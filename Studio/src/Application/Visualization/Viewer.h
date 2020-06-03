@@ -1,8 +1,9 @@
 #pragma once
 
+//#include <array>
+
 #include <QSharedPointer>
 #include <Visualization/ColorSchemes.h>
-#include <array>
 #include <Application/Data/Shape.h>
 
 class vtkRenderer;
@@ -17,10 +18,15 @@ class vtkColorTransferFunction;
 class vtkArrowSource;
 class vtkTransformPolyDataFilter;
 class vtkScalarBarActor;
+class vtkCornerAnnotation;
+class vtkPolyDataMapper;
+class vtkActor;
+class vtkTransform;
 
-class DisplayObject;
+class Shape;
 
 class Viewer;
+class Visualizer;
 
 class StudioInteractorStyle;
 
@@ -43,7 +49,7 @@ public:
   void set_renderer(vtkSmartPointer<vtkRenderer> renderer);
   vtkSmartPointer<vtkRenderer> get_renderer();
 
-  void display_object(QSharedPointer<DisplayObject> object);
+  void display_shape(QSharedPointer<Shape> shape);
 
   void clear_viewer();
   void reset_camera(std::array<double, 3> c);
@@ -65,6 +71,12 @@ public:
 
   void set_color_scheme(int i);
 
+  void handle_new_mesh();
+
+  bool is_viewer_ready();
+
+  void set_visualizer(Visualizer* visualizer);
+
 private:
 
   void display_vector_field();
@@ -76,13 +88,13 @@ private:
   void compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitudes,
                                    vtkSmartPointer<vtkFloatArray> vectors);
 
-  void draw_exclusion_spheres(QSharedPointer<DisplayObject> object);
+  void draw_exclusion_spheres(QSharedPointer<Shape> object);
 
   void updateDifferenceLUT(float r0, float r1);
 
   bool visible_;
 
-  QSharedPointer<DisplayObject> object_;
+  QSharedPointer<Shape> shape_;
 
   void update_actors();
 
@@ -115,7 +127,7 @@ private:
 
   vtkSmartPointer<StudioInteractorStyle>   style_;
 
-  vtkSmartPointer<vtkImageActor>           image_actor_;
+  //vtkSmartPointer<vtkImageActor>           image_actor_;
 
   vtkSmartPointer<vtkColorTransferFunction>   difference_lut_;
   vtkSmartPointer<vtkArrowSource>             arrow_source_;
@@ -127,8 +139,18 @@ private:
 
   vtkSmartPointer<vtkScalarBarActor> scalar_bar_actor_;
 
+  vtkSmartPointer<vtkCornerAnnotation> corner_annotation_;
+
   bool arrows_visible_ = false;
 
   ColorSchemes color_schemes_;
   int scheme_;
+
+  bool mesh_ready_ = false;
+  bool viewer_ready_ = false;
+  bool loading_displayed_ = false;
+
+  QSharedPointer<Mesh> mesh_;
+
+  Visualizer* visualizer_{nullptr};
 };

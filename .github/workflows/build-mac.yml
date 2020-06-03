@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - release_v5.4
     tags:
     - '*'
   pull_request:
@@ -90,7 +91,7 @@ jobs:
 
     - name: cmake
       shell: bash -l {0}
-      run: conda activate shapeworks && mkdir build && cd build && cmake -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DEigen3_DIR=$HOME/install/share/eigen3/cmake -DOpenVDB_DIR=$HOME/install/lib/cmake/OpenVDB -DCMAKE_BUILD_TYPE=Release -DSHAPEWORKS_SUPERBUILD=OFF -DUSE_OPENMP=OFF -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DCMAKE_OSX_SYSROOT="$HOME/MacOSX10.13.sdk" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.13" ..
+      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_PREFIX_PATH=$HOME/install -DCMAKE_BUILD_TYPE=Release -DUSE_OPENMP=OFF -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DCMAKE_OSX_SYSROOT="$HOME/MacOSX10.13.sdk" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.13" ..
 
     - name: make
       shell: bash -l {0}
@@ -102,7 +103,6 @@ jobs:
 
     - name: Build Binary Package
       run: pwd ; ls ; ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
-      
     - name: make test
       shell: bash -l {0}
       run: conda activate shapeworks && cd build && ctest -VV
@@ -111,3 +111,15 @@ jobs:
       with:
         name: artifact-${{github.sha}}-mac
         path: ${{runner.workspace}}/ShapeWorks/artifacts
+
+    - name: Deploy
+      id: deploy
+      if: github.ref == 'refs/heads/master'
+      uses: marvinpinto/action-automatic-releases@v1.0.0
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "dev-mac"
+        prerelease: true
+        title: "Development Build for Mac"
+        files: |
+             ${{runner.workspace}}/ShapeWorks/artifacts/*.zip

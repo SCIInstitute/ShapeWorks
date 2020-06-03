@@ -1,5 +1,4 @@
-#ifndef STUDIO_APPLICATION_SHAPEWORKSSTUDIOAPP_H
-#define STUDIO_APPLICATION_SHAPEWORKSSTUDIOAPP_H
+#pragma once
 
 #include <QMainWindow>
 #include <QActionGroup>
@@ -8,15 +7,15 @@
 #include <QDoubleSpinBox>
 #include <QLabel>
 #include <QTimer>
-#include "Data/PreferencesWindow.h"
-#include <vtkCamera.h>
 #include <QProgressBar>
+
+#include <Data/PreferencesWindow.h>
 
 class Lightbox;
 class GroomTool;
 class OptimizeTool;
 class AnalysisTool;
-class Project;
+class Session;
 class Visualizer;
 
 // Forward Qt class declarations
@@ -34,7 +33,7 @@ class ShapeWorksStudioApp : public QMainWindow
   Q_OBJECT
 public:
 
-  ShapeWorksStudioApp(int argc, char** argv);
+  ShapeWorksStudioApp();
   ~ShapeWorksStudioApp();
 
   void closeEvent(QCloseEvent* event) override;
@@ -62,8 +61,6 @@ public Q_SLOTS:
   void on_action_analysis_mode_triggered();
   void on_actionShow_Tool_Window_triggered();
   void on_actionExport_PCA_Mesh_triggered();
-  void on_actionSet_Data_Directory_triggered();
-  void on_actionExport_Parameter_XML_triggered();
   void on_actionExport_Eigenvalues_triggered();
   void on_actionExport_Eigenvectors_triggered();
   void on_actionExport_PCA_Mode_Points_triggered();
@@ -73,7 +70,7 @@ public Q_SLOTS:
   void on_action_export_mesh_scalars_triggered();
 
   void on_center_checkbox_stateChanged();
-  void on_thumbnail_size_slider_valueChanged();
+  void on_zoom_slider_valueChanged();
   void on_view_mode_combobox_currentIndexChanged(QString disp_mode);
   void on_auto_view_button_clicked();
 
@@ -93,13 +90,19 @@ public Q_SLOTS:
   void handle_open_recent();
 
   void handle_color_scheme();
-  void handle_new_mesh();
+  void handle_pca_update();
   void handle_message(std::string str);
   void handle_error(std::string str);
   void handle_warning(std::string str);
   void handle_progress(size_t amt);
+  void handle_new_mesh();
+  void handle_clear_cache();
 
 private:
+
+  void new_session();
+  void update_tool_mode();
+  void update_view_mode();
 
   enum VIEW_MODE {
     ORIGINAL = 0,
@@ -107,10 +110,26 @@ private:
     RECONSTRUCTED = 2
   };
 
+  enum DISPLAY_MODE {
+    ALL_SAMPLES = 0,
+    MEAN = 1,
+    PCA = 2,
+    SINGLE_SAMPLE = 3
+  };
+
+  static const std::string MODE_ORIGINAL_C;
+  static const std::string MODE_GROOMED_C;
+  static const std::string MODE_RECONSTRUCTION_C;
+
+  static const std::string SETTING_ZOOM_C;
+
+  std::string get_view_mode();
+
   void set_view_combo_item_enabled(int item, bool value);
 
   void disableAllActions();
-  void enablePossibleActions();
+
+  void enable_possible_actions();
 
   void update_from_preferences();
 
@@ -118,11 +137,15 @@ private:
 
   void update_table();
 
-  void update_display();
+  void update_display(bool force = false);
 
   void compute_mode_shape();
 
+  bool set_view_mode(std::string view_mode);
+
   void update_recent_files();
+
+  void save_project(std::string filename);
 
   /// designer form
   Ui_ShapeWorksStudioApp* ui_;
@@ -130,16 +153,16 @@ private:
   QActionGroup* action_group_;
 
   QSharedPointer<Lightbox> lightbox_;
-
   QSharedPointer<GroomTool> groom_tool_;
   QSharedPointer<OptimizeTool> optimize_tool_;
   QSharedPointer<AnalysisTool> analysis_tool_;
   QSharedPointer<Visualizer> visualizer_;
   QSharedPointer<PreferencesWindow> preferences_window_;
+
   //all the preferences
   Preferences preferences_;
 
-  QSharedPointer<Project> project_;
+  QSharedPointer<Session> session_;
 
   QSharedPointer<WheelEventForwarder> wheel_event_forwarder_;
 
@@ -149,9 +172,13 @@ private:
   QLabel* glyph_size_label_;
   QLabel* glyph_quality_label_;
   QList<QAction*> recent_file_actions_;
-  std::vector<std::string> originalFilenames_;
-  QProgressBar* progressBar_;
-  std::string data_dir_, currentMessage_;
-};
 
-#endif /* STUDIO_APPLICATION_SHAPEWORKSSTUDIOAPP_H */
+  QProgressBar* progress_bar_;
+  std::string currentMessage_;
+
+  std::string current_display_mode_;
+
+  bool block_update_{false};
+  bool is_loading_{false};
+
+};

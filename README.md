@@ -23,18 +23,24 @@ The underlying scientific premise of ShapeWorks, particle-based shape modeling, 
     
 ShapeWorks has been effective in a range of applications, including psychology, biological phenotyping, cardiology, and orthopedics. [See relevant papers](#relevant-papers). 
 
-
 Contact Us
 =====================
 
-User Forum
+Users Forum
 ----------
 Our user forum is located on [Gitter ShapeWorks User Forum](https://gitter.im/ShapeWorks).
 
-Mailing List
+Users Mailing List
 ------------
 Please join our mailing list by sending a message to sympa@sci.utah.edu with the subject `subscribe shapeworks-users` and empty body.
 You can also email any questions, bugs, or feature requests to shapeworks-users@sci.utah.edu.
+
+Developers Mailing List
+------------
+You can join our developer support mailing list by sending a message to sympa@sci.utah.edu with the subject `subscribe shapeworks-dev-support` and empty body.
+
+As a developer, if you encounter any problems or bugs, please report them using [the issue tracker on GitHub](https://github.com/SCIInstitute/ShapeWorks/issues). This includes feature requests. Feel free to add improvements using git pull requests. You can also email ShapeWorkers at shapeworks-dev-support@sci.utah.edu.
+
 
 Table of Contents
 ====================
@@ -55,6 +61,16 @@ ShapeWorks provides official user releases, the features of which can be seen at
 First, download the latest ShapeWorks binary release:  
 https://github.com/SCIInstitute/ShapeWorks/releases/latest
 
+We also provide up-to-date development builds from the master branch for Windows, Mac, and Linux:
+
+https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-windows
+
+https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-mac
+
+https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-linux
+
+Please understand that these are in-progress development builds, not official releases.
+
 Then follow the appropriate instructions for their platform:  
 [Windows](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/install/Windows_README.txt)  
 [Mac](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/install/Mac_README.txt)  
@@ -71,7 +87,6 @@ Developers
 Please see **[BUILD.md](BUILD.md)** for the current build instructions.  
 Please see **[Datasets.md](Documentation/Datasets.md)** for dataset upload instructions and guidelines.
 
-**Bug report:** As a developer, if you encounter any problems or bugs, please report them using [the issue tracker on GitHub](https://github.com/SCIInstitute/ShapeWorks/issues). This includes feature requests. Feel free to add improvements using git pull requests. You can also email ShapeWorkers at shapeworks-dev@sci.utah.edu.
 
 Getting Started
 =====================
@@ -135,8 +150,10 @@ Researchers
 - [Praful Agrawal](https://www.sci.utah.edu/people/prafulag.html)
 - [Riddhish Bhalodia](https://www.sci.utah.edu/people/riddhishb.html)
 - [Atefeh Ghanaatikashani](https://www.sci.utah.edu/people/atefeh.gk.html)
-- [Iain Lee](https://www.sci.utah.edu/people/iclee.html)
 - [Jadie Adams](https://www.sci.utah.edu/people/jadie.html)
+- [Hong Xu](http://www.sci.utah.edu/people/hxu.html)
+- [Oleks Korshak](http://www.sci.utah.edu/people/oleks.html)
+- [Karthik Karanth](http://www.sci.utah.edu/people/karthik.html)
 
 Past Contributors
 ---------------------

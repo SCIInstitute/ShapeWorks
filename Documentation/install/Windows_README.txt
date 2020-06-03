@@ -40,7 +40,7 @@ https://repo.anaconda.com/archive/Anaconda3-2019.10-Windows-x86_64.exe
 
 7. CD to your copied Examples\Python location
 
-8. Run "python RunUseCase.py --use_case ellipse"
+8. Run "python RunUseCase.py --use_case ellipsoid"
 
 Note: If you have installed ShapeWorks in a different location than
 "C:\Program Files\ShapeWorks", please add the path to the "bin"

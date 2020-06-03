@@ -4,10 +4,12 @@
 #include <QString>
 #include <Groom/ShapeWorksGroom.h>
 #include <Data/Mesh.h>
+#include <Libs/Project/Subject.h>
+#include <Data/MeshManager.h>
 
 class Shape;
-typedef QSharedPointer< Shape > ShapeHandle;
-typedef QVector< ShapeHandle > ShapeList;
+using ShapeHandle = QSharedPointer<Shape>;
+using ShapeList = QVector<ShapeHandle>;
 
 class Point
 {
@@ -15,13 +17,26 @@ public:
   double x, y, z;
 };
 
-//! Representation of a single shape/patient.
+//! Representation of a single shape/patient/subject.
 class Shape
 {
 
 public:
+
   Shape();
+
   ~Shape();
+
+  QSharedPointer<Mesh> get_mesh(string display_mode);
+
+  void set_annotations(QStringList annotations);
+  QStringList get_annotations();
+
+  void set_mesh_manager(QSharedPointer<MeshManager> mesh_manager);
+
+  void set_subject(std::shared_ptr<shapeworks::Subject> subject);
+
+  std::shared_ptr<shapeworks::Subject> get_subject();
 
   /// Import the original raw image file
   void import_original_image(std::string filename, float iso_value);
@@ -45,6 +60,7 @@ public:
 
   /// Import local correspondence point file
   bool import_local_point_file(QString filename);
+
   /// Import local correspondence point data
   bool import_points(std::vector<itk::Point<double>> points, bool local);
 
@@ -58,6 +74,11 @@ public:
   vnl_vector<double> get_local_correspondence_points();
 
   void set_reconstructed_mesh(vtkSmartPointer<vtkPolyData> poly_data);
+
+  void clear_reconstructed_mesh();
+
+  void set_global_particles(const vnl_vector<double> &points);
+
 
   /// Get the id of this shape
   int get_id();
@@ -86,7 +107,17 @@ public:
   int get_group_id();
   void set_group_id(int id);
 
+  std::vector<Point> get_vectors();
+  void set_vectors(std::vector<Point> vectors);
+
+  void set_transform(const vnl_vector<double>& transform);
+  vnl_vector<double> get_transform();
+
 private:
+
+  void generate_original_meshes();
+
+  void generate_meshes(std::vector<std::string> filenames, QSharedPointer<Mesh> &mesh);
 
   static bool import_point_file(QString filename, vnl_vector<double> &points);
 
@@ -99,7 +130,7 @@ private:
   int group_id_ = 1;
 
   QString original_mesh_filename_;
-  QString groomed_mesh_filename_;
+  QString groomed_filename_;
   QString global_point_filename_;
   QString local_point_filename_;
 
@@ -108,4 +139,13 @@ private:
 
   QList<Point> exclusion_sphere_centers_;
   QList<double> exclusion_sphere_radii_;
+
+  std::shared_ptr<shapeworks::Subject> subject_;
+
+  std::vector<Point> vectors_;
+  vnl_vector<double> transform_;
+
+  QStringList corner_annotations_;
+
+  QSharedPointer<MeshManager> mesh_manager_;
 };

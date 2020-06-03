@@ -1,5 +1,5 @@
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set (CMAKE_AUTOMOC ON)
+#set (CMAKE_AUTOMOC ON)
 
 # Find QT5
 find_package(OpenGL REQUIRED)
@@ -7,6 +7,9 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5OpenGL REQUIRED)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
+
+### Xlnt
+#find_package (XLNT REQUIRED)
 
 cmake_policy(SET CMP0020 NEW)
 
@@ -57,8 +60,45 @@ QT5_ADD_RESOURCES(STUDIO_RSCS ${UI_RESOURCES_RCC})
 ### Application
 #--------------------------------------------------------------------------------
 
-FILE(GLOB STUDIO_SRCS main.cc */*.cc */*.cpp */*.hxx)
-FILE(GLOB STUDIO_HDRS */*.h)
+
+FILE(GLOB STUDIO_DATA_SRCS Data/*.cpp)
+FILE(GLOB STUDIO_DATA_HDRS Data/*.h)
+
+FILE(GLOB STUDIO_ANALYSIS_SRCS Analysis/*.cpp)
+FILE(GLOB STUDIO_ANALYSIS_HDRS Analysis/*.h)
+
+FILE(GLOB STUDIO_GROOM_SRCS Groom/*.cpp)
+FILE(GLOB STUDIO_GROOM_HDRS Groom/*.h)
+
+FILE(GLOB STUDIO_OPTIMIZE_SRCS Optimize/*.cpp)
+FILE(GLOB STUDIO_OPTIMIZE_HDRS Optimize/*.h)
+
+FILE(GLOB STUDIO_VISUALIZATION_SRCS Visualization/*.cpp)
+FILE(GLOB STUDIO_VISUALIZATION_HDRS Visualization/*.h)
+
+SET(STUDIO_SRCS
+  ${STUDIO_ANALYSIS_SRCS}
+  ${STUDIO_DATA_SRCS}
+  ${STUDIO_GROOM_SRCS}
+  ${STUDIO_OPTIMIZE_SRCS}
+  ${STUDIO_VISUALIZATION_SRCS}
+)
+
+SET(STUDIO_MOC_HDRS
+  ${STUDIO_ANALYSIS_HDRS}
+  ${STUDIO_DATA_HDRS}
+  ${STUDIO_GROOM_HDRS}
+  ${STUDIO_OPTIMIZE_HDRS}
+  ${STUDIO_VISUALIZATION_HDRS}
+)
+
+qt5_wrap_cpp( STUDIO_MOC_SRCS ${STUDIO_MOC_HDRS} )
+
+
+
+
+#FILE(GLOB STUDIO_SRCS main.cpp */*.cc */*.cpp */*.hxx)
+#FILE(GLOB STUDIO_HDRS */*.h)
 FILE(GLOB STUDIO_ICNS Resources/Images/*.ico)
 FILE(GLOB WINDOW_ICNS Resources/Images/shapes-icon.png)
 
@@ -100,8 +140,10 @@ ELSE()
 ENDIF()
 # here we instruct CMake to build STUDIO executable from all of the source files
 ADD_EXECUTABLE( ShapeWorksStudio MACOSX_BUNDLE ${WinConsole}
+  main.cpp
   ${STUDIO_SRCS}
-  ${STUDIO_HDRS}
+  ${STUDIO_MOC_HDRS}
+  ${STUDIO_MOC_SRCS}
   ${STUDIO_UI}
   ${STUDIO_ICNS}
   ${STUDIO_RSCS}
@@ -151,6 +193,8 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   Analyze
   Optimize
   Utils
+  Project
+  xlnt::xlnt
   )
 
 INSTALL(TARGETS ShapeWorksStudio
