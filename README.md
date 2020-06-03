@@ -39,7 +39,10 @@ Contact Us
 
 Users Forum
 ----------
-Our user forum is located on [Gitter ShapeWorks User Forum](https://gitter.im/ShapeWorks).
+Our user forum is located on [Gitter ShapeWorks User Forum](https://gitter.im/ShapeWorks). 
+
+You can access the ShapeWorks Gitter using the [![Gitter](https://badges.gitter.im/ShapeWorks/ShapeWorks.svg)](https://gitter.im/ShapeWorks/ShapeWorks?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) link above or download the [Gitter app](https://gitter.im/apps) for any platform or your phone. It provides easy integration with [GitHub](https://github.com) and has no limitation on the number of messages as is the case with other services. 
+
 
 Users Mailing List
 ------------
@@ -88,7 +91,9 @@ $ conda activate shapeworks
 Developers
 ---------------------
 Please see **[BUILD.md](Documentation/Build/BUILD.md)** for the current build instructions.  
-Please see **[Datasets.md](Documentation/UseCases/Datasets.md)** for dataset upload instructions and guidelines.
+Please see **[Datasets.md](Documentation/UseCases/Datasets.md)** for dataset upload instructions and guidelines.  
+Please see **[GIT.md](Documentation/Development/GIT.md)** for details to checkout out and committing newly modified code.  
+ShapeWorks documentation uses markdown. Please refer to our tiny **[getting started with markdown](Documentation/Development/Markdown.md)**.
 
 
 Getting Started
