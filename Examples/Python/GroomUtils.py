@@ -210,7 +210,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
 
     if processRaw:
         rawoutDir = os.path.join(outDir, 'images')
-        binaryoutDir = os.path.join(outDir + 'segmentations')
+        binaryoutDir = os.path.join(outDir, 'segmentations')
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
         if not os.path.exists(binaryoutDir):
@@ -242,7 +242,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
 
             cmd = ["shapeworks", 
                    "read-image", "--name", dtnrrdfilename,
-                   "compute-dt", "--isovlaue", str(isoValue),
+                   "compute-dt", "--isovalue", str(isoValue),
                    "write-image", "--name", dtnrrdfilename]
             subprocess.check_call(cmd)            
 
@@ -257,9 +257,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
 
             cmd = ["shapeworks", 
                    "read-image", "--name", seginname,
-                   "--target", ref_tpdtnrrdfilename,
-                   "--source", tpdtnrrdfilename,
-                   "--iterations", str(icpIterations),
+                   "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename,"--iterations", str(icpIterations),
                    "write-image", "--name", segoutname]
             subprocess.check_call(cmd)
 

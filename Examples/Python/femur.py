@@ -40,16 +40,16 @@ def Run_Pipeline(args):
     """
 
     print("\nStep 1. Get Data\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
+    # if int(args.interactive) != 0:
+        # input("Press Enter to continue")
 
     datasetName = "femur"
-    filename = datasetName + ".zip"
-    # Check if the data is in the right place
-    if not os.path.exists(filename):
-        print("Can't find " + filename + " in the current directory.")
-        import DatasetUtils
-        DatasetUtils.downloadDataset(datasetName)
+    # filename = datasetName + ".zip"
+    # # Check if the data is in the right place
+    # if not os.path.exists(filename):
+    #     print("Can't find " + filename + " in the current directory.")
+    #     import DatasetUtils
+    #     DatasetUtils.downloadDataset(datasetName)
 
     parentDir="TestFemur/"
     inputDir = 'TestFemur/' + datasetName + '/'
@@ -58,13 +58,13 @@ def Run_Pipeline(args):
         os.makedirs(parentDir)
 
     # extract the zipfile
-    print("Extracting data from " + filename + "...")
-    with ZipFile(filename, 'r') as zipObj:
-        zipObj.extractall(path=parentDir)
+    # print("Extracting data from " + filename + "...")
+    # with ZipFile(filename, 'r') as zipObj:
+    #     zipObj.extractall(path=parentDir)
 
     print("\nStep 2. Groom - Data Pre-processing\n")
-    if args.interactive:
-        input("Press Enter to continue")
+    # if args.interactive:
+        # input("Press Enter to continue")
 
     if not args.start_with_prepped_data:
         """
@@ -159,8 +159,8 @@ def Run_Pipeline(args):
         Apply padding
         Both the segmentation and raw images are padded in case the seg lies on the image boundary.
         """
-        paddedFiles_segmentations = applyPadding(parentDir + "padded/segementations/", resampledFiles_segmentations, 10)
-        paddedFiles_images = applyPadding(parentDir + "padded/images/", resampledFiles_images, 10)
+        paddedFiles_segmentations = applyPadding(parentDir + "padded/segementations", resampledFiles_segmentations, 10)
+        paddedFiles_images = applyPadding(parentDir + "padded/images", resampledFiles_images, 10)
 
         """
         Apply center of mass alignment
@@ -169,8 +169,8 @@ def Run_Pipeline(args):
         comFiles_segmentations = applyCOMAlignment(parentDir + "com_aligned/segmentations", paddedFiles_segmentations)
         comFiles_images = applyCOMAlignment(parentDir + "com_aligned/images", paddedFiles_images)
 
-        centerFiles_segmentations = center(parentDir + "centered/segmentations/", comFiles_segmentations)
-        centerFiles_images = center(parentDir + "centered/images/", comFiles_images)
+        centerFiles_segmentations = center(parentDir + "centered/segmentations", comFiles_segmentations)
+        centerFiles_images = center(parentDir + "centered/images", comFiles_images)
 
         """
         Apply rigid alignment
@@ -188,7 +188,7 @@ def Run_Pipeline(args):
         # Fix cutting plane points previously selected
         else:
             # Get COM translation
-            COM_folder = parentDir + "com_aligned/segmentations/"
+            COM_folder = parentDir + "com_aligned/segmentations"
             for file in os.listdir(COM_folder):
                 if cp_prefix in file and ".txt" in file:
                     COM_filename = COM_folder + file
@@ -207,7 +207,7 @@ def Run_Pipeline(args):
                 new_cutting_plane_points[pt_index] = cutting_plane_points[pt_index] - trans
             cutting_plane_points = new_cutting_plane_points
             # Get center translation
-            center_folder = parentDir + "centered/segmentations/"
+            center_folder = parentDir + "centered/segmentations"
             for file in os.listdir(center_folder):
                 if cp_prefix in file and ".txt" in file:
                     center_filename = center_folder + file
@@ -223,7 +223,7 @@ def Run_Pipeline(args):
                 new_cutting_plane_points[pt_index] = cutting_plane_points[pt_index] - center_trans
             cutting_plane_points = new_cutting_plane_points
             # Get rigid transformation
-            rigid_folder = parentDir + "aligned/transformations/"
+            rigid_folder = parentDir + "aligned/transformations"
             for file in os.listdir(rigid_folder):
                 if cp_prefix in file and img_suffix not in file:
                     rigid_filename = rigid_folder + file
@@ -261,12 +261,13 @@ def Run_Pipeline(args):
         clippedFiles_segmentations = ClipBinaryVolumes(parentDir + 'clipped_segmentations', rigidFiles_segmentations, cutting_plane_points.flatten())
 
         """Compute largest bounding box and apply cropping"""
-        croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", clippedFiles_segmentations,  rigidFiles_images, processRaw=True)
-        [croppedFiles_segmentations, croppedFiles_images] = applyCropping(parentDir, clippedFiles_segmentations,  rigidFiles_images, processRaw=True)
+        croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", clippedFiles_segmentations)
+
+        croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images)
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
-        if args.interactive:
-            input("Press Enter to continue")
+        # if args.interactive:
+            # input("Press Enter to continue")
 
         """
         We convert the scans to distance transforms, this step is common for both the
@@ -275,12 +276,12 @@ def Run_Pipeline(args):
         dtFiles = applyDistanceTransforms(parentDir, croppedFiles_segmentations)
 
     else:
+        print("\nStep 3. Groom - Convert to distance transforms\n")
+        # if args.interactive:
+            # input("Press Enter to continue")
+
         dtFiles = applyDistanceTransforms(parentDir, fileList_seg)
 
-        print("\nStep 3. Groom - Convert to distance transforms\n")
-        if args.interactive:
-            input("Press Enter to continue")
-    
     """
     ## OPTIMIZE : Particle Based Optimization
 
@@ -302,8 +303,8 @@ def Run_Pipeline(args):
     optimization routines
     """
     print("\nStep 4. Optimize - Particle Based Optimization\n")
-    if args.interactive:
-        input("Press Enter to continue")
+    # if args.interactive:
+        # input("Press Enter to continue")
 
     pointDir = './TestFemur/PointFiles/'
     if not os.path.exists(pointDir):
