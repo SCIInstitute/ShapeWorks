@@ -1,6 +1,6 @@
 # Building ShapeWorks from source on Windows
 
-If you encounter problems, have questions, or need help, please contact shapeworks-dev@sci.utah.edu
+If you encounter problems, have questions, or need help, please contact shapeworks-dev-support@sci.utah.edu
 
 ## Minimum Requirements
 * CMake 3.11 (provided by conda below if not already installed)
