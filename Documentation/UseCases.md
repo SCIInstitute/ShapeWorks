@@ -69,6 +69,14 @@ To run on a subset of the data in the use case, add the --use_subsample tag foll
 
 This will select a representative sample of the specified size to run through the pipeline so that it runs faster and uses less memory. The sample is selected by running k-mean clustering, then picking one sample from each cluster so that the resulting sample is representative of all the data.
 
+### Running subsequent analysis
+
+To run ShapeWorksStudio again without running the full pipeline, you must first navigate to the Python/Examples directory, and then run ShapeWorksStudio on the appropriate analysis xml file.  For example:
+
+            cd /path/to/shapeworks/Examples/Python
+            ShapeWorksStudio TestEllipsoids/PointFiles/analyze.xml
+	    
+
 ## Dataset Guidelines
 Check out [Datasets.md](Datasets.md) for dataset upload instructions and guidelines. 
 
