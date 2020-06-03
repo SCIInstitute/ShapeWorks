@@ -42,13 +42,13 @@ public:
   bool save_project(std::string filename);
 
   /// load project from file
-  bool load_xml_project(QString filename, std::string& planesFile);
+  bool load_project(QString filename);
 
   /// read a lightweight project file
   bool load_light_project(QString filename);
 
   /// load a shapeworks project
-  bool load_project(QString filename);
+  bool load_xl_project(QString filename);
 
   void set_project_path(QString relative_path);
 

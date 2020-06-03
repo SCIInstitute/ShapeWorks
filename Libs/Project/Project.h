@@ -68,6 +68,12 @@ public:
   //! Store from subject list to spreadsheet
   void store_subjects();
 
+  //! Get the supported version (this version of the code)
+  int get_supported_version();
+
+  //! Get the version of the currently loaded project
+  int get_version();
+
 private:
 
   // known prefixes
@@ -105,5 +111,8 @@ private:
   bool segmentations_present_{false};
   bool groomed_present_{false};
   bool particles_present_{false};
+
+  const int supported_version_{1};
+  int version_{1};
 };
 }
