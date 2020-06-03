@@ -1,64 +1,39 @@
 from DatasetUtils import GirderConnector
 
+# Note that the loginState parameter is there for easy testing in the future.
+# The testing library can just use a login state rather than having to simulate user input to log in.
+# login state is a dictionary containing {username, key} where key is the api key to use for getting an access token
+
 ## Returns None if failed to get list, otherwise returns list of dataset names: ['ellipsoid', 'left_atrium', ...]
 def getDatasetList(loginState = None):
     GirderConnector.printDataPortalWelcome()
     print('Getting dataset list from the ShapeWorks Portal')
-    accessToken = GirderConnector._login(loginState)
-    if not accessToken:
-        return None
-    return GirderConnector._getDatasetList(accessToken)
+    accessToken = GirderConnector.login(loginState)
+    return GirderConnector.getDatasetList(accessToken)
 
 
+## fileList is list of file path strings 
 def downloadDataset(datasetName, destinationPath='.', fileList = None, asZip = True, loginState = None):
     GirderConnector.printDataPortalWelcome()
     print('Downloading the', datasetName, 'dataset from the ShapeWorks Portal')
-    accessToken = GirderConnector._login(loginState)
-    if not accessToken:
-        return False
+    accessToken = GirderConnector.login(loginState)
     
-    if fileList is not None:
-        print('Downloading', len(fileList), 'specified files')
-        success = GirderConnector._downloadDatasetFiles(accessToken, datasetName, fileList, destinationPath)
-    elif asZip:
-        success = GirderConnector._downloadDatasetZip(accessToken, datasetName, destinationPath)
+    # specifying fileList overrides asZip
+    if asZip and not fileList:
+        GirderConnector.downloadDatasetZip(accessToken, datasetName, destinationPath)
     else:
-        success = GirderConnector._downloadDataset(accessToken, datasetName, destinationPath)
+        if fileList is not None:
+            print('Downloading', len(fileList), 'specified files')
+        GirderConnector.downloadDataset(accessToken, datasetName, destinationPath, fileList)
 
-    if success:
-        print('Downloaded the', datasetName, 'dataset from the ShapeWorks Portal.')
-        return True
-    else:
-        print('FAILED to download the', datasetName, 'dataset from the ShapeWorks Portal.')
-        return False
-
-## fileList is list of strings 
-def downloadDatasetFiles(datasetName, fileList, destinationPath='.', loginState = None):
-    GirderConnector.printDataPortalWelcome()
-    print('Downloading', len(fileList), 'specified files from the', datasetName, 'dataset from the ShapeWorks Portal')
-    accessToken = GirderConnector._login(loginState)
-    if not accessToken:
-        return False
-
-    success = GirderConnector._downloadDatasetFiles(accessToken, datasetName, fileList, destinationPath)
-    if success:
-        print('Downloaded', len(fileList), 'specified files from the', datasetName, 'dataset from the ShapeWorks Portal')
-        return True
-    else:
-        print('FAILED to download', len(fileList), 'specified files from the', datasetName, 'dataset from the ShapeWorks Portal')
-        return False
+    print('Downloaded the', datasetName, 'dataset from the ShapeWorks Portal.')
 
 
 def uploadNewDataset(datasetName, datasetPath, loginState = None):
     GirderConnector.printDataPortalWelcome()
     print('Uploading the %s dataset from %s to the ShapeWorks Portal' % (datasetName, datasetPath))
-    accessToken = GirderConnector._login(loginState)
-    if not accessToken:
-        return False
+    accessToken = GirderConnector.login(loginState)
 
-    if GirderConnector._uploadNewDataset(accessToken, datasetName, datasetPath):
-        print('Uploaded the', datasetName, 'dataset to the ShapeWorks Portal.')
-        return True
-    else:
-        print('FAILED to upload the', datasetName, 'dataset to the ShapeWorks Portal.')
-        return False
+    GirderConnector.uploadNewDataset(accessToken, datasetName, datasetPath)
+
+    print('Uploaded the', datasetName, 'dataset to the ShapeWorks Portal.')

@@ -23,21 +23,21 @@ def printDataPortalWelcome():
     print()
 
 
-def _login(loginState):
+def login(loginState):
     if loginState is None:
         # interactive login mode
         loginState, accessToken = _loginAndGetAccessToken()
     else:
         # login using provided credentials
         if not _verifyLoginState(loginState):
-            print('Invalid login state')
-            return None
-        accessToken = _getAccessToken(loginState['key'])
+            raise ValueError('Invalid login state')
+        accessToken = GirderAPI.getAccessToken(loginState['key'])
     if accessToken is None:
-        print('Unable to get access token')
+        raise ValueError('Unable to get access token. %' % _CONTACT_SUPPORT_STRING)
     return accessToken
     
 
+## Interactively prompts the user to log in
 def _loginAndGetAccessToken():
 
     loginState = _loadLogin()
@@ -49,7 +49,7 @@ def _loginAndGetAccessToken():
             print('Login failed!')
             return (None, None)
 
-    accessToken = GirderAPI._getAccessToken(serverAddress, loginState['key'])
+    accessToken = GirderAPI.getAccessToken(serverAddress, loginState['key'])
     if accessToken is None:
         # Retry login once
         print('Login info in current directory is invalid.')
@@ -57,10 +57,7 @@ def _loginAndGetAccessToken():
         if loginState is None:
             print('Login failed!')
             return (None, None)
-        accessToken = GirderAPI._getAccessToken(serverAddress, loginState['key'])
-        if accessToken is None:
-            print('ERROR! Login info is invalid again.', _CONTACT_SUPPORT_STRING)
-            return (loginState, None)
+        accessToken = GirderAPI.getAccessToken(serverAddress, loginState['key'])
     return (loginState, accessToken)
 
 
@@ -75,16 +72,15 @@ def _promptLogin():
         password = getpass.getpass("Password: ")
         combined = username + ':' + password
         usernamePasswordHash = base64.b64encode(combined.encode()).decode("ascii")
-        basicAuthToken = GirderAPI._authenticateBasicAuth(serverAddress, usernamePasswordHash)
-        if basicAuthToken is None:
-            print('Incorrect username or password')
+        try:
+            basicAuthToken = GirderAPI.authenticateBasicAuth(serverAddress, usernamePasswordHash)
+        except ValueError as e:
+            print('Incorrect username or password.')
+    try:
+        apiKey = GirderAPI.getApiKey(serverAddress, basicAuthToken, _API_KEY_NAME)
+    except ValueError as e:
+        apiKey = GirderAPI.createApiKey(serverAddress, basicAuthToken, _API_KEY_NAME)
 
-    apiKey = GirderAPI._getApiKey(serverAddress, basicAuthToken, _API_KEY_NAME)
-    if apiKey is None:
-        apiKey = GirderAPI._createApiKey(serverAddress, basicAuthToken, _API_KEY_NAME)
-    if apiKey is None:
-        print('Failed to create api key.', _CONTACT_SUPPORT_STRING)
-        return None
     loginState = {'username': username, 'key': apiKey}
     _saveLogin(loginState)
     return loginState
@@ -110,45 +106,24 @@ def _verifyLoginState(loginState):
     return 'key' in loginState and 'username' in loginState
 
 
-# returns True if success
-def _downloadDatasetZip(accessToken, datasetName, destinationPath):
-    
-    print('Collection: %s' % _USE_CASE_DATA_COLLECTION)
-    # 1 get info of the use case collection
-    useCaseCollection = GirderAPI._getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
-    if useCaseCollection is None:
-        return False
-
-    # 2 get info of the dataset folder in that collection
-    datasetFolder = GirderAPI._getFolderInfo(serverAddress, accessToken, parentType='collection', parentId=useCaseCollection['_id'], folderName=datasetName)
-    if datasetFolder is None:
-        return False
-    
-    success = GirderAPI._downloadFolder(serverAddress, accessToken, path=destinationPath, folderInfo=datasetFolder)
-    return success
-
-
-# returns True if success
-def _downloadFolder(accessToken, path, folder):
+def _downloadFolder(accessToken, path, folder, parsedFileList = None):
+    if not os.path.exists(path):
+        os.makedirs(path)
     # 1 download items in this folder
-    items = GirderAPI._listItemsInFolder(serverAddress, accessToken, folder['_id'])
-    failure = False
+    items = GirderAPI.listItemsInFolder(serverAddress, accessToken, folder['_id'])
     for item in items:
-        failure = not GirderAPI._downloadItem(serverAddress, accessToken, path, item) or failure
+        subset = None if not parsedFileList else [elem for elem in parsedFileList if len(elem) == 1 and elem[0] == item['name']]
+        if subset is None or len(subset) > 0:
+            GirderAPI.downloadItem(serverAddress, accessToken, path, item)
         
-    # 2 check for subfolders
-    subfolders = GirderAPI._getFolderInfo(serverAddress, accessToken, parentType='folder', parentId=folder['_id'])
-    if subfolders:
-        # 3 for each subfolder, create directory in the file system and download every item in the subfolder
-        for subfolder in subfolders:
-            subpath = path + '/' + subfolder['name']
-            if not os.path.exists(subpath):
-                os.makedirs(subpath)
-            failure = not _downloadFolder(accessToken, subpath, subfolder) or failure
+    # 2 for each subfolder, create directory in the file system and download every item in the subfolder
+    for subfolder in GirderAPI.getFolderList(serverAddress, accessToken, parentType='folder', parentId=folder['_id']):
+        subset = None if not parsedFileList else [elem[1:] for elem in parsedFileList if len(elem) > 1 and elem[0] == subfolder['name']]
+        if subset is None or len(subset) > 0:
+            _downloadFolder(accessToken, path + '/' + subfolder['name'], subfolder, subset)
 
-    return not failure
-    
-def _splitall(path):
+
+def _splitPathIntoParts(path):
     allparts = []
     while 1:
         parts = os.path.split(path)
@@ -163,110 +138,47 @@ def _splitall(path):
             allparts.insert(0, parts[1])
     return allparts
 
-def _parseFileList(fileList):
-    parsedFileList = [_splitall(elem) for elem in fileList]
-    return parsedFileList
 
-# returns True if success
-def _downloadFolderFiles(accessToken, path, folder, parsedFileList):
-    # 1 download items in this folder
-    items = GirderAPI._listItemsInFolder(serverAddress, accessToken, folder['_id'])
-    failure = False
-    for item in items:
-        subset = [elem for elem in parsedFileList if len(elem) == 1 and elem[0] == item['name']]
-        if len(subset) > 0:
-            failure = not GirderAPI._downloadItem(serverAddress, accessToken, path, item) or failure
-        
-    # 2 check for subfolders
-    subfolders = GirderAPI._getFolderInfo(serverAddress, accessToken, parentType='folder', parentId=folder['_id'])
-    if subfolders:
-        # 3 for each subfolder, create directory in the file system and download every item in the subfolder
-        for subfolder in subfolders:
-            subset = [elem[1:] for elem in parsedFileList if len(elem) > 1 and elem[0] == subfolder['name']]
-            if len(subset) > 0:
-                subpath = path + '/' + subfolder['name']
-                if not os.path.exists(subpath):
-                    os.makedirs(subpath)
-                failure = not _downloadFolderFiles(accessToken, subpath, subfolder, subset) or failure
-
-    return not failure
-
-
-# returns True if success
-def _downloadDataset(accessToken, datasetName, destinationPath):
-    print('Collection: %s' % _USE_CASE_DATA_COLLECTION)
+def downloadDataset(accessToken, datasetName, destinationPath, fileList = None):
     # 1 get info of the use case collection
-    useCaseCollection = GirderAPI._getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
-    if useCaseCollection is None:
-        return False
-
+    useCaseCollection = GirderAPI.getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
     # 2 get info of the dataset folder in that collection
-    datasetFolder = GirderAPI._getFolderInfo(serverAddress, accessToken, parentType='collection', parentId=useCaseCollection['_id'], folderName=datasetName)
-    if datasetFolder is None:
-        return False
-    
-    # 3 create destination directory in the file system and download every item in the base dataset folder
-    if not os.path.exists(destinationPath):
-        os.makedirs(destinationPath)
+    datasetFolder = GirderAPI.getFolderInfo(serverAddress, accessToken, parentType='collection', parentId=useCaseCollection['_id'], folderName=datasetName)
+    # 3 download every item in the base dataset folder
+    if fileList:
+        _downloadFolder(accessToken, destinationPath, datasetFolder, [_splitPathIntoParts(path) for path in fileList])
+    else:
+        _downloadFolder(accessToken, destinationPath, datasetFolder)
 
-    return _downloadFolder(accessToken, destinationPath, datasetFolder)
 
-    
-# returns True if success
-def _downloadDatasetFiles(accessToken, datasetName, fileList, destinationPath):
-    print('Collection: %s' % _USE_CASE_DATA_COLLECTION)
+def downloadDatasetZip(accessToken, datasetName, destinationPath):
     # 1 get info of the use case collection
-    useCaseCollection = GirderAPI._getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
-    if useCaseCollection is None:
-        return False
-
+    useCaseCollection = GirderAPI.getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
     # 2 get info of the dataset folder in that collection
-    datasetFolder = GirderAPI._getFolderInfo(serverAddress, accessToken, parentType='collection', parentId=useCaseCollection['_id'], folderName=datasetName)
-    if datasetFolder is None:
-        return False
-    
-    # 3 create destination directory in the file system and download every item in the base dataset folder
-    if not os.path.exists(destinationPath):
-        os.makedirs(destinationPath)
-
-    return _downloadFolderFiles(accessToken, destinationPath, datasetFolder, _parseFileList(fileList))
+    datasetFolder = GirderAPI.getFolderInfo(serverAddress, accessToken, parentType='collection', parentId=useCaseCollection['_id'], folderName=datasetName)
+    # 3 download the dataset folder
+    GirderAPI.downloadFolder(serverAddress, accessToken, path=destinationPath, folderInfo=datasetFolder)
 
 
-# returns True if success, False if failed to upload 1 or more files
 def _uploadFolder(accessToken, folderName, folderPath, parentId, parentType):
-    if GirderAPI._createFolder(serverAddress, accessToken, parentId, folderName, parentType=parentType) is None:
-        return True
-    folderInfo = GirderAPI._getFolderInfo(serverAddress, accessToken, parentType=parentType, parentId=parentId, folderName=folderName)
-    if folderInfo is None:
-        return True
-
-    failure = False
+    GirderAPI.createFolder(serverAddress, accessToken, parentId, folderName, parentType=parentType)
+    folderInfo = GirderAPI.getFolderInfo(serverAddress, accessToken, parentType=parentType, parentId=parentId, folderName=folderName)
     for item in os.listdir(folderPath):
         itempath = os.path.join(folderPath, item)
         if os.path.isfile(itempath):
-            failure = not GirderAPI._uploadFile(serverAddress, accessToken, folderInfo['_id'], item, itempath, parentType='folder') or failure
+            GirderAPI.uploadFile(serverAddress, accessToken, folderInfo['_id'], item, itempath, parentType='folder')
         else:
-            failure = not _uploadFolder(accessToken, item, itempath, folderInfo['_id'], 'folder') or failure
-    return not failure
+            _uploadFolder(accessToken, item, itempath, folderInfo['_id'], 'folder')
 
 
-# returns True if success, False if failure
-def _uploadNewDataset(accessToken, datasetName, datasetPath):
-    print('Collection: %s' % _USE_CASE_DATA_COLLECTION)
-    useCaseCollection = GirderAPI._getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
+def uploadNewDataset(accessToken, datasetName, datasetPath):
+    useCaseCollection = GirderAPI.getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
     if useCaseCollection is None:
         return False
-
     return _uploadFolder(accessToken, datasetName, datasetPath, useCaseCollection['_id'], parentType='collection')
 
 
-# returns None if failed, otherwise a list of dataset names
-def _getDatasetList(accessToken):
-    useCaseCollection = GirderAPI._getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
-    if useCaseCollection is None:
-        return None
-    jsonList = GirderAPI._listFolders(serverAddress, accessToken, useCaseCollection['_id'], 'collection')
-    if jsonList is None:
-        return None
-    datasetList = [element['name'] for element in jsonList]
-    return datasetList
+def getDatasetList(accessToken):
+    useCaseCollection = GirderAPI.getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
+    jsonList = GirderAPI.getFolderList(serverAddress, accessToken, 'collection', useCaseCollection['_id'])
+    return [element['name'] for element in jsonList]
