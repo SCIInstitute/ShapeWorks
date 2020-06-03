@@ -9,6 +9,7 @@
   - [Femur](UseCases/Femur.md)
 - [Dataset Guidelines](#Dataset-Guidelines)
 
+
 ## Downloading Datasets from [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/)
 
 Use Case datasets such as the ellipsoid and left atrium datasets will be downloaded
