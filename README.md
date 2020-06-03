@@ -23,6 +23,17 @@ The underlying scientific premise of ShapeWorks, particle-based shape modeling, 
     
 ShapeWorks has been effective in a range of applications, including psychology, biological phenotyping, cardiology, and orthopedics. [See relevant papers](#relevant-papers). 
 
+
+Table of Contents
+====================
+- [Contact Us](#contact-us)  
+- [Installation](#installation)  
+- [Getting Started](#getting-started)  
+- [Acknowledgements](#acknowledgements)
+- [Contributors](#contributors)
+- [Relevant Papers](#relevant-papers)
+
+
 Contact Us
 =====================
 
@@ -41,14 +52,6 @@ You can join our developer support mailing list by sending a message to sympa@sc
 
 As a developer, if you encounter any problems or bugs, please report them using [the issue tracker on GitHub](https://github.com/SCIInstitute/ShapeWorks/issues). This includes feature requests. Feel free to add improvements using git pull requests. You can also email ShapeWorkers at shapeworks-dev-support@sci.utah.edu.
 
-
-Table of Contents
-====================
-- [Installation](#installation)  
-- [Getting Started](#getting-started)  
-- [Acknowledgements](#acknowledgements)
-- [Contributors](#contributors)
-- [Relevant Papers](#relevant-papers)
 
 Installation
 =====================
