@@ -23,7 +23,7 @@ To clone the ShapeWorks source:
 ```
 $ git clone https://github.com/SCIInstitute/ShapeWorks
 ```
-See **[GIT.md](GIT.md)** for more details on git commands.  
+See **[GIT.md](../development/GIT.md)** for more details on git commands.  
 
 
 ## Install dependencies
