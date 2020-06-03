@@ -84,7 +84,7 @@ $ conda activate shapeworks
 
 Developers
 ---------------------
-Please see **[BUILD.md](BUILD.md)** for the current build instructions.  
+Please see **[BUILD.md](Documentation/build/BUILD.md)** for the current build instructions.  
 Please see **[Datasets.md](Documentation/Datasets.md)** for dataset upload instructions and guidelines.
 
 
