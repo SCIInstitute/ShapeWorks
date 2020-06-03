@@ -8,17 +8,18 @@ from DatasetUtils import GirderAPI
 
 _API_KEY_NAME = 'python_script'
 _LOGIN_FILE_NAME = 'shapeworksPortalLogin.txt'
-_CONTACT_SUPPORT_STRING = 'Please contact support: shapeworks-users@sci.utah.edu'
-_USE_CASE_DATA_COLLECTION = 'use-case-data-v0'
+_CONTACT_SUPPORT_STRING = 'Please contact support: shapeworks-dev-support@sci.utah.edu'
+_VERSION = 'v1'
+_USE_CASE_DATA_COLLECTION = 'use-case-data-%s' % _VERSION
 
 serverAddress = 'http://cibc1.sci.utah.edu:8080/'
 
 
-def _printDataPortalWelcome():
-    print('.___________________________.')
-    print('|                           |')
-    print('|     ShapeWorks Portal     |')
-    print('|___________________________|')
+def printDataPortalWelcome():
+    print(' _____    ___      .     ')
+    print('|     |  /   \    / \    ')
+    print('|ShapeWorks Portal %s\   ' % _VERSION)
+    print('|_____|  \___/  /_____\  ')
     print()
 
 
