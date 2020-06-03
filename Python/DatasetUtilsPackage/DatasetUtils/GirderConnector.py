@@ -18,7 +18,7 @@ serverAddress = 'http://cibc1.sci.utah.edu:8080/'
 def printDataPortalWelcome():
     print(' _____    ___      .     ')
     print('|     |  /   \    / \    ')
-    print('|ShapeWorks Portal %s\   ' % _VERSION)
+    print('| ShapeWorks Portal  \   ')
     print('|_____|  \___/  /_____\  ')
     print()
 

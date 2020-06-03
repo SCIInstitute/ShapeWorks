@@ -96,7 +96,7 @@ def _getCollectionInfo(serverAddress, accessToken, collectionName):
     actionMessage = 'finding collection: %s' % collectionName
     response = _makeGetRequest(
         url = serverAddress + "api/v1/collection", 
-        params = {'text': collectionName}, 
+        params = {'text': '\"' + collectionName + '\"'}, 
         headers = {'Girder-Token': accessToken}, 
         actionMessage = actionMessage)
     if response is None:
