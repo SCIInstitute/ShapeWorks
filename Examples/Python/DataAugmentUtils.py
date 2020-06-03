@@ -321,6 +321,9 @@ def dataAugment(out_dir, data_list, point_list, num_samples, PCA_var_cutoff, doR
 	K_img, pca_images_loadings, eigvals_images, eigvecs_images, mean_image = pca_mode_loadings_computation_images(tilde_images_list, N_images, imgDims, out_dir,PCA_var_cutoff)
 	np.save(os.path.join(out_dir, 'original_loadings_images.npy'), pca_images_loadings)
 	print("\nThe PCA modes of images being retained : ", K_img)
+	if K_pt == 1:
+		print("Error: need to retain more than one PCA mode.")
+		exit()
 
 	print("\nGenerating particles:")
 	generated_particles_list = generate_particles(pca_particle_loadings, eigvals_particles, eigvecs_particles, mean_particles, num_samples, K_pt, M_particles, pt_dim, N_images, out_dir)
