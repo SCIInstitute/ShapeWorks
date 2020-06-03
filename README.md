@@ -91,7 +91,7 @@ Please see **[Datasets.md](Documentation/Datasets.md)** for dataset upload instr
 Getting Started
 =====================
 
-[Documentation/GettingStarted.md](Documentation/GettingStarted.md) provides overviews of dataset grooming, optimization, and analysis, ShapeWorks Studio and command line instructions, and practical use cases.
+[GettingStarted.md](Documentation/GettingStarted.md) provides overviews of dataset grooming, optimization, and analysis, ShapeWorks Studio and command line instructions, and practical use cases.
 
 Acknowledgements
 =====================
