@@ -42,7 +42,7 @@ Analyze Stage
 
 The [analyze stage](Workflow/Analyze.md) is the model analysis phase that supports the computation and visualization of the principal components of shape variation, average shapes, and group differences. 
 
-![Analyze](images/analyze2.png)
+![Analyze](images/analyze.png)
 
 ShapeWorks Interfaces
 =====================
