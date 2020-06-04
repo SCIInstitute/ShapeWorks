@@ -25,13 +25,13 @@ $ source conda_installs.sh
 
 ```
 $ cd Examples/Python
-$ python3 RunUseCase.py --use_case [insert name of use case here]
+$ python RunUseCase.py --use_case [insert name of use case here]
 ```
 
 - For names for the use cases that are currently release, run:
 
 ```
-$ python3 RunUseCase.py --help
+$ python RunUseCase.py --help
 ```
 
 - More information about running use cases can be found [here](../UseCases/UseCases.md#running-the-use-cases).
