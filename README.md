@@ -99,7 +99,7 @@ ShapeWorks documentation uses markdown. Please refer to our tiny **[getting star
 Getting Started
 =====================
 
-[GettingStarted](Documentation/GettingStarted.md) provides overviews of dataset grooming, optimization, and analysis, ShapeWorks Studio and command line instructions, and practical use cases.
+[GettingStarted](Documentation/GettingStarted.md) provides overviews of dataset grooming, optimization, and analysis, ShapeWorks Studio and command line instructions, and practical use cases. See [ShapeWorks in action](Documentation/GettingStarted.md#shapeworksstudio)!
 
 How Tos
 ---------------------
