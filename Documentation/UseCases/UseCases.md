@@ -3,10 +3,10 @@
 
 - [Downloading Datasets](#Downloading-Datasets)
 - [Running Use Cases](#Running-the-Use-Cases)
-  - [Ellipsoid](UseCases/Ellipsoid.md)
-  - [Fixed Domains Ellipsoid](UseCases/FixedDomainEllipsoid.md)
-  - [Left Atrium](UseCases/LeftAtrium.md)
-  - [Femur](UseCases/Femur.md)
+  - [Ellipsoid](Ellipsoid.md)
+  - [Fixed Domains Ellipsoid](FixedDomainEllipsoid.md)
+  - [Left Atrium](LeftAtrium.md)
+  - [Femur](Femur.md)
 - [Dataset Guidelines](#Dataset-Guidelines)
 
 
