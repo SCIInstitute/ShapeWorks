@@ -1,25 +1,79 @@
 # Getting Started with ShapeWorks 
 
-GettingStarted.md provides overviews of dataset grooming, optimization, and analysis, ShapeWorks Studio and command line instructions, and practical use cases.
+ShapeWorks is an open-source software that learns population-specific shape parameterization directly from user data. It enables the automated placement of dense corresponding landmarks on a group of shapes given as either binary volumes or surface meshes. 
+
 
 Table of Contents
 ====================
 - [Shape Modeling Workflow](#shape-modeling-workflow)  
+- [ShapeWorks Interfaces](#shapeworks-interfaces)
 - [Use Cases](#use-cases) 
 - [How Tos](#how-tos)
-
 
 
 Shape Modeling Workflow
 =====================
 
+ShapeWorks supports the typical three-stage workflow for shape modeling. 
+
+![ShapeWorks Workflow](images/workflow.png)
 
 
-Imaging Data and Shape Models
+Groom Stage
 ---------------------
+
+The [groom stage](Worflow/Groom.md) entails data inspection and preprocessing, including conversion of the input segmentations and surface meshes into the appropriate data types that are optimization friendly so that landmarks can be optimized in a numerically stable way. It also includes visualization for preprocessed/groomed data for quality control and we are planning to include annotations for user-defined modeling preferences such as landmarks and constraints.
 
 The grooming stage entails rigid transformations to align samples for groupwise modeling and analysis. Imaging data (e.g., CT, MRI) becomes out of alignment and cannot be tied to the resulting shape models. We have developed [segmentation-based](UseCases/LeftAtrium.md) and [mesh-based](UseCases/Femur.md) grooming tools and associated python scripts (i.e., use cases) to carry volumetric data through each grooming step with the shapes (meshes or segmentations) such that they can be used for subsequent analysis and visualization. These tools include image reflection (for paired anatomies), isotropic voxel resampling, image padding, applying shape-based alignment to images (center of mass and rigid alignment), and image cropping.
 
+Optimize Stage
+---------------------
+
+The [optimize stage](Workflow/Optimize.md) is an iterative cycle of correspondences (landmarks/particles) optimization, visualization/quality control of resulting correspondence model and parameter tuning. 
+
+
+The model initialization proceeds simultaneously with the optimization in a multiscale fashion using an iterative particle splitting strategy to generate progressively detailed correspondence models with each split.
+
+![Multiscale particles optimization](images/multiscale.png)
+
+
+Analyze Stage
+---------------------
+
+The [analyze stage](Workflow/Analyze.md) is the model analysis phase that supports the computation and visualization of the principal components of shape variation, average shapes, and group differences. 
+
+![Analyze](images/analyze2.png)
+
+ShapeWorks Interfaces
+=====================
+
+ShapeWorks tools are designed to support different usage scenarios, including execution on a local computing platform through terminal ([command line](#shapeworks-command)) and the user-friendly [Studio](#shapeworksstudio) application, and remote systems such as [Jupyter notebooks](#shapeworks-in-python) and private or public [clouds](#shapeworks-in-the-cloud). 
+
+
+ShapeWorks Command
+---------------------
+
+ShapeWorks is currently a set of independent command line tools for preprocessing binary segmentations and surface meshes ([Groom](Workflow/Groom.md)) and computing landmark-based shape models ([Optimize](Workflow/Optimize.md)). It also includes an interactive user interface called [ShapeWorksStudio](#shapeworksstudio) to analyze and visualize the optimized shape models ([Analyze](Workflow/Analyze.md)). 
+
+**Coming soon!** We are consolidating these tools into a single, reusable API (command) for ShapeWorks that is shared across different computational libraries in ShapeWorks. This single executable is highly flexible, modular, and loosely coupled, with standardized subcommands and interactive help to perform individual operations needed for a typical shape modeling workflow that includes the Groom, Optimize, and Analyze phases. 
+
+
+
+ShapeWorks in Python
+---------------------
+**Coming soon!**  We are developing Python bindings to enable users to script their customized shape modeling workflows. Exemplar [use cases](UseCases/UseCases.md) will be updated to use these Python APIs to showcase their use and flexibility.
+
+
+ShapeWorksStudio
+---------------------
+
+ShapeWorksStudio is a cross-platform graphical user interface (GUI) to support the standard shape analysis workflow needed by most ShapeWorks users, enabling a wide variety of research scenarios. It is currently supporting image-based grooming and is actively under developement to support surface meshes, more sophisticated grooming operations (including user annotations) and offline processing.  ShapeWorksStudio enable real-time parameter tuning and visualization of the optimization process, and statistical analyses.
+
+ ![ShapeWorksStudio in action](images/Studio2.gif)
+
+ShapeWorks in the Cloud 
+---------------------
+*Under construction ... Stay tuned!*
 
 Use Cases
 =====================
