@@ -16,16 +16,22 @@ point-based shape models, and visualizing the results.
 
 You have downloaded a binary distribution of ShapeWorks.
 
-There is currently one python example included.  To run it you will
-need python with a few packages.  The easist way to install them is
-to run
+ShapeWorks comes with python examples to get you started. To run them you will
+need python with a few packages.  The easist way to install them is to run:
 
 source ./conda_installs.sh
+
 
 Then, to run the example:
 
 cd Examples/Python
-python RunUseCase.py --use_case ellipse
+python RunUseCase.py --use_case [insert name of use case here]
+
+
+For names for the use cases that are currently released, run:
+
+python RunUseCase.py --help
+
 
 For subsequent usage, the shapeworks conda environment must be activated using:
 

@@ -35,11 +35,10 @@ $ conda_installs.bat
 - To run an example:
 
 ```
-$ cd Examples/Python
 $ python RunUseCase.py --use_case [insert name of use case here]
 ```
 
-- For names for the use cases that are currently release, run:
+- For names for the use cases that are currently released, run:
 
 ```
 $ python RunUseCase.py --help

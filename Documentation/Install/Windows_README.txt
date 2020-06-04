@@ -40,14 +40,15 @@ https://repo.anaconda.com/archive/Anaconda3-2019.10-Windows-x86_64.exe
 
 7. CD to your copied Examples\Python location
 
-8. Run "python RunUseCase.py --use_case ellipsoid"
+8. Run "python RunUseCase.py --use_case [insert name of use case here]". For names for the use cases that are currently released, run: "python RunUseCase.py --help"
+
+
+Running conda_installs.bat will activate the conda shapeworks environment
+into your current anaconda prompt. For subsequent usage, the shapeworks conda environment must be activated using:
+
+"conda activate shapeworks"
 
 Note: If you have installed ShapeWorks in a different location than
 "C:\Program Files\ShapeWorks", please add the path to the "bin"
 directory as the final argument to RunUseCase.py so that the path will
 be set correctly.
-
-Note: Running conda_installs.bat will activate the conda shapeworks environment
-into your current anaconda prompt.  For later usage, to activate it, you must only run:
-
-"conda activate shapeworks"

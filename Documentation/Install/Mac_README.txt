@@ -28,7 +28,7 @@ To use the installer version of ShapeWorks (.pkg):
 
 5. CD to your copied Examples\Python location
 
-6. Run "python RunUseCase.py --use_case ellipse"
+6. Run "python RunUseCase.py --use_case [insert name of use case here]". For names for the use cases that are currently released, run: "python RunUseCase.py --help"
 
 
 Note: For subsequent usage, the shapeworks conda environment must be activated using:
