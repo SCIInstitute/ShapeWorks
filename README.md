@@ -78,9 +78,9 @@ https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-linux
 Please understand that these are in-progress development builds, not official releases.
 
 Then follow the appropriate instructions for their platform:  
-[Windows](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/install/Windows_README.txt)  
-[Mac](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/install/Mac_README.txt)  
-[Linux](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/install/PACKAGE_README.txt)  
+[Windows](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/Install/Windows_README.md)  
+[Mac](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/Install/Mac_README.md)  
+[Linux](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/Install/Linux_README.md)  
 
 _<b>Important</b>_  
 Each time you use ShapeWorks from the command line you must first activate its environment:
@@ -90,16 +90,27 @@ $ conda activate shapeworks
 
 Developers
 ---------------------
-Please see **[BUILD.md](Documentation/Build/BUILD.md)** for the current build instructions.  
-Please see **[Datasets.md](Documentation/UseCases/Datasets.md)** for dataset upload instructions and guidelines.  
-Please see **[GIT.md](Documentation/Development/GIT.md)** for details to checkout out and committing newly modified code.  
+Please see **[BUILD](Documentation/Build/BUILD.md)** for the current build instructions.  
+Please see **[Datasets](Documentation/UseCases/Datasets.md)** for dataset upload instructions and guidelines.  
+Please see **[GIT](Documentation/Development/GIT.md)** for details to checkout out and committing newly modified code.  
 ShapeWorks documentation uses markdown. Please refer to our tiny **[getting started with markdown](Documentation/Development/Markdown.md)**.
 
 
 Getting Started
 =====================
 
-[GettingStarted.md](Documentation/GettingStarted.md) provides overviews of dataset grooming, optimization, and analysis, ShapeWorks Studio and command line instructions, and practical use cases.
+[GettingStarted](Documentation/GettingStarted.md) provides overviews of dataset grooming, optimization, and analysis, ShapeWorks Studio and command line instructions, and practical use cases.
+
+How Tos
+---------------------
+- How to run and see ShapeWorks in action on exemplar [use cases](UseCases/UseCases.md). 
+- How to preprocess or [groom](Workflow/Groom.md) your dataset.
+- How to [optimize](Workflow/Optimize.md) your shape model.
+- How to [visualize and analyze](Workflow/Analyze.md) your optimized shape model.
+- How to get the [latest ShapeWorks binary release](https://github.com/SCIInstitute/ShapeWorks/releases/latest) or up-to-date development builds from the master branch for [Windows](https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-windows), [Mac](https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-mac), or [Linux](https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-linux). *Please understand that these are in-progress development builds, not official releases.*
+- How to install ShapeWorks on [Windows](Install/Windows_README.md), [Mac](Install/Mac_README.md), or [Linux](Install/Linux_README.md).
+- How to [build](Build/BUILD.md) ShapeWorks from source (for developers).
+
 
 Acknowledgements
 =====================
