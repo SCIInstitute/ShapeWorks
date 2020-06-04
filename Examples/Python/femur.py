@@ -60,7 +60,7 @@ def Run_Pipeline(args):
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)
 
-    extract the zipfile
+    # extract the zipfile
     print("Extracting data from " + filename + "...")
     with ZipFile(filename, 'r') as zipObj:
         zipObj.extractall(path=parentDir)
