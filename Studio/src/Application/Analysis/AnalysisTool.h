@@ -56,7 +56,7 @@ public:
   bool pcaAnimate();
   bool groupAnimate();
 
-  int getSampleNumber();
+  int get_sample_number();
 
   bool compute_stats();
 

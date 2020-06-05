@@ -100,5 +100,5 @@ private:
   vnl_vector<double> cached_mean_;
   vnl_vector<double> current_shape_;
 
-  ShapeList display_objects_;
+  ShapeList shapes_;
 };

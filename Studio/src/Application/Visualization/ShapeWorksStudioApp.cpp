@@ -813,7 +813,7 @@ void ShapeWorksStudioApp::handle_optimize_start()
 void ShapeWorksStudioApp::handle_display_setting_changed()
 {
   if (this->analysis_tool_->pcaAnimate()) {return;}
-  this->update_display();
+  this->update_display(true);
 }
 
 //---------------------------------------------------------------------------
@@ -944,7 +944,7 @@ void ShapeWorksStudioApp::update_display(bool force)
       this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
                                         this->session_->particles_present() &&
                                         reconstruct_ready);
-      this->visualizer_->display_sample(this->analysis_tool_->getSampleNumber());
+      this->visualizer_->display_sample(this->analysis_tool_->get_sample_number());
       this->visualizer_->reset_camera();
     }
     else { //?
@@ -1048,10 +1048,9 @@ void ShapeWorksStudioApp::on_action_preferences_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_export_current_mesh_triggered()
 {
-  auto dir = preferences_.get_last_directory().toStdString();
-  dir = dir.substr(0, dir.find_last_of("/") + 1);
+  auto dir = preferences_.get_last_directory() + "/";
   QString filename = QFileDialog::getSaveFileName(this, tr("Save Project As..."),
-                                                  QString::fromStdString(dir) + "newMesh",
+                                                  dir + "mesh",
                                                   tr("VTK files (*.vtk)"));
   if (filename.isEmpty()) {
     return;

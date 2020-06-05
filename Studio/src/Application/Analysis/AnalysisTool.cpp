@@ -220,7 +220,7 @@ void AnalysisTool::setLabels(QString which, QString value)
 }
 
 //---------------------------------------------------------------------------
-int AnalysisTool::getSampleNumber()
+int AnalysisTool::get_sample_number()
 {
   return this->ui_->sampleSpinBox->value();
 }
