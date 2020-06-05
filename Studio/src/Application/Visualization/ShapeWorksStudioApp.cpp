@@ -1061,6 +1061,7 @@ void ShapeWorksStudioApp::on_action_export_current_mesh_triggered()
   vtkPolyDataWriter* writer = vtkPolyDataWriter::New();
   writer->SetFileName(filename.toStdString().c_str());
   writer->SetInputData(poly_data);
+  writer->WriteArrayMetaDataOff();
   writer->Write();
 }
 
@@ -1299,6 +1300,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered()
       name = name.substr(0, name.find_last_of(".")) + std::to_string(i) + ".vtk";
       writer->SetFileName(name.c_str());
       writer->SetInputData(msh);
+      writer->WriteArrayMetaDataOff();
       writer->Write();
     }
     this->handle_message("Successfully exported PCA Mesh files: " + filename.toStdString());
@@ -1312,6 +1314,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered()
   writer->SetFileName(filename.toStdString().c_str());
   /// TODO: fix
   //writer->SetInputData(msh);
+  writer->WriteArrayMetaDataOff();
   writer->Write();
   this->handle_message("Successfully exported PCA Mesh file: " + filename.toStdString());
 }

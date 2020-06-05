@@ -18,9 +18,6 @@
 
 #include <tinyxml.h>
 
-#include <vtkPolyDataWriter.h>
-#include <vtkPolyDataReader.h>
-
 #include <Libs/Project/Project.h>
 
 #include <Data/Session.h>
