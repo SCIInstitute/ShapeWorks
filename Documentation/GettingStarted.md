@@ -69,7 +69,8 @@ ShapeWorksStudio
 
 ShapeWorksStudio is a cross-platform graphical user interface (GUI) to support the standard shape analysis workflow needed by most ShapeWorks users, enabling a wide variety of research scenarios. It is currently supporting image-based grooming and is actively under developement to support surface meshes, more sophisticated grooming operations (including user annotations) and offline processing.  ShapeWorksStudio enable real-time parameter tuning and visualization of the optimization process, and statistical analyses.
 
- ![ShapeWorksStudio in action](images/Studio2.gif)
+[![Alt text](https://img.youtube.com/vi/TUk0vsk4HIA/0.jpg)](https://www.youtube.com/watch?v=TUk0vsk4HIA)
+
 
 ShapeWorks in the Cloud 
 ---------------------
