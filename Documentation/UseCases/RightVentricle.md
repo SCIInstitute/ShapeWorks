@@ -16,4 +16,4 @@ For a description of the grooming tools and parameters, see: [Groom.md](https://
 6. Crop - The segmentations are cropped so that all of the samples are within the same bounding box.
 7. Distance Transform - Finally, the distance transform is taken and the data is ready for ShapeWorks optimize.
 
-![RV_groom](images/RV_groom.png)
+![RV_groom](../images/RV_groom.png)
