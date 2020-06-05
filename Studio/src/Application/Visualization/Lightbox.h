@@ -32,6 +32,7 @@ public:
   ~Lightbox();
 
   void set_shapes(QVector<QSharedPointer<Shape>> shapes);
+  QVector<ShapeHandle> get_shapes();
 
   void set_interactor(vtkRenderWindowInteractor* interactor);
 
