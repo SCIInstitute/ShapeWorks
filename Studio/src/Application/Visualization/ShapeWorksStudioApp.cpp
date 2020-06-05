@@ -299,20 +299,9 @@ bool ShapeWorksStudioApp::on_action_save_project_triggered()
 //---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::on_action_save_project_as_triggered()
 {
-  QString fname("Untitled.xlsx");
-  if (this->session_->get_shapes().size() > 0) {
-    QString original_filename = this->session_->get_shapes()[0]->get_original_filename();
-    if (original_filename != "") {
-      std::string tmp = original_filename.toStdString();
-      tmp = tmp.substr(0, tmp.size() - 5);
-      fname = QString::fromStdString(tmp);
-    }
-  }
   QString last_directory = this->preferences_.get_last_directory();
-  auto dir = last_directory.toStdString();
-  dir = dir.substr(0, dir.find_last_of("/") + 1);
   QString filename = QFileDialog::getSaveFileName(this, tr("Save Project As..."),
-                                                  QString::fromStdString(dir) + fname,
+                                                  last_directory,
                                                   tr("XLSX files (*.xlsx)"));
   if (filename.isEmpty()) {
     return false;
