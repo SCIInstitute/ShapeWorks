@@ -324,6 +324,7 @@ bool ShapeWorksStudioApp::on_action_save_project_as_triggered()
 
   this->save_project(filename.toStdString());
 
+  this->enable_possible_actions();
   return false;
 }
 
