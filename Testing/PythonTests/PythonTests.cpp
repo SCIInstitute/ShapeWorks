@@ -42,7 +42,7 @@ TEST(PythonTests, tiny_test) {
 
   // check that one of the resulting files exists
   std::string check_file = python_examples_location +
-                           "/TestEllipsoids/PointFiles/32/seg.ellipsoid_0.isores.center.pad.com.aligned.cropped.tpSmoothDT_local.particles";
+                           "/TestEllipsoids/PointFiles/32/seg.ellipsoid_00.isores.center.pad.com.aligned.cropped.tpSmoothDT_local.particles";
 
   // change to the python examples directory
   chdir(python_examples_location.c_str());
