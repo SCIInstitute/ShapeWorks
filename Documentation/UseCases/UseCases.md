@@ -56,18 +56,50 @@ The following use case names are currently supported:
 * ellipsoid_fd
 * left_atrium
 * femur
-
+            
+### Optional Tags
+There are optional tags to run with thie use cases.
 To see the full list of optional tags, run:
           
             python RunUseCase.py --help
-            
-### Running a Subset
 
+#### --use_subsample
 To run on a subset of the data in the use case, add the --use_subsample tag followed by the number of samples you wish to use. For example:
 
             python RunUseCase.py --use_case [insert name of use case here] --use_subsample 4
 
 This will select a representative sample of the specified size to run through the pipeline so that it runs faster and uses less memory. The sample is selected by running k-mean clustering, then picking one sample from each cluster so that the resulting sample is representative of all the data.
+
+#### --interactive
+When the interactive tag is used, the user must press enter after each step. This allows the user to inspect the output between steps of the pipeline.
+
+            python RunUseCase.py --use_case [insert name of use case here] --interactive
+
+#### --start_with_prepped_data
+For some use cases, prepped data is available and the user can skip the grooming steps if they prefer. To do so the --start_with_prepped_data tag must be used.
+
+            python RunUseCase.py --use_case [insert name of use case here] --start_with_prepped_data
+           
+#### --start_with_image_and_segmentation_data
+Some use cases can be run on just segmentations or on segmentations plus the corresponding full image. To carry the image through the grooming proccess with the segmentation, the --start_with_image_and_segmentation_data tag must be used.
+
+            python RunUseCase.py --use_case [insert name of use case here] --start_with_image_and_segmentation_data
+            
+#### --use_single_scale
+Use cases can be run with multi-scale or single-scale optimization. The default mode is mutli-scale, to run single-scale use the --use_single_scale tag.
+
+            python RunUseCase.py --use_case [insert name of use case here] --use_single_scale
+           
+#### --tiny_test
+Users can run a fast verision of the use case by using the --tiny_test tag. This runs on a subset of the data for fewer optimization iterations to verify ShapeWorks has been properly installed. It is meant to test that use cases can run, not to create a good correspondence model.
+
+           python RunUseCase.py --use_case [insert name of use case here] --tiny_test
+           
+#### shapeworks_path
+This can be used to automatically add the ShapeWorks executable to the users PATH varibale if it has not already been set. To use add the Shapeworks_path tag followed by the path to the bin folder that contains ShapeWorks executables.
+
+           python RunUseCase.py --use_case [insert name of use case here] shapeworks_path [path to shapeworks bin folder here]
+
 
 ## Dataset Guidelines
 Check out [Datasets.md](Datasets.md) for dataset upload instructions and guidelines. 
