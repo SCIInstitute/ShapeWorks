@@ -118,7 +118,6 @@ void AnalysisTool::handle_reconstruction_complete()
 {
   this->session_->handle_clear_cache();
 
-
   this->session_->calculate_reconstructed_samples();
   emit progress(100);
   emit message("Reconstruction Complete");
@@ -368,8 +367,9 @@ bool AnalysisTool::compute_stats()
   }
 
   this->stats_.ImportPoints(points, group_ids);
-
   this->stats_.ComputeModes();
+  this->stats_.PrincipalComponentProjections();
+
   this->stats_ready_ = true;
   std::vector<double> vals;
   for (int i = this->stats_.Eigenvalues().size() - 1; i > 0; i--) {
