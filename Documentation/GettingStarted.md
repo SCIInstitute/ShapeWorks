@@ -103,7 +103,7 @@ This mesh-based [use case](UseCases/Femur.md) demonstrates using ShapeWorks tool
 Your Own Use Case
 ---------------------
 
-You can use any of these use cases as a starting point and customize it to your own dataset. 
+You can use any of these use cases as a starting point and customize it to your own dataset. Please [contact ShapeWorks team](../README.md#contact-us) for questions and guidance to customize a use case to your data.
 
 How Tos
 =====================
