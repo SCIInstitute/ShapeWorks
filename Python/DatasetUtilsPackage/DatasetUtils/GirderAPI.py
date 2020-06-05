@@ -209,7 +209,7 @@ def _printProgress(fileName, progressBytes, totalBytes = None):
     unit = 'KB' if progressBytes < _B_PER_MB else 'MB'
 
     if totalBytes is None:
-        stdout.write('\r%s [%d %s]' % (fileName, progressBytes/divider, unit))
+        stdout.write('\r%s [%d %s]  ' % (fileName, progressBytes/divider, unit))
     else:
         stdout.write('\r%s [%d/%d %s]' % (fileName, progressBytes/divider, totalBytes/divider, unit))
 
