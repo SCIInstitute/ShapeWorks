@@ -113,8 +113,6 @@ public Q_SLOTS:
 
   void on_reconstructionButton_clicked();
 
-  void write_pca_scores(std::string filename);
-
 signals:
   void update_view();
   void pca_update();
