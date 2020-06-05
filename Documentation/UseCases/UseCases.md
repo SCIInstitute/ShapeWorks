@@ -100,6 +100,13 @@ This can be used to automatically add the ShapeWorks executable to the users PAT
 
            python RunUseCase.py --use_case [insert name of use case here] shapeworks_path [path to shapeworks bin folder here]
 
+### Running subsequent analysis
+
+To run ShapeWorksStudio again without running the full pipeline, you must first navigate to the Python/Examples directory, and then run ShapeWorksStudio on the appropriate analysis xml file.  For example:
+
+            cd /path/to/shapeworks/Examples/Python
+            ShapeWorksStudio TestEllipsoids/PointFiles/analyze.xml
+	    
 
 ## Dataset Guidelines
 Check out [Datasets.md](Datasets.md) for dataset upload instructions and guidelines. 
