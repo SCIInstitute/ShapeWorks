@@ -71,10 +71,6 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
     return false;
   }
 
-  if (!this->read_inputs(&doc_handle, optimize)) {
-    return false;
-  }
-
   if (!this->read_mesh_inputs(&doc_handle, optimize)) {
     return false;
   }
@@ -92,6 +88,11 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
   }
 
   if (!this->read_flag_domains(&doc_handle, optimize)) {
+    return false;
+  }
+
+  // read last so that we can skip loading any images from fixed domains
+  if (!this->read_inputs(&doc_handle, optimize)) {
     return false;
   }
 
@@ -279,6 +280,9 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
   elem = docHandle->FirstChild("cotan_sigma_factor").Element();
   if (elem) { optimize->SetCotanSigmaFactor(atof(elem->GetText()));}
 
+  elem = docHandle->FirstChild("narrow_band").Element();
+  if (elem) { optimize->SetNarrowBand(atof(elem->GetText()));}
+
   return true;
 }
 
@@ -302,7 +306,6 @@ bool OptimizeParameterFile::set_debug_parameters(TiXmlHandle* docHandle, Optimiz
 //---------------------------------------------------------------------------
 bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimize)
 {
-
   TiXmlElement* elem = nullptr;
 
   elem = docHandle->FirstChild("inputs").Element();
@@ -317,29 +320,43 @@ bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimi
 
   // load input shapes
   std::vector < std::string > shapeFiles;
-  std::vector < Optimize::ImageType::Pointer > images;
 
   inputsBuffer.str(elem->GetText());
+  auto flags = optimize->GetDomainFlags();
+
+  int index = 0;
   while (inputsBuffer >> filename) {
 
-    if (this->verbosity_level_ > 1) {
-      std::cout << "Reading inputfile: " << filename << "...\n" << std::flush;
+    bool fixed_domain = false;
+    for (int i = 0; i < flags.size(); i++) {
+      if (flags[i] == index) {
+        fixed_domain = true;
+      }
     }
-    typename itk::ImageFileReader < Optimize::ImageType > ::Pointer reader = itk::ImageFileReader <
-      Optimize::ImageType > ::New();
-    reader->SetFileName(filename);
-    reader->UpdateLargestPossibleRegion();
-    images.push_back(reader->GetOutput());
+
+    if (!fixed_domain) {
+      if (this->verbosity_level_ > 1) {
+        std::cout << "Reading inputfile: " << filename << "...\n" << std::flush;
+      }
+      typename itk::ImageFileReader < Optimize::ImageType > ::Pointer reader = itk::ImageFileReader <
+        Optimize::ImageType > ::New();
+      reader->SetFileName(filename);
+      reader->UpdateLargestPossibleRegion();
+      const auto image = reader->GetOutput();
+      optimize->AddImage(image);
+    }
+    else {
+      optimize->AddImage(nullptr);
+    }
 
     shapeFiles.push_back(filename);
+    index++;
   }
 
   inputsBuffer.clear();
   inputsBuffer.str("");
 
   numShapes = shapeFiles.size();
-
-  optimize->SetImages(images);
 
   std::vector < std::string > filenames;
 

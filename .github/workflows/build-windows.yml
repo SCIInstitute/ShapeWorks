@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - release_v5.4
     tags:
     - '*'
   pull_request:
@@ -67,9 +68,9 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('**/build_dependencies.sh') }}
 
     - name: Build dependencies
-      shell: bash
+      shell: bash -l {0}
       if: steps.cache-dependencies.outputs.cache-hit != 'true'
-      run: ./build_dependencies.sh --install-dir="${{runner.workspace}}\deps" --build-dir="/d/a/bdeps"
+      run: conda activate shapeworks && bash -x ./build_dependencies.sh --install-dir="${{runner.workspace}}\deps" --build-dir="/d/a/bdeps"
 
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
@@ -84,7 +85,7 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source 
       # and build directories, but this is only available with CMake 3.13 and higher.  
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: conda activate shapeworks && cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DSHAPEWORKS_SUPERBUILD=OFF -DVXL_DIR="${{runner.workspace}}\deps\vxl\build" -DITK_DIR="${{runner.workspace}}\deps\lib\cmake\ITK-5.0" -DVTK_DIR="${{runner.workspace}}\deps\lib\cmake\vtk-8.2" -DEigen3_DIR="${{runner.workspace}}\deps\share\eigen3\cmake" -DBuild_Studio=ON -DBuild_View2=ON
+      run: conda activate shapeworks && cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DSHAPEWORKS_SUPERBUILD=OFF -DVXL_DIR="${{runner.workspace}}\deps\vxl\build" -DITK_DIR="${{runner.workspace}}\deps\lib\cmake\ITK-5.0" -DVTK_DIR="${{runner.workspace}}\deps\lib\cmake\vtk-8.2" -DEigen3_DIR="${{runner.workspace}}\deps\share\eigen3\cmake" -DXLNT_DIR="${{runner.workspace}}\deps" -DOpenVDB_DIR="${{runner.workspace}}\deps\lib\cmake\OpenVDB" -DBuild_Studio=ON -DBuild_View2=ON
 
     - name: Build
       working-directory: ${{runner.workspace}}/build
@@ -95,7 +96,12 @@ jobs:
     - name: Copy Libraries
       working-directory: ${{runner.workspace}}/build
       run: xcopy /f ${{runner.workspace}}\deps\bin\*.dll ${{runner.workspace}}\build\bin\Release
-    
+
+    - name: Copy Anaconda Libraries
+      working-directory: ${{runner.workspace}}/build
+      shell: bash -l {0}
+      run: cp /c/Miniconda3/envs/shapeworks/Library/bin/zlib.dll /c/Miniconda3/envs/shapeworks/Library/bin/tbb.dll /c/Miniconda3/envs/shapeworks/Library/bin/half.dll bin/Release
+
     - name: Build Binary Package
       shell: bash
       run: pwd ; ls ; cp Documentation/install/Windows_README.txt . ; cp Support/shapeworks.nsi . ; ./Support/package_windows.sh tag
@@ -111,3 +117,14 @@ jobs:
       with:
         name: artifact-${{github.sha}}-windows
         path: ${{runner.workspace}}\ShapeWorks\artifacts
+
+    - name: Deploy
+      if: github.ref == 'refs/heads/master'
+      uses: marvinpinto/action-automatic-releases@v1.0.0
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "dev-windows"
+        prerelease: true
+        title: "Development Build for Windows"
+        files: |
+             d:/a/ShapeWorks/ShapeWorks/artifacts/*.exe

@@ -1,5 +1,7 @@
 # Building ShapeWorks from source
 
+If you encounter problems, have questions, or need help, please contact shapeworks-dev-support@sci.utah.edu
+
 ## Minimum Requirements
 
 ### Linux
@@ -52,7 +54,7 @@ Download and install the latest version of [[Qt5]](https://download.qt.io/archiv
 After installing Qt5, add the directory containing `qmake.exe` to your PATH. (See [Adding to PATH](GettingStarted.md#PATH-environment-variable) for help with this)  
 Example qmake directory Linux: `/opt/Qt5.14.0/5.14.0/gcc_64/bin`  
 
-### VXL, VTK, ITK, and Eigen
+### VXL, VTK, ITK, Eigen and OpenVDB
 These dependencies can be installed using the **build_dependencies.sh** script.  
 
 Use `$ ./build_dependencies.sh --help` for more details on the available options.  
@@ -92,7 +94,8 @@ Required (otherwise):
   -DVXL_DIR=<vxl cmake path>           (contains VXLConfig.cmake)
   -DVTK_DIR=<vtk cmake path>           (contains VTKConfig.cmake)
   -DITK_DIR=<itk cmake path>           (contains ITKConfig.cmake)
-  -Eigen3_DIR=<eigen3 cmake path>      (contains Eigen3Config.cmake)
+  -DEigen3_DIR=<eigen3 cmake path>     (contains Eigen3Config.cmake)
+  -DOpenVDB_DIR=<openvdb cmake path>   (contains FindOpenVDB.cmake)
 ```
 
 Optional:

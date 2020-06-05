@@ -1,5 +1,4 @@
-#ifndef STUDIO_VISUALIZATION_DISPLAYOBJECT_H
-#define STUDIO_VISUALIZATION_DISPLAYOBJECT_H
+#pragma once
 
 #include <QSharedPointer>
 #include <QStringList>
@@ -25,16 +24,16 @@ public:
   DisplayObject();
   ~DisplayObject();
 
-  void set_mesh( QSharedPointer<Mesh> mesh );
+  void set_mesh(QSharedPointer<Mesh> mesh);
   QSharedPointer<Mesh> get_mesh();
 
-  void set_annotations( QStringList annotations );
+  void set_annotations(QStringList annotations);
   QStringList get_annotations();
 
-  void set_correspondence_points( vnl_vector<double> points );
+  void set_correspondence_points(vnl_vector<double> points);
   vnl_vector<double> get_correspondence_points();
 
-  void set_transform( const vnl_vector<double>& transform );
+  void set_transform(const vnl_vector<double>& transform);
   vnl_vector<double> get_transform();
 
   QList<Point> get_exclusion_sphere_centers();
@@ -56,7 +55,4 @@ private:
 
   QList<Point> exclusion_sphere_centers_;
   QList<double> exclusion_sphere_radii_;
-
 };
-
-#endif /* STUDIO_VISUALIZATION_DISPLAYOBJECT_H */

@@ -60,7 +60,11 @@ function install_conda() {
        git-lfs=2.6.1 \
        openblas=0.3.3 \
        vtk=8.2.0 \
-       scikit-learn=0.22.1
+       scikit-learn=0.22.1 \
+       tbb=2019.9 \
+       tbb-devel=2019.9 \
+       boost=1.72.0 \
+       openexr=2.4.1
   then return 1; fi
 
 

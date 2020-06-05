@@ -361,11 +361,25 @@ public:
   /** Flag/Unflag a domain.  Flagging a domain has different meanings according
       to the application using this particle system. */
   void FlagDomain(unsigned int i)
-  { m_DomainFlags[i] = true; }
+  {
+    // ensure large enough
+    while (i >= this->m_DomainFlags.size()) {
+      m_DomainFlags.push_back(false);
+    }
+
+    // set the flag
+    m_DomainFlags[i] = true;
+  }
   void UnflagDomain(unsigned int i)
   { m_DomainFlags[i] = false; }
   bool GetDomainFlag(unsigned int i) const
-  { return m_DomainFlags[i]; }
+  {
+    if (i >= m_DomainFlags.size()) {
+      // not set
+      return false;
+    }
+    return m_DomainFlags[i];
+  }
   const std::vector<bool> &GetDomainFlags() const
   { return m_DomainFlags; }
   void SetDomainFlags()

@@ -5,9 +5,6 @@
 #include <vector>
 #include <map>
 
-#include <itkeigen/Eigen/Dense>
-#include <itkeigen/Eigen/Sparse>
-
 #include <itkConnectedThresholdImageFilter.h>
 #include <itkTranslationTransform.h>
 #include <itkImage.h>

@@ -17,7 +17,15 @@ else
 fi
     
 if [[ "$VERSION" == "tag" ]]; then
-    VERSION="ShapeWorks-$(git describe --tags)-$PLATFORM"
+    VERSION="ShapeWorks-$(git describe --tags)-${PLATFORM}"
+fi
+
+# Special case for when we are on the master branch (dev releases)
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [[ "$BRANCH" == "master" ]]; then
+    NUMBER=$(git rev-list start_dev_releases..HEAD --count)
+    HASH=$(git rev-parse --short HEAD)
+    VERSION="ShapeWorks-dev-${NUMBER}-${HASH}-${PLATFORM}"
 fi
 
 echo "Version: $VERSION"
@@ -63,6 +71,12 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     
     cd ..
 else
+    # Copy libraries from anaconda
+    conda_libs="libboost_iostreams libbz2 liblzma liblz4 libtbb libHalf"
+    for clib in $conda_libs; do
+        cp ${CONDA_PREFIX}/lib/${clib}* lib
+    done
+
     cd bin
     linuxdeployqt ShapeWorksView2 -verbose=2
     linuxdeployqt ShapeWorksStudio -verbose=2

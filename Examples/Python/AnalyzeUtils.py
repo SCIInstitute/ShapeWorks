@@ -52,4 +52,8 @@ def launchShapeWorksStudio(parentDir, dtFiles, localPointFiles, worldPointFiles)
     create_cpp_xml(xmlfilename, xmlfilename)
     execCommand = ["ShapeWorksStudio" , xmlfilename ]
     subprocess.check_call(execCommand )
+    print("\n\nTo re-run ShapeWorksStudio, run:\n")
+    print(f" cd {os.getcwd()}")
+    print(f" {' '.join(execCommand)}\n\n")
+    
     
