@@ -115,6 +115,21 @@ def Run_Pipeline(args):
 
         # If not interactive, get cutting plane on a mesh user specifies
         if not args.interactive:
+            cutting_plane_points = np.array([[68.5970168,-128.34930979,-709.84309115],[1.0,-1.0,-709.84309115],[-1.0,1.0,-709.84309115]])
+            cp_prefix = 'm03_L'
+            choice = 0
+        # If interactive ask whether to define on chosen sample or median
+        else:
+            choice_made = False
+            while not choice_made:
+                print("\nOption 1: Define cutting plane now on a sample of your choice.")
+                print("Option 2: Define cutting plane on median sample once it has been selected.")
+                choice = input("Please input 1 or 2 and press enter: ")
+                choice = int(choice)
+                if choice==1 or choice==2:
+                    choice_made = True
+
+        if choice == 1:
             options = []
             for file in files_mesh:
                 file = file.split('/')[-1]
@@ -183,8 +198,8 @@ def Run_Pipeline(args):
         [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, centerFiles_segmentations, centerFiles_images, medianFile, processRaw = True)
 
         # Define cutting plane on median sample
-        if args.interactive:
-           input_file = medianFile.replace("centered", "aligned").replace(".nrrd", ".aligned.DT.nrrd")
+        if choice == 2:
+           input_file = medianFile.replace("centered","aligned").replace(".nrrd", ".aligned.DT.nrrd")
            cutting_plane_points = SelectCuttingPlane(input_file)
         # Fix cutting plane points previously selected
         else:
