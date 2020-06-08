@@ -174,7 +174,7 @@ class DeepSSMdataset():
 		return len(self.img)
 
 '''
-getTorchData helper
+getTorchDataLoaderHelper
 returns sample prefix from path string
 '''
 def getPrefix(path):
@@ -184,17 +184,7 @@ def getPrefix(path):
 	return prefix
 
 '''
-getTorchData helper
-reads .nrrd file and retunrs data
-the except is for the generated files, it forces the .nrrd to be in a format itk can read
-'''
-def getImage(path):
-	image = itk.imread(path, itk.F)
-	img = itk.GetArrayFromImage(image)
-	return [list(img)]
-
-'''
-getTorchData helper
+getTorchDataLoaderHelper
 get list from .particles format
 '''
 def getParticles(model_path):
@@ -207,23 +197,45 @@ def getParticles(model_path):
 	return(data)
 
 '''
-Gets pytorch data loaders from data csv
-Inputs:
-	loader_dir - where to save data loaders
-	data_csv - csv from data augmentation with rows or: image path, particles pat, pca scores
-	batch_size - training batch size (memory dependent)
-Output:
-	train_path - path to train loader
-	val_path - path to validation loader
-	test_path - path to test loader
-	test_names - list of names of files in test set
+getTorchDataLoaderHelper
+reads .nrrd files and returns whitened data
+'''
+def getWhitenedImages(image_list):
+	all_images = []
+	for image_path in image_list:
+		image = itk.imread(image_path, itk.F)
+		img = itk.GetArrayFromImage(image)
+		all_images.append(img)
+	all_images = np.array(all_images)
+	mean_image = np.mean(all_images)
+	std_image = np.std(all_images)
+	norm_images = []
+	for image in all_images:
+		norm_images.append([(image-mean_image)/std_image])
+	return norm_images
+
+'''
+getTorchDataLoaderHelper
+normalizes PCA scores, returns mean and std for reconstruction
+'''
+def whitenPCAscores(scores):
+	scores = np.array(scores)
+	mean_score = np.mean(scores)
+	std_score = np.mean(scores)
+	norm_scores = []
+	for score in scores:
+		norm_scores.append((score-mean_score)/std_score)
+	return norm_scores, mean_score, std_score
+
+'''
+Reads csv and makes data loaders with given batch size, saves them in loader_dir
 '''
 def getTorchDataLoaders(loader_dir, data_csv, batch_size=1):
 	if not os.path.exists(loader_dir):
 		os.makedirs(loader_dir)
 	# get all data and targets
 	print("Reading all data...")
-	images = []
+	image_paths = []
 	scores = []
 	models = []
 	prefixes = []
@@ -248,16 +260,19 @@ def getTorchDataLoaders(loader_dir, data_csv, batch_size=1):
 				print(getPrefix(model_path))
 				exit()
 			prefixes.append(prefix)
-			# add image
-			img = getImage(image_path)
-			images.append(img)
-			# add score
+			# add image path
+			image_paths.append(image_path)
+			# add score (un-normalized)
 			pca_scores = [float(i) for i in pca_scores]
 			scores.append(pca_scores)
 			# add model
 			mdl = getParticles(model_path)
 			models.append(mdl)
 			index += 1
+	images = getWhitenedImages(image_paths)
+	scores, mean_score, std_score = whitenPCAscores(scores)
+	np.save(loader_dir + 'mean_PCA.npy', np.array(mean_score))
+	np.save(loader_dir + 'std_PCA.npy', np.array(std_score))
 
 	print("\nShuffling and splitting into train, val, and test...")
 	# shuffle
