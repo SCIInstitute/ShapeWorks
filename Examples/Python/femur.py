@@ -40,16 +40,16 @@ def Run_Pipeline(args):
     """
 
     print("\nStep 1. Get Data\n")
-    # if int(args.interactive) != 0:
-        # input("Press Enter to continue")
+    if int(args.interactive) != 0:
+        input("Press Enter to continue")
 
     datasetName = "femur"
-    # filename = datasetName + ".zip"
-    # # Check if the data is in the right place
-    # if not os.path.exists(filename):
-    #     print("Can't find " + filename + " in the current directory.")
-    #     import DatasetUtils
-    #     DatasetUtils.downloadDataset(datasetName)
+    filename = datasetName + ".zip"
+    # Check if the data is in the right place
+    if not os.path.exists(filename):
+        print("Can't find " + filename + " in the current directory.")
+        import DatasetUtils
+        DatasetUtils.downloadDataset(datasetName)
 
     parentDir="TestFemur/"
     inputDir = 'TestFemur/' + datasetName + '/'
@@ -57,14 +57,14 @@ def Run_Pipeline(args):
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)
 
-    # extract the zipfile
-    # print("Extracting data from " + filename + "...")
-    # with ZipFile(filename, 'r') as zipObj:
-    #     zipObj.extractall(path=parentDir)
+    extract the zipfile
+    print("Extracting data from " + filename + "...")
+    with ZipFile(filename, 'r') as zipObj:
+        zipObj.extractall(path=parentDir)
 
     print("\nStep 2. Groom - Data Pre-processing\n")
-    # if args.interactive:
-        # input("Press Enter to continue")
+    if args.interactive:
+        input("Press Enter to continue")
 
     if not args.start_with_prepped_data:
         """
@@ -155,6 +155,7 @@ def Run_Pipeline(args):
         """
         resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, isBinary=True)
         resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", reflectedFile_img, isBinary=False)
+
         """
         Apply padding
         Both the segmentation and raw images are padded in case the seg lies on the image boundary.
@@ -261,13 +262,13 @@ def Run_Pipeline(args):
         clippedFiles_segmentations = ClipBinaryVolumes(parentDir + 'clipped_segmentations', rigidFiles_segmentations, cutting_plane_points.flatten())
 
         """Compute largest bounding box and apply cropping"""
-        croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", clippedFiles_segmentations)
+        croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", clippedFiles_segmentations, parentDir + "clipped_segmentations/*.nrrd")
 
-        croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images)
+        croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images, parentDir + "aligned/images/*.nrrd")
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
-        # if args.interactive:
-            # input("Press Enter to continue")
+        if args.interactive:
+            input("Press Enter to continue")
 
         """
         We convert the scans to distance transforms, this step is common for both the
@@ -277,8 +278,8 @@ def Run_Pipeline(args):
 
     else:
         print("\nStep 3. Groom - Convert to distance transforms\n")
-        # if args.interactive:
-            # input("Press Enter to continue")
+        if args.interactive:
+            input("Press Enter to continue")
 
         dtFiles = applyDistanceTransforms(parentDir, fileList_seg)
 
@@ -303,8 +304,8 @@ def Run_Pipeline(args):
     optimization routines
     """
     print("\nStep 4. Optimize - Particle Based Optimization\n")
-    # if args.interactive:
-        # input("Press Enter to continue")
+    if args.interactive:
+        input("Press Enter to continue")
 
     pointDir = './TestFemur/PointFiles/'
     if not os.path.exists(pointDir):

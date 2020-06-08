@@ -171,24 +171,14 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
     ref_dtnrrdfilename = newRefFile.replace('.nrrd', '.DT.nrrd')
     ref_tpdtnrrdfilename = newRefFile.replace('.nrrd', '.tpSmoothDT.nrrd')
     ref_isonrrdfilename = newRefFile.replace('.nrrd', '.ISO.nrrd')
-    ref_binnrrdfilename = newRefFile.replace('.nrrd', '.BIN.nrrd')
 
     # reference image processing
     cmd = ["shapeworks",
            "read-image", "--name", refFile,
            "extract-label", "--label", str(1.0),
            "close-holes",
-           "write-image", "--name", refFile]
-    subprocess.check_call(cmd)
-
-    cmd = ["shapeworks",
-           "read-image", "--name", refFile,
+           "write-image", "--name", refFile,
            "antialias", "--iterations", str(antialiasIterations),
-           "write-image", "--name", ref_dtnrrdfilename]
-    subprocess.check_call(cmd)
-
-    cmd = ["shapeworks",
-           "read-image", "--name", ref_dtnrrdfilename,
            "compute-dt", "--isovalue", str(isoValue),
            "write-image", "--name", ref_dtnrrdfilename]
     subprocess.check_call(cmd)
@@ -200,12 +190,6 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
            "topo-preserving-smooth", "--scaling", str(scaling), "--alpha", str(alpha), "--beta", str(beta),
            "--applycurvature", str(False),  # b/c starting with the results of curvature (smoothed)
            "write-image", "--name", ref_isonrrdfilename]
-    subprocess.check_call(cmd)
-
-    cmd = ["shapeworks", 
-           "read-image", "--name", ref_tpdtnrrdfilename,
-           "threshold", "--min", str(-0.000001),
-           "write-image", "--name", ref_binnrrdfilename]
     subprocess.check_call(cmd)
 
     if processRaw:
@@ -237,11 +221,6 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
                    "close-holes",
                    "write-image", "--name", seginname,
                    "antialias", "--iterations", str(antialiasIterations),
-                   "write-image", "--name", dtnrrdfilename]
-            subprocess.check_call(cmd)
-
-            cmd = ["shapeworks", 
-                   "read-image", "--name", dtnrrdfilename,
                    "compute-dt", "--isovalue", str(isoValue),
                    "write-image", "--name", dtnrrdfilename]
             subprocess.check_call(cmd)            
@@ -257,7 +236,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
 
             cmd = ["shapeworks", 
                    "read-image", "--name", seginname,
-                   "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename,"--iterations", str(icpIterations),
+                   "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
                    "write-image", "--name", segoutname]
             subprocess.check_call(cmd)
 
@@ -283,17 +262,8 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
                    "read-image", "--name", inname,
                    "extract-label", "--label", str(1.0),
                    "close-holes",
-                   "write-image", "--name", inname]
-            subprocess.check_call(cmd)
-
-            cmd = ["shapeworks", 
-                   "read-image", "--name", inname,
+                   "write-image", "--name", inname,
                    "antialias", "--iterations", str(antialiasIterations),
-                   "write-image", "--name", dtnrrdfilename]
-            subprocess.check_call(cmd)
-
-            cmd = ["shapeworks", 
-                   "read-image", "--name", dtnrrdfilename,
                    "compute-dt", "--isovalue", str(isoValue),
                    "write-image", "--name", dtnrrdfilename]
             subprocess.check_call(cmd)
@@ -314,7 +284,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
             subprocess.check_call(cmd)
         return outDataList
 
-def applyCropping(outDir, inDataList, paddingSize=10):
+def applyCropping(outDir, inDataList, path, paddingSize=10):
     """
     This function takes in a filelist and crops them according to the largest
     bounding box which it discovers
@@ -330,7 +300,7 @@ def applyCropping(outDir, inDataList, paddingSize=10):
         outname = outname.replace('.nrrd', '.cropped.nrrd')
         outDataList.append(outname)
         cmd = ["shapeworks",
-               "boundingbox", "--names"] + glob.glob(initPath + "/*.aligned.nrrd") + ["--", "--padding", str(paddingSize),
+               "boundingbox", "--names"] + glob.glob(path) + ["--", "--padding", str(paddingSize),
                "read-image", "--name", inname,
                "crop",
                "write-image", "--name", outname]
@@ -370,17 +340,8 @@ def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoot
                "read-image", "--name", inname,
                "extract-label", "--label", str(1.0),
                "close-holes",
-               "write-image", "--name", inname]
-        subprocess.check_call(cmd)
-
-        cmd = ["shapeworks", 
-               "read-image", "--name", inname,
+               "write-image", "--name", inname,
                "antialias", "--iterations", str(antialiasIterations),
-               "write-image", "--name", dtnrrdfilename]
-        subprocess.check_call(cmd)
-
-        cmd = ["shapeworks", 
-               "read-image", "--name", dtnrrdfilename,
                "compute-dt", "--isovalue", str(isoValue),
                "write-image", "--name", dtnrrdfilename]
         subprocess.check_call(cmd)
@@ -540,9 +501,9 @@ def ClipBinaryVolumes(outDir, segList, cutting_plane_points):
         seg_out = rename(seg, outDir, "clipped")
         outListSeg.append(seg_out)
         cmd = ["shapeworks", "read-image", "--name", seg,
-               "clip", "--x1", str(cutting_plane_points[0]), "--y1", str(cutting_plane_points[1]), "--z1", str(cutting_plane_points[2]),
-                       "--x2", str(cutting_plane_points[3]), "--y2", str(cutting_plane_points[4]), "--z2", str(cutting_plane_points[5]),
-                       "--x3", str(cutting_plane_points[6]), "--y3", str(cutting_plane_points[7]), "--z3", str(cutting_plane_points[8]),
+               "clip", "--x1", str(cutting_plane_points[0]), "--y1", str(cutting_plane_points[3]), "--z1", str(cutting_plane_points[6]),
+                       "--x2", str(cutting_plane_points[1]), "--y2", str(cutting_plane_points[4]), "--z2", str(cutting_plane_points[7]),
+                       "--x3", str(cutting_plane_points[2]), "--y3", str(cutting_plane_points[5]), "--z3", str(cutting_plane_points[8]),
                "write-image", "--name", seg_out]
         subprocess.check_call(cmd)
     return outListSeg

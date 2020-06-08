@@ -405,7 +405,7 @@ TEST(ImageTests, icpTest)
   Image image(test_location + "1x2x2.nrrd");
   Image target(test_location + "target.nrrd");
   Image source(test_location + "source.nrrd");
-  ImageUtils::rigidRegistration(target, source);
+  ImageUtils::rigidRegistration(image, target, source);
   Image ground_truth(test_location + "icp_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);

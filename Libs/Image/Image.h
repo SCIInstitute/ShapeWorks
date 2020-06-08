@@ -108,6 +108,9 @@ public:
   Image& rotate(const double angle, const Vector3 &axis);
 
   /// applies the given transformation to the image by using resampling filter
+  Image &applyTransform(const TransformPtr transform, const Image &img);
+
+  /// applies the given transformation to the image by using resampling filter
   Image &applyTransform(const TransformPtr transform);
 
   /// extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image

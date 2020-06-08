@@ -15,7 +15,7 @@ public:
   static TransformPtr createCenterOfMassTransform(const Image &image);
 
   /// Return Transform necessary to align this image with target.
-  static Image rigidRegistration(Image &target, const Image &source, float isoValue = 0.0, unsigned iterations = 20);
+  static Image rigidRegistration(Image &img, const Image &target, const Image &source, float isoValue = 0.0, unsigned iterations = 20);
 
   /// Computes a warp transform from source to target
   static TransformPtr computeWarp(const std::string &source_file, const std::string &target_file, const int pointFactor = 1);

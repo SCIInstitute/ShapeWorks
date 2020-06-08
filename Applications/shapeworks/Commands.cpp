@@ -162,7 +162,7 @@ void Antialias::buildParser()
 
   parser.add_option("--maxrmserror").action("store").type("float").set_default(0.01).help("Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default 0.01].");
   parser.add_option("--iterations").action("store").type("int").set_default(50).help("Number of iterations [default 50].");
-  parser.add_option("--layers").action("store").type("int").set_default(1).help("Number of layers around a 3d pixel to use for this computation [default image dims].");
+  parser.add_option("--layers").action("store").type("int").set_default(0).help("Number of layers around a 3d pixel to use for this computation [default image dims].");
 
   Command::buildParser();
 }
@@ -173,7 +173,7 @@ bool Antialias::execute(const optparse::Values &options, SharedCommandData &shar
   int iterations = static_cast<int>(options.get("iterations"));
   int layers = static_cast<int>(options.get("layers"));
 
-  if (layers < 1)
+  if (layers < 0)
   {
     std::cerr << "Must specify a valid layers argument\n";
     return false;
@@ -725,7 +725,7 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
   {
     Image target(targetImg);
     Image source(sourceImg);
-    ImageUtils::rigidRegistration(target, source, isovalue, iterations);
+    sharedData.image = ImageUtils::rigidRegistration(sharedData.image, target, source, isovalue, iterations);
     return true;
   }
 }
@@ -739,15 +739,15 @@ void ClipVolume::buildParser()
   const std::string desc = "chops volume with corresponding cutting planes";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--x1").action("store").type("double").set_default(0.0).help("Value of cuttingplane [0][0] [default 0.0].");
-  parser.add_option("--x2").action("store").type("double").set_default(0.0).help("Value of cuttingplane [0][1] [default 0.0].");
-  parser.add_option("--x3").action("store").type("double").set_default(0.0).help("Value of cuttingplane [0][2] [default 0.0].");
-  parser.add_option("--y1").action("store").type("double").set_default(0.0).help("Value of cuttingplane [1][0] [default 0.0].");
-  parser.add_option("--y2").action("store").type("double").set_default(0.0).help("Value of cuttingplane [1][1] [default 0.0].");
-  parser.add_option("--y3").action("store").type("double").set_default(0.0).help("Value of cuttingplane [1][2] [default 0.0].");
-  parser.add_option("--z1").action("store").type("double").set_default(0.0).help("Value of cuttingplane [2][0] [default 0.0].");
-  parser.add_option("--z2").action("store").type("double").set_default(0.0).help("Value of cuttingplane [2][1] [default 0.0].");
-  parser.add_option("--z3").action("store").type("double").set_default(0.0).help("Value of cuttingplane [2][2] [default 0.0].");
+  parser.add_option("--x1").action("store").type("double").set_default(0.0).help("Value of x1 for cutting plane [default 0.0].");
+  parser.add_option("--y1").action("store").type("double").set_default(0.0).help("Value of y1 for cutting plane [default 0.0].");
+  parser.add_option("--z1").action("store").type("double").set_default(0.0).help("Value of z1 for cutting plane [default 0.0].");
+  parser.add_option("--x2").action("store").type("double").set_default(0.0).help("Value of x2 for cutting plane [default 0.0].");
+  parser.add_option("--y2").action("store").type("double").set_default(0.0).help("Value of y2 for cutting plane [default 0.0].");
+  parser.add_option("--z2").action("store").type("double").set_default(0.0).help("Value of z2 for cutting plane [default 0.0].");
+  parser.add_option("--x3").action("store").type("double").set_default(0.0).help("Value of x3 for cutting plane [default 0.0].");
+  parser.add_option("--y3").action("store").type("double").set_default(0.0).help("Value of y3 for cutting plane [default 0.0].");
+  parser.add_option("--z3").action("store").type("double").set_default(0.0).help("Value of z3 for cutting plane [default 0.0].");
   parser.add_option("--val").action("store").type("double").set_default(0.0).help("Value of clipped pixels [default 0.0].");
 
   Command::buildParser();
