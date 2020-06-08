@@ -200,7 +200,7 @@ void OptimizeTool::disable_actions()
 //---------------------------------------------------------------------------
 void OptimizeTool::shutdown_threads()
 {
-  std::cerr << "Shut Down Optimization Threads";
+  std::cerr << "Shut Down Optimization Threads\n";
   if (!this->optimize_) {
     return;
   }

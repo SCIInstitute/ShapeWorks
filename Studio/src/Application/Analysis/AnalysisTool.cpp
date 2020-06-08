@@ -308,11 +308,6 @@ void AnalysisTool::handle_analysis_options()
     this->ui_->pcaModeSpinBox->setEnabled(false);
   }
 
-  this->ui_->group1_button->setEnabled(this->session_->groups_available());
-  this->ui_->group2_button->setEnabled(this->session_->groups_available());
-  this->ui_->difference_button->setEnabled(this->session_->groups_available());
-  this->ui_->group_slider_widget->setEnabled(this->session_->groups_available());
-
   emit update_view();
 }
 
@@ -381,6 +376,7 @@ bool AnalysisTool::compute_stats()
 
   // set widget enable state for groups
   bool groups_available = this->session_->groups_available();
+
   this->ui_->group_slider->setEnabled(groups_available);
   this->ui_->group_animate_checkbox->setEnabled(groups_available);
   this->ui_->group_radio_button->setEnabled(groups_available);
@@ -613,6 +609,11 @@ void AnalysisTool::enable_actions()
 {
   this->ui_->reconstructionButton->setEnabled(
     this->session_->particles_present() && this->session_->get_groomed_present());
+
+  this->ui_->group1_button->setEnabled(this->session_->groups_available());
+  this->ui_->group2_button->setEnabled(this->session_->groups_available());
+  this->ui_->difference_button->setEnabled(this->session_->groups_available());
+  this->ui_->group_slider_widget->setEnabled(this->session_->groups_available());
 }
 
 //---------------------------------------------------------------------------
