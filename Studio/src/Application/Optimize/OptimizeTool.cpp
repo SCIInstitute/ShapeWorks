@@ -63,8 +63,8 @@ void OptimizeTool::handle_optimize_complete()
   auto global = this->optimize_->GetGlobalPoints();
   this->session_->update_points(local, true);
   this->session_->update_points(global, false);
-  this->session_->set_reconstructed_present(
-    local.size() == global.size() && global.size() > 1);
+  //this->session_->set_reconstructed_present(
+//    local.size() == global.size() && global.size() > 1);
   this->session_->calculate_reconstructed_samples();
   this->session_->get_project()->store_subjects();
   emit progress(100);
