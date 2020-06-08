@@ -51,7 +51,7 @@ $ conda activate shapeworks
 
 ### Qt5  
 Download and install the latest version of [[Qt5]](https://download.qt.io/archive/qt/), selecting the LGPL (free) license. (at least version 5.10 required)  
-After installing Qt5, add the directory containing `qmake.exe` to your PATH. (See [Adding to PATH](../GettingStarted.md#PATH-environment-variable) for help with this)  
+After installing Qt5, add the directory containing `qmake.exe` to your PATH. (See [Adding to PATH](../Development/Paths.md#PATH-environment-variable) for help with this)  
 Example qmake directory Linux: `/opt/Qt5.14.0/5.14.0/gcc_64/bin`  
 
 ### VXL, VTK, ITK, Eigen and OpenVDB
