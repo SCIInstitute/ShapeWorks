@@ -286,7 +286,7 @@ def getTorchDataLoaders(loader_dir, data_csv, batch_size=1):
 	test_path = loader_dir + 'test'
 	torch.save(testloader, test_path)
 	print("Test loader done.")
-	return train_path, val_path, test_path, test_names
+	return 
 
 ########################## Model Class ####################################
 
@@ -377,8 +377,10 @@ Network training method
 	logs training and validation errors
 	saves the model and returns the path it is saved to
 '''
-def train(train_loader_path, validation_loader_path, parameters, parent_dir):
+def train(loader_dir, parameters, parent_dir):
 	# load le loaders
+	train_loader_path = loader_dir + "train"
+	validation_loader_path = loader_dir + "validation"
 	print("Loading data loaders...")
 	train_loader = torch.load(train_loader_path)
 	val_loader = torch.load(validation_loader_path)
@@ -454,11 +456,24 @@ def train(train_loader_path, validation_loader_path, parameters, parent_dir):
 
 ############################## Test Model #################################
 '''
+undo data whitening
+''' 
+def undoNorm(data_list, mean, std):
+	unnorm_data = []
+	for data in data_list:
+		unnorm_data.append((data*std)+mean)
+	return np.array(unnorm_data)
+
+'''
 Test helper
 	gets the original and predicted paricle coordinates from the pca scores
 	saves them in out_dir
 '''
-def getPoints(out_dir, orig_scores, pred_scores, pca_score_path, test_names):
+def getPoints(out_dir, orig_scores, pred_scores, pca_score_path, test_names, loader_dir):
+	mean_PCA = np.load(loader_dir + 'mean_PCA.npy')
+	std_PCA = np.load(loader_dir + 'std_PCA.npy')
+	orig_scores = undoNorm(orig_scores, mean_PCA, std_PCA)
+	pred_scores = undoNorm(pred_scores, mean_PCA, std_PCA)
 	if not os.path.exists(out_dir):
 		os.makedirs(out_dir)
 	predPath = out_dir + 'predictedPoints/'
@@ -494,8 +509,11 @@ Network Test Function
 	predicts the PCA scores using the trained networks
 	returns the error measures and saves the predicted and poriginal particles for comparison
 '''
-def test(out_dir, model_path, test_loader_path, test_names, pca_scores_path):
+def test(out_dir, model_path, loader_dir, pca_scores_path):
+	if not os.path.exists(out_dir):
+		os.makedirs(out_dir)
 	# load le loaders
+	test_loader_path = loader_dir + "test"
 	print("Loading test data loader...")
 	test_loader = torch.load(test_loader_path)
 	print("Done.\n")
@@ -506,6 +524,16 @@ def test(out_dir, model_path, test_loader_path, test_names, pca_scores_path):
 	device = model.device
 	model.cuda()
 	model.eval()
+	# Get test names 
+	test_names_file = loader_dir + 'test_names.txt'
+	f = open(test_names_file, 'r')
+	test_names_string = f.read()
+	f.close()
+	test_names_string = test_names_string.replace("[","").replace("]","").replace("'","")
+	test_names = test_names_string.split(",")
+	# Logger
+	logger = open(out_dir + "results.csv", "w+")
+	log_print(logger, ["Name", "Test_Err", "Test_Rel_Err"])
 	# Get predicted PCA scores and errors
 	test_losses = []
 	test_rel_losses = []
@@ -522,13 +550,14 @@ def test(out_dir, model_path, test_loader_path, test_names, pca_scores_path):
 		test_losses.append(loss.item())
 		test_rel_loss = F.mse_loss(pred, pca) / F.mse_loss(pred*0, pca)
 		test_rel_losses.append(test_rel_loss.item())
+		log_print(logger, [test_names[index], str(loss.item()), str(test_rel_loss.item())])
 		index += 1
+	logger.close()
 	test_mr_MSE = np.mean(np.sqrt(test_losses))
 	test_rel_err =  np.mean(test_rel_losses)
 	# Get paricles 
 	orig_scores = np.array(orig_scores)
 	pred_scores = np.array(pred_scores)
-	getPoints(out_dir, orig_scores, pred_scores, pca_scores_path, test_names)
-
+	getPoints(out_dir, orig_scores, pred_scores, pca_scores_path, test_names, loader_dir)
 	return test_mr_MSE, test_rel_err
 
