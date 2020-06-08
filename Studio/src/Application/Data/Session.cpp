@@ -242,7 +242,7 @@ bool Session::load_project(QString filename)
 //---------------------------------------------------------------------------
 bool Session::load_light_project(QString filename)
 {
-  std::cerr << "Loading light project...\n";
+  std::cerr << "Loading old XML parameter file...\n";
   this->is_light_project_ = true;
 
   // open and parse XML
@@ -365,7 +365,7 @@ bool Session::load_light_project(QString filename)
 
   this->project_->store_subjects();
 
-  std::cerr << "light project loaded\n";
+  std::cerr << "Old XML parameter file loaded\n";
   return true;
 }
 

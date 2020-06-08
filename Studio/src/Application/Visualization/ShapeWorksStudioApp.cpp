@@ -385,8 +385,6 @@ void ShapeWorksStudioApp::on_zoom_slider_valueChanged()
 
   int value = this->ui_->zoom_slider->value();
 
-  std::cerr << "zoom value set to: " << value << "\n";
-
   this->lightbox_->set_tile_layout(value, value);
   this->visualizer_->update_viewer_properties();
 
@@ -1030,7 +1028,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->analysis_tool_->set_analysis_mode(analysis_mode);
 
   int zoom_value = this->session_->settings().get(ShapeWorksStudioApp::SETTING_ZOOM_C, "4");
-  std::cerr << "setting zoom value to :" << zoom_value << "\n";
   this->ui_->zoom_slider->setValue(zoom_value);
 
   this->block_update_ = false;
