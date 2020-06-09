@@ -80,11 +80,8 @@ def Run_Pipeline(args):
     -- Padding
     -- Center of Mass Alignment
     -- Rigid Alignment
-    -- Largest Bounding Box and Cropping
-
-    For detailed explainations of parameters for each tool, go to
-    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ImagePrepTools.pdf'
-    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/AlgnmentTools.pdf'
+    -- Largest Bounding Box and Cropping 
+    For a detailed explanation of grooming steps see: /Documentation/Workflow/Groom.md
     """
 
     print("\nStep 2. Groom - Data Pre-processing\n")
@@ -112,7 +109,7 @@ def Run_Pipeline(args):
         rigidFiles = applyRigidAlignment(parentDir, comFiles, None, comFiles[0])
 
         """Compute largest bounding box and apply cropping"""
-        croppedFiles = applyCropping(parentDir + "cropped", rigidFiles)
+        croppedFiles = applyCropping(parentDir + "cropped", rigidFiles, parentDir + "aligned/*.aligned.nrrd")
 
     """
     We convert the scans to distance transforms, this step is common for both the 
@@ -167,7 +164,7 @@ def Run_Pipeline(args):
             "procrustes_scaling" : 0,
             "save_init_splits" : 0,
             "debug_projection" : 0,
-            "verbosity" : 3
+            "verbosity" : 3,
           }
 
         if args.tiny_test:
@@ -197,7 +194,7 @@ def Run_Pipeline(args):
             "procrustes_scaling" : 0,
             "save_init_splits" : 0,
             "debug_projection" : 0,
-            "verbosity" : 3
+            "verbosity" : 3,
             }
 
         """Now we execute a multi-scale particle optimization function"""

@@ -287,7 +287,7 @@ protected:
 
   void PrintDoneMessage(unsigned int vlevel = 0) const;
 
-  void UpdateExportablePoints();
+  virtual void UpdateExportablePoints();
 
   itk::MaximumEntropyCorrespondenceSampler<ImageType>::Pointer m_sampler;
   itk::ParticleProcrustesRegistration<3>::Pointer m_procrustes;

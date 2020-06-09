@@ -1,5 +1,4 @@
-#ifndef STUDIO_DATA_MESH_H
-#define STUDIO_DATA_MESH_H
+#pragma once
 
 #include <QString>
 #include <QSharedPointer>
@@ -33,10 +32,12 @@ public:
   /// Destructor
   ~Mesh();
 
-  /// Create a mesh from an image
+  /// Create a mesh from a file
   ImageType::Pointer create_from_file(std::string filename, double iso_value);
+
+  /// Create a mesh from an image
   void create_from_image(ImageType::Pointer img, double iso_value);
-  
+
   /// Get the dimensions as a string for display (if loaded from an image)
   QString get_dimension_string();
 
@@ -46,15 +47,15 @@ public:
   /// Get the center transform
   vnl_vector<double> get_center_transform();
 
+  //! Set the poly data directly
   void set_poly_data(vtkSmartPointer<vtkPolyData> poly_data);
 
 private:
 
-  vtkSmartPointer<vtkPolyData> poly_data_;
-
+  // metadata
   int dimensions_[3];
-
   vnl_vector<double> center_transform_;
-};
 
-#endif /* STUDIO_DATA_MESH_H */
+  // the polydata
+  vtkSmartPointer<vtkPolyData> poly_data_;
+};

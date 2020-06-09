@@ -43,7 +43,7 @@ public:
     /// grows or shrinks the region by the specified amount
     void pad(int padding) {
       for (auto i=0; i<3; i++) {
-        min[i] += padding;
+        min[i] -= padding;
         max[i] += padding;
       }
     }
@@ -106,6 +106,9 @@ public:
 
   /// helper to simply rotate around center (not origin) using axis (default z-axis) by angle (in radians) 
   Image& rotate(const double angle, const Vector3 &axis);
+
+  /// applies the given transformation to the image by using resampling filter
+  Image &applyTransform(const TransformPtr transform, const Image &img);
 
   /// applies the given transformation to the image by using resampling filter
   Image &applyTransform(const TransformPtr transform);
@@ -185,7 +188,10 @@ public:
   Coord physicalToLogical(const Point3 &p) const;
 
   /// compares this with another image using the region of interest filter
-  bool operator==(const Image &other) const;
+  bool compare(const Image &other, double precision = 1e-12) const;
+
+  /// compares this with another image using the region of interest filter
+  bool operator==(const Image &other) const { return compare(other); }
 
   // export functions //
 

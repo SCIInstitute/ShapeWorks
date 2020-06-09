@@ -1,14 +1,20 @@
 #pragma once
 
+// Qt
 #include <QSharedPointer>
 #include <QWidget>
-#include <Visualization/Visualizer.h>
+
+// ShapeWorks
+#include <itkParticleShapeStatistics.h>
+
+// Studio
 #include <Data/Shape.h>
-#include "Data/Preferences.h"
+#include <Data/Preferences.h>
+#include <Visualization/Visualizer.h>
 #include <itkParticleShapeStatistics.h>
 #include <Visualization/BarGraph.h>
 
-class Project;
+class Session;
 class Lightbox;
 class ShapeWorksStudioApp;
 class Ui_AnalysisTool;
@@ -22,8 +28,8 @@ public:
   AnalysisTool(Preferences& prefs);
   ~AnalysisTool();
 
-  /// set the pointer to the project
-  void set_project(QSharedPointer<Project> project);
+  /// set the pointer to the session
+  void set_session(QSharedPointer<Session> session);
 
   /// set the pointer to the application
   void set_app(ShapeWorksStudioApp* app);
@@ -32,13 +38,12 @@ public:
 
   void activate();
 
-  std::string getAnalysisMode();
-
   bool get_group_difference_mode();
 
   std::vector<Point> get_group_difference_vectors();
 
-  void setAnalysisMode(std::string mode);
+  std::string get_analysis_mode();
+  void set_analysis_mode(std::string mode);
 
   void setLabels(QString which, QString value);
 
@@ -51,26 +56,32 @@ public:
   bool pcaAnimate();
   bool groupAnimate();
 
-  int getSampleNumber();
+  int get_sample_number();
 
   bool compute_stats();
 
   void updateSlider();
 
   void reset_stats();
-  void enableActions();
+  void enable_actions();
 
   const vnl_vector<double>& get_mean_shape();
 
   const vnl_vector<double>& get_shape(int mode, double value, double group_value = 0.5);
 
   ParticleShapeStatistics<3> get_stats();
-  void load_from_preferences();
-  void save_to_preferences();
+  void load_settings();
+  void store_settings();
 
   void shutdown();
 
   bool export_variance_graph(QString filename);
+
+  static const std::string MODE_ALL_SAMPLES_C;
+  static const std::string MODE_MEAN_C;
+  static const std::string MODE_PCA_C;
+  static const std::string MODE_SINGLE_SAMPLE_C;
+  static const std::string MODE_REGRESSION_C;
 
 public Q_SLOTS:
 
@@ -103,6 +114,7 @@ public Q_SLOTS:
   void on_reconstructionButton_clicked();
 
 signals:
+
   void update_view();
   void pca_update();
   void progress(size_t);
@@ -116,10 +128,11 @@ private:
   void compute_mode_shape();
   void update_analysis_mode();
 
-  //private members
   Preferences & preferences_;
+  //private members
+
   Ui_AnalysisTool* ui_;
-  QSharedPointer<Project> project_;
+  QSharedPointer<Session> session_;
   ShapeWorksStudioApp* app_;
 
   VisualizerHandle visualizer_;
@@ -136,5 +149,4 @@ private:
 
   bool group_animate_direction_ = true;
   QTimer group_animate_timer_;
-
 };

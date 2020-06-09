@@ -18,6 +18,7 @@ ITK_VER_STR="5.0"
 EIGEN_VER="3.3.7"
 ITK_VER_STR="5.0"
 QT_MIN_VER="5.9.8"  # NOTE: 5.x is required, but this restriction is a clever way to ensure the anaconda version of Qt (5.9.6 or 5.9.7) isn't used since it won't work on most systems.
+XLNT_VER="v1.4.0"
 OpenVDB_VER="v7.0.0"
 
 usage()
@@ -154,11 +155,13 @@ build_vtk()
       cmake -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release -DVTK_PYTHON_VERSION=3 -Wno-dev ..
       cmake --build . --config Release || exit 1
       cmake --build . --config Release --target install
+      VTK_DIR="${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}"
+      VTK_DIR=$(echo $VTK_DIR | sed s/\\\\/\\//g)
   else
       cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release -DVTK_PYTHON_VERSION=3 -Wno-dev ..
       make -j${NUM_PROCS} install || exit 1
+      VTK_DIR=${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}
   fi
-  VTK_DIR=${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}
 }
 
 build_itk()
@@ -174,7 +177,7 @@ build_itk()
   mkdir -p build && cd build
 
   if [[ $OSTYPE == "msys" ]]; then
-      cmake -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="d:/a/ShapeWorks/deps/lib/cmake/vtk-8.2" -DModule_ITKVtkGlue:BOOL=ON -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
+      cmake -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="${VTK_DIR}" -DModule_ITKVtkGlue:BOOL=ON -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
       
       cmake --build . --config Release || exit 1
       cmake --build . --config Release --target install
@@ -210,7 +213,31 @@ build_eigen()
   EIGEN_DIR=${INSTALL_DIR}/share/eigen3/cmake/
 }
 
-built_openvdb()
+build_xlnt()
+{
+  echo ""
+  echo "## Building Xlnt..."
+  cd ${BUILD_DIR}
+  git clone https://github.com/tfussell/xlnt.git
+  cd xlnt
+  git checkout -f tags/${XLNT_VER}
+
+  if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
+  mkdir -p build && cd build
+
+  if [[ $OSTYPE == "msys" ]]; then
+      cmake -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DSTATIC=ON ..
+      cmake --build . --config Release || exit 1
+      cmake --build . --config Release --target install
+  else
+      cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DSTATIC=ON ..
+      make -j${NUM_PROCS} install || exit 1
+  fi
+
+  XLNT_DIR=${INSTALL_DIR}
+}
+
+build_openvdb()
 {
   echo ""
   echo "## Building OpenVDB..."
@@ -222,17 +249,24 @@ built_openvdb()
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 
+  CONCURRENT_FLAG=""
+  if [ "$(uname)" == "Darwin" ]; then
+      # There is an incompatibility between Qt and tbbmalloc_proxy on Mac
+      CONCURRENT_FLAG="-DCONCURRENT_MALLOC=None"
+  fi
+  
   if [[ $OSTYPE == "msys" ]]; then
       cmake -DUSE_BLOSC=OFF -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} ..
       cmake --build . --config Release || exit 1
       cmake --build . --config Release --target install
   else
-      cmake -DUSE_BLOSC=OFF -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} ..
+      cmake -DUSE_BLOSC=OFF ${CONCURRENT_FLAG} -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_INSTALL_LIBDIR=lib ..
       make -j${NUM_PROCS} install || exit 1
   fi
 
   OpenVDB_DIR=${INSTALL_DIR}/lib64/cmake/OpenVDB/
 }
+
 
 show_shapeworks_build()
 {
@@ -245,13 +279,13 @@ show_shapeworks_build()
     OPENMP_FLAG="-DUSE_OPENMP=OFF"
   fi
 
-  echo "cmake -DCMAKE_PREFIX_PATH=${INSTALL_DIR} ${OPENMP_FLAG} -DBuild_Studio={BUILD_GUI} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}"
+  echo "cmake -DCMAKE_PREFIX_PATH=${INSTALL_DIR} ${OPENMP_FLAG} -DBuild_Studio=${BUILD_GUI} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}"
 }
 
-# determine if we can build using specified or discovered version of Qt
+# determine if we can build using the specified or discovered version of Qt
 verify_qt()
 {
-  # If BUILD_GUI is true, verify sufficient version of Qt is installed using the qmake that's in the path.
+  # If BUILD_GUI is true, verify that a sufficient version of Qt is installed using the qmake that's in the path.
   # If not, inform the user of where to go to download and install Qt.
 
   if [[ $BUILD_GUI = 1 ]]; then
@@ -287,7 +321,7 @@ build_all()
 
   ## build dependencies if their locations were not specified
   if [[ -z $OpenVDB_DIR ]]; then
-    built_openvdb
+    build_openvdb
   fi
 
   if [[ -z $VXL_DIR ]]; then
@@ -306,6 +340,9 @@ build_all()
     build_eigen
   fi
 
+  if [[ -z $XLNT_DIR ]]; then
+    build_xlnt
+  fi
 
   # echo dependency directories for easy reference in case the user is independently building ShapeWorks
   echo ""

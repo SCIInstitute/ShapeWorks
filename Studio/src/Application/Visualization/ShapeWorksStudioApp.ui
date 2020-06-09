@@ -183,7 +183,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QSlider" name="thumbnail_size_slider">
+          <widget class="QSlider" name="zoom_slider">
            <property name="maximumSize">
             <size>
              <width>100</width>
@@ -200,13 +200,13 @@
             <number>1</number>
            </property>
            <property name="value">
-            <number>5</number>
+            <number>4</number>
            </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
            <property name="invertedAppearance">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <property name="invertedControls">
             <bool>false</bool>
@@ -240,17 +240,15 @@
     <addaction name="action_open_project"/>
     <addaction name="action_save_project"/>
     <addaction name="action_save_project_as"/>
-    <addaction name="actionSet_Data_Directory"/>
     <addaction name="separator"/>
     <addaction name="action_import"/>
     <addaction name="action_export_current_mesh"/>
     <addaction name="action_export_mesh_scalars"/>
-    <addaction name="actionExport_PCA_Mesh"/>
+    <addaction name="actionExport_Eigenvectors"/>
     <addaction name="actionExport_Eigenvalues"/>
     <addaction name="actionExport_Variance_Graph"/>
-    <addaction name="actionExport_Eigenvectors"/>
+    <addaction name="action_export_pca_scores"/>
     <addaction name="actionExport_PCA_Mode_Points"/>
-    <addaction name="actionExport_Parameter_XML"/>
     <addaction name="separator"/>
     <addaction name="action_recent1"/>
     <addaction name="action_recent2"/>
@@ -323,7 +321,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QTableWidget" name="table_widget"/>
+          <widget class="QTableWidget" name="table"/>
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout2">
@@ -592,14 +590,6 @@
     <string>Ctrl+D</string>
    </property>
   </action>
-  <action name="actionExport_Parameter_XML">
-   <property name="text">
-    <string>Export Parameter XML...</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+P</string>
-   </property>
-  </action>
   <action name="actionExport_Eigenvalues">
    <property name="text">
     <string>Export Eigenvalues...</string>
@@ -639,6 +629,11 @@
     <string>Export Mesh Scalars...</string>
    </property>
   </action>
+  <action name="action_export_pca_scores">
+   <property name="text">
+    <string>Export PCA Component Scores...</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -648,7 +643,7 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>table_widget</tabstop>
+  <tabstop>table</tabstop>
   <tabstop>delete_button</tabstop>
   <tabstop>add_button</tabstop>
   <tabstop>auto_view_button</tabstop>
@@ -656,7 +651,7 @@
   <tabstop>surface_visible_button</tabstop>
   <tabstop>view_mode_combobox</tabstop>
   <tabstop>center_checkbox</tabstop>
-  <tabstop>thumbnail_size_slider</tabstop>
+  <tabstop>zoom_slider</tabstop>
  </tabstops>
  <resources>
   <include location="../Resources/ShapeWorksStudio.qrc"/>

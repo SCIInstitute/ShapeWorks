@@ -51,8 +51,6 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, isBinary=True):
         ImageUtils.isoresample(img, isoSpacing)
         if isBinary:
             img.threshold() # re-binarize the image (defaults for threshold are (0,max) )
-        if recenter:
-            img.recenter()
         img.write(outname)
     return outDataList
 
@@ -109,25 +107,46 @@ def FindReferenceImage(inDataList):
     """
     This find the median file between all the input files
     """
-    print("\n############# Reference File #############")
-    IMG = []
-    DIM = []
+    x = y = z = 0
+    for i in range(len(inDataList)):
+        dim = itk.GetArrayFromImage(itk.imread(inDataList[i])).shape
+        if dim[0] > x:
+            x = dim[0]
+        if dim[1] > y:
+            y = dim[1]
+        if dim[2] > z:
+            z = dim[2]
+
+    COM = np.zeros((x, y, z))
     for i in range(len(inDataList)):
         tmp = itk.GetArrayFromImage(itk.imread(inDataList[i]))
-        IMG.append(tmp)
-        DIM.append(tmp.shape)
-
-    ref_dim = np.max(DIM, axis =0)
+        COM += np.pad(tmp, (((x - tmp.shape[0]) // 2, (x - tmp.shape[0]) - (x - tmp.shape[0]) // 2),
+                            ((y - tmp.shape[1]) // 2, (y - tmp.shape[1]) - (y - tmp.shape[1]) // 2),
+                            ((z - tmp.shape[2]) // 2, (z - tmp.shape[2]) - (z - tmp.shape[2]) // 2)))
+    COM /= len(inDataList)
+    dist = np.inf
+    idx = 0
     for i in range(len(inDataList)):
-        IMG[i] = np.pad(IMG[i], ((0,ref_dim[0]-DIM[i][0]), (0,ref_dim[1]-DIM[i][1]), (0,ref_dim[2]-DIM[i][2])), mode ='constant', constant_values=0)
+        tmp = itk.GetArrayFromImage(itk.imread(inDataList[i]))
+        tmp_dist = np.linalg.norm(
+            COM - np.pad(tmp, (((x - tmp.shape[0]) // 2, (x - tmp.shape[0]) - (x - tmp.shape[0]) // 2),
+                               ((y - tmp.shape[1]) // 2, (y - tmp.shape[1]) - (y - tmp.shape[1]) // 2),
+                               ((z - tmp.shape[2]) // 2, (z - tmp.shape[2]) - (z - tmp.shape[2]) // 2))))
+        if tmp_dist < dist:
+            idx = i
+            dist = tmp_dist
 
-    COM = np.sum(np.asarray(IMG), axis=0) / len(inDataList)
-    idx = np.argmin(np.sqrt(np.sum((np.asarray(IMG) - COM) ** 2, axis=(1, 2, 3))))
+    print(" ")
+    print("############# Reference File #############")
+    cprint(("The reference file for rigid alignment is found"), 'cyan')
+    cprint(("Output Median Filename : ", inDataList[idx]), 'yellow')
+    print("###########################################")
+    print(" ")
     return inDataList[idx]
 
 def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
                         antialiasIterations=20, smoothingIterations=1, alpha=10.5, beta=10.0,
-                        scaling=0.0, isoValue=0, icpIterations=10, processRaw=False):
+                        scaling=20.0, isoValue=0, icpIterations=10, processRaw=False):
     """
     This function takes in a filelists(binary and raw) and produces rigid aligned
     files in the appropriate directory. If the process_raw flag is set True,
@@ -159,7 +178,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
 
     if processRaw:
         rawoutDir = os.path.join(outDir, 'images')
-        binaryoutDir = os.path.join(outDir + 'segmentations')
+        binaryoutDir = os.path.join(outDir, 'segmentations')
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
         if not os.path.exists(binaryoutDir):
@@ -230,7 +249,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
             subprocess.check_call(cmd)
         return outDataList
 
-def applyCropping(outDir, inDataList, paddingSize=10):
+def applyCropping(outDir, inDataList, path, paddingSize=10):
     """
     This function takes in a filelist and crops them according to the largest
     bounding box which it discovers
@@ -343,7 +362,7 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side):
             centerFilename = os.path.join(outDir, prefix + "_origin.txt")
             cmd = ["shapeworks", 
                    "read-image", "--name", img,
-                   "reflect-volume", "--axis", str(0),
+                   "reflect", "--x", str(-1), "--y", str(1), "--z", str(1),
                    "write-image", "--name", img_out]
             subprocess.check_call(cmd)
             seg_out = rename(flip_seg, outSegDir, 'reflect')
@@ -434,24 +453,12 @@ def ClipBinaryVolumes(outDir, segList, cutting_plane_points):
         print("\n############## Clipping ##############")
         seg_out = rename(seg, outDir, "clipped")
         outListSeg.append(seg_out)
-        # write xml file
-        xmlfilename= seg_out.replace(".nrrd",".xml")
-        if os.path.exists(xmlfilename):
-            os.remove(xmlfilename)
-        xml = open(xmlfilename, "a")
-        xml.write("<?xml version=\"1.0\" ?>\n")
-        xml.write("<num_shapes>1</num_shapes>\n")
-        xml.write("<inputs>\n")
-        xml.write(seg+"\n")
-        xml.write("</inputs>\n")
-        xml.write("<outputs>\n")
-        xml.write(seg_out+"\n")
-        xml.write("</outputs>\n")
-        points = str(cutting_plane_points)[1:-1].replace(",","")
-        xml.write("<cutting_planes> " + points +" </cutting_planes>")
-        xml.close()
-        execCommand = ["ClipVolume", xmlfilename]
-        subprocess.check_call(execCommand)
+        cmd = ["shapeworks", "read-image", "--name", seg,
+               "clip", "--x1", str(cutting_plane_points[0]), "--y1", str(cutting_plane_points[3]), "--z1", str(cutting_plane_points[6]),
+                       "--x2", str(cutting_plane_points[1]), "--y2", str(cutting_plane_points[4]), "--z2", str(cutting_plane_points[7]),
+                       "--x3", str(cutting_plane_points[2]), "--y3", str(cutting_plane_points[5]), "--z3", str(cutting_plane_points[8]),
+               "write-image", "--name", seg_out]
+        subprocess.check_call(cmd)
     return outListSeg
 
 def SelectCuttingPlane(input_file):

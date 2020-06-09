@@ -190,9 +190,6 @@ protected:
     return m_VDBImage;
   }
 
-  // Why 4? The ITK version of the Optimizer already used a narrow band of +/- 4 in the
-  // curvature computation. This will allow existing use cases to work as before. This
-  // value can be set in the XML file for ShapeWorksRun.
   ParticleImageDomain() { }
   virtual ~ParticleImageDomain() {};
 

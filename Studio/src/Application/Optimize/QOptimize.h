@@ -16,6 +16,8 @@ public:
   std::vector<std::vector<itk::Point<double>>> GetLocalPoints() override;
   std::vector<std::vector<itk::Point<double>>> GetGlobalPoints() override;
 
+  void UpdateExportablePoints() override;
+
 protected:
   virtual void SetIterationCallback() override;
   virtual void IterateCallback(itk::Object* caller, const itk::EventObject &) override;

@@ -124,7 +124,8 @@ Image& Image::antialias(unsigned iterations, double maxRMSErr, int layers)
 
   filter->SetMaximumRMSError(maxRMSErr);
   filter->SetNumberOfIterations(iterations);
-  filter->SetNumberOfLayers(layers);
+  if (layers)
+    filter->SetNumberOfLayers(layers);
   filter->SetInput(this->image);
   filter->Update();
   this->image = filter->GetOutput();
@@ -171,7 +172,7 @@ Image& Image::resample(const Point3& physicalSpacing, Dims logicalDims)
   return *this;
 }
 
-bool Image::operator==(const Image &other) const
+bool Image::compare(const Image &other, double precision) const
 {
   // we use the region of interest filter here with the full region because our
   // incoming image may be the output of an ExtractImageFilter or PadImageFilter
@@ -196,14 +197,14 @@ bool Image::operator==(const Image &other) const
   DiffType::Pointer diff = DiffType::New();
   diff->SetValidInput(other_itk_image);
   diff->SetTestInput(itk_image);
-  diff->SetDifferenceThreshold(0.0);
+  diff->SetDifferenceThreshold(precision);
   diff->SetToleranceRadius(0);
 
   try
   {
     diff->UpdateLargestPossibleRegion();
-  } 
-  catch (itk::ExceptionObject &exp) 
+  }
+  catch (itk::ExceptionObject &exp)
   {
     std::cerr << "Comparison failed" << std::endl;
     std::cerr << exp << std::endl;
@@ -287,9 +288,28 @@ Image& Image::rotate(const double angle, const Vector3 &axis)
   return *this;
 }
 
-Image& Image::applyTransform(const TransformPtr transform)
+Image& Image::applyTransform(const TransformPtr transform, const Image &img)
 {
   using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;  // linear interpolation by default
+  FilterType::Pointer resampler = FilterType::New();
+
+  resampler->SetInput(this->image);
+  resampler->SetTransform(transform);
+
+  resampler->SetSize(img.image->GetBufferedRegion().GetSize());
+  resampler->SetOutputOrigin(img.image->GetOrigin());
+  resampler->SetOutputDirection(img.image->GetDirection());
+  resampler->SetOutputSpacing(img.image->GetSpacing());
+
+  resampler->Update();
+  this->image = resampler->GetOutput();
+
+  return *this;
+}
+
+Image &Image::applyTransform(const TransformPtr transform)
+{
+  using FilterType = itk::ResampleImageFilter<ImageType, ImageType>; // linear interpolation by default
   FilterType::Pointer resampler = FilterType::New();
 
   resampler->SetInput(this->image);

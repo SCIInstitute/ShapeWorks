@@ -28,8 +28,8 @@ TEST(ImageTests, antialiasTest)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, isoresampleBinaryIsotropicTest) {
-
+TEST(ImageTests, isoresampleBinaryIsotropicTest) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/isoresample/");
 
   Image image(test_location + "binary-isotropic-input.nrrd");
@@ -41,8 +41,8 @@ TEST(ImageTests, isoresampleBinaryIsotropicTest) {
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, isoresampleBinaryAnisotropicTest) {
-
+TEST(ImageTests, isoresampleBinaryAnisotropicTest) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/isoresample/");
 
   Image image(test_location + "binary-anisotropic-input.nrrd");
@@ -54,8 +54,8 @@ TEST(ImageTests, isoresampleBinaryAnisotropicTest) {
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, isoresampleSmoothIsotropicTest) {
-
+TEST(ImageTests, isoresampleSmoothIsotropicTest) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/isoresample/");
 
   Image image(test_location + "smooth-isotropic-input.nrrd");
@@ -66,8 +66,8 @@ TEST(ImageTests, isoresampleSmoothIsotropicTest) {
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, isoresampleSmoothAnisotropicTest) {
-
+TEST(ImageTests, isoresampleSmoothAnisotropicTest) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/isoresample/");
 
   Image image(test_location + "smooth-anisotropic-input.nrrd");
@@ -78,8 +78,8 @@ TEST(ImageTests, isoresampleSmoothAnisotropicTest) {
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, isoresampleImageAnisotropicTest) {
-
+TEST(ImageTests, isoresampleImageAnisotropicTest) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/isoresample/");
 
   Image image(test_location + "image-anisotropic-input.nrrd");
@@ -112,7 +112,8 @@ TEST(ImageTests, recentertest2)
   ASSERT_FALSE(image == ground_truth);
 }
 
-TEST(ImageTests, padTest) {
+TEST(ImageTests, padTest) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/pad/");
 
   Image image(test_location + "1x2x2.nrrd");
@@ -222,7 +223,36 @@ TEST(ImageTests, rotateTest3)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, extractlabelTest) {
+TEST(ImageTests, rotateTest4) 
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/rotate/");
+
+  double angle = Pi / 2.0;
+  shapeworks::Vector3 axis = makeVector({1, 0, 0});
+  Image image(test_location + "la-bin-centered.nrrd");
+  image.rotate(angle, axis);
+  image.rotate(-angle, axis);
+
+  Image image2(test_location + "la-bin-centered.nrrd");
+  image2.rotate(-angle, axis);
+  image2.rotate(angle, axis);
+
+  ASSERT_FALSE(image == image2);
+}
+
+TEST(ImageTests, rotateTest5) 
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/rotate/");
+
+  Image image(test_location + "la-bin-centered.nrrd");
+  image.rotate(0, makeVector({0,0,1}));
+  Image original(test_location + "la-bin-centered.nrrd");
+
+  ASSERT_TRUE(image == original);
+}
+
+TEST(ImageTests, extractlabelTest) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/extract-label/");
 
   Image image(test_location + "1x2x2.nrrd");
@@ -232,7 +262,8 @@ TEST(ImageTests, extractlabelTest) {
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, closeholesTest) {
+TEST(ImageTests, closeholesTest) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/close-holes/");
 
   Image image(test_location + "1x2x2.nrrd");
@@ -374,7 +405,7 @@ TEST(ImageTests, icpTest)
   Image image(test_location + "1x2x2.nrrd");
   Image target(test_location + "target.nrrd");
   Image source(test_location + "source.nrrd");
-  ImageUtils::rigidRegistration(target, source);
+  ImageUtils::rigidRegistration(image, target, source);
   Image ground_truth(test_location + "icp_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -583,7 +614,9 @@ TEST(ImageTests, dimsTest)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
 
   Image image(test_location + "la-bin.nrrd");
-  Dims dims({289, 329, 182});
+  //Dims dims({289, 329, 182}); // This was causing compile error on Windows
+  Dims dims;
+  dims[0] = 289; dims[1] = 329; dims[2] = 182;
   
   ASSERT_TRUE(image.dims() == dims);
 }

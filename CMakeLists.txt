@@ -32,11 +32,14 @@ include(DefaultBuildType)
 
 project(ShapeWorks)
 
-# OpenVDB doesn't provide a config file currently
-# https://www.openvdb.org/documentation/doxygen/build.html#buildUsingOpenVDB
-file(TO_CMAKE_PATH ${OpenVDB_DIR} OpenVDB_DIR) # use forward slashes on windows
+# OpenVDB only provides a module file (FindOpenVDB.cmake), so we use OpenVDB_DIR to find it
+if (NOT DEFINED OpenVDB_DIR OR "${OpenVDB_DIR}" STREQUAL "OpenVDB_DIR-NOTFOUND")
+  set(OpenVDB_DIR ${CMAKE_PREFIX_PATH}/lib/cmake/OpenVDB)
+endif()
+message(STATUS "OpenVDB_DIR set to ${OpenVDB_DIR} (must contain FindOpenVDB.cmake)")
+file(TO_CMAKE_PATH ${OpenVDB_DIR} OpenVDB_DIR) # fixes path to use forward slashes on Windows
 list(APPEND CMAKE_MODULE_PATH ${OpenVDB_DIR})
-find_package(OpenVDB REQUIRED)
+find_package(OpenVDB MODULE REQUIRED)
 
 # use ccache if available
 find_program(CCACHE_PROGRAM ccache)
@@ -60,7 +63,7 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 SET(CMAKE_BUNDLE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # make it easier to see more important compiler warnings and errors (# TODO: fix the actual cause of the warnings)
-if (NOT MSVC)
+if (APPLE)
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-inconsistent-missing-override")
 endif()
 
@@ -122,6 +125,9 @@ ENDIF()
 
 ### Eigen
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+
+### XLNT
+find_package (XLNT REQUIRED)
 
 if(USE_OPENMP)
   find_package(OpenMP REQUIRED)

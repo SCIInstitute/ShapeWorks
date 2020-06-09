@@ -1,6 +1,4 @@
-/*
- * Shapeworks license
- */
+#pragma once
 
 /**
  * @file MeshWorkQueue.h
@@ -8,14 +6,12 @@
  *
  */
 
-#ifndef MESH_WORK_QUEUE_H
-#define MESH_WORK_QUEUE_H
-
 // stl
 #include <list>
 
 // qt
 #include <QMutex>
+#include <QMetaType>
 
 // vnl
 #include "vnl/vnl_vector.h"
@@ -23,8 +19,20 @@
 class MeshWorkItem
 {
 public:
-  vnl_vector<double> shape;
+  std::string filename;
+  vnl_vector<double> points;
+  int domain{0};
+
+  size_t memory_size{0};
+
+  friend bool operator<(const MeshWorkItem &a, const MeshWorkItem &b);
+
+  friend bool operator==(const MeshWorkItem &a, const MeshWorkItem &b);
 };
+
+Q_DECLARE_METATYPE(MeshWorkItem);
+
+using WorkList = std::list<MeshWorkItem>;
 
 class MeshWorkQueue
 {
@@ -33,24 +41,28 @@ public:
   MeshWorkQueue();
   ~MeshWorkQueue();
 
-  void push( const vnl_vector<double> &item );
+  void push(const MeshWorkItem &item);
 
   MeshWorkItem* pop();
 
-  bool isInside( const vnl_vector<double> &item );
+  MeshWorkItem* get_next_work_item();
 
-  void remove( const vnl_vector<double> &item );
+  bool isInside(const MeshWorkItem &item);
+
+  void remove(const MeshWorkItem &item);
 
   bool isEmpty();
 
+  int size();
+
 private:
 
+  bool in_inside_list(const MeshWorkItem &item, const WorkList& list);
+
   // for concurrent access
-  QMutex mutex;
+  QMutex mutex_;
 
-  typedef std::list< vnl_vector<double> > WorkList;
+  WorkList work_list_;
 
-  WorkList workList;
+  WorkList processing_list_;
 };
-
-#endif // ifndef MESH_WORK_QUEUE_H

@@ -1,3 +1,11 @@
+ShapeWorks 5.4.0 - 2020-05-27
+	* Studio: New XLSX based file format.  See Examples/Studio/ellipsoid.xlsx for an example
+	* Studio: Improved scalability.  Files now loaded on-demand as necessary.
+	* Lower memory footprint and faster optimization: ShapeWorks is now using [OpenVDB](https://www.openvdb.org/), a more memory-efficient data structure, for signed distance transforms. Along with other refactoring and code optimizations, ShapeWorks now uses *85% less memory* (from 57.09GB to 9.67GB in one use case). Additionally, the particles optimizer is now *2X faster*.
+	* Lower memory footprint for estimating correspondences for new shapes on existing shape models: For <fixed_domains> usage, only distance transforms for the new shapes will be loaded. 
+	* Lower memory footprint for finding the reference image for the rigid alignment.
+	* Lower memory footprint and running time for finding representative subset samples of data.
+
 ShapeWorks 5.3.0 - 2020-02-20
 	* Use cases: Updated femur use case with interactive cutting plane
 	* Use cases: Added fixed domains use case that demonstrates adding a single shape to an existing shape model
