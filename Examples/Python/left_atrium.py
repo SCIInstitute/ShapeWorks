@@ -130,7 +130,7 @@ def Run_Pipeline(args):
         Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
         """
         medianFile = FindReferenceImage(comFiles_segmentations)
-        [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, comFiles_segmentations, comFiles_images , medianFile, processRaw = True)
+        [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, comFiles_segmentations, comFiles_images, medianFile, processRaw = True)
 
         """
         Compute largest bounding box and apply cropping
@@ -138,8 +138,8 @@ def Run_Pipeline(args):
         processRaw = False, applies the center of mass alignment only on segemnattion data.
         The function uses the same bounding box to crop the raw and segemnattion data.
         """
-        croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", rigidFiles_segmentations)
-        croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images)
+        croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", rigidFiles_segmentations, parentDir + "aligned/segmentations/*.aligned.nrrd")
+        croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images, parentDir + "aligned/images/*.aligned.nrrd")
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
         if args.interactive:
@@ -203,7 +203,7 @@ def Run_Pipeline(args):
             rigidFiles = applyRigidAlignment(parentDir, comFiles, None, medianFile)
 
             """Compute largest bounding box and apply cropping"""
-            croppedFiles = applyCropping(parentDir + "cropped", rigidFiles, None )
+            croppedFiles = applyCropping(parentDir + "cropped", rigidFiles, parentDir + "aligned/*.aligned.nrrd")
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
         if args.interactive:
