@@ -68,7 +68,7 @@ To run on a subset of the data in the use case, add the --use_subsample tag foll
 
             python RunUseCase.py --use_case [insert name of use case here] --use_subsample 4
 
-This will select a representative sample of the specified size to run through the pipeline so that it runs faster and uses less memory. The sample is selected by running k-mean clustering, then picking one sample from each cluster so that the resulting sample is representative of all the data.
+This will select a representative sample of the specified size to run through the pipeline so that it runs faster and uses less memory. The sample is selected by running clustering, then picking one sample from each cluster so that the resulting sample is representative of all the data.
 
 #### --interactive
 When the interactive tag is used, the user must press enter after each step. This allows the user to inspect the output between steps of the pipeline.
@@ -76,7 +76,7 @@ When the interactive tag is used, the user must press enter after each step. Thi
             python RunUseCase.py --use_case [insert name of use case here] --interactive
 
 #### --start_with_prepped_data
-For some use cases, prepped data is available and the user can skip the grooming steps if they prefer. To do so the --start_with_prepped_data tag must be used.
+When this tag is used, the grooming steps are skipped. Instead of generating the distance transforms from segmentations via grooming, the distance transforms from the data .zip folder are used in optimization. If a user wishes to start with the optimization step, add --start_with_prepped_data tag.
 
             python RunUseCase.py --use_case [insert name of use case here] --start_with_prepped_data
            
