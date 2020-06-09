@@ -43,8 +43,6 @@ public:
   //! clear the cache
   void clear_cache();
 
-  void shutdown_threads();
-
 public Q_SLOTS:
   void handle_thread_complete(const MeshWorkItem &item, vtkSmartPointer<vtkPolyData> mesh);
 
@@ -52,8 +50,6 @@ Q_SIGNALS:
   void new_mesh();
 
 private:
-
-  void do_work();
 
   Preferences& prefs_;
 

@@ -34,32 +34,6 @@ void MeshManager::clear_cache()
 }
 
 //---------------------------------------------------------------------------
-void MeshManager::shutdown_threads()
-{
-  std::cerr << "Shut Down MeshManager Threads";
-/*
-   for (size_t i = 0; i < this->threads_.size(); i++) {
-    if (this->threads_[i]->isRunning()) {
-      this->threads_[i]->quit();
-      this->threads_[i]->terminate();
-      std::cerr << "waiting...\n";
-      //this->threads_[i]->wait(1000);
-      std::cerr << "done waiting...\n";
-    }
-    //this->threads_[i]->exit();
-
-    //std::cerr << "Terminate!\n";
-    //this->threads_[i]->terminate();
-    //this->threads_[i]->wait(1000);
-    //  }
-   }
-   for (size_t i = 0; i < this->threads_.size(); i++) {
-    //delete this->threads_[i];
-   }
- */
-}
-
-//---------------------------------------------------------------------------
 void MeshManager::generate_mesh(const MeshWorkItem item)
 {
   // check cache first
@@ -117,17 +91,7 @@ void MeshManager::handle_thread_complete(const MeshWorkItem &item,
 {
   this->mesh_cache_.insert_mesh(item, mesh);
   this->work_queue_.remove(item);
-  /*
-     this->thread_count_--;
-     int max_threads = this->prefs_.get_num_threads();
-     while (!this->threads_.empty() && this->thread_count_ < max_threads) {
-     QThread* thread = this->threads_.front();
-     std::cerr << "starting next thread\n";
-     this->threads_.pop();
-     thread->start();
-     this->thread_count_++;
-     }
-   */
+
   emit new_mesh();
 }
 
@@ -135,20 +99,4 @@ void MeshManager::handle_thread_complete(const MeshWorkItem &item,
 QSharedPointer<SurfaceReconstructor> MeshManager::get_surface_reconstructor()
 {
   return this->surface_reconstructor_;
-}
-
-//---------------------------------------------------------------------------
-void MeshManager::do_work()
-{
-  if (this->thread_count_ < 8) {
-/*
-    MeshWorker* worker = new MeshWorker(this->prefs_, item,
-                                        &this->work_queue_, &this->mesh_cache_);
-    worker->get_mesh_generator()->set_surface_reconstructor(this->surface_reconstructor_);
-
-    connect(worker, &MeshWorker::result_ready, this, &MeshManager::handle_thread_complete);
-
-    this->thread_pool_.start(worker);
- */
-  }
 }

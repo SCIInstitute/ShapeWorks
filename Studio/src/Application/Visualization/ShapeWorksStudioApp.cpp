@@ -1165,7 +1165,6 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event)
 
   this->hide();
   this->optimize_tool_->shutdown_threads();
-  this->session_->get_mesh_manager()->shutdown_threads();
   QCoreApplication::processEvents();
 }
 

@@ -48,8 +48,6 @@ public:
   ImageType::Pointer get_groomed_image();
 
   /// Import the groomed raw image file
-  void import_groomed_file(QString filename, double iso);
-  /// Import the groomed raw image file
   void import_groomed_image(ImageType::Pointer img, double iso);
 
   /// Retrieve the groomed mesh

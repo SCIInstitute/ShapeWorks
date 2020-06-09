@@ -30,6 +30,18 @@ void Mesh::set_poly_data(vtkSmartPointer<vtkPolyData> poly_data)
 }
 
 //---------------------------------------------------------------------------
+void Mesh::set_error_message(std::string error_message)
+{
+  this->error_message_ = error_message;
+}
+
+//---------------------------------------------------------------------------
+std::string Mesh::get_error_message()
+{
+  return this->error_message_;
+}
+
+//---------------------------------------------------------------------------
 QString Mesh::get_dimension_string()
 {
   QString str = "[" + QString::number(this->dimensions_[0]) +
@@ -42,29 +54,6 @@ QString Mesh::get_dimension_string()
 vtkSmartPointer<vtkPolyData> Mesh::get_poly_data()
 {
   return this->poly_data_;
-}
-
-//---------------------------------------------------------------------------
-ImageType::Pointer Mesh::create_from_file(std::string filename, double iso_value)
-{
-
-  // read file using ITK
-  ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName(filename);
-  reader->Update();
-  ImageType::Pointer image = reader->GetOutput();
-
-  // set orientation to RAI
-  itk::OrientImageFilter<ImageType, ImageType>::Pointer orienter =
-    itk::OrientImageFilter<ImageType, ImageType>::New();
-  orienter->UseImageDirectionOn();
-  orienter->SetDesiredCoordinateOrientation(itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
-  orienter->SetInput(image);
-  orienter->Update();
-  image = orienter->GetOutput();
-
-  this->create_from_image(image, iso_value);
-  return image;
 }
 
 //---------------------------------------------------------------------------

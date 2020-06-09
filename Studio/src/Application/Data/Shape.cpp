@@ -137,14 +137,6 @@ ImageType::Pointer Shape::get_groomed_image()
 }
 
 //---------------------------------------------------------------------------
-void Shape::import_groomed_file(QString filename, double iso)
-{
-  this->groomed_mesh_ = QSharedPointer<Mesh>(new Mesh());
-  this->groomed_image_ = this->groomed_mesh_->create_from_file(filename.toStdString(), iso);
-  this->groomed_filename_ = filename;
-}
-
-//---------------------------------------------------------------------------
 void Shape::import_groomed_image(ImageType::Pointer img, double iso)
 {
   this->groomed_mesh_ = QSharedPointer<Mesh>(new Mesh());
@@ -164,8 +156,7 @@ QSharedPointer<Mesh> Shape::get_groomed_mesh()
       std::cerr << "Error: asked for groom mesh when none as present!\n";
       //return this->groomed_mesh_;
     }
-    else
-    {
+    else {
       this->generate_meshes(this->subject_->get_groomed_filenames(), this->groomed_mesh_);
     }
   }

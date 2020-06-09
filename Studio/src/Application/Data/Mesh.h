@@ -26,29 +26,32 @@ class Mesh
 {
 public:
 
-  /// Constructor
+  //! Constructor
   Mesh();
 
-  /// Destructor
+  //! Destructor
   ~Mesh();
 
-  /// Create a mesh from a file
-  ImageType::Pointer create_from_file(std::string filename, double iso_value);
-
-  /// Create a mesh from an image
+  //! Create a mesh from an image
   void create_from_image(ImageType::Pointer img, double iso_value);
 
-  /// Get the dimensions as a string for display (if loaded from an image)
+  //! Get the dimensions as a string for display (if loaded from an image)
   QString get_dimension_string();
 
-  /// Get the mesh polydata
+  //! Get the mesh polydata
   vtkSmartPointer<vtkPolyData> get_poly_data();
 
-  /// Get the center transform
+  //! Get the center transform
   vnl_vector<double> get_center_transform();
 
   //! Set the poly data directly
   void set_poly_data(vtkSmartPointer<vtkPolyData> poly_data);
+
+  //! Set the error message
+  void set_error_message(std::string error_message);
+
+  //! Return the error message
+  std::string get_error_message();
 
 private:
 
@@ -58,4 +61,8 @@ private:
 
   // the polydata
   vtkSmartPointer<vtkPolyData> poly_data_;
+
+  // error message if the polydata didn't load
+  std::string error_message_;
+
 };
