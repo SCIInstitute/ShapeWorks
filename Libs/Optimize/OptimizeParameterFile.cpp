@@ -315,18 +315,20 @@ bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimi
   }
 
   std::istringstream inputsBuffer;
-  std::string filename;
-  int numShapes = 0;
-
-  // load input shapes
-  std::vector < std::string > shapeFiles;
 
   inputsBuffer.str(elem->GetText());
   auto flags = optimize->GetDomainFlags();
 
-  int index = 0;
+  // load input shapes
+  std::vector < std::string > shapeFiles;
+  std::string filename;
   while (inputsBuffer >> filename) {
+    shapeFiles.push_back(filename);
+  }
 
+
+  for(int index = 0; index < shapeFiles.size(); index++) {
+    filename = shapeFiles[index];
     bool fixed_domain = false;
     for (int i = 0; i < flags.size(); i++) {
       if (flags[i] == index) {
@@ -348,19 +350,14 @@ bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimi
     else {
       optimize->AddImage(nullptr);
     }
-
-    shapeFiles.push_back(filename);
-    index++;
   }
 
   inputsBuffer.clear();
   inputsBuffer.str("");
 
-  numShapes = shapeFiles.size();
-
   std::vector < std::string > filenames;
 
-  for (int i = 0; i < numShapes; i++) {
+  for (int i = 0; i < shapeFiles.size(); i++) {
     char* str = new char[shapeFiles[i].length() + 1];
     strcpy(str, shapeFiles[i].c_str());
 
@@ -395,7 +392,7 @@ bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimi
     inputsBuffer.str("");
 
     // read point files only if they are all present
-    if (pointFiles.size() != numShapes) {
+    if (pointFiles.size() != shapeFiles.size()) {
       std::cerr << "ERROR: incorrect number of point files!" << std::endl;
       return false;
     }
