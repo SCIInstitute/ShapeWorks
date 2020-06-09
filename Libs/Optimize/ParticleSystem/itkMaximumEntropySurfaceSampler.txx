@@ -92,17 +92,20 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
     int ctr = 0;
     for (unsigned int i = 0; i < this->m_DomainList.size(); i++)
     {
+      if(m_domain_type == shapeworks::DomainType::Image) {
+        // Cast to ImageDomain
+        auto domain = m_DomainList[i];
         if (m_CuttingPlanes.size() > i)
         {
             for (unsigned int j = 0; j< m_CuttingPlanes[i].size(); j++)
-                m_DomainList[i]->SetCuttingPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b, m_CuttingPlanes[i][j].c);
+              domain->SetCuttingPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b, m_CuttingPlanes[i][j].c);
         }
 
         if (m_Spheres.size() > i)
         {
             for (unsigned int j = 0; j < m_Spheres[i].size();j++)
             {
-                m_DomainList[i]->AddSphere(m_Spheres[i][j].center,m_Spheres[i][j].radius);
+              domain->AddSphere(m_Spheres[i][j].center,m_Spheres[i][j].radius);
             }
         }
 
@@ -142,22 +145,23 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
                     themesh->need_speed();
                     themesh->setSpeedType(1);
 
-                    m_DomainList[i]->SetMesh(themesh);
-                    m_DomainList[i]->SetFids(m_FidsFiles[i].c_str());
+                    domain->SetMesh(themesh);
+                    domain->SetFids(m_FidsFiles[i].c_str());
                     int d = i % m_DomainsPerShape;
                     for (unsigned int c = 0; c < m_AttributesPerDomain[d]; c++)
                     {
                         int ctr1 = ctr++;
-                        m_DomainList[i]->SetFeaMesh(m_FeaMeshFiles[ctr1].c_str());
-                        m_DomainList[i]->SetFeaGrad(m_FeaGradFiles[ctr1].c_str());
+                        domain->SetFeaMesh(m_FeaMeshFiles[ctr1].c_str());
+                        domain->SetFeaGrad(m_FeaGradFiles[ctr1].c_str());
                     }
                 }
             }
         }
+      }
 
-        // END TEST CUTTING PLANE
-        m_ParticleSystem->AddDomain(m_DomainList[i]);
-        m_ParticleSystem->SetNeighborhood(i, m_NeighborhoodList[i]);
+      // END TEST CUTTING PLANE
+      m_ParticleSystem->AddDomain(m_DomainList[i]);
+      m_ParticleSystem->SetNeighborhood(i, m_NeighborhoodList[i]);
     }
 }
 
