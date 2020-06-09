@@ -9,8 +9,7 @@
 #pragma once
 
 #include "itkParticleImageDomainWithCurvature.h"
-//Prateep
-#include "vnl/vnl_matrix_fixed.h"
+
 #include "vnl/vnl_inverse.h"
 
 #include "TriMesh.h"
@@ -37,8 +36,6 @@ public:
 
   typedef typename Superclass::ImageType ImageType;
   typedef typename Superclass::PointType PointType;
-
-  typedef vnl_matrix_fixed<double, VDimension +1, VDimension +1> TransformType;
 
   /** Method for creation through the object factory. */
   itkNewMacro(ParticleImplicitSurfaceDomain);
@@ -86,8 +83,7 @@ public:
                        const vnl_vector<double> &c);
 
   /** Transform cutting planes based on base index. Base plane coordinates passed as argument. */
-  void TransformCuttingPlane(const TransformType &Trans, const vnl_vector<double> &base_a,
-                             const vnl_vector<double> &base_b, const vnl_vector<double> &base_c);
+  void TransformCuttingPlane(const vnl_matrix_fixed<double, VDimension + 1, VDimension + 1> &Trans) override;
 
 
   void SetMesh(TriMesh *mesh);

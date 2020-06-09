@@ -229,22 +229,13 @@ public:
         if (m_Initialized == true)
         {
             TransformType T1 = this->GetParticleSystem()->GetTransform(i) * this->GetParticleSystem()->GetPrefixTransform(i);
-            vnl_vector_fixed<double, Dimension> fa = m_DomainList[i]->GetA();
-            vnl_vector_fixed<double, Dimension> fb = m_DomainList[i]->GetB();
-            vnl_vector_fixed<double, Dimension> fc = m_DomainList[i]->GetC();
-            /* Copy vnl_vector_fixed to vnl_vector */
-            vnl_vector<double> a(Dimension); vnl_vector<double> b(Dimension); vnl_vector<double> c(Dimension);
-            for(unsigned int k = 0; k < Dimension; k++)
-            {
-                a[k] = fa[k]; b[k] = fb[k]; c[k] = fc[k];
-            }
             for(unsigned int d = 0; d < this->GetParticleSystem()->GetNumberOfDomains(); d++)
             {
                 if (this->GetParticleSystem()->GetDomainFlag(d) == false)
                 {
                     TransformType T2 = this->GetParticleSystem()->InvertTransform( this->GetParticleSystem()->GetTransform(d)
                                                                                    * this->GetParticleSystem()->GetPrefixTransform(d));
-                    m_DomainList[d]->TransformCuttingPlane( T2 * T1, a, b, c );
+                    m_ParticleSystem->GetDomain(d)->TransformCuttingPlane(T2 * T1);
                 }
             }
         }
