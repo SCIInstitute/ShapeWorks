@@ -92,7 +92,7 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
     int ctr = 0;
     for (unsigned int i = 0; i < this->m_DomainList.size(); i++)
     {
-      auto domain = m_DomainList[i];
+      ParticleDomain<Dimension> *domain = m_DomainList[i];
       if (m_CuttingPlanes.size() > i) {
         for (unsigned int j = 0; j < m_CuttingPlanes[i].size(); j++)
           domain->SetCuttingPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b, m_CuttingPlanes[i][j].c);
@@ -105,7 +105,7 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
       }
 
       if(m_domain_type == shapeworks::DomainType::Image) {
-        auto imageDomain = dynamic_cast<ParticleImplicitSurfaceDomain<typename ImageType::PixelType, Dimension> *>(m_DomainList[i]);
+        auto imageDomain = static_cast<ParticleImplicitSurfaceDomain<typename ImageType::PixelType, Dimension> *>(domain);
 
         if (m_AttributesPerDomain.size() > 0)
         {
