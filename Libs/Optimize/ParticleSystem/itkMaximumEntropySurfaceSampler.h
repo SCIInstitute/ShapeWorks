@@ -167,11 +167,6 @@ public:
         m_DomainList.push_back(domain);
     }
 
-    int NumDomains() const
-    {
-      return m_DomainList.size();
-    }
-
     void SetFidsFiles(const std::vector<std::string> &s)
     {
         m_FidsFiles = s;
