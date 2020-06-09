@@ -105,7 +105,7 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
       }
 
       if(m_domain_type == shapeworks::DomainType::Image) {
-        auto *imageDomain = static_cast<ParticleImplicitSurfaceDomain<typename ImageType::PixelType, Dimension> *>(m_DomainList[i]);
+        auto imageDomain = dynamic_cast<ParticleImplicitSurfaceDomain<typename ImageType::PixelType, Dimension> *>(m_DomainList[i]);
 
         if (m_AttributesPerDomain.size() > 0)
         {
@@ -151,7 +151,7 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
       }
 
       // END TEST CUTTING PLANE
-      m_ParticleSystem->AddDomain(m_DomainList[i]);
+      m_ParticleSystem->AddDomain(domain);
       m_ParticleSystem->SetNeighborhood(i, m_NeighborhoodList[i]);
     }
 }
