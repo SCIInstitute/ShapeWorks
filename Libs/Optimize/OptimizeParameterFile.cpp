@@ -88,11 +88,9 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
   }
 
   // read last so that we can skip loading any images from fixed domains
-  if (!this->read_inputs(&doc_handle, optimize)) {
-    return false;
-  }
-
-  if (!this->read_mesh_inputs(&doc_handle, optimize)) {
+  bool imageSuccess = this->read_image_inputs(&doc_handle, optimize);
+  bool meshSuccess = this->read_mesh_inputs(&doc_handle, optimize);
+  if (!imageSuccess && !meshSuccess) {
     return false;
   }
   if (!this->read_point_files(&doc_handle, optimize)) {
@@ -334,7 +332,7 @@ std::string OptimizeParameterFile::getFileNameWithoutExtension(std::string path)
 }
 
 //---------------------------------------------------------------------------
-bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimize)
+bool OptimizeParameterFile::read_image_inputs(TiXmlHandle* docHandle, Optimize* optimize)
 {
   TiXmlElement* elem = nullptr;
 

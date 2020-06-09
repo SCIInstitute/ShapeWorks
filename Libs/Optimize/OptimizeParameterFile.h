@@ -37,7 +37,7 @@ private:
 
   std::string getFileNameWithoutExtension(std::string path);
 
-  bool read_inputs(TiXmlHandle* docHandle, Optimize* optimize);
+  bool read_image_inputs(TiXmlHandle* docHandle, Optimize* optimize);
 
   bool read_mesh_attributes(TiXmlHandle *docHandle, Optimize *optimize);
 
