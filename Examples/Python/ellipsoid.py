@@ -80,11 +80,8 @@ def Run_Pipeline(args):
     -- Padding
     -- Center of Mass Alignment
     -- Rigid Alignment
-    -- Largest Bounding Box and Cropping
-
-    For detailed explainations of parameters for each tool, go to
-    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ImagePrepTools.pdf'
-    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/AlgnmentTools.pdf'
+    -- Largest Bounding Box and Cropping 
+    For a detailed explanation of grooming steps see: /Documentation/Workflow/Groom.md
     """
 
     print("\nStep 2. Groom - Data Pre-processing\n")

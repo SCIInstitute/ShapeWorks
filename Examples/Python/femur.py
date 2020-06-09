@@ -304,16 +304,16 @@ def Run_Pipeline(args):
     Now that we have the distance transform representation of data we create
     the parameter files for the shapeworks particle optimization routine.
     For more details on the plethora of parameters for shapeworks please refer to
-    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ParameterDescription.pdf'
+    '/Documentation/PDFs/ParameterDescription.pdf'
 
     We provide two different mode of operations for the ShapeWorks particle opimization;
     1- Single Scale model takes fixed number of particles and performs the optimization.
     For more detail about the optimization steps and parameters please refer to
-    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ScriptUsage.pdf'
+    '/Documentation/PDFs/ScriptUsage.pdf'
 
     2- Multi scale model optimizes for different number of particles in hierarchical manner.
     For more detail about the optimization steps and parameters please refer to
-    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ScriptUsage.pdf'
+    '/Documentation/PDFs/ScriptUsage.pdf'
 
     First we need to create a dictionary for all the parameters required by these
     optimization routines

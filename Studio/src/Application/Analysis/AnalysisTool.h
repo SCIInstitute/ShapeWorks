@@ -56,7 +56,7 @@ public:
   bool pcaAnimate();
   bool groupAnimate();
 
-  int getSampleNumber();
+  int get_sample_number();
 
   bool compute_stats();
 
@@ -114,6 +114,7 @@ public Q_SLOTS:
   void on_reconstructionButton_clicked();
 
 signals:
+
   void update_view();
   void pca_update();
   void progress(size_t);

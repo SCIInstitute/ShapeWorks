@@ -19,7 +19,7 @@
 #include <Data/vtkPolyDataToImageData.h>
 
 #include <vtkMetaImageWriter.h>
-#include <vtkPolyDataWriter.h>
+
 
 #include "CustomSurfaceReconstructionFilter.h"
 
