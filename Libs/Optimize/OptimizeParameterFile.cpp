@@ -86,11 +86,8 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
   if (!this->read_flag_domains(&doc_handle, optimize)) {
     return false;
   }
-
   // read last so that we can skip loading any images from fixed domains
-  bool imageSuccess = this->read_image_inputs(&doc_handle, optimize);
-  bool meshSuccess = this->read_mesh_inputs(&doc_handle, optimize);
-  if (!imageSuccess && !meshSuccess) {
+  if (!this->read_image_inputs(&doc_handle, optimize)) {
     return false;
   }
   if (!this->read_point_files(&doc_handle, optimize)) {
@@ -426,6 +423,27 @@ bool OptimizeParameterFile::read_mesh_attributes(TiXmlHandle *docHandle, Optimiz
   std::string filename;
   int numShapes = optimize->GetNumShapes();
 
+  // load mesh files
+  elem = docHandle->FirstChild("mesh_files").Element();
+  if (elem) {
+    std::vector<std::string> meshFiles;
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> filename) {
+      meshFiles.push_back(filename);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+
+    // read mesh files only if they are all present
+    if (meshFiles.size() != numShapes) {
+      std::cerr << "Error: incorrect number of mesh files!" << std::endl;
+      return false;
+    }
+    else {
+      optimize->SetMeshFiles(meshFiles);
+    }
+  }
+
   std::vector<int> attributes_per_domain = optimize->GetAttributesPerDomain();
 
   // attributes
@@ -540,38 +558,6 @@ bool OptimizeParameterFile::read_mesh_attributes(TiXmlHandle *docHandle, Optimiz
           return false;
         }
       }
-    }
-  }
-  return true;
-}
-
-
-//---------------------------------------------------------------------------
-bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* optimize)
-{
-  TiXmlElement* elem = nullptr;
-  std::istringstream inputsBuffer;
-  std::string filename;
-  int numShapes = optimize->GetNumShapes();
-
-  // load mesh files
-  elem = docHandle->FirstChild("mesh_files").Element();
-  if (elem) {
-    std::vector<std::string> meshFiles;
-    inputsBuffer.str(elem->GetText());
-    while (inputsBuffer >> filename) {
-      meshFiles.push_back(filename);
-    }
-    inputsBuffer.clear();
-    inputsBuffer.str("");
-
-    // read mesh files only if they are all present
-    if (meshFiles.size() != numShapes) {
-      std::cerr << "Error: incorrect number of mesh files!" << std::endl;
-      return false;
-    }
-    else {
-      optimize->SetMeshFiles(meshFiles);
     }
   }
   return true;
