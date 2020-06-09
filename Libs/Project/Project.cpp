@@ -7,8 +7,8 @@
 using namespace shapeworks;
 
 //---------------------------------------------------------------------------
-std::string ReplaceString(std::string subject, const std::string& search,
-                          const std::string& replace)
+static std::string replace_string(std::string subject, const std::string& search,
+                                  const std::string& replace)
 {
   size_t pos = 0;
   while ((pos = subject.find(search, pos)) != std::string::npos) {
@@ -113,16 +113,20 @@ int Project::get_number_of_domains()
     return seg_columns.size();
   }
 
-  auto mesh_columns = this->get_matching_columns("mesh_");
+  auto mesh_columns = this->get_matching_columns(MESH_PREFIX);
   if (mesh_columns.size() > 0) {
     return mesh_columns.size();
   }
 
-  /// TODO: DT's?
+  auto groom_columns = this->get_matching_columns(GROOMED_PREFIX);
+  if (groom_columns.size() > 0) {
+    return groom_columns.size();
+  }
 
   /// TODO: when only point files are specified, the user has to specify somewhere how many domains there are (if more than one)
 
-  return 0;
+  // default 1
+  return 1;
 }
 
 //---------------------------------------------------------------------------
@@ -229,24 +233,29 @@ void Project::store_subjects()
   std::vector<std::string> groomed_columns;
 
   for (int i = 0; i < seg_columns.size(); i++) {
-    std::string groom_column_name = ReplaceString(seg_columns[i], SEGMENTATION_PREFIX,
-                                                  GROOMED_PREFIX);
+    std::string groom_column_name = replace_string(seg_columns[i], SEGMENTATION_PREFIX,
+                                                   GROOMED_PREFIX);
     groomed_columns.push_back(groom_column_name);
   }
 
   for (int i = 0; i < num_subjects; i++) {
     std::shared_ptr<Subject> subject = this->subjects_[i];
 
+    // segmentations
     auto seg_files = subject->get_segmentation_filenames();
     if (seg_files.size() > seg_columns.size()) {
       seg_columns.push_back(std::string(SEGMENTATION_PREFIX) + "file");
     }
     this->set_list(seg_columns, i, seg_files);
-    auto groomed_files = subject->get_groomed_filenames();
-    if (groomed_files.size() == groomed_columns.size()) {
-      this->set_list(groomed_columns, i, groomed_files);
-    }
 
+    // groomed files
+    auto groomed_files = subject->get_groomed_filenames();
+    while (groomed_files.size() > groomed_columns.size()) {
+      groomed_columns.push_back(std::string(GROOMED_PREFIX) + "file");
+    }
+    this->set_list(groomed_columns, i, groomed_files);
+
+    // local files
     std::string local_filename = subject->get_local_particle_filename();
     if (local_filename != "") {
       this->set_value("local_particles", i, local_filename);

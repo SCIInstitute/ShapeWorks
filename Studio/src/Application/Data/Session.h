@@ -65,8 +65,6 @@ public:
   bool load_point_files(std::vector<std::string> file_names, bool local);
   bool update_points(std::vector<std::vector<itk::Point<double>>> points, bool local);
 
-  void set_reconstructed_present(bool b);
-
   bool is_light_project();
 
   bool get_groomed_present();
@@ -135,10 +133,6 @@ private:
   QVector<QSharedPointer<Shape>> shapes_;
 
   QSharedPointer<MeshManager> mesh_manager_;
-
-  bool original_present_{false};
-  bool groomed_present_{false};
-  bool particles_present_{false};
 
   bool groups_available_{false};
   bool is_light_project_{false};

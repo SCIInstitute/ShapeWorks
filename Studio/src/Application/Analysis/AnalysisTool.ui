@@ -283,7 +283,7 @@ QToolButton:pressed{
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="mean_tab">
       <attribute name="title">
