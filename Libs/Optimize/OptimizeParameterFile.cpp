@@ -326,7 +326,6 @@ std::string OptimizeParameterFile::getFileNameWithoutExtension(std::string path)
   // separate filename from the extension
   char *pch2;
   pch2 = strrchr(fname, '.');
-  std::cerr << pch2 << std::endl;
   int num = pch2 - fname + 1;
   int num2 = strlen(fname);
   strncpy(pch2, "", num2 - num);
@@ -577,6 +576,7 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
       optimize->SetMeshFiles(meshFiles);
     }
   }
+  return true;
 }
 
 //---------------------------------------------------------------------------
