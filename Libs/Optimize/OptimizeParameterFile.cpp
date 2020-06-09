@@ -303,6 +303,30 @@ bool OptimizeParameterFile::set_debug_parameters(TiXmlHandle* docHandle, Optimiz
   return true;
 }
 
+std::string OptimizeParameterFile::getFileNameWithoutExtension(std::string path) {
+  char *str = new char[path.length() + 1];
+  strcpy(str, path.c_str());
+
+  // separate filename from the full path
+  char *fname;
+  char *pch;
+  pch = strtok(str, "/");
+  while (pch != NULL) {
+    fname = pch;
+    pch = strtok(NULL, "/");
+  }
+
+  // separate filename from the extension
+  char *pch2;
+  pch2 = strrchr(fname, '.');
+  std::cerr << pch2 << std::endl;
+  int num = pch2 - fname + 1;
+  int num2 = strlen(fname);
+  strncpy(pch2, "", num2 - num);
+
+  return std::string(fname);
+}
+
 //---------------------------------------------------------------------------
 bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimize)
 {
@@ -320,15 +344,13 @@ bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimi
   auto flags = optimize->GetDomainFlags();
 
   // load input shapes
-  std::vector < std::string > shapeFiles;
-  std::string filename;
-  while (inputsBuffer >> filename) {
-    shapeFiles.push_back(filename);
+  std::vector < std::string > imageFiles;
+  std::string imagefilename;
+  while (inputsBuffer >> imagefilename) {
+    imageFiles.push_back(imagefilename);
   }
 
-
-  for(int index = 0; index < shapeFiles.size(); index++) {
-    filename = shapeFiles[index];
+  for(int index = 0; index < imageFiles.size(); index++) {
     bool fixed_domain = false;
     for (int i = 0; i < flags.size(); i++) {
       if (flags[i] == index) {
@@ -338,11 +360,11 @@ bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimi
 
     if (!fixed_domain) {
       if (this->verbosity_level_ > 1) {
-        std::cout << "Reading inputfile: " << filename << "...\n" << std::flush;
+        std::cout << "Reading inputfile: " << imageFiles[index] << "...\n" << std::flush;
       }
       typename itk::ImageFileReader < Optimize::ImageType > ::Pointer reader = itk::ImageFileReader <
         Optimize::ImageType > ::New();
-      reader->SetFileName(filename);
+      reader->SetFileName(imageFiles[index]);
       reader->UpdateLargestPossibleRegion();
       const auto image = reader->GetOutput();
       optimize->AddImage(image);
@@ -356,28 +378,10 @@ bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimi
   inputsBuffer.str("");
 
   std::vector < std::string > filenames;
-
-  for (int i = 0; i < shapeFiles.size(); i++) {
-    char* str = new char[shapeFiles[i].length() + 1];
-    strcpy(str, shapeFiles[i].c_str());
-
-    char* fname;
-    char* pch;
-    pch = strtok(str, "/");
-    while (pch != NULL) {
-      fname = pch;
-      pch = strtok(NULL, "/");
-    }
-
-    char* pch2;
-    pch2 = strrchr(fname, '.');
-    int num = pch2 - fname + 1;
-    int num2 = strlen(fname);
-    strncpy(pch2, "", num2 - num);
-
+  for (int i = 0; i < imageFiles.size(); i++) {
+    std::string fname = this->getFileNameWithoutExtension(imageFiles[i]);
     filenames.push_back(std::string(fname));
   }
-
   optimize->SetFilenames(filenames);
 
   // load point files
@@ -385,14 +389,15 @@ bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimi
   elem = docHandle->FirstChild("point_files").Element();
   if (elem) {
     inputsBuffer.str(elem->GetText());
-    while (inputsBuffer >> filename) {
-      pointFiles.push_back(filename);
+    std::string pointsfilename;
+    while (inputsBuffer >> pointsfilename) {
+      pointFiles.push_back(pointsfilename);
     }
     inputsBuffer.clear();
     inputsBuffer.str("");
 
     // read point files only if they are all present
-    if (pointFiles.size() != shapeFiles.size()) {
+    if (pointFiles.size() != imageFiles.size()) {
       std::cerr << "ERROR: incorrect number of point files!" << std::endl;
       return false;
     }

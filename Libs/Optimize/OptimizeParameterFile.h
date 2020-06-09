@@ -35,6 +35,8 @@ private:
 
   bool set_debug_parameters(TiXmlHandle* docHandle, Optimize* optimize);
 
+  std::string getFileNameWithoutExtension(std::string path);
+
   bool read_inputs(TiXmlHandle* docHandle, Optimize* optimize);
 
   bool read_mesh_inputs(TiXmlHandle* docHandle, Optimize* optimize);
