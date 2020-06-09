@@ -19,6 +19,7 @@
 #include "itkParticleMeanCurvatureAttribute.h"
 #include "itkParticleSurfaceNeighborhood.h"
 #include "itkParticleOmegaGradientFunction.h"
+#include "DomainType.h"
 
 #include "itkParticleModifiedCotangentEntropyGradientFunction.h"
 #include "itkParticleConstrainedModifiedCotangentEntropyGradientFunction.h"
@@ -187,6 +188,10 @@ public:
     void SetDomainsPerShape(int i)
     {
         m_DomainsPerShape = i;
+    }
+    void SetDomainType(shapeworks::DomainType domain_type)
+    {
+        m_domain_type = domain_type;
     }
     void SetAttributesPerDomain(const std::vector<int> &i)
     {
@@ -406,6 +411,7 @@ private:
     std::vector<int> m_AttributesPerDomain;
     int m_DomainsPerShape;
     double m_Spacing{0};
+    shapeworks::DomainType m_domain_type;
 
     std::string m_TransformFile;
     std::string m_PrefixTransformFile;

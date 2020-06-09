@@ -106,7 +106,6 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
             }
         }
 
-
         if (m_AttributesPerDomain.size() > 0)
         {
             if (m_AttributesPerDomain[i % m_DomainsPerShape] > 0)

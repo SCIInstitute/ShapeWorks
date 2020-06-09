@@ -229,6 +229,24 @@ int Optimize::GetDomainsPerShape()
 }
 
 //---------------------------------------------------------------------------
+void Optimize::SetDomainType(std::string& domain_type)
+{
+  if (domain_type == "image") {
+    this->m_domain_type = shapeworks::DomainType::Image;
+  }
+  else if (domain_type == "mesh") {
+    this->m_domain_type = shapeworks::DomainType::Mesh;
+  }
+  this->m_sampler->SetDomainType(this->m_domain_type);
+}
+
+//---------------------------------------------------------------------------
+shapeworks::DomainType Optimize::GetDomainType()
+{
+  return this->m_domain_type;
+}
+
+//---------------------------------------------------------------------------
 void Optimize::SetNumberOfParticles(std::vector<unsigned int> number_of_particles)
 {
   this->m_number_of_particles = number_of_particles;

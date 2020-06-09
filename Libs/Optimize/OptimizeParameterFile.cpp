@@ -34,6 +34,13 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
   }
   optimize->SetDomainsPerShape(domains_per_shape);
 
+  std::string domain_type = "image";
+  elem = doc_handle.FirstChild("domain_type").Element();
+  if (elem) {
+    domain_type = elem->GetText();
+  }
+  optimize->SetDomainType(domain_type);
+
   std::vector<unsigned int> number_of_particles;
   elem = doc_handle.FirstChild("number_of_particles").Element();
   if (elem) {
