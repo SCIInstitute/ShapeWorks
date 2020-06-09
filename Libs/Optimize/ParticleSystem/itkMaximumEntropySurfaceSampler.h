@@ -337,11 +337,6 @@ public:
     virtual void AllocateDataCaches();
     virtual void AllocateDomainsAndNeighborhoods();
     virtual void InitializeOptimizationFunctions();
-    virtual void DeleteImages() {
-        for(int i=0; i<m_DomainList.size(); i++) {
-            m_DomainList[i]->DeleteImages();
-        }
-    }
 
     /** */
     virtual void Initialize()
