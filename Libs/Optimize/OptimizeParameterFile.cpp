@@ -71,10 +71,6 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
     return false;
   }
 
-  if (!this->read_mesh_inputs(&doc_handle, optimize)) {
-    return false;
-  }
-
   if (!this->read_constraints(&doc_handle, optimize)) {
     return false;
   }
@@ -93,6 +89,17 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
 
   // read last so that we can skip loading any images from fixed domains
   if (!this->read_inputs(&doc_handle, optimize)) {
+    return false;
+  }
+
+  if (!this->read_mesh_inputs(&doc_handle, optimize)) {
+    return false;
+  }
+  if (!this->read_point_files(&doc_handle, optimize)) {
+    return false;
+  }
+
+  if (!this->read_mesh_attributes(&doc_handle, optimize)) {
     return false;
   }
 
@@ -343,7 +350,7 @@ bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimi
   inputsBuffer.str(elem->GetText());
   auto flags = optimize->GetDomainFlags();
 
-  // load input shapes
+  // load input images
   std::vector < std::string > imageFiles;
   std::string imagefilename;
   while (inputsBuffer >> imagefilename) {
@@ -383,8 +390,14 @@ bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimi
     filenames.push_back(std::string(fname));
   }
   optimize->SetFilenames(filenames);
+  return true;
+}
 
+//---------------------------------------------------------------------------
+bool OptimizeParameterFile::read_point_files(TiXmlHandle *docHandle, Optimize *optimize) {
   // load point files
+  TiXmlElement *elem = nullptr;
+  std::istringstream inputsBuffer;
   std::vector <std::string> pointFiles;
   elem = docHandle->FirstChild("point_files").Element();
   if (elem) {
@@ -397,7 +410,7 @@ bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimi
     inputsBuffer.str("");
 
     // read point files only if they are all present
-    if (pointFiles.size() != imageFiles.size()) {
+    if (pointFiles.size() != optimize->GetNumShapes()) {
       std::cerr << "ERROR: incorrect number of point files!" << std::endl;
       return false;
     }
@@ -405,45 +418,23 @@ bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimi
       optimize->SetPointFiles(pointFiles);
     }
   }
-
   return true;
 }
 
 //---------------------------------------------------------------------------
-bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* optimize)
-{
-  TiXmlElement* elem = nullptr;
+bool OptimizeParameterFile::read_mesh_attributes(TiXmlHandle *docHandle, Optimize *optimize) {
+
+  TiXmlElement *elem = nullptr;
   std::istringstream inputsBuffer;
   std::string filename;
   int numShapes = optimize->GetNumShapes();
-
-  // load mesh files
-  elem = docHandle->FirstChild("mesh_files").Element();
-  if (elem) {
-    std::vector<std::string> meshFiles;
-    inputsBuffer.str(elem->GetText());
-    while (inputsBuffer >> filename) {
-      meshFiles.push_back(filename);
-    }
-    inputsBuffer.clear();
-    inputsBuffer.str("");
-
-    // read mesh files only if they are all present
-    if (meshFiles.size() != numShapes) {
-      std::cerr << "Error: incorrect number of mesh files!" << std::endl;
-      return false;
-    }
-    else {
-      optimize->SetMeshFiles(meshFiles);
-    }
-  }
 
   std::vector<int> attributes_per_domain = optimize->GetAttributesPerDomain();
 
   // attributes
   if ((attributes_per_domain.size() >= 1 &&
-       *std::max_element(attributes_per_domain.begin(),
-                         attributes_per_domain.end()) > 0) ||
+      *std::max_element(attributes_per_domain.begin(),
+      attributes_per_domain.end()) > 0) ||
       optimize->GetUseMeshBasedAttributes()) {
     // attribute scales
     double sc;
@@ -520,7 +511,7 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
       else {
         if (attributes_per_domain.size() >= 1 &&
             *std::max_element(attributes_per_domain.begin(),
-                              attributes_per_domain.end()) > 0) {
+            attributes_per_domain.end()) > 0) {
           std::cerr << "ERROR: No feature gradient files!!!" << std::endl;
           return false;
         }
@@ -547,7 +538,7 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
       else {
         if (attributes_per_domain.size() >= 1 &&
             *std::max_element(attributes_per_domain.begin(),
-                              attributes_per_domain.end()) > 0) {
+            attributes_per_domain.end()) > 0) {
           std::cerr << "ERROR: Must provide fids!!" << std::endl;
           return false;
         }
@@ -555,6 +546,37 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
     }
   }
   return true;
+}
+
+
+//---------------------------------------------------------------------------
+bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* optimize)
+{
+  TiXmlElement* elem = nullptr;
+  std::istringstream inputsBuffer;
+  std::string filename;
+  int numShapes = optimize->GetNumShapes();
+
+  // load mesh files
+  elem = docHandle->FirstChild("mesh_files").Element();
+  if (elem) {
+    std::vector<std::string> meshFiles;
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> filename) {
+      meshFiles.push_back(filename);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+
+    // read mesh files only if they are all present
+    if (meshFiles.size() != numShapes) {
+      std::cerr << "Error: incorrect number of mesh files!" << std::endl;
+      return false;
+    }
+    else {
+      optimize->SetMeshFiles(meshFiles);
+    }
+  }
 }
 
 //---------------------------------------------------------------------------
