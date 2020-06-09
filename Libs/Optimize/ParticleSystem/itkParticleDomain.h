@@ -64,6 +64,7 @@ public:
   virtual void SetCuttingPlane(const vnl_vector<double>& a, const vnl_vector<double>& b, const vnl_vector<double> &c) = 0;
   virtual void TransformCuttingPlane(const vnl_matrix_fixed<double, VDimension + 1, VDimension + 1> &Trans) = 0;
 
+  virtual void AddSphere(const vnl_vector_fixed<double, VDimension> &v, double r) = 0;
 
   virtual void DeleteImages() = 0;
   virtual void DeletePartialDerivativeImages() = 0;

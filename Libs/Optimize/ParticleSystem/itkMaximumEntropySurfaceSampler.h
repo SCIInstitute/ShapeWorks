@@ -214,7 +214,7 @@ public:
 
         if (m_Initialized == true)
         {
-            m_DomainList[i]->SetCuttingPlane(va,vb,vc);
+            m_ParticleSystem->GetDomain(i)->SetCuttingPlane(va, vb, vc);
         }
     }
 
@@ -251,7 +251,7 @@ public:
 
         if (m_Initialized == true)
         {
-            m_DomainList[i]->AddSphere(c,r);
+            m_ParticleSystem->GetDomain(i)->AddSphere(c, r);
         }
     }
 

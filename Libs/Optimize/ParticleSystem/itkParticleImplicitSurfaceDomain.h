@@ -129,7 +129,7 @@ public:
 
   /** Maintain a list of spheres within the domain.  These are used as 
       soft constraints by some particle forcing functions. */
-  void AddSphere(const vnl_vector_fixed<double,VDimension> &v, double r)
+  void AddSphere(const vnl_vector_fixed<double,VDimension> &v, double r) override
   {
 //    if (r > 0) -- Praful, sign will be used to determine inwards or outwards
 //    {
