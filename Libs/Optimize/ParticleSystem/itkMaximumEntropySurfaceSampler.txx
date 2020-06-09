@@ -92,22 +92,20 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
     int ctr = 0;
     for (unsigned int i = 0; i < this->m_DomainList.size(); i++)
     {
-      if(m_domain_type == shapeworks::DomainType::Image) {
-        // Cast to ImageDomain
-        auto domain = m_DomainList[i];
-        if (m_CuttingPlanes.size() > i)
-        {
-            for (unsigned int j = 0; j< m_CuttingPlanes[i].size(); j++)
-              domain->SetCuttingPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b, m_CuttingPlanes[i][j].c);
-        }
+      auto domain = m_DomainList[i];
+      if (m_CuttingPlanes.size() > i) {
+        for (unsigned int j = 0; j < m_CuttingPlanes[i].size(); j++)
+          domain->SetCuttingPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b, m_CuttingPlanes[i][j].c);
+      }
 
-        if (m_Spheres.size() > i)
-        {
-            for (unsigned int j = 0; j < m_Spheres[i].size();j++)
-            {
-              domain->AddSphere(m_Spheres[i][j].center,m_Spheres[i][j].radius);
-            }
+      if (m_Spheres.size() > i) {
+        for (unsigned int j = 0; j < m_Spheres[i].size(); j++) {
+          domain->AddSphere(m_Spheres[i][j].center, m_Spheres[i][j].radius);
         }
+      }
+
+      if(m_domain_type == shapeworks::DomainType::Image) {
+        auto *imageDomain = static_cast<ParticleImplicitSurfaceDomain<typename ImageType::PixelType, Dimension> *>(m_DomainList[i]);
 
         if (m_AttributesPerDomain.size() > 0)
         {
@@ -138,14 +136,14 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
                     themesh->need_speed();
                     themesh->setSpeedType(1);
 
-                    domain->SetMesh(themesh);
-                    domain->SetFids(m_FidsFiles[i].c_str());
+                    imageDomain->SetMesh(themesh);
+                    imageDomain->SetFids(m_FidsFiles[i].c_str());
                     int d = i % m_DomainsPerShape;
                     for (unsigned int c = 0; c < m_AttributesPerDomain[d]; c++)
                     {
                         int ctr1 = ctr++;
-                        domain->SetFeaMesh(m_FeaMeshFiles[ctr1].c_str());
-                        domain->SetFeaGrad(m_FeaGradFiles[ctr1].c_str());
+                        imageDomain->SetFeaMesh(m_FeaMeshFiles[ctr1].c_str());
+                        imageDomain->SetFeaGrad(m_FeaGradFiles[ctr1].c_str());
                     }
                 }
             }
