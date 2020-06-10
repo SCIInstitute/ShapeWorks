@@ -1,9 +1,5 @@
 #include "ShapeworksUtils.h"
 
-#include <vtkIterativeClosestPointTransform.h>
-#include <vtkTransformPolyDataFilter.h>
-#include <vtkLandmarkTransform.h>
-#include <vtkTransform.h>
 
 #include <sys/stat.h>
 
@@ -20,26 +16,6 @@ bool ShapeworksUtils::is_directory(const std::string &pathname)
     return true;
   }
   return false;
-}
-
-Matrix ShapeworksUtils::icp(const vtkSmartPointer<vtkPolyData> target, const vtkSmartPointer<vtkPolyData> source, const unsigned iterations)
-{
-  vtkSmartPointer<vtkIterativeClosestPointTransform> icp = vtkSmartPointer<vtkIterativeClosestPointTransform>::New();
-  icp->SetSource(source);
-  icp->SetTarget(target);
-  icp->GetLandmarkTransform()->SetModeToRigidBody();
-  icp->SetMaximumNumberOfIterations(iterations);
-  icp->Modified();
-  icp->Update();
-
-  vtkSmartPointer<vtkTransformPolyDataFilter> icpTransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-  icpTransformFilter->SetInputData(source);
-  icpTransformFilter->SetTransform(icp);
-  icpTransformFilter->Update();
-
-  Matrix xmat = getMatrix(icp->GetMatrix());
-
-  return xmat;
 }
 
 Matrix33 ShapeworksUtils::getMatrix(const vtkSmartPointer<vtkMatrix4x4> mat)

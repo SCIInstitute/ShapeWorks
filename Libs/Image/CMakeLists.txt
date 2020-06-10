@@ -15,6 +15,7 @@ target_include_directories(Image PUBLIC
   $<INSTALL_INTERFACE:include>)
 target_link_libraries(Image
   Common
+  Mesh
   ${ITK_LIBRARIES}
   )
 

@@ -1,4 +1,5 @@
 #include "ImageUtils.h"
+#include "MeshUtils.h"
 
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
@@ -50,15 +51,13 @@ TransformPtr ImageUtils::createCenterOfMassTransform(const Image &image)
   return xform;
 }
 
-Image& ImageUtils::rigidRegistration(Image &img, const Image &target, const Image &source, float isoValue, unsigned iterations)
+Image& ImageUtils::rigidRegistration(Image &image, const Image &target, const Image &source, float isoValue, unsigned iterations)
 {
   vtkSmartPointer<vtkPolyData> targetContour = Image::getPolyData(target, isoValue);
   vtkSmartPointer<vtkPolyData> sourceContour = Image::getPolyData(source, isoValue);
-  Matrix mat = ShapeworksUtils::icp(targetContour, sourceContour, iterations);
-  AffineTransformPtr xform(AffineTransform::New());
-  xform->SetMatrix(mat);
-  img.applyTransform(xform, target);
-  return img;
+  Matrix mat(ShapeworksUtils::getMatrix(MeshUtils::createIcpTransform(sourceContour, targetContour, iterations)));
+  image.applyTransform(createAffineTransform(mat), target);
+  return image;
 }
 
 TransformPtr ImageUtils::createWarpTransform(const std::string &source_file, const std::string &target_file, const int pointFactor)

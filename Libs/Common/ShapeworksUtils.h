@@ -3,7 +3,6 @@
 #include "Shapeworks.h"
 
 #include <vtkSmartPointer.h>
-#include <vtkPolyData.h>
 #include <vtkMatrix4x4.h>
 
 namespace shapeworks {
@@ -15,9 +14,6 @@ public:
   /// returns true if pathname is a directory
   // TODO: in C++17 this is a standard function
   static bool is_directory(const std::string &pathname);
-
-  /// vtkIterativeClosestPointTransform
-  static Matrix icp(const vtkSmartPointer<vtkPolyData> target, const vtkSmartPointer<vtkPolyData> moving, const unsigned iterations = 20);
 
   /// converts a vtkMatrix4x4 to a [non-homogenous] shapeworks::Matrix33
   static Matrix33 getMatrix(const vtkSmartPointer<vtkMatrix4x4> mat);
