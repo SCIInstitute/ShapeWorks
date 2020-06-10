@@ -119,8 +119,7 @@ The default values of this use case are as below.
 ![left Atrium multiScale](../Images/leftatrium_multiscale.png)
 
 #### PCA
-https://youtu.be/ojTKiSsordA
-[![left Atrium singleScale PCA mode](../Images/leftatrium_multiscale_pca_thumbnail.png)](https://youtu.be/ojTKiSsordA)
+[![left Atrium Multi Scale PCA mode](../Images/leftatrium_multiscale_pca_thumbnail.png)](https://youtu.be/ojTKiSsordA)
 
 ### Analyze
 
