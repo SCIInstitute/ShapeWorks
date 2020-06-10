@@ -30,7 +30,7 @@ Returning ShapeWorks Portal users: Enter your username and password
 Username: 
 ```
 
-![ShapeWorks Portal Account Registration Screenshot](../images/ShapeWorksPortalAccountRegistration.png)
+![ShapeWorks Portal Account Registration Screenshot](../Images/ShapeWorksPortalAccountRegistration.png)
 
 **Do not use the same password as for your bank account or email!**  
 After registering a free account, you can log in from within the script
