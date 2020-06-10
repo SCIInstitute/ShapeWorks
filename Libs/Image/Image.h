@@ -179,7 +179,7 @@ public:
   Point3 centerOfMass(PixelType minval = 0.0, PixelType maxval = 1.0) const;  
 
   /// computes the logical coordinates of the largest region of data <= the given isoValue
-  Image::Region boundingBox() const;
+  Image::Region boundingBox(PixelType isoValue = 1.0) const;
 
   /// converts from pixel coordinates to physical space
   Point3 logicalToPhysical(const Coord &v) const;
