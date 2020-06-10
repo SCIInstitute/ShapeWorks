@@ -62,7 +62,7 @@ Installation
 Users
 ---------------------
 
-ShapeWorks provides official user releases, the features of which can be seen at [ChangeLog](ChangeLog).
+ShapeWorks provides official user releases, the features of which can be seen at [ChangeLog](Documentation/ChangeLog.md).
 
 First, download the latest ShapeWorks binary release:  
 https://github.com/SCIInstitute/ShapeWorks/releases/latest
