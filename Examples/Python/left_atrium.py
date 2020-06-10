@@ -152,7 +152,6 @@ def Run_Pipeline(args):
         For detailed explainations of parameters for finding the largest bounding box and cropping, go to
         '/Documentation/PDFs/ImagePrepTools.pdf'
 
-
         Compute largest bounding box and apply cropping
         processRaw = True, processes raw and binary images with shared parameters.
         processRaw = False, applies the center of mass alignment only on segemnattion data.
