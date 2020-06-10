@@ -1,5 +1,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <pybind11/operators.h>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -24,10 +25,15 @@ PYBIND11_MODULE(shapeworks, m)
 {
   m.doc() = "ShapeWorks Python API";
 
+  py::class_<shapeworks::Coord>(m, "Coord")
+  .def(py::init<>())
+  // .def(py::init<unsigned, unsigned, unsigned>)
+  ;
+
   // Shapeworks globals
   py::class_<shapeworks::Dims>(m, "Dims")
   .def(py::init<>())
-  .def(py::init<unsigned, unsigned, unsigned>())
+  // .def(py::init<unsigned, unsigned, unsigned>())
   //.def("__repr__",              &shapeworks::Dims::print)   //todo, this should use insertion operator<<
   //.def("__setitem__",           &shapeworks::Dims::operator[], "idx"_a, "val"_a) //todo
   //.def("__getitem__",           &shapeworks::Dims::operator[], "idx"_a)
@@ -37,6 +43,47 @@ PYBIND11_MODULE(shapeworks, m)
   .def(py::init<>())
 //  .def(py::init<unsigned, unsigned, unsigned>(), [](double x, double y, double z){ self[0] = x; self[1] = y; self[2] = z; }) // todo: use a lambda kind of like this to initialize Point3 from three values
   ;
+
+  py::class_<shapeworks::Vector3>(m, "Vector3")
+  .def(py::init<>())
+  // .def(py::init<unsigned, unsigned, unsigned>)
+  ;
+
+  py::class_<shapeworks::Matrix44>(m, "Matrix44")
+  .def(py::init<>())
+  // .def(py::init<unsigned, unsigned, unsigned>)
+  ;
+
+  py::class_<shapeworks::Matrix33>(m, "Matrix33")
+  .def(py::init<>())
+  // .def(py::init<unsigned, unsigned, unsigned>)
+  ;
+
+  py::class_<shapeworks::IPoint3>(m, "IPoint3")
+  .def(py::init<>())
+  // .def(py::init<unsigned, unsigned, unsigned>)
+  ;
+
+  py::class_<shapeworks::FPoint3>(m, "FPoint3")
+  .def(py::init<>())
+  // .def(py::init<unsigned, unsigned, unsigned>)
+  ;
+
+  py::class_<shapeworks::Vector>(m, "Vector")
+  .def(py::init<>())
+  // .def(py::init<unsigned, unsigned, unsigned>)
+  ;
+
+  py::class_<shapeworks::Point>(m, "Point")
+  .def(py::init<>())
+  // .def(py::init<unsigned, unsigned, unsigned>)
+  ;
+
+  py::class_<shapeworks::Matrix>(m, "Matrix")
+  .def(py::init<>())
+  // .def(py::init<unsigned, unsigned, unsigned>)
+  ;
+
 //TODO: enable subscripting of Point3 in Python
 // >>> sz = img.size()
 // >>> sz[0]
@@ -44,14 +91,12 @@ PYBIND11_MODULE(shapeworks, m)
 //   File "<stdin>", line 1, in <module>
 // TypeError: 'shapeworks.Point3' object is not subscriptable
 
-  // TODO: add Vector3 and Matrix (Matrix44) 
-
   py::class_<shapeworks::Image>(m, "Image")
   .def(py::init<const std::string &>()) // can the argument for init be named (it's filename in this case)
   .def(py::init<shapeworks::Image::ImageType::Pointer>())
-  .def(py::init<const shapeworks::Image &&>())
+  // .def(py::init<const shapeworks::Image &&>())
   .def(py::init<const shapeworks::Image &>())
-  .def(py::self = py::self)
+  // .def(py::self = py::self)
   .def("write",                 &shapeworks::Image::write, "filename"_a, "compressed"_a=true)
   .def("antialias",             &shapeworks::Image::antialias, "smooth the image", "iterations"_a=50, "maxRMSErr"_a=0.01f, "layers"_a=3)
   .def("recenter",              &shapeworks::Image::recenter)
@@ -83,7 +128,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("center",                &shapeworks::Image::center)
   .def("coordsys",              &shapeworks::Image::coordsys)
   // .def("__repr__",              &shapeworks::Image::print)
-  // .def("__set__",             &shapeworks::Image::operator=)
+  // .def("__set__",               &shapeworks::Image::operator=, "img"_a)
   ;
 
   py::class_<shapeworks::Image::Region>(m, "Region")
