@@ -11,7 +11,6 @@
 #include <vtkMarchingCubes.h>
 #include <vtkTriangleFilter.h>
 #include <vtkPolyDataNormals.h>
-#include <vtkPolyDataWriter.h>
 
 #include <Data/Mesh.h>
 #include <Data/ItkToVtk.h>

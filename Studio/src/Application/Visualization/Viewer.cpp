@@ -165,13 +165,13 @@ Viewer::Viewer()
   this->scalar_bar_actor_->GetPositionCoordinate()->SetCoordinateSystemToNormalizedViewport();
   this->scalar_bar_actor_->GetPositionCoordinate()->SetValue(.2, .05);
   this->scalar_bar_actor_->SetWidth(0.8);
-  this->scalar_bar_actor_->SetHeight(0.1);
+  this->scalar_bar_actor_->SetHeight(0.05);
   this->scalar_bar_actor_->SetPosition(0.1, 0.01);
   this->scalar_bar_actor_->SetLabelFormat("%.0f");
   this->scalar_bar_actor_->GetTitleTextProperty()->SetFontFamilyToArial();
-  this->scalar_bar_actor_->GetTitleTextProperty()->SetFontSize(12);
+  this->scalar_bar_actor_->GetTitleTextProperty()->SetFontSize(4);
   this->scalar_bar_actor_->GetLabelTextProperty()->SetFontFamilyToArial();
-  this->scalar_bar_actor_->GetLabelTextProperty()->SetFontSize(10);
+  this->scalar_bar_actor_->GetLabelTextProperty()->SetFontSize(4);
   this->scalar_bar_actor_->GetLabelTextProperty()->SetJustificationToCentered();
   this->scalar_bar_actor_->GetLabelTextProperty()->SetColor(1, 1, 1);
 

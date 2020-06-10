@@ -87,7 +87,7 @@ def Run_Pipeline(args):
     -- Center of Mass Alignment
     -- Rigid Alignment
     -- Largest Bounding Box and Cropping 
-    For a detailed explanation of grooming steps see: https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Workflow/Groom.md
+    For a detailed explanation of grooming steps see: /Documentation/Workflow/Groom.md
     """
 
     print("\nStep 2. Groom - Data Pre-processing\n")
