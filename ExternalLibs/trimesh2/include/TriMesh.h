@@ -2169,6 +2169,12 @@ public:
         return faceID;
 
     }
+    
+    int GetClosestFaceToPoint(point x) {
+      Face f;
+      float a, b, g;
+      return GetTriangleInfoForPoint(x, f, a, b, g);
+    }
 
     int GetVertexInfoForPoint(point x)
     {

@@ -20,6 +20,8 @@
 #include "itkParticleSurfaceNeighborhood.h"
 #include "itkParticleOmegaGradientFunction.h"
 #include "DomainType.h"
+#include "MeshWrapper.h"
+#include "MeshDomain.h"
 
 #include "itkParticleModifiedCotangentEntropyGradientFunction.h"
 #include "itkParticleConstrainedModifiedCotangentEntropyGradientFunction.h"
@@ -165,6 +167,16 @@ public:
         }
 
         m_DomainList.push_back(domain);
+    }
+
+    void AddMesh(shapeworks::MeshWrapper * mesh) {
+
+      MeshDomain<Dimension> *domain = new MeshDomain<Dimension>();
+      m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood<ImageType>::New());
+      if (mesh) {
+        domain->SetMesh(mesh);
+      }
+      m_DomainList.push_back(domain);
     }
 
     void SetFidsFiles(const std::vector<std::string> &s)

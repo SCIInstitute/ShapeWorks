@@ -1911,6 +1911,12 @@ void Optimize::AddImage(ImageType::Pointer image) {
 }
 
 //---------------------------------------------------------------------------
+void Optimize::AddMesh(shapeworks::MeshWrapper *mesh) {
+  this->m_sampler->AddMesh(mesh);
+  this->m_num_shapes++;
+}
+
+//---------------------------------------------------------------------------
 void Optimize::SetFilenames(const std::vector<std::string> &filenames)
 { this->m_filenames = filenames; }
 
