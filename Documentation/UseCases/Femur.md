@@ -117,4 +117,4 @@ For more information see: [Analyze.md](../Workflow/Analyze.md)
 ![Femur Samples](../Images/femur_samples.png)
 
 #### PCA
-![Alt Text](../Images/femur_PCA.gif)
+[![Femur PCA](../Images/femur_PCA_thumbnail.png)](https://youtu.be/N4hmXSJsqRg)

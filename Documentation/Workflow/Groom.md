@@ -159,7 +159,7 @@ Here is the list of all parameters in the parameter file.
 inwards (NEGATIVE).
 alpha and beta are smoothing parameters in the following formula.
 
-<p align="center"><img src="images/alpha.png" /></p>
+<p align="center"><img src="../Images/alpha.png" /></p>
 
 #### Reflect Image
 This tool reflects an image. It can be used when you want to align all pairs of anatomies together. For example, if you have left and right femurs and want to align them all, you would first reflect one side or the other so they are all either left or right femurs.

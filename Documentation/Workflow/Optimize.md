@@ -13,12 +13,12 @@ simultaneously treating correspondence configuration as a random variable.
 
 Correspondence positions are optimized by gradient descent on an energy function that balances the negative entropy of 
 the distribution of particles in configuration space with the positive entropy of the distribution of the configurations
-in shape space. The method is to consider ![equation](../images/z_k.png)
+in shape space. The method is to consider ![equation](../Images/z_k.png)
  both as observations on a dM × 1 vector random
-variable Z and as N samples of M observations on N , d × 1 vector random variables ![equation](../images/x_k.png)
+variable Z and as N samples of M observations on N , d × 1 vector random variables ![equation](../Images/x_k.png)
  . The optimization to establish correspondence minimizes the energy function
  
-<p align="center"><img src="../images/Q.png" /></p>
+<p align="center"><img src="../Images/Q.png" /></p>
 
 where H is an estimation of differential entropy. Minimization of the first term in Q
 produces a compact distribution of samples in shape space, while the second term seeks
