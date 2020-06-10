@@ -116,8 +116,6 @@ bool ImageInfo::execute(const optparse::Values &options, SharedCommandData &shar
   bool centerofmass = static_cast<bool>(options.get("centerofmass"));
   bool boundingbox = static_cast<bool>(options.get("boundingbox"));
 
-  // (options, args) = parser.parse_args()
-
   if (dims)
     std::cout << "logical dims:          " << sharedData.image.dims() << std::endl;
   if (spacing)
@@ -135,18 +133,6 @@ bool ImageInfo::execute(const optparse::Values &options, SharedCommandData &shar
     std::cout << "center of mass (0,1]:  " << sharedData.image.centerOfMass() << std::endl;
   if (boundingbox)
     std::cout << "bounding box:          " << sharedData.image.boundingBox() << std::endl;
-  // if (len(args) == 0)
-  // {
-  //   std::cout << "logical dims:          " << sharedData.image.dims() << std::endl;
-  //   std::cout << "physical spacing:      " << sharedData.image.spacing() << std::endl;
-  //   std::cout << "size (spacing * dims): " << sharedData.image.size() << std::endl;
-  //   std::cout << "physical origin:       " << sharedData.image.origin() << std::endl;
-  //   std::cout << "direction (coordsys):  " << std::endl
-  //             << sharedData.image.coordsys();
-  //   std::cout << "center:                " << sharedData.image.center() << std::endl;
-  //   std::cout << "center of mass (0,1]:  " << sharedData.image.centerOfMass() << std::endl;
-  //   std::cout << "bounding box:          " << sharedData.image.boundingBox();
-  // }
   
   return true;
 }
