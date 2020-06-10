@@ -216,10 +216,9 @@ bool ResampleImage::execute(const optparse::Values &options, SharedCommandData &
   unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
 
   if (isoSpacing > 0.0)
-    ImageUtils::isoresample(sharedData.image, isoSpacing, Dims({sizeX, sizeY, sizeZ}));
+    ImageUtils::isoresample<Image>(sharedData.image, isoSpacing, Dims({sizeX, sizeY, sizeZ}));
   else
     sharedData.image.resample(Point3({spaceX, spaceY, spaceZ}), Dims({sizeX, sizeY, sizeZ}));
-
   return true;
 }
 
@@ -615,7 +614,7 @@ bool TopologyPreservingFilter::execute(const optparse::Values &options, SharedCo
   }
   else
   {
-    ImageUtils::topologyPreservingSmooth(sharedData.image, scaling, alpha, beta, iterations, applycurvature);
+    ImageUtils::topologyPreservingSmooth<Image>(sharedData.image, scaling, alpha, beta, iterations, applycurvature);
     return true;
   }
 }
