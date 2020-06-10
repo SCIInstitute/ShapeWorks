@@ -107,46 +107,43 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
       if(m_domain_type == shapeworks::DomainType::Image) {
         auto imageDomain = static_cast<ParticleImplicitSurfaceDomain<typename ImageType::PixelType, Dimension> *>(domain.GetPointer());
 
-        if (m_AttributesPerDomain.size() > 0)
+        if (m_AttributesPerDomain.size() > 0 && m_AttributesPerDomain[i % m_DomainsPerShape] > 0)
         {
-            if (m_AttributesPerDomain[i % m_DomainsPerShape] > 0)
-            {
-                TriMesh *themesh = TriMesh::read(m_MeshFiles[i].c_str());
-                if(themesh != NULL)
-                {
-                    themesh->need_faces();
-                    themesh->need_neighbors();
-                    orient(themesh);
-                    themesh->need_bsphere();
-                    if (!themesh->normals.empty())
-                        themesh->normals.clear();
-                    themesh->need_normals();
-                    if (!themesh->tstrips.empty())
-                        themesh->tstrips.clear();
-                    themesh->need_tstrips();
-                    if (!themesh->adjacentfaces.empty())
-                        themesh->adjacentfaces.clear();
-                    themesh->need_adjacentfaces();
-                    if (!themesh->across_edge.empty())
-                        themesh->across_edge.clear();
-                    themesh->need_across_edge();
-                    themesh->need_faceedges();
-                    themesh->need_oneringfaces();
-                    themesh->need_abs_curvatures();
-                    themesh->need_speed();
-                    themesh->setSpeedType(1);
+          TriMesh *themesh = TriMesh::read(m_MeshFiles[i].c_str());
+          if(themesh != NULL)
+          {
+              themesh->need_faces();
+              themesh->need_neighbors();
+              orient(themesh);
+              themesh->need_bsphere();
+              if (!themesh->normals.empty())
+                  themesh->normals.clear();
+              themesh->need_normals();
+              if (!themesh->tstrips.empty())
+                  themesh->tstrips.clear();
+              themesh->need_tstrips();
+              if (!themesh->adjacentfaces.empty())
+                  themesh->adjacentfaces.clear();
+              themesh->need_adjacentfaces();
+              if (!themesh->across_edge.empty())
+                  themesh->across_edge.clear();
+              themesh->need_across_edge();
+              themesh->need_faceedges();
+              themesh->need_oneringfaces();
+              themesh->need_abs_curvatures();
+              themesh->need_speed();
+              themesh->setSpeedType(1);
 
-                    imageDomain->SetMesh(themesh);
-                    imageDomain->SetFids(m_FidsFiles[i].c_str());
-                    int d = i % m_DomainsPerShape;
-                    for (unsigned int c = 0; c < m_AttributesPerDomain[d]; c++)
-                    {
-                        int ctr1 = ctr++;
-                        imageDomain->SetFeaMesh(m_FeaMeshFiles[ctr1].c_str());
-                        imageDomain->SetFeaGrad(m_FeaGradFiles[ctr1].c_str());
-                    }
-                }
-            }
+              imageDomain->SetMesh(themesh);
+              imageDomain->SetFids(m_FidsFiles[i].c_str());
+              int d = i % m_DomainsPerShape;
+              for (unsigned int c = 0; c < m_AttributesPerDomain[d]; c++)
+              {
+                  int ctr1 = ctr++;
+                  imageDomain->SetFeaMesh(m_FeaMeshFiles[ctr1].c_str());
+                  imageDomain->SetFeaGrad(m_FeaGradFiles[ctr1].c_str());
+              }
+          }
         }
       }
 
