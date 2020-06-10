@@ -345,7 +345,8 @@ TEST(ImageTests, topopreservingsmoothTest)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/topo-preserving-smooth/");
 
   Image image(test_location + "1x2x2.nrrd");
-  ImageUtils::topologyPreservingSmooth(image, 10, 10.5, 10, 1, true);
+  ImageUtils::topologyPreservingSmooth(image, 10, 10.5, 10);
+  image.write("/Users/cam/data/ShapeWorks/tmp/topo-preserving-smooth_baseline.nrrd");
   Image ground_truth(test_location + "topo-preserving-smooth_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);

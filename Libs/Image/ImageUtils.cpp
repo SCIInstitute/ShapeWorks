@@ -50,7 +50,7 @@ TransformPtr ImageUtils::createCenterOfMassTransform(const Image &image)
   return xform;
 }
 
-Image ImageUtils::rigidRegistration(Image &img, const Image &target, const Image &source, float isoValue, unsigned iterations)
+Image& ImageUtils::rigidRegistration(Image &img, const Image &target, const Image &source, float isoValue, unsigned iterations)
 {
   vtkSmartPointer<vtkPolyData> targetContour = Image::getPolyData(target, isoValue);
   vtkSmartPointer<vtkPolyData> sourceContour = Image::getPolyData(source, isoValue);
@@ -61,7 +61,7 @@ Image ImageUtils::rigidRegistration(Image &img, const Image &target, const Image
   return img;
 }
 
-TransformPtr ImageUtils::computeWarp(const std::string &source_file, const std::string &target_file, const int pointFactor)
+TransformPtr ImageUtils::createWarpTransform(const std::string &source_file, const std::string &target_file, const int pointFactor)
 { 
   typedef itk::ThinPlateSplineKernelTransform<double, 3> TPSTransform;
   typedef TPSTransform::PointSetType PointSet;
@@ -106,6 +106,21 @@ TransformPtr ImageUtils::computeWarp(const std::string &source_file, const std::
   tps->ComputeWMatrix();
 
   return tps;
+}
+
+Image& ImageUtils::topologyPreservingSmooth(Image& image, float scaling, float sigmoidAlpha, float sigmoidBeta)
+{
+  Image featureImage(image);
+  featureImage.applyGradientFilter();
+  featureImage.applySigmoidFilter(sigmoidAlpha, sigmoidBeta);
+
+  return image.applyTPLevelSetFilter(featureImage, scaling);
+}
+
+Image& ImageUtils::isoresample(Image& image, double isoSpacing, Dims outputSize)
+{
+  Point3 spacing({isoSpacing, isoSpacing, isoSpacing});
+  return image.resample(spacing, outputSize);
 }
 
 } //shapeworks
