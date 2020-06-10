@@ -37,7 +37,7 @@ The first option is to select the cutting plane in the beggining of the grooming
 
 The user will be prompted with “Type the prefix of the sample you wish to use to select the cutting plane from listed options and press enter.” and the options are listed. After they've typed the chosen sample prefix, an interactive window will pop up in which they can select the cutting plane. When the user is content with their selection, they simply close this window and the grooming process will continue. This process can be seen below.
 
-![Alt Text](../Images/option1Femur.gif)
+[![Femur option 1](../Images/femur_option1_thumbnail.gif)](https://youtu.be/DWPuyLY8iRk)
 
 Note that internally, whatever transformations are done to the sample the user has defined the cutting plane on will be done to the cutting plane as well, so that when it is time to clip the samples the cutting plane is still well defined. 
 
@@ -45,7 +45,7 @@ Note that internally, whatever transformations are done to the sample the user h
 
 If option 2 is selected, the user will be asked to select a cutting plane for the femur shaft in the middle of the grooming process. Once the reference sample for alignment has been selected, an interactive window will pop up with the reference sample and the user can define the cutting plane. Closing the window will continue the grooming process. 
 
-![Alt Text](../Images/option2Femur.gif)
+[![Femur option 2](../Images/femur_option2_thumbnail.gif)](https://youtu.be/BRw2JAKUiEY)
 
 ### Grooming
 For a description of the grooming tools and parameters, see: [Groom.md](../Workflow/Groom.md)
