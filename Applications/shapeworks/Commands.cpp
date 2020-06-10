@@ -540,7 +540,7 @@ bool SigmoidFilter::execute(const optparse::Values &options, SharedCommandData &
 void TPLevelSetFilter::buildParser()
 {
   const std::string prog = "tp-levelset";
-  const std::string desc = "segemnts structures in images using topology preserving geodesic active contour level set filter";
+  const std::string desc = "segments structures in images using topology preserving geodesic active contour level set filter";
   parser.prog(prog).description(desc);
 
   parser.add_option("--featureimage").action("store").type("string").set_default("").help("Path of feature image for filter");
@@ -574,14 +574,12 @@ bool TPLevelSetFilter::execute(const optparse::Values &options, SharedCommandDat
 void TopologyPreservingFilter::buildParser()
 {
   const std::string prog = "topo-preserving-smooth";
-  const std::string desc = "helper command that applies curvature, gradient, sigmoid, and uses them for the TPLevelSet filter";
+  const std::string desc = "Helper command that applies gradient and sigmoid filters to create a feature image for the TPLevelSet filter; note that a curvature flow filter is sometimes applied to the image before this.";
   parser.prog(prog).description(desc);
 
   parser.add_option("--scaling").action("store").type("double").set_default(20.0).help("Scale for TPLevelSet level set filter [default 20].");
   parser.add_option("--alpha").action("store").type("double").set_default(10.0).help("Value of alpha for sigmoid fitler [default 10.0].");
   parser.add_option("--beta").action("store").type("double").set_default(10.0).help("Value of beta for sigmoid fitler [default 10.0].");
-  parser.add_option("--iterations").action("store").type("int").set_default(10).help("Number of iterations for curvature filter [default 10].");
-  parser.add_option("--applycurvature").action("store").type("bool").set_default(true).help("Whether to perfrom curvature filter [default set to true]");
 
   Command::buildParser();
 }
@@ -591,19 +589,9 @@ bool TopologyPreservingFilter::execute(const optparse::Values &options, SharedCo
   double scaling = static_cast<double>(options.get("scaling"));
   double alpha = static_cast<double>(options.get("alpha"));
   double beta = static_cast<double>(options.get("beta"));
-  int iterations = static_cast<int>(options.get("iterations"));
-  bool applycurvature = static_cast<bool>(options.get("applycurvature"));
 
-  if (iterations < 0)
-  {
-    std::cout << "Must specify a valid iterations argument\n";
-    return false;
-  }
-  else
-  {
-    ImageUtils::topologyPreservingSmooth<Image>(sharedData.image, scaling, alpha, beta, iterations, applycurvature);
-    return true;
-  }
+  ImageUtils::topologyPreservingSmooth(sharedData.image, scaling, alpha, beta);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -838,7 +826,7 @@ bool WarpImage::execute(const optparse::Values &options, SharedCommandData &shar
     return false;
   }
 
-  TransformPtr transform(ImageUtils::computeWarp(source_landmarks, target_landmarks, factor));
+  TransformPtr transform(ImageUtils::createWarpTransform(source_landmarks, target_landmarks, factor));
   sharedData.image.applyTransform(transform);
 
   return true;

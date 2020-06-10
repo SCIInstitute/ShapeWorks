@@ -188,7 +188,6 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
            "curvature", "--iterations", str(smoothingIterations),
            "write-image", "--name", ref_tpdtnrrdfilename,
            "topo-preserving-smooth", "--scaling", str(scaling), "--alpha", str(alpha), "--beta", str(beta),
-           "--applycurvature", str(False),  # b/c starting with the results of curvature (smoothed)
            "write-image", "--name", ref_isonrrdfilename]
     subprocess.check_call(cmd)
 
@@ -230,7 +229,6 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
                    "curvature", "--iterations", str(smoothingIterations),
                    "write-image", "--name", tpdtnrrdfilename,
                    "topo-preserving-smooth", "--scaling", str(scaling), "--alpha", str(alpha), "--beta", str(beta),
-                   "--applycurvature", str(False), # b/c starting with the results of curvature (smoothed)
                    "write-image", "--name", isonrrdfilename]
             subprocess.check_call(cmd)
 
@@ -273,7 +271,6 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
                    "curvature", "--iterations", str(smoothingIterations),
                    "write-image", "--name", tpdtnrrdfilename,
                    "topo-preserving-smooth", "--scaling", str(scaling), "--alpha", str(alpha), "--beta", str(beta),
-                   "--applycurvature", str(False), # b/c starting with the results of curvature (smoothed)
                    "write-image", "--name", isonrrdfilename]
             subprocess.check_call(cmd)
 
@@ -351,7 +348,6 @@ def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoot
                "curvature", "--iterations", str(smoothingIterations),
                "write-image", "--name", tpdtnrrdfilename,
                "topo-preserving-smooth", "--scaling", str(scaling), "--alpha", str(alpha), "--beta", str(beta),
-               "--applycurvature", str(False), # b/c starting with the results of curvature (smoothed)
                "write-image", "--name", isonrrdfilename]
         subprocess.check_call(cmd)
         shutil.copy(tpdtnrrdfilename, finalDTDir)
