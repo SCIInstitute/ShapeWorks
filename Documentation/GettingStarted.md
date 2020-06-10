@@ -16,7 +16,7 @@ Shape Modeling Workflow
 
 ShapeWorks supports the typical three-stage workflow for shape modeling. 
 
-![ShapeWorks Workflow](images/workflow.png)
+![ShapeWorks Workflow](Images/workflow.png)
 
 
 Groom Stage
@@ -34,7 +34,7 @@ The [optimize stage](Workflow/Optimize.md) is an iterative cycle of corresponden
 
 The model initialization proceeds simultaneously with the optimization in a multiscale fashion using an iterative particle splitting strategy to generate progressively detailed correspondence models with each split.
 
-![Multiscale particles optimization](images/multiscale.png)
+![Multiscale particles optimization](Images/multiscale.png)
 
 
 Analyze Stage
@@ -42,7 +42,7 @@ Analyze Stage
 
 The [analyze stage](Workflow/Analyze.md) is the model analysis phase that supports the computation and visualization of the principal components of shape variation, average shapes, and group differences. 
 
-![Analyze](images/analyze.png)
+![Analyze](Images/analyze.png)
 
 ShapeWorks Interfaces
 =====================
@@ -70,7 +70,7 @@ ShapeWorksStudio
 ShapeWorksStudio is a cross-platform graphical user interface (GUI) to support the standard shape analysis workflow needed by most ShapeWorks users, enabling a wide variety of research scenarios. It is currently supporting image-based grooming and is actively under developement to support surface meshes, more sophisticated grooming operations (including user annotations) and offline processing.  ShapeWorksStudio enable real-time parameter tuning and visualization of the optimization process, and statistical analyses.
 
 
-[![ShapeWorksStudio](images/studio_thumbnail.png)](https://youtu.be/RX4uSB_ot3U "ShapeWorksStudio - Click to Watch!")
+[![ShapeWorksStudio](Images/studio_thumbnail.png)](https://youtu.be/RX4uSB_ot3U "ShapeWorksStudio - Click to Watch!")
 
 ShapeWorks in the Cloud 
 ---------------------
