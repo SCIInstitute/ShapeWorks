@@ -16,6 +16,7 @@ public:
   using PixelType = float;
   using ImageType = itk::Image<PixelType, 3>;
 
+  /// Logical region of an image (may be negative for relative regions to a given location in an image).
   struct Region
   {
     Coord min = Coord({static_cast<itk::IndexValueType>(1e6),static_cast<itk::IndexValueType>(1e6), static_cast<itk::IndexValueType>(1e6)});
