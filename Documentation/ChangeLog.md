@@ -3,7 +3,13 @@ ShapeWorks 5.4.0 - 2020-05-27
 * Studio: New XLSX based file format.  See Examples/Studio/ellipsoid.xlsx for an example
 * Studio: Improved scalability.  Files now loaded on-demand as necessary.
 * Lower memory footprint and faster optimization: ShapeWorks is now using [OpenVDB](https://www.openvdb.org/), a more memory-efficient data structure, for signed distance transforms. Along with other refactoring and code optimizations, ShapeWorks now uses *85% less memory* (from 57.09GB to 9.67GB in one use case). Additionally, the particles optimizer is now *2X faster*.
-* Lower memory footprint for estimating correspondences for new shapes on existing shape models: For <fixed_domains> usage, only distance transforms for the new shapes will be loaded. 
+* Lower memory footprint for estimating correspondences for new shapes on existing shape models: For <fixed_domains> usage, only distance transforms for the new shapes will be loaded.
+* Documentation: New Getting started documentation that goes over shape modeling workflow documentation, different ShapeWorks interfaces with a video illustration for Studio.
+* Documentation: Better documentation for the [RunUseCase](UseCases/UseCases.md) input arguments.
+* Documentation: Added [instructions](UseCases/UseCases.md#running-subsequent-analysis) on how to load a pre-trained shape model without running the full pipeline.
+* Studio: Changed exported meshes to be compatible with CloudCompare
+* Studio: Added PCA Raw Component Score Export
+* @0leks : About dataset portal?
 
 ShapeWorks 5.3.0 - 2020-02-20
 
