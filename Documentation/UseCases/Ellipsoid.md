@@ -2,7 +2,7 @@
 
 The ellipsoid dataset comprises of axis-aligned ellipsoids which are varying along a singular axis. This example is a steeping stone for the user to get familiar with the workflow of ShapeWorks. The ellipsoid.py use case represent the standard use version of a shape modeling workflow using ShapeWorks. It includes the full pipeline for processed as well as unprocessed data. 
 
-The use case is located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python)
+The use case is located at: [/Examples/Python](../Examples/Python)
 
 To run the use case, run ellipsoid.py with proper tags. The tags control the type of input data and the optimization method.
 * --start_with_prepped_data: just does the optimization on previously processed data

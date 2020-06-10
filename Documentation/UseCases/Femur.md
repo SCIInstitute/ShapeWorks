@@ -9,7 +9,7 @@ The femur meshes in this data set have been segmented with various shaft lengths
 ![Femur Lengths](../Images/femurLengths.png)
 
 ### Running the Use Case
-The use case is located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python)
+The use case is located at: [/Examples/Python](../Examples/Python)
 
 To run the use case, run:
             

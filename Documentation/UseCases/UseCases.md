@@ -44,9 +44,9 @@ joeshmoe downloaded the ellipsoid dataset from the ShapeWorks Portal.
 
 ## Running the Use Cases
 
-The use cases are located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python). When a use case is run the data is automatically downloaded but you must make an account as described above first.
+The use cases are located at: [/Examples/Python](../Examples/Python). When a use case is run the data is automatically downloaded but you must make an account as described above first.
 
-To run a use case, run the following command from the [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python) directory:
+To run a use case, run the following command from the [/Examples/Python](../Examples/Python) directory:
             
             python RunUseCase.py --use_case [insert name of use case here]
             

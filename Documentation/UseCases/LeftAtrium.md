@@ -33,7 +33,7 @@ The multi-scale optimization is providing the optimize particle system at each l
 
 
 ### Running Left Atrium
-The use case is located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python)
+The use case is located at: [/Examples/Python](../Examples/Python)
 
 To run the use case, run LAMain.py with proper tags. The tags control the type of input data and the optimization method.
 * --start_with_image_and_segmentation_data: to groom raw images as well as segmentation, the default is only segmentation
