@@ -87,7 +87,8 @@ Below are the default optimization parameters for this use case.
 ![left Atrium singleScale](../Images/leftatrium_singlescale.png)
 
 #### PCA
-![left Atrium singleScale PCA mode](../Images/leftatrium_singlescale_pca.gif)
+[![left Atrium singleScale PCA mode](../Images/leftatrium_singlescale_pca_thumbnail.png)](https://youtu.be/Coj6-xqw8dw)
+
 
 * Multiscale optimization uses use defined starting number of particles and number of optimization levels, 
 and the optimized particles of each level are used to initialize the next level particles. 
@@ -118,8 +119,8 @@ The default values of this use case are as below.
 ![left Atrium multiScale](../Images/leftatrium_multiscale.png)
 
 #### PCA
-![left Atrium singleScale PCA mode](../Images/leftatrium_multiScale_pca.gif)
-
+https://youtu.be/ojTKiSsordA
+[![left Atrium singleScale PCA mode](../Images/leftatrium_multiscale_pca_thumbnail.png)](https://youtu.be/ojTKiSsordA)
 
 ### Analyze
 
