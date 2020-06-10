@@ -362,17 +362,6 @@ TEST(ImageTests, blurTest)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, boundingBoxTest)
-{
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
-
-  Image image(test_location + "1x2x2.nrrd");
-  Image::Region bbox(Dims({100, 50, 50}));
-
-  // ASSERT_TRUE(image.boundingBox() == bbox);
-  ASSERT_FALSE(image.boundingBox() == bbox);
-}
-
 TEST(ImageTests, cropTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/crop/");

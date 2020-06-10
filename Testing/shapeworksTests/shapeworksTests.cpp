@@ -224,6 +224,20 @@ TEST(shapeworksTests, blur)
 }
 
 //---------------------------------------------------------------------------
+TEST(shapeworksTests, boundingbox)
+{
+  shapeworksEnvSetup();
+  ASSERT_FALSE(system("bash boundingbox.sh"));
+}
+
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, boundingboxfail)
+{
+  shapeworksEnvSetup();
+  ASSERT_TRUE(system("bash boundingboxfail.sh"));
+}
+
+//---------------------------------------------------------------------------
 TEST(shapeworksTests, icp)
 {
   shapeworksEnvSetup();
