@@ -15,7 +15,7 @@ In each step of grooming, we use the segmentation files to find the grooming par
 for alignment or the bounding box for cropping, then we save them in a TXT file and use the same set of parameters 
 to groom the raw images. At the end of this stage, we have groomed segmentations to convert to distance transforms 
 and run the optimization and also, grooming parameters, and groomed raw files.
-For this use case, we have 58 MRI images and their corresponding binary segmentation of left atrium(more details of 
+For this use case, we have 58 MRI images and their corresponding binary segmentation of left atrium (more details of 
 [data](https://www.insight-journal.org/midas/collection/view/197))
 
 This use case also demonstrates evaluation of different methods for optimization. 
@@ -33,7 +33,7 @@ The multi-scale optimization is providing the optimize particle system at each l
 
 
 ### Running Left Atrium
-The use case is located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python)
+The use case is located at: [/Examples/Python](../Examples/Python)
 
 To run the use case, run LAMain.py with proper tags. The tags control the type of input data and the optimization method.
 * --start_with_image_and_segmentation_data: to groom raw images as well as segmentation, the default is only segmentation
@@ -48,7 +48,7 @@ This calls left_atrium.py which:
 * Opens ShapeWorksStudio  to visualize results by calling methods in AnalyzeUtils.py
 
 ### Grooming
-For a description of the grooming tools and parameters, see: [Groom.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Groom.md)
+For a description of the grooming tools and parameters, see: [Groom.md](../Workflow/Groom.md)
 1. Isotropic Resampling - Both the image and mesh are resampled to have uniform voxel spacing. 
 2. Apply Padding- Segmentations which lie on the image boundary will have a hole on that intersection. Padding is added to the images and segmentations prevent this.
 3. Center of Mass Alignment - Center of mass alignment is performed before aligning the samples to a reference. This factors out translations reducing the risk of misalignment and allows for a median sample to be selected as the reference.
@@ -57,10 +57,10 @@ For a description of the grooming tools and parameters, see: [Groom.md](https://
 6. Crop - The images and segmentations are cropped so that all of the samples are within the same bounding box.
 7. Distance Transform - Finally, the distance transform is taken and the data is ready for ShapeWorks optimize.
 
-![left Atrium Groom](../images/leftatrium_groom.png)
+![left Atrium Groom](../Images/leftatrium_groom.png)
 ### Optimize
-For a description of the optimize tools and parameters, see: [Optimize.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Optimize.md)
-
+For a description of the optimize tools and parameters, see: [Optimize.md](../Workflow/Optimize.md)
+.
 * Single scale optimization uses the user defined number of particles for optimization and uses procrustes scaling to factor out size as a mode of variation. 
 Below are the default optimization parameters for this use case. 
 
@@ -84,10 +84,11 @@ Below are the default optimization parameters for this use case.
             "verbosity" : 3
 
 #### Mean Shape
-![left Atrium singleScale](../images/leftatrium_singlescale.png)
+![left Atrium singleScale](../Images/leftatrium_singlescale.png)
 
 #### PCA
-![left Atrium singleScale PCA mode](../images/leftatrium_singlescale_pca.gif)
+[![left Atrium singleScale PCA mode](../Images/leftatrium_singlescale_pca_thumbnail.png)](https://youtu.be/Coj6-xqw8dw)
+
 
 * Multiscale optimization uses use defined starting number of particles and number of optimization levels, 
 and the optimized particles of each level are used to initialize the next level particles. 
@@ -115,13 +116,12 @@ The default values of this use case are as below.
             "verbosity" : 3
 
 #### Mean Shape          
-![left Atrium multiScale](../images/leftatrium_multiscale.png)
+![left Atrium multiScale](../Images/leftatrium_multiscale.png)
 
 #### PCA
-![left Atrium singleScale PCA mode](../images/leftatrium_multiScale_pca.gif)
-
+[![left Atrium Multi Scale PCA mode](../Images/leftatrium_multiscale_pca_thumbnail.png)](https://youtu.be/ojTKiSsordA)
 
 ### Analyze
 
 The particle based model for the mean shape and samples and the primary modes of variation are visualized using ShapeWorksStudio.
-For more information see: [Analyze.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Analyze.md)            
+For more information see: [Analyze.md](../Workflow/Analyze.md)            

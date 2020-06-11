@@ -63,9 +63,9 @@ def Run_Pipeline(args):
         zipObj.extractall(path=parentDir)
         parentDir = parentDir + datasetName + "/"
         if not args.start_with_prepped_data:
-            fileList = sorted(glob.glob(parentDir + "Ellipsoids_UnPrepped/*.nrrd"))
+            fileList = sorted(glob.glob(parentDir + "images/*.nrrd"))
         else:
-            fileList = sorted(glob.glob(parentDir + "Ellipsoids_Prepped/*.nrrd"))
+            fileList = sorted(glob.glob(parentDir + "segmentations/*.nrrd"))
 
     fileList = fileList[:15]
     if args.tiny_test:
