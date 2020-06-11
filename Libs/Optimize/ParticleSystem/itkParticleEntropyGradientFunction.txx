@@ -47,13 +47,13 @@ ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
                         const ParticleImageDomainWithGradients<TGradientNumericType, VDimension> *domain,
                         std::vector<double> &weights) const
 {
-  GradientVectorType posnormal = domain->SampleNormalVnl(pos, 1.0e-10);
+  GradientVectorType posnormal = domain->SampleNormalAtPoint(pos);
   weights.resize(neighborhood.size());
   
   for (unsigned int i = 0; i < neighborhood.size(); i++)
     {
     weights[i] = this->AngleCoefficient(posnormal,
-                                        domain->SampleNormalVnl(neighborhood[i].Point, 1.0e-10));
+                                        domain->SampleNormalAtPoint(neighborhood[i].Point));
     if (weights[i] < 1.0e-5) weights[i] = 0.0;
     }
 }

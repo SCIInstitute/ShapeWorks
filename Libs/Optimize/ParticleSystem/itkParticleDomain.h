@@ -33,8 +33,12 @@ public:
   virtual bool ApplyConstraints(PointType& p) const = 0;
   virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, VDimension>& gradE,
     const PointType& pos) const = 0;
+
+  virtual PointType UpdateParticlePosition(PointType &point, vnl_vector_fixed<double, VDimension> &update) const = 0;
+
   virtual vnl_vector_fixed<double, VDimension> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, VDimension>& gradE,
     const PointType& pos) const = 0;
+  virtual vnl_vector_fixed<float, 3> SampleNormalAtPoint(const PointType & point) const = 0;
 
   /** A Domain may define a distance calculation.  This is useful in cases
       such as geodesic distance, where distance depends on some information
@@ -47,6 +51,10 @@ public:
       {      sum += (b[i]-a[i]) * (b[i]-a[i]);      }
     return sqrt(sum);
   }
+
+
+  virtual double GetSurfaceMeanCurvature() const = 0;
+  virtual double GetSurfaceStdDevCurvature() const = 0;
   
   /** A Domain may optionally return a bounding box.  The lower bound method
       gives the upper-left-hand corner of the domain.  The upper bound method

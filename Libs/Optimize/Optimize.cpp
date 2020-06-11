@@ -1436,7 +1436,7 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
         if (m_use_normals[i % m_domains_per_shape]) {
           typename itk::ParticleImageDomainWithGradients < float,
                                                            3 > ::VnlVectorType pG =
-            domain->SampleNormalVnl(pos);
+            domain->SampleNormalAtPoint(pos);
           VectorType pN;
           pN[0] = pG[0]; pN[1] = pG[1]; pN[2] = pG[2];
           pN = m_sampler->GetParticleSystem()->TransformVector(pN,

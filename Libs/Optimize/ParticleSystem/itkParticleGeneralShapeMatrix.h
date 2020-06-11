@@ -147,7 +147,7 @@ public:
         }
         if (m_use_normals[dom])
         {
-            ParticleImageDomainWithGradients<float, 3>::VnlVectorType pN = domainWithGrad->SampleNormalVnl(posLocal);
+            ParticleImageDomainWithGradients<float, 3>::VnlVectorType pN = domainWithGrad->SampleNormalAtPoint(posLocal);
             typename ParticleSystemType::VectorType tmp;
             tmp[0] = pN[0]; tmp[1] = pN[1]; tmp[2] = pN[2];
             tmp = ps->TransformVector(tmp, ps->GetTransform(d) * ps->GetPrefixTransform(d));

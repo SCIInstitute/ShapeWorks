@@ -62,25 +62,24 @@ public:
 
     vnl_vector_fixed<float, 3> negativeUpdate;
     for (unsigned int i = 0; i < 3; i++) { negativeUpdate[i] = -update[i]; }
-    //fprintf(stderr, "About to geodesic walk\n");
     PointType walkedPoint = meshWrapper->GeodesicWalk(point, negativeUpdate);
-    //fprintf(stderr, "Finished geodesic walk\n");
-    //newpoint = point + negativeUpdate;
     for (unsigned int i = 0; i < 3; i++) { newpoint[i] = walkedPoint[i]; }
-    PointType traditional;
-    for (unsigned int i = 0; i < 3; i++) { traditional[i] = point [i] + negativeUpdate[i]; }
-    //fprintf(stderr, "Geodesic point: \t%s\nnormal   point: \t%s\n", PrintValue<PointType>(walkedPoint).c_str(), PrintValue<PointType>(traditional).c_str());
-
-    //fprintf(stderr, "About to apply constraints\n");
+    //PointType traditional;
+    //for (unsigned int i = 0; i < 3; i++) { traditional[i] = point [i] + negativeUpdate[i]; }
     ApplyConstraints(newpoint);
-    //fprintf(stderr, "Finished apply constraints\n");
     return newpoint;
   }
-  inline void GetMeanCurvature(double &curvature, double &standardDeviation) const override {
+
+  inline double GetSurfaceMeanCurvature() const override {
     // This function is used by MeanCurvatureAttribute which is used for good/bad assessment
     // These arbitrary values should eventually be replaced with actual computation
-    curvature = 0.15;
-    standardDeviation = 0.02;
+    return 0.15;
+  }
+
+  inline double GetSurfaceStdDevCurvature() const override {
+    // This function is used by MeanCurvatureAttribute which is used for good/bad assessment
+    // These arbitrary values should eventually be replaced with actual computation
+    return 0.02;
   }
 
   // TODO replace the default euclidean distance computation with geodesic distance computation
