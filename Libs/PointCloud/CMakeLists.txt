@@ -8,10 +8,12 @@ FILE(GLOB KERNELS_SOURCE "kernels/*")
 
 set(PointCloud_sources
   RBFShape.cpp
+  pc_aux.cpp
   ${KERNELS_SOURCE}
   )
 set(PointCloud_headers
   RBFShape.h
+  pc_aux.h
   )
 
 add_library(PointCloud STATIC

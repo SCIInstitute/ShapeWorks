@@ -98,9 +98,6 @@ public:
       /*******************************************************************************************************************/
 
 
-      /** This functions computes the normals from a point could */
-      virtual double compute_normals();
-
       /** This function evaluates the implicit function value (i.e. scalar) at a given 3D point.
           \param point A 3D spatial point that is defined by xyz coordinates.
           The implicit function \f$f(\mathbf{x})\f$ at the point \f$\mathbf{x}\f$ is evaluated as \f$ f(\mathbf{x}) = \mathbf{c}^T\mathbf{x}^\mathbf{p} + c_v \f$

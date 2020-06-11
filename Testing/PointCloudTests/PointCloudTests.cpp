@@ -9,6 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include "RBFShape.h"
+#include "pc_aux.h"
 
 #include <Eigen/Core>
 
@@ -87,7 +88,6 @@ std::vector<double> flat_test(int side_length, int sep){
     if(print_files){
         RBFflat.set_raw_points(flat);
         RBFflat.set_raw_normals(flat_normals);
-        RBFflat.compute_normals();
 
         RBFflat.write_csv("flat_1.csv",5);
         RBFflat.writeToEqFile("flat_1.Eq",5);
@@ -133,29 +133,61 @@ std::vector<double> sphere_test() {
 
   int count = ng;
 
-  std::cout << "Points: " << count << std::endl;
-
-  Eigen::MatrixXd sphere(count*3, 4);
-  Eigen::MatrixXd sphere_normals(count*3, 3);
-
-  std::cout << "Points + dipoles: " << count*3 << std::endl;
 
   std::ofstream file;
   file.open("sample_sphere.ptnrms");
   file << std::fixed;
   file << std::setprecision(5);
 
-  for(size_t i = 0; i < count; i++){
+  size_t new_count = 0;
 
-    double ix = sphere_pts[i*3];
-    double iy = sphere_pts[i*3+1];
-    double iz = sphere_pts[i*3+2];
-    double ix_in = sphere_pts_in[i*3];
-    double iy_in = sphere_pts_in[i*3+1];
-    double iz_in = sphere_pts_in[i*3+2];
-    double ix_out = sphere_pts_out[i*3];
-    double iy_out = sphere_pts_out[i*3+1];
-    double iz_out = sphere_pts_out[i*3+2];
+  std::vector<size_t> pts_vec;
+
+  for(size_t i = 0; i < count; i++){
+      bool in = false;
+      double ix = sphere_pts[i*3];
+      double iy = sphere_pts[i*3+1];
+      double iz = sphere_pts[i*3+2];
+      for(size_t j = 0; j < pts_vec.size(); j++){
+        if(ix == sphere_pts[pts_vec[j]*3] && iy == sphere_pts[pts_vec[j]*3+1] && iz == sphere_pts[pts_vec[j]*3+2]) in = true;
+      }
+      if(!in){
+          pts_vec.push_back(i);
+      }
+  }
+
+  Eigen::MatrixXd sphere(pts_vec.size()*3, 4);
+  Eigen::MatrixXd sphere_no_dipoles(pts_vec.size(), 3);
+  Eigen::MatrixXd sphere_normals(pts_vec.size()*3, 3);
+
+  std::cout << "Points: " << pts_vec.size() << std::endl;
+
+  std::cout << "Points + dipoles: " << pts_vec.size()*3 << std::endl;
+
+  for(size_t i = 0; i < pts_vec.size(); i++){
+      double ix = sphere_pts[pts_vec[i]*3];
+      double iy = sphere_pts[pts_vec[i]*3+1];
+      double iz = sphere_pts[pts_vec[i]*3+2];
+      sphere_no_dipoles(i, 0) = ix;
+      sphere_no_dipoles(i, 1) = iy;
+      sphere_no_dipoles(i, 2) = iz;
+  }
+
+  shapeworks::pc_aux pc_auxiliary;
+
+  Eigen::MatrixXd normals = pc_auxiliary.compute_normals(sphere_no_dipoles, 40.);
+
+  for(size_t i = 0; i < pts_vec.size(); i++){
+
+    double ix = sphere_pts[pts_vec[i]*3];
+    double iy = sphere_pts[pts_vec[i]*3+1];
+    double iz = sphere_pts[pts_vec[i]*3+2];
+    double ix_in = sphere_pts_in[pts_vec[i]*3];
+    double iy_in = sphere_pts_in[pts_vec[i]*3+1];
+    double iz_in = sphere_pts_in[pts_vec[i]*3+2];
+    double ix_out = sphere_pts_out[pts_vec[i]*3];
+    double iy_out = sphere_pts_out[pts_vec[i]*3+1];
+    double iz_out = sphere_pts_out[pts_vec[i]*3+2];
 
     //std::cout << ix << "," << iy << "," << iz << std::endl;
 
@@ -177,24 +209,24 @@ std::vector<double> sphere_test() {
     sphere(i, 1) = iy;
     sphere(i, 2) = iz;
     sphere(i, 3) = 0.;
-    sphere(i+count,0) = ix_in;
-    sphere(i+count,1) = iy_in;
-    sphere(i+count,2) = iz_in;
-    sphere(i+count,3) = -true_mag;
-    sphere(i+count*2,0) = ix_out;
-    sphere(i+count*2,1) = iy_out;
-    sphere(i+count*2,2) = iz_out;
-    sphere(i+count*2,3) = true_mag;
+    sphere(i+pts_vec.size(),0) = ix_in;
+    sphere(i+pts_vec.size(),1) = iy_in;
+    sphere(i+pts_vec.size(),2) = iz_in;
+    sphere(i+pts_vec.size(),3) = -true_mag;
+    sphere(i+pts_vec.size()*2,0) = ix_out;
+    sphere(i+pts_vec.size()*2,1) = iy_out;
+    sphere(i+pts_vec.size()*2,2) = iz_out;
+    sphere(i+pts_vec.size()*2,3) = true_mag;
 
     sphere_normals(i,0) = norm[0]/magnitude;
     sphere_normals(i,1) = norm[1]/magnitude;
     sphere_normals(i,2) = norm[2]/magnitude;
-    sphere_normals(i+count,0) = norm[0]/magnitude;
-    sphere_normals(i+count,1) = norm[1]/magnitude;
-    sphere_normals(i+count,2) = norm[2]/magnitude;
-    sphere_normals(i+count*2,0) = norm[0]/magnitude;
-    sphere_normals(i+count*2,1) = norm[1]/magnitude;
-    sphere_normals(i+count*2,2) = norm[2]/magnitude;
+    sphere_normals(i+pts_vec.size(),0) = norm[0]/magnitude;
+    sphere_normals(i+pts_vec.size(),1) = norm[1]/magnitude;
+    sphere_normals(i+pts_vec.size(),2) = norm[2]/magnitude;
+    sphere_normals(i+pts_vec.size()*2,0) = norm[0]/magnitude;
+    sphere_normals(i+pts_vec.size()*2,1) = norm[1]/magnitude;
+    sphere_normals(i+pts_vec.size()*2,2) = norm[2]/magnitude;
   }
 
   file.close();
@@ -221,7 +253,7 @@ std::vector<double> sphere_test() {
   double sum_absolute_differences = 0.;
   std::vector<double> absolute_differences;
 
-  for(size_t i = 0; i < count*3; i++){
+  for(size_t i = 0; i < pts_vec.size()*3; i++){
       Eigen::Vector3d pt = sphere.row(i).head<3>();
       double value = sphere(i,3);
       double rbf_value = RBFsphere.evaluate(pt);
