@@ -32,6 +32,7 @@ using TransformPtr       = GenericTransform::Pointer;
 /// Affine transforms are used for many Image manipulation commands
 using AffineTransform    = itk::AffineTransform<double, 3>;
 using AffineTransformPtr = AffineTransform::Pointer;
+AffineTransformPtr createAffineTransform(const Matrix33 &mat);
 
 /// For deliberate conversions between types
 Point toPoint(const Dims &d);

@@ -76,4 +76,10 @@ double degToRad(const double deg)
   return deg * Pi / 180.0;
 }
 
+AffineTransformPtr createAffineTransform(const Matrix33 &mat) {
+  AffineTransformPtr xform(AffineTransform::New());
+  xform->SetMatrix(mat);
+  return xform;
+}
+
 }; //shapeworks

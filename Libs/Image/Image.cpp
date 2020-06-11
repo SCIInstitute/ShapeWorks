@@ -451,7 +451,7 @@ Image& Image::gaussianBlur(double sigma)
   return *this;
 }
 
-Image::Region Image::boundingBox() const
+Image::Region Image::boundingBox(PixelType isoValue) const
 {
   Image::Region bbox;
 
@@ -460,7 +460,7 @@ Image::Region Image::boundingBox() const
   {
     PixelType val = imageIterator.Get();
 
-    if (val == 1)
+    if (val >= isoValue)
       bbox.expand(imageIterator.GetIndex());
 
     ++imageIterator;

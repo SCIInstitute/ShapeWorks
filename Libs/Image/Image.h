@@ -16,10 +16,11 @@ public:
   using PixelType = float;
   using ImageType = itk::Image<PixelType, 3>;
 
+  /// Logical region of an image (may be negative for relative regions to a given location in an image).
   struct Region
   {
-    Coord min = Coord({static_cast<itk::IndexValueType>(1e6),static_cast<itk::IndexValueType>(1e6), static_cast<itk::IndexValueType>(1e6)});
-    Coord max = Coord({0,0,0});
+    Coord min = Coord({ 1000000000, 1000000000, 1000000000 });
+    Coord max = Coord({-1000000000,-1000000000,-1000000000 });
     Region(const Dims &dims) : min({0, 0, 0}) {
       if (0 != (dims[0] + dims[1] + dims[2])) 
         max = Coord({static_cast<long>(dims[0])-1,
@@ -84,6 +85,9 @@ public:
   Image& operator=(const Image &img); /// lvalue assignment operator
   Image& operator=(Image &&img);      /// rvalue assignment operator
 
+  // return this as an ITK image
+  operator ImageType::Pointer() { return image; }
+  
   // modification functions //
 
   /// antialiases image
@@ -179,7 +183,7 @@ public:
   Point3 centerOfMass(PixelType minval = 0.0, PixelType maxval = 1.0) const;  
 
   /// computes the logical coordinates of the largest region of data <= the given isoValue
-  Image::Region boundingBox() const;
+  Image::Region boundingBox(PixelType isoValue = 1.0) const;
 
   /// converts from pixel coordinates to physical space
   Point3 logicalToPhysical(const Coord &v) const;
