@@ -181,7 +181,7 @@ def Run_Pipeline(args):
         
         """
         Apply centering
-        """"
+        """
         centerFiles_segmentations = center(parentDir + "centered/segmentations/", comFiles_segmentations)
         centerFiles_images = center(parentDir + "centered/images/", comFiles_images)
         
