@@ -1,10 +1,8 @@
 #include "ShapeworksUtils.h"
 
-
 #include <sys/stat.h>
 
 namespace shapeworks {
-
 
 bool ShapeworksUtils::is_directory(const std::string &pathname)
 {

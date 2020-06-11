@@ -210,13 +210,6 @@ TEST(shapeworksTests, topo)
 }
 
 //---------------------------------------------------------------------------
-TEST(shapeworksTests, topofail)
-{
-  shapeworksEnvSetup();
-  ASSERT_TRUE(system("bash topofail.sh"));
-}
-
-//---------------------------------------------------------------------------
 TEST(shapeworksTests, blur)
 {
   shapeworksEnvSetup();

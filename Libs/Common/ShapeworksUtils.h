@@ -36,7 +36,6 @@ public:
     importer->SetCallbackUserData(exporter->GetCallbackUserData());
   }
 
-
 };
 
 } // shapeworks
