@@ -15,22 +15,30 @@
 * **Lower memory footprint for estimating correspondences for new shapes on existing shape models:** For <fixed_domains> usage, only distance transforms for the new shapes will be loaded.
 * **Improved use case documentation:** Better documentation for the [RunUseCase](UseCases/UseCases.md) input arguments.
 * **Documentation for running existing shape models:** Added [instructions](UseCases/UseCases.md#running-subsequent-analysis) on how to load a pre-trained shape model without running the full pipeline.
-* **Consistent cross-platform splitting direction:** Correspondence point splits take a random direction, but are now consistent and repeatable across platforms.
+* **Consistent cross-platform splitting direction:** Correspondence point splits take a random direction, but are now consistent and repeatable across platforms for reproducible shape models.
 
 ## Fixes
 * **Mesh export in Studio:** Changed exported meshes to be compatible with CloudCompare
 
 # ShapeWorks 5.3.0 - 2020-02-20
 
-* Use cases: Updated femur use case with interactive cutting plane
+
+## What's New
+
 * Use cases: Added fixed domains use case that demonstrates adding a single shape to an existing shape model
 * Use cases: Added ellipsoid evaluation use that demonstrates quantitative evaluation of the ellipsoid
-* Studio: Replaced bar chart with explained variance chart
 * New commands: Added commands to the `shapeworks` executable to quantitatively evaluate shape models: read-particle-system, compactness, generalization, specificity
 * New shapeworks executables commands: read-image, write-image, antialias, isoresample, binarize, recenter-image, pad.
 * New build method: Separate build_dependencies script (see Documentation/Build/BUILD.md)
 
+## Improvements
+* Use cases: Updated femur use case with interactive cutting plane
+* Studio: Replaced bar chart with explained variance chart
+
+
 # ShapeWorks 5.2.2 - 2020-01-09
+
+## Fixes
 
 * Returned to superbuild.sh build process
 * Fixed non-Qt build
@@ -40,19 +48,29 @@
 
 # ShapeWorks 5.2.1 - 2019-11-09
 
+## Fixes
+
 * Fix examples, binaries
 
 # ShapeWorks 5.2.0 - 2019-11-07
 
+## What's New
+
 * Studio: Added live particle optimization updates
 * Studio: Added "Stop optimization" button
-* Studio: Fixes crashes on exit during optimizations (clean shutdown of threads)
-* Studio: Added support for reading View2 parameter files
-* Studio: Added legacy (View2) surface reconstructor
-* Studio: Replaced optimization libary with same used by ShapeWorksRun
 * Use cases: Added a femur use case that demonstrates grooming surface meshes along with imaging data for shape modeling
 * Use cases: Added a left atrium use case that demonstrates grooming images data along with shape data and build multi-scale shape models
 * Use cases: New portal downloadable example data (ellipsoid, left atrium, and femurs)
 * Windows installer and binary releases for Mac and Linux
 * CMake-based superbuild with all dependencies built automatically
+
+## Improvements
+
+* Studio: Added support for reading View2 parameter files
+* Studio: Added legacy (View2) surface reconstructor
+* Studio: Replaced optimization libary with same used by ShapeWorksRun
+
+## Fixes
+* Studio: Fixes crashes on exit during optimizations (clean shutdown of threads)
+
 
