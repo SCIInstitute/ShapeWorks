@@ -15,7 +15,7 @@
 * **Lower memory footprint for estimating correspondences for new shapes on existing shape models:** For <fixed_domains> usage, only distance transforms for the new shapes will be loaded.
 * **Improved use case documentation:** Better documentation for the [RunUseCase](UseCases/UseCases.md) input arguments.
 * **Documentation for running existing shape models:** Added [instructions](UseCases/UseCases.md#running-subsequent-analysis) on how to load a pre-trained shape model without running the full pipeline.
-* **Consistent cross-platform splitting direction:** Correspondence point splits take a random direction, but are now consistent and repeatable across platforms.
+* **Consistent cross-platform splitting direction:** Correspondence point splits take a random direction, but are now consistent and repeatable across platforms for reproducible shape models.
 
 ## Fixes
 * **Mesh export in Studio:** Changed exported meshes to be compatible with CloudCompare
