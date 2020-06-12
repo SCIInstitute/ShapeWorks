@@ -239,16 +239,8 @@ def runShapeWorksOptimize_SingleScale(parentDir, inDataFiles, parameterDictionar
     print(parameterFile)
     execCommand = ["ShapeWorksRun" , parameterFile]
     subprocess.check_call(execCommand )
-    outPointsWorld = []
-    outPointsLocal = []
-    for i in range(len(inDataFiles)):
-        inname = inDataFiles[i].replace('\\','/')
-        inpath = os.path.dirname(inDataFiles[i]) + '/'
-        outname = inname.replace(inpath, outDir)
-        wrdname = outname.replace('.nrrd', '_world.particles')
-        lclname = outname.replace('.nrrd', '_local.particles')
-        outPointsWorld.append(wrdname)
-        outPointsLocal.append(lclname)
+
+    outPointsWorld, outPointsLocal = _convertFilenamesToPointFilenames(inDataFiles, outDir)
     return [outPointsLocal, outPointsWorld]
 
 def runShapeWorksOptimize_MultiScale(parentDir, inDataFiles, parameterDictionary):
@@ -277,17 +269,27 @@ def runShapeWorksOptimize_MultiScale(parentDir, inDataFiles, parameterDictionary
         execCommand = ["ShapeWorksRun" , parameterFile]
         subprocess.check_call(execCommand )
 
+    outPointsWorld, outPointsLocal = _convertFilenamesToPointFilenames(inDataFiles, outDir)
+    return [outPointsLocal, outPointsWorld]
+
+
+def _convertFilenamesToPointFilenames(files, outDir):
     outPointsWorld = []
     outPointsLocal = []
-    for i in range(len(inDataFiles)):
-        inname = inDataFiles[i].replace('\\','/')
-        inpath = os.path.dirname(inDataFiles[i]) + '/'
+    for i in range(len(files)):
+        inname = files[i].replace('\\','/')
+        inpath = os.path.dirname(files[i]) + '/'
         outname = inname.replace(inpath, outDir)
-        wrdname = outname.replace('.nrrd', '_world.particles')
-        lclname = outname.replace('.nrrd', '_local.particles')
+        filename, fileextension = os.path.splitext(outname)
+        wrdname = filename + '_world.particles'
+        lclname = filename + '_local.particles'
+
+        # wrdname = outname.replace('.nrrd', '_world.particles')
+        # lclname = outname.replace('.nrrd', '_local.particles')
         outPointsWorld.append(wrdname)
         outPointsLocal.append(lclname)
     return [outPointsLocal, outPointsWorld]
+
 
 def findMeanShape(shapeModelDir):
     fileList = sorted(glob.glob(shapeModelDir + '/*local.particles'))

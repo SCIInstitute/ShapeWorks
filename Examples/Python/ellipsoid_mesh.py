@@ -66,12 +66,12 @@ def Run_Pipeline(args):
     with ZipFile(filename, 'r') as zipObj:
         zipObj.extractall(path=parentDir)
         parentDir = parentDir + datasetName + "/"
-        fileList = sorted(glob.glob(parentDir + "meshes/*.ply"))
+        meshFiles = sorted(glob.glob(parentDir + "meshes/*.ply"))
 
-    fileList = fileList[:15]
+    meshFiles = meshFiles[:15]
     if args.tiny_test:
         args.use_single_scale = 1
-        fileList = fileList[:2]
+        meshFiles = meshFiles[:2]
 
     pointDir = parentDir + 'PointFiles/'
     if not os.path.exists(pointDir):
