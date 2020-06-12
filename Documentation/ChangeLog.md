@@ -6,7 +6,7 @@
 * **Exporting shape parameters:** Added PCA Raw Component Score Export to Studio.
 * **New Getting Started documentation:** New [Getting started](GettingStarted.md) documentation that goes over shape modeling workflow documentation, different ShapeWorks interfaces with a video illustration for Studio.
 * **Lower memory footprint and faster optimization:** ShapeWorks is now using [OpenVDB](https://www.openvdb.org/), a more memory-efficient data structure, for signed distance transforms. Along with other refactoring and code optimizations, ShapeWorks now uses *85% less memory* (from 57.09GB to 9.67GB in one use case). Additionally, the particles optimizer is now *2X faster*.
-* **Automated development builds** We now offer up-to-date development binary builds that track the master branch, available [here](https://github.com/SCIInstitute/ShapeWorks/releases)
+* **Automated development builds:** We now offer up-to-date development binary builds that track the master branch, available [here](https://github.com/SCIInstitute/ShapeWorks/releases)
 
 ## Improvements
 
@@ -15,10 +15,10 @@
 * **Lower memory footprint for estimating correspondences for new shapes on existing shape models:** For <fixed_domains> usage, only distance transforms for the new shapes will be loaded.
 * **Improved use case documentation:** Better documentation for the [RunUseCase](UseCases/UseCases.md) input arguments.
 * **Documentation for running existing shape models:** Added [instructions](UseCases/UseCases.md#running-subsequent-analysis) on how to load a pre-trained shape model without running the full pipeline.
-* **Consistent cross-platform splitting direction** Correspondence point splits take a random direction, but are now consistent and repeatable across platforms.
+* **Consistent cross-platform splitting direction:** Correspondence point splits take a random direction, but are now consistent and repeatable across platforms.
 
 ## Fixes
-* **Mesh export in Studio**: Changed exported meshes to be compatible with CloudCompare
+* **Mesh export in Studio:** Changed exported meshes to be compatible with CloudCompare
 
 # ShapeWorks 5.3.0 - 2020-02-20
 
