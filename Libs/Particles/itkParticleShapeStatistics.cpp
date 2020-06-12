@@ -163,8 +163,8 @@ int ParticleShapeStatistics < VDimension > ::ImportPoints(
     }
   }
 
-  std::cerr << "m_numSamples1 = " << m_numSamples1 << "\n";
-  std::cerr << "m_numSamples2 = " << m_numSamples2 << "\n";
+  //std::cerr << "m_numSamples1 = " << m_numSamples1 << "\n";
+  //std::cerr << "m_numSamples2 = " << m_numSamples2 << "\n";
 
   m_pointsMinusMean.set_size(m_numDimensions, m_numSamples);
   m_shapes.set_size(m_numDimensions, m_numSamples);

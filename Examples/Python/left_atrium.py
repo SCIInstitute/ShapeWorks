@@ -40,7 +40,7 @@ def Run_Pipeline(args):
     data and create necessary supporting files. The files will be Extracted in a
     newly created Directory TestEllipsoids.
     This data is LGE segmentation of left atrium.
-    For a detailed explanation of grooming steps see: https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Groom.md
+    For a detailed explanation of grooming steps see: https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Workflow/Groom.md
     """
 
     """
@@ -67,13 +67,12 @@ def Run_Pipeline(args):
     with ZipFile(filename, 'r') as zipObj:
         zipObj.extractall(path=parentDir)
         parentDir = parentDir + datasetName + "/"
-        fileList_img = sorted(glob.glob(parentDir + "LGE/*.nrrd"))
-        fileList_seg = sorted(glob.glob(parentDir + "segmentation_LGE/*.nrrd"))
+        fileList_img = sorted(glob.glob(parentDir + "images/*.nrrd"))
+        fileList_seg = sorted(glob.glob(parentDir + "segmentations/*.nrrd"))
 
     if args.tiny_test:
         fileList_img = fileList_img[:3]
         fileList_img = fileList_img[:3]
-
     if args.use_subsample:
         sample_idx = sampledata(fileList_seg, int(args.use_subsample))
         fileList_seg= [fileList_seg[i] for i in sample_idx]
@@ -115,7 +114,7 @@ def Run_Pipeline(args):
         Apply padding
 
         For detailed explainations of parameters for padding volumes, go to
-        'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/ImagePrepTools.pdf'
+        '/Documentation/PDFs/ImagePrepTools.pdf'
 
         Both the segmentation and raw images are padded.
         """
@@ -126,7 +125,7 @@ def Run_Pipeline(args):
         Apply center of mass alignment
 
         For detailed explainations of parameters for center of mass(COM) alignment of volumes, go to
-        'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/AlgnmentTools.pdf'
+        '/Documentation/PDFs/AlgnmentTools.pdf'
 
         This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
         There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
@@ -137,7 +136,7 @@ def Run_Pipeline(args):
         Apply rigid alignment
 
         For detailed explainations of parameters for rigid alignment of volumes, go to
-        'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/AlgnmentTools.pdf'
+        '/Documentation/PDFs/AlgnmentTools.pdf'
 
         This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
         There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
@@ -151,8 +150,7 @@ def Run_Pipeline(args):
 
         """
         For detailed explainations of parameters for finding the largest bounding box and cropping, go to
-        'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/ImagePrepTools.pdf'
-
+        '/Documentation/PDFs/ImagePrepTools.pdf'
 
         Compute largest bounding box and apply cropping
         processRaw = True, processes raw and binary images with shared parameters.
@@ -203,7 +201,7 @@ def Run_Pipeline(args):
             Apply isotropic resampling
 
             For detailed explainations of parameters for resampling volumes, go to
-            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ImagePrepTools.pdf'
+            '/Documentation/PDFs/ImagePrepTools.pdf'
 
             """
 
@@ -218,7 +216,7 @@ def Run_Pipeline(args):
             Apply padding
 
             For detailed explainations of parameters for padding volumes, go to
-            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ImagePrepTools.pdf'
+            '/Documentation/PDFs/ImagePrepTools.pdf'
 
             """
 
@@ -228,7 +226,7 @@ def Run_Pipeline(args):
             Apply center of mass alignment
 
             For detailed explainations of parameters for center of mass(COM) alignment of volumes, go to
-            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/AlgnmentTools.pdf'
+            '/Documentation/PDFs/AlgnmentTools.pdf'
 
              """
             comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles)
@@ -237,7 +235,7 @@ def Run_Pipeline(args):
             Apply rigid alignment
 
             For detailed explainations of parameters for rigid alignment of volumes, go to
-            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/AlgnmentTools.pdf'
+            '/Documentation/PDFs/AlgnmentTools.pdf'
 
             Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
             """
@@ -250,7 +248,7 @@ def Run_Pipeline(args):
 
             For detailed explainations of parameters for finding the largest bounding box and cropping, go to
 
-            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ImagePrepTools.pdf'
+            '/Documentation/PDFs/ImagePrepTools.pdf'
             """
             croppedFiles = applyCropping(parentDir, rigidFiles, None )
 
@@ -277,16 +275,16 @@ def Run_Pipeline(args):
     Now that we have the distance transform representation of data we create
     the parameter files for the shapeworks particle optimization routine.
     For more details on the plethora of parameters for shapeworks please refer to
-    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ParameterDescription.pdf'
+    '/Documentation/PDFs/ParameterDescription.pdf'
 
     We provide two different mode of operations for the ShapeWorks particle opimization;
     1- Single Scale model takes fixed number of particles and performs the optimization.
     For more detail about the optimization steps and parameters please refer to
-    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ScriptUsage.pdf'
+    '/Documentation/PDFs/ScriptUsage.pdf'
 
     2- Multi scale model optimizes for different number of particles in hierarchical manner.
     For more detail about the optimization steps and parameters please refer to
-    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ScriptUsage.pdf'
+    '/Documentation/PDFs/ScriptUsage.pdf'
 
     First we need to create a dictionary for all the parameters required by these
     optimization routines

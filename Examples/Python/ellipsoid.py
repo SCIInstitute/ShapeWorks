@@ -67,9 +67,9 @@ def Run_Pipeline(args):
         zipObj.extractall(path=parentDir)
         parentDir = parentDir + datasetName + "/"
         if not args.start_with_prepped_data:
-            fileList = sorted(glob.glob(parentDir + "Ellipsoids_UnPrepped/*.nrrd"))
+            fileList = sorted(glob.glob(parentDir + "images/*.nrrd"))
         else:
-            fileList = sorted(glob.glob(parentDir + "Ellipsoids_Prepped/*.nrrd"))
+            fileList = sorted(glob.glob(parentDir + "segmentations/*.nrrd"))
 
     fileList = fileList[:15]
     if args.tiny_test:
@@ -87,7 +87,7 @@ def Run_Pipeline(args):
     -- Center of Mass Alignment
     -- Rigid Alignment
     -- Largest Bounding Box and Cropping 
-    For a detailed explanation of grooming steps see: https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Groom.md
+    For a detailed explanation of grooming steps see: /Documentation/Workflow/Groom.md
     """
 
     print("\nStep 2. Groom - Data Pre-processing\n")

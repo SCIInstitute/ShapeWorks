@@ -288,6 +288,12 @@ void Lightbox::set_shapes(QVector<QSharedPointer<Shape>> shapes)
 }
 
 //-----------------------------------------------------------------------------
+QVector<ShapeHandle> Lightbox::get_shapes()
+{
+  return this->shapes_;
+}
+
+//-----------------------------------------------------------------------------
 void Lightbox::redraw()
 {
   if (this->render_window_) {

@@ -299,20 +299,9 @@ bool ShapeWorksStudioApp::on_action_save_project_triggered()
 //---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::on_action_save_project_as_triggered()
 {
-  QString fname("Untitled.xlsx");
-  if (this->session_->get_shapes().size() > 0) {
-    QString original_filename = this->session_->get_shapes()[0]->get_original_filename();
-    if (original_filename != "") {
-      std::string tmp = original_filename.toStdString();
-      tmp = tmp.substr(0, tmp.size() - 5);
-      fname = QString::fromStdString(tmp);
-    }
-  }
   QString last_directory = this->preferences_.get_last_directory();
-  auto dir = last_directory.toStdString();
-  dir = dir.substr(0, dir.find_last_of("/") + 1);
   QString filename = QFileDialog::getSaveFileName(this, tr("Save Project As..."),
-                                                  QString::fromStdString(dir) + fname,
+                                                  last_directory,
                                                   tr("XLSX files (*.xlsx)"));
   if (filename.isEmpty()) {
     return false;
@@ -324,6 +313,7 @@ bool ShapeWorksStudioApp::on_action_save_project_as_triggered()
 
   this->save_project(filename.toStdString());
 
+  this->enable_possible_actions();
   return false;
 }
 
@@ -338,7 +328,7 @@ void ShapeWorksStudioApp::on_action_import_triggered()
 {
   QStringList filenames;
   std::cerr << "getOpenFileNames, last_dir = " <<
-  this->preferences_.get_last_directory().toStdString() << "\n";
+    this->preferences_.get_last_directory().toStdString() << "\n";
   filenames = QFileDialog::getOpenFileNames(this, tr("Import Files..."),
                                             this->preferences_.get_last_directory(),
                                             tr("NRRD files (*.nrrd);;MHA files (*.mha)"));
@@ -394,8 +384,6 @@ void ShapeWorksStudioApp::on_zoom_slider_valueChanged()
   if (!this->lightbox_->render_window_ready()) {return;}
 
   int value = this->ui_->zoom_slider->value();
-
-  std::cerr << "zoom value set to: " << value << "\n";
 
   this->lightbox_->set_tile_layout(value, value);
   this->visualizer_->update_viewer_properties();
@@ -823,7 +811,7 @@ void ShapeWorksStudioApp::handle_optimize_start()
 void ShapeWorksStudioApp::handle_display_setting_changed()
 {
   if (this->analysis_tool_->pcaAnimate()) {return;}
-  this->update_display();
+  this->update_display(true);
 }
 
 //---------------------------------------------------------------------------
@@ -954,7 +942,7 @@ void ShapeWorksStudioApp::update_display(bool force)
       this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
                                         this->session_->particles_present() &&
                                         reconstruct_ready);
-      this->visualizer_->display_sample(this->analysis_tool_->getSampleNumber());
+      this->visualizer_->display_sample(this->analysis_tool_->get_sample_number());
       this->visualizer_->reset_camera();
     }
     else { //?
@@ -1040,7 +1028,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->analysis_tool_->set_analysis_mode(analysis_mode);
 
   int zoom_value = this->session_->settings().get(ShapeWorksStudioApp::SETTING_ZOOM_C, "4");
-  std::cerr << "setting zoom value to :" << zoom_value << "\n";
   this->ui_->zoom_slider->setValue(zoom_value);
 
   this->block_update_ = false;
@@ -1058,10 +1045,9 @@ void ShapeWorksStudioApp::on_action_preferences_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_export_current_mesh_triggered()
 {
-  auto dir = preferences_.get_last_directory().toStdString();
-  dir = dir.substr(0, dir.find_last_of("/") + 1);
+  auto dir = preferences_.get_last_directory() + "/";
   QString filename = QFileDialog::getSaveFileName(this, tr("Save Project As..."),
-                                                  QString::fromStdString(dir) + "newMesh",
+                                                  dir + "mesh",
                                                   tr("VTK files (*.vtk)"));
   if (filename.isEmpty()) {
     return;
@@ -1072,14 +1058,14 @@ void ShapeWorksStudioApp::on_action_export_current_mesh_triggered()
   vtkPolyDataWriter* writer = vtkPolyDataWriter::New();
   writer->SetFileName(filename.toStdString().c_str());
   writer->SetInputData(poly_data);
+  writer->WriteArrayMetaDataOff();
   writer->Write();
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered()
 {
-  auto dir = preferences_.get_last_directory().toStdString();
-  dir = dir.substr(0, dir.find_last_of("/") + 1);
+  auto dir = preferences_.get_last_directory().toStdString() + "/";
   QString filename = QFileDialog::getSaveFileName(this, tr("Save Project As..."),
                                                   QString::fromStdString(dir) + "scalars",
                                                   tr("CSV files (*.csv)"));
@@ -1131,6 +1117,22 @@ void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered()
   }
 
   output.close();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_action_export_pca_scores_triggered()
+{
+  auto dir = preferences_.get_last_directory().toStdString() + "/";
+  QString filename = QFileDialog::getSaveFileName(this, tr("Save Project As..."),
+                                                  QString::fromStdString(dir) + "scores",
+                                                  tr("CSV files (*.csv)"));
+  if (filename.isEmpty()) {
+    return;
+  }
+  this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
+
+  auto stats = this->analysis_tool_->get_stats();
+  stats.WriteCSVFile2(filename.toStdString());
 }
 
 //---------------------------------------------------------------------------
@@ -1295,6 +1297,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered()
       name = name.substr(0, name.find_last_of(".")) + std::to_string(i) + ".vtk";
       writer->SetFileName(name.c_str());
       writer->SetInputData(msh);
+      writer->WriteArrayMetaDataOff();
       writer->Write();
     }
     this->handle_message("Successfully exported PCA Mesh files: " + filename.toStdString());
@@ -1308,6 +1311,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered()
   writer->SetFileName(filename.toStdString().c_str());
   /// TODO: fix
   //writer->SetInputData(msh);
+  writer->WriteArrayMetaDataOff();
   writer->Write();
   this->handle_message("Successfully exported PCA Mesh file: " + filename.toStdString());
 }
@@ -1319,8 +1323,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvalues_triggered()
   auto values = stats.Eigenvalues();
   QString fname("Untitled.eval");
 
-  auto dir = this->preferences_.get_last_directory().toStdString();
-  dir = dir.substr(0, dir.find_last_of("/") + 1);
+  auto dir = this->preferences_.get_last_directory().toStdString() + "/";
   QString filename = QFileDialog::getSaveFileName(this, tr("Save Eigenvalue EVAL file..."),
                                                   QString::fromStdString(dir) + fname,
                                                   tr("EVAL files (*.eval)"));
@@ -1342,8 +1345,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered()
   auto stats = this->analysis_tool_->get_stats();
   auto values = stats.Eigenvectors();
   QString fname("Untitled.eval");
-  auto dir = this->preferences_.get_last_directory().toStdString();
-  dir = dir.substr(0, dir.find_last_of("/") + 1);
+  auto dir = this->preferences_.get_last_directory().toStdString() + "/";
   QString filename = QFileDialog::getSaveFileName(this, tr("Save Eigenvector EVAL files..."),
                                                   QString::fromStdString(dir) + fname,
                                                   tr("EVAL files (*.eval)"));
@@ -1370,8 +1372,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered()
 void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered()
 {
   QString fname("Untitled.pts");
-  auto dir = this->preferences_.get_last_directory().toStdString();
-  dir = dir.substr(0, dir.find_last_of("/") + 1);
+  auto dir = this->preferences_.get_last_directory().toStdString() + "/";
   QString filename = QFileDialog::getSaveFileName(this, tr("Save PCA Mode PCA files..."),
                                                   QString::fromStdString(dir) + fname,
                                                   tr("PTS files (*.pts)"));
