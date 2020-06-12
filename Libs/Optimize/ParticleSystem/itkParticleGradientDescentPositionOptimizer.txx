@@ -117,7 +117,7 @@ namespace itk
           if (m_ParticleSystem->GetDomainFlag(dom) == false)
           {
 
-            const DomainType* domain = static_cast<const DomainType*>(m_ParticleSystem->GetDomain(dom));
+            const ParticleDomain<Dimension> *domain = m_ParticleSystem->GetDomain(dom);
 
             typename GradientFunctionType::Pointer localGradientFunction = m_GradientFunction;
 #ifdef SW_USE_OPENMP
@@ -172,12 +172,7 @@ namespace itk
                 }
 
                 // Step D compute the new point position
-                PointType newpoint;
-                for (unsigned int i = 0; i < VDimension; i++)
-                  newpoint[i] = pt[i] - gradient[i];
-
-                // Step E have the domain snap the point to the surface and satisfy constraints
-                domain->ApplyConstraints(newpoint);
+                PointType newpoint = domain->UpdateParticlePosition(pt, gradient);
 
                 // Step F update the point position in the particle system
                 m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);
