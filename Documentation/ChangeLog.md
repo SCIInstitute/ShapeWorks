@@ -11,7 +11,7 @@
 ## Improvements
 
 * **Improved scalability for Studio:** Files now loaded on-demand as necessary.
-* **Restructured datasets portal:** Better and more consistent directory structure for use cases datasets. See [datatsets guidelines](UseCases/Datasets.md) for more details. Visit our [ShapeWorks Portal](http://cibc1.sci.utah.edu:8080) to register and download datasets to run [use cases](UseCases/UseCases.md).
+* **Restructured datasets portal:** Better and more consistent directory structure for use cases datasets. See [datasets guidelines](UseCases/Datasets.md) for more details. Visit our [ShapeWorks Portal](http://cibc1.sci.utah.edu:8080) to register and download datasets to run [use cases](UseCases/UseCases.md).
 * **Lower memory footprint for estimating correspondences for new shapes on existing shape models:** For <fixed_domains> usage, only distance transforms for the new shapes will be loaded.
 * **Improved use case documentation:** Better documentation for the [RunUseCase](UseCases/UseCases.md) input arguments.
 * **Documentation for running existing shape models:** Added [instructions](UseCases/UseCases.md#running-subsequent-analysis) on how to load a pre-trained shape model without running the full pipeline.
