@@ -30,8 +30,6 @@ from OptimizeUtils import *
 from AnalyzeUtils import *
 
 
-
-
 def Run_Pipeline(args):
 
     """
@@ -90,7 +88,7 @@ def Run_Pipeline(args):
             "ending_regularization" : 0.1,
             "recompute_regularization_interval" : 2,
             "domains_per_shape" : 1,
-            "domain_type" : 'image',
+            "domain_type" : 'mesh',
             "relative_weighting" : 10,
             "initial_relative_weighting" : 0.01,
             "procrustes_interval" : 0,
@@ -107,13 +105,13 @@ def Run_Pipeline(args):
         """
         Now we execute a single scale particle optimization function.
         """
-        [localPointFiles, worldPointFiles] = runShapeWorksOptimize_SingleScale(pointDir, dtFiles, parameterDictionary)
+        [localPointFiles, worldPointFiles] = runShapeWorksOptimize_SingleScale(pointDir, meshFiles, parameterDictionary)
 
     else:
         parameterDictionary = {
             "starting_particles" : 32,
             "number_of_levels" : 3,
-            "use_normals": 1,
+            "use_normals": 0,
             "normal_weight": 10.0,
             "checkpointing_interval" : 200,
             "keep_checkpoints" : 0,
@@ -123,7 +121,7 @@ def Run_Pipeline(args):
             "ending_regularization" : 0.1,
             "recompute_regularization_interval" : 2,
             "domains_per_shape" : 1,
-            "domain_type" : 'image',
+            "domain_type" : 'mesh',
             "relative_weighting" : 10,
             "initial_relative_weighting" : 0.01,
             "procrustes_interval" : 0,
@@ -136,7 +134,7 @@ def Run_Pipeline(args):
         """
         Now we execute a multi-scale particle optimization function.
         """
-        [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
+        [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, meshFiles, parameterDictionary)
 
     if args.tiny_test:
         print("Done with tiny test")
@@ -168,5 +166,5 @@ def Run_Pipeline(args):
     if args.interactive != 0:
         input("Press Enter to continue")
 
-    launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)
+    launchShapeWorksStudio(pointDir, [], localPointFiles, worldPointFiles)
 

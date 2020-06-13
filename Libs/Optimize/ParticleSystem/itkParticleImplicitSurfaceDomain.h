@@ -52,6 +52,10 @@ public:
   virtual T GetTolerance() {
     return this->m_Tolerance;
   }
+
+  shapeworks::DomainType GetDomainType() const override {
+    return shapeworks::DomainType::Image;
+  }
   
   /** Apply any constraints to the given point location.  This method
       constrains points to lie within the given domain and on a given implicit

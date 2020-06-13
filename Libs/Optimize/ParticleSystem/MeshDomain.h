@@ -28,6 +28,11 @@ public:
   /** Point type used to store particle locations. */
   typedef typename ParticleDomain<VDimension>::PointType PointType;
 
+
+  shapeworks::DomainType GetDomainType() const override {
+    return shapeworks::DomainType::Mesh;
+  }
+
   /** Apply any constraints to the given point location.  This method may, for
       example, implement boundary conditions or restrict points to lie on a
       surface.  Default behavior does nothing.  Returns true if the value of
@@ -68,6 +73,10 @@ public:
     //for (unsigned int i = 0; i < 3; i++) { traditional[i] = point [i] + negativeUpdate[i]; }
     ApplyConstraints(newpoint);
     return newpoint;
+  }
+
+  double GetCurvature(const PointType &p) const override {
+    return GetSurfaceMeanCurvature();
   }
 
   inline double GetSurfaceMeanCurvature() const override {
@@ -141,6 +150,7 @@ public:
   void SetMesh(shapeworks::MeshWrapper* mesh_) {
     meshWrapper = mesh_;
   }
+
 
   MeshDomain() { }
   virtual ~MeshDomain() {}

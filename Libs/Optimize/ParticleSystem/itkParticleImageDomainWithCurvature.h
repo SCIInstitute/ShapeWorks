@@ -86,7 +86,7 @@ public:
     this->ComputeSurfaceStatistics(I);
   } // end setimage
 
-  double GetCurvature(const PointType &p) const
+  double GetCurvature(const PointType &p) const override
   {
     if (this->m_FixedDomain) {
       return 0;

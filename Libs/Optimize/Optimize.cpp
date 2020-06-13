@@ -237,7 +237,6 @@ void Optimize::SetDomainType(std::string& domain_type)
   else if (domain_type == "mesh") {
     this->m_domain_type = shapeworks::DomainType::Mesh;
   }
-  this->m_sampler->SetDomainType(this->m_domain_type);
 }
 
 //---------------------------------------------------------------------------

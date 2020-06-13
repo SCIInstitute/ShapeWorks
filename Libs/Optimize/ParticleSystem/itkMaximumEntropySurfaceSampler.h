@@ -196,10 +196,6 @@ public:
     {
         m_DomainsPerShape = i;
     }
-    void SetDomainType(shapeworks::DomainType domain_type)
-    {
-        m_domain_type = domain_type;
-    }
     void SetAttributesPerDomain(const std::vector<int> &i)
     {
         m_AttributesPerDomain = i;
@@ -403,7 +399,6 @@ private:
     std::vector<int> m_AttributesPerDomain;
     int m_DomainsPerShape;
     double m_Spacing{0};
-    shapeworks::DomainType m_domain_type;
 
     std::string m_TransformFile;
     std::string m_PrefixTransformFile;

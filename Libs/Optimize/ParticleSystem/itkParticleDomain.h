@@ -14,6 +14,8 @@
 #include "vnl/vnl_vector_fixed.h"
 #include "vnl/vnl_matrix_fixed.h"
 
+#include "DomainType.h"
+
 namespace itk
 {
 template <unsigned int VDimension=3>
@@ -53,6 +55,7 @@ public:
   }
 
 
+  virtual double GetCurvature(const PointType &p) const = 0;
   virtual double GetSurfaceMeanCurvature() const = 0;
   virtual double GetSurfaceStdDevCurvature() const = 0;
   
@@ -80,6 +83,7 @@ public:
   bool IsDomainFixed() const {
     return m_FixedDomain;
   }
+  virtual shapeworks::DomainType GetDomainType() const = 0;
 
 protected:
 

@@ -96,16 +96,23 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize *
     return false;
   }
   // read last so that we can skip loading any images from fixed domains
-  if (!this->read_image_inputs(&doc_handle, optimize)) {
-    return false;
+  if (optimize->GetDomainType() == shapeworks::DomainType::Image) {
+    if (!this->read_image_inputs(&doc_handle, optimize)) {
+      return false;
+    }
+    if (!this->read_mesh_attributes(&doc_handle, optimize)) {
+      return false;
+    }
+  }
+  else if (optimize->GetDomainType() == shapeworks::DomainType::Mesh) {
+    if (!this->read_mesh_inputs(&doc_handle, optimize)) {
+      return false;
+    }
   }
   if (!this->read_point_files(&doc_handle, optimize)) {
     return false;
   }
 
-  if (!this->read_mesh_attributes(&doc_handle, optimize)) {
-    return false;
-  }
 
   return true;
 }
@@ -404,7 +411,7 @@ bool OptimizeParameterFile::read_image_inputs(TiXmlHandle* docHandle, Optimize* 
 bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle *docHandle, Optimize *optimize) {
   TiXmlElement *elem = nullptr;
 
-  elem = docHandle->FirstChild("mesh_files").Element();
+  elem = docHandle->FirstChild("inputs").Element();
   if (!elem) {
     std::cerr << "No input meshes have been specified\n";
     return false;
