@@ -568,21 +568,6 @@ Image& Image::setOrigin(Point3 origin)
   return *this;
 }
 
-Point3 Image::size() const
-{
-  return spacing() * toPoint(dims());
-}
-
-Point3 Image::spacing() const
-{
-  return image->GetSpacing();
-}
-
-const Image::ImageType::DirectionType& Image::coordsys() const
-{
-  return image->GetDirection();
-}
-
 Point3 Image::centerOfMass(PixelType minval, PixelType maxval) const
 {
   itk::ImageRegionIteratorWithIndex<ImageType> imageIt(this->image, image->GetLargestPossibleRegion());

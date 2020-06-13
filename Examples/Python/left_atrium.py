@@ -50,22 +50,22 @@ def Run_Pipeline(args):
         input("Press Enter to continue")
 
     datasetName = "left_atrium"
-    filename = datasetName + ".zip"
+    # filename = datasetName + ".zip"
     # Check if the data is in the right place
-    if not os.path.exists(filename):
-        print("Can't find " + filename + " in the current directory.")
-        import DatasetUtils
-        DatasetUtils.downloadDataset(datasetName)
+    # if not os.path.exists(filename):
+        # print("Can't find " + filename + " in the current directory.")
+        # import DatasetUtils
+        # DatasetUtils.downloadDataset(datasetName)
 
     parentDir = "TestLeftAtrium/"
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)
     # extract the zipfile
-    with ZipFile(filename, 'r') as zipObj:
-        zipObj.extractall(path=parentDir)
-        parentDir = parentDir + datasetName + "/"
-        fileList_img = sorted(glob.glob(parentDir + "LGE/*.nrrd"))
-        fileList_seg = sorted(glob.glob(parentDir + "segmentation_LGE/*.nrrd"))
+    # with ZipFile(filename, 'r') as zipObj:
+        # zipObj.extractall(path=parentDir)
+    parentDir = parentDir + datasetName + "/"
+    fileList_img = sorted(glob.glob(parentDir + "LGE/*.nrrd"))
+    fileList_seg = sorted(glob.glob(parentDir + "segmentation_LGE/*.nrrd"))
 
     if args.tiny_test:
         fileList_img = fileList_img[:3]
@@ -129,8 +129,7 @@ def Run_Pipeline(args):
         This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
         There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
         """
-        comFiles_segmentations = applyCOMAlignment(parentDir + "com_aligned/segmentations", paddedFiles_segmentations)
-        comFiles_images = applyCOMAlignment(parentDir + "com_aligned/images", paddedFiles_images)
+        [comFiles_segmentations, comFiles_images] = applyCOMAlignment(parentDir + 'com_aligned', paddedFiles_segmentations, paddedFiles_images)
 
         """
         Apply rigid alignment
@@ -145,7 +144,7 @@ def Run_Pipeline(args):
         Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
         """
         medianFile = FindReferenceImage(comFiles_segmentations)
-        [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, comFiles_segmentations, comFiles_images, medianFile, processRaw = True)
+        [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir + "aligned", comFiles_segmentations, comFiles_images, medianFile, processRaw = True)
 
         """
         For detailed explainations of parameters for finding the largest bounding box and cropping, go to
@@ -232,7 +231,7 @@ def Run_Pipeline(args):
             Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
             """
             medianFile = FindReferenceImage(comFiles)
-            rigidFiles = applyRigidAlignment(parentDir, comFiles, None, medianFile)
+            rigidFiles = applyRigidAlignment(parentDir + "aligned", comFiles, None, medianFile)
 
             """
             Compute largest bounding box and apply cropping
@@ -240,7 +239,7 @@ def Run_Pipeline(args):
             For detailed explainations of parameters for finding the largest bounding box and cropping, go to 
             '/Documentation/PDFs/ImagePrepTools.pdf'
             """
-            croppedFiles = applyCropping(parentDir, rigidFiles, None )
+            croppedFiles = applyCropping(parentDir + "cropped", rigidFiles, parentDir + "aligned/*.aligned.nrrd")
 
 
         print("\nStep 3. Groom - Convert to distance transforms\n")

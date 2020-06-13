@@ -20,7 +20,7 @@ public:
   struct Region
   {
     Coord min = Coord({ 1000000000, 1000000000, 1000000000 });
-    Coord max = Coord({-1000000000,-1000000000,-1000000000 });
+    Coord max = Coord({-1000000000, -1000000000, -1000000000 });
     Region(const Dims &dims) : min({0, 0, 0}) {
       if (0 != (dims[0] + dims[1] + dims[2])) 
         max = Coord({static_cast<long>(dims[0])-1,
@@ -165,10 +165,10 @@ public:
   Dims dims() const { return image->GetLargestPossibleRegion().GetSize(); }
 
   /// physical dimensions of the image (dims * spacing)
-  Point3 size() const;
+  Point3 size() const { return spacing() * toPoint(dims()); };
 
   /// physical spacing of the image
-  Point3 spacing() const;
+  Point3 spacing() const { return image->GetSpacing(); };
 
   /// physical coordinates of image origin
   Point3 origin() const { return image->GetOrigin(); }
@@ -177,7 +177,7 @@ public:
   Point3 center() const { return origin() + size() / 2.0; }
 
   /// return coordinate system in which this image lives in physical space
-  const ImageType::DirectionType& coordsys() const;
+  const ImageType::DirectionType &coordsys() const { return image->GetDirection(); };
 
   /// returns average physical coordinate of pixels in range (minval, maxval]
   Point3 centerOfMass(PixelType minval = 0.0, PixelType maxval = 1.0) const;  

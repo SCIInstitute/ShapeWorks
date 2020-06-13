@@ -40,31 +40,31 @@ def Run_Pipeline(args):
     """
 
     print("\nStep 1. Get Data\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
+    # if int(args.interactive) != 0:
+        # input("Press Enter to continue")
 
     datasetName = "femur"
-    filename = datasetName + ".zip"
+    # filename = datasetName + ".zip"
     # Check if the data is in the right place
-    if not os.path.exists(filename):
-        print("Can't find " + filename + " in the current directory.")
-        import DatasetUtils
-        DatasetUtils.downloadDataset(datasetName)
+    # if not os.path.exists(filename):
+        # print("Can't find " + filename + " in the current directory.")
+        # import DatasetUtils
+        # DatasetUtils.downloadDataset(datasetName)
 
-    parentDir="TestFemur/"
+    parentDir = "TestFemur/"
     inputDir = 'TestFemur/' + datasetName + '/'
 
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)
 
-    extract the zipfile
-    print("Extracting data from " + filename + "...")
-    with ZipFile(filename, 'r') as zipObj:
-        zipObj.extractall(path=parentDir)
+    # extract the zipfile
+    # print("Extracting data from " + filename + "...")
+    # with ZipFile(filename, 'r') as zipObj:
+    #     zipObj.extractall(path=parentDir)
 
     print("\nStep 2. Groom - Data Pre-processing\n")
-    if args.interactive:
-        input("Press Enter to continue")
+    # if args.interactive:
+    #     input("Press Enter to continue")
 
     if not args.start_with_prepped_data:
         """
@@ -182,8 +182,7 @@ def Run_Pipeline(args):
         Apply center of mass alignment
         This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
         """
-        comFiles_segmentations = applyCOMAlignment(parentDir + "com_aligned/segmentations", paddedFiles_segmentations)
-        comFiles_images = applyCOMAlignment(parentDir + "com_aligned/images", paddedFiles_images)
+        [comFiles_segmentations, comFiles_images] = applyCOMAlignment(parentDir + "com_aligned", paddedFiles_segmentations, paddedFiles_images)
 
         centerFiles_segmentations = center(parentDir + "centered/segmentations", comFiles_segmentations)
         centerFiles_images = center(parentDir + "centered/images", comFiles_images)
@@ -195,7 +194,7 @@ def Run_Pipeline(args):
         Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
         """
         medianFile = FindReferenceImage(centerFiles_segmentations)
-        [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, centerFiles_segmentations, centerFiles_images, medianFile, processRaw = True)
+        [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir + "aligned", centerFiles_segmentations, centerFiles_images, medianFile, processRaw = True)
 
         # Define cutting plane on median sample
         if choice == 2:
@@ -282,8 +281,8 @@ def Run_Pipeline(args):
         croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images, parentDir + "aligned/images/*.nrrd")
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
-        if args.interactive:
-            input("Press Enter to continue")
+        # if args.interactive:
+        #     input("Press Enter to continue")
 
         """
         We convert the scans to distance transforms, this step is common for both the
@@ -319,8 +318,8 @@ def Run_Pipeline(args):
     optimization routines
     """
     print("\nStep 4. Optimize - Particle Based Optimization\n")
-    if args.interactive:
-        input("Press Enter to continue")
+    # if args.interactive:
+    #     input("Press Enter to continue")
 
     pointDir = './TestFemur/PointFiles/'
     if not os.path.exists(pointDir):
@@ -400,6 +399,6 @@ def Run_Pipeline(args):
     Reconstruct the dense mean surface given the sparse correspondence model.
     """
     print("\nStep 5. Analysis - Reconstruct the dense mean surface given the sparse correspodence model.\n")
-    if args.interactive:
-        input("Press Enter to continue")
+    # if args.interactive:
+        # input("Press Enter to continue")
     launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)

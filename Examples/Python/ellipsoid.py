@@ -106,7 +106,7 @@ def Run_Pipeline(args):
         comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles)
 
         """Apply rigid alignment"""
-        rigidFiles = applyRigidAlignment(parentDir, comFiles, None, comFiles[0])
+        rigidFiles = applyRigidAlignment(parentDir + "aligned", comFiles, None, comFiles[0])
 
         """Compute largest bounding box and apply cropping"""
         croppedFiles = applyCropping(parentDir + "cropped", rigidFiles, parentDir + "aligned/*.aligned.nrrd")
