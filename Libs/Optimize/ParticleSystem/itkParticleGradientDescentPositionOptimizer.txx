@@ -161,7 +161,7 @@ namespace itk
                 gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
 
                 // Step B Constrain the gradient so that the resulting position will not violate any domain constraints
-                dynamic_cast<DomainType*>(m_ParticleSystem->GetDomain(dom))->ApplyVectorConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
+                m_ParticleSystem->GetDomain(dom)->ApplyVectorConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
                 gradmag = gradient.magnitude();
 
                 // Step C if the magnitude is larger than the Sampler allows, try again with smaller time step

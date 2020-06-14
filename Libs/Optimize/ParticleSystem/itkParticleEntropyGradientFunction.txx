@@ -44,7 +44,7 @@ void
 ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
 ::ComputeAngularWeights(const PointType &pos,
                         const typename ParticleSystemType::PointVectorType &neighborhood,
-                        const ParticleImageDomainWithGradients<TGradientNumericType, VDimension> *domain,
+                        const ParticleDomain<VDimension> *domain,
                         std::vector<double> &weights) const
 {
   GradientVectorType posnormal = domain->SampleNormalAtPoint(pos);
@@ -155,9 +155,7 @@ ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
            double &maxdt) const
 {
   // Grab a pointer to the domain.  We need a Domain that has surface normal information.
-  const ParticleImageDomainWithGradients<TGradientNumericType, VDimension> *
-    domain = static_cast<const ParticleImageDomainWithGradients<
-  TGradientNumericType, VDimension> *>(system->GetDomain(d));
+  auto domain = system->GetDomain(d);
   const double epsilon = 1.0e-6;
   
   // Retrieve the previous optimal sigma value for this point.  If the value is
