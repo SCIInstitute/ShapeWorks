@@ -219,10 +219,10 @@ public:
     return ConvertPointToPointType(firstVertex);
   }
 
-  inline PointType GetMeshLowerBound() const override {
+  inline const PointType &GetMeshLowerBound() const override {
     return meshLowerBound;
   }
-  inline PointType GetMeshUpperBound() const override {
+  inline const PointType &GetMeshUpperBound() const override {
     return meshUpperBound;
   }
 

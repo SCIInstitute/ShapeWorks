@@ -16,8 +16,8 @@ public:
 
   virtual PointType GetPointOnMesh() const = 0;
 
-  virtual PointType GetMeshLowerBound() const = 0;
-  virtual PointType GetMeshUpperBound() const = 0;
+  virtual const PointType &GetMeshLowerBound() const = 0;
+  virtual const PointType &GetMeshUpperBound() const = 0;
 
   virtual vnl_vector_fixed<float, 3> ProjectVectorToSurfaceTangent(const PointType & pointa, vnl_vector_fixed<float, 3> & vector) const = 0;
   virtual vnl_vector_fixed<float, 3> SampleNormalAtPoint(PointType p) const = 0;
