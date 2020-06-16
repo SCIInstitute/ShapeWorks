@@ -171,6 +171,11 @@ namespace optparse
           _map.clear();
         }
 
+        int size()
+        {
+          return _map.size();
+        }
+
         Value get(const std::string &d) const
         {
             return (is_set(d)) ? Value((*this)[d]) : Value();
