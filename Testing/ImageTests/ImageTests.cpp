@@ -17,6 +17,32 @@ TEST(ImageTests, dicomReadTest)
   ASSERT_TRUE(image == ground_truth);
 }
 
+TEST(ImageTests, fileFormatTest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.write(test_location + "1x2x2.tiff");
+  image.write(test_location + "1x2x2_back.nrrd");
+
+  Image original(test_location + "1x2x2.nrrd");
+
+  ASSERT_TRUE(image == original);
+}
+
+TEST(ImageTests, fileFormatTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
+
+  Image image(test_location + "sample_001.dcm");
+  image.write(test_location + "sample_001.nrrd");
+  image.write(test_location + "sample_001_back.dcm");
+
+  Image original(test_location + "sample_001.dcm");
+
+  ASSERT_TRUE(image == original);
+}
+
 TEST(ImageTests, antialiasTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/antialias/");
