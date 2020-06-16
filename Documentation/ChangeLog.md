@@ -1,3 +1,9 @@
+
+# ShapeWorks 5.4.1 - 2020-06-15
+
+## Fixes
+* **ShapeWorksStudio:** Fixed crash when importing data on a new/blank project.	
+
 # ShapeWorks 5.4.0 - 2020-06-10
 
 ## What's New
