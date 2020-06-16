@@ -87,7 +87,7 @@ public:
 
 protected:
 
-  // is this a fixed domain or not?  We start as fixed and if an image is set, we set this to false
+  // is this a fixed domain or not?  We start as fixed and if an image or mesh is set, we set this to false
   bool m_FixedDomain{true};
 
 
