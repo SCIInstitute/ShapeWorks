@@ -498,8 +498,7 @@ void Optimize::AddSinglePoint()
 {
   typedef itk::ParticleSystem < 3 > ParticleSystemType;
   typedef ParticleSystemType::PointType PointType;
-  for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains();
-       i++) {
+  for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
     if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) > 0) {
       continue;
     }

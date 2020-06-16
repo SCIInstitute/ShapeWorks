@@ -148,6 +148,7 @@ public:
   }
 
   void SetMesh(shapeworks::MeshWrapper* mesh_) {
+    this->m_FixedDomain = false;
     meshWrapper = mesh_;
   }
 
