@@ -128,6 +128,10 @@ bool ImageInfo::execute(const optparse::Values &options, SharedCommandData &shar
   bool centerofmass = static_cast<bool>(options.get("centerofmass"));
   bool boundingbox = static_cast<bool>(options.get("boundingbox"));
 
+  // by default print everything
+  if (!(dims || spacing || size || origin || direction || center || centerofmass || boundingbox))
+    dims = spacing = size = origin = direction = center = centerofmass = boundingbox = true;
+
   if (dims)
     std::cout << "logical dims:          " << sharedData.image.dims() << std::endl;
   if (spacing)
