@@ -48,10 +48,7 @@ public:
       distance. */
   virtual double Distance(const PointType &a, const PointType &b) const
   {
-    double sum = 0.0;
-    for (unsigned int i = 0; i < VDimension; i++)
-      {      sum += (b[i]-a[i]) * (b[i]-a[i]);      }
-    return sqrt(sum);
+    return a.SquaredEuclideanDistanceTo(b);
   }
 
 
