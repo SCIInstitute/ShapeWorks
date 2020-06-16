@@ -478,18 +478,9 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle *docHandle, Optimize *o
     }
   }
   std::vector<double> attr_scales;
-  elem = docHandle->FirstChild("attribute_scales").Element();
-  if (elem) {
-    inputsBuffer.str(elem->GetText());
-    double value;
-    while (inputsBuffer >> value) {
-      attr_scales.push_back(value);
-    }
-    inputsBuffer.clear();
-    inputsBuffer.str("");
-  }
-  inputsBuffer.clear();
-  inputsBuffer.str("");
+  attr_scales.push_back(1);
+  attr_scales.push_back(1);
+  attr_scales.push_back(1);
   if (attr_scales.size() != 3) {
     std::cerr << "not enough attribute scale values!!!" << std::endl;
     return false;
