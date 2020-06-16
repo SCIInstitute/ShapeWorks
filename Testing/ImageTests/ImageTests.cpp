@@ -625,7 +625,7 @@ TEST(ImageTests, spacingTest)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
 
   Image image(test_location + "1x2x2.nrrd");
-  Point spacing({1,2,2});
+  Vector spacing(makeVector({1,2,2}));
   
   ASSERT_TRUE(image.spacing() == spacing);
 }

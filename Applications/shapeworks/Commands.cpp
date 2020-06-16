@@ -297,6 +297,7 @@ void Translate::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--centerofmass").action("store").type("bool").set_default(false).help("Use center of mass [default set to false].");
+  parser.add_option("--applycenterofmass").action("store").type("bool").set_default(false).help("Apply calculated center of mass [default set to false].");
   parser.add_option("--tx", "-x").action("store").type("double").help("Explicit tx in image space (physical coordinates)");
   parser.add_option("--ty", "-y").action("store").type("double").help("Explicit ty in image space (e.g., 3.14)");
   parser.add_option("--tz", "-z").action("store").type("double").help("Explicit tz in image space");
@@ -313,10 +314,21 @@ bool Translate::execute(const optparse::Values &options, SharedCommandData &shar
   }
 
   bool centerofmass = static_cast<bool>(options.get("centerofmass"));
+  bool applycenterofmass = static_cast<bool>(options.get("applycenterofmass"));
 
   if (centerofmass)
   {
     sharedData.image.applyTransform(ImageUtils::createCenterOfMassTransform(sharedData.image));
+    return true;
+  }
+  else if (applycenterofmass)
+  {
+    double tx = static_cast<double>(options.get("tx"));
+    double ty = static_cast<double>(options.get("ty"));
+    double tz = static_cast<double>(options.get("tz"));
+    AffineTransformPtr xform(AffineTransform::New());
+    xform->Translate(-(sharedData.image.center() - Point3({tx, ty, tz})));
+    sharedData.image.applyTransform(xform);
     return true;
   }
   else

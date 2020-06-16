@@ -50,19 +50,19 @@ def Run_Pipeline(args):
         input("Press Enter to continue")
 
     datasetName = "left_atrium"
-    # filename = datasetName + ".zip"
+    filename = datasetName + ".zip"
     # Check if the data is in the right place
-    # if not os.path.exists(filename):
-        # print("Can't find " + filename + " in the current directory.")
-        # import DatasetUtils
-        # DatasetUtils.downloadDataset(datasetName)
+    if not os.path.exists(filename):
+        print("Can't find " + filename + " in the current directory.")
+        import DatasetUtils
+        DatasetUtils.downloadDataset(datasetName)
 
     parentDir = "TestLeftAtrium/"
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)
     # extract the zipfile
-    # with ZipFile(filename, 'r') as zipObj:
-        # zipObj.extractall(path=parentDir)
+    with ZipFile(filename, 'r') as zipObj:
+        zipObj.extractall(path=parentDir)
     parentDir = parentDir + datasetName + "/"
     fileList_img = sorted(glob.glob(parentDir + "LGE/*.nrrd"))
     fileList_seg = sorted(glob.glob(parentDir + "segmentation_LGE/*.nrrd"))
@@ -156,7 +156,7 @@ def Run_Pipeline(args):
         The function uses the same bounding box to crop the raw and segemnattion data.
         """
         croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", rigidFiles_segmentations, parentDir + "aligned/segmentations/*.aligned.nrrd")
-        croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images, parentDir + "aligned/images/*.aligned.nrrd")
+        croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images, parentDir + "aligned/segmentations/*.aligned.nrrd")
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
         if args.interactive:
@@ -240,7 +240,6 @@ def Run_Pipeline(args):
             '/Documentation/PDFs/ImagePrepTools.pdf'
             """
             croppedFiles = applyCropping(parentDir + "cropped", rigidFiles, parentDir + "aligned/*.aligned.nrrd")
-
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
         if args.interactive:

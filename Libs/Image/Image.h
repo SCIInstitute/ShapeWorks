@@ -112,7 +112,7 @@ public:
   Image& rotate(const double angle, const Vector3 &axis);
 
   /// applies the given transformation to the image by using resampling filter
-  Image &applyTransform(const TransformPtr transform, const Image &img);
+  Image &applyTransform(const TransformPtr transform, const Dims dims, const Point3 origin, const Vector spacing, const ImageType::DirectionType direction);
 
   /// applies the given transformation to the image by using resampling filter
   Image &applyTransform(const TransformPtr transform);
@@ -165,10 +165,10 @@ public:
   Dims dims() const { return image->GetLargestPossibleRegion().GetSize(); }
 
   /// physical dimensions of the image (dims * spacing)
-  Point3 size() const { return spacing() * toPoint(dims()); };
+  Point3 size() const { return toPoint(spacing()) * toPoint(dims()); }
 
   /// physical spacing of the image
-  Point3 spacing() const { return image->GetSpacing(); };
+  Vector spacing() const { return image->GetSpacing(); }
 
   /// physical coordinates of image origin
   Point3 origin() const { return image->GetOrigin(); }

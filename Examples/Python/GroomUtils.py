@@ -123,7 +123,7 @@ def applyCOMAlignment(outDir, inDataList, raw=[]):
         com = com[1].split(",")
         cmd = ["shapeworks", 
                "readimage", "--name", inname, 
-               "translate", "-x", com[0], "-y", com[1], "-z", com[2], 
+               "translate", "--applycenterofmass", str(True), "-x", com[0], "-y", com[1], "-z", com[2], 
                "write-image", "--name", outname]
         subprocess.check_call(cmd)
         if raw:
@@ -131,7 +131,8 @@ def applyCOMAlignment(outDir, inDataList, raw=[]):
             outnameImg = rename(innameImg, imageDir, 'com')
             outDataListImg.append(outnameImg)
             cmd = ["shapeworks", 
-                   "readimage", "--name", innameImg, "translate", "-x", com[0], "-y", com[1], "-z", com[2], 
+                   "readimage", "--name", innameImg, 
+                   "translate", "--applycenterofmass", str(True), "-x", com[0], "-y", com[1], "-z", com[2], 
                    "write-image", "--name", outnameImg]
             subprocess.check_call(cmd)
 
@@ -228,59 +229,78 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
             os.makedirs(binaryoutDir)
         outRawDataList=[]
         outSegDataList=[]
-    else:
-        outSegDataList=[]
-
-    for i in range(len(inDataListSeg)):
-        seginname = inDataListSeg[i]
-        initPath = os.path.dirname(seginname)
-        if processRaw:
+        for i in range(len(inDataListSeg)):
+            seginname = inDataListSeg[i]
+            initPath = os.path.dirname(seginname)
             segoutname = seginname.replace(initPath, binaryoutDir)
-        else:
-            segoutname = seginname.replace(initPath, outDir)
-        segoutname = segoutname.replace('.nrrd', '.aligned.nrrd')
-        outSegDataList.append(segoutname)
-        dtnrrdfilename = segoutname.replace('.aligned.nrrd', '.aligned.DT.nrrd')
-        tpdtnrrdfilename = segoutname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.nrrd')
-        isonrrdfilename = segoutname.replace('.aligned.nrrd', '.aligned.ISO.nrrd')
-        
-        cmd = ["shapeworks", 
-                "read-image", "--name", seginname, 
-                "extract-label", "--label", str(1.0),
-                "close-holes",
-                "write-image", "--name", seginname,
-                "antialias", "--iterations", str(antialiasIterations),
-                "compute-dt", "--isovalue", str(isoValue),
-                "write-image", "--name", dtnrrdfilename,
-                "curvature", "--iterations", str(smoothingIterations),
-                "write-image", "--name", tpdtnrrdfilename,
-                "topo-preserving-smooth", "--scaling", str(scaling), "--alpha", str(alpha), "--beta", str(beta),
-                "write-image", "--name", isonrrdfilename]
-        subprocess.check_call(cmd)
-
-        cmd = ["shapeworks", 
-                "read-image", "--name", seginname,
-                "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
-                "write-image", "--name", segoutname]
-        subprocess.check_call(cmd)
-
-        if processRaw:
+            segoutname = segoutname.replace('.nrrd', '.aligned.nrrd')
+            outSegDataList.append(segoutname)
             rawinname = inDataListImg[i]
             initPath = os.path.dirname(rawinname)
             rawoutname = rawinname.replace(initPath, rawoutDir)
             rawoutname = rawoutname.replace('.nrrd', '.aligned.nrrd')
             outRawDataList.append(rawoutname)
+            dtnrrdfilename = segoutname.replace('.aligned.nrrd', '.aligned.DT.nrrd')
+            tpdtnrrdfilename = segoutname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.nrrd')
+            isonrrdfilename = segoutname.replace('.aligned.nrrd', '.aligned.ISO.nrrd')
+            cmd = ["shapeworks", 
+                   "read-image", "--name", seginname, 
+                   "extract-label", "--label", str(1.0),
+                   "close-holes",
+                   "write-image", "--name", seginname,
+                   "antialias", "--iterations", str(antialiasIterations),
+                   "compute-dt", "--isovalue", str(isoValue),
+                   "write-image", "--name", dtnrrdfilename,
+                   "curvature", "--iterations", str(smoothingIterations),
+                   "write-image", "--name", tpdtnrrdfilename,
+                   "topo-preserving-smooth", "--scaling", str(scaling), "--alpha", str(alpha), "--beta", str(beta),
+                   "write-image", "--name", isonrrdfilename]
+            subprocess.check_call(cmd)
 
             cmd = ["shapeworks", 
-                    "read-image", "--name", rawinname,
-                    "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
-                    "write-image", "--name", rawoutname]
+                   "read-image", "--name", seginname,
+                   "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
+                   "write-image", "--name", segoutname]
             subprocess.check_call(cmd)
-    
-    if processRaw:
+
+            cmd = ["shapeworks", 
+                   "read-image", "--name", rawinname,
+                   "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
+                   "write-image", "--name", rawoutname]
+            subprocess.check_call(cmd)
         return  [outSegDataList, outRawDataList]
+
     else:
-        return outSegDataList
+        outDataList = []
+        for i in range(len(inDataListSeg)):
+            inname = inDataListSeg[i]
+            initPath = os.path.dirname(inname)
+            outname = inname.replace(initPath, outDir)
+            outname = outname.replace('.nrrd', '.aligned.nrrd')
+            outDataList.append(outname)
+            dtnrrdfilename = outname.replace('.aligned.nrrd', '.aligned.DT.nrrd')
+            tpdtnrrdfilename = outname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.nrrd')
+            isonrrdfilename = outname.replace('.aligned.nrrd', '.aligned.ISO.nrrd')
+            cmd = ["shapeworks", 
+                   "read-image", "--name", inname,
+                   "extract-label", "--label", str(1.0),
+                   "close-holes",
+                   "write-image", "--name", inname,
+                   "antialias", "--iterations", str(antialiasIterations),
+                   "compute-dt", "--isovalue", str(isoValue),
+                   "write-image", "--name", dtnrrdfilename,
+                   "curvature", "--iterations", str(smoothingIterations),
+                   "write-image", "--name", tpdtnrrdfilename,
+                   "topo-preserving-smooth", "--scaling", str(scaling), "--alpha", str(alpha), "--beta", str(beta),
+                   "write-image", "--name", isonrrdfilename]
+            subprocess.check_call(cmd)
+
+            cmd = ["shapeworks", 
+                   "read-image", "--name", inname,
+                   "icp", "--source", tpdtnrrdfilename, "--target", ref_tpdtnrrdfilename, "--iterations", str(icpIterations),
+                   "write-image", "--name", outname]
+            subprocess.check_call(cmd)
+        return outDataList
 
 def applyCropping(outDir, inDataList, path, paddingSize=10):
     """

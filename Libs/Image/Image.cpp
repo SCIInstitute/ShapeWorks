@@ -289,7 +289,7 @@ Image& Image::rotate(const double angle, const Vector3 &axis)
   return *this;
 }
 
-Image& Image::applyTransform(const TransformPtr transform, const Image &img)
+Image &Image::applyTransform(const TransformPtr transform, const Dims dims, const Point3 origin, const Vector spacing, const ImageType::DirectionType direction)
 {
   using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;  // linear interpolation by default
   FilterType::Pointer resampler = FilterType::New();
@@ -297,10 +297,10 @@ Image& Image::applyTransform(const TransformPtr transform, const Image &img)
   resampler->SetInput(this->image);
   resampler->SetTransform(transform);
 
-  resampler->SetSize(img.image->GetBufferedRegion().GetSize());
-  resampler->SetOutputOrigin(img.image->GetOrigin());
-  resampler->SetOutputDirection(img.image->GetDirection());
-  resampler->SetOutputSpacing(img.image->GetSpacing());
+  resampler->SetSize(dims);
+  resampler->SetOutputOrigin(origin);
+  resampler->SetOutputSpacing(spacing);
+  resampler->SetOutputDirection(direction);
 
   resampler->Update();
   this->image = resampler->GetOutput();
@@ -318,8 +318,8 @@ Image &Image::applyTransform(const TransformPtr transform)
 
   resampler->SetSize(dims());
   resampler->SetOutputOrigin(origin());
+  resampler->SetOutputSpacing(spacing());
   resampler->SetOutputDirection(coordsys());
-  resampler->SetOutputSpacing(image->GetSpacing());
 
   resampler->Update();
   this->image = resampler->GetOutput();

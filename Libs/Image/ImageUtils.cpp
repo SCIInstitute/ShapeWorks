@@ -56,7 +56,7 @@ Image& ImageUtils::rigidRegistration(Image &image, const Image &target, const Im
   vtkSmartPointer<vtkPolyData> targetContour = Image::getPolyData(target, isoValue);
   vtkSmartPointer<vtkPolyData> sourceContour = Image::getPolyData(source, isoValue);
   Matrix mat(ShapeworksUtils::getMatrix(MeshUtils::createIcpTransform(sourceContour, targetContour, iterations)));
-  image.applyTransform(createAffineTransform(mat), target);
+  image.applyTransform(createAffineTransform(mat), target.dims(), target.origin(), target.spacing(), target.coordsys());
   return image;
 }
 
