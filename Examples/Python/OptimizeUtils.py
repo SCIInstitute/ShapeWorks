@@ -256,8 +256,8 @@ def runShapeWorksOptimize_MultiScale(parentDir, inDataFiles, parameterDictionary
             os.makedirs(outDir)
         prevOutDir = parentDir + '/' + str(2**(startFactor + i - 1)) + '/'
         parameterFile = parentDir + "correspondence_" + str(2**(startFactor + i)) + '.xml'
-        outPointsWorld, outPointsLocal = _convertFilenamesToPointFilenames(inDataFiles, prevOutDir)
-        create_SWRun_multi_xml(parameterFile, inDataFiles, parameterDictionary, outDir, i, outPointsLocal)
+        _, inparts = _convertFilenamesToPointFilenames(inDataFiles, prevOutDir)
+        create_SWRun_multi_xml(parameterFile, inDataFiles, parameterDictionary, outDir, i, inparts)
         create_cpp_xml(parameterFile, parameterFile)
         print(parameterFile)
         execCommand = ["ShapeWorksRun" , parameterFile]
