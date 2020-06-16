@@ -174,6 +174,7 @@ public:
       MeshDomain<Dimension> *domain = new MeshDomain<Dimension>();
       m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood<ImageType>::New());
       if (mesh) {
+        this->m_Spacing = 1;
         domain->SetMesh(mesh);
       }
       m_DomainList.push_back(domain);
