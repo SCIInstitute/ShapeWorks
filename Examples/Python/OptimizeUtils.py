@@ -256,14 +256,8 @@ def runShapeWorksOptimize_MultiScale(parentDir, inDataFiles, parameterDictionary
             os.makedirs(outDir)
         prevOutDir = parentDir + '/' + str(2**(startFactor + i - 1)) + '/'
         parameterFile = parentDir + "correspondence_" + str(2**(startFactor + i)) + '.xml'
-        inparts = []
-        for j in range(len(inDataFiles)):
-            inname = inDataFiles[j].replace('\\','/')
-            inpath = os.path.dirname(inDataFiles[j]) + '/'
-            outname = inname.replace(inpath, prevOutDir)
-            lclname = outname.replace('.nrrd', '_local.particles')
-            inparts.append(lclname)
-        create_SWRun_multi_xml(parameterFile, inDataFiles, parameterDictionary, outDir, i, inparts)
+        outPointsWorld, outPointsLocal = _convertFilenamesToPointFilenames(inDataFiles, prevOutDir)
+        create_SWRun_multi_xml(parameterFile, inDataFiles, parameterDictionary, outDir, i, outPointsLocal)
         create_cpp_xml(parameterFile, parameterFile)
         print(parameterFile)
         execCommand = ["ShapeWorksRun" , parameterFile]
@@ -283,9 +277,6 @@ def _convertFilenamesToPointFilenames(files, outDir):
         filename, fileextension = os.path.splitext(outname)
         wrdname = filename + '_world.particles'
         lclname = filename + '_local.particles'
-
-        # wrdname = outname.replace('.nrrd', '_world.particles')
-        # lclname = outname.replace('.nrrd', '_local.particles')
         outPointsWorld.append(wrdname)
         outPointsLocal.append(lclname)
     return [outPointsLocal, outPointsWorld]
@@ -332,14 +323,5 @@ def runShapeWorksOptimize_FixedDomains(parentDir, inDataFiles, parameterDictiona
     print(parameterFile)
     execCommand = ["ShapeWorksRun" , parameterFile]
     subprocess.check_call(execCommand )
-    outPointsWorld = []
-    outPointsLocal = []
-    for i in range(len(inDataFiles)):
-        inname = inDataFiles[i].replace('\\','/')
-        inpath = os.path.dirname(inDataFiles[i]) + '/'
-        outname = inname.replace(inpath, outDir)
-        wrdname = outname.replace('.nrrd', '_world.particles')
-        lclname = outname.replace('.nrrd', '_local.particles')
-        outPointsWorld.append(wrdname)
-        outPointsLocal.append(lclname)
+    outPointsWorld, outPointsLocal = _convertFilenamesToPointFilenames(inDataFiles, outDir)
     return [outPointsLocal, outPointsWorld]
