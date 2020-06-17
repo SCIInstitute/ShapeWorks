@@ -209,6 +209,13 @@ bool Image::compare(const Image &other, bool verifyall, double precision) const
   catch (itk::ExceptionObject &exp)
   {
     std::cerr << "Comparison failed: " << exp.GetDescription() << std::endl;
+
+    // if metadata differs but dims do not, re-run compare to identify pixel differences (but still return false)
+    if (std::string(exp.what()).find("Inputs do not occupy the same physical space!") != std::string::npos)
+      if (dims() == other.dims())
+        if (compare(other, false, precision))
+          std::cerr << "0 pixels differ\n";
+
     return false;
   }
 

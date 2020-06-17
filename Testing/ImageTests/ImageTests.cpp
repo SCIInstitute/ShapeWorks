@@ -17,6 +17,19 @@ TEST(ImageTests, dicomReadTest)
   ASSERT_TRUE(image == ground_truth);
 }
 
+TEST(ImageTests, readTestNoImage)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/non-existant-dir/");
+
+  try {
+    Image image(test_location + "foo.nrrd");
+  } catch(...) {
+    return;
+  }
+
+  ASSERT_TRUE(false);
+}
+
 TEST(ImageTests, fileFormatTest1)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
