@@ -50,12 +50,19 @@ void ReadImage::buildParser()
 bool ReadImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string filename = options["name"];
-
+  if (filename.length() == 0) {
+    std::cerr << "readimage error: no filename specified, must pass `--name <filename>`\n";
+    return false;
+  }
+  
   try {
     sharedData.image = Image(filename);
     return true;
+  } catch(std::exception &e) {
+    std::cerr << "exception while reading " << filename << ": " << e.what() << std::endl;
+    return false;
   } catch(...) {
-    std::cerr << "exception while reading " << filename;
+    std::cerr << "unknown exception while reading " << filename << std::endl;
     return false;
   }
 }
@@ -84,6 +91,11 @@ bool WriteImage::execute(const optparse::Values &options, SharedCommandData &sha
   }
 
   std::string filename = options["name"];
+  if (filename.length() == 0) {
+    std::cerr << "writeimage error: no filename specified, must pass `--name <filename>`\n";
+    return false;
+  }
+
   bool compressed = static_cast<bool>(options.get("compressed"));
   
   sharedData.image.write(filename, compressed);
@@ -1025,6 +1037,11 @@ bool Compare::execute(const optparse::Values &options, SharedCommandData &shared
   }
 
   std::string filename = options["name"];
+  if (filename.length() == 0) {
+    std::cerr << "compare error: no filename specified with which to compare, must pass `--name <filename>`\n";
+    return false;
+  }
+
   double precision = static_cast<double>(options.get("precision"));
   bool verifyall = static_cast<bool>(options.get("verifyall"));
 

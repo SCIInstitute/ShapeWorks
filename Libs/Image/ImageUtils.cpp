@@ -75,6 +75,7 @@ TransformPtr ImageUtils::createWarpTransform(const std::string &source_landmarks
   std::ifstream intargetfile;
   insourcefile.open(source_landmarks);
   intargetfile.open(target_landmarks);
+  if (!insourcefile.is_open() || !intargetfile.is_open()) return TPSTransform::New();
 
   PointSet::PointIdentifier id{itk::NumericTraits<PointSet::PointIdentifier>::Zero};
   Point3 src, tgt;
