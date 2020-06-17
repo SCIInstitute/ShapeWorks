@@ -195,7 +195,7 @@ bool Antialias::execute(const optparse::Values &options, SharedCommandData &shar
 
   if (layers < 0)
   {
-    std::cerr << "Must specify a valid layers argument\n";
+    std::cerr << "layers must be >= 0\n";
     return false;
   }
   else
@@ -314,9 +314,9 @@ void Translate::buildParser()
 
   parser.add_option("--centerofmass").action("store").type("bool").set_default(false).help("Use center of mass [default set to false].");
   parser.add_option("--applycenterofmass").action("store").type("bool").set_default(false).help("Apply calculated center of mass [default set to false].");
-  parser.add_option("--tx", "-x").action("store").type("double").help("Explicit tx in image space (physical coordinates)");
-  parser.add_option("--ty", "-y").action("store").type("double").help("Explicit ty in image space (e.g., 3.14)");
-  parser.add_option("--tz", "-z").action("store").type("double").help("Explicit tz in image space");
+  parser.add_option("--tx", "-x").action("store").type("double").set_default(0).help("Explicit tx in image space (physical coordinates)");
+  parser.add_option("--ty", "-y").action("store").type("double").set_default(0).help("Explicit ty in image space (e.g., 3.14)");
+  parser.add_option("--tz", "-z").action("store").type("double").set_default(0).help("Explicit tz in image space");
 
   Command::buildParser();
 }
@@ -353,16 +353,8 @@ bool Translate::execute(const optparse::Values &options, SharedCommandData &shar
     double ty = static_cast<double>(options.get("ty"));
     double tz = static_cast<double>(options.get("tz"));
 
-    if (tx == 0 || ty == 0 || tz == 0)
-    {
-      std::cerr << "Must specify a valid translate argument\n";
-      return false;
-    }
-    else
-    {
-      sharedData.image.translate(makeVector({tx, ty, tz}));
-      return true;
-    }
+    sharedData.image.translate(makeVector({tx, ty, tz}));
+    return true;
   }
 }
 

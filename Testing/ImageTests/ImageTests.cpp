@@ -186,6 +186,17 @@ TEST(ImageTests, translateTest2)
   ASSERT_TRUE(image == ground_truth);
 }
 
+TEST(ImageTests, translateTest3)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/translate/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.translate(makeVector({0, 0, -10}));
+  Image ground_truth(test_location + "translate3_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
 TEST(ImageTests, comTest1)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/com/");

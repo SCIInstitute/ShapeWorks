@@ -256,9 +256,6 @@ Image& Image::pad(int padding, PixelType value)
 
 Image& Image::translate(const Vector3 &v)
 {
-  if (v[0] == 0 || v[1] == 0 || v[2] == 0)
-    throw std::invalid_argument("Invalid translate point");
-
   AffineTransformPtr xform(AffineTransform::New());
   xform->Translate(-v);            // negate v because ITK applies transformations backwards.
 
