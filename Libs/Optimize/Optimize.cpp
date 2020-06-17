@@ -232,7 +232,6 @@ int Optimize::GetDomainsPerShape()
 void Optimize::SetDomainType(shapeworks::DomainType type)
 {
   this->m_domain_type = type;
-  this->m_sampler->SetDomainType(this->m_domain_type);
 }
 
 //---------------------------------------------------------------------------
