@@ -548,52 +548,52 @@ TEST(ImageTests, setoriginTest)
   ASSERT_TRUE(image == ground_truth);
 }
 
-// TEST(ImageTests, warptest1)
-// {
-//   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
+TEST(ImageTests, warpTest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
 
-//   Image image(test_location + "1x2x2.nrrd");
-//   std::string src_filename(test_location + "src.pts"); // todo: create sets of landmarks for source and target
-//   std::string dst_filename(test_location + "dst.pts");
+  Image image(test_location + "input_image.nrrd");
+  std::string src_filename(test_location + "source.particles");
+  std::string dst_filename(test_location + "target.particles");
 
-//   TransformPtr transform(ImageUtils::computeWarp(src_filename, dst_filename));
-//   image.applyTransform(transform);
-//   Image ground_truth(test_location + "warp_baseline1.nrrd");
+  TransformPtr transform(ImageUtils::createWarpTransform(src_filename, dst_filename));
+  image.applyTransform(transform);
+  Image ground_truth(test_location + "warp_baseline1.nrrd");
 
-//   ASSERT_TRUE(image == ground_truth);
-// }
+  ASSERT_TRUE(image == ground_truth);
+}
 
-// TEST(ImageTests, warptest2)
-// {
-//   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
+TEST(ImageTests, warpTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
 
-//   Image image(test_location + "1x2x2.nrrd");
-//   std::string src_filename(test_location + "src.pts"); // todo: create sets of landmarks for source and target
-//   std::string dst_filename(test_location + "dst.pts");
+  Image image(test_location + "1x2x2.nrrd");
+  std::string src_filename(test_location + "src.pts"); // todo: create sets of landmarks for source and target
+  std::string dst_filename(test_location + "dst.pts");
 
-//   // only use every 3rd landmark point
-//   TransformPtr transform(ImageUtils::computeWarp(src_filename, dst_filename, 3));
-//   image.applyTransform(transform);
-//   Image ground_truth(test_location + "warp_baseline2.nrrd");
+  // only use every 3rd landmark point
+  TransformPtr transform(ImageUtils::createWarpTransform(src_filename, dst_filename, 3));
+  image.applyTransform(transform);
+  Image ground_truth(test_location + "warp_baseline2.nrrd");
 
-//   ASSERT_TRUE(image == ground_truth);
-// }
+  ASSERT_TRUE(image == ground_truth);
+}
 
-// TEST(ImageTests, warptest3)
-// {
-//   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
+TEST(ImageTests, warpTest3)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
 
-//   Image image(test_location + "1x2x2.nrrd");
-//   std::string src_filename(test_location + "bogus_src.pts");
-//   std::string dst_filename(test_location + "bogus_dst.pts");
+  Image image(test_location + "1x2x2.nrrd");
+  std::string src_filename(test_location + "bogus_src.pts");
+  std::string dst_filename(test_location + "bogus_dst.pts");
 
-//   // empty files should just produce identity transform
-//   TransformPtr transform(ImageUtils::computeWarp(src_filename, dst_filename));
-//   image.applyTransform(transform);
-//   Image ground_truth(test_location + "1x2x2.nrrd");
+  // empty files should just produce identity transform
+  TransformPtr transform(ImageUtils::createWarpTransform(src_filename, dst_filename));
+  image.applyTransform(transform);
+  Image ground_truth(test_location + "1x2x2.nrrd");
 
-//   ASSERT_TRUE(image == ground_truth);
-// }
+  ASSERT_TRUE(image == ground_truth);
+}
 
 TEST(ImageTests, compareTest1)
 {
