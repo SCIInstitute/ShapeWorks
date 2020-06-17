@@ -173,7 +173,7 @@ Image& Image::resample(const Point3& physicalSpacing, Dims logicalDims)
   return *this;
 }
 
-bool Image::compare(const Image &other, double precision, bool verifyall) const
+bool Image::compare(const Image &other, bool verifyall, double precision) const
 {
   // we use the region of interest filter here with the full region because our
   // incoming image may be the output of an ExtractImageFilter or PadImageFilter
@@ -209,12 +209,6 @@ bool Image::compare(const Image &other, double precision, bool verifyall) const
   catch (itk::ExceptionObject &exp)
   {
     std::cerr << "Comparison failed: " << exp.GetDescription() << std::endl;
-
-    // if metadata not the same, re-run compare to identify pixel differences, but still return false
-    if (std::string(exp.what()).find("Inputs do not occupy the same physical space!") != std::string::npos) 
-      if (compare(other, precision, false))
-        std::cerr << "0 pixels differ\n";
-
     return false;
   }
 

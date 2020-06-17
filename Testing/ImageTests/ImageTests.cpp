@@ -21,26 +21,28 @@ TEST(ImageTests, fileFormatTest1)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
 
-  Image image(test_location + "1x2x2.nrrd");
-  image.write(test_location + "1x2x2.tiff");
-  image.write(test_location + "1x2x2_back.nrrd");
+  Image image_orig(test_location + "1x2x2.nrrd");
+  image_orig.write(test_location + "1x2x2.tiff");
+  Image image_tiff(test_location + "1x2x2.tiff");
+  image_tiff.write(test_location + "1x2x2_back.nrrd");
+  Image image_back(test_location + "1x2x2_back.nrrd");
 
-  Image original(test_location + "1x2x2.nrrd");
-
-  ASSERT_TRUE(image == original);
+  ASSERT_TRUE(image_orig.compare(image_tiff, false /* only compare pixels, not regions */) &&
+              image_orig.compare(image_back, false /* only compare pixels, not regions */) &&
+              image_tiff.compare(image_back));
 }
 
 TEST(ImageTests, fileFormatTest2)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
 
-  Image image(test_location + "sample_001.dcm");
-  image.write(test_location + "sample_001.nrrd");
-  image.write(test_location + "sample_001_back.dcm");
+  Image image_orig(test_location + "sample_001.dcm");
+  image_orig.write(test_location + "sample_001.nrrd");
+  Image image_nrrd(test_location + "sample_001.nrrd");
+  image_nrrd.write(test_location + "sample_001_back.dcm");
+  Image image_back(test_location + "sample_001_back.dcm");
 
-  Image original(test_location + "sample_001.dcm");
-
-  ASSERT_TRUE(image == original);
+  ASSERT_TRUE(image_orig == image_nrrd && image_orig == image_back);
 }
 
 TEST(ImageTests, antialiasTest)
@@ -611,6 +613,66 @@ TEST(ImageTests, compareTest2)
   Image image2(test_location + "la-bin.nrrd");
 
   ASSERT_FALSE(image1 == image2);
+}
+
+TEST(ImageTests, compareTest3a)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "same_image_diff_region_same_dims.nrrd");
+
+  ASSERT_FALSE(image1.compare(image2));
+}
+
+TEST(ImageTests, compareTest3b)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "same_image_diff_region_same_dims.nrrd");
+
+  ASSERT_TRUE(image1.compare(image2, false /* only compare pixels, not regions */));
+}
+
+TEST(ImageTests, compareTest4a)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "diff_image_diff_region_same_dims.nrrd");
+
+  ASSERT_FALSE(image1.compare(image2));
+}
+
+TEST(ImageTests, compareTest4b)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "diff_image_diff_region_same_dims.nrrd");
+
+  ASSERT_FALSE(image1.compare(image2, false /* only compare pixels, not regions */));
+}
+
+TEST(ImageTests, compareTest5a)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "diff_image_same_region_same_dims.nrrd");
+
+  ASSERT_FALSE(image1.compare(image2));
+}
+
+TEST(ImageTests, compareTest5b)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "diff_image_same_region_same_dims.nrrd");
+
+  ASSERT_TRUE(image1.compare(image2, true /* keep comparing regions */, 1.0 /* allow pixels to differ by 1.0 */));
 }
 
 TEST(ImageTests, multicommandTest)
