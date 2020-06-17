@@ -571,7 +571,6 @@ TEST(ImageTests, warpTest1)
 
   TransformPtr transform(ImageUtils::createWarpTransform(src_filename, dst_filename));
   image.applyTransform(transform);
-  image.write("/Users/cam/data/ShapeWorks/tmp/warp_baseline1.nrrd");
   Image ground_truth(test_location + "warp_baseline1.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -588,7 +587,6 @@ TEST(ImageTests, warpTest2)
   // only use every 3rd landmark point
   TransformPtr transform(ImageUtils::createWarpTransform(src_filename, dst_filename, 3));
   image.applyTransform(transform);
-  image.write("/Users/cam/data/ShapeWorks/tmp/warp_baseline2.nrrd");
   Image ground_truth(test_location + "warp_baseline2.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
