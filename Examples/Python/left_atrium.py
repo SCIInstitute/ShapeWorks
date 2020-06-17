@@ -63,9 +63,9 @@ def Run_Pipeline(args):
     # extract the zipfile
     with ZipFile(filename, 'r') as zipObj:
         zipObj.extractall(path=parentDir)
-    parentDir = parentDir + datasetName + "/"
-    fileList_img = sorted(glob.glob(parentDir + "LGE/*.nrrd"))
-    fileList_seg = sorted(glob.glob(parentDir + "segmentation_LGE/*.nrrd"))
+        parentDir = parentDir + datasetName + "/"
+        fileList_img = sorted(glob.glob(parentDir + "images/*.nrrd"))
+        fileList_seg = sorted(glob.glob(parentDir + "segmentations/*.nrrd"))
 
     if args.tiny_test:
         fileList_img = fileList_img[:3]

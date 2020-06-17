@@ -250,10 +250,12 @@ void Project::store_subjects()
 
     // groomed files
     auto groomed_files = subject->get_groomed_filenames();
-    while (groomed_files.size() > groomed_columns.size()) {
-      groomed_columns.push_back(std::string(GROOMED_PREFIX) + "file");
+    if (groomed_files.size() >= groomed_columns.size()) {
+      while (groomed_files.size() > groomed_columns.size()) {
+        groomed_columns.push_back(std::string(GROOMED_PREFIX) + "file");
+      }
+      this->set_list(groomed_columns, i, groomed_files);
     }
-    this->set_list(groomed_columns, i, groomed_files);
 
     // local files
     std::string local_filename = subject->get_local_particle_filename();
@@ -437,7 +439,7 @@ std::vector<std::string> Project::get_list(std::vector<std::string> columns, int
 void Project::set_list(std::vector<std::string> columns, int subject,
                        std::vector<std::string> values)
 {
-
+  assert(columns.size() == values.size());
   for (int s = 0; s < columns.size(); s++) {
     auto column = columns[s];
     int column_index = get_index_for_column(column, true);
