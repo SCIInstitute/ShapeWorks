@@ -101,7 +101,8 @@ def Run_Pipeline(args):
         if args.tiny_test:
             files_img = files_img[:3]
             files_mesh = files_mesh[:3]
-
+            args.use_single_scale = True
+            args.interactive = False
         # run clustering if running on a subset
         if args.use_subsample:
             sample_idx = sampledata(files_img, int(args.use_subsample))
@@ -353,6 +354,10 @@ def Run_Pipeline(args):
             "verbosity" : 3,
             "use_statistics_in_init" : 0
         }
+        if args.tiny_test:
+            parameterDictionary["number_of_particles"] = 32
+            parameterDictionary["optimization_iterations"] = 25
+            parameterDictionary["iterations_per_split"] = 25
 
         """
         Now we execute the particle optimization function.
@@ -384,7 +389,9 @@ def Run_Pipeline(args):
         }
         [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
 
-
+    if args.tiny_test:
+        print("Done with tiny test")
+        exit()
 
     """
     ## ANALYZE : Shape Analysis and Visualization
