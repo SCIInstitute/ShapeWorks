@@ -1,5 +1,6 @@
 #include "OptimizeParameterFile.h"
 #include "Optimize.h"
+#include "ParticleSystem/DomainType.h"
 
 #include <itkImageFileReader.h>
 
@@ -34,10 +35,16 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
   }
   optimize->SetDomainsPerShape(domains_per_shape);
 
-  std::string domain_type = "image";
+  shapeworks::DomainType domain_type = shapeworks::DomainType::Image;
   elem = doc_handle.FirstChild("domain_type").Element();
   if (elem) {
-    domain_type = elem->GetText();
+    std::string text = elem->GetText();
+    if (text == "image") {
+      domain_type = shapeworks::DomainType::Image;
+    }
+    else if (text == "mesh") {
+      domain_type = shapeworks::DomainType::Mesh;
+    }
   }
   optimize->SetDomainType(domain_type);
 

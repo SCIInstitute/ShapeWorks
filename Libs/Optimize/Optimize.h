@@ -82,7 +82,7 @@ public:
   //! Return the number of domains per shape
   int GetDomainsPerShape();
 
-  void SetDomainType(std::string &_domain_type);
+  void SetDomainType(shapeworks::DomainType type);
   shapeworks::DomainType GetDomainType();
 
   //! Set the numbers of particles (vector of numbers, one for each domain)
