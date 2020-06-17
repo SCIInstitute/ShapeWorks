@@ -7,8 +7,8 @@ Jadie Adams
 
 The femur data set is comprised of segmented meshes of femurs and corresponding CT images that are not segmented.
 The first step in grooming is to turn the meshes into the binary volume format shapeworks expects.
-The full mages and segmentations must be carried through every stop of grooming. 
-Optimization uses single scale.
+The full images and segmentations are through every stop of grooming. 
+Optimization is single scale.
 
 First import the necessary modules
 """
@@ -28,15 +28,10 @@ from AnalyzeUtils import *
 
 def Run_Pipeline(args):
     """
-    Unzip the data for this tutorial.
-
-    The data is inside the leftatrium.zip, run the following function to unzip the
-    data and create necessary supporting files. The files will be Extracted in a
-    newly created Directory TestEllipsoids.
-    This data is LGE segmentation of left atrium.
-
-    Extract the zipfile into proper directory and create necessary supporting
-    files
+    Get the data for this tutorial.
+    If femur.zip is not there it will be downloaded from the ShapeWorks data portal.
+    femur.zip will be unzipped and the data will be extracted in a newly created Directory TestFemur.
+    This data is femur segmentation and the unsegmented hip CT scan.
     """
 
     print("\nStep 1. Get Data\n")
@@ -70,29 +65,27 @@ def Run_Pipeline(args):
         """
         ## GROOM : Data Pre-processing
         For the unprepped data the first few steps are
-        -- if no interactive tag - define cutting plane
+        -- if no interactive tag - use pre-defined cutting plane
+        -- if interacitve tag and option 1 is chosen - define cutting plane on sample of users choice
         -- Reflect images and meshes
         -- Turn meshes to volumes
         -- Isotropic resampling
         -- Padding
         -- Center of Mass Alignment
+        -- Centering
         -- Rigid Alignment
-        -- if interactive tag - define cutting plane
+        -- if interactive tag and option 2 was chosen- define cutting plane on mean sample
         -- clip segementations with cutting plane
-        -- Largest Bounding Box and Cropping
-
-        For detailed explainations of parameters for each tool, go to
-        'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ImagePrepTools.pdf'
-        'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/AlgnmentTools.pdf'
+        -- find largest bounding box and crop
         """
-
         # Directory where grooming output folders will be added
         parentDir = 'TestFemur/PrepOutput/'
         if not os.path.exists(parentDir):
             os.mkdir(parentDir)
+        
         # set name specific variables
         img_suffix = "1x_hip"
-        reference_side = "left" # somewhat arbitrary
+        reference_side = "left" # somewhat arbitrary, could be right
 
         # Get image ane mesh segmentation file lists
         files_img = []
@@ -104,16 +97,18 @@ def Run_Pipeline(args):
         for file in sorted(os.listdir(mesh_dir)):
             files_mesh.append(mesh_dir + file)
 
+        # use 3 sample if running a tiny test
         if args.tiny_test:
             files_img = files_img[:3]
             files_mesh = files_mesh[:3]
 
+        # run clustering if running on a subset
         if args.use_subsample:
             sample_idx = sampledata(files_img, int(args.use_subsample))
             files_img = [files_img[i] for i in sample_idx]
             files_mesh = [files_mesh[i] for i in sample_idx]
 
-        # If not interactive, get cutting plane on a mesh user specifies
+        # If not interactive, set cutting plane
         if not args.interactive:
             cutting_plane_points = np.array([[68.5970168,-128.34930979,-709.84309115],[1.0,-1.0,-709.84309115],[-1.0,1.0,-709.84309115]])
             cp_prefix = 'm03_L'
@@ -128,7 +123,8 @@ def Run_Pipeline(args):
                 choice = int(choice)
                 if choice==1 or choice==2:
                     choice_made = True
-
+                    
+        # If user chose option 1, define cutting plane on sample of their choice 
         if choice == 1:
             options = []
             for file in files_mesh:
@@ -152,6 +148,7 @@ def Run_Pipeline(args):
             print(cutting_plane_points)
             print("Continuing to groom.")
 
+        # BEGIN GROOMING
         """
         Reflect - We have left and right femurs, so we reflect both image and mesh 
         for the non-reference side so that all of the femurs can be aligned.
@@ -170,7 +167,7 @@ def Run_Pipeline(args):
         """
         resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, isBinary=True)
         resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", reflectedFile_img, isBinary=False)
-
+        
         """
         Apply padding
         Both the segmentation and raw images are padded in case the seg lies on the image boundary.
@@ -182,21 +179,27 @@ def Run_Pipeline(args):
         Apply center of mass alignment
         This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
         """
-        [comFiles_segmentations, comFiles_images] = applyCOMAlignment(parentDir + "com_aligned", paddedFiles_segmentations, paddedFiles_images)
-
-        centerFiles_segmentations = center(parentDir + "centered/segmentations", comFiles_segmentations)
-        centerFiles_images = center(parentDir + "centered/images", comFiles_images)
-
+        [comFiles_segmentations, comFiles_images] = applyCOMAlignment( parentDir + "com_aligned", paddedFiles_segmentations, raw=paddedFiles_images)
+        
+        """
+        Apply centering
+        """
+        centerFiles_segmentations = center(parentDir + "centered/segmentations/", comFiles_segmentations)
+        centerFiles_images = center(parentDir + "centered/images/", comFiles_images)
+        
+        """
+        Rigid alignment needs a reference file to align all the input files, FindReferenceImage function defines the median file as the reference.        
+        """
+        medianFile = FindReferenceImage(centerFiles_segmentations)
+        
         """
         Apply rigid alignment
         This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
         This function uses the same transfrmation matrix for alignment of raw and segmentation files.
-        Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
         """
-        medianFile = FindReferenceImage(centerFiles_segmentations)
-        [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir + "aligned", centerFiles_segmentations, centerFiles_images, medianFile, processRaw = True)
+        [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, centerFiles_segmentations, centerFiles_images , medianFile, processRaw = True)
 
-        # Define cutting plane on median sample
+        # If user chose option 2, define cutting plane on median sample
         if choice == 2:
            input_file = medianFile.replace("centered","aligned").replace(".nrrd", ".aligned.DT.nrrd")
            cutting_plane_points = SelectCuttingPlane(input_file)
@@ -373,7 +376,10 @@ def Run_Pipeline(args):
             "verbosity" : 3,
             "use_statistics_in_init" : 0
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
         [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
 
     """
