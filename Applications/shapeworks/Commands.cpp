@@ -971,7 +971,7 @@ void WarpImage::buildParser()
   parser.prog(prog).description(desc);
   parser.add_option("--source_landmarks").action("store").type("string").set_default("").help("Path to source landmarks.");
   parser.add_option("--target_landmarks").action("store").type("string").set_default("").help("Path to target landmarks.");
-  parser.add_option("--factor").action("store").type("int").set_default(1).help("Every Nth(factor) point used for warping [default 1].");
+  parser.add_option("--stride").action("store").type("int").set_default(1).help("Every _stride_ points will be used for warping [default 1].");
   Command::buildParser();
 }
 

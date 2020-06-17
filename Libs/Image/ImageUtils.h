@@ -15,8 +15,10 @@ public:
   /// Generates the Transform necessary to move the contents of this binary image to the center.
   static TransformPtr createCenterOfMassTransform(const Image &image);
 
-  /// Computes a warp transform from source to target
-  static TransformPtr createWarpTransform(const std::string &source_file, const std::string &target_file, const int pointFactor = 1);
+  /// Computes a warp transform from source to target using the given landmark points for each.
+  ///
+  /// \param stride Every _stride_ points will be used for computing the warp (using fewer points takes less time).
+  static TransformPtr createWarpTransform(const std::string &source_landmarks, const std::string &target_landmarks, const int stride = 1);
 
   /// Return Transform necessary to align this image with target.
   static Image& rigidRegistration(Image &img, const Image &target, const Image &source, float isoValue = 0.0, unsigned iterations = 20);
