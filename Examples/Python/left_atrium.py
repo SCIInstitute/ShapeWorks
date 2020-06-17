@@ -71,8 +71,10 @@ def Run_Pipeline(args):
         fileList_seg = sorted(glob.glob(parentDir + "segmentations/*.nrrd"))
 
     if args.tiny_test:
-        fileList_img = fileList_img[:3]
-        fileList_img = fileList_img[:3]
+        fileList_img = fileList_img[:2]
+        fileList_seg = fileList_seg[:2]
+        args.use_single_scale = True
+        
     if args.use_subsample:
         sample_idx = sampledata(fileList_seg, int(args.use_subsample))
         fileList_seg= [fileList_seg[i] for i in sample_idx]
@@ -318,7 +320,12 @@ def Run_Pipeline(args):
             "debug_projection": 0,
             "verbosity": 3
         }
-
+        if args.tiny_test:
+            parameterDictionary["number_of_particles"] = 32
+            parameterDictionary["optimization_iterations"] = 25
+            parameterDictionary["iterations_per_split"] = 25
+            
+            
 
         """
         Now we execute the particle optimization function.
@@ -350,7 +357,9 @@ def Run_Pipeline(args):
 
         [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
 
-
+    if args.tiny_test:
+        print("Done with tiny test")
+        exit()
 
     """
     ## ANALYZE : Shape Analysis and Visualization
