@@ -14,8 +14,7 @@
 
 namespace itk
 {
-template <unsigned int VDimension=3>
-class MeshDomain : public ParticleDomain<VDimension>
+class MeshDomain : public ParticleDomain
 {
 public:
   template<class T>
@@ -26,7 +25,7 @@ public:
   typedef SmartPointer<MeshDomain>  Pointer;
 
   /** Point type used to store particle locations. */
-  typedef typename ParticleDomain<VDimension>::PointType PointType;
+  typedef typename ParticleDomain::PointType PointType;
 
 
   shapeworks::DomainType GetDomainType() const override {
@@ -43,34 +42,30 @@ public:
     p = meshWrapper->SnapToMesh(p);
     return true;
   }
-  inline bool ApplyVectorConstraints(vnl_vector_fixed<double, VDimension>& gradE,
-                                     const PointType &pos) const override {
+  inline bool ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> & gradE, const PointType &pos) const override {
     // TODO need to refactor into update particle method
     // TODO reduce magnitude of vector so it doesn't violate constraints
     return true;
   }
-  inline vnl_vector_fixed<double, VDimension> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, VDimension>& gradE,
-                                                                            const PointType &pos) const override {
+  inline vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION> & gradE, const PointType &pos) const override {
 
-    vnl_vector_fixed<float, VDimension> vector;
-    for (unsigned int i = 0; i < VDimension; i++) { vector[i] = gradE[i]; }
+    vnl_vector_fixed<float, DIMENSION> vector;
+    for (unsigned int i = 0; i < DIMENSION; i++) { vector[i] = gradE[i]; }
 
-    vnl_vector_fixed<float, VDimension> projected = meshWrapper->ProjectVectorToSurfaceTangent(pos, vector);
+    vnl_vector_fixed<float, DIMENSION> projected = meshWrapper->ProjectVectorToSurfaceTangent(pos, vector);
 
-    vnl_vector_fixed<double, VDimension> result;
-    for (unsigned int i = 0; i < VDimension; i++) { result[i] = projected[i]; }
+    vnl_vector_fixed<double, DIMENSION> result;
+    for (unsigned int i = 0; i < DIMENSION; i++) { result[i] = projected[i]; }
     return result;
   }
 
-  inline PointType UpdateParticlePosition(PointType& point, vnl_vector_fixed<double, VDimension>& update) const override {
+  inline PointType UpdateParticlePosition(PointType& point, vnl_vector_fixed<double, DIMENSION> & update) const override {
     PointType newpoint;
 
-    vnl_vector_fixed<float, 3> negativeUpdate;
-    for (unsigned int i = 0; i < 3; i++) { negativeUpdate[i] = -update[i]; }
+    vnl_vector_fixed<float, DIMENSION> negativeUpdate;
+    for (unsigned int i = 0; i < DIMENSION; i++) { negativeUpdate[i] = -update[i]; }
     PointType walkedPoint = meshWrapper->GeodesicWalk(point, negativeUpdate);
-    for (unsigned int i = 0; i < 3; i++) { newpoint[i] = walkedPoint[i]; }
-    //PointType traditional;
-    //for (unsigned int i = 0; i < 3; i++) { traditional[i] = point [i] + negativeUpdate[i]; }
+    for (unsigned int i = 0; i < DIMENSION; i++) { newpoint[i] = walkedPoint[i]; }
     ApplyConstraints(newpoint);
     return newpoint;
   }
@@ -121,7 +116,7 @@ public:
     std::cerr << "Using " << max << " as max dim radius\n";
     return max;
   }
-  inline vnl_vector_fixed<float, 3> SampleNormalAtPoint(const PointType & point) const override {
+  inline vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType & point) const override {
     return meshWrapper->SampleNormalAtPoint(point);
   }
 
@@ -132,10 +127,10 @@ public:
   void SetCuttingPlane(const vnl_vector<double>& a, const vnl_vector<double>& b, const vnl_vector<double>& c) {
     // TODO for Farshad: figure out constraint thing
   }
-  void TransformCuttingPlane(const vnl_matrix_fixed<double, VDimension + 1, VDimension + 1> & Trans) {
+  void TransformCuttingPlane(const vnl_matrix_fixed<double, DIMENSION + 1, DIMENSION + 1> & Trans) {
     // TODO for Farshad: figure out constraint thing
   }
-  void AddSphere(const vnl_vector_fixed<double, VDimension>& v, double r) {
+  void AddSphere(const vnl_vector_fixed<double, DIMENSION>& v, double r) {
     // TODO for Farshad: figure out constraint thing
   }
 

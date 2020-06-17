@@ -153,9 +153,8 @@ ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType
     if (system->GetDomain(d)->GetDomainType() == shapeworks::DomainType::Image) {
       // Grab a pointer to the domain.  We need a Domain that has surface normal
       // information and a cutting plane
-      const ParticleImplicitSurfaceDomain<TGradientNumericType, VDimension> *domain
-        = static_cast<const ParticleImplicitSurfaceDomain<TGradientNumericType,
-        VDimension> *>(system->GetDomain(d));
+      const ParticleImplicitSurfaceDomain<TGradientNumericType> *domain
+        = static_cast<const ParticleImplicitSurfaceDomain<TGradientNumericType> *>(system->GetDomain(d));
       // PRATEEP
       vnl_vector_fixed<double, VDimension> x;
       vnl_vector_fixed<float, VDimension> grad = domain->SampleGradientVnl(pos);

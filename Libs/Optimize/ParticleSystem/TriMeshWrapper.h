@@ -133,14 +133,14 @@ public:
     return currentPoint;
   }
 
-  inline PointType GeodesicWalk(PointType pointa, vnl_vector_fixed<float, 3> vector) const override {
+  inline PointType GeodesicWalk(PointType pointa, vnl_vector_fixed<float, DIMENSION> vector) const override {
 
     PointType snapped = this->SnapToMesh(pointa);
     float a, b, c;
     TriMesh::Face face;
     int faceIndex = mesh->GetTriangleInfoForPoint(ConvertPointTypeToPoint(snapped), face, a, b, c);
 
-    Eigen::Vector3f vectorEigen = convert<vnl_vector_fixed<float, 3>>(vector);
+    Eigen::Vector3f vectorEigen = convert<vnl_vector_fixed<float, DIMENSION>>(vector);
     Eigen::Vector3f projectedVector = this->ProjectVectorToFace(GetFaceNormal(faceIndex), vectorEigen);
 
     Eigen::Vector3f snappedPoint = convert<PointType>(snapped);
@@ -151,13 +151,13 @@ public:
     return newPointpt;
   }
 
-  inline vnl_vector_fixed<float, 3> ProjectVectorToSurfaceTangent(const PointType & pointa, vnl_vector_fixed<float, 3> & vector) const override {
+  inline vnl_vector_fixed<float, DIMENSION> ProjectVectorToSurfaceTangent(const PointType & pointa, vnl_vector_fixed<float, DIMENSION> & vector) const override {
     float a, b, c;
     TriMesh::Face face;
     int faceIndex = mesh->GetTriangleInfoForPoint(ConvertPointTypeToPoint(pointa), face, a, b, c);
     const Eigen::Vector3f normal = GetFaceNormal(faceIndex);
-    Eigen::Vector3f result = ProjectVectorToFace(normal, convert<vnl_vector_fixed<float, 3>>(vector));
-    vnl_vector_fixed<float, 3> resultvnl(result[0], result[1], result[2]);
+    Eigen::Vector3f result = ProjectVectorToFace(normal, convert<vnl_vector_fixed<float, DIMENSION>>(vector));
+    vnl_vector_fixed<float, DIMENSION> resultvnl(result[0], result[1], result[2]);
     return resultvnl;
   }
 
@@ -177,10 +177,10 @@ public:
     return rotated;
   }
 
-  inline vnl_vector_fixed<float, 3> SampleNormalAtPoint(PointType p) const override {
+  inline vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(PointType p) const override {
     int faceID = mesh->GetClosestFaceToPoint(ConvertPointTypeToPoint(p));
     const Eigen::Vector3f vecnormal = GetFaceNormal(faceID);
-    vnl_vector_fixed<float, 3> normal(vecnormal[0], vecnormal[1], vecnormal[2]);
+    vnl_vector_fixed<float, DIMENSION> normal(vecnormal[0], vecnormal[1], vecnormal[2]);
     return normal;
   }
 

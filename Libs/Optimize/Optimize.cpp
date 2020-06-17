@@ -1416,9 +1416,8 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
     }
 
     // Only run the following code if we are dealing with ImplicitSurfaceDomains
-    const itk::ParticleImplicitSurfaceDomain < float, 3 >* domain
-      = dynamic_cast <const itk::ParticleImplicitSurfaceDomain < float,
-                                                                 3 >*> (m_sampler->GetParticleSystem()
+    const itk::ParticleImplicitSurfaceDomain < float >* domain
+      = dynamic_cast <const itk::ParticleImplicitSurfaceDomain < float>*> (m_sampler->GetParticleSystem()
                                                                         ->GetDomain(i));
     if (domain) {
       std::vector < float > fVals;
@@ -1432,9 +1431,7 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
         }
 
         if (m_use_normals[i % m_domains_per_shape]) {
-          typename itk::ParticleImageDomainWithGradients < float,
-                                                           3 > ::VnlVectorType pG =
-            domain->SampleNormalAtPoint(pos);
+          vnl_vector_fixed<float, DIMENSION> pG = domain->SampleNormalAtPoint(pos);
           VectorType pN;
           pN[0] = pG[0]; pN[1] = pG[1]; pN[2] = pG[2];
           pN = m_sampler->GetParticleSystem()->TransformVector(pN,

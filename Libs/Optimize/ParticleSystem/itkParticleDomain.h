@@ -18,7 +18,6 @@
 
 namespace itk
 {
-template <unsigned int VDimension=3>
 class ParticleDomain : public DataObject
 {
 public:
@@ -26,20 +25,18 @@ public:
   typedef SmartPointer<ParticleDomain>  Pointer;
 
   /** Point type used to store particle locations. */
-  typedef Point<double, VDimension> PointType;
+  typedef Point<double, DIMENSION> PointType;
 
   /** Apply any constraints to the given point location.  This method may, for
       example, implement boundary conditions or restrict points to lie on a
       surface.  Default behavior does nothing.  Returns true if the value of
       the point was modified and false otherwise. */
   virtual bool ApplyConstraints(PointType& p) const = 0;
-  virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, VDimension>& gradE,
-    const PointType& pos) const = 0;
+  virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION>& gradE, const PointType& pos) const = 0;
 
-  virtual PointType UpdateParticlePosition(PointType &point, vnl_vector_fixed<double, VDimension> &update) const = 0;
+  virtual PointType UpdateParticlePosition(PointType &point, vnl_vector_fixed<double, DIMENSION> &update) const = 0;
 
-  virtual vnl_vector_fixed<double, VDimension> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, VDimension>& gradE,
-    const PointType& pos) const = 0;
+  virtual vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION>& gradE, const PointType& pos) const = 0;
   virtual vnl_vector_fixed<float, 3> SampleNormalAtPoint(const PointType & point) const = 0;
 
   /** A Domain may define a distance calculation.  This is useful in cases
@@ -70,9 +67,9 @@ public:
   // Cutting Plane constraint functionality
   virtual void PrintCuttingPlaneConstraints(std::ofstream &out) const = 0;
   virtual void SetCuttingPlane(const vnl_vector<double>& a, const vnl_vector<double>& b, const vnl_vector<double> &c) = 0;
-  virtual void TransformCuttingPlane(const vnl_matrix_fixed<double, VDimension + 1, VDimension + 1> &Trans) = 0;
+  virtual void TransformCuttingPlane(const vnl_matrix_fixed<double, DIMENSION + 1, DIMENSION + 1> &Trans) = 0;
 
-  virtual void AddSphere(const vnl_vector_fixed<double, VDimension> &v, double r) = 0;
+  virtual void AddSphere(const vnl_vector_fixed<double, DIMENSION> &v, double r) = 0;
 
   virtual void DeleteImages() = 0;
   virtual void DeletePartialDerivativeImages() = 0;
