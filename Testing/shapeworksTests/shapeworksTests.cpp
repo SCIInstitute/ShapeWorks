@@ -30,6 +30,13 @@ void shapeworksEnvSetup() // fixme: use googletest's setup/teardown: https://git
 }
 
 //---------------------------------------------------------------------------
+TEST(shapeworksTests, info)
+{
+  shapeworksEnvSetup();
+  ASSERT_FALSE(system("bash info.sh"));
+}
+
+//---------------------------------------------------------------------------
 TEST(shapeworksTests, compare) {
   shapeworksEnvSetup();
   ASSERT_FALSE(system("bash compare.sh"));
@@ -81,13 +88,6 @@ TEST(shapeworksTests, translate)
 {
   shapeworksEnvSetup();
   ASSERT_FALSE(system("bash translate.sh"));
-}
-
-//---------------------------------------------------------------------------
-TEST(shapeworksTests, translatefail)
-{
-  shapeworksEnvSetup();
-  ASSERT_TRUE(system("bash translatefail.sh"));
 }
 
 //---------------------------------------------------------------------------
