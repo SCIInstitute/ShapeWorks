@@ -297,11 +297,14 @@ def Run_Pipeline(args):
         dtFiles = applyDistanceTransforms(parentDir, croppedFiles_segmentations)
 
     else:
-        dtFiles = applyDistanceTransforms(parentDir, fileList_seg)
+        print("Skipping grooming...")
+        dtFiles = []
+        dt_dir = inputDir + 'distance_transforms/'
+        for file in sorted(os.listdir(dt_dir)):
+            dtFiles.append(dt_dir + file)
 
-        print("\nStep 3. Groom - Convert to distance transforms\n")
-        if args.interactive:
-            input("Press Enter to continue")
+        if args.tiny_test:
+            dtFiles = dtFiles[:3]
     
     """
 
