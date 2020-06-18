@@ -25,6 +25,9 @@ using Vector        = Vector3;
 using Point         = Point3;
 using Matrix        = Matrix33;
 
+/// Enables `makeVector({1,2,3});`, construction using an initializer list (likely an accidental omission in current ITK version)
+Vector3 makeVector(std::array<double, 3>&& arr);
+
 /// All transforms can be accessed using a generic transform pointer
 using GenericTransform   = itk::Transform<double, 3>;
 using TransformPtr       = GenericTransform::Pointer;
@@ -32,7 +35,7 @@ using TransformPtr       = GenericTransform::Pointer;
 /// Affine transforms are used for many Image manipulation commands
 using AffineTransform    = itk::AffineTransform<double, 3>;
 using AffineTransformPtr = AffineTransform::Pointer;
-AffineTransformPtr createAffineTransform(const Matrix33 &mat);
+AffineTransformPtr createAffineTransform(const Matrix33 &mat, const Vector3 &translate = makeVector({0,0,0}));
 
 /// For deliberate conversions between types
 Point toPoint(const Dims &d);
@@ -44,9 +47,6 @@ Point toPoint(const Vector &v);
 /// Negation operator (ITK only has it for Vectors, but sometimes useful for Points)
 template<typename P>
 P negate(P &&p) { return P({-p[0], -p[1], -p[2]}); }
-
-/// Enables `makeVector({1,2,3});`, construction using an initializer list (likely an accidental omission in current ITK version)
-Vector3 makeVector(std::array<double, 3>&& arr);
 
 /// Inversion function for all but Vector
 template<typename P>

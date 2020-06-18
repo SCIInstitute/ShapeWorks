@@ -16,7 +16,7 @@ bool ShapeworksUtils::is_directory(const std::string &pathname)
   return false;
 }
 
-Matrix33 ShapeworksUtils::getMatrix(const vtkSmartPointer<vtkMatrix4x4> mat)
+Matrix33 ShapeworksUtils::getMatrix(const vtkSmartPointer<vtkMatrix4x4>& mat)
 {
   Matrix m;
 
@@ -29,6 +29,11 @@ Matrix33 ShapeworksUtils::getMatrix(const vtkSmartPointer<vtkMatrix4x4> mat)
   }
 
   return m;
+}
+
+Vector3 ShapeworksUtils::getOffset(const vtkSmartPointer<vtkMatrix4x4>& mat)
+{
+  return makeVector({mat->GetElement(0,3), mat->GetElement(1,3), mat->GetElement(2,3)});
 }
 
 } // shapeworks

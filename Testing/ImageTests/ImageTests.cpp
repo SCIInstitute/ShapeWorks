@@ -446,7 +446,8 @@ TEST(ImageTests, icpTest)
   Image image(test_location + "1x2x2.nrrd");
   Image target(test_location + "target.nrrd");
   Image source(test_location + "source.nrrd");
-  ImageUtils::rigidRegistration(image, target, source);
+  TransformPtr transform(ImageUtils::createRigidRegistrationTransform(target, source));
+  image.applyTransform(transform, target.dims(), target.origin(), target.spacing(), target.coordsys());
   Image ground_truth(test_location + "icp_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -772,3 +773,53 @@ TEST(ImageTests, coordsysTest)
   
   ASSERT_TRUE(image.coordsys() == coordsys);
 }
+
+TEST(ImageTests, negationTest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/negation/");
+
+  Image image(test_location + "la-bin.nrrd");
+  image = -image;
+  Image baseline(test_location + "negation1_baseline.nrrd");
+  
+  ASSERT_TRUE(image == baseline);
+}
+
+TEST(ImageTests, negationTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/negation/");
+
+  Image image(test_location + "la-bin.nrrd");
+  image = -(-image); // negation of negation
+  Image baseline(test_location + "la-bin.nrrd");
+
+  ASSERT_TRUE(image == baseline);
+}
+
+TEST(ImageTests, additionTest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/addition/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "1x2x2.nrrd");
+  try {
+    image1 = image1 + image2; // the have different dims, so operator throws an exception
+  } catch(std::invalid_argument) { return; }
+
+  // fails if an exception is not thrown
+  ASSERT_TRUE(false);
+}
+
+// TEST(ImageTests, additionTest1)
+// {
+//   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/addition/");
+
+//   Image image1(test_location + "la-bin.nrrd");
+//   Image image2(test_location + "1x2x2.nrrd");
+//   try {
+//     image1 = image1 + image2; // the have different dims, so operator throws an exception
+//   } catch(std::invalid_argument) { return; }
+
+//   // fails if an exception is not thrown
+//   ASSERT_TRUE(false);
+// }

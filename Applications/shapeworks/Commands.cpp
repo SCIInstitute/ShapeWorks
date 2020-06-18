@@ -537,7 +537,7 @@ bool Threshold::execute(const optparse::Values &options, SharedCommandData &shar
 void ComputeDT::buildParser()
 {
   const std::string prog = "compute-dt";
-  const std::string desc = "computes distance transform volume from a binary (antialiased) image";
+  const std::string desc = "computes distance transform volume from a (preferably antialized) binary image";
   parser.prog(prog).description(desc);
 
   parser.add_option("--isovalue").action("store").type("float").set_default(0.0).help("Level set value that defines the interface between foreground and background [default 0.0].");
@@ -757,12 +757,12 @@ bool Blur::execute(const optparse::Values &options, SharedCommandData &sharedDat
 void ICPRigid::buildParser()
 {
   const std::string prog = "icp";
-  const std::string desc = "performs iterative closed point (ICP) 3D rigid registration on pair of images";
+  const std::string desc = "transform current image using iterative closed point (ICP) 3D rigid registration computed from source to target distance maps";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--target").action("store").type("string").set_default("").help("Distance map of target image.");
   parser.add_option("--source").action("store").type("string").set_default("").help("Distance map of source image.");
-  parser.add_option("--isovalue").action("store").type("float").set_default(0.0).help("Value of isovalue [default 0.0].");
+  parser.add_option("--target").action("store").type("string").set_default("").help("Distance map of target image.");
+  parser.add_option("--isovalue").action("store").type("float").set_default(0.0).help("isovalue of distance maps used to create ICPtransform [default 0.0].");
   parser.add_option("--iterations").action("store").type("unsigned").set_default(20).help("Number of iterations run ICP registration [default 20].");
 
   Command::buildParser();
@@ -776,26 +776,27 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
-  std::string targetImg = static_cast<std::string>(options.get("target"));
-  std::string sourceImg = static_cast<std::string>(options.get("source"));
+  std::string targetDT = static_cast<std::string>(options.get("target"));
+  std::string sourceDT = static_cast<std::string>(options.get("source"));
   float isovalue = static_cast<float>(options.get("isovalue"));
   unsigned iterations = static_cast<unsigned>(options.get("iterations"));
 
-  if (targetImg == "")
+  if (targetDT == "")
   {
-    std::cerr << "Must specify a target image\n";
+    std::cerr << "Must specify a target distance map\n";
     return false;
   }
-  else if (sourceImg == "")
+  else if (sourceDT == "")
   {
-    std::cerr << "Must specify a source image\n";
+    std::cerr << "Must specify a source distance map\n";
     return false;
   }
   else
   {
-    Image target(targetImg);
-    Image source(sourceImg);
-    sharedData.image = ImageUtils::rigidRegistration(sharedData.image, target, source, isovalue, iterations);
+    Image target_dt(targetDT);
+    Image source_dt(sourceDT);
+    TransformPtr transform(ImageUtils::createRigidRegistrationTransform(source_dt, target_dt, isovalue, iterations));
+    sharedData.image.applyTransform(transform, target_dt.dims(), target_dt.origin(), target_dt.spacing(), target_dt.coordsys());
     return true;
   }
 }
