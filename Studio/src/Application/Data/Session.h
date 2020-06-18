@@ -42,13 +42,13 @@ public:
   bool save_project(std::string filename);
 
   /// load project from file
-  bool load_xml_project(QString filename, std::string& planesFile);
+  bool load_project(QString filename);
 
   /// read a lightweight project file
   bool load_light_project(QString filename);
 
   /// load a shapeworks project
-  bool load_project(QString filename);
+  bool load_xl_project(QString filename);
 
   void set_project_path(QString relative_path);
 
@@ -64,8 +64,6 @@ public:
   /// load point files
   bool load_point_files(std::vector<std::string> file_names, bool local);
   bool update_points(std::vector<std::vector<itk::Point<double>>> points, bool local);
-
-  void set_reconstructed_present(bool b);
 
   bool is_light_project();
 
@@ -135,10 +133,6 @@ private:
   QVector<QSharedPointer<Shape>> shapes_;
 
   QSharedPointer<MeshManager> mesh_manager_;
-
-  bool original_present_{false};
-  bool groomed_present_{false};
-  bool particles_present_{false};
 
   bool groups_available_{false};
   bool is_light_project_{false};

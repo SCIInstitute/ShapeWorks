@@ -3,11 +3,13 @@
 set(Mesh_sources
  Mesh.cpp
  meshFIM.cpp
+ MeshUtils.cpp
  )
 
 set(Mesh_headers
  Mesh.h
  meshFIM.h
+ MeshUtils.h
  )
 
 FILE(GLOB PreviewMeshQC_sources ./PreviewMeshQC/*.cpp)

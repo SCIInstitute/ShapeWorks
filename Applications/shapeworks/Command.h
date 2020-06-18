@@ -19,8 +19,11 @@ public:
   const std::string name() const { return parser.prog(); }
   const std::string usage() const { return parser.get_usage(); }
   const std::string desc() const { return parser.description(); }
-
+  
+  /// parses the arguments for this command, saving them in the parser and returning the leftovers
   std::vector<std::string> parse_args(const std::vector<std::string> &arguments);
+
+  /// calls execute for this command using the parsed args, returning system exit value
   int run(SharedCommandData &sharedData);
 
 private:

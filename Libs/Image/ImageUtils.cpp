@@ -1,4 +1,5 @@
 #include "ImageUtils.h"
+#include "MeshUtils.h"
 
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
@@ -9,10 +10,13 @@
 
 namespace shapeworks {
 
-Image::Region ImageUtils::boundingBox(std::vector<std::string> &filenames)
+Image::Region ImageUtils::boundingBox(std::vector<std::string> &filenames, Image::PixelType isoValue)
 {
   if (filenames.empty())
-    throw std::invalid_argument("No filenames provided from which to compute a bounding box"); 
+    throw std::invalid_argument("No filenames provided to compute a bounding box");
+  
+  if (filenames.size() == 1)
+    throw std::invalid_argument("Only one filename provided to compute a bounding box");
 
   Image img(filenames[0]);
   Image::Region bbox(img.boundingBox());
@@ -26,7 +30,7 @@ Image::Region ImageUtils::boundingBox(std::vector<std::string> &filenames)
       throw std::invalid_argument("Image sizes do not match (" + filename + ")");
     }
 
-    bbox.grow(img.boundingBox());
+    bbox.grow(img.boundingBox(isoValue));
   }
 
   return bbox;
@@ -47,18 +51,16 @@ TransformPtr ImageUtils::createCenterOfMassTransform(const Image &image)
   return xform;
 }
 
-Image ImageUtils::rigidRegistration(Image &target, const Image &source, float isoValue, unsigned iterations)
+Image& ImageUtils::rigidRegistration(Image &image, const Image &target, const Image &source, float isoValue, unsigned iterations)
 {
   vtkSmartPointer<vtkPolyData> targetContour = Image::getPolyData(target, isoValue);
   vtkSmartPointer<vtkPolyData> sourceContour = Image::getPolyData(source, isoValue);
-  Matrix mat = ShapeworksUtils::icp(targetContour, sourceContour, iterations);
-  AffineTransformPtr xform(AffineTransform::New());
-  xform->SetMatrix(mat);
-  target.applyTransform(xform);
-  return target;
+  Matrix mat(ShapeworksUtils::getMatrix(MeshUtils::createIcpTransform(sourceContour, targetContour, iterations)));
+  image.applyTransform(createAffineTransform(mat), target.dims(), target.origin(), target.spacing(), target.coordsys());
+  return image;
 }
 
-TransformPtr ImageUtils::computeWarp(const std::string &source_file, const std::string &target_file, const int pointFactor)
+TransformPtr ImageUtils::createWarpTransform(const std::string &source_file, const std::string &target_file, const int pointFactor)
 { 
   typedef itk::ThinPlateSplineKernelTransform<double, 3> TPSTransform;
   typedef TPSTransform::PointSetType PointSet;
@@ -103,6 +105,21 @@ TransformPtr ImageUtils::computeWarp(const std::string &source_file, const std::
   tps->ComputeWMatrix();
 
   return tps;
+}
+
+Image& ImageUtils::topologyPreservingSmooth(Image& image, float scaling, float sigmoidAlpha, float sigmoidBeta)
+{
+  Image featureImage(image);
+  featureImage.applyGradientFilter();
+  featureImage.applySigmoidFilter(sigmoidAlpha, sigmoidBeta);
+
+  return image.applyTPLevelSetFilter(featureImage, scaling);
+}
+
+Image& ImageUtils::isoresample(Image& image, double isoSpacing, Dims outputSize)
+{
+  Point3 spacing({isoSpacing, isoSpacing, isoSpacing});
+  return image.resample(spacing, outputSize);
 }
 
 } //shapeworks

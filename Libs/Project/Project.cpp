@@ -7,8 +7,8 @@
 using namespace shapeworks;
 
 //---------------------------------------------------------------------------
-std::string ReplaceString(std::string subject, const std::string& search,
-                          const std::string& replace)
+static std::string replace_string(std::string subject, const std::string& search,
+                                  const std::string& replace)
 {
   size_t pos = 0;
   while ((pos = subject.find(search, pos)) != std::string::npos) {
@@ -44,6 +44,10 @@ bool Project::load(std::string filename)
 
   this->load_subjects();
 
+  Parameters project_parameters = this->get_parameters(Parameters::PROJECT_PARAMS);
+
+  this->version_ = project_parameters.get("version", -1);
+
   this->loaded_ = true;
   return true;
 }
@@ -57,8 +61,8 @@ bool Project::save(std::string filename)
     ws.title("data");
 
     Parameters project_parameters;
-    project_parameters.set("version", 1);
-    this->set_parameters("project", project_parameters);
+    project_parameters.set("version", this->supported_version_);
+    this->set_parameters(Parameters::PROJECT_PARAMS, project_parameters);
 
     this->store_subjects();
     this->wb_->save(filename);
@@ -109,16 +113,20 @@ int Project::get_number_of_domains()
     return seg_columns.size();
   }
 
-  auto mesh_columns = this->get_matching_columns("mesh_");
+  auto mesh_columns = this->get_matching_columns(MESH_PREFIX);
   if (mesh_columns.size() > 0) {
     return mesh_columns.size();
   }
 
-  /// TODO: DT's?
+  auto groom_columns = this->get_matching_columns(GROOMED_PREFIX);
+  if (groom_columns.size() > 0) {
+    return groom_columns.size();
+  }
 
   /// TODO: when only point files are specified, the user has to specify somewhere how many domains there are (if more than one)
 
-  return 0;
+  // default 1
+  return 1;
 }
 
 //---------------------------------------------------------------------------
@@ -225,24 +233,31 @@ void Project::store_subjects()
   std::vector<std::string> groomed_columns;
 
   for (int i = 0; i < seg_columns.size(); i++) {
-    std::string groom_column_name = ReplaceString(seg_columns[i], SEGMENTATION_PREFIX,
-                                                  GROOMED_PREFIX);
+    std::string groom_column_name = replace_string(seg_columns[i], SEGMENTATION_PREFIX,
+                                                   GROOMED_PREFIX);
     groomed_columns.push_back(groom_column_name);
   }
 
   for (int i = 0; i < num_subjects; i++) {
     std::shared_ptr<Subject> subject = this->subjects_[i];
 
+    // segmentations
     auto seg_files = subject->get_segmentation_filenames();
     if (seg_files.size() > seg_columns.size()) {
       seg_columns.push_back(std::string(SEGMENTATION_PREFIX) + "file");
     }
     this->set_list(seg_columns, i, seg_files);
+
+    // groomed files
     auto groomed_files = subject->get_groomed_filenames();
-    if (groomed_files.size() == groomed_columns.size()) {
+    if (groomed_files.size() >= groomed_columns.size()) {
+      while (groomed_files.size() > groomed_columns.size()) {
+        groomed_columns.push_back(std::string(GROOMED_PREFIX) + "file");
+      }
       this->set_list(groomed_columns, i, groomed_files);
     }
 
+    // local files
     std::string local_filename = subject->get_local_particle_filename();
     if (local_filename != "") {
       this->set_value("local_particles", i, local_filename);
@@ -257,6 +272,18 @@ void Project::store_subjects()
 
   this->segmentations_present_ = seg_columns.size() >= 1;
   this->groomed_present_ = groomed_columns.size() >= 1;
+}
+
+//---------------------------------------------------------------------------
+int Project::get_supported_version()
+{
+  return this->supported_version_;
+}
+
+//---------------------------------------------------------------------------
+int Project::get_version()
+{
+  return this->version_;
 }
 
 //---------------------------------------------------------------------------
@@ -412,7 +439,7 @@ std::vector<std::string> Project::get_list(std::vector<std::string> columns, int
 void Project::set_list(std::vector<std::string> columns, int subject,
                        std::vector<std::string> values)
 {
-
+  assert(columns.size() == values.size());
   for (int s = 0; s < columns.size(); s++) {
     auto column = columns[s];
     int column_index = get_index_for_column(column, true);

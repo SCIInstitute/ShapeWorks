@@ -14,6 +14,10 @@ struct SharedCommandData
   Image::Region region;
   Mesh mesh;
   ParticleSystem particleSystem;
+
+  bool validImage() const { return image.image != nullptr; }
+  bool validMesh() const { return true; }
+  bool validParticleSystem() const {return particleSystem.N() >= 1 && particleSystem.D() >= 1; }
 };
 
 } // shapeworks

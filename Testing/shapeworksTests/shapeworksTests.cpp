@@ -210,17 +210,24 @@ TEST(shapeworksTests, topo)
 }
 
 //---------------------------------------------------------------------------
-TEST(shapeworksTests, topofail)
-{
-  shapeworksEnvSetup();
-  ASSERT_TRUE(system("bash topofail.sh"));
-}
-
-//---------------------------------------------------------------------------
 TEST(shapeworksTests, blur)
 {
   shapeworksEnvSetup();
   ASSERT_FALSE(system("bash blur.sh"));
+}
+
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, boundingbox)
+{
+  shapeworksEnvSetup();
+  ASSERT_FALSE(system("bash boundingbox.sh"));
+}
+
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, boundingboxfail)
+{
+  shapeworksEnvSetup();
+  ASSERT_TRUE(system("bash boundingboxfail.sh"));
 }
 
 //---------------------------------------------------------------------------

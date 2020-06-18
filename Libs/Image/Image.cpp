@@ -125,7 +125,8 @@ Image& Image::antialias(unsigned iterations, double maxRMSErr, int layers)
 
   filter->SetMaximumRMSError(maxRMSErr);
   filter->SetNumberOfIterations(iterations);
-  filter->SetNumberOfLayers(layers);
+  if (layers)
+    filter->SetNumberOfLayers(layers);
   filter->SetInput(this->image);
   filter->Update();
   this->image = filter->GetOutput();
@@ -172,7 +173,7 @@ Image& Image::resample(const Point3& physicalSpacing, Dims logicalDims)
   return *this;
 }
 
-bool Image::compare(const Image &other, double precision) const
+bool Image::compare(const Image &other, bool verifyall, double precision) const
 {
   // we use the region of interest filter here with the full region because our
   // incoming image may be the output of an ExtractImageFilter or PadImageFilter
@@ -199,6 +200,7 @@ bool Image::compare(const Image &other, double precision) const
   diff->SetTestInput(itk_image);
   diff->SetDifferenceThreshold(precision);
   diff->SetToleranceRadius(0);
+  diff->SetVerifyInputInformation(verifyall);
 
   try
   {
@@ -206,15 +208,14 @@ bool Image::compare(const Image &other, double precision) const
   }
   catch (itk::ExceptionObject &exp)
   {
-    std::cerr << "Comparison failed" << std::endl;
-    std::cerr << exp << std::endl;
+    std::cerr << "Comparison failed: " << exp.GetDescription() << std::endl;
     return false;
   }
 
   auto numberOfPixelsWithDifferences = diff->GetNumberOfPixelsWithDifferences();
   if (numberOfPixelsWithDifferences > 0)
   {
-    std::cerr << "Comparison failed: " << numberOfPixelsWithDifferences << " pixels differ\n";
+    std::cerr << numberOfPixelsWithDifferences << " pixels differ\n";
     return false;
   }
 
@@ -288,7 +289,7 @@ Image& Image::rotate(const double angle, const Vector3 &axis)
   return *this;
 }
 
-Image& Image::applyTransform(const TransformPtr transform)
+Image &Image::applyTransform(const TransformPtr transform, const Dims dims, const Point3 origin, const Vector spacing, const ImageType::DirectionType direction)
 {
   using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;  // linear interpolation by default
   FilterType::Pointer resampler = FilterType::New();
@@ -296,10 +297,29 @@ Image& Image::applyTransform(const TransformPtr transform)
   resampler->SetInput(this->image);
   resampler->SetTransform(transform);
 
+  resampler->SetSize(dims);
+  resampler->SetOutputOrigin(origin);
+  resampler->SetOutputSpacing(spacing);
+  resampler->SetOutputDirection(direction);
+
+  resampler->Update();
+  this->image = resampler->GetOutput();
+
+  return *this;
+}
+
+Image &Image::applyTransform(const TransformPtr transform)
+{
+  using FilterType = itk::ResampleImageFilter<ImageType, ImageType>; // linear interpolation by default
+  FilterType::Pointer resampler = FilterType::New();
+
+  resampler->SetInput(this->image);
+  resampler->SetTransform(transform);
+
   resampler->SetSize(dims());
   resampler->SetOutputOrigin(origin());
+  resampler->SetOutputSpacing(spacing());
   resampler->SetOutputDirection(coordsys());
-  resampler->SetOutputSpacing(image->GetSpacing());
 
   resampler->Update();
   this->image = resampler->GetOutput();
@@ -432,7 +452,7 @@ Image& Image::gaussianBlur(double sigma)
   return *this;
 }
 
-Image::Region Image::boundingBox() const
+Image::Region Image::boundingBox(PixelType isoValue) const
 {
   Image::Region bbox;
 
@@ -441,7 +461,7 @@ Image::Region Image::boundingBox() const
   {
     PixelType val = imageIterator.Get();
 
-    if (val == 1)
+    if (val >= isoValue)
       bbox.expand(imageIterator.GetIndex());
 
     ++imageIterator;
@@ -546,21 +566,6 @@ Image& Image::setOrigin(Point3 origin)
   this->image = filter->GetOutput();
 
   return *this;
-}
-
-Point3 Image::size() const
-{
-  return spacing() * toPoint(dims());
-}
-
-Point3 Image::spacing() const
-{
-  return image->GetSpacing();
-}
-
-const Image::ImageType::DirectionType& Image::coordsys() const
-{
-  return image->GetDirection();
 }
 
 Point3 Image::centerOfMass(PixelType minval, PixelType maxval) const

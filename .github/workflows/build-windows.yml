@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - release_v5.4
     tags:
     - '*'
   pull_request:
@@ -69,7 +70,7 @@ jobs:
     - name: Build dependencies
       shell: bash -l {0}
       if: steps.cache-dependencies.outputs.cache-hit != 'true'
-      run: conda activate shapeworks && ./build_dependencies.sh --install-dir="${{runner.workspace}}\deps" --build-dir="/d/a/bdeps"
+      run: conda activate shapeworks && bash -x ./build_dependencies.sh --install-dir="${{runner.workspace}}\deps" --build-dir="/d/a/bdeps"
 
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
@@ -116,3 +117,14 @@ jobs:
       with:
         name: artifact-${{github.sha}}-windows
         path: ${{runner.workspace}}\ShapeWorks\artifacts
+
+    - name: Deploy
+      if: github.ref == 'refs/heads/master'
+      uses: marvinpinto/action-automatic-releases@v1.0.0
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "dev-windows"
+        prerelease: true
+        title: "Development Build for Windows"
+        files: |
+             d:/a/ShapeWorks/ShapeWorks/artifacts/*.exe

@@ -17,6 +17,34 @@ TEST(ImageTests, dicomReadTest)
   ASSERT_TRUE(image == ground_truth);
 }
 
+TEST(ImageTests, fileFormatTest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
+
+  Image image_orig(test_location + "1x2x2.nrrd");
+  image_orig.write(test_location + "1x2x2.tiff");
+  Image image_tiff(test_location + "1x2x2.tiff");
+  image_tiff.write(test_location + "1x2x2_back.nrrd");
+  Image image_back(test_location + "1x2x2_back.nrrd");
+
+  ASSERT_TRUE(image_orig.compare(image_tiff, false /* only compare pixels, not regions */) &&
+              image_orig.compare(image_back, false /* only compare pixels, not regions */) &&
+              image_tiff.compare(image_back));
+}
+
+TEST(ImageTests, fileFormatTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
+
+  Image image_orig(test_location + "sample_001.dcm");
+  image_orig.write(test_location + "sample_001.nrrd");
+  Image image_nrrd(test_location + "sample_001.nrrd");
+  image_nrrd.write(test_location + "sample_001_back.dcm");
+  Image image_back(test_location + "sample_001_back.dcm");
+
+  ASSERT_TRUE(image_orig == image_nrrd && image_orig == image_back);
+}
+
 TEST(ImageTests, antialiasTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/antialias/");
@@ -237,15 +265,17 @@ TEST(ImageTests, rotateTest4)
   image2.rotate(-angle, axis);
   image2.rotate(angle, axis);
 
-  ASSERT_TRUE(image == image2);
+  ASSERT_FALSE(image == image2);
 }
 
 TEST(ImageTests, rotateTest5) 
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/rotate/");
+
   Image image(test_location + "la-bin-centered.nrrd");
   image.rotate(0, makeVector({0,0,1}));
   Image original(test_location + "la-bin-centered.nrrd");
+
   ASSERT_TRUE(image == original);
 }
 
@@ -343,7 +373,7 @@ TEST(ImageTests, topopreservingsmoothTest)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/topo-preserving-smooth/");
 
   Image image(test_location + "1x2x2.nrrd");
-  ImageUtils::topologyPreservingSmooth(image, 10, 10.5, 10, 1, true);
+  ImageUtils::topologyPreservingSmooth(image, 10, 10.5, 10);
   Image ground_truth(test_location + "topo-preserving-smooth_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -358,17 +388,6 @@ TEST(ImageTests, blurTest)
   Image ground_truth(test_location + "blur_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
-}
-
-TEST(ImageTests, boundingBoxTest)
-{
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
-
-  Image image(test_location + "1x2x2.nrrd");
-  Image::Region bbox(Dims({100, 50, 50}));
-
-  // ASSERT_TRUE(image.boundingBox() == bbox);
-  ASSERT_FALSE(image.boundingBox() == bbox);
 }
 
 TEST(ImageTests, cropTest)
@@ -403,7 +422,7 @@ TEST(ImageTests, icpTest)
   Image image(test_location + "1x2x2.nrrd");
   Image target(test_location + "target.nrrd");
   Image source(test_location + "source.nrrd");
-  ImageUtils::rigidRegistration(target, source);
+  ImageUtils::rigidRegistration(image, target, source);
   Image ground_truth(test_location + "icp_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -596,6 +615,66 @@ TEST(ImageTests, compareTest2)
   ASSERT_FALSE(image1 == image2);
 }
 
+TEST(ImageTests, compareTest3a)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "same_image_diff_region_same_dims.nrrd");
+
+  ASSERT_FALSE(image1.compare(image2));
+}
+
+TEST(ImageTests, compareTest3b)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "same_image_diff_region_same_dims.nrrd");
+
+  ASSERT_TRUE(image1.compare(image2, false /* only compare pixels, not regions */));
+}
+
+TEST(ImageTests, compareTest4a)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "diff_image_diff_region_same_dims.nrrd");
+
+  ASSERT_FALSE(image1.compare(image2));
+}
+
+TEST(ImageTests, compareTest4b)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "diff_image_diff_region_same_dims.nrrd");
+
+  ASSERT_FALSE(image1.compare(image2, false /* only compare pixels, not regions */));
+}
+
+TEST(ImageTests, compareTest5a)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "diff_image_same_region_same_dims.nrrd");
+
+  ASSERT_FALSE(image1.compare(image2));
+}
+
+TEST(ImageTests, compareTest5b)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "diff_image_same_region_same_dims.nrrd");
+
+  ASSERT_TRUE(image1.compare(image2, true /* keep comparing regions */, 1.0 /* allow pixels to differ by 1.0 */));
+}
+
 TEST(ImageTests, multicommandTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/multicommand/");
@@ -634,7 +713,7 @@ TEST(ImageTests, spacingTest)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
 
   Image image(test_location + "1x2x2.nrrd");
-  Point spacing({1,2,2});
+  Vector spacing(makeVector({1,2,2}));
   
   ASSERT_TRUE(image.spacing() == spacing);
 }
