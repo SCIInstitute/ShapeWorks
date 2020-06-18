@@ -1156,7 +1156,13 @@ void ReadParticleSystem::buildParser()
 bool ReadParticleSystem::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::vector<std::string> filenames = options.get("names");
-  return sharedData.particleSystem.LoadParticles(filenames);
+  try {
+    sharedData.particleSystem = ParticleSystem(filenames);
+    return true;
+  } catch(...) {
+    std::cerr << "exception while reading particle system" << std::endl;
+    return false;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1188,7 +1194,7 @@ bool Compactness::execute(const optparse::Values &options, SharedCommandData &sh
   const double r = ShapeEvaluation<3>::ComputeCompactness(sharedData.particleSystem, nModes, saveTo);
   std::cout << r << std::endl;
 
-  return false;
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
