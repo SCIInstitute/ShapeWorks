@@ -388,7 +388,7 @@ bool Scale::execute(const optparse::Values &options, SharedCommandData &sharedDa
 
   if (sx == 0 || sy == 0 || sz == 0)
   {
-    std::cerr << "Must specify a valid scale arguemnt\n";
+    std::cerr << "Error: cannot scale by 0 in any dimension\n";
     return false;
   }
   else
@@ -1055,14 +1055,14 @@ bool Compare::execute(const optparse::Values &options, SharedCommandData &shared
 void Filter::buildParser()
 {
   const std::string prog = "filter";
-  const std::string desc = "perform given filter on image";
+  const std::string desc = "apply the specified filter (curvature, gradient, sigmoid, tplevelset, gaussian, antialias)";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--type").action("store").type("string").set_default("").help("Type of filter");
+  parser.add_option("--type").action("store").type("string").set_default("").help("filter type: curvature, gradient, sigmoid, tplevelset, gaussian, antialias");
   parser.add_option("--iterations").action("store").type("unsigned").set_default(10).help("Number of iterations [default 10].");
   parser.add_option("--alpha").action("store").type("double").set_default(10.0).help("Value of alpha [default 10.0].");
   parser.add_option("--beta").action("store").type("double").set_default(10.0).help("Value of beta [default 10.0].");
-  parser.add_option("--featureimage").action("store").type("string").set_default("").help("Path of feature image for filter");
+  parser.add_option("--featureimage").action("store").type("string").set_default("").help("Path of feature image for tplevelset filter");
   parser.add_option("--scaling").action("store").type("double").set_default(20.0).help("Value of scale [default 20]");
   parser.add_option("--sigma").action("store").type("double").set_default(0.0).help("Value of sigma [default 0.0].");
   parser.add_option("--maxrmserror").action("store").type("float").set_default(0.01).help("Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default 0.01].");
@@ -1081,12 +1081,6 @@ bool Filter::execute(const optparse::Values &options, SharedCommandData &sharedD
 
   std::string type = static_cast<std::string>(options.get("type"));
 
-  if (type == "")
-  {
-    std::cerr << "Must specify valid filter type value\n";
-    return false;
-  }
-
   if (!type.compare("curvature"))
   {
     unsigned iterations = static_cast<unsigned>(options.get("iterations"));
@@ -1094,14 +1088,12 @@ bool Filter::execute(const optparse::Values &options, SharedCommandData &sharedD
     sharedData.image.applyCurvatureFilter(iterations);
     return true;
   }
-
-  if (!type.compare("gradient"))
+  else if (!type.compare("gradient"))
   {
     sharedData.image.applyGradientFilter();
     return true;
   }
-
-  if (!type.compare("sigmoid"))
+  else if (!type.compare("sigmoid"))
   {
     double alpha = static_cast<double>(options.get("alpha"));
     double beta = static_cast<double>(options.get("beta"));
@@ -1109,8 +1101,7 @@ bool Filter::execute(const optparse::Values &options, SharedCommandData &sharedD
     sharedData.image.applySigmoidFilter(alpha, beta);
     return true;
   }
-
-  if (!type.compare("tplevelset") || !type.compare("tp-levelset") || !type.compare("tplevel-set"))
+  else if (!type.compare("tplevelset") || !type.compare("tp-levelset") || !type.compare("tplevel-set"))
   {
     std::string featureimage = static_cast<std::string>(options.get("featureimage"));
     if (featureimage == "")
@@ -1127,16 +1118,14 @@ bool Filter::execute(const optparse::Values &options, SharedCommandData &sharedD
       return true;
     }
   }
-
-  if (!type.compare("gaussian"))
+  else if (!type.compare("gaussian"))
   {
     double sigma = static_cast<double>(options.get("sigma"));
 
     sharedData.image.gaussianBlur(sigma);
     return true;
   }
-
-  if (!type.compare("antialias"))
+  else if (!type.compare("antialias"))
   {
     unsigned iterations = static_cast<unsigned>(options.get("iterations"));
     float maxRMSErr = static_cast<float>(options.get("maxrmserror"));
@@ -1144,6 +1133,11 @@ bool Filter::execute(const optparse::Values &options, SharedCommandData &sharedD
 
     sharedData.image.antialias(iterations, maxRMSErr, layers);
     return true;
+  }
+  else
+  {
+    std::cerr << type << " is not one of: curvature, gradient, sigmoid, tplevelset, gaussian, antialias\n";
+    return false;
   }
 }
 
