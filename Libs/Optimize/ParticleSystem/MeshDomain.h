@@ -120,6 +120,9 @@ public:
     return meshWrapper->SampleNormalAtPoint(point);
   }
 
+  inline double Distance(const PointType &a, const PointType &b) const override {
+      return meshWrapper->ComputeDistance(a, b);
+  }
 
   void PrintCuttingPlaneConstraints(std::ofstream& out) const override {
     // TODO for Farshad: figure out constraint thing
