@@ -586,7 +586,7 @@ bool CurvatureFilter::execute(const optparse::Values &options, SharedCommandData
 
   if (iterations < 0)
   {
-    std::cerr << "Must specify a valid iterations argument\n";
+    std::cerr << "iterations must be >= 0\n";
     return false;
   }
   else
@@ -677,7 +677,7 @@ bool TPLevelSetFilter::execute(const optparse::Values &options, SharedCommandDat
 
   if (featureimage == "")
   {
-    std::cerr << "Must specify a valid feature image value\n";
+    std::cerr << "Must specify a feature image\n";
     return false;
   }
   else
@@ -783,12 +783,12 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
 
   if (targetImg == "")
   {
-    std::cerr << "Must specify a valid target value\n";
+    std::cerr << "Must specify a target image\n";
     return false;
   }
   else if (sourceImg == "")
   {
-    std::cerr << "Must specify a valid source value\n";
+    std::cerr << "Must specify a source image\n";
     return false;
   }
   else
@@ -897,12 +897,12 @@ bool ClipVolume::execute(const optparse::Values &options, SharedCommandData &sha
 void ReflectVolume::buildParser()
 {
   const std::string prog = "reflect";
-  const std::string desc = "reflect images with respect to image center and specific axis";
+  const std::string desc = "reflect images with respect to logical image center and the specified normal (ex: <1,0,0> reflects along X axis across YZ-plane).";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--x").action("store").type("double").set_default(-1).help("Value of x in normal [default -1].");
-  parser.add_option("--y").action("store").type("double").set_default(1).help("Value of y in normal [default 1].");
-  parser.add_option("--z").action("store").type("double").set_default(1).help("Value of z in normal [default 1].");
+  parser.add_option("--nx", "-x").action("store").type("double").set_default(1).help("Value of x in normal [default 1].");
+  parser.add_option("--ny", "-y").action("store").type("double").set_default(0).help("Value of y in normal [default 0].");
+  parser.add_option("--nz", "-z").action("store").type("double").set_default(0).help("Value of z in normal [default 0].");
 
   Command::buildParser();
 }
@@ -919,11 +919,10 @@ bool ReflectVolume::execute(const optparse::Values &options, SharedCommandData &
   double y = static_cast<double>(options.get("y"));
   double z = static_cast<double>(options.get("z"));
 
-  if ((x == -1 && (y == -1 || z == -1)) ||
-      (y == -1 && (x == -1 || z == -1)) ||
-      (z == -1 && (x == -1 || z == -1)))
+  Vector3 axis(makeVector({x, y, z}));
+  if (!axis_is_valid(axis))
   {
-    std::cerr << "Must specify a valid normal argument\n";
+    std::cerr << "Must specify a valid normal\n";
     return false;
   }
   else
@@ -1106,7 +1105,7 @@ bool Filter::execute(const optparse::Values &options, SharedCommandData &sharedD
     std::string featureimage = static_cast<std::string>(options.get("featureimage"));
     if (featureimage == "")
     {
-      std::cerr << "Must specify a valid feature image value\n";
+      std::cerr << "Must specify a feature image\n";
       return false;
     }
     else

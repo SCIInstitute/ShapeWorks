@@ -539,21 +539,18 @@ Image& Image::clip(const Vector &n, const Point &q, const PixelType val)
 
 Image& Image::reflect(const Vector3 &normal)
 {
-  if ((normal[0] == -1 && (normal[1] == -1 || normal[2] == -1)) ||
-      (normal[1] == -1 && (normal[0] == -1 || normal[2] == -1)) ||
-      (normal[2] == -1 && (normal[0] == -1 || normal[1] == -1))) 
+  if (!axis_is_valid(normal))
     throw std::invalid_argument("Invalid normal");
 
-  Matrix reflection;
-  reflection.Fill(0);
-  reflection[0][0] = normal[0];
-  reflection[1][1] = normal[1];
-  reflection[2][2] = normal[2];
+  //TODO: https://pdfs.semanticscholar.org/b754/be03b482bad4296dbad67507d8d768b8ccc7.pdf
+  //      or use quaternions
+  //      or dig into itk to see if they have a rotation operation
+  //      or...
 
-  AffineTransformPtr xform(AffineTransform::New());
-  xform->SetMatrix(reflection);
-  Point3 currentOrigin(origin());
-  recenter().applyTransform(xform).setOrigin(currentOrigin);
+  // rotate normal into Z, scale by <0,0,-1>, and rotate back (watch out for gimball lock if normal is -z <0,0,-1>)
+  // if (n dot z > eps)
+  //   rotate(n cross z, acos(n dot z));
+  // scale(makeVector({0,0,-1}));
 
   return *this;
 }

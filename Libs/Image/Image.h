@@ -156,7 +156,7 @@ public:
   /// sets the iamge origin in physical space to the given value
   Image &setOrigin(Point3 origin = Point3({0, 0, 0}));
 
-  /// Reflect image on the plane specified by center of image and given normal (ex: <1,0,0> to reflect "vertically" across YZ-plane).
+  /// Reflect image around the plane specified by the logical center and the given normal (ex: <1,0,0> reflects across YZ-plane).
   Image &reflect(const Vector3 &normal = makeVector({-1, 1, 1}));
 
   // query functions //
