@@ -5,12 +5,10 @@ namespace shapeworks {
 
 ///////////////////////////////////////////////////////////////////////////////
 void Executable::buildParser()
-{
-  parser.description("Unified Shapeworks executable for all commands.");
-
+{  
+  parser.description("Unified ShapeWorks executable that includes command line utilities for automated construction of compact statistical landmark-based shape models of ensembles of shapes");
   parser.usage("Usage: %prog <command> [args]...");
   parser.version("%prog 1.0\nMIT license (todo: verify)");
-  parser.description("Command line utilities for understanding groups of related shapes.");
   parser.epilog("Available commands:");
   parser.disable_interspersed_args(); // so everything after a command's name will be passed to that command (ex: its --help argumemnt)
   
@@ -66,7 +64,7 @@ void Executable::addCommand(Command &command)
   std::map<std::string, std::string> &command_type_descriptions = parser_epilog[command.type()];
   command_type_descriptions[command.name()] = command.desc();
 
-  unsigned opt_width = 24;
+  unsigned opt_width = 32;
   unsigned desc_width = 80 - opt_width;
   unsigned indent = 2;
   std::stringstream ss;
