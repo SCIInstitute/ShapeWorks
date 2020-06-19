@@ -200,4 +200,7 @@ def addCommand(mdFile, cmd, level, spacedelim = ' ', verbose = True): # from Exe
                 mdFile.new_header(level=level, title= cmdtype + ' Commands')
                 for cmdname in subcommands[cmdtype].keys():
                     addCommand(mdFile, cmd + " " + cmdname, level = level+1, spacedelim = spacedelim, verbose = verbose)
+                    mdFile.new_line('[Back to ' + cmdtype + ' Commands' +'](#' + cmdtype.lower() + '-commands)')
+                    mdFile.new_line('<a href="#top">Back to Top</a>')
         lid +=1
+#%%
