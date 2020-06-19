@@ -376,10 +376,7 @@ def Run_Pipeline(args):
             "verbosity" : 3,
             "use_statistics_in_init" : 0
         }
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/master
+        
         [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
 
     """
@@ -405,6 +402,7 @@ def Run_Pipeline(args):
     Reconstruct the dense mean surface given the sparse correspondence model.
     """
     print("\nStep 5. Analysis - Reconstruct the dense mean surface given the sparse correspodence model.\n")
-    # if args.interactive:
-        # input("Press Enter to continue")
+    if args.interactive:
+        input("Press Enter to continue")
+
     launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)
