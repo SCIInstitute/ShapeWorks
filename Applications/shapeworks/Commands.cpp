@@ -1130,6 +1130,94 @@ bool Filter::execute(const optparse::Values &options, SharedCommandData &sharedD
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// NegateImage
+///////////////////////////////////////////////////////////////////////////////
+void NegateImage::buildParser()
+{
+  const std::string prog = "negate";
+  const std::string desc = "negate the values in this image";
+  parser.prog(prog).description(desc);
+
+  Command::buildParser();
+}
+
+bool NegateImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validImage())
+  {
+    std::cerr << "No image to operate on\n";
+    return false;
+  }
+
+  sharedData.image = -sharedData.image;
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// AddImage
+///////////////////////////////////////////////////////////////////////////////
+void AddImage::buildParser()
+{
+  const std::string prog = "add";
+  const std::string desc = "add an image";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of image to add");
+
+  Command::buildParser();
+}
+
+bool AddImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validImage())
+  {
+    std::cerr << "No image to operate on\n";
+    return false;
+  }
+
+  std::string filename = options["name"];
+  if (filename.length() == 0) {
+    std::cerr << "add error: no filename specified with which to add, must pass `--name <filename>`\n";
+    return false;
+  }
+
+  sharedData.image += Image(filename);
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// SubtractImage
+///////////////////////////////////////////////////////////////////////////////
+void SubtractImage::buildParser()
+{
+  const std::string prog = "sub";
+  const std::string desc = "subtract an image";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of image to subtract");
+
+  Command::buildParser();
+}
+
+bool SubtractImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validImage())
+  {
+    std::cerr << "No image to operate on\n";
+    return false;
+  }
+
+  std::string filename = options["name"];
+  if (filename.length() == 0) {
+    std::cerr << "sub error: no filename specified to subtract, must pass `--name <filename>`\n";
+    return false;
+  }
+
+  sharedData.image -= Image(filename);
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // ReadParticleSystem
 ///////////////////////////////////////////////////////////////////////////////
 void ReadParticleSystem::buildParser()

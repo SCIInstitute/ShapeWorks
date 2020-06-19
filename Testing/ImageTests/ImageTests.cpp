@@ -817,7 +817,6 @@ TEST(ImageTests, additionTest2)
   Image image1(test_location + "la-bin.nrrd");
   Image image2(test_location + "la-bin.nrrd");
   image1 = image1 + image2;
-  image1.write(test_location + "baseline_addition.nrrd");
   Image baseline(test_location + "baseline_addition.nrrd");
 
   ASSERT_TRUE(image1 == baseline);
@@ -856,7 +855,6 @@ TEST(ImageTests, subtractionTest2)
   Image image1(test_location + "img1.nrrd");
   Image image2(test_location + "img2.nrrd");
   image1 = image1 - image2;
-  image1.write(test_location + "baseline_subtraction.nrrd");
   Image baseline(test_location + "baseline_subtraction.nrrd");
 
   ASSERT_TRUE(image1 == baseline);
