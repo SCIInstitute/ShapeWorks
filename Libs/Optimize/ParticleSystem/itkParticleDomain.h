@@ -27,16 +27,19 @@ public:
   /** Point type used to store particle locations. */
   typedef Point<double, DIMENSION> PointType;
 
-  /** Apply any constraints to the given point location.  This method may, for
-      example, implement boundary conditions or restrict points to lie on a
-      surface.  Default behavior does nothing.  Returns true if the value of
-      the point was modified and false otherwise. */
+  /** Apply any constraints to the given point location.
+      This should force the point to a position on the surface that satisfies all constraints. */
   virtual bool ApplyConstraints(PointType& p) const = 0;
+  /** Reduce magnitude of the vector so that applying point = point + gradE does not violate any constraints.
+      This should have no effect if there are no constraints. ImageDomain may restrict vector magnitude based on the narrow band. */
   virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION>& gradE, const PointType& pos) const = 0;
 
+  /** Applies the update to the point and returns the new point position. */
   virtual PointType UpdateParticlePosition(PointType &point, vnl_vector_fixed<double, DIMENSION> &update) const = 0;
 
+  /** Projects the vector to the surface tangent at the point. */
   virtual vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION>& gradE, const PointType& pos) const = 0;
+  /** Get the surface normal at a point. */
   virtual vnl_vector_fixed<float, 3> SampleNormalAtPoint(const PointType & point) const = 0;
 
   /** A Domain may define a distance calculation.  This is useful in cases
@@ -49,19 +52,23 @@ public:
   }
 
 
+  /** Used in ParticleMeanCurvatureAttribute */
   virtual double GetCurvature(const PointType &p) const = 0;
+  /** Used in ParticleMeanCurvatureAttribute */
   virtual double GetSurfaceMeanCurvature() const = 0;
+  /** Used in ParticleMeanCurvatureAttribute */
   virtual double GetSurfaceStdDevCurvature() const = 0;
-  
-  /** A Domain may optionally return a bounding box.  The lower bound method
-      gives the upper-left-hand corner of the domain.  The upper bound method
-      gives the lower-right-hand-corner of the domain.  If a domain does not
-      define boundaries, these methods will throw an exceptions  */
+
+  /** Gets the minimum x, y, z values of the bounding box for the domain. This is used for setting up the PowerOfTwoPointTree. */
   virtual const PointType& GetLowerBound() const = 0;
+  /** Gets the maximum x, y, z values of the bounding box for the domain. This is used for setting up the PowerOfTwoPointTree. */
   virtual const PointType& GetUpperBound() const = 0;
 
+  /** Get any valid point on the domain. This is used to place the first particle. */
   virtual PointType GetZeroCrossingPoint() const = 0;
+  /** Use for neighborhood radius. */
   virtual double GetSurfaceArea() const = 0;
+  /** Used to compute sigma for sampling and neighborhood radius. */
   virtual double GetMaxDimRadius() const = 0;
 
   // Cutting Plane constraint functionality
