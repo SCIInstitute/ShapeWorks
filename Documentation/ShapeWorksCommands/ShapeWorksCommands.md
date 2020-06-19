@@ -61,11 +61,11 @@ Contents
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit
+**-h, --help:** show this help message and exit
 
-**--version**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show program's version number and exit
+**--version:** show program's version number and exit
 
-**-q, --quiet**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;don't print status messages  
+**-q, --quiet:** don't print status messages  
 
 # Image Commands
 
@@ -84,13 +84,13 @@ shapeworks  antialias [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit
+**-h, --help:** show this help message and exit
 
-**--maxrmserror=FLOAT**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default 0.01].
+**--maxrmserror=FLOAT:** Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default 0.01].
 
-**--iterations=INT**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number of iterations [default 50].
+**--iterations=INT:** Number of iterations [default 50].
 
-**--layers=INT**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number of layers around a 3d pixel to use for this computation [default image dims].  
+**--layers=INT:** Number of layers around a 3d pixel to use for this computation [default image dims].  
 
 ## blur
 
@@ -107,9 +107,9 @@ shapeworks  blur [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit
+**-h, --help:** show this help message and exit
 
-**--sigma=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Value of sigma [default 0.0].  
+**--sigma=DOUBLE:** Value of sigma [default 0.0].  
 
 ## bounding-box
 
@@ -126,11 +126,11 @@ shapeworks  bounding-box [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit --names <list of strings> Paths to images
+**-h, --help:** show this help message and exit --names <list of strings> Paths to images
 
-**--padding=INT**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number of extra voxels in each direction to pad the largest bounding box [default 0].
+**--padding=INT:** Number of extra voxels in each direction to pad the largest bounding box [default 0].
 
-**--isovalue=FLOAT**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Threshold value [default 1.0].  
+**--isovalue=FLOAT:** Threshold value [default 1.0].  
 
 ## clip
 
@@ -147,27 +147,27 @@ shapeworks  clip [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit
+**-h, --help:** show this help message and exit
 
-**--x1=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Value of x1 for cutting plane [default 0.0].
+**--x1=DOUBLE:** Value of x1 for cutting plane [default 0.0].
 
-**--y1=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Value of y1 for cutting plane [default 0.0].
+**--y1=DOUBLE:** Value of y1 for cutting plane [default 0.0].
 
-**--z1=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Value of z1 for cutting plane [default 0.0].
+**--z1=DOUBLE:** Value of z1 for cutting plane [default 0.0].
 
-**--x2=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Value of x2 for cutting plane [default 0.0].
+**--x2=DOUBLE:** Value of x2 for cutting plane [default 0.0].
 
-**--y2=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Value of y2 for cutting plane [default 0.0].
+**--y2=DOUBLE:** Value of y2 for cutting plane [default 0.0].
 
-**--z2=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Value of z2 for cutting plane [default 0.0].
+**--z2=DOUBLE:** Value of z2 for cutting plane [default 0.0].
 
-**--x3=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Value of x3 for cutting plane [default 0.0].
+**--x3=DOUBLE:** Value of x3 for cutting plane [default 0.0].
 
-**--y3=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Value of y3 for cutting plane [default 0.0].
+**--y3=DOUBLE:** Value of y3 for cutting plane [default 0.0].
 
-**--z3=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Value of z3 for cutting plane [default 0.0].
+**--z3=DOUBLE:** Value of z3 for cutting plane [default 0.0].
 
-**--val=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Value of clipped pixels [default 0.0].  
+**--val=DOUBLE:** Value of clipped pixels [default 0.0].  
 
 ## close-holes
 
@@ -184,7 +184,7 @@ shapeworks  close-holes [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit  
+**-h, --help:** show this help message and exit  
 
 ## compare
 
@@ -201,13 +201,13 @@ shapeworks  compare [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit
+**-h, --help:** show this help message and exit
 
-**--name=STRING**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name of image with which to compare
+**--name=STRING:** Name of image with which to compare
 
-**--precision=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Allowed pixel difference to still be considered equal (default: none)
+**--precision=DOUBLE:** Allowed pixel difference to still be considered equal (default: none)
 
-**--verifyall=BOOL**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Verify origin, spacing, and direction of both images match (default: true)  
+**--verifyall=BOOL:** Verify origin, spacing, and direction of both images match (default: true)  
 
 ## compute-dt
 
@@ -224,9 +224,9 @@ shapeworks  compute-dt [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit
+**-h, --help:** show this help message and exit
 
-**--isovalue=FLOAT**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Level set value that defines the interface between foreground and background [default 0.0].  
+**--isovalue=FLOAT:** Level set value that defines the interface between foreground and background [default 0.0].  
 
 ## crop
 
@@ -243,7 +243,7 @@ shapeworks  crop [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit  
+**-h, --help:** show this help message and exit  
 
 ## curvature
 
@@ -260,9 +260,9 @@ shapeworks  curvature [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit
+**-h, --help:** show this help message and exit
 
-**--iterations=INT**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number of iterations [default 10].  
+**--iterations=INT:** Number of iterations [default 10].  
 
 ## extract-label
 
@@ -279,9 +279,9 @@ shapeworks  extract-label [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit
+**-h, --help:** show this help message and exit
 
-**--label=FLOAT**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Label value which has to be extracted [default 1.0].  
+**--label=FLOAT:** Label value which has to be extracted [default 1.0].  
 
 ## filter
 
@@ -298,21 +298,21 @@ shapeworks  filter [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit
+**-h, --help:** show this help message and exit
 
-**--type=STRING**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filter type: curvature, gradient, sigmoid, tplevelset, gaussian, antialias --iterations=UNSIGNED Number of iterations [default 10].
+**--type=STRING:** filter type: curvature, gradient, sigmoid, tplevelset, gaussian, antialias --iterations=UNSIGNED Number of iterations [default 10].
 
-**--alpha=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Value of alpha [default 10.0].
+**--alpha=DOUBLE:** Value of alpha [default 10.0].
 
-**--beta=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Value of beta [default 10.0]. --featureimage=STRING Path of feature image for tplevelset filter
+**--beta=DOUBLE:** Value of beta [default 10.0]. --featureimage=STRING Path of feature image for tplevelset filter
 
-**--scaling=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Value of scale [default 20]
+**--scaling=DOUBLE:** Value of scale [default 20]
 
-**--sigma=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Value of sigma [default 0.0].
+**--sigma=DOUBLE:** Value of sigma [default 0.0].
 
-**--maxrmserror=FLOAT**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default 0.01].
+**--maxrmserror=FLOAT:** Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default 0.01].
 
-**--layers=INT**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number of layers around a 3d pixel to use for this computation [default image dims].  
+**--layers=INT:** Number of layers around a 3d pixel to use for this computation [default image dims].  
 
 ## gradient
 
@@ -329,7 +329,7 @@ shapeworks  gradient [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit  
+**-h, --help:** show this help message and exit  
 
 ## icp
 
@@ -346,13 +346,13 @@ shapeworks  icp [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit
+**-h, --help:** show this help message and exit
 
-**--target=STRING**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Distance map of target image.
+**--target=STRING:** Distance map of target image.
 
-**--source=STRING**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Distance map of source image.
+**--source=STRING:** Distance map of source image.
 
-**--isovalue=FLOAT**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Value of isovalue [default 0.0]. --iterations=UNSIGNED Number of iterations run ICP registration [default 20].  
+**--isovalue=FLOAT:** Value of isovalue [default 0.0]. --iterations=UNSIGNED Number of iterations run ICP registration [default 20].  
 
 ## info
 
@@ -369,23 +369,23 @@ shapeworks  info [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit
+**-h, --help:** show this help message and exit
 
-**--dims=BOOL**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether to display logical dims [default is false]
+**--dims=BOOL:** Whether to display logical dims [default is false]
 
-**--spacing=BOOL**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether to display physical spacing [default is false]
+**--spacing=BOOL:** Whether to display physical spacing [default is false]
 
-**--size=BOOL**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether to display size [default is false]
+**--size=BOOL:** Whether to display size [default is false]
 
-**--origin=BOOL**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether to display physical origin [default is false]
+**--origin=BOOL:** Whether to display physical origin [default is false]
 
-**--direction=BOOL**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether to display direction [default is false]
+**--direction=BOOL:** Whether to display direction [default is false]
 
-**--center=BOOL**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether to display center [default is false]
+**--center=BOOL:** Whether to display center [default is false]
 
-**--centerofmass=BOOL**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether to display center of mass [default is false]
+**--centerofmass=BOOL:** Whether to display center of mass [default is false]
 
-**--boundingbox=BOOL**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether to display bounding box [default is false]  
+**--boundingbox=BOOL:** Whether to display bounding box [default is false]  
 
 ## pad
 
@@ -402,11 +402,11 @@ shapeworks  pad [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit
+**-h, --help:** show this help message and exit
 
-**--padding=INT**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number of voxels to be padded in each direction [default 0].
+**--padding=INT:** Number of voxels to be padded in each direction [default 0].
 
-**--value=FLOAT**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Value to be used to fill padded voxels [default 0.0].  
+**--value=FLOAT:** Value to be used to fill padded voxels [default 0.0].  
 
 ## read-image
 
@@ -423,9 +423,9 @@ shapeworks  read-image [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit
+**-h, --help:** show this help message and exit
 
-**--name=STRING**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name of file to read  
+**--name=STRING:** Name of file to read  
 
 ## recenter
 
@@ -442,7 +442,7 @@ shapeworks  recenter [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit  
+**-h, --help:** show this help message and exit  
 
 ## reflect
 
@@ -459,7 +459,7 @@ shapeworks  reflect [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit -x DOUBLE, --nx=DOUBLE Value of x in normal [default 1]. -y DOUBLE, --ny=DOUBLE Value of y in normal [default 0]. -z DOUBLE, --nz=DOUBLE Value of z in normal [default 0].  
+**-h, --help:** show this help message and exit -x DOUBLE, --nx=DOUBLE Value of x in normal [default 1]. -y DOUBLE, --ny=DOUBLE Value of y in normal [default 0]. -z DOUBLE, --nz=DOUBLE Value of z in normal [default 0].  
 
 ## resample
 
@@ -476,21 +476,21 @@ shapeworks  resample [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit
+**-h, --help:** show this help message and exit
 
-**--isospacing=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use this spacing in all dimensions.
+**--isospacing=DOUBLE:** Use this spacing in all dimensions.
 
-**--spacex=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pixel spacing in x-direction [default 1.0].
+**--spacex=DOUBLE:** Pixel spacing in x-direction [default 1.0].
 
-**--spacey=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pixel spacing in y-direction [default 1.0].
+**--spacey=DOUBLE:** Pixel spacing in y-direction [default 1.0].
 
-**--spacez=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pixel spacing in z-direction [default 1.0].
+**--spacez=DOUBLE:** Pixel spacing in z-direction [default 1.0].
 
-**--sizex=UNSIGNED**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Image size in x-direction [default estimated from the image].
+**--sizex=UNSIGNED:** Image size in x-direction [default estimated from the image].
 
-**--sizey=UNSIGNED**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Image size in y-direction [default estimated from the image].
+**--sizey=UNSIGNED:** Image size in y-direction [default estimated from the image].
 
-**--sizez=UNSIGNED**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Image size in z-direction [default estimated from the image].  
+**--sizez=UNSIGNED:** Image size in z-direction [default estimated from the image].  
 
 ## rotate
 
@@ -507,11 +507,11 @@ shapeworks  rotate [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit -x DOUBLE, --rx=DOUBLE Physical axis around which to rotate (z-axis if unspecified) -y DOUBLE, --ry=DOUBLE Physical axis around which to rotate (z-axis if unspecified) -z DOUBLE, --rz=DOUBLE Physical axis around which to rotate (z-axis if unspecified)
+**-h, --help:** show this help message and exit -x DOUBLE, --rx=DOUBLE Physical axis around which to rotate (z-axis if unspecified) -y DOUBLE, --ry=DOUBLE Physical axis around which to rotate (z-axis if unspecified) -z DOUBLE, --rz=DOUBLE Physical axis around which to rotate (z-axis if unspecified)
 
-**--radians=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Angle in radians
+**--radians=DOUBLE:** Angle in radians
 
-**--degrees=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Angle in degrees  
+**--degrees=DOUBLE:** Angle in degrees  
 
 ## scale
 
@@ -528,7 +528,7 @@ shapeworks  scale [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit -x DOUBLE, --sx=DOUBLE x scale -y DOUBLE, --sy=DOUBLE y scale -z DOUBLE, --sz=DOUBLE z scale  
+**-h, --help:** show this help message and exit -x DOUBLE, --sx=DOUBLE x scale -y DOUBLE, --sy=DOUBLE y scale -z DOUBLE, --sz=DOUBLE z scale  
 
 ## set-origin
 
@@ -545,7 +545,7 @@ shapeworks  set-origin [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit -x DOUBLE, --x=DOUBLE x value of origin [default 0]. -y DOUBLE, --y=DOUBLE y value of origin [default 0]. -z DOUBLE, --z=DOUBLE z value of origin [default 0].  
+**-h, --help:** show this help message and exit -x DOUBLE, --x=DOUBLE x value of origin [default 0]. -y DOUBLE, --y=DOUBLE y value of origin [default 0]. -z DOUBLE, --z=DOUBLE z value of origin [default 0].  
 
 ## sigmoid
 
@@ -562,11 +562,11 @@ shapeworks  sigmoid [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit
+**-h, --help:** show this help message and exit
 
-**--alpha=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Value of alpha [default 10.0].
+**--alpha=DOUBLE:** Value of alpha [default 10.0].
 
-**--beta=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Value of beta [default 10.0].  
+**--beta=DOUBLE:** Value of beta [default 10.0].  
 
 ## threshold
 
@@ -583,11 +583,11 @@ shapeworks  threshold [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit
+**-h, --help:** show this help message and exit
 
-**--min=FLOAT**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lower threshold level [default = epsilon].
+**--min=FLOAT:** Lower threshold level [default = epsilon].
 
-**--max=FLOAT**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Upper threshold level [default = FLT_MAX].  
+**--max=FLOAT:** Upper threshold level [default = FLT_MAX].  
 
 ## topo-preserving-smooth
 
@@ -604,13 +604,13 @@ shapeworks  topo-preserving-smooth [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit
+**-h, --help:** show this help message and exit
 
-**--scaling=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Scale for TPLevelSet level set filter [default 20].
+**--scaling=DOUBLE:** Scale for TPLevelSet level set filter [default 20].
 
-**--alpha=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Value of alpha for sigmoid fitler [default 10.0].
+**--alpha=DOUBLE:** Value of alpha for sigmoid fitler [default 10.0].
 
-**--beta=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Value of beta for sigmoid fitler [default 10.0].  
+**--beta=DOUBLE:** Value of beta for sigmoid fitler [default 10.0].  
 
 ## tp-levelset
 
@@ -627,9 +627,9 @@ shapeworks  tp-levelset [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit --featureimage=STRING Path of feature image for filter
+**-h, --help:** show this help message and exit --featureimage=STRING Path of feature image for filter
 
-**--scaling=DOUBLE**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Value of scale [default 20].  
+**--scaling=DOUBLE:** Value of scale [default 20].  
 
 ## translate
 
@@ -646,9 +646,9 @@ shapeworks  translate [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit
+**-h, --help:** show this help message and exit
 
-**--centerofmass=BOOL**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use center of mass [default set to false]. --applycenterofmass=BOOL Apply calculated center of mass [default set to false]. -x DOUBLE, --tx=DOUBLE Explicit tx in image space (physical coordinates) -y DOUBLE, --ty=DOUBLE Explicit ty in image space (e.g., 3.14) -z DOUBLE, --tz=DOUBLE Explicit tz in image space  
+**--centerofmass=BOOL:** Use center of mass [default set to false]. --applycenterofmass=BOOL Apply calculated center of mass [default set to false]. -x DOUBLE, --tx=DOUBLE Explicit tx in image space (physical coordinates) -y DOUBLE, --ty=DOUBLE Explicit ty in image space (e.g., 3.14) -z DOUBLE, --tz=DOUBLE Explicit tz in image space  
 
 ## warp-image
 
@@ -665,9 +665,9 @@ shapeworks  warp-image [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit --source_landmarks=STRING Path to source landmarks. --target_landmarks=STRING Path to target landmarks.
+**-h, --help:** show this help message and exit --source_landmarks=STRING Path to source landmarks. --target_landmarks=STRING Path to target landmarks.
 
-**--stride=INT**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Every _stride_ points will be used for warping [default 1].  
+**--stride=INT:** Every _stride_ points will be used for warping [default 1].  
 
 ## write-image
 
@@ -684,11 +684,11 @@ shapeworks  write-image [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit
+**-h, --help:** show this help message and exit
 
-**--name=STRING**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name of file to write
+**--name=STRING:** Name of file to write
 
-**--compressed=BOOL**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether to compress file [default is true]  
+**--compressed=BOOL:** Whether to compress file [default is true]  
 
 # Mesh Commands
 
@@ -707,9 +707,9 @@ shapeworks  coverage [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit
+**-h, --help:** show this help message and exit
 
-**--second_mesh=STRING**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Second mesh to apply coverage.  
+**--second_mesh=STRING:** Second mesh to apply coverage.  
 
 ## read-mesh
 
@@ -726,9 +726,9 @@ shapeworks  read-mesh [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit
+**-h, --help:** show this help message and exit
 
-**--name=STRING**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name of file to read  
+**--name=STRING:** name of file to read  
 
 ## write-mesh
 
@@ -745,9 +745,9 @@ shapeworks  write-mesh [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit
+**-h, --help:** show this help message and exit
 
-**--name=STRING**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name of file to write  
+**--name=STRING:** name of file to write  
 
 # ParticleSystem Commands
 
@@ -766,11 +766,11 @@ shapeworks  compactness [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit
+**-h, --help:** show this help message and exit
 
-**--nmodes=INT**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number of modes to use
+**--nmodes=INT:** Number of modes to use
 
-**--saveto=STRING**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Save the scree plots for all modes to a file  
+**--saveto=STRING:** Save the scree plots for all modes to a file  
 
 ## generalization
 
@@ -787,11 +787,11 @@ shapeworks  generalization [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit
+**-h, --help:** show this help message and exit
 
-**--nmodes=INT**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number of modes to use
+**--nmodes=INT:** Number of modes to use
 
-**--saveto=STRING**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Save the reconstructions sorted by generalization along with the mapping to the original shape  
+**--saveto=STRING:** Save the reconstructions sorted by generalization along with the mapping to the original shape  
 
 ## read-particle-system
 
@@ -808,7 +808,7 @@ shapeworks  read-particle-system [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit --names <list of strings> paths to .particle files  
+**-h, --help:** show this help message and exit --names <list of strings> paths to .particle files  
 
 ## specificity
 
@@ -825,8 +825,8 @@ shapeworks  specificity [args]...
 
 **Options:**
 
-**-h, --help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show this help message and exit
+**-h, --help:** show this help message and exit
 
-**--nmodes=INT**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number of modes to use
+**--nmodes=INT:** Number of modes to use
 
-**--saveto=STRING**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Save the reconstructions sorted by generalization along with the mapping to the original shape  
+**--saveto=STRING:** Save the reconstructions sorted by generalization along with the mapping to the original shape  

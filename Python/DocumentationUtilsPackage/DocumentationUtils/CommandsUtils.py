@@ -117,7 +117,7 @@ def addDescription(mdFile, stdout, lid):
     return lid
        
 
-def addOptions(mdFile, stdout, lid, opt_width = 32, spacedelim = ' '): # from Executable.cpp
+def addOptions(mdFile, stdout, lid, spacedelim = ' '): 
     nlines = len(stdout)
     mdFile.new_paragraph('**Options:**')
     lid += 1
@@ -133,8 +133,7 @@ def addOptions(mdFile, stdout, lid, opt_width = 32, spacedelim = ' '): # from Ex
         if optname.split()[0][0] is not '-':
             lid += 1
             break
-        nspaces = opt_width - len(optname)
-        mdFile.new_paragraph("**" + optname + "**" + spacestr(nspaces) + optdesc)   
+        mdFile.new_paragraph("**" + optname + ":** " + optdesc)   
         lid += 1
     mdFile.new_line('')
     return lid
@@ -163,8 +162,7 @@ def getSubCommands(stdout, lid, spacedelim = ' '):
             lid += 1
     return subcommands, lid
 
-def addCommand(mdFile, cmd, level, 
-               opt_width = 32, spacedelim = ' ', verbose = True): # from Executable.cpp
+def addCommand(mdFile, cmd, level, spacedelim = ' ', verbose = True): # from Executable.cpp
 
     stdout, stderr = getCommandHelp(cmd, verbose = verbose )
     mdFile.new_header(level = level, title = cmd.split()[-1])
@@ -193,7 +191,7 @@ def addCommand(mdFile, cmd, level,
             continue
         
         if 'Options' in line:
-            lid = addOptions(mdFile, stdout, lid, opt_width = opt_width, spacedelim = spacedelim)
+            lid = addOptions(mdFile, stdout, lid, spacedelim = spacedelim)
             continue
         
         if 'Available commands' in line:
@@ -201,5 +199,5 @@ def addCommand(mdFile, cmd, level,
             for cmdtype in subcommands.keys():
                 mdFile.new_header(level=level, title= cmdtype + ' Commands')
                 for cmdname in subcommands[cmdtype].keys():
-                    addCommand(mdFile, cmd + " " + cmdname, level = level+1, opt_width = opt_width, spacedelim = spacedelim, verbose = verbose)
+                    addCommand(mdFile, cmd + " " + cmdname, level = level+1, spacedelim = spacedelim, verbose = verbose)
         lid +=1
