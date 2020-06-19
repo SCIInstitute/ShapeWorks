@@ -810,16 +810,66 @@ TEST(ImageTests, additionTest1)
   ASSERT_TRUE(false);
 }
 
-// TEST(ImageTests, additionTest1)
-// {
-//   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/addition/");
+TEST(ImageTests, additionTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/addition/");
 
-//   Image image1(test_location + "la-bin.nrrd");
-//   Image image2(test_location + "1x2x2.nrrd");
-//   try {
-//     image1 = image1 + image2; // the have different dims, so operator throws an exception
-//   } catch(std::invalid_argument) { return; }
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "la-bin.nrrd");
+  image1 = image1 + image2;
+  image1.write(test_location + "baseline_addition.nrrd");
+  Image baseline(test_location + "baseline_addition.nrrd");
 
-//   // fails if an exception is not thrown
-//   ASSERT_TRUE(false);
-// }
+  ASSERT_TRUE(image1 == baseline);
+}
+
+TEST(ImageTests, additionTest3)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/addition/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "la-bin.nrrd");
+  image1 += image2;
+  Image baseline(test_location + "baseline_addition.nrrd");
+
+  ASSERT_TRUE(image1 == baseline);
+}
+
+TEST(ImageTests, subtractionTest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/subtraction/");
+
+  Image image1(test_location + "img1.nrrd");
+  Image image2(test_location + "1x2x2.nrrd");
+  try {
+    image1 = image1 - image2; // the have different dims, so operator throws an exception
+  } catch(std::invalid_argument) { return; }
+
+  // fails if an exception is not thrown
+  ASSERT_TRUE(false);
+}
+
+TEST(ImageTests, subtractionTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/subtraction/");
+
+  Image image1(test_location + "img1.nrrd");
+  Image image2(test_location + "img2.nrrd");
+  image1 = image1 - image2;
+  image1.write(test_location + "baseline_subtraction.nrrd");
+  Image baseline(test_location + "baseline_subtraction.nrrd");
+
+  ASSERT_TRUE(image1 == baseline);
+}
+
+TEST(ImageTests, subtractionTest3)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/subtraction/");
+
+  Image image1(test_location + "img1.nrrd");
+  Image image2(test_location + "img2.nrrd");
+  image1 -= image2;
+  Image baseline(test_location + "baseline_subtraction.nrrd");
+
+  ASSERT_TRUE(image1 == baseline);
+}
