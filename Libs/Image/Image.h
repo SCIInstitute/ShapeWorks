@@ -168,7 +168,7 @@ public:
   Image &setOrigin(Point3 origin = Point3({0, 0, 0}));
 
   /// Reflect image around the plane specified by the logical center and the given normal (ex: <1,0,0> reflects across YZ-plane).
-  Image &reflect(const Vector3 &normal = makeVector({-1, 1, 1}));
+  Image &reflect(const Axis& axis);
 
   // query functions //
 

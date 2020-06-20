@@ -545,7 +545,7 @@ TEST(ImageTests, reflectTest1)
 
   // reflect across XZ plane (looks like vertical direction facing "front" of volume, X-axis pointing right, Y-axis pointing up)
   Image image(test_location + "1x2x2.nrrd");
-  image.reflect();
+  image.reflect(Axis::X);
   Image ground_truth(test_location + "reflect_baseline1.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -556,7 +556,7 @@ TEST(ImageTests, reflectTest2)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/reflect/");
 
   Image image(test_location + "la-bin.nrrd");
-  image.reflect();
+  image.reflect(Axis::X);
   Image ground_truth(test_location + "reflect_baseline2.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
