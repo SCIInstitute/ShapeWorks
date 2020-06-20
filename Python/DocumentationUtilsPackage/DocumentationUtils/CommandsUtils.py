@@ -192,6 +192,7 @@ def addCommand(mdFile, cmd, level, spacedelim = ' ', verbose = True): # from Exe
         
         if 'Options' in line:
             lid = addOptions(mdFile, stdout, lid, spacedelim = spacedelim)
+            mdFile.new_line('<a href="#top">Back to Top</a>\n')
             continue
         
         if 'Available commands' in line:

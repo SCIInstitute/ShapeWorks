@@ -66,6 +66,8 @@ Contents
 **--version:** show program's version number and exit
 
 **-q, --quiet:** don't print status messages  
+  
+<a href="#top">Back to Top</a>
 
 # Image Commands
 
@@ -92,6 +94,8 @@ shapeworks  antialias [args]...
 
 **--layers=INT:** Number of layers around a 3d pixel to use for this computation [default image dims].  
   
+<a href="#top">Back to Top</a>
+  
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
 ## blur
@@ -112,6 +116,8 @@ shapeworks  blur [args]...
 **-h, --help:** show this help message and exit
 
 **--sigma=DOUBLE:** Value of sigma [default 0.0].  
+  
+<a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
@@ -135,6 +141,8 @@ shapeworks  bounding-box [args]...
 **--padding=INT:** Number of extra voxels in each direction to pad the largest bounding box [default 0].
 
 **--isovalue=FLOAT:** Threshold value [default 1.0].  
+  
+<a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
@@ -175,6 +183,8 @@ shapeworks  clip [args]...
 
 **--val=DOUBLE:** Value of clipped pixels [default 0.0].  
   
+<a href="#top">Back to Top</a>
+  
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
 ## close-holes
@@ -193,6 +203,8 @@ shapeworks  close-holes [args]...
 **Options:**
 
 **-h, --help:** show this help message and exit  
+  
+<a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
@@ -219,6 +231,8 @@ shapeworks  compare [args]...
 
 **--verifyall=BOOL:** Verify origin, spacing, and direction of both images match (default: true)  
   
+<a href="#top">Back to Top</a>
+  
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
 ## compute-dt
@@ -240,6 +254,8 @@ shapeworks  compute-dt [args]...
 
 **--isovalue=FLOAT:** Level set value that defines the interface between foreground and background [default 0.0].  
   
+<a href="#top">Back to Top</a>
+  
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
 ## crop
@@ -258,6 +274,8 @@ shapeworks  crop [args]...
 **Options:**
 
 **-h, --help:** show this help message and exit  
+  
+<a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
@@ -280,6 +298,8 @@ shapeworks  curvature [args]...
 
 **--iterations=INT:** Number of iterations [default 10].  
   
+<a href="#top">Back to Top</a>
+  
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
 ## extract-label
@@ -300,6 +320,8 @@ shapeworks  extract-label [args]...
 **-h, --help:** show this help message and exit
 
 **--label=FLOAT:** Label value which has to be extracted [default 1.0].  
+  
+<a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
@@ -334,6 +356,8 @@ shapeworks  filter [args]...
 
 **--layers=INT:** Number of layers around a 3d pixel to use for this computation [default image dims].  
   
+<a href="#top">Back to Top</a>
+  
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
 ## gradient
@@ -352,6 +376,8 @@ shapeworks  gradient [args]...
 **Options:**
 
 **-h, --help:** show this help message and exit  
+  
+<a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
@@ -377,6 +403,8 @@ shapeworks  icp [args]...
 **--source=STRING:** Distance map of source image.
 
 **--isovalue=FLOAT:** Value of isovalue [default 0.0]. --iterations=UNSIGNED Number of iterations run ICP registration [default 20].  
+  
+<a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
@@ -413,6 +441,8 @@ shapeworks  info [args]...
 
 **--boundingbox=BOOL:** Whether to display bounding box [default is false]  
   
+<a href="#top">Back to Top</a>
+  
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
 ## pad
@@ -436,6 +466,8 @@ shapeworks  pad [args]...
 
 **--value=FLOAT:** Value to be used to fill padded voxels [default 0.0].  
   
+<a href="#top">Back to Top</a>
+  
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
 ## read-image
@@ -457,6 +489,8 @@ shapeworks  read-image [args]...
 
 **--name=STRING:** Name of file to read  
   
+<a href="#top">Back to Top</a>
+  
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
 ## recenter
@@ -476,6 +510,8 @@ shapeworks  recenter [args]...
 
 **-h, --help:** show this help message and exit  
   
+<a href="#top">Back to Top</a>
+  
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
 ## reflect
@@ -494,6 +530,8 @@ shapeworks  reflect [args]...
 **Options:**
 
 **-h, --help:** show this help message and exit -x DOUBLE, --nx=DOUBLE Value of x in normal [default 1]. -y DOUBLE, --ny=DOUBLE Value of y in normal [default 0]. -z DOUBLE, --nz=DOUBLE Value of z in normal [default 0].  
+  
+<a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
@@ -528,6 +566,8 @@ shapeworks  resample [args]...
 
 **--sizez=UNSIGNED:** Image size in z-direction [default estimated from the image].  
   
+<a href="#top">Back to Top</a>
+  
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
 ## rotate
@@ -551,6 +591,8 @@ shapeworks  rotate [args]...
 
 **--degrees=DOUBLE:** Angle in degrees  
   
+<a href="#top">Back to Top</a>
+  
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
 ## scale
@@ -570,6 +612,8 @@ shapeworks  scale [args]...
 
 **-h, --help:** show this help message and exit -x DOUBLE, --sx=DOUBLE x scale -y DOUBLE, --sy=DOUBLE y scale -z DOUBLE, --sz=DOUBLE z scale  
   
+<a href="#top">Back to Top</a>
+  
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
 ## set-origin
@@ -588,6 +632,8 @@ shapeworks  set-origin [args]...
 **Options:**
 
 **-h, --help:** show this help message and exit -x DOUBLE, --x=DOUBLE x value of origin [default 0]. -y DOUBLE, --y=DOUBLE y value of origin [default 0]. -z DOUBLE, --z=DOUBLE z value of origin [default 0].  
+  
+<a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
@@ -612,6 +658,8 @@ shapeworks  sigmoid [args]...
 
 **--beta=DOUBLE:** Value of beta [default 10.0].  
   
+<a href="#top">Back to Top</a>
+  
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
 ## threshold
@@ -634,6 +682,8 @@ shapeworks  threshold [args]...
 **--min=FLOAT:** Lower threshold level [default = epsilon].
 
 **--max=FLOAT:** Upper threshold level [default = FLT_MAX].  
+  
+<a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
@@ -660,6 +710,8 @@ shapeworks  topo-preserving-smooth [args]...
 
 **--beta=DOUBLE:** Value of beta for sigmoid fitler [default 10.0].  
   
+<a href="#top">Back to Top</a>
+  
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
 ## tp-levelset
@@ -680,6 +732,8 @@ shapeworks  tp-levelset [args]...
 **-h, --help:** show this help message and exit --featureimage=STRING Path of feature image for filter
 
 **--scaling=DOUBLE:** Value of scale [default 20].  
+  
+<a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
@@ -702,6 +756,8 @@ shapeworks  translate [args]...
 
 **--centerofmass=BOOL:** Use center of mass [default set to false]. --applycenterofmass=BOOL Apply calculated center of mass [default set to false]. -x DOUBLE, --tx=DOUBLE Explicit tx in image space (physical coordinates) -y DOUBLE, --ty=DOUBLE Explicit ty in image space (e.g., 3.14) -z DOUBLE, --tz=DOUBLE Explicit tz in image space  
   
+<a href="#top">Back to Top</a>
+  
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
 ## warp-image
@@ -722,6 +778,8 @@ shapeworks  warp-image [args]...
 **-h, --help:** show this help message and exit --source_landmarks=STRING Path to source landmarks. --target_landmarks=STRING Path to target landmarks.
 
 **--stride=INT:** Every _stride_ points will be used for warping [default 1].  
+  
+<a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
@@ -746,6 +804,8 @@ shapeworks  write-image [args]...
 
 **--compressed=BOOL:** Whether to compress file [default is true]  
   
+<a href="#top">Back to Top</a>
+  
 [Back to Image Commands](#image-commands)  
 <a href="#top">Back to Top</a>
 # Mesh Commands
@@ -769,6 +829,8 @@ shapeworks  coverage [args]...
 
 **--second_mesh=STRING:** Second mesh to apply coverage.  
   
+<a href="#top">Back to Top</a>
+  
 [Back to Mesh Commands](#mesh-commands)  
 <a href="#top">Back to Top</a>
 ## read-mesh
@@ -790,6 +852,8 @@ shapeworks  read-mesh [args]...
 
 **--name=STRING:** name of file to read  
   
+<a href="#top">Back to Top</a>
+  
 [Back to Mesh Commands](#mesh-commands)  
 <a href="#top">Back to Top</a>
 ## write-mesh
@@ -810,6 +874,8 @@ shapeworks  write-mesh [args]...
 **-h, --help:** show this help message and exit
 
 **--name=STRING:** name of file to write  
+  
+<a href="#top">Back to Top</a>
   
 [Back to Mesh Commands](#mesh-commands)  
 <a href="#top">Back to Top</a>
@@ -836,6 +902,8 @@ shapeworks  compactness [args]...
 
 **--saveto=STRING:** Save the scree plots for all modes to a file  
   
+<a href="#top">Back to Top</a>
+  
 [Back to ParticleSystem Commands](#particlesystem-commands)  
 <a href="#top">Back to Top</a>
 ## generalization
@@ -859,6 +927,8 @@ shapeworks  generalization [args]...
 
 **--saveto=STRING:** Save the reconstructions sorted by generalization along with the mapping to the original shape  
   
+<a href="#top">Back to Top</a>
+  
 [Back to ParticleSystem Commands](#particlesystem-commands)  
 <a href="#top">Back to Top</a>
 ## read-particle-system
@@ -877,6 +947,8 @@ shapeworks  read-particle-system [args]...
 **Options:**
 
 **-h, --help:** show this help message and exit --names <list of strings> paths to .particle files  
+  
+<a href="#top">Back to Top</a>
   
 [Back to ParticleSystem Commands](#particlesystem-commands)  
 <a href="#top">Back to Top</a>
@@ -900,6 +972,8 @@ shapeworks  specificity [args]...
 **--nmodes=INT:** Number of modes to use
 
 **--saveto=STRING:** Save the reconstructions sorted by generalization along with the mapping to the original shape  
+  
+<a href="#top">Back to Top</a>
   
 [Back to ParticleSystem Commands](#particlesystem-commands)  
 <a href="#top">Back to Top</a>
