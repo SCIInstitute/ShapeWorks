@@ -17,6 +17,19 @@ TEST(ImageTests, dicomReadTest)
   ASSERT_TRUE(image == ground_truth);
 }
 
+TEST(ImageTests, readTestNoImage)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/non-existant-dir/");
+
+  try {
+    Image image(test_location + "foo.nrrd");
+  } catch(...) {
+    return;
+  }
+
+  ASSERT_TRUE(false);
+}
+
 TEST(ImageTests, fileFormatTest1)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
@@ -169,6 +182,17 @@ TEST(ImageTests, translateTest2)
   Image image(test_location + "1x2x2.nrrd");
   image.translate(makeVector({-10, -10, -10}));
   Image ground_truth(test_location + "translate2_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, translateTest3)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/translate/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.translate(makeVector({0, 0, -10}));
+  Image ground_truth(test_location + "translate3_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -422,7 +446,8 @@ TEST(ImageTests, icpTest)
   Image image(test_location + "1x2x2.nrrd");
   Image target(test_location + "target.nrrd");
   Image source(test_location + "source.nrrd");
-  ImageUtils::rigidRegistration(image, target, source);
+  TransformPtr transform(ImageUtils::createRigidRegistrationTransform(target, source));
+  image.applyTransform(transform, target.dims(), target.origin(), target.spacing(), target.coordsys());
   Image ground_truth(test_location + "icp_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -520,7 +545,7 @@ TEST(ImageTests, reflectTest1)
 
   // reflect across XZ plane (looks like vertical direction facing "front" of volume, X-axis pointing right, Y-axis pointing up)
   Image image(test_location + "1x2x2.nrrd");
-  image.reflect();
+  image.reflect(Axis::X);
   Image ground_truth(test_location + "reflect_baseline1.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -531,7 +556,7 @@ TEST(ImageTests, reflectTest2)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/reflect/");
 
   Image image(test_location + "la-bin.nrrd");
-  image.reflect();
+  image.reflect(Axis::X);
   Image ground_truth(test_location + "reflect_baseline2.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -548,52 +573,52 @@ TEST(ImageTests, setoriginTest)
   ASSERT_TRUE(image == ground_truth);
 }
 
-// TEST(ImageTests, warptest1)
-// {
-//   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
+TEST(ImageTests, warpTest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
 
-//   Image image(test_location + "1x2x2.nrrd");
-//   std::string src_filename(test_location + "src.pts"); // todo: create sets of landmarks for source and target
-//   std::string dst_filename(test_location + "dst.pts");
+  Image image(test_location + "input.nrrd");
+  std::string src_filename(test_location + "source.particles");
+  std::string dst_filename(test_location + "target.particles");
 
-//   TransformPtr transform(ImageUtils::computeWarp(src_filename, dst_filename));
-//   image.applyTransform(transform);
-//   Image ground_truth(test_location + "warp_baseline1.nrrd");
+  TransformPtr transform(ImageUtils::createWarpTransform(src_filename, dst_filename));
+  image.applyTransform(transform);
+  Image ground_truth(test_location + "warp_baseline1.nrrd");
 
-//   ASSERT_TRUE(image == ground_truth);
-// }
+  ASSERT_TRUE(image == ground_truth);
+}
 
-// TEST(ImageTests, warptest2)
-// {
-//   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
+TEST(ImageTests, warpTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
 
-//   Image image(test_location + "1x2x2.nrrd");
-//   std::string src_filename(test_location + "src.pts"); // todo: create sets of landmarks for source and target
-//   std::string dst_filename(test_location + "dst.pts");
+  Image image(test_location + "input.nrrd");
+  std::string src_filename(test_location + "source.particles");
+  std::string dst_filename(test_location + "target.particles");
 
-//   // only use every 3rd landmark point
-//   TransformPtr transform(ImageUtils::computeWarp(src_filename, dst_filename, 3));
-//   image.applyTransform(transform);
-//   Image ground_truth(test_location + "warp_baseline2.nrrd");
+  // only use every 3rd landmark point
+  TransformPtr transform(ImageUtils::createWarpTransform(src_filename, dst_filename, 3));
+  image.applyTransform(transform);
+  Image ground_truth(test_location + "warp_baseline2.nrrd");
 
-//   ASSERT_TRUE(image == ground_truth);
-// }
+  ASSERT_TRUE(image == ground_truth);
+}
 
-// TEST(ImageTests, warptest3)
-// {
-//   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
+TEST(ImageTests, warpTest3)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
 
-//   Image image(test_location + "1x2x2.nrrd");
-//   std::string src_filename(test_location + "bogus_src.pts");
-//   std::string dst_filename(test_location + "bogus_dst.pts");
+  Image image(test_location + "1x2x2.nrrd");
+  std::string src_filename(test_location + "bogus_src.pts");
+  std::string dst_filename(test_location + "bogus_dst.pts");
 
-//   // empty files should just produce identity transform
-//   TransformPtr transform(ImageUtils::computeWarp(src_filename, dst_filename));
-//   image.applyTransform(transform);
-//   Image ground_truth(test_location + "1x2x2.nrrd");
+  // empty files should just produce identity transform
+  TransformPtr transform(ImageUtils::createWarpTransform(src_filename, dst_filename));
+  image.applyTransform(transform);
+  Image ground_truth(test_location + "1x2x2.nrrd");
 
-//   ASSERT_TRUE(image == ground_truth);
-// }
+  ASSERT_TRUE(image == ground_truth);
+}
 
 TEST(ImageTests, compareTest1)
 {
@@ -747,4 +772,102 @@ TEST(ImageTests, coordsysTest)
   coordsys.SetIdentity();
   
   ASSERT_TRUE(image.coordsys() == coordsys);
+}
+
+TEST(ImageTests, negationTest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/negation/");
+
+  Image image(test_location + "la-bin.nrrd");
+  image = -image;
+  Image baseline(test_location + "negation1_baseline.nrrd");
+  
+  ASSERT_TRUE(image == baseline);
+}
+
+TEST(ImageTests, negationTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/negation/");
+
+  Image image(test_location + "la-bin.nrrd");
+  image = -(-image); // negation of negation
+  Image baseline(test_location + "la-bin.nrrd");
+
+  ASSERT_TRUE(image == baseline);
+}
+
+TEST(ImageTests, additionTest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/addition/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "1x2x2.nrrd");
+  try {
+    image1 = image1 + image2; // the have different dims, so operator throws an exception
+  } catch(std::invalid_argument) { return; }
+
+  // fails if an exception is not thrown
+  ASSERT_TRUE(false);
+}
+
+TEST(ImageTests, additionTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/addition/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "la-bin.nrrd");
+  image1 = image1 + image2;
+  Image baseline(test_location + "baseline_addition.nrrd");
+
+  ASSERT_TRUE(image1 == baseline);
+}
+
+TEST(ImageTests, additionTest3)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/addition/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "la-bin.nrrd");
+  image1 += image2;
+  Image baseline(test_location + "baseline_addition.nrrd");
+
+  ASSERT_TRUE(image1 == baseline);
+}
+
+TEST(ImageTests, subtractionTest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/subtraction/");
+
+  Image image1(test_location + "img1.nrrd");
+  Image image2(test_location + "1x2x2.nrrd");
+  try {
+    image1 = image1 - image2; // the have different dims, so operator throws an exception
+  } catch(std::invalid_argument) { return; }
+
+  // fails if an exception is not thrown
+  ASSERT_TRUE(false);
+}
+
+TEST(ImageTests, subtractionTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/subtraction/");
+
+  Image image1(test_location + "img1.nrrd");
+  Image image2(test_location + "img2.nrrd");
+  image1 = image1 - image2;
+  Image baseline(test_location + "baseline_subtraction.nrrd");
+
+  ASSERT_TRUE(image1 == baseline);
+}
+
+TEST(ImageTests, subtractionTest3)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/subtraction/");
+
+  Image image1(test_location + "img1.nrrd");
+  Image image2(test_location + "img2.nrrd");
+  image1 -= image2;
+  Image baseline(test_location + "baseline_subtraction.nrrd");
+
+  ASSERT_TRUE(image1 == baseline);
 }

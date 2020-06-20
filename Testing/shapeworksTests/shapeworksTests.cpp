@@ -11,7 +11,7 @@ void shapeworksEnvSetup() // fixme: use googletest's setup/teardown: https://git
   auto path(std::string(BUILD_DIR) + "\\bin\\Release" + ";" + std::getenv("PATH"));
   _putenv_s("PATH", path.c_str());
 #else
-  auto path(std::string(BUILD_DIR) + "/bin/" + ":" + std::getenv("PATH")); // might be /bin/Debug or /bin/Release for systems such as Xcode
+  auto path(std::string(BUILD_DIR) + "/bin" + ":" + std::getenv("PATH")); // might be /bin/Debug or /bin/Release for systems such as Xcode
   setenv("PATH", path.c_str(), true);
 #endif
 
@@ -27,6 +27,13 @@ void shapeworksEnvSetup() // fixme: use googletest's setup/teardown: https://git
   // change to the shapeworksTest directory
   auto shapeworksTestsDir(std::string(TEST_DATA_DIR) + "/../shapeworksTests");
   chdir(shapeworksTestsDir.c_str());
+}
+
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, info)
+{
+  shapeworksEnvSetup();
+  ASSERT_FALSE(system("bash info.sh"));
 }
 
 //---------------------------------------------------------------------------
@@ -81,13 +88,6 @@ TEST(shapeworksTests, translate)
 {
   shapeworksEnvSetup();
   ASSERT_FALSE(system("bash translate.sh"));
-}
-
-//---------------------------------------------------------------------------
-TEST(shapeworksTests, translatefail)
-{
-  shapeworksEnvSetup();
-  ASSERT_TRUE(system("bash translatefail.sh"));
 }
 
 //---------------------------------------------------------------------------
@@ -277,4 +277,25 @@ TEST(shapeworksTests, setorigin)
 {
   shapeworksEnvSetup();
   ASSERT_FALSE(system("bash setorigin.sh"));
+}
+
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, negate)
+{
+  shapeworksEnvSetup();
+  ASSERT_FALSE(system("bash negate.sh"));
+}
+
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, addition)
+{
+  shapeworksEnvSetup();
+  ASSERT_FALSE(system("bash add.sh"));
+}
+
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, subtraction)
+{
+  shapeworksEnvSetup();
+  ASSERT_FALSE(system("bash sub.sh"));
 }

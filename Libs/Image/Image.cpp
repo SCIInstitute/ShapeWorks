@@ -13,6 +13,7 @@
 #include <itkRegionOfInterestImageFilter.h>
 #include <itkReinitializeLevelSetImageFilter.h>
 #include <itkTranslationTransform.h>
+#include <itkScalableAffineTransform.h>
 #include <itkBinaryFillholeImageFilter.h>
 #include <itkGradientMagnitudeImageFilter.h>
 #include <itkCurvatureFlowImageFilter.h>
@@ -74,6 +75,48 @@ Image::ImageType::Pointer Image::read(const std::string &pathname)
   }
 
   return reader->GetOutput();
+}
+
+Image& Image::operator-()
+{
+  itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
+  while (!iter.IsAtEnd())
+  {
+    iter.Set(-iter.Value());
+    ++iter;
+  }
+
+  return *this;
+}
+
+Image& Image::operator+(const Image &other)
+{
+  if (dims() != other.dims()) { throw std::invalid_argument("images must have same logical dims"); }
+  
+  itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
+  itk::ImageRegionIteratorWithIndex<ImageType> otherIter(other.image, other.image->GetLargestPossibleRegion());
+  while (!iter.IsAtEnd() && !otherIter.IsAtEnd())
+  {
+    iter.Set(iter.Value() + otherIter.Value());
+    ++iter; ++otherIter;
+  }
+
+  return *this;
+}
+
+Image& Image::operator-(const Image &other)
+{
+  if (dims() != other.dims()) { throw std::invalid_argument("images must have same logical dims"); }
+  
+  itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
+  itk::ImageRegionIteratorWithIndex<ImageType> otherIter(other.image, other.image->GetLargestPossibleRegion());
+  while (!iter.IsAtEnd() && !otherIter.IsAtEnd())
+  {
+    iter.Set(iter.Value() - otherIter.Value());
+    ++iter; ++otherIter;
+  }
+
+  return *this;
 }
 
 Image::ImageType::Pointer Image::readDICOMImage(const std::string &pathname)
@@ -209,6 +252,13 @@ bool Image::compare(const Image &other, bool verifyall, double precision) const
   catch (itk::ExceptionObject &exp)
   {
     std::cerr << "Comparison failed: " << exp.GetDescription() << std::endl;
+
+    // if metadata differs but dims do not, re-run compare to identify pixel differences (but still return false)
+    if (std::string(exp.what()).find("Inputs do not occupy the same physical space!") != std::string::npos)
+      if (dims() == other.dims())
+        if (compare(other, false, precision))
+          std::cerr << "0 pixels differ\n";
+
     return false;
   }
 
@@ -249,9 +299,6 @@ Image& Image::pad(int padding, PixelType value)
 
 Image& Image::translate(const Vector3 &v)
 {
-  if (v[0] == 0 || v[1] == 0 || v[2] == 0)
-    throw std::invalid_argument("Invalid translate point");
-
   AffineTransformPtr xform(AffineTransform::New());
   xform->Translate(-v);            // negate v because ITK applies transformations backwards.
 
@@ -267,7 +314,7 @@ Image& Image::scale(const Vector3 &s)
   setOrigin(negate(center()));     // move center _away_ from origin since ITK applies transformations backwards.
 
   AffineTransformPtr xform(AffineTransform::New());
-  xform->Scale(invert(std::move(const_cast<Vector3&>(s))));   // invert scale ratio because ITK applies transformations backwards.  
+  xform->Scale(invert(Vector(s)));         // invert scale ratio because ITK applies transformations backwards.  
   applyTransform(xform);
   setOrigin(origOrigin);           // restore origin
   
@@ -533,21 +580,18 @@ Image& Image::clip(const Vector &n, const Point &q, const PixelType val)
   return *this;
 }
 
-Image& Image::reflect(const Vector3 &normal)
+Image& Image::reflect(const Axis &axis)
 {
-  if ((normal[0] == -1 && (normal[1] == -1 || normal[2] == -1)) ||
-      (normal[1] == -1 && (normal[0] == -1 || normal[2] == -1)) ||
-      (normal[2] == -1 && (normal[0] == -1 || normal[1] == -1))) 
-    throw std::invalid_argument("Invalid normal");
+  if (!axis_is_valid(axis))
+    throw std::invalid_argument("Invalid axis");
 
-  Matrix reflection;
-  reflection.Fill(0);
-  reflection[0][0] = normal[0];
-  reflection[1][1] = normal[1];
-  reflection[2][2] = normal[2];
+  Vector scale(makeVector({1,1,1}));
+  scale[axis] = -1;
 
-  AffineTransformPtr xform(AffineTransform::New());
-  xform->SetMatrix(reflection);
+  
+  using ScalableTransform = itk::ScalableAffineTransform<double, 3>;
+  ScalableTransform::Pointer xform(ScalableTransform::New());
+  xform->SetScale(scale);
   Point3 currentOrigin(origin());
   recenter().applyTransform(xform).setOrigin(currentOrigin);
 

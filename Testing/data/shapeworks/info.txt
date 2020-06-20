@@ -1,0 +1,15 @@
+logical dims:          [100, 50, 50]
+physical spacing:      [1, 2, 2]
+size (spacing * dims): [100, 100, 100]
+physical origin:       [0, 0.5, 0.5]
+direction (coordsys):  
+1 0 0
+0 1 0
+0 0 1
+
+center:                [50, 50.5, 50.5]
+center of mass (0,1]:  [49.9917, 49.8699, 49.8699]
+bounding box:          {
+	min: [41, 21, 21],
+	max: [59, 29, 29]
+}

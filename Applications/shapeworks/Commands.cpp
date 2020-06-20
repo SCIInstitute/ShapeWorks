@@ -50,12 +50,19 @@ void ReadImage::buildParser()
 bool ReadImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string filename = options["name"];
-
+  if (filename.length() == 0) {
+    std::cerr << "readimage error: no filename specified, must pass `--name <filename>`\n";
+    return false;
+  }
+  
   try {
     sharedData.image = Image(filename);
     return true;
+  } catch(std::exception &e) {
+    std::cerr << "exception while reading " << filename << ": " << e.what() << std::endl;
+    return false;
   } catch(...) {
-    std::cerr << "exception while reading " << filename;
+    std::cerr << "unknown exception while reading " << filename << std::endl;
     return false;
   }
 }
@@ -84,6 +91,11 @@ bool WriteImage::execute(const optparse::Values &options, SharedCommandData &sha
   }
 
   std::string filename = options["name"];
+  if (filename.length() == 0) {
+    std::cerr << "writeimage error: no filename specified, must pass `--name <filename>`\n";
+    return false;
+  }
+
   bool compressed = static_cast<bool>(options.get("compressed"));
   
   sharedData.image.write(filename, compressed);
@@ -183,7 +195,7 @@ bool Antialias::execute(const optparse::Values &options, SharedCommandData &shar
 
   if (layers < 0)
   {
-    std::cerr << "Must specify a valid layers argument\n";
+    std::cerr << "layers must be >= 0\n";
     return false;
   }
   else
@@ -301,10 +313,9 @@ void Translate::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--centerofmass").action("store").type("bool").set_default(false).help("Use center of mass [default set to false].");
-  parser.add_option("--applycenterofmass").action("store").type("bool").set_default(false).help("Apply calculated center of mass [default set to false].");
-  parser.add_option("--tx", "-x").action("store").type("double").help("Explicit tx in image space (physical coordinates)");
-  parser.add_option("--ty", "-y").action("store").type("double").help("Explicit ty in image space (e.g., 3.14)");
-  parser.add_option("--tz", "-z").action("store").type("double").help("Explicit tz in image space");
+  parser.add_option("--tx", "-x").action("store").type("double").set_default(0).help("Explicit tx in image space (physical coordinates)");
+  parser.add_option("--ty", "-y").action("store").type("double").set_default(0).help("Explicit ty in image space (e.g., 3.14)");
+  parser.add_option("--tz", "-z").action("store").type("double").set_default(0).help("Explicit tz in image space");
 
   Command::buildParser();
 }
@@ -318,21 +329,10 @@ bool Translate::execute(const optparse::Values &options, SharedCommandData &shar
   }
 
   bool centerofmass = static_cast<bool>(options.get("centerofmass"));
-  bool applycenterofmass = static_cast<bool>(options.get("applycenterofmass"));
 
   if (centerofmass)
   {
     sharedData.image.applyTransform(ImageUtils::createCenterOfMassTransform(sharedData.image));
-    return true;
-  }
-  else if (applycenterofmass)
-  {
-    double tx = static_cast<double>(options.get("tx"));
-    double ty = static_cast<double>(options.get("ty"));
-    double tz = static_cast<double>(options.get("tz"));
-    AffineTransformPtr xform(AffineTransform::New());
-    xform->Translate(-(sharedData.image.center() - Point3({tx, ty, tz})));
-    sharedData.image.applyTransform(xform);
     return true;
   }
   else
@@ -341,16 +341,8 @@ bool Translate::execute(const optparse::Values &options, SharedCommandData &shar
     double ty = static_cast<double>(options.get("ty"));
     double tz = static_cast<double>(options.get("tz"));
 
-    if (tx == 0 || ty == 0 || tz == 0)
-    {
-      std::cerr << "Must specify a valid translate argument\n";
-      return false;
-    }
-    else
-    {
-      sharedData.image.translate(makeVector({tx, ty, tz}));
-      return true;
-    }
+    sharedData.image.translate(makeVector({tx, ty, tz}));
+    return true;
   }
 }
 
@@ -384,7 +376,7 @@ bool Scale::execute(const optparse::Values &options, SharedCommandData &sharedDa
 
   if (sx == 0 || sy == 0 || sz == 0)
   {
-    std::cerr << "Must specify a valid scale arguemnt\n";
+    std::cerr << "Error: cannot scale by 0 in any dimension\n";
     return false;
   }
   else
@@ -533,7 +525,7 @@ bool Threshold::execute(const optparse::Values &options, SharedCommandData &shar
 void ComputeDT::buildParser()
 {
   const std::string prog = "compute-dt";
-  const std::string desc = "computes distance transform volume from a binary (antialiased) image";
+  const std::string desc = "computes distance transform volume from a (preferably antialized) binary image";
   parser.prog(prog).description(desc);
 
   parser.add_option("--isovalue").action("store").type("float").set_default(0.0).help("Level set value that defines the interface between foreground and background [default 0.0].");
@@ -582,7 +574,7 @@ bool CurvatureFilter::execute(const optparse::Values &options, SharedCommandData
 
   if (iterations < 0)
   {
-    std::cerr << "Must specify a valid iterations argument\n";
+    std::cerr << "iterations must be >= 0\n";
     return false;
   }
   else
@@ -673,7 +665,7 @@ bool TPLevelSetFilter::execute(const optparse::Values &options, SharedCommandDat
 
   if (featureimage == "")
   {
-    std::cerr << "Must specify a valid feature image value\n";
+    std::cerr << "Must specify a feature image\n";
     return false;
   }
   else
@@ -753,12 +745,12 @@ bool Blur::execute(const optparse::Values &options, SharedCommandData &sharedDat
 void ICPRigid::buildParser()
 {
   const std::string prog = "icp";
-  const std::string desc = "performs iterative closed point (ICP) 3D rigid registration on pair of images";
+  const std::string desc = "transform current image using iterative closed point (ICP) 3D rigid registration computed from source to target distance maps";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--target").action("store").type("string").set_default("").help("Distance map of target image.");
   parser.add_option("--source").action("store").type("string").set_default("").help("Distance map of source image.");
-  parser.add_option("--isovalue").action("store").type("float").set_default(0.0).help("Value of isovalue [default 0.0].");
+  parser.add_option("--target").action("store").type("string").set_default("").help("Distance map of target image.");
+  parser.add_option("--isovalue").action("store").type("float").set_default(0.0).help("isovalue of distance maps used to create ICPtransform [default 0.0].");
   parser.add_option("--iterations").action("store").type("unsigned").set_default(20).help("Number of iterations run ICP registration [default 20].");
 
   Command::buildParser();
@@ -772,26 +764,27 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
-  std::string targetImg = static_cast<std::string>(options.get("target"));
-  std::string sourceImg = static_cast<std::string>(options.get("source"));
+  std::string targetDT = static_cast<std::string>(options.get("target"));
+  std::string sourceDT = static_cast<std::string>(options.get("source"));
   float isovalue = static_cast<float>(options.get("isovalue"));
   unsigned iterations = static_cast<unsigned>(options.get("iterations"));
 
-  if (targetImg == "")
+  if (targetDT == "")
   {
-    std::cerr << "Must specify a valid target value\n";
+    std::cerr << "Must specify a target distance map\n";
     return false;
   }
-  else if (sourceImg == "")
+  else if (sourceDT == "")
   {
-    std::cerr << "Must specify a valid source value\n";
+    std::cerr << "Must specify a source distance map\n";
     return false;
   }
   else
   {
-    Image target(targetImg);
-    Image source(sourceImg);
-    sharedData.image = ImageUtils::rigidRegistration(sharedData.image, target, source, isovalue, iterations);
+    Image target_dt(targetDT);
+    Image source_dt(sourceDT);
+    TransformPtr transform(ImageUtils::createRigidRegistrationTransform(source_dt, target_dt, isovalue, iterations));
+    sharedData.image.applyTransform(transform, target_dt.dims(), target_dt.origin(), target_dt.spacing(), target_dt.coordsys());
     return true;
   }
 }
@@ -893,12 +886,10 @@ bool ClipVolume::execute(const optparse::Values &options, SharedCommandData &sha
 void ReflectVolume::buildParser()
 {
   const std::string prog = "reflect";
-  const std::string desc = "reflect images with respect to image center and specific axis";
+  const std::string desc = "reflect images with respect to logical image center and the specified axis";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--x").action("store").type("double").set_default(-1).help("Value of x in normal [default -1].");
-  parser.add_option("--y").action("store").type("double").set_default(1).help("Value of y in normal [default 1].");
-  parser.add_option("--z").action("store").type("double").set_default(1).help("Value of z in normal [default 1].");
+  parser.add_option("--axis").action("store").type("string").set_default("").help("Axis along which to reflect (X, Y, or Z).");
 
   Command::buildParser();
 }
@@ -911,20 +902,16 @@ bool ReflectVolume::execute(const optparse::Values &options, SharedCommandData &
     return false;
   }
 
-  double x = static_cast<double>(options.get("x"));
-  double y = static_cast<double>(options.get("y"));
-  double z = static_cast<double>(options.get("z"));
-
-  if ((x == -1 && (y == -1 || z == -1)) ||
-      (y == -1 && (x == -1 || z == -1)) ||
-      (z == -1 && (x == -1 || z == -1)))
+  std::string axis_str(static_cast<std::string>(options.get("axis")));
+  Axis axis(toAxis(axis_str));
+  if (!axis_is_valid(axis))
   {
-    std::cerr << "Must specify a valid normal argument\n";
+    std::cerr << "Must specify a valid axis (X, Y, or Z)\n";
     return false;
   }
   else
   {
-    sharedData.image.reflect(makeVector({x, y, z}));
+    sharedData.image.reflect(axis);
     return true;
   }
 }
@@ -971,7 +958,7 @@ void WarpImage::buildParser()
   parser.prog(prog).description(desc);
   parser.add_option("--source_landmarks").action("store").type("string").set_default("").help("Path to source landmarks.");
   parser.add_option("--target_landmarks").action("store").type("string").set_default("").help("Path to target landmarks.");
-  parser.add_option("--factor").action("store").type("int").set_default(1).help("Every Nth(factor) point used for warping [default 1].");
+  parser.add_option("--stride").action("store").type("int").set_default(1).help("Every _stride_ points will be used for warping [default 1].");
   Command::buildParser();
 }
 
@@ -1025,6 +1012,11 @@ bool Compare::execute(const optparse::Values &options, SharedCommandData &shared
   }
 
   std::string filename = options["name"];
+  if (filename.length() == 0) {
+    std::cerr << "compare error: no filename specified with which to compare, must pass `--name <filename>`\n";
+    return false;
+  }
+
   double precision = static_cast<double>(options.get("precision"));
   bool verifyall = static_cast<bool>(options.get("verifyall"));
 
@@ -1046,14 +1038,14 @@ bool Compare::execute(const optparse::Values &options, SharedCommandData &shared
 void Filter::buildParser()
 {
   const std::string prog = "filter";
-  const std::string desc = "perform given filter on image";
+  const std::string desc = "apply the specified filter (curvature, gradient, sigmoid, tplevelset, gaussian, antialias)";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--type").action("store").type("string").set_default("").help("Type of filter");
+  parser.add_option("--type").action("store").type("string").set_default("").help("filter type: curvature, gradient, sigmoid, tplevelset, gaussian, antialias");
   parser.add_option("--iterations").action("store").type("unsigned").set_default(10).help("Number of iterations [default 10].");
   parser.add_option("--alpha").action("store").type("double").set_default(10.0).help("Value of alpha [default 10.0].");
   parser.add_option("--beta").action("store").type("double").set_default(10.0).help("Value of beta [default 10.0].");
-  parser.add_option("--featureimage").action("store").type("string").set_default("").help("Path of feature image for filter");
+  parser.add_option("--featureimage").action("store").type("string").set_default("").help("Path of feature image for tplevelset filter");
   parser.add_option("--scaling").action("store").type("double").set_default(20.0).help("Value of scale [default 20]");
   parser.add_option("--sigma").action("store").type("double").set_default(0.0).help("Value of sigma [default 0.0].");
   parser.add_option("--maxrmserror").action("store").type("float").set_default(0.01).help("Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default 0.01].");
@@ -1072,12 +1064,6 @@ bool Filter::execute(const optparse::Values &options, SharedCommandData &sharedD
 
   std::string type = static_cast<std::string>(options.get("type"));
 
-  if (type == "")
-  {
-    std::cerr << "Must specify valid filter type value\n";
-    return false;
-  }
-
   if (!type.compare("curvature"))
   {
     unsigned iterations = static_cast<unsigned>(options.get("iterations"));
@@ -1085,14 +1071,12 @@ bool Filter::execute(const optparse::Values &options, SharedCommandData &sharedD
     sharedData.image.applyCurvatureFilter(iterations);
     return true;
   }
-
-  if (!type.compare("gradient"))
+  else if (!type.compare("gradient"))
   {
     sharedData.image.applyGradientFilter();
     return true;
   }
-
-  if (!type.compare("sigmoid"))
+  else if (!type.compare("sigmoid"))
   {
     double alpha = static_cast<double>(options.get("alpha"));
     double beta = static_cast<double>(options.get("beta"));
@@ -1100,13 +1084,12 @@ bool Filter::execute(const optparse::Values &options, SharedCommandData &sharedD
     sharedData.image.applySigmoidFilter(alpha, beta);
     return true;
   }
-
-  if (!type.compare("tplevelset") || !type.compare("tp-levelset") || !type.compare("tplevel-set"))
+  else if (!type.compare("tplevelset") || !type.compare("tp-levelset") || !type.compare("tplevel-set"))
   {
     std::string featureimage = static_cast<std::string>(options.get("featureimage"));
     if (featureimage == "")
     {
-      std::cerr << "Must specify a valid feature image value\n";
+      std::cerr << "Must specify a feature image\n";
       return false;
     }
     else
@@ -1118,16 +1101,14 @@ bool Filter::execute(const optparse::Values &options, SharedCommandData &sharedD
       return true;
     }
   }
-
-  if (!type.compare("gaussian"))
+  else if (!type.compare("gaussian"))
   {
     double sigma = static_cast<double>(options.get("sigma"));
 
     sharedData.image.gaussianBlur(sigma);
     return true;
   }
-
-  if (!type.compare("antialias"))
+  else if (!type.compare("antialias"))
   {
     unsigned iterations = static_cast<unsigned>(options.get("iterations"));
     float maxRMSErr = static_cast<float>(options.get("maxrmserror"));
@@ -1136,6 +1117,99 @@ bool Filter::execute(const optparse::Values &options, SharedCommandData &sharedD
     sharedData.image.antialias(iterations, maxRMSErr, layers);
     return true;
   }
+  else
+  {
+    std::cerr << type << " is not one of: curvature, gradient, sigmoid, tplevelset, gaussian, antialias\n";
+    return false;
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// NegateImage
+///////////////////////////////////////////////////////////////////////////////
+void NegateImage::buildParser()
+{
+  const std::string prog = "negate";
+  const std::string desc = "negate the values in this image";
+  parser.prog(prog).description(desc);
+
+  Command::buildParser();
+}
+
+bool NegateImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validImage())
+  {
+    std::cerr << "No image to operate on\n";
+    return false;
+  }
+
+  sharedData.image = -sharedData.image;
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// AddImage
+///////////////////////////////////////////////////////////////////////////////
+void AddImage::buildParser()
+{
+  const std::string prog = "add";
+  const std::string desc = "add an image";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of image to add");
+
+  Command::buildParser();
+}
+
+bool AddImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validImage())
+  {
+    std::cerr << "No image to operate on\n";
+    return false;
+  }
+
+  std::string filename = options["name"];
+  if (filename.length() == 0) {
+    std::cerr << "add error: no filename specified with which to add, must pass `--name <filename>`\n";
+    return false;
+  }
+
+  sharedData.image += Image(filename);
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// SubtractImage
+///////////////////////////////////////////////////////////////////////////////
+void SubtractImage::buildParser()
+{
+  const std::string prog = "sub";
+  const std::string desc = "subtract an image";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of image to subtract");
+
+  Command::buildParser();
+}
+
+bool SubtractImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validImage())
+  {
+    std::cerr << "No image to operate on\n";
+    return false;
+  }
+
+  std::string filename = options["name"];
+  if (filename.length() == 0) {
+    std::cerr << "sub error: no filename specified to subtract, must pass `--name <filename>`\n";
+    return false;
+  }
+
+  sharedData.image -= Image(filename);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
