@@ -135,17 +135,11 @@ def Run_Pipeline(args):
             For detailed explainations of parameters for center of mass(COM) alignment of volumes, go to
             '/Documentation/PDFs/AlgnmentTools.pdf'
 
-<<<<<<< HEAD
-        This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
-        There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
-        """
-        [comFiles_segmentations, comFiles_images] = applyCOMAlignment(parentDir + 'com_aligned', paddedFiles_segmentations, paddedFiles_images)
-=======
             This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
             There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
             """
             [comFiles_segmentations, comFiles_images] = applyCOMAlignment(parentDir + "com_aligned", paddedFiles_segmentations, raw=paddedFiles_images)
->>>>>>> master
+
 
             """
             Apply rigid alignment
@@ -153,16 +147,6 @@ def Run_Pipeline(args):
             For detailed explainations of parameters for rigid alignment of volumes, go to
             '/Documentation/PDFs/AlgnmentTools.pdf'
 
-<<<<<<< HEAD
-        This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
-        There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
-        processRaw = False, applies the center of mass alignment only on segemnattion data.
-        This function uses the same transfrmation matrix for alignment of raw and segmentation files.
-        Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
-        """
-        medianFile = FindReferenceImage(comFiles_segmentations)
-        [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir + "aligned", comFiles_segmentations, comFiles_images, medianFile, processRaw = True)
-=======
             This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
             There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
             processRaw = False, applies the center of mass alignment only on segemnattion data.
@@ -172,21 +156,11 @@ def Run_Pipeline(args):
             medianFile = FindReferenceImage(comFiles_segmentations)
 
             [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, comFiles_segmentations, comFiles_images , medianFile, processRaw = True)
->>>>>>> master
 
             """
             For detailed explainations of parameters for finding the largest bounding box and cropping, go to
             '/Documentation/PDFs/ImagePrepTools.pdf'
 
-<<<<<<< HEAD
-        Compute largest bounding box and apply cropping
-        processRaw = True, processes raw and binary images with shared parameters.
-        processRaw = False, applies the center of mass alignment only on segemnattion data.
-        The function uses the same bounding box to crop the raw and segemnattion data.
-        """
-        croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", rigidFiles_segmentations, parentDir + "aligned/segmentations/*.aligned.nrrd")
-        croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images, parentDir + "aligned/segmentations/*.aligned.nrrd")
-=======
             Compute largest bounding box and apply cropping
             processRaw = True, processes raw and binary images with shared parameters.
             processRaw = False, applies the center of mass alignment only on segemnattion data.
@@ -194,8 +168,6 @@ def Run_Pipeline(args):
 
             """
             [croppedFiles_segmentations, croppedFiles_images] = applyCropping(parentDir, rigidFiles_segmentations,  rigidFiles_images, processRaw=True)
-
->>>>>>> master
 
             print("\nStep 3. Groom - Convert to distance transforms\n")
             if args.interactive:
@@ -209,14 +181,7 @@ def Run_Pipeline(args):
             dtFiles = applyDistanceTransforms(parentDir, croppedFiles_segmentations)
 
         else:
-<<<<<<< HEAD
-            dtFiles = applyDistanceTransforms(parentDir, fileList_seg)
 
-    else:
-        if not args.start_with_prepped_data:
-=======
-
->>>>>>> master
             """
             ## GROOM : Data Pre-processing
             For the unprepped data the first few steps are
@@ -263,12 +228,8 @@ def Run_Pipeline(args):
 
             For detailed explainations of parameters for center of mass(COM) alignment of volumes, go to
             '/Documentation/PDFs/AlgnmentTools.pdf'
-<<<<<<< HEAD
-            """
-=======
 
-                """
->>>>>>> master
+            """
             comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles)
 
             """
@@ -299,11 +260,6 @@ def Run_Pipeline(args):
             prepped as well as unprepped data, just provide correct filenames.
             """
             dtFiles = applyDistanceTransforms(parentDir, croppedFiles)
-<<<<<<< HEAD
-        else:
-            dtFiles = applyDistanceTransforms(parentDir, fileList_seg)
-=======
->>>>>>> master
 
     """
     ## OPTIMIZE : Particle Based Optimization
@@ -355,20 +311,15 @@ def Run_Pipeline(args):
             "debug_projection": 0,
             "verbosity": 3
         }
-<<<<<<< HEAD
 
-=======
         if args.tiny_test:
             parameterDictionary["number_of_particles"] = 32
             parameterDictionary["optimization_iterations"] = 25
             parameterDictionary["iterations_per_split"] = 25
             
-            
-
         """
         Now we execute the particle optimization function.
         """
->>>>>>> master
         [localPointFiles, worldPointFiles] = runShapeWorksOptimize_SingleScale(pointDir, dtFiles, parameterDictionary)
 
     else:
@@ -396,13 +347,10 @@ def Run_Pipeline(args):
 
         [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
 
-<<<<<<< HEAD
-=======
     if args.tiny_test:
         print("Done with tiny test")
         exit()
 
->>>>>>> master
     """
     ## ANALYZE : Shape Analysis and Visualization
 
