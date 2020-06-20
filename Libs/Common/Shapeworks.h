@@ -60,8 +60,13 @@ Vector3 invert(Vector3 &&v);
 Vector3 dot(const Vector3 &a, const Vector3 &b);
 Vector3 cross(const Vector3 &a, const Vector3 &b);
 
+/// handy way to specify an axis
+enum Axis { invalid = -1, X, Y, Z };
+Axis toAxis(const std::string &str);
+
 /// Ensure an axis is valid
 bool axis_is_valid(const Vector3 &axis);
+bool axis_is_valid(const Axis &axis);
 
 /// convert degrees to radians
 double degToRad(const double deg);

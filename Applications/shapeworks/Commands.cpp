@@ -886,12 +886,10 @@ bool ClipVolume::execute(const optparse::Values &options, SharedCommandData &sha
 void ReflectVolume::buildParser()
 {
   const std::string prog = "reflect";
-  const std::string desc = "reflect images with respect to logical image center and the specified normal (ex: <1,0,0> reflects along X axis across YZ-plane).";
+  const std::string desc = "reflect images with respect to logical image center and the specified axis";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--nx", "-x").action("store").type("double").set_default(1).help("Value of x in normal [default 1].");
-  parser.add_option("--ny", "-y").action("store").type("double").set_default(0).help("Value of y in normal [default 0].");
-  parser.add_option("--nz", "-z").action("store").type("double").set_default(0).help("Value of z in normal [default 0].");
+  parser.add_option("--axis").action("store").type("string").set_default("").help("Axis along which to reflect (X, Y, or Z).");
 
   Command::buildParser();
 }
@@ -904,19 +902,16 @@ bool ReflectVolume::execute(const optparse::Values &options, SharedCommandData &
     return false;
   }
 
-  double x = static_cast<double>(options.get("x"));
-  double y = static_cast<double>(options.get("y"));
-  double z = static_cast<double>(options.get("z"));
-
-  Vector3 axis(makeVector({x, y, z}));
+  std::string axis_str(static_cast<std::string>(options.get("axis")));
+  Axis axis(toAxis(axis_str));
   if (!axis_is_valid(axis))
   {
-    std::cerr << "Must specify a valid normal\n";
+    std::cerr << "Must specify a valid axis (X, Y, or Z)\n";
     return false;
   }
   else
   {
-    sharedData.image.reflect(makeVector({x, y, z}));
+    sharedData.image.reflect(axis);
     return true;
   }
 }
