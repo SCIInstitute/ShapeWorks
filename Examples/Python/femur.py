@@ -101,7 +101,8 @@ def Run_Pipeline(args):
         if args.tiny_test:
             files_img = files_img[:3]
             files_mesh = files_mesh[:3]
-
+            args.use_single_scale = True
+            args.interactive = False
         # run clustering if running on a subset
         if args.use_subsample:
             sample_idx = sampledata(files_img, int(args.use_subsample))
@@ -301,11 +302,15 @@ def Run_Pipeline(args):
         dtFiles = applyDistanceTransforms(parentDir, croppedFiles_segmentations)
 
     else:
-        print("\nStep 3. Groom - Convert to distance transforms\n")
-        if args.interactive:
-            input("Press Enter to continue")
+        print("Skipping grooming...")
+        dtFiles = []
+        dt_dir = inputDir + 'distance_transforms/'
+        for file in sorted(os.listdir(dt_dir)):
+            dtFiles.append(dt_dir + file)
 
-        dtFiles = applyDistanceTransforms(parentDir, fileList_seg)
+        if args.tiny_test:
+            dtFiles = dtFiles[:3]
+    
 
     """
     ## OPTIMIZE : Particle Based Optimization
@@ -357,6 +362,10 @@ def Run_Pipeline(args):
             "verbosity" : 3,
             "use_statistics_in_init" : 0
         }
+        if args.tiny_test:
+            parameterDictionary["number_of_particles"] = 32
+            parameterDictionary["optimization_iterations"] = 25
+            parameterDictionary["iterations_per_split"] = 25
 
         [localPointFiles, worldPointFiles] = runShapeWorksOptimize_SingleScale(pointDir, dtFiles, parameterDictionary)
 
@@ -383,8 +392,12 @@ def Run_Pipeline(args):
             "verbosity" : 3,
             "use_statistics_in_init" : 0
         }
-
         [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
+
+    if args.tiny_test:
+        print("Done with tiny test")
+        exit()
+
 
     """
     ## ANALYZE : Shape Analysis and Visualization

@@ -68,75 +68,92 @@ def Run_Pipeline(args):
         fileList_seg = sorted(glob.glob(parentDir + "segmentations/*.nrrd"))
 
     if args.tiny_test:
-        fileList_img = fileList_img[:3]
-        fileList_img = fileList_img[:3]
+        fileList_img = fileList_img[:2]
+        fileList_seg = fileList_seg[:2]
+        args.use_single_scale = True
+        
     if args.use_subsample:
         sample_idx = sampledata(fileList_seg, int(args.use_subsample))
         fileList_seg= [fileList_seg[i] for i in sample_idx]
         fileList_img = [fileList_img[i] for i in sample_idx]
+        
+    if args.start_with_prepped_data:
+        dtFiles = sorted(glob.glob(parentDir + "distance_transforms/*.nrrd"))
+        
+        if args.use_subsample:
+            dtFiles = [dtFiles[i] for i in sample_idx]
+        if args.tiny_test:
+            dtFiles  = dtFiles[:2]
+        
+    else:            
+        
+        if args.start_with_image_and_segmentation_data and fileList_img:
+            """
+            ## GROOM : Data Pre-processing
+            For the unprepped data the first few steps are
+            -- Isotropic resampling
+            -- Center
+            -- Padding
+            -- Center of Mass Alignment
+            -- Rigid Alignment
+            -- Largest Bounding Box and Cropping
+            """
 
-    if args.start_with_image_and_segmentation_data and fileList_img:
-        """
-        ## GROOM : Data Pre-processing
-        For the unprepped data the first few steps are
-        -- Isotropic resampling
-        -- Center
-        -- Padding
-        -- Center of Mass Alignment
-        -- Rigid Alignment
-        -- Largest Bounding Box and Cropping
+            parentDir = './TestLeftAtrium/PrepOutput/'
 
-        For detailed explainations of parameters for each tool, go to
-        'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ImagePrepTools.pdf'
-        'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/AlgnmentTools.pdf'
-        """
+            print("\nStep 2. Groom - Data Pre-processing\n")
+            if args.interactive:
+                input("Press Enter to continue")
 
-        parentDir = './TestLeftAtrium/PrepOutput/'
-        print("\nStep 2. Groom - Data Pre-processing\n")
-        if args.interactive:
-            input("Press Enter to continue")
+            """
+            Apply isotropic resampling
+            the segmentation and images are resampled independently and the result files are saved in two different directories.
+            """
+            resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, isBinary=True)
+            resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", fileList_img, isBinary=False)
 
-        """
-        Apply isotropic resampling
-        The segmentation and images are resampled independently and the result files are saved in two different directories.
-        """
-        resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, isBinary=True)
-        resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", fileList_img, isBinary=False)
+            """
+            Centering
+            """
+            centeredFiles_segmentations = center(parentDir + "centered/segmentations", resampledFiles_segmentations)
+            centeredFiles_images = center(parentDir + "centered/images", resampledFiles_images)
 
-        """
-        Centering
-        """
-        centeredFiles_segmentations = center(parentDir + "centered/segmentations", resampledFiles_segmentations)
-        centeredFiles_images = center(parentDir + "centered/images", resampledFiles_images)
+            """
+            Apply padding
 
-        """
-        Apply padding
+            For detailed explainations of parameters for padding volumes, go to
+            '/Documentation/PDFs/ImagePrepTools.pdf'
 
-        For detailed explainations of parameters for padding volumes, go to
-        '/Documentation/PDFs/ImagePrepTools.pdf'
+            Both the segmentation and raw images are padded.
+            """
+            paddedFiles_segmentations = applyPadding(parentDir + 'padded/segmentations', centeredFiles_segmentations, 10)
+            paddedFiles_images = applyPadding(parentDir+ 'padded/images', centeredFiles_images, 10)
 
-        Both the segmentation and raw images are padded.
-        """
-        paddedFiles_segmentations = applyPadding(parentDir + 'padded/segmentations', centeredFiles_segmentations, 10)
-        paddedFiles_images = applyPadding(parentDir+ 'padded/images', centeredFiles_images, 10)
+            """
+            Apply center of mass alignment
 
-        """
-        Apply center of mass alignment
+            For detailed explainations of parameters for center of mass(COM) alignment of volumes, go to
+            '/Documentation/PDFs/AlgnmentTools.pdf'
 
-        For detailed explainations of parameters for center of mass(COM) alignment of volumes, go to
-        '/Documentation/PDFs/AlgnmentTools.pdf'
-
+<<<<<<< HEAD
         This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
         There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
         """
         [comFiles_segmentations, comFiles_images] = applyCOMAlignment(parentDir + 'com_aligned', paddedFiles_segmentations, paddedFiles_images)
+=======
+            This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
+            There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
+            """
+            [comFiles_segmentations, comFiles_images] = applyCOMAlignment(parentDir + "com_aligned", paddedFiles_segmentations, raw=paddedFiles_images)
+>>>>>>> master
 
-        """
-        Apply rigid alignment
+            """
+            Apply rigid alignment
 
-        For detailed explainations of parameters for rigid alignment of volumes, go to
-        '/Documentation/PDFs/AlgnmentTools.pdf'
+            For detailed explainations of parameters for rigid alignment of volumes, go to
+            '/Documentation/PDFs/AlgnmentTools.pdf'
 
+<<<<<<< HEAD
         This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
         There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
         processRaw = False, applies the center of mass alignment only on segemnattion data.
@@ -145,11 +162,23 @@ def Run_Pipeline(args):
         """
         medianFile = FindReferenceImage(comFiles_segmentations)
         [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir + "aligned", comFiles_segmentations, comFiles_images, medianFile, processRaw = True)
+=======
+            This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
+            There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
+            processRaw = False, applies the center of mass alignment only on segemnattion data.
+            This function uses the same transfrmation matrix for alignment of raw and segmentation files.
+            Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
+            """
+            medianFile = FindReferenceImage(comFiles_segmentations)
 
-        """
-        For detailed explainations of parameters for finding the largest bounding box and cropping, go to
-        '/Documentation/PDFs/ImagePrepTools.pdf'
+            [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, comFiles_segmentations, comFiles_images , medianFile, processRaw = True)
+>>>>>>> master
 
+            """
+            For detailed explainations of parameters for finding the largest bounding box and cropping, go to
+            '/Documentation/PDFs/ImagePrepTools.pdf'
+
+<<<<<<< HEAD
         Compute largest bounding box and apply cropping
         processRaw = True, processes raw and binary images with shared parameters.
         processRaw = False, applies the center of mass alignment only on segemnattion data.
@@ -157,22 +186,37 @@ def Run_Pipeline(args):
         """
         croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", rigidFiles_segmentations, parentDir + "aligned/segmentations/*.aligned.nrrd")
         croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images, parentDir + "aligned/segmentations/*.aligned.nrrd")
+=======
+            Compute largest bounding box and apply cropping
+            processRaw = True, processes raw and binary images with shared parameters.
+            processRaw = False, applies the center of mass alignment only on segemnattion data.
+            The function uses the same bounding box to crop the raw and segemnattion data.
 
-        print("\nStep 3. Groom - Convert to distance transforms\n")
-        if args.interactive:
-            input("Press Enter to continue")
+            """
+            [croppedFiles_segmentations, croppedFiles_images] = applyCropping(parentDir, rigidFiles_segmentations,  rigidFiles_images, processRaw=True)
 
-        """
-        We convert the scans to distance transforms, this step is common for both the
-        prepped as well as unprepped data, just provide correct filenames.
-        """
-        if not args.start_with_prepped_data:
+>>>>>>> master
+
+            print("\nStep 3. Groom - Convert to distance transforms\n")
+            if args.interactive:
+                input("Press Enter to continue")
+
+            """
+            We convert the scans to distance transforms, this step is common for both the
+            prepped as well as unprepped data, just provide correct filenames.
+            """
+            
             dtFiles = applyDistanceTransforms(parentDir, croppedFiles_segmentations)
+
         else:
+<<<<<<< HEAD
             dtFiles = applyDistanceTransforms(parentDir, fileList_seg)
 
     else:
         if not args.start_with_prepped_data:
+=======
+
+>>>>>>> master
             """
             ## GROOM : Data Pre-processing
             For the unprepped data the first few steps are
@@ -219,7 +263,12 @@ def Run_Pipeline(args):
 
             For detailed explainations of parameters for center of mass(COM) alignment of volumes, go to
             '/Documentation/PDFs/AlgnmentTools.pdf'
+<<<<<<< HEAD
             """
+=======
+
+                """
+>>>>>>> master
             comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles)
 
             """
@@ -241,18 +290,20 @@ def Run_Pipeline(args):
             """
             croppedFiles = applyCropping(parentDir + "cropped", rigidFiles, parentDir + "aligned/*.aligned.nrrd")
 
-        print("\nStep 3. Groom - Convert to distance transforms\n")
-        if args.interactive:
-            input("Press Enter to continue")
+            print("\nStep 3. Groom - Convert to distance transforms\n")
+            if args.interactive:
+                input("Press Enter to continue")
 
-        """
-        We convert the scans to distance transforms, this step is common for both the
-        prepped as well as unprepped data, just provide correct filenames.
-        """
-        if not args.start_with_prepped_data:
+            """
+            We convert the scans to distance transforms, this step is common for both the
+            prepped as well as unprepped data, just provide correct filenames.
+            """
             dtFiles = applyDistanceTransforms(parentDir, croppedFiles)
+<<<<<<< HEAD
         else:
             dtFiles = applyDistanceTransforms(parentDir, fileList_seg)
+=======
+>>>>>>> master
 
     """
     ## OPTIMIZE : Particle Based Optimization
@@ -304,7 +355,20 @@ def Run_Pipeline(args):
             "debug_projection": 0,
             "verbosity": 3
         }
+<<<<<<< HEAD
 
+=======
+        if args.tiny_test:
+            parameterDictionary["number_of_particles"] = 32
+            parameterDictionary["optimization_iterations"] = 25
+            parameterDictionary["iterations_per_split"] = 25
+            
+            
+
+        """
+        Now we execute the particle optimization function.
+        """
+>>>>>>> master
         [localPointFiles, worldPointFiles] = runShapeWorksOptimize_SingleScale(pointDir, dtFiles, parameterDictionary)
 
     else:
@@ -332,6 +396,13 @@ def Run_Pipeline(args):
 
         [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
 
+<<<<<<< HEAD
+=======
+    if args.tiny_test:
+        print("Done with tiny test")
+        exit()
+
+>>>>>>> master
     """
     ## ANALYZE : Shape Analysis and Visualization
 
