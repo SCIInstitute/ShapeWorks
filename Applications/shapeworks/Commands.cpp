@@ -145,7 +145,7 @@ bool ImageInfo::execute(const optparse::Values &options, SharedCommandData &shar
     dims = spacing = size = origin = direction = center = centerofmass = boundingbox = true;
 
   if (dims)
-    std::cout << "image dimensions:          " << sharedData.image.dims() << std::endl;
+    std::cout << "image dimensions:      " << sharedData.image.dims() << std::endl;
   if (spacing)
     std::cout << "physical spacing:      " << sharedData.image.spacing() << std::endl;
   if (size)
