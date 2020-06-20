@@ -65,7 +65,7 @@ void Executable::addCommand(Command &command)
   command_type_descriptions[command.name()] = command.desc();
 
   unsigned opt_width = 32;
-  unsigned desc_width = 80 - opt_width;
+  unsigned desc_width = 100 - opt_width;
   unsigned indent = 2;
   std::stringstream ss;
   ss << "Available commands (dashes optional):\n---------------------\n";
