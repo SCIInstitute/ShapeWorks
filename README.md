@@ -162,7 +162,6 @@ Software Developers
 
 Researchers
 ---------------------
-- [Praful Agrawal](https://www.sci.utah.edu/people/prafulag.html)
 - [Riddhish Bhalodia](https://www.sci.utah.edu/people/riddhishb.html)
 - [Atefeh Ghanaatikashani](https://www.sci.utah.edu/people/atefeh.gk.html)
 - [Jadie Adams](https://www.sci.utah.edu/people/jadie.html)
@@ -175,6 +174,8 @@ Past Contributors
 - [Joshua Cates](http://www.sci.utah.edu/~cates/)
 - [Manasi Datar](https://manasidatar.github.io/index.html)
 - [Brig Bagley](http://www.cs.utah.edu/~bbagley/)
+- [Praful Agrawal](https://www.sci.utah.edu/people/prafulag.html)
+
 
 
 Relevant Papers
