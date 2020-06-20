@@ -17,7 +17,7 @@ To generate documentation for the `shapeworks` commands, use the `generateShapeW
 
 ```python
 import DocumentationUtils
-DocumentationUtils.generateShapeWorksCommandDocumentation(mdFilename = '../../Documentation/ShapeWorksCommands/ShapeWorksCommands.md')
+DocumentationUtils.generateShapeWorksCommandDocumentation(mdFilename = '/path/to/documentation/ShapeWorksCommands/ShapeWorksCommands.md')
 ```
 
 **Parameters**:   
