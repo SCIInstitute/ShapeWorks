@@ -745,7 +745,7 @@ bool Blur::execute(const optparse::Values &options, SharedCommandData &sharedDat
 void ICPRigid::buildParser()
 {
   const std::string prog = "icp";
-  const std::string desc = "transform current image using iterative iterative point (ICP) 3D rigid registration computed from source to target distance maps";
+  const std::string desc = "transform current image using iterative closest point (ICP) 3D rigid registration computed from source to target distance maps";
   parser.prog(prog).description(desc);
 
   parser.add_option("--source").action("store").type("string").set_default("").help("Distance map of source image.");
