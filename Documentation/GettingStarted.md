@@ -115,3 +115,4 @@ How Tos
 - How to get the [latest ShapeWorks binary release](https://github.com/SCIInstitute/ShapeWorks/releases/latest) or up-to-date development builds from the master branch for [Windows](https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-windows), [Mac](https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-mac), or [Linux](https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-linux). *Please understand that these are in-progress development builds, not official releases.*
 - How to install ShapeWorks on [Windows](Install/Windows_README.md), [Mac](Install/Mac_README.md), or [Linux](Install/Linux_README.md).
 - How to [build](Build/BUILD.md) ShapeWorks from source (for developers).
+- How to [auto-generate documentation](AutoDocumentation/AutoDocumentation.md) for ShapeWorks interfaces and code (for developers).

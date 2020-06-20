@@ -93,7 +93,7 @@ Developers
 Please see **[BUILD](Documentation/Build/BUILD.md)** for the current build instructions.  
 Please see **[Datasets](Documentation/UseCases/Datasets.md)** for dataset upload instructions and guidelines.  
 Please see **[GIT](Documentation/Development/GIT.md)** for details to checkout out and committing newly modified code.  
-ShapeWorks documentation uses markdown. Please refer to our tiny **[getting started with markdown](Documentation/Development/Markdown.md)**.
+Please see **[AutoDocumentation](Documentation/AutoDocumentation/AutoDocumentation.md)** to auto-generate documentation for ShapeWorks interfaces and code. ShapeWorks documentation uses markdown. Please refer to our tiny **[getting started with markdown](Documentation/Development/Markdown.md)**.
 
 
 Getting Started
