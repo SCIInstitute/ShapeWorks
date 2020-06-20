@@ -14,8 +14,7 @@ import subprocess
 from mdutils.mdutils import MdUtils
 from mdutils import Html
 
-#%%
-
+#%% misc util functions
 def spacestr(nspaces):
     spstr = ''
     for n in range(nspaces):
@@ -40,7 +39,7 @@ def split_and_filter(line, spacedelim = ' '):
         line_out.append(piece.strip())
     return line_out
                         
-
+#%%
 def getCommandHelp(cmd, verbose = False):
     out = subprocess.Popen(cmd + " --help", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell = True)
     stdout,stderr = out.communicate()
@@ -63,6 +62,7 @@ def getCommandHelp(cmd, verbose = False):
         
     return stdout, stderr
 
+#%%
 # handle multiline description of subcommands and options
 def getNameAndDescription(stdout, lid, spacedelim = ' '):
     nlines = len(stdout)
@@ -91,7 +91,7 @@ def getNameAndDescription(stdout, lid, spacedelim = ' '):
             break
     return name, desc, lid
 
-
+#%%
 def addUsage(mdFile, stdout, lid, cmd_prefix = ''):
     line = stdout[lid]
     line = line.split(':')
@@ -103,6 +103,7 @@ def addUsage(mdFile, stdout, lid, cmd_prefix = ''):
     lid += 1
     return lid
 
+#%%
 def addDescription(mdFile, stdout, lid):
     nlines = len(stdout)
     desc = stdout[lid]
@@ -124,7 +125,7 @@ def addDescription(mdFile, stdout, lid):
     lid += 1
     return lid
        
-
+#%%
 def addOptions(mdFile, stdout, lid, spacedelim = ' '): 
     nlines = len(stdout)
     mdFile.new_paragraph('**Options:**')
@@ -145,7 +146,8 @@ def addOptions(mdFile, stdout, lid, spacedelim = ' '):
         lid += 1
     mdFile.new_line('')
     return lid
-        
+
+#%%       
 def getSubCommands(stdout, lid, spacedelim = ' '):
     nlines = len(stdout)
     line = stdout[lid]
@@ -170,6 +172,7 @@ def getSubCommands(stdout, lid, spacedelim = ' '):
             lid += 1
     return subcommands, lid
 
+#%%
 def addCommand(mdFile, cmd, level, spacedelim = ' ', verbose = True): # from Executable.cpp
 
     stdout, stderr = getCommandHelp(cmd, verbose = verbose )
@@ -208,8 +211,6 @@ def addCommand(mdFile, cmd, level, spacedelim = ' ', verbose = True): # from Exe
             for cmdtype in subcommands.keys():
                 mdFile.new_header(level=level, title= cmdtype + ' Commands')
                 for cmdname in subcommands[cmdtype].keys():
-                    if cmdname == 'filter':
-                        test =0 
                     addCommand(mdFile, cmd + " " + cmdname, level = level+1, spacedelim = spacedelim, verbose = verbose)
                     mdFile.new_line('[Back to ' + cmdtype + ' Commands' +'](#' + cmdtype.lower() + '-commands)')
         lid +=1

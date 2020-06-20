@@ -2,11 +2,15 @@
 ShapeWorks Commands
 ===================
 
-Contents
-========
+
+`shapeworks` is a single executable for ShapeWorks with a set of sub-executables (commands) that are flexible, modular, loosely coupled, and standardized subcommands, with interactive help to perform individual operations needed for a typical shape modeling workflow that includes the Groom, Optimize, and Analyze phases.
+
+Table of Contents
+=================
 
 * [shapeworks](#shapeworks)
 * [Image Commands](#image-commands)
+	* [add](#add)
 	* [antialias](#antialias)
 	* [blur](#blur)
 	* [bounding-box](#bounding-box)
@@ -21,6 +25,7 @@ Contents
 	* [gradient](#gradient)
 	* [icp](#icp)
 	* [info](#info)
+	* [negate](#negate)
 	* [pad](#pad)
 	* [read-image](#read-image)
 	* [recenter](#recenter)
@@ -30,6 +35,7 @@ Contents
 	* [scale](#scale)
 	* [set-origin](#set-origin)
 	* [sigmoid](#sigmoid)
+	* [sub](#sub)
 	* [threshold](#threshold)
 	* [topo-preserving-smooth](#topo-preserving-smooth)
 	* [tp-levelset](#tp-levelset)
@@ -71,6 +77,28 @@ Contents
 
 # Image Commands
 
+## add
+
+
+**Usage:**
+
+```
+shapeworks  add [args]...
+```  
+
+
+**Description:** add an image  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--name=STRING:** Name of image to add  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Image Commands](#image-commands)
 ## antialias
 
 
@@ -241,7 +269,7 @@ shapeworks  compute-dt [args]...
 ```  
 
 
-**Description:** computes signed distance transform volume from a binary (antialiased) image  
+**Description:** computes signed distance transform volume from an image at the specified isovalue  
 
 
 **Options:**
@@ -385,18 +413,18 @@ shapeworks  icp [args]...
 ```  
 
 
-**Description:** performs iterative closest point (ICP) 3D rigid registration on a pair of images  
+**Description:** transform current image using iterative closest point (ICP) 3D rigid registration computed from source to target distance maps  
 
 
 **Options:**
 
 **-h, --help:** show this help message and exit
 
-**--target=STRING:** Distance map of target image.
-
 **--source=STRING:** Distance map of source image.
 
-**--isovalue=FLOAT:** Value of isovalue [default 0.0].
+**--target=STRING:** Distance map of target image.
+
+**--isovalue=FLOAT:** isovalue of distance maps used to create ICPtransform [default 0.0].
 
 **--iterations=UNSIGNED:**  Number of iterations run ICP registration [default 20].  
   
@@ -435,6 +463,26 @@ shapeworks  info [args]...
 **--centerofmass=BOOL:** Whether to display center of mass [default is false]
 
 **--boundingbox=BOOL:** Whether to display bounding box [default is false]  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Image Commands](#image-commands)
+## negate
+
+
+**Usage:**
+
+```
+shapeworks  negate [args]...
+```  
+
+
+**Description:** negate the values in this image  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit  
   
 <a href="#top">Back to Top</a>
   
@@ -515,18 +563,14 @@ shapeworks  reflect [args]...
 ```  
 
 
-**Description:** reflect images with respect to logical image center and the specified normal (ex: <1,0,0> reflects along X axis across YZ-plane).  
+**Description:** reflect images with respect to logical image center and the specified axis  
 
 
 **Options:**
 
 **-h, --help:** show this help message and exit
 
-**-x DOUBLE, --nx=DOUBLE:**  Value of x in normal [default 1].
-
-**-y DOUBLE, --ny=DOUBLE:**  Value of y in normal [default 0].
-
-**-z DOUBLE, --nz=DOUBLE:**  Value of z in normal [default 0].  
+**--axis=STRING:** Axis along which to reflect (X, Y, or Z).  
   
 <a href="#top">Back to Top</a>
   
@@ -671,6 +715,28 @@ shapeworks  sigmoid [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
+## sub
+
+
+**Usage:**
+
+```
+shapeworks  sub [args]...
+```  
+
+
+**Description:** subtract an image  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--name=STRING:** Name of image to subtract  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Image Commands](#image-commands)
 ## threshold
 
 
@@ -763,8 +829,6 @@ shapeworks  translate [args]...
 **-h, --help:** show this help message and exit
 
 **--centerofmass=BOOL:** Use center of mass [default set to false].
-
-**--applycenterofmass=BOOL:**  Apply calculated center of mass [default set to false].
 
 **-x DOUBLE, --tx=DOUBLE:**  Explicit tx in image space (physical coordinates)
 
