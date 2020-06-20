@@ -96,8 +96,7 @@ shapeworks  antialias [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## blur
 
 
@@ -119,8 +118,7 @@ shapeworks  blur [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## bounding-box
 
 
@@ -144,8 +142,7 @@ shapeworks  bounding-box [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## clip
 
 
@@ -185,8 +182,7 @@ shapeworks  clip [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## close-holes
 
 
@@ -206,8 +202,7 @@ shapeworks  close-holes [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## compare
 
 
@@ -233,8 +228,7 @@ shapeworks  compare [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## compute-dt
 
 
@@ -256,8 +250,7 @@ shapeworks  compute-dt [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## crop
 
 
@@ -277,8 +270,7 @@ shapeworks  crop [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## curvature
 
 
@@ -300,8 +292,7 @@ shapeworks  curvature [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## extract-label
 
 
@@ -323,8 +314,7 @@ shapeworks  extract-label [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## filter
 
 
@@ -358,8 +348,7 @@ shapeworks  filter [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## gradient
 
 
@@ -379,8 +368,7 @@ shapeworks  gradient [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## icp
 
 
@@ -406,8 +394,7 @@ shapeworks  icp [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## info
 
 
@@ -443,8 +430,7 @@ shapeworks  info [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## pad
 
 
@@ -468,8 +454,7 @@ shapeworks  pad [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## read-image
 
 
@@ -491,8 +476,7 @@ shapeworks  read-image [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## recenter
 
 
@@ -512,8 +496,7 @@ shapeworks  recenter [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## reflect
 
 
@@ -533,8 +516,7 @@ shapeworks  reflect [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## resample
 
 
@@ -568,8 +550,7 @@ shapeworks  resample [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## rotate
 
 
@@ -593,8 +574,7 @@ shapeworks  rotate [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## scale
 
 
@@ -614,8 +594,7 @@ shapeworks  scale [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## set-origin
 
 
@@ -635,8 +614,7 @@ shapeworks  set-origin [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## sigmoid
 
 
@@ -660,8 +638,7 @@ shapeworks  sigmoid [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## threshold
 
 
@@ -685,8 +662,7 @@ shapeworks  threshold [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## topo-preserving-smooth
 
 
@@ -712,8 +688,7 @@ shapeworks  topo-preserving-smooth [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## tp-levelset
 
 
@@ -735,8 +710,7 @@ shapeworks  tp-levelset [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## translate
 
 
@@ -758,8 +732,7 @@ shapeworks  translate [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## warp-image
 
 
@@ -781,8 +754,7 @@ shapeworks  warp-image [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 ## write-image
 
 
@@ -806,8 +778,7 @@ shapeworks  write-image [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Image Commands](#image-commands)  
-<a href="#top">Back to Top</a>
+[Back to Image Commands](#image-commands)
 # Mesh Commands
 
 ## coverage
@@ -831,8 +802,7 @@ shapeworks  coverage [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Mesh Commands](#mesh-commands)  
-<a href="#top">Back to Top</a>
+[Back to Mesh Commands](#mesh-commands)
 ## read-mesh
 
 
@@ -854,8 +824,7 @@ shapeworks  read-mesh [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Mesh Commands](#mesh-commands)  
-<a href="#top">Back to Top</a>
+[Back to Mesh Commands](#mesh-commands)
 ## write-mesh
 
 
@@ -877,8 +846,7 @@ shapeworks  write-mesh [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to Mesh Commands](#mesh-commands)  
-<a href="#top">Back to Top</a>
+[Back to Mesh Commands](#mesh-commands)
 # ParticleSystem Commands
 
 ## compactness
@@ -904,8 +872,7 @@ shapeworks  compactness [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to ParticleSystem Commands](#particlesystem-commands)  
-<a href="#top">Back to Top</a>
+[Back to ParticleSystem Commands](#particlesystem-commands)
 ## generalization
 
 
@@ -929,8 +896,7 @@ shapeworks  generalization [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to ParticleSystem Commands](#particlesystem-commands)  
-<a href="#top">Back to Top</a>
+[Back to ParticleSystem Commands](#particlesystem-commands)
 ## read-particle-system
 
 
@@ -950,8 +916,7 @@ shapeworks  read-particle-system [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to ParticleSystem Commands](#particlesystem-commands)  
-<a href="#top">Back to Top</a>
+[Back to ParticleSystem Commands](#particlesystem-commands)
 ## specificity
 
 
@@ -975,5 +940,4 @@ shapeworks  specificity [args]...
   
 <a href="#top">Back to Top</a>
   
-[Back to ParticleSystem Commands](#particlesystem-commands)  
-<a href="#top">Back to Top</a>
+[Back to ParticleSystem Commands](#particlesystem-commands)
