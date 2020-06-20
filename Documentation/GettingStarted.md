@@ -55,7 +55,7 @@ ShapeWorks Command
 
 ShapeWorks is currently a set of independent command line tools for preprocessing binary segmentations and surface meshes ([Groom](Workflow/Groom.md)) and computing landmark-based shape models ([Optimize](Workflow/Optimize.md)). It also includes an interactive user interface called [ShapeWorksStudio](#shapeworksstudio) to analyze and visualize the optimized shape models ([Analyze](Workflow/Analyze.md)). 
 
-**Coming soon!** We are consolidating these tools into a single, reusable API (command) for ShapeWorks that is shared across different computational libraries in ShapeWorks. This single executable is highly flexible, modular, and loosely coupled, with standardized subcommands and interactive help to perform individual operations needed for a typical shape modeling workflow that includes the Groom, Optimize, and Analyze phases. 
+**Almost there!** We are consolidating these tools into a single, reusable API (command) for ShapeWorks that is shared across different computational libraries in ShapeWorks. This single executable is highly flexible, modular, and loosely coupled, with standardized subcommands and interactive help to perform individual operations needed for a typical shape modeling workflow that includes the Groom, Optimize, and Analyze phases. Please see **[shapeworks commands documentation](ShapeWorksCommands/ShapeWorksCommands.md)** for currently consolidated commands.
 
 
 
