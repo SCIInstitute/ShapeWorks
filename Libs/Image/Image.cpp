@@ -525,7 +525,7 @@ Image& Image::crop(const Region &region)
   using FilterType = itk::ExtractImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
-  filter->SetExtractionRegion(region);
+  filter->SetExtractionRegion(Region(region).clip(*this));
   filter->SetInput(this->image);
   filter->SetDirectionCollapseToIdentity();
   filter->Update();
