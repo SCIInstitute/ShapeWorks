@@ -68,14 +68,22 @@ def getNameAndDescription(stdout, lid, spacedelim = ' '):
     nlines = len(stdout)
     line   = stdout[lid]
     line   = split_and_filter(line, spacedelim)
+    
     name   = line[0]
-    desc   = line[1]
+    if len(line) < 2:
+        desc = ''
+    else:
+        desc   = line[1]
+        
     while True:
         lid += 1
         if lid >= nlines:
             break
         line = stdout[lid]
-        line = split_and_filter(line, spacedelim)
+        if (len(line.strip()) > 0) and (line.strip()[0] == '-'):
+            lid -= 1 # new subcommand/option
+            break
+        line = split_and_filter(line, spacedelim)    
         if len(line) == 1:
             desc = desc + ' ' + line[0]
         else:
@@ -200,6 +208,8 @@ def addCommand(mdFile, cmd, level, spacedelim = ' ', verbose = True): # from Exe
             for cmdtype in subcommands.keys():
                 mdFile.new_header(level=level, title= cmdtype + ' Commands')
                 for cmdname in subcommands[cmdtype].keys():
+                    if cmdname == 'filter':
+                        test =0 
                     addCommand(mdFile, cmd + " " + cmdname, level = level+1, spacedelim = spacedelim, verbose = verbose)
                     mdFile.new_line('[Back to ' + cmdtype + ' Commands' +'](#' + cmdtype.lower() + '-commands)')
         lid +=1

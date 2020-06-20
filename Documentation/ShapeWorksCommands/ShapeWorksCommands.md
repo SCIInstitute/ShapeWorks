@@ -134,7 +134,9 @@ shapeworks  bounding-box [args]...
 
 **Options:**
 
-**-h, --help:** show this help message and exit --names <list of strings> Paths to images
+**-h, --help:** show this help message and exit
+
+**--names <list of strings>:**  Paths to images
 
 **--padding=INT:** Number of extra voxels in each direction to pad the largest bounding box [default 0].
 
@@ -153,7 +155,7 @@ shapeworks  clip [args]...
 ```  
 
 
-**Description:** chops volume with corresponding cutting planes  
+**Description:** chops volume with the given cutting planes defined by three 3D points  
 
 
 **Options:**
@@ -239,7 +241,7 @@ shapeworks  compute-dt [args]...
 ```  
 
 
-**Description:** computes distance transform volume from a binary (antialiased) image  
+**Description:** computes signed distance transform volume from a binary (antialiased) image  
 
 
 **Options:**
@@ -261,7 +263,7 @@ shapeworks  crop [args]...
 ```  
 
 
-**Description:** performs translational alignment of shape image based on its center of mass or given 3D point  
+**Description:** crop image  
 
 
 **Options:**
@@ -332,11 +334,15 @@ shapeworks  filter [args]...
 
 **-h, --help:** show this help message and exit
 
-**--type=STRING:** filter type: curvature, gradient, sigmoid, tplevelset, gaussian, antialias --iterations=UNSIGNED Number of iterations [default 10].
+**--type=STRING:** filter type: curvature, gradient, sigmoid, tplevelset, gaussian, antialias
+
+**--iterations=UNSIGNED:**  Number of iterations [default 10].
 
 **--alpha=DOUBLE:** Value of alpha [default 10.0].
 
-**--beta=DOUBLE:** Value of beta [default 10.0]. --featureimage=STRING Path of feature image for tplevelset filter
+**--beta=DOUBLE:** Value of beta [default 10.0].
+
+**--featureimage=STRING:**  Path of feature image for tplevelset filter
 
 **--scaling=DOUBLE:** Value of scale [default 20]
 
@@ -379,7 +385,7 @@ shapeworks  icp [args]...
 ```  
 
 
-**Description:** performs iterative closed point (ICP) 3D rigid registration on pair of images  
+**Description:** performs iterative closest point (ICP) 3D rigid registration on a pair of images  
 
 
 **Options:**
@@ -390,7 +396,9 @@ shapeworks  icp [args]...
 
 **--source=STRING:** Distance map of source image.
 
-**--isovalue=FLOAT:** Value of isovalue [default 0.0]. --iterations=UNSIGNED Number of iterations run ICP registration [default 20].  
+**--isovalue=FLOAT:** Value of isovalue [default 0.0].
+
+**--iterations=UNSIGNED:**  Number of iterations run ICP registration [default 20].  
   
 <a href="#top">Back to Top</a>
   
@@ -405,14 +413,14 @@ shapeworks  info [args]...
 ```  
 
 
-**Description:** prints logical dims, spacing, size, origin, direction (coordinate system), center, center of mass and bounding box  
+**Description:** prints image dimensions, spacing, size, origin, direction (coordinate system), center, center of mass and bounding box  
 
 
 **Options:**
 
 **-h, --help:** show this help message and exit
 
-**--dims=BOOL:** Whether to display logical dims [default is false]
+**--dims=BOOL:** Whether to display image dimensions [default is false]
 
 **--spacing=BOOL:** Whether to display physical spacing [default is false]
 
@@ -512,7 +520,13 @@ shapeworks  reflect [args]...
 
 **Options:**
 
-**-h, --help:** show this help message and exit -x DOUBLE, --nx=DOUBLE Value of x in normal [default 1]. -y DOUBLE, --ny=DOUBLE Value of y in normal [default 0]. -z DOUBLE, --nz=DOUBLE Value of z in normal [default 0].  
+**-h, --help:** show this help message and exit
+
+**-x DOUBLE, --nx=DOUBLE:**  Value of x in normal [default 1].
+
+**-y DOUBLE, --ny=DOUBLE:**  Value of y in normal [default 0].
+
+**-z DOUBLE, --nz=DOUBLE:**  Value of z in normal [default 0].  
   
 <a href="#top">Back to Top</a>
   
@@ -566,7 +580,13 @@ shapeworks  rotate [args]...
 
 **Options:**
 
-**-h, --help:** show this help message and exit -x DOUBLE, --rx=DOUBLE Physical axis around which to rotate (z-axis if unspecified) -y DOUBLE, --ry=DOUBLE Physical axis around which to rotate (z-axis if unspecified) -z DOUBLE, --rz=DOUBLE Physical axis around which to rotate (z-axis if unspecified)
+**-h, --help:** show this help message and exit
+
+**-x DOUBLE, --rx=DOUBLE:**  Physical axis around which to rotate (z-axis if unspecified)
+
+**-y DOUBLE, --ry=DOUBLE:**  Physical axis around which to rotate (z-axis if unspecified)
+
+**-z DOUBLE, --rz=DOUBLE:**  Physical axis around which to rotate (z-axis if unspecified)
 
 **--radians=DOUBLE:** Angle in radians
 
@@ -590,7 +610,13 @@ shapeworks  scale [args]...
 
 **Options:**
 
-**-h, --help:** show this help message and exit -x DOUBLE, --sx=DOUBLE x scale -y DOUBLE, --sy=DOUBLE y scale -z DOUBLE, --sz=DOUBLE z scale  
+**-h, --help:** show this help message and exit
+
+**-x DOUBLE, --sx=DOUBLE:**  x scale
+
+**-y DOUBLE, --sy=DOUBLE:**  y scale
+
+**-z DOUBLE, --sz=DOUBLE:**  z scale  
   
 <a href="#top">Back to Top</a>
   
@@ -610,7 +636,13 @@ shapeworks  set-origin [args]...
 
 **Options:**
 
-**-h, --help:** show this help message and exit -x DOUBLE, --x=DOUBLE x value of origin [default 0]. -y DOUBLE, --y=DOUBLE y value of origin [default 0]. -z DOUBLE, --z=DOUBLE z value of origin [default 0].  
+**-h, --help:** show this help message and exit
+
+**-x DOUBLE, --x=DOUBLE:**  x value of origin [default 0].
+
+**-y DOUBLE, --y=DOUBLE:**  y value of origin [default 0].
+
+**-z DOUBLE, --z=DOUBLE:**  z value of origin [default 0].  
   
 <a href="#top">Back to Top</a>
   
@@ -649,7 +681,7 @@ shapeworks  threshold [args]...
 ```  
 
 
-**Description:** threholds image into binary label based on upper and lower intensity bounds given by user  
+**Description:** thresholds image into binary label based on upper and lower intensity bounds given by user  
 
 
 **Options:**
@@ -704,7 +736,9 @@ shapeworks  tp-levelset [args]...
 
 **Options:**
 
-**-h, --help:** show this help message and exit --featureimage=STRING Path of feature image for filter
+**-h, --help:** show this help message and exit
+
+**--featureimage=STRING:**  Path of feature image for filter
 
 **--scaling=DOUBLE:** Value of scale [default 20].  
   
@@ -728,7 +762,15 @@ shapeworks  translate [args]...
 
 **-h, --help:** show this help message and exit
 
-**--centerofmass=BOOL:** Use center of mass [default set to false]. --applycenterofmass=BOOL Apply calculated center of mass [default set to false]. -x DOUBLE, --tx=DOUBLE Explicit tx in image space (physical coordinates) -y DOUBLE, --ty=DOUBLE Explicit ty in image space (e.g., 3.14) -z DOUBLE, --tz=DOUBLE Explicit tz in image space  
+**--centerofmass=BOOL:** Use center of mass [default set to false].
+
+**--applycenterofmass=BOOL:**  Apply calculated center of mass [default set to false].
+
+**-x DOUBLE, --tx=DOUBLE:**  Explicit tx in image space (physical coordinates)
+
+**-y DOUBLE, --ty=DOUBLE:**  Explicit ty in image space (e.g., 3.14)
+
+**-z DOUBLE, --tz=DOUBLE:**  Explicit tz in image space  
   
 <a href="#top">Back to Top</a>
   
@@ -748,7 +790,11 @@ shapeworks  warp-image [args]...
 
 **Options:**
 
-**-h, --help:** show this help message and exit --source_landmarks=STRING Path to source landmarks. --target_landmarks=STRING Path to target landmarks.
+**-h, --help:** show this help message and exit
+
+**--source_landmarks=STRING:**  Path to source landmarks.
+
+**--target_landmarks=STRING:**  Path to target landmarks.
 
 **--stride=INT:** Every _stride_ points will be used for warping [default 1].  
   
@@ -912,7 +958,9 @@ shapeworks  read-particle-system [args]...
 
 **Options:**
 
-**-h, --help:** show this help message and exit --names <list of strings> paths to .particle files  
+**-h, --help:** show this help message and exit
+
+**--names <list of strings>:**  paths to .particle files  
   
 <a href="#top">Back to Top</a>
   
