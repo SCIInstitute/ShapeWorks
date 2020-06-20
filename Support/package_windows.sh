@@ -37,3 +37,5 @@ windeployqt "bin/ShapeWorksView2.exe"
 mkdir artifacts
 cp *.exe artifacts
 
+# Run auto-documentation
+python DocumentationUtils.RunShapeWorksAutoDoc()

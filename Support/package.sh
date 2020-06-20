@@ -95,6 +95,9 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     pkgbuild --component-plist ShapeWorks.plist --install-location /Applications/ShapeWorks --root ${VERSION} --identifier edu.utah.sci.shapeworks ${ROOT}/artifacts/${VERSION}.pkg
 fi
 
+# Run auto-documentation
+python DocumentationUtils.RunShapeWorksAutoDoc()
+
 cd $ROOT
 
 
