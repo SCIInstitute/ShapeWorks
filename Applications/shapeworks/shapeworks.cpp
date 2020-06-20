@@ -14,6 +14,9 @@ int main(int argc, char *argv[])
 
   shapeworks.addCommand(ReadImage::getCommand());
   shapeworks.addCommand(WriteImage::getCommand());
+  shapeworks.addCommand(NegateImage::getCommand());
+  shapeworks.addCommand(AddImage::getCommand());
+  shapeworks.addCommand(SubtractImage::getCommand());
   shapeworks.addCommand(ImageInfo::getCommand());
   shapeworks.addCommand(Antialias::getCommand());
   shapeworks.addCommand(ResampleImage::getCommand());

@@ -121,6 +121,8 @@ def applyCOMAlignment(outDir, inDataList, raw=[], printCmd = True):
         else:
             outname = rename(inname, outDir, 'com')
         outDataListSeg.append(outname)
+
+        # get centerofmass
         cmd = ["shapeworks",
                "read-image", "--name", inname,
                "info", "--centerofmass", str(True)]
@@ -129,9 +131,22 @@ def applyCOMAlignment(outDir, inDataList, raw=[], printCmd = True):
         com = subprocess.run(cmd, stdout=subprocess.PIPE).stdout.decode('utf-8')
         com = com.strip().replace("[", "").replace("]", "").replace(" ", "").split(":")
         com = com[1].split(",")
+
+        # get origin
+        cmd = ["shapeworks",
+               "read-image", "--name", inname,
+               "info", "--center", str(True)]
+        center = subprocess.run(cmd, stdout=subprocess.PIPE).stdout.decode('utf-8')
+        center = center.strip().replace("[", "").replace("]", "").replace(" ", "").split(":")
+        center = center[1].split(",")
+
+        tx = float(com[0]) - float(center[0])
+        ty = float(com[1]) - float(center[1])
+        tz = float(com[2]) - float(center[2])
+
         cmd = ["shapeworks", 
                "readimage", "--name", inname, 
-               "translate", "--applycenterofmass", str(True), "-x", com[0], "-y", com[1], "-z", com[2], 
+               "translate", "-x", str(tx), "-y", str(ty), "-z", str(tz), 
                "write-image", "--name", outname]
         if printCmd:
             print("CMD: " + " ".join(cmd))
@@ -142,7 +157,7 @@ def applyCOMAlignment(outDir, inDataList, raw=[], printCmd = True):
             outDataListImg.append(outnameImg)
             cmd = ["shapeworks", 
                    "readimage", "--name", innameImg, 
-                   "translate", "--applycenterofmass", str(True), "-x", com[0], "-y", com[1], "-z", com[2], 
+                   "translate", "-x", str(tx), "-y", str(ty), "-z", str(tz),
                    "write-image", "--name", outnameImg]
             if printCmd:
                 print("CMD: " + " ".join(cmd))

@@ -13,6 +13,7 @@
 #include <itkRegionOfInterestImageFilter.h>
 #include <itkReinitializeLevelSetImageFilter.h>
 #include <itkTranslationTransform.h>
+#include <itkScalableAffineTransform.h>
 #include <itkBinaryFillholeImageFilter.h>
 #include <itkGradientMagnitudeImageFilter.h>
 #include <itkCurvatureFlowImageFilter.h>
@@ -74,6 +75,48 @@ Image::ImageType::Pointer Image::read(const std::string &pathname)
   }
 
   return reader->GetOutput();
+}
+
+Image& Image::operator-()
+{
+  itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
+  while (!iter.IsAtEnd())
+  {
+    iter.Set(-iter.Value());
+    ++iter;
+  }
+
+  return *this;
+}
+
+Image& Image::operator+(const Image &other)
+{
+  if (dims() != other.dims()) { throw std::invalid_argument("images must have same logical dims"); }
+  
+  itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
+  itk::ImageRegionIteratorWithIndex<ImageType> otherIter(other.image, other.image->GetLargestPossibleRegion());
+  while (!iter.IsAtEnd() && !otherIter.IsAtEnd())
+  {
+    iter.Set(iter.Value() + otherIter.Value());
+    ++iter; ++otherIter;
+  }
+
+  return *this;
+}
+
+Image& Image::operator-(const Image &other)
+{
+  if (dims() != other.dims()) { throw std::invalid_argument("images must have same logical dims"); }
+  
+  itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
+  itk::ImageRegionIteratorWithIndex<ImageType> otherIter(other.image, other.image->GetLargestPossibleRegion());
+  while (!iter.IsAtEnd() && !otherIter.IsAtEnd())
+  {
+    iter.Set(iter.Value() - otherIter.Value());
+    ++iter; ++otherIter;
+  }
+
+  return *this;
 }
 
 Image::ImageType::Pointer Image::readDICOMImage(const std::string &pathname)
@@ -271,7 +314,7 @@ Image& Image::scale(const Vector3 &s)
   setOrigin(negate(center()));     // move center _away_ from origin since ITK applies transformations backwards.
 
   AffineTransformPtr xform(AffineTransform::New());
-  xform->Scale(invert(std::move(const_cast<Vector3&>(s))));   // invert scale ratio because ITK applies transformations backwards.  
+  xform->Scale(invert(Vector(s)));         // invert scale ratio because ITK applies transformations backwards.  
   applyTransform(xform);
   setOrigin(origOrigin);           // restore origin
   
@@ -537,20 +580,20 @@ Image& Image::clip(const Vector &n, const Point &q, const PixelType val)
   return *this;
 }
 
-Image& Image::reflect(const Vector3 &normal)
+Image& Image::reflect(const Axis &axis)
 {
-  if (!axis_is_valid(normal))
-    throw std::invalid_argument("Invalid normal");
+  if (!axis_is_valid(axis))
+    throw std::invalid_argument("Invalid axis");
 
-  //TODO: https://pdfs.semanticscholar.org/b754/be03b482bad4296dbad67507d8d768b8ccc7.pdf
-  //      or use quaternions
-  //      or dig into itk to see if they have a rotation operation
-  //      or...
+  Vector scale(makeVector({1,1,1}));
+  scale[axis] = -1;
 
-  // rotate normal into Z, scale by <0,0,-1>, and rotate back (watch out for gimball lock if normal is -z <0,0,-1>)
-  // if (n dot z > eps)
-  //   rotate(n cross z, acos(n dot z));
-  // scale(makeVector({0,0,-1}));
+  
+  using ScalableTransform = itk::ScalableAffineTransform<double, 3>;
+  ScalableTransform::Pointer xform(ScalableTransform::New());
+  xform->SetScale(scale);
+  Point3 currentOrigin(origin());
+  recenter().applyTransform(xform).setOrigin(currentOrigin);
 
   return *this;
 }

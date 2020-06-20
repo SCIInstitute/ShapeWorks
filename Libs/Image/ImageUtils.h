@@ -20,8 +20,8 @@ public:
   /// \param stride Every _stride_ points will be used for computing the warp (using fewer points takes less time).
   static TransformPtr createWarpTransform(const std::string &source_landmarks, const std::string &target_landmarks, const int stride = 1);
 
-  /// Return Transform necessary to align this image with target.
-  static Image& rigidRegistration(Image &img, const Image &target, const Image &source, float isoValue = 0.0, unsigned iterations = 20);
+  /// Creates transform from source distance map to target using ICP registration (isovalue is used to create meshes from dts passed to ICP).
+  static TransformPtr createRigidRegistrationTransform(const Image &source_dt, const Image &target_dt, float isoValue = 0.0, unsigned iterations = 20);
 
   /// topologyPreservingSmooth
   ///

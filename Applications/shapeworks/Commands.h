@@ -376,6 +376,42 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+class NegateImage : public ImageCommand
+{
+public:
+  static NegateImage& getCommand() { static NegateImage instance; return instance; }
+
+private:
+  NegateImage() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class AddImage : public ImageCommand
+{
+public:
+  static AddImage& getCommand() { static AddImage instance; return instance; }
+
+private:
+  AddImage() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class SubtractImage : public ImageCommand
+{
+public:
+  static SubtractImage& getCommand() { static SubtractImage instance; return instance; }
+
+private:
+  SubtractImage() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
 class ReadParticleSystem : public ParticleSystemCommand
 {
 public:

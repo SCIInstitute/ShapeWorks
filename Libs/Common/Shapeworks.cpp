@@ -71,14 +71,28 @@ bool axis_is_valid(const Vector3 &axis)
   return axis.GetSquaredNorm() > eps;
 }
 
+bool axis_is_valid(const Axis &axis)
+{
+  return axis >= Axis::X && axis <= Axis::Z;
+}
+
+Axis toAxis(const std::string &str)
+{
+  if (str == "X" || str == "x") return Axis::X;
+  if (str == "Y" || str == "y") return Axis::X;
+  if (str == "Z" || str == "z") return Axis::X;
+  return Axis::invalid;
+}
+
 double degToRad(const double deg)
 {
   return deg * Pi / 180.0;
 }
 
-AffineTransformPtr createAffineTransform(const Matrix33 &mat) {
+AffineTransformPtr createAffineTransform(const Matrix33 &mat, const Vector3 &translate) {
   AffineTransformPtr xform(AffineTransform::New());
   xform->SetMatrix(mat);
+  xform->SetOffset(translate);
   return xform;
 }
 
