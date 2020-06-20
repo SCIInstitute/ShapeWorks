@@ -313,7 +313,6 @@ void Translate::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--centerofmass").action("store").type("bool").set_default(false).help("Use center of mass [default set to false].");
-  parser.add_option("--applycenterofmass").action("store").type("bool").set_default(false).help("Apply calculated center of mass [default set to false].");
   parser.add_option("--tx", "-x").action("store").type("double").set_default(0).help("Explicit tx in image space (physical coordinates)");
   parser.add_option("--ty", "-y").action("store").type("double").set_default(0).help("Explicit ty in image space (e.g., 3.14)");
   parser.add_option("--tz", "-z").action("store").type("double").set_default(0).help("Explicit tz in image space");
@@ -330,21 +329,10 @@ bool Translate::execute(const optparse::Values &options, SharedCommandData &shar
   }
 
   bool centerofmass = static_cast<bool>(options.get("centerofmass"));
-  bool applycenterofmass = static_cast<bool>(options.get("applycenterofmass"));
 
   if (centerofmass)
   {
     sharedData.image.applyTransform(ImageUtils::createCenterOfMassTransform(sharedData.image));
-    return true;
-  }
-  else if (applycenterofmass)
-  {
-    double tx = static_cast<double>(options.get("tx"));
-    double ty = static_cast<double>(options.get("ty"));
-    double tz = static_cast<double>(options.get("tz"));
-    AffineTransformPtr xform(AffineTransform::New());
-    xform->Translate(-(sharedData.image.center() - Point3({tx, ty, tz})));
-    sharedData.image.applyTransform(xform);
     return true;
   }
   else
@@ -757,12 +745,12 @@ bool Blur::execute(const optparse::Values &options, SharedCommandData &sharedDat
 void ICPRigid::buildParser()
 {
   const std::string prog = "icp";
-  const std::string desc = "performs iterative closest point (ICP) 3D rigid registration on a pair of images";
+  const std::string desc = "transform current image using iterative iterative point (ICP) 3D rigid registration computed from source to target distance maps";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--target").action("store").type("string").set_default("").help("Distance map of target image.");
   parser.add_option("--source").action("store").type("string").set_default("").help("Distance map of source image.");
-  parser.add_option("--isovalue").action("store").type("float").set_default(0.0).help("Value of isovalue [default 0.0].");
+  parser.add_option("--target").action("store").type("string").set_default("").help("Distance map of target image.");
+  parser.add_option("--isovalue").action("store").type("float").set_default(0.0).help("isovalue of distance maps used to create ICPtransform [default 0.0].");
   parser.add_option("--iterations").action("store").type("unsigned").set_default(20).help("Number of iterations run ICP registration [default 20].");
 
   Command::buildParser();
@@ -776,26 +764,27 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
-  std::string targetImg = static_cast<std::string>(options.get("target"));
-  std::string sourceImg = static_cast<std::string>(options.get("source"));
+  std::string targetDT = static_cast<std::string>(options.get("target"));
+  std::string sourceDT = static_cast<std::string>(options.get("source"));
   float isovalue = static_cast<float>(options.get("isovalue"));
   unsigned iterations = static_cast<unsigned>(options.get("iterations"));
 
-  if (targetImg == "")
+  if (targetDT == "")
   {
-    std::cerr << "Must specify a target image\n";
+    std::cerr << "Must specify a target distance map\n";
     return false;
   }
-  else if (sourceImg == "")
+  else if (sourceDT == "")
   {
-    std::cerr << "Must specify a source image\n";
+    std::cerr << "Must specify a source distance map\n";
     return false;
   }
   else
   {
-    Image target(targetImg);
-    Image source(sourceImg);
-    sharedData.image = ImageUtils::rigidRegistration(sharedData.image, target, source, isovalue, iterations);
+    Image target_dt(targetDT);
+    Image source_dt(sourceDT);
+    TransformPtr transform(ImageUtils::createRigidRegistrationTransform(source_dt, target_dt, isovalue, iterations));
+    sharedData.image.applyTransform(transform, target_dt.dims(), target_dt.origin(), target_dt.spacing(), target_dt.coordsys());
     return true;
   }
 }
@@ -1138,6 +1127,94 @@ bool Filter::execute(const optparse::Values &options, SharedCommandData &sharedD
     std::cerr << type << " is not one of: curvature, gradient, sigmoid, tplevelset, gaussian, antialias\n";
     return false;
   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// NegateImage
+///////////////////////////////////////////////////////////////////////////////
+void NegateImage::buildParser()
+{
+  const std::string prog = "negate";
+  const std::string desc = "negate the values in this image";
+  parser.prog(prog).description(desc);
+
+  Command::buildParser();
+}
+
+bool NegateImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validImage())
+  {
+    std::cerr << "No image to operate on\n";
+    return false;
+  }
+
+  sharedData.image = -sharedData.image;
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// AddImage
+///////////////////////////////////////////////////////////////////////////////
+void AddImage::buildParser()
+{
+  const std::string prog = "add";
+  const std::string desc = "add an image";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of image to add");
+
+  Command::buildParser();
+}
+
+bool AddImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validImage())
+  {
+    std::cerr << "No image to operate on\n";
+    return false;
+  }
+
+  std::string filename = options["name"];
+  if (filename.length() == 0) {
+    std::cerr << "add error: no filename specified with which to add, must pass `--name <filename>`\n";
+    return false;
+  }
+
+  sharedData.image += Image(filename);
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// SubtractImage
+///////////////////////////////////////////////////////////////////////////////
+void SubtractImage::buildParser()
+{
+  const std::string prog = "sub";
+  const std::string desc = "subtract an image";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of image to subtract");
+
+  Command::buildParser();
+}
+
+bool SubtractImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validImage())
+  {
+    std::cerr << "No image to operate on\n";
+    return false;
+  }
+
+  std::string filename = options["name"];
+  if (filename.length() == 0) {
+    std::cerr << "sub error: no filename specified to subtract, must pass `--name <filename>`\n";
+    return false;
+  }
+
+  sharedData.image -= Image(filename);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

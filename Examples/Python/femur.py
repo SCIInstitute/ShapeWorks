@@ -113,6 +113,7 @@ def Run_Pipeline(args):
             cutting_plane_points = np.array([[68.5970168,-128.34930979,-709.84309115],[1.0,-1.0,-709.84309115],[-1.0,1.0,-709.84309115]])
             cp_prefix = 'm03_L'
             choice = 0
+
         # If interactive ask whether to define on chosen sample or median
         else:
             choice_made = False
@@ -197,12 +198,13 @@ def Run_Pipeline(args):
         This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
         This function uses the same transfrmation matrix for alignment of raw and segmentation files.
         """
-        [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, centerFiles_segmentations, centerFiles_images , medianFile, processRaw = True)
+        [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, centerFiles_segmentations, centerFiles_images, medianFile, processRaw = True)
 
         # If user chose option 2, define cutting plane on median sample
         if choice == 2:
-           input_file = medianFile.replace("centered","aligned").replace(".nrrd", ".aligned.DT.nrrd")
+           input_file = medianFile.replace("centered", "aligned").replace(".nrrd", ".aligned.DT.nrrd")
            cutting_plane_points = SelectCuttingPlane(input_file)
+    
         # Fix cutting plane points previously selected
         else:
             # Get COM translation
@@ -217,6 +219,7 @@ def Run_Pipeline(args):
                 trans.append(float(string))
             trans = np.array(trans)
             COM_filehandler.close()
+
             # Apply COM translation
             print("Translating cutting plane by: ")
             print(trans)
@@ -224,6 +227,7 @@ def Run_Pipeline(args):
             for pt_index in range(cutting_plane_points.shape[0]):
                 new_cutting_plane_points[pt_index] = cutting_plane_points[pt_index] - trans
             cutting_plane_points = new_cutting_plane_points
+
             # Get center translation
             center_folder = parentDir + "centered/segmentations"
             for file in os.listdir(center_folder):
@@ -233,6 +237,7 @@ def Run_Pipeline(args):
             line = center_filehandler.readlines()[0]
             center_trans = np.array(line.split())
             center_trans= center_trans.astype(float)
+
             # Apply center translation
             print("Translating cutting plane by: ")
             print(center_trans)
@@ -240,6 +245,7 @@ def Run_Pipeline(args):
             for pt_index in range(cutting_plane_points.shape[0]):
                 new_cutting_plane_points[pt_index] = cutting_plane_points[pt_index] - center_trans
             cutting_plane_points = new_cutting_plane_points
+
             # Get rigid transformation
             rigid_folder = parentDir + "aligned/transformations"
             for file in os.listdir(rigid_folder):
@@ -265,6 +271,7 @@ def Run_Pipeline(args):
                 pt = matrix.dot(pt4D)
                 new_cutting_plane_points[pt_index] = pt
             cutting_plane_points = new_cutting_plane_points
+            
             # catch for flipped norm
             if cutting_plane_points[0][1] < 0 and cutting_plane_points[1][1] < 0 and cutting_plane_points[2][1] < 0 :
                 cutting_plane_points[0][1] = cutting_plane_points[0][1] *-1
@@ -376,10 +383,7 @@ def Run_Pipeline(args):
             "verbosity" : 3,
             "use_statistics_in_init" : 0
         }
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/master
         [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
 
     """
@@ -405,6 +409,7 @@ def Run_Pipeline(args):
     Reconstruct the dense mean surface given the sparse correspondence model.
     """
     print("\nStep 5. Analysis - Reconstruct the dense mean surface given the sparse correspodence model.\n")
-    # if args.interactive:
-        # input("Press Enter to continue")
+    if args.interactive:
+        input("Press Enter to continue")
+
     launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)

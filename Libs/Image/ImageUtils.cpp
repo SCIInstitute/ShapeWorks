@@ -51,13 +51,12 @@ TransformPtr ImageUtils::createCenterOfMassTransform(const Image &image)
   return xform;
 }
 
-Image& ImageUtils::rigidRegistration(Image &image, const Image &target, const Image &source, float isoValue, unsigned iterations)
+TransformPtr ImageUtils::createRigidRegistrationTransform(const Image &source_dt, const Image &target_dt, float isoValue, unsigned iterations)
 {
-  vtkSmartPointer<vtkPolyData> targetContour = Image::getPolyData(target, isoValue);
-  vtkSmartPointer<vtkPolyData> sourceContour = Image::getPolyData(source, isoValue);
-  Matrix mat(ShapeworksUtils::getMatrix(MeshUtils::createIcpTransform(sourceContour, targetContour, iterations)));
-  image.applyTransform(createAffineTransform(mat), target.dims(), target.origin(), target.spacing(), target.coordsys());
-  return image;
+  vtkSmartPointer<vtkPolyData> targetContour = Image::getPolyData(target_dt, isoValue);
+  vtkSmartPointer<vtkPolyData> sourceContour = Image::getPolyData(source_dt, isoValue);
+  const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createIcpTransform(sourceContour, targetContour, iterations));
+  return createAffineTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
 }
 
 TransformPtr ImageUtils::createWarpTransform(const std::string &source_landmarks, const std::string &target_landmarks, const int stride)

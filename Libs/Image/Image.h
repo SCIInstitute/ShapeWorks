@@ -90,6 +90,17 @@ public:
   
   // modification functions //
 
+  /// negation operator
+  Image& operator-();
+
+  /// plus operator to add two images
+  Image& operator+(const Image &other);
+  Image& operator+=(const Image &other) { return *this = *this + other; }
+
+  /// minus operator to add two images
+  Image& operator-(const Image &other);
+  Image& operator-=(const Image &other) { return *this = *this - other; }
+
   /// antialiases image
   Image &antialias(unsigned iterations = 50, double maxRMSErr = 0.01f, int layers = 3);
   
@@ -126,7 +137,7 @@ public:
   /// threholds image into binary label based on upper and lower intensity bounds given by user
   Image &threshold(PixelType minval = std::numeric_limits<PixelType>::epsilon(), PixelType maxval = std::numeric_limits<PixelType>::max());
 
-  /// computes distance transform volume from an antialiased binary image using the specified isovalue
+  /// computes distance transform volume from a (preferably antialiased) binary image using the specified isovalue
   Image &computeDT(PixelType isoValue = 0.0);
 
   /// denoises an image using curvature driven flow using curvature flow image filter

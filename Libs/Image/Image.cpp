@@ -76,6 +76,48 @@ Image::ImageType::Pointer Image::read(const std::string &pathname)
   return reader->GetOutput();
 }
 
+Image& Image::operator-()
+{
+  itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
+  while (!iter.IsAtEnd())
+  {
+    iter.Set(-iter.Value());
+    ++iter;
+  }
+
+  return *this;
+}
+
+Image& Image::operator+(const Image &other)
+{
+  if (dims() != other.dims()) { throw std::invalid_argument("images must have same logical dims"); }
+  
+  itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
+  itk::ImageRegionIteratorWithIndex<ImageType> otherIter(other.image, other.image->GetLargestPossibleRegion());
+  while (!iter.IsAtEnd() && !otherIter.IsAtEnd())
+  {
+    iter.Set(iter.Value() + otherIter.Value());
+    ++iter; ++otherIter;
+  }
+
+  return *this;
+}
+
+Image& Image::operator-(const Image &other)
+{
+  if (dims() != other.dims()) { throw std::invalid_argument("images must have same logical dims"); }
+  
+  itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
+  itk::ImageRegionIteratorWithIndex<ImageType> otherIter(other.image, other.image->GetLargestPossibleRegion());
+  while (!iter.IsAtEnd() && !otherIter.IsAtEnd())
+  {
+    iter.Set(iter.Value() - otherIter.Value());
+    ++iter; ++otherIter;
+  }
+
+  return *this;
+}
+
 Image::ImageType::Pointer Image::readDICOMImage(const std::string &pathname)
 {
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
@@ -271,7 +313,7 @@ Image& Image::scale(const Vector3 &s)
   setOrigin(negate(center()));     // move center _away_ from origin since ITK applies transformations backwards.
 
   AffineTransformPtr xform(AffineTransform::New());
-  xform->Scale(invert(std::move(const_cast<Vector3&>(s))));   // invert scale ratio because ITK applies transformations backwards.  
+  xform->Scale(invert(Vector(s)));         // invert scale ratio because ITK applies transformations backwards.  
   applyTransform(xform);
   setOrigin(origOrigin);           // restore origin
   
@@ -551,6 +593,8 @@ Image& Image::reflect(const Vector3 &normal)
   // if (n dot z > eps)
   //   rotate(n cross z, acos(n dot z));
   // scale(makeVector({0,0,-1}));
+  // if (n dot z > eps)
+  //   rotate(n cross z, -acos(n dot z));
 
   return *this;
 }
