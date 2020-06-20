@@ -525,7 +525,7 @@ bool Threshold::execute(const optparse::Values &options, SharedCommandData &shar
 void ComputeDT::buildParser()
 {
   const std::string prog = "compute-dt";
-  const std::string desc = "computes signed distance transform volume from a binary (antialiased) image";
+  const std::string desc = "computes signed distance transform volume from an image at the specified isovalue";
   parser.prog(prog).description(desc);
 
   parser.add_option("--isovalue").action("store").type("float").set_default(0.0).help("Level set value that defines the interface between foreground and background [default 0.0].");
