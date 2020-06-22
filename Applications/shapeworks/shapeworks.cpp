@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(Rotate::getCommand());
   shapeworks.addCommand(ExtractLabel::getCommand());
   shapeworks.addCommand(CloseHoles::getCommand());
-  shapeworks.addCommand(Threshold::getCommand());
+  shapeworks.addCommand(Binarize::getCommand());
   shapeworks.addCommand(ComputeDT::getCommand());
   shapeworks.addCommand(CurvatureFilter::getCommand());
   shapeworks.addCommand(GradientFilter::getCommand());

@@ -76,7 +76,7 @@ TEST(ImageTests, isoresampleBinaryIsotropicTest)
   Image image(test_location + "binary-isotropic-input.nrrd");
   image.antialias();
   ImageUtils::isoresample(image);
-  image.threshold().recenter();
+  image.binarize().recenter();
   Image ground_truth(test_location + "binary-isotropic-isoresampled.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -89,7 +89,7 @@ TEST(ImageTests, isoresampleBinaryAnisotropicTest)
   Image image(test_location + "binary-anisotropic-input.nrrd");
   image.antialias();
   ImageUtils::isoresample(image);
-  image.threshold().recenter();
+  image.binarize().recenter();
   Image ground_truth(test_location + "binary-anisotropic-isoresampled.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -325,13 +325,24 @@ TEST(ImageTests, closeholesTest)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, thresholdTest)
+TEST(ImageTests, binarizeTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/threshold/");
 
   Image image(test_location + "1x2x2.nrrd");
-  image.threshold();
+  image.binarize();
   Image ground_truth(test_location + "threshold_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, binarizeTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/threshold/");
+
+  Image image(test_location + "raw.nrrd");
+  image.binarize(10.0, 100.0, 42);
+  Image ground_truth(test_location + "banded.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }

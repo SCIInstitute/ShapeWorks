@@ -140,17 +140,17 @@ TEST(shapeworksTests, closeholes)
 }
 
 //---------------------------------------------------------------------------
-TEST(shapeworksTests, threshold)
+TEST(shapeworksTests, binarize)
 {
   shapeworksEnvSetup();
-  ASSERT_FALSE(system("bash threshold.sh"));
+  ASSERT_FALSE(system("bash binarize.sh"));
 }
 
 //---------------------------------------------------------------------------
-TEST(shapeworksTests, thresholdfail)
+TEST(shapeworksTests, binarizefail)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("bash thresholdfail.sh"));
+  ASSERT_TRUE(system("bash binarizefail.sh"));
 }
 
 //---------------------------------------------------------------------------

@@ -376,7 +376,7 @@ Image &Image::applyTransform(const TransformPtr transform)
 
 Image& Image::extractLabel(PixelType label)
 {
-  threshold(label, label);
+  binarize(label, label);
 
   return *this;
 }
@@ -394,7 +394,7 @@ Image& Image::closeHoles()
   return *this;
 }
 
-Image& Image::threshold(PixelType minval, PixelType maxval)
+Image& Image::binarize(PixelType minval, PixelType maxval, PixelType inner_value, PixelType outer_value)
 {
   using FilterType = itk::BinaryThresholdImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
@@ -402,8 +402,8 @@ Image& Image::threshold(PixelType minval, PixelType maxval)
   filter->SetInput(this->image);
   filter->SetLowerThreshold(minval);
   filter->SetUpperThreshold(maxval);
-  filter->SetInsideValue(1.0);
-  filter->SetOutsideValue(0.0);
+  filter->SetInsideValue(inner_value);
+  filter->SetOutsideValue(outer_value);
   filter->Update();
   this->image = filter->GetOutput();
 
