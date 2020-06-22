@@ -43,6 +43,7 @@ cp conda_installs.sh package/${VERSION}
 cp Documentation/ChangeLog.md package/${VERSION}
 
 # Run auto-documentation
+PATH=$INSTALL_DIR/bin:$PATH
 python -c "import DocumentationUtils;DocumentationUtils.generateShapeWorksCommandDocumentation('Documentation/ShapeWorksCommands/ShapeWorksCommands.md')"
 cp -a Documentation "package/${VERSION}"
 
