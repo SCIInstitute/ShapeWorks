@@ -28,6 +28,10 @@ ROOT=`pwd`
 cp -r ../build/bin/Release bin
 rm -rf Post
 
+# Run auto-documentation
+PATH=../build/bin/Release:$PATH
+python -c "import DocumentationUtils;DocumentationUtils.generateShapeWorksCommandDocumentation('Documentation/ShapeWorksCommands/ShapeWorksCommands.md')"
+
 # Remove tests, they won't work for users anyway
 rm bin/*Tests.exe
 
@@ -37,5 +41,3 @@ windeployqt "bin/ShapeWorksView2.exe"
 mkdir artifacts
 cp *.exe artifacts
 
-# Run auto-documentation
-python DocumentationUtils.RunShapeWorksAutoDoc()
