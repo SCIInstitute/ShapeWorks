@@ -310,7 +310,6 @@ def Run_Pipeline(args):
 
         if args.tiny_test:
             dtFiles = dtFiles[:3]
-    
 
     """
     ## OPTIMIZE : Particle Based Optimization
@@ -333,6 +332,7 @@ def Run_Pipeline(args):
     optimization routines
     """
     print("\nStep 4. Optimize - Particle Based Optimization\n")
+
     if args.interactive:
         input("Press Enter to continue")
 
@@ -392,12 +392,12 @@ def Run_Pipeline(args):
             "verbosity" : 3,
             "use_statistics_in_init" : 0
         }
+
         [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
 
     if args.tiny_test:
         print("Done with tiny test")
         exit()
-
 
     """
     ## ANALYZE : Shape Analysis and Visualization

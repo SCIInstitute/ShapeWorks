@@ -140,7 +140,6 @@ def Run_Pipeline(args):
             """
             [comFiles_segmentations, comFiles_images] = applyCOMAlignment(parentDir + "com_aligned", paddedFiles_segmentations, raw=paddedFiles_images)
 
-
             """
             Apply rigid alignment
 
@@ -181,7 +180,6 @@ def Run_Pipeline(args):
             dtFiles = applyDistanceTransforms(parentDir, croppedFiles_segmentations)
 
         else:
-
             """
             ## GROOM : Data Pre-processing
             For the unprepped data the first few steps are
@@ -316,7 +314,7 @@ def Run_Pipeline(args):
             parameterDictionary["number_of_particles"] = 32
             parameterDictionary["optimization_iterations"] = 25
             parameterDictionary["iterations_per_split"] = 25
-            
+
         """
         Now we execute the particle optimization function.
         """
