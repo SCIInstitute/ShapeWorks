@@ -141,7 +141,7 @@ bool ImageInfo::execute(const optparse::Values &options, SharedCommandData &shar
   bool boundingbox = static_cast<bool>(options.get("boundingbox"));
 
   // by default: print everything
-  if (options.size() == 0)
+  if (options.num_set() == 0)
     dims = spacing = size = origin = direction = center = centerofmass = boundingbox = true;
 
   if (dims)
@@ -392,7 +392,7 @@ bool Scale::execute(const optparse::Values &options, SharedCommandData &sharedDa
 void Rotate::buildParser()
 {
   const std::string prog = "rotate";
-  const std::string desc = "rotates image by specified value";";
+  const std::string desc = "rotates image by specified value";
   parser.prog(prog).description(desc);
 
   parser.add_option("--rx", "-x").action("store").type("double").help("Physical axis around which to rotate [default: z-axis]");

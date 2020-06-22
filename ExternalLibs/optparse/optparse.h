@@ -171,9 +171,9 @@ namespace optparse
           _map.clear();
         }
 
-        int size()
+        int num_set() const
         {
-          return _map.size();
+          return _user_set.size();
         }
 
         Value get(const std::string &d) const
