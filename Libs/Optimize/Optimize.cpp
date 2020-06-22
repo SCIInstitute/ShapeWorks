@@ -229,6 +229,19 @@ int Optimize::GetDomainsPerShape()
 }
 
 //---------------------------------------------------------------------------
+void Optimize::SetDomainType(shapeworks::DomainType type)
+{
+  this->m_domain_type = type;
+  this->m_sampler->SetDomainType(this->m_domain_type);
+}
+
+//---------------------------------------------------------------------------
+shapeworks::DomainType Optimize::GetDomainType()
+{
+  return this->m_domain_type;
+}
+
+//---------------------------------------------------------------------------
 void Optimize::SetNumberOfParticles(std::vector<unsigned int> number_of_particles)
 {
   this->m_number_of_particles = number_of_particles;

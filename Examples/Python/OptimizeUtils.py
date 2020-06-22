@@ -40,6 +40,8 @@ def create_SWRun_xml(xmlfilename, inDataFiles, parameterDictionary, outDir):
     recompute_regularization_interval.text = "\n" + str(parameterDictionary['recompute_regularization_interval']) + "\n"
     domains_per_shape = ET.SubElement(root, 'domains_per_shape')
     domains_per_shape.text = "\n" + str(parameterDictionary['domains_per_shape']) + "\n"
+    domain_type = ET.SubElement(root, 'domain_type')
+    domain_type.text = "\n" + str(parameterDictionary['domain_type']) + "\n"
     relative_weighting = ET.SubElement(root, 'relative_weighting')
     relative_weighting.text = "\n" + str(parameterDictionary['relative_weighting']) + "\n"
     initial_relative_weighting = ET.SubElement(root, 'initial_relative_weighting')
@@ -101,6 +103,8 @@ def create_SWRun_multi_xml(xmlfilename, inDataFiles, parameterDictionary, outDir
     recompute_regularization_interval.text = "\n" + str(parameterDictionary['recompute_regularization_interval']) + "\n"    
     domains_per_shape = ET.SubElement(root, 'domains_per_shape')
     domains_per_shape.text = "\n" + str(parameterDictionary['domains_per_shape']) + "\n"
+    domain_type = ET.SubElement(root, 'domain_type')
+    domain_type.text = "\n" + str(parameterDictionary['domain_type']) + "\n"
     relative_weighting = ET.SubElement(root, 'relative_weighting')
     relative_weighting.text = "\n" + str(parameterDictionary['relative_weighting']) + "\n"
     initial_relative_weighting = ET.SubElement(root, 'initial_relative_weighting')
@@ -174,6 +178,8 @@ def create_SWRun_fixed_domains(xmlfilename, inDataFiles, parameterDictionary, ou
     recompute_regularization_interval.text = "\n" + str(parameterDictionary['recompute_regularization_interval']) + "\n"    
     domains_per_shape = ET.SubElement(root, 'domains_per_shape')
     domains_per_shape.text = "\n" + str(parameterDictionary['domains_per_shape']) + "\n"
+    domain_type = ET.SubElement(root, 'domain_type')
+    domain_type.text = "\n" + str(parameterDictionary['domain_type']) + "\n"
     relative_weighting = ET.SubElement(root, 'relative_weighting')
     relative_weighting.text = "\n" + str(parameterDictionary['relative_weighting']) + "\n"
     initial_relative_weighting = ET.SubElement(root, 'initial_relative_weighting')

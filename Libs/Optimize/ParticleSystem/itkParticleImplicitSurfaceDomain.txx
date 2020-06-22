@@ -49,38 +49,18 @@ SetCuttingPlane(const vnl_vector<double> &a, const vnl_vector<double> &b,
 template<class T, unsigned int VDimension>
 void
 ParticleImplicitSurfaceDomain<T, VDimension>::
-TransformCuttingPlane(const TransformType &Trans, const vnl_vector<double> &base_a,
-                      const vnl_vector<double> &base_b, const vnl_vector<double> &base_c )
+TransformCuttingPlane(const vnl_matrix_fixed<double, VDimension + 1, VDimension + 1> &Trans)
 {
     if (m_UseCuttingPlane == true)
     {
-/*
-        // Transform m_CuttingPlanePoint
-//        vnl_vector_fixed<double, VDimension> point;
-//        point[0] = Trans[0][0] * m_CuttingPlanePoint[0] + Trans[0][1] * m_CuttingPlanePoint[1] + Trans[0][2] * m_CuttingPlanePoint[2] + Trans[0][3];
-//        point[1] = Trans[1][0] * m_CuttingPlanePoint[0] + Trans[1][1] * m_CuttingPlanePoint[1] + Trans[1][2] * m_CuttingPlanePoint[2] + Trans[1][3];
-//        point[2] = Trans[2][0] * m_CuttingPlanePoint[0] + Trans[2][1] * m_CuttingPlanePoint[1] + Trans[2][2] * m_CuttingPlanePoint[2] + Trans[2][3];
-
-//        // Transform m_CuttingPlaneNormal
-//        vnl_vector_fixed<double, VDimension> normal;
-
-////        TransformType TransInv = vnl_inverse(Trans);
-////        TransformType TransInvT;
-////        for (unsigned int i = 0; i <= VDimension; i++) {
-////            for (unsigned int j = 0; j <= VDimension; j++) {
-////                TransInvT[i][j] = TransInv[j][i];
-////            }
-////        }
-////        normal[0] = TransInvT[0][0] * m_CuttingPlaneNormal[0] + TransInvT[0][1] * m_CuttingPlaneNormal[1] + TransInvT[0][2] * m_CuttingPlaneNormal[2];
-////        normal[1] = TransInvT[1][0] * m_CuttingPlaneNormal[0] + TransInvT[1][1] * m_CuttingPlaneNormal[1] + TransInvT[1][2] * m_CuttingPlaneNormal[2];
-////        normal[2] = TransInvT[2][0] * m_CuttingPlaneNormal[0] + TransInvT[2][1] * m_CuttingPlaneNormal[1] + TransInvT[2][2] * m_CuttingPlaneNormal[2];
-
-//        normal[0] = Trans[0][0] * m_CuttingPlaneNormal[0] + Trans[0][1] * m_CuttingPlaneNormal[1] + Trans[0][2] * m_CuttingPlaneNormal[2];
-//        normal[1] = Trans[1][0] * m_CuttingPlaneNormal[0] + Trans[1][1] * m_CuttingPlaneNormal[1] + Trans[1][2] * m_CuttingPlaneNormal[2];
-//        normal[2] = Trans[2][0] * m_CuttingPlaneNormal[0] + Trans[2][1] * m_CuttingPlaneNormal[1] + Trans[2][2] * m_CuttingPlaneNormal[2];
-
-//        normal /= normal.magnitude();
-*/
+        vnl_vector_fixed<double, VDimension> fa = GetA();
+        vnl_vector_fixed<double, VDimension> fb = GetB();
+        vnl_vector_fixed<double, VDimension> fc = GetC();
+        /* Copy vnl_vector_fixed to vnl_vector */
+        vnl_vector<double> base_a(VDimension); vnl_vector<double> base_b(VDimension); vnl_vector<double> base_c(VDimension);
+        for (unsigned int k = 0; k < VDimension; k++) {
+          base_a[k] = fa[k]; base_b[k] = fb[k]; base_c[k] = fc[k];
+        }
         // Transform m_a
         vnl_vector<double> pa(3);
         pa[0] = Trans[0][0] * base_a[0] + Trans[0][1] * base_a[1] + Trans[0][2] * base_a[2] + Trans[0][3];
