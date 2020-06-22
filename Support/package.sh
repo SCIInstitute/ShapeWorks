@@ -40,8 +40,18 @@ cp -a $INSTALL_DIR/* "package/${VERSION}"
 cp -a Examples "package/${VERSION}"
 cp -a Python "package/${VERSION}"
 cp conda_installs.sh package/${VERSION}
-cp ChangeLog package/${VERSION}
-cp documentation/install/PACKAGE_README.txt package/${VERSION}/README.txt
+cp Documentation/ChangeLog.md package/${VERSION}
+
+# Run auto-documentation
+python -c "import DocumentationUtils;DocumentationUtils.generateShapeWorksCommandDocumentation('Documentation/ShapeWorksCommands/ShapeWorksCommands.md')"
+cp -a Documentation "package/${VERSION}"
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    cp Documentation/Install/Mac_README.txt package/${VERSION}/README.txt
+else
+    cp Documentation/Install/Linux_README.txt package/${VERSION}/README.txt
+fi
+
 cd "package/${VERSION}"
 rm bin/h5cc bin/h5c++ bin/itkTestDriver
 rm -rf include share v3p plugins
@@ -94,9 +104,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     plutil -replace BundleIsRelocatable -bool NO ShapeWorks.plist
     pkgbuild --component-plist ShapeWorks.plist --install-location /Applications/ShapeWorks --root ${VERSION} --identifier edu.utah.sci.shapeworks ${ROOT}/artifacts/${VERSION}.pkg
 fi
-
-# Run auto-documentation
-python DocumentationUtils.RunShapeWorksAutoDoc()
 
 cd $ROOT
 
