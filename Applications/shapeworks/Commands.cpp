@@ -141,7 +141,7 @@ bool ImageInfo::execute(const optparse::Values &options, SharedCommandData &shar
   bool boundingbox = static_cast<bool>(options.get("boundingbox"));
 
   // by default print everything
-  if (!(dims || spacing || size || origin || direction || center || centerofmass || boundingbox))
+  if (options.size() == 0)
     dims = spacing = size = origin = direction = center = centerofmass = boundingbox = true;
 
   if (dims)
