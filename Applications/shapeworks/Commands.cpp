@@ -218,9 +218,9 @@ void ResampleImage::buildParser()
   parser.add_option("--spacex").action("store").type("double").set_default(1.0f).help("Pixel spacing in x-direction [default 1.0].");
   parser.add_option("--spacey").action("store").type("double").set_default(1.0f).help("Pixel spacing in y-direction [default 1.0].");
   parser.add_option("--spacez").action("store").type("double").set_default(1.0f).help("Pixel spacing in z-direction [default 1.0].");
-  parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Image size in x-direction [default estimated from the image].");
-  parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Image size in y-direction [default estimated from the image].");
-  parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Image size in z-direction [default estimated from the image].");
+  parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Output size in x-direction [default calculated using current size and desired spacing].");
+  parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Output size in y-direction [default calculated using current size and desired spacing].");
+  parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Output size in z-direction [default calculated using current size and desired spacing].");
 
   Command::buildParser();
 }
