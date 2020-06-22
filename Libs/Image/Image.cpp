@@ -400,7 +400,7 @@ Image& Image::binarize(PixelType minval, PixelType maxval, PixelType inner_value
   FilterType::Pointer filter = FilterType::New();
 
   filter->SetInput(this->image);
-  filter->SetLowerThreshold(minval);
+  filter->SetLowerThreshold(minval + std::numeric_limits<PixelType>::epsilon());
   filter->SetUpperThreshold(maxval);
   filter->SetInsideValue(inner_value);
   filter->SetOutsideValue(outer_value);
