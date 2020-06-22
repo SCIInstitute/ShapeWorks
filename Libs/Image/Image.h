@@ -142,7 +142,7 @@ public:
   Image &closeHoles();
   
   /// threholds image into binary label based on upper and lower intensity bounds given by user
-  Image &threshold(PixelType minval = std::numeric_limits<PixelType>::epsilon(), PixelType maxval = std::numeric_limits<PixelType>::max());
+  Image &binarize(PixelType minval = 0.0, PixelType maxval = std::numeric_limits<PixelType>::max(), PixelType inner_value = 1.0, PixelType outer_value = 0.0);
 
   /// computes distance transform volume from a (preferably antialiased) binary image using the specified isovalue
   Image &computeDT(PixelType isoValue = 0.0);

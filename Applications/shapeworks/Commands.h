@@ -168,13 +168,13 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class Threshold : public ImageCommand
+class Binarize : public ImageCommand
 {
 public:
-  static Threshold& getCommand() { static Threshold instance; return instance; }
+  static Binarize& getCommand() { static Binarize instance; return instance; }
 
 private:
-  Threshold() { buildParser(); }
+  Binarize() { buildParser(); }
   void buildParser() override;
   bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };

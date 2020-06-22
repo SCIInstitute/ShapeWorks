@@ -18,7 +18,7 @@ void Example::buildParser()
   const std::string desc = "brief description of command";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--optionName").action("store").type("float").set_default(0.01).help("Description of optionName.");
+  parser.add_option("--optionName").action("store").type("double").set_default(0.01).help("Description of optionName.");
   //additional options... 
   
   Command::buildParser();
@@ -26,7 +26,7 @@ void Example::buildParser()
 
 bool Example::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  float optionName = static_cast<float>(options.get("optionName"));
+  double optionName = static_cast<double>(options.get("optionName"));
   //read additional options... 
 
   return sharedData.image.example(optionName, ...);
@@ -174,7 +174,7 @@ void Antialias::buildParser()
   const std::string desc = "antialiases binary volumes";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--maxrmserror").action("store").type("float").set_default(0.01).help("Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default: 0.01].");
+  parser.add_option("--maxrmserror").action("store").type("double").set_default(0.01).help("Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default: 0.01].");
   parser.add_option("--iterations").action("store").type("int").set_default(50).help("Number of iterations [default: 50].");
   parser.add_option("--layers").action("store").type("int").set_default(0).help("Number of layers around a 3d pixel to use for this computation [default: image dims].");
 
@@ -189,7 +189,7 @@ bool Antialias::execute(const optparse::Values &options, SharedCommandData &shar
     return false;
   }
 
-  float maxRMSErr = static_cast<float>(options.get("maxrmserror"));
+  double maxRMSErr = static_cast<double>(options.get("maxrmserror"));
   int iterations = static_cast<int>(options.get("iterations"));
   int layers = static_cast<int>(options.get("layers"));
 
@@ -283,7 +283,7 @@ void PadImage::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--padding").action("store").type("int").set_default(0).help("Number of voxels to be padded in each direction [default: 0].");
-  parser.add_option("--value").action("store").type("float").set_default(0.0).help("Value to be used to fill padded voxels [default: 0.0].");
+  parser.add_option("--value").action("store").type("double").set_default(0.0).help("Value to be used to fill padded voxels [default: 0.0].");
 
   Command::buildParser();
 }
@@ -297,7 +297,7 @@ bool PadImage::execute(const optparse::Values &options, SharedCommandData &share
   }
 
   int padding = static_cast<int>(options.get("padding"));
-  float value = static_cast<float>(options.get("value"));
+  double value = static_cast<double>(options.get("value"));
 
   sharedData.image.pad(padding, value);
   return true;
@@ -446,7 +446,7 @@ void ExtractLabel::buildParser()
   const std::string desc = "extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--label").action("store").type("float").set_default(1.0).help("Label value which has to be extracted [default: 1.0].");
+  parser.add_option("--label").action("store").type("double").set_default(1.0).help("Label value which has to be extracted [default: 1.0].");
 
   Command::buildParser();
 }
@@ -459,7 +459,7 @@ bool ExtractLabel::execute(const optparse::Values &options, SharedCommandData &s
     return false;
   }
 
-  float label = static_cast<float>(options.get("label"));
+  double label = static_cast<double>(options.get("label"));
 
   sharedData.image.extractLabel(label);
   return true;
@@ -490,21 +490,22 @@ bool CloseHoles::execute(const optparse::Values &options, SharedCommandData &sha
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Threshold
+// Binarize
 ///////////////////////////////////////////////////////////////////////////////
-void Threshold::buildParser()
+void Binarize::buildParser()
 {
-  const std::string prog = "threshold";
-  const std::string desc = "thresholds image into binary label lower intensity bounds given by user";
+  const std::string prog = "binarize";
+  const std::string desc = "sets portion of image greater than min and less than or equal to max to the given value";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--min").action("store").type("float").set_default(std::numeric_limits<float>::epsilon()).help("Lower threshold level [default: epsilon].");
-  parser.add_option("--max").action("store").type("float").set_default(std::numeric_limits<float>::max()).help("Upper threshold level [default: FLT_MAX].");
+  parser.add_option("--min").action("store").type("double").set_default(std::numeric_limits<double>::epsilon()).help("Lower threshold level [default: 0.0].");
+  parser.add_option("--max").action("store").type("double").set_default(std::numeric_limits<double>::max()).help("Upper threshold level [default: inf ].");
+  parser.add_option("--val").action("store").type("double").set_default(1.0).help("Value to set region [default: 1.0].");
   
   Command::buildParser();
 }
 
-bool Threshold::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool Binarize::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validImage())
   {
@@ -512,10 +513,11 @@ bool Threshold::execute(const optparse::Values &options, SharedCommandData &shar
     return false;
   }
 
-  float min = static_cast<float>(options.get("min"));
-  float max = static_cast<float>(options.get("max"));
+  double min = static_cast<double>(options.get("min"));
+  double max = static_cast<double>(options.get("max"));
+  double val = static_cast<double>(options.get("val"));
 
-  sharedData.image.threshold(min, max);
+  sharedData.image.binarize(min, max, val);
   return true;
 }
 
@@ -528,7 +530,7 @@ void ComputeDT::buildParser()
   const std::string desc = "computes signed distance transform volume from an image at the specified isovalue";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--isovalue").action("store").type("float").set_default(0.0).help("Level set value that defines the interface between foreground and background [default: 0.0].");
+  parser.add_option("--isovalue").action("store").type("double").set_default(0.0).help("Level set value that defines the interface between foreground and background [default: 0.0].");
 
   Command::buildParser();
 }
@@ -542,7 +544,7 @@ bool ComputeDT::execute(const optparse::Values &options, SharedCommandData &shar
     return false;
   }
 
-  float isovalue = static_cast<float>(options.get("isovalue"));
+  double isovalue = static_cast<double>(options.get("isovalue"));
 
   sharedData.image.computeDT(isovalue);
   return true;
@@ -750,7 +752,7 @@ void ICPRigid::buildParser()
 
   parser.add_option("--source").action("store").type("string").set_default("").help("Distance map of source image.");
   parser.add_option("--target").action("store").type("string").set_default("").help("Distance map of target image.");
-  parser.add_option("--isovalue").action("store").type("float").set_default(0.0).help("isovalue of distance maps used to create ICPtransform [default: 0.0].");
+  parser.add_option("--isovalue").action("store").type("double").set_default(0.0).help("isovalue of distance maps used to create ICPtransform [default: 0.0].");
   parser.add_option("--iterations").action("store").type("unsigned").set_default(20).help("Number of iterations run ICP registration [default: 20].");
 
   Command::buildParser();
@@ -766,7 +768,7 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
 
   std::string targetDT = static_cast<std::string>(options.get("target"));
   std::string sourceDT = static_cast<std::string>(options.get("source"));
-  float isovalue = static_cast<float>(options.get("isovalue"));
+  double isovalue = static_cast<double>(options.get("isovalue"));
   unsigned iterations = static_cast<unsigned>(options.get("iterations"));
 
   if (targetDT == "")
@@ -795,12 +797,12 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
 void BoundingBox::buildParser()
 {
   const std::string prog = "bounding-box";
-  const std::string desc = "compute largest bounding box size of the given set of binary images";
+  const std::string desc = "compute largest bounding box surrounding the given isovalue of this set of binary images";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to images");
+  parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to images (must be followed by `--`)");
   parser.add_option("--padding").action("store").type("int").set_default(0).help("Number of extra voxels in each direction to pad the largest bounding box [default: 0].");
-  parser.add_option("--isovalue").action("store").type("float").set_default(1.0).help("Threshold value [default: 1.0].");
+  parser.add_option("--isovalue").action("store").type("double").set_default(1.0).help("Threshold value [default: 1.0].");
 
   Command::buildParser();
 }
@@ -809,7 +811,7 @@ bool BoundingBox::execute(const optparse::Values &options, SharedCommandData &sh
 {
   std::vector<std::string> filenames = options.get("names");
   int padding = static_cast<int>(options.get("padding"));
-  float isovalue = static_cast<float>(options.get("isovalue"));
+  double isovalue = static_cast<double>(options.get("isovalue"));
 
   sharedData.region = ImageUtils::boundingBox(filenames, isovalue);
   sharedData.region.pad(padding);
