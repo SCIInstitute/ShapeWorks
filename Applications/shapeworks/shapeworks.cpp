@@ -43,7 +43,6 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(SetOrigin::getCommand());
   shapeworks.addCommand(WarpImage::getCommand());
   shapeworks.addCommand(Compare::getCommand());
-  shapeworks.addCommand(Filter::getCommand());
   shapeworks.addCommand(ReadParticleSystem::getCommand());
   shapeworks.addCommand(Compactness::getCommand());
   shapeworks.addCommand(Generalization::getCommand());

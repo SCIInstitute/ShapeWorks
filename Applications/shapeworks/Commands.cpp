@@ -279,7 +279,7 @@ bool RecenterImage::execute(const optparse::Values &options, SharedCommandData &
 void PadImage::buildParser()
 {
   const std::string prog = "pad";
-  const std::string desc = "pads an image with a contant value in the x-, y-, and z- directions";
+  const std::string desc = "pads an image with the specified value in the x-, y-, and z- directions";
   parser.prog(prog).description(desc);
 
   parser.add_option("--padding").action("store").type("int").set_default(0).help("Number of voxels to be padded in each direction [default: 0].");
@@ -1030,98 +1030,6 @@ bool Compare::execute(const optparse::Values &options, SharedCommandData &shared
   else
   {
     std::cout << "compare failure\n";
-    return false;
-  }
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// Filter
-///////////////////////////////////////////////////////////////////////////////
-void Filter::buildParser()
-{
-  const std::string prog = "filter";
-  const std::string desc = "apply the specified filter (curvature, gradient, sigmoid, tplevelset, gaussian, antialias)";
-  parser.prog(prog).description(desc);
-
-  parser.add_option("--type").action("store").type("string").set_default("").help("filter type: curvature, gradient, sigmoid, tplevelset, gaussian, antialias");
-  parser.add_option("--iterations").action("store").type("unsigned").set_default(10).help("Number of iterations [default: 10].");
-  parser.add_option("--alpha").action("store").type("double").set_default(10.0).help("Value of alpha [default: 10.0].");
-  parser.add_option("--beta").action("store").type("double").set_default(10.0).help("Value of beta [default: 10.0].");
-  parser.add_option("--featureimage").action("store").type("string").set_default("").help("Path of feature image for tplevelset filter");
-  parser.add_option("--scaling").action("store").type("double").set_default(20.0).help("Value of scale [default: 20]");
-  parser.add_option("--sigma").action("store").type("double").set_default(0.0).help("Value of sigma [default: 0.0].");
-  parser.add_option("--maxrmserror").action("store").type("double").set_default(0.01).help("Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default: 0.01].");
-  parser.add_option("--layers").action("store").type("int").set_default(0).help("Number of layers around a 3d pixel to use for this computation [default: image dims].");
-
-  Command::buildParser();
-}
-
-bool Filter::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validImage())
-  {
-    std::cerr << "No image to operate on\n";
-    return false;
-  }
-
-  std::string type = static_cast<std::string>(options.get("type"));
-
-  if (!type.compare("curvature"))
-  {
-    unsigned iterations = static_cast<unsigned>(options.get("iterations"));
-
-    sharedData.image.applyCurvatureFilter(iterations);
-    return true;
-  }
-  else if (!type.compare("gradient"))
-  {
-    sharedData.image.applyGradientFilter();
-    return true;
-  }
-  else if (!type.compare("sigmoid"))
-  {
-    double alpha = static_cast<double>(options.get("alpha"));
-    double beta = static_cast<double>(options.get("beta"));
-
-    sharedData.image.applySigmoidFilter(alpha, beta);
-    return true;
-  }
-  else if (!type.compare("tplevelset") || !type.compare("tp-levelset") || !type.compare("tplevel-set"))
-  {
-    std::string featureimage = static_cast<std::string>(options.get("featureimage"));
-    if (featureimage == "")
-    {
-      std::cerr << "Must specify a feature image\n";
-      return false;
-    }
-    else
-    {
-      Image featureImage(featureimage);
-      double scaling = static_cast<double>(options.get("scaling"));
-
-      sharedData.image.applyTPLevelSetFilter(featureImage, scaling);
-      return true;
-    }
-  }
-  else if (!type.compare("gaussian"))
-  {
-    double sigma = static_cast<double>(options.get("sigma"));
-
-    sharedData.image.gaussianBlur(sigma);
-    return true;
-  }
-  else if (!type.compare("antialias"))
-  {
-    unsigned iterations = static_cast<unsigned>(options.get("iterations"));
-    double maxRMSErr = static_cast<double>(options.get("maxrmserror"));
-    int layers = static_cast<int>(options.get("layers"));
-
-    sharedData.image.antialias(iterations, maxRMSErr, layers);
-    return true;
-  }
-  else
-  {
-    std::cerr << type << " is not one of: curvature, gradient, sigmoid, tplevelset, gaussian, antialias\n";
     return false;
   }
 }
