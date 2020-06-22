@@ -93,7 +93,7 @@ Developers
 Please see **[BUILD](Documentation/Build/BUILD.md)** for the current build instructions.  
 Please see **[Datasets](Documentation/UseCases/Datasets.md)** for dataset upload instructions and guidelines.  
 Please see **[GIT](Documentation/Development/GIT.md)** for details to checkout out and committing newly modified code.  
-ShapeWorks documentation uses markdown. Please refer to our tiny **[getting started with markdown](Documentation/Development/Markdown.md)**.
+Please see **[AutoDocumentation](Documentation/AutoDocumentation/AutoDocumentation.md)** to auto-generate documentation for ShapeWorks interfaces and code. ShapeWorks documentation uses markdown. Please refer to our tiny **[getting started with markdown](Documentation/Development/Markdown.md)**.
 
 
 Getting Started
@@ -162,7 +162,6 @@ Software Developers
 
 Researchers
 ---------------------
-- [Praful Agrawal](https://www.sci.utah.edu/people/prafulag.html)
 - [Riddhish Bhalodia](https://www.sci.utah.edu/people/riddhishb.html)
 - [Atefeh Ghanaatikashani](https://www.sci.utah.edu/people/atefeh.gk.html)
 - [Jadie Adams](https://www.sci.utah.edu/people/jadie.html)
@@ -175,6 +174,8 @@ Past Contributors
 - [Joshua Cates](http://www.sci.utah.edu/~cates/)
 - [Manasi Datar](https://manasidatar.github.io/index.html)
 - [Brig Bagley](http://www.cs.utah.edu/~bbagley/)
+- [Praful Agrawal](https://www.sci.utah.edu/people/prafulag.html)
+
 
 
 Relevant Papers

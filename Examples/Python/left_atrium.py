@@ -105,7 +105,6 @@ def Run_Pipeline(args):
             if args.interactive:
                 input("Press Enter to continue")
 
-
             """
             Apply isotropic resampling
             the segmentation and images are resampled independently and the result files are saved in two different directories.
@@ -168,7 +167,6 @@ def Run_Pipeline(args):
 
             """
             [croppedFiles_segmentations, croppedFiles_images] = applyCropping(parentDir, rigidFiles_segmentations,  rigidFiles_images, processRaw=True)
-
 
             print("\nStep 3. Groom - Convert to distance transforms\n")
             if args.interactive:
@@ -260,7 +258,7 @@ def Run_Pipeline(args):
             prepped as well as unprepped data, just provide correct filenames.
             """
             dtFiles = applyDistanceTransforms(parentDir, croppedFiles)
-            
+
     """
     ## OPTIMIZE : Particle Based Optimization
 
@@ -311,7 +309,7 @@ def Run_Pipeline(args):
             "debug_projection": 0,
             "verbosity": 3
         }
-        
+
         if args.tiny_test:
             parameterDictionary["number_of_particles"] = 32
             parameterDictionary["optimization_iterations"] = 25

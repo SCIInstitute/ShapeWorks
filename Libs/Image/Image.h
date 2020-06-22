@@ -41,6 +41,13 @@ public:
                    static_cast<unsigned long>(max[2]-min[2])});
     }
 
+    /// clip region to fit inside image
+    Region& clip(const Image& image)
+    {
+      shrink(Region(image.dims()));
+      return *this;
+    }
+    
     /// grows or shrinks the region by the specified amount
     void pad(int padding) {
       for (auto i=0; i<3; i++) {

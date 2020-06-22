@@ -1,4 +1,4 @@
-logical dims:          [100, 50, 50]
+image dimensions:      [100, 50, 50]
 physical spacing:      [1, 2, 2]
 size (spacing * dims): [100, 100, 100]
 physical origin:       [0, 0.5, 0.5]

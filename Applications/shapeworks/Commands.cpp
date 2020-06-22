@@ -108,10 +108,10 @@ bool WriteImage::execute(const optparse::Values &options, SharedCommandData &sha
 void ImageInfo::buildParser()
 {
   const std::string prog = "info";
-  const std::string desc = "prints logical dims, spacing, size, origin, direction (coordinate system), center, center of mass and bounding box";
+  const std::string desc = "prints image dimensions, spacing, size, origin, direction (coordinate system), center, center of mass and bounding box";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--dims").action("store").type("bool").set_default(false).help("Whether to display logical dims [default is false]");
+  parser.add_option("--dims").action("store").type("bool").set_default(false).help("Whether to display image dimensions [default is false]");
   parser.add_option("--spacing").action("store").type("bool").set_default(false).help("Whether to display physical spacing [default is false]");
   parser.add_option("--size").action("store").type("bool").set_default(false).help("Whether to display size [default is false]");
   parser.add_option("--origin").action("store").type("bool").set_default(false).help("Whether to display physical origin [default is false]");
@@ -145,7 +145,7 @@ bool ImageInfo::execute(const optparse::Values &options, SharedCommandData &shar
     dims = spacing = size = origin = direction = center = centerofmass = boundingbox = true;
 
   if (dims)
-    std::cout << "logical dims:          " << sharedData.image.dims() << std::endl;
+    std::cout << "image dimensions:      " << sharedData.image.dims() << std::endl;
   if (spacing)
     std::cout << "physical spacing:      " << sharedData.image.spacing() << std::endl;
   if (size)
@@ -495,7 +495,7 @@ bool CloseHoles::execute(const optparse::Values &options, SharedCommandData &sha
 void Threshold::buildParser()
 {
   const std::string prog = "threshold";
-  const std::string desc = "threholds image into binary label based on upper and lower intensity bounds given by user";
+  const std::string desc = "thresholds image into binary label based on upper and lower intensity bounds given by user";
   parser.prog(prog).description(desc);
 
   parser.add_option("--min").action("store").type("float").set_default(std::numeric_limits<float>::epsilon()).help("Lower threshold level [default = epsilon].");
@@ -525,7 +525,7 @@ bool Threshold::execute(const optparse::Values &options, SharedCommandData &shar
 void ComputeDT::buildParser()
 {
   const std::string prog = "compute-dt";
-  const std::string desc = "computes distance transform volume from a (preferably antialized) binary image";
+  const std::string desc = "computes signed distance transform volume from an image at the specified isovalue";
   parser.prog(prog).description(desc);
 
   parser.add_option("--isovalue").action("store").type("float").set_default(0.0).help("Level set value that defines the interface between foreground and background [default 0.0].");
@@ -745,7 +745,7 @@ bool Blur::execute(const optparse::Values &options, SharedCommandData &sharedDat
 void ICPRigid::buildParser()
 {
   const std::string prog = "icp";
-  const std::string desc = "transform current image using iterative closed point (ICP) 3D rigid registration computed from source to target distance maps";
+  const std::string desc = "transform current image using iterative closest point (ICP) 3D rigid registration computed from source to target distance maps";
   parser.prog(prog).description(desc);
 
   parser.add_option("--source").action("store").type("string").set_default("").help("Distance map of source image.");
@@ -822,7 +822,7 @@ bool BoundingBox::execute(const optparse::Values &options, SharedCommandData &sh
 void CropImage::buildParser()
 {
   const std::string prog = "crop";
-  const std::string desc = "performs translational alignment of shape image based on its center of mass or given 3D point";
+  const std::string desc = "crop image";
   parser.prog(prog).description(desc);
 
   Command::buildParser();
@@ -847,7 +847,7 @@ bool CropImage::execute(const optparse::Values &options, SharedCommandData &shar
 void ClipVolume::buildParser()
 {
   const std::string prog = "clip";
-  const std::string desc = "chops volume with corresponding cutting planes";
+  const std::string desc = "chops volume with the given cutting planes defined by three 3D points";
   parser.prog(prog).description(desc);
 
   parser.add_option("--x1").action("store").type("double").set_default(0.0).help("Value of x1 for cutting plane [default 0.0].");

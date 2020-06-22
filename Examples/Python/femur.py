@@ -311,8 +311,6 @@ def Run_Pipeline(args):
         if args.tiny_test:
             dtFiles = dtFiles[:3]
 
-        # dtFiles = applyDistanceTransforms(parentDir, fileList_seg)
-
     """
     ## OPTIMIZE : Particle Based Optimization
 
