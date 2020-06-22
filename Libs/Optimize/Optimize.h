@@ -18,6 +18,7 @@
 // std
 #include <vector>
 #include <string>
+#include <random>
 
 // itk
 #include <itkImage.h>
@@ -384,4 +385,6 @@ protected:
   itk::MemberCommand<Optimize>::Pointer m_iterate_command;
   int m_total_iterations = 0;
   size_t m_iteration_count = 0;
+
+  std::mt19937 m_rand{42};
 };

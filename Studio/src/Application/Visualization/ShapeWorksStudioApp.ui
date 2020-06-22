@@ -244,10 +244,10 @@
     <addaction name="action_import"/>
     <addaction name="action_export_current_mesh"/>
     <addaction name="action_export_mesh_scalars"/>
-    <addaction name="actionExport_PCA_Mesh"/>
+    <addaction name="actionExport_Eigenvectors"/>
     <addaction name="actionExport_Eigenvalues"/>
     <addaction name="actionExport_Variance_Graph"/>
-    <addaction name="actionExport_Eigenvectors"/>
+    <addaction name="action_export_pca_scores"/>
     <addaction name="actionExport_PCA_Mode_Points"/>
     <addaction name="separator"/>
     <addaction name="action_recent1"/>
@@ -627,6 +627,11 @@
   <action name="action_export_mesh_scalars">
    <property name="text">
     <string>Export Mesh Scalars...</string>
+   </property>
+  </action>
+  <action name="action_export_pca_scores">
+   <property name="text">
+    <string>Export PCA Component Scores...</string>
    </property>
   </action>
  </widget>

@@ -586,9 +586,9 @@ void Optimize::Initialize()
 
   int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
   vnl_vector_fixed < double, 3 > random;
-  srand(1);
+
   for (int i = 0; i < 3; i++) {
-    random[i] = static_cast < double > (rand());
+    random[i] = static_cast < double > (this->m_rand());
   }
   double norm = random.magnitude();
   random /= norm;

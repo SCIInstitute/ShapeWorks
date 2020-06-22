@@ -61,8 +61,8 @@ def Run_Pipeline(args):
     with ZipFile(filename, 'r') as zipObj:
         zipObj.extractall(path=parentDir)
         parentDir = parentDir + datasetName + "/"
-        fileListDT = sorted(glob.glob(parentDir + "Ellipsoids_ExistingDT/*.nrrd"))
-        fileListNew = sorted(glob.glob(parentDir + "Ellipsoids_NewShapes/*.nrrd"))
+        fileListDT = sorted(glob.glob(parentDir + "distance_transforms/*.nrrd"))
+        fileListNew = sorted(glob.glob(parentDir + "new_distance_transforms/*.nrrd"))
 
     """
 
@@ -106,7 +106,7 @@ def Run_Pipeline(args):
     Evaluate the meanshape of the existing shape model and use that to initialize the 
     particles on the new shapes
     """
-    shapemodelDir = parentDir + "Ellipsoids_ExistingShapeModel/"
+    shapemodelDir = parentDir + "model/"
     findMeanShape(shapemodelDir)
     meanShapePath = shapemodelDir + '/meanshape_local.particles'
 
