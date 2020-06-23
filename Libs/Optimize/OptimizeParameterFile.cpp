@@ -17,6 +17,7 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
   bool loadOkay = doc.LoadFile();
 
   if (!loadOkay) {
+    std::cerr << "Could not parse XML\n";
     return false;
   }
 
