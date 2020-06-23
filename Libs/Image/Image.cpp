@@ -43,13 +43,13 @@ Image::ImageType::Pointer Image::cloneData(const Image::ImageType::Pointer image
   return duplicator->GetOutput();
 }
 
-Image& Image::operator=(const Image &img)
+Image& Image::operator=(const Image& img)
 {
   this->image = Image::cloneData(image);
   return *this;
 }
 
-Image& Image::operator=(Image &&img)
+Image& Image::operator=(Image&& img)
 {
   this->image = nullptr;        // make sure to free existing image by setting it to nullptr (works b/c it's a smart ptr)
   this->image.Swap(img.image);
@@ -89,7 +89,7 @@ Image& Image::operator-()
   return *this;
 }
 
-Image& Image::operator+(const Image &other)
+Image& Image::operator+(const Image& other)
 {
   if (dims() != other.dims()) { throw std::invalid_argument("images must have same logical dims"); }
   
@@ -104,7 +104,7 @@ Image& Image::operator+(const Image &other)
   return *this;
 }
 
-Image& Image::operator-(const Image &other)
+Image& Image::operator-(const Image& other)
 {
   if (dims() != other.dims()) { throw std::invalid_argument("images must have same logical dims"); }
   
@@ -216,7 +216,7 @@ Image& Image::resample(const Point3& physicalSpacing, Dims logicalDims)
   return *this;
 }
 
-bool Image::compare(const Image &other, bool verifyall, double precision) const
+bool Image::compare(const Image& other, bool verifyall, double precision) const
 {
   // we use the region of interest filter here with the full region because our
   // incoming image may be the output of an ExtractImageFilter or PadImageFilter
@@ -341,7 +341,7 @@ Image& Image::rotate(const double angle, const Vector3 &axis)
   return *this;
 }
 
-Image &Image::applyTransform(const TransformPtr transform, const Dims dims, const Point3 origin, const Vector spacing, const ImageType::DirectionType direction)
+Image& Image::applyTransform(const TransformPtr transform, const Dims dims, const Point3 origin, const Vector spacing, const ImageType::DirectionType direction)
 {
   using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;  // linear interpolation by default
   FilterType::Pointer resampler = FilterType::New();
@@ -360,7 +360,7 @@ Image &Image::applyTransform(const TransformPtr transform, const Dims dims, cons
   return *this;
 }
 
-Image &Image::applyTransform(const TransformPtr transform)
+Image& Image::applyTransform(const TransformPtr transform)
 {
   using FilterType = itk::ResampleImageFilter<ImageType, ImageType>; // linear interpolation by default
   FilterType::Pointer resampler = FilterType::New();
@@ -471,7 +471,7 @@ Image& Image::applySigmoidFilter(double alpha, double beta)
   return *this;
 }
 
-Image& Image::applyTPLevelSetFilter(const Image &featureImage, double scaling)
+Image& Image::applyTPLevelSetFilter(const Image& featureImage, double scaling)
 {
   if (!featureImage.image) { throw std::invalid_argument("Invalid feature image"); }
 
@@ -539,7 +539,7 @@ Image& Image::crop(const Region &region)
   return *this;
 }
 
-vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image &img, PixelType isoValue)
+vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image& img, PixelType isoValue)
 {
   using FilterType = itk::VTKImageExport<ImageType>;
   FilterType::Pointer itkTargetExporter = FilterType::New();
@@ -657,7 +657,7 @@ std::ostream& operator<<(std::ostream &os, const Image::Region &r)
             << ",\n\tmax: [" << r.max[0] << ", " << r.max[1] << ", " << r.max[2] << "]\n}";
 }
 
-std::ostream& operator<<(std::ostream &os, const Image &img)
+std::ostream& operator<<(std::ostream &os, const Image& img)
 {
   return os << "{\n\tdims: " << img.dims() << ",\n\torigin: "
             << img.origin() << ",\n\tsize: " << img.size() << "\n}";
