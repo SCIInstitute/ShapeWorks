@@ -89,7 +89,7 @@ void MeshManager::handle_thread_complete(const MeshWorkItem &item, MeshHandle me
 {
   if (mesh->get_error_message() != "") {
     std::string message = "Error during mesh construction:\n\n" + mesh->get_error_message()
-                          + "\n\nFurther messagess will be suppressed\n";
+                          + "\n\nFurther messages will be suppressed\n";
     Q_EMIT error_encountered(message);
     this->error_emitted_ = true;
   }

@@ -1,5 +1,7 @@
 #include <limits>
 
+#include <QFileInfo>
+
 #include <itkPoint.h>
 
 #include <vtkPolyDataNormals.h>
@@ -89,8 +91,12 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
   //std::cerr << "build_mesh from " << filename << "\n";
   MeshHandle mesh(new Mesh);
 
-  try {
+  if (!QFileInfo(QString::fromStdString(filename)).exists()) {
+    mesh->set_error_message("File does not exist: " + filename);
+    return mesh;
+  }
 
+  try {
     // read file using ITK
     ReaderType::Pointer reader = ReaderType::New();
     reader->SetFileName(filename);
@@ -98,8 +104,8 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
     ImageType::Pointer image = reader->GetOutput();
 
     // set orientation to RAI
-    itk::OrientImageFilter<ImageType, ImageType>::Pointer orienter =
-      itk::OrientImageFilter<ImageType, ImageType>::New();
+    using Orienter = itk::OrientImageFilter<ImageType, ImageType>;
+    Orienter::Pointer orienter = Orienter::New();
     orienter->UseImageDirectionOn();
     orienter->SetDesiredCoordinateOrientation(
       itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
