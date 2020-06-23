@@ -147,13 +147,6 @@ TEST(shapeworksTests, binarize)
 }
 
 //---------------------------------------------------------------------------
-TEST(shapeworksTests, binarizefail)
-{
-  shapeworksEnvSetup();
-  ASSERT_TRUE(system("bash binarizefail.sh"));
-}
-
-//---------------------------------------------------------------------------
 TEST(shapeworksTests, computedt)
 {
   shapeworksEnvSetup();

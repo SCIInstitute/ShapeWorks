@@ -274,15 +274,20 @@ bool Image::compare(const Image &other, bool verifyall, double precision) const
 
 Image& Image::pad(int padding, PixelType value)
 {
+  return this->pad(padding, padding, padding, value);
+}
+
+Image& Image::pad(int padx, int pady, int padz, PixelType value)
+{
   ImageType::SizeType lowerExtendRegion;
-  lowerExtendRegion[0] = padding;
-  lowerExtendRegion[1] = padding;
-  lowerExtendRegion[2] = padding;
+  lowerExtendRegion[0] = padx;
+  lowerExtendRegion[1] = pady;
+  lowerExtendRegion[2] = padz;
 
   ImageType::SizeType upperExtendRegion;
-  upperExtendRegion[0] = padding;
-  upperExtendRegion[1] = padding;
-  upperExtendRegion[2] = padding;
+  upperExtendRegion[0] = padx;
+  upperExtendRegion[1] = pady;
+  upperExtendRegion[2] = padz;
 
   using FilterType = itk::ConstantPadImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
@@ -376,7 +381,7 @@ Image &Image::applyTransform(const TransformPtr transform)
 
 Image& Image::extractLabel(PixelType label)
 {
-  binarize(label, label);
+  binarize(label - std::numeric_limits<PixelType>::epsilon(), label + std::numeric_limits<PixelType>::epsilon());
 
   return *this;
 }

@@ -117,8 +117,11 @@ public:
   /// Resamples image with new physical spacing and logical size [same size if unspecified]
   Image &resample(const Point3& physicalSpacing, Dims logicalDims);
 
+  /// pads an image in all directions with constant value
+  Image &pad(int padding, PixelType value = 0.0);
+
   /// pads an image by desired number of voxels in each direction with constant value
-  Image &pad(int padding = 0, PixelType value = 0.0);
+  Image &pad(int padx, int pady, int padz, PixelType value = 0.0);
 
   /// helper to simply translate image
   Image &translate(const Vector3 &v);
