@@ -18,7 +18,7 @@ class Mesh;
 typedef QSharedPointer< Mesh > MeshHandle;
 //! Representation of a single mesh.
 /*!
- * The Mesh class represents a single mesh generated from an image file.
+ * The Mesh class represents a single mesh generated from an image file or set of particles.
  * It is responsible for loading the image and generating a mesh from it.
  *
  */
