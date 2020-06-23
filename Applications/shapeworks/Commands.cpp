@@ -988,7 +988,7 @@ bool SetOrigin::execute(const optparse::Values &options, SharedCommandData &shar
 void WarpImage::buildParser()
 {
   const std::string prog = "warp-image";
-  const std::string desc = "warps an image from source to target based on landmark guidence";
+  const std::string desc = "Finds the warp between the source and target landmarks  and returns the source image translated by that warp.";
   parser.prog(prog).description(desc);
   parser.add_option("--source_landmarks").action("store").type("string").set_default("").help("Path to source landmarks.");
   parser.add_option("--target_landmarks").action("store").type("string").set_default("").help("Path to target landmarks.");
