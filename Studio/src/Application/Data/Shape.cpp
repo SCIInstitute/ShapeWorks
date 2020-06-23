@@ -167,12 +167,9 @@ QSharedPointer<Mesh> Shape::get_groomed_mesh()
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_reconstructed_mesh(vtkSmartPointer<vtkPolyData> poly_data)
+void Shape::set_reconstructed_mesh(MeshHandle mesh)
 {
-  if (poly_data) {
-    this->reconstructed_mesh_ = QSharedPointer<Mesh> (new Mesh());
-    this->reconstructed_mesh_->set_poly_data(poly_data);
-  }
+  this->reconstructed_mesh_ = mesh;
 }
 
 //---------------------------------------------------------------------------
@@ -250,13 +247,7 @@ QSharedPointer<Mesh> Shape::get_reconstructed_mesh()
 {
   //std::cerr << "get_reconstructed_mesh\n";
   if (!this->reconstructed_mesh_) {
-    vtkSmartPointer<vtkPolyData> poly_data = this->mesh_manager_->get_mesh(
-      this->global_correspondence_points_);
-    if (poly_data) {
-      //std::cerr << "mesh was ready from manager!\n";
-      this->reconstructed_mesh_ = QSharedPointer<Mesh>(new Mesh());
-      this->reconstructed_mesh_->set_poly_data(poly_data);
-    }
+    this->reconstructed_mesh_ = this->mesh_manager_->get_mesh(this->global_correspondence_points_);
   }
 
   return this->reconstructed_mesh_;
@@ -410,15 +401,14 @@ void Shape::generate_original_meshes()
 
     MeshWorkItem item;
     item.filename = filename;
-    vtkSmartPointer<vtkPolyData> poly_data = this->mesh_manager_->get_mesh(item);
-    if (poly_data) {
+    MeshHandle mesh = this->mesh_manager_->get_mesh(item);
+    if (mesh) {
       //std::cerr << "mesh was ready from manager!\n";
-      this->original_mesh_ = QSharedPointer<Mesh>(new Mesh());
-      this->original_mesh_->set_poly_data(poly_data);
+      this->original_mesh_ = mesh;
 
       /// Temporarily calculate it here
       auto com = vtkSmartPointer<vtkCenterOfMass>::New();
-      com->SetInputData(poly_data);
+      com->SetInputData(mesh->get_poly_data());
       com->Update();
       double center[3];
       com->GetCenter(center);
@@ -448,15 +438,14 @@ void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<Mesh> 
 
   MeshWorkItem item;
   item.filename = filename;
-  vtkSmartPointer<vtkPolyData> poly_data = this->mesh_manager_->get_mesh(item);
-  if (poly_data) {
+  MeshHandle new_mesh = this->mesh_manager_->get_mesh(item);
+  if (new_mesh) {
     //std::cerr << "mesh was ready from manager!\n";
-    mesh = QSharedPointer<Mesh>(new Mesh());
-    mesh->set_poly_data(poly_data);
+    mesh = new_mesh;
 
     /// Temporarily calculate it here
     auto com = vtkSmartPointer<vtkCenterOfMass>::New();
-    com->SetInputData(poly_data);
+    com->SetInputData(mesh->get_poly_data());
     com->Update();
     double center[3];
     com->GetCenter(center);

@@ -15,7 +15,7 @@
 #include <Groom/ShapeWorksGroom.h>
 
 class Mesh;
-typedef QSharedPointer< Mesh > MeshHandle;
+typedef QSharedPointer<Mesh> MeshHandle;
 //! Representation of a single mesh.
 /*!
  * The Mesh class represents a single mesh generated from an image file or set of particles.

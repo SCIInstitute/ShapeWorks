@@ -32,10 +32,10 @@ public:
   void generate_mesh(const MeshWorkItem item);
 
   //! get a mesh for a MeshWorkItem
-  vtkSmartPointer<vtkPolyData> get_mesh(const MeshWorkItem& item);
+  MeshHandle get_mesh(const MeshWorkItem& item);
 
   //! get a mesh for a set of points
-  vtkSmartPointer<vtkPolyData> get_mesh(const vnl_vector<double> &points);
+  MeshHandle get_mesh(const vnl_vector<double> &points);
 
   //! return the surface reconstructor
   QSharedPointer<SurfaceReconstructor> get_surface_reconstructor();
@@ -44,10 +44,14 @@ public:
   void clear_cache();
 
 public Q_SLOTS:
-  void handle_thread_complete(const MeshWorkItem &item, vtkSmartPointer<vtkPolyData> mesh);
+
+  void handle_thread_complete(const MeshWorkItem &item, MeshHandle mesh);
 
 Q_SIGNALS:
+
   void new_mesh();
+
+  void error_encountered(std::string message);
 
 private:
 
@@ -70,4 +74,6 @@ private:
   QSharedPointer<SurfaceReconstructor> surface_reconstructor_;
 
   QThreadPool thread_pool_;
+
+  bool error_emitted_ = false;
 };

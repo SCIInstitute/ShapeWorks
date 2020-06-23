@@ -91,7 +91,7 @@ public:
 
   QSharedPointer<MeshManager> get_mesh_manager() { return this->mesh_manager_; }
 
-  Parameters & settings();
+  Parameters& parameters();
 
 public Q_SLOTS:
   void handle_clear_cache();

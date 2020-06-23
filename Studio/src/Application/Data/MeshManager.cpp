@@ -19,7 +19,7 @@ MeshManager::MeshManager(Preferences& prefs) :
   this->mesh_generator_.set_surface_reconstructor(this->surface_reconstructor_);
 
   qRegisterMetaType<MeshWorkItem>("MeshWorkItem");
-  qRegisterMetaType<vtkSmartPointer<vtkPolyData>>("vtkSmartPointer<vtkPolyData>");
+  qRegisterMetaType<MeshHandle>("MeshHandle");
 
   this->thread_pool_.setMaxThreadCount(8);
 }
@@ -37,8 +37,7 @@ void MeshManager::clear_cache()
 void MeshManager::generate_mesh(const MeshWorkItem item)
 {
   // check cache first
-  if (!this->mesh_cache_.get_mesh(item)
-      && !this->work_queue_.isInside(item)) {
+  if (!this->mesh_cache_.get_mesh(item) && !this->work_queue_.isInside(item)) {
 
     this->work_queue_.push(item);
 
@@ -53,32 +52,32 @@ void MeshManager::generate_mesh(const MeshWorkItem item)
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MeshManager::get_mesh(const MeshWorkItem &item)
+MeshHandle MeshManager::get_mesh(const MeshWorkItem &item)
 {
-  vtkSmartPointer<vtkPolyData> poly_data;
+  MeshHandle mesh;
 
   // check cache first
   if (this->prefs_.get_cache_enabled()) {
-    poly_data = this->mesh_cache_.get_mesh(item);
-    if (!poly_data) {
+    mesh = this->mesh_cache_.get_mesh(item);
+    if (!mesh) {
       if (prefs_.get_parallel_enabled() &&
           (this->prefs_.get_num_threads() > 0)) {
         this->generate_mesh(item);
       }
       else {
-        poly_data = this->mesh_generator_.build_mesh(item);
-        this->mesh_cache_.insert_mesh(item, poly_data);
+        mesh = this->mesh_generator_.build_mesh(item);
+        this->mesh_cache_.insert_mesh(item, mesh);
       }
     }
   }
   else {
-    poly_data = this->mesh_generator_.build_mesh(item);
+    mesh = this->mesh_generator_.build_mesh(item);
   }
-  return poly_data;
+  return mesh;
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MeshManager::get_mesh(const vnl_vector<double> &points)
+MeshHandle MeshManager::get_mesh(const vnl_vector<double> &points)
 {
   MeshWorkItem item;
   item.points = points;
@@ -86,9 +85,14 @@ vtkSmartPointer<vtkPolyData> MeshManager::get_mesh(const vnl_vector<double> &poi
 }
 
 //---------------------------------------------------------------------------
-void MeshManager::handle_thread_complete(const MeshWorkItem &item,
-                                         vtkSmartPointer<vtkPolyData> mesh)
+void MeshManager::handle_thread_complete(const MeshWorkItem &item, MeshHandle mesh)
 {
+  if (mesh->get_error_message() != "") {
+    std::string message = "Error during mesh construction:" + mesh->get_error_message()
+                          + "\nfurther messagess will be supressed\n";
+    Q_EMIT error_encountered(mesh->get_error_message());
+    this->error_emitted_ = true;
+  }
   this->mesh_cache_.insert_mesh(item, mesh);
   this->work_queue_.remove(item);
 

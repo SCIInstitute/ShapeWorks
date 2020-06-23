@@ -38,7 +38,7 @@ Session::Session(QWidget* parent, Preferences& prefs) : parent_(parent),
 {
   this->parent_ = NULL;
   this->reset();
-  connect(this->mesh_manager_.data(), SIGNAL(new_mesh()), this, SLOT(handle_new_mesh()));
+  connect(this->mesh_manager_.data(), &MeshManager::new_mesh, this, &Session::handle_new_mesh);
 }
 
 //---------------------------------------------------------------------------
@@ -355,8 +355,8 @@ bool Session::load_light_project(QString filename)
 
   //this->calculate_reconstructed_samples();
 
-  this->settings().set("view_state", Visualizer::MODE_RECONSTRUCTION_C);
-  this->settings().set("tool_state", Session::ANALYSIS_C);
+  this->parameters().set("view_state", Visualizer::MODE_RECONSTRUCTION_C);
+  this->parameters().set("tool_state", Session::ANALYSIS_C);
 
   //this->preferences_.set_preference("display_state",
 //                                    QString::fromStdString(Visualizer::MODE_RECONSTRUCTION_C));
@@ -768,7 +768,7 @@ int Session::get_num_shapes()
 }
 
 //---------------------------------------------------------------------------
-Parameters &Session::settings()
+Parameters &Session::parameters()
 {
   return this->params_;
 }

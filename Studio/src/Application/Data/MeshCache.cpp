@@ -27,7 +27,7 @@
 Preferences* MeshCache::pref_ref_ = nullptr;
 
 //-----------------------------------------------------------------------------
-long long MeshCache::getTotalPhysicalMemory()
+long long MeshCache::get_total_physical_memory()
 {
 #ifdef _WIN32
   MEMORYSTATUSEX memInfo;
@@ -56,7 +56,7 @@ long long MeshCache::getTotalPhysicalMemory()
 }
 
 //-----------------------------------------------------------------------------
-long long MeshCache::getTotalAddressibleMemory()
+long long MeshCache::get_total_addressible_memory()
 {
   if (sizeof (void*) == 8) {
     return 1ULL << 62;
@@ -67,23 +67,23 @@ long long MeshCache::getTotalAddressibleMemory()
 }
 
 //-----------------------------------------------------------------------------
-long long MeshCache::getTotalAddressiblePhysicalMemory()
+long long MeshCache::get_total_addressible_physical_memory()
 {
-  long long addressable = MeshCache::getTotalAddressibleMemory();
-  long long physical = MeshCache::getTotalPhysicalMemory();
+  long long addressable = MeshCache::get_total_addressible_memory();
+  long long physical = MeshCache::get_total_physical_memory();
   if (physical > addressable) {return addressable; } else {return physical; }
 }
 
 //-----------------------------------------------------------------------------
 MeshCache::MeshCache(Preferences& prefs) : preferences_(prefs)
 {
-  this->max_memory_ = MeshCache::getTotalAddressiblePhysicalMemory();
+  this->max_memory_ = MeshCache::get_total_addressible_physical_memory();
   this->memory_size_ = 0;
   this->pref_ref_ = &this->preferences_;
 }
 
 //-----------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MeshCache::get_mesh(const MeshWorkItem &shape)
+MeshHandle MeshCache::get_mesh(const MeshWorkItem &shape)
 {
   QMutexLocker locker(&mutex_);
 
@@ -101,7 +101,7 @@ vtkSmartPointer<vtkPolyData> MeshCache::get_mesh(const MeshWorkItem &shape)
 }
 
 //-----------------------------------------------------------------------------
-void MeshCache::insert_mesh(const MeshWorkItem& item, vtkSmartPointer<vtkPolyData> mesh)
+void MeshCache::insert_mesh(const MeshWorkItem& item, MeshHandle mesh)
 {
   if (!preferences_.get_cache_enabled()) {
     return;
@@ -109,10 +109,10 @@ void MeshCache::insert_mesh(const MeshWorkItem& item, vtkSmartPointer<vtkPolyDat
 
   QMutexLocker locker(&mutex_);
 
-  if (mesh) {
+  if (mesh->get_poly_data()) {
     // compute the memory size of this shape
     size_t shape_size = item.points.size() * sizeof(double);
-    size_t mesh_size = mesh->GetActualMemorySize() * 1024; // given in kb
+    size_t mesh_size = mesh->get_poly_data()->GetActualMemorySize() * 1024; // given in kb
     size_t combined_size = (shape_size * 2) + mesh_size;
     this->memory_size_ += combined_size;
   }
