@@ -14,7 +14,7 @@ This calls ellipsoid_fd.py which:
 
 ### Optimize
 
-For a description of the optimize tools and parameters, see: [Optimize.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Optimize.md)
+For a description of the optimize tools and parameters, see: [Optimize.md](../Workflow/Optimize.md)
 
 * Single scale optimization uses the user defined number of particles for optimization and uses procrustes scaling to factor out size as a mode of variation. 
 Below are the default optimization parameters for this use case. 

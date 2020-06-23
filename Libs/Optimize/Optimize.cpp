@@ -229,6 +229,19 @@ int Optimize::GetDomainsPerShape()
 }
 
 //---------------------------------------------------------------------------
+void Optimize::SetDomainType(shapeworks::DomainType type)
+{
+  this->m_domain_type = type;
+  this->m_sampler->SetDomainType(this->m_domain_type);
+}
+
+//---------------------------------------------------------------------------
+shapeworks::DomainType Optimize::GetDomainType()
+{
+  return this->m_domain_type;
+}
+
+//---------------------------------------------------------------------------
 void Optimize::SetNumberOfParticles(std::vector<unsigned int> number_of_particles)
 {
   this->m_number_of_particles = number_of_particles;
@@ -573,9 +586,9 @@ void Optimize::Initialize()
 
   int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
   vnl_vector_fixed < double, 3 > random;
-  srand(1);
+
   for (int i = 0; i < 3; i++) {
-    random[i] = static_cast < double > (rand());
+    random[i] = static_cast < double > (this->m_rand());
   }
   double norm = random.magnitude();
   random /= norm;

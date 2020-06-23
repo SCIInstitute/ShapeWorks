@@ -273,7 +273,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
 
     if processRaw:
         rawoutDir = os.path.join(outDir, 'images')
-        binaryoutDir = os.path.join(outDir + 'segmentations')
+        binaryoutDir = os.path.join(outDir, 'segmentations')
 
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)

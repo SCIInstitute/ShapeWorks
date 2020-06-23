@@ -5,12 +5,11 @@
 In this use case we start with full unsegmented images (CT scans) of the hip and segmented meshes of each femur.
 ShapeWorks requires a binary volume format for input segmentations so these meshes must first be converted into binary volumes. Additionally, the corresponding unsegmented images need to be carried through each grooming step with the meshes so that they can be used for analysis.
 
-The femur meshes in this data set have been segmented with various shaft lengths as can be seen below. In order to remove this variablity so that it is not captured in the shape model, the femurs are clipped using a cutting plane defined by the user. There are two ways to do so as explained below and they are differentiated by using the "--interactive" tag or not. 
-
-![Femur Lengths](../images/femurLengths.png)
+The femur meshes in this data set have been segmented with various shaft lengths as can be seen below. In order to remove this variablity so that it is not captured in the shape model, the femurs are clipped using a cutting plane. The use case has a predefined cutting plane but the user can chose to overwrite it and define the cutting plane interactively by running the use case with the "--interactive" tag. There are two ways to define the cutting plane interactively as explained below.
+![Femur Lengths](../Images/femurLengths.png)
 
 ### Running the Use Case
-The use case is located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python)
+The use case is located at: [/Examples/Python](../Examples/Python)
 
 To run the use case, run:
             
@@ -24,29 +23,36 @@ This calls femur.py which:
 
 #### Running without the --interactive tag
 
-If the --interactive tag is not used, the user will select the cutting plane in the beggining of the grooming steps on a sample of their choice.
-
-The user will be prompted with “Type the prefix of the sample you wish to use to select the cutting plane from listed options and press enter.” and the options are listed. After they've typed the chosen sample prefix, an interactive window will pop up in which they can select the cutting plane. When the user is content with their selection, they simply close this window and the grooming process will continue. This process can be seen below.
-
-![Alt Text](../images/notInteractiveFemur.gif)
-
-Note that internally, whatever transformations are done to the sample the user has defined the cutting plane on will be done to the cutting plane as well, so that when it is time to clip the samples the cutting plane is still well defined. 
+If the --interactive tag is not used, the pre-defined cutting plane is used to clip the segmenations.
 
 #### Running with the --interactive tag
-To run the use case interactively, either run:
+To run the use case interactively, run:
             
               python RunUseCase.py --use_case femur --interactive
 
-If the --interactive tag is used, the user will be asked to select a cutting plane for the femur shaft in the middle of the grooming process. Once the reference sample for alignment has been selected, an interactive window will pop up with the reference sample and the user can define the cutting plane. Closing the window will continue the grooming process. 
+In interactive mode, the user is presented with two options to chose between for defining the cutting plane interactively.
+##### Option 1
+              
+The first option is to select the cutting plane in the beggining of the grooming steps on a sample of the users choice.
 
-![Alt Text](../images/interactiveFemur.gif)
+The user will be prompted with “Type the prefix of the sample you wish to use to select the cutting plane from listed options and press enter.” and the options are listed. After they've typed the chosen sample prefix, an interactive window will pop up in which they can select the cutting plane. When the user is content with their selection, they simply close this window and the grooming process will continue. This process can be seen below.
+
+[![Femur option 1](../Images/femur_option1_thumbnail.png)](https://youtu.be/DWPuyLY8iRk)
+
+Note that internally, whatever transformations are done to the sample the user has defined the cutting plane on will be done to the cutting plane as well, so that when it is time to clip the samples the cutting plane is still well defined. 
+
+ ##### Option 2
+
+If option 2 is selected, the user will be asked to select a cutting plane for the femur shaft in the middle of the grooming process. Once the reference sample for alignment has been selected, an interactive window will pop up with the reference sample and the user can define the cutting plane. Closing the window will continue the grooming process. 
+
+[![Femur option 2](../Images/femur_option2_thumbnail.png)](https://youtu.be/BRw2JAKUiEY)
 
 ### Grooming
-For a description of the grooming tools and parameters, see: [Groom.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Groom.md)
+For a description of the grooming tools and parameters, see: [Groom.md](../Workflow/Groom.md)
 
 The steps are described below and the results of each step are shown for the meshes (note every step is perfmored on both the meshes the images although the resulting images are not shown here).
 
-0. Define cutting plane either in beginning or after rigid alignment using the interactive window. 
+0. If interactive, define cutting plane either in beginning or after rigid alignment using the interactive window. 
 
             Within this window:
 
@@ -70,10 +76,10 @@ The steps are described below and the results of each step are shown for the mes
 9. Crop - The images and segmentations are cropped so that all of the samples are within the same bounding box.
 10. Distance Transform - Finally the distance transform it taken and the data is ready for ShapeWorks optimize.
 
-![Grooming steps](images/FemurGroomPipeline.PNG)
+![Grooming steps](../Images/FemurGroomPipeline.PNG)
 
 ### Optimize
-For a description of the optimize tools and parameters, see: [Optimize.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Optimize.md)
+For a description of the optimize tools and parameters, see: [Optimize.md](../Workflow/Optimize.md)
 
 Single scale optimization is used with procrustes scaling to factor out size as a mode of variation. Below are the default optimization parameters for this use case. 
 
@@ -100,14 +106,15 @@ Single scale optimization is used with procrustes scaling to factor out size as 
 ### Analyze
 
 The particle based model for the mean shape and samples and the primary modes of variation are visualized using ShapeWorksStudio.
-For more information see: [Analyze.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Analyze.md)
+For more information see: [Analyze.md](../Workflow/Analyze.md)
 
 #### Mean Shape
-![Alt Text](../images/mean_femur.gif)
+
+[![Mean Shape of Femur](../Images/mean_femur_thumbnail.png)](https://youtu.be/CgCRYlD4Hdg)
 
 #### Samples
-![Zoom Femur Samples](../images/femur_samples_zoom.png)
-![Femur Samples](../images/femur_samples.png)
+![Zoom Femur Samples](../Images/femur_samples_zoom.png)
+![Femur Samples](../Images/femur_samples.png)
 
 #### PCA
-![Alt Text](../images/femur_PCA.gif)
+[![Femur PCA](../Images/femur_PCA_thumbnail.png)](https://youtu.be/N4hmXSJsqRg)

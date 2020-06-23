@@ -19,6 +19,7 @@
 #include "itkParticleMeanCurvatureAttribute.h"
 #include "itkParticleSurfaceNeighborhood.h"
 #include "itkParticleOmegaGradientFunction.h"
+#include "DomainType.h"
 
 #include "itkParticleModifiedCotangentEntropyGradientFunction.h"
 #include "itkParticleConstrainedModifiedCotangentEntropyGradientFunction.h"
@@ -166,11 +167,6 @@ public:
         m_DomainList.push_back(domain);
     }
 
-    int NumDomains() const
-    {
-      return m_DomainList.size();
-    }
-
     void SetFidsFiles(const std::vector<std::string> &s)
     {
         m_FidsFiles = s;
@@ -187,6 +183,10 @@ public:
     void SetDomainsPerShape(int i)
     {
         m_DomainsPerShape = i;
+    }
+    void SetDomainType(shapeworks::DomainType domain_type)
+    {
+        m_domain_type = domain_type;
     }
     void SetAttributesPerDomain(const std::vector<int> &i)
     {
@@ -214,7 +214,7 @@ public:
 
         if (m_Initialized == true)
         {
-            m_DomainList[i]->SetCuttingPlane(va,vb,vc);
+            m_ParticleSystem->GetDomain(i)->SetCuttingPlane(va, vb, vc);
         }
     }
 
@@ -224,22 +224,13 @@ public:
         if (m_Initialized == true)
         {
             TransformType T1 = this->GetParticleSystem()->GetTransform(i) * this->GetParticleSystem()->GetPrefixTransform(i);
-            vnl_vector_fixed<double, Dimension> fa = m_DomainList[i]->GetA();
-            vnl_vector_fixed<double, Dimension> fb = m_DomainList[i]->GetB();
-            vnl_vector_fixed<double, Dimension> fc = m_DomainList[i]->GetC();
-            /* Copy vnl_vector_fixed to vnl_vector */
-            vnl_vector<double> a(Dimension); vnl_vector<double> b(Dimension); vnl_vector<double> c(Dimension);
-            for(unsigned int k = 0; k < Dimension; k++)
-            {
-                a[k] = fa[k]; b[k] = fb[k]; c[k] = fc[k];
-            }
             for(unsigned int d = 0; d < this->GetParticleSystem()->GetNumberOfDomains(); d++)
             {
                 if (this->GetParticleSystem()->GetDomainFlag(d) == false)
                 {
                     TransformType T2 = this->GetParticleSystem()->InvertTransform( this->GetParticleSystem()->GetTransform(d)
                                                                                    * this->GetParticleSystem()->GetPrefixTransform(d));
-                    m_DomainList[d]->TransformCuttingPlane( T2 * T1, a, b, c );
+                    m_ParticleSystem->GetDomain(d)->TransformCuttingPlane(T2 * T1);
                 }
             }
         }
@@ -260,7 +251,7 @@ public:
 
         if (m_Initialized == true)
         {
-            m_DomainList[i]->AddSphere(c,r);
+            m_ParticleSystem->GetDomain(i)->AddSphere(c, r);
         }
     }
 
@@ -332,11 +323,6 @@ public:
     virtual void AllocateDataCaches();
     virtual void AllocateDomainsAndNeighborhoods();
     virtual void InitializeOptimizationFunctions();
-    virtual void DeleteImages() {
-        for(int i=0; i<m_DomainList.size(); i++) {
-            m_DomainList[i]->DeleteImages();
-        }
-    }
 
     /** */
     virtual void Initialize()
@@ -387,8 +373,7 @@ protected:
 
     typename ParticleSystem<Dimension>::Pointer m_ParticleSystem;
 
-    std::vector<typename ParticleImplicitSurfaceDomain<typename
-    ImageType::PixelType, Dimension>::Pointer> m_DomainList;
+    std::vector<typename ParticleDomain<Dimension>::Pointer> m_DomainList;
 
     std::vector<typename ParticleSurfaceNeighborhood<ImageType>::Pointer> m_NeighborhoodList;
 
@@ -406,6 +391,7 @@ private:
     std::vector<int> m_AttributesPerDomain;
     int m_DomainsPerShape;
     double m_Spacing{0};
+    shapeworks::DomainType m_domain_type;
 
     std::string m_TransformFile;
     std::string m_PrefixTransformFile;
