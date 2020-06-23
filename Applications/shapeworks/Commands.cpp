@@ -279,11 +279,14 @@ bool RecenterImage::execute(const optparse::Values &options, SharedCommandData &
 void PadImage::buildParser()
 {
   const std::string prog = "pad";
-  const std::string desc = "pads an image with the specified value in the x-, y-, and z- directions";
+  const std::string desc = "pads an image with value by the specified number of voxels in the x-, y-, and/or z- directions; origin remains at the same location (note: negative values are permitted)";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--padding").action("store").type("int").set_default(0).help("Number of voxels to be padded in each direction [default: 0].");
-  parser.add_option("--value").action("store").type("double").set_default(0.0).help("Value to be used to fill padded voxels [default: 0.0].");
+  parser.add_option("--padding").action("store").type("int").set_default(0).help("Pad this many voxels in ALL directions (used if set) [default: 0].");
+  parser.add_option("--padx","-x").action("store").type("int").set_default(0).help("Pad this many voxels in the x-direction [default: 0].");
+  parser.add_option("--pady","-y").action("store").type("int").set_default(0).help("Pad this many voxels in the y-direction [default: 0].");
+  parser.add_option("--padz","-z").action("store").type("int").set_default(0).help("Pad this many voxels in the z-direction [default: 0].");
+  parser.add_option("--value").action("store").type("double").set_default(0.0).help("Value used to fill padded voxels [default: 0.0].");
 
   Command::buildParser();
 }
@@ -297,9 +300,15 @@ bool PadImage::execute(const optparse::Values &options, SharedCommandData &share
   }
 
   int padding = static_cast<int>(options.get("padding"));
+  int padx = static_cast<int>(options.get("padx"));
+  int pady = static_cast<int>(options.get("pady"));
+  int padz = static_cast<int>(options.get("padz"));
   double value = static_cast<double>(options.get("value"));
 
-  sharedData.image.pad(padding, value);
+  if (padding < 0 || padding > 0)
+    sharedData.image.pad(padding, value);
+  else 
+    sharedData.image.pad(padx, pady, padz, value);
   return true;
 }
 
@@ -824,7 +833,13 @@ bool BoundingBox::execute(const optparse::Values &options, SharedCommandData &sh
 void CropImage::buildParser()
 {
   const std::string prog = "crop";
-  const std::string desc = "crop image";
+  const std::string desc = "crop image down to the current region (e.g., from bounding-box command), or the specified min/max in each direction [default: image dimensions]";
+  parser.add_option("--xmin").action("store").type("unsigned").set_default(0).help("Minimum X.");
+  parser.add_option("--xmax").action("store").type("unsigned").set_default(0).help("Maximum X.");
+  parser.add_option("--ymin").action("store").type("unsigned").set_default(0).help("Minimum Y.");
+  parser.add_option("--ymax").action("store").type("unsigned").set_default(0).help("Maximum Y.");
+  parser.add_option("--zmin").action("store").type("unsigned").set_default(0).help("Minimum Z.");
+  parser.add_option("--zmax").action("store").type("unsigned").set_default(0).help("Maximum Z.");
   parser.prog(prog).description(desc);
 
   Command::buildParser();
@@ -839,7 +854,24 @@ bool CropImage::execute(const optparse::Values &options, SharedCommandData &shar
     return false;
   }
 
-  sharedData.image.crop(sharedData.region);
+  unsigned xmin = static_cast<unsigned>(options.get("xmin"));
+  unsigned ymin = static_cast<unsigned>(options.get("ymin"));
+  unsigned zmin = static_cast<unsigned>(options.get("zmin"));
+  unsigned xmax = static_cast<unsigned>(options.get("xmax"));
+  unsigned ymax = static_cast<unsigned>(options.get("ymax"));
+  unsigned zmax = static_cast<unsigned>(options.get("zmax"));
+
+  if (xmin == 0 && ymin == 0 && zmin == 0 &&
+      xmax == 0 && ymax == 0 && zmax == 0)
+    sharedData.image.crop(sharedData.region);
+  else
+  {
+    Image::Region region(sharedData.image.dims());
+    if (xmin < xmax) { region.min[0] = xmin; region.max[0] = xmax; }
+    if (ymin < ymax) { region.min[0] = ymin; region.max[0] = ymax; }
+    if (zmin < zmax) { region.min[0] = zmin; region.max[0] = zmax; }
+    sharedData.image.crop(region);
+  }
   return true;
 }
 

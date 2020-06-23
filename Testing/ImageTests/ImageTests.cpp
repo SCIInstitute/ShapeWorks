@@ -164,6 +164,17 @@ TEST(ImageTests, padTest)
   ASSERT_TRUE(image == ground_truth);
 }
 
+TEST(ImageTests, padTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/pad/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.pad(100, 25, 1, 10.0);
+  Image ground_truth(test_location + "pad2_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
 TEST(ImageTests, translateTest1)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/translate/");
@@ -444,7 +455,7 @@ TEST(ImageTests, cropTest)
   Image image(test_location + "seg.ellipsoid_1.nrrd");
   Image::Region region;
   region = ImageUtils::boundingBox(images);
-  image.pad().crop(region);
+  image.crop(region);
   Image ground_truth(test_location + "crop_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
