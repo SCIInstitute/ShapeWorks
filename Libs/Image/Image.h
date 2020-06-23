@@ -101,12 +101,20 @@ public:
   Image& operator-();
 
   /// plus operator to add two images
-  Image& operator+(const Image& other);
-  Image& operator+=(const Image& other) { return *this = *this + other; }
+  Image operator+(const Image& other) const;
+  Image& operator+=(const Image& other);
 
   /// minus operator to add two images
-  Image& operator-(const Image& other);
-  Image& operator-=(const Image& other) { return *this = *this - other; }
+  Image operator-(const Image& other) const;
+  Image& operator-=(const Image& other);
+
+  /// multiply operator to scale contents of an image
+  Image operator*(const PixelType x) const;
+  Image& operator*=(const PixelType x);
+
+  /// plus operator to add two images
+  Image operator/(const PixelType x) const;
+  Image& operator/=(const PixelType x);
 
   /// antialiases image
   Image& antialias(unsigned iterations = 50, double maxRMSErr = 0.01f, int layers = 0);
@@ -240,7 +248,18 @@ private:
   ImageType::Pointer image;
 };
 
+/// stream insertion operators for Image and Image::Region
 std::ostream& operator<<(std::ostream &os, const Image& img);
 std::ostream& operator<<(std::ostream &os, const Image::Region &region);
+
+/// override templates defined in Shapeworks.h
+template<>
+Image operator*(const Image& img, const double x);
+template<>
+Image operator/(const Image& img, const double x);
+template<>
+Image& operator*=(Image& img, const double x);
+template<>
+Image& operator/=(Image& img, const double x);
 
 } // shapeworks

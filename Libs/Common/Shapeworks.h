@@ -100,19 +100,44 @@ P operator*(const P &p, const P &q)
 }
 
 template <typename P>
+P& operator+=(P &p, const P &q)
+{
+  for (unsigned i = 0; i < 3; i++)
+    p[i] += q[i];
+  return p;
+}
+
+template <typename P>
+P& operator-=(P &p, const P &q)
+{
+  for (unsigned i = 0; i < 3; i++)
+    p[i] -= q[i];
+  return p;
+}
+
+template <typename P>
+P operator*(const P &p, const double x)
+{
+  P ret;
+  for (unsigned i = 0; i < 3; i++)
+    ret[i] = p[i] * x;
+  return std::move(ret);
+}
+
+template <typename P>
 P operator/(const P &p, const double x)
 {
   P ret;
   for (unsigned i = 0; i < 3; i++)
     ret[i] = p[i] / x;
-  return ret;
+  return std::move(ret);
 }
 
 template <typename P>
-P& operator+=(P &p, const P &q)
+P& operator*=(P &p, const double x)
 {
   for (unsigned i = 0; i < 3; i++)
-    p[i] += q[i];
+    p[i] *= x;
   return p;
 }
 

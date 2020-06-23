@@ -400,6 +400,30 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+class MultiplyImage : public ImageCommand
+{
+public:
+  static MultiplyImage& getCommand() { static MultiplyImage instance; return instance; }
+
+private:
+  MultiplyImage() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class DivideImage : public ImageCommand
+{
+public:
+  static DivideImage& getCommand() { static DivideImage instance; return instance; }
+
+private:
+  DivideImage() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
 class ReadParticleSystem : public ParticleSystemCommand
 {
 public:

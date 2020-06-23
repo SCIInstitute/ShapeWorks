@@ -292,3 +292,18 @@ TEST(shapeworksTests, subtraction)
   shapeworksEnvSetup();
   ASSERT_FALSE(system("bash sub.sh"));
 }
+
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, multiplication)
+{
+  shapeworksEnvSetup();
+  ASSERT_FALSE(system("bash mul.sh"));
+}
+
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, division)
+{
+  shapeworksEnvSetup();
+  ASSERT_FALSE(system("bash div.sh"));
+}
+

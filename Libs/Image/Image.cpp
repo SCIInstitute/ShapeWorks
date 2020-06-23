@@ -89,7 +89,14 @@ Image& Image::operator-()
   return *this;
 }
 
-Image& Image::operator+(const Image& other)
+Image Image::operator+(const Image& other) const
+{
+  Image ret(*this);
+  ret += other;
+  return ret;
+}
+
+Image& Image::operator+=(const Image& other)
 {
   if (dims() != other.dims()) { throw std::invalid_argument("images must have same logical dims"); }
   
@@ -104,7 +111,14 @@ Image& Image::operator+(const Image& other)
   return *this;
 }
 
-Image& Image::operator-(const Image& other)
+Image Image::operator-(const Image& other) const
+{
+  Image ret(*this);
+  ret -= other;
+  return ret;
+}
+
+Image& Image::operator-=(const Image& other)
 {
   if (dims() != other.dims()) { throw std::invalid_argument("images must have same logical dims"); }
   
@@ -118,6 +132,56 @@ Image& Image::operator-(const Image& other)
 
   return *this;
 }
+
+Image Image::operator*(const PixelType x) const
+{
+  Image ret(*this);
+  ret *= x;
+  return ret;
+}
+
+Image& Image::operator*=(const PixelType x)
+{
+  itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
+  while (!iter.IsAtEnd())
+  {
+    iter.Set(iter.Value() * x);
+    ++iter;
+  }
+
+  return *this;
+}
+
+Image Image::operator/(const PixelType x) const
+{
+  Image ret(*this);
+  ret /= x;
+  return ret;
+}
+
+Image& Image::operator/=(const PixelType x)
+{
+  itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
+  while (!iter.IsAtEnd())
+  {
+    iter.Set(iter.Value() / x);
+    ++iter;
+  }
+
+  return *this;
+}
+
+template<>
+Image operator*(const Image& img, const double x) { return img.operator*(x); }
+
+template<>
+Image operator/(const Image& img, const double x) { return img.operator/(x); }
+
+template<>
+Image& operator*=(Image& img, const double x) { return img.operator*=(x); }
+
+template<>
+Image& operator/=(Image& img, const double x) { return img.operator/=(x); }
 
 Image::ImageType::Pointer Image::readDICOMImage(const std::string &pathname)
 {

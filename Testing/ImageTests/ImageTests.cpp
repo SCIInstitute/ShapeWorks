@@ -825,7 +825,7 @@ TEST(ImageTests, additionTest1)
   Image image1(test_location + "la-bin.nrrd");
   Image image2(test_location + "1x2x2.nrrd");
   try {
-    image1 = image1 + image2; // the have different dims, so operator throws an exception
+    image1 = image1 + image2; // they have different dims, so operator throws an exception
   } catch(std::invalid_argument) { return; }
 
   // fails if an exception is not thrown
@@ -838,22 +838,25 @@ TEST(ImageTests, additionTest2)
 
   Image image1(test_location + "la-bin.nrrd");
   Image image2(test_location + "la-bin.nrrd");
-  image1 = image1 + image2;
+  Image image3(image1 + image2);
   Image baseline(test_location + "baseline_addition.nrrd");
 
-  ASSERT_TRUE(image1 == baseline);
+  ASSERT_TRUE(image3 == baseline);
+  ASSERT_TRUE(image1 == image2);
 }
 
 TEST(ImageTests, additionTest3)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/addition/");
 
+  std::cout << "addition3\n"; 
   Image image1(test_location + "la-bin.nrrd");
   Image image2(test_location + "la-bin.nrrd");
   image1 += image2;
   Image baseline(test_location + "baseline_addition.nrrd");
 
   ASSERT_TRUE(image1 == baseline);
+  std::cout << "addition3 DONE\n"; 
 }
 
 TEST(ImageTests, subtractionTest1)
@@ -876,10 +879,13 @@ TEST(ImageTests, subtractionTest2)
 
   Image image1(test_location + "img1.nrrd");
   Image image2(test_location + "img2.nrrd");
-  image1 = image1 - image2;
-  Image baseline(test_location + "baseline_subtraction.nrrd");
 
-  ASSERT_TRUE(image1 == baseline);
+  Image image3(image1 - image2);
+  Image baseline(test_location + "baseline_subtraction.nrrd");
+  ASSERT_TRUE(image3 == baseline);
+
+  Image orig_image1(test_location + "img1.nrrd");
+  ASSERT_TRUE(image1 == orig_image1);
 }
 
 TEST(ImageTests, subtractionTest3)
@@ -892,4 +898,54 @@ TEST(ImageTests, subtractionTest3)
   Image baseline(test_location + "baseline_subtraction.nrrd");
 
   ASSERT_TRUE(image1 == baseline);
+}
+
+TEST(ImageTests, multiplyTest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/multiply/");
+
+  Image image(test_location + "la-bin.nrrd");
+  Image multiplied(image * 3.14);
+  Image baseline(test_location + "baseline_multiply.nrrd");
+
+  ASSERT_TRUE(multiplied == baseline);
+
+  Image orig_image(test_location + "la-bin.nrrd");
+  ASSERT_TRUE(image == orig_image);
+}
+
+TEST(ImageTests, multiplyTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/multiply/");
+
+  Image image(test_location + "la-bin.nrrd");
+  image *= 3.14;
+  Image baseline(test_location + "baseline_multiply.nrrd");
+
+  ASSERT_TRUE(image == baseline);
+}
+
+TEST(ImageTests, divideTest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/divide/");
+
+  Image image(test_location + "la-bin.nrrd");
+  Image divided(image / 3.14);
+  Image baseline(test_location + "baseline_divide.nrrd");
+
+  ASSERT_TRUE(divided == baseline);
+
+  Image orig_image(test_location + "la-bin.nrrd");
+  ASSERT_TRUE(image == orig_image);
+}
+
+TEST(ImageTests, divideTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/divide/");
+
+  Image image(test_location + "la-bin.nrrd");
+  image /= 3.14;
+  Image baseline(test_location + "baseline_divide.nrrd");
+
+  ASSERT_TRUE(image == baseline);
 }

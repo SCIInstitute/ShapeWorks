@@ -1161,6 +1161,62 @@ bool SubtractImage::execute(const optparse::Values &options, SharedCommandData &
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// MultiplyImage
+///////////////////////////////////////////////////////////////////////////////
+void MultiplyImage::buildParser()
+{
+  const std::string prog = "mul";
+  const std::string desc = "multiply an image by a constant";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--val","-x").action("store").type("double").set_default("0.0").help("Value with which to multiply");
+
+  Command::buildParser();
+}
+
+bool MultiplyImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validImage())
+  {
+    std::cerr << "No image to operate on\n";
+    return false;
+  }
+
+  double val = static_cast<double>(options.get("val"));
+  if (val != 0.0)
+    sharedData.image *= val;
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// DivideImage
+///////////////////////////////////////////////////////////////////////////////
+void DivideImage::buildParser()
+{
+  const std::string prog = "div";
+  const std::string desc = "divide an image by a constant";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--val","-x").action("store").type("double").set_default("0.0").help("Value with which to divide");
+
+  Command::buildParser();
+}
+
+bool DivideImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validImage())
+  {
+    std::cerr << "No image to operate on\n";
+    return false;
+  }
+
+  double val = static_cast<double>(options.get("val"));
+  if (val != 0.0)
+    sharedData.image /= val;
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // ReadParticleSystem
 ///////////////////////////////////////////////////////////////////////////////
 void ReadParticleSystem::buildParser()
