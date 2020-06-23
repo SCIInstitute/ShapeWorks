@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<number_of_particles> 32 </number_of_particles>
+<iterations_per_split> 1000 </iterations_per_split>
+<starting_regularization> 1000.0 </starting_regularization>
+<ending_regularization> 10.0 </ending_regularization>
+<optimization_iterations> 1000 </optimization_iterations>
+<checkpointing_interval> 20 </checkpointing_interval>
+<procrustes_scaling> 0 </procrustes_scaling>
+<procrustes_interval> 0 </procrustes_interval>
+<verbosity>3</verbosity>
+
+<output_dir>
+output
+</output_dir>
+
+<inputs>
+sphere10_DT.nrrd
+sphere20_DT.nrrd
+sphere30_DT.nrrd
+sphere40_DT.nrrd
+</inputs>
+
+<fixed_domains>
+0
+1
+2
+</fixed_domains>
+
+<point_files>
+sphere10_DT_local.particles
+sphere20_DT_local.particles
+sphere30_DT_local.particles
+sphere30_DT_local.particles
+</point_files>
