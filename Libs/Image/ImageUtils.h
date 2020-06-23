@@ -15,7 +15,7 @@ public:
   /// Generates the Transform necessary to move the contents of this binary image to the center.
   static TransformPtr createCenterOfMassTransform(const Image &image);
 
-  /// Computes a warp transform from source to target using the given landmark points for each.
+  /// Finds the warp between the source and target landmarks  and returns the source image translated by that warp
   ///
   /// \param stride Every _stride_ points will be used for computing the warp (using fewer points takes less time).
   static TransformPtr createWarpTransform(const std::string &source_landmarks, const std::string &target_landmarks, const int stride = 1);
