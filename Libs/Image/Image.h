@@ -109,7 +109,7 @@ public:
   Image& operator-=(const Image& other) { return *this = *this - other; }
 
   /// antialiases image
-  Image& antialias(unsigned iterations = 50, double maxRMSErr = 0.01f, int layers = 3);
+  Image& antialias(unsigned iterations = 50, double maxRMSErr = 0.01f, int layers = 0);
   
   /// helper identical to setOrigin(image.center()) changing origin (in the image header) to physcial center of the image
   Image& recenter();
@@ -139,10 +139,10 @@ public:
   Image& applyTransform(const TransformPtr transform);
 
   /// extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image
-  Image& extractLabel(PixelType label = 1.0);
+  Image& extractLabel(const PixelType label = 1.0);
 
-  /// closes holes in a given binary volume
-  Image& closeHoles();
+  /// closes holes in a given volume, default foreground value assumes a binary volume
+  Image& closeHoles(const PixelType foreground = 0.0);
   
   /// threholds image into binary label based on upper and lower intensity bounds given by user
   Image& binarize(PixelType minval = 0.0, PixelType maxval = std::numeric_limits<PixelType>::max(), PixelType inner_value = 1.0, PixelType outer_value = 0.0);

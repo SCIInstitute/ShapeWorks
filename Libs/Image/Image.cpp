@@ -379,20 +379,20 @@ Image& Image::applyTransform(const TransformPtr transform)
   return *this;
 }
 
-Image& Image::extractLabel(PixelType label)
+Image& Image::extractLabel(const PixelType label)
 {
   binarize(label - std::numeric_limits<PixelType>::epsilon(), label + std::numeric_limits<PixelType>::epsilon());
 
   return *this;
 }
 
-Image& Image::closeHoles()
+Image& Image::closeHoles(const PixelType foreground)
 {
   using FilterType = itk::BinaryFillholeImageFilter<ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
   filter->SetInput(this->image);
-  filter->SetForegroundValue(itk::NumericTraits<PixelType>::min());
+  filter->SetForegroundValue(foreground + std::numeric_limits<PixelType>::epsilon());
   filter->Update();
   this->image = filter->GetOutput();
 

@@ -175,8 +175,8 @@ void Antialias::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--maxrmserror").action("store").type("double").set_default(0.01).help("Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default: 0.01].");
-  parser.add_option("--iterations").action("store").type("int").set_default(50).help("Number of iterations [default: 50].");
-  parser.add_option("--layers").action("store").type("int").set_default(0).help("Number of layers around a 3d pixel to use for this computation [default: image dims].");
+  parser.add_option("--iterations").action("store").type("int").set_default(50).help("Maximum number of iterations [default: 50].");
+  parser.add_option("--layers").action("store").type("int").set_default(0).help("Number of layers around a 3d pixel to use for this computation [default: 3].");
 
   Command::buildParser();
 }
@@ -279,7 +279,7 @@ bool RecenterImage::execute(const optparse::Values &options, SharedCommandData &
 void PadImage::buildParser()
 {
   const std::string prog = "pad";
-  const std::string desc = "pads an image with value by the specified number of voxels in the x-, y-, and/or z- directions; origin remains at the same location (note: negative values are permitted)";
+  const std::string desc = "pads an image with specified value by specified number of voxels in the x-, y-, and/or z- directions; origin remains at the same location (note: negative padding to shrink an image is permitted)";
   parser.prog(prog).description(desc);
 
   parser.add_option("--padding").action("store").type("int").set_default(0).help("Pad this many voxels in ALL directions (used if set) [default: 0].");
@@ -455,7 +455,7 @@ void ExtractLabel::buildParser()
   const std::string desc = "extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--label").action("store").type("double").set_default(1.0).help("Label value which has to be extracted [default: 1.0].");
+  parser.add_option("--label").action("store").type("double").set_default(1.0).help("Label value to be extracted [default: 1.0].");
 
   Command::buildParser();
 }
@@ -480,8 +480,10 @@ bool ExtractLabel::execute(const optparse::Values &options, SharedCommandData &s
 void CloseHoles::buildParser()
 {
   const std::string prog = "close-holes";
-  const std::string desc = "closes holes in a given binary volume";
+  const std::string desc = "closes holes in a volume defined by values larger than specified value";
   parser.prog(prog).description(desc);
+
+  parser.add_option("--val").action("store").type("double").set_default(0.0).help("Largest value not in volume [default: 0.0].");
 
   Command::buildParser();
 }
@@ -494,7 +496,9 @@ bool CloseHoles::execute(const optparse::Values &options, SharedCommandData &sha
     return false;
   }
 
-  sharedData.image.closeHoles();
+  double value = static_cast<double>(options.get("val"));
+
+  sharedData.image.closeHoles(value);
   return true;
 }
 
@@ -504,7 +508,7 @@ bool CloseHoles::execute(const optparse::Values &options, SharedCommandData &sha
 void Binarize::buildParser()
 {
   const std::string prog = "binarize";
-  const std::string desc = "sets portion of image greater than min and less than or equal to max to the given value";
+  const std::string desc = "sets portion of image greater than min and less than or equal to max to the specified value";
   parser.prog(prog).description(desc);
 
   parser.add_option("--min").action("store").type("double").set_default(std::numeric_limits<double>::epsilon()).help("Lower threshold level [default: 0.0].");
@@ -806,7 +810,7 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
 void BoundingBox::buildParser()
 {
   const std::string prog = "bounding-box";
-  const std::string desc = "compute largest bounding box surrounding the given isovalue of this set of binary images";
+  const std::string desc = "compute largest bounding box surrounding the specified isovalue of this set of binary images";
   parser.prog(prog).description(desc);
 
   parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to images (must be followed by `--`)");
@@ -834,13 +838,14 @@ void CropImage::buildParser()
 {
   const std::string prog = "crop";
   const std::string desc = "crop image down to the current region (e.g., from bounding-box command), or the specified min/max in each direction [default: image dimensions]";
+  parser.prog(prog).description(desc);
+
   parser.add_option("--xmin").action("store").type("unsigned").set_default(0).help("Minimum X.");
   parser.add_option("--xmax").action("store").type("unsigned").set_default(0).help("Maximum X.");
   parser.add_option("--ymin").action("store").type("unsigned").set_default(0).help("Minimum Y.");
   parser.add_option("--ymax").action("store").type("unsigned").set_default(0).help("Maximum Y.");
   parser.add_option("--zmin").action("store").type("unsigned").set_default(0).help("Minimum Z.");
   parser.add_option("--zmax").action("store").type("unsigned").set_default(0).help("Maximum Z.");
-  parser.prog(prog).description(desc);
 
   Command::buildParser();
 }
@@ -881,7 +886,7 @@ bool CropImage::execute(const optparse::Values &options, SharedCommandData &shar
 void ClipVolume::buildParser()
 {
   const std::string prog = "clip";
-  const std::string desc = "chops volume with the given cutting planes defined by three 3D points";
+  const std::string desc = "chops volume with the specified cutting planes defined by three 3D points";
   parser.prog(prog).description(desc);
 
   parser.add_option("--x1").action("store").type("double").set_default(0.0).help("Value of x1 for cutting plane [default: 0.0].");
@@ -988,8 +993,9 @@ bool SetOrigin::execute(const optparse::Values &options, SharedCommandData &shar
 void WarpImage::buildParser()
 {
   const std::string prog = "warp-image";
-  const std::string desc = "Finds the warp between the source and target landmarks  and returns the source image translated by that warp.";
+  const std::string desc = "Finds the warp between the source and target landmarks and transforms image by this warp.";
   parser.prog(prog).description(desc);
+
   parser.add_option("--source_landmarks").action("store").type("string").set_default("").help("Path to source landmarks.");
   parser.add_option("--target_landmarks").action("store").type("string").set_default("").help("Path to target landmarks.");
   parser.add_option("--stride").action("store").type("int").set_default(1).help("Every _stride_ points will be used for warping [default: 1].");
