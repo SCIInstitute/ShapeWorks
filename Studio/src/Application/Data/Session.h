@@ -77,9 +77,6 @@ public:
 
   void calculate_reconstructed_samples();
 
-  /// reset the session
-  void reset();
-
   /// get the filename
   QString get_filename();
 

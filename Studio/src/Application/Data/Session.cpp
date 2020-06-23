@@ -34,10 +34,10 @@ const std::string Session::ANALYSIS_C("analysis");
 
 //---------------------------------------------------------------------------
 Session::Session(QWidget* parent, Preferences& prefs) : parent_(parent),
-  preferences_(prefs)
+  preferences_(prefs),
+  mesh_manager_(QSharedPointer<MeshManager>(new MeshManager(preferences_)))
 {
   this->parent_ = NULL;
-  this->reset();
   connect(this->mesh_manager_.data(), &MeshManager::new_mesh, this, &Session::handle_new_mesh);
 }
 
@@ -207,7 +207,7 @@ bool Session::load_project(QString filename)
     return false;
   }
   // clear the project out first
-  this->reset();
+
   this->filename_ = filename;
 
   if (filename.toLower().endsWith(".xlsx")) {
@@ -372,8 +372,6 @@ bool Session::load_light_project(QString filename)
 //---------------------------------------------------------------------------
 bool Session::load_xl_project(QString filename)
 {
-  // clear the project out first
-  this->reset();
   this->filename_ = filename;
 
   this->set_project_path(QFileInfo(filename).absolutePath());
@@ -707,22 +705,6 @@ void Session::remove_shapes(QList<int> list)
 }
 
 //---------------------------------------------------------------------------
-void Session::reset()
-{
-  this->is_light_project_ = false;
-
-  this->filename_ = "";
-
-  this->shapes_.clear();
-
-  this->mesh_manager_ = QSharedPointer<MeshManager>(new MeshManager(preferences_));
-
-  connect(this->mesh_manager_.data(), SIGNAL(new_mesh()), this, SLOT(handle_new_mesh()));
-  this->handle_clear_cache();
-  emit data_changed();
-}
-
-//---------------------------------------------------------------------------
 bool Session::original_present()
 {
   return this->project_->get_segmentations_present();
@@ -732,7 +714,6 @@ bool Session::original_present()
 bool Session::groomed_present()
 {
   return this->project_->get_groomed_present();
-  //return this->groomed_present_;
 }
 
 //---------------------------------------------------------------------------

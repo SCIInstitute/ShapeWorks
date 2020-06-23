@@ -514,7 +514,7 @@ void ShapeWorksStudioApp::on_delete_button_clicked()
 
   this->session_->remove_shapes(index_list);
   if (this->session_->get_shapes().size() == 0) {
-    this->session_->reset();
+    this->new_session();
     this->analysis_tool_->reset_stats();
     this->lightbox_->clear_renderers();
   }
@@ -525,7 +525,6 @@ void ShapeWorksStudioApp::on_delete_button_clicked()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_table()
 {
-
   QVector<QSharedPointer<Shape>> shapes = this->session_->get_shapes();
 
   auto project = this->session_->get_project();

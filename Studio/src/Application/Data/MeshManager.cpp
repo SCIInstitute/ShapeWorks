@@ -88,9 +88,9 @@ MeshHandle MeshManager::get_mesh(const vnl_vector<double> &points)
 void MeshManager::handle_thread_complete(const MeshWorkItem &item, MeshHandle mesh)
 {
   if (mesh->get_error_message() != "") {
-    std::string message = "Error during mesh construction:" + mesh->get_error_message()
-                          + "\nfurther messagess will be supressed\n";
-    Q_EMIT error_encountered(mesh->get_error_message());
+    std::string message = "Error during mesh construction:\n\n" + mesh->get_error_message()
+                          + "\n\nFurther messagess will be suppressed\n";
+    Q_EMIT error_encountered(message);
     this->error_emitted_ = true;
   }
   this->mesh_cache_.insert_mesh(item, mesh);
