@@ -2016,6 +2016,18 @@ double Optimize::GetNarrowBand()
 }
 
 //---------------------------------------------------------------------------
+void Optimize::SetMultiScaleModeParticles(int num_particles)
+{
+  this->m_multiscale_mode_particles = num_particles;
+}
+
+//---------------------------------------------------------------------------
+int Optimize::GetMultiScaleModeParticles()
+{
+  return this->m_multiscale_mode_particles;
+}
+
+//---------------------------------------------------------------------------
 void Optimize::SetIterationCallback()
 {
   this->m_iterate_command = itk::MemberCommand<Optimize>::New();
