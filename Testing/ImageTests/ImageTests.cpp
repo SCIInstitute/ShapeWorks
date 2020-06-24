@@ -329,9 +329,9 @@ TEST(ImageTests, closeholesTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/close-holes/");
 
-  Image image(test_location + "1x2x2.nrrd");
+  Image image(test_location + "image_with_holes.nrrd");
   image.closeHoles();
-  Image ground_truth(test_location + "close-holes_baseline.nrrd");
+  Image ground_truth(test_location + "closedholes.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
