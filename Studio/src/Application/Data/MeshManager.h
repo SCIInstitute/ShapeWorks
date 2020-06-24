@@ -69,8 +69,6 @@ private:
   // the workers
   std::queue<QThread*> threads_;
 
-  int thread_count_;
-
   QSharedPointer<SurfaceReconstructor> surface_reconstructor_;
 
   QThreadPool thread_pool_;

@@ -589,7 +589,7 @@ void ShapeWorksStudioApp::handle_error(std::string str)
 {
   QMessageBox::critical(this, "Critical Error", str.c_str());
   this->handle_message(str);
-  this->handle_progress(100);
+  //this->handle_progress(100);
 }
 
 //---------------------------------------------------------------------------

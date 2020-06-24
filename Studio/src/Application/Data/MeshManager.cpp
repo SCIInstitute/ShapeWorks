@@ -14,8 +14,6 @@ MeshManager::MeshManager(Preferences& prefs) :
   mesh_generator_(prefs),
   surface_reconstructor_(new SurfaceReconstructor())
 {
-  this->thread_count_ = 0;
-
   this->mesh_generator_.set_surface_reconstructor(this->surface_reconstructor_);
 
   qRegisterMetaType<MeshWorkItem>("MeshWorkItem");
@@ -87,14 +85,15 @@ MeshHandle MeshManager::get_mesh(const vnl_vector<double> &points)
 //---------------------------------------------------------------------------
 void MeshManager::handle_thread_complete(const MeshWorkItem &item, MeshHandle mesh)
 {
-  if (mesh->get_error_message() != "") {
-    std::string message = "Error during mesh construction:\n\n" + mesh->get_error_message()
-                          + "\n\nFurther messages will be suppressed\n";
-    Q_EMIT error_encountered(message);
-    this->error_emitted_ = true;
-  }
   this->mesh_cache_.insert_mesh(item, mesh);
   this->work_queue_.remove(item);
+
+  if (mesh->get_error_message() != "" && !this->error_emitted_) {
+    this->error_emitted_ = true;
+    std::string message = "Error during mesh construction:\n\n" + mesh->get_error_message()
+                          + "\n\nFurther messages will be suppressed\n";
+    emit error_encountered(message);
+  }
 
   emit new_mesh();
 }

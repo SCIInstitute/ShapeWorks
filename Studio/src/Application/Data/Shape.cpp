@@ -32,7 +32,6 @@ Shape::~Shape()
 //---------------------------------------------------------------------------
 QSharedPointer<Mesh> Shape::get_mesh(std::string display_mode)
 {
-  //std::cerr << "get_mesh(" << display_mode << ")\n";
   if (display_mode == Visualizer::MODE_ORIGINAL_C) {
     return this->get_original_mesh();
   }
@@ -95,6 +94,7 @@ QSharedPointer<Mesh> Shape::get_original_mesh()
 //---------------------------------------------------------------------------
 ImageType::Pointer Shape::get_original_image()
 {
+
   ImageType::Pointer image;
   std::string filename = this->subject_->get_segmentation_filenames()[0];
   if (filename != "") {
@@ -245,7 +245,6 @@ bool Shape::import_local_point_file(QString filename)
 //---------------------------------------------------------------------------
 QSharedPointer<Mesh> Shape::get_reconstructed_mesh()
 {
-  //std::cerr << "get_reconstructed_mesh\n";
   if (!this->reconstructed_mesh_) {
     this->reconstructed_mesh_ = this->mesh_manager_->get_mesh(this->global_correspondence_points_);
   }
