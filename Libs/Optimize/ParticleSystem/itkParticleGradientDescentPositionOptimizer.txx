@@ -149,6 +149,7 @@ namespace itk
               double original_magnitude = original_gradient.magnitude();
               VectorType original_gradient_projectedOntoTangentSpace = domain->ProjectVectorToSurfaceTangent(original_gradient, pt);
               double new_magnitude = original_gradient_projectedOntoTangentSpace.magnitude();
+              // Rescale gradient to original magnitude
               original_gradient_projectedOntoTangentSpace *= original_magnitude / new_magnitude;
 
               // Step 2 scale the gradient by the time step
