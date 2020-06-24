@@ -102,9 +102,9 @@ namespace itk
     {
       const auto accTimerBegin = std::chrono::steady_clock::now();
       m_GradientFunction->SetParticleSystem(m_ParticleSystem);
-        if (counter % global_iteration == 0)
-            m_GradientFunction->BeforeIteration();
-        counter++;
+      if (counter % global_iteration == 0)
+        m_GradientFunction->BeforeIteration();
+      counter++;
 
 #pragma omp parallel
       {
@@ -143,11 +143,13 @@ namespace itk
               double maximumDTUpdateAllowed;
               original_gradient = localGradientFunction->Evaluate(it.GetIndex(), dom, m_ParticleSystem, maximumDTUpdateAllowed, energy);
 
-              unsigned int idx = it.GetIndex();
               PointType pt = *it;
 
               // Step 1 Project the gradient vector onto the tangent plane
+              double original_magnitude = original_gradient.magnitude();
               VectorType original_gradient_projectedOntoTangentSpace = domain->ProjectVectorToSurfaceTangent(original_gradient, pt);
+              double new_magnitude = original_gradient_projectedOntoTangentSpace.magnitude();
+              original_gradient_projectedOntoTangentSpace *= original_magnitude / new_magnitude;
 
               // Step 2 scale the gradient by the time step
               // Note that time step can only decrease while finding a good update so the gradient computed here is 
