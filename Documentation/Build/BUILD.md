@@ -36,10 +36,11 @@ To install conda and the dependencies it provides (currently requires either bas
 $ source conda_installs.sh
 ```
 
-ShapeWorks uses *[git-lfs](https://github.com/git-lfs/git-lfs/* to store image data for testing.  
+ShapeWorks uses *[git-lfs](https://github.com/git-lfs/git-lfs/)* to store image data for testing.  
 If git-lfs was not already installed before cloning ShapeWorks, please use the following commands to get this data:  
 ```
 $ git lfs fetch
+$ git lfs install
 $ git lfs checkout
 ```
 

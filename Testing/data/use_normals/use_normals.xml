@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<number_of_particles> 16 </number_of_particles>
+<iterations_per_split> 1000 </iterations_per_split>
+<starting_regularization> 1000.0 </starting_regularization>
+<ending_regularization> 1.0 </ending_regularization>
+<optimization_iterations> 500 </optimization_iterations>
+<verbosity>0</verbosity>
+<procrustes_scaling>0</procrustes_scaling>
+<procrustes_interval>0</procrustes_interval>
+<initial_relative_weighting>0.05</initial_relative_weighting>
+<relative_weighting>0.01</relative_weighting>
+<checkpointing_interval>0</checkpointing_interval>
+<keep_checkpoints>0</keep_checkpoints>
+<save_init_splits>0</save_init_splits>
+
+<output_dir>output</output_dir>
+
+
+<mesh_based_attributes>1</mesh_based_attributes>
+<use_xyz>0</use_xyz>
+<use_normals>1</use_normals>
+<attribute_scales>
+10.0
+10.0
+10.0
+</attribute_scales>
+
+<inputs>
+  sphere10_DT.nrrd
+  sphere20_DT.nrrd
+  sphere30_DT.nrrd
+  sphere40_DT.nrrd
+</inputs>
+
