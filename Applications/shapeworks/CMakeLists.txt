@@ -27,8 +27,10 @@ target_link_libraries(shapeworks
   )
 
 # Install
-set_target_properties(shapeworks PROPERTIES PUBLIC_HEADER
-  "${shapeworks_headers}")
+set_target_properties(shapeworks PROPERTIES
+  PUBLIC_HEADER "${shapeworks_headers}"
+  ENABLE_EXPORTS TRUE
+  )
 install(TARGETS shapeworks
   ARCHIVE DESTINATION bin
   RUNTIME DESTINATION bin

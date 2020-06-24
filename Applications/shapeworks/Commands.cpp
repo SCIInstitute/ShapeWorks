@@ -483,7 +483,7 @@ void CloseHoles::buildParser()
   const std::string desc = "closes holes in a volume defined by values larger than specified value";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--val").action("store").type("double").set_default(0.0).help("Largest value not in volume [default: 0.0].");
+  parser.add_option("--value").action("store").type("double").set_default(0.0).help("Largest value not in volume [default: 0.0].");
 
   Command::buildParser();
 }
@@ -513,7 +513,7 @@ void Binarize::buildParser()
 
   parser.add_option("--min").action("store").type("double").set_default(std::numeric_limits<double>::epsilon()).help("Lower threshold level [default: 0.0].");
   parser.add_option("--max").action("store").type("double").set_default(std::numeric_limits<double>::max()).help("Upper threshold level [default: inf ].");
-  parser.add_option("--val").action("store").type("double").set_default(1.0).help("Value to set region [default: 1.0].");
+  parser.add_option("--value").action("store").type("double").set_default(1.0).help("Value to set region [default: 1.0].");
   
   Command::buildParser();
 }
@@ -898,7 +898,7 @@ void ClipVolume::buildParser()
   parser.add_option("--x3").action("store").type("double").set_default(0.0).help("Value of x3 for cutting plane [default: 0.0].");
   parser.add_option("--y3").action("store").type("double").set_default(0.0).help("Value of y3 for cutting plane [default: 0.0].");
   parser.add_option("--z3").action("store").type("double").set_default(0.0).help("Value of z3 for cutting plane [default: 0.0].");
-  parser.add_option("--val").action("store").type("double").set_default(0.0).help("Value of clipped pixels [default: 0.0].");
+  parser.add_option("--value").action("store").type("double").set_default(0.0).help("Value of clipped pixels [default: 0.0].");
 
   Command::buildParser();
 }
@@ -1013,7 +1013,7 @@ bool WarpImage::execute(const optparse::Values &options, SharedCommandData &shar
 
   std::string source_landmarks = static_cast<std::string>(options.get("source_landmarks"));
   std::string target_landmarks = static_cast<std::string>(options.get("target_landmarks"));
-  int factor = static_cast<int>(options.get("factor"));
+  int stride = static_cast<int>(options.get("stride"));
 
   if (source_landmarks == "" || target_landmarks == "")
   {
@@ -1021,7 +1021,7 @@ bool WarpImage::execute(const optparse::Values &options, SharedCommandData &shar
     return false;
   }
 
-  TransformPtr transform(ImageUtils::createWarpTransform(source_landmarks, target_landmarks, factor));
+  TransformPtr transform(ImageUtils::createWarpTransform(source_landmarks, target_landmarks, stride));
   sharedData.image.applyTransform(transform);
 
   return true;
@@ -1133,7 +1133,7 @@ bool AddImage::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 void SubtractImage::buildParser()
 {
-  const std::string prog = "sub";
+  const std::string prog = "subtract";
   const std::string desc = "subtract an image";
   parser.prog(prog).description(desc);
 
@@ -1165,11 +1165,11 @@ bool SubtractImage::execute(const optparse::Values &options, SharedCommandData &
 ///////////////////////////////////////////////////////////////////////////////
 void MultiplyImage::buildParser()
 {
-  const std::string prog = "mul";
+  const std::string prog = "multiply";
   const std::string desc = "multiply an image by a constant";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--val","-x").action("store").type("double").set_default("0.0").help("Value with which to multiply");
+  parser.add_option("--value","-x").action("store").type("double").set_default("0.0").help("Value with which to multiply");
 
   Command::buildParser();
 }
@@ -1193,11 +1193,11 @@ bool MultiplyImage::execute(const optparse::Values &options, SharedCommandData &
 ///////////////////////////////////////////////////////////////////////////////
 void DivideImage::buildParser()
 {
-  const std::string prog = "div";
+  const std::string prog = "divide";
   const std::string desc = "divide an image by a constant";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--val","-x").action("store").type("double").set_default("0.0").help("Value with which to divide");
+  parser.add_option("--value","-x").action("store").type("double").set_default("0.0").help("Value with which to divide");
 
   Command::buildParser();
 }
