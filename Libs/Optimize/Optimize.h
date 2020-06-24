@@ -274,6 +274,8 @@ protected:
   void AddAdaptivity();
   void RunOptimize();
 
+  void SetInitialCorrespondenceMode();
+
   virtual void IterateCallback(itk::Object*, const itk::EventObject &);
 
   void ComputeEnergyAfterIteration();

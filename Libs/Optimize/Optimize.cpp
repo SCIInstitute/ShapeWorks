@@ -535,48 +535,7 @@ void Optimize::Initialize()
 
   m_sampler->SetCorrespondenceOn();
 
-  if (m_use_shape_statistics_in_init) {
-    if (m_attributes_per_domain.size() > 0 &&
-        *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) {
-      if (m_mesh_based_attributes) {
-        m_sampler->SetCorrespondenceMode(5);
-      }
-      else {
-        m_sampler->SetCorrespondenceMode(2);
-      }
-    }
-    else {
-      if (m_mesh_based_attributes) {
-        m_sampler->SetCorrespondenceMode(5);
-      }
-      else {
-        m_sampler->SetCorrespondenceMode(1);
-      }
-    }
-
-    m_sampler->GetEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
-                                                                     m_ending_regularization,
-                                                                     m_iterations_per_split);
-
-    m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(
-      m_starting_regularization,
-      m_ending_regularization,
-      m_iterations_per_split);
-  }
-  else {
-    // force to mean
-    if ((m_attributes_per_domain.size() > 0 &&
-         *std::max_element(m_attributes_per_domain.begin(),
-                           m_attributes_per_domain.end()) > 0) || m_mesh_based_attributes) {
-      m_sampler->SetCorrespondenceMode(6);
-    }
-    else {
-      m_sampler->SetCorrespondenceMode(0);
-    }
-  }
-
-  m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
-  m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
+  this->SetInitialCorrespondenceMode();
 
   this->AddSinglePoint();
 
@@ -887,6 +846,55 @@ void Optimize::RunOptimize()
   if (m_verbosity_level > 0) {
     std::cout << "Finished optimization!!!" << std::endl;
   }
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetInitialCorrespondenceMode()
+{
+
+  if (m_use_shape_statistics_in_init) {
+    if (m_attributes_per_domain.size() > 0 &&
+        *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) {
+      if (m_mesh_based_attributes) {
+        m_sampler->SetCorrespondenceMode(5);
+      }
+      else {
+        m_sampler->SetCorrespondenceMode(2);
+      }
+    }
+    else {
+      if (m_mesh_based_attributes) {
+        m_sampler->SetCorrespondenceMode(5);
+      }
+      else {
+        m_sampler->SetCorrespondenceMode(1);
+      }
+    }
+
+    m_sampler->GetEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
+                                                                     m_ending_regularization,
+                                                                     m_iterations_per_split);
+
+    m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(
+      m_starting_regularization,
+      m_ending_regularization,
+      m_iterations_per_split);
+  }
+  else {
+    // force to mean
+    if ((m_attributes_per_domain.size() > 0 &&
+         *std::max_element(m_attributes_per_domain.begin(),
+                           m_attributes_per_domain.end()) > 0) || m_mesh_based_attributes) {
+      m_sampler->SetCorrespondenceMode(6);
+    }
+    else {
+      m_sampler->SetCorrespondenceMode(0);
+    }
+  }
+
+  m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
+  m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
+
 }
 
 //---------------------------------------------------------------------------
