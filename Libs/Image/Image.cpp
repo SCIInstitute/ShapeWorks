@@ -133,6 +133,44 @@ Image& Image::operator-=(const Image& other)
   return *this;
 }
 
+Image Image::operator+(const PixelType x) const
+{
+  Image ret(*this);
+  ret += x;
+  return ret;
+}
+
+Image& Image::operator+=(const PixelType x)
+{
+  itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
+  while (!iter.IsAtEnd())
+  {
+    iter.Set(iter.Value() + x);
+    ++iter;
+  }
+
+  return *this;
+}
+
+Image Image::operator-(const PixelType x) const
+{
+  Image ret(*this);
+  ret -= x;
+  return ret;
+}
+
+Image& Image::operator-=(const PixelType x)
+{
+  itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
+  while (!iter.IsAtEnd())
+  {
+    iter.Set(iter.Value() - x);
+    ++iter;
+  }
+
+  return *this;
+}
+
 Image Image::operator*(const PixelType x) const
 {
   Image ret(*this);

@@ -900,6 +900,56 @@ TEST(ImageTests, subtractionTest3)
   ASSERT_TRUE(image1 == baseline);
 }
 
+TEST(ImageTests, addTest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/add/");
+
+  Image image(test_location + "la-bin.nrrd");
+  Image added(image + 3.14);
+  Image baseline(test_location + "baseline_add.nrrd");
+
+  ASSERT_TRUE(added == baseline);
+
+  Image orig_image(test_location + "la-bin.nrrd");
+  ASSERT_TRUE(image == orig_image);
+}
+
+TEST(ImageTests, addTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/add/");
+
+  Image image(test_location + "la-bin.nrrd");
+  image += 3.14;
+  Image baseline(test_location + "baseline_add.nrrd");
+
+  ASSERT_TRUE(image == baseline);
+}
+
+TEST(ImageTests, subtractTest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/subtract/");
+
+  Image image(test_location + "la-bin.nrrd");
+  Image subtracted(image - 3.14);
+  Image baseline(test_location + "baseline_subtract.nrrd");
+
+  ASSERT_TRUE(subtracted == baseline);
+
+  Image orig_image(test_location + "la-bin.nrrd");
+  ASSERT_TRUE(image == orig_image);
+}
+
+TEST(ImageTests, subtractTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/subtract/");
+
+  Image image(test_location + "la-bin.nrrd");
+  image -= 3.14;
+  Image baseline(test_location + "baseline_subtract.nrrd");
+
+  ASSERT_TRUE(image == baseline);
+}
+
 TEST(ImageTests, multiplyTest1)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/multiply/");

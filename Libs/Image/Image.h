@@ -112,9 +112,17 @@ public:
   Image operator*(const PixelType x) const;
   Image& operator*=(const PixelType x);
 
-  /// plus operator to add two images
+  /// divide operator to scale contents of an image
   Image operator/(const PixelType x) const;
   Image& operator/=(const PixelType x);
+
+  /// plus operator to shift contents of an image
+  Image operator+(const PixelType x) const;
+  Image& operator+=(const PixelType x);
+
+  /// minus operator to shift contents of an image
+  Image operator-(const PixelType x) const;
+  Image& operator-=(const PixelType x);
 
   /// antialiases image
   Image& antialias(unsigned iterations = 50, double maxRMSErr = 0.01f, int layers = 0);

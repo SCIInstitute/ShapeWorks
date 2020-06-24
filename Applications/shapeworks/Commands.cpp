@@ -496,7 +496,7 @@ bool CloseHoles::execute(const optparse::Values &options, SharedCommandData &sha
     return false;
   }
 
-  double value = static_cast<double>(options.get("val"));
+  double value = static_cast<double>(options.get("value"));
 
   sharedData.image.closeHoles(value);
   return true;
@@ -528,9 +528,9 @@ bool Binarize::execute(const optparse::Values &options, SharedCommandData &share
 
   double min = static_cast<double>(options.get("min"));
   double max = static_cast<double>(options.get("max"));
-  double val = static_cast<double>(options.get("val"));
+  double value = static_cast<double>(options.get("value"));
 
-  sharedData.image.binarize(min, max, val);
+  sharedData.image.binarize(min, max, value);
   return true;
 }
 
@@ -915,7 +915,7 @@ bool ClipVolume::execute(const optparse::Values &options, SharedCommandData &sha
   Point p2({static_cast<double>(options.get("y1")), static_cast<double>(options.get("y2")), static_cast<double>(options.get("y3"))});
   Point p3({static_cast<double>(options.get("z1")), static_cast<double>(options.get("z2")), static_cast<double>(options.get("z3"))});
 
-  sharedData.image.clip(p1, p2, p3, static_cast<double>(options.get("val")));
+  sharedData.image.clip(p1, p2, p3, static_cast<double>(options.get("value")));
   return true;
 }
 
@@ -1102,10 +1102,11 @@ bool NegateImage::execute(const optparse::Values &options, SharedCommandData &sh
 void AddImage::buildParser()
 {
   const std::string prog = "add";
-  const std::string desc = "add an image";
+  const std::string desc = "add a value to each pixel in this image and/or add another image in a pixelwise manner";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--name").action("store").type("string").set_default("").help("Name of image to add");
+  parser.add_option("--value","-x").action("store").type("double").set_default("0.0").help("Value to add to each pixel");
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of image to add pixelwise");
 
   Command::buildParser();
 }
@@ -1118,13 +1119,20 @@ bool AddImage::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
+  double value = static_cast<double>(options.get("value"));
   std::string filename = options["name"];
-  if (filename.length() == 0) {
-    std::cerr << "add error: no filename specified with which to add, must pass `--name <filename>`\n";
+
+  if (filename.length() == 0 && value == 0.0) {
+    std::cerr << "add error: no filename or value specified. Must pass value or name.\n";
     return false;
   }
 
-  sharedData.image += Image(filename);
+  if (value != 0.0)
+    sharedData.image += value;
+
+  if (filename.length() != 0)
+    sharedData.image += Image(filename);
+
   return true;
 }
 
@@ -1134,10 +1142,11 @@ bool AddImage::execute(const optparse::Values &options, SharedCommandData &share
 void SubtractImage::buildParser()
 {
   const std::string prog = "subtract";
-  const std::string desc = "subtract an image";
+  const std::string desc = "subtract a value from each pixel in this image and/or subtract another image in a pixelwise manner";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--name").action("store").type("string").set_default("").help("Name of image to subtract");
+  parser.add_option("--value","-x").action("store").type("double").set_default("0.0").help("Value to subtract from each pixel");
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of image to subtract pixelwise");
 
   Command::buildParser();
 }
@@ -1150,13 +1159,20 @@ bool SubtractImage::execute(const optparse::Values &options, SharedCommandData &
     return false;
   }
 
+  double value = static_cast<double>(options.get("value"));
   std::string filename = options["name"];
-  if (filename.length() == 0) {
-    std::cerr << "sub error: no filename specified to subtract, must pass `--name <filename>`\n";
+
+  if (filename.length() == 0 && value == 0.0) {
+    std::cerr << "sub error: no filename or value specified. Must pass value or name.\n";
     return false;
   }
 
-  sharedData.image -= Image(filename);
+  if (value != 0.0)
+    sharedData.image -= value;
+
+  if (filename.length() != 0)
+    sharedData.image -= Image(filename);
+
   return true;
 }
 
@@ -1182,9 +1198,9 @@ bool MultiplyImage::execute(const optparse::Values &options, SharedCommandData &
     return false;
   }
 
-  double val = static_cast<double>(options.get("val"));
-  if (val != 0.0)
-    sharedData.image *= val;
+  double value = static_cast<double>(options.get("value"));
+  if (value != 0.0)
+    sharedData.image *= value;
   return true;
 }
 
@@ -1210,9 +1226,9 @@ bool DivideImage::execute(const optparse::Values &options, SharedCommandData &sh
     return false;
   }
 
-  double val = static_cast<double>(options.get("val"));
-  if (val != 0.0)
-    sharedData.image /= val;
+  double value = static_cast<double>(options.get("value"));
+  if (value != 0.0)
+    sharedData.image /= value;
   return true;
 }
 
