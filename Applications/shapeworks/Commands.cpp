@@ -1038,6 +1038,7 @@ void Compare::buildParser()
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of image with which to compare");
   parser.add_option("--precision").action("store").type("double").set_default(1e-12).help("Allowed difference between two pixels for them to still be considered equal [default: 0.0]");
+  parser.add_option("--pixel").action("store").type("double").set_default(0.0).help("Allowed percentage of pixel difference between two pixels for them to still be considered equal [default: 0.0]");
   parser.add_option("--verifyall").action("store").type("bool").set_default(true).help("Verify origin, spacing, and direction of both images match [default: true]");
 
   Command::buildParser();
@@ -1058,9 +1059,10 @@ bool Compare::execute(const optparse::Values &options, SharedCommandData &shared
   }
 
   double precision = static_cast<double>(options.get("precision"));
+  double pixel = static_cast<double>(options.get("pixel"));
   bool verifyall = static_cast<bool>(options.get("verifyall"));
 
-  if (sharedData.image.compare(Image(filename), verifyall, precision))
+  if (sharedData.image.compare(Image(filename), verifyall, pixel))
   {
     std::cout << "compare success\n";
     return true;

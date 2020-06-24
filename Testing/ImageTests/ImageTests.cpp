@@ -642,6 +642,45 @@ TEST(ImageTests, warpTest3)
   ASSERT_TRUE(image == ground_truth);
 }
 
+TEST(ImageTests, warpTest4)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  std::string src_filename(test_location + "source.particles");
+  std::string dst_filename(test_location + "source.particles");
+
+  // warping from A to A should produce A
+  TransformPtr transform(ImageUtils::createWarpTransform(src_filename, dst_filename));
+  image.applyTransform(transform);
+  Image ground_truth(test_location + "1x2x2.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, warpTest5)
+{
+  // warping from A to B and then back to A should produce A
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  std::string src_filename1(test_location + "source.particles");
+  std::string dst_filename1(test_location + "target.particles");
+
+  TransformPtr transform(ImageUtils::createWarpTransform(src_filename1, dst_filename1));
+  image.applyTransform(transform);
+
+  std::string src_filename2(test_location + "source.particles");
+  std::string dst_filename2(test_location + "source.particles");
+
+  TransformPtr transform_back(ImageUtils::createWarpTransform(src_filename2, dst_filename2));
+  image.applyTransform(transform_back);
+
+  Image ground_truth(test_location + "1x2x2.nrrd");
+
+  ASSERT_TRUE(image.compare(ground_truth, true, 1e-12, 1));
+}
+
 TEST(ImageTests, compareTest1)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
@@ -720,6 +759,26 @@ TEST(ImageTests, compareTest5b)
   Image image2(test_location + "diff_image_same_region_same_dims.nrrd");
 
   ASSERT_TRUE(image1.compare(image2, true /* keep comparing regions */, 1.0 /* allow pixels to differ by 1.0 */));
+}
+
+TEST(ImageTests, compareTest6a)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
+
+  Image image1(test_location + "1x2x2.nrrd");
+  Image image2(test_location + "compute-dt_baseline.nrrd");
+
+  ASSERT_FALSE(image1.compare(image2, true /* keep comparing regions */, 1.0 /* allow pixels to differ by 1.0 */));
+}
+
+TEST(ImageTests, compareTest6b)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
+
+  Image image1(test_location + "1x2x2.nrrd");
+  Image image2(test_location + "compute-dt_baseline.nrrd");
+
+  ASSERT_TRUE(image1.compare(image2, true /* keep comparing regions */, 1.0 /* allow pixels to differ by 1.0 */, 1 /* allow pixels to differ by 1 percentage*/));
 }
 
 TEST(ImageTests, multicommandTest)

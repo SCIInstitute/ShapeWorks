@@ -259,6 +259,20 @@ TEST(shapeworksTests, reflect)
 }
 
 //---------------------------------------------------------------------------
+TEST(shapeworksTests, warp)
+{
+  shapeworksEnvSetup();
+  ASSERT_FALSE(system("bash warp.sh"));
+}
+
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, warpfail)
+{
+  shapeworksEnvSetup();
+  ASSERT_TRUE(system("bash warpfail.sh"));
+}
+
+//---------------------------------------------------------------------------
 TEST(shapeworksTests, reflectfail)
 {
   shapeworksEnvSetup();

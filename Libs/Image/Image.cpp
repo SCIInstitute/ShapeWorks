@@ -318,7 +318,7 @@ Image& Image::resample(const Point3& physicalSpacing, Dims logicalDims)
   return *this;
 }
 
-bool Image::compare(const Image& other, bool verifyall, double precision) const
+bool Image::compare(const Image& other, bool verifyall, double precision, double pixel) const
 {
   // we use the region of interest filter here with the full region because our
   // incoming image may be the output of an ExtractImageFilter or PadImageFilter
@@ -365,7 +365,9 @@ bool Image::compare(const Image& other, bool verifyall, double precision) const
   }
 
   auto numberOfPixelsWithDifferences = diff->GetNumberOfPixelsWithDifferences();
-  if (numberOfPixelsWithDifferences > 0)
+  Dims dim = dims();
+  auto allowedPixelDifference = (pixel/100) * dim[0] * dim[1] * dim[2];
+  if (numberOfPixelsWithDifferences > allowedPixelDifference)
   {
     std::cerr << numberOfPixelsWithDifferences << " pixels differ\n";
     return false;
