@@ -125,14 +125,21 @@ ImageType::Pointer Shape::get_original_image()
 ImageType::Pointer Shape::get_groomed_image()
 {
   if (!this->groomed_image_) {
-    ImageType::Pointer image;
     std::string filename = this->subject_->get_groomed_filenames()[0]; // single domain supported
     if (filename != "") {
-      // read file using ITK
-      ReaderType::Pointer reader = ReaderType::New();
-      reader->SetFileName(filename);
-      reader->Update();
-      this->groomed_image_ = reader->GetOutput();
+      ImageType::Pointer image;
+      try {
+        // read file using ITK
+        ReaderType::Pointer reader = ReaderType::New();
+        reader->SetFileName(filename);
+        reader->Update();
+        image = reader->GetOutput();
+        // don't store to this->groomed_image_ so that we don't hold a pointer to it
+      } catch (itk::ExceptionObject & excep) {
+        std::cerr << "Exception caught!" << std::endl;
+        std::cerr << excep << std::endl;
+      }
+      return image;
     }
   }
   return this->groomed_image_;
