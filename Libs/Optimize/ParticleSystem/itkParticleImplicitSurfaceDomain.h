@@ -70,15 +70,6 @@ public:
   virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
                                       const PointType &pos) const override;
 
-
-  /** Define a distance measure on the surface.  Note that this distance
-      measure is NOT the geodesic distance, as one might expect, but is only a
-      Euclidean distance which ignores points whose normals are not
-      sufficiently aligned (method returns a negative number).  The assumption
-      here is that points are sufficiently close to one another on the surface
-      that they may be considered to lie in a tangent plane. */
-  virtual double Distance(const PointType &, const PointType &) const override;
-
   void SetCuttingPlane(const vnl_vector<double> &a, const vnl_vector<double> &b,
                        const vnl_vector<double> &c);
 

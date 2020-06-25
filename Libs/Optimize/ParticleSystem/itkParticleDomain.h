@@ -35,18 +35,6 @@ public:
     const PointType& pos) const = 0;
   virtual vnl_vector_fixed<double, VDimension> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, VDimension>& gradE,
     const PointType& pos) const = 0;
-
-  /** A Domain may define a distance calculation.  This is useful in cases
-      such as geodesic distance, where distance depends on some information
-      contained in the Domain.  The default implementation is Euclidean
-      distance. */
-  virtual double Distance(const PointType &a, const PointType &b) const
-  {
-    double sum = 0.0;
-    for (unsigned int i = 0; i < VDimension; i++)
-      {      sum += (b[i]-a[i]) * (b[i]-a[i]);      }
-    return sqrt(sum);
-  }
   
   /** A Domain may optionally return a bounding box.  The lower bound method
       gives the upper-left-hand corner of the domain.  The upper bound method

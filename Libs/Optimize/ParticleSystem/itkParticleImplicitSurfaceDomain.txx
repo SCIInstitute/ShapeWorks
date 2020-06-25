@@ -227,28 +227,6 @@ ParticleImplicitSurfaceDomain<T, VDimension>::ApplyConstraints(PointType &p) con
     return flag;
 }
 
-template <class T, unsigned int VDimension>
-double
-ParticleImplicitSurfaceDomain<T, VDimension>::Distance(const PointType &a, const PointType &b) const
-{
-  if (m_mesh != NULL)
-  {
-    point p1;
-    p1[0] = a[0];
-    p1[1] = a[1];
-    p1[2] = a[2];    
-    
-    point p2;
-    p2[0] = b[0];
-    p2[1] = b[1];
-    p2[2] = b[2];
-
-    return ( m_mesh->GetGeodesicDistance(p1,p2) );
-  }
-}
-
-
-
 template<class T, unsigned int VDimension>
 bool
 ParticleImplicitSurfaceDomain<T, VDimension>::
