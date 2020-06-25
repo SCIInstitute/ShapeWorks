@@ -88,6 +88,7 @@ function install_conda() {
 
   
   if ! pip install termcolor==1.1.0; then return 1; fi
+  if ! pip install grip==4.5.2; then return 1; fi
   if ! pip install matplotlib==3.1.2; then return 1; fi
   if ! pip install itk==5.0.1; then return 1; fi
   if ! pip install Python/DatasetUtilsPackage; then return 1; fi   # install the local GirderConnector code as a package

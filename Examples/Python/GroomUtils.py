@@ -562,8 +562,11 @@ def MeshesToVolumes(outDir, meshList, imgList, printCmd = True):
         execCommand = ["GenerateBinaryAndDTImagesFromMeshes", xmlfilename]
         if printCmd:
             print("CMD: " + " ".join(execCommand))
+        import time
+        start_time = time.time()
         subprocess.check_call(execCommand)
-         # save output volume
+        print("--- %s seconds ---" % (time.time() - start_time))
+        # save output volume
         output_volume = mesh.replace(".ply", ".rasterized_sp" + str(spacingX) + ".nrrd")
         shutil.move(output_volume, segFile)
         segList.append(segFile)
