@@ -566,6 +566,9 @@ void Optimize::Initialize()
   while (flag_split) {
     //        m_Sampler->GetEnsembleEntropyFunction()->PrintShapeMatrix();
     this->OptimizerStop();
+
+    this->SetInitialCorrespondenceMode();
+
     for (int i = 0; i < n; i++) {
       int d = i % m_domains_per_shape;
       if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d]) {
@@ -851,8 +854,17 @@ void Optimize::RunOptimize()
 //---------------------------------------------------------------------------
 void Optimize::SetInitialCorrespondenceMode()
 {
+  int num_particles = m_sampler->GetParticleSystem()->GetNumberOfParticles();
 
-  if (m_use_shape_statistics_in_init) {
+  bool use_shape_statistics = m_use_shape_statistics_in_init;
+
+  // if the multiscale mode is enabled and the number of particles is greater or equal to the provided
+  // value, we switch to the 'use_shape_statistics_in_init' mode
+  if (this->m_multiscale_mode_particles > 0 && num_particles >= this->m_multiscale_mode_particles) {
+    use_shape_statistics = true;
+  }
+
+  if (use_shape_statistics) {
     if (m_attributes_per_domain.size() > 0 &&
         *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) {
       if (m_mesh_based_attributes) {
