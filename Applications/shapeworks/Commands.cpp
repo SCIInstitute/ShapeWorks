@@ -886,7 +886,7 @@ bool CropImage::execute(const optparse::Values &options, SharedCommandData &shar
 void ClipVolume::buildParser()
 {
   const std::string prog = "clip";
-  const std::string desc = "chops volume with the specified cutting planes defined by three 3D points";
+  const std::string desc = "clips volume with the specified cutting planes defined by three 3D points";
   parser.prog(prog).description(desc);
 
   parser.add_option("--x1").action("store").type("double").set_default(0.0).help("Value of x1 for cutting plane [default: 0.0].");
@@ -1243,7 +1243,7 @@ void ReadParticleSystem::buildParser()
   const std::string desc = "reads a particle system";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--names").action("store").type("multistring").set_default("").help("paths to .particle files");
+  parser.add_option("--names").action("store").type("multistring").set_default("").help("paths to .particle files (must be followed by `--`), ex: \"--names *.particle -- next-command...\")");
 
   Command::buildParser();
 }
@@ -1288,7 +1288,7 @@ bool Compactness::execute(const optparse::Values &options, SharedCommandData &sh
   const int nModes = static_cast<int>(options.get("nmodes"));
   const std::string saveTo = static_cast<std::string>(options.get("saveto"));
   const double r = ShapeEvaluation<3>::ComputeCompactness(sharedData.particleSystem, nModes, saveTo);
-  std::cout << r << std::endl;
+  std::cout << "Particle system compactness: " << r << std::endl;
 
   return true;
 }
@@ -1320,7 +1320,7 @@ bool Generalization::execute(const optparse::Values &options, SharedCommandData 
   const int nModes = static_cast<int>(options.get("nmodes"));
   const std::string saveTo = static_cast<std::string>(options.get("saveto"));
   const double r = ShapeEvaluation<3>::ComputeGeneralization(sharedData.particleSystem, nModes, saveTo);
-  std::cout << r << std::endl;
+  std::cout << "Particle system generalization: " << r << std::endl;
 
   return true;
 }
@@ -1335,7 +1335,7 @@ void Specificity::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--nmodes").action("store").type("int").set_default("1").help("Number of modes to use");
-  parser.add_option("--saveto").action("store").type("string").set_default("").help("Save the reconstructions sorted by generalization along with the mapping to the original shape");
+  parser.add_option("--saveto").action("store").type("string").set_default("").help("Save the reconstructions sorted by specificity along with the mapping to the original shape");
 
   Command::buildParser();
 }
@@ -1352,7 +1352,7 @@ bool Specificity::execute(const optparse::Values &options, SharedCommandData &sh
   const int nModes = static_cast<int>(options.get("nmodes"));
   const std::string saveTo = static_cast<std::string>(options.get("saveto"));
   const double r = ShapeEvaluation<3>::ComputeSpecificity(sharedData.particleSystem, nModes, saveTo);
-  std::cout << r << std::endl;
+  std::cout << "Particle system specificity: " << r << std::endl;
 
   return true;
 }
