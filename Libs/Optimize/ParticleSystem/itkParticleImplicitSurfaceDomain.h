@@ -77,10 +77,7 @@ public:
 
   inline PointType UpdateParticlePosition(PointType &point, vnl_vector_fixed<double, VDimension> &update) const override {
     PointType newpoint;
-
-    vnl_vector_fixed<float, 3> negativeUpdate;
-    for (unsigned int i = 0; i < 3; i++) { negativeUpdate[i] = -update[i]; }
-    for (unsigned int i = 0; i < 3; i++) { newpoint[i] = point[i] + negativeUpdate[i]; }
+    for (unsigned int i = 0; i < 3; i++) { newpoint[i] = point[i] - update[i]; }
     ApplyConstraints(newpoint);
     return newpoint;
   }
