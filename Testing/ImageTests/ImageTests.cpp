@@ -678,7 +678,7 @@ TEST(ImageTests, warpTest5)
 
   Image ground_truth(test_location + "1x2x2.nrrd");
 
-  ASSERT_TRUE(image.compare(ground_truth, true, 1e-12, 1));
+  ASSERT_TRUE(image.compare(ground_truth, true, 1));
 }
 
 TEST(ImageTests, compareTest1)
@@ -758,7 +758,7 @@ TEST(ImageTests, compareTest5b)
   Image image1(test_location + "la-bin.nrrd");
   Image image2(test_location + "diff_image_same_region_same_dims.nrrd");
 
-  ASSERT_TRUE(image1.compare(image2, true /* keep comparing regions */, 1.0 /* allow pixels to differ by 1.0 */));
+  ASSERT_TRUE(image1.compare(image2, true /* keep comparing regions */, 0.0 /* allow pixels to differ by 0% */, 1.0 /* allow pixels to differ by 1.0 */));
 }
 
 TEST(ImageTests, compareTest6a)
@@ -768,7 +768,7 @@ TEST(ImageTests, compareTest6a)
   Image image1(test_location + "1x2x2.nrrd");
   Image image2(test_location + "compute-dt_baseline.nrrd");
 
-  ASSERT_FALSE(image1.compare(image2, true /* keep comparing regions */, 1.0 /* allow pixels to differ by 1.0 */));
+  ASSERT_FALSE(image1.compare(image2, true /* keep comparing regions */, 0.0 /* allow pixels to differ by 0% */, 1.0 /* allow pixels to differ by 1.0 */));
 }
 
 TEST(ImageTests, compareTest6b)
@@ -778,7 +778,7 @@ TEST(ImageTests, compareTest6b)
   Image image1(test_location + "1x2x2.nrrd");
   Image image2(test_location + "compute-dt_baseline.nrrd");
 
-  ASSERT_TRUE(image1.compare(image2, true /* keep comparing regions */, 1.0 /* allow pixels to differ by 1.0 */, 1 /* allow pixels to differ by 1 percentage*/));
+  ASSERT_TRUE(image1.compare(image2, true /* keep comparing regions */, 1 /* allow pixels to differ by 1% */, 1.0 /* allow pixels to differ by 1.0 */));
 }
 
 TEST(ImageTests, multicommandTest)
@@ -908,14 +908,12 @@ TEST(ImageTests, additionTest3)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/addition/");
 
-  std::cout << "addition3\n"; 
   Image image1(test_location + "la-bin.nrrd");
   Image image2(test_location + "la-bin.nrrd");
   image1 += image2;
   Image baseline(test_location + "baseline_addition.nrrd");
 
   ASSERT_TRUE(image1 == baseline);
-  std::cout << "addition3 DONE\n"; 
 }
 
 TEST(ImageTests, subtractionTest1)

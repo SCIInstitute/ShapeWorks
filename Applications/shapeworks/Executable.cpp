@@ -53,9 +53,7 @@ void Executable::addCommand(Command &command)
   if (cmdkey != commands.end()) {
     throw std::runtime_error(cmdkey->first + " already exists!");
   }
-#if 0 && DEBUG_CONSOLIDATION
-  std::cout << "Adding " << command.name() << "...\n";
-#endif
+
   commands.insert(std::pair<std::string, Command&>(command.name(), command));
   auto nodashname = command.name();
   nodashname.erase(std::remove(nodashname.begin(), nodashname.end(), '-'), nodashname.end());
@@ -89,9 +87,6 @@ int Executable::run(std::vector<std::string> arguments, SharedCommandData &share
   {
     auto cmd = commands.find(arguments[0]);
     if (cmd != commands.end()) {
-#if 0 && DEBUG_CONSOLIDATION
-      std::cout << "Executing " << cmd->first << "...\n";
-#endif
       auto args = std::vector<std::string>(arguments.begin() + 1, arguments.end());
       arguments = cmd->second.parse_args(args);
       try {
@@ -114,14 +109,7 @@ int Executable::run(std::vector<std::string> arguments, SharedCommandData &share
 
 ///////////////////////////////////////////////////////////////////////////////
 int Executable::run(int argc, char const *const *argv)
-{
-#if DEBUG_CONSOLIDATION
-  std::stringstream cmd;
-  for (int i=0; i<argc; i++)
-    cmd << argv[i] << " ";
-  std::cout << cmd.str() << std::endl;
-#endif
-  
+{  
   const optparse::Values options = parser.parse_args(argc, argv);
   
   // shapeworks global options

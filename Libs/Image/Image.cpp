@@ -318,8 +318,10 @@ Image& Image::resample(const Point3& physicalSpacing, Dims logicalDims)
   return *this;
 }
 
-bool Image::compare(const Image& other, bool verifyall, double precision, double pixel) const
+bool Image::compare(const Image& other, bool verifyall, double tolerance, double precision) const
 {
+  if (tolerance > 1 || tolerance < 0) { throw std::invalid_argument("tolerance value must be between 0 and 1 (inclusive)"); }
+  
   // we use the region of interest filter here with the full region because our
   // incoming image may be the output of an ExtractImageFilter or PadImageFilter
   // which modify indices and leave the origin intact.  These will not compare
@@ -366,7 +368,7 @@ bool Image::compare(const Image& other, bool verifyall, double precision, double
 
   auto numberOfPixelsWithDifferences = diff->GetNumberOfPixelsWithDifferences();
   Dims dim = dims();
-  auto allowedPixelDifference = (pixel/100) * dim[0] * dim[1] * dim[2];
+  auto allowedPixelDifference = tolerance * dim[0] * dim[1] * dim[2];
   if (numberOfPixelsWithDifferences > allowedPixelDifference)
   {
     std::cerr << numberOfPixelsWithDifferences << " pixels differ\n";

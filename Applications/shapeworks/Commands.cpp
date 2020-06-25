@@ -996,8 +996,8 @@ void WarpImage::buildParser()
   const std::string desc = "Finds the warp between the source and target landmarks and transforms image by this warp.";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--source_landmarks").action("store").type("string").set_default("").help("Path to source landmarks.");
-  parser.add_option("--target_landmarks").action("store").type("string").set_default("").help("Path to target landmarks.");
+  parser.add_option("--source").action("store").type("string").set_default("").help("Path to source landmarks.");
+  parser.add_option("--target").action("store").type("string").set_default("").help("Path to target landmarks.");
   parser.add_option("--stride").action("store").type("int").set_default(1).help("Every _stride_ points will be used for warping [default: 1].");
   Command::buildParser();
 }
@@ -1011,17 +1011,17 @@ bool WarpImage::execute(const optparse::Values &options, SharedCommandData &shar
     return false;
   }
 
-  std::string source_landmarks = static_cast<std::string>(options.get("source_landmarks"));
-  std::string target_landmarks = static_cast<std::string>(options.get("target_landmarks"));
+  std::string source = static_cast<std::string>(options.get("source"));
+  std::string target = static_cast<std::string>(options.get("target"));
   int stride = static_cast<int>(options.get("stride"));
 
-  if (source_landmarks == "" || target_landmarks == "")
+  if (source == "" || target == "")
   {
     std::cerr << "Must specify both source and target landmarks\n";
     return false;
   }
 
-  TransformPtr transform(ImageUtils::createWarpTransform(source_landmarks, target_landmarks, stride));
+  TransformPtr transform(ImageUtils::createWarpTransform(source, target, stride));
   sharedData.image.applyTransform(transform);
 
   return true;
@@ -1036,10 +1036,10 @@ void Compare::buildParser()
   const std::string desc = "compare two images";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--name").action("store").type("string").set_default("").help("Name of image with which to compare");
-  parser.add_option("--precision").action("store").type("double").set_default(1e-12).help("Allowed difference between two pixels for them to still be considered equal [default: 0.0]");
-  parser.add_option("--pixel").action("store").type("double").set_default(0.0).help("Allowed percentage of pixel difference between two pixels for them to still be considered equal [default: 0.0]");
+  parser.add_option("--name").action("store").type("string").set_default("").help("Compare this image with another");
   parser.add_option("--verifyall").action("store").type("bool").set_default(true).help("Verify origin, spacing, and direction of both images match [default: true]");
+  parser.add_option("--tolerance").action("store").type("double").set_default(0.0).help("Allowed percentage of pixel differences [default: 0.0]");
+  parser.add_option("--precision").action("store").type("double").set_default(1e-12).help("Allowed difference between two pixels for them to still be considered equal [default: 0.0]");
 
   Command::buildParser();
 }
@@ -1058,11 +1058,17 @@ bool Compare::execute(const optparse::Values &options, SharedCommandData &shared
     return false;
   }
 
-  double precision = static_cast<double>(options.get("precision"));
-  double pixel = static_cast<double>(options.get("pixel"));
   bool verifyall = static_cast<bool>(options.get("verifyall"));
+  double tolerance = static_cast<double>(options.get("tolerance"));
+  double precision = static_cast<double>(options.get("precision"));
 
-  if (sharedData.image.compare(Image(filename), verifyall, pixel))
+  if (tolerance > 100 || tolerance < 0)
+  {
+    std::cerr << "tolerance value must be between 0 and 100 (inclusive)";
+    return false;
+  }
+
+  if (sharedData.image.compare(Image(filename), verifyall, tolerance/100, precision))
   {
     std::cout << "compare success\n";
     return true;
@@ -1107,7 +1113,7 @@ void AddImage::buildParser()
   const std::string desc = "add a value to each pixel in this image and/or add another image in a pixelwise manner";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--value","-x").action("store").type("double").set_default("0.0").help("Value to add to each pixel");
+  parser.add_option("--value", "-x").action("store").type("double").set_default("0.0").help("Value to add to each pixel");
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of image to add pixelwise");
 
   Command::buildParser();
@@ -1147,7 +1153,7 @@ void SubtractImage::buildParser()
   const std::string desc = "subtract a value from each pixel in this image and/or subtract another image in a pixelwise manner";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--value","-x").action("store").type("double").set_default("0.0").help("Value to subtract from each pixel");
+  parser.add_option("--value", "-x").action("store").type("double").set_default("0.0").help("Value to subtract from each pixel");
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of image to subtract pixelwise");
 
   Command::buildParser();
@@ -1187,7 +1193,7 @@ void MultiplyImage::buildParser()
   const std::string desc = "multiply an image by a constant";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--value","-x").action("store").type("double").set_default("0.0").help("Value with which to multiply");
+  parser.add_option("--value", "-x").action("store").type("double").set_default("0.0").help("Value with which to multiply");
 
   Command::buildParser();
 }
@@ -1215,7 +1221,7 @@ void DivideImage::buildParser()
   const std::string desc = "divide an image by a constant";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--value","-x").action("store").type("double").set_default("0.0").help("Value with which to divide");
+  parser.add_option("--value", "-x").action("store").type("double").set_default("0.0").help("Value with which to divide");
 
   Command::buildParser();
 }

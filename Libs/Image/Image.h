@@ -229,7 +229,7 @@ public:
   Coord physicalToLogical(const Point3 &p) const;
 
   /// compares this with another image using the region of interest filter
-  bool compare(const Image& other, bool verifyall = true, double precision = 1e-12, double pixel = 0.0) const;
+  bool compare(const Image& other, bool verifyall = true, double tolerance = 0.0, double precision = 1e-12) const;
 
   /// compares this with another image using the region of interest filter
   bool operator==(const Image& other) const { return compare(other); }
