@@ -74,7 +74,7 @@ def Run_Pipeline(args):
         -- Center of Mass Alignment
         -- Centering
         -- Rigid Alignment
-        -- if interactive tag and option 2 was chosen- define cutting plane on mean sample
+        -- if interactive tag and option 2 was chosen - define cutting plane on mean sample
         -- clip segementations with cutting plane
         -- find largest bounding box and crop
         """
@@ -144,7 +144,7 @@ def Run_Pipeline(args):
                 if not input_mesh:
                     print("Invalid prefix.")
             cutting_plane_points = SelectCuttingPlane(input_mesh)
-            if cp_prefix[-1] =='R':
+            if cp_prefix[-1] == 'R':
                 reference_side = "right"
             print("Cutting plane points defined: ")
             print(cutting_plane_points)
@@ -199,7 +199,7 @@ def Run_Pipeline(args):
         This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
         This function uses the same transfrmation matrix for alignment of raw and segmentation files.
         """
-        [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, centerFiles_segmentations, centerFiles_images, medianFile, processRaw = True)
+        [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir + "aligned", centerFiles_segmentations, centerFiles_images, medianFile, processRaw = True)
 
         # If user chose option 2, define cutting plane on median sample
         if choice == 2:

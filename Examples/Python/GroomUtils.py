@@ -93,6 +93,17 @@ def applyPadding(outDir, inDataList, padSize, padValue=0, printCmd = True):
         subprocess.check_call(cmd)
     return outDataList
 
+def makeVector(str):
+    arr = np.array(str.replace("[", "").replace("]", "").split(","))
+    return np.asarray(arr, np.float64) 
+
+def getInfo(name, info):
+    cmd = ["shapeworks",
+           "read-image", "--name", name,
+           "info", "--" + info, str(True)]
+    output = subprocess.run(cmd, capture_output=True, text=True).stdout.splitlines()   
+    return makeVector(output[0].split(":")[1])
+
 def applyCOMAlignment(outDir, inDataList, raw=[], printCmd = True):
     """
     This function takes in a filelist and produces the center of mass aligned
@@ -122,31 +133,14 @@ def applyCOMAlignment(outDir, inDataList, raw=[], printCmd = True):
             outname = rename(inname, outDir, 'com')
         outDataListSeg.append(outname)
 
-        # get centerofmass
-        cmd = ["shapeworks",
-               "read-image", "--name", inname,
-               "info", "--centerofmass", str(True)]
-        if printCmd:
-            print("CMD: " + " ".join(cmd))
-        com = subprocess.run(cmd, stdout=subprocess.PIPE).stdout.decode('utf-8')
-        com = com.strip().replace("[", "").replace("]", "").replace(" ", "").split(":")
-        com = com[1].split(",")
-
-        # get origin
-        cmd = ["shapeworks",
-               "read-image", "--name", inname,
-               "info", "--center", str(True)]
-        center = subprocess.run(cmd, stdout=subprocess.PIPE).stdout.decode('utf-8')
-        center = center.strip().replace("[", "").replace("]", "").replace(" ", "").split(":")
-        center = center[1].split(",")
-
-        tx = float(com[0]) - float(center[0])
-        ty = float(com[1]) - float(center[1])
-        tz = float(com[2]) - float(center[2])
+        # get centerofmass and center
+        center = getInfo(inname, "center")
+        com = getInfo(inname, "centerofmass")
+        T = com - center
 
         cmd = ["shapeworks", 
                "readimage", "--name", inname, 
-               "translate", "-x", str(tx), "-y", str(ty), "-z", str(tz), 
+               "translate", "-x", str(T[0]), "-y", str(T[1]), "-z", str(T[2]), 
                "write-image", "--name", outname]
         if printCmd:
             print("CMD: " + " ".join(cmd))
@@ -157,7 +151,7 @@ def applyCOMAlignment(outDir, inDataList, raw=[], printCmd = True):
             outDataListImg.append(outnameImg)
             cmd = ["shapeworks", 
                    "readimage", "--name", innameImg, 
-                   "translate", "-x", str(tx), "-y", str(ty), "-z", str(tz),
+                   "translate", "-x", str(T[0]), "-y", str(T[1]), "-z", str(T[2]),
                    "write-image", "--name", outnameImg]
             if printCmd:
                 print("CMD: " + " ".join(cmd))
@@ -487,6 +481,7 @@ def MeshesToVolumes(outDir, meshList, imgList, printCmd = True):
         mesh_name = os.path.basename(mesh)
         extension = mesh_name.split(".")[-1]
         prefix = mesh_name.split("_")[0] + "_" + mesh_name.split("_")[1]
+
         # change to ply if needed
         if extension == "vtk":
             mesh_vtk = mesh
@@ -501,47 +496,27 @@ def MeshesToVolumes(outDir, meshList, imgList, printCmd = True):
             execCommand = ["stl2ply", mesh_vtk, mesh]
             if printCmd:
                 print("CMD: " + " ".join(execCommand))
-            subprocess.check_call(execCommand) 
+            subprocess.check_call(execCommand)
+
         # get image
         for image_file in imgList:
             if prefix in image_file:
                 image = image_file
-         # write origin, size, and spacing info to text file
-        infoPrefix = os.path.join(outDir, prefix)
-        cmd = ["shapeworks",
-               "readimage", "--name", image,
-               "info", "--origin", str(True)]
-        if printCmd:
-            print("CMD: " + " ".join(cmd))
-        origin = subprocess.run(cmd, stdout=subprocess.PIPE).stdout.decode('utf-8')
-        origin = origin.strip().replace("[", "").replace("]", "").replace(" ", "").split(":")
-        origin = origin[1].split(",")
 
-        cmd = ["shapeworks",
-               "readimage", "--name", image,
-               "info", "--dims", str(True)]
-        if printCmd:
-            print("CMD: " + " ".join(cmd))
-        size = subprocess.run(cmd, stdout=subprocess.PIPE).stdout.decode('utf-8')
-        size = size.strip().replace("[", "").replace("]", "").replace(" ", "").split(":")
-        size = size[1].split(",")
+        # write origin, size, and spacing info to text file
+        origin = getInfo(image, "origin")
+        size = getInfo(image, "dims")
+        spacing = getInfo(image, "spacing")
 
-        cmd = ["shapeworks",
-               "readimage", "--name", image,
-               "info", "--spacing", str(True)]
-        if printCmd:
-            print("CMD: " + " ".join(cmd))
-        spacing = subprocess.run(cmd, stdout=subprocess.PIPE).stdout.decode('utf-8')
-        spacing = spacing.strip().replace("[", "").replace("]", "").replace(" ", "").split(":")
-        spacing = spacing[1].split(",")
         # get origin, size, and spacing data
         data = {}
         data["origin"] = origin
         data["size"] = size
         data["spacing"] = spacing
-        spacingX = spacing[0]
+
         # write xml file
-        xmlfilename=infoPrefix + "_GenerateBinaryAndDT.xml"
+        infoPrefix = os.path.join(outDir, prefix)
+        xmlfilename = infoPrefix + "_GenerateBinaryAndDT.xml"
         if os.path.exists(xmlfilename):
             os.remove(xmlfilename)
         xml = open(xmlfilename, "a")
@@ -549,6 +524,7 @@ def MeshesToVolumes(outDir, meshList, imgList, printCmd = True):
         xml.write("<mesh>\n")
         xml.write(mesh+"\n")
         xml.write("</mesh>\n")
+
         # write origin, size, and spacing data
         for key,value in data.items():
             index = 0
@@ -556,8 +532,9 @@ def MeshesToVolumes(outDir, meshList, imgList, printCmd = True):
                 xml.write("<" + key + "_" + dim + ">" + str(value[index]) + "</" + key + "_" + dim + ">\n")
                 index += 1
         xml.close()
-        print("########### Turning  Mesh To Volume ##############")
+        print("########### Turning Mesh To Volume ##############")
         segFile = rename(mesh, outDir, "", ".nrrd")
+
         # call generate binary and DT
         execCommand = ["GenerateBinaryAndDTImagesFromMeshes", xmlfilename]
         if printCmd:
@@ -566,14 +543,17 @@ def MeshesToVolumes(outDir, meshList, imgList, printCmd = True):
         start_time = time.time()
         subprocess.check_call(execCommand)
         print("--- %s seconds ---" % (time.time() - start_time))
+
         # save output volume
-        output_volume = mesh.replace(".ply", ".rasterized_sp" + str(spacingX) + ".nrrd")
+        output_volume = mesh.replace(".ply", ".rasterized_sp" + str(spacing[0]) + ".nrrd")
         shutil.move(output_volume, segFile)
         segList.append(segFile)
-        #save output DT
-        output_DT =  mesh.replace(".ply", ".DT_sp" + str(spacingX) + ".nrrd")
+
+        # save output DT
+        output_DT =  mesh.replace(".ply", ".DT_sp" + str(spacing[0]) + ".nrrd")
         dtFile = segFile.replace(".nrrd", "_DT.nrrd")
-        shutil.move(output_DT, dtFile)                    
+        shutil.move(output_DT, dtFile)
+
     return segList
 
 def ClipBinaryVolumes(outDir, segList, cutting_plane_points, printCmd = True):
