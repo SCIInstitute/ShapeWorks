@@ -240,7 +240,7 @@ def runShapeWorksOptimize_SingleScale(parentDir, inDataFiles, parameterDictionar
     execCommand = ["ShapeWorksRun" , parameterFile]
     subprocess.check_call(execCommand )
 
-    outPointsWorld, outPointsLocal = _convertFilenamesToPointFilenames(inDataFiles, outDir)
+    outPointsLocal, outPointsWorld = _convertFilenamesToPointFilenames(inDataFiles, outDir)
     return [outPointsLocal, outPointsWorld]
 
 def runShapeWorksOptimize_MultiScale(parentDir, inDataFiles, parameterDictionary):
@@ -256,14 +256,14 @@ def runShapeWorksOptimize_MultiScale(parentDir, inDataFiles, parameterDictionary
             os.makedirs(outDir)
         prevOutDir = parentDir + '/' + str(2**(startFactor + i - 1)) + '/'
         parameterFile = parentDir + "correspondence_" + str(2**(startFactor + i)) + '.xml'
-        _, inparts = _convertFilenamesToPointFilenames(inDataFiles, prevOutDir)
+        inparts, _  = _convertFilenamesToPointFilenames(inDataFiles, prevOutDir)
         create_SWRun_multi_xml(parameterFile, inDataFiles, parameterDictionary, outDir, i, inparts)
         create_cpp_xml(parameterFile, parameterFile)
         print(parameterFile)
         execCommand = ["ShapeWorksRun" , parameterFile]
         subprocess.check_call(execCommand )
 
-    outPointsWorld, outPointsLocal = _convertFilenamesToPointFilenames(inDataFiles, outDir)
+    outPointsLocal, outPointsWorld  = _convertFilenamesToPointFilenames(inDataFiles, outDir)
     return [outPointsLocal, outPointsWorld]
 
 
@@ -323,5 +323,5 @@ def runShapeWorksOptimize_FixedDomains(parentDir, inDataFiles, parameterDictiona
     print(parameterFile)
     execCommand = ["ShapeWorksRun" , parameterFile]
     subprocess.check_call(execCommand )
-    outPointsWorld, outPointsLocal = _convertFilenamesToPointFilenames(inDataFiles, outDir)
+    outPointsLocal, outPointsWorld = _convertFilenamesToPointFilenames(inDataFiles, outDir)
     return [outPointsLocal, outPointsWorld]
