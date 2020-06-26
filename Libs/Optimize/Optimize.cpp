@@ -232,7 +232,6 @@ int Optimize::GetDomainsPerShape()
 void Optimize::SetDomainType(shapeworks::DomainType type)
 {
   this->m_domain_type = type;
-  this->m_sampler->SetDomainType(this->m_domain_type);
 }
 
 //---------------------------------------------------------------------------
@@ -494,8 +493,7 @@ void Optimize::AddSinglePoint()
 {
   typedef itk::ParticleSystem < 3 > ParticleSystemType;
   typedef ParticleSystemType::PointType PointType;
-  for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains();
-       i++) {
+  for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
     if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) > 0) {
       continue;
     }
@@ -1431,7 +1429,7 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
         if (m_use_normals[i % m_domains_per_shape]) {
           typename itk::ParticleImageDomainWithGradients < float,
                                                            3 > ::VnlVectorType pG =
-            domain->SampleNormalVnl(pos);
+            domain->SampleNormalAtPoint(pos);
           VectorType pN;
           pN[0] = pG[0]; pN[1] = pG[1]; pN[2] = pG[2];
           pN = m_sampler->GetParticleSystem()->TransformVector(pN,
@@ -1903,6 +1901,13 @@ void Optimize::AddImage(ImageType::Pointer image) {
   if (image) {
     this->m_spacing = image->GetSpacing()[0];
   }
+}
+
+//---------------------------------------------------------------------------
+void Optimize::AddMesh(shapeworks::MeshWrapper *mesh) {
+  this->m_sampler->AddMesh(mesh);
+  this->m_num_shapes++;
+  this->m_spacing = 1;
 }
 
 //---------------------------------------------------------------------------

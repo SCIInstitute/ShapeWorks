@@ -100,14 +100,13 @@ template<class TGradientNumericType, unsigned int VDimension>
 vnl_matrix<double>
 ParticleGoodBadAssessment<TGradientNumericType, VDimension>::computeParticlesNormals(int d, const ParticleSystemType * m_ParticleSystem)
 {
-    const DomainType * domain = static_cast<const DomainType *>(m_ParticleSystem->GetDomain(d));
     int num = m_ParticleSystem->GetNumberOfParticles(d);
     vnl_matrix<double> normals(num, VDimension);
 
     for (int i = 0; i < num; i++)
     {
         PointType pt = m_ParticleSystem->GetPosition(i, d);
-        NormalType n = domain->SampleNormalVnl(pt);
+        NormalType n = m_ParticleSystem->GetDomain(d)->SampleNormalAtPoint(pt);
         for (int j = 0; j < VDimension; j++)
             normals[i][j] = n[j];
     }

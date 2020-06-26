@@ -147,6 +147,7 @@ void PowerOfTwoPointTree<VDimension>::ConstructTree(const PointType &lowerbound,
   m_Depth = depth;
 
   NodePointerType n = NodeType::New();
+
   n->SetLowerBound(lowerbound);
   n->SetUpperBound(upperbound);
 

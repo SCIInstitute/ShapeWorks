@@ -20,6 +20,8 @@
 #include "itkParticleSurfaceNeighborhood.h"
 #include "itkParticleOmegaGradientFunction.h"
 #include "DomainType.h"
+#include "MeshWrapper.h"
+#include "MeshDomain.h"
 
 #include "itkParticleModifiedCotangentEntropyGradientFunction.h"
 #include "itkParticleConstrainedModifiedCotangentEntropyGradientFunction.h"
@@ -167,6 +169,17 @@ public:
         m_DomainList.push_back(domain);
     }
 
+    void AddMesh(shapeworks::MeshWrapper * mesh) {
+
+      MeshDomain<Dimension> *domain = new MeshDomain<Dimension>();
+      m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood<ImageType>::New());
+      if (mesh) {
+        this->m_Spacing = 1;
+        domain->SetMesh(mesh);
+      }
+      m_DomainList.push_back(domain);
+    }
+
     void SetFidsFiles(const std::vector<std::string> &s)
     {
         m_FidsFiles = s;
@@ -183,10 +196,6 @@ public:
     void SetDomainsPerShape(int i)
     {
         m_DomainsPerShape = i;
-    }
-    void SetDomainType(shapeworks::DomainType domain_type)
-    {
-        m_domain_type = domain_type;
     }
     void SetAttributesPerDomain(const std::vector<int> &i)
     {
@@ -391,7 +400,6 @@ private:
     std::vector<int> m_AttributesPerDomain;
     int m_DomainsPerShape;
     double m_Spacing{0};
-    shapeworks::DomainType m_domain_type;
 
     std::string m_TransformFile;
     std::string m_PrefixTransformFile;
