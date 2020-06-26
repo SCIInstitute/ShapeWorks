@@ -86,9 +86,6 @@ public:
     return 0.02;
   }
 
-  // TODO replace the default euclidean distance computation with geodesic distance computation
-  //double Distance(const PointType& a, const PointType& b) const override;
-
   inline std::string PrintPoint(PointType point) const {
     return "(" + std::to_string(point[0]) + ", " + std::to_string(point[1]) + ", " + std::to_string(point[2]) + ")";
   }

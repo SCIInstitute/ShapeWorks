@@ -274,6 +274,10 @@ private:
                                   ? mesh->vertices[index][dimension] : meshUpperBound[dimension];
       }
     }
+    for (int i = 0; i < 3; i++) {
+      meshLowerBound[i] = meshLowerBound[i] - 0.1;
+      meshUpperBound[i] = meshUpperBound[i] + 0.1;
+    }
   }
 
 

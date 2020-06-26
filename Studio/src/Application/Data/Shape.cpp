@@ -153,6 +153,8 @@ void Shape::import_groomed_image(ImageType::Pointer img, double iso)
   auto name = this->get_original_filename_with_path().toStdString();
   name = name.substr(0, name.find_last_of(".")) + "_DT.nrrd";
   this->groomed_filename_ = QString::fromStdString(name);
+  std::vector<std::string> groomed_filenames {name};   // only single domain supported so far
+  this->subject_->set_groomed_filenames(groomed_filenames);
 }
 
 //---------------------------------------------------------------------------

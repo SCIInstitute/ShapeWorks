@@ -19,6 +19,7 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize *
   bool loadOkay = doc.LoadFile();
 
   if (!loadOkay) {
+    std::cerr << "Could not parse XML\n";
     return false;
   }
 
@@ -87,10 +88,6 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize *
     return false;
   }
 
-  if (!this->read_constraints(&doc_handle, optimize)) {
-    return false;
-  }
-
   if (!this->read_explanatory_variables(&doc_handle, optimize)) {
     return false;
   }
@@ -120,6 +117,11 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize *
     return false;
   }
 
+
+  // must be read after the inputs since it checks that the counts match
+  if (!this->read_constraints(&doc_handle, optimize)) {
+    return false;
+  }
 
   return true;
 }
