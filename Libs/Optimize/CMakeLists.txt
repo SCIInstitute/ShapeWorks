@@ -5,6 +5,7 @@ add_library(Optimize STATIC
   Optimize.cpp
   OptimizeParameterFile.cpp
   ./ParticleSystem/MeshDomain.cpp
+  ./ParticleSystem/TriMeshWrapper.cpp
   )
 
 target_link_libraries(Optimize
