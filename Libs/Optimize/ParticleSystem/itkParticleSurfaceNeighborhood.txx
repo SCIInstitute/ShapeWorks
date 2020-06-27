@@ -24,8 +24,8 @@ ParticleSurfaceNeighborhood<TImage>
 ::FindNeighborhoodPoints(const PointType &center,
                          std::vector<double> &weights, double radius) const
 {
-  const DomainType *domain = dynamic_cast<const DomainType *>(this->GetDomain());
-  GradientVectorType posnormal = domain->SampleNormalVnl(center, 1.0e-10);
+  const auto *domain = this->GetDomain();
+  GradientVectorType posnormal = domain->SampleNormalAtPoint(center);
   //  double posnormalmag = posnormal.magnitude();
   weights.clear();
 
@@ -66,7 +66,7 @@ ParticleSurfaceNeighborhood<TImage>
     
     if ( sum < radius && sum > 0.0 )
       {
-      GradientVectorType pn = domain->SampleNormalVnl((*it)->Point, 1.0e-10);
+      GradientVectorType pn = domain->SampleNormalAtPoint((*it)->Point);
       double cosine   = dot_product(posnormal,pn); // normals already normalized
       // double cosine = proj / (posnormalmag * pn.magnitude() + 1.0e-6);
 

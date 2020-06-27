@@ -122,16 +122,7 @@ public:
             k += idx * VDimension;
         k += idx * m_AttributesPerDomain[dom];
 
-        const ParticleImplicitSurfaceDomain<float, 3>* domain
-                = static_cast<const ParticleImplicitSurfaceDomain<float ,3> *>(ps->GetDomain(d));
-
-        const ParticleImageDomainWithGradients<float, 3> * domainWithGrad
-                = static_cast<const ParticleImageDomainWithGradients<float ,3> *>(ps->GetDomain(d));
-
-        const ParticleImageDomainWithHessians<float, 3> * domainWithHess
-                = static_cast<const ParticleImageDomainWithHessians<float ,3> *>(ps->GetDomain(d));
-
-        TriMesh *ptr = domain->GetMesh();
+        
 
         int s = 0;
         if (m_use_xyz[dom])
@@ -165,7 +156,9 @@ public:
             }
             else
             {
-                typename ParticleImageDomainWithGradients<float,3>::VnlVectorType pG = domainWithGrad->SampleGradientVnl(posLocal);
+                const ParticleImageDomainWithHessians<float, 3> * domainWithHess
+                  = static_cast<const ParticleImageDomainWithHessians<float, 3> *>(ps->GetDomain(d));
+                typename ParticleImageDomainWithGradients<float,3>::VnlVectorType pG = domainWithHess->SampleGradientVnl(posLocal);
                 typename ParticleImageDomainWithGradients<float,3>::VnlVectorType pN = pG.normalize();
                 float grad_mag = pG.magnitude();
 
@@ -233,6 +226,9 @@ public:
                 {
                     point dc;
                     dc.clear();
+                    const ParticleImplicitSurfaceDomain<float, 3> * domain
+                      = static_cast<const ParticleImplicitSurfaceDomain<float, 3> *>(ps->GetDomain(d));
+                    TriMesh *ptr = domain->GetMesh();
                     dc = ptr->GetFeatureDerivative(pt, aa);
                     for (unsigned int vd = 0; vd < VDimension; vd++)
                         this->operator()(aa+k, vd + 3 * (d / m_DomainsPerShape)) = dc[vd]*m_AttributeScales[num+aa+s];

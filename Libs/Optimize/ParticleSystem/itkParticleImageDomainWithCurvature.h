@@ -86,7 +86,7 @@ public:
     this->ComputeSurfaceStatistics(I);
   } // end setimage
 
-  double GetCurvature(const PointType &p) const
+  double GetCurvature(const PointType &p) const override
   {
     if (this->m_FixedDomain) {
       return 0;
@@ -95,12 +95,12 @@ public:
     return openvdb::tools::BoxSampler::sample(m_VDBCurvature->tree(), coord);
   }
 
-  inline double GetSurfaceMeanCurvature() const
+  inline double GetSurfaceMeanCurvature() const override
   {
     return m_SurfaceMeanCurvature;
   }
 
-  inline double GetSurfaceStdDevCurvature() const
+  inline double GetSurfaceStdDevCurvature() const override
   {
     return m_SurfaceStdDevCurvature;
   }
@@ -121,7 +121,7 @@ protected:
     // Rendering..." for detailss
     
     // Get the normal vector associated with this position.
-    typename Superclass::VnlVectorType posnormal = this->SampleNormalVnl(pos, 1.0e-6);
+    typename Superclass::VnlVectorType posnormal = this->SampleNormalAtPoint(pos);
 
     // Sample the Hessian for this point and compute gradient of the normal.
     typename Superclass::VnlMatrixType I;

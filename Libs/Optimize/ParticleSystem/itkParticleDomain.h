@@ -14,6 +14,8 @@
 #include "vnl/vnl_vector_fixed.h"
 #include "vnl/vnl_matrix_fixed.h"
 
+#include "DomainType.h"
+
 namespace itk
 {
 template <unsigned int VDimension=3>
@@ -33,8 +35,12 @@ public:
   virtual bool ApplyConstraints(PointType& p) const = 0;
   virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, VDimension>& gradE,
     const PointType& pos) const = 0;
+
+  virtual PointType UpdateParticlePosition(PointType &point, vnl_vector_fixed<double, VDimension> &update) const = 0;
+
   virtual vnl_vector_fixed<double, VDimension> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, VDimension>& gradE,
     const PointType& pos) const = 0;
+  virtual vnl_vector_fixed<float, 3> SampleNormalAtPoint(const PointType & point) const = 0;
 
   /** A Domain may define a distance calculation.  This is useful in cases
       such as geodesic distance, where distance depends on some information
@@ -47,6 +53,11 @@ public:
       {      sum += (b[i]-a[i]) * (b[i]-a[i]);      }
     return sqrt(sum);
   }
+
+
+  virtual double GetCurvature(const PointType &p) const = 0;
+  virtual double GetSurfaceMeanCurvature() const = 0;
+  virtual double GetSurfaceStdDevCurvature() const = 0;
   
   /** A Domain may optionally return a bounding box.  The lower bound method
       gives the upper-left-hand corner of the domain.  The upper bound method
@@ -72,10 +83,11 @@ public:
   bool IsDomainFixed() const {
     return m_FixedDomain;
   }
+  virtual shapeworks::DomainType GetDomainType() const = 0;
 
 protected:
 
-  // is this a fixed domain or not?  We start as fixed and if an image is set, we set this to true
+  // is this a fixed domain or not?  We start as fixed and if an image or mesh is set, we set this to false
   bool m_FixedDomain{true};
 
 
