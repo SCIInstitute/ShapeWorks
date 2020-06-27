@@ -11,13 +11,6 @@
 
 namespace itk
 {
-  namespace {
-    template<class T>
-    inline std::string PrintValue(T value) {
-      return "(" + std::to_string(value[0]) + ", " + std::to_string(value[1]) + ", " + std::to_string(value[2]) + ")";
-    }
-  }
-
   bool MeshDomain::ApplyConstraints(PointType &p) const {
     // TODO snap the point to the closest position on the mesh or something
     // TODO need to refactor particle updates into a function so that mesh can do its own update method.
