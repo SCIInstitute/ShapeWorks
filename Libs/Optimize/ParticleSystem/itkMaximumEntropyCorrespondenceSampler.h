@@ -15,6 +15,7 @@
 #ifndef __itkMaximumEntropyCorrespondenceSampler_h
 #define __itkMaximumEntropyCorrespondenceSampler_h
 
+#include "CorrespondenceMode.h"
 #include "itkMaximumEntropySurfaceSampler.h"
 #include "itkParticleDualVectorFunction.h"
 #include "itkParticleEnsembleEntropyFunction.h"
@@ -113,44 +114,35 @@ public:
     this->Modified();
   }
 
-  /** This method sets the optimization function for correspondences between
-      surfaces (domains).
-      mode 0 = mean energy
-      mode 1 = ensemble entropy
-      mode 3 = ensemble regression entropy
-      mode 4 = ensemble mixed effects entropy
-      mode 5 = mesh based general entropy
-      mode 6 = mesh based general mean energy
-  */
-  virtual void SetCorrespondenceMode(int mode)
+  /** This method sets the optimization function for correspondences between surfaces (domains). */
+  virtual void SetCorrespondenceMode(shapeworks::CorrespondenceMode mode)
   {
-    if (mode == 1)
+    if (mode == shapeworks::CorrespondenceMode::MeanEnergy) {
+      m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
+      m_EnsembleEntropyFunction->UseMeanEnergy();
+    }
+    else if (mode == shapeworks::CorrespondenceMode::EnsembleEntropy)
     {
       m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
       m_EnsembleEntropyFunction->UseEntropy();
     }
-    else if (mode == 3)
+    else if (mode == shapeworks::CorrespondenceMode::EnsembleRegressionEntropy)
     {
       m_LinkingFunction->SetFunctionB(m_EnsembleRegressionEntropyFunction);
     }
-    else if (mode == 4)
+    else if (mode == shapeworks::CorrespondenceMode::EnsembleMixedEffectsEntropy)
     {
       m_LinkingFunction->SetFunctionB(m_EnsembleMixedEffectsEntropyFunction);
     }
-    else if (mode == 5)
+    else if (mode == shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy)
     {
         m_LinkingFunction->SetFunctionB(m_MeshBasedGeneralEntropyGradientFunction);
         m_MeshBasedGeneralEntropyGradientFunction->UseEntropy();
     }
-    else if (mode == 6)
+    else if (mode == shapeworks::CorrespondenceMode::MeshBasedGeneralMeanEnergy)
     {
         m_LinkingFunction->SetFunctionB(m_MeshBasedGeneralEntropyGradientFunction);
         m_MeshBasedGeneralEntropyGradientFunction->UseMeanEnergy();
-    }
-    else
-    {
-      m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
-      m_EnsembleEntropyFunction->UseMeanEnergy();
     }
 
     m_CorrespondenceMode = mode;
@@ -253,7 +245,7 @@ public:
     m_MixedEffectsShapeMatrix->SetTimeptsPerIndividual(n);
   }
 
-  int GetCorrespondenceMode() const
+  shapeworks::CorrespondenceMode GetCorrespondenceMode() const
   { return m_CorrespondenceMode; }
 
   virtual void InitializeOptimizationFunctions();
@@ -273,7 +265,7 @@ protected:
 private:
   MaximumEntropyCorrespondenceSampler(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
-  int m_CorrespondenceMode;
+  shapeworks::CorrespondenceMode m_CorrespondenceMode;
 
   typename ParticleDualVectorFunction<Dimension>::Pointer m_LinkingFunction;
 

@@ -46,7 +46,7 @@ MaximumEntropyCorrespondenceSampler<TImage>::MaximumEntropyCorrespondenceSampler
   Superclass::m_ParticleSystem->RegisterAttribute(m_LinearRegressionShapeMatrix);
   Superclass::m_ParticleSystem->RegisterAttribute(m_MixedEffectsShapeMatrix);
 
-  m_CorrespondenceMode = 1;
+  m_CorrespondenceMode = shapeworks::CorrespondenceMode::EnsembleEntropy;
 }
 
 template<class TImage>
