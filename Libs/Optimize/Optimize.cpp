@@ -540,7 +540,7 @@ void Optimize::Initialize()
         m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy);
       }
       else {
-        m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeanEnergy);
+        m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::UnknownEnergy);
       }
     }
     else {
