@@ -2,5 +2,8 @@ TestEllipsoidsFD/
 TestEllipsoids/
 TestEllipsoidsMesh/
 TestFemur/
+TestFemurMesh/
+TestScapula/
+TestCan/
 left_atrium.zip
 femur.zip
