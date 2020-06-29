@@ -56,8 +56,7 @@ public:
   typedef ParticleMeanCurvatureAttribute<TGradientNumericType, VDimension>
     MeanCurvatureCacheType;
 
-  typedef typename ParticleImageDomainWithCurvature<TGradientNumericType, VDimension>
-    ::VnlMatrixType VnlMatrixType;
+  typedef typename ParticleImageDomainWithCurvature<TGradientNumericType>::VnlMatrixType VnlMatrixType;
 
   /** Method for creation through the object factory. */
   itkNewMacro( Self );

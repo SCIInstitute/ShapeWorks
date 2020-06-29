@@ -26,12 +26,12 @@ namespace itk
  * \sa ParticleClipRegionDomain
  * \sa ParticleDomain
  */
-template <class T, unsigned int VDimension=3>
-class ParticleImageDomainWithCurvature : public ParticleImageDomainWithHessians<T, VDimension>
+template <class T>
+class ParticleImageDomainWithCurvature : public ParticleImageDomainWithHessians<T>
 {
 public:
   /** Standard class typedefs */
-  typedef ParticleImageDomainWithHessians<T, VDimension> Superclass;
+  typedef ParticleImageDomainWithHessians<T> Superclass;
 
   typedef typename Superclass::PointType PointType;  
   typedef typename Superclass::ImageType ImageType;
@@ -155,7 +155,7 @@ protected:
   inline double vnl_trace(const VnlMatrixType &m) const
   {
     double sum = 0.0;
-    for (unsigned int i = 0; i < VDimension; i++)
+    for (unsigned int i = 0; i < DIMENSION; i++)
       {
       sum += m[i][i];
       }

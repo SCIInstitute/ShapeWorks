@@ -70,7 +70,7 @@ public:
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
   /** Define the base domain type. */
-  typedef ParticleDomain<VDimension> DomainType;
+  typedef ParticleDomain DomainType;
   
   /** Point type used to store particle locations. */
   typedef Point<double, VDimension> PointType;
