@@ -103,6 +103,7 @@ def Run_Pipeline(args):
             files_mesh = files_mesh[:3]
             args.use_single_scale = True
             args.interactive = False
+
         # run clustering if running on a subset
         if args.use_subsample:
             sample_idx = sampledata(files_img, int(args.use_subsample))
@@ -203,76 +204,16 @@ def Run_Pipeline(args):
 
         # If user chose option 2, define cutting plane on median sample
         if choice == 2:
-           input_file = medianFile.replace("centered", "aligned").replace(".nrrd", ".aligned.DT.nrrd")
-           cutting_plane_points = SelectCuttingPlane(input_file)
-    
-        # Fix cutting plane points previously selected
+            input_file = medianFile.replace("centered", "aligned").replace(".nrrd", ".aligned.DT.nrrd")
+            cutting_plane_points = SelectCuttingPlane(input_file)
+
         else:
-            # Get COM translation
-            COM_folder = parentDir + "com_aligned/segmentations"
-            for file in os.listdir(COM_folder):
-                if cp_prefix in file and ".txt" in file:
-                    COM_filename = COM_folder + file
-            COM_filehandler = open(COM_filename, "r")
-            line = COM_filehandler.readlines()[2].replace("translation:","")
-            trans = []
-            for string in line.split():
-                trans.append(float(string))
-            trans = np.array(trans)
-            COM_filehandler.close()
+            postfix = "_femur.isores.pad.com.center.aligned.DT.nrrd"
+            input_file = cp_prefix + postfix
+            print("Input File: ")
+            print(input_file)
+            cutting_plane_points = SelectCuttingPlane(input_file)
 
-            # Apply COM translation
-            print("Translating cutting plane by: ")
-            print(trans)
-            new_cutting_plane_points = np.zeros(cutting_plane_points.shape)
-            for pt_index in range(cutting_plane_points.shape[0]):
-                new_cutting_plane_points[pt_index] = cutting_plane_points[pt_index] - trans
-            cutting_plane_points = new_cutting_plane_points
-
-            # Get center translation
-            center_folder = parentDir + "centered/segmentations"
-            for file in os.listdir(center_folder):
-                if cp_prefix in file and ".txt" in file:
-                    center_filename = center_folder + file
-            center_filehandler = open(center_filename, "r")
-            line = center_filehandler.readlines()[0]
-            center_trans = np.array(line.split())
-            center_trans= center_trans.astype(float)
-
-            # Apply center translation
-            print("Translating cutting plane by: ")
-            print(center_trans)
-            new_cutting_plane_points = np.zeros(cutting_plane_points.shape)
-            for pt_index in range(cutting_plane_points.shape[0]):
-                new_cutting_plane_points[pt_index] = cutting_plane_points[pt_index] - center_trans
-            cutting_plane_points = new_cutting_plane_points
-
-            # Get rigid transformation
-            rigid_folder = parentDir + "aligned/transformations"
-            for file in os.listdir(rigid_folder):
-                if cp_prefix in file and img_suffix not in file:
-                    rigid_filename = rigid_folder + file
-            rigid_filehandler = open(rigid_filename, "r")
-            matrix = []
-            lines = rigid_filehandler.readlines()
-            index = 0
-            for line in lines:
-                matrix.append([])
-                for string in line.split():
-                    matrix[index].append(float(string))
-                index += 1
-            matrix = np.array(matrix)
-            rigid_filehandler.close()
-            print("Transforming cutting plane by: ")
-            print(matrix)
-            new_cutting_plane_points = np.zeros(cutting_plane_points.shape)
-            for pt_index in range(cutting_plane_points.shape[0]):
-                pt4D = np.array([1,1,1,1])
-                pt4D[:3] = cutting_plane_points[pt_index]
-                pt = matrix.dot(pt4D)
-                new_cutting_plane_points[pt_index] = pt
-            cutting_plane_points = new_cutting_plane_points
-            
             # catch for flipped norm
             if cutting_plane_points[0][1] < 0 and cutting_plane_points[1][1] < 0 and cutting_plane_points[2][1] < 0 :
                 cutting_plane_points[0][1] = cutting_plane_points[0][1] *-1
