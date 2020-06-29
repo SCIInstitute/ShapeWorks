@@ -154,7 +154,7 @@ def Run_Pipeline(args):
             """
             medianFile = FindReferenceImage(comFiles_segmentations)
 
-            [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, comFiles_segmentations, comFiles_images , medianFile, processRaw = True)
+            [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir + "aligned", comFiles_segmentations, comFiles_images, medianFile, processRaw = True)
 
             """
             For detailed explainations of parameters for finding the largest bounding box and cropping, go to
@@ -166,7 +166,9 @@ def Run_Pipeline(args):
             The function uses the same bounding box to crop the raw and segemnattion data.
 
             """
-            [croppedFiles_segmentations, croppedFiles_images] = applyCropping(parentDir, rigidFiles_segmentations,  rigidFiles_images, processRaw=True)
+            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", rigidFiles_segmentations, parentDir + "aligned/images/*.aligned.nrrd")
+
+            croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images, parentDir + "aligned/images/*.aligned.nrrd")
 
             print("\nStep 3. Groom - Convert to distance transforms\n")
             if args.interactive:
