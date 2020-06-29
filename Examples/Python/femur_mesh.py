@@ -43,7 +43,7 @@ def Run_Pipeline(args):
 
 
     meshFiles = sorted(glob.glob(parentDir + datasetName + "/meshes/*.ply"))
-    imageFiles = sorted(glob.glob(parentDir + datasetName + "/images/*.nrrd"))
+    imageFiles = sorted(glob.glob(parentDir + datasetName + "/distance_transforms/*.nrrd"))
 
     # Only do this when want to run on all meshes
     #reflectedFiles_mesh, reflectedFile_img = anatomyPairsToSingles('TestFemur/reflected', meshFiles, imageFiles, 'left')
@@ -51,11 +51,16 @@ def Run_Pipeline(args):
 
     #### Step 1, Get only left side femurs
     leftMeshFiles = []
-    for f in meshFiles:
+    leftImageFiles = []
+    for f, f2 in zip(meshFiles, imageFiles):
+        # n09_L is a bad example, it is squished or something
+        if 'n09_L_femur.ply' in f:
+            continue
         name = os.path.basename(f)
         side = name.split("_")[1]
         if side == 'L':
             leftMeshFiles.append(f)
+            leftImageFiles.append(f2)
     print(leftMeshFiles)
 
 
@@ -84,7 +89,8 @@ def Run_Pipeline(args):
             'source_mesh': meshFile,
             'target_mesh': referenceMesh,
             'out_mesh': targetName,
-            'out_transform': alignedMeshesDir + name + '.transform'
+            'out_transform': alignedMeshesDir + name + '.transform',
+            'mode': 'affine'
         }
         dictToXML(params, 'params.txt')
         execCommand = ["ICPRigid3DMeshRegistration.exe", "params.txt"]
@@ -97,24 +103,24 @@ def Run_Pipeline(args):
     for meshFile in alignedMeshes:
         basename = os.path.basename(meshFile)
         name, ext = os.path.splitext(basename)
-        targetName = vtkDir + name + '.ply'
+        targetName = plyDir + name + '.ply'
         subprocess.check_call(['vtk2ply.exe', meshFile, targetName])   
         plyMeshFiles.append(targetName)
 
 
 
 
+    meshFiles = plyMeshFiles
 
 
 
 
 
 
+    # exit()
 
-    exit()
-
-    meshFiles = sorted(glob.glob("TestFemur/femur/meshes2/*.ply"))
-    imageFiles = sorted(glob.glob("TestFemur/femur/distance_transforms2/*.nrrd"))
+    # meshFiles = sorted(glob.glob("TestFemur/femur/meshes2/*.ply"))
+    # imageFiles = sorted(glob.glob("TestFemur/femur/distance_transforms2/*.nrrd"))
 
 
     pointDir = 'TestFemur/PointFiles/'
@@ -126,8 +132,8 @@ def Run_Pipeline(args):
         "normal_weight": 0.0,
         "checkpointing_interval" : 200,
         "keep_checkpoints" : 0,
-        "iterations_per_split" : 1000,
-        "optimization_iterations" : 100,
+        "iterations_per_split" : 500,
+        "optimization_iterations" : 500,
         "starting_regularization" : 100,
         "ending_regularization" : 0.1,
         "recompute_regularization_interval" : 2,
@@ -139,7 +145,7 @@ def Run_Pipeline(args):
         "procrustes_scaling" : 0,
         "save_init_splits" : 0,
         "debug_projection" : 0,
-        "verbosity" : 1
+        "verbosity" : 3
         }
     if int(args.use_single_scale) != 0:
         parameterDictionary["number_of_particles"] = 1024
@@ -161,4 +167,4 @@ def Run_Pipeline(args):
         input("Press Enter to continue")
 
     # Image files are passed because Studio does not support viewing meshes yet.
-    launchShapeWorksStudio(pointDir, imageFiles, localPointFiles, worldPointFiles)
+    launchShapeWorksStudio(pointDir, leftImageFiles, localPointFiles, worldPointFiles)
