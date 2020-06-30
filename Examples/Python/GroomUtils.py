@@ -136,7 +136,7 @@ def applyCOMAlignment(outDir, inDataList, raw=[], printCmd = True):
         # get centerofmass and center
         center = getInfo(inname, "center")
         com = getInfo(inname, "centerofmass")
-        T = com - center
+        T = center - com
 
         cmd = ["shapeworks", 
                "readimage", "--name", inname, 
