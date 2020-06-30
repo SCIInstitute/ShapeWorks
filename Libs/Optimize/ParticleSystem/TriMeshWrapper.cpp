@@ -48,18 +48,18 @@ namespace shapeworks
     return inter;
   }
 
-  Eigen::Vector3f TriMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3f pointa__, Eigen::Vector3f projectedVector__, int faceIndex__, int prevFace__) const {
+  Eigen::Vector3d TriMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d pointa__, Eigen::Vector3d projectedVector__, int faceIndex__, int prevFace__) const {
 
     int currentFace = faceIndex__;
-    Eigen::Vector3f currentPoint = pointa__;
-    Eigen::Vector3f remainingVector = projectedVector__;
+    Eigen::Vector3d currentPoint = pointa__;
+    Eigen::Vector3d remainingVector = projectedVector__;
     float epsilon = 0.00001;
     double epsilon2 = 0.00001;
     std::vector<int> faces;
     while (remainingVector.norm() > epsilon) {
       faces.push_back(currentFace);
       vec3 currentBary = mesh->ComputeBarycentricCoordinates(point(currentPoint[0], currentPoint[1], currentPoint[2]), mesh->faces[currentFace]);
-      Eigen::Vector3f targetPoint = currentPoint + remainingVector;
+      Eigen::Vector3d targetPoint = currentPoint + remainingVector;
       vec3 targetBary = mesh->ComputeBarycentricCoordinates(point(targetPoint[0], targetPoint[1], targetPoint[2]), mesh->faces[currentFace]);
 
       if (faces.size() > 10) {
@@ -67,10 +67,10 @@ namespace shapeworks
           std::cerr << faces[i] << ": " << PrintValue<TriMesh::Face>(mesh->faces[faces[i]]) << ", ";
           std::cerr << PrintValue<vec>(mesh->GetFaceNormal(faces[i])) << std::endl;
         }
-        std::cerr << "Current point: " << PrintValue<Eigen::Vector3f>(currentPoint) << "\n";
-        std::cerr << "remaining vector: " << PrintValue<Eigen::Vector3f>(remainingVector) << "\n";
+        std::cerr << "Current point: " << PrintValue<Eigen::Vector3d>(currentPoint) << "\n";
+        std::cerr << "remaining vector: " << PrintValue<Eigen::Vector3d>(remainingVector) << "\n";
         std::cerr << "currentBary: " << PrintValue<vec3>(currentBary) << "\n";
-        std::cerr << "targetPoint: " << PrintValue<Eigen::Vector3f>(targetPoint) << "\n";
+        std::cerr << "targetPoint: " << PrintValue<Eigen::Vector3d>(targetPoint) << "\n";
         std::cerr << "targetBary: " << PrintValue<vec3>(targetBary) << "\n";
         std::cerr << std::endl;
         break;
@@ -97,8 +97,8 @@ namespace shapeworks
             break;
           }
         }
-        Eigen::Vector3f intersect = convert<point, Eigen::Vector3f>(GetBarycentricIntersection(currentBary, targetBary, currentFace, negativeEdge));
-        Eigen::Vector3f remaining = targetPoint - intersect;
+        Eigen::Vector3d intersect = convert<point, Eigen::Vector3d>(GetBarycentricIntersection(currentBary, targetBary, currentFace, negativeEdge));
+        Eigen::Vector3d remaining = targetPoint - intersect;
 
         int nextFace = mesh->across_edge[currentFace][negativeEdge];
         remainingVector = RotateVectorToFace(GetFaceNormal(currentFace), GetFaceNormal(nextFace), remaining);
@@ -120,12 +120,12 @@ namespace shapeworks
         if (negativeVertices.size() != 2 || positiveVertex == -1) {
           std::cerr << "ERROR ERROR incorrect number of negative vertices or positiveVertex is still -1!\n";
         }
-        Eigen::Vector3f intersect0 = convert<point, Eigen::Vector3f>(GetBarycentricIntersection(currentBary, targetBary, currentFace, negativeVertices[1]));
-        Eigen::Vector3f intersect1 = convert<point, Eigen::Vector3f>(GetBarycentricIntersection(currentBary, targetBary, currentFace, negativeVertices[0]));
+        Eigen::Vector3d intersect0 = convert<point, Eigen::Vector3d>(GetBarycentricIntersection(currentBary, targetBary, currentFace, negativeVertices[1]));
+        Eigen::Vector3d intersect1 = convert<point, Eigen::Vector3d>(GetBarycentricIntersection(currentBary, targetBary, currentFace, negativeVertices[0]));
 
         int first = -1;
-        Eigen::Vector3f remaining;
-        Eigen::Vector3f firstIntersect;
+        Eigen::Vector3d remaining;
+        Eigen::Vector3d firstIntersect;
         double length0 = (intersect0 - currentPoint).norm();
         double length1 = (intersect1 - currentPoint).norm();
 
@@ -211,53 +211,53 @@ namespace shapeworks
     return currentPoint;
   }
 
-  TriMeshWrapper::PointType TriMeshWrapper::GeodesicWalk(PointType pointa, vnl_vector_fixed<float, DIMENSION> vector) const {
+  TriMeshWrapper::PointType TriMeshWrapper::GeodesicWalk(PointType pointa, vnl_vector_fixed<double, DIMENSION> vector) const {
 
     PointType snapped = this->SnapToMesh(pointa);
     float a, b, c;
     TriMesh::Face face;
     int faceIndex = mesh->GetTriangleInfoForPoint(convert<PointType, point>(snapped), face, a, b, c);
 
-    Eigen::Vector3f vectorEigen = convert<vnl_vector_fixed<float, DIMENSION>, Eigen::Vector3f>(vector);
-    Eigen::Vector3f projectedVector = this->ProjectVectorToFace(GetFaceNormal(faceIndex), vectorEigen);
+    Eigen::Vector3d vectorEigen = convert<vnl_vector_fixed<double, DIMENSION>, Eigen::Vector3d>(vector);
+    Eigen::Vector3d projectedVector = this->ProjectVectorToFace(GetFaceNormal(faceIndex), vectorEigen);
 
-    Eigen::Vector3f snappedPoint = convert<PointType, Eigen::Vector3f>(snapped);
-    Eigen::Vector3f newPoint = GeodesicWalkOnFace(snappedPoint, projectedVector, faceIndex, -1);
+    Eigen::Vector3d snappedPoint = convert<PointType, Eigen::Vector3d>(snapped);
+    Eigen::Vector3d newPoint = GeodesicWalkOnFace(snappedPoint, projectedVector, faceIndex, -1);
 
     PointType newPointpt;
     newPointpt[0] = newPoint[0]; newPointpt[1] = newPoint[1]; newPointpt[2] = newPoint[2];
     return newPointpt;
   }
 
-  vnl_vector_fixed<float, DIMENSION> TriMeshWrapper::ProjectVectorToSurfaceTangent(const PointType &pointa, vnl_vector_fixed<float, DIMENSION> &vector) const {
+  vnl_vector_fixed<double, DIMENSION> TriMeshWrapper::ProjectVectorToSurfaceTangent(const PointType &pointa, vnl_vector_fixed<double, DIMENSION> &vector) const {
     float a, b, c;
     TriMesh::Face face;
     int faceIndex = mesh->GetTriangleInfoForPoint(convert<const PointType, point>(pointa), face, a, b, c);
-    const Eigen::Vector3f normal = GetFaceNormal(faceIndex);
-    Eigen::Vector3f result = ProjectVectorToFace(normal, convert<vnl_vector_fixed<float, DIMENSION>, Eigen::Vector3f>(vector));
-    vnl_vector_fixed<float, DIMENSION> resultvnl(result[0], result[1], result[2]);
+    const Eigen::Vector3d normal = GetFaceNormal(faceIndex);
+    Eigen::Vector3d result = ProjectVectorToFace(normal, convert<vnl_vector_fixed<double, DIMENSION>, Eigen::Vector3d>(vector));
+    vnl_vector_fixed<double, DIMENSION> resultvnl(result[0], result[1], result[2]);
     return resultvnl;
   }
 
-  Eigen::Vector3f TriMeshWrapper::ProjectVectorToFace(const Eigen::Vector3f &normal, const Eigen::Vector3f &vector) const {
+  Eigen::Vector3d TriMeshWrapper::ProjectVectorToFace(const Eigen::Vector3d &normal, const Eigen::Vector3d &vector) const {
     return vector - normal * normal.dot(vector);
   }
 
-  Eigen::Vector3f TriMeshWrapper::RotateVectorToFace(const Eigen::Vector3f &prevnormal, const Eigen::Vector3f &nextnormal, const Eigen::Vector3f &vector) const {
+  Eigen::Vector3d TriMeshWrapper::RotateVectorToFace(const Eigen::Vector3d &prevnormal, const Eigen::Vector3d &nextnormal, const Eigen::Vector3d &vector) const {
     float dotprod = prevnormal.normalized().dot(nextnormal.normalized());
     if (dotprod >= 1) {
       return vector;
     }
     float angle = acos(dotprod);
-    Eigen::Vector3f rotationAxis = prevnormal.normalized().cross(nextnormal.normalized()).normalized();
-    Eigen::AngleAxisf transform(angle, rotationAxis);
-    Eigen::Vector3f rotated = transform * vector;
+    Eigen::Vector3d rotationAxis = prevnormal.normalized().cross(nextnormal.normalized()).normalized();
+    Eigen::AngleAxisd transform(angle, rotationAxis);
+    Eigen::Vector3d rotated = transform * vector;
     return rotated;
   }
 
   vnl_vector_fixed<float, DIMENSION> TriMeshWrapper::SampleNormalAtPoint(PointType p) const {
     int faceID = mesh->GetClosestFaceToPoint(convert<PointType, point>(p));
-    const Eigen::Vector3f vecnormal = GetFaceNormal(faceID);
+    const Eigen::Vector3d vecnormal = GetFaceNormal(faceID);
     vnl_vector_fixed<float, DIMENSION> normal(vecnormal[0], vecnormal[1], vecnormal[2]);
     return normal;
   }
@@ -296,9 +296,9 @@ namespace shapeworks
     return convert<point, PointType>(firstVertex);
   }
 
-  const Eigen::Vector3f TriMeshWrapper::GetFaceNormal(int faceIndex) const {
+  const Eigen::Vector3d TriMeshWrapper::GetFaceNormal(int faceIndex) const {
     vec vecNormal = mesh->GetFaceNormal(faceIndex);
-    Eigen::Vector3f normal = convert<vec, Eigen::Vector3f>(vecNormal);
+    Eigen::Vector3d normal = convert<vec, Eigen::Vector3d>(vecNormal);
     return normal.normalized();
   }
 

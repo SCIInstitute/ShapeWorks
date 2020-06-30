@@ -25,19 +25,11 @@ namespace itk
   }
 
   vnl_vector_fixed<double, DIMENSION> MeshDomain::ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const {
-
-    vnl_vector_fixed<float, DIMENSION> vector;
-    for (unsigned int i = 0; i < DIMENSION; i++) { vector[i] = gradE[i]; }
-
-    vnl_vector_fixed<float, DIMENSION> projected = meshWrapper->ProjectVectorToSurfaceTangent(pos, vector);
-
-    vnl_vector_fixed<double, DIMENSION> result;
-    for (unsigned int i = 0; i < DIMENSION; i++) { result[i] = projected[i]; }
-    return result;
+    return meshWrapper->ProjectVectorToSurfaceTangent(pos, gradE);
   }
 
   MeshDomain::PointType MeshDomain::UpdateParticlePosition(PointType &point, vnl_vector_fixed<double, DIMENSION> &update) const {
-    vnl_vector_fixed<float, DIMENSION> negativeUpdate;
+    vnl_vector_fixed<double, DIMENSION> negativeUpdate;
     for (unsigned int i = 0; i < DIMENSION; i++) { negativeUpdate[i] = -update[i]; }
     PointType newPoint = meshWrapper->GeodesicWalk(point, negativeUpdate);
     ApplyConstraints(newPoint);

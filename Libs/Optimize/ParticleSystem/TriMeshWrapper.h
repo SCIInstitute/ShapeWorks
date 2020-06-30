@@ -16,9 +16,9 @@ public:
 
   double ComputeDistance(PointType pointa, PointType pointb) const override;
 
-  PointType GeodesicWalk(PointType pointa, vnl_vector_fixed<float, DIMENSION> vector) const override;
+  PointType GeodesicWalk(PointType pointa, vnl_vector_fixed<double, DIMENSION> vector) const override;
 
-  vnl_vector_fixed<float, DIMENSION> ProjectVectorToSurfaceTangent(const PointType &pointa, vnl_vector_fixed<float, DIMENSION> &vector) const override;
+  vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(const PointType &pointa, vnl_vector_fixed<double, DIMENSION> &vector) const override;
 
   vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(PointType p) const override;
 
@@ -37,10 +37,10 @@ public:
   }
 
 private:
-  Eigen::Vector3f GeodesicWalkOnFace(Eigen::Vector3f pointa__, Eigen::Vector3f projectedVector__, int faceIndex__, int prevFace__) const;
-  Eigen::Vector3f ProjectVectorToFace(const Eigen::Vector3f &normal, const Eigen::Vector3f &vector) const;
-  Eigen::Vector3f RotateVectorToFace(const Eigen::Vector3f &prevnormal, const Eigen::Vector3f &nextnormal, const Eigen::Vector3f &vector) const;
-  const Eigen::Vector3f GetFaceNormal(int faceIndex) const;
+  Eigen::Vector3d GeodesicWalkOnFace(Eigen::Vector3d pointa__, Eigen::Vector3d projectedVector__, int faceIndex__, int prevFace__) const;
+  Eigen::Vector3d ProjectVectorToFace(const Eigen::Vector3d &normal, const Eigen::Vector3d &vector) const;
+  Eigen::Vector3d RotateVectorToFace(const Eigen::Vector3d &prevnormal, const Eigen::Vector3d &nextnormal, const Eigen::Vector3d &vector) const;
+  const Eigen::Vector3d GetFaceNormal(int faceIndex) const;
   void ComputeMeshBounds();
 
   point TriMeshWrapper::GetBarycentricIntersection(vec3 start, vec3 end, int currentFace, int edge) const;
