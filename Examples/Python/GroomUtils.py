@@ -104,27 +104,24 @@ def getInfo(name, info):
     output = subprocess.run(cmd, capture_output=True, text=True).stdout.splitlines()   
     return makeVector(output[0].split(":")[1])
 
-def applyCOMAlignment(outDir, inDataList, raw=[], printCmd=True):
+def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False, printCmd=True):
     """
     This function takes in a filelist and produces the center of mass aligned
     files in the appropriate directory.
     """
     print("\n############# COM Alignment ###############")
-
-    segDir = os.path.join(outDir, 'segmentations') if raw else outDir
+    segDir = os.path.join(outDir, 'segmentations') if processRaw else outDir
     if not os.path.exists(segDir):
         os.makedirs(segDir)
-    
-    if raw:
+    if processRaw:
         imageDir = os.path.join(outDir, 'images') 
         if not os.path.exists(imageDir):
             os.makedirs(imageDir)
 
     outDataListImg = []
     outDataListSeg = []
-
-    for i in range(len(inDataList)):
-        inname = inDataList[i]
+    for i in range(len(inDataListSeg)):
+        inname = inDataListSeg[i]
         outname = rename(inname, segDir, 'com')
         outDataListSeg.append(outname)
 
@@ -132,7 +129,6 @@ def applyCOMAlignment(outDir, inDataList, raw=[], printCmd=True):
         center = getInfo(inname, "center")
         com = getInfo(inname, "centerofmass")
         T = com - center
-
         cmd = ["shapeworks", 
                "readimage", "--name", inname, 
                "translate", "-x", str(T[0]), "-y", str(T[1]), "-z", str(T[2]), 
@@ -141,8 +137,8 @@ def applyCOMAlignment(outDir, inDataList, raw=[], printCmd=True):
             print("CMD: " + " ".join(cmd))
         subprocess.check_call(cmd)
 
-        if raw:
-            innameImg = raw[i]
+        if processRaw:
+            innameImg = inDataListImg[i]
             outnameImg = rename(innameImg, imageDir, 'com')
             outDataListImg.append(outnameImg)
             cmd = ["shapeworks", 
@@ -153,7 +149,7 @@ def applyCOMAlignment(outDir, inDataList, raw=[], printCmd=True):
                 print("CMD: " + " ".join(cmd))
             subprocess.check_call(cmd)
 
-    return [outDataListSeg, outDataListImg] if raw else outDataListSeg
+    return [outDataListSeg, outDataListImg] if processRaw else outDataListSeg
 
 def FindReferenceImage(inDataList):
     """
@@ -252,16 +248,15 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
         segoutname = seginname.replace(os.path.dirname(seginname), segoutDir)
         segoutname = segoutname.replace('.nrrd', '.aligned.nrrd')
         outSegDataList.append(segoutname)
-
-        if processRaw:
-            rawinname = inDataListImg[i]
-            rawoutname = rawinname.replace(os.path.dirname(seginname), rawoutDir)
-            rawoutname = rawoutname.replace('.nrrd', '.aligned.nrrd')
-            outRawDataList.append(rawoutname)
-
         dtnrrdfilename = segoutname.replace('.aligned.nrrd', '.aligned.DT.nrrd')
         tpdtnrrdfilename = segoutname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.nrrd')
         isonrrdfilename = segoutname.replace('.aligned.nrrd', '.aligned.ISO.nrrd')
+
+        if processRaw:
+            rawinname = inDataListImg[i]
+            rawoutname = rawinname.replace(os.path.dirname(rawinname), rawoutDir)
+            rawoutname = rawoutname.replace('.nrrd', '.aligned.nrrd')
+            outRawDataList.append(rawoutname)
 
         cmd = ["shapeworks", 
                "read-image", "--name", seginname, 

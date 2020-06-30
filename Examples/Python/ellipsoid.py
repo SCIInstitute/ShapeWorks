@@ -103,7 +103,7 @@ def Run_Pipeline(args):
         paddedFiles = applyPadding(parentDir + "padded", centeredFiles, 10)
 
         """Apply center of mass alignment"""
-        comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles)
+        comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles, None)
 
         """Apply rigid alignment"""
         rigidFiles = applyRigidAlignment(parentDir + "aligned", comFiles, None, comFiles[0])

@@ -182,7 +182,7 @@ def Run_Pipeline(args):
         Apply center of mass alignment
         This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
         """
-        [comFiles_segmentations, comFiles_images] = applyCOMAlignment( parentDir + "com_aligned", paddedFiles_segmentations, raw=paddedFiles_images)
+        [comFiles_segmentations, comFiles_images] = applyCOMAlignment(parentDir + "com_aligned", paddedFiles_segmentations, paddedFiles_images, processRaw=True)
         
         """
         Apply centering
@@ -228,7 +228,6 @@ def Run_Pipeline(args):
 
         """Compute largest bounding box and apply cropping"""
         croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", clippedFiles_segmentations, parentDir + "clipped_segmentations/*.nrrd")
-
         croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images, parentDir + "clipped_segmentations/*.nrrd")
 
         print("\nStep 3. Groom - Convert to distance transforms\n")

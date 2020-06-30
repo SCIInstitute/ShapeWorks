@@ -166,9 +166,8 @@ def Run_Pipeline(args):
             The function uses the same bounding box to crop the raw and segemnattion data.
 
             """
-            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", rigidFiles_segmentations, parentDir + "aligned/images/*.aligned.nrrd")
-
-            croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images, parentDir + "aligned/images/*.aligned.nrrd")
+            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", rigidFiles_segmentations, parentDir + "aligned/segmentations/*.aligned.nrrd")
+            croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images, parentDir + "aligned/segmentations/*.aligned.nrrd")
 
             print("\nStep 3. Groom - Convert to distance transforms\n")
             if args.interactive:
@@ -230,7 +229,7 @@ def Run_Pipeline(args):
             '/Documentation/PDFs/AlgnmentTools.pdf'
 
             """
-            comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles)
+            comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles, None)
 
             """
             Apply rigid alignment
