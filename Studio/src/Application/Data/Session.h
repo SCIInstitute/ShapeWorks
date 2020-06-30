@@ -77,9 +77,6 @@ public:
 
   void calculate_reconstructed_samples();
 
-  /// reset the session
-  void reset();
-
   /// get the filename
   QString get_filename();
 
@@ -91,7 +88,7 @@ public:
 
   QSharedPointer<MeshManager> get_mesh_manager() { return this->mesh_manager_; }
 
-  Parameters & settings();
+  Parameters& parameters();
 
 public Q_SLOTS:
   void handle_clear_cache();

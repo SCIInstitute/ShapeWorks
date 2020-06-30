@@ -8,7 +8,7 @@
  * @file MeshCache.h
  * @brief Thread safe cache for meshes index by shape
  *
- * The MeshCache implements a std::map keyed by shape (list of points) with vtkPolyData values.
+ * The MeshCache implements a std::map keyed by shape (list of points) with MeshHandle values.
  * It is thread-safe and can be used from any thread.
  */
 
@@ -17,18 +17,14 @@
 
 #include <QMutex>
 
-#include <vtkSmartPointer.h>
-
 #include <vnl/vnl_vector.h>
 
+#include <Data/Mesh.h>
 #include <Data/MeshWorkQueue.h>
-
 #include <Data/Preferences.h>
 
-class vtkPolyData;
-
 // mesh cache type
-using CacheMap = std::map<MeshWorkItem, vtkSmartPointer<vtkPolyData>>;
+using CacheMap = std::map<MeshWorkItem, MeshHandle>;
 
 // LRC list
 using CacheList = std::list<MeshWorkItem>;
@@ -40,9 +36,9 @@ public:
 
   MeshCache(Preferences& prefs);
 
-  vtkSmartPointer<vtkPolyData> get_mesh(const MeshWorkItem& vector);
+  MeshHandle get_mesh(const MeshWorkItem& vector);
 
-  void insert_mesh(const MeshWorkItem& item, vtkSmartPointer<vtkPolyData> mesh);
+  void insert_mesh(const MeshWorkItem& item, MeshHandle mesh);
 
   void clear();
 
@@ -52,9 +48,9 @@ private:
 
   void freeSpaceForAmount(size_t allocation);
 
-  static long long getTotalPhysicalMemory();
-  static long long getTotalAddressibleMemory();
-  static long long getTotalAddressiblePhysicalMemory();
+  static long long get_total_physical_memory();
+  static long long get_total_addressible_memory();
+  static long long get_total_addressible_physical_memory();
 
   Preferences &preferences_;
 
