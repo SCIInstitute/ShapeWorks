@@ -17,6 +17,47 @@ TEST(ImageTests, dicomReadTest)
   ASSERT_TRUE(image == ground_truth);
 }
 
+TEST(ImageTests, readTestNoImage)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/non-existant-dir/");
+
+  try {
+    Image image(test_location + "foo.nrrd");
+  } catch(...) {
+    return;
+  }
+
+  ASSERT_TRUE(false);
+}
+
+TEST(ImageTests, fileFormatTest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
+
+  Image image_orig(test_location + "1x2x2.nrrd");
+  image_orig.write(test_location + "1x2x2.tiff");
+  Image image_tiff(test_location + "1x2x2.tiff");
+  image_tiff.write(test_location + "1x2x2_back.nrrd");
+  Image image_back(test_location + "1x2x2_back.nrrd");
+
+  ASSERT_TRUE(image_orig.compare(image_tiff, false /* only compare pixels, not regions */) &&
+              image_orig.compare(image_back, false /* only compare pixels, not regions */) &&
+              image_tiff.compare(image_back));
+}
+
+TEST(ImageTests, fileFormatTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
+
+  Image image_orig(test_location + "sample_001.dcm");
+  image_orig.write(test_location + "sample_001.nrrd");
+  Image image_nrrd(test_location + "sample_001.nrrd");
+  image_nrrd.write(test_location + "sample_001_back.dcm");
+  Image image_back(test_location + "sample_001_back.dcm");
+
+  ASSERT_TRUE(image_orig == image_nrrd && image_orig == image_back);
+}
+
 TEST(ImageTests, antialiasTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/antialias/");
@@ -35,7 +76,7 @@ TEST(ImageTests, isoresampleBinaryIsotropicTest)
   Image image(test_location + "binary-isotropic-input.nrrd");
   image.antialias();
   ImageUtils::isoresample(image);
-  image.threshold().recenter();
+  image.binarize().recenter();
   Image ground_truth(test_location + "binary-isotropic-isoresampled.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -48,7 +89,7 @@ TEST(ImageTests, isoresampleBinaryAnisotropicTest)
   Image image(test_location + "binary-anisotropic-input.nrrd");
   image.antialias();
   ImageUtils::isoresample(image);
-  image.threshold().recenter();
+  image.binarize().recenter();
   Image ground_truth(test_location + "binary-anisotropic-isoresampled.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -123,6 +164,17 @@ TEST(ImageTests, padTest)
   ASSERT_TRUE(image == ground_truth);
 }
 
+TEST(ImageTests, padTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/pad/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.pad(100, 25, 1, 10.0);
+  Image ground_truth(test_location + "pad2_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
 TEST(ImageTests, translateTest1)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/translate/");
@@ -141,6 +193,17 @@ TEST(ImageTests, translateTest2)
   Image image(test_location + "1x2x2.nrrd");
   image.translate(makeVector({-10, -10, -10}));
   Image ground_truth(test_location + "translate2_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, translateTest3)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/translate/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.translate(makeVector({0, 0, -10}));
+  Image ground_truth(test_location + "translate3_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -266,20 +329,31 @@ TEST(ImageTests, closeholesTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/close-holes/");
 
-  Image image(test_location + "1x2x2.nrrd");
+  Image image(test_location + "image_with_holes.nrrd");
   image.closeHoles();
-  Image ground_truth(test_location + "close-holes_baseline.nrrd");
+  Image ground_truth(test_location + "closedholes.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, thresholdTest)
+TEST(ImageTests, binarizeTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/threshold/");
 
   Image image(test_location + "1x2x2.nrrd");
-  image.threshold();
+  image.binarize();
   Image ground_truth(test_location + "threshold_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, binarizeTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/threshold/");
+
+  Image image(test_location + "raw.nrrd");
+  image.binarize(10.0, 100.0, 42);
+  Image ground_truth(test_location + "banded.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -381,7 +455,7 @@ TEST(ImageTests, cropTest)
   Image image(test_location + "seg.ellipsoid_1.nrrd");
   Image::Region region;
   region = ImageUtils::boundingBox(images);
-  image.pad().crop(region);
+  image.crop(region);
   Image ground_truth(test_location + "crop_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -394,7 +468,8 @@ TEST(ImageTests, icpTest)
   Image image(test_location + "1x2x2.nrrd");
   Image target(test_location + "target.nrrd");
   Image source(test_location + "source.nrrd");
-  ImageUtils::rigidRegistration(image, target, source);
+  TransformPtr transform(ImageUtils::createRigidRegistrationTransform(target, source));
+  image.applyTransform(transform, target.dims(), target.origin(), target.spacing(), target.coordsys());
   Image ground_truth(test_location + "icp_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -492,7 +567,7 @@ TEST(ImageTests, reflectTest1)
 
   // reflect across XZ plane (looks like vertical direction facing "front" of volume, X-axis pointing right, Y-axis pointing up)
   Image image(test_location + "1x2x2.nrrd");
-  image.reflect();
+  image.reflect(Axis::X);
   Image ground_truth(test_location + "reflect_baseline1.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -503,7 +578,7 @@ TEST(ImageTests, reflectTest2)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/reflect/");
 
   Image image(test_location + "la-bin.nrrd");
-  image.reflect();
+  image.reflect(Axis::X);
   Image ground_truth(test_location + "reflect_baseline2.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -520,52 +595,91 @@ TEST(ImageTests, setoriginTest)
   ASSERT_TRUE(image == ground_truth);
 }
 
-// TEST(ImageTests, warptest1)
-// {
-//   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
+TEST(ImageTests, warpTest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
 
-//   Image image(test_location + "1x2x2.nrrd");
-//   std::string src_filename(test_location + "src.pts"); // todo: create sets of landmarks for source and target
-//   std::string dst_filename(test_location + "dst.pts");
+  Image image(test_location + "input.nrrd");
+  std::string src_filename(test_location + "source.particles");
+  std::string dst_filename(test_location + "target.particles");
 
-//   TransformPtr transform(ImageUtils::computeWarp(src_filename, dst_filename));
-//   image.applyTransform(transform);
-//   Image ground_truth(test_location + "warp_baseline1.nrrd");
+  TransformPtr transform(ImageUtils::createWarpTransform(src_filename, dst_filename));
+  image.applyTransform(transform);
+  Image ground_truth(test_location + "warp_baseline1.nrrd");
 
-//   ASSERT_TRUE(image == ground_truth);
-// }
+  ASSERT_TRUE(image == ground_truth);
+}
 
-// TEST(ImageTests, warptest2)
-// {
-//   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
+TEST(ImageTests, warpTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
 
-//   Image image(test_location + "1x2x2.nrrd");
-//   std::string src_filename(test_location + "src.pts"); // todo: create sets of landmarks for source and target
-//   std::string dst_filename(test_location + "dst.pts");
+  Image image(test_location + "input.nrrd");
+  std::string src_filename(test_location + "source.particles");
+  std::string dst_filename(test_location + "target.particles");
 
-//   // only use every 3rd landmark point
-//   TransformPtr transform(ImageUtils::computeWarp(src_filename, dst_filename, 3));
-//   image.applyTransform(transform);
-//   Image ground_truth(test_location + "warp_baseline2.nrrd");
+  // only use every 3rd landmark point
+  TransformPtr transform(ImageUtils::createWarpTransform(src_filename, dst_filename, 3));
+  image.applyTransform(transform);
+  Image ground_truth(test_location + "warp_baseline2.nrrd");
 
-//   ASSERT_TRUE(image == ground_truth);
-// }
+  ASSERT_TRUE(image == ground_truth);
+}
 
-// TEST(ImageTests, warptest3)
-// {
-//   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
+TEST(ImageTests, warpTest3)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
 
-//   Image image(test_location + "1x2x2.nrrd");
-//   std::string src_filename(test_location + "bogus_src.pts");
-//   std::string dst_filename(test_location + "bogus_dst.pts");
+  Image image(test_location + "1x2x2.nrrd");
+  std::string src_filename(test_location + "bogus_src.pts");
+  std::string dst_filename(test_location + "bogus_dst.pts");
 
-//   // empty files should just produce identity transform
-//   TransformPtr transform(ImageUtils::computeWarp(src_filename, dst_filename));
-//   image.applyTransform(transform);
-//   Image ground_truth(test_location + "1x2x2.nrrd");
+  // empty files should just produce identity transform
+  TransformPtr transform(ImageUtils::createWarpTransform(src_filename, dst_filename));
+  image.applyTransform(transform);
+  Image ground_truth(test_location + "1x2x2.nrrd");
 
-//   ASSERT_TRUE(image == ground_truth);
-// }
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, warpTest4)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  std::string src_filename(test_location + "source.particles");
+  std::string dst_filename(test_location + "source.particles");
+
+  // warping from A to A should produce A
+  TransformPtr transform(ImageUtils::createWarpTransform(src_filename, dst_filename));
+  image.applyTransform(transform);
+  Image ground_truth(test_location + "1x2x2.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, warpTest5)
+{
+  // warping from A to B and then back to A should produce A
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  std::string src_filename1(test_location + "source.particles");
+  std::string dst_filename1(test_location + "target.particles");
+
+  TransformPtr transform(ImageUtils::createWarpTransform(src_filename1, dst_filename1));
+  image.applyTransform(transform);
+
+  std::string src_filename2(test_location + "source.particles");
+  std::string dst_filename2(test_location + "source.particles");
+
+  TransformPtr transform_back(ImageUtils::createWarpTransform(src_filename2, dst_filename2));
+  image.applyTransform(transform_back);
+
+  Image ground_truth(test_location + "1x2x2.nrrd");
+
+  ASSERT_TRUE(image.compare(ground_truth, true, 1));
+}
 
 TEST(ImageTests, compareTest1)
 {
@@ -585,6 +699,86 @@ TEST(ImageTests, compareTest2)
   Image image2(test_location + "la-bin.nrrd");
 
   ASSERT_FALSE(image1 == image2);
+}
+
+TEST(ImageTests, compareTest3a)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "same_image_diff_region_same_dims.nrrd");
+
+  ASSERT_FALSE(image1.compare(image2));
+}
+
+TEST(ImageTests, compareTest3b)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "same_image_diff_region_same_dims.nrrd");
+
+  ASSERT_TRUE(image1.compare(image2, false /* only compare pixels, not regions */));
+}
+
+TEST(ImageTests, compareTest4a)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "diff_image_diff_region_same_dims.nrrd");
+
+  ASSERT_FALSE(image1.compare(image2));
+}
+
+TEST(ImageTests, compareTest4b)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "diff_image_diff_region_same_dims.nrrd");
+
+  ASSERT_FALSE(image1.compare(image2, false /* only compare pixels, not regions */));
+}
+
+TEST(ImageTests, compareTest5a)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "diff_image_same_region_same_dims.nrrd");
+
+  ASSERT_FALSE(image1.compare(image2));
+}
+
+TEST(ImageTests, compareTest5b)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "diff_image_same_region_same_dims.nrrd");
+
+  ASSERT_TRUE(image1.compare(image2, true /* keep comparing regions */, 0.0 /* allow pixels to differ by 0% */, 1.0 /* allow pixels to differ by 1.0 */));
+}
+
+TEST(ImageTests, compareTest6a)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
+
+  Image image1(test_location + "1x2x2.nrrd");
+  Image image2(test_location + "compute-dt_baseline.nrrd");
+
+  ASSERT_FALSE(image1.compare(image2, true /* keep comparing regions */, 0.0 /* allow pixels to differ by 0% */, 1.0 /* allow pixels to differ by 1.0 */));
+}
+
+TEST(ImageTests, compareTest6b)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
+
+  Image image1(test_location + "1x2x2.nrrd");
+  Image image2(test_location + "compute-dt_baseline.nrrd");
+
+  ASSERT_TRUE(image1.compare(image2, true /* keep comparing regions */, 1 /* allow pixels to differ by 1% */, 1.0 /* allow pixels to differ by 1.0 */));
 }
 
 TEST(ImageTests, multicommandTest)
@@ -625,7 +819,7 @@ TEST(ImageTests, spacingTest)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
 
   Image image(test_location + "1x2x2.nrrd");
-  Point spacing({1,2,2});
+  Vector spacing(makeVector({1,2,2}));
   
   ASSERT_TRUE(image.spacing() == spacing);
 }
@@ -659,4 +853,206 @@ TEST(ImageTests, coordsysTest)
   coordsys.SetIdentity();
   
   ASSERT_TRUE(image.coordsys() == coordsys);
+}
+
+TEST(ImageTests, negationTest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/negation/");
+
+  Image image(test_location + "la-bin.nrrd");
+  image = -image;
+  Image baseline(test_location + "negation1_baseline.nrrd");
+  
+  ASSERT_TRUE(image == baseline);
+}
+
+TEST(ImageTests, negationTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/negation/");
+
+  Image image(test_location + "la-bin.nrrd");
+  image = -(-image); // negation of negation
+  Image baseline(test_location + "la-bin.nrrd");
+
+  ASSERT_TRUE(image == baseline);
+}
+
+TEST(ImageTests, additionTest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/addition/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "1x2x2.nrrd");
+  try {
+    image1 = image1 + image2; // they have different dims, so operator throws an exception
+  } catch(std::invalid_argument) { return; }
+
+  // fails if an exception is not thrown
+  ASSERT_TRUE(false);
+}
+
+TEST(ImageTests, additionTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/addition/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "la-bin.nrrd");
+  Image image3(image1 + image2);
+  Image baseline(test_location + "baseline_addition.nrrd");
+
+  ASSERT_TRUE(image3 == baseline);
+  ASSERT_TRUE(image1 == image2);
+}
+
+TEST(ImageTests, additionTest3)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/addition/");
+
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "la-bin.nrrd");
+  image1 += image2;
+  Image baseline(test_location + "baseline_addition.nrrd");
+
+  ASSERT_TRUE(image1 == baseline);
+}
+
+TEST(ImageTests, subtractionTest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/subtraction/");
+
+  Image image1(test_location + "img1.nrrd");
+  Image image2(test_location + "1x2x2.nrrd");
+  try {
+    image1 = image1 - image2; // the have different dims, so operator throws an exception
+  } catch(std::invalid_argument) { return; }
+
+  // fails if an exception is not thrown
+  ASSERT_TRUE(false);
+}
+
+TEST(ImageTests, subtractionTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/subtraction/");
+
+  Image image1(test_location + "img1.nrrd");
+  Image image2(test_location + "img2.nrrd");
+
+  Image image3(image1 - image2);
+  Image baseline(test_location + "baseline_subtraction.nrrd");
+  ASSERT_TRUE(image3 == baseline);
+
+  Image orig_image1(test_location + "img1.nrrd");
+  ASSERT_TRUE(image1 == orig_image1);
+}
+
+TEST(ImageTests, subtractionTest3)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/subtraction/");
+
+  Image image1(test_location + "img1.nrrd");
+  Image image2(test_location + "img2.nrrd");
+  image1 -= image2;
+  Image baseline(test_location + "baseline_subtraction.nrrd");
+
+  ASSERT_TRUE(image1 == baseline);
+}
+
+TEST(ImageTests, addTest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/add/");
+
+  Image image(test_location + "la-bin.nrrd");
+  Image added(image + 3.14);
+  Image baseline(test_location + "baseline_add.nrrd");
+
+  ASSERT_TRUE(added == baseline);
+
+  Image orig_image(test_location + "la-bin.nrrd");
+  ASSERT_TRUE(image == orig_image);
+}
+
+TEST(ImageTests, addTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/add/");
+
+  Image image(test_location + "la-bin.nrrd");
+  image += 3.14;
+  Image baseline(test_location + "baseline_add.nrrd");
+
+  ASSERT_TRUE(image == baseline);
+}
+
+TEST(ImageTests, subtractTest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/subtract/");
+
+  Image image(test_location + "la-bin.nrrd");
+  Image subtracted(image - 3.14);
+  Image baseline(test_location + "baseline_subtract.nrrd");
+
+  ASSERT_TRUE(subtracted == baseline);
+
+  Image orig_image(test_location + "la-bin.nrrd");
+  ASSERT_TRUE(image == orig_image);
+}
+
+TEST(ImageTests, subtractTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/subtract/");
+
+  Image image(test_location + "la-bin.nrrd");
+  image -= 3.14;
+  Image baseline(test_location + "baseline_subtract.nrrd");
+
+  ASSERT_TRUE(image == baseline);
+}
+
+TEST(ImageTests, multiplyTest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/multiply/");
+
+  Image image(test_location + "la-bin.nrrd");
+  Image multiplied(image * 3.14);
+  Image baseline(test_location + "baseline_multiply.nrrd");
+
+  ASSERT_TRUE(multiplied == baseline);
+
+  Image orig_image(test_location + "la-bin.nrrd");
+  ASSERT_TRUE(image == orig_image);
+}
+
+TEST(ImageTests, multiplyTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/multiply/");
+
+  Image image(test_location + "la-bin.nrrd");
+  image *= 3.14;
+  Image baseline(test_location + "baseline_multiply.nrrd");
+
+  ASSERT_TRUE(image == baseline);
+}
+
+TEST(ImageTests, divideTest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/divide/");
+
+  Image image(test_location + "la-bin.nrrd");
+  Image divided(image / 3.14);
+  Image baseline(test_location + "baseline_divide.nrrd");
+
+  ASSERT_TRUE(divided == baseline);
+
+  Image orig_image(test_location + "la-bin.nrrd");
+  ASSERT_TRUE(image == orig_image);
+}
+
+TEST(ImageTests, divideTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/divide/");
+
+  Image image(test_location + "la-bin.nrrd");
+  image /= 3.14;
+  Image baseline(test_location + "baseline_divide.nrrd");
+
+  ASSERT_TRUE(image == baseline);
 }

@@ -1,26 +1,30 @@
 #include "OptimizeParameterFile.h"
 #include "Optimize.h"
+#include "ParticleSystem/DomainType.h"
 
 #include <itkImageFileReader.h>
 
 #include <tinyxml.h>
+
+#include "ParticleSystem/MeshWrapper.h"
+#include "ParticleSystem/TriMeshWrapper.h"
 
 //---------------------------------------------------------------------------
 OptimizeParameterFile::OptimizeParameterFile()
 {}
 
 //---------------------------------------------------------------------------
-bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* optimize)
-{
+bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize *optimize) {
   TiXmlDocument doc(filename.c_str());
   bool loadOkay = doc.LoadFile();
 
   if (!loadOkay) {
+    std::cerr << "Could not parse XML\n";
     return false;
   }
 
   TiXmlHandle doc_handle(&doc);
-  TiXmlElement* elem;
+  TiXmlElement *elem;
 
   this->verbosity_level_ = 5;
   elem = doc_handle.FirstChild("verbosity").Element();
@@ -33,6 +37,19 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
     domains_per_shape = atoi(elem->GetText());
   }
   optimize->SetDomainsPerShape(domains_per_shape);
+
+  shapeworks::DomainType domain_type = shapeworks::DomainType::Image;
+  elem = doc_handle.FirstChild("domain_type").Element();
+  if (elem) {
+    std::string text = elem->GetText();
+    if (text == "image") {
+      domain_type = shapeworks::DomainType::Image;
+    }
+    else if (text == "mesh") {
+      domain_type = shapeworks::DomainType::Mesh;
+    }
+  }
+  optimize->SetDomainType(domain_type);
 
   std::vector<unsigned int> number_of_particles;
   elem = doc_handle.FirstChild("number_of_particles").Element();
@@ -71,14 +88,6 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
     return false;
   }
 
-  if (!this->read_mesh_inputs(&doc_handle, optimize)) {
-    return false;
-  }
-
-  if (!this->read_constraints(&doc_handle, optimize)) {
-    return false;
-  }
-
   if (!this->read_explanatory_variables(&doc_handle, optimize)) {
     return false;
   }
@@ -90,9 +99,27 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
   if (!this->read_flag_domains(&doc_handle, optimize)) {
     return false;
   }
-
   // read last so that we can skip loading any images from fixed domains
-  if (!this->read_inputs(&doc_handle, optimize)) {
+  if (optimize->GetDomainType() == shapeworks::DomainType::Image) {
+    if (!this->read_image_inputs(&doc_handle, optimize)) {
+      return false;
+    }
+    if (!this->read_mesh_attributes(&doc_handle, optimize)) {
+      return false;
+    }
+  }
+  else if (optimize->GetDomainType() == shapeworks::DomainType::Mesh) {
+    if (!this->read_mesh_inputs(&doc_handle, optimize)) {
+      return false;
+    }
+  }
+  if (!this->read_point_files(&doc_handle, optimize)) {
+    return false;
+  }
+
+
+  // must be read after the inputs since it checks that the counts match
+  if (!this->read_constraints(&doc_handle, optimize)) {
     return false;
   }
 
@@ -303,30 +330,62 @@ bool OptimizeParameterFile::set_debug_parameters(TiXmlHandle* docHandle, Optimiz
   return true;
 }
 
+std::string OptimizeParameterFile::getFileNameWithoutExtension(std::string path) {
+  char *str = new char[path.length() + 1];
+  strcpy(str, path.c_str());
+
+  // separate filename from the full path
+  char *fname;
+  char *pch;
+  pch = strtok(str, "/");
+  while (pch != NULL) {
+    fname = pch;
+    pch = strtok(NULL, "/");
+  }
+
+  // separate filename from the extension
+  char *pch2;
+  pch2 = strrchr(fname, '.');
+  int num = pch2 - fname + 1;
+  int num2 = strlen(fname);
+  strncpy(pch2, "", num2 - num);
+
+  return std::string(fname);
+}
+
+void OptimizeParameterFile::ParseFileNamesFromPaths(std::vector<std::string> &filePaths, Optimize *optimize) {
+  std::vector < std::string > filenames;
+  for (int i = 0; i < filePaths.size(); i++) {
+    std::string fname = this->getFileNameWithoutExtension(filePaths[i]);
+    filenames.push_back(std::string(fname));
+  }
+  optimize->SetFilenames(filenames);
+}
+
 //---------------------------------------------------------------------------
-bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimize)
+bool OptimizeParameterFile::read_image_inputs(TiXmlHandle* docHandle, Optimize* optimize)
 {
   TiXmlElement* elem = nullptr;
 
   elem = docHandle->FirstChild("inputs").Element();
   if (!elem) {
-    std::cerr << "No input files have been specified\n";
+    std::cerr << "No input images have been specified\n";
     return false;
   }
 
   std::istringstream inputsBuffer;
-  std::string filename;
-  int numShapes = 0;
-
-  // load input shapes
-  std::vector < std::string > shapeFiles;
 
   inputsBuffer.str(elem->GetText());
   auto flags = optimize->GetDomainFlags();
 
-  int index = 0;
-  while (inputsBuffer >> filename) {
+  // load input images
+  std::vector < std::string > imageFiles;
+  std::string imagefilename;
+  while (inputsBuffer >> imagefilename) {
+    imageFiles.push_back(imagefilename);
+  }
 
+  for(int index = 0; index < imageFiles.size(); index++) {
     bool fixed_domain = false;
     for (int i = 0; i < flags.size(); i++) {
       if (flags[i] == index) {
@@ -336,11 +395,11 @@ bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimi
 
     if (!fixed_domain) {
       if (this->verbosity_level_ > 1) {
-        std::cout << "Reading inputfile: " << filename << "...\n" << std::flush;
+        std::cout << "Reading inputfile: " << imageFiles[index] << "...\n" << std::flush;
       }
       typename itk::ImageFileReader < Optimize::ImageType > ::Pointer reader = itk::ImageFileReader <
         Optimize::ImageType > ::New();
-      reader->SetFileName(filename);
+      reader->SetFileName(imageFiles[index]);
       reader->UpdateLargestPossibleRegion();
       const auto image = reader->GetOutput();
       optimize->AddImage(image);
@@ -348,54 +407,117 @@ bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimi
     else {
       optimize->AddImage(nullptr);
     }
-
-    shapeFiles.push_back(filename);
-    index++;
   }
 
   inputsBuffer.clear();
   inputsBuffer.str("");
 
-  numShapes = shapeFiles.size();
+  ParseFileNamesFromPaths(imageFiles, optimize);
+  return true;
+}
 
-  std::vector < std::string > filenames;
+//---------------------------------------------------------------------------
+bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle *docHandle, Optimize *optimize) {
+  TiXmlElement *elem = nullptr;
 
-  for (int i = 0; i < numShapes; i++) {
-    char* str = new char[shapeFiles[i].length() + 1];
-    strcpy(str, shapeFiles[i].c_str());
-
-    char* fname;
-    char* pch;
-    pch = strtok(str, "/");
-    while (pch != NULL) {
-      fname = pch;
-      pch = strtok(NULL, "/");
-    }
-
-    char* pch2;
-    pch2 = strrchr(fname, '.');
-    int num = pch2 - fname + 1;
-    int num2 = strlen(fname);
-    strncpy(pch2, "", num2 - num);
-
-    filenames.push_back(std::string(fname));
+  elem = docHandle->FirstChild("inputs").Element();
+  if (!elem) {
+    std::cerr << "No input meshes have been specified\n";
+    return false;
   }
 
-  optimize->SetFilenames(filenames);
+  std::istringstream inputsBuffer;
 
+  inputsBuffer.str(elem->GetText());
+  auto flags = optimize->GetDomainFlags();
+
+  // load input images
+  std::vector < std::string > meshFiles;
+  std::string meshfilename;
+  while (inputsBuffer >> meshfilename) {
+    meshFiles.push_back(meshfilename);
+  }
+
+  for (int index = 0; index < meshFiles.size(); index++) {
+    bool fixed_domain = false;
+    for (int i = 0; i < flags.size(); i++) {
+      if (flags[i] == index) {
+        fixed_domain = true;
+      }
+    }
+
+    if (!fixed_domain) {
+      if (this->verbosity_level_ > 1) {
+        std::cout << "Reading inputfile: " << meshFiles[index] << "...\n" << std::flush;
+      }
+
+      TriMesh *themesh = TriMesh::read(meshFiles[index].c_str());
+      if (themesh != NULL) {
+        themesh->need_faces();
+        themesh->need_neighbors();
+        orient(themesh);
+        themesh->need_bsphere();
+        if (!themesh->normals.empty())
+          themesh->normals.clear();
+        themesh->need_normals();
+        if (!themesh->tstrips.empty())
+          themesh->tstrips.clear();
+        themesh->need_tstrips();
+        if (!themesh->adjacentfaces.empty())
+          themesh->adjacentfaces.clear();
+        themesh->need_adjacentfaces();
+        if (!themesh->across_edge.empty())
+          themesh->across_edge.clear();
+        themesh->need_across_edge();
+        themesh->need_faceedges();
+        themesh->need_oneringfaces();
+        themesh->need_abs_curvatures();
+        themesh->need_speed();
+        themesh->setSpeedType(1);
+
+        shapeworks::MeshWrapper *mesh = new shapeworks::TriMeshWrapper(themesh);
+        optimize->AddMesh(mesh);
+      }
+      else {
+        return false;
+      }
+    }
+    else {
+      optimize->AddMesh(nullptr);
+    }
+  }
+  std::vector<double> attr_scales;
+  attr_scales.push_back(1);
+  attr_scales.push_back(1);
+  attr_scales.push_back(1);
+  if (attr_scales.size() != 3) {
+    std::cerr << "not enough attribute scale values!!!" << std::endl;
+    return false;
+  }
+  optimize->SetAttributeScales(attr_scales);
+
+  ParseFileNamesFromPaths(meshFiles, optimize);
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool OptimizeParameterFile::read_point_files(TiXmlHandle *docHandle, Optimize *optimize) {
   // load point files
+  TiXmlElement *elem = nullptr;
+  std::istringstream inputsBuffer;
   std::vector <std::string> pointFiles;
   elem = docHandle->FirstChild("point_files").Element();
   if (elem) {
     inputsBuffer.str(elem->GetText());
-    while (inputsBuffer >> filename) {
-      pointFiles.push_back(filename);
+    std::string pointsfilename;
+    while (inputsBuffer >> pointsfilename) {
+      pointFiles.push_back(pointsfilename);
     }
     inputsBuffer.clear();
     inputsBuffer.str("");
 
     // read point files only if they are all present
-    if (pointFiles.size() != numShapes) {
+    if (pointFiles.size() != optimize->GetNumShapes()) {
       std::cerr << "ERROR: incorrect number of point files!" << std::endl;
       return false;
     }
@@ -403,14 +525,13 @@ bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimi
       optimize->SetPointFiles(pointFiles);
     }
   }
-
   return true;
 }
 
 //---------------------------------------------------------------------------
-bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* optimize)
-{
-  TiXmlElement* elem = nullptr;
+bool OptimizeParameterFile::read_mesh_attributes(TiXmlHandle *docHandle, Optimize *optimize) {
+
+  TiXmlElement *elem = nullptr;
   std::istringstream inputsBuffer;
   std::string filename;
   int numShapes = optimize->GetNumShapes();
@@ -440,8 +561,8 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
 
   // attributes
   if ((attributes_per_domain.size() >= 1 &&
-       *std::max_element(attributes_per_domain.begin(),
-                         attributes_per_domain.end()) > 0) ||
+      *std::max_element(attributes_per_domain.begin(),
+      attributes_per_domain.end()) > 0) ||
       optimize->GetUseMeshBasedAttributes()) {
     // attribute scales
     double sc;
@@ -518,7 +639,7 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
       else {
         if (attributes_per_domain.size() >= 1 &&
             *std::max_element(attributes_per_domain.begin(),
-                              attributes_per_domain.end()) > 0) {
+            attributes_per_domain.end()) > 0) {
           std::cerr << "ERROR: No feature gradient files!!!" << std::endl;
           return false;
         }
@@ -545,7 +666,7 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
       else {
         if (attributes_per_domain.size() >= 1 &&
             *std::max_element(attributes_per_domain.begin(),
-                              attributes_per_domain.end()) > 0) {
+            attributes_per_domain.end()) > 0) {
           std::cerr << "ERROR: Must provide fids!!" << std::endl;
           return false;
         }

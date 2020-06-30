@@ -30,10 +30,6 @@ install(TARGETS Image
   PUBLIC_HEADER DESTINATION include
   )
 
-add_executable(WriteImageInfoToText WriteImageInfoToText.cxx )
-target_link_libraries(WriteImageInfoToText ${ITK_LIBRARIES} Utils)
-INSTALL(TARGETS WriteImageInfoToText RUNTIME DESTINATION bin)
-
 add_executable(MeshFromDistanceTransforms MeshFromDistanceTransforms.cxx)
 target_link_libraries(MeshFromDistanceTransforms ${ITK_LIBRARIES} ${VTK_LIBRARIES} tinyxml)
 INSTALL(TARGETS MeshFromDistanceTransforms  RUNTIME DESTINATION bin)

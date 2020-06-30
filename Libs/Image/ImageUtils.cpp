@@ -51,16 +51,15 @@ TransformPtr ImageUtils::createCenterOfMassTransform(const Image &image)
   return xform;
 }
 
-Image& ImageUtils::rigidRegistration(Image &image, const Image &target, const Image &source, float isoValue, unsigned iterations)
+TransformPtr ImageUtils::createRigidRegistrationTransform(const Image &source_dt, const Image &target_dt, float isoValue, unsigned iterations)
 {
-  vtkSmartPointer<vtkPolyData> targetContour = Image::getPolyData(target, isoValue);
-  vtkSmartPointer<vtkPolyData> sourceContour = Image::getPolyData(source, isoValue);
-  Matrix mat(ShapeworksUtils::getMatrix(MeshUtils::createIcpTransform(sourceContour, targetContour, iterations)));
-  image.applyTransform(createAffineTransform(mat), target);
-  return image;
+  vtkSmartPointer<vtkPolyData> targetContour = Image::getPolyData(target_dt, isoValue);
+  vtkSmartPointer<vtkPolyData> sourceContour = Image::getPolyData(source_dt, isoValue);
+  const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createIcpTransform(sourceContour, targetContour, iterations));
+  return createAffineTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
 }
 
-TransformPtr ImageUtils::createWarpTransform(const std::string &source_file, const std::string &target_file, const int pointFactor)
+TransformPtr ImageUtils::createWarpTransform(const std::string &source_landmarks, const std::string &target_landmarks, const int stride)
 { 
   typedef itk::ThinPlateSplineKernelTransform<double, 3> TPSTransform;
   typedef TPSTransform::PointSetType PointSet;
@@ -73,9 +72,9 @@ TransformPtr ImageUtils::createWarpTransform(const std::string &source_file, con
 
   std::ifstream insourcefile;
   std::ifstream intargetfile;
-  insourcefile.open(source_file.c_str());
-  intargetfile.open(target_file.c_str());
-  if (!insourcefile.is_open() || !intargetfile.is_open()) return TPSTransform::New();
+  insourcefile.open(source_landmarks);
+  intargetfile.open(target_landmarks);
+  if (!insourcefile.is_open() || !intargetfile.is_open()) return AffineTransform::New();
 
   PointSet::PointIdentifier id{itk::NumericTraits<PointSet::PointIdentifier>::Zero};
   Point3 src, tgt;
@@ -86,9 +85,9 @@ TransformPtr ImageUtils::createWarpTransform(const std::string &source_file, con
     insourcefile >> src[0] >> src[1] >> src[2];
     intargetfile >> tgt[0] >> tgt[1] >> tgt[2];
 
-    if (count % pointFactor == 0)
+    if (count % stride == 0)
     {
-      // swap src and tgt b/c ITK transforms go backwards (must be inverted on creation since some do not provide an invert function)
+      // swap src and tgt b/c ITK transforms must be inverted on creation since some do not provide an invert function
       sourceLandMarkContainer->InsertElement( id, tgt );
       targetLandMarkContainer->InsertElement( id, src );
       id++;

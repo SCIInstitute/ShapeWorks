@@ -18,6 +18,7 @@
 // std
 #include <vector>
 #include <string>
+#include <random>
 
 // itk
 #include <itkImage.h>
@@ -29,6 +30,8 @@
 #include "ParticleSystem/itkParticleProcrustesRegistration.h"
 #include "ParticleSystem/itkParticleGoodBadAssessment.h"
 #include "ParticleSystem/itkParticleVectorFunction.h"
+#include "ParticleSystem/DomainType.h"
+#include "ParticleSystem/MeshWrapper.h"
 
 /**
  * \class Optimize
@@ -80,6 +83,9 @@ public:
   void SetDomainsPerShape(int domains_per_shape);
   //! Return the number of domains per shape
   int GetDomainsPerShape();
+
+  void SetDomainType(shapeworks::DomainType type);
+  shapeworks::DomainType GetDomainType();
 
   //! Set the numbers of particles (vector of numbers, one for each domain)
   void SetNumberOfParticles(std::vector<unsigned int> number_of_particles);
@@ -195,6 +201,7 @@ public:
 
   //! Set the shape input images
   void AddImage(ImageType::Pointer image);
+  void AddMesh(shapeworks::MeshWrapper *mesh);
 
   //! Set the shape filenames (TODO: details)
   void SetFilenames(const std::vector<std::string> &filenames);
@@ -309,6 +316,7 @@ protected:
 
   // IO Parameters
   unsigned int m_domains_per_shape = 1;
+  shapeworks::DomainType m_domain_type = shapeworks::DomainType::Image;
   std::vector<unsigned int> m_number_of_particles;
   std::string m_transform_file;
   std::string m_prefix_transform_file;
@@ -379,4 +387,6 @@ protected:
   itk::MemberCommand<Optimize>::Pointer m_iterate_command;
   int m_total_iterations = 0;
   size_t m_iteration_count = 0;
+
+  std::mt19937 m_rand{42};
 };

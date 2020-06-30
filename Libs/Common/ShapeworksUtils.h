@@ -15,8 +15,9 @@ public:
   // TODO: in C++17 this is a standard function
   static bool is_directory(const std::string &pathname);
 
-  /// converts a vtkMatrix4x4 to a [non-homogenous] shapeworks::Matrix33
-  static Matrix33 getMatrix(const vtkSmartPointer<vtkMatrix4x4> mat);
+  /// converts a vtkMatrix4x4 to a Matrix33 and corresponding translationVector
+  static Matrix33 getMatrix(const vtkSmartPointer<vtkMatrix4x4>& mat);
+  static Vector3 getOffset(const vtkSmartPointer<vtkMatrix4x4>& mat);
 
   /// connects pipeline from an itk exporter to a vtk importer
   template <typename ITK_Exporter, typename VTK_Importer>

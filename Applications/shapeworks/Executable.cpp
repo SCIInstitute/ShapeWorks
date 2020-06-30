@@ -5,12 +5,10 @@ namespace shapeworks {
 
 ///////////////////////////////////////////////////////////////////////////////
 void Executable::buildParser()
-{
-  parser.description("Unified Shapeworks executable for all commands.");
-
+{  
+  parser.description("Unified ShapeWorks executable that includes command line utilities for automated construction of compact statistical landmark-based shape models of ensembles of shapes");
   parser.usage("Usage: %prog <command> [args]...");
   parser.version("%prog 1.0\nMIT license (todo: verify)");
-  parser.description("Command line utilities for understanding groups of related shapes.");
   parser.epilog("Available commands:");
   parser.disable_interspersed_args(); // so everything after a command's name will be passed to that command (ex: its --help argumemnt)
   
@@ -55,9 +53,7 @@ void Executable::addCommand(Command &command)
   if (cmdkey != commands.end()) {
     throw std::runtime_error(cmdkey->first + " already exists!");
   }
-#if 0 && DEBUG_CONSOLIDATION
-  std::cout << "Adding " << command.name() << "...\n";
-#endif
+
   commands.insert(std::pair<std::string, Command&>(command.name(), command));
   auto nodashname = command.name();
   nodashname.erase(std::remove(nodashname.begin(), nodashname.end(), '-'), nodashname.end());
@@ -66,8 +62,8 @@ void Executable::addCommand(Command &command)
   std::map<std::string, std::string> &command_type_descriptions = parser_epilog[command.type()];
   command_type_descriptions[command.name()] = command.desc();
 
-  unsigned opt_width = 24;
-  unsigned desc_width = 80 - opt_width;
+  unsigned opt_width = 32;
+  unsigned desc_width = 100 - opt_width;
   unsigned indent = 2;
   std::stringstream ss;
   ss << "Available commands (dashes optional):\n---------------------\n";
@@ -91,9 +87,6 @@ int Executable::run(std::vector<std::string> arguments, SharedCommandData &share
   {
     auto cmd = commands.find(arguments[0]);
     if (cmd != commands.end()) {
-#if 0 && DEBUG_CONSOLIDATION
-      std::cout << "Executing " << cmd->first << "...\n";
-#endif
       auto args = std::vector<std::string>(arguments.begin() + 1, arguments.end());
       arguments = cmd->second.parse_args(args);
       try {
@@ -116,14 +109,7 @@ int Executable::run(std::vector<std::string> arguments, SharedCommandData &share
 
 ///////////////////////////////////////////////////////////////////////////////
 int Executable::run(int argc, char const *const *argv)
-{
-#if DEBUG_CONSOLIDATION
-  std::stringstream cmd;
-  for (int i=0; i<argc; i++)
-    cmd << argv[i] << " ";
-  std::cout << cmd.str() << std::endl;
-#endif
-  
+{  
   const optparse::Values options = parser.parse_args(argc, argv);
   
   // shapeworks global options

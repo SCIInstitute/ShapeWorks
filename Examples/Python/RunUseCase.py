@@ -26,13 +26,12 @@ except ImportError as error:
     print("See https://github.com/SCIInstitute/ShapeWorks for more information")
     sys.exit(1)
 
-
-# Path pre-setup
-binpath = "../build/shapeworks/src/ShapeWorks-build/bin:../../bin"
+# Default installation path for each platform. If using your own build, specify --shapeworks_path
+default_binpath = "../../bin"
 if platform.system() == "Windows":
-    binpath = "C:\\Program Files\ShapeWorks\\bin"
+    default_binpath = "C:\\Program Files\ShapeWorks\\bin"
 if platform.system() == "Darwin":
-    binpath = binpath + ":/Applications/ShapeWorks/bin"
+    default_binpath = "/Applications/ShapeWorks/bin:/Applications/ShapeWorks/bin/ShapeWorksStudio.app/Contents/MacOS"
 
 parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
 parser.add_argument("--use_case", help="Specify which use case to run, either: ellipsoid, ellipsoid_fd, left_atrium, or femur.")
@@ -42,9 +41,9 @@ parser.add_argument("--start_with_prepped_data", help="Start with already preppe
 parser.add_argument("--start_with_image_and_segmentation_data", help = "use images and segmentations data for preprocessing", action="store_true")
 parser.add_argument("--use_single_scale", help="Single scale or multi scale optimization", action="store_true")
 parser.add_argument("--tiny_test", help="Run as a short test", action="store_true")
-parser.add_argument("--shapeworks_path", help="Path to ShapeWorks executables (default: "+binpath+")", nargs='?', type=str, default=binpath)
+parser.add_argument("--shapeworks_path", help="Path to ShapeWorks executables (default: "+default_binpath+")", nargs='?', type=str, default=os.pathsep)
 args = parser.parse_args()
-binpath = args.shapeworks_path
+explicit_binpath = args.shapeworks_path
 
 if len(sys.argv)==1:
     parser.print_help(sys.stderr)
@@ -54,14 +53,20 @@ if len(sys.argv)==1:
 sys.path.insert(0, binpath + "/ShapeWorksStudio.app/Contents/MacOS")
 sys.path.insert(0, binpath)
 
-# paths for subprocesses (or could pass as env to each one)
+os.environ["PATH"] = explicit_binpath + os.pathsep + os.environ["PATH"] + os.pathsep + default_binpath
+
+# make sure the shapeworks executable can be found
+import shutil
+if (not shutil.which("shapeworks")):
+    print("Error: cannot find ShapeWorks executables. Please pass their location using the --shapeworks_path argument")
+    sys.exit(1)
+
+# OSX: add ShapeWorksStudio to user-provided path
 if platform.system() == "Darwin":
-    items = binpath.split(os.pathsep)
-    binpath = ""
+    items = explicit_binpath.split(os.pathsep)
+    explicit_binpath = ""
     for item in items:
-        binpath = binpath + os.pathsep + item \
-            + os.pathsep + item + "/ShapeWorksStudio.app/Contents/MacOS"
-os.environ["PATH"] = binpath + os.pathsep + os.environ["PATH"]
+        explicit_binpath = explicit_binpath + os.pathsep + item + os.pathsep + item + "/ShapeWorksStudio.app/Contents/MacOS"
 
 module = __import__(args.use_case)
 

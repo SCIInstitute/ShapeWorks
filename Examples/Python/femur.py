@@ -46,7 +46,7 @@ def Run_Pipeline(args):
         import DatasetUtils
         DatasetUtils.downloadDataset(datasetName)
 
-    parentDir="TestFemur/"
+    parentDir = "TestFemur/"
     inputDir = 'TestFemur/' + datasetName + '/'
 
     if not os.path.exists(parentDir):
@@ -74,7 +74,7 @@ def Run_Pipeline(args):
         -- Center of Mass Alignment
         -- Centering
         -- Rigid Alignment
-        -- if interactive tag and option 2 was chosen- define cutting plane on mean sample
+        -- if interactive tag and option 2 was chosen - define cutting plane on mean sample
         -- clip segementations with cutting plane
         -- find largest bounding box and crop
         """
@@ -101,6 +101,8 @@ def Run_Pipeline(args):
         if args.tiny_test:
             files_img = files_img[:3]
             files_mesh = files_mesh[:3]
+            args.use_single_scale = True
+            args.interactive = False
 
         # run clustering if running on a subset
         if args.use_subsample:
@@ -113,6 +115,7 @@ def Run_Pipeline(args):
             cutting_plane_points = np.array([[68.5970168,-128.34930979,-709.84309115],[1.0,-1.0,-709.84309115],[-1.0,1.0,-709.84309115]])
             cp_prefix = 'm03_L'
             choice = 0
+
         # If interactive ask whether to define on chosen sample or median
         else:
             choice_made = False
@@ -142,7 +145,7 @@ def Run_Pipeline(args):
                 if not input_mesh:
                     print("Invalid prefix.")
             cutting_plane_points = SelectCuttingPlane(input_mesh)
-            if cp_prefix[-1] =='R':
+            if cp_prefix[-1] == 'R':
                 reference_side = "right"
             print("Cutting plane points defined: ")
             print(cutting_plane_points)
@@ -179,13 +182,13 @@ def Run_Pipeline(args):
         Apply center of mass alignment
         This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
         """
-        [comFiles_segmentations, comFiles_images] = applyCOMAlignment( parentDir + "com_aligned", paddedFiles_segmentations, raw=paddedFiles_images)
+        [comFiles_segmentations, comFiles_images] = applyCOMAlignment(parentDir + "com_aligned", paddedFiles_segmentations, paddedFiles_images, processRaw=True)
         
         """
         Apply centering
         """
-        centerFiles_segmentations = center(parentDir + "centered/segmentations/", comFiles_segmentations)
-        centerFiles_images = center(parentDir + "centered/images/", comFiles_images)
+        centerFiles_segmentations = center(parentDir + "centered/segmentations", comFiles_segmentations)
+        centerFiles_images = center(parentDir + "centered/images", comFiles_images)
         
         """
         Rigid alignment needs a reference file to align all the input files, FindReferenceImage function defines the median file as the reference.        
@@ -197,74 +200,19 @@ def Run_Pipeline(args):
         This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
         This function uses the same transfrmation matrix for alignment of raw and segmentation files.
         """
-        [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, centerFiles_segmentations, centerFiles_images , medianFile, processRaw = True)
+        [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir + "aligned", centerFiles_segmentations, centerFiles_images, medianFile, processRaw = True)
 
         # If user chose option 2, define cutting plane on median sample
         if choice == 2:
-           input_file = medianFile.replace("centered","aligned").replace(".nrrd", ".aligned.DT.nrrd")
-           cutting_plane_points = SelectCuttingPlane(input_file)
-        # Fix cutting plane points previously selected
+            input_file = medianFile.replace("centered", "aligned").replace(".nrrd", ".aligned.DT.nrrd")
+            cutting_plane_points = SelectCuttingPlane(input_file)
+
         else:
-            # Get COM translation
-            COM_folder = parentDir + "com_aligned/segmentations"
-            for file in os.listdir(COM_folder):
-                if cp_prefix in file and ".txt" in file:
-                    COM_filename = COM_folder + file
-            COM_filehandler = open(COM_filename, "r")
-            line = COM_filehandler.readlines()[2].replace("translation:","")
-            trans = []
-            for string in line.split():
-                trans.append(float(string))
-            trans = np.array(trans)
-            COM_filehandler.close()
-            # Apply COM translation
-            print("Translating cutting plane by: ")
-            print(trans)
-            new_cutting_plane_points = np.zeros(cutting_plane_points.shape)
-            for pt_index in range(cutting_plane_points.shape[0]):
-                new_cutting_plane_points[pt_index] = cutting_plane_points[pt_index] - trans
-            cutting_plane_points = new_cutting_plane_points
-            # Get center translation
-            center_folder = parentDir + "centered/segmentations"
-            for file in os.listdir(center_folder):
-                if cp_prefix in file and ".txt" in file:
-                    center_filename = center_folder + file
-            center_filehandler = open(center_filename, "r")
-            line = center_filehandler.readlines()[0]
-            center_trans = np.array(line.split())
-            center_trans= center_trans.astype(float)
-            # Apply center translation
-            print("Translating cutting plane by: ")
-            print(center_trans)
-            new_cutting_plane_points = np.zeros(cutting_plane_points.shape)
-            for pt_index in range(cutting_plane_points.shape[0]):
-                new_cutting_plane_points[pt_index] = cutting_plane_points[pt_index] - center_trans
-            cutting_plane_points = new_cutting_plane_points
-            # Get rigid transformation
-            rigid_folder = parentDir + "aligned/transformations"
-            for file in os.listdir(rigid_folder):
-                if cp_prefix in file and img_suffix not in file:
-                    rigid_filename = rigid_folder + file
-            rigid_filehandler = open(rigid_filename, "r")
-            matrix = []
-            lines = rigid_filehandler.readlines()
-            index = 0
-            for line in lines:
-                matrix.append([])
-                for string in line.split():
-                    matrix[index].append(float(string))
-                index += 1
-            matrix = np.array(matrix)
-            rigid_filehandler.close()
-            print("Transforming cutting plane by: ")
-            print(matrix)
-            new_cutting_plane_points = np.zeros(cutting_plane_points.shape)
-            for pt_index in range(cutting_plane_points.shape[0]):
-                pt4D = np.array([1,1,1,1])
-                pt4D[:3] = cutting_plane_points[pt_index]
-                pt = matrix.dot(pt4D)
-                new_cutting_plane_points[pt_index] = pt
-            cutting_plane_points = new_cutting_plane_points
+            postfix = "_femur.isores.pad.com.center.aligned.DT.nrrd"
+            path = "aligned/segmentations/"
+            input_file = parentDir + path + cp_prefix + postfix
+            cutting_plane_points = SelectCuttingPlane(input_file)
+
             # catch for flipped norm
             if cutting_plane_points[0][1] < 0 and cutting_plane_points[1][1] < 0 and cutting_plane_points[2][1] < 0 :
                 cutting_plane_points[0][1] = cutting_plane_points[0][1] *-1
@@ -280,8 +228,7 @@ def Run_Pipeline(args):
 
         """Compute largest bounding box and apply cropping"""
         croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", clippedFiles_segmentations, parentDir + "clipped_segmentations/*.nrrd")
-
-        croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images, parentDir + "aligned/images/*.nrrd")
+        croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images, parentDir + "clipped_segmentations/*.nrrd")
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
         if args.interactive:
@@ -294,11 +241,14 @@ def Run_Pipeline(args):
         dtFiles = applyDistanceTransforms(parentDir, croppedFiles_segmentations)
 
     else:
-        print("\nStep 3. Groom - Convert to distance transforms\n")
-        if args.interactive:
-            input("Press Enter to continue")
+        print("Skipping grooming...")
+        dtFiles = []
+        dt_dir = inputDir + 'distance_transforms/'
+        for file in sorted(os.listdir(dt_dir)):
+            dtFiles.append(dt_dir + file)
 
-        dtFiles = applyDistanceTransforms(parentDir, fileList_seg)
+        if args.tiny_test:
+            dtFiles = dtFiles[:3]
 
     """
     ## OPTIMIZE : Particle Based Optimization
@@ -321,6 +271,7 @@ def Run_Pipeline(args):
     optimization routines
     """
     print("\nStep 4. Optimize - Particle Based Optimization\n")
+
     if args.interactive:
         input("Press Enter to continue")
 
@@ -341,6 +292,7 @@ def Run_Pipeline(args):
             "ending_regularization" : 0.1,
             "recompute_regularization_interval" : 2,
             "domains_per_shape" : 1,
+            "domain_type" : 'image',
             "relative_weighting" : 10,
             "initial_relative_weighting" : 1,
             "procrustes_interval" : 1,
@@ -350,6 +302,10 @@ def Run_Pipeline(args):
             "verbosity" : 3,
             "use_statistics_in_init" : 0
         }
+        if args.tiny_test:
+            parameterDictionary["number_of_particles"] = 32
+            parameterDictionary["optimization_iterations"] = 25
+            parameterDictionary["iterations_per_split"] = 25
 
         [localPointFiles, worldPointFiles] = runShapeWorksOptimize_SingleScale(pointDir, dtFiles, parameterDictionary)
 
@@ -367,6 +323,7 @@ def Run_Pipeline(args):
             "ending_regularization" : 0.1,
             "recompute_regularization_interval" : 2,
             "domains_per_shape" : 1,
+            "domain_type" : 'image',
             "relative_weighting" : 10,
             "initial_relative_weighting" : 1,
             "procrustes_interval" : 1, 
@@ -376,7 +333,15 @@ def Run_Pipeline(args):
             "verbosity" : 3,
             "use_statistics_in_init" : 0
         }
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/executable
         [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
+
+    if args.tiny_test:
+        print("Done with tiny test")
+        exit()
 
     """
     ## ANALYZE : Shape Analysis and Visualization
@@ -403,4 +368,5 @@ def Run_Pipeline(args):
     print("\nStep 5. Analysis - Reconstruct the dense mean surface given the sparse correspodence model.\n")
     if args.interactive:
         input("Press Enter to continue")
+
     launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)

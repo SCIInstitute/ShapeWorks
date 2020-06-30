@@ -33,7 +33,7 @@ public:
   void run();
 
 Q_SIGNALS:
-  void result_ready(const MeshWorkItem &item, vtkSmartPointer<vtkPolyData> mesh);
+  void result_ready(const MeshWorkItem &item, MeshHandle mesh);
   void finished();
 
 private:

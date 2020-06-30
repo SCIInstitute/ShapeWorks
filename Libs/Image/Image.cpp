@@ -12,6 +12,8 @@
 #include <itkTestingComparisonImageFilter.h>
 #include <itkRegionOfInterestImageFilter.h>
 #include <itkReinitializeLevelSetImageFilter.h>
+#include <itkTranslationTransform.h>
+#include <itkScalableAffineTransform.h>
 #include <itkBinaryFillholeImageFilter.h>
 #include <itkGradientMagnitudeImageFilter.h>
 #include <itkCurvatureFlowImageFilter.h>
@@ -41,13 +43,13 @@ Image::ImageType::Pointer Image::cloneData(const Image::ImageType::Pointer image
   return duplicator->GetOutput();
 }
 
-Image& Image::operator=(const Image &img)
+Image& Image::operator=(const Image& img)
 {
   this->image = Image::cloneData(image);
   return *this;
 }
 
-Image& Image::operator=(Image &&img)
+Image& Image::operator=(Image&& img)
 {
   this->image = nullptr;        // make sure to free existing image by setting it to nullptr (works b/c it's a smart ptr)
   this->image.Swap(img.image);
@@ -74,6 +76,150 @@ Image::ImageType::Pointer Image::read(const std::string &pathname)
 
   return reader->GetOutput();
 }
+
+Image& Image::operator-()
+{
+  itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
+  while (!iter.IsAtEnd())
+  {
+    iter.Set(-iter.Value());
+    ++iter;
+  }
+
+  return *this;
+}
+
+Image Image::operator+(const Image& other) const
+{
+  Image ret(*this);
+  ret += other;
+  return ret;
+}
+
+Image& Image::operator+=(const Image& other)
+{
+  if (dims() != other.dims()) { throw std::invalid_argument("images must have same logical dims"); }
+  
+  itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
+  itk::ImageRegionIteratorWithIndex<ImageType> otherIter(other.image, other.image->GetLargestPossibleRegion());
+  while (!iter.IsAtEnd() && !otherIter.IsAtEnd())
+  {
+    iter.Set(iter.Value() + otherIter.Value());
+    ++iter; ++otherIter;
+  }
+
+  return *this;
+}
+
+Image Image::operator-(const Image& other) const
+{
+  Image ret(*this);
+  ret -= other;
+  return ret;
+}
+
+Image& Image::operator-=(const Image& other)
+{
+  if (dims() != other.dims()) { throw std::invalid_argument("images must have same logical dims"); }
+  
+  itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
+  itk::ImageRegionIteratorWithIndex<ImageType> otherIter(other.image, other.image->GetLargestPossibleRegion());
+  while (!iter.IsAtEnd() && !otherIter.IsAtEnd())
+  {
+    iter.Set(iter.Value() - otherIter.Value());
+    ++iter; ++otherIter;
+  }
+
+  return *this;
+}
+
+Image Image::operator+(const PixelType x) const
+{
+  Image ret(*this);
+  ret += x;
+  return ret;
+}
+
+Image& Image::operator+=(const PixelType x)
+{
+  itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
+  while (!iter.IsAtEnd())
+  {
+    iter.Set(iter.Value() + x);
+    ++iter;
+  }
+
+  return *this;
+}
+
+Image Image::operator-(const PixelType x) const
+{
+  Image ret(*this);
+  ret -= x;
+  return ret;
+}
+
+Image& Image::operator-=(const PixelType x)
+{
+  itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
+  while (!iter.IsAtEnd())
+  {
+    iter.Set(iter.Value() - x);
+    ++iter;
+  }
+
+  return *this;
+}
+
+Image Image::operator*(const PixelType x) const
+{
+  Image ret(*this);
+  ret *= x;
+  return ret;
+}
+
+Image& Image::operator*=(const PixelType x)
+{
+  itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
+  while (!iter.IsAtEnd())
+  {
+    iter.Set(iter.Value() * x);
+    ++iter;
+  }
+
+  return *this;
+}
+
+Image Image::operator/(const PixelType x) const
+{
+  Image ret(*this);
+  ret /= x;
+  return ret;
+}
+
+Image& Image::operator/=(const PixelType x)
+{
+  itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
+  while (!iter.IsAtEnd())
+  {
+    iter.Set(iter.Value() / x);
+    ++iter;
+  }
+
+  return *this;
+}
+
+template<>
+Image operator*(const Image& img, const double x) { return img.operator*(x); }
+
+template<>
+Image operator/(const Image& img, const double x) { return img.operator/(x); }
+
+template<>
+Image& operator*=(Image& img, const double x) { return img.operator*=(x); }
+
+template<>
+Image& operator/=(Image& img, const double x) { return img.operator/=(x); }
 
 Image::ImageType::Pointer Image::readDICOMImage(const std::string &pathname)
 {
@@ -135,15 +281,7 @@ Image& Image::antialias(unsigned iterations, double maxRMSErr, int layers)
 
 Image& Image::recenter()
 {
-  using FilterType = itk::ChangeInformationImageFilter<ImageType>;
-  FilterType::Pointer filter = FilterType::New();
-
-  filter->SetInput(this->image);
-  filter->CenterImageOn();
-  filter->Update();
-  this->image = filter->GetOutput();
-  
-  return *this;
+  return setOrigin(negate(center()));
 }
 
 Image& Image::resample(const Point3& physicalSpacing, Dims logicalDims)
@@ -172,8 +310,10 @@ Image& Image::resample(const Point3& physicalSpacing, Dims logicalDims)
   return *this;
 }
 
-bool Image::compare(const Image &other, double precision) const
+bool Image::compare(const Image& other, bool verifyall, double tolerance, double precision) const
 {
+  if (tolerance > 1 || tolerance < 0) { throw std::invalid_argument("tolerance value must be between 0 and 1 (inclusive)"); }
+  
   // we use the region of interest filter here with the full region because our
   // incoming image may be the output of an ExtractImageFilter or PadImageFilter
   // which modify indices and leave the origin intact.  These will not compare
@@ -199,6 +339,7 @@ bool Image::compare(const Image &other, double precision) const
   diff->SetTestInput(itk_image);
   diff->SetDifferenceThreshold(precision);
   diff->SetToleranceRadius(0);
+  diff->SetVerifyInputInformation(verifyall);
 
   try
   {
@@ -206,15 +347,23 @@ bool Image::compare(const Image &other, double precision) const
   }
   catch (itk::ExceptionObject &exp)
   {
-    std::cerr << "Comparison failed" << std::endl;
-    std::cerr << exp << std::endl;
+    std::cerr << "Comparison failed: " << exp.GetDescription() << std::endl;
+
+    // if metadata differs but dims do not, re-run compare to identify pixel differences (but still return false)
+    if (std::string(exp.what()).find("Inputs do not occupy the same physical space!") != std::string::npos)
+      if (dims() == other.dims())
+        if (compare(other, false, precision))
+          std::cerr << "0 pixels differ\n";
+
     return false;
   }
 
   auto numberOfPixelsWithDifferences = diff->GetNumberOfPixelsWithDifferences();
-  if (numberOfPixelsWithDifferences > 0)
+  Dims dim = dims();
+  auto allowedPixelDifference = tolerance * dim[0] * dim[1] * dim[2];
+  if (numberOfPixelsWithDifferences > allowedPixelDifference)
   {
-    std::cerr << "Comparison failed: " << numberOfPixelsWithDifferences << " pixels differ\n";
+    std::cerr << numberOfPixelsWithDifferences << " pixels differ\n";
     return false;
   }
 
@@ -223,15 +372,20 @@ bool Image::compare(const Image &other, double precision) const
 
 Image& Image::pad(int padding, PixelType value)
 {
+  return this->pad(padding, padding, padding, value);
+}
+
+Image& Image::pad(int padx, int pady, int padz, PixelType value)
+{
   ImageType::SizeType lowerExtendRegion;
-  lowerExtendRegion[0] = padding;
-  lowerExtendRegion[1] = padding;
-  lowerExtendRegion[2] = padding;
+  lowerExtendRegion[0] = padx;
+  lowerExtendRegion[1] = pady;
+  lowerExtendRegion[2] = padz;
 
   ImageType::SizeType upperExtendRegion;
-  upperExtendRegion[0] = padding;
-  upperExtendRegion[1] = padding;
-  upperExtendRegion[2] = padding;
+  upperExtendRegion[0] = padx;
+  upperExtendRegion[1] = pady;
+  upperExtendRegion[2] = padz;
 
   using FilterType = itk::ConstantPadImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
@@ -248,9 +402,6 @@ Image& Image::pad(int padding, PixelType value)
 
 Image& Image::translate(const Vector3 &v)
 {
-  if (v[0] == 0 || v[1] == 0 || v[2] == 0)
-    throw std::invalid_argument("Invalid translate point");
-
   AffineTransformPtr xform(AffineTransform::New());
   xform->Translate(-v);            // negate v because ITK applies transformations backwards.
 
@@ -266,7 +417,7 @@ Image& Image::scale(const Vector3 &s)
   setOrigin(negate(center()));     // move center _away_ from origin since ITK applies transformations backwards.
 
   AffineTransformPtr xform(AffineTransform::New());
-  xform->Scale(invert(std::move(const_cast<Vector3&>(s))));   // invert scale ratio because ITK applies transformations backwards.  
+  xform->Scale(invert(Vector(s)));         // invert scale ratio because ITK applies transformations backwards.  
   applyTransform(xform);
   setOrigin(origOrigin);           // restore origin
   
@@ -288,7 +439,7 @@ Image& Image::rotate(const double angle, const Vector3 &axis)
   return *this;
 }
 
-Image& Image::applyTransform(const TransformPtr transform, const Image &img)
+Image& Image::applyTransform(const TransformPtr transform, const Dims dims, const Point3 origin, const Vector spacing, const ImageType::DirectionType direction)
 {
   using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;  // linear interpolation by default
   FilterType::Pointer resampler = FilterType::New();
@@ -296,10 +447,10 @@ Image& Image::applyTransform(const TransformPtr transform, const Image &img)
   resampler->SetInput(this->image);
   resampler->SetTransform(transform);
 
-  resampler->SetSize(img.image->GetBufferedRegion().GetSize());
-  resampler->SetOutputOrigin(img.image->GetOrigin());
-  resampler->SetOutputDirection(img.image->GetDirection());
-  resampler->SetOutputSpacing(img.image->GetSpacing());
+  resampler->SetSize(dims);
+  resampler->SetOutputOrigin(origin);
+  resampler->SetOutputSpacing(spacing);
+  resampler->SetOutputDirection(direction);
 
   resampler->Update();
   this->image = resampler->GetOutput();
@@ -307,7 +458,7 @@ Image& Image::applyTransform(const TransformPtr transform, const Image &img)
   return *this;
 }
 
-Image &Image::applyTransform(const TransformPtr transform)
+Image& Image::applyTransform(const TransformPtr transform)
 {
   using FilterType = itk::ResampleImageFilter<ImageType, ImageType>; // linear interpolation by default
   FilterType::Pointer resampler = FilterType::New();
@@ -317,8 +468,8 @@ Image &Image::applyTransform(const TransformPtr transform)
 
   resampler->SetSize(dims());
   resampler->SetOutputOrigin(origin());
+  resampler->SetOutputSpacing(spacing());
   resampler->SetOutputDirection(coordsys());
-  resampler->SetOutputSpacing(image->GetSpacing());
 
   resampler->Update();
   this->image = resampler->GetOutput();
@@ -326,36 +477,36 @@ Image &Image::applyTransform(const TransformPtr transform)
   return *this;
 }
 
-Image& Image::extractLabel(PixelType label)
+Image& Image::extractLabel(const PixelType label)
 {
-  threshold(label, label);
+  binarize(label - std::numeric_limits<PixelType>::epsilon(), label + std::numeric_limits<PixelType>::epsilon());
 
   return *this;
 }
 
-Image& Image::closeHoles()
+Image& Image::closeHoles(const PixelType foreground)
 {
   using FilterType = itk::BinaryFillholeImageFilter<ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
   filter->SetInput(this->image);
-  filter->SetForegroundValue(itk::NumericTraits<PixelType>::min());
+  filter->SetForegroundValue(foreground + std::numeric_limits<PixelType>::epsilon());
   filter->Update();
   this->image = filter->GetOutput();
 
   return *this;
 }
 
-Image& Image::threshold(PixelType minval, PixelType maxval)
+Image& Image::binarize(PixelType minval, PixelType maxval, PixelType inner_value, PixelType outer_value)
 {
   using FilterType = itk::BinaryThresholdImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
   filter->SetInput(this->image);
-  filter->SetLowerThreshold(minval);
+  filter->SetLowerThreshold(minval + std::numeric_limits<PixelType>::epsilon());
   filter->SetUpperThreshold(maxval);
-  filter->SetInsideValue(1.0);
-  filter->SetOutsideValue(0.0);
+  filter->SetInsideValue(inner_value);
+  filter->SetOutsideValue(outer_value);
   filter->Update();
   this->image = filter->GetOutput();
 
@@ -418,7 +569,7 @@ Image& Image::applySigmoidFilter(double alpha, double beta)
   return *this;
 }
 
-Image& Image::applyTPLevelSetFilter(const Image &featureImage, double scaling)
+Image& Image::applyTPLevelSetFilter(const Image& featureImage, double scaling)
 {
   if (!featureImage.image) { throw std::invalid_argument("Invalid feature image"); }
 
@@ -477,7 +628,7 @@ Image& Image::crop(const Region &region)
   using FilterType = itk::ExtractImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
-  filter->SetExtractionRegion(region);
+  filter->SetExtractionRegion(Region(region).clip(*this));
   filter->SetInput(this->image);
   filter->SetDirectionCollapseToIdentity();
   filter->Update();
@@ -486,7 +637,7 @@ Image& Image::crop(const Region &region)
   return *this;
 }
 
-vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image &img, PixelType isoValue)
+vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image& img, PixelType isoValue)
 {
   using FilterType = itk::VTKImageExport<ImageType>;
   FilterType::Pointer itkTargetExporter = FilterType::New();
@@ -532,21 +683,18 @@ Image& Image::clip(const Vector &n, const Point &q, const PixelType val)
   return *this;
 }
 
-Image& Image::reflect(const Vector3 &normal)
+Image& Image::reflect(const Axis &axis)
 {
-  if ((normal[0] == -1 && (normal[1] == -1 || normal[2] == -1)) ||
-      (normal[1] == -1 && (normal[0] == -1 || normal[2] == -1)) ||
-      (normal[2] == -1 && (normal[0] == -1 || normal[1] == -1))) 
-    throw std::invalid_argument("Invalid normal");
+  if (!axis_is_valid(axis))
+    throw std::invalid_argument("Invalid axis");
 
-  Matrix reflection;
-  reflection.Fill(0);
-  reflection[0][0] = normal[0];
-  reflection[1][1] = normal[1];
-  reflection[2][2] = normal[2];
+  Vector scale(makeVector({1,1,1}));
+  scale[axis] = -1;
 
-  AffineTransformPtr xform(AffineTransform::New());
-  xform->SetMatrix(reflection);
+  
+  using ScalableTransform = itk::ScalableAffineTransform<double, 3>;
+  ScalableTransform::Pointer xform(ScalableTransform::New());
+  xform->SetScale(scale);
   Point3 currentOrigin(origin());
   recenter().applyTransform(xform).setOrigin(currentOrigin);
 
@@ -567,21 +715,6 @@ Image& Image::setOrigin(Point3 origin)
   return *this;
 }
 
-Point3 Image::size() const
-{
-  return spacing() * toPoint(dims());
-}
-
-Point3 Image::spacing() const
-{
-  return image->GetSpacing();
-}
-
-const Image::ImageType::DirectionType& Image::coordsys() const
-{
-  return image->GetDirection();
-}
-
 Point3 Image::centerOfMass(PixelType minval, PixelType maxval) const
 {
   itk::ImageRegionIteratorWithIndex<ImageType> imageIt(this->image, image->GetLargestPossibleRegion());
@@ -598,7 +731,11 @@ Point3 Image::centerOfMass(PixelType minval, PixelType maxval) const
     }
     ++imageIt;
   }
-  com /= static_cast<double>(numPixels);
+
+  if (numPixels > 0)
+    com /= static_cast<double>(numPixels);
+  else
+    com = center();  // an image with no mass still has a center
 
   return com;
 }
@@ -622,7 +759,7 @@ std::ostream& operator<<(std::ostream &os, const Image::Region &r)
             << ",\n\tmax: [" << r.max[0] << ", " << r.max[1] << ", " << r.max[2] << "]\n}";
 }
 
-std::ostream& operator<<(std::ostream &os, const Image &img)
+std::ostream& operator<<(std::ostream &os, const Image& img)
 {
   return os << "{\n\tdims: " << img.dims() << ",\n\torigin: "
             << img.origin() << ",\n\tsize: " << img.size() << "\n}";

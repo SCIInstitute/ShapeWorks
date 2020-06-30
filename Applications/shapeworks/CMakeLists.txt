@@ -28,10 +28,12 @@ target_link_libraries(shapeworks_exe
   )
 
 # Install
-set_target_properties(shapeworks_exe PROPERTIES
+set_target_properties(shapeworks PROPERTIES
   PUBLIC_HEADER "${shapeworks_headers}"
-  OUTPUT_NAME "shapeworks")
-install(TARGETS shapeworks_exe
+  #ENABLE_EXPORTS TRUE  # needed to enable dependency of shapeworksTests (fixme: doesn't work with gcc, but works with Xcode)
+  # https://gitlab.kitware.com/cmake/cmake/-/issues/19527
+  )
+install(TARGETS shapeworks
   ARCHIVE DESTINATION bin
   RUNTIME DESTINATION bin
   PUBLIC_HEADER DESTINATION include

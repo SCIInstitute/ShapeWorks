@@ -141,14 +141,15 @@ PYBIND11_MODULE(shapeworks, m)
   ;
 
   py::class_<shapeworks::ImageUtils>(m, "ImageUtils")
-  .def_static("boundingBox",    &shapeworks::ImageUtils::boundingBox, "filenames"_a)
+  .def_static("boundingBox",    &shapeworks::ImageUtils::boundingBox, "filenames"_a, "isoValue"_a=1.0)
   .def_static("createCenterOfMassTransform",
                                 &shapeworks::ImageUtils::createCenterOfMassTransform, "image"_a)
-  .def_static("rigidRegistration",
-                                &shapeworks::ImageUtils::rigidRegistration, "img"_a, "target"_a, "source"_a, "isoValue"_a=0.0, "iterations"_a=20)
-  .def_static("computeWarp",    &shapeworks::ImageUtils::computeWarp, "source_file"_a, "target_file"_a, "pointFactor"_a=1)
+  .def_static("createRigidRegistrationTransform",
+                                &shapeworks::ImageUtils::createRigidRegistrationTransform "source_dt"_a, "target_dt"_a, "isoValue"_a=0.0, "iterations"_a=20)
+  .def_static("createWarpTransform",    
+                                &shapeworks::ImageUtils::createWarpTransform, "source_landmarks"_a, "target_landmarks"_a, "stride"_a=1)
   .def_static("topologyPreservingSmooth", 
-                                &shapeworks::ImageUtils::topologyPreservingSmooth<shapeworks::Image>, "img"_a, "scaling"_a = 20.0, "sigmoidAlpha"_a = 10.5, "sigmoidBeta"_a = 10.0, "curvatureIterations"_a = 10, "applycurvaturefilter"_a = true)
+                                &shapeworks::ImageUtils::topologyPreservingSmooth<shapeworks::Image>, "image"_a, "scaling"_a = 20.0, "sigmoidAlpha"_a = 10.5, "sigmoidBeta"_a = 10.0)
   .def_static("isoresample",    &shapeworks::ImageUtils::isoresample<shapeworks::Image>, "img"_a, "isoSpacing"_a = 1.0, "outputSize"_a = shapeworks::Dims())
   ;
 

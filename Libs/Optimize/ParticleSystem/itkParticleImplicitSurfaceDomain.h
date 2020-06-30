@@ -9,8 +9,7 @@
 #pragma once
 
 #include "itkParticleImageDomainWithCurvature.h"
-//Prateep
-#include "vnl/vnl_matrix_fixed.h"
+
 #include "vnl/vnl_inverse.h"
 
 #include "TriMesh.h"
@@ -38,8 +37,6 @@ public:
   typedef typename Superclass::ImageType ImageType;
   typedef typename Superclass::PointType PointType;
 
-  typedef vnl_matrix_fixed<double, VDimension +1, VDimension +1> TransformType;
-
   /** Method for creation through the object factory. */
   itkNewMacro(ParticleImplicitSurfaceDomain);
 
@@ -54,6 +51,10 @@ public:
   }
   virtual T GetTolerance() {
     return this->m_Tolerance;
+  }
+
+  shapeworks::DomainType GetDomainType() const override {
+    return shapeworks::DomainType::Image;
   }
   
   /** Apply any constraints to the given point location.  This method
@@ -74,6 +75,13 @@ public:
                                       const PointType &pos) const override;
 
 
+  inline PointType UpdateParticlePosition(PointType &point, vnl_vector_fixed<double, VDimension> &update) const override {
+    PointType newpoint;
+    for (unsigned int i = 0; i < 3; i++) { newpoint[i] = point[i] - update[i]; }
+    ApplyConstraints(newpoint);
+    return newpoint;
+  }
+
   /** Define a distance measure on the surface.  Note that this distance
       measure is NOT the geodesic distance, as one might expect, but is only a
       Euclidean distance which ignores points whose normals are not
@@ -86,8 +94,7 @@ public:
                        const vnl_vector<double> &c);
 
   /** Transform cutting planes based on base index. Base plane coordinates passed as argument. */
-  void TransformCuttingPlane(const TransformType &Trans, const vnl_vector<double> &base_a,
-                             const vnl_vector<double> &base_b, const vnl_vector<double> &base_c);
+  void TransformCuttingPlane(const vnl_matrix_fixed<double, VDimension + 1, VDimension + 1> &Trans) override;
 
 
   void SetMesh(TriMesh *mesh);
@@ -133,7 +140,7 @@ public:
 
   /** Maintain a list of spheres within the domain.  These are used as 
       soft constraints by some particle forcing functions. */
-  void AddSphere(const vnl_vector_fixed<double,VDimension> &v, double r)
+  void AddSphere(const vnl_vector_fixed<double,VDimension> &v, double r) override
   {
 //    if (r > 0) -- Praful, sign will be used to determine inwards or outwards
 //    {

@@ -103,10 +103,10 @@ def Run_Pipeline(args):
         paddedFiles = applyPadding(parentDir + "padded", centeredFiles, 10)
 
         """Apply center of mass alignment"""
-        comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles)
+        comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles, None)
 
         """Apply rigid alignment"""
-        rigidFiles = applyRigidAlignment(parentDir, comFiles, None, comFiles[0])
+        rigidFiles = applyRigidAlignment(parentDir + "aligned", comFiles, None, comFiles[0])
 
         """Compute largest bounding box and apply cropping"""
         croppedFiles = applyCropping(parentDir + "cropped", rigidFiles, parentDir + "aligned/*.aligned.nrrd")
@@ -158,6 +158,7 @@ def Run_Pipeline(args):
             "ending_regularization" : 0.1,
             "recompute_regularization_interval" : 2,
             "domains_per_shape" : 1,
+            "domain_type" : 'image',
             "relative_weighting" : 10,
             "initial_relative_weighting" : 0.01,
             "procrustes_interval" : 0,
@@ -188,6 +189,7 @@ def Run_Pipeline(args):
             "ending_regularization" : 0.1,
             "recompute_regularization_interval" : 2,
             "domains_per_shape" : 1,
+            "domain_type" : 'image',
             "relative_weighting" : 10,
             "initial_relative_weighting" : 0.01,
             "procrustes_interval" : 0,

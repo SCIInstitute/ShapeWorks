@@ -48,8 +48,6 @@ public:
   ImageType::Pointer get_groomed_image();
 
   /// Import the groomed raw image file
-  void import_groomed_file(QString filename, double iso);
-  /// Import the groomed raw image file
   void import_groomed_image(ImageType::Pointer img, double iso);
 
   /// Retrieve the groomed mesh
@@ -73,7 +71,7 @@ public:
   /// Get the local correspondence points
   vnl_vector<double> get_local_correspondence_points();
 
-  void set_reconstructed_mesh(vtkSmartPointer<vtkPolyData> poly_data);
+  void set_reconstructed_mesh(MeshHandle mesh);
 
   void clear_reconstructed_mesh();
 

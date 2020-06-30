@@ -168,13 +168,13 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class Threshold : public ImageCommand
+class Binarize : public ImageCommand
 {
 public:
-  static Threshold& getCommand() { static Threshold instance; return instance; }
+  static Binarize& getCommand() { static Binarize instance; return instance; }
 
 private:
-  Threshold() { buildParser(); }
+  Binarize() { buildParser(); }
   void buildParser() override;
   bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
@@ -364,13 +364,61 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class Filter : public ImageCommand
+class NegateImage : public ImageCommand
 {
 public:
-  static Filter &getCommand() { static Filter instance; return instance; }
+  static NegateImage& getCommand() { static NegateImage instance; return instance; }
 
 private:
-  Filter() { buildParser(); }
+  NegateImage() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class AddImage : public ImageCommand
+{
+public:
+  static AddImage& getCommand() { static AddImage instance; return instance; }
+
+private:
+  AddImage() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class SubtractImage : public ImageCommand
+{
+public:
+  static SubtractImage& getCommand() { static SubtractImage instance; return instance; }
+
+private:
+  SubtractImage() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class MultiplyImage : public ImageCommand
+{
+public:
+  static MultiplyImage& getCommand() { static MultiplyImage instance; return instance; }
+
+private:
+  MultiplyImage() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class DivideImage : public ImageCommand
+{
+public:
+  static DivideImage& getCommand() { static DivideImage instance; return instance; }
+
+private:
+  DivideImage() { buildParser(); }
   void buildParser() override;
   bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };

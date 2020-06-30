@@ -14,6 +14,11 @@ int main(int argc, char *argv[])
 
   shapeworks.addCommand(ReadImage::getCommand());
   shapeworks.addCommand(WriteImage::getCommand());
+  shapeworks.addCommand(NegateImage::getCommand());
+  shapeworks.addCommand(AddImage::getCommand());
+  shapeworks.addCommand(SubtractImage::getCommand());
+  shapeworks.addCommand(MultiplyImage::getCommand());
+  shapeworks.addCommand(DivideImage::getCommand());
   shapeworks.addCommand(ImageInfo::getCommand());
   shapeworks.addCommand(Antialias::getCommand());
   shapeworks.addCommand(ResampleImage::getCommand());
@@ -24,7 +29,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(Rotate::getCommand());
   shapeworks.addCommand(ExtractLabel::getCommand());
   shapeworks.addCommand(CloseHoles::getCommand());
-  shapeworks.addCommand(Threshold::getCommand());
+  shapeworks.addCommand(Binarize::getCommand());
   shapeworks.addCommand(ComputeDT::getCommand());
   shapeworks.addCommand(CurvatureFilter::getCommand());
   shapeworks.addCommand(GradientFilter::getCommand());
@@ -40,7 +45,6 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(SetOrigin::getCommand());
   shapeworks.addCommand(WarpImage::getCommand());
   shapeworks.addCommand(Compare::getCommand());
-  shapeworks.addCommand(Filter::getCommand());
   shapeworks.addCommand(ReadParticleSystem::getCommand());
   shapeworks.addCommand(Compactness::getCommand());
   shapeworks.addCommand(Generalization::getCommand());
