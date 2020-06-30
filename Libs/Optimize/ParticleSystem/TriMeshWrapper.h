@@ -40,12 +40,14 @@ private:
   Eigen::Vector3f GeodesicWalkOnFace(Eigen::Vector3f pointa__, Eigen::Vector3f projectedVector__, int faceIndex__, int prevFace__) const;
   Eigen::Vector3f ProjectVectorToFace(const Eigen::Vector3f &normal, const Eigen::Vector3f &vector) const;
   Eigen::Vector3f RotateVectorToFace(const Eigen::Vector3f &prevnormal, const Eigen::Vector3f &nextnormal, const Eigen::Vector3f &vector) const;
-  Eigen::Vector3f intersectLines(Eigen::Vector3f A1, Eigen::Vector3f A2, Eigen::Vector3f B1, Eigen::Vector3f B2) const;
   const Eigen::Vector3f GetFaceNormal(int faceIndex) const;
   void ComputeMeshBounds();
 
+  point TriMeshWrapper::GetBarycentricIntersection(vec3 start, vec3 end, int currentFace, int edge) const;
+
   TriMesh* mesh;
   meshFIM* fim;
+
 
   PointType meshLowerBound;
   PointType meshUpperBound;
