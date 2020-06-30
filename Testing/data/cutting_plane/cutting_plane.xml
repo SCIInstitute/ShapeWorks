@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+<number_of_particles> 16 </number_of_particles>
+<iterations_per_split> 500 </iterations_per_split>
+<starting_regularization> 500.0 </starting_regularization>
+<ending_regularization> 10.0 </ending_regularization>
+<optimization_iterations> 100 </optimization_iterations>
+<checkpointing_interval> 0 </checkpointing_interval>
+<procrustes_scaling> 0 </procrustes_scaling>
+<procrustes_interval> 0 </procrustes_interval>
+<save_init_splits>0</save_init_splits>
+<verbosity>1</verbosity>
+
+<!-- needed to fully turn on cutting planes -->
+<adaptivity_mode> 3 </adaptivity_mode>
+
+<output_dir>
+output
+</output_dir>
+
+<inputs>
+sphere10_DT.nrrd
+sphere20_DT.nrrd
+sphere30_DT.nrrd
+sphere40_DT.nrrd
+</inputs>
+
+<num_planes_per_input>
+  1
+  1
+  1
+  1
+</num_planes_per_input>
+
+<cutting_planes>
+  10 10 0 -10 -10 0 10 -10 0
+  10 10 0 -10 -10 0 10 -10 0
+  10 10 0 -10 -10 0 10 -10 0
+  10 10 0 -10 -10 0 10 -10 0
+</cutting_planes>
+

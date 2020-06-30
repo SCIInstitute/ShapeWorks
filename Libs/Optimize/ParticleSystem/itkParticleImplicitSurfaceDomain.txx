@@ -152,7 +152,7 @@ bool
 ParticleImplicitSurfaceDomain<T>::
 ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const 
 {
-
+    std::cout << "Applying Vector Constraints" << std::endl;
     bool flag = false;
   //ShapeWorksRun4.5 - Ensuring that the update does not violate constraints
   vnl_vector_fixed<double, DIMENSION> x;
