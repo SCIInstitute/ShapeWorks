@@ -55,7 +55,7 @@ def Run_Pipeline(args):
     parameterDictionary = {
         "use_normals": 0,
         "normal_weight": 0.0,
-        "checkpointing_interval" : 200,
+        "checkpointing_interval" : 1000,
         "keep_checkpoints" : 0,
         "iterations_per_split" : 2000,
         "optimization_iterations" : 2000,
