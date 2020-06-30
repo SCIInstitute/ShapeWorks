@@ -128,7 +128,8 @@ def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False, pr
         # get centerofmass and center
         center = getInfo(inname, "center")
         com = getInfo(inname, "centerofmass")
-        T = com - center
+        T = center - com
+
         cmd = ["shapeworks", 
                "readimage", "--name", inname, 
                "translate", "-x", str(T[0]), "-y", str(T[1]), "-z", str(T[2]), 
