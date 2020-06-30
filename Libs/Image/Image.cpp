@@ -281,15 +281,7 @@ Image& Image::antialias(unsigned iterations, double maxRMSErr, int layers)
 
 Image& Image::recenter()
 {
-  using FilterType = itk::ChangeInformationImageFilter<ImageType>;
-  FilterType::Pointer filter = FilterType::New();
-
-  filter->SetInput(this->image);
-  filter->CenterImageOn();
-  filter->Update();
-  this->image = filter->GetOutput();
-  
-  return *this;
+  return setOrigin(negate(center()));
 }
 
 Image& Image::resample(const Point3& physicalSpacing, Dims logicalDims)
@@ -739,7 +731,11 @@ Point3 Image::centerOfMass(PixelType minval, PixelType maxval) const
     }
     ++imageIt;
   }
-  com /= static_cast<double>(numPixels);
+
+  if (numPixels > 0)
+    com /= static_cast<double>(numPixels);
+  else
+    com = center();  // an image with no mass still has a center
 
   return com;
 }
