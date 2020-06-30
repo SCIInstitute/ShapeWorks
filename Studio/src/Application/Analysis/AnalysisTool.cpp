@@ -17,7 +17,6 @@
 #include <Data/Shape.h>
 #include <Analysis/AnalysisTool.h>
 #include <Visualization/Lightbox.h>
-#include <Visualization/DisplayObject.h>
 
 #include <ui_AnalysisTool.h>
 
