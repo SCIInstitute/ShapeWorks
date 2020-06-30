@@ -352,10 +352,8 @@ protected:
   bool m_use_shape_statistics_in_init = false;
   unsigned int m_procrustes_interval = 3;
   int m_procrustes_scaling = 1;
-//  double m_relative_weighting = 1.0;
-  //double m_initial_relative_weighting = 0.05;
-  double m_relative_weighting = 0.5;
-  double m_initial_relative_weighting = 0.1;
+  double m_relative_weighting = 1.0;
+  double m_initial_relative_weighting = 0.05;
   double m_starting_regularization = 1000;
   double m_ending_regularization = 1.0;
   int m_recompute_regularization_interval = 1;
