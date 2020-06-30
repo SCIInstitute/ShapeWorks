@@ -65,7 +65,7 @@ public:
   { 
     return VnlVectorType( this->SampleGradient(p).GetDataPointer() ); 
   }
-  inline VnlVectorType SampleNormalVnl(const PointType &p, T epsilon = 1.0e-5) const
+  inline VnlVectorType SampleNormalAtPoint(const PointType &p) const
   {
     VnlVectorType grad = this->SampleGradientVnl(p);
     return grad.normalize();
@@ -77,9 +77,8 @@ public:
   vnl_vector_fixed<double, VDimension> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, VDimension> &gradE,
                                       const PointType &pos) const override
   {
-    const double epsilon = 1.0e-10;
     double dotprod = 0.0;  
-    VnlVectorType normal =  this->SampleNormalVnl(pos, epsilon);
+    VnlVectorType normal =  this->SampleNormalAtPoint(pos);
     for (unsigned int i = 0; i < VDimension; i++) {   dotprod  += normal[i] * gradE[i]; }
     vnl_vector_fixed<double, VDimension> result;
     for (unsigned int i = 0; i < VDimension; i++) { result[i] = gradE[i] - normal[i] * dotprod; }

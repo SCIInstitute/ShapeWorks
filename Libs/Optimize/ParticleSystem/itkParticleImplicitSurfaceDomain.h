@@ -52,6 +52,10 @@ public:
   virtual T GetTolerance() {
     return this->m_Tolerance;
   }
+
+  shapeworks::DomainType GetDomainType() const override {
+    return shapeworks::DomainType::Image;
+  }
   
   /** Apply any constraints to the given point location.  This method
       constrains points to lie within the given domain and on a given implicit
@@ -70,6 +74,13 @@ public:
   virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
                                       const PointType &pos) const override;
 
+
+  inline PointType UpdateParticlePosition(PointType &point, vnl_vector_fixed<double, VDimension> &update) const override {
+    PointType newpoint;
+    for (unsigned int i = 0; i < 3; i++) { newpoint[i] = point[i] - update[i]; }
+    ApplyConstraints(newpoint);
+    return newpoint;
+  }
 
   /** Define a distance measure on the surface.  Note that this distance
       measure is NOT the geodesic distance, as one might expect, but is only a

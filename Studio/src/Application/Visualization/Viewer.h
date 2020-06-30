@@ -35,7 +35,7 @@ typedef QVector< ViewerHandle > ViewerList;
 
 //! 3D Viewer
 /*!
- * The Viewer class encapsulates all the functionality for visualizing a single DisplayObject
+ * The Viewer class encapsulates all the functionality for visualizing a single subject/shape
  *
  */
 class Viewer

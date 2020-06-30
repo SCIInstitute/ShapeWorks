@@ -187,8 +187,8 @@ def Run_Pipeline(args):
         """
         Apply centering
         """
-        centerFiles_segmentations = center(parentDir + "centered/segmentations/", comFiles_segmentations)
-        centerFiles_images = center(parentDir + "centered/images/", comFiles_images)
+        centerFiles_segmentations = center(parentDir + "centered/segmentations", comFiles_segmentations)
+        centerFiles_images = center(parentDir + "centered/images", comFiles_images)
         
         """
         Rigid alignment needs a reference file to align all the input files, FindReferenceImage function defines the median file as the reference.        
@@ -209,9 +209,8 @@ def Run_Pipeline(args):
 
         else:
             postfix = "_femur.isores.pad.com.center.aligned.DT.nrrd"
-            input_file = cp_prefix + postfix
-            print("Input File: ")
-            print(input_file)
+            path = "aligned/segmentations/"
+            input_file = parentDir + path + cp_prefix + postfix
             cutting_plane_points = SelectCuttingPlane(input_file)
 
             # catch for flipped norm
