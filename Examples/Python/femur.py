@@ -144,12 +144,8 @@ def Run_Pipeline(args):
                             input_mesh = file
                 if not input_mesh:
                     print("Invalid prefix.")
-            cutting_plane_points = SelectCuttingPlane(input_mesh)
             if cp_prefix[-1] == 'R':
                 reference_side = "right"
-            print("Cutting plane points defined: ")
-            print(cutting_plane_points)
-            print("Continuing to groom.")
 
         # BEGIN GROOMING
         """
@@ -218,8 +214,9 @@ def Run_Pipeline(args):
                 cutting_plane_points[0][1] = cutting_plane_points[0][1] *-1
                 cutting_plane_points[1][1] = cutting_plane_points[1][1] *-1
                 cutting_plane_points[2][1] = cutting_plane_points[2][1] *-1
-            print("Cutting plane points: ")
-            print(cutting_plane_points)
+
+        print("Cutting plane points: ")
+        print(cutting_plane_points)
 
         """
         Clip Binary Volumes - We have femurs of different shaft length so we will clip them all using the defined cutting plane.
