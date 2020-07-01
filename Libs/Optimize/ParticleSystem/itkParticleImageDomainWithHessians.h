@@ -30,19 +30,19 @@ namespace itk
  * \sa ParticleClipRegionDomain
  * \sa ParticleDomain
  */
-template <class T, unsigned int VDimension=3>
-class ParticleImageDomainWithHessians : public ParticleImageDomainWithGradients<T, VDimension>
+template <class T>
+class ParticleImageDomainWithHessians : public ParticleImageDomainWithGradients<T>
 {
 public:
   /** Standard class typedefs */
-  typedef ParticleImageDomainWithGradients<T, VDimension> Superclass;
+  typedef ParticleImageDomainWithGradients<T> Superclass;
   typedef SmartPointer<ParticleImageDomainWithHessians>  Pointer;
 
     /** Point type of the domain (not necessarily of the image). */
   typedef typename Superclass::PointType PointType;
   typedef typename Superclass::ImageType ImageType;
 
-  typedef vnl_matrix_fixed<T, VDimension, VDimension> VnlMatrixType;
+  typedef vnl_matrix_fixed<T, DIMENSION, DIMENSION> VnlMatrixType;
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
@@ -85,7 +85,7 @@ public:
     gaussian->Update();
     
     // Compute the second derivatives
-    for (unsigned int i = 0; i < VDimension; i++)
+    for (unsigned int i = 0; i < DIMENSION; i++)
       {
       typename DerivativeImageFilter<ImageType, ImageType>::Pointer
         deriv = DerivativeImageFilter<ImageType, ImageType>::New();
@@ -101,10 +101,10 @@ public:
       }
 
     // Compute the cross derivatives and set up the interpolators
-    unsigned int k = VDimension;
-    for (unsigned int i = 0; i < VDimension; i++)
+    unsigned int k = DIMENSION;
+    for (unsigned int i = 0; i < DIMENSION; i++)
       {
-      for (unsigned int j = i+1; j < VDimension; j++, k++)
+      for (unsigned int j = i+1; j < DIMENSION; j++, k++)
         {
         typename DerivativeImageFilter<ImageType, ImageType>::Pointer
           deriv1 = DerivativeImageFilter<ImageType, ImageType>::New();
@@ -139,16 +139,16 @@ public:
     const auto coord = this->ToVDBCoord(p);
 
     VnlMatrixType vdbAns;
-    for (unsigned int i = 0; i < VDimension; i++)
+    for (unsigned int i = 0; i < DIMENSION; i++)
     {
       vdbAns[i][i] = openvdb::tools::BoxSampler::sample(m_VDBHessians[i]->tree(), coord);
     }
 
     // Cross derivatives
-    unsigned int k = VDimension;
-    for (unsigned int i =0; i < VDimension; i++)
+    unsigned int k = DIMENSION;
+    for (unsigned int i =0; i < DIMENSION; i++)
     {
-      for (unsigned int j = i+1; j < VDimension; j++, k++)
+      for (unsigned int j = i+1; j < DIMENSION; j++, k++)
       {
         vdbAns[i][j] = vdbAns[j][i] = openvdb::tools::BoxSampler::sample(m_VDBHessians[k]->tree(), coord);
       }
@@ -172,7 +172,7 @@ public:
 
   void DeletePartialDerivativeImages() override
   {
-    for (unsigned int i = 0; i < VDimension + ((VDimension * VDimension) - VDimension) / 2; i++) {
+    for (unsigned int i = 0; i < DIMENSION + ((DIMENSION * DIMENSION) - DIMENSION) / 2; i++) {
       m_VDBHessians[i] = 0;
     }
   }
@@ -201,7 +201,7 @@ private:
   //             1: dyy  5: dyz
   //                     2: dzz
   typename openvdb::FloatGrid::Ptr m_VDBHessians[
-          VDimension + ((VDimension * VDimension) - VDimension) / 2];
+          DIMENSION + ((DIMENSION * DIMENSION) - DIMENSION) / 2];
 };
 
 } // end namespace itk

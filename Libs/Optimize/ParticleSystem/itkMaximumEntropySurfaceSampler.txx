@@ -105,7 +105,7 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
       }
 
       if(domain->GetDomainType() == shapeworks::DomainType::Image) {
-        auto imageDomain = static_cast<ParticleImplicitSurfaceDomain<typename ImageType::PixelType, Dimension> *>(domain.GetPointer());
+        auto imageDomain = static_cast<ParticleImplicitSurfaceDomain<typename ImageType::PixelType> *>(domain.GetPointer());
 
         if (m_AttributesPerDomain.size() > 0 && m_AttributesPerDomain[i % m_DomainsPerShape] > 0)
         {
