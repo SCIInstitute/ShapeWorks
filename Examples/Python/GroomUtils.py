@@ -24,9 +24,8 @@ def rename(inname, outDir, extension_addition, extension_change=''):
         outname = outname.replace(current_extension, '.' + extension_addition + current_extension)
     if extension_change != '':
         outname = outname.replace(current_extension, extension_change)
-    cprint(("Input Filename : ", inname), 'cyan')
-    cprint(("Output Filename : ", outname), 'yellow')
-    print("######################################\n")
+    cprint(("Input filename: " + inname), 'cyan')
+    cprint(("Output filename: " + outname), 'yellow')
     return outname
 
 def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, isBinary=True, printCmd=True):
