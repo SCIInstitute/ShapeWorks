@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<number_of_particles> 16 </number_of_particles>
+<number_of_particles> 500 </number_of_particles>
 <iterations_per_split> 500 </iterations_per_split>
 <starting_regularization> 500.0 </starting_regularization>
 <ending_regularization> 10.0 </ending_regularization>
@@ -11,7 +11,7 @@
 <verbosity>1</verbosity>
 
 <!-- needed to fully turn on cutting planes -->
-<adaptivity_mode> 3 </adaptivity_mode>
+<adaptivity_mode> -1 </adaptivity_mode>
 
 <output_dir>
 output
