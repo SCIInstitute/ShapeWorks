@@ -172,7 +172,10 @@ namespace itk
                 }
 
                 // Step D compute the new point position
+                //std::cerr << "pt: " << pt[0] << ", " << pt[1] << ", " << pt[2] << "\n";
+                //std::cerr << "gradient: " << gradient[0] << ", " << gradient[1] << ", " << gradient[2] << "\n";
                 PointType newpoint = domain->UpdateParticlePosition(pt, gradient);
+                //std::cerr << "newpoint: " << newpoint[0] << ", " << newpoint[1] << ", " << newpoint[2] << "\n";
 
                 // Step F update the point position in the particle system
                 m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);

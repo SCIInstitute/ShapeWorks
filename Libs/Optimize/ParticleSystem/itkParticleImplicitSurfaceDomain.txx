@@ -19,6 +19,8 @@
 #include "vnl/vnl_cross.h"
 #define PARTICLE_DEBUG_FLAG 1
 
+using namespace trimesh;
+
 namespace itk
 {
 
@@ -111,7 +113,7 @@ void
 ParticleImplicitSurfaceDomain<T>::
 SetFeaMesh(const char *feaFile)
 {
-    m_mesh->ReadFeatureFromFile(feaFile);
+    //m_mesh->ReadFeatureFromFile(feaFile);
 }
 
 template<class T>
@@ -119,7 +121,7 @@ void
 ParticleImplicitSurfaceDomain<T>::
 SetFeaGrad(const char *feaGradFile)
 {
-    m_mesh->ReadFeatureGradientFromFile(feaGradFile);
+    //m_mesh->ReadFeatureGradientFromFile(feaGradFile);
 }
 
 template<class T>
@@ -127,23 +129,23 @@ void
 ParticleImplicitSurfaceDomain<T>::
 SetFids(const char *fidsFile)
 {
-    m_mesh->ReadFaceIndexMap(fidsFile);
-    const typename ImageType::PointType orgn = this->GetOrigin();
-    m_mesh->imageOrigin[0] = orgn[0];
-    m_mesh->imageOrigin[1] = orgn[1];
-    m_mesh->imageOrigin[2] = orgn[2];
-    typename ImageType::RegionType::SizeType sz = this->GetSize();
-    m_mesh->imageSize[0]   = sz[0];
-    m_mesh->imageSize[1]   = sz[1];
-    m_mesh->imageSize[2]   = sz[2];
-    typename ImageType::SpacingType sp = this->GetSpacing();
-    m_mesh->imageSpacing[0] = sp[0];
-    m_mesh->imageSpacing[1] = sp[1];
-    m_mesh->imageSpacing[2] = sp[2];
-    typename ImageType::RegionType::IndexType idx = this->GetIndex();
-    m_mesh->imageIndex[0]   = idx[0];
-    m_mesh->imageIndex[1]   = idx[1];
-    m_mesh->imageIndex[2]   = idx[2];
+    //m_mesh->ReadFaceIndexMap(fidsFile);
+    //const typename ImageType::PointType orgn = this->GetOrigin();
+    //m_mesh->imageOrigin[0] = orgn[0];
+    //m_mesh->imageOrigin[1] = orgn[1];
+    //m_mesh->imageOrigin[2] = orgn[2];
+    //typename ImageType::RegionType::SizeType sz = this->GetSize();
+    //m_mesh->imageSize[0]   = sz[0];
+    //m_mesh->imageSize[1]   = sz[1];
+    //m_mesh->imageSize[2]   = sz[2];
+    //typename ImageType::SpacingType sp = this->GetSpacing();
+    //m_mesh->imageSpacing[0] = sp[0];
+    //m_mesh->imageSpacing[1] = sp[1];
+    //m_mesh->imageSpacing[2] = sp[2];
+    //typename ImageType::RegionType::IndexType idx = this->GetIndex();
+    //m_mesh->imageIndex[0]   = idx[0];
+    //m_mesh->imageIndex[1]   = idx[1];
+    //m_mesh->imageIndex[2]   = idx[2];
 }
 
 
@@ -232,18 +234,19 @@ ParticleImplicitSurfaceDomain<T>::Distance(const PointType &a, const PointType &
 {
   if (m_mesh != NULL)
   {
-    point p1;
-    p1[0] = a[0];
-    p1[1] = a[1];
-    p1[2] = a[2];    
-    
-    point p2;
-    p2[0] = b[0];
-    p2[1] = b[1];
-    p2[2] = b[2];
+    //point p1;
+    //p1[0] = a[0];
+    //p1[1] = a[1];
+    //p1[2] = a[2];    
+    //
+    //point p2;
+    //p2[0] = b[0];
+    //p2[1] = b[1];
+    //p2[2] = b[2];
 
-    return ( m_mesh->GetGeodesicDistance(p1,p2) );
+    //return ( m_mesh->GetGeodesicDistance(p1,p2) );
   }
+  return 1;
 }
 
 

@@ -14,7 +14,8 @@
 
 #include "TriMesh.h"
 #include "TriMesh_algo.h"
-#include "meshFIM.h"
+
+using namespace trimesh;
 
 namespace itk
 {

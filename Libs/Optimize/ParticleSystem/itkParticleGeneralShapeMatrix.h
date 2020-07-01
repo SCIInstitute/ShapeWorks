@@ -155,17 +155,18 @@ public:
         std::vector<float> fVals;
         if (m_AttributesPerDomain[dom] > 0)
         {
-            point pt;
-            pt.clear();
-            pt[0] = posLocal[0];
-            pt[1] = posLocal[1];
-            pt[2] = posLocal[2];
-            fVals.clear();
-            const ParticleImplicitSurfaceDomain<float> * domain = static_cast<const ParticleImplicitSurfaceDomain<float> *>(ps->GetDomain(d));
-            TriMesh *ptr = domain->GetMesh();
-            ptr->GetFeatureValues(pt, fVals);
-            for (int aa = 0; aa < m_AttributesPerDomain[dom]; aa++)
-                this->operator()(aa+k, d / m_DomainsPerShape) = fVals[aa]*m_AttributeScales[aa+num+s];
+          // TODO figure out what is going on here
+            //point pt;
+            //pt.clear();
+            //pt[0] = posLocal[0];
+            //pt[1] = posLocal[1];
+            //pt[2] = posLocal[2];
+            //fVals.clear();
+            //const ParticleImplicitSurfaceDomain<float> * domain = static_cast<const ParticleImplicitSurfaceDomain<float> *>(ps->GetDomain(d));
+            //TriMesh *ptr = domain->GetMesh();
+            //ptr->GetFeatureValues(pt, fVals);
+            //for (int aa = 0; aa < m_AttributesPerDomain[dom]; aa++)
+            //    this->operator()(aa+k, d / m_DomainsPerShape) = fVals[aa]*m_AttributeScales[aa+num+s];
         }
 
 

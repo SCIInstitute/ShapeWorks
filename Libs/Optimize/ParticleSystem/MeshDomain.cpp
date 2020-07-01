@@ -32,7 +32,17 @@ namespace itk
     vnl_vector_fixed<double, DIMENSION> negativeUpdate;
     for (unsigned int i = 0; i < DIMENSION; i++) { negativeUpdate[i] = -update[i]; }
     PointType newPoint = meshWrapper->GeodesicWalk(point, negativeUpdate);
-    ApplyConstraints(newPoint);
+
+    //PointType prevNewPoint;
+    //for (unsigned int i = 0; i < DIMENSION; i++) { prevNewPoint[i] = newPoint[i]; }
+    //ApplyConstraints(newPoint);
+    //double diff = 0;
+    //for (unsigned int i = 0; i < DIMENSION; i++) { 
+    //  diff += abs(prevNewPoint[i] - newPoint[i]);
+    //}
+    //if (diff > 0.001) {
+    //  std::cerr << "diff " << diff << "\n";
+    //}
     return newPoint;
   }
 

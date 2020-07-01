@@ -1424,22 +1424,22 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
           outw << pN[0] << " " << pN[1] << " " << pN[2] << " ";
         }
 
-        if (m_attributes_per_domain.size() > 0) {
-          if (m_attributes_per_domain[i % m_domains_per_shape] > 0) {
-            point pt;
-            pt.clear();
-            pt[0] = pos[0];
-            pt[1] = pos[1];
-            pt[2] = pos[2];
-            fVals.clear();
-            if (m_mesh_based_attributes) {
-              domain->GetMesh()->GetFeatureValues(pt, fVals);
-            }
-            for (unsigned int k = 0; k < m_attributes_per_domain[i % m_domains_per_shape]; k++) {
-              outw << fVals[k] << " ";
-            }
-          }
-        }
+        //if (m_attributes_per_domain.size() > 0) {
+        //  if (m_attributes_per_domain[i % m_domains_per_shape] > 0) {
+        //    point pt;
+        //    pt.clear();
+        //    pt[0] = pos[0];
+        //    pt[1] = pos[1];
+        //    pt[2] = pos[2];
+        //    fVals.clear();
+        //    if (m_mesh_based_attributes) {
+        //      domain->GetMesh()->GetFeatureValues(pt, fVals);
+        //    }
+        //    for (unsigned int k = 0; k < m_attributes_per_domain[i % m_domains_per_shape]; k++) {
+        //      outw << fVals[k] << " ";
+        //    }
+        //  }
+        //}
 
         outw << std::endl;
 

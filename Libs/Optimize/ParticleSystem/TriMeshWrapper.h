@@ -2,9 +2,14 @@
 
 #include "vnl/vnl_vector_fixed.h"
 #include "TriMesh.h"
-#include <meshFIM.h>
+#include "KDtree.h"
 
 #include "MeshWrapper.h"
+
+#include <Eigen/Core>
+#include <Eigen/Geometry>
+
+using namespace trimesh;
 
 namespace shapeworks
 {
@@ -45,9 +50,13 @@ private:
 
   point TriMeshWrapper::GetBarycentricIntersection(vec3 start, vec3 end, int currentFace, int edge) const;
 
-  TriMesh* mesh;
-  meshFIM* fim;
+  int GetNearestVertex(point pt) const;
+  int GetTriangleForPoint(point pt) const;
+  std::vector<int> GetKNearestVertices(point pt, int k) const;
+  vec3 ComputeBarycentricCoordinates(point pt, int face) const;
 
+  TriMesh* mesh;
+  KDtree *kdTree;
 
   PointType meshLowerBound;
   PointType meshUpperBound;

@@ -128,11 +128,11 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
               if (!themesh->across_edge.empty())
                   themesh->across_edge.clear();
               themesh->need_across_edge();
-              themesh->need_faceedges();
-              themesh->need_oneringfaces();
-              themesh->need_abs_curvatures();
-              themesh->need_speed();
-              themesh->setSpeedType(1);
+              //themesh->need_faceedges();
+              //themesh->need_oneringfaces();
+              //themesh->need_abs_curvatures();
+              //themesh->need_speed();
+              //themesh->setSpeedType(1);
 
               imageDomain->SetMesh(themesh);
               imageDomain->SetFids(m_FidsFiles[i].c_str());

@@ -215,22 +215,23 @@ public:
             }
             else
             {
-                point pt;
-                pt.clear();
-                pt[0] = posLocal[0];
-                pt[1] = posLocal[1];
-                pt[2] = posLocal[2];
+              // TODO, figure out what is going on here
+                //point pt;
+                //pt.clear();
+                //pt[0] = posLocal[0];
+                //pt[1] = posLocal[1];
+                //pt[2] = posLocal[2];
 
-                for (int aa = 0; aa < m_AttributesPerDomain[dom]; aa++)
-                {
-                    point dc;
-                    dc.clear();
-                    const ParticleImplicitSurfaceDomain<float> * domain = static_cast<const ParticleImplicitSurfaceDomain<float> *>(ps->GetDomain(d));
-                    TriMesh *ptr = domain->GetMesh();
-                    dc = ptr->GetFeatureDerivative(pt, aa);
-                    for (unsigned int vd = 0; vd < VDimension; vd++)
-                        this->operator()(aa+k, vd + 3 * (d / m_DomainsPerShape)) = dc[vd]*m_AttributeScales[num+aa+s];
-                }
+                //for (int aa = 0; aa < m_AttributesPerDomain[dom]; aa++)
+                //{
+                //    point dc;
+                //    dc.clear();
+                //    const ParticleImplicitSurfaceDomain<float> * domain = static_cast<const ParticleImplicitSurfaceDomain<float> *>(ps->GetDomain(d));
+                //    trimesh::TriMesh *ptr = domain->GetMesh();
+                //    dc = ptr->GetFeatureDerivative(pt, aa);
+                //    for (unsigned int vd = 0; vd < VDimension; vd++)
+                //        this->operator()(aa+k, vd + 3 * (d / m_DomainsPerShape)) = dc[vd]*m_AttributeScales[num+aa+s];
+                //}
             }
         }
     }

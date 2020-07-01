@@ -1,9 +1,14 @@
 
 #include "TriMeshWrapper.h"
 
+#include <set>
+
+using namespace trimesh;
+
 namespace shapeworks
 {
   namespace {
+    static float epsilon = 1e-6;
 
     template<class T>
     inline std::string PrintValue(T value) {
@@ -27,9 +32,10 @@ namespace shapeworks
   }
 
   double TriMeshWrapper::ComputeDistance(PointType pointa, PointType pointb) const {
-    point a = convert<PointType, point>(pointa);
-    point b = convert<PointType, point>(pointb);
-    return mesh->GetGeodesicDistance(a, b);
+    //point a = convert<PointType, point>(pointa);
+    //point b = convert<PointType, point>(pointb);
+    //return mesh->GetGeodesicDistance(a, b);
+    return 1;
   }
 
   /** start in barycentric coords of currentFace
@@ -61,14 +67,16 @@ namespace shapeworks
         break;
       }
       faces.push_back(currentFace);
-      vec3 currentBary = mesh->ComputeBarycentricCoordinates(point(currentPoint[0], currentPoint[1], currentPoint[2]), mesh->faces[currentFace]);
+      vec3 currentBary(1, 0, 0);
+      vec3 targetBary(1, 0, 0);
+      //vec3 currentBary = mesh->ComputeBarycentricCoordinates(point(currentPoint[0], currentPoint[1], currentPoint[2]), mesh->faces[currentFace]);
       Eigen::Vector3d targetPoint = currentPoint + remainingVector;
-      vec3 targetBary = mesh->ComputeBarycentricCoordinates(point(targetPoint[0], targetPoint[1], targetPoint[2]), mesh->faces[currentFace]);
+      //vec3 targetBary = mesh->ComputeBarycentricCoordinates(point(targetPoint[0], targetPoint[1], targetPoint[2]), mesh->faces[currentFace]);
 
       if (faces.size() > 10) {
         for (int i = 0; i < faces.size(); i++) {
           std::cerr << faces[i] << ": " << PrintValue<TriMesh::Face>(mesh->faces[faces[i]]) << ", ";
-          std::cerr << PrintValue<vec>(mesh->GetFaceNormal(faces[i])) << std::endl;
+          //std::cerr << PrintValue<vec>(mesh->GetFaceNormal(faces[i])) << std::endl;
         }
         std::cerr << "Current point: " << PrintValue<Eigen::Vector3d>(currentPoint) << "\n";
         std::cerr << "remaining vector: " << PrintValue<Eigen::Vector3d>(remainingVector) << "\n";
@@ -223,9 +231,7 @@ namespace shapeworks
   TriMeshWrapper::PointType TriMeshWrapper::GeodesicWalk(PointType pointa, vnl_vector_fixed<double, DIMENSION> vector) const {
 
     PointType snapped = this->SnapToMesh(pointa);
-    float a, b, c;
-    TriMesh::Face face;
-    int faceIndex = mesh->GetTriangleInfoForPoint(convert<PointType, point>(snapped), face, a, b, c);
+    int faceIndex = GetTriangleForPoint(convert<PointType, point>(snapped));
 
     Eigen::Vector3d vectorEigen = convert<vnl_vector_fixed<double, DIMENSION>, Eigen::Vector3d>(vector);
     Eigen::Vector3d projectedVector = this->ProjectVectorToFace(GetFaceNormal(faceIndex), vectorEigen);
@@ -239,9 +245,7 @@ namespace shapeworks
   }
 
   vnl_vector_fixed<double, DIMENSION> TriMeshWrapper::ProjectVectorToSurfaceTangent(const PointType &pointa, vnl_vector_fixed<double, DIMENSION> &vector) const {
-    float a, b, c;
-    TriMesh::Face face;
-    int faceIndex = mesh->GetTriangleInfoForPoint(convert<const PointType, point>(pointa), face, a, b, c);
+    int faceIndex = GetTriangleForPoint(convert<const PointType, point>(pointa));
     const Eigen::Vector3d normal = GetFaceNormal(faceIndex);
     Eigen::Vector3d result = ProjectVectorToFace(normal, convert<vnl_vector_fixed<double, DIMENSION>, Eigen::Vector3d>(vector));
     vnl_vector_fixed<double, DIMENSION> resultvnl(result[0], result[1], result[2]);
@@ -265,68 +269,184 @@ namespace shapeworks
   }
 
   vnl_vector_fixed<float, DIMENSION> TriMeshWrapper::SampleNormalAtPoint(PointType p) const {
-    int faceID = mesh->GetClosestFaceToPoint(convert<PointType, point>(p));
-    const Eigen::Vector3d vecnormal = GetFaceNormal(faceID);
+    int face = GetTriangleForPoint(convert<PointType, point>(p));
+    const Eigen::Vector3d vecnormal = GetFaceNormal(face);
     vnl_vector_fixed<float, DIMENSION> normal(vecnormal[0], vecnormal[1], vecnormal[2]);
     return normal;
   }
 
-  TriMeshWrapper::PointType TriMeshWrapper::SnapToMesh(PointType pointa) const {
-    float a, b, c;
-    TriMesh::Face face;
-    int faceIndex = mesh->GetTriangleInfoForPoint(convert<PointType, point>(pointa), face, a, b, c);
-    if (a < 0) a = 0;
-    if (a > 1) a = 1;
-    if (b < 0) b = 0;
-    if (b > 1) b = 1;
-    if (c < 0) c = 0;
-    if (c > 1) c = 1;
-    float sumBarycentric = a + b + c;
-    a = a / sumBarycentric;
-    b = b / sumBarycentric;
-    c = c / sumBarycentric;
-    point snappedPoint = mesh->vertices[face[0]] * a + mesh->vertices[face[1]] * b + mesh->vertices[face[2]] * c;
+  int TriMeshWrapper::GetNearestVertex(point pt) const {
+    const float * match = kdTree->closest_to_pt(pt, 99999999);
+    int match_ind = ( const point *) match - &(mesh->vertices[0]);
+    //point nearest = mesh->vertices[match_ind];
+    //std::cerr << "Nearest vs query " << PrintValue<point>(nearest) << ", " << PrintValue<point>(pt) << "\n";
+    return match_ind;
+  }
+  std::vector<int> TriMeshWrapper::GetKNearestVertices(point pt, int k) const {
+    std::vector<const float *> knn;
+    kdTree->find_k_closest_to_pt(knn, k, pt, 9999999);
+    std::vector<int> vertices;
+    for (int i = 0; i < knn.size(); i++) {
+      int match_ind = ( const point *) knn[i] - &(mesh->vertices[0]);
+      vertices.push_back(match_ind);
+    }
+    return vertices;
+  }
+
+  vec normalizeBary(const vec &bary) {
+    float sum =abs(bary[0]) + abs(bary[1]) + abs(bary[2]);
+    return vec(bary / sum);
+    //bary[0] /= sum; bary[1] /= sum; bary[2] /= sum;
+  }
+
+  int TriMeshWrapper::GetTriangleForPoint(point pt) const {
+
+    double closestDistance = 99999999;
+    int closestFace = -1;
+
+    std::vector<int> vertices = GetKNearestVertices(pt, 10);
+    std::set<int> faceCandidatesSet;
+    for (int j = 0; j < vertices.size(); j++) {
+      int vert = vertices[j];
+      for (int i = 0; i < mesh->adjacentfaces[vert].size(); i++) {
+        int face = mesh->adjacentfaces[vert][i];
+
+        // Only check each face once
+        if (faceCandidatesSet.find(face) == faceCandidatesSet.end()) {
+          faceCandidatesSet.insert(face);
+          vec bary = this->ComputeBarycentricCoordinates(pt, face);
+          bary = normalizeBary(bary);
+          if (((bary[0] >= -epsilon) && (bary[0] <= 1 + epsilon)) &&
+            ((bary[1] >= -epsilon) && (bary[1] <= 1 + epsilon)) &&
+              ((bary[2] >= -epsilon) && (bary[2] <= 1 + epsilon))) {
+            return face;
+          }
+          else {
+            float distance = 0;
+            for (int j = 0; j < 3; j++) {
+              if (bary[j] < 0) {
+                distance += -bary[j];
+              }
+              else if (bary[j] > 1) {
+                distance += bary[j] - 1;
+              }
+            }
+            if (distance < closestDistance) {
+              closestFace = face;
+              closestDistance = distance;
+            }
+          }
+        }
+      }
+    }
+    //double closestDistance = 99999999;
+    //int closestFace = -1;
+
+    //int vertex = GetNearestVertex(pt);
+    //for (int i = 0; i < mesh->adjacentfaces[vertex].size(); i++) {
+    //  int face = mesh->adjacentfaces[vertex][i];
+    //  vec bary = this->ComputeBarycentricCoordinates(pt, face);
+    //  if (((bary[0] >= 0) && (bary[0] <= 1)) &&
+    //    ((bary[1] >= 0) && (bary[1] <= 1)) &&
+    //      ((bary[2] >= 0) && (bary[2] <= 1))) {
+    //    return face;
+    //  }
+    //  else {
+    //    float distance = 0;
+    //    for (int j = 0; j < 3; j++) {
+    //      if (bary[j] < 0) {
+    //        distance += -bary[j];
+    //      }
+    //      else if (bary[j] > 1) {
+    //        distance += bary[j] - 1;
+    //      }
+    //    }
+    //    if (distance < closestDistance) {
+    //      closestFace = face;
+    //      closestDistance = distance;
+    //    }
+    //  }
+    //}
+    std::cerr << "ERROR ERROR reached end of GetTriangleForPoint!\n";
+
+    vec bary = this->ComputeBarycentricCoordinates(pt, closestFace);
+    std::cerr << "bary: " << PrintValue<vec>(bary) << "\n";
+    return closestFace;
+  }
+  vec3 TriMeshWrapper::ComputeBarycentricCoordinates(point pt, int face) const {
+    vec3 bCoords; bCoords.clear();
+    point a, b, c;
+    a = mesh->vertices[mesh->faces[face][0]];
+    b = mesh->vertices[mesh->faces[face][1]];
+    c = mesh->vertices[mesh->faces[face][2]];
+
+    point n = (b - a) CROSS(c - a);
+    normalize(n);
+
+    float area = ((b - a) CROSS(c - a)) DOT n;
+    float inv_area = 1.0f / (area + epsilon);
+    bCoords[0] = (((c - b) CROSS(pt - b)) DOT n) * inv_area;
+    bCoords[1] = (((a - c) CROSS(pt - c)) DOT n) * inv_area;
+    bCoords[2] = (((b - a) CROSS(pt - a)) DOT n) * inv_area;
+
+    float sum = bCoords.sum();
+    bCoords[0] /= sum;
+    bCoords[1] /= sum;
+    bCoords[2] /= sum;
+
+    return bCoords;
+  }
+
+  TriMeshWrapper::PointType TriMeshWrapper::SnapToMesh(PointType pointtype) const {
+    point pt = convert<PointType, point>(pointtype);
+    int face = GetTriangleForPoint(pt);
+    vec bary = ComputeBarycentricCoordinates(pt, face);
+    for (int i = 0; i < 3; i++) {
+      if (bary[i] < -epsilon) bary[i] = 0;
+      else if (bary[i] > 1 + epsilon) bary[i] = 1;
+    }
+    float sum = abs(bary[0]) + abs(bary[1]) + abs(bary[2]);
+    bary[0] /= sum; bary[1] /= sum; bary[2] /= sum;
+    point snappedPoint(0, 0, 0);
+    for (int i = 0; i < 3; i++) {
+      snappedPoint += mesh->vertices[mesh->faces[face][i]] * bary[i];
+    }
     return convert<point, PointType>(snappedPoint);
   }
 
   TriMeshWrapper::TriMeshWrapper(TriMesh *_mesh) {
     mesh = _mesh;
-    mesh->need_adjacentfaces();
     mesh->need_faces();
+    mesh->need_adjacentfaces();
     mesh->need_across_edge();
-    fim = new meshFIM;
-    fim->SetMesh(mesh);
-    fim->GenerateReducedData();
     ComputeMeshBounds();
+
+    kdTree = new KDtree(mesh->vertices);
   }
 
   TriMeshWrapper::PointType TriMeshWrapper::GetPointOnMesh() const {
     int faceIndex = 0;
-    for (int i = 0; i < mesh->faces.size(); i++) {
-      bool isEdge = false;
-      for (int j = 0; j < 3; j++) {
-        if (mesh->across_edge[i][j] == -1) {
-          isEdge = true;
-          break;
-        }
-      }
-      if (!isEdge) {
-        faceIndex = i;
-      }
-    }
-    PointType vertex;
-    for (int j = 0; j < 3; j++) {
-      for (int i = 0; i < 3; i++) {
-        vertex[j] += mesh->vertices[mesh->faces[faceIndex][i]][j];
-      }
-      vertex[j] /= 3;
-    }
-    return vertex;
+    //for (int i = 0; i < mesh->faces.size(); i++) {
+    //  bool isEdge = false;
+    //  for (int j = 0; j < 3; j++) {
+    //    if (mesh->across_edge[i][j] == -1) {
+    //      isEdge = true;
+    //      break;
+    //    }
+    //  }
+    //  if (!isEdge) {
+    //    faceIndex = i;
+    //  }
+    //}
+    vec center = mesh->centroid(faceIndex);
+    vec bary = ComputeBarycentricCoordinates(center, faceIndex);
+    //std::cerr << "Getting point on mesh: " << PrintValue<vec>(center) << "bary: " << PrintValue<vec>(bary) << "\n";
+    return convert<vec, PointType>(center);
   }
 
   const Eigen::Vector3d TriMeshWrapper::GetFaceNormal(int faceIndex) const {
-    vec vecNormal = mesh->GetFaceNormal(faceIndex);
-    Eigen::Vector3d normal = convert<vec, Eigen::Vector3d>(vecNormal);
+    vec n = mesh->trinorm(faceIndex);
+    Eigen::Vector3d normal = convert<vec, Eigen::Vector3d>(n);
     return normal.normalized();
   }
 
@@ -341,9 +461,11 @@ namespace shapeworks
           ? mesh->vertices[index][dimension] : meshUpperBound[dimension];
       }
     }
+    double buffer = .1;
     for (int i = 0; i < 3; i++) {
-      meshLowerBound[i] = meshLowerBound[i] - 0.1;
-      meshUpperBound[i] = meshUpperBound[i] + 0.1;
+      meshLowerBound[i] = meshLowerBound[i] - buffer;
+      meshUpperBound[i] = meshUpperBound[i] + buffer;
     }
+    std::cerr << "Mesh bounds: " << PrintValue<PointType>(meshLowerBound) << " -> " << PrintValue<PointType>(meshUpperBound) << "\n";
   }
 }
