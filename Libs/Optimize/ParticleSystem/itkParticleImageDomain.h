@@ -37,18 +37,18 @@ namespace itk
  *  Domain object may be sampled for interpolated image values using the
  *  Sample(Point) method.
  */
-template <class T, unsigned int VDimension=3>
-class ParticleImageDomain : public ParticleRegionDomain<T, VDimension>
+template <class T>
+class ParticleImageDomain : public ParticleRegionDomain
 {
 public:
   /** Standard class typedefs */
   typedef SmartPointer<ParticleImageDomain>  Pointer;
 
   /** Type of the ITK image used by this class. */
-  typedef Image<T, VDimension> ImageType;
+  typedef Image<T, DIMENSION> ImageType;
 
   /** Point type of the domain (not the image). */
-  typedef typename ParticleRegionDomain<T, VDimension>::PointType PointType;
+  typedef typename ParticleRegionDomain::PointType PointType;
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
@@ -96,7 +96,7 @@ public:
 
     typename ImageType::PointType l0;
     I->TransformIndexToPhysicalPoint(m_Index, l0);
-    for (unsigned int i = 0; i < VDimension; i++)
+    for (unsigned int i = 0; i < DIMENSION; i++)
         m_Index[i] += m_Size[i]-1;
 
     typename ImageType::PointType u0;
@@ -108,7 +108,7 @@ public:
     PointType l;
     PointType u;
     
-    for (unsigned int i = 0; i < VDimension; i++)
+    for (unsigned int i = 0; i < DIMENSION; i++)
       {
       l[i] = static_cast<double>(l0[i]);
       u[i] = static_cast<double>(u0[i]);
@@ -195,7 +195,7 @@ protected:
 
   void PrintSelf(std::ostream& os, Indent indent) const
   {
-    ParticleRegionDomain<T, VDimension>::PrintSelf(os, indent);
+    ParticleRegionDomain::PrintSelf(os, indent);
     os << indent << "VDB Active Voxels = " << m_VDBImage->activeVoxelCount() << std::endl;
   }
 

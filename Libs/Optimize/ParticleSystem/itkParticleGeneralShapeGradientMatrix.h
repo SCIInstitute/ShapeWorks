@@ -156,20 +156,19 @@ public:
             }
             else
             {
-                const ParticleImageDomainWithHessians<float, 3> * domainWithHess
-                  = static_cast<const ParticleImageDomainWithHessians<float, 3> *>(ps->GetDomain(d));
-                typename ParticleImageDomainWithGradients<float,3>::VnlVectorType pG = domainWithHess->SampleGradientVnl(posLocal);
-                typename ParticleImageDomainWithGradients<float,3>::VnlVectorType pN = pG.normalize();
+                const ParticleImageDomainWithHessians<float> * domainWithHess = static_cast<const ParticleImageDomainWithHessians<float> *>(ps->GetDomain(d));
+                typename ParticleImageDomainWithGradients<float>::VnlVectorType pG = domainWithHess->SampleGradientVnl(posLocal);
+                typename ParticleImageDomainWithGradients<float>::VnlVectorType pN = pG.normalize();
                 float grad_mag = pG.magnitude();
 
-                typename ParticleImageDomainWithHessians<float,3>::VnlMatrixType pH = domainWithHess->SampleHessianVnl(posLocal);
+                typename ParticleImageDomainWithHessians<float>::VnlMatrixType pH = domainWithHess->SampleHessianVnl(posLocal);
 
-                typename ParticleImageDomainWithHessians<float,3>::VnlMatrixType mat1;
+                typename ParticleImageDomainWithHessians<float>::VnlMatrixType mat1;
                 mat1.set_identity();
                 vnl_matrix<float> nrml(VDimension, 1);
                 nrml.fill(0.0);
                 nrml(0,0) = pN[0]; nrml(1,0) = pN[1]; nrml(2,0) = pN[2];
-                typename ParticleImageDomainWithHessians<float,3>::VnlMatrixType mat2 = nrml * nrml.transpose();
+                typename ParticleImageDomainWithHessians<float>::VnlMatrixType mat2 = nrml * nrml.transpose();
 
                 for (unsigned int x1 = 0; x1 < VDimension; x1++)
                 {
@@ -181,7 +180,7 @@ public:
                 }
 
                 // mat3 = H/|grad_f| * (I - n*n');
-                typename ParticleImageDomainWithHessians<float,3>::VnlMatrixType mat3 = pH * mat1;
+                typename ParticleImageDomainWithHessians<float>::VnlMatrixType mat3 = pH * mat1;
                 typename itk::ParticleSystem<VDimension>::VnlMatrixType tmp;
                 tmp.set_size(VDimension, VDimension);
                 tmp.fill(0.0);
@@ -226,8 +225,7 @@ public:
                 {
                     point dc;
                     dc.clear();
-                    const ParticleImplicitSurfaceDomain<float, 3> * domain
-                      = static_cast<const ParticleImplicitSurfaceDomain<float, 3> *>(ps->GetDomain(d));
+                    const ParticleImplicitSurfaceDomain<float> * domain = static_cast<const ParticleImplicitSurfaceDomain<float> *>(ps->GetDomain(d));
                     TriMesh *ptr = domain->GetMesh();
                     dc = ptr->GetFeatureDerivative(pt, aa);
                     for (unsigned int vd = 0; vd < VDimension; vd++)
