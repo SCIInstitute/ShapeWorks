@@ -2,6 +2,7 @@
 #include "TriMeshWrapper.h"
 
 #include <set>
+#include <random>
 
 using namespace trimesh;
 
@@ -9,6 +10,7 @@ namespace shapeworks
 {
   namespace {
     static float epsilon = 1e-6;
+    static std::mt19937 m_rand{42};
 
     template<class T>
     inline std::string PrintValue(T value) {
@@ -245,10 +247,12 @@ namespace shapeworks
   }
 
   vnl_vector_fixed<double, DIMENSION> TriMeshWrapper::ProjectVectorToSurfaceTangent(const PointType &pointa, vnl_vector_fixed<double, DIMENSION> &vector) const {
+    //std::cerr << "Projecting vector " << PrintValue< vnl_vector_fixed<double, DIMENSION>>(vector) << " at point " << PrintValue<PointType>(pointa) << "\n";
     int faceIndex = GetTriangleForPoint(convert<const PointType, point>(pointa));
     const Eigen::Vector3d normal = GetFaceNormal(faceIndex);
     Eigen::Vector3d result = ProjectVectorToFace(normal, convert<vnl_vector_fixed<double, DIMENSION>, Eigen::Vector3d>(vector));
     vnl_vector_fixed<double, DIMENSION> resultvnl(result[0], result[1], result[2]);
+    //std::cerr << "normal: " << PrintValue<Eigen::Vector3d>(normal) << ", projected vector: " << PrintValue<Eigen::Vector3d>(result) << "\n";
     return resultvnl;
   }
 
@@ -367,10 +371,10 @@ namespace shapeworks
     //    }
     //  }
     //}
-    std::cerr << "ERROR ERROR reached end of GetTriangleForPoint!\n";
+    //std::cerr << "ERROR ERROR reached end of GetTriangleForPoint!\n";
 
     vec bary = this->ComputeBarycentricCoordinates(pt, closestFace);
-    std::cerr << "bary: " << PrintValue<vec>(bary) << "\n";
+    //std::cerr << "bary: " << PrintValue<vec>(bary) << "\n";
     return closestFace;
   }
   vec3 TriMeshWrapper::ComputeBarycentricCoordinates(point pt, int face) const {
@@ -425,19 +429,7 @@ namespace shapeworks
   }
 
   TriMeshWrapper::PointType TriMeshWrapper::GetPointOnMesh() const {
-    int faceIndex = 0;
-    //for (int i = 0; i < mesh->faces.size(); i++) {
-    //  bool isEdge = false;
-    //  for (int j = 0; j < 3; j++) {
-    //    if (mesh->across_edge[i][j] == -1) {
-    //      isEdge = true;
-    //      break;
-    //    }
-    //  }
-    //  if (!isEdge) {
-    //    faceIndex = i;
-    //  }
-    //}
+    int faceIndex = m_rand() % mesh->faces.size();
     vec center = mesh->centroid(faceIndex);
     vec bary = ComputeBarycentricCoordinates(center, faceIndex);
     //std::cerr << "Getting point on mesh: " << PrintValue<vec>(center) << "bary: " << PrintValue<vec>(bary) << "\n";
