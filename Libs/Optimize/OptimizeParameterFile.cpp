@@ -453,32 +453,11 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle *docHandle, Optimize *o
 
       TriMesh *themesh = TriMesh::read(meshFiles[index].c_str());
       if (themesh != NULL) {
-        themesh->need_faces();
-        themesh->need_neighbors();
-        orient(themesh);
-        themesh->need_bsphere();
-        if (!themesh->normals.empty())
-          themesh->normals.clear();
-        themesh->need_normals();
-        if (!themesh->tstrips.empty())
-          themesh->tstrips.clear();
-        themesh->need_tstrips();
-        if (!themesh->adjacentfaces.empty())
-          themesh->adjacentfaces.clear();
-        themesh->need_adjacentfaces();
-        if (!themesh->across_edge.empty())
-          themesh->across_edge.clear();
-        themesh->need_across_edge();
-        themesh->need_faceedges();
-        themesh->need_oneringfaces();
-        themesh->need_abs_curvatures();
-        themesh->need_speed();
-        themesh->setSpeedType(1);
-
         shapeworks::MeshWrapper *mesh = new shapeworks::TriMeshWrapper(themesh);
         optimize->AddMesh(mesh);
       }
       else {
+        std::cerr << "Failed to read " << meshFiles[index] << "\n";
         return false;
       }
     }

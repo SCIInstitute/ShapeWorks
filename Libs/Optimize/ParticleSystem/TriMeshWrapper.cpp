@@ -53,10 +53,13 @@ namespace shapeworks
     int currentFace = faceIndex__;
     Eigen::Vector3d currentPoint = pointa__;
     Eigen::Vector3d remainingVector = projectedVector__;
-    float epsilon = 0.00001;
-    double epsilon2 = 0.00001;
+    float epsilon = 0.0001;
+    double epsilon2 = 0.0001;
     std::vector<int> faces;
     while (remainingVector.norm() > epsilon) {
+      if (currentFace == -1) {
+        break;
+      }
       faces.push_back(currentFace);
       vec3 currentBary = mesh->ComputeBarycentricCoordinates(point(currentPoint[0], currentPoint[1], currentPoint[2]), mesh->faces[currentFace]);
       Eigen::Vector3d targetPoint = currentPoint + remainingVector;
@@ -101,6 +104,9 @@ namespace shapeworks
         Eigen::Vector3d remaining = targetPoint - intersect;
 
         int nextFace = mesh->across_edge[currentFace][negativeEdge];
+        if (currentFace == -1) {
+          break;
+        }
         remainingVector = RotateVectorToFace(GetFaceNormal(currentFace), GetFaceNormal(nextFace), remaining);
         currentPoint = intersect;
         currentFace = nextFace;
@@ -198,6 +204,9 @@ namespace shapeworks
         //  }
         //}
         int nextFace = (length0 <= length1) ? mesh->across_edge[currentFace][negativeVertices[1]] : mesh->across_edge[currentFace][negativeVertices[0]];
+        if (currentFace == -1) {
+          break;
+        }
         remainingVector = RotateVectorToFace(GetFaceNormal(currentFace), GetFaceNormal(nextFace), remaining);
         currentPoint = firstIntersect;
         currentFace = nextFace;
@@ -292,8 +301,27 @@ namespace shapeworks
   }
 
   TriMeshWrapper::PointType TriMeshWrapper::GetPointOnMesh() const {
-    point firstVertex = mesh->vertices[0];
-    return convert<point, PointType>(firstVertex);
+    int faceIndex = 0;
+    for (int i = 0; i < mesh->faces.size(); i++) {
+      bool isEdge = false;
+      for (int j = 0; j < 3; j++) {
+        if (mesh->across_edge[i][j] == -1) {
+          isEdge = true;
+          break;
+        }
+      }
+      if (!isEdge) {
+        faceIndex = i;
+      }
+    }
+    PointType vertex;
+    for (int j = 0; j < 3; j++) {
+      for (int i = 0; i < 3; i++) {
+        vertex[j] += mesh->vertices[mesh->faces[faceIndex][i]][j];
+      }
+      vertex[j] /= 3;
+    }
+    return vertex;
   }
 
   const Eigen::Vector3d TriMeshWrapper::GetFaceNormal(int faceIndex) const {
