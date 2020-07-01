@@ -14,7 +14,7 @@ import platform
 import argparse
 import subprocess
 import sys
-
+from CommonUtils import robustifyShapeworksPaths
 
 # check that required modules are found
 try:
@@ -53,18 +53,8 @@ module = __import__(args.use_case)
 
 os.environ["PATH"] = explicit_binpath + os.pathsep + os.environ["PATH"] + os.pathsep + default_binpath
 
-# make sure the shapeworks executable can be found
-import shutil
-if (not shutil.which("shapeworks")):
-    print("Error: cannot find ShapeWorks executables. Please pass their location using the --shapeworks_path argument")
-    sys.exit(1)
-
-# OSX: add ShapeWorksStudio to user-provided path
-if platform.system() == "Darwin":
-    items = explicit_binpath.split(os.pathsep)
-    explicit_binpath = ""
-    for item in items:
-        explicit_binpath = explicit_binpath + os.pathsep + item + os.pathsep + item + "/ShapeWorksStudio.app/Contents/MacOS"
+# make sure the shapeworks executables can be found
+robustifyShapeworksPaths()
 
 try:
     module.Run_Pipeline(args)
