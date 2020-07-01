@@ -281,7 +281,7 @@ Image& Image::antialias(unsigned iterations, double maxRMSErr, int layers)
 
 Image& Image::recenter()
 {
-  return setOrigin(negate(center()));
+  return setOrigin(negate(size() / 2.0));
 }
 
 Image& Image::resample(const Point3& physicalSpacing, Dims logicalDims)
