@@ -76,6 +76,9 @@ namespace itk
     // ADDED TO THE SYSTEM DURING OPTIMIZATION.
 
     m_StopOptimization = false;
+    if (m_NumberOfIterations >= m_MaximumNumberOfIterations) {
+      m_StopOptimization = true;
+    }
     //m_GradientFunction->SetParticleSystem(m_ParticleSystem);
 
     typedef typename DomainType::VnlVectorType NormalType;
