@@ -28,13 +28,13 @@ public:
   /// Topology preserving smoothing first creates a feature image (by applying gradient then sigmoid filters, 
   /// then passes them to the TPLevelSet filter.
   /// Note that the the curvature flow filter is often applied to the image before this filter.
-  static Image& topologyPreservingSmooth(Image& img, float scaling = 20.0, float sigmoidAlpha = 10.5, float sigmoidBeta = 10.0);
+  static Image& topologyPreservingSmooth(Image& image, float scaling = 20.0, float sigmoidAlpha = 10.5, float sigmoidBeta = 10.0);
 
   /// Create an isotropic resampling of the given image volume
   ///
   /// \param isoSpacing     size of an [isotropic (n x n x n)] output voxel [default n=1]
   /// \param outputSize     image size can be changed [default stays the same]
-  static Image& isoresample(Image& img, double isoSpacing = 1.0, Dims outputSize = Dims());
+  static Image& isoresample(Image& image, double isoSpacing = 1.0, Dims outputSize = Dims());
 };
 
 } // shapeworks

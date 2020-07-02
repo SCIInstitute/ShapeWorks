@@ -637,11 +637,11 @@ Image& Image::crop(const Region &region)
   return *this;
 }
 
-vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image& img, PixelType isoValue)
+vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image& image, PixelType isoValue)
 {
   using FilterType = itk::VTKImageExport<ImageType>;
   FilterType::Pointer itkTargetExporter = FilterType::New();
-  itkTargetExporter->SetInput(img.image);
+  itkTargetExporter->SetInput(image.image);
 
   vtkImageImport *vtkTargetImporter = vtkImageImport::New();
   ShapeworksUtils::connectPipelines(itkTargetExporter, vtkTargetImporter);

@@ -240,7 +240,7 @@ public:
   Image& write(const std::string &filename, bool compressed = true);
 
   /// creates a vtkPolyData for the given image
-  static vtkSmartPointer<vtkPolyData> getPolyData(const Image& img, PixelType isoValue = 0.0);
+  static vtkSmartPointer<vtkPolyData> getPolyData(const Image& image, PixelType isoValue = 0.0);
 
 private:
   friend struct SharedCommandData;
