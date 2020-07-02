@@ -450,7 +450,7 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle *docHandle, Optimize *o
       if (this->verbosity_level_ > 1) {
         std::cout << "Reading inputfile: " << meshFiles[index] << "...\n" << std::flush;
       }
-
+      optimize->AddMeshDebugging(meshFiles[index]);
       TriMesh *themesh = TriMesh::read(meshFiles[index].c_str());
       if (themesh != NULL) {
         shapeworks::MeshWrapper *mesh = new shapeworks::TriMeshWrapper(themesh);

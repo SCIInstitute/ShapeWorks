@@ -191,6 +191,7 @@ public:
   //! Set the shape input images
   void AddImage(ImageType::Pointer image);
   void AddMesh(shapeworks::MeshWrapper *mesh);
+  void AddMeshDebugging(std::string filename);
 
   //! Set the shape filenames (TODO: details)
   void SetFilenames(const std::vector<std::string> &filenames);

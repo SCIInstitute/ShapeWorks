@@ -40,6 +40,20 @@
 
 #include "Optimize.h"
 
+#include <vtkSphereSource.h>
+#include <vtkSmartPointer.h>
+#include <vtkCubeSource.h>
+#include <vtkPolyData.h>
+#include <vtkPoints.h>
+#include <vtkGlyph3D.h>
+#include <vtkCellArray.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkActor.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderer.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkGenericRenderWindowInteractor.h>
+
 //---------------------------------------------------------------------------
 Optimize::Optimize()
 {
@@ -894,9 +908,180 @@ void Optimize::AbortOptimization()
   this->m_sampler->GetOptimizer()->AbortProcessing();
 }
 
+static std::vector<vtkSmartPointer<vtkPolyData>> meshes;
+
+#include <vtkProperty.h>
+#include <vtkLine.h>
+#include <vtkCellData.h>
 //---------------------------------------------------------------------------
 void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
 {
+  static bool firstRun = 1;
+  static vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+  static vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
+  static vtkSmartPointer<vtkRenderer> mainRenderer = vtkSmartPointer<vtkRenderer>::New();
+  static vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
+  static vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+  static vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
+  //static vtkSmartPointer<vtkCellArray> lines = vtkSmartPointer<vtkCellArray>::New();
+  static vtkSmartPointer<vtkSphereSource> cubeSource = vtkSmartPointer<vtkSphereSource>::New();
+
+  static vtkSmartPointer<vtkPolyDataMapper> lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+  static vtkSmartPointer<vtkActor> lineActor = vtkSmartPointer<vtkActor>::New();
+  static vtkSmartPointer<vtkCellArray> lines = vtkSmartPointer<vtkCellArray>::New();
+
+  static std::vector<vtkSmartPointer<vtkRenderer>> sampleRenderers;
+  static std::vector<vtkSmartPointer<vtkPolyDataMapper>> sampleMappers;
+  static std::vector<vtkSmartPointer<vtkPoints>> samplePoints;
+  static std::vector<vtkSmartPointer<vtkPolyData>> samplePolyData;
+
+  if (firstRun) {
+    polydata->SetPoints(points);
+    polydata->SetLines(lines);
+    actor->SetMapper(mapper);
+    actor->GetProperty()->SetColor(1.0, 0, 0);
+    renderWindow->SetFullScreen(1);
+    renderWindow->AddRenderer(mainRenderer);
+    mainRenderer->SetBackground(.5, .5, .5);
+    mainRenderer->AddActor(actor);
+
+    lineActor->SetMapper(lineMapper);
+    lineActor->GetProperty()->SetColor(0, 1, 0);
+    lineActor->GetProperty()->SetLineWidth(1);
+    mainRenderer->AddActor(lineActor);
+
+    double width = 1.0 / meshes.size();
+    //if (width < 0.1) width = 0.1;
+    double height = (width < 0.1) ? width : 0.1;
+    for (int i = 0; i < meshes.size(); i++) {
+      vtkSmartPointer<vtkPolyDataMapper> meshMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+      vtkSmartPointer<vtkActor> meshActor = vtkSmartPointer<vtkActor>::New();
+      meshMapper->SetInputData(meshes[i]);
+      meshActor->SetMapper(meshMapper);
+      meshActor->GetProperty()->SetColor(0.0, 0.0, 0.0);
+      meshActor->GetProperty()->SetLineWidth(0.02);
+      mainRenderer->AddActor(meshActor);
+
+
+
+
+      vtkSmartPointer<vtkRenderer> meshRenderer = vtkSmartPointer<vtkRenderer>::New();
+      meshRenderer->AddActor(meshActor);
+      meshRenderer->SetBackground(.5, .5, .5);
+      meshRenderer->SetViewport(width*i, 0, width*(i+1), height);
+
+      vtkSmartPointer<vtkPolyDataMapper> sampleMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+      vtkSmartPointer<vtkActor> sampleActor = vtkSmartPointer<vtkActor>::New();
+      sampleActor->SetMapper(sampleMapper);
+      sampleActor->GetProperty()->SetColor(1.0, 0, 0);
+
+      meshRenderer->AddActor(sampleActor);
+
+      renderWindow->AddRenderer(meshRenderer);
+
+      vtkSmartPointer<vtkPolyData> samplepolydata = vtkSmartPointer<vtkPolyData>::New();
+      vtkSmartPointer<vtkPoints> samplepoints = vtkSmartPointer<vtkPoints>::New();
+      samplepolydata->SetPoints(samplepoints);
+
+
+
+      sampleRenderers.push_back(meshRenderer);
+      sampleMappers.push_back(sampleMapper);
+      samplePoints.push_back(samplepoints);
+      samplePolyData.push_back(samplepolydata);
+      
+    }
+
+    mainRenderer->ResetCamera();
+    for (int i = 0; i < sampleRenderers.size(); i++) {
+      sampleRenderers[i]->ResetCamera();
+    }
+    firstRun = 0;
+  }
+
+  int count = 0;
+  int numShapes = m_sampler->GetParticleSystem()->GetNumberOfDomains();
+  int numParticles = m_sampler->GetParticleSystem()->GetNumberOfParticles(0);
+  for (int j = 0; j < numParticles; j++) {
+    for (int i = 0; i < numShapes; i++) {
+      itk::Point<double, 3> p = m_sampler->GetParticleSystem()->GetPosition(j, i);
+      //int index = i * numParticles + j;
+      if (count >= points->GetNumberOfPoints()) {
+        points->InsertNextPoint(p[0], p[1], p[2]);
+        if (i > 0) {
+          vtkSmartPointer<vtkLine> line2 = vtkSmartPointer<vtkLine>::New();
+          line2->GetPointIds()->SetId(0, count);
+          line2->GetPointIds()->SetId(1, count - 1);
+          if (count >= lines->GetNumberOfCells()) {
+            lines->InsertNextCell(line2);
+          }
+        }
+      }
+      else {
+        points->SetPoint(count, p[0], p[1], p[2]);
+      }
+      count++;
+      if (j >= samplePoints[i]->GetNumberOfPoints()) {
+        samplePoints[i]->InsertNextPoint(p[0], p[1], p[2]);
+      }
+      else {
+        samplePoints[i]->SetPoint(j, p[0], p[1], p[2]);
+      }
+    }
+  }
+
+  //int numParticles = m_sampler->GetParticleSystem()->GetNumberOfParticles(0);
+  //for (int j = 0; j < numParticles; j++) {
+  //  for (int i = 0; i < numShapes - 1; i++) {
+  //    vtkSmartPointer<vtkLine> line2 = vtkSmartPointer<vtkLine>::New();
+  //    line2->GetPointIds()->SetId(0, (i) * numParticles + j);
+  //    line2->GetPointIds()->SetId(1, (i+1) * numParticles + j);
+  //    if (count >= lines->GetNumberOfCells()) {
+  //      lines->InsertNextCell(line2);
+  //    }
+  //    count++;
+  //  }
+  //}
+  //for (int i = 0; i < numShapes; i++) {
+  //  for (int j = 0; j < numParticles + 1; j++) {
+  //    vtkSmartPointer<vtkLine> line2 = vtkSmartPointer<vtkLine>::New();
+  //    line2->GetPointIds()->SetId(0, (i) * numParticles + j);
+  //    line2->GetPointIds()->SetId(1, (i) * numParticles + j + 1);
+  //    if (count >= lines->GetNumberOfCells()) {
+  //      lines->InsertNextCell(line2);
+  //    }
+  //    count++;
+  //  }
+  //}
+  //polydata->GetPoints()->GetData()->Modified();
+  //polydata->GetCellData()->Modified();
+  polydata->SetPoints(points);
+  polydata->SetLines(lines);
+  polydata->Modified();
+
+  vtkSmartPointer<vtkPolyData> polydata2 = vtkSmartPointer<vtkPolyData>::New();
+  polydata2->DeepCopy(polydata);
+  lineMapper->SetInputData(polydata2);
+
+  vtkSmartPointer<vtkGlyph3D> glyph3D = vtkSmartPointer<vtkGlyph3D>::New();
+  glyph3D->SetSourceConnection(cubeSource->GetOutputPort());
+  glyph3D->SetInputData(polydata);
+  glyph3D->SetScaleFactor(0.2);
+  glyph3D->Update();
+  mapper->SetInputConnection(glyph3D->GetOutputPort());
+
+  for (int i = 0; i < sampleMappers.size(); i++) {
+    vtkSmartPointer<vtkGlyph3D> sampleGlyph = vtkSmartPointer<vtkGlyph3D>::New();
+    sampleGlyph->SetSourceConnection(cubeSource->GetOutputPort());
+    sampleGlyph->SetInputData(samplePolyData[i]);
+    sampleGlyph->SetScaleFactor(1);
+    sampleGlyph->Update();
+    sampleMappers[i]->SetInputConnection(sampleGlyph->GetOutputPort());
+  }
+
+  renderWindow->Render();
+  
+
   if (m_perform_good_bad == true) {
     std::vector < std::vector < int >> tmp;
     tmp = m_good_bad->RunAssessment(m_sampler->GetParticleSystem(),
@@ -1893,6 +2078,20 @@ void Optimize::AddMesh(shapeworks::MeshWrapper *mesh) {
   this->m_sampler->AddMesh(mesh);
   this->m_num_shapes++;
   this->m_spacing = 1;
+}
+
+#include <vtkPLYReader.h>
+#include <vtkExtractEdges.h>
+void Optimize::AddMeshDebugging(std::string filename) {
+  vtkSmartPointer<vtkPLYReader> reader = vtkSmartPointer<vtkPLYReader>::New();
+  reader->SetFileName(filename.c_str());
+  reader->Update();
+  vtkSmartPointer<vtkExtractEdges> edges = vtkSmartPointer<vtkExtractEdges>::New();
+  edges->SetInputData(reader->GetOutput());
+  edges->Update();
+  vtkSmartPointer<vtkPolyData> mesh = edges->GetOutput();
+
+  meshes.push_back(mesh);
 }
 
 //---------------------------------------------------------------------------
