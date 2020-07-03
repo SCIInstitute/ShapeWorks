@@ -103,6 +103,9 @@ namespace itk
     double maxchange = 0.0;
     while (m_StopOptimization == false) // iterations loop
     {
+      double dampening = exp(-double(m_NumberOfIterations) * 5.0 / double(m_MaximumNumberOfIterations));
+
+      maxchange = 0.0;
       const auto accTimerBegin = std::chrono::steady_clock::now();
       m_GradientFunction->SetParticleSystem(m_ParticleSystem);
         if (counter % global_iteration == 0)
@@ -132,7 +135,6 @@ namespace itk
 
             // Iterate over each particle position
             unsigned int k = 0;
-            maxchange = 0.0;
             typename ParticleSystemType::PointContainerType::ConstIterator endit =
               m_ParticleSystem->GetPositions(dom)->GetEnd();
             for (typename ParticleSystemType::PointContainerType::ConstIterator it
@@ -148,6 +150,8 @@ namespace itk
 
               unsigned int idx = it.GetIndex();
               PointType pt = *it;
+
+              m_TimeSteps[dom][k] = dampening;
 
               // Step 1 Project the gradient vector onto the tangent plane
               VectorType original_gradient_projectedOntoTangentSpace = domain->ProjectVectorToSurfaceTangent(original_gradient, pt);
@@ -190,7 +194,7 @@ namespace itk
                 {
                   meantime[dom] += m_TimeSteps[dom][k];
                   m_TimeSteps[dom][k] *= factor;
-                  if (m_TimeSteps[dom][k] > maxtime[dom]) m_TimeSteps[dom][k] = maxtime[dom];
+                  //if (m_TimeSteps[dom][k] > maxtime[dom]) m_TimeSteps[dom][k] = maxtime[dom];
                   if (gradmag > maxchange) maxchange = gradmag;
                   break;
                 }
@@ -205,6 +209,8 @@ namespace itk
                   }
                   else // keep the move with timestep 1.0 anyway
                   {
+                    meantime[dom] += m_TimeSteps[dom][k];
+                    if (gradmag > maxchange) maxchange = gradmag;
                     break;
                   }
                 }
@@ -214,10 +220,10 @@ namespace itk
             // Compute mean time step
             meantime[dom] /= static_cast<double>(k);
 
-            if (meantime[dom] < 1.0) meantime[dom] = 1.0;
+            //if (meantime[dom] < 1.0) meantime[dom] = 1.0;
             //                    //        std::cout << "meantime = " << meantime[dom] << std::endl;
-            maxtime[dom] = meantime[dom] + meantime[dom] * 0.2;
-            mintime[dom] = meantime[dom] - meantime[dom] * 0.1;
+            //maxtime[dom] = meantime[dom] + meantime[dom] * 0.2;
+            //mintime[dom] = meantime[dom] - meantime[dom] * 0.1;
           } // if not flagged
         }// for each domain
       }
@@ -245,9 +251,18 @@ namespace itk
       // particle is less than the specified precision.
       //    std::cout << "maxchange = " << maxchange << std::endl;
 
-      if ((m_NumberOfIterations >= m_MaximumNumberOfIterations)
-        || (m_Tolerance > 0.0 && maxchange < m_Tolerance))
-      {
+      if (m_NumberOfIterations % (m_MaximumNumberOfIterations / 20) == 0) {
+        std::cerr << "Iteration " << m_NumberOfIterations << ", maxchange = " << maxchange  << ", dampening = " << dampening << std::endl;
+        //for (int dom = 0; dom < numdomains; dom++) {
+        //  std::cerr << meantime[dom] << ", ";
+        //}
+        //std::cerr << "\n";
+      }
+      if (maxchange < m_Tolerance) {
+        std::cerr << "Iteration " << m_NumberOfIterations << ", maxchange = " << maxchange << std::endl;
+        m_StopOptimization = true;
+      }
+      if (m_NumberOfIterations >= m_MaximumNumberOfIterations) {
         m_StopOptimization = true;
       }
 
