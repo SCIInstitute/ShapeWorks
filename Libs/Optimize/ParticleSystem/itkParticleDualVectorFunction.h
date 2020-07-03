@@ -215,6 +215,7 @@ public:
         if (m_AOn == true)
         {
             ansA = m_FunctionA->Evaluate(idx, d, system, maxA, energyA);
+            if (idx == 0 && d == 0) std::cerr << "ansA = " << ansA[0] << " " << ansA[1] << " " << ansA[2] << "\n";
 
             const_cast<ParticleDualVectorFunction *>(this)->m_AverageGradMagA = m_AverageGradMagA + ansA.magnitude();
             const_cast<ParticleDualVectorFunction *>(this)->m_AverageEnergyA = m_AverageEnergyA + energyA;
@@ -223,6 +224,7 @@ public:
         if (m_BOn == true)
         {
             ansB = m_FunctionB->Evaluate(idx, d, system, maxB, energyB);
+            if (idx == 0 && d == 0) std::cerr << "ansB = " << ansB[0] << " " << ansB[1] << " " << ansB[2] << "\n";
 
             const_cast<ParticleDualVectorFunction *>(this)->m_AverageGradMagB = m_AverageGradMagB + ansB.magnitude();
             const_cast<ParticleDualVectorFunction *>(this)->m_AverageEnergyB = m_AverageEnergyB + energyB;

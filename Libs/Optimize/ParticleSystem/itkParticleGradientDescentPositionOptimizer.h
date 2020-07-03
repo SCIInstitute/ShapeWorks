@@ -105,8 +105,8 @@ public:
 
   /** Get/Set a time step parameter for the update.  Each update is simply
       scaled by this value. */
-  itkGetMacro(TimeStep, double);
-  itkSetMacro(TimeStep, double);
+  //itkGetMacro(TimeStep, double);
+  //itkSetMacro(TimeStep, double);
 
   /** Get/Set the maximum iterations to allow this solver to use. */
   itkGetMacro(MaximumNumberOfIterations, unsigned int);
@@ -142,7 +142,7 @@ private:
   unsigned int m_NumberOfIterations;
   unsigned int m_MaximumNumberOfIterations;
   double m_Tolerance;
-  double m_TimeStep;
+  //double m_TimeStep;
   std::vector< std::vector<double> > m_TimeSteps;
   unsigned int m_verbosity;
 
