@@ -913,6 +913,7 @@ static std::vector<vtkSmartPointer<vtkPolyData>> meshes;
 #include <vtkProperty.h>
 #include <vtkLine.h>
 #include <vtkCellData.h>
+#include <vtkCamera.h>
 //---------------------------------------------------------------------------
 void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
 {
@@ -934,6 +935,10 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
   static std::vector<vtkSmartPointer<vtkPolyDataMapper>> sampleMappers;
   static std::vector<vtkSmartPointer<vtkPoints>> samplePoints;
   static std::vector<vtkSmartPointer<vtkPolyData>> samplePolyData;
+
+  static double *focalPoint;
+  static int iteration = 0;
+  static double radius;
 
   if (firstRun) {
     polydata->SetPoints(points);
@@ -993,6 +998,12 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
     }
 
     mainRenderer->ResetCamera();
+    focalPoint = mainRenderer->GetActiveCamera()->GetFocalPoint();
+
+    double *pos = mainRenderer->GetActiveCamera()->GetPosition();
+    radius = pos[2] - focalPoint[2];
+
+
     for (int i = 0; i < sampleRenderers.size(); i++) {
       sampleRenderers[i]->ResetCamera();
     }
@@ -1066,7 +1077,7 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
   vtkSmartPointer<vtkGlyph3D> glyph3D = vtkSmartPointer<vtkGlyph3D>::New();
   glyph3D->SetSourceConnection(cubeSource->GetOutputPort());
   glyph3D->SetInputData(polydata);
-  glyph3D->SetScaleFactor(0.2);
+  glyph3D->SetScaleFactor(0.1);
   glyph3D->Update();
   mapper->SetInputConnection(glyph3D->GetOutputPort());
 
@@ -1079,7 +1090,31 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
     sampleMappers[i]->SetInputConnection(sampleGlyph->GetOutputPort());
   }
 
+  vtkSmartPointer<vtkCamera> cam = mainRenderer->GetActiveCamera();
+  //double *pos = cam->GetPosition();
+  //std::cerr << pos[0] << ", " << pos[1] << ", " << pos[2] << "\n";
+  //pos = cam->GetFocalPoint();
+  //std::cerr << pos[0] << ", " << pos[1] << ", " << pos[2] << "\n";
+  //pos = cam->GetClippingRange();
+  //std::cerr << pos[0] << ", " << pos[1] << "\n";
+
+  iteration = iteration % 360;
+  double PI = 3.14159;
+  double z = sin(iteration * 2 * PI / 360);
+  double x = cos(iteration * 2 * PI / 360);
+
+  cam->SetPosition(focalPoint[0] + radius * x, focalPoint[1], focalPoint[2] + radius * z);
+  cam->SetClippingRange(1, radius*2);
+  cam->Modified();
+
+  for (int i = 0; i < sampleRenderers.size(); i++) {
+    sampleRenderers[i]->GetActiveCamera()->SetPosition(focalPoint[0] + radius * x, focalPoint[1], focalPoint[2] + radius * z);
+    sampleRenderers[i]->GetActiveCamera()->SetClippingRange(1, 50);
+    sampleRenderers[i]->GetActiveCamera()->Modified();
+  }
+  
   renderWindow->Render();
+  iteration++;
   
 
   if (m_perform_good_bad == true) {
