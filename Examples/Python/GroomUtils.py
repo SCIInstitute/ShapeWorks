@@ -124,14 +124,32 @@ def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False, pr
         outname = rename(inname, segDir, 'com')
         outDataListSeg.append(outname)
 
+        # antialias input segmentation (do this as separate command since it may affect computation of com below)
+        cmd = ["shapeworks", 
+               "readimage", "--name", inname, 
+               "antialias", 
+               "write-image", "--name", outname]
+        if printCmd:
+            print("CMD: " + " ".join(cmd))
+        subprocess.check_call(cmd)
+
         # get centerofmass and center
         center = getInfo(inname, "center")
         com = getInfo(inname, "centerofmass")
         T = center - com
 
         cmd = ["shapeworks", 
-               "readimage", "--name", inname, 
+               "readimage", "--name", outname, 
                "translate", "-x", str(T[0]), "-y", str(T[1]), "-z", str(T[2]), 
+               "write-image", "--name", outname]
+        if printCmd:
+            print("CMD: " + " ".join(cmd))
+        subprocess.check_call(cmd)
+
+        # binarize result since linear interpolation makes image blurry again
+        cmd = ["shapeworks", 
+               "readimage", "--name", outname, 
+               "binarize",
                "write-image", "--name", outname]
         if printCmd:
             print("CMD: " + " ".join(cmd))
