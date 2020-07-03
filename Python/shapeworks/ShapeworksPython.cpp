@@ -25,10 +25,10 @@ PYBIND11_MODULE(shapeworks, m)
 {
   m.doc() = "ShapeWorks Python API";
 
-  py::class_<shapeworks::Coord>(m, "Coord")
-  .def(py::init<>())
-  // .def(py::init<unsigned, unsigned, unsigned>)
-  ;
+  // py::class_<shapeworks::Coord>(m, "Coord")
+  // .def(py::init<>())
+  // // .def(py::init<unsigned, unsigned, unsigned>)
+  // ;
 
   // Shapeworks globals
   py::class_<shapeworks::Dims>(m, "Dims")
@@ -65,21 +65,6 @@ PYBIND11_MODULE(shapeworks, m)
   ;
 
   py::class_<shapeworks::FPoint3>(m, "FPoint3")
-  .def(py::init<>())
-  // .def(py::init<unsigned, unsigned, unsigned>)
-  ;
-
-  py::class_<shapeworks::Vector>(m, "Vector")
-  .def(py::init<>())
-  // .def(py::init<unsigned, unsigned, unsigned>)
-  ;
-
-  py::class_<shapeworks::Point>(m, "Point")
-  .def(py::init<>())
-  // .def(py::init<unsigned, unsigned, unsigned>)
-  ;
-
-  py::class_<shapeworks::Matrix>(m, "Matrix")
   .def(py::init<>())
   // .def(py::init<unsigned, unsigned, unsigned>)
   ;
