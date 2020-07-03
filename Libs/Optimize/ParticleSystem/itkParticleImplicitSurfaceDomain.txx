@@ -232,21 +232,13 @@ template <class T>
 double
 ParticleImplicitSurfaceDomain<T>::Distance(const PointType &a, const PointType &b) const
 {
-  if (m_mesh != NULL)
-  {
-    //point p1;
-    //p1[0] = a[0];
-    //p1[1] = a[1];
-    //p1[2] = a[2];    
-    //
-    //point p2;
-    //p2[0] = b[0];
-    //p2[1] = b[1];
-    //p2[2] = b[2];
-
-    //return ( m_mesh->GetGeodesicDistance(p1,p2) );
+  double sum = 0.0;
+  for (unsigned int i = 0; i < DIMENSION; i++) {
+    double q = a[i] - b[i];
+    sum += q * q;
   }
-  return 1;
+  sum = sqrt(sum);
+  return sum;
 }
 
 
