@@ -232,13 +232,7 @@ template <class T>
 double
 ParticleImplicitSurfaceDomain<T>::Distance(const PointType &a, const PointType &b) const
 {
-  double sum = 0.0;
-  for (unsigned int i = 0; i < DIMENSION; i++) {
-    double q = a[i] - b[i];
-    sum += q * q;
-  }
-  sum = sqrt(sum);
-  return sum;
+  return a.EuclideanDistanceTo(b);
 }
 
 

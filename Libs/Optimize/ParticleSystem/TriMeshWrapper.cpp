@@ -35,12 +35,7 @@ namespace shapeworks
 
   double TriMeshWrapper::ComputeDistance(PointType pointa, PointType pointb) const {
 
-    double eucDistance = 0.0;
-    for (unsigned int i = 0; i < 3; i++) {
-      double q = pointa[i] - pointb[i];
-      eucDistance += q * q;
-    }
-    eucDistance = sqrt(eucDistance);
+    double eucDistance = pointa.EuclideanDistanceTo(pointb);
 
     //point pta = convert<PointType, point>(pointa);
     //int facea = GetTriangleForPoint(pta);

@@ -25,7 +25,8 @@ double
 ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 ::EstimateSigma(unsigned int idx,
                 unsigned int dom,
-                const typename ParticleSystemType::PointVectorType &neighborhood,
+                const typename ParticleSystemType::PointVectorType &neighborhood, 
+                const ParticleDomain *domain,
                 const std::vector<double> &weights,
                 const PointType &pos,
                 double initial_sigma,
@@ -47,7 +48,6 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   
   while (error > precision)
     {
-    VectorType r_vec;
     double A = 0.0;
     double B = 0.0;
     double C = 0.0;
@@ -65,15 +65,9 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 
       avgKappa += kappa;
       
-      for (unsigned int n = 0; n < VDimension; n++)
-        {
-        // Note that the Neighborhood object has already filtered the
-        // neighborhood for points whose normals differ by > 90 degrees.
-        r_vec[n] = (pos[n] - neighborhood[i].Point[n]) * kappa;
-        }
+      double distance = domain->Distance(pos, neighborhood[i].Point);
 
-      double r = r_vec.magnitude();
-      double r2 = r*r;
+      double r2 = distance * distance;
       double alpha = exp(-r2 / sigma22) * weights[i];
       A += alpha;
       B += r2 * alpha;
@@ -185,7 +179,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   // In these cases, an error != 0 is returned, and we try the estimation again
   // with an increased neighborhood radius.
   int err;
-  m_CurrentSigma = EstimateSigma(idx, d, m_CurrentNeighborhood, m_CurrentWeights, pos,
+  m_CurrentSigma = EstimateSigma(idx, d, m_CurrentNeighborhood, system->GetDomain(d), m_CurrentWeights, pos,
                                   m_CurrentSigma, epsilon, err, m_avgKappa);
 
   while (err != 0)
@@ -210,7 +204,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
     //  m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
     //    this->ComputeAngularWeights(pos,m_CurrentNeighborhood,domain,m_CurrentWeights);
     
-    m_CurrentSigma = EstimateSigma(idx, d, m_CurrentNeighborhood, m_CurrentWeights, pos,
+    m_CurrentSigma = EstimateSigma(idx, d, m_CurrentNeighborhood, system->GetDomain(d), m_CurrentWeights, pos,
                                    m_CurrentSigma, epsilon, err, m_avgKappa);
     } // done while err
 

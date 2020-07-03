@@ -45,7 +45,7 @@ public:
       distance. */
   virtual double Distance(const PointType &a, const PointType &b) const
   {
-    return a.SquaredEuclideanDistanceTo(b);
+    return a.EuclideanDistanceTo(b);
   }
 
 

@@ -131,9 +131,9 @@ public:
   
   /** Estimate the best sigma for Parzen windowing in a given neighborhood.
       The best sigma is the sigma that maximizes probability at the given point  */
-  virtual double EstimateSigma(unsigned int, const typename ParticleSystemType::PointVectorType &,
-                                const std::vector<double> &,
-                                    const PointType &, double,  double,  int &err) const;
+  virtual double EstimateSigma(unsigned int idx, const typename ParticleSystemType::PointVectorType &neighborhood, const ParticleDomain *domain,
+                                const std::vector<double> &weights,
+                                    const PointType &pos, double initial_sigma,  double precision,  int &err) const;
 
   /** Returns a weighting coefficient based on the angle between two
      vectors. Weights smoothly approach zero as the angle between two
