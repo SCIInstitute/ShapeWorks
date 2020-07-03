@@ -9,10 +9,13 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
+#include "CGALGeodesicDistance.h"
+
 using namespace trimesh;
 
 namespace shapeworks
 {
+
 class TriMeshWrapper : public MeshWrapper
 {
 public:
@@ -57,6 +60,8 @@ private:
 
   TriMesh* mesh;
   KDtree *kdTree;
+
+  CGALGeodesicDistance *cgal;
 
   PointType meshLowerBound;
   PointType meshUpperBound;

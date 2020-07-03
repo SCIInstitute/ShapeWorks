@@ -6,12 +6,14 @@ add_library(Optimize STATIC
   OptimizeParameterFile.cpp
   ./ParticleSystem/MeshDomain.cpp
   ./ParticleSystem/TriMeshWrapper.cpp
+  ./ParticleSystem/CGALGeodesicDistance.cpp
   )
 
 target_link_libraries(Optimize
   OpenVDB::openvdb
   Alignment
   trimesh2
+  CGAL::CGAL
   Mesh
   tinyxml
   Utils
