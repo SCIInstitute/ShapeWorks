@@ -283,13 +283,9 @@ ParticleSystem<VDimension>
     {
     // Add epsilon times random direction to existing point and apply domain
     // constraints to generate a new particle position.  Add the new position.
-    PointType newpos;
-    for (unsigned int i = 0; i < VDimension; i++)
-      {
-      newpos[i] = (*it)[i] + epsilon * random[i];
-      }
-    if (m_DomainFlags[domain] == false)
-        this->GetDomain(domain)->ApplyConstraints(newpos);
+    PointType newpos = *it;
+    vnl_vector_fixed<double, VDimension> updateVector = random * epsilon;
+    newpos = this->GetDomain(domain)->UpdateParticlePosition(newpos, updateVector);
     this->AddPosition(newpos, domain, threadId);
     } // end for std::vector::iterator
 }
