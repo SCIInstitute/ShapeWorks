@@ -20,8 +20,6 @@
 #include "itkZeroCrossingImageFilter.h"
 #include "object_reader.h"
 #include "itkParticleImageDomain.h"
-#include "itkMaximumEntropySurfaceSampler.h"
-
 
 namespace itk
 {
@@ -277,10 +275,9 @@ MaximumEntropySurfaceSampler<TImage>::ReadTransforms()
 
 }
 
-    template<class TImage>
-    void MaximumEntropySurfaceSampler<TImage>::ReInitialize() {
-
-    }
+template<class TImage>
+void MaximumEntropySurfaceSampler<TImage>::ReInitialize() {
+}
 
 
 } // end namespace

@@ -84,11 +84,11 @@ bool Optimize::Run()
   }
 
   // Initialize
-  if (m_processing_mode >= 0) { this->Initialize(); }
+  if (m_processing_mode >= 0) { this->Initialize();}
   // Introduce adaptivity
-  if (m_processing_mode >= 1 || m_processing_mode == -1) { this->AddAdaptivity(); }
+  if (m_processing_mode >= 1 || m_processing_mode == -1) { this->AddAdaptivity();}
   // Optimize
-  if (m_processing_mode >= 2 || m_processing_mode == -2) { this->RunOptimize(); }
+  if (m_processing_mode >= 2 || m_processing_mode == -2) { this->RunOptimize();}
 
   if (this->m_multiscale_mode_particles > 0) {
 
