@@ -77,6 +77,10 @@ public:
   inline double Distance(const PointType &a, const PointType &b) const override {
       return meshWrapper->ComputeDistance(a, b);
   }
+  inline double SquaredDistance(const PointType &a, const PointType &b) const override {
+    double dist = meshWrapper->ComputeDistance(a, b);
+    return dist * dist;
+  }
 
   void PrintCuttingPlaneConstraints(std::ofstream& out) const override {
     // TODO for Farshad: figure out constraint thing

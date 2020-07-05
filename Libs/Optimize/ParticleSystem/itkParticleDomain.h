@@ -39,13 +39,13 @@ public:
   virtual vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION>& gradE, const PointType& pos) const = 0;
   virtual vnl_vector_fixed<float, 3> SampleNormalAtPoint(const PointType & point) const = 0;
 
-  /** A Domain may define a distance calculation.  This is useful in cases
-      such as geodesic distance, where distance depends on some information
-      contained in the Domain.  The default implementation is Euclidean
-      distance. */
-  virtual double Distance(const PointType &a, const PointType &b) const
-  {
+  /** Distance between locations is used for computing energy and neighborhoods. */
+  virtual double Distance(const PointType &a, const PointType &b) const {
     return a.EuclideanDistanceTo(b);
+  }
+  /** Squared Distance between locations is used for computing sigma. */
+  virtual double SquaredDistance(const PointType &a, const PointType &b) const {
+    return a.SquaredEuclideanDistanceTo(b);
   }
 
 

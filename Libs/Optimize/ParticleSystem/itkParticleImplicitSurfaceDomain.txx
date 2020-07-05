@@ -228,14 +228,6 @@ ParticleImplicitSurfaceDomain<T>::ApplyConstraints(PointType &p) const
     return flag;
 }
 
-template <class T>
-double
-ParticleImplicitSurfaceDomain<T>::Distance(const PointType &a, const PointType &b) const
-{
-  return a.EuclideanDistanceTo(b);
-}
-
-
 
 template<class T>
 bool
