@@ -188,7 +188,7 @@ MaximumEntropySurfaceSampler<TImage>::InitializeOptimizationFunctions()
     for (unsigned int d = 0; d < this->GetParticleSystem()->GetNumberOfDomains(); d++)
     {
       if (!GetParticleSystem()->GetDomain(d)->IsDomainFixed()) {
-        double radius = GetParticleSystem()->GetDomain(d)->GetMaxDimRadius();
+        double radius = GetParticleSystem()->GetDomain(d)->GetMaxDiameter();
         maxradius = radius > maxradius ? radius : maxradius;
       }
     }

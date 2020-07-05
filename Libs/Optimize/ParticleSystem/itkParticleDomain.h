@@ -60,9 +60,11 @@ public:
   virtual const PointType& GetLowerBound() const = 0;
   virtual const PointType& GetUpperBound() const = 0;
 
-  virtual PointType GetZeroCrossingPoint() const = 0;
+  /** GetValidLocation returns a PointType location on the surface. Used for placing the first particle. */
+  virtual PointType GetValidLocation() const = 0;
   virtual double GetSurfaceArea() const = 0;
-  virtual double GetMaxDimRadius() const = 0;
+  /** GetMaxDiameter returns the maximum diameter of the domain and is used for computing sigma */
+  virtual double GetMaxDiameter() const = 0;
 
   // Cutting Plane constraint functionality
   virtual void PrintCuttingPlaneConstraints(std::ofstream &out) const = 0;

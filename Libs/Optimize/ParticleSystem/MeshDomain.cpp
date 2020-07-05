@@ -46,7 +46,7 @@ namespace itk
     return newPoint;
   }
 
-  double MeshDomain::GetMaxDimRadius() const {
+  double MeshDomain::GetMaxDiameter() const {
     PointType size = meshWrapper->GetMeshUpperBound() - meshWrapper->GetMeshLowerBound();
     double max = 0;
     for (int d = 0; d < 3; d++) {

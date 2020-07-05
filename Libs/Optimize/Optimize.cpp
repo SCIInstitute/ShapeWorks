@@ -500,7 +500,7 @@ void Optimize::AddSinglePoint()
       continue;
     }
 
-    const auto zcPos = m_sampler->GetParticleSystem()->GetDomain(i)->GetZeroCrossingPoint();
+    const auto zcPos = m_sampler->GetParticleSystem()->GetDomain(i)->GetValidLocation();
     m_sampler->GetParticleSystem()->AddPosition(zcPos, i);
   }
 }

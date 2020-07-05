@@ -147,7 +147,7 @@ public:
     return m_Index;
   }
 
-  inline PointType GetZeroCrossingPoint() const override
+  inline PointType GetValidLocation() const override
   {
     return m_ZeroCrossingPoint;
   }
@@ -163,7 +163,7 @@ public:
     }
   }
 
-  inline double GetMaxDimRadius() const override
+  inline double GetMaxDiameter() const override
   {
     double bestRadius = 0;
     double maxdim = 0;

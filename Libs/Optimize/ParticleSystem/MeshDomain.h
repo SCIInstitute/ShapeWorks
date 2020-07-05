@@ -60,7 +60,7 @@ public:
     return meshWrapper->GetMeshUpperBound();
   }
 
-  PointType GetZeroCrossingPoint() const override {
+  PointType GetValidLocation() const override {
     return meshWrapper->GetPointOnMesh();
   }
   double GetSurfaceArea() const override {
@@ -68,7 +68,7 @@ public:
     return 0;
   }
 
-  double GetMaxDimRadius() const override;
+  double GetMaxDiameter() const override;
 
   inline vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType & point) const override {
     return meshWrapper->SampleNormalAtPoint(point);
