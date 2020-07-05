@@ -251,14 +251,8 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
    // Get the position for which we are computing the gradient.
   PointType pos = system->GetPosition(idx, d);
 
-
-  bool v = idx == 48 && d == 11;
   // Compute the gradients
   double sigma2inv = 1.0 / (2.0* m_CurrentSigma * m_CurrentSigma + epsilon);
-
-  if (v) std::cerr << "[" << idx << ":" << d << "] m_CurrentSigma = " << m_CurrentSigma;
-  if (v) std::cerr << ",pos= " << pos[0] << "," << pos[1] << "," << pos[2];
-
 
   VectorType r;
   VectorType gradE;
@@ -270,18 +264,12 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 
   double mymc = m_MeanCurvatureCache->operator[](d)->operator[](idx);
   double A = 0.0;
-  if (v) std::cerr << ",mymc = " << mymc;
 
   for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++)
     {
     double mc = m_MeanCurvatureCache->operator[](d)->operator[](m_CurrentNeighborhood[i].Index);
-      if (v) std::cerr << ",m_CurrentNeighborhood["<<i<<"].Index=" << m_CurrentNeighborhood[i].Index;
-      if (v) std::cerr << ",mc["<<i<<"]=" << mc;
-
-
-      double Dij = (mymc + mc) * 0.5; // average my curvature with my neighbors
+    double Dij = (mymc + mc) * 0.5; // average my curvature with my neighbors
     double kappa = this->ComputeKappa(Dij, d);
-      if (v) std::cerr << ",kappa["<<i<<"]=" << kappa;
 
     // TEST DISTANCE TO PLANE IDEA
     //    kappa *=  (fabs(pos[0]) * 1.0);
@@ -298,9 +286,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
     
     double q = kappa * exp( -dot_product(r, r) * sigma2inv);
 
-      if (v) std::cerr << ",q["<<i<<"]=" << q;
-
-      A += q;
+    A += q;
     
     for (unsigned int n = 0; n < VDimension; n++)
       {
@@ -318,14 +304,6 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   maxmove= (m_CurrentSigma / m_avgKappa) * m_MaxMoveFactor;
 
   energy = (A * sigma2inv ) / m_avgKappa;
-
-  if (v) std::cerr << ",maxmove = " << maxmove;
-  if (v) std::cerr << ",energy = " << energy;
-  if (v) std::cerr << ",m_avgKappa = " << m_avgKappa;
-  if (v) std::cerr << ",sigma2inv= " << sigma2inv;
-  if (v) std::cerr << ",A= " << A;
-  if (v) std::cerr << ",m_CurrentNeighborhood.size()= " << m_CurrentNeighborhood.size();
-  if (v) std::cerr << "\n";
 
   return gradE / m_avgKappa;
 }

@@ -121,22 +121,17 @@ public:
   }
 
     void DropPrecision() {
-      std::cerr << "@@@ Drop Precision\n";
       for (unsigned int d = 0; d < this->GetNumberOfDomains(); d++) {
         for (unsigned int p = 0; p < this->GetNumberOfParticles(d); p++) {
           std::stringstream st;
           auto point = this->GetPosition(p, d);
-          std::cerr << "Point " << d << ":" << p << " was " << point[0] << "  " << point[1] << " " << point[2] << "\n";
           st << point[0] << " " << point[1] << " " << point[2];
           st >> point[0];
           st >> point[1];
           st >> point[2];
-          //std::cerr << "Point now " << point[0] << "  " << point[1] << " " << point[2] << "\n";
-          //this->SetPosition(this->GetPosition(p, d), p, d);
           this->SetPosition(point, p, d);
         }
       }
-      std::cerr << "@@@ Drop Precision done\n";
     }
   
   /** Returns the number of particles in domain k. */

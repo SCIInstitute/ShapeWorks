@@ -75,9 +75,7 @@ bool Optimize::Run() {
 
   std::vector<unsigned int> final_number_of_particles = this->m_number_of_particles;
   int scale = 1;
-  std::cerr << "!!@@@@@@@@@ m_multiscale_mode_particles =  " << m_multiscale_mode_particles << " @@@@@@@@@@@@@\n";
   if (this->m_multiscale_mode_particles > 0) {
-    std::cerr << "@@@@@@@@@@@@ Scale " << scale++ << " @@@@@@@@@@@@@\n";
     this->m_use_shape_statistics_in_init = false;
     for (int i = 0; i < this->m_number_of_particles.size(); i++) {
       // run up to only the specified starting point for multiscale
@@ -93,8 +91,6 @@ bool Optimize::Run() {
   if (m_processing_mode >= 2 || m_processing_mode == -2) { this->RunOptimize(); }
 
   if (this->m_multiscale_mode_particles > 0) {
-
-    std::cerr << "@@@@@@@@ NExt phase!!!\n";
     std::string out_path = m_output_dir;
     std::string tmp_dir_name = out_path + "/" + "regular_phase";
     this->WritePointFiles(tmp_dir_name + "/");
@@ -136,23 +132,15 @@ bool Optimize::Run() {
       }
 
       if (!finished) {
-        std::cerr << "@@@@@@@@@@@@ Scale " << scale++ << " @@@@@@@@@@@@@\n";
         if (m_processing_mode >= 0) { this->Initialize(); }
         if (m_processing_mode >= 1 || m_processing_mode == -1) { this->AddAdaptivity(); }
         if (m_processing_mode >= 2 || m_processing_mode == -2) { this->RunOptimize(); }
       }
 
-
-      std::cerr << "@@@@@@@@ Next mega-split!!!\n";
       std::string out_path = m_output_dir;
       std::string tmp_dir_name = out_path + "/" + "phase_after_" + std::to_string(this->m_number_of_particles[0]);
       this->WritePointFiles(tmp_dir_name + "/");
-
-
     }
-
-
-    std::cerr << "@@@@@@@@@@@@ Actually finished!\n";
   }
 
 
@@ -532,7 +520,7 @@ void Optimize::AddSinglePoint() {
 void Optimize::Initialize() {
   if (m_verbosity_level > 0) {
     std::cout << "------------------------------\n";
-    std::cout << "@@@ Initialize Step\n";
+    std::cout << "*** Initialize Step\n";
     std::cout << "------------------------------\n";
   }
 
@@ -791,7 +779,7 @@ void Optimize::AddAdaptivity() {
 void Optimize::RunOptimize() {
   if (m_verbosity_level > 0) {
     std::cout << "------------------------------\n";
-    std::cout << "@@@ Optimize Step\n";
+    std::cout << "*** Optimize Step\n";
     std::cout << "------------------------------\n";
   }
 

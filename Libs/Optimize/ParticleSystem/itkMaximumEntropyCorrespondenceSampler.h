@@ -75,7 +75,6 @@ public:
   */
   virtual void SetAdaptivityMode(int mode) override
   {
-    std::cerr << "@@@ SetAdaptivityMode(" << mode << ")\n";
     if (mode == 0)
       {
         if(this->m_pairwise_potential_type == 0)
