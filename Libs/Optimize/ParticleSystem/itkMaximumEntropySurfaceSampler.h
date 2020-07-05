@@ -1,14 +1,4 @@
 #pragma once
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
 
 #include "itkParticleSystem.h"
 #include "itkParticleGradientDescentPositionOptimizer.h"
@@ -155,8 +145,7 @@ public:
 
     void AddImage(const typename TImage::Pointer image, double narrow_band)
     {
-        const auto domain = ParticleImplicitSurfaceDomain<typename
-                              ImageType::PixelType, Dimension>::New();
+        const auto domain = ParticleImplicitSurfaceDomain<typename ImageType::PixelType>::New();
         m_NeighborhoodList.push_back( ParticleSurfaceNeighborhood<ImageType>::New() );
 
         if (image)
@@ -171,7 +160,7 @@ public:
 
     void AddMesh(shapeworks::MeshWrapper * mesh) {
 
-      MeshDomain<Dimension> *domain = new MeshDomain<Dimension>();
+      MeshDomain *domain = new MeshDomain();
       m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood<ImageType>::New());
       if (mesh) {
         this->m_Spacing = 1;
@@ -385,7 +374,7 @@ protected:
 
     typename ParticleSystem<Dimension>::Pointer m_ParticleSystem;
 
-    std::vector<typename ParticleDomain<Dimension>::Pointer> m_DomainList;
+    std::vector<typename ParticleDomain::Pointer> m_DomainList;
 
     std::vector<typename ParticleSurfaceNeighborhood<ImageType>::Pointer> m_NeighborhoodList;
 

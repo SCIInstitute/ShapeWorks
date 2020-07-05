@@ -118,7 +118,7 @@ namespace itk
           if (m_ParticleSystem->GetDomainFlag(dom) == false)
           {
 
-            const ParticleDomain<Dimension> *domain = m_ParticleSystem->GetDomain(dom);
+            const ParticleDomain *domain = m_ParticleSystem->GetDomain(dom);
 
             typename GradientFunctionType::Pointer localGradientFunction = m_GradientFunction;
 #ifdef SW_USE_OPENMP

@@ -1,14 +1,3 @@
-/*=========================================================================
-   Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-   File:      ShapeWorksRunApp.h
-
-   Copyright (c) 2020 Scientific Computing and Imaging Institute.
-   See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-   =========================================================================*/
 #pragma once
 
 #ifdef _WIN32
