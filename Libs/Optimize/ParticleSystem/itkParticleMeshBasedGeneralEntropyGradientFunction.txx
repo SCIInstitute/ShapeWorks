@@ -24,7 +24,6 @@ void
 ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 ::ComputeUpdates(const ParticleSystemType *c)
 {
-  std::cerr << "@@@ ComputeUpdates\n";
     num_dims = m_ShapeData->rows();
     num_samples = m_ShapeData->cols();
 
@@ -63,13 +62,11 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 
     if (this->m_UseMeanEnergy)
     {
-      std::cerr << "@@@ Using mean energy\n";
         pinvMat.set_identity();
         m_InverseCovMatrix->clear();
     }
     else
     {
-      std::cerr << "@@@ Not using mean energy\n";
 //        vnl_svd <double> svd(points_minus_mean);
 
 //        vnl_matrix_type U = svd.U();
