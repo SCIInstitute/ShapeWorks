@@ -366,7 +366,7 @@ protected:
   double m_narrow_band{4};
   bool m_narrow_band_set{false};
   bool m_fixed_domains_present{false};
-  int m_multiscale_mode_particles{32};
+  int m_multiscale_mode_particles{-1};
 
   // Keeps track of which state the optimization is in.
   unsigned int m_mode = 0;

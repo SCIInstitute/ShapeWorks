@@ -87,7 +87,7 @@ bool Optimize::Run() {
 
   std::vector<unsigned int> final_number_of_particles = this->m_number_of_particles;
   int scale = 1;
-  std::cerr << "@@@@@@@@@@@@ m_multiscale_mode_particles =  " << m_multiscale_mode_particles << " @@@@@@@@@@@@@\n";
+  std::cerr << "!!@@@@@@@@@ m_multiscale_mode_particles =  " << m_multiscale_mode_particles << " @@@@@@@@@@@@@\n";
   if (this->m_multiscale_mode_particles > 0) {
     std::cerr << "@@@@@@@@@@@@ Scale " << scale++ << " @@@@@@@@@@@@@\n";
     this->m_use_shape_statistics_in_init = false;
@@ -116,6 +116,8 @@ bool Optimize::Run() {
 
     // set to use shape statistics now for the Initialize mode
     this->m_use_shape_statistics_in_init = true;
+    //this->m_checkpointing_interval = 1;
+    //this->m_keep_checkpoints = 1;
 
     this->m_optimization_iterations_completed = 0;
 
@@ -704,7 +706,7 @@ void Optimize::Initialize() {
               minRad);
     }
 
-    std::cerr << "pos = " << m_sampler->GetParticleSystem()->GetPosition(0,0)[0] << "\n";
+    std::cerr << "pos = " << m_sampler->GetParticleSystem()->GetPosition(0, 0)[0] << "\n";
 
     m_saturation_counter = 0;
     m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
@@ -974,7 +976,7 @@ void Optimize::IterateCallback(itk::Object *, const itk::EventObject &) {
     }
   }
 
-  if (m_checkpointing_interval != 0 && m_disable_checkpointing == false) {
+  if (m_checkpointing_interval != 0 ) {
     m_checkpoint_counter++;
     if (m_checkpoint_counter == (int) m_checkpointing_interval) {
       m_checkpoint_counter = 0;
@@ -1062,7 +1064,7 @@ void Optimize::ComputeEnergyAfterIteration() {
   m_energy_b.push_back(corrEnergy);
   m_total_energy.push_back(totalEnergy);
   if (m_verbosity_level > 2) {
-    //std::cout << "Energy: " << totalEnergy << std::endl;
+    std::cerr << "Energy: " << totalEnergy << std::endl;
   }
 }
 

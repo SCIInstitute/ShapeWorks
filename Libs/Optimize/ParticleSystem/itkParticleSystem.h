@@ -126,7 +126,7 @@ public:
         for (unsigned int p = 0; p < this->GetNumberOfParticles(d); p++) {
           std::stringstream st;
           auto point = this->GetPosition(p, d);
-          //std::cerr << "Point was " << point[0] << "  " << point[1] << " " << point[2] << "\n";
+          std::cerr << "Point " << d << ":" << p << " was " << point[0] << "  " << point[1] << " " << point[2] << "\n";
           st << point[0] << " " << point[1] << " " << point[2];
           st >> point[0];
           st >> point[1];
@@ -136,6 +136,7 @@ public:
           this->SetPosition(point, p, d);
         }
       }
+      std::cerr << "@@@ Drop Precision done\n";
     }
   
   /** Returns the number of particles in domain k. */

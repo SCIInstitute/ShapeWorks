@@ -25,6 +25,8 @@
 #include "itkParticleVectorFunction.h"
 #include "itkParticleImageDomainWithGradients.h"
 #include <algorithm>
+#include "itkParticleShapeMatrixAttribute.h"
+
 
 namespace itk
 {
@@ -44,7 +46,15 @@ template <class TGradientNumericType, unsigned int VDimension>
 class ParticleGradientDescentPositionOptimizer : public Object
 {
 public:
-  /** Standard class typedefs */
+
+    typedef ParticleShapeMatrixAttribute<double, VDimension> ShapeMatrixType;
+
+
+    typename ShapeMatrixType::Pointer m_ShapeMatrix;
+
+
+
+    /** Standard class typedefs */
   typedef ParticleGradientDescentPositionOptimizer Self;
   typedef Object Superclass;
   typedef SmartPointer<Self>  Pointer;
@@ -123,7 +133,11 @@ public:
   /** Get/Set the gradient function used by this optimizer. */
   itkGetObjectMacro(GradientFunction, GradientFunctionType);
   itkSetObjectMacro(GradientFunction, GradientFunctionType);
-  
+
+    /**Access the shape matrix. */
+    void SetShapeMatrix( ShapeMatrixType *s)
+    {    m_ShapeMatrix = s;  }
+
 protected:
   ParticleGradientDescentPositionOptimizer();
   ParticleGradientDescentPositionOptimizer(const ParticleGradientDescentPositionOptimizer &);

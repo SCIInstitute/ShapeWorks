@@ -116,6 +116,7 @@ template <unsigned int VDimension>
 void ParticleRegionNeighborhood<VDimension>
 ::AddPosition(const PointType &p, unsigned int idx, int)
 {
+  std::cerr << "ParticleRegionNeighborhood<VDimension>::AddPosition\n";
   // Cache this point and index into the tree.  AddPoint returns a pointer
   // to the cached values and the node in which the point resides.  This info
   // is saved for efficient moves and deletes.

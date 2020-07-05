@@ -41,13 +41,13 @@ void
 ParticleEnsembleEntropyFunction<VDimension>
 ::ComputeCovarianceMatrix()
 {
-  std::cerr << "@@@ ComputeCovarianceMatrix\n";
 
     // NOTE: This code requires that indices be contiguous, i.e. it wont work if
     // you start deleting particles.
     const unsigned int num_samples = m_ShapeMatrix->cols();
     const unsigned int num_dims    = m_ShapeMatrix->rows();
 
+  std::cerr << "@@@ ComputeCovarianceMatrix, num_samples = " << num_samples << ", num_dims = " << num_dims << "\n";
 
     // Do we need to resize the covariance matrix?
     if (m_PointsUpdate->rows() != num_dims || m_PointsUpdate->cols() != num_samples)
@@ -78,14 +78,34 @@ ParticleEnsembleEntropyFunction<VDimension>
         _total += total;
     }
 
+  std::cout.precision(17);
+  std::cerr.precision(17);
+    std::cerr << "_total = " << _total << "\n";
 
+    double joke = 0;
     for (unsigned int j = 0; j < num_dims; j++)
     {
+      double dim_joke = 0;
         for (unsigned int i = 0; i < num_samples; i++)
         {
-            points_minus_mean(j, i) = m_ShapeMatrix->operator()(j, i) - m_points_mean->get(j,0);
+
+          double value = m_ShapeMatrix->operator()(j, i) - m_points_mean->get(j,0);
+          joke += value;
+          dim_joke += value;
+          points_minus_mean(j, i) = value;
+
+          if (j == 144) {
+            std::cerr << "dim_joke_144: matrix value (" << j << "," << i << ")= " << m_ShapeMatrix->operator()(j, i);
+            std::cerr << ", m_points_mean->get(" << j << ",0) = " << m_points_mean->get(j,0);
+            std::cerr << ", value= " << value;
+            std::cerr << ", dim_joke=" << dim_joke << "\n";
+          }
+
         }
+        std::cerr << "dim_joke[" << j << "] = " << dim_joke << "\n";
     }
+    std::cerr << "total_joke = " << joke << "\n";
+
 //    std:cout << points_minus_mean.extract(num_dims, num_samples, 0, 0) << std::endl;
 
 #ifdef PARTICLE_DEBUG
@@ -170,8 +190,13 @@ ParticleEnsembleEntropyFunction<VDimension>
     }
 
     m_CurrentEnergy /= 2.0;
-    if (m_UseMeanEnergy)
+
+
+  if (m_UseMeanEnergy)
         m_MinimumEigenValue = m_CurrentEnergy / 2.0;
+
+  std::cerr << "m_CurrentEnergy = " << m_CurrentEnergy << "\n";
+  std::cerr << "m_MinimumEigenValue = " << m_MinimumEigenValue << "\n";
 
 //    if (!m_UseMeanEnergy)
 //    {
@@ -207,8 +232,10 @@ ParticleEnsembleEntropyFunction<VDimension>
     Xi(1,0) = m_ShapeMatrix->operator()(k+1, d/DomainsPerShape) - m_points_mean->get(k+1, 0);
     Xi(2,0) = m_ShapeMatrix->operator()(k+2, d/DomainsPerShape) - m_points_mean->get(k+2, 0);
 
+    if (idx == 0 && d == 0) std::cerr << "Xi = " << Xi(0,0) << ", " << Xi(1,0) << ", " << Xi(2,0) << "\n";
 
     vnl_matrix_type tmp1(3, 3, 0.0);
+
 
     if (this->m_UseMeanEnergy)
         tmp1.set_identity();
