@@ -46,15 +46,7 @@ template <class TGradientNumericType, unsigned int VDimension>
 class ParticleGradientDescentPositionOptimizer : public Object
 {
 public:
-
-    typedef ParticleShapeMatrixAttribute<double, VDimension> ShapeMatrixType;
-
-
-    typename ShapeMatrixType::Pointer m_ShapeMatrix;
-
-
-
-    /** Standard class typedefs */
+  /** Standard class typedefs */
   typedef ParticleGradientDescentPositionOptimizer Self;
   typedef Object Superclass;
   typedef SmartPointer<Self>  Pointer;
@@ -115,8 +107,8 @@ public:
 
   /** Get/Set a time step parameter for the update.  Each update is simply
       scaled by this value. */
-  //itkGetMacro(TimeStep, double);
-  //itkSetMacro(TimeStep, double);
+  itkGetMacro(TimeStep, double);
+  itkSetMacro(TimeStep, double);
 
   /** Get/Set the maximum iterations to allow this solver to use. */
   itkGetMacro(MaximumNumberOfIterations, unsigned int);
@@ -133,11 +125,7 @@ public:
   /** Get/Set the gradient function used by this optimizer. */
   itkGetObjectMacro(GradientFunction, GradientFunctionType);
   itkSetObjectMacro(GradientFunction, GradientFunctionType);
-
-    /**Access the shape matrix. */
-    void SetShapeMatrix( ShapeMatrixType *s)
-    {    m_ShapeMatrix = s;  }
-
+  
 protected:
   ParticleGradientDescentPositionOptimizer();
   ParticleGradientDescentPositionOptimizer(const ParticleGradientDescentPositionOptimizer &);
@@ -156,7 +144,7 @@ private:
   unsigned int m_NumberOfIterations;
   unsigned int m_MaximumNumberOfIterations;
   double m_Tolerance;
-  //double m_TimeStep;
+  double m_TimeStep;
   std::vector< std::vector<double> > m_TimeSteps;
   unsigned int m_verbosity;
 
