@@ -310,8 +310,8 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
   elem = docHandle->FirstChild("narrow_band").Element();
   if (elem) { optimize->SetNarrowBand(atof(elem->GetText()));}
 
-  elem = docHandle->FirstChild("multiscale_mode_particles").Element();
-  if (elem) { optimize->SetMultiScaleModeParticles(atof(elem->GetText()));}
+  elem = docHandle->FirstChild("use_shape_statistics_after").Element();
+  if (elem) { optimize->SetUseShapeStatisticsAfter(atof(elem->GetText()));}
 
   return true;
 }

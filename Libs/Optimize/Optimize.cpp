@@ -75,11 +75,11 @@ bool Optimize::Run()
 
   std::vector<unsigned int> final_number_of_particles = this->m_number_of_particles;
   int scale = 1;
-  if (this->m_multiscale_mode_particles > 0) {
+  if (this->m_use_shape_statistics_after > 0) {
     this->m_use_shape_statistics_in_init = false;
     for (int i = 0; i < this->m_number_of_particles.size(); i++) {
       // run up to only the specified starting point for multiscale
-      this->m_number_of_particles[i] = this->m_multiscale_mode_particles;
+      this->m_number_of_particles[i] = this->m_use_shape_statistics_after;
     }
   }
 
@@ -90,7 +90,7 @@ bool Optimize::Run()
   // Optimize
   if (m_processing_mode >= 2 || m_processing_mode == -2) { this->RunOptimize();}
 
-  if (this->m_multiscale_mode_particles > 0) {
+  if (this->m_use_shape_statistics_after > 0) {
 
 
 
@@ -2059,15 +2059,15 @@ double Optimize::GetNarrowBand()
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetMultiScaleModeParticles(int num_particles)
+void Optimize::SetUseShapeStatisticsAfter(int num_particles)
 {
-  this->m_multiscale_mode_particles = num_particles;
+  this->m_use_shape_statistics_after = num_particles;
 }
 
 //---------------------------------------------------------------------------
-int Optimize::GetMultiScaleModeParticles()
+int Optimize::GetUseShapeStatisticsAfter()
 {
-  return this->m_multiscale_mode_particles;
+  return this->m_use_shape_statistics_after;
 }
 
 //---------------------------------------------------------------------------

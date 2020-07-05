@@ -233,10 +233,10 @@ public:
   double GetNarrowBand();
 
   //! Set the number of particles when correspondence based multiscale takes over
-  void SetMultiScaleModeParticles(int num_particles);
+  void SetUseShapeStatisticsAfter(int num_particles);
 
   //! Return the number of particles when correspondence based multiscale takes over
-  int GetMultiScaleModeParticles();
+  int GetUseShapeStatisticsAfter();
 
   //! Print parameter info to stdout
   void PrintParamInfo();
@@ -355,7 +355,7 @@ protected:
   double m_narrow_band{4};
   bool m_narrow_band_set{false};
   bool m_fixed_domains_present{false};
-  int m_multiscale_mode_particles{-1};
+  int m_use_shape_statistics_after{-1};
 
   // Keeps track of which state the optimization is in.
   unsigned int m_mode = 0;
