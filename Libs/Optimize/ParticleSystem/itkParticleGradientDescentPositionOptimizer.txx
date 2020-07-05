@@ -35,13 +35,12 @@ namespace itk
     m_NumberOfIterations = 0;
     m_MaximumNumberOfIterations = 0;
     m_Tolerance = 0.0;
-    //m_TimeStep = 1.0;
+    m_TimeStep = 1.0;
   }
 
   template <class TGradientNumericType, unsigned int VDimension>
   void ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>::ResetTimeStepVectors()
   {
-    std::cerr << "@@@ Resetting timesteps!\n";
     // Make sure the time step vector is the right size
     while (m_TimeSteps.size() != m_ParticleSystem->GetNumberOfDomains())
     {
@@ -144,15 +143,6 @@ namespace itk
               double maximumDTUpdateAllowed;
               original_gradient = localGradientFunction->Evaluate(it.GetIndex(), dom, m_ParticleSystem, maximumDTUpdateAllowed, energy);
 
-              if (dom == 0 && k == 0) {
-                std::cerr << "gradient = " << original_gradient[0] << " " << original_gradient[1] << " "
-                          << original_gradient[2] << "\n";
-              }
-
-              std::cerr << "[" << dom << ":" << k << "] gradient = " << original_gradient[0] << " " << original_gradient[1] << " "
-                        << original_gradient[2] << "\n";
-
-
               unsigned int idx = it.GetIndex();
               PointType pt = *it;
 
@@ -186,9 +176,6 @@ namespace itk
 
                 // Step F update the point position in the particle system
                 m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);
-                if (dom == 0 && k==0) {
-                  std::cerr << "setting to: " << newpoint[0] << "\n";
-                }
 
                 // Step G compute the new energy of the particle system 
                 newenergy = localGradientFunction->Energy(it.GetIndex(), dom, m_ParticleSystem);
@@ -237,26 +224,13 @@ namespace itk
 
       if (m_verbosity > 2)
       {
-        //if (m_NumberOfIterations % 10 == 0) {
-        std::cerr << "\n------------------------------\n";
-          std::cerr << "Iteration: " << m_NumberOfIterations << ". " << msElapsed << "ms";
+        std::cout << m_NumberOfIterations << ". " << msElapsed << "ms";
 #ifdef LOG_MEMORY_USAGE
-          double vmUsage, residentSet;
-          process_mem_usage(vmUsage, residentSet);
-          std::cout << " | Mem=" << residentSet << "KB";
+        double vmUsage, residentSet;
+        process_mem_usage(vmUsage, residentSet);
+        std::cout << " | Mem=" << residentSet << "KB";
 #endif
-          std::cerr << std::endl;
-        //}
-
-        if (m_NumberOfIterations > 40 && m_NumberOfIterations < 76)
-        {
-          std::cout << "Shape Matrix:\n";
-          this->m_ShapeMatrix->PrintMatrix();
-          std::cout << std::flush;
-//          this->m_GradientFunction->Get
-        }
-
-
+        std::cout << std::endl;
       }
 
       this->InvokeEvent(itk::IterationEvent());
