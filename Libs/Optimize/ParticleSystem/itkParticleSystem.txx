@@ -227,11 +227,9 @@ ParticleSystem<VDimension>
                                             unsigned int d, int threadId )
 {
   // Traverse the list and add each point to the domain.
-  for (typename std::vector<PointType>::const_iterator it= p.begin();
-       it != p.end(); it++)
-    {
+  for (typename std::vector<PointType>::const_iterator it= p.begin(); it != p.end(); it++) {
     this->AddPosition(*it, d, threadId);    
-    }
+  }
 }
 
 template <unsigned int VDimension>
@@ -243,14 +241,13 @@ ParticleSystem<VDimension>
     vnl_vector_fixed<double, VDimension> random;
 
     /* PRATEEP : fix direction for multiple runs. */
-    srand(1);
+    //srand(1);
     
-    for (unsigned int i = 0; i < VDimension; i++)
-      {  random[i] = static_cast<double>(rand());  }
-    double norm = random.magnitude();
-    
-    // Normalize the random vector.
-    random /= norm;
+    for (unsigned int i = 0; i < VDimension; i++) {
+      random[i] = static_cast<double>(rand());  
+    }
+
+    random = random.normalize()
 
     // Add epsilon times random direction to existing point and apply domain
     // constraints to generate a new particle position.  Add the new position.
