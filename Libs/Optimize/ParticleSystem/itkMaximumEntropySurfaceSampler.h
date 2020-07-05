@@ -334,11 +334,6 @@ public:
 
     virtual void Execute();
 
-    itkSetMacro(Initialized, bool);
-    itkGetMacro(Initialized, bool);
-    itkSetMacro(Initializing, bool);
-    itkGetMacro(Initializing, bool);
-
 
 protected:
     MaximumEntropySurfaceSampler();
@@ -346,6 +341,10 @@ protected:
 
     void GenerateData();
 
+    itkSetMacro(Initialized, bool);
+    itkGetMacro(Initialized, bool);
+    itkSetMacro(Initializing, bool);
+    itkGetMacro(Initializing, bool);
 
     bool m_Initialized;
     int m_AdaptivityMode;

@@ -120,19 +120,20 @@ public:
       } 
   }
 
-    void DropPrecision() {
-      for (unsigned int d = 0; d < this->GetNumberOfDomains(); d++) {
-        for (unsigned int p = 0; p < this->GetNumberOfParticles(d); p++) {
-          std::stringstream st;
-          auto point = this->GetPosition(p, d);
-          st << point[0] << " " << point[1] << " " << point[2];
-          st >> point[0];
-          st >> point[1];
-          st >> point[2];
-          this->SetPosition(point, p, d);
-        }
+  //! Replicate the loss of precision from writing the particle positions to and from a file
+  void DropPrecision() {
+    for (unsigned int d = 0; d < this->GetNumberOfDomains(); d++) {
+      for (unsigned int p = 0; p < this->GetNumberOfParticles(d); p++) {
+        std::stringstream st;
+        auto point = this->GetPosition(p, d);
+        st << point[0] << " " << point[1] << " " << point[2];
+        st >> point[0];
+        st >> point[1];
+        st >> point[2];
+        this->SetPosition(point, p, d);
       }
     }
+  }
   
   /** Returns the number of particles in domain k. */
   unsigned long int GetNumberOfParticles(unsigned int d = 0) const
@@ -198,15 +199,10 @@ public:
   inline PointVectorType FindNeighborhoodPoints(const PointType &p,
                                                 double r, unsigned int d = 0) const
   {  return m_Neighborhoods[d]->FindNeighborhoodPoints(p, r); }
-
-
   inline PointVectorType FindNeighborhoodPoints(const PointType &p,
                                                 std::vector<double> &w,
                                                 double r, unsigned int d = 0) const
-  {
-    return m_Neighborhoods[d]->FindNeighborhoodPoints(p,w,r);
-  }
-
+  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(p,w,r); }
   inline PointVectorType FindNeighborhoodPoints(unsigned int idx,
                                                 double r, unsigned int d = 0) const
   {  return m_Neighborhoods[d]->FindNeighborhoodPoints(this->GetPosition(idx,d), r); }
