@@ -116,7 +116,7 @@ MaximumEntropyCorrespondenceSampler<TImage>::Execute()
 
   if (this->GetInitializing() == true) return;
 
-  this->GetOptimizer()->SetShapeMatrix(this->m_ShapeMatrix);
+  //this->GetOptimizer()->SetShapeMatrix(this->m_ShapeMatrix);
   this->GetOptimizer()->StartOptimization();
 }
 template <class TImage>

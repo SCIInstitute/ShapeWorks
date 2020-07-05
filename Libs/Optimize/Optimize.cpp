@@ -10,11 +10,9 @@
 #include <direct.h>
 #define mkdir _mkdir
 #else
-
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
-
 #endif // ifdef _WIN32
 
 // itk
@@ -43,16 +41,18 @@
 #include "Optimize.h"
 
 //---------------------------------------------------------------------------
-Optimize::Optimize() {
+Optimize::Optimize()
+{
   this->m_sampler = itk::MaximumEntropyCorrespondenceSampler<ImageType>::New();
 }
 
 //---------------------------------------------------------------------------
-bool Optimize::Run() {
+bool Optimize::Run()
+{
   // sanity check
   if (this->m_domains_per_shape != this->m_number_of_particles.size()) {
     std::cerr <<
-              "Inconsistency in parameters... m_domains_per_shape != m_number_of_particles.size()\n";
+      "Inconsistency in parameters... m_domains_per_shape != m_number_of_particles.size()\n";
     return false;
   }
 
@@ -91,34 +91,27 @@ bool Optimize::Run() {
   if (m_processing_mode >= 2 || m_processing_mode == -2) { this->RunOptimize(); }
 
   if (this->m_multiscale_mode_particles > 0) {
-    std::string out_path = m_output_dir;
-    std::string tmp_dir_name = out_path + "/" + "regular_phase";
-    this->WritePointFiles(tmp_dir_name + "/");
+
 
 
     // First phase is done now run iteratively until we reach the final particle counts
 
     // set to use shape statistics now for the Initialize mode
     this->m_use_shape_statistics_in_init = true;
-    //this->m_checkpointing_interval = 1;
-    //this->m_keep_checkpoints = 1;
+
 
     this->m_optimization_iterations_completed = 0;
 
     bool finished = false;
 
-//    finished = true;
 
     while (!finished) {
-
-      //this->m_iterations_per_split = 1;
-      //this->m_optimization_iterations = 0;
       this->m_sampler->ReInitialize();
 
-      //this->m_sampler->SetInitialized(false);
-
+      // do the same drop in precision as if we wrote particle files and re-read them
       this->m_sampler->GetParticleSystem()->DropPrecision();
 
+      // reset the random seed for identical run
       this->m_rand.seed(42);
 
       // determine if we have reached the final particle counts
@@ -126,7 +119,6 @@ bool Optimize::Run() {
       for (int i = 0; i < this->m_number_of_particles.size(); i++) {
         if (this->m_number_of_particles[i] < final_number_of_particles[i]) {
           this->m_number_of_particles[i] *= 2;
-          std::cerr << "Not finished, particles now " << this->m_number_of_particles[i] << "\n";
           finished = false;
         }
       }
@@ -136,29 +128,26 @@ bool Optimize::Run() {
         if (m_processing_mode >= 1 || m_processing_mode == -1) { this->AddAdaptivity(); }
         if (m_processing_mode >= 2 || m_processing_mode == -2) { this->RunOptimize(); }
       }
-
-      std::string out_path = m_output_dir;
-      std::string tmp_dir_name = out_path + "/" + "phase_after_" + std::to_string(this->m_number_of_particles[0]);
-      this->WritePointFiles(tmp_dir_name + "/");
     }
   }
-
 
   this->UpdateExportablePoints();
   return true;
 }
 
 //---------------------------------------------------------------------------
-void Optimize::RunProcrustes() {
+void Optimize::RunProcrustes()
+{
   this->OptimizerStop();
   m_procrustes->RunRegistration();
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetParameters() {
+void Optimize::SetParameters()
+{
   if (this->m_verbosity_level == 0) {
     std::cout <<
-              "Verbosity 0: This will be the only output on your screen, unless there are any errors. Increase the verbosity if needed."
+      "Verbosity 0: This will be the only output on your screen, unless there are any errors. Increase the verbosity if needed."
               << std::endl;
   }
 
@@ -172,7 +161,8 @@ void Optimize::SetParameters() {
     for (int i = 0; i < this->m_domains_per_shape; i++) {
       this->m_sampler->SetXYZ(i, this->m_use_xyz[i]);
     }
-  } else {
+  }
+  else {
     for (int i = 0; i < this->m_domains_per_shape; i++) {
       this->m_sampler->SetXYZ(i, false);
     }
@@ -182,20 +172,22 @@ void Optimize::SetParameters() {
     for (int i = 0; i < this->m_domains_per_shape; i++) {
       this->m_sampler->SetNormals(i, this->m_use_normals[i]);
     }
-  } else {
+  }
+  else {
     for (int i = 0; i < this->m_domains_per_shape; i++) {
       this->m_sampler->SetNormals(i, false);
     }
   }
 
   // Set up the procrustes registration object.
-  this->m_procrustes = itk::ParticleProcrustesRegistration<3>::New();
+  this->m_procrustes = itk::ParticleProcrustesRegistration < 3 > ::New();
   this->m_procrustes->SetParticleSystem(this->m_sampler->GetParticleSystem());
   this->m_procrustes->SetDomainsPerShape(this->m_domains_per_shape);
 
   if (this->m_procrustes_scaling == 0) {
     this->m_procrustes->ScalingOff();
-  } else {
+  }
+  else {
     this->m_procrustes->ScalingOn();
   }
 
@@ -211,7 +203,8 @@ void Optimize::SetParameters() {
       }
       m_sampler->GetParticleSystem()->GetDomain(i)->DeletePartialDerivativeImages();
     }
-  } else {
+  }
+  else {
     int numShapes = m_sampler->GetParticleSystem()->GetNumberOfDomains();
     for (int i = 0; i < numShapes; i++) {
       m_sampler->GetParticleSystem()->GetDomain(i)->DeletePartialDerivativeImages();
@@ -223,11 +216,14 @@ void Optimize::SetParameters() {
       if (m_use_normals.size() > 0) {
         if (m_use_normals[i % m_domains_per_shape]) {
           m_sampler->GetParticleSystem()->GetDomain(m_domain_flags[i])->
-                  DeletePartialDerivativeImages();
-        } else {
+          DeletePartialDerivativeImages();
+        }
+        else {
           m_sampler->GetParticleSystem()->GetDomain(m_domain_flags[i])->DeleteImages();
         }
-      } else {
+      }
+      else
+      {
         m_sampler->GetParticleSystem()->GetDomain(m_domain_flags[i])->DeleteImages();
       }
     }
@@ -255,73 +251,87 @@ void Optimize::SetParameters() {
 Optimize::~Optimize() {}
 
 //---------------------------------------------------------------------------
-void Optimize::SetVerbosity(int verbosity_level) {
+void Optimize::SetVerbosity(int verbosity_level)
+{
   this->m_verbosity_level = verbosity_level;
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetDomainsPerShape(int domains_per_shape) {
+void Optimize::SetDomainsPerShape(int domains_per_shape)
+{
   this->m_domains_per_shape = domains_per_shape;
   this->m_sampler->SetDomainsPerShape(this->m_domains_per_shape);
 }
 
 //---------------------------------------------------------------------------
-int Optimize::GetDomainsPerShape() {
+int Optimize::GetDomainsPerShape()
+{
   return this->m_domains_per_shape;
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetDomainType(shapeworks::DomainType type) {
+void Optimize::SetDomainType(shapeworks::DomainType type)
+{
   this->m_domain_type = type;
 }
 
 //---------------------------------------------------------------------------
-shapeworks::DomainType Optimize::GetDomainType() {
+shapeworks::DomainType Optimize::GetDomainType()
+{
   return this->m_domain_type;
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetNumberOfParticles(std::vector<unsigned int> number_of_particles) {
+void Optimize::SetNumberOfParticles(std::vector<unsigned int> number_of_particles)
+{
   this->m_number_of_particles = number_of_particles;
 }
 
 //---------------------------------------------------------------------------
-std::vector<unsigned int> Optimize::GetNumberOfParticles() {
+std::vector<unsigned int> Optimize::GetNumberOfParticles()
+{
   return this->m_number_of_particles;
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetTransformFile(std::string filename) {
+void Optimize::SetTransformFile(std::string filename)
+{
   this->m_transform_file = filename;
 }
 
 //---------------------------------------------------------------------------
-std::string Optimize::GetTransformFile() {
+std::string Optimize::GetTransformFile()
+{
   return this->m_transform_file;
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetPrefixTransformFile(std::string prefix_transform_file) {
+void Optimize::SetPrefixTransformFile(std::string prefix_transform_file)
+{
   this->m_prefix_transform_file = prefix_transform_file;
 }
 
 //---------------------------------------------------------------------------
-std::string Optimize::GetPrefixTransformFile() {
+std::string Optimize::GetPrefixTransformFile()
+{
   return this->m_prefix_transform_file;
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetOutputDir(std::string output_dir) {
+void Optimize::SetOutputDir(std::string output_dir)
+{
   this->m_output_dir = output_dir;
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetOutputTransformFile(std::string output_transform_file) {
+void Optimize::SetOutputTransformFile(std::string output_transform_file)
+{
   this->m_output_transform_file = output_transform_file;
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetUseMeshBasedAttributes(bool use_mesh_based_attributes) {
+void Optimize::SetUseMeshBasedAttributes(bool use_mesh_based_attributes)
+{
   this->m_mesh_based_attributes = use_mesh_based_attributes;
 
   if (this->m_mesh_based_attributes) {
@@ -330,76 +340,90 @@ void Optimize::SetUseMeshBasedAttributes(bool use_mesh_based_attributes) {
 }
 
 //---------------------------------------------------------------------------
-bool Optimize::GetUseMeshBasedAttributes() {
+bool Optimize::GetUseMeshBasedAttributes()
+{
   return this->m_mesh_based_attributes;
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetUseXYZ(std::vector<bool> use_xyz) {
+void Optimize::SetUseXYZ(std::vector<bool> use_xyz)
+{
   this->m_use_xyz = use_xyz;
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetUseNormals(std::vector<bool> use_normals) {
+void Optimize::SetUseNormals(std::vector<bool> use_normals)
+{
   this->m_use_normals = use_normals;
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetAttributesPerDomain(std::vector<int> attributes_per_domain) {
+void Optimize::SetAttributesPerDomain(std::vector<int> attributes_per_domain)
+{
   this->m_attributes_per_domain = attributes_per_domain;
   this->m_sampler->SetAttributesPerDomain(attributes_per_domain);
 }
 
 //---------------------------------------------------------------------------
-std::vector<int> Optimize::GetAttributesPerDomain() {
+std::vector<int> Optimize::GetAttributesPerDomain()
+{
   return this->m_attributes_per_domain;
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetDistributionDomainID(int distribution_domain_id) {
+void Optimize::SetDistributionDomainID(int distribution_domain_id)
+{
   this->m_distribution_domain_id = distribution_domain_id;
 }
 
 //---------------------------------------------------------------------------
-int Optimize::GetDistributionDomainID() {
+int Optimize::GetDistributionDomainID()
+{
   return this->m_distribution_domain_id;
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetOutputCuttingPlaneFile(std::string output_cutting_plane_file) {
+void Optimize::SetOutputCuttingPlaneFile(std::string output_cutting_plane_file)
+{
   this->m_output_cutting_plane_file = output_cutting_plane_file;
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetUseCuttingPlanes(bool use_cutting_planes) {
+void Optimize::SetUseCuttingPlanes(bool use_cutting_planes)
+{
   this->m_use_cutting_planes = use_cutting_planes;
 }
 
 //---------------------------------------------------------------------------
 void Optimize::SetCuttingPlane(unsigned int i, const vnl_vector_fixed<double, 3> &va,
                                const vnl_vector_fixed<double, 3> &vb,
-                               const vnl_vector_fixed<double, 3> &vc) {
+                               const vnl_vector_fixed<double, 3> &vc)
+{
   this->m_sampler->SetCuttingPlane(i, va, vb, vc);
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetProcessingMode(int mode) {
+void Optimize::SetProcessingMode(int mode)
+{
   this->m_processing_mode = mode;
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetAdaptivityMode(int adaptivity_mode) {
+void Optimize::SetAdaptivityMode(int adaptivity_mode)
+{
   this->m_adaptivity_mode = adaptivity_mode;
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetAdaptivityStrength(double adaptivity_strength) {
+void Optimize::SetAdaptivityStrength(double adaptivity_strength)
+{
   this->m_adaptivity_strength = adaptivity_strength;
 }
 
 //---------------------------------------------------------------------------
-void Optimize::ReadTransformFile() {
-  object_reader<itk::ParticleSystem<3>::TransformType> reader;
+void Optimize::ReadTransformFile()
+{
+  object_reader < itk::ParticleSystem < 3 > ::TransformType > reader;
   reader.SetFileName(m_transform_file);
   reader.Update();
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
@@ -408,8 +432,9 @@ void Optimize::ReadTransformFile() {
 }
 
 //---------------------------------------------------------------------------
-void Optimize::ReadPrefixTransformFile(const std::string &fn) {
-  object_reader<itk::ParticleSystem<3>::TransformType> reader;
+void Optimize::ReadPrefixTransformFile(const std::string &fn)
+{
+  object_reader < itk::ParticleSystem < 3 > ::TransformType > reader;
   reader.SetFileName(fn.c_str());
   reader.Update();
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
@@ -419,7 +444,8 @@ void Optimize::ReadPrefixTransformFile(const std::string &fn) {
 
 //---------------------------------------------------------------------------
 // Initialization and Optimization
-void Optimize::InitializeSampler() {
+void Optimize::InitializeSampler()
+{
   float nbhd_to_sigma = 3.0;   // 3.0 -> 1.0
   float flat_cutoff = 0.3;   // 0.3 -> 0.85
 
@@ -442,7 +468,7 @@ void Optimize::InitializeSampler() {
   m_sampler->GetEnsembleEntropyFunction()->SetHoldMinimumVariance(false);
 
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVariance(
-          m_starting_regularization);
+    m_starting_regularization);
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetRecomputeCovarianceInterval(1);
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetHoldMinimumVariance(false);
 
@@ -454,7 +480,7 @@ void Optimize::InitializeSampler() {
   m_sampler->GetEnsembleMixedEffectsEntropyFunction()->SetRecomputeCovarianceInterval(1);
   m_sampler->GetEnsembleMixedEffectsEntropyFunction()->SetHoldMinimumVariance(false);
 
-  //m_sampler->GetOptimizer()->SetTimeStep(1.0);
+  m_sampler->GetOptimizer()->SetTimeStep(1.0);
 
   m_sampler->SetSamplingOn();
 
@@ -462,13 +488,13 @@ void Optimize::InitializeSampler() {
 
   m_sampler->SetAdaptivityMode(m_adaptivity_mode);
   m_sampler->GetEnsembleEntropyFunction()
-          ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
+  ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()
-          ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
+  ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
   m_sampler->GetEnsembleRegressionEntropyFunction()
-          ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
+  ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
   m_sampler->GetEnsembleMixedEffectsEntropyFunction()
-          ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
+  ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
 
 
   // These flags must be set before Initialize, since Initialize need to know which domains are fixed ahead of time
@@ -483,18 +509,19 @@ void Optimize::InitializeSampler() {
   // These flags have to be set after Initialize, since Initialize will set them all to zero
   for (unsigned int i = 0; i < this->m_particle_flags.size() / 2; i++) {
     this->GetSampler()->GetParticleSystem()
-            ->SetFixedParticleFlag(this->m_particle_flags[2 * i], this->m_particle_flags[2 * i + 1]);
+    ->SetFixedParticleFlag(this->m_particle_flags[2 * i], this->m_particle_flags[2 * i + 1]);
   }
 }
 
 //---------------------------------------------------------------------------
-double Optimize::GetMinNeighborhoodRadius() {
+double Optimize::GetMinNeighborhoodRadius()
+{
   double rad = 0.0;
-  typename itk::ImageToVTKImageFilter<ImageType>::Pointer itk2vtkConnector;
+  typename itk::ImageToVTKImageFilter < ImageType > ::Pointer itk2vtkConnector;
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
     double area = m_sampler->GetParticleSystem()->GetDomain(i)->GetSurfaceArea();
     double sigma =
-            std::sqrt(area / (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) * M_PI));
+      std::sqrt(area / (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) * M_PI));
     if (rad < sigma) {
       rad = sigma;
     }
@@ -503,8 +530,9 @@ double Optimize::GetMinNeighborhoodRadius() {
 }
 
 //---------------------------------------------------------------------------
-void Optimize::AddSinglePoint() {
-  typedef itk::ParticleSystem<3> ParticleSystemType;
+void Optimize::AddSinglePoint()
+{
+  typedef itk::ParticleSystem < 3 > ParticleSystemType;
   typedef ParticleSystemType::PointType PointType;
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
     if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) > 0) {
@@ -517,7 +545,8 @@ void Optimize::AddSinglePoint() {
 }
 
 //---------------------------------------------------------------------------
-void Optimize::Initialize() {
+void Optimize::Initialize()
+{
   if (m_verbosity_level > 0) {
     std::cout << "------------------------------\n";
     std::cout << "*** Initialize Step\n";
@@ -550,13 +579,16 @@ void Optimize::Initialize() {
         *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) {
       if (m_mesh_based_attributes) {
         m_sampler->SetCorrespondenceMode(5);
-      } else {
+      }
+      else {
         m_sampler->SetCorrespondenceMode(2);
       }
-    } else {
+    }
+    else {
       if (m_mesh_based_attributes) {
         m_sampler->SetCorrespondenceMode(5);
-      } else {
+      }
+      else {
         m_sampler->SetCorrespondenceMode(1);
       }
     }
@@ -566,16 +598,18 @@ void Optimize::Initialize() {
                                                                      m_iterations_per_split);
 
     m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(
-            m_starting_regularization,
-            m_ending_regularization,
-            m_iterations_per_split);
-  } else {
+      m_starting_regularization,
+      m_ending_regularization,
+      m_iterations_per_split);
+  }
+  else {
     // force to mean
     if ((m_attributes_per_domain.size() > 0 &&
          *std::max_element(m_attributes_per_domain.begin(),
                            m_attributes_per_domain.end()) > 0) || m_mesh_based_attributes) {
       m_sampler->SetCorrespondenceMode(6);
-    } else {
+    }
+    else {
       m_sampler->SetCorrespondenceMode(0);
     }
   }
@@ -590,7 +624,7 @@ void Optimize::Initialize() {
   int split_number = 0;
 
   int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
-  vnl_vector_fixed<double, 3> random;
+  vnl_vector_fixed < double, 3 > random;
 
   for (int i = 0; i < 3; i++) {
     random[i] = static_cast < double > (this->m_rand());
@@ -624,13 +658,13 @@ void Optimize::Initialize() {
     split_number++;
 
     if (m_verbosity_level > 0) {
-      std::cerr << "split number = " << split_number << std::endl;
+      std::cout << "split number = " << split_number << std::endl;
 
-      std::cerr << std::endl << "Particle count: ";
+      std::cout << std::endl << "Particle count: ";
       for (unsigned int i = 0; i < this->m_domains_per_shape; i++) {
-        std::cerr << m_sampler->GetParticleSystem()->GetNumberOfParticles(i) << "  ";
+        std::cout << m_sampler->GetParticleSystem()->GetNumberOfParticles(i) << "  ";
       }
-      std::cerr << std::endl;
+      std::cout << std::endl;
     }
 
     if (m_save_init_splits == true) {
