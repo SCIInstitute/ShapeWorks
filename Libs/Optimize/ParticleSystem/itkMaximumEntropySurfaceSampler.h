@@ -341,7 +341,7 @@ public:
         this->m_Initializing = false;
     }
 
-    virtual void ReInit();
+    virtual void ReInitialize();
 
     virtual void Execute();
 

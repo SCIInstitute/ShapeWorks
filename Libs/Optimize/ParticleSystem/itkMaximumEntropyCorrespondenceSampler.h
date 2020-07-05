@@ -259,9 +259,9 @@ public:
 
   virtual void InitializeOptimizationFunctions();
 
-    void ReInit() override;
+  void ReInitialize() override;
 
-    void Execute() override;
+  void Execute() override;
 
 protected:
   MaximumEntropyCorrespondenceSampler();

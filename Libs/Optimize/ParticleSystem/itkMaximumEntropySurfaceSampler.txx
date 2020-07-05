@@ -278,7 +278,7 @@ MaximumEntropySurfaceSampler<TImage>::ReadTransforms()
 }
 
     template<class TImage>
-    void MaximumEntropySurfaceSampler<TImage>::ReInit() {
+    void MaximumEntropySurfaceSampler<TImage>::ReInitialize() {
 
     }
 

@@ -60,7 +60,7 @@ MaximumEntropyCorrespondenceSampler<TImage>::AllocateDataCaches()
 
 template <class TImage>
 void
-MaximumEntropyCorrespondenceSampler<TImage>::ReInit() {
+MaximumEntropyCorrespondenceSampler<TImage>::ReInitialize() {
   this->SetAdaptivityMode(Superclass::m_AdaptivityMode);
   this->SetCorrespondenceMode(m_CorrespondenceMode);
   this->GetOptimizer()->SetGradientFunction(m_LinkingFunction);
@@ -87,15 +87,6 @@ MaximumEntropyCorrespondenceSampler<TImage>::ReInit() {
       this->m_NeighborhoodList[d]->AddPosition(point, p);
     }
   }
-/*
-  for (int i = 0; i < this->GetParticleSystem()->GetNumberOfDomains(); i++) {
-
-
-    this->GetParticleSystem()->GetNumberOfParticles(i);
-  }
-*/
-
-
 }
 
 

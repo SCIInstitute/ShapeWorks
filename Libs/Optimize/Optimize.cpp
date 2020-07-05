@@ -129,7 +129,7 @@ bool Optimize::Run() {
 
       //this->m_iterations_per_split = 1;
       //this->m_optimization_iterations = 0;
-      this->m_sampler->ReInit();
+      this->m_sampler->ReInitialize();
 
       //this->m_sampler->SetInitialized(false);
 
