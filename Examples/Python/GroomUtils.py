@@ -212,7 +212,7 @@ def FindReferenceImage(inDataList):
 
 def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
                         antialiasIterations=20, smoothingIterations=1, alpha=10.5, beta=10.0,
-                        scaling=20.0, isoValue=0, icpIterations=10, processRaw=False, printCmd=True):
+                        scaling=0.0, isoValue=0, icpIterations=10, processRaw=False, printCmd=True):
     """
     This function takes in a filelists(binary and raw) and produces rigid aligned
     files in the appropriate directory. If the process_raw flag is set True,
@@ -294,7 +294,6 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
 
         cmd = ["shapeworks", 
                "read-image", "--name", seginname,
-               "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
                "write-image", "--name", segoutname]
         if printCmd:
             print("CMD: " + " ".join(cmd))
@@ -303,7 +302,6 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
         if processRaw:
             cmd = ["shapeworks", 
                    "read-image", "--name", rawinname,
-                   "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
                    "write-image", "--name", rawoutname]
             if printCmd:
                 print("CMD: " + " ".join(cmd))
