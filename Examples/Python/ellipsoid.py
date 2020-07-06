@@ -182,10 +182,10 @@ def Run_Pipeline(args):
     if not args.use_single_scale:
         parameterDictionary["use_shape_statistics_after"] = 32
 
-        """
-        Now we execute a single scale particle optimization function.
-        """
-        [localPointFiles, worldPointFiles] = runShapeWorksOptimize(pointDir, dtFiles, parameterDictionary)
+    """
+    Now we execute a single scale particle optimization function.
+    """
+    [localPointFiles, worldPointFiles] = runShapeWorksOptimize(pointDir, dtFiles, parameterDictionary)
 
     if args.tiny_test:
         print("Done with tiny test")

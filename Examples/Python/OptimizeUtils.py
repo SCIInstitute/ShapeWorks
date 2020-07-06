@@ -56,8 +56,9 @@ def create_SWRun_xml(xmlfilename, inDataFiles, parameterDictionary, outDir):
     debug_projection.text = "\n" + str(parameterDictionary['debug_projection']) + "\n"
     mesh_based_attributes = ET.SubElement(root, 'mesh_based_attributes')
     mesh_based_attributes.text = "\n" + str(1) + "\n"
-    use_shape_statistics_after = ET.SubElement(root, 'use_shape_statistics_after')
-    use_shape_statistics_after.text = "\n" + str(parameterDictionary['use_shape_statistics_after']) + "\n"
+    if 'use_shape_statistics_after' in parameterDictionary:
+        use_shape_statistics_after = ET.SubElement(root, 'use_shape_statistics_after')
+        use_shape_statistics_after.text = "\n" + str(parameterDictionary['use_shape_statistics_after']) + "\n"
     verbosity = ET.SubElement(root, 'verbosity')
     verbosity.text = "\n" + str(parameterDictionary['verbosity']) + "\n"
     use_xyz = ET.SubElement(root, 'use_xyz')
