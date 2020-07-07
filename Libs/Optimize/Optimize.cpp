@@ -495,12 +495,16 @@ void Optimize::AddSinglePoint()
 {
   typedef itk::ParticleSystem < 3 > ParticleSystemType;
   typedef ParticleSystemType::PointType PointType;
+
+  const auto domainZeroPos = m_sampler->GetParticleSystem()->GetDomain(0)->GetValidLocation();
+
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
     if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) > 0) {
       continue;
     }
-
-    const auto zcPos = m_sampler->GetParticleSystem()->GetDomain(i)->GetValidLocation();
+    auto pos = domainZeroPos;
+    const auto zcPos = m_sampler->GetParticleSystem()->GetDomain(i)->ApplyConstraints(pos);
+    //const auto zcPos = m_sampler->GetParticleSystem()->GetDomain(i)->GetValidLocation();
     m_sampler->GetParticleSystem()->AddPosition(zcPos, i);
   }
 }
