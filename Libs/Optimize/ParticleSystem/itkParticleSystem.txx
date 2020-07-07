@@ -235,34 +235,6 @@ ParticleSystem<VDimension>
 template <unsigned int VDimension>
 void
 ParticleSystem<VDimension>
-::SplitParticle(double epsilon, unsigned int idx, unsigned int domain, int threadId)
-{
-  // Find a random direction.
-    vnl_vector_fixed<double, VDimension> random;
-
-    /* PRATEEP : fix direction for multiple runs. */
-    //srand(1);
-    
-    for (unsigned int i = 0; i < VDimension; i++) {
-      random[i] = static_cast<double>(rand());  
-    }
-
-    random = random.normalize()
-
-    // Add epsilon times random direction to existing point and apply domain
-    // constraints to generate a new particle position.  Add the new position.
-    PointType newpos;
-    for (unsigned int i = 0; i < VDimension; i++)
-      {
-      newpos[i] = this->GetPosition(idx,domain)[i] + 2 * epsilon * random[i];
-      }
-    this->GetDomain(domain)->ApplyConstraints(newpos);
-    this->AddPosition(newpos, domain, threadId);
-}
-
-template <unsigned int VDimension>
-void
-ParticleSystem<VDimension>
 ::SplitAllParticlesInDomain(const vnl_vector_fixed<double, VDimension> &random,
                                                       double epsilon, unsigned int domain, int threadId)
 {
