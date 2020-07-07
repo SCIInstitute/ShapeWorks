@@ -13,6 +13,7 @@
 #include <itkRegionOfInterestImageFilter.h>
 #include <itkReinitializeLevelSetImageFilter.h>
 #include <itkScalableAffineTransform.h>
+#include <itkNearestNeighborInterpolateImageFunction.h>
 #include <itkBinaryFillholeImageFilter.h>
 #include <itkGradientMagnitudeImageFilter.h>
 #include <itkCurvatureFlowImageFilter.h>
@@ -440,9 +441,13 @@ Image& Image::rotate(const double angle, const Vector3 &axis)
 
 Image& Image::applyTransform(const TransformPtr transform, const Dims dims, const Point3 origin, const Vector spacing, const ImageType::DirectionType direction)
 {
-  using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;  // linear interpolation by default
+  using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;
   FilterType::Pointer resampler = FilterType::New();
 
+  using InterpolatorType = itk::NearestNeighborInterpolateImageFunction<ImageType, double>;
+  InterpolatorType::Pointer interpolator = InterpolatorType::New();
+
+  resampler->SetInterpolator(interpolator);
   resampler->SetInput(this->image);
   resampler->SetTransform(transform);
 
