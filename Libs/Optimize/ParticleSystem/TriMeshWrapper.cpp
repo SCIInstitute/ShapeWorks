@@ -59,6 +59,10 @@ namespace shapeworks
   */
   point TriMeshWrapper::GetBarycentricIntersection(vec3 start, vec3 end, int currentFace, int edge) const {
     vec3 delta = end - start;
+    if (delta[edge] == 0) {
+      // If going parallel to the edge, it is allowed to go all the way to the end where it wants to go
+      return end;
+    }
     double ratio = -start[edge] / delta[edge];
     vec3 intersect = start + delta * vec3(ratio, ratio, ratio);
 
@@ -69,29 +73,62 @@ namespace shapeworks
     return inter;
   }
 
+  int SlideAlongEdge(Eigen::Vector3d &point_, Eigen::Vector3d &remainingVector_, int face_, int edge_, TriMesh *mesh) {
+    int indexa = (edge_ + 1) % 3;
+    int indexb = (edge_ + 2) % 3;
+    int vertexindexa = mesh->faces[face_][indexa];
+    int vertexindexb = mesh->faces[face_][indexb];
+    Eigen::Vector3d pointa = convert<trimesh::point, Eigen::Vector3d>(mesh->vertices[vertexindexa]);
+    Eigen::Vector3d pointb = convert<trimesh::point, Eigen::Vector3d>(mesh->vertices[vertexindexb]);
+    Eigen::Vector3d meshEdge(pointb[0] - pointa[0], pointb[1] - pointa[1], pointb[2] - pointa[2]);
+    meshEdge.normalize();
+    double dotprod = meshEdge.dot(remainingVector_);
+    Eigen::Vector3d projectedVector = meshEdge.normalized() * dotprod;
+
+    Eigen::Vector3d maxSlide = pointb - point_;
+    double newDot = projectedVector.dot(meshEdge);
+    int towardsEdge = indexa;
+    if (newDot < 0) {
+      // going in opposite direction as mesh edge
+      meshEdge = -meshEdge;
+      maxSlide = pointa - point_;
+      towardsEdge = indexb;
+    }
+    if (projectedVector.norm() > maxSlide.norm()) {
+      point_ += maxSlide;
+      remainingVector_ = projectedVector - maxSlide;
+      return mesh->across_edge[face_][towardsEdge];
+    }
+    else {
+      point_ += projectedVector;
+      remainingVector_ = Eigen::Vector3d(0, 0, 0);
+      return face_;
+    }
+  }
+
   Eigen::Vector3d TriMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d pointa__, Eigen::Vector3d projectedVector__, int faceIndex__, int prevFace__) const {
 
     int currentFace = faceIndex__;
     Eigen::Vector3d currentPoint = pointa__;
     Eigen::Vector3d remainingVector = projectedVector__;
-    float epsilon = 0.0001;
-    double epsilon2 = 0.0001;
-    std::vector<int> faces;
-    while (remainingVector.norm() > epsilon) {
-      if (currentFace == -1) {
+    double minimumUpdate = 0.0000000001;
+    double barycentricEpsilon = 0.0001;
+    std::vector<int> facesTraversed;
+    while (remainingVector.norm() > minimumUpdate && currentFace != -1) {
+      facesTraversed.push_back(currentFace);
+      vec3 currentBary = ComputeBarycentricCoordinates(point(currentPoint[0], currentPoint[1], currentPoint[2]), currentFace);
+      Eigen::Vector3d targetPoint = currentPoint + remainingVector;
+      vec3 targetBary = ComputeBarycentricCoordinates(point(targetPoint[0], targetPoint[1], targetPoint[2]), currentFace);
+
+      if (facesTraversed.size() >= 3 && facesTraversed[facesTraversed.size() - 1] == facesTraversed[facesTraversed.size() - 3]) {
+        // When at the intersection of two faces while also being at the edge of the mesh, the edge-sliding will keep alternating 
+        // between the two faces without actually going anywhere since it is at a corner in the mesh.
+        std::cerr << "exiting due to face repetition\n";
         break;
       }
-      faces.push_back(currentFace);
-      vec3 currentBary(1, 0, 0);
-      vec3 targetBary(1, 0, 0);
-      //vec3 currentBary = mesh->ComputeBarycentricCoordinates(point(currentPoint[0], currentPoint[1], currentPoint[2]), mesh->faces[currentFace]);
-      Eigen::Vector3d targetPoint = currentPoint + remainingVector;
-      //vec3 targetBary = mesh->ComputeBarycentricCoordinates(point(targetPoint[0], targetPoint[1], targetPoint[2]), mesh->faces[currentFace]);
-
-      if (faces.size() > 10) {
-        for (int i = 0; i < faces.size(); i++) {
-          std::cerr << faces[i] << ": " << PrintValue<TriMesh::Face>(mesh->faces[faces[i]]) << ", ";
-          //std::cerr << PrintValue<vec>(mesh->GetFaceNormal(faces[i])) << std::endl;
+      if (facesTraversed.size() > 10) {
+        for (int i = 0; i < facesTraversed.size(); i++) {
+          std::cerr << facesTraversed[i] << ": " << PrintValue<TriMesh::Face>(mesh->faces[facesTraversed[i]]) << ", ";
         }
         std::cerr << "Current point: " << PrintValue<Eigen::Vector3d>(currentPoint) << "\n";
         std::cerr << "remaining vector: " << PrintValue<Eigen::Vector3d>(remainingVector) << "\n";
@@ -103,142 +140,60 @@ namespace shapeworks
       }
 
       // TODO, use a small epsilon to soften the requirements (in trimesh function ComputeBarycentricCoordinates)
-      if (targetBary[0] + epsilon2 >= 0 && targetBary[1] + epsilon2 >= 0 && targetBary[2] + epsilon2 >= 0 && targetBary[0] - epsilon2 <= 1 && targetBary[1] - epsilon2 <= 1 && targetBary[2] - epsilon2 <= 1) {
+      if (targetBary[0] + barycentricEpsilon >= 0 && targetBary[1] + barycentricEpsilon >= 0 && targetBary[2] + barycentricEpsilon >= 0 && targetBary[0] - barycentricEpsilon <= 1 && targetBary[1] - barycentricEpsilon <= 1 && targetBary[2] - barycentricEpsilon <= 1) {
         currentPoint = targetPoint;
+        //std::cerr << "same triangle " << PrintValue<Eigen::Vector3d>(currentPoint) << ")\n";
         break;
       }
-      int numNegative = 0;
+      int positiveVertex = -1;
+      std::vector<int> negativeVertices;
       for (int i = 0; i < 3; i++) {
-        if (targetBary[i] < 0) {
-          numNegative++;
-        }
-      }
-      // Number of negative Bary coords indicates if we went over edge or corner
-      if (numNegative == 1) {
-        // Figure out which edge we are going over
-        int negativeEdge = -1;
-        for (int i = 0; i < 3; i++) {
-          if (targetBary[i] < 0) {
-            negativeEdge = i;
-            break;
-          }
-        }
-        Eigen::Vector3d intersect = convert<point, Eigen::Vector3d>(GetBarycentricIntersection(currentBary, targetBary, currentFace, negativeEdge));
-        Eigen::Vector3d remaining = targetPoint - intersect;
-
-        int nextFace = mesh->across_edge[currentFace][negativeEdge];
-        if (currentFace == -1) {
-          break;
-        }
-        remainingVector = RotateVectorToFace(GetFaceNormal(currentFace), GetFaceNormal(nextFace), remaining);
-        currentPoint = intersect;
-        currentFace = nextFace;
-        continue;
-      }
-      else if (numNegative == 2) {
-        int positiveVertex = -1;
-        std::vector<int> negativeVertices;
-        for (int i = 0; i < 3; i++) {
-          if (targetBary[i] >= 0) {
-            positiveVertex = i;
-          }
-          else {
-            negativeVertices.push_back(i);
-          }
-        }
-        if (negativeVertices.size() != 2 || positiveVertex == -1) {
-          std::cerr << "ERROR ERROR incorrect number of negative vertices or positiveVertex is still -1!\n";
-        }
-        Eigen::Vector3d intersect0 = convert<point, Eigen::Vector3d>(GetBarycentricIntersection(currentBary, targetBary, currentFace, negativeVertices[1]));
-        Eigen::Vector3d intersect1 = convert<point, Eigen::Vector3d>(GetBarycentricIntersection(currentBary, targetBary, currentFace, negativeVertices[0]));
-
-        int first = -1;
-        Eigen::Vector3d remaining;
-        Eigen::Vector3d firstIntersect;
-        double length0 = (intersect0 - currentPoint).norm();
-        double length1 = (intersect1 - currentPoint).norm();
-
-        if (length0 <= length1) {
-          remaining = targetPoint - intersect0;
-          firstIntersect = intersect0;
+        if (targetBary[i] >= 0) {
+          positiveVertex = i;
         }
         else {
-          remaining = targetPoint - intersect1;
-          firstIntersect = intersect1;
+          negativeVertices.push_back(i);
         }
-
-
-        //if (false  && abs(length1 - length0) < 0.00000000001) {
-        //  int crossingVertex = mesh->faces[currentFace][positiveVertex];
-        //  // Check target pos against all neighbors of the vertex.
-        //  // Pick the one with 2 positive coords (not including the crossing vertex)
-        //  std::vector<int> neighbors = mesh->adjacentfaces[mesh->faces[currentFace][positiveVertex]];
-        //  int numNotBad = 0;
-        //  int notBadNeighbor = -1;
-        //  for (int i = 0; i < neighbors.size(); i++) {
-
-        //    Eigen::Vector3f rotated = RotateVectorToFace(GetFaceNormal(currentFace), GetFaceNormal(neighbors[i]), remaining);
-        //    Eigen::Vector3f potentialPoint = firstIntersect + rotated;
-        //    vec3 potentialBary = mesh->ComputeBarycentricCoordinates(point(potentialPoint[0], potentialPoint[1], potentialPoint[2]), mesh->faces[neighbors[i]]);
-        //    bool bad = false;
-        //    for (int j = 0; j < 3; j++) {
-        //      if (mesh->faces[neighbors[i]][j] != crossingVertex) {
-        //        // must be pos
-        //        if (potentialBary[j] < 0) {
-        //          bad = true;
-        //          break;
-        //        }
-        //      }
-        //    }
-        //    //std::cerr << "Neighbor " << neighbors[i] << ": " << PrintValue<vec3>(potentialBary) << ", BAD=" << bad << std::endl;
-        //    if (!bad) {
-        //      notBadNeighbor = neighbors[i];
-        //      numNotBad++;
-        //    }
-        //  }
-        //  if (numNotBad == 1) {
-        //    int nextFace = notBadNeighbor;
-        //    remainingVector = RotateVectorToFace(GetFaceNormal(currentFace), GetFaceNormal(nextFace), remaining);
-        //    currentPoint = firstIntersect;
-        //    currentFace = nextFace;
-        //    continue;
-        //  }
-        //  std::cerr << "ERRORERROR numNotBad = " << numNotBad << " crossingVertex: " << crossingVertex  << "currentface: " << currentFace << std::endl;
-        //  for (int i = 0; i < neighbors.size(); i++) {
-
-        //    Eigen::Vector3f rotated = RotateVectorToFace(GetFaceNormal(currentFace), GetFaceNormal(neighbors[i]), remaining);
-        //    Eigen::Vector3f potentialPoint = firstIntersect + rotated;
-        //    vec3 potentialBary = mesh->ComputeBarycentricCoordinates(point(potentialPoint[0], potentialPoint[1], potentialPoint[2]), mesh->faces[neighbors[i]]);
-        //    bool bad = false;
-        //    for (int j = 0; j < 3; j++) {
-        //      if (mesh->faces[neighbors[i]][j] != crossingVertex) {
-        //        // must be pos
-        //        if (potentialBary[j] < 0) {
-        //          bad = true;
-        //          break;
-        //        }
-        //      }
-        //    }
-        //    std::cerr << "Neighbor " << neighbors[i] << ": " << PrintValue<vec3>(potentialBary) << ", BAD=" << bad << " vertices: " << PrintValue<TriMesh::Face>(mesh->faces[neighbors[i]]) << std::endl;
-        //    if (!bad) {
-        //      notBadNeighbor = neighbors[i];
-        //      numNotBad++;
-        //    }
-        //  }
-        //}
-        int nextFace = (length0 <= length1) ? mesh->across_edge[currentFace][negativeVertices[1]] : mesh->across_edge[currentFace][negativeVertices[0]];
-        if (currentFace == -1) {
-          break;
-        }
-        remainingVector = RotateVectorToFace(GetFaceNormal(currentFace), GetFaceNormal(nextFace), remaining);
-        currentPoint = firstIntersect;
-        currentFace = nextFace;
-        continue;
       }
-      else {
-        std::cerr << "ERROR ERROR numNegative was " << numNegative << "!!!! Cancelling Geodesic Walk\n";
+
+      if (negativeVertices.size() == 0 || negativeVertices.size() > 2) {
+        std::cerr << "ERROR ERROR invalid number of negative vertices. Point is not on surface.\n";
         break;
       }
+      int negativeEdge = negativeVertices[0];
+      Eigen::Vector3d intersect = convert<point, Eigen::Vector3d>(GetBarycentricIntersection(currentBary, targetBary, currentFace, negativeEdge));
+
+      if (negativeVertices.size() == 2) {
+        int negativeEdge1 = negativeVertices[1];
+        Eigen::Vector3d intersect1 = convert<point, Eigen::Vector3d>(GetBarycentricIntersection(currentBary, targetBary, currentFace, negativeEdge1));
+
+        double length0 = (intersect - currentPoint).norm();
+        double length1 = (intersect1 - currentPoint).norm();
+
+        if (length0 < length1) {
+          intersect = intersect;
+          negativeEdge = negativeEdge;
+        }
+        else {
+          intersect = intersect1;
+          negativeEdge = negativeEdge1;
+        }
+      }
+
+      Eigen::Vector3d remaining = targetPoint - intersect;
+      int nextFace = mesh->across_edge[currentFace][negativeEdge];
+      if (nextFace == -1) {
+        nextFace = SlideAlongEdge(intersect, remaining, currentFace, negativeEdge, mesh);
+      }
+      if ((intersect - currentPoint).norm() > remainingVector.norm()) {
+        std::cerr << "ASDFASDF moved further than the vector\n";
+      }
+      remainingVector = remaining;
+      if (nextFace != -1) {
+        remainingVector = RotateVectorToFace(GetFaceNormal(currentFace), GetFaceNormal(nextFace), remainingVector);
+      }
+      currentPoint = intersect;
+      currentFace = nextFace;
     }
     return currentPoint;
   }
