@@ -247,42 +247,22 @@ ParticleSystem<VDimension>
        it != endIt; it++)
     {    list.push_back(*it);    }
 
-  for (typename std::vector<PointType>::const_iterator it = list.begin();
-       it != list.end(); it++)
-    {
+  int k = 0;
+  for (typename std::vector<PointType>::const_iterator it = list.begin(); it != list.end(); it++, k++) {
     // Add epsilon times random direction to existing point and apply domain
     // constraints to generate a new particle position.  Add the new position.
-    PointType newpos = *it;
-    vnl_vector_fixed<double, VDimension> updateVector = random * epsilon;
-    newpos = this->GetDomain(domain)->UpdateParticlePosition(newpos, updateVector);
+    PointType startingPos = *it;
+
+    vnl_vector_fixed<double, VDimension> updateVector = random * epsilon * 0.5;
+    PointType newpos = this->GetDomain(domain)->UpdateParticlePosition(startingPos, updateVector);
     this->AddPosition(newpos, domain, threadId);
-    } // end for std::vector::iterator
-}
 
-template <unsigned int VDimension>
-void
-ParticleSystem<VDimension>
-::SplitAllParticles(double epsilon, int threadId)
-{
-    // Find a random direction.
-    vnl_vector_fixed<double, VDimension> random;
+    // Apply opposite update to each original point in the split.
+    updateVector = -random * epsilon * 0.5;
+    newpos = this->GetDomain(domain)->UpdateParticlePosition(startingPos, updateVector);
+    this->SetPosition(newpos, k, domain, threadId);
 
-    /* fix direction for multiple runs. */
-    srand(1);
-    
-    for (unsigned int i = 0; i < VDimension; i++)
-      {        random[i] = static_cast<double>(rand());        }
-    double norm = random.magnitude();
-
-    // Normalize the random vector.
-    random /= norm;
-
-    // Loop through all particle positions in the domain and add a new position
-    // at an epsilon distance and random direction.
-    for (unsigned i = 0; i < this->GetNumberOfDomains(); i++)
-      {
-      this->SplitAllParticlesInDomain(random, epsilon, i, threadId);
-      }
+  }
 }
 
 template <unsigned int VDimension>

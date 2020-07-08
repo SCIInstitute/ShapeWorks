@@ -34,7 +34,7 @@ public:
   virtual bool ApplyConstraints(PointType& p) const = 0;
   virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION>& gradE, const PointType& pos) const = 0;
 
-  virtual PointType UpdateParticlePosition(PointType &point, vnl_vector_fixed<double, DIMENSION> &update) const = 0;
+  virtual PointType UpdateParticlePosition(const PointType &point, vnl_vector_fixed<double, DIMENSION> &update) const = 0;
 
   virtual vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION>& gradE, const PointType& pos) const = 0;
   virtual vnl_vector_fixed<float, 3> SampleNormalAtPoint(const PointType & point) const = 0;

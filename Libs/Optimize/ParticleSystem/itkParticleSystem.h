@@ -164,7 +164,6 @@ public:
       added to the system at a random epsilon distance on the surface from the
       original particle.  The new particles are added using the AddPosition
       method, so all appropriate callbacks are invoked. */
-  void SplitAllParticles(double epsilon, int threadId=0);
   void SplitAllParticlesInDomain(const vnl_vector_fixed<double, VDimension> &,
                                  double epsilon, unsigned int d=0, int threadId=0);
   
