@@ -91,19 +91,36 @@ bool Optimize::Run()
   if (m_processing_mode >= 2 || m_processing_mode == -2) { this->RunOptimize();}
 
   if (this->m_use_shape_statistics_after > 0) {
-
-
-
     // First phase is done now run iteratively until we reach the final particle counts
+
+    // save the particles for this split if requested
+    if (m_save_init_splits == true) {
+      std::stringstream ss;
+      ss << this->m_split_number;
+      std::stringstream ssp;
+      std::string dir_name = "split" + ss.str();
+      for (int i = 0; i < m_domains_per_shape; i++) {
+        ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles(i);
+        dir_name += "_" + ssp.str();
+        ssp.str("");
+      }
+      dir_name += "pts_w_opt";
+      std::string out_path = m_output_dir;
+      std::string tmp_dir_name = out_path + "/" + dir_name;
+
+      this->WritePointFiles(tmp_dir_name + "/");
+      this->WritePointFilesWithFeatures(tmp_dir_name + "/");
+      this->WriteTransformFile(tmp_dir_name + "/" + m_output_transform_file);
+      this->WriteParameters(this->m_split_number);
+    }
 
     // set to use shape statistics now for the Initialize mode
     this->m_use_shape_statistics_in_init = true;
 
-
+    // reset the number of iterations completed
     this->m_optimization_iterations_completed = 0;
 
     bool finished = false;
-
 
     while (!finished) {
       this->m_sampler->ReInitialize();
@@ -621,7 +638,7 @@ void Optimize::Initialize()
 
   m_sampler->GetParticleSystem()->SynchronizePositions();
 
-  int split_number = 0;
+  this->m_split_number = 0;
 
   int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
   vnl_vector_fixed < double, 3 > random;
@@ -655,10 +672,10 @@ void Optimize::Initialize()
 
     m_sampler->GetParticleSystem()->SynchronizePositions();
 
-    split_number++;
+    this->m_split_number++;
 
     if (m_verbosity_level > 0) {
-      std::cout << "split number = " << split_number << std::endl;
+      std::cout << "split number = " << this->m_split_number << std::endl;
 
       std::cout << std::endl << "Particle count: ";
       for (unsigned int i = 0; i < this->m_domains_per_shape; i++) {
@@ -669,7 +686,7 @@ void Optimize::Initialize()
 
     if (m_save_init_splits == true) {
       std::stringstream ss;
-      ss << split_number;
+      ss << this->m_split_number;
 
       std::stringstream ssp;
       std::string dir_name = "split" + ss.str();
@@ -678,22 +695,22 @@ void Optimize::Initialize()
         dir_name += "_" + ssp.str();
         ssp.str("");
       }
-      dir_name += "pts_wo_opt";
+      dir_name += "pts_wo_init";
       std::string out_path = m_output_dir;
 
       std::string tmp_dir_name = out_path + "/" + dir_name;
 
-      this->WritePointFiles(tmp_dir_name + "/");
+      this->WritePointFiles(tmp_dir_name);
       this->WritePointFilesWithFeatures(tmp_dir_name + "/");
       this->WriteTransformFile(tmp_dir_name + "/" + m_output_transform_file);
-      this->WriteParameters(split_number);
+      this->WriteParameters(this->m_split_number);
     }
 
     m_energy_a.clear();
     m_energy_b.clear();
     m_total_energy.clear();
     std::stringstream ss;
-    ss << split_number;
+    ss << this->m_split_number;
     std::stringstream ssp;
 
     ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles();     // size from domain 0
@@ -724,7 +741,7 @@ void Optimize::Initialize()
 
     if (m_save_init_splits == true) {
       std::stringstream ss;
-      ss << split_number;
+      ss << this->m_split_number;
       std::stringstream ssp;
       std::string dir_name = "split" + ss.str();
       for (int i = 0; i < m_domains_per_shape; i++) {
@@ -732,14 +749,14 @@ void Optimize::Initialize()
         dir_name += "_" + ssp.str();
         ssp.str("");
       }
-      dir_name += "pts_w_opt";
+      dir_name += "pts_w_init";
       std::string out_path = m_output_dir;
       std::string tmp_dir_name = out_path + "/" + dir_name;
 
       this->WritePointFiles(tmp_dir_name + "/");
       this->WritePointFilesWithFeatures(tmp_dir_name + "/");
       this->WriteTransformFile(tmp_dir_name + "/" + m_output_transform_file);
-      this->WriteParameters(split_number);
+      this->WriteParameters(this->m_split_number);
     }
     this->WritePointFiles();
     this->WritePointFilesWithFeatures();

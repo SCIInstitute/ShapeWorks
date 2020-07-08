@@ -386,5 +386,7 @@ protected:
   int m_total_iterations = 0;
   size_t m_iteration_count = 0;
 
+  int m_split_number{0};
+
   std::mt19937 m_rand{42};
 };
