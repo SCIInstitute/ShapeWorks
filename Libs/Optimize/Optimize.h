@@ -351,6 +351,7 @@ protected:
 
   // Keeps track of which state the optimization is in.
   unsigned int m_mode = 0;
+  /* m_spacing is used to scale the random update vector for particle splitting. */
   double m_spacing = 0;
 
   std::vector < std::string > m_filenames;
