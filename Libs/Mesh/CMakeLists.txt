@@ -2,12 +2,12 @@
 
 set(Mesh_sources
  Mesh.cpp
- #meshFIM.cpp
+ meshFIM.cpp
  )
 
 set(Mesh_headers
  Mesh.h
- #meshFIM.h
+ meshFIM.h
  )
 
 FILE(GLOB PreviewMeshQC_sources ./PreviewMeshQC/*.cpp)
