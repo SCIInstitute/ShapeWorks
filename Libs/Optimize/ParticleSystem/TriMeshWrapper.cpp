@@ -423,7 +423,7 @@ namespace shapeworks
           ? mesh->vertices[index][dimension] : meshUpperBound[dimension];
       }
     }
-    double buffer = .1;
+    double buffer = 1;
     for (int i = 0; i < 3; i++) {
       meshLowerBound[i] = meshLowerBound[i] - buffer;
       meshUpperBound[i] = meshUpperBound[i] + buffer;
