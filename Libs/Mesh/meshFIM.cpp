@@ -2290,3 +2290,32 @@ void meshFIM::WriteFeaFile(std::vector<float> fea, char* outfilename)
 }
 
 // end SHIREEN
+
+/* Praful */
+void meshFIM::GetFeatureValues(point x, std::vector<float> &vals) {
+  float alphaX, betaX, gammaX;
+  TriMesh::Face triangleX;
+  GetTriangleInfoForPoint(x, triangleX, alphaX, betaX, gammaX);
+  if (alphaX < 0.000001f)
+    alphaX = 0.000001f;
+
+  if (betaX < 0.000001f)
+    betaX = 0.000001f;
+
+  if (gammaX < 0.000001f)
+    gammaX = 0.000001f;
+
+  alphaX /= (alphaX + betaX + gammaX);
+  betaX /= (alphaX + betaX + gammaX);
+  gammaX /= (alphaX + betaX + gammaX);
+
+  vals.resize(this->features.size());
+  for (unsigned int i = 0; i < this->features.size(); i++) {
+    float f0 = this->features[i][triangleX[0]];
+    float f1 = this->features[i][triangleX[1]];
+    float f2 = this->features[i][triangleX[2]];
+
+    vals[i] = (alphaX * f0) + (betaX * f1) + (gammaX * f2);
+  }
+}
+

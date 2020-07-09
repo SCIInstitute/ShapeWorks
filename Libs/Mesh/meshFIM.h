@@ -68,16 +68,18 @@ public:
     enum LabelType { MaskPoint, SeedPoint, ActivePoint, FarPoint, StopPoint, AlivePoint,ToBeAlivePoint };
 
     TriMesh *m_meshPtr;
-    int                                          NumComputation;
+    int NumComputation;
     float imageOrigin[3];
     float imageSpacing[3];
     int imageSize[3];
+    int imageIndex[3];
 
     std::vector<Color> colors;
 
 
 
     void computeFIM(TriMesh *mesh, const char *vertT_filename);
+    void GetFeatureValues(point x, std::vector<float> &vals);
 
 
     void need_abs_curvatures();
@@ -216,6 +218,7 @@ private:
 
   std::vector< std::vector<TriMesh::Face> > vertOneringFaces;
 
+  std::vector< std::vector<float> > features;
 
 };
 

@@ -15,7 +15,7 @@
 #include "TriMesh.h"
 #include "TriMesh_algo.h"
 
-using namespace trimesh;
+#include "meshFIM.h"
 
 namespace itk
 {
@@ -93,11 +93,11 @@ public:
   void SetFeaMesh(const char *feaFile);
   void SetFeaGrad(const char *feaGradFile);
   void SetFids(const char *fidsFile);
-  TriMesh* GetMesh()
+  meshFIM* GetMesh()
   {
       return m_mesh;
   }
-  TriMesh* GetMesh() const
+  meshFIM* GetMesh() const
   {
       return m_mesh;
   }
@@ -211,7 +211,7 @@ private:
   std::vector < vnl_vector_fixed<double, DIMENSION> > m_b;
   std::vector < vnl_vector_fixed<double, DIMENSION> > m_c;
   
-  TriMesh *m_mesh;
+  meshFIM *m_mesh;
 
   std::vector< vnl_vector_fixed<double, DIMENSION> > m_SphereCenterList;
   std::vector< double > m_SphereRadiusList;

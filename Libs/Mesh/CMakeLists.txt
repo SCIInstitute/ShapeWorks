@@ -51,6 +51,7 @@ ADD_EXECUTABLE(ExtractVertexFeatureFromMesh ExtractVertexFeatureFromMesh.cxx )
 TARGET_LINK_LIBRARIES(ExtractVertexFeatureFromMesh Mesh tinyxml)
 INSTALL(TARGETS ExtractVertexFeatureFromMesh RUNTIME DESTINATION bin)
 
+# Uses custom TriMesh functions without making an instance of meshFIM
 #ADD_EXECUTABLE(GetFeatureVolume GetFeatureVolume.cxx)
 #TARGET_LINK_LIBRARIES(GetFeatureVolume ${ITK_LIBRARIES} ${VXL_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS GetFeatureVolume RUNTIME DESTINATION bin)
