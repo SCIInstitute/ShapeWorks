@@ -944,6 +944,10 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
   static int iteration = 0;
   static double radius;
 
+  int count = 0;
+  int numShapes = m_sampler->GetParticleSystem()->GetNumberOfDomains();
+  int numParticles = m_sampler->GetParticleSystem()->GetNumberOfParticles(0);
+
   if (firstRun) {
     polydata->SetPoints(points);
     polydata->SetLines(lines);
@@ -968,7 +972,12 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
       meshMapper->SetInputData(meshes[i]);
       meshActor->SetMapper(meshMapper);
       meshActor->GetProperty()->SetColor(0.0, 0.0, 0.0);
-      meshActor->GetProperty()->SetLineWidth(0.02);
+      meshActor->GetProperty()->SetEdgeVisibility(false);
+      double alpha = 1.0 / numShapes;
+      alpha = alpha > 1 ? 1 : alpha;
+      std::cerr << "alpha = " << alpha << "\n";
+      meshActor->GetProperty()->SetOpacity(alpha);
+      meshActor->GetProperty()->SetLineWidth(0.01);
       mainRenderer->AddActor(meshActor);
 
 
@@ -1014,9 +1023,6 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
     firstRun = 0;
   }
 
-  int count = 0;
-  int numShapes = m_sampler->GetParticleSystem()->GetNumberOfDomains();
-  int numParticles = m_sampler->GetParticleSystem()->GetNumberOfParticles(0);
   for (int j = 0; j < numParticles; j++) {
     for (int i = 0; i < numShapes; i++) {
       itk::Point<double, 3> p = m_sampler->GetParticleSystem()->GetPosition(j, i);
