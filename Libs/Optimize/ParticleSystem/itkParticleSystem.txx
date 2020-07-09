@@ -235,8 +235,7 @@ ParticleSystem<VDimension>
 template <unsigned int VDimension>
 void
 ParticleSystem<VDimension>
-::SplitAllParticlesInDomain(const vnl_vector_fixed<double, VDimension> &random,
-                                                      double epsilon, unsigned int domain, int threadId)
+::SplitAllParticlesInDomain(const vnl_vector_fixed<double, VDimension> &random, unsigned int domain, int threadId)
 {
   // Loop through all particle positions in the domain and add a new position
   // at an epsilon distance and random direction. Since we are going to add
@@ -253,12 +252,12 @@ ParticleSystem<VDimension>
     // constraints to generate a new particle position.  Add the new position.
     PointType startingPos = *it;
 
-    vnl_vector_fixed<double, VDimension> updateVector = random * epsilon * 0.5;
+    vnl_vector_fixed<double, VDimension> updateVector = random * 0.5;
     PointType newpos = this->GetDomain(domain)->UpdateParticlePosition(startingPos, updateVector);
     this->AddPosition(newpos, domain, threadId);
 
     // Apply opposite update to each original point in the split.
-    updateVector = -random * epsilon * 0.5;
+    updateVector = -random * 0.5;
     newpos = this->GetDomain(domain)->UpdateParticlePosition(startingPos, updateVector);
     this->SetPosition(newpos, k, domain, threadId);
 

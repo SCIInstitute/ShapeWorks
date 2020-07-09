@@ -596,8 +596,8 @@ void Optimize::Initialize()
   }
   double norm = random.magnitude();
   random /= norm;
+  random *= this->m_spacing;
 
-  double epsilon = this->m_spacing;
   bool flag_split = false;
 
   for (int i = 0; i < n; i++) {
@@ -614,7 +614,7 @@ void Optimize::Initialize()
     for (int i = 0; i < n; i++) {
       int d = i % m_domains_per_shape;
       if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d]) {
-        m_sampler->GetParticleSystem()->SplitAllParticlesInDomain(random, epsilon, i, 0);
+        m_sampler->GetParticleSystem()->SplitAllParticlesInDomain(random, i, 0);
       }
     }
 
