@@ -84,26 +84,23 @@ namespace itk
     typedef typename DomainType::VnlVectorType NormalType;
 
     ResetTimeStepVectors();
+    double minimumTimeStep = 1.0;
 
     const double pi = std::acos(-1.0);
     unsigned int numdomains = m_ParticleSystem->GetNumberOfDomains();
-    std::vector<double> meantime(numdomains);
-    std::vector<double> maxtime(numdomains);
-    std::vector<double> mintime(numdomains);
 
     unsigned int counter = 0;
-
-    for (unsigned int q = 0; q < numdomains; q++)
-    {
-      meantime[q] = 0.0;
-      maxtime[q] = 1.0e30;
-      mintime[q] = 1.0;
-    }
 
     double maxchange = 0.0;
     while (m_StopOptimization == false) // iterations loop
     {
-      double dampening = exp(-double(m_NumberOfIterations) * 5.0 / double(m_MaximumNumberOfIterations));
+
+      double dampening = 1;
+      int startDampening = m_MaximumNumberOfIterations / 2;
+      if (m_NumberOfIterations > startDampening) {
+        dampening = exp(-double(m_NumberOfIterations - startDampening) * 5.0 / double(m_MaximumNumberOfIterations - startDampening));
+      }
+      minimumTimeStep = dampening;
 
       maxchange = 0.0;
       const auto accTimerBegin = std::chrono::steady_clock::now();
@@ -118,7 +115,6 @@ namespace itk
 #pragma omp for
         for (int dom = 0; dom < numdomains; dom++)
         {
-          meantime[dom] = 0.0;
           // skip any flagged domains
           if (m_ParticleSystem->GetDomainFlag(dom) == false)
           {
@@ -150,8 +146,6 @@ namespace itk
 
               unsigned int idx = it.GetIndex();
               PointType pt = *it;
-
-              m_TimeSteps[dom][k] = dampening;
 
               // Step 1 Project the gradient vector onto the tangent plane
               VectorType original_gradient_projectedOntoTangentSpace = domain->ProjectVectorToSurfaceTangent(original_gradient, pt);
@@ -188,15 +182,13 @@ namespace itk
 
                 if (newenergy < energy) // good move, increase timestep for next time
                 {
-                  meantime[dom] += m_TimeSteps[dom][k];
                   m_TimeSteps[dom][k] *= factor;
-                  //if (m_TimeSteps[dom][k] > maxtime[dom]) m_TimeSteps[dom][k] = maxtime[dom];
                   if (gradmag > maxchange) maxchange = gradmag;
                   break;
                 }
                 else
                 {// bad move, reset point position and back off on timestep
-                  if (m_TimeSteps[dom][k] > mintime[dom])
+                  if (m_TimeSteps[dom][k] > minimumTimeStep)
                   {
                     domain->ApplyConstraints(pt);
                     m_ParticleSystem->SetPosition(pt, it.GetIndex(), dom);
@@ -205,21 +197,12 @@ namespace itk
                   }
                   else // keep the move with timestep 1.0 anyway
                   {
-                    meantime[dom] += m_TimeSteps[dom][k];
                     if (gradmag > maxchange) maxchange = gradmag;
                     break;
                   }
                 }
               } // end while(true)
             } // for each particle
-
-            // Compute mean time step
-            meantime[dom] /= static_cast<double>(k);
-
-            //if (meantime[dom] < 1.0) meantime[dom] = 1.0;
-            //                    //        std::cout << "meantime = " << meantime[dom] << std::endl;
-            //maxtime[dom] = meantime[dom] + meantime[dom] * 0.2;
-            //mintime[dom] = meantime[dom] - meantime[dom] * 0.1;
           } // if not flagged
         }// for each domain
       }
