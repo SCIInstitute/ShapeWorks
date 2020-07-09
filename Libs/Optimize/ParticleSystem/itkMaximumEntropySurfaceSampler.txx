@@ -183,7 +183,7 @@ MaximumEntropySurfaceSampler<TImage>::InitializeOptimizationFunctions()
     // domain of the 1st input image.
     unsigned int maxdim = 0;
     double maxradius = -1.0;
-    double spacing = this->m_Spacing;
+    double minimumNeighborhoodRadius = this->m_Spacing;
 
     for (unsigned int d = 0; d < this->GetParticleSystem()->GetNumberOfDomains(); d++)
     {
@@ -193,25 +193,25 @@ MaximumEntropySurfaceSampler<TImage>::InitializeOptimizationFunctions()
       }
     }
 
-    m_GradientFunction->SetMinimumNeighborhoodRadius(spacing * 5.0);
+    m_GradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
     m_GradientFunction->SetMaximumNeighborhoodRadius(maxradius);
 
-    m_CurvatureGradientFunction->SetMinimumNeighborhoodRadius(spacing * 5.0);
+    m_CurvatureGradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
     m_CurvatureGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
     m_CurvatureGradientFunction->SetParticleSystem(this->GetParticleSystem());
     m_CurvatureGradientFunction->SetDomainNumber(0);
 
-    m_ModifiedCotangentGradientFunction->SetMinimumNeighborhoodRadius(spacing * 5.0);
+    m_ModifiedCotangentGradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
     m_ModifiedCotangentGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
     m_ModifiedCotangentGradientFunction->SetParticleSystem(this->GetParticleSystem());
     m_ModifiedCotangentGradientFunction->SetDomainNumber(0);
 
-    m_ConstrainedModifiedCotangentGradientFunction->SetMinimumNeighborhoodRadius(spacing * 5.0);
+    m_ConstrainedModifiedCotangentGradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
     m_ConstrainedModifiedCotangentGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
     m_ConstrainedModifiedCotangentGradientFunction->SetParticleSystem(this->GetParticleSystem());
     m_ConstrainedModifiedCotangentGradientFunction->SetDomainNumber(0);
 
-    m_OmegaGradientFunction->SetMinimumNeighborhoodRadius(spacing * 5.0);
+    m_OmegaGradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
     m_OmegaGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
     m_OmegaGradientFunction->SetParticleSystem(this->GetParticleSystem());
     m_OmegaGradientFunction->SetDomainNumber(0);

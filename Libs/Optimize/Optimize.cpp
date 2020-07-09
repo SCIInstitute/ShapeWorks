@@ -2108,7 +2108,7 @@ void Optimize::AddImage(ImageType::Pointer image) {
   this->m_sampler->AddImage(image, this->GetNarrowBand());
   this->m_num_shapes++;
   if (image) {
-    this->m_spacing = image->GetSpacing()[0];
+    this->m_spacing = image->GetSpacing()[0] * 5;
   }
 }
 
