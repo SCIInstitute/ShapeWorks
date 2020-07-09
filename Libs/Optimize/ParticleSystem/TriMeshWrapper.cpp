@@ -311,38 +311,7 @@ namespace shapeworks
         }
       }
     }
-    //double closestDistance = 99999999;
-    //int closestFace = -1;
-
-    //int vertex = GetNearestVertex(pt);
-    //for (int i = 0; i < mesh->adjacentfaces[vertex].size(); i++) {
-    //  int face = mesh->adjacentfaces[vertex][i];
-    //  vec bary = this->ComputeBarycentricCoordinates(pt, face);
-    //  if (((bary[0] >= 0) && (bary[0] <= 1)) &&
-    //    ((bary[1] >= 0) && (bary[1] <= 1)) &&
-    //      ((bary[2] >= 0) && (bary[2] <= 1))) {
-    //    return face;
-    //  }
-    //  else {
-    //    float distance = 0;
-    //    for (int j = 0; j < 3; j++) {
-    //      if (bary[j] < 0) {
-    //        distance += -bary[j];
-    //      }
-    //      else if (bary[j] > 1) {
-    //        distance += bary[j] - 1;
-    //      }
-    //    }
-    //    if (distance < closestDistance) {
-    //      closestFace = face;
-    //      closestDistance = distance;
-    //    }
-    //  }
-    //}
-    //std::cerr << "ERROR ERROR reached end of GetTriangleForPoint!\n";
-
     vec bary = this->ComputeBarycentricCoordinates(pt, closestFace);
-    //std::cerr << "bary: " << PrintValue<vec>(bary) << "\n";
     return closestFace;
   }
   vec3 TriMeshWrapper::ComputeBarycentricCoordinates(point pt, int face) const {

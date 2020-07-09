@@ -149,6 +149,7 @@ namespace itk
 
               // Step 1 Project the gradient vector onto the tangent plane
               VectorType original_gradient_projectedOntoTangentSpace = domain->ProjectVectorToSurfaceTangent(original_gradient, pt);
+              original_gradient_projectedOntoTangentSpace = original_gradient;
 
               // Step 2 scale the gradient by the time step
               // Note that time step can only decrease while finding a good update so the gradient computed here is 
