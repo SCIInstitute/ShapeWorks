@@ -53,6 +53,8 @@
 #include <vtkRenderer.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkGenericRenderWindowInteractor.h>
+#include <vtkWindowToImageFilter.h>
+#include <vtkPNGWriter.h>
 
 //---------------------------------------------------------------------------
 Optimize::Optimize()
@@ -1087,7 +1089,7 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
   vtkSmartPointer<vtkGlyph3D> glyph3D = vtkSmartPointer<vtkGlyph3D>::New();
   glyph3D->SetSourceConnection(cubeSource->GetOutputPort());
   glyph3D->SetInputData(polydata);
-  glyph3D->SetScaleFactor(0.1);
+  glyph3D->SetScaleFactor(0.15);
   glyph3D->Update();
   mapper->SetInputConnection(glyph3D->GetOutputPort());
 
@@ -1108,10 +1110,13 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
   //pos = cam->GetClippingRange();
   //std::cerr << pos[0] << ", " << pos[1] << "\n";
 
-  iteration = iteration % 360;
+  int rotationSpeed = 10;
+  double rotation = double(iteration % (360 * rotationSpeed)) / double(rotationSpeed);
+
+  //double rotation = (iteration/20.0) % 360;
   double PI = 3.14159;
-  double z = sin(iteration * 2 * PI / 360);
-  double x = cos(iteration * 2 * PI / 360);
+  double z = sin(rotation * 2 * PI / 360);
+  double x = cos(rotation * 2 * PI / 360);
 
   cam->SetPosition(focalPoint[0] + radius * x, focalPoint[1], focalPoint[2] + radius * z);
   cam->SetClippingRange(1, radius*2);
@@ -1124,7 +1129,27 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
   }
   
   renderWindow->Render();
+
+  //if (iteration % 10 == 0) {
+    vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter =
+      vtkSmartPointer<vtkWindowToImageFilter>::New();
+    windowToImageFilter->SetInput(renderWindow);
+    //windowToImageFilter->SetMagnification(3); //set the resolution of the output image (3 times the current resolution of vtk render window)
+    //windowToImageFilter->SetInputBufferTypeToRGBA(); //also record the alpha (transparency) channel
+    windowToImageFilter->ReadFrontBufferOff(); // read from the back buffer
+    windowToImageFilter->Update();
+
+    vtkSmartPointer<vtkPNGWriter> writer = vtkSmartPointer<vtkPNGWriter>::New(); 
+    char buffer[100];
+    int n;
+    n = sprintf(buffer, "screenshots/screenshot_%08d.png", iteration);
+    writer->SetFileName(buffer);
+    writer->SetInputConnection(windowToImageFilter->GetOutputPort());
+    writer->Write();
+  //}
+
   iteration++;
+
   
 
   if (m_perform_good_bad == true) {
