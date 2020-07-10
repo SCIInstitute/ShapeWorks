@@ -60,8 +60,11 @@ public:
     return meshWrapper->GetMeshUpperBound();
   }
 
-  PointType GetValidLocation() const override {
-    return meshWrapper->GetPointOnMesh();
+  PointType GetValidLocationNear(PointType p) const override {
+    PointType valid;
+    valid[0] = p[0]; valid[1] = p[1]; valid[2] = p[2];
+    ApplyConstraints(valid);
+    return valid;
   }
   double GetSurfaceArea() const override {
     // TODO return actual surface area
