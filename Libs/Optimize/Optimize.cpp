@@ -498,16 +498,15 @@ void Optimize::AddSinglePoint()
   typedef itk::ParticleSystem < 3 > ParticleSystemType;
   typedef ParticleSystemType::PointType PointType;
 
-  const auto domainZeroPos = m_sampler->GetParticleSystem()->GetDomain(0)->GetValidLocation();
+  PointType domainZeroPos;
+  domainZeroPos = m_sampler->GetParticleSystem()->GetDomain(0)->GetValidLocationNear(domainZeroPos);
 
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
     if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) > 0) {
       continue;
     }
-    auto pos = domainZeroPos;
-    const auto zcPos = m_sampler->GetParticleSystem()->GetDomain(i)->ApplyConstraints(pos);
-    //const auto zcPos = m_sampler->GetParticleSystem()->GetDomain(i)->GetValidLocation();
-    m_sampler->GetParticleSystem()->AddPosition(zcPos, i);
+    PointType pos = m_sampler->GetParticleSystem()->GetDomain(0)->GetValidLocationNear(domainZeroPos);
+    m_sampler->GetParticleSystem()->AddPosition(pos, i);
   }
 }
 
@@ -1114,7 +1113,6 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
   double rotation = double(iteration % (360 * rotationSpeed)) / double(rotationSpeed);
 
   //double rotation = (iteration/20.0) % 360;
-  double PI = 3.14159;
   double z = sin(rotation * 2 * PI / 360);
   double x = cos(rotation * 2 * PI / 360);
 
@@ -1131,21 +1129,21 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
   renderWindow->Render();
 
   //if (iteration % 10 == 0) {
-    vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter =
-      vtkSmartPointer<vtkWindowToImageFilter>::New();
-    windowToImageFilter->SetInput(renderWindow);
-    //windowToImageFilter->SetMagnification(3); //set the resolution of the output image (3 times the current resolution of vtk render window)
-    //windowToImageFilter->SetInputBufferTypeToRGBA(); //also record the alpha (transparency) channel
-    windowToImageFilter->ReadFrontBufferOff(); // read from the back buffer
-    windowToImageFilter->Update();
+    //vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter =
+    //  vtkSmartPointer<vtkWindowToImageFilter>::New();
+    //windowToImageFilter->SetInput(renderWindow);
+    ////windowToImageFilter->SetMagnification(3); //set the resolution of the output image (3 times the current resolution of vtk render window)
+    ////windowToImageFilter->SetInputBufferTypeToRGBA(); //also record the alpha (transparency) channel
+    //windowToImageFilter->ReadFrontBufferOff(); // read from the back buffer
+    //windowToImageFilter->Update();
 
-    vtkSmartPointer<vtkPNGWriter> writer = vtkSmartPointer<vtkPNGWriter>::New(); 
-    char buffer[100];
-    int n;
-    n = sprintf(buffer, "screenshots/screenshot_%08d.png", iteration);
-    writer->SetFileName(buffer);
-    writer->SetInputConnection(windowToImageFilter->GetOutputPort());
-    writer->Write();
+    //vtkSmartPointer<vtkPNGWriter> writer = vtkSmartPointer<vtkPNGWriter>::New(); 
+    //char buffer[100];
+    //int n;
+    //n = sprintf(buffer, "screenshots/screenshot_%08d.png", iteration);
+    //writer->SetFileName(buffer);
+    //writer->SetInputConnection(windowToImageFilter->GetOutputPort());
+    //writer->Write();
   //}
 
   iteration++;

@@ -2319,3 +2319,203 @@ void meshFIM::GetFeatureValues(point x, std::vector<float> &vals) {
   }
 }
 
+/* Prateep */
+void meshFIM::ReadFaceIndexMap(const char *infilename) {
+  std::ifstream infile(infilename);
+  if (!infile.is_open()) {
+    std::cout << "File Not Found:" << infilename << std::endl;
+  }
+  else {
+    std::cout << "reading face indices from " << infilename << std::endl;
+
+    //            map<VoxelIndexType, set<int> > tmpFaceIndexMap;
+    std::string line;
+    while (infile) {
+      getline(infile, line);
+      std::stringstream ss(line);
+      VoxelIndexType index;
+      char delim;
+      ss >> index >> delim;
+      int fid;
+      while (ss >> fid) {
+        this->faceIndexMap[index].push_back(fid);
+        //                    tmpFaceIndexMap[index].insert(fid);
+      }
+    }
+
+    //            if(tmpFaceIndexMap.size() != 0 )
+    //            {
+    //                this->faceIndexMap = tmpFaceIndexMap;
+    //            }
+
+    //            tmpFaceIndexMap.clear(); // clear memory
+    infile.close();
+  }
+}
+
+void meshFIM::ReadFeatureFromFile(const char *infilename) {
+  std::ifstream infile(infilename, std::ios::binary);
+  if (!infile.is_open()) {
+    std::cerr << "File Not Found: " << infilename << std::endl;
+    throw(1);
+  }
+  else {
+    // read # vertices
+    unsigned int numVert;
+    infile.read(reinterpret_cast<char *>(&numVert), sizeof(unsigned int));
+
+    if (numVert != m_meshPtr->vertices.size()) {
+      std::cerr << "size of feature vector does not match # vertices in mesh" << std::endl;
+      throw(1);
+    }
+    else {
+      //                std::cout << "reading feature from file " << infilename << std::endl;
+
+      std::vector< float > tmpFeatureVec;
+      // loop over vertices
+      for (int i = 0; i < numVert; i++) {
+        // read feature value
+        float value;
+        infile.read(reinterpret_cast<char *>(&value), sizeof(float));
+        tmpFeatureVec.push_back(value);
+      }
+
+      this->features.push_back(tmpFeatureVec);
+    }
+
+    infile.close();
+  }
+
+}
+
+/* Praful */
+void meshFIM::ReadFeatureGradientFromFile(const char *infilename) {
+  std::ifstream infile(infilename);
+  if (!infile.is_open()) {
+    std::cerr << "File Not Found" << std::endl;
+    throw(1);//exit(1);
+  }
+  else {
+    // read # vertices
+    unsigned int numVert;
+    infile.read(reinterpret_cast<char *>(&numVert), sizeof(unsigned int));
+
+    if (numVert != m_meshPtr->vertices.size()) {
+      std::cerr << "size of feature vector does not match # vertices in mesh" << std::endl;
+      throw(1); //exit(1);
+    }
+    else {
+      //                std::cout << "reading feature gradient from file " << infilename << std::endl;
+
+      std::vector<point> tempFeatureGradVec;
+      // loop over vertices
+      for (int i = 0; i < numVert; i++) {
+        // read feature gradient
+        point val;
+        float value;
+        for (int j = 0; j < 3; j++) {
+          infile.read(reinterpret_cast<char *>(&value), sizeof(float));
+          val[j] = ( float) value;
+        }
+
+        tempFeatureGradVec.push_back(val);
+      }
+      this->featureGradients.push_back(tempFeatureGradVec);
+    }
+    infile.close();
+  }
+}
+
+/* Praful */
+point meshFIM::ComputeFeatureDerivative(int v, int nFeature = 0) {
+  if (featureGradients.size() > 0)
+    return featureGradients[nFeature][v];
+  else {
+    point df; df.clear();
+    df[0] = 0.0f; df[1] = 0.0f; df[2] = 0.0f;
+
+    // feature value at v
+    float valueV = this->features[nFeature][v];
+    point ptV = m_meshPtr->vertices[v];
+
+    // iterate over neighbors of v to compute derivative as central difference
+    for (unsigned int n = 0; n < m_meshPtr->neighbors[v].size(); n++) {
+      int indexN = m_meshPtr->neighbors[v][n];
+      float valueN = this->features[nFeature][indexN];
+      point ptN = m_meshPtr->vertices[indexN];
+
+      float valueDiff = valueN - valueV;
+      point ptDiff = ptN - ptV;
+
+      df[0] = df[0] + valueDiff / (ptDiff[0] + 0.0001f);
+      df[1] = df[1] + valueDiff / (ptDiff[1] + 0.0001f);
+      df[2] = df[2] + valueDiff / (ptDiff[2] + 0.0001f);
+    }
+
+    df[0] = df[0] / ( float) (m_meshPtr->neighbors[v].size());
+    df[1] = df[1] / ( float) (m_meshPtr->neighbors[v].size());
+    df[2] = df[2] / ( float) (m_meshPtr->neighbors[v].size());
+
+    return df;
+  }
+}
+
+/* Prateep -- updated Praful */
+point meshFIM::GetFeatureDerivative(point p, int fIndex = 0) {
+  point dP; dP.clear();
+  dP[0] = 0.0f; dP[1] = 0.0f; dP[2] = 0.0f;
+
+  float alphaP, betaP, gammaP;
+  TriMesh::Face triangleP;
+
+  GetTriangleInfoForPoint(p, triangleP, alphaP, betaP, gammaP);
+
+  if (alphaP < 0.000001f)
+    alphaP = 0.000001f;
+
+  if (betaP < 0.000001f)
+    betaP = 0.000001f;
+
+  if (gammaP < 0.000001f)
+    gammaP = 0.000001f;
+
+  alphaP /= (alphaP + betaP + gammaP);
+  betaP /= (alphaP + betaP + gammaP);
+  gammaP /= (alphaP + betaP + gammaP);
+
+  // compute derivative at 3 vertices (A,B,C)
+  int A = triangleP[0];
+  int B = triangleP[1];
+  int C = triangleP[2];
+
+  //        // Get derivatives of Barycentric coordinates
+  //        vec fNorm    = GetFaceNormal(triangleP);
+  //        float mag    = fNorm DOT fNorm;
+  //        mag          = std::sqrt(mag);
+  //        fNorm[0]     /= mag;
+  //        fNorm[1]     /= mag;
+  //        fNorm[2]     /= mag;
+
+  //        float fArea  = GetFaceArea(triangleP);
+  //        vec v0 = this->vertices[triangleP.v[0]];
+  //        vec v1 = this->vertices[triangleP.v[1]];
+  //        vec v2 = this->vertices[triangleP.v[2]];
+  //        vec dAlpha   = GetGradientBaryCentricCoord(fNorm, v2-v1, fArea);
+  //        vec dBeta    = GetGradientBaryCentricCoord(fNorm, v0-v2, fArea);
+  //        vec dGamma   = GetGradientBaryCentricCoord(fNorm, v1-v0, fArea);
+
+  point dA = ComputeFeatureDerivative(A, fIndex);
+  point dB = ComputeFeatureDerivative(B, fIndex);
+  point dC = ComputeFeatureDerivative(C, fIndex);
+
+  //        float f0 = this->features[fIndex][A];
+  //        float f1 = this->features[fIndex][B];
+  //        float f2 = this->features[fIndex][C];
+
+          // interpolate
+  dP[0] = (alphaP * dA[0]) + (betaP * dB[0]) + (gammaP * dC[0]);// + ( dAlpha[0] * f0 ) + ( dBeta[0] * f1 ) + ( dGamma[0] * f2 );
+  dP[1] = (alphaP * dA[1]) + (betaP * dB[1]) + (gammaP * dC[1]);// + ( dAlpha[1] * f0 ) + ( dBeta[1] * f1 ) + ( dGamma[1] * f2 );
+  dP[2] = (alphaP * dA[2]) + (betaP * dB[2]) + (gammaP * dC[2]);// + ( dAlpha[2] * f0 ) + ( dBeta[2] * f1 ) + ( dGamma[2] * f2 );
+
+  return dP;
+}

@@ -80,6 +80,10 @@ public:
 
     void computeFIM(TriMesh *mesh, const char *vertT_filename);
     void GetFeatureValues(point x, std::vector<float> &vals);
+    void ReadFaceIndexMap(const char *infilename);
+    void ReadFeatureFromFile(const char *infilename);
+    void ReadFeatureGradientFromFile(const char *infilename);
+    point GetFeatureDerivative(point p, int fIndex);
 
 
     void need_abs_curvatures();
@@ -188,6 +192,8 @@ private:
   void WriteFeaFile(std::vector<float> fea, char *outfilename);
   // end SHIREEN
 
+  point ComputeFeatureDerivative(int v, int nFeature);
+
 
 
   int speedType;
@@ -219,6 +225,8 @@ private:
   std::vector< std::vector<TriMesh::Face> > vertOneringFaces;
 
   std::vector< std::vector<float> > features;
+
+  std::vector < std::vector<point> > featureGradients;
 
 };
 
