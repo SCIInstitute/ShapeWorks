@@ -345,7 +345,7 @@ protected:
   double m_cotan_sigma_factor = 5.0;
   std::vector <int> m_particle_flags;
   std::vector <int> m_domain_flags;
-  double m_narrow_band{4};
+  double m_narrow_band;
   bool m_narrow_band_set{false};
   bool m_fixed_domains_present{false};
 
