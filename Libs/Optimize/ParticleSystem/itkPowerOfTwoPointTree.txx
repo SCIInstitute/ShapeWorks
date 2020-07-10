@@ -1,19 +1,5 @@
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkPowerOfTwoPointTree.txx,v $
-  Date:      $Date: 2011/03/24 01:17:34 $
-  Version:   $Revision: 1.2 $
-  Author:    $Author: wmartin $
 
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
-#ifndef __itkPowerOfTwoPointTree_txx
-#define __itkPowerOfTwoPointTree_txx
+#pragma once
 
 #include <cmath>
 
@@ -51,9 +37,9 @@ bool  PowerOfTwoPointTree<VDimension>
     {
     // Does this region contain either node endpoint or does the node region
    // contain both of this region's endpoints?
-    if (!  (node->GetLowerBound()[i] >= lowerbound[i] && node->GetLowerBound()[i] <= upperbound[i]
-            || node->GetUpperBound()[i] >= lowerbound[i] && node->GetUpperBound()[i] <= upperbound[i]
-            || node->GetLowerBound()[i] <= lowerbound[i] && node->GetUpperBound()[i] >= upperbound[i] ) )
+    if (!  ((node->GetLowerBound()[i] >= lowerbound[i] && node->GetLowerBound()[i] <= upperbound[i])
+            || (node->GetUpperBound()[i] >= lowerbound[i] && node->GetUpperBound()[i] <= upperbound[i])
+            || (node->GetLowerBound()[i] <= lowerbound[i] && node->GetUpperBound()[i] >= upperbound[i]) ) )
       return false;
     }
   return true;
@@ -147,6 +133,7 @@ void PowerOfTwoPointTree<VDimension>::ConstructTree(const PointType &lowerbound,
   m_Depth = depth;
 
   NodePointerType n = NodeType::New();
+
   n->SetLowerBound(lowerbound);
   n->SetUpperBound(upperbound);
 
@@ -210,4 +197,4 @@ void PowerOfTwoPointTree<VDimension>::PrintSelf(std::ostream& os, Indent indent)
 }
 
 } // end namespace itk
-#endif
+

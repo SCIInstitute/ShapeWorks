@@ -70,7 +70,7 @@ public:
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
   /** Define the base domain type. */
-  typedef ParticleDomain<VDimension> DomainType;
+  typedef ParticleDomain DomainType;
   
   /** Point type used to store particle locations. */
   typedef Point<double, VDimension> PointType;
@@ -119,7 +119,7 @@ public:
         }
       } 
   }
-  
+
   /** Returns the number of particles in domain k. */
   unsigned long int GetNumberOfParticles(unsigned int d = 0) const
   { return m_Positions[d]->GetSize(); }

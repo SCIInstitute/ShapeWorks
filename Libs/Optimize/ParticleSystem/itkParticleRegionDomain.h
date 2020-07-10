@@ -12,15 +12,14 @@
 
 namespace itk
 {
-template <class T, unsigned int VDimension=3>
-class ParticleRegionDomain : public ParticleDomain<VDimension>
+class ParticleRegionDomain : public ParticleDomain
 {
 public:
   /** Standard class typedefs */
   typedef SmartPointer<ParticleRegionDomain>  Pointer;
 
   /** Point type used to store particle locations. */
-  typedef typename ParticleDomain<VDimension>::PointType PointType;
+  typedef typename ParticleDomain::PointType PointType;
 
   /** Apply any constraints to the given point location.  This method may, for
       example, implement boundary conditions or restrict points to lie on a
@@ -28,7 +27,7 @@ public:
   virtual bool ApplyConstraints(PointType &p) const
   {
     bool changed = false;
-    for (unsigned int i = 0; i < VDimension; i++)
+    for (unsigned int i = 0; i < DIMENSION; i++)
     {
         if (p[i] < GetLowerBound()[i]) {
             changed = true;
@@ -58,7 +57,7 @@ protected:
 
   void PrintSelf(std::ostream& os, Indent indent) const
   {
-    ParticleDomain<VDimension>::PrintSelf(os, indent);
+    ParticleDomain::PrintSelf(os, indent);
     os << "LowerBound = " << GetLowerBound() << std::endl;
     os << "UpperBound = " << GetUpperBound() << std::endl;
   }
@@ -66,7 +65,7 @@ protected:
   /** Check whether the point p may be sampled in this domain. */
   inline bool IsInsideBuffer(const PointType &p) const
   {
-    for(int i=0; i<VDimension; i++) {
+    for(int i=0; i<DIMENSION; i++) {
       if(p[i] < m_LowerBound[i] || p[i] > m_UpperBound[i]) {
         return false;
       }

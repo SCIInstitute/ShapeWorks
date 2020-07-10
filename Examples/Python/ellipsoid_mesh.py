@@ -30,8 +30,6 @@ from OptimizeUtils import *
 from AnalyzeUtils import *
 
 
-
-
 def Run_Pipeline(args):
 
     """
@@ -59,121 +57,48 @@ def Run_Pipeline(args):
         import DatasetUtils
         DatasetUtils.downloadDataset(datasetName)
 
-    parentDir = "TestEllipsoids/"
+    parentDir = "TestEllipsoidsMesh/"
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)
     # extract the zipfile
     with ZipFile(filename, 'r') as zipObj:
         zipObj.extractall(path=parentDir)
-        parentDir = parentDir + datasetName + "/"
-        if not args.start_with_prepped_data:
-            fileList = sorted(glob.glob(parentDir + "images/*.nrrd"))
-        else:
-            fileList = sorted(glob.glob(parentDir + "segmentations/*.nrrd"))
+        datasetDir = parentDir + datasetName + "/"
+        meshFiles = sorted(glob.glob(datasetDir + "meshes/*.ply"))
+        imageFiles = sorted(glob.glob(datasetDir + "images/*.nrrd"))
 
-    fileList = fileList[:15]
+    meshFiles = meshFiles[:15]
+    imageFiles = imageFiles[:15]
     if args.tiny_test:
         args.use_single_scale = 1
-        fileList = fileList[:2]
+        meshFiles = meshFiles[:2]
+        imageFiles = imageFiles[:2]
 
-
-    """
-
-    ## GROOM : Data Pre-processing 
-    For the unprepped data the first few steps are 
-    -- Isotropic resampling
-    -- Center
-    -- Padding
-    -- Center of Mass Alignment
-    -- Rigid Alignment
-    -- Largest Bounding Box and Cropping 
-    For a detailed explanation of grooming steps see: /Documentation/Workflow/Groom.md
-    """
-
-    print("\nStep 2. Groom - Data Pre-processing\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
-
-
-    parentDir = 'TestEllipsoids/PrepOutput/'
-    if not os.path.exists(parentDir):
-        os.makedirs(parentDir)
-
-    if int(args.start_with_prepped_data) == 0:
-
-        """ Apply isotropic resampling """
-        resampledFiles = applyIsotropicResampling(parentDir + "resampled", fileList)
-
-        """ Center """
-        centeredFiles = center(parentDir + "centered", resampledFiles)
-
-        """ Apply padding"""
-        paddedFiles = applyPadding(parentDir + "padded", centeredFiles, 10)
-
-        """ Apply center of mass alignment """
-        comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles)
-
-        """ Apply rigid alignment """
-        rigidFiles = applyRigidAlignment(parentDir, comFiles, None, comFiles[0])
-
-        """ Compute largest bounding box and apply cropping """
-        croppedFiles = applyCropping(parentDir, rigidFiles, None)
-
-    """
-    We convert the scans to distance transforms, this step is common for both the 
-    prepped as well as unprepped data, just provide correct filenames.
-    """
-
-    print("\nStep 3. Groom - Convert to distance transforms\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
-
-    if int(args.start_with_prepped_data) == 0:
-        dtFiles = applyDistanceTransforms(parentDir, croppedFiles)
-    else:
-        dtFiles = applyDistanceTransforms(parentDir, fileList)
-
-    """
-    ## OPTIMIZE : Particle Based Optimization
-
-    Now that we have the distance transform representation of data we create 
-    the parameter files for the shapeworks particle optimization routine.
-    For more details on the plethora of parameters for shapeworks please refer to
-    ...[link to documentation]
-
-    First we need to create a dictionary for all the parameters required by this
-    optimization routine
-    """
-
-    print("\nStep 4. Optimize - Particle Based Optimization\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
-
-    pointDir = './TestEllipsoids/PointFiles/'
+    pointDir = parentDir + 'PointFiles/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
     parameterDictionary = {
-        "number_of_particles": 128,
-        "use_normals": 1,
+        "number_of_particles" : 128,
+        "use_normals": 0,
         "normal_weight": 10.0,
-        "checkpointing_interval": 200,
-        "keep_checkpoints": 0,
-        "iterations_per_split": 100,
-        "optimization_iterations": 2000,
-        "starting_regularization": 100,
-        "ending_regularization": 0.1,
-        "recompute_regularization_interval": 2,
-        "domains_per_shape": 1,
-        "domain_type": 'image',
-        "relative_weighting": 10,
-        "initial_relative_weighting": 0.01,
-        "procrustes_interval": 0,
-        "procrustes_scaling": 0,
-        "save_init_splits": 0,
-        "debug_projection": 0,
-        "verbosity": 3
-    }
+        "checkpointing_interval" : 200,
+        "keep_checkpoints" : 0,
+        "iterations_per_split" : 500,
+        "optimization_iterations" : 500,
+        "starting_regularization" : 100,
+        "ending_regularization" : 0.1,
+        "recompute_regularization_interval" : 2,
+        "domains_per_shape" : 1,
+        "domain_type" : 'mesh',
+        "relative_weighting" : 10,
+        "initial_relative_weighting" : 0.01,
+        "procrustes_interval" : 0,
+        "procrustes_scaling" : 0,
+        "save_init_splits" : 0,
+        "debug_projection" : 0,
+        "verbosity" : 3
+      }
 
     if args.tiny_test:
         parameterDictionary["number_of_particles"] = 32
@@ -182,10 +107,11 @@ def Run_Pipeline(args):
     if not args.use_single_scale:
         parameterDictionary["use_shape_statistics_after"] = 32
 
+
     """
     Now we execute a single scale particle optimization function.
     """
-    [localPointFiles, worldPointFiles] = runShapeWorksOptimize(pointDir, dtFiles, parameterDictionary)
+    [localPointFiles, worldPointFiles] = runShapeWorksOptimize(pointDir, meshFiles, parameterDictionary)
 
     if args.tiny_test:
         print("Done with tiny test")
@@ -217,5 +143,5 @@ def Run_Pipeline(args):
     if args.interactive != 0:
         input("Press Enter to continue")
 
-    launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)
+    launchShapeWorksStudio(pointDir, imageFiles, localPointFiles, worldPointFiles)
 

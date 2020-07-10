@@ -23,10 +23,8 @@ void
 ParticleMeanCurvatureAttribute<TNumericType, VDimension>::
 ComputeCurvatureStatistics(const ParticleSystemType *system, unsigned int d)
 {
-  //TODO: Get rid of dynamic_cast
-  const auto domain = dynamic_cast<const itk::ParticleImageDomainWithCurvature<float, 3> *>(system->GetDomain(d));
-  m_MeanCurvatureList[d] = domain->GetSurfaceMeanCurvature();
-  m_CurvatureStandardDeviationList[d] = domain->GetSurfaceStdDevCurvature();
+  m_MeanCurvatureList[d] = system->GetDomain(d)->GetSurfaceMeanCurvature();
+  m_CurvatureStandardDeviationList[d] = system->GetDomain(d)->GetSurfaceStdDevCurvature();
 
   if (m_verbosity > 1)
   {
