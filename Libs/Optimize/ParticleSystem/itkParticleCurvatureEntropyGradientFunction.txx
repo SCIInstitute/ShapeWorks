@@ -242,10 +242,10 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 
    // Get the position for which we are computing the gradient.
   PointType pos = system->GetPosition(idx, d);
-  
+
   // Compute the gradients
   double sigma2inv = 1.0 / (2.0* m_CurrentSigma * m_CurrentSigma + epsilon);
-  
+
   VectorType r;
   VectorType gradE;
 
@@ -277,7 +277,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 
     
     double q = kappa * exp( -dot_product(r, r) * sigma2inv);
-    
+
     A += q;
     
     for (unsigned int n = 0; n < VDimension; n++)

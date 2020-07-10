@@ -53,12 +53,13 @@ def Run_Pipeline(args):
         os.makedirs(pointDir)
 
     parameterDictionary = {
+        "number_of_particles" : 128,
         "use_normals": 0,
-        "normal_weight": 0.0,
-        "checkpointing_interval" : 1000,
+        "normal_weight": 10.0,
+        "checkpointing_interval" : 200,
         "keep_checkpoints" : 0,
-        "iterations_per_split" : 2000,
-        "optimization_iterations" : 2000,
+        "iterations_per_split" : 500,
+        "optimization_iterations" : 500,
         "starting_regularization" : 100,
         "ending_regularization" : 0.1,
         "recompute_regularization_interval" : 2,
@@ -70,21 +71,21 @@ def Run_Pipeline(args):
         "procrustes_scaling" : 0,
         "save_init_splits" : 0,
         "debug_projection" : 0,
-        "verbosity" : 1
-        }
-    if int(args.use_single_scale) != 0:
-        parameterDictionary["number_of_particles"] = 128
-        if args.tiny_test:
-            parameterDictionary["number_of_particles"] = 32
-            parameterDictionary["optimization_iterations"] = 25
+        "verbosity" : 3
+      }
 
-        [localPointFiles, worldPointFiles] = runShapeWorksOptimize_SingleScale(pointDir, meshFiles, parameterDictionary)
+    if args.tiny_test:
+        parameterDictionary["number_of_particles"] = 32
+        parameterDictionary["optimization_iterations"] = 25
 
-    else:
-        parameterDictionary["starting_particles"] = 32
-        parameterDictionary["number_of_levels"] = 3
+    if not args.use_single_scale:
+        parameterDictionary["use_shape_statistics_after"] = 32
 
-        [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, meshFiles, parameterDictionary)
+
+    """
+    Now we execute a single scale particle optimization function.
+    """
+    [localPointFiles, worldPointFiles] = runShapeWorksOptimize(pointDir, meshFiles, parameterDictionary)
 
     if args.tiny_test:
         print("Done with tiny test")

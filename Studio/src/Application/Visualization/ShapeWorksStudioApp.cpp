@@ -514,7 +514,7 @@ void ShapeWorksStudioApp::on_delete_button_clicked()
 
   this->session_->remove_shapes(index_list);
   if (this->session_->get_shapes().size() == 0) {
-    this->session_->reset();
+    this->new_session();
     this->analysis_tool_->reset_stats();
     this->lightbox_->clear_renderers();
   }
@@ -525,7 +525,6 @@ void ShapeWorksStudioApp::on_delete_button_clicked()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_table()
 {
-
   QVector<QSharedPointer<Shape>> shapes = this->session_->get_shapes();
 
   auto project = this->session_->get_project();
@@ -590,7 +589,7 @@ void ShapeWorksStudioApp::handle_error(std::string str)
 {
   QMessageBox::critical(this, "Critical Error", str.c_str());
   this->handle_message(str);
-  this->handle_progress(100);
+  //this->handle_progress(100);
 }
 
 //---------------------------------------------------------------------------
@@ -636,6 +635,10 @@ void ShapeWorksStudioApp::new_session()
   // project initializations
   this->session_ = QSharedPointer<Session>(new Session(this, preferences_));
   this->session_->set_parent(this);
+
+  connect(this->session_->get_mesh_manager().data(), &MeshManager::error_encountered,
+          this, &ShapeWorksStudioApp::handle_error);
+
   connect(this->session_.data(), SIGNAL(data_changed()), this, SLOT(handle_project_changed()));
   connect(this->session_.data(), SIGNAL(points_changed()), this, SLOT(handle_points_changed()));
   connect(this->session_.data(), SIGNAL(update_display()), this,
@@ -656,7 +659,7 @@ void ShapeWorksStudioApp::new_session()
 void ShapeWorksStudioApp::update_tool_mode()
 {
   std::string tool_state =
-    this->session_->settings().get("tool_state", Session::DATA_C);
+    this->session_->parameters().get("tool_state", Session::DATA_C);
 
   if (tool_state == Session::ANALYSIS_C) {
     this->ui_->stacked_widget->setCurrentWidget(this->analysis_tool_.data());
@@ -704,7 +707,7 @@ void ShapeWorksStudioApp::update_view_mode()
 //---------------------------------------------------------------------------
 std::string ShapeWorksStudioApp::get_view_mode()
 {
-  return this->session_->settings().get("view_state", Visualizer::MODE_ORIGINAL_C);
+  return this->session_->parameters().get("view_state", Visualizer::MODE_ORIGINAL_C);
 }
 
 //---------------------------------------------------------------------------
@@ -716,28 +719,28 @@ void ShapeWorksStudioApp::set_view_combo_item_enabled(int item, bool value)
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_import_mode_triggered()
 {
-  this->session_->settings().set("tool_state", Session::DATA_C);
+  this->session_->parameters().set("tool_state", Session::DATA_C);
   this->update_tool_mode();
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_groom_mode_triggered()
 {
-  this->session_->settings().set("tool_state", Session::GROOM_C);
+  this->session_->parameters().set("tool_state", Session::GROOM_C);
   this->update_tool_mode();
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_optimize_mode_triggered()
 {
-  this->session_->settings().set("tool_state", Session::OPTIMIZE_C);
+  this->session_->parameters().set("tool_state", Session::OPTIMIZE_C);
   this->update_tool_mode();
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
 {
-  this->session_->settings().set("tool_state", Session::ANALYSIS_C);
+  this->session_->parameters().set("tool_state", Session::ANALYSIS_C);
   this->update_tool_mode();
 }
 
@@ -1024,10 +1027,10 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->update_table();
 
   // load analysis state
-  std::string analysis_mode = this->session_->settings().get("analysis_mode", "mean");
+  std::string analysis_mode = this->session_->parameters().get("analysis_mode", "mean");
   this->analysis_tool_->set_analysis_mode(analysis_mode);
 
-  int zoom_value = this->session_->settings().get(ShapeWorksStudioApp::SETTING_ZOOM_C, "4");
+  int zoom_value = this->session_->parameters().get(ShapeWorksStudioApp::SETTING_ZOOM_C, "4");
   this->ui_->zoom_slider->setValue(zoom_value);
 
   this->block_update_ = false;
@@ -1165,7 +1168,6 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event)
 
   this->hide();
   this->optimize_tool_->shutdown_threads();
-  this->session_->get_mesh_manager()->shutdown_threads();
   QCoreApplication::processEvents();
 }
 
@@ -1185,7 +1187,7 @@ bool ShapeWorksStudioApp::set_view_mode(std::string view_mode)
 {
   if (view_mode != this->get_view_mode()) {
     if (!this->is_loading_) {
-      this->session_->settings().set("view_state", view_mode);
+      this->session_->parameters().set("view_state", view_mode);
     }
     this->update_view_mode();
     return true;
@@ -1238,10 +1240,10 @@ void ShapeWorksStudioApp::update_recent_files()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::save_project(std::string filename)
 {
-  this->session_->settings().set(ShapeWorksStudioApp::SETTING_ZOOM_C,
-                                 std::to_string(this->ui_->zoom_slider->value()));
+  this->session_->parameters().set(ShapeWorksStudioApp::SETTING_ZOOM_C,
+                                   std::to_string(this->ui_->zoom_slider->value()));
 
-  this->session_->settings().set("analysis_mode", this->analysis_tool_->get_analysis_mode());
+  this->session_->parameters().set("analysis_mode", this->analysis_tool_->get_analysis_mode());
 
   this->groom_tool_->store_settings();
   this->optimize_tool_->store_params();
