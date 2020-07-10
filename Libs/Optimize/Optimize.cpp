@@ -2268,7 +2268,7 @@ double Optimize::GetNarrowBand()
     return 1e10;
   }
   else {
-    return 4.0;
+    return 10.0;
   }
 }
 
