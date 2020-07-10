@@ -52,19 +52,22 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize *
   }
   optimize->SetDomainType(domain_type);
 
-
-  elem = doc_handle.FirstChild("visualizer_enable").Element();
-  if (elem) {
-    optimize->SetShowVisualizer(true);
-
-    elem = doc_handle.FirstChild("visualizer_wireframe").Element();
+  if (optimize->GetDomainType() == shapeworks::DomainType::Mesh) {
+    // Currently the visualizer only works if you call AddMesh on it for every domain.
+    // In order to get it working for image domains, need to add code that extracts meshes from each image and adds them to the visualizer.
+    elem = doc_handle.FirstChild("visualizer_enable").Element();
     if (elem) {
-      optimize->GetVisualizer().SetWireFrame(true);
-    }
-    elem = doc_handle.FirstChild("visualizer_screenshot_directory").Element();
-    if (elem) {
-      std::string dir = elem->GetText();
-      optimize->GetVisualizer().SetSaveScreenshots(true, dir);
+      optimize->SetShowVisualizer(true);
+
+      elem = doc_handle.FirstChild("visualizer_wireframe").Element();
+      if (elem) {
+        optimize->GetVisualizer().SetWireFrame(true);
+      }
+      elem = doc_handle.FirstChild("visualizer_screenshot_directory").Element();
+      if (elem) {
+        std::string dir = elem->GetText();
+        optimize->GetVisualizer().SetSaveScreenshots(true, dir);
+      }
     }
   }
 
@@ -415,8 +418,7 @@ bool OptimizeParameterFile::read_image_inputs(TiXmlHandle* docHandle, Optimize* 
       if (this->verbosity_level_ > 1) {
         std::cout << "Reading inputfile: " << imageFiles[index] << "...\n" << std::flush;
       }
-      typename itk::ImageFileReader < Optimize::ImageType > ::Pointer reader = itk::ImageFileReader <
-        Optimize::ImageType > ::New();
+      typename itk::ImageFileReader < Optimize::ImageType > ::Pointer reader = itk::ImageFileReader <Optimize::ImageType > ::New();
       reader->SetFileName(imageFiles[index]);
       reader->UpdateLargestPossibleRegion();
       const auto image = reader->GetOutput();
