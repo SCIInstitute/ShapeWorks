@@ -7,6 +7,7 @@ add_library(Optimize STATIC
   ./ParticleSystem/MeshDomain.cpp
   ./ParticleSystem/TriMeshWrapper.cpp
   ./ParticleSystem/CGALGeodesicDistance.cpp
+  ./ParticleSystem/OptimizationVisualizer.cpp
   )
 
 target_link_libraries(Optimize

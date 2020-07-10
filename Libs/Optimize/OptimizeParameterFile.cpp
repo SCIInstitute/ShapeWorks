@@ -3,6 +3,7 @@
 #include "ParticleSystem/DomainType.h"
 
 #include <itkImageFileReader.h>
+#include <vtkPLYReader.h>
 
 #include <tinyxml.h>
 
@@ -50,6 +51,23 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize *
     }
   }
   optimize->SetDomainType(domain_type);
+
+
+  elem = doc_handle.FirstChild("visualizer_enable").Element();
+  if (elem) {
+    optimize->SetShowVisualizer(true);
+
+    elem = doc_handle.FirstChild("visualizer_wireframe").Element();
+    if (elem) {
+      optimize->GetVisualizer().SetWireFrame(true);
+    }
+    elem = doc_handle.FirstChild("visualizer_screenshot_directory").Element();
+    if (elem) {
+      std::string dir = elem->GetText();
+      optimize->GetVisualizer().SetSaveScreenshots(true, dir);
+    }
+  }
+
 
   std::vector<unsigned int> number_of_particles;
   elem = doc_handle.FirstChild("number_of_particles").Element();
@@ -450,7 +468,14 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle *docHandle, Optimize *o
       if (this->verbosity_level_ > 1) {
         std::cout << "Reading inputfile: " << meshFiles[index] << "...\n" << std::flush;
       }
-      optimize->AddMeshDebugging(meshFiles[index]);
+
+      if (optimize->GetShowVisualizer()) {
+        vtkSmartPointer<vtkPLYReader> reader = vtkSmartPointer<vtkPLYReader>::New();
+        reader->SetFileName(meshFiles[index].c_str());
+        reader->Update();
+        optimize->GetVisualizer().AddMesh(reader->GetOutput());
+      }
+
       TriMesh *themesh = TriMesh::read(meshFiles[index].c_str());
       if (themesh != NULL) {
         shapeworks::MeshWrapper *mesh = new shapeworks::TriMeshWrapper(themesh);

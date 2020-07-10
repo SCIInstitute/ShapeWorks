@@ -22,6 +22,8 @@
 #include "ParticleSystem/DomainType.h"
 #include "ParticleSystem/MeshWrapper.h"
 
+#include "ParticleSystem/OptimizationVisualizer.h"
+
 /**
  * \class Optimize
  * \ingroup Group-Optimize
@@ -191,7 +193,6 @@ public:
   //! Set the shape input images
   void AddImage(ImageType::Pointer image);
   void AddMesh(shapeworks::MeshWrapper *mesh);
-  void AddMeshDebugging(std::string filename);
 
   //! Set the shape filenames (TODO: details)
   void SetFilenames(const std::vector<std::string> &filenames);
@@ -238,6 +239,10 @@ public:
 
   //! Return the Sampler
   SamplerType* GetSampler() { return m_sampler.GetPointer(); }
+
+  shapeworks::OptimizationVisualizer &GetVisualizer();
+  void SetShowVisualizer(bool show);
+  bool GetShowVisualizer();
 
 protected:
 
@@ -375,9 +380,12 @@ protected:
   bool m_aborted = false;
   std::vector<std::array<itk::Point<double>, 3 >> m_cut_planes;
 
-  itk::MemberCommand<Optimize>::Pointer m_iterate_command;
+  //itk::MemberCommand<Optimize>::Pointer m_iterate_command;
   int m_total_iterations = 0;
   size_t m_iteration_count = 0;
 
   std::mt19937 m_rand{42};
+
+  bool show_visualizer = false;
+  shapeworks::OptimizationVisualizer visualizer;
 };

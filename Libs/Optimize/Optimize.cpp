@@ -40,21 +40,6 @@
 
 #include "Optimize.h"
 
-#include <vtkSphereSource.h>
-#include <vtkSmartPointer.h>
-#include <vtkCubeSource.h>
-#include <vtkPolyData.h>
-#include <vtkPoints.h>
-#include <vtkGlyph3D.h>
-#include <vtkCellArray.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkActor.h>
-#include <vtkRenderWindow.h>
-#include <vtkRenderer.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkGenericRenderWindowInteractor.h>
-#include <vtkWindowToImageFilter.h>
-#include <vtkPNGWriter.h>
 
 //---------------------------------------------------------------------------
 Optimize::Optimize()
@@ -913,242 +898,13 @@ void Optimize::AbortOptimization()
   this->m_sampler->GetOptimizer()->AbortProcessing();
 }
 
-static std::vector<vtkSmartPointer<vtkPolyData>> meshes;
 
-#include <vtkProperty.h>
-#include <vtkLine.h>
-#include <vtkCellData.h>
-#include <vtkCamera.h>
 //---------------------------------------------------------------------------
 void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
 {
-  static bool firstRun = 1;
-  static vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-  static vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
-  static vtkSmartPointer<vtkRenderer> mainRenderer = vtkSmartPointer<vtkRenderer>::New();
-  static vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
-  static vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
-  static vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
-  //static vtkSmartPointer<vtkCellArray> lines = vtkSmartPointer<vtkCellArray>::New();
-  static vtkSmartPointer<vtkSphereSource> cubeSource = vtkSmartPointer<vtkSphereSource>::New();
-
-  static vtkSmartPointer<vtkPolyDataMapper> lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-  static vtkSmartPointer<vtkActor> lineActor = vtkSmartPointer<vtkActor>::New();
-  static vtkSmartPointer<vtkCellArray> lines = vtkSmartPointer<vtkCellArray>::New();
-
-  static std::vector<vtkSmartPointer<vtkRenderer>> sampleRenderers;
-  static std::vector<vtkSmartPointer<vtkPolyDataMapper>> sampleMappers;
-  static std::vector<vtkSmartPointer<vtkPoints>> samplePoints;
-  static std::vector<vtkSmartPointer<vtkPolyData>> samplePolyData;
-
-  static double *focalPoint;
-  static int iteration = 0;
-  static double radius;
-
-  int count = 0;
-  int numShapes = m_sampler->GetParticleSystem()->GetNumberOfDomains();
-  int numParticles = m_sampler->GetParticleSystem()->GetNumberOfParticles(0);
-
-  if (firstRun) {
-    polydata->SetPoints(points);
-    polydata->SetLines(lines);
-    actor->SetMapper(mapper);
-    actor->GetProperty()->SetColor(1.0, 0, 0);
-    renderWindow->SetFullScreen(1);
-    renderWindow->AddRenderer(mainRenderer);
-    mainRenderer->SetBackground(.5, .5, .5);
-    mainRenderer->AddActor(actor);
-
-    lineActor->SetMapper(lineMapper);
-    lineActor->GetProperty()->SetColor(0, 1, 0);
-    lineActor->GetProperty()->SetLineWidth(1);
-    mainRenderer->AddActor(lineActor);
-
-    double width = 1.0 / meshes.size();
-    //if (width < 0.1) width = 0.1;
-    double height = (width < 0.1) ? width : 0.1;
-    for (int i = 0; i < meshes.size(); i++) {
-      vtkSmartPointer<vtkPolyDataMapper> meshMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-      vtkSmartPointer<vtkActor> meshActor = vtkSmartPointer<vtkActor>::New();
-      meshMapper->SetInputData(meshes[i]);
-      meshActor->SetMapper(meshMapper);
-      meshActor->GetProperty()->SetColor(0.0, 0.0, 0.0);
-      meshActor->GetProperty()->SetEdgeVisibility(false);
-      double alpha = 1.0 / numShapes;
-      alpha = alpha > 1 ? 1 : alpha;
-      std::cerr << "alpha = " << alpha << "\n";
-      meshActor->GetProperty()->SetOpacity(alpha);
-      meshActor->GetProperty()->SetLineWidth(0.01);
-      mainRenderer->AddActor(meshActor);
-
-
-
-
-      vtkSmartPointer<vtkRenderer> meshRenderer = vtkSmartPointer<vtkRenderer>::New();
-      meshRenderer->AddActor(meshActor);
-      meshRenderer->SetBackground(.5, .5, .5);
-      meshRenderer->SetViewport(width*i, 0, width*(i+1), height);
-
-      vtkSmartPointer<vtkPolyDataMapper> sampleMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-      vtkSmartPointer<vtkActor> sampleActor = vtkSmartPointer<vtkActor>::New();
-      sampleActor->SetMapper(sampleMapper);
-      sampleActor->GetProperty()->SetColor(1.0, 0, 0);
-
-      meshRenderer->AddActor(sampleActor);
-
-      renderWindow->AddRenderer(meshRenderer);
-
-      vtkSmartPointer<vtkPolyData> samplepolydata = vtkSmartPointer<vtkPolyData>::New();
-      vtkSmartPointer<vtkPoints> samplepoints = vtkSmartPointer<vtkPoints>::New();
-      samplepolydata->SetPoints(samplepoints);
-
-
-
-      sampleRenderers.push_back(meshRenderer);
-      sampleMappers.push_back(sampleMapper);
-      samplePoints.push_back(samplepoints);
-      samplePolyData.push_back(samplepolydata);
-      
-    }
-
-    mainRenderer->ResetCamera();
-    focalPoint = mainRenderer->GetActiveCamera()->GetFocalPoint();
-
-    double *pos = mainRenderer->GetActiveCamera()->GetPosition();
-    radius = pos[2] - focalPoint[2];
-
-
-    for (int i = 0; i < sampleRenderers.size(); i++) {
-      sampleRenderers[i]->ResetCamera();
-    }
-    firstRun = 0;
+  if (this->GetShowVisualizer()) {
+    this->GetVisualizer().IterationCallback(m_sampler->GetParticleSystem());
   }
-
-  for (int j = 0; j < numParticles; j++) {
-    for (int i = 0; i < numShapes; i++) {
-      itk::Point<double, 3> p = m_sampler->GetParticleSystem()->GetPosition(j, i);
-      //int index = i * numParticles + j;
-      if (count >= points->GetNumberOfPoints()) {
-        points->InsertNextPoint(p[0], p[1], p[2]);
-        if (i > 0) {
-          vtkSmartPointer<vtkLine> line2 = vtkSmartPointer<vtkLine>::New();
-          line2->GetPointIds()->SetId(0, count);
-          line2->GetPointIds()->SetId(1, count - 1);
-          if (count >= lines->GetNumberOfCells()) {
-            lines->InsertNextCell(line2);
-          }
-        }
-      }
-      else {
-        points->SetPoint(count, p[0], p[1], p[2]);
-      }
-      count++;
-      if (j >= samplePoints[i]->GetNumberOfPoints()) {
-        samplePoints[i]->InsertNextPoint(p[0], p[1], p[2]);
-      }
-      else {
-        samplePoints[i]->SetPoint(j, p[0], p[1], p[2]);
-      }
-    }
-  }
-
-  //int numParticles = m_sampler->GetParticleSystem()->GetNumberOfParticles(0);
-  //for (int j = 0; j < numParticles; j++) {
-  //  for (int i = 0; i < numShapes - 1; i++) {
-  //    vtkSmartPointer<vtkLine> line2 = vtkSmartPointer<vtkLine>::New();
-  //    line2->GetPointIds()->SetId(0, (i) * numParticles + j);
-  //    line2->GetPointIds()->SetId(1, (i+1) * numParticles + j);
-  //    if (count >= lines->GetNumberOfCells()) {
-  //      lines->InsertNextCell(line2);
-  //    }
-  //    count++;
-  //  }
-  //}
-  //for (int i = 0; i < numShapes; i++) {
-  //  for (int j = 0; j < numParticles + 1; j++) {
-  //    vtkSmartPointer<vtkLine> line2 = vtkSmartPointer<vtkLine>::New();
-  //    line2->GetPointIds()->SetId(0, (i) * numParticles + j);
-  //    line2->GetPointIds()->SetId(1, (i) * numParticles + j + 1);
-  //    if (count >= lines->GetNumberOfCells()) {
-  //      lines->InsertNextCell(line2);
-  //    }
-  //    count++;
-  //  }
-  //}
-  //polydata->GetPoints()->GetData()->Modified();
-  //polydata->GetCellData()->Modified();
-  polydata->SetPoints(points);
-  polydata->SetLines(lines);
-  polydata->Modified();
-
-  vtkSmartPointer<vtkPolyData> polydata2 = vtkSmartPointer<vtkPolyData>::New();
-  polydata2->DeepCopy(polydata);
-  lineMapper->SetInputData(polydata2);
-
-  vtkSmartPointer<vtkGlyph3D> glyph3D = vtkSmartPointer<vtkGlyph3D>::New();
-  glyph3D->SetSourceConnection(cubeSource->GetOutputPort());
-  glyph3D->SetInputData(polydata);
-  glyph3D->SetScaleFactor(0.15);
-  glyph3D->Update();
-  mapper->SetInputConnection(glyph3D->GetOutputPort());
-
-  for (int i = 0; i < sampleMappers.size(); i++) {
-    vtkSmartPointer<vtkGlyph3D> sampleGlyph = vtkSmartPointer<vtkGlyph3D>::New();
-    sampleGlyph->SetSourceConnection(cubeSource->GetOutputPort());
-    sampleGlyph->SetInputData(samplePolyData[i]);
-    sampleGlyph->SetScaleFactor(1);
-    sampleGlyph->Update();
-    sampleMappers[i]->SetInputConnection(sampleGlyph->GetOutputPort());
-  }
-
-  vtkSmartPointer<vtkCamera> cam = mainRenderer->GetActiveCamera();
-  //double *pos = cam->GetPosition();
-  //std::cerr << pos[0] << ", " << pos[1] << ", " << pos[2] << "\n";
-  //pos = cam->GetFocalPoint();
-  //std::cerr << pos[0] << ", " << pos[1] << ", " << pos[2] << "\n";
-  //pos = cam->GetClippingRange();
-  //std::cerr << pos[0] << ", " << pos[1] << "\n";
-
-  int rotationSpeed = 10;
-  double rotation = double(iteration % (360 * rotationSpeed)) / double(rotationSpeed);
-
-  //double rotation = (iteration/20.0) % 360;
-  double z = sin(rotation * 2 * PI / 360);
-  double x = cos(rotation * 2 * PI / 360);
-
-  cam->SetPosition(focalPoint[0] + radius * x, focalPoint[1], focalPoint[2] + radius * z);
-  cam->SetClippingRange(1, radius*2);
-  cam->Modified();
-
-  for (int i = 0; i < sampleRenderers.size(); i++) {
-    sampleRenderers[i]->GetActiveCamera()->SetPosition(focalPoint[0] + radius * x, focalPoint[1], focalPoint[2] + radius * z);
-    sampleRenderers[i]->GetActiveCamera()->SetClippingRange(1, 50);
-    sampleRenderers[i]->GetActiveCamera()->Modified();
-  }
-  
-  renderWindow->Render();
-
-  //if (iteration % 10 == 0) {
-    //vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter =
-    //  vtkSmartPointer<vtkWindowToImageFilter>::New();
-    //windowToImageFilter->SetInput(renderWindow);
-    ////windowToImageFilter->SetMagnification(3); //set the resolution of the output image (3 times the current resolution of vtk render window)
-    ////windowToImageFilter->SetInputBufferTypeToRGBA(); //also record the alpha (transparency) channel
-    //windowToImageFilter->ReadFrontBufferOff(); // read from the back buffer
-    //windowToImageFilter->Update();
-
-    //vtkSmartPointer<vtkPNGWriter> writer = vtkSmartPointer<vtkPNGWriter>::New(); 
-    //char buffer[100];
-    //int n;
-    //n = sprintf(buffer, "screenshots/screenshot_%08d.png", iteration);
-    //writer->SetFileName(buffer);
-    //writer->SetInputConnection(windowToImageFilter->GetOutputPort());
-    //writer->Write();
-  //}
-
-  iteration++;
-
-  
 
   if (m_perform_good_bad == true) {
     std::vector < std::vector < int >> tmp;
@@ -2148,20 +1904,6 @@ void Optimize::AddMesh(shapeworks::MeshWrapper *mesh) {
   this->m_spacing = 0.2;
 }
 
-#include <vtkPLYReader.h>
-#include <vtkExtractEdges.h>
-void Optimize::AddMeshDebugging(std::string filename) {
-  vtkSmartPointer<vtkPLYReader> reader = vtkSmartPointer<vtkPLYReader>::New();
-  reader->SetFileName(filename.c_str());
-  reader->Update();
-  vtkSmartPointer<vtkExtractEdges> edges = vtkSmartPointer<vtkExtractEdges>::New();
-  edges->SetInputData(reader->GetOutput());
-  edges->Update();
-  vtkSmartPointer<vtkPolyData> mesh = edges->GetOutput();
-
-  meshes.push_back(mesh);
-}
-
 //---------------------------------------------------------------------------
 void Optimize::SetFilenames(const std::vector<std::string> &filenames)
 { this->m_filenames = filenames; }
@@ -2178,6 +1920,18 @@ void Optimize::SetPointFiles(const std::vector<std::string> &point_files)
 int Optimize::GetNumShapes()
 {
   return this->m_num_shapes;
+}
+
+shapeworks::OptimizationVisualizer& Optimize::GetVisualizer() {
+  return visualizer;
+}
+
+void Optimize::SetShowVisualizer(bool show) {
+  this->show_visualizer = true;
+}
+
+bool Optimize::GetShowVisualizer() {
+  return this->show_visualizer;
 }
 
 //---------------------------------------------------------------------------
@@ -2275,9 +2029,9 @@ double Optimize::GetNarrowBand()
 //---------------------------------------------------------------------------
 void Optimize::SetIterationCallback()
 {
-  this->m_iterate_command = itk::MemberCommand<Optimize>::New();
-  this->m_iterate_command->SetCallbackFunction(this, &Optimize::IterateCallback);
-  this->m_sampler->GetOptimizer()->AddObserver(itk::IterationEvent(), m_iterate_command);
+  itk::MemberCommand<Optimize>::Pointer m_iterate_command = itk::MemberCommand<Optimize>::New();
+  m_iterate_command->SetCallbackFunction(this, &Optimize::IterateCallback);
+  m_sampler->GetOptimizer()->AddObserver(itk::IterationEvent(), m_iterate_command);
 }
 
 //---------------------------------------------------------------------------
