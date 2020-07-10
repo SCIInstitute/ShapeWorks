@@ -125,12 +125,6 @@ bool Optimize::Run()
     while (!finished) {
       this->m_sampler->ReInitialize();
 
-      // do the same drop in precision as if we wrote particle files and re-read them
-      this->m_sampler->GetParticleSystem()->DropPrecision();
-
-      // reset the random seed for identical run
-      this->m_rand.seed(42);
-
       // determine if we have reached the final particle counts
       finished = true;
       for (int i = 0; i < this->m_number_of_particles.size(); i++) {

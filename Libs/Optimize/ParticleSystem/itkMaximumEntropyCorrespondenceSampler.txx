@@ -64,29 +64,12 @@ MaximumEntropyCorrespondenceSampler<TImage>::ReInitialize() {
   this->SetAdaptivityMode(Superclass::m_AdaptivityMode);
   this->SetCorrespondenceMode(m_CorrespondenceMode);
   this->GetOptimizer()->SetGradientFunction(m_LinkingFunction);
-  m_LinkingFunction->SetAOn();
-  m_LinkingFunction->SetBOn();
+  this->m_LinkingFunction->SetAOn();
+  this->m_LinkingFunction->SetBOn();
   this->InitializeOptimizationFunctions();
   this->m_Sigma1Cache->ZeroAllValues();
   this->m_Sigma2Cache->ZeroAllValues();
   this->m_MeanCurvatureCache->ZeroAllValues();
-
-  int number = this->m_NeighborhoodList.size();
-  this->m_NeighborhoodList.clear();
-
-  for (int i=0; i<number; i++ )
-  {
-    this->m_NeighborhoodList.push_back( ParticleSurfaceNeighborhood<ImageType>::New() );
-    this->m_ParticleSystem->SetNeighborhood(i, this->m_NeighborhoodList[i]);
-  }
-
-  for (unsigned int d = 0; d < this->m_ParticleSystem->GetNumberOfDomains(); d++) {
-    for (unsigned int p = 0; p < this->m_ParticleSystem->GetNumberOfParticles(d); p++) {
-      auto point = this->m_ParticleSystem->GetPosition(p, d);
-
-      this->m_NeighborhoodList[d]->AddPosition(point, p);
-    }
-  }
 }
 
 
