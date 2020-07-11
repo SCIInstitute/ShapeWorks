@@ -136,6 +136,9 @@ namespace itk
             for (typename ParticleSystemType::PointContainerType::ConstIterator it
               = m_ParticleSystem->GetPositions(dom)->GetBegin(); it != endit; it++, k++)
             {
+              if (m_TimeSteps[dom][k] < minimumTimeStep) {
+                m_TimeSteps[dom][k] = minimumTimeStep;
+              }
               // Compute gradient update.
               double energy = 0.0;
               localGradientFunction->BeforeEvaluate(it.GetIndex(), dom, m_ParticleSystem);
