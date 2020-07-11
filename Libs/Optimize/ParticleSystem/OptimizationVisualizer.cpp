@@ -90,7 +90,7 @@ namespace shapeworks {
     vtkSmartPointer<vtkGlyph3D> glyph3D = vtkSmartPointer<vtkGlyph3D>::New();
     glyph3D->SetSourceConnection(cubeSource->GetOutputPort());
     glyph3D->SetInputData(polydata);
-    glyph3D->SetScaleFactor(0.15);
+    glyph3D->SetScaleFactor(radius/170);
     glyph3D->Update();
     mapper->SetInputConnection(glyph3D->GetOutputPort());
 
