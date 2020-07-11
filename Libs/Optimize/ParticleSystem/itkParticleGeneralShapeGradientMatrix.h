@@ -156,31 +156,32 @@ public:
             }
             else
             {
-                const ParticleImageDomainWithHessians<float> * domainWithHess = static_cast<const ParticleImageDomainWithHessians<float> *>(ps->GetDomain(d));
-                typename ParticleImageDomainWithGradients<float>::VnlVectorType pG = domainWithHess->SampleGradientVnl(posLocal);
-                typename ParticleImageDomainWithGradients<float>::VnlVectorType pN = pG.normalize();
-                float grad_mag = pG.magnitude();
+                vnl_vector_fixed<float, DIMENSION> gradient = ps->GetDomain(d)->SampleGradientAtPoint(posLocal);
+                vnl_vector_fixed<float, DIMENSION> normal = gradient.normalize();
 
-                typename ParticleImageDomainWithHessians<float>::VnlMatrixType pH = domainWithHess->SampleHessianVnl(posLocal);
+                float grad_mag = gradient.magnitude();
+
+                // TODO what is grad_mag when running on image domains?
+
+                const ParticleImageDomainWithHessians<float> *domainWithHess = static_cast<const ParticleImageDomainWithHessians<float> *>(ps->GetDomain(d));
+                typename ParticleImageDomainWithHessians<float>::VnlMatrixType hessian = domainWithHess->SampleHessianVnl(posLocal);
 
                 typename ParticleImageDomainWithHessians<float>::VnlMatrixType mat1;
                 mat1.set_identity();
                 vnl_matrix<float> nrml(VDimension, 1);
                 nrml.fill(0.0);
-                nrml(0,0) = pN[0]; nrml(1,0) = pN[1]; nrml(2,0) = pN[2];
+                nrml(0,0) = normal[0]; nrml(1,0) = normal[1]; nrml(2,0) = normal[2];
                 typename ParticleImageDomainWithHessians<float>::VnlMatrixType mat2 = nrml * nrml.transpose();
 
-                for (unsigned int x1 = 0; x1 < VDimension; x1++)
-                {
-                    for (unsigned int x2 = 0; x2 < VDimension; x2++)
-                    {
+                for (unsigned int x1 = 0; x1 < VDimension; x1++) {
+                    for (unsigned int x2 = 0; x2 < VDimension; x2++) {
                         mat1(x1, x2) -= mat2(x1, x2);
-                        pH(x1, x2)   /= grad_mag;
+                        hessian(x1, x2)   /= grad_mag;
                     }
                 }
 
                 // mat3 = H/|grad_f| * (I - n*n');
-                typename ParticleImageDomainWithHessians<float>::VnlMatrixType mat3 = pH * mat1;
+                typename ParticleImageDomainWithHessians<float>::VnlMatrixType mat3 = hessian * mat1;
                 typename itk::ParticleSystem<VDimension>::VnlMatrixType tmp;
                 tmp.set_size(VDimension, VDimension);
                 tmp.fill(0.0);

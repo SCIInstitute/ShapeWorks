@@ -73,6 +73,9 @@ public:
 
   double GetMaxDiameter() const override;
 
+  inline vnl_vector_fixed<float, DIMENSION> SampleGradientAtPoint(const PointType &point) const override {
+    return meshWrapper->SampleNormalAtPoint(point);
+  }
   inline vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType & point) const override {
     return meshWrapper->SampleNormalAtPoint(point);
   }

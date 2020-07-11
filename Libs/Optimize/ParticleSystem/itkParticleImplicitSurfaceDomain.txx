@@ -205,7 +205,7 @@ ParticleImplicitSurfaceDomain<T>::ApplyConstraints(PointType &p) const
   while ( fabs(f) > (m_Tolerance * mult) || gradmag < epsilon)
     //  while ( fabs(f) > m_Tolerance || gradmag < epsilon)
     {
-    vnl_vector_fixed<T, DIMENSION> grad = this->SampleGradientVnl(p);
+    vnl_vector_fixed<T, DIMENSION> grad = this->SampleGradientAtPoint(p);
       
     gradmag = grad.magnitude();
     vnl_vector_fixed<T, DIMENSION> vec = grad * (f / (gradmag + epsilon));
