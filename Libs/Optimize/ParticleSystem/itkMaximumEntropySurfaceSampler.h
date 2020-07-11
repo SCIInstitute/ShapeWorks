@@ -413,6 +413,3 @@ private:
 } // end namespace itk
 
 #include "itkMaximumEntropySurfaceSampler.txx"
-
-
-

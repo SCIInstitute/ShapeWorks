@@ -45,7 +45,7 @@
 #include "itkImageToVTKImageFilter.h"
 #include "ParticleSystem/itkParticleImageDomain.h"
 #include "ParticleSystem/itkParticleImageDomainWithGradients.h"
-#include "ParticleSystem/itkParticleImplicitSurfaceDomain.h"
+#include "ParticleSystem/itkParticleDomain.h"
 #include "ParticleSystem/itkParticleImageDomainWithHessians.h"
 #include "ParticleSystem/object_reader.h"
 #include "ParticleSystem/object_writer.h"

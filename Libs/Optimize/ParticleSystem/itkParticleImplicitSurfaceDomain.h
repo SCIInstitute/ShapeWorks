@@ -2,8 +2,8 @@
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
 #pragma once
@@ -43,7 +43,7 @@ public:
   /** Set/Get the precision of the projection operation.  The resulting projection
       will be within the specified tolerance. */
   virtual void SetTolerance(const T _Tolerance) {
-    if (this->m_Tolerance != _Tolerance) 
+    if (this->m_Tolerance != _Tolerance)
     {
       this->m_Tolerance = _Tolerance;
       this->Modified();
@@ -56,7 +56,7 @@ public:
   shapeworks::DomainType GetDomainType() const override {
     return shapeworks::DomainType::Image;
   }
-  
+
   /** Apply any constraints to the given point location.  This method
       constrains points to lie within the given domain and on a given implicit
       surface.  If the point is not already on the surface, it is projected
@@ -112,14 +112,10 @@ public:
       return m_mesh;
   }
 
-  void RemoveCuttingPlane()  { m_UseCuttingPlane = false; }
+  bool IsCuttingPlaneDefined(){return m_UseCuttingPlane;}
 
-  void RemoveCuttingSphere()  { m_UseCuttingSphere = false; }
+  bool IsCuttingSphereDefined(){return m_UseCuttingSphere;}
 
-  bool IsCuttingPlaneDefined() const {return m_UseCuttingPlane;}
-
-  bool IsCuttingSphereDefined() const {return m_UseCuttingSphere;}
-  
   const vnl_vector_fixed<double, DIMENSION> &GetCuttingPlanePoint() const
   { return m_CuttingPlanePoint[0]; }
   const vnl_vector_fixed<double, DIMENSION> &GetCuttingPlaneNormal() const
@@ -133,14 +129,11 @@ public:
 
 
   // Prateep
-  const vnl_vector_fixed<double, DIMENSION> &GetA() const
-  { return m_a[0]; }
-  const vnl_vector_fixed<double, DIMENSION> &GetB() const
-  { return m_b[0]; }
-  const vnl_vector_fixed<double, DIMENSION> &GetC() const
-  { return m_c[0]; }
+  const vnl_vector_fixed<double, DIMENSION> &GetA() const{ return m_a[0]; }
+  const vnl_vector_fixed<double, DIMENSION> &GetB() const{ return m_b[0]; }
+  const vnl_vector_fixed<double, DIMENSION> &GetC() const{ return m_c[0]; }
 
-  /** Maintain a list of spheres within the domain.  These are used as 
+  /** Maintain a list of spheres within the domain.  These are used as
       soft constraints by some particle forcing functions. */
   void AddSphere(const vnl_vector_fixed<double, DIMENSION> &v, double r) override
   {
@@ -151,7 +144,7 @@ public:
       m_UseCuttingSphere = true;
 //    }
   }
-  
+
   /** Returns the radius of sphere i, or 0.0 if sphere i does not exist */
   double GetSphereRadius(unsigned int i) const
   {
@@ -172,7 +165,7 @@ public:
   {
     return m_SphereCenterList.size();
   }
-    
+
   unsigned int GetNumberOfPlanes() const
   {
       return m_CuttingPlanePoint.size();
@@ -220,7 +213,7 @@ private:
   std::vector < vnl_vector_fixed<double, DIMENSION> > m_a;
   std::vector < vnl_vector_fixed<double, DIMENSION> > m_b;
   std::vector < vnl_vector_fixed<double, DIMENSION> > m_c;
-  
+
   TriMesh *m_mesh;
 
   std::vector< vnl_vector_fixed<double, DIMENSION> > m_SphereCenterList;

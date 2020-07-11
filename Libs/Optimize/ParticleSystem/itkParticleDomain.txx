@@ -1,6 +1,6 @@
 /*=========================================================================
   Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticleImplicitSurfaceDomain.txx,v $
+  Module:    $RCSfile: itkParticleDomain.txx,v $
   Date:      $Date: 2011/03/24 01:17:33 $
   Version:   $Revision: 1.3 $
   Author:    $Author: wmartin $
@@ -12,8 +12,8 @@
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
-#ifndef __itkParticleImplicitSurfaceDomain_txx
-#define __itkParticleImplicitSurfaceDomain_txx
+#ifndef __itkParticleDomain_txx
+#define __itkParticleDomain_txx
 
 #include "vnl/vnl_math.h"
 #include "vnl/vnl_cross.h"
@@ -36,12 +36,7 @@ SetCuttingPlane(const vnl_vector<double> &a, const vnl_vector<double> &b,
   if (q.magnitude() > 0.0)
   {
     m_CuttingPlaneNormal.push_back(q / q.magnitude()); //m_CuttingPlaneNormal = q / q.magnitude();
-    m_CuttingPlanePoint.push_back(a); //m_CuttingPlanePoint = a;
     m_UseCuttingPlane = true;
-
-    m_a.push_back(a); //m_a = a;
-    m_b.push_back(b); //m_b = b;
-    m_c.push_back(c); //m_c = c;
   }
 }
 
@@ -85,9 +80,9 @@ TransformCuttingPlane(const vnl_matrix_fixed<double, DIMENSION + 1, DIMENSION + 
 
         m_CuttingPlaneNormal[0] = pq / pq.magnitude();
         m_CuttingPlanePoint[0] = pa;
-        m_a[0] = pa;
-        m_b[0] = pb;
-        m_c[0] = pc;
+        //m_a[0] = pa;
+        //m_b[0] = pb;
+        //m_c[0] = pc;
 
 #ifdef PARTICLE_DEBUG_FLAG
 //        std::cout << "Mag(normal) : " << m_CuttingPlaneNormal[0].magnitude() << std::endl;

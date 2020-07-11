@@ -2,8 +2,8 @@
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
 #pragma once
@@ -15,6 +15,7 @@
 #include "vnl/vnl_matrix_fixed.h"
 
 #include "DomainType.h"
+#include "Constraints.h"
 
 namespace itk
 {
@@ -86,22 +87,24 @@ public:
   }
   virtual shapeworks::DomainType GetDomainType() const = 0;
 
+  Constraints *GetConstraints() const {return constraints;}
+
 protected:
 
   // is this a fixed domain or not?  We start as fixed and if an image or mesh is set, we set this to false
   bool m_FixedDomain{true};
 
-
-  ParticleDomain() {}
-  virtual ~ParticleDomain() {}
+  ParticleDomain() {constraints = new Constraints();}
+  virtual ~ParticleDomain() {delete constraints;}
   void PrintSelf(std::ostream& os, Indent indent) const
   {
     Superclass::PrintSelf(os, indent);
   }
-  
+
 private:
   ParticleDomain(const ParticleDomain&); //purposely not implemented
   void operator=(const ParticleDomain&); //purposely not implemented
+  Constraints *constraints;
 
 };
 

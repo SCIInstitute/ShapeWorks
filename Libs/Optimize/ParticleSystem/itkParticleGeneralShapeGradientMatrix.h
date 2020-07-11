@@ -122,7 +122,7 @@ public:
             k += idx * VDimension;
         k += idx * m_AttributesPerDomain[dom];
 
-        
+
 
         int s = 0;
         if (m_use_xyz[dom])
