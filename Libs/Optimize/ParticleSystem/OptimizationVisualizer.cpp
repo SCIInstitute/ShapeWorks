@@ -14,6 +14,7 @@
 #include <vtkGenericRenderWindowInteractor.h>
 #include <vtkWindowToImageFilter.h>
 #include <vtkPNGWriter.h>
+#include <vtkPointData.h>
 
 #include <vtkExtractEdges.h>
 
@@ -30,7 +31,7 @@ namespace shapeworks {
     this->wireFrame = enabled;
   }
 
-  void OptimizationVisualizer::AddMesh(vtkPolyData* mesh) {
+  void OptimizationVisualizer::AddMesh(vtkPolyData* mesh, trimesh::TriMesh * tmesh) {
     if (this->wireFrame) {
       vtkSmartPointer<vtkExtractEdges> edges = vtkSmartPointer<vtkExtractEdges>::New();
       edges->SetInputData(mesh);
@@ -41,6 +42,7 @@ namespace shapeworks {
     else {
       meshes.push_back(mesh);
     }
+    tmeshes.push_back(tmesh);
   }
 
   void OptimizationVisualizer::IterationCallback(itk::ParticleSystem<3> * particleSystem) {
@@ -117,15 +119,14 @@ namespace shapeworks {
 
     for (int i = 0; i < sampleRenderers.size(); i++) {
       sampleRenderers[i]->GetActiveCamera()->SetPosition(focalPoint[0] + radius * x, focalPoint[1], focalPoint[2] + radius * z);
-      sampleRenderers[i]->GetActiveCamera()->SetClippingRange(1, 50);
+      sampleRenderers[i]->GetActiveCamera()->SetClippingRange(1, radius * 2);
       sampleRenderers[i]->GetActiveCamera()->Modified();
     }
 
     renderWindow->Render();
 
     if (this->saveScreenshots) {
-      vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter =
-        vtkSmartPointer<vtkWindowToImageFilter>::New();
+      vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter = vtkSmartPointer<vtkWindowToImageFilter>::New();
       windowToImageFilter->SetInput(renderWindow);
       //windowToImageFilter->SetMagnification(3); //set the resolution of the output image (3 times the current resolution of vtk render window)
       //windowToImageFilter->SetInputBufferTypeToRGBA(); //also record the alpha (transparency) channel
@@ -162,6 +163,35 @@ namespace shapeworks {
     double width = 1.0 / meshes.size();
     double height = (width < 0.1) ? width : 0.1;
     for (int i = 0; i < meshes.size(); i++) {
+
+
+      int numVertices = tmeshes[i]->vertices.size();
+      vtkSmartPointer<vtkUnsignedCharArray> colors = vtkSmartPointer<vtkUnsignedCharArray>::New();
+      colors->SetNumberOfComponents(3);
+      colors->SetName("Colors");
+
+      // Add the three colors we have created to the array
+      float maxcurv = tmeshes[i]->curv1[0];
+      float mincurv = maxcurv;
+
+      for (int vertex = 0; vertex < numVertices; vertex++) {
+        float curv = tmeshes[i]->curv1[vertex];
+        mincurv = curv < mincurv ? curv : mincurv;
+        maxcurv = curv > maxcurv ? curv : maxcurv;
+      }
+      std::cerr << "curv range = [" << mincurv << ", " << maxcurv << "]\n";
+      for (int vertex = 0; vertex < numVertices; vertex++) {
+        float curv = tmeshes[i]->curv1[vertex];
+        float red = 255.0 * (curv - mincurv) / (maxcurv - mincurv);
+
+        unsigned char col[3] = {red, 0, 1 - red};
+        colors->InsertNextTypedTuple(col);
+      }
+      meshes[i]->GetPointData()->SetScalars(colors);
+
+
+
+
       vtkSmartPointer<vtkPolyDataMapper> meshMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
       vtkSmartPointer<vtkActor> meshActor = vtkSmartPointer<vtkActor>::New();
       meshMapper->SetInputData(meshes[i]);
@@ -171,8 +201,16 @@ namespace shapeworks {
       double alpha = 1.0 / meshes.size();
       alpha /= 2;
       alpha = alpha > 1 ? 1 : alpha;
+      //alpha = 1;
       meshActor->GetProperty()->SetOpacity(alpha);
       meshActor->GetProperty()->SetLineWidth(0.01);
+
+
+
+
+
+
+
       mainRenderer->AddActor(meshActor);
 
       vtkSmartPointer<vtkRenderer> meshRenderer = vtkSmartPointer<vtkRenderer>::New();

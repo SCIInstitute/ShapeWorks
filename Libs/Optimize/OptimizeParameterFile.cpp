@@ -476,12 +476,6 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle *docHandle, Optimize *o
         std::cout << "Reading inputfile: " << meshFiles[index] << "...\n" << std::flush;
       }
 
-      if (optimize->GetShowVisualizer()) {
-        vtkSmartPointer<vtkPLYReader> reader = vtkSmartPointer<vtkPLYReader>::New();
-        reader->SetFileName(meshFiles[index].c_str());
-        reader->Update();
-        optimize->GetVisualizer().AddMesh(reader->GetOutput());
-      }
 
       TriMesh *themesh = TriMesh::read(meshFiles[index].c_str());
       if (themesh != NULL) {
@@ -491,6 +485,13 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle *docHandle, Optimize *o
       else {
         std::cerr << "Failed to read " << meshFiles[index] << "\n";
         return false;
+      }
+
+      if (optimize->GetShowVisualizer()) {
+        vtkSmartPointer<vtkPLYReader> reader = vtkSmartPointer<vtkPLYReader>::New();
+        reader->SetFileName(meshFiles[index].c_str());
+        reader->Update();
+        optimize->GetVisualizer().AddMesh(reader->GetOutput(), themesh);
       }
     }
     else {

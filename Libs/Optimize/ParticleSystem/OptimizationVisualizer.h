@@ -3,6 +3,8 @@
 #include <vector>
 #include <string>
 
+#include "TriMesh.h"
+
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkActor.h>
@@ -20,7 +22,7 @@ namespace shapeworks
   {
   public:
 
-    void AddMesh(vtkPolyData *mesh);
+    void AddMesh(vtkPolyData *mesh, trimesh::TriMesh *tmesh);
     void IterationCallback(itk::ParticleSystem<3> * particleSystem);
 
     void SetWireFrame(bool enabled);
@@ -43,6 +45,7 @@ namespace shapeworks
     double radius;
 
     std::vector<vtkSmartPointer<vtkPolyData>> meshes;
+    std::vector<trimesh::TriMesh *> tmeshes;
 
     vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
     vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
