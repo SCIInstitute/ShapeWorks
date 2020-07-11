@@ -241,10 +241,16 @@ namespace shapeworks
   }
 
   vnl_vector_fixed<float, DIMENSION> TriMeshWrapper::SampleNormalAtPoint(PointType p) const {
-    int face = GetTriangleForPoint(convert<PointType, point>(p));
-    const Eigen::Vector3d vecnormal = GetFaceNormal(face);
-    vnl_vector_fixed<float, DIMENSION> normal(vecnormal[0], vecnormal[1], vecnormal[2]);
-    return normal;
+    point pointa = convert<PointType, point>(p);
+    int face = GetTriangleForPoint(pointa);
+    vec3 bary = ComputeBarycentricCoordinates(pointa, face);
+
+    vnl_vector_fixed<float, DIMENSION> weightedNormal(0, 0, 0);
+    for (int i = 0; i < 3; i++) {
+      vnl_vector_fixed<float, DIMENSION> normal = convert<vec3, vnl_vector_fixed<float, DIMENSION>>(mesh->normals[mesh->faces[face][i]]);
+      weightedNormal += normal.normalize() * bary[i];
+    }
+    return weightedNormal;
   }
 
   int TriMeshWrapper::GetNearestVertex(point pt) const {
@@ -360,6 +366,8 @@ namespace shapeworks
     mesh->need_faces();
     mesh->need_adjacentfaces();
     mesh->need_across_edge();
+    mesh->need_normals();
+    mesh->need_curvatures();
     ComputeMeshBounds();
 
     kdTree = new KDtree(mesh->vertices);
