@@ -1,3 +1,3 @@
 #! /bin/bash
 
-shapeworks readimage --name $DATA/1x2x2.nrrd closeholes compare --name $DATA/closeholes.nrrd
+shapeworks readimage --name $DATA/image_with_holes.nrrd closeholes compare --name $DATA/closedholes.nrrd

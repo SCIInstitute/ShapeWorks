@@ -77,6 +77,7 @@ Section "ShapeWorks (required)"
   File /r "bin"
   File /r "Examples"
   File /r "Python"
+  File /r "Documentation"
 
   
   ; Write the installation path into the registry

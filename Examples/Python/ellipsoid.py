@@ -70,7 +70,7 @@ def Run_Pipeline(args):
     fileList = fileList[:15]
     if args.tiny_test:
         args.use_single_scale = 1
-        fileList = fileList[:2]
+        fileList = fileList[0:10]
 
     """
     ## GROOM : Data Pre-processing 
@@ -103,13 +103,13 @@ def Run_Pipeline(args):
         paddedFiles = applyPadding(parentDir + "padded", centeredFiles, 10)
 
         """Apply center of mass alignment"""
-        comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles)
+        comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles, None)
 
         """Apply rigid alignment"""
-        rigidFiles = applyRigidAlignment(parentDir, comFiles, None, comFiles[0])
+        rigidFiles = applyRigidAlignment(parentDir + "aligned", comFiles, None, comFiles[0])
 
         """Compute largest bounding box and apply cropping"""
-        croppedFiles = applyCropping(parentDir + "cropped", rigidFiles)
+        croppedFiles = applyCropping(parentDir + "cropped", rigidFiles, parentDir + "aligned/*.aligned.nrrd")
 
     """
     We convert the scans to distance transforms, this step is common for both the 

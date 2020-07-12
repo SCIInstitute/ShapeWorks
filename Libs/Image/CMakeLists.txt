@@ -15,6 +15,7 @@ target_include_directories(Image PUBLIC
   $<INSTALL_INTERFACE:include>)
 target_link_libraries(Image
   Common
+  Mesh
   ${ITK_LIBRARIES}
   )
 
@@ -28,10 +29,6 @@ install(TARGETS Image
   LIBRARY DESTINATION lib
   PUBLIC_HEADER DESTINATION include
   )
-
-add_executable(WriteImageInfoToText WriteImageInfoToText.cxx )
-target_link_libraries(WriteImageInfoToText ${ITK_LIBRARIES} Utils)
-INSTALL(TARGETS WriteImageInfoToText RUNTIME DESTINATION bin)
 
 add_executable(MeshFromDistanceTransforms MeshFromDistanceTransforms.cxx)
 target_link_libraries(MeshFromDistanceTransforms ${ITK_LIBRARIES} ${VTK_LIBRARIES} tinyxml)

@@ -88,9 +88,12 @@ function install_conda() {
 
   
   if ! pip install termcolor==1.1.0; then return 1; fi
+  if ! pip install grip==4.5.2; then return 1; fi
   if ! pip install matplotlib==3.1.2; then return 1; fi
   if ! pip install itk==5.0.1; then return 1; fi
   if ! pip install Python/DatasetUtilsPackage; then return 1; fi   # install the local GirderConnector code as a package
+  if ! pip install mdutils; then return 1; fi # lib for writing markdown files needed for auto-documentation (not available through conda install)
+  if ! pip install Python/DocumentationUtilsPackage; then return 1; fi   # install shapeworks auto-documentation as a package
 
   # install any additional Linux dependencies
   if [[ "$(uname)" == "Linux" ]]; then

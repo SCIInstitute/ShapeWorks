@@ -82,24 +82,25 @@ Then follow the appropriate instructions for their platform:
 [Mac](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/Install/Mac_README.md)  
 [Linux](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/Install/Linux_README.md)  
 
-_<b>Important</b>_  
+_**Important**_  
 Each time you use ShapeWorks from the command line you must first activate its environment:
 ```
 $ conda activate shapeworks
 ```
 
-Developers
----------------------
-Please see **[BUILD](Documentation/Build/BUILD.md)** for the current build instructions.  
-Please see **[Datasets](Documentation/UseCases/Datasets.md)** for dataset upload instructions and guidelines.  
-Please see **[GIT](Documentation/Development/GIT.md)** for details to checkout out and committing newly modified code.  
-ShapeWorks documentation uses markdown. Please refer to our tiny **[getting started with markdown](Documentation/Development/Markdown.md)**.
-
-
-Getting Started
+Documentation
 =====================
 
+Getting Started
+---------------------
 [GettingStarted](Documentation/GettingStarted.md) provides overviews of dataset grooming, optimization, and analysis, ShapeWorks Studio and command line instructions, and practical use cases. See [ShapeWorks in action](Documentation/GettingStarted.md#shapeworks-interfaces)!
+
+Using
+---------------------
+[ShapeWorks Commands](Documentation/GettingStarted.md#shapeworks-command)  
+[ShapeWorks Studio](Documentation/GettingStarted.md#shapeworksstudio)  
+[Python API](Documentation/GettingStarted.md#shapeworks-in-python) _(Coming Soon!)_  
+[Clouds Deployments](Documentation/GettingStarted.md#shapeworks-in-the-cloud) _(Coming Soon!)_  
 
 How Tos
 ---------------------
@@ -107,6 +108,14 @@ How Tos
 - How to preprocess or [groom](Documentation/Workflow/Groom.md) your dataset.
 - How to [optimize](Documentation/Workflow/Optimize.md) your shape model.
 - How to [visualize and analyze](Documentation/Workflow/Analyze.md) your optimized shape model.
+- [...and more](Documentation/GettingStarted.md#how-tos)
+
+Development
+=====================
+Please see **[BUILD](Documentation/Build/BUILD.md)** for the current build instructions.  
+Please see **[Datasets](Documentation/UseCases/Datasets.md)** for dataset upload instructions and guidelines.  
+Please see **[GIT](Documentation/Development/GIT.md)** for details to checkout out and committing newly modified code.  
+Please see **[AutoDocumentation](Documentation/AutoDocumentation/AutoDocumentation.md)** to auto-generate documentation for ShapeWorks interfaces and code. ShapeWorks documentation uses markdown. Please refer to our tiny **[getting started with markdown](Documentation/Development/Markdown.md)**.
 
 Acknowledgements
 =====================
@@ -158,11 +167,10 @@ Software Developers
 ---------------------
 - [Alan Morris](https://www.sci.utah.edu/people/amorris.html)
 - [Cameron Christensen](https://www.sci.utah.edu/people/cam.html)
-- [Archansri Subramanian](https://www.sci.utah.edu/people/archanasri.html)
+- [Archanasri Subramanian](https://www.sci.utah.edu/people/archanasri.html)
 
 Researchers
 ---------------------
-- [Praful Agrawal](https://www.sci.utah.edu/people/prafulag.html)
 - [Riddhish Bhalodia](https://www.sci.utah.edu/people/riddhishb.html)
 - [Atefeh Ghanaatikashani](https://www.sci.utah.edu/people/atefeh.gk.html)
 - [Jadie Adams](https://www.sci.utah.edu/people/jadie.html)
@@ -175,6 +183,8 @@ Past Contributors
 - [Joshua Cates](http://www.sci.utah.edu/~cates/)
 - [Manasi Datar](https://manasidatar.github.io/index.html)
 - [Brig Bagley](http://www.cs.utah.edu/~bbagley/)
+- [Praful Agrawal](https://www.sci.utah.edu/people/prafulag.html)
+
 
 
 Relevant Papers

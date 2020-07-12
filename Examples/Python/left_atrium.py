@@ -98,6 +98,7 @@ def Run_Pipeline(args):
             -- Rigid Alignment
             -- Largest Bounding Box and Cropping
             """
+
             parentDir = './TestLeftAtrium/PrepOutput/'
 
             print("\nStep 2. Groom - Data Pre-processing\n")
@@ -137,7 +138,7 @@ def Run_Pipeline(args):
             This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
             There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
             """
-            [comFiles_segmentations, comFiles_images] = applyCOMAlignment(parentDir + "com_aligned", paddedFiles_segmentations, raw=paddedFiles_images)
+            [comFiles_segmentations, comFiles_images] = applyCOMAlignment(parentDir + "com_aligned", paddedFiles_segmentations, paddedFiles_images, processRaw=True)
 
             """
             Apply rigid alignment
@@ -153,7 +154,7 @@ def Run_Pipeline(args):
             """
             medianFile = FindReferenceImage(comFiles_segmentations)
 
-            [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, comFiles_segmentations, comFiles_images , medianFile, processRaw = True)
+            [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir + "aligned", comFiles_segmentations, comFiles_images, medianFile, processRaw = True)
 
             """
             For detailed explainations of parameters for finding the largest bounding box and cropping, go to
@@ -165,8 +166,8 @@ def Run_Pipeline(args):
             The function uses the same bounding box to crop the raw and segemnattion data.
 
             """
-            [croppedFiles_segmentations, croppedFiles_images] = applyCropping(parentDir, rigidFiles_segmentations,  rigidFiles_images, processRaw=True)
-
+            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", rigidFiles_segmentations, parentDir + "aligned/segmentations/*.aligned.nrrd")
+            croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images, parentDir + "aligned/segmentations/*.aligned.nrrd")
 
             print("\nStep 3. Groom - Convert to distance transforms\n")
             if args.interactive:
@@ -208,9 +209,7 @@ def Run_Pipeline(args):
 
             For detailed explainations of parameters for resampling volumes, go to
             '/Documentation/PDFs/ImagePrepTools.pdf'
-
             """
-
             resampledFiles = applyIsotropicResampling(parentDir + "resampled", fileList_seg)
 
             """Apply Centering"""
@@ -220,7 +219,6 @@ def Run_Pipeline(args):
             Apply padding
             For detailed explainations of parameters for padding volumes, go to
             '/Documentation/PDFs/ImagePrepTools.pdf'
-
             """
             paddedFiles = applyPadding(parentDir + "padded", centeredFiles, 10)
 
@@ -229,28 +227,27 @@ def Run_Pipeline(args):
 
             For detailed explainations of parameters for center of mass(COM) alignment of volumes, go to
             '/Documentation/PDFs/AlgnmentTools.pdf'
-
-                """
-            comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles)
+            """
+            comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles, None)
 
             """
             Apply rigid alignment
 
             For detailed explainations of parameters for rigid alignment of volumes, go to
             '/Documentation/PDFs/AlgnmentTools.pdf'
+
             Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
             """
             medianFile = FindReferenceImage(comFiles)
-            rigidFiles = applyRigidAlignment(parentDir, comFiles, None, medianFile)
+            rigidFiles = applyRigidAlignment(parentDir + "aligned", comFiles, None, medianFile)
 
             """
             Compute largest bounding box and apply cropping
 
-            For detailed explainations of parameters for finding the largest bounding box and cropping, go to
-
+            For detailed explainations of parameters for finding the largest bounding box and cropping, go to 
             '/Documentation/PDFs/ImagePrepTools.pdf'
             """
-            croppedFiles = applyCropping(parentDir, rigidFiles, None )
+            croppedFiles = applyCropping(parentDir + "cropped", rigidFiles, parentDir + "aligned/*.aligned.nrrd")
 
             print("\nStep 3. Groom - Convert to distance transforms\n")
             if args.interactive:
@@ -272,12 +269,9 @@ def Run_Pipeline(args):
 
     We provide two different mode of operations for the ShapeWorks particle opimization:
     1- Single Scale model takes fixed number of particles and performs the optimization.
-<<<<<<< HEAD
-=======
     For more detail about the optimization steps and parameters please refer to
     '/Documentation/PDFs/ScriptUsage.pdf'
 
->>>>>>> origin/master
     2- Multi scale model optimizes for different number of particles in hierarchical manner.
     For more detail about the optimization steps and parameters please refer to
     '/Documentation/PDFs/ScriptUsage.pdf'
@@ -294,42 +288,64 @@ def Run_Pipeline(args):
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
-    parameterDictionary = {
-        "number_of_particles": 1024,
-        "use_normals": 1,
-        "normal_weight": 10.0,
-        "checkpointing_interval": 200,
-        "keep_checkpoints": 0,
-        "iterations_per_split": 4000,
-        "optimization_iterations": 4000,
-        "starting_regularization": 50000,
-        "ending_regularization": 0.1,
-        "recompute_regularization_interval": 2,
-        "domains_per_shape": 1,
-        "relative_weighting": 50,
-        "domain_type" : 'image',
-        "initial_relative_weighting": 0.1,
-        "procrustes_interval": 0,
-        "procrustes_scaling": 1,
-        "save_init_splits": 0,
-        "debug_projection": 0,
-        "verbosity": 3
-    }
+    if args.use_single_scale:
+        parameterDictionary = {
+            "number_of_particles": 1024,
+            "use_normals": 1,
+            "normal_weight": 10.0,
+            "checkpointing_interval": 200,
+            "keep_checkpoints": 0,
+            "iterations_per_split": 4000,
+            "optimization_iterations": 4000,
+            "starting_regularization": 50000,
+            "ending_regularization": 0.1,
+            "recompute_regularization_interval": 2,
+            "domains_per_shape": 1,
+            "relative_weighting": 50,
+            "domain_type" : 'image',
+            "initial_relative_weighting": 0.1,
+            "procrustes_interval": 0,
+            "procrustes_scaling": 1,
+            "save_init_splits": 0,
+            "debug_projection": 0,
+            "verbosity": 3
+        }
 
-    if not args.use_single_scale:
-        parameterDictionary["use_shape_statistics_after"] = 128
-        
-    if args.tiny_test:
-        parameterDictionary["number_of_particles"] = 32
-        parameterDictionary["optimization_iterations"] = 25
-        parameterDictionary["iterations_per_split"] = 25
-            
-            
+        if args.tiny_test:
+            parameterDictionary["number_of_particles"] = 32
+            parameterDictionary["optimization_iterations"] = 25
+            parameterDictionary["iterations_per_split"] = 25
 
-    """
-    Now we execute the particle optimization function.
-    """
-    [localPointFiles, worldPointFiles] = runShapeWorksOptimize(pointDir, dtFiles, parameterDictionary)
+        """
+        Now we execute the particle optimization function.
+        """
+        [localPointFiles, worldPointFiles] = runShapeWorksOptimize_SingleScale(pointDir, dtFiles, parameterDictionary)
+
+    else:
+        parameterDictionary = {
+            "starting_particles" : 128,
+            "number_of_levels" : 4,
+            "use_normals": 1,
+            "normal_weight": 10.0,
+            "checkpointing_interval" : 200,
+            "keep_checkpoints" : 0,
+            "iterations_per_split" : 4000,
+            "optimization_iterations" : 4000,
+            "starting_regularization" : 50000,
+            "ending_regularization" : 0.1,
+            "recompute_regularization_interval" : 2,
+            "domains_per_shape" : 1,
+            "relative_weighting" : 50,
+            "domain_type" : 'image',
+            "initial_relative_weighting" : 0.1,
+            "procrustes_interval" : 0,
+            "procrustes_scaling" : 1,
+            "save_init_splits" : 0,
+            "debug_projection" : 0,
+            "verbosity" : 3
+        }
+
+        [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
 
     if args.tiny_test:
         print("Done with tiny test")
