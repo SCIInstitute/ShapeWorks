@@ -171,20 +171,30 @@ namespace shapeworks {
       colors->SetName("Colors");
 
       // Add the three colors we have created to the array
-      float maxcurv = tmeshes[i]->curv1[0];
-      float mincurv = maxcurv;
+      //float maxcurv = tmeshes[i]->curv1[0];
+      //float mincurv = maxcurv;
+
+      //for (int vertex = 0; vertex < numVertices; vertex++) {
+      //  float curv = tmeshes[i]->curv1[vertex];
+      //  mincurv = curv < mincurv ? curv : mincurv;
+      //  maxcurv = curv > maxcurv ? curv : maxcurv;
+      //}
+      //std::cerr << "curv range = [" << mincurv << ", " << maxcurv << "]\n";
+      //for (int vertex = 0; vertex < numVertices; vertex++) {
+      //  float curv = tmeshes[i]->curv1[vertex];
+      //  float red = 255.0 * (curv - mincurv) / (maxcurv - mincurv);
+
+      //  unsigned char col[3] = {red, 0, 1 - red};
+      //  colors->InsertNextTypedTuple(col);
+      //}
+
+
+
 
       for (int vertex = 0; vertex < numVertices; vertex++) {
-        float curv = tmeshes[i]->curv1[vertex];
-        mincurv = curv < mincurv ? curv : mincurv;
-        maxcurv = curv > maxcurv ? curv : maxcurv;
-      }
-      std::cerr << "curv range = [" << mincurv << ", " << maxcurv << "]\n";
-      for (int vertex = 0; vertex < numVertices; vertex++) {
-        float curv = tmeshes[i]->curv1[vertex];
-        float red = 255.0 * (curv - mincurv) / (maxcurv - mincurv);
-
-        unsigned char col[3] = {red, 0, 1 - red};
+        trimesh::vec normal = tmeshes[i]->normals[vertex];
+        normal = (normal + trimesh::vec(1, 1, 1)) * 0.5 * 255;
+        unsigned char col[3] = {normal[0], normal[1], normal[2]};
         colors->InsertNextTypedTuple(col);
       }
       meshes[i]->GetPointData()->SetScalars(colors);
