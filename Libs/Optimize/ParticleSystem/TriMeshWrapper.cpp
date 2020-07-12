@@ -126,7 +126,7 @@ namespace shapeworks
         std::cerr << "exiting due to face repetition\n";
         break;
       }
-      if (facesTraversed.size() > 10) {
+      if (facesTraversed.size() > 100) {
         for (int i = 0; i < facesTraversed.size(); i++) {
           std::cerr << facesTraversed[i] << ": " << PrintValue<TriMesh::Face>(mesh->faces[facesTraversed[i]]) << ", ";
         }
