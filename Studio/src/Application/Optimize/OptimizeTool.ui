@@ -83,7 +83,7 @@ background: rgb(255, 255, 127)
           <number>0</number>
          </property>
          <item row="0" column="1">
-          <widget class="QCheckBox" name="checkBox_2">
+          <widget class="QCheckBox" name="procrustes">
            <property name="text">
             <string/>
            </property>
@@ -104,6 +104,70 @@ background: rgb(255, 255, 127)
          </item>
          <item row="0" column="2">
           <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="12" column="0">
+       <widget class="QLabel" name="label_13">
+        <property name="text">
+         <string>Multiscale Mode</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="1">
+       <widget class="QWidget" name="widget_4" native="true">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>20</height>
+         </size>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_5">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="multiscale">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <spacer name="horizontalSpacer_7">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="2">
+          <spacer name="horizontalSpacer_8">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -282,7 +346,7 @@ background: rgb(255, 255, 127)
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QDoubleSpinBox" name="weight">
+       <widget class="QDoubleSpinBox" name="relative_weighting">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -342,7 +406,7 @@ background: rgb(255, 255, 127)
           <number>0</number>
          </property>
          <item row="0" column="1">
-          <widget class="QCheckBox" name="checkBox">
+          <widget class="QCheckBox" name="use_normals">
            <property name="text">
             <string/>
            </property>
@@ -411,6 +475,70 @@ background: rgb(255, 255, 127)
         </property>
        </widget>
       </item>
+      <item row="10" column="0">
+       <widget class="QLabel" name="label_12">
+        <property name="text">
+         <string>Procrustes Scaling</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="1">
+       <widget class="QWidget" name="widget_3" native="true">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>20</height>
+         </size>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="procrustes_scaling">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <spacer name="horizontalSpacer_5">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="2">
+          <spacer name="horizontalSpacer_6">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </item>
       <item row="0" column="0">
        <widget class="QLabel" name="label_3">
         <property name="text">
@@ -435,7 +563,7 @@ background: rgb(255, 255, 127)
        </widget>
       </item>
       <item row="5" column="1">
-       <widget class="QSpinBox" name="iterations">
+       <widget class="QSpinBox" name="iterations_per_split">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -496,68 +624,27 @@ background: rgb(255, 255, 127)
         </property>
        </widget>
       </item>
-      <item row="10" column="0">
-       <widget class="QLabel" name="label_12">
+      <item row="13" column="0">
+       <widget class="QLabel" name="label_14">
         <property name="text">
-         <string>Procrustes Scaling</string>
+         <string>Multiscale Start</string>
         </property>
        </widget>
       </item>
-      <item row="10" column="1">
-       <widget class="QWidget" name="widget_3" native="true">
-        <property name="maximumSize">
+      <item row="13" column="1">
+       <widget class="QSpinBox" name="multiscale_particles">
+        <property name="minimumSize">
          <size>
-          <width>16777215</width>
-          <height>20</height>
+          <width>85</width>
+          <height>0</height>
          </size>
         </property>
-        <layout class="QGridLayout" name="gridLayout_4">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item row="0" column="1">
-          <widget class="QCheckBox" name="checkBox_3">
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <spacer name="horizontalSpacer_5">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="0" column="2">
-          <spacer name="horizontalSpacer_6">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
+        <property name="maximum">
+         <number>99</number>
+        </property>
+        <property name="value">
+         <number>0</number>
+        </property>
        </widget>
       </item>
      </layout>
@@ -601,10 +688,10 @@ background: rgb(255, 255, 127)
  </widget>
  <tabstops>
   <tabstop>number_of_particles</tabstop>
-  <tabstop>weight</tabstop>
+  <tabstop>relative_weighting</tabstop>
   <tabstop>starting_regularization</tabstop>
   <tabstop>ending_regularization</tabstop>
-  <tabstop>iterations</tabstop>
+  <tabstop>iterations_per_split</tabstop>
   <tabstop>optimization_iterations</tabstop>
   <tabstop>procrustes_interval</tabstop>
   <tabstop>run_optimize_button</tabstop>

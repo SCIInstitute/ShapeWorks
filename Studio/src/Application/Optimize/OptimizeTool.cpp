@@ -97,11 +97,12 @@ void OptimizeTool::on_run_optimize_button_clicked()
   this->optimize_->SetFileOutputEnabled(false);
   this->optimize_->SetStartingRegularization(this->ui_->starting_regularization->value());
   this->optimize_->SetEndingRegularization(this->ui_->ending_regularization->value());
-  this->optimize_->SetIterationsPerSplit(this->ui_->iterations->value());
+  this->optimize_->SetIterationsPerSplit(this->ui_->iterations_per_split->value());
   this->optimize_->SetNumberOfParticles(numbers_of_particles);
   this->optimize_->SetOptimizationIterations(this->ui_->optimization_iterations->value());
   this->optimize_->SetProcrustesInterval(this->ui_->procrustes_interval->value());
-  this->optimize_->SetRelativeWeighting(this->ui_->weight->value());
+  this->optimize_->SetInitialRelativeWeighting(this->ui_->initial_relative_weighting->value());
+  this->optimize_->SetRelativeWeighting(this->ui_->relative_weighting->value());
   this->optimize_->SetVerbosity(5);
 
   // should add the images last
@@ -160,26 +161,47 @@ void OptimizeTool::load_params()
 {
   Parameters params = this->session_->get_project()->get_parameters(Parameters::OPTIMIZE_PARAMS);
 
-  this->ui_->weight->setValue(params.get("relative_weighting", 1.0));
   this->ui_->number_of_particles->setValue(params.get("number_of_particles", 128));
+  this->ui_->initial_relative_weighting->setValue(params.get("initial_relative_weighting", 1.0));
+  this->ui_->relative_weighting->setValue(params.get("relative_weighting", 1.0));
   this->ui_->starting_regularization->setValue(params.get("starting_regularization", 10.0));
   this->ui_->ending_regularization->setValue(params.get("ending_regularization", 1.0));
-  this->ui_->iterations->setValue(params.get("iterations_per_split", 1000));
+  this->ui_->iterations_per_split->setValue(params.get("iterations_per_split", 1000));
   this->ui_->optimization_iterations->setValue(params.get("optimization_iterations", 1000));
+
+  this->ui_->use_normals->setChecked(params.get("use_normals", false));
+  this->ui_->normals_strength->setValue(params.get("normals_strength",10));
+
+  this->ui_->procrustes->setChecked(params.get("procrustes", false));
+  this->ui_->procrustes_scaling->setChecked(params.get("procrustes_scaling", false));
   this->ui_->procrustes_interval->setValue(params.get("procrustes_interval", 0));
+
+  this->ui_->multiscale->setChecked(params.get("multiscale", false));
+  this->ui_->multiscale_particles->setValue(params.get("multiscale_particles", 32));
+
 }
 
 //---------------------------------------------------------------------------
 void OptimizeTool::store_params()
 {
   Parameters params = this->session_->get_project()->get_parameters(Parameters::OPTIMIZE_PARAMS);
-  params.set("relative_weighting", this->ui_->weight->value());
   params.set("number_of_particles", this->ui_->number_of_particles->value());
+  params.set("initial_relative_weighting", this->ui_->initial_relative_weighting->value());
+  params.set("relative_weighting", this->ui_->relative_weighting->value());
   params.set("starting_regularization", this->ui_->starting_regularization->value());
   params.set("ending_regularization", this->ui_->ending_regularization->value());
-  params.set("iterations_per_split", this->ui_->iterations->value());
+  params.set("iterations_per_split", this->ui_->iterations_per_split->value());
   params.set("optimization_iterations", this->ui_->optimization_iterations->value());
+
+  params.set("use_normals", this->ui_->use_normals->isChecked());
+  params.set("normals_strength", this->ui_->normals_strength->value());
+
+  params.set("procrustes", this->ui_->procrustes->isChecked());
+  params.set("procrustes_scaling", this->ui_->procrustes_scaling->isChecked());
   params.set("procrustes_interval", this->ui_->procrustes_interval->value());
+
+  params.set("multiscale", this->ui_->multiscale->isChecked());
+  params.set("multiscale_particles", this->ui_->multiscale_particles->value());
 
   this->session_->get_project()->set_parameters(Parameters::OPTIMIZE_PARAMS, params);
 }
