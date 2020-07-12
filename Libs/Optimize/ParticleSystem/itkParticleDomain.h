@@ -12,10 +12,12 @@
 #include "itkPoint.h"
 
 #include "vnl/vnl_vector_fixed.h"
+#include "vnl/vnl_matrix_fixed.h"
+
+#include "DomainType.h"
 
 namespace itk
 {
-template <unsigned int VDimension=3>
 class ParticleDomain : public DataObject
 {
 public:
@@ -23,17 +25,19 @@ public:
   typedef SmartPointer<ParticleDomain>  Pointer;
 
   /** Point type used to store particle locations. */
-  typedef Point<double, VDimension> PointType;
+  typedef Point<double, DIMENSION> PointType;
 
   /** Apply any constraints to the given point location.  This method may, for
       example, implement boundary conditions or restrict points to lie on a
       surface.  Default behavior does nothing.  Returns true if the value of
       the point was modified and false otherwise. */
   virtual bool ApplyConstraints(PointType& p) const = 0;
-  virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, VDimension>& gradE,
-    const PointType& pos) const = 0;
-  virtual vnl_vector_fixed<double, VDimension> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, VDimension>& gradE,
-    const PointType& pos) const = 0;
+  virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION>& gradE, const PointType& pos) const = 0;
+
+  virtual PointType UpdateParticlePosition(PointType &point, vnl_vector_fixed<double, DIMENSION> &update) const = 0;
+
+  virtual vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION>& gradE, const PointType& pos) const = 0;
+  virtual vnl_vector_fixed<float, 3> SampleNormalAtPoint(const PointType & point) const = 0;
 
   /** A Domain may define a distance calculation.  This is useful in cases
       such as geodesic distance, where distance depends on some information
@@ -41,11 +45,13 @@ public:
       distance. */
   virtual double Distance(const PointType &a, const PointType &b) const
   {
-    double sum = 0.0;
-    for (unsigned int i = 0; i < VDimension; i++)
-      {      sum += (b[i]-a[i]) * (b[i]-a[i]);      }
-    return sqrt(sum);
+    return a.SquaredEuclideanDistanceTo(b);
   }
+
+
+  virtual double GetCurvature(const PointType &p) const = 0;
+  virtual double GetSurfaceMeanCurvature() const = 0;
+  virtual double GetSurfaceStdDevCurvature() const = 0;
   
   /** A Domain may optionally return a bounding box.  The lower bound method
       gives the upper-left-hand corner of the domain.  The upper bound method
@@ -58,7 +64,12 @@ public:
   virtual double GetSurfaceArea() const = 0;
   virtual double GetMaxDimRadius() const = 0;
 
+  // Cutting Plane constraint functionality
   virtual void PrintCuttingPlaneConstraints(std::ofstream &out) const = 0;
+  virtual void SetCuttingPlane(const vnl_vector<double>& a, const vnl_vector<double>& b, const vnl_vector<double> &c) = 0;
+  virtual void TransformCuttingPlane(const vnl_matrix_fixed<double, DIMENSION + 1, DIMENSION + 1> &Trans) = 0;
+
+  virtual void AddSphere(const vnl_vector_fixed<double, DIMENSION> &v, double r) = 0;
 
   virtual void DeleteImages() = 0;
   virtual void DeletePartialDerivativeImages() = 0;
@@ -66,10 +77,11 @@ public:
   bool IsDomainFixed() const {
     return m_FixedDomain;
   }
+  virtual shapeworks::DomainType GetDomainType() const = 0;
 
 protected:
 
-  // is this a fixed domain or not?  We start as fixed and if an image is set, we set this to true
+  // is this a fixed domain or not?  We start as fixed and if an image or mesh is set, we set this to false
   bool m_FixedDomain{true};
 
 

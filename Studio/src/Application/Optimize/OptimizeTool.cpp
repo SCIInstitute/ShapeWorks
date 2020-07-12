@@ -63,8 +63,8 @@ void OptimizeTool::handle_optimize_complete()
   auto global = this->optimize_->GetGlobalPoints();
   this->session_->update_points(local, true);
   this->session_->update_points(global, false);
-  this->session_->set_reconstructed_present(
-    local.size() == global.size() && global.size() > 1);
+  //this->session_->set_reconstructed_present(
+//    local.size() == global.size() && global.size() > 1);
   this->session_->calculate_reconstructed_samples();
   this->session_->get_project()->store_subjects();
   emit progress(100);
@@ -107,7 +107,12 @@ void OptimizeTool::on_run_optimize_button_clicked()
   // should add the images last
   auto shapes = this->session_->get_shapes();
   for (auto s : shapes) {
-    this->optimize_->AddImage(s->get_groomed_image());
+    auto image = s->get_groomed_image();
+    if (!image) {
+      emit error_message("Error loading groomed images");
+      return;
+    }
+    this->optimize_->AddImage(image);
   }
 
   QThread* thread = new QThread;
@@ -200,7 +205,7 @@ void OptimizeTool::disable_actions()
 //---------------------------------------------------------------------------
 void OptimizeTool::shutdown_threads()
 {
-  std::cerr << "Shut Down Optimization Threads";
+  std::cerr << "Shut Down Optimization Threads\n";
   if (!this->optimize_) {
     return;
   }

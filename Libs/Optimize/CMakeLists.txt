@@ -1,9 +1,10 @@
-FILE(GLOB ParticleSystem_sources ./ParticleSystem/*.t* ./ParticleSystem/*.cxx)
+FILE(GLOB ParticleSystem_sources ./ParticleSystem/*.t* ./ParticleSystem/*.cxx ./ParticleSystem/*.h)
 
 add_library(Optimize STATIC
   ${ParticleSystem_sources}
   Optimize.cpp
   OptimizeParameterFile.cpp
+  ./ParticleSystem/MeshDomain.cpp
   )
 
 target_link_libraries(Optimize

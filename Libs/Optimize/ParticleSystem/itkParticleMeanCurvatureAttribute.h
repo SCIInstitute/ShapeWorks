@@ -91,13 +91,9 @@ public:
   inline void ComputeMeanCurvature(const ParticleSystemType *system,
                                    unsigned int idx, unsigned int dom)
   {
-    // First we need a pointer to the domain.  Assume we have Curvature information.
-    const ParticleImageDomainWithCurvature<TNumericType, VDimension> *domain
-      = static_cast<const ParticleImageDomainWithCurvature<TNumericType, VDimension> *>(
-                                                               system->GetDomain(dom) ); 
     //  Get the position and index.
     PointType pos = system->GetPosition(idx, dom);
-    this->operator[](dom)->operator[](idx) = domain->GetCurvature(pos);
+    this->operator[](dom)->operator[](idx) = system->GetDomain(dom)->GetCurvature(pos);
   }
   
   /** Compute the mean and std deviation of the curvature on the image

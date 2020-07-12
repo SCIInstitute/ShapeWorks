@@ -132,11 +132,6 @@ ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType
 //        std::cout<<"-------------------"<<std::endl;
         // END Praful -- SHIREEN
 
-    // Grab a pointer to the domain.  We need a Domain that has surface normal
-    // information and a cutting plane
-    const ParticleImplicitSurfaceDomain<TGradientNumericType, VDimension>* domain
-            = static_cast<const ParticleImplicitSurfaceDomain<TGradientNumericType,
-            VDimension>*>( system->GetDomain( d ) );
 
     // Get the position for which we are computing the gradient.
     PointType pos = system->GetPosition(idx, d);
@@ -155,78 +150,82 @@ ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType
     // Get the neighborhood surrounding the point "pos".
     m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, m_CurrentWeights, neighborhood_radius, d);
 
-    // PRATEEP
-    vnl_vector_fixed<double, VDimension> x;
-    vnl_vector_fixed<float, VDimension> grad = domain->SampleGradientVnl(pos);
-    for (unsigned int i =0; i < VDimension; i++) { x[i] = pos[i]; }
-    double D = dot_product( domain->GetCuttingPlaneNormal(),
-                            x - domain->GetCuttingPlanePoint());
-    D = -fabs(D);
-    itk::Point<double, VDimension> planept;
-    for (unsigned int i = 0; i < VDimension; i++)
-    { planept[i] = x[i] - (domain->GetCuttingPlaneNormal()[i] * D); }
-    m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>(planept, 0));
-    m_CurrentWeights.push_back(0.3);
-    // end PRATEEP
+    if (system->GetDomain(d)->GetDomainType() == shapeworks::DomainType::Image) {
+      // Grab a pointer to the domain.  We need a Domain that has surface normal
+      // information and a cutting plane
+      const ParticleImplicitSurfaceDomain<TGradientNumericType> *domain
+        = static_cast<const ParticleImplicitSurfaceDomain<TGradientNumericType> *>(system->GetDomain(d));
+      // PRATEEP
+      vnl_vector_fixed<double, VDimension> x;
+      vnl_vector_fixed<float, VDimension> grad = domain->SampleGradientVnl(pos);
+      for (unsigned int i = 0; i < VDimension; i++) { x[i] = pos[i]; }
+      double D = dot_product(domain->GetCuttingPlaneNormal(),
+                             x - domain->GetCuttingPlanePoint());
+      D = -fabs(D);
+      itk::Point<double, VDimension> planept;
+      for (unsigned int i = 0; i < VDimension; i++) { planept[i] = x[i] - (domain->GetCuttingPlaneNormal()[i] * D); }
+      m_CurrentNeighborhood.push_back(itk::ParticlePointIndexPair<VDimension>(planept, 0));
+      m_CurrentWeights.push_back(0.3);
+      // end PRATEEP
 
-    // didn't work, for zero-mode, ensemble mean function didnt converge to zero compared to the original shapeworks weighting
-    //    // adjusting the weights according to Meyer's thesis
-    //    double gamma = 0.156;
+      // didn't work, for zero-mode, ensemble mean function didnt converge to zero compared to the original shapeworks weighting
+      //    // adjusting the weights according to Meyer's thesis
+      //    double gamma = 0.156;
 
-    //    // get domain information with gradients
-    //    const ParticleImageDomainWithGradients<float, VDimension> * domain
-    //            = static_cast<const ParticleImageDomainWithGradients<float, VDimension> *>(system->GetDomain(d));
+      //    // get domain information with gradients
+      //    const ParticleImageDomainWithGradients<float, VDimension> * domain
+      //            = static_cast<const ParticleImageDomainWithGradients<float, VDimension> *>(system->GetDomain(d));
 
-    //    // get normal for current position
-    //    typename ParticleImageDomainWithGradients<float,VDimension>::VnlVectorType pos_normal = domain->SampleNormalVnl(pos, 1.0e-10);
+      //    // get normal for current position
+      //    typename ParticleImageDomainWithGradients<float,VDimension>::VnlVectorType pos_normal = domain->SampleNormalVnl(pos, 1.0e-10);
 
-    //    for (unsigned int k = 0; k < m_CurrentNeighborhood.size(); k++)
-    //    {
-    //        typename ParticleImageDomainWithGradients<float,VDimension>::VnlVectorType neigh_normal
-    //                = domain->SampleNormalVnl(m_CurrentNeighborhood[k].Point, 1.0e-10);
+      //    for (unsigned int k = 0; k < m_CurrentNeighborhood.size(); k++)
+      //    {
+      //        typename ParticleImageDomainWithGradients<float,VDimension>::VnlVectorType neigh_normal
+      //                = domain->SampleNormalVnl(m_CurrentNeighborhood[k].Point, 1.0e-10);
 
-    //        double dot_prod = dot_product(pos_normal,neigh_normal); // normals already normalized
+      //        double dot_prod = dot_product(pos_normal,neigh_normal); // normals already normalized
 
-    //        if (dot_prod >= gamma)
-    //            m_CurrentWeights[k] = 1.0;
-    //        else
-    //        {
-    //            if (dot_prod <= 0)
-    //                m_CurrentWeights[k] = 0.0;
-    //            else
-    //            {
-    //                m_CurrentWeights[k] = cos((gamma - dot_prod)/gamma);
-    //            }
-    //        }
-    //    }
+      //        if (dot_prod >= gamma)
+      //            m_CurrentWeights[k] = 1.0;
+      //        else
+      //        {
+      //            if (dot_prod <= 0)
+      //                m_CurrentWeights[k] = 0.0;
+      //            else
+      //            {
+      //                m_CurrentWeights[k] = cos((gamma - dot_prod)/gamma);
+      //            }
+      //        }
+      //    }
 
 
-    //    std::cout << "idx: " << idx << ", sigma:" << m_GlobalSigma << std::endl;
-    //    std::cout << "idx: " << idx << ", neighborhood_radius:" << neighborhood_radius << std::endl;
-    //    std::cout << "idx: " << idx << ", number of neighbors:" << m_CurrentNeighborhood.size() << std::endl;
+      //    std::cout << "idx: " << idx << ", sigma:" << m_GlobalSigma << std::endl;
+      //    std::cout << "idx: " << idx << ", neighborhood_radius:" << neighborhood_radius << std::endl;
+      //    std::cout << "idx: " << idx << ", number of neighbors:" << m_CurrentNeighborhood.size() << std::endl;
 
-    // Add the closest points on any spheres that are defined in the domain.
-    //std::vector<itk::Point<double, VDimension> > spherepoints;
+      // Add the closest points on any spheres that are defined in the domain.
+      //std::vector<itk::Point<double, VDimension> > spherepoints;
 
-    for ( unsigned int i = 0; i < domain->GetNumberOfSpheres(); i++ )
-    {
+      for (unsigned int i = 0; i < domain->GetNumberOfSpheres(); i++) {
         itk::Point<double, VDimension> spherept;
         vnl_vector_fixed<double, VDimension> q;
 
-        for ( unsigned int j = 0; j < VDimension; j++ )
-            q[j] = pos[j] - domain->GetSphereCenter( i )[j];
+        for (unsigned int j = 0; j < VDimension; j++)
+          q[j] = pos[j] - domain->GetSphereCenter(i)[j];
 
         q.normalize();
 
-        for ( unsigned int j = 0; j < VDimension; j++ )
-            spherept[j] = domain->GetSphereCenter( i )[j] + ( q[j] * domain->GetSphereRadius( i ) );
+        for (unsigned int j = 0; j < VDimension; j++)
+          spherept[j] = domain->GetSphereCenter(i)[j] + (q[j] * domain->GetSphereRadius(i));
 
         //spherepoints.push_back( spherept );
-        m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( spherept, 0 ) );
+        m_CurrentNeighborhood.push_back(itk::ParticlePointIndexPair<VDimension>(spherept, 0));
 
         // give small weight to this sphere point
         // m_CurrentWeights.push_back( 0.01 );
-        m_CurrentWeights.push_back( 0.3 );
+        m_CurrentWeights.push_back(0.3);
+      }
     }
 }
 
@@ -238,13 +237,6 @@ ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType
            double &maxmove, double &energy) const
 {
     const double epsilon = 1.0e-6;
-
-    // Grab a pointer to the domain.  We need a Domain that has surface normal information.
-    const ParticleImplicitSurfaceDomain<TGradientNumericType, VDimension>* domain
-            = static_cast<const ParticleImplicitSurfaceDomain<TGradientNumericType,
-            VDimension>*>( system->GetDomain( d ) );
-
-    unsigned int numspheres = domain->GetNumberOfSpheres();
 
     // Get the position for which we are computing the gradient.
     PointType pos = system->GetPosition(idx, d);

@@ -92,73 +92,64 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
     int ctr = 0;
     for (unsigned int i = 0; i < this->m_DomainList.size(); i++)
     {
-        if (m_CuttingPlanes.size() > i)
-        {
-            for (unsigned int j = 0; j< m_CuttingPlanes[i].size(); j++)
-                m_DomainList[i]->SetCuttingPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b, m_CuttingPlanes[i][j].c);
+      auto domain = m_DomainList[i];
+      if (m_CuttingPlanes.size() > i) {
+        for (unsigned int j = 0; j < m_CuttingPlanes[i].size(); j++)
+          domain->SetCuttingPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b, m_CuttingPlanes[i][j].c);
+      }
+
+      if (m_Spheres.size() > i) {
+        for (unsigned int j = 0; j < m_Spheres[i].size(); j++) {
+          domain->AddSphere(m_Spheres[i][j].center, m_Spheres[i][j].radius);
         }
+      }
 
-        if (m_Spheres.size() > i)
+      if(domain->GetDomainType() == shapeworks::DomainType::Image) {
+        auto imageDomain = static_cast<ParticleImplicitSurfaceDomain<typename ImageType::PixelType> *>(domain.GetPointer());
+
+        if (m_AttributesPerDomain.size() > 0 && m_AttributesPerDomain[i % m_DomainsPerShape] > 0)
         {
-            for (unsigned int j = 0; j < m_Spheres[i].size();j++)
-            {
-                m_DomainList[i]->AddSphere(m_Spheres[i][j].center,m_Spheres[i][j].radius);
-            }
+          TriMesh *themesh = TriMesh::read(m_MeshFiles[i].c_str());
+          if(themesh != NULL)
+          {
+              themesh->need_faces();
+              themesh->need_neighbors();
+              orient(themesh);
+              themesh->need_bsphere();
+              if (!themesh->normals.empty())
+                  themesh->normals.clear();
+              themesh->need_normals();
+              if (!themesh->tstrips.empty())
+                  themesh->tstrips.clear();
+              themesh->need_tstrips();
+              if (!themesh->adjacentfaces.empty())
+                  themesh->adjacentfaces.clear();
+              themesh->need_adjacentfaces();
+              if (!themesh->across_edge.empty())
+                  themesh->across_edge.clear();
+              themesh->need_across_edge();
+              themesh->need_faceedges();
+              themesh->need_oneringfaces();
+              themesh->need_abs_curvatures();
+              themesh->need_speed();
+              themesh->setSpeedType(1);
+
+              imageDomain->SetMesh(themesh);
+              imageDomain->SetFids(m_FidsFiles[i].c_str());
+              int d = i % m_DomainsPerShape;
+              for (unsigned int c = 0; c < m_AttributesPerDomain[d]; c++)
+              {
+                  int ctr1 = ctr++;
+                  imageDomain->SetFeaMesh(m_FeaMeshFiles[ctr1].c_str());
+                  imageDomain->SetFeaGrad(m_FeaGradFiles[ctr1].c_str());
+              }
+          }
         }
+      }
 
-
-        if (m_AttributesPerDomain.size() > 0)
-        {
-            if (m_AttributesPerDomain[i % m_DomainsPerShape] > 0)
-            {
-                TriMesh *themesh = TriMesh::read(m_MeshFiles[i].c_str());
-                if(themesh != NULL)
-                {
-                    themesh->need_faces();
-                    themesh->need_neighbors();
-
-                    orient(themesh);
-
-                    themesh->need_bsphere();
-
-                    if (!themesh->normals.empty())
-                        themesh->normals.clear();
-                    themesh->need_normals();
-
-                    if (!themesh->tstrips.empty())
-                        themesh->tstrips.clear();
-                    themesh->need_tstrips();
-
-                    if (!themesh->adjacentfaces.empty())
-                        themesh->adjacentfaces.clear();
-                    themesh->need_adjacentfaces();
-
-                    if (!themesh->across_edge.empty())
-                        themesh->across_edge.clear();
-                    themesh->need_across_edge();
-
-                    themesh->need_faceedges();
-                    themesh->need_oneringfaces();
-                    themesh->need_abs_curvatures();
-                    themesh->need_speed();
-                    themesh->setSpeedType(1);
-
-                    m_DomainList[i]->SetMesh(themesh);
-                    m_DomainList[i]->SetFids(m_FidsFiles[i].c_str());
-                    int d = i % m_DomainsPerShape;
-                    for (unsigned int c = 0; c < m_AttributesPerDomain[d]; c++)
-                    {
-                        int ctr1 = ctr++;
-                        m_DomainList[i]->SetFeaMesh(m_FeaMeshFiles[ctr1].c_str());
-                        m_DomainList[i]->SetFeaGrad(m_FeaGradFiles[ctr1].c_str());
-                    }
-                }
-            }
-        }
-
-        // END TEST CUTTING PLANE
-        m_ParticleSystem->AddDomain(m_DomainList[i]);
-        m_ParticleSystem->SetNeighborhood(i, m_NeighborhoodList[i]);
+      // END TEST CUTTING PLANE
+      m_ParticleSystem->AddDomain(domain);
+      m_ParticleSystem->SetNeighborhood(i, m_NeighborhoodList[i]);
     }
 }
 
@@ -282,6 +273,10 @@ MaximumEntropySurfaceSampler<TImage>::ReadTransforms()
             this->GetParticleSystem()->SetPrefixTransform(i, reader.GetOutput()[i]);
     }
 
+}
+
+template<class TImage>
+void MaximumEntropySurfaceSampler<TImage>::ReInitialize() {
 }
 
 

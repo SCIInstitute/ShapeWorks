@@ -63,9 +63,9 @@ def Run_Pipeline(args):
         zipObj.extractall(path=parentDir)
         parentDir = parentDir + datasetName + "/"
         if not args.start_with_prepped_data:
-            fileList = sorted(glob.glob(parentDir + "Ellipsoids_UnPrepped/*.nrrd"))
+            fileList = sorted(glob.glob(parentDir + "images/*.nrrd"))
         else:
-            fileList = sorted(glob.glob(parentDir + "Ellipsoids_Prepped/*.nrrd"))
+            fileList = sorted(glob.glob(parentDir + "segmentations/*.nrrd"))
 
     fileList = fileList[:15]
     if args.tiny_test:
@@ -80,11 +80,8 @@ def Run_Pipeline(args):
     -- Padding
     -- Center of Mass Alignment
     -- Rigid Alignment
-    -- Largest Bounding Box and Cropping
-
-    For detailed explainations of parameters for each tool, go to
-    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ImagePrepTools.pdf'
-    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/AlgnmentTools.pdf'
+    -- Largest Bounding Box and Cropping 
+    For a detailed explanation of grooming steps see: /Documentation/Workflow/Groom.md
     """
 
     print("\nStep 2. Groom - Data Pre-processing\n")
@@ -148,60 +145,39 @@ def Run_Pipeline(args):
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
-    if int(args.use_single_scale) != 0:
-        parameterDictionary = {
-            "number_of_particles" : 128,
-            "use_normals": 0,
-            "normal_weight": 10.0,
-            "checkpointing_interval" : 200,
-            "keep_checkpoints" : 0,
-            "iterations_per_split" : 100,
-            "optimization_iterations" : 2000,
-            "starting_regularization" : 100,
-            "ending_regularization" : 0.1,
-            "recompute_regularization_interval" : 2,
-            "domains_per_shape" : 1,
-            "relative_weighting" : 10,
-            "initial_relative_weighting" : 0.01,
-            "procrustes_interval" : 0,
-            "procrustes_scaling" : 0,
-            "save_init_splits" : 0,
-            "debug_projection" : 0,
-            "verbosity" : 3,
-          }
+    parameterDictionary = {
+        "number_of_particles": 128,
+        "use_normals": 1,
+        "normal_weight": 10.0,
+        "checkpointing_interval": 200,
+        "keep_checkpoints": 0,
+        "iterations_per_split": 100,
+        "optimization_iterations": 2000,
+        "starting_regularization": 100,
+        "ending_regularization": 0.1,
+        "recompute_regularization_interval": 2,
+        "domains_per_shape": 1,
+        "domain_type": 'image',
+        "relative_weighting": 10,
+        "initial_relative_weighting": 0.01,
+        "procrustes_interval": 0,
+        "procrustes_scaling": 0,
+        "save_init_splits": 0,
+        "debug_projection": 0,
+        "verbosity": 3
+    }
 
-        if args.tiny_test:
-            parameterDictionary["number_of_particles"] = 32
-            parameterDictionary["optimization_iterations"] = 25
+    if args.tiny_test:
+        parameterDictionary["number_of_particles"] = 32
+        parameterDictionary["optimization_iterations"] = 25
 
-        """Now we execute a single scale particle optimization function"""
-        [localPointFiles, worldPointFiles] = runShapeWorksOptimize_SingleScale(pointDir, dtFiles, parameterDictionary)
+    if not args.use_single_scale:
+        parameterDictionary["use_shape_statistics_after"] = 32
 
-    else:
-        parameterDictionary = {
-            "starting_particles" : 32,
-            "number_of_levels" : 3,
-            "use_normals": 1,
-            "normal_weight": 10.0,
-            "checkpointing_interval" : 200,
-            "keep_checkpoints" : 0,
-            "iterations_per_split" : 100,
-            "optimization_iterations" : 2000,
-            "starting_regularization" : 100,
-            "ending_regularization" : 0.1,
-            "recompute_regularization_interval" : 2,
-            "domains_per_shape" : 1,
-            "relative_weighting" : 10,
-            "initial_relative_weighting" : 0.01,
-            "procrustes_interval" : 0,
-            "procrustes_scaling" : 0,
-            "save_init_splits" : 0,
-            "debug_projection" : 0,
-            "verbosity" : 3,
-            }
-
-        """Now we execute a multi-scale particle optimization function"""
-        [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
+    """
+    Now we execute a single scale particle optimization function.
+    """
+    [localPointFiles, worldPointFiles] = runShapeWorksOptimize(pointDir, dtFiles, parameterDictionary)
 
     if args.tiny_test:
         print("Done with tiny test")

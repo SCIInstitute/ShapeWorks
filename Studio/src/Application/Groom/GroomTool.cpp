@@ -123,7 +123,13 @@ void GroomTool::on_run_groom_button_clicked()
   QVector<QSharedPointer<Shape>> shapes = this->session_->get_shapes();
   std::vector<ImageType::Pointer> imgs;
   for (QSharedPointer<Shape> s : shapes) {
-    imgs.push_back(s->get_original_image());
+    auto image = s->get_original_image();
+    if (!image) {
+      emit error_message("Error loading original images");
+      emit progress(100);
+      return;
+    }
+    imgs.push_back(image);
   }
   this->groom_ = new QGroom(this, imgs, 0., 1.,
                             this->ui_->blur_sigma->value(),
@@ -194,7 +200,12 @@ void GroomTool::on_skipButton_clicked()
   QVector<QSharedPointer<Shape>> shapes = this->session_->get_shapes();
   std::vector<ImageType::Pointer> imgs;
   for (QSharedPointer<Shape> s : shapes) {
-    imgs.push_back(s->get_original_image());
+    auto image = s->get_original_image();
+    if (!image) {
+      emit error_message("Error loading original images");
+      return;
+    }
+    imgs.push_back(image);
   }
   this->session_->load_groomed_images(imgs, 0.);
   emit message("Skipped groom.");

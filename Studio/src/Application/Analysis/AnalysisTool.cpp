@@ -17,7 +17,6 @@
 #include <Data/Shape.h>
 #include <Analysis/AnalysisTool.h>
 #include <Visualization/Lightbox.h>
-#include <Visualization/DisplayObject.h>
 
 #include <ui_AnalysisTool.h>
 
@@ -117,7 +116,6 @@ void AnalysisTool::on_linear_radio_toggled(bool b)
 void AnalysisTool::handle_reconstruction_complete()
 {
   this->session_->handle_clear_cache();
-
 
   this->session_->calculate_reconstructed_samples();
   emit progress(100);
@@ -220,7 +218,7 @@ void AnalysisTool::setLabels(QString which, QString value)
 }
 
 //---------------------------------------------------------------------------
-int AnalysisTool::getSampleNumber()
+int AnalysisTool::get_sample_number()
 {
   return this->ui_->sampleSpinBox->value();
 }
@@ -309,11 +307,6 @@ void AnalysisTool::handle_analysis_options()
     this->ui_->pcaModeSpinBox->setEnabled(false);
   }
 
-  this->ui_->group1_button->setEnabled(this->session_->groups_available());
-  this->ui_->group2_button->setEnabled(this->session_->groups_available());
-  this->ui_->difference_button->setEnabled(this->session_->groups_available());
-  this->ui_->group_slider_widget->setEnabled(this->session_->groups_available());
-
   emit update_view();
 }
 
@@ -368,8 +361,9 @@ bool AnalysisTool::compute_stats()
   }
 
   this->stats_.ImportPoints(points, group_ids);
-
   this->stats_.ComputeModes();
+  this->stats_.PrincipalComponentProjections();
+
   this->stats_ready_ = true;
   std::vector<double> vals;
   for (int i = this->stats_.Eigenvalues().size() - 1; i > 0; i--) {
@@ -381,6 +375,7 @@ bool AnalysisTool::compute_stats()
 
   // set widget enable state for groups
   bool groups_available = this->session_->groups_available();
+
   this->ui_->group_slider->setEnabled(groups_available);
   this->ui_->group_animate_checkbox->setEnabled(groups_available);
   this->ui_->group_radio_button->setEnabled(groups_available);
@@ -613,6 +608,11 @@ void AnalysisTool::enable_actions()
 {
   this->ui_->reconstructionButton->setEnabled(
     this->session_->particles_present() && this->session_->get_groomed_present());
+
+  this->ui_->group1_button->setEnabled(this->session_->groups_available());
+  this->ui_->group2_button->setEnabled(this->session_->groups_available());
+  this->ui_->difference_button->setEnabled(this->session_->groups_available());
+  this->ui_->group_slider_widget->setEnabled(this->session_->groups_available());
 }
 
 //---------------------------------------------------------------------------

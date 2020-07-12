@@ -57,7 +57,7 @@ public:
   /** Inherited typedefs from parent class. */
   typedef typename Superclass::PointType PointType;
   typedef typename Superclass::PointContainerType PointContainerType;
-  typedef ParticleImplicitSurfaceDomain<typename TImage::PixelType, Dimension> DomainType;
+  typedef ParticleImplicitSurfaceDomain<typename TImage::PixelType> DomainType;
   typedef typename Superclass::PointVectorType PointVectorType;
 
   /** Compile a list of points that are within a specified radius of a given

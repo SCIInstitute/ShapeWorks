@@ -22,16 +22,16 @@
 namespace itk
 {
 
-template<class T, unsigned int VDimension>
+template<class T>
 void
-ParticleImplicitSurfaceDomain<T, VDimension>::
+ParticleImplicitSurfaceDomain<T>::
 SetCuttingPlane(const vnl_vector<double> &a, const vnl_vector<double> &b,
                 const vnl_vector<double> &c)
 {
   // See http://mathworld.wolfram.com/Plane.html, for example
   vnl_vector<double> q;
-  if (VDimension == 3)  q = vnl_cross_3d((b-a),(c-a));
-  else if (VDimension == 2)  q = vnl_cross_2d((b-a),(c-a));
+  if (DIMENSION == 3)  q = vnl_cross_3d((b-a),(c-a));
+  else if (DIMENSION == 2)  q = vnl_cross_2d((b-a),(c-a));
   
   if (q.magnitude() > 0.0)
   {
@@ -46,62 +46,42 @@ SetCuttingPlane(const vnl_vector<double> &a, const vnl_vector<double> &b,
 }
 
 // Prateep
-template<class T, unsigned int VDimension>
+template<class T>
 void
-ParticleImplicitSurfaceDomain<T, VDimension>::
-TransformCuttingPlane(const TransformType &Trans, const vnl_vector<double> &base_a,
-                      const vnl_vector<double> &base_b, const vnl_vector<double> &base_c )
+ParticleImplicitSurfaceDomain<T>::
+TransformCuttingPlane(const vnl_matrix_fixed<double, DIMENSION + 1, DIMENSION + 1> &Trans)
 {
     if (m_UseCuttingPlane == true)
     {
-/*
-        // Transform m_CuttingPlanePoint
-//        vnl_vector_fixed<double, VDimension> point;
-//        point[0] = Trans[0][0] * m_CuttingPlanePoint[0] + Trans[0][1] * m_CuttingPlanePoint[1] + Trans[0][2] * m_CuttingPlanePoint[2] + Trans[0][3];
-//        point[1] = Trans[1][0] * m_CuttingPlanePoint[0] + Trans[1][1] * m_CuttingPlanePoint[1] + Trans[1][2] * m_CuttingPlanePoint[2] + Trans[1][3];
-//        point[2] = Trans[2][0] * m_CuttingPlanePoint[0] + Trans[2][1] * m_CuttingPlanePoint[1] + Trans[2][2] * m_CuttingPlanePoint[2] + Trans[2][3];
-
-//        // Transform m_CuttingPlaneNormal
-//        vnl_vector_fixed<double, VDimension> normal;
-
-////        TransformType TransInv = vnl_inverse(Trans);
-////        TransformType TransInvT;
-////        for (unsigned int i = 0; i <= VDimension; i++) {
-////            for (unsigned int j = 0; j <= VDimension; j++) {
-////                TransInvT[i][j] = TransInv[j][i];
-////            }
-////        }
-////        normal[0] = TransInvT[0][0] * m_CuttingPlaneNormal[0] + TransInvT[0][1] * m_CuttingPlaneNormal[1] + TransInvT[0][2] * m_CuttingPlaneNormal[2];
-////        normal[1] = TransInvT[1][0] * m_CuttingPlaneNormal[0] + TransInvT[1][1] * m_CuttingPlaneNormal[1] + TransInvT[1][2] * m_CuttingPlaneNormal[2];
-////        normal[2] = TransInvT[2][0] * m_CuttingPlaneNormal[0] + TransInvT[2][1] * m_CuttingPlaneNormal[1] + TransInvT[2][2] * m_CuttingPlaneNormal[2];
-
-//        normal[0] = Trans[0][0] * m_CuttingPlaneNormal[0] + Trans[0][1] * m_CuttingPlaneNormal[1] + Trans[0][2] * m_CuttingPlaneNormal[2];
-//        normal[1] = Trans[1][0] * m_CuttingPlaneNormal[0] + Trans[1][1] * m_CuttingPlaneNormal[1] + Trans[1][2] * m_CuttingPlaneNormal[2];
-//        normal[2] = Trans[2][0] * m_CuttingPlaneNormal[0] + Trans[2][1] * m_CuttingPlaneNormal[1] + Trans[2][2] * m_CuttingPlaneNormal[2];
-
-//        normal /= normal.magnitude();
-*/
+        vnl_vector_fixed<double, DIMENSION> fa = GetA();
+        vnl_vector_fixed<double, DIMENSION> fb = GetB();
+        vnl_vector_fixed<double, DIMENSION> fc = GetC();
+        /* Copy vnl_vector_fixed to vnl_vector */
+        vnl_vector<double> base_a(DIMENSION); vnl_vector<double> base_b(DIMENSION); vnl_vector<double> base_c(DIMENSION);
+        for (unsigned int k = 0; k < DIMENSION; k++) {
+          base_a[k] = fa[k]; base_b[k] = fb[k]; base_c[k] = fc[k];
+        }
         // Transform m_a
-        vnl_vector<double> pa(3);
+        vnl_vector<double> pa(DIMENSION);
         pa[0] = Trans[0][0] * base_a[0] + Trans[0][1] * base_a[1] + Trans[0][2] * base_a[2] + Trans[0][3];
         pa[1] = Trans[1][0] * base_a[0] + Trans[1][1] * base_a[1] + Trans[1][2] * base_a[2] + Trans[1][3];
         pa[2] = Trans[2][0] * base_a[0] + Trans[2][1] * base_a[1] + Trans[2][2] * base_a[2] + Trans[2][3];
 
         // Transform base_b
-        vnl_vector<double> pb(3);
+        vnl_vector<double> pb(DIMENSION);
         pb[0] = Trans[0][0] * base_b[0] + Trans[0][1] * base_b[1] + Trans[0][2] * base_b[2] + Trans[0][3];
         pb[1] = Trans[1][0] * base_b[0] + Trans[1][1] * base_b[1] + Trans[1][2] * base_b[2] + Trans[1][3];
         pb[2] = Trans[2][0] * base_b[0] + Trans[2][1] * base_b[1] + Trans[2][2] * base_b[2] + Trans[2][3];
 
         // Transform base_c
-        vnl_vector<double> pc(3);
+        vnl_vector<double> pc(DIMENSION);
         pc[0] = Trans[0][0] * base_c[0] + Trans[0][1] * base_c[1] + Trans[0][2] * base_c[2] + Trans[0][3];
         pc[1] = Trans[1][0] * base_c[0] + Trans[1][1] * base_c[1] + Trans[1][2] * base_c[2] + Trans[1][3];
         pc[2] = Trans[2][0] * base_c[0] + Trans[2][1] * base_c[1] + Trans[2][2] * base_c[2] + Trans[2][3];
 
         vnl_vector<double> pq;
-        if (VDimension == 3)  pq = vnl_cross_3d((pb-pa),(pc-pa));
-        else if (VDimension == 2)  pq = vnl_cross_2d((pb-pa),(pc-pa));
+        if (DIMENSION == 3)  pq = vnl_cross_3d((pb-pa),(pc-pa));
+        else if (DIMENSION == 2)  pq = vnl_cross_2d((pb-pa),(pc-pa));
 
         m_CuttingPlaneNormal[0] = pq / pq.magnitude();
         m_CuttingPlanePoint[0] = pa;
@@ -118,33 +98,33 @@ TransformCuttingPlane(const TransformType &Trans, const vnl_vector<double> &base
     }
 }
 
-template<class T, unsigned int VDimension>
+template<class T>
 void
-ParticleImplicitSurfaceDomain<T, VDimension>::
+ParticleImplicitSurfaceDomain<T>::
 SetMesh(TriMesh *mesh)
 {
   m_mesh = mesh;
 }
 
-template<class T, unsigned int VDimension>
+template<class T>
 void
-ParticleImplicitSurfaceDomain<T, VDimension>::
+ParticleImplicitSurfaceDomain<T>::
 SetFeaMesh(const char *feaFile)
 {
     m_mesh->ReadFeatureFromFile(feaFile);
 }
 
-template<class T, unsigned int VDimension>
+template<class T>
 void
-ParticleImplicitSurfaceDomain<T, VDimension>::
+ParticleImplicitSurfaceDomain<T>::
 SetFeaGrad(const char *feaGradFile)
 {
     m_mesh->ReadFeatureGradientFromFile(feaGradFile);
 }
 
-template<class T, unsigned int VDimension>
+template<class T>
 void
-ParticleImplicitSurfaceDomain<T, VDimension>::
+ParticleImplicitSurfaceDomain<T>::
 SetFids(const char *fidsFile)
 {
     m_mesh->ReadFaceIndexMap(fidsFile);
@@ -167,18 +147,17 @@ SetFids(const char *fidsFile)
 }
 
 
-template<class T, unsigned int VDimension>
+template<class T>
 bool
-ParticleImplicitSurfaceDomain<T, VDimension>::
-ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
-                       const PointType &pos) const 
+ParticleImplicitSurfaceDomain<T>::
+ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const 
 {
 
     bool flag = false;
   //ShapeWorksRun4.5 - Ensuring that the update does not violate constraints
-  vnl_vector_fixed<double, VDimension> x;
-  vnl_vector_fixed<double, VDimension> xPos;
-  for (unsigned int i = 0; i < VDimension; i++)
+  vnl_vector_fixed<double, DIMENSION> x;
+  vnl_vector_fixed<double, DIMENSION> xPos;
+  for (unsigned int i = 0; i < DIMENSION; i++)
   {
       x[i] = pos[i] - gradE[i];
       xPos[i] = pos[i];
@@ -195,10 +174,10 @@ ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
               flag = true;
               double D_pos = dot_product(this->GetCuttingPlaneNormal(i), xPos-this->GetCuttingPlanePoint(i));
               if (D_pos < 0)
-                for (unsigned int n = 0; n < VDimension; n++)
+                for (unsigned int n = 0; n < DIMENSION; n++)
                     gradE[n] *= -0.5*sqrt(-D_pos)/gradMag;
               else
-                for (unsigned int n = 0; n < VDimension; n++)
+                for (unsigned int n = 0; n < DIMENSION; n++)
                     gradE[n] *= 0.85*sqrt(D_pos)/gradMag;
           }
       }
@@ -207,9 +186,9 @@ ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
 }
 
 
-template<class T, unsigned int VDimension>
+template<class T>
 bool
-ParticleImplicitSurfaceDomain<T, VDimension>::ApplyConstraints(PointType &p) const
+ParticleImplicitSurfaceDomain<T>::ApplyConstraints(PointType &p) const
 {
   // First apply and constraints imposed by superclasses.  This will
   // guarantee the point starts in the correct image domain.
@@ -225,11 +204,11 @@ ParticleImplicitSurfaceDomain<T, VDimension>::ApplyConstraints(PointType &p) con
   while ( fabs(f) > (m_Tolerance * mult) || gradmag < epsilon)
     //  while ( fabs(f) > m_Tolerance || gradmag < epsilon)
     {
-    vnl_vector_fixed<T, VDimension> grad = this->SampleGradientVnl(p);
+    vnl_vector_fixed<T, DIMENSION> grad = this->SampleGradientVnl(p);
       
     gradmag = grad.magnitude();
-    vnl_vector_fixed<T, VDimension> vec   =  grad  * ( f / (gradmag + epsilon) );
-    for (unsigned int i = 0; i < VDimension; i++)
+    vnl_vector_fixed<T, DIMENSION> vec = grad * (f / (gradmag + epsilon));
+    for (unsigned int i = 0; i < DIMENSION; i++)
       {
       p[i] -= vec[i];
       }
@@ -247,9 +226,9 @@ ParticleImplicitSurfaceDomain<T, VDimension>::ApplyConstraints(PointType &p) con
     return flag;
 }
 
-template <class T, unsigned int VDimension>
+template <class T>
 double
-ParticleImplicitSurfaceDomain<T, VDimension>::Distance(const PointType &a, const PointType &b) const
+ParticleImplicitSurfaceDomain<T>::Distance(const PointType &a, const PointType &b) const
 {
   if (m_mesh != NULL)
   {
@@ -269,11 +248,10 @@ ParticleImplicitSurfaceDomain<T, VDimension>::Distance(const PointType &a, const
 
 
 
-template<class T, unsigned int VDimension>
+template<class T>
 bool
-ParticleImplicitSurfaceDomain<T, VDimension>::
-SphereVectorConstraintMayOrMayNotWork(vnl_vector_fixed<double, VDimension>& gradE,
-  const PointType& pos) const
+ParticleImplicitSurfaceDomain<T>::
+SphereVectorConstraintMayOrMayNotWork(vnl_vector_fixed<double, DIMENSION> & gradE, const PointType& pos) const
 {
   //gradMag = gradE.magnitude();
 

@@ -18,9 +18,6 @@
 
 #include <tinyxml.h>
 
-#include <vtkPolyDataWriter.h>
-#include <vtkPolyDataReader.h>
-
 #include <Libs/Project/Project.h>
 
 #include <Data/Session.h>
@@ -37,11 +34,11 @@ const std::string Session::ANALYSIS_C("analysis");
 
 //---------------------------------------------------------------------------
 Session::Session(QWidget* parent, Preferences& prefs) : parent_(parent),
-  preferences_(prefs)
+  preferences_(prefs),
+  mesh_manager_(QSharedPointer<MeshManager>(new MeshManager(preferences_)))
 {
   this->parent_ = NULL;
-  this->reset();
-  connect(this->mesh_manager_.data(), SIGNAL(new_mesh()), this, SLOT(handle_new_mesh()));
+  connect(this->mesh_manager_.data(), &MeshManager::new_mesh, this, &Session::handle_new_mesh);
 }
 
 //---------------------------------------------------------------------------
@@ -83,7 +80,7 @@ void Session::handle_clear_cache()
 //---------------------------------------------------------------------------
 void Session::calculate_reconstructed_samples()
 {
-  if (!this->particles_present_) {
+  if (!this->project_->get_particles_present()) {
     return;
   }
   //this->preferences_.set_preference("Studio/cache_enabled", false);
@@ -210,7 +207,7 @@ bool Session::load_project(QString filename)
     return false;
   }
   // clear the project out first
-  this->reset();
+
   this->filename_ = filename;
 
   if (filename.toLower().endsWith(".xlsx")) {
@@ -236,7 +233,8 @@ bool Session::load_project(QString filename)
     return this->load_light_project(filename);
   }
 
-  QString message = "Error: This version of ShapeWorksStudio only reads XLSX and legacy XML files: " + filename;
+  QString message =
+    "Error: This version of ShapeWorksStudio only reads XLSX and legacy XML files: " + filename;
   QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
   return false;
 }
@@ -244,7 +242,7 @@ bool Session::load_project(QString filename)
 //---------------------------------------------------------------------------
 bool Session::load_light_project(QString filename)
 {
-  std::cerr << "Loading light project...\n";
+  std::cerr << "Loading old XML parameter file...\n";
   this->is_light_project_ = true;
 
   // open and parse XML
@@ -355,13 +353,10 @@ bool Session::load_light_project(QString filename)
     }
   }
 
-  this->particles_present_ = local_point_files.size() == global_point_files.size() &&
-                             global_point_files.size() > 1;
-
   //this->calculate_reconstructed_samples();
 
-  this->settings().set("view_state", Visualizer::MODE_RECONSTRUCTION_C);
-  this->settings().set("tool_state", Session::ANALYSIS_C);
+  this->parameters().set("view_state", Visualizer::MODE_RECONSTRUCTION_C);
+  this->parameters().set("tool_state", Session::ANALYSIS_C);
 
   //this->preferences_.set_preference("display_state",
 //                                    QString::fromStdString(Visualizer::MODE_RECONSTRUCTION_C));
@@ -370,15 +365,13 @@ bool Session::load_light_project(QString filename)
 
   this->project_->store_subjects();
 
-  std::cerr << "light project loaded\n";
+  std::cerr << "Old XML parameter file loaded\n";
   return true;
 }
 
 //---------------------------------------------------------------------------
 bool Session::load_xl_project(QString filename)
 {
-  // clear the project out first
-  this->reset();
   this->filename_ = filename;
 
   this->set_project_path(QFileInfo(filename).absolutePath());
@@ -413,8 +406,6 @@ bool Session::load_xl_project(QString filename)
                                                                  goodPtsFile);
      }
    */
-  this->particles_present_ = local_point_files.size() == global_point_files.size() &&
-                             global_point_files.size() > 1;
 
   this->params_ = this->project_->get_parameters(Parameters::STUDIO_PARAMS);
 
@@ -510,8 +501,8 @@ void Session::load_original_files(std::vector<std::string> filenames)
   }
 
   this->renumber_shapes();
+  this->project_->store_subjects();
   if (filenames.size() > 0) {
-    this->original_present_ = true;
     emit data_changed();
   }
 }
@@ -542,7 +533,6 @@ void Session::load_groomed_images(std::vector<ImageType::Pointer> images, double
   this->project_->store_subjects();
   if (images.size() > 0) {
     this->unsaved_groomed_files_ = true;
-    this->groomed_present_ = true;
     emit data_changed();
   }
 }
@@ -568,9 +558,9 @@ void Session::load_groomed_files(std::vector<std::string> file_names, double iso
     this->shapes_[i]->get_subject()->set_groomed_filenames(groomed_filenames);
   }
 
+  this->project_->store_subjects();
   if (file_names.size() > 0) {
-    this->groomed_present_ = true;
-    //emit data_changed();
+    emit data_changed();
   }
 }
 
@@ -622,12 +612,6 @@ bool Session::update_points(std::vector<std::vector<itk::Point<double>>> points,
     emit points_changed();
   }
   return true;
-}
-
-//---------------------------------------------------------------------------
-void Session::set_reconstructed_present(bool value)
-{
-  this->particles_present_ = value;
 }
 
 //---------------------------------------------------------------------------
@@ -721,26 +705,6 @@ void Session::remove_shapes(QList<int> list)
 }
 
 //---------------------------------------------------------------------------
-void Session::reset()
-{
-  this->is_light_project_ = false;
-
-  this->filename_ = "";
-
-  this->shapes_.clear();
-
-  this->original_present_ = false;
-  this->groomed_present_ = false;
-  this->particles_present_ = false;
-
-  this->mesh_manager_ = QSharedPointer<MeshManager>(new MeshManager(preferences_));
-
-  connect(this->mesh_manager_.data(), SIGNAL(new_mesh()), this, SLOT(handle_new_mesh()));
-  this->handle_clear_cache();
-  emit data_changed();
-}
-
-//---------------------------------------------------------------------------
 bool Session::original_present()
 {
   return this->project_->get_segmentations_present();
@@ -750,7 +714,6 @@ bool Session::original_present()
 bool Session::groomed_present()
 {
   return this->project_->get_groomed_present();
-  //return this->groomed_present_;
 }
 
 //---------------------------------------------------------------------------
@@ -786,7 +749,7 @@ int Session::get_num_shapes()
 }
 
 //---------------------------------------------------------------------------
-Parameters &Session::settings()
+Parameters &Session::parameters()
 {
   return this->params_;
 }

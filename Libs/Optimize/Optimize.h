@@ -1,14 +1,3 @@
-/*=========================================================================
-   Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-   File:      ShapeWorksRunApp.h
-
-   Copyright (c) 2020 Scientific Computing and Imaging Institute.
-   See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-   =========================================================================*/
 #pragma once
 
 #ifdef _WIN32
@@ -18,6 +7,7 @@
 // std
 #include <vector>
 #include <string>
+#include <random>
 
 // itk
 #include <itkImage.h>
@@ -29,6 +19,8 @@
 #include "ParticleSystem/itkParticleProcrustesRegistration.h"
 #include "ParticleSystem/itkParticleGoodBadAssessment.h"
 #include "ParticleSystem/itkParticleVectorFunction.h"
+#include "ParticleSystem/DomainType.h"
+#include "ParticleSystem/MeshWrapper.h"
 
 /**
  * \class Optimize
@@ -80,6 +72,9 @@ public:
   void SetDomainsPerShape(int domains_per_shape);
   //! Return the number of domains per shape
   int GetDomainsPerShape();
+
+  void SetDomainType(shapeworks::DomainType type);
+  shapeworks::DomainType GetDomainType();
 
   //! Set the numbers of particles (vector of numbers, one for each domain)
   void SetNumberOfParticles(std::vector<unsigned int> number_of_particles);
@@ -195,6 +190,7 @@ public:
 
   //! Set the shape input images
   void AddImage(ImageType::Pointer image);
+  void AddMesh(shapeworks::MeshWrapper *mesh);
 
   //! Set the shape filenames (TODO: details)
   void SetFilenames(const std::vector<std::string> &filenames);
@@ -236,6 +232,12 @@ public:
   //! Return the narrow band to be used
   double GetNarrowBand();
 
+  //! Set the number of particles when correspondence based multiscale takes over
+  void SetUseShapeStatisticsAfter(int num_particles);
+
+  //! Return the number of particles when correspondence based multiscale takes over
+  int GetUseShapeStatisticsAfter();
+
   //! Print parameter info to stdout
   void PrintParamInfo();
 
@@ -262,6 +264,8 @@ protected:
   void Initialize();
   void AddAdaptivity();
   void RunOptimize();
+
+  void SetInitialCorrespondenceMode();
 
   virtual void IterateCallback(itk::Object*, const itk::EventObject &);
 
@@ -309,6 +313,7 @@ protected:
 
   // IO Parameters
   unsigned int m_domains_per_shape = 1;
+  shapeworks::DomainType m_domain_type = shapeworks::DomainType::Image;
   std::vector<unsigned int> m_number_of_particles;
   std::string m_transform_file;
   std::string m_prefix_transform_file;
@@ -350,6 +355,7 @@ protected:
   double m_narrow_band{4};
   bool m_narrow_band_set{false};
   bool m_fixed_domains_present{false};
+  int m_use_shape_statistics_after{-1};
 
   // Keeps track of which state the optimization is in.
   unsigned int m_mode = 0;
@@ -379,4 +385,8 @@ protected:
   itk::MemberCommand<Optimize>::Pointer m_iterate_command;
   int m_total_iterations = 0;
   size_t m_iteration_count = 0;
+
+  int m_split_number{0};
+
+  std::mt19937 m_rand{42};
 };

@@ -1,14 +1,4 @@
 #pragma once
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
 
 #include "itkParticleSystem.h"
 #include "itkParticleGradientDescentPositionOptimizer.h"
@@ -19,6 +9,9 @@
 #include "itkParticleMeanCurvatureAttribute.h"
 #include "itkParticleSurfaceNeighborhood.h"
 #include "itkParticleOmegaGradientFunction.h"
+#include "DomainType.h"
+#include "MeshWrapper.h"
+#include "MeshDomain.h"
 
 #include "itkParticleModifiedCotangentEntropyGradientFunction.h"
 #include "itkParticleConstrainedModifiedCotangentEntropyGradientFunction.h"
@@ -152,8 +145,7 @@ public:
 
     void AddImage(const typename TImage::Pointer image, double narrow_band)
     {
-        const auto domain = ParticleImplicitSurfaceDomain<typename
-                              ImageType::PixelType, Dimension>::New();
+        const auto domain = ParticleImplicitSurfaceDomain<typename ImageType::PixelType>::New();
         m_NeighborhoodList.push_back( ParticleSurfaceNeighborhood<ImageType>::New() );
 
         if (image)
@@ -166,9 +158,15 @@ public:
         m_DomainList.push_back(domain);
     }
 
-    int NumDomains() const
-    {
-      return m_DomainList.size();
+    void AddMesh(shapeworks::MeshWrapper * mesh) {
+
+      MeshDomain *domain = new MeshDomain();
+      m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood<ImageType>::New());
+      if (mesh) {
+        this->m_Spacing = 1;
+        domain->SetMesh(mesh);
+      }
+      m_DomainList.push_back(domain);
     }
 
     void SetFidsFiles(const std::vector<std::string> &s)
@@ -214,7 +212,7 @@ public:
 
         if (m_Initialized == true)
         {
-            m_DomainList[i]->SetCuttingPlane(va,vb,vc);
+            m_ParticleSystem->GetDomain(i)->SetCuttingPlane(va, vb, vc);
         }
     }
 
@@ -224,22 +222,13 @@ public:
         if (m_Initialized == true)
         {
             TransformType T1 = this->GetParticleSystem()->GetTransform(i) * this->GetParticleSystem()->GetPrefixTransform(i);
-            vnl_vector_fixed<double, Dimension> fa = m_DomainList[i]->GetA();
-            vnl_vector_fixed<double, Dimension> fb = m_DomainList[i]->GetB();
-            vnl_vector_fixed<double, Dimension> fc = m_DomainList[i]->GetC();
-            /* Copy vnl_vector_fixed to vnl_vector */
-            vnl_vector<double> a(Dimension); vnl_vector<double> b(Dimension); vnl_vector<double> c(Dimension);
-            for(unsigned int k = 0; k < Dimension; k++)
-            {
-                a[k] = fa[k]; b[k] = fb[k]; c[k] = fc[k];
-            }
             for(unsigned int d = 0; d < this->GetParticleSystem()->GetNumberOfDomains(); d++)
             {
                 if (this->GetParticleSystem()->GetDomainFlag(d) == false)
                 {
                     TransformType T2 = this->GetParticleSystem()->InvertTransform( this->GetParticleSystem()->GetTransform(d)
                                                                                    * this->GetParticleSystem()->GetPrefixTransform(d));
-                    m_DomainList[d]->TransformCuttingPlane( T2 * T1, a, b, c );
+                    m_ParticleSystem->GetDomain(d)->TransformCuttingPlane(T2 * T1);
                 }
             }
         }
@@ -260,7 +249,7 @@ public:
 
         if (m_Initialized == true)
         {
-            m_DomainList[i]->AddSphere(c,r);
+            m_ParticleSystem->GetDomain(i)->AddSphere(c, r);
         }
     }
 
@@ -332,11 +321,6 @@ public:
     virtual void AllocateDataCaches();
     virtual void AllocateDomainsAndNeighborhoods();
     virtual void InitializeOptimizationFunctions();
-    virtual void DeleteImages() {
-        for(int i=0; i<m_DomainList.size(); i++) {
-            m_DomainList[i]->DeleteImages();
-        }
-    }
 
     /** */
     virtual void Initialize()
@@ -345,6 +329,8 @@ public:
         this->Execute();
         this->m_Initializing = false;
     }
+
+    virtual void ReInitialize();
 
     virtual void Execute();
 
@@ -387,8 +373,7 @@ protected:
 
     typename ParticleSystem<Dimension>::Pointer m_ParticleSystem;
 
-    std::vector<typename ParticleImplicitSurfaceDomain<typename
-    ImageType::PixelType, Dimension>::Pointer> m_DomainList;
+    std::vector<typename ParticleDomain::Pointer> m_DomainList;
 
     std::vector<typename ParticleSurfaceNeighborhood<ImageType>::Pointer> m_NeighborhoodList;
 
