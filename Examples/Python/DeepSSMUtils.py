@@ -18,6 +18,144 @@ from torch.utils.data import DataLoader
 ######################## Data loading functions ####################################
 
 '''
+Reads csv and makes train and validation data loaders
+'''
+def getTrainValLoaders(loader_dir, data_csv, batch_size=1, down_sample=False):
+	makeDir(loader_dir)
+	images, scores, models, prefixes = getAllTrainData(data_csv, down_sample)
+	images, scores, models, prefixes = shuffleData(images, scores, models, prefixes)
+	# split into train (80%) validation(20%)
+	cut = int(len(images)*.80) 
+	print("\nTurning to tensors...")
+	train_data = DeepSSMdataset(images[:cut], scores[:cut], models[:cut])
+	print(str(len(train_data)) + ' in training set')
+	val_data = DeepSSMdataset(images[cut:], scores[cut:], models[cut:])
+	print(str(len(val_data)) + ' in validation set')
+
+	print("\nCreating and saving dataloaders...")
+	trainloader = DataLoader(
+			train_data,
+			batch_size=batch_size,
+			shuffle=True,
+			num_workers=8,
+			pin_memory=torch.cuda.is_available()
+		)
+	train_path = loader_dir + 'train'
+	torch.save(trainloader, train_path)
+	print("Train loader done.")
+
+	validationloader = DataLoader(
+			val_data,
+			batch_size=1,
+			shuffle=True,
+			num_workers=8,
+			pin_memory=torch.cuda.is_available()
+		)
+	val_path = loader_dir + 'validation'
+	torch.save(validationloader, val_path)
+	print("Val loader done.")
+	return train_path, val_path
+
+'''
+Makes test data loader
+'''
+def getTestLoader(loader_dir, test_img_list, test_particle_list, down_sample):
+	# get data
+	image_paths = []
+	scores = []
+	models = []
+	test_names = []
+	for index in range(len(test_img_list)):
+		image_path = test_img_list[index]
+		model_path = test_particle_list[index]
+		# add name
+		prefix = getPrefix(image_path)
+		# data error check
+		if prefix not in getPrefix(model_path):
+			print("Error: Images and models mismatched in csv.")
+			print(index)
+			print(prefix)
+			print(getPrefix(model_path))
+			exit()
+		test_names.append(prefix)
+		image_paths.append(image_path)
+		# add scoe placeholder
+		scores.append([])
+		models.append(getParticles(model_path))
+	images = getImages(image_paths, down_sample)
+	scores = whitenPCAscores(scores, loader_dir, mean_std_dir)
+
+	test_data = DeepSSMdataset(images, scores, models)
+	# Write test names to file so they are saved somewhere
+	name_file = open(loader_dir + 'test_names.txt', 'w+')
+	name_file.write(str(test_names))
+	name_file.close()
+	print("Test names saved to: " + loader_dir + "test_names.txt")
+	# Make loader
+	print("Creating and saving test dataloader...")
+	testloader = DataLoader(
+			test_data,
+			batch_size=1,
+			shuffle=False,
+			num_workers=8,
+			pin_memory=torch.cuda.is_available()
+		)
+	test_path = loader_dir + 'test'
+	torch.save(testloader, test_path)
+	print("Done.")
+	return test_path, test_names
+
+'''
+returns images, scores, models, prefixes from CSV
+'''
+def getAllTrainData(data_csv, down_sample):
+	# get all data and targets
+	print("Reading all data...")
+	image_paths = []
+	scores = []
+	models = []
+	prefixes = []
+	with open(data_csv, newline='') as csvfile:
+		datareader = csv.reader(csvfile)
+		index = 0
+		for row in datareader:
+			image_path = row[0]
+			model_path = row[1]
+			pca_scores = row[2:]
+			# add name
+			prefix = getPrefix(image_path)
+			# data error check
+			if prefix not in getPrefix(model_path):
+				print("Error: Images and models mismatched in csv.")
+				print(index)
+				print(prefix)
+				print(getPrefix(model_path))
+				exit()
+			prefixes.append(prefix)
+			# add image path
+			image_paths.append(image_path)
+			# add score (un-normalized)
+			pca_scores = [float(i) for i in pca_scores]
+			scores.append(pca_scores)
+			# add model
+			mdl = getParticles(model_path)
+			models.append(mdl)
+			index += 1
+	images = getImages(loader_dir, image_paths, down_sample)
+	scores = whitenPCAscores(scores, loader_dir, mean_std_dir)
+	return images, scores, models, prefixes 
+
+'''
+Shuffle all data
+'''
+def shuffleData(images, scores, models, prefixes):
+	print("Shuffling.")
+	c = list(zip(images, scores, models, prefixes))
+	random.shuffle(c)
+	images, scores, models, prefixes = zip(*c)
+	return images, scores, models, prefixes
+
+'''
 Class for DeepSSM datasets that works with Pytorch DataLoader
 '''
 class DeepSSMdataset():
@@ -39,8 +177,8 @@ returns sample prefix from path string
 '''
 def getPrefix(path):
 	file_name = os.path.basename(path)
-	prefix = file_name.split(".")[0]
-	prefix = prefix.replace("_1x_hip", "").replace("_femur", "")
+	prefix = "_".join(file_name.split("_")[:2])
+	prefix = prefix.split(".")[0]
 	return prefix
 
 '''
@@ -60,136 +198,52 @@ def getParticles(model_path):
 getTorchDataLoaderHelper
 reads .nrrd files and returns whitened data
 '''
-def getWhitenedImages(image_list):
+def getImages(loader_dir, image_list, down_sample):
+	# get all images
 	all_images = []
 	for image_path in image_list:
 		image = itk.imread(image_path, itk.F)
 		img = itk.GetArrayFromImage(image)
+		if down_sample:
+			img = downSample(img)
 		all_images.append(img)
 	all_images = np.array(all_images)
-	mean_image = np.mean(all_images)
-	std_image = np.std(all_images)
+	# get mean and std
+	mean_path = loader_dir + 'mean_img.npy'
+	std_path = loader_dir + 'std_img.npy'
+	if not os.path.exists(mean_path) or not os.path.exists(std_path):
+		mean_image = np.mean(all_images)
+		std_image = np.std(all_images)
+		np.save(mean_path, mean_image)
+		np.save(std_path, std_image)
+	else:
+		mean_image = np.load(mean_path)
+		std_image = np.load(std_path)
+	# normlaize
 	norm_images = []
 	for image in all_images:
 		norm_images.append([(image-mean_image)/std_image])
 	return norm_images
 
+# @TODO
+def downSample(img):
+	return img
+
 '''
 getTorchDataLoaderHelper
 normalizes PCA scores, returns mean and std for reconstruction
 '''
-def whitenPCAscores(scores):
+def whitenPCAscores(scores, loader_dir):
 	scores = np.array(scores)
 	mean_score = np.mean(scores)
-	std_score = np.mean(scores)
+	std_score = np.std(scores)
+	np.save(loader_dir + 'mean_PCA.npy', mean_score)
+	np.save(loader_dir + 'std_PCA.npy', std_score)
 	norm_scores = []
 	for score in scores:
 		norm_scores.append((score-mean_score)/std_score)
-	return norm_scores, mean_score, std_score
+	return norm_scores
 
-'''
-Reads csv and makes data loaders with given batch size, saves them in loader_dir
-'''
-def getTorchDataLoaders(loader_dir, data_csv, batch_size=1):
-	if not os.path.exists(loader_dir):
-		os.makedirs(loader_dir)
-	# get all data and targets
-	print("Reading all data...")
-	image_paths = []
-	scores = []
-	models = []
-	prefixes = []
-	with open(data_csv) as f:
-		total = sum(1 for line in f)
-	with open(data_csv, newline='') as csvfile:
-		datareader = csv.reader(csvfile)
-		index = 0
-		for row in datareader:
-			percent = ((index+1)/total) * 100
-			if percent % 5 == 0:
-				print(str(percent)+ '% processed')
-			image_path = row[0]
-			model_path = row[1]
-			pca_scores = row[2:]
-			# add name
-			prefix = getPrefix(image_path)
-			# data error check
-			if prefix not in getPrefix(model_path):
-				print("Error: Images and models mismatched in csv.")
-				print(prefix)
-				print(getPrefix(model_path))
-				exit()
-			prefixes.append(prefix)
-			# add image path
-			image_paths.append(image_path)
-			# add score (un-normalized)
-			pca_scores = [float(i) for i in pca_scores]
-			scores.append(pca_scores)
-			# add model
-			mdl = getParticles(model_path)
-			models.append(mdl)
-			index += 1
-	images = getWhitenedImages(image_paths)
-	scores, mean_score, std_score = whitenPCAscores(scores)
-	np.save(loader_dir + 'mean_PCA.npy', np.array(mean_score))
-	np.save(loader_dir + 'std_PCA.npy', np.array(std_score))
-
-	print("\nShuffling and splitting into train, val, and test...")
-	# shuffle
-	c = list(zip(images, scores, models, prefixes))
-	random.shuffle(c)
-	images, scores, models, prefixes = zip(*c)
-	# split into train (80%), validation(10%), and test(10%) datsets
-	cut1 = int(len(images)*.8) 
-	cut2 = cut1 + int(len(images)*.1)
-
-	# Write test names to file so they are saved somewhere
-	test_names = list(prefixes[cut2:])
-	name_file = open(loader_dir + 'test_names.txt', 'w+')
-	name_file.write(str(test_names))
-	name_file.close()
-	print("Test names saved to: " + loader_dir + "test_names.txt")
-
-	print("\nTurning to tensors...")
-	train_data = DeepSSMdataset(images[:cut1], scores[:cut1], models[:cut1])
-	print(str(len(train_data)) + ' in training set')
-	val_data = DeepSSMdataset(images[cut1:cut2], scores[cut1:cut2], models[cut1:cut2])
-	print(str(len(val_data)) + ' in validation set')
-	test_data = DeepSSMdataset(images[cut2:], scores[cut2:], models[cut2:])
-	print(str(len(test_data)) + ' in testing set')
-
-	print("\nCreating and saving dataloaders...")
-	trainloader = DataLoader(
-			train_data,
-			batch_size=batch_size,
-			shuffle=True,
-			num_workers=8,
-			pin_memory=torch.cuda.is_available()
-		)
-	train_path = loader_dir + 'train'
-	torch.save(trainloader, train_path)
-	print("Train loader done.")
-	validationloader = DataLoader(
-			val_data,
-			batch_size=1,
-			shuffle=True,
-			num_workers=8,
-			pin_memory=torch.cuda.is_available()
-		)
-	val_path = loader_dir + 'validation'
-	torch.save(validationloader, val_path)
-	print("Val loader done.")
-	testloader = DataLoader(
-			test_data,
-			batch_size=1,
-			shuffle=False,
-			num_workers=8,
-			pin_memory=torch.cuda.is_available()
-		)
-	test_path = loader_dir + 'test'
-	torch.save(testloader, test_path)
-	print("Test loader done.")
-	return 
 
 ########################## Model Class ####################################
 
@@ -464,3 +518,9 @@ def test(out_dir, model_path, loader_dir, pca_scores_path):
 	getPoints(out_dir, orig_scores, pred_scores, pca_scores_path, test_names, loader_dir)
 	return test_mr_MSE, test_rel_err
 
+'''
+Make folder
+'''
+def makeDir(dirPath):
+    if not os.path.exists(dirPath):
+        os.makedirs(dirPath)

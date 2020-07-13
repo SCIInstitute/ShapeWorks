@@ -15,8 +15,8 @@ import glob
 import re
 import numpy as np
 
-from DataAugmentUtils import *
-from DeepSSMUtils import *
+import DataAugmentUtils
+import DeepSSMUtils
 
 def Run_Pipeline(args):
 	if args.tiny_test:
@@ -39,9 +39,9 @@ def Run_Pipeline(args):
 		import DatasetUtils
 		DatasetUtils.downloadDataset(datasetName)
 	# extract the zipfile
-	print("Extracting data from " + filename + "...")
-	with ZipFile(filename, 'r') as zipObj:
-		zipObj.extractall(path=parent_dir)
+	# print("Extracting data from " + filename + "...")
+	# with ZipFile(filename, 'r') as zipObj:
+	# 	zipObj.extractall(path=parent_dir)
 	# Get image path list
 	img_dir = input_dir + "groomed/images/"
 	img_list = []
@@ -55,10 +55,17 @@ def Run_Pipeline(args):
 		if "local" in file:
 			particle_list.append(model_dir + file)
 	particle_list = sorted(particle_list)
+	# split into train and test
+	train_img_list = img_list[:40]
+	test_img_list = img_list[40:]
+	train_particle_list = particle_list[:40]
+	test_particle_list = particle_list[40:]
 	# shorten lists for tiny test 
 	if args.tiny_test:
-		img_list = img_list[:4]
-		particle_list = particle_list[:4]
+		train_img_list = train_img_list[:4]
+		train_particle_list = train_particle_list[:4]
+		test_img_list = test_img_list[:2]
+		test_particle_list = particle_list[:2]
 
 
 	print("\n\n\nStep 2. Augment data\n") ###################################################################################
@@ -67,24 +74,27 @@ def Run_Pipeline(args):
 	num_PCA is the number of PCA scores to use
 	sample type is the sampling method to use
 	'''
-	num_samples = 3950
+	num_samples = 4960
 	num_PCA = 6
 	sample_type = "KDE"
 	if args.tiny_test:
 		num_samples = 16
-		num_PCA = 3
-	aug_data_csv, PCA_scores_path = RunDataAugmentation(parent_dir + "augmentation/", img_list, particle_list, num_samples, num_PCA, sample_type)
+		num_PCA = 2
+	aug_data_csv, PCA_scores_path = DataAugmentUtils.RunDataAugmentation(parent_dir + "augmentation/", train_img_list, train_particle_list, num_samples, num_PCA, sample_type)
 
 
 	print("\n\n\nStep 3. Reformat Data for Pytorch\n") #######################################################################
 	'''
-	Hyper-paramter batch_size for training
-	Higher batch size will help speed up training but uses more cuda memory
-	If you get a memory error try reducing the batch size
+	If down_sample is true, model will trian on images half the original size
+	If whiten is true, images and PCA scores will be whitened 
+	Hyper-paramter batch_size is for training
+		Higher batch size will help speed up training but uses more cuda memory, if you get a memory error try reducing the batch size
 	'''
-	batch_size = 1
+	down_sample = True
+	batch_size = 4
 	loader_dir = parent_dir + 'TorchDataLoaders/'
-	getTorchDataLoaders(parent_dir + 'TorchDataLoaders/', aug_data_csv, batch_size)
+	DeepSSMUtils.getTrainValLoaders(loader_dir, aug_data_csv, batch_size, down_sample)
+	DeepSSMUtils.getTestLoader(loader_dir, test_img_list, test_particle_list, down_sample)
 
 
 	print("\n\n\nStep 4. Train model.\n") #####################################################################################
@@ -96,14 +106,14 @@ def Run_Pipeline(args):
 	parameters = {"epochs":10, "learning_rate":0.001, "val_freq":1}
 	if args.tiny_test:
 		parameters = {"epochs":5, "learning_rate":0.001, "val_freq":1}
-	model_path = train(loader_dir, parameters, parent_dir)
+	model_path = DeepSSMUtils.train(loader_dir, parameters, parent_dir)
 
 
 	print("\n\n\nStep 5. Test DeepSSM\n") #####################################################################################
 	'''
 	Test DeepSSM
 	'''
-	mr_error, rel_error = test(parent_dir + 'test/', model_path, loader_dir, PCA_scores_path)
+	mr_error, rel_error = DeepSSMUtils.test(parent_dir + 'test/', model_path, loader_dir, PCA_scores_path)
 	print("Average mean root MSE on test set:")
 	print(mr_error)
 	print("Average relative error on test set:")
