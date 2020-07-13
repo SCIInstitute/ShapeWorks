@@ -66,11 +66,8 @@ def Run_Pipeline(args):
 	num_samples = 3950
 	if args.tiny_test:
 		num_samples = 16
-	# PCA_var_cutoff dictates how many modes of variation are preserved for points and images (a smaller value will result in fewer PCA modes, setting to 1 will use all of them)
-	PCA_var_cutoff = 0.97
-	# If doResample is 1 it will resample the image to be half the size for faster training (default is 0)
-	# If doPad is 1 it will add padding around the image in case the anatomy lies on the image boundary (default is 0)
-	aug_data_csv, PCA_scores_path = dataAugment(parent_dir + "augmentation/", img_list, particle_list, num_samples, PCA_var_cutoff, doResample=0, doPad=0)
+	num_PCA = 6
+	aug_data_csv, PCA_scores_path = RunDataAugmentation(parent_dir + "augmentation/", img_list, particle_list, num_samples, num_PCA, sample_type="KDE")
 
 	print("\n\n\nStep 3. Reformat Data for Pytorch\n")
 	# Hyper-paramter batch_size for training
