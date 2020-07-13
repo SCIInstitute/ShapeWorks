@@ -64,9 +64,10 @@ def Run_Pipeline(args):
 	print("\n\n\nStep 2. Augment data\n")
 	# num_samples is how many samples to generate 
 	num_samples = 3950
+	num_PCA = 6
 	if args.tiny_test:
 		num_samples = 16
-	num_PCA = 6
+		num_PCA = 3
 	aug_data_csv, PCA_scores_path = RunDataAugmentation(parent_dir + "augmentation/", img_list, particle_list, num_samples, num_PCA, sample_type="KDE")
 
 	print("\n\n\nStep 3. Reformat Data for Pytorch\n")
