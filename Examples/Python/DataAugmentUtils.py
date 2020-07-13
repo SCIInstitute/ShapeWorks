@@ -53,6 +53,7 @@ def RunDataAugmentation(out_dir, img_list, point_list, num_samples, num_PCA, sam
 	csv_out.close()
 	return out_dir + "totalData.csv", out_dir + 'original_PCA_scores.npy'
 
+############################ Methods for PCA on original data ##################################################
 def ProcessOriginal(out_dir, img_list, point_list, num_PCA):
 	# Initialize
 	makeDir(out_dir)
@@ -73,45 +74,6 @@ def ProcessOriginal(out_dir, img_list, point_list, num_PCA):
 		csv_out.write(string + "\n")
 	csv_out.close()
 	return pca_particle_scores, mean_particles, eigvecs_particles, M_particles
-
-def getKDEsigma(pca_particle_scores):
-	nearest_neighbor_dists = []
-	cov = np.cov(pca_particle_scores.T) # this is pain
-	for score_i in pca_particle_scores:
-		smallest = np.Inf
-		for score_j in pca_particle_scores:
-			temp = score_i - score_j
-			dist = np.dot(np.dot(temp, np.linalg.inv(cov)), temp.T) #mahalanobis
-			if dist < smallest and dist != 0:
-				smallest = dist
-		nearest_neighbor_dists.append(smallest)
-	return np.mean(np.array(nearest_neighbor_dists))
-
-def sampleKDE(img_list, point_list, pca_particle_scores, sigma_squared):
-	# Get random base example
-	base_index = np.random.randint(len(img_list))
-	base_image_path = img_list[base_index]
-	base_particles_path = point_list[base_index]
-	base_PCA_scores = pca_particle_scores[base_index]
-	# Get PCA noise
-	noise = []
-	for i in range(pca_particle_scores.shape[1]):
-		noise.append(np.random.normal(0,sigma_squared))
-	noise = np.array(noise)
-	# get new pca score
-	new_PCA_score = base_PCA_scores + noise
-	return new_PCA_score, base_image_path, base_particles_path
-
-# @TDOD
-def getGaussianSigma(pca_particle_scores):
-	return 1
-
-# @TODO
-def sampleGaussian(img_list, point_list, pca_particle_scores, sigma_squared):
-	base_image_path = ''
-	base_particles_path = ''
-	new_PCA_score = []
-	return new_PCA_score, base_image_path, base_particles_path
 
 '''
 Use warp between particles to warp original image into a new image
@@ -208,3 +170,52 @@ Make folder
 def makeDir(dirPath):
     if not os.path.exists(dirPath):
         os.makedirs(dirPath)
+
+########################## Gaussian sampling mehtods ##########################################
+
+# @TDOD
+def getGaussianSigma(pca_particle_scores):
+	return 1
+
+# @TODO
+def sampleGaussian(img_list, point_list, pca_particle_scores, sigma_squared):
+	base_image_path = ''
+	base_particles_path = ''
+	new_PCA_score = []
+	return new_PCA_score, base_image_path, base_particles_path
+	
+############################## KDE sampling methods ###########################################
+
+'''
+Get sigma squared for KDE sampling
+'''
+def getKDEsigma(pca_particle_scores):
+	nearest_neighbor_dists = []
+	cov = np.cov(pca_particle_scores.T) # this is pain
+	for score_i in pca_particle_scores:
+		smallest = np.Inf
+		for score_j in pca_particle_scores:
+			temp = score_i - score_j
+			dist = np.dot(np.dot(temp, np.linalg.inv(cov)), temp.T) #mahalanobis
+			if dist < smallest and dist != 0:
+				smallest = dist
+		nearest_neighbor_dists.append(smallest)
+	return np.mean(np.array(nearest_neighbor_dists))
+
+'''
+Sample using KDE
+'''
+def sampleKDE(img_list, point_list, pca_particle_scores, sigma_squared):
+	# Get random base example
+	base_index = np.random.randint(len(img_list))
+	base_image_path = img_list[base_index]
+	base_particles_path = point_list[base_index]
+	base_PCA_scores = pca_particle_scores[base_index]
+	# Get PCA noise
+	noise = []
+	for i in range(pca_particle_scores.shape[1]):
+		noise.append(np.random.normal(0,sigma_squared))
+	noise = np.array(noise)
+	# get new pca score
+	new_PCA_score = base_PCA_scores + noise
+	return new_PCA_score, base_image_path, base_particles_path
