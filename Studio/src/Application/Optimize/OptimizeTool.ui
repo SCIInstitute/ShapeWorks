@@ -558,7 +558,7 @@ background: rgb(255, 255, 127)
          <number>99</number>
         </property>
         <property name="value">
-         <number>0</number>
+         <number>10</number>
         </property>
        </widget>
       </item>
@@ -643,7 +643,7 @@ background: rgb(255, 255, 127)
          <number>99</number>
         </property>
         <property name="value">
-         <number>0</number>
+         <number>32</number>
         </property>
        </widget>
       </item>

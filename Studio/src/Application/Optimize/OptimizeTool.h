@@ -9,12 +9,15 @@
 #include <Data/Preferences.h>
 
 class Session;
+
 class Ui_OptimizeTool;
+
 class QOptimize;
 
 class OptimizeTool : public QWidget
 {
-  Q_OBJECT;
+Q_OBJECT;
+
 public:
 
   OptimizeTool();
@@ -41,6 +44,8 @@ public Q_SLOTS:
   void handle_error(std::string);
   void handle_warning(std::string);
   void handle_message(std::string);
+
+  void update_ui_elements();
 
 signals:
   void optimize_start();
