@@ -1967,7 +1967,7 @@ void Optimize::AddImage(ImageType::Pointer image) {
 void Optimize::AddMesh(shapeworks::MeshWrapper *mesh) {
   this->m_sampler->AddMesh(mesh);
   this->m_num_shapes++;
-  this->m_spacing = 0.2;
+  this->m_spacing = 0.5;
 }
 
 //---------------------------------------------------------------------------
@@ -1993,7 +1993,7 @@ shapeworks::OptimizationVisualizer& Optimize::GetVisualizer() {
 }
 
 void Optimize::SetShowVisualizer(bool show) {
-  this->show_visualizer = true;
+  this->show_visualizer = show;
 }
 
 bool Optimize::GetShowVisualizer() {

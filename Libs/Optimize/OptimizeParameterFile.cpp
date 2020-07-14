@@ -58,11 +58,11 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize *
     // In order to get it working for image domains, need to add code that extracts meshes from each image and adds them to the visualizer.
     elem = doc_handle.FirstChild("visualizer_enable").Element();
     if (elem) {
-      optimize->SetShowVisualizer(true);
+      optimize->SetShowVisualizer(( bool) atoi(elem->GetText()));
 
       elem = doc_handle.FirstChild("visualizer_wireframe").Element();
       if (elem) {
-        optimize->GetVisualizer().SetWireFrame(true);
+        optimize->GetVisualizer().SetWireFrame(( bool) atoi(elem->GetText()));
       }
       elem = doc_handle.FirstChild("visualizer_screenshot_directory").Element();
       if (elem) {

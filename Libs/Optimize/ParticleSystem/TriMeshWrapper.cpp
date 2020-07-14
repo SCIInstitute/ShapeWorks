@@ -123,7 +123,7 @@ namespace shapeworks
       if (facesTraversed.size() >= 3 && facesTraversed[facesTraversed.size() - 1] == facesTraversed[facesTraversed.size() - 3]) {
         // When at the intersection of two faces while also being at the edge of the mesh, the edge-sliding will keep alternating 
         // between the two faces without actually going anywhere since it is at a corner in the mesh.
-        std::cerr << "exiting due to face repetition\n";
+        //std::cerr << "exiting due to face repetition\n";
         break;
       }
       if (facesTraversed.size() > 100) {

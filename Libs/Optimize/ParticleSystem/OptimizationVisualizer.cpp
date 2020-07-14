@@ -24,6 +24,7 @@ namespace shapeworks {
     this->saveScreenshots = enabled;
     if (this->saveScreenshots) {
       screenshotDirectory = path;
+      std::cerr << "Saving screenshots to " << screenshotDirectory << "\n";
     }
   }
 
@@ -135,7 +136,7 @@ namespace shapeworks {
 
       vtkSmartPointer<vtkPNGWriter> writer = vtkSmartPointer<vtkPNGWriter>::New(); 
       char buffer[100];
-      int n = sprintf(buffer, "%s/screenshot_%08d.png", this->screenshotDirectory, iteration);
+      int n = sprintf(buffer, "%s/screenshot_%08d.png", this->screenshotDirectory.c_str(), iteration);
       writer->SetFileName(buffer);
       writer->SetInputConnection(windowToImageFilter->GetOutputPort());
       writer->Write();
