@@ -1419,7 +1419,7 @@ void Coverage::buildParser()
   const std::string desc = "coverage between two meshes";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--second_mesh").action("store").type("string").set_default("").help("Second mesh to apply coverage.");
+  parser.add_option("--name").action("store").type("string").set_default("").help("Second mesh to apply coverage");
 
   Command::buildParser();
 }
@@ -1432,18 +1432,15 @@ bool Coverage::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
-  std::string second_mesh_string = static_cast<std::string>(options.get("second_mesh"));
+  std::string name = options["name"];
 
-  if (second_mesh_string == "")
+  if (name == "")
   {
     std::cerr << "Must specify second mesh\n";
     return false;
   }
 
-  Mesh second_mesh;
-  second_mesh.read(second_mesh_string);
-
-  return sharedData.mesh.coverage(second_mesh);
+  return sharedData.mesh.coverage(Mesh(name));
 }
 
 } // shapeworks

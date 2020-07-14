@@ -10,7 +10,7 @@ typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> R
 namespace shapeworks {
 template<unsigned int VDimension>
 double ShapeEvaluation<VDimension>::ComputeCompactness(const ParticleSystem &particleSystem, const int nModes,
-                                                       const std::string &saveScreePlotTo)
+                                                       const std::string &saveTo)
 {
   const int N = particleSystem.N();
   const int D = particleSystem.D();
@@ -30,8 +30,8 @@ double ShapeEvaluation<VDimension>::ComputeCompactness(const ParticleSystem &par
   }
   cumsum /= S.sum();
 
-  if (!saveScreePlotTo.empty()) {
-    std::ofstream of(saveScreePlotTo);
+  if (!saveTo.empty()) {
+    std::ofstream of(saveTo);
     of << cumsum;
     of.close();
   }

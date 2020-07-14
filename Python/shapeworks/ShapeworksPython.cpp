@@ -9,8 +9,10 @@ using namespace pybind11::literals;
 #include "Image.h"
 #include "ImageUtils.h"
 #include "Mesh.h"
+#include "MeshUtils.h"
 #include "Optimize.h"
 #include "ParticleSystem.h"
+#include "ShapeEvaluation.h"
 
 // TODO
 // - add operator= to the pybind11 (for Image, Mesh, etc)
@@ -25,12 +27,13 @@ PYBIND11_MODULE(shapeworks, m)
 {
   m.doc() = "ShapeWorks Python API";
 
+  // Shapeworks globals
+
   // py::class_<shapeworks::Coord>(m, "Coord")
   // .def(py::init<>())
   // // .def(py::init<unsigned, unsigned, unsigned>)
   // ;
 
-  // Shapeworks globals
   py::class_<shapeworks::Dims>(m, "Dims")
   .def(py::init<>())
   // .def(py::init<unsigned, unsigned, unsigned>())
@@ -76,6 +79,7 @@ PYBIND11_MODULE(shapeworks, m)
 //   File "<stdin>", line 1, in <module>
 // TypeError: 'shapeworks.Point3' object is not subscriptable
 
+  // Image
   py::class_<shapeworks::Image>(m, "Image")
   .def(py::init<const std::string &>()) // can the argument for init be named (it's filename in this case)
   .def(py::init<shapeworks::Image::ImageType::Pointer>())
@@ -140,6 +144,7 @@ PYBIND11_MODULE(shapeworks, m)
   // .def("__set__",               &shapeworks::Image::operator=, "img"_a)
   ;
 
+  // Image::Region
   py::class_<shapeworks::Image::Region>(m, "Region")
   .def(py::init<shapeworks::Dims>())
   .def(py::init<shapeworks::Coord, shapeworks::Coord>())
@@ -156,6 +161,7 @@ PYBIND11_MODULE(shapeworks, m)
   // .def("ImageType::RegionType")
   ;
 
+  // ImageUtils
   py::class_<shapeworks::ImageUtils>(m, "ImageUtils")
   .def_static("boundingBox",    &shapeworks::ImageUtils::boundingBox, "filenames"_a, "isoValue"_a=1.0)
   .def_static("createCenterOfMassTransform",
@@ -169,24 +175,41 @@ PYBIND11_MODULE(shapeworks, m)
   .def_static("isoresample",    &shapeworks::ImageUtils::isoresample, "image"_a, "isoSpacing"_a = 1.0, "outputSize"_a = shapeworks::Dims())
   ;
 
+  // Mesh
   py::class_<shapeworks::Mesh>(m, "Mesh")
-  .def(py::init<>())
-  .def("read",                  &shapeworks::Mesh::read, "filename"_a)
-  .def("write",                 &shapeworks::Mesh::write, "filename"_a)
-  .def("coverage",              &shapeworks::Mesh::coverage, "Not sure what this computes. Maybe spatial overlap", "other_mesh"_a)
+  .def(py::init<const std::string &>())
+  .def("write",                 &shapeworks::Mesh::write, "pathname"_a)
+  .def("coverage",              &shapeworks::Mesh::coverage, "other_mesh"_a)
   .def("compare_points_equal",  &shapeworks::Mesh::compare_points_equal, "other_mesh"_a)
   .def("compare_scalars_equal", &shapeworks::Mesh::compare_scalars_equal, "other_mesh"_a)
   ;
 
+  // MeshUtils
+  py::class_<shapeworks::MeshUtils>(m, "MeshUtils")
+  .def_static("createIcpTransform",  
+                                &shapeworks::MeshUtils::createIcpTransform, "source"_a, "target"_a, "iterations"_a=20)
+  ;
+
   // ParticleSystem
   py::class_<shapeworks::ParticleSystem>(m, "ParticleSystem")
-  // .def(py::init<>())
-  // .def("LoadParticles",         &shapeworks::ParticleSystem::LoadParticles, "paths"_a)
-  // .def("Particles",             &shapeworks::ParticleSystem::Particles) // note: must import Eigenpy (github stack-of-tasks/eigenpy)
+  .def(py::init<const std::vector<std::string> &>())
+  .def("Particles",             &shapeworks::ParticleSystem::Particles) // note: must import Eigenpy (github stack-of-tasks/eigenpy)
   .def("Paths",                 &shapeworks::ParticleSystem::Paths)
   .def("N",                     &shapeworks::ParticleSystem::N)
   .def("D",                     &shapeworks::ParticleSystem::D)
   ;
+
+  // ShapeEvaluation
+  py::class_<shapeworks::ShapeEvaluation<3>>(m, "ShapeEvaluation")
+  .def(py::init<>())
+  .def_static("ComputeCompactness",
+                              &shapeworks::ShapeEvaluation<3>::ComputeCompactness, "particleSystem"_a, "nModes"_a, "saveTo"_a="")
+  .def_static("ComputeGeneralization",
+                              &shapeworks::ShapeEvaluation<3>::ComputeGeneralization, "particleSystem"_a, "nModes"_a, "saveTo"_a="")
+  .def_static("ComputeSpecificity",
+                              &shapeworks::ShapeEvaluation<3>::ComputeSpecificity, "particleSystem"_a, "nModes"_a, "saveTo"_a="")
+
+  ; // <todo> make template arguments global?
 
   // Optimize (TODO)
   py::class_<Optimize>(m, "Optimize")

@@ -31,7 +31,7 @@ def rename(inname, outDir, extension_addition, extension_change=''):
     print("######################################\n")
     return outname
 
-def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, isBinary=True, printCmd=True):
+def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, isBinary=True):
     """
     This function takes in a filelist and produces the resampled files in the appropriate directory.
     """
@@ -43,18 +43,16 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, isBinary=True, 
         inname = inDataList[i]
         outname = rename(inname, outDir, 'isores')
         outDataList.append(outname)
-        # <ctc> as an example, keep in mind that if it's binary and needs recentering, the command can be written:
-        # img.threshold().recenter().write(outname)
         img = Image(inname)
         if isBinary:
             img.antialias()
         ImageUtils.isoresample(img, isoSpacing)
         if isBinary:
-            img.threshold() # re-binarize the image (defaults for threshold are (0,max) )
+            img.binarize()
         img.write(outname)
     return outDataList
 
-def center(outDir, inDataList, printCmd=True):
+def center(outDir, inDataList):
     print("\n########### Centering ###############")
     if not os.path.exists(outDir):
         os.makedirs(outDir)
@@ -67,7 +65,7 @@ def center(outDir, inDataList, printCmd=True):
         img.recenter().write(outname)
     return outDataList
 
-def applyPadding(outDir, inDataList, padSize, padValue=0, printCmd=True):
+def applyPadding(outDir, inDataList, padSize, padValue=0):
     """
     This function takes in a filelist and produces the padded files in the appropriate directory.
     """
@@ -94,7 +92,7 @@ def getInfo(name, info):
     output = subprocess.run(cmd, capture_output=True, text=True).stdout.splitlines()   
     return makeVector(output[0].split(":")[1])
 
-def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False, printCmd=True):
+def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False):
     """
     This function takes in a filelist and produces the center of mass aligned
     files in the appropriate directory.
@@ -123,8 +121,6 @@ def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False, pr
                "readimage", "--name", inname, 
                "translate", "-x", str(T[0]), "-y", str(T[1]), "-z", str(T[2]), 
                "write-image", "--name", outname]
-        if printCmd:
-            print("CMD: " + " ".join(cmd))
         subprocess.check_call(cmd)
 
         if processRaw:

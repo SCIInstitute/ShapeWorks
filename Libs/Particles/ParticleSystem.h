@@ -6,7 +6,8 @@
 
 namespace shapeworks {
 
-class ParticleSystem {
+class ParticleSystem 
+{
 public:
   ParticleSystem(const std::vector<std::string> &paths);
 
