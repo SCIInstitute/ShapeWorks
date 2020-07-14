@@ -6,6 +6,7 @@ namespace py = pybind11;
 using namespace pybind11::literals;
 
 #include "Shapeworks.h"
+#include "ShapeworksUtils.h"
 #include "Image.h"
 #include "ImageUtils.h"
 #include "Mesh.h"
@@ -72,12 +73,20 @@ PYBIND11_MODULE(shapeworks, m)
   // .def(py::init<unsigned, unsigned, unsigned>)
   ;
 
-//TODO: enable subscripting of Point3 in Python
-// >>> sz = img.size()
-// >>> sz[0]
-// Traceback (most recent call last):
-//   File "<stdin>", line 1, in <module>
-// TypeError: 'shapeworks.Point3' object is not subscriptable
+  //TODO: enable subscripting of Point3 in Python
+  // >>> sz = img.size()
+  // >>> sz[0]
+  // Traceback (most recent call last):
+  //   File "<stdin>", line 1, in <module>
+  // TypeError: 'shapeworks.Point3' object is not subscriptable
+
+  // ShapeworksUtils
+  py::class_<shapeworks::ShapeworksUtils>(m, "ShapeworksUtils")
+  .def_static("is_directory",   &shapeworks::ShapeworksUtils::is_directory, "pathname"_a)
+  .def_static("getMatrix",      &shapeworks::ShapeworksUtils::getMatrix, "mat"_a)
+  .def_static("getOffset",      &shapeworks::ShapeworksUtils::getOffset, "mat"_a)
+  .def_static("connectPipelines",
+                                &shapeworks::ShapeworksUtils::connectPipelines<itk::VTKImageExport<shapeworks::Image::ImageType>, vtkImageImport::New()>, "exporter"_a, "importer"_a);
 
   // Image
   py::class_<shapeworks::Image>(m, "Image")
@@ -203,11 +212,11 @@ PYBIND11_MODULE(shapeworks, m)
   py::class_<shapeworks::ShapeEvaluation<3>>(m, "ShapeEvaluation")
   .def(py::init<>())
   .def_static("ComputeCompactness",
-                              &shapeworks::ShapeEvaluation<3>::ComputeCompactness, "particleSystem"_a, "nModes"_a, "saveTo"_a="")
+                                &shapeworks::ShapeEvaluation<3>::ComputeCompactness, "particleSystem"_a, "nModes"_a, "saveTo"_a="")
   .def_static("ComputeGeneralization",
-                              &shapeworks::ShapeEvaluation<3>::ComputeGeneralization, "particleSystem"_a, "nModes"_a, "saveTo"_a="")
+                                &shapeworks::ShapeEvaluation<3>::ComputeGeneralization, "particleSystem"_a, "nModes"_a, "saveTo"_a="")
   .def_static("ComputeSpecificity",
-                              &shapeworks::ShapeEvaluation<3>::ComputeSpecificity, "particleSystem"_a, "nModes"_a, "saveTo"_a="")
+                                &shapeworks::ShapeEvaluation<3>::ComputeSpecificity, "particleSystem"_a, "nModes"_a, "saveTo"_a="")
 
   ; // <todo> make template arguments global?
 
