@@ -11,13 +11,12 @@ class Mesh
 public:
   using MeshType = vtkSmartPointer<vtkPolyData>;
 
-  Mesh() {}
+  Mesh(vtkSmartPointer<vtkPolyData>&& rhs) : mesh(std::move(rhs)) {}
   Mesh(const std::string &inFilename) { read(inFilename); }
 
-  bool read(const std::string &pathname);
   bool write(const std::string &pathname);
 
-  bool coverage(const Mesh& other_mesh);
+  Mesh& coverage(const Mesh& other_mesh);
   bool smooth(unsigned iterations = 1);
   bool decimate(float reduction = 0.01, float angle = 30, bool preservetopology = false);
 
@@ -25,8 +24,10 @@ public:
   bool compare_scalars_equal(const Mesh& other_mesh);
 
 private:
-  MeshType mesh;
+  Mesh() {}
+  bool read(const std::string &pathname);
 
+  MeshType mesh;
 };
 
 } // shapeworks

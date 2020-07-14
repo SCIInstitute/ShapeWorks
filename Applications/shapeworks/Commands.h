@@ -424,6 +424,18 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+class ImageToMesh : public ImageCommand 
+{
+public:
+  static ImageToMesh &getCommand() { static ImageToMesh instance; return instance; }
+
+private:
+  ImageToMesh() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
 class ReadParticleSystem : public ParticleSystemCommand
 {
 public:

@@ -79,25 +79,13 @@ bool Mesh::write(const std::string &pathname)
   return true;
 }
 
-/// coverage
-///
-/// Not really sure what this does... (TODO: add desc here and also add desc in ShapeworksPython.cpp)
-///
-/// \param mesh
-bool Mesh::coverage(const Mesh &other_mesh)
+/// creates mesh of coverage between two meshes
+Mesh& Mesh::coverage(const Mesh &other_mesh)
 {
-  if (!this->mesh) {
-    std::cerr << "No mesh loaded, so returning false." << std::endl;
-    return false;
-  }
-
   FEVTKimport importer;
   FEMesh* surf1 = importer.Load(this->mesh);
   FEMesh* surf2 = importer.Load(other_mesh.mesh);
-  if (surf1 == nullptr || surf2 == nullptr) {
-    std::cerr << "Error reading mesh\n";
-    return false;
-  }
+  if (surf1 == nullptr || surf2 == nullptr) { throw std::invalid_argument("Mesh invalid"); }
 
   FEAreaCoverage areaCoverage;
 
@@ -113,7 +101,7 @@ bool Mesh::coverage(const Mesh &other_mesh)
 
   this->mesh = vtkout.ExportToVTK(*surf1);
 
-  return true;
+  return *this;
 }
 
 /// compare_points_equal

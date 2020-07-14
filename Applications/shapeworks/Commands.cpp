@@ -1241,6 +1241,34 @@ bool DivideImage::execute(const optparse::Values &options, SharedCommandData &sh
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// ImageToMesh
+///////////////////////////////////////////////////////////////////////////////
+void ImageToMesh::buildParser()
+{
+  const std::string prog = "image-to-mesh";
+  const std::string desc = "converts the current image to a mesh";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--isovalue", "-v").action("store").type("double").set_default(1.0).help("isovalue to determine mesh boundary [default: 1.0].");
+
+  Command::buildParser();
+}
+
+bool ImageToMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validImage())
+  {
+    std::cerr << "No image to operate on\n";
+    return false;
+  }
+
+  double isovalue = static_cast<double>(options.get("isovalue"));
+
+  sharedData.mesh = sharedData.image.toMesh(isovalue);
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // ReadParticleSystem
 ///////////////////////////////////////////////////////////////////////////////
 void ReadParticleSystem::buildParser()
@@ -1381,7 +1409,8 @@ bool ReadMesh::execute(const optparse::Values &options, SharedCommandData &share
 {
   std::string filename = options["name"];
 
-  return sharedData.mesh.read(filename);
+  sharedData.mesh = std::make_unique<Mesh>(filename);
+  return sharedData.validMesh();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1408,19 +1437,19 @@ bool WriteMesh::execute(const optparse::Values &options, SharedCommandData &shar
 
   std::string filename = options["name"];
 
-  return sharedData.mesh.write(filename);
+  return sharedData.mesh->write(filename);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Coverage
+/// Coverage
 ///////////////////////////////////////////////////////////////////////////////
 void Coverage::buildParser()
 {
   const std::string prog = "coverage";
-  const std::string desc = "coverage between two meshes";
+  const std::string desc = "creates mesh of coverage between two meshes";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--second_mesh").action("store").type("string").set_default("").help("Second mesh to apply coverage.");
+  parser.add_option("--name").action("store").type("string").set_default("").help("Path to other mesh with which to create coverage.");
 
   Command::buildParser();
 }
@@ -1433,18 +1462,16 @@ bool Coverage::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
-  std::string second_mesh_string = static_cast<std::string>(options.get("second_mesh"));
+  const std::string& other_mesh_path(static_cast<std::string>(options.get("name")));
 
-  if (second_mesh_string == "")
+  if (other_mesh_path.length() == 0)
   {
-    std::cerr << "Must specify second mesh\n";
+    std::cerr << "Must specify path to other mesh\n";
     return false;
   }
 
-  Mesh second_mesh;
-  second_mesh.read(second_mesh_string);
-
-  return sharedData.mesh.coverage(second_mesh);
+  sharedData.mesh->coverage(Mesh(other_mesh_path));
+  return sharedData.validMesh();
 }
 
 } // shapeworks
