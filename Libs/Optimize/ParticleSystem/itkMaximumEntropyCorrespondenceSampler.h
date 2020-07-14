@@ -243,6 +243,8 @@ public:
 
   virtual void InitializeOptimizationFunctions();
 
+  void ReInitialize() override;
+
   void Execute() override;
 
 protected:

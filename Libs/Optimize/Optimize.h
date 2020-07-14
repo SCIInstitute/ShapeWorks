@@ -22,6 +22,8 @@
 #include "ParticleSystem/DomainType.h"
 #include "ParticleSystem/MeshWrapper.h"
 
+#include "ParticleSystem/OptimizationVisualizer.h"
+
 /**
  * \class Optimize
  * \ingroup Group-Optimize
@@ -191,7 +193,6 @@ public:
   //! Set the shape input images
   void AddImage(ImageType::Pointer image);
   void AddMesh(shapeworks::MeshWrapper *mesh);
-  void AddMeshDebugging(std::string filename);
 
   //! Set the shape filenames (TODO: details)
   void SetFilenames(const std::vector<std::string> &filenames);
@@ -233,11 +234,21 @@ public:
   //! Return the narrow band to be used
   double GetNarrowBand();
 
+  //! Set the number of particles when correspondence based multiscale takes over
+  void SetUseShapeStatisticsAfter(int num_particles);
+
+  //! Return the number of particles when correspondence based multiscale takes over
+  int GetUseShapeStatisticsAfter();
+
   //! Print parameter info to stdout
   void PrintParamInfo();
 
   //! Return the Sampler
   SamplerType* GetSampler() { return m_sampler.GetPointer(); }
+
+  shapeworks::OptimizationVisualizer &GetVisualizer();
+  void SetShowVisualizer(bool show);
+  bool GetShowVisualizer();
 
 protected:
 
@@ -259,6 +270,8 @@ protected:
   void Initialize();
   void AddAdaptivity();
   void RunOptimize();
+
+  void SetInitialCorrespondenceMode();
 
   virtual void IterateCallback(itk::Object*, const itk::EventObject &);
 
@@ -345,9 +358,10 @@ protected:
   double m_cotan_sigma_factor = 5.0;
   std::vector <int> m_particle_flags;
   std::vector <int> m_domain_flags;
-  double m_narrow_band{4};
+  double m_narrow_band;
   bool m_narrow_band_set{false};
   bool m_fixed_domains_present{false};
+  int m_use_shape_statistics_after{-1};
 
   // Keeps track of which state the optimization is in.
   unsigned int m_mode = 0;
@@ -375,9 +389,14 @@ protected:
   bool m_aborted = false;
   std::vector<std::array<itk::Point<double>, 3 >> m_cut_planes;
 
-  itk::MemberCommand<Optimize>::Pointer m_iterate_command;
+  //itk::MemberCommand<Optimize>::Pointer m_iterate_command;
   int m_total_iterations = 0;
   size_t m_iteration_count = 0;
 
+  int m_split_number{0};
+
   std::mt19937 m_rand{42};
+
+  bool show_visualizer = false;
+  shapeworks::OptimizationVisualizer visualizer;
 };

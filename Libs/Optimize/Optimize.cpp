@@ -40,19 +40,6 @@
 
 #include "Optimize.h"
 
-#include <vtkSphereSource.h>
-#include <vtkSmartPointer.h>
-#include <vtkCubeSource.h>
-#include <vtkPolyData.h>
-#include <vtkPoints.h>
-#include <vtkGlyph3D.h>
-#include <vtkCellArray.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkActor.h>
-#include <vtkRenderWindow.h>
-#include <vtkRenderer.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkGenericRenderWindowInteractor.h>
 
 //---------------------------------------------------------------------------
 Optimize::Optimize()
@@ -73,7 +60,7 @@ bool Optimize::Run()
   this->SetParameters();
 
   int number_of_splits = static_cast<int>(
-    std::log2(static_cast<double>(this->m_number_of_particles[0])) + 1);
+          std::log2(static_cast<double>(this->m_number_of_particles[0])));
   this->m_iteration_count = 0;
 
   this->m_total_iterations = (number_of_splits * this->m_iterations_per_split) +
@@ -85,12 +72,76 @@ bool Optimize::Run()
 
   m_disable_procrustes = true;
   m_disable_checkpointing = true;
+
+
+  std::vector<unsigned int> final_number_of_particles = this->m_number_of_particles;
+  int scale = 1;
+  if (this->m_use_shape_statistics_after > 0) {
+    this->m_use_shape_statistics_in_init = false;
+    for (int i = 0; i < this->m_number_of_particles.size(); i++) {
+      // run up to only the specified starting point for multiscale
+      this->m_number_of_particles[i] = this->m_use_shape_statistics_after;
+    }
+  }
+
   // Initialize
   if (m_processing_mode >= 0) { this->Initialize();}
   // Introduce adaptivity
   if (m_processing_mode >= 1 || m_processing_mode == -1) { this->AddAdaptivity();}
   // Optimize
   if (m_processing_mode >= 2 || m_processing_mode == -2) { this->RunOptimize();}
+
+  if (this->m_use_shape_statistics_after > 0) {
+    // First phase is done now run iteratively until we reach the final particle counts
+
+    // save the particles for this split if requested
+    if (m_save_init_splits == true) {
+      std::stringstream ss;
+      ss << this->m_split_number;
+      std::stringstream ssp;
+      std::string dir_name = "split" + ss.str();
+      for (int i = 0; i < m_domains_per_shape; i++) {
+        ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles(i);
+        dir_name += "_" + ssp.str();
+        ssp.str("");
+      }
+      dir_name += "pts_w_opt";
+      std::string out_path = m_output_dir;
+      std::string tmp_dir_name = out_path + "/" + dir_name;
+
+      this->WritePointFiles(tmp_dir_name + "/");
+      this->WritePointFilesWithFeatures(tmp_dir_name + "/");
+      this->WriteTransformFile(tmp_dir_name + "/" + m_output_transform_file);
+      this->WriteParameters(this->m_split_number);
+    }
+
+    // set to use shape statistics now for the Initialize mode
+    this->m_use_shape_statistics_in_init = true;
+
+    // reset the number of iterations completed
+    this->m_optimization_iterations_completed = 0;
+
+    bool finished = false;
+
+    while (!finished) {
+      this->m_sampler->ReInitialize();
+
+      // determine if we have reached the final particle counts
+      finished = true;
+      for (int i = 0; i < this->m_number_of_particles.size(); i++) {
+        if (this->m_number_of_particles[i] < final_number_of_particles[i]) {
+          this->m_number_of_particles[i] *= 2;
+          finished = false;
+        }
+      }
+
+      if (!finished) {
+        if (m_processing_mode >= 0) { this->Initialize(); }
+        if (m_processing_mode >= 1 || m_processing_mode == -1) { this->AddAdaptivity(); }
+        if (m_processing_mode >= 2 || m_processing_mode == -2) { this->RunOptimize(); }
+      }
+    }
+  }
 
   this->UpdateExportablePoints();
   return true;
@@ -496,16 +547,15 @@ void Optimize::AddSinglePoint()
   typedef itk::ParticleSystem < 3 > ParticleSystemType;
   typedef ParticleSystemType::PointType PointType;
 
-  const auto domainZeroPos = m_sampler->GetParticleSystem()->GetDomain(0)->GetValidLocation();
+  PointType domainZeroPos;
+  domainZeroPos = m_sampler->GetParticleSystem()->GetDomain(0)->GetValidLocationNear(domainZeroPos);
 
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
     if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) > 0) {
       continue;
     }
-    auto pos = domainZeroPos;
-    const auto zcPos = m_sampler->GetParticleSystem()->GetDomain(i)->ApplyConstraints(pos);
-    //const auto zcPos = m_sampler->GetParticleSystem()->GetDomain(i)->GetValidLocation();
-    m_sampler->GetParticleSystem()->AddPosition(zcPos, i);
+    PointType pos = m_sampler->GetParticleSystem()->GetDomain(0)->GetValidLocationNear(domainZeroPos);
+    m_sampler->GetParticleSystem()->AddPosition(pos, i);
   }
 }
 
@@ -586,7 +636,7 @@ void Optimize::Initialize()
 
   m_sampler->GetParticleSystem()->SynchronizePositions();
 
-  int split_number = 0;
+  this->m_split_number = 0;
 
   int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
   vnl_vector_fixed < double, 3 > random;
@@ -594,9 +644,7 @@ void Optimize::Initialize()
   for (int i = 0; i < 3; i++) {
     random[i] = static_cast < double > (this->m_rand());
   }
-  double norm = random.magnitude();
-  random /= norm;
-  random *= this->m_spacing;
+  random = random.normalize() * this->m_spacing;
 
   bool flag_split = false;
 
@@ -609,6 +657,10 @@ void Optimize::Initialize()
   }
 
   while (flag_split) {
+    for (int i = 0; i < 3; i++) {
+      random[i] = static_cast <double> (this->m_rand());
+    }
+    random = random.normalize() * this->m_spacing;
     //        m_Sampler->GetEnsembleEntropyFunction()->PrintShapeMatrix();
     this->OptimizerStop();
     for (int i = 0; i < n; i++) {
@@ -620,10 +672,10 @@ void Optimize::Initialize()
 
     m_sampler->GetParticleSystem()->SynchronizePositions();
 
-    split_number++;
+    this->m_split_number++;
 
     if (m_verbosity_level > 0) {
-      std::cout << "split number = " << split_number << std::endl;
+      std::cout << "split number = " << this->m_split_number << std::endl;
 
       std::cout << std::endl << "Particle count: ";
       for (unsigned int i = 0; i < this->m_domains_per_shape; i++) {
@@ -634,7 +686,7 @@ void Optimize::Initialize()
 
     if (m_save_init_splits == true) {
       std::stringstream ss;
-      ss << split_number;
+      ss << this->m_split_number;
 
       std::stringstream ssp;
       std::string dir_name = "split" + ss.str();
@@ -643,22 +695,22 @@ void Optimize::Initialize()
         dir_name += "_" + ssp.str();
         ssp.str("");
       }
-      dir_name += "pts_wo_opt";
+      dir_name += "pts_wo_init";
       std::string out_path = m_output_dir;
 
       std::string tmp_dir_name = out_path + "/" + dir_name;
 
-      this->WritePointFiles(tmp_dir_name + "/");
+      this->WritePointFiles(tmp_dir_name);
       this->WritePointFilesWithFeatures(tmp_dir_name + "/");
       this->WriteTransformFile(tmp_dir_name + "/" + m_output_transform_file);
-      this->WriteParameters(split_number);
+      this->WriteParameters(this->m_split_number);
     }
 
     m_energy_a.clear();
     m_energy_b.clear();
     m_total_energy.clear();
     std::stringstream ss;
-    ss << split_number;
+    ss << this->m_split_number;
     std::stringstream ssp;
 
     ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles();     // size from domain 0
@@ -689,7 +741,7 @@ void Optimize::Initialize()
 
     if (m_save_init_splits == true) {
       std::stringstream ss;
-      ss << split_number;
+      ss << this->m_split_number;
       std::stringstream ssp;
       std::string dir_name = "split" + ss.str();
       for (int i = 0; i < m_domains_per_shape; i++) {
@@ -697,14 +749,14 @@ void Optimize::Initialize()
         dir_name += "_" + ssp.str();
         ssp.str("");
       }
-      dir_name += "pts_w_opt";
+      dir_name += "pts_w_init";
       std::string out_path = m_output_dir;
       std::string tmp_dir_name = out_path + "/" + dir_name;
 
       this->WritePointFiles(tmp_dir_name + "/");
       this->WritePointFilesWithFeatures(tmp_dir_name + "/");
       this->WriteTransformFile(tmp_dir_name + "/" + m_output_transform_file);
-      this->WriteParameters(split_number);
+      this->WriteParameters(this->m_split_number);
     }
     this->WritePointFiles();
     this->WritePointFilesWithFeatures();
@@ -912,220 +964,13 @@ void Optimize::AbortOptimization()
   this->m_sampler->GetOptimizer()->AbortProcessing();
 }
 
-static std::vector<vtkSmartPointer<vtkPolyData>> meshes;
 
-#include <vtkProperty.h>
-#include <vtkLine.h>
-#include <vtkCellData.h>
-#include <vtkCamera.h>
 //---------------------------------------------------------------------------
 void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
 {
-  static bool firstRun = 1;
-  static vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-  static vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
-  static vtkSmartPointer<vtkRenderer> mainRenderer = vtkSmartPointer<vtkRenderer>::New();
-  static vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
-  static vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
-  static vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
-  //static vtkSmartPointer<vtkCellArray> lines = vtkSmartPointer<vtkCellArray>::New();
-  static vtkSmartPointer<vtkSphereSource> cubeSource = vtkSmartPointer<vtkSphereSource>::New();
-
-  static vtkSmartPointer<vtkPolyDataMapper> lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-  static vtkSmartPointer<vtkActor> lineActor = vtkSmartPointer<vtkActor>::New();
-  static vtkSmartPointer<vtkCellArray> lines = vtkSmartPointer<vtkCellArray>::New();
-
-  static std::vector<vtkSmartPointer<vtkRenderer>> sampleRenderers;
-  static std::vector<vtkSmartPointer<vtkPolyDataMapper>> sampleMappers;
-  static std::vector<vtkSmartPointer<vtkPoints>> samplePoints;
-  static std::vector<vtkSmartPointer<vtkPolyData>> samplePolyData;
-
-  static double *focalPoint;
-  static int iteration = 0;
-  static double radius;
-
-  int count = 0;
-  int numShapes = m_sampler->GetParticleSystem()->GetNumberOfDomains();
-  int numParticles = m_sampler->GetParticleSystem()->GetNumberOfParticles(0);
-
-  if (firstRun) {
-    polydata->SetPoints(points);
-    polydata->SetLines(lines);
-    actor->SetMapper(mapper);
-    actor->GetProperty()->SetColor(1.0, 0, 0);
-    renderWindow->SetFullScreen(1);
-    renderWindow->AddRenderer(mainRenderer);
-    mainRenderer->SetBackground(.5, .5, .5);
-    mainRenderer->AddActor(actor);
-
-    lineActor->SetMapper(lineMapper);
-    lineActor->GetProperty()->SetColor(0, 1, 0);
-    lineActor->GetProperty()->SetLineWidth(1);
-    mainRenderer->AddActor(lineActor);
-
-    double width = 1.0 / meshes.size();
-    //if (width < 0.1) width = 0.1;
-    double height = (width < 0.1) ? width : 0.1;
-    for (int i = 0; i < meshes.size(); i++) {
-      vtkSmartPointer<vtkPolyDataMapper> meshMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-      vtkSmartPointer<vtkActor> meshActor = vtkSmartPointer<vtkActor>::New();
-      meshMapper->SetInputData(meshes[i]);
-      meshActor->SetMapper(meshMapper);
-      meshActor->GetProperty()->SetColor(0.0, 0.0, 0.0);
-      meshActor->GetProperty()->SetEdgeVisibility(false);
-      double alpha = 1.0 / numShapes;
-      alpha = alpha > 1 ? 1 : alpha;
-      std::cerr << "alpha = " << alpha << "\n";
-      meshActor->GetProperty()->SetOpacity(alpha);
-      meshActor->GetProperty()->SetLineWidth(0.01);
-      mainRenderer->AddActor(meshActor);
-
-
-
-
-      vtkSmartPointer<vtkRenderer> meshRenderer = vtkSmartPointer<vtkRenderer>::New();
-      meshRenderer->AddActor(meshActor);
-      meshRenderer->SetBackground(.5, .5, .5);
-      meshRenderer->SetViewport(width*i, 0, width*(i+1), height);
-
-      vtkSmartPointer<vtkPolyDataMapper> sampleMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-      vtkSmartPointer<vtkActor> sampleActor = vtkSmartPointer<vtkActor>::New();
-      sampleActor->SetMapper(sampleMapper);
-      sampleActor->GetProperty()->SetColor(1.0, 0, 0);
-
-      meshRenderer->AddActor(sampleActor);
-
-      renderWindow->AddRenderer(meshRenderer);
-
-      vtkSmartPointer<vtkPolyData> samplepolydata = vtkSmartPointer<vtkPolyData>::New();
-      vtkSmartPointer<vtkPoints> samplepoints = vtkSmartPointer<vtkPoints>::New();
-      samplepolydata->SetPoints(samplepoints);
-
-
-
-      sampleRenderers.push_back(meshRenderer);
-      sampleMappers.push_back(sampleMapper);
-      samplePoints.push_back(samplepoints);
-      samplePolyData.push_back(samplepolydata);
-      
-    }
-
-    mainRenderer->ResetCamera();
-    focalPoint = mainRenderer->GetActiveCamera()->GetFocalPoint();
-
-    double *pos = mainRenderer->GetActiveCamera()->GetPosition();
-    radius = pos[2] - focalPoint[2];
-
-
-    for (int i = 0; i < sampleRenderers.size(); i++) {
-      sampleRenderers[i]->ResetCamera();
-    }
-    firstRun = 0;
+  if (this->GetShowVisualizer()) {
+    this->GetVisualizer().IterationCallback(m_sampler->GetParticleSystem());
   }
-
-  for (int j = 0; j < numParticles; j++) {
-    for (int i = 0; i < numShapes; i++) {
-      itk::Point<double, 3> p = m_sampler->GetParticleSystem()->GetPosition(j, i);
-      //int index = i * numParticles + j;
-      if (count >= points->GetNumberOfPoints()) {
-        points->InsertNextPoint(p[0], p[1], p[2]);
-        if (i > 0) {
-          vtkSmartPointer<vtkLine> line2 = vtkSmartPointer<vtkLine>::New();
-          line2->GetPointIds()->SetId(0, count);
-          line2->GetPointIds()->SetId(1, count - 1);
-          if (count >= lines->GetNumberOfCells()) {
-            lines->InsertNextCell(line2);
-          }
-        }
-      }
-      else {
-        points->SetPoint(count, p[0], p[1], p[2]);
-      }
-      count++;
-      if (j >= samplePoints[i]->GetNumberOfPoints()) {
-        samplePoints[i]->InsertNextPoint(p[0], p[1], p[2]);
-      }
-      else {
-        samplePoints[i]->SetPoint(j, p[0], p[1], p[2]);
-      }
-    }
-  }
-
-  //int numParticles = m_sampler->GetParticleSystem()->GetNumberOfParticles(0);
-  //for (int j = 0; j < numParticles; j++) {
-  //  for (int i = 0; i < numShapes - 1; i++) {
-  //    vtkSmartPointer<vtkLine> line2 = vtkSmartPointer<vtkLine>::New();
-  //    line2->GetPointIds()->SetId(0, (i) * numParticles + j);
-  //    line2->GetPointIds()->SetId(1, (i+1) * numParticles + j);
-  //    if (count >= lines->GetNumberOfCells()) {
-  //      lines->InsertNextCell(line2);
-  //    }
-  //    count++;
-  //  }
-  //}
-  //for (int i = 0; i < numShapes; i++) {
-  //  for (int j = 0; j < numParticles + 1; j++) {
-  //    vtkSmartPointer<vtkLine> line2 = vtkSmartPointer<vtkLine>::New();
-  //    line2->GetPointIds()->SetId(0, (i) * numParticles + j);
-  //    line2->GetPointIds()->SetId(1, (i) * numParticles + j + 1);
-  //    if (count >= lines->GetNumberOfCells()) {
-  //      lines->InsertNextCell(line2);
-  //    }
-  //    count++;
-  //  }
-  //}
-  //polydata->GetPoints()->GetData()->Modified();
-  //polydata->GetCellData()->Modified();
-  polydata->SetPoints(points);
-  polydata->SetLines(lines);
-  polydata->Modified();
-
-  vtkSmartPointer<vtkPolyData> polydata2 = vtkSmartPointer<vtkPolyData>::New();
-  polydata2->DeepCopy(polydata);
-  lineMapper->SetInputData(polydata2);
-
-  vtkSmartPointer<vtkGlyph3D> glyph3D = vtkSmartPointer<vtkGlyph3D>::New();
-  glyph3D->SetSourceConnection(cubeSource->GetOutputPort());
-  glyph3D->SetInputData(polydata);
-  glyph3D->SetScaleFactor(0.1);
-  glyph3D->Update();
-  mapper->SetInputConnection(glyph3D->GetOutputPort());
-
-  for (int i = 0; i < sampleMappers.size(); i++) {
-    vtkSmartPointer<vtkGlyph3D> sampleGlyph = vtkSmartPointer<vtkGlyph3D>::New();
-    sampleGlyph->SetSourceConnection(cubeSource->GetOutputPort());
-    sampleGlyph->SetInputData(samplePolyData[i]);
-    sampleGlyph->SetScaleFactor(1);
-    sampleGlyph->Update();
-    sampleMappers[i]->SetInputConnection(sampleGlyph->GetOutputPort());
-  }
-
-  vtkSmartPointer<vtkCamera> cam = mainRenderer->GetActiveCamera();
-  //double *pos = cam->GetPosition();
-  //std::cerr << pos[0] << ", " << pos[1] << ", " << pos[2] << "\n";
-  //pos = cam->GetFocalPoint();
-  //std::cerr << pos[0] << ", " << pos[1] << ", " << pos[2] << "\n";
-  //pos = cam->GetClippingRange();
-  //std::cerr << pos[0] << ", " << pos[1] << "\n";
-
-  iteration = iteration % 360;
-  double PI = 3.14159;
-  double z = sin(iteration * 2 * PI / 360);
-  double x = cos(iteration * 2 * PI / 360);
-
-  cam->SetPosition(focalPoint[0] + radius * x, focalPoint[1], focalPoint[2] + radius * z);
-  cam->SetClippingRange(1, radius*2);
-  cam->Modified();
-
-  for (int i = 0; i < sampleRenderers.size(); i++) {
-    sampleRenderers[i]->GetActiveCamera()->SetPosition(focalPoint[0] + radius * x, focalPoint[1], focalPoint[2] + radius * z);
-    sampleRenderers[i]->GetActiveCamera()->SetClippingRange(1, 50);
-    sampleRenderers[i]->GetActiveCamera()->Modified();
-  }
-  
-  renderWindow->Render();
-  iteration++;
-  
 
   if (m_perform_good_bad == true) {
     std::vector < std::vector < int >> tmp;
@@ -1654,22 +1499,22 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
           outw << pN[0] << " " << pN[1] << " " << pN[2] << " ";
         }
 
-        //if (m_attributes_per_domain.size() > 0) {
-        //  if (m_attributes_per_domain[i % m_domains_per_shape] > 0) {
-        //    point pt;
-        //    pt.clear();
-        //    pt[0] = pos[0];
-        //    pt[1] = pos[1];
-        //    pt[2] = pos[2];
-        //    fVals.clear();
-        //    if (m_mesh_based_attributes) {
-        //      domain->GetMesh()->GetFeatureValues(pt, fVals);
-        //    }
-        //    for (unsigned int k = 0; k < m_attributes_per_domain[i % m_domains_per_shape]; k++) {
-        //      outw << fVals[k] << " ";
-        //    }
-        //  }
-        //}
+        if (m_attributes_per_domain.size() > 0) {
+          if (m_attributes_per_domain[i % m_domains_per_shape] > 0) {
+            point pt;
+            pt.clear();
+            pt[0] = pos[0];
+            pt[1] = pos[1];
+            pt[2] = pos[2];
+            fVals.clear();
+            if (m_mesh_based_attributes) {
+              domain->GetMesh()->GetFeatureValues(pt, fVals);
+            }
+            for (unsigned int k = 0; k < m_attributes_per_domain[i % m_domains_per_shape]; k++) {
+              outw << fVals[k] << " ";
+            }
+          }
+        }
 
         outw << std::endl;
 
@@ -2122,21 +1967,7 @@ void Optimize::AddImage(ImageType::Pointer image) {
 void Optimize::AddMesh(shapeworks::MeshWrapper *mesh) {
   this->m_sampler->AddMesh(mesh);
   this->m_num_shapes++;
-  this->m_spacing = 0.2;
-}
-
-#include <vtkPLYReader.h>
-#include <vtkExtractEdges.h>
-void Optimize::AddMeshDebugging(std::string filename) {
-  vtkSmartPointer<vtkPLYReader> reader = vtkSmartPointer<vtkPLYReader>::New();
-  reader->SetFileName(filename.c_str());
-  reader->Update();
-  vtkSmartPointer<vtkExtractEdges> edges = vtkSmartPointer<vtkExtractEdges>::New();
-  edges->SetInputData(reader->GetOutput());
-  edges->Update();
-  vtkSmartPointer<vtkPolyData> mesh = edges->GetOutput();
-
-  meshes.push_back(mesh);
+  this->m_spacing = 0.5;
 }
 
 //---------------------------------------------------------------------------
@@ -2155,6 +1986,18 @@ void Optimize::SetPointFiles(const std::vector<std::string> &point_files)
 int Optimize::GetNumShapes()
 {
   return this->m_num_shapes;
+}
+
+shapeworks::OptimizationVisualizer& Optimize::GetVisualizer() {
+  return visualizer;
+}
+
+void Optimize::SetShowVisualizer(bool show) {
+  this->show_visualizer = show;
+}
+
+bool Optimize::GetShowVisualizer() {
+  return this->show_visualizer;
 }
 
 //---------------------------------------------------------------------------
@@ -2245,16 +2088,28 @@ double Optimize::GetNarrowBand()
     return 1e10;
   }
   else {
-    return 4.0;
+    return 10.0;
   }
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetUseShapeStatisticsAfter(int num_particles)
+{
+  this->m_use_shape_statistics_after = num_particles;
+}
+
+//---------------------------------------------------------------------------
+int Optimize::GetUseShapeStatisticsAfter()
+{
+  return this->m_use_shape_statistics_after;
 }
 
 //---------------------------------------------------------------------------
 void Optimize::SetIterationCallback()
 {
-  this->m_iterate_command = itk::MemberCommand<Optimize>::New();
-  this->m_iterate_command->SetCallbackFunction(this, &Optimize::IterateCallback);
-  this->m_sampler->GetOptimizer()->AddObserver(itk::IterationEvent(), m_iterate_command);
+  itk::MemberCommand<Optimize>::Pointer m_iterate_command = itk::MemberCommand<Optimize>::New();
+  m_iterate_command->SetCallbackFunction(this, &Optimize::IterateCallback);
+  m_sampler->GetOptimizer()->AddObserver(itk::IterationEvent(), m_iterate_command);
 }
 
 //---------------------------------------------------------------------------

@@ -3,6 +3,7 @@
 #include "ParticleSystem/DomainType.h"
 
 #include <itkImageFileReader.h>
+#include <vtkPLYReader.h>
 
 #include <tinyxml.h>
 
@@ -50,6 +51,28 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize *
     }
   }
   optimize->SetDomainType(domain_type);
+
+  if (optimize->GetDomainType() == shapeworks::DomainType::Mesh) {
+    std::cerr << "WARNING Using the visualizer will increase run time!\n";
+    // Currently the visualizer only works if you call AddMesh on it for every domain.
+    // In order to get it working for image domains, need to add code that extracts meshes from each image and adds them to the visualizer.
+    elem = doc_handle.FirstChild("visualizer_enable").Element();
+    if (elem) {
+      optimize->SetShowVisualizer(( bool) atoi(elem->GetText()));
+
+      elem = doc_handle.FirstChild("visualizer_wireframe").Element();
+      if (elem) {
+        optimize->GetVisualizer().SetWireFrame(( bool) atoi(elem->GetText()));
+      }
+      elem = doc_handle.FirstChild("visualizer_screenshot_directory").Element();
+      if (elem) {
+        std::cerr << "WARNING Saving screenshots will increase run time even more!\n";
+        std::string dir = elem->GetText();
+        optimize->GetVisualizer().SetSaveScreenshots(true, dir);
+      }
+    }
+  }
+
 
   std::vector<unsigned int> number_of_particles;
   elem = doc_handle.FirstChild("number_of_particles").Element();
@@ -310,6 +333,9 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
   elem = docHandle->FirstChild("narrow_band").Element();
   if (elem) { optimize->SetNarrowBand(atof(elem->GetText()));}
 
+  elem = docHandle->FirstChild("use_shape_statistics_after").Element();
+  if (elem) { optimize->SetUseShapeStatisticsAfter(atof(elem->GetText()));}
+
   return true;
 }
 
@@ -397,8 +423,7 @@ bool OptimizeParameterFile::read_image_inputs(TiXmlHandle* docHandle, Optimize* 
       if (this->verbosity_level_ > 1) {
         std::cout << "Reading inputfile: " << imageFiles[index] << "...\n" << std::flush;
       }
-      typename itk::ImageFileReader < Optimize::ImageType > ::Pointer reader = itk::ImageFileReader <
-        Optimize::ImageType > ::New();
+      typename itk::ImageFileReader < Optimize::ImageType > ::Pointer reader = itk::ImageFileReader <Optimize::ImageType > ::New();
       reader->SetFileName(imageFiles[index]);
       reader->UpdateLargestPossibleRegion();
       const auto image = reader->GetOutput();
@@ -450,7 +475,8 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle *docHandle, Optimize *o
       if (this->verbosity_level_ > 1) {
         std::cout << "Reading inputfile: " << meshFiles[index] << "...\n" << std::flush;
       }
-      optimize->AddMeshDebugging(meshFiles[index]);
+
+
       TriMesh *themesh = TriMesh::read(meshFiles[index].c_str());
       if (themesh != NULL) {
         shapeworks::MeshWrapper *mesh = new shapeworks::TriMeshWrapper(themesh);
@@ -459,6 +485,13 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle *docHandle, Optimize *o
       else {
         std::cerr << "Failed to read " << meshFiles[index] << "\n";
         return false;
+      }
+
+      if (optimize->GetShowVisualizer()) {
+        vtkSmartPointer<vtkPLYReader> reader = vtkSmartPointer<vtkPLYReader>::New();
+        reader->SetFileName(meshFiles[index].c_str());
+        reader->Update();
+        optimize->GetVisualizer().AddMesh(reader->GetOutput(), themesh);
       }
     }
     else {

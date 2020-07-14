@@ -2,12 +2,12 @@
 
 set(Mesh_sources
  Mesh.cpp
- #meshFIM.cpp
+ meshFIM.cpp
  )
 
 set(Mesh_headers
  Mesh.h
- #meshFIM.h
+ meshFIM.h
  )
 
 FILE(GLOB PreviewMeshQC_sources ./PreviewMeshQC/*.cpp)
@@ -39,18 +39,19 @@ install(TARGETS Mesh
  PUBLIC_HEADER DESTINATION include
  )
 
-#ADD_EXECUTABLE(GenerateBinaryAndDTImagesFromMeshes GenerateBinaryAndDTImagesFromMeshes.cxx )
-#TARGET_LINK_LIBRARIES(GenerateBinaryAndDTImagesFromMeshes ${ITK_LIBRARIES} Mesh tinyxml)
-#INSTALL(TARGETS GenerateBinaryAndDTImagesFromMeshes RUNTIME DESTINATION bin)
+ADD_EXECUTABLE(GenerateBinaryAndDTImagesFromMeshes GenerateBinaryAndDTImagesFromMeshes.cxx )
+TARGET_LINK_LIBRARIES(GenerateBinaryAndDTImagesFromMeshes ${ITK_LIBRARIES} Mesh tinyxml)
+INSTALL(TARGETS GenerateBinaryAndDTImagesFromMeshes RUNTIME DESTINATION bin)
 
-#ADD_EXECUTABLE(ComputeMeshGeodesics ComputeMeshGeodesics.cxx )
-#TARGET_LINK_LIBRARIES(ComputeMeshGeodesics ${ITK_LIBRARIES} Mesh tinyxml)
-#INSTALL(TARGETS ComputeMeshGeodesics RUNTIME DESTINATION bin)
+ADD_EXECUTABLE(ComputeMeshGeodesics ComputeMeshGeodesics.cxx )
+TARGET_LINK_LIBRARIES(ComputeMeshGeodesics ${ITK_LIBRARIES} Mesh tinyxml)
+INSTALL(TARGETS ComputeMeshGeodesics RUNTIME DESTINATION bin)
 
 ADD_EXECUTABLE(ExtractVertexFeatureFromMesh ExtractVertexFeatureFromMesh.cxx )
 TARGET_LINK_LIBRARIES(ExtractVertexFeatureFromMesh Mesh tinyxml)
 INSTALL(TARGETS ExtractVertexFeatureFromMesh RUNTIME DESTINATION bin)
 
+# Uses custom TriMesh functions without making an instance of meshFIM
 #ADD_EXECUTABLE(GetFeatureVolume GetFeatureVolume.cxx)
 #TARGET_LINK_LIBRARIES(GetFeatureVolume ${ITK_LIBRARIES} ${VXL_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS GetFeatureVolume RUNTIME DESTINATION bin)

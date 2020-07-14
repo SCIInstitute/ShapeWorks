@@ -66,6 +66,8 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
       avgKappa += kappa;
       
       double sqrdistance = domain->SquaredDistance(pos, neighborhood[i].Point);
+      sqrdistance = sqrdistance * kappa * kappa;
+
       double alpha = exp(-sqrdistance / sigma22) * weights[i];
       A += alpha;
       B += sqrdistance * alpha;
@@ -127,11 +129,6 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   if (system->GetDomain(d)->IsDomainFixed()) {
     return;
   }
-
-  // Grab a pointer to the domain.  We need a Domain that has surface normal information.
-  //  const ParticleImageDomainWithGradients<TGradientNumericType, VDimension> * domain
-  //   = static_cast<const ParticleImageDomainWithGradients<TGradientNumericType,
-  //   VDimension> *>(system->GetDomain(d));
 
   // Get the position for which we are computing the gradient.
   PointType pos = system->GetPosition(idx, d);
@@ -234,70 +231,57 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
            double &maxmove, double &energy) const
 {
   const double epsilon = 1.0e-6;
-  
-  // Grab a pointer to the domain.  We need a Domain that has surface normal information.
-  //  const ParticleImageDomainWithGradients<TGradientNumericType, VDimension> * domain
-  //   = static_cast<const ParticleImageDomainWithGradients<TGradientNumericType,
-  //   VDimension> *>(system->GetDomain(d));
 
    // Get the position for which we are computing the gradient.
   PointType pos = system->GetPosition(idx, d);
-  
+
   // Compute the gradients
-  double sigma2inv = 1.0 / (2.0* m_CurrentSigma * m_CurrentSigma + epsilon);
-  
-  VectorType r;
+  double sigma2inv = 1.0 / (2.0 * m_CurrentSigma * m_CurrentSigma + epsilon);
+
   VectorType gradE;
 
-  for (unsigned int n = 0; n < VDimension; n++)
-    {
+  for (unsigned int n = 0; n < VDimension; n++) {
     gradE[n] = 0.0;
-    }
+  }
 
   double mymc = m_MeanCurvatureCache->operator[](d)->operator[](idx);
   double A = 0.0;
 
-  for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++)
-    {
+  for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++) {
     double mc = m_MeanCurvatureCache->operator[](d)->operator[](m_CurrentNeighborhood[i].Index);
     double Dij = (mymc + mc) * 0.5; // average my curvature with my neighbors
     double kappa = this->ComputeKappa(Dij, d);
 
-    // TEST DISTANCE TO PLANE IDEA
-    //    kappa *=  (fabs(pos[0]) * 1.0);
-    // END TEST
-    
-
-    for (unsigned int n = 0; n < VDimension; n++)
-      {
+    VectorType r;
+    for (unsigned int n = 0; n < VDimension; n++) {
       // Note that the Neighborhood object has already filtered the
       // neighborhood for points whose normals differ by > 90 degrees.
       r[n] = (pos[n] - m_CurrentNeighborhood[i].Point[n]) * kappa;
-      }
+    }
 
-    
     double q = kappa * exp( -dot_product(r, r) * sigma2inv);
-    
     A += q;
     
     for (unsigned int n = 0; n < VDimension; n++)
       {
       gradE[n] += m_CurrentWeights[i] * r[n] * q;
       }
-    }
-  
+  }
+
   double p = 0.0;
-  if (A > epsilon)
-    {    p = -1.0 / (A * m_CurrentSigma * m_CurrentSigma);    }
+  if (A > epsilon) {    
+    p = -1.0 / (A * m_CurrentSigma * m_CurrentSigma);
+  }
   
   for (unsigned int n = 0; n <VDimension; n++)
     {    gradE[n] *= p;    }
 
-  maxmove= (m_CurrentSigma / m_avgKappa) * m_MaxMoveFactor;
+  maxmove = (m_CurrentSigma / m_avgKappa) * m_MaxMoveFactor;
 
   energy = (A * sigma2inv ) / m_avgKappa;
 
-  return gradE / m_avgKappa;
+  gradE = gradE / m_avgKappa;
+  return gradE;
 }
 
 }// end namespace

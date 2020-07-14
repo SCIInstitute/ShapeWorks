@@ -147,8 +147,7 @@ public:
     return m_Index;
   }
 
-  inline PointType GetValidLocation() const override
-  {
+  inline PointType GetValidLocationNear(PointType p) const override {
     return m_ZeroCrossingPoint;
   }
 

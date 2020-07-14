@@ -262,9 +262,9 @@ vtkSmartPointer< vtkPolyData > TriMesh2PolyData(TriMesh * mesh)
     vtkSmartPointer<vtkTriangle> triangle = vtkSmartPointer<vtkTriangle>::New();
     for(unsigned int ii = 0 ; ii < mesh->faces.size(); ii++)
     {
-        triangle->GetPointIds()->SetId(0, mesh->faces[ii].v[0]);
-        triangle->GetPointIds()->SetId(1, mesh->faces[ii].v[1]);
-        triangle->GetPointIds()->SetId(2, mesh->faces[ii].v[2]);
+        triangle->GetPointIds()->SetId(0, mesh->faces[ii][0]);
+        triangle->GetPointIds()->SetId(1, mesh->faces[ii][1]);
+        triangle->GetPointIds()->SetId(2, mesh->faces[ii][2]);
         triangles->InsertNextCell(triangle);
     }
 
@@ -498,17 +498,17 @@ int main(int argc, char *argv[])
         size[2] = size_z;
 
         // setting domain characterestics
-        mesh->imageOrigin[0] = origin[0];
-        mesh->imageOrigin[1] = origin[1];
-        mesh->imageOrigin[2] = origin[2];
+        fim->imageOrigin[0] = origin[0];
+        fim->imageOrigin[1] = origin[1];
+        fim->imageOrigin[2] = origin[2];
 
-        mesh->imageSize[0] = size[0];
-        mesh->imageSize[1] = size[1];
-        mesh->imageSize[2] = size[2];
+        fim->imageSize[0] = size[0];
+        fim->imageSize[1] = size[1];
+        fim->imageSize[2] = size[2];
 
-        mesh->imageSpacing[0] = spacing[0];
-        mesh->imageSpacing[1] = spacing[1];
-        mesh->imageSpacing[2] = spacing[2];
+        fim->imageSpacing[0] = spacing[0];
+        fim->imageSpacing[1] = spacing[1];
+        fim->imageSpacing[2] = spacing[2];
 
         /* narrowband = original x number_of_subvoxels -- (1)
          * narrowband = orginal x factor (length of the supervoxel)
@@ -529,7 +529,7 @@ int main(int argc, char *argv[])
         std::string f2 = prefix + ".rasterized" + suffix + ".nrrd";
 
         std::cout << "Rasterizing ..." << std::endl;
-        ImageType::Pointer binaryImage =  RasterizeMesh(polydata, dspacing, dorigin, mesh->imageSize);
+        ImageType::Pointer binaryImage =  RasterizeMesh(polydata, dspacing, dorigin, fim->imageSize);
         std::cout << "Done Rasterizing ..." << std::endl;
 
         ImageWriterType::Pointer w2 = ImageWriterType::New();

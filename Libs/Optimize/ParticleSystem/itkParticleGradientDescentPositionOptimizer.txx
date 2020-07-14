@@ -136,13 +136,16 @@ namespace itk
             for (typename ParticleSystemType::PointContainerType::ConstIterator it
               = m_ParticleSystem->GetPositions(dom)->GetBegin(); it != endit; it++, k++)
             {
-              VectorType gradient;
-              VectorType original_gradient;
+              if (m_TimeSteps[dom][k] < minimumTimeStep) {
+                m_TimeSteps[dom][k] = minimumTimeStep;
+              }
               // Compute gradient update.
               double energy = 0.0;
               localGradientFunction->BeforeEvaluate(it.GetIndex(), dom, m_ParticleSystem);
-              double maximumDTUpdateAllowed;
-              original_gradient = localGradientFunction->Evaluate(it.GetIndex(), dom, m_ParticleSystem, maximumDTUpdateAllowed, energy);
+              // maximumUpdateAllowed is set based on some fraction of the distance between particles
+              // This is to avoid particles shooting past their neighbors
+              double maximumUpdateAllowed;
+              VectorType original_gradient = localGradientFunction->Evaluate(it.GetIndex(), dom, m_ParticleSystem, maximumUpdateAllowed, energy);
 
               unsigned int idx = it.GetIndex();
               PointType pt = *it;
@@ -150,25 +153,19 @@ namespace itk
               // Step 1 Project the gradient vector onto the tangent plane
               VectorType original_gradient_projectedOntoTangentSpace = domain->ProjectVectorToSurfaceTangent(original_gradient, pt);
 
-              // Step 2 scale the gradient by the time step
-              // Note that time step can only decrease while finding a good update so the gradient computed here is 
-              // the largest possible we can get during this update.
-              gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
-
               double newenergy, gradmag;
               while (true) {
                 // Step A scale the projected gradient by the current time step
-                gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
+                VectorType gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
 
                 // Step B Constrain the gradient so that the resulting position will not violate any domain constraints
                 m_ParticleSystem->GetDomain(dom)->ApplyVectorConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
                 gradmag = gradient.magnitude();
 
-                // Step C if the magnitude is larger than the Sampler allows, try again with smaller time step
-                if (gradmag > maximumDTUpdateAllowed)
-                {
-                  m_TimeSteps[dom][k] /= factor;
-                  continue;
+                // Step C if the magnitude is larger than the Sampler allows, scale the gradient down to an acceptable magnitude
+                if (gradmag > maximumUpdateAllowed) {
+                  gradient = gradient * maximumUpdateAllowed / gradmag;
+                  gradmag = gradient.magnitude();
                 }
 
                 // Step D compute the new point position

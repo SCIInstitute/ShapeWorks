@@ -19,8 +19,6 @@
 #include "vnl/vnl_cross.h"
 #define PARTICLE_DEBUG_FLAG 1
 
-using namespace trimesh;
-
 namespace itk
 {
 
@@ -105,7 +103,8 @@ void
 ParticleImplicitSurfaceDomain<T>::
 SetMesh(TriMesh *mesh)
 {
-  m_mesh = mesh;
+  m_mesh = new meshFIM();
+  m_mesh->SetMesh(mesh);
 }
 
 template<class T>
@@ -113,7 +112,7 @@ void
 ParticleImplicitSurfaceDomain<T>::
 SetFeaMesh(const char *feaFile)
 {
-    //m_mesh->ReadFeatureFromFile(feaFile);
+    m_mesh->ReadFeatureFromFile(feaFile);
 }
 
 template<class T>
@@ -121,7 +120,7 @@ void
 ParticleImplicitSurfaceDomain<T>::
 SetFeaGrad(const char *feaGradFile)
 {
-    //m_mesh->ReadFeatureGradientFromFile(feaGradFile);
+    m_mesh->ReadFeatureGradientFromFile(feaGradFile);
 }
 
 template<class T>
@@ -129,23 +128,23 @@ void
 ParticleImplicitSurfaceDomain<T>::
 SetFids(const char *fidsFile)
 {
-    //m_mesh->ReadFaceIndexMap(fidsFile);
-    //const typename ImageType::PointType orgn = this->GetOrigin();
-    //m_mesh->imageOrigin[0] = orgn[0];
-    //m_mesh->imageOrigin[1] = orgn[1];
-    //m_mesh->imageOrigin[2] = orgn[2];
-    //typename ImageType::RegionType::SizeType sz = this->GetSize();
-    //m_mesh->imageSize[0]   = sz[0];
-    //m_mesh->imageSize[1]   = sz[1];
-    //m_mesh->imageSize[2]   = sz[2];
-    //typename ImageType::SpacingType sp = this->GetSpacing();
-    //m_mesh->imageSpacing[0] = sp[0];
-    //m_mesh->imageSpacing[1] = sp[1];
-    //m_mesh->imageSpacing[2] = sp[2];
-    //typename ImageType::RegionType::IndexType idx = this->GetIndex();
-    //m_mesh->imageIndex[0]   = idx[0];
-    //m_mesh->imageIndex[1]   = idx[1];
-    //m_mesh->imageIndex[2]   = idx[2];
+    m_mesh->ReadFaceIndexMap(fidsFile);
+    const typename ImageType::PointType orgn = this->GetOrigin();
+    m_mesh->imageOrigin[0] = orgn[0];
+    m_mesh->imageOrigin[1] = orgn[1];
+    m_mesh->imageOrigin[2] = orgn[2];
+    typename ImageType::RegionType::SizeType sz = this->GetSize();
+    m_mesh->imageSize[0]   = sz[0];
+    m_mesh->imageSize[1]   = sz[1];
+    m_mesh->imageSize[2]   = sz[2];
+    typename ImageType::SpacingType sp = this->GetSpacing();
+    m_mesh->imageSpacing[0] = sp[0];
+    m_mesh->imageSpacing[1] = sp[1];
+    m_mesh->imageSpacing[2] = sp[2];
+    typename ImageType::RegionType::IndexType idx = this->GetIndex();
+    m_mesh->imageIndex[0]   = idx[0];
+    m_mesh->imageIndex[1]   = idx[1];
+    m_mesh->imageIndex[2]   = idx[2];
 }
 
 
@@ -206,7 +205,7 @@ ParticleImplicitSurfaceDomain<T>::ApplyConstraints(PointType &p) const
   while ( fabs(f) > (m_Tolerance * mult) || gradmag < epsilon)
     //  while ( fabs(f) > m_Tolerance || gradmag < epsilon)
     {
-    vnl_vector_fixed<T, DIMENSION> grad = this->SampleGradientVnl(p);
+    vnl_vector_fixed<T, DIMENSION> grad = this->SampleGradientAtPoint(p);
       
     gradmag = grad.magnitude();
     vnl_vector_fixed<T, DIMENSION> vec = grad * (f / (gradmag + epsilon));

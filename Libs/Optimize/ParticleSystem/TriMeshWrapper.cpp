@@ -123,10 +123,10 @@ namespace shapeworks
       if (facesTraversed.size() >= 3 && facesTraversed[facesTraversed.size() - 1] == facesTraversed[facesTraversed.size() - 3]) {
         // When at the intersection of two faces while also being at the edge of the mesh, the edge-sliding will keep alternating 
         // between the two faces without actually going anywhere since it is at a corner in the mesh.
-        std::cerr << "exiting due to face repetition\n";
+        //std::cerr << "exiting due to face repetition\n";
         break;
       }
-      if (facesTraversed.size() > 10) {
+      if (facesTraversed.size() > 100) {
         for (int i = 0; i < facesTraversed.size(); i++) {
           std::cerr << facesTraversed[i] << ": " << PrintValue<TriMesh::Face>(mesh->faces[facesTraversed[i]]) << ", ";
         }
@@ -241,10 +241,16 @@ namespace shapeworks
   }
 
   vnl_vector_fixed<float, DIMENSION> TriMeshWrapper::SampleNormalAtPoint(PointType p) const {
-    int face = GetTriangleForPoint(convert<PointType, point>(p));
-    const Eigen::Vector3d vecnormal = GetFaceNormal(face);
-    vnl_vector_fixed<float, DIMENSION> normal(vecnormal[0], vecnormal[1], vecnormal[2]);
-    return normal;
+    point pointa = convert<PointType, point>(p);
+    int face = GetTriangleForPoint(pointa);
+    vec3 bary = ComputeBarycentricCoordinates(pointa, face);
+
+    vnl_vector_fixed<float, DIMENSION> weightedNormal(0, 0, 0);
+    for (int i = 0; i < 3; i++) {
+      vnl_vector_fixed<float, DIMENSION> normal = convert<vec3, vnl_vector_fixed<float, DIMENSION>>(mesh->normals[mesh->faces[face][i]]);
+      weightedNormal += normal.normalize() * bary[i];
+    }
+    return weightedNormal;
   }
 
   int TriMeshWrapper::GetNearestVertex(point pt) const {
@@ -311,38 +317,7 @@ namespace shapeworks
         }
       }
     }
-    //double closestDistance = 99999999;
-    //int closestFace = -1;
-
-    //int vertex = GetNearestVertex(pt);
-    //for (int i = 0; i < mesh->adjacentfaces[vertex].size(); i++) {
-    //  int face = mesh->adjacentfaces[vertex][i];
-    //  vec bary = this->ComputeBarycentricCoordinates(pt, face);
-    //  if (((bary[0] >= 0) && (bary[0] <= 1)) &&
-    //    ((bary[1] >= 0) && (bary[1] <= 1)) &&
-    //      ((bary[2] >= 0) && (bary[2] <= 1))) {
-    //    return face;
-    //  }
-    //  else {
-    //    float distance = 0;
-    //    for (int j = 0; j < 3; j++) {
-    //      if (bary[j] < 0) {
-    //        distance += -bary[j];
-    //      }
-    //      else if (bary[j] > 1) {
-    //        distance += bary[j] - 1;
-    //      }
-    //    }
-    //    if (distance < closestDistance) {
-    //      closestFace = face;
-    //      closestDistance = distance;
-    //    }
-    //  }
-    //}
-    //std::cerr << "ERROR ERROR reached end of GetTriangleForPoint!\n";
-
     vec bary = this->ComputeBarycentricCoordinates(pt, closestFace);
-    //std::cerr << "bary: " << PrintValue<vec>(bary) << "\n";
     return closestFace;
   }
   vec3 TriMeshWrapper::ComputeBarycentricCoordinates(point pt, int face) const {
@@ -391,6 +366,8 @@ namespace shapeworks
     mesh->need_faces();
     mesh->need_adjacentfaces();
     mesh->need_across_edge();
+    mesh->need_normals();
+    mesh->need_curvatures();
     ComputeMeshBounds();
 
     kdTree = new KDtree(mesh->vertices);

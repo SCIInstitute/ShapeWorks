@@ -107,7 +107,12 @@ void OptimizeTool::on_run_optimize_button_clicked()
   // should add the images last
   auto shapes = this->session_->get_shapes();
   for (auto s : shapes) {
-    this->optimize_->AddImage(s->get_groomed_image());
+    auto image = s->get_groomed_image();
+    if (!image) {
+      emit error_message("Error loading groomed images");
+      return;
+    }
+    this->optimize_->AddImage(image);
   }
 
   QThread* thread = new QThread;

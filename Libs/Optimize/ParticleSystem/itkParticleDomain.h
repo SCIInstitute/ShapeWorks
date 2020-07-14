@@ -37,7 +37,8 @@ public:
   virtual PointType UpdateParticlePosition(const PointType &point, vnl_vector_fixed<double, DIMENSION> &update) const = 0;
 
   virtual vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION>& gradE, const PointType& pos) const = 0;
-  virtual vnl_vector_fixed<float, 3> SampleNormalAtPoint(const PointType & point) const = 0;
+  virtual vnl_vector_fixed<float, DIMENSION> SampleGradientAtPoint(const PointType &point) const = 0;
+  virtual vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType & point) const = 0;
 
   /** Distance between locations is used for computing energy and neighborhoods. */
   virtual double Distance(const PointType &a, const PointType &b) const {
@@ -61,7 +62,7 @@ public:
   virtual const PointType& GetUpperBound() const = 0;
 
   /** GetValidLocation returns a PointType location on the surface. Used for placing the first particle. */
-  virtual PointType GetValidLocation() const = 0;
+  virtual PointType GetValidLocationNear(PointType p) const = 0;
   virtual double GetSurfaceArea() const = 0;
   /** GetMaxDiameter returns the maximum diameter of the domain and is used for computing sigma */
   virtual double GetMaxDiameter() const = 0;
