@@ -1,9 +1,8 @@
-#include <gtest/gtest.h>
 
-#include <Libs/Image/Image.h>
-#include <Libs/Image/ImageUtils.h>
+#include "Testing.h"
 
-#include "TestConfiguration.h"
+#include "Image.h"
+#include "ImageUtils.h"
 
 using namespace shapeworks;
 

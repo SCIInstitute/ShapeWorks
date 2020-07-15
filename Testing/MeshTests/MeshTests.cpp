@@ -1,8 +1,6 @@
-#include <gtest/gtest.h>
+#include "Testing.h"
 
-#include <Libs/Mesh/Mesh.h>
-
-#include "TestConfiguration.h"
+#include "Mesh.h"
 
 using namespace shapeworks;
 

@@ -1,10 +1,10 @@
-#include <gtest/gtest.h>
-
-#include <Libs/Particles/ParticleSystem.h>
-#include <Libs/Particles/ShapeEvaluation.h>
-#include "TestConfiguration.h"
 #include <vector>
 #include <string>
+
+#include "Testing.h"
+
+#include "ParticleSystem.h"
+#include "ShapeEvaluation.h"
 
 using namespace shapeworks;
 
