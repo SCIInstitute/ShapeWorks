@@ -23,10 +23,11 @@ namespace shapeworks {
 /// reads a mesh
 ///
 /// \param filename
-bool Mesh::read(const std::string &pathname)
+Mesh::MeshType Mesh::read(const std::string &pathname)
 {
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
 
+  // TODO: enable reading of different kinds of meshes
   // if (pref == "ply")
   //   using ReaderType = vtkSmartPointer<vtkPLYReader>;
   // else 
@@ -35,7 +36,6 @@ bool Mesh::read(const std::string &pathname)
   using ReaderType = vtkSmartPointer<vtkPolyDataReader>;
   ReaderType reader = ReaderType::New();
   reader->SetFileName(pathname.c_str());
-  // this->mesh = vtkSmartPointer<vtkPolyData>::New();
 
   try {
     reader->Update();
@@ -45,8 +45,7 @@ bool Mesh::read(const std::string &pathname)
     throw std::invalid_argument(pathname + " does not exist");
   }
 
-  // this->mesh = reader->GetOutput();
-  return true;
+  return reader->GetOutput();
 }
 
 /// write
