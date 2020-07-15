@@ -57,6 +57,22 @@ MaximumEntropyCorrespondenceSampler<TImage>::AllocateDataCaches()
   //   m_CurvatureEnsembleMeanFunction->SetMeanCurvatureCache(Superclass::m_MeanCurvatureCache);
 }
 
+
+template <class TImage>
+void
+MaximumEntropyCorrespondenceSampler<TImage>::ReInitialize() {
+  this->SetAdaptivityMode(Superclass::m_AdaptivityMode);
+  this->SetCorrespondenceMode(m_CorrespondenceMode);
+  this->GetOptimizer()->SetGradientFunction(m_LinkingFunction);
+  this->m_LinkingFunction->SetAOn();
+  this->m_LinkingFunction->SetBOn();
+  this->InitializeOptimizationFunctions();
+  this->m_Sigma1Cache->ZeroAllValues();
+  this->m_Sigma2Cache->ZeroAllValues();
+  this->m_MeanCurvatureCache->ZeroAllValues();
+}
+
+
 template <class TImage>
 void
 MaximumEntropyCorrespondenceSampler<TImage>::Execute()
@@ -83,6 +99,7 @@ MaximumEntropyCorrespondenceSampler<TImage>::Execute()
 
   if (this->GetInitializing() == true) return;
 
+  //this->GetOptimizer()->SetShapeMatrix(this->m_ShapeMatrix);
   this->GetOptimizer()->StartOptimization();
 }
 template <class TImage>

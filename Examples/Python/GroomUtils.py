@@ -294,7 +294,8 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
 
         cmd = ["shapeworks", 
                "read-image", "--name", seginname,
-               "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
+            #    matrix created by icp is not used
+            #    "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
                "write-image", "--name", segoutname]
         if printCmd:
             print("CMD: " + " ".join(cmd))
@@ -303,7 +304,8 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
         if processRaw:
             cmd = ["shapeworks", 
                    "read-image", "--name", rawinname,
-                   "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
+                #    matrix created by icp is not used
+                #    "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
                    "write-image", "--name", rawoutname]
             if printCmd:
                 print("CMD: " + " ".join(cmd))

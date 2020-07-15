@@ -232,6 +232,12 @@ public:
   //! Return the narrow band to be used
   double GetNarrowBand();
 
+  //! Set the number of particles when correspondence based multiscale takes over
+  void SetUseShapeStatisticsAfter(int num_particles);
+
+  //! Return the number of particles when correspondence based multiscale takes over
+  int GetUseShapeStatisticsAfter();
+
   //! Print parameter info to stdout
   void PrintParamInfo();
 
@@ -258,6 +264,8 @@ protected:
   void Initialize();
   void AddAdaptivity();
   void RunOptimize();
+
+  void SetInitialCorrespondenceMode();
 
   virtual void IterateCallback(itk::Object*, const itk::EventObject &);
 
@@ -347,6 +355,7 @@ protected:
   double m_narrow_band{4};
   bool m_narrow_band_set{false};
   bool m_fixed_domains_present{false};
+  int m_use_shape_statistics_after{-1};
 
   // Keeps track of which state the optimization is in.
   unsigned int m_mode = 0;
@@ -376,6 +385,8 @@ protected:
   itk::MemberCommand<Optimize>::Pointer m_iterate_command;
   int m_total_iterations = 0;
   size_t m_iteration_count = 0;
+
+  int m_split_number{0};
 
   std::mt19937 m_rand{42};
 };
