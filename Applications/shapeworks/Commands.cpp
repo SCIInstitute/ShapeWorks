@@ -111,14 +111,14 @@ void ImageInfo::buildParser()
   const std::string desc = "prints requested image dimensions, spacing, size, origin, direction (coordinate system), center, center of mass and bounding box [default: prints everything]";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--dims").action("store").type("bool").set_default(false).help("Whether to display image dimensions");
-  parser.add_option("--spacing").action("store").type("bool").set_default(false).help("Whether to display physical spacing");
-  parser.add_option("--size").action("store").type("bool").set_default(false).help("Whether to display size");
-  parser.add_option("--origin").action("store").type("bool").set_default(false).help("Whether to display physical origin");
-  parser.add_option("--direction").action("store").type("bool").set_default(false).help("Whether to display direction");
-  parser.add_option("--center").action("store").type("bool").set_default(false).help("Whether to display center");
-  parser.add_option("--centerofmass").action("store").type("bool").set_default(false).help("Whether to display center of mass");
-  parser.add_option("--boundingbox").action("store").type("bool").set_default(false).help("Whether to display bounding box");
+  parser.add_option("--dims").action("store_true").set_default(false).help("Whether to display image dimensions");
+  parser.add_option("--spacing").action("store_true").set_default(false).help("Whether to display physical spacing");
+  parser.add_option("--size").action("store_true").set_default(false).help("Whether to display size");
+  parser.add_option("--origin").action("store_true").set_default(false).help("Whether to display physical origin");
+  parser.add_option("--direction").action("store_true").set_default(false).help("Whether to display direction");
+  parser.add_option("--center").action("store_true").set_default(false).help("Whether to display center");
+  parser.add_option("--centerofmass").action("store_true").set_default(false).help("Whether to display center of mass");
+  parser.add_option("--boundingbox").action("store_true").set_default(false).help("Whether to display bounding box");
 
   Command::buildParser();
 }
@@ -321,7 +321,7 @@ void Translate::buildParser()
   const std::string desc = "translates image by specified physical (image space) distance";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--centerofmass").action("store").type("bool").set_default(false).help("Use center of mass [default: false].");
+  parser.add_option("--centerofmass").action("store_true").set_default(false).help("Use center of mass [default: false].");
   parser.add_option("--tx", "-x").action("store").type("double").set_default(0).help("X distance");
   parser.add_option("--ty", "-y").action("store").type("double").set_default(0).help("Y distance");
   parser.add_option("--tz", "-z").action("store").type("double").set_default(0).help("Z distance");
@@ -1037,7 +1037,7 @@ void Compare::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Compare this image with another");
-  parser.add_option("--verifyall").action("store").type("bool").set_default(true).help("Verify origin, spacing, and direction of both images match [default: true]");
+  parser.add_option("--verifyall").action("store").type("bool").set_default(true).help("Also verify origin, spacing, and direction matches [default: true]");
   parser.add_option("--tolerance").action("store").type("double").set_default(0.0).help("Allowed percentage of pixel differences [default: 0.0]");
   parser.add_option("--precision").action("store").type("double").set_default(1e-12).help("Allowed difference between two pixels for them to still be considered equal [default: 0.0]");
 
