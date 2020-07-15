@@ -330,6 +330,8 @@ public:
         this->m_Initializing = false;
     }
 
+    virtual void ReInitialize();
+
     virtual void Execute();
 
 

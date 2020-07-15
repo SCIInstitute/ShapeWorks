@@ -40,7 +40,7 @@ template <unsigned int VDimension>
 void
 ParticleEnsembleEntropyFunction<VDimension>
 ::ComputeCovarianceMatrix()
-{ 
+{
     // NOTE: This code requires that indices be contiguous, i.e. it wont work if
     // you start deleting particles.
     const unsigned int num_samples = m_ShapeMatrix->cols();
