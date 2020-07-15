@@ -70,7 +70,7 @@ def Run_Pipeline(args):
     fileList = fileList[:15]
     if args.tiny_test:
         args.use_single_scale = 1
-        fileList = fileList[:2]
+        fileList = fileList[0:10]
 
     """
     ## GROOM : Data Pre-processing 

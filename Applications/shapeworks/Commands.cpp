@@ -778,25 +778,25 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
-  std::string targetDT = static_cast<std::string>(options.get("target"));
   std::string sourceDT = static_cast<std::string>(options.get("source"));
+  std::string targetDT = static_cast<std::string>(options.get("target"));
   double isovalue = static_cast<double>(options.get("isovalue"));
   unsigned iterations = static_cast<unsigned>(options.get("iterations"));
 
-  if (targetDT == "")
-  {
-    std::cerr << "Must specify a target distance map\n";
-    return false;
-  }
-  else if (sourceDT == "")
+  if (sourceDT == "")
   {
     std::cerr << "Must specify a source distance map\n";
     return false;
   }
+  else if (targetDT == "")
+  {
+    std::cerr << "Must specify a target distance map\n";
+    return false;
+  }
   else
   {
-    Image target_dt(targetDT);
     Image source_dt(sourceDT);
+    Image target_dt(targetDT);
     TransformPtr transform(ImageUtils::createRigidRegistrationTransform(source_dt, target_dt, isovalue, iterations));
     sharedData.image.applyTransform(transform, target_dt.dims(), target_dt.origin(), target_dt.spacing(), target_dt.coordsys());
     return true;

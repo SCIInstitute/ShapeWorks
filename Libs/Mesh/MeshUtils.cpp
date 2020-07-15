@@ -24,7 +24,9 @@ const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createIcpTransform(const vtkSmart
   icpTransformFilter->SetTransform(icp);
   icpTransformFilter->Update();
 
-  return icp->GetMatrix();
+  vtkSmartPointer<vtkMatrix4x4> m = vtkMatrix4x4::New();
+  vtkMatrix4x4::Invert(icp->GetMatrix(), m);
+  return m;
 }
 
 } // shapeworks

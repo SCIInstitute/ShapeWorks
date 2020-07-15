@@ -26,9 +26,8 @@ def rename(inname, outDir, extension_addition, extension_change=''):
         outname = outname.replace(current_extension, '.' + extension_addition + current_extension)
     if extension_change != '':
         outname = outname.replace(current_extension, extension_change)
-    cprint(("Input Filename : ", inname), 'cyan')
-    cprint(("Output Filename : ", outname), 'yellow')
-    print("######################################\n")
+    cprint(("Input filename: " + inname), 'cyan')
+    cprint(("Output filename: " + outname), 'yellow')
     return outname
 
 def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, isBinary=True):
@@ -103,7 +102,9 @@ def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False):
         outDataListSeg.append(outname)
         img = Image(inname)
         T = img.centerOfMass() - img.center()
-        img.translate(T[0], T[1], T[2]).write(outname)
+
+        # binarize result since linear interpolation makes image blurry again
+        img.translate(T[0], T[1], T[2]).binarize().write(outname)
 
         if processRaw:
             innameImg = inDataListImg[i]
@@ -157,7 +158,7 @@ def FindReferenceImage(inDataList):
 
 def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
                         antialiasIterations=20, smoothingIterations=1, alpha=10.5, beta=10.0,
-                        scaling=20.0, isoValue=0, icpIterations=10, processRaw=False, printCmd=True):
+                        scaling=0.0, isoValue=0, icpIterations=10, processRaw=False):
     """
     This function takes in a filelists(binary and raw) and produces rigid aligned
     files in the appropriate directory. If the process_raw flag is set True,
@@ -180,11 +181,20 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
 
     # reference image processing
     img = Image(refFile)
-    img.extractLabel(1.0).closeHoles().antialias(antialiasIterations).computeDT(isoValue).write(ref_dtnrrdfilename)
-    dtimg = Image(ref_dtnrrdfilename)
-    dtimg.applyCurvatureFilter(smoothingIterations).write(ref_tpdtnrrdfilename)
-    isoimg = ImageUtils.topologyPreservingSmooth(dtimg, scaling, alpha, beta, False)
+    img.extractLabel(1.0).closeHoles().write(refFile)
+    img.antialias(antialiasIterations).computeDT(isoValue).write(ref_dtnrrdfilename)
+    img.applyCurvatureFilter(smoothingIterations).write(ref_tpdtnrrdfilename)
+    isoimg = ImageUtils.topologyPreservingSmooth(img, scaling, alpha, beta)
     isoimg.write(ref_isonrrdfilename)
+
+    # create output dirs
+    segoutDir = os.path.join(outDir, 'segmentations') if processRaw else outDir
+    if not os.path.exists(segoutDir):
+        os.makedirs(segoutDir)
+    if processRaw:
+        rawoutDir = os.path.join(outDir, 'images')
+        if not os.path.exists(rawoutDir):
+            os.makedirs(rawoutDir)
 
     # create output dirs
     segoutDir = os.path.join(outDir, 'segmentations') if processRaw else outDir
@@ -212,64 +222,24 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
             rawoutname = rawinname.replace(os.path.dirname(rawinname), rawoutDir)
             rawoutname = rawoutname.replace('.nrrd', '.aligned.nrrd')
             outRawDataList.append(rawoutname)
-            dtnrrdfilename = segoutname.replace('.aligned.nrrd', '.aligned.DT.nrrd')
-            tpdtnrrdfilename = segoutname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.nrrd')
-            isonrrdfilename = segoutname.replace('.aligned.nrrd', '.aligned.ISO.nrrd')
-            img = Image(seginname)
-            img.extractLabel(1.0).closeHoles().write(seginname)
-            img.antialias(antialiasIterations).computeDT(isoValue).write(dtnrrdfilename)
-            dtimg = Image(dtnrrdfilename)
-            dtimg.applyCurvatureFilter(smoothingIterations).write(tpdtnrrdfilename)
-            isoimg = ImageUtils.topologyPreservingSmooth(dtimg, scaling, alpha, beta, False)
-            isoimg.write(isonrrdfilename)
 
-        cmd = ["shapeworks", 
-               "read-image", "--name", seginname,
-               "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
-               "write-image", "--name", segoutname]
-        if printCmd:
-            print("CMD: " + " ".join(cmd))
-        subprocess.check_call(cmd)
+        img = Image(seginname)
+        img.extractLabel(1.0).closeHoles().write(seginname)
+        img.antialias(antialiasIterations).computeDT(isoValue).write(dtnrrdfilename)
+        img.applyCurvatureFilter(smoothingIterations).write(tpdtnrrdfilename)
+        isoimg = ImageUtils.topologyPreservingSmooth(img, scaling, alpha, beta)
+        isoimg.write(isonrrdfilename)
+
+        img = Image(seginname)
+        img.icp(ref_tpdtnrrdfilename, tpdtnrrdfilename, icpIterations).write(segoutname)
 
         if processRaw:
-            cmd = ["shapeworks", 
-                   "read-image", "--name", rawinname,
-                   "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
-                   "write-image", "--name", rawoutname]
-            if printCmd:
-                print("CMD: " + " ".join(cmd))
-            subprocess.check_call(cmd)
+            img = Image(rawinname)
+            img.icp(ref_tpdtnrrdfilename, tpdtnrrdfilename, icpIterations).write(rawoutname)
 
-    else:
-        outDataList = []
-        for i in range(len(inDataListSeg)):
-            inname = inDataListSeg[i]
-            initPath = os.path.dirname(inname)
-            outname = inname.replace(initPath, outDir)
-            outname = outname.replace('.nrrd', '.aligned.nrrd')
-            outDataList.append(outname)
-            dtnrrdfilename = outname.replace('.aligned.nrrd', '.aligned.DT.nrrd')
-            tpdtnrrdfilename = outname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.nrrd')
-            isonrrdfilename = outname.replace('.aligned.nrrd', '.aligned.ISO.nrrd')
-            img = Image(inname)
-            img.extractLabel(1.0).closeHoles().write(inname)
-            img.antialias(antialiasIterations).computeDT(isoValue).write(dtnrrdfilename)
-            dtimg = Image(dtnrrdfilename)
-            dtimg.applyCurvatureFilter(smoothingIterations).write(tpdtnrrdfilename)
-            isoimg = ImageUtils.topologyPreservingSmooth(dtimg, scaling, alpha, beta, False)
-            isoimg.write(isonrrdfilename)
-            
-            cmd = ["shapeworks", 
-                   "read-image", "--name", inname,
-                   "icp",
-                   "--source", tpdtnrrdfilename,
-                   "--target", ref_tpdtnrrdfilename,
-                   "--iterations", str(icpIterations),
-                   "write-image", "--name", outname]
-            subprocess.check_call(cmd)
-        return outDataList
+    return [outSegDataList, outRawDataList] if processRaw else outSegDataList
 
-def applyCropping(outDir, inDataList, path, paddingSize=10, printCmd=True):
+def applyCropping(outDir, inDataList, path, paddingSize=10):
     """
     This function takes in a filelist and crops them according to the largest
     bounding box which it discovers
@@ -300,7 +270,7 @@ def create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename):
     file.write("<outputs>\n"+str(vtkfilename) + "\n</outputs>")
     file.close()
 
-def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoothingIterations=1, alpha=10.5, beta=10.0, scaling=20.0, isoValue=0, printCmd=True):
+def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoothingIterations=1, alpha=10.5, beta=10.0, scaling=20.0, isoValue=0):
     outDir = os.path.join(parentDir, 'groom_and_meshes')
     if not os.path.exists(outDir):
         os.makedirs(outDir)
@@ -472,14 +442,14 @@ def ClipBinaryVolumes(outDir, segList, cutting_plane_points):
     if not os.path.exists(outDir):
         os.makedirs(outDir)
     outListSeg = []
-    for i in range(len(segList):
-        seginname = segList[i]
-        segoutname = rename(seginname, outDir, "clipped")
-        outListSeg.append(seg_out)
-        seg = Image(seginname)
-        seg.clip(cutting_plane_points[0], cutting_plane_points[1], cutting_plane_points[2],
+    for i in range(len(segList)):
+        inname = segList[i]
+        outname = rename(inname, outDir, "clipped")
+        outListSeg.append(outname)
+        img = Image(inname)
+        img.clip(cutting_plane_points[0], cutting_plane_points[1], cutting_plane_points[2],
                  cutting_plane_points[3], cutting_plane_points[4], cutting_plane_points[5],
-                 cutting_plane_points[6], cutting_plane_points[7], cutting_plane_points[8]).write(segoutname)
+                 cutting_plane_points[6], cutting_plane_points[7], cutting_plane_points[8]).write(outname)
     return outListSeg
 
 def SelectCuttingPlane(input_file, printCmd=True):

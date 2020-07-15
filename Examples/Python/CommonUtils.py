@@ -13,6 +13,7 @@ from sklearn.cluster import SpectralClustering
 import io
 import glob
 import os
+import platform
 import shutil
 import xml.etree.ElementTree as ET
 from termcolor import colored, cprint
@@ -70,3 +71,17 @@ def sampledata(inDataList, num_sample):
 
     print("###########################################\n")
     return samples_idx
+
+
+# make sure the shapeworks executables can be found, adding path to osx studio app bundle if necessary
+def robustifyShapeworksPaths():
+    swpath = shutil.which("shapeworks")
+    if (not swpath):
+        print("Error: cannot find ShapeWorks executables. Please pass their location using the --shapeworks_path argument")
+        sys.exit(1)
+
+    # OSX: ensure ShapeWorksStudio is also in the path (if it exists)
+    if platform.system() == "Darwin":
+        if (not shutil.which("ShapeWorksStudio")):
+            studiodir = os.path.dirname(swpath) + "/ShapeWorksStudio.app/Contents/MacOS"
+            os.environ["PATH"] = studiodir + os.pathsep + os.environ["PATH"]

@@ -29,45 +29,59 @@ PYBIND11_MODULE(shapeworks, m)
   m.doc() = "ShapeWorks Python API";
 
   // Shapeworks globals
+  py::class_<shapeworks::Coord>(m, "Coord")
+  .def(py::init<>())
+  .def(py::init<unsigned, unsigned, unsigned>())
+  ;
 
-  // py::class_<shapeworks::Coord>(m, "Coord")
-  // .def(py::init<>())
-  // // .def(py::init<unsigned, unsigned, unsigned>)
-  // ;
-
+  // Shapeworks globals
   py::class_<shapeworks::Dims>(m, "Dims")
   .def(py::init<>())
-  // .def(py::init<unsigned, unsigned, unsigned>())
+  .def(py::init<unsigned, unsigned, unsigned>())
   //.def("__repr__",              &shapeworks::Dims::print)   //todo, this should use insertion operator<<
   //.def("__setitem__",           &shapeworks::Dims::operator[], "idx"_a, "val"_a) //todo
   //.def("__getitem__",           &shapeworks::Dims::operator[], "idx"_a)
   ;
 
+  m.def("toPoint",               py::overload_cast<shapeworks::Dims>(&shapeworks::Point3::toPoint))
+  m.def("toPoint",               py::overload_cast<shapeworks::Coord>(&shapeworks::Point3::toPoint))
+  m.def("toPoint",               py::overload_cast<shapeworks::Vector>(&shapeworks::Point3::toPoint))
+
+  // Shapeworks globals
   py::class_<shapeworks::Point3>(m, "Point3")
   .def(py::init<>())
 //  .def(py::init<unsigned, unsigned, unsigned>(), [](double x, double y, double z){ self[0] = x; self[1] = y; self[2] = z; }) // todo: use a lambda kind of like this to initialize Point3 from three values
+  // .def("toPoint",               py::overload_cast<shapeworks::Dims>(&shapeworks::Point3::toPoint))
+  // .def("toPoint",               py::overload_cast<shapeworks::Coord>(&shapeworks::Point3::toPoint))
+  // .def("toPoint",               py::overload_cast<shapeworks::Vector>(&shapeworks::Point3::toPoint))
   ;
 
+  // Shapeworks globals
   py::class_<shapeworks::Vector3>(m, "Vector3")
   .def(py::init<>())
-  // .def(py::init<unsigned, unsigned, unsigned>)
+  .def("toVector",              py::overload_cast<shapeworks::Dims>(&shapeworks::Vector3::toVector))
+  .def("toVector",              py::overload_cast<shapeworks::Point>(&shapeworks::Vector3::toVector))
   ;
 
+  // Shapeworks globals
   py::class_<shapeworks::Matrix44>(m, "Matrix44")
   .def(py::init<>())
   // .def(py::init<unsigned, unsigned, unsigned>)
   ;
 
+  // Shapeworks globals
   py::class_<shapeworks::Matrix33>(m, "Matrix33")
   .def(py::init<>())
   // .def(py::init<unsigned, unsigned, unsigned>)
   ;
 
+  // Shapeworks globals
   py::class_<shapeworks::IPoint3>(m, "IPoint3")
   .def(py::init<>())
   // .def(py::init<unsigned, unsigned, unsigned>)
   ;
 
+  // Shapeworks globals
   py::class_<shapeworks::FPoint3>(m, "FPoint3")
   .def(py::init<>())
   // .def(py::init<unsigned, unsigned, unsigned>)
@@ -85,8 +99,9 @@ PYBIND11_MODULE(shapeworks, m)
   .def_static("is_directory",   &shapeworks::ShapeworksUtils::is_directory, "pathname"_a)
   .def_static("getMatrix",      &shapeworks::ShapeworksUtils::getMatrix, "mat"_a)
   .def_static("getOffset",      &shapeworks::ShapeworksUtils::getOffset, "mat"_a)
-  .def_static("connectPipelines",
-                                &shapeworks::ShapeworksUtils::connectPipelines<itk::VTKImageExport<shapeworks::Image::ImageType>, vtkImageImport::New()>, "exporter"_a, "importer"_a);
+  // .def_static("connectPipelines",
+  //                               &shapeworks::ShapeworksUtils::connectPipelines<itk::VTKImageExport<shapeworks::Image::ImageType>, vtkImageImport::New()>, "exporter"_a, "importer"_a)
+  ;
 
   // Image
   py::class_<shapeworks::Image>(m, "Image")
