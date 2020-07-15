@@ -47,17 +47,23 @@ The [analyze stage](Workflow/Analyze.md) is the model analysis phase that suppor
 ShapeWorks Interfaces
 =====================
 
-ShapeWorks tools are designed to support different usage scenarios, including execution on a local computing platform through terminal ([command line](#shapeworks-command)) and the user-friendly [Studio](#shapeworksstudio) application, and remote systems such as [Jupyter notebooks](#shapeworks-in-python) and private or public [clouds](#shapeworks-in-the-cloud). 
+ShapeWorks tools are designed to support different usage scenarios, including execution on a local computing platform through terminal ([command line](#shapeworks-commands)) and the user-friendly [Studio](#shapeworksstudio) application, APIs including [Python](#shapeworks-in-python), and remote systems such as private or public [clouds](#shapeworks-in-the-cloud). 
 
 
-ShapeWorks Command
+ShapeWorks Commands
 ---------------------
 
-ShapeWorks is currently a set of independent command line tools for preprocessing binary segmentations and surface meshes ([Groom](Workflow/Groom.md)) and computing landmark-based shape models ([Optimize](Workflow/Optimize.md)). It also includes an interactive user interface called [ShapeWorksStudio](#shapeworksstudio) to analyze and visualize the optimized shape models ([Analyze](Workflow/Analyze.md)). 
+ShapeWorks consists of a set of independent command line tools for preprocessing binary segmentations and surface meshes ([Groom](Workflow/Groom.md)) and computing landmark-based shape models ([Optimize](Workflow/Optimize.md)). It also includes an interactive user interface called [ShapeWorksStudio](#shapeworksstudio) to analyze and visualize the optimized shape models ([Analyze](Workflow/Analyze.md)). 
 
-**Coming soon!** We are consolidating these tools into a single, reusable API (command) for ShapeWorks that is shared across different computational libraries in ShapeWorks. This single executable is highly flexible, modular, and loosely coupled, with standardized subcommands and interactive help to perform individual operations needed for a typical shape modeling workflow that includes the Groom, Optimize, and Analyze phases. 
+We are consolidating these tools into a single, reusable API that is shared across different computational libraries in ShapeWorks, , and a standalone `shapeworks` command. 
 
+The `shapeworks` executable is highly flexible, modular, and loosely coupled, with standardized subcommands and interactive help to perform individual operations needed for a typical shape modeling workflow that includes the Groom, Optimize, and Analyze phases. Please see **[shapeworks commands documentation](ShapeWorksCommands/ShapeWorksCommands.md)** for the list of available commands.
 
+_**Important**_  
+Each time you use ShapeWorks from the command line you must first activate its environment:
+```
+$ conda activate shapeworks
+```
 
 ShapeWorks in Python
 ---------------------
@@ -115,3 +121,4 @@ How Tos
 - How to get the [latest ShapeWorks binary release](https://github.com/SCIInstitute/ShapeWorks/releases/latest) or up-to-date development builds from the master branch for [Windows](https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-windows), [Mac](https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-mac), or [Linux](https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-linux). *Please understand that these are in-progress development builds, not official releases.*
 - How to install ShapeWorks on [Windows](Install/Windows_README.md), [Mac](Install/Mac_README.md), or [Linux](Install/Linux_README.md).
 - How to [build](Build/BUILD.md) ShapeWorks from source (for developers).
+- How to [auto-generate documentation](AutoDocumentation/AutoDocumentation.md) for ShapeWorks interfaces and code (for developers).

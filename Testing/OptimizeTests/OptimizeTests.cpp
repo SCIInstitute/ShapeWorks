@@ -1,16 +1,15 @@
-#include <gtest/gtest.h>
-
 #include <cstdio>
 
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
 #include <itkApproximateSignedDistanceMapImageFilter.h>
 
-#include "TestConfiguration.h"
+#include "Testing.h"
 
 #include "Optimize.h"
 #include "OptimizeParameterFile.h"
 #include "itkParticleShapeStatistics.h"
+
 
 //---------------------------------------------------------------------------
 // until we have a "groom" library we can call

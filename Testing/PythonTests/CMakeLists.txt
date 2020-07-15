@@ -1,4 +1,3 @@
-
 set(TEST_SRCS
   PythonTests.cpp
   )
@@ -8,7 +7,8 @@ add_executable(PythonTests
   )
 
 target_link_libraries(PythonTests
-  GTest::Main
+  ${ITK_LIBRARIES} ${VTK_LIBRARIES}
+  Testing
   )
 
 add_test(NAME PythonTests COMMAND PythonTests)

@@ -4,13 +4,11 @@ set(shapeworks_sources
   Executable.cpp
   Command.cpp
   Commands.cpp
-  ParticleCommands.cpp
   )
 set(shapeworks_headers
   Executable.h
   Command.h
   Commands.h
-  ParticleCommands.h
   SharedCommandData.h
   )
 add_executable(shapeworks
@@ -20,8 +18,8 @@ target_include_directories(shapeworks PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:include>)
 target_link_libraries(shapeworks
-  Utils
   Image
+  Common
   Mesh
   Analyze
   Particles
@@ -29,8 +27,11 @@ target_link_libraries(shapeworks
   )
 
 # Install
-set_target_properties(shapeworks PROPERTIES PUBLIC_HEADER
-  "${shapeworks_headers}")
+set_target_properties(shapeworks PROPERTIES
+  PUBLIC_HEADER "${shapeworks_headers}"
+  #ENABLE_EXPORTS TRUE  # needed to enable dependency of shapeworksTests (fixme: doesn't work with gcc, but works with Xcode)
+  # https://gitlab.kitware.com/cmake/cmake/-/issues/19527
+  )
 install(TARGETS shapeworks
   ARCHIVE DESTINATION bin
   RUNTIME DESTINATION bin
