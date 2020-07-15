@@ -29,63 +29,84 @@ PYBIND11_MODULE(shapeworks, m)
   m.doc() = "ShapeWorks Python API";
 
   // Shapeworks globals
-  py::class_<shapeworks::Coord>(m, "Coord")
-  .def(py::init<>())
-  .def(py::init<unsigned, unsigned, unsigned>())
-  ;
+  py::object Coord = py::cast(itk::Index<3>());
+  m.attr("Coord") = Coord;
+  py::object Dims = py::cast(itk::Size<3>());
+  m.attr("Dims") = Dims;
+  py::object Point3 = py::cast(itk::Point<double, 3>());
+  m.attr("Point3") = Point3;
+  py::object Vector3 = py::cast(itk::Vector<double, 3>());
+  m.attr("Vector3") = Vector3;
+  py::object Matrix44 = py::cast(itk::Matrix<double, 4, 4>());
+  m.attr("Matrix44") = Matrix44;
+  py::object Matrix33 = py::cast(itk::Matrix<double, 3, 3>());
+  m.attr("Matrix33") = Matrix33;
+  py::object IPoint3 = py::cast(itk::Point<int, 3>());
+  m.attr("IPoint3") = IPoint3;
+  py::object FPoint3 = py::cast(itk::Point<float, 3>());
+  m.attr("FPoint3") = FPoint3;
+  m.attr("Vector") = Vector3;
+  m.attr("Point") = Point3;
+  m.attr("Matrix") = Matrix33;
 
   // Shapeworks globals
-  py::class_<shapeworks::Dims>(m, "Dims")
-  .def(py::init<>())
-  .def(py::init<unsigned, unsigned, unsigned>())
+  // py::class_<shapeworks::Coord>(m, "Coord")
+  // .def(py::init<>())
+  // .def(py::init<unsigned, unsigned, unsigned>())
+  // ;
+
+  // Shapeworks globals
+  // py::class_<shapeworks::Dims>(m, "Dims")
+  // .def(py::init<>())
+  // .def(py::init<unsigned, unsigned, unsigned>())
   //.def("__repr__",              &shapeworks::Dims::print)   //todo, this should use insertion operator<<
   //.def("__setitem__",           &shapeworks::Dims::operator[], "idx"_a, "val"_a) //todo
   //.def("__getitem__",           &shapeworks::Dims::operator[], "idx"_a)
-  ;
+  // ;
 
-  m.def("toPoint",               py::overload_cast<shapeworks::Dims>(&shapeworks::Point3::toPoint))
-  m.def("toPoint",               py::overload_cast<shapeworks::Coord>(&shapeworks::Point3::toPoint))
-  m.def("toPoint",               py::overload_cast<shapeworks::Vector>(&shapeworks::Point3::toPoint))
+  // m.def("toPoint",               py::overload_cast<shapeworks::Dims>(&shapeworks::Point::toPoint));
+  // m.def("toPoint",               py::overload_cast<shapeworks::Coord>(&shapeworks::Point::toPoint));
+  // m.def("toPoint",               py::overload_cast<shapeworks::Vector>(&shapeworks::Point::toPoint));
 
   // Shapeworks globals
-  py::class_<shapeworks::Point3>(m, "Point3")
-  .def(py::init<>())
+  // py::class_<shapeworks::Point3>(m, "Point3")
+  // .def(py::init<>())
 //  .def(py::init<unsigned, unsigned, unsigned>(), [](double x, double y, double z){ self[0] = x; self[1] = y; self[2] = z; }) // todo: use a lambda kind of like this to initialize Point3 from three values
   // .def("toPoint",               py::overload_cast<shapeworks::Dims>(&shapeworks::Point3::toPoint))
   // .def("toPoint",               py::overload_cast<shapeworks::Coord>(&shapeworks::Point3::toPoint))
   // .def("toPoint",               py::overload_cast<shapeworks::Vector>(&shapeworks::Point3::toPoint))
-  ;
+  // ;
 
   // Shapeworks globals
-  py::class_<shapeworks::Vector3>(m, "Vector3")
-  .def(py::init<>())
-  .def("toVector",              py::overload_cast<shapeworks::Dims>(&shapeworks::Vector3::toVector))
-  .def("toVector",              py::overload_cast<shapeworks::Point>(&shapeworks::Vector3::toVector))
-  ;
+  // py::class_<shapeworks::Vector3>(m, "Vector3")
+  // .def(py::init<>())
+  // .def("toVector",              py::overload_cast<shapeworks::Dims>(&shapeworks::Vector3::toVector))
+  // .def("toVector",              py::overload_cast<shapeworks::Point>(&shapeworks::Vector3::toVector))
+  // ;
 
   // Shapeworks globals
-  py::class_<shapeworks::Matrix44>(m, "Matrix44")
-  .def(py::init<>())
+  // py::class_<shapeworks::Matrix44>(m, "Matrix44")
+  // .def(py::init<>())
   // .def(py::init<unsigned, unsigned, unsigned>)
-  ;
+  // ;
 
   // Shapeworks globals
-  py::class_<shapeworks::Matrix33>(m, "Matrix33")
-  .def(py::init<>())
+  // py::class_<shapeworks::Matrix33>(m, "Matrix33")
+  // .def(py::init<>())
   // .def(py::init<unsigned, unsigned, unsigned>)
-  ;
+  // ;
 
   // Shapeworks globals
-  py::class_<shapeworks::IPoint3>(m, "IPoint3")
-  .def(py::init<>())
+  // py::class_<shapeworks::IPoint3>(m, "IPoint3")
+  // .def(py::init<>())
   // .def(py::init<unsigned, unsigned, unsigned>)
-  ;
+  // ;
 
   // Shapeworks globals
-  py::class_<shapeworks::FPoint3>(m, "FPoint3")
-  .def(py::init<>())
+  // py::class_<shapeworks::FPoint3>(m, "FPoint3")
+  // .def(py::init<>())
   // .def(py::init<unsigned, unsigned, unsigned>)
-  ;
+  // ;
 
   //TODO: enable subscripting of Point3 in Python
   // >>> sz = img.size()
