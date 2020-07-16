@@ -9,7 +9,7 @@ add_executable(ParticlesTests
 target_link_libraries(ParticlesTests
   ${ITK_LIBRARIES} ${VTK_LIBRARIES}
   Particles
-  GTest::Main
+  Testing
   )
 
 add_test(NAME ParticlesTests COMMAND ParticlesTests)

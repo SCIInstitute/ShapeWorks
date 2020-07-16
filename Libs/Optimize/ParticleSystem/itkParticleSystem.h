@@ -119,7 +119,7 @@ public:
         }
       } 
   }
-  
+
   /** Returns the number of particles in domain k. */
   unsigned long int GetNumberOfParticles(unsigned int d = 0) const
   { return m_Positions[d]->GetSize(); }

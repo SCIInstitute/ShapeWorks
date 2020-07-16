@@ -123,7 +123,7 @@ public:
   /** Get/Set the gradient function used by this optimizer. */
   itkGetObjectMacro(GradientFunction, GradientFunctionType);
   itkSetObjectMacro(GradientFunction, GradientFunctionType);
-  
+
 protected:
   ParticleGradientDescentPositionOptimizer();
   ParticleGradientDescentPositionOptimizer(const ParticleGradientDescentPositionOptimizer &);

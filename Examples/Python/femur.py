@@ -276,65 +276,40 @@ def Run_Pipeline(args):
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
-    if args.use_single_scale:
-        parameterDictionary = {
-            "number_of_particles" : 1024, 
-            "use_normals": 0,
-            "normal_weight": 10.0,
-            "checkpointing_interval" : 10,
-            "keep_checkpoints" : 1,
-            "iterations_per_split" : 4000,
-            "optimization_iterations" : 4000,
-            "starting_regularization" : 100,
-            "ending_regularization" : 0.1,
-            "recompute_regularization_interval" : 2,
-            "domains_per_shape" : 1,
-            "domain_type" : 'image',
-            "relative_weighting" : 10,
-            "initial_relative_weighting" : 1,
-            "procrustes_interval" : 1,
-            "procrustes_scaling" : 1,
-            "save_init_splits" : 1,
-            "debug_projection" : 0,
-            "verbosity" : 3,
-            "use_statistics_in_init" : 0
-        }
-        if args.tiny_test:
-            parameterDictionary["number_of_particles"] = 32
-            parameterDictionary["optimization_iterations"] = 25
-            parameterDictionary["iterations_per_split"] = 25
+    parameterDictionary = {
+        "number_of_particles" : 1024,
+        "use_normals": 0,
+        "normal_weight": 10.0,
+        "checkpointing_interval" : 200,
+        "keep_checkpoints" : 1,
+        "iterations_per_split" : 4000,
+        "optimization_iterations" : 4000,
+        "starting_regularization" : 100,
+        "ending_regularization" : 0.1,
+        "recompute_regularization_interval" : 2,
+        "domains_per_shape" : 1,
+        "domain_type" : 'image',
+        "relative_weighting" : 10,
+        "initial_relative_weighting" : 1,
+        "procrustes_interval" : 1,
+        "procrustes_scaling" : 1,
+        "save_init_splits" : 1,
+        "debug_projection" : 0,
+        "verbosity" : 3,
+        "use_statistics_in_init" : 0
+    }
+    if args.tiny_test:
+        parameterDictionary["number_of_particles"] = 32
+        parameterDictionary["optimization_iterations"] = 25
+        parameterDictionary["iterations_per_split"] = 25
 
-        [localPointFiles, worldPointFiles] = runShapeWorksOptimize_SingleScale(pointDir, dtFiles, parameterDictionary)
+    if not args.use_single_scale:
+        parameterDictionary["use_shape_statistics_after"] = 64
 
-    else:
-        parameterDictionary = {
-            "starting_particles" : 64,
-            "number_of_levels" : 4,
-            "use_normals": 0, 
-            "normal_weight": 10.0,
-            "checkpointing_interval" : 10,
-            "keep_checkpoints" : 1,
-            "iterations_per_split" : 4000,
-            "optimization_iterations" : 4000,
-            "starting_regularization" : 100,
-            "ending_regularization" : 0.1,
-            "recompute_regularization_interval" : 2,
-            "domains_per_shape" : 1,
-            "domain_type" : 'image',
-            "relative_weighting" : 10,
-            "initial_relative_weighting" : 1,
-            "procrustes_interval" : 1, 
-            "procrustes_scaling" : 1,
-            "save_init_splits" : 1, 
-            "debug_projection" : 0,
-            "verbosity" : 3,
-            "use_statistics_in_init" : 0
-        }
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/executable
-        [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
+    """
+    Now we execute the particle optimization function.
+    """
+    [localPointFiles, worldPointFiles] = runShapeWorksOptimize(pointDir, dtFiles, parameterDictionary)
 
     if args.tiny_test:
         print("Done with tiny test")

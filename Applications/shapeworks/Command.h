@@ -10,6 +10,18 @@
 #include <iostream>
 #include <stdexcept>
 
+#define COMMAND_DECLARE(CommandName, CommandType)                                          \
+  class CommandName : public CommandType                                                   \
+  {                                                                                        \
+  public:                                                                                  \
+    static CommandName &getCommand() { static CommandName instance; return instance; }     \
+                                                                                           \
+  private:                                                                                 \
+    CommandName() { buildParser(); }                                                       \
+    void buildParser() override;                                                           \
+    bool execute(const optparse::Values &options, SharedCommandData &sharedData) override; \
+  }
+
 namespace shapeworks {
 
 class Command {
