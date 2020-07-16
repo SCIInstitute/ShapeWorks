@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vnl/vnl_vector_fixed.h"
+#include <vnl/vnl_vector_fixed.h>
 
 #include "itkParticleDomain.h"
 #include "DomainType.h"

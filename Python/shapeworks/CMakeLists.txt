@@ -1,8 +1,8 @@
 find_package(pybind11 2.4.3 REQUIRED)
 
-pybind11_add_module(shapeworks ShapeworksPython.cpp)
+pybind11_add_module(shapeworks_py ShapeworksPython.cpp)
 
-target_link_libraries(shapeworks PUBLIC
+target_link_libraries(shapeworks_py PUBLIC
   Common
   Image
   Mesh
@@ -14,7 +14,11 @@ target_link_libraries(shapeworks PUBLIC
   # tinyxml  vgl vgl_algo  Utils trimesh2
   # gtest_main ${ITK_LIBRARIES} ${VTK_LIBRARIES})
 
-install(TARGETS shapeworks
+set_target_properties(shapeworks_py PROPERTIES
+  OUTPUT_NAME shapeworks
+  )
+
+install(TARGETS shapeworks_py
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "vnl/vnl_vector_fixed.h"
-#include "TriMesh.h"
+#include <vnl/vnl_vector_fixed.h>
 #include <meshFIM.h>
+#include <TriMesh.h>
 
 #include "MeshWrapper.h"
 
