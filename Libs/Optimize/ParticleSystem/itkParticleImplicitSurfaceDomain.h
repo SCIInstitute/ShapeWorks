@@ -78,15 +78,18 @@ public:
     PointType newpoint;
 
     // Master merge conflict
-    /*
+
     //vnl_vector_fixed<float, DIMENSION> negativeUpdate;
     //for (unsigned int i = 0; i < DIMENSION; i++) { negativeUpdate[i] = -update[i]; }
     //for (unsigned int i = 0; i < DIMENSION; i++) { newpoint[i] = point[i] + negativeUpdate[i]; }
 
     for (unsigned int i = 0; i < 3; i++) { newpoint[i] = point[i] - update[i]; }
-    */
+    std::cout << "NewPoint " << newpoint << std::endl;
+    std::cout << "Point " << point << std::endl;
+    std::cout << "Update " << update << std::endl;
 
-    for (unsigned int i = 0; i < DIMENSION; i++) { newpoint[i] = point[i] - update[i]; }
+
+    //for (unsigned int i = 0; i < DIMENSION; i++) { newpoint[i] = point[i] - update[i]; }
 
     ApplyConstraints(newpoint);
     return newpoint;
