@@ -38,6 +38,7 @@ namespace shapeworks
     std::string screenshotDirectory;
     bool saveScreenshots = false;
     bool wireFrame = false;
+    bool colorNormals = false;
     bool initialized = false;
 
     double *focalPoint;

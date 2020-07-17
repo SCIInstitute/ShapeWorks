@@ -24,7 +24,6 @@ namespace shapeworks {
     this->saveScreenshots = enabled;
     if (this->saveScreenshots) {
       screenshotDirectory = path;
-      std::cerr << "Saving screenshots to " << screenshotDirectory << "\n";
     }
   }
 
@@ -108,8 +107,8 @@ namespace shapeworks {
 
     vtkSmartPointer<vtkCamera> cam = mainRenderer->GetActiveCamera();
 
-    int rotationSpeed = 10;
-    double rotation = double(iteration % (360 * rotationSpeed)) / double(rotationSpeed);
+    int iterationsPerFullRotation = 500;
+    double rotation = double(iteration % (iterationsPerFullRotation)) * 360 / double(iterationsPerFullRotation);
     double PI = 3.14159;
     double z = sin(rotation * 2 * PI / 360);
     double x = cos(rotation * 2 * PI / 360);
@@ -129,9 +128,7 @@ namespace shapeworks {
     if (this->saveScreenshots) {
       vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter = vtkSmartPointer<vtkWindowToImageFilter>::New();
       windowToImageFilter->SetInput(renderWindow);
-      //windowToImageFilter->SetMagnification(3); //set the resolution of the output image (3 times the current resolution of vtk render window)
-      //windowToImageFilter->SetInputBufferTypeToRGBA(); //also record the alpha (transparency) channel
-      windowToImageFilter->ReadFrontBufferOff(); // read from the back buffer
+      windowToImageFilter->ReadFrontBufferOff();
       windowToImageFilter->Update();
 
       vtkSmartPointer<vtkPNGWriter> writer = vtkSmartPointer<vtkPNGWriter>::New(); 
@@ -165,43 +162,19 @@ namespace shapeworks {
     double height = (width < 0.1) ? width : 0.1;
     for (int i = 0; i < meshes.size(); i++) {
 
-
-      int numVertices = tmeshes[i]->vertices.size();
-      vtkSmartPointer<vtkUnsignedCharArray> colors = vtkSmartPointer<vtkUnsignedCharArray>::New();
-      colors->SetNumberOfComponents(3);
-      colors->SetName("Colors");
-
-      // Add the three colors we have created to the array
-      //float maxcurv = tmeshes[i]->curv1[0];
-      //float mincurv = maxcurv;
-
-      //for (int vertex = 0; vertex < numVertices; vertex++) {
-      //  float curv = tmeshes[i]->curv1[vertex];
-      //  mincurv = curv < mincurv ? curv : mincurv;
-      //  maxcurv = curv > maxcurv ? curv : maxcurv;
-      //}
-      //std::cerr << "curv range = [" << mincurv << ", " << maxcurv << "]\n";
-      //for (int vertex = 0; vertex < numVertices; vertex++) {
-      //  float curv = tmeshes[i]->curv1[vertex];
-      //  float red = 255.0 * (curv - mincurv) / (maxcurv - mincurv);
-
-      //  unsigned char col[3] = {red, 0, 1 - red};
-      //  colors->InsertNextTypedTuple(col);
-      //}
-
-
-
-
-      for (int vertex = 0; vertex < numVertices; vertex++) {
-        trimesh::vec normal = tmeshes[i]->normals[vertex];
-        normal = (normal + trimesh::vec(1, 1, 1)) * 0.5 * 255;
-        unsigned char col[3] = {normal[0], normal[1], normal[2]};
-        colors->InsertNextTypedTuple(col);
+      if (colorNormals) {
+        int numVertices = tmeshes[i]->vertices.size();
+        vtkSmartPointer<vtkUnsignedCharArray> colors = vtkSmartPointer<vtkUnsignedCharArray>::New();
+        colors->SetNumberOfComponents(3);
+        colors->SetName("Colors");
+        for (int vertex = 0; vertex < numVertices; vertex++) {
+          trimesh::vec normal = tmeshes[i]->normals[vertex];
+          normal = (normal + trimesh::vec(1, 1, 1)) * 0.5 * 255;
+          unsigned char col[3] = {normal[0], normal[1], normal[2]};
+          colors->InsertNextTypedTuple(col);
+        }
+        meshes[i]->GetPointData()->SetScalars(colors);
       }
-      meshes[i]->GetPointData()->SetScalars(colors);
-
-
-
 
       vtkSmartPointer<vtkPolyDataMapper> meshMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
       vtkSmartPointer<vtkActor> meshActor = vtkSmartPointer<vtkActor>::New();
@@ -212,15 +185,8 @@ namespace shapeworks {
       double alpha = 1.0 / meshes.size();
       alpha /= 2;
       alpha = alpha > 1 ? 1 : alpha;
-      //alpha = 1;
       meshActor->GetProperty()->SetOpacity(alpha);
       meshActor->GetProperty()->SetLineWidth(0.01);
-
-
-
-
-
-
 
       mainRenderer->AddActor(meshActor);
 
