@@ -24,7 +24,7 @@ namespace itk
 
 template<class T>
 void
-ParticleImplicitSurfaceDomain<T>::
+ParticleDomain<T>::
 SetCuttingPlane(const vnl_vector<double> &a, const vnl_vector<double> &b,
                 const vnl_vector<double> &c)
 {
@@ -43,7 +43,7 @@ SetCuttingPlane(const vnl_vector<double> &a, const vnl_vector<double> &b,
 // Prateep
 template<class T>
 void
-ParticleImplicitSurfaceDomain<T>::
+ParticleDomain<T>::
 TransformCuttingPlane(const vnl_matrix_fixed<double, DIMENSION + 1, DIMENSION + 1> &Trans)
 {
     if (m_UseCuttingPlane == true)
@@ -95,7 +95,7 @@ TransformCuttingPlane(const vnl_matrix_fixed<double, DIMENSION + 1, DIMENSION + 
 
 template<class T>
 void
-ParticleImplicitSurfaceDomain<T>::
+ParticleDomain<T>::
 SetMesh(TriMesh *mesh)
 {
   m_mesh = mesh;
@@ -103,7 +103,7 @@ SetMesh(TriMesh *mesh)
 
 template<class T>
 void
-ParticleImplicitSurfaceDomain<T>::
+ParticleDomain<T>::
 SetFeaMesh(const char *feaFile)
 {
     m_mesh->ReadFeatureFromFile(feaFile);
@@ -111,7 +111,7 @@ SetFeaMesh(const char *feaFile)
 
 template<class T>
 void
-ParticleImplicitSurfaceDomain<T>::
+ParticleDomain<T>::
 SetFeaGrad(const char *feaGradFile)
 {
     m_mesh->ReadFeatureGradientFromFile(feaGradFile);
@@ -119,7 +119,7 @@ SetFeaGrad(const char *feaGradFile)
 
 template<class T>
 void
-ParticleImplicitSurfaceDomain<T>::
+ParticleDomain<T>::
 SetFids(const char *fidsFile)
 {
     m_mesh->ReadFaceIndexMap(fidsFile);
@@ -144,7 +144,7 @@ SetFids(const char *fidsFile)
 
 template<class T>
 bool
-ParticleImplicitSurfaceDomain<T>::
+ParticleDomain<T>::
 ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const
 {
     std::cout << "Applying Vector Constraints" << std::endl;
@@ -181,7 +181,7 @@ ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> &gradE, const PointTy
 
 template<class T>
 bool
-ParticleImplicitSurfaceDomain<T>::ApplyConstraints(PointType &p) const
+ParticleDomain<T>::ApplyConstraints(PointType &p) const
 {
   // First apply and constraints imposed by superclasses.  This will
   // guarantee the point starts in the correct image domain.
@@ -221,7 +221,7 @@ ParticleImplicitSurfaceDomain<T>::ApplyConstraints(PointType &p) const
 
 template <class T>
 double
-ParticleImplicitSurfaceDomain<T>::Distance(const PointType &a, const PointType &b) const
+ParticleDomain<T>::Distance(const PointType &a, const PointType &b) const
 {
   if (m_mesh != NULL)
   {
@@ -242,7 +242,7 @@ ParticleImplicitSurfaceDomain<T>::Distance(const PointType &a, const PointType &
 
 template<class T>
 bool
-ParticleImplicitSurfaceDomain<T>::
+ParticleDomain<T>::
 SphereVectorConstraintMayOrMayNotWork(vnl_vector_fixed<double, DIMENSION> & gradE, const PointType& pos) const
 {
 //  gradMag = gradE.magnitude();

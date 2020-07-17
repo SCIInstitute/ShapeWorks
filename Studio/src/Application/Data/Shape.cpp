@@ -32,7 +32,6 @@ Shape::~Shape()
 //---------------------------------------------------------------------------
 QSharedPointer<Mesh> Shape::get_mesh(std::string display_mode)
 {
-  //std::cerr << "get_mesh(" << display_mode << ")\n";
   if (display_mode == Visualizer::MODE_ORIGINAL_C) {
     return this->get_original_mesh();
   }
@@ -98,50 +97,52 @@ ImageType::Pointer Shape::get_original_image()
   ImageType::Pointer image;
   std::string filename = this->subject_->get_segmentation_filenames()[0];
   if (filename != "") {
-    // read file using ITK
-    ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileName(filename);
-    reader->Update();
-    image = reader->GetOutput();
+    try {
+      // read file using ITK
+      ReaderType::Pointer reader = ReaderType::New();
+      reader->SetFileName(filename);
+      reader->Update();
+      image = reader->GetOutput();
 
-    // set orientation to RAI
-    itk::OrientImageFilter<ImageType, ImageType>::Pointer orienter =
-      itk::OrientImageFilter<ImageType, ImageType>::New();
-    orienter->UseImageDirectionOn();
-    orienter->SetDesiredCoordinateOrientation(
-      itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
-    orienter->SetInput(image);
-    orienter->Update();
-    image = orienter->GetOutput();
+      // set orientation to RAI
+      itk::OrientImageFilter<ImageType, ImageType>::Pointer orienter =
+        itk::OrientImageFilter<ImageType, ImageType>::New();
+      orienter->UseImageDirectionOn();
+      orienter->SetDesiredCoordinateOrientation(
+        itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
+      orienter->SetInput(image);
+      orienter->Update();
+      image = orienter->GetOutput();
+    } catch (itk::ExceptionObject & excep) {
+      std::cerr << "Exception caught!" << std::endl;
+      std::cerr << excep << std::endl;
+    }
   }
   return image;
-
-  //return this->original_image_;
 }
 
 //---------------------------------------------------------------------------
 ImageType::Pointer Shape::get_groomed_image()
 {
   if (!this->groomed_image_) {
-    ImageType::Pointer image;
     std::string filename = this->subject_->get_groomed_filenames()[0]; // single domain supported
     if (filename != "") {
-      // read file using ITK
-      ReaderType::Pointer reader = ReaderType::New();
-      reader->SetFileName(filename);
-      reader->Update();
-      this->groomed_image_ = reader->GetOutput();
+      ImageType::Pointer image;
+      try {
+        // read file using ITK
+        ReaderType::Pointer reader = ReaderType::New();
+        reader->SetFileName(filename);
+        reader->Update();
+        image = reader->GetOutput();
+        // don't store to this->groomed_image_ so that we don't hold a pointer to it
+      } catch (itk::ExceptionObject & excep) {
+        std::cerr << "Exception caught!" << std::endl;
+        std::cerr << excep << std::endl;
+      }
+      return image;
     }
   }
   return this->groomed_image_;
-}
-
-//---------------------------------------------------------------------------
-void Shape::import_groomed_file(QString filename, double iso)
-{
-  this->groomed_mesh_ = QSharedPointer<Mesh>(new Mesh());
-  this->groomed_image_ = this->groomed_mesh_->create_from_file(filename.toStdString(), iso);
-  this->groomed_filename_ = filename;
 }
 
 //---------------------------------------------------------------------------
@@ -153,6 +154,8 @@ void Shape::import_groomed_image(ImageType::Pointer img, double iso)
   auto name = this->get_original_filename_with_path().toStdString();
   name = name.substr(0, name.find_last_of(".")) + "_DT.nrrd";
   this->groomed_filename_ = QString::fromStdString(name);
+  std::vector<std::string> groomed_filenames {name};   // only single domain supported so far
+  this->subject_->set_groomed_filenames(groomed_filenames);
 }
 
 //---------------------------------------------------------------------------
@@ -164,8 +167,7 @@ QSharedPointer<Mesh> Shape::get_groomed_mesh()
       std::cerr << "Error: asked for groom mesh when none as present!\n";
       //return this->groomed_mesh_;
     }
-    else
-    {
+    else {
       this->generate_meshes(this->subject_->get_groomed_filenames(), this->groomed_mesh_);
     }
   }
@@ -174,12 +176,9 @@ QSharedPointer<Mesh> Shape::get_groomed_mesh()
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_reconstructed_mesh(vtkSmartPointer<vtkPolyData> poly_data)
+void Shape::set_reconstructed_mesh(MeshHandle mesh)
 {
-  if (poly_data) {
-    this->reconstructed_mesh_ = QSharedPointer<Mesh> (new Mesh());
-    this->reconstructed_mesh_->set_poly_data(poly_data);
-  }
+  this->reconstructed_mesh_ = mesh;
 }
 
 //---------------------------------------------------------------------------
@@ -255,15 +254,8 @@ bool Shape::import_local_point_file(QString filename)
 //---------------------------------------------------------------------------
 QSharedPointer<Mesh> Shape::get_reconstructed_mesh()
 {
-  //std::cerr << "get_reconstructed_mesh\n";
   if (!this->reconstructed_mesh_) {
-    vtkSmartPointer<vtkPolyData> poly_data = this->mesh_manager_->get_mesh(
-      this->global_correspondence_points_);
-    if (poly_data) {
-      //std::cerr << "mesh was ready from manager!\n";
-      this->reconstructed_mesh_ = QSharedPointer<Mesh>(new Mesh());
-      this->reconstructed_mesh_->set_poly_data(poly_data);
-    }
+    this->reconstructed_mesh_ = this->mesh_manager_->get_mesh(this->global_correspondence_points_);
   }
 
   return this->reconstructed_mesh_;
@@ -417,15 +409,14 @@ void Shape::generate_original_meshes()
 
     MeshWorkItem item;
     item.filename = filename;
-    vtkSmartPointer<vtkPolyData> poly_data = this->mesh_manager_->get_mesh(item);
-    if (poly_data) {
+    MeshHandle mesh = this->mesh_manager_->get_mesh(item);
+    if (mesh) {
       //std::cerr << "mesh was ready from manager!\n";
-      this->original_mesh_ = QSharedPointer<Mesh>(new Mesh());
-      this->original_mesh_->set_poly_data(poly_data);
+      this->original_mesh_ = mesh;
 
       /// Temporarily calculate it here
       auto com = vtkSmartPointer<vtkCenterOfMass>::New();
-      com->SetInputData(poly_data);
+      com->SetInputData(mesh->get_poly_data());
       com->Update();
       double center[3];
       com->GetCenter(center);
@@ -455,15 +446,14 @@ void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<Mesh> 
 
   MeshWorkItem item;
   item.filename = filename;
-  vtkSmartPointer<vtkPolyData> poly_data = this->mesh_manager_->get_mesh(item);
-  if (poly_data) {
+  MeshHandle new_mesh = this->mesh_manager_->get_mesh(item);
+  if (new_mesh) {
     //std::cerr << "mesh was ready from manager!\n";
-    mesh = QSharedPointer<Mesh>(new Mesh());
-    mesh->set_poly_data(poly_data);
+    mesh = new_mesh;
 
     /// Temporarily calculate it here
     auto com = vtkSmartPointer<vtkCenterOfMass>::New();
-    com->SetInputData(poly_data);
+    com->SetInputData(mesh->get_poly_data());
     com->Update();
     double center[3];
     com->GetCenter(center);

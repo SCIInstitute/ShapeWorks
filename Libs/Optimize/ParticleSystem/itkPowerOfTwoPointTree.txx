@@ -148,16 +148,8 @@ void PowerOfTwoPointTree<VDimension>::ConstructTree(const PointType &lowerbound,
 
   NodePointerType n = NodeType::New();
 
-  PointType lower;
-  PointType upper;
-  // Add extra 1 margin to all dimensions to allow for small numerical error.
-  for (int i = 0; i < 3; i++) {
-    lower[i] = lowerbound[i] - 1;
-    upper[i] = upperbound[i] + 1;
-  }
-
-  n->SetLowerBound(lower);
-  n->SetUpperBound(upper);
+  n->SetLowerBound(lowerbound);
+  n->SetUpperBound(upperbound);
 
   this->SetRoot(n);
   this->BranchNode(n, 1);

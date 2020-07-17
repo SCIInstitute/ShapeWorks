@@ -11,7 +11,7 @@
 <verbosity>1</verbosity>
 
 <!-- needed to fully turn on cutting planes -->
-<adaptivity_mode> 3 </adaptivity_mode>
+<adaptivity_mode> 0 </adaptivity_mode>
 
 <output_dir>
 output
@@ -37,4 +37,3 @@ sphere40_DT.nrrd
   10 10 0 -10 -10 0 10 -10 0
   10 10 0 -10 -10 0 10 -10 0
 </cutting_planes>
-

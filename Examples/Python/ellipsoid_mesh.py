@@ -63,13 +63,16 @@ def Run_Pipeline(args):
     # extract the zipfile
     with ZipFile(filename, 'r') as zipObj:
         zipObj.extractall(path=parentDir)
-        parentDir = parentDir + datasetName + "/"
-        meshFiles = sorted(glob.glob(parentDir + "meshes/*.ply"))
+        datasetDir = parentDir + datasetName + "/"
+        meshFiles = sorted(glob.glob(datasetDir + "meshes/*.ply"))
+        imageFiles = sorted(glob.glob(datasetDir + "images/*.nrrd"))
 
     meshFiles = meshFiles[:15]
+    imageFiles = imageFiles[:15]
     if args.tiny_test:
         args.use_single_scale = 1
         meshFiles = meshFiles[:2]
+        imageFiles = imageFiles[:2]
 
     pointDir = parentDir + 'PointFiles/'
     if not os.path.exists(pointDir):
@@ -82,8 +85,8 @@ def Run_Pipeline(args):
             "normal_weight": 10.0,
             "checkpointing_interval" : 200,
             "keep_checkpoints" : 0,
-            "iterations_per_split" : 100,
-            "optimization_iterations" : 2000,
+            "iterations_per_split" : 500,
+            "optimization_iterations" : 500,
             "starting_regularization" : 100,
             "ending_regularization" : 0.1,
             "recompute_regularization_interval" : 2,
@@ -115,8 +118,8 @@ def Run_Pipeline(args):
             "normal_weight": 10.0,
             "checkpointing_interval" : 200,
             "keep_checkpoints" : 0,
-            "iterations_per_split" : 100,
-            "optimization_iterations" : 2000,
+            "iterations_per_split" : 500,
+            "optimization_iterations" : 500,
             "starting_regularization" : 100,
             "ending_regularization" : 0.1,
             "recompute_regularization_interval" : 2,
@@ -166,5 +169,5 @@ def Run_Pipeline(args):
     if args.interactive != 0:
         input("Press Enter to continue")
 
-    launchShapeWorksStudio(pointDir, [], localPointFiles, worldPointFiles)
+    launchShapeWorksStudio(pointDir, imageFiles, localPointFiles, worldPointFiles)
 
