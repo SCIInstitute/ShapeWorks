@@ -123,10 +123,8 @@ namespace shapeworks
         break;
       }
 
-      // TODO, use a small epsilon to soften the requirements (in trimesh function ComputeBarycentricCoordinates)
       if (targetBary[0] + barycentricEpsilon >= 0 && targetBary[1] + barycentricEpsilon >= 0 && targetBary[2] + barycentricEpsilon >= 0 && targetBary[0] - barycentricEpsilon <= 1 && targetBary[1] - barycentricEpsilon <= 1 && targetBary[2] - barycentricEpsilon <= 1) {
         currentPoint = targetPoint;
-        //std::cerr << "same triangle " << PrintValue<Eigen::Vector3d>(currentPoint) << ")\n";
         break;
       }
       int positiveVertex = -1;
@@ -147,6 +145,7 @@ namespace shapeworks
       int negativeEdge = negativeVertices[0];
       Eigen::Vector3d intersect = convert<point, Eigen::Vector3d>(GetBarycentricIntersection(currentBary, targetBary, currentFace, negativeEdge));
 
+      // When more than 1 negative barycentric coordinate, compute both intersections and take the closest one.
       if (negativeVertices.size() == 2) {
         int negativeEdge1 = negativeVertices[1];
         Eigen::Vector3d intersect1 = convert<point, Eigen::Vector3d>(GetBarycentricIntersection(currentBary, targetBary, currentFace, negativeEdge1));
@@ -168,9 +167,6 @@ namespace shapeworks
       int nextFace = mesh->across_edge[currentFace][negativeEdge];
       if (nextFace == -1) {
         nextFace = SlideAlongEdge(intersect, remaining, currentFace, negativeEdge, mesh);
-      }
-      if ((intersect - currentPoint).norm() > remainingVector.norm()) {
-        std::cerr << "ASDFASDF moved further than the vector\n";
       }
       remainingVector = remaining;
       if (nextFace != -1) {
@@ -199,12 +195,10 @@ namespace shapeworks
   }
 
   vnl_vector_fixed<double, DIMENSION> TriMeshWrapper::ProjectVectorToSurfaceTangent(const PointType &pointa, vnl_vector_fixed<double, DIMENSION> &vector) const {
-    //std::cerr << "Projecting vector " << PrintValue< vnl_vector_fixed<double, DIMENSION>>(vector) << " at point " << PrintValue<PointType>(pointa) << "\n";
     int faceIndex = GetTriangleForPoint(convert<const PointType, point>(pointa));
     const Eigen::Vector3d normal = GetFaceNormal(faceIndex);
     Eigen::Vector3d result = ProjectVectorToFace(normal, convert<vnl_vector_fixed<double, DIMENSION>, Eigen::Vector3d>(vector));
     vnl_vector_fixed<double, DIMENSION> resultvnl(result[0], result[1], result[2]);
-    //std::cerr << "normal: " << PrintValue<Eigen::Vector3d>(normal) << ", projected vector: " << PrintValue<Eigen::Vector3d>(result) << "\n";
     return resultvnl;
   }
 
@@ -240,10 +234,9 @@ namespace shapeworks
   int TriMeshWrapper::GetNearestVertex(point pt) const {
     const float * match = kdTree->closest_to_pt(pt, 99999999);
     int match_ind = ( const point *) match - &(mesh->vertices[0]);
-    //point nearest = mesh->vertices[match_ind];
-    //std::cerr << "Nearest vs query " << PrintValue<point>(nearest) << ", " << PrintValue<point>(pt) << "\n";
     return match_ind;
   }
+
   std::vector<int> TriMeshWrapper::GetKNearestVertices(point pt, int k) const {
     std::vector<const float *> knn;
     kdTree->find_k_closest_to_pt(knn, k, pt, 9999999);
@@ -258,9 +251,10 @@ namespace shapeworks
   vec normalizeBary(const vec &bary) {
     float sum =abs(bary[0]) + abs(bary[1]) + abs(bary[2]);
     return vec(bary / sum);
-    //bary[0] /= sum; bary[1] /= sum; bary[2] /= sum;
   }
 
+  // Checks all of the neighbor faces of the 10 nearest vertices to pt.
+  // Returns index of the first face that has valid barycentric coordinates.
   int TriMeshWrapper::GetTriangleForPoint(point pt) const {
 
     double closestDistance = 99999999;
@@ -328,6 +322,7 @@ namespace shapeworks
     return bCoords;
   }
 
+  // snaps the point to the mesh by getting the barycentric coordinates and normalizing them to sum to 1.
   TriMeshWrapper::PointType TriMeshWrapper::SnapToMesh(PointType pointtype) const {
     point pt = convert<PointType, point>(pointtype);
     int face = GetTriangleForPoint(pt);
