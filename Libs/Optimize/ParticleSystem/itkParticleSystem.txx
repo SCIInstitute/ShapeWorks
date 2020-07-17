@@ -253,12 +253,16 @@ ParticleSystem<VDimension>
     PointType startingPos = *it;
 
     vnl_vector_fixed<double, VDimension> updateVector = random * 0.5;
-    PointType newpos = this->GetDomain(domain)->UpdateParticlePosition(startingPos, updateVector);
+    vnl_vector_fixed<double, VDimension> projected = this->GetDomain(domain)->ProjectVectorToSurfaceTangent(updateVector, startingPos);
+
+    projected = projected * updateVector.magnitude() / projected.magnitude();
+
+
+    PointType newpos = this->GetDomain(domain)->UpdateParticlePosition(startingPos, projected);
     this->AddPosition(newpos, domain, threadId);
 
     // Apply opposite update to each original point in the split.
-    updateVector = -random * 0.5;
-    newpos = this->GetDomain(domain)->UpdateParticlePosition(startingPos, updateVector);
+    newpos = this->GetDomain(domain)->UpdateParticlePosition(startingPos, -projected);
     this->SetPosition(newpos, k, domain, threadId);
 
   }
