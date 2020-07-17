@@ -17,12 +17,8 @@ namespace itk
 class MeshDomain : public ParticleDomain
 {
 public:
-  template<class T>
-  inline std::string PrintValue(T value) const {
-    return "(" + std::to_string(value[0]) + ", " + std::to_string(value[1]) + ", " + std::to_string(value[2]) + ")";
-  }
   /** Standard class typedefs */
-  typedef SmartPointer<MeshDomain>  Pointer;
+  typedef SmartPointer<MeshDomain> Pointer;
 
   /** Point type used to store particle locations. */
   typedef typename ParticleDomain::PointType PointType;
@@ -36,39 +32,10 @@ public:
       example, implement boundary conditions or restrict points to lie on a
       surface.  Default behavior does nothing.  Returns true if the value of
       the point was modified and false otherwise. */
-  inline bool ApplyConstraints(PointType& p) const override {
-    // TODO snap the point to the closest position on the mesh or something
-    // TODO need to refactor particle updates into a function so that mesh can do its own update method.
-    p = meshWrapper->SnapToMesh(p);
-    return true;
-  }
-  inline bool ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> & gradE, const PointType &pos) const override {
-    // TODO need to refactor into update particle method
-    // TODO reduce magnitude of vector so it doesn't violate constraints
-    return true;
-  }
-  inline vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION> & gradE, const PointType &pos) const override {
-
-    vnl_vector_fixed<float, DIMENSION> vector;
-    for (unsigned int i = 0; i < DIMENSION; i++) { vector[i] = gradE[i]; }
-
-    vnl_vector_fixed<float, DIMENSION> projected = meshWrapper->ProjectVectorToSurfaceTangent(pos, vector);
-
-    vnl_vector_fixed<double, DIMENSION> result;
-    for (unsigned int i = 0; i < DIMENSION; i++) { result[i] = projected[i]; }
-    return result;
-  }
-
-  inline PointType UpdateParticlePosition(PointType& point, vnl_vector_fixed<double, DIMENSION> & update) const override {
-    PointType newpoint;
-
-    vnl_vector_fixed<float, DIMENSION> negativeUpdate;
-    for (unsigned int i = 0; i < DIMENSION; i++) { negativeUpdate[i] = -update[i]; }
-    PointType walkedPoint = meshWrapper->GeodesicWalk(point, negativeUpdate);
-    for (unsigned int i = 0; i < DIMENSION; i++) { newpoint[i] = walkedPoint[i]; }
-    ApplyConstraints(newpoint);
-    return newpoint;
-  }
+  bool ApplyConstraints(PointType &p) const override;
+  bool ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const override;
+  vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const override;
+  PointType UpdateParticlePosition(PointType &point, vnl_vector_fixed<double, DIMENSION> &update) const override;
 
   double GetCurvature(const PointType &p) const override {
     return GetSurfaceMeanCurvature();
@@ -86,10 +53,6 @@ public:
     return 0.02;
   }
 
-  inline std::string PrintPoint(PointType point) const {
-    return "(" + std::to_string(point[0]) + ", " + std::to_string(point[1]) + ", " + std::to_string(point[2]) + ")";
-  }
-
   const PointType& GetLowerBound() const override {
     return meshWrapper->GetMeshLowerBound();
   }
@@ -104,15 +67,9 @@ public:
     // TODO return actual surface area
     return 0;
   }
-  double GetMaxDimRadius() const override {
-    PointType size = meshWrapper->GetMeshUpperBound() - meshWrapper->GetMeshLowerBound();
-    double max = 0;
-    for (int d = 0; d < 3; d++) {
-      max = max > size[d] ? max : size[d];
-    }
-    std::cerr << "Using " << max << " as max dim radius\n";
-    return max;
-  }
+
+  double GetMaxDimRadius() const override;
+
   inline vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType & point) const override {
     return meshWrapper->SampleNormalAtPoint(point);
   }
@@ -147,7 +104,6 @@ public:
     meshWrapper = mesh_;
   }
 
-
   MeshDomain() { }
   virtual ~MeshDomain() {}
 
@@ -163,4 +119,4 @@ private:
 
 };
 
-} // end namespace itk
+}

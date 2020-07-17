@@ -9,7 +9,6 @@
 
 namespace shapeworks {
 
-
 class Executable {
 public:
   Executable();
@@ -26,5 +25,4 @@ private:
   int run(std::vector<std::string> arguments, SharedCommandData &sharedData);
 };
 
-
-}; // Shapeworks
+}; // shapeworks

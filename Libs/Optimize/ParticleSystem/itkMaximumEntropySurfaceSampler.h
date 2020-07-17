@@ -1,14 +1,4 @@
 #pragma once
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
 
 #include "itkParticleSystem.h"
 #include "itkParticleGradientDescentPositionOptimizer.h"
@@ -339,6 +329,8 @@ public:
         this->Execute();
         this->m_Initializing = false;
     }
+
+    virtual void ReInitialize();
 
     virtual void Execute();
 
