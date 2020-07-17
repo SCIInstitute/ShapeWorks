@@ -8,7 +8,6 @@
 namespace shapeworks {
 
 template<unsigned int VDimension = 3>
-
 class ShapeEvaluation
 {
 public:

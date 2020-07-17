@@ -8,6 +8,7 @@
 typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> RowMajorMatrix;
 
 namespace shapeworks {
+
 template<unsigned int VDimension>
 double ShapeEvaluation<VDimension>::ComputeCompactness(const ParticleSystem &particleSystem, const int nModes,
                                                        const std::string &saveTo)
@@ -165,5 +166,6 @@ double ShapeEvaluation<VDimension>::ComputeSpecificity(const ParticleSystem &par
 
 template
 class ShapeEvaluation<3>;
-}
+
+} // shapeworks
 

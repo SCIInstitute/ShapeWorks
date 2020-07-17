@@ -63,6 +63,7 @@ function install_conda() {
        doxygen=1.8.16 \
        graphviz=2.38.0 \
        vtk=8.2.0 \
+#       itk=5.1.0 \
        scikit-learn=0.22.1 \
        pybind11=2.5.0 \
        notebook=6.0.3 \
