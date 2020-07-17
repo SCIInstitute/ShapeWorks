@@ -116,91 +116,92 @@ namespace itk
         for (int dom = 0; dom < numdomains; dom++)
         {
           // skip any flagged domains
-          if (m_ParticleSystem->GetDomainFlag(dom) == false)
+          if (m_ParticleSystem->GetDomainFlag(dom) == true)
           {
+            continue;
+          }
 
-            const ParticleDomain *domain = m_ParticleSystem->GetDomain(dom);
+          const ParticleDomain *domain = m_ParticleSystem->GetDomain(dom);
 
-            typename GradientFunctionType::Pointer localGradientFunction = m_GradientFunction;
+          typename GradientFunctionType::Pointer localGradientFunction = m_GradientFunction;
 #ifdef SW_USE_OPENMP
-            localGradientFunction = m_GradientFunction->Clone();
+          localGradientFunction = m_GradientFunction->Clone();
 #endif
 
-            // Tell function which domain we are working on.
-            localGradientFunction->SetDomainNumber(dom);
+          // Tell function which domain we are working on.
+          localGradientFunction->SetDomainNumber(dom);
 
-            // Iterate over each particle position
-            unsigned int k = 0;
-            typename ParticleSystemType::PointContainerType::ConstIterator endit =
-              m_ParticleSystem->GetPositions(dom)->GetEnd();
-            for (typename ParticleSystemType::PointContainerType::ConstIterator it
-              = m_ParticleSystem->GetPositions(dom)->GetBegin(); it != endit; it++, k++)
-            {
-              if (m_TimeSteps[dom][k] < minimumTimeStep) {
-                m_TimeSteps[dom][k] = minimumTimeStep;
-              }
-              // Compute gradient update.
-              double energy = 0.0;
-              localGradientFunction->BeforeEvaluate(it.GetIndex(), dom, m_ParticleSystem);
-              // maximumUpdateAllowed is set based on some fraction of the distance between particles
-              // This is to avoid particles shooting past their neighbors
-              double maximumUpdateAllowed;
-              VectorType original_gradient = localGradientFunction->Evaluate(it.GetIndex(), dom, m_ParticleSystem, maximumUpdateAllowed, energy);
+          // Iterate over each particle position
+          unsigned int k = 0;
+          typename ParticleSystemType::PointContainerType::ConstIterator endit =
+            m_ParticleSystem->GetPositions(dom)->GetEnd();
+          for (typename ParticleSystemType::PointContainerType::ConstIterator it
+            = m_ParticleSystem->GetPositions(dom)->GetBegin(); it != endit; it++, k++)
+          {
+            if (m_TimeSteps[dom][k] < minimumTimeStep) {
+              m_TimeSteps[dom][k] = minimumTimeStep;
+            }
+            // Compute gradient update.
+            double energy = 0.0;
+            localGradientFunction->BeforeEvaluate(it.GetIndex(), dom, m_ParticleSystem);
+            // maximumUpdateAllowed is set based on some fraction of the distance between particles
+            // This is to avoid particles shooting past their neighbors
+            double maximumUpdateAllowed;
+            VectorType original_gradient = localGradientFunction->Evaluate(it.GetIndex(), dom, m_ParticleSystem, maximumUpdateAllowed, energy);
 
-              unsigned int idx = it.GetIndex();
-              PointType pt = *it;
+            unsigned int idx = it.GetIndex();
+            PointType pt = *it;
 
-              // Step 1 Project the gradient vector onto the tangent plane
-              VectorType original_gradient_projectedOntoTangentSpace = domain->ProjectVectorToSurfaceTangent(original_gradient, pt);
+            // Step 1 Project the gradient vector onto the tangent plane
+            VectorType original_gradient_projectedOntoTangentSpace = domain->ProjectVectorToSurfaceTangent(original_gradient, pt);
 
-              double newenergy, gradmag;
-              while (true) {
-                // Step A scale the projected gradient by the current time step
-                VectorType gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
+            double newenergy, gradmag;
+            while (true) {
+              // Step A scale the projected gradient by the current time step
+              VectorType gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
 
-                // Step B Constrain the gradient so that the resulting position will not violate any domain constraints
-                m_ParticleSystem->GetDomain(dom)->ApplyVectorConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
+              // Step B Constrain the gradient so that the resulting position will not violate any domain constraints
+              m_ParticleSystem->GetDomain(dom)->ApplyVectorConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
+              gradmag = gradient.magnitude();
+
+              // Step C if the magnitude is larger than the Sampler allows, scale the gradient down to an acceptable magnitude
+              if (gradmag > maximumUpdateAllowed) {
+                gradient = gradient * maximumUpdateAllowed / gradmag;
                 gradmag = gradient.magnitude();
+              }
 
-                // Step C if the magnitude is larger than the Sampler allows, scale the gradient down to an acceptable magnitude
-                if (gradmag > maximumUpdateAllowed) {
-                  gradient = gradient * maximumUpdateAllowed / gradmag;
-                  gradmag = gradient.magnitude();
-                }
+              // Step D compute the new point position
+              PointType newpoint = domain->UpdateParticlePosition(pt, gradient);
 
-                // Step D compute the new point position
-                PointType newpoint = domain->UpdateParticlePosition(pt, gradient);
+              // Step F update the point position in the particle system
+              m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);
 
-                // Step F update the point position in the particle system
-                m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);
+              // Step G compute the new energy of the particle system 
+              newenergy = localGradientFunction->Energy(it.GetIndex(), dom, m_ParticleSystem);
 
-                // Step G compute the new energy of the particle system 
-                newenergy = localGradientFunction->Energy(it.GetIndex(), dom, m_ParticleSystem);
-
-                if (newenergy < energy) // good move, increase timestep for next time
+              if (newenergy < energy) // good move, increase timestep for next time
+              {
+                m_TimeSteps[dom][k] *= factor;
+                if (gradmag > maxchange) maxchange = gradmag;
+                break;
+              }
+              else
+              {// bad move, reset point position and back off on timestep
+                if (m_TimeSteps[dom][k] > minimumTimeStep)
                 {
-                  m_TimeSteps[dom][k] *= factor;
+                  domain->ApplyConstraints(pt);
+                  m_ParticleSystem->SetPosition(pt, it.GetIndex(), dom);
+
+                  m_TimeSteps[dom][k] /= factor;
+                }
+                else // keep the move with timestep 1.0 anyway
+                {
                   if (gradmag > maxchange) maxchange = gradmag;
                   break;
                 }
-                else
-                {// bad move, reset point position and back off on timestep
-                  if (m_TimeSteps[dom][k] > minimumTimeStep)
-                  {
-                    domain->ApplyConstraints(pt);
-                    m_ParticleSystem->SetPosition(pt, it.GetIndex(), dom);
-
-                    m_TimeSteps[dom][k] /= factor;
-                  }
-                  else // keep the move with timestep 1.0 anyway
-                  {
-                    if (gradmag > maxchange) maxchange = gradmag;
-                    break;
-                  }
-                }
-              } // end while(true)
-            } // for each particle
-          } // if not flagged
+              }
+            } // end while(true)
+          } // for each particle
         }// for each domain
       }
 
@@ -220,24 +221,22 @@ namespace itk
 #endif
         std::cout << std::endl;
       }
+      else if (m_verbosity > 1) {
+        if (m_NumberOfIterations % (m_MaximumNumberOfIterations / 10) == 0) {
+          std::cerr << "Iteration " << m_NumberOfIterations << ", maxchange = " << maxchange << ", minimumTimeStep = " << minimumTimeStep << std::endl;
+        }
+      }
 
       this->InvokeEvent(itk::IterationEvent());
+
       // Check for convergence.  Optimization is considered to have converged if
       // max number of iterations is reached or maximum distance moved by any
       // particle is less than the specified precision.
-      //    std::cout << "maxchange = " << maxchange << std::endl;
-
-      if (m_NumberOfIterations % (m_MaximumNumberOfIterations / 20) == 0) {
-        std::cerr << "Iteration " << m_NumberOfIterations << ", maxchange = " << maxchange  << ", dampening = " << dampening << std::endl;
-        //for (int dom = 0; dom < numdomains; dom++) {
-        //  std::cerr << meantime[dom] << ", ";
-        //}
-        //std::cerr << "\n";
-      }
       if (maxchange < m_Tolerance) {
         std::cerr << "Iteration " << m_NumberOfIterations << ", maxchange = " << maxchange << std::endl;
         m_StopOptimization = true;
       }
+
       if (m_NumberOfIterations >= m_MaximumNumberOfIterations) {
         m_StopOptimization = true;
       }
