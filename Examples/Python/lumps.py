@@ -75,7 +75,7 @@ def Run_Pipeline(args):
         "ending_regularization": 0.1,
         # "visualizer_enable": 1,
         # "visualizer_wireframe": 1,
-        # "visualizer_screenshot_directory": 'screenshots/',
+        # "visualizer_screenshot_directory": testDirectory + 'screenshots/',
         "recompute_regularization_interval": 1,
         "domains_per_shape": 1,
         "domain_type": "mesh",
