@@ -363,6 +363,7 @@ namespace shapeworks
 
   TriMeshWrapper::TriMeshWrapper(TriMesh *_mesh) {
     mesh = _mesh;
+    mesh->need_neighbors();
     mesh->need_faces();
     mesh->need_adjacentfaces();
     mesh->need_across_edge();

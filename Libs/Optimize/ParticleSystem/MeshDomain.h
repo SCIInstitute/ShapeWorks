@@ -79,6 +79,11 @@ public:
   inline vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType & point) const override {
     return meshWrapper->SampleNormalAtPoint(point);
   }
+  inline vnl_matrix_fixed<float, DIMENSION, DIMENSION> SampleHessianAtPoint(const PointType &p) const override {
+    //return meshWrapper->SampleHessianAtPoint(p);
+    // TODO need to figure out how to compute Hessians at mesh vertices.
+    return vnl_matrix_fixed<float, DIMENSION, DIMENSION>();
+  }
 
   inline double Distance(const PointType &a, const PointType &b) const override {
       return meshWrapper->ComputeDistance(a, b);

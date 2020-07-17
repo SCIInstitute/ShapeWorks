@@ -39,6 +39,7 @@ public:
   virtual vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION>& gradE, const PointType& pos) const = 0;
   virtual vnl_vector_fixed<float, DIMENSION> SampleGradientAtPoint(const PointType &point) const = 0;
   virtual vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType & point) const = 0;
+  virtual vnl_matrix_fixed<float, DIMENSION, DIMENSION> SampleHessianAtPoint(const PointType &p) const = 0;
 
   /** Distance between locations is used for computing energy and neighborhoods. */
   virtual double Distance(const PointType &a, const PointType &b) const {
