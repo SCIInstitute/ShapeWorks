@@ -34,23 +34,7 @@ namespace shapeworks
   }
 
   double TriMeshWrapper::ComputeDistance(PointType pointa, PointType pointb) const {
-
-    double eucDistance = pointa.EuclideanDistanceTo(pointb);
-
-    //point pta = convert<PointType, point>(pointa);
-    //int facea = GetTriangleForPoint(pta);
-    //vec barya = ComputeBarycentricCoordinates(pta, facea);
-
-    //point ptb = convert<PointType, point>(pointb);
-    //int faceb = GetTriangleForPoint(ptb);
-    //vec baryb = ComputeBarycentricCoordinates(ptb, faceb);
-
-    //double geoDistance = cgal->ComputeDistance(facea, faceb, barya, baryb);
-    //std::cerr << "Computing distance from " << PrintValue<PointType>(pointa) << " to " << PrintValue<PointType>(pointb) << "\n";
-    //std::cerr << "Euclidean Distance = " << eucDistance << ", geoDistance = " << geoDistance << "\n";
-
-    double distance = eucDistance;
-    return distance;
+    return pointa.EuclideanDistanceTo(pointb);
   }
 
   /** start in barycentric coords of currentFace
@@ -372,15 +356,12 @@ namespace shapeworks
     ComputeMeshBounds();
 
     kdTree = new KDtree(mesh->vertices);
-
-    cgal = new CGALGeodesicDistance(mesh);
   }
 
   TriMeshWrapper::PointType TriMeshWrapper::GetPointOnMesh() const {
     int faceIndex = m_rand() % mesh->faces.size();
     vec center = mesh->centroid(faceIndex);
     vec bary = ComputeBarycentricCoordinates(center, faceIndex);
-    //std::cerr << "Getting point on mesh: " << PrintValue<vec>(center) << "bary: " << PrintValue<vec>(bary) << "\n";
     return convert<vec, PointType>(center);
   }
 

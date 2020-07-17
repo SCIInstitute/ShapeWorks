@@ -116,14 +116,6 @@ ELSE()
   MESSAGE(SEND_ERROR "ITK (The Insight Toolkit) is required, but could not be found! Make sure path to ITKConfig.cmake is included in CMAKE_PREFIX_PATH")
 ENDIF()
 
-### CGAL
-FIND_PACKAGE(CGAL REQUIRED)
-IF (CGAL_FOUND)
-  INCLUDE(${CGAL_USE_FILE})
-ELSE()
-  MESSAGE(SEND_ERROR "CGAL is required, but could not be found! Make sure path to CGALConfig.cmake is included in CMAKE_PREFIX_PATH")
-ENDIF()
-
 ### Eigen
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 

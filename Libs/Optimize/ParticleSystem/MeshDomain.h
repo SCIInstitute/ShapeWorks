@@ -28,10 +28,6 @@ public:
     return shapeworks::DomainType::Mesh;
   }
 
-  /** Apply any constraints to the given point location.  This method may, for
-      example, implement boundary conditions or restrict points to lie on a
-      surface.  Default behavior does nothing.  Returns true if the value of
-      the point was modified and false otherwise. */
   bool ApplyConstraints(PointType &p) const override;
   bool ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const override;
   vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const override;

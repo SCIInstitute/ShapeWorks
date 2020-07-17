@@ -9,8 +9,6 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-#include "CGALGeodesicDistance.h"
-
 using namespace trimesh;
 
 namespace shapeworks
@@ -50,7 +48,6 @@ private:
   Eigen::Vector3d RotateVectorToFace(const Eigen::Vector3d &prevnormal, const Eigen::Vector3d &nextnormal, const Eigen::Vector3d &vector) const;
   const Eigen::Vector3d GetFaceNormal(int faceIndex) const;
   void ComputeMeshBounds();
-  void ComputeHessians();
 
   point TriMeshWrapper::GetBarycentricIntersection(vec3 start, vec3 end, int currentFace, int edge) const;
 
@@ -62,12 +59,8 @@ private:
   TriMesh* mesh;
   KDtree *kdTree;
 
-  CGALGeodesicDistance *cgal;
-
   PointType meshLowerBound;
   PointType meshUpperBound;
-
-  std::vector<vnl_matrix_fixed<float, DIMENSION, DIMENSION>> hessians;
 };
 
 }
