@@ -1079,6 +1079,12 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
 //---------------------------------------------------------------------------
 void Optimize::ComputeEnergyAfterIteration()
 {
+  if (!this->m_file_output_enabled) {
+    return;
+  }
+  if (!this->m_log_energy) {
+    return;
+  }
   int numShapes = m_sampler->GetParticleSystem()->GetNumberOfDomains();
   double corrEnergy = 0.0;
 
