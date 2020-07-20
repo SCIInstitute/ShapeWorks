@@ -7,18 +7,8 @@ Jadie Adams
 
 The femur data set is comprised of segmented meshes of femurs and corresponding CT images that are not segmented.
 The first step in grooming is to turn the meshes into the binary volume format shapeworks expects.
-<<<<<<< HEAD
-<<<<<<< HEAD
-The full mages and segmentations must be carried through every stop of grooming. 
-Optimization uses single scale.
-=======
 The full images and segmentations are through every stop of grooming. 
 Optimization is single scale.
->>>>>>> origin/master
-=======
-The full images and segmentations are through every stop of grooming. 
-Optimization is single scale.
->>>>>>> origin/executable
 
 First import the necessary modules
 """
@@ -315,37 +305,11 @@ def Run_Pipeline(args):
 
     if not args.use_single_scale:
         parameterDictionary["use_shape_statistics_after"] = 64
+
     """
     Now we execute the particle optimization function.
     """
     [localPointFiles, worldPointFiles] = runShapeWorksOptimize(pointDir, dtFiles, parameterDictionary)
-
-    else:
-        parameterDictionary = {
-            "starting_particles" : 64,
-            "number_of_levels" : 4,
-            "use_normals": 0, 
-            "normal_weight": 10.0,
-            "checkpointing_interval" : 10,
-            "keep_checkpoints" : 1,
-            "iterations_per_split" : 4000,
-            "optimization_iterations" : 4000,
-            "starting_regularization" : 100,
-            "ending_regularization" : 0.1,
-            "recompute_regularization_interval" : 2,
-            "domains_per_shape" : 1,
-            "domain_type" : 'image',
-            "relative_weighting" : 10,
-            "initial_relative_weighting" : 1,
-            "procrustes_interval" : 1, 
-            "procrustes_scaling" : 1,
-            "save_init_splits" : 1, 
-            "debug_projection" : 0,
-            "verbosity" : 3,
-            "use_statistics_in_init" : 0
-        }
-
-        [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
 
     if args.tiny_test:
         print("Done with tiny test")

@@ -183,7 +183,7 @@ def sampleGaussian(img_list, point_list, pca_particle_scores, sigma_squared):
 	base_particles_path = ''
 	new_PCA_score = []
 	return new_PCA_score, base_image_path, base_particles_path
-	
+
 ############################## KDE sampling methods ###########################################
 
 '''
