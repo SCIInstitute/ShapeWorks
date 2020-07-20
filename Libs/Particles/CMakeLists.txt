@@ -20,11 +20,7 @@ target_include_directories(Particles PUBLIC
   $<INSTALL_INTERFACE:include>)
 target_link_libraries(Particles PUBLIC
   tinyxml
-  Eigen3::Eigen
-  Mesh
-  Alignment
-  Utils
-  Optimize)
+  Eigen3::Eigen)
 
 # set
 set_target_properties(Particles PROPERTIES PUBLIC_HEADER

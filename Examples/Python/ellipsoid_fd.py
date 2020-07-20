@@ -27,7 +27,6 @@ from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
 
-
 def Run_Pipeline(args):
 
     """
@@ -37,11 +36,11 @@ def Run_Pipeline(args):
     data and create necessary supporting files. The files will be Extracted in a
     newly created Directory TestEllipsoidsFD. This contains the existing shape model and
     all the necessary files plus the new scans to be processed.
-    """
-    """
+
     Extract the zipfile into proper directory and create necessary supporting
     files
     """
+
     print("\nStep 1. Extract Data\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
@@ -65,7 +64,6 @@ def Run_Pipeline(args):
         fileListNew = sorted(glob.glob(parentDir + "new_distance_transforms/*.nrrd"))
 
     """
-
     ## GROOM : Data Pre-processing 
     These ellipsoids are prepped and the new ellipsoids just needs to be converted to
     distance transforms.
@@ -88,7 +86,7 @@ def Run_Pipeline(args):
     Now that we have the distance transform representation of data we create 
     the parameter files for the shapeworks particle optimization routine.
     For more details on the plethora of parameters for shapeworks please refer to
-    ...[link to documentation]
+    [link to documentation]
 
     First we need to create a dictionary for all the parameters required by this
     optimization routine
@@ -114,7 +112,6 @@ def Run_Pipeline(args):
     Read the parameter file used for creating the existing shape model 
     and decipher the parameters
     """
-    """ TODO """
 
     parameterDictionary = {
         "number_of_particles" : 128,
@@ -141,10 +138,8 @@ def Run_Pipeline(args):
         "mean_shape_path": meanShapePath,
     }
 
-
     [localPointFiles, worldPointFiles] = runShapeWorksOptimize_FixedDomains(pointDir, dtFiles, parameterDictionary)
 
-        
     """
     ## ANALYZE : Shape Analysis and Visualization
 
@@ -164,7 +159,6 @@ def Run_Pipeline(args):
     In order to recover a sample-specific surface mesh, a warping function is constructed using the 
     sample-level particle system and the mean/template particle system as control points. 
     This warping function is then used to deform the template dense mesh to the sample space.
-
     """
 
     print("\nStep 5. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")

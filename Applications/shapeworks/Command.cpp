@@ -1,7 +1,6 @@
 #include "Command.h"
 #include <sstream>
 
-
 namespace shapeworks {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -29,7 +28,6 @@ int Command::run(SharedCommandData &sharedData)
 }
 
 } // shapeworks
-
 
 std::ostream& operator<<(std::ostream& os, const shapeworks::Command &cmd)
 {

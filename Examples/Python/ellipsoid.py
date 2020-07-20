@@ -29,11 +29,7 @@ from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
 
-
-
-
 def Run_Pipeline(args):
-
     """
     Unzip the data for this tutorial.
 
@@ -42,11 +38,11 @@ def Run_Pipeline(args):
     newly created Directory TestEllipsoids.
     This data both prepped and unprepped are binary images of ellipsoids varying
     one of the axes while the other two are kept fixed. 
-    """
-    """
+
     Extract the zipfile into proper directory and create necessary supporting
     files
     """
+
     print("\nStep 1. Extract Data\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
@@ -74,11 +70,9 @@ def Run_Pipeline(args):
     fileList = fileList[:15]
     if args.tiny_test:
         args.use_single_scale = 1
-        fileList = fileList[:2]
-
+        fileList = fileList[0:10]
 
     """
-
     ## GROOM : Data Pre-processing 
     For the unprepped data the first few steps are 
     -- Isotropic resampling
@@ -94,30 +88,28 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-
     parentDir = 'TestEllipsoids/PrepOutput/'
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)
 
     if int(args.start_with_prepped_data) == 0:
-
-        """ Apply isotropic resampling """
+        """Apply isotropic resampling"""
         resampledFiles = applyIsotropicResampling(parentDir + "resampled", fileList)
 
-        """ Center """
+        """Apply centering"""
         centeredFiles = center(parentDir + "centered", resampledFiles)
 
-        """ Apply padding"""
+        """Apply padding"""
         paddedFiles = applyPadding(parentDir + "padded", centeredFiles, 10)
 
-        """ Apply center of mass alignment """
-        comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles)
+        """Apply center of mass alignment"""
+        comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles, None)
 
-        """ Apply rigid alignment """
-        rigidFiles = applyRigidAlignment(parentDir, comFiles, None, comFiles[0])
+        """Apply rigid alignment"""
+        rigidFiles = applyRigidAlignment(parentDir + "aligned", comFiles, None, comFiles[0])
 
-        """ Compute largest bounding box and apply cropping """
-        croppedFiles = applyCropping(parentDir, rigidFiles, None)
+        """Compute largest bounding box and apply cropping"""
+        croppedFiles = applyCropping(parentDir + "cropped", rigidFiles, parentDir + "aligned/*.aligned.nrrd")
 
     """
     We convert the scans to distance transforms, this step is common for both the 
@@ -138,8 +130,8 @@ def Run_Pipeline(args):
 
     Now that we have the distance transform representation of data we create 
     the parameter files for the shapeworks particle optimization routine.
-    For more details on the plethora of parameters for shapeworks please refer to
-    ...[link to documentation]
+    For more details on the plethora of parameters for shapeworks please refer to 
+    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ParameterDescription.pdf'
 
     First we need to create a dictionary for all the parameters required by this
     optimization routine
@@ -210,12 +202,10 @@ def Run_Pipeline(args):
     In order to recover a sample-specific surface mesh, a warping function is constructed using the 
     sample-level particle system and the mean/template particle system as control points. 
     This warping function is then used to deform the template dense mesh to the sample space.
-
     """
-
+    
     print("\nStep 5. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
     if args.interactive != 0:
         input("Press Enter to continue")
 
     launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)
-

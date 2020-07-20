@@ -15,7 +15,6 @@ images as well as their binary segmentation images.
 In this example, the raw and segmentation data are sharing the same functions for pre-processing,
 such as the same transformation matrices for the center of mass and rigid alignment or same bounding box for cropping.
 
-
 First import the necessary modules
 """
 
@@ -30,9 +29,7 @@ from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
 
-
 def Run_Pipeline(args):
-
     """
     Unzip the data for this tutorial.
 
@@ -47,10 +44,10 @@ def Run_Pipeline(args):
     Extract the zipfile into proper directory and create necessary supporting
     files
     """
+
     print("\nStep 1. Extract Data\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
-
 
     datasetName = "left_atrium"
     filename = datasetName + ".zip"
@@ -108,7 +105,6 @@ def Run_Pipeline(args):
             if args.interactive:
                 input("Press Enter to continue")
 
-
             """
             Apply isotropic resampling
             the segmentation and images are resampled independently and the result files are saved in two different directories.
@@ -142,7 +138,7 @@ def Run_Pipeline(args):
             This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
             There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
             """
-            [comFiles_segmentations, comFiles_images] = applyCOMAlignment(parentDir + "com_aligned", paddedFiles_segmentations, raw=paddedFiles_images)
+            [comFiles_segmentations, comFiles_images] = applyCOMAlignment(parentDir + "com_aligned", paddedFiles_segmentations, paddedFiles_images, processRaw=True)
 
             """
             Apply rigid alignment
@@ -158,7 +154,7 @@ def Run_Pipeline(args):
             """
             medianFile = FindReferenceImage(comFiles_segmentations)
 
-            [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, comFiles_segmentations, comFiles_images , medianFile, processRaw = True)
+            [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir + "aligned", comFiles_segmentations, comFiles_images, medianFile, processRaw = True)
 
             """
             For detailed explainations of parameters for finding the largest bounding box and cropping, go to
@@ -170,8 +166,8 @@ def Run_Pipeline(args):
             The function uses the same bounding box to crop the raw and segemnattion data.
 
             """
-            [croppedFiles_segmentations, croppedFiles_images] = applyCropping(parentDir, rigidFiles_segmentations,  rigidFiles_images, processRaw=True)
-
+            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", rigidFiles_segmentations, parentDir + "aligned/segmentations/*.aligned.nrrd")
+            croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images, parentDir + "aligned/segmentations/*.aligned.nrrd")
 
             print("\nStep 3. Groom - Convert to distance transforms\n")
             if args.interactive:
@@ -185,7 +181,6 @@ def Run_Pipeline(args):
             dtFiles = applyDistanceTransforms(parentDir, croppedFiles_segmentations)
 
         else:
-
             """
             ## GROOM : Data Pre-processing
             For the unprepped data the first few steps are
@@ -194,6 +189,10 @@ def Run_Pipeline(args):
             -- Center of Mass Alignment
             -- Rigid Alignment
             -- Largest Bounding Box and Cropping
+
+            For detailed explainations of parameters for each tool, go to
+            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ImagePrepTools.pdf'
+            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/AlgnmentTools.pdf'
             """
 
             print("\nStep 2. Groom - Data Pre-processing\n")
@@ -205,31 +204,22 @@ def Run_Pipeline(args):
             if not os.path.exists(parentDir):
                 os.makedirs(parentDir)
 
-
-
             """
             Apply isotropic resampling
 
             For detailed explainations of parameters for resampling volumes, go to
             '/Documentation/PDFs/ImagePrepTools.pdf'
-
             """
-
             resampledFiles = applyIsotropicResampling(parentDir + "resampled", fileList_seg)
 
-            """
-            Centering
-            """
+            """Apply Centering"""
             centeredFiles = center(parentDir + "centered", resampledFiles)
 
             """
             Apply padding
-
             For detailed explainations of parameters for padding volumes, go to
             '/Documentation/PDFs/ImagePrepTools.pdf'
-
             """
-
             paddedFiles = applyPadding(parentDir + "padded", centeredFiles, 10)
 
             """
@@ -238,8 +228,8 @@ def Run_Pipeline(args):
             For detailed explainations of parameters for center of mass(COM) alignment of volumes, go to
             '/Documentation/PDFs/AlgnmentTools.pdf'
 
-                """
-            comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles)
+            """
+            comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles, None)
 
             """
             Apply rigid alignment
@@ -250,18 +240,15 @@ def Run_Pipeline(args):
             Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
             """
             medianFile = FindReferenceImage(comFiles)
-
-            rigidFiles = applyRigidAlignment(parentDir, comFiles, None, medianFile)
+            rigidFiles = applyRigidAlignment(parentDir + "aligned", comFiles, None, medianFile)
 
             """
             Compute largest bounding box and apply cropping
 
-            For detailed explainations of parameters for finding the largest bounding box and cropping, go to
-
+            For detailed explainations of parameters for finding the largest bounding box and cropping, go to 
             '/Documentation/PDFs/ImagePrepTools.pdf'
             """
-            croppedFiles = applyCropping(parentDir, rigidFiles, None )
-
+            croppedFiles = applyCropping(parentDir + "cropped", rigidFiles, parentDir + "aligned/*.aligned.nrrd")
 
             print("\nStep 3. Groom - Convert to distance transforms\n")
             if args.interactive:
@@ -274,7 +261,6 @@ def Run_Pipeline(args):
             dtFiles = applyDistanceTransforms(parentDir, croppedFiles)
 
     """
-
     ## OPTIMIZE : Particle Based Optimization
 
     Now that we have the distance transform representation of data we create
@@ -282,7 +268,7 @@ def Run_Pipeline(args):
     For more details on the plethora of parameters for shapeworks please refer to
     '/Documentation/PDFs/ParameterDescription.pdf'
 
-    We provide two different mode of operations for the ShapeWorks particle opimization;
+    We provide two different mode of operations for the ShapeWorks particle opimization:
     1- Single Scale model takes fixed number of particles and performs the optimization.
     For more detail about the optimization steps and parameters please refer to
     '/Documentation/PDFs/ScriptUsage.pdf'
@@ -294,6 +280,7 @@ def Run_Pipeline(args):
     First we need to create a dictionary for all the parameters required by these
     optimization routines
     """
+
     print("\nStep 4. Optimize - Particle Based Optimization\n")
     if args.interactive:
         input("Press Enter to continue")
@@ -301,7 +288,6 @@ def Run_Pipeline(args):
     pointDir = './TestLeftAtrium/PointFiles/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
-
 
     parameterDictionary = {
         "number_of_particles": 1024,
@@ -333,8 +319,6 @@ def Run_Pipeline(args):
         parameterDictionary["optimization_iterations"] = 25
         parameterDictionary["iterations_per_split"] = 25
             
-            
-
     """
     Now we execute the particle optimization function.
     """
@@ -363,7 +347,6 @@ def Run_Pipeline(args):
     In order to recover a sample-specific surface mesh, a warping function is constructed using the
     sample-level particle system and the mean/template particle system as control points.
     This warping function is then used to deform the template dense mesh to the sample space.
-
     """
 
     print("\nStep 5. Analysis - Launch ShapeWorksStudio.\n")
@@ -371,4 +354,3 @@ def Run_Pipeline(args):
         input("Press Enter to continue")
 
     launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)
-
