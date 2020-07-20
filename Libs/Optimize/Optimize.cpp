@@ -1999,6 +1999,9 @@ shapeworks::OptimizationVisualizer& Optimize::GetVisualizer() {
 }
 
 void Optimize::SetShowVisualizer(bool show) {
+  if (show && this->m_verbosity_level > 0) {
+    std::cout << "WARNING Using the visualizer will increase run time!\n";
+  }
   this->show_visualizer = show;
 }
 

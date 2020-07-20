@@ -382,6 +382,8 @@ namespace shapeworks
       meshLowerBound[i] = meshLowerBound[i] - buffer;
       meshUpperBound[i] = meshUpperBound[i] + buffer;
     }
-    std::cerr << "Mesh bounds: " << PrintValue<PointType>(meshLowerBound) << " -> " << PrintValue<PointType>(meshUpperBound) << "\n";
+    if (TriMesh::verbose) {
+      std::cerr << "Mesh bounds: " << PrintValue<PointType>(meshLowerBound) << " -> " << PrintValue<PointType>(meshUpperBound) << "\n";
+    }
   }
 }

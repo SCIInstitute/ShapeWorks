@@ -137,7 +137,6 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize *
 bool OptimizeParameterFile::set_visualizer_parameters(TiXmlHandle *docHandle, Optimize *optimize)
 {
   TiXmlElement *elem = nullptr;
-  std::cout << "WARNING Using the visualizer will increase run time!\n";
   // Currently the visualizer only works if you call AddMesh on it for every domain.
   // In order to get it working for image domains, need to add code that extracts meshes from each image and adds them to the visualizer.
   elem = docHandle->FirstChild("visualizer_enable").Element();
@@ -485,7 +484,9 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle *docHandle, Optimize *o
         std::cout << "Reading inputfile: " << meshFiles[index] << "...\n" << std::flush;
       }
 
-
+      if (this->verbosity_level_ <= 1) {
+        TriMesh::set_verbose(0);
+      }
       TriMesh *themesh = TriMesh::read(meshFiles[index].c_str());
       if (themesh != NULL) {
         shapeworks::MeshWrapper *mesh = new shapeworks::TriMeshWrapper(themesh);
