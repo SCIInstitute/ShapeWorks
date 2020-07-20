@@ -100,11 +100,12 @@ protected:
   {
     Superclass::PrintSelf(os, indent);
   }
+  Constraints *constraints;
 
 private:
   ParticleDomain(const ParticleDomain&); //purposely not implemented
   void operator=(const ParticleDomain&); //purposely not implemented
-  Constraints *constraints;
+
 
 };
 

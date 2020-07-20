@@ -48,6 +48,10 @@ public:
   void setSpheres(std::string filename);
   void setFreeFormConstraint(std::string filename);
 
+  // Set & get defined
+  void setCuttingPlaneDefined(bool value){cuttingPlaneDefined = value;}
+  bool getCuttingPlaneDefined(){return cuttingPlaneDefined;}
+
   // Write constraints
   bool writePlanes(std::string filename){return true;}
   bool writeSpheres(std::string filename){return true;}
@@ -57,10 +61,12 @@ public:
   bool IsCuttingPlaneDefined() const {if(planeConsts->size() > 0) return true; return false;}
   bool IsCuttingSphereDefined() const {if(sphereConsts->size() > 0) return true; return false;}
 
-private:
+protected:
   std::vector<PlaneConstraint> *planeConsts;
   std::vector<SphereConstraint> *sphereConsts;
   std::vector<FreeFormConstraint> *freeFormConsts;
+
+  bool cuttingPlaneDefined;
 };
 
 

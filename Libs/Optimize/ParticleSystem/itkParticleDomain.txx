@@ -159,20 +159,21 @@ ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> &gradE, const PointTy
   }
   double gradMag = gradE.magnitude();
 
-
-  for (unsigned int i = 0; i < this->GetNumberOfPlanes(); i++)
-  {
-      double D = dot_product(this->GetCuttingPlaneNormal(i), x-this->GetCuttingPlanePoint(i));
-      if (D < 0)
+  if (constraints->getCuttingPlaneDefined() && gradMag > 0.0){
+      for (unsigned int i = 0; i < this->GetNumberOfPlanes(); i++)
       {
-          flag = true;
-          double D_pos = dot_product(this->GetCuttingPlaneNormal(i), xPos-this->GetCuttingPlanePoint(i));
-          if (D_pos < 0)
-            for (unsigned int n = 0; n < DIMENSION; n++)
-                gradE[n] *= -0.5*sqrt(-D_pos)/gradMag;
-          else
-            for (unsigned int n = 0; n < DIMENSION; n++)
-                gradE[n] *= 0.85*sqrt(D_pos)/gradMag;
+          double D = dot_product(this->GetCuttingPlaneNormal(i), x-this->GetCuttingPlanePoint(i));
+          if (D < 0)
+          {
+              flag = true;
+              double D_pos = dot_product(this->GetCuttingPlaneNormal(i), xPos-this->GetCuttingPlanePoint(i));
+              if (D_pos < 0)
+                for (unsigned int n = 0; n < DIMENSION; n++)
+                    gradE[n] *= -0.5*sqrt(-D_pos)/gradMag;
+              else
+                for (unsigned int n = 0; n < DIMENSION; n++)
+                    gradE[n] *= 0.85*sqrt(D_pos)/gradMag;
+          }
       }
   }
   return flag;

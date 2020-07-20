@@ -42,6 +42,9 @@ SetCuttingPlane(const vnl_vector<double> &a, const vnl_vector<double> &b,
     m_a.push_back(a); //m_a = a;
     m_b.push_back(b); //m_b = b;
     m_c.push_back(c); //m_c = c;
+
+    ParticleDomain::constraints->addPlane(a,b,c);
+    ParticleDomain::constraints->setCuttingPlaneDefined(true);
   }
 }
 
@@ -164,7 +167,7 @@ ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> &gradE, const PointTy
   }
   double gradMag = gradE.magnitude();
 
-  if (gradMag > 0.0){
+  if (ParticleDomain::constraints->getCuttingPlaneDefined() && gradMag > 0.0){
       for (unsigned int i = 0; i < this->GetNumberOfPlanes(); i++)
       {
           double D = dot_product(this->GetCuttingPlaneNormal(i), x-this->GetCuttingPlanePoint(i));
