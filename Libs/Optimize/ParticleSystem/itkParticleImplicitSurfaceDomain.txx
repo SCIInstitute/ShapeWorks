@@ -155,7 +155,6 @@ bool
 ParticleImplicitSurfaceDomain<T>::
 ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const
 {
-    std::cout << "Applying Vector Constraints" << std::endl;
     bool flag = false;
   //ShapeWorksRun4.5 - Ensuring that the update does not violate constraints
   vnl_vector_fixed<double, DIMENSION> x;
@@ -166,8 +165,9 @@ ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> &gradE, const PointTy
       xPos[i] = pos[i];
   }
   double gradMag = gradE.magnitude();
+  vnl_vector_fixed<double, DIMENSION> prevGradE = gradE;
 
-  if (ParticleDomain::constraints->getCuttingPlaneDefined() && gradMag > 0.0){
+  if (gradMag > 0.0){
       for (unsigned int i = 0; i < this->GetNumberOfPlanes(); i++)
       {
           double D = dot_product(this->GetCuttingPlaneNormal(i), x-this->GetCuttingPlanePoint(i));
@@ -184,6 +184,19 @@ ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> &gradE, const PointTy
           }
       }
     }
+  if(pos[2] >= 0 && pos[2] + gradE[2] < 0){
+      std::cerr << "pos " << pos << std::endl;
+      std::cerr << "prevGradE " << prevGradE << std::endl;
+      std::cerr << "gradE " << gradE << std::endl;
+      std::cerr << "planeNumber " << this->GetNumberOfPlanes() << std::endl;
+      for (unsigned int i = 0; i < this->GetNumberOfPlanes(); i++){
+        double D = dot_product(this->GetCuttingPlaneNormal(i), x-this->GetCuttingPlanePoint(i));
+        std::cerr << "D " << D << std::endl;
+        std::cerr << "planeNormal " << this->GetCuttingPlaneNormal(i) << std::endl;
+        std::cerr << "planePoint " << this->GetCuttingPlanePoint(i) << std::endl;
+      }
+  }
+
   return flag;
 }
 

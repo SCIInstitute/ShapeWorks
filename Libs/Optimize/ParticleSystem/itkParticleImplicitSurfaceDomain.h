@@ -84,14 +84,19 @@ public:
     //for (unsigned int i = 0; i < DIMENSION; i++) { newpoint[i] = point[i] + negativeUpdate[i]; }
 
     for (unsigned int i = 0; i < 3; i++) { newpoint[i] = point[i] - update[i]; }
-    std::cout << "NewPoint " << newpoint << std::endl;
-    std::cout << "Point " << point << std::endl;
-    std::cout << "Update " << update << std::endl;
 
 
     //for (unsigned int i = 0; i < DIMENSION; i++) { newpoint[i] = point[i] - update[i]; }
 
     ApplyConstraints(newpoint);
+
+    /*
+    if(point[2] >= 0 && newpoint[2] < 0){
+        std::cerr << "NewPoint " << newpoint << std::endl;
+        std::cerr << "Point " << point << std::endl;
+        std::cerr << "Update " << update << std::endl;
+    }
+    */
     return newpoint;
   }
 
