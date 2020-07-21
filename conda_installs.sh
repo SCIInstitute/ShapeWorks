@@ -94,6 +94,8 @@ function install_conda() {
   if ! pip install Python/DatasetUtilsPackage; then return 1; fi   # install the local GirderConnector code as a package
   if ! pip install mdutils; then return 1; fi # lib for writing markdown files needed for auto-documentation (not available through conda install)
   if ! pip install Python/DocumentationUtilsPackage; then return 1; fi   # install shapeworks auto-documentation as a package
+  if ! pip install Python/DataAugmentationUtilsPackage; then return 1; fi   # install data augmentation code as a package
+  if ! pip install Python/DeepSSMUtilsPackage; then return 1; fi   # install DeepSSM code as a package
 
   # install any additional Linux dependencies
   if [[ "$(uname)" == "Linux" ]]; then
