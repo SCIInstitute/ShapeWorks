@@ -39,9 +39,10 @@ def Run_Pipeline(args):
 		import DatasetUtils
 		DatasetUtils.downloadDataset(datasetName)
 	# extract the zipfile
-	print("Extracting data from " + filename + "...")
-	with ZipFile(filename, 'r') as zipObj:
-		zipObj.extractall(path=parent_dir)
+	if not os.path.exists(input_dir):
+		print("Extracting data from " + filename + "...")
+		with ZipFile(filename, 'r') as zipObj:
+			zipObj.extractall(path=parent_dir)
 	# Get image path list
 	img_dir = input_dir + "groomed/images/"
 	img_list = []
