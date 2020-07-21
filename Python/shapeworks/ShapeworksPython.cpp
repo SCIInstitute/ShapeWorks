@@ -34,43 +34,29 @@ PYBIND11_MODULE(shapeworks, m)
 {
   m.doc() = "ShapeWorks Python API";
 
-  // Shapeworks globals
-  // py::object Coord = py::cast(itk::Index<3>());
-  // m.attr("Coord") = Coord;
-  // py::object Vector3 = py::cast(itk::Vector<double, 3>());
-  // m.attr("Vector3") = Vector3;
-  // py::object Matrix44 = py::cast(itk::Matrix<double, 4, 4>());
-  // m.attr("Matrix44") = Matrix44;
-  // py::object Matrix33 = py::cast(itk::Matrix<double, 3, 3>());
-  // m.attr("Matrix33") = Matrix33;
-  // py::object IPoint3 = py::cast(itk::Point<int, 3>());
-  // m.attr("IPoint3") = IPoint3;
-  // py::object FPoint3 = py::cast(itk::Point<float, 3>());
-  // m.attr("FPoint3") = FPoint3;
-  // m.attr("Vector") = Vector3;
-  // m.attr("Point") = Point3;
-  // m.attr("Matrix") = Matrix33;
+  m.attr("Pi") = std::atan(1.0) * 4.0;
 
-  // Shapeworks globals
-  // py::class_<Coord>(m, "Coord")
-  // .def(py::init<>())
-  // .def(py::init<unsigned, unsigned, unsigned>())
-  // ;
+  // Shapeworks Globals
+  py::class_<Coord>(m, "Coord")
+  .def(py::init<>())
+  .def(py::init<unsigned, unsigned, unsigned>())
+  .def("__repr__", [](const Coord& c) { return (std::stringstream()<<c).str(); })
+  .def("__getitem__", [](const Coord& c, size_t idx) { return c[idx]; })
+  .def("__setitem__", [](Coord& c, size_t idx, unsigned val) { c[idx] = val; })
+  // .def(py::self + py::self)
+  ;
 
-  // Shapeworks globals
+  // Shapeworks Globals
   py::class_<Dims>(m, "Dims")
   .def(py::init<>())
   .def(py::init<unsigned, unsigned, unsigned>())
-  .def("__repr__",
-       [](const Dims& d) {
-         return (std::stringstream()<<d).str();
-       })
-  .def("__getitem__",
-       [](const Dims& d, size_t idx) { return d[idx]; })
-  .def("__setitem__",
-       [](Dims& d, size_t idx, unsigned val) { d[idx] = val; })
+  .def("__repr__", [](const Dims& d) { return (std::stringstream()<<d).str(); })
+  .def("__getitem__", [](const Dims& d, size_t idx) { return d[idx]; })
+  .def("__setitem__", [](Dims& d, size_t idx, unsigned val) { d[idx] = val; })
+  // .def(py::self<Dims> + py::self<Dims>)
   ;
 
+  // Shapeworks Globals
   py::class_<Point>(m, "Point")
   .def(py::init<>())
   // .def(py::init<double, double, double>()) // no constructor available
@@ -82,57 +68,84 @@ PYBIND11_MODULE(shapeworks, m)
   .def("__repr__", [](const Point& p) { return (std::stringstream()<<p).str(); })
   .def("__getitem__", [](const Point& d, size_t idx) { return d[idx]; })
   .def("__setitem__", [](Point& d, size_t idx, double val) { d[idx] = val; })
+  // .def("__add__", const Point)
   ;
 
-  m.def("toPoint", py::overload_cast<const Dims&>(&toPoint), "converts Dims to Point");
-  // m.def("toPoint",               py::overload_cast<Coord>(&Point::toPoint));
-  // m.def("toPoint",               py::overload_cast<Vector>(&Point::toPoint));
+  py::class_<Vector>(m, "Vector")
+  .def(py::init<>())
+  .def(py::init([](double x, double y, double z) { return makeVector({x,y,z}); }))
+  .def("__repr__", [](const Vector& v) { return (std::stringstream()<<v).str(); })
+  .def("__getitem__", [](const Vector& v, size_t idx) { return v[idx]; })
+  .def("__setitem__", [](Vector& v, size_t idx, double val) { v[idx] = val; })
+  .def(py::self + py::self)
+  ;
 
-
-  // py::class_<Vector3>(m, "Vector3")
-  // .def(py::init<>())
-  // .def("toVector",              py::overload_cast<Dims>(&Vector3::toVector))
-  // .def("toVector",              py::overload_cast<Point>(&Vector3::toVector))
-  // ;
-
-  // Shapeworks globals
-  // py::class_<Matrix44>(m, "Matrix44")
-  // .def(py::init<>())
+  // Shapeworks Globals
+  py::class_<Matrix44>(m, "Matrix44")
+  .def(py::init<>())
   // .def(py::init<unsigned, unsigned, unsigned>)
-  // ;
+  ;
 
-  // Shapeworks globals
-  // py::class_<Matrix33>(m, "Matrix33")
-  // .def(py::init<>())
+  // Shapeworks Globals
+  py::class_<Matrix>(m, "Matrix")
+  .def(py::init<>())
   // .def(py::init<unsigned, unsigned, unsigned>)
-  // ;
+  ;
 
-  // Shapeworks globals
-  // py::class_<IPoint3>(m, "IPoint3")
-  // .def(py::init<>())
-  // .def(py::init<unsigned, unsigned, unsigned>)
-  // ;
+  // Shapeworks Globals
+  py::class_<IPoint3>(m, "IPoint3")
+  .def(py::init<>())
+  .def(py::init([](int x, int y, int z) { return IPoint3({x,y,z}); }))
+  .def("__repr__", [](const IPoint3& p) { return (std::stringstream()<<p).str(); })
+  .def("__getitem__", [](const IPoint3& p, size_t idx) { return p[idx]; })
+  .def("__setitem__", [](IPoint3& p, size_t idx, int val) { p[idx] = val; })
+  // .def(py::self + py::self)
+  ;
 
-  // Shapeworks globals
-  // py::class_<FPoint3>(m, "FPoint3")
-  // .def(py::init<>())
-  // .def(py::init<unsigned, unsigned, unsigned>)
-  // ;
+  // Shapeworks Globals
+  py::class_<FPoint3>(m, "FPoint3")
+  .def(py::init<>())
+  .def(py::init([](float x, float y, float z) { return Point({x,y,z}); }))
+  .def("__repr__", [](const FPoint3& p) { return (std::stringstream()<<p).str(); })
+  .def("__getitem__", [](const FPoint3& p, size_t idx) { return p[idx]; })
+  .def("__setitem__", [](FPoint3& p, size_t idx, float val) { p[idx] = val; })
+  // .def(py::self + py::self)
+  ;
 
-  //TODO: enable subscripting of Point3 in Python
-  // >>> sz = img.size()
-  // >>> sz[0]
-  // Traceback (most recent call last):
-  //   File "<stdin>", line 1, in <module>
-  // TypeError: 'shapeworks.Point3' object is not subscriptable
+  // Shapeworks Globals 
+  // Generic Transform
+  // Affine Transform
 
+  // Shapeworks Globals
+  m.def("toPoint", py::overload_cast<const Dims &>(&toPoint), "converts Dims to Point");
+  m.def("toPoint", py::overload_cast<const Coord &>(&toPoint), "converts Coord to Point");
+  m.def("toPoint", py::overload_cast<const Vector &>(&toPoint), "converts Vector to Point");
+  m.def("toVector", py::overload_cast<const Dims &>(&toVector), "converts Dims to Vector");
+  m.def("toVector", py::overload_cast<const Point &>(&toVector), "converts Point to Vector");
+  // m.def("negate", &negate<Point>, "p"_a);
+  // m.def("invert", invert, "v"_a);
+  m.def("dot", dot, "a"_a, "b"_a);
+  m.def("cross", cross, "a"_a, "b"_a);
+
+  py::enum_<Axis>(m, "Axis")
+  .value("invalid", Axis::invalid)
+  .value("X", Axis::X)
+  .value("Y", Axis::Y)
+  .value("Z", Axis::Z)
+  .export_values();
+  ;
+
+  m.def("axis_is_valid", py::overload_cast<const Vector &>(&axis_is_valid));
+  m.def("axis_is_valid", py::overload_cast<const Axis &>(&axis_is_valid));
+  m.def("degToRad", degToRad, "deg"_a);
+  
   // ShapeworksUtils
   py::class_<ShapeworksUtils>(m, "ShapeworksUtils")
   .def_static("is_directory",   &ShapeworksUtils::is_directory, "pathname"_a)
   .def_static("getMatrix",      &ShapeworksUtils::getMatrix, "mat"_a)
   .def_static("getOffset",      &ShapeworksUtils::getOffset, "mat"_a)
   // .def_static("connectPipelines",
-  //                               &ShapeworksUtils::connectPipelines<itk::VTKImageExport<Image::ImageType>, vtkImageImport::New()>, "exporter"_a, "importer"_a)
+  //                               &ShapeworksUtils::connectPipelines<itk::VTKImageExport<Image::ImageType::Pointer>, vtkImageImport::New()>, "exporter"_a, "importer"_a)
   ;
 
   // Image
@@ -256,16 +269,15 @@ PYBIND11_MODULE(shapeworks, m)
   ;
 
   // ShapeEvaluation  
-  // py::class_<ShapeEvaluation<3>>(m, "ShapeEvaluation")
-  // .def(py::init<>())
-  // .def_static("ComputeCompactness",
-  //                               &ShapeEvaluation<3>::ComputeCompactness, "particleSystem"_a, "nModes"_a, "saveTo"_a="")
-  // .def_static("ComputeGeneralization",
-  //                               &ShapeEvaluation<3>::ComputeGeneralization, "particleSystem"_a, "nModes"_a, "saveTo"_a="")
-  // .def_static("ComputeSpecificity",
-  //                               &ShapeEvaluation<3>::ComputeSpecificity, "particleSystem"_a, "nModes"_a, "saveTo"_a="")
+  py::class_<ShapeEvaluation>(m, "ShapeEvaluation")
+  .def_static("ComputeCompactness",
+                                &ShapeEvaluation::ComputeCompactness, "particleSystem"_a, "nModes"_a, "saveTo"_a="")
+  .def_static("ComputeGeneralization",
+                                &ShapeEvaluation::ComputeGeneralization, "particleSystem"_a, "nModes"_a, "saveTo"_a="")
+  .def_static("ComputeSpecificity",
+                                &ShapeEvaluation::ComputeSpecificity, "particleSystem"_a, "nModes"_a, "saveTo"_a="")
 
-  // ; // <todo> make template arguments global?
+  ;
 
   // Optimize (TODO)
   py::class_<Optimize>(m, "Optimize")
