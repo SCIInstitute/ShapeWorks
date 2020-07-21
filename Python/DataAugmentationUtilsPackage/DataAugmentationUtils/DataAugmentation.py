@@ -57,7 +57,7 @@ def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_PC
 		gen_image_paths.append(gen_image_path)
 	csv_file = out_dir + "TotalData.csv"
 	makeCSV(out_dir + "TotalData.csv", orig_img_list, orig_point_list, embedded_matrix, gen_image_paths, gen_points_paths, gen_embeddings)
-	return
+	return 
 
 # @TODO
 def point_and_image_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_PCA=0, sampler_type="KDE"):

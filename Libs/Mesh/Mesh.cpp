@@ -23,10 +23,11 @@ namespace shapeworks {
 /// reads a mesh
 ///
 /// \param filename
-bool Mesh::read(const std::string &pathname)
+Mesh::MeshType Mesh::read(const std::string &pathname)
 {
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
 
+  // TODO: enable reading of different kinds of meshes
   // if (pref == "ply")
   //   using ReaderType = vtkSmartPointer<vtkPLYReader>;
   // else 
@@ -35,7 +36,6 @@ bool Mesh::read(const std::string &pathname)
   using ReaderType = vtkSmartPointer<vtkPolyDataReader>;
   ReaderType reader = ReaderType::New();
   reader->SetFileName(pathname.c_str());
-  // this->mesh = vtkSmartPointer<vtkPolyData>::New();
 
   try {
     reader->Update();
@@ -45,8 +45,7 @@ bool Mesh::read(const std::string &pathname)
     throw std::invalid_argument(pathname + " does not exist");
   }
 
-  // this->mesh = reader->GetOutput();
-  return true;
+  return reader->GetOutput();
 }
 
 /// write
@@ -79,25 +78,13 @@ bool Mesh::write(const std::string &pathname)
   return true;
 }
 
-/// coverage
-///
-/// Not really sure what this does... (TODO: add desc here and also add desc in ShapeworksPython.cpp)
-///
-/// \param mesh
-bool Mesh::coverage(const Mesh &other_mesh)
+/// creates mesh of coverage between two meshes
+Mesh& Mesh::coverage(const Mesh &other_mesh)
 {
-  if (!this->mesh) {
-    std::cerr << "No mesh loaded, so returning false." << std::endl;
-    return false;
-  }
-
   FEVTKimport importer;
   FEMesh* surf1 = importer.Load(this->mesh);
   FEMesh* surf2 = importer.Load(other_mesh.mesh);
-  if (surf1 == nullptr || surf2 == nullptr) {
-    std::cerr << "Error reading mesh\n";
-    return false;
-  }
+  if (surf1 == nullptr || surf2 == nullptr) { throw std::invalid_argument("Mesh invalid"); }
 
   FEAreaCoverage areaCoverage;
 
@@ -113,7 +100,7 @@ bool Mesh::coverage(const Mesh &other_mesh)
 
   this->mesh = vtkout.ExportToVTK(*surf1);
 
-  return true;
+  return *this;
 }
 
 /// compare_points_equal

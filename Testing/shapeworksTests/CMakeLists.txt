@@ -8,7 +8,7 @@ add_executable(shapeworksTests
 
 target_link_libraries(shapeworksTests
   ${ITK_LIBRARIES} ${VTK_LIBRARIES}
-  GTest::Main
+  Testing
   )
 
 add_test(NAME shapeworksTests COMMAND shapeworksTests)

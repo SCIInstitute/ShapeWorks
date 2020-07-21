@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(SubtractImage::getCommand());
   shapeworks.addCommand(MultiplyImage::getCommand());
   shapeworks.addCommand(DivideImage::getCommand());
+  shapeworks.addCommand(ImageToMesh::getCommand());
   shapeworks.addCommand(ImageInfo::getCommand());
   shapeworks.addCommand(Antialias::getCommand());
   shapeworks.addCommand(ResampleImage::getCommand());

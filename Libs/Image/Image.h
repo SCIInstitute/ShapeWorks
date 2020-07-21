@@ -10,6 +10,8 @@
 
 namespace shapeworks {
 
+class Mesh;
+
 class Image
 {
 public:
@@ -241,6 +243,9 @@ public:
 
   /// creates a vtkPolyData for the given image
   static vtkSmartPointer<vtkPolyData> getPolyData(const Image& img, PixelType isoValue = 0.0);
+
+  /// converts to Mesh
+  std::unique_ptr<Mesh> toMesh(PixelType isovalue = 1.0) const;
 
 private:
   friend struct SharedCommandData;
