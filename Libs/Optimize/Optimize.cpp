@@ -999,25 +999,6 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
 
   this->ComputeEnergyAfterIteration();
 
-  //int lnth = m_total_energy.size();
-  //if (lnth > 1) {
-  //  double val = std::abs(m_total_energy[lnth - 1] - m_total_energy[lnth - 2]) / std::abs(
-  //    m_total_energy[lnth - 2]);
-  //  if ((m_optimizing == false && val < m_initialization_criterion) ||
-  //      (m_optimizing == true && val < m_optimization_criterion)) {
-  //    m_saturation_counter++;
-  //  }
-  //  else {
-  //    m_saturation_counter = 0;
-  //  }
-  //  if (m_saturation_counter > 10) {
-  //    if (m_verbosity_level > 2) {
-  //      std::cout << " \n ----Early termination due to minimal energy decay---- \n";
-  //    }
-  //    this->OptimizerStop();
-  //  }
-  //}
-
   if (m_checkpointing_interval != 0 && m_disable_checkpointing == false) {
     m_checkpoint_counter++;
     if (m_checkpoint_counter == (int)m_checkpointing_interval) {
@@ -1078,6 +1059,7 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
 //---------------------------------------------------------------------------
 void Optimize::ComputeEnergyAfterIteration()
 {
+  // The energy computed here is only used for writing to file
   if (!this->m_file_output_enabled) {
     return;
   }
