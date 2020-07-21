@@ -14,7 +14,7 @@ Reads csv and makes train and validation data loaders
 '''
 def getTrainValLoaders(loader_dir, data_csv, batch_size=1, down_sample=False):
 	if not os.path.exists(loader_dir):
-		os.makedir(loader_dir)
+		os.makedirs(loader_dir)
 	images, scores, models, prefixes = getAllTrainData(loader_dir, data_csv, down_sample)
 	images, scores, models, prefixes = shuffleData(images, scores, models, prefixes)
 	# split into train (80%) validation(20%)
