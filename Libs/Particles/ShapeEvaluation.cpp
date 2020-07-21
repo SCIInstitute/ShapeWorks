@@ -9,8 +9,7 @@ typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> R
 
 namespace shapeworks {
 
-template<unsigned int VDimension>
-double ShapeEvaluation<VDimension>::ComputeCompactness(const ParticleSystem &particleSystem, const int nModes,
+double ShapeEvaluation::ComputeCompactness(const ParticleSystem &particleSystem, const int nModes,
                                                        const std::string &saveTo)
 {
   const int N = particleSystem.N();
@@ -40,8 +39,7 @@ double ShapeEvaluation<VDimension>::ComputeCompactness(const ParticleSystem &par
   return cumsum(nModes - 1);
 }
 
-template<unsigned int VDimension>
-double ShapeEvaluation<VDimension>::ComputeGeneralization(const ParticleSystem &particleSystem, const int nModes,
+double ShapeEvaluation::ComputeGeneralization(const ParticleSystem &particleSystem, const int nModes,
                                                           const std::string &saveTo)
 {
   const int N = particleSystem.N();
@@ -86,8 +84,7 @@ double ShapeEvaluation<VDimension>::ComputeGeneralization(const ParticleSystem &
   return generalization;
 }
 
-template<unsigned int VDimension>
-double ShapeEvaluation<VDimension>::ComputeSpecificity(const ParticleSystem &particleSystem, const int nModes,
+double ShapeEvaluation::ComputeSpecificity(const ParticleSystem &particleSystem, const int nModes,
                                                        const std::string &saveTo)
 {
 
@@ -163,9 +160,6 @@ double ShapeEvaluation<VDimension>::ComputeSpecificity(const ParticleSystem &par
   const double specificity = meanSpecificity(nModes - 1) / numParticles;
   return specificity;
 }
-
-template
-class ShapeEvaluation<3>;
 
 } // shapeworks
 

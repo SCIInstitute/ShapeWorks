@@ -1320,7 +1320,7 @@ bool Compactness::execute(const optparse::Values &options, SharedCommandData &sh
 
   const int nModes = static_cast<int>(options.get("nmodes"));
   const std::string saveTo = static_cast<std::string>(options.get("saveto"));
-  const double r = ShapeEvaluation<3>::ComputeCompactness(sharedData.particleSystem, nModes, saveTo);
+  const double r = ShapeEvaluation::ComputeCompactness(sharedData.particleSystem, nModes, saveTo);
   std::cout << "Particle system compactness: " << r << std::endl;
 
   return true;
@@ -1352,7 +1352,7 @@ bool Generalization::execute(const optparse::Values &options, SharedCommandData 
 
   const int nModes = static_cast<int>(options.get("nmodes"));
   const std::string saveTo = static_cast<std::string>(options.get("saveto"));
-  const double r = ShapeEvaluation<3>::ComputeGeneralization(sharedData.particleSystem, nModes, saveTo);
+  const double r = ShapeEvaluation::ComputeGeneralization(sharedData.particleSystem, nModes, saveTo);
   std::cout << "Particle system generalization: " << r << std::endl;
 
   return true;
@@ -1384,7 +1384,7 @@ bool Specificity::execute(const optparse::Values &options, SharedCommandData &sh
 
   const int nModes = static_cast<int>(options.get("nmodes"));
   const std::string saveTo = static_cast<std::string>(options.get("saveto"));
-  const double r = ShapeEvaluation<3>::ComputeSpecificity(sharedData.particleSystem, nModes, saveTo);
+  const double r = ShapeEvaluation::ComputeSpecificity(sharedData.particleSystem, nModes, saveTo);
   std::cout << "Particle system specificity: " << r << std::endl;
 
   return true;
