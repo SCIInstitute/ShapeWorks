@@ -544,17 +544,16 @@ double Optimize::GetMinNeighborhoodRadius()
 //---------------------------------------------------------------------------
 void Optimize::AddSinglePoint()
 {
-  typedef itk::ParticleSystem < 3 > ParticleSystemType;
-  typedef ParticleSystemType::PointType PointType;
+  typedef itk::ParticleSystem < 3 >::PointType PointType;
 
-  PointType domainZeroPos;
-  domainZeroPos = m_sampler->GetParticleSystem()->GetDomain(0)->GetValidLocationNear(domainZeroPos);
+  PointType firstPointPosition;
+  firstPointPosition = m_sampler->GetParticleSystem()->GetDomain(0)->GetValidLocationNear(firstPointPosition);
 
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
     if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) > 0) {
       continue;
     }
-    PointType pos = m_sampler->GetParticleSystem()->GetDomain(0)->GetValidLocationNear(domainZeroPos);
+    PointType pos = m_sampler->GetParticleSystem()->GetDomain(0)->GetValidLocationNear(firstPointPosition);
     m_sampler->GetParticleSystem()->AddPosition(pos, i);
   }
 }
