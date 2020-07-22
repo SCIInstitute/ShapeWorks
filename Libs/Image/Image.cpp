@@ -414,7 +414,7 @@ Image& Image::scale(const Vector3 &s)
     throw std::invalid_argument("Invalid scale point");
 
   auto origOrigin(origin());       // scale centered at origin, so temporarily set origin to be the center
-  setOrigin(negate(center()));     // move center _away_ from origin since ITK applies transformations backwards.
+  recenter();
 
   AffineTransformPtr xform(AffineTransform::New());
   xform->Scale(invert(Vector(s)));         // invert scale ratio because ITK applies transformations backwards.  
@@ -429,7 +429,7 @@ Image& Image::rotate(const double angle, const Vector3 &axis)
   if (!axis_is_valid(axis)) { throw std::invalid_argument("Invalid axis"); }
 
   auto origOrigin(origin());       // rotation is around origin, so temporarily set origin to be the center
-  setOrigin(negate(center()));     // move center _away_ from origin since ITK applies transformations backwards.
+  recenter();
 
   AffineTransformPtr xform(AffineTransform::New());
   xform->Rotate3D(axis, -angle);   // negate angle because ITK applies transformations backwards.  
