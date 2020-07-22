@@ -79,6 +79,43 @@ TEST(OptimizeTests, sample_test) {
 }
 
 //---------------------------------------------------------------------------
+TEST(OptimizeTests, open_mesh_test) {
+
+    std::cerr << "open_mesh_test\n";
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/hemisphere");
+  chdir(test_location.c_str());
+
+  // make sure we clean out at least one necessary file to make sure we re-run
+  std::remove("output/hemisphere_world.particles");
+
+  // run with parameter file
+  std::string paramfile = std::string("hemisphere.xml");
+  Optimize app;
+  OptimizeParameterFile param;
+  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
+  app.Run();
+    std::cerr << "finished running\n";
+
+  // compute stats
+  ParticleShapeStatistics<3> stats;
+  stats.ReadPointFiles("analyze.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+
+  // check the first mode of variation.
+  // If Procrustes scaling is working, this should be small.
+  // Otherwise it is quite large (>4000).
+  double value = values[values.size() - 1];
+  ASSERT_LT(value, 100);
+}
+
+//---------------------------------------------------------------------------
 TEST(OptimizeTests, fixed_domain_test) {
 
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/fixed_domain");
