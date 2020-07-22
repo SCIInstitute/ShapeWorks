@@ -292,3 +292,10 @@ TEST(shapeworksTests, division)
   ASSERT_FALSE(system("bash div.sh"));
 }
 
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, crop)
+{
+  shapeworksEnvSetup();
+  ASSERT_FALSE(system("bash crop.sh"));
+}
+

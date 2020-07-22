@@ -152,15 +152,15 @@ bool ImageInfo::execute(const optparse::Values &options, SharedCommandData &shar
     std::cout << "size (spacing * dims): " << sharedData.image.size() << std::endl;
   if (origin)
     std::cout << "physical origin:       " << sharedData.image.origin() << std::endl;
-  if (direction)
-    std::cout << "direction (coordsys):  " << std::endl
-              << sharedData.image.coordsys() << std::endl;
   if (center)
     std::cout << "center:                " << sharedData.image.center() << std::endl;
   if (centerofmass)
     std::cout << "center of mass (0,1]:  " << sharedData.image.centerOfMass() << std::endl;
   if (boundingbox)
     std::cout << "bounding box:          " << sharedData.image.boundingBox() << std::endl;
+  if (direction)
+    std::cout << "direction (coordsys):  " << std::endl
+              << sharedData.image.coordsys() << std::endl;
   
   return true;
 }
@@ -868,13 +868,13 @@ bool CropImage::execute(const optparse::Values &options, SharedCommandData &shar
 
   if (xmin == 0 && ymin == 0 && zmin == 0 &&
       xmax == 0 && ymax == 0 && zmax == 0)
-    sharedData.image.crop(sharedData.region);
+    sharedData.image.crop(sharedData.region); // use the previous region (maybe set by boundingbox cmd)
   else
   {
     Image::Region region(sharedData.image.dims());
     if (xmin < xmax) { region.min[0] = xmin; region.max[0] = xmax; }
-    if (ymin < ymax) { region.min[0] = ymin; region.max[0] = ymax; }
-    if (zmin < zmax) { region.min[0] = zmin; region.max[0] = zmax; }
+    if (ymin < ymax) { region.min[1] = ymin; region.max[1] = ymax; }
+    if (zmin < zmax) { region.min[2] = zmin; region.max[2] = zmax; }
     sharedData.image.crop(region);
   }
   return true;
