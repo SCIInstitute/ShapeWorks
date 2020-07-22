@@ -28,6 +28,7 @@ call pip install matplotlib==3.1.2
 call pip install itk==5.0.1
 call pip install vtk==8.1.2
 call pip install mdutils
+call pip install mkdocs
 
 REM install the local GirderConnector code as a package
 call pip install Python/DatasetUtilsPackage
