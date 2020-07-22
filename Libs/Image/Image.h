@@ -22,7 +22,7 @@ public:
   struct Region
   {
     Coord min = Coord({ 1000000000, 1000000000, 1000000000 });
-    Coord max = Coord({-1000000000, -1000000000, -1000000000 });
+    Coord max = Coord({ -1000000000, -1000000000, -1000000000 });
     Region(const Dims &dims) : min({0, 0, 0}) {
       if (0 != (dims[0] + dims[1] + dims[2])) 
         max = Coord({static_cast<long>(dims[0])-1,

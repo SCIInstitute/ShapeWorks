@@ -43,7 +43,11 @@ PYBIND11_MODULE(shapeworks, m)
   .def("__repr__", [](const Coord& c) { return (std::stringstream()<<c).str(); })
   .def("__getitem__", [](const Coord& c, size_t idx) { return c[idx]; })
   .def("__setitem__", [](Coord& c, size_t idx, unsigned val) { c[idx] = val; })
-  // .def(py::self + py::self)
+  .def("__add__", [](const Coord& c1, const Coord& c2) { return c1 + c2; })
+  .def("__sub__", [](const Coord& c1, const Coord& c2) { return c1 - c2; })
+  .def("__mul__", [](const Coord& c1, const Coord& c2) { return c1 * c2; })
+  // .def("__truediv__", [](const Coord& c1, const Coord& c2) { return c1 / c2; }) // fix div for all
+  // .def("__iadd__", [](const Coord& c1, const Coord& c2) { return c1 += c2; })
   ;
 
   // Shapeworks Globals
@@ -53,7 +57,10 @@ PYBIND11_MODULE(shapeworks, m)
   .def("__repr__", [](const Dims& d) { return (std::stringstream()<<d).str(); })
   .def("__getitem__", [](const Dims& d, size_t idx) { return d[idx]; })
   .def("__setitem__", [](Dims& d, size_t idx, unsigned val) { d[idx] = val; })
-  // .def(py::self<Dims> + py::self<Dims>)
+  .def("__add__", [](const Dims& d1, const Dims& d2) { return d1 + d2; })
+  .def("__sub__", [](const Dims& d1, const Dims& d2) { return d1 + d2; })
+  .def("__mul__", [](const Dims& d1, const Dims& d2) { return d1 * d2; })
+  // .def("__truediv__", [](const Dims& d1, const Dims& d2) { return d1 / d2; })
   ;
 
   // Shapeworks Globals
@@ -68,7 +75,10 @@ PYBIND11_MODULE(shapeworks, m)
   .def("__repr__", [](const Point& p) { return (std::stringstream()<<p).str(); })
   .def("__getitem__", [](const Point& d, size_t idx) { return d[idx]; })
   .def("__setitem__", [](Point& d, size_t idx, double val) { d[idx] = val; })
-  // .def("__add__", const Point)
+  .def("__add__", [](const Point& p1, const Point& p2) { return p1 + p2; })
+  .def("__sub__", [](const Point& p1, const Point& p2) { return p1 - p2; })
+  .def("__mul__", [](const Point& p1, const Point& p2) { return p1 * p2; })
+  // .def("__truediv__", [](const Point& p1, const Point& p2) { return p1 / p2; })
   ;
 
   py::class_<Vector>(m, "Vector")
@@ -77,7 +87,10 @@ PYBIND11_MODULE(shapeworks, m)
   .def("__repr__", [](const Vector& v) { return (std::stringstream()<<v).str(); })
   .def("__getitem__", [](const Vector& v, size_t idx) { return v[idx]; })
   .def("__setitem__", [](Vector& v, size_t idx, double val) { v[idx] = val; })
-  .def(py::self + py::self)
+  .def("__add__", [](const Vector& v1, const Vector& v2) { return v1 + v2; })
+  .def("__sub__", [](const Vector& v1, const Vector& v2) { return v1 - v2; })
+  .def("__mul__", [](const Vector& v1, const Vector& v2) { return v1 * v2; })
+  // .def("__truediv__", [](const Vector& v1, const Vector& v2) { return v1 / v2; })
   ;
 
   // Shapeworks Globals
@@ -99,7 +112,10 @@ PYBIND11_MODULE(shapeworks, m)
   .def("__repr__", [](const IPoint3& p) { return (std::stringstream()<<p).str(); })
   .def("__getitem__", [](const IPoint3& p, size_t idx) { return p[idx]; })
   .def("__setitem__", [](IPoint3& p, size_t idx, int val) { p[idx] = val; })
-  // .def(py::self + py::self)
+  .def("__add__", [](const IPoint3& p1, const IPoint3& p2) { return p1 + p2; })
+  .def("__sub__", [](const IPoint3& p1, const IPoint3& p2) { return p1 - p2; })
+  .def("__mul__", [](const IPoint3& p1, const IPoint3& p2) { return p1 * p2; })
+  // .def("__truediv__", [](const IPoint3& p1, const IPoint3& p2) { return p1 / p2; })
   ;
 
   // Shapeworks Globals
@@ -109,7 +125,10 @@ PYBIND11_MODULE(shapeworks, m)
   .def("__repr__", [](const FPoint3& p) { return (std::stringstream()<<p).str(); })
   .def("__getitem__", [](const FPoint3& p, size_t idx) { return p[idx]; })
   .def("__setitem__", [](FPoint3& p, size_t idx, float val) { p[idx] = val; })
-  // .def(py::self + py::self)
+  .def("__add__", [](const FPoint3& p1, const FPoint3& p2) { return p1 + p2; })
+  .def("__sub__", [](const FPoint3& p1, const FPoint3& p2) { return p1 - p2; })
+  .def("__mul__", [](const FPoint3& p1, const FPoint3& p2) { return p1 * p2; })
+  // .def("__truediv__", [](const FPoint3& p1, const FPoint3& p2) { return p1 / p2; })
   ;
 
   // Shapeworks Globals 
