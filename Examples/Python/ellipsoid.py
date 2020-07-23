@@ -29,11 +29,7 @@ from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
 
-
-
-
 def Run_Pipeline(args):
-
     """
     Unzip the data for this tutorial.
 
@@ -42,11 +38,11 @@ def Run_Pipeline(args):
     newly created Directory TestEllipsoids.
     This data both prepped and unprepped are binary images of ellipsoids varying
     one of the axes while the other two are kept fixed. 
-    """
-    """
+
     Extract the zipfile into proper directory and create necessary supporting
     files
     """
+
     print("\nStep 1. Extract Data\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
@@ -74,11 +70,9 @@ def Run_Pipeline(args):
     fileList = fileList[:15]
     if args.tiny_test:
         args.use_single_scale = 1
-        fileList = fileList[:2]
-
+        fileList = fileList[0:10]
 
     """
-
     ## GROOM : Data Pre-processing 
     For the unprepped data the first few steps are 
     -- Isotropic resampling
@@ -94,30 +88,28 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-
     parentDir = 'TestEllipsoids/PrepOutput/'
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)
 
     if int(args.start_with_prepped_data) == 0:
-
-        """ Apply isotropic resampling """
+        """Apply isotropic resampling"""
         resampledFiles = applyIsotropicResampling(parentDir + "resampled", fileList)
 
-        """ Center """
+        """Apply centering"""
         centeredFiles = center(parentDir + "centered", resampledFiles)
 
-        """ Apply padding"""
+        """Apply padding"""
         paddedFiles = applyPadding(parentDir + "padded", centeredFiles, 10)
 
-        """ Apply center of mass alignment """
-        comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles)
+        """Apply center of mass alignment"""
+        comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles, None)
 
-        """ Apply rigid alignment """
-        rigidFiles = applyRigidAlignment(parentDir, comFiles, None, comFiles[0])
+        """Apply rigid alignment"""
+        rigidFiles = applyRigidAlignment(parentDir + "aligned", comFiles, None, comFiles[0])
 
-        """ Compute largest bounding box and apply cropping """
-        croppedFiles = applyCropping(parentDir, rigidFiles, None)
+        """Compute largest bounding box and apply cropping"""
+        croppedFiles = applyCropping(parentDir + "cropped", rigidFiles, parentDir + "aligned/*.aligned.nrrd")
 
     """
     We convert the scans to distance transforms, this step is common for both the 
@@ -138,8 +130,8 @@ def Run_Pipeline(args):
 
     Now that we have the distance transform representation of data we create 
     the parameter files for the shapeworks particle optimization routine.
-    For more details on the plethora of parameters for shapeworks please refer to
-    ...[link to documentation]
+    For more details on the plethora of parameters for shapeworks please refer to 
+    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ParameterDescription.pdf'
 
     First we need to create a dictionary for all the parameters required by this
     optimization routine
@@ -153,66 +145,39 @@ def Run_Pipeline(args):
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
-    if int(args.use_single_scale) != 0:
-        parameterDictionary = {
-            "number_of_particles" : 128,
-            "use_normals": 0,
-            "normal_weight": 10.0,
-            "checkpointing_interval" : 200,
-            "keep_checkpoints" : 0,
-            "iterations_per_split" : 100,
-            "optimization_iterations" : 2000,
-            "starting_regularization" : 100,
-            "ending_regularization" : 0.1,
-            "recompute_regularization_interval" : 2,
-            "domains_per_shape" : 1,
-            "domain_type" : 'image',
-            "relative_weighting" : 10,
-            "initial_relative_weighting" : 0.01,
-            "procrustes_interval" : 0,
-            "procrustes_scaling" : 0,
-            "save_init_splits" : 0,
-            "debug_projection" : 0,
-            "verbosity" : 3
-          }
+    parameterDictionary = {
+        "number_of_particles": 128,
+        "use_normals": 1,
+        "normal_weight": 10.0,
+        "checkpointing_interval": 200,
+        "keep_checkpoints": 0,
+        "iterations_per_split": 100,
+        "optimization_iterations": 2000,
+        "starting_regularization": 100,
+        "ending_regularization": 0.1,
+        "recompute_regularization_interval": 2,
+        "domains_per_shape": 1,
+        "domain_type": 'image',
+        "relative_weighting": 10,
+        "initial_relative_weighting": 0.01,
+        "procrustes_interval": 0,
+        "procrustes_scaling": 0,
+        "save_init_splits": 0,
+        "debug_projection": 0,
+        "verbosity": 3
+    }
 
-        if args.tiny_test:
-            parameterDictionary["number_of_particles"] = 32
-            parameterDictionary["optimization_iterations"] = 25
+    if args.tiny_test:
+        parameterDictionary["number_of_particles"] = 32
+        parameterDictionary["optimization_iterations"] = 25
 
-        """
-        Now we execute a single scale particle optimization function.
-        """
-        [localPointFiles, worldPointFiles] = runShapeWorksOptimize_SingleScale(pointDir, dtFiles, parameterDictionary)
+    if not args.use_single_scale:
+        parameterDictionary["use_shape_statistics_after"] = 32
 
-    else:
-        parameterDictionary = {
-            "starting_particles" : 32,
-            "number_of_levels" : 3,
-            "use_normals": 1,
-            "normal_weight": 10.0,
-            "checkpointing_interval" : 200,
-            "keep_checkpoints" : 0,
-            "iterations_per_split" : 100,
-            "optimization_iterations" : 2000,
-            "starting_regularization" : 100,
-            "ending_regularization" : 0.1,
-            "recompute_regularization_interval" : 2,
-            "domains_per_shape" : 1,
-            "domain_type" : 'image',
-            "relative_weighting" : 10,
-            "initial_relative_weighting" : 0.01,
-            "procrustes_interval" : 0,
-            "procrustes_scaling" : 0,
-            "save_init_splits" : 0,
-            "debug_projection" : 0,
-            "verbosity" : 3
-            }
-
-        """
-        Now we execute a multi-scale particle optimization function.
-        """
-        [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
+    """
+    Now we execute a single scale particle optimization function.
+    """
+    [localPointFiles, worldPointFiles] = runShapeWorksOptimize(pointDir, dtFiles, parameterDictionary)
 
     if args.tiny_test:
         print("Done with tiny test")
@@ -237,12 +202,10 @@ def Run_Pipeline(args):
     In order to recover a sample-specific surface mesh, a warping function is constructed using the 
     sample-level particle system and the mean/template particle system as control points. 
     This warping function is then used to deform the template dense mesh to the sample space.
-
     """
-
+    
     print("\nStep 5. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
     if args.interactive != 0:
         input("Press Enter to continue")
 
     launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)
-

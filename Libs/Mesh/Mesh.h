@@ -9,31 +9,25 @@ namespace shapeworks {
 class Mesh
 {
 public:
-  Mesh() {}
-  Mesh(const std::string &inFilename) { read(inFilename); }
+  using MeshType = vtkSmartPointer<vtkPolyData>; // TODO: we need to support multiple mesh types, such as vtkPolyData and vtkPLYData; probably use vtk mesh base class (if one exists)
 
-  /// read
-  /// \param filename
-  bool read(const std::string &inFilename);
+  Mesh(vtkSmartPointer<vtkPolyData>&& rhs) : mesh(std::move(rhs)) {}
+  Mesh(const std::string& pathname) : mesh(read(pathname)) {}
 
-  /// write
-  /// \param filename
-  bool write(const std::string &outFilename);
+  bool write(const std::string &pathname);
 
-  /// coverage
-  /// \param mesh
-  bool coverage(const Mesh& other_mesh);
+  Mesh& coverage(const Mesh& other_mesh); // TODO: everything should be like this and return reference to self
+  bool smooth(unsigned iterations = 1);
+  bool decimate(float reduction = 0.01, float angle = 30, bool preservetopology = false);
 
-  bool smooth(/*iterations, relaxation_factor, edge_smoothing, boundary_smoothing*/);
-  // bool nextfunction(...);
-
-  /// Compare if points in two meshes are equal
   bool compare_points_equal(const Mesh& other_mesh);
-
-  /// Compare if scalars in two meshes are equal
   bool compare_scalars_equal(const Mesh& other_mesh);
 
 private:
-  vtkSmartPointer<vtkPolyData> poly_data_;
+  Mesh() {}
+  MeshType read(const std::string& pathname);
+
+  MeshType mesh;
 };
+
 } // shapeworks

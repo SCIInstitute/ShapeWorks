@@ -1,10 +1,10 @@
-#include <gtest/gtest.h>
-
-#include <Libs/Particles/ParticleSystem.h>
-#include <Libs/Particles/ShapeEvaluation.h>
-#include "TestConfiguration.h"
 #include <vector>
 #include <string>
+
+#include "Testing.h"
+
+#include "ParticleSystem.h"
+#include "ShapeEvaluation.h"
 
 using namespace shapeworks;
 
@@ -30,8 +30,7 @@ const std::vector<std::string> filenames = {
 //---------------------------------------------------------------------------
 TEST(ParticlesTests, compactness_test)
 {
-  auto particleSystem = ParticleSystem();
-  ASSERT_TRUE(particleSystem.LoadParticles(filenames));
+  ParticleSystem particleSystem(filenames);
 
   const double compactness = ShapeEvaluation<3>::ComputeCompactness(particleSystem, 1);
   ASSERT_DOUBLE_EQ(compactness, 0.99178682878009183);
@@ -40,8 +39,7 @@ TEST(ParticlesTests, compactness_test)
 //---------------------------------------------------------------------------
 TEST(ParticlesTests, generalization_test)
 {
-  auto particleSystem = ParticleSystem();
-  ASSERT_TRUE(particleSystem.LoadParticles(filenames));
+  ParticleSystem particleSystem(filenames);
 
   const double generalization = ShapeEvaluation<3>::ComputeGeneralization(particleSystem, 1);
   ASSERT_DOUBLE_EQ(generalization, 0.19815116412998687);
@@ -50,8 +48,7 @@ TEST(ParticlesTests, generalization_test)
 //---------------------------------------------------------------------------
 TEST(ParticlesTests, specificity_test)
 {
-  auto particleSystem = ParticleSystem();
-  ASSERT_TRUE(particleSystem.LoadParticles(filenames));
+  ParticleSystem particleSystem(filenames);
 
   const double specificity = ShapeEvaluation<3>::ComputeSpecificity(particleSystem, 1);
   ASSERT_NEAR(specificity, 0.262809, 1e-1f);

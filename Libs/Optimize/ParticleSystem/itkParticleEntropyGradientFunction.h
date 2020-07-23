@@ -182,7 +182,7 @@ public:
       results in a weight of 0. */
   void ComputeAngularWeights(const PointType &,
                              const typename ParticleSystemType::PointVectorType &,
-                             const ParticleDomain<VDimension> *,
+                             const ParticleDomain *,
                              std::vector<double> &) const;
 
 
