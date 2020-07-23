@@ -218,7 +218,7 @@ background: rgb(255, 255, 127)
          <number>1</number>
         </property>
         <property name="maximum">
-         <number>20000</number>
+         <number>999999</number>
         </property>
         <property name="value">
          <number>128</number>
@@ -249,7 +249,7 @@ background: rgb(255, 255, 127)
          <number>1</number>
         </property>
         <property name="maximum">
-         <number>99999</number>
+         <number>999999</number>
         </property>
         <property name="value">
          <number>10</number>
@@ -324,6 +324,12 @@ background: rgb(255, 255, 127)
           <height>16777215</height>
          </size>
         </property>
+        <property name="maximum">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
+        </property>
         <property name="value">
          <double>0.050000000000000</double>
         </property>
@@ -376,6 +382,12 @@ background: rgb(255, 255, 127)
           <width>70</width>
           <height>16777215</height>
          </size>
+        </property>
+        <property name="maximum">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
         </property>
         <property name="value">
          <double>1.000000000000000</double>
@@ -567,7 +579,7 @@ background: rgb(255, 255, 127)
          </size>
         </property>
         <property name="maximum">
-         <number>99</number>
+         <number>999999</number>
         </property>
         <property name="value">
          <number>10</number>
@@ -598,7 +610,7 @@ background: rgb(255, 255, 127)
          <number>1</number>
         </property>
         <property name="maximum">
-         <number>99999</number>
+         <number>999999</number>
         </property>
         <property name="value">
          <number>1000</number>
@@ -629,7 +641,7 @@ background: rgb(255, 255, 127)
          <number>1</number>
         </property>
         <property name="maximum">
-         <number>99999</number>
+         <number>999999</number>
         </property>
         <property name="value">
          <number>1000</number>
@@ -652,7 +664,7 @@ background: rgb(255, 255, 127)
          </size>
         </property>
         <property name="maximum">
-         <number>99</number>
+         <number>999999</number>
         </property>
         <property name="value">
          <number>32</number>
