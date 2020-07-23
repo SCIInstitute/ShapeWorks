@@ -184,7 +184,8 @@ ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> &gradE, const PointTy
           }
       }
     }
-  if(pos[2] >= 0 && pos[2] + gradE[2] < 0){
+  /*
+  if(pos[2] >= 0 && pos[2] - gradE[2] < 0){
       std::cerr << "pos " << pos << std::endl;
       std::cerr << "prevGradE " << prevGradE << std::endl;
       std::cerr << "gradE " << gradE << std::endl;
@@ -193,9 +194,11 @@ ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> &gradE, const PointTy
         double D = dot_product(this->GetCuttingPlaneNormal(i), x-this->GetCuttingPlanePoint(i));
         std::cerr << "D " << D << std::endl;
         std::cerr << "planeNormal " << this->GetCuttingPlaneNormal(i) << std::endl;
+        std::cerr << "x_planePt " << x-this->GetCuttingPlanePoint(i) << std::endl;
         std::cerr << "planePoint " << this->GetCuttingPlanePoint(i) << std::endl;
       }
   }
+  */
 
   return flag;
 }
