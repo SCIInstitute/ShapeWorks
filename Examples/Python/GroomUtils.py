@@ -146,7 +146,7 @@ def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False, pr
             print("CMD: " + " ".join(cmd))
         subprocess.check_call(cmd)
 
-        # binarize result since linear interpolation makes image blurry again
+        # binarize result since linear interpolation makes image blurry again (TODO: add option to use nearest neighbor interpolation, see github issue)
         cmd = ["shapeworks", 
                "readimage", "--name", outname, 
                "binarize",

@@ -837,7 +837,7 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
 void BoundingBox::buildParser()
 {
   const std::string prog = "bounding-box";
-  const std::string desc = "compute largest bounding box surrounding the specified isovalue of the specified set of binary images";
+  const std::string desc = "compute largest bounding box surrounding the specified isovalue of the specified set of images";
   parser.prog(prog).description(desc);
 
   parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to images (must be followed by `--`), ex: \"bounding-box --names *.nrrd -- --isovalue 1.5\")");
@@ -855,6 +855,7 @@ bool BoundingBox::execute(const optparse::Values &options, SharedCommandData &sh
 
   sharedData.region = ImageUtils::boundingBox(filenames, isovalue);
   sharedData.region.pad(padding);
+  std::cout << "Bounding box:\n" << sharedData.region;
   return true;
 }
 
