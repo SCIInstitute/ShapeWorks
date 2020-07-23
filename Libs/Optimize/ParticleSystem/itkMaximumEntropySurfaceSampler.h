@@ -213,6 +213,7 @@ public:
         if (m_Initialized == true)
         {
             m_ParticleSystem->GetDomain(i)->SetCuttingPlane(va, vb, vc);
+            m_ParticleSystem->GetDomain(i)->GetConstraints()->addPlane(va, vb, vc);
         }
     }
 
