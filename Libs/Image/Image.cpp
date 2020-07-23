@@ -284,25 +284,50 @@ Image& Image::recenter()
   return setOrigin(negate(size() / 2.0));
 }
 
-Image& Image::resample(const Point3& physicalSpacing, Dims logicalDims)
+Image& Image::resample(const Point3& newSpacing) // (TODO: linear filter by default, but nn is sometimes desired; add enum) 
 {
   using ResampleFilter = itk::ResampleImageFilter<ImageType, ImageType>;
   ResampleFilter::Pointer resampler = ResampleFilter::New();
 
-  resampler->SetOutputSpacing(physicalSpacing.GetDataPointer());
+  // compute new dimensions
+  Dims inputDims(dims());
+  Vector3 inputSpacing(spacing());
+  Dims newDims({ static_cast<unsigned>(std::floor(inputDims[0] * inputSpacing[0] / newSpacing[0])),
+                 static_cast<unsigned>(std::floor(inputDims[1] * inputSpacing[1] / newSpacing[1])),
+                 static_cast<unsigned>(std::floor(inputDims[2] * inputSpacing[2] / newSpacing[2])) });
+
+  resampler->SetOutputSpacing(newSpacing.GetDataPointer());
   resampler->SetOutputOrigin(origin());
   resampler->SetOutputDirection(image->GetDirection());
+  resampler->SetSize(newDims);
+  resampler->SetInput(this->image);
+  resampler->Update();
+  this->image = resampler->GetOutput();
 
-  if (logicalDims[0] == 0 || logicalDims[1] == 0 || logicalDims[2] == 0)
-  {
-    ImageType::SizeType inputSize = image->GetLargestPossibleRegion().GetSize();
-    ImageType::SpacingType inputSpacing = image->GetSpacing();
-    logicalDims[0] = std::floor(inputSize[0] * inputSpacing[0] / physicalSpacing[0]);
-    logicalDims[1] = std::floor(inputSize[1] * inputSpacing[1] / physicalSpacing[1]);
-    logicalDims[2] = std::floor(inputSize[2] * inputSpacing[2] / physicalSpacing[2]);
-  }
+  return *this;
+}
 
-  resampler->SetSize(logicalDims);
+Image& Image::resize(Dims newDims) //, FilterType filtertype) // todo: enable specification of filter type using enum
+{
+  using ResampleFilter = itk::ResampleImageFilter<ImageType, ImageType>;
+  ResampleFilter::Pointer resampler = ResampleFilter::New();
+
+  // use existing dims if unspecified
+  Dims inputDims(dims());
+  if (newDims[0] == 0) newDims[0] = inputDims[0];
+  if (newDims[1] == 0) newDims[1] = inputDims[1];
+  if (newDims[2] == 0) newDims[2] = inputDims[2];
+
+  // compute new spacing
+  Vector3 inputSpacing(spacing());
+  Point3 newSpacing({ inputSpacing[0] * inputDims[0] / newDims[0],
+                      inputSpacing[1] * inputDims[1] / newDims[1],
+                      inputSpacing[2] * inputDims[2] / newDims[2] });
+
+  resampler->SetOutputSpacing(newSpacing.GetDataPointer());
+  resampler->SetOutputOrigin(origin());
+  resampler->SetOutputDirection(image->GetDirection());
+  resampler->SetSize(newDims);
   resampler->SetInput(this->image);
   resampler->Update();
   this->image = resampler->GetOutput();

@@ -23,6 +23,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(ImageInfo::getCommand());
   shapeworks.addCommand(Antialias::getCommand());
   shapeworks.addCommand(ResampleImage::getCommand());
+  shapeworks.addCommand(ResizeImage::getCommand());
   shapeworks.addCommand(RecenterImage::getCommand());
   shapeworks.addCommand(PadImage::getCommand());
   shapeworks.addCommand(Translate::getCommand());

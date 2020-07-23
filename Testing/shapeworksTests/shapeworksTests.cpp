@@ -41,6 +41,13 @@ TEST(shapeworksTests, resample)
 }
 
 //---------------------------------------------------------------------------
+TEST(shapeworksTests, resize)
+{
+  shapeworksEnvSetup();
+  ASSERT_FALSE(system("bash resize.sh"));
+}
+
+//---------------------------------------------------------------------------
 TEST(shapeworksTests, recenter)
 {
   shapeworksEnvSetup();

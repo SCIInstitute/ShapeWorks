@@ -252,6 +252,17 @@ TEST(ImageTests, scaleTest2)
   ASSERT_TRUE(image == ground_truth);
 }
 
+TEST(ImageTests, rotateTest0)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/rotate/");
+
+  Image image(test_location + "la1-small.nrrd");
+  image.rotate(Pi / 2.0, makeVector({0,0,1})); // 90 degrees around the z axis
+  Image ground_truth(test_location + "rotate0_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
 TEST(ImageTests, rotateTest1)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/rotate/");
@@ -1055,3 +1066,48 @@ TEST(ImageTests, divideTest2)
 
   ASSERT_TRUE(image == baseline);
 }
+
+TEST(ImageTests, resample1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/resample/");
+
+  Image image(test_location + "la1-small.nrrd");
+  image.resample(Point({0.78, 1.0, 10.0}));
+  Image ground_truth(test_location + "baseline_resample1.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, resample2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/resample/");
+
+  Image image(test_location + "la1-small.nrrd");
+  image.resample(Point({0.98, 1.02, 3.14159}));
+  Image ground_truth(test_location + "baseline_resample2.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, resize1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/resize/");
+
+  Image image(test_location + "la1-small.nrrd");
+  image.resize(Dims({20, 40, 60}));
+  Image ground_truth(test_location + "baseline_resize1.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, resize2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/resize/");
+
+  Image image(test_location + "la1-small.nrrd");
+  image.resize(Dims({12, 14, 80}));
+  Image ground_truth(test_location + "baseline_resize2.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
