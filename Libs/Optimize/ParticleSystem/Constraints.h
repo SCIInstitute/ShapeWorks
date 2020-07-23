@@ -35,14 +35,12 @@ public:
 
                   if (q.magnitude() > 0.0)
                   {
-                    Eigen::Vector4d qp;
+                    Eigen::Vector3d qp;
                     q = q/q.magnitude();
-                    qp(0) = q[0]; qp(1) = q[1]; qp(2) = q[2]; qp(3) = q.magnitude();
+                    qp(0) = q[0]; qp(1) = q[1]; qp(2) = q[2];
                     PlaneConstraint plane_c;
-                    plane_c.SetPlane(qp);
-                    plane_c.SetA(a);
-                    plane_c.SetB(b);
-                    plane_c.SetC(c);
+                    plane_c.SetPlaneNormal(qp);
+                    plane_c.SetPlanePoint(a);
                   }
                 }
   void setSpheres(std::string filename);
