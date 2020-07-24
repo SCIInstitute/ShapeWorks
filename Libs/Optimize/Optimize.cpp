@@ -18,10 +18,10 @@
 // itk
 #include <itkMultiThreaderBase.h>
 #include <itkImageRegionIteratorWithIndex.h>
+#include <itkImageToVTKImageFilter.h>
 
-// shapeworks particle system
+// shapeworks
 #include "TriMesh.h"
-#include "itkImageToVTKImageFilter.h"
 #include "ParticleSystem/itkParticleImageDomain.h"
 #include "ParticleSystem/itkParticleImplicitSurfaceDomain.h"
 #include "ParticleSystem/object_reader.h"
