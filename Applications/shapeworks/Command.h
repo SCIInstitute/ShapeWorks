@@ -10,6 +10,17 @@
 #include <iostream>
 #include <stdexcept>
 
+#define COMMAND_DECLARE(CommandName, CommandType)                                          \
+  class CommandName : public CommandType                                                   \
+  {                                                                                        \
+  public:                                                                                  \
+    static CommandName &getCommand() { static CommandName instance; return instance; }     \
+                                                                                           \
+  private:                                                                                 \
+    CommandName() { buildParser(); }                                                       \
+    void buildParser() override;                                                           \
+    bool execute(const optparse::Values &options, SharedCommandData &sharedData) override; \
+  }
 
 namespace shapeworks {
 
@@ -20,12 +31,15 @@ public:
   const std::string name() const { return parser.prog(); }
   const std::string usage() const { return parser.get_usage(); }
   const std::string desc() const { return parser.description(); }
-
+  
+  /// parses the arguments for this command, saving them in the parser and returning the leftovers
   std::vector<std::string> parse_args(const std::vector<std::string> &arguments);
+
+  /// calls execute for this command using the parsed args, returning system exit value
   int run(SharedCommandData &sharedData);
 
 private:
-  virtual int execute(const optparse::Values &options, SharedCommandData &sharedData) = 0;
+  virtual bool execute(const optparse::Values &options, SharedCommandData &sharedData) = 0;
 
 protected:
   virtual void buildParser(); // derived classes should specialize and call this as well
@@ -57,20 +71,6 @@ public:
 private:
 };
 
-// TODO: something like this for a command that reads a list of files, computes a transform from all of them (or say, the average of the input images), then writes the single result (or lets it be reused for downstream commands)
-// NOTE: for most of the existing commands that take a list of files, they could (and should) be executed once for each file, so this type of command should only be used for operations that *require* a list of files to compute a given result, and the others should simply be called once for each file in a given list.
-class MultiImageCommand : public Command
-{
-public:
-  const std::string type() override { return "Multi-image"; }
-
-private:
-  // bool read(const std::string filelist, SharedCommandData &sharedData) override;
-  // bool write(const std::string outFilename, SharedCommandData &sharedData) override;
-};
-
-}; // Shapeworks
-
+}; // shapeworks
 
 std::ostream& operator<<(std::ostream& os, const shapeworks::Command &cmd);
-

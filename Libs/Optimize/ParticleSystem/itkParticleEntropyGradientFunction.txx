@@ -44,7 +44,7 @@ void
 ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
 ::ComputeAngularWeights(const PointType &pos,
                         const typename ParticleSystemType::PointVectorType &neighborhood,
-                        const ParticleDomain<VDimension> *domain,
+                        const ParticleDomain *domain,
                         std::vector<double> &weights) const
 {
   GradientVectorType posnormal = domain->SampleNormalAtPoint(pos);

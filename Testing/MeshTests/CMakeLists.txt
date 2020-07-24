@@ -1,5 +1,3 @@
-
-
 set(TEST_SRCS
   MeshTests.cpp
   )
@@ -11,7 +9,7 @@ add_executable(MeshTests
 target_link_libraries(MeshTests
   tinyxml Mesh vgl vgl_algo Mesh Optimize Utils trimesh2
   ${ITK_LIBRARIES} ${VTK_LIBRARIES}
-  GTest::Main
+  Testing
   )
 
 

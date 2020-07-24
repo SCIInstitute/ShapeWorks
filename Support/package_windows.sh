@@ -28,6 +28,10 @@ ROOT=`pwd`
 cp -r ../build/bin/Release bin
 rm -rf Post
 
+# Run auto-documentation
+PATH=../build/bin/Release:$PATH
+python -c "import DocumentationUtils;DocumentationUtils.generateShapeWorksCommandDocumentation('Documentation/ShapeWorksCommands/ShapeWorksCommands.md')"
+
 # Remove tests, they won't work for users anyway
 rm bin/*Tests.exe
 

@@ -14,7 +14,7 @@ import platform
 import argparse
 import subprocess
 import sys
-
+from CommonUtils import robustifyShapeworksPaths
 
 # check that required modules are found
 try:
@@ -26,25 +26,25 @@ except ImportError as error:
     print("See https://github.com/SCIInstitute/ShapeWorks for more information")
     sys.exit(1)
 
-
-# Path pre-setup
-binpath = "../build/shapeworks/src/ShapeWorks-build/bin:../../bin"
+# Default installation path for each platform. If using your own build, specify --shapeworks_path
+default_binpath = "../../bin"
 if platform.system() == "Windows":
-    binpath = "C:\\Program Files\ShapeWorks\\bin"
+    default_binpath = "C:\\Program Files\ShapeWorks\\bin"
 if platform.system() == "Darwin":
-    binpath = binpath + ":/Applications/ShapeWorks/bin"
+    default_binpath = "/Applications/ShapeWorks/bin:/Applications/ShapeWorks/bin/ShapeWorksStudio.app/Contents/MacOS"
 
 parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
-parser.add_argument("--use_case", help="Specify which use case to run, either: ellipsoid, ellipsoid_fd, left_atrium, or femur.")
+parser.add_argument("--use_case", help="Specify which use case to run",
+                    choices=["ellipsoid", "ellipsoid_fd", "left_atrium", "femur"])
 parser.add_argument("--use_subsample", help="Set number of samples to run the pipeline for a subset of data.")
 parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
 parser.add_argument("--start_with_prepped_data", help="Start with already prepped data", action="store_true")
 parser.add_argument("--start_with_image_and_segmentation_data", help = "use images and segmentations data for preprocessing", action="store_true")
 parser.add_argument("--use_single_scale", help="Single scale or multi scale optimization", action="store_true")
 parser.add_argument("--tiny_test", help="Run as a short test", action="store_true")
-parser.add_argument("--shapeworks_path", help="Path to ShapeWorks executables (default: "+binpath+")", nargs='?', type=str, default=binpath)
+parser.add_argument("--shapeworks_path", help="Path to ShapeWorks executables (default: "+default_binpath+")", nargs='?', type=str, default=os.pathsep)
 args = parser.parse_args()
-binpath = args.shapeworks_path
+explicit_binpath = args.shapeworks_path
 
 if len(sys.argv)==1:
     parser.print_help(sys.stderr)
@@ -52,15 +52,10 @@ if len(sys.argv)==1:
 
 module = __import__(args.use_case)
 
-# Path final
-if platform.system() == "Darwin":
-    items = binpath.split(os.pathsep)
-    binpath = ""
-    for item in items:
-        binpath = binpath + os.pathsep + item \
-            + os.pathsep + item + "/ShapeWorksStudio.app/Contents/MacOS"
+os.environ["PATH"] = explicit_binpath + os.pathsep + os.environ["PATH"] + os.pathsep + default_binpath
 
-os.environ["PATH"] = binpath + os.pathsep + os.environ["PATH"]
+# make sure the shapeworks executables can be found
+robustifyShapeworksPaths()
 
 try:
     module.Run_Pipeline(args)

@@ -5,6 +5,8 @@ ShapeWorks documentation is written using [Markdown](#markdown-basics), a text l
 [Markdown Basics](#markdown-basics)  
 [GitHub Markdown](https://help.github.com/en/articles/basic-writing-and-formatting-syntax)  
 
+To edit your markdown it helps to have a convenient viewer. The `grip` instant preview application is very helpful, and is installed by the conda_installs script (see [BUILD.md](../Build/BUILD.md). From the ShapeWorks directory just run `grip` (be sure to `conda activate shapeworks` beforehand), and then navigate to `http://localhost:6419` in your favorite browser. It will load and display markdown files just like GitHub, showing README.md by default. You can also specify relative paths to any markdown file below the directory from which it was run. Happy editing!
+
 ## Markdown Basics
 
 ShapeWorks uses Markdown for much of its documentation.  
