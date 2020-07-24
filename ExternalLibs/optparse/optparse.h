@@ -169,6 +169,7 @@ namespace optparse
         void clear()
         {
           _map.clear();
+          _user_set.clear();
         }
 
         int num_set() const
