@@ -16,25 +16,14 @@
 #endif // ifdef _WIN32
 
 // itk
-#include <itkImageFileReader.h>
 #include <itkMultiThreaderBase.h>
 #include <itkImageRegionIteratorWithIndex.h>
-#include <itkMacro.h>
-
-// vtk
-#include <vtkContourFilter.h>
-#include <vtkSmartPointer.h>
-#include <vtkImageData.h>
-#include <vtkPolyData.h>
-#include <vtkMassProperties.h>
 
 // shapeworks particle system
 #include "TriMesh.h"
 #include "itkImageToVTKImageFilter.h"
 #include "ParticleSystem/itkParticleImageDomain.h"
-#include "ParticleSystem/itkParticleImageDomainWithGradients.h"
 #include "ParticleSystem/itkParticleImplicitSurfaceDomain.h"
-#include "ParticleSystem/itkParticleImageDomainWithHessians.h"
 #include "ParticleSystem/object_reader.h"
 #include "ParticleSystem/object_writer.h"
 
