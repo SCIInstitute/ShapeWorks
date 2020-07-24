@@ -111,10 +111,6 @@ public:
       m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
       m_EnsembleEntropyFunction->UseEntropy();
     }
-    else if (mode == shapeworks::CorrespondenceMode::UnknownEnergy) {
-      m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
-      m_EnsembleEntropyFunction->UseMeanEnergy();
-    }
     else if (mode == shapeworks::CorrespondenceMode::EnsembleRegressionEntropy)
     {
       m_LinkingFunction->SetFunctionB(m_EnsembleRegressionEntropyFunction);
