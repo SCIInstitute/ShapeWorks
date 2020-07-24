@@ -41,6 +41,7 @@ public:
                     PlaneConstraint plane_c;
                     plane_c.SetPlaneNormal(qp);
                     plane_c.SetPlanePoint(a);
+                    planeConsts->push_back(plane_c);
                   }
                 }
   void setSpheres(std::string filename);
@@ -58,6 +59,9 @@ public:
   // Is defined? functions
   bool IsCuttingPlaneDefined() const {if(planeConsts->size() > 0) return true; return false;}
   bool IsCuttingSphereDefined() const {if(sphereConsts->size() > 0) return true; return false;}
+
+  // Plane constraint
+  std::vector<PlaneConstraint> *getPlaneConstraints(){return planeConsts;}
 
 protected:
   std::vector<PlaneConstraint> *planeConsts;
