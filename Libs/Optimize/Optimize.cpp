@@ -1,15 +1,3 @@
-/*=========================================================================
-   Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-   File:      Optimize.cpp
-
-   Copyright (c) 2020 Scientific Computing and Imaging Institute.
-   See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-   =========================================================================*/
-
 // std
 #include <sstream>
 #include <string>
@@ -71,7 +59,7 @@ bool Optimize::Run()
   this->SetParameters();
 
   int number_of_splits = static_cast<int>(
-    std::log2(static_cast<double>(this->m_number_of_particles[0])) + 1);
+          std::log2(static_cast<double>(this->m_number_of_particles[0])));
   this->m_iteration_count = 0;
 
   this->m_total_iterations = (number_of_splits * this->m_iterations_per_split) +
@@ -83,12 +71,76 @@ bool Optimize::Run()
 
   m_disable_procrustes = true;
   m_disable_checkpointing = true;
+
+
+  std::vector<unsigned int> final_number_of_particles = this->m_number_of_particles;
+  int scale = 1;
+  if (this->m_use_shape_statistics_after > 0) {
+    this->m_use_shape_statistics_in_init = false;
+    for (int i = 0; i < this->m_number_of_particles.size(); i++) {
+      // run up to only the specified starting point for multiscale
+      this->m_number_of_particles[i] = this->m_use_shape_statistics_after;
+    }
+  }
+
   // Initialize
   if (m_processing_mode >= 0) { this->Initialize();}
   // Introduce adaptivity
   if (m_processing_mode >= 1 || m_processing_mode == -1) { this->AddAdaptivity();}
   // Optimize
   if (m_processing_mode >= 2 || m_processing_mode == -2) { this->RunOptimize();}
+
+  if (this->m_use_shape_statistics_after > 0) {
+    // First phase is done now run iteratively until we reach the final particle counts
+
+    // save the particles for this split if requested
+    if (m_save_init_splits == true) {
+      std::stringstream ss;
+      ss << this->m_split_number;
+      std::stringstream ssp;
+      std::string dir_name = "split" + ss.str();
+      for (int i = 0; i < m_domains_per_shape; i++) {
+        ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles(i);
+        dir_name += "_" + ssp.str();
+        ssp.str("");
+      }
+      dir_name += "pts_w_opt";
+      std::string out_path = m_output_dir;
+      std::string tmp_dir_name = out_path + "/" + dir_name;
+
+      this->WritePointFiles(tmp_dir_name + "/");
+      this->WritePointFilesWithFeatures(tmp_dir_name + "/");
+      this->WriteTransformFile(tmp_dir_name + "/" + m_output_transform_file);
+      this->WriteParameters(this->m_split_number);
+    }
+
+    // set to use shape statistics now for the Initialize mode
+    this->m_use_shape_statistics_in_init = true;
+
+    // reset the number of iterations completed
+    this->m_optimization_iterations_completed = 0;
+
+    bool finished = false;
+
+    while (!finished) {
+      this->m_sampler->ReInitialize();
+
+      // determine if we have reached the final particle counts
+      finished = true;
+      for (int i = 0; i < this->m_number_of_particles.size(); i++) {
+        if (this->m_number_of_particles[i] < final_number_of_particles[i]) {
+          this->m_number_of_particles[i] *= 2;
+          finished = false;
+        }
+      }
+
+      if (!finished) {
+        if (m_processing_mode >= 0) { this->Initialize(); }
+        if (m_processing_mode >= 1 || m_processing_mode == -1) { this->AddAdaptivity(); }
+        if (m_processing_mode >= 2 || m_processing_mode == -2) { this->RunOptimize(); }
+      }
+    }
+  }
 
   this->UpdateExportablePoints();
   return true;
@@ -232,7 +284,6 @@ int Optimize::GetDomainsPerShape()
 void Optimize::SetDomainType(shapeworks::DomainType type)
 {
   this->m_domain_type = type;
-  this->m_sampler->SetDomainType(this->m_domain_type);
 }
 
 //---------------------------------------------------------------------------
@@ -494,8 +545,7 @@ void Optimize::AddSinglePoint()
 {
   typedef itk::ParticleSystem < 3 > ParticleSystemType;
   typedef ParticleSystemType::PointType PointType;
-  for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains();
-       i++) {
+  for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
     if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) > 0) {
       continue;
     }
@@ -582,7 +632,7 @@ void Optimize::Initialize()
 
   m_sampler->GetParticleSystem()->SynchronizePositions();
 
-  int split_number = 0;
+  this->m_split_number = 0;
 
   int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
   vnl_vector_fixed < double, 3 > random;
@@ -616,10 +666,10 @@ void Optimize::Initialize()
 
     m_sampler->GetParticleSystem()->SynchronizePositions();
 
-    split_number++;
+    this->m_split_number++;
 
     if (m_verbosity_level > 0) {
-      std::cout << "split number = " << split_number << std::endl;
+      std::cout << "split number = " << this->m_split_number << std::endl;
 
       std::cout << std::endl << "Particle count: ";
       for (unsigned int i = 0; i < this->m_domains_per_shape; i++) {
@@ -630,7 +680,7 @@ void Optimize::Initialize()
 
     if (m_save_init_splits == true) {
       std::stringstream ss;
-      ss << split_number;
+      ss << this->m_split_number;
 
       std::stringstream ssp;
       std::string dir_name = "split" + ss.str();
@@ -639,22 +689,22 @@ void Optimize::Initialize()
         dir_name += "_" + ssp.str();
         ssp.str("");
       }
-      dir_name += "pts_wo_opt";
+      dir_name += "pts_wo_init";
       std::string out_path = m_output_dir;
 
       std::string tmp_dir_name = out_path + "/" + dir_name;
 
-      this->WritePointFiles(tmp_dir_name + "/");
+      this->WritePointFiles(tmp_dir_name);
       this->WritePointFilesWithFeatures(tmp_dir_name + "/");
       this->WriteTransformFile(tmp_dir_name + "/" + m_output_transform_file);
-      this->WriteParameters(split_number);
+      this->WriteParameters(this->m_split_number);
     }
 
     m_energy_a.clear();
     m_energy_b.clear();
     m_total_energy.clear();
     std::stringstream ss;
-    ss << split_number;
+    ss << this->m_split_number;
     std::stringstream ssp;
 
     ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles();     // size from domain 0
@@ -685,7 +735,7 @@ void Optimize::Initialize()
 
     if (m_save_init_splits == true) {
       std::stringstream ss;
-      ss << split_number;
+      ss << this->m_split_number;
       std::stringstream ssp;
       std::string dir_name = "split" + ss.str();
       for (int i = 0; i < m_domains_per_shape; i++) {
@@ -693,14 +743,14 @@ void Optimize::Initialize()
         dir_name += "_" + ssp.str();
         ssp.str("");
       }
-      dir_name += "pts_w_opt";
+      dir_name += "pts_w_init";
       std::string out_path = m_output_dir;
       std::string tmp_dir_name = out_path + "/" + dir_name;
 
       this->WritePointFiles(tmp_dir_name + "/");
       this->WritePointFilesWithFeatures(tmp_dir_name + "/");
       this->WriteTransformFile(tmp_dir_name + "/" + m_output_transform_file);
-      this->WriteParameters(split_number);
+      this->WriteParameters(this->m_split_number);
     }
     this->WritePointFiles();
     this->WritePointFilesWithFeatures();
@@ -1413,9 +1463,8 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
     }
 
     // Only run the following code if we are dealing with ImplicitSurfaceDomains
-    const itk::ParticleImplicitSurfaceDomain < float, 3 >* domain
-      = dynamic_cast <const itk::ParticleImplicitSurfaceDomain < float,
-                                                                 3 >*> (m_sampler->GetParticleSystem()
+    const itk::ParticleImplicitSurfaceDomain < float >* domain
+      = dynamic_cast <const itk::ParticleImplicitSurfaceDomain < float>*> (m_sampler->GetParticleSystem()
                                                                         ->GetDomain(i));
     if (domain) {
       std::vector < float > fVals;
@@ -1429,9 +1478,7 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
         }
 
         if (m_use_normals[i % m_domains_per_shape]) {
-          typename itk::ParticleImageDomainWithGradients < float,
-                                                           3 > ::VnlVectorType pG =
-            domain->SampleNormalVnl(pos);
+          vnl_vector_fixed<float, DIMENSION> pG = domain->SampleNormalAtPoint(pos);
           VectorType pN;
           pN[0] = pG[0]; pN[1] = pG[1]; pN[2] = pG[2];
           pN = m_sampler->GetParticleSystem()->TransformVector(pN,
@@ -1906,6 +1953,13 @@ void Optimize::AddImage(ImageType::Pointer image) {
 }
 
 //---------------------------------------------------------------------------
+void Optimize::AddMesh(shapeworks::MeshWrapper *mesh) {
+  this->m_sampler->AddMesh(mesh);
+  this->m_num_shapes++;
+  this->m_spacing = 1;
+}
+
+//---------------------------------------------------------------------------
 void Optimize::SetFilenames(const std::vector<std::string> &filenames)
 { this->m_filenames = filenames; }
 
@@ -2013,6 +2067,18 @@ double Optimize::GetNarrowBand()
   else {
     return 4.0;
   }
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetUseShapeStatisticsAfter(int num_particles)
+{
+  this->m_use_shape_statistics_after = num_particles;
+}
+
+//---------------------------------------------------------------------------
+int Optimize::GetUseShapeStatisticsAfter()
+{
+  return this->m_use_shape_statistics_after;
 }
 
 //---------------------------------------------------------------------------

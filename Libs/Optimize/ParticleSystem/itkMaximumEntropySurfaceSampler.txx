@@ -104,8 +104,8 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
         }
       }
 
-      if(m_domain_type == shapeworks::DomainType::Image) {
-        auto imageDomain = static_cast<ParticleImplicitSurfaceDomain<typename ImageType::PixelType, Dimension> *>(domain.GetPointer());
+      if(domain->GetDomainType() == shapeworks::DomainType::Image) {
+        auto imageDomain = static_cast<ParticleImplicitSurfaceDomain<typename ImageType::PixelType> *>(domain.GetPointer());
 
         if (m_AttributesPerDomain.size() > 0 && m_AttributesPerDomain[i % m_DomainsPerShape] > 0)
         {
@@ -273,6 +273,10 @@ MaximumEntropySurfaceSampler<TImage>::ReadTransforms()
             this->GetParticleSystem()->SetPrefixTransform(i, reader.GetOutput()[i]);
     }
 
+}
+
+template<class TImage>
+void MaximumEntropySurfaceSampler<TImage>::ReInitialize() {
 }
 
 

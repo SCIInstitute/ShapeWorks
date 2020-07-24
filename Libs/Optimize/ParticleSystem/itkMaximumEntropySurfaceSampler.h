@@ -1,14 +1,4 @@
 #pragma once
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
 
 #include "itkParticleSystem.h"
 #include "itkParticleGradientDescentPositionOptimizer.h"
@@ -20,6 +10,8 @@
 #include "itkParticleSurfaceNeighborhood.h"
 #include "itkParticleOmegaGradientFunction.h"
 #include "DomainType.h"
+#include "MeshWrapper.h"
+#include "MeshDomain.h"
 
 #include "itkParticleModifiedCotangentEntropyGradientFunction.h"
 #include "itkParticleConstrainedModifiedCotangentEntropyGradientFunction.h"
@@ -153,8 +145,7 @@ public:
 
     void AddImage(const typename TImage::Pointer image, double narrow_band)
     {
-        const auto domain = ParticleImplicitSurfaceDomain<typename
-                              ImageType::PixelType, Dimension>::New();
+        const auto domain = ParticleImplicitSurfaceDomain<typename ImageType::PixelType>::New();
         m_NeighborhoodList.push_back( ParticleSurfaceNeighborhood<ImageType>::New() );
 
         if (image)
@@ -165,6 +156,17 @@ public:
         }
 
         m_DomainList.push_back(domain);
+    }
+
+    void AddMesh(shapeworks::MeshWrapper * mesh) {
+
+      MeshDomain *domain = new MeshDomain();
+      m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood<ImageType>::New());
+      if (mesh) {
+        this->m_Spacing = 1;
+        domain->SetMesh(mesh);
+      }
+      m_DomainList.push_back(domain);
     }
 
     void SetFidsFiles(const std::vector<std::string> &s)
@@ -183,10 +185,6 @@ public:
     void SetDomainsPerShape(int i)
     {
         m_DomainsPerShape = i;
-    }
-    void SetDomainType(shapeworks::DomainType domain_type)
-    {
-        m_domain_type = domain_type;
     }
     void SetAttributesPerDomain(const std::vector<int> &i)
     {
@@ -332,6 +330,8 @@ public:
         this->m_Initializing = false;
     }
 
+    virtual void ReInitialize();
+
     virtual void Execute();
 
 
@@ -373,7 +373,7 @@ protected:
 
     typename ParticleSystem<Dimension>::Pointer m_ParticleSystem;
 
-    std::vector<typename ParticleDomain<Dimension>::Pointer> m_DomainList;
+    std::vector<typename ParticleDomain::Pointer> m_DomainList;
 
     std::vector<typename ParticleSurfaceNeighborhood<ImageType>::Pointer> m_NeighborhoodList;
 
@@ -391,7 +391,6 @@ private:
     std::vector<int> m_AttributesPerDomain;
     int m_DomainsPerShape;
     double m_Spacing{0};
-    shapeworks::DomainType m_domain_type;
 
     std::string m_TransformFile;
     std::string m_PrefixTransformFile;

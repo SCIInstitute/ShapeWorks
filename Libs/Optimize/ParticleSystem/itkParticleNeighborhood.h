@@ -59,7 +59,7 @@ public:
 
   /** Domain type.  The Domain object provides bounds and distance
       information. */
-  typedef ParticleDomain<VDimension> DomainType;
+  typedef ParticleDomain DomainType;
   
   /** Container type for points.  This matches the itkParticleSystem container
       type. */

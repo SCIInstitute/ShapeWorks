@@ -13,6 +13,12 @@ add_library(Image STATIC
 target_include_directories(Image PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:include>)
+target_link_libraries(Image
+  Common
+  Mesh
+  ${ITK_LIBRARIES}
+  )
+
 
 # Install
 set_target_properties(Image PROPERTIES PUBLIC_HEADER
@@ -23,46 +29,6 @@ install(TARGETS Image
   LIBRARY DESTINATION lib
   PUBLIC_HEADER DESTINATION include
   )
-
-add_executable(ClipVolume ClipVolume.cxx)
-target_link_libraries(ClipVolume ${ITK_LIBRARIES} ${VTK_LIBRARIES} tinyxml)
-INSTALL(TARGETS ClipVolume RUNTIME DESTINATION bin)
-
-add_executable(CloseHoles CloseHoles.cxx )
-target_link_libraries(CloseHoles ${ITK_LIBRARIES} Utils)
-INSTALL(TARGETS CloseHoles RUNTIME DESTINATION bin)
-
-add_executable(WriteImageInfoToText WriteImageInfoToText.cxx )
-target_link_libraries(WriteImageInfoToText ${ITK_LIBRARIES} Utils)
-INSTALL(TARGETS WriteImageInfoToText RUNTIME DESTINATION bin)
-
-add_executable(ExtractGivenLabelImage ExtractGivenLabelImage.cxx)
-target_link_libraries(ExtractGivenLabelImage ${ITK_LIBRARIES} Utils Image)
-INSTALL(TARGETS ExtractGivenLabelImage  RUNTIME DESTINATION bin)
-
-add_executable(FastMarching FastMarching.cxx)
-target_link_libraries(FastMarching ${ITK_LIBRARIES} Utils)
-INSTALL(TARGETS FastMarching  RUNTIME DESTINATION bin)
-
-ADD_EXECUTABLE(TopologyPreservingSmoothing TopologyPreservingSmoothing.cxx)
-TARGET_LINK_LIBRARIES(TopologyPreservingSmoothing  tinyxml ${ITK_LIBRARIES})
-INSTALL(TARGETS TopologyPreservingSmoothing  RUNTIME DESTINATION bin)
-
-add_executable(CropImages CropImages.cxx)
-target_link_libraries(CropImages ${ITK_LIBRARIES} Utils)
-INSTALL(TARGETS CropImages  RUNTIME DESTINATION bin)
-
-add_executable(ThresholdImages ThresholdImages.cxx)
-target_link_libraries(ThresholdImages ${ITK_LIBRARIES} Utils)
-INSTALL(TARGETS ThresholdImages  RUNTIME DESTINATION bin)
-
-add_executable(FindLargestBoundingBox FindLargestBoundingBox.cxx )
-target_link_libraries(FindLargestBoundingBox ${ITK_LIBRARIES} Utils)
-INSTALL(TARGETS FindLargestBoundingBox  RUNTIME DESTINATION bin)
-
-add_executable(ReflectVolumes ReflectVolumes.cxx)
-target_link_libraries(ReflectVolumes ${ITK_LIBRARIES} Utils)
-INSTALL(TARGETS ReflectVolumes  RUNTIME DESTINATION bin)
 
 add_executable(MeshFromDistanceTransforms MeshFromDistanceTransforms.cxx)
 target_link_libraries(MeshFromDistanceTransforms ${ITK_LIBRARIES} ${VTK_LIBRARIES} tinyxml)

@@ -26,23 +26,23 @@ namespace itk
  * \sa ParticleClipRegionDomain
  * \sa ParticleDomain
  */
-template <class T, unsigned int VDimension=3>
-class ParticleImageDomainWithGradients : public ParticleImageDomain<T, VDimension>
+template <class T>
+class ParticleImageDomainWithGradients : public ParticleImageDomain<T>
 {
 public:
-  typedef SmartPointer<ParticleImageDomainWithGradients<T, VDimension>>  Pointer;
+  typedef SmartPointer<ParticleImageDomainWithGradients<T>>  Pointer;
 
   /** Point type of the domain (not necessarily of the image). */
-  typedef typename ParticleImageDomain<T, VDimension>::PointType PointType;
-  typedef typename ParticleImageDomain<T, VDimension>::ImageType ImageType;
+  typedef typename ParticleImageDomain<T>::PointType PointType;
+  typedef typename ParticleImageDomain<T>::ImageType ImageType;
 
-  typedef FixedArray<T, 3> VectorType;
-  typedef vnl_vector_fixed<T, 3> VnlVectorType;
+  typedef FixedArray<T, DIMENSION> VectorType;
+  typedef vnl_vector_fixed<T, DIMENSION> VnlVectorType;
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
   void SetImage(ImageType *I, double narrow_band) {
-    ParticleImageDomain<T, VDimension>::SetImage(I, narrow_band);
+    ParticleImageDomain<T>::SetImage(I, narrow_band);
     m_VDBGradient = openvdb::tools::gradient(*this->GetVDBImage());
   }
 
@@ -65,31 +65,29 @@ public:
   { 
     return VnlVectorType( this->SampleGradient(p).GetDataPointer() ); 
   }
-  inline VnlVectorType SampleNormalVnl(const PointType &p, T epsilon = 1.0e-5) const
+  inline vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType &p) const
   {
-    VnlVectorType grad = this->SampleGradientVnl(p);
+    vnl_vector_fixed<float, DIMENSION> grad = this->SampleGradientVnl(p);
     return grad.normalize();
   }
 
   /** This method is called by an optimizer after a call to Evaluate and may be
       used to apply any constraints the resulting vector, such as a projection
       to the surface tangent plane. Returns true if the gradient was modified.*/
-  vnl_vector_fixed<double, VDimension> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, VDimension> &gradE,
-                                      const PointType &pos) const override
+  vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const override
   {
-    const double epsilon = 1.0e-10;
     double dotprod = 0.0;  
-    VnlVectorType normal =  this->SampleNormalVnl(pos, epsilon);
-    for (unsigned int i = 0; i < VDimension; i++) {   dotprod  += normal[i] * gradE[i]; }
-    vnl_vector_fixed<double, VDimension> result;
-    for (unsigned int i = 0; i < VDimension; i++) { result[i] = gradE[i] - normal[i] * dotprod; }
+    VnlVectorType normal =  this->SampleNormalAtPoint(pos);
+    for (unsigned int i = 0; i < DIMENSION; i++) {   dotprod  += normal[i] * gradE[i]; }
+    vnl_vector_fixed<double, DIMENSION> result;
+    for (unsigned int i = 0; i < DIMENSION; i++) { result[i] = gradE[i] - normal[i] * dotprod; }
     return result;
   }
 
   /** Used when a domain is fixed. */
   void DeleteImages() override
   {
-    ParticleImageDomain<T, VDimension>::DeleteImages();
+    ParticleImageDomain<T>::DeleteImages();
     m_VDBGradient = 0;
   }
   
@@ -99,7 +97,7 @@ protected:
 
   void PrintSelf(std::ostream& os, Indent indent) const
   {
-    ParticleImageDomain<T, VDimension>::PrintSelf(os, indent);
+    ParticleImageDomain<T>::PrintSelf(os, indent);
     os << indent << "VDB Active Voxels = " << m_VDBGradient->activeVoxelCount() << std::endl;
   }
   
