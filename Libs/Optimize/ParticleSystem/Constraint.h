@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ConstraintType.h"
+#include <vnl_vector.h>
 #include "vnl/vnl_math.h"
 #include "Eigen/Core"
 
