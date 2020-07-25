@@ -7,6 +7,7 @@
 #include <vector>
 #include "vnl/vnl_inverse.h"
 #include "vnl/vnl_cross.h"
+#include "Eigen/Dense"
 
 namespace itk
 {
@@ -29,6 +30,13 @@ public:
   void addPlane(const vnl_vector<double> &a, const vnl_vector<double> &b,const vnl_vector<double> &c);
   void setSpheres(std::string filename);
   void setFreeFormConstraint(std::string filename);
+
+  // Transforms
+  bool transformConstraints(const vnl_matrix_fixed<double, 4, 4> &Trans);
+  bool transformPlanes(const vnl_matrix_fixed<double, 4, 4> &Trans);
+
+  // Apply functions
+  bool applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, const vnl_vector_fixed<double, 3> &pos);
 
   // Set & get defined
   void setCuttingPlaneDefined(bool value){cuttingPlaneDefined = value;}

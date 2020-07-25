@@ -31,6 +31,7 @@ public:
     pt_eigen(0) = ina[0]; pt_eigen(1) = ina[1]; pt_eigen(2) = ina[2];
     planePoint = pt_eigen;
   }
+  void SetPlanePoint(const Eigen::Vector3d & p){planePoint = p;}
 
 private:
   Eigen::Vector3d planeNormal;

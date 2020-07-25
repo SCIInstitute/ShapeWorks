@@ -54,6 +54,7 @@ void
 ParticleImplicitSurfaceDomain<T>::
 TransformCuttingPlane(const vnl_matrix_fixed<double, DIMENSION + 1, DIMENSION + 1> &Trans)
 {
+    std::cout << "Transforming cutting planes ------------------------" << std::endl;
     if (m_UseCuttingPlane == true)
     {
         vnl_vector_fixed<double, DIMENSION> fa = GetA();

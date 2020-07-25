@@ -204,6 +204,6 @@ TEST(OptimizeTests, cutting_plane_test) {
   // should not allow points to go below Z=0
   auto points = stats.Mean();
   for (int i = 2; i < points.size(); i += 3) { // check z coordinates only
-    ASSERT_GT(points[i], 0.0);
+    ASSERT_GE(points[i], 0.0);
   }
 }
