@@ -101,7 +101,7 @@ bool Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, cons
     }
 
     // Update gradient
-    gradE[0] = l(0); gradE[1] = l(1); gradE[2] = l(2);
+    gradE[0] = -l(0); gradE[1] = -l(1); gradE[2] = -l(2);
 
     // CHECK: Is returning false correct? This is what the previous function returns
     return false;
