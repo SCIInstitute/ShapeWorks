@@ -22,7 +22,7 @@ void Constraints::addPlane(const vnl_vector<double> &a, const vnl_vector<double>
   }
 
 bool Constraints::transformConstraints(const vnl_matrix_fixed<double, 4, 4> &Trans){
-    return Constraints::transformPlanes(Trans) & true;
+    return transformPlanes(Trans) & true;
 }
 
 bool Constraints::transformPlanes(const vnl_matrix_fixed<double, 4, 4> &Trans){
@@ -69,7 +69,11 @@ bool Constraints::transformPlanes(const vnl_matrix_fixed<double, 4, 4> &Trans){
 
 }
 
-bool Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, const vnl_vector_fixed<double, 3> &pos){
+bool Constraints::applyBoundaryConstraints(vnl_vector_fixed<double, 3> &gradE, const Point<double, 3> &pos){
+    return applyPlaneConstraints(gradE, pos);
+}
+
+bool Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, const Point<double, 3> &pos){
 
     // Convert points and grads to eigen vectors
     Eigen::Vector3d l0; l0(0) = pos[0]; l0(1) = pos[1]; l0(2) = pos[2];

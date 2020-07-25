@@ -8,6 +8,7 @@
 #include "vnl/vnl_inverse.h"
 #include "vnl/vnl_cross.h"
 #include "Eigen/Dense"
+#include "itkPoint.h"
 
 namespace itk
 {
@@ -36,7 +37,8 @@ public:
   bool transformPlanes(const vnl_matrix_fixed<double, 4, 4> &Trans);
 
   // Apply functions
-  bool applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, const vnl_vector_fixed<double, 3> &pos);
+  bool applyBoundaryConstraints(vnl_vector_fixed<double, 3> &gradE, const Point<double, 3> &pos);
+  bool applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, const Point<double, 3> &pos);
 
   // Set & get defined
   void setCuttingPlaneDefined(bool value){cuttingPlaneDefined = value;}
