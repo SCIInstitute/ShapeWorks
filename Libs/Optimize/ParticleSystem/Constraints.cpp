@@ -83,7 +83,7 @@ bool Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, cons
     for(size_t i = 0; i < planeConsts->size(); i++){
 
         // If constraint is violated, update gradient
-        if((*planeConsts)[i].isViolated(l0-l)){
+        if((*planeConsts)[i].isViolated(l0+l)){
 
             // Get points
             Eigen::Vector3d n = (*planeConsts)[i].GetPlaneNormal();
