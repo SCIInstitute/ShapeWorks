@@ -62,6 +62,10 @@ protected:
   std::vector<FreeFormConstraint> *freeFormConsts;
 
   bool cuttingPlaneDefined;
+
+private:
+  Eigen::Vector3d projectOntoLine(Eigen::Vector3d a, Eigen::Vector3d b, Eigen::Vector3d p);
+  Eigen::Vector3d linePlaneIntersect(Eigen::Vector3d n, Eigen::Vector3d p0, Eigen::Vector3d l0, Eigen::Vector3d l);
 };
 
 

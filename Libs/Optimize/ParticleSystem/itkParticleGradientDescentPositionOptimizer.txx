@@ -164,15 +164,13 @@ namespace itk
 
                 // DEBUGGG
                 //VectorType gradient_new = gradient;
-                //VectorType gradient_old = gradient;
+                VectorType gradient_old = gradient;
                 m_ParticleSystem->GetDomain(dom)->GetConstraints()->applyBoundaryConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
 
                 //m_ParticleSystem->GetDomain(dom)->ApplyVectorConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
-                /*
-                std::cout << "Original gradient " << gradient_old << std::endl <<
-                             "Old gradient " << gradient_old << std::endl <<
-                             "New gradient " << gradient_new << std::endl << std::endl;
-                */
+
+                //std::cout << "Original gradient " << gradient_old << std::endl << "Updated gradient " << gradient << std::endl << std::endl;
+
                 // End DEBUGGG
 
                 //m_ParticleSystem->GetDomain(dom)->ApplyVectorConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
