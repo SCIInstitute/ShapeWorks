@@ -903,7 +903,7 @@ bool OptimizeParameterFile::read_cutting_spheres(TiXmlHandle* doc_handle, Optimi
     inputsBuffer.str("");
     if (spheres_per_input.size() != numShapes) {
       std::cerr <<
-        "ERROR: Incomplete cutting plane data! Number of cutting spheres for every input shape is required!!"
+        "ERROR: Incomplete sphere data! Number of spheres for every input shape is required!!"
                 << std::endl;
       return false;
     }

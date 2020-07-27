@@ -159,7 +159,6 @@ TEST(OptimizeTests, use_normals_test) {
   ASSERT_GT(values[values.size() - 1], 2500);
   ASSERT_LT(values[values.size() - 2], 100);
 }
-*/
 
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, cutting_plane_test) {
@@ -206,4 +205,54 @@ TEST(OptimizeTests, cutting_plane_test) {
   for (int i = 2; i < points.size(); i += 3) { // check z coordinates only
     ASSERT_GE(points[i], 0.0);
   }
+}
+*/
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, sphere_constraint_test) {
+
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sphere_constraint");
+  chdir(test_location.c_str());
+
+  // prep/groom
+  prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
+  prep_distance_transform("sphere20.nrrd", "sphere20_DT.nrrd");
+  prep_distance_transform("sphere30.nrrd", "sphere30_DT.nrrd");
+  prep_distance_transform("sphere40.nrrd", "sphere40_DT.nrrd");
+
+  // make sure we clean out at least one output file
+  std::remove("output/sphere10_DT_world.particles");
+
+  // run with parameter file
+  std::string paramfile = std::string("sphere_constraint.xml");
+  Optimize app;
+  OptimizeParameterFile param;
+  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
+  app.Run();
+
+  // compute stats
+  ParticleShapeStatistics<3> stats;
+  stats.ReadPointFiles("analyze.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+
+  // Check the modes of variation.  The first mode should contain almost all the variation and the 2nd
+  // and higher modes should contain very little
+  ASSERT_GT(values[values.size() - 1], 2500);
+  ASSERT_LT(values[values.size() - 2], 150);
+
+  /*
+  // next check that the cutting plane works.  While the spheres are centered on 0,0,0, the cutting plane
+  // should not allow points to go below Z=0
+  auto points = stats.Mean();
+  for (int i = 2; i < points.size(); i += 3) { // check z coordinates only
+    ASSERT_GE(points[i], 0.0);
+  }
+  */
 }

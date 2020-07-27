@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<number_of_particles> 16 </number_of_particles>
+<number_of_particles> 128 </number_of_particles>
 <iterations_per_split> 500 </iterations_per_split>
 <starting_regularization> 500.0 </starting_regularization>
 <ending_regularization> 10.0 </ending_regularization>
@@ -11,7 +11,7 @@
 <verbosity>1</verbosity>
 
 <!-- needed to fully turn on cutting planes -->
-<adaptivity_mode> 0 </adaptivity_mode>
+<adaptivity_mode> 3 </adaptivity_mode>
 
 <output_dir>
 output
@@ -24,16 +24,23 @@ sphere30_DT.nrrd
 sphere40_DT.nrrd
 </inputs>
 
-<num_planes_per_input>
+<spheres_per_domain>
   1
   1
   1
   1
-</num_planes_per_input>
+</spheres_per_domain>
 
-<cutting_planes>
-  10 10 0 -10 -10 0 10 -10 0
-  10 10 0 -10 -10 0 10 -10 0
-  10 10 0 -10 -10 0 10 -10 0
-  10 10 0 -10 -10 0 10 -10 0
-</cutting_planes>
+<sphere_radii>
+  5
+  5
+  5
+  5
+</sphere_radii>
+
+<sphere_centers>
+  0 0 25
+  0 0 25
+  0 0 25
+  0 0 25
+</sphere_centers>
