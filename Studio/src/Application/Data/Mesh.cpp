@@ -117,3 +117,9 @@ vnl_vector<double> Mesh::get_center_transform()
 {
   return this->center_transform_;
 }
+
+//---------------------------------------------------------------------------
+void Mesh::apply_feature_map(std::string name, std::string filename)
+{
+
+}

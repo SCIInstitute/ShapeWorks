@@ -99,6 +99,8 @@ public Q_SLOTS:
   void handle_new_mesh();
   void handle_clear_cache();
 
+  void update_feature_map_selection();
+
 
 private:
 
@@ -148,6 +150,7 @@ private:
   void update_recent_files();
 
   void save_project(std::string filename);
+
 
   /// designer form
   Ui_ShapeWorksStudioApp* ui_;

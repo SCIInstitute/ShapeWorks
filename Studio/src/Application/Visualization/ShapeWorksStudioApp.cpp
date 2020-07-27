@@ -200,6 +200,9 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, false);
 
+  connect(this->ui_->features, qOverload<int>(&QComboBox::currentIndexChanged), this,
+          &ShapeWorksStudioApp::update_feature_map_selection);
+
   //glyph options signals/slots
   connect(this->ui_->glyphs_visible_button, SIGNAL(clicked()), this, SLOT(handle_glyph_changed()));
   connect(this->ui_->surface_visible_button, SIGNAL(clicked()), this, SLOT(handle_glyph_changed()));
@@ -1432,4 +1435,10 @@ void ShapeWorksStudioApp::on_actionExport_Variance_Graph_triggered()
   else {
     this->handle_message("Successfully exported Variance Graph: " + filename.toStdString());
   }
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::update_feature_map_selection()
+{
+  std::cerr << "update feature map selection\n";
 }
