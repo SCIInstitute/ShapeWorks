@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 namespace shapeworks {
 
@@ -44,11 +45,8 @@ public:
   //! Get the number of domains
   int get_number_of_domains();
 
-  //! Get the list of feature maps
-  const std::vector<std::string>& get_feature_filenames() const;
-
-  //! Set the list of feature maps
-  void set_feature_filenames(const std::vector<std::string>& feature_filenames);
+  std::map<std::string, std::string> get_feature_filenames() const;
+  void set_feature_filenames(const std::map<std::string, std::string>& feature_filenames);
 
 private:
 
@@ -60,6 +58,7 @@ private:
   std::string local_particle_filename_;
   std::string global_particle_filename_;
 
-  std::vector<std::string> feature_filenames_;
+
+  std::map<std::string, std::string> feature_filenames_;
 };
 }

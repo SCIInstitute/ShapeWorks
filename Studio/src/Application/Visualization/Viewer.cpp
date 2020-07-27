@@ -29,6 +29,7 @@
 #include <vtkImageGaussianSmooth.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkScalarBarActor.h>
+#include <vtkColorTransferFunction.h>
 
 #include <Application/Data/CustomSurfaceReconstructionFilter.h>
 #include <Data/Preferences.h>
@@ -300,7 +301,7 @@ void Viewer::display_vector_field()
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::compute_point_differences(const std::vector<Point> &vecs,
+void Viewer::compute_point_differences(const std::vector<Point>& vecs,
                                        vtkSmartPointer<vtkFloatArray> magnitudes,
                                        vtkSmartPointer<vtkFloatArray> vectors)
 {
@@ -347,8 +348,8 @@ void Viewer::compute_point_differences(const std::vector<Point> &vecs,
 
     float mag = xd * normal[0] + yd * normal[1] + zd * normal[2];
 
-    if (mag < minmag) {minmag = mag; }
-    if (mag > maxmag) {maxmag = mag; }
+    if (mag < minmag) { minmag = mag; }
+    if (mag > maxmag) { maxmag = mag; }
 
     vectors->InsertNextTuple3(normal[0] * mag, normal[1] * mag, normal[2] * mag);
     magnitudes->InsertNextTuple1(mag);
@@ -491,6 +492,19 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
     //std::cerr << "mesh is ready!\n";
 
     vtkSmartPointer<vtkPolyData> poly_data = this->mesh_->get_poly_data();
+
+    auto feature_map = this->visualizer_->get_feature_map();
+
+    std::cerr << "checking if mesh has scalar array for " << feature_map << "\n";
+    auto scalar_array = poly_data->GetPointData()->GetArray(feature_map.c_str());
+    if (scalar_array) {
+      std::cerr << "array present!\n";
+    }
+    else {
+      std::cerr << "array NOT present! Loading...\n";
+      this->shape_->load_feature(this->visualizer_->get_display_mode(), feature_map);
+    }
+
     vtkSmartPointer<vtkPolyDataMapper> mapper = this->surface_mapper_;
     vtkSmartPointer<vtkActor> actor = this->surface_actor_;
 
@@ -520,19 +534,43 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
     }
 
     mapper->SetInputData(poly_data);
+
+    ///////mapper->Activ
     actor->SetMapper(mapper);
     actor->GetProperty()->SetDiffuseColor(color_schemes_[this->scheme_].foreground.r,
                                           color_schemes_[this->scheme_].foreground.g,
                                           color_schemes_[this->scheme_].foreground.b);
     actor->GetProperty()->SetSpecular(0.2);
     actor->GetProperty()->SetSpecularPower(15);
-    mapper->ScalarVisibilityOff();
+
+    if (feature_map != "") {
+      poly_data->GetPointData()->SetActiveScalars(feature_map.c_str());
+
+      mapper->ScalarVisibilityOn();
+
+
+      mapper->SetScalarModeToUsePointData();
+
+      auto rainbow = vtkColorTransferFunction::New();
+      rainbow->SetColorSpaceToHSV();
+      rainbow->HSVWrapOff();
+      rainbow->AddHSVPoint(0.0, 0.0, 1.0, 1.0);
+      rainbow->AddHSVPoint(1.0, 0.66667, 1.0, 1.0);
+
+      mapper->SetLookupTable(rainbow);
+
+    }
+    else {
+      mapper->ScalarVisibilityOff();
+
+    }
+
+
 
     //ren->AddActor( actor );
     //ren->AddActor( this->glyph_actor_ );
 
     this->display_vector_field();
-
 
   }
 
@@ -636,12 +674,12 @@ void Viewer::update_points()
   int num_points = correspondence_points.size() / 3;
 
   vtkUnsignedLongArray* scalars =
-    (vtkUnsignedLongArray*)(this->glyph_point_set_->GetPointData()->GetScalars());
+    (vtkUnsignedLongArray*) (this->glyph_point_set_->GetPointData()->GetScalars());
 
   if (num_points > 0) {
     this->viewer_ready_ = true;
-    this->glyphs_->SetRange(0.0, (double)num_points + 1);
-    this->glyph_mapper_->SetScalarRange(0.0, (double)num_points + 1.0);
+    this->glyphs_->SetRange(0.0, (double) num_points + 1);
+    this->glyph_mapper_->SetScalarRange(0.0, (double) num_points + 1.0);
 
     this->glyph_points_->Reset();
     this->glyph_points_->SetNumberOfPoints(num_points);
@@ -772,13 +810,13 @@ void Viewer::draw_exclusion_spheres(QSharedPointer<Shape> object)
   }
   else {
 
-    vtkUnsignedLongArray* scalars = (vtkUnsignedLongArray*)(
+    vtkUnsignedLongArray* scalars = (vtkUnsignedLongArray*) (
       this->exclusion_sphere_point_set_->GetPointData()->GetScalars());
     scalars->Reset();
     scalars->SetNumberOfTuples(num_points);
 
-    this->exclusion_sphere_glyph_->SetRange(0.0, (double)num_points + 1);
-    this->exclusion_sphere_mapper_->SetScalarRange(0.0, (double)num_points + 1.0);
+    this->exclusion_sphere_glyph_->SetRange(0.0, (double) num_points + 1);
+    this->exclusion_sphere_mapper_->SetScalarRange(0.0, (double) num_points + 1.0);
 
     this->exclusion_sphere_points_->Reset();
     this->exclusion_sphere_points_->SetNumberOfPoints(num_points);
@@ -797,20 +835,20 @@ void Viewer::draw_exclusion_spheres(QSharedPointer<Shape> object)
 void Viewer::updateDifferenceLUT(float r0, float r1)
 {
 
-  double black[3] = { 0.0, 0.0, 0.0 };
-  double white[3] = { 1.0, 1.0, 1.0 };
-  double red[3] = { 1.0, 0.3, 0.3 };
-  double red_pure[3] = { 1.0, 0.0, 0.0 };
-  double green[3] = { 0.3, 1.0, 0.3 };
-  double green_pure[3] = { 0.0, 1.0, 0.0 };
-  double blue[3] = { 0.3, 0.3, 1.0 };
-  double blue_pure[3] = { 0.0, 0.0, 1.0 };
-  double yellow[3] = { 1.0, 1.0, 0.3 };
-  double yellow_pure[3] = { 1.0, 1.0, 0.0 };
-  double magenta[3] = { 1.0, 0.3, 1.0 };
-  double cyan[3] = { 0.3, 1.0, 1.0 };
-  double orange[3] = { 1.0, 0.5, 0.0 };
-  double violet[3] = { 2.0 / 3.0, 0.0, 1.0 };
+  double black[3] = {0.0, 0.0, 0.0};
+  double white[3] = {1.0, 1.0, 1.0};
+  double red[3] = {1.0, 0.3, 0.3};
+  double red_pure[3] = {1.0, 0.0, 0.0};
+  double green[3] = {0.3, 1.0, 0.3};
+  double green_pure[3] = {0.0, 1.0, 0.0};
+  double blue[3] = {0.3, 0.3, 1.0};
+  double blue_pure[3] = {0.0, 0.0, 1.0};
+  double yellow[3] = {1.0, 1.0, 0.3};
+  double yellow_pure[3] = {1.0, 1.0, 0.0};
+  double magenta[3] = {1.0, 0.3, 1.0};
+  double cyan[3] = {0.3, 1.0, 1.0};
+  double orange[3] = {1.0, 0.5, 0.0};
+  double violet[3] = {2.0 / 3.0, 0.0, 1.0};
 
   this->difference_lut_->RemoveAllPoints();
 
@@ -821,8 +859,8 @@ void Viewer::updateDifferenceLUT(float r0, float r1)
   const unsigned int resolution = 100;
   const float resinv = 1.0 / static_cast<float>(resolution);
   float maxrange;
-  if (fabs(r0) > fabs(r1)) {maxrange = fabs(r0); }
-  else {maxrange = fabs(r1); }
+  if (fabs(r0) > fabs(r1)) { maxrange = fabs(r0); }
+  else { maxrange = fabs(r1); }
 
   std::cerr << "r0 = " << r0 << "\n";
   std::cerr << "r1 = " << r1 << "\n";

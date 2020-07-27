@@ -205,7 +205,14 @@ void Project::load_subjects()
 
     subject->set_segmentation_filenames(this->get_list(seg_columns, i));
     subject->set_groomed_filenames(this->get_list(groomed_columns, i));
-    subject->set_feature_filenames(this->get_list(feature_columns, i));
+
+    auto feature_list = this->get_list(feature_columns, i);
+    std::map<std::string, std::string> map;
+    for (int i = 0; i < feature_columns.size(); i++) {
+      std::string feature = feature_columns[i].substr(strlen(FEATURE_PREFIX));
+      map[feature] = feature_list[i];
+    }
+    subject->set_feature_filenames(map);
 
     if (local_particle_column > 0) {
       this->particles_present_ = true;

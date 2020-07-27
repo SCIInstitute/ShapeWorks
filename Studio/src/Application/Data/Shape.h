@@ -111,6 +111,9 @@ public:
   void set_transform(const vnl_vector<double>& transform);
   vnl_vector<double> get_transform();
 
+
+  void load_feature(std::string display_mode, std::string feature);
+
 private:
 
   void generate_original_meshes();

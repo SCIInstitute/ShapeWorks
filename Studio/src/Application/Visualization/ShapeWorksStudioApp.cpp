@@ -200,7 +200,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, false);
 
-  connect(this->ui_->features, qOverload<int>(&QComboBox::currentIndexChanged), this,
+  connect(this->ui_->features, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
           &ShapeWorksStudioApp::update_feature_map_selection);
 
   //glyph options signals/slots
@@ -717,6 +717,7 @@ void ShapeWorksStudioApp::update_view_mode()
     //std::cerr << "Setting view mode to: " << view_mode << "\n";
     this->visualizer_->set_display_mode(view_mode);
     this->visualizer_->set_feature_map(feature_map);
+    std::cerr << "force update!\n";
     this->update_display(true);
   }
 }
@@ -1442,9 +1443,9 @@ void ShapeWorksStudioApp::on_actionExport_Variance_Graph_triggered()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::update_feature_map_selection()
+void ShapeWorksStudioApp::update_feature_map_selection(const QString& feature_map)
 {
-  std::cerr << "update feature map selection\n";
+  this->set_feature_map(feature_map.toStdString());
 }
 
 //---------------------------------------------------------------------------

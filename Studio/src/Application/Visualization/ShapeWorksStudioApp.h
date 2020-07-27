@@ -12,25 +12,30 @@
 #include <Data/PreferencesWindow.h>
 
 class Lightbox;
+
 class GroomTool;
+
 class OptimizeTool;
+
 class AnalysisTool;
+
 class Session;
+
 class Visualizer;
 
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
 
 class LightboxLayout;
+
 class WheelEventForwarder;
 
 //! Main ShapeWorksStudio window
 /*!
  * This class represents the primary ShapeWorksStudio window interface
  */
-class ShapeWorksStudioApp : public QMainWindow
-{
-  Q_OBJECT
+class ShapeWorksStudioApp : public QMainWindow {
+Q_OBJECT
 public:
 
   ShapeWorksStudioApp();
@@ -99,8 +104,7 @@ public Q_SLOTS:
   void handle_new_mesh();
   void handle_clear_cache();
 
-  void update_feature_map_selection();
-
+  void update_feature_map_selection(const QString& feature_map);
 
 private:
 
@@ -154,7 +158,6 @@ private:
   void update_recent_files();
 
   void save_project(std::string filename);
-
 
   /// designer form
   Ui_ShapeWorksStudioApp* ui_;

@@ -496,3 +496,26 @@ bool Shape::import_point_file(QString filename, vnl_vector<double> &points)
   }
   return true;
 }
+
+//---------------------------------------------------------------------------
+void Shape::load_feature(std::string display_mode, std::string feature)
+{
+  auto mesh = this->get_mesh(display_mode);
+  vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
+
+  std::cerr << "checking if mesh has scalar array for " << feature << "\n";
+  auto scalar_array = poly_data->GetPointData()->GetArray(feature.c_str());
+  if (scalar_array) {
+    std::cerr << "shape: array present!\n";
+  }
+  else {
+    std::cerr << "shape: array NOT present! Loading...\n";
+
+    auto filenames = this->subject_->get_feature_filenames();
+
+    mesh->apply_feature_map(feature, filenames[feature]);
+
+  }
+
+
+}

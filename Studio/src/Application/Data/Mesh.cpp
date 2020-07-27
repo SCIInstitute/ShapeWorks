@@ -6,14 +6,19 @@
 #include <itkImageRegionIteratorWithIndex.h>
 #include <itkVTKImageExport.h>
 #include <itkOrientImageFilter.h>
+#include <itkNearestNeighborInterpolateImageFunction.h>
 
 #include <vtkSurfaceReconstructionFilter.h>
 #include <vtkMarchingCubes.h>
 #include <vtkTriangleFilter.h>
 #include <vtkPolyDataNormals.h>
+#include <vtkFloatArray.h>
+#include <vtkPointData.h>
 
 #include <Data/Mesh.h>
 #include <Data/ItkToVtk.h>
+
+using NearestNeighborInterpolatorType = itk::NearestNeighborInterpolateImageFunction<ImageType, double>;
 
 //---------------------------------------------------------------------------
 Mesh::Mesh()
@@ -106,7 +111,7 @@ void Mesh::create_from_image(ImageType::Pointer image, double iso_value)
 
     // store isosurface polydata
     this->poly_data_ = marching->GetOutput();
-  } catch (itk::ExceptionObject & excep) {
+  } catch (itk::ExceptionObject& excep) {
     std::cerr << "3Exception caught!" << std::endl;
     std::cerr << excep << std::endl;
   }
@@ -121,5 +126,45 @@ vnl_vector<double> Mesh::get_center_transform()
 //---------------------------------------------------------------------------
 void Mesh::apply_feature_map(std::string name, std::string filename)
 {
+  if (!this->poly_data_ || name == "") {
+    return;
+  }
+
+  std::cerr << "being asked to apply feature map for feature '" << name << "' using filename " << filename << "\n";
+
+
+  // read fibrosis_mask
+  ReaderType::Pointer reader = ReaderType::New();
+  reader->SetFileName(filename);
+  reader->Update();
+  ImageType::Pointer image = reader->GetOutput();
+  NearestNeighborInterpolatorType::Pointer interpolator = NearestNeighborInterpolatorType::New();
+  interpolator->SetInputImage(image);
+
+  float radius = 5.0; // mm - need to expose as parameter
+
+  auto points = this->poly_data_->GetPoints();
+
+  vtkFloatArray* scalars = vtkFloatArray::New();
+  scalars->SetNumberOfValues(points->GetNumberOfPoints());
+
+  scalars->SetName(name.c_str());
+
+  for (int i = 0; i < points->GetNumberOfPoints(); i++) {
+    double pt[3];
+    points->GetPoint(i, pt);
+
+    ImageType::PointType pitk;
+    pitk[0] = pt[0];
+    pitk[1] = pt[1];
+    pitk[2] = pt[2];
+    ImageType::IndexType idx;
+    image->TransformPhysicalPointToIndex(pitk, idx);
+
+    auto pixel = image->GetPixel(idx);
+    scalars->SetValue(i, pixel);
+  }
+
+  this->poly_data_->GetPointData()->AddArray(scalars);
 
 }
