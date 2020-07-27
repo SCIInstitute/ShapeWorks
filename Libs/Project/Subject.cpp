@@ -1,4 +1,5 @@
 #include <Libs/Project/Subject.h>
+
 using namespace shapeworks;
 
 //---------------------------------------------------------------------------
@@ -67,4 +68,16 @@ void Subject::set_number_of_domains(int number_of_domains)
 int Subject::get_number_of_domains()
 {
   return this->number_of_domains_;
+}
+
+//---------------------------------------------------------------------------
+const std::vector<std::string>& Subject::get_feature_filenames() const
+{
+  return feature_filenames_;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_feature_filenames(const std::vector<std::string>& feature_filenames)
+{
+  feature_filenames_ = feature_filenames;
 }

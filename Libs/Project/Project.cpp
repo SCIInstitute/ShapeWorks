@@ -31,10 +31,9 @@ Project::~Project()
 //---------------------------------------------------------------------------
 bool Project::load(std::string filename)
 {
-  try
-  {
+  try {
     this->wb_->load(filename);
-  } catch (xlnt::exception &e) {
+  } catch (xlnt::exception& e) {
 
     std::cerr << std::string("Error reading xlsx: ")
               << std::string(e.what()) << ", " << "\n";
@@ -66,7 +65,7 @@ bool Project::save(std::string filename)
 
     this->store_subjects();
     this->wb_->save(filename);
-  } catch (xlnt::exception &e) {
+  } catch (xlnt::exception& e) {
 
     std::cerr << std::string("Error writing xlsx: ")
               << std::string(e.what()) << ", " << "\n";
@@ -130,7 +129,7 @@ int Project::get_number_of_domains()
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::shared_ptr<Subject>> &Project::get_subjects()
+std::vector<std::shared_ptr<Subject>>& Project::get_subjects()
 {
   return this->subjects_;
 }
@@ -194,6 +193,7 @@ void Project::load_subjects()
 
   auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
   auto groomed_columns = this->get_matching_columns(GROOMED_PREFIX);
+  auto feature_columns = this->get_matching_columns(FEATURE_PREFIX);
 
   int local_particle_column = this->get_index_for_column(LOCAL_PARTICLES);
   int global_particle_column = this->get_index_for_column(WORLD_PARTICLES);
@@ -205,6 +205,7 @@ void Project::load_subjects()
 
     subject->set_segmentation_filenames(this->get_list(seg_columns, i));
     subject->set_groomed_filenames(this->get_list(groomed_columns, i));
+    subject->set_feature_filenames(this->get_list(feature_columns, i));
 
     if (local_particle_column > 0) {
       this->particles_present_ = true;
@@ -415,7 +416,7 @@ void Project::set_parameters(std::string name, Parameters params)
       ws.cell(xlnt::cell_reference(2, row)).value(kv.second);
       row++;
     }
-  } catch (xlnt::exception &e) {
+  } catch (xlnt::exception& e) {
 
     std::cerr << std::string("Error storing parameters: ")
               << std::string(e.what()) << ", " << "\n";

@@ -3,8 +3,7 @@
 #include <string>
 #include <vector>
 
-namespace shapeworks
-{
+namespace shapeworks {
 
 //! Representation of a single subject.
 /*!
@@ -45,6 +44,12 @@ public:
   //! Get the number of domains
   int get_number_of_domains();
 
+  //! Get the list of feature maps
+  const std::vector<std::string>& get_feature_filenames() const;
+
+  //! Set the list of feature maps
+  void set_feature_filenames(const std::vector<std::string>& feature_filenames);
+
 private:
 
   int number_of_domains_ = 0;
@@ -54,5 +59,7 @@ private:
   std::vector<std::string> groomed_filenames_;
   std::string local_particle_filename_;
   std::string global_particle_filename_;
+
+  std::vector<std::string> feature_filenames_;
 };
 }

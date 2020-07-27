@@ -9,13 +9,11 @@
 #include "Parameters.h"
 
 // forward declaration
-namespace xlnt
-{
+namespace xlnt {
 class workbook;
 }
 
-namespace shapeworks
-{
+namespace shapeworks {
 
 //! Representation of a project.
 /*!
@@ -48,7 +46,7 @@ public:
   int get_number_of_domains();
 
   //! Return the list of Subjects
-  std::vector<std::shared_ptr<Subject>> & get_subjects();
+  std::vector<std::shared_ptr<Subject>>& get_subjects();
 
   //! Return if segmentations are present
   bool get_segmentations_present();
@@ -80,6 +78,7 @@ private:
   static constexpr const char* SEGMENTATION_PREFIX = "segmentation_";
   static constexpr const char* GROOMED_PREFIX = "groomed_";
   static constexpr const char* MESH_PREFIX = "mesh_";
+  static constexpr const char* FEATURE_PREFIX = "feature_";
   static constexpr const char* LOCAL_PARTICLES = "local_particles";
   static constexpr const char* WORLD_PARTICLES = "world_particles";
 
