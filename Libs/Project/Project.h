@@ -57,6 +57,9 @@ public:
   //! Return if particle files are present
   bool get_particles_present();
 
+  //! Get feature columns
+  std::vector<std::string> get_feature_columns() const;
+
   //! Retrieve parameters based on key
   Parameters get_parameters(std::string name);
 
@@ -85,7 +88,7 @@ private:
   std::vector<std::string> get_list(std::vector<std::string> columns, int subject);
   void set_list(std::vector<std::string> columns, int subject, std::vector<std::string> values);
 
-  std::vector<std::string> get_matching_columns(std::string prefix);
+  std::vector<std::string> get_matching_columns(std::string prefix) const;
 
   std::string get_value(int column, int subject_id);
   void set_value(int column, int subject_id, std::string value);
