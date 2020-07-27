@@ -147,6 +147,10 @@ private:
 
   bool set_view_mode(std::string view_mode);
 
+  bool set_feature_map(std::string feature_map);
+
+  std::string get_feature_map();
+
   void update_recent_files();
 
   void save_project(std::string filename);

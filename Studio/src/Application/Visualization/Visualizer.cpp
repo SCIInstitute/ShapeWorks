@@ -319,3 +319,16 @@ void Visualizer::reset_camera()
   }
   this->update_viewer_properties();
 }
+
+//-----------------------------------------------------------------------------
+const string& Visualizer::get_feature_map() const
+{
+  return feature_map_;
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::set_feature_map(const string& feature_map)
+{
+  feature_map_ = feature_map;
+}
+

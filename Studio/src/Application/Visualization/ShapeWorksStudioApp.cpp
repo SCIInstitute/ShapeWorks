@@ -710,9 +710,13 @@ void ShapeWorksStudioApp::update_view_mode()
   auto view_mode = this->get_view_mode();
   this->ui_->view_mode_combobox->setCurrentText(QString::fromStdString(view_mode));
 
+  auto feature_map = this->get_feature_map();
+  this->ui_->features->setCurrentText(QString::fromStdString(feature_map));
+
   if (this->visualizer_) {
     //std::cerr << "Setting view mode to: " << view_mode << "\n";
     this->visualizer_->set_display_mode(view_mode);
+    this->visualizer_->set_feature_map(feature_map);
     this->update_display(true);
   }
 }
@@ -1441,4 +1445,23 @@ void ShapeWorksStudioApp::on_actionExport_Variance_Graph_triggered()
 void ShapeWorksStudioApp::update_feature_map_selection()
 {
   std::cerr << "update feature map selection\n";
+}
+
+//---------------------------------------------------------------------------
+bool ShapeWorksStudioApp::set_feature_map(std::string feature_map)
+{
+  if (feature_map != this->get_feature_map()) {
+    if (!this->is_loading_) {
+      this->session_->parameters().set("feature_map", feature_map);
+    }
+    this->update_view_mode();
+    return true;
+  }
+  return false;
+}
+
+//---------------------------------------------------------------------------
+std::string ShapeWorksStudioApp::get_feature_map()
+{
+  return this->session_->parameters().get("feature_map", "");
 }
