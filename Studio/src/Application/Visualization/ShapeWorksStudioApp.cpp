@@ -559,17 +559,11 @@ void ShapeWorksStudioApp::update_table()
   this->ui_->features->addItem("");
   auto feature_maps = project->get_feature_columns();
   for (const std::string& feature : feature_maps) {
-    std::cerr << "adding feature: " << feature << "\n";
     QString item = QString::fromStdString(feature);
-    item = item.remove(0,8);
-    //item = item.replace("feature_", "");
+    item = item.remove(0, 8);
     this->ui_->features->addItem(item);
   }
 
-  // get the minimum width that fits the largest item.
-  //int width = this->ui_->features->minimumSizeHint().width();
-  // set the ComboBox to that width.
-  //this->ui_->features->setMinimumWidth(width);
 }
 
 //---------------------------------------------------------------------------

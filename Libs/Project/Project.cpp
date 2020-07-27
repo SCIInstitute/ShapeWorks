@@ -141,12 +141,10 @@ std::vector<std::string> Project::get_matching_columns(std::string prefix) const
   auto headers = ws.rows(false)[0];
   std::vector<std::string> list;
 
-  std::cerr << "searching for prefix!\n";
   //std::cerr << "headers.length() = " << headers.length() << "\n";
 
   for (int i = 0; i < headers.length(); i++) {
     if (headers[i].to_string().substr(0, prefix.size()) == prefix) {
-      std::cerr << "found " << headers[i] << "\n";
       list.push_back(headers[i].to_string());
     }
   }
@@ -468,8 +466,6 @@ void Project::save_string_column(std::string name, std::vector<std::string> item
 //---------------------------------------------------------------------------
 std::vector<std::string> Project::get_feature_columns() const
 {
-  std::cerr << "get feature columns!\n";
-
   auto feature_columns = this->get_matching_columns(FEATURE_PREFIX);
   return feature_columns;
 }
