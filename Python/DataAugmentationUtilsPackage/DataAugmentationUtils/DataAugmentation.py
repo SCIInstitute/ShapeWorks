@@ -11,7 +11,7 @@ from DataAugmentationUtils import Sampler
 
 ################################# Augmentaiton Pipelines ###############################################
 
-def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_PCA=0, sampler_type="KDE"):
+def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_PCA=0, sampler_type="KDE", mixture_num=0):
 	# Get Embedder
 	point_matrix = create_data_matrix(orig_point_list)
 	PointEmbedder = Embedder.PCA_Embbeder(point_matrix, num_PCA)
@@ -20,14 +20,17 @@ def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_PC
 	# Get sampler
 	if sampler_type == "Gaussian":
 		PointSampler = Sampler.Gaussian_Sampler()
+		PointSampler.fit(embedded_matrix) 
 	elif sampler_type == "mixture":
 		PointSampler = Sampler.Mixture_Sampler()
+		PointSampler.fit(embedded_matrix, mixture_num) 
 	elif sampler_type == "KDE":
 		PointSampler = Sampler.KDE_Sampler()
+		PointSampler.fit(embedded_matrix) 
 	else:
 		print("Error sampler_type unrecognized.")
 		print("Gaussian, mixture, and KDE currently supported.")
-	PointSampler.fit(embedded_matrix) # fit distribution
+	
 	# Initialize output folders and lists
 	gen_point_dir = out_dir + "Generated-Particles/"
 	if not os.path.exists(gen_point_dir):
@@ -57,11 +60,7 @@ def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_PC
 		gen_image_paths.append(gen_image_path)
 	csv_file = out_dir + "TotalData.csv"
 	makeCSV(out_dir + "TotalData.csv", orig_img_list, orig_point_list, embedded_matrix, gen_image_paths, gen_points_paths, gen_embeddings)
-	return 
-
-# @TODO
-def point_and_image_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_PCA=0, sampler_type="KDE"):
-	pass
+	return
 
 ############################ Augmentaiton Pipeline Helper Methods ##################################
 

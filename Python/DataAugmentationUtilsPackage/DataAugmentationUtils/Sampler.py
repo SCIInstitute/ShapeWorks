@@ -5,6 +5,7 @@
 import os
 import numpy as np
 from abc import ABC, abstractmethod
+from sklearn.mixture import GaussianMixture
 
 
 ###################### Sampler Class ###################################
@@ -23,6 +24,7 @@ class Sampler(ABC):
 # instance of Sampler class that uses a single Gaussian
 class Gaussian_Sampler(Sampler):
 	def fit(self, embedded_matrix):
+		print("Fitting Gaussian distribution...")
 		self.embedded_matrix = embedded_matrix
 		self.mean = np.mean(embedded_matrix, axis=0)
 		self.cov = np.cov(embedded_matrix, rowvar=0)
@@ -31,17 +33,36 @@ class Gaussian_Sampler(Sampler):
 		closest_index = getClosest(sample, self.embedded_matrix)
 		return sample, closest_index
 
-# @TODO instance of Sampler class that uses a mixture of Gaussians
+# instance of Sampler class that uses a mixture of Gaussians
+# mixture_num is the number of clusters to use (if 0 it autoselects the best number using the elbow method)
 class Mixture_Sampler(Sampler):
-	def fit(self, embedded_matrix):
+	def fit(self, embedded_matrix, mixture_num):
+		print("Fitting Gaussian mixture model...")
 		self.embedded_matrix = embedded_matrix
-		pass
+		if mixture_num == 0:
+			mixture_num = self.selectClusterNum()
+		self.GMM = GaussianMixture(mixture_num, covariance_type='full', random_state=0)
+		self.GMM.fit(self.embedded_matrix)
+		print("Gaussian mixture model converged: " + str(self.GMM.converged_))
+	# get optimal cluster number by minimizing Akaike information criterion (AIC) and Bayesian information criterion (BIC)
+	def selectClusterNum(self):
+		n_components = np.arange(1, self.embedded_matrix.shape[1])
+		models = [GaussianMixture(n, covariance_type='full', random_state=0).fit(self.embedded_matrix) for n in n_components]
+		bic_min_index = np.argmin(np.array([m.bic(self.embedded_matrix) for m in models]))
+		aic_min_index = np.argmin(np.array([m.aic(self.embedded_matrix) for m in models]))
+		avg_index = int((bic_min_index + aic_min_index) / 2)
+		mixture_num = n_components[avg_index]
+		print("Using " + str(mixture_num) + " components.")
+		return mixture_num
 	def sample(self):
-		pass
+		sample = self.GMM.sample(1)[0]
+		closest_index = getClosest(sample, self.embedded_matrix)
+		return sample, closest_index
 
 # instance of Sampler class that uses kernel density estimate
 class KDE_Sampler(Sampler):
 	def fit(self, embedded_matrix):
+		print("Fittting KDE...")
 		self.embedded_matrix = embedded_matrix
 		# get sigma squared
 		nearest_neighbor_dists = []
