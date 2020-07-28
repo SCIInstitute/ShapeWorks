@@ -46,21 +46,30 @@ PYBIND11_MODULE(shapeworks, m)
   .def("__add__", [](const Coord& c1, const Coord& c2) { return c1 + c2; })
   .def("__sub__", [](const Coord& c1, const Coord& c2) { return c1 - c2; })
   .def("__mul__", [](const Coord& c1, const Coord& c2) { return c1 * c2; })
-  // .def("__truediv__", [](const Coord& c1, const Coord& c2) { return c1 / c2; }) // fix div for all
-  // .def("__iadd__", [](const Coord& c1, const Coord& c2) { return c1 += c2; })
+  .def("__iadd__", [](Coord& c1, const Coord& c2) { return c1 += c2; })
+  .def("__isub__", [](Coord& c1, const Coord& c2) { return c1 -= c2; })
+  .def("__mul__", [](const Coord& c, const double x) { return c * x; })
+  .def("__truediv__", [](const Coord& c, const double x) { return c / x; })
+  .def("__imul__", [](Coord& c, const double x) { return c *= x; })
+  .def("__itruediv__", [](Coord& c, const double x) { return c /= x; })
   ;
 
   // Shapeworks Globals
   py::class_<Dims>(m, "Dims")
   .def(py::init<>())
   .def(py::init<unsigned, unsigned, unsigned>())
-  .def("__repr__", [](const Dims& d) { return (std::stringstream()<<d).str(); })
-  .def("__getitem__", [](const Dims& d, size_t idx) { return d[idx]; })
-  .def("__setitem__", [](Dims& d, size_t idx, unsigned val) { d[idx] = val; })
-  .def("__add__", [](const Dims& d1, const Dims& d2) { return d1 + d2; })
-  .def("__sub__", [](const Dims& d1, const Dims& d2) { return d1 + d2; })
-  .def("__mul__", [](const Dims& d1, const Dims& d2) { return d1 * d2; })
-  // .def("__truediv__", [](const Dims& d1, const Dims& d2) { return d1 / d2; })
+  .def("__repr__", [](const Dims &d) { return (std::stringstream() << d).str(); })
+  .def("__getitem__", [](const Dims &d, size_t idx) { return d[idx]; })
+  .def("__setitem__", [](Dims &d, size_t idx, unsigned val) { d[idx] = val; })
+  .def("__add__", [](const Dims &d1, const Dims &d2) { return d1 + d2; })
+  .def("__sub__", [](const Dims &d1, const Dims &d2) { return d1 + d2; })
+  .def("__mul__", [](const Dims &d1, const Dims &d2) { return d1 * d2; })
+  .def("__iadd__", [](Dims &d1, const Dims &d2) { return d1 += d2; })
+  .def("__isub__", [](Dims &d1, const Dims &d2) { return d1 -= d2; })
+  .def("__mul__", [](const Dims& d, const double x) { return d * x; })
+  .def("__truediv__", [](const Dims& d, const double x) { return d / x; })
+  .def("__imul__", [](Dims &d, const double x) { return d *= x; })
+  .def("__itruediv__", [](Dims &d, const double x) { return d /= x; })
   ;
 
   // Shapeworks Globals
@@ -78,7 +87,12 @@ PYBIND11_MODULE(shapeworks, m)
   .def("__add__", [](const Point& p1, const Point& p2) { return p1 + p2; })
   .def("__sub__", [](const Point& p1, const Point& p2) { return p1 - p2; })
   .def("__mul__", [](const Point& p1, const Point& p2) { return p1 * p2; })
-  // .def("__truediv__", [](const Point& p1, const Point& p2) { return p1 / p2; })
+  .def("__iadd__", [](Point& p1, const Point& p2) { return p1 += p2; })
+  .def("__isub__", [](Point& p1, const Point& p2) { return p1 -= p2; })
+  .def("__mul__", [](const Point& p, const double x) { return p * x; })
+  .def("__truediv__", [](const Point& p, const double x) { return p / x; })
+  .def("__imul__", [](Point& p, const double x) { return p *= x; })
+  .def("__itruediv__", [](Point& p, const double x) { return p /= x; })
   ;
 
   py::class_<Vector>(m, "Vector")
@@ -90,7 +104,9 @@ PYBIND11_MODULE(shapeworks, m)
   .def("__add__", [](const Vector& v1, const Vector& v2) { return v1 + v2; })
   .def("__sub__", [](const Vector& v1, const Vector& v2) { return v1 - v2; })
   .def("__mul__", [](const Vector& v1, const Vector& v2) { return v1 * v2; })
-  // .def("__truediv__", [](const Vector& v1, const Vector& v2) { return v1 / v2; })
+  .def("__iadd__", [](Vector& v1, const Vector& v2) { return v1 += v2; })
+  .def("__isub__", [](Vector& v1, const Vector& v2) { return v1 -= v2; })
+  .def("__mul__", [](const Vector& v, const double x) { return v * x; })
   ;
 
   // Shapeworks Globals
@@ -115,7 +131,12 @@ PYBIND11_MODULE(shapeworks, m)
   .def("__add__", [](const IPoint3& p1, const IPoint3& p2) { return p1 + p2; })
   .def("__sub__", [](const IPoint3& p1, const IPoint3& p2) { return p1 - p2; })
   .def("__mul__", [](const IPoint3& p1, const IPoint3& p2) { return p1 * p2; })
-  // .def("__truediv__", [](const IPoint3& p1, const IPoint3& p2) { return p1 / p2; })
+  .def("__iadd__", [](IPoint3& p1, const IPoint3& p2) { return p1 += p2; })
+  .def("__isub__", [](IPoint3& p1, const IPoint3& p2) { return p1 -= p2; })
+  .def("__mul__", [](const IPoint3& p, const double x) { return p * x; })
+  .def("__truediv__", [](const IPoint3& p, const double x) { return p / x; })
+  .def("__imul__", [](IPoint3& p, const double x) { return p *= x; })
+  .def("__itruediv__", [](IPoint3& p, const double x) { return p /= x; })
   ;
 
   // Shapeworks Globals
@@ -128,7 +149,12 @@ PYBIND11_MODULE(shapeworks, m)
   .def("__add__", [](const FPoint3& p1, const FPoint3& p2) { return p1 + p2; })
   .def("__sub__", [](const FPoint3& p1, const FPoint3& p2) { return p1 - p2; })
   .def("__mul__", [](const FPoint3& p1, const FPoint3& p2) { return p1 * p2; })
-  // .def("__truediv__", [](const FPoint3& p1, const FPoint3& p2) { return p1 / p2; })
+  .def("__iadd__", [](FPoint3& p1, const FPoint3& p2) { return p1 += p2; })
+  .def("__isub__", [](FPoint3& p1, const FPoint3& p2) { return p1 -= p2; })
+  .def("__mul__", [](const FPoint3& p, const double x) { return p * x; })
+  .def("__truediv__", [](const FPoint3& p, const double x) { return p / x; })
+  .def("__imul__", [](FPoint3& p, const double x) { return p *= x; })
+  .def("__itruediv__", [](FPoint3& p, const double x) { return p /= x; })
   ;
 
   // Shapeworks Globals 
