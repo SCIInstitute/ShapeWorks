@@ -1,0 +1,28 @@
+site_name: ShapeWorks
+site_url: http://www.sci.utah.edu/software/shapeworks.html
+repo_url: https://github.com/SCIInstitute/ShapeWorks
+edit_uri: edit/mkdocs/MkDocs/docs/ # should be changed to master branch
+site_description: The official documentation of ShapeWorks 
+site_author: Shireen Elhabian et al.
+copyright: Copyright © 1998 - 2020 Scientific Computing and Imaging Institute. All rights reserved.
+google_analytics: ['UA-36723568-3', 'mkdocs.org']
+
+nav:
+- Home: 'index.md'
+- Statistial Shape Modeling:
+   - ''
+- About:
+   - 'Amazing Team':  'about/team.md'
+   - 'Release Notes': 'about/release-notes.md'
+   - 'License':       'about/license.md'
+   - 'Contact Us':    'about/contact.md'
+ 
+theme:
+   name: readthedocs #rtd-dropdown #readthedocs #yeti  #united  #spacelab  #sandstone  #minty #lumen #flatly
+   include_sidebar: true
+   highlightjs: true
+   hljs_languages:
+      - yaml
+      - python
+
+
