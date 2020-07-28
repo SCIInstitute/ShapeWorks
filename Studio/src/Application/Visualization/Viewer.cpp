@@ -544,13 +544,14 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
     actor->GetProperty()->SetSpecularPower(15);
 
     if (feature_map != "") {
+
       poly_data->GetPointData()->SetActiveScalars(feature_map.c_str());
 
       mapper->ScalarVisibilityOn();
 
 
       mapper->SetScalarModeToUsePointData();
-
+/*
       auto rainbow = vtkColorTransferFunction::New();
       rainbow->SetColorSpaceToHSV();
       rainbow->HSVWrapOff();
@@ -558,6 +559,10 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
       rainbow->AddHSVPoint(1.0, 0.66667, 1.0, 1.0);
 
       mapper->SetLookupTable(rainbow);
+      //mapper->SetScalarRange(-500,500);
+*/
+
+      mapper->SetScalarRange(24,80);
 
     }
     else {

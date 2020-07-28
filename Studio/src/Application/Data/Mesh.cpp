@@ -7,6 +7,7 @@
 #include <itkVTKImageExport.h>
 #include <itkOrientImageFilter.h>
 #include <itkNearestNeighborInterpolateImageFunction.h>
+#include <itkLinearInterpolateImageFunction.h>
 
 #include <vtkSurfaceReconstructionFilter.h>
 #include <vtkMarchingCubes.h>
@@ -14,11 +15,13 @@
 #include <vtkPolyDataNormals.h>
 #include <vtkFloatArray.h>
 #include <vtkPointData.h>
+#include <vtkPolyDataWriter.h>
 
 #include <Data/Mesh.h>
 #include <Data/ItkToVtk.h>
 
 using NearestNeighborInterpolatorType = itk::NearestNeighborInterpolateImageFunction<ImageType, double>;
+using LinearInterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
 
 //---------------------------------------------------------------------------
 Mesh::Mesh()
@@ -138,8 +141,9 @@ void Mesh::apply_feature_map(std::string name, std::string filename)
   reader->SetFileName(filename);
   reader->Update();
   ImageType::Pointer image = reader->GetOutput();
-  NearestNeighborInterpolatorType::Pointer interpolator = NearestNeighborInterpolatorType::New();
+  LinearInterpolatorType::Pointer interpolator = LinearInterpolatorType::New();
   interpolator->SetInputImage(image);
+
 
   float radius = 5.0; // mm - need to expose as parameter
 
@@ -159,12 +163,30 @@ void Mesh::apply_feature_map(std::string name, std::string filename)
     pitk[1] = pt[1];
     pitk[2] = pt[2];
     ImageType::IndexType idx;
-    image->TransformPhysicalPointToIndex(pitk, idx);
 
-    auto pixel = image->GetPixel(idx);
+
+
+    LinearInterpolatorType::ContinuousIndexType index;
+    image->TransformPhysicalPointToContinuousIndex(pitk, index);
+
+    auto pixel = interpolator->EvaluateAtContinuousIndex(index);
+
+    //image->TransformPhysicalPointToIndex(pitk, idx);
+
+    //auto pixel = image->GetPixel(idx);
+    std::cerr << pixel << " ";
     scalars->SetValue(i, pixel);
   }
 
   this->poly_data_->GetPointData()->AddArray(scalars);
+
+  this->poly_data_->GetPointData()->SetScalars(scalars);
+
+  //auto writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+
+  //writer->SetInputData(this->poly_data_);
+  //writer->SetFileName("/tmp/foo.vtk");
+  //writer->Update();
+
 
 }
