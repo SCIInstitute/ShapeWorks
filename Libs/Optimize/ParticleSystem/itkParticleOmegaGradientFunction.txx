@@ -200,6 +200,7 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
 
     // Shadow particle sphere constraints
     numSpheres = domain->GetNumberOfSpheres();
+    //std::cout << "Num spheres " << numSpheres << std::endl;
     for (unsigned int sidx = 0; sidx < numSpheres; sidx++)
     {
         itk::Point<double, VDimension> spherept;

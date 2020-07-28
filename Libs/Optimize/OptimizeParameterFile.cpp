@@ -962,6 +962,7 @@ bool OptimizeParameterFile::read_cutting_spheres(TiXmlHandle* doc_handle, Optimi
 
               rad = radList[r_ctr++];
 
+              std::cout << "Adding sphere" << std::endl;
               optimize->GetSampler()->AddSphere(shapeCount, center, rad);
             }
           }

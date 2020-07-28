@@ -29,7 +29,7 @@ public:
 
   // Set constraints
   void addPlane(const vnl_vector<double> &a, const vnl_vector<double> &b,const vnl_vector<double> &c);
-  void setSpheres(std::string filename);
+  void addSphere(const vnl_vector_fixed<double, DIMENSION> &v, double r);
   void setFreeFormConstraint(std::string filename);
 
   // Transforms

@@ -251,6 +251,7 @@ public:
         if (m_Initialized == true)
         {
             m_ParticleSystem->GetDomain(i)->AddSphere(c, r);
+            m_ParticleSystem->GetDomain(i)->GetConstraints()->addSphere(c, r);
         }
     }
 

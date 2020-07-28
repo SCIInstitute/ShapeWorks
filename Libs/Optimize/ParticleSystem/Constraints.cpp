@@ -21,6 +21,13 @@ void Constraints::addPlane(const vnl_vector<double> &a, const vnl_vector<double>
     }
   }
 
+void Constraints::addSphere(const vnl_vector_fixed<double, DIMENSION> &v, double r){
+    Eigen::Vector3d c; c(0) = v[0]; c(1) = v[1]; c(2) = v[2];
+    SphereConstraint sphere_c;
+    sphere_c.SetCenter(c);
+    sphere_c.SetRadius(r);
+}
+
 bool Constraints::transformConstraints(const vnl_matrix_fixed<double, 4, 4> &Trans){
     return transformPlanes(Trans) & true;
 }

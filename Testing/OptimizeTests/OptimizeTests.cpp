@@ -246,13 +246,4 @@ TEST(OptimizeTests, sphere_constraint_test) {
   // and higher modes should contain very little
   ASSERT_GT(values[values.size() - 1], 2500);
   ASSERT_LT(values[values.size() - 2], 150);
-
-  /*
-  // next check that the cutting plane works.  While the spheres are centered on 0,0,0, the cutting plane
-  // should not allow points to go below Z=0
-  auto points = stats.Mean();
-  for (int i = 2; i < points.size(); i += 3) { // check z coordinates only
-    ASSERT_GE(points[i], 0.0);
-  }
-  */
 }
