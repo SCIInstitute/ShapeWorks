@@ -53,4 +53,4 @@ Examples/Python/shapeworksPortalLogin.txt
 __pycache__/
 
 # mkdocs generated site
-MkDocs/site
+MkDocs/site/
