@@ -33,14 +33,14 @@ sphere40_DT.nrrd
 
 <sphere_radii>
   5
-  5
-  5
-  5
+  10
+  15
+  20
 </sphere_radii>
 
 <sphere_centers>
-  0 0 10
-  0 0 10
-  0 0 10
-  0 0 10
+  0 10 0
+  0 20 0
+  0 30 0
+  0 40 0
 </sphere_centers>
