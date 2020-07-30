@@ -103,8 +103,14 @@ def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False):
         img = Image(inname)
         T = img.centerOfMass() - img.center()
 
-        # binarize result since linear interpolation makes image blurry again
-        img.translate(T[0], T[1], T[2]).binarize().write(outname)
+        # binarize result since linear interpolation makes image blurry again (TODO: add option to use nearest neighbor interpolation, see github issue)
+        cmd = ["shapeworks", 
+               "readimage", "--name", outname, 
+               "binarize",
+               "write-image", "--name", outname]
+        if printCmd:
+            print("CMD: " + " ".join(cmd))
+        subprocess.check_call(cmd)
 
         if processRaw:
             innameImg = inDataListImg[i]

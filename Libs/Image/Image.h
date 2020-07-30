@@ -132,8 +132,11 @@ public:
   /// helper identical to setOrigin(image.center()) changing origin (in the image header) to physcial center of the image
   Image& recenter();
 
-  /// Resamples image with new physical spacing and logical size [same size if unspecified]
-  Image& resample(const Point3& physicalSpacing, Dims logicalDims);
+  /// Resamples image to new size based on desired physical spacing
+  Image& resample(const Point3& physicalSpacing);
+
+  /// Resizes image with new physical spacing based on desired logical size
+  Image& resize(Dims logicalDims);
 
   /// pads an image in all directions with constant value
   Image& pad(int padding, PixelType value = 0.0);

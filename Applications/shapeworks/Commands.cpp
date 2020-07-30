@@ -152,15 +152,15 @@ bool ImageInfo::execute(const optparse::Values &options, SharedCommandData &shar
     std::cout << "size (spacing * dims): " << sharedData.image.size() << std::endl;
   if (origin)
     std::cout << "physical origin:       " << sharedData.image.origin() << std::endl;
-  if (direction)
-    std::cout << "direction (coordsys):  " << std::endl
-              << sharedData.image.coordsys() << std::endl;
   if (center)
     std::cout << "center:                " << sharedData.image.center() << std::endl;
   if (centerofmass)
     std::cout << "center of mass (0,1]:  " << sharedData.image.centerOfMass() << std::endl;
   if (boundingbox)
     std::cout << "bounding box:          " << sharedData.image.boundingBox() << std::endl;
+  if (direction)
+    std::cout << "direction (coordsys):  " << std::endl
+              << sharedData.image.coordsys();
   
   return true;
 }
@@ -211,16 +211,13 @@ bool Antialias::execute(const optparse::Values &options, SharedCommandData &shar
 void ResampleImage::buildParser()
 {
   const std::string prog = "resample";
-  const std::string desc = "resamples an image";
+  const std::string desc = "resamples an image using new physical spacing (computes new dims)";
   parser.prog(prog).description(desc);
 
   parser.add_option("--isospacing").action("store").type("double").set_default(0.0f).help("Use this spacing in all dimensions.");
   parser.add_option("--spacex").action("store").type("double").set_default(1.0f).help("Pixel spacing in x-direction [default: 1.0].");
   parser.add_option("--spacey").action("store").type("double").set_default(1.0f).help("Pixel spacing in y-direction [default: 1.0].");
   parser.add_option("--spacez").action("store").type("double").set_default(1.0f).help("Pixel spacing in z-direction [default: 1.0].");
-  parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Output size in x-direction [default: calculated using current size and desired spacing].");
-  parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Output size in y-direction [default: calculated using current size and desired spacing].");
-  parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Output size in z-direction [default: calculated using current size and desired spacing].");
 
   Command::buildParser();
 }
@@ -237,14 +234,45 @@ bool ResampleImage::execute(const optparse::Values &options, SharedCommandData &
   double spaceX = static_cast<double>(options.get("spacex"));
   double spaceY = static_cast<double>(options.get("spacey"));
   double spaceZ = static_cast<double>(options.get("spacez"));
+
+  if (isoSpacing > 0.0)
+    ImageUtils::isoresample(sharedData.image, isoSpacing);
+  else
+    sharedData.image.resample(Point3({spaceX, spaceY, spaceZ}));
+
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ResizeImage
+///////////////////////////////////////////////////////////////////////////////
+void ResizeImage::buildParser()
+{
+  const std::string prog = "resize";
+  const std::string desc = "resizes an image (computes new physical spacing)";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Output size in x-direction [default: current size].");
+  parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Output size in y-direction [default: current size].");
+  parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Output size in z-direction [default: current size].");
+
+  Command::buildParser();
+}
+
+bool ResizeImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validImage())
+  {
+    std::cerr << "No image to operate on\n";
+    return false;
+  }
+
   unsigned sizeX = static_cast<unsigned>(options.get("sizex"));
   unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
   unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
 
-  if (isoSpacing > 0.0)
-    ImageUtils::isoresample(sharedData.image, isoSpacing, Dims({sizeX, sizeY, sizeZ}));
-  else
-    sharedData.image.resample(Point3({spaceX, spaceY, spaceZ}), Dims({sizeX, sizeY, sizeZ}));
+  sharedData.image.resize(Dims({sizeX, sizeY, sizeZ}));
+
   return true;
 }
 
@@ -809,7 +837,7 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
 void BoundingBox::buildParser()
 {
   const std::string prog = "bounding-box";
-  const std::string desc = "compute largest bounding box surrounding the specified isovalue of the specified set of binary images";
+  const std::string desc = "compute largest bounding box surrounding the specified isovalue of the specified set of images";
   parser.prog(prog).description(desc);
 
   parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to images (must be followed by `--`), ex: \"bounding-box --names *.nrrd -- --isovalue 1.5\")");
@@ -827,6 +855,7 @@ bool BoundingBox::execute(const optparse::Values &options, SharedCommandData &sh
 
   sharedData.region = ImageUtils::boundingBox(filenames, isovalue);
   sharedData.region.pad(padding);
+  std::cout << "Bounding box:\n" << sharedData.region;
   return true;
 }
 
@@ -867,13 +896,13 @@ bool CropImage::execute(const optparse::Values &options, SharedCommandData &shar
 
   if (xmin == 0 && ymin == 0 && zmin == 0 &&
       xmax == 0 && ymax == 0 && zmax == 0)
-    sharedData.image.crop(sharedData.region);
+    sharedData.image.crop(sharedData.region); // use the previous region (maybe set by boundingbox cmd)
   else
   {
     Image::Region region(sharedData.image.dims());
     if (xmin < xmax) { region.min[0] = xmin; region.max[0] = xmax; }
-    if (ymin < ymax) { region.min[0] = ymin; region.max[0] = ymax; }
-    if (zmin < zmax) { region.min[0] = zmin; region.max[0] = zmax; }
+    if (ymin < ymax) { region.min[1] = ymin; region.max[1] = ymax; }
+    if (zmin < zmax) { region.min[2] = zmin; region.max[2] = zmax; }
     sharedData.image.crop(region);
   }
   return true;
