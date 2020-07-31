@@ -18,18 +18,17 @@ MaximumEntropySurfaceSampler::MaximumEntropySurfaceSampler()
   // Allocate the particle system members.
   m_ParticleSystem = itk::ParticleSystem<Dimension>::New();
 
-  m_GradientFunction
-    = itk::ParticleEntropyGradientFunction<typename ImageType::PixelType, Dimension>::New();
+  m_GradientFunction = itk::ParticleEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
   m_CurvatureGradientFunction
-    = itk::ParticleCurvatureEntropyGradientFunction<typename ImageType::PixelType, Dimension>::New();
+    = itk::ParticleCurvatureEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
 
   m_ModifiedCotangentGradientFunction
-    = itk::ParticleModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>::New();
+    = itk::ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
   m_ConstrainedModifiedCotangentGradientFunction
-    = itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>::New();
+    = itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
 
   m_OmegaGradientFunction
-    = itk::ParticleOmegaGradientFunction<typename ImageType::PixelType, Dimension>::New();
+    = itk::ParticleOmegaGradientFunction<ImageType::PixelType, Dimension>::New();
 
   // Allocate some optimization code.
   m_Optimizer = OptimizerType::New();
@@ -37,6 +36,33 @@ MaximumEntropySurfaceSampler::MaximumEntropySurfaceSampler()
   m_Initialized = false;
   m_PointsFiles.push_back("");
   m_MeshFiles.push_back("");
+
+  m_LinkingFunction = itk::ParticleDualVectorFunction<Dimension>::New();
+  m_EnsembleEntropyFunction = itk::ParticleEnsembleEntropyFunction<Dimension>::New();
+  m_EnsembleRegressionEntropyFunction = itk::ParticleEnsembleEntropyFunction<Dimension>::New();
+  m_EnsembleMixedEffectsEntropyFunction = itk::ParticleEnsembleEntropyFunction<Dimension>::New();
+  m_MeshBasedGeneralEntropyGradientFunction = itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::New();
+
+  m_ShapeMatrix = itk::ParticleShapeMatrixAttribute<double, Dimension>::New();
+  m_GeneralShapeMatrix = itk::ParticleGeneralShapeMatrix<double, Dimension>::New();
+  m_GeneralShapeGradMatrix = itk::ParticleGeneralShapeGradientMatrix<double, Dimension>::New();
+
+  m_LinearRegressionShapeMatrix = itk::ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::New();
+  m_MixedEffectsShapeMatrix = itk::ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::New();
+
+  m_EnsembleEntropyFunction->SetShapeMatrix(m_ShapeMatrix);
+
+  m_EnsembleRegressionEntropyFunction->SetShapeMatrix(m_LinearRegressionShapeMatrix);
+  m_EnsembleMixedEffectsEntropyFunction->SetShapeMatrix(m_MixedEffectsShapeMatrix);
+
+  m_MeshBasedGeneralEntropyGradientFunction->SetShapeData(m_GeneralShapeMatrix);
+  m_MeshBasedGeneralEntropyGradientFunction->SetShapeGradient(m_GeneralShapeGradMatrix);
+
+  m_ParticleSystem->RegisterAttribute(m_ShapeMatrix);
+  m_ParticleSystem->RegisterAttribute(m_LinearRegressionShapeMatrix);
+  m_ParticleSystem->RegisterAttribute(m_MixedEffectsShapeMatrix);
+
+  m_CorrespondenceMode = shapeworks::CorrespondenceMode::EnsembleEntropy;
 }
 
 void MaximumEntropySurfaceSampler::AllocateDataCaches()
@@ -55,7 +81,7 @@ void MaximumEntropySurfaceSampler::AllocateDataCaches()
   m_Sigma2Cache = itk::ParticleContainerArrayAttribute<double, Dimension>::New();
   m_ParticleSystem->RegisterAttribute(m_Sigma2Cache);
 
-  m_MeanCurvatureCache = itk::ParticleMeanCurvatureAttribute<typename ImageType::PixelType, Dimension>::New();
+  m_MeanCurvatureCache = itk::ParticleMeanCurvatureAttribute<ImageType::PixelType, Dimension>::New();
   m_MeanCurvatureCache->SetVerbosity(m_verbosity);
   m_CurvatureGradientFunction->SetMeanCurvatureCache(m_MeanCurvatureCache);
   m_OmegaGradientFunction->SetMeanCurvatureCache(m_MeanCurvatureCache);
@@ -82,7 +108,7 @@ void MaximumEntropySurfaceSampler::AllocateDomainsAndNeighborhoods()
     }
 
     if (domain->GetDomainType() == shapeworks::DomainType::Image) {
-      auto imageDomain = static_cast<itk::ParticleImplicitSurfaceDomain<typename ImageType::PixelType>*>(domain.GetPointer());
+      auto imageDomain = static_cast<itk::ParticleImplicitSurfaceDomain<ImageType::PixelType>*>(domain.GetPointer());
 
       if (m_AttributesPerDomain.size() > 0 && m_AttributesPerDomain[i % m_DomainsPerShape] > 0) {
         TriMesh* themesh = TriMesh::read(m_MeshFiles[i].c_str());
@@ -182,6 +208,13 @@ void MaximumEntropySurfaceSampler::InitializeOptimizationFunctions()
   m_OmegaGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
   m_OmegaGradientFunction->SetParticleSystem(this->GetParticleSystem());
   m_OmegaGradientFunction->SetDomainNumber(0);
+
+  m_LinearRegressionShapeMatrix->Initialize();
+  m_MixedEffectsShapeMatrix->Initialize();
+  m_ShapeMatrix->Initialize();
+
+  m_GeneralShapeMatrix->Initialize();
+  m_GeneralShapeGradMatrix->Initialize();
 }
 
 void MaximumEntropySurfaceSampler::GenerateData()
@@ -190,21 +223,30 @@ void MaximumEntropySurfaceSampler::GenerateData()
 
 void MaximumEntropySurfaceSampler::Execute()
 {
-  if (m_Initialized == false) {
+
+  if (this->GetInitialized() == false) {
     this->AllocateDataCaches();
     this->SetAdaptivityMode(m_AdaptivityMode);
+    this->SetCorrespondenceMode(m_CorrespondenceMode);
+    this->GetOptimizer()->SetGradientFunction(m_LinkingFunction);
+    m_LinkingFunction->SetAOn();
+    m_LinkingFunction->SetBOn();
+
     this->AllocateDomainsAndNeighborhoods();
 
     // Point the optimizer to the particle system.
-    m_Optimizer->SetParticleSystem(m_ParticleSystem);
+    this->GetOptimizer()->SetParticleSystem(this->GetParticleSystem());
     this->ReadTransforms();
     this->ReadPointsFiles();
     this->InitializeOptimizationFunctions();
-    m_Initialized = true;
+
+    this->SetInitialized(true);
   }
 
-  if (m_Initializing == true) return;
-  m_Optimizer->StartOptimization();
+  if (this->GetInitializing() == true) return;
+
+  //this->GetOptimizer()->SetShapeMatrix(this->m_ShapeMatrix);
+  this->GetOptimizer()->StartOptimization();
 }
 
 void MaximumEntropySurfaceSampler::ReadTransforms()
@@ -231,6 +273,15 @@ void MaximumEntropySurfaceSampler::ReadTransforms()
 
 void MaximumEntropySurfaceSampler::ReInitialize()
 {
+  this->SetAdaptivityMode(m_AdaptivityMode);
+  this->SetCorrespondenceMode(m_CorrespondenceMode);
+  this->GetOptimizer()->SetGradientFunction(m_LinkingFunction);
+  this->m_LinkingFunction->SetAOn();
+  this->m_LinkingFunction->SetBOn();
+  this->InitializeOptimizationFunctions();
+  this->m_Sigma1Cache->ZeroAllValues();
+  this->m_Sigma2Cache->ZeroAllValues();
+  this->m_MeanCurvatureCache->ZeroAllValues();
 }
 
 void MaximumEntropySurfaceSampler::AddMesh(shapeworks::MeshWrapper* mesh)
@@ -295,7 +346,7 @@ void MaximumEntropySurfaceSampler::AddSphere(unsigned int i, vnl_vector_fixed<do
 
 void MaximumEntropySurfaceSampler::AddImage(const TImage::Pointer image, double narrow_band)
 {
-  const auto domain = itk::ParticleImplicitSurfaceDomain<typename ImageType::PixelType>::New();
+  const auto domain = itk::ParticleImplicitSurfaceDomain<ImageType::PixelType>::New();
   m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
 
   if (image) {
