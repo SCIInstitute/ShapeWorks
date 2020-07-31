@@ -28,11 +28,13 @@ namespace itk
  *
  *
  */
-template <class TImage>
 class ITK_EXPORT MaximumEntropySurfaceSampler
         : public DataObject
 {
 public:
+
+    using TImage = Image<float, 3>;
+
     /** Standard class typedefs. */
     typedef MaximumEntropySurfaceSampler  Self;
     typedef SmartPointer<Self>   Pointer;

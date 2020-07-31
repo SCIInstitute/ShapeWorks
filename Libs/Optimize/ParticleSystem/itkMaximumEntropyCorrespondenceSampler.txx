@@ -18,8 +18,7 @@
 namespace itk
 {
 
-template <class TImage>
-MaximumEntropyCorrespondenceSampler<TImage>::MaximumEntropyCorrespondenceSampler()
+MaximumEntropyCorrespondenceSampler::MaximumEntropyCorrespondenceSampler()
 {
   m_LinkingFunction = ParticleDualVectorFunction<Dimension>::New();
   m_EnsembleEntropyFunction = ParticleEnsembleEntropyFunction<Dimension>::New();
@@ -49,18 +48,14 @@ MaximumEntropyCorrespondenceSampler<TImage>::MaximumEntropyCorrespondenceSampler
   m_CorrespondenceMode = shapeworks::CorrespondenceMode::EnsembleEntropy;
 }
 
-template<class TImage>
-void
-MaximumEntropyCorrespondenceSampler<TImage>::AllocateDataCaches()
+void MaximumEntropyCorrespondenceSampler::AllocateDataCaches()
 {
   Superclass::AllocateDataCaches();
   //   m_CurvatureEnsembleMeanFunction->SetMeanCurvatureCache(Superclass::m_MeanCurvatureCache);
 }
 
 
-template <class TImage>
-void
-MaximumEntropyCorrespondenceSampler<TImage>::ReInitialize() {
+void MaximumEntropyCorrespondenceSampler::ReInitialize() {
   this->SetAdaptivityMode(Superclass::m_AdaptivityMode);
   this->SetCorrespondenceMode(m_CorrespondenceMode);
   this->GetOptimizer()->SetGradientFunction(m_LinkingFunction);
@@ -73,9 +68,7 @@ MaximumEntropyCorrespondenceSampler<TImage>::ReInitialize() {
 }
 
 
-template <class TImage>
-void
-MaximumEntropyCorrespondenceSampler<TImage>::Execute()
+void MaximumEntropyCorrespondenceSampler::Execute()
 {    
   if (this->GetInitialized() == false)
     {
@@ -102,9 +95,8 @@ MaximumEntropyCorrespondenceSampler<TImage>::Execute()
   //this->GetOptimizer()->SetShapeMatrix(this->m_ShapeMatrix);
   this->GetOptimizer()->StartOptimization();
 }
-template <class TImage>
-void
-MaximumEntropyCorrespondenceSampler<TImage>::InitializeOptimizationFunctions()
+
+void MaximumEntropyCorrespondenceSampler::InitializeOptimizationFunctions()
 {
   Superclass::InitializeOptimizationFunctions();
   m_LinearRegressionShapeMatrix->Initialize();

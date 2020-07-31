@@ -16,14 +16,13 @@ namespace itk
  * 
  *
  */
-template <class TImage>
 class ITK_EXPORT MaximumEntropyCorrespondenceSampler
-  : public MaximumEntropySurfaceSampler<TImage> 
+  : public MaximumEntropySurfaceSampler
 {
 public:
   /** Standard class typedefs. */
   typedef MaximumEntropyCorrespondenceSampler  Self;
-  typedef MaximumEntropySurfaceSampler<TImage>  Superclass;
+  typedef MaximumEntropySurfaceSampler  Superclass;
   typedef SmartPointer<Self>   Pointer;
   typedef SmartPointer<const Self>  ConstPointer;
 

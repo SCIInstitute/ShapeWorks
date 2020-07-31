@@ -38,7 +38,7 @@ class Optimize
 {
 public:
   using ImageType = itk::Image<float, 3>;
-  using SamplerType = itk::MaximumEntropyCorrespondenceSampler<itk::Image<float, 3>>;
+  using SamplerType = itk::MaximumEntropyCorrespondenceSampler;
   using VectorType = itk::ParticleVectorFunction<3>::VectorType;
 
   //! Constructor
@@ -293,7 +293,7 @@ protected:
 
   virtual void UpdateExportablePoints();
 
-  itk::MaximumEntropyCorrespondenceSampler<ImageType>::Pointer m_sampler;
+  itk::MaximumEntropyCorrespondenceSampler::Pointer m_sampler;
   itk::ParticleProcrustesRegistration<3>::Pointer m_procrustes;
   itk::ParticleGoodBadAssessment<float, 3>::Pointer m_good_bad;
 

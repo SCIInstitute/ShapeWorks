@@ -24,8 +24,7 @@
 namespace itk
 {
 
-template <class TImage>
-MaximumEntropySurfaceSampler<TImage>::MaximumEntropySurfaceSampler()
+MaximumEntropySurfaceSampler::MaximumEntropySurfaceSampler()
 {
     m_AdaptivityMode = 0;
     m_Initializing = false;
@@ -57,9 +56,7 @@ MaximumEntropySurfaceSampler<TImage>::MaximumEntropySurfaceSampler()
     m_MeshFiles.push_back("");
 }
 
-template <class TImage>
-void
-MaximumEntropySurfaceSampler<TImage>::AllocateDataCaches()
+void MaximumEntropySurfaceSampler::AllocateDataCaches()
 {
     // Set up the various data caches that the optimization functions will use.
     m_Sigma1Cache = ParticleContainerArrayAttribute<double, Dimension>::New();
@@ -82,9 +79,7 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDataCaches()
     m_ParticleSystem->RegisterAttribute(m_MeanCurvatureCache);
 }
 
-template <class TImage>
-void
-MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
+void MaximumEntropySurfaceSampler::AllocateDomainsAndNeighborhoods()
 {
     // Allocate all the necessary domains and neighborhoods. This must be done
     // *after* registering the attributes to the particle system since some of
@@ -153,9 +148,7 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
     }
 }
 
-template <class TImage>
-void
-MaximumEntropySurfaceSampler<TImage>::ReadPointsFiles()
+void MaximumEntropySurfaceSampler::ReadPointsFiles()
 {
     // If points file names have been specified, then read the initial points.
     for (unsigned int i = 0; i < m_PointsFiles.size(); i++)
@@ -175,9 +168,7 @@ MaximumEntropySurfaceSampler<TImage>::ReadPointsFiles()
     this->GetParticleSystem()->SynchronizePositions();
 }
 
-template <class TImage>
-void
-MaximumEntropySurfaceSampler<TImage>::InitializeOptimizationFunctions()
+void MaximumEntropySurfaceSampler::InitializeOptimizationFunctions()
 {
     // Set the minimum neighborhood radius and maximum sigma based on the
     // domain of the 1st input image.
@@ -218,16 +209,12 @@ MaximumEntropySurfaceSampler<TImage>::InitializeOptimizationFunctions()
 }
 
 
-template <class TImage>
-void
-MaximumEntropySurfaceSampler<TImage>::GenerateData()
+void MaximumEntropySurfaceSampler::GenerateData()
 {
 }
 
 
-template <class TImage>
-void
-MaximumEntropySurfaceSampler<TImage>::Execute()
+void MaximumEntropySurfaceSampler::Execute()
 {
     if (m_Initialized == false)
     {
@@ -248,10 +235,7 @@ MaximumEntropySurfaceSampler<TImage>::Execute()
 }
 
 
-template <class TImage>
-void
-
-MaximumEntropySurfaceSampler<TImage>::ReadTransforms()
+void MaximumEntropySurfaceSampler::ReadTransforms()
 {
     if (m_TransformFile != "")
     {
@@ -275,8 +259,7 @@ MaximumEntropySurfaceSampler<TImage>::ReadTransforms()
 
 }
 
-template<class TImage>
-void MaximumEntropySurfaceSampler<TImage>::ReInitialize() {
+void MaximumEntropySurfaceSampler::ReInitialize() {
 }
 
 
