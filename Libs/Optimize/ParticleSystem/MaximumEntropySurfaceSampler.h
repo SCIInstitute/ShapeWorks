@@ -49,12 +49,12 @@ public:
     double radius;
   };
 
-  /** Tranform Type*/
+  /** Transform Type*/
   typedef vnl_matrix_fixed<double, Dimension + 1, Dimension + 1> TransformType;
 
   /** Type of the input/output image. */
   typedef TImage ImageType;
-  typedef itk::ParticleGradientDescentPositionOptimizer<typename ImageType::PixelType, Dimension> OptimizerType;
+  typedef itk::ParticleGradientDescentPositionOptimizer<ImageType::PixelType, Dimension> OptimizerType;
 
   /** Returns the particle system used in the surface sampling. */
   itkGetObjectMacro(ParticleSystem, itk::ParticleSystem<Dimension>);
@@ -62,31 +62,31 @@ public:
   itkGetConstObjectMacro(ParticleSystem, itk::ParticleSystem<Dimension>);
 
   /** Returns a pointer to the gradient function used. */
-  itk::ParticleEntropyGradientFunction<typename ImageType::PixelType, Dimension>
+  itk::ParticleEntropyGradientFunction<ImageType::PixelType, Dimension>
   * GetGradientFunction()
   {
     return m_GradientFunction;
   }
 
-  itk::ParticleCurvatureEntropyGradientFunction<typename ImageType::PixelType, Dimension>
+  itk::ParticleCurvatureEntropyGradientFunction<ImageType::PixelType, Dimension>
   * GetCurvatureGradientFunction()
   {
     return m_CurvatureGradientFunction;
   }
 
-  itk::ParticleModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
+  itk::ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>
   * GetModifiedCotangentGradientFunction()
   {
     return m_ModifiedCotangentGradientFunction;
   }
 
-  itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
+  itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>
   * GetConstrainedModifiedCotangentGradientFunction()
   {
     return m_ConstrainedModifiedCotangentGradientFunction;
   }
 
-  itk::ParticleOmegaGradientFunction<typename ImageType::PixelType, Dimension>
+  itk::ParticleOmegaGradientFunction<ImageType::PixelType, Dimension>
   * GetOmegaGradientFunction()
   {
     return m_OmegaGradientFunction;
@@ -130,7 +130,7 @@ public:
     m_MeshFiles = s;
   }
 
-  void AddImage(const typename TImage::Pointer image, double narrow_band);
+  void AddImage(const TImage::Pointer image, double narrow_band);
 
   void AddMesh(shapeworks::MeshWrapper* mesh);
 
@@ -252,7 +252,8 @@ public:
 protected:
   MaximumEntropySurfaceSampler();
 
-  virtual ~MaximumEntropySurfaceSampler()  {};
+  virtual ~MaximumEntropySurfaceSampler()
+  {};
 
   void GenerateData();
 
@@ -280,31 +281,31 @@ protected:
   int m_AdaptivityMode;
   bool m_Initializing;
 
-  typename OptimizerType::Pointer m_Optimizer;
+  OptimizerType::Pointer m_Optimizer;
 
-  typename itk::ParticleEntropyGradientFunction<typename ImageType::PixelType, Dimension>
+  itk::ParticleEntropyGradientFunction<ImageType::PixelType, Dimension>
   ::Pointer m_GradientFunction;
-  typename itk::ParticleCurvatureEntropyGradientFunction<typename ImageType::PixelType, Dimension>
+  itk::ParticleCurvatureEntropyGradientFunction<ImageType::PixelType, Dimension>
   ::Pointer m_CurvatureGradientFunction;
 
-  typename itk::ParticleModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
+  itk::ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>
   ::Pointer m_ModifiedCotangentGradientFunction;
-  typename itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
+  itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>
   ::Pointer m_ConstrainedModifiedCotangentGradientFunction;
 
-  typename itk::ParticleOmegaGradientFunction<typename ImageType::PixelType, Dimension>
+  itk::ParticleOmegaGradientFunction<ImageType::PixelType, Dimension>
   ::Pointer m_OmegaGradientFunction;
 
-  typename itk::ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma1Cache;
-  typename itk::ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma2Cache;
+  itk::ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma1Cache;
+  itk::ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma2Cache;
 
-  typename MeanCurvatureCacheType::Pointer m_MeanCurvatureCache;
+  MeanCurvatureCacheType::Pointer m_MeanCurvatureCache;
 
-  typename itk::ParticleSystem<Dimension>::Pointer m_ParticleSystem;
+  itk::ParticleSystem<Dimension>::Pointer m_ParticleSystem;
 
-  std::vector<typename itk::ParticleDomain::Pointer> m_DomainList;
+  std::vector<itk::ParticleDomain::Pointer> m_DomainList;
 
-  std::vector<typename itk::ParticleSurfaceNeighborhood<ImageType>::Pointer> m_NeighborhoodList;
+  std::vector<itk::ParticleSurfaceNeighborhood<ImageType>::Pointer> m_NeighborhoodList;
 
   int m_pairwise_potential_type;
 

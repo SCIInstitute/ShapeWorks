@@ -21,10 +21,10 @@ public:
   using Superclass = MaximumEntropySurfaceSampler;
 
   /** Type of the input/output image. */
-  typedef typename MaximumEntropySurfaceSampler::ImageType ImageType;
+  typedef MaximumEntropySurfaceSampler::ImageType ImageType;
 
   /** Expose the point type */
-  typedef typename ImageType::PointType PointType;
+  typedef ImageType::PointType PointType;
 
   //! Constructor
   MaximumEntropyCorrespondenceSampler();
@@ -230,21 +230,21 @@ private:
   void operator=(const MaximumEntropyCorrespondenceSampler&); //purposely not implemented
   shapeworks::CorrespondenceMode m_CorrespondenceMode;
 
-  typename itk::ParticleDualVectorFunction<Dimension>::Pointer m_LinkingFunction;
+  itk::ParticleDualVectorFunction<Dimension>::Pointer m_LinkingFunction;
 
-  typename itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleEntropyFunction;
-  typename itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleRegressionEntropyFunction;
-  typename itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleMixedEffectsEntropyFunction;
+  itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleEntropyFunction;
+  itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleRegressionEntropyFunction;
+  itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleMixedEffectsEntropyFunction;
 
-  typename itk::ParticleShapeMatrixAttribute<double, Dimension>::Pointer m_ShapeMatrix;
+  itk::ParticleShapeMatrixAttribute<double, Dimension>::Pointer m_ShapeMatrix;
 
-  typename itk::ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::Pointer m_LinearRegressionShapeMatrix;
-  typename itk::ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::Pointer m_MixedEffectsShapeMatrix;
+  itk::ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::Pointer m_LinearRegressionShapeMatrix;
+  itk::ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::Pointer m_MixedEffectsShapeMatrix;
 
-  typename itk::ParticleGeneralShapeMatrix<double, Dimension>::Pointer m_GeneralShapeMatrix;
-  typename itk::ParticleGeneralShapeGradientMatrix<double, Dimension>::Pointer m_GeneralShapeGradMatrix;
+  itk::ParticleGeneralShapeMatrix<double, Dimension>::Pointer m_GeneralShapeMatrix;
+  itk::ParticleGeneralShapeGradientMatrix<double, Dimension>::Pointer m_GeneralShapeGradMatrix;
 
-  typename itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::Pointer m_MeshBasedGeneralEntropyGradientFunction;
+  itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::Pointer m_MeshBasedGeneralEntropyGradientFunction;
 };
 
 } // end namespace
