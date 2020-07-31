@@ -1,37 +1,23 @@
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkMaximumEntropyCorrespondenceSampler.txx,v $
-  Date:      $Date: 2011/03/24 01:17:33 $
-  Version:   $Revision: 1.3 $
-  Author:    $Author: wmartin $
+#include "MaximumEntropyCorrespondenceSampler.h"
 
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
-#ifndef __itkMaximumEntropyCorrespondenceSampler_txx
-#define __itkMaximumEntropyCorrespondenceSampler_txx
-
-namespace itk
+namespace shapeworks
 {
 
 MaximumEntropyCorrespondenceSampler::MaximumEntropyCorrespondenceSampler()
 {
-  m_LinkingFunction = ParticleDualVectorFunction<Dimension>::New();
-  m_EnsembleEntropyFunction = ParticleEnsembleEntropyFunction<Dimension>::New();
-  m_EnsembleRegressionEntropyFunction = ParticleEnsembleEntropyFunction<Dimension>::New();
-  m_EnsembleMixedEffectsEntropyFunction = ParticleEnsembleEntropyFunction<Dimension>::New();
-  m_MeshBasedGeneralEntropyGradientFunction = ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::New();
+  m_LinkingFunction = itk::ParticleDualVectorFunction<Dimension>::New();
+  m_EnsembleEntropyFunction = itk::ParticleEnsembleEntropyFunction<Dimension>::New();
+  m_EnsembleRegressionEntropyFunction = itk::ParticleEnsembleEntropyFunction<Dimension>::New();
+  m_EnsembleMixedEffectsEntropyFunction = itk::ParticleEnsembleEntropyFunction<Dimension>::New();
+  m_MeshBasedGeneralEntropyGradientFunction = itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::New();
 
-  m_ShapeMatrix = ParticleShapeMatrixAttribute<double, Dimension>::New();
-  m_GeneralShapeMatrix = ParticleGeneralShapeMatrix<double, Dimension>::New();
-  m_GeneralShapeGradMatrix = ParticleGeneralShapeGradientMatrix<double, Dimension>::New();
+  m_ShapeMatrix = itk::ParticleShapeMatrixAttribute<double, Dimension>::New();
+  m_GeneralShapeMatrix = itk::ParticleGeneralShapeMatrix<double, Dimension>::New();
+  m_GeneralShapeGradMatrix = itk::ParticleGeneralShapeGradientMatrix<double, Dimension>::New();
 
-  m_LinearRegressionShapeMatrix = ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::New();
-  m_MixedEffectsShapeMatrix = ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::New();
+  m_LinearRegressionShapeMatrix = itk::ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::New();
+  m_MixedEffectsShapeMatrix = itk::ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::New();
 
   m_EnsembleEntropyFunction->SetShapeMatrix(m_ShapeMatrix);
   
@@ -110,4 +96,3 @@ void MaximumEntropyCorrespondenceSampler::InitializeOptimizationFunctions()
 
 } // end namespace
 
-#endif

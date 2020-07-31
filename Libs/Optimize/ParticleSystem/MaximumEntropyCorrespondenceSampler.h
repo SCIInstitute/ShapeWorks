@@ -1,14 +1,14 @@
 #pragma once
 
 #include "CorrespondenceMode.h"
-#include "itkMaximumEntropySurfaceSampler.h"
+#include "MaximumEntropySurfaceSampler.h"
 #include "itkParticleDualVectorFunction.h"
 #include "itkParticleEnsembleEntropyFunction.h"
 #include "itkParticleShapeLinearRegressionMatrixAttribute.h"
 #include "itkParticleShapeMixedEffectsMatrixAttribute.h"
 #include "itkParticleMeshBasedGeneralEntropyGradientFunction.h"
 
-namespace itk
+namespace shapeworks
 {
   
 /** \class MaximumEntropyCorrespondenceSampler
@@ -23,8 +23,8 @@ public:
   /** Standard class typedefs. */
   typedef MaximumEntropyCorrespondenceSampler  Self;
   typedef MaximumEntropySurfaceSampler  Superclass;
-  typedef SmartPointer<Self>   Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
+  typedef itk::SmartPointer<Self>   Pointer;
+  typedef itk::SmartPointer<const Self>  ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -176,39 +176,39 @@ public:
       m_GeneralShapeGradMatrix->SetAttributesPerDomain(s1);
   }
 
-  ParticleShapeMatrixAttribute<double, Dimension> *GetShapeMatrix()
+  itk::ParticleShapeMatrixAttribute<double, Dimension> *GetShapeMatrix()
   {
       return m_ShapeMatrix.GetPointer();
   }
-  ParticleGeneralShapeMatrix<double, Dimension> *GetGeneralShapeMatrix()
+  itk::ParticleGeneralShapeMatrix<double, Dimension> *GetGeneralShapeMatrix()
   {
       return m_GeneralShapeMatrix.GetPointer();
   }
-  ParticleGeneralShapeGradientMatrix<double, Dimension> *GetGeneralShapeGradientMatrix()
+  itk::ParticleGeneralShapeGradientMatrix<double, Dimension> *GetGeneralShapeGradientMatrix()
   {
       return m_GeneralShapeGradMatrix.GetPointer();
   }
 
-  ParticleDualVectorFunction<Dimension> *GetLinkingFunction()
+  itk::ParticleDualVectorFunction<Dimension> *GetLinkingFunction()
   { return m_LinkingFunction.GetPointer(); }
-  ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleEntropyFunction()
+  itk::ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleEntropyFunction()
   { return m_EnsembleEntropyFunction.GetPointer(); }
-  ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleRegressionEntropyFunction()
+  itk::ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleRegressionEntropyFunction()
   { return m_EnsembleRegressionEntropyFunction.GetPointer(); }
-  ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleMixedEffectsEntropyFunction()
+  itk::ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleMixedEffectsEntropyFunction()
   { return m_EnsembleMixedEffectsEntropyFunction.GetPointer(); }
-  ParticleMeshBasedGeneralEntropyGradientFunction<Dimension> *GetMeshBasedGeneralEntropyGradientFunction()
+  itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension> *GetMeshBasedGeneralEntropyGradientFunction()
   { return m_MeshBasedGeneralEntropyGradientFunction.GetPointer(); }
   
-  const ParticleDualVectorFunction<Dimension> *GetLinkingFunction() const
+  const itk::ParticleDualVectorFunction<Dimension> *GetLinkingFunction() const
   { return m_LinkingFunction.GetPointer(); }
-  const ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleEntropyFunction() const
+  const itk::ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleEntropyFunction() const
   { return m_EnsembleEntropyFunction.GetPointer(); }
-  const ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleRegressionEntropyFunction() const
+  const itk::ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleRegressionEntropyFunction() const
   { return m_EnsembleRegressionEntropyFunction.GetPointer(); }
-  const ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleMixedEffectsEntropyFunction() const
+  const itk::ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleMixedEffectsEntropyFunction() const
   { return m_EnsembleMixedEffectsEntropyFunction.GetPointer(); }
-  const ParticleMeshBasedGeneralEntropyGradientFunction<Dimension> *GetMeshBasedGeneralEntropyGradientFunction() const
+  const itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension> *GetMeshBasedGeneralEntropyGradientFunction() const
   { return m_MeshBasedGeneralEntropyGradientFunction.GetPointer(); }
   
   virtual void AllocateDataCaches();
@@ -242,7 +242,7 @@ protected:
   MaximumEntropyCorrespondenceSampler();
   virtual ~MaximumEntropyCorrespondenceSampler() {};
 
-  void PrintSelf(std::ostream& os, Indent indent) const
+  void PrintSelf(std::ostream& os, itk::Indent indent) const
   {
     Superclass::PrintSelf(os, indent);
   }
@@ -253,24 +253,22 @@ private:
   void operator=(const Self&); //purposely not implemented
   shapeworks::CorrespondenceMode m_CorrespondenceMode;
 
-  typename ParticleDualVectorFunction<Dimension>::Pointer m_LinkingFunction;
+  typename itk::ParticleDualVectorFunction<Dimension>::Pointer m_LinkingFunction;
 
-  typename ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleEntropyFunction;
-  typename ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleRegressionEntropyFunction;
-  typename ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleMixedEffectsEntropyFunction;
+  typename itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleEntropyFunction;
+  typename itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleRegressionEntropyFunction;
+  typename itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleMixedEffectsEntropyFunction;
 
-  typename ParticleShapeMatrixAttribute<double, Dimension>::Pointer m_ShapeMatrix;
+  typename itk::ParticleShapeMatrixAttribute<double, Dimension>::Pointer m_ShapeMatrix;
 
-  typename ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::Pointer m_LinearRegressionShapeMatrix;
-  typename ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::Pointer m_MixedEffectsShapeMatrix;
+  typename itk::ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::Pointer m_LinearRegressionShapeMatrix;
+  typename itk::ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::Pointer m_MixedEffectsShapeMatrix;
 
-  typename ParticleGeneralShapeMatrix<double, Dimension>::Pointer m_GeneralShapeMatrix;
-  typename ParticleGeneralShapeGradientMatrix<double, Dimension>::Pointer m_GeneralShapeGradMatrix;
+  typename itk::ParticleGeneralShapeMatrix<double, Dimension>::Pointer m_GeneralShapeMatrix;
+  typename itk::ParticleGeneralShapeGradientMatrix<double, Dimension>::Pointer m_GeneralShapeGradMatrix;
 
-  typename ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::Pointer m_MeshBasedGeneralEntropyGradientFunction;
+  typename itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::Pointer m_MeshBasedGeneralEntropyGradientFunction;
 };
 
-} // end namespace itk
+} // end namespace
 
-
-#include "itkMaximumEntropyCorrespondenceSampler.txx"

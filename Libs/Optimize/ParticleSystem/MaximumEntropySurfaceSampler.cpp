@@ -1,27 +1,11 @@
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkMaximumEntropySurfaceSampler.txx,v $
-  Date:      $Date: 2011/03/24 01:17:33 $
-  Version:   $Revision: 1.3 $
-  Author:    $Author: wmartin $
-
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
-#ifndef __itkMaximumEntropySurfaceSampler_txx
-#define __itkMaximumEntropySurfaceSampler_txx
 
 #include "itkParticlePositionReader.h"
 #include "itkImageRegionIterator.h"
-#include "itkZeroCrossingImageFilter.h"
 #include "object_reader.h"
 #include "itkParticleImageDomain.h"
+#include "MaximumEntropySurfaceSampler.h"
 
-namespace itk
+namespace shapeworks
 {
 
 MaximumEntropySurfaceSampler::MaximumEntropySurfaceSampler()
@@ -33,20 +17,20 @@ MaximumEntropySurfaceSampler::MaximumEntropySurfaceSampler()
     m_TransformFile = "";
 
     // Allocate the particle system members.
-    m_ParticleSystem = ParticleSystem<Dimension>::New();
+    m_ParticleSystem = itk::ParticleSystem<Dimension>::New();
 
     m_GradientFunction
-            = ParticleEntropyGradientFunction<typename ImageType::PixelType, Dimension>::New();
+      = itk::ParticleEntropyGradientFunction<typename ImageType::PixelType, Dimension>::New();
     m_CurvatureGradientFunction
-            = ParticleCurvatureEntropyGradientFunction<typename ImageType::PixelType, Dimension>::New();
+      = itk::ParticleCurvatureEntropyGradientFunction<typename ImageType::PixelType, Dimension>::New();
 
     m_ModifiedCotangentGradientFunction
-            = ParticleModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>::New();
+            = itk::ParticleModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>::New();
     m_ConstrainedModifiedCotangentGradientFunction
-            = ParticleConstrainedModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>::New();
+            = itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>::New();
 
     m_OmegaGradientFunction
-            = ParticleOmegaGradientFunction<typename ImageType::PixelType, Dimension>::New();
+            = itk::ParticleOmegaGradientFunction<typename ImageType::PixelType, Dimension>::New();
 
     // Allocate some optimization code.
     m_Optimizer = OptimizerType::New();
@@ -59,7 +43,7 @@ MaximumEntropySurfaceSampler::MaximumEntropySurfaceSampler()
 void MaximumEntropySurfaceSampler::AllocateDataCaches()
 {
     // Set up the various data caches that the optimization functions will use.
-    m_Sigma1Cache = ParticleContainerArrayAttribute<double, Dimension>::New();
+    m_Sigma1Cache = itk::ParticleContainerArrayAttribute<double, Dimension>::New();
     m_ParticleSystem->RegisterAttribute(m_Sigma1Cache);
     m_GradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
     m_CurvatureGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
@@ -69,10 +53,10 @@ void MaximumEntropySurfaceSampler::AllocateDataCaches()
 
     m_OmegaGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
 
-    m_Sigma2Cache = ParticleContainerArrayAttribute<double, Dimension>::New();
+    m_Sigma2Cache = itk::ParticleContainerArrayAttribute<double, Dimension>::New();
     m_ParticleSystem->RegisterAttribute(m_Sigma2Cache);
 
-    m_MeanCurvatureCache = ParticleMeanCurvatureAttribute<typename ImageType::PixelType, Dimension>::New();
+    m_MeanCurvatureCache = itk::ParticleMeanCurvatureAttribute<typename ImageType::PixelType, Dimension>::New();
     m_MeanCurvatureCache->SetVerbosity(m_verbosity);
     m_CurvatureGradientFunction->SetMeanCurvatureCache(m_MeanCurvatureCache);
     m_OmegaGradientFunction->SetMeanCurvatureCache(m_MeanCurvatureCache);
@@ -100,7 +84,7 @@ void MaximumEntropySurfaceSampler::AllocateDomainsAndNeighborhoods()
       }
 
       if(domain->GetDomainType() == shapeworks::DomainType::Image) {
-        auto imageDomain = static_cast<ParticleImplicitSurfaceDomain<typename ImageType::PixelType> *>(domain.GetPointer());
+        auto imageDomain = static_cast<itk::ParticleImplicitSurfaceDomain<typename ImageType::PixelType> *>(domain.GetPointer());
 
         if (m_AttributesPerDomain.size() > 0 && m_AttributesPerDomain[i % m_DomainsPerShape] > 0)
         {
@@ -265,4 +249,3 @@ void MaximumEntropySurfaceSampler::ReInitialize() {
 
 } // end namespace
 
-#endif

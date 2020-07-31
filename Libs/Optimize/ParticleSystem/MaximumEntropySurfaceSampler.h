@@ -20,7 +20,7 @@
 
 #include "TriMesh.h"
 
-namespace itk
+namespace shapeworks
 {
 
 /** \class MaximumEntropySurfaceSampler
@@ -28,17 +28,16 @@ namespace itk
  *
  *
  */
-class ITK_EXPORT MaximumEntropySurfaceSampler
-        : public DataObject
+class MaximumEntropySurfaceSampler : public itk::DataObject
 {
 public:
 
-    using TImage = Image<float, 3>;
+    using TImage = itk::Image<float, 3>;
 
     /** Standard class typedefs. */
     typedef MaximumEntropySurfaceSampler  Self;
-    typedef SmartPointer<Self>   Pointer;
-    typedef SmartPointer<const Self>  ConstPointer;
+    typedef itk::SmartPointer<Self>   Pointer;
+    typedef itk::SmartPointer<const Self>  ConstPointer;
 
     /** Method for creation through the object factory. */
     itkNewMacro(Self);
@@ -49,7 +48,7 @@ public:
     /** Expose the image dimension. */
     itkStaticConstMacro(Dimension, unsigned int, TImage::ImageDimension);
 
-    typedef ParticleMeanCurvatureAttribute<typename TImage::PixelType, Dimension>  MeanCurvatureCacheType;
+    typedef itk::ParticleMeanCurvatureAttribute<typename TImage::PixelType, Dimension>  MeanCurvatureCacheType;
 
     /** Convenient typedef for storing cutting plane information */
     struct CuttingPlaneType
@@ -71,37 +70,38 @@ public:
 
     /** Type of the input/output image. */
     typedef TImage ImageType;
-    typedef ParticleGradientDescentPositionOptimizer<typename ImageType::PixelType, Dimension> OptimizerType;
+    typedef itk::ParticleGradientDescentPositionOptimizer<typename ImageType::PixelType, Dimension> OptimizerType;
 
     /** Returns the particle system used in the surface sampling. */
-    itkGetObjectMacro(ParticleSystem, ParticleSystem<Dimension>);
-    itkGetConstObjectMacro(ParticleSystem, ParticleSystem<Dimension>);
+    itkGetObjectMacro(ParticleSystem, itk::ParticleSystem<Dimension>);
+    itkGetConstObjectMacro(ParticleSystem, itk::ParticleSystem<Dimension>);
 
     /** Returns a pointer to the gradient function used. */
-    ParticleEntropyGradientFunction<typename ImageType::PixelType, Dimension>
+    itk::ParticleEntropyGradientFunction<typename ImageType::PixelType, Dimension>
     *GetGradientFunction()
     {
         return m_GradientFunction;
     }
 
-    ParticleCurvatureEntropyGradientFunction<typename ImageType::PixelType, Dimension>
+    itk::ParticleCurvatureEntropyGradientFunction<typename ImageType::PixelType, Dimension>
     *GetCurvatureGradientFunction()
     {
         return m_CurvatureGradientFunction;
     }
 
-    ParticleModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
+    itk::ParticleModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
     *GetModifiedCotangentGradientFunction()
     {
         return m_ModifiedCotangentGradientFunction;
     }
-    ParticleConstrainedModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
+
+    itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
     *GetConstrainedModifiedCotangentGradientFunction()
     {
         return m_ConstrainedModifiedCotangentGradientFunction;
     }
 
-    ParticleOmegaGradientFunction<typename ImageType::PixelType, Dimension>
+    itk::ParticleOmegaGradientFunction<typename ImageType::PixelType, Dimension>
     *GetOmegaGradientFunction()
     {
         return m_OmegaGradientFunction;
@@ -147,8 +147,8 @@ public:
 
     void AddImage(const typename TImage::Pointer image, double narrow_band)
     {
-        const auto domain = ParticleImplicitSurfaceDomain<typename ImageType::PixelType>::New();
-        m_NeighborhoodList.push_back( ParticleSurfaceNeighborhood<ImageType>::New() );
+        const auto domain = itk::ParticleImplicitSurfaceDomain<typename ImageType::PixelType>::New();
+        m_NeighborhoodList.push_back( itk::ParticleSurfaceNeighborhood<ImageType>::New() );
 
         if (image)
         {
@@ -162,8 +162,8 @@ public:
 
     void AddMesh(shapeworks::MeshWrapper * mesh) {
 
-      MeshDomain *domain = new MeshDomain();
-      m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood<ImageType>::New());
+      itk::MeshDomain *domain = new itk::MeshDomain();
+      m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
       if (mesh) {
         this->m_Spacing = 1;
         domain->SetMesh(mesh);
@@ -354,30 +354,30 @@ protected:
 
     typename OptimizerType::Pointer m_Optimizer;
 
-    typename ParticleEntropyGradientFunction<typename ImageType::PixelType,  Dimension>
+    typename itk::ParticleEntropyGradientFunction<typename ImageType::PixelType,  Dimension>
     ::Pointer m_GradientFunction;
-    typename ParticleCurvatureEntropyGradientFunction<typename ImageType::PixelType, Dimension>
+    typename itk::ParticleCurvatureEntropyGradientFunction<typename ImageType::PixelType, Dimension>
     ::Pointer m_CurvatureGradientFunction;
 
-    typename ParticleModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
+    typename itk::ParticleModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
     ::Pointer m_ModifiedCotangentGradientFunction;
-    typename ParticleConstrainedModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
+    typename itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
     ::Pointer m_ConstrainedModifiedCotangentGradientFunction;
 
 
-    typename ParticleOmegaGradientFunction<typename ImageType::PixelType, Dimension>
+    typename itk::ParticleOmegaGradientFunction<typename ImageType::PixelType, Dimension>
     ::Pointer m_OmegaGradientFunction;
 
-    typename ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma1Cache;
-    typename ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma2Cache;
+    typename itk::ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma1Cache;
+    typename itk::ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma2Cache;
 
     typename MeanCurvatureCacheType::Pointer m_MeanCurvatureCache;
 
-    typename ParticleSystem<Dimension>::Pointer m_ParticleSystem;
+    typename itk::ParticleSystem<Dimension>::Pointer m_ParticleSystem;
 
-    std::vector<typename ParticleDomain::Pointer> m_DomainList;
+    std::vector<typename itk::ParticleDomain::Pointer> m_DomainList;
 
-    std::vector<typename ParticleSurfaceNeighborhood<ImageType>::Pointer> m_NeighborhoodList;
+    std::vector<typename itk::ParticleSurfaceNeighborhood<ImageType>::Pointer> m_NeighborhoodList;
 
     int m_pairwise_potential_type;
 
@@ -404,9 +404,9 @@ private:
 
 };
 
-} // end namespace itk
+} // end namespace
 
-#include "itkMaximumEntropySurfaceSampler.txx"
+
 
 
 
