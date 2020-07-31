@@ -1,8 +1,6 @@
 #include "MaximumEntropyCorrespondenceSampler.h"
 
-
-namespace shapeworks
-{
+namespace shapeworks {
 
 MaximumEntropyCorrespondenceSampler::MaximumEntropyCorrespondenceSampler()
 {
@@ -20,7 +18,7 @@ MaximumEntropyCorrespondenceSampler::MaximumEntropyCorrespondenceSampler()
   m_MixedEffectsShapeMatrix = itk::ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::New();
 
   m_EnsembleEntropyFunction->SetShapeMatrix(m_ShapeMatrix);
-  
+
   m_EnsembleRegressionEntropyFunction->SetShapeMatrix(m_LinearRegressionShapeMatrix);
   m_EnsembleMixedEffectsEntropyFunction->SetShapeMatrix(m_MixedEffectsShapeMatrix);
 
@@ -37,11 +35,10 @@ MaximumEntropyCorrespondenceSampler::MaximumEntropyCorrespondenceSampler()
 void MaximumEntropyCorrespondenceSampler::AllocateDataCaches()
 {
   Superclass::AllocateDataCaches();
-  //   m_CurvatureEnsembleMeanFunction->SetMeanCurvatureCache(Superclass::m_MeanCurvatureCache);
 }
 
-
-void MaximumEntropyCorrespondenceSampler::ReInitialize() {
+void MaximumEntropyCorrespondenceSampler::ReInitialize()
+{
   this->SetAdaptivityMode(Superclass::m_AdaptivityMode);
   this->SetCorrespondenceMode(m_CorrespondenceMode);
   this->GetOptimizer()->SetGradientFunction(m_LinkingFunction);
@@ -53,11 +50,9 @@ void MaximumEntropyCorrespondenceSampler::ReInitialize() {
   this->m_MeanCurvatureCache->ZeroAllValues();
 }
 
-
 void MaximumEntropyCorrespondenceSampler::Execute()
-{    
-  if (this->GetInitialized() == false)
-    {
+{
+  if (this->GetInitialized() == false) {
     this->AllocateDataCaches();
     this->SetAdaptivityMode(Superclass::m_AdaptivityMode);
     this->SetCorrespondenceMode(m_CorrespondenceMode);
@@ -74,7 +69,7 @@ void MaximumEntropyCorrespondenceSampler::Execute()
     this->InitializeOptimizationFunctions();
 
     this->SetInitialized(true);
-    }
+  }
 
   if (this->GetInitializing() == true) return;
 

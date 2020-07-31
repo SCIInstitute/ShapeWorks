@@ -17,390 +17,321 @@
 #include "itkParticleConstrainedModifiedCotangentEntropyGradientFunction.h"
 #include "vnl/vnl_matrix_fixed.h"
 
-
 #include "TriMesh.h"
 
-namespace shapeworks
-{
+namespace shapeworks {
 
 /** \class MaximumEntropySurfaceSampler
  *
  *
  *
  */
-class MaximumEntropySurfaceSampler : public itk::DataObject
-{
+class MaximumEntropySurfaceSampler : public itk::DataObject {
+
 public:
 
-    using TImage = itk::Image<float, 3>;
+  using TImage = itk::Image<float, 3>;
 
-    /** Standard class typedefs. */
-    typedef MaximumEntropySurfaceSampler  Self;
-    typedef itk::SmartPointer<Self>   Pointer;
-    typedef itk::SmartPointer<const Self>  ConstPointer;
+  /** Standard class typedefs. */
+  typedef MaximumEntropySurfaceSampler Self;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
 
-    /** Method for creation through the object factory. */
-    itkNewMacro(Self);
+  /** Method for creation through the object factory. */
+  itkNewMacro(Self);
 
-    /** Run-time type information (and related methods). */
-    itkTypeMacro(MaximumEntropySurfaceSampler, InPlaceImageFilter);
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(MaximumEntropySurfaceSampler, InPlaceImageFilter);
 
-    /** Expose the image dimension. */
-    itkStaticConstMacro(Dimension, unsigned int, TImage::ImageDimension);
+  /** Expose the image dimension. */
+  itkStaticConstMacro(Dimension, unsigned int, TImage::ImageDimension);
 
-    typedef itk::ParticleMeanCurvatureAttribute<typename TImage::PixelType, Dimension>  MeanCurvatureCacheType;
+  typedef itk::ParticleMeanCurvatureAttribute<typename TImage::PixelType, Dimension> MeanCurvatureCacheType;
 
-    /** Convenient typedef for storing cutting plane information */
-    struct CuttingPlaneType
-    {
-        vnl_vector_fixed<double,Dimension> a;
-        vnl_vector_fixed<double,Dimension> b;
-        vnl_vector_fixed<double,Dimension> c;
-    };
+  /** Convenient typedef for storing cutting plane information */
+  struct CuttingPlaneType {
+    vnl_vector_fixed<double, Dimension> a;
+    vnl_vector_fixed<double, Dimension> b;
+    vnl_vector_fixed<double, Dimension> c;
+  };
 
-    /** Convenient typedef for storing sphere information */
-    struct SphereType
-    {
-        vnl_vector_fixed<double,Dimension> center;
-        double radius;
-    };
+  /** Convenient typedef for storing sphere information */
+  struct SphereType {
+    vnl_vector_fixed<double, Dimension> center;
+    double radius;
+  };
 
-    /** Tranform Type*/
-    typedef vnl_matrix_fixed<double, Dimension +1, Dimension +1> TransformType;
+  /** Tranform Type*/
+  typedef vnl_matrix_fixed<double, Dimension + 1, Dimension + 1> TransformType;
 
-    /** Type of the input/output image. */
-    typedef TImage ImageType;
-    typedef itk::ParticleGradientDescentPositionOptimizer<typename ImageType::PixelType, Dimension> OptimizerType;
+  /** Type of the input/output image. */
+  typedef TImage ImageType;
+  typedef itk::ParticleGradientDescentPositionOptimizer<typename ImageType::PixelType, Dimension> OptimizerType;
 
-    /** Returns the particle system used in the surface sampling. */
-    itkGetObjectMacro(ParticleSystem, itk::ParticleSystem<Dimension>);
-    itkGetConstObjectMacro(ParticleSystem, itk::ParticleSystem<Dimension>);
+  /** Returns the particle system used in the surface sampling. */
+  itkGetObjectMacro(ParticleSystem, itk::ParticleSystem<Dimension>);
 
-    /** Returns a pointer to the gradient function used. */
-    itk::ParticleEntropyGradientFunction<typename ImageType::PixelType, Dimension>
-    *GetGradientFunction()
-    {
-        return m_GradientFunction;
+  itkGetConstObjectMacro(ParticleSystem, itk::ParticleSystem<Dimension>);
+
+  /** Returns a pointer to the gradient function used. */
+  itk::ParticleEntropyGradientFunction<typename ImageType::PixelType, Dimension>
+  * GetGradientFunction()
+  {
+    return m_GradientFunction;
+  }
+
+  itk::ParticleCurvatureEntropyGradientFunction<typename ImageType::PixelType, Dimension>
+  * GetCurvatureGradientFunction()
+  {
+    return m_CurvatureGradientFunction;
+  }
+
+  itk::ParticleModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
+  * GetModifiedCotangentGradientFunction()
+  {
+    return m_ModifiedCotangentGradientFunction;
+  }
+
+  itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
+  * GetConstrainedModifiedCotangentGradientFunction()
+  {
+    return m_ConstrainedModifiedCotangentGradientFunction;
+  }
+
+  itk::ParticleOmegaGradientFunction<typename ImageType::PixelType, Dimension>
+  * GetOmegaGradientFunction()
+  {
+    return m_OmegaGradientFunction;
+  }
+
+  /** Return a pointer to the optimizer object. */
+  itkGetObjectMacro(Optimizer, OptimizerType);
+
+  itkGetConstObjectMacro(Optimizer, OptimizerType);
+
+  /**Optionally provide a filename for an initial point set.*/
+  void SetPointsFile(unsigned int i, const std::string& s)
+  {
+    if (m_PointsFiles.size() < i + 1) {
+      m_PointsFiles.resize(i + 1);
     }
+    m_PointsFiles[i] = s;
+  }
 
-    itk::ParticleCurvatureEntropyGradientFunction<typename ImageType::PixelType, Dimension>
-    *GetCurvatureGradientFunction()
-    {
-        return m_CurvatureGradientFunction;
+  void SetPointsFile(const std::string& s)
+  {
+    this->SetPointsFile(0, s);
+  }
+
+  /**Optionally provide a filename for a mesh with geodesic distances.*/
+  void SetMeshFile(unsigned int i, const std::string& s)
+  {
+    if (m_MeshFiles.size() < i + 1) {
+      m_MeshFiles.resize(i + 1);
     }
+    m_MeshFiles[i] = s;
+  }
 
-    itk::ParticleModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
-    *GetModifiedCotangentGradientFunction()
-    {
-        return m_ModifiedCotangentGradientFunction;
-    }
+  void SetMeshFile(const std::string& s)
+  {
+    this->SetMeshFile(0, s);
+  }
 
-    itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
-    *GetConstrainedModifiedCotangentGradientFunction()
-    {
-        return m_ConstrainedModifiedCotangentGradientFunction;
-    }
+  void SetMeshFiles(const std::vector<std::string>& s)
+  {
+    m_MeshFiles = s;
+  }
 
-    itk::ParticleOmegaGradientFunction<typename ImageType::PixelType, Dimension>
-    *GetOmegaGradientFunction()
-    {
-        return m_OmegaGradientFunction;
-    }
+  void AddImage(const typename TImage::Pointer image, double narrow_band);
 
-    /** Return a pointer to the optimizer object. */
-    itkGetObjectMacro(Optimizer, OptimizerType);
-    itkGetConstObjectMacro(Optimizer, OptimizerType);
+  void AddMesh(shapeworks::MeshWrapper* mesh);
 
-    /**Optionally provide a filename for an initial point set.*/
-    void SetPointsFile(unsigned int i, const std::string &s)
-    {
-        if (m_PointsFiles.size() < i+1)
-        {
-            m_PointsFiles.resize(i+1);
-        }
-        m_PointsFiles[i] = s;
-    }
+  void SetFidsFiles(const std::vector<std::string>& s)
+  {
+    m_FidsFiles = s;
+  }
 
-    void SetPointsFile(const std::string &s)
-    {
-        this->SetPointsFile(0,s);
-    }
+  void SetFeaFiles(const std::vector<std::string>& s)
+  {
+    m_FeaMeshFiles = s;
+  }
 
-    /**Optionally provide a filename for a mesh with geodesic distances.*/
-    void SetMeshFile(unsigned int i, const std::string &s)
-    {
-        if (m_MeshFiles.size() < i+1)
-        {
-            m_MeshFiles.resize(i+1);
-        }
-        m_MeshFiles[i] = s;
-    }
-    void SetMeshFile(const std::string &s)
-    {
-        this->SetMeshFile(0,s);
-    }
+  void SetFeaGradFiles(const std::vector<std::string>& s)
+  {
+    m_FeaGradFiles = s;
+  }
 
-    void SetMeshFiles(const std::vector<std::string> &s)
-    {
-        m_MeshFiles = s;
-    }
+  void SetDomainsPerShape(int i)
+  {
+    m_DomainsPerShape = i;
+  }
 
-    void AddImage(const typename TImage::Pointer image, double narrow_band)
-    {
-        const auto domain = itk::ParticleImplicitSurfaceDomain<typename ImageType::PixelType>::New();
-        m_NeighborhoodList.push_back( itk::ParticleSurfaceNeighborhood<ImageType>::New() );
+  void SetAttributesPerDomain(const std::vector<int>& i)
+  {
+    m_AttributesPerDomain = i;
+  }
 
-        if (image)
-        {
-          this->m_Spacing = image->GetSpacing()[0];
-          domain->SetSigma(this->m_Spacing * 2.0);
-          domain->SetImage(image, narrow_band);
-        }
+  /** Optionally supply a cutting plane that will be set as a particle
+  optimization constraint in the image domains. */
+  void SetCuttingPlane(unsigned int i,
+                       const vnl_vector_fixed<double, Dimension>& va,
+                       const vnl_vector_fixed<double, Dimension>& vb,
+                       const vnl_vector_fixed<double, Dimension>& vc);
 
-        m_DomainList.push_back(domain);
-    }
+  /** Transform a cutting plane based on procrustes transformation */
+  void TransformCuttingPlanes(unsigned int i);
 
-    void AddMesh(shapeworks::MeshWrapper * mesh) {
+  /** Optionally add spheres that may be used as constraints to the domain. */
+  void AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, double r);
 
-      itk::MeshDomain *domain = new itk::MeshDomain();
-      m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
-      if (mesh) {
-        this->m_Spacing = 1;
-        domain->SetMesh(mesh);
-      }
-      m_DomainList.push_back(domain);
-    }
-
-    void SetFidsFiles(const std::vector<std::string> &s)
-    {
-        m_FidsFiles = s;
-    }
-    void SetFeaFiles(const std::vector<std::string> &s)
-    {
-        m_FeaMeshFiles = s;
-    }
-    void SetFeaGradFiles(const std::vector<std::string> &s)
-    {
-        m_FeaGradFiles = s;
-    }
-
-    void SetDomainsPerShape(int i)
-    {
-        m_DomainsPerShape = i;
-    }
-    void SetAttributesPerDomain(const std::vector<int> &i)
-    {
-        m_AttributesPerDomain = i;
-    }
-
-
-    /** Optionally supply a cutting plane that will be set as a particle
-      optimization constraint in the image domains. */
-    void SetCuttingPlane(unsigned int i,
-                         const vnl_vector_fixed<double,Dimension> &va,
-                         const vnl_vector_fixed<double,Dimension> &vb,
-                         const vnl_vector_fixed<double,Dimension> &vc)
-    {
-        if (m_CuttingPlanes.size() < i+1)
-        {
-            m_CuttingPlanes.resize(i+1);
-        }
-
-        m_CuttingPlanes[i].push_back(CuttingPlaneType());
-
-        m_CuttingPlanes[i][m_CuttingPlanes[i].size()-1].a = va;
-        m_CuttingPlanes[i][m_CuttingPlanes[i].size()-1].b = vb;
-        m_CuttingPlanes[i][m_CuttingPlanes[i].size()-1].c = vc;
-
-        if (m_Initialized == true)
-        {
-            m_ParticleSystem->GetDomain(i)->SetCuttingPlane(va, vb, vc);
-        }
-    }
-
-    /** Transform a cutting plane based on procrustes transformation */
-    void  TransformCuttingPlanes(unsigned int i)
-    {
-        if (m_Initialized == true)
-        {
-            TransformType T1 = this->GetParticleSystem()->GetTransform(i) * this->GetParticleSystem()->GetPrefixTransform(i);
-            for(unsigned int d = 0; d < this->GetParticleSystem()->GetNumberOfDomains(); d++)
-            {
-                if (this->GetParticleSystem()->GetDomainFlag(d) == false)
-                {
-                    TransformType T2 = this->GetParticleSystem()->InvertTransform( this->GetParticleSystem()->GetTransform(d)
-                                                                                   * this->GetParticleSystem()->GetPrefixTransform(d));
-                    m_ParticleSystem->GetDomain(d)->TransformCuttingPlane(T2 * T1);
-                }
-            }
-        }
-    }
-
-    /** Optionally add spheres that may be used as constraints to the domain. */
-
-    void AddSphere(unsigned int i, vnl_vector_fixed<double,Dimension> &c, double r)
-    {
-        if (m_Spheres.size() < i+1)
-        {
-            m_Spheres.resize(i+1);
-        }
-
-        m_Spheres[i].push_back( SphereType() );
-        m_Spheres[i][m_Spheres[i].size()-1].center = c;
-        m_Spheres[i][m_Spheres[i].size()-1].radius = r;
-
-        if (m_Initialized == true)
-        {
-            m_ParticleSystem->GetDomain(i)->AddSphere(c, r);
-        }
-    }
-
-
-    /** This method sets the optimization function for the sampling.
-      mode 0 = no adaptivity
-      mode 1 = isotropic adaptivity
-      mode 2 = anisotropic adaptivity
+  /** This method sets the optimization function for the sampling.
+    mode 0 = no adaptivity
+    mode 1 = isotropic adaptivity
+    mode 2 = anisotropic adaptivity
   */
-    virtual void SetAdaptivityMode(int mode)
-    {
-        if (mode == 0)
-        {
-            if(m_pairwise_potential_type == 0)
-                m_Optimizer->SetGradientFunction(m_CurvatureGradientFunction);
-            else if(m_pairwise_potential_type == 1)
-                m_Optimizer->SetGradientFunction(m_ModifiedCotangentGradientFunction);
-        }
-        else if (mode ==1)
-        {
-            m_Optimizer->SetGradientFunction(m_GradientFunction);
-        }
-        else if (mode ==3)
-        {
-            if(m_pairwise_potential_type == 0)
-                m_Optimizer->SetGradientFunction(m_OmegaGradientFunction);
-            else if(m_pairwise_potential_type == 1)
-                m_Optimizer->SetGradientFunction(m_ConstrainedModifiedCotangentGradientFunction);
-        }
-
-        m_AdaptivityMode = mode;
-        this->Modified();
-
+  virtual void SetAdaptivityMode(int mode)
+  {
+    if (mode == 0) {
+      if (m_pairwise_potential_type == 0)
+        m_Optimizer->SetGradientFunction(m_CurvatureGradientFunction);
+      else if (m_pairwise_potential_type == 1)
+        m_Optimizer->SetGradientFunction(m_ModifiedCotangentGradientFunction);
     }
-    int GetAdaptivityMode() const
-    { return m_AdaptivityMode; }
-
-    void SetTransformFile(const std::string& s)
-    { m_TransformFile = s; }
-    void SetTransformFile(const char *s)
-    { m_TransformFile = std::string(s); }
-
-    void SetPrefixTransformFile(const std::string& s)
-    { m_PrefixTransformFile = s; }
-    void SetPrefixTransformFile(const char *s)
-    { m_PrefixTransformFile = std::string(s); }
-
-    void SetPairwisePotentialType(int pairwise_potential_type)
-    { m_pairwise_potential_type = pairwise_potential_type; }
-
-    int GetPairwisePotentialType()
-    {return m_pairwise_potential_type;}
-
-
-    void SetVerbosity(unsigned int val)
-    {
-        m_verbosity = val;
-        m_Optimizer->SetVerbosity(val);
+    else if (mode == 1) {
+      m_Optimizer->SetGradientFunction(m_GradientFunction);
+    }
+    else if (mode == 3) {
+      if (m_pairwise_potential_type == 0)
+        m_Optimizer->SetGradientFunction(m_OmegaGradientFunction);
+      else if (m_pairwise_potential_type == 1)
+        m_Optimizer->SetGradientFunction(m_ConstrainedModifiedCotangentGradientFunction);
     }
 
-    unsigned int GetVerbosity()
-    { return m_verbosity; }
+    m_AdaptivityMode = mode;
+    this->Modified();
 
-    MeanCurvatureCacheType *GetMeanCurvatureCache()
-    {   return  m_MeanCurvatureCache.GetPointer();  }
+  }
 
-    void ReadTransforms();
-    void ReadPointsFiles();
-    virtual void AllocateDataCaches();
-    virtual void AllocateDomainsAndNeighborhoods();
-    virtual void InitializeOptimizationFunctions();
+  int GetAdaptivityMode() const
+  { return m_AdaptivityMode; }
 
-    /** */
-    virtual void Initialize()
-    {
-        this->m_Initializing = true;
-        this->Execute();
-        this->m_Initializing = false;
-    }
+  void SetTransformFile(const std::string& s)
+  { m_TransformFile = s; }
 
-    virtual void ReInitialize();
+  void SetTransformFile(const char* s)
+  { m_TransformFile = std::string(s); }
 
-    virtual void Execute();
+  void SetPrefixTransformFile(const std::string& s)
+  { m_PrefixTransformFile = s; }
 
+  void SetPrefixTransformFile(const char* s)
+  { m_PrefixTransformFile = std::string(s); }
+
+  void SetPairwisePotentialType(int pairwise_potential_type)
+  { m_pairwise_potential_type = pairwise_potential_type; }
+
+  int GetPairwisePotentialType()
+  { return m_pairwise_potential_type; }
+
+  void SetVerbosity(unsigned int val)
+  {
+    m_verbosity = val;
+    m_Optimizer->SetVerbosity(val);
+  }
+
+  unsigned int GetVerbosity()
+  { return m_verbosity; }
+
+  MeanCurvatureCacheType* GetMeanCurvatureCache()
+  { return m_MeanCurvatureCache.GetPointer(); }
+
+  void ReadTransforms();
+  void ReadPointsFiles();
+  virtual void AllocateDataCaches();
+  virtual void AllocateDomainsAndNeighborhoods();
+  virtual void InitializeOptimizationFunctions();
+
+/** */
+  virtual void Initialize()
+  {
+    this->m_Initializing = true;
+    this->Execute();
+    this->m_Initializing = false;
+  }
+
+  virtual void ReInitialize();
+
+  virtual void Execute();
 
 protected:
-    MaximumEntropySurfaceSampler();
-    virtual ~MaximumEntropySurfaceSampler() {};
+  MaximumEntropySurfaceSampler();
 
-    void GenerateData();
+  virtual ~
 
-    itkSetMacro(Initialized, bool);
-    itkGetMacro(Initialized, bool);
-    itkSetMacro(Initializing, bool);
-    itkGetMacro(Initializing, bool);
+  MaximumEntropySurfaceSampler()
+  {};
 
-    bool m_Initialized;
-    int m_AdaptivityMode;
-    bool m_Initializing;
+  void GenerateData();
 
-    typename OptimizerType::Pointer m_Optimizer;
+  itkSetMacro(Initialized, bool);
 
-    typename itk::ParticleEntropyGradientFunction<typename ImageType::PixelType,  Dimension>
-    ::Pointer m_GradientFunction;
-    typename itk::ParticleCurvatureEntropyGradientFunction<typename ImageType::PixelType, Dimension>
-    ::Pointer m_CurvatureGradientFunction;
+  itkGetMacro(Initialized, bool);
 
-    typename itk::ParticleModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
-    ::Pointer m_ModifiedCotangentGradientFunction;
-    typename itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
-    ::Pointer m_ConstrainedModifiedCotangentGradientFunction;
+  itkSetMacro(Initializing, bool);
 
+  itkGetMacro(Initializing, bool);
 
-    typename itk::ParticleOmegaGradientFunction<typename ImageType::PixelType, Dimension>
-    ::Pointer m_OmegaGradientFunction;
+  bool m_Initialized;
+  int m_AdaptivityMode;
+  bool m_Initializing;
 
-    typename itk::ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma1Cache;
-    typename itk::ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma2Cache;
+  typename OptimizerType::Pointer m_Optimizer;
 
-    typename MeanCurvatureCacheType::Pointer m_MeanCurvatureCache;
+  typename itk::ParticleEntropyGradientFunction<typename ImageType::PixelType, Dimension>
+  ::Pointer m_GradientFunction;
+  typename itk::ParticleCurvatureEntropyGradientFunction<typename ImageType::PixelType, Dimension>
+  ::Pointer m_CurvatureGradientFunction;
 
-    typename itk::ParticleSystem<Dimension>::Pointer m_ParticleSystem;
+  typename itk::ParticleModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
+  ::Pointer m_ModifiedCotangentGradientFunction;
+  typename itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
+  ::Pointer m_ConstrainedModifiedCotangentGradientFunction;
 
-    std::vector<typename itk::ParticleDomain::Pointer> m_DomainList;
+  typename itk::ParticleOmegaGradientFunction<typename ImageType::PixelType, Dimension>
+  ::Pointer m_OmegaGradientFunction;
 
-    std::vector<typename itk::ParticleSurfaceNeighborhood<ImageType>::Pointer> m_NeighborhoodList;
+  typename itk::ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma1Cache;
+  typename itk::ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma2Cache;
 
-    int m_pairwise_potential_type;
+  typename MeanCurvatureCacheType::Pointer m_MeanCurvatureCache;
+
+  typename itk::ParticleSystem<Dimension>::Pointer m_ParticleSystem;
+
+  std::vector<typename itk::ParticleDomain::Pointer> m_DomainList;
+
+  std::vector<typename itk::ParticleSurfaceNeighborhood<ImageType>::Pointer> m_NeighborhoodList;
+
+  int m_pairwise_potential_type;
 
 private:
-    MaximumEntropySurfaceSampler(const Self&); //purposely not implemented
-    void operator=(const Self&); //purposely not implemented
+  MaximumEntropySurfaceSampler(const Self&); //purposely not implemented
+  void operator=(const Self&); //purposely not implemented
 
-    std::vector<std::string> m_PointsFiles;
-    std::vector<std::string> m_MeshFiles;
-    std::vector<std::string> m_FeaMeshFiles;
-    std::vector<std::string> m_FeaGradFiles;
-    std::vector<std::string> m_FidsFiles;
-    std::vector<int> m_AttributesPerDomain;
-    int m_DomainsPerShape;
-    double m_Spacing{0};
+  std::vector<std::string> m_PointsFiles;
+  std::vector<std::string> m_MeshFiles;
+  std::vector<std::string> m_FeaMeshFiles;
+  std::vector<std::string> m_FeaGradFiles;
+  std::vector<std::string> m_FidsFiles;
+  std::vector<int> m_AttributesPerDomain;
+  int m_DomainsPerShape;
+  double m_Spacing{0};
 
-    std::string m_TransformFile;
-    std::string m_PrefixTransformFile;
-    std::vector< std::vector< CuttingPlaneType> > m_CuttingPlanes;
-    std::vector< std::vector<SphereType> > m_Spheres;
+  std::string m_TransformFile;
+  std::string m_PrefixTransformFile;
+  std::vector<std::vector<CuttingPlaneType> > m_CuttingPlanes;
+  std::vector<std::vector<SphereType> > m_Spheres;
 
-    unsigned int m_verbosity;
-
+  unsigned int m_verbosity;
 
 };
 

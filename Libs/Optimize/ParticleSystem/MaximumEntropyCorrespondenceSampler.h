@@ -8,27 +8,24 @@
 #include "itkParticleShapeMixedEffectsMatrixAttribute.h"
 #include "itkParticleMeshBasedGeneralEntropyGradientFunction.h"
 
-namespace shapeworks
-{
-  
+namespace shapeworks {
+
 /** \class MaximumEntropyCorrespondenceSampler
  *
  * 
  *
  */
-class ITK_EXPORT MaximumEntropyCorrespondenceSampler
-  : public MaximumEntropySurfaceSampler
-{
+class MaximumEntropyCorrespondenceSampler : public MaximumEntropySurfaceSampler {
 public:
   /** Standard class typedefs. */
-  typedef MaximumEntropyCorrespondenceSampler  Self;
-  typedef MaximumEntropySurfaceSampler  Superclass;
-  typedef itk::SmartPointer<Self>   Pointer;
-  typedef itk::SmartPointer<const Self>  ConstPointer;
+  typedef MaximumEntropyCorrespondenceSampler Self;
+  typedef MaximumEntropySurfaceSampler Superclass;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
-  
+
   /** Run-time type information (and related methods). */
   itkTypeMacro(MaximumEntropyCorrespondenceSampler, MaximumEntropySurfaceSampler);
 
@@ -41,12 +38,12 @@ public:
   /** Expose the point type */
   typedef typename ImageType::PointType PointType;
 
-
   void SetCorrespondenceOn()
   {
     m_LinkingFunction->SetBOn();
     this->Modified();
   }
+
   void SetCorrespondenceOff()
   {
     m_LinkingFunction->SetBOff();
@@ -58,6 +55,7 @@ public:
     m_LinkingFunction->SetAOn();
     this->Modified();
   }
+
   void SetSamplingOff()
   {
     m_LinkingFunction->SetAOff();
@@ -66,6 +64,7 @@ public:
 
   bool GetCorrespondenceOn() const
   { return m_LinkingFunction->GetBOn(); }
+
   bool GetSamplingOn() const
   { return m_LinkingFunction->GetAOn(); }
 
@@ -75,24 +74,21 @@ public:
   */
   virtual void SetAdaptivityMode(int mode) override
   {
-    if (mode == 0)
-      {
-        if(this->m_pairwise_potential_type == 0)
-            m_LinkingFunction->SetFunctionA(this->GetCurvatureGradientFunction());
-        else if(this->m_pairwise_potential_type == 1)
-            m_LinkingFunction->SetFunctionA( this->GetModifiedCotangentGradientFunction());
-      }
-    else if (mode == 1)
-      {
+    if (mode == 0) {
+      if (this->m_pairwise_potential_type == 0)
+        m_LinkingFunction->SetFunctionA(this->GetCurvatureGradientFunction());
+      else if (this->m_pairwise_potential_type == 1)
+        m_LinkingFunction->SetFunctionA(this->GetModifiedCotangentGradientFunction());
+    }
+    else if (mode == 1) {
       m_LinkingFunction->SetFunctionA(this->GetGradientFunction());
-      }
-    else if (mode == 3)
-      {
-        if(this->m_pairwise_potential_type == 0)
-            m_LinkingFunction->SetFunctionA(this->GetOmegaGradientFunction());
-        else if(this->m_pairwise_potential_type == 1)
-            m_LinkingFunction->SetFunctionA(this->GetConstrainedModifiedCotangentGradientFunction());
-      }
+    }
+    else if (mode == 3) {
+      if (this->m_pairwise_potential_type == 0)
+        m_LinkingFunction->SetFunctionA(this->GetOmegaGradientFunction());
+      else if (this->m_pairwise_potential_type == 1)
+        m_LinkingFunction->SetFunctionA(this->GetConstrainedModifiedCotangentGradientFunction());
+    }
 
     Superclass::m_AdaptivityMode = mode;
     this->Modified();
@@ -105,28 +101,23 @@ public:
       m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
       m_EnsembleEntropyFunction->UseMeanEnergy();
     }
-    else if (mode == shapeworks::CorrespondenceMode::EnsembleEntropy)
-    {
+    else if (mode == shapeworks::CorrespondenceMode::EnsembleEntropy) {
       m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
       m_EnsembleEntropyFunction->UseEntropy();
     }
-    else if (mode == shapeworks::CorrespondenceMode::EnsembleRegressionEntropy)
-    {
+    else if (mode == shapeworks::CorrespondenceMode::EnsembleRegressionEntropy) {
       m_LinkingFunction->SetFunctionB(m_EnsembleRegressionEntropyFunction);
     }
-    else if (mode == shapeworks::CorrespondenceMode::EnsembleMixedEffectsEntropy)
-    {
+    else if (mode == shapeworks::CorrespondenceMode::EnsembleMixedEffectsEntropy) {
       m_LinkingFunction->SetFunctionB(m_EnsembleMixedEffectsEntropyFunction);
     }
-    else if (mode == shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy)
-    {
-        m_LinkingFunction->SetFunctionB(m_MeshBasedGeneralEntropyGradientFunction);
-        m_MeshBasedGeneralEntropyGradientFunction->UseEntropy();
+    else if (mode == shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy) {
+      m_LinkingFunction->SetFunctionB(m_MeshBasedGeneralEntropyGradientFunction);
+      m_MeshBasedGeneralEntropyGradientFunction->UseEntropy();
     }
-    else if (mode == shapeworks::CorrespondenceMode::MeshBasedGeneralMeanEnergy)
-    {
-        m_LinkingFunction->SetFunctionB(m_MeshBasedGeneralEntropyGradientFunction);
-        m_MeshBasedGeneralEntropyGradientFunction->UseMeanEnergy();
+    else if (mode == shapeworks::CorrespondenceMode::MeshBasedGeneralMeanEnergy) {
+      m_LinkingFunction->SetFunctionB(m_MeshBasedGeneralEntropyGradientFunction);
+      m_MeshBasedGeneralEntropyGradientFunction->UseMeanEnergy();
     }
 
     m_CorrespondenceMode = mode;
@@ -134,11 +125,11 @@ public:
 
   void RegisterGeneralShapeMatrices()
   {
-      Superclass::m_ParticleSystem->RegisterAttribute(m_GeneralShapeMatrix);
-      Superclass::m_ParticleSystem->RegisterAttribute(m_GeneralShapeGradMatrix);
+    Superclass::m_ParticleSystem->RegisterAttribute(m_GeneralShapeMatrix);
+    Superclass::m_ParticleSystem->RegisterAttribute(m_GeneralShapeGradMatrix);
   }
 
-  void SetAttributeScales(const std::vector<double> &s)
+  void SetAttributeScales(const std::vector<double>& s)
   {
     m_MeshBasedGeneralEntropyGradientFunction->SetAttributeScales(s);
     m_GeneralShapeMatrix->SetAttributeScales(s);
@@ -147,70 +138,80 @@ public:
 
   void SetXYZ(unsigned int i, bool flag)
   {
-      m_MeshBasedGeneralEntropyGradientFunction->SetXYZ(i, flag);
-      m_GeneralShapeMatrix->SetXYZ(i, flag);
-      m_GeneralShapeGradMatrix->SetXYZ(i, flag);
+    m_MeshBasedGeneralEntropyGradientFunction->SetXYZ(i, flag);
+    m_GeneralShapeMatrix->SetXYZ(i, flag);
+    m_GeneralShapeGradMatrix->SetXYZ(i, flag);
   }
 
   void SetNormals(int i, bool flag)
   {
-      m_MeshBasedGeneralEntropyGradientFunction->SetNormals(i, flag);
-      m_GeneralShapeMatrix->SetNormals(i, flag);
-      m_GeneralShapeGradMatrix->SetNormals(i, flag);
+    m_MeshBasedGeneralEntropyGradientFunction->SetNormals(i, flag);
+    m_GeneralShapeMatrix->SetNormals(i, flag);
+    m_GeneralShapeGradMatrix->SetNormals(i, flag);
   }
 
   void SetAttributesPerDomain(const std::vector<int> s)
   {
-      std::vector<int> s1;
-      if (s.size() == 0)
-      {
-          s1.resize(m_MeshBasedGeneralEntropyGradientFunction->GetDomainsPerShape());
-          for (int i = 0; i < m_MeshBasedGeneralEntropyGradientFunction->GetDomainsPerShape(); i++)
-              s1[i] = 0;
-      }
-      else
-          s1 = s;
-      this->Superclass::SetAttributesPerDomain(s1);
-      m_MeshBasedGeneralEntropyGradientFunction->SetAttributesPerDomain(s1);
-      m_GeneralShapeMatrix->SetAttributesPerDomain(s1);
-      m_GeneralShapeGradMatrix->SetAttributesPerDomain(s1);
+    std::vector<int> s1;
+    if (s.size() == 0) {
+      s1.resize(m_MeshBasedGeneralEntropyGradientFunction->GetDomainsPerShape());
+      for (int i = 0; i < m_MeshBasedGeneralEntropyGradientFunction->GetDomainsPerShape(); i++)
+        s1[i] = 0;
+    }
+    else
+      s1 = s;
+    this->Superclass::SetAttributesPerDomain(s1);
+    m_MeshBasedGeneralEntropyGradientFunction->SetAttributesPerDomain(s1);
+    m_GeneralShapeMatrix->SetAttributesPerDomain(s1);
+    m_GeneralShapeGradMatrix->SetAttributesPerDomain(s1);
   }
 
-  itk::ParticleShapeMatrixAttribute<double, Dimension> *GetShapeMatrix()
+  itk::ParticleShapeMatrixAttribute<double, Dimension>* GetShapeMatrix()
   {
-      return m_ShapeMatrix.GetPointer();
-  }
-  itk::ParticleGeneralShapeMatrix<double, Dimension> *GetGeneralShapeMatrix()
-  {
-      return m_GeneralShapeMatrix.GetPointer();
-  }
-  itk::ParticleGeneralShapeGradientMatrix<double, Dimension> *GetGeneralShapeGradientMatrix()
-  {
-      return m_GeneralShapeGradMatrix.GetPointer();
+    return m_ShapeMatrix.GetPointer();
   }
 
-  itk::ParticleDualVectorFunction<Dimension> *GetLinkingFunction()
+  itk::ParticleGeneralShapeMatrix<double, Dimension>* GetGeneralShapeMatrix()
+  {
+    return m_GeneralShapeMatrix.GetPointer();
+  }
+
+  itk::ParticleGeneralShapeGradientMatrix<double, Dimension>* GetGeneralShapeGradientMatrix()
+  {
+    return m_GeneralShapeGradMatrix.GetPointer();
+  }
+
+  itk::ParticleDualVectorFunction<Dimension>* GetLinkingFunction()
   { return m_LinkingFunction.GetPointer(); }
-  itk::ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleEntropyFunction()
+
+  itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleEntropyFunction()
   { return m_EnsembleEntropyFunction.GetPointer(); }
-  itk::ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleRegressionEntropyFunction()
+
+  itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleRegressionEntropyFunction()
   { return m_EnsembleRegressionEntropyFunction.GetPointer(); }
-  itk::ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleMixedEffectsEntropyFunction()
+
+  itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleMixedEffectsEntropyFunction()
   { return m_EnsembleMixedEffectsEntropyFunction.GetPointer(); }
-  itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension> *GetMeshBasedGeneralEntropyGradientFunction()
+
+  itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>* GetMeshBasedGeneralEntropyGradientFunction()
   { return m_MeshBasedGeneralEntropyGradientFunction.GetPointer(); }
-  
-  const itk::ParticleDualVectorFunction<Dimension> *GetLinkingFunction() const
+
+  const itk::ParticleDualVectorFunction<Dimension>* GetLinkingFunction() const
   { return m_LinkingFunction.GetPointer(); }
-  const itk::ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleEntropyFunction() const
+
+  const itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleEntropyFunction() const
   { return m_EnsembleEntropyFunction.GetPointer(); }
-  const itk::ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleRegressionEntropyFunction() const
+
+  const itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleRegressionEntropyFunction() const
   { return m_EnsembleRegressionEntropyFunction.GetPointer(); }
-  const itk::ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleMixedEffectsEntropyFunction() const
+
+  const itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleMixedEffectsEntropyFunction() const
   { return m_EnsembleMixedEffectsEntropyFunction.GetPointer(); }
-  const itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension> *GetMeshBasedGeneralEntropyGradientFunction() const
+
+  const itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>*
+  GetMeshBasedGeneralEntropyGradientFunction() const
   { return m_MeshBasedGeneralEntropyGradientFunction.GetPointer(); }
-  
+
   virtual void AllocateDataCaches();
 
   void SetDomainsPerShape(int n)
@@ -240,14 +241,15 @@ public:
 
 protected:
   MaximumEntropyCorrespondenceSampler();
-  virtual ~MaximumEntropyCorrespondenceSampler() {};
+
+  virtual ~MaximumEntropyCorrespondenceSampler()
+  {};
 
   void PrintSelf(std::ostream& os, itk::Indent indent) const
   {
     Superclass::PrintSelf(os, indent);
   }
 
-  
 private:
   MaximumEntropyCorrespondenceSampler(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
