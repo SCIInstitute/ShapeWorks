@@ -25,16 +25,16 @@ MaximumEntropyCorrespondenceSampler::MaximumEntropyCorrespondenceSampler()
   m_MeshBasedGeneralEntropyGradientFunction->SetShapeData(m_GeneralShapeMatrix);
   m_MeshBasedGeneralEntropyGradientFunction->SetShapeGradient(m_GeneralShapeGradMatrix);
 
-  Superclass::m_ParticleSystem->RegisterAttribute(m_ShapeMatrix);
-  Superclass::m_ParticleSystem->RegisterAttribute(m_LinearRegressionShapeMatrix);
-  Superclass::m_ParticleSystem->RegisterAttribute(m_MixedEffectsShapeMatrix);
+  m_ParticleSystem->RegisterAttribute(m_ShapeMatrix);
+  m_ParticleSystem->RegisterAttribute(m_LinearRegressionShapeMatrix);
+  m_ParticleSystem->RegisterAttribute(m_MixedEffectsShapeMatrix);
 
   m_CorrespondenceMode = shapeworks::CorrespondenceMode::EnsembleEntropy;
 }
 
 void MaximumEntropyCorrespondenceSampler::AllocateDataCaches()
 {
-  Superclass::AllocateDataCaches();
+  MaximumEntropySurfaceSampler::AllocateDataCaches();
 }
 
 void MaximumEntropyCorrespondenceSampler::ReInitialize()

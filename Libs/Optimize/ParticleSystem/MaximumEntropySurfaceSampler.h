@@ -26,25 +26,13 @@ namespace shapeworks {
  *
  *
  */
-class MaximumEntropySurfaceSampler : public itk::DataObject {
+class MaximumEntropySurfaceSampler {
 
 public:
 
   using TImage = itk::Image<float, 3>;
 
-  /** Standard class typedefs. */
-  typedef MaximumEntropySurfaceSampler Self;
-  typedef itk::SmartPointer<Self> Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
-
-  /** Method for creation through the object factory. */
-  itkNewMacro(Self);
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MaximumEntropySurfaceSampler, InPlaceImageFilter);
-
-  /** Expose the image dimension. */
-  itkStaticConstMacro(Dimension, unsigned int, TImage::ImageDimension);
+  static constexpr unsigned int Dimension = TImage::ImageDimension;
 
   typedef itk::ParticleMeanCurvatureAttribute<typename TImage::PixelType, Dimension> MeanCurvatureCacheType;
 
@@ -208,8 +196,6 @@ public:
     }
 
     m_AdaptivityMode = mode;
-    this->Modified();
-
   }
 
   int GetAdaptivityMode() const
@@ -266,20 +252,29 @@ public:
 protected:
   MaximumEntropySurfaceSampler();
 
-  virtual ~
-
-  MaximumEntropySurfaceSampler()
-  {};
+  virtual ~MaximumEntropySurfaceSampler()  {};
 
   void GenerateData();
 
-  itkSetMacro(Initialized, bool);
+  bool GetInitialized()
+  {
+    return this->m_Initialized;
+  }
 
-  itkGetMacro(Initialized, bool);
+  void SetInitialized(bool value)
+  {
+    this->m_Initialized = value;
+  }
 
-  itkSetMacro(Initializing, bool);
+  bool GetInitializing()
+  {
+    return this->m_Initializing;
+  }
 
-  itkGetMacro(Initializing, bool);
+  void SetInitializing(bool value)
+  {
+    this->m_Initializing = value;
+  }
 
   bool m_Initialized;
   int m_AdaptivityMode;
@@ -314,8 +309,8 @@ protected:
   int m_pairwise_potential_type;
 
 private:
-  MaximumEntropySurfaceSampler(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  MaximumEntropySurfaceSampler(const MaximumEntropySurfaceSampler&); //purposely not implemented
+  void operator=(const MaximumEntropySurfaceSampler&); //purposely not implemented
 
   std::vector<std::string> m_PointsFiles;
   std::vector<std::string> m_MeshFiles;

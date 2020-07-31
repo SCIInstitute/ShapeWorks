@@ -34,7 +34,7 @@ namespace shapeworks {
 //---------------------------------------------------------------------------
 Optimize::Optimize()
 {
-  this->m_sampler = MaximumEntropyCorrespondenceSampler::New();
+  this->m_sampler = std::make_shared<MaximumEntropyCorrespondenceSampler>();
 }
 
 //---------------------------------------------------------------------------
@@ -709,7 +709,6 @@ void Optimize::Initialize()
     m_saturation_counter = 0;
     m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
     m_sampler->GetOptimizer()->SetNumberOfIterations(0);
-    m_sampler->Modified();
     m_sampler->Execute();
 
     if (m_save_init_splits == true) {
@@ -784,7 +783,6 @@ void Optimize::AddAdaptivity()
   m_saturation_counter = 0;
   m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
   m_sampler->GetOptimizer()->SetNumberOfIterations(0);
-  m_sampler->Modified();
   m_sampler->Execute();
 
   this->WritePointFiles();
@@ -901,7 +899,6 @@ void Optimize::RunOptimize()
   m_saturation_counter = 0;
   m_sampler->GetOptimizer()->SetNumberOfIterations(0);
   m_sampler->GetOptimizer()->SetTolerance(0.0);
-  m_sampler->Modified();
   m_sampler->Execute();
 
   this->WritePointFiles();

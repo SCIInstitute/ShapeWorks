@@ -17,49 +17,36 @@ namespace shapeworks {
  */
 class MaximumEntropyCorrespondenceSampler : public MaximumEntropySurfaceSampler {
 public:
-  /** Standard class typedefs. */
-  typedef MaximumEntropyCorrespondenceSampler Self;
-  typedef MaximumEntropySurfaceSampler Superclass;
-  typedef itk::SmartPointer<Self> Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
 
-  /** Method for creation through the object factory. */
-  itkNewMacro(Self);
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MaximumEntropyCorrespondenceSampler, MaximumEntropySurfaceSampler);
-
-  /**Expose the image dimension. */
-  itkStaticConstMacro(Dimension, unsigned int, TImage::ImageDimension);
+  using Superclass = MaximumEntropySurfaceSampler;
 
   /** Type of the input/output image. */
-  typedef typename Superclass::ImageType ImageType;
+  typedef typename MaximumEntropySurfaceSampler::ImageType ImageType;
 
   /** Expose the point type */
   typedef typename ImageType::PointType PointType;
 
+  //! Constructor
+  MaximumEntropyCorrespondenceSampler();
+
   void SetCorrespondenceOn()
   {
     m_LinkingFunction->SetBOn();
-    this->Modified();
   }
 
   void SetCorrespondenceOff()
   {
     m_LinkingFunction->SetBOff();
-    this->Modified();
   }
 
   void SetSamplingOn()
   {
     m_LinkingFunction->SetAOn();
-    this->Modified();
   }
 
   void SetSamplingOff()
   {
     m_LinkingFunction->SetAOff();
-    this->Modified();
   }
 
   bool GetCorrespondenceOn() const
@@ -90,8 +77,7 @@ public:
         m_LinkingFunction->SetFunctionA(this->GetConstrainedModifiedCotangentGradientFunction());
     }
 
-    Superclass::m_AdaptivityMode = mode;
-    this->Modified();
+    this->m_AdaptivityMode = mode;
   }
 
   /** This method sets the optimization function for correspondences between surfaces (domains). */
@@ -125,8 +111,8 @@ public:
 
   void RegisterGeneralShapeMatrices()
   {
-    Superclass::m_ParticleSystem->RegisterAttribute(m_GeneralShapeMatrix);
-    Superclass::m_ParticleSystem->RegisterAttribute(m_GeneralShapeGradMatrix);
+    this->m_ParticleSystem->RegisterAttribute(m_GeneralShapeMatrix);
+    this->m_ParticleSystem->RegisterAttribute(m_GeneralShapeGradMatrix);
   }
 
   void SetAttributeScales(const std::vector<double>& s)
@@ -160,7 +146,7 @@ public:
     }
     else
       s1 = s;
-    this->Superclass::SetAttributesPerDomain(s1);
+    Superclass::SetAttributesPerDomain(s1);
     m_MeshBasedGeneralEntropyGradientFunction->SetAttributesPerDomain(s1);
     m_GeneralShapeMatrix->SetAttributesPerDomain(s1);
     m_GeneralShapeGradMatrix->SetAttributesPerDomain(s1);
@@ -239,20 +225,9 @@ public:
 
   void Execute() override;
 
-protected:
-  MaximumEntropyCorrespondenceSampler();
-
-  virtual ~MaximumEntropyCorrespondenceSampler()
-  {};
-
-  void PrintSelf(std::ostream& os, itk::Indent indent) const
-  {
-    Superclass::PrintSelf(os, indent);
-  }
-
 private:
-  MaximumEntropyCorrespondenceSampler(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  MaximumEntropyCorrespondenceSampler(const MaximumEntropyCorrespondenceSampler&); //purposely not implemented
+  void operator=(const MaximumEntropyCorrespondenceSampler&); //purposely not implemented
   shapeworks::CorrespondenceMode m_CorrespondenceMode;
 
   typename itk::ParticleDualVectorFunction<Dimension>::Pointer m_LinkingFunction;

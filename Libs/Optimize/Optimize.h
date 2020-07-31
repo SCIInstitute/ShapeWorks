@@ -243,8 +243,8 @@ public:
   void PrintParamInfo();
 
   //! Return the Sampler
-  SamplerType* GetSampler()
-  { return m_sampler.GetPointer(); }
+  std::shared_ptr<MaximumEntropyCorrespondenceSampler> GetSampler()
+  { return m_sampler; }
 
 protected:
 
@@ -295,7 +295,7 @@ protected:
 
   virtual void UpdateExportablePoints();
 
-  MaximumEntropyCorrespondenceSampler::Pointer m_sampler;
+  std::shared_ptr<MaximumEntropyCorrespondenceSampler> m_sampler;
   itk::ParticleProcrustesRegistration<3>::Pointer m_procrustes;
   itk::ParticleGoodBadAssessment<float, 3>::Pointer m_good_bad;
 
