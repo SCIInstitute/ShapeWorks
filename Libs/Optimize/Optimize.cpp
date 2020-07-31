@@ -16,25 +16,14 @@
 #endif // ifdef _WIN32
 
 // itk
-#include <itkImageFileReader.h>
 #include <itkMultiThreaderBase.h>
 #include <itkImageRegionIteratorWithIndex.h>
-#include <itkMacro.h>
+#include <itkImageToVTKImageFilter.h>
 
-// vtk
-#include <vtkContourFilter.h>
-#include <vtkSmartPointer.h>
-#include <vtkImageData.h>
-#include <vtkPolyData.h>
-#include <vtkMassProperties.h>
-
-// shapeworks particle system
+// shapeworks
 #include "TriMesh.h"
-#include "itkImageToVTKImageFilter.h"
 #include "ParticleSystem/itkParticleImageDomain.h"
-#include "ParticleSystem/itkParticleImageDomainWithGradients.h"
 #include "ParticleSystem/itkParticleImplicitSurfaceDomain.h"
-#include "ParticleSystem/itkParticleImageDomainWithHessians.h"
 #include "ParticleSystem/object_reader.h"
 #include "ParticleSystem/object_writer.h"
 
@@ -586,22 +575,11 @@ void Optimize::Initialize()
   m_sampler->SetCorrespondenceOn();
 
   if (m_use_shape_statistics_in_init) {
-    if (m_attributes_per_domain.size() > 0 &&
-        *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) {
-      if (m_mesh_based_attributes) {
-        m_sampler->SetCorrespondenceMode(5);
-      }
-      else {
-        m_sampler->SetCorrespondenceMode(2);
-      }
+    if (m_mesh_based_attributes) {
+      m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy);
     }
     else {
-      if (m_mesh_based_attributes) {
-        m_sampler->SetCorrespondenceMode(5);
-      }
-      else {
-        m_sampler->SetCorrespondenceMode(1);
-      }
+      m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::EnsembleEntropy);
     }
 
     m_sampler->GetEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
@@ -618,10 +596,10 @@ void Optimize::Initialize()
     if ((m_attributes_per_domain.size() > 0 &&
          *std::max_element(m_attributes_per_domain.begin(),
                            m_attributes_per_domain.end()) > 0) || m_mesh_based_attributes) {
-      m_sampler->SetCorrespondenceMode(6);
+      m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralMeanEnergy);
     }
     else {
-      m_sampler->SetCorrespondenceMode(0);
+      m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeanEnergy);
     }
   }
 
@@ -892,21 +870,21 @@ void Optimize::RunOptimize()
   if ((m_attributes_per_domain.size() > 0 &&
        *std::max_element(m_attributes_per_domain.begin(),
                          m_attributes_per_domain.end()) > 0) || m_mesh_based_attributes) {
-    m_sampler->SetCorrespondenceMode(5);
+    m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy);
   }
   else if (m_use_regression == true) {
     if (m_use_mixed_effects == true) {
-      m_sampler->SetCorrespondenceMode(4);       // MixedEffects
+      m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::EnsembleMixedEffectsEntropy);
     }
     else {
-      m_sampler->SetCorrespondenceMode(3);       // Regression
+      m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::EnsembleRegressionEntropy);
     }
   }
   else if (m_starting_regularization == m_ending_regularization) {
-    m_sampler->SetCorrespondenceMode(0);     // mean force
+    m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeanEnergy);     // mean force
   }
   else {
-    m_sampler->SetCorrespondenceMode(1);     // Ensemble Entropy
+    m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::EnsembleEntropy);
   }
 
   if (m_optimization_iterations - m_optimization_iterations_completed > 0) {
@@ -1082,14 +1060,14 @@ void Optimize::ComputeEnergyAfterIteration()
         sampEnergy +=
           m_sampler->GetLinkingFunction()->EnergyA(j, i, m_sampler->GetParticleSystem());
       }
-      if (m_sampler->GetCorrespondenceMode() == 0) {
+      if (m_sampler->GetCorrespondenceMode() == shapeworks::CorrespondenceMode::MeanEnergy) {
         corrEnergy +=
           m_sampler->GetLinkingFunction()->EnergyB(j, i, m_sampler->GetParticleSystem());
       }
     }
   }
 
-  if (m_sampler->GetCorrespondenceMode() > 0) {
+  if (m_sampler->GetCorrespondenceMode() != shapeworks::CorrespondenceMode::MeanEnergy) {
     corrEnergy = m_sampler->GetLinkingFunction()->EnergyB(0, 0, m_sampler->GetParticleSystem());
   }
 
