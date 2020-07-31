@@ -23,8 +23,7 @@ public:
   /** Type of the input/output image. */
   typedef MaximumEntropySurfaceSampler::ImageType ImageType;
 
-  /** Expose the point type */
-  typedef ImageType::PointType PointType;
+
 
   //! Constructor
   MaximumEntropyCorrespondenceSampler();

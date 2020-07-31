@@ -40,6 +40,12 @@ public:
 
   using TImage = itk::Image<float, 3>;
 
+  /** Type of the input/output image. */
+  typedef TImage ImageType;
+
+  /** Expose the point type */
+  typedef ImageType::PointType PointType;
+
   static constexpr unsigned int Dimension = TImage::ImageDimension;
 
   typedef itk::ParticleMeanCurvatureAttribute<typename TImage::PixelType, Dimension> MeanCurvatureCacheType;
@@ -60,14 +66,18 @@ public:
   /** Transform Type*/
   typedef vnl_matrix_fixed<double, Dimension + 1, Dimension + 1> TransformType;
 
-  /** Type of the input/output image. */
-  typedef TImage ImageType;
   typedef itk::ParticleGradientDescentPositionOptimizer<ImageType::PixelType, Dimension> OptimizerType;
 
   /** Returns the particle system used in the surface sampling. */
   itkGetObjectMacro(ParticleSystem, itk::ParticleSystem<Dimension>);
 
   itkGetConstObjectMacro(ParticleSystem, itk::ParticleSystem<Dimension>);
+
+
+  MaximumEntropySurfaceSampler();
+
+  virtual ~MaximumEntropySurfaceSampler()
+  {};
 
   /** Returns a pointer to the gradient function used. */
   itk::ParticleEntropyGradientFunction<ImageType::PixelType, Dimension>
@@ -411,10 +421,6 @@ public:
   virtual void Execute();
 
 protected:
-  MaximumEntropySurfaceSampler();
-
-  virtual ~MaximumEntropySurfaceSampler()
-  {};
 
   void GenerateData();
 
