@@ -55,30 +55,6 @@ public:
   bool GetSamplingOn() const
   { return m_LinkingFunction->GetAOn(); }
 
-  /** This method sets the optimization function for the sampling.
-      mode 0 = isotropic adaptivity
-      mode 1 = no adaptivity
-  */
-  virtual void SetAdaptivityMode(int mode) override
-  {
-    if (mode == 0) {
-      if (this->m_pairwise_potential_type == 0)
-        m_LinkingFunction->SetFunctionA(this->GetCurvatureGradientFunction());
-      else if (this->m_pairwise_potential_type == 1)
-        m_LinkingFunction->SetFunctionA(this->GetModifiedCotangentGradientFunction());
-    }
-    else if (mode == 1) {
-      m_LinkingFunction->SetFunctionA(this->GetGradientFunction());
-    }
-    else if (mode == 3) {
-      if (this->m_pairwise_potential_type == 0)
-        m_LinkingFunction->SetFunctionA(this->GetOmegaGradientFunction());
-      else if (this->m_pairwise_potential_type == 1)
-        m_LinkingFunction->SetFunctionA(this->GetConstrainedModifiedCotangentGradientFunction());
-    }
-
-    this->m_AdaptivityMode = mode;
-  }
 
   /** This method sets the optimization function for correspondences between surfaces (domains). */
   virtual void SetCorrespondenceMode(shapeworks::CorrespondenceMode mode)

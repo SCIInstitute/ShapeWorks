@@ -187,30 +187,30 @@ public:
   /** Optionally add spheres that may be used as constraints to the domain. */
   void AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, double r);
 
+
   /** This method sets the optimization function for the sampling.
-    mode 0 = no adaptivity
-    mode 1 = isotropic adaptivity
-    mode 2 = anisotropic adaptivity
+      mode 0 = isotropic adaptivity
+      mode 1 = no adaptivity
   */
   virtual void SetAdaptivityMode(int mode)
   {
     if (mode == 0) {
-      if (m_pairwise_potential_type == 0)
-        m_Optimizer->SetGradientFunction(m_CurvatureGradientFunction);
-      else if (m_pairwise_potential_type == 1)
-        m_Optimizer->SetGradientFunction(m_ModifiedCotangentGradientFunction);
+      if (this->m_pairwise_potential_type == 0)
+        m_LinkingFunction->SetFunctionA(this->GetCurvatureGradientFunction());
+      else if (this->m_pairwise_potential_type == 1)
+        m_LinkingFunction->SetFunctionA(this->GetModifiedCotangentGradientFunction());
     }
     else if (mode == 1) {
-      m_Optimizer->SetGradientFunction(m_GradientFunction);
+      m_LinkingFunction->SetFunctionA(this->GetGradientFunction());
     }
     else if (mode == 3) {
-      if (m_pairwise_potential_type == 0)
-        m_Optimizer->SetGradientFunction(m_OmegaGradientFunction);
-      else if (m_pairwise_potential_type == 1)
-        m_Optimizer->SetGradientFunction(m_ConstrainedModifiedCotangentGradientFunction);
+      if (this->m_pairwise_potential_type == 0)
+        m_LinkingFunction->SetFunctionA(this->GetOmegaGradientFunction());
+      else if (this->m_pairwise_potential_type == 1)
+        m_LinkingFunction->SetFunctionA(this->GetConstrainedModifiedCotangentGradientFunction());
     }
 
-    m_AdaptivityMode = mode;
+    this->m_AdaptivityMode = mode;
   }
 
   int GetAdaptivityMode() const
