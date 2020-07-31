@@ -32,14 +32,10 @@ MaximumEntropyCorrespondenceSampler::MaximumEntropyCorrespondenceSampler()
   m_CorrespondenceMode = shapeworks::CorrespondenceMode::EnsembleEntropy;
 }
 
-void MaximumEntropyCorrespondenceSampler::AllocateDataCaches()
-{
-  MaximumEntropySurfaceSampler::AllocateDataCaches();
-}
 
 void MaximumEntropyCorrespondenceSampler::ReInitialize()
 {
-  this->SetAdaptivityMode(Superclass::m_AdaptivityMode);
+  this->SetAdaptivityMode(m_AdaptivityMode);
   this->SetCorrespondenceMode(m_CorrespondenceMode);
   this->GetOptimizer()->SetGradientFunction(m_LinkingFunction);
   this->m_LinkingFunction->SetAOn();

@@ -198,18 +198,6 @@ public:
   GetMeshBasedGeneralEntropyGradientFunction() const
   { return m_MeshBasedGeneralEntropyGradientFunction.GetPointer(); }
 
-  virtual void AllocateDataCaches();
-
-  void SetDomainsPerShape(int n)
-  {
-    Superclass::SetDomainsPerShape(n);
-    m_LinearRegressionShapeMatrix->SetDomainsPerShape(n);
-    m_MixedEffectsShapeMatrix->SetDomainsPerShape(n);
-    m_ShapeMatrix->SetDomainsPerShape(n);
-    m_MeshBasedGeneralEntropyGradientFunction->SetDomainsPerShape(n);
-    m_GeneralShapeMatrix->SetDomainsPerShape(n);
-    m_GeneralShapeGradMatrix->SetDomainsPerShape(n);
-  }
 
   void SetTimeptsPerIndividual(int n)
   {
@@ -228,23 +216,8 @@ public:
 private:
   MaximumEntropyCorrespondenceSampler(const MaximumEntropyCorrespondenceSampler&); //purposely not implemented
   void operator=(const MaximumEntropyCorrespondenceSampler&); //purposely not implemented
-  shapeworks::CorrespondenceMode m_CorrespondenceMode;
 
-  itk::ParticleDualVectorFunction<Dimension>::Pointer m_LinkingFunction;
 
-  itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleEntropyFunction;
-  itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleRegressionEntropyFunction;
-  itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleMixedEffectsEntropyFunction;
-
-  itk::ParticleShapeMatrixAttribute<double, Dimension>::Pointer m_ShapeMatrix;
-
-  itk::ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::Pointer m_LinearRegressionShapeMatrix;
-  itk::ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::Pointer m_MixedEffectsShapeMatrix;
-
-  itk::ParticleGeneralShapeMatrix<double, Dimension>::Pointer m_GeneralShapeMatrix;
-  itk::ParticleGeneralShapeGradientMatrix<double, Dimension>::Pointer m_GeneralShapeGradMatrix;
-
-  itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::Pointer m_MeshBasedGeneralEntropyGradientFunction;
 };
 
 } // end namespace

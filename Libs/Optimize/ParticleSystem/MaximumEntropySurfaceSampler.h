@@ -13,6 +13,15 @@
 #include "MeshWrapper.h"
 #include "MeshDomain.h"
 
+
+#include "CorrespondenceMode.h"
+#include "MaximumEntropySurfaceSampler.h"
+#include "itkParticleDualVectorFunction.h"
+#include "itkParticleEnsembleEntropyFunction.h"
+#include "itkParticleShapeLinearRegressionMatrixAttribute.h"
+#include "itkParticleShapeMixedEffectsMatrixAttribute.h"
+#include "itkParticleMeshBasedGeneralEntropyGradientFunction.h"
+
 #include "itkParticleModifiedCotangentEntropyGradientFunction.h"
 #include "itkParticleConstrainedModifiedCotangentEntropyGradientFunction.h"
 #include "vnl/vnl_matrix_fixed.h"
@@ -149,9 +158,15 @@ public:
     m_FeaGradFiles = s;
   }
 
-  void SetDomainsPerShape(int i)
+  void SetDomainsPerShape(int n)
   {
-    m_DomainsPerShape = i;
+    m_DomainsPerShape = n;
+    m_LinearRegressionShapeMatrix->SetDomainsPerShape(n);
+    m_MixedEffectsShapeMatrix->SetDomainsPerShape(n);
+    m_ShapeMatrix->SetDomainsPerShape(n);
+    m_MeshBasedGeneralEntropyGradientFunction->SetDomainsPerShape(n);
+    m_GeneralShapeMatrix->SetDomainsPerShape(n);
+    m_GeneralShapeGradMatrix->SetDomainsPerShape(n);
   }
 
   void SetAttributesPerDomain(const std::vector<int>& i)
@@ -283,18 +298,15 @@ protected:
 
   OptimizerType::Pointer m_Optimizer;
 
-  itk::ParticleEntropyGradientFunction<ImageType::PixelType, Dimension>
-  ::Pointer m_GradientFunction;
-  itk::ParticleCurvatureEntropyGradientFunction<ImageType::PixelType, Dimension>
-  ::Pointer m_CurvatureGradientFunction;
+  itk::ParticleEntropyGradientFunction<ImageType::PixelType, Dimension>::Pointer m_GradientFunction;
+  itk::ParticleCurvatureEntropyGradientFunction<ImageType::PixelType, Dimension>::Pointer m_CurvatureGradientFunction;
 
   itk::ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>
   ::Pointer m_ModifiedCotangentGradientFunction;
   itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>
   ::Pointer m_ConstrainedModifiedCotangentGradientFunction;
 
-  itk::ParticleOmegaGradientFunction<ImageType::PixelType, Dimension>
-  ::Pointer m_OmegaGradientFunction;
+  itk::ParticleOmegaGradientFunction<ImageType::PixelType, Dimension>::Pointer m_OmegaGradientFunction;
 
   itk::ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma1Cache;
   itk::ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma2Cache;
@@ -308,6 +320,26 @@ protected:
   std::vector<itk::ParticleSurfaceNeighborhood<ImageType>::Pointer> m_NeighborhoodList;
 
   int m_pairwise_potential_type;
+
+
+  shapeworks::CorrespondenceMode m_CorrespondenceMode;
+
+  itk::ParticleDualVectorFunction<Dimension>::Pointer m_LinkingFunction;
+
+  itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleEntropyFunction;
+  itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleRegressionEntropyFunction;
+  itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleMixedEffectsEntropyFunction;
+
+  itk::ParticleShapeMatrixAttribute<double, Dimension>::Pointer m_ShapeMatrix;
+
+  itk::ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::Pointer m_LinearRegressionShapeMatrix;
+  itk::ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::Pointer m_MixedEffectsShapeMatrix;
+
+  itk::ParticleGeneralShapeMatrix<double, Dimension>::Pointer m_GeneralShapeMatrix;
+  itk::ParticleGeneralShapeGradientMatrix<double, Dimension>::Pointer m_GeneralShapeGradMatrix;
+
+  itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::Pointer m_MeshBasedGeneralEntropyGradientFunction;
+
 
 private:
   MaximumEntropySurfaceSampler(const MaximumEntropySurfaceSampler&); //purposely not implemented
