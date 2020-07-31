@@ -15,7 +15,7 @@
 
 // shapeworks particle system
 #include "ParticleSystem/itkParticleSystem.h"
-#include "ParticleSystem/MaximumEntropyCorrespondenceSampler.h"
+#include "ParticleSystem/MaximumEntropySurfaceSampler.h"
 #include "ParticleSystem/itkParticleProcrustesRegistration.h"
 #include "ParticleSystem/itkParticleGoodBadAssessment.h"
 #include "ParticleSystem/itkParticleVectorFunction.h"
@@ -39,7 +39,6 @@ namespace shapeworks {
 class Optimize {
 public:
   using ImageType = itk::Image<float, 3>;
-  using SamplerType = MaximumEntropyCorrespondenceSampler;
   using VectorType = itk::ParticleVectorFunction<3>::VectorType;
 
   //! Constructor
