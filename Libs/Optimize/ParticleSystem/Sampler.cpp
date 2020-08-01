@@ -9,12 +9,6 @@ namespace shapeworks {
 
 Sampler::Sampler()
 {
-  m_AdaptivityMode = 0;
-  m_Initializing = false;
-
-  m_PrefixTransformFile = "";
-  m_TransformFile = "";
-
   // Allocate the particle system members.
   m_ParticleSystem = itk::ParticleSystem<Dimension>::New();
 
@@ -33,7 +27,6 @@ Sampler::Sampler()
   // Allocate some optimization code.
   m_Optimizer = OptimizerType::New();
 
-  m_Initialized = false;
   m_PointsFiles.push_back("");
   m_MeshFiles.push_back("");
 
@@ -98,7 +91,8 @@ void Sampler::AllocateDomainsAndNeighborhoods()
     auto domain = m_DomainList[i];
     if (m_CuttingPlanes.size() > i) {
       for (unsigned int j = 0; j < m_CuttingPlanes[i].size(); j++)
-        domain->SetCuttingPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b, m_CuttingPlanes[i][j].c);
+        domain->SetCuttingPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b,
+                                m_CuttingPlanes[i][j].c);
     }
 
     if (m_Spheres.size() > i) {
@@ -117,17 +111,21 @@ void Sampler::AllocateDomainsAndNeighborhoods()
           themesh->need_neighbors();
           orient(themesh);
           themesh->need_bsphere();
-          if (!themesh->normals.empty())
+          if (!themesh->normals.empty()) {
             themesh->normals.clear();
+          }
           themesh->need_normals();
-          if (!themesh->tstrips.empty())
+          if (!themesh->tstrips.empty()) {
             themesh->tstrips.clear();
+          }
           themesh->need_tstrips();
-          if (!themesh->adjacentfaces.empty())
+          if (!themesh->adjacentfaces.empty()) {
             themesh->adjacentfaces.clear();
+          }
           themesh->need_adjacentfaces();
-          if (!themesh->across_edge.empty())
+          if (!themesh->across_edge.empty()) {
             themesh->across_edge.clear();
+          }
           themesh->need_across_edge();
           themesh->need_faceedges();
           themesh->need_oneringfaces();
@@ -298,12 +296,14 @@ void Sampler::AddMesh(shapeworks::MeshWrapper* mesh)
 void Sampler::TransformCuttingPlanes(unsigned int i)
 {
   if (m_Initialized == true) {
-    TransformType T1 = this->GetParticleSystem()->GetTransform(i) * this->GetParticleSystem()->GetPrefixTransform(i);
+    TransformType T1 =
+      this->GetParticleSystem()->GetTransform(i) * this->GetParticleSystem()->GetPrefixTransform(i);
     for (unsigned int d = 0; d < this->GetParticleSystem()->GetNumberOfDomains(); d++) {
       if (this->GetParticleSystem()->GetDomainFlag(d) == false) {
-        TransformType T2 = this->GetParticleSystem()->InvertTransform(this->GetParticleSystem()->GetTransform(d)
-                                                                      *
-                                                                      this->GetParticleSystem()->GetPrefixTransform(d));
+        TransformType T2 = this->GetParticleSystem()->InvertTransform(
+          this->GetParticleSystem()->GetTransform(d)
+          *
+          this->GetParticleSystem()->GetPrefixTransform(d));
         m_ParticleSystem->GetDomain(d)->TransformCuttingPlane(T2 * T1);
       }
     }

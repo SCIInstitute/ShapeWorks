@@ -410,9 +410,9 @@ protected:
     this->m_Initializing = value;
   }
 
-  bool m_Initialized;
-  int m_AdaptivityMode;
-  bool m_Initializing;
+  bool m_Initialized{false};
+  int m_AdaptivityMode{0};
+  bool m_Initializing{false};
 
   OptimizerType::Pointer m_Optimizer;
 
