@@ -34,7 +34,8 @@ See [How to Contribute?](contribute.md) for more details on git commands.
 
 ## Install dependencies
 
-### Linux & Mac
+### Linux and Mac
+
 #### Anaconda
 We use Anaconda (conda) to install many dependencies required for both building and running ShapeWorks. Conda [sub]environments do not affect a machine's global setup in any way, do not require sudo to install, and are only available at the user level when activated.
 
