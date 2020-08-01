@@ -34,7 +34,7 @@ namespace shapeworks {
 //---------------------------------------------------------------------------
 Optimize::Optimize()
 {
-  this->m_sampler = std::make_shared<MaximumEntropySurfaceSampler>();
+  this->m_sampler = std::make_shared<Sampler>();
 }
 
 //---------------------------------------------------------------------------
@@ -1324,7 +1324,7 @@ void Optimize::WritePointFiles(std::string iter_prefix)
   mkdir(iter_prefix.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 #endif
 
-  typedef MaximumEntropySurfaceSampler::PointType PointType;
+  typedef Sampler::PointType PointType;
   const int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
 
   int counter;
@@ -1409,7 +1409,7 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
   }
 
   this->PrintStartMessage("Writing point with attributes files...\n");
-  typedef MaximumEntropySurfaceSampler::PointType PointType;
+  typedef Sampler::PointType PointType;
   const int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
 
   int counter;
@@ -1727,7 +1727,7 @@ void Optimize::ReportBadParticles()
   }
 
   this->PrintStartMessage("Reporting bad particles...", 2);
-  typedef MaximumEntropySurfaceSampler::PointType PointType;
+  typedef Sampler::PointType PointType;
   const int totalDomains = m_sampler->GetParticleSystem()->GetNumberOfDomains();
   const int numShapes = totalDomains / m_domains_per_shape;
   std::string outDomDir;

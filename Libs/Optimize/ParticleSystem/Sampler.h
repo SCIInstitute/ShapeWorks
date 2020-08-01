@@ -14,7 +14,7 @@
 #include "MeshDomain.h"
 
 #include "CorrespondenceMode.h"
-#include "MaximumEntropySurfaceSampler.h"
+#include "Sampler.h"
 #include "itkParticleDualVectorFunction.h"
 #include "itkParticleEnsembleEntropyFunction.h"
 #include "itkParticleShapeLinearRegressionMatrixAttribute.h"
@@ -29,26 +29,23 @@
 
 namespace shapeworks {
 
-/** \class MaximumEntropySurfaceSampler
+/** \class Sampler
  *
  *
  *
  */
-class MaximumEntropySurfaceSampler {
+class Sampler {
 
 public:
+  using PixelType = float;
+  static constexpr unsigned int Dimension = 3;
 
-  using TImage = itk::Image<float, 3>;
+  using ImageType = itk::Image<PixelType, Dimension>;
+  using PointType = ImageType::PointType;
 
-  /** Type of the input/output image. */
-  typedef TImage ImageType;
-
-  /** Expose the point type */
-  typedef ImageType::PointType PointType;
-
-  static constexpr unsigned int Dimension = TImage::ImageDimension;
-
-  typedef itk::ParticleMeanCurvatureAttribute<typename TImage::PixelType, Dimension> MeanCurvatureCacheType;
+  using MeanCurvatureCacheType = itk::ParticleMeanCurvatureAttribute<PixelType, Dimension>;
+  using TransformType = vnl_matrix_fixed<double, Dimension + 1, Dimension + 1>;
+  using OptimizerType = itk::ParticleGradientDescentPositionOptimizer<PixelType, Dimension>;
 
   /** Convenient typedef for storing cutting plane information */
   struct CuttingPlaneType {
@@ -63,52 +60,38 @@ public:
     double radius;
   };
 
-  /** Transform Type*/
-  typedef vnl_matrix_fixed<double, Dimension + 1, Dimension + 1> TransformType;
-
-  typedef itk::ParticleGradientDescentPositionOptimizer<ImageType::PixelType, Dimension> OptimizerType;
-
   /** Returns the particle system used in the surface sampling. */
   itkGetObjectMacro(ParticleSystem, itk::ParticleSystem<Dimension>);
 
   itkGetConstObjectMacro(ParticleSystem, itk::ParticleSystem<Dimension>);
 
+  //! Constructor
+  Sampler();
 
-  MaximumEntropySurfaceSampler();
-
-  virtual ~MaximumEntropySurfaceSampler()
+  //! Destructor
+  virtual ~Sampler()
   {};
 
   /** Returns a pointer to the gradient function used. */
-  itk::ParticleEntropyGradientFunction<ImageType::PixelType, Dimension>
-  * GetGradientFunction()
-  {
-    return m_GradientFunction;
-  }
+  itk::ParticleEntropyGradientFunction<ImageType::PixelType, Dimension>*
+  GetGradientFunction()
+  { return m_GradientFunction; }
 
-  itk::ParticleCurvatureEntropyGradientFunction<ImageType::PixelType, Dimension>
-  * GetCurvatureGradientFunction()
-  {
-    return m_CurvatureGradientFunction;
-  }
+  itk::ParticleCurvatureEntropyGradientFunction<ImageType::PixelType, Dimension>*
+  GetCurvatureGradientFunction()
+  { return m_CurvatureGradientFunction; }
 
-  itk::ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>
-  * GetModifiedCotangentGradientFunction()
-  {
-    return m_ModifiedCotangentGradientFunction;
-  }
+  itk::ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>*
+  GetModifiedCotangentGradientFunction()
+  { return m_ModifiedCotangentGradientFunction; }
 
-  itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>
-  * GetConstrainedModifiedCotangentGradientFunction()
-  {
-    return m_ConstrainedModifiedCotangentGradientFunction;
-  }
+  itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>*
+  GetConstrainedModifiedCotangentGradientFunction()
+  { return m_ConstrainedModifiedCotangentGradientFunction; }
 
-  itk::ParticleOmegaGradientFunction<ImageType::PixelType, Dimension>
-  * GetOmegaGradientFunction()
-  {
-    return m_OmegaGradientFunction;
-  }
+  itk::ParticleOmegaGradientFunction<ImageType::PixelType, Dimension>*
+  GetOmegaGradientFunction()
+  { return m_OmegaGradientFunction; }
 
   /** Return a pointer to the optimizer object. */
   itkGetObjectMacro(Optimizer, OptimizerType);
@@ -125,9 +108,7 @@ public:
   }
 
   void SetPointsFile(const std::string& s)
-  {
-    this->SetPointsFile(0, s);
-  }
+  { this->SetPointsFile(0, s); }
 
   /**Optionally provide a filename for a mesh with geodesic distances.*/
   void SetMeshFile(unsigned int i, const std::string& s)
@@ -139,33 +120,23 @@ public:
   }
 
   void SetMeshFile(const std::string& s)
-  {
-    this->SetMeshFile(0, s);
-  }
+  { this->SetMeshFile(0, s); }
 
   void SetMeshFiles(const std::vector<std::string>& s)
-  {
-    m_MeshFiles = s;
-  }
+  { m_MeshFiles = s; }
 
-  void AddImage(const TImage::Pointer image, double narrow_band);
+  void AddImage(ImageType::Pointer image, double narrow_band);
 
   void AddMesh(shapeworks::MeshWrapper* mesh);
 
   void SetFidsFiles(const std::vector<std::string>& s)
-  {
-    m_FidsFiles = s;
-  }
+  { m_FidsFiles = s; }
 
   void SetFeaFiles(const std::vector<std::string>& s)
-  {
-    m_FeaMeshFiles = s;
-  }
+  { m_FeaMeshFiles = s; }
 
   void SetFeaGradFiles(const std::vector<std::string>& s)
-  {
-    m_FeaGradFiles = s;
-  }
+  { m_FeaGradFiles = s; }
 
   void SetDomainsPerShape(int n)
   {
@@ -220,24 +191,16 @@ public:
   { return m_AdaptivityMode; }
 
   void SetCorrespondenceOn()
-  {
-    m_LinkingFunction->SetBOn();
-  }
+  { m_LinkingFunction->SetBOn(); }
 
   void SetCorrespondenceOff()
-  {
-    m_LinkingFunction->SetBOff();
-  }
+  { m_LinkingFunction->SetBOff(); }
 
   void SetSamplingOn()
-  {
-    m_LinkingFunction->SetAOn();
-  }
+  { m_LinkingFunction->SetAOn(); }
 
   void SetSamplingOff()
-  {
-    m_LinkingFunction->SetAOff();
-  }
+  { m_LinkingFunction->SetAOff(); }
 
   bool GetCorrespondenceOn() const
   { return m_LinkingFunction->GetBOn(); }
@@ -345,7 +308,8 @@ public:
   itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleMixedEffectsEntropyFunction()
   { return m_EnsembleMixedEffectsEntropyFunction.GetPointer(); }
 
-  itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>* GetMeshBasedGeneralEntropyGradientFunction()
+  itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>*
+  GetMeshBasedGeneralEntropyGradientFunction()
   { return m_MeshBasedGeneralEntropyGradientFunction.GetPointer(); }
 
   const itk::ParticleDualVectorFunction<Dimension>* GetLinkingFunction() const
@@ -354,10 +318,12 @@ public:
   const itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleEntropyFunction() const
   { return m_EnsembleEntropyFunction.GetPointer(); }
 
-  const itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleRegressionEntropyFunction() const
+  const itk::ParticleEnsembleEntropyFunction<Dimension>*
+  GetEnsembleRegressionEntropyFunction() const
   { return m_EnsembleRegressionEntropyFunction.GetPointer(); }
 
-  const itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleMixedEffectsEntropyFunction() const
+  const itk::ParticleEnsembleEntropyFunction<Dimension>*
+  GetEnsembleMixedEffectsEntropyFunction() const
   { return m_EnsembleMixedEffectsEntropyFunction.GetPointer(); }
 
   const itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>*
@@ -492,8 +458,8 @@ protected:
   itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::Pointer m_MeshBasedGeneralEntropyGradientFunction;
 
 private:
-  MaximumEntropySurfaceSampler(const MaximumEntropySurfaceSampler&); //purposely not implemented
-  void operator=(const MaximumEntropySurfaceSampler&); //purposely not implemented
+  Sampler(const Sampler&); //purposely not implemented
+  void operator=(const Sampler&); //purposely not implemented
 
   std::vector<std::string> m_PointsFiles;
   std::vector<std::string> m_MeshFiles;

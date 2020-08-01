@@ -3,11 +3,11 @@
 #include "itkImageRegionIterator.h"
 #include "object_reader.h"
 #include "itkParticleImageDomain.h"
-#include "MaximumEntropySurfaceSampler.h"
+#include "Sampler.h"
 
 namespace shapeworks {
 
-MaximumEntropySurfaceSampler::MaximumEntropySurfaceSampler()
+Sampler::Sampler()
 {
   m_AdaptivityMode = 0;
   m_Initializing = false;
@@ -65,7 +65,7 @@ MaximumEntropySurfaceSampler::MaximumEntropySurfaceSampler()
   m_CorrespondenceMode = shapeworks::CorrespondenceMode::EnsembleEntropy;
 }
 
-void MaximumEntropySurfaceSampler::AllocateDataCaches()
+void Sampler::AllocateDataCaches()
 {
   // Set up the various data caches that the optimization functions will use.
   m_Sigma1Cache = itk::ParticleContainerArrayAttribute<double, Dimension>::New();
@@ -88,7 +88,7 @@ void MaximumEntropySurfaceSampler::AllocateDataCaches()
   m_ParticleSystem->RegisterAttribute(m_MeanCurvatureCache);
 }
 
-void MaximumEntropySurfaceSampler::AllocateDomainsAndNeighborhoods()
+void Sampler::AllocateDomainsAndNeighborhoods()
 {
   // Allocate all the necessary domains and neighborhoods. This must be done
   // *after* registering the attributes to the particle system since some of
@@ -153,7 +153,7 @@ void MaximumEntropySurfaceSampler::AllocateDomainsAndNeighborhoods()
   }
 }
 
-void MaximumEntropySurfaceSampler::ReadPointsFiles()
+void Sampler::ReadPointsFiles()
 {
   // If points file names have been specified, then read the initial points.
   for (unsigned int i = 0; i < m_PointsFiles.size(); i++) {
@@ -171,7 +171,7 @@ void MaximumEntropySurfaceSampler::ReadPointsFiles()
   this->GetParticleSystem()->SynchronizePositions();
 }
 
-void MaximumEntropySurfaceSampler::InitializeOptimizationFunctions()
+void Sampler::InitializeOptimizationFunctions()
 {
   // Set the minimum neighborhood radius and maximum sigma based on the
   // domain of the 1st input image.
@@ -217,11 +217,11 @@ void MaximumEntropySurfaceSampler::InitializeOptimizationFunctions()
   m_GeneralShapeGradMatrix->Initialize();
 }
 
-void MaximumEntropySurfaceSampler::GenerateData()
+void Sampler::GenerateData()
 {
 }
 
-void MaximumEntropySurfaceSampler::Execute()
+void Sampler::Execute()
 {
 
   if (this->GetInitialized() == false) {
@@ -249,7 +249,7 @@ void MaximumEntropySurfaceSampler::Execute()
   this->GetOptimizer()->StartOptimization();
 }
 
-void MaximumEntropySurfaceSampler::ReadTransforms()
+void Sampler::ReadTransforms()
 {
   if (m_TransformFile != "") {
     object_reader<itk::ParticleSystem<3>::TransformType> reader;
@@ -271,7 +271,7 @@ void MaximumEntropySurfaceSampler::ReadTransforms()
 
 }
 
-void MaximumEntropySurfaceSampler::ReInitialize()
+void Sampler::ReInitialize()
 {
   this->SetAdaptivityMode(m_AdaptivityMode);
   this->SetCorrespondenceMode(m_CorrespondenceMode);
@@ -284,7 +284,7 @@ void MaximumEntropySurfaceSampler::ReInitialize()
   this->m_MeanCurvatureCache->ZeroAllValues();
 }
 
-void MaximumEntropySurfaceSampler::AddMesh(shapeworks::MeshWrapper* mesh)
+void Sampler::AddMesh(shapeworks::MeshWrapper* mesh)
 {
   itk::MeshDomain* domain = new itk::MeshDomain();
   m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
@@ -295,7 +295,7 @@ void MaximumEntropySurfaceSampler::AddMesh(shapeworks::MeshWrapper* mesh)
   m_DomainList.push_back(domain);
 }
 
-void MaximumEntropySurfaceSampler::TransformCuttingPlanes(unsigned int i)
+void Sampler::TransformCuttingPlanes(unsigned int i)
 {
   if (m_Initialized == true) {
     TransformType T1 = this->GetParticleSystem()->GetTransform(i) * this->GetParticleSystem()->GetPrefixTransform(i);
@@ -310,9 +310,9 @@ void MaximumEntropySurfaceSampler::TransformCuttingPlanes(unsigned int i)
   }
 }
 
-void MaximumEntropySurfaceSampler::SetCuttingPlane(unsigned int i, const vnl_vector_fixed<double, Dimension>& va,
-                                                   const vnl_vector_fixed<double, Dimension>& vb,
-                                                   const vnl_vector_fixed<double, Dimension>& vc)
+void Sampler::SetCuttingPlane(unsigned int i, const vnl_vector_fixed<double, Dimension>& va,
+                              const vnl_vector_fixed<double, Dimension>& vb,
+                              const vnl_vector_fixed<double, Dimension>& vc)
 {
   if (m_CuttingPlanes.size() < i + 1) {
     m_CuttingPlanes.resize(i + 1);
@@ -329,7 +329,7 @@ void MaximumEntropySurfaceSampler::SetCuttingPlane(unsigned int i, const vnl_vec
   }
 }
 
-void MaximumEntropySurfaceSampler::AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, double r)
+void Sampler::AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, double r)
 {
   if (m_Spheres.size() < i + 1) {
     m_Spheres.resize(i + 1);
@@ -344,7 +344,7 @@ void MaximumEntropySurfaceSampler::AddSphere(unsigned int i, vnl_vector_fixed<do
   }
 }
 
-void MaximumEntropySurfaceSampler::AddImage(const TImage::Pointer image, double narrow_band)
+void Sampler::AddImage(ImageType::Pointer image, double narrow_band)
 {
   const auto domain = itk::ParticleImplicitSurfaceDomain<ImageType::PixelType>::New();
   m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());

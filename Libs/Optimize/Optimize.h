@@ -15,7 +15,7 @@
 
 // shapeworks particle system
 #include "ParticleSystem/itkParticleSystem.h"
-#include "ParticleSystem/MaximumEntropySurfaceSampler.h"
+#include "ParticleSystem/Sampler.h"
 #include "ParticleSystem/itkParticleProcrustesRegistration.h"
 #include "ParticleSystem/itkParticleGoodBadAssessment.h"
 #include "ParticleSystem/itkParticleVectorFunction.h"
@@ -242,7 +242,7 @@ public:
   void PrintParamInfo();
 
   //! Return the Sampler
-  std::shared_ptr<MaximumEntropySurfaceSampler> GetSampler()
+  std::shared_ptr<Sampler> GetSampler()
   { return m_sampler; }
 
 protected:
@@ -294,7 +294,7 @@ protected:
 
   virtual void UpdateExportablePoints();
 
-  std::shared_ptr<MaximumEntropySurfaceSampler> m_sampler;
+  std::shared_ptr<Sampler> m_sampler;
   itk::ParticleProcrustesRegistration<3>::Pointer m_procrustes;
   itk::ParticleGoodBadAssessment<float, 3>::Pointer m_good_bad;
 
