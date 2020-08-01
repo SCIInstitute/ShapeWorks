@@ -35,6 +35,9 @@ public:
   /// \param isoSpacing     size of an [isotropic (n x n x n)] output voxel [default n=1]
   /// \param outputSize     image size can be changed [default stays the same]
   static Image& isoresample(Image& img, double isoSpacing = 1.0);
+
+  /// create mesh from distance transform
+  static Mesh &meshFromDT(const Image &image, double levelset = 0.0, double reduction = 0.0, double angle = 0.0, int leveliterations = 0, int meshiteraations = 0, bool preservetopology = false);
 };
 
 } // shapeworks

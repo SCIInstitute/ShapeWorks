@@ -121,4 +121,12 @@ Image& ImageUtils::isoresample(Image& image, double isoSpacing)
   return image.resample(spacing);
 }
 
+Mesh &ImageUtils::meshFromDT(const Image &image, double levelset, double reduction, double angle, int leveliterations, int meshiterations, bool preservetopology)
+{
+  vtkImageData* mesh = image.getVTK();
+  mesh.march(levelset).smooth(leveliterations).decimate(reduction, angle).smooth(meshiterations);
+
+  return mesh;
+}
+
 } //shapeworks

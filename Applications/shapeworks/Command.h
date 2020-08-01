@@ -10,7 +10,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#define COMMAND_DECLARE(CommandName, CommandType)                                          \
+#define COMMAND_DECLARE(CommandName, CommandType)                                           \
   class CommandName : public CommandType                                                   \
   {                                                                                        \
   public:                                                                                  \

@@ -28,6 +28,7 @@
 #include <vtkImageImport.h>
 #include <vtkContourFilter.h>
 #include <vtkImageData.h>
+#include <itkImageToVTKImageFilter.h>
 
 #include <exception>
 #include <cmath>
@@ -684,7 +685,17 @@ vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image& image, PixelType is
   return targetContour->GetOutput();
 }
 
-Image& Image::clip(const Point &o, const Point &p1, const Point &p2, const PixelType val)
+vtkImageData* Image::getVTK() const
+{
+  using connectorType = itk::ImageToVTKImageFilter<ImageType>;
+  connectorType::Pointer connector = connectorType::New();
+  connector->SetInput(this->image);
+  connector->Update();
+
+  return connector->GetOutput();
+}
+
+Image &Image::clip(const Point &o, const Point &p1, const Point &p2, const PixelType val)
 {
   // clipping plane normal n = (p1-o) x (p2-o)
   Vector v1(makeVector({p1[0] - o[0], p1[1] - o[1], p1[2] - o[2]}));

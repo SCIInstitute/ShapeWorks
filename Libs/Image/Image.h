@@ -5,6 +5,7 @@
 #include <itkImage.h>
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
+#include <vtkImageData.h>
 
 #include <limits>
 
@@ -246,6 +247,9 @@ public:
 
   /// creates a vtkPolyData for the given image
   static vtkSmartPointer<vtkPolyData> getPolyData(const Image& image, PixelType isoValue = 0.0);
+
+  /// creates a VTK filter for the given image
+  vtkImageData* getVTK() const;
 
   /// converts to Mesh
   std::unique_ptr<Mesh> toMesh(PixelType isovalue = 1.0) const;

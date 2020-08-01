@@ -8,7 +8,9 @@
 #include <vtkPolyDataWriter.h>
 #include <vtkPLYWriter.h>
 #include <vtkPointData.h>
-#include <itkImageToVTKImageFilter.h>
+#include <vtkMarchingCubes.h>
+#include <vtkSmoothPolyDataFilter.h>
+#include <vtkDecimatePro.h>
 
 static bool compare_double(double a, double b)
 {
@@ -18,11 +20,6 @@ static bool compare_double(double a, double b)
 
 namespace shapeworks {
 
-/// read
-///
-/// reads a mesh
-///
-/// \param filename
 Mesh::MeshType Mesh::read(const std::string &pathname)
 {
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
@@ -48,16 +45,12 @@ Mesh::MeshType Mesh::read(const std::string &pathname)
   return reader->GetOutput();
 }
 
-/// write
-///
-/// writes the mesh
-///
-/// \param filename
-bool Mesh::write(const std::string &pathname)
+Mesh& Mesh::write(const std::string &pathname)
 {
   if (!this->mesh) { throw std::invalid_argument("Mesh invalid"); }
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
 
+  // TODO: enable writing of different kinds of meshes
   // if (pref == "ply")
   //   using WriterType = vtkSmartPointer<vtkPLYWriter>;
   // else
@@ -67,18 +60,11 @@ bool Mesh::write(const std::string &pathname)
   WriterType writer = WriterType::New();
   writer->SetInputData(this->mesh);
   writer->SetFileName(pathname.c_str());
+  writer->Update();
 
-  try {
-    writer->Update();
-  }
-  catch (const std::exception &exp) {
-    std::cerr << "Failed to write mesh to " << pathname << std::endl;
-    return false;
-  }
-  return true;
+  return *this;
 }
 
-/// creates mesh of coverage between two meshes
 Mesh& Mesh::coverage(const Mesh &other_mesh)
 {
   FEVTKimport importer;
@@ -103,11 +89,42 @@ Mesh& Mesh::coverage(const Mesh &other_mesh)
   return *this;
 }
 
-/// compare_points_equal
-///
-/// Compare if points in two meshes are equal
-///
-/// \param other_mesh
+Mesh& Mesh::march(double levelset)
+{
+  vtkSmartPointer<vtkMarchingCubes> cube = vtkSmartPointer<vtkMarchingCubes>::New();
+  cube->SetInputData(this->mesh);
+  cube->SetValue(0, levelset);
+  cube->Update();
+  this->mesh = cube->GetOutput();
+
+  return *this;
+}
+
+Mesh &Mesh::smooth(int iterations)
+{
+  vtkSmartPointer<vtkSmoothPolyDataFilter> smoother = vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
+  smoother->SetInputData(this->mesh);
+  smoother->SetNumberOfIterations(iterations);
+  smoother->Update();
+  this->mesh = smoother->GetOutput();
+
+  return *this;
+}
+
+Mesh &Mesh::decimate(float reduction, double angle, bool preservetopology)
+{
+  vtkSmartPointer<vtkDecimatePro> decimator = vtkSmartPointer<vtkDecimatePro>::New();
+  decimator->SetInputData(this->mesh);
+  decimator->SetTargetReduction(reduction);
+  decimator->SetFeatureAngle(angle);
+  preservetopology == true ? decimator->PreserveTopologyOn() : decimator->PreserveTopologyOff();
+  decimator->BoundaryVertexDeletionOn();
+  decimator->Update();
+  this->mesh = decimator->GetOutput();
+
+  return *this;
+}
+
 bool Mesh::compare_points_equal(const Mesh &other_mesh)
 {
   if (!this->mesh || !other_mesh.mesh) {
@@ -130,11 +147,6 @@ bool Mesh::compare_points_equal(const Mesh &other_mesh)
   return true;
 }
 
-/// compare_scalars_equal
-///
-/// Compare if scalars in two meshes are equal
-///
-/// \param other_mesh
 bool Mesh::compare_scalars_equal(const Mesh &other_mesh)
 {
   if (!this->mesh || !other_mesh.mesh) {

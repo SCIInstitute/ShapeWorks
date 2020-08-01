@@ -42,7 +42,7 @@ void ReadImage::buildParser()
   const std::string desc = "reads an image";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--name").action("store").type("string").set_default("").help("Name of file to read");
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of file to read.");
 
   Command::buildParser();
 }
@@ -76,8 +76,8 @@ void WriteImage::buildParser()
   const std::string desc = "writes the current image (determines type by its extension)";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--name").action("store").type("string").set_default("").help("Name of file to write");
-  parser.add_option("--compressed").action("store").type("bool").set_default(true).help("Whether to compress file [default: true]");
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of file to write.");
+  parser.add_option("--compressed").action("store").type("bool").set_default(true).help("Whether to compress file [default: true].");
 
   Command::buildParser();
 }
@@ -111,14 +111,14 @@ void ImageInfo::buildParser()
   const std::string desc = "prints requested image dimensions, spacing, size, origin, direction (coordinate system), center, center of mass and bounding box [default: prints everything]";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--dims").action("store_true").set_default(false).help("Whether to display image dimensions");
-  parser.add_option("--spacing").action("store_true").set_default(false).help("Whether to display physical spacing");
-  parser.add_option("--size").action("store_true").set_default(false).help("Whether to display size");
-  parser.add_option("--origin").action("store_true").set_default(false).help("Whether to display physical origin");
-  parser.add_option("--direction").action("store_true").set_default(false).help("Whether to display direction");
-  parser.add_option("--center").action("store_true").set_default(false).help("Whether to display center");
-  parser.add_option("--centerofmass").action("store_true").set_default(false).help("Whether to display center of mass");
-  parser.add_option("--boundingbox").action("store_true").set_default(false).help("Whether to display bounding box");
+  parser.add_option("--dims").action("store_true").set_default(false).help("Whether to display image dimensions.");
+  parser.add_option("--spacing").action("store_true").set_default(false).help("Whether to display physical spacing.");
+  parser.add_option("--size").action("store_true").set_default(false).help("Whether to display size.");
+  parser.add_option("--origin").action("store_true").set_default(false).help("Whether to display physical origin.");
+  parser.add_option("--direction").action("store_true").set_default(false).help("Whether to display direction.");
+  parser.add_option("--center").action("store_true").set_default(false).help("Whether to display center.");
+  parser.add_option("--centerofmass").action("store_true").set_default(false).help("Whether to display center of mass.");
+  parser.add_option("--boundingbox").action("store_true").set_default(false).help("Whether to display bounding box.");
 
   Command::buildParser();
 }
@@ -1297,6 +1297,44 @@ bool ImageToMesh::execute(const optparse::Values &options, SharedCommandData &sh
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// MeshFromDT
+///////////////////////////////////////////////////////////////////////////////
+void MeshFromDT::buildParser()
+{
+  const std::string prog = "mesh-from-dt";
+  const std::string desc = "create mesh from distance transform";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--levelset").action("store").type("double").set_default(0.0).help("Value of levelset [default: 0.0].");
+  parser.add_option("--reduction").action("store").type("double").set_default(0.0).help("Percentage to decimate [default: 0.0].");
+  parser.add_option("--angle").action("store").type("int").set_default(0).help("Value of feature angle in degrees [default: 0].");
+  parser.add_option("--leveliterations").action("store").type("int").set_default(0).help("Number of iterations to smooth the level set [default: 0].");
+  parser.add_option("--meshiterations").action("store").type("int").set_default(0).help("Number of iterations to smooth the initial mesh [default: 0].");
+  parser.add_option("--preservetopology").action("store_true").set_default("false").help("Whether to preserve topology [default: true].");
+
+  Command::buildParser();
+}
+
+bool MeshFromDT::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validImage())
+  {
+    std::cerr << "No image to operate on\n";
+    return false;
+  }
+
+  double levelset = static_cast<double>(options.get("levelset"));
+  double reduction = static_cast<double>(options.get("reduction"));
+  double angle = static_cast<double>(options.get("angle"));
+  int leveliterations = static_cast<int>(options.get("leveliterations"));
+  int meshiterations = static_cast<int>(options.get("meshiterations"));
+  bool preservetopology = static_cast<bool>(options.get("preservetopology"));
+
+  sharedData.mesh = ImageUtils::meshFromDT(sharedData.image, levelset, reduction, angle, leveliterations, meshiterations, preservetopology);
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // ReadParticleSystem
 ///////////////////////////////////////////////////////////////////////////////
 void ReadParticleSystem::buildParser()
@@ -1428,7 +1466,7 @@ void ReadMesh::buildParser()
   const std::string desc = "reads a mesh";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--name").action("store").type("string").set_default("").help("name of file to read");
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of file to read.");
 
   Command::buildParser();
 }
@@ -1436,9 +1474,21 @@ void ReadMesh::buildParser()
 bool ReadMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string filename = options["name"];
+  if (filename.length() == 0) {
+    std::cerr << "readmesh error: no filename specified, must pass `--name <filename>`\n";
+    return false;
+  }
 
-  sharedData.mesh = std::make_unique<Mesh>(filename);
-  return sharedData.validMesh();
+  try {
+    sharedData.mesh = std::make_unique<Mesh>(filename);
+    return true;
+  } catch (std::exception &e) {
+    std::cerr << "exception while reading " << filename << ": " << e.what() << std::endl;
+    return false;
+  } catch (...) {
+    std::cerr << "unknown exception while reading " << filename << std::endl;
+    return false;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1450,7 +1500,7 @@ void WriteMesh::buildParser()
   const std::string desc = "writes the current mesh (determines type by its extension)";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--name").action("store").type("string").set_default("").help("name of file to write");
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of file to write.");
 
   Command::buildParser();
 }

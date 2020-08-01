@@ -54,6 +54,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(ReadMesh::getCommand());
   shapeworks.addCommand(WriteMesh::getCommand());
   shapeworks.addCommand(Coverage::getCommand());
+  shapeworks.addCommand(MeshFromDT::getCommand();)
   
   try {
     return shapeworks.run(argc, argv);
