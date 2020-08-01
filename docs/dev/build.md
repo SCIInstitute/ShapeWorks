@@ -58,7 +58,7 @@ $ conda activate shapeworks
 #### Qt5  
 Download and install the latest version of [Qt5](https://download.qt.io/archive/qt/), selecting the LGPL (free) license (at least version 5.10 required).  
 
-After installing Qt5, add the directory containing `qmake.exe` to your PATH. See [Adding to PATH](paths.md) for help with this.  
+After installing Qt5, add the directory containing `qmake.exe` to your PATH. See [Adding to PATH Environment Variable](paths.md) for help with this.  
 
 Example qmake directory Linux: `/opt/Qt5.14.0/5.14.0/gcc_64/bin`  
 
@@ -93,7 +93,7 @@ Using the *Anaconda Prompt*, run `conda_installs.bat`
 #### Qt5  
 Download and install the latest version of [Qt5](https://download.qt.io/archive/qt/), selecting the LGPL (free) license (at least version 5.10 required).   
    
-After installing Qt5, add the directory containing `qmake.exe` to your PATH. See [Adding to PATH](paths.md) for help with this.  
+After installing Qt5, add the directory containing `qmake.exe` to your PATH. See [Adding to PATH Environment Variable](paths.md) for help with this.  
 
 Example qmake directory: `D:\Qt\5.14.0\winrt_x64_msvc2017\bin`  
 
