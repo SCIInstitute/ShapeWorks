@@ -255,6 +255,7 @@ void ResizeImage::buildParser()
   parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Output size in x-direction [default: current size].");
   parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Output size in y-direction [default: current size].");
   parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Output size in z-direction [default: current size].");
+  parser.add_option("--name").action("store").type("string").set_default("").help("Path of image whose sizes will be used.");
 
   Command::buildParser();
 }
@@ -267,13 +268,27 @@ bool ResizeImage::execute(const optparse::Values &options, SharedCommandData &sh
     return false;
   }
 
-  unsigned sizeX = static_cast<unsigned>(options.get("sizex"));
-  unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
-  unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
+  std::string filename = options["name"];
+  
+  if (filename != "")
+  {
+    Dims dims = sharedData.image.dims();
+    unsigned sizeX = dims[0];
+    unsigned sizeY = dims[1];
+    unsigned sizeZ = dims[2];
 
-  sharedData.image.resize(Dims({sizeX, sizeY, sizeZ}));
+    sharedData.image.resize(Dims({sizeX, sizeY, sizeZ}));
+    return true;
+  }
+  else
+  {
+    unsigned sizeX = static_cast<unsigned>(options.get("sizex"));
+    unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
+    unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
 
-  return true;
+    sharedData.image.resize(Dims({sizeX, sizeY, sizeZ}));
+    return true;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////

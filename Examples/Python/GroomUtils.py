@@ -296,6 +296,7 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
                "read-image", "--name", seginname,
             #    matrix created by icp is not used
             #    "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
+               "resize", "--name", ref_tpdtnrrdfilename,
                "write-image", "--name", segoutname]
         if printCmd:
             print("CMD: " + " ".join(cmd))
@@ -313,7 +314,6 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
 
     return [outSegDataList, outRawDataList] if processRaw else outSegDataList
             
-
 def applyCropping(outDir, inDataList, path, paddingSize=10, printCmd=True):
     """
     This function takes in a filelist and crops them according to the largest
