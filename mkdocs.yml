@@ -12,12 +12,21 @@ nav:
 - Statistial Shape Modeling:
    - ''
 - For Developers:
+   - 'How to Build ShapeWorks from Source?' : 'dev/build.md'
+   - 'How to Contribute?' : 'dev/contribute.md'
+   - 'How to Add New Datasets?' : 'dev/datasets.md'
+   - 'How to Auto-generate Documentation?' : 'dev/autodoc.md'
+   - 'Getting Started with Markdown' : 'markdown.md'
+   - 'Adding to PATH' : 'dev/paths.md'
 - About:
    - 'Amazing Team':  'about/team.md'
    - 'Release Notes': 'about/release-notes.md'
    - 'License':       'about/license.md'
    - 'Contact Us':    'about/contact.md'
  
+
+
+
 theme:
    name: readthedocs #rtd-dropdown #readthedocs #yeti  #united  #spacelab  #sandstone  #minty #lumen #flatly
    include_sidebar: true
@@ -26,4 +35,5 @@ theme:
       - yaml
       - python
 
-
+markdown_extensions:
+   - fontawesome_markdown
