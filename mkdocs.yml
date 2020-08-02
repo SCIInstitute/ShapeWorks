@@ -9,8 +9,11 @@ google_analytics: ['UA-36723568-3', 'mkdocs.org']
 
 nav:
 - Home: 'index.md'
-- Statistial Shape Modeling:
-   - ''
+- Getting Started:
+   - 'Shape Modeling Workflow':              'getting-started/workflow.md'
+   - 'ShapeWorks Interfaces':                'getting-started/interfaces.md'   
+   - 'Use Cases':                            'getting-started/use-cases.md'
+   - 'How Tos':                              'getting-started/how-tos.md'      
 - For Users:
    - 'How to Install ShapeWorks?':           'users/install.md'
    - 'How to Cite ShapeWorks?':              'users/citation.md'
