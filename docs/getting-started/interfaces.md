@@ -21,7 +21,7 @@ $ conda activate shapeworks
 
 ## ShapeWorks in Python
 
-**Coming soon!**  We are developing Python bindings to enable users to script their customized shape modeling workflows. Exemplar [use cases](../use-cases/UseCases.md) will be updated to use these Python APIs to showcase their use and flexibility.
+**Coming soon!**  We are developing Python bindings to enable users to script their customized shape modeling workflows. Exemplar [use cases](../use-cases/use-cases.md) will be updated to use these Python APIs to showcase their use and flexibility.
 
 
 ## ShapeWorksStudio

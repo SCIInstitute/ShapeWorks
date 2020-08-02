@@ -18,10 +18,10 @@
 ### Improvements
 
 * **Improved scalability for Studio:** Files now loaded on-demand as necessary.
-* **Restructured datasets portal:** Better and more consistent directory structure for use cases datasets. See [datasets guidelines](../dev/datasets.md) for more details. Visit our [ShapeWorks Portal](http://cibc1.sci.utah.edu:8080) to register and download datasets to run [use cases](../use-cases/UseCases.md).
+* **Restructured datasets portal:** Better and more consistent directory structure for use cases datasets. See [datasets guidelines](../dev/datasets.md) for more details. Visit our [ShapeWorks Portal](http://cibc1.sci.utah.edu:8080) to register and download datasets to run [use cases](../use-cases/use-cases.md).
 * **Lower memory footprint for estimating correspondences for new shapes on existing shape models:** For <fixed_domains> usage, only distance transforms for the new shapes will be loaded.
-* **Improved use case documentation:** Better documentation for the [RunUseCase](../use-cases/UseCases.md) input arguments.
-* **Documentation for running existing shape models:** Added [instructions](../use-cases/UseCases.md#running-subsequent-analysis) on how to load a pre-trained shape model without running the full pipeline.
+* **Improved use case documentation:** Better documentation for the [RunUseCase](../use-cases/use-cases.md) input arguments.
+* **Documentation for running existing shape models:** Added [instructions](../use-cases/use-cases.md#running-subsequent-analysis) on how to load a pre-trained shape model without running the full pipeline.
 * **Consistent cross-platform splitting direction:** Correspondence point splits take a random direction, but are now consistent and repeatable across platforms for reproducible shape models.
 
 ### Fixes
