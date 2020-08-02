@@ -7,25 +7,56 @@
 
 <img src="img/about-shapeworks.png" width="1000px" align="right" hspace="20">
 
-<p align="justify">
-  ShapeWorks is a free, open-source suite of software tools that uses a flexible method for automated construction of compact statistical landmark-based shape models of ensembles of anatomical shapes that does not rely on any specific surface parameterization. The method requires very little preprocessing or parameter tuning, and is applicable to a wide range of shape analysis problems, including nonmanifold surfaces and objects of arbitrary topology. ShapeWorks includes tools for preprocessing data, computing landmark-based shape models, and visualizing the results.
-</p>
-
-## With ShapeWorks You Can!
-
+ShapeWorks is a free, open-source suite of software tools that uses a flexible method for automated construction of compact statistical landmark-based shape models of ensembles of anatomical shapes that does not rely on any specific surface parameterization. The method requires very little preprocessing or parameter tuning, and is applicable to a wide range of shape analysis problems, including nonmanifold surfaces and objects of arbitrary topology. ShapeWorks includes tools for preprocessing data, computing landmark-based shape models, and visualizing the results.
 
 
 ## ShapeWorks in Action!
 
-<p align="justify">
-The underlying scientific premise of ShapeWorks, particle-based shape modeling, is a groupwise approach to placing landmarks (i.e., correspondences) that considers the variability in the entire cohort of images. ShapeWorks uses a set of interacting particle systems, one for each shape, in an ensemble, to produce optimal sets of surface correspondences. Particles interact with one another via mutually repelling forces to optimally cover, and therefore describe, the surface geometry. Particles are positioned on surfaces automatically by optimizing the information content of the model via an entropy optimization scheme. In particular, ShapeWorks explicitly models the inherent trade-off between the statistical simplicity of the model (i.e., compactness) in the shape space and the accuracy of the shape representations (i.e., good surface samplings) in the configuration space. 
-</p>
 
-<p align="justify">
-ShapeWorks has been effective in a range of applications, including psychology, biological phenotyping, cardiology, and orthopedics. [See relevant papers](#relevant-papers). 
-</p>
+The underlying scientific premise of ShapeWorks, particle-based shape modeling, is a groupwise approach to placing landmarks (i.e., correspondences) that considers the variability in the entire cohort of images. ShapeWorks uses a set of interacting particle systems, one for each shape, in an ensemble, to produce optimal sets of surface correspondences. Particles interact with one another via mutually repelling forces to optimally cover, and therefore describe, the surface geometry. Particles are positioned on surfaces automatically by optimizing the information content of the model via an entropy optimization scheme. In particular, ShapeWorks explicitly models the inherent trade-off between the statistical simplicity of the model (i.e., compactness) in the shape space and the accuracy of the shape representations (i.e., good surface samplings) in the configuration space. 
+
+
+**TODO: box bump example**.  
+**TODO: video for illustration**.  
+
+
+ShapeWorks has been effective in a range of applications, including psychology, biological phenotyping, cardiology, and orthopedics. [See relevant papers](index.md#relevant-papers). 
+
+
+
+## With ShapeWorks You Can!
 
 **TODO: use case with relevant paper, see the U24 proposal**
+
+
+## How to Install ShapeWorks?
+
+
+ShapeWorks provides official user releases, the features of which can be seen at [ChangeLog](Documentation/ChangeLog.md).
+
+First, download the latest ShapeWorks binary release:  
+https://github.com/SCIInstitute/ShapeWorks/releases/latest
+
+We also provide up-to-date development builds from the master branch for Windows, Mac, and Linux:
+
+https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-windows
+
+https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-mac
+
+https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-linux
+
+Please understand that these are in-progress development builds, not official releases.
+
+Then follow the appropriate instructions for their platform:  
+[Windows](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/Install/Windows_README.md)  
+[Mac](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/Install/Mac_README.md)  
+[Linux](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/Install/Linux_README.md)  
+
+_**Important**_  
+Each time you use ShapeWorks from the command line you must first activate its environment:
+```
+$ conda activate shapeworks
+```
 
 ## How to Cite ShapeWorks?
 

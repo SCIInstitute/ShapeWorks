@@ -14,6 +14,8 @@ nav:
 - For Developers:
    - 'How to Build ShapeWorks from Source?' : 'dev/build.md'
    - 'How to Contribute to ShapeWorks?' : 'dev/contribute.md'
+   - 'How to Add ShapeWorks Commands?' : 'dev/commands.md'
+   - 'How to Add and Run Unit Tests?' : 'dev/tests.md'
    - 'How to Add New Datasets?' : 'dev/datasets.md'
    - 'How to Auto-generate Documentation?' : 'dev/autodoc.md'
    - 'Getting Started with MkDocs' : 'dev/mkdocs.md'
