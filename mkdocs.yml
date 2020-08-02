@@ -10,6 +10,7 @@ google_analytics: ['UA-36723568-3', 'mkdocs.org']
 nav:
 - Home: 'index.md'
 - Getting Started:
+   - 'Shapes, What & From Where?':           'getting-started/shapes.md'
    - 'Shape Modeling Workflow':              'getting-started/workflow.md'
    - 'ShapeWorks Interfaces':                'getting-started/interfaces.md'   
    - 'Use Cases':                            'getting-started/use-cases.md'
