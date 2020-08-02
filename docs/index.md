@@ -29,35 +29,6 @@ ShapeWorks has been effective in a range of applications, including psychology, 
 **TODO: use case with relevant paper, see the U24 proposal**
 
 
-## How to Install ShapeWorks?
-
-
-ShapeWorks provides official user releases, the features of which can be seen at [ChangeLog](Documentation/ChangeLog.md).
-
-First, download the latest ShapeWorks binary release:  
-https://github.com/SCIInstitute/ShapeWorks/releases/latest
-
-We also provide up-to-date development builds from the master branch for Windows, Mac, and Linux:
-
-https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-windows
-
-https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-mac
-
-https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-linux
-
-Please understand that these are in-progress development builds, not official releases.
-
-Then follow the appropriate instructions for their platform:  
-[Windows](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/Install/Windows_README.md)  
-[Mac](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/Install/Mac_README.md)  
-[Linux](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/Install/Linux_README.md)  
-
-_**Important**_  
-Each time you use ShapeWorks from the command line you must first activate its environment:
-```
-$ conda activate shapeworks
-```
-
 ## How to Cite ShapeWorks?
 
 ### Acknowledgements
