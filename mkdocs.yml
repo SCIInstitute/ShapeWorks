@@ -14,6 +14,7 @@ nav:
 - For Users:
    - 'How to Install ShapeWorks?':           'users/install.md'
    - 'How to Cite ShapeWorks?':              'users/citation.md'
+   - 'Revelant Papers':                      'users/papers.md'
 - For Developers:
    - 'How to Build ShapeWorks from Source?': 'dev/build.md'
    - 'How to Contribute to ShapeWorks?':     'dev/contribute.md'
