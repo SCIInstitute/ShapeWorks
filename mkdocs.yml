@@ -24,6 +24,8 @@ nav:
    - 'Getting Started with GitHub Actions':  'dev/gh-actions.md'
    - 'Getting Started with Markdown':        'dev/markdown.md'
    - 'Adding to PATH Environment Variable':  'dev/paths.md'
+- ShapeWorks Tools:
+   - 'ShapeWorks Commands': 'tools/ShapeWorksCommands.md'
 - About:
    - 'Amazing Team':  'about/team.md'
    - 'Release Notes': 'about/release-notes.md'
