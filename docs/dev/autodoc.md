@@ -4,6 +4,17 @@
 
 ## MkDocs
 
+
+To generate static html files for the markdown files, [checkout](build.md#clone-source) the branch where source documentation (`mkdocs.yml`) is maintained and run the following command:
+
+`mkdocs gh-deploy`
+
+Using this command, MkDocs builds the project documentation and uses the ghp-import tool to commit them to the gh-pages branch and push the gh-pages branch to GitHub. *All behind the scenes ...*
+
+Use `mkdocs gh-deploy --help` for a full list of options available for the gh-deploy command.
+
+:fa-info-circle: _**Important:**_ You can not review the built site before pushing it to GitHub. To verify any changes you made locally to the documentation, please use `mkdocs serve`.  
+
 ## ShapeWorks Commands
 
 The `DocumentationUtils` package has APIs for auto-documenting command line tools and *to-come-soon* python APIs. Please use the `docs` folder to save generated documentation.
