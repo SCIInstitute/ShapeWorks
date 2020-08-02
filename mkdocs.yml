@@ -13,11 +13,13 @@ nav:
    - ''
 - For Developers:
    - 'How to Build ShapeWorks from Source?' : 'dev/build.md'
-   - 'How to Contribute?' : 'dev/contribute.md'
+   - 'How to Contribute to ShapeWorks?' : 'dev/contribute.md'
    - 'How to Add New Datasets?' : 'dev/datasets.md'
    - 'How to Auto-generate Documentation?' : 'dev/autodoc.md'
-   - 'Getting Started with Markdown' : 'markdown.md'
-   - 'Adding to PATH' : 'dev/paths.md'
+   - 'Getting Started with MkDocs' : 'dev/mkdocs.md'
+   - 'Getting Started with GitHub Actions' : 'dev/gh-actions.md'
+   - 'Getting Started with Markdown' : 'dev/markdown.md'
+   - 'Adding to PATH Environment Variable' : 'dev/paths.md'
 - About:
    - 'Amazing Team':  'about/team.md'
    - 'Release Notes': 'about/release-notes.md'
