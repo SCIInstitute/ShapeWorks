@@ -52,6 +52,7 @@ Use `mkdocs gh-deploy --help` for a full list of options available for the gh-de
 
 :fa-info-circle: _**Important:**_ You can not review the built site before pushing it to GitHub. To verify any changes you made locally to the documentation, please use `mkdocs serve`.  
  
+:fa-info-circle: _**Important:**_ Never manually edit files on the `gh-pages` branch because you will lose your work the next time you run the `gh-deploy` command.
 
 ## See Also
 - [MkDocs documentation](https://mkdocs.readthedocs.io/en/stable/)
