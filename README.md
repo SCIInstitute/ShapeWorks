@@ -7,15 +7,11 @@ ShapeWorks
 
 <img src="Images/shapeworks-logo.png" width="300px" align="left" hspace="20">
 
-<p align="justify">
 ShapeWorks is an open-source software that learns population-specific shape parameterization directly from user data. It enables the automated placement of dense corresponding landmarks on a group of shapes given as either binary volumes or surface meshes. Please visit [ShapeWorks website](http://sciinstitute.github.io/ShapeWorks/) for more information. ShapeWorks has been effective in a range of applications, including psychology, biological phenotyping, cardiology, and orthopedics. [See relevant papers](http://sciinstitute.github.io/ShapeWorks/users/papers). 
-</p>
 
 
 <img src="Images/about-shapeworks.png" width="1000px" align="right" hspace="20">
 
-   
-    
 
 
 Table of Contents
