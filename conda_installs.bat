@@ -29,6 +29,7 @@ call pip install itk==5.0.1
 call pip install vtk==8.1.2
 call pip install mdutils
 call pip install mkdocs
+call pip install fontawesome-markdown
 
 REM install the local GirderConnector code as a package
 call pip install Python/DatasetUtilsPackage
