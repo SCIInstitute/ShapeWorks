@@ -27,6 +27,11 @@ Then
 
 This command creates mkdocs.yml that will be used for MkDocs configuration, and docs/index.md, which is the Markdown file that is the entry point for the documentation.
 
+## Naming and Organization
+
+:fa-info-circle: **Naming convention:** To maintain consistency, please use lower-case letters and dashes for your markdown files, e.g., `fixed-domain-ellipsoid.md`.  
+
+:fa-info-circle: **Docs organization:** ShapeWorks documentation is organized into main sections (e.g., "Getting Started", "Use Cases", ... etc), which map to subfolders in the `docs/` folder (e.g., "getting-started", "use-cases", ... etc) and images used in their markdown files are located in the corresponding subfolders in the `docs/img` folder.
 
 ## Building Documentation
   
