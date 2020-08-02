@@ -11,9 +11,11 @@ To generate static html files for the markdown files, [checkout](build.md#clone-
 
 Using this command, MkDocs builds the project documentation and uses the ghp-import tool to commit them to the gh-pages branch and push the gh-pages branch to GitHub. *All behind the scenes ...*
 
+Use `mkdocs gh-deploy --clean` to start a fresh deployment.   
+
 Use `mkdocs gh-deploy --help` for a full list of options available for the gh-deploy command.
 
-:fa-info-circle: _**Important:**_ You can not review the built site before pushing it to GitHub. To verify any changes you made locally to the documentation, please use `mkdocs serve`.  
+:fa-info-circle: _**Important:**_ You can not review the built site before pushing it to GitHub. To verify any changes you made locally to the documentation, please use ``mkdocs build`` or `mkdocs serve`.  
 
 
 :fa-info-circle: _**Important:**_ Never manually edit files on the `gh-pages` branch because you will lose your work the next time you run the `gh-deploy` command.
