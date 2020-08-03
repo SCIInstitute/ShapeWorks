@@ -1,3 +1,5 @@
+find_package(pybind11 2.4.3 REQUIRED)
+
 FILE(GLOB ParticleSystem_sources ./ParticleSystem/*.t* ./ParticleSystem/*.cxx ./ParticleSystem/*.cpp ./ParticleSystem/*.h)
 
 add_library(Optimize STATIC
@@ -14,7 +16,9 @@ target_link_libraries(Optimize
   Mesh
   tinyxml
   Utils
-  Particles)
+  Particles
+  pybind11::embed
+  )
 
 target_include_directories(Optimize PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>

@@ -20,6 +20,9 @@
 #include <itkImageRegionIteratorWithIndex.h>
 #include <itkImageToVTKImageFilter.h>
 
+// pybind
+#include <pybind11/embed.h>
+
 // shapeworks
 #include "TriMesh.h"
 #include "ParticleSystem/itkParticleImageDomain.h"
@@ -29,6 +32,8 @@
 #include "OptimizeParameterFile.h"
 
 #include "Optimize.h"
+
+namespace py = pybind11;
 
 namespace shapeworks {
 
@@ -41,6 +46,17 @@ Optimize::Optimize()
 //---------------------------------------------------------------------------
 bool Optimize::Run()
 {
+  py::scoped_interpreter guard{}; // start the interpreter and keep it alive
+
+  py::print("Python Hello, World!"); // use the Python API
+
+  std::cerr << "Calling run_me\n";
+  py::module calc = py::module::import("run_me");
+  py::object result = calc.attr("run")(this);
+  std::cerr << "Done calling run_me\n";
+
+  //return true;
+
   // sanity check
   if (this->m_domains_per_shape != this->m_number_of_particles.size()) {
     std::cerr <<
