@@ -7,7 +7,7 @@ ShapeWorks tools are designed to support different usage scenarios, including ex
 ## ShapeWorks Commands
 
 
-ShapeWorks consists of a set of independent command line tools for preprocessing binary segmentations and surface meshes ([Groom](groom.md)) and computing landmark-based shape models ([Optimize](optimize.md)). It also includes an interactive user interface called [ShapeWorksStudio](#shapeworksstudio) to analyze and visualize the optimized shape models ([Analyze](analyze.md)). 
+ShapeWorks consists of a set of independent command line tools for preprocessing binary segmentations and surface meshes ([Groom](../workflow/groom.md)) and computing landmark-based shape models ([Optimize](../workflow/optimize.md)). It also includes an interactive user interface called [ShapeWorksStudio](#shapeworksstudio) to analyze and visualize the optimized shape models ([Analyze](../workflow/analyze.md)). 
 
 We are consolidating these tools into a single, reusable API that is shared across different computational libraries in ShapeWorks, and a standalone `shapeworks` command. 
 
