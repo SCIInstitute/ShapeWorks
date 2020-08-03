@@ -208,6 +208,7 @@ TEST(OptimizeTests, cutting_plane_test) {
   }
 }
 
+/*
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, sphere_constraint_test) {
 
@@ -247,3 +248,4 @@ TEST(OptimizeTests, sphere_constraint_test) {
   ASSERT_GT(values[values.size() - 1], 2500);
   ASSERT_LT(values[values.size() - 2], 150);
 }
+*/
