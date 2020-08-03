@@ -252,9 +252,9 @@ void ResizeImage::buildParser()
   const std::string desc = "resizes an image (computes new physical spacing)";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Output size in x-direction [default: current size].");
-  parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Output size in y-direction [default: current size].");
-  parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Output size in z-direction [default: current size].");
+  parser.add_option("--sizex", "-x").action("store").type("unsigned").set_default(0).help("Output size in x-direction [default: current size].");
+  parser.add_option("--sizey", "-y").action("store").type("unsigned").set_default(0).help("Output size in y-direction [default: current size].");
+  parser.add_option("--sizez", "-z").action("store").type("unsigned").set_default(0).help("Output size in z-direction [default: current size].");
 
   Command::buildParser();
 }
