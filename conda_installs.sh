@@ -35,12 +35,11 @@ function install_conda() {
   # add default channels
   conda config --add channels anaconda
   conda config --add channels conda-forge
-  
-  # update anaconda
+
   if ! conda update --yes -n base conda; then return 1; fi
   if ! conda update --yes --all; then return 1; fi
 
-  #create and activate shapeworks env 
+  #create and activate shapeworks env
   CONDAENV=shapeworks
   if ! conda create --yes --name $CONDAENV python=3.7; then return 1; fi
   eval "$(conda shell.bash hook)"
@@ -86,11 +85,11 @@ function install_conda() {
            git-lfs=2.6.1 \
            openmp=8.0.1 \
            ncurses=6.1 \
-           libuuid=2.32.1 \
-           termcolor==1.1.0
+           libuuid=2.32.1
       then return 1; fi
   fi
-  
+
+
   if ! pip install termcolor==1.1.0; then return 1; fi
   if ! pip install grip==4.5.2; then return 1; fi
   if ! pip install matplotlib==3.1.2; then return 1; fi

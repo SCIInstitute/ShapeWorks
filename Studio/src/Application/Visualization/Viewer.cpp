@@ -624,7 +624,14 @@ void Viewer::update_points()
   if (!this->shape_) {
     return;
   }
-  vnl_vector<double> correspondence_points = this->shape_->get_global_correspondence_points();
+
+  vnl_vector<double> correspondence_points;
+  if (this->visualizer_->get_display_mode() == Visualizer::MODE_RECONSTRUCTION_C) {
+    correspondence_points = this->shape_->get_global_correspondence_points();
+  }
+  else {
+    correspondence_points = this->shape_->get_local_correspondence_points();
+  }
 
   int num_points = correspondence_points.size() / 3;
 

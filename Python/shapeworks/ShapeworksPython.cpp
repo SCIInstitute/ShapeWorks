@@ -3,6 +3,7 @@
 //#include <pybind11/stl_bind.h>  // look at Binding STL containers portion of manual; not sure we even use any in ShapeWorks
 #include <pybind11/operators.h>
 #include <pybind11/eigen.h>
+#include <pybind11/functional.h>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -193,6 +194,7 @@ PYBIND11_MODULE(shapeworks, m)
   //                               &ShapeworksUtils::connectPipelines<itk::VTKImageExport<Image::ImageType::Pointer>, vtkImageImport::New()>, "exporter"_a, "importer"_a)
   ;
 
+  /*
   // Image
   py::class_<Image>(m, "Image")
   .def(py::init<const std::string &>()) // can the argument for init be named (it's filename in this case)
@@ -258,6 +260,9 @@ PYBIND11_MODULE(shapeworks, m)
   // .def("__set__",               &Image::operator=, "img"_a)
   ;
 
+   */
+
+  /*
   // Image::Region
   py::class_<Image::Region>(m, "Region")
   .def(py::init<Dims>())
@@ -288,6 +293,8 @@ PYBIND11_MODULE(shapeworks, m)
                                 &ImageUtils::topologyPreservingSmooth, "img"_a, "scaling"_a = 20.0, "sigmoidAlpha"_a = 10.5, "sigmoidBeta"_a = 10.0)
   .def_static("isoresample",    &ImageUtils::isoresample, "image"_a, "isoSpacing"_a = 1.0, "outputSize"_a = Dims())
   ;
+
+   */
 
   // Mesh
   py::class_<Mesh>(m, "Mesh")
@@ -326,6 +333,10 @@ PYBIND11_MODULE(shapeworks, m)
 
   // Optimize (TODO)
   py::class_<Optimize>(m, "Optimize")
+    .def(py::init<>())
+    .def("LoadParameterFile", &Optimize::LoadParameterFile)
+    .def("Run",&Optimize::Run)
+    .def("SetIterationCallbackFunction", &Optimize::SetIterationCallbackFunction)
   ;
   
   // this is simply a demonstration of creating a submodule, which may not be necessary (could add Groom, Optimize, etc)
