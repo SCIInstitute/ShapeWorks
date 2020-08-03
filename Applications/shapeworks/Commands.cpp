@@ -276,19 +276,16 @@ bool ResizeImage::execute(const optparse::Values &options, SharedCommandData &sh
     unsigned sizeX = dims[0];
     unsigned sizeY = dims[1];
     unsigned sizeZ = dims[2];
-
-    sharedData.image.resize(Dims({sizeX, sizeY, sizeZ}));
-    return true;
   }
   else
   {
     unsigned sizeX = static_cast<unsigned>(options.get("sizex"));
     unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
     unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
-
-    sharedData.image.resize(Dims({sizeX, sizeY, sizeZ}));
-    return true;
   }
+
+  sharedData.image.resize(Dims({sizeX, sizeY, sizeZ}));
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

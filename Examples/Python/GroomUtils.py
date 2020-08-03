@@ -294,7 +294,7 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
 
         cmd = ["shapeworks", 
                "read-image", "--name", seginname,
-            #    matrix created by icp is not used
+            #    matrix created by icp is not used so we use resize since icp resizes all images to the reference image which is a requirement for cropping (next step)
             #    "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
                "resize", "--name", ref_tpdtnrrdfilename,
                "write-image", "--name", segoutname]
@@ -305,8 +305,9 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
         if processRaw:
             cmd = ["shapeworks", 
                    "read-image", "--name", rawinname,
-                #    matrix created by icp is not used
+                #    matrix created by icp is not used so we use resize since icp resizes all images to the reference image which is a requirement for cropping (next step)
                 #    "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
+                   "resize", "--name", ref_tpdtnrrdfilename,
                    "write-image", "--name", rawoutname]
             if printCmd:
                 print("CMD: " + " ".join(cmd))
