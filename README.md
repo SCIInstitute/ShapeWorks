@@ -17,30 +17,21 @@ Quick Links
 =====================
 - [How to install ShapeWorks?](http://sciinstitute.github.io/ShapeWorks/users/install)
 - [How to cite ShapeWorks?](http://sciinstitute.github.io/ShapeWorks/users/citation)
+- [How to get started with shape modeling?](http://sciinstitute.github.io/ShapeWorks/getting-started/shapes)
+- See [ShapeWorks in action](http://sciinstitute.github.io/ShapeWorks/getting-started/interfaces)!
+- How to run and see ShapeWorks in action on exemplar [use cases](http://sciinstitute.github.io/ShapeWorks/use-cases/use-cases). 
 - [How to contact us?](http://sciinstitute.github.io/ShapeWorks/about/contact)
 - [Meet ShapeWorkers!](http://sciinstitute.github.io/ShapeWorks/about/team)
+- [...and more](http://sciinstitute.github.io/ShapeWorks/getting-started/how-tos)
 
-
-Documentation
-=====================
-
-Getting Started
----------------------
-[GettingStarted](Documentation/GettingStarted.md) provides overviews of dataset grooming, optimization, and analysis, ShapeWorks Studio and command line instructions, and practical use cases. See [ShapeWorks in action](Documentation/GettingStarted.md#shapeworks-interfaces)!
 
 Using
----------------------
-[ShapeWorks Commands](Documentation/GettingStarted.md#shapeworks-command)  
-[ShapeWorks Studio](Documentation/GettingStarted.md#shapeworksstudio)  
-[Python API](Documentation/GettingStarted.md#shapeworks-in-python) _(Coming Soon!)_  
-[Clouds Deployments](Documentation/GettingStarted.md#shapeworks-in-the-cloud) _(Coming Soon!)_  
+=====================
+[ShapeWorks Commands](http://sciinstitute.github.io/ShapeWorks/tools/commands)  
+[ShapeWorks Studio](http://sciinstitute.github.io/ShapeWorks/getting-started/interfaces#shapeworksstudio)  
+[Python API](http://sciinstitute.github.io/ShapeWorks/getting-started/interfaces#shapeworks-in-python) _(Coming Soon!)_  
+[Clouds Deployments](http://sciinstitute.github.io/ShapeWorks/getting-started/interfaces#shapeworks-in-the-cloud) _(Coming Soon!)_  
 
-How Tos
----------------------
-- How to run and see ShapeWorks in action on exemplar [use cases](Documentation/UseCases/UseCases.md). 
-- How to preprocess or [groom](Documentation/Workflow/Groom.md) your dataset.
-- How to [optimize](Documentation/Workflow/Optimize.md) your shape model.
-- How to [visualize and analyze](Documentation/Workflow/Analyze.md) your optimized shape model.
-- [...and more](Documentation/GettingStarted.md#how-tos)
+
 
 
