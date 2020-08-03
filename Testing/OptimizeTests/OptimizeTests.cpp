@@ -159,6 +159,7 @@ TEST(OptimizeTests, use_normals_test) {
   ASSERT_GT(values[values.size() - 1], 2500);
   ASSERT_LT(values[values.size() - 2], 100);
 }
+*/
 
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, cutting_plane_test) {
@@ -206,7 +207,6 @@ TEST(OptimizeTests, cutting_plane_test) {
     ASSERT_GE(points[i], 0.0);
   }
 }
-*/
 
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, sphere_constraint_test) {
