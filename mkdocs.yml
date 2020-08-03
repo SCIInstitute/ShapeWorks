@@ -13,8 +13,14 @@ nav:
    - 'Shapes, What & From Where?':           'getting-started/shapes.md'
    - 'Shape Modeling Workflow':              'getting-started/workflow.md'
    - 'ShapeWorks Interfaces':                'getting-started/interfaces.md'   
-   - 'Use Cases':                            'getting-started/use-cases.md'
-   - 'How Tos':                              'getting-started/how-tos.md'      
+   - 'Examples':                             'getting-started/examples.md'
+   - 'How Tos':                              'getting-started/how-tos.md'
+- Workflow:
+   - 'How to groom your dataset?':           'workflow/groom.md'
+   - 'How to optimize your shape model?' :   'workflow/optimize.md'        
+   - 'How to analyze your shape model?' :    'workflow/analyze.md'     
+- Use Cases:
+   - 'Use Cases':                            'use-cases/UseCases.md'
 - For Users:
    - 'How to Install ShapeWorks?':           'users/install.md'
    - 'How to Cite ShapeWorks?':              'users/citation.md'
@@ -23,6 +29,7 @@ nav:
    - 'How to Build ShapeWorks from Source?': 'dev/build.md'
    - 'How to Contribute to ShapeWorks?':     'dev/contribute.md'
    - 'How to Add ShapeWorks Commands?':      'dev/commands.md'
+   - 'How to Add Python APIs?':              'dev/python-apis.md'
    - 'How to Add and Run Unit Tests?':       'dev/tests.md'
    - 'How to Add New Datasets?':             'dev/datasets.md'
    - 'How to Auto-generate Documentation?':  'dev/autodoc.md'
