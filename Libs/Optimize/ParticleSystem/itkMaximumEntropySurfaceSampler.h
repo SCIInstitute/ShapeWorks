@@ -230,6 +230,7 @@ public:
                     TransformType T2 = this->GetParticleSystem()->InvertTransform( this->GetParticleSystem()->GetTransform(d)
                                                                                    * this->GetParticleSystem()->GetPrefixTransform(d));
                     m_ParticleSystem->GetDomain(d)->TransformCuttingPlane(T2 * T1);
+                    m_ParticleSystem->GetDomain(d)->GetConstraints()->transformConstraints(T2*T1);
                 }
             }
         }
