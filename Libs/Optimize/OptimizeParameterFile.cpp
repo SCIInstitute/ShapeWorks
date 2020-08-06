@@ -158,6 +158,12 @@ bool OptimizeParameterFile::set_io_parameters(TiXmlHandle* docHandle, Optimize* 
   if (elem) { output_transform_file = elem->GetText(); }
   optimize->SetOutputTransformFile(output_transform_file);
 
+  // python filename
+  std::string python_file = "";
+  elem = docHandle->FirstChild("python_filename").Element();
+  if (elem) { python_file = elem->GetText(); }
+  optimize->SetPythonFile(python_file);
+
   // mesh based attributes
   bool use_mesh_based_attributes = false;
   std::vector<bool> use_xyz;

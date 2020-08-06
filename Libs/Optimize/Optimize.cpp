@@ -46,18 +46,28 @@ Optimize::Optimize()
 //---------------------------------------------------------------------------
 bool Optimize::Run()
 {
-  /*
-  py::scoped_interpreter guard{}; // start the interpreter and keep it alive
 
-  py::print("Python Hello, World!"); // use the Python API
+  if (this->m_python_filename != "") {
+    py::initialize_interpreter();
 
-  std::cerr << "Calling run_me\n";
-  py::module calc = py::module::import("run_me");
-  py::object result = calc.attr("run")(this);
-  std::cerr << "Done calling run_me\n";
-*/
+    auto dir = this->m_python_filename;
 
-  //return true;
+    auto filename = dir.substr(dir.find_last_of("/") + 1);
+    std::cerr << "Running Python File: " << filename << "\n";
+    filename = filename.substr(0, filename.length() - 3); // remove .py
+    dir = dir.substr(0, dir.find_last_of("/") + 1);
+
+    py::module sys = py::module::import("sys");
+    py::print(sys.attr("path"));
+    sys.attr("path").attr("insert")(1, dir);
+    py::print(sys.attr("path"));
+
+    py::module module = py::module::import(filename.c_str());
+    py::object result = module.attr("run")(this);
+
+  }
+
+
 
   // sanity check
   if (this->m_domains_per_shape != this->m_number_of_particles.size()) {
@@ -152,6 +162,12 @@ bool Optimize::Run()
   }
 
   this->UpdateExportablePoints();
+
+  if (this->m_python_filename != "") {
+      this->m_iter_callback = nullptr;
+      py::finalize_interpreter();
+  }
+
   return true;
 }
 
@@ -2128,6 +2144,7 @@ bool Optimize::LoadParameterFile(std::string filename)
   return true;
 }
 
+//---------------------------------------------------------------------------
 Optimize::MatrixType Optimize::GetParticleSystem()
 {
   auto shape_matrix = m_sampler->GetGeneralShapeMatrix();
@@ -2142,7 +2159,12 @@ Optimize::MatrixType Optimize::GetParticleSystem()
   }
 
   return matrix;
+}
 
+//---------------------------------------------------------------------------
+void Optimize::SetPythonFile(std::string filename)
+{
+  this->m_python_filename = filename;
 }
 
 }

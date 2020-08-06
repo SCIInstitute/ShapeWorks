@@ -257,6 +257,9 @@ public:
   //! Return the particle system as a matrix
   MatrixType GetParticleSystem();
 
+  //! Set the python file to run at startup
+  void SetPythonFile(std::string filename);
+
 protected:
 
   //! Set the iteration callback.  Derived classes should override to set their own callback
@@ -369,6 +372,7 @@ protected:
   bool m_narrow_band_set{false};
   bool m_fixed_domains_present{false};
   int m_use_shape_statistics_after{-1};
+  std::string m_python_filename;
 
   // Keeps track of which state the optimization is in.
   unsigned int m_mode = 0;
