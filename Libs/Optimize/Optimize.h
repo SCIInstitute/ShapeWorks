@@ -254,7 +254,7 @@ public:
   std::shared_ptr<Sampler> GetSampler()
   { return m_sampler; }
 
-
+  //! Return the particle system as a matrix
   MatrixType GetParticleSystem();
 
 protected:
