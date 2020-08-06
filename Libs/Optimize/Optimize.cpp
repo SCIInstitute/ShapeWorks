@@ -46,6 +46,7 @@ Optimize::Optimize()
 //---------------------------------------------------------------------------
 bool Optimize::Run()
 {
+  /*
   py::scoped_interpreter guard{}; // start the interpreter and keep it alive
 
   py::print("Python Hello, World!"); // use the Python API
@@ -54,6 +55,7 @@ bool Optimize::Run()
   py::module calc = py::module::import("run_me");
   py::object result = calc.attr("run")(this);
   std::cerr << "Done calling run_me\n";
+*/
 
   //return true;
 
@@ -2124,6 +2126,23 @@ bool Optimize::LoadParameterFile(std::string filename)
     return false;
   }
   return true;
+}
+
+Optimize::MatrixType Optimize::GetParticleSystem()
+{
+  auto shape_matrix = m_sampler->GetGeneralShapeMatrix();
+
+  MatrixType matrix;
+  matrix.resize(shape_matrix->rows(), shape_matrix->cols());
+
+  for (int i = 0; i < shape_matrix->rows(); i++) {
+    for (int j = 0; j < shape_matrix->cols(); j++) {
+      matrix(i, j) = shape_matrix->get(i, j);
+    }
+  }
+
+  return matrix;
+
 }
 
 }

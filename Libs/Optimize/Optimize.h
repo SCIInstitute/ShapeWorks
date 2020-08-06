@@ -13,6 +13,8 @@
 #include <itkImage.h>
 #include <itkCommand.h>
 
+#include <Eigen/Eigen>
+
 // shapeworks particle system
 #include "ParticleSystem/itkParticleSystem.h"
 #include "ParticleSystem/Sampler.h"
@@ -40,6 +42,7 @@ class Optimize {
 public:
   using ImageType = itk::Image<float, 3>;
   using VectorType = itk::ParticleVectorFunction<3>::VectorType;
+  using MatrixType = Eigen::MatrixXd;
 
   //! Constructor
   Optimize();
@@ -250,6 +253,9 @@ public:
   //! Return the Sampler
   std::shared_ptr<Sampler> GetSampler()
   { return m_sampler; }
+
+
+  MatrixType GetParticleSystem();
 
 protected:
 

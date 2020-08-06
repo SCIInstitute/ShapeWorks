@@ -337,6 +337,7 @@ PYBIND11_MODULE(shapeworks, m)
     .def("LoadParameterFile", &Optimize::LoadParameterFile)
     .def("Run",&Optimize::Run)
     .def("SetIterationCallbackFunction", &Optimize::SetIterationCallbackFunction)
+    .def("GetParticleSystem", &Optimize::GetParticleSystem)
   ;
   
   // this is simply a demonstration of creating a submodule, which may not be necessary (could add Groom, Optimize, etc)
