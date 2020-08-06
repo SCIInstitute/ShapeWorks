@@ -262,7 +262,8 @@ ParticleSystem<VDimension>
     this->AddPosition(newpos, domain, threadId);
 
     // Apply opposite update to each original point in the split.
-    newpos = this->GetDomain(domain)->UpdateParticlePosition(startingPos, -projected);
+    auto neg_projected = -projected;
+    newpos = this->GetDomain(domain)->UpdateParticlePosition(startingPos, neg_projected);
     this->SetPosition(newpos, k, domain, threadId);
 
   }

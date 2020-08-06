@@ -1,5 +1,3 @@
-#pragma once
-
 #include "OptimizationVisualizer.h"
 
 #include <vtkProperty.h>
@@ -170,7 +168,10 @@ namespace shapeworks {
         for (int vertex = 0; vertex < numVertices; vertex++) {
           trimesh::vec normal = tmeshes[i]->normals[vertex];
           normal = (normal + trimesh::vec(1, 1, 1)) * 0.5 * 255;
-          unsigned char col[3] = {normal[0], normal[1], normal[2]};
+          unsigned char col[3];
+          col[0] = normal[0];
+          col[1] = normal[1];
+          col[2] = normal[2];
           colors->InsertNextTypedTuple(col);
         }
         meshes[i]->GetPointData()->SetScalars(colors);

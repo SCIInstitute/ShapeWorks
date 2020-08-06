@@ -143,12 +143,14 @@ namespace shapeworks
         break;
       }
       int negativeEdge = negativeVertices[0];
-      Eigen::Vector3d intersect = convert<point, Eigen::Vector3d>(GetBarycentricIntersection(currentBary, targetBary, currentFace, negativeEdge));
+      auto value = GetBarycentricIntersection(currentBary, targetBary, currentFace, negativeEdge);
+      Eigen::Vector3d intersect = convert<point, Eigen::Vector3d>(value);
 
       // When more than 1 negative barycentric coordinate, compute both intersections and take the closest one.
       if (negativeVertices.size() == 2) {
         int negativeEdge1 = negativeVertices[1];
-        Eigen::Vector3d intersect1 = convert<point, Eigen::Vector3d>(GetBarycentricIntersection(currentBary, targetBary, currentFace, negativeEdge1));
+        auto value = GetBarycentricIntersection(currentBary, targetBary, currentFace, negativeEdge1);
+        Eigen::Vector3d intersect1 = convert<point, Eigen::Vector3d>(value);
 
         double length0 = (intersect - currentPoint).norm();
         double length1 = (intersect1 - currentPoint).norm();

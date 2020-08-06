@@ -49,7 +49,7 @@ private:
   const Eigen::Vector3d GetFaceNormal(int faceIndex) const;
   void ComputeMeshBounds();
 
-  point TriMeshWrapper::GetBarycentricIntersection(vec3 start, vec3 end, int currentFace, int edge) const;
+  point GetBarycentricIntersection(vec3 start, vec3 end, int currentFace, int edge) const;
 
   int GetNearestVertex(point pt) const;
   int GetTriangleForPoint(point pt) const;
