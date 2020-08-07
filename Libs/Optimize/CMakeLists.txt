@@ -16,7 +16,12 @@ target_link_libraries(Optimize
   Mesh
   tinyxml
   Utils
-  Particles)
+  Particles
+  ${ITK_LIBRARIES}
+  ${VTK_LIBRARIES}
+  vgl
+  vgl_algo
+  )
 
 target_include_directories(Optimize PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
@@ -26,6 +31,6 @@ target_include_directories(Optimize PUBLIC
 
 add_executable(ShapeWorksRun ShapeWorksRun.cxx )
 set_target_properties(ShapeWorksRun PROPERTIES COMPILE_DEFINITIONS SW_USE_FEAMESH)
-target_link_libraries(ShapeWorksRun ${ITK_LIBRARIES} ${VTK_LIBRARIES} tinyxml Mesh vgl vgl_algo Optimize Utils trimesh2)
+target_link_libraries(ShapeWorksRun Optimize)
 install(TARGETS ShapeWorksRun RUNTIME DESTINATION bin)
 
