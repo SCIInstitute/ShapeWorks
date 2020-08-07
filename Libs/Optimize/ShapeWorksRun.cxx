@@ -16,6 +16,8 @@
 #include "Optimize.h"
 #include "OptimizeParameterFile.h"
 
+using namespace shapeworks;
+
 int main(int argc, char* argv[])
 {
   try
