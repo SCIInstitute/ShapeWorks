@@ -41,6 +41,13 @@ TEST(shapeworksTests, resample)
 }
 
 //---------------------------------------------------------------------------
+TEST(shapeworksTests, resize)
+{
+  shapeworksEnvSetup();
+  ASSERT_FALSE(system("bash resize.sh"));
+}
+
+//---------------------------------------------------------------------------
 TEST(shapeworksTests, recenter)
 {
   shapeworksEnvSetup();
@@ -290,5 +297,12 @@ TEST(shapeworksTests, division)
 {
   shapeworksEnvSetup();
   ASSERT_FALSE(system("bash div.sh"));
+}
+
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, crop)
+{
+  shapeworksEnvSetup();
+  ASSERT_FALSE(system("bash crop.sh"));
 }
 

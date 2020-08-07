@@ -10,6 +10,7 @@ COMMAND_DECLARE(WriteImage, ImageCommand);
 COMMAND_DECLARE(ImageInfo, ImageCommand);
 COMMAND_DECLARE(Antialias, ImageCommand);
 COMMAND_DECLARE(ResampleImage, ImageCommand);
+COMMAND_DECLARE(ResizeImage, ImageCommand);
 COMMAND_DECLARE(RecenterImage, ImageCommand);
 COMMAND_DECLARE(PadImage, ImageCommand);
 COMMAND_DECLARE(Translate, ImageCommand);
