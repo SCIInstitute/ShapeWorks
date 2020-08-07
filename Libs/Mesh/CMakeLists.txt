@@ -27,7 +27,14 @@ target_include_directories(Mesh PUBLIC
  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/PreviewMeshQC>
  $<INSTALL_INTERFACE:include>)
 
-target_link_libraries(Mesh trimesh2 vgl vgl_algo ${VTK_LIBRARIES})
+target_link_libraries(
+  Mesh 
+  Common
+  trimesh2 
+  vgl 
+  vgl_algo 
+  ${VTK_LIBRARIES}
+  )
 
 # Install
 set_target_properties(Mesh PROPERTIES PUBLIC_HEADER

@@ -219,7 +219,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("write",                 &Image::write, "filename"_a, "compressed"_a=true)
   .def("antialias",             &Image::antialias, "smooth the image", "iterations"_a=50, "maxRMSErr"_a=0.01f, "layers"_a=0)
   .def("recenter",              &Image::recenter)
-  .def("resample",              &Image::resample, "physicalSpacing"_a, "logicalDims"_a)
+  .def("resample",              &Image::resample, "newSpacing"_a)
   .def("pad",                   py::overload_cast<int, Image::PixelType>(&Image::pad))
   .def("pad",                   py::overload_cast<int, int, int,Image::PixelType>(&Image::pad))
   .def("translate",             &Image::translate, "v"_a)
@@ -286,7 +286,7 @@ PYBIND11_MODULE(shapeworks, m)
                                 &ImageUtils::createWarpTransform, "source_landmarks"_a, "target_landmarks"_a, "stride"_a=1)
   .def_static("topologyPreservingSmooth", 
                                 &ImageUtils::topologyPreservingSmooth, "img"_a, "scaling"_a = 20.0, "sigmoidAlpha"_a = 10.5, "sigmoidBeta"_a = 10.0)
-  .def_static("isoresample",    &ImageUtils::isoresample, "image"_a, "isoSpacing"_a = 1.0, "outputSize"_a = Dims())
+  .def_static("isoresample",    &ImageUtils::isoresample, "image"_a, "isoSpacing"_a = 1.0)
   ;
 
   // Mesh

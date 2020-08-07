@@ -731,7 +731,6 @@ Image& Image::reflect(const Axis &axis)
   Vector scale(makeVector({1,1,1}));
   scale[axis] = -1;
 
-  
   using ScalableTransform = itk::ScalableAffineTransform<double, 3>;
   ScalableTransform::Pointer xform(ScalableTransform::New());
   xform->SetScale(scale);

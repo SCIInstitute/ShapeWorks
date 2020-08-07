@@ -11,6 +11,8 @@
 #include <vtkMarchingCubes.h>
 #include <vtkSmoothPolyDataFilter.h>
 #include <vtkDecimatePro.h>
+#include <vtkTransformPolyDataFilter.h>
+#include <vtkReverseSense.h>
 
 static bool compare_double(double a, double b)
 {
@@ -91,7 +93,9 @@ Mesh& Mesh::coverage(const Mesh &other_mesh)
 
 Mesh& Mesh::march(double levelset)
 {
-  vtkSmartPointer<vtkMarchingCubes> cube = vtkSmartPointer<vtkMarchingCubes>::New();
+  using FilterType = vtkSmartPointer<vtkMarchingCubes>;
+  FilterType cube = FilterType::New();
+
   cube->SetInputData(this->mesh);
   cube->SetValue(0, levelset);
   cube->Update();
@@ -100,20 +104,29 @@ Mesh& Mesh::march(double levelset)
   return *this;
 }
 
-Mesh &Mesh::smooth(int iterations)
+Mesh &Mesh::smooth(int iterations, double relaxation)
 {
-  vtkSmartPointer<vtkSmoothPolyDataFilter> smoother = vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
+  using FilterType = vtkSmartPointer<vtkSmoothPolyDataFilter>;
+  FilterType smoother = FilterType::New();
   smoother->SetInputData(this->mesh);
   smoother->SetNumberOfIterations(iterations);
+  if (relaxation)
+  {
+    smoother->SetRelaxationFactor(relaxation);
+    smoother->FeatureEdgeSmoothingOff();
+    smoother->BoundarySmoothingOn();
+  }
   smoother->Update();
   this->mesh = smoother->GetOutput();
 
   return *this;
 }
 
-Mesh &Mesh::decimate(float reduction, double angle, bool preservetopology)
+Mesh &Mesh::decimate(double reduction, double angle, bool preservetopology)
 {
-  vtkSmartPointer<vtkDecimatePro> decimator = vtkSmartPointer<vtkDecimatePro>::New();
+  using FilterType = vtkSmartPointer<vtkDecimatePro>;
+  FilterType decimator = FilterType::New();
+
   decimator->SetInputData(this->mesh);
   decimator->SetTargetReduction(reduction);
   decimator->SetFeatureAngle(angle);
@@ -121,6 +134,41 @@ Mesh &Mesh::decimate(float reduction, double angle, bool preservetopology)
   decimator->BoundaryVertexDeletionOn();
   decimator->Update();
   this->mesh = decimator->GetOutput();
+
+  return *this;
+}
+
+Mesh &Mesh::reflect(const Vector3 &origin, const Axis &axis)
+{
+  Vector scale(makeVector({1,1,1}));
+  scale[axis] = -1;
+
+  vtkTransform transform(vtkTransform::New());
+  transform->Translate(-origin[0], -origin[1], -origin[2]);
+  transform->Scale(scale[0], scale[1], scale[2]);
+  transform->Translate(origin[0], origin[1], origin[2]);
+
+  // handle flipping normals under negative scaling
+  using ReverseType = vtkSmartPointer<vtkReverseSense>;
+  ReverseType reverseSense = ReverseType::New();
+  reverseSense->SetInputData(this->mesh);
+  reverseSense->ReverseNormalsOff();
+  reverseSense->ReverseCellsOn();
+  reverseSense->Update();
+  this->mesh = reverseSense->GetOutput();
+
+  return *this;
+}
+
+Mesh &Mesh::applyTransform(const vtkTransform transform)
+{
+  using FilterType = vtkSmartPointer<vtkTransformPolyDataFilter>;
+  FilterType resampler = FilterType::New();
+
+  resampler->SetTransform(transform);
+  resampler->SetInputData(this->mesh);
+  resampler->Update();
+  this->mesh = resampler->GetOutput();
 
   return *this;
 }

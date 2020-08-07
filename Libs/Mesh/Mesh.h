@@ -1,6 +1,7 @@
 #pragma once
 
-#include <vtkSmartPointer.h>
+#include "Shapeworks.h"
+
 #include <vtkPolyData.h>
 #include <string>
 
@@ -21,8 +22,10 @@ public:
   Mesh& coverage(const Mesh& other_mesh); // TODO: everything should be like this and return reference to self
 
   Mesh& march(double levelset = 0.0);
-  Mesh& smooth(int iterations = 0);
-  Mesh& decimate(float reduction = 0.0, double angle = 0, bool preservetopology = false);
+  Mesh& smooth(int iterations = 0, double relaxation = 0.0);
+  Mesh& decimate(double reduction = 0.0, double angle = 0.0, bool preservetopology = false);
+  Mesh& reflect(const Vector3 &origin, const Axis &axis);
+  Mesh& applyTransform(const vtkTransform transform);
 
   /// compare if points in two meshes are equal
   bool compare_points_equal(const Mesh& other_mesh);

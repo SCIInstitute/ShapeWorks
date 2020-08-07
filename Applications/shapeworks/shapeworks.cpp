@@ -43,10 +43,11 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(CropImage::getCommand());
   shapeworks.addCommand(ICPRigid::getCommand());
   shapeworks.addCommand(ClipVolume::getCommand());
-  shapeworks.addCommand(ReflectVolume::getCommand());
+  shapeworks.addCommand(ReflectImage::getCommand());
   shapeworks.addCommand(SetOrigin::getCommand());
   shapeworks.addCommand(WarpImage::getCommand());
   shapeworks.addCommand(Compare::getCommand());
+  shapeworks.addCommand(MeshFromDT::getCommand());
   shapeworks.addCommand(ReadParticleSystem::getCommand());
   shapeworks.addCommand(Compactness::getCommand());
   shapeworks.addCommand(Generalization::getCommand());
@@ -54,8 +55,11 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(ReadMesh::getCommand());
   shapeworks.addCommand(WriteMesh::getCommand());
   shapeworks.addCommand(Coverage::getCommand());
-  shapeworks.addCommand(MeshFromDT::getCommand();)
-  
+  shapeworks.addCommand(March::getCommand());
+  shapeworks.addCommand(Smooth::getCommand());
+  shapeworks.addCommand(Decimate::getCommand());
+  shapeworks.addCommand(ReflectMesh::getCommand());
+
   try {
     return shapeworks.run(argc, argv);
   } catch (const std::exception &e) {

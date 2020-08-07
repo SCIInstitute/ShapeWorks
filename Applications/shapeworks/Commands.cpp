@@ -948,11 +948,11 @@ bool ClipVolume::execute(const optparse::Values &options, SharedCommandData &sha
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// ReflectVolume
+// ReflectImage
 ///////////////////////////////////////////////////////////////////////////////
-void ReflectVolume::buildParser()
+void ReflectImage::buildParser()
 {
-  const std::string prog = "reflect";
+  const std::string prog = "reflect-image";
   const std::string desc = "reflect image with respect to logical image center and the specified axis";
   parser.prog(prog).description(desc);
 
@@ -961,7 +961,7 @@ void ReflectVolume::buildParser()
   Command::buildParser();
 }
 
-bool ReflectVolume::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool ReflectImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validImage())
   {
@@ -971,6 +971,7 @@ bool ReflectVolume::execute(const optparse::Values &options, SharedCommandData &
 
   std::string axis_str(static_cast<std::string>(options.get("axis")));
   Axis axis(toAxis(axis_str));
+
   if (!axis_is_valid(axis))
   {
     std::cerr << "Must specify a valid axis (X, Y, or Z)\n";
@@ -1497,7 +1498,7 @@ bool ReadMesh::execute(const optparse::Values &options, SharedCommandData &share
 void WriteMesh::buildParser()
 {
   const std::string prog = "write-mesh";
-  const std::string desc = "writes the current mesh (determines type by its extension)";
+  const std::string desc = "writes the current mesh";
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of file to write.");
@@ -1514,8 +1515,13 @@ bool WriteMesh::execute(const optparse::Values &options, SharedCommandData &shar
   }
 
   std::string filename = options["name"];
+  if (filename.length() == 0) {
+    std::cerr << "writemesh error: no filename specified, must pass `--name <filename>`\n";
+    return false;
+  }
 
-  return sharedData.mesh->write(filename);
+  sharedData.mesh->write(filename);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1550,6 +1556,140 @@ bool Coverage::execute(const optparse::Values &options, SharedCommandData &share
 
   sharedData.mesh->coverage(Mesh(other_mesh_path));
   return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// March
+///////////////////////////////////////////////////////////////////////////////
+void March::buildParser()
+{
+  const std::string prog = "march";
+  const std::string desc = "brief description of command";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--levelset").action("store").type("double").set_default(0.0).help("Value of levelset [default: 0.0].");
+
+  Command::buildParser();
+}
+
+bool March::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  double levelset = static_cast<double>(options.get("levelset"));
+
+  sharedData.mesh->march(levelset);
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Smooth
+///////////////////////////////////////////////////////////////////////////////
+void Smooth::buildParser()
+{
+  const std::string prog = "smooth";
+  const std::string desc = "applies laplacian smoothing";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--iterations").action("store").type("int").set_default(1).help("Number of iterations [default: 1].");
+  parser.add_option("--relaxation").action("store").type("double").set_default(0.0).help("Amount of displacement for a vertex to move in each iteration [default: 0.0].");
+
+  Command::buildParser();
+}
+
+bool Smooth::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  int iterations = static_cast<int>(options.get("iterations"));
+  double relaxation = static_cast<double>(options.get("relaxation"));
+
+  sharedData.mesh->smooth(iterations, relaxation);
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Decimate
+///////////////////////////////////////////////////////////////////////////////
+void Decimate::buildParser()
+{
+  const std::string prog = "decimate";
+  const std::string desc = "brief description of command";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--reduction").action("store").type("double").set_default(0.0).help("Description of optionName.");
+  parser.add_option("--angle").action("store").type("double").set_default(0.0).help("Angle in degrees [default: 0.0].");
+  parser.add_option("--preservetopology").action("store").type("bool").set_default(false).help("Whether to preserve topology [default: False].");
+
+  Command::buildParser();
+}
+
+bool Decimate::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  double reduction = static_cast<double>(options.get("reduction"));
+  double angle = static_cast<double>(options.get("angle"));
+  bool preservetopology = static_cast<bool>(options.get("preservetopology"));
+
+  sharedData.mesh->decimate(reduction, angle, preservetopology);
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ReflectMesh
+///////////////////////////////////////////////////////////////////////////////
+void ReflectMesh::buildParser()
+{
+  const std::string prog = "reflect";
+  const std::string desc = "reflect meshes with respect to a specified center and specific axis";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--originx", "-x").action("store").type("double").set_default(0.0).help("Origin about which reflection occurs in x-direction [default: 0.0].");
+  parser.add_option("--originy", "-y").action("store").type("double").set_default(0.0).help("Origin about which reflection occurs in y-direction [default: 0.0].");
+  parser.add_option("--originz", "-z").action("store").type("double").set_default(0.0).help("Origin about which reflection occurs in z-direction [default: 0.0].");
+  parser.add_option("--axis").action("store").type("string").set_default("").help("Axis along which to reflect (X, Y, or Z).");
+
+  Command::buildParser();
+}
+
+bool ReflectMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  double originX = static_cast<double>(options.get("originx"));
+  double originY = static_cast<double>(options.get("originy"));
+  double originZ = static_cast<double>(options.get("originz"));
+
+  std::string axis_str(static_cast<std::string>(options.get("axis")));
+  Axis axis(toAxis(axis_str));
+
+  if (!axis_is_valid(axis))
+  {
+    std::cerr << "Must specify a valid axis (X, Y, or Z)\n";
+    return false;
+  }
+  else
+  {
+    sharedData.mesh->reflect(makeVector({originX, originY, originZ}), axis);
+    return sharedData.validMesh();
+  }
 }
 
 } // shapeworks

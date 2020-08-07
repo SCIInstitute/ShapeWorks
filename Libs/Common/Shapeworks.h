@@ -6,6 +6,8 @@
 #include <itkSize.h>
 #include <itkIndex.h>
 #include <itkAffineTransform.h>
+#include <vtkSmartPointer.h>
+#include <vtkTransform.h>
 
 namespace shapeworks {
 
@@ -36,6 +38,9 @@ using TransformPtr       = GenericTransform::Pointer;
 using AffineTransform    = itk::AffineTransform<double, 3>;
 using AffineTransformPtr = AffineTransform::Pointer;
 AffineTransformPtr createAffineTransform(const Matrix33 &mat, const Vector3 &translate = makeVector({0,0,0}));
+
+/// Mesh transforms
+using vtkTransform = vtkSmartPointer<vtkTransform>;
 
 /// For deliberate conversions between types
 Point toPoint(const Dims &d);

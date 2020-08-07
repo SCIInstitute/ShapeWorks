@@ -30,7 +30,7 @@ COMMAND_DECLARE(BoundingBox, ImageCommand);
 COMMAND_DECLARE(CropImage, ImageCommand);
 COMMAND_DECLARE(ICPRigid, ImageCommand);
 COMMAND_DECLARE(ClipVolume, ImageCommand);
-COMMAND_DECLARE(ReflectVolume, ImageCommand);
+COMMAND_DECLARE(ReflectImage, ImageCommand);
 COMMAND_DECLARE(SetOrigin, ImageCommand);
 COMMAND_DECLARE(WarpImage, ImageCommand);
 COMMAND_DECLARE(Compare, ImageCommand);
@@ -51,6 +51,10 @@ COMMAND_DECLARE(Specificity, ParticleSystemCommand);
 // Mesh Commands
 COMMAND_DECLARE(ReadMesh, MeshCommand);
 COMMAND_DECLARE(WriteMesh, MeshCommand);
-COMMAND_DECLARE(Coverage, MeshCommand)
+COMMAND_DECLARE(Coverage, MeshCommand);
+COMMAND_DECLARE(March, MeshCommand);
+COMMAND_DECLARE(Smooth, MeshCommand);
+COMMAND_DECLARE(Decimate, MeshCommand);
+COMMAND_DECLARE(ReflectMesh, MeshCommand);
 
 } // shapeworks
