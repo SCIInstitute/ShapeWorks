@@ -200,7 +200,7 @@ def Run_Pipeline(args):
                 input("Press Enter to continue")
 
             # create the output directory
-            parentDir = './TestLeftAtrium/PrepOutput/'
+            parentDir = './TestLeftAtrium/groomed/'
             if not os.path.exists(parentDir):
                 os.makedirs(parentDir)
 
@@ -285,7 +285,7 @@ def Run_Pipeline(args):
     if args.interactive:
         input("Press Enter to continue")
 
-    pointDir = './TestLeftAtrium/PointFiles/'
+    pointDir = './TestLeftAtrium/shape_models/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 

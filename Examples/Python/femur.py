@@ -79,7 +79,7 @@ def Run_Pipeline(args):
         -- find largest bounding box and crop
         """
         # Directory where grooming output folders will be added
-        parentDir = 'TestFemur/PrepOutput/'
+        parentDir = 'TestFemur/groomed/'
         if not os.path.exists(parentDir):
             os.mkdir(parentDir)
         
@@ -272,7 +272,7 @@ def Run_Pipeline(args):
     if args.interactive:
         input("Press Enter to continue")
 
-    pointDir = './TestFemur/PointFiles/'
+    pointDir = './TestFemur/shape_models/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
