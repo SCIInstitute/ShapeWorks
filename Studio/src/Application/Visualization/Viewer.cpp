@@ -92,7 +92,8 @@ Viewer::Viewer()
   //this->exclusion_sphere_glyph_->SetColorModeToColorByScale();
 
   this->exclusion_sphere_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
-  this->exclusion_sphere_mapper_->SetInputConnection(this->exclusion_sphere_glyph_->GetOutputPort());
+  this->exclusion_sphere_mapper_->SetInputConnection(
+    this->exclusion_sphere_glyph_->GetOutputPort());
   this->exclusion_sphere_mapper_->SetScalarVisibility(0);
 
   this->exclusion_sphere_actor_ = vtkSmartPointer<vtkActor>::New();
@@ -233,7 +234,8 @@ void Viewer::display_vector_field()
 
     this->glyph_points_->SetDataTypeToDouble();
     this->glyph_point_set_->SetPoints(this->glyph_points_);
-    this->glyph_point_set_->GetPointData()->SetScalars(vtkSmartPointer<vtkUnsignedLongArray>::New());
+    this->glyph_point_set_->GetPointData()->SetScalars(
+      vtkSmartPointer<vtkUnsignedLongArray>::New());
 
     this->glyphs_->SetInputData(this->glyph_point_set_);
     this->glyphs_->ScalingOn();
@@ -495,14 +497,16 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
 
     auto feature_map = this->visualizer_->get_feature_map();
 
-    std::cerr << "checking if mesh has scalar array for " << feature_map << "\n";
-    auto scalar_array = poly_data->GetPointData()->GetArray(feature_map.c_str());
-    if (scalar_array) {
-      std::cerr << "array present!\n";
-    }
-    else {
-      std::cerr << "array NOT present! Loading...\n";
-      this->shape_->load_feature(this->visualizer_->get_display_mode(), feature_map);
+    if (feature_map != "") {
+      std::cerr << "checking if mesh has scalar array for " << feature_map << "\n";
+      auto scalar_array = poly_data->GetPointData()->GetArray(feature_map.c_str());
+      if (scalar_array) {
+        std::cerr << "array present!\n";
+      }
+      else {
+        std::cerr << "array NOT present! Loading...\n";
+        this->shape_->load_feature(this->visualizer_->get_display_mode(), feature_map);
+      }
     }
 
     vtkSmartPointer<vtkPolyDataMapper> mapper = this->surface_mapper_;
@@ -549,7 +553,6 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
 
       mapper->ScalarVisibilityOn();
 
-
       mapper->SetScalarModeToUsePointData();
 /*
       auto rainbow = vtkColorTransferFunction::New();
@@ -562,7 +565,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
       //mapper->SetScalarRange(-500,500);
 */
 
-      mapper->SetScalarRange(24,80);
+      mapper->SetScalarRange(24, 80);
 
     }
     else {
