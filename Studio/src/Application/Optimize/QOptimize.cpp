@@ -2,6 +2,8 @@
 
 #include <QMutexLocker>
 
+using namespace shapeworks;
+
 QOptimize::QOptimize(QObject* parent) :
   QObject(parent),
   Optimize() {}

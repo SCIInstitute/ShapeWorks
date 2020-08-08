@@ -14,6 +14,8 @@
 
 #include <ui_OptimizeTool.h>
 
+using namespace shapeworks;
+
 //---------------------------------------------------------------------------
 OptimizeTool::OptimizeTool()
 {
