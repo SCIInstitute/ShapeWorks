@@ -543,7 +543,7 @@ void Optimize::AddSinglePoint()
     if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) > 0) {
       continue;
     }
-    PointType pos = m_sampler->GetParticleSystem()->GetDomain(0)->GetValidLocationNear(firstPointPosition);
+    PointType pos = m_sampler->GetParticleSystem()->GetDomain(i)->GetValidLocationNear(firstPointPosition);
     m_sampler->GetParticleSystem()->AddPosition(pos, i);
   }
 }
