@@ -1,6 +1,5 @@
 #pragma once
 
-//#include <array>
 
 #include <QSharedPointer>
 #include <Visualization/ColorSchemes.h>
@@ -76,7 +75,7 @@ private:
 
   void display_vector_field();
 
-  void compute_point_differences(const std::vector<Point>& vecs,
+  void compute_point_differences(const std::vector<Point>& points,
                                  vtkSmartPointer<vtkFloatArray> magnitudes,
                                  vtkSmartPointer<vtkFloatArray> vectors);
 
@@ -87,11 +86,11 @@ private:
 
   void updateDifferenceLUT(float r0, float r1);
 
+  void update_actors();
+
   bool visible_;
 
   QSharedPointer<Shape> shape_;
-
-  void update_actors();
 
   bool show_glyphs_ = true;
   bool show_surface_ = true;
@@ -121,8 +120,6 @@ private:
   vtkSmartPointer<vtkLookupTable> lut_;
 
   vtkSmartPointer<StudioInteractorStyle> style_;
-
-  //vtkSmartPointer<vtkImageActor>           image_actor_;
 
   vtkSmartPointer<vtkColorTransferFunction> difference_lut_;
   vtkSmartPointer<vtkArrowSource> arrow_source_;

@@ -290,7 +290,7 @@ void Viewer::display_vector_field()
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::compute_point_differences(const std::vector<Point>& vecs,
+void Viewer::compute_point_differences(const std::vector<Point>& points,
                                        vtkSmartPointer<vtkFloatArray> magnitudes,
                                        vtkSmartPointer<vtkFloatArray> vectors)
 {
@@ -331,9 +331,9 @@ void Viewer::compute_point_differences(const std::vector<Point>& vecs,
     auto id = locator->FindClosestPoint(pointSet->GetPoint(i));
     double* normal = poly_data->GetPointData()->GetNormals()->GetTuple(id);
 
-    float xd = vecs[i].x;
-    float yd = vecs[i].y;
-    float zd = vecs[i].z;
+    float xd = points[i].x;
+    float yd = points[i].y;
+    float zd = points[i].z;
 
     float mag = xd * normal[0] + yd * normal[1] + zd * normal[2];
 
