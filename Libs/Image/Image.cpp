@@ -292,9 +292,10 @@ Image& Image::resample(const Point3& newSpacing) // (TODO: linear filter by defa
   // compute new dimensions
   Dims inputDims(dims());
   Vector3 inputSpacing(spacing());
-  Dims newDims({ static_cast<unsigned>(std::floor(inputDims[0] * inputSpacing[0] / newSpacing[0])),
-                 static_cast<unsigned>(std::floor(inputDims[1] * inputSpacing[1] / newSpacing[1])),
-                 static_cast<unsigned>(std::floor(inputDims[2] * inputSpacing[2] / newSpacing[2])) });
+  Dims newDims;
+  for (int i = 0; i < 3; i++) {
+    newDims[i] = static_cast<unsigned>(std::floor(inputDims[i] * inputSpacing[i] / newSpacing[i]));
+  }
 
   resampler->SetOutputSpacing(newSpacing.GetDataPointer());
   resampler->SetOutputOrigin(origin());
