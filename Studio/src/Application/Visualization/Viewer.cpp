@@ -10,26 +10,19 @@
 #include <vtkImageActor.h>
 #include <vtkImageData.h>
 #include <vtkRenderWindow.h>
-#include <vtkProperty.h>
 #include <vtkTextActor.h>
 #include <vtkTextProperty.h>
 #include <vtkCornerAnnotation.h>
-#include <vtkPointPicker.h>
-#include <vtkIdTypeArray.h>
 #include <vtkPropPicker.h>
 #include <vtkCellPicker.h>
 #include <vtkCell.h>
-#include <vtkCamera.h>
 #include <vtkFloatArray.h>
-#include <vtkImageGradient.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkArrowSource.h>
 #include <vtkPointLocator.h>
 #include <vtkPolyDataNormals.h>
-#include <vtkImageGaussianSmooth.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkScalarBarActor.h>
-#include <vtkColorTransferFunction.h>
 
 #include <Application/Data/CustomSurfaceReconstructionFilter.h>
 #include <Data/Preferences.h>
@@ -155,8 +148,6 @@ Viewer::Viewer()
   this->visible_ = false;
   this->scheme_ = 0;
 
-  this->glyph_size_ = 1.0f;
-  this->glyph_quality_ = 5.0f;
   this->update_glyph_properties();
 
   this->scalar_bar_actor_ = vtkSmartPointer<vtkScalarBarActor>::New();
@@ -182,10 +173,6 @@ Viewer::Viewer()
   corner_annotation_->SetNonlinearFontScaleFactor(1);
   corner_annotation_->SetMaximumFontSize(16);
 }
-
-//-----------------------------------------------------------------------------
-Viewer::~Viewer()
-{}
 
 //-----------------------------------------------------------------------------
 void Viewer::set_color_scheme(int scheme)
