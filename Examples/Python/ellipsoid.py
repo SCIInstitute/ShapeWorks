@@ -151,10 +151,10 @@ def Run_Pipeline(args):
         "normal_weight": 10.0,
         "checkpointing_interval": 200,
         "keep_checkpoints": 0,
-        "iterations_per_split": 100,
-        "optimization_iterations": 2000,
+        "iterations_per_split": 2000,
+        "optimization_iterations": 1000,
         "starting_regularization": 100,
-        "ending_regularization": 0.1,
+        "ending_regularization": 10,
         "recompute_regularization_interval": 2,
         "domains_per_shape": 1,
         "domain_type": 'image',
@@ -164,7 +164,7 @@ def Run_Pipeline(args):
         "procrustes_scaling": 0,
         "save_init_splits": 0,
         "debug_projection": 0,
-        "verbosity": 3
+        "verbosity": 2
     }
 
     if args.tiny_test:
