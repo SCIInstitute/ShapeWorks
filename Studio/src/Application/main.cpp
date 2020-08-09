@@ -6,11 +6,13 @@
 #include <vtkObject.h>
 #include <itkMacro.h>
 
+#include <Data/StudioLog.h>
+
 int main(int argc, char** argv)
 {
   try {
 
-    std::cerr << "ShapeWorksStudio initializing...\n";
+    STUDIO_LOG_MESSAGE("ShapeWorksStudio initializing...");
     vtkObject::GlobalWarningDisplayOff();
 
     QApplication app(argc, argv);

@@ -20,6 +20,7 @@
 #include <Data/Session.h>
 #include <Data/Shape.h>
 #include <Data/Mesh.h>
+#include <Data/StudioLog.h>
 #include <Visualization/ShapeWorksStudioApp.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/Visualizer.h>
@@ -1168,6 +1169,7 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event)
 
   this->hide();
   this->optimize_tool_->shutdown_threads();
+  STUDIO_CLOSE_LOG();
   QCoreApplication::processEvents();
 }
 
