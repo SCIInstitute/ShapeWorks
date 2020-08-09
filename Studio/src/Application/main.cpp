@@ -8,9 +8,17 @@
 
 #include <Data/StudioLog.h>
 
+#include <Utils/WindowsCrashHandler.h>
+
 int main(int argc, char** argv)
 {
   try {
+
+#ifdef WIN32
+    init_crash_handler();
+    ::SetErrorMode( 0 );
+#endif
+
 
     STUDIO_LOG_MESSAGE("ShapeWorksStudio initializing...");
     vtkObject::GlobalWarningDisplayOff();
