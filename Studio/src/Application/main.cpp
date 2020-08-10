@@ -8,7 +8,10 @@
 
 #include <Data/StudioLog.h>
 
+#ifdef _WIN32
+#include "errhandlingapi.h"
 #include <Utils/WindowsCrashHandler.h>
+#endif
 
 int main(int argc, char** argv)
 {
