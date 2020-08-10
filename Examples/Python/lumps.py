@@ -64,15 +64,15 @@ def Run_Pipeline(args):
         os.makedirs(pointFilesDirectory)
 
     parameterDictionary = {
-        "number_of_particles": 128,
+        "number_of_particles": 512,
         "use_normals": 0,
         "normal_weight": 10.0,
         "checkpointing_interval": 100,
         "keep_checkpoints": 0,
-        "iterations_per_split": 400,
-        "optimization_iterations": 100,
-        "starting_regularization": 100,
-        "ending_regularization": 0.1,
+        "iterations_per_split": 2000,
+        "optimization_iterations": 500,
+        "starting_regularization": 10,
+        "ending_regularization": 1,
         # "visualizer_enable": 1,
         # "visualizer_wireframe": 1,
         # "visualizer_screenshot_directory": testDirectory + 'screenshots/',

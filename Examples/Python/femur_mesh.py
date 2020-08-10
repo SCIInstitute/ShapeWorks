@@ -19,143 +19,68 @@ from OptimizeUtils import *
 from AnalyzeUtils import *
 
 
-def dictToXML(params, filename):
-    with open(filename, "w") as f:
-        for key in params:
-            tag = '<' + key + '>'
-            closer = '</' + key + '>\n'
-            f.write(tag + str(params[key]) + closer)
-
-
 def Run_Pipeline(args):
     datasetName = 'femur'
+    filename = datasetName + '.zip'
     parentDir = 'TestFemurMesh/'
     prepDir = parentDir + 'PrepOutput/'
-    vtkDir = prepDir + 'vtk/'
-    plyDir = prepDir + 'ply/'
-    alignedMeshesDir = prepDir + 'aligned/'
+    meshDir = parentDir + datasetName + '/groomed/meshes/'
+    
+    if not os.path.exists(parentDir):
+        os.makedirs(parentDir)
+    
+    # Check if the data is in the right place
+    if not os.path.exists(meshDir):
+        print("Missing folder " + meshDir + ". Checking for " + filename)
+        if not os.path.exists(filename):
+            print("Can't find " + filename)
+            import DatasetUtils
+            DatasetUtils.downloadDataset(datasetName)
+        # extract the zipfile
+        print("Extracting data from " + filename + "...")
+        with ZipFile(filename, 'r') as zipObj:
+            zipObj.extractall(path=parentDir)
 
+    meshFiles = []
+    for f in sorted(os.listdir(meshDir)):
+        meshFiles.append(meshDir + f)
 
-    meshFiles = sorted(glob.glob(parentDir + datasetName + "/meshes/*.ply"))
-    imageFiles = sorted(glob.glob(parentDir + datasetName + "/distance_transforms/*.nrrd"))
+    if len(meshFiles) == 0:
+        print('Zero mesh files found in', meshDir)
+        return
 
-    # Only do this when want to run on all meshes
-    #reflectedFiles_mesh, reflectedFile_img = anatomyPairsToSingles('TestFemur/reflected', meshFiles, imageFiles, 'left')
+    meshFiles = meshFiles[:15]
+    print(meshFiles)
 
-
-    #### Step 1, Get only left side femurs
-    leftMeshFiles = []
-    leftImageFiles = []
-    for f, f2 in zip(meshFiles, imageFiles):
-        # n09_L is a bad example, it is squished or something
-        if 'n09_L_femur.ply' in f or 'n11_L_femur.ply' in f:
-            continue
-        name = os.path.basename(f)
-        side = name.split("_")[1]
-        if side == 'L':
-            leftMeshFiles.append(f)
-            leftImageFiles.append(f2)
-
-
-    #### Step 2, Convert to .vtk
-    if not os.path.exists(vtkDir):
-        os.makedirs(vtkDir)
-        vtkMeshFiles = []
-        for meshFile in leftMeshFiles:
-            basename = os.path.basename(meshFile)
-            name, ext = os.path.splitext(basename)
-            targetName = vtkDir + name + '.vtk'
-            subprocess.check_call(['ply2vtk.exe', meshFile, targetName])   
-            vtkMeshFiles.append(targetName)
-    else:
-        vtkMeshFiles = sorted(glob.glob(vtkDir + "*.vtk"))
-
-
-    #### Step 3, align meshes
-    if not os.path.exists(alignedMeshesDir):
-        os.makedirs(alignedMeshesDir)
-        referenceMesh = vtkMeshFiles[0]
-        vtkMeshFiles = vtkMeshFiles[1:]
-        alignedMeshes = []
-        
-        refFileName = alignedMeshesDir + os.path.basename(referenceMesh)
-        shutil.copy(referenceMesh, refFileName)
-        alignedMeshes.append(refFileName)
-        for meshFile in vtkMeshFiles:
-            name = os.path.basename(meshFile)
-            targetName = alignedMeshesDir + name
-            params = {
-                'source_mesh': meshFile,
-                'target_mesh': referenceMesh,
-                'out_mesh': targetName,
-                'out_transform': alignedMeshesDir + name + '.transform',
-                'mode': 'affine'
-            }
-            paramFile = alignedMeshesDir + 'ICPRigid3DMeshRegistration_params.txt'
-            dictToXML(params, paramFile)
-            execCommand = ["ICPRigid3DMeshRegistration.exe", paramFile]
-            subprocess.check_call(execCommand)
-            alignedMeshes.append(targetName)
-    else:
-        alignedMeshes = sorted(glob.glob(alignedMeshesDir + "*.vtk"))
-
-
-
-    #### Step 4, Convert back to .ply
-    if not os.path.exists(plyDir):
-        os.makedirs(plyDir)
-        plyMeshFiles = []
-        for meshFile in alignedMeshes:
-            basename = os.path.basename(meshFile)
-            name, ext = os.path.splitext(basename)
-            targetName = plyDir + name + '.ply'
-            subprocess.check_call(['vtk2ply.exe', meshFile, targetName])   
-            plyMeshFiles.append(targetName)
-        meshFiles = plyMeshFiles
-    else:
-        meshFiles = sorted(glob.glob(plyDir + "*.ply"))
-
-
-    meshFiles = meshFiles[:10]
-    leftImageFiles = leftImageFiles[:10]
-
-    pointDir = 'TestFemurMesh/PointFiles/'
+    pointDir = parentDir + 'PointFiles/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
     parameterDictionary = {
+        "number_of_particles": 512,
+        "use_shape_statistics_after": 0,
         "use_normals": 0,
         "normal_weight": 0.0,
-        "checkpointing_interval" : 1000,
+        "checkpointing_interval" : 10000,
         "keep_checkpoints" : 0,
-        "iterations_per_split" : 600,
-        "optimization_iterations" : 0,
-        "starting_regularization" : 100,
-        "ending_regularization" : 0.1,
-        "recompute_regularization_interval" : 2,
+        "iterations_per_split" : 3000,
+        "optimization_iterations" : 500,
+        "starting_regularization" : 10,
+        "ending_regularization" : 1,
+        "recompute_regularization_interval" : 1,
         "domains_per_shape" : 1,
         "domain_type" : 'mesh',
         "relative_weighting" : 10,
-        "initial_relative_weighting" : 0.01,
-        "procrustes_interval" : 0,
-        "procrustes_scaling" : 0,
+        "initial_relative_weighting" : 1,
+        "procrustes_interval" : 1,
+        "procrustes_scaling" : 1,
         "save_init_splits" : 0,
         "debug_projection" : 0,
-        "verbosity" : 1
-        }
-    if int(args.use_single_scale) != 0:
-        parameterDictionary["number_of_particles"] = 512
+        "verbosity" : 2,
+        "visualizer_enable": 0,
+        "visualizer_wireframe": 0,
+        # "visualizer_screenshot_directory": "screenshots_" + str(use_case) + "_" + str(num_samples) + "samples_" + str(num_particles) + "particles/",
+    }
+    [localPointFiles, worldPointFiles] = runShapeWorksOptimize(pointDir, meshFiles, parameterDictionary)
 
-        [localPointFiles, worldPointFiles] = runShapeWorksOptimize_SingleScale(pointDir, meshFiles, parameterDictionary)
-
-    else:
-        parameterDictionary["starting_particles"] = 32
-        parameterDictionary["number_of_levels"] = 3
-
-        [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, meshFiles, parameterDictionary)
-
-    print(leftImageFiles)
-    print(localPointFiles)
-    print(worldPointFiles)
-    # Image files are passed because Studio does not support viewing meshes yet.
-    launchShapeWorksStudio(pointDir, leftImageFiles, localPointFiles, worldPointFiles)
+    launchShapeWorksStudio(pointDir, meshFiles, localPointFiles, worldPointFiles)
