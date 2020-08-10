@@ -38,7 +38,7 @@ public:
 
 private:
 
-  QString generate_header( const int line, const char* filename );
+  QString create_header(const int line, const char* filename );
 
   QString get_current_datetime();
 

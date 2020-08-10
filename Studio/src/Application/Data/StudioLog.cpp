@@ -40,6 +40,14 @@ void StudioLog::new_log()
     dir.mkpath(".");
   }
 
+  // clean out old logs
+  QStringList logs = dir.entryList(QDir::Files, QDir::Time);
+
+  for (int i = 100; i < logs.size(); i++) {
+    std::cerr << "Removing old log: " << logs[i].toStdString() << "\n";
+    dir.remove(logs[i]);
+  }
+
   QString logfile = path + QDir::separator() + "studio-" + session_name + ".txt";
 
   std::cerr << "filename = " << logfile.toStdString() << "\n";
@@ -51,7 +59,7 @@ void StudioLog::new_log()
 //-----------------------------------------------------------------------------
 void StudioLog::log_message(QString message, const int line, const char* file)
 {
-  QString str = this->generate_header(line, file) + QString(" MESSAGE: ") + message;
+  QString str = this->create_header(line, file) + QString(" MESSAGE: ") + message;
   this->log_ << str.toStdString() << "\n";
   std::cerr << str.toStdString() << "\n";
 }
@@ -67,7 +75,7 @@ void StudioLog::log_stack(std::string message)
 //-----------------------------------------------------------------------------
 void StudioLog::log_error(QString message, const int line, const char* file)
 {
-  QString str = this->generate_header(line, file) + QString(" ERROR: ") + message;
+  QString str = this->create_header(line, file) + QString(" ERROR: ") + message;
   this->log_ << str.toStdString() << "\n";
   std::cerr << str.toStdString() << "\n";
   this->log_.flush();
@@ -96,13 +104,13 @@ void StudioLog::flush_log()
 //-----------------------------------------------------------------------------
 void StudioLog::log_debug(QString message, const int line, const char* file)
 {
-  QString str = this->generate_header(line, file) + QString(" DEBUG: ") + message;
+  QString str = this->create_header(line, file) + QString(" DEBUG: ") + message;
   this->log_ << str.toStdString() << "\n";
   this->log_.flush();
 }
 
 //-----------------------------------------------------------------------------
-QString StudioLog::generate_header(const int line, const char* filename)
+QString StudioLog::create_header(const int line, const char* filename)
 {
   const char* name = (strrchr(filename, '/') ? strrchr(filename, '/') + 1 : filename);
   const char* name2 = (strrchr(name, '\\') ? strrchr(name, '\\') + 1 : name);
