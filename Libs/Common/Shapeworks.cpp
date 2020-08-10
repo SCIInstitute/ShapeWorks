@@ -96,4 +96,10 @@ AffineTransformPtr createAffineTransform(const Matrix33 &mat, const Vector3 &tra
   return xform;
 }
 
+vtkTransform createvtkTransform(const vtkSmartPointer<vtkMatrix4x4> &mat) {
+  vtkTransform xform(vtkTransform::New());
+  xform->SetMatrix(mat);
+  return xform;
+}
+
 }; //shapeworks

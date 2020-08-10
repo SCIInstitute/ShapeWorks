@@ -15,6 +15,9 @@ public:
   Mesh(vtkSmartPointer<vtkPolyData>&& rhs) : mesh(std::move(rhs)) {}
   Mesh(const std::string& pathname) : mesh(read(pathname)) {}
 
+  // return the current mesh
+  MeshType getMesh() const { return this->mesh; }
+
   /// writes mesh, format specified by filename extension
   Mesh& write(const std::string &pathname);
 

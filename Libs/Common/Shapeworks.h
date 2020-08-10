@@ -41,6 +41,7 @@ AffineTransformPtr createAffineTransform(const Matrix33 &mat, const Vector3 &tra
 
 /// Mesh transforms
 using vtkTransform = vtkSmartPointer<vtkTransform>;
+vtkTransform createvtkTransform(const vtkSmartPointer<vtkMatrix4x4> &mat);
 
 /// For deliberate conversions between types
 Point toPoint(const Dims &d);

@@ -1,6 +1,7 @@
 #include "Commands.h"
 #include "Image.h"
 #include "ImageUtils.h"
+#include "MeshUtils.h"
 #include "ShapeEvaluation.h"
 #include <limits>
 
@@ -782,23 +783,23 @@ bool Blur::execute(const optparse::Values &options, SharedCommandData &sharedDat
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// ICPRigid
+// ICPRigidImage
 ///////////////////////////////////////////////////////////////////////////////
-void ICPRigid::buildParser()
+void ICPRigidImage::buildParser()
 {
-  const std::string prog = "icp";
+  const std::string prog = "icp-image";
   const std::string desc = "transform current image using iterative closest point (ICP) 3D rigid registration computed from source to target distance maps";
   parser.prog(prog).description(desc);
 
   parser.add_option("--source").action("store").type("string").set_default("").help("Distance map of source image.");
   parser.add_option("--target").action("store").type("string").set_default("").help("Distance map of target image.");
-  parser.add_option("--isovalue").action("store").type("double").set_default(0.0).help("isovalue of distance maps used to create ICPtransform [default: 0.0].");
+  parser.add_option("--isovalue").action("store").type("double").set_default(0.0).help("isovalue of distance maps used to create ICP transform [default: 0.0].");
   parser.add_option("--iterations").action("store").type("unsigned").set_default(20).help("Number of iterations run ICP registration [default: 20].");
 
   Command::buildParser();
 }
 
-bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool ICPRigidImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validImage())
   {
@@ -1331,7 +1332,8 @@ bool MeshFromDT::execute(const optparse::Values &options, SharedCommandData &sha
   int meshiterations = static_cast<int>(options.get("meshiterations"));
   bool preservetopology = static_cast<bool>(options.get("preservetopology"));
 
-  sharedData.mesh = ImageUtils::meshFromDT(sharedData.image, levelset, reduction, angle, leveliterations, meshiterations, preservetopology);
+  // we probably don't need this because of base mesh class (todo)
+  // sharedData.mesh = ImageUtils::meshFromDT(sharedData.image, levelset, reduction, angle, leveliterations, meshiterations, preservetopology);
   return true;
 }
 
@@ -1688,6 +1690,61 @@ bool ReflectMesh::execute(const optparse::Values &options, SharedCommandData &sh
   else
   {
     sharedData.mesh->reflect(makeVector({originX, originY, originZ}), axis);
+    return sharedData.validMesh();
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ICPRigidMesh
+///////////////////////////////////////////////////////////////////////////////
+void ICPRigidMesh::buildParser()
+{
+  const std::string prog = "icp-mesh";
+  const std::string desc = "transform current mesh using iterative closest point (ICP) 3D rigid registration computed from source to target meshes";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--source").action("store").type("string").set_default("").help("Filename of source mesh.");
+  parser.add_option("--target").action("store").type("string").set_default("").help("Filename of target mesh.");
+  parser.add_option("--iterations").action("store").type("unsigned").set_default(20).help("Number of iterations run ICP registration [default: 20].");
+  parser.add_option("--rigid").action("store").type("bool").set_default(false).help("Whether to use rigid registration [default: false].");
+  parser.add_option("--similarity").action("store").type("bool").set_default(true).help("Whether to use similarity registration [default: true].");
+  parser.add_option("--affine").action("store").type("bool").set_default(false).help("Whether to use affine registration [default: false].");
+
+  Command::buildParser();
+}
+
+bool ICPRigidMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  std::string sourceMesh = static_cast<std::string>(options.get("source"));
+  std::string targetMesh = static_cast<std::string>(options.get("target"));
+  unsigned iterations = static_cast<unsigned>(options.get("iterations"));
+  std::string mode = static_cast<std::string>(options.get("mode"));
+  bool rigid = static_cast<bool>(options.get("rigid"));
+  bool similarity = static_cast<bool>(options.get("similarity"));
+  bool affine = static_cast<bool>(options.get("affine"));
+
+  if (sourceMesh == "")
+  {
+    std::cerr << "Must specify a source mesh\n";
+    return false;
+  }
+  else if (targetMesh == "")
+  {
+    std::cerr << "Must specify a target mesh\n";
+    return false;
+  }
+  else
+  {
+    std::unique_ptr<Mesh> source = std::make_unique<Mesh>(sourceMesh);
+    std::unique_ptr<Mesh> target = std::make_unique<Mesh>(targetMesh);
+    vtkTransform transform(MeshUtils::createRegistrationTransform(source, target, iterations, rigid, similarity, affine));
+    sharedData.mesh->applyTransform(transform);
     return sharedData.validMesh();
   }
 }

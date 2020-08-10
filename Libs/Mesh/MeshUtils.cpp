@@ -29,4 +29,10 @@ const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createIcpTransform(const vtkSmart
   return m;
 }
 
+vtkTransform MeshUtils::createRegistrationTransform(const std::unique_ptr<Mesh> &sourceMesh, const std::unique_ptr<Mesh> &targetMesh, unsigned iterations, bool rigid, bool similarity, bool affine)
+{
+  const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createIcpTransform(sourceMesh->getMesh(), targetMesh->getMesh(), iterations));
+  return createvtkTransform(mat);
+}
+
 } // shapeworks
