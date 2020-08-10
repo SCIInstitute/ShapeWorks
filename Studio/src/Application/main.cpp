@@ -13,14 +13,14 @@
 int main(int argc, char** argv)
 {
   try {
+    STUDIO_LOG_MESSAGE("ShapeWorksStudio initializing...");
 
-#ifdef WIN32
+#ifdef _WIN32
+    STUDIO_LOG_MESSAGE("ShapeWorksStudio win32 initializing...");
     init_crash_handler();
     ::SetErrorMode( 0 );
 #endif
 
-
-    STUDIO_LOG_MESSAGE("ShapeWorksStudio initializing...");
     vtkObject::GlobalWarningDisplayOff();
 
     QApplication app(argc, argv);
