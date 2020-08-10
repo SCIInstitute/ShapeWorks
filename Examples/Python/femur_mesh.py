@@ -57,13 +57,13 @@ def Run_Pipeline(args):
         os.makedirs(pointDir)
 
     parameterDictionary = {
-        "number_of_particles": 512,
+        "number_of_particles": 1024,
         "use_shape_statistics_after": 0,
         "use_normals": 0,
         "normal_weight": 0.0,
         "checkpointing_interval" : 10000,
         "keep_checkpoints" : 0,
-        "iterations_per_split" : 3000,
+        "iterations_per_split" : 4000,
         "optimization_iterations" : 500,
         "starting_regularization" : 10,
         "ending_regularization" : 1,
