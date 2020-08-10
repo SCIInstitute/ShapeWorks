@@ -1705,10 +1705,8 @@ void ICPRigidMesh::buildParser()
 
   parser.add_option("--source").action("store").type("string").set_default("").help("Filename of source mesh.");
   parser.add_option("--target").action("store").type("string").set_default("").help("Filename of target mesh.");
+  parser.add_option("--type").action("store").type("string").set_default("rigid").help("Type of registration to be used (rigid, similarity or affine) [default: rigid].");
   parser.add_option("--iterations").action("store").type("unsigned").set_default(20).help("Number of iterations run ICP registration [default: 20].");
-  parser.add_option("--rigid").action("store").type("bool").set_default(false).help("Whether to use rigid registration [default: false].");
-  parser.add_option("--similarity").action("store").type("bool").set_default(true).help("Whether to use similarity registration [default: true].");
-  parser.add_option("--affine").action("store").type("bool").set_default(false).help("Whether to use affine registration [default: false].");
 
   Command::buildParser();
 }
@@ -1724,10 +1722,7 @@ bool ICPRigidMesh::execute(const optparse::Values &options, SharedCommandData &s
   std::string sourceMesh = static_cast<std::string>(options.get("source"));
   std::string targetMesh = static_cast<std::string>(options.get("target"));
   unsigned iterations = static_cast<unsigned>(options.get("iterations"));
-  std::string mode = static_cast<std::string>(options.get("mode"));
-  bool rigid = static_cast<bool>(options.get("rigid"));
-  bool similarity = static_cast<bool>(options.get("similarity"));
-  bool affine = static_cast<bool>(options.get("affine"));
+  std::string type = static_cast<std::string>(options.get("type"));
 
   if (sourceMesh == "")
   {
@@ -1743,7 +1738,7 @@ bool ICPRigidMesh::execute(const optparse::Values &options, SharedCommandData &s
   {
     std::unique_ptr<Mesh> source = std::make_unique<Mesh>(sourceMesh);
     std::unique_ptr<Mesh> target = std::make_unique<Mesh>(targetMesh);
-    vtkTransform transform(MeshUtils::createRegistrationTransform(source, target, iterations, rigid, similarity, affine));
+    vtkTransform transform(MeshUtils::createRegistrationTransform(source, target, type, iterations));
     sharedData.mesh->applyTransform(transform);
     return sharedData.validMesh();
   }

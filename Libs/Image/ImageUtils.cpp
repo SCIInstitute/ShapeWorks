@@ -55,7 +55,7 @@ TransformPtr ImageUtils::createRigidRegistrationTransform(const Image &source_dt
 {
   vtkSmartPointer<vtkPolyData> sourceContour = Image::getPolyData(source_dt, isoValue);
   vtkSmartPointer<vtkPolyData> targetContour = Image::getPolyData(target_dt, isoValue);
-  const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createIcpTransform(sourceContour, targetContour, iterations));
+  const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createIcpTransform(sourceContour, targetContour, "rigid", iterations));
   return createAffineTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
 }
 
