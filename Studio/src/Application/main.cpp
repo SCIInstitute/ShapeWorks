@@ -9,7 +9,7 @@
 #include <Data/StudioLog.h>
 
 #ifdef _WIN32
-#include "errhandlingapi.h"
+#include <windows.h>
 #include <Utils/WindowsCrashHandler.h>
 #endif
 
