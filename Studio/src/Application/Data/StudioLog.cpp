@@ -44,16 +44,13 @@ void StudioLog::new_log()
   QStringList logs = dir.entryList(QDir::Files, QDir::Time);
 
   for (int i = 100; i < logs.size(); i++) {
-    std::cerr << "Removing old log: " << logs[i].toStdString() << "\n";
     dir.remove(logs[i]);
   }
 
   QString logfile = path + QDir::separator() + "studio-" + session_name + ".txt";
 
-  std::cerr << "filename = " << logfile.toStdString() << "\n";
   this->log_.open(logfile.toStdString());
   this->log_.flush();
-
 }
 
 //-----------------------------------------------------------------------------
