@@ -1069,7 +1069,7 @@ void Compare::buildParser()
   parser.add_option("--name").action("store").type("string").set_default("").help("Compare this image with another");
   parser.add_option("--verifyall").action("store").type("bool").set_default(true).help("Also verify origin, spacing, and direction matches [default: true]");
   parser.add_option("--tolerance").action("store").type("double").set_default(0.0).help("Allowed percentage of pixel differences [default: 0.0]");
-  parser.add_option("--precision").action("store").type("double").set_default(1e-12).help("Allowed difference between two pixels for them to still be considered equal [default: 0.0]");
+  parser.add_option("--precision").action("store").type("double").set_default(1e-12).help("Allowed difference between two pixels for them to still be considered equal [default: 1e-12]");
 
   Command::buildParser();
 }

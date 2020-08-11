@@ -9,12 +9,17 @@
 #include <Data/Preferences.h>
 
 class Session;
+
 class Ui_OptimizeTool;
+
+namespace shapeworks {
 class QOptimize;
+}
 
 class OptimizeTool : public QWidget
 {
-  Q_OBJECT;
+Q_OBJECT;
+
 public:
 
   OptimizeTool();
@@ -42,6 +47,8 @@ public Q_SLOTS:
   void handle_warning(std::string);
   void handle_message(std::string);
 
+  void update_ui_elements();
+
 signals:
   void optimize_start();
   void optimize_complete();
@@ -54,7 +61,7 @@ signals:
 private:
   QList<QThread*> threads_;
   bool optimization_is_running_ = false;
-  QOptimize* optimize_ = nullptr;
+  shapeworks::QOptimize* optimize_ = nullptr;
   Ui_OptimizeTool* ui_;
   QSharedPointer<Session> session_;
 };

@@ -122,7 +122,7 @@ TEST(ImageTests, isoresampleImageAnisotropicTest)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/isoresample/");
 
   Image image(test_location + "image-anisotropic-input.nrrd");
-  ImageUtils::isoresample(image);
+  ImageUtils::isoresample(image, 10.0);
   image.recenter();
   Image ground_truth(test_location + "image-anisotropic-isoresampled.nrrd");
 
