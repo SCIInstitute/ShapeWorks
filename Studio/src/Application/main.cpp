@@ -40,8 +40,11 @@ int main(int argc, char** argv)
     if (argc == 2) {
       studio_app->open_project(QString(argv[1]));
     }
+    else {
+      studio_app->show_splash_screen();
+    }
     return app.exec();
-  } catch (itk::ExceptionObject & excep) {
+  } catch (itk::ExceptionObject& excep) {
     std::cerr << excep << std::endl;
   } catch (std::exception e) {
     std::cerr << "Exception caught!" << std::endl;

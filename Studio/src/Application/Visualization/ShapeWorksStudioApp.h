@@ -18,6 +18,10 @@ class AnalysisTool;
 class Session;
 class Visualizer;
 
+namespace shapeworks {
+class SplashScreen;
+}
+
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
 
@@ -28,9 +32,8 @@ class WheelEventForwarder;
 /*!
  * This class represents the primary ShapeWorksStudio window interface
  */
-class ShapeWorksStudioApp : public QMainWindow
-{
-  Q_OBJECT
+class ShapeWorksStudioApp : public QMainWindow {
+Q_OBJECT
 public:
 
   ShapeWorksStudioApp();
@@ -99,6 +102,7 @@ public Q_SLOTS:
   void handle_new_mesh();
   void handle_clear_cache();
 
+  void show_splash_screen();
 
 private:
 
@@ -179,6 +183,8 @@ private:
   std::string currentMessage_;
 
   std::string current_display_mode_;
+
+  QSharedPointer<shapeworks::SplashScreen> splash_screen_;
 
   bool block_update_{false};
   bool is_loading_{false};
