@@ -202,6 +202,9 @@ public:
   /// Reflect image around the plane specified by the logical center and the given normal (ex: <1,0,0> reflects across YZ-plane).
   Image& reflect(const Axis& axis);
 
+  /// applies intensity windowing filter
+  Image& applyIntensityFilter(PixelType minval, PixelType maxval);
+
   // query functions //
 
   /// logical dimensions of the image

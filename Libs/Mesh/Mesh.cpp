@@ -138,7 +138,7 @@ Mesh &Mesh::decimate(double reduction, double angle, bool preservetopology)
   return *this;
 }
 
-Mesh &Mesh::reflect(const Vector3 &origin, const Axis &axis)
+Mesh &Mesh::reflect(const Axis &axis, const Vector3 &origin)
 {
   Vector scale(makeVector({1,1,1}));
   scale[axis] = -1;
@@ -157,7 +157,7 @@ Mesh &Mesh::reflect(const Vector3 &origin, const Axis &axis)
   reverseSense->Update();
   this->mesh = reverseSense->GetOutput();
 
-  return *this;
+  return applyTransform(transform);
 }
 
 Mesh &Mesh::applyTransform(const vtkTransform transform)

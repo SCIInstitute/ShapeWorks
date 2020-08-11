@@ -27,7 +27,7 @@ public:
   Mesh& march(double levelset = 0.0);
   Mesh& smooth(int iterations = 0, double relaxation = 0.0);
   Mesh& decimate(double reduction = 0.0, double angle = 0.0, bool preservetopology = false);
-  Mesh& reflect(const Vector3 &origin, const Axis &axis);
+  Mesh& reflect(const Axis &axis, const Vector3 &origin = makeVector({ 0.0, 0.0, 0.0 }));
   Mesh& applyTransform(const vtkTransform transform);
 
   /// compare if points in two meshes are equal

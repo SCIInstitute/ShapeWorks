@@ -1,4 +1,3 @@
-
 #include "Testing.h"
 
 #include "Image.h"

@@ -147,17 +147,9 @@ ADD_EXECUTABLE(ProbeFeatureVolumesAtMeshVertices ProbeFeatureVolumesAtMeshVertic
 TARGET_LINK_LIBRARIES(ProbeFeatureVolumesAtMeshVertices ${ITK_LIBRARIES} Mesh tinyxml)
 INSTALL(TARGETS ProbeFeatureVolumesAtMeshVertices RUNTIME DESTINATION bin)
 
-ADD_EXECUTABLE(SmoothMesh SmoothMesh.cxx )
-TARGET_LINK_LIBRARIES(SmoothMesh Mesh tinyxml)
-INSTALL(TARGETS SmoothMesh RUNTIME DESTINATION bin)
-
 ADD_EXECUTABLE(ComputeRasterizationVolumeOriginAndSize ComputeRasterizationVolumeOriginAndSize.cxx )
 TARGET_LINK_LIBRARIES(ComputeRasterizationVolumeOriginAndSize Mesh tinyxml)
 INSTALL(TARGETS ComputeRasterizationVolumeOriginAndSize RUNTIME DESTINATION bin)
-
-add_executable(ReflectMesh ReflectMesh.cxx )
-target_link_libraries(ReflectMesh Mesh Utils)
-INSTALL(TARGETS ReflectMesh RUNTIME DESTINATION bin)
 
 ADD_EXECUTABLE(fea2vtk fea2vtk.cxx)
 TARGET_LINK_LIBRARIES(fea2vtk ${ITK_LIBRARIES} Mesh tinyxml)

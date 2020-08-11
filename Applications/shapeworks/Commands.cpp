@@ -1655,14 +1655,14 @@ bool Decimate::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 void ReflectMesh::buildParser()
 {
-  const std::string prog = "reflect";
+  const std::string prog = "reflect-mesh";
   const std::string desc = "reflect meshes with respect to a specified center and specific axis";
   parser.prog(prog).description(desc);
 
+  parser.add_option("--axis").action("store").type("string").set_default("").help("Axis along which to reflect (X, Y, or Z).");
   parser.add_option("--originx", "-x").action("store").type("double").set_default(0.0).help("Origin about which reflection occurs in x-direction [default: 0.0].");
   parser.add_option("--originy", "-y").action("store").type("double").set_default(0.0).help("Origin about which reflection occurs in y-direction [default: 0.0].");
   parser.add_option("--originz", "-z").action("store").type("double").set_default(0.0).help("Origin about which reflection occurs in z-direction [default: 0.0].");
-  parser.add_option("--axis").action("store").type("string").set_default("").help("Axis along which to reflect (X, Y, or Z).");
 
   Command::buildParser();
 }
@@ -1675,12 +1675,12 @@ bool ReflectMesh::execute(const optparse::Values &options, SharedCommandData &sh
     return false;
   }
 
+  std::string axis_str(static_cast<std::string>(options.get("axis")));
+  Axis axis(toAxis(axis_str));
+
   double originX = static_cast<double>(options.get("originx"));
   double originY = static_cast<double>(options.get("originy"));
   double originZ = static_cast<double>(options.get("originz"));
-
-  std::string axis_str(static_cast<std::string>(options.get("axis")));
-  Axis axis(toAxis(axis_str));
 
   if (!axis_is_valid(axis))
   {
@@ -1689,7 +1689,7 @@ bool ReflectMesh::execute(const optparse::Values &options, SharedCommandData &sh
   }
   else
   {
-    sharedData.mesh->reflect(makeVector({originX, originY, originZ}), axis);
+    sharedData.mesh->reflect(axis, makeVector({originX, originY, originZ}));
     return sharedData.validMesh();
   }
 }
