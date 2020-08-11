@@ -57,5 +57,6 @@ COMMAND_DECLARE(Smooth, MeshCommand);
 COMMAND_DECLARE(Decimate, MeshCommand);
 COMMAND_DECLARE(ReflectMesh, MeshCommand);
 COMMAND_DECLARE(ICPRigidMesh, MeshCommand);
+COMMAND_DECLARE(FillHoles, MeshCommand);
 
 } // shapeworks

@@ -60,6 +60,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(Decimate::getCommand());
   shapeworks.addCommand(ReflectMesh::getCommand());
   shapeworks.addCommand(ICPRigidMesh::getCommand());
+  shapeworks.addCommand(FillHoles::getCommand());
 
   try {
     return shapeworks.run(argc, argv);

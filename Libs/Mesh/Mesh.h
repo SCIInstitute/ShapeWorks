@@ -25,10 +25,20 @@ public:
   Mesh& coverage(const Mesh& other_mesh); // TODO: everything should be like this and return reference to self
 
   Mesh& march(double levelset = 0.0);
+
+  /// applies laplacian smoothing
   Mesh& smooth(int iterations = 0, double relaxation = 0.0);
+
   Mesh& decimate(double reduction = 0.0, double angle = 0.0, bool preservetopology = false);
+
+  /// reflect meshes with respect to a specified center and specific axis
   Mesh& reflect(const Axis &axis, const Vector3 &origin = makeVector({ 0.0, 0.0, 0.0 }));
+
+  /// applies the given transformation to the mesh
   Mesh& applyTransform(const vtkTransform transform);
+
+  /// finds holes in a mesh and closes them
+  Mesh& fillHoles();
 
   /// compare if points in two meshes are equal
   bool compare_points_equal(const Mesh& other_mesh);

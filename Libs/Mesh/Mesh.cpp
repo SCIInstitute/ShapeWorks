@@ -13,6 +13,8 @@
 #include <vtkDecimatePro.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkReverseSense.h>
+#include <vtkFillHolesFilter.h>
+#include <vtkPolyDataNormals.h>
 
 static bool compare_double(double a, double b)
 {
@@ -25,12 +27,6 @@ namespace shapeworks {
 Mesh::MeshType Mesh::read(const std::string &pathname)
 {
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
-
-  // TODO: enable reading of different kinds of meshes
-  // if (pref == "ply")
-  //   using ReaderType = vtkSmartPointer<vtkPLYReader>;
-  // else 
-  //   using ReaderType = vtkSmartPointer<vtkPolyDataReader>;
 
   using ReaderType = vtkSmartPointer<vtkPolyDataReader>;
   ReaderType reader = ReaderType::New();
@@ -51,12 +47,6 @@ Mesh& Mesh::write(const std::string &pathname)
 {
   if (!this->mesh) { throw std::invalid_argument("Mesh invalid"); }
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
-
-  // TODO: enable writing of different kinds of meshes
-  // if (pref == "ply")
-  //   using WriterType = vtkSmartPointer<vtkPLYWriter>;
-  // else
-  //   using WriterType = vtkSmartPointer<vtkPolyDataWriter>;
 
   using WriterType = vtkSmartPointer<vtkPolyDataWriter>;
   WriterType writer = WriterType::New();
@@ -93,8 +83,7 @@ Mesh& Mesh::coverage(const Mesh &other_mesh)
 
 Mesh& Mesh::march(double levelset)
 {
-  using FilterType = vtkSmartPointer<vtkMarchingCubes>;
-  FilterType cube = FilterType::New();
+  vtkSmartPointer<vtkMarchingCubes> cube = vtkSmartPointer<vtkMarchingCubes>::New();
 
   cube->SetInputData(this->mesh);
   cube->SetValue(0, levelset);
@@ -106,8 +95,8 @@ Mesh& Mesh::march(double levelset)
 
 Mesh &Mesh::smooth(int iterations, double relaxation)
 {
-  using FilterType = vtkSmartPointer<vtkSmoothPolyDataFilter>;
-  FilterType smoother = FilterType::New();
+  vtkSmartPointer<vtkSmoothPolyDataFilter> smoother = vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
+
   smoother->SetInputData(this->mesh);
   smoother->SetNumberOfIterations(iterations);
   if (relaxation)
@@ -124,8 +113,7 @@ Mesh &Mesh::smooth(int iterations, double relaxation)
 
 Mesh &Mesh::decimate(double reduction, double angle, bool preservetopology)
 {
-  using FilterType = vtkSmartPointer<vtkDecimatePro>;
-  FilterType decimator = FilterType::New();
+  vtkSmartPointer<vtkDecimatePro> decimator = vtkSmartPointer<vtkDecimatePro>::New();
 
   decimator->SetInputData(this->mesh);
   decimator->SetTargetReduction(reduction);
@@ -149,8 +137,7 @@ Mesh &Mesh::reflect(const Axis &axis, const Vector3 &origin)
   transform->Translate(origin[0], origin[1], origin[2]);
 
   // handle flipping normals under negative scaling
-  using ReverseType = vtkSmartPointer<vtkReverseSense>;
-  ReverseType reverseSense = ReverseType::New();
+  vtkSmartPointer<vtkReverseSense> reverseSense = vtkSmartPointer<vtkReverseSense>::New();
   reverseSense->SetInputData(this->mesh);
   reverseSense->ReverseNormalsOff();
   reverseSense->ReverseCellsOn();
@@ -162,13 +149,34 @@ Mesh &Mesh::reflect(const Axis &axis, const Vector3 &origin)
 
 Mesh &Mesh::applyTransform(const vtkTransform transform)
 {
-  using FilterType = vtkSmartPointer<vtkTransformPolyDataFilter>;
-  FilterType resampler = FilterType::New();
+  vtkSmartPointer<vtkTransformPolyDataFilter> resampler = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
 
   resampler->SetTransform(transform);
   resampler->SetInputData(this->mesh);
   resampler->Update();
   this->mesh = resampler->GetOutput();
+
+  return *this;
+}
+
+Mesh &Mesh::fillHoles()
+{
+  Mesh copyMesh = *this;
+
+  vtkSmartPointer<vtkFillHolesFilter> filter = vtkSmartPointer<vtkFillHolesFilter>::New();
+  filter->SetInputData(this->mesh);
+  filter->SetHoleSize(1000.0);
+
+  // Make the triangle window order consistent
+  vtkSmartPointer<vtkPolyDataNormals> normals = vtkSmartPointer<vtkPolyDataNormals>::New();
+  normals->SetInputConnection(filter->GetOutputPort());
+  normals->ConsistencyOn();
+  normals->SplittingOff();
+  normals->Update();
+
+  // Restore the original normals
+  normals->GetOutput()->GetPointData()->SetNormals(copyMesh.mesh->GetPointData()->GetNormals());
+  this->mesh = normals->GetOutput();
 
   return *this;
 }

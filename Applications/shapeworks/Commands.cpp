@@ -1744,4 +1744,22 @@ bool ICPRigidMesh::execute(const optparse::Values &options, SharedCommandData &s
   }
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// FillHoles
+///////////////////////////////////////////////////////////////////////////////
+void FillHoles::buildParser()
+{
+  const std::string prog = "fill-holes";
+  const std::string desc = "finds holes in a mesh and closes them";
+  parser.prog(prog).description(desc);
+
+  Command::buildParser();
+}
+
+bool FillHoles::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  sharedData.mesh->fillHoles();
+  return sharedData.validMesh();
+}
+
 } // shapeworks
