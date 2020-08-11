@@ -11,8 +11,6 @@ import itk
 import vtk
 import vtk.util.numpy_support
 
-USE_NATIVE_API = True  # use native API instead of external executable (just for testing; eventually only this API)
-from shapeworks import *
 from CommonUtils import *
 
 def rename(inname, outDir, extension_addition, extension_change=''):
@@ -42,13 +40,17 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, isBinary=True):
         inname = inDataList[i]
         outname = rename(inname, outDir, 'isores')
         outDataList.append(outname)
-        img = Image(inname)
+        cmd = ["shapeworks", 
+               "read-image", "--name", inname]
         if isBinary:
-            img.antialias()
-        ImageUtils.isoresample(img, isoSpacing)
+            cmd.extend(["antialias"])
+        cmd.extend(["resample", "--isospacing", str(isoSpacing)])  
         if isBinary:
-            img.binarize()
-        img.write(outname)
+            cmd.extend(["binarize"])
+        cmd.extend(["write-image", "--name", outname])
+        if printCmd:
+            print("CMD: " + " ".join(cmd))
+        subprocess.check_call(cmd)
     return outDataList
 
 def center(outDir, inDataList):
@@ -60,8 +62,13 @@ def center(outDir, inDataList):
         inname = inDataList[i]
         outname = rename(inname, outDir, 'center')
         outDataList.append(outname)
-        img = Image(inname)
-        img.recenter().write(outname)
+        cmd = ["shapeworks", 
+               "read-image", "--name", inname,
+               "recenter",
+               "write-image", "--name", outname]
+        if printCmd:
+            print("CMD: " + " ".join(cmd))
+        subprocess.check_call(cmd)
     return outDataList
 
 def applyPadding(outDir, inDataList, padSize, padValue=0):
@@ -76,9 +83,25 @@ def applyPadding(outDir, inDataList, padSize, padValue=0):
         inname = inDataList[i]
         outname = rename(inname, outDir, 'pad')
         outDataList.append(outname)
-        img = Image(inname)
-        img.pad(padSize, padValue).write(outname)
+        cmd = ["shapeworks", 
+               "read-image", "--name", inname,
+               "pad", "--padding", str(padSize), "--value", str(padValue),
+               "write-image", "--name", outname]
+        if printCmd:
+            print("CMD: " + " ".join(cmd))
+        subprocess.check_call(cmd)
     return outDataList
+
+def makeVector(str):
+    arr = np.array(str.replace("[", "").replace("]", "").split(","))
+    return np.asarray(arr, np.float64) 
+
+def getInfo(name, info):
+    cmd = ["shapeworks",
+           "read-image", "--name", name,
+           "info", "--" + info, str(True)]
+    output = subprocess.run(cmd, capture_output=True, text=True).stdout.splitlines()   
+    return makeVector(output[0].split(":")[1])
 
 def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False):
     """
@@ -100,8 +123,28 @@ def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False):
         inname = inDataListSeg[i]
         outname = rename(inname, segDir, 'com')
         outDataListSeg.append(outname)
-        img = Image(inname)
-        T = img.centerOfMass() - img.center()
+
+        # antialias input segmentation (do this as separate command since it may affect computation of com below)
+        cmd = ["shapeworks", 
+               "readimage", "--name", inname, 
+               "antialias", 
+               "write-image", "--name", outname]
+        if printCmd:
+            print("CMD: " + " ".join(cmd))
+        subprocess.check_call(cmd)
+
+        # get centerofmass and center
+        center = getInfo(inname, "center")
+        com = getInfo(inname, "centerofmass")
+        T = center - com
+
+        cmd = ["shapeworks", 
+               "readimage", "--name", outname, 
+               "translate", "-x", str(T[0]), "-y", str(T[1]), "-z", str(T[2]), 
+               "write-image", "--name", outname]
+        if printCmd:
+            print("CMD: " + " ".join(cmd))
+        subprocess.check_call(cmd)
 
         # binarize result since linear interpolation makes image blurry again (TODO: add option to use nearest neighbor interpolation, see github issue)
         cmd = ["shapeworks", 
@@ -116,8 +159,13 @@ def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False):
             innameImg = inDataListImg[i]
             outnameImg = rename(innameImg, imageDir, 'com')
             outDataListImg.append(outnameImg)
-            segImg = Image(innameImg)
-            segImg.translate(T[0], T[1], T[2]).write(outnameImg)
+            cmd = ["shapeworks", 
+                   "readimage", "--name", innameImg, 
+                   "translate", "-x", str(T[0]), "-y", str(T[1]), "-z", str(T[2]),
+                   "write-image", "--name", outnameImg]
+            if printCmd:
+                print("CMD: " + " ".join(cmd))
+            subprocess.check_call(cmd)
 
     return [outDataListSeg, outDataListImg] if processRaw else outDataListSeg
 
@@ -185,22 +233,21 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
     ref_tpdtnrrdfilename = newRefFile.replace('.nrrd', '.tpSmoothDT.nrrd')
     ref_isonrrdfilename = newRefFile.replace('.nrrd', '.ISO.nrrd')
 
-    # reference image processing
-    img = Image(refFile)
-    img.extractLabel(1.0).closeHoles().write(refFile)
-    img.antialias(antialiasIterations).computeDT(isoValue).write(ref_dtnrrdfilename)
-    img.applyCurvatureFilter(smoothingIterations).write(ref_tpdtnrrdfilename)
-    isoimg = ImageUtils.topologyPreservingSmooth(img, scaling, alpha, beta)
-    isoimg.write(ref_isonrrdfilename)
-
-    # create output dirs
-    segoutDir = os.path.join(outDir, 'segmentations') if processRaw else outDir
-    if not os.path.exists(segoutDir):
-        os.makedirs(segoutDir)
-    if processRaw:
-        rawoutDir = os.path.join(outDir, 'images')
-        if not os.path.exists(rawoutDir):
-            os.makedirs(rawoutDir)
+    cmd = ["shapeworks",
+           "read-image", "--name", refFile,
+           "extract-label", "--label", str(1.0),
+           "close-holes",
+           "write-image", "--name", refFile,
+           "antialias", "--iterations", str(antialiasIterations),
+           "compute-dt", "--isovalue", str(isoValue),
+           "write-image", "--name", ref_dtnrrdfilename,
+           "curvature", "--iterations", str(smoothingIterations),
+           "write-image", "--name", ref_tpdtnrrdfilename,
+           "topo-preserving-smooth", "--scaling", str(scaling), "--alpha", str(alpha), "--beta", str(beta),
+           "write-image", "--name", ref_isonrrdfilename]
+    if printCmd:
+        print("CMD: " + " ".join(cmd))
+    subprocess.check_call(cmd)
 
     # create output dirs
     segoutDir = os.path.join(outDir, 'segmentations') if processRaw else outDir
@@ -229,19 +276,40 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
             rawoutname = rawoutname.replace('.nrrd', '.aligned.nrrd')
             outRawDataList.append(rawoutname)
 
-        img = Image(seginname)
-        img.extractLabel(1.0).closeHoles().write(seginname)
-        img.antialias(antialiasIterations).computeDT(isoValue).write(dtnrrdfilename)
-        img.applyCurvatureFilter(smoothingIterations).write(tpdtnrrdfilename)
-        isoimg = ImageUtils.topologyPreservingSmooth(img, scaling, alpha, beta)
-        isoimg.write(isonrrdfilename)
+        cmd = ["shapeworks", 
+               "read-image", "--name", seginname, 
+               "extract-label", "--label", str(1.0),
+               "close-holes",
+               "write-image", "--name", seginname,
+               "antialias", "--iterations", str(antialiasIterations),
+               "compute-dt", "--isovalue", str(isoValue),
+               "write-image", "--name", dtnrrdfilename,
+               "curvature", "--iterations", str(smoothingIterations),
+               "write-image", "--name", tpdtnrrdfilename,
+               "topo-preserving-smooth", "--scaling", str(scaling), "--alpha", str(alpha), "--beta", str(beta),
+               "write-image", "--name", isonrrdfilename]
+        if printCmd:
+            print("CMD: " + " ".join(cmd))
+        subprocess.check_call(cmd)
 
-        img = Image(seginname)
-        img.icp(ref_tpdtnrrdfilename, tpdtnrrdfilename, icpIterations).write(segoutname)
+        cmd = ["shapeworks", 
+               "read-image", "--name", seginname,
+            #    matrix created by icp is not used
+            #    "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
+               "write-image", "--name", segoutname]
+        if printCmd:
+            print("CMD: " + " ".join(cmd))
+        subprocess.check_call(cmd)
 
         if processRaw:
-            img = Image(rawinname)
-            img.icp(ref_tpdtnrrdfilename, tpdtnrrdfilename, icpIterations).write(rawoutname)
+            cmd = ["shapeworks", 
+                   "read-image", "--name", rawinname,
+                #    matrix created by icp is not used
+                #    "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
+                   "write-image", "--name", rawoutname]
+            if printCmd:
+                print("CMD: " + " ".join(cmd))
+            subprocess.check_call(cmd)
 
     return [outSegDataList, outRawDataList] if processRaw else outSegDataList
 
@@ -260,10 +328,14 @@ def applyCropping(outDir, inDataList, path, paddingSize=10):
         outname = inname.replace(initPath, outDir)
         outname = outname.replace('.nrrd', '.cropped.nrrd')
         outDataList.append(outname)
-        img = Image(inname)
-        region = ImageUtils.boundingBox(glob.glob(initPath+"/*.nrrd"))
-        region.pad(paddingSize)
-        img.crop(region).write(outname)
+        cmd = ["shapeworks",
+               "boundingbox", "--names"] + glob.glob(path) + ["--", "--padding", str(paddingSize),
+               "read-image", "--name", inname,
+               "crop",
+               "write-image", "--name", outname]
+        if printCmd:
+            print("CMD: " + " ".join(cmd))
+        subprocess.check_call(cmd)
     return outDataList
 
 def create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename):
@@ -295,12 +367,21 @@ def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoot
         isonrrdfilename = outname.replace('.nrrd', '.ISO.nrrd')
         finalnm = tpdtnrrdfilename.replace(outDir, finalDTDir)
         outDataList.append(finalnm)
-        img = Image(inname)
-        img.extractLabel(1.0).closeHoles().write(inname)
-        img.antialias(antialiasIterations).computeDT().write(dtnrrdfilename)
-        img.applyCurvatureFilter(smoothingIterations).write(tpdtnrrdfilename)
-        isoimg = ImageUtils.topologyPreservingSmooth(img, scaling, alpha, beta)
-        isoimg.write(isonrrdfilename)
+        cmd = ["shapeworks", 
+               "read-image", "--name", inname,
+               "extract-label", "--label", str(1.0),
+               "close-holes",
+               "write-image", "--name", inname,
+               "antialias", "--iterations", str(antialiasIterations),
+               "compute-dt", "--isovalue", str(isoValue),
+               "write-image", "--name", dtnrrdfilename,
+               "curvature", "--iterations", str(smoothingIterations),
+               "write-image", "--name", tpdtnrrdfilename,
+               "topo-preserving-smooth", "--scaling", str(scaling), "--alpha", str(alpha), "--beta", str(beta),
+               "write-image", "--name", isonrrdfilename]
+        if printCmd:
+            print("CMD: " + " ".join(cmd))
+        subprocess.check_call(cmd)
         shutil.copy(tpdtnrrdfilename, finalDTDir)
     return outDataList
 
@@ -356,12 +437,23 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side, printCmd=T
         if flip_seg != 'None':
             img_out = rename(image, outImgDir, 'reflect').replace(prefix, flip_prefix)
             imageList.append(img_out)
-            centerFilename = os.path.join(outDir, prefix + "_origin.txt")
-            img = Image(image)
-            img.reflext("X").write(img_out)
+            cmd = ["shapeworks", 
+                   "read-image", "--name", img,
+                   "reflect", "--axis", "X",
+                   "write-image", "--name", img_out]
+            if printCmd:
+                print("CMD: " + " ".join(cmd))
+            subprocess.check_call(cmd)
+
             seg_out = rename(flip_seg, outSegDir, 'reflect')
             meshList.append(seg_out)
-            execCommand = ["ReflectMesh", "--inFilename", flip_seg, "--outFilename", seg_out, "--reflectCenterFilename", centerFilename, "--inputDirection", "0", "--meshFormat", flip_seg.split(".")[-1]]
+
+            origin = getInfo(image, "origin")
+
+            cmd = ["shapeworks", 
+                   "read-image", "--name", flip_seg,
+                   "reflect", "--axis", "X", "--originx", str(origin[0]), "--originy", str(origin[1]), "--originz", str(origin[2]),
+                   "write-image", "--name", seg_out]
             if printCmd:
                 print("CMD: " + " ".join(execCommand))
             subprocess.check_call(execCommand)        
@@ -396,13 +488,18 @@ def MeshesToVolumes(outDir, meshList, imgList, printCmd=True):
         # get image
         for image_file in imgList:
             if prefix in image_file:
-                img = Image(image_file)
+                image = image_file
+
+        # write origin, size, and spacing info to text file
+        origin = getInfo(image, "origin")
+        size = getInfo(image, "dims")
+        spacing = getInfo(image, "spacing")
 
         # get origin, size, and spacing data
         data = {}
-        data["origin"] = img.origin()
-        data["size"] = img.dims()
-        data["spacing"] = img.spacing()
+        data["origin"] = origin
+        data["size"] = size
+        data["spacing"] = spacing
 
         # write xml file
         infoPrefix = os.path.join(outDir, prefix)
@@ -432,12 +529,12 @@ def MeshesToVolumes(outDir, meshList, imgList, printCmd=True):
         subprocess.check_call(execCommand)
 
         # save output volume
-        output_volume = mesh.replace(".ply", ".rasterized_sp" + str(img.spacing()[0]) + ".nrrd")
+        output_volume = mesh.replace(".ply", ".rasterized_sp" + str(spacing[0]) + ".nrrd")
         shutil.move(output_volume, segFile)
         segList.append(segFile)
 
         # save output DT
-        output_DT =  mesh.replace(".ply", ".DT_sp" + str(img.spacing()[0]) + ".nrrd")
+        output_DT =  mesh.replace(".ply", ".DT_sp" + str(spacing[0]) + ".nrrd")
         dtFile = segFile.replace(".nrrd", "_DT.nrrd")
         shutil.move(output_DT, dtFile)
 
@@ -452,10 +549,14 @@ def ClipBinaryVolumes(outDir, segList, cutting_plane_points):
         inname = segList[i]
         outname = rename(inname, outDir, "clipped")
         outListSeg.append(outname)
-        img = Image(inname)
-        img.clip(cutting_plane_points[0], cutting_plane_points[1], cutting_plane_points[2],
-                 cutting_plane_points[3], cutting_plane_points[4], cutting_plane_points[5],
-                 cutting_plane_points[6], cutting_plane_points[7], cutting_plane_points[8]).write(outname)
+        cmd = ["shapeworks", "read-image", "--name", seg,
+               "clip", "--x1", str(cutting_plane_points[0]), "--y1", str(cutting_plane_points[3]), "--z1", str(cutting_plane_points[6]),
+                       "--x2", str(cutting_plane_points[1]), "--y2", str(cutting_plane_points[4]), "--z2", str(cutting_plane_points[7]),
+                       "--x3", str(cutting_plane_points[2]), "--y3", str(cutting_plane_points[5]), "--z3", str(cutting_plane_points[8]),
+               "write-image", "--name", seg_out]
+        if printCmd:
+            print("CMD: " + " ".join(cmd))
+        subprocess.check_call(cmd)
     return outListSeg
 
 def SelectCuttingPlane(input_file, printCmd=True):
