@@ -28,7 +28,7 @@ def rename(inname, outDir, extension_addition, extension_change=''):
     cprint(("Output filename: " + outname), 'yellow')
     return outname
 
-def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, isBinary=True):
+def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, isBinary=True, printCmd=True):
     """
     This function takes in a filelist and produces the resampled files in the appropriate directory.
     """
@@ -53,7 +53,7 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, isBinary=True):
         subprocess.check_call(cmd)
     return outDataList
 
-def center(outDir, inDataList):
+def center(outDir, inDataList, printCmd=True):
     print("\n########### Centering ###############")
     if not os.path.exists(outDir):
         os.makedirs(outDir)
@@ -71,7 +71,7 @@ def center(outDir, inDataList):
         subprocess.check_call(cmd)
     return outDataList
 
-def applyPadding(outDir, inDataList, padSize, padValue=0):
+def applyPadding(outDir, inDataList, padSize, padValue=0, printCmd=True):
     """
     This function takes in a filelist and produces the padded files in the appropriate directory.
     """
@@ -103,7 +103,7 @@ def getInfo(name, info):
     output = subprocess.run(cmd, capture_output=True, text=True).stdout.splitlines()   
     return makeVector(output[0].split(":")[1])
 
-def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False):
+def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False, printCmd=True):
     """
     This function takes in a filelist and produces the center of mass aligned
     files in the appropriate directory.
@@ -212,7 +212,7 @@ def FindReferenceImage(inDataList):
 
 def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
                         antialiasIterations=20, smoothingIterations=1, alpha=10.5, beta=10.0,
-                        scaling=0.0, isoValue=0, icpIterations=10, processRaw=False):
+                        scaling=0.0, isoValue=0, icpIterations=10, processRaw=False, printCmd=True):
     """
     This function takes in a filelists(binary and raw) and produces rigid aligned
     files in the appropriate directory. If the process_raw flag is set True,
@@ -313,7 +313,7 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
 
     return [outSegDataList, outRawDataList] if processRaw else outSegDataList
 
-def applyCropping(outDir, inDataList, path, paddingSize=10):
+def applyCropping(outDir, inDataList, path, paddingSize=10, printCmd=True):
     """
     This function takes in a filelist and crops them according to the largest
     bounding box which it discovers
@@ -348,7 +348,7 @@ def create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename):
     file.write("<outputs>\n"+str(vtkfilename) + "\n</outputs>")
     file.close()
 
-def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoothingIterations=1, alpha=10.5, beta=10.0, scaling=20.0, isoValue=0):
+def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoothingIterations=1, alpha=10.5, beta=10.0, scaling=20.0, isoValue=0, printCmd=True):
     outDir = os.path.join(parentDir, 'groom_and_meshes')
     if not os.path.exists(outDir):
         os.makedirs(outDir)
@@ -438,7 +438,7 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side, printCmd=T
             img_out = rename(image, outImgDir, 'reflect').replace(prefix, flip_prefix)
             imageList.append(img_out)
             cmd = ["shapeworks", 
-                   "read-image", "--name", img,
+                   "read-image", "--name", image,
                    "reflect", "--axis", "X",
                    "write-image", "--name", img_out]
             if printCmd:
@@ -455,8 +455,8 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side, printCmd=T
                    "reflect", "--axis", "X", "--originx", str(origin[0]), "--originy", str(origin[1]), "--originz", str(origin[2]),
                    "write-image", "--name", seg_out]
             if printCmd:
-                print("CMD: " + " ".join(execCommand))
-            subprocess.check_call(execCommand)        
+                print("CMD: " + " ".join(cmd))
+            subprocess.check_call(cmd)        
     return meshList, imageList
 
 # rasterization for meshes to DT
@@ -540,7 +540,7 @@ def MeshesToVolumes(outDir, meshList, imgList, printCmd=True):
 
     return segList
 
-def ClipBinaryVolumes(outDir, segList, cutting_plane_points):
+def ClipBinaryVolumes(outDir, segList, cutting_plane_points, printCmd=True):
     print("\n############## Clipping ##############")
     if not os.path.exists(outDir):
         os.makedirs(outDir)
@@ -549,11 +549,11 @@ def ClipBinaryVolumes(outDir, segList, cutting_plane_points):
         inname = segList[i]
         outname = rename(inname, outDir, "clipped")
         outListSeg.append(outname)
-        cmd = ["shapeworks", "read-image", "--name", seg,
+        cmd = ["shapeworks", "read-image", "--name", inname,
                "clip", "--x1", str(cutting_plane_points[0]), "--y1", str(cutting_plane_points[3]), "--z1", str(cutting_plane_points[6]),
                        "--x2", str(cutting_plane_points[1]), "--y2", str(cutting_plane_points[4]), "--z2", str(cutting_plane_points[7]),
                        "--x3", str(cutting_plane_points[2]), "--y3", str(cutting_plane_points[5]), "--z3", str(cutting_plane_points[8]),
-               "write-image", "--name", seg_out]
+               "write-image", "--name", outname]
         if printCmd:
             print("CMD: " + " ".join(cmd))
         subprocess.check_call(cmd)

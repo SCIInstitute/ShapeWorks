@@ -50,16 +50,12 @@ if len(sys.argv)==1:
     parser.print_help(sys.stderr)
     sys.exit(1)
 
-# local path for imports, etc
-sys.path.insert(0, binpath + "/ShapeWorksStudio.app/Contents/MacOS")
-sys.path.insert(0, binpath)
+module = __import__(args.use_case)
 
 os.environ["PATH"] = explicit_binpath + os.pathsep + os.environ["PATH"] + os.pathsep + default_binpath
 
 # make sure the shapeworks executables can be found
 robustifyShapeworksPaths()
-
-module = __import__(args.use_case)
 
 try:
     module.Run_Pipeline(args)
