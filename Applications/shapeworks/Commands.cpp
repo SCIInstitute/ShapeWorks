@@ -783,9 +783,9 @@ bool Blur::execute(const optparse::Values &options, SharedCommandData &sharedDat
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// ICPRigidImage
+// ICPRigid
 ///////////////////////////////////////////////////////////////////////////////
-void ICPRigidImage::buildParser()
+void ICPRigid::buildParser()
 {
   const std::string prog = "icp-image";
   const std::string desc = "transform current image using iterative closest point (ICP) 3D rigid registration computed from source to target distance maps";
@@ -799,7 +799,7 @@ void ICPRigidImage::buildParser()
   Command::buildParser();
 }
 
-bool ICPRigidImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validImage())
   {
@@ -1695,9 +1695,9 @@ bool ReflectMesh::execute(const optparse::Values &options, SharedCommandData &sh
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// ICPRigidMesh
+// ICP
 ///////////////////////////////////////////////////////////////////////////////
-void ICPRigidMesh::buildParser()
+void ICP::buildParser()
 {
   const std::string prog = "icp-mesh";
   const std::string desc = "transform current mesh using iterative closest point (ICP) 3D rigid registration computed from source to target meshes";
@@ -1711,7 +1711,7 @@ void ICPRigidMesh::buildParser()
   Command::buildParser();
 }
 
-bool ICPRigidMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool ICP::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validMesh())
   {
@@ -1758,6 +1758,12 @@ void FillHoles::buildParser()
 
 bool FillHoles::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+  
   sharedData.mesh->fillHoles();
   return sharedData.validMesh();
 }

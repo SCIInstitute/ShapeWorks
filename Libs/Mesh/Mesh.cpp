@@ -196,9 +196,8 @@ bool Mesh::compare_points_equal(const Mesh &other_mesh)
     double* point2 = other_mesh.mesh->GetPoint(i);
     if (!compare_double(point1[0], point2[0])
         || !compare_double(point1[1], point2[1])
-        || !compare_double(point1[2], point2[2])) {
+        || !compare_double(point1[2], point2[2]))
       return false;
-    }
   }
   return true;
 }

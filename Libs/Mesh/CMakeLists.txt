@@ -135,10 +135,6 @@ ADD_EXECUTABLE(ComputeGeodesicDistanceFromVerticesToPoints ComputeGeodesicDistan
 TARGET_LINK_LIBRARIES(ComputeGeodesicDistanceFromVerticesToPoints ${ITK_LIBRARIES} ${VXL_LIBRARIES} Mesh tinyxml)
 INSTALL(TARGETS ComputeGeodesicDistanceFromVerticesToPoints RUNTIME DESTINATION bin)
 
-ADD_EXECUTABLE(FillMeshHoles FillMeshHoles.cxx )
-TARGET_LINK_LIBRARIES(FillMeshHoles Mesh tinyxml)
-INSTALL(TARGETS FillMeshHoles RUNTIME DESTINATION bin)
-
 ADD_EXECUTABLE(RemoveFidsDTLeakage RemoveFidsDTLeakage.cxx )
 TARGET_LINK_LIBRARIES(RemoveFidsDTLeakage ${ITK_LIBRARIES} Mesh tinyxml)
 INSTALL(TARGETS RemoveFidsDTLeakage RUNTIME DESTINATION bin)

@@ -28,7 +28,7 @@ COMMAND_DECLARE(TopologyPreservingFilter, ImageCommand);
 COMMAND_DECLARE(Blur, ImageCommand);
 COMMAND_DECLARE(BoundingBox, ImageCommand);
 COMMAND_DECLARE(CropImage, ImageCommand);
-COMMAND_DECLARE(ICPRigidImage, ImageCommand);
+COMMAND_DECLARE(ICPRigid, ImageCommand);
 COMMAND_DECLARE(ClipVolume, ImageCommand);
 COMMAND_DECLARE(ReflectImage, ImageCommand);
 COMMAND_DECLARE(SetOrigin, ImageCommand);
@@ -56,7 +56,7 @@ COMMAND_DECLARE(March, MeshCommand);
 COMMAND_DECLARE(Smooth, MeshCommand);
 COMMAND_DECLARE(Decimate, MeshCommand);
 COMMAND_DECLARE(ReflectMesh, MeshCommand);
-COMMAND_DECLARE(ICPRigidMesh, MeshCommand);
+COMMAND_DECLARE(ICP, MeshCommand);
 COMMAND_DECLARE(FillHoles, MeshCommand);
 
 } // shapeworks

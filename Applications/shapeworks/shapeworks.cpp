@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(Blur::getCommand());
   shapeworks.addCommand(BoundingBox::getCommand());
   shapeworks.addCommand(CropImage::getCommand());
-  shapeworks.addCommand(ICPRigidImage::getCommand());
+  shapeworks.addCommand(ICPRigid::getCommand());
   shapeworks.addCommand(ClipVolume::getCommand());
   shapeworks.addCommand(ReflectImage::getCommand());
   shapeworks.addCommand(SetOrigin::getCommand());
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(Smooth::getCommand());
   shapeworks.addCommand(Decimate::getCommand());
   shapeworks.addCommand(ReflectMesh::getCommand());
-  shapeworks.addCommand(ICPRigidMesh::getCommand());
+  shapeworks.addCommand(ICP::getCommand());
   shapeworks.addCommand(FillHoles::getCommand());
 
   try {
