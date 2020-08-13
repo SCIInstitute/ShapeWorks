@@ -58,11 +58,12 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   }
   this->update_recent_files();
 
-
   this->splash_screen_ = QSharedPointer<SplashScreen>(new SplashScreen(this, this->preferences_));
+  connect(this->splash_screen_.data(), &SplashScreen::open_project, this,
+          &ShapeWorksStudioApp::open_project);
 
   this->wheel_event_forwarder_ = QSharedPointer<WheelEventForwarder>
-                                   (new WheelEventForwarder(this->ui_->vertical_scroll_bar));
+    (new WheelEventForwarder(this->ui_->vertical_scroll_bar));
   this->ui_->qvtkWidget->installEventFilter(this->wheel_event_forwarder_.data());
 
   // Glyph options in the render window.
@@ -335,7 +336,7 @@ void ShapeWorksStudioApp::on_action_import_triggered()
 {
   QStringList filenames;
   std::cerr << "getOpenFileNames, last_dir = " <<
-    this->preferences_.get_last_directory().toStdString() << "\n";
+            this->preferences_.get_last_directory().toStdString() << "\n";
   filenames = QFileDialog::getOpenFileNames(this, tr("Import Files..."),
                                             this->preferences_.get_last_directory(),
                                             tr("NRRD files (*.nrrd);;MHA files (*.mha)"));
@@ -363,7 +364,7 @@ void ShapeWorksStudioApp::on_action_import_triggered()
 void ShapeWorksStudioApp::import_files(QStringList file_names)
 {
   std::vector<std::string> list;
-  for (auto &a : file_names) {
+  for (auto& a : file_names) {
     list.push_back(a.toStdString());
   }
   try {
@@ -388,7 +389,7 @@ void ShapeWorksStudioApp::import_files(QStringList file_names)
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_zoom_slider_valueChanged()
 {
-  if (!this->lightbox_->render_window_ready()) {return;}
+  if (!this->lightbox_->render_window_ready()) { return; }
 
   int value = this->ui_->zoom_slider->value();
 
@@ -421,7 +422,7 @@ void ShapeWorksStudioApp::disableAllActions()
   this->optimize_tool_->disable_actions();
   //recent
   QStringList recent_files = preferences_.get_recent_files();
-  int num_recent_files = qMin(recent_files.size(), (int)Preferences::MAX_RECENT_FILES);
+  int num_recent_files = qMin(recent_files.size(), (int) Preferences::MAX_RECENT_FILES);
   for (int i = 0; i < num_recent_files; i++) {
     this->recent_file_actions_[i]->setEnabled(false);
   }
@@ -459,7 +460,7 @@ void ShapeWorksStudioApp::enable_possible_actions()
   this->analysis_tool_->enable_actions();
   //recent
   QStringList recent_files = preferences_.get_recent_files();
-  int num_recent_files = qMin(recent_files.size(), (int)Preferences::MAX_RECENT_FILES);
+  int num_recent_files = qMin(recent_files.size(), (int) Preferences::MAX_RECENT_FILES);
   for (int i = 0; i < num_recent_files; i++) {
     this->recent_file_actions_[i]->setEnabled(true);
   }
@@ -566,7 +567,7 @@ void ShapeWorksStudioApp::update_table()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_pca_changed()
 {
-  if (!this->session_->particles_present()) {return;}
+  if (!this->session_->particles_present()) { return; }
   this->session_->handle_clear_cache();
   this->visualizer_->update_lut();
   this->compute_mode_shape();
@@ -820,7 +821,7 @@ void ShapeWorksStudioApp::handle_optimize_start()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_display_setting_changed()
 {
-  if (this->analysis_tool_->pcaAnimate()) {return;}
+  if (this->analysis_tool_->pcaAnimate()) { return; }
   this->update_display(true);
 }
 
@@ -988,8 +989,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   this->analysis_tool_->reset_stats();
 
-  try
-  {
+  try {
     if (!this->session_->load_project(filename)) {
       this->enable_possible_actions();
       return;
@@ -1000,8 +1000,9 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   auto project = this->session_->get_project();
   if (project->get_version() > project->get_supported_version()) {
-    this->handle_warning("Warning: The project you have opened was created in a newer version of ShapeWorks\n\n"
-                         "Some features may not work and some settings may be incorrect or missing");
+    this->handle_warning(
+      "Warning: The project you have opened was created in a newer version of ShapeWorks\n\n"
+      "Some features may not work and some settings may be incorrect or missing");
   }
 
   this->is_loading_ = true;
@@ -1231,7 +1232,7 @@ void ShapeWorksStudioApp::update_recent_files()
   }
   recent_files = no_dupes;
 
-  int num_recent_files = qMin(recent_files.size(), (int)Preferences::MAX_RECENT_FILES);
+  int num_recent_files = qMin(recent_files.size(), (int) Preferences::MAX_RECENT_FILES);
 
   for (int i = 0; i < num_recent_files; i++) {
     QString text = tr("&%1 %2").arg(i + 1).arg(QFileInfo(recent_files[i]).fileName());
@@ -1369,7 +1370,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered()
     auto col = values.get_column(i);
     std::ofstream out(basename + std::to_string(ii) + ".eval");
     size_t newline = 1;
-    for (auto &a : col) {
+    for (auto& a : col) {
       out << a << (newline % 3 == 0 ? "\n" : "    ");
       newline++;
     }
@@ -1402,7 +1403,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered()
     auto pts = this->analysis_tool_->get_shape(mode, pca);
     std::ofstream out(basename + std::to_string(mode) + "-" + std::to_string(i) + ".pts");
     size_t newline = 1;
-    for (auto &a : pts) {
+    for (auto& a : pts) {
       out << a << (newline % 3 == 0 ? "\n" : "    ");
       newline++;
     }

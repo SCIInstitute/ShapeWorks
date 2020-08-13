@@ -43,9 +43,10 @@ public:
 
   void initialize_vtk();
   void import_files(QStringList file_names);
-  void open_project(QString filename);
 
 public Q_SLOTS:
+
+  void open_project(QString filename);
 
   void on_action_new_project_triggered();
   void on_action_open_project_triggered();
