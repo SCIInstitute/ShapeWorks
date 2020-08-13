@@ -6,11 +6,24 @@
 #include <vtkObject.h>
 #include <itkMacro.h>
 
+#include <Data/StudioLog.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#include <Utils/WindowsCrashHandler.h>
+#endif
+
 int main(int argc, char** argv)
 {
   try {
+    STUDIO_LOG_MESSAGE("ShapeWorksStudio initializing...");
 
-    std::cerr << "ShapeWorksStudio initializing...\n";
+#ifdef _WIN32
+    STUDIO_LOG_MESSAGE("ShapeWorksStudio win32 initializing...");
+    init_crash_handler();
+    ::SetErrorMode( 0 );
+#endif
+
     vtkObject::GlobalWarningDisplayOff();
 
     QApplication app(argc, argv);

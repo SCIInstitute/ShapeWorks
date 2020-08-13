@@ -25,11 +25,11 @@ fi
 export SW_VERSION=$VERSION
 ROOT=`pwd`
 
-cp -r ../build/bin/Release bin
+cp -r ../build/bin/RelWithDebInfo bin
 rm -rf Post
 
 # Run auto-documentation
-PATH=../build/bin/Release:$PATH
+PATH=../build/bin/RelWithDebInfo:$PATH
 python -c "import DocumentationUtils;DocumentationUtils.generateShapeWorksCommandDocumentation('Documentation/ShapeWorksCommands/ShapeWorksCommands.md')"
 
 # Remove tests, they won't work for users anyway
