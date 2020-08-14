@@ -25,6 +25,7 @@
 #include <Visualization/Lightbox.h>
 #include <Visualization/Visualizer.h>
 #include <Visualization/WheelEventForwarder.h>
+#include <Interface/SplashScreen.h>
 
 // ui
 #include <ui_ShapeWorksStudioApp.h>
@@ -34,6 +35,8 @@ static QVariant ITEM_ENABLE(1 | 32);
 static int ITEM_ROLE = Qt::UserRole - 1;
 
 const std::string ShapeWorksStudioApp::SETTING_ZOOM_C("zoom_state");
+
+using namespace shapeworks;
 
 //---------------------------------------------------------------------------
 ShapeWorksStudioApp::ShapeWorksStudioApp()
@@ -54,6 +57,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
             this, SLOT(handle_open_recent()));
   }
   this->update_recent_files();
+
+  this->splash_screen_ = QSharedPointer<SplashScreen>(new SplashScreen(this, this->preferences_));
+  connect(this->splash_screen_.data(), &SplashScreen::open_project, this,
+          &ShapeWorksStudioApp::open_project);
 
   this->wheel_event_forwarder_ = QSharedPointer<WheelEventForwarder>
     (new WheelEventForwarder(this->ui_->vertical_scroll_bar));
@@ -212,6 +219,12 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           SLOT(handle_glyph_changed()));
   this->preferences_.set_saved();
   this->enable_possible_actions();
+
+  QMenu* qmenu = this->ui_->menubar->addMenu("&Help");
+  auto qaction = qmenu->addAction(tr("&About"));
+  std::string about = std::string("About ShapeWorksStudio");
+  qaction->setToolTip(QString::fromStdString(about));
+  connect(qaction, &QAction::triggered, this, &ShapeWorksStudioApp::about);
 }
 
 //---------------------------------------------------------------------------
@@ -1011,8 +1024,9 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   auto project = this->session_->get_project();
   if (project->get_version() > project->get_supported_version()) {
-    this->handle_warning("Warning: The project you have opened was created in a newer version of ShapeWorks\n\n"
-                         "Some features may not work and some settings may be incorrect or missing");
+    this->handle_warning(
+      "Warning: The project you have opened was created in a newer version of ShapeWorks\n\n"
+      "Some features may not work and some settings may be incorrect or missing");
   }
 
   this->is_loading_ = true;
@@ -1217,7 +1231,7 @@ bool ShapeWorksStudioApp::set_view_mode(std::string view_mode)
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_recent_files()
 {
-  QStringList recent_files = preferences_.get_recent_files();
+  QStringList recent_files = this->preferences_.get_recent_files();
 
   QStringList existing_files;
   for (int i = 0; i < recent_files.size(); i++) {
@@ -1467,4 +1481,21 @@ bool ShapeWorksStudioApp::set_feature_map(std::string feature_map)
 std::string ShapeWorksStudioApp::get_feature_map()
 {
   return this->session_->parameters().get("feature_map", "");
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::show_splash_screen()
+{
+  this->splash_screen_->show();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::about()
+{
+
+  std::string about = std::string("About ShapeWorksStudio");
+
+  QMessageBox::about(this, QString::fromStdString(about), "ShapeWorksStudio\n"
+                                                          "https://www.sci.utah.edu/software/shapeworks.html");
+
 }

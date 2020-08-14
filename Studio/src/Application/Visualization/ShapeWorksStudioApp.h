@@ -23,6 +23,10 @@ class Session;
 
 class Visualizer;
 
+namespace shapeworks {
+class SplashScreen;
+}
+
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
 
@@ -45,9 +49,10 @@ public:
 
   void initialize_vtk();
   void import_files(QStringList file_names);
-  void open_project(QString filename);
 
 public Q_SLOTS:
+
+  void open_project(QString filename);
 
   void on_action_new_project_triggered();
   void on_action_open_project_triggered();
@@ -105,6 +110,9 @@ public Q_SLOTS:
   void handle_clear_cache();
 
   void update_feature_map_selection(const QString& feature_map);
+  void show_splash_screen();
+  void about();
+
 
 private:
 
@@ -189,6 +197,8 @@ private:
   std::string currentMessage_;
 
   std::string current_display_mode_;
+
+  QSharedPointer<shapeworks::SplashScreen> splash_screen_;
 
   bool block_update_{false};
   bool is_loading_{false};
