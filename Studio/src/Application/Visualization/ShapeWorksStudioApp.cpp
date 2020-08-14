@@ -1495,7 +1495,8 @@ void ShapeWorksStudioApp::about()
 
   std::string about = std::string("About ShapeWorksStudio");
 
-  QMessageBox::about(this, QString::fromStdString(about), "ShapeWorksStudio\n"
-                                                          "https://www.sci.utah.edu/software/shapeworks.html");
+  QMessageBox::about(this, QString::fromStdString(about),
+                     "ShapeWorksStudio\n\n"
+                     "https://www.sci.utah.edu/software/shapeworks.html");
 
 }
