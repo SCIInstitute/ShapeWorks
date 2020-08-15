@@ -53,7 +53,8 @@ public:
   //! Return the error message
   std::string get_error_message();
 
-  void apply_feature_map(std::string name, std::string filename);
+  //! Apply a feature map
+  void apply_feature_map(std::string name, std::string filename, bool transform);
 
 private:
 

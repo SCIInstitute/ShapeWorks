@@ -113,7 +113,7 @@ ImageType::Pointer Shape::get_original_image()
       orienter->SetInput(image);
       orienter->Update();
       image = orienter->GetOutput();
-    } catch (itk::ExceptionObject & excep) {
+    } catch (itk::ExceptionObject& excep) {
       std::cerr << "Exception caught!" << std::endl;
       std::cerr << excep << std::endl;
     }
@@ -135,7 +135,7 @@ ImageType::Pointer Shape::get_groomed_image()
         reader->Update();
         image = reader->GetOutput();
         // don't store to this->groomed_image_ so that we don't hold a pointer to it
-      } catch (itk::ExceptionObject & excep) {
+      } catch (itk::ExceptionObject& excep) {
         std::cerr << "Exception caught!" << std::endl;
         std::cerr << excep << std::endl;
       }
@@ -154,7 +154,7 @@ void Shape::import_groomed_image(ImageType::Pointer img, double iso)
   auto name = this->get_original_filename_with_path().toStdString();
   name = name.substr(0, name.find_last_of(".")) + "_DT.nrrd";
   this->groomed_filename_ = QString::fromStdString(name);
-  std::vector<std::string> groomed_filenames {name};   // only single domain supported so far
+  std::vector<std::string> groomed_filenames{name};   // only single domain supported so far
   this->subject_->set_groomed_filenames(groomed_filenames);
 }
 
@@ -188,7 +188,7 @@ void Shape::clear_reconstructed_mesh()
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_global_particles(const vnl_vector<double> &points)
+void Shape::set_global_particles(const vnl_vector<double>& points)
 {
   this->global_correspondence_points_ = points;
 }
@@ -213,7 +213,7 @@ bool Shape::import_points(std::vector<itk::Point<double>> points, bool local)
 {
   vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
   size_t num_points = 0;
-  for (auto &a : points) {
+  for (auto& a : points) {
     double x = static_cast<double>(a[0]);
     double y = static_cast<double>(a[1]);
     double z = static_cast<double>(a[2]);
@@ -221,8 +221,8 @@ bool Shape::import_points(std::vector<itk::Point<double>> points, bool local)
     vtk_points->InsertNextPoint(x, y, z);
     num_points++;
   }
-  auto & point_list = local ? this->local_correspondence_points_ :
-                      this->global_correspondence_points_;
+  auto& point_list = local ? this->local_correspondence_points_ :
+                     this->global_correspondence_points_;
 
   point_list.clear();
   point_list.set_size(num_points * 3);
@@ -304,6 +304,7 @@ QString Shape::get_original_filename_with_path()
   }
   return QString::fromStdString(this->subject_->get_segmentation_filenames()[0]);
 }
+
 //---------------------------------------------------------------------------
 QString Shape::get_groomed_filename()
 {
@@ -390,7 +391,7 @@ void Shape::set_vectors(std::vector<Point> vectors)
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_transform(const vnl_vector<double> &transform)
+void Shape::set_transform(const vnl_vector<double>& transform)
 {
   this->transform_ = transform;
 }
@@ -435,7 +436,7 @@ void Shape::generate_original_meshes()
 }
 
 //---------------------------------------------------------------------------
-void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<Mesh> &mesh)
+void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<Mesh>& mesh)
 {
   if (filenames.size() < 1) {
     return;
@@ -466,7 +467,7 @@ void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<Mesh> 
 }
 
 //---------------------------------------------------------------------------
-bool Shape::import_point_file(QString filename, vnl_vector<double> &points)
+bool Shape::import_point_file(QString filename, vnl_vector<double>& points)
 {
   std::ifstream in(filename.toStdString().c_str());
   if (!in.good()) {
@@ -479,7 +480,7 @@ bool Shape::import_point_file(QString filename, vnl_vector<double> &points)
   while (in.good()) {
     double x, y, z;
     in >> x >> y >> z;
-    if (!in.good()) {break;}
+    if (!in.good()) { break; }
     vtk_points->InsertNextPoint(x, y, z);
     num_points++;
   }
@@ -513,9 +514,9 @@ void Shape::load_feature(std::string display_mode, std::string feature)
 
     auto filenames = this->subject_->get_feature_filenames();
 
-    mesh->apply_feature_map(feature, filenames[feature]);
+    mesh->apply_feature_map(feature, filenames[feature],
+                            display_mode != Visualizer::MODE_ORIGINAL_C);
 
   }
-
 
 }

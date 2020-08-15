@@ -127,13 +127,13 @@ vnl_vector<double> Mesh::get_center_transform()
 }
 
 //---------------------------------------------------------------------------
-void Mesh::apply_feature_map(std::string name, std::string filename)
+void Mesh::apply_feature_map(std::string name, std::string filename, bool transform)
 {
   if (!this->poly_data_ || name == "") {
     return;
   }
 
-  std::cerr << "being asked to apply feature map for feature '" << name << "' using filename "
+  std::cerr << "Apply feature map for feature '" << name << "' using filename "
             << filename << "\n";
 
 
@@ -144,6 +144,8 @@ void Mesh::apply_feature_map(std::string name, std::string filename)
   ImageType::Pointer image = reader->GetOutput();
   LinearInterpolatorType::Pointer interpolator = LinearInterpolatorType::New();
   interpolator->SetInputImage(image);
+
+  auto region = image->GetLargestPossibleRegion();
 
   float radius = 5.0; // mm - need to expose as parameter
 
@@ -162,12 +164,19 @@ void Mesh::apply_feature_map(std::string name, std::string filename)
     pitk[0] = pt[0];
     pitk[1] = pt[1];
     pitk[2] = pt[2];
+    if (transform) {
+      pitk[0] = pitk[0] + this->center_transform_[0];
+      pitk[1] = pitk[1] + this->center_transform_[1];;
+      pitk[2] = pitk[2] + this->center_transform_[2];;
+    }
 
     LinearInterpolatorType::ContinuousIndexType index;
     image->TransformPhysicalPointToContinuousIndex(pitk, index);
 
-    auto pixel = interpolator->EvaluateAtContinuousIndex(index);
-
+    auto pixel = 0;
+    if (region.IsInside(index)) {
+      pixel = interpolator->EvaluateAtContinuousIndex(index);
+    }
     scalars->SetValue(i, pixel);
   }
 
