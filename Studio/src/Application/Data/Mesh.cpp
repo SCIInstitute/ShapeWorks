@@ -133,7 +133,8 @@ void Mesh::apply_feature_map(std::string name, std::string filename)
     return;
   }
 
-  std::cerr << "being asked to apply feature map for feature '" << name << "' using filename " << filename << "\n";
+  std::cerr << "being asked to apply feature map for feature '" << name << "' using filename "
+            << filename << "\n";
 
 
   // read fibrosis_mask
@@ -143,7 +144,6 @@ void Mesh::apply_feature_map(std::string name, std::string filename)
   ImageType::Pointer image = reader->GetOutput();
   LinearInterpolatorType::Pointer interpolator = LinearInterpolatorType::New();
   interpolator->SetInputImage(image);
-
 
   float radius = 5.0; // mm - need to expose as parameter
 
@@ -162,19 +162,12 @@ void Mesh::apply_feature_map(std::string name, std::string filename)
     pitk[0] = pt[0];
     pitk[1] = pt[1];
     pitk[2] = pt[2];
-    ImageType::IndexType idx;
-
-
 
     LinearInterpolatorType::ContinuousIndexType index;
     image->TransformPhysicalPointToContinuousIndex(pitk, index);
 
     auto pixel = interpolator->EvaluateAtContinuousIndex(index);
 
-    //image->TransformPhysicalPointToIndex(pitk, idx);
-
-    //auto pixel = image->GetPixel(idx);
-    std::cerr << pixel << " ";
     scalars->SetValue(i, pixel);
   }
 
