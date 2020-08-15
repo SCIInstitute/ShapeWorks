@@ -4,6 +4,8 @@
 
 #include "SplashScreen.h"
 
+#include <Applications/Configuration.h>
+
 #include "ui_SplashScreen.h"
 
 namespace shapeworks {
@@ -21,6 +23,8 @@ SplashScreen::SplashScreen(QWidget* parent, Preferences& preferences) :
   // Set up the private internals of the AppSplash class
   this->setObjectName(QString::fromUtf8("splashscreen"));
 
+  this->ui_->version_->setText(SHAPEWORKS_VERSION);
+  
   // Disable these since they arent being used yet.
   this->ui_->load_recent_button_->setEnabled(false);
 

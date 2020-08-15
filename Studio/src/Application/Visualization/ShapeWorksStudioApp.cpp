@@ -12,6 +12,9 @@
 #include <vtkRenderWindow.h>
 #include <vtkPolyDataWriter.h>
 
+// shapeworks
+#include <Applications/Configuration.h>
+
 // studio
 #include <Data/Preferences.h>
 #include <Groom/GroomTool.h>
@@ -1496,7 +1499,9 @@ void ShapeWorksStudioApp::about()
   std::string about = std::string("About ShapeWorksStudio");
 
   QMessageBox::about(this, QString::fromStdString(about),
-                     "ShapeWorksStudio\n\n"
+                     "ShapeWorksStudio\n"
+                     SHAPEWORKS_VERSION
+                     "\n\n"
                      "https://www.sci.utah.edu/software/shapeworks.html");
 
 }
