@@ -1,8 +1,6 @@
 #include <QMessageBox>
 #include <QTextStream>
 
-#include <itkNrrdImageIOFactory.h>
-#include <itkMetaImageIOFactory.h>
 #include <itkImageRegionIteratorWithIndex.h>
 #include <itkVTKImageExport.h>
 #include <itkOrientImageFilter.h>
@@ -12,7 +10,6 @@
 #include <vtkSurfaceReconstructionFilter.h>
 #include <vtkMarchingCubes.h>
 #include <vtkTriangleFilter.h>
-#include <vtkPolyDataNormals.h>
 #include <vtkFloatArray.h>
 #include <vtkPointData.h>
 #include <vtkPolyDataWriter.h>
@@ -164,7 +161,7 @@ void Mesh::apply_feature_map(std::string name, std::string filename, bool transf
     pitk[0] = pt[0];
     pitk[1] = pt[1];
     pitk[2] = pt[2];
-    if (transform) {
+    if (transform && !this->center_transform_.empty()) {
       pitk[0] = pitk[0] + this->center_transform_[0];
       pitk[1] = pitk[1] + this->center_transform_[1];;
       pitk[2] = pitk[2] + this->center_transform_[2];;
