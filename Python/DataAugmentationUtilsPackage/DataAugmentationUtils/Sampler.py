@@ -55,7 +55,7 @@ class Mixture_Sampler(Sampler):
 		print("Using " + str(mixture_num) + " components.")
 		return mixture_num
 	def sample(self):
-		sample = self.GMM.sample(1)[0]
+		sample = self.GMM.sample(1)[0][0]
 		closest_index = getClosest(sample, self.embedded_matrix)
 		return sample, closest_index
 

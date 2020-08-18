@@ -75,14 +75,16 @@ def Run_Pipeline(args):
 	aug_type is the augmentation method to use (1 is based on just particles wheras 2 is based on images and particles)
 	sample type is the distribution to use for sampling
 	'''
-	num_samples = 4960
+	# num_samples = 4960
+	num_samples = 20
 	num_PCA = 6
-	aug_type = 1
-	sampler_type = "Gaussian"
+	sampler_type = "mixture"
 	if args.tiny_test:
-		num_samples = 6
-		num_PCA = 2
-	DataAugmentationUtils.RunDataAugmentation(parent_dir + "augmentation/", train_img_list, train_particle_list, num_samples, num_PCA, aug_type, sampler_type)
+		num_samples = 4
+		num_PCA = 3
+	DataAugmentationUtils.RunDataAugmentation(parent_dir + "augmentation/", train_img_list, train_particle_list, num_samples, num_PCA, sampler_type)
+	aug_data_csv = parent_dir + "augmentation/TotalData.csv"
+	DataAugmentationUtils.VisualizeAugmentation(aug_data_csv)
 
 	print("\n\n\nStep 3. Reformat Data for Pytorch\n") #######################################################################
 	'''
@@ -91,7 +93,7 @@ def Run_Pipeline(args):
 	Hyper-paramter batch_size is for training
 		Higher batch size will help speed up training but uses more cuda memory, if you get a memory error try reducing the batch size
 	'''
-	aug_data_csv = parent_dir + "augmentation/TotalData.csv"
+	
 	down_sample = True
 	batch_size = 1
 	loader_dir = parent_dir + 'TorchDataLoaders/'
