@@ -1,4 +1,5 @@
 from DataAugmentationUtils import DataAugmentation
+from DataAugmentationUtils import Visualize
 
 '''
 Runs data augmentation and takes the following arguements:
@@ -14,3 +15,6 @@ def RunDataAugmentation(out_dir, img_list, point_list, num_samples, num_dim=0, s
     print("Running point based data augmentation.")
     DataAugmentation.point_based_aug(out_dir, img_list, point_list, num_samples, num_dim, sampler_type, mixture_num)
     print("Done.")
+
+def VisualizeAugmentation(data_csv):
+    Visualize.splom(data_csv)
