@@ -124,7 +124,7 @@ vnl_vector<double> Mesh::get_center_transform()
 }
 
 //---------------------------------------------------------------------------
-void Mesh::apply_feature_map(std::string name, std::string filename, bool transform)
+void Mesh::apply_feature_map(std::string name, std::string filename, vnl_vector<double> transform)
 {
   if (!this->poly_data_ || name == "") {
     return;
@@ -153,6 +153,12 @@ void Mesh::apply_feature_map(std::string name, std::string filename, bool transf
 
   scalars->SetName(name.c_str());
 
+  std::cerr << "transform size = " << transform.size() << "\n";
+  for (int i = 0; i < transform.size(); i++) {
+    std::cerr << " " << transform[i];
+  }
+  std::cerr << "\n";
+
   for (int i = 0; i < points->GetNumberOfPoints(); i++) {
     double pt[3];
     points->GetPoint(i, pt);
@@ -161,10 +167,10 @@ void Mesh::apply_feature_map(std::string name, std::string filename, bool transf
     pitk[0] = pt[0];
     pitk[1] = pt[1];
     pitk[2] = pt[2];
-    if (transform && !this->center_transform_.empty()) {
-      pitk[0] = pitk[0] + this->center_transform_[0];
-      pitk[1] = pitk[1] + this->center_transform_[1];;
-      pitk[2] = pitk[2] + this->center_transform_[2];;
+    if (transform.size() == 3) {
+      pitk[0] = pitk[0] - transform[0];
+      pitk[1] = pitk[1] - transform[1];
+      pitk[2] = pitk[2] - transform[2];
     }
 
     LinearInterpolatorType::ContinuousIndexType index;

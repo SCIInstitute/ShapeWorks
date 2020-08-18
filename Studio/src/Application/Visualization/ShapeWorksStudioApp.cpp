@@ -734,7 +734,6 @@ void ShapeWorksStudioApp::update_view_mode()
     //std::cerr << "Setting view mode to: " << view_mode << "\n";
     this->visualizer_->set_display_mode(view_mode);
     this->visualizer_->set_feature_map(feature_map);
-    std::cerr << "force update!\n";
     this->update_display(true);
   }
 }

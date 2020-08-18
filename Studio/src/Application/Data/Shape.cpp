@@ -425,6 +425,7 @@ void Shape::generate_original_meshes()
       this->transform_.set_size(3);
       for (unsigned int i = 0; i < 3; i++) {
         this->transform_[i] = center[i];
+        std::cerr << "trans[" << i << "] = " << this->transform_[i] << "\n";
       }
 
 //      this->set_transform(this->original_mesh_->get_center_transform());
@@ -462,6 +463,7 @@ void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<Mesh>&
     this->transform_.set_size(3);
     for (unsigned int i = 0; i < 3; i++) {
       this->transform_[i] = center[i];
+      std::cerr << "trans[" << i << "] = " << this->transform_[i] << "\n";
     }
   }
 }
@@ -514,8 +516,13 @@ void Shape::load_feature(std::string display_mode, std::string feature)
 
     auto filenames = this->subject_->get_feature_filenames();
 
-    mesh->apply_feature_map(feature, filenames[feature],
-                            display_mode != Visualizer::MODE_ORIGINAL_C);
+    vnl_vector<double> transform;
+    if (display_mode != Visualizer::MODE_ORIGINAL_C)
+    {
+      transform = this->transform_;
+    }
+
+    mesh->apply_feature_map(feature, filenames[feature], transform);
 
   }
 
