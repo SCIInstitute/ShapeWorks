@@ -34,7 +34,8 @@ if platform.system() == "Darwin":
     default_binpath = "/Applications/ShapeWorks/bin:/Applications/ShapeWorks/bin/ShapeWorksStudio.app/Contents/MacOS"
 
 parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
-parser.add_argument("--use_case", help="Specify which use case to run, either: ellipsoid, ellipsoid_fd, left_atrium, femur, or deep_ssm.")
+parser.add_argument("--use_case", help="Specify which use case to run",
+                    choices=["ellipsoid", "ellipsoid_fd", "left_atrium", "femur"])
 parser.add_argument("--use_subsample", help="Set number of samples to run the pipeline for a subset of data.")
 parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
 parser.add_argument("--start_with_prepped_data", help="Start with already prepped data", action="store_true")

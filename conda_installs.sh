@@ -35,16 +35,16 @@ function install_conda() {
   #update anaconda
   conda config --add channels anaconda
   conda config --add channels conda-forge
-  
+
   if ! conda update --yes -n base conda; then return 1; fi
   if ! conda update --yes --all; then return 1; fi
 
-  #create and activate shapeworks env 
+  #create and activate shapeworks env
   CONDAENV=shapeworks
   if ! conda create --yes --name $CONDAENV python=3.7; then return 1; fi
   eval "$(conda shell.bash hook)"
   if ! conda activate $CONDAENV; then return 1; fi
-  
+
   # pip is needed in sub-environments or the base env's pip will silently install to base
   if ! conda install --yes pip; then return 1; fi
   if ! python -m pip install --upgrade pip; then return 1; fi
@@ -73,20 +73,20 @@ function install_conda() {
   # linux and mac (only) deps
   if [[ "$(uname)" == "Linux" || "$(uname)" == "Darwin" ]]; then
       if ! conda install --yes \
-	   xorg-libx11=1.6.9 \
-	   xorg-libsm=1.2.3 \
-	   libxrandr-devel-cos6-x86_64=1.5.1 \
-	   libxinerama-devel-cos6-x86_64=1.1.3 \
-	   libxcursor-devel-cos6-x86_64=1.1.14 \
-	   libxi-devel-cos6-x86_64=1.7.8 \
-	   git-lfs=2.6.1 \
-	   openmp=8.0.1 \
-	   ncurses=6.1 \
-	   libuuid=2.32.1
+           xorg-libx11=1.6.9 \
+           xorg-libsm=1.2.3 \
+           libxrandr-devel-cos6-x86_64=1.5.1 \
+           libxinerama-devel-cos6-x86_64=1.1.3 \
+           libxcursor-devel-cos6-x86_64=1.1.14 \
+           libxi-devel-cos6-x86_64=1.7.8 \
+           git-lfs=2.6.1 \
+           openmp=8.0.1 \
+           ncurses=6.1 \
+           libuuid=2.32.1
       then return 1; fi
   fi
 
-  
+
   if ! pip install termcolor==1.1.0; then return 1; fi
   if ! pip install grip==4.5.2; then return 1; fi
   if ! pip install matplotlib==3.1.2; then return 1; fi
@@ -113,4 +113,3 @@ else
   echo "Problem encountered creating/updating $CONDAENV conda environment."
   return 1;
 fi
-

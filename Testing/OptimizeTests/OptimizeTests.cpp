@@ -10,6 +10,7 @@
 #include "OptimizeParameterFile.h"
 #include "itkParticleShapeStatistics.h"
 
+using namespace shapeworks;
 
 //---------------------------------------------------------------------------
 // until we have a "groom" library we can call
