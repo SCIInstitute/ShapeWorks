@@ -44,7 +44,6 @@ SetCuttingPlane(const vnl_vector<double> &a, const vnl_vector<double> &b,
     m_c.push_back(c); //m_c = c;
 
     ParticleDomain::constraints->addPlane(a,b,c);
-    ParticleDomain::constraints->setCuttingPlaneDefined(true);
   }
 }
 

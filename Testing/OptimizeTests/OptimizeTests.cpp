@@ -164,7 +164,7 @@ TEST(OptimizeTests, use_normals_test) {
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, cutting_plane_test) {
 
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/cutting_plane");
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/cutting_plane_multi");
   chdir(test_location.c_str());
 
   // prep/groom

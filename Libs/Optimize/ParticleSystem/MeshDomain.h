@@ -61,6 +61,8 @@ public:
   }
 
   PointType GetZeroCrossingPoint() const override {
+    // TODO Hong
+    // Apply constraints somehow
     return meshWrapper->GetPointOnMesh();
   }
   double GetSurfaceArea() const override {

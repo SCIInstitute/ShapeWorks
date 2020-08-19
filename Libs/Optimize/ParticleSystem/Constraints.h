@@ -40,10 +40,6 @@ public:
   bool applyBoundaryConstraints(vnl_vector_fixed<double, 3> &gradE, const Point<double, 3> &pos);
   bool applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, const Point<double, 3> &pos);
 
-  // Set & get defined
-  void setCuttingPlaneDefined(bool value){cuttingPlaneDefined = value;}
-  bool getCuttingPlaneDefined(){return cuttingPlaneDefined;}
-
   // Write constraints
   bool writePlanes(std::string filename){return true;}
   bool writeSpheres(std::string filename){return true;}
@@ -56,12 +52,34 @@ public:
   // Plane constraint
   std::vector<PlaneConstraint> *getPlaneConstraints(){return planeConsts;}
 
+  // Is any violated
+  bool IsAnyViolated(const Point<double, 3> &pos){
+      Eigen::Vector3d pt; pt(0) = pos[0]; pt(1) = pos[1]; pt(2) = pos[2];
+      for(size_t i = 0; i < planeConsts->size(); i++){
+          if((*planeConsts)[i].isViolated(pt)){return true;}
+      }
+      for(size_t i = 0; i < sphereConsts->size(); i++){
+          if((*sphereConsts)[i].isViolated(pt)){return true;}
+      }
+      for(size_t i = 0; i < freeFormConsts->size(); i++){
+          if((*freeFormConsts)[i].isViolated(pt)){return true;}
+      }
+      return false;
+  }
+
+  // Constraint violations
+  std::vector<int> planesViolated(Eigen::Vector3d pt){
+      std::vector<int> planesViolated;
+      for(size_t i = 0; i < planeConsts->size(); i++){
+          if((*planeConsts)[i].isViolated(pt)){planesViolated.push_back(i);}
+      }
+      return planesViolated;
+  }
+
 protected:
   std::vector<PlaneConstraint> *planeConsts;
   std::vector<SphereConstraint> *sphereConsts;
   std::vector<FreeFormConstraint> *freeFormConsts;
-
-  bool cuttingPlaneDefined;
 
 private:
   Eigen::Vector3d projectOntoLine(Eigen::Vector3d a, Eigen::Vector3d b, Eigen::Vector3d p);

@@ -244,9 +244,11 @@ private:
         PointType pos;
         I->TransformIndexToPhysicalPoint(zcIt.GetIndex(), pos);
         this->m_ZeroCrossingPoint = pos;
-        break;
+        if(!this->GetConstraints()->IsAnyViolated(this->m_ZeroCrossingPoint))
+            break;
       }
     }
+    if(this->GetConstraints()->IsAnyViolated(this->m_ZeroCrossingPoint)){std::cerr << "A particle initialization violates at least one constraint. Make sure at least one point satisfies all constraints" << std::endl;}
   }
 
   void UpdateSurfaceArea(ImageType *I) {

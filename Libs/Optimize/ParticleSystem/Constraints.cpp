@@ -34,6 +34,8 @@ bool Constraints::transformConstraints(const vnl_matrix_fixed<double, 4, 4> &Tra
 
 bool Constraints::transformPlanes(const vnl_matrix_fixed<double, 4, 4> &Trans){
 
+  std::cout << "Transforming planes" << Trans <<  std::endl;
+
   // Convert vnl_matrix to Eigen Matrix
   Eigen::Matrix4d trans;
   for(unsigned int i = 0; i < 4; i++){
@@ -99,6 +101,40 @@ bool Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, cons
     Eigen::Vector3d l0; l0(0) = pos[0]; l0(1) = pos[1]; l0(2) = pos[2];
     Eigen::Vector3d l; l(0) = -gradE[0]; l(1) = -gradE[1]; l(2) = -gradE[2];
 
+    // Check if original point violates any constraints
+    // If it does, try to go towards the closest plane with the magnitude of the gradient
+    std::vector<int> violatedPlanes = planesViolated(l0);
+    if(violatedPlanes.size() > 0){
+        std::stringstream stream;
+        stream << "Violation! " << l0.transpose() << " violates constraints ";
+        for(size_t i = 0; i < violatedPlanes.size(); i++){
+            stream << violatedPlanes[i] << ", ";
+        }
+        stream << "." << std::endl;
+        std::cerr << stream.str();
+
+        /*
+        Eigen::Vector3d n = (*planeConsts)[violatedPlanes[0]].GetPlaneNormal();
+        Eigen::Vector3d p0 = (*planeConsts)[violatedPlanes[0]].GetPlanePoint();
+
+        double minD = (p0-l0).dot(n)/l.dot(n);
+        int minDInd = violatedPlanes[0];
+        for(size_t i = 1; i < violatedPlanes.size(); i++){
+            n = (*planeConsts)[violatedPlanes[i]].GetPlaneNormal();
+            p0 = (*planeConsts)[violatedPlanes[i]].GetPlanePoint();
+            double d = (p0-l0).dot(n)/l.dot(n);
+            if(d < minD){
+                minD = d;
+                minDInd = violatedPlanes[i];
+            }
+        }
+
+        Eigen::Vector3d updated_gradient = (*planeConsts)[minDInd].GetPlaneNormal()*l.norm();
+        gradE[0] = -updated_gradient(0); gradE[1] = -updated_gradient(1); gradE[2] = -updated_gradient(2);
+        return false;
+        */
+    }
+
     // Figure out dominant plane i.e. the one closest to pose in the direction of the gradient
     // Ranks the value of d when intersecting plane and line segment
     std::vector<double> Ds;
@@ -122,10 +158,8 @@ bool Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, cons
             double d = (p0-l0).dot(n)/l.dot(n);
             Ds.push_back(d);
 
-            if(minD == -1. || d < minD){
-                minD = d;
-                minDInd = i;
-            }
+            minD = d;
+            minDInd = i;
         }
         else{
             Ds.push_back(-1.);
@@ -137,7 +171,7 @@ bool Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, cons
         // Project gradient-applied point onto dominant plane
         Eigen::Vector3d n_d = (*planeConsts)[minDInd].GetPlaneNormal();
         Eigen::Vector3d p0_d = (*planeConsts)[minDInd].GetPlanePoint();
-        Eigen::Vector3d curr_updated_pt = linePlaneIntersect(n_d, p0_d, l0+l, l0+l-n_d);
+        Eigen::Vector3d curr_updated_pt = linePlaneIntersect(n_d, p0_d, l0+l, n_d);
 
         // Projected point proj_grad_upd is curr_updated_pt projected to the gradient update vector segment l0 -> l0+l
         Eigen::Vector3d proj_grad_upd = projectOntoLine(l0, l0+l, curr_updated_pt);
@@ -152,22 +186,24 @@ bool Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, cons
 
                 // Find intersection between violated plane and feasible range line segment i.e. the line between curr_updated_pt and its projection to the gradient update vector segment.
                 curr_updated_pt = linePlaneIntersect(n, p0, curr_updated_pt, proj_grad_upd-curr_updated_pt);
-                proj_grad_upd = projectOntoLine(l0, l0+l, curr_updated_pt);
+                //proj_grad_upd = projectOntoLine(l0, l0+l, curr_updated_pt);
             }
         }
 
         // Update gradient
-        Eigen::Vector3d updated_gradient = curr_updated_pt-l0;
+        Eigen::Vector3d updated_gradient = (curr_updated_pt-l0);
         gradE[0] = -updated_gradient(0); gradE[1] = -updated_gradient(1); gradE[2] = -updated_gradient(2);
 
-        /*
-        std::stringstream stream;
-        stream << "Original point " << l0.transpose() << std::endl
-               << "Updated point " << curr_updated_pt.transpose() << std::endl
-               << "Original gradient " << l.transpose() << std::endl
-               << "Updated gradient " << updated_gradient.transpose() << std::endl << std::endl;
-        std::cout << stream.str();
-        */
+        if(l(0)*updated_gradient(0) < 0 || l(1)*updated_gradient(1) < 0 || l(2)*updated_gradient(2) < 0 || updated_gradient(1)/l(1) > 2){
+            std::stringstream stream;
+            stream << "Original point " << l0.transpose() << std::endl
+                   << "Original Updated point " << (l0+l).transpose() << std::endl
+                   << "Original intersection on dominant plane " << linePlaneIntersect(n_d, p0_d, l0+l, l0+l-n_d).transpose() << std::endl
+                   << "Corrected point " << curr_updated_pt.transpose() << std::endl
+                   << "Original gradient " << l.transpose() << std::endl
+                   << "Updated gradient " << updated_gradient.transpose() << std::endl << std::endl;
+            std::cout << stream.str();
+        }
     }
 
 

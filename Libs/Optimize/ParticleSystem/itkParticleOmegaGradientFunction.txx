@@ -187,6 +187,7 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
 
     std::vector<PlaneConstraint> planeConsts = *(domain->GetConstraints()->getPlaneConstraints());
     numPlanes = planeConsts.size();
+    //std::cout << "Num planes " << numPlanes << std::endl;
     Eigen::Vector3d x_eigen;
     x_eigen(0) = double(x[0]); x_eigen(1) = double(x[1]); x_eigen(2) = double(x[2]);
     for (unsigned int pidx = 0; pidx < numPlanes; pidx++)

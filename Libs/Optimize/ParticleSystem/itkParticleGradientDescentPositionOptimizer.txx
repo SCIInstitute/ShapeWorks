@@ -171,7 +171,13 @@ namespace itk
                 // Old broken implementation. Constraints don't work
                 //m_ParticleSystem->GetDomain(dom)->ApplyVectorConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
 
-                //std::cout << "Original gradient " << gradient_old << std::endl << "Updated gradient " << gradient << std::endl << std::endl;
+                /*
+                //if(gradient_old[0]*gradient[0] < 0 || gradient_old[1]*gradient[1] < 0 || gradient_old[2]*gradient[2] < 0){
+                    std::stringstream stream;
+                    stream << "Point "<< it.GetIndex() << std::endl << "Original gradient " << gradient_old << std::endl << "Updated gradient " << gradient << std::endl << std::endl;
+                    std::cout << stream.str();
+                //}
+                */
                 // End DEBUGGG
 
                 //m_ParticleSystem->GetDomain(dom)->ApplyVectorConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
