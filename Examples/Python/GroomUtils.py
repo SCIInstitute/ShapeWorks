@@ -292,10 +292,13 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
             print("CMD: " + " ".join(cmd))
         subprocess.check_call(cmd)
 
+        size = getInfo(ref_tpdtnrrdfilename, "dims")
+
         cmd = ["shapeworks", 
                "read-image", "--name", seginname,
-            #    matrix created by icp is not used
+            #    matrix created by icp is not used so we use resize since icp resizes all images to the reference image which is a requirement for cropping (next step)
             #    "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
+               "resize", "--sizex", str(size[0]), "--sizey", str(size[1]), "--sizez", str(size[2]),
                "write-image", "--name", segoutname]
         if printCmd:
             print("CMD: " + " ".join(cmd))
@@ -304,8 +307,9 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
         if processRaw:
             cmd = ["shapeworks", 
                    "read-image", "--name", rawinname,
-                #    matrix created by icp is not used
+                #    matrix created by icp is not used so we use resize since icp resizes all images to the reference image which is a requirement for cropping (next step)
                 #    "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
+                   "resize", "--sizex", str(size[0]), "--sizey", str(size[1]), "--sizez", str(size[2]),
                    "write-image", "--name", rawoutname]
             if printCmd:
                 print("CMD: " + " ".join(cmd))
@@ -313,7 +317,6 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
 
     return [outSegDataList, outRawDataList] if processRaw else outSegDataList
             
-
 def applyCropping(outDir, inDataList, path, paddingSize=10, printCmd=True):
     """
     This function takes in a filelist and crops them according to the largest
