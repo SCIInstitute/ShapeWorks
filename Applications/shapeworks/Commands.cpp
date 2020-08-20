@@ -214,10 +214,18 @@ void ResampleImage::buildParser()
   const std::string desc = "resamples an image using new physical spacing (computes new dims)";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--isospacing").action("store").type("double").set_default(0.0f).help("Use this spacing in all dimensions.");
-  parser.add_option("--spacex").action("store").type("double").set_default(1.0f).help("Pixel spacing in x-direction [default: 1.0].");
-  parser.add_option("--spacey").action("store").type("double").set_default(1.0f).help("Pixel spacing in y-direction [default: 1.0].");
-  parser.add_option("--spacez").action("store").type("double").set_default(1.0f).help("Pixel spacing in z-direction [default: 1.0].");
+  parser.add_option("--isospacing").action("store").type("double").set_default(0.0).help("Use this spacing in all dimensions.");
+  parser.add_option("--spacex").action("store").type("double").set_default(1.0).help("Pixel spacing in x-direction [default: %default].");
+  parser.add_option("--spacey").action("store").type("double").set_default(1.0).help("Pixel spacing in y-direction [default: %default].");
+  parser.add_option("--spacez").action("store").type("double").set_default(1.0).help("Pixel spacing in z-direction [default: %default].");
+  parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Output size in x-direction [default: current size].");
+  parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Output size in y-direction [default: current size].");
+  parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Output size in z-direction [default: current size].");
+  parser.add_option("--originx").action("store").type("double").set_default(std::numeric_limits<float>::max()).help("Output origin in x-direction [default: current origin].");
+  parser.add_option("--originy").action("store").type("double").set_default(std::numeric_limits<float>::max()).help("Output origin in y-direction [default: current origin].");
+  parser.add_option("--originz").action("store").type("double").set_default(std::numeric_limits<float>::max()).help("Output origin in z-direction [default: current origin].");
+  std::list<std::string> interps{"linear", "nearest"};
+  parser.add_option("--interp").action("store").type("choice").choices(interps.begin(), interps.end()).set_default("linear").help("Interpolation method to use [default: %default].");
 
   Command::buildParser();
 }
@@ -234,11 +242,29 @@ bool ResampleImage::execute(const optparse::Values &options, SharedCommandData &
   double spaceX = static_cast<double>(options.get("spacex"));
   double spaceY = static_cast<double>(options.get("spacey"));
   double spaceZ = static_cast<double>(options.get("spacez"));
+  unsigned sizeX = static_cast<unsigned>(options.get("sizex"));
+  unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
+  unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
+  double originX = static_cast<double>(options.get("originx"));
+  double originY = static_cast<double>(options.get("originy"));
+  double originZ = static_cast<double>(options.get("originz"));
+  std::string interpopt(options.get("interp"));
+  Image::InterpolationType interp = interpopt == "nearest" ? Image::NearestNeighbor : Image::Linear;
 
   if (isoSpacing > 0.0)
-    ImageUtils::isoresample(sharedData.image, isoSpacing);
-  else
-    sharedData.image.resample(Point3({spaceX, spaceY, spaceZ}));
+    ImageUtils::isoresample(sharedData.image, isoSpacing, interp);
+  else if (sizeX == 0 || sizeY == 0 || sizeX == 0) 
+    sharedData.image.resample(makeVector({spaceX, spaceY, spaceZ}), interp);
+  else {
+    Point3 origin({originX, originY, originZ});
+    if (originX >= 1e9 ||
+        originY >= 1e9 ||
+        originZ >= 1e9)
+      origin = sharedData.image.origin();
+    sharedData.image.resample(IdentityTransform::New(), origin,
+                              Dims({sizeX, sizeY, sizeZ}), makeVector({spaceX, spaceY, spaceZ}),
+                              sharedData.image.coordsys(), interp);
+  }
 
   return true;
 }
@@ -825,7 +851,7 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
     Image source_dt(sourceDT);
     Image target_dt(targetDT);
     TransformPtr transform(ImageUtils::createRigidRegistrationTransform(source_dt, target_dt, isovalue, iterations));
-    sharedData.image.applyTransform(transform, target_dt.dims(), target_dt.origin(), target_dt.spacing(), target_dt.coordsys());
+    sharedData.image.applyTransform(transform, target_dt.origin(), target_dt.dims(), target_dt.spacing(), target_dt.coordsys());
     return true;
   }
 }
