@@ -214,16 +214,16 @@ void ResampleImage::buildParser()
   const std::string desc = "resamples an image using new physical spacing (computes new dims)";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--isospacing").action("store").type("double").set_default(0.0f).help("Use this spacing in all dimensions.");
-  parser.add_option("--spacex").action("store").type("double").set_default(1.0f).help("Pixel spacing in x-direction [default: %default].");
-  parser.add_option("--spacey").action("store").type("double").set_default(1.0f).help("Pixel spacing in y-direction [default: %default].");
-  parser.add_option("--spacez").action("store").type("double").set_default(1.0f).help("Pixel spacing in z-direction [default: %default].");
+  parser.add_option("--isospacing").action("store").type("double").set_default(0.0).help("Use this spacing in all dimensions.");
+  parser.add_option("--spacex").action("store").type("double").set_default(1.0).help("Pixel spacing in x-direction [default: %default].");
+  parser.add_option("--spacey").action("store").type("double").set_default(1.0).help("Pixel spacing in y-direction [default: %default].");
+  parser.add_option("--spacez").action("store").type("double").set_default(1.0).help("Pixel spacing in z-direction [default: %default].");
   parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Output size in x-direction [default: current size].");
   parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Output size in y-direction [default: current size].");
   parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Output size in z-direction [default: current size].");
-  parser.add_option("--originx").action("store").type("double").set_default(std::numeric_limits<double>::max()).help("Output origin in x-direction [default: current origin].");
-  parser.add_option("--originy").action("store").type("double").set_default(std::numeric_limits<double>::max()).help("Output origin in y-direction [default: current origin].");
-  parser.add_option("--originz").action("store").type("double").set_default(std::numeric_limits<double>::max()).help("Output origin in z-direction [default: current origin].");
+  parser.add_option("--originx").action("store").type("double").set_default(std::numeric_limits<float>::max()).help("Output origin in x-direction [default: current origin].");
+  parser.add_option("--originy").action("store").type("double").set_default(std::numeric_limits<float>::max()).help("Output origin in y-direction [default: current origin].");
+  parser.add_option("--originz").action("store").type("double").set_default(std::numeric_limits<float>::max()).help("Output origin in z-direction [default: current origin].");
   std::list<std::string> interps{"linear", "nearest"};
   parser.add_option("--interp").action("store").type("choice").choices(interps.begin(), interps.end()).set_default("linear").help("Interpolation method to use [default: %default].");
 
@@ -257,9 +257,9 @@ bool ResampleImage::execute(const optparse::Values &options, SharedCommandData &
     sharedData.image.resample(makeVector({spaceX, spaceY, spaceZ}), interp);
   else {
     Point3 origin({originX, originY, originZ});
-    if (originX == std::numeric_limits<double>::max() ||
-        originY == std::numeric_limits<double>::max() ||
-        originZ == std::numeric_limits<double>::max())
+    if (originX >= 1e9 ||
+        originY >= 1e9 ||
+        originZ >= 1e9)
       origin = sharedData.image.origin();
     sharedData.image.resample(IdentityTransform::New(), origin,
                               Dims({sizeX, sizeY, sizeZ}), makeVector({spaceX, spaceY, spaceZ}),
