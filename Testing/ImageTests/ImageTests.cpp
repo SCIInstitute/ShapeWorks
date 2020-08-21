@@ -1118,7 +1118,7 @@ TEST(ImageTests, resample4)
   Image image(test_location + "la1-small.nrrd");
 
   // sample center of image at same physical resolution
-  image.resample(IdentityTransform::New(),
+  image.resample(nullptr,
                  image.origin() + toVector(toPoint(image.dims() * 0.25) * toPoint(image.spacing())), // 1/4 into the image
                  image.dims() * 0.5, image.spacing(), image.coordsys(), Image::Linear);
 
@@ -1149,7 +1149,7 @@ TEST(ImageTests, resample6)
   Image image(test_location + "la1-small.nrrd");
 
   // sample center of image at 2x physical resolution
-  image.resample(IdentityTransform::New(),
+  image.resample(nullptr,
                  image.origin() + toVector(toPoint(image.dims() * 0.25) * toPoint(image.spacing())), // 1/4 into the image
                  image.dims(), image.spacing() * 0.5, image.coordsys(), Image::Linear);
 

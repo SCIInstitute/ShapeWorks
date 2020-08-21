@@ -306,7 +306,7 @@ Image& Image::resample(const TransformPtr transform, const Point3 origin, Dims d
   }
 
   resampler->SetInput(this->image);
-  resampler->SetTransform(transform);
+  resampler->SetTransform(transform ? transform : IdentityTransform::New());
   resampler->SetOutputOrigin(origin);
   resampler->SetOutputSpacing(spacing);
   resampler->SetSize(dims);
