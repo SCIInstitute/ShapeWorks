@@ -1119,7 +1119,7 @@ TEST(ImageTests, resample4)
 
   // sample center of image at same physical resolution
   image.resample(nullptr,
-                 image.origin() + toVector(toPoint(image.dims() * 0.25) * toPoint(image.spacing())), // 1/4 into the image
+                 image.origin() + toPoint(image.dims() * 0.25) * toPoint(image.spacing()), // 1/4 into the image
                  image.dims() * 0.5, image.spacing(), image.coordsys(), Image::Linear);
 
   Image ground_truth(test_location + "baseline_resample4.nrrd");
@@ -1150,7 +1150,7 @@ TEST(ImageTests, resample6)
 
   // sample center of image at 2x physical resolution
   image.resample(nullptr,
-                 image.origin() + toVector(toPoint(image.dims() * 0.25) * toPoint(image.spacing())), // 1/4 into the image
+                 image.origin() + toPoint(image.dims() * 0.25) * toPoint(image.spacing()), // 1/4 into the image
                  image.dims(), image.spacing() * 0.5, image.coordsys(), Image::Linear);
 
   Image ground_truth(test_location + "baseline_resample6.nrrd");
