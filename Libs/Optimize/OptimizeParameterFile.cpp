@@ -783,7 +783,6 @@ bool OptimizeParameterFile::read_distribution_cutting_plane(TiXmlHandle* doc_han
 //---------------------------------------------------------------------------
 bool OptimizeParameterFile::read_cutting_planes(TiXmlHandle* docHandle, Optimize* optimize)
 {
-    std::cout << "Reading cutting planes" << std::endl;
   TiXmlElement* elem;
   std::istringstream inputsBuffer;
   int numShapes = optimize->GetNumShapes();
