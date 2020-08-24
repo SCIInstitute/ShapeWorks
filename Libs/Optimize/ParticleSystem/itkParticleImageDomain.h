@@ -118,7 +118,7 @@ public:
     this->SetUpperBound(u);
 
     // Precompute and save values that are used in parts of the optimizer
-    this->UpdateZeroCrossingPoint(I);
+    this->SetupImageForCrossingPointUpdate(I); // this->UpdateZeroCrossingPoint(I);
     this->UpdateSurfaceArea(I);
   }
 
@@ -184,6 +184,18 @@ public:
     m_VDBImage = 0;
   }
 
+  // Updates zero crossing points. Raster scans candidate zero crossing points, and finds one that does not violate any constraints.
+  void UpdateZeroCrossingPoint() override {
+    for (size_t i = 0; i < m_possible_zero_crossings.size(); i++) {
+        this->m_ZeroCrossingPoint = m_possible_zero_crossings[i];
+        if(!this->GetConstraints()->IsAnyViolated(this->m_ZeroCrossingPoint))
+            break;
+
+    }
+
+    if(this->GetConstraints()->IsAnyViolated(this->m_ZeroCrossingPoint)){std::cerr << "A particle initialization violates at least one constraint. Make sure at least one point satisfies all constraints" << std::endl;}
+  }
+
 protected:
 
   openvdb::FloatGrid::Ptr GetVDBImage() const {
@@ -230,25 +242,25 @@ private:
   PointType m_ZeroCrossingPoint;
   typename ImageType::RegionType::IndexType m_Index; // Index defining the corner of the region
   double m_SurfaceArea;
+  std::vector<PointType> m_possible_zero_crossings;
 
-  void UpdateZeroCrossingPoint(ImageType *I) {
-    typename itk::ZeroCrossingImageFilter < ImageType, ImageType > ::Pointer zc =
-            itk::ZeroCrossingImageFilter < ImageType, ImageType > ::New();
-    zc->SetInput(I);
-    zc->Update();
-    typename itk::ImageRegionConstIteratorWithIndex < ImageType > zcIt(zc->GetOutput(),
-                                                                       zc->GetOutput()->GetRequestedRegion());
+  // Computes possible zero crossing points. Later on, one can find the ones that do not violate constraints.
+  void SetupImageForCrossingPointUpdate(ImageType *I){
+      typename itk::ZeroCrossingImageFilter < ImageType, ImageType > ::Pointer zc =
+              itk::ZeroCrossingImageFilter < ImageType, ImageType > ::New();
+      zc->SetInput(I);
+      zc->Update();
+      typename itk::ImageRegionConstIteratorWithIndex < ImageType > zcIt(zc->GetOutput(),
+                                                                         zc->GetOutput()->GetRequestedRegion());
 
-    for (zcIt.GoToReverseBegin(); !zcIt.IsAtReverseEnd(); --zcIt) {
-      if (zcIt.Get() == 1.0) {
-        PointType pos;
-        I->TransformIndexToPhysicalPoint(zcIt.GetIndex(), pos);
-        this->m_ZeroCrossingPoint = pos;
-        if(!this->GetConstraints()->IsAnyViolated(this->m_ZeroCrossingPoint))
-            break;
+      for (zcIt.GoToReverseBegin(); !zcIt.IsAtReverseEnd(); --zcIt) {
+        if (zcIt.Get() == 1.0) {
+          PointType pos;
+          I->TransformIndexToPhysicalPoint(zcIt.GetIndex(), pos);
+          this->m_ZeroCrossingPoint = pos;
+          m_possible_zero_crossings.push_back(pos);
+        }
       }
-    }
-    if(this->GetConstraints()->IsAnyViolated(this->m_ZeroCrossingPoint)){std::cerr << "A particle initialization violates at least one constraint. Make sure at least one point satisfies all constraints" << std::endl;}
   }
 
   void UpdateSurfaceArea(ImageType *I) {

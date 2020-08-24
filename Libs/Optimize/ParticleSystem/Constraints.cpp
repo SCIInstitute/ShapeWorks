@@ -198,6 +198,7 @@ bool Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, cons
             std::stringstream stream;
             stream << "Original point " << l0.transpose() << std::endl
                    << "Original Updated point " << (l0+l).transpose() << std::endl
+                   << "Dominant plane id " << minDInd << ". Dominant plane normal: " << n_d.transpose() << ". Dominant plane point: " << p0_d.transpose() << std::endl
                    << "Original intersection on dominant plane " << linePlaneIntersect(n_d, p0_d, l0+l, l0+l-n_d).transpose() << std::endl
                    << "Corrected point " << curr_updated_pt.transpose() << std::endl
                    << "Original gradient " << l.transpose() << std::endl

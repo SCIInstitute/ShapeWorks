@@ -81,6 +81,7 @@ public:
 
   virtual void DeleteImages() = 0;
   virtual void DeletePartialDerivativeImages() = 0;
+  virtual void UpdateZeroCrossingPoint() = 0;
 
   bool IsDomainFixed() const {
     return m_FixedDomain;

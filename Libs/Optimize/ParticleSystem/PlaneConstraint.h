@@ -3,6 +3,7 @@
 #include "Constraint.h"
 #include "Eigen/Core"
 #include "vnl/vnl_math.h"
+#include <iostream>
 
 namespace itk
 {
@@ -18,7 +19,6 @@ public:
 
   bool isViolated(const Eigen::Vector3d &pt) const{
     double dist = planeNormal.dot(pt-planePoint);
-
     if(dist < 0)return true;
     return false;
   }

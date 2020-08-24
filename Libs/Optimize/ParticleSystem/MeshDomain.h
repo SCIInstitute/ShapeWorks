@@ -101,9 +101,12 @@ public:
     // TODO Change this to a generic delete function
   }
 
-  void SetMesh(shapeworks::MeshWrapper* mesh_) {
+  void SetMesh(shapeworks::MeshWrapper* mesh_)  {
     this->m_FixedDomain = false;
     meshWrapper = mesh_;
+  }
+
+  void UpdateZeroCrossingPoint() override {
   }
 
   MeshDomain() { }
@@ -118,6 +121,7 @@ protected:
   
 private:
   shapeworks::MeshWrapper* meshWrapper;
+  PointType m_ZeroCrossingPoint;
 
 };
 

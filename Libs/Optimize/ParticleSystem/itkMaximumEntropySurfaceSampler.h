@@ -158,6 +158,12 @@ public:
         m_DomainList.push_back(domain);
     }
 
+    void ApplyConstraintsToZeroCrossing(){
+        for(size_t i = 0; i < m_DomainList.size(); i++){
+            this->m_DomainList[i]->UpdateZeroCrossingPoint();
+        }
+    }
+
     void AddMesh(shapeworks::MeshWrapper * mesh) {
 
       MeshDomain *domain = new MeshDomain();

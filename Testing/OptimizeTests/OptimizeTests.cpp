@@ -180,7 +180,9 @@ TEST(OptimizeTests, cutting_plane_test) {
   std::string paramfile = std::string("cutting_plane.xml");
   Optimize app;
   OptimizeParameterFile param;
+  std::cout << "Loading parameters-----" << std::endl;
   ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
+  std::cout << "Running-----" << std::endl;
   app.Run();
 
   // compute stats

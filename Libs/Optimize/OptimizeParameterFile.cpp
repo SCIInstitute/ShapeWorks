@@ -123,6 +123,8 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize *
     return false;
   }
 
+  optimize->GetSampler()->ApplyConstraintsToZeroCrossing();
+
   return true;
 }
 
@@ -781,6 +783,7 @@ bool OptimizeParameterFile::read_distribution_cutting_plane(TiXmlHandle* doc_han
 //---------------------------------------------------------------------------
 bool OptimizeParameterFile::read_cutting_planes(TiXmlHandle* docHandle, Optimize* optimize)
 {
+    std::cout << "Reading cutting planes" << std::endl;
   TiXmlElement* elem;
   std::istringstream inputsBuffer;
   int numShapes = optimize->GetNumShapes();
