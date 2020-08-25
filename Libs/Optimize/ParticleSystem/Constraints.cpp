@@ -101,6 +101,13 @@ bool Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, cons
     Eigen::Vector3d l0; l0(0) = pos[0]; l0(1) = pos[1]; l0(2) = pos[2];
     Eigen::Vector3d l; l(0) = -gradE[0]; l(1) = -gradE[1]; l(2) = -gradE[2];
 
+    std::stringstream stream;
+    stream << "Constraint.cpp::ApplyPlaneConstraints(" << pos << ")" << std::endl
+           << "Original point " << l0.transpose() << std::endl
+           << "Original gradient " << l.transpose() << std::endl
+          << "Original Updated point " << (l0+l).transpose() << std::endl;
+
+
     // Check if original point violates any constraints
     // If it does, try to go towards the closest plane with the magnitude of the gradient
     std::vector<int> violatedPlanes = planesViolated(l0);
@@ -194,20 +201,19 @@ bool Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, cons
         Eigen::Vector3d updated_gradient = (curr_updated_pt-l0);
         gradE[0] = -updated_gradient(0); gradE[1] = -updated_gradient(1); gradE[2] = -updated_gradient(2);
 
-        if(l(0)*updated_gradient(0) < 0 || l(1)*updated_gradient(1) < 0 || l(2)*updated_gradient(2) < 0 || updated_gradient(1)/l(1) > 2){
-            std::stringstream stream;
-            stream << "Original point " << l0.transpose() << std::endl
+        //if(l(0)*updated_gradient(0) < 0 || l(1)*updated_gradient(1) < 0 || l(2)*updated_gradient(2) < 0 || updated_gradient(1)/l(1) > 2){
+            stream << "Constraint violated" << std::endl
+                    << "Original point " << l0.transpose() << std::endl
                    << "Original Updated point " << (l0+l).transpose() << std::endl
                    << "Dominant plane id " << minDInd << ". Dominant plane normal: " << n_d.transpose() << ". Dominant plane point: " << p0_d.transpose() << std::endl
                    << "Original intersection on dominant plane " << linePlaneIntersect(n_d, p0_d, l0+l, l0+l-n_d).transpose() << std::endl
                    << "Corrected point " << curr_updated_pt.transpose() << std::endl
                    << "Original gradient " << l.transpose() << std::endl
                    << "Updated gradient " << updated_gradient.transpose() << std::endl << std::endl;
-            std::cout << stream.str();
-        }
+        //}
     }
 
-
+    std::cout << stream.str();
     // CHECK: Is returning false correct? This is what the previous function returns
     return false;
 }

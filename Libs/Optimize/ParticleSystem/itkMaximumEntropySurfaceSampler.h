@@ -159,6 +159,7 @@ public:
     }
 
     void ApplyConstraintsToZeroCrossing(){
+        std::cout << "ApplyConstraintsToZeroCrossing " << m_DomainList.size() << std::endl;
         for(size_t i = 0; i < m_DomainList.size(); i++){
             this->m_DomainList[i]->UpdateZeroCrossingPoint();
         }

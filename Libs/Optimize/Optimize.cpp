@@ -512,8 +512,8 @@ void Optimize::InitializeSampler()
   for (unsigned int i = 0; i < this->m_domain_flags.size(); i++) {
     this->GetSampler()->GetParticleSystem()->FlagDomain(this->m_domain_flags[i]);
   }
-
   m_sampler->Initialize();
+  m_sampler->ApplyConstraintsToZeroCrossing();
 
   m_sampler->GetOptimizer()->SetTolerance(0.0);
 

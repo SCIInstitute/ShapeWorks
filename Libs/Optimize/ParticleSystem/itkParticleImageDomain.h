@@ -188,8 +188,9 @@ public:
   void UpdateZeroCrossingPoint() override {
     for (size_t i = 0; i < m_possible_zero_crossings.size(); i++) {
         this->m_ZeroCrossingPoint = m_possible_zero_crossings[i];
-        if(!this->GetConstraints()->IsAnyViolated(this->m_ZeroCrossingPoint))
+        if(!this->GetConstraints()->IsAnyViolated(this->m_ZeroCrossingPoint)){
             break;
+        }
 
     }
 

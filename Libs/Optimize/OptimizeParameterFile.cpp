@@ -123,7 +123,7 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize *
     return false;
   }
 
-  optimize->GetSampler()->ApplyConstraintsToZeroCrossing();
+  //optimize->GetSampler()->ApplyConstraintsToZeroCrossing();
 
   return true;
 }

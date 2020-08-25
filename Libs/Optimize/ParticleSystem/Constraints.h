@@ -55,7 +55,6 @@ public:
   // Is any constraint violated by point pos?
   bool IsAnyViolated(const Point<double, 3> &pos){
       Eigen::Vector3d pt; pt(0) = pos[0]; pt(1) = pos[1]; pt(2) = pos[2];
-      std::cout << "numPlanes " << planeConsts->size() << std::endl;
       for(size_t i = 0; i < planeConsts->size(); i++){
           if((*planeConsts)[i].isViolated(pt)){return true;}
       }
