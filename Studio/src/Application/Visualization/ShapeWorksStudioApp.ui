@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../Resources/ShapeWorksStudio.qrc">
-    <normaloff>:/Studio/Images/shapes-icon.png</normaloff>:/Studio/Images/shapes-icon.png</iconset>
+    <normaloff>:/Studio/Images/shapeworks-logo.png</normaloff>:/Studio/Images/shapeworks-logo.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true"/>
