@@ -143,7 +143,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->action_group_->addAction(this->ui_->action_optimize_mode);
   this->action_group_->addAction(this->ui_->action_analysis_mode);
 
-  this->ui_->statusbar->showMessage("ShapeWorksStudio");
+  this->ui_->statusbar->showMessage("ShapeWorks Studio");
   this->lightbox_ = LightboxHandle(new Lightbox());
 
   // visualizer initializations
