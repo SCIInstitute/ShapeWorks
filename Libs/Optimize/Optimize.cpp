@@ -638,7 +638,10 @@ void Optimize::Initialize()
     for (int i = 0; i < 3; i++) {
       random[i] = static_cast <double> (this->m_rand());
     }
-    random = random.normalize() * this->m_spacing;
+    
+    // divide by 5 since m_spacing was artificially multiplied by 5 elsewhere
+    random = random.normalize() * this->m_spacing / 5.0;
+    
     //        m_Sampler->GetEnsembleEntropyFunction()->PrintShapeMatrix();
     this->OptimizerStop();
     for (int i = 0; i < n; i++) {
