@@ -3,6 +3,7 @@ import numpy as np
 import itk
 import csv
 import random
+import subprocess
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
@@ -218,8 +219,21 @@ def getImages(loader_dir, image_list, down_sample):
 		norm_images.append([(image-mean_image)/std_image])
 	return norm_images
 
-# @TODO
+'''
+Halves the size of the image
+'''
 def downSample(img):
+	isoSpacing = 1.0
+	cmd = ["shapeworks",
+		   "read-image", "--name", name,
+		   "info", "--spacing", str(True)]
+	output = subprocess.run(cmd, capture_output=True, text=True).stdout.splitlines() 
+	input(output) 
+	cmd = ["shapeworks", 
+		"read-image", "--name", img,
+		"resample", "--isospacing", str(isoSpacing),
+		"write-image", "--name", img]
+	subprocess.check_call(cmd)
 	return img
 
 '''
