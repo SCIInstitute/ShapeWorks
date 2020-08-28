@@ -6,11 +6,13 @@ faceflip.cc
 Flip the order of vertices in each face.  Turns the mesh inside out.
 */
 
-#include <stdio.h>
 #include "TriMesh.h"
 #include "TriMesh_algo.h"
 #define dprintf TriMesh::dprintf
+using namespace std;
 
+
+namespace trimesh {
 
 void faceflip(TriMesh *mesh)
 {
@@ -29,3 +31,4 @@ void faceflip(TriMesh *mesh)
 		mesh->need_tstrips();
 }
 
+} // namespace trimesh

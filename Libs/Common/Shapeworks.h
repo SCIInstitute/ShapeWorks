@@ -6,6 +6,7 @@
 #include <itkSize.h>
 #include <itkIndex.h>
 #include <itkAffineTransform.h>
+#include <itkIdentityTransform.h>
 
 namespace shapeworks {
 
@@ -30,6 +31,7 @@ Vector3 makeVector(std::array<double, 3>&& arr);
 
 /// All transforms can be accessed using a generic transform pointer
 using GenericTransform   = itk::Transform<double, 3>;
+using IdentityTransform  = itk::IdentityTransform<double, 3>;
 using TransformPtr       = GenericTransform::Pointer;
 
 /// Affine transforms are used for many Image manipulation commands

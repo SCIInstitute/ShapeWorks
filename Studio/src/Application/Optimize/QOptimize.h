@@ -5,9 +5,11 @@
 #include <QMutex>
 #include <QElapsedTimer>
 
+namespace shapeworks {
+
 //! Wraps Optimize as a QObject
 class QOptimize : public QObject, public Optimize {
-  Q_OBJECT;
+Q_OBJECT;
 
 public:
   QOptimize(QObject* parent = nullptr);
@@ -20,7 +22,7 @@ public:
 
 protected:
   virtual void SetIterationCallback() override;
-  virtual void IterateCallback(itk::Object* caller, const itk::EventObject &) override;
+  virtual void IterateCallback(itk::Object* caller, const itk::EventObject&) override;
 
 signals:
   void progress(int);
@@ -34,5 +36,6 @@ private:
 
   QElapsedTimer time_since_last_update_;
 
-
 };
+
+}

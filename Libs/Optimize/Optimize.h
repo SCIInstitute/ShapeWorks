@@ -15,12 +15,15 @@
 
 // shapeworks particle system
 #include "ParticleSystem/itkParticleSystem.h"
-#include "ParticleSystem/itkMaximumEntropyCorrespondenceSampler.h"
+#include "ParticleSystem/Sampler.h"
 #include "ParticleSystem/itkParticleProcrustesRegistration.h"
 #include "ParticleSystem/itkParticleGoodBadAssessment.h"
 #include "ParticleSystem/itkParticleVectorFunction.h"
 #include "ParticleSystem/DomainType.h"
 #include "ParticleSystem/MeshWrapper.h"
+#include "ParticleSystem/OptimizationVisualizer.h"
+
+namespace shapeworks {
 
 /**
  * \class Optimize
@@ -34,11 +37,9 @@
  * provides a top-level public API for running optimization
  *
  */
-class Optimize
-{
+class Optimize {
 public:
   using ImageType = itk::Image<float, 3>;
-  using SamplerType = itk::MaximumEntropyCorrespondenceSampler<itk::Image<float, 3>>;
   using VectorType = itk::ParticleVectorFunction<3>::VectorType;
 
   //! Constructor
@@ -125,9 +126,9 @@ public:
   void SetUseCuttingPlanes(bool use_cutting_planes);
   //! Set a given cutting plane for a shape
   void SetCuttingPlane(unsigned int i,
-                       const vnl_vector_fixed<double, 3> &va,
-                       const vnl_vector_fixed<double, 3> &vb,
-                       const vnl_vector_fixed<double, 3> &vc);
+                       const vnl_vector_fixed<double, 3>& va,
+                       const vnl_vector_fixed<double, 3>& vb,
+                       const vnl_vector_fixed<double, 3>& vc);
 
   //! Set processing mode (TODO: details)
   void SetProcessingMode(int mode);
@@ -190,25 +191,25 @@ public:
 
   //! Set the shape input images
   void AddImage(ImageType::Pointer image);
-  void AddMesh(shapeworks::MeshWrapper *mesh);
+  void AddMesh(shapeworks::MeshWrapper* mesh);
 
   //! Set the shape filenames (TODO: details)
-  void SetFilenames(const std::vector<std::string> &filenames);
+  void SetFilenames(const std::vector<std::string>& filenames);
   //! Set starting point files (TODO: details)
-  void SetPointFiles(const std::vector <std::string> &point_files);
+  void SetPointFiles(const std::vector<std::string>& point_files);
 
   //! Get number of shapes
   int GetNumShapes();
   //! Set the mesh files (TODO: details)
-  void SetMeshFiles(const std::vector<std::string> &mesh_files);
+  void SetMeshFiles(const std::vector<std::string>& mesh_files);
   //! Set attribute scales (TODO: details)
-  void SetAttributeScales(const std::vector<double> &scales);
+  void SetAttributeScales(const std::vector<double>& scales);
   //! Set FEA files (TODO: details)
-  void SetFeaFiles(const std::vector<std::string> &files);
+  void SetFeaFiles(const std::vector<std::string>& files);
   //! Set FEA grad files (TODO: details)
-  void SetFeaGradFiles(const std::vector<std::string> &files);
+  void SetFeaGradFiles(const std::vector<std::string>& files);
   //! Set FIDS files (TODO: details)
-  void SetFidsFiles(const std::vector<std::string> &files);
+  void SetFidsFiles(const std::vector<std::string>& files);
 
   //! Set Particle Flags (TODO: details)
   void SetParticleFlags(std::vector<int> flags);
@@ -242,7 +243,12 @@ public:
   void PrintParamInfo();
 
   //! Return the Sampler
-  SamplerType* GetSampler() { return m_sampler.GetPointer(); }
+  std::shared_ptr<Sampler> GetSampler()
+  { return m_sampler; }
+
+  shapeworks::OptimizationVisualizer &GetVisualizer();
+  void SetShowVisualizer(bool show);
+  bool GetShowVisualizer();
 
 protected:
 
@@ -256,7 +262,7 @@ protected:
   void OptimizerStop();
 
   void ReadTransformFile();
-  void ReadPrefixTransformFile(const std::string &s);
+  void ReadPrefixTransformFile(const std::string& s);
 
   void InitializeSampler();
   double GetMinNeighborhoodRadius();
@@ -267,7 +273,7 @@ protected:
 
   void SetInitialCorrespondenceMode();
 
-  virtual void IterateCallback(itk::Object*, const itk::EventObject &);
+  virtual void IterateCallback(itk::Object*, const itk::EventObject&);
 
   void ComputeEnergyAfterIteration();
 
@@ -293,13 +299,13 @@ protected:
 
   virtual void UpdateExportablePoints();
 
-  itk::MaximumEntropyCorrespondenceSampler<ImageType>::Pointer m_sampler;
+  std::shared_ptr<Sampler> m_sampler;
   itk::ParticleProcrustesRegistration<3>::Pointer m_procrustes;
   itk::ParticleGoodBadAssessment<float, 3>::Pointer m_good_bad;
 
   unsigned int m_verbosity_level = 0;
 
-  std::vector<std::vector<itk::Point<double>>>  m_local_points, m_global_points;
+  std::vector<std::vector<itk::Point<double>>> m_local_points, m_global_points;
 
   int m_checkpoint_counter = 0;
   int m_procrustes_counter = 0;
@@ -350,18 +356,19 @@ protected:
   unsigned int m_checkpointing_interval = 50;
   int m_keep_checkpoints = 0;
   double m_cotan_sigma_factor = 5.0;
-  std::vector <int> m_particle_flags;
-  std::vector <int> m_domain_flags;
-  double m_narrow_band{4};
-  bool m_narrow_band_set{false};
-  bool m_fixed_domains_present{false};
-  int m_use_shape_statistics_after{-1};
+  std::vector<int> m_particle_flags;
+  std::vector<int> m_domain_flags;
+  double m_narrow_band = 0.0;
+  bool m_narrow_band_set = false;
+  bool m_fixed_domains_present = false;
+  int m_use_shape_statistics_after = -1;
 
   // Keeps track of which state the optimization is in.
   unsigned int m_mode = 0;
+  /* m_spacing is used to scale the random update vector for particle splitting. */
   double m_spacing = 0;
 
-  std::vector < std::string > m_filenames;
+  std::vector<std::string> m_filenames;
   int m_num_shapes = 0;
 
   std::vector<double> m_energy_a;
@@ -382,11 +389,16 @@ protected:
   bool m_aborted = false;
   std::vector<std::array<itk::Point<double>, 3 >> m_cut_planes;
 
-  itk::MemberCommand<Optimize>::Pointer m_iterate_command;
+  //itk::MemberCommand<Optimize>::Pointer m_iterate_command;
   int m_total_iterations = 0;
   size_t m_iteration_count = 0;
 
   int m_split_number{0};
 
   std::mt19937 m_rand{42};
+
+  bool show_visualizer = false;
+  shapeworks::OptimizationVisualizer visualizer;
 };
+
+}

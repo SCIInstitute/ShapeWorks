@@ -295,7 +295,7 @@ def Run_Pipeline(args):
         "procrustes_scaling" : 1,
         "save_init_splits" : 1,
         "debug_projection" : 0,
-        "verbosity" : 3,
+        "verbosity" : 2,
         "use_statistics_in_init" : 0
     }
     if args.tiny_test:

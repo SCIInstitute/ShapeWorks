@@ -68,8 +68,9 @@ def Run_Pipeline(args):
         fileList_seg = sorted(glob.glob(parentDir + "segmentations/*.nrrd"))
 
     if args.tiny_test:
-        fileList_img = fileList_img[:2]
-        fileList_seg = fileList_seg[:2]
+        # adding more samples to include different resolutions
+        fileList_img = fileList_img[:5]
+        fileList_seg = fileList_seg[:5]
         args.use_single_scale = True
         
     if args.use_subsample:

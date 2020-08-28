@@ -3,18 +3,22 @@
 #include "ParticleSystem/DomainType.h"
 
 #include <itkImageFileReader.h>
+#include <vtkPLYReader.h>
 
 #include <tinyxml.h>
 
 #include "ParticleSystem/MeshWrapper.h"
 #include "ParticleSystem/TriMeshWrapper.h"
 
+namespace shapeworks {
+
 //---------------------------------------------------------------------------
 OptimizeParameterFile::OptimizeParameterFile()
 {}
 
 //---------------------------------------------------------------------------
-bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize *optimize) {
+bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* optimize)
+{
   TiXmlDocument doc(filename.c_str());
   bool loadOkay = doc.LoadFile();
 
@@ -24,7 +28,7 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize *
   }
 
   TiXmlHandle doc_handle(&doc);
-  TiXmlElement *elem;
+  TiXmlElement* elem;
 
   this->verbosity_level_ = 5;
   elem = doc_handle.FirstChild("verbosity").Element();
@@ -51,6 +55,13 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize *
   }
   optimize->SetDomainType(domain_type);
 
+  if (optimize->GetDomainType() == shapeworks::DomainType::Mesh) {
+      if (!this->set_visualizer_parameters(&doc_handle, optimize)) {
+        return false;
+      }
+  }
+
+
   std::vector<unsigned int> number_of_particles;
   elem = doc_handle.FirstChild("number_of_particles").Element();
   if (elem) {
@@ -64,8 +75,8 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize *
     /// TODO: Not sure we need to check this here as it will be checked by Optimize anyway
     if (domains_per_shape != number_of_particles.size()) {
       std::cerr <<
-        "Inconsistency in parameters... domains_per_shape != number_of_particles.size()" <<
-        std::endl;
+                "Inconsistency in parameters... domains_per_shape != number_of_particles.size()" <<
+                std::endl;
       return false;
     }
 
@@ -126,6 +137,29 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize *
   return true;
 }
 
+bool OptimizeParameterFile::set_visualizer_parameters(TiXmlHandle *docHandle, Optimize *optimize)
+{
+  TiXmlElement *elem = nullptr;
+  // Currently the visualizer only works if you call AddMesh on it for every domain.
+  // In order to get it working for image domains, need to add code that extracts meshes from each image and adds them to the visualizer.
+  elem = docHandle->FirstChild("visualizer_enable").Element();
+  if (elem) {
+    optimize->SetShowVisualizer(( bool) atoi(elem->GetText()));
+
+    elem = docHandle->FirstChild("visualizer_wireframe").Element();
+    if (elem) {
+      optimize->GetVisualizer().SetWireFrame(( bool) atoi(elem->GetText()));
+    }
+    elem = docHandle->FirstChild("visualizer_screenshot_directory").Element();
+    if (elem) {
+      std::cout << "WARNING Saving screenshots will increase run time even more!\n";
+      std::string dir = elem->GetText();
+      optimize->GetVisualizer().SetSaveScreenshots(true, dir);
+    }
+  }
+  return true;
+}
+
 //---------------------------------------------------------------------------
 bool OptimizeParameterFile::set_io_parameters(TiXmlHandle* docHandle, Optimize* optimize)
 {
@@ -134,25 +168,25 @@ bool OptimizeParameterFile::set_io_parameters(TiXmlHandle* docHandle, Optimize* 
   // transform file
   std::string transform_file = "";
   elem = docHandle->FirstChild("transform_file").Element();
-  if (elem) { transform_file = elem->GetText();}
+  if (elem) { transform_file = elem->GetText(); }
   optimize->SetTransformFile(transform_file);
 
   // prefix transform file
   std::string prefix_transform_file = "";
   elem = docHandle->FirstChild("prefix_transform_file").Element();
-  if (elem) { prefix_transform_file = elem->GetText();}
+  if (elem) { prefix_transform_file = elem->GetText(); }
   optimize->SetPrefixTransformFile(prefix_transform_file);
 
   // output dir
   std::string output_dir = "";
   elem = docHandle->FirstChild("output_dir").Element();
-  if (elem) { output_dir = elem->GetText();}
+  if (elem) { output_dir = elem->GetText(); }
   optimize->SetOutputDir(output_dir);
 
   // output transform file
   std::string output_transform_file = "transform";
   elem = docHandle->FirstChild("output_transform_file").Element();
-  if (elem) { output_transform_file = elem->GetText();}
+  if (elem) { output_transform_file = elem->GetText(); }
   optimize->SetOutputTransformFile(output_transform_file);
 
   // mesh based attributes
@@ -161,7 +195,7 @@ bool OptimizeParameterFile::set_io_parameters(TiXmlHandle* docHandle, Optimize* 
   std::vector<bool> use_normals;
 
   elem = docHandle->FirstChild("mesh_based_attributes").Element();
-  if (elem) { use_mesh_based_attributes = (bool) atoi(elem->GetText());}
+  if (elem) { use_mesh_based_attributes = (bool) atoi(elem->GetText()); }
   if (use_mesh_based_attributes) {
     elem = docHandle->FirstChild("use_xyz").Element();
     if (elem) {
@@ -174,7 +208,7 @@ bool OptimizeParameterFile::set_io_parameters(TiXmlHandle* docHandle, Optimize* 
 
       if (optimize->GetDomainsPerShape() != use_xyz.size()) {
         std::cerr << "Inconsistency in parameters... m_domains_per_shape != m_use_xyz.size()" <<
-          std::endl;
+                  std::endl;
         return false;
       }
     }
@@ -190,8 +224,8 @@ bool OptimizeParameterFile::set_io_parameters(TiXmlHandle* docHandle, Optimize* 
 
       if (optimize->GetDomainsPerShape() != use_normals.size()) {
         std::cerr <<
-          "Inconsistency in parameters... m_domains_per_shape != m_use_normals.size()" <<
-          std::endl;
+                  "Inconsistency in parameters... m_domains_per_shape != m_use_normals.size()" <<
+                  std::endl;
         return false;
       }
     }
@@ -214,8 +248,8 @@ bool OptimizeParameterFile::set_io_parameters(TiXmlHandle* docHandle, Optimize* 
 
     if (optimize->GetDomainsPerShape() != attributes_per_domain.size()) {
       std::cerr <<
-        "Inconsistency in parameters... m_domains_per_shape != m_attributes_per_domain.size()" <<
-        std::endl;
+                "Inconsistency in parameters... m_domains_per_shape != m_attributes_per_domain.size()" <<
+                std::endl;
       return false;
     }
   }
@@ -224,13 +258,13 @@ bool OptimizeParameterFile::set_io_parameters(TiXmlHandle* docHandle, Optimize* 
   // distribution domain id
   int distribution_domain_id = -1;
   elem = docHandle->FirstChild("distribution_plane_id").Element();
-  if (elem) { distribution_domain_id = atoi(elem->GetText());}
+  if (elem) { distribution_domain_id = atoi(elem->GetText()); }
   optimize->SetDistributionDomainID(distribution_domain_id);
 
   // output cutting plane file
   std::string output_cutting_plane_file = "";
   elem = docHandle->FirstChild("output_cutting_plane_file").Element();
-  if (elem) { output_cutting_plane_file = elem->GetText();}
+  if (elem) { output_cutting_plane_file = elem->GetText(); }
   optimize->SetOutputCuttingPlaneFile(output_cutting_plane_file);
 
   return true;
@@ -242,76 +276,76 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
   TiXmlElement* elem = nullptr;
 
   elem = docHandle->FirstChild("processing_mode").Element();
-  if (elem) { optimize->SetProcessingMode(atoi(elem->GetText()));}
+  if (elem) { optimize->SetProcessingMode(atoi(elem->GetText())); }
 
   elem = docHandle->FirstChild("adaptivity_mode").Element();
-  if (elem) { optimize->SetAdaptivityMode(atoi(elem->GetText()));}
+  if (elem) { optimize->SetAdaptivityMode(atoi(elem->GetText())); }
 
   elem = docHandle->FirstChild("adaptivity_strength").Element();
-  if (elem) { optimize->SetAdaptivityStrength(atof(elem->GetText()));}
+  if (elem) { optimize->SetAdaptivityStrength(atof(elem->GetText())); }
 
   elem = docHandle->FirstChild("pairwise_potential_type").Element();
-  if (elem) { optimize->SetPairwisePotentialType(atoi(elem->GetText()));}
+  if (elem) { optimize->SetPairwisePotentialType(atoi(elem->GetText())); }
 
   elem = docHandle->FirstChild("timepts_per_subject").Element();
-  if (elem) { optimize->SetTimePtsPerSubject(atoi(elem->GetText()));}
+  if (elem) { optimize->SetTimePtsPerSubject(atoi(elem->GetText())); }
 
   elem = docHandle->FirstChild("optimization_iterations").Element();
-  if (elem) { optimize->SetOptimizationIterations(atoi(elem->GetText()));}
+  if (elem) { optimize->SetOptimizationIterations(atoi(elem->GetText())); }
 
   elem = docHandle->FirstChild("optimization_iterations_completed").Element();
-  if (elem) { optimize->SetOptimizationIterationsCompleted(atoi(elem->GetText()));}
+  if (elem) { optimize->SetOptimizationIterationsCompleted(atoi(elem->GetText())); }
 
   elem = docHandle->FirstChild("iterations_per_split").Element();
-  if (elem) { optimize->SetIterationsPerSplit(atoi(elem->GetText()));}
+  if (elem) { optimize->SetIterationsPerSplit(atoi(elem->GetText())); }
 
   elem = docHandle->FirstChild("init_criterion").Element();
-  if (elem) { optimize->SetInitializationCriterion(atof(elem->GetText()));}
+  if (elem) { optimize->SetInitializationCriterion(atof(elem->GetText())); }
 
   elem = docHandle->FirstChild("opt_criterion").Element();
-  if (elem) { optimize->SetOptimizationCriterion(atof(elem->GetText()));}
+  if (elem) { optimize->SetOptimizationCriterion(atof(elem->GetText())); }
 
   elem = docHandle->FirstChild("use_shape_statistics_in_init").Element();
-  if (elem) { optimize->SetUseShapeStatisticsInInit((bool) atoi(elem->GetText()));}
+  if (elem) { optimize->SetUseShapeStatisticsInInit((bool) atoi(elem->GetText())); }
 
   elem = docHandle->FirstChild("procrustes_interval").Element();
-  if (elem) { optimize->SetProcrustesInterval(atoi(elem->GetText()));}
+  if (elem) { optimize->SetProcrustesInterval(atoi(elem->GetText())); }
 
   elem = docHandle->FirstChild("procrustes_scaling").Element();
-  if (elem) { optimize->SetProcrustesScaling(atoi(elem->GetText()));}
+  if (elem) { optimize->SetProcrustesScaling(atoi(elem->GetText())); }
 
   elem = docHandle->FirstChild("relative_weighting").Element();
-  if (elem) { optimize->SetRelativeWeighting(atof(elem->GetText()));}
+  if (elem) { optimize->SetRelativeWeighting(atof(elem->GetText())); }
 
   elem = docHandle->FirstChild("initial_relative_weighting").Element();
-  if (elem) { optimize->SetInitialRelativeWeighting(atof(elem->GetText()));}
+  if (elem) { optimize->SetInitialRelativeWeighting(atof(elem->GetText())); }
 
   elem = docHandle->FirstChild("starting_regularization").Element();
-  if (elem) { optimize->SetStartingRegularization(atof(elem->GetText()));}
+  if (elem) { optimize->SetStartingRegularization(atof(elem->GetText())); }
 
   elem = docHandle->FirstChild("ending_regularization").Element();
-  if (elem) { optimize->SetEndingRegularization(atof(elem->GetText()));}
+  if (elem) { optimize->SetEndingRegularization(atof(elem->GetText())); }
 
   elem = docHandle->FirstChild("recompute_regularization_interval").Element();
-  if (elem) { optimize->SetRecomputeRegularizationInterval(atoi(elem->GetText()));}
+  if (elem) { optimize->SetRecomputeRegularizationInterval(atoi(elem->GetText())); }
 
   elem = docHandle->FirstChild("save_init_splits").Element();
-  if (elem) { optimize->SetSaveInitSplits((bool) atoi(elem->GetText()));}
+  if (elem) { optimize->SetSaveInitSplits((bool) atoi(elem->GetText())); }
 
   elem = docHandle->FirstChild("checkpointing_interval").Element();
-  if (elem) { optimize->SetCheckpointingInterval(atoi(elem->GetText()));}
+  if (elem) { optimize->SetCheckpointingInterval(atoi(elem->GetText())); }
 
   elem = docHandle->FirstChild("keep_checkpoints").Element();
-  if (elem) { optimize->SetKeepCheckpoints(atoi(elem->GetText()));}
+  if (elem) { optimize->SetKeepCheckpoints(atoi(elem->GetText())); }
 
   elem = docHandle->FirstChild("cotan_sigma_factor").Element();
-  if (elem) { optimize->SetCotanSigmaFactor(atof(elem->GetText()));}
+  if (elem) { optimize->SetCotanSigmaFactor(atof(elem->GetText())); }
 
   elem = docHandle->FirstChild("narrow_band").Element();
-  if (elem) { optimize->SetNarrowBand(atof(elem->GetText()));}
+  if (elem) { optimize->SetNarrowBand(atof(elem->GetText())); }
 
   elem = docHandle->FirstChild("use_shape_statistics_after").Element();
-  if (elem) { optimize->SetUseShapeStatisticsAfter(atof(elem->GetText()));}
+  if (elem) { optimize->SetUseShapeStatisticsAfter(atof(elem->GetText())); }
 
   return true;
 }
@@ -322,24 +356,25 @@ bool OptimizeParameterFile::set_debug_parameters(TiXmlHandle* docHandle, Optimiz
   TiXmlElement* elem = nullptr;
 
   elem = docHandle->FirstChild("normal_angle").Element();
-  if (elem) { optimize->SetNormalAngle(atof(elem->GetText()) * itk::Math::pi / 180.0);}
+  if (elem) { optimize->SetNormalAngle(atof(elem->GetText()) * itk::Math::pi / 180.0); }
 
   elem = docHandle->FirstChild("report_bad_particles").Element();
-  if (elem) { optimize->SetPerformGoodBad(static_cast<bool>(atoi(elem->GetText())));}
+  if (elem) { optimize->SetPerformGoodBad(static_cast<bool>(atoi(elem->GetText()))); }
 
   elem = docHandle->FirstChild("log_energy").Element();
-  if (elem) { optimize->SetLogEnergy(static_cast<bool>(atoi(elem->GetText())));}
+  if (elem) { optimize->SetLogEnergy(static_cast<bool>(atoi(elem->GetText()))); }
 
   return true;
 }
 
-std::string OptimizeParameterFile::getFileNameWithoutExtension(std::string path) {
-  char *str = new char[path.length() + 1];
+std::string OptimizeParameterFile::getFileNameWithoutExtension(std::string path)
+{
+  char* str = new char[path.length() + 1];
   strcpy(str, path.c_str());
 
   // separate filename from the full path
-  char *fname;
-  char *pch;
+  char* fname;
+  char* pch;
   pch = strtok(str, "/");
   while (pch != NULL) {
     fname = pch;
@@ -347,7 +382,7 @@ std::string OptimizeParameterFile::getFileNameWithoutExtension(std::string path)
   }
 
   // separate filename from the extension
-  char *pch2;
+  char* pch2;
   pch2 = strrchr(fname, '.');
   int num = pch2 - fname + 1;
   int num2 = strlen(fname);
@@ -356,8 +391,9 @@ std::string OptimizeParameterFile::getFileNameWithoutExtension(std::string path)
   return std::string(fname);
 }
 
-void OptimizeParameterFile::ParseFileNamesFromPaths(std::vector<std::string> &filePaths, Optimize *optimize) {
-  std::vector < std::string > filenames;
+void OptimizeParameterFile::ParseFileNamesFromPaths(std::vector<std::string>& filePaths, Optimize* optimize)
+{
+  std::vector<std::string> filenames;
   for (int i = 0; i < filePaths.size(); i++) {
     std::string fname = this->getFileNameWithoutExtension(filePaths[i]);
     filenames.push_back(std::string(fname));
@@ -382,13 +418,13 @@ bool OptimizeParameterFile::read_image_inputs(TiXmlHandle* docHandle, Optimize* 
   auto flags = optimize->GetDomainFlags();
 
   // load input images
-  std::vector < std::string > imageFiles;
+  std::vector<std::string> imageFiles;
   std::string imagefilename;
   while (inputsBuffer >> imagefilename) {
     imageFiles.push_back(imagefilename);
   }
 
-  for(int index = 0; index < imageFiles.size(); index++) {
+  for (int index = 0; index < imageFiles.size(); index++) {
     bool fixed_domain = false;
     for (int i = 0; i < flags.size(); i++) {
       if (flags[i] == index) {
@@ -400,8 +436,8 @@ bool OptimizeParameterFile::read_image_inputs(TiXmlHandle* docHandle, Optimize* 
       if (this->verbosity_level_ > 1) {
         std::cout << "Reading inputfile: " << imageFiles[index] << "...\n" << std::flush;
       }
-      typename itk::ImageFileReader < Optimize::ImageType > ::Pointer reader = itk::ImageFileReader <
-        Optimize::ImageType > ::New();
+      typename itk::ImageFileReader<Optimize::ImageType>::Pointer reader = itk::ImageFileReader<
+        Optimize::ImageType>::New();
       reader->SetFileName(imageFiles[index]);
       reader->UpdateLargestPossibleRegion();
       const auto image = reader->GetOutput();
@@ -420,8 +456,9 @@ bool OptimizeParameterFile::read_image_inputs(TiXmlHandle* docHandle, Optimize* 
 }
 
 //---------------------------------------------------------------------------
-bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle *docHandle, Optimize *optimize) {
-  TiXmlElement *elem = nullptr;
+bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* optimize)
+{
+  TiXmlElement* elem = nullptr;
 
   elem = docHandle->FirstChild("inputs").Element();
   if (!elem) {
@@ -435,7 +472,7 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle *docHandle, Optimize *o
   auto flags = optimize->GetDomainFlags();
 
   // load input images
-  std::vector < std::string > meshFiles;
+  std::vector<std::string> meshFiles;
   std::string meshfilename;
   while (inputsBuffer >> meshfilename) {
     meshFiles.push_back(meshfilename);
@@ -454,35 +491,24 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle *docHandle, Optimize *o
         std::cout << "Reading inputfile: " << meshFiles[index] << "...\n" << std::flush;
       }
 
+      if (this->verbosity_level_ <= 1) {
+        TriMesh::set_verbose(0);
+      }
       TriMesh *themesh = TriMesh::read(meshFiles[index].c_str());
       if (themesh != NULL) {
-        themesh->need_faces();
-        themesh->need_neighbors();
-        orient(themesh);
-        themesh->need_bsphere();
-        if (!themesh->normals.empty())
-          themesh->normals.clear();
-        themesh->need_normals();
-        if (!themesh->tstrips.empty())
-          themesh->tstrips.clear();
-        themesh->need_tstrips();
-        if (!themesh->adjacentfaces.empty())
-          themesh->adjacentfaces.clear();
-        themesh->need_adjacentfaces();
-        if (!themesh->across_edge.empty())
-          themesh->across_edge.clear();
-        themesh->need_across_edge();
-        themesh->need_faceedges();
-        themesh->need_oneringfaces();
-        themesh->need_abs_curvatures();
-        themesh->need_speed();
-        themesh->setSpeedType(1);
-
         shapeworks::MeshWrapper *mesh = new shapeworks::TriMeshWrapper(themesh);
         optimize->AddMesh(mesh);
       }
       else {
+        std::cerr << "Failed to read " << meshFiles[index] << "\n";
         return false;
+      }
+
+      if (optimize->GetShowVisualizer()) {
+        vtkSmartPointer<vtkPLYReader> reader = vtkSmartPointer<vtkPLYReader>::New();
+        reader->SetFileName(meshFiles[index].c_str());
+        reader->Update();
+        optimize->GetVisualizer().AddMesh(reader->GetOutput(), themesh);
       }
     }
     else {
@@ -504,11 +530,12 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle *docHandle, Optimize *o
 }
 
 //---------------------------------------------------------------------------
-bool OptimizeParameterFile::read_point_files(TiXmlHandle *docHandle, Optimize *optimize) {
+bool OptimizeParameterFile::read_point_files(TiXmlHandle* docHandle, Optimize* optimize)
+{
   // load point files
-  TiXmlElement *elem = nullptr;
+  TiXmlElement* elem = nullptr;
   std::istringstream inputsBuffer;
-  std::vector <std::string> pointFiles;
+  std::vector<std::string> pointFiles;
   elem = docHandle->FirstChild("point_files").Element();
   if (elem) {
     inputsBuffer.str(elem->GetText());
@@ -532,9 +559,10 @@ bool OptimizeParameterFile::read_point_files(TiXmlHandle *docHandle, Optimize *o
 }
 
 //---------------------------------------------------------------------------
-bool OptimizeParameterFile::read_mesh_attributes(TiXmlHandle *docHandle, Optimize *optimize) {
+bool OptimizeParameterFile::read_mesh_attributes(TiXmlHandle* docHandle, Optimize* optimize)
+{
 
-  TiXmlElement *elem = nullptr;
+  TiXmlElement* elem = nullptr;
   std::istringstream inputsBuffer;
   std::string filename;
   int numShapes = optimize->GetNumShapes();
@@ -564,12 +592,12 @@ bool OptimizeParameterFile::read_mesh_attributes(TiXmlHandle *docHandle, Optimiz
 
   // attributes
   if ((attributes_per_domain.size() >= 1 &&
-      *std::max_element(attributes_per_domain.begin(),
-      attributes_per_domain.end()) > 0) ||
+       *std::max_element(attributes_per_domain.begin(),
+                         attributes_per_domain.end()) > 0) ||
       optimize->GetUseMeshBasedAttributes()) {
     // attribute scales
     double sc;
-    std::vector < double > attr_scales;
+    std::vector<double> attr_scales;
 
     elem = docHandle->FirstChild("attribute_scales").Element();
     if (elem) {
@@ -601,7 +629,7 @@ bool OptimizeParameterFile::read_mesh_attributes(TiXmlHandle *docHandle, Optimiz
     optimize->SetAttributeScales(attr_scales);
 
     // attribute files
-    std::vector < std::string > attrFiles;
+    std::vector<std::string> attrFiles;
     elem = docHandle->FirstChild("attribute_files").Element();
     if (elem) {
       inputsBuffer.str(elem->GetText());
@@ -618,7 +646,7 @@ bool OptimizeParameterFile::read_mesh_attributes(TiXmlHandle *docHandle, Optimiz
 
     // need fids for mesh based fea
     if (optimize->GetUseMeshBasedAttributes()) {
-      std::vector < std::string > feaGradFiles;
+      std::vector<std::string> feaGradFiles;
       elem = docHandle->FirstChild("attribute_grad_files").Element();
       if (elem) {
         inputsBuffer.str(elem->GetText());
@@ -642,13 +670,13 @@ bool OptimizeParameterFile::read_mesh_attributes(TiXmlHandle *docHandle, Optimiz
       else {
         if (attributes_per_domain.size() >= 1 &&
             *std::max_element(attributes_per_domain.begin(),
-            attributes_per_domain.end()) > 0) {
+                              attributes_per_domain.end()) > 0) {
           std::cerr << "ERROR: No feature gradient files!!!" << std::endl;
           return false;
         }
       }
 
-      std::vector < std::string > fidsFiles;
+      std::vector<std::string> fidsFiles;
       elem = docHandle->FirstChild("fids").Element();
       if (elem) {
         inputsBuffer.str(elem->GetText());
@@ -669,7 +697,7 @@ bool OptimizeParameterFile::read_mesh_attributes(TiXmlHandle *docHandle, Optimiz
       else {
         if (attributes_per_domain.size() >= 1 &&
             *std::max_element(attributes_per_domain.begin(),
-            attributes_per_domain.end()) > 0) {
+                              attributes_per_domain.end()) > 0) {
           std::cerr << "ERROR: Must provide fids!!" << std::endl;
           return false;
         }
@@ -724,13 +752,13 @@ bool OptimizeParameterFile::read_distribution_cutting_plane(TiXmlHandle* doc_han
 
   if (cpVals.size() < 9) {
     std::cerr <<
-      "ERROR: Incomplete cutting plane data for reference shape! No cutting planes will be loaded!!"
+              "ERROR: Incomplete cutting plane data for reference shape! No cutting planes will be loaded!!"
               << std::endl;
     return false;
   }
   else {
     optimize->SetUseCuttingPlanes(true);
-    vnl_vector_fixed < double, 3 > a, b, c;
+    vnl_vector_fixed<double, 3> a, b, c;
     int ctr = 0;
 
     for (int shapeCount = 0; shapeCount < numShapes; shapeCount++) {
@@ -748,26 +776,38 @@ bool OptimizeParameterFile::read_distribution_cutting_plane(TiXmlHandle* doc_han
 
       // If initial transform provided, transform cutting plane points
       if (optimize->GetPrefixTransformFile() != "" && optimize->GetTransformFile() != "") {
-        itk::ParticleSystem < 3 > ::PointType pa;
-        itk::ParticleSystem < 3 > ::PointType pb;
-        itk::ParticleSystem < 3 > ::PointType pc;
+        itk::ParticleSystem<3>::PointType pa;
+        itk::ParticleSystem<3>::PointType pb;
+        itk::ParticleSystem<3>::PointType pc;
 
-        pa[0] = a[0]; pa[1] = a[1]; pa[2] = a[2];
-        pb[0] = b[0]; pb[1] = b[1]; pb[2] = b[2];
-        pc[0] = c[0]; pc[1] = c[1]; pc[2] = c[2];
+        pa[0] = a[0];
+        pa[1] = a[1];
+        pa[2] = a[2];
+        pb[0] = b[0];
+        pb[1] = b[1];
+        pb[2] = b[2];
+        pc[0] = c[0];
+        pc[1] = c[1];
+        pc[2] = c[2];
 
-        itk::ParticleSystem < 3 >::TransformType T =
+        itk::ParticleSystem<3>::TransformType T =
           optimize->GetSampler()->GetParticleSystem()->GetTransform(
             shapeCount);
-        itk::ParticleSystem < 3 >::TransformType prefT =
+        itk::ParticleSystem<3>::TransformType prefT =
           optimize->GetSampler()->GetParticleSystem()->GetPrefixTransform(shapeCount);
         pa = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pa, T * prefT);
         pb = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pb, T * prefT);
         pc = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pc, T * prefT);
 
-        a[0] = pa[0]; a[1] = pa[1]; a[2] = pa[2];
-        b[0] = pb[0]; b[1] = pb[1]; b[2] = pb[2];
-        c[0] = pc[0]; c[1] = pc[1]; c[2] = pc[2];
+        a[0] = pa[0];
+        a[1] = pa[1];
+        a[2] = pa[2];
+        b[0] = pb[0];
+        b[1] = pb[1];
+        b[2] = pb[2];
+        c[0] = pc[0];
+        c[1] = pc[1];
+        c[2] = pc[2];
       }
 
       optimize->SetCuttingPlane(shapeCount, a, b, c);
@@ -799,7 +839,7 @@ bool OptimizeParameterFile::read_cutting_planes(TiXmlHandle* docHandle, Optimize
     inputsBuffer.str("");
     if (cutting_planes_per_input.size() != numShapes) {
       std::cerr <<
-        "ERROR: Incomplete cutting plane data! Number of cutting planes for every input shape is required!!"
+                "ERROR: Incomplete cutting plane data! Number of cutting planes for every input shape is required!!"
                 << std::endl;
       throw 1;
     }
@@ -827,12 +867,12 @@ bool OptimizeParameterFile::read_cutting_planes(TiXmlHandle* docHandle, Optimize
 
   if (cpVals.size() < 9 * numPlanes) {
     std::cerr << "ERROR: Incomplete cutting plane data! No cutting planes will be loaded!!" <<
-      std::endl;
+              std::endl;
     throw 1;
   }
   else {
     optimize->SetUseCuttingPlanes(true);
-    vnl_vector_fixed < double, 3 > a, b, c;
+    vnl_vector_fixed<double, 3> a, b, c;
     int ctr = 0;
 
     for (int shapeCount = 0; shapeCount < numShapes; shapeCount++) {
@@ -852,26 +892,38 @@ bool OptimizeParameterFile::read_cutting_planes(TiXmlHandle* docHandle, Optimize
 
         // If initial transform provided, transform cutting plane points
         if (optimize->GetPrefixTransformFile() != "" && optimize->GetTransformFile() != "") {
-          itk::ParticleSystem < 3 > ::PointType pa;
-          itk::ParticleSystem < 3 > ::PointType pb;
-          itk::ParticleSystem < 3 > ::PointType pc;
+          itk::ParticleSystem<3>::PointType pa;
+          itk::ParticleSystem<3>::PointType pb;
+          itk::ParticleSystem<3>::PointType pc;
 
-          pa[0] = a[0]; pa[1] = a[1]; pa[2] = a[2];
-          pb[0] = b[0]; pb[1] = b[1]; pb[2] = b[2];
-          pc[0] = c[0]; pc[1] = c[1]; pc[2] = c[2];
+          pa[0] = a[0];
+          pa[1] = a[1];
+          pa[2] = a[2];
+          pb[0] = b[0];
+          pb[1] = b[1];
+          pb[2] = b[2];
+          pc[0] = c[0];
+          pc[1] = c[1];
+          pc[2] = c[2];
 
-          itk::ParticleSystem < 3 >::TransformType T =
+          itk::ParticleSystem<3>::TransformType T =
             optimize->GetSampler()->GetParticleSystem()->GetTransform(
               shapeCount);
-          itk::ParticleSystem < 3 >::TransformType prefT =
+          itk::ParticleSystem<3>::TransformType prefT =
             optimize->GetSampler()->GetParticleSystem()->GetPrefixTransform(shapeCount);
           pa = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pa, T * prefT);
           pb = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pb, T * prefT);
           pc = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pc, T * prefT);
 
-          a[0] = pa[0]; a[1] = pa[1]; a[2] = pa[2];
-          b[0] = pb[0]; b[1] = pb[1]; b[2] = pb[2];
-          c[0] = pc[0]; c[1] = pc[1]; c[2] = pc[2];
+          a[0] = pa[0];
+          a[1] = pa[1];
+          a[2] = pa[2];
+          b[0] = pb[0];
+          b[1] = pb[1];
+          b[2] = pb[2];
+          c[0] = pc[0];
+          c[1] = pc[1];
+          c[2] = pc[2];
         }
 
         optimize->GetSampler()->SetCuttingPlane(shapeCount, a, b, c);
@@ -903,7 +955,7 @@ bool OptimizeParameterFile::read_cutting_spheres(TiXmlHandle* doc_handle, Optimi
     inputsBuffer.str("");
     if (spheres_per_input.size() != numShapes) {
       std::cerr <<
-        "ERROR: Incomplete cutting plane data! Number of cutting spheres for every input shape is required!!"
+                "ERROR: Incomplete cutting plane data! Number of cutting spheres for every input shape is required!!"
                 << std::endl;
       return false;
     }
@@ -925,7 +977,7 @@ bool OptimizeParameterFile::read_cutting_spheres(TiXmlHandle* doc_handle, Optimi
 
     if (radList.size() != numSpheres) {
       std::cerr << "ERROR: Incomplete sphere radius data! No spheres will be loaded!!" <<
-        std::endl;
+                std::endl;
       return false;
     }
     else {
@@ -944,11 +996,11 @@ bool OptimizeParameterFile::read_cutting_spheres(TiXmlHandle* doc_handle, Optimi
 
         if (spVals.size() < 3 * numSpheres) {
           std::cerr << "ERROR: Incomplete sphere center data! No spheres will be loaded!!" <<
-            std::endl;
+                    std::endl;
           return false;
         }
         else {
-          vnl_vector_fixed < double, 3 > center;
+          vnl_vector_fixed<double, 3> center;
           double rad;
           int c_ctr = 0;
           int r_ctr = 0;
@@ -979,7 +1031,7 @@ bool OptimizeParameterFile::read_explanatory_variables(TiXmlHandle* doc_handle, 
   TiXmlElement* elem = nullptr;
 
   std::istringstream inputsBuffer;
-  std::vector < double > evars;
+  std::vector<double> evars;
   double etmp;
 
   elem = doc_handle->FirstChild("explanatory_variable").Element();
@@ -991,13 +1043,13 @@ bool OptimizeParameterFile::read_explanatory_variables(TiXmlHandle* doc_handle, 
     evars.push_back(etmp);
   }
 
-  dynamic_cast < itk::ParticleShapeLinearRegressionMatrixAttribute < double, 3 >* >
+  dynamic_cast < itk::ParticleShapeLinearRegressionMatrixAttribute<double, 3>* >
   (optimize->GetSampler()->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())->SetExplanatory(
     evars);
 
-  dynamic_cast < itk::ParticleShapeMixedEffectsMatrixAttribute < double, 3 >* >
+  dynamic_cast < itk::ParticleShapeMixedEffectsMatrixAttribute<double, 3>* >
   (optimize->GetSampler()->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())->
-  SetExplanatory(evars);
+    SetExplanatory(evars);
 
   optimize->SetUseRegression(true);
   if (optimize->GetTimePtsPerSubject() > 1) {
@@ -1037,3 +1089,5 @@ std::vector<int> OptimizeParameterFile::read_int_list(TiXmlHandle* doc_handle, s
   return list;
 }
 //---------------------------------------------------------------------------
+
+}

@@ -12,7 +12,9 @@ class Session;
 
 class Ui_OptimizeTool;
 
+namespace shapeworks {
 class QOptimize;
+}
 
 class OptimizeTool : public QWidget
 {
@@ -59,7 +61,7 @@ signals:
 private:
   QList<QThread*> threads_;
   bool optimization_is_running_ = false;
-  QOptimize* optimize_ = nullptr;
+  shapeworks::QOptimize* optimize_ = nullptr;
   Ui_OptimizeTool* ui_;
   QSharedPointer<Session> session_;
 };

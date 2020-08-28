@@ -15,6 +15,8 @@ class Mesh;
 class Image
 {
 public:
+  enum InterpolationType { Linear, NearestNeighbor };
+
   using PixelType = float;
   using ImageType = itk::Image<PixelType, 3>;
 
@@ -132,11 +134,14 @@ public:
   /// helper identical to setOrigin(image.center()) changing origin (in the image header) to physcial center of the image
   Image& recenter();
 
-  /// Resamples image to new size based on desired physical spacing
-  Image& resample(const Point3& physicalSpacing);
+  /// Resamples by applying transform then sampling from given origin along direction axes at spacing physical units per pixel for dims pixels using specified interpolator
+  Image& resample(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);
 
-  /// Resizes image with new physical spacing based on desired logical size
-  Image& resize(Dims logicalDims);
+  /// Resamples image using new physical spacing, updating logical dims to keep all image data for this spacing
+  Image& resample(const Vector3& physicalSpacing, InterpolationType interp = Linear);
+  
+  /// Changes logical image size, computing new physical spacing based on this size (i.e., physical image size remains the same)
+  Image& resize(Dims logicalDims, InterpolationType interp = Linear);
 
   /// pads an image in all directions with constant value
   Image& pad(int padding, PixelType value = 0.0);
@@ -154,10 +159,10 @@ public:
   Image& rotate(const double angle, const Vector3 &axis);
 
   /// applies the given transformation to the image by using resampling filter
-  Image& applyTransform(const TransformPtr transform, const Dims dims, const Point3 origin, const Vector spacing, const ImageType::DirectionType direction);
+  Image& applyTransform(const TransformPtr transform, InterpolationType interp = Linear);
 
   /// applies the given transformation to the image by using resampling filter
-  Image& applyTransform(const TransformPtr transform);
+  Image& applyTransform(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);
 
   /// extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image
   Image& extractLabel(const PixelType label = 1.0);
