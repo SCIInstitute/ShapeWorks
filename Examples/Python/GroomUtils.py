@@ -670,7 +670,9 @@ def MeshesToVolumes(outDir, meshList, spacing, printCmd=True):
 def getMeshInfo(outDir, meshList, spacing, printCmd=True):
     # get meshes in vtk format 
     meshList = getVTKmeshes(meshList)
-    meshListStr = str(meshList).replace("[","").replace("]","")
+    meshListStr = ''
+    for mesh in meshList:
+        meshListStr += mesh + '\n'
     # Write XML
     xmlfilename = outDir + "MeshInfo.xml"
     out_origin = outDir + "origin.txt"
@@ -690,8 +692,11 @@ def getMeshInfo(outDir, meshList, spacing, printCmd=True):
     if printCmd:
         print("CMD: " + " ".join(execCommand))
     subprocess.check_call(execCommand)
-    os.remove(xmlfilename)
-    input()
+    # os.remove(xmlfilename)
+    origin_file = open(out_origin, 'r')
+    origin = np.array(origin_file.read().split()).astype(int)
+    size_file = open(out_size, 'r')
+    size = np.array(size_file.read().split()).astype(int)
     return origin, size
 
 
