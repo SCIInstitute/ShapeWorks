@@ -114,7 +114,7 @@ def Run_Pipeline(args):
 
         # If not interactive, set cutting plane
         if not args.interactive:
-            cutting_plane_points = np.array([[68.5970168,-128.34930979,-709.84309115],[1.0,-1.0,-709.84309115],[-1.0,1.0,-709.84309115]])
+            cutting_plane_points = np.array([[-1.0, -1.0,-40.5],[1.0,-1.0,-40.5],[-1.0,1.0, -40.5]])
             cp_prefix = 'm03_L'
             choice = 0
 
@@ -206,7 +206,7 @@ def Run_Pipeline(args):
                 input_file = medianFile.replace("centered", "aligned").replace(".nrrd", ".aligned.DT.nrrd")
                 cutting_plane_points = SelectCuttingPlane(input_file)
 
-            else:
+            elif choice == 1:
                 postfix = "_femur.isores.pad.com.center.aligned.DT.nrrd"
                 path = "aligned/segmentations/"
                 input_file = parentDir + path + cp_prefix + postfix
@@ -297,7 +297,7 @@ def Run_Pipeline(args):
                 input_file = medianFile.replace("centered", "aligned").replace(".nrrd", ".aligned.DT.nrrd")
                 cutting_plane_points = SelectCuttingPlane(input_file)
 
-            else:
+            elif choice == 1:
                 postfix = "_femur.isores.pad.com.center.aligned.DT.nrrd"
                 path = "aligned/"
                 input_file = parentDir + path + cp_prefix + postfix
