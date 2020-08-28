@@ -7,7 +7,6 @@ Miscellaneous filtering operations on trimeshes
 */
 
 
-#include <stdio.h>
 #include "TriMesh.h"
 #include "TriMesh_algo.h"
 #include "lineqn.h"
@@ -16,13 +15,7 @@ using namespace std;
 #define dprintf TriMesh::dprintf
 
 
-// Quick 'n dirty portable random number generator 
-static inline float tinyrnd()
-{
-	static unsigned trand = 0;
-	trand = 1664525u * trand + 1013904223u;
-	return (float) trand / 4294967296.0f;
-}
+namespace trimesh {
 
 
 // Create an offset surface from a mesh.  Dumb - just moves along the
@@ -50,14 +43,27 @@ void inflate(TriMesh *mesh, float amount)
 void apply_xform(TriMesh *mesh, const xform &xf)
 {
 	int nv = mesh->vertices.size();
+
+#pragma omp parallel for
 	for (int i = 0; i < nv; i++)
 		mesh->vertices[i] = xf * mesh->vertices[i];
+
 	if (!mesh->normals.empty()) {
 		xform nxf = norm_xf(xf);
+#pragma omp parallel for
 		for (int i = 0; i < nv; i++) {
 			mesh->normals[i] = nxf * mesh->normals[i];
 			normalize(mesh->normals[i]);
 		}
+	}
+
+	if (mesh->bbox.valid) {
+		mesh->bbox.valid = false;
+		mesh->need_bbox();
+	}
+	if (mesh->bsphere.valid) {
+		mesh->bsphere.valid = false;
+		mesh->need_bsphere();
 	}
 }
 
@@ -97,18 +103,13 @@ void scale(TriMesh *mesh, float s, const vec &d)
 }
 
 
-// Clip mesh to the given bounding box 
-void clip(TriMesh *mesh, const TriMesh::BBox &b)
+// Clip mesh to the given bounding box
+void clip(TriMesh *mesh, const box &b)
 {
 	int nv = mesh->vertices.size();
 	vector<bool> toremove(nv, false);
 	for (int i = 0; i < nv; i++)
-		if (mesh->vertices[i][0] < b.min[0] ||
-		    mesh->vertices[i][0] > b.max[0] ||
-		    mesh->vertices[i][1] < b.min[1] ||
-		    mesh->vertices[i][1] > b.max[1] ||
-		    mesh->vertices[i][2] < b.min[2] ||
-		    mesh->vertices[i][2] > b.max[2])
+		if (!b.contains(mesh->vertices[i]))
 			toremove[i] = true;
 
 	remove_vertices(mesh, toremove);
@@ -126,13 +127,13 @@ point point_center_of_mass(const vector<point> &pts)
 // Find (area-weighted) center of mass of a mesh
 point mesh_center_of_mass(TriMesh *mesh)
 {
+	mesh->need_faces();
 	if (mesh->faces.empty() && mesh->tstrips.empty())
 		return point_center_of_mass(mesh->vertices);
 
 	point com;
 	float totwt = 0;
 
-	mesh->need_faces();
 	int nf = mesh->faces.size();
 	for (int i = 0; i < nf; i++) {
 		const point &v0 = mesh->vertices[mesh->faces[i][0]];
@@ -149,7 +150,7 @@ point mesh_center_of_mass(TriMesh *mesh)
 
 
 // Compute covariance of a bunch of points
-void point_covariance(const vector<point> &pts, float C[3][3])
+void point_covariance(const vector<point> &pts, float (&C)[3][3])
 {
 	for (int j = 0; j < 3; j++)
 		for (int k = 0; k < 3; k++)
@@ -173,14 +174,13 @@ void point_covariance(const vector<point> &pts, float C[3][3])
 
 
 // Compute covariance of faces (area-weighted) in a mesh
-void mesh_covariance(TriMesh *mesh, float C[3][3])
+void mesh_covariance(TriMesh *mesh, float (&C)[3][3])
 {
+	mesh->need_faces();
 	if (mesh->faces.empty() && mesh->tstrips.empty()) {
 		point_covariance(mesh->vertices, C);
 		return;
 	}
-
-	mesh->need_faces();
 
 	for (int j = 0; j < 3; j++)
 		for (int k = 0; k < 3; k++)
@@ -362,8 +362,8 @@ void pca_snap(TriMesh *mesh)
 static float max_x(const TriMesh *mesh, int i)
 {
 	return max(max(mesh->vertices[mesh->faces[i][0]][0],
-		       mesh->vertices[mesh->faces[i][1]][0]),
-		       mesh->vertices[mesh->faces[i][2]][0]);
+	               mesh->vertices[mesh->faces[i][1]][0]),
+	               mesh->vertices[mesh->faces[i][2]][0]);
 }
 
 
@@ -381,7 +381,8 @@ void orient(TriMesh *mesh)
 	dprintf("Auto-orienting mesh... ");
 	unsigned cc = 0;
 	vector<int> cc_farthest;
-	for (int i = 0; i < mesh->faces.size(); i++) {
+	int nf = mesh->faces.size();
+	for (int i = 0; i < nf; i++) {
 		if (mesh->flags[i] != NONE)
 			continue;
 		mesh->flags[i] = cc;
@@ -395,9 +396,9 @@ void orient(TriMesh *mesh)
 			q.pop_back();
 			for (int j = 0; j < 3; j++) {
 				int v0 = mesh->faces[f][j];
-				int v1 = mesh->faces[f][(j+1)%3];
+				int v1 = mesh->faces[f][NEXT_MOD3(j)];
 				const vector<int> &a = mesh->adjacentfaces[v0];
-				for (int k = 0; k < a.size(); k++) {
+				for (size_t k = 0; k < a.size(); k++) {
 					int f1 = a[k];
 					if (mesh->flags[f1] != NONE)
 						continue;
@@ -421,7 +422,7 @@ void orient(TriMesh *mesh)
 	}
 
 	vector<bool> cc_flip(cc, false);
-	for (int i = 0; i < cc; i++) {
+	for (unsigned i = 0; i < cc; i++) {
 		int f = cc_farthest[i];
 		const point &v0 = mesh->vertices[mesh->faces[f][0]];
 		const point &v1 = mesh->vertices[mesh->faces[f][1]];
@@ -434,18 +435,18 @@ void orient(TriMesh *mesh)
 		int v = mesh->faces[f][j];
 		const vector<int> &a = mesh->adjacentfaces[v];
 		vec n;
-		for (int k = 0; k < a.size(); k++) {
+		for (size_t k = 0; k < a.size(); k++) {
 			int f1 = a[k];
-			const point &v0 = mesh->vertices[mesh->faces[f1][0]];
-			const point &v1 = mesh->vertices[mesh->faces[f1][1]];
-			const point &v2 = mesh->vertices[mesh->faces[f1][2]];
-			n += trinorm(v0, v1, v2);
+			const point &v10 = mesh->vertices[mesh->faces[f1][0]];
+			const point &v11 = mesh->vertices[mesh->faces[f1][1]];
+			const point &v12 = mesh->vertices[mesh->faces[f1][2]];
+			n += trinorm(v10, v11, v12);
 		}
 		if (n[0] < 0.0f)
 			cc_flip[i] = true;
 	}
 
-	for (int i = 0; i < mesh->faces.size(); i++) {
+	for (int i = 0; i < nf; i++) {
 		if (cc_flip[mesh->flags[i]])
 			swap(mesh->faces[i][1], mesh->faces[i][2]);
 	}
@@ -475,18 +476,19 @@ void noisify(TriMesh *mesh, float amount)
 	for (int i = 0; i < nv; i++) {
 		point &v = mesh->vertices[i];
 		// Tangential
-		for (int j = 0; j < mesh->neighbors[i].size(); j++) {
+		int nn = mesh->neighbors[i].size();
+		for (int j = 0; j < nn; j++) {
 			const point &n = mesh->vertices[mesh->neighbors[i][j]];
 			float scale = amount / (amount + len(n-v));
-			disp[i] += (float) tinyrnd() * scale * (n-v);
+			disp[i] += uniform_rnd(scale) * (n-v);
 		}
-		if (mesh->neighbors[i].size())
-			disp[i] /= (float) mesh->neighbors[i].size();
+		if (nn)
+			disp[i] /= (float) nn;
 		// Normal
-		disp[i] += (2.0f * (float) tinyrnd() - 1.0f) *
-			   amount * mesh->normals[i];
+		disp[i] += normal_rnd(amount) * mesh->normals[i];
 	}
 	for (int i = 0; i < nv; i++)
 		mesh->vertices[i] += disp[i];
 }
 
+} // namespace trimesh

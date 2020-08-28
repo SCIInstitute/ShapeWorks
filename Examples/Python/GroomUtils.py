@@ -292,10 +292,13 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
             print("CMD: " + " ".join(cmd))
         subprocess.check_call(cmd)
 
+        size = getInfo(ref_tpdtnrrdfilename, "dims")
+        spacing = getInfo(ref_tpdtnrrdfilename, "spacing")
+
         cmd = ["shapeworks", 
                "read-image", "--name", seginname,
-            #    matrix created by icp is not used
-            #    "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
+               # resample all images to have the same size and dims as the reference image
+               "resample", "--sizex", str(size[0]), "--sizey", str(size[1]), "--sizez", str(size[2]), "--spacex", str(spacing[0]), "--spacey", str(spacing[1]), "--spacez", str(spacing[2]), "--interp", "nearest",
                "write-image", "--name", segoutname]
         if printCmd:
             print("CMD: " + " ".join(cmd))
@@ -304,8 +307,8 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
         if processRaw:
             cmd = ["shapeworks", 
                    "read-image", "--name", rawinname,
-                #    matrix created by icp is not used
-                #    "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
+                   # resample all images to have the same size and dims as the reference image
+                   "resample", "--sizex", str(size[0]), "--sizey", str(size[1]), "--sizez", str(size[2]), "--spacex", str(spacing[0]), "--spacey", str(spacing[1]), "--spacez", str(spacing[2]), "--interp", "nearest",
                    "write-image", "--name", rawoutname]
             if printCmd:
                 print("CMD: " + " ".join(cmd))
@@ -313,7 +316,6 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
 
     return [outSegDataList, outRawDataList] if processRaw else outSegDataList
             
-
 def applyCropping(outDir, inDataList, path, paddingSize=10, printCmd=True):
     """
     This function takes in a filelist and crops them according to the largest

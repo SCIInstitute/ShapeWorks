@@ -61,7 +61,7 @@ ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
 template <class TGradientNumericType, unsigned int VDimension>
 double
 ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
-::EstimateSigma(unsigned int idx, const typename ParticleSystemType::PointVectorType &neighborhood,
+::EstimateSigma(unsigned int idx, const typename ParticleSystemType::PointVectorType &neighborhood, const ParticleDomain *domain,
                 const std::vector<double> &weights,
                 const PointType &pos,  double initial_sigma,  double precision,
                 int &err) const
@@ -78,7 +78,6 @@ ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
   
   while (error > precision)
     {
-    VectorType r_vec;
     double A = 0.0;
     double B = 0.0;
     double C = 0.0;
@@ -88,19 +87,12 @@ ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
     for (unsigned int i = 0; i < neighborhood.size(); i++)
       {
       if (weights[i] < epsilon) continue;
-      
-      //    if ( neighborhood[i].Index == idx) continue;
-      for (unsigned int n = 0; n < VDimension; n++)
-        {
-        r_vec[n] = pos[n] - neighborhood[i].Point[n];
-        }
-      
-      double r = r_vec.magnitude();
-      double r2 = r*r;
-      double alpha = exp(-r2 / sigma22) * weights[i];
+
+      double sqrdistance = domain->SquaredDistance(pos, neighborhood[i].Point);
+      double alpha = exp(-sqrdistance / sigma22) * weights[i];
       A += alpha;
-      B += r2 * alpha;
-      C += r2 * r2 * alpha;
+      B += sqrdistance * alpha;
+      C += sqrdistance * sqrdistance * alpha;
       } // end for i
 
     prev_sigma = sigma;
@@ -189,7 +181,7 @@ ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
   // In these cases, an error != 0 is returned, and we try the estimation again
   // with an increased neighborhood radius.
   int err;
-  sigma =  this->EstimateSigma(idx, neighborhood,weights,pos, sigma, epsilon, err);
+  sigma =  this->EstimateSigma(idx, neighborhood, domain, weights,pos, sigma, epsilon, err);
   
   while (err != 0)
     {
@@ -209,7 +201,7 @@ ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
     
     neighborhood = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
     this->ComputeAngularWeights(pos,neighborhood,domain,weights);
-    sigma = this->EstimateSigma(idx, neighborhood, weights, pos, sigma, epsilon, err);
+    sigma = this->EstimateSigma(idx, neighborhood, domain, weights, pos, sigma, epsilon, err);
     } // done while err
   
   // Constrain sigma to a maximum reasonable size based on the user-supplied
@@ -295,3 +287,4 @@ ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
 
 }// end namespace
 #endif
+
