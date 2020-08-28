@@ -262,26 +262,23 @@ def Run_Pipeline(args):
             The segmentation and images are resampled independently to have uniform spacing.
             """
             resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, isBinary=True)
-            resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", reflectedFile_img, isBinary=False)
             
             """
             Apply padding
             Both the segmentation and raw images are padded in case the seg lies on the image boundary.
             """
             paddedFiles_segmentations = applyPadding(parentDir + "padded/segementations", resampledFiles_segmentations, 10)
-            paddedFiles_images = applyPadding(parentDir + "padded/images", resampledFiles_images, 10)
 
             """
             Apply center of mass alignment
             This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
             """
-            [comFiles_segmentations, comFiles_images] = applyCOMAlignment(parentDir + "com_aligned", paddedFiles_segmentations, paddedFiles_images, processRaw=True)
+            comFiles_segmentations = applyCOMAlignment(parentDir + "com_aligned", paddedFiles_segmentations, None)
             
             """
             Apply centering
             """
             centerFiles_segmentations = center(parentDir + "centered/segmentations", comFiles_segmentations)
-            centerFiles_images = center(parentDir + "centered/images", comFiles_images)
             
             """
             Rigid alignment needs a reference file to align all the input files, FindReferenceImage function defines the median file as the reference.        
@@ -293,7 +290,7 @@ def Run_Pipeline(args):
             This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
             This function uses the same transfrmation matrix for alignment of raw and segmentation files.
             """
-            [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir + "aligned", centerFiles_segmentations, centerFiles_images, medianFile, processRaw = True)
+            rigidFiles_segmentations = applyRigidAlignment(parentDir + "aligned", centerFiles_segmentations, None, medianFile, processRaw = False)
 
             # If user chose option 2, define cutting plane on median sample
             if choice == 2:
@@ -302,7 +299,7 @@ def Run_Pipeline(args):
 
             else:
                 postfix = "_femur.isores.pad.com.center.aligned.DT.nrrd"
-                path = "aligned/segmentations/"
+                path = "aligned/"
                 input_file = parentDir + path + cp_prefix + postfix
                 cutting_plane_points = SelectCuttingPlane(input_file)
 
@@ -322,7 +319,6 @@ def Run_Pipeline(args):
 
             """Compute largest bounding box and apply cropping"""
             croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", clippedFiles_segmentations, parentDir + "clipped_segmentations/*.nrrd")
-            croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images, parentDir + "clipped_segmentations/*.nrrd")
 
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
