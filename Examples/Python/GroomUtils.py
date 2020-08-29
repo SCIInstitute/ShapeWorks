@@ -298,7 +298,8 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
         cmd = ["shapeworks", 
                "read-image", "--name", seginname,
                # resample all images to have the same size and dims as the reference image
-               "resample", "--sizex", str(size[0]), "--sizey", str(size[1]), "--sizez", str(size[2]), "--spacex", str(spacing[0]), "--spacey", str(spacing[1]), "--spacez", str(spacing[2]), "--interp", "nearest",
+               "resize", "--sizex", str(size[0]), "--sizey", str(size[1]), "--sizez", str(size[2]),
+               "resample", "--spacex", str(spacing[0]), "--spacey", str(spacing[1]), "--spacez", str(spacing[2]), 
                "write-image", "--name", segoutname]
         if printCmd:
             print("CMD: " + " ".join(cmd))
@@ -308,7 +309,8 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
             cmd = ["shapeworks", 
                    "read-image", "--name", rawinname,
                    # resample all images to have the same size and dims as the reference image
-                   "resample", "--sizex", str(size[0]), "--sizey", str(size[1]), "--sizez", str(size[2]), "--spacex", str(spacing[0]), "--spacey", str(spacing[1]), "--spacez", str(spacing[2]), "--interp", "nearest",
+                   "resize", "--sizex", str(size[0]), "--sizey", str(size[1]), "--sizez", str(size[2]),
+                   "resample", "--spacex", str(spacing[0]), "--spacey", str(spacing[1]), "--spacez", str(spacing[2]), 
                    "write-image", "--name", rawoutname]
             if printCmd:
                 print("CMD: " + " ".join(cmd))
