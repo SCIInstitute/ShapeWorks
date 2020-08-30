@@ -94,6 +94,7 @@ function install_conda() {
   if ! pip install mdutils; then return 1; fi # lib for writing markdown files needed for auto-documentation (not available through conda install)
   if ! pip install mkdocs; then return 1; fi # lib for generating documentation from markdown
   if ! pip install fontawesome-markdown; then return 1; fi # lib for icons in documentation
+  if ! pip install --upgrade pymdown-extensions; then return 1; fi # lib to support checkbox lists in documentation
   if ! pip install Python/DatasetUtilsPackage; then return 1; fi   # install the local GirderConnector code as a package
   if ! pip install Python/DocumentationUtilsPackage; then return 1; fi   # install shapeworks auto-documentation as a package
 
