@@ -66,5 +66,5 @@ Use `mkdocs gh-deploy --help` for a full list of options available for the gh-de
 - [Getting started with MkDocs](https://docs.readthedocs.io/en/stable/intro/getting-started-with-mkdocs.html)
 - [Setting up MkDocs](https://mikedemaso.com/tech/2019-06-20-setting-up-mkdocs/)
 - [Projects documentation](https://netgen.io/blog/the-most-overlooked-part-in-software-development-writing-project-documentation)
-
+- [MkDocs recipes](https://github.com/mkdocs/mkdocs/wiki/MkDocs-Recipes)
 

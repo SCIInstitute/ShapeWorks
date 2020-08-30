@@ -16,9 +16,6 @@ ShapeWorks is a free, open-source suite of software tools that uses a flexible m
 The underlying scientific premise of ShapeWorks, particle-based shape modeling, is a groupwise approach to placing landmarks (i.e., correspondences) that considers the variability in the entire cohort of images. ShapeWorks uses a set of interacting particle systems, one for each shape, in an ensemble, to produce optimal sets of surface correspondences. Particles interact with one another via mutually repelling forces to optimally cover, and therefore describe, the surface geometry. Particles are positioned on surfaces automatically by optimizing the information content of the model via an entropy optimization scheme. In particular, ShapeWorks explicitly models the inherent trade-off between the statistical simplicity of the model (i.e., compactness) in the shape space and the accuracy of the shape representations (i.e., good surface samplings) in the configuration space. 
 
 
-**TODO: box bump example**.  
-**TODO: video for illustration**.  
-
 
 ShapeWorks has been effective in a range of applications, including psychology, biological phenotyping, cardiology, and orthopedics. [See relevant papers](users/papers.md). 
 
@@ -26,6 +23,5 @@ ShapeWorks has been effective in a range of applications, including psychology, 
 
 ## With ShapeWorks You Can!
 
-**TODO: use case with relevant paper, see the U24 proposal**
 
 

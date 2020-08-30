@@ -1,7 +1,7 @@
 site_name: ShapeWorks
 site_url: http://www.sci.utah.edu/software/shapeworks.html
 repo_url: https://github.com/SCIInstitute/ShapeWorks
-edit_uri: edit/mkdocs/MkDocs/docs/ # should be changed to master branch
+edit_uri: edit/master/docs/ # should be changed to master branch
 site_description: The official documentation of ShapeWorks 
 site_author: Shireen Elhabian et al.
 copyright: Copyright © 1998 - 2020 Scientific Computing and Imaging Institute. All rights reserved.
@@ -16,11 +16,16 @@ nav:
    - 'Examples':                             'getting-started/examples.md'
    - 'How Tos':                              'getting-started/how-tos.md'
 - Workflow:
-   - 'How to groom your dataset?':           'workflow/groom.md'
-   - 'How to optimize your shape model?' :   'workflow/optimize.md'        
-   - 'How to analyze your shape model?' :    'workflow/analyze.md'     
+   - 'How to Groom Your Dataset?':           'workflow/groom.md'
+   - 'How to Optimize Your Shape Model?' :   'workflow/optimize.md'        
+   - 'How to Analyze Your Shape Model?' :    'workflow/analyze.md'     
 - Use Cases:
-   - 'Use Cases':                            'use-cases/UseCases.md'
+   - 'Getting Started with Use Cases':          'use-cases/use-cases.md'
+   - 'Ellipsoid: Basic Example':                'use-cases/ellipsoid.md'
+   - 'Fixed Domains: SSM on New Shapes':        'use-cases/fixed-domain-ellipsoid.md'
+   - 'Left Atrium: SSM from Segmentations':     'use-cases/left-atrium.md'
+   - 'Femurs: SSM from Meshes':                 'use-cases/femur.md'
+   - 'Right Ventricle: Highly Variable Shapes': 'use-cases/right-ventricle.md'
 - For Users:
    - 'How to Install ShapeWorks?':           'users/install.md'
    - 'How to Cite ShapeWorks?':              'users/citation.md'
@@ -56,3 +61,7 @@ theme:
 
 markdown_extensions:
    - fontawesome_markdown
+   - pymdownx.tasklist
+
+extra_css:
+    - css/custom.css
