@@ -111,8 +111,8 @@ double ShapeEvaluation<VDimension>::ComputeSpecificity(const ParticleSystem &par
 
   Eigen::JacobiSVD<Eigen::MatrixXd> svd(Y, Eigen::ComputeFullU);
   const auto epsi = svd.matrixU().block(0, 0, D, nModes);
-  auto eigenValues = svd.singularValues();
-  eigenValues = eigenValues.segment(0, nModes);
+  const auto allEigenValues = svd.singularValues();
+  const auto eigenValues = allEigenValues.head(nModes);
 
   Eigen::MatrixXd samplingBetas(nModes, nSamples);
   MultiVariateNormalRandom sampling{eigenValues.asDiagonal()};
