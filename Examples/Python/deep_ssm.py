@@ -65,8 +65,8 @@ def Run_Pipeline(args):
 	if args.tiny_test:
 		train_img_list = train_img_list[:4]
 		train_particle_list = train_particle_list[:4]
-		test_img_list = test_img_list[:2]
-		test_particle_list = test_particle_list[:2]
+		test_img_list = test_img_list[:3]
+		test_particle_list = test_particle_list[:3]
 
 	print("\n\n\nStep 2. Augment data\n") ###################################################################################
 	'''
@@ -75,8 +75,7 @@ def Run_Pipeline(args):
 	- aug_type is the augmentation method to use (1 is based on just particles wheras 2 is based on images and particles)
 	- sample type is the distribution to use for sampling. Can be Gaussian, mixture, or KDE
 	'''
-	# num_samples = 4960
-	num_samples = 20
+	num_samples = 4960
 	num_PCA = 6
 	sampler_type = "KDE"
 	if args.tiny_test:
@@ -94,7 +93,7 @@ def Run_Pipeline(args):
 		Higher batch size will help speed up training but uses more cuda memory, if you get a memory error try reducing the batch size
 	'''
 	
-	down_sample = True
+	down_sample = False
 	batch_size = 1
 	loader_dir = parent_dir + 'TorchDataLoaders/'
 	DeepSSMUtils.getTrainValLoaders(loader_dir, aug_data_csv, batch_size, down_sample)
@@ -107,7 +106,7 @@ def Run_Pipeline(args):
 	val_freq sets how often too test on validation set and log
 	for example val_freq=1 is every epoch and val_freq=2 is every other
 	'''
-	parameters = {"epochs":10, "learning_rate":0.001, "val_freq":1}
+	parameters = {"epochs":50, "learning_rate":0.001, "val_freq":1}
 	if args.tiny_test:
 		parameters = {"epochs":5, "learning_rate":0.001, "val_freq":1}
 	model_path = DeepSSMUtils.trainDeepSSM(loader_dir, parameters, parent_dir)
@@ -117,10 +116,6 @@ def Run_Pipeline(args):
 	'''
 	Test DeepSSM
 	'''
-	PCA_scores_path = parent_dir + "augmentation/original_PCA_scores.npy"
-	mr_error, rel_error = DeepSSMUtils.testDeepSSM(parent_dir + 'test/', model_path, loader_dir, PCA_scores_path)
-	print("Average mean root MSE on test set:")
-	print(mr_error)
-	print("Average relative error on test set:")
-	print(rel_error)
-	print('Original and predicted particles saved at: ' + parent_dir + 'test/')
+	PCA_scores_path = parent_dir + "augmentation/PCA_Particle_Info/"
+	DeepSSMUtils.testDeepSSM(parent_dir + 'test/', model_path, loader_dir, PCA_scores_path, num_PCA)
+	print('Predicted particles saved at: ' + parent_dir + 'test/')

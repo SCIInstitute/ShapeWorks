@@ -113,7 +113,7 @@ def train(loader_dir, parameters, parent_dir):
 	print("Done.")
 	# initalizations
 	num_pca = train_loader.dataset.pca_target[0].shape[0]
-	print("Defining model.")
+	print("Defining model...")
 	model = DeepSSMNet(num_pca)
 	device = model.device
 	model.cuda()
@@ -127,8 +127,9 @@ def train(loader_dir, parameters, parent_dir):
 	train_params = model.parameters()
 	opt = torch.optim.Adam(train_params, learning_rate)
 	opt.zero_grad()
+	print("Done.")
 	# train
-	print("Beginning training on device = " + device)
+	print("Beginning training on device = " + device + '\n')
 	logger = open(parent_dir + "train_log.csv", "w+")
 	log_print(logger, ["Epoch", "Train_Err", "Train_Rel_Err", "Val_Err", "Val_Rel_Err", "Sec"])
 	t0 = time.time()
@@ -192,26 +193,23 @@ def undoNorm(data_list, mean, std):
 
 '''
 Test helper
-	gets the original and predicted paricle coordinates from the pca scores
+	gets the predicted paricle coordinates from the pca scores
 	saves them in out_dir
 '''
-def getPoints(out_dir, orig_scores, pred_scores, pca_score_path, test_names, loader_dir):
+def getPoints(out_dir, pred_scores, pca_score_path, test_names, loader_dir):
+	print("Getting particles from predicted PCA scores...")
 	mean_PCA = np.load(loader_dir + 'mean_PCA.npy')
 	std_PCA = np.load(loader_dir + 'std_PCA.npy')
-	orig_scores = undoNorm(orig_scores, mean_PCA, std_PCA)
 	pred_scores = undoNorm(pred_scores, mean_PCA, std_PCA)
 	if not os.path.exists(out_dir):
 		os.makedirs(out_dir)
 	predPath = out_dir + 'predictedPoints/'
 	if not os.path.exists(predPath):
 		os.makedirs(predPath)
-	origPath = out_dir + 'originalPoints/'
-	if not os.path.exists(origPath):
-		os.makedirs(origPath)
-	N = orig_scores.shape[0]
-	K = orig_scores.shape[1]
+	N = pred_scores.shape[0]
+	K = pred_scores.shape[1]
 	# now create the PCA matrix
-	meanshape = np.loadtxt(pca_score_path + '/meanshape.particles')
+	meanshape = np.loadtxt(pca_score_path + '/mean.particles')
 	M = meanshape.shape[0]
 	W = np.zeros([K, 3*M])
 	for i in range(K):
@@ -219,23 +217,20 @@ def getPoints(out_dir, orig_scores, pred_scores, pca_score_path, test_names, loa
 		prt = np.loadtxt(nm)
 		W[i, ...] = prt.flatten()
 	pointsPred = np.matmul(pred_scores,W) + np.matlib.repmat(meanshape.reshape(1, 3*M), N, 1)
-	pointsOrig = np.matmul(orig_scores,W) + np.matlib.repmat(meanshape.reshape(1, 3*M), N, 1)
 
 	for i in range(N):
 		print("Data Point : ", i)
 		nmpred = predPath + 'predicted_' + test_names[i] + '.particles'
-		nmorig = origPath + 'original_' + test_names[i] + '.particles'
 		tmpPred = pointsPred[i, ...].reshape(M, 3)
-		tmpOrig = pointsOrig[i, ...].reshape(M, 3)
 		np.savetxt(nmpred, tmpPred)
-		np.savetxt(nmorig, tmpOrig)
+	print("Done.\n")
 
 '''
 Network Test Function
 	predicts the PCA scores using the trained networks
 	returns the error measures and saves the predicted and poriginal particles for comparison
 '''
-def test(out_dir, model_path, loader_dir, pca_scores_path):
+def test(out_dir, model_path, loader_dir, pca_scores_path, num_pca):
 	if not os.path.exists(out_dir):
 		os.makedirs(out_dir)
 	# load le loaders
@@ -244,7 +239,7 @@ def test(out_dir, model_path, loader_dir, pca_scores_path):
 	test_loader = torch.load(test_loader_path)
 	print("Done.\n")
 	# initalizations
-	num_pca = test_loader.dataset.pca_target[0].shape[0]
+	print("Loading trained model...")
 	model = DeepSSMNet(num_pca)
 	model.load_state_dict(torch.load(model_path))
 	device = model.device
@@ -257,35 +252,20 @@ def test(out_dir, model_path, loader_dir, pca_scores_path):
 	f.close()
 	test_names_string = test_names_string.replace("[","").replace("]","").replace("'","")
 	test_names = test_names_string.split(",")
-	# Logger
-	logger = open(out_dir + "results.csv", "w+")
-	log_print(logger, ["Name", "Test_Err", "Test_Rel_Err"])
-	# Get predicted PCA scores and errors
-	test_losses = []
-	test_rel_losses = []
+	print("Done.\n")
+	print("Predicting for test images...")
 	index = 0
-	orig_scores = []
 	pred_scores = []
 	for img, pca, mdl in test_loader:
 		img = img.to(device)
-		pca = pca.to(device)
 		pred = model(img)
-		orig_scores.append(pca.cpu().data.numpy()[0])
 		pred_scores.append(pred.cpu().data.numpy()[0])
-		loss = torch.mean((pred - pca)**2)
-		test_losses.append(loss.item())
-		test_rel_loss = F.mse_loss(pred, pca) / F.mse_loss(pred*0, pca)
-		test_rel_losses.append(test_rel_loss.item())
-		log_print(logger, [test_names[index], str(loss.item()), str(test_rel_loss.item())])
 		index += 1
-	logger.close()
-	test_mr_MSE = np.mean(np.sqrt(test_losses))
-	test_rel_err =  np.mean(test_rel_losses)
-	# Get paricles 
-	orig_scores = np.array(orig_scores)
+		print("Predicted test " + str(index) + ".")
+	print("Done.\n")
 	pred_scores = np.array(pred_scores)
-	getPoints(out_dir, orig_scores, pred_scores, pca_scores_path, test_names, loader_dir)
-	return test_mr_MSE, test_rel_err
+	getPoints(out_dir, pred_scores, pca_scores_path, test_names, loader_dir)
+	return
 
 '''
 Make folder

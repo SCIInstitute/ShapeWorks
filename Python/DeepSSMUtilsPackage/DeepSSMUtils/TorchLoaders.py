@@ -66,18 +66,17 @@ def getTestLoader(loader_dir, test_img_list, test_particle_list, down_sample):
 		prefix = getPrefix(image_path)
 		# data error check
 		if prefix not in getPrefix(model_path):
-			print("Error: Images and models mismatched in csv.")
+			print("Error: Images and models mismatched.")
 			print(index)
 			print(prefix)
 			print(getPrefix(model_path))
 			exit()
 		test_names.append(prefix)
 		image_paths.append(image_path)
-		# add scoe placeholder
+		# add score placeholder
 		scores.append([])
 		models.append(getParticles(model_path))
 	images = getImages(loader_dir, image_paths, down_sample)
-	scores = whitenPCAscores(scores, loader_dir)
 
 	test_data = DeepSSMdataset(images, scores, models)
 	# Write test names to file so they are saved somewhere
