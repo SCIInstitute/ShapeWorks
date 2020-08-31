@@ -1,4 +1,4 @@
-## Femur: Shape Model from Meshes
+# Femur: Shape Model from Meshes
 
 ## What and Where is the Use Case?
 
@@ -31,7 +31,7 @@ $ cd /path/to/shapeworks/Examples/Python
 $ python RunUseCase.py --use_case femur 
 ```
 
-This calls [left_atrium.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/left_atrium.py) to perform the following.
+This calls [femur.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/femur.py) to perform the following.
             
 * Loads the femur dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
 * Grooms the images and meshes by calling data preprocessing functions in [GroomUtils.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/GroomUtils.py). See [Grooming Data](#grooming-data) for details about these preprocessing steps.
@@ -157,6 +157,6 @@ Here are femur samples with their optimized correspondences.
 Zooming in some femur samples.
 ![Zoom Femur Samples](../img/use-cases/femur_samples_zoom.png)
 
-Here is a video showing the shape modes of variation (computed using principal component analysis - PCA) of the left atrium dataset using single-scale optimization.
+Here is a video showing the shape modes of variation (computed using principal component analysis - PCA) of the femur dataset using single-scale optimization.
 
 [![Femur PCA](../img/use-cases/femur_PCA_thumbnail.png)](https://youtu.be/N4hmXSJsqRg)
