@@ -1,7 +1,7 @@
 # How to Install ShapeWorks?
 
 
-ShapeWorks provides official user releases, the features of which can be seen at [Release Notes](about/release-notes.md).
+ShapeWorks provides official user releases, the features of which can be seen at [Release Notes](../about/release-notes.md).
 
 First, download the [latest ShapeWorks binary release](https://github.com/SCIInstitute/ShapeWorks/releases/latest).    
 
