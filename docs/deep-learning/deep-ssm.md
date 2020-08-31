@@ -1,6 +1,6 @@
 ## ShapeWorks DeepSSM
 DeepSSM is a convolutional neural network (CNN) model that can provide particles directly from unsegmented images after it has been trained. This documentation provides an overview of the DeepSSM process, for a full explanation see: [DeepSSM: A Deep Learning Framework for Statistical
-Shape Modeling from Raw Images](https://arxiv.org/pdf/1810.00111.pdf)
+Shape Modeling from Raw Images](publications/DeepSSM.pdf)
 
 The input to the DeepSSM network are unsegmented 3D images of the anatomy of interest and the ouput are the particle-based shape models. DeepSSM requires training examples of image/PBM pairs which are generated via the traditional Shapeworks grooming and optimzation pipeline or otherewise. Once the network has been trained on these examples it can predict the PBM of unseen examples given only image, bypassing the need for labor intensive segmentation, grooming, and optization parameter tuning. 
 
