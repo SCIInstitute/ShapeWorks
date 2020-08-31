@@ -34,6 +34,11 @@
 - [ ] Instructions on how to add videos to the documentation (thumbnails that link to youtube)
 - [x] Instructions to add a new use case
 - [ ] Revise the right ventricle use case after release it. Might need more results to illustrate group differences.
+- [ ] Instructions for Doxygen and building doxygen.
+- [ ] `dev/commands.md`:How to add shapeworks commands?
+- [ ] `dev/gh-actions.md`: getting started with github actions
+- [ ] `dev/python-apis.md`: How to Add Python APIs?
+- [ ] `dev/tests.md`: How to Add and Run Unit Tests?
 
 ## To investigate for docs
 - [ ] How can we use repo_url in markdown files to link to repo files? Currently, we use hard code it whenever we link to a page: https://github.com/SCIInstitute/ShapeWorks/tree/master

@@ -1,4 +1,4 @@
-# How Tos
+# How-Tos
 
 - How to install ShapeWorks on [Windows](../users/install.md#installing-shapeworks-on-windows), [Mac](../users/install.md#installing-shapeworks-on-mac), or [Linux](../users/install.md#installing-shapeworks-on-linux).
 - How to get the [latest ShapeWorks binary release](https://github.com/SCIInstitute/ShapeWorks/releases/latest) or up-to-date development builds from the master branch for [Windows](https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-windows), [Mac](https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-mac), or [Linux](https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-linux). :fa-exclamation-circle: *Please understand that these are in-progress development builds, not official releases.*

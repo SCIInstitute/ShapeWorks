@@ -17,7 +17,7 @@ Then follow the appropriate instructions for their platform:
 [Mac](#installing-shapeworks-on-mac)   
 [Linux](#installing-shapeworks-on-linux)   
 
-:fa-info-circle: _**Important:**_  Each time you use ShapeWorks from the command line you must first activate its environment:
+:fa-info-circle: _**Important:**_  Each time you use ShapeWorks from the command-line, you must first activate its environment:
 ```
 $ conda activate shapeworks
 ```
@@ -25,7 +25,7 @@ $ conda activate shapeworks
 
 ## Installing ShapeWorks on Windows
 
-Please make sure that you download the [latest ShapeWorks binary release](https://github.com/SCIInstitute/ShapeWorks/releases/latest) or up-to-date development builds from the master branch for [Windows](https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-windows). *Please understand that these are in-progress development builds, not official releases.*
+Please make sure that you download the [latest ShapeWorks binary release](https://github.com/SCIInstitute/ShapeWorks/releases/latest), or up-to-date development builds from the master branch for [Windows](https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-windows). *Please understand that these are in-progress development builds, not official releases.*
 
 To install:
 
@@ -88,7 +88,7 @@ be set correctly.
 
 ## Installing ShapeWorks on Mac
 
-Please make sure that you download the [latest ShapeWorks binary release](https://github.com/SCIInstitute/ShapeWorks/releases/latest) or up-to-date development builds from the master branch for [Mac](https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-mac). *Please understand that these are in-progress development builds, not official releases.*
+Please make sure that you download the [latest ShapeWorks binary release](https://github.com/SCIInstitute/ShapeWorks/releases/latest), or up-to-date development builds from the master branch for [Mac](https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-mac). *Please understand that these are in-progress development builds, not official releases.*
 
 
 To use the installer version of ShapeWorks (.pkg):
@@ -131,11 +131,11 @@ $ conda activate shapeworks
 
 ## Installing ShapeWorks on Linux
 
-Please make sure that you download the [latest ShapeWorks binary release](https://github.com/SCIInstitute/ShapeWorks/releases/latest) or up-to-date development builds from the master branch for [Linux](https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-linux). *Please understand that these are in-progress development builds, not official releases.*
+Please make sure that you download the [latest ShapeWorks binary release](https://github.com/SCIInstitute/ShapeWorks/releases/latest), or up-to-date development builds from the master branch for [Linux](https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-linux). *Please understand that these are in-progress development builds, not official releases.*
 
 
-ShapeWorks comes with [python examples](../use-cases/use-cases.md) to get you started. To run them you will
-need python with a few packages.  The easist way to **install** them is to run:
+ShapeWorks comes with [python examples](../use-cases/use-cases.md) to get you started. To run them, you will
+need python with a few packages.  The easiest way to **install** them is to run:
 
 ```
 $ source ./conda_installs.sh

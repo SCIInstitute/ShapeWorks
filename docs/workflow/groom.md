@@ -1,19 +1,16 @@
 # How to Groom Your Dataset?
 
-ShapeWorks needs suitable distance transforms for establishing shape correspondence. Groom stage has a pipeline to 
-generate the distance transforms from input images (binary segmentation or mesh).  It consists of image/mesh pre-processing and 
-alignment tools.
+ShapeWorks needs suitable distance transforms for establishing shape correspondence. The groom stage has a pipeline to generate the distance transforms from input images (binary segmentation or mesh).  It consists of image/mesh pre-processing and alignment tools.
 
 ## Image Pre-Processing 
 
 ### Isotropic Resampling
-This command line uses an interpolation process to resample anisotropic voxels into isotropic-sized voxels. The command
-line tool can be used as follows.
+This command-line uses an interpolation process to resample anisotropic voxels into isotropic-sized voxels. The command-line tool can be used as follows.
 
 ``
 ResampleVolumesToIsotropic --inFilename $1 --outFilename $2 --isBinaryImage $3 --isoSpacing $4 --isCenterImageOn $5
 ``
-Here is the list of arguments.
+Here is a list of arguments.
 
 * inFilename: The filename of the input image to be resampled.
 * outFilename: The filename of the output resampled image.

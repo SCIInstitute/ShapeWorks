@@ -3,7 +3,7 @@
 **If you would like to have your publication listed here: e-mail us!**
 
 <p align="justify">
-The following selected papers give background on the methods used in ShapeWorks and a sample of the areas ShapeWorks has been applied:
+The following selected papers give background on the methods used in ShapeWorks, and a sample of the areas ShapeWorks has been applied:
 </p>
 
 <p align="justify">

@@ -2,7 +2,7 @@
 
 ## What and Where is the Use Case? 
 
-This use case is designed for the fixed domains functionality of ShapeWorks. The fixed domains are used for the cases where we need to place correspondences on new shapes using a pre-existing shape model. In this example, we use the example dataset in `ellipsoid_fd.zip`, which contains a previously generated shape model on ellipsoids, plus prepped segmentations of two new ellipsoids.
+This use case is designed to demonstrate the functionality of the fixed domain of ShapeWorks. The fixed domains are used for the cases where we need to place correspondences on new shapes using a pre-existing shape model. In this example, we use the example dataset in `ellipsoid_fd.zip`, which contains a previously generated shape model on ellipsoids and prepped segmentations of two new ellipsoids.
 
 
 ![Fixed Domains](../img/use-cases/fixed-domains.png)
@@ -15,7 +15,7 @@ The use case is located at: [Examples/Python/ellipsoid_fd.py](https://github.com
 To run the use case, run [RunUseCase.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/RunUseCase.py) with proper tags. The tags control the type of input data and the optimization method. See [Getting Started with Use Cases](../use-cases/use-cases.md#running-use-case) for the full list of tags.
 
 
-Run the following command to run this use case. This optimization is done only with a single-scale support since the new shapes will have the same number of particles as the existing shape model. Hence, there is no need to use the `--use_single_scale` tag.
+Run the following command to run this use case. This optimization is done only with single-scale support since the new shapes will have the same number of particles as the existing shape model. Hence, there is no need to use the `--use_single_scale` tag.
             
 ```
 $ cd /path/to/shapeworks/Examples/Python
@@ -24,7 +24,7 @@ $ python RunUseCase.py --use_case ellipsoid_fd
 
 This calls [ellipsoid_fd.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/ellipsoid_fd.py) to perform the following.
 
-* Loads the ellipsoid_fd dataset using a local version if it exists (i.e., previously downloaded), otherwise the dataset is automatically downloaded from the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
+* Loads the ellipsoid_fd dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
 * Loads the existing (pre-trained) shape model and converts the new segmentations into signed distance transforms.
 * Optimizes particle distribution (i.e., the shape/correspondence model) on the new shape samples by calling optimization functions in [OptimizeUtils.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/OptimizeUtils.py). See [Optimizing Shape Model](#optimizing-shape-model) for details about algorithmic parameters for optimizing the shape model.
 * Launches ShapeWorksStudio to visualize the use case results (i.e., optimized shape model on the new shapes and the pre-trained shape model) by calling functions in [AnalyzeUtils.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/AnalyzeUtils.py)
@@ -32,7 +32,7 @@ This calls [ellipsoid_fd.py](https://github.com/SCIInstitute/ShapeWorks/tree/mas
 
 ## Grooming Data
 
-This use case assumes that the new samples are already aligned with the existing shape model. The only grooming step is computing the signed distance tranform for each new segmentation.
+This use case assumes that the new samples are already aligned with the existing shape model. The only grooming step is computing the signed distance transform for each new segmentation.
 
 ## Optimizing Shape Model
 
@@ -72,4 +72,4 @@ In [ellipsoid_fd.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Exam
 
 ## Analyzing Shape Model
 
-ShapeWorksStudio visualize/analyze the optimized particle-based shape model by visualizing the mean shape, individual shape samples, and the shape modes of variations. For more information see: [How to Analyze Your Shape Model?](../workflow/analyze.md).   
+ShapeWorksStudio visualizes/analyzes the optimized particle-based shape model by visualizing the mean shape, individual shape samples, and the shape modes of variations. For more information, see: [How to Analyze Your Shape Model?](../workflow/analyze.md).   

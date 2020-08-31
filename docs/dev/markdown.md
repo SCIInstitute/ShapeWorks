@@ -1,21 +1,21 @@
 
 # Getting Started with Markdown
 
-ShapeWorks documentation is written using [Markdown](#markdown-basics), a text layout language that enables simple formatting for section headers, code samples, web links, and images, yet is still readable as plain text. 
+ShapeWorks documentation is written using [Markdown](#markdown-basics), a text layout language that enables simple formatting for section headers, code samples, weblinks, and images, yet is still readable as plain text. 
 
-:fa-info-circle: If you're viewing this document in github, you can click on the pencil icon in the top-right corner to see its source. On github, it can be used for issues and wiki documentation and edited inline.
+:fa-info-circle: If you're viewing this document in GitHub, you can click on the pencil icon in the top-right corner to see its source. On GitHub, it can be used for issues and wiki documentation and edited inline.
 
 ## Grip
 
-To edit your markdown, it helps to have a convenient viewer. The `grip` instant preview application is very helpful, and is installed by the conda_installs script (see [How to Build ShapeWorks from Source?](build.md). From the ShapeWorks directory just run `grip` (be sure to `conda activate shapeworks` beforehand), and then navigate to `http://localhost:6419` in your favorite browser. It will load and display markdown files just like GitHub, showing README.md by default. You can also specify relative paths to any markdown file below the directory from which it was run. Happy editing!
+To edit your Markdown, it helps to have a convenient viewer. The `grip` instant preview application is beneficial, and is installed by the conda_installs script (see [How to Build ShapeWorks from Source?](build.md). From the ShapeWorks directory, just run `grip` (be sure to `conda activate shapeworks` beforehand), and then navigate to `http://localhost:6419` in your favorite browser. It will load and display markdown files just like GitHub, showing README.md by default. You can also specify relative paths to any markdown file below the directory from which it was run. Happy editing!
 
 ## Markdown Basics
 
 ShapeWorks uses Markdown for much of its documentation.  
-Here are the basics of using Markdown. The plain text is readable and there are many editors available, such as [Dillinger](https://dillinger.io).  
-One method is to use a plaion text editor along with an automatic rendering tool such as [grip](https://github.com/joeyespo/grip/blob/master/README.md) to view the formatted results in a browser as the files are edited.
+Here are the basics of using Markdown. The plain text is readable, and there are many editors available, such as [Dillinger](https://dillinger.io).  
+One method is to use a plain text editor along with an automatic rendering tool such as [grip](https://github.com/joeyespo/grip/blob/master/README.md) to view the formatted results in a browser as the files are edited.
 
-Use hash symbols to create section headers. Use more hashes for successive subsections.
+Use hash symbols to create section headers. Use more hashes for subsequent subsections.
 ```
 # Main section
 ## Subsection
@@ -25,7 +25,7 @@ Use hash symbols to create section headers. Use more hashes for successive subse
 ###### on... 
 ```
 
-Links are created by enclosing the text shown for the link in brackets and the link directly adjacent in paranthesis. Links to other '#'-indicated sections of the document are formed by using a '#' followed by the lowercase text of the section name separated with dashes. For icons, add some additional brackets and a '!'.  
+Links are created by enclosing the text shown for the link in brackets and the link directly adjacent to parenthesis. Links to other '#'-indicated sections of the document are formed using a '#' followed by the lowercase text of the section name separated with dashes. For icons, add some additional brackets and a '!'.  
 [external site](http://google.com)  
 [link text](#local-section-name)  
 [![thumbs up](https://66.media.tumblr.com/1f45d6ab69e02479f85ac1c9f1eb4301/tumblr_inline_pkaqpvkvHH1syktzs_540.png)](http://google.com)
@@ -36,14 +36,14 @@ Links are created by enclosing the text shown for the link in brackets and the l
 [![thumbs up](https://66.media.tumblr.com/1f45d6ab69e02479f85ac1c9f1eb4301/tumblr_inline_pkaqpvkvHH1syktzs_540.png)](http://google.com)
 ```
 
-HTML comments can be utilized within a Markdown document if you don't want something to be shown in the rendered output:
+HTML comments can be utilized within a Markdown document if you don't want something shown in the rendered output:
 ```
 <!--
   commented stuff
 -->
 ```
 
-Finally, code can be shown using triple back-ticks (the backwards apostrophe: '\`' ), even highlighted for a particular language by following the first set of back-ticks with the language name.  
+Finally, code can be shown using triple back-ticks (the backward apostrophe: '\`' ), even highlighted for a particular language by following the first set of back-ticks with the language name.  
 
 ````
 ```python  

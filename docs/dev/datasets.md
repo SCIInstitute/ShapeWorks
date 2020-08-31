@@ -5,7 +5,7 @@
 
 ## Dataset Requirements
 
-Each dataset must have a **License.txt** which descibes the terms of use and citation requirements for the data.  
+Each dataset must have a **License.txt**, which describes the terms of use and citation requirements for the data.  
 You can see an example in the Left Atrium dataset [License](http://cibc1.sci.utah.edu:8080/#item/5e5600298886bab730d72cf5).
 
 Data should be organized into appropriately named directories: **images**, **segmentations**, **meshes**, **landmarks**, **distance_transforms**, **shape_models**.  
