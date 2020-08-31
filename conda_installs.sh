@@ -12,6 +12,26 @@ if [[ "$sourced" == "0" ]]; then
   exit 1
 fi
 
+# PyTorch installation
+function install_pytorch() {
+  echo "installing pytorch"
+  PYTORCH="cpuonly"
+  if ! [ -x "$(command -v nvidia-smi)" ]; then
+    echo 'Could not find nvidia-smi, using cpu-only PyTorch'
+  else
+    CUDA=`nvidia-smi | grep CUDA | sed -e "s/.*CUDA Version: //" -e "s/ .*//"`
+    echo "Found CUDA Version: ${CUDA}"
+
+    if [[ "$CUDA" == "9.2" || "$CUDA" == "10.1" || "$CUDA" == "10.2" ]]; then
+        PYTORCH="cudatoolkit=${CUDA}"
+    else
+        echo "CUDA version not compatible, using cpu-only"
+    fi
+  fi
+
+  conda install --yes pytorch torchvision $PYTORCH -c pytorch
+}
+
 function install_conda() {
   if ! command -v conda 2>/dev/null 1>&2; then
     echo "installing anaconda..."
@@ -32,25 +52,24 @@ function install_conda() {
     conda config --set auto_activate_base false
   fi
 
-  # add default channels
+  #update anaconda
   conda config --add channels anaconda
   conda config --add channels conda-forge
   
-  # update anaconda
   if ! conda update --yes -n base conda; then return 1; fi
   if ! conda update --yes --all; then return 1; fi
 
-  # create and activate shapeworks env
+  #create and activate shapeworks env 
   CONDAENV=shapeworks
   if ! conda create --yes --name $CONDAENV python=3.7; then return 1; fi
   eval "$(conda shell.bash hook)"
   if ! conda activate $CONDAENV; then return 1; fi
-
+  
   # pip is needed in sub-environments or the base env's pip will silently install to base
-  if ! conda install --yes pip=20.1.1; then return 1; fi
+  if ! conda install --yes pip; then return 1; fi
   if ! python -m pip install --upgrade pip; then return 1; fi
 
-  # install shapeworks deps
+  #install shapeworks deps
   if ! conda install --yes \
        cmake=3.15.5 \
        gtest=1.10.0 \
@@ -74,35 +93,42 @@ function install_conda() {
   # linux and mac (only) deps
   if [[ "$(uname)" == "Linux" || "$(uname)" == "Darwin" ]]; then
       if ! conda install --yes \
-           xorg-libx11=1.6.9 \
-           xorg-libsm=1.2.3 \
-           libxrandr-devel-cos6-x86_64=1.5.1 \
-           libxinerama-devel-cos6-x86_64=1.1.3 \
-           libxcursor-devel-cos6-x86_64=1.1.14 \
-           libxi-devel-cos6-x86_64=1.7.8 \
-           git-lfs=2.6.1 \
-           openmp=8.0.1 \
-           ncurses=6.1 \
-           libuuid=2.32.1
+	   xorg-libx11=1.6.9 \
+	   xorg-libsm=1.2.3 \
+	   libxrandr-devel-cos6-x86_64=1.5.1 \
+	   libxinerama-devel-cos6-x86_64=1.1.3 \
+	   libxcursor-devel-cos6-x86_64=1.1.14 \
+	   libxi-devel-cos6-x86_64=1.7.8 \
+	   git-lfs=2.6.1 \
+	   openmp=8.0.1 \
+	   ncurses=6.1 \
+	   libuuid=2.32.1
       then return 1; fi
   fi
 
-  # pip installs
+  
   if ! pip install termcolor==1.1.0; then return 1; fi
   if ! pip install grip==4.5.2; then return 1; fi
   if ! pip install matplotlib==3.1.2; then return 1; fi
   if ! pip install itk==5.0.1; then return 1; fi
+  if ! pip install bokeh==2.2; then return 1; fi
   if ! pip install Python/DatasetUtilsPackage; then return 1; fi   # install the local GirderConnector code as a package
   if ! pip install mdutils; then return 1; fi # lib for writing markdown files needed for auto-documentation (not available through conda install)
   if ! pip install Python/DocumentationUtilsPackage; then return 1; fi   # install shapeworks auto-documentation as a package
   if ! pip install Python/DataAugmentationUtilsPackage; then return 1; fi   # install data augmentation code as a package
   if ! pip install Python/DeepSSMUtilsPackage; then return 1; fi   # install DeepSSM code as a package
 
+  # install any additional Linux dependencies
+  if [[ "$(uname)" == "Linux" ]]; then
+    echo "nothing additional to install for Linux"
+  fi
+
   conda info
   return 0
 }
 
 if install_conda; then
+  install_pytorch
   echo "$CONDAENV environment successfully created/updated!"
   conda activate $CONDAENV
 else
