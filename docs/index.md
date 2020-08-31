@@ -24,4 +24,4 @@ ShapeWorks has been effective in a range of applications, including psychology, 
 ## With ShapeWorks You Can!
 
 
-
+![Under construction, coming soon!](img/misc/under-construction.png)
