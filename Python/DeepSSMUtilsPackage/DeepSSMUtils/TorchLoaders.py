@@ -196,10 +196,11 @@ def getImages(loader_dir, image_list, down_sample):
 	# get all images
 	all_images = []
 	for image_path in image_list:
-		image = itk.imread(image_path, itk.F)
-		img = itk.GetArrayFromImage(image)
 		if down_sample:
-			img = downSample(img)
+			img = downSample(image_path)
+		else:
+			image = itk.imread(image_path, itk.F)
+			img = itk.GetArrayFromImage(image)
 		all_images.append(img)
 	all_images = np.array(all_images)
 	# get mean and std
@@ -222,19 +223,32 @@ def getImages(loader_dir, image_list, down_sample):
 '''
 Halves the size of the image
 '''
-def downSample(img):
-	isoSpacing = 1.0
+def downSample(image_path):
+	path = os.path.dirname(image_path)
+	temp_path = path + "/temp.nrrd"
 	cmd = ["shapeworks",
-		   "read-image", "--name", name,
-		   "info", "--spacing", str(True)]
-	output = subprocess.run(cmd, capture_output=True, text=True).stdout.splitlines() 
-	input(output) 
+		   "read-image", "--name", image_path,
+		   "info", "--size", str(True)]
+	output = subprocess.run(cmd, capture_output=True, text=True).stdout.splitlines()
+	size = makeVector(output[0].split(":")[1])
+	sizex = int(size[0]/2)
+	sizey = int(size[1]/2)
+	sizez = int(size[2]/2)
 	cmd = ["shapeworks", 
-		"read-image", "--name", img,
-		"resample", "--isospacing", str(isoSpacing),
-		"write-image", "--name", img]
+		"read-image", "--name", image_path,
+		"resize", "--sizex", str(sizex),
+		"--sizey", str(sizey),
+		"--sizez", str(sizez),
+		"write-image", "--name", temp_path]
 	subprocess.check_call(cmd)
+	image = itk.imread(temp_path, itk.F)
+	img = itk.GetArrayFromImage(image)
+	os.remove(temp_path)
 	return img
+ 
+def makeVector(str):
+   arr = np.array(str.replace("[", "").replace("]", "").split(","))
+   return np.asarray(arr, np.float64)
 
 '''
 getTorchDataLoaderHelper
