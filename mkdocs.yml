@@ -24,7 +24,7 @@ nav:
    - 'Ellipsoid: Basic Example':                'use-cases/ellipsoid.md'
    - 'Fixed Domains: SSM on New Shapes':        'use-cases/fixed-domain-ellipsoid.md'
    - 'Left Atrium: SSM from Segmentations':     'use-cases/left-atrium.md'
-   - 'Femurs: SSM from Meshes':                 'use-cases/femur.md'
+   - 'Femur: SSM from Meshes':                 'use-cases/femur.md'
    - 'Right Ventricle: Highly Variable Shapes': 'use-cases/right-ventricle.md'
 - For Users:
    - 'How to Install ShapeWorks?':           'users/install.md'
@@ -36,6 +36,7 @@ nav:
    - 'How to Add ShapeWorks Commands?':      'dev/commands.md'
    - 'How to Add Python APIs?':              'dev/python-apis.md'
    - 'How to Add and Run Unit Tests?':       'dev/tests.md'
+   - 'How to Add New Use Cases?':            'dev/new-use-case.md'
    - 'How to Add New Datasets?':             'dev/datasets.md'
    - 'How to Auto-generate Documentation?':  'dev/autodoc.md'
    - 'Getting Started with MkDocs':          'dev/mkdocs.md'

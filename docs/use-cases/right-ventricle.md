@@ -1,19 +1,44 @@
-##  Right Ventricle Use Case
+##  Right Ventricle: Highly Variable Shapes
 
-The goal of this use case is, study the group difference of right ventricle between control and patients.
- In this study, we have two sets of data, the control group with six subjects and patient group consists of 26 subjects.
-  For each group, we have diastole and systole segmentation. The goal is to study the variation of the systole and diastole in two groups.
-   For this purpose, we pre-process diastole and systole data with the groom utils of ShapeWorks and then optimize the particle system for them, independently.
-    Then using the group difference analysis tool of ShapeWorks we can study the difference of variation in control and patient group from diastole to systole stage of heart.
+## What and Where is the Use Case? 
 
-### Grooming
-For a description of the grooming tools and parameters, see: [Groom.md](../Workflow/Groom.md)
-1. Isotropic Resampling - Segmentations are resampled to have uniform voxel spacing.
-2. Apply Padding- Segmentations which lie on the image boundary will have a hole on that intersection. Padding is added to the segmentations to prevent this.
-3. Center of Mass Alignment - Center of mass alignment is performed before aligning the samples to a reference. This factors out translations reducing the risk of misalignment and allows for a median sample to be selected as the reference.
-4. Reference Selection - The reference is selected by first getting the mean distance transform of the segmentations, then selecting the sample closest to that mean.
-5. Rigid Alignment - All of the segmentations are now aligned to the reference using rigid alignment.
-6. Crop - The segmentations are cropped so that all of the samples are within the same bounding box.
-7. Distance Transform - Finally, the distance transform is taken and the data is ready for ShapeWorks optimize.
+This use case demonstrates using ShapeWorks tools to perform the following.
 
-![RV_groom](../Images/RV_groom.png)
+- Model the highly variable shapes of the right ventricle
+- Study the group difference of right ventricle shape between control and patients
+- Build a shape model where shapes are given as binary segmentations
+- Groom a dataset that only contains shapes
+
+In this study, we have two sets of data, the control group with 6 subjects and patient group consists of 26 subjects. For each group, we have diastole and systole segmentations. The goal is to study the variation of the systole and diastole in the two groups. For this purpose, we pre-process/groom diastole and systole data and then optimize the particle system for them, independently. Then using the group difference analysis tool of ShapeWorks, we can quantify and study the difference of variation in control and patient group from diastole to systole stage of heart.
+
+:fa-info-circle: _**Important:**_ This use case is not yet released!
+
+## Running the Use Case
+
+:fa-info-circle: _**Important:**_ This use case is not yet added to the use case list!
+
+
+## Grooming Data
+
+For a description of the grooming tools and parameters, see: [How to Groom Your Dataset?](../workflow/groom.md).
+
+1. **Isotropic Resampling**: Binary segmentations are resampled to have an isotropic voxel spacing using a user-defined spacing. This step could also be used to produce images and segmentations with smaller voxel spacing, and thereby reduce aliasing artifacts (i.e., staircase/jagged surface) due to binarization for segmentations.
+2. **Apply Padding**: Segmentations that touch the image boundary will have an artificial hole at that intersection. Segmentations are padded by adding a user-defined number of voxels along each image direction (rows, cols, and slices) to avoid introducing artifical holes.
+3. **Center-of-Mass Alignment**: This translational alignment step is performed before rigidly aligning the samples to a shape reference. This factors out translations to reduce the risk of misalignment and allow for a mediod sample to be automatically selected as the reference for rigid alignment.
+4. **Reference Selection**: The reference is selected by first computing the mean (average) distance transform of the segmentations, then selecting the sample closest to that mean (i.e., mediod).
+5. **Rigid Alignment**: All of the segmentations are then aligned to the selected reference using rigid alignment, which factors out rotation and remaining translation. 
+6. **Cropping**: The segmentations are cropped so that all of the samples are within the same bounding box. The bounding box parameters are computed based on the biggest bounding box that encapsulate all the segmentations of the given dataset.
+7. **Distance Transform**: Finally, the signed distance transform is computed and the dataset is now ready for the optimize phase.
+
+![RV_groom](../img/use-cases/RV_groom.png)
+
+
+## Optimizing Shape Model
+
+*Coming soon!*
+
+## Analyzing Shape Model
+
+*Coming soon!*
+
+

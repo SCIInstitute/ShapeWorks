@@ -43,7 +43,9 @@ For example:
   - example_64/
     - \*.particles
 
-## Uploading a Dataset (developers only)
+## Uploading a Dataset
+
+:fa-info-circle: _**Important:**_ Uploaded datasets are only restricted to ShapeWorks developers.
 
 1. Create an account on the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/#?dialog=register)
 2. Ask Oleks to add you to the list of developers. (oleks@sci.utah.edu)

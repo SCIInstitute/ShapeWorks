@@ -22,7 +22,18 @@
 - [ ] `use-cases/ellipsoid.md`: Add video/snapshots for the optimized model and groomed data
 - [ ] `use-cases/XX.md`: Update optimization parameters based on Examples/Python
 - [ ] `use-cases/XX.md`: Update use cases to reflect multi-scale being integrated into the optimizer
-
+- [ ] Add documentation for femur_mesh and lumps use cases
+- [ ] `use-cases/left-atrium.md`:Check the left atrium use case for saving txt files to carry over images to reflect recent changes (consolidation)
+- [ ] Consolidate docs/pdfs
+- [ ] Consolidate docs/backlog
+- [ ] Add to use cases how to run with prepped data
+- [ ] Add mean and PCA visuals for ellipsoid and fixed domain ellipsoid use cases
+- [ ] Review and edit femur use case
+- [ ] Review and edit right ventricle use case
+- [ ] Once meshes work, update the femur use case to indicate that this is optional and add femur_mesh use case
+- [ ] Instructions on how to add videos to the documentation (thumbnails that link to youtube)
+- [x] Instructions to add a new use case
+- [ ] Revise the right ventricle use case after release it. Might need more results to illustrate group differences.
 
 ## To investigate for docs
 - [ ] How can we use repo_url in markdown files to link to repo files? Currently, we use hard code it whenever we link to a page: https://github.com/SCIInstitute/ShapeWorks/tree/master
@@ -34,6 +45,11 @@
 - [ ] Update `DocumentationUtilsPackage` to generate md for mkdocs (ShapeworksCommand.md)
 - [ ] Add `mkdocs build` for autodoc (deploy) to github actions and release
 - [x] When a use case launches Studio, does it load groomed data? It does, based on the launch function that takes in distance transforms, local, and world point files.
+- [ ] Review and edit comments in the <use-case>.py
+- [ ] A fixed domain use case that include grooming the new samples
+- [ ] Revisit the fixed domain use case, why do we need the path for the mean shape? why not use the mean of the fixed domains?
+- [ ] Release and update the right ventricle use case
+
 
 ## Misc
 - [ ] Add link to documentation http://sciinstitute.github.io/ShapeWorks/ to shapeworks.sci.utah.edu

@@ -1,4 +1,4 @@
-# How to optimize your shape model?
+# How to Optimize Your Shape Model?
 
 ShapeWorks uses the processed data groomed to the sign distance transform for optimization step.
 ShapeWorks uses the Particle Based Modeling (PBM) approach to constructs a correspondence 

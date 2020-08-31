@@ -1,4 +1,4 @@
-# How to groom your dataset?
+# How to Groom Your Dataset?
 
 ShapeWorks needs suitable distance transforms for establishing shape correspondence. Groom stage has a pipeline to 
 generate the distance transforms from input images (binary segmentation or mesh).  It consists of image/mesh pre-processing and 

@@ -1,4 +1,4 @@
-# How to analyze your shape model?
+# How to Analyze Your Shape Model?
 
 After ShapeWorks Optimize we have a correspondence model for the population and now we can perform some statistical 
 analysis like PCA and visualize these modes of variation. ShapeWorks provides visualization tool named ***ShapeWorksStudio***. 

@@ -6,28 +6,28 @@ The ellipsoid dataset comprises of axis-aligned ellipsoids with varying radii al
 
 The [ellipsoid.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/ellipsoid.py) use case represents the standard use version of a shape modeling workflow using ShapeWorks. It includes the full pipeline for processed (i.e., prepped/groomed) as well as unprocessed data. 
 
-The use case is located at: [Examples/Python](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python)
+The use case is located at: [Examples/Python/ellipsoid.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/ellipsoid.py)
 
 ## Running the Use Case
 
 To run the use case, run [RunUseCase.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/RunUseCase.py) with proper tags. The tags control the type of input data and the optimization method. See [Getting Started with Use Cases](../use-cases/use-cases.md#running-use-case) for the full list of tags.
 
-* `--start_with_prepped_data`: to run the optimization on previously processed data
+* `--start_with_prepped_data`: to run the optimization on previously processed/groomed data
 * `--use_single_scale`: to use the single-scale optimization. Default is multi-scale optimization
 
 To run the full pipeline with multi-scale:
             
-`
+```
 $ cd /path/to/shapeworks/Examples/Python
 $python RunUseCase.py --use_case ellipsoid 
-`
+```
 
 This calls [ellipsoid.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/ellipsoid.py) to perform the following.
 
-* Loads the ellpsoid dataset using a local version if it exists (i.e., previously downloaded), otherwise the dataset is automatically downloaded from the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
-* Grooms the images and segmentations by calling data preprocessing functions in [GroomUtils.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/GroomUtils.py). See [Grooming Data](#grooming-data) for details about these preprocessing steps.
+* Loads the ellipsoid dataset using a local version if it exists (i.e., previously downloaded), otherwise the dataset is automatically downloaded from the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
+* Grooms the segmentations by calling data preprocessing functions in [GroomUtils.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/GroomUtils.py). See [Grooming Data](#grooming-data) for details about these preprocessing steps.
 * Optimizes particle distribution (i.e., the shape/correspondence model) by calling optimization functions in [OptimizeUtils.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/OptimizeUtils.py). See [Optimizing Shape Model](#optimizing-shape-model) for details about algorithmic parameters for optimizing the shape model.
-* Launces ShapeWorksStudio to visualize the use case results (i.e., optimized shape model and the groomed data) by calling functions in [AnalyzeUtils.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/AnalyzeUtils.py)
+* Launches ShapeWorksStudio to visualize the use case results (i.e., optimized shape model and the groomed data) by calling functions in [AnalyzeUtils.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/AnalyzeUtils.py)
 
 ## Grooming Data
 
@@ -67,3 +67,7 @@ Below are the default optimization parameters for this use case. For a descripti
         "verbosity": 2
         "use_shape_statistics_after": 32
 ```
+
+## Analyzing Shape Model
+
+ShapeWorksStudio visualize/analyze the optimized particle-based shape model by visualizing the mean shape, individual shape samples, and the shape modes of variations. For more information see: [How to Analyze Your Shape Model?](../workflow/analyze.md). 
