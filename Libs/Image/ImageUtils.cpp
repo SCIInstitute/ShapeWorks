@@ -115,10 +115,9 @@ Image& ImageUtils::topologyPreservingSmooth(Image& image, float scaling, float s
   return image.applyTPLevelSetFilter(featureImage, scaling);
 }
 
-Image& ImageUtils::isoresample(Image& image, double isoSpacing, Dims outputSize)
+Image& ImageUtils::isoresample(Image& image, double isoSpacing, Image::InterpolationType interp)
 {
-  Point3 spacing({isoSpacing, isoSpacing, isoSpacing});
-  return image.resample(spacing, outputSize);
+  return image.resample(makeVector({isoSpacing, isoSpacing, isoSpacing}), interp);
 }
 
 } //shapeworks

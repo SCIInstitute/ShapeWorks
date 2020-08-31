@@ -8,7 +8,7 @@ void Executable::buildParser()
 {  
   parser.description("Unified ShapeWorks executable that includes command line utilities for automated construction of compact statistical landmark-based shape models of ensembles of shapes");
   parser.usage("Usage: %prog <command> [args]...");
-  parser.version("%prog 1.0\nMIT license (todo: verify)");
+  parser.version("ShapeWorks Framework version X.Y.Z (executable version 1.0.0)"); // TODO: add frameworks version to this string
   parser.epilog("Available commands:");
   parser.disable_interspersed_args(); // so everything after a command's name will be passed to that command (ex: its --help argumemnt)
   
@@ -113,7 +113,7 @@ int Executable::run(int argc, char const *const *argv)
   const optparse::Values options = parser.parse_args(argc, argv);
   
   // shapeworks global options
-  // todo: handle --quiet, --verbose, whatever else is global
+  // todo: handle --quiet, --verbose, --version, etc.
 
   if (parser.args().empty())
   {

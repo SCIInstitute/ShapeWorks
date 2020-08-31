@@ -40,17 +40,17 @@ function install_conda() {
   if ! conda update --yes -n base conda; then return 1; fi
   if ! conda update --yes --all; then return 1; fi
 
-  #create and activate shapeworks env 
+  # create and activate shapeworks env
   CONDAENV=shapeworks
   if ! conda create --yes --name $CONDAENV python=3.7; then return 1; fi
   eval "$(conda shell.bash hook)"
   if ! conda activate $CONDAENV; then return 1; fi
 
   # pip is needed in sub-environments or the base env's pip will silently install to base
-  if ! conda install --yes pip; then return 1; fi
+  if ! conda install --yes pip=20.1.1; then return 1; fi
   if ! python -m pip install --upgrade pip; then return 1; fi
 
-  #install shapeworks deps
+  # install shapeworks deps
   if ! conda install --yes \
        cmake=3.15.5 \
        gtest=1.10.0 \
@@ -86,11 +86,11 @@ function install_conda() {
            git-lfs=2.6.1 \
            openmp=8.0.1 \
            ncurses=6.1 \
-           libuuid=2.32.1 \
-           termcolor==1.1.0
+           libuuid=2.32.1
       then return 1; fi
   fi
-  
+
+  # pip installs
   if ! pip install termcolor==1.1.0; then return 1; fi
   if ! pip install grip==4.5.2; then return 1; fi
   if ! pip install matplotlib==3.1.2; then return 1; fi
@@ -98,11 +98,6 @@ function install_conda() {
   if ! pip install Python/DatasetUtilsPackage; then return 1; fi   # install the local GirderConnector code as a package
   if ! pip install mdutils; then return 1; fi # lib for writing markdown files needed for auto-documentation (not available through conda install)
   if ! pip install Python/DocumentationUtilsPackage; then return 1; fi   # install shapeworks auto-documentation as a package
-
-  # install any additional Linux dependencies
-  if [[ "$(uname)" == "Linux" ]]; then
-    echo "nothing additional to install for Linux"
-  fi
 
   conda info
   return 0

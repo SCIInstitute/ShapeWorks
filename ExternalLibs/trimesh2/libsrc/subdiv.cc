@@ -7,21 +7,20 @@ Perform subdivision on a mesh.
 */
 
 
-#include <stdio.h>
 #include "TriMesh.h"
 #include "TriMesh_algo.h"
+using namespace std;
 #define dprintf TriMesh::dprintf
+#ifndef M_TWOPIf
+# define M_TWOPIf 6.2831855f
+#endif
 
 
-// i+1 and i-1 modulo 3
-// This way of computing it tends to be faster than using %
-#define NEXT(i) ((i)<2 ? (i)+1 : (i)-2)
-#define PREV(i) ((i)>0 ? (i)-1 : (i)+2)
-
+namespace trimesh {
 
 // Compute the ordinary Loop edge stencil
-static point loop(TriMesh *mesh, int f1, int f2,
-		  int v0, int v1, int v2, int v3)
+static point loop(TriMesh *mesh, int /* f1 */, int /* f2 */,
+                  int v0, int v1, int v2, int v3)
 {
 	return 0.125f * (mesh->vertices[v0] + mesh->vertices[v3]) +
 	       0.375f * (mesh->vertices[v1] + mesh->vertices[v2]);
@@ -33,23 +32,25 @@ static point loop(TriMesh *mesh, int f1, int f2,
 static point opposite(TriMesh *mesh, int f, int v)
 {
 	int ind = mesh->faces[f].indexof(v);
+	if (unlikely(ind < 0)) // Shut up compiler warning
+		return point();
 	int ae = mesh->across_edge[f][ind];
-	if (ae) {
-		int j = mesh->faces[ae].indexof(mesh->faces[f][NEXT(ind)]);
-		return mesh->vertices[mesh->faces[ae][NEXT(j)]];
+	if (ae >= 0) {
+		int j = mesh->faces[ae].indexof(mesh->faces[f][NEXT_MOD3(ind)]);
+		return mesh->vertices[mesh->faces[ae][NEXT_MOD3(j)]];
 	}
-	return mesh->vertices[mesh->faces[f][NEXT(ind)]] +
-	       mesh->vertices[mesh->faces[f][PREV(ind)]] -
+	return mesh->vertices[mesh->faces[f][NEXT_MOD3(ind)]] +
+	       mesh->vertices[mesh->faces[f][PREV_MOD3(ind)]] -
 	       mesh->vertices[v];
 }
 
 
 // Compute the butterfly stencil
 static point butterfly(TriMesh *mesh, int f1, int f2,
-		       int v0, int v1, int v2, int v3)
+                       int v0, int v1, int v2, int v3)
 {
 	point p = 0.5f * (mesh->vertices[v1] + mesh->vertices[v2]) +
-		  0.125f * (mesh->vertices[v0] + mesh->vertices[v3]);
+	          0.125f * (mesh->vertices[v0] + mesh->vertices[v3]);
 	p -= 0.0625f * (opposite(mesh, f1, v1) + opposite(mesh, f1, v2) +
 			opposite(mesh, f2, v1) + opposite(mesh, f2, v2));
 	return p;
@@ -58,7 +59,7 @@ static point butterfly(TriMesh *mesh, int f1, int f2,
 
 // Compute Loop's new edge mask for an extraordinary vertex for SUBDIV_LOOP_NEW
 static point new_loop_edge(TriMesh *mesh, int f1, int f2,
-			   int v0, int v1, int v2, int v3)
+                           int v0, int v1, int v2, int v3)
 {
 	static const float wts[6][5] = {
 		{ 0, 0, 0, 0, 0 },
@@ -66,7 +67,7 @@ static point new_loop_edge(TriMesh *mesh, int f1, int f2,
 		{ 0, 0, 0, 0, 0 },
 		{ 0, 0, 0, 0, 0 },
 		{ 0.3828125f, 0.125f, 0.0078125f, 0.125f, 0 },
-		{ 0.3945288f, 0.1215267f, 0.01074729f, 0.01074729f, 0.1215267f }, 
+		{ 0.3945288f, 0.1215267f, 0.01074729f, 0.01074729f, 0.1215267f },
 	};
 
 	int n = mesh->adjacentfaces[v1].size();
@@ -76,7 +77,7 @@ static point new_loop_edge(TriMesh *mesh, int f1, int f2,
 	float sumwts = 0.0f;
 	int f = f1;
 	float s1 = 1.0f / n;
-	float s2 = 2.0f * (float)M_PI * s1;
+	float s2 = M_TWOPIf * s1;
 	float l = 0.375f + 0.25f * cos(s2);
 	float a = (2.0f * l*l*l) / ((1.0f - l) * n);
 	float b = (1.0f / l) - 1.5f;
@@ -84,7 +85,7 @@ static point new_loop_edge(TriMesh *mesh, int f1, int f2,
 		int ind = mesh->faces[f].indexof(v1);
 		if (ind == -1)
 			return loop(mesh, f1, f2, v0, v1, v2, v3);
-		ind = NEXT(ind);
+		ind = NEXT_MOD3(ind);
 		int v = mesh->faces[f][ind];
 		float wt;
 		if (n < 6) {
@@ -126,12 +127,12 @@ static point zorin_edge(TriMesh *mesh, int f1, int f2,
 	float sumwts = 0.0f;
 	int f = f1;
 	float s1 = 1.0f / n;
-	float s2 = 2.0f * (float)M_PI * s1;
+	float s2 = M_TWOPIf * s1;
 	for (int i = 0; i < n; i++) {
 		int ind = mesh->faces[f].indexof(v1);
 		if (ind == -1)
 			return butterfly(mesh, f1, f2, v0, v1, v2, v3);
-		ind = NEXT(ind);
+		ind = NEXT_MOD3(ind);
 		int v = mesh->faces[f][ind];
 		float wt;
 		if (n < 6) {
@@ -158,12 +159,12 @@ static point avg_bdy(TriMesh *mesh, int v)
 	point p;
 	int n = 0;
 	const vector<int> &a = mesh->adjacentfaces[v];
-	for (int i = 0; i < a.size(); i++) {
+	for (size_t i = 0; i < a.size(); i++) {
 		int f = a[i];
 		for (int j = 0; j < 3; j++) {
 			if (mesh->across_edge[f][j] == -1) {
-				p += mesh->vertices[mesh->faces[f][NEXT(j)]];
-				p += mesh->vertices[mesh->faces[f][PREV(j)]];
+				p += mesh->vertices[mesh->faces[f][NEXT_MOD3(j)]];
+				p += mesh->vertices[mesh->faces[f][PREV_MOD3(j)]];
 				n += 2;
 			}
 		}
@@ -174,38 +175,39 @@ static point avg_bdy(TriMesh *mesh, int v)
 
 // Compute the weight on the central vertex used in updating original
 // vertices in Loop subdivision
-static float loop_update_alpha(int scheme, int n)
+static inline float loop_update_alpha(SubdivScheme scheme, int n)
 {
 	if (scheme == SUBDIV_LOOP) {
 		if (n == 3)	  return 0.3438f;
 		else if (n == 4)  return 0.4625f;
 		else if (n == 5)  return 0.5625f;
-		return 0.625f;
+		else              return 0.625f;
 	} else if (scheme == SUBDIV_LOOP_ORIG) {
 		if (n == 3)	  return 0.4375f;
 		else if (n == 4)  return 0.515625f;
 		else if (n == 5)  return 0.5795339f;
 		else if (n == 6)  return 0.625f;
-		return 0.375f + (float)sqr(0.375f + 0.25f * cos(2.0f * M_PI / n));
+		else              return 0.375f +
+			sqr(0.375f + 0.25f * cos(M_TWOPIf / n));
+	} else { // SUBDIV_LOOP_NEW
+		if (n == 3)	  return 0.4375f;
+		else if (n == 4)  return 0.5f;
+		else if (n == 5)  return 0.545466f;
+		else if (n == 6)  return 0.625f;
+		float l = 0.375f + 0.25f * cos(M_TWOPIf / n);
+		float beta = l * (4.0f + l * (5.0f * l - 8.0f)) / (2.0f * (1.0f - l));
+		return 1.0f - beta + l * l;
 	}
-	// SUBDIV_LOOP_NEW
-	if (n == 3)	  return 0.4375f;
-	else if (n == 4)  return 0.5f;
-	else if (n == 5)  return 0.545466f;
-	else if (n == 6)  return 0.625f;
-	float l = 0.375f + 0.25f * (float)cos(2.0f * M_PI / n);
-	float beta = l * (4.0f + l * (5.0f * l - 8.0f)) / (2.0f * (1.0f - l));
-	return 1.0f - beta + l * l;
 }
 
 
 // Insert a new vertex
-static void insert_vert(TriMesh *mesh, int scheme, int f, int e)
+static void insert_vert(TriMesh *mesh, SubdivScheme scheme, int f, int e)
 {
-	int v1 = mesh->faces[f][NEXT(e)], v2 = mesh->faces[f][PREV(e)];
+	int v1 = mesh->faces[f][NEXT_MOD3(e)], v2 = mesh->faces[f][PREV_MOD3(e)];
 	if (scheme == SUBDIV_PLANAR) {
 		point p = 0.5f * (mesh->vertices[v1] +
-				  mesh->vertices[v2]);
+		                  mesh->vertices[v2]);
 		mesh->vertices.push_back(p);
 		return;
 	}
@@ -214,7 +216,7 @@ static void insert_vert(TriMesh *mesh, int scheme, int f, int e)
 	if (ae == -1) {
 		// Boundary
 		point p = 0.5f * (mesh->vertices[v1] +
-				  mesh->vertices[v2]);
+		                  mesh->vertices[v2]);
 		if (scheme == SUBDIV_BUTTERFLY ||
 		    scheme == SUBDIV_BUTTERFLY_MODIFIED) {
 			p *= 1.5f;
@@ -226,7 +228,7 @@ static void insert_vert(TriMesh *mesh, int scheme, int f, int e)
 
 	int v0 = mesh->faces[f][e];
 	const TriMesh::Face &aef = mesh->faces[ae];
-	int v3 = aef[NEXT(aef.indexof(v1))];
+	int v3 = aef[NEXT_MOD3(aef.indexof(v1))];
 	point p;
 	if (scheme == SUBDIV_LOOP || scheme == SUBDIV_LOOP_ORIG) {
 		p = loop(mesh, f, ae, v0, v1, v2, v3);
@@ -235,7 +237,7 @@ static void insert_vert(TriMesh *mesh, int scheme, int f, int e)
 		bool e2 = (mesh->adjacentfaces[v2].size() != 6);
 		if (e1 && e2)
 			p = 0.5f * (new_loop_edge(mesh, f, ae, v0, v1, v2, v3) +
-				    new_loop_edge(mesh, ae, f, v3, v2, v1, v0));
+			            new_loop_edge(mesh, ae, f, v3, v2, v1, v0));
 		else if (e1)
 			p = new_loop_edge(mesh, f, ae, v0, v1, v2, v3);
 		else if (e2)
@@ -249,7 +251,7 @@ static void insert_vert(TriMesh *mesh, int scheme, int f, int e)
 		bool e2 = (mesh->adjacentfaces[v2].size() != 6);
 		if (e1 && e2)
 			p = 0.5f * (zorin_edge(mesh, f, ae, v0, v1, v2, v3) +
-				    zorin_edge(mesh, ae, f, v3, v2, v1, v0));
+			            zorin_edge(mesh, ae, f, v3, v2, v1, v0));
 		else if (e1)
 			p = zorin_edge(mesh, f, ae, v0, v1, v2, v3);
 		else if (e2)
@@ -263,21 +265,21 @@ static void insert_vert(TriMesh *mesh, int scheme, int f, int e)
 
 
 // Subdivide a mesh
-void subdiv(TriMesh *mesh, int scheme /* = SUBDIV_LOOP */)
+void subdiv(TriMesh *mesh, SubdivScheme scheme)
 {
 	bool have_col = !mesh->colors.empty();
 	bool have_conf = !mesh->confidences.empty();
-	mesh->flags.clear();
-	mesh->normals.clear();
-	mesh->pdir1.clear(); mesh->pdir2.clear();
-	mesh->curv1.clear(); mesh->curv2.clear();
-	mesh->dcurv.clear();
-	mesh->cornerareas.clear(); mesh->pointareas.clear();
-	mesh->bbox.valid = false;
-	mesh->bsphere.valid = false;
-	mesh->need_faces(); mesh->tstrips.clear(); mesh->grid.clear();
-	mesh->neighbors.clear();
-	mesh->need_across_edge(); mesh->need_adjacentfaces();
+	mesh->clear_flags();
+	mesh->clear_normals();
+	mesh->clear_curvatures();
+	mesh->clear_dcurv();
+	mesh->clear_pointareas();
+	mesh->clear_bbox();
+	mesh->clear_bsphere();
+	mesh->need_faces(); mesh->clear_tstrips(); mesh->clear_grid();
+	mesh->clear_neighbors();
+	mesh->need_adjacentfaces();
+	mesh->need_across_edge();
 
 
 	dprintf("Subdividing mesh... ");
@@ -322,13 +324,13 @@ void subdiv(TriMesh *mesh, int scheme /* = SUBDIV_LOOP */)
 			const TriMesh::Face &v = mesh->faces[i];
 			if (have_col) {
 				mesh->colors.push_back(0.5f *
-					mesh->colors[v[NEXT(j)]] +
-					mesh->colors[v[PREV(j)]]);
+					(mesh->colors[v[NEXT_MOD3(j)]] +
+					 mesh->colors[v[PREV_MOD3(j)]]));
 			}
 			if (have_conf)
 				mesh->confidences.push_back(0.5f *
-					mesh->confidences[v[NEXT(j)]] +
-					mesh->confidences[v[PREV(j)]]);
+					(mesh->confidences[v[NEXT_MOD3(j)]] +
+					 mesh->confidences[v[PREV_MOD3(j)]]));
 		}
 	}
 
@@ -336,6 +338,8 @@ void subdiv(TriMesh *mesh, int scheme /* = SUBDIV_LOOP */)
 	if (scheme == SUBDIV_LOOP ||
 	    scheme == SUBDIV_LOOP_ORIG ||
 	    scheme == SUBDIV_LOOP_NEW) {
+
+		vector<point> oldvertices = mesh->vertices;
 #pragma omp parallel for
 		for (int i = 0; i < old_nv; i++) {
 			point bdyavg, nbdyavg;
@@ -346,20 +350,20 @@ void subdiv(TriMesh *mesh, int scheme /* = SUBDIV_LOOP */)
 			for (int j = 0; j < naf; j++) {
 				int af = mesh->adjacentfaces[i][j];
 				int afi = mesh->faces[af].indexof(i);
-				int n1 = NEXT(afi);
-				int n2 = PREV(afi);
+				int n1 = NEXT_MOD3(afi);
+				int n2 = PREV_MOD3(afi);
 				if (mesh->across_edge[af][n1] == -1) {
-					bdyavg += mesh->vertices[mesh->faces[af][n2]];
+					bdyavg += oldvertices[mesh->faces[af][n2]];
 					nbdy++;
 				} else {
-					nbdyavg += mesh->vertices[mesh->faces[af][n2]];
+					nbdyavg += oldvertices[mesh->faces[af][n2]];
 					nnbdy++;
 				}
 				if (mesh->across_edge[af][n2] == -1) {
-					bdyavg += mesh->vertices[mesh->faces[af][n1]];
+					bdyavg += oldvertices[mesh->faces[af][n1]];
 					nbdy++;
 				} else {
-					nbdyavg += mesh->vertices[mesh->faces[af][n1]];
+					nbdyavg += oldvertices[mesh->faces[af][n1]];
 					nnbdy++;
 				}
 			}
@@ -381,7 +385,7 @@ void subdiv(TriMesh *mesh, int scheme /* = SUBDIV_LOOP */)
 	}
 
 	// Insert new faces
-	mesh->adjacentfaces.clear(); mesh->across_edge.clear();
+	mesh->clear_adjacentfaces(); mesh->clear_across_edge();
 	mesh->faces.reserve(4*nf);
 	for (int i = 0; i < nf; i++) {
 		TriMesh::Face &v = mesh->faces[i];
@@ -395,3 +399,4 @@ void subdiv(TriMesh *mesh, int scheme /* = SUBDIV_LOOP */)
 	dprintf("Done.\n");
 }
 
+} // namespace trimesh
