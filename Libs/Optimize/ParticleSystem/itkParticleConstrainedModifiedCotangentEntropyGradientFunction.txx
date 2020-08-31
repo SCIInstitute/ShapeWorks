@@ -157,7 +157,7 @@ ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType
         = static_cast<const ParticleImplicitSurfaceDomain<TGradientNumericType> *>(system->GetDomain(d));
       // PRATEEP
       vnl_vector_fixed<double, VDimension> x;
-      vnl_vector_fixed<float, VDimension> grad = domain->SampleGradientVnl(pos);
+      vnl_vector_fixed<float, VDimension> grad = system->GetDomain(d)->SampleGradientAtPoint(pos);
       for (unsigned int i = 0; i < VDimension; i++) { x[i] = pos[i]; }
       double D = dot_product(domain->GetCuttingPlaneNormal(),
                              x - domain->GetCuttingPlanePoint());
