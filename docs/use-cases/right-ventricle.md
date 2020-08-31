@@ -1,4 +1,4 @@
-##  Right Ventricle: Highly Variable Shapes
+#  Right Ventricle: Highly Variable Shapes
 
 ## What and Where is the Use Case? 
 
