@@ -39,6 +39,12 @@ This calls `femur.py` (in `Examples/Python/`) to perform the following.
 * Launches ShapeWorksStudio to visualize the use case results (i.e., the optimized shape model and the groomed data) by calling functions in `AnalyzeUtils.py` (in `Examples/Python/`).
 
 
+If you wish to start with the optimization step using a previously groomed data, add `--start_with_prepped_data` tag.
+
+```
+$ python RunUseCase.py --use_case femur --start_with_prepped_data
+```
+
 ### Running with Interactivity
 
 To run the use case interactively, run:

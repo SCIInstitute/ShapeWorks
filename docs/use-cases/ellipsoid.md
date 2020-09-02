@@ -29,6 +29,11 @@ This calls `ellipsoid.py` (in `Examples/Python/`) to perform the following.
 * Optimizes particle distribution (i.e., the shape/correspondence model) by calling optimization functions in `OptimizeUtils.py` (in `Examples/Python/`). See [Optimizing Shape Model](#optimizing-shape-model) for details about algorithmic parameters for optimizing the shape model.
 * Launches ShapeWorksStudio to visualize the use case results (i.e., optimized shape model and the groomed data) by calling functions in `AnalyzeUtils.py` (in `Examples/Python/`).
 
+If you wish to start with the optimization step using a previously groomed data, add `--start_with_prepped_data` tag.
+
+```
+$ python RunUseCase.py --use_case ellipsoid --start_with_prepped_data
+```
 
 ## Grooming Data
 

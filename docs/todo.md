@@ -26,7 +26,7 @@
 - [ ] `use-cases/left-atrium.md`:Check the left atrium use case for saving txt files to carry over images to reflect recent changes (consolidation)
 - [ ] Consolidate docs/pdfs
 - [ ] Consolidate docs/backlog
-- [ ] Add to use cases how to run with prepped data
+- [x] Add to use cases how to run with prepped data
 - [ ] Add mean and PCA visuals for ellipsoid and fixed domain ellipsoid use cases
 - [x] Review and edit ellipsoid use cases
 - [x] Review and edit femur use case
