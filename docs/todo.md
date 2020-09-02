@@ -49,7 +49,7 @@
 ## For ShapeWorks repo
 
 - [x] Change the autodoc dir for commands in github action and release, see 'dev/autodoc.md'
-- [ ] Update `DocumentationUtilsPackage` to generate md for mkdocs (ShapeworksCommand.md)
+- [x] Update `DocumentationUtilsPackage` to generate md for mkdocs (ShapeworksCommand.md)
 - [x] Add `mkdocs build` for autodoc (deploy) to github actions and release
 - [x] When a use case launches Studio, does it load groomed data? It does, based on the launch function that takes in distance transforms, local, and world point files.
 - [ ] Review and edit comments in the <use-case>.py
