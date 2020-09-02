@@ -20,8 +20,8 @@
 - [ ] For groom and use cases, update the reference selection documentation to reflect any recent updates in this process (e.g., meshes, pairwise distance matrix ... etc)
 - [ ] `workflow/XX.md`: Review and edit the workflow md files. Add/update the decription of single vs multiscale.
 - [ ] `use-cases/ellipsoid.md`: Add video/snapshots for the optimized model and groomed data
-- [ ] `use-cases/XX.md`: Update optimization parameters based on Examples/Python
-- [ ] `use-cases/XX.md`: Update use cases to reflect multi-scale being integrated into the optimizer
+- [x] `use-cases/XX.md`: Update optimization parameters based on Examples/Python
+- [x] `use-cases/XX.md`: Update use cases to reflect multi-scale being integrated into the optimizer
 - [ ] Add documentation for femur_mesh and lumps use cases
 - [ ] `use-cases/left-atrium.md`:Check the left atrium use case for saving txt files to carry over images to reflect recent changes (consolidation)
 - [ ] Consolidate docs/pdfs
