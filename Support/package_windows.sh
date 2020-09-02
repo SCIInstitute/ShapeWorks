@@ -30,7 +30,10 @@ rm -rf Post
 
 # Run auto-documentation
 PATH=../build/bin/Release:$PATH
-python -c "import DocumentationUtils;DocumentationUtils.generateShapeWorksCommandDocumentation('Documentation/ShapeWorksCommands/ShapeWorksCommands.md')"
+python -c "import DocumentationUtils;DocumentationUtils.generateShapeWorksCommandDocumentation('docs/tools/ShapeWorksCommands.md')"
+mkdocs build
+mv site Documentation
+cp -a Documentation bin/
 
 # Remove tests, they won't work for users anyway
 rm bin/*Tests.exe
