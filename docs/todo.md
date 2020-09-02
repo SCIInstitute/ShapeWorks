@@ -13,7 +13,7 @@
 - [x] `dev/autodoc.md`: Which dir to use for autodoc for commands? 
 - [ ] Spell and grammar check all markdown files 
 - [ ] `use-cases/ellipsoid.md`: Add a figure showing some samples of the dataset that highlight the mode of variation
-- [ ] Be consistent: multi-scale vs multiscale in the md files
+- [x] Be consistent: multi-scale vs multiscale in the md files
 - [ ] Be consistent: we vs you (e.g., in use cases)
 - [ ] Add illustrating images to the groom steps in groom and specific use cases
 - [ ] Update md files for groom/optimize and use cases to reflect the new workflow (icp, bounding box, crop) that does not apply explicitly resample images/segmentations beyond the isoresample step and use transforamtions as input to the optimization

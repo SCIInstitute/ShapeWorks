@@ -13,7 +13,7 @@ This [use case](../use-cases/fixed-domain-ellipsoid.md) is designed for the fixe
 
 ## Left Atrium: SSM from Segmentations
 
-This segmentation-based [use case](../use-cases/left-atrium.md) demonstrates using the ShapeWorks functionality to groom shapes (given as binary segmentations) and their corresponding imaging data (e.g., MRI). This use case also showcases a single scale and multiscale optimization for correspondence models.
+This segmentation-based [use case](../use-cases/left-atrium.md) demonstrates using the ShapeWorks functionality to groom shapes (given as binary segmentations) and their corresponding imaging data (e.g., MRI). This use case also showcases a single-scale and multi-scale optimization for correspondence models.
 
 ## Femurs: SSM from Meshes
 

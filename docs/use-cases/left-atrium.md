@@ -145,7 +145,7 @@ Here is a video showing the shape modes of variation (computed using principal c
 
 Here is the mean shape of the optimized shape mode using multi-scale optimization.
      
-![left Atrium multiScale](../img/use-cases/leftatrium_multiscale.png)
+![left Atrium Multi-scale](../img/use-cases/leftatrium_multiscale.png)
 
 Here is a video showing the shape modes of variation (computed using principal component analysis - PCA) of the left atrium dataset using multi-scale optimization.
 

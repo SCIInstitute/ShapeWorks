@@ -19,9 +19,9 @@ The grooming stage entails rigid transformations to align samples for groupwise 
 The [optimize stage](../workflow/optimize.md) is an iterative cycle of correspondences (landmarks/particles) optimization, visualization/quality control of resulting correspondence model and parameter tuning. 
 
 
-The model initialization proceeds simultaneously with the optimization in a multiscale fashion using an iterative particle splitting strategy to generate progressively detailed correspondence models with each split.
+The model initialization proceeds simultaneously with the optimization in a multi-scale fashion using an iterative particle splitting strategy to generate progressively detailed correspondence models with each split.
 
-![Multiscale particles optimization](../img/getting-started/multiscale.png)
+![Multi-scale particles optimization](../img/getting-started/multiscale.png)
 
 
 ## Analyze Stage
