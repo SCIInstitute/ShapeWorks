@@ -11,7 +11,7 @@
 - [x] `about/release-notes.md`: Fix links in release notes
 - [ ] `about/team.md`: May be some pics
 - [x] `dev/autodoc.md`: Which dir to use for autodoc for commands? 
-- [ ] Spell and grammar check all markdown files 
+- [x] Spell and grammar check all markdown files 
 - [ ] `use-cases/ellipsoid.md`: Add a figure showing some samples of the dataset that highlight the mode of variation
 - [x] Be consistent: multi-scale vs multiscale in the md files
 - [ ] Be consistent: we vs you (e.g., in use cases)
