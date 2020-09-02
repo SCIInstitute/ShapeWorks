@@ -19,6 +19,8 @@ Next, install font awesome for icons to display in the documentation.
 
 ## Setting up the MkDocs project
 
+:fa-info-circle: _**Important:**_ This step is only needed when setting up the project for documentation. Please ignore if you have already mkdocs.yml in the project directory.
+
 Go to the directory for the MkDocs project.   
 
 Then    
