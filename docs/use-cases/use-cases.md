@@ -40,11 +40,11 @@ joeshmoe downloaded the ellipsoid dataset from the ShapeWorks Portal.
 
 ## Running Use Case
 
-The use cases are located at: [Examples/Python](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python). When a use case is run, the dataset is automatically downloaded. 
+The use cases are located at: `Examples/Python/`. When a use case is run, the dataset is automatically downloaded. 
 
 :fa-info-circle: _**Important:**_  You must first register of a *free* ShapeWorks account by visiting the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
 
-To run a use case, run the following command from the Examples/Python directory:
+To run a use case, run the following command from the `Examples/Python/` directory:
 
 ```
 $ cd /path/to/shapeworks/Examples/Python
@@ -103,7 +103,7 @@ $ python RunUseCase.py --use_case [insert name of use case here] shapeworks_path
 
 ## Running Subsequent Analysis
 
-To run ShapeWorksStudio again without running the full pipeline, you must first navigate to the Examples/Python/ directory, and then run ShapeWorksStudio on the appropriate analysis XML file.  For example:
+To run ShapeWorksStudio again without running the full pipeline, you must first navigate to the `Examples/Python/` directory, and then run ShapeWorksStudio on the appropriate analysis XML file.  For example:
 
 ```
 $ cd /path/to/shapeworks/Examples/Python

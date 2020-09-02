@@ -9,9 +9,9 @@
 
 ### What's New
 
-* **New, flexible ShapeWorks project file format:** New spreadsheet (XLSX) based project file format that can easily handle multiple shape modeling scenarios. It is now fully integrated into Studio. See the [ellipsoid studio example](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Studio/ellipsoid.xlsx) for an example.
+* **New, flexible ShapeWorks project file format:** New spreadsheet (XLSX) based project file format that can easily handle multiple shape modeling scenarios. It is now fully integrated into Studio. See the ellipsoid studio example in `Examples/Studio/ellipsoid.xlsx` for an example.
 * **Exporting shape parameters:** Added PCA Raw Component Score Export to Studio.
-* **New Getting Started documentation:** New [Getting started](http://sciinstitute.github.io/ShapeWorks/getting-started/workflow) documentation goes over shape modeling workflow documentation, different ShapeWorks interfaces with a video illustration for Studio.
+* **New Getting Started documentation:** New [Getting started](../getting-started/workflow.md) documentation goes over shape modeling workflow documentation, different ShapeWorks interfaces with a video illustration for Studio.
 * **Lower memory footprint and faster optimization:** ShapeWorks is now using [OpenVDB](https://www.openvdb.org/), a more memory-efficient data structure, for signed distance transforms. Along with other refactoring and code optimizations, ShapeWorks now uses *85% less memory* (from 57.09GB to 9.67GB in one use case). Additionally, the particle optimizer is now *2X faster*.
 * **Automated development builds:** We now offer up-to-date development binary builds that track the master branch, available [here](https://github.com/SCIInstitute/ShapeWorks/releases). Please understand that these are in-progress development builds, not official releases.
 

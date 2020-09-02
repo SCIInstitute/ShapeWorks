@@ -11,14 +11,14 @@ This use case demonstrates using ShapeWorks tools to perform the following.
 
 For this use case, we have 58 MRI images and their corresponding binary segmentations of the left atrium (visit [MIDAS-NAMIC](https://www.insight-journal.org/midas/collection/view/197) for more details of the left atrium dataset).
 
-The use case is located at: [Examples/Python/left_atrium.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/left_atrium.py)
+The use case is located at: `Examples/Python/left_atrium.py`
 
 
 ## Running the Use Case
 
 :fa-info-circle: _**Important:**_ Minimum of 32GB of RAM required to run the full use case.
 
-To run the use case, run [RunUseCase.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/RunUseCase.py) with proper tags. The tags control the type of input data and the optimization method. See [Getting Started with Use Cases](../use-cases/use-cases.md#running-use-case) for the full list of tags.
+To run the use case, run `RunUseCase.py` (in `Examples/Python/`) with proper tags. The tags control the type of input data and the optimization method. See [Getting Started with Use Cases](../use-cases/use-cases.md#running-use-case) for the full list of tags.
 
 * `--start_with_image_and_segmentation_data`: to groom both raw images and segmentations using the segmentations to find the grooming parameters (e.g., bounding box, reference shape for alignment). The default is grooming only segmentations
 * `--use_single_scale`: to use the single-scale optimization. Default is multi-scale optimization
@@ -32,12 +32,12 @@ $ cd /path/to/shapeworks/Examples/Python
 $python RunUseCase.py --use_case left_atrium 
 ```
 
-This calls [left_atrium.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/left_atrium.py) to perform the following.
+This calls `left_atrium.py` (in `Examples/Python/`) to perform the following.
             
 * Loads the left atrium dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
-* Grooms the images and segmentations by calling data preprocessing functions in [GroomUtils.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/GroomUtils.py). See [Grooming Data](#grooming-data) for details about these preprocessing steps.
-* Optimizes particle distribution (i.e., the shape/correspondence model) by calling optimization functions in [OptimizeUtils.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/OptimizeUtils.py). See [Optimizing Shape Model](#optimizing-shape-model) for details about algorithmic parameters for optimizing the shape model.
-* Launches ShapeWorksStudio to visualize the use case results (i.e., optimized shape model and the groomed data) by calling functions in [AnalyzeUtils.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/AnalyzeUtils.py)
+* Grooms the images and segmentations by calling data preprocessing functions in `GroomUtils.py` (in `Examples/Python/`). See [Grooming Data](#grooming-data) for details about these preprocessing steps.
+* Optimizes particle distribution (i.e., the shape/correspondence model) by calling optimization functions in `OptimizeUtils.py` (in `Examples/Python/`). See [Optimizing Shape Model](#optimizing-shape-model) for details about algorithmic parameters for optimizing the shape model.
+* Launches ShapeWorksStudio to visualize the use case results (i.e., optimized shape model and the groomed data) by calling functions in `AnalyzeUtils.py` (in `Examples/Python/`).
 
 
 ## Grooming Data

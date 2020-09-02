@@ -39,11 +39,9 @@ For a description of the grooming tools and parameters, see: [How to Groom Your 
 
 ## Optimizing Shape Model
 
-*Coming soon!*
-
+![Under construction, coming soon!](../img/misc/under-construction.png)
 
 ## Analyzing Shape Model
 
-*Coming soon!*
-
+![Under construction, coming soon!](../img/misc/under-construction.png)
 

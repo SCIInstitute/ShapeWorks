@@ -28,8 +28,9 @@
 - [ ] Consolidate docs/backlog
 - [ ] Add to use cases how to run with prepped data
 - [ ] Add mean and PCA visuals for ellipsoid and fixed domain ellipsoid use cases
-- [ ] Review and edit femur use case
-- [ ] Review and edit right ventricle use case
+- [x] Review and edit ellipsoid use cases
+- [x] Review and edit femur use case
+- [x] Review and edit right ventricle use case
 - [ ] Once meshes work, update the femur use case to indicate that this is optional and add femur_mesh use case
 - [ ] Instructions on how to add videos to the documentation (thumbnails that link to youtube)
 - [x] Instructions to add a new use case
@@ -39,9 +40,10 @@
 - [ ] `dev/gh-actions.md`: getting started with github actions
 - [ ] `dev/python-apis.md`: How to Add Python APIs?
 - [ ] `dev/tests.md`: How to Add and Run Unit Tests?
+- [x] Remove all hard-coded links outside docs (relative paths) except for (1) web links (e.g. segmentation softwares, markdown edits ... etc) and (2) shapeworks releases, and shapeworks data portal.
 
 ## To investigate for docs
-- [ ] How can we use repo_url in markdown files to link to repo files? Currently, we use hard code it whenever we link to a page: https://github.com/SCIInstitute/ShapeWorks/tree/master
+- [x] How can we use repo_url in markdown files to link to repo files? -- not needed any more, we won't include any links outside docs except for weblinks, shapeworks releases and data portal.
 - [ ] How to use google_analytics?
 
 ## For ShapeWorks repo

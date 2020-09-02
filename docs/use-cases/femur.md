@@ -12,13 +12,13 @@ The femur meshes in this data set have been segmented with various shaft lengths
 ![Femur Lengths](../img/use-cases/femurLengths.png)
 
 
-The use case is located at: [Examples/Python/femur.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/femur.py)
+The use case is located at: `Examples/Python/femur.py`
  
 ## Running the Use Case
 
 :fa-info-circle: _**Important:**_ Minimum of 32GB of RAM required to run the full use case.
 
-To run the use case, run [RunUseCase.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/RunUseCase.py) with proper tags. The tags control the type of input data and the optimization method. See [Getting Started with Use Cases](../use-cases/use-cases.md#running-use-case) for the full list of tags.
+To run the use case, run `RunUseCase.py` (in `Examples/Python/`) with proper tags. The tags control the type of input data and the optimization method. See [Getting Started with Use Cases](../use-cases/use-cases.md#running-use-case) for the full list of tags.
 
 * `--start_with_prepped_data`: to run the optimization on previously processed/groomed data.
 * `--interactive`: This tag is used to allow you to interactively select the cutting plane to be used for clipping all meshes. If this tag is not used, the pre-defined cutting plane is used to clip the given meshes.
@@ -31,12 +31,12 @@ $ cd /path/to/shapeworks/Examples/Python
 $ python RunUseCase.py --use_case femur 
 ```
 
-This calls [femur.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/femur.py) to perform the following.
+This calls `femur.py` (in `Examples/Python/`) to perform the following.
             
 * Loads the femur dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
-* Grooms the images and meshes by calling data preprocessing functions in [GroomUtils.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/GroomUtils.py). See [Grooming Data](#grooming-data) for details about these preprocessing steps.
-* Optimizes particle distribution (i.e., the shape/correspondence model) by calling optimization functions in [OptimizeUtils.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/OptimizeUtils.py). See [Optimizing Shape Model](#optimizing-shape-model) for details about algorithmic parameters for optimizing the shape model.
-* Launches ShapeWorksStudio to visualize the use case results (i.e., the optimized shape model and the groomed data) by calling functions in [AnalyzeUtils.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/AnalyzeUtils.py)
+* Grooms the images and meshes by calling data preprocessing functions in `GroomUtils.py` (in `Examples/Python/`). See [Grooming Data](#grooming-data) for details about these preprocessing steps.
+* Optimizes particle distribution (i.e., the shape/correspondence model) by calling optimization functions in `OptimizeUtils.py` (in `Examples/Python/`). See [Optimizing Shape Model](#optimizing-shape-model) for details about algorithmic parameters for optimizing the shape model.
+* Launches ShapeWorksStudio to visualize the use case results (i.e., the optimized shape model and the groomed data) by calling functions in `AnalyzeUtils.py` (in `Examples/Python/`).
 
 
 ### Running with Interactivity

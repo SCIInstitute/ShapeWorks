@@ -8,11 +8,11 @@ This use case is designed to demonstrate the functionality of the fixed domain o
 ![Fixed Domains](../img/use-cases/fixed-domains.png)
 
 
-The use case is located at: [Examples/Python/ellipsoid_fd.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/ellipsoid_fd.py)
+The use case is located at: `Examples/Python/ellipsoid_fd.py`
 
 ## Running the Use Case
 
-To run the use case, run [RunUseCase.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/RunUseCase.py) with proper tags. The tags control the type of input data and the optimization method. See [Getting Started with Use Cases](../use-cases/use-cases.md#running-use-case) for the full list of tags.
+To run the use case, run `RunUseCase.py` (in `Examples/Python/`) with proper tags. The tags control the type of input data and the optimization method. See [Getting Started with Use Cases](../use-cases/use-cases.md#running-use-case) for the full list of tags.
 
 
 Run the following command to run this use case. This optimization is done only with single-scale support since the new shapes will have the same number of particles as the existing shape model. Hence, there is no need to use the `--use_single_scale` tag.
@@ -22,12 +22,12 @@ $ cd /path/to/shapeworks/Examples/Python
 $ python RunUseCase.py --use_case ellipsoid_fd
 ```
 
-This calls [ellipsoid_fd.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/ellipsoid_fd.py) to perform the following.
+This calls `ellipsoid_fd.py` (in `Examples/Python/`) to perform the following.
 
 * Loads the ellipsoid_fd dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
 * Loads the existing (pre-trained) shape model and converts the new segmentations into signed distance transforms.
-* Optimizes particle distribution (i.e., the shape/correspondence model) on the new shape samples by calling optimization functions in [OptimizeUtils.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/OptimizeUtils.py). See [Optimizing Shape Model](#optimizing-shape-model) for details about algorithmic parameters for optimizing the shape model.
-* Launches ShapeWorksStudio to visualize the use case results (i.e., optimized shape model on the new shapes and the pre-trained shape model) by calling functions in [AnalyzeUtils.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/AnalyzeUtils.py)
+* Optimizes particle distribution (i.e., the shape/correspondence model) on the new shape samples by calling optimization functions in `OptimizeUtils.py` (in `Examples/Python/`). See [Optimizing Shape Model](#optimizing-shape-model) for details about algorithmic parameters for optimizing the shape model.
+* Launches ShapeWorksStudio to visualize the use case results (i.e., optimized shape model on the new shapes and the pre-trained shape model) by calling functions in `AnalyzeUtils.py` (in `Examples/Python/`).
 
 
 ## Grooming Data
@@ -63,7 +63,7 @@ Below are the default optimization parameters for this use case. For a descripti
         "mean_shape_path": meanShapePath,`
 ```
 
-In [ellipsoid_fd.py](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python/ellipsoid_fd.py), the following is defined.
+In `ellipsoid_fd.py` (in `Examples/Python/`), the following is defined.
 
 - `fileListDT` is the list of distance transforms for the existing shape model
 -  `shapemodelDir` is the directory path to the new shape model
