@@ -162,7 +162,7 @@ void Shape::import_groomed_image(ImageType::Pointer img, double iso, transform_t
   std::vector<std::vector<double>> groomed_transforms;
   std::vector<double> groomed_transform;
   for (int i = 0; i < transform.size(); i++) {
-    groomed_transform.push_back(i);
+    groomed_transform.push_back(transform[i]);
   }
   groomed_transforms.push_back(groomed_transform);
   this->subject_->set_groomed_transforms(groomed_transforms);

@@ -531,6 +531,11 @@ void Project::set_transform_list(std::vector<std::string> columns, int subject,
     transform_strings.push_back(str);
   }
 
+  while (transform_strings.size() < columns.size())
+  {
+    transform_strings.push_back("");
+  }
+
   this->set_list(columns, subject, transform_strings);
 
 }
