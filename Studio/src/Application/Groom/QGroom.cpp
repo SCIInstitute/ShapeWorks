@@ -1,5 +1,7 @@
 #include "QGroom.h"
 
+//#include <tbb/parallel_for.h>
+
 QGroom::QGroom(QObject* parent,
                std::vector<ImageType::Pointer> inputs,
                double background, double foreground,

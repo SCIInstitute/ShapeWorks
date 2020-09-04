@@ -575,6 +575,9 @@ void ShapeWorksStudioApp::update_table()
   this->ui_->table->horizontalHeader()->setStretchLastSection(false);
   this->ui_->table->setSelectionBehavior(QAbstractItemView::SelectRows);
 
+
+  /// todo: check if the list has changed before changing
+  auto current_feature = this->ui_->features->currentText();
   this->ui_->features->clear();
   this->ui_->features->addItem("");
   auto feature_maps = project->get_feature_columns();
@@ -583,6 +586,7 @@ void ShapeWorksStudioApp::update_table()
     item = item.remove(0, 8);
     this->ui_->features->addItem(item);
   }
+  this->ui_->features->setCurrentText(current_feature);
 
 }
 

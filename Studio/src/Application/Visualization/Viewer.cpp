@@ -554,7 +554,8 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
 */
 
       //mapper->SetScalarRange(24, 80);
-      mapper->SetScalarRange(-773, 1806);
+      //mapper->SetScalarRange(-773, 1806);
+      mapper->SetScalarRange(-25, 25);
 
     }
     else {

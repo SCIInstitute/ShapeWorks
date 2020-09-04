@@ -48,7 +48,7 @@ public:
   ImageType::Pointer get_groomed_image();
 
   /// Import the groomed raw image file
-  void import_groomed_image(ImageType::Pointer img, double iso);
+  void import_groomed_image(ImageType::Pointer img, double iso, transform_type transform);
 
   /// Retrieve the groomed mesh
   QSharedPointer<Mesh> get_groomed_mesh();
@@ -145,6 +145,8 @@ private:
 
   std::vector<Point> vectors_;
   vnl_vector<double> transform_;
+
+  transform_type groomed_transform_;
 
   QStringList corner_annotations_;
 

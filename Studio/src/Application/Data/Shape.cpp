@@ -146,11 +146,12 @@ ImageType::Pointer Shape::get_groomed_image()
 }
 
 //---------------------------------------------------------------------------
-void Shape::import_groomed_image(ImageType::Pointer img, double iso)
+void Shape::import_groomed_image(ImageType::Pointer img, double iso, transform_type transform)
 {
   this->groomed_mesh_ = QSharedPointer<Mesh>(new Mesh());
   this->groomed_image_ = img;
   this->groomed_mesh_->create_from_image(img, iso);
+  this->groomed_transform_ = transform;
   auto name = this->get_original_filename_with_path().toStdString();
   name = name.substr(0, name.find_last_of(".")) + "_DT.nrrd";
   this->groomed_filename_ = QString::fromStdString(name);

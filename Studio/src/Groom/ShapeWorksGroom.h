@@ -30,6 +30,9 @@ public:
   std::vector<ImageType::Pointer> getImages();
   double foreground();
   std::map<std::string, bool> tools();
+
+  std::vector<transform_type> get_transforms();
+
 protected:
   void isolate(int which = -1);
   void hole_fill(int which = -1);
@@ -43,7 +46,7 @@ protected:
   bool verbose_;
   double background_, foreground_, blurSigma_;
   flood_fill_filter_type::IndexType seed_;
-  transform_type transform_;
+  std::vector<transform_type> transforms_;
   size_t padding_, iterations_;
   std::map<std::string, bool> runTools_;
   ImageType::IndexType upper_;

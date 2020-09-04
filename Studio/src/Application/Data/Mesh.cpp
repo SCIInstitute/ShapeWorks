@@ -95,6 +95,10 @@ void Mesh::create_from_image(ImageType::Pointer image, double iso_value)
       this->center_transform_[i] = params[i] / count;
     }
 
+    this->center_transform_[0] = 0;
+    this->center_transform_[1] = 0;
+    this->center_transform_[2] = 0;
+
     // connect to VTK
     vtkSmartPointer<vtkImageImport> vtk_image = vtkSmartPointer<vtkImageImport>::New();
     itk::VTKImageExport<ImageType>::Pointer itk_exporter = itk::VTKImageExport<ImageType>::New();
@@ -139,6 +143,8 @@ void Mesh::apply_feature_map(std::string name, std::string filename, vnl_vector<
   reader->SetFileName(filename);
   reader->Update();
   ImageType::Pointer image = reader->GetOutput();
+
+
   LinearInterpolatorType::Pointer interpolator = LinearInterpolatorType::New();
   interpolator->SetInputImage(image);
 
@@ -167,11 +173,13 @@ void Mesh::apply_feature_map(std::string name, std::string filename, vnl_vector<
     pitk[0] = pt[0];
     pitk[1] = pt[1];
     pitk[2] = pt[2];
+    /*
     if (transform.size() == 3) {
       pitk[0] = pitk[0] - transform[0];
       pitk[1] = pitk[1] - transform[1];
       pitk[2] = pitk[2] - transform[2];
     }
+     */
 
     LinearInterpolatorType::ContinuousIndexType index;
     image->TransformPhysicalPointToContinuousIndex(pitk, index);

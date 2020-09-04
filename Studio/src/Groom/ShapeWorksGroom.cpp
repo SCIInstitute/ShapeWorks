@@ -34,10 +34,13 @@ ShapeWorksGroom::ShapeWorksGroom(
   bool verbose)
   : images_(inputs), background_(background), blurSigma_(blurSigma),
   foreground_(foreground),  padding_(padding),
-  iterations_(iterations), verbose_(verbose) {
+  iterations_(iterations), verbose_(verbose)
+  {
+
   this->paddingInit_ = false;
   this->upper_ = { 0,0,0 };
   this->lower_ = { 0,0,0 };
+  this->transforms_.resize(this->images_.size());
 }
 
 void ShapeWorksGroom::queueTool(std::string tool) {
@@ -153,6 +156,7 @@ void ShapeWorksGroom::center(int which) {
   }
   auto start = (which == -1 ? 0 : which);
   auto end = (which == -1 ? this->images_.size() : which + 1);
+
   for (size_t i = start; i < end; i++) {
     auto img = this->images_[i];
     ImageType::PointType origin = img->GetOrigin();
@@ -207,6 +211,8 @@ void ShapeWorksGroom::center(int which) {
     itk::TranslationTransform<double, 3>::Pointer trans
       = itk::TranslationTransform<double, 3>::New();
     trans->SetParameters(params);
+
+    this->transforms_[i] = params;
 
     itk::NearestNeighborInterpolateImageFunction<ImageType, double>::Pointer
       interp = itk::NearestNeighborInterpolateImageFunction<ImageType, double>::New();
@@ -377,4 +383,9 @@ void ShapeWorksGroom::blur(int which) {
   if (this->verbose_) {
     std::cout << "*** FINISHED RUNNING TOOL: blur" << std::endl;
   }
+}
+
+std::vector<transform_type> ShapeWorksGroom::get_transforms()
+{
+  return this->transforms_;
 }

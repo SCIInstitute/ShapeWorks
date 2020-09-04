@@ -59,7 +59,8 @@ public:
 
   /// load groomed files
   void load_groomed_files(std::vector<std::string> file_names, double iso);
-  void load_groomed_images(std::vector<ImageType::Pointer> images, double iso);
+  void load_groomed_images(std::vector<ImageType::Pointer> images, double iso,
+                           std::vector<transform_type> transforms = std::vector<transform_type>());
 
   /// load point files
   bool load_point_files(std::vector<std::string> file_names, bool local);
