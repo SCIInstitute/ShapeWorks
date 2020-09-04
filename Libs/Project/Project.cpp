@@ -506,9 +506,7 @@ Project::get_transform_list(std::vector<std::string> columns, int subject)
 
     std::vector<double> values;
 
-    std::cerr << "=========" << str << "\n";
     for(double value; ss >> value; ) {
-      std::cerr << "got: " << value << "\n";
       values.push_back(value);
     }
     //while (ss);
