@@ -50,7 +50,7 @@ def Run_Pipeline(args):
 		img_list.append(img_dir + file)
 	img_list = sorted(img_list)
 	# Get particles path list
-	model_dir =  input_dir + "model/" 
+	model_dir =  input_dir + "shape_models/multi-scale/512/" 
 	particle_list = []
 	for file in os.listdir(model_dir):
 		if "local" in file:
