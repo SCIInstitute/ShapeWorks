@@ -1498,13 +1498,11 @@ void ShapeWorksStudioApp::show_splash_screen()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::about()
 {
-
   std::string about = std::string("About ShapeWorksStudio");
-
   QMessageBox::about(this, QString::fromStdString(about),
                      "ShapeWorksStudio\n"
                      SHAPEWORKS_VERSION
                      "\n\n"
-                     "https://www.sci.utah.edu/software/shapeworks.html");
+                     "http://shapeworks.sci.utah.edu");
 
 }
