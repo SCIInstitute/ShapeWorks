@@ -28,14 +28,10 @@ public:
     return shapeworks::DomainType::Mesh;
   }
 
-  /** Apply any constraints to the given point location.  This method may, for
-      example, implement boundary conditions or restrict points to lie on a
-      surface.  Default behavior does nothing.  Returns true if the value of
-      the point was modified and false otherwise. */
   bool ApplyConstraints(PointType &p) const override;
   bool ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const override;
   vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const override;
-  PointType UpdateParticlePosition(PointType &point, vnl_vector_fixed<double, DIMENSION> &update) const override;
+  PointType UpdateParticlePosition(const PointType &point, vnl_vector_fixed<double, DIMENSION> &update) const override;
 
   double GetCurvature(const PointType &p) const override {
     return GetSurfaceMeanCurvature();
@@ -60,22 +56,37 @@ public:
     return meshWrapper->GetMeshUpperBound();
   }
 
-  PointType GetZeroCrossingPoint() const override {
-    return meshWrapper->GetPointOnMesh();
+  PointType GetValidLocationNear(PointType p) const override {
+    PointType valid;
+    valid[0] = p[0]; valid[1] = p[1]; valid[2] = p[2];
+    ApplyConstraints(valid);
+    return valid;
   }
   double GetSurfaceArea() const override {
     // TODO return actual surface area
     return 0;
   }
 
-  double GetMaxDimRadius() const override;
+  double GetMaxDiameter() const override;
 
+  inline vnl_vector_fixed<float, DIMENSION> SampleGradientAtPoint(const PointType &point) const override {
+    return meshWrapper->SampleNormalAtPoint(point);
+  }
   inline vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType & point) const override {
     return meshWrapper->SampleNormalAtPoint(point);
+  }
+  inline vnl_matrix_fixed<float, DIMENSION, DIMENSION> SampleHessianAtPoint(const PointType &p) const override {
+    //return meshWrapper->SampleHessianAtPoint(p);
+    // TODO need to figure out how to compute Hessians at mesh vertices.
+    return vnl_matrix_fixed<float, DIMENSION, DIMENSION>();
   }
 
   inline double Distance(const PointType &a, const PointType &b) const override {
       return meshWrapper->ComputeDistance(a, b);
+  }
+  inline double SquaredDistance(const PointType &a, const PointType &b) const override {
+    double dist = meshWrapper->ComputeDistance(a, b);
+    return dist * dist;
   }
 
   void PrintCuttingPlaneConstraints(std::ofstream& out) const override {
