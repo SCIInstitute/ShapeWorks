@@ -82,3 +82,15 @@ void Subject::set_feature_filenames(const std::map<std::string, std::string>& fe
 {
   feature_filenames_ = feature_filenames;
 }
+
+//---------------------------------------------------------------------------
+std::vector<std::vector<double>> Subject::get_groomed_transforms() const
+{
+  return this->groomed_transforms_;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_groomed_transforms(std::vector<std::vector<double>> transforms)
+{
+  this->groomed_transforms_ = transforms;
+}

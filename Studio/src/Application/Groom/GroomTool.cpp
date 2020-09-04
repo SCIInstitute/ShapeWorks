@@ -180,7 +180,8 @@ void GroomTool::handle_thread_complete()
   emit progress(95);
 
   this->session_->load_groomed_images(this->groom_->getImages(),
-                                      this->ui_->fastmarching_checkbox->isChecked() ? 0. : 0.5);
+                                      this->ui_->fastmarching_checkbox->isChecked() ? 0. : 0.5,
+                                      this->groom_->get_transforms());
   emit progress(100);
   emit message("Groom Complete");
   emit groom_complete();

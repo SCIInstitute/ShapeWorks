@@ -157,6 +157,16 @@ void Shape::import_groomed_image(ImageType::Pointer img, double iso, transform_t
   this->groomed_filename_ = QString::fromStdString(name);
   std::vector<std::string> groomed_filenames{name};   // only single domain supported so far
   this->subject_->set_groomed_filenames(groomed_filenames);
+
+  // single domain so far
+  std::vector<std::vector<double>> groomed_transforms;
+  std::vector<double> groomed_transform;
+  for (int i=0;i<transform.size();i++){
+    groomed_transform.push_back(i);
+  }
+  groomed_transforms.push_back(groomed_transform);
+  this->subject_->set_groomed_transforms(groomed_transforms);
+
 }
 
 //---------------------------------------------------------------------------

@@ -241,9 +241,18 @@ void Project::store_subjects()
   std::vector<std::string> groomed_columns;
 
   for (int i = 0; i < seg_columns.size(); i++) {
-    std::string groom_column_name = replace_string(seg_columns[i], SEGMENTATION_PREFIX,
-                                                   GROOMED_PREFIX);
+    std::string groom_column_name = replace_string(seg_columns[i],
+                                                   SEGMENTATION_PREFIX, GROOMED_PREFIX);
     groomed_columns.push_back(groom_column_name);
+  }
+
+  std::vector<std::string> groomed_transform_columns;
+
+  for (int i = 0; i < groomed_columns.size(); i++) {
+    std::string groomed_transform_column_name = replace_string(groomed_columns[i],
+                                                               GROOMED_PREFIX,
+                                                               GROOMED_TRANSFORMS_PREFIX);
+    groomed_transform_columns.push_back(groomed_transform_column_name);
   }
 
   for (int i = 0; i < num_subjects; i++) {
@@ -263,6 +272,19 @@ void Project::store_subjects()
         groomed_columns.push_back(std::string(GROOMED_PREFIX) + "file");
       }
       this->set_list(groomed_columns, i, groomed_files);
+
+      auto transforms = subject->get_groomed_transforms();
+      std::vector<std::string> transform_strings;
+      for (int i = 0; i < transforms.size(); i++) {
+        std::string str;
+        for (int j = 0; j < transforms[i].size(); j++) {
+          str = str + " " + std::to_string(transforms[i][j]);
+        }
+        transform_strings.push_back(str);
+      }
+
+      this->set_list(groomed_transform_columns, i, transform_strings);
+
     }
 
     // local files
