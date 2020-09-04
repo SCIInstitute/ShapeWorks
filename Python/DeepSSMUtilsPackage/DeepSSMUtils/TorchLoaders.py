@@ -220,7 +220,7 @@ def getImages(loader_dir, image_list, down_sample):
 	return norm_images
 
 '''
-Halves the size of the image
+Decreases the size of the image to 3/4 it's original size
 '''
 def downSample(image_path):
 	path = os.path.dirname(image_path)
@@ -230,9 +230,9 @@ def downSample(image_path):
 		   "info", "--size", str(True)]
 	output = subprocess.run(cmd, capture_output=True, text=True).stdout.splitlines()
 	size = makeVector(output[0].split(":")[1])
-	sizex = int(size[0]/2)
-	sizey = int(size[1]/2)
-	sizez = int(size[2]/2)
+	sizex = int(3*size[0]/4)
+	sizey = int(3*size[1]/4)
+	sizez = int(3*size[2]/4)
 	cmd = ["shapeworks", 
 		"read-image", "--name", image_path,
 		"resize", "--sizex", str(sizex),

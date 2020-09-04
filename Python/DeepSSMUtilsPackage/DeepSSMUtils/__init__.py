@@ -28,4 +28,6 @@ def testPytorch():
 		print("Pytorch is running on your CPU!")
 		print("This will be very slow. If your machine has a GPU,") 
 		print("please reinstall Pytorch to your shapeworks conda ")
-		print("environment with the correct CUDA version.\n\n\n")
+		print("environment with the correct CUDA version.")
+		print("**********************************************************")
+		exit()

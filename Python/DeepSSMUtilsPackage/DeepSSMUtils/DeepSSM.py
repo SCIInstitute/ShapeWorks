@@ -1,3 +1,4 @@
+# Jadie Adams
 import os
 import numpy as np
 from numpy import matlib
@@ -52,7 +53,7 @@ class DeepSSMNet(nn.Module):
 
 			('flatten', Flatten()),
 			
-			('fc1', nn.Linear(103680, 384)),
+			('fc1', nn.Linear(17280, 384)),
 			('relu6', nn.PReLU()),
 			('fc2', nn.Linear(384,96)),
 			('relu7', nn.PReLU()),
@@ -196,14 +197,11 @@ Test helper
 	gets the predicted paricle coordinates from the pca scores
 	saves them in out_dir
 '''
-def getPoints(out_dir, pred_scores, pca_score_path, test_names, loader_dir):
+def getPoints(predPath, pred_scores, pca_score_path, test_names, loader_dir):
 	print("Getting particles from predicted PCA scores...")
 	mean_PCA = np.load(loader_dir + 'mean_PCA.npy')
 	std_PCA = np.load(loader_dir + 'std_PCA.npy')
 	pred_scores = undoNorm(pred_scores, mean_PCA, std_PCA)
-	if not os.path.exists(out_dir):
-		os.makedirs(out_dir)
-	predPath = out_dir + 'predictedPoints/'
 	if not os.path.exists(predPath):
 		os.makedirs(predPath)
 	N = pred_scores.shape[0]

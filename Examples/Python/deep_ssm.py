@@ -93,8 +93,8 @@ def Run_Pipeline(args):
 		Higher batch size will help speed up training but uses more cuda memory, if you get a memory error try reducing the batch size
 	'''
 	
-	down_sample = False
-	batch_size = 1
+	down_sample = True
+	batch_size = 8
 	loader_dir = parent_dir + 'TorchDataLoaders/'
 	DeepSSMUtils.getTrainValLoaders(loader_dir, aug_data_csv, batch_size, down_sample)
 	DeepSSMUtils.getTestLoader(loader_dir, test_img_list, test_particle_list, down_sample)
@@ -112,10 +112,15 @@ def Run_Pipeline(args):
 	model_path = DeepSSMUtils.trainDeepSSM(loader_dir, parameters, parent_dir)
 
 
-	print("\n\n\nStep 5. Test DeepSSM\n") #####################################################################################
+	print("\n\n\nStep 5. Predict with DeepSSM\n") #####################################################################################
 	'''
 	Test DeepSSM
 	'''
 	PCA_scores_path = parent_dir + "augmentation/PCA_Particle_Info/"
-	DeepSSMUtils.testDeepSSM(parent_dir + 'test/', model_path, loader_dir, PCA_scores_path, num_PCA)
-	print('Predicted particles saved at: ' + parent_dir + 'test/')
+	prediction_dir = parent_dir + 'PredictedParticles/'
+	DeepSSMUtils.testDeepSSM(prediction_dir, model_path, loader_dir, PCA_scores_path, num_PCA)
+	print('Predicted particles saved at: ' + prediction_dir)
+
+	print("\n\n\nStep 6. Analyze results.\n") #####################################################################################
+	DT_dir = input_dir + "groomed/distance_transforms/"
+	# DeepSSMUtils.AnalyzeResults(DT_dir, prediction_dir)
