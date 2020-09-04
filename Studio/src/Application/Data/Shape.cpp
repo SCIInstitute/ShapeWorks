@@ -541,7 +541,7 @@ void Shape::load_feature(std::string display_mode, std::string feature)
 
     vnl_vector<double> transform;
     if (display_mode != Visualizer::MODE_ORIGINAL_C) {
-      transform = this->transform_;
+      transform = this->groomed_transform_;
     }
 
     mesh->apply_feature_map(feature, filenames[feature], transform);

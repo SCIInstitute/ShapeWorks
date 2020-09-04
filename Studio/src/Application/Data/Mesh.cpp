@@ -173,13 +173,13 @@ void Mesh::apply_feature_map(std::string name, std::string filename, vnl_vector<
     pitk[0] = pt[0];
     pitk[1] = pt[1];
     pitk[2] = pt[2];
-    /*
+
     if (transform.size() == 3) {
-      pitk[0] = pitk[0] - transform[0];
-      pitk[1] = pitk[1] - transform[1];
-      pitk[2] = pitk[2] - transform[2];
+      pitk[0] = pitk[0] + transform[0];
+      pitk[1] = pitk[1] + transform[1];
+      pitk[2] = pitk[2] + transform[2];
     }
-     */
+
 
     LinearInterpolatorType::ContinuousIndexType index;
     image->TransformPhysicalPointToContinuousIndex(pitk, index);
