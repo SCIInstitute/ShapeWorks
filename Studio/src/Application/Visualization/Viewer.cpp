@@ -504,7 +504,8 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
     this->draw_exclusion_spheres(shape);
 
     vnl_vector<double> transform;
-    if (this->visualizer_->get_display_mode() == Visualizer::MODE_ORIGINAL_C) {
+    if (this->visualizer_->get_display_mode() == Visualizer::MODE_ORIGINAL_C &&
+        this->visualizer_->get_center()) {
       transform = shape->get_transform();
     }
 
@@ -552,7 +553,8 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
       //mapper->SetScalarRange(-500,500);
 */
 
-      mapper->SetScalarRange(24, 80);
+      //mapper->SetScalarRange(24, 80);
+      mapper->SetScalarRange(-773, 1806);
 
     }
     else {

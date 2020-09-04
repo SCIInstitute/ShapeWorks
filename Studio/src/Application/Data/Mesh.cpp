@@ -179,19 +179,20 @@ void Mesh::apply_feature_map(std::string name, std::string filename, vnl_vector<
     auto pixel = 0;
     if (region.IsInside(index)) {
       pixel = interpolator->EvaluateAtContinuousIndex(index);
+    //  std::cerr << pixel << " ";
     }
     scalars->SetValue(i, pixel);
   }
+  //std::cerr << "\n";
 
   this->poly_data_->GetPointData()->AddArray(scalars);
 
   this->poly_data_->GetPointData()->SetScalars(scalars);
 
-  //auto writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-
-  //writer->SetInputData(this->poly_data_);
-  //writer->SetFileName("/tmp/foo.vtk");
-  //writer->Update();
+  auto writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+  writer->SetInputData(this->poly_data_);
+  writer->SetFileName("/tmp/foo.vtk");
+  writer->Update();
 
 
 }

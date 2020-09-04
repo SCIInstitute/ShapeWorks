@@ -867,7 +867,7 @@ void ShapeWorksStudioApp::handle_glyph_changed()
 void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
 {
   this->preferences_.set_center_checked(this->ui_->center_checkbox->isChecked());
-  this->update_display();
+  this->update_display(true);
 }
 
 //---------------------------------------------------------------------------

@@ -61,6 +61,7 @@ std::string Visualizer::get_display_mode()
 //-----------------------------------------------------------------------------
 void Visualizer::set_center(bool center)
 {
+  std::cerr << "set center to: " << center << "\n";
   this->center_ = center;
 }
 
@@ -330,5 +331,11 @@ const string& Visualizer::get_feature_map() const
 void Visualizer::set_feature_map(const string& feature_map)
 {
   feature_map_ = feature_map;
+}
+
+//-----------------------------------------------------------------------------
+bool Visualizer::get_center()
+{
+  return this->center_;
 }
 

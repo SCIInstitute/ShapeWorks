@@ -37,6 +37,8 @@ public:
   /// turn automatic centering on/off
   void set_center(bool center);
 
+  bool get_center();
+
   /// turn on/off glyph display
   void set_show_glyphs(bool show);
 
@@ -92,7 +94,9 @@ private:
 
   std::string display_mode_;
   std::string feature_map_;
+
 private:
+
   bool center_;
 
   bool show_glyphs_;
