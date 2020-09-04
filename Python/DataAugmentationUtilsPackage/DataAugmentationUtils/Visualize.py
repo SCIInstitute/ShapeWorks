@@ -7,7 +7,6 @@ from bokeh.layouts import gridplot
 from bokeh.models import (BasicTicker, Circle, ColumnDataSource, DataRange1d,
                           Grid, LinearAxis, PanTool, Plot, WheelZoomTool,)
 from bokeh.resources import INLINE
-from bokeh.sampledata.iris import flowers
 from bokeh.util.browser import view
 
 def splom(data_csv):
