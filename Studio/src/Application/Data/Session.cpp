@@ -529,7 +529,7 @@ void Session::load_groomed_images(std::vector<ImageType::Pointer> images,
       new_shape->set_mesh_manager(this->mesh_manager_);
       this->shapes_.push_back(new_shape);
     }
-    this->shapes_[i]->import_groomed_image(images[i], iso, transform);
+    this->shapes_[i]->import_groomed_image(images[i], iso, transforms[i]);
   }
   progress.setValue(images.size());
   QApplication::processEvents();
