@@ -1,8 +1,7 @@
 // Copyright (c) 2011 LTSI INSERM U642
 // All rights reserved.
 
-#include "vtkHausdorffDistancePointSetFilter2.h"
-
+#include "vtkHausdorffDistancePointSetFilter.h"
 #include "vtkXMLPolyDataReader.h"
 #include "vtkPolyDataReader.h"
 #include "vtkAlgorithm.h"
@@ -109,7 +108,7 @@ int main(int argc,char** argv)
         legacyReaderB->SetFileName(argv[inputBParam]);
     }
 
-    vtkSmartPointer<vtkHausdorffDistancePointSetFilter2> filter = vtkSmartPointer<vtkHausdorffDistancePointSetFilter2>::New();
+    vtkSmartPointer<vtkHausdorffDistancePointSetFilter> filter = vtkSmartPointer<vtkHausdorffDistancePointSetFilter>::New();
     filter->SetInputConnection(readerA->GetOutputPort());
     filter->SetInputConnection(1,readerB->GetOutputPort());
 
