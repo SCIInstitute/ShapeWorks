@@ -161,7 +161,7 @@ void Shape::import_groomed_image(ImageType::Pointer img, double iso, transform_t
   // single domain so far
   std::vector<std::vector<double>> groomed_transforms;
   std::vector<double> groomed_transform;
-  for (int i=0;i<transform.size();i++){
+  for (int i = 0; i < transform.size(); i++) {
     groomed_transform.push_back(i);
   }
   groomed_transforms.push_back(groomed_transform);
@@ -180,6 +180,18 @@ QSharedPointer<Mesh> Shape::get_groomed_mesh()
     }
     else {
       this->generate_meshes(this->subject_->get_groomed_filenames(), this->groomed_mesh_);
+    }
+
+    // single domain support
+    auto transforms = this->subject_->get_groomed_transforms();
+    if (transforms.size() > 0) {
+      this->groomed_transform_.set_size(transforms[0].size());
+      std::cerr << "loaded groomed transform from project: \n";
+      for (int i = 0; i < transforms[0].size(); i++) {
+        std::cerr << transforms[0][i] << " ";
+        this->groomed_transform_[i] = transforms[0][i];
+      }
+      std::cerr << "\n";
     }
   }
 
@@ -528,8 +540,7 @@ void Shape::load_feature(std::string display_mode, std::string feature)
     auto filenames = this->subject_->get_feature_filenames();
 
     vnl_vector<double> transform;
-    if (display_mode != Visualizer::MODE_ORIGINAL_C)
-    {
+    if (display_mode != Visualizer::MODE_ORIGINAL_C) {
       transform = this->transform_;
     }
 

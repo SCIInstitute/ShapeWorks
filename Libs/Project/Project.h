@@ -89,6 +89,12 @@ private:
   std::vector<std::string> get_list(std::vector<std::string> columns, int subject);
   void set_list(std::vector<std::string> columns, int subject, std::vector<std::string> values);
 
+  std::vector<std::vector<double>>
+  get_transform_list(std::vector<std::string> columns, int subject);
+
+  void set_transform_list(std::vector<std::string> columns, int subject,
+                          std::vector<std::vector<double>> transforms);
+
   std::vector<std::string> get_matching_columns(std::string prefix) const;
 
   std::string get_value(int column, int subject_id);

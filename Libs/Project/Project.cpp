@@ -193,6 +193,7 @@ void Project::load_subjects()
 
   auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
   auto groomed_columns = this->get_matching_columns(GROOMED_PREFIX);
+  auto groomed_transform_columns = this->get_matching_columns(GROOMED_TRANSFORMS_PREFIX);
   auto feature_columns = this->get_matching_columns(FEATURE_PREFIX);
 
   int local_particle_column = this->get_index_for_column(LOCAL_PARTICLES);
@@ -202,9 +203,10 @@ void Project::load_subjects()
     std::shared_ptr<Subject> subject = std::make_shared<Subject>();
 
     subject->set_number_of_domains(this->num_domains_);
-
     subject->set_segmentation_filenames(this->get_list(seg_columns, i));
     subject->set_groomed_filenames(this->get_list(groomed_columns, i));
+
+    subject->set_groomed_transforms(this->get_transform_list(groomed_transform_columns, i));
 
     auto feature_list = this->get_list(feature_columns, i);
     std::map<std::string, std::string> map;
@@ -273,17 +275,7 @@ void Project::store_subjects()
       }
       this->set_list(groomed_columns, i, groomed_files);
 
-      auto transforms = subject->get_groomed_transforms();
-      std::vector<std::string> transform_strings;
-      for (int i = 0; i < transforms.size(); i++) {
-        std::string str;
-        for (int j = 0; j < transforms[i].size(); j++) {
-          str = str + " " + std::to_string(transforms[i][j]);
-        }
-        transform_strings.push_back(str);
-      }
-
-      this->set_list(groomed_transform_columns, i, transform_strings);
+      this->set_transform_list(groomed_transform_columns, i, subject->get_groomed_transforms());
 
     }
 
@@ -497,6 +489,50 @@ std::vector<std::string> Project::get_feature_columns() const
 {
   auto feature_columns = this->get_matching_columns(FEATURE_PREFIX);
   return feature_columns;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::vector<double>>
+Project::get_transform_list(std::vector<std::string> columns, int subject)
+{
+  //auto transform_string_list = this->get_list(groomed_transform_columns, i);
+  auto list = this->get_list(columns, subject);
+
+  std::vector<std::vector<double>> transforms;
+  for (int i = 0; i < list.size(); i++) {
+    std::string str = list[i];
+
+    std::istringstream ss(str);
+
+    std::vector<double> values;
+
+    do {
+      double value;
+      ss >> value;
+      values.push_back(value);
+    } while (ss);
+
+    transforms.push_back(values);
+
+  }
+  return transforms;
+}
+
+//---------------------------------------------------------------------------
+void Project::set_transform_list(std::vector<std::string> columns, int subject,
+                                 std::vector<std::vector<double>> transforms)
+{
+  std::vector<std::string> transform_strings;
+  for (int i = 0; i < transforms.size(); i++) {
+    std::string str;
+    for (int j = 0; j < transforms[i].size(); j++) {
+      str = str + " " + std::to_string(transforms[i][j]);
+    }
+    transform_strings.push_back(str);
+  }
+
+  this->set_list(columns, subject, transform_strings);
+
 }
 
 //---------------------------------------------------------------------------
