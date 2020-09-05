@@ -484,7 +484,6 @@ void ShapeWorksStudioApp::update_from_preferences()
   this->glyph_quality_slider_->setValue(preferences_.get_glyph_quality());
   this->glyph_size_slider_->setValue(preferences_.get_glyph_size() * 10.0);
 
-
   this->glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
   this->glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
 
@@ -866,14 +865,6 @@ void ShapeWorksStudioApp::handle_glyph_changed()
   this->glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
   this->glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
   this->update_display(true);
-
-  std::cerr << "slider = " <<this->glyph_size_slider_->value() << "\n";
-  if (this->glyph_size_slider_->value() >= 90)
-  {
-    int *foo = nullptr;
-    foo[0] = 42;
-  }
-
 }
 
 //---------------------------------------------------------------------------
