@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 
 #ifdef _WIN32
     STUDIO_LOG_MESSAGE("ShapeWorksStudio win32 initializing...");
-    //init_crash_handler();
+    init_crash_handler();
     ::SetErrorMode( 0 );
 #endif
 
