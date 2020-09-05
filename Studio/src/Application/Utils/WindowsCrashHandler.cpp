@@ -155,7 +155,7 @@ static LONG __stdcall CrashHandlerExceptionFilter(EXCEPTION_POINTERS* pExPtrs)
 
   // attempt to open the log file with notepad
   std::string file = shapeworks::StudioLog::Instance().get_log_filename().toStdString();
-  ShellExecute(0, 0, file, 0, 0 , SW_SHOW );
+  ShellExecute(0, 0, file.c_str(), 0, 0 , SW_SHOW );
 
   FatalAppExit(-1, lString);
   
