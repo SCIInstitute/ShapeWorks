@@ -57,8 +57,6 @@ void OptimizeTool::handle_progress(int val)
     this->session_->update_points(local, true);
     this->session_->update_points(global, false);
   }
-
-  QApplication::processEvents();
 }
 
 //---------------------------------------------------------------------------
