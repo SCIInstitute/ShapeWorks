@@ -1,5 +1,7 @@
 #include <QApplication>
 #include <QResource>
+#include <QMessageBox>
+
 #include <Visualization/ShapeWorksStudioApp.h>
 #include <iostream>
 
@@ -33,6 +35,11 @@ int main(int argc, char** argv)
     QResource::registerResource(RSCS_FILE);
     studio_app->setWindowIcon(QIcon(ICON_FILE));
     studio_app->show();
+
+    if (!shapeworks::StudioLog::Instance().check_log_open()) {
+      QMessageBox::warning(NULL, "ShapeWorksStudio", "Unable to open log file: " +
+                                                     shapeworks::StudioLog::Instance().get_log_filename());
+    }
 
     // do this after "show" for mac initialization
     studio_app->initialize_vtk();

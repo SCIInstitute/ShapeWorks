@@ -4,6 +4,7 @@
 #include <QDateTime>
 #include <QString>
 #include <QDir>
+#include <QStandardPaths>
 
 using namespace shapeworks;
 
@@ -33,7 +34,9 @@ void StudioLog::new_log()
 
   QDateTime date_time = QDateTime::currentDateTime();
   QString session_name = date_time.toString(StudioLog::log_datetime_format_);
-  QString path = QDir::homePath() + QDir::separator() + ".shapeworks";
+
+  auto app_data_path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+  QString path = app_data_path + QDir::separator() + "shapeworks" + QDir::separator() + "logs";
 
   QDir dir(path);
   if (!dir.exists()) {
@@ -49,6 +52,7 @@ void StudioLog::new_log()
 
   QString logfile = path + QDir::separator() + "studio-" + session_name + ".txt";
 
+  this->log_filename_ = logfile;
   this->log_.open(logfile.toStdString());
   this->log_.flush();
 }
@@ -121,5 +125,17 @@ QString StudioLog::get_current_datetime()
 {
   QDateTime date_time = QDateTime::currentDateTime();
   return date_time.toString(StudioLog::datetime_format_);
+}
+
+//-----------------------------------------------------------------------------
+bool StudioLog::check_log_open()
+{
+  return this->log_.is_open();
+}
+
+//-----------------------------------------------------------------------------
+QString StudioLog::get_log_filename()
+{
+  return this->log_filename_;
 }
 

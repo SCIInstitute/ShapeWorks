@@ -36,6 +36,12 @@ public:
   //! Flush log to disk
   void flush_log();
 
+  //! Return if the log is open
+  bool check_log_open();
+
+  //! Return the log filename
+  QString get_log_filename();
+
 private:
 
   QString create_header(const int line, const char* filename );
@@ -43,6 +49,8 @@ private:
   QString get_current_datetime();
 
   std::ofstream log_; //! log file
+
+  QString log_filename_;
 
   //! Datetime format used
   static const QString datetime_format_;
