@@ -10,6 +10,7 @@
 #include <vtkCenterOfMass.h>
 
 #include <Data/MeshGenerator.h>
+#include <Data/StudioLog.h>
 #include <Visualization/Visualizer.h>
 
 using namespace shapeworks;
@@ -131,11 +132,13 @@ ImageType::Pointer Shape::get_groomed_image()
       try {
         // read file using ITK
         ReaderType::Pointer reader = ReaderType::New();
+        STUDIO_LOG_MESSAGE(QString::fromStdString("Loading groomed file: " + filename));
         reader->SetFileName(filename);
         reader->Update();
         image = reader->GetOutput();
         // don't store to this->groomed_image_ so that we don't hold a pointer to it
       } catch (itk::ExceptionObject& excep) {
+        STUDIO_LOG_ERROR(QString::fromStdString("Failed to loading groomed file: " + filename));
         std::cerr << "Exception caught!" << std::endl;
         std::cerr << excep << std::endl;
       }
