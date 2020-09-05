@@ -1513,5 +1513,4 @@ void ShapeWorksStudioApp::about()
                      SHAPEWORKS_VERSION
                      "\n\n"
                      "http://shapeworks.sci.utah.edu");
-
 }
