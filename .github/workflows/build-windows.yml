@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-      - release_v5.4
+      - studio_feature_map
     tags:
     - '*'
   pull_request:
