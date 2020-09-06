@@ -16,6 +16,9 @@ See [this link](https://mkdocs.github.io/mkdocs-bootswatch/) for a list of boots
 Next, install font awesome for icons to display in the documentation.   
 `pip install fontawesome-markdown`
 
+and pymdown-extensions for tasklists:
+`pip install pymdown-extensions`
+
 
 ## Setting up the MkDocs project
 
