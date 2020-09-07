@@ -49,9 +49,6 @@ def Run_Pipeline(args):
         print('Zero mesh files found in', meshDir)
         return
 
-    meshFiles = meshFiles[:15]
-    print(meshFiles)
-
     pointDir = parentDir + 'PointFiles/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
