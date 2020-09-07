@@ -8,14 +8,13 @@ This use case demonstrates using ShapeWorks tools to perform the following.
 - Groom a dataset from meshes, and obtain a SSM without converting the meshes to a different representation. This requires significantly lower RAM.
 
 The use case is located at: `Examples/Python/femur_mesh.py`
+
+![Femur Dataset](../img/use-cases/femur-mesh/dataset.png)
  
 ## Running the Use Case
 
-To run the use case, run `RunUseCase.py` (in `Examples/Python/`) with proper tags. The tags control the type of input data and the optimization method. See [Getting Started with Use Cases](../use-cases/use-cases.md#running-use-case) for the full list of tags.
+To run the use case, run `RunUseCase.py` (in `Examples/Python/`).
 
-
-To run the full pipeline:
-            
 ```
 $ cd /path/to/shapeworks/Examples/Python
 $ python RunUseCase.py --use_case femur_mesh
@@ -30,7 +29,7 @@ This calls `femur_mesh.py` (in `Examples/Python/`) to perform the following.
 
 ## Grooming Data
 
-In this use case, we download pre-groomed data. The grooming process used for this data can be exlored in `Libs/Mesh/GroomFemur.cpp`.
+In this use case, we download pre-groomed data. The grooming process used for this data can be explored in `Libs/Mesh/GroomFemur.cpp`.
 
 1. **Clip**: Because the femur meshes vary in shaft lengths, we clip the lengths of all the femurs to that of the shortest one.
 2. **Reflect Meshes**: In this use case, we often have both right and left femur surface meshes. To align all the femurs, we choose one side to reflect both the image and mesh.
@@ -69,8 +68,6 @@ $ python RunUseCase.py --use_case femur_mesh
         "save_init_splits" : 0,
         "debug_projection" : 0,
         "verbosity" : 2,
-        "visualizer_enable": 0,
-        "visualizer_wireframe": 0,
 }
 ```
 
@@ -80,14 +77,12 @@ ShapeWorksStudio visualizes/analyzes the optimized particle-based shape model by
 
 Here is the mean shape of the optimized shape mode using single-scale optimization.
 
-[![Mean Shape of Femur](../img/use-cases/mean_femur_thumbnail.png)](https://youtu.be/CgCRYlD4Hdg)
+![Femur Mean Shape](../img/use-cases/femur-mesh/mean.png)
 
 Here are femur samples with their optimized correspondences.
-![Femur Samples](../img/use-cases/femur_samples.png)
-
-Zooming in some femur samples.
-![Zoom Femur Samples](../img/use-cases/femur_samples_zoom.png)
+![Femur Samples](../img/use-cases/femur-mesh/samples.png)
 
 Here is a video showing the shape modes of variation (computed using principal component analysis - PCA) of the femur dataset using single-scale optimization.
 
-[![Femur PCA](../img/use-cases/femur_PCA_thumbnail.png)](https://youtu.be/N4hmXSJsqRg)
+TODO: Update video link
+[![Femur Mesh PCA](../img/use-cases/femur-mesh/pca.png)](https://youtu.be/)
