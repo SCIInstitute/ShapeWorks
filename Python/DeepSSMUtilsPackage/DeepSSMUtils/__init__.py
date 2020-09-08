@@ -7,9 +7,9 @@ def getTrainValLoaders(loader_dir, aug_data_csv, batch_size=1, down_sample=False
 	testPytorch()
 	TorchLoaders.getTrainValLoaders(loader_dir, aug_data_csv, batch_size, down_sample)
 
-def getTestLoader(loader_dir, test_img_list, test_particle_list, down_sample=False):
+def getTestLoader(loader_dir, test_img_list, down_sample=False):
 	testPytorch()
-	TorchLoaders.getTestLoader(loader_dir, test_img_list, test_particle_list, down_sample)
+	TorchLoaders.getTestLoader(loader_dir, test_img_list, down_sample)
 
 def trainDeepSSM(loader_dir, parameters, parent_dir):
 	testPytorch()

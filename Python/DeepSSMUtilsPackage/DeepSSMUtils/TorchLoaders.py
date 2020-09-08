@@ -53,7 +53,7 @@ def getTrainValLoaders(loader_dir, data_csv, batch_size=1, down_sample=False):
 '''
 Makes test data loader
 '''
-def getTestLoader(loader_dir, test_img_list, test_particle_list, down_sample):
+def getTestLoader(loader_dir, test_img_list, down_sample):
 	# get data
 	image_paths = []
 	scores = []
@@ -61,21 +61,13 @@ def getTestLoader(loader_dir, test_img_list, test_particle_list, down_sample):
 	test_names = []
 	for index in range(len(test_img_list)):
 		image_path = test_img_list[index]
-		model_path = test_particle_list[index]
 		# add name
 		prefix = getPrefix(image_path)
-		# data error check
-		if prefix not in getPrefix(model_path):
-			print("Error: Images and models mismatched.")
-			print(index)
-			print(prefix)
-			print(getPrefix(model_path))
-			exit()
 		test_names.append(prefix)
 		image_paths.append(image_path)
-		# add score placeholder
+		# add label placeholders
 		scores.append([])
-		models.append(getParticles(model_path))
+		models.append([])
 	images = getImages(loader_dir, image_paths, down_sample)
 
 	test_data = DeepSSMdataset(images, scores, models)
