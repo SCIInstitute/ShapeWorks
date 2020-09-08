@@ -27,7 +27,7 @@ The next step is to reformat the data into PyTorch tensors. 80% of the data is r
 
 PyTorch is used in constructing and training DeepSSM. The network architecture is defined to have five convolution layers followed by two fully connected layers as illustrated in the figure below. Parametric ReLU activation is used and the weights are initialized using Xavier initialization. The network is trained for the specified number of epochs using Adam optimization to minimize the L2 loss function with a learning rate of 0.0001. The average training and validation error are printed and logged each epoch to determine convergence.
 
-![DeepSSM Architecture](../img/deep-learning/Architecture.pdf)
+![DeepSSM Architecture](../img/deep-learning/Architecture.png)
 
 #### 4. Testing
 
