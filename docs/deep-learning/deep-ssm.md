@@ -1,6 +1,6 @@
 ## ShapeWorks DeepSSM
 DeepSSM is a convolutional neural network (CNN) model that can provide particles directly from unsegmented images after it has been trained. This documentation provides an overview of the DeepSSM process, for a full explanation see: [DeepSSM: A Deep Learning Framework for Statistical
-Shape Modeling from Raw Images](https://arxiv.org/abs/1810.00111)
+Shape Modeling from Raw Images](https://arxiv.org/abs/1810.00111).
 
 The input to the DeepSSM network are unsegmented 3D images of the anatomy of interest and the output are the particle-based shape models. DeepSSM requires training examples of image/PBM pairs which are generated via the traditional Shapeworks grooming and optimization pipeline or otherwise. Once the network has been trained on these examples it can predict the PBM of unseen examples given only images, bypassing the need for labor intensive segmentation, grooming, and optimization parameter tuning. 
 
@@ -15,7 +15,7 @@ The DeepSSM network is implemented in PyTorch and requires a GPU to run efficien
 
 #### 1. Data Augmentation
 
-The first step to creating a DeepSSM model is generating training data. Deep networks require thousands of training instances and so because medical imaging data is typically limited, data augmentation is necessary. The data augmentation process is described here:  [Data Augmentation](DataAugmentation.md)
+The first step to creating a DeepSSM model is generating training data. Deep networks require thousands of training instances and so because medical imaging data is typically limited, data augmentation is necessary. The data augmentation process is described here:  [data-augmentation.md](DataAugmentation.md).
 
 The data augmentation process involves reducing the PBM's to a low dimensional space via Principal Component Analysis (PCA), preserving a chosen percent of the variation. The PCA scores are saved and used as the labels for DeepSSM prediction. The PCA scores are deterministically mapped back to the PDM using the eigenvalues and vectors once the DeepSSM model makes a prediction. 
 
@@ -27,7 +27,7 @@ The next step is to reformat the data into PyTorch tensors. 80% of the data is r
 
 PyTorch is used in constructing and training DeepSSM. The network architecture is defined to have five convolution layers followed by two fully connected layers as illustrated in the figure below. Parametric ReLU activation is used and the weights are initialized using Xavier initialization. The network is trained for the specified number of epochs using Adam optimization to minimize the L2 loss function with a learning rate of 0.0001. The average training and validation error are printed and logged each epoch to determine convergence.
 
-TODO: Put network architecture figure here
+![DeepSSM Architecture](../img/deep-learning/Architecture.pdf)
 
 #### 4. Testing
 
