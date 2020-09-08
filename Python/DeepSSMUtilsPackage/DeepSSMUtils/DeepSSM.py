@@ -248,7 +248,7 @@ def test(out_dir, model_path, loader_dir, pca_scores_path, num_pca):
 	f = open(test_names_file, 'r')
 	test_names_string = f.read()
 	f.close()
-	test_names_string = test_names_string.replace("[","").replace("]","").replace("'","")
+	test_names_string = test_names_string.replace("[","").replace("]","").replace("'","").replace(" ","")
 	test_names = test_names_string.split(",")
 	print("Done.\n")
 	print("Predicting for test images...")

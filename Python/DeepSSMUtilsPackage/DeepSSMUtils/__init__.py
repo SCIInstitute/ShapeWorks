@@ -1,5 +1,6 @@
 from DeepSSMUtils import TorchLoaders
 from DeepSSMUtils import DeepSSM
+from DeepSSMUtils import Analyze
 import torch
 
 def getTrainValLoaders(loader_dir, aug_data_csv, batch_size=1, down_sample=False):
@@ -19,6 +20,10 @@ def testDeepSSM(out_dir, model_path, loader_dir, PCA_scores_path, num_PCA):
 	testPytorch()
 	DeepSSM.test(out_dir, model_path, loader_dir, PCA_scores_path, num_PCA)
 	return
+
+def AnalyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix):
+	avg_distance = Analyze.getDistance(out_dir, DT_dir, prediction_dir, mean_prefix)
+	return avg_distance
 
 def testPytorch():
 	if torch.cuda.is_available():
