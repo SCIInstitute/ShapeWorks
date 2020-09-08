@@ -30,10 +30,10 @@ The following is performed by [deep-ssm.py](https://github.com/SCIInstitute/Shap
 * Performs data augmentation as described in [data-augmentation.md](../deep-learning/data-augmentation.md).
 * Creates a DeepSSM model as described in [deep-ssm.md](../deep-learning/deep-ssm.md) and uses it to make predictions on unseen images.
 
-### Step 1: Getting the original data
-The femur data is downloaded from Girder. This use case uses the original unsegmented images and the corresponding .particle shape model files.
+## Use Case Pipeline
 
-Of the 50 examples in the femur dataset, 40 are used to create training and validation sets while the remaining 10 are saved for a test set.
+### Step 1: Getting the original data
+The femur data is downloaded from Girder. This use case uses the original unsegmented images and the corresponding .particle shape model files. Of the 50 examples in the femur dataset, 40 are used to create training and validation sets while the remaining 10 are saved for a test set.
 
 ### Step 2: Running data augmentation
 For a full description of the data augmentation process and how to use the ShapeWorks data augmentation Python package, please see [data-augmentation.md](../deep-learning/data-augmentation.md). The functions relevant to this step are `RunDataAugmentation` and `VisualizeAugmentation`.
@@ -46,19 +46,13 @@ For a full description of the DeepSSM process and how to use the ShapeWorks Deep
 The images and particle files are reformatted into tensors for training and testing the DeepSSM network. The 5000 original and augmented image/particle pairs are turned into train (80%) and validation (20%) loaders and the images held out for the test set are turned into a test loader. A batch size of 8 is used for optimal GPU capacity. Note if a CUDA memory error occurs when running the use case, this value may need to be decreased. The images in the train, validation, and test sets are downsampled to 75% of their original size to decrease training time.
 
 ### Step 4: Training DeepSSM 
-See the documentation for the function `trainDeepSSM` in [deep-ssm.md](../deep-learning/deep-ssm.md) for a full description.
-
-A DeepSSM model is created and trained for 30 epochs. A learning rate of 0.0001 is used and the validation error is calculated and reported every epoch.
+This step uses function `trainDeepSSM` documented in [deep-ssm.md](../deep-learning/deep-ssm.md). A DeepSSM model is created and trained for 30 epochs. A learning rate of 0.0001 is used and the validation error is calculated and reported every epoch.
 
 ### Step 5: Testing DeepSSM
-See the documentation for the function `testDeepSSM` in [deep-ssm.md](../deep-learning/deep-ssm.md) for a full description.
-
-The trained DeepSSM model is used to predict the PCA scores of the unseen images in the test loader. These scores are then mapped to the particle shape model using the PCA information from data augmentation and the predcited particles are saved.
+This step uses function `testDeepSSM` documented in [deep-ssm.md](../deep-learning/deep-ssm.md). The trained DeepSSM model is used to predict the PCA scores of the unseen images in the test loader. These scores are then mapped to the particle shape model using the PCA information from data augmentation and the predcited particles are saved.
 
 ### Step 6: Analyze DeepSSM Results
-See the documentation for the function `AnalyzeResuls` in [deep-ssm.md](../deep-learning/deep-ssm.md) for a full description.
-
-The DeepSSM predictions are analyzed by considering the surface-to-surface distance between the mesh generated from the original segmentation and the mesh generated from the predicted particles. Heat maps of these distances on the meshes are saved to visualize the results.
+This step uses function `AnalyzeResults` documented in [deep-ssm.md](../deep-learning/deep-ssm.md). The DeepSSM predictions are analyzed by considering the surface-to-surface distance between the mesh generated from the original segmentation and the mesh generated from the predicted particles. Heat maps of these distances on the meshes are saved to visualize the results.
 
 
 
