@@ -13,27 +13,27 @@ The DeepSSM network is implemented in PyTorch and requires a GPU to run efficien
 
 ### DeepSSM Steps 
 
-1. Data Augmentation
+#### 1. Data Augmentation
 
 The first step to creating a DeepSSM model is generating training data. Deep networks require thousands of training instances and so because medical imaging data is typically limited, data augmentation is necessary. The data augmentation process is described here:  [Data Augmentation](DataAugmentation.md)
 
 The data augmentation process involves reducing the PBM's to a low dimensional space via Principal Component Analysis (PCA), preserving a chosen percent of the variation. The PCA scores are saved and used as the labels for DeepSSM prediction. The PCA scores are deterministically mapped back to the PDM using the eigenvalues and vectors once the DeepSSM model makes a prediction. 
 
-2. Creation of Data Loaders
+#### 2. Creation of Data Loaders
 
 The next step is to reformat the data into PyTorch tensors. 80% of the data is randomly selected to be training data and the remaining 20% of the data is used as a validation set. The input images are whitened and turned into tensors. They can also be optionally downsampled to a smaller size to allow for faster training. The corresponding PCA scores are also normalized or whitened to avoid DeepSSM learning to favor the primary modes of variation then turned to tensors. Pytorch data loaders are then created with batch size specified by the user. 
 
-3. Training
+#### 3. Training
 
 PyTorch is used in constructing and training DeepSSM. The network architecture is defined to have five convolution layers followed by two fully connected layers as illustrated in the figure below. Parametric ReLU activation is used and the weights are initialized using Xavier initialization. The network is trained for the specified number of epochs using Adam optimization to minimize the L2 loss function with a learning rate of 0.0001. The average training and validation error are printed and logged each epoch to determine convergence.
 
 TODO: Put network architecture figure here
 
-4. Testing
+#### 4. Testing
 
 The trained model is then used to predict the PCA score from the images in the test set. These PCA scores are then un-whitened and mapped back to the particle coordinates using the eigenvalues and eigenvectors from PCA. Thus a PDM is acquired for each test image.
 
-5. Evaluation
+#### 5. Evaluation
 
 To evaluate the accuracy of DeepSSM output, we compare a mesh created from segmentation to a mesh created from the predicted PDM. To obtain the original mesh, we use the ShapeWorks MeshFromDistanceTransforms command to get a mesh from the distance transform created from the true segmentation. To obtain the predicted mesh, we use the ShapeWorks ReconstructSurface command with the mean and predicted particles to reconstruct a surface.
 
