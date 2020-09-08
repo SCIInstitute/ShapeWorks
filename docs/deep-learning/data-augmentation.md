@@ -1,10 +1,10 @@
-## ShapeWorks Data Augmentation 
+# ShapeWorks Data Augmentation 
 
 ShapeWorks includes a Python package for running data augmentation which is useful when a larger amount of data than what is available is required (such as when training DeepSSM).
 In data augmentation, realistic fabricated examples are generated based on the available real data in a way that preserves the population statistics.
 Here we explain the basic steps to data augmentation.
 
-### Data Augmentation Steps
+## Data Augmentation Steps
 #### 0. Collect Real Data
 As a prelimanry step, the data which augmentation will be based off of is needed. This includes the shape model .particle files and can also include corresponding images.
 ![DataAug0.PNG](../img/deep-learning/DataAug0.PNG)
@@ -42,6 +42,40 @@ A Gaussian mixture model can provide a more appropriate probability density func
 Kernel Density Estimation (KDE) is a non-parametric way of estimating the probability density function of the embedded data. It is fit by defining a Gaussian ball around each real data point in the embedded space, the combination of which provides the distribution. The kernel bandwidth or variance of the Gaussian balls is computed as the average nearest neighbor Mahalanobis distance in the PCA subspace.
 
 To sample from the KDE distribution, a real example is chosen then a point is randomly sampled from it's kernel. The chosen real example is also returned as it is the closest to the sample. 
+
+## Using the Data Augmentation Python Package
+The ShapeWorks data augmentation package is installed to the ShapeWorks anaconda environment when [conda_installs.sh](https://github.com/SCIInstitute/ShapeWorks/tree/master/conda_installs.sh) is run. To use, make sure you have the shapeworks conda environment activated and add the following import to your Python code:
+
+`import DataAugmentationUtils`
+
+### Functions
+
+#### Run Data Augmentation
+This function runs the complete data augmentation process.
+
+Call:
+
+`DataAugmentationUtils.RunDataAugmentation(out_dir, img_list, point_list, num_samples, num_dim, sampler_type, mixture_num)`
+
+Arguments:
+
+* out_dir - Path to directory to store augmented data
+* img_list - List of paths to images in original dataset.
+* point_list - List of paths to .particle files in original dataset. Note this should be in corrspondece with the img_list.
+* num_dim - The number of dimensions to reduce to in PCA embedding. If zero or not specified num_dim will be automatically selected so that 95% of the population variation is preserved.
+* sampler_type - The kind of distribution to fit and sample from. Options: Gaussian, mixture, or KDE. Default: KDE.
+* mixture_num - Only neccesary if sampler_type is mixture. The number of clusters to use in fitting a mixture model. If zero or not specified the optimal number of clusters will be automatically determined.
+
+#### Visualize Data Augmentation
+This function creates a visualization for augmented data. It creates a scatterplot matrix which opens automatically in the default web browser. The scatterplots show the PCA values of the real and augmented data so that they can be compared pair-wise across the dimnesions. 
+
+Call:
+
+`DataAugmentationUtils.VisualizeAugmentation(data_csv)`
+
+Arguments:
+
+* data_csv - The path to the CSV file created by running data augmentation.
 
 
 
