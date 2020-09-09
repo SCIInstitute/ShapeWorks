@@ -330,7 +330,7 @@ const string& Visualizer::get_feature_map() const
 //-----------------------------------------------------------------------------
 void Visualizer::set_feature_map(const string& feature_map)
 {
-  feature_map_ = feature_map;
+  this->feature_map_ = feature_map;
 }
 
 //-----------------------------------------------------------------------------

@@ -579,7 +579,7 @@ void ShapeWorksStudioApp::update_table()
   /// todo: check if the list has changed before changing
   auto current_feature = this->ui_->features->currentText();
   this->ui_->features->clear();
-  this->ui_->features->addItem("");
+  this->ui_->features->addItem("-none-");
   auto feature_maps = project->get_feature_columns();
   for (const std::string& feature : feature_maps) {
     QString item = QString::fromStdString(feature);
@@ -737,6 +737,7 @@ void ShapeWorksStudioApp::update_view_mode()
   if (this->visualizer_) {
     //std::cerr << "Setting view mode to: " << view_mode << "\n";
     this->visualizer_->set_display_mode(view_mode);
+    if (feature_map == "-none-") { feature_map = ""; }
     this->visualizer_->set_feature_map(feature_map);
     this->update_display(true);
   }
