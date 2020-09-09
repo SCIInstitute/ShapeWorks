@@ -699,7 +699,7 @@ bool TPLevelSetFilter::execute(const optparse::Values &options, SharedCommandDat
 void TopologyPreservingFilter::buildParser()
 {
   const std::string prog = "topo-preserving-smooth";
-  const std::string desc = "Helper command that applies gradient and sigmoid filters to create a feature image for the TPLevelSet filter; note that a curvature flow filter is sometimes applied to the image before this.";
+  const std::string desc = "Helper command that applies gradient and sigmoid filters to create a feature image for the TPLevelSet filter; note that a curvature flow filter is sometimes applied to the image before this";
   parser.prog(prog).description(desc);
 
   parser.add_option("--scaling").action("store").type("double").set_default(20.0).help("Scale for TPLevelSet level set filter [default: 20.0].");
@@ -765,7 +765,7 @@ void ICPRigid::buildParser()
 
   parser.add_option("--source").action("store").type("string").set_default("").help("Distance map of source image.");
   parser.add_option("--target").action("store").type("string").set_default("").help("Distance map of target image.");
-  parser.add_option("--isovalue").action("store").type("double").set_default(0.0).help("isovalue of distance maps used to create ICPtransform [default: 0.0].");
+  parser.add_option("--isovalue").action("store").type("double").set_default(0.0).help("Isovalue of distance maps used to create ICPtransform [default: 0.0].");
   parser.add_option("--iterations").action("store").type("unsigned").set_default(20).help("Number of iterations run ICP registration [default: 20].");
 
   Command::buildParser();
@@ -993,7 +993,7 @@ bool SetOrigin::execute(const optparse::Values &options, SharedCommandData &shar
 void WarpImage::buildParser()
 {
   const std::string prog = "warp-image";
-  const std::string desc = "Finds the warp between the source and target landmarks and transforms image by this warp.";
+  const std::string desc = "finds the warp between the source and target landmarks and transforms image by this warp";
   parser.prog(prog).description(desc);
 
   parser.add_option("--source").action("store").type("string").set_default("").help("Path to source landmarks.");
@@ -1036,10 +1036,10 @@ void Compare::buildParser()
   const std::string desc = "compare two images";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--name").action("store").type("string").set_default("").help("Compare this image with another");
-  parser.add_option("--verifyall").action("store").type("bool").set_default(true).help("Also verify origin, spacing, and direction matches [default: true]");
-  parser.add_option("--tolerance").action("store").type("double").set_default(0.0).help("Allowed percentage of pixel differences [default: 0.0]");
-  parser.add_option("--precision").action("store").type("double").set_default(1e-12).help("Allowed difference between two pixels for them to still be considered equal [default: 0.0]");
+  parser.add_option("--name").action("store").type("string").set_default("").help("Compare this image with another.");
+  parser.add_option("--verifyall").action("store").type("bool").set_default(true).help("Also verify origin, spacing, and direction matches [default: true].");
+  parser.add_option("--tolerance").action("store").type("double").set_default(0.0).help("Allowed percentage of pixel differences [default: 0.0].");
+  parser.add_option("--precision").action("store").type("double").set_default(1e-12).help("Allowed difference between two pixels for them to still be considered equal [default: 0.0].");
 
   Command::buildParser();
 }
@@ -1086,7 +1086,7 @@ bool Compare::execute(const optparse::Values &options, SharedCommandData &shared
 void NegateImage::buildParser()
 {
   const std::string prog = "negate";
-  const std::string desc = "negate the values in this image";
+  const std::string desc = "negate the values in the given image";
   parser.prog(prog).description(desc);
 
   Command::buildParser();
@@ -1110,11 +1110,11 @@ bool NegateImage::execute(const optparse::Values &options, SharedCommandData &sh
 void AddImage::buildParser()
 {
   const std::string prog = "add";
-  const std::string desc = "add a value to each pixel in this image and/or add another image in a pixelwise manner";
+  const std::string desc = "add a value to each pixel in the given image and/or add another image in a pixelwise manner";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--value", "-x").action("store").type("double").set_default("0.0").help("Value to add to each pixel");
-  parser.add_option("--name").action("store").type("string").set_default("").help("Name of image to add pixelwise");
+  parser.add_option("--value", "-x").action("store").type("double").set_default("0.0").help("Value to add to each pixel.");
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of image to add pixelwise.");
 
   Command::buildParser();
 }
@@ -1153,8 +1153,8 @@ void SubtractImage::buildParser()
   const std::string desc = "subtract a value from each pixel in this image and/or subtract another image in a pixelwise manner";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--value", "-x").action("store").type("double").set_default("0.0").help("Value to subtract from each pixel");
-  parser.add_option("--name").action("store").type("string").set_default("").help("Name of image to subtract pixelwise");
+  parser.add_option("--value", "-x").action("store").type("double").set_default("0.0").help("Value to subtract from each pixel.");
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of image to subtract pixelwise.");
 
   Command::buildParser();
 }
@@ -1193,7 +1193,7 @@ void MultiplyImage::buildParser()
   const std::string desc = "multiply an image by a constant";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--value", "-x").action("store").type("double").set_default("0.0").help("Value with which to multiply");
+  parser.add_option("--value", "-x").action("store").type("double").set_default("0.0").help("Value with which to multiply.");
 
   Command::buildParser();
 }
@@ -1221,7 +1221,7 @@ void DivideImage::buildParser()
   const std::string desc = "divide an image by a constant";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--value", "-x").action("store").type("double").set_default("0.0").help("Value with which to divide");
+  parser.add_option("--value", "-x").action("store").type("double").set_default("0.0").help("Value with which to divide.");
 
   Command::buildParser();
 }
@@ -1249,7 +1249,7 @@ void ImageToMesh::buildParser()
   const std::string desc = "converts the current image to a mesh";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--isovalue", "-v").action("store").type("double").set_default(1.0).help("isovalue to determine mesh boundary [default: 1.0].");
+  parser.add_option("--isovalue", "-v").action("store").type("double").set_default(1.0).help("Isovalue to determine mesh boundary [default: 1.0].");
 
   Command::buildParser();
 }
