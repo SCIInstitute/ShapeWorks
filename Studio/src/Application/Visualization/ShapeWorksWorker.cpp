@@ -8,6 +8,8 @@
 #include <Visualization/ShapeWorksWorker.h>
 #include <Libs/Optimize/Optimize.h>
 
+using namespace shapeworks;
+
 ShapeworksWorker::ShapeworksWorker(ThreadType type,
                                    ShapeWorksGroom* groom,
                                    Optimize* optimize,

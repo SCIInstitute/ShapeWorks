@@ -35,7 +35,7 @@ void MeshManager::clear_cache()
 void MeshManager::generate_mesh(const MeshWorkItem item)
 {
   // check cache first
-  if (!this->mesh_cache_.get_mesh(item) && !this->work_queue_.isInside(item)) {
+  if (!this->mesh_cache_.get_mesh(item) && !this->work_queue_.is_inside(item)) {
 
     this->work_queue_.push(item);
 

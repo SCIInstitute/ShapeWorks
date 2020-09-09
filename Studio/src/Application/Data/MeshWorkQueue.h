@@ -43,15 +43,13 @@ public:
 
   void push(const MeshWorkItem &item);
 
-  MeshWorkItem* pop();
-
   MeshWorkItem* get_next_work_item();
 
-  bool isInside(const MeshWorkItem &item);
+  bool is_inside(const MeshWorkItem &item);
 
   void remove(const MeshWorkItem &item);
 
-  bool isEmpty();
+  bool is_empty();
 
   int size();
 

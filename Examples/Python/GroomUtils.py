@@ -146,7 +146,7 @@ def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False, pr
             print("CMD: " + " ".join(cmd))
         subprocess.check_call(cmd)
 
-        # binarize result since linear interpolation makes image blurry again
+        # binarize result since linear interpolation makes image blurry again (TODO: add option to use nearest neighbor interpolation, see github issue)
         cmd = ["shapeworks", 
                "readimage", "--name", outname, 
                "binarize",
@@ -292,10 +292,13 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
             print("CMD: " + " ".join(cmd))
         subprocess.check_call(cmd)
 
+        size = getInfo(ref_tpdtnrrdfilename, "dims")
+        spacing = getInfo(ref_tpdtnrrdfilename, "spacing")
+
         cmd = ["shapeworks", 
                "read-image", "--name", seginname,
-            #    matrix created by icp is not used
-            #    "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
+               # resample all images to have the same size and dims as the reference image
+               "resample", "--sizex", str(size[0]), "--sizey", str(size[1]), "--sizez", str(size[2]), "--spacex", str(spacing[0]), "--spacey", str(spacing[1]), "--spacez", str(spacing[2]), "--interp", "nearest",
                "write-image", "--name", segoutname]
         if printCmd:
             print("CMD: " + " ".join(cmd))
@@ -304,8 +307,8 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
         if processRaw:
             cmd = ["shapeworks", 
                    "read-image", "--name", rawinname,
-                #    matrix created by icp is not used
-                #    "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
+                   # resample all images to have the same size and dims as the reference image
+                   "resample", "--sizex", str(size[0]), "--sizey", str(size[1]), "--sizez", str(size[2]), "--spacex", str(spacing[0]), "--spacey", str(spacing[1]), "--spacez", str(spacing[2]), "--interp", "nearest",
                    "write-image", "--name", rawoutname]
             if printCmd:
                 print("CMD: " + " ".join(cmd))
@@ -313,7 +316,6 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
 
     return [outSegDataList, outRawDataList] if processRaw else outSegDataList
             
-
 def applyCropping(outDir, inDataList, path, paddingSize=10, printCmd=True):
     """
     This function takes in a filelist and crops them according to the largest
@@ -388,8 +390,17 @@ def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoot
 
 ### Mesh Grooming 
 
-# Refelcts images and meshes to reference side
+# Reflects images and meshes to reference side
 def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side, printCmd=True):
+    if reference_side == 'right':
+        ref = 'R'
+        flip = 'L'
+    elif reference_side == 'left':
+        ref = 'L'
+        flip = 'R'
+    else:
+        raise Exception("reference_side must be 'left' or 'right'")
+    
     if not os.path.exists(outDir):
         os.makedirs(outDir)
     outSegDir = os.path.join(outDir, "segmentations")
@@ -403,14 +414,6 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side, printCmd=T
     for img in img_list:
         img_name = os.path.basename(img)
         prefix = img_name.split("_")[0]
-        if reference_side == 'right':
-            ref = 'R'
-            flip = 'L'
-        elif reference_side == 'left':
-            ref = 'L'
-            flip = 'R'
-        else:
-            print("Error: reference side must be 'left' or 'right'.")
         # check if ref exists
         ref_prefix = prefix + "_" + ref
         flip_prefix = prefix + "_" + flip

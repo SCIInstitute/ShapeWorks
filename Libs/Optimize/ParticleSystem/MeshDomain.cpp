@@ -12,8 +12,6 @@
 namespace itk
 {
   bool MeshDomain::ApplyConstraints(PointType &p) const {
-    // TODO snap the point to the closest position on the mesh or something
-    // TODO need to refactor particle updates into a function so that mesh can do its own update method.
     p = meshWrapper->SnapToMesh(p);
     return true;
   }
@@ -25,32 +23,22 @@ namespace itk
   }
 
   vnl_vector_fixed<double, DIMENSION> MeshDomain::ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const {
-
-    vnl_vector_fixed<float, DIMENSION> vector;
-    for (unsigned int i = 0; i < DIMENSION; i++) { vector[i] = gradE[i]; }
-
-    vnl_vector_fixed<float, DIMENSION> projected = meshWrapper->ProjectVectorToSurfaceTangent(pos, vector);
-
-    vnl_vector_fixed<double, DIMENSION> result;
-    for (unsigned int i = 0; i < DIMENSION; i++) { result[i] = projected[i]; }
-    return result;
+    return meshWrapper->ProjectVectorToSurfaceTangent(pos, gradE);
   }
 
-  MeshDomain::PointType MeshDomain::UpdateParticlePosition(PointType &point, vnl_vector_fixed<double, DIMENSION> &update) const {
-    vnl_vector_fixed<float, DIMENSION> negativeUpdate;
+  MeshDomain::PointType MeshDomain::UpdateParticlePosition(const PointType &point, vnl_vector_fixed<double, DIMENSION> &update) const {
+    vnl_vector_fixed<double, DIMENSION> negativeUpdate;
     for (unsigned int i = 0; i < DIMENSION; i++) { negativeUpdate[i] = -update[i]; }
     PointType newPoint = meshWrapper->GeodesicWalk(point, negativeUpdate);
-    ApplyConstraints(newPoint);
     return newPoint;
   }
 
-  double MeshDomain::GetMaxDimRadius() const {
-    PointType size = meshWrapper->GetMeshUpperBound() - meshWrapper->GetMeshLowerBound();
+  double MeshDomain::GetMaxDiameter() const {
+    PointType boundingBoxSize = meshWrapper->GetMeshUpperBound() - meshWrapper->GetMeshLowerBound();
     double max = 0;
     for (int d = 0; d < 3; d++) {
-      max = max > size[d] ? max : size[d];
+      max = max > boundingBoxSize[d] ? max : boundingBoxSize[d];
     }
-    std::cerr << "Using " << max << " as max dim radius\n";
     return max;
   }
 
