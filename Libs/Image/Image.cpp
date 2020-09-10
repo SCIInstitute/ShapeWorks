@@ -507,16 +507,16 @@ Image& Image::closeHoles(const PixelType foreground)
   return *this;
 }
 
-Image& Image::binarize(PixelType minval, PixelType maxval, PixelType inner_value, PixelType outer_value)
+Image& Image::binarize(PixelType minVal, PixelType maxVal, PixelType innerVal, PixelType outerVal)
 {
   using FilterType = itk::BinaryThresholdImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
   filter->SetInput(this->image);
-  filter->SetLowerThreshold(minval + std::numeric_limits<PixelType>::epsilon());
-  filter->SetUpperThreshold(maxval);
-  filter->SetInsideValue(inner_value);
-  filter->SetOutsideValue(outer_value);
+  filter->SetLowerThreshold(minVal + std::numeric_limits<PixelType>::epsilon());
+  filter->SetUpperThreshold(maxVal);
+  filter->SetInsideValue(innerVal);
+  filter->SetOutsideValue(outerVal);
   filter->Update();
   this->image = filter->GetOutput();
 
@@ -612,7 +612,7 @@ Image& Image::gaussianBlur(double sigma)
   return *this;
 }
 
-Image::Region Image::boundingBox(PixelType isoValue) const
+Image::Region Image::boundingBox(PixelType isovalue) const
 {
   Image::Region bbox;
 
@@ -621,7 +621,7 @@ Image::Region Image::boundingBox(PixelType isoValue) const
   {
     PixelType val = imageIterator.Get();
 
-    if (val >= isoValue)
+    if (val >= isovalue)
       bbox.expand(imageIterator.GetIndex());
 
     ++imageIterator;
@@ -725,7 +725,7 @@ Image& Image::setOrigin(Point3 origin)
   return *this;
 }
 
-Point3 Image::centerOfMass(PixelType minval, PixelType maxval) const
+Point3 Image::centerOfMass(PixelType minVal, PixelType maxVal) const
 {
   itk::ImageRegionIteratorWithIndex<ImageType> imageIt(this->image, image->GetLargestPossibleRegion());
   int numPixels = 0;
@@ -734,7 +734,7 @@ Point3 Image::centerOfMass(PixelType minval, PixelType maxval) const
   while (!imageIt.IsAtEnd())
   {
     PixelType val = imageIt.Get();
-    if (val > minval && val <= maxval)
+    if (val > minVal && val <= maxVal)
     {
       numPixels++;
       com += image->TransformIndexToPhysicalPoint<double>(imageIt.GetIndex());

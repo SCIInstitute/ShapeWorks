@@ -11,8 +11,8 @@ class Mesh
 public:
   using MeshType = vtkSmartPointer<vtkPolyData>; // TODO: we need to support multiple mesh types, such as vtkPolyData and vtkPLYData; probably use vtk mesh base class (if one exists)
 
-  Mesh(vtkSmartPointer<vtkPolyData>&& rhs) : mesh(std::move(rhs)) {}
   Mesh(const std::string& pathname) : mesh(read(pathname)) {}
+  Mesh(vtkSmartPointer<vtkPolyData>&& rhs) : mesh(std::move(rhs)) {}
 
   bool write(const std::string &pathname);
 

@@ -171,7 +171,7 @@ public:
   Image& closeHoles(const PixelType foreground = 0.0);
   
   /// threholds image into binary label based on upper and lower intensity bounds given by user
-  Image& binarize(PixelType minval = 0.0, PixelType maxval = std::numeric_limits<PixelType>::max(), PixelType inner_value = 1.0, PixelType outer_value = 0.0);
+  Image& binarize(PixelType minVal = 0.0, PixelType maxVal = std::numeric_limits<PixelType>::max(), PixelType innerVal = 1.0, PixelType outerVal = 0.0);
 
   /// computes distance transform volume from a (preferably antialiased) binary image using the specified isovalue
   Image& computeDT(PixelType isoValue = 0.0);
@@ -227,10 +227,10 @@ public:
   const ImageType::DirectionType coordsys() const { return image->GetDirection(); };
 
   /// returns average physical coordinate of pixels in range (minval, maxval]
-  Point3 centerOfMass(PixelType minval = 0.0, PixelType maxval = 1.0) const;  
+  Point3 centerOfMass(PixelType minVal = 0.0, PixelType maxVal = 1.0) const;
 
   /// computes the logical coordinates of the largest region of data <= the given isoValue
-  Image::Region boundingBox(PixelType isoValue = 1.0) const;
+  Image::Region boundingBox(PixelType isovalue = 1.0) const;
 
   /// converts from pixel coordinates to physical space
   Point3 logicalToPhysical(const Coord &v) const;
