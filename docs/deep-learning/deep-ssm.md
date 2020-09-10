@@ -40,3 +40,82 @@ To evaluate the accuracy of DeepSSM output, we compare a mesh created from segme
 We then compare the original mesh to the predicted mesh via surface-to-surface distance. To find the distance from the original to the predicted, we consider each vertex in the original and find the shortest distance to the surface of the predicted. This process is not symmetric as it depends on the vertices of one mesh, so the distance from the predicted to the original will be slightly different. We compute the Hausdorff distance which takes the max of these vertex-wise distances to return a single value as a measure of accuracy. We also consider the vertex-wise distances as a scalar field on the mesh vertices and visualize them as a heat map on the surface. This provides us with a way of seeing where the predicted PDM was more or less accurate.
 
 TODO: Example of heat map here
+
+## Using the DeepSSM Python Package
+The ShapeWorks DeepSSM package is installed to the ShapeWorks anaconda environment when [conda_installs.sh](https://github.com/SCIInstitute/ShapeWorks/tree/master/conda_installs.sh) is run. To use, make sure you have the shapeworks conda environment activated and add the following import to your Python code:
+
+`import DeepSSMUtils`
+
+### Functions
+
+#### Get train and validation torch loaders
+This function turns the original and augmented data into training and validation torch loaders. The data provided is randomly split so that 80% is used in the training set and 20% is used in the validation set.
+
+Call:
+
+`DeepSSMUtils.getTrainValLoaders(out_dir, data_aug_csv, batch_size=1, down_sample=False)`
+
+Arguments:
+
+* out_dir - Path to directory to store torch loaders.
+* data_aug_csv - The path to the csv containing original and augmented data which is output when running data augmentation.
+* batch_size - The batch size for training data. Default value is 1.
+* down_sample - If true the images will be downsampled to a smaller size to decrease the time needed to train the network. If false the full image will be used. Default is false.
+
+#### Get test torch loader
+This function turns the provided data into a test torch loader.
+
+Call:
+
+`DeepSSMUtils.getTestLoader(out_dir, test_img_list, down_sample)`
+
+Arguments:
+
+* out_dir - Path to directory to store torch loader.
+* test_img_list - A list of paths to the images that are in the test set.
+* down_sample - If true the images will be downsampled, if false the full image will be used. This should match what is done for the training and validation loaders. Default is false.
+
+#### Train DeepSSM
+This function defines a DeepSSM model and trains it on the data provided.
+
+Call:
+
+`DeepSSMUtils.trainDeepSSM(loader_dir, parameters, out_dir)`
+
+Arguments:
+
+* loader_dir - Path to directory where train and validation torch loaders are.
+* parameters - A dictionary of network parameters:
+  - epochs - The number of epochs to train for.
+  - learning_rate - The value of the learning rate.
+  - val_freq - How often to evaluate on the validation set. 1 means test on validation set every epoch, 2 means every other epoch, and so on.
+* out_dir - Directory to save the model and logs in.
+
+#### Test DeepSSM
+This function gets predicted shape models based on the images provided using a trained DeepSSM model.
+
+Call:
+
+`DeepSSMUtils.testDeepSSM(out_dir, model_path, loader_dir, PCA_scores_path, num_PCA)`
+
+Arguments:
+
+* out_dir - Path to directory where predictions are saved.
+* model_path - Path to train DeepSSM model.
+* loader_dir - Path to directory containing test torch loader.
+* PCA_scores_path - Path to eigenvalues and eigenvectors from data augmentation which are used to map predicted PCA scores to particles.
+* num_PCA - The number of PCA scores the DeepSSM model is trained to predict.
+
+#### Analyze Results
+This function analyzes the shape models predicted by DeepSSM by comparing them to the true segmentation. 
+
+Call:
+
+`DeepSSMUtils.AnalyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix)`
+
+Arguments:
+
+* out_dir - Path to the directory where meshes and analysis should be saved.
+* DT_dir - Path to the directory containing distance transforms based on the true segmentations of the test images.
+* prediction_dir - Path to the directory containing predicted particle files from testing DeepSSM.
+* mean_prefix - Path to the mean particle and mesh files for the dataset.
