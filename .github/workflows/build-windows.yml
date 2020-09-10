@@ -104,7 +104,7 @@ jobs:
 
     - name: Build Binary Package
       shell: bash
-      run: pwd ; ls ; cp docs/users/Windows_README.txt . ; cp Support/shapeworks.nsi . ; ./Support/package_windows.sh tag
+      run: conda activate shapeworks && pwd ; ls ; cp docs/users/Windows_README.txt . ; cp Support/shapeworks.nsi . ; ./Support/package_windows.sh tag
       
     - name: Test
       working-directory: ${{runner.workspace}}/build
