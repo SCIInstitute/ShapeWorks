@@ -68,58 +68,58 @@ def Run_Pipeline(args):
 		test_img_list = test_img_list[:3]
 		test_particle_list = test_particle_list[:3]
 
-	# print("\n\n\nStep 2. Augment data\n") ###################################################################################
-	# '''
-	# - num_samples is how many samples to generate 
-	# - num_PCA is the number of PCA scores to use
-	# - aug_type is the augmentation method to use (1 is based on just particles wheras 2 is based on images and particles)
-	# - sample type is the distribution to use for sampling. Can be Gaussian, mixture, or KDE
-	# '''
-	# num_samples = 4960
-	# num_PCA = 6
-	# sampler_type = "KDE"
-	# if args.tiny_test:
-	# 	num_samples = 4
-	# 	num_PCA = 3
-	# DataAugmentationUtils.RunDataAugmentation(parent_dir + "Augmentation/", train_img_list, train_particle_list, num_samples, num_PCA, sampler_type)
-	# aug_data_csv = parent_dir + "Augmentation/TotalData.csv"
-	# DataAugmentationUtils.VisualizeAugmentation(aug_data_csv)
+	print("\n\n\nStep 2. Augment data\n") ###################################################################################
+	'''
+	- num_samples is how many samples to generate 
+	- num_PCA is the number of PCA scores to use
+	- aug_type is the augmentation method to use (1 is based on just particles wheras 2 is based on images and particles)
+	- sample type is the distribution to use for sampling. Can be Gaussian, mixture, or KDE
+	'''
+	num_samples = 4960
+	num_PCA = 6
+	sampler_type = "KDE"
+	if args.tiny_test:
+		num_samples = 4
+		num_PCA = 3
+	DataAugmentationUtils.RunDataAugmentation(parent_dir + "Augmentation/", train_img_list, train_particle_list, num_samples, num_PCA, sampler_type)
+	aug_data_csv = parent_dir + "Augmentation/TotalData.csv"
+	DataAugmentationUtils.VisualizeAugmentation(aug_data_csv)
 
-	# print("\n\n\nStep 3. Reformat Data for Pytorch\n") #######################################################################
-	# '''
-	# If down_sample is true, model will trian on images half the original size
-	# If whiten is true, images and PCA scores will be whitened 
-	# Hyper-paramter batch_size is for training
-	# 	Higher batch size will help speed up training but uses more cuda memory, if you get a memory error try reducing the batch size
-	# '''
+	print("\n\n\nStep 3. Reformat Data for Pytorch\n") #######################################################################
+	'''
+	If down_sample is true, model will trian on images half the original size
+	If whiten is true, images and PCA scores will be whitened 
+	Hyper-paramter batch_size is for training
+		Higher batch size will help speed up training but uses more cuda memory, if you get a memory error try reducing the batch size
+	'''
 	
-	# down_sample = True
-	# batch_size = 8
-	# loader_dir = parent_dir + 'TorchDataLoaders/'
-	# DeepSSMUtils.getTrainValLoaders(loader_dir, aug_data_csv, batch_size, down_sample)
-	# DeepSSMUtils.getTestLoader(loader_dir, test_img_list, down_sample)
+	down_sample = True
+	batch_size = 8
+	loader_dir = parent_dir + 'TorchDataLoaders/'
+	DeepSSMUtils.getTrainValLoaders(loader_dir, aug_data_csv, batch_size, down_sample)
+	DeepSSMUtils.getTestLoader(loader_dir, test_img_list, down_sample)
 
 
-	# print("\n\n\nStep 4. Train model.\n") #####################################################################################
-	# '''
-	# Set training parameters dict
-	# val_freq sets how often too test on validation set and log
-	# for example val_freq=1 is every epoch and val_freq=2 is every other
-	# '''
-	# parameters = {"epochs":50, "learning_rate":0.001, "val_freq":1}
-	# if args.tiny_test:
-	# 	parameters = {"epochs":5, "learning_rate":0.001, "val_freq":1}
-	# model_path = DeepSSMUtils.trainDeepSSM(loader_dir, parameters, parent_dir)
+	print("\n\n\nStep 4. Train model.\n") #####################################################################################
+	'''
+	Set training parameters dict
+	val_freq sets how often too test on validation set and log
+	for example val_freq=1 is every epoch and val_freq=2 is every other
+	'''
+	parameters = {"epochs":30, "learning_rate":0.001, "val_freq":1}
+	if args.tiny_test:
+		parameters = {"epochs":5, "learning_rate":0.001, "val_freq":1}
+	model_path = DeepSSMUtils.trainDeepSSM(loader_dir, parameters, parent_dir)
 
 
-	# print("\n\n\nStep 5. Predict with DeepSSM\n") #####################################################################################
-	# '''
-	# Test DeepSSM
-	# '''
-	# PCA_scores_path = parent_dir + "Augmentation/PCA_Particle_Info/"
-	# prediction_dir = parent_dir + 'Results/PredictedParticles/'
-	# DeepSSMUtils.testDeepSSM(prediction_dir, model_path, loader_dir, PCA_scores_path, num_PCA)
-	# print('Predicted particles saved at: ' + prediction_dir)
+	print("\n\n\nStep 5. Predict with DeepSSM\n") #####################################################################################
+	'''
+	Test DeepSSM
+	'''
+	PCA_scores_path = parent_dir + "Augmentation/PCA_Particle_Info/"
+	prediction_dir = parent_dir + 'Results/PredictedParticles/'
+	DeepSSMUtils.testDeepSSM(prediction_dir, model_path, loader_dir, PCA_scores_path, num_PCA)
+	print('Predicted particles saved at: ' + prediction_dir)
 
 	print("\n\n\nStep 6. Analyze results.\n") #####################################################################################
 	DT_dir = input_dir + "groomed/distance_transforms/"
