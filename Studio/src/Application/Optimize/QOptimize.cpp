@@ -16,21 +16,21 @@ QOptimize::~QOptimize()
 //---------------------------------------------------------------------------
 std::vector<std::vector<itk::Point<double>>> QOptimize::GetLocalPoints()
 {
-  QMutexLocker locker(&qmutex);
+  QMutexLocker locker(&qmutex_);
   return this->m_local_points;
 }
 
 //---------------------------------------------------------------------------
 std::vector<std::vector<itk::Point<double>>> QOptimize::GetGlobalPoints()
 {
-  QMutexLocker locker(&qmutex);
+  QMutexLocker locker(&qmutex_);
   return this->m_global_points;
 }
 
 //---------------------------------------------------------------------------
 void QOptimize::UpdateExportablePoints()
 {
-  QMutexLocker locker(&qmutex);
+  QMutexLocker locker(&qmutex_);
   Optimize::UpdateExportablePoints();
 }
 
@@ -77,7 +77,7 @@ void QOptimize::IterateCallback(itk::Object* caller, const itk::EventObject& e)
     this->time_since_last_update_.start();
 
     {
-      QMutexLocker locker(&qmutex);
+      QMutexLocker locker(&qmutex_);
 
       this->m_local_points.clear();
       this->m_global_points.clear();
