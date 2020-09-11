@@ -158,11 +158,6 @@ void Mesh::apply_feature_map(std::string name, std::string filename, vnl_vector<
 
   scalars->SetName(name.c_str());
 
-  std::cerr << "transform size = " << transform.size() << "\n";
-  for (int i = 0; i < transform.size(); i++) {
-    std::cerr << " " << transform[i];
-  }
-  std::cerr << "\n";
 
   for (int i = 0; i < points->GetNumberOfPoints(); i++) {
     double pt[3];
