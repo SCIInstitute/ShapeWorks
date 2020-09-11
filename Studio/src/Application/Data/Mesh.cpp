@@ -128,21 +128,14 @@ vnl_vector<double> Mesh::get_center_transform()
 }
 
 //---------------------------------------------------------------------------
-void Mesh::apply_feature_map(std::string name, std::string filename, vnl_vector<double> transform)
+void Mesh::apply_feature_map(std::string name, ImageType::Pointer image, vnl_vector<double> transform)
 {
   if (!this->poly_data_ || name == "") {
     return;
   }
 
-  std::cerr << "Apply feature map for feature '" << name << "' using filename "
-            << filename << "\n";
 
 
-  // read feature volume
-  ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName(filename);
-  reader->Update();
-  ImageType::Pointer image = reader->GetOutput();
 
   LinearInterpolatorType::Pointer interpolator = LinearInterpolatorType::New();
   interpolator->SetInputImage(image);

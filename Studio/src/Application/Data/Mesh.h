@@ -54,7 +54,7 @@ public:
   std::string get_error_message();
 
   //! Apply a feature map
-  void apply_feature_map(std::string name, std::string filename, vnl_vector<double> transform);
+  void apply_feature_map(std::string name, ImageType::Pointer image, vnl_vector<double> transform);
 
 private:
 

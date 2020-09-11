@@ -547,7 +547,18 @@ void Shape::load_feature(std::string display_mode, std::string feature)
       transform = this->groomed_transform_;
     }
 
-    mesh->apply_feature_map(feature, filenames[feature], transform);
+
+    std::cerr << "Apply feature map for feature '" << feature << "' using filename "
+              << filenames[feature] << "\n";
+
+    // read the feature
+    ReaderType::Pointer reader = ReaderType::New();
+    reader->SetFileName(filenames[feature]);
+    reader->Update();
+    ImageType::Pointer image = reader->GetOutput();
+
+
+    mesh->apply_feature_map(feature, image, transform);
 
   }
 
