@@ -195,9 +195,10 @@ void Mesh::apply_feature_map(std::string name, std::string filename, vnl_vector<
 
   this->poly_data_->GetPointData()->SetScalars(scalars);
 
+  /*
   auto writer = vtkSmartPointer<vtkPolyDataWriter>::New();
   writer->SetInputData(this->poly_data_);
   writer->SetFileName("/tmp/foo.vtk");
   writer->Update();
-
+*/
 }
