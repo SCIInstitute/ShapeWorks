@@ -1,6 +1,5 @@
 #!/bin/bash -x
 
-
 if [ "$#" -ne 1 ]; then
     echo "Usage: $0 <version>"
     exit 1
@@ -30,7 +29,10 @@ rm -rf Post
 
 # Run auto-documentation
 PATH=../build/bin/RelWithDebInfo:$PATH
-python -c "import DocumentationUtils;DocumentationUtils.generateShapeWorksCommandDocumentation('Documentation/ShapeWorksCommands/ShapeWorksCommands.md')"
+python -c "import DocumentationUtils;DocumentationUtils.generateShapeWorksCommandDocumentation('docs/tools/ShapeWorksCommands.md')"
+mkdocs build
+mv site Documentation
+cp -a Documentation bin/
 
 # Remove tests, they won't work for users anyway
 rm bin/*Tests.exe
