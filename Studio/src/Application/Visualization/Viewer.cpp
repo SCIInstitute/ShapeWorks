@@ -484,7 +484,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
 
     auto feature_map = this->visualizer_->get_feature_map();
 
-    if (feature_map != "") {
+    if (feature_map != "" && poly_data) {
       std::cerr << "checking if mesh has scalar array for " << feature_map << "\n";
       auto scalar_array = poly_data->GetPointData()->GetArray(feature_map.c_str());
       if (scalar_array) {
@@ -535,7 +535,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
     actor->GetProperty()->SetSpecular(0.2);
     actor->GetProperty()->SetSpecularPower(15);
 
-    if (feature_map != "") {
+    if (feature_map != "" && poly_data) {
 
       poly_data->GetPointData()->SetActiveScalars(feature_map.c_str());
 

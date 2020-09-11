@@ -657,6 +657,7 @@ void ShapeWorksStudioApp::handle_new_mesh()
   this->visualizer_->handle_new_mesh();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_clear_cache()
 {
   this->handle_pca_changed();
