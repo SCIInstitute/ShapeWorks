@@ -103,7 +103,7 @@ jobs:
       run: cp /c/Miniconda3/envs/shapeworks/Library/bin/zlib.dll /c/Miniconda3/envs/shapeworks/Library/bin/tbb.dll /c/Miniconda3/envs/shapeworks/Library/bin/half.dll bin/Release
 
     - name: Build Binary Package
-      shell: bash
+      shell: bash -l {0}
       run: conda activate shapeworks && pwd ; ls ; cp docs/users/Windows_README.txt . ; cp Support/shapeworks.nsi . ; conda activate shapeworks && ./Support/package_windows.sh tag
       
     - name: Test
