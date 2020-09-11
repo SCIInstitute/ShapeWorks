@@ -1,14 +1,9 @@
 #!/bin/bash -x
 
-
 if [ "$#" -ne 1 ]; then
     echo "Usage: $0 <version>"
     exit 1
 fi
-
-echo "package_windows.sh here"
-echo "PATH = $PATH"
-which python
 
 VERSION=$1
 PLATFORM="windows"
