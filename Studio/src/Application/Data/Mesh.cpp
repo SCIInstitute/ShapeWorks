@@ -138,12 +138,11 @@ void Mesh::apply_feature_map(std::string name, std::string filename, vnl_vector<
             << filename << "\n";
 
 
-  // read fibrosis_mask
+  // read feature volume
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(filename);
   reader->Update();
   ImageType::Pointer image = reader->GetOutput();
-
 
   LinearInterpolatorType::Pointer interpolator = LinearInterpolatorType::New();
   interpolator->SetInputImage(image);
@@ -180,14 +179,13 @@ void Mesh::apply_feature_map(std::string name, std::string filename, vnl_vector<
       pitk[2] = pitk[2] + transform[2];
     }
 
-
     LinearInterpolatorType::ContinuousIndexType index;
     image->TransformPhysicalPointToContinuousIndex(pitk, index);
 
     auto pixel = 0;
     if (region.IsInside(index)) {
       pixel = interpolator->EvaluateAtContinuousIndex(index);
-    //  std::cerr << pixel << " ";
+      //  std::cerr << pixel << " ";
     }
     scalars->SetValue(i, pixel);
   }
@@ -201,6 +199,5 @@ void Mesh::apply_feature_map(std::string name, std::string filename, vnl_vector<
   writer->SetInputData(this->poly_data_);
   writer->SetFileName("/tmp/foo.vtk");
   writer->Update();
-
 
 }
