@@ -40,17 +40,19 @@ cp -a $INSTALL_DIR/* "package/${VERSION}"
 cp -a Examples "package/${VERSION}"
 cp -a Python "package/${VERSION}"
 cp conda_installs.sh package/${VERSION}
-cp Documentation/ChangeLog.md package/${VERSION}
+cp docs/about/release-notes.md package/${VERSION}
 
 # Run auto-documentation
 PATH=$INSTALL_DIR/bin:$PATH
-python -c "import DocumentationUtils;DocumentationUtils.generateShapeWorksCommandDocumentation('Documentation/ShapeWorksCommands/ShapeWorksCommands.md')"
+python -c "import DocumentationUtils;DocumentationUtils.generateShapeWorksCommandDocumentation('docs/tools/ShapeWorksCommands.md')"
+mkdocs build
+mv site Documentation
 cp -a Documentation "package/${VERSION}"
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    cp Documentation/Install/Mac_README.txt package/${VERSION}/README.txt
+    cp docs/users/Mac_README.txt package/${VERSION}/README.txt
 else
-    cp Documentation/Install/Linux_README.txt package/${VERSION}/README.txt
+    cp docs/users/Linux_README.txt package/${VERSION}/README.txt
 fi
 
 cd "package/${VERSION}"
@@ -95,12 +97,12 @@ fi
 
 mkdir ${ROOT}/artifacts
 cd ${ROOT}/package
-cp ${ROOT}/Documentation/install/PACKAGE_README.txt ${VERSION}/README.txt
+cp ${ROOT}/docs/users/PACKAGE_README.txt ${VERSION}/README.txt
 zip -r ${ROOT}/artifacts/${VERSION}.zip ${VERSION}
 
 # Additionally on Mac, create an installer
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    cp ${ROOT}/Documentation/install/Mac_README.txt ${VERSION}/README.txt
+    cp ${ROOT}/docs/users/Mac_README.txt ${VERSION}/README.txt
     pkgbuild --quiet --analyze --root ${VERSION} ShapeWorks.plist
     plutil -replace BundleIsRelocatable -bool NO ShapeWorks.plist
     pkgbuild --component-plist ShapeWorks.plist --install-location /Applications/ShapeWorks --root ${VERSION} --identifier edu.utah.sci.shapeworks ${ROOT}/artifacts/${VERSION}.pkg
