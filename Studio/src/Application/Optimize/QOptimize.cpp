@@ -6,7 +6,8 @@ using namespace shapeworks;
 
 QOptimize::QOptimize(QObject* parent) :
   QObject(parent),
-  Optimize() {}
+  Optimize()
+{}
 
 //---------------------------------------------------------------------------
 QOptimize::~QOptimize()
@@ -42,7 +43,7 @@ void QOptimize::SetIterationCallback()
 }
 
 //---------------------------------------------------------------------------
-void QOptimize::IterateCallback(itk::Object* caller, const itk::EventObject &e)
+void QOptimize::IterateCallback(itk::Object* caller, const itk::EventObject& e)
 {
 
   if (this->m_aborted) {
@@ -75,26 +76,28 @@ void QOptimize::IterateCallback(itk::Object* caller, const itk::EventObject &e)
 
     this->time_since_last_update_.start();
 
-    QMutexLocker locker(&qmutex);
+    {
+      QMutexLocker locker(&qmutex);
 
-    this->m_local_points.clear();
-    this->m_global_points.clear();
+      this->m_local_points.clear();
+      this->m_global_points.clear();
 
-    // copy particles
-    for (size_t d = 0; d < this->m_sampler->
-         GetParticleSystem()->GetNumberOfDomains(); d++) {
+      // copy particles
+      for (size_t d = 0; d < this->m_sampler->
+        GetParticleSystem()->GetNumberOfDomains(); d++) {
 
-      // blank set of points
-      this->m_local_points.push_back(std::vector<itk::Point<double>>());
-      this->m_global_points.push_back(std::vector<itk::Point<double>>());
+        // blank set of points
+        this->m_local_points.push_back(std::vector<itk::Point<double>>());
+        this->m_global_points.push_back(std::vector<itk::Point<double>>());
 
-      // for each particle
-      for (size_t j = 0; j < this->m_sampler->
-           GetParticleSystem()->GetNumberOfParticles(d); j++) {
-        auto pos = this->m_sampler->GetParticleSystem()->GetPosition(j, d);
-        auto pos2 = this->m_sampler->GetParticleSystem()->GetTransformedPosition(j, d);
-        this->m_local_points[d].push_back(pos);
-        this->m_global_points[d].push_back(pos2);
+        // for each particle
+        for (size_t j = 0; j < this->m_sampler->
+          GetParticleSystem()->GetNumberOfParticles(d); j++) {
+          auto pos = this->m_sampler->GetParticleSystem()->GetPosition(j, d);
+          auto pos2 = this->m_sampler->GetParticleSystem()->GetTransformedPosition(j, d);
+          this->m_local_points[d].push_back(pos);
+          this->m_global_points[d].push_back(pos2);
+        }
       }
     }
 
