@@ -65,9 +65,13 @@ public:
   void reset_stats();
   void enable_actions();
 
-  const vnl_vector<double>& get_mean_shape();
+  const vnl_vector<double>& get_mean_shape_points();
+  ShapeHandle get_mean_shape();
 
-  const vnl_vector<double>& get_shape(int mode, double value, double group_value = 0.5);
+  const vnl_vector<double>& get_shape_points(int mode, double value, double group_value = 0.5);
+
+  ShapeHandle get_shape(int mode, double value, double group_value = 0.5);
+
 
   ParticleShapeStatistics<3> get_stats();
   void load_settings();
@@ -127,6 +131,8 @@ private:
   void pca_labels_changed(QString value, QString eigen, QString lambda);
   void compute_mode_shape();
   void update_analysis_mode();
+
+  ShapeHandle create_shape_from_points(const vnl_vector<double>& points);
 
   Preferences & preferences_;
   //private members

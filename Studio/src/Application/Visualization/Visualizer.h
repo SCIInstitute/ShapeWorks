@@ -56,6 +56,8 @@ public:
 
   void display_shape(const vnl_vector<double>& points, const std::vector<Point>& vectors);
 
+  void display_shape(ShapeHandle shape);
+
   void set_selected_point_one(int id);
   void set_selected_point_two(int id);
 

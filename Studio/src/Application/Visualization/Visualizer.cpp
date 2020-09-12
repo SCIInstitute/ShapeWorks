@@ -104,6 +104,18 @@ void Visualizer::display_shape(const vnl_vector<double> &points, const std::vect
   this->current_shape_ = points;
 }
 //-----------------------------------------------------------------------------
+void Visualizer::display_shape(ShapeHandle shape)
+{
+  QVector<ShapeHandle> shapes;
+  shapes.push_back(shape);
+  this->lightbox_->set_shapes(shapes);
+  this->update_viewer_properties();
+  //this->reset_camera();
+  this->lightbox_->redraw();
+  this->current_shape_ = shape->get_global_correspondence_points();
+}
+
+//-----------------------------------------------------------------------------
 vnl_vector<double> Visualizer::getCurrentShape()
 {
   return this->current_shape_;
@@ -338,4 +350,5 @@ bool Visualizer::get_center()
 {
   return this->center_;
 }
+
 

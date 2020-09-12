@@ -61,8 +61,8 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
 std::string AnalysisTool::get_analysis_mode()
 {
   if (this->ui_->tabWidget->currentWidget() == this->ui_->samples_tab) {
-    if (this->ui_->allSamplesRadio->isChecked()) { return AnalysisTool::MODE_ALL_SAMPLES_C;}
-    if (this->ui_->singleSamplesRadio->isChecked()) { return AnalysisTool::MODE_SINGLE_SAMPLE_C;}
+    if (this->ui_->allSamplesRadio->isChecked()) { return AnalysisTool::MODE_ALL_SAMPLES_C; }
+    if (this->ui_->singleSamplesRadio->isChecked()) { return AnalysisTool::MODE_SINGLE_SAMPLE_C; }
   }
 
   if (this->ui_->tabWidget->currentWidget() == this->ui_->mean_tab) {
@@ -143,7 +143,7 @@ void AnalysisTool::on_reconstructionButton_clicked()
   global.resize(shapes.size());
   images.resize(shapes.size());
   size_t ii = 0;
-  for (auto &s : shapes) {
+  for (auto& s : shapes) {
     auto l = s->get_local_correspondence_points();
     auto g = s->get_global_correspondence_points();
     for (size_t i = 0; i < l.size(); i += 3) {
@@ -313,8 +313,9 @@ void AnalysisTool::handle_analysis_options()
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_median()
 {
-  if (!this->compute_stats()) { return;}
-  this->ui_->sampleSpinBox->setValue(this->stats_.ComputeMedianShape(-32));       //-32 = both groups
+  if (!this->compute_stats()) { return; }
+  this->ui_->sampleSpinBox->setValue(
+    this->stats_.ComputeMedianShape(-32));       //-32 = both groups
   emit update_view();
 }
 
@@ -353,12 +354,12 @@ bool AnalysisTool::compute_stats()
     return false;
   }
 
-  std::vector < vnl_vector < double >> points;
+  std::vector<vnl_vector<double >> points;
   std::vector<int> group_ids;
-  foreach(ShapeHandle shape, this->session_->get_shapes()) {
-    points.push_back(shape->get_global_correspondence_points());
-    group_ids.push_back(shape->get_group_id());
-  }
+    foreach(ShapeHandle shape, this->session_->get_shapes()) {
+      points.push_back(shape->get_global_correspondence_points());
+      group_ids.push_back(shape->get_group_id());
+    }
 
   this->stats_.ImportPoints(points, group_ids);
   this->stats_.ComputeModes();
@@ -384,7 +385,7 @@ bool AnalysisTool::compute_stats()
 }
 
 //-----------------------------------------------------------------------------
-const vnl_vector<double>& AnalysisTool::get_mean_shape()
+const vnl_vector<double>& AnalysisTool::get_mean_shape_points()
 {
   if (!this->compute_stats()) {
     return this->empty_shape_;
@@ -401,12 +402,14 @@ const vnl_vector<double>& AnalysisTool::get_mean_shape()
 }
 
 //-----------------------------------------------------------------------------
-const vnl_vector<double>& AnalysisTool::get_shape(int mode, double value, double group_value)
+const vnl_vector<double>& AnalysisTool::get_shape_points(int mode, double value, double group_value)
 {
   if (!this->compute_stats() || this->stats_.Eigenvectors().size() <= 1) {
     return this->empty_shape_;
   }
-  if (mode + 2 > this->stats_.Eigenvalues().size()) {mode = this->stats_.Eigenvalues().size() - 2;}
+  if (mode + 2 > this->stats_.Eigenvalues().size()) {
+    mode = this->stats_.Eigenvalues().size() - 2;
+  }
 
   unsigned int m = this->stats_.Eigenvectors().columns() - (mode + 1);
 
@@ -567,7 +570,7 @@ double AnalysisTool::get_pca_value()
   float range = preferences_.get_pca_range();
   int halfRange = this->ui_->pcaSlider->maximum();
 
-  double value = (double)slider_value / (double)halfRange * range;
+  double value = (double) slider_value / (double) halfRange * range;
   return value;
 }
 
@@ -632,4 +635,31 @@ void AnalysisTool::set_analysis_mode(std::string mode)
   else if (mode == "regression") {
     this->ui_->tabWidget->setCurrentWidget(this->ui_->regression_tab);
   }
+}
+
+//---------------------------------------------------------------------------
+ShapeHandle AnalysisTool::get_shape(int mode, double value, double group_value)
+{
+  return this->create_shape_from_points(this->get_shape_points(mode, value, group_value));
+}
+
+//---------------------------------------------------------------------------
+ShapeHandle AnalysisTool::get_mean_shape()
+{
+  ShapeHandle shape = this->create_shape_from_points(this->get_mean_shape_points());
+  if (this->get_group_difference_mode()) {
+    shape->set_vectors(this->get_group_difference_vectors());
+  }
+  return shape;
+}
+
+//---------------------------------------------------------------------------
+ShapeHandle AnalysisTool::create_shape_from_points(const vnl_vector<double>& points)
+{
+  MeshHandle mesh = this->session_->get_mesh_manager()->get_mesh(points);
+  ShapeHandle shape = ShapeHandle(new Shape());
+  shape->set_mesh_manager(this->session_->get_mesh_manager());
+  shape->set_reconstructed_mesh(mesh);
+  shape->set_global_particles(points);
+  return shape;
 }

@@ -820,7 +820,7 @@ void ShapeWorksStudioApp::handle_optimize_complete()
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
   this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::GROOMED);
   this->visualizer_->set_display_mode(this->ui_->view_mode_combobox->currentText().toStdString());
-  this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape());
+  this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape_points());
   this->visualizer_->update_lut();
   this->update_display();
   this->enable_possible_actions();
@@ -833,7 +833,7 @@ void ShapeWorksStudioApp::handle_reconstruction_complete()
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
   this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::RECONSTRUCTED);
   this->visualizer_->set_display_mode(this->ui_->view_mode_combobox->currentText().toStdString());
-  this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape());
+  this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape_points());
   this->visualizer_->update_lut();
   this->update_display(true);
 }
@@ -963,14 +963,7 @@ void ShapeWorksStudioApp::update_display(bool force)
 
       this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
 
-      if (this->analysis_tool_->get_group_difference_mode()) {
-        this->visualizer_->display_shape(
-          this->analysis_tool_->get_mean_shape(),
-          this->analysis_tool_->get_group_difference_vectors());
-      }
-      else {
-        this->visualizer_->display_shape(this->analysis_tool_->get_mean_shape());
-      }
+      this->visualizer_->display_shape(this->analysis_tool_->get_mean_shape());
     }
     else if (mode == AnalysisTool::MODE_PCA_C) {
       this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
@@ -1221,8 +1214,8 @@ void ShapeWorksStudioApp::compute_mode_shape()
   double pca_value = this->analysis_tool_->get_pca_value();
   double group_value = this->analysis_tool_->get_group_value();
 
-  this->visualizer_->display_shape(this->analysis_tool_->get_shape(pca_mode, pca_value,
-                                                                   group_value));
+  this->visualizer_->display_shape(this->analysis_tool_->get_shape_points(pca_mode, pca_value,
+                                                                          group_value));
 }
 
 //---------------------------------------------------------------------------
@@ -1434,7 +1427,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered()
   auto increment = range * 2.f / steps;
   size_t i = 0;
   for (float pca = -range; pca <= range; pca += increment, i++) {
-    auto pts = this->analysis_tool_->get_shape(mode, pca);
+    auto pts = this->analysis_tool_->get_shape_points(mode, pca);
     std::ofstream out(basename + std::to_string(mode) + "-" + std::to_string(i) + ".pts");
     size_t newline = 1;
     for (auto& a : pts) {
