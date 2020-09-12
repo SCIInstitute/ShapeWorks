@@ -33,12 +33,12 @@ The optimization is consists f two part the initialization of correspondence and
 
 ## Initialization
  One effective approach is to use an iterative, particle splitting strategy, in which the full set of particles is
-initialized in a multiscale fashion as follows. First, the PBM system is initialized with a
+initialized in a multi-scale fashion as follows. First, the PBM system is initialized with a
 single particle on each shape that finds the nearest zero of the implicit surface. This sin-
 gle particle is then split to produce a new, nearby particle. The two-particle (per shape)
 system is then optimized for correspondence until a steady state is reached. The splitting
 process, followed by optimization, is then repeated until a specific number of particles
-have been produced. Thus, the initialization proceeds simultaneously with the optimization in a multiscale fashion,
+have been produced. Thus, the initialization proceeds simultaneously with the optimization in a multi-scale fashion,
  generating progressively more detailed correspondence models with each split.
 Typically, we set the numerical parameters for the PBM optimization automatically based on the machine precision.
 

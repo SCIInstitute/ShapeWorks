@@ -3,7 +3,7 @@
 <!--## Source Management using Git
 -->
 
-ShapeWorks uses `git` for managing source code so changes can be integrated from multiple people. Here are some of the basics so you can checkout the repository, make and share modifications, and keep track of all your changes along the way.
+ShapeWorks uses `git` for managing source code so changes can be integrated from multiple people. Here are some of the basics to check out the repository, make and share modifications, and keep track of all your changes along the way.
 The ShapeWorks repositories are stored on [GitHub](https://github.com/SCIInstitute/ShapeWorks). 
 
 :fa-info-circle: _**Important:**_ If you want to contribute, first _make sure you have a developer account_.  
@@ -16,13 +16,13 @@ To clone the ShapeWorks source, use one of the following commands:
 $ git clone https://github.com/SCIInstitute/ShapeWorks
 ```
 
-To avoid having to type your password every time you refresh your source code, you can copy your public ssh key (found in ~/.ssh/id_rsa.pub) and [add it to your github account](https://github.com/settings/keys). Now you can use this version to clone the code: 
+To avoid having to type your password every time you refresh your source code, you can copy your public ssh key (found in ~/.ssh/id_rsa.pub) and [add it to your GitHub account](https://github.com/settings/keys). Now you can use this version to clone the code: 
 ```
 $ git clone git@github.com:sciinstitute/ShapeWorks
 ```
 If you've already cloned your code, simply change the `[remote "origin"]` in .git/config to `url = git@github.com:SCIInstitute/ShapeWorks`. All git commands remain the same.
 
-_Now that you've cloned the source you can [build ShapeWorks](build.md) from souce if you want._
+_Now that you've cloned the source you can [build ShapeWorks](build.md) from source if you want._
 
 View current state (branch and modifications, both staged and unstaged):  
 ```
@@ -53,7 +53,7 @@ Merge the fetched changes to your current branch:
 ```
 $ git merge origin/<branchname>
 ```
-For example, use this command to merge the latest master to your current branch. After that you can test as necessary, then push your branch and make a pull request when it's ready:
+For example, use this command to merge the latest master to your current branch. After that, you can test as necessary, then push your branch and make a pull request when it's ready:
 `git merge origin/master`
 
 Shortcut to both fetch and merge upstream changes to the current branch:  
@@ -66,7 +66,7 @@ Push a branch to GitHub:
 $ git push origin <branchname>
 ```
 
-Delete a branch (e.g., after a pull request has been completed and it has been merged ):  
+Delete a branch (e.g., after a pull request has been completed and merged ):  
 ```
 $ git branch -d <branchname>
 ```
@@ -88,18 +88,18 @@ Check the current status of your changes scheduled to be committed using:
 $ git status
 ```
 
-To commit your current changes to current *local* branch (first use `git diff` to ensure they are correct):  
+To commit your current changes to current *local* branch (first, use `git diff` to ensure they are correct):  
 ```
 $ git diff
 $ git commit -m "description of changes"
 ```
 
-This commits only the files specifically scheduled to be commited.  
+This commits only the files specifically scheduled to be committed.  
 If you want _all_ changes to be committed, use the `-a` switch:  
 ```
 $ git commit -am "description of changes"
 ```
-If you only want to commit scheduled files and a file has been changed after being scheduled, simply add it again for it to be updated:  
+If you only want to commit scheduled files and a file has been changed after being scheduled, add it again to be updated:  
 ```
 $ git add <filename>
 ```
@@ -167,7 +167,7 @@ Create a new tag using the following:
 $ git tag <tagname>
 ```
 
-Tags must be explicitly pushed to github. Push your new tag using:  
+Tags must be explicitly pushed to GitHub. Push your new tag using:  
 ```
 $ git push origin <tagname>
 ```
@@ -183,7 +183,7 @@ The second command is only necessary if the tag has been pushed to Github.
 There are many other things that can be done, such as mashing together commits, temporarily "stashing" and retrieving stashed changes, etc.
 Please add anything here that seems useful.
 
-Stash your current changes (temporarily set them aside without commiting):
+Stash your current changes (temporarily set them aside without committing):
 ```
 $ git stash -m "what is being stashed"
 ```

@@ -11,3 +11,8 @@ or
 $ make test
 
 If using Unix Makefile, for example
+
+
+## Adding New ShapeWorks Automated Tests
+
+![Under construction, coming soon!](../img/misc/under-construction.png)

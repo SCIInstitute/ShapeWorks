@@ -5,7 +5,7 @@
 ## MkDocs
 
 
-To generate static html files for the markdown files, [checkout](build.md#clone-source) the branch where source documentation (`mkdocs.yml`) is maintained and run the following command:
+To generate static HTML files for the markdown files, [checkout](build.md#clone-source) the branch where source documentation (`mkdocs.yml`) is maintained and run the following command:
 
 `mkdocs gh-deploy`
 
@@ -22,7 +22,7 @@ Use `mkdocs gh-deploy --help` for a full list of options available for the gh-de
 
 ## ShapeWorks Commands
 
-The `DocumentationUtils` package has APIs for auto-documenting command line tools and *to-come-soon* python APIs. Please use the `docs` folder to save generated documentation.
+The `DocumentationUtils` package has APIs for auto-documenting command-line tools and *to-come-soon* python APIs. Please use the `docs` folder to save generated documentation.
 
 
 To generate documentation for the `shapeworks` commands, use the `generateShapeWorksCommandDocumentation` function of the `DocumentationUtils` library. Be sure to run `conda_install.sh` as described in [How to Build ShapeWorks from Source?](build.md) to install `DocumentationUtils`.

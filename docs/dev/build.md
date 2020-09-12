@@ -1,6 +1,6 @@
 # How to Build ShapeWorks from Source?
 
-If you encounter problems, have questions, or need help, please contact <shapeworks-dev-support@sci.utah.edu>
+If you encounter problems, have questions, or need help, please contact `<shapeworks-dev-support@sci.utah.edu>`.
 
 
 ## Minimum Requirements
@@ -121,7 +121,7 @@ There is a CMake GUI to see and change any of the options:
 - On OSX/Linux, you can use the GUI by running `ccmake` instead of `cmake`.  
 
 #### Options
-If you used the `build_dependencies.sh` script above, the prefix for all dependencie is the same.
+If you used the `build_dependencies.sh` script above, the prefix for all dependencies is the same.
 Otherwise, the specific paths to VTK, VXL, ITK, and Eigen3 are all required.
 
 Required (if you used build_dependencies.sh):  
@@ -174,7 +174,7 @@ open ShapeWorks.xcodeproj
 
 ### Windows
 
-Use the cmake from the Anaconda Prompt with shapeworks env activated to configure and generate project files for your preferred build system (e.g. Visual Studio 16 2019).  
+Use the cmake from the Anaconda Prompt with shapeworks env activated to configure and generate project files for your preferred build system (e.g., Visual Studio 16 2019).  
 
 #### Options
 Required:  
@@ -196,7 +196,7 @@ Optional:
 ```
 
 #### Examples
-Example that builds dependencies separately, then generates a Visual Studio project for ShapeWorks:  
+An example that builds dependencies separately then generates a Visual Studio project for ShapeWorks:  
 ```
 > conda activate shapeworks
 > ./build_dependencies.sh --build-dir=../dependencies --install-dir=../dependencies

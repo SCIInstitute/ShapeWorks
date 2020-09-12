@@ -1,7 +1,7 @@
 # ShapeWorks Interfaces
 
 
-ShapeWorks tools are designed to support different usage scenarios, including execution on a local computing platform through terminal ([command line](#shapeworks-commands)) and the user-friendly [Studio](#shapeworksstudio) application, APIs including [Python](#shapeworks-in-python), and remote systems such as private or public [clouds](#shapeworks-in-the-cloud). 
+ShapeWorks tools are designed to support different usage scenarios, including execution on a local computing platform through the terminal ([command line](#shapeworks-commands)) and the user-friendly [Studio](#shapeworksstudio) application, APIs including [Python](#shapeworks-in-python), and remote systems such as private or public [clouds](#shapeworks-in-the-cloud). 
 
 
 ## ShapeWorks Commands
@@ -27,7 +27,7 @@ $ conda activate shapeworks
 ## ShapeWorksStudio
 
 
-ShapeWorksStudio is a cross-platform graphical user interface (GUI) to support the standard shape analysis workflow needed by most ShapeWorks users, enabling a wide variety of research scenarios. It is currently supporting image-based grooming and is actively under developement to support surface meshes, more sophisticated grooming operations (including user annotations) and offline processing.  ShapeWorksStudio enable real-time parameter tuning and visualization of the optimization process, and statistical analyses.
+ShapeWorksStudio is a cross-platform graphical user interface (GUI) to support the standard shape analysis workflow needed by most ShapeWorks users, enabling a wide variety of research scenarios. It is currently supporting image-based grooming and is actively under development to support surface meshes, more sophisticated grooming operations (including user annotations), and offline processing.  ShapeWorksStudio enables real-time parameter tuning and visualization of the optimization process and statistical analyses.
 
 
 [![ShapeWorksStudio](../img/getting-started/studio_thumbnail.png)](https://youtu.be/RX4uSB_ot3U "ShapeWorksStudio - Click to Watch!")

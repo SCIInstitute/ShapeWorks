@@ -9,10 +9,10 @@
 
 ### What's New
 
-* **New, flexible ShapeWorks project file format:** New spreadsheet (XLSX) based project file format that can easily handle multiple shape modeling scenarios. It is now fully integrated in Studio. See the [ellipsoid studio example](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Studio/ellipsoid.xlsx) for an example.
+* **New, flexible ShapeWorks project file format:** New spreadsheet (XLSX) based project file format that can easily handle multiple shape modeling scenarios. It is now fully integrated into Studio. See the ellipsoid studio example in `Examples/Studio/ellipsoid.xlsx` for an example.
 * **Exporting shape parameters:** Added PCA Raw Component Score Export to Studio.
-* **New Getting Started documentation:** New [Getting started](http://sciinstitute.github.io/ShapeWorks/getting-started/workflow) documentation that goes over shape modeling workflow documentation, different ShapeWorks interfaces with a video illustration for Studio.
-* **Lower memory footprint and faster optimization:** ShapeWorks is now using [OpenVDB](https://www.openvdb.org/), a more memory-efficient data structure, for signed distance transforms. Along with other refactoring and code optimizations, ShapeWorks now uses *85% less memory* (from 57.09GB to 9.67GB in one use case). Additionally, the particles optimizer is now *2X faster*.
+* **New Getting Started documentation:** New [Getting started](../getting-started/workflow.md) documentation goes over shape modeling workflow documentation, different ShapeWorks interfaces with a video illustration for Studio.
+* **Lower memory footprint and faster optimization:** ShapeWorks is now using [OpenVDB](https://www.openvdb.org/), a more memory-efficient data structure, for signed distance transforms. Along with other refactoring and code optimizations, ShapeWorks now uses *85% less memory* (from 57.09GB to 9.67GB in one use case). Additionally, the particle optimizer is now *2X faster*.
 * **Automated development builds:** We now offer up-to-date development binary builds that track the master branch, available [here](https://github.com/SCIInstitute/ShapeWorks/releases). Please understand that these are in-progress development builds, not official releases.
 
 ### Improvements
@@ -33,13 +33,13 @@
 ### What's New
 
 * Use cases: Added fixed domains use case that demonstrates adding a single shape to an existing shape model
-* Use cases: Added ellipsoid evaluation use that demonstrates quantitative evaluation of the ellipsoid
+* Use cases: Added ellipsoid evaluation use that demonstrates the quantitative evaluation of the ellipsoid
 * New commands: Added commands to the `shapeworks` executable to quantitatively evaluate shape models: read-particle-system, compactness, generalization, specificity
 * New shapeworks executables commands: read-image, write-image, antialias, isoresample, binarize, recenter-image, pad.
 * New build method: Separate build_dependencies script (see Documentation/Build/BUILD.md)
 
 ### Improvements
-* Use cases: Updated femur use case with interactive cutting plane
+* Use cases: Updated femur use case with an interactive cutting plane selection
 * Studio: Replaced bar chart with explained variance chart
 
 
@@ -75,7 +75,7 @@
 
 * Studio: Added support for reading View2 parameter files
 * Studio: Added legacy (View2) surface reconstructor
-* Studio: Replaced optimization libary with same used by ShapeWorksRun
+* Studio: Replaced optimization library with same used by ShapeWorksRun
 
 ### Fixes
 * Studio: Fixes crashes on exit during optimizations (clean shutdown of threads)

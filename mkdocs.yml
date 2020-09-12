@@ -14,7 +14,7 @@ nav:
    - 'Shape Modeling Workflow':              'getting-started/workflow.md'
    - 'ShapeWorks Interfaces':                'getting-started/interfaces.md'   
    - 'Examples':                             'getting-started/examples.md'
-   - 'How Tos':                              'getting-started/how-tos.md'
+   - 'How-Tos':                              'getting-started/how-tos.md'
 - Workflow:
    - 'How to Groom Your Dataset?':           'workflow/groom.md'
    - 'How to Optimize Your Shape Model?' :   'workflow/optimize.md'        

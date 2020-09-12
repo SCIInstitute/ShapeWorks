@@ -7,17 +7,19 @@
 Install mkdocs.  
 `pip install mkdocs`
 
-Next install the theme (if needed). 
+Next, install the theme (if needed). 
 For example, `pip install mkdocs-bootswatch`
 
-See [this link](https://mkdocs.github.io/mkdocs-bootswatch/) for list of bootswatch themes.    
+See [this link](https://mkdocs.github.io/mkdocs-bootswatch/) for a list of bootswatch themes.    
 
 
-Next install font awesome for icons to display in the documentation.   
+Next, install font awesome for icons to display in the documentation.   
 `pip install fontawesome-markdown`
 
 
 ## Setting up the MkDocs project
+
+:fa-info-circle: _**Important:**_ This step is only needed when setting up the project for documentation. Please ignore if you have already mkdocs.yml in the project directory.
 
 Go to the directory for the MkDocs project.   
 
@@ -37,9 +39,9 @@ This command creates mkdocs.yml that will be used for MkDocs configuration, and 
   
 `mkdocs serve`
 
-This command builds markdown files into html and starts a development server to browse the documentation. 
+This command builds markdown files into HTML and starts a development server to browse the documentation. 
 
-Open up `http://127.0.0.1:8000/` in your favorite browser to see the documentation. Changes you make to the markdown files are automatically rebuild.
+Open up `http://127.0.0.1:8000/` in your favorite browser to see the documentation. Changes you make to the markdown files are automatically rebuilt.
 
 ## Deploying on GitHub Pages
 
@@ -47,7 +49,7 @@ As ShapeWorks is hosted on [GitHub](https://github.com/SCIInstitute/ShapeWorks),
 
 We use Project Pages sites for documentation deployment. The site files are deployed to the `gh-pages' branch within the ShapeWorks repository.
 
-To generate static html files for the markdown files, [checkout](build.md#clone-source) the branch where source documentation (`mkdocs.yml`) is maintained and run the following command:
+To generate static HTML files for the markdown files, [checkout](build.md#clone-source) the branch where source documentation (`mkdocs.yml`) is maintained and run the following command:
 
 `mkdocs gh-deploy`
 
