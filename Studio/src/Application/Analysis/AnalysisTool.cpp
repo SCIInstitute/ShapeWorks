@@ -53,8 +53,6 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
           &AnalysisTool::handle_group_animate_state_changed);
   connect(&this->group_animate_timer_, &QTimer::timeout, this, &AnalysisTool::handle_group_timer);
 
-  connect(this->ui_->pca_radio_button, &QRadioButton::clicked, this, &AnalysisTool::pca_update);
-  connect(this->ui_->group_radio_button, &QRadioButton::clicked, this, &AnalysisTool::pca_update);
 }
 
 //---------------------------------------------------------------------------
@@ -379,7 +377,6 @@ bool AnalysisTool::compute_stats()
 
   this->ui_->group_slider->setEnabled(groups_available);
   this->ui_->group_animate_checkbox->setEnabled(groups_available);
-  this->ui_->group_radio_button->setEnabled(groups_available);
 
   return true;
 }
@@ -391,12 +388,14 @@ const vnl_vector<double>& AnalysisTool::get_mean_shape_points()
     return this->empty_shape_;
   }
 
+  /*
   if (this->ui_->group1_button->isChecked()) {
     return this->stats_.Group1Mean();
   }
   else if (this->ui_->group2_button->isChecked()) {
     return this->stats_.Group2Mean();
   }
+*/
 
   return this->stats_.Mean();
 }
@@ -421,12 +420,15 @@ const vnl_vector<double>& AnalysisTool::get_shape_points(int mode, double value,
                            QString::number(this->stats_.Eigenvalues()[m]),
                            QString::number(value * lambda));
 
+  ///TODO: fix for multi-group
+  /*
   if (this->ui_->group_radio_button->isChecked()) {
     this->temp_shape_ = this->stats_.Group1Mean() + (this->stats_.GroupDifference() * group_value);
   }
   else {
     this->temp_shape_ = this->stats_.Mean() + (e * (value * lambda));
   }
+*/
 
   return this->temp_shape_;
 }
@@ -612,8 +614,9 @@ void AnalysisTool::enable_actions()
   this->ui_->reconstructionButton->setEnabled(
     this->session_->particles_present() && this->session_->get_groomed_present());
 
-  this->ui_->group1_button->setEnabled(this->session_->groups_available());
-  this->ui_->group2_button->setEnabled(this->session_->groups_available());
+  ///TODO: setup for multigroup
+//  this->ui_->group1_button->setEnabled(this->session_->groups_available());
+//  this->ui_->group2_button->setEnabled(this->session_->groups_available());
   this->ui_->difference_button->setEnabled(this->session_->groups_available());
   this->ui_->group_slider_widget->setEnabled(this->session_->groups_available());
 }
