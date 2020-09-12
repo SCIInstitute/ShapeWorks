@@ -547,7 +547,6 @@ void Shape::load_feature(std::string display_mode, std::string feature)
       transform = this->groomed_transform_;
     }
 
-
     std::cerr << "Apply feature map for feature '" << feature << "' using filename "
               << filenames[feature] << "\n";
 
@@ -557,9 +556,54 @@ void Shape::load_feature(std::string display_mode, std::string feature)
     reader->Update();
     ImageType::Pointer image = reader->GetOutput();
 
-
     mesh->apply_feature_map(feature, image, transform);
 
+    this->apply_feature_to_points(feature, image);
+
   }
+
+}
+
+//---------------------------------------------------------------------------
+void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer image)
+{
+  using LinearInterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
+
+  LinearInterpolatorType::Pointer interpolator = LinearInterpolatorType::New();
+  interpolator->SetInputImage(image);
+
+  auto region = image->GetLargestPossibleRegion();
+
+  vnl_vector<double> transform = this->groomed_transform_;
+
+  int num_points = this->local_correspondence_points_.size() / 3;
+
+  Eigen::VectorXf values(num_points);
+
+  int idx = 0;
+  for (int i = 0; i < num_points; ++i) {
+
+    ImageType::PointType pitk;
+    pitk[0] = this->local_correspondence_points_[idx++];
+    pitk[1] = this->local_correspondence_points_[idx++];
+    pitk[2] = this->local_correspondence_points_[idx++];
+
+    if (transform.size() == 3) {
+      pitk[0] = pitk[0] + transform[0];
+      pitk[1] = pitk[1] + transform[1];
+      pitk[2] = pitk[2] + transform[2];
+    }
+
+    LinearInterpolatorType::ContinuousIndexType index;
+    image->TransformPhysicalPointToContinuousIndex(pitk, index);
+
+    auto pixel = 0;
+    if (region.IsInside(index)) {
+      pixel = interpolator->EvaluateAtContinuousIndex(index);
+    }
+
+    values[i] = pixel;
+  }
+  this->point_features_[feature] = values;
 
 }

@@ -148,9 +148,7 @@ void Mesh::apply_feature_map(std::string name, ImageType::Pointer image, vnl_vec
 
   vtkFloatArray* scalars = vtkFloatArray::New();
   scalars->SetNumberOfValues(points->GetNumberOfPoints());
-
   scalars->SetName(name.c_str());
-
 
   for (int i = 0; i < points->GetNumberOfPoints(); i++) {
     double pt[3];

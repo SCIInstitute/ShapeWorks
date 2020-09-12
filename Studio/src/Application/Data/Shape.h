@@ -122,6 +122,8 @@ private:
 
   static bool import_point_file(QString filename, vnl_vector<double> &points);
 
+  void apply_feature_to_points(std::string feature, ImageType::Pointer image);
+
   int id_;
 
   QSharedPointer<Mesh> original_mesh_;
@@ -137,6 +139,7 @@ private:
 
   vnl_vector<double> global_correspondence_points_;
   vnl_vector<double> local_correspondence_points_;
+  std::map<std::string, Eigen::VectorXf> point_features_;
 
   QList<Point> exclusion_sphere_centers_;
   QList<double> exclusion_sphere_radii_;
