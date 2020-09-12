@@ -54,6 +54,15 @@ public:
   //! Set the groomed transforms (one vector per domain)
   void set_groomed_transforms(std::vector<std::vector<double>> transforms);
 
+  //! Get the group values
+  std::map<std::string, std::string> get_group_values() const;
+  //! Get a specific group value
+  std::string get_group_value(std::string group_name);
+
+  //! Set the group values
+  void set_group_values(const std::map<std::string, std::string>& group_values);
+
+
 private:
 
   int number_of_domains_ = 0;
@@ -66,5 +75,6 @@ private:
   std::vector<std::vector<double>> groomed_transforms_;
 
   std::map<std::string, std::string> feature_filenames_;
+  std::map<std::string, std::string> group_values_;
 };
 }

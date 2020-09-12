@@ -94,3 +94,21 @@ void Subject::set_groomed_transforms(std::vector<std::vector<double>> transforms
 {
   this->groomed_transforms_ = transforms;
 }
+
+//---------------------------------------------------------------------------
+std::map<std::string, std::string> Subject::get_group_values() const
+{
+  return this->group_values_;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_group_values(const std::map<std::string, std::string>& group_values)
+{
+  this->group_values_ = group_values;
+}
+
+//---------------------------------------------------------------------------
+std::string Subject::get_group_value(std::string group_name)
+{
+  return this->group_values_[group_name];
+}

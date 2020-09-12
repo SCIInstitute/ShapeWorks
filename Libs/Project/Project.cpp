@@ -194,7 +194,8 @@ void Project::load_subjects()
   auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
   auto groomed_columns = this->get_matching_columns(GROOMED_PREFIX);
   auto groomed_transform_columns = this->get_matching_columns(GROOMED_TRANSFORMS_PREFIX);
-  auto feature_columns = this->get_matching_columns(FEATURE_PREFIX);
+  auto feature_columns = this->get_feature_names();
+  auto group_names = this->get_group_names();
 
   int local_particle_column = this->get_index_for_column(LOCAL_PARTICLES);
   int global_particle_column = this->get_index_for_column(WORLD_PARTICLES);
@@ -205,7 +206,6 @@ void Project::load_subjects()
     subject->set_number_of_domains(this->num_domains_);
     subject->set_segmentation_filenames(this->get_list(seg_columns, i));
     subject->set_groomed_filenames(this->get_list(groomed_columns, i));
-
     subject->set_groomed_transforms(this->get_transform_list(groomed_transform_columns, i));
 
     auto feature_list = this->get_list(feature_columns, i);
@@ -215,6 +215,10 @@ void Project::load_subjects()
       map[feature] = feature_list[i];
     }
     subject->set_feature_filenames(map);
+
+
+
+
 
     if (local_particle_column > 0) {
       this->particles_present_ = true;
