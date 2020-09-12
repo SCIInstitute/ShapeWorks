@@ -635,7 +635,6 @@ void ShapeWorksStudioApp::handle_warning(std::string str)
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_progress(size_t value)
 {
-  STUDIO_LOG_MESSAGE("start Studio::handle_progress: " + QString::number(value));
   if (value < 100) {
     this->progress_bar_->setVisible(true);
     this->progress_bar_->setValue(static_cast<int>(value));
@@ -647,8 +646,6 @@ void ShapeWorksStudioApp::handle_progress(size_t value)
     this->enable_possible_actions();
   }
   this->handle_message(this->currentMessage_);
-  STUDIO_LOG_MESSAGE("end Studio::handle_progress: " + QString::number(value));
-//  qApp->processEvents();
 }
 
 //---------------------------------------------------------------------------

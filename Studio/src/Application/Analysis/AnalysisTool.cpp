@@ -430,6 +430,8 @@ const vnl_vector<double>& AnalysisTool::get_shape_points(int mode, double value,
   }
 */
 
+  this->temp_shape_ = this->stats_.Mean() + (e * (value * lambda));
+
   return this->temp_shape_;
 }
 

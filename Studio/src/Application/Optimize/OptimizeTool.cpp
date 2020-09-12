@@ -49,7 +49,6 @@ void OptimizeTool::handle_warning(std::string msg)
 //---------------------------------------------------------------------------
 void OptimizeTool::handle_progress(int val)
 {
-  STUDIO_LOG_MESSAGE("start OptimizeTool::handle_progress: " + QString::number(val));
   emit progress(static_cast<size_t>(val));
 
   auto local = this->optimize_->GetLocalPoints();
@@ -59,7 +58,6 @@ void OptimizeTool::handle_progress(int val)
     this->session_->update_points(local, true);
     this->session_->update_points(global, false);
   }
-  STUDIO_LOG_MESSAGE("end OptimizeTool::handle_progress: " + QString::number(val));
 }
 
 //---------------------------------------------------------------------------
