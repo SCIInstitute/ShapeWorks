@@ -216,9 +216,13 @@ void Project::load_subjects()
     }
     subject->set_feature_filenames(map);
 
-
-
-
+    auto group_values = this->get_list(group_names, i);
+    std::map<std::string, std::string> group_map;
+    for (int i = 0; i < group_names.size(); i++) {
+      std::string name = group_names[i].substr(strlen(GROUP_PREFIX));
+      group_map[name] = group_values[i];
+    }
+    subject->set_group_values(group_map);
 
     if (local_particle_column > 0) {
       this->particles_present_ = true;
