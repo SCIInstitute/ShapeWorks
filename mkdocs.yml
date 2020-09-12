@@ -67,4 +67,3 @@ markdown_extensions:
    - pymdownx.tasklist
 
 extra_css:
-    - css/custom.css
