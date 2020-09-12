@@ -84,4 +84,4 @@ Here are femur samples with their optimized correspondences.
 
 Here is a video showing the shape modes of variation (computed using principal component analysis - PCA) of the femur dataset using single-scale optimization.
 
-<video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/femur_mesh_pca.mp4" autoplay muted loop style="width:100%">
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/femur_mesh_pca.mp4" autoplay muted loop style="width:100%"></p>

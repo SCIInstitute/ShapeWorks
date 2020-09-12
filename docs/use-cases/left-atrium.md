@@ -138,7 +138,7 @@ Here is the mean shape of the optimized shape mode using single-scale optimizati
 ![left Atrium singleScale](../img/use-cases/leftatrium_singlescale.png)
 
 Here is a video showing the shape modes of variation (computed using principal component analysis - PCA) of the left atrium dataset using single-scale optimization.
-[![left Atrium singleScale PCA mode](../img/use-cases/leftatrium_singlescale_pca_thumbnail.png)](https://youtu.be/Coj6-xqw8dw)
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/leftatrium_singlescale_pca.mp4" autoplay muted loop style="width:100%"></p>
 
 
 ### Multi-Scale Optimization
@@ -149,4 +149,4 @@ Here is the mean shape of the optimized shape mode using multi-scale optimizatio
 
 Here is a video showing the shape modes of variation (computed using principal component analysis - PCA) of the left atrium dataset using multi-scale optimization.
 
-[![left Atrium Multi Scale PCA mode](../img/use-cases/leftatrium_multiscale_pca_thumbnail.png)](https://youtu.be/ojTKiSsordA)
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/leftatrium_multiscale_pca.mp4" autoplay muted loop style="width:100%"></p>
