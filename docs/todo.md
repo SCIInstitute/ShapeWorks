@@ -32,7 +32,7 @@
 - [x] Review and edit femur use case
 - [x] Review and edit right ventricle use case
 - [ ] Once meshes work, update the femur use case to indicate that this is optional and add femur_mesh use case
-- [ ] Instructions on how to add videos to the documentation (thumbnails that link to youtube)
+- [x] Instructions on how to add videos to the documentation (thumbnails that link to youtube)
 - [x] Instructions to add a new use case
 - [ ] Revise the right ventricle use case after release it. Might need more results to illustrate group differences.
 - [ ] Instructions for Doxygen and building doxygen.

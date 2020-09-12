@@ -70,6 +70,12 @@ Use `mkdocs gh-deploy --help` for a full list of options available for the gh-de
 
 We use github issues to keep track of hanging fruits to improve ShapeWorks documentation. For an internal list of todos, which will be turned to issues, visit [Documentation ToDo List](../todo.md).
 
+## Inserting videos in documentation
+
+[Request on GitHub](https://github.com/SCIInstitute/ShapeWorks/issues/new) for your video to be uploaded to the SCI ShapeWorks server.
+
+Insert it in the markdown file using `<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/video.mp4" autoplay muted loop style="width:100%"></p>`.
+
 ## See Also
 - [MkDocs documentation](https://mkdocs.readthedocs.io/en/stable/)
 - [Getting started with MkDocs](https://docs.readthedocs.io/en/stable/intro/getting-started-with-mkdocs.html)
