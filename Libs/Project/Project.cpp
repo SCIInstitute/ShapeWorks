@@ -485,17 +485,23 @@ void Project::save_string_column(std::string name, std::vector<std::string> item
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> Project::get_feature_columns() const
+std::vector<std::string> Project::get_feature_names() const
 {
-  auto feature_columns = this->get_matching_columns(FEATURE_PREFIX);
-  return feature_columns;
+  auto feature_names = this->get_matching_columns(FEATURE_PREFIX);
+  return feature_names;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Project::get_group_names() const
+{
+  auto group_names = this->get_matching_columns(GROUP_PREFIX);
+  return group_names;
 }
 
 //---------------------------------------------------------------------------
 std::vector<std::vector<double>>
 Project::get_transform_list(std::vector<std::string> columns, int subject)
 {
-  //auto transform_string_list = this->get_list(groomed_transform_columns, i);
   auto list = this->get_list(columns, subject);
 
   std::vector<std::vector<double>> transforms;
@@ -506,13 +512,11 @@ Project::get_transform_list(std::vector<std::string> columns, int subject)
 
     std::vector<double> values;
 
-    for(double value; ss >> value; ) {
+    for (double value; ss >> value;) {
       values.push_back(value);
     }
-    //while (ss);
 
     transforms.push_back(values);
-
   }
   return transforms;
 }
@@ -530,13 +534,13 @@ void Project::set_transform_list(std::vector<std::string> columns, int subject,
     transform_strings.push_back(str);
   }
 
-  while (transform_strings.size() < columns.size())
-  {
+  while (transform_strings.size() < columns.size()) {
     transform_strings.push_back("");
   }
 
   this->set_list(columns, subject, transform_strings);
 
 }
+
 
 //---------------------------------------------------------------------------

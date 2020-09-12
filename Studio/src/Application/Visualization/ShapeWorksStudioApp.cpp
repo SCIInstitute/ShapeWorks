@@ -580,7 +580,7 @@ void ShapeWorksStudioApp::update_table()
   auto current_feature = this->ui_->features->currentText();
   this->ui_->features->clear();
   this->ui_->features->addItem("-none-");
-  auto feature_maps = project->get_feature_columns();
+  auto feature_maps = project->get_feature_names();
   for (const std::string& feature : feature_maps) {
     QString item = QString::fromStdString(feature);
     item = item.remove(0, 8);

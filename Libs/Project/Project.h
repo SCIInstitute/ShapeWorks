@@ -57,8 +57,11 @@ public:
   //! Return if particle files are present
   bool get_particles_present();
 
-  //! Get feature columns
-  std::vector<std::string> get_feature_columns() const;
+  //! Get feature names
+  std::vector<std::string> get_feature_names() const;
+
+  //! Get group names
+  std::vector<std::string> get_group_names() const;
 
   //! Retrieve parameters based on key
   Parameters get_parameters(std::string name);
@@ -85,6 +88,7 @@ private:
   static constexpr const char* FEATURE_PREFIX = "feature_";
   static constexpr const char* LOCAL_PARTICLES = "local_particles";
   static constexpr const char* WORLD_PARTICLES = "world_particles";
+  static constexpr const char* GROUP_PREFIX = "group_";
 
   std::vector<std::string> get_list(std::vector<std::string> columns, int subject);
   void set_list(std::vector<std::string> columns, int subject, std::vector<std::string> values);
