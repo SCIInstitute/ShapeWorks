@@ -74,5 +74,4 @@ Here are lumps samples with their optimized correspondences.
 
 Here is a video showing the shape modes of variation (computed using principal component analysis - PCA) of the lumps dataset using single-scale optimization.
 
-TODO: Update video link and thumbnail
-[![Lumps Mesh PCA](../img/use-cases/lumps/pca.png)](https://youtu.be/)
+<video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/lumps_pca.mp4" autoplay muted loop style="width:100%">
