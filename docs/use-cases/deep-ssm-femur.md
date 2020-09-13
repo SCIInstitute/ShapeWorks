@@ -46,7 +46,7 @@ For a full description of the DeepSSM process and how to use the ShapeWorks Deep
 The images and particle files are reformatted into tensors for training and testing the DeepSSM network. The 5000 original and augmented image/particle pairs are turned into train (80%) and validation (20%) loaders and the images held out for the test set are turned into a test loader. A batch size of 8 is used for optimal GPU capacity. Note if a CUDA memory error occurs when running the use case, this value may need to be decreased. The images in the train, validation, and test sets are downsampled to 75% of their original size to decrease training time.
 
 ### Step 4: Training DeepSSM 
-This step uses function `trainDeepSSM` documented in [deep-ssm.md](../deep-learning/deep-ssm.md). A DeepSSM model is created and trained for 30 epochs. A learning rate of 0.0001 is used and the validation error is calculated and reported every epoch.
+This step uses function `trainDeepSSM` documented in [deep-ssm.md](../deep-learning/deep-ssm.md). A DeepSSM model is created and trained for 50 epochs. A learning rate of 0.0001 is used and the validation error is calculated and reported every epoch.
 
 ### Step 5: Testing DeepSSM
 This step uses function `testDeepSSM` documented in [deep-ssm.md](../deep-learning/deep-ssm.md). The trained DeepSSM model is used to predict the PCA scores of the unseen images in the test loader. These scores are then mapped to the particle shape model using the PCA information from data augmentation and the predicted particles are saved.
@@ -54,6 +54,7 @@ This step uses function `testDeepSSM` documented in [deep-ssm.md](../deep-learni
 ### Step 6: Analyze DeepSSM Results
 This step uses function `AnalyzeResults` documented in [deep-ssm.md](../deep-learning/deep-ssm.md). The DeepSSM predictions are analyzed by considering the surface-to-surface distance between the mesh generated from the original segmentation and the mesh generated from the predicted particles. Heat maps of these distances on the meshes are saved to visualize the results.
 
+![DeepSSM Results](../img/deep-learning/DeepSSMResults.png)
 
 
 
