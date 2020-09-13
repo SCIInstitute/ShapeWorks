@@ -39,7 +39,7 @@ To evaluate the accuracy of DeepSSM output, we compare a mesh created from segme
 
 We then compare the original mesh to the predicted mesh via surface-to-surface distance. To find the distance from the original to the predicted, we consider each vertex in the original and find the shortest distance to the surface of the predicted. This process is not symmetric as it depends on the vertices of one mesh, so the distance from the predicted to the original will be slightly different. We compute the Hausdorff distance which takes the max of these vertex-wise distances to return a single value as a measure of accuracy. We also consider the vertex-wise distances as a scalar field on the mesh vertices and visualize them as a heat map on the surface. This provides us with a way of seeing where the predicted PDM was more or less accurate.
 
-TODO: Example of heat map here
+![Mesh Distance](../img/deep-learning/mesh-distance.png)
 
 ## Using the DeepSSM Python Package
 The ShapeWorks DeepSSM package is installed to the ShapeWorks anaconda environment when [conda_installs.sh](https://github.com/SCIInstitute/ShapeWorks/tree/master/conda_installs.sh) is run. To use, make sure you have the shapeworks conda environment activated and add the following import to your Python code:
