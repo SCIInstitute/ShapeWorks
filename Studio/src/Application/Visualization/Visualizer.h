@@ -82,6 +82,9 @@ public:
   //! Set the currently selected feature map
   void set_feature_map(const string& feature_map);
 
+  //! clear out the viewers
+  void clear_viewers();
+
 public Q_SLOTS:
 
   /// update viewer properties (e.g. glyph size, quality, etc)

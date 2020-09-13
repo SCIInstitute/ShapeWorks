@@ -13,7 +13,7 @@ const std::string Visualizer::MODE_GROOMED_C("Groomed");
 const std::string Visualizer::MODE_RECONSTRUCTION_C("Reconstructed");
 
 //-----------------------------------------------------------------------------
-Visualizer::Visualizer(Preferences &prefs) : preferences_(prefs)
+Visualizer::Visualizer(Preferences& prefs) : preferences_(prefs)
 {
   this->display_mode_ = Visualizer::MODE_ORIGINAL_C;
 
@@ -78,22 +78,22 @@ void Visualizer::display_samples()
 //-----------------------------------------------------------------------------
 void Visualizer::update_samples()
 {
-  QVector < QSharedPointer < Shape >> shapes = this->session_->get_shapes();
-  foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
-    viewer->update_points();
-  }
+  QVector<QSharedPointer<Shape >> shapes = this->session_->get_shapes();
+    foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
+      viewer->update_points();
+    }
   this->lightbox_->redraw();
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::display_shape(const vnl_vector<double> &points)
+void Visualizer::display_shape(const vnl_vector<double>& points)
 {
   std::vector<Point> empty_vectors;
   this->display_shape(points, empty_vectors);
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::display_shape(const vnl_vector<double> &points, const std::vector<Point> &vectors)
+void Visualizer::display_shape(const vnl_vector<double>& points, const std::vector<Point>& vectors)
 {
   QVector<ShapeHandle> shapes;
   shapes.push_back(this->create_display_object(points, vectors));
@@ -103,6 +103,7 @@ void Visualizer::display_shape(const vnl_vector<double> &points, const std::vect
   this->lightbox_->redraw();
   this->current_shape_ = points;
 }
+
 //-----------------------------------------------------------------------------
 void Visualizer::display_shape(ShapeHandle shape)
 {
@@ -154,8 +155,8 @@ void Visualizer::display_sample(int i)
 }
 
 //-----------------------------------------------------------------------------
-ShapeHandle Visualizer::create_display_object(const vnl_vector<double> &points,
-                                              const std::vector<Point> &vectors)
+ShapeHandle Visualizer::create_display_object(const vnl_vector<double>& points,
+                                              const std::vector<Point>& vectors)
 {
 
   MeshHandle mesh = this->session_->get_mesh_manager()->get_mesh(points);
@@ -197,12 +198,12 @@ void Visualizer::update_viewer_properties()
   double quality = this->preferences_.get_glyph_quality();
 
   if (this->lightbox_) {
-    foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
-      viewer->set_glyph_size_and_quality(size, quality);
-      viewer->set_show_glyphs(this->show_glyphs_);
-      viewer->set_show_surface(this->show_surface_);
-      viewer->set_color_scheme(this->preferences_.get_color_scheme());
-    }
+      foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
+        viewer->set_glyph_size_and_quality(size, quality);
+        viewer->set_show_glyphs(this->show_glyphs_);
+        viewer->set_show_surface(this->show_surface_);
+        viewer->set_color_scheme(this->preferences_.get_color_scheme());
+      }
 
     this->update_lut();
 
@@ -219,7 +220,7 @@ void Visualizer::update_lut()
   num_points = 512;
 
   this->glyph_lut_->SetNumberOfTableValues(num_points + 1);
-  this->glyph_lut_->SetTableRange(0.0, (double)num_points + 1.0);
+  this->glyph_lut_->SetTableRange(0.0, (double) num_points + 1.0);
 
   if (this->selected_point_one_ < 0) {
     this->glyph_lut_->ForceBuild();
@@ -245,18 +246,18 @@ void Visualizer::update_lut()
       // color by distance from the selected point
 
       double p1[3];
-      p1[0] = this->cached_mean_[ this->selected_point_one_ * 3 + 0];
-      p1[1] = this->cached_mean_[ this->selected_point_one_ * 3 + 1];
-      p1[2] = this->cached_mean_[ this->selected_point_one_ * 3 + 2];
+      p1[0] = this->cached_mean_[this->selected_point_one_ * 3 + 0];
+      p1[1] = this->cached_mean_[this->selected_point_one_ * 3 + 1];
+      p1[2] = this->cached_mean_[this->selected_point_one_ * 3 + 2];
 
       std::vector<double> distances;
       double max_distance = 0;
       for (int i = 0; i < num_points; i++) {
 
         double p2[3];
-        p2[0] = this->cached_mean_[ i * 3 + 0];
-        p2[1] = this->cached_mean_[ i * 3 + 1];
-        p2[2] = this->cached_mean_[ i * 3 + 2];
+        p2[0] = this->cached_mean_[i * 3 + 0];
+        p2[1] = this->cached_mean_[i * 3 + 1];
+        p2[2] = this->cached_mean_[i * 3 + 2];
 
         double distance = sqrt(vtkMath::Distance2BetweenPoints(p1, p2));
         distances.push_back(distance);
@@ -311,12 +312,11 @@ void Visualizer::set_selected_point_two(int id)
 //-----------------------------------------------------------------------------
 void Visualizer::compute_measurements()
 {
-  if (this->selected_point_one_ >= 0 && this->selected_point_two_ >= 0)
-  {}
+  if (this->selected_point_one_ >= 0 && this->selected_point_two_ >= 0) {}
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::set_mean(const vnl_vector<double> & mean)
+void Visualizer::set_mean(const vnl_vector<double>& mean)
 {
   this->cached_mean_ = mean;
 }
@@ -349,6 +349,13 @@ void Visualizer::set_feature_map(const string& feature_map)
 bool Visualizer::get_center()
 {
   return this->center_;
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::clear_viewers()
+{
+  QVector<ShapeHandle> shapes;
+  this->lightbox_->set_shapes(shapes);
 }
 
 

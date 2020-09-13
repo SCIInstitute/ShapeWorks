@@ -688,6 +688,8 @@ void ShapeWorksStudioApp::new_session()
           SLOT(handle_display_setting_changed()));
   connect(this->session_.data(), &Session::new_mesh, this, &ShapeWorksStudioApp::handle_new_mesh);
 
+  this->visualizer_->clear_viewers();
+
   this->analysis_tool_->set_session(this->session_);
   this->visualizer_->set_session(this->session_);
   this->groom_tool_->set_session(this->session_);
@@ -1016,7 +1018,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
 {
   this->new_session();
 
-  this->analysis_tool_->reset_stats();
 
   try {
     if (!this->session_->load_project(filename)) {
@@ -1036,6 +1037,9 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   this->is_loading_ = true;
 
+  this->block_update_ = true;
+
+  this->analysis_tool_->reset_stats();
   this->groom_tool_->load_settings();
   this->optimize_tool_->load_params();
   this->preferences_window_->set_values_from_preferences();
@@ -1044,7 +1048,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->preferences_.add_recent_file(filename);
   this->update_recent_files();
 
-  this->block_update_ = true;
 
   this->update_tool_mode();
 
