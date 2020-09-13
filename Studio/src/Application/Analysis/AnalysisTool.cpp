@@ -15,6 +15,7 @@
 #include <Data/Session.h>
 #include <Data/Mesh.h>
 #include <Data/Shape.h>
+#include <Data/StudioLog.h>
 #include <Analysis/AnalysisTool.h>
 #include <Visualization/Lightbox.h>
 
@@ -167,9 +168,11 @@ void AnalysisTool::on_reconstructionButton_clicked()
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_reconstruction_complete()));
-  connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
-  connect(worker, SIGNAL(warning_message(std::string)), this, SLOT(handle_warning(std::string)));
-  connect(worker, SIGNAL(message(std::string)), this, SLOT(handle_message(std::string)));
+
+  connect(worker, &ShapeworksWorker::error_message, this, &AnalysisTool::handle_error);
+  connect(worker, &ShapeworksWorker::warning_message, this, &AnalysisTool::handle_warning);
+  connect(worker, &ShapeworksWorker::message, this, &AnalysisTool::handle_message);
+
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   thread->start();
   emit progress(15);
@@ -667,4 +670,25 @@ ShapeHandle AnalysisTool::create_shape_from_points(const vnl_vector<double>& poi
   shape->set_reconstructed_mesh(mesh);
   shape->set_global_particles(points);
   return shape;
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_error(std::string message_string)
+{
+  STUDIO_LOG_ERROR(QString::fromStdString(message_string));
+  emit error(message_string);
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_warning(std::string message_string)
+{
+  STUDIO_LOG_ERROR(QString::fromStdString(message_string));
+  emit error(message_string);
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_message(std::string message_string)
+{
+  STUDIO_LOG_MESSAGE(QString::fromStdString(message_string));
+  emit message(message_string);
 }

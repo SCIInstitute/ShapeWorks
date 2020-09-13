@@ -124,6 +124,11 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           this, SLOT(handle_progress(size_t)));
   connect(this->analysis_tool_.data(), SIGNAL(reconstruction_complete()),
           this, SLOT(handle_reconstruction_complete()));
+  connect(this->analysis_tool_.data(), &AnalysisTool::message,
+          this, &ShapeWorksStudioApp::handle_message);
+  connect(this->analysis_tool_.data(), &AnalysisTool::error,
+          this, &ShapeWorksStudioApp::handle_error);
+
 
   // resize from preferences
   if (!this->preferences_.get_window_geometry().isEmpty()) {

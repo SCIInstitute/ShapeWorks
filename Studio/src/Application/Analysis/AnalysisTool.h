@@ -117,12 +117,18 @@ public Q_SLOTS:
 
   void on_reconstructionButton_clicked();
 
+
+  void handle_error(std::string message);
+  void handle_warning(std::string message);
+  void handle_message(std::string message);
+
 signals:
 
   void update_view();
   void pca_update();
   void progress(size_t);
   void message(std::string);
+  void error(std::string);
   void reconstruction_complete();
 
 private:
