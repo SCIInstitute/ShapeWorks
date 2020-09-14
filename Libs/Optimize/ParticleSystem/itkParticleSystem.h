@@ -31,6 +31,7 @@
 #include "vnl/vnl_inverse.h"
 #include <map>
 #include <vector>
+#include <random>
 
 namespace itk
 {
@@ -165,9 +166,9 @@ public:
       original particle.  The new particles are added using the AddPosition
       method, so all appropriate callbacks are invoked. */
   void SplitAllParticles(double epsilon, int threadId=0);
-  void SplitAllParticlesInDomain(const vnl_vector_fixed<double, VDimension> &,
-                                 double epsilon, unsigned int d=0, int threadId=0);
+  void SplitAllParticlesInDomain(const vnl_vector_fixed<double, VDimension> random, double epsilon, unsigned int d=0, int threadId=0);
   void SplitParticle(double epsilon, unsigned int idx,  unsigned int d=0, int threadId=0);
+  void AdvancedAllParticleSplitting(double epsilon);
   
   /** Set/Get the neighborhood object associated with domain k. */
   void SetNeighborhood(unsigned int,  NeighborhoodType *, int threadId=0);
@@ -514,6 +515,8 @@ private:
   /** An array that indicates which particle indices (in any domain) will
       not respond to SetPosition. */
   std::vector< std::vector<bool> > m_FixedParticleFlags;
+
+  std::mt19937 m_rand{42};
 };
 
 } // end namespace itk

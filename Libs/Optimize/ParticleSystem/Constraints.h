@@ -37,8 +37,8 @@ public:
   bool transformPlanes(const vnl_matrix_fixed<double, 4, 4> &Trans);
 
   // Apply functions
-  bool applyBoundaryConstraints(vnl_vector_fixed<double, 3> &gradE, const Point<double, 3> &pos);
-  bool applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, const Point<double, 3> &pos);
+  std::stringstream applyBoundaryConstraints(vnl_vector_fixed<double, 3> &gradE, const Point<double, 3> &pos);
+  std::stringstream applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, const Point<double, 3> &pos);
 
   // Write constraints
   bool writePlanes(std::string filename){return true;}

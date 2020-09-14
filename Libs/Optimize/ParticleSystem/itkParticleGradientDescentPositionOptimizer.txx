@@ -167,10 +167,10 @@ namespace itk
                 VectorType gradient_old = gradient;
 
                 // New good implementation of cutting plane
-                m_ParticleSystem->GetDomain(dom)->GetConstraints()->applyBoundaryConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
+                std::stringstream stream = m_ParticleSystem->GetDomain(dom)->GetConstraints()->applyBoundaryConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
                 // Old broken implementation. Constraints don't work
                 //m_ParticleSystem->GetDomain(dom)->ApplyVectorConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
-
+                stream << "Index ----------------" << it.GetIndex() << "--------------" << dom << std::endl;
                 /*
                 //if(gradient_old[0]*gradient[0] < 0 || gradient_old[1]*gradient[1] < 0 || gradient_old[2]*gradient[2] < 0){
                     std::stringstream stream;
@@ -187,6 +187,9 @@ namespace itk
                 if (gradmag > maximumDTUpdateAllowed)
                 {
                   m_TimeSteps[dom][k] /= factor;
+                  stream << "Rejected because of magnitude" << std::endl;
+                  stream << std::endl;
+                  std::cout << stream.str();
                   continue;
                 }
 
@@ -195,6 +198,9 @@ namespace itk
 
                 // Step F update the point position in the particle system
                 m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);
+
+                stream << "New Point " << newpoint << std::endl;
+
 
                 // Step G compute the new energy of the particle system 
                 newenergy = localGradientFunction->Energy(it.GetIndex(), dom, m_ParticleSystem);
@@ -205,6 +211,9 @@ namespace itk
                   m_TimeSteps[dom][k] *= factor;
                   if (m_TimeSteps[dom][k] > maxtime[dom]) m_TimeSteps[dom][k] = maxtime[dom];
                   if (gradmag > maxchange) maxchange = gradmag;
+                  stream << "Good energy " << std::endl;
+                  stream << std::endl;
+                  std::cout << stream.str();
                   break;
                 }
                 else
@@ -213,6 +222,9 @@ namespace itk
                   {
                     domain->ApplyConstraints(pt);
                     m_ParticleSystem->SetPosition(pt, it.GetIndex(), dom);
+                    stream << "Not good energy " << pt << std::endl;
+                    stream << std::endl;
+                    std::cout << stream.str();
 
                     m_TimeSteps[dom][k] /= factor;
                   }
@@ -221,6 +233,7 @@ namespace itk
                     break;
                   }
                 }
+
               } // end while(true)
             } // for each particle
 

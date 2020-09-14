@@ -78,7 +78,7 @@ bool Constraints::transformPlanes(const vnl_matrix_fixed<double, 4, 4> &Trans){
 
 }
 
-bool Constraints::applyBoundaryConstraints(vnl_vector_fixed<double, 3> &gradE, const Point<double, 3> &pos){
+std::stringstream Constraints::applyBoundaryConstraints(vnl_vector_fixed<double, 3> &gradE, const Point<double, 3> &pos){
     return applyPlaneConstraints(gradE, pos);
 }
 
@@ -95,7 +95,7 @@ Eigen::Vector3d Constraints::linePlaneIntersect(Eigen::Vector3d n, Eigen::Vector
 
 // This function implementation performs a series of projections onto planes such that at the end, the gradient update is close to the original(<45 degrees)
 // and the magnitude is less than or equal to the original. Read comments for more information.
-bool Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, const Point<double, 3> &pos){
+std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, const Point<double, 3> &pos){
 
     // Convert points and grads to eigen vectors
     Eigen::Vector3d l0; l0(0) = pos[0]; l0(1) = pos[1]; l0(2) = pos[2];
@@ -209,13 +209,13 @@ bool Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, cons
                    << "Original intersection on dominant plane " << linePlaneIntersect(n_d, p0_d, l0+l, l0+l-n_d).transpose() << std::endl
                    << "Corrected point " << curr_updated_pt.transpose() << std::endl
                    << "Original gradient " << l.transpose() << std::endl
-                   << "Updated gradient " << updated_gradient.transpose() << std::endl << std::endl;
+                   << "Updated gradient " << updated_gradient.transpose() << std::endl;
         //}
     }
 
-    std::cout << stream.str();
+    //std::cout << stream.str();
     // CHECK: Is returning false correct? This is what the previous function returns
-    return false;
+    return stream;
 }
 
 /*

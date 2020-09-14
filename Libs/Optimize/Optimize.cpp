@@ -256,6 +256,8 @@ void Optimize::SetParameters()
   // Now read the transform file if present.
   if (m_transform_file != "") { this->ReadTransformFile(); }
   if (m_prefix_transform_file != "") { this->ReadPrefixTransformFile(m_prefix_transform_file); }
+
+  m_sampler->ApplyConstraintsToZeroCrossing();
 }
 
 //---------------------------------------------------------------------------
@@ -513,7 +515,6 @@ void Optimize::InitializeSampler()
     this->GetSampler()->GetParticleSystem()->FlagDomain(this->m_domain_flags[i]);
   }
   m_sampler->Initialize();
-  m_sampler->ApplyConstraintsToZeroCrossing();
 
   m_sampler->GetOptimizer()->SetTolerance(0.0);
 
@@ -522,6 +523,8 @@ void Optimize::InitializeSampler()
     this->GetSampler()->GetParticleSystem()
     ->SetFixedParticleFlag(this->m_particle_flags[2 * i], this->m_particle_flags[2 * i + 1]);
   }
+
+  //m_sampler->ApplyConstraintsToZeroCrossing();
 }
 
 //---------------------------------------------------------------------------
@@ -635,13 +638,6 @@ void Optimize::Initialize()
   this->m_split_number = 0;
 
   int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
-  vnl_vector_fixed < double, 3 > random;
-
-  for (int i = 0; i < 3; i++) {
-    random[i] = static_cast < double > (this->m_rand());
-  }
-  double norm = random.magnitude();
-  random /= norm;
 
   double epsilon = this->m_spacing;
   bool flag_split = false;
@@ -657,13 +653,9 @@ void Optimize::Initialize()
   while (flag_split) {
     //        m_Sampler->GetEnsembleEntropyFunction()->PrintShapeMatrix();
     this->OptimizerStop();
-    for (int i = 0; i < n; i++) {
-      int d = i % m_domains_per_shape;
-      if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d]) {
-        m_sampler->GetParticleSystem()->SplitAllParticlesInDomain(random, epsilon, i, 0);
-      }
-    }
 
+    m_sampler->GetParticleSystem()->AdvancedAllParticleSplitting(epsilon);
+      
     m_sampler->GetParticleSystem()->SynchronizePositions();
 
     this->m_split_number++;
