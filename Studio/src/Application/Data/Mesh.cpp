@@ -13,6 +13,7 @@
 #include <vtkFloatArray.h>
 #include <vtkPointData.h>
 #include <vtkPolyDataWriter.h>
+#include <vtkPointLocator.h>
 
 #include <Data/Mesh.h>
 #include <Data/ItkToVtk.h>
@@ -128,14 +129,12 @@ vnl_vector<double> Mesh::get_center_transform()
 }
 
 //---------------------------------------------------------------------------
-void Mesh::apply_feature_map(std::string name, ImageType::Pointer image, vnl_vector<double> transform)
+void Mesh::apply_feature_map(std::string name, ImageType::Pointer image,
+                             vnl_vector<double> transform)
 {
   if (!this->poly_data_ || name == "") {
     return;
   }
-
-
-
 
   LinearInterpolatorType::Pointer interpolator = LinearInterpolatorType::New();
   interpolator->SetInputImage(image);
@@ -187,4 +186,74 @@ void Mesh::apply_feature_map(std::string name, ImageType::Pointer image, vnl_vec
   writer->SetFileName("/tmp/foo.vtk");
   writer->Update();
 */
+}
+
+//---------------------------------------------------------------------------
+void Mesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double> positions,
+                                       itkeigen::VectorXf scalar_values)
+{
+
+  vtkSmartPointer<vtkPoints> vtk_points;
+
+  int num_points = positions.size() / 3;
+  vtk_points->SetNumberOfPoints(num_points);
+
+  unsigned int idx = 0;
+  for (int i = 0; i < num_points; i++) {
+
+    double x = positions[idx++];
+    double y = positions[idx++];
+    double z = positions[idx++];
+
+    vtk_points->InsertPoint(i, x, y, z);
+  }
+
+  vtkSmartPointer<vtkPolyData> point_data = vtkSmartPointer<vtkPolyData>::New();
+  point_data->SetPoints(vtk_points);
+
+  vtkPointLocator* point_locator = vtkPointLocator::New();
+  point_locator->SetDataSet(point_data);
+  point_locator->SetDivisions(100, 100, 100);
+  point_locator->BuildLocator();
+
+  auto points = this->poly_data_->GetPoints();
+
+  vtkFloatArray* scalars = vtkFloatArray::New();
+  scalars->SetNumberOfValues(points->GetNumberOfPoints());
+  scalars->SetName(name.c_str());
+
+  for (int i = 0; i < points->GetNumberOfPoints(); i++) {
+    double pt[3];
+    points->GetPoint(i, pt);
+
+    // find the 8 closest correspondence points the to current point
+    vtkSmartPointer<vtkIdList> closest_points = vtkSmartPointer<vtkIdList>::New();
+    point_locator->FindClosestNPoints(8, pt, closest_points);
+
+    // assign scalar value based on a weighted scheme
+    float weighted_scalar = 0.0f;
+    float distanceSum = 0.0f;
+    float distance[8];
+    for (unsigned int p = 0; p < closest_points->GetNumberOfIds(); p++) {
+      // get a particle position
+      vtkIdType id = closest_points->GetId(p);
+
+      // compute distance to current particle
+      double x = pt[0] - point_data->GetPoint(id)[0];
+      double y = pt[1] - point_data->GetPoint(id)[1];
+      double z = pt[2] - point_data->GetPoint(id)[2];
+      distance[p] = 1.0f / (x * x + y * y + z * z);
+
+      // multiply scalar value by weight and add to running sum
+      distanceSum += distance[p];
+    }
+
+    for (unsigned int p = 0; p < closest_points->GetNumberOfIds(); p++) {
+      vtkIdType current_id = closest_points->GetId(p);
+      weighted_scalar += distance[p] / distanceSum * scalar_values[current_id];
+    }
+
+    scalars->SetValue(i, weighted_scalar);
+  }
+
 }

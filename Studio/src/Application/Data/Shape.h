@@ -11,15 +11,13 @@ class Shape;
 using ShapeHandle = QSharedPointer<Shape>;
 using ShapeList = QVector<ShapeHandle>;
 
-class Point
-{
+class Point {
 public:
   double x, y, z;
 };
 
 //! Representation of a single shape/patient/subject.
-class Shape
-{
+class Shape {
 
 public:
 
@@ -75,8 +73,7 @@ public:
 
   void clear_reconstructed_mesh();
 
-  void set_global_particles(const vnl_vector<double> &points);
-
+  void set_global_particles(const vnl_vector<double>& points);
 
   /// Get the id of this shape
   int get_id();
@@ -111,7 +108,6 @@ public:
   void set_transform(const vnl_vector<double>& transform);
   vnl_vector<double> get_transform();
 
-
   void load_feature(std::string display_mode, std::string feature);
 
   Eigen::VectorXf get_point_features(std::string feature);
@@ -122,9 +118,9 @@ private:
 
   void generate_original_meshes();
 
-  void generate_meshes(std::vector<std::string> filenames, QSharedPointer<Mesh> &mesh);
+  void generate_meshes(std::vector<std::string> filenames, QSharedPointer<Mesh>& mesh);
 
-  static bool import_point_file(QString filename, vnl_vector<double> &points);
+  static bool import_point_file(QString filename, vnl_vector<double>& points);
 
   void apply_feature_to_points(std::string feature, ImageType::Pointer image);
 

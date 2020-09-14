@@ -623,4 +623,9 @@ Eigen::VectorXf Shape::get_point_features(std::string feature)
 void Shape::set_point_features(std::string feature, itkeigen::VectorXf values)
 {
   this->point_features_[feature] = values;
+
+  auto mesh = this->get_mesh(Visualizer::MODE_RECONSTRUCTION_C);
+
+  mesh->interpolate_scalars_to_mesh(feature, this->local_correspondence_points_, values);
+
 }
