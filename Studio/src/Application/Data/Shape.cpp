@@ -454,7 +454,7 @@ void Shape::generate_original_meshes()
         std::cerr << "trans[" << i << "] = " << this->transform_[i] << "\n";
       }
 
-//      this->set_transform(this->original_mesh_->get_center_transform());
+      this->set_transform(this->original_mesh_->get_center_transform());
     }
     else {
       //std::cerr << "no mesh yet from manager!\n";
@@ -596,11 +596,13 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
     pitk[1] = this->local_correspondence_points_[idx++];
     pitk[2] = this->local_correspondence_points_[idx++];
 
+
     if (transform.size() == 3) {
       pitk[0] = pitk[0] + transform[0];
       pitk[1] = pitk[1] + transform[1];
       pitk[2] = pitk[2] + transform[2];
     }
+
 
     LinearInterpolatorType::ContinuousIndexType index;
     image->TransformPhysicalPointToContinuousIndex(pitk, index);
