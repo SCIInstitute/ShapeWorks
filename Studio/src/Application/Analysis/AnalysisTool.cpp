@@ -663,20 +663,26 @@ ShapeHandle AnalysisTool::get_mean_shape()
   int num_points = shape_points.size() / 3;
   std::vector<Eigen::VectorXf> values;
 
-
   if (this->feature_map_ != "") {
     auto shapes = this->session_->get_shapes();
     Eigen::VectorXf sum(num_points);
     sum.setZero();
+    bool ready = true;
     for (int i = 0; i < shapes.size(); i++) {
-      shapes[i]->load_feature(Visualizer::MODE_ORIGINAL_C, this->feature_map_);
+      shapes[i]->load_feature(Visualizer::MODE_RECONSTRUCTION_C, this->feature_map_);
       auto value = shapes[i]->get_point_features(this->feature_map_);
+      if (value.size() != sum.size()) {
+        ready = false;
+      }
       values.push_back(value);
       sum = sum + value;
+
     }
     auto mean = sum / shapes.size();
 
-    shape->set_point_features(this->feature_map_, mean);
+    if (ready) {
+      shape->set_point_features(this->feature_map_, mean);
+    }
   }
 
   return shape;
