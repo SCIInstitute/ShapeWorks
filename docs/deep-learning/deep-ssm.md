@@ -15,7 +15,7 @@ The DeepSSM network is implemented in PyTorch and requires a GPU to run efficien
 
 #### 1. Data Augmentation
 
-The first step to creating a DeepSSM model is generating training data. Deep networks require thousands of training instances and so because medical imaging data is typically limited, data augmentation is necessary. The data augmentation process is described here:  [data-augmentation.md](DataAugmentation.md).
+The first step to creating a DeepSSM model is generating training data. Deep networks require thousands of training instances and so because medical imaging data is typically limited, data augmentation is necessary. The data augmentation process is described here:  [Running Data Augmentation](DataAugmentation.md).
 
 The data augmentation process involves reducing the PBM's to a low dimensional space via Principal Component Analysis (PCA), preserving a chosen percent of the variation. The PCA scores are saved and used as the labels for DeepSSM prediction. The PCA scores are deterministically mapped back to the PDM using the eigenvalues and vectors once the DeepSSM model makes a prediction. 
 
@@ -39,7 +39,7 @@ To evaluate the accuracy of DeepSSM output, we compare a mesh created from segme
 
 We then compare the original mesh to the predicted mesh via surface-to-surface distance. To find the distance from the original to the predicted, we consider each vertex in the original and find the shortest distance to the surface of the predicted. This process is not symmetric as it depends on the vertices of one mesh, so the distance from the predicted to the original will be slightly different. We compute the Hausdorff distance which takes the max of these vertex-wise distances to return a single value as a measure of accuracy. We also consider the vertex-wise distances as a scalar field on the mesh vertices and visualize them as a heat map on the surface. This provides us with a way of seeing where the predicted PDM was more or less accurate.
 
-TODO: Example of heat map here
+![Mesh Distance](../img/deep-learning/mesh-distance.png)
 
 ## Using the DeepSSM Python Package
 The ShapeWorks DeepSSM package is installed to the ShapeWorks anaconda environment when [conda_installs.sh](https://github.com/SCIInstitute/ShapeWorks/tree/master/conda_installs.sh) is run. To use, make sure you have the shapeworks conda environment activated and add the following import to your Python code:
