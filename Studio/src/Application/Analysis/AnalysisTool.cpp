@@ -654,16 +654,20 @@ ShapeHandle AnalysisTool::get_shape(int mode, double value, double group_value)
 //---------------------------------------------------------------------------
 ShapeHandle AnalysisTool::get_mean_shape()
 {
-  ShapeHandle shape = this->create_shape_from_points(this->get_mean_shape_points());
+  auto shape_points = this->get_mean_shape_points();
+  ShapeHandle shape = this->create_shape_from_points(shape_points);
   if (this->get_group_difference_mode()) {
     shape->set_vectors(this->get_group_difference_vectors());
   }
 
+  int num_points = shape_points.size() / 3;
   std::vector<Eigen::VectorXf> values;
+
 
   if (this->feature_map_ != "") {
     auto shapes = this->session_->get_shapes();
-    Eigen::VectorXf sum;
+    Eigen::VectorXf sum(num_points);
+    sum.setZero();
     for (int i = 0; i < shapes.size(); i++) {
       shapes[i]->load_feature(Visualizer::MODE_ORIGINAL_C, this->feature_map_);
       auto value = shapes[i]->get_point_features(this->feature_map_);

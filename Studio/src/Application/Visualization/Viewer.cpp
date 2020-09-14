@@ -557,11 +557,13 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
       //mapper->SetScalarRange(-773, 1806);
 
       auto scalars = poly_data->GetPointData()->GetScalars(feature_map.c_str());
-      double range[2];
-      scalars->GetRange(range);
-      std::cerr << "range = " << range[0] << ":" << range[1] << "\n";
+      if (scalars) {
+        double range[2];
+        scalars->GetRange(range);
+        std::cerr << "range = " << range[0] << ":" << range[1] << "\n";
 
-      mapper->SetScalarRange(range[0], range[1]);
+        mapper->SetScalarRange(range[0], range[1]);
+      }
 
     }
     else {

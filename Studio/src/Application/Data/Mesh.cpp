@@ -193,9 +193,13 @@ void Mesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double> posi
                                        itkeigen::VectorXf scalar_values)
 {
 
-  vtkSmartPointer<vtkPoints> vtk_points;
-
   int num_points = positions.size() / 3;
+  if (num_points == 0) {
+    return;
+  }
+
+  vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
+
   vtk_points->SetNumberOfPoints(num_points);
 
   unsigned int idx = 0;
@@ -211,7 +215,7 @@ void Mesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double> posi
   vtkSmartPointer<vtkPolyData> point_data = vtkSmartPointer<vtkPolyData>::New();
   point_data->SetPoints(vtk_points);
 
-  vtkPointLocator* point_locator = vtkPointLocator::New();
+  vtkSmartPointer<vtkPointLocator> point_locator = vtkPointLocator::New();
   point_locator->SetDataSet(point_data);
   point_locator->SetDivisions(100, 100, 100);
   point_locator->BuildLocator();
@@ -255,5 +259,7 @@ void Mesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double> posi
 
     scalars->SetValue(i, weighted_scalar);
   }
+
+  this->poly_data_->GetPointData()->AddArray(scalars);
 
 }
