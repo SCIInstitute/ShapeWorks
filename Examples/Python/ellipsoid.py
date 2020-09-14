@@ -88,42 +88,52 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    parentDir = 'TestEllipsoids/PrepOutput/'
+    parentDir = 'TestEllipsoids/groomed/'
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)
 
+
+    if args.start_with_image_and_segmentation_data:
+        print("\n\n************************ WARNING ************************")
+        print("'start_with_image_and_segmentation_data' tag was used \nbut Ellipsoid data set does not have images.")
+        print("Continuing to run use case with segmentations only.")
+        print("*********************************************************\n\n")
+
     if int(args.start_with_prepped_data) == 0:
         """Apply isotropic resampling"""
-        resampledFiles = applyIsotropicResampling(parentDir + "resampled", fileList)
+        resampledFiles = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList)
 
         """Apply centering"""
-        centeredFiles = center(parentDir + "centered", resampledFiles)
+        centeredFiles = center(parentDir + "centered/segmentations", resampledFiles)
 
         """Apply padding"""
-        paddedFiles = applyPadding(parentDir + "padded", centeredFiles, 10)
+        paddedFiles = applyPadding(parentDir + "padded/segmentations", centeredFiles, 10)
 
         """Apply center of mass alignment"""
-        comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles, None)
+        comFiles = applyCOMAlignment(parentDir + "com_aligned/segmentations", paddedFiles, None)
 
         """Apply rigid alignment"""
-        rigidFiles = applyRigidAlignment(parentDir + "aligned", comFiles, None, comFiles[0])
+        rigidFiles = applyRigidAlignment(parentDir + "aligned/segmentations", comFiles, None, comFiles[0])
 
         """Compute largest bounding box and apply cropping"""
-        croppedFiles = applyCropping(parentDir + "cropped", rigidFiles, parentDir + "aligned/*.aligned.nrrd")
+        croppedFiles = applyCropping(parentDir + "cropped/segmentations", rigidFiles, parentDir + "aligned/segmentations/*.aligned.nrrd")
 
-    """
-    We convert the scans to distance transforms, this step is common for both the 
-    prepped as well as unprepped data, just provide correct filenames.
-    """
+        """
+        We convert the scans to distance transforms, this step is common for both the 
+        prepped as well as unprepped data, just provide correct filenames.
+        """
 
-    print("\nStep 3. Groom - Convert to distance transforms\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
+        print("\nStep 3. Groom - Convert to distance transforms\n")
+        if int(args.interactive) != 0:
+            input("Press Enter to continue")
 
-    if int(args.start_with_prepped_data) == 0:
-        dtFiles = applyDistanceTransforms(parentDir, croppedFiles)
-    else:
-        dtFiles = applyDistanceTransforms(parentDir, fileList)
+        if int(args.start_with_prepped_data) == 0:
+            dtFiles = applyDistanceTransforms(parentDir, croppedFiles)
+        else:
+            dtFiles = applyDistanceTransforms(parentDir, fileList)
+
+    if int(args.start_with_prepped_data) == 1:
+        dtFiles = sorted(glob.glob('TestEllipsoids/ellipsoid/groomed/distance_transforms/*.nrrd'))
 
     """
     ## OPTIMIZE : Particle Based Optimization
@@ -141,7 +151,7 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    pointDir = './TestEllipsoids/PointFiles/'
+    pointDir = './TestEllipsoids/shape_models/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 

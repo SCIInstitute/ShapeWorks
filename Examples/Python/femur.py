@@ -80,7 +80,7 @@ def Run_Pipeline(args):
         -- find largest bounding box and crop
         """
         # Directory where grooming output folders will be added
-        parentDir = 'TestFemur/PrepOutput/'
+        parentDir = 'TestFemur/groomed/'
         if not os.path.exists(parentDir):
             os.mkdir(parentDir)
         
@@ -334,7 +334,7 @@ def Run_Pipeline(args):
     else:
         print("Skipping grooming...")
         dtFiles = []
-        dt_dir = inputDir + 'distance_transforms/'
+        dt_dir = inputDir + 'groomed/distance_transforms/'
         for file in sorted(os.listdir(dt_dir)):
             dtFiles.append(dt_dir + file)
 
@@ -366,7 +366,7 @@ def Run_Pipeline(args):
     if args.interactive:
         input("Press Enter to continue")
 
-    pointDir = './TestFemur/PointFiles/'
+    pointDir = './TestFemur/shape_models/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 

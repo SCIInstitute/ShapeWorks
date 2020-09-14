@@ -64,20 +64,20 @@ For a description of the optimize tools and parameters, see: [Optimize.md](../Wo
 * Single scale optimization uses the user defined number of particles for optimization and uses procrustes scaling to factor out size as a mode of variation. 
 Below are the default optimization parameters for this use case. 
 
-            "number_of_particles" : 1024, 
-            "use_normals": 1,
+            "number_of_particles" : 512, 
+            "use_normals": 0,
             "normal_weight": 10.0,
             "checkpointing_interval" : 200,
             "keep_checkpoints" : 0,
             "iterations_per_split" : 4000,
             "optimization_iterations" : 4000,
-            "starting_regularization" : 50000,
-            "ending_regularization" : 0.1,
+            "starting_regularization" : 1000,
+            "ending_regularization" : 10,
             "recompute_regularization_interval" : 2,
             "domains_per_shape" : 1,
-            "relative_weighting" : 50,
+            "relative_weighting" : 10,
             "initial_relative_weighting" : 0.1,
-            "procrustes_interval" : 0,
+            "procrustes_interval" : 1,
             "procrustes_scaling" : 1,
             "save_init_splits" : 0,
             "debug_projection" : 0,
@@ -90,26 +90,25 @@ Below are the default optimization parameters for this use case.
 [![left Atrium singleScale PCA mode](../Images/leftatrium_singlescale_pca_thumbnail.png)](https://youtu.be/Coj6-xqw8dw)
 
 
-* Multiscale optimization uses use defined starting number of particles and number of optimization levels, 
+* Multiscale optimization uses runs optimization in number of levels to reach the user defined number of particles, 
 and the optimized particles of each level are used to initialize the next level particles. 
 This method runs single scale optimization for each level and generates robust particle system.
 The default values of this use case are as below.
 
-            "starting_particles" : 128,
-            "number_of_levels" : 4,
-            "use_normals": 1,
+            "number_of_particles" : 512, 
+            "use_normals": 0,
             "normal_weight": 10.0,
             "checkpointing_interval" : 200,
             "keep_checkpoints" : 0,
             "iterations_per_split" : 4000,
             "optimization_iterations" : 4000,
-            "starting_regularization" : 50000,
-            "ending_regularization" : 0.1,
+            "starting_regularization" : 1000,
+            "ending_regularization" : 10,
             "recompute_regularization_interval" : 2,
             "domains_per_shape" : 1,
-            "relative_weighting" : 50,
+            "relative_weighting" : 10,
             "initial_relative_weighting" : 0.1,
-            "procrustes_interval" : 0,
+            "procrustes_interval" : 1,
             "procrustes_scaling" : 1,
             "save_init_splits" : 0,
             "debug_projection" : 0,
