@@ -240,7 +240,7 @@ def Run_Pipeline(args):
     else:
         print("Skipping grooming...")
         dtFiles = []
-        dt_dir = inputDir + 'distance_transforms/'
+        dt_dir = inputDir + 'groomed/distance_transforms/'
         for file in sorted(os.listdir(dt_dir)):
             dtFiles.append(dt_dir + file)
 
