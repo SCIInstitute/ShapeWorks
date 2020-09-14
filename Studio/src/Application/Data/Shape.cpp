@@ -596,13 +596,11 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
     pitk[1] = this->local_correspondence_points_[idx++];
     pitk[2] = this->local_correspondence_points_[idx++];
 
-
     if (transform.size() == 3) {
       pitk[0] = pitk[0] + transform[0];
       pitk[1] = pitk[1] + transform[1];
       pitk[2] = pitk[2] + transform[2];
     }
-
 
     LinearInterpolatorType::ContinuousIndexType index;
     image->TransformPhysicalPointToContinuousIndex(pitk, index);
@@ -636,6 +634,7 @@ void Shape::set_point_features(std::string feature, itkeigen::VectorXf values)
 
   auto mesh = this->get_mesh(Visualizer::MODE_RECONSTRUCTION_C);
 
-  mesh->interpolate_scalars_to_mesh(feature, this->global_correspondence_points_, values);
-
+  if (mesh) {
+    mesh->interpolate_scalars_to_mesh(feature, this->global_correspondence_points_, values);
+  }
 }

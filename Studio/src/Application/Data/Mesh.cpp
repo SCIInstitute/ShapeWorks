@@ -220,6 +220,10 @@ void Mesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double> posi
   point_locator->SetDivisions(100, 100, 100);
   point_locator->BuildLocator();
 
+  if (!this->poly_data_)
+  {
+    return;
+  }
   auto points = this->poly_data_->GetPoints();
 
   vtkFloatArray* scalars = vtkFloatArray::New();

@@ -405,6 +405,11 @@ QToolButton:pressed{
               <string>-None-</string>
              </property>
             </item>
+            <item>
+             <property name="text">
+              <string>Hypertension</string>
+             </property>
+            </item>
            </widget>
           </item>
           <item row="4" column="2">
@@ -427,7 +432,13 @@ QToolButton:pressed{
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QComboBox" name="group_box_3"/>
+           <widget class="QComboBox" name="group_box_3">
+            <item>
+             <property name="text">
+              <string>No</string>
+             </property>
+            </item>
+           </widget>
           </item>
           <item row="4" column="1">
            <widget class="QPushButton" name="difference_button">
@@ -538,7 +549,13 @@ QToolButton:pressed{
            </widget>
           </item>
           <item row="2" column="2">
-           <widget class="QComboBox" name="group_box_4"/>
+           <widget class="QComboBox" name="group_box_4">
+            <item>
+             <property name="text">
+              <string>Yes</string>
+             </property>
+            </item>
+           </widget>
           </item>
           <item row="1" column="0" colspan="3">
            <widget class="Line" name="line">
@@ -881,8 +898,8 @@ QToolButton:pressed{
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>413</width>
-               <height>237</height>
+               <width>100</width>
+               <height>234</height>
               </rect>
              </property>
              <property name="sizePolicy">
