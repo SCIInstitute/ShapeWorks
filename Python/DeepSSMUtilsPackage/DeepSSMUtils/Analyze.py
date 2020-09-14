@@ -73,7 +73,6 @@ def GetMeshFromParticles(particle_list, mesh_dir, mean_prefix):
 	return mesh_files
 
 def createMeshFromParticlesXML(xmlfilename, out_dir, mean_prefix, filelist):
-	print(filelist)
 	file = open(xmlfilename, "w+")
 	file.write("<local_point_files>\n")
 	for filename in filelist:

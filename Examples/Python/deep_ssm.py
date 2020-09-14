@@ -106,7 +106,7 @@ def Run_Pipeline(args):
 	val_freq sets how often too test on validation set and log
 	for example val_freq=1 is every epoch and val_freq=2 is every other
 	'''
-	parameters = {"epochs":30, "learning_rate":0.001, "val_freq":1}
+	parameters = {"epochs":50, "learning_rate":0.001, "val_freq":1}
 	if args.tiny_test:
 		parameters = {"epochs":5, "learning_rate":0.001, "val_freq":1}
 	model_path = DeepSSMUtils.trainDeepSSM(loader_dir, parameters, parent_dir)
@@ -121,10 +121,10 @@ def Run_Pipeline(args):
 	DeepSSMUtils.testDeepSSM(prediction_dir, model_path, loader_dir, PCA_scores_path, num_PCA)
 	print('Predicted particles saved at: ' + prediction_dir)
 
-	print("\n\n\nStep 6. Analyze results.\n") #####################################################################################
-	DT_dir = input_dir + "groomed/distance_transforms/"
-	out_dir = parent_dir + "Results/"
-	prediction_dir = parent_dir + 'Results/PredictedParticles/'
-	mean_prefix = input_dir + "shape_models/mean/femur"
-	avg_distance = DeepSSMUtils.AnalyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix)
-	print("Average surface-to-surface distance from the original to predicted shape = " + str(avg_distance))
+	if not args.tiny_test:
+		print("\n\n\nStep 6. Analyze results.\n") #####################################################################################
+		DT_dir = input_dir + "groomed/distance_transforms/"
+		out_dir = parent_dir + "Results/"
+		mean_prefix = input_dir + "shape_models/mean/femur"
+		avg_distance = DeepSSMUtils.AnalyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix)
+		print("Average surface-to-surface distance from the original to predicted shape = " + str(avg_distance))

@@ -53,9 +53,9 @@ def Run_Pipeline(args):
         os.makedirs(parentDir)
 
     # extract the zipfile
-    # print("Extracting data from " + filename + "...")
-    # with ZipFile(filename, 'r') as zipObj:
-    #     zipObj.extractall(path=parentDir)
+    print("Extracting data from " + filename + "...")
+    with ZipFile(filename, 'r') as zipObj:
+        zipObj.extractall(path=parentDir)
 
     print("\nStep 2. Groom - Data Pre-processing\n")
     if args.interactive:
@@ -240,7 +240,7 @@ def Run_Pipeline(args):
     else:
         print("Skipping grooming...")
         dtFiles = []
-        dt_dir = inputDir + 'distance_transforms/'
+        dt_dir = inputDir + 'groomed/distance_transforms/'
         for file in sorted(os.listdir(dt_dir)):
             dtFiles.append(dt_dir + file)
 
