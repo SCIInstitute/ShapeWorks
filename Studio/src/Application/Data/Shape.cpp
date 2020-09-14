@@ -607,3 +607,20 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
   this->point_features_[feature] = values;
 
 }
+
+//---------------------------------------------------------------------------
+Eigen::VectorXf Shape::get_point_features(std::string feature)
+{
+  auto it = this->point_features_.find(feature);
+  if (it == this->point_features_.end()) {
+    return Eigen::VectorXf();
+  }
+
+  return it->second;
+}
+
+//---------------------------------------------------------------------------
+void Shape::set_point_features(std::string feature, itkeigen::VectorXf values)
+{
+  this->point_features_[feature] = values;
+}

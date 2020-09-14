@@ -334,13 +334,13 @@ void Visualizer::reset_camera()
 }
 
 //-----------------------------------------------------------------------------
-const string& Visualizer::get_feature_map() const
+const std::string& Visualizer::get_feature_map() const
 {
   return feature_map_;
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::set_feature_map(const string& feature_map)
+void Visualizer::set_feature_map(const std::string& feature_map)
 {
   this->feature_map_ = feature_map;
 }

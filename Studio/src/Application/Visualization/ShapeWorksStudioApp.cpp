@@ -745,6 +745,7 @@ void ShapeWorksStudioApp::update_view_mode()
     //std::cerr << "Setting view mode to: " << view_mode << "\n";
     this->visualizer_->set_display_mode(view_mode);
     if (feature_map == "-none-") { feature_map = ""; }
+    this->analysis_tool_->set_feature_map(feature_map);
     this->visualizer_->set_feature_map(feature_map);
     this->update_display(true);
   }

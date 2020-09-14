@@ -77,10 +77,10 @@ public:
   vtkSmartPointer<vtkPolyData> get_current_mesh();
 
   //! Get the currently selected feature map
-  const string& get_feature_map() const;
+  const std::string& get_feature_map() const;
 
   //! Set the currently selected feature map
-  void set_feature_map(const string& feature_map);
+  void set_feature_map(const std::string& feature_map);
 
   //! clear out the viewers
   void clear_viewers();

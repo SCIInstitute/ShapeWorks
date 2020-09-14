@@ -658,6 +658,23 @@ ShapeHandle AnalysisTool::get_mean_shape()
   if (this->get_group_difference_mode()) {
     shape->set_vectors(this->get_group_difference_vectors());
   }
+
+  std::vector<Eigen::VectorXf> values;
+
+  if (this->feature_map_ != "") {
+    auto shapes = this->session_->get_shapes();
+    Eigen::VectorXf sum;
+    for (int i = 0; i < shapes.size(); i++) {
+      shapes[i]->load_feature(Visualizer::MODE_ORIGINAL_C, this->feature_map_);
+      auto value = shapes[i]->get_point_features(this->feature_map_);
+      values.push_back(value);
+      sum = sum + value;
+    }
+    auto mean = sum / shapes.size();
+
+    shape->set_point_features(this->feature_map_, mean);
+  }
+
   return shape;
 }
 
@@ -691,4 +708,10 @@ void AnalysisTool::handle_message(std::string message_string)
 {
   STUDIO_LOG_MESSAGE(QString::fromStdString(message_string));
   emit message(message_string);
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::set_feature_map(const std::string& feature_map)
+{
+  this->feature_map_ = feature_map;
 }

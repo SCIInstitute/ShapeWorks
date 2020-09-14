@@ -20,7 +20,7 @@ class ShapeWorksStudioApp;
 class Ui_AnalysisTool;
 
 class AnalysisTool : public QWidget {
-  Q_OBJECT;
+Q_OBJECT;
 public:
 
   using PointType = itk::Point<double, 3>;
@@ -34,7 +34,6 @@ public:
   /// set the pointer to the application
   void set_app(ShapeWorksStudioApp* app);
 
-  void set_shapes(ShapeList shapes);
 
   void activate();
 
@@ -71,7 +70,6 @@ public:
   const vnl_vector<double>& get_shape_points(int mode, double value, double group_value = 0.5);
 
   ShapeHandle get_shape(int mode, double value, double group_value = 0.5);
-
 
   ParticleShapeStatistics<3> get_stats();
   void load_settings();
@@ -117,6 +115,8 @@ public Q_SLOTS:
 
   void on_reconstructionButton_clicked();
 
+  //! Set the currently selected feature map
+  void set_feature_map(const std::string& feature_map);
 
   void handle_error(std::string message);
   void handle_warning(std::string message);
@@ -133,21 +133,17 @@ signals:
 
 private:
 
-  //private methods
   void pca_labels_changed(QString value, QString eigen, QString lambda);
   void compute_mode_shape();
   void update_analysis_mode();
 
   ShapeHandle create_shape_from_points(const vnl_vector<double>& points);
 
-  Preferences & preferences_;
-  //private members
+  Preferences& preferences_;
 
   Ui_AnalysisTool* ui_;
   QSharedPointer<Session> session_;
   ShapeWorksStudioApp* app_;
-
-  VisualizerHandle visualizer_;
 
   /// itk particle shape statistics
   ParticleShapeStatistics<3> stats_;
@@ -161,4 +157,9 @@ private:
 
   bool group_animate_direction_ = true;
   QTimer group_animate_timer_;
+
+  ShapeHandle computed_shape_;
+
+  std::string feature_map_;
+
 };

@@ -114,6 +114,10 @@ public:
 
   void load_feature(std::string display_mode, std::string feature);
 
+  Eigen::VectorXf get_point_features(std::string feature);
+
+  void set_point_features(std::string feature, Eigen::VectorXf values);
+
 private:
 
   void generate_original_meshes();
