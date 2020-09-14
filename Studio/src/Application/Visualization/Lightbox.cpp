@@ -5,7 +5,7 @@
 
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
-#include <vtkQImageToImageSource.h>
+//#include <vtkQImageToImageSource.h>
 #include <vtkImageData.h>
 #include <vtkBoundingBox.h>
 
@@ -26,6 +26,7 @@ Lightbox::Lightbox()
   this->style_->AutoAdjustCameraClippingRangeOn();
   this->style_->set_lightbox(this);
 
+  /*
   // prepare the loading spinner
   QPixmap pixmap;
   pixmap.load(QString(":/Studio/Images/spinner.png"));
@@ -42,7 +43,8 @@ Lightbox::Lightbox()
 
     this->spinner_images_.push_back(image);
   }
-
+  */
+  
   QObject::connect(
     &this->loading_timer_, SIGNAL(timeout()),
     this, SLOT(handle_timer_callback()));
