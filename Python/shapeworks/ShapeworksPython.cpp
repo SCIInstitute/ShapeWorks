@@ -277,6 +277,12 @@ PYBIND11_MODULE(shapeworks, m)
   // .def("ImageType::RegionType")
   ;
 
+  py::enum_<Image::InterpolationType>(m, "InterpolationType")
+  .value("Linear", Image::InterpolationType::Linear)
+  .value("NearestNeighbor", Image::InterpolationType::NearestNeighbor)
+  .export_values();
+  ;
+
   // ImageUtils
   py::class_<ImageUtils>(m, "ImageUtils")
   .def_static("boundingBox",    &ImageUtils::boundingBox, "filenames"_a, "isoValue"_a=1.0)
@@ -288,7 +294,7 @@ PYBIND11_MODULE(shapeworks, m)
                                 &ImageUtils::createWarpTransform, "source_landmarks"_a, "target_landmarks"_a, "stride"_a=1)
   .def_static("topologyPreservingSmooth", 
                                 &ImageUtils::topologyPreservingSmooth, "image"_a, "scaling"_a=20.0, "sigmoidAlpha"_a=10.5, "sigmoidBeta"_a=10.0)
-  .def_static("isoresample",    &ImageUtils::isoresample, "image"_a, "isoSpacing"_a = 1.0, "interp"_a = Image::Linear)
+  .def_static("isoresample",    &ImageUtils::isoresample, "image"_a, "isoSpacing"_a = 1.0, "interp"_a = Image::InterpolationType::Linear)
   ;
 
   // Mesh
@@ -297,8 +303,6 @@ PYBIND11_MODULE(shapeworks, m)
   .def(py::init<vtkSmartPointer<vtkPolyData>>())
   .def("write",                 &Mesh::write, "pathname"_a)
   .def("coverage",              &Mesh::coverage, "other_mesh"_a)
-  .def("smooth",                &Mesh::smooth, "iterations"_a=1)
-  .def("decimate",              &Mesh::decimate, "reduction"_a=0.01, "angle"_a=30, "preservetopology"_a=false)
   .def("compare_points_equal",  &Mesh::compare_points_equal, "other_mesh"_a)
   .def("compare_scalars_equal", &Mesh::compare_scalars_equal, "other_mesh"_a)
   ;
