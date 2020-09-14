@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - studio_feature_map
     tags:
     - '*'
   pull_request:
