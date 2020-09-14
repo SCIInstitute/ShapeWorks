@@ -51,3 +51,6 @@ Python/DatasetUtilsPackage/DatasetUtils.egg-info
 Examples/Python/shapeworksPortalLogin.txt
 
 __pycache__/
+
+# mkdocs generated site
+site/
