@@ -134,6 +134,9 @@ private:
   void compute_mode_shape();
   void update_analysis_mode();
 
+  void update_group_boxes();
+  void update_group_values();
+
   ShapeHandle create_shape_from_points(const vnl_vector<double>& points);
 
   Preferences& preferences_;
@@ -158,5 +161,8 @@ private:
   ShapeHandle computed_shape_;
 
   std::string feature_map_;
+
+  std::vector<std::string> current_group_names_;
+  std::vector<std::string> current_group_values_;
 
 };

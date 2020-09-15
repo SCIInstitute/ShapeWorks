@@ -195,7 +195,7 @@ void Project::load_subjects()
   auto groomed_columns = this->get_matching_columns(GROOMED_PREFIX);
   auto groomed_transform_columns = this->get_matching_columns(GROOMED_TRANSFORMS_PREFIX);
   auto feature_columns = this->get_feature_names();
-  auto group_names = this->get_group_names();
+  auto group_names = this->get_matching_columns(GROUP_PREFIX);
 
   int local_particle_column = this->get_index_for_column(LOCAL_PARTICLES);
   int global_particle_column = this->get_index_for_column(WORLD_PARTICLES);
@@ -502,7 +502,15 @@ std::vector<std::string> Project::get_feature_names() const
 //---------------------------------------------------------------------------
 std::vector<std::string> Project::get_group_names() const
 {
-  auto group_names = this->get_matching_columns(GROUP_PREFIX);
+  auto raw_names = this->get_matching_columns(GROUP_PREFIX);
+
+  std::vector<std::string> group_names;
+
+  for (std::string group : raw_names) {
+    group.erase(0, strlen(GROUP_PREFIX)); // erase "group_"
+    group_names.push_back(group);
+  }
+
   return group_names;
 }
 

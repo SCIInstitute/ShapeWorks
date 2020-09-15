@@ -54,6 +54,9 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
           &AnalysisTool::handle_group_animate_state_changed);
   connect(&this->group_animate_timer_, &QTimer::timeout, this, &AnalysisTool::handle_group_timer);
 
+  connect(this->ui_->group_box, qOverload<const QString&>(&QComboBox::currentIndexChanged),
+          this, &AnalysisTool::update_group_values);
+
 }
 
 //---------------------------------------------------------------------------
@@ -448,28 +451,10 @@ void AnalysisTool::load_settings()
   this->ui_->meshDecimation->setValue(params.get("reconstruction_decimation", 0.30));
   this->ui_->maxAngle->setValue(params.get("reconstruction_max_angle", 60));
 
+  this->update_group_boxes();
 
-  // populate the group sets
-  this->ui_->group_box->clear();
-  auto group_names = this->session_->get_project()->get_group_names();
-  this->ui_->group_box->addItem("-None-");
-  for (const std::string& group : group_names) {
-    QString item = QString::fromStdString(group);
-    item = item.remove(0, 6);
-    this->ui_->group_box->addItem(item);
-  }
-
-  // populate group values
-  auto values = this->session_->get_project()->
-    get_group_values(std::string("group_")
-                     + this->ui_->group_box->currentText().toStdString());
-  this->ui_->group_left->clear();
-  this->ui_->group_right->clear();
-  for (const std::string& value : values) {
-    QString item = QString::fromStdString(value);
-    this->ui_->group_left->addItem(item);
-    this->ui_->group_right->addItem(item);
-  }
+  this->ui_->group_box->setCurrentText(
+    QString::fromStdString(params.get("current_group", "-None-")));
 
 }
 
@@ -690,11 +675,13 @@ ShapeHandle AnalysisTool::get_mean_shape()
     for (int i = 0; i < shapes.size(); i++) {
       shapes[i]->load_feature(Visualizer::MODE_RECONSTRUCTION_C, this->feature_map_);
       auto value = shapes[i]->get_point_features(this->feature_map_);
-      if (value.size() != sum.size()) {
+      if (value.rows() != sum.rows()) {
         ready = false;
       }
-      values.push_back(value);
-      sum = sum + value;
+      else {
+        values.push_back(value);
+        sum = sum + value;
+      }
 
     }
     auto mean = sum / shapes.size();
@@ -743,4 +730,44 @@ void AnalysisTool::handle_message(std::string message_string)
 void AnalysisTool::set_feature_map(const std::string& feature_map)
 {
   this->feature_map_ = feature_map;
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::update_group_boxes()
+{
+
+  // populate the group sets
+  auto group_names = this->session_->get_project()->get_group_names();
+
+  if (group_names != this->current_group_names_) { // only update if different
+    this->ui_->group_box->clear();
+    this->ui_->group_box->addItem("-None-");
+    for (const std::string& group : group_names) {
+      this->ui_->group_box->addItem(QString::fromStdString(group));
+    }
+    this->current_group_names_ = group_names;
+  }
+
+
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::update_group_values()
+{
+  auto values = this->session_->get_project()->
+    get_group_values(std::string("group_")
+                     + this->ui_->group_box->currentText().toStdString());
+
+  if (values != this->current_group_values_) {
+    // populate group values
+    this->ui_->group_left->clear();
+    this->ui_->group_right->clear();
+    for (const std::string& value : values) {
+      QString item = QString::fromStdString(value);
+      this->ui_->group_left->addItem(item);
+      this->ui_->group_right->addItem(item);
+    }
+    this->current_group_values_ = values;
+  }
+
 }
