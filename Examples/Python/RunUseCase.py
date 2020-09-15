@@ -29,14 +29,15 @@ except ImportError as error:
 # Default installation path for each platform. If using your own build, specify --shapeworks_path
 default_binpath = "../../bin"
 if platform.system() == "Windows":
-    default_binpath = "C:\\Program Files\ShapeWorks\\bin"
+    default_binpath = "C:\\Program Files\\ShapeWorks\\bin"
 if platform.system() == "Darwin":
     default_binpath = "/Applications/ShapeWorks/bin:/Applications/ShapeWorks/bin/ShapeWorksStudio.app/Contents/MacOS"
 
 parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
 parser.add_argument("--use_case", help="Specify which use case to run",
                     choices=["ellipsoid", "ellipsoid_fd", "lumps", "left_atrium", "femur", "femur_mesh"])
-parser.add_argument("--use_subsample", help="Set number of samples to run the pipeline for a subset of data.")
+parser.add_argument("--use_subsample", help="Run the pipeline for a subset of data",action="store_true")
+parser.add_argument("--num_subsample", help="Size of subset to run on (default: "+str(default_subsample)+")", nargs='?', type=int, default=default_subsample)
 parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
 parser.add_argument("--start_with_prepped_data", help="Start with already prepped data", action="store_true")
 parser.add_argument("--start_with_image_and_segmentation_data", help = "use images and segmentations data for preprocessing", action="store_true")
@@ -45,6 +46,9 @@ parser.add_argument("--tiny_test", help="Run as a short test", action="store_tru
 parser.add_argument("--shapeworks_path", help="Path to ShapeWorks executables (default: "+default_binpath+")", nargs='?', type=str, default=os.pathsep)
 args = parser.parse_args()
 explicit_binpath = args.shapeworks_path
+
+if args.use_subsample:
+    args.use_subsample = args.num_subsample
 
 if len(sys.argv)==1:
     parser.print_help(sys.stderr)
