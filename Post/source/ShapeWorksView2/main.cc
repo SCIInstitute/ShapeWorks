@@ -1,6 +1,9 @@
 #include <QApplication>
 #include <ShapeWorksView2.h>
 
+#include <QSurfaceFormat>
+#include <QVTKOpenGLNativeWidget.h>
+
 #ifdef _WIN32
 
 #include <windows.h>
@@ -9,6 +12,7 @@
 #include <io.h>
 #include <iostream>
 #include <fstream>
+
 
 #ifndef _USE_OLD_IOSTREAMS
 using namespace std;
@@ -71,6 +75,10 @@ void RedirectIOToConsole2()
 
 int main( int argc, char** argv )
 {
+
+  // needed to ensure appropriate OpenGL context is created for VTK rendering.
+  QSurfaceFormat::setDefaultFormat(QVTKOpenGLNativeWidget::defaultFormat());
+    
 #ifdef WIN32
   ::SetErrorMode( 0 );
   RedirectIOToConsole2();
@@ -80,6 +88,8 @@ int main( int argc, char** argv )
 
   try {
 
+
+    
 #ifdef WIN32
     ::SetErrorMode( 0 );
 #endif
