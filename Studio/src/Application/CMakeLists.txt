@@ -181,10 +181,6 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   Qt5::Core
   Qt5::Gui
   ${VTK_LIBRARIES}
-  vtkIOLegacy
-  vtkRenderingQt
-  vtkGUISupportQt
-  vtkViewsQt
   ${ITK_LIBRARIES}
   ${OPENGL_LIBRARIES}
   tinyxml
