@@ -241,12 +241,6 @@ void AnalysisTool::set_app(ShapeWorksStudioApp* app)
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::activate()
-{
-  this->update_analysis_mode();
-}
-
-//---------------------------------------------------------------------------
 void AnalysisTool::update_analysis_mode()
 {
   // update UI
@@ -262,6 +256,7 @@ void AnalysisTool::compute_mode_shape()
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_analysis_options()
 {
+
   if (this->ui_->tabWidget->currentWidget() == this->ui_->samples_tab) {
     if (this->ui_->singleSamplesRadio->isChecked()) {
       //one sample mode
@@ -452,6 +447,16 @@ void AnalysisTool::load_settings()
   this->ui_->numClusters->setValue(params.get("reconstruction_clusters", 3));
   this->ui_->meshDecimation->setValue(params.get("reconstruction_decimation", 0.30));
   this->ui_->maxAngle->setValue(params.get("reconstruction_max_angle", 60));
+
+  this->ui_->group_box->clear();
+  auto group_names = this->session_->get_project()->get_group_names();
+  this->ui_->group_box->addItem("-None-");
+  for (const std::string& group : group_names) {
+    QString item = QString::fromStdString(group);
+    item = item.remove(0, 6);
+    this->ui_->group_box->addItem(item);
+  }
+
 }
 
 //---------------------------------------------------------------------------

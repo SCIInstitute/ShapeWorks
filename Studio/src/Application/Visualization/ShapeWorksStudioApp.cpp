@@ -1052,7 +1052,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   this->update_tool_mode();
 
-  this->update_view_mode();
 
   this->analysis_tool_->reset_stats();
 
@@ -1066,6 +1065,8 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->visualizer_->reset_camera();
 
   this->update_table();
+
+  this->update_view_mode();
 
   // load analysis state
   std::string analysis_mode = this->session_->parameters().get("analysis_mode", "mean");

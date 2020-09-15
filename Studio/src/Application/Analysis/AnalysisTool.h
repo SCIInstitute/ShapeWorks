@@ -34,9 +34,6 @@ public:
   /// set the pointer to the application
   void set_app(ShapeWorksStudioApp* app);
 
-
-  void activate();
-
   bool get_group_difference_mode();
 
   std::vector<Point> get_group_difference_vectors();
