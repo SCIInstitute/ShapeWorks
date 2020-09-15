@@ -748,7 +748,6 @@ void AnalysisTool::update_group_boxes()
     this->current_group_names_ = group_names;
   }
 
-
 }
 
 //---------------------------------------------------------------------------
@@ -768,6 +767,13 @@ void AnalysisTool::update_group_values()
       this->ui_->group_right->addItem(item);
     }
     this->current_group_values_ = values;
+
+    // try to set the right one to a different value than left
+    int i = 0;
+    while (this->ui_->group_left->currentIndex() == this->ui_->group_right->currentIndex() &&
+           i < this->current_group_values_.size()) {
+      this->ui_->group_right->setCurrentIndex(i++);
+    }
   }
 
 }
