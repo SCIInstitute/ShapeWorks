@@ -409,6 +409,9 @@ bool Session::load_xl_project(QString filename)
      }
    */
 
+
+  this->groups_available_ = this->project_->get_group_names().size() > 0;
+
   this->params_ = this->project_->get_parameters(Parameters::STUDIO_PARAMS);
 
   return true;

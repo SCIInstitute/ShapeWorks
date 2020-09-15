@@ -57,6 +57,12 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   connect(this->ui_->group_box, qOverload<const QString&>(&QComboBox::currentIndexChanged),
           this, &AnalysisTool::update_group_values);
 
+  connect(this->ui_->group_left, qOverload<const QString&>(&QComboBox::currentIndexChanged),
+          this, &AnalysisTool::group_changed);
+
+  connect(this->ui_->group_right, qOverload<const QString&>(&QComboBox::currentIndexChanged),
+          this, &AnalysisTool::group_changed);
+
 }
 
 //---------------------------------------------------------------------------
@@ -353,12 +359,25 @@ bool AnalysisTool::compute_stats()
     return false;
   }
 
-  std::vector<vnl_vector<double >> points;
+  std::vector<vnl_vector<double>> points;
   std::vector<int> group_ids;
-    foreach(ShapeHandle shape, this->session_->get_shapes()) {
+
+  std::string group_set = this->ui_->group_box->currentText().toStdString();
+  std::string left_group = this->ui_->group_left->currentText().toStdString();
+  std::string right_group = this->ui_->group_right->currentText().toStdString();
+
+  bool groups_enabled = group_set != "-None-";
+
+  for (ShapeHandle shape : this->session_->get_shapes()) {
+
+    if (groups_enabled) {
+      shape->get_subject()->get_group_value(group_set);
+    }
+    else {
       points.push_back(shape->get_global_correspondence_points());
       group_ids.push_back(shape->get_group_id());
     }
+  }
 
   this->stats_.ImportPoints(points, group_ids);
   this->stats_.ComputeModes();
@@ -775,5 +794,11 @@ void AnalysisTool::update_group_values()
       this->ui_->group_right->setCurrentIndex(i++);
     }
   }
+
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::group_changed()
+{
 
 }

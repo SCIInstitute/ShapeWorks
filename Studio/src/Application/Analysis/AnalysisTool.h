@@ -119,6 +119,8 @@ public Q_SLOTS:
   void handle_warning(std::string message);
   void handle_message(std::string message);
 
+  void group_changed();
+
 signals:
 
   void update_view();
