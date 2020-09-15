@@ -37,7 +37,7 @@ public:
   std::vector<std::string> get_headers();
 
   //! Return a column by name
-  std::vector<std::string> get_string_column(std::string name);
+  std::vector<std::string> get_string_column(std::string name) const;
 
   //! Return the number of subjects in the project
   int get_number_of_subjects();
@@ -62,6 +62,9 @@ public:
 
   //! Get group names
   std::vector<std::string> get_group_names() const;
+
+  //! Get possible group values
+  std::vector<std::string> get_group_values(std::string group_name) const;
 
   //! Retrieve parameters based on key
   Parameters get_parameters(std::string name);
@@ -109,7 +112,7 @@ private:
 
   void load_subjects();
 
-  int get_index_for_column(std::string name, bool create_if_not_found = false);
+  int get_index_for_column(std::string name, bool create_if_not_found = false) const;
 
   void save_string_column(std::string name, std::vector<std::string> items);
 

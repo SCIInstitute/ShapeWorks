@@ -317,7 +317,7 @@ int Project::get_version()
 }
 
 //---------------------------------------------------------------------------
-int Project::get_index_for_column(std::string name, bool create_if_not_found)
+int Project::get_index_for_column(std::string name, bool create_if_not_found) const
 {
 
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);
@@ -350,7 +350,7 @@ int Project::get_index_for_column(std::string name, bool create_if_not_found)
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> Project::get_string_column(std::string name)
+std::vector<std::string> Project::get_string_column(std::string name) const
 {
   int index = this->get_index_for_column(name);
 
@@ -548,6 +548,19 @@ void Project::set_transform_list(std::vector<std::string> columns, int subject,
 
   this->set_list(columns, subject, transform_strings);
 
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Project::get_group_values(std::string group_name) const
+{
+
+  auto values = this->get_string_column(group_name);
+
+  // remove duplicates
+  std::sort(values.begin(), values.end());
+  values.erase(std::unique(values.begin(), values.end()), values.end());
+
+  return values;
 }
 
 

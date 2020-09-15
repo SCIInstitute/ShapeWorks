@@ -448,6 +448,8 @@ void AnalysisTool::load_settings()
   this->ui_->meshDecimation->setValue(params.get("reconstruction_decimation", 0.30));
   this->ui_->maxAngle->setValue(params.get("reconstruction_max_angle", 60));
 
+
+  // populate the group sets
   this->ui_->group_box->clear();
   auto group_names = this->session_->get_project()->get_group_names();
   this->ui_->group_box->addItem("-None-");
@@ -455,6 +457,18 @@ void AnalysisTool::load_settings()
     QString item = QString::fromStdString(group);
     item = item.remove(0, 6);
     this->ui_->group_box->addItem(item);
+  }
+
+  // populate group values
+  auto values = this->session_->get_project()->
+    get_group_values(std::string("group_")
+                     + this->ui_->group_box->currentText().toStdString());
+  this->ui_->group_left->clear();
+  this->ui_->group_right->clear();
+  for (const std::string& value : values) {
+    QString item = QString::fromStdString(value);
+    this->ui_->group_left->addItem(item);
+    this->ui_->group_right->addItem(item);
   }
 
 }

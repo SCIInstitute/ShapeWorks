@@ -421,7 +421,7 @@ QToolButton:pressed{
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QComboBox" name="group_box_3">
+           <widget class="QComboBox" name="group_left">
             <item>
              <property name="text">
               <string>No</string>
@@ -538,7 +538,7 @@ QToolButton:pressed{
            </widget>
           </item>
           <item row="2" column="2">
-           <widget class="QComboBox" name="group_box_4">
+           <widget class="QComboBox" name="group_right">
             <item>
              <property name="text">
               <string>Yes</string>
