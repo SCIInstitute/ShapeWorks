@@ -325,20 +325,26 @@ void AnalysisTool::handle_median()
 }
 
 //-----------------------------------------------------------------------------
-void AnalysisTool::on_overall_button_clicked()
+void AnalysisTool::on_mean_button_clicked()
 {
+  this->ui_->group1_button->setChecked(false);
+  this->ui_->group2_button->setChecked(false);
+  this->ui_->group_animate_checkbox->setChecked(false);
+
   emit update_view();
 }
 
 //-----------------------------------------------------------------------------
 void AnalysisTool::on_group1_button_clicked()
 {
+  this->ui_->mean_button->setChecked(false);
   emit update_view();
 }
 
 //-----------------------------------------------------------------------------
 void AnalysisTool::on_group2_button_clicked()
 {
+  this->ui_->mean_button->setChecked(false);
   emit update_view();
 }
 
@@ -390,8 +396,7 @@ bool AnalysisTool::compute_stats()
     }
   }
 
-  if (points.empty())
-  {
+  if (points.empty()) {
     return false;
   }
 
@@ -408,12 +413,6 @@ bool AnalysisTool::compute_stats()
 
   this->ui_->graph_->repaint();
 
-  // set widget enable state for groups
-  bool groups_available = this->session_->groups_available();
-
-  this->ui_->group_slider->setEnabled(groups_available);
-  this->ui_->group_animate_checkbox->setEnabled(groups_available);
-
   return true;
 }
 
@@ -424,14 +423,12 @@ const vnl_vector<double>& AnalysisTool::get_mean_shape_points()
     return this->empty_shape_;
   }
 
-  /*
   if (this->ui_->group1_button->isChecked()) {
     return this->stats_.Group1Mean();
   }
   else if (this->ui_->group2_button->isChecked()) {
     return this->stats_.Group2Mean();
   }
-*/
 
   return this->stats_.Mean();
 }
@@ -658,11 +655,7 @@ void AnalysisTool::enable_actions()
   this->ui_->reconstructionButton->setEnabled(
     this->session_->particles_present() && this->session_->get_groomed_present());
 
-  ///TODO: setup for multigroup
-//  this->ui_->group1_button->setEnabled(this->session_->groups_available());
-//  this->ui_->group2_button->setEnabled(this->session_->groups_available());
-  this->ui_->difference_button->setEnabled(this->session_->groups_available());
-  this->ui_->group_slider_widget->setEnabled(this->session_->groups_available());
+  this->update_group_boxes();
 }
 
 //---------------------------------------------------------------------------
@@ -781,6 +774,7 @@ void AnalysisTool::update_group_boxes()
     }
     this->current_group_names_ = group_names;
   }
+
   this->group_changed();
 }
 
@@ -809,6 +803,17 @@ void AnalysisTool::update_group_values()
       this->ui_->group_right->setCurrentIndex(i++);
     }
   }
+
+  bool groups_on = this->ui_->group_box->currentText() != "-None-";
+
+  this->ui_->group1_button->setEnabled(groups_on);
+  this->ui_->group2_button->setEnabled(groups_on);
+  this->ui_->difference_button->setEnabled(groups_on);
+  this->ui_->group_slider->setEnabled(groups_on);
+  this->ui_->group_left->setEnabled(groups_on);
+  this->ui_->group_right->setEnabled(groups_on);
+  this->ui_->group_animate_checkbox->setEnabled(groups_on);
+
   this->group_changed();
 }
 

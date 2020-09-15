@@ -61,7 +61,6 @@ std::string Visualizer::get_display_mode()
 //-----------------------------------------------------------------------------
 void Visualizer::set_center(bool center)
 {
-  std::cerr << "set center to: " << center << "\n";
   this->center_ = center;
 }
 
