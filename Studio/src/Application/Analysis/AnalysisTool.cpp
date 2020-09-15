@@ -371,12 +371,28 @@ bool AnalysisTool::compute_stats()
   for (ShapeHandle shape : this->session_->get_shapes()) {
 
     if (groups_enabled) {
-      shape->get_subject()->get_group_value(group_set);
+      auto value = shape->get_subject()->get_group_value(group_set);
+      if (value == left_group) {
+        points.push_back(shape->get_global_correspondence_points());
+        group_ids.push_back(1);
+      }
+      else if (value == right_group) {
+        points.push_back(shape->get_global_correspondence_points());
+        group_ids.push_back(2);
+      }
+      else {
+        // we don't include it
+      }
     }
     else {
       points.push_back(shape->get_global_correspondence_points());
       group_ids.push_back(shape->get_group_id());
     }
+  }
+
+  if (points.empty())
+  {
+    return false;
   }
 
   this->stats_.ImportPoints(points, group_ids);
@@ -754,7 +770,6 @@ void AnalysisTool::set_feature_map(const std::string& feature_map)
 //---------------------------------------------------------------------------
 void AnalysisTool::update_group_boxes()
 {
-
   // populate the group sets
   auto group_names = this->session_->get_project()->get_group_names();
 
@@ -766,7 +781,7 @@ void AnalysisTool::update_group_boxes()
     }
     this->current_group_names_ = group_names;
   }
-
+  this->group_changed();
 }
 
 //---------------------------------------------------------------------------
@@ -794,11 +809,12 @@ void AnalysisTool::update_group_values()
       this->ui_->group_right->setCurrentIndex(i++);
     }
   }
-
+  this->group_changed();
 }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::group_changed()
 {
-
+  this->stats_ready_ = false;
+  this->compute_stats();
 }
