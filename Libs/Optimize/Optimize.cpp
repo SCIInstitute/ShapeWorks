@@ -514,7 +514,7 @@ void Optimize::InitializeSampler()
       ->SetFixedParticleFlag(this->m_particle_flags[2 * i], this->m_particle_flags[2 * i + 1]);
   }
 
-  //m_sampler->ApplyConstraintsToZeroCrossing();
+  m_sampler->ApplyConstraintsToZeroCrossing();
 }
 
 //---------------------------------------------------------------------------

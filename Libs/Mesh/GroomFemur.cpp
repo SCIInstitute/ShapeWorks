@@ -143,7 +143,7 @@ void cropExtra(std::vector<vtkSmartPointer<vtkPolyData>> &inmeshes, std::vector<
   }
 }
 
-int main(int argc, char *argv[])
+int oleks_main(int argc, char *argv[])
 {
   std::cout << "Instructions: Place all of the femur mesh .ply files to be groomed in ./grooming/ and add a file_list.txt file which lists the filenames 1 per line\n";
 
@@ -276,7 +276,5 @@ int main(int argc, char *argv[])
 
   //std::string asdf;
   //std::cin >> asdf;
-
+  return 0;
 }
-
-

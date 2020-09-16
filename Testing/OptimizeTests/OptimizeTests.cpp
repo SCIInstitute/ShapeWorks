@@ -202,8 +202,6 @@ TEST(OptimizeTests, use_normals_test) {
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, cutting_plane_test) {
 
-  std::cout << "Begin cp tests" << std::endl;
-
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/cutting_plane_multi");
   chdir(test_location.c_str());
 
@@ -248,8 +246,6 @@ TEST(OptimizeTests, cutting_plane_test) {
   for (int i = 2; i < points.size(); i += 3) { // check z coordinates only
     ASSERT_GE(points[i], 0.0);
   }
-
-  std::cout << "End cp tests" << std::endl;
 }
 
 /*
