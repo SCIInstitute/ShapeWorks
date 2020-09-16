@@ -1,9 +1,7 @@
-# DEBUG = y
-MAKERULESDIR = ..
 DESTDIR = ../lib.$(UNAME)
 INCLUDES = -I../include
 
-include $(MAKERULESDIR)/Makerules
+include ../Makerules
 
 CCFILES =	TriMesh_bounding.cc \
 		TriMesh_connectivity.cc \
@@ -15,16 +13,21 @@ CCFILES =	TriMesh_bounding.cc \
 		TriMesh_stats.cc \
 		TriMesh_tstrips.cc \
 		GLCamera.cc \
+		GLManager.cc \
 		ICP.cc \
 		KDtree.cc \
+		conn_comps.cc \
 		diffuse.cc \
 		edgeflip.cc \
 		faceflip.cc \
 		filter.cc \
-		lmsmooth.cc \
+		make.cc \
+		merge.cc \
+		overlap.cc \
 		remove.cc \
 		reorder_verts.cc \
-		subdiv.cc
+		subdiv.cc \
+		umbrella.cc
 
 
 OFILES = $(addprefix $(OBJDIR)/,$(CCFILES:.cc=.o))
@@ -35,8 +38,7 @@ $(LIB): $(OFILES)
 	$(STATICLIB)
 
 clean:
-	-rm -f $(OFILES) $(OBJDIR)/Makedepend $(OBJDIR)/*.d
-	-rm -rf $(OBJDIR)/ii_files
+	-rm -f $(OBJDIR)/*.o $(OBJDIR)/*.d
 	-rmdir $(OBJDIR)
 
 spotless: clean

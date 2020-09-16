@@ -5,7 +5,9 @@
 #include <Groom/ShapeWorksGroom.h>
 #include <Data/Session.h>
 
+namespace shapeworks {
 class Optimize;
+}
 
 class ShapeworksWorker : public QObject
 {

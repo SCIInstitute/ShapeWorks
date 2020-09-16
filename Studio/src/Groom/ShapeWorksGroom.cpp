@@ -342,13 +342,16 @@ void ShapeWorksGroom::fastmarching(int which) {
   auto end = (which == -1 ? this->images_.size() : which + 1);
   for (size_t i = start; i < end; i++) {
     auto img = this->images_[i];
-    itk::ApproximateSignedDistanceMapImageFilter<ImageType, ImageType>::Pointer P
-      = itk::ApproximateSignedDistanceMapImageFilter<ImageType, ImageType>::New();
-    P->SetInput(img);
-    P->SetInsideValue(0);
-    P->SetOutsideValue(1);
-    P->Update();
-    this->images_[i] = P->GetOutput();
+
+    using FilterType = itk::ReinitializeLevelSetImageFilter<ImageType>;
+    FilterType::Pointer filter = FilterType::New();
+
+    filter->SetInput(img);
+    filter->NarrowBandingOff();
+    filter->SetLevelSetValue(0);
+    filter->Update();
+    this->images_[i] = filter->GetOutput();
+
   }
   if (this->verbose_) {
     std::cout << "*** FINISHED RUNNING TOOL: fastmarching" << std::endl;

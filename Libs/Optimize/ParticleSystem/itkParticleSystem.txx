@@ -227,40 +227,9 @@ ParticleSystem<VDimension>
                                             unsigned int d, int threadId )
 {
   // Traverse the list and add each point to the domain.
-  for (typename std::vector<PointType>::const_iterator it= p.begin();
-       it != p.end(); it++)
-    {
+  for (typename std::vector<PointType>::const_iterator it= p.begin(); it != p.end(); it++) {
     this->AddPosition(*it, d, threadId);    
-    }
-}
-
-template <unsigned int VDimension>
-void
-ParticleSystem<VDimension>
-::SplitParticle(double epsilon, unsigned int idx, unsigned int domain, int threadId)
-{
-  // Find a random direction.
-    vnl_vector_fixed<double, VDimension> random;
-
-    /* PRATEEP : fix direction for multiple runs. */
-    srand(1);
-    
-    for (unsigned int i = 0; i < VDimension; i++)
-      {  random[i] = static_cast<double>(rand());  }
-    double norm = random.magnitude();
-    
-    // Normalize the random vector.
-    random /= norm;
-
-    // Add epsilon times random direction to existing point and apply domain
-    // constraints to generate a new particle position.  Add the new position.
-    PointType newpos;
-    for (unsigned int i = 0; i < VDimension; i++)
-      {
-      newpos[i] = this->GetPosition(idx,domain)[i] + 2 * epsilon * random[i];
-      }
-    this->GetDomain(domain)->ApplyConstraints(newpos);
-    this->AddPosition(newpos, domain, threadId);
+  }
 }
 
 template <unsigned int VDimension>
@@ -356,7 +325,7 @@ ParticleSystem<VDimension>
 template <unsigned int VDimension>
 void
 ParticleSystem<VDimension>
-::SplitAllParticlesInDomain(const vnl_vector_fixed<double, VDimension> random,double epsilon, unsigned int domain, int threadId)
+::SplitAllParticlesInDomain(const vnl_vector_fixed<double, VDimension> &random, unsigned int domain, int threadId)
 {
   // Loop through all particle positions in the domain and add a new position
   // at an epsilon distance and random direction. Since we are going to add
@@ -367,46 +336,27 @@ ParticleSystem<VDimension>
        it != endIt; it++)
     {    list.push_back(*it);    }
 
-  for (typename std::vector<PointType>::const_iterator it = list.begin();
-       it != list.end(); it++)
-    {
+  int k = 0;
+  for (typename std::vector<PointType>::const_iterator it = list.begin(); it != list.end(); it++, k++) {
     // Add epsilon times random direction to existing point and apply domain
     // constraints to generate a new particle position.  Add the new position.
-    PointType newpos;
-    for (unsigned int i = 0; i < VDimension; i++)
-      {
-      newpos[i] = (*it)[i] + epsilon * random[i];
-      }
-    if (m_DomainFlags[domain] == false)
-        this->GetDomain(domain)->ApplyConstraints(newpos);
+    PointType startingPos = *it;
+
+    vnl_vector_fixed<double, VDimension> updateVector = random * 0.5;
+    vnl_vector_fixed<double, VDimension> projected = this->GetDomain(domain)->ProjectVectorToSurfaceTangent(updateVector, startingPos);
+
+    projected = projected * updateVector.magnitude() / projected.magnitude();
+
+
+    PointType newpos = this->GetDomain(domain)->UpdateParticlePosition(startingPos, projected);
     this->AddPosition(newpos, domain, threadId);
-    } // end for std::vector::iterator
-}
 
-template <unsigned int VDimension>
-void
-ParticleSystem<VDimension>
-::SplitAllParticles(double epsilon, int threadId)
-{
-    // Find a random direction.
-    vnl_vector_fixed<double, VDimension> random;
+    // Apply opposite update to each original point in the split.
+    auto neg_projected = -projected;
+    newpos = this->GetDomain(domain)->UpdateParticlePosition(startingPos, neg_projected);
+    this->SetPosition(newpos, k, domain, threadId);
 
-    /* fix direction for multiple runs. */
-    srand(1);
-    
-    for (unsigned int i = 0; i < VDimension; i++)
-      {        random[i] = static_cast<double>(rand());        }
-    double norm = random.magnitude();
-
-    // Normalize the random vector.
-    random /= norm;
-
-    // Loop through all particle positions in the domain and add a new position
-    // at an epsilon distance and random direction.
-    for (unsigned i = 0; i < this->GetNumberOfDomains(); i++)
-      {
-      this->SplitAllParticlesInDomain(random, epsilon, i, threadId);
-      }
+  }
 }
 
 template <unsigned int VDimension>

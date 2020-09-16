@@ -63,6 +63,17 @@ def create_SWRun_xml(xmlfilename, inDataFiles, parameterDictionary, outDir):
     verbosity.text = "\n" + str(parameterDictionary['verbosity']) + "\n"
     use_xyz = ET.SubElement(root, 'use_xyz')
     use_xyz.text = "\n" + str(1) + "\n"
+    if 'visualizer_enable' in parameterDictionary:
+        visualizer_enable = ET.SubElement(root, 'visualizer_enable')
+        visualizer_enable.text = "\n" + str(parameterDictionary['visualizer_enable']) + "\n"
+    if 'visualizer_wireframe' in parameterDictionary:
+        visualizer_wireframe = ET.SubElement(root, 'visualizer_wireframe')
+        visualizer_wireframe.text = "\n" + str(parameterDictionary['visualizer_wireframe']) + "\n"
+    if 'visualizer_screenshot_directory' in parameterDictionary:
+        if not os.path.exists(parameterDictionary['visualizer_screenshot_directory']):
+            os.makedirs(parameterDictionary['visualizer_screenshot_directory'])
+        visualizer_screenshot_directory = ET.SubElement(root, 'visualizer_screenshot_directory')
+        visualizer_screenshot_directory.text = "\n" + str(parameterDictionary['visualizer_screenshot_directory']) + "\n"
     inputs = ET.SubElement(root, 'inputs')
     inputs.text = "\n"
     for filename in inDataFiles:

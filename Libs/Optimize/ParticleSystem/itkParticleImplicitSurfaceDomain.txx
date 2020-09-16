@@ -106,7 +106,8 @@ void
 ParticleImplicitSurfaceDomain<T>::
 SetMesh(TriMesh *mesh)
 {
-  m_mesh = mesh;
+  m_mesh = new meshFIM();
+  m_mesh->SetMesh(mesh);
 }
 
 template<class T>
@@ -222,7 +223,8 @@ ParticleImplicitSurfaceDomain<T>::ApplyConstraints(PointType &p) const
   while ( fabs(f) > (m_Tolerance * mult) || gradmag < epsilon)
     //  while ( fabs(f) > m_Tolerance || gradmag < epsilon)
     {
-    vnl_vector_fixed<T, DIMENSION> grad = this->SampleGradientVnl(p);
+
+    vnl_vector_fixed<T, DIMENSION> grad = this->SampleGradientAtPoint(p);
 
     gradmag = grad.magnitude();
     vnl_vector_fixed<T, DIMENSION> vec = grad * (f / (gradmag + epsilon));
@@ -243,27 +245,6 @@ ParticleImplicitSurfaceDomain<T>::ApplyConstraints(PointType &p) const
     } // end while
     return flag;
 }
-
-template <class T>
-double
-ParticleImplicitSurfaceDomain<T>::Distance(const PointType &a, const PointType &b) const
-{
-  if (m_mesh != NULL)
-  {
-    point p1;
-    p1[0] = a[0];
-    p1[1] = a[1];
-    p1[2] = a[2];
-
-    point p2;
-    p2[0] = b[0];
-    p2[1] = b[1];
-    p2[2] = b[2];
-
-    return ( m_mesh->GetGeodesicDistance(p1,p2) );
-  }
-}
-
 
 template<class T>
 bool

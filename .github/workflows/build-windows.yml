@@ -103,8 +103,8 @@ jobs:
       run: cp /c/Miniconda3/envs/shapeworks/Library/bin/zlib.dll /c/Miniconda3/envs/shapeworks/Library/bin/tbb.dll /c/Miniconda3/envs/shapeworks/Library/bin/half.dll bin/Release
 
     - name: Build Binary Package
-      shell: bash
-      run: pwd ; ls ; cp Documentation/install/Windows_README.txt . ; cp Support/shapeworks.nsi . ; ./Support/package_windows.sh tag
+      shell: bash -l {0}
+      run: conda activate shapeworks && pwd ; ls ; cp docs/users/Windows_README.txt . ; cp Support/shapeworks.nsi . ; conda activate shapeworks && ./Support/package_windows.sh tag
       
     - name: Test
       working-directory: ${{runner.workspace}}/build
@@ -120,7 +120,7 @@ jobs:
 
     - name: Deploy
       if: github.ref == 'refs/heads/master'
-      uses: marvinpinto/action-automatic-releases@v1.0.0
+      uses: marvinpinto/action-automatic-releases@latest
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "dev-windows"

@@ -14,6 +14,7 @@
 
 #include "TriMesh.h"
 #include "TriMesh_algo.h"
+
 #include "meshFIM.h"
 
 namespace itk
@@ -74,7 +75,7 @@ public:
   virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const override;
 
 
-  inline PointType UpdateParticlePosition(PointType &point, vnl_vector_fixed<double, DIMENSION> &update) const override {
+  inline PointType UpdateParticlePosition(const PointType &point, vnl_vector_fixed<double, DIMENSION> &update) const override {
     PointType newpoint;
 
     // Master merge conflict
@@ -100,14 +101,6 @@ public:
     return newpoint;
   }
 
-  /** Define a distance measure on the surface.  Note that this distance
-      measure is NOT the geodesic distance, as one might expect, but is only a
-      Euclidean distance which ignores points whose normals are not
-      sufficiently aligned (method returns a negative number).  The assumption
-      here is that points are sufficiently close to one another on the surface
-      that they may be considered to lie in a tangent plane. */
-  virtual double Distance(const PointType &, const PointType &) const override;
-
   void SetCuttingPlane(const vnl_vector<double> &a, const vnl_vector<double> &b,
                        const vnl_vector<double> &c);
 
@@ -119,11 +112,11 @@ public:
   void SetFeaMesh(const char *feaFile);
   void SetFeaGrad(const char *feaGradFile);
   void SetFids(const char *fidsFile);
-  TriMesh* GetMesh()
+  meshFIM* GetMesh()
   {
       return m_mesh;
   }
-  TriMesh* GetMesh() const
+  meshFIM* GetMesh() const
   {
       return m_mesh;
   }
@@ -205,6 +198,14 @@ public:
     }
   }
 
+  /** Get any valid point on the domain. This is used to place the first particle. */
+    PointType GetZeroCrossingPoint() const override {
+      PointType p;
+      // TODO Hong
+      // Return point that doesn't violate plane constraints.
+      return p;
+    }
+
 protected:
   ParticleImplicitSurfaceDomain() : m_Tolerance(1.0e-4), m_UseCuttingPlane(false), m_UseCuttingSphere(false)
   {
@@ -229,8 +230,8 @@ private:
   std::vector < vnl_vector_fixed<double, DIMENSION> > m_a;
   std::vector < vnl_vector_fixed<double, DIMENSION> > m_b;
   std::vector < vnl_vector_fixed<double, DIMENSION> > m_c;
-
-  TriMesh *m_mesh;
+  
+  meshFIM *m_mesh;
 
   std::vector< vnl_vector_fixed<double, DIMENSION> > m_SphereCenterList;
   std::vector< double > m_SphereRadiusList;

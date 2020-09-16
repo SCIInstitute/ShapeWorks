@@ -1,4 +1,4 @@
-FILE(GLOB ParticleSystem_sources ./ParticleSystem/*.t* ./ParticleSystem/*.cxx ./ParticleSystem/*.h)
+FILE(GLOB ParticleSystem_sources ./ParticleSystem/*.t* ./ParticleSystem/*.cxx ./ParticleSystem/*.cpp ./ParticleSystem/*.h)
 
 add_library(Optimize STATIC
   ${ParticleSystem_sources}
@@ -6,6 +6,8 @@ add_library(Optimize STATIC
   OptimizeParameterFile.cpp
   ./ParticleSystem/MeshDomain.cpp
   ./ParticleSystem/Constraints.cpp
+  ./ParticleSystem/TriMeshWrapper.cpp
+  ./ParticleSystem/OptimizationVisualizer.cpp
   )
 
 target_link_libraries(Optimize
@@ -15,7 +17,12 @@ target_link_libraries(Optimize
   Mesh
   tinyxml
   Utils
-  Particles)
+  Particles
+  ${ITK_LIBRARIES}
+  ${VTK_LIBRARIES}
+  vgl
+  vgl_algo
+  )
 
 target_include_directories(Optimize PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
@@ -25,6 +32,6 @@ target_include_directories(Optimize PUBLIC
 
 add_executable(ShapeWorksRun ShapeWorksRun.cxx )
 set_target_properties(ShapeWorksRun PROPERTIES COMPILE_DEFINITIONS SW_USE_FEAMESH)
-target_link_libraries(ShapeWorksRun ${ITK_LIBRARIES} ${VTK_LIBRARIES} tinyxml Mesh vgl vgl_algo Optimize Utils trimesh2)
+target_link_libraries(ShapeWorksRun Optimize)
 install(TARGETS ShapeWorksRun RUNTIME DESTINATION bin)
 
