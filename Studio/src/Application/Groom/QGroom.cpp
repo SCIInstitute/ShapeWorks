@@ -1,6 +1,7 @@
 #include "QGroom.h"
 
 #include <tbb/parallel_for.h>
+#include <tbb/task_scheduler_init.h>
 
 QGroom::QGroom(QObject* parent,
                std::vector<ImageType::Pointer> inputs,
@@ -14,7 +15,8 @@ QGroom::QGroom(QObject* parent,
 
 void QGroom::run()
 {
-  this->seed_.Fill(0);
+  //tbb::task_scheduler_init init(1);
+
   size_t ran = 0, total = this->runTools_.size() * this->images_.size();
   if (this->runTools_.count("center")) {
 

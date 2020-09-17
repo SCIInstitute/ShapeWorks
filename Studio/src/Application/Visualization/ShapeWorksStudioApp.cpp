@@ -439,7 +439,7 @@ void ShapeWorksStudioApp::disableAllActions()
   this->optimize_tool_->disable_actions();
   //recent
   QStringList recent_files = preferences_.get_recent_files();
-  int num_recent_files = qMin(recent_files.size(), (int) Preferences::MAX_RECENT_FILES);
+  int num_recent_files = qMin(recent_files.size(), 4);
   for (int i = 0; i < num_recent_files; i++) {
     this->recent_file_actions_[i]->setEnabled(false);
   }
@@ -477,7 +477,7 @@ void ShapeWorksStudioApp::enable_possible_actions()
   this->analysis_tool_->enable_actions();
   //recent
   QStringList recent_files = preferences_.get_recent_files();
-  int num_recent_files = qMin(recent_files.size(), (int) Preferences::MAX_RECENT_FILES);
+  int num_recent_files = qMin(recent_files.size(), 4);
   for (int i = 0; i < num_recent_files; i++) {
     this->recent_file_actions_[i]->setEnabled(true);
   }
@@ -1019,7 +1019,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
 {
   this->new_session();
 
-
   try {
     if (!this->session_->load_project(filename)) {
       this->enable_possible_actions();
@@ -1049,9 +1048,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->preferences_.add_recent_file(filename);
   this->update_recent_files();
 
-
   this->update_tool_mode();
-
 
   this->analysis_tool_->reset_stats();
 
@@ -1266,7 +1263,7 @@ void ShapeWorksStudioApp::update_recent_files()
   }
   recent_files = no_dupes;
 
-  int num_recent_files = qMin(recent_files.size(), (int) Preferences::MAX_RECENT_FILES);
+  int num_recent_files = qMin(recent_files.size(), 4); // only 4 max in the file menu
 
   for (int i = 0; i < num_recent_files; i++) {
     QString text = tr("&%1 %2").arg(i + 1).arg(QFileInfo(recent_files[i]).fileName());
@@ -1275,7 +1272,7 @@ void ShapeWorksStudioApp::update_recent_files()
     this->recent_file_actions_[i]->setVisible(true);
   }
 
-  for (int j = num_recent_files; j < Preferences::MAX_RECENT_FILES; ++j) {
+  for (int j = num_recent_files; j < 4; ++j) {
     this->recent_file_actions_[j]->setVisible(false);
   }
 }
