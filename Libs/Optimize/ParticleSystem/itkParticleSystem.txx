@@ -152,7 +152,7 @@ ParticleSystem<VDimension>
   if (m_DomainFlags[d] == false) {
       // debugg
       //std::cout << "d" << d << " before apply " << m_Positions[d]->operator[](m_IndexCounters[d]);
-    m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](m_IndexCounters[d]), true);
+    m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](m_IndexCounters[d]));
       // debugg
       //std::cout << " after apply " << m_Positions[d]->operator[](m_IndexCounters[d]) << std::endl;
     m_Neighborhoods[d]->AddPosition( m_Positions[d]->operator[](m_IndexCounters[d]), m_IndexCounters[d], threadId);

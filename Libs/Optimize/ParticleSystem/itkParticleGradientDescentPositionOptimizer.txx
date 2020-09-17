@@ -165,8 +165,12 @@ namespace itk
               //VectorType gradient_new = gradient;
               VectorType gradient_old = gradient;
 
+              PointType oldpoint = m_ParticleSystem->GetPosition(it.GetIndex(), dom);
+
               // New good implementation of cutting plane
               std::stringstream stream = m_ParticleSystem->GetDomain(dom)->GetConstraints()->applyBoundaryConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
+              typedef std::numeric_limits< double > dbl;
+              std::cout.precision(dbl::max_digits10);
               // Old broken implementation. Constraints don't work
               //m_ParticleSystem->GetDomain(dom)->ApplyVectorConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
               stream << "Index ----------------" << it.GetIndex() << "--------------" << dom << std::endl;
@@ -208,7 +212,8 @@ namespace itk
                 if (gradmag > maxchange) maxchange = gradmag;
                 stream << "Good energy " << std::endl;
                 stream << std::endl;
-                //std::cout << stream.str();
+                if(!m_ParticleSystem->GetDomain(dom)->GetConstraints()->IsAnyViolated(oldpoint) && m_ParticleSystem->GetDomain(dom)->GetConstraints()->IsAnyViolated(newpoint) )
+                    std::cout << stream.str();
                 break;
               }
               else
