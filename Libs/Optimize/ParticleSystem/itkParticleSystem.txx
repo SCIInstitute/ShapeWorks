@@ -150,7 +150,11 @@ ParticleSystem<VDimension>
 
   // Potentially modifies position!
   if (m_DomainFlags[d] == false) {
-    m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](m_IndexCounters[d]));
+      // debugg
+      std::cout << "d" << d << " before apply " << m_Positions[d]->operator[](m_IndexCounters[d]);
+    m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](m_IndexCounters[d]), true);
+      // debugg
+      std::cout << " after apply " << m_Positions[d]->operator[](m_IndexCounters[d]) << std::endl;
     m_Neighborhoods[d]->AddPosition( m_Positions[d]->operator[](m_IndexCounters[d]), m_IndexCounters[d], threadId);
   }
 
@@ -183,7 +187,9 @@ ParticleSystem<VDimension>
     if (m_DomainFlags[d] == false) {
       m_Positions[d]->operator[](k) = p;
 
+      std::cout << "SynchronizePositions Apply constraints " << m_Positions[d]->operator[](k);
       m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](k));
+      std::cout << " updated " << m_Positions[d]->operator[](k) << std::endl;
 
       m_Neighborhoods[d]->SetPosition( m_Positions[d]->operator[](k), k, threadId);
     }
@@ -230,6 +236,41 @@ ParticleSystem<VDimension>
   for (typename std::vector<PointType>::const_iterator it= p.begin(); it != p.end(); it++) {
     this->AddPosition(*it, d, threadId);    
   }
+}
+
+template <unsigned int VDimension>
+void
+ParticleSystem<VDimension>
+::PrintParticleSystem(){
+
+    for (unsigned int d = 0; d < this->GetNumberOfDomains(); d++)
+      {
+        std::vector<PointType> list;
+      for (unsigned int p = 0; p < this->GetNumberOfParticles(d); p++)
+        {
+        list.push_back(this->GetPosition(p,d));
+        }
+          std::cout << "D " << d << " Curr Pos ";
+          for(size_t i = 0; i < list.size(); i++)
+              std::cout << list[i] << " ";
+          std::cout << " List size " << list.size() << std::endl;
+      }
+
+    /*
+    size_t num_doms = this->GetNumberOfDomains();
+
+    for(size_t domain = 0; domain < num_doms; domain++){
+        std::vector<PointType> list;
+        typename PointContainerType::ConstIterator endIt = GetPositions(domain)->GetEnd();
+        for (typename PointContainerType::ConstIterator it = GetPositions(domain)->GetBegin();
+             it != endIt; it++)
+          {    list.push_back(*it);    }
+        std::cout << "D " << domain << " Curr Pos ";
+        for(size_t i = 0; i < list.size(); i++)
+            std::cout << list[i] << " ";
+        std::cout << " List size " << list.size() << std::endl;
+    }
+    */
 }
 
 template <unsigned int VDimension>

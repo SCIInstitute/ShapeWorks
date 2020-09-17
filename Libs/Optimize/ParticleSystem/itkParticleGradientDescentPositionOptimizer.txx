@@ -186,7 +186,7 @@ namespace itk
                 gradmag = gradient.magnitude();
                 stream << "Rejected because of magnitude" << std::endl;
                   stream << std::endl;
-                  std::cout << stream.str();
+                  //std::cout << stream.str();
                   continue;
               }
 
@@ -207,7 +207,7 @@ namespace itk
                 if (gradmag > maxchange) maxchange = gradmag;
                 stream << "Good energy " << std::endl;
                 stream << std::endl;
-                std::cout << stream.str();
+                //std::cout << stream.str();
                 break;
               }
               else
@@ -218,7 +218,7 @@ namespace itk
                   m_ParticleSystem->SetPosition(pt, it.GetIndex(), dom);
                   stream << "Not good energy " << pt << std::endl;
                   stream << std::endl;
-                  std::cout << stream.str();
+                  //std::cout << stream.str();
 
                   m_TimeSteps[dom][k] /= factor;
                 }

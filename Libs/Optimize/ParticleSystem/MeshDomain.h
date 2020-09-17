@@ -2,8 +2,8 @@
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
 #pragma once
@@ -28,7 +28,7 @@ public:
     return shapeworks::DomainType::Mesh;
   }
 
-  bool ApplyConstraints(PointType &p) const override;
+  bool ApplyConstraints(PointType &p, bool dbg = false) const override;
   bool ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const override;
   vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const override;
   PointType UpdateParticlePosition(const PointType &point, vnl_vector_fixed<double, DIMENSION> &update) const override;
@@ -135,7 +135,7 @@ protected:
     DataObject::Superclass::PrintSelf(os, indent);
     os << indent << "MeshDomain\n";
   }
-  
+
 private:
   shapeworks::MeshWrapper* meshWrapper;
   PointType m_ZeroCrossingPoint;

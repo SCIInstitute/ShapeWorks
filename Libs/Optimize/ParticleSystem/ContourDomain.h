@@ -2,8 +2,8 @@
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
 #pragma once
@@ -25,14 +25,14 @@ public:
     return shapeworks::DomainType::Contour;
   }
 
-  /** Apply any constraints to the given point location. 
+  /** Apply any constraints to the given point location.
       This should force the point to a position on the surface that satisfies all constraints. */
-  inline bool ApplyConstraints(PointType& p) const override {
+  inline bool ApplyConstraints(PointType& p, bool dbg = false) const override {
     // TODO snap the point to the closest position on the contour.
     return true;
   }
 
-  /** Reduce magnitude of the vector so that applying point = point + gradE does not violate any constraints. 
+  /** Reduce magnitude of the vector so that applying point = point + gradE does not violate any constraints.
       This should have no effect if there are no constraints. ImageDomain may restrict vector magnitude based on the narrow band. */
   inline bool ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> & gradE, const PointType &pos) const override {
     return true;
@@ -149,7 +149,7 @@ protected:
     DataObject::Superclass::PrintSelf(os, indent);
     os << indent << "ContourDomain\n";
   }
-  
+
 private:
 
 };

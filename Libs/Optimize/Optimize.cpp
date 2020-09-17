@@ -547,6 +547,8 @@ void Optimize::AddSinglePoint()
       continue;
     }
     PointType pos = m_sampler->GetParticleSystem()->GetDomain(i)->GetValidLocationNear(firstPointPosition);
+    // debugg
+    std::cout << "d" << i << " firstPointPosition " << firstPointPosition << " pos " << pos << std::endl;
     m_sampler->GetParticleSystem()->AddPosition(pos, i);
   }
 }
@@ -574,6 +576,7 @@ void Optimize::Initialize()
   }
   m_disable_procrustes = true;
 
+  // Does nothing
   m_sampler->GetParticleSystem()->SynchronizePositions();
 
   m_sampler->GetCurvatureGradientFunction()->SetRho(0.0);
@@ -613,9 +616,20 @@ void Optimize::Initialize()
   m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
   m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
 
+  // Debugg
+  std::cout << "Before adding single point" << std::endl;
+  m_sampler->GetParticleSystem()->PrintParticleSystem();
+
   this->AddSinglePoint();
 
+  // Debugg
+  std::cout << "After adding single point" << std::endl;
+  m_sampler->GetParticleSystem()->PrintParticleSystem();
+
   m_sampler->GetParticleSystem()->SynchronizePositions();
+
+  // Debugg
+  m_sampler->GetParticleSystem()->PrintParticleSystem();
 
   this->m_split_number = 0;
 
@@ -631,6 +645,7 @@ void Optimize::Initialize()
   random = random.normalize() * this->m_spacing;
   */
 
+  double epsilon = this->m_spacing;
   bool flag_split = false;
 
   for (int i = 0; i < n; i++) {
@@ -663,7 +678,7 @@ void Optimize::Initialize()
     }
     */
 
-    m_sampler->GetParticleSystem()->AdvancedAllParticleSplitting(1.);
+    m_sampler->GetParticleSystem()->AdvancedAllParticleSplitting(epsilon);
       
     m_sampler->GetParticleSystem()->SynchronizePositions();
 

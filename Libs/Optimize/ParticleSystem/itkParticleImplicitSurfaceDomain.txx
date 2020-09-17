@@ -207,7 +207,7 @@ ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> &gradE, const PointTy
 
 template<class T>
 bool
-ParticleImplicitSurfaceDomain<T>::ApplyConstraints(PointType &p) const
+ParticleImplicitSurfaceDomain<T>::ApplyConstraints(PointType &p, bool dbg) const
 {
   // First apply and constraints imposed by superclasses.  This will
   // guarantee the point starts in the correct image domain.
@@ -224,13 +224,19 @@ ParticleImplicitSurfaceDomain<T>::ApplyConstraints(PointType &p) const
     //  while ( fabs(f) > m_Tolerance || gradmag < epsilon)
     {
 
-    vnl_vector_fixed<T, DIMENSION> grad = this->SampleGradientAtPoint(p);
+    vnl_vector_fixed<T, DIMENSION> grad = -this->SampleGradientAtPoint(p);
+
+    std::stringstream msg = this->GetConstraints()->applyBoundaryConstraints(grad, p);
+    if(dbg){
+        msg << std::endl;
+        std::cout << msg.str();
+    }
 
     gradmag = grad.magnitude();
     vnl_vector_fixed<T, DIMENSION> vec = grad * (f / (gradmag + epsilon));
     for (unsigned int i = 0; i < DIMENSION; i++)
       {
-      p[i] -= vec[i];
+      p[i] += vec[i];
       }
 
     f = this->Sample(p);

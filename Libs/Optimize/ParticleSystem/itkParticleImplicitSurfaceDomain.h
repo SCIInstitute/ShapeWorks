@@ -68,7 +68,7 @@ public:
       bounding box domain, since movement off the surface will be very
       common.  Consider subclassing this method to add a check for significant
       differences in the input and output points. */
-  virtual bool ApplyConstraints(PointType &p) const override;
+  virtual bool ApplyConstraints(PointType &p, bool dbg = false) const override;
 
   /** Optionally add a repulsion from a planar boundar specified in
       m_CuttingPlane */

@@ -30,7 +30,7 @@ public:
 
   /** Apply any constraints to the given point location.
       This should force the point to a position on the surface that satisfies all constraints. */
-  virtual bool ApplyConstraints(PointType& p) const = 0;
+  virtual bool ApplyConstraints(PointType& p, bool dbg = false) const = 0;
   /** Reduce magnitude of the vector so that applying point = point + gradE does not violate any constraints.
       This should have no effect if there are no constraints. ImageDomain may restrict vector magnitude based on the narrow band. */
   virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION>& gradE, const PointType& pos) const = 0;

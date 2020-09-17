@@ -169,6 +169,8 @@ public:
   void SplitAllParticles(double epsilon, int threadId=0);
   void SplitParticle(double epsilon, unsigned int idx,  unsigned int d=0, int threadId=0);
   void AdvancedAllParticleSplitting(double epsilon);
+  // Debug function
+  void PrintParticleSystem();
   void SplitAllParticlesInDomain(const vnl_vector_fixed<double, VDimension> &, unsigned int d=0, int threadId=0);
   
   /** Set/Get the neighborhood object associated with domain k. */

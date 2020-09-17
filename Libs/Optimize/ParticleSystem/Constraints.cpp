@@ -82,6 +82,14 @@ std::stringstream Constraints::applyBoundaryConstraints(vnl_vector_fixed<double,
     return applyPlaneConstraints(gradE, pos);
 }
 
+std::stringstream Constraints::applyBoundaryConstraints(vnl_vector_fixed<float, 3> &gradE, const Point<double, 3> &pos){
+    vnl_vector_fixed<double, 3> gradD;
+    gradD[0] = double(gradE[0]); gradD[1] = double(gradE[1]); gradD[2] = double(gradE[2]);
+    std::stringstream  out = applyPlaneConstraints(gradD, pos);
+    gradE[0] = float(gradD[0]); gradE[1] = float(gradD[1]); gradE[2] = float(gradD[2]);
+    return out;
+}
+
 Eigen::Vector3d Constraints::projectOntoLine(Eigen::Vector3d a, Eigen::Vector3d b, Eigen::Vector3d p){
     Eigen::Vector3d ap = p-a;
     Eigen::Vector3d ab = b-a;
