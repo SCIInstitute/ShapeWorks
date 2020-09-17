@@ -184,10 +184,11 @@ namespace itk
               if (gradmag > maximumUpdateAllowed) {
                 gradient = gradient * maximumUpdateAllowed / gradmag;
                 gradmag = gradient.magnitude();
-                stream << "Rejected because of magnitude" << std::endl;
-                  stream << std::endl;
-                  //std::cout << stream.str();
-                  continue;
+                /*
+                stream << "Rejected because of magnitude " << gradmag << "/" << maximumUpdateAllowed <<  std::endl;
+                stream << std::endl;
+                std::cout << stream.str();
+                */
               }
 
               // Step D compute the new point position

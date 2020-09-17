@@ -8,8 +8,8 @@
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
 #ifndef __itkParticleSystem_txx
@@ -55,7 +55,7 @@ void ParticleSystem<VDimension>
 ::AddDomain( DomainType *input, int threadId)
 {
   this->Modified();
-  
+
   for (unsigned int idx = 0; idx < m_Domains.size(); ++idx)
     {
     if (!m_Domains[idx])
@@ -76,7 +76,7 @@ void ParticleSystem<VDimension>
   m_InverseTransforms[static_cast<int>( m_Domains.size() -1)].set_identity();
   m_PrefixTransforms[static_cast<int>( m_Domains.size() -1)].set_identity();
   m_InversePrefixTransforms[static_cast<int>( m_Domains.size() -1)].set_identity();
-  
+
   // Notify any observers.
   ParticleDomainAddEvent e;
   e.SetDomainIndex(m_Domains.size() - 1);
@@ -133,7 +133,7 @@ void ParticleSystem<VDimension>
   m_Neighborhoods[i] = N;
   m_Neighborhoods[i]->SetDomain(m_Domains[i]);
   m_Neighborhoods[i]->SetPointContainer(m_Positions[i]);
-  
+
   // Notify any observers.
   ParticleNeighborhoodSetEvent e;
   e.SetThreadID(threadId);
@@ -151,10 +151,10 @@ ParticleSystem<VDimension>
   // Potentially modifies position!
   if (m_DomainFlags[d] == false) {
       // debugg
-      std::cout << "d" << d << " before apply " << m_Positions[d]->operator[](m_IndexCounters[d]);
+      //std::cout << "d" << d << " before apply " << m_Positions[d]->operator[](m_IndexCounters[d]);
     m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](m_IndexCounters[d]), true);
       // debugg
-      std::cout << " after apply " << m_Positions[d]->operator[](m_IndexCounters[d]) << std::endl;
+      //std::cout << " after apply " << m_Positions[d]->operator[](m_IndexCounters[d]) << std::endl;
     m_Neighborhoods[d]->AddPosition( m_Positions[d]->operator[](m_IndexCounters[d]), m_IndexCounters[d], threadId);
   }
 
@@ -171,7 +171,7 @@ ParticleSystem<VDimension>
   e.SetPositionIndex(m_IndexCounters[d]);
   this->InvokeEvent(e);
   m_IndexCounters[d]++;
- 
+
   return m_Positions[d]->operator[](m_IndexCounters[d]-1);
 }
 
@@ -187,9 +187,11 @@ ParticleSystem<VDimension>
     if (m_DomainFlags[d] == false) {
       m_Positions[d]->operator[](k) = p;
 
-      std::cout << "SynchronizePositions Apply constraints " << m_Positions[d]->operator[](k);
+      // Debuggg
+      //std::cout << "SynchronizePositions Apply constraints " << m_Positions[d]->operator[](k);
       m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](k));
-      std::cout << " updated " << m_Positions[d]->operator[](k) << std::endl;
+      // Debuggg
+      //std::cout << " updated " << m_Positions[d]->operator[](k) << std::endl;
 
       m_Neighborhoods[d]->SetPosition( m_Positions[d]->operator[](k), k, threadId);
     }
@@ -201,9 +203,9 @@ ParticleSystem<VDimension>
   e.SetThreadID(threadId);
   e.SetDomainIndex(d);
   e.SetPositionIndex(k);
-  
+
   this->InvokeEvent(e);
-  
+
   return m_Positions[d]->operator[](k);
 }
 
@@ -214,9 +216,9 @@ ParticleSystem<VDimension>
                                         unsigned int d,  int threadId)
 {
   m_Positions[d]->Erase(k);
-  
+
   m_Neighborhoods[d]->RemovePosition(k, threadId);
-  
+
   // Notify any observers.
   ParticlePositionRemoveEvent e;
   e.SetThreadID(threadId);
@@ -234,7 +236,7 @@ ParticleSystem<VDimension>
 {
   // Traverse the list and add each point to the domain.
   for (typename std::vector<PointType>::const_iterator it= p.begin(); it != p.end(); it++) {
-    this->AddPosition(*it, d, threadId);    
+    this->AddPosition(*it, d, threadId);
   }
 }
 
@@ -372,7 +374,7 @@ ParticleSystem<VDimension>
   // at an epsilon distance and random direction. Since we are going to add
   // positions to the list, we need to first copy the list.
   std::vector<PointType> list;
-  typename PointContainerType::ConstIterator endIt = GetPositions(domain)->GetEnd();     
+  typename PointContainerType::ConstIterator endIt = GetPositions(domain)->GetEnd();
   for (typename PointContainerType::ConstIterator it = GetPositions(domain)->GetBegin();
        it != endIt; it++)
     {    list.push_back(*it);    }
