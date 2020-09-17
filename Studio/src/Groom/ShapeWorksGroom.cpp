@@ -48,7 +48,7 @@ void ShapeWorksGroom::queueTool(std::string tool) {
 }
 
 void ShapeWorksGroom::run() {
-  this->seed_.Fill(0);
+
   size_t ran = 0;
   if (this->runTools_.count("center")) {
     this->center();
