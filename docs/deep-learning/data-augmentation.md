@@ -31,17 +31,21 @@ The sampler_type variable determines which type of distribution to fit to the em
 
 #### Multivariate Gaussian Distribution
 
-To fit multivariate Gaussian distribution, the probability density function is parameterized by the mean of and covariance of the embedded data matrix. This normal distribution is then randomly sampled from to get new examples. The closest real example to each sampled point is found by calculating the Mahalanobis distance. 
+To fit multivariate Gaussian distribution (which can be seen in Step 2 above), the probability density function is parameterized by the mean of and covariance of the embedded data matrix. This normal distribution is then randomly sampled from to get new examples. The closest real example to each sampled point is found by calculating the Mahalanobis distance. 
 
 #### Mixture of Multivariate Gaussians Distribution
 
 A Gaussian mixture model can provide a more appropriate probability density function when the embedded data distribution is mutli-modal. To fit a mixture model, first we cluster on the embedded data and select the optimal number of clusters by minimizing Akaike information criterion (AIC) and Bayesian information criterion (BIC). This number determines how many Gaussian distributions (or components) should be used. Next the expectation-maximization (EM) algorithm is used to fit a mixture-of-Gaussian model with this number of components. This distribution can then be randomly sampled from and the closest real example is chosen using Mahalanobis distance. 
+
+![mixture.png](../img/deep-learning/mixture.png)
 
 #### Kernel Density Estimate Distribution
 
 Kernel Density Estimation (KDE) is a non-parametric way of estimating the probability density function of the embedded data. It is fit by defining a Gaussian ball around each real data point in the embedded space, the combination of which provides the distribution. The kernel bandwidth or variance of the Gaussian balls is computed as the average nearest neighbor Mahalanobis distance in the PCA subspace.
 
 To sample from the KDE distribution, a real example is chosen then a point is randomly sampled from it's kernel. The chosen real example is also returned as it is the closest to the sample. 
+
+![KDE.png](../img/deep-learning/KDE.png)
 
 ## Using the Data Augmentation Python Package
 The ShapeWorks data augmentation package is installed to the ShapeWorks anaconda environment when [conda_installs.sh](https://github.com/SCIInstitute/ShapeWorks/tree/master/conda_installs.sh) is run. To use, make sure you have the shapeworks conda environment activated and add the following import to your Python code:
