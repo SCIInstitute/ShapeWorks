@@ -294,11 +294,12 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
 
         size = getInfo(ref_tpdtnrrdfilename, "dims")
         spacing = getInfo(ref_tpdtnrrdfilename, "spacing")
+        origin = getInfo(ref_tpdtnrrdfilename, "origin")
 
         cmd = ["shapeworks", 
                "read-image", "--name", seginname,
                # resample all images to have the same size and dims as the reference image
-               "resample", "--sizex", str(size[0]), "--sizey", str(size[1]), "--sizez", str(size[2]), "--spacex", str(spacing[0]), "--spacey", str(spacing[1]), "--spacez", str(spacing[2]), "--interp", "nearest",
+               "resample", "--sizex", str(size[0]), "--sizey", str(size[1]), "--sizez", str(size[2]), "--spacex", str(spacing[0]), "--spacey", str(spacing[1]), "--spacez", str(spacing[2]), "--originx", str(origin[0]), "--originy", str(origin[1]), "--originz", str(origin[2]), "--interp", "nearest",
                "write-image", "--name", segoutname]
         if printCmd:
             print("CMD: " + " ".join(cmd))
