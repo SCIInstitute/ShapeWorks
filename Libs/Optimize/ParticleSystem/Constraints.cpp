@@ -245,6 +245,7 @@ std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3>
     return stream;
 }
 
+// Cutting plane constraints using truncated gradients. Replaced with dominant constraint above.
 /*
 bool Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, const Point<double, 3> &pos){
 
