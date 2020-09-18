@@ -81,9 +81,9 @@ def Run_Pipeline(args):
 	if args.tiny_test:
 		num_samples = 4
 		num_PCA = 3
-	DataAugmentationUtils.RunDataAugmentation(parent_dir + "Augmentation/", train_img_list, train_particle_list, num_samples, num_PCA, sampler_type)
+	DataAugmentationUtils.runDataAugmentation(parent_dir + "Augmentation/", train_img_list, train_particle_list, num_samples, num_PCA, sampler_type)
 	aug_data_csv = parent_dir + "Augmentation/TotalData.csv"
-	DataAugmentationUtils.VisualizeAugmentation(aug_data_csv)
+	DataAugmentationUtils.visualizeAugmentation(aug_data_csv)
 
 	print("\n\n\nStep 3. Reformat Data for Pytorch\n") #######################################################################
 	'''
@@ -126,5 +126,5 @@ def Run_Pipeline(args):
 		DT_dir = input_dir + "groomed/distance_transforms/"
 		out_dir = parent_dir + "Results/"
 		mean_prefix = input_dir + "shape_models/mean/femur"
-		avg_distance = DeepSSMUtils.AnalyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix)
+		avg_distance = DeepSSMUtils.analyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix)
 		print("Average surface-to-surface distance from the original to predicted shape = " + str(avg_distance))

@@ -21,7 +21,7 @@ def testDeepSSM(out_dir, model_path, loader_dir, PCA_scores_path, num_PCA):
 	DeepSSM.test(out_dir, model_path, loader_dir, PCA_scores_path, num_PCA)
 	return
 
-def AnalyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix):
+def analyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix):
 	avg_distance = Analyze.getDistance(out_dir, DT_dir, prediction_dir, mean_prefix)
 	return avg_distance
 
