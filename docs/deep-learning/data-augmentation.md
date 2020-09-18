@@ -6,7 +6,7 @@ Here we explain the basic steps to data augmentation.
 
 ## Data Augmentation Steps
 #### 0. Collect Real Data
-As a prelimanry step, the data which augmentation will be based off of is needed. This includes the shape model .particle files and can also include corresponding images.
+As a preliminary step, the data which augmentation will be based off of is needed. This includes the shape model .particle files and can also include corresponding images.
 ![DataAug0.PNG](../img/deep-learning/DataAug0.PNG)
 #### 1. Embed Data
 First the true data is embedded into a lower dimensional subspace. This is done by creating a matrix which contains all of the real examples, then reducing the dimension via Principal Component Analysis (PCA).
@@ -55,23 +55,24 @@ This function runs the complete data augmentation process.
 
 Call:
 
-`DataAugmentationUtils.RunDataAugmentation(out_dir, img_list, point_list, num_samples, num_dim, sampler_type, mixture_num)`
+`DataAugmentationUtils.runDataAugmentation(out_dir, img_list, point_list, num_samples, num_dim, sampler_type, mixture_num)`
 
 Arguments:
 
 * out_dir - Path to directory to store augmented data
 * img_list - List of paths to images in original dataset.
-* point_list - List of paths to .particle files in original dataset. Note this should be in corrspondece with the img_list.
-* num_dim - The number of dimensions to reduce to in PCA embedding. If zero or not specified num_dim will be automatically selected so that 95% of the population variation is preserved.
+* point_list - List of paths to .particle files in original dataset. Note this should be in correspondence with the img_list.
+* num_dim - The number of dimensions to reduce to in PCA embedding. If zero or not specified, num_dim will be automatically selected so that 95% of the population variation is preserved.
 * sampler_type - The kind of distribution to fit and sample from. Options: Gaussian, mixture, or KDE. Default: KDE.
-* mixture_num - Only neccesary if sampler_type is mixture. The number of clusters to use in fitting a mixture model. If zero or not specified the optimal number of clusters will be automatically determined.
+* mixture_num - Only necessary if sampler_type is mixture. The number of clusters to use in fitting a mixture model. If zero or not specified the optimal number of clusters will be automatically determined.
 
 #### Visualize Data Augmentation
-This function creates a visualization for augmented data. It creates a scatterplot matrix which opens automatically in the default web browser. The scatterplots show the PCA values of the real and augmented data so that they can be compared pair-wise across the dimnesions. 
+This function creates a visualization for augmented data. It creates a scatterplot matrix which opens automatically in the default web browser. The scatterplots show the PCA values of the real and augmented data so that they can be compared pairwise across the dimensions.
+
 
 Call:
 
-`DataAugmentationUtils.VisualizeAugmentation(data_csv)`
+`DataAugmentationUtils.visualizeAugmentation(data_csv)`
 
 Arguments:
 
