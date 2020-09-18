@@ -11,7 +11,6 @@ import itk
 import vtk
 import vtk.util.numpy_support
 
-USE_NATIVE_API = True  # use native API instead of external executable (just for testing; eventually only this API)
 from shapeworks import *
 from CommonUtils import *
 

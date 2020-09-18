@@ -1,8 +1,16 @@
-# from shapeworks import *
-import shapeworks
+from pythonTestSetup import setup
+
+setup()
+
+from shapeworks import *
+import os
 
 def antialiasTest():
-  img = Image("$DATA/1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "1x2x2.nrrd")
   img.antialias()
 
-  return img.compare("$DATA/antialias1.nrrd")
+  compareImg = Image(os.environ["DATA"] + "antialias1.nrrd")
+
+  return img.compare(compareImg)
+
+antialiasTest()

@@ -18,7 +18,6 @@ import shutil
 import xml.etree.ElementTree as ET
 from termcolor import colored, cprint
 
-
 def create_cpp_xml(filename, outputfilename):
     '''
         This creates a xml for cpp Shape warp binary
@@ -71,7 +70,6 @@ def sampledata(inDataList, num_sample):
 
     print("###########################################\n")
     return samples_idx
-
 
 # make sure the shapeworks executables can be found, adding path to osx studio app bundle if necessary
 def robustifyShapeworksPaths():
