@@ -36,7 +36,7 @@ This calls `deep_ssm.py` (in `Examples/Python/`) to perform the following.
 The femur data is downloaded from Girder. This use case uses the original unsegmented images and the corresponding .particle shape model files. Of the 50 examples in the femur dataset, 40 are used to create training and validation sets while the remaining 10 are saved for a test set.
 
 ### Step 2: Running data augmentation
-For a full description of the data augmentation process and how to use the ShapeWorks data augmentation Python package, please see [Running Data Augmentation](../deep-learning/data-augmentation.md). The functions relevant to this step are `RunDataAugmentation` and `VisualizeAugmentation`.
+For a full description of the data augmentation process and how to use the ShapeWorks data augmentation Python package, please see [Running Data Augmentation](../deep-learning/data-augmentation.md). The functions relevant to this step are `runDataAugmentation` and `visualizeAugmentation`.
 
 Data augmentation is run using the images and particle files allocated for training and validation. 4960 augmented samples are created so that DeepSSM can be trained on 5000 total examples. The data is embedded to 6 dimensions using PCA, preserving 95% of the population variation. A KDE distribution is fit to the embedded data and used in sampling and the real and augmented results are visualized in a scatterplot matrix.
 
@@ -52,6 +52,6 @@ This step uses function `trainDeepSSM` documented in [SSM from Images](../deep-l
 This step uses function `testDeepSSM` documented in [SSM from Images](../deep-learning/deep-ssm.md). The trained DeepSSM model is used to predict the PCA scores of the unseen images in the test loader. These scores are then mapped to the particle shape model using the PCA information from data augmentation and the predicted particles are saved.
 
 ### Step 6: Analyze DeepSSM Results
-This step uses function `AnalyzeResults` documented in [SSM from Images](../deep-learning/deep-ssm.md). The DeepSSM predictions are analyzed by considering the surface-to-surface distance between the mesh generated from the original segmentation and the mesh generated from the predicted particles. Heat maps of these distances on the meshes are saved to visualize the results.
+This step uses function `analyzeResults` documented in [SSM from Images](../deep-learning/deep-ssm.md). The DeepSSM predictions are analyzed by considering the surface-to-surface distance between the mesh generated from the original segmentation and the mesh generated from the predicted particles. Heat maps of these distances on the meshes are saved to visualize the results.
 
 ![DeepSSM Results](../img/deep-learning/DeepSSMResults.png)
