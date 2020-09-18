@@ -111,7 +111,7 @@ This function analyzes the shape models predicted by DeepSSM by comparing them t
 
 Call:
 
-`DeepSSMUtils.AnalyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix)`
+`DeepSSMUtils.analyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix)`
 
 Arguments:
 
