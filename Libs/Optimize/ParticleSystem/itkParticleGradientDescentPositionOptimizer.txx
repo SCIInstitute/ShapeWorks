@@ -212,8 +212,7 @@ namespace itk
                 if (gradmag > maxchange) maxchange = gradmag;
                 stream << "Good energy " << std::endl;
                 stream << std::endl;
-                if(!m_ParticleSystem->GetDomain(dom)->GetConstraints()->IsAnyViolated(oldpoint) && m_ParticleSystem->GetDomain(dom)->GetConstraints()->IsAnyViolated(newpoint) )
-                    std::cout << stream.str();
+                if(!m_ParticleSystem->GetDomain(dom)->GetConstraints()->IsAnyViolated(oldpoint) && m_ParticleSystem->GetDomain(dom)->GetConstraints()->IsAnyViolated(newpoint) ) std::cerr << stream.str();
                 break;
               }
               else

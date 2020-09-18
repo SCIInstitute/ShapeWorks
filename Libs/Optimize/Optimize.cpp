@@ -616,20 +616,20 @@ void Optimize::Initialize()
   m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
   m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
 
-  // Debugg
+  // Debuggg
   //std::cout << "Before adding single point" << std::endl;
-  m_sampler->GetParticleSystem()->PrintParticleSystem();
+  //m_sampler->GetParticleSystem()->PrintParticleSystem();
 
   this->AddSinglePoint();
 
-  // Debugg
+  // Debuggg
   //std::cout << "After adding single point" << std::endl;
-  m_sampler->GetParticleSystem()->PrintParticleSystem();
+  //m_sampler->GetParticleSystem()->PrintParticleSystem();
 
   m_sampler->GetParticleSystem()->SynchronizePositions();
 
-  // Debugg
-  m_sampler->GetParticleSystem()->PrintParticleSystem();
+  // Debuggg
+  //m_sampler->GetParticleSystem()->PrintParticleSystem();
 
   this->m_split_number = 0;
 

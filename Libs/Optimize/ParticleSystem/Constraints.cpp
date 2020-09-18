@@ -185,21 +185,25 @@ std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3>
 
     // If update violates at least one plane
     if(minDInd > -1){
+        // Error offset to account for precision error
+        double eps = 1e-4;
+
         // Project gradient-applied point onto dominant plane
         Eigen::Vector3d n_d = (*planeConsts)[minDInd].GetPlaneNormal();
         Eigen::Vector3d p0_d = (*planeConsts)[minDInd].GetPlanePoint();
-        Eigen::Vector3d curr_updated_pt = linePlaneIntersect(n_d, p0_d, l0+l, n_d);
+        Eigen::Vector3d curr_updated_pt = linePlaneIntersect(n_d, p0_d+(n_d*eps), l0+l, n_d);
 
         // Projected point proj_grad_upd is curr_updated_pt projected to the gradient update vector segment l0 -> l0+l
         //Eigen::Vector3d proj_grad_upd = projectOntoLine(l0, l0+l, curr_updated_pt);
         // Projected point proj_grad_upd is the intersection bt the dominant plane and the original gradient update vector
-        Eigen::Vector3d proj_grad_upd = linePlaneIntersect(n_d, p0_d, l0, l);
+        Eigen::Vector3d proj_grad_upd = linePlaneIntersect(n_d, p0_d+(n_d*eps), l0, l);
 
         stream << "---------------------Constraint violated---------------------" << std::endl
                 << "Original point " << l0.transpose() << std::endl
                << "Original Updated point " << (l0+l).transpose() << std::endl
                << "Dominant plane id " << minDInd << ". Dominant plane normal: " << n_d.transpose() << ". Dominant plane point: " << p0_d.transpose() << std::endl
-               << "Original intersection on dominant plane " << linePlaneIntersect(n_d, p0_d, l0+l, l0+l-n_d).transpose() << std::endl << std::endl;
+               << "Original intersection on dominant plane " << linePlaneIntersect(n_d, p0_d, l0+l, n_d).transpose() << std::endl
+               << "proj_grad_update " << proj_grad_upd.transpose() << std::endl<< std::endl;
 
         // Now progressively check for how non-dominant planes affect the plane
         for(size_t i = 0; i < planeConsts->size(); i++){
@@ -211,7 +215,7 @@ std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3>
                 Eigen::Vector3d p0 = (*planeConsts)[i].GetPlanePoint();
 
                 // Find intersection between violated plane and feasible range line segment i.e. the line between curr_updated_pt and its projection to the gradient update vector segment.
-                curr_updated_pt = linePlaneIntersect(n, p0, curr_updated_pt, proj_grad_upd-curr_updated_pt);
+                curr_updated_pt = linePlaneIntersect(n, p0+(n*eps), curr_updated_pt, proj_grad_upd-curr_updated_pt);
                 //proj_grad_upd = projectOntoLine(l0, l0+l, curr_updated_pt);
                 stream << "Plane " << i << " violated" << " updatedpoint " << curr_updated_pt.transpose() << std::endl << std::endl;
             }

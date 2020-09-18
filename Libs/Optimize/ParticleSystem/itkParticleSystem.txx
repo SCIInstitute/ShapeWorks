@@ -291,10 +291,13 @@ ParticleSystem<VDimension>
              it != endIt; it++)
           {    list.push_back(*it);    }
         lists.push_back(list);
+        // Debuggg
+        /*
         std::cout << "Domain " << domain << " Curr Pos ";
         for(size_t i = 0; i < list.size(); i++)
             std::cout << list[i] << " ";
         std::cout << " List size " << list.size() << std::endl;
+        */
     }
 
     /*
@@ -355,7 +358,8 @@ ParticleSystem<VDimension>
                  if(good){
                     for(size_t j = 0; j < lists.size(); j++){
                         this->AddPosition(newposs_good[j], j, 0);
-                        std::cout << "Domain " << j << " Curr Pos " << lists[j][i] << " random " << random  << " epsilon " << epsilon << " picked " << newposs_good[j] << std::endl;
+                        // Debuggg
+                        //std::cout << "Domain " << j << " Curr Pos " << lists[j][i] << " random " << random  << " epsilon " << epsilon << " picked " << newposs_good[j] << std::endl;
                     }
                     break;
                  }
