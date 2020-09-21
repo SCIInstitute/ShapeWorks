@@ -50,7 +50,7 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   connect(&this->pca_animate_timer_, SIGNAL(timeout()), this, SLOT(handle_pca_timer()));
 
   // group animation
-  connect(this->ui_->group_animate_checkbox, &QCheckBox::clicked, this,
+  connect(this->ui_->group_animate_checkbox, &QCheckBox::stateChanged, this,
           &AnalysisTool::handle_group_animate_state_changed);
   connect(&this->group_animate_timer_, &QTimer::timeout, this, &AnalysisTool::handle_group_timer);
 
@@ -208,12 +208,6 @@ bool AnalysisTool::pcaAnimate()
 }
 
 //---------------------------------------------------------------------------
-bool AnalysisTool::groupAnimate()
-{
-  return this->ui_->group_animate_checkbox->isChecked();
-}
-
-//---------------------------------------------------------------------------
 void AnalysisTool::setLabels(QString which, QString value)
 {
   if (which == QString("pca")) {
@@ -329,8 +323,8 @@ void AnalysisTool::on_mean_button_clicked()
 {
   this->ui_->group1_button->setChecked(false);
   this->ui_->group2_button->setChecked(false);
+  this->ui_->difference_button->setChecked(false);
   this->ui_->group_animate_checkbox->setChecked(false);
-
   emit update_view();
 }
 
@@ -339,6 +333,9 @@ void AnalysisTool::on_group1_button_clicked()
 {
   this->ui_->group_slider->setValue(this->ui_->group_slider->minimum());
   this->ui_->mean_button->setChecked(false);
+  this->ui_->group2_button->setChecked(false);
+  this->ui_->difference_button->setChecked(false);
+  this->ui_->group_animate_checkbox->setChecked(false);
   emit update_view();
 }
 
@@ -347,12 +344,19 @@ void AnalysisTool::on_group2_button_clicked()
 {
   this->ui_->group_slider->setValue(this->ui_->group_slider->maximum());
   this->ui_->mean_button->setChecked(false);
+  this->ui_->group1_button->setChecked(false);
+  this->ui_->difference_button->setChecked(false);
+  this->ui_->group_animate_checkbox->setChecked(false);
   emit update_view();
 }
 
 //-----------------------------------------------------------------------------
 void AnalysisTool::on_difference_button_clicked()
 {
+  this->ui_->mean_button->setChecked(false);
+  this->ui_->group1_button->setChecked(false);
+  this->ui_->group2_button->setChecked(false);
+  this->ui_->group_animate_checkbox->setChecked(false);
   emit update_view();
 }
 
@@ -430,6 +434,15 @@ const vnl_vector<double>& AnalysisTool::get_mean_shape_points()
   }
   else if (this->ui_->group2_button->isChecked()) {
     return this->stats_.Group2Mean();
+  }
+  else if (this->ui_->mean_button->isChecked()) {
+    return this->stats_.Mean();
+  }
+
+  if (this->groups_active()) {
+    auto group_value = this->get_group_value();
+    this->temp_shape_ = this->stats_.Group1Mean() + (this->stats_.GroupDifference() * group_value);
+    return this->temp_shape_;
   }
 
   return this->stats_.Mean();
@@ -533,9 +546,14 @@ void AnalysisTool::on_pcaSlider_valueChanged()
 void AnalysisTool::on_group_slider_valueChanged()
 {
   // this will make the slider handle redraw making the UI appear more responsive
-  QCoreApplication::processEvents();
+  //QCoreApplication::processEvents();
 
-  emit pca_update();
+  this->ui_->group1_button->setChecked(false);
+  this->ui_->group2_button->setChecked(false);
+  this->ui_->difference_button->setChecked(false);
+  this->ui_->mean_button->setChecked(false);
+
+  emit update_view();
 }
 
 //---------------------------------------------------------------------------
@@ -579,12 +597,14 @@ void AnalysisTool::handle_pca_timer()
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_group_animate_state_changed()
 {
-  if (this->groupAnimate()) {
+  if (this->ui_->group_animate_checkbox->isChecked()) {
     //this->setPregenSteps();
+    std::cerr << "group animating\n";
     this->group_animate_timer_.setInterval(10);
     this->group_animate_timer_.start();
   }
   else {
+    std::cerr << "group NOT animating\n";
     this->group_animate_timer_.stop();
   }
 }
@@ -824,4 +844,12 @@ void AnalysisTool::group_changed()
 {
   this->stats_ready_ = false;
   this->compute_stats();
+}
+
+//---------------------------------------------------------------------------
+bool AnalysisTool::groups_active()
+{
+  std::string group_set = this->ui_->group_box->currentText().toStdString();
+  bool groups_enabled = group_set != "" && group_set != "-None-";
+  return groups_enabled;
 }

@@ -50,7 +50,7 @@ public:
   double get_pca_value();
 
   bool pcaAnimate();
-  bool groupAnimate();
+
 
   int get_sample_number();
 
@@ -120,6 +120,9 @@ public Q_SLOTS:
   void handle_message(std::string message);
 
   void group_changed();
+
+
+  bool groups_active();
 
 signals:
 
