@@ -8,4 +8,4 @@ Created on Fri Jun 19 19:55:55 2020
 
 import DocumentationUtils
 
-DocumentationUtils.generateShapeWorksCommandDocumentation(mdFilename = '../Documentation/ShapeWorksCommands/ShapeWorksCommands.md')
+DocumentationUtils.generateShapeWorksCommandDocumentation(mdFilename = '../docs/tools/ShapeWorksCommands.md')
