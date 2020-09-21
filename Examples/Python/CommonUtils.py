@@ -17,6 +17,7 @@ import platform
 import shutil
 import xml.etree.ElementTree as ET
 from termcolor import colored, cprint
+import sys
 
 
 def create_cpp_xml(filename, outputfilename):
