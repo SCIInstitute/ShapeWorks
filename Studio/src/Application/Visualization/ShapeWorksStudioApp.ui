@@ -184,7 +184,7 @@
           <item>
            <widget class="QLabel" name="label">
             <property name="text">
-             <string>Zoom:</string>
+             <string>Viewers:</string>
             </property>
            </widget>
           </item>
