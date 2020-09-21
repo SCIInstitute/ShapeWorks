@@ -1,6 +1,5 @@
 // Copyright (c) 2011 LTSI INSERM U642
 // All rights reserved.
-
 #include "vtkHausdorffDistancePointSetFilter.h"
 #include "vtkXMLPolyDataReader.h"
 #include "vtkPolyDataReader.h"
@@ -116,20 +115,20 @@ int main(int argc,char** argv)
         filter->SetTargetDistanceMethod( 1 );
     filter->Update();
 
-    // SHIREEN
-    std::vector<int> AtoBindices = filter->GetAtoBindices();
-    std::vector<int> BtoAindices = filter->GetBtoAindices();
+    // // SHIREEN
+    // std::vector<int> AtoBindices = filter->GetAtoBindices();
+    // std::vector<int> BtoAindices = filter->GetBtoAindices();
 
-    std::ofstream AtoBidxfile(argv[outputAidx]);
-    for(unsigned int ii = 0 ; ii < AtoBindices.size(); ii++)
-        AtoBidxfile << AtoBindices[ii] << std::endl;
-    AtoBidxfile.close();
+    // std::ofstream AtoBidxfile(argv[outputAidx]);
+    // for(unsigned int ii = 0 ; ii < AtoBindices.size(); ii++)
+    //     AtoBidxfile << AtoBindices[ii] << std::endl;
+    // AtoBidxfile.close();
 
-    std::ofstream BtoAidxfile(argv[outputBidx]);
-    for(unsigned int ii = 0 ; ii < BtoAindices.size(); ii++)
-        BtoAidxfile << BtoAindices[ii] << std::endl;
-    BtoAidxfile.close();
-    // end SHIREEN
+    // std::ofstream BtoAidxfile(argv[outputBidx]);
+    // for(unsigned int ii = 0 ; ii < BtoAindices.size(); ii++)
+    //     BtoAidxfile << BtoAindices[ii] << std::endl;
+    // BtoAidxfile.close();
+    // // end SHIREEN
 
     if( !printOnlyParam )
     {
