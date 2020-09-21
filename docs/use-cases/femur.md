@@ -39,11 +39,19 @@ This calls `femur.py` (in `Examples/Python/`) to perform the following.
 * Launches ShapeWorksStudio to visualize the use case results (i.e., the optimized shape model and the groomed data) by calling functions in `AnalyzeUtils.py` (in `Examples/Python/`).
 
 
-If you wish to start with the optimization step using a previously groomed data, add `--start_with_prepped_data` tag.
+If you wish to start with the optimization step using previously groomed data, add `--start_with_prepped_data` tag.
 
 ```
 $ python RunUseCase.py --use_case femur --start_with_prepped_data
 ```
+
+To groom both the meshes and corresponding images, use `-start_with_image_and_segmentation_data` tag. The image origin, size, and spacing will be used in mesh rasterization. 
+
+```
+$ python RunUseCase.py --use_case femur --start_with_prepped_data
+```
+
+If this tag is not used, grooming will be done on meshes only. For rasterization, the origin and size will be inferred from the meshes and isotropic spacing will be used unless the user specifies otherwise.
 
 ### Running with Interactivity
 
