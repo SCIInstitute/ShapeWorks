@@ -13,7 +13,7 @@
 #include <vtkWindowToImageFilter.h>
 #include <vtkPNGWriter.h>
 #include <vtkPointData.h>
-
+#include <vtkUnsignedCharArray.h>
 #include <vtkExtractEdges.h>
 
 namespace shapeworks {
