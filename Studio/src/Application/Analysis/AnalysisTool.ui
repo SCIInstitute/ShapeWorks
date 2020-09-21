@@ -429,7 +429,7 @@ QToolButton:pressed{
              <bool>true</bool>
             </property>
             <property name="text">
-             <string>Difference</string>
+             <string>Difference --&gt;</string>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -875,8 +875,8 @@ QToolButton:pressed{
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>413</width>
-               <height>237</height>
+               <width>100</width>
+               <height>234</height>
               </rect>
              </property>
              <property name="sizePolicy">

@@ -325,6 +325,7 @@ void AnalysisTool::on_mean_button_clicked()
   this->ui_->group2_button->setChecked(false);
   this->ui_->difference_button->setChecked(false);
   this->ui_->group_animate_checkbox->setChecked(false);
+  this->ui_->mean_button->setChecked(true);
   emit update_view();
 }
 
@@ -336,6 +337,7 @@ void AnalysisTool::on_group1_button_clicked()
   this->ui_->group2_button->setChecked(false);
   this->ui_->difference_button->setChecked(false);
   this->ui_->group_animate_checkbox->setChecked(false);
+  this->ui_->group1_button->setChecked(true);
   emit update_view();
 }
 
@@ -347,16 +349,19 @@ void AnalysisTool::on_group2_button_clicked()
   this->ui_->group1_button->setChecked(false);
   this->ui_->difference_button->setChecked(false);
   this->ui_->group_animate_checkbox->setChecked(false);
+  this->ui_->group2_button->setChecked(true);
   emit update_view();
 }
 
 //-----------------------------------------------------------------------------
 void AnalysisTool::on_difference_button_clicked()
 {
+  this->ui_->group_slider->setValue(this->ui_->group_slider->minimum());
   this->ui_->mean_button->setChecked(false);
   this->ui_->group1_button->setChecked(false);
   this->ui_->group2_button->setChecked(false);
   this->ui_->group_animate_checkbox->setChecked(false);
+  this->ui_->difference_button->setChecked(true);
   emit update_view();
 }
 
@@ -429,7 +434,7 @@ const vnl_vector<double>& AnalysisTool::get_mean_shape_points()
     return this->empty_shape_;
   }
 
-  if (this->ui_->group1_button->isChecked()) {
+  if (this->ui_->group1_button->isChecked() || this->ui_->difference_button->isChecked()) {
     return this->stats_.Group1Mean();
   }
   else if (this->ui_->group2_button->isChecked()) {
