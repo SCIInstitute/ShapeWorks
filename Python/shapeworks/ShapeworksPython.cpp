@@ -157,9 +157,18 @@ PYBIND11_MODULE(shapeworks, m)
   .def("__itruediv__", [](FPoint3& p, const double x) { return p /= x; })
   ;
 
-  // Shapeworks Globals 
-  // Generic Transform
-  // Affine Transform
+  // Shapeworks Globals
+  // TODO: bind transforms
+  // typedef itk::Transform<double, 3> GenericTransform;
+  // using GenericTransform = itk::Transform<double, 3>;
+  // using TransformPtr = GenericTransform::Pointer;
+  // using IdentityTransform = itk::IdentityTransform<double, 3>;
+  // using IdentityTransformPtr = IdentityTransform::Pointer;
+  // py::object IdentityTransformPtr = py::cast(itk::Transform<double, 3>::New());
+
+  // m.def("TransformPtr", [] { return itk::Transform<double, 3>::New(); });
+  // m.def("IdentityTransformPtr", [] { return itk::IdentityTransform<double, 3>::New(); });
+  // m.def("AffineTransformPtr", [] { return itk::AffineTransform<double, 3>::New(); });
 
   // Shapeworks Globals
   m.def("toPoint", py::overload_cast<const Dims &>(&toPoint), "converts Dims to Point");
@@ -220,7 +229,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("antialias",             &Image::antialias, "smooth the image", "iterations"_a=50, "maxRMSErr"_a=0.01f, "layers"_a=0)
   .def("recenter",              &Image::recenter)
   .def("resample",              py::overload_cast<TransformPtr, Point3, Dims, Vector3, Image::ImageType::DirectionType, Image::InterpolationType>(&Image::resample))
-  .def("resample",              py::overload_cast<const Vector3&, Image::InterpolationType>(&Image::resample))
+  .def("resample",              py::overload_cast<const Vector&, Image::InterpolationType>(&Image::resample))
   .def("resize",                &Image::resize, "logicalDims"_a, "value"_a=0.0)
   .def("pad",                   py::overload_cast<int, Image::PixelType>(&Image::pad))
   .def("pad",                   py::overload_cast<int, int, int, Image::PixelType>(&Image::pad))

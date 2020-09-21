@@ -138,7 +138,7 @@ public:
   Image& resample(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);
 
   /// Resamples image using new physical spacing, updating logical dims to keep all image data for this spacing
-  Image& resample(const Vector3& physicalSpacing, InterpolationType interp = Linear);
+  Image& resample(const Vector& physicalSpacing, InterpolationType interp = Linear);
   
   /// Changes logical image size, computing new physical spacing based on this size (i.e., physical image size remains the same)
   Image& resize(Dims logicalDims, InterpolationType interp = Linear);
