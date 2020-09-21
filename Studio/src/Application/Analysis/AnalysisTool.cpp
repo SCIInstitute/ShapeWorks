@@ -337,6 +337,7 @@ void AnalysisTool::on_mean_button_clicked()
 //-----------------------------------------------------------------------------
 void AnalysisTool::on_group1_button_clicked()
 {
+  this->ui_->group_slider->setValue(this->ui_->group_slider->minimum());
   this->ui_->mean_button->setChecked(false);
   emit update_view();
 }
@@ -344,6 +345,7 @@ void AnalysisTool::on_group1_button_clicked()
 //-----------------------------------------------------------------------------
 void AnalysisTool::on_group2_button_clicked()
 {
+  this->ui_->group_slider->setValue(this->ui_->group_slider->maximum());
   this->ui_->mean_button->setChecked(false);
   emit update_view();
 }

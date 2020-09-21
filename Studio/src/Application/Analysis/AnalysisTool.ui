@@ -442,13 +442,13 @@ QToolButton:pressed{
           <item row="2" column="1">
            <widget class="QSlider" name="group_slider">
             <property name="maximum">
-             <number>10</number>
+             <number>20</number>
             </property>
             <property name="pageStep">
              <number>1</number>
             </property>
             <property name="value">
-             <number>5</number>
+             <number>10</number>
             </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -876,7 +876,7 @@ QToolButton:pressed{
                <x>0</x>
                <y>0</y>
                <width>413</width>
-               <height>236</height>
+               <height>237</height>
               </rect>
              </property>
              <property name="sizePolicy">
