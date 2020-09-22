@@ -62,7 +62,7 @@ function install_conda() {
        openblas=0.3.3 \
        doxygen=1.8.16 \
        graphviz=2.38.0 \
-       vtk=8.2.0 \
+       vtk=9.0.1 \
        scikit-learn=0.22.1 \
        tbb=2019.9 \
        tbb-devel=2019.9 \
