@@ -6,13 +6,14 @@ reorder_verts.cc
 Reorder and remap vertices.
 */
 
-#include <stdio.h>
 #include "TriMesh.h"
 #include "TriMesh_algo.h"
-#include <vector>
+using namespace std;
 #define dprintf TriMesh::dprintf
 #define eprintf TriMesh::eprintf
 
+
+namespace trimesh {
 
 // Remap vertices according to the given table
 //
@@ -22,20 +23,28 @@ Reorder and remap vertices.
 // Any per-vertex properties are renumbered along with the vertices.
 void remap_verts(TriMesh *mesh, const std::vector<int> &remap_table)
 {
-	int nv = mesh->vertices.size();
-	if (remap_table.size() != nv) {
+	if (remap_table.size() != mesh->vertices.size()) {
 		eprintf("remap_verts called with wrong table size!\n");
 		return;
 	}
 
 	// Check what we're doing
-	bool removing_verts = false;
+	bool removing_verts = false, any_left = false;
 	int last = -1;
+	int nv = mesh->vertices.size();
 	for (int i = 0; i < nv; i++) {
-		if (remap_table[i] < 0)
+		if (remap_table[i] < 0) {
 			removing_verts = true;
-		else if (remap_table[i] > last)
-			last = remap_table[i];
+		} else {
+			any_left = true;
+			if (remap_table[i] > last)
+				last = remap_table[i];
+		}
+	}
+
+	if (!any_left) {
+		mesh->clear();
+		return;
 	}
 
 	// Figure out what we have sitting around, so we can remap/recompute
@@ -86,7 +95,7 @@ void remap_verts(TriMesh *mesh, const std::vector<int> &remap_table)
 	}
 
 #define ERASE(property) mesh->property.erase(mesh->property.begin()+last+1, \
-					     mesh->property.end())
+                                             mesh->property.end())
 	ERASE(vertices);
 	if (have_col) ERASE(colors);
 	if (have_conf) ERASE(confidences);
@@ -104,7 +113,7 @@ void remap_verts(TriMesh *mesh, const std::vector<int> &remap_table)
 		int n0 = (mesh->faces[nextface][0] = remap_table[oldmesh->faces[i][0]]);
 		int n1 = (mesh->faces[nextface][1] = remap_table[oldmesh->faces[i][1]]);
 		int n2 = (mesh->faces[nextface][2] = remap_table[oldmesh->faces[i][2]]);
-		if ((n0 != -1) && (n1 != -1) && (n2 != -1))
+		if ((n0 >= 0) && (n1 >= 0) && (n2 >= 0))
 			nextface++;
 	}
 	mesh->faces.erase(mesh->faces.begin() + nextface, mesh->faces.end());
@@ -175,13 +184,16 @@ void remap_verts(TriMesh *mesh, const std::vector<int> &remap_table)
 // they are referenced by the grid, tstrips, or faces.
 void reorder_verts(TriMesh *mesh)
 {
+	if (mesh->grid.empty() && mesh->tstrips.empty() && mesh->faces.empty())
+		return;
+
 	dprintf("Reordering vertices... ");
 
 	int nv = mesh->vertices.size();
 	vector<int> remap(nv, -1);
 	int next = 0;
 	if (!mesh->grid.empty()) {
-		for (int i = 0; i < mesh->grid.size(); i++) {
+		for (size_t i = 0; i < mesh->grid.size(); i++) {
 			int v = mesh->grid[i];
 			if (v == -1)
 				continue;
@@ -190,7 +202,7 @@ void reorder_verts(TriMesh *mesh)
 		}
 	} else if (!mesh->tstrips.empty()) {
 		mesh->convert_strips(TriMesh::TSTRIP_TERM);
-		for (int i = 0; i < mesh->tstrips.size(); i++) {
+		for (size_t i = 0; i < mesh->tstrips.size(); i++) {
 			int v = mesh->tstrips[i];
 			if (v == -1)
 				continue;
@@ -199,7 +211,7 @@ void reorder_verts(TriMesh *mesh)
 		}
 		mesh->convert_strips(TriMesh::TSTRIP_LENGTH);
 	} else {
-		for (int i = 0; i < mesh->faces.size(); i++) {
+		for (size_t i = 0; i < mesh->faces.size(); i++) {
 			for (int j = 0; j < 3; j++) {
 				int v = mesh->faces[i][j];
 				if (remap[v] == -1)
@@ -220,3 +232,4 @@ void reorder_verts(TriMesh *mesh)
 	dprintf("Done.\n");
 }
 
+} // namespace trimesh

@@ -11,7 +11,6 @@ import itk
 import vtk
 import vtk.util.numpy_support
 
-USE_NATIVE_API = True  # use native API instead of external executable (just for testing; eventually only this API)
 from shapeworks import *
 from CommonUtils import *
 
@@ -103,14 +102,8 @@ def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False):
         img = Image(inname)
         T = img.centerOfMass() - img.center()
 
-        # binarize result since linear interpolation makes image blurry again (TODO: add option to use nearest neighbor interpolation, see github issue)
-        cmd = ["shapeworks", 
-               "readimage", "--name", outname, 
-               "binarize",
-               "write-image", "--name", outname]
-        if printCmd:
-            print("CMD: " + " ".join(cmd))
-        subprocess.check_call(cmd)
+        # binarize result since linear interpolation makes image blurry again
+        img.translate(T[0], T[1], T[2]).binarize().write(outname)
 
         if processRaw:
             innameImg = inDataListImg[i]
@@ -308,9 +301,6 @@ def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoot
 
 # Reflects images and meshes to reference side
 def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side, printCmd=True):
-<<<<<<< HEAD
-    print("\n############## Reflecting ###############")
-=======
     if reference_side == 'right':
         ref = 'R'
         flip = 'L'
@@ -319,8 +309,7 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side, printCmd=T
         flip = 'R'
     else:
         raise Exception("reference_side must be 'left' or 'right'")
-    
->>>>>>> refactor_templates
+
     if not os.path.exists(outDir):
         os.makedirs(outDir)
     outSegDir = os.path.join(outDir, "segmentations")
@@ -334,18 +323,6 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side, printCmd=T
     for image in img_list:
         img_name = os.path.basename(image)
         prefix = img_name.split("_")[0]
-<<<<<<< HEAD
-        if reference_side == 'right':
-            ref = 'R'
-            flip = 'L'
-        elif reference_side == 'left':
-            ref = 'L'
-            flip = 'R'
-        else:
-            print("Error: reference side must be 'left' or 'right'.")
-
-=======
->>>>>>> refactor_templates
         # check if ref exists
         ref_prefix = prefix + "_" + ref
         flip_prefix = prefix + "_" + flip

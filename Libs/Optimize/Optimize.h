@@ -23,6 +23,7 @@
 #include "ParticleSystem/itkParticleVectorFunction.h"
 #include "ParticleSystem/DomainType.h"
 #include "ParticleSystem/MeshWrapper.h"
+#include "ParticleSystem/OptimizationVisualizer.h"
 
 namespace shapeworks {
 
@@ -260,6 +261,10 @@ public:
   //! Set the python file to run at startup
   void SetPythonFile(std::string filename);
 
+  shapeworks::OptimizationVisualizer &GetVisualizer();
+  void SetShowVisualizer(bool show);
+  bool GetShowVisualizer();
+
 protected:
 
   //! Set the iteration callback.  Derived classes should override to set their own callback
@@ -368,14 +373,15 @@ protected:
   double m_cotan_sigma_factor = 5.0;
   std::vector<int> m_particle_flags;
   std::vector<int> m_domain_flags;
-  double m_narrow_band{4};
-  bool m_narrow_band_set{false};
-  bool m_fixed_domains_present{false};
-  int m_use_shape_statistics_after{-1};
+  double m_narrow_band = 0.0;
+  bool m_narrow_band_set = false;
+  bool m_fixed_domains_present = false;
+  int m_use_shape_statistics_after = -1;
   std::string m_python_filename;
 
   // Keeps track of which state the optimization is in.
   unsigned int m_mode = 0;
+  /* m_spacing is used to scale the random update vector for particle splitting. */
   double m_spacing = 0;
 
   std::vector<std::string> m_filenames;
@@ -399,7 +405,7 @@ protected:
   bool m_aborted = false;
   std::vector<std::array<itk::Point<double>, 3 >> m_cut_planes;
 
-  itk::MemberCommand<Optimize>::Pointer m_iterate_command;
+  //itk::MemberCommand<Optimize>::Pointer m_iterate_command;
   int m_total_iterations = 0;
   size_t m_iteration_count = 0;
 
@@ -408,6 +414,8 @@ protected:
   std::mt19937 m_rand{42};
 
   std::function<void(void)> m_iter_callback;
+  bool show_visualizer = false;
+  shapeworks::OptimizationVisualizer visualizer;
 };
 
 }

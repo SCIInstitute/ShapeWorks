@@ -28,3 +28,10 @@ void shapeworksEnvSetup() // fixme: use googletest's setup/teardown: https://git
   chdir(shapeworksTestsDir.c_str());
 }
 
+//---------------------------------------------------------------------------
+void pythonEnvSetup()
+{
+  // change to the shapeworksTest directory
+  auto pythonTestsDir(std::string(TEST_DATA_DIR) + "/../PythonTests");
+  chdir(pythonTestsDir.c_str());
+}

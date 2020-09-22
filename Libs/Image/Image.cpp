@@ -284,55 +284,67 @@ Image& Image::recenter()
   return setOrigin(negate(size() / 2.0));
 }
 
-Image& Image::resample(const Point3& newSpacing) // (TODO: linear filter by default, but nn is sometimes desired; add enum) 
+Image& Image::resample(const TransformPtr transform, const Point3 origin, Dims dims, const Vector3 spacing,
+                       const ImageType::DirectionType direction, Image::InterpolationType interp)
 {
-  using ResampleFilter = itk::ResampleImageFilter<ImageType, ImageType>;
-  ResampleFilter::Pointer resampler = ResampleFilter::New();
+  using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;
+  FilterType::Pointer resampler = FilterType::New();
 
-  // compute new dimensions
-  Dims inputDims(dims());
-  Vector3 inputSpacing(spacing());
-  Dims newDims({ static_cast<unsigned>(std::floor(inputDims[0] * inputSpacing[0] / newSpacing[0])),
-                 static_cast<unsigned>(std::floor(inputDims[1] * inputSpacing[1] / newSpacing[1])),
-                 static_cast<unsigned>(std::floor(inputDims[2] * inputSpacing[2] / newSpacing[2])) });
+  switch (interp) {
+    case Linear:
+      // linear interpolation is the default
+      break;
+    case NearestNeighbor:
+    {
+      using InterpolatorType = itk::NearestNeighborInterpolateImageFunction<ImageType, double>;
+      InterpolatorType::Pointer interpolator = InterpolatorType::New();
+      resampler->SetInterpolator(interpolator);
+      break;
+    }
+    default:
+      throw std::invalid_argument("Unknown Image::InterpolationType");
+  }
 
-  resampler->SetOutputSpacing(newSpacing.GetDataPointer());
-  resampler->SetOutputOrigin(origin());
-  resampler->SetOutputDirection(image->GetDirection());
-  resampler->SetSize(newDims);
   resampler->SetInput(this->image);
+  resampler->SetTransform(transform ? transform : IdentityTransform::New());
+  resampler->SetOutputOrigin(origin);
+  resampler->SetOutputSpacing(spacing);
+  resampler->SetSize(dims);
+  resampler->SetOutputDirection(direction);
+
   resampler->Update();
   this->image = resampler->GetOutput();
 
   return *this;
 }
 
-Image& Image::resize(Dims newDims) //, FilterType filtertype) // todo: enable specification of filter type using enum
+Image& Image::resample(const Vector3& spacing, Image::InterpolationType interp)
 {
-  using ResampleFilter = itk::ResampleImageFilter<ImageType, ImageType>;
-  ResampleFilter::Pointer resampler = ResampleFilter::New();
+  // compute logical dimensions that keep all image data for this spacing
+  Dims inputDims(this->dims());
+  Vector3 inputSpacing(this->spacing());
+  Dims dims({ static_cast<unsigned>(std::floor(inputDims[0] * inputSpacing[0] / spacing[0])),
+              static_cast<unsigned>(std::floor(inputDims[1] * inputSpacing[1] / spacing[1])),
+              static_cast<unsigned>(std::floor(inputDims[2] * inputSpacing[2] / spacing[2])) });
+  
+  return resample(IdentityTransform::New(), origin(), dims, spacing, coordsys(), interp);
+}
 
-  // use existing dims if unspecified
-  Dims inputDims(dims());
-  if (newDims[0] == 0) newDims[0] = inputDims[0];
-  if (newDims[1] == 0) newDims[1] = inputDims[1];
-  if (newDims[2] == 0) newDims[2] = inputDims[2];
+Image& Image::resize(Dims dims, Image::InterpolationType interp)
+{
+  // use existing dims for any that are unspecified
+  Dims inputDims(this->dims());
+  if (dims[0] == 0) dims[0] = inputDims[0];
+  if (dims[1] == 0) dims[1] = inputDims[1];
+  if (dims[2] == 0) dims[2] = inputDims[2];
 
-  // compute new spacing
+  // compute new spacing so physical image size remains the same
   Vector3 inputSpacing(spacing());
-  Point3 newSpacing({ inputSpacing[0] * inputDims[0] / newDims[0],
-                      inputSpacing[1] * inputDims[1] / newDims[1],
-                      inputSpacing[2] * inputDims[2] / newDims[2] });
+  Vector3 spacing(makeVector({ inputSpacing[0] * inputDims[0] / dims[0],
+                               inputSpacing[1] * inputDims[1] / dims[1],
+                               inputSpacing[2] * inputDims[2] / dims[2] }));
 
-  resampler->SetOutputSpacing(newSpacing.GetDataPointer());
-  resampler->SetOutputOrigin(origin());
-  resampler->SetOutputDirection(image->GetDirection());
-  resampler->SetSize(newDims);
-  resampler->SetInput(this->image);
-  resampler->Update();
-  this->image = resampler->GetOutput();
-
-  return *this;
+  return resample(IdentityTransform::New(), origin(), dims, spacing, coordsys(), interp);
 }
 
 bool Image::compare(const Image& other, bool verifyall, double tolerance, double precision) const
@@ -442,7 +454,7 @@ Image& Image::scale(const Vector3 &s)
   recenter();
 
   AffineTransformPtr xform(AffineTransform::New());
-  xform->Scale(invert(Vector(s)));         // invert scale ratio because ITK applies transformations backwards.  
+  xform->Scale(invert(Vector(s))); // invert scale ratio because ITK applies transformations backwards.  
   applyTransform(xform);
   setOrigin(origOrigin);           // restore origin
   
@@ -464,46 +476,15 @@ Image& Image::rotate(const double angle, const Vector3 &axis)
   return *this;
 }
 
-Image& Image::applyTransform(const TransformPtr transform, const Dims dims, const Point3 origin, const Vector spacing, const ImageType::DirectionType direction)
+Image& Image::applyTransform(const TransformPtr transform, Image::InterpolationType interp)
 {
-  using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;
-  FilterType::Pointer resampler = FilterType::New();
-
-  using InterpolatorType = itk::NearestNeighborInterpolateImageFunction<ImageType, double>;
-  InterpolatorType::Pointer interpolator = InterpolatorType::New();
-
-  resampler->SetInterpolator(interpolator);
-  resampler->SetInput(this->image);
-  resampler->SetTransform(transform);
-
-  resampler->SetSize(dims);
-  resampler->SetOutputOrigin(origin);
-  resampler->SetOutputSpacing(spacing);
-  resampler->SetOutputDirection(direction);
-
-  resampler->Update();
-  this->image = resampler->GetOutput();
-
-  return *this;
+  return applyTransform(transform, origin(), dims(), spacing(), coordsys(), interp);
 }
 
-Image& Image::applyTransform(const TransformPtr transform)
+Image& Image::applyTransform(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing,
+                             const ImageType::DirectionType coordsys, Image::InterpolationType interp)
 {
-  using FilterType = itk::ResampleImageFilter<ImageType, ImageType>; // linear interpolation by default
-  FilterType::Pointer resampler = FilterType::New();
-
-  resampler->SetInput(this->image);
-  resampler->SetTransform(transform);
-
-  resampler->SetSize(dims());
-  resampler->SetOutputOrigin(origin());
-  resampler->SetOutputSpacing(spacing());
-  resampler->SetOutputDirection(coordsys());
-
-  resampler->Update();
-  this->image = resampler->GetOutput();
-
-  return *this;
+  return resample(transform, origin, dims, spacing, coordsys, interp);
 }
 
 Image& Image::extractLabel(const PixelType label)
@@ -526,16 +507,16 @@ Image& Image::closeHoles(const PixelType foreground)
   return *this;
 }
 
-Image& Image::binarize(PixelType minval, PixelType maxval, PixelType inner_value, PixelType outer_value)
+Image& Image::binarize(PixelType minVal, PixelType maxVal, PixelType innerVal, PixelType outerVal)
 {
   using FilterType = itk::BinaryThresholdImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
   filter->SetInput(this->image);
-  filter->SetLowerThreshold(minval + std::numeric_limits<PixelType>::epsilon());
-  filter->SetUpperThreshold(maxval);
-  filter->SetInsideValue(inner_value);
-  filter->SetOutsideValue(outer_value);
+  filter->SetLowerThreshold(minVal + std::numeric_limits<PixelType>::epsilon());
+  filter->SetUpperThreshold(maxVal);
+  filter->SetInsideValue(innerVal);
+  filter->SetOutsideValue(outerVal);
   filter->Update();
   this->image = filter->GetOutput();
 
@@ -631,7 +612,7 @@ Image& Image::gaussianBlur(double sigma)
   return *this;
 }
 
-Image::Region Image::boundingBox(PixelType isoValue) const
+Image::Region Image::boundingBox(PixelType isovalue) const
 {
   Image::Region bbox;
 
@@ -640,7 +621,7 @@ Image::Region Image::boundingBox(PixelType isoValue) const
   {
     PixelType val = imageIterator.Get();
 
-    if (val >= isoValue)
+    if (val >= isovalue)
       bbox.expand(imageIterator.GetIndex());
 
     ++imageIterator;
@@ -744,7 +725,7 @@ Image& Image::setOrigin(Point3 origin)
   return *this;
 }
 
-Point3 Image::centerOfMass(PixelType minval, PixelType maxval) const
+Point3 Image::centerOfMass(PixelType minVal, PixelType maxVal) const
 {
   itk::ImageRegionIteratorWithIndex<ImageType> imageIt(this->image, image->GetLargestPossibleRegion());
   int numPixels = 0;
@@ -753,7 +734,7 @@ Point3 Image::centerOfMass(PixelType minval, PixelType maxval) const
   while (!imageIt.IsAtEnd())
   {
     PixelType val = imageIt.Get();
-    if (val > minval && val <= maxval)
+    if (val > minVal && val <= maxVal)
     {
       numPixels++;
       com += image->TransformIndexToPhysicalPoint<double>(imageIt.GetIndex());

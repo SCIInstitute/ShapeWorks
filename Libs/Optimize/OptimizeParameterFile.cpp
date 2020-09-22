@@ -3,6 +3,7 @@
 #include "ParticleSystem/DomainType.h"
 
 #include <itkImageFileReader.h>
+#include <vtkPLYReader.h>
 
 #include <tinyxml.h>
 
@@ -53,6 +54,13 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
     }
   }
   optimize->SetDomainType(domain_type);
+
+  if (optimize->GetDomainType() == shapeworks::DomainType::Mesh) {
+      if (!this->set_visualizer_parameters(&doc_handle, optimize)) {
+        return false;
+      }
+  }
+
 
   std::vector<unsigned int> number_of_particles;
   elem = doc_handle.FirstChild("number_of_particles").Element();
@@ -126,6 +134,29 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
     return false;
   }
 
+  return true;
+}
+
+bool OptimizeParameterFile::set_visualizer_parameters(TiXmlHandle *docHandle, Optimize *optimize)
+{
+  TiXmlElement *elem = nullptr;
+  // Currently the visualizer only works if you call AddMesh on it for every domain.
+  // In order to get it working for image domains, need to add code that extracts meshes from each image and adds them to the visualizer.
+  elem = docHandle->FirstChild("visualizer_enable").Element();
+  if (elem) {
+    optimize->SetShowVisualizer(( bool) atoi(elem->GetText()));
+
+    elem = docHandle->FirstChild("visualizer_wireframe").Element();
+    if (elem) {
+      optimize->GetVisualizer().SetWireFrame(( bool) atoi(elem->GetText()));
+    }
+    elem = docHandle->FirstChild("visualizer_screenshot_directory").Element();
+    if (elem) {
+      std::cout << "WARNING Saving screenshots will increase run time even more!\n";
+      std::string dir = elem->GetText();
+      optimize->GetVisualizer().SetSaveScreenshots(true, dir);
+    }
+  }
   return true;
 }
 
@@ -466,35 +497,24 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
         std::cout << "Reading inputfile: " << meshFiles[index] << "...\n" << std::flush;
       }
 
-      TriMesh* themesh = TriMesh::read(meshFiles[index].c_str());
+      if (this->verbosity_level_ <= 1) {
+        TriMesh::set_verbose(0);
+      }
+      TriMesh *themesh = TriMesh::read(meshFiles[index].c_str());
       if (themesh != NULL) {
-        themesh->need_faces();
-        themesh->need_neighbors();
-        orient(themesh);
-        themesh->need_bsphere();
-        if (!themesh->normals.empty())
-          themesh->normals.clear();
-        themesh->need_normals();
-        if (!themesh->tstrips.empty())
-          themesh->tstrips.clear();
-        themesh->need_tstrips();
-        if (!themesh->adjacentfaces.empty())
-          themesh->adjacentfaces.clear();
-        themesh->need_adjacentfaces();
-        if (!themesh->across_edge.empty())
-          themesh->across_edge.clear();
-        themesh->need_across_edge();
-        themesh->need_faceedges();
-        themesh->need_oneringfaces();
-        themesh->need_abs_curvatures();
-        themesh->need_speed();
-        themesh->setSpeedType(1);
-
-        shapeworks::MeshWrapper* mesh = new shapeworks::TriMeshWrapper(themesh);
+        shapeworks::MeshWrapper *mesh = new shapeworks::TriMeshWrapper(themesh);
         optimize->AddMesh(mesh);
       }
       else {
+        std::cerr << "Failed to read " << meshFiles[index] << "\n";
         return false;
+      }
+
+      if (optimize->GetShowVisualizer()) {
+        vtkSmartPointer<vtkPLYReader> reader = vtkSmartPointer<vtkPLYReader>::New();
+        reader->SetFileName(meshFiles[index].c_str());
+        reader->Update();
+        optimize->GetVisualizer().AddMesh(reader->GetOutput(), themesh);
       }
     }
     else {

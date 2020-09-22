@@ -570,13 +570,16 @@ void Optimize::AddSinglePoint()
 {
   typedef itk::ParticleSystem<3> ParticleSystemType;
   typedef ParticleSystemType::PointType PointType;
+
+  PointType firstPointPosition;
+  firstPointPosition = m_sampler->GetParticleSystem()->GetDomain(0)->GetValidLocationNear(firstPointPosition);
+
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
     if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) > 0) {
       continue;
     }
-
-    const auto zcPos = m_sampler->GetParticleSystem()->GetDomain(i)->GetZeroCrossingPoint();
-    m_sampler->GetParticleSystem()->AddPosition(zcPos, i);
+    PointType pos = m_sampler->GetParticleSystem()->GetDomain(i)->GetValidLocationNear(firstPointPosition);
+    m_sampler->GetParticleSystem()->AddPosition(pos, i);
   }
 }
 
@@ -654,10 +657,8 @@ void Optimize::Initialize()
   for (int i = 0; i < 3; i++) {
     random[i] = static_cast < double > (this->m_rand());
   }
-  double norm = random.magnitude();
-  random /= norm;
+  random = random.normalize() * this->m_spacing;
 
-  double epsilon = this->m_spacing;
   bool flag_split = false;
 
   for (int i = 0; i < n; i++) {
@@ -669,12 +670,19 @@ void Optimize::Initialize()
   }
 
   while (flag_split) {
+    for (int i = 0; i < 3; i++) {
+      random[i] = static_cast <double> (this->m_rand());
+    }
+    
+    // divide by 5 since m_spacing was artificially multiplied by 5 elsewhere
+    random = random.normalize() * this->m_spacing / 5.0;
+    
     //        m_Sampler->GetEnsembleEntropyFunction()->PrintShapeMatrix();
     this->OptimizerStop();
     for (int i = 0; i < n; i++) {
       int d = i % m_domains_per_shape;
       if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d]) {
-        m_sampler->GetParticleSystem()->SplitAllParticlesInDomain(random, epsilon, i, 0);
+        m_sampler->GetParticleSystem()->SplitAllParticlesInDomain(random, i, 0);
       }
     }
 
@@ -967,11 +975,15 @@ void Optimize::AbortOptimization()
   this->m_sampler->GetOptimizer()->AbortProcessing();
 }
 
+
 //---------------------------------------------------------------------------
 void Optimize::IterateCallback(itk::Object*, const itk::EventObject&)
 {
   if (this->m_iter_callback) {
     this->m_iter_callback();
+  }
+  if (this->GetShowVisualizer()) {
+    this->GetVisualizer().IterationCallback(m_sampler->GetParticleSystem());
   }
 
   if (m_perform_good_bad == true) {
@@ -1001,25 +1013,6 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject&)
   }
 
   this->ComputeEnergyAfterIteration();
-
-  int lnth = m_total_energy.size();
-  if (lnth > 1) {
-    double val = std::abs(m_total_energy[lnth - 1] - m_total_energy[lnth - 2]) / std::abs(
-      m_total_energy[lnth - 2]);
-    if ((m_optimizing == false && val < m_initialization_criterion) ||
-        (m_optimizing == true && val < m_optimization_criterion)) {
-      m_saturation_counter++;
-    }
-    else {
-      m_saturation_counter = 0;
-    }
-    if (m_saturation_counter > 10) {
-      if (m_verbosity_level > 2) {
-        std::cout << " \n ----Early termination due to minimal energy decay---- \n";
-      }
-      this->OptimizerStop();
-    }
-  }
 
   if (m_checkpointing_interval != 0 && m_disable_checkpointing == false) {
     m_checkpoint_counter++;
@@ -1081,6 +1074,13 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject&)
 //---------------------------------------------------------------------------
 void Optimize::ComputeEnergyAfterIteration()
 {
+  // The energy computed here is only used for writing to file
+  if (!this->m_file_output_enabled) {
+    return;
+  }
+  if (!this->m_log_energy) {
+    return;
+  }
   int numShapes = m_sampler->GetParticleSystem()->GetNumberOfDomains();
   double corrEnergy = 0.0;
 
@@ -1965,7 +1965,7 @@ void Optimize::AddImage(ImageType::Pointer image)
   this->m_sampler->AddImage(image, this->GetNarrowBand());
   this->m_num_shapes++;
   if (image) {
-    this->m_spacing = image->GetSpacing()[0];
+    this->m_spacing = image->GetSpacing()[0] * 5;
   }
 }
 
@@ -1974,7 +1974,7 @@ void Optimize::AddMesh(shapeworks::MeshWrapper* mesh)
 {
   this->m_sampler->AddMesh(mesh);
   this->m_num_shapes++;
-  this->m_spacing = 1;
+  this->m_spacing = 0.5;
 }
 
 //---------------------------------------------------------------------------
@@ -1993,6 +1993,21 @@ void Optimize::SetPointFiles(const std::vector<std::string>& point_files)
 int Optimize::GetNumShapes()
 {
   return this->m_num_shapes;
+}
+
+shapeworks::OptimizationVisualizer& Optimize::GetVisualizer() {
+  return visualizer;
+}
+
+void Optimize::SetShowVisualizer(bool show) {
+  if (show && this->m_verbosity_level > 0) {
+    std::cout << "WARNING Using the visualizer will increase run time!\n";
+  }
+  this->show_visualizer = show;
+}
+
+bool Optimize::GetShowVisualizer() {
+  return this->show_visualizer;
 }
 
 //---------------------------------------------------------------------------
@@ -2102,9 +2117,9 @@ int Optimize::GetUseShapeStatisticsAfter()
 //---------------------------------------------------------------------------
 void Optimize::SetIterationCallback()
 {
-  this->m_iterate_command = itk::MemberCommand<Optimize>::New();
-  this->m_iterate_command->SetCallbackFunction(this, &Optimize::IterateCallback);
-  this->m_sampler->GetOptimizer()->AddObserver(itk::IterationEvent(), m_iterate_command);
+  itk::MemberCommand<Optimize>::Pointer m_iterate_command = itk::MemberCommand<Optimize>::New();
+  m_iterate_command->SetCallbackFunction(this, &Optimize::IterateCallback);
+  m_sampler->GetOptimizer()->AddObserver(itk::IterationEvent(), m_iterate_command);
 }
 
 //---------------------------------------------------------------------------
