@@ -23,7 +23,7 @@ def Run_Pipeline(args):
     datasetName = 'femur'
     filename = datasetName + '.zip'
     parentDir = 'TestFemurMesh/'
-    prepDir = parentDir + 'PrepOutput/'
+    prepDir = parentDir + 'groomed/'
     meshDir = parentDir + datasetName + '/groomed/meshes/'
     
     if not os.path.exists(parentDir):
@@ -52,7 +52,8 @@ def Run_Pipeline(args):
     meshFiles = meshFiles[:15]
     print(meshFiles)
 
-    pointDir = parentDir + 'PointFiles/'
+    pointDir = parentDir + 'shape_models/'
+
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
