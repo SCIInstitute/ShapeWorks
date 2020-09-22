@@ -309,7 +309,7 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side, printCmd=T
         flip = 'R'
     else:
         raise Exception("reference_side must be 'left' or 'right'")
-
+    
     if not os.path.exists(outDir):
         os.makedirs(outDir)
     outSegDir = os.path.join(outDir, "segmentations")
