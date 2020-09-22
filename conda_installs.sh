@@ -28,7 +28,7 @@ function install_conda() {
       return 1
     fi
 
-    source ~/miniconda3/bin/activate
+    conda activate
     conda config --set auto_activate_base false
   fi
 
