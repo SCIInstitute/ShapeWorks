@@ -123,7 +123,7 @@ TEST(ImageTests, isoresampleImageAnisotropicTest)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/isoresample/");
 
   Image image(test_location + "image-anisotropic-input.nrrd");
-  ImageUtils::isoresample(image);
+  ImageUtils::isoresample(image, 10.0);
   image.recenter();
   Image ground_truth(test_location + "image-anisotropic-isoresampled.nrrd");
 
@@ -221,13 +221,25 @@ TEST(ImageTests, comTest1)
 
 TEST(ImageTests, comTest2)
 {
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/com/");
 
   Image image(test_location + "la-bin.nrrd");
   Point com({79.2113, 117.8811, 46.4797});
   const double eps = 1E-4;
 
   ASSERT_TRUE(epsEqual(image.centerOfMass(), com, eps));
+}
+
+TEST(ImageTests, comTest3)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/com/");
+
+  Image image(test_location + "la-bin.nrrd");
+  TransformPtr xform = ImageUtils::createCenterOfMassTransform(image);
+  image.applyTransform(xform, Image::NearestNeighbor);
+  Image ground_truth(test_location + "com_baseline3.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
 }
 
 TEST(ImageTests, scaleTest1)
@@ -248,6 +260,17 @@ TEST(ImageTests, scaleTest2)
   Image image(test_location + "la-bin-centered.nrrd");
   image.scale(makeVector({-1.0, 1.5, 1.0})); // inverted in x
   Image ground_truth(test_location + "scale2_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, rotateTest0)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/rotate/");
+
+  Image image(test_location + "la1-small.nrrd");
+  image.rotate(Pi / 2.0, makeVector({0,0,1})); // 90 degrees around the z axis
+  Image ground_truth(test_location + "rotate0_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -468,7 +491,7 @@ TEST(ImageTests, icpTest)
   Image target(test_location + "target.nrrd");
   Image source(test_location + "source.nrrd");
   TransformPtr transform(ImageUtils::createRigidRegistrationTransform(target, source));
-  image.applyTransform(transform, target.dims(), target.origin(), target.spacing(), target.coordsys());
+  image.applyTransform(transform, target.origin(), target.dims(), target.spacing(), target.coordsys());
   Image ground_truth(test_location + "icp_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -1055,3 +1078,118 @@ TEST(ImageTests, divideTest2)
 
   ASSERT_TRUE(image == baseline);
 }
+
+TEST(ImageTests, resample1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/resample/");
+
+  Image image(test_location + "la1-small.nrrd");
+  image.resample(makeVector({0.78, 1.0, 10.0}));
+  Image ground_truth(test_location + "baseline_resample1.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, resample2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/resample/");
+
+  Image image(test_location + "la1-small.nrrd");
+  image.resample(makeVector({0.98, 1.02, 3.14159}));
+  Image ground_truth(test_location + "baseline_resample2.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, resample3)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/resample/");
+
+  Image image(test_location + "la1-small.nrrd");
+  image.resample(makeVector({0.98, 1.02, 3.14159}), Image::NearestNeighbor);
+  Image ground_truth(test_location + "baseline_resample3.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, resample4)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/resample/");
+  Image image(test_location + "la1-small.nrrd");
+
+  // sample center of image at same physical resolution
+  image.resample(nullptr,
+                 image.origin() + toPoint(image.dims() * 0.25) * toPoint(image.spacing()), // 1/4 into the image
+                 image.dims() * 0.5, image.spacing(), image.coordsys(), Image::Linear);
+
+  Image ground_truth(test_location + "baseline_resample4.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+/* fails to compile on linux due to weird template conflicts with itkeigen
+TEST(ImageTests, resample5)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/resample/");
+  Image image(test_location + "la1-small.nrrd");
+
+  // sample center of image at same physical resolution using a translation instead of changing origin
+  AffineTransformPtr xform(AffineTransform::New());
+  xform->Translate(toVector(toPoint(image.dims() * 0.25) * toPoint(image.spacing())));
+  image.resample(xform, image.origin(),
+                 image.dims() * 0.5, image.spacing(), image.coordsys(), Image::Linear);
+
+  Image ground_truth(test_location + "baseline_resample5.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+*/
+
+TEST(ImageTests, resample6)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/resample/");
+  Image image(test_location + "la1-small.nrrd");
+
+  // sample center of image at 2x physical resolution
+  image.resample(nullptr,
+                 image.origin() + toPoint(image.dims() * 0.25) * toPoint(image.spacing()), // 1/4 into the image
+                 image.dims(), image.spacing() * 0.5, image.coordsys(), Image::Linear);
+
+  Image ground_truth(test_location + "baseline_resample6.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, resize1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/resize/");
+
+  Image image(test_location + "la1-small.nrrd");
+  image.resize(Dims({20, 40, 60}));
+  Image ground_truth(test_location + "baseline_resize1.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, resize2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/resize/");
+
+  Image image(test_location + "la1-small.nrrd");
+  image.resize(Dims({12, 14, 80}));
+  Image ground_truth(test_location + "baseline_resize2.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, resize3)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/resize/");
+
+  Image image(test_location + "la1-small.nrrd");
+  image.resize(Dims({12, 14, 80}), Image::NearestNeighbor);
+  Image ground_truth(test_location + "baseline_resize3.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+

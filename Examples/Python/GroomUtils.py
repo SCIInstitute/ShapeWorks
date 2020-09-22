@@ -11,7 +11,6 @@ import itk
 import vtk
 import vtk.util.numpy_support
 
-USE_NATIVE_API = True  # use native API instead of external executable (just for testing; eventually only this API)
 from shapeworks import *
 from CommonUtils import *
 
@@ -300,9 +299,17 @@ def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoot
 
 ### Mesh Grooming 
 
-# Refelcts images and meshes to reference side
+# Reflects images and meshes to reference side
 def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side, printCmd=True):
-    print("\n############## Reflecting ###############")
+    if reference_side == 'right':
+        ref = 'R'
+        flip = 'L'
+    elif reference_side == 'left':
+        ref = 'L'
+        flip = 'R'
+    else:
+        raise Exception("reference_side must be 'left' or 'right'")
+    
     if not os.path.exists(outDir):
         os.makedirs(outDir)
     outSegDir = os.path.join(outDir, "segmentations")
@@ -316,15 +323,6 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side, printCmd=T
     for image in img_list:
         img_name = os.path.basename(image)
         prefix = img_name.split("_")[0]
-        if reference_side == 'right':
-            ref = 'R'
-            flip = 'L'
-        elif reference_side == 'left':
-            ref = 'L'
-            flip = 'R'
-        else:
-            print("Error: reference side must be 'left' or 'right'.")
-
         # check if ref exists
         ref_prefix = prefix + "_" + ref
         flip_prefix = prefix + "_" + flip

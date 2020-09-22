@@ -169,6 +169,7 @@ namespace optparse
         void clear()
         {
           _map.clear();
+          _user_set.clear();
         }
 
         int num_set() const
@@ -661,6 +662,22 @@ namespace optparse
             if (not help().empty())
             {
                 std::string help_str = (not get_default().empty()) ? detail::str_replace(help(), "%default", get_default()) : help();
+                {
+                  std::string mvar = metavar();
+                  if (mvar.empty())
+                  {
+                    mvar = type();
+                    std::transform(mvar.begin(), mvar.end(), mvar.begin(), ::toupper);
+                  }
+
+                  if (mvar == "CHOICE")
+                  {
+                    std::list<std::string> tmp = choices();
+                    std::transform(tmp.begin(), tmp.end(), tmp.begin(), detail::str_wrap("'"));
+                    help_str += " (choose from " + detail::str_join(", ", tmp.begin(), tmp.end()) + ")";
+                  }
+                }
+                
                 ss << detail::str_format(help_str, opt_width, width, indent_first);
             }
 

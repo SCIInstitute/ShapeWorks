@@ -15,6 +15,8 @@ class Mesh;
 class Image
 {
 public:
+  enum InterpolationType { Linear, NearestNeighbor };
+
   using PixelType = float;
   using ImageType = itk::Image<PixelType, 3>;
 
@@ -22,7 +24,7 @@ public:
   struct Region
   {
     Coord min = Coord({ 1000000000, 1000000000, 1000000000 });
-    Coord max = Coord({-1000000000, -1000000000, -1000000000 });
+    Coord max = Coord({ -1000000000, -1000000000, -1000000000 });
     Region(const Dims &dims) : min({0, 0, 0}) {
       if (0 != (dims[0] + dims[1] + dims[2])) 
         max = Coord({static_cast<long>(dims[0])-1,
@@ -132,8 +134,14 @@ public:
   /// helper identical to setOrigin(image.center()) changing origin (in the image header) to physcial center of the image
   Image& recenter();
 
-  /// Resamples image with new physical spacing and logical size [same size if unspecified]
-  Image& resample(const Point3& physicalSpacing, Dims logicalDims);
+  /// Resamples by applying transform then sampling from given origin along direction axes at spacing physical units per pixel for dims pixels using specified interpolator
+  Image& resample(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);
+
+  /// Resamples image using new physical spacing, updating logical dims to keep all image data for this spacing
+  Image& resample(const Vector& physicalSpacing, InterpolationType interp = Linear);
+  
+  /// Changes logical image size, computing new physical spacing based on this size (i.e., physical image size remains the same)
+  Image& resize(Dims logicalDims, InterpolationType interp = Linear);
 
   /// pads an image in all directions with constant value
   Image& pad(int padding, PixelType value = 0.0);
@@ -151,10 +159,10 @@ public:
   Image& rotate(const double angle, const Vector3 &axis);
 
   /// applies the given transformation to the image by using resampling filter
-  Image& applyTransform(const TransformPtr transform, const Dims dims, const Point3 origin, const Vector spacing, const ImageType::DirectionType direction);
+  Image& applyTransform(const TransformPtr transform, InterpolationType interp = Linear);
 
   /// applies the given transformation to the image by using resampling filter
-  Image& applyTransform(const TransformPtr transform);
+  Image& applyTransform(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);
 
   /// extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image
   Image& extractLabel(const PixelType label = 1.0);
@@ -163,7 +171,7 @@ public:
   Image& closeHoles(const PixelType foreground = 0.0);
   
   /// threholds image into binary label based on upper and lower intensity bounds given by user
-  Image& binarize(PixelType minval = 0.0, PixelType maxval = std::numeric_limits<PixelType>::max(), PixelType inner_value = 1.0, PixelType outer_value = 0.0);
+  Image& binarize(PixelType minVal = 0.0, PixelType maxVal = std::numeric_limits<PixelType>::max(), PixelType innerVal = 1.0, PixelType outerVal = 0.0);
 
   /// computes distance transform volume from a (preferably antialiased) binary image using the specified isovalue
   Image& computeDT(PixelType isoValue = 0.0);
@@ -219,10 +227,10 @@ public:
   const ImageType::DirectionType coordsys() const { return image->GetDirection(); };
 
   /// returns average physical coordinate of pixels in range (minval, maxval]
-  Point3 centerOfMass(PixelType minval = 0.0, PixelType maxval = 1.0) const;  
+  Point3 centerOfMass(PixelType minVal = 0.0, PixelType maxVal = 1.0) const;
 
   /// computes the logical coordinates of the largest region of data <= the given isoValue
-  Image::Region boundingBox(PixelType isoValue = 1.0) const;
+  Image::Region boundingBox(PixelType isovalue = 1.0) const;
 
   /// converts from pixel coordinates to physical space
   Point3 logicalToPhysical(const Coord &v) const;

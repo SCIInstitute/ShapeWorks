@@ -6,6 +6,7 @@
 #include <itkSize.h>
 #include <itkIndex.h>
 #include <itkAffineTransform.h>
+#include <itkIdentityTransform.h>
 
 namespace shapeworks {
 
@@ -30,6 +31,7 @@ Vector3 makeVector(std::array<double, 3>&& arr);
 
 /// All transforms can be accessed using a generic transform pointer
 using GenericTransform   = itk::Transform<double, 3>;
+using IdentityTransform  = itk::IdentityTransform<double, 3>;
 using TransformPtr       = GenericTransform::Pointer;
 
 /// Affine transforms are used for many Image manipulation commands
@@ -116,8 +118,12 @@ P& operator-=(P &p, const P &q)
 }
 
 class Image;
-template<typename P, typename = std::enable_if_t<std::is_same<Point3, P>::value ||
-                                                 std::is_same<Image, P>::value> >
+template<typename P, typename = std::enable_if_t<std::is_same<Image, P>::value ||
+                                                 std::is_same<Coord, P>::value ||
+                                                 std::is_same<Dims, P>::value ||
+                                                 std::is_same<Point, P>::value ||
+                                                 std::is_same<IPoint3, P>::value ||
+                                                 std::is_same<FPoint3, P>::value> >
 P operator*(const P &p, const double x)
 {
   P ret;

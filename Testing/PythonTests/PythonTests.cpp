@@ -1,33 +1,43 @@
-#include <iostream>
-#include <fstream>
-#include <cstdio>
-
 #include "Testing.h"
 
 //---------------------------------------------------------------------------
-static bool file_exists(const std::string &filename)
+TEST(pythonTests, info)
 {
-  return access(filename.c_str(), 0) == 0;
+  pythonEnvSetup();
+  ASSERT_FALSE(system("python info.py"));
 }
 
 //---------------------------------------------------------------------------
-TEST(PythonTests, ellipsoidTinyTest) {
-  shapeworksEnvSetup();
+TEST(pythonTests, compare)
+{
+  pythonEnvSetup();
+  ASSERT_FALSE(system("python compare.py"));
+}
 
-  std::string test_location(std::string(TEST_DATA_DIR) + "/../../Examples/Python");
+//---------------------------------------------------------------------------
+TEST(pythonTests, compareFail)
+{
+  pythonEnvSetup();
+  ASSERT_TRUE(system("python compareFail.py"));
+}
 
-  // decide success by checking that one of the files created by the use case exists (todo: better measure of success)
-  std::string check_file = test_location +
-    "/TestEllipsoids/PointFiles/32/seg.ellipsoid_00.isores.center.pad.com.aligned.cropped.tpSmoothDT_local.particles";
+//---------------------------------------------------------------------------
+TEST(pythonTests, antialias)
+{
+  pythonEnvSetup();
+  ASSERT_FALSE(system("python antialias.py"));
+}
 
-  // delete the file to make sure it's remade
-  chdir(test_location.c_str());
-  std::remove(check_file.c_str());
+//---------------------------------------------------------------------------
+TEST(pythonTests, antialiasFail)
+{
+  pythonEnvSetup();
+  ASSERT_TRUE(system("python antialiasFail.py"));
+}
 
-  // run the use case
-  std::string command = "python RunUseCase.py --use_case ellipsoid --tiny_test";
-  std::cerr << "Running command: " << command << "\n";
-  system(command.c_str());
-
-  ASSERT_TRUE(file_exists(check_file));
+//---------------------------------------------------------------------------
+TEST(pythonTests, resample)
+{
+  pythonEnvSetup();
+  ASSERT_FALSE(system("python resample.py"));
 }
