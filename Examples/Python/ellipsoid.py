@@ -47,7 +47,7 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    datasetName = "ellipsoid"
+    datasetName = "ellipsoid-v0"
     filename = datasetName + ".zip"
     # Check if the data is in the right place
     if not os.path.exists(filename):

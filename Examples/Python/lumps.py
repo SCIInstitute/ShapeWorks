@@ -28,7 +28,7 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    datasetName = "lumps"
+    datasetName = "lumps-v0"
     testDirectory = f"Test_{datasetName}/"
     originalDataDirectory = testDirectory + datasetName + "/"
     meshFileDirectory = originalDataDirectory + "meshes/"
