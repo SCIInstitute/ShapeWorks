@@ -20,10 +20,12 @@
  * This class computes various statistics for a set of correspondence positions
  * and group ids.
  */
-template <unsigned int VDimension>
-class ITK_EXPORT ParticleShapeStatistics
+class ParticleShapeStatistics
 {
 public:
+
+  constexpr static int VDimension = 3;
+
   ParticleShapeStatistics() {}
   ~ParticleShapeStatistics() {}
 
@@ -175,6 +177,4 @@ protected:
   // used to keep the points' files that needs to be reloaded when new updates come in.
   std::vector< std::string > m_pointsfiles; 
 };
-
-#include "itkParticleShapeStatistics.cpp"
 

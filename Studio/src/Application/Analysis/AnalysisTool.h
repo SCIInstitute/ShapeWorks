@@ -68,7 +68,7 @@ public:
 
   ShapeHandle get_shape(int mode, double value, double group_value = 0.5);
 
-  ParticleShapeStatistics<3> get_stats();
+  ParticleShapeStatistics get_stats();
   void load_settings();
   void store_settings();
 
@@ -157,7 +157,7 @@ private:
   ShapeWorksStudioApp* app_;
 
   /// itk particle shape statistics
-  ParticleShapeStatistics<3> stats_;
+  ParticleShapeStatistics stats_;
   bool stats_ready_;
 
   vnl_vector<double> empty_shape_;

@@ -493,7 +493,7 @@ const vnl_vector<double>& AnalysisTool::get_shape_points(int mode, double value,
 }
 
 //---------------------------------------------------------------------------
-ParticleShapeStatistics<3> AnalysisTool::get_stats()
+ParticleShapeStatistics AnalysisTool::get_stats()
 {
   this->compute_stats();
   return this->stats_;
@@ -677,7 +677,7 @@ void AnalysisTool::reset_stats()
   this->ui_->pcaModeSpinBox->setEnabled(false);
   this->ui_->pcaAnimateCheckBox->setChecked(false);
   this->stats_ready_ = false;
-  this->stats_ = ParticleShapeStatistics<3>();
+  this->stats_ = ParticleShapeStatistics();
 }
 
 //---------------------------------------------------------------------------

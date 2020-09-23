@@ -1,25 +1,8 @@
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticleShapeStatistics.txx,v $
-  Date:      $Date: 2011/03/24 01:17:41 $
-  Version:   $Revision: 1.5 $
-  Author:    $Author: wmartin $
-
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
-#ifndef __itkParticleShapeStatistics_txx
-#define __itkParticleShapeStatistics_txx
 
 #include "itkParticleShapeStatistics.h"
 #include "tinyxml.h"
 
-template <unsigned int VDimension>
-int ParticleShapeStatistics<VDimension>
+int ParticleShapeStatistics
 ::SimpleLinearRegression(const std::vector<double> &y,
                          const std::vector<double> &x,
                          double &a, double &b) const
@@ -67,9 +50,7 @@ int ParticleShapeStatistics<VDimension>
   return 0;
 }
 
-template <unsigned int VDimension>
-int ParticleShapeStatistics<VDimension>
-::ComputeMedianShape(const int ID)
+int ParticleShapeStatistics::ComputeMedianShape(const int ID)
 {
   int ret = -1;
   double min_L1 = 1.0e300;
@@ -108,9 +89,8 @@ int ParticleShapeStatistics<VDimension>
   return ret; // if there has been some error ret == -1
 }
 
-template <unsigned int VDimension>
-double ParticleShapeStatistics<VDimension>
-::L1Norm(unsigned int a, unsigned int b)
+
+double ParticleShapeStatistics::L1Norm(unsigned int a, unsigned int b)
 {
   double norm = 0.0;
   for (unsigned int i = 0; i < m_shapes.rows(); i++)
@@ -121,8 +101,8 @@ double ParticleShapeStatistics<VDimension>
 }
 
 
-template < unsigned int VDimension /*= 3*/ >
-int ParticleShapeStatistics < VDimension > ::ImportPoints(
+
+int ParticleShapeStatistics::ImportPoints(
   std::vector < vnl_vector < double >> points, std::vector < int > group_ids) {
   this->m_groupIDs = group_ids;
   this->m_domainsPerShape = 1;
@@ -213,9 +193,8 @@ int ParticleShapeStatistics < VDimension > ::ImportPoints(
   return 0;
 }
 
-template <unsigned int VDimension>
-int ParticleShapeStatistics<VDimension>
-::ReadPointFiles(const char * fname)
+
+int ParticleShapeStatistics::ReadPointFiles(const char * fname)
 {
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
@@ -366,9 +345,8 @@ int ParticleShapeStatistics<VDimension>
 } // end ReadPointFiles
 
 
-template <unsigned int VDimension>
-int ParticleShapeStatistics<VDimension>
-::DoPCA(std::vector< std::vector<PointType> > global_pts,
+
+int ParticleShapeStatistics::DoPCA(std::vector< std::vector<PointType> > global_pts,
             int domainsPerShape)
 {
   this->m_domainsPerShape = domainsPerShape;
@@ -434,9 +412,7 @@ int ParticleShapeStatistics<VDimension>
 
 /** Reloads a set of point files and recomputes some statistics. */
 
-template <unsigned int VDimension>
-int ParticleShapeStatistics<VDimension>
-::ReloadPointFiles( )
+int ParticleShapeStatistics::ReloadPointFiles( )
 {
   
   m_mean.fill(0);
@@ -505,8 +481,7 @@ int ParticleShapeStatistics<VDimension>
 }
 
 
-template <unsigned int VDimension>
-int ParticleShapeStatistics<VDimension>::ComputeModes()
+int ParticleShapeStatistics::ComputeModes()
 {
   // COMPUTE MODES
   vnl_matrix<double> A = m_pointsMinusMean.transpose()
@@ -558,8 +533,8 @@ int ParticleShapeStatistics<VDimension>::ComputeModes()
   return 0;
 }  // end ComputeModes();
 
-template <unsigned int VDimension>
-int ParticleShapeStatistics<VDimension>::PrincipalComponentProjections()
+
+int ParticleShapeStatistics::PrincipalComponentProjections()
 {
   // Now print the projection of each shape
   m_principals.set_size(m_numSamples, m_numSamples);
@@ -579,8 +554,7 @@ int ParticleShapeStatistics<VDimension>::PrincipalComponentProjections()
   return 0;
 }
 
-template <unsigned int VDimension>
-int ParticleShapeStatistics<VDimension>::FisherLinearDiscriminant(unsigned int numModes)
+int ParticleShapeStatistics::FisherLinearDiscriminant(unsigned int numModes)
 {
   m_projectedMean1.set_size(numModes);
   m_projectedMean2.set_size(numModes);
@@ -692,8 +666,7 @@ int ParticleShapeStatistics<VDimension>::FisherLinearDiscriminant(unsigned int n
 }
 
 
-template <unsigned int VDimension>
-int ParticleShapeStatistics<VDimension>::WriteCSVFile2(const char *fn)
+int ParticleShapeStatistics::WriteCSVFile2(const char *fn)
 {
   // Write csv file
   std::ofstream outfile;
@@ -721,8 +694,7 @@ int ParticleShapeStatistics<VDimension>::WriteCSVFile2(const char *fn)
 }
 
 
-template <unsigned int VDimension>
-int ParticleShapeStatistics<VDimension>::WriteCSVFile(const char *fn)
+int ParticleShapeStatistics::WriteCSVFile(const char *fn)
 {
   // Write csv file
   std::ofstream outfile;
@@ -751,5 +723,3 @@ int ParticleShapeStatistics<VDimension>::WriteCSVFile(const char *fn)
   return 0;
 }
 
-
-#endif
