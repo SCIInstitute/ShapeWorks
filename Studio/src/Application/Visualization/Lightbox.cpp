@@ -8,6 +8,9 @@
 #include <vtkQImageToImageSource.h>
 #include <vtkImageData.h>
 #include <vtkBoundingBox.h>
+#include <vtkSSAOPass.h>
+#include <vtkRenderStepsPass.h>
+#include <vtkOpenGLRenderer.h>
 
 #include <Visualization/Lightbox.h>
 #include <Visualization/StudioInteractorStyle.h>
@@ -207,6 +210,13 @@ void Lightbox::setup_renderers()
       else {
         renderer = this->viewers_[i]->get_renderer();
       }
+      vtkNew<vtkRenderStepsPass> basicPasses;
+      vtkNew<vtkSSAOPass> ssao;
+      ssao->SetRadius(0.15);
+      ssao->SetKernelSize(256);
+      ssao->SetDelegatePass(basicPasses);
+      vtkOpenGLRenderer* glRenderer = vtkOpenGLRenderer::SafeDownCast(renderer);
+      glRenderer->SetPass(ssao);
 
       renderer->GetRenderWindow()->GetInteractor()->SetInteractorStyle(this->style_);
 
