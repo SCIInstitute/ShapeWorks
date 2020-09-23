@@ -5,13 +5,12 @@
 #include <QWidget>
 
 // ShapeWorks
-#include <itkParticleShapeStatistics.h>
+#include <ParticleShapeStatistics.h>
 
 // Studio
 #include <Data/Shape.h>
 #include <Data/Preferences.h>
 #include <Visualization/Visualizer.h>
-#include <itkParticleShapeStatistics.h>
 #include <Visualization/BarGraph.h>
 
 class Session;

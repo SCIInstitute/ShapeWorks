@@ -8,7 +8,7 @@
 
 #include "Optimize.h"
 #include "OptimizeParameterFile.h"
-#include "itkParticleShapeStatistics.h"
+#include "ParticleShapeStatistics.h"
 
 using namespace shapeworks;
 

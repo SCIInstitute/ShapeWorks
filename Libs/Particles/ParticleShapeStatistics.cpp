@@ -1,5 +1,5 @@
 
-#include "itkParticleShapeStatistics.h"
+#include "ParticleShapeStatistics.h"
 #include <Libs/Particles/ShapeEvaluation.h>
 #include "tinyxml.h"
 
