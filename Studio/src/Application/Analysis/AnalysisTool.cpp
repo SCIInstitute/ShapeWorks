@@ -70,6 +70,8 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
 
   /// TODO nothing there yet (regression tab)
   this->ui_->tabWidget->removeTab(3);
+
+  this->ui_->evaluation_widget->hide();
 }
 
 //---------------------------------------------------------------------------
