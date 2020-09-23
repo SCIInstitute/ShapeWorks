@@ -2,7 +2,7 @@
 
 ## Install MkDocs and Themes 
 
-:fa-info-circle: _**Important:**_ The below installations are added to `conda_installs` scripts.
+:fa-info-circle: _**Note:**_ The below installations have already been added to `conda_installs` scripts.
 
 Install mkdocs.  
 `pip install mkdocs`
