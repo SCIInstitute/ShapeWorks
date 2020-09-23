@@ -9,8 +9,6 @@
 #include "vtkPointSet.h"
 #include "vtkFieldData.h"
 
-// SHIREEN
-#include <fstream>
 
 int main(int argc,char** argv)
 {
@@ -18,8 +16,6 @@ int main(int argc,char** argv)
     int inputBParam = 0;
     int outputAParam = 0;
     int outputBParam = 0;
-    int outputAidx = 0;// SHIREEN
-    int outputBidx = 0;// SHIREEN
     int targetParam = 0;
     int printOnlyParam = 0;
     int xmlReader = 0;
@@ -41,14 +37,6 @@ int main(int argc,char** argv)
         else if(strcmp(argv[i],"-B") == 0 || strcmp(argv[i],"--outputB") == 0)
         {
             outputBParam = i + 1;
-        }
-        else if(strcmp(argv[i],"-Ax") == 0 || strcmp(argv[i],"--outputAidx") == 0)// SHIREEN
-        {
-            outputAidx = i + 1;
-        }
-        else if(strcmp(argv[i],"-Bx") == 0 || strcmp(argv[i],"--outputAidx") == 0)// SHIREEN
-        {
-            outputBidx = i + 1;
         }
         else if(strcmp(argv[i],"-t") == 0 || strcmp(argv[i],"--target") == 0)
         {
@@ -72,8 +60,6 @@ int main(int argc,char** argv)
         cout<<"\n(-b , --inputB) InputBFileName"<<endl;
         cout<<"\n(-A , --outputA) OutputAFileName"<<endl;
         cout<<"\n(-B , --outputB) OutputBFileName"<<endl;
-        cout<<"\n(-Ax , --outputAidx) OutputAIndicesFileName"<<endl;// SHIREEN
-        cout<<"\n(-Bx , --outputBidx) OutputBIndicesFileName"<<endl;// SHIREEN
         cout<<"\n(-t , --target) <0 point-to-point/1 point-to-cell> (Optional)"<<endl;
         cout<<"\n(-p , --print-only) print on stdout the distances (Optional) Hausdorff AtoB BtoA (space-separated)"<<endl;
         cout<<"\n(-x , --xml-reader) use vtkXMLPolyDataReader as input reader"<<endl;
@@ -114,21 +100,6 @@ int main(int argc,char** argv)
     if( atoi(argv[targetParam]) )
         filter->SetTargetDistanceMethod( 1 );
     filter->Update();
-
-    // // SHIREEN
-    // std::vector<int> AtoBindices = filter->GetAtoBindices();
-    // std::vector<int> BtoAindices = filter->GetBtoAindices();
-
-    // std::ofstream AtoBidxfile(argv[outputAidx]);
-    // for(unsigned int ii = 0 ; ii < AtoBindices.size(); ii++)
-    //     AtoBidxfile << AtoBindices[ii] << std::endl;
-    // AtoBidxfile.close();
-
-    // std::ofstream BtoAidxfile(argv[outputBidx]);
-    // for(unsigned int ii = 0 ; ii < BtoAindices.size(); ii++)
-    //     BtoAidxfile << BtoAindices[ii] << std::endl;
-    // BtoAidxfile.close();
-    // // end SHIREEN
 
     if( !printOnlyParam )
     {
