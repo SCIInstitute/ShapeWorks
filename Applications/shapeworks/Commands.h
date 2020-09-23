@@ -52,4 +52,7 @@ COMMAND_DECLARE(ReadMesh, MeshCommand);
 COMMAND_DECLARE(WriteMesh, MeshCommand);
 COMMAND_DECLARE(Coverage, MeshCommand);
 
+// Optimize Commands
+COMMAND_DECLARE(OptimizeCommand, OptimizeCommandGroup);
+
 } // shapeworks
