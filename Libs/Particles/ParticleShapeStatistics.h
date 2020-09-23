@@ -148,8 +148,13 @@ public:
 
 
   double get_compactness(const int num_modes);
+  double get_specificity(const int num_modes);
+  double get_generalization(const int num_modes);
 
-protected:
+private:
+
+  void compute_evaluation(int num_modes);
+
   unsigned int m_numSamples1;
   unsigned int m_numSamples2;
   unsigned int m_numSamples;
@@ -181,6 +186,11 @@ protected:
   std::vector< std::string > m_pointsfiles;
 
   Eigen::MatrixXd m_Matrix;
+  double compactness_ = 0;
+  double specificity_ = 0;
+  double generalization_ = 0;
+  bool evaluation_ready_ = false;
+  int evaluation_modes_ = 0;
 
 };
 

@@ -185,11 +185,12 @@ int ParticleShapeStatistics::ImportPoints(
   m_groupdiff = m_mean2 - m_mean1;
 
   // copy to Eigen matrix
-  this->m_Matrix.resize(m_numSamples, num_points * 3);
+  //this->m_Matrix.resize(m_numSamples, num_points * 3);
+  this->m_Matrix.resize(num_points * 3, m_numSamples);
   for (unsigned int i = 0; i < m_numSamples; i++) {
     unsigned int q = points[i].size();
     for (unsigned int j = 0; j < q; j++) {
-      this->m_Matrix(i, j) = points[i][j];
+      this->m_Matrix(j, i) = points[i][j];
     }
   }
 
@@ -678,7 +679,32 @@ int ParticleShapeStatistics::WriteCSVFile(const char* fn)
 
 double ParticleShapeStatistics::get_compactness(const int num_modes)
 {
-  auto ps = shapeworks::ParticleSystem(this->m_Matrix);
-  return shapeworks::ShapeEvaluation<3>::ComputeCompactness(ps, num_modes);
+  this->compute_evaluation(num_modes);
+  return this->compactness_;
+}
+
+double ParticleShapeStatistics::get_specificity(const int num_modes)
+{
+  this->compute_evaluation(num_modes);
+  return this->specificity_;
+}
+
+double ParticleShapeStatistics::get_generalization(const int num_modes)
+{
+  this->compute_evaluation(num_modes);
+  return this->generalization_;
+}
+
+void ParticleShapeStatistics::compute_evaluation(int num_modes)
+{
+  if (!this->evaluation_ready_ || num_modes != this->evaluation_modes_) {
+    auto ps = shapeworks::ParticleSystem(this->m_Matrix);
+    this->compactness_ = shapeworks::ShapeEvaluation<3>::ComputeCompactness(ps, num_modes);
+    this->specificity_ = shapeworks::ShapeEvaluation<3>::ComputeSpecificity(ps, num_modes);
+    this->generalization_ = shapeworks::ShapeEvaluation<3>::ComputeGeneralization(ps, num_modes);
+    this->evaluation_ready_ = true;
+    this->evaluation_modes_ = num_modes;
+  }
+
 }
 

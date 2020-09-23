@@ -883,6 +883,8 @@ void AnalysisTool::on_metrics_open_button_clicked()
   bool show = this->ui_->metrics_open_button->isChecked();
   this->ui_->metrics_content->setVisible(show);
   if (show) {
+    this->ui_->specificity_label->setText(QString::number(this->stats_.get_specificity(1)));
     this->ui_->compactness_label->setText(QString::number(this->stats_.get_compactness(1)));
+    this->ui_->generalization_label->setText(QString::number(this->stats_.get_generalization(1)));
   }
 }
