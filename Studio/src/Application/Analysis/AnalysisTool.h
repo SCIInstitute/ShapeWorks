@@ -124,6 +124,12 @@ public Q_SLOTS:
 
   bool groups_active();
 
+  void on_view_open_button_clicked();
+
+  void on_surface_open_button_clicked();
+
+  void on_metrics_open_button_clicked();
+
 signals:
 
   void update_view();

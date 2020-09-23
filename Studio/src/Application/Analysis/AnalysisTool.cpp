@@ -63,6 +63,10 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   connect(this->ui_->group_right, qOverload<const QString&>(&QComboBox::currentIndexChanged),
           this, &AnalysisTool::group_changed);
 
+  this->ui_->surface_open_button->setChecked(false);
+  this->on_surface_open_button_clicked();
+  this->ui_->metrics_open_button->setChecked(false);
+  this->on_metrics_open_button_clicked();
 }
 
 //---------------------------------------------------------------------------
@@ -857,4 +861,25 @@ bool AnalysisTool::groups_active()
   std::string group_set = this->ui_->group_box->currentText().toStdString();
   bool groups_enabled = group_set != "" && group_set != "-None-";
   return groups_enabled;
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::on_view_open_button_clicked()
+{
+  bool show = this->ui_->view_open_button->isChecked();
+  this->ui_->view_content->setVisible(show);
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::on_surface_open_button_clicked()
+{
+  bool show = this->ui_->surface_open_button->isChecked();
+  this->ui_->surface_content->setVisible(show);
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::on_metrics_open_button_clicked()
+{
+  bool show = this->ui_->metrics_open_button->isChecked();
+  this->ui_->metrics_content->setVisible(show);
 }
