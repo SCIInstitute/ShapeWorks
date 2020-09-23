@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
         //inp->Update();
         unsigned int numVert = inp->GetNumberOfPoints();
         vtkDataArray *scalars = inp->GetPointData()->GetScalars();
-        ofstream outfile(feaFilename[i].c_str(), std::ios::binary);
+	std::ofstream outfile(feaFilename[i].c_str(), std::ios::binary);
 
         outfile.write( reinterpret_cast<char *>(&numVert), sizeof(unsigned int) );
 
