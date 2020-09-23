@@ -76,6 +76,10 @@ We use github issues to keep track of hanging fruits to improve ShapeWorks docum
 
 Insert it in the markdown file using `<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/video.mp4" autoplay muted loop controls style="width:100%"></p>`.
 
+### Where are the videos stored?
+
+On SCI servers, at `/usr/sci/www/shapeworks/doc-resources/mp4s/`.
+
 ## See Also
 - [MkDocs documentation](https://mkdocs.readthedocs.io/en/stable/)
 - [Getting started with MkDocs](https://docs.readthedocs.io/en/stable/intro/getting-started-with-mkdocs.html)
