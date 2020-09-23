@@ -15,6 +15,8 @@ double ShapeEvaluation<VDimension>::ComputeCompactness(const ParticleSystem &par
   const int N = particleSystem.N();
   const int D = particleSystem.D();
 
+  std::cerr << "N = " << N << "\n";
+  std::cerr << "D = " << D << "\n";
   Eigen::MatrixXd Y = particleSystem.Particles();
   const Eigen::VectorXd mu = Y.rowwise().mean();
   Y.colwise() -= mu;

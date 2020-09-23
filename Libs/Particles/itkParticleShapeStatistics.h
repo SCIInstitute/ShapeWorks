@@ -1,14 +1,15 @@
 #pragma once
 
-#include <iostream>
-#include <vector>
 #include "vnl/vnl_vector.h"
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
 #include "vnl/vnl_matrix.h"
 #include "vnl/vnl_vector_fixed.h"
 #include "vnl/algo/vnl_matrix_inverse.h"
+#include <Eigen/Eigen>
+
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include <string>
 #include <cstdio>
 
@@ -35,7 +36,7 @@ public:
 
  /** Dimensionality of the domain of the particle system. */
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
-  
+
   /** Loads a set of point files and pre-computes some statistics. */
   int ImportPoints( std::vector<vnl_vector<double> > points, std::vector<int> group_ids );
 
@@ -112,7 +113,7 @@ public:
       the index number of the median shape for Group A and Group B,
       respectively.*/
   int ComputeMedianShape(const int);
-  
+
     /** Returns the euclidean L1 norm between shape a and b */
   double L1Norm(unsigned int a, unsigned int b);
 
@@ -144,7 +145,10 @@ public:
   int SimpleLinearRegression(const std::vector<double> &y,
                               const std::vector<double> &x,
                               double &a, double &b) const;
-    
+
+
+  double get_compactness(const int num_modes);
+
 protected:
   unsigned int m_numSamples1;
   unsigned int m_numSamples2;
@@ -168,13 +172,15 @@ protected:
   std::vector<double> m_fishersProjection;
   std::vector<double> m_percentVarByMode;
   vnl_vector<double> m_fishersLD;
-  int m_top95;
   vnl_matrix<double> m_principals;
 
   vnl_vector<double> m_groupdiff;
   vnl_vector<double> m_groupdiffnorm;
 
   // used to keep the points' files that needs to be reloaded when new updates come in.
-  std::vector< std::string > m_pointsfiles; 
+  std::vector< std::string > m_pointsfiles;
+
+  Eigen::MatrixXd m_Matrix;
+
 };
 
