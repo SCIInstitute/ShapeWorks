@@ -74,7 +74,7 @@ We use github issues to keep track of hanging fruits to improve ShapeWorks docum
 
 [Request on GitHub](https://github.com/SCIInstitute/ShapeWorks/issues/new) for your video to be uploaded to the SCI ShapeWorks server.
 
-Insert it in the markdown file using `<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/video.mp4" autoplay muted loop style="width:100%"></p>`.
+Insert it in the markdown file using `<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/video.mp4" autoplay muted loop controls style="width:100%"></p>`.
 
 ## See Also
 - [MkDocs documentation](https://mkdocs.readthedocs.io/en/stable/)
