@@ -68,7 +68,7 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   this->ui_->metrics_open_button->setChecked(false);
   this->on_metrics_open_button_clicked();
 
-  /// nothing there yet (regression tab)
+  /// TODO nothing there yet (regression tab)
   this->ui_->tabWidget->removeTab(3);
 }
 
