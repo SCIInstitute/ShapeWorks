@@ -121,10 +121,12 @@ def Run_Pipeline(args):
 	DeepSSMUtils.testDeepSSM(prediction_dir, model_path, loader_dir, PCA_scores_path, num_PCA)
 	print('Predicted particles saved at: ' + prediction_dir)
 
-	if not args.tiny_test:
-		print("\n\n\nStep 6. Analyze results.\n") #####################################################################################
-		DT_dir = input_dir + "groomed/distance_transforms/"
-		out_dir = parent_dir + "Results/"
-		mean_prefix = input_dir + "shape_models/mean/femur"
-		avg_distance = DeepSSMUtils.analyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix)
-		print("Average surface-to-surface distance from the original to predicted shape = " + str(avg_distance))
+	print("\n\n\nStep 6. Analyze results.\n") #####################################################################################
+	'''
+	Analyze DeepSSM
+	'''
+	DT_dir = input_dir + "groomed/distance_transforms/"
+	out_dir = parent_dir + "Results/"
+	mean_prefix = input_dir + "shape_models/mean/femur"
+	avg_distance = DeepSSMUtils.analyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix)
+	print("Average surface-to-surface distance from the original to predicted shape = " + str(avg_distance))

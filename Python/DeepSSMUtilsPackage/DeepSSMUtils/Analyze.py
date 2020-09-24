@@ -104,13 +104,11 @@ def surface2surfaceDist(orig_list, pred_list, out_dir):
 		pred_out_list.append(pred_out)
 		indicesO = orig_out.replace(".vtk",".indices")
 		indicesP = pred_out.replace(".vtk",".indices")
-		execCommand = ["HausdorffDistance2",
+		execCommand = ["SurfaceToSurfaceDistance",
 			"-a", orig,
 			"-b", pred,
 			"-A", orig_out,
 			"-B", pred_out,
-			"-Ax", indicesO,
-			"-Bx", indicesP,
 			"-t", "1"
 		]
 		subprocess.check_call(execCommand)
