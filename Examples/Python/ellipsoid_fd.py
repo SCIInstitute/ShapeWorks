@@ -45,7 +45,7 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    datasetName = "ellipsoid_fd"
+    datasetName = "ellipsoid_fd-v0"
     filename = datasetName + ".zip"
     # Check if the data is in the right place
     if not os.path.exists(filename):
@@ -69,7 +69,7 @@ def Run_Pipeline(args):
     distance transforms.
     """
 
-    outputDir = 'TestEllipsoidsFD/PrepOutput/'
+    outputDir = 'TestEllipsoidsFD/groomed/'
     if not os.path.exists(outputDir):
         os.makedirs(outputDir)
 
@@ -96,7 +96,7 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    pointDir = './TestEllipsoidsFD/PointFiles/'
+    pointDir = './TestEllipsoidsFD/shape_models/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
@@ -104,7 +104,7 @@ def Run_Pipeline(args):
     Evaluate the meanshape of the existing shape model and use that to initialize the 
     particles on the new shapes
     """
-    shapemodelDir = parentDir + "model/"
+    shapemodelDir = parentDir + "shape_models/"
     findMeanShape(shapemodelDir)
     meanShapePath = shapemodelDir + '/meanshape_local.particles'
 
@@ -132,7 +132,7 @@ def Run_Pipeline(args):
         "procrustes_scaling" : 0,
         "save_init_splits" : 0,
         "debug_projection" : 0,
-        "verbosity" : 3,
+        "verbosity" : 2,
         "number_fixed_domains": len(fileListDT),
         "fixed_domain_model_dir": shapemodelDir,
         "mean_shape_path": meanShapePath,

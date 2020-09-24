@@ -10,6 +10,9 @@
 
 #include <Data/StudioLog.h>
 
+#include <QSurfaceFormat>
+#include <QVTKOpenGLNativeWidget.h>
+
 #ifdef _WIN32
 #include <windows.h>
 #include <Utils/WindowsCrashHandler.h>
@@ -19,6 +22,9 @@ int main(int argc, char** argv)
 {
   try {
     STUDIO_LOG_MESSAGE("ShapeWorksStudio initializing...");
+
+    // needed to ensure appropriate OpenGL context is created for VTK rendering.
+    QSurfaceFormat::setDefaultFormat(QVTKOpenGLNativeWidget::defaultFormat());
 
 #ifdef _WIN32
     STUDIO_LOG_MESSAGE("ShapeWorksStudio win32 initializing...");
@@ -51,7 +57,7 @@ int main(int argc, char** argv)
       studio_app->show_splash_screen();
     }
     return app.exec();
-  } catch (itk::ExceptionObject& excep) {
+  } catch (itk::ExceptionObject & excep) {
     std::cerr << excep << std::endl;
   } catch (std::exception e) {
     std::cerr << "Exception caught!" << std::endl;
