@@ -16,7 +16,6 @@ VTK_VER_STR="9.0"
 ITK_VER="v5.0.1"
 ITK_VER_STR="5.0"
 EIGEN_VER="3.3.7"
-ITK_VER_STR="5.0"
 QT_MIN_VER="5.9.8"  # NOTE: 5.x is required, but this restriction is a clever way to ensure the anaconda version of Qt (5.9.6 or 5.9.7) isn't used since it won't work on most systems.
 XLNT_VER="v1.4.0"
 OpenVDB_VER="v7.0.0"
@@ -152,7 +151,7 @@ build_vtk()
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
   if [[ $OSTYPE == "msys" ]]; then
-      cmake -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -Wno-dev ..
+      cmake -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release -DVTK_PYTHON_VERSION=3 -DVTK_WRAP_PYTHON:BOOL=ON -DVTK_GROUP_ENABLE_Qt=YES -Wno-dev ..
       cmake --build . --config Release || exit 1
       cmake --build . --config Release --target install
       VTK_DIR="${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}"

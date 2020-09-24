@@ -66,7 +66,6 @@ function install_conda() {
   if ! conda install --yes pybind11=2.5.0; then return 1; fi
   if ! conda install --yes requests=2.24.0; then return 1; fi
   if ! conda install --yes scikit-learn=0.23.2; then return 1; fi
-  #if ! conda install --yes vtk=9.0.1; then return 1; fi # VTK Python bindings (TODO: see issues #300, #302)
 
   # shapeworks deps, platform-specific (e.g., for different versions)
   if [[ "$(uname)" == "Linux" ]]; then                                  # Linux
