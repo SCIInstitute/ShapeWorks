@@ -43,7 +43,7 @@ function install_conda() {
 
   # create and activate shapeworks env
   CONDAENV=shapeworks
-  if ! conda create --yes --name $CONDAENV python=3.7; then return 1; fi
+  if ! conda create --yes --name $CONDAENV python=3.7.8; then return 1; fi
   eval "$(conda shell.bash hook)"
   if ! conda activate $CONDAENV; then return 1; fi
 
@@ -59,7 +59,7 @@ function install_conda() {
   if ! conda install --yes geotiff=1.6.0; then return 1; fi
   if ! conda install --yes git-lfs=2.11.0; then return 1; fi
   if ! conda install --yes gtest=1.10.0; then return 1; fi
-  if ! conda install --yes notebook=6.1.4; then return 1; fi
+  #if ! conda install --yes notebook=6.1.4; then return 1; fi
   if ! conda install --yes numpy=1.19.1; then return 1; fi
   if ! conda install --yes openblas=0.3.10; then return 1; fi
   if ! conda install --yes openexr=2.5.3; then return 1; fi
