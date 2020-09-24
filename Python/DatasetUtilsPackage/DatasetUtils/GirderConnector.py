@@ -182,3 +182,24 @@ def getDatasetList(accessToken):
     useCaseCollection = GirderAPI.getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
     jsonList = GirderAPI.getFolderList(serverAddress, accessToken, 'collection', useCaseCollection['_id'])
     return [element['name'] for element in jsonList]
+
+
+def getFileList(accessToken, datasetName):
+    useCaseCollection = GirderAPI.getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
+    datasetFolder = GirderAPI.getFolderInfo(serverAddress, accessToken, parentType='collection', parentId=useCaseCollection['_id'], folderName=datasetName)
+
+    # Add items and folders of base directory
+    items = GirderAPI.listItemsInFolder(serverAddress, accessToken, datasetFolder['_id'])
+    subfolders = [(sf, '') for sf in GirderAPI.getFolderList(serverAddress, accessToken, parentType='folder', parentId=datasetFolder['_id'])]
+    itemPaths = [element['name'] for element in items]
+
+    # Iterate through subfolders to get all the items
+    while len(subfolders) > 0:
+        subfolder = subfolders.pop(0)
+        path = subfolder[1] + subfolder[0]['name'] + '/'
+        items = GirderAPI.listItemsInFolder(serverAddress, accessToken, subfolder[0]['_id'])
+        itemPaths += [path + element['name'] for element in items]
+        subfolders = [(sf, path) for sf in GirderAPI.getFolderList(serverAddress, accessToken, parentType='folder', parentId=subfolder[0]['_id'])] + subfolders
+
+    return itemPaths
+

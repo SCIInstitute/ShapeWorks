@@ -12,6 +12,14 @@ def getDatasetList(loginState = None):
     return GirderConnector.getDatasetList(accessToken)
 
 
+## Returns None if failed to get list, otherwise returns list of file names: ['meshes/ellipsoid_00.ply', 'meshes/ellipsoid_00.vtk', ...]
+def getFileList(datasetName, loginState = None):
+    GirderConnector.printDataPortalWelcome()
+    print('Getting file list of', datasetName , 'from the ShapeWorks Portal')
+    accessToken = GirderConnector.login(loginState)
+    return GirderConnector.getFileList(accessToken, datasetName)
+
+
 ## fileList is list of file path strings 
 def downloadDataset(datasetName, destinationPath='.', fileList = None, asZip = True, loginState = None):
     GirderConnector.printDataPortalWelcome()
