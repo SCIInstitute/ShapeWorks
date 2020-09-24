@@ -674,9 +674,11 @@ void ShapeWorksStudioApp::handle_clear_cache()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::new_session()
 {
+
   // project initializations
   this->session_ = QSharedPointer<Session>(new Session(this, preferences_));
   this->session_->set_parent(this);
+  this->setWindowTitle(this->session_->get_display_name());
 
   connect(this->session_->get_mesh_manager().data(), &MeshManager::error_encountered,
           this, &ShapeWorksStudioApp::handle_error);
@@ -1079,6 +1081,8 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->update_display(true);
 
   this->is_loading_ = false;
+
+  this->setWindowTitle(this->session_->get_display_name());
 }
 
 //---------------------------------------------------------------------------
@@ -1297,6 +1301,8 @@ void ShapeWorksStudioApp::save_project(std::string filename)
   }
 
   this->update_table();
+  this->setWindowTitle(this->session_->get_display_name());
+
 }
 
 //---------------------------------------------------------------------------

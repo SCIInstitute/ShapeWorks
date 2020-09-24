@@ -81,6 +81,9 @@ public:
   /// get the filename
   QString get_filename();
 
+  /// get file display name
+  QString get_display_name();
+
   bool original_present();
   bool groomed_present();
   bool particles_present();

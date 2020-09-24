@@ -769,3 +769,12 @@ Parameters& Session::parameters()
 {
   return this->params_;
 }
+
+//---------------------------------------------------------------------------
+QString Session::get_display_name()
+{
+  if (this->filename_ == "") {
+    return "New Project";
+  }
+  return QFileInfo(this->filename_).baseName();
+}
