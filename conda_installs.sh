@@ -33,6 +33,7 @@ function install_conda() {
   fi
 
   # add default channels
+  conda deactivate
   conda config --add channels anaconda
   conda config --add channels conda-forge
   
@@ -41,7 +42,7 @@ function install_conda() {
   if ! conda update --yes --all; then return 1; fi
 
   # create and activate shapeworks env
-  CONDAENV=shapeworks
+  CONDAENV=shapeworks-pybind
   if ! conda create --yes --name $CONDAENV python=3.7.8; then return 1; fi
   eval "$(conda shell.bash hook)"
   if ! conda activate $CONDAENV; then return 1; fi
