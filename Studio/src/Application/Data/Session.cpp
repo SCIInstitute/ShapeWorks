@@ -280,10 +280,10 @@ bool Session::load_light_project(QString filename)
       //std::cerr << "Found distance transform: " << distance_transform_filename << "\n";
 
       if (!QFile::exists(QString::fromStdString(distance_transform_filename))) {
-        QMessageBox::critical(NULL, "ShapeWorksStudio",
-                              "File does not exist: " +
-                              QString::fromStdString(distance_transform_filename),
-                              QMessageBox::Ok);
+        QString message = "File does not exist: " +
+                          QString::fromStdString(distance_transform_filename);
+        STUDIO_LOG_ERROR(message);
+        QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
         return false;
       }
 
@@ -489,8 +489,9 @@ void Session::load_original_files(std::vector<std::string> filenames)
 
     QString filename = QString::fromStdString(filenames[i]);
     if (!QFile::exists(filename)) {
-      QMessageBox::critical(NULL, "ShapeWorksStudio", "File does not exist: " + filename,
-                            QMessageBox::Ok);
+      QString message = "File does not exist: " + filename;
+      STUDIO_LOG_MESSAGE(message);
+      QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
       return;
     }
 

@@ -619,6 +619,7 @@ void ShapeWorksStudioApp::handle_pca_update()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_message(std::string str)
 {
+  STUDIO_LOG_MESSAGE(QString::fromStdString(str));
   this->ui_->statusbar->showMessage(QString::fromStdString(str));
   this->currentMessage_ = str;
 }
@@ -626,6 +627,7 @@ void ShapeWorksStudioApp::handle_message(std::string str)
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_error(std::string str)
 {
+  STUDIO_LOG_ERROR(QString::fromStdString(str));
   QMessageBox::critical(this, "Critical Error", str.c_str());
   this->handle_message(str);
   //this->handle_progress(100);
@@ -634,6 +636,7 @@ void ShapeWorksStudioApp::handle_error(std::string str)
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_warning(std::string str)
 {
+  STUDIO_LOG_MESSAGE(QString::fromStdString(str));
   QMessageBox::warning(this, "Warning!", str.c_str());
 }
 
