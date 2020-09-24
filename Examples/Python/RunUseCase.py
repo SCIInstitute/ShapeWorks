@@ -14,6 +14,7 @@ import platform
 import argparse
 import subprocess
 import sys
+import traceback 
 from CommonUtils import robustifyShapeworksPaths
 
 # check that required modules are found
@@ -36,7 +37,7 @@ default_subsample = 3
 
 parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
 parser.add_argument("--use_case", help="Specify which use case to run",
-                    choices=["ellipsoid", "ellipsoid_fd", "lumps", "left_atrium", "femur", "femur_mesh"])
+                    choices=["ellipsoid", "ellipsoid_fd", "lumps", "left_atrium", "femur", "femur_mesh", "femur_cut", "ellipsoid_cut"])
 parser.add_argument("--use_subsample", help="Run the pipeline for a subset of data",action="store_true")
 parser.add_argument("--num_subsample", help="Size of subset to run on (default: "+str(default_subsample)+")", nargs='?', type=int, default=default_subsample)
 parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
@@ -70,3 +71,4 @@ except KeyboardInterrupt:
     sys.exit(1)
 except subprocess.CalledProcessError as e:
     print("General exception caught.\n\tReturncode: "+str(e.returncode)+"\n\tOutput: "+str(e.output))
+    traceback.print_exc()

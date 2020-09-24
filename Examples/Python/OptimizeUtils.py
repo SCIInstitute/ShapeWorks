@@ -74,10 +74,28 @@ def create_SWRun_xml(xmlfilename, inDataFiles, parameterDictionary, outDir):
             os.makedirs(parameterDictionary['visualizer_screenshot_directory'])
         visualizer_screenshot_directory = ET.SubElement(root, 'visualizer_screenshot_directory')
         visualizer_screenshot_directory.text = "\n" + str(parameterDictionary['visualizer_screenshot_directory']) + "\n"
+    if 'adaptivity_mode' in parameterDictionary:
+        adaptivity_mode = ET.SubElement(root, 'adaptivity_mode')
+        adaptivity_mode.text = "\n" + str(parameterDictionary['adaptivity_mode']) + "\n"
     inputs = ET.SubElement(root, 'inputs')
     inputs.text = "\n"
     for filename in inDataFiles:
         inputs.text = inputs.text + filename.replace('\\','/') + "\n"
+    if 'cutting_plane_counts' in parameterDictionary and 'cutting_planes' in parameterDictionary:
+        cutting_plane_counts = ET.SubElement(root, 'num_planes_per_input')
+        cutting_plane_counts_var = parameterDictionary['cutting_plane_counts']
+        cutting_planes = ET.SubElement(root, 'cutting_planes')
+        cutting_planes_var = parameterDictionary['cutting_planes']
+
+        cutting_plane_counts_text = "\n"
+        cutting_planes_text = "\n"
+        for i in range(len(cutting_planes_var)):
+            cur_plane = cutting_planes_var[i]
+            cutting_planes_text += "  " + str(cur_plane[0][0]) + " " + str(cur_plane[0][1]) + " " + str(cur_plane[0][2]) + " " + str(cur_plane[1][0]) + " " + str(cur_plane[1][1]) + " " + str(cur_plane[1][2]) + " " + str(cur_plane[2][0]) + " " + str(cur_plane[2][1]) + " " + str(cur_plane[2][2]) + "\n"
+        for i in range(len(cutting_plane_counts_var)):
+            cutting_plane_counts_text += "  " + str(cutting_plane_counts_var[i]) + "\n"
+        cutting_plane_counts.text = cutting_plane_counts_text
+        cutting_planes.text = cutting_planes_text
 
     data = ET.tostring(root, encoding='unicode')
     file = open(xmlfilename, "w+")
@@ -111,7 +129,7 @@ def create_SWRun_fixed_domains(xmlfilename, inDataFiles, parameterDictionary, ou
     ending_regularization = ET.SubElement(root, 'ending_regularization')
     ending_regularization.text = "\n" + str(parameterDictionary['ending_regularization']) + "\n"
     recompute_regularization_interval = ET.SubElement(root, 'recompute_regularization_interval')
-    recompute_regularization_interval.text = "\n" + str(parameterDictionary['recompute_regularization_interval']) + "\n"    
+    recompute_regularization_interval.text = "\n" + str(parameterDictionary['recompute_regularization_interval']) + "\n"
     domains_per_shape = ET.SubElement(root, 'domains_per_shape')
     domains_per_shape.text = "\n" + str(parameterDictionary['domains_per_shape']) + "\n"
     domain_type = ET.SubElement(root, 'domain_type')
@@ -144,21 +162,21 @@ def create_SWRun_fixed_domains(xmlfilename, inDataFiles, parameterDictionary, ou
         inputs.text = inputs.text + filename.replace('\\','/') + "\n"
 
     # add in the pointfiles
-        
+
     points = ET.SubElement(root, 'point_files')
     points.text = "\n"
     for i in range(len(inDataFiles)):
             t1 = points.text
             t1 = t1 + fixedPointFiles[i].replace('\\','/') + '\n'
             points.text = t1
-    
+
     # add in the fixed domains
     fd = ET.SubElement(root, 'fixed_domains')
     fd.text = '\n'
     for i in range(numFixedDomains):
         t1 = fd.text
         t1 = t1 + str(i) + '\n'
-        fd.text = t1    
+        fd.text = t1
 
     data = ET.tostring(root, encoding='unicode')
     file = open(xmlfilename, "w+")
@@ -204,7 +222,7 @@ def findMeanShape(shapeModelDir):
     meanShape = meanShape / len(fileList)
     nmMS = shapeModelDir + '/meanshape_local.particles'
     np.savetxt(nmMS, meanShape)
-    
+
 
 
 def runShapeWorksOptimize_FixedDomains(parentDir, inDataFiles, parameterDictionary):
@@ -228,7 +246,7 @@ def runShapeWorksOptimize_FixedDomains(parentDir, inDataFiles, parameterDictiona
             # check the validity of this file existing everytime
             lclname = meanShapePath
             inparts.append(lclname)
-    
+
     parameterFile = parentDir + "correspondence_" + str(numP) + '.xml'
     create_SWRun_fixed_domains(parameterFile, inDataFiles, parameterDictionary, outDir, numFD, inparts)
     create_cpp_xml(parameterFile, parameterFile)

@@ -225,7 +225,6 @@ ParticleImplicitSurfaceDomain<T>::ApplyConstraints(PointType &p, bool dbg) const
     {
 
     vnl_vector_fixed<T, DIMENSION> grad = -this->SampleGradientAtPoint(p);
-
     std::stringstream msg = this->GetConstraints()->applyBoundaryConstraints(grad, p);
     if(dbg){
         msg << std::endl;

@@ -157,6 +157,7 @@ namespace itk
 
             double newenergy, gradmag;
             while (true) {
+
               // Step A scale the projected gradient by the current time step
               VectorType gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
 
@@ -210,9 +211,13 @@ namespace itk
               {
                 m_TimeSteps[dom][k] *= factor;
                 if (gradmag > maxchange) maxchange = gradmag;
+
+                // Debuggg
+                if(!m_ParticleSystem->GetDomain(dom)->GetConstraints()->IsAnyViolated(oldpoint) && m_ParticleSystem->GetDomain(dom)->GetConstraints()->IsAnyViolated(newpoint) ) std::cerr << stream.str();
                 stream << "Good energy " << std::endl;
                 stream << std::endl;
-                if(!m_ParticleSystem->GetDomain(dom)->GetConstraints()->IsAnyViolated(oldpoint) && m_ParticleSystem->GetDomain(dom)->GetConstraints()->IsAnyViolated(newpoint) ) std::cerr << stream.str();
+                //std::cout << stream.str();
+
                 break;
               }
               else
@@ -221,9 +226,10 @@ namespace itk
                 {
                   domain->ApplyConstraints(pt);
                   m_ParticleSystem->SetPosition(pt, it.GetIndex(), dom);
+
+                  // Debuggg
                   stream << "Not good energy " << pt << std::endl;
-                  stream << std::endl;
-                  //std::cout << stream.str();
+                  //stream << std::endl;
 
                   m_TimeSteps[dom][k] /= factor;
                 }
@@ -274,6 +280,7 @@ namespace itk
       }
 
     } // end while stop optimization
+    std::cout << "Ended opt##############" << std::endl;
   }
 
 } // end namespace
