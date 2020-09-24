@@ -149,7 +149,7 @@ ImageType::Pointer Shape::get_groomed_image()
 }
 
 //---------------------------------------------------------------------------
-void Shape::import_groomed_image(ImageType::Pointer img, double iso, transform_type transform)
+void Shape::import_groomed_image(ImageType::Pointer img, double iso, TransformType transform)
 {
   this->groomed_mesh_ = QSharedPointer<Mesh>(new Mesh());
   this->groomed_image_ = img;

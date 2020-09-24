@@ -173,7 +173,8 @@ void ShapeWorksGroom::center(int which) {
     oit.GoToBegin();
 
     itk::Array<double> params(3);
-    params.Fill(0.0);
+    //TransformType::OutputVectorType params;
+    //params.Fill(0.0);
     double count = 0.0;
     itk::Point<double, 3> point;
     for (; !oit.IsAtEnd(); ++oit, ++sit) {
@@ -207,12 +208,19 @@ void ShapeWorksGroom::center(int which) {
       oit.Set(this->background_);
     }
 
-    // Translate the segmentation back into the original image.
-    itk::TranslationTransform<double, 3>::Pointer trans
-      = itk::TranslationTransform<double, 3>::New();
-    trans->SetParameters(params);
 
-    this->transforms_[i] = params;
+    itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
+    //TransformType::OutputVectorType translation;
+
+    // Translate the segmentation back into the original image.
+    itk::AffineTransform<double, 3>::Pointer trans = itk::AffineTransform<double, 3>::New();
+
+    tform[0] = params[0];
+    tform[1] = params[1];
+    tform[2] = params[2];
+    trans->SetTranslation(tform);
+
+    this->transforms_[i] = trans->GetParameters();
 
     itk::NearestNeighborInterpolateImageFunction<ImageType, double>::Pointer
       interp = itk::NearestNeighborInterpolateImageFunction<ImageType, double>::New();
@@ -385,7 +393,7 @@ void ShapeWorksGroom::blur(int which) {
   }
 }
 
-std::vector<transform_type> ShapeWorksGroom::get_transforms()
+std::vector<TransformType> ShapeWorksGroom::get_transforms()
 {
   return this->transforms_;
 }

@@ -427,6 +427,8 @@ void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitud
 //-----------------------------------------------------------------------------
 void Viewer::display_shape(QSharedPointer<Shape> shape)
 {
+  std::cerr << "display shape!\n";
+  
   this->visible_ = true;
 
   this->shape_ = shape;
@@ -509,10 +511,11 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
       transform = shape->get_transform();
     }
 
-    if (transform.size() == 3) {
-      double tx = -transform[0];
-      double ty = -transform[1];
-      double tz = -transform[2];
+    if (transform.size() == 12) {
+      std::cerr << "...translating\n";
+      double tx = -transform[9];
+      double ty = -transform[10];
+      double tz = -transform[11];
 
       vtkSmartPointer<vtkTransform> translation = vtkSmartPointer<vtkTransform>::New();
       translation->Translate(tx, ty, tz);

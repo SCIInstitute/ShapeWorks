@@ -516,7 +516,7 @@ void Session::load_original_files(std::vector<std::string> filenames)
 
 //---------------------------------------------------------------------------
 void Session::load_groomed_images(std::vector<ImageType::Pointer> images,
-                                  double iso, std::vector<transform_type> transforms)
+                                  double iso, std::vector<TransformType> transforms)
 {
   QProgressDialog progress("Loading groomed images...", "Abort",
                            0, images.size(), this->parent_);
@@ -534,7 +534,7 @@ void Session::load_groomed_images(std::vector<ImageType::Pointer> images,
       new_shape->set_mesh_manager(this->mesh_manager_);
       this->shapes_.push_back(new_shape);
     }
-    transform_type transform;
+    TransformType transform;
     if (i < transforms.size()) {
       transform = transforms[i];
     }

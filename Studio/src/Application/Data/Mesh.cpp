@@ -158,10 +158,10 @@ void Mesh::apply_feature_map(std::string name, ImageType::Pointer image,
     pitk[1] = pt[1];
     pitk[2] = pt[2];
 
-    if (transform.size() == 3) {
-      pitk[0] = pitk[0] + transform[0];
-      pitk[1] = pitk[1] + transform[1];
-      pitk[2] = pitk[2] + transform[2];
+    if (transform.size() == 12) {
+      pitk[0] = pitk[0] + transform[9];
+      pitk[1] = pitk[1] + transform[10];
+      pitk[2] = pitk[2] + transform[11];
     }
 
     LinearInterpolatorType::ContinuousIndexType index;
