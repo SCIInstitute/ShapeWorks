@@ -47,7 +47,7 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    datasetName = "ellipsoid"
+    datasetName = "ellipsoid-v0"
     filename = datasetName + ".zip"
     # Check if the data is in the right place
     if not os.path.exists(filename):
@@ -62,10 +62,7 @@ def Run_Pipeline(args):
     with ZipFile(filename, 'r') as zipObj:
         zipObj.extractall(path=parentDir)
         parentDir = parentDir + datasetName + "/"
-        if not args.start_with_prepped_data:
-            fileList = sorted(glob.glob(parentDir + "images/*.nrrd"))
-        else:
-            fileList = sorted(glob.glob(parentDir + "segmentations/*.nrrd"))
+        fileList = sorted(glob.glob(parentDir + "segmentations/*.nrrd"))
 
     fileList = fileList[:15]
     if args.tiny_test:
@@ -99,7 +96,9 @@ def Run_Pipeline(args):
         print("Continuing to run use case with segmentations only.")
         print("*********************************************************\n\n")
 
-    if int(args.start_with_prepped_data) == 0:
+    if int(args.start_with_prepped_data) == 1:
+        dtFiles = sorted(glob.glob('TestEllipsoids/' + datasetName + '/groomed/distance_transforms/*.nrrd'))
+    else:
         """Apply isotropic resampling"""
         resampledFiles = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList)
 
@@ -127,13 +126,8 @@ def Run_Pipeline(args):
         if int(args.interactive) != 0:
             input("Press Enter to continue")
 
-        if int(args.start_with_prepped_data) == 0:
-            dtFiles = applyDistanceTransforms(parentDir, croppedFiles)
-        else:
-            dtFiles = applyDistanceTransforms(parentDir, fileList)
+        dtFiles = applyDistanceTransforms(parentDir, croppedFiles)
 
-    if int(args.start_with_prepped_data) == 1:
-        dtFiles = sorted(glob.glob('TestEllipsoids/ellipsoid/groomed/distance_transforms/*.nrrd'))
 
     """
     ## OPTIMIZE : Particle Based Optimization
