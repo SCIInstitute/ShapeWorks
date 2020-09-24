@@ -511,7 +511,6 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
     }
 
     if (transform.size() == 12) {
-      std::cerr << "...translating\n";
       double tx = -transform[9];
       double ty = -transform[10];
       double tz = -transform[11];
@@ -522,7 +521,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
       vtkSmartPointer<vtkTransformPolyDataFilter> transform_filter =
         vtkSmartPointer<vtkTransformPolyDataFilter>::New();
       transform_filter->SetInputData(poly_data);
-      //transform_filter->SetTransform(translation);
+      transform_filter->SetTransform(translation);
       transform_filter->Update();
       poly_data = transform_filter->GetOutput();
     }
