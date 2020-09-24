@@ -20,10 +20,10 @@ from AnalyzeUtils import *
 
 
 def Run_Pipeline(args):
-    datasetName = 'femur'
+    datasetName = 'femur-v0'
     filename = datasetName + '.zip'
     parentDir = 'TestFemurMesh/'
-    prepDir = parentDir + 'PrepOutput/'
+    prepDir = parentDir + 'groomed/'
     meshDir = parentDir + datasetName + '/groomed/meshes/'
     
     if not os.path.exists(parentDir):
@@ -49,7 +49,8 @@ def Run_Pipeline(args):
         print('Zero mesh files found in', meshDir)
         return
 
-    pointDir = parentDir + 'PointFiles/'
+    pointDir = parentDir + 'shape_models/'
+
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
