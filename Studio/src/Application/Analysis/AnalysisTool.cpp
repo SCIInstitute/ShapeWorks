@@ -802,6 +802,8 @@ void AnalysisTool::update_group_boxes()
   // populate the group sets
   auto group_names = this->session_->get_project()->get_group_names();
 
+  this->ui_->group_widget->setEnabled(!group_names.empty());
+
   if (group_names != this->current_group_names_) { // only update if different
     this->ui_->group_box->clear();
     this->ui_->group_box->addItem("-None-");

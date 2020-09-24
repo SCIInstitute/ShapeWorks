@@ -619,7 +619,6 @@ void ShapeWorksStudioApp::handle_pca_update()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_message(std::string str)
 {
-  std::cerr << "handle_message called\n";
   STUDIO_LOG_MESSAGE(QString::fromStdString(str));
   this->ui_->statusbar->showMessage(QString::fromStdString(str));
   this->currentMessage_ = str;
