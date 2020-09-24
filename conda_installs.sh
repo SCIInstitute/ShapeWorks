@@ -89,7 +89,7 @@ function install_conda() {
     if ! conda install --yes tbb-devel=2019.9; then return 1; fi
 
   else                                                                  # Windows
-    if ! conda install --yes graphviz=2.38.1; then return 1; fi
+    if ! conda install --yes graphviz=2.38.0; then return 1; fi
     if ! conda install --yes tbb=2020.1; then return 1; fi
     if ! conda install --yes tbb-devel=2020.1; then return 1; fi
   fi
