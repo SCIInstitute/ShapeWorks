@@ -61,6 +61,7 @@
 
 #include <iostream>
 #include <fstream>
+
 optparse::OptionParser buildParser()
 {
     const std::string usage = "%prog [OPTION]";
@@ -185,7 +186,7 @@ int main(int argc, char * argv [] )
 
     float m[3][4] = {0.0f};
 
-    ifstream info(transformationMatrix.c_str());
+    std::ifstream info(transformationMatrix.c_str());
     for (int i = 0; i < 3; i++){
         for (int j = 0; j < 4; j++){
           info >> m[i][j];

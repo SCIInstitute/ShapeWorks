@@ -12,7 +12,7 @@ target_include_directories(Utils PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:include>)
 target_link_libraries(Utils PUBLIC
-  Eigen3::Eigen)
+  Eigen3::Eigen ${VTK_LIBRARIES})
 
 
 # Install
