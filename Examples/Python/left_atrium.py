@@ -49,7 +49,7 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    datasetName = "left_atrium"
+    datasetName = "left_atrium-v0"
     filename = datasetName + ".zip"
     # Check if the data is in the right place
     if not os.path.exists(filename):

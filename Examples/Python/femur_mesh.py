@@ -20,7 +20,7 @@ from AnalyzeUtils import *
 
 
 def Run_Pipeline(args):
-    datasetName = 'femur'
+    datasetName = 'femur-v0'
     filename = datasetName + '.zip'
     parentDir = 'TestFemurMesh/'
     prepDir = parentDir + 'groomed/'

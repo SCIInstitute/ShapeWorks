@@ -99,3 +99,8 @@ When calling `DatasetUtils.downloadDataset('dataset_name')`, you will get a zip 
 
 ### DatasetUtils.getDatasetList()  
 - Returns: a list of all existing datasets on the data portal  
+
+### DatasetUtils.getFileList(datasetName)  
+- Parameters:  
+  - **datasetName** is one of the names returned by `DatasetUtils.getDatasetList()`  
+- Returns: a list of all files in the specified dataset on the data portal  
