@@ -29,7 +29,7 @@ def Run_Pipeline(args):
         input("Press Enter to continue")
 
     datasetName = "lumps-v0"
-    testDirectory = f"Test_{datasetName}/"
+    testDirectory = f"TestLumps/"
     originalDataDirectory = testDirectory + datasetName + "/"
     meshFileDirectory = originalDataDirectory + "meshes/"
     pointFilesDirectory = testDirectory + "PointFiles/"
