@@ -619,6 +619,7 @@ void ShapeWorksStudioApp::handle_pca_update()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_message(std::string str)
 {
+  std::cerr << "handle_message called\n";
   STUDIO_LOG_MESSAGE(QString::fromStdString(str));
   this->ui_->statusbar->showMessage(QString::fromStdString(str));
   this->currentMessage_ = str;
@@ -1318,6 +1319,7 @@ void ShapeWorksStudioApp::handle_color_scheme()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_auto_view_button_clicked()
 {
+  std::cerr << "auto view button clicked\n";
   this->visualizer_->reset_camera();
 }
 

@@ -121,6 +121,7 @@ void GroomTool::on_run_groom_button_clicked()
   this->timer_.start();
 
   this->store_settings();
+  std::cerr << "################## on run groom\n";
   emit message("Please wait: running groom step...");
   emit progress(5);
   QVector<QSharedPointer<Shape>> shapes = this->session_->get_shapes();

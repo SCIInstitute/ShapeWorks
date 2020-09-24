@@ -427,8 +427,7 @@ void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitud
 //-----------------------------------------------------------------------------
 void Viewer::display_shape(QSharedPointer<Shape> shape)
 {
-  std::cerr << "display shape!\n";
-  
+
   this->visible_ = true;
 
   this->shape_ = shape;
@@ -523,7 +522,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
       vtkSmartPointer<vtkTransformPolyDataFilter> transform_filter =
         vtkSmartPointer<vtkTransformPolyDataFilter>::New();
       transform_filter->SetInputData(poly_data);
-      transform_filter->SetTransform(translation);
+      //transform_filter->SetTransform(translation);
       transform_filter->Update();
       poly_data = transform_filter->GetOutput();
     }
@@ -607,10 +606,10 @@ void Viewer::clear_viewer()
 //-----------------------------------------------------------------------------
 void Viewer::reset_camera(std::array<double, 3> c)
 {
-  //this->renderer_->ResetCamera();
+  this->renderer_->ResetCamera();
 
 //  this->renderer_->GetActiveCamera()->SetViewUp(0, 1, 0);
-//  this->renderer_->GetActiveCamera()->SetFocalPoint(0, 0, 0);
+  //this->renderer_->GetActiveCamera()->SetFocalPoint(0, 0, 0);
 //  this->renderer_->GetActiveCamera()->SetPosition(c[0], c[1], c[2]);
 }
 

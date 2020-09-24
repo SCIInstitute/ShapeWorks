@@ -448,8 +448,8 @@ void Shape::generate_original_meshes()
       double center[3];
       com->GetCenter(center);
 
-      this->transform_.set_size(3);
-      for (unsigned int i = 0; i < 3; i++) {
+      this->transform_.set_size(12);
+      for (unsigned int i = 9; i < 12; i++) {
         this->transform_[i] = center[i];
         //std::cerr << "trans[" << i << "] = " << this->transform_[i] << "\n";
       }
@@ -486,8 +486,8 @@ void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<Mesh>&
     double center[3];
     com->GetCenter(center);
 
-    this->transform_.set_size(3);
-    for (unsigned int i = 0; i < 3; i++) {
+    this->transform_.set_size(12);
+    for (unsigned int i = 9; i < 12; i++) {
       this->transform_[i] = center[i];
     }
   }

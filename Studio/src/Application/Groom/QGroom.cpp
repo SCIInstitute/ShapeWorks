@@ -15,6 +15,8 @@ QGroom::QGroom(QObject* parent,
 
 void QGroom::run()
 {
+
+  /// uncomment this to disable threading
   //tbb::task_scheduler_init init(1);
 
   size_t ran = 0, total = this->runTools_.size() * this->images_.size();
