@@ -451,7 +451,7 @@ void Shape::generate_original_meshes()
       this->transform_.set_size(3);
       for (unsigned int i = 0; i < 3; i++) {
         this->transform_[i] = center[i];
-        std::cerr << "trans[" << i << "] = " << this->transform_[i] << "\n";
+        //std::cerr << "trans[" << i << "] = " << this->transform_[i] << "\n";
       }
 
       this->set_transform(this->original_mesh_->get_center_transform());
