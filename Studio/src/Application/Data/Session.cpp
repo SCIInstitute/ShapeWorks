@@ -22,6 +22,7 @@
 #include <Libs/Project/Project.h>
 
 #include <Data/Session.h>
+#include <Data/StudioLog.h>
 #include <Data/Shape.h>
 #include <Data/Mesh.h>
 #include <Data/MeshManager.h>
@@ -533,8 +534,7 @@ void Session::load_groomed_images(std::vector<ImageType::Pointer> images,
       this->shapes_.push_back(new_shape);
     }
     transform_type transform;
-    if (i < transforms.size())
-    {
+    if (i < transforms.size()) {
       transform = transforms[i];
     }
     this->shapes_[i]->import_groomed_image(images[i], iso, transform);
@@ -685,7 +685,9 @@ bool Session::load_point_files(std::vector<std::string> list, bool local)
       }
     }
     else {
-      QMessageBox::critical(0, "Error", "Unable to open particle file:" + fname);
+      QString message = "Unable to open particle file:" + fname;
+      STUDIO_LOG_ERROR(message);
+      QMessageBox::critical(0, "Error", message);
       return false;
     }
   }
