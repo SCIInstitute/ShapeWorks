@@ -489,7 +489,6 @@ void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<Mesh>&
     this->transform_.set_size(3);
     for (unsigned int i = 0; i < 3; i++) {
       this->transform_[i] = center[i];
-      std::cerr << "trans[" << i << "] = " << this->transform_[i] << "\n";
     }
   }
 }
