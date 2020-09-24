@@ -9,7 +9,7 @@ void Executable::buildParser()
 {  
   parser.description("Unified ShapeWorks executable that includes command line utilities for automated construction of compact statistical landmark-based shape models of ensembles of shapes");
   parser.usage("Usage: %prog <command> [args]...");
-  parser.version(std::string("ShapeWorks version ") + SHAPEWORKS_VERSION + " (executable version 1.0.0)");
+  parser.version(std::string("ShapeWorks Version ") + SHAPEWORKS_VERSION);
   parser.epilog("Available commands:");
   parser.disable_interspersed_args(); // so everything after a command's name will be passed to that command (ex: its --help argumemnt)
   
