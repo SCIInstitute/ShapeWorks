@@ -59,7 +59,7 @@ function install_conda() {
   if ! conda install --yes geotiff=1.6.0; then return 1; fi
   if ! conda install --yes git-lfs=2.11.0; then return 1; fi
   if ! conda install --yes gtest=1.10.0; then return 1; fi
-  #if ! conda install --yes notebook=6.1.4; then return 1; fi
+  if ! conda install --yes notebook=6.1.4; then return 1; fi
   if ! conda install --yes numpy=1.19.1; then return 1; fi
   if ! conda install --yes openblas=0.3.10; then return 1; fi
   if ! conda install --yes openexr=2.5.3; then return 1; fi
@@ -89,7 +89,7 @@ function install_conda() {
     if ! conda install --yes tbb-devel=2019.9; then return 1; fi
 
   else                                                                  # Windows
-    if ! conda install --yes graphviz=2.38.0; then return 1; fi
+    #if ! conda install --yes graphviz=2.38.0; then return 1; fi
     if ! conda install --yes tbb=2020.1; then return 1; fi
     if ! conda install --yes tbb-devel=2020.1; then return 1; fi
   fi
