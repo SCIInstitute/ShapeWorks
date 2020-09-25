@@ -255,6 +255,9 @@ ParticleImplicitSurfaceDomain<T>::ApplyConstraints(PointType &p, bool dbg) const
         msg << std::endl << std::endl;
         std::cerr << msg.str();
     }
+    if(vec[0] == 0 && vec[1] == 0 && vec[2] == 0){
+        std::cerr << "Stuck ";
+    }
 
     // Raise the tolerance if we have done too many iterations.
     k++;

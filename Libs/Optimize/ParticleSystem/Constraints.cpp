@@ -225,7 +225,7 @@ std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3>
     // If exactly two planes are violated and the points are almost violating the plane, we project the updated point to the intersection between these planes
     if(violations.size() == 2){
         stream << "distance0 " << distances[0] << " distance1 " << distances[0] << std::endl;
-        if(distances[0] <= 1.5*eps && distances[1] <= 1.5*eps){
+        if(distances[0] <= 1e-4 && distances[1] <= 1e-4){
             // Plane 1
             Eigen::Vector3d n_d = (*planeConsts)[violations[0]].GetPlaneNormal();
             Eigen::Vector3d p0_d = (*planeConsts)[violations[0]].GetPlanePoint();
@@ -251,7 +251,7 @@ std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3>
                   << "Corrected point " << new_point.transpose() << std::endl
                        << "Original gradient " << l.transpose() << std::endl
                        << "Updated gradient " << updated_gradient.transpose() << std::endl << std::endl;
-            std::cout << stream.str();
+            //std::cout << stream.str();
         }
         else{
             run = true;
