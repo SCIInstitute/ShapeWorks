@@ -13,7 +13,7 @@ BUILD_LOG="build_dependencies.log"
 VXL_VER="v2.0.2"
 VTK_VER="v9.0.1"
 VTK_VER_STR="9.0"
-ITK_VER="v5.0.1"
+ITK_VER="v5.1.1"
 ITK_VER_STR="5.0"
 EIGEN_VER="3.3.7"
 QT_MIN_VER="5.9.8"  # NOTE: 5.x is required, but this restriction is a clever way to ensure the anaconda version of Qt (5.9.6 or 5.9.7) isn't used since it won't work on most systems.
@@ -176,12 +176,12 @@ build_itk()
   mkdir -p build && cd build
 
   if [[ $OSTYPE == "msys" ]]; then
-      cmake -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="${VTK_DIR}" -DModule_ITKVtkGlue:BOOL=ON -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
+      cmake -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="${VTK_DIR}" -DModule_ITKVtkGlue:BOOL=ON -DITK_WRAP_PYTHON:BOOL=ON -DITK_LEGACY_SILENT:BOOL=ON -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
       
       cmake --build . --config Release || exit 1
       cmake --build . --config Release --target install
   else
-      cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DModule_ITKVtkGlue:BOOL=ON -DITK_USE_SYSTEM_VXL=on -DVXL_DIR=${INSTALL_DIR} -DVTK_DIR=${VTK_DIR} -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
+      cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR=${VTK_DIR} -DModule_ITKVtkGlue:BOOL=ON -DITK_USE_SYSTEM_VXL=on -DVXL_DIR=${INSTALL_DIR} -DITK_WRAP_PYTHON:BOOL=ON -DITK_LEGACY_SILENT:BOOL=ON -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
       make -j${NUM_PROCS} install || exit 1
   fi
 
