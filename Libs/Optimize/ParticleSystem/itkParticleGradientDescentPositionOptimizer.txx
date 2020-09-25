@@ -171,7 +171,7 @@ namespace itk
               // New good implementation of cutting plane
               std::stringstream stream = m_ParticleSystem->GetDomain(dom)->GetConstraints()->applyBoundaryConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
               typedef std::numeric_limits< double > dbl;
-              std::cout.precision(dbl::max_digits10);
+              std::cout.precision(18);
               // Old broken implementation. Constraints don't work
               //m_ParticleSystem->GetDomain(dom)->ApplyVectorConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
               stream << "Index ----------------" << it.GetIndex() << "--------------" << dom << std::endl;
@@ -189,20 +189,32 @@ namespace itk
               if (gradmag > maximumUpdateAllowed) {
                 gradient = gradient * maximumUpdateAllowed / gradmag;
                 gradmag = gradient.magnitude();
+
+                // debuggg
+                stream << "Rescaled because of magnitude. New gradient: " << gradient <<  std::endl;
                 /*
-                stream << "Rejected because of magnitude " << gradmag << "/" << maximumUpdateAllowed <<  std::endl;
                 stream << std::endl;
                 std::cout << stream.str();
                 */
               }
 
+              // debuggg
+              stream << "Out_old gradient: " << gradient_old <<  std::endl;
+              stream << "Out_new gradient: " << gradient <<  std::endl;
+              stream << "pt: " << pt << std::endl;
+              stream << "m_ParticleSystem->GetPosition(it.GetIndex(), dom): " << m_ParticleSystem->GetPosition(it.GetIndex(), dom) << std::endl;
+
               // Step D compute the new point position
               PointType newpoint = domain->UpdateParticlePosition(pt, gradient);
+
+              // debuggg
+              stream << "Step D new point: " << newpoint <<  std::endl;
 
               // Step F update the point position in the particle system
               m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);
 
               stream << "New Point " << newpoint << std::endl;
+              stream << "Position set new point " << m_ParticleSystem->GetPosition(it.GetIndex(), dom) << std::endl;
 
               // Step G compute the new energy of the particle system
               newenergy = localGradientFunction->Energy(it.GetIndex(), dom, m_ParticleSystem);
@@ -280,7 +292,6 @@ namespace itk
       }
 
     } // end while stop optimization
-    std::cout << "Ended opt##############" << std::endl;
   }
 
 } // end namespace

@@ -89,7 +89,15 @@ public:
 
     //for (unsigned int i = 0; i < DIMENSION; i++) { newpoint[i] = point[i] - update[i]; }
 
-    ApplyConstraints(newpoint);
+    // debuggg
+    ApplyConstraints(newpoint, true);
+
+    // debuggg
+    /*
+    if(!this->GetConstraints()->IsAnyViolated(point) && this->GetConstraints()->IsAnyViolated(newpoint)){
+        std::cerr << "####### Violation within apply constraints #######" << std::endl;
+    }
+    */
 
     /*
     if(point[2] >= 0 && newpoint[2] < 0){

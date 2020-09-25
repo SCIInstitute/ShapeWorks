@@ -223,22 +223,38 @@ ParticleImplicitSurfaceDomain<T>::ApplyConstraints(PointType &p, bool dbg) const
   while ( fabs(f) > (m_Tolerance * mult) || gradmag < epsilon)
     //  while ( fabs(f) > m_Tolerance || gradmag < epsilon)
     {
+    PointType p_old = p;
+    //vnl_vector_fixed<T, DIMENSION> grad = -this->SampleGradientAtPoint(p);
+    vnl_vector_fixed<T, DIMENSION> gradf = this->SampleGradientAtPoint(p);
+    vnl_vector_fixed<double, DIMENSION> grad;
+    grad[0] = double(gradf[0]); grad[1] = double(gradf[1]); grad[2] = double(gradf[2]);
 
-    vnl_vector_fixed<T, DIMENSION> grad = -this->SampleGradientAtPoint(p);
-    std::stringstream msg = this->GetConstraints()->applyBoundaryConstraints(grad, p);
+
+    gradmag = grad.magnitude();
+    //vnl_vector_fixed<T, DIMENSION> vec = grad * (f / (gradmag + epsilon));
+    vnl_vector_fixed<double, DIMENSION> vec = grad * (double(f) / (gradmag + double(epsilon)));
+
+    vnl_vector_fixed<double, DIMENSION> vec_old = vec;
+    std::stringstream msg = this->GetConstraints()->applyBoundaryConstraints(vec, p);
     if(dbg){
         msg << std::endl;
         std::cout << msg.str();
     }
 
-    gradmag = grad.magnitude();
-    vnl_vector_fixed<T, DIMENSION> vec = grad * (f / (gradmag + epsilon));
     for (unsigned int i = 0; i < DIMENSION; i++)
       {
-      p[i] += vec[i];
+      p[i] -= vec[i];
       }
 
     f = this->Sample(p);
+
+    if(!this->GetConstraints()->IsAnyViolated(p_old) && this->GetConstraints()->IsAnyViolated(p)){
+        msg << std::endl << "####### Violation within apply constraints #######" << p_old << p  << std::endl;
+        msg << "f " << f << " epsilon " << epsilon << std::endl;
+        msg << "vec_old " << vec_old << " vec " << vec << std::endl;
+        msg << std::endl << std::endl;
+        std::cerr << msg.str();
+    }
 
     // Raise the tolerance if we have done too many iterations.
     k++;
