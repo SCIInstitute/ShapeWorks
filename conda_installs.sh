@@ -1,6 +1,9 @@
 #
 # Installs conda environment for building ShapeWorks
 #
+# Same dependencies are conservatively installed by ./conda_installs.bat for Windows users.
+# Please keep this up to date with ./conda_installs.bat whenever changes are made.
+# 
 echo ""
 echo "Note: this script only supports bash and zsh shells"
 echo ""
@@ -98,7 +101,6 @@ function install_conda() {
   if ! pip install Python/DocumentationUtilsPackage; then return 1; fi # install shapeworks auto-documentation as a package
   if ! pip install fontawesome-markdown==0.2.6; then return 1; fi      # lib for icons in documentation
   if ! pip install grip==4.5.2; then return 1; fi                      # quick markdown preview server
-  if ! pip install itk==5.1.1; then return 1; fi                       # ITK Python bindings (TODO: see issues #300, #302)
   if ! pip install matplotlib==3.3.2; then return 1; fi
   if ! pip install mdutils==1.3.0; then return 1; fi                   # lib for writing markdown files (auto-documentation)
   if ! pip install mkdocs==1.1.2; then return 1; fi                    # lib for generating documentation from markdown

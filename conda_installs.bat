@@ -1,8 +1,11 @@
-REM update anaconda
+REM
+REM Conservatively installs same dependencies as ./conda_installs.sh.
+REM Please keep this up to date with ./conda_installs.sh whenever changes are made.
+REM 
 
+REM update anaconda
 call conda config --add channels anaconda
 call conda config --add channels conda-forge
-
 call conda update --yes -n base -c defaults conda
 call conda update --yes --all
 
@@ -39,7 +42,6 @@ call pip install Python/DatasetUtilsPackage
 call pip install Python/DocumentationUtilsPackage
 call pip install fontawesome-markdown==0.2.6
 call pip install grip==4.5.2
-call pip install itk==5.1.1
 call pip install matplotlib==3.3.2
 call pip install mdutils==1.3.0
 call pip install mkdocs==1.1.2
