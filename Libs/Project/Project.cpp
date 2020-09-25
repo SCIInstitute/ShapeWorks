@@ -3,6 +3,7 @@
 #include <xlnt/xlnt.hpp>
 
 #include <memory>
+#include <cstring>
 
 using namespace shapeworks;
 
@@ -211,7 +212,7 @@ void Project::load_subjects()
     auto feature_list = this->get_list(feature_columns, i);
     std::map<std::string, std::string> map;
     for (int i = 0; i < feature_columns.size(); i++) {
-      std::string feature = feature_columns[i].substr(strlen(FEATURE_PREFIX));
+      std::string feature = feature_columns[i].substr(std::strlen(FEATURE_PREFIX));
       map[feature] = feature_list[i];
     }
     subject->set_feature_filenames(map);
@@ -219,7 +220,7 @@ void Project::load_subjects()
     auto group_values = this->get_list(group_names, i);
     std::map<std::string, std::string> group_map;
     for (int i = 0; i < group_names.size(); i++) {
-      std::string name = group_names[i].substr(strlen(GROUP_PREFIX));
+      std::string name = group_names[i].substr(std::strlen(GROUP_PREFIX));
       group_map[name] = group_values[i];
     }
     subject->set_group_values(group_map);
@@ -507,7 +508,7 @@ std::vector<std::string> Project::get_group_names() const
   std::vector<std::string> group_names;
 
   for (std::string group : raw_names) {
-    group.erase(0, strlen(GROUP_PREFIX)); // erase "group_"
+    group.erase(0, std::strlen(GROUP_PREFIX)); // erase "group_"
     group_names.push_back(group);
   }
 
