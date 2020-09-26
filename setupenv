@@ -1,0 +1,45 @@
+#!/bin/bash
+
+#
+# Source this to setup the ShapeWorks environment.
+# - adds the location of the `shapeworks` executable to the PATH
+# - adds the location of the Python VTK libraries (ITK coming soon)
+#
+# TODO: paths must be specified by user (ugh.)
+
+(return 0 2>/dev/null) && sourced=1 || sourced=0
+
+if [[ "$sourced" == "0" ]]; then
+  echo "ERROR: must call this script using \"source ./conda_installs.sh\""
+  exit 1
+fi
+
+conda activate shapeworks
+
+if [[ "$(uname)" == "Linux" ]]; then                    # Linux
+  BUILD_DIR=`pwd`/build/bin
+  DEPS=`pwd`/../swdeps/install
+  QT=/scratch/cam/tools/Qt5.13.1/5.13.1
+
+  export PATH=${BUILD_DIR}:${PATH}
+  export PYTHONPATH=${DEPS}/bin/lib/site-packages:${PYTHONPATH}
+  export LD_LIBRARY_PATH=${QT}/gcc_64/lib:${DEPS}/lib:${LD_LIBRARY_PATH}
+
+elif [[ "$(uname)" == "Darwin" ]]; then                 # OSX
+  BUILD_DIR=`pwd`/build_xcode/bin/Release
+  DEPS=`pwd`/../swdeps/install
+  QT=/Users/cam/tools/Qt5.13.0/5.13.0
+
+  export PATH=${BUILD_DIR}:${PATH}
+  export PYTHONPATH=${DEPS}/lib/python3.8/site-packages:${PYTHONPATH}
+  export LD_LIBRARY_PATH=${QT}/clang_64/lib:${DEPS}/lib:${LD_LIBRARY_PATH}
+
+else                                                    # Windows (git bash)
+  BUILD_DIR=`pwd`/build/bin/Release
+  DEPS=`pwd`/../swdeps/install
+
+  export PATH=${BUILD_DIR}:${PATH}
+  export PYTHONPATH=${DEPS}/bin/lib/site-packages:${PYTHONPATH}
+  export LD_LIBRARY_PATH=${DEPS}/lib:${LD_LIBRARY_PATH}
+fi
+
