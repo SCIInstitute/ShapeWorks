@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
   std::cout << "Instructions: Place all of the femur mesh .ply files to be groomed in ./grooming/ and add a file_list.txt file which lists the filenames 1 per line\n";
 
   std::string directoryName = "grooming/";
-  ifstream inFile;
+  std::ifstream inFile;
   std::string infilename = directoryName + "file_list.txt";
   inFile.open(infilename);
   if (!inFile) {
