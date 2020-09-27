@@ -189,7 +189,7 @@ def Run_Pipeline(args):
             This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
             This function uses the same transfrmation matrix for alignment of raw and segmentation files.
             """
-            [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir + "aligned", centerFiles_segmentations, centerFiles_images, medianFile, processRaw = True)
+            [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir + "aligned/segmentations", centerFiles_segmentations, centerFiles_images, medianFile, processRaw = True)
 
             # If user chose option 2, define cutting plane on median sample
             if choice == 2:
@@ -214,11 +214,12 @@ def Run_Pipeline(args):
             '''
             # Clip Binary Volumes - We have femurs of different shaft length so we will clip them all using the defined cutting plane.
             clippedFiles_segmentations = ClipBinaryVolumes(parentDir + 'clipped_segmentations', rigidFiles_segmentations, cutting_plane_points.flatten())
+            '''
 
             # Compute largest bounding box and apply cropping
-            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", clippedFiles_segmentations, parentDir + "clipped_segmentations/*.nrrd")
-            croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images, parentDir + "clipped_segmentations/*.nrrd")
-            '''
+            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", rigidFiles_segmentations, parentDir + "aligned/segmentations/*.aligned.nrrd")
+            croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images, parentDir + "aligned/segmentations/*.aligned.nrrd")
+
 
         # BEGIN GROOMING WITHOUT IMAGES
         else:
@@ -280,7 +281,7 @@ def Run_Pipeline(args):
             This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
             This function uses the same transfrmation matrix for alignment of raw and segmentation files.
             """
-            rigidFiles_segmentations = applyRigidAlignment(parentDir + "aligned", centerFiles_segmentations, None, medianFile, processRaw = False)
+            rigidFiles_segmentations = applyRigidAlignment(parentDir + "aligned/segmentations", centerFiles_segmentations, None, medianFile, processRaw = False)
 
             # If user chose option 2, define cutting plane on median sample
             if choice == 2:
@@ -305,10 +306,11 @@ def Run_Pipeline(args):
             '''
             # Clip Binary Volumes - We have femurs of different shaft length so we will clip them all using the defined cutting plane.
             clippedFiles_segmentations = ClipBinaryVolumes(parentDir + 'clipped_segmentations', rigidFiles_segmentations, cutting_plane_points.flatten())
+            '''
 
             # Compute largest bounding box and apply cropping
-            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", clippedFiles_segmentations, parentDir + "clipped_segmentations/*.nrrd")
-            '''
+            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", rigidFiles_segmentations, parentDir + "aligned/segmentations/*.aligned.nrrd")
+
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
         if args.interactive:
