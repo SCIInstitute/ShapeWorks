@@ -7,7 +7,7 @@ Jadie Adams
 
 The femur data set is comprised of segmented meshes of femurs and corresponding CT images that are not segmented.
 The first step in grooming is to turn the meshes into the binary volume format shapeworks expects.
-The full images and segmentations are through every stop of grooming. 
+The full images and segmentations are through every stop of grooming.
 Optimization is single scale.
 
 First import the necessary modules
@@ -38,7 +38,7 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    datasetName = "femur-v0"
+    datasetName = "femur"
     filename = datasetName + ".zip"
     # Check if the data is in the right place
     if not os.path.exists(filename):
@@ -83,7 +83,7 @@ def Run_Pipeline(args):
         parentDir = 'TestFemur/groomed/'
         if not os.path.exists(parentDir):
             os.mkdir(parentDir)
-        
+
         # set name specific variables
         img_suffix = "1x_hip"
         reference_side = "left" # somewhat arbitrary, could be right
@@ -128,8 +128,8 @@ def Run_Pipeline(args):
                 choice = int(choice)
                 if choice==1 or choice==2:
                     choice_made = True
-                    
-        # If user chose option 1, define cutting plane on sample of their choice 
+
+        # If user chose option 1, define cutting plane on sample of their choice
         if choice == 1:
             options = []
             for file in files_mesh:
@@ -152,13 +152,13 @@ def Run_Pipeline(args):
         # BEGIN GROOMING WITH IMAGES
         if args.start_with_image_and_segmentation_data and files_img:
             """
-            Reflect - We have left and right femurs, so we reflect both image and mesh 
+            Reflect - We have left and right femurs, so we reflect both image and mesh
             for the non-reference side so that all of the femurs can be aligned.
             """
             reflectedFiles_mesh, reflectedFile_img = anatomyPairsToSingles(parentDir + 'reflected', files_mesh, files_img, reference_side)
 
             """
-            MeshesToVolumes - Shapeworks requires volumes so we need to convert 
+            MeshesToVolumes - Shapeworks requires volumes so we need to convert
             mesh segementaions to binary segmentations.
             """
             fileList_seg = MeshesToVolumesUsingImages(parentDir + "volumes", reflectedFiles_mesh, reflectedFile_img)
@@ -169,7 +169,7 @@ def Run_Pipeline(args):
             """
             resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, isBinary=True)
             resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", reflectedFile_img, isBinary=False)
-            
+
             """
             Apply padding
             Both the segmentation and raw images are padded in case the seg lies on the image boundary.
@@ -182,18 +182,18 @@ def Run_Pipeline(args):
             This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
             """
             [comFiles_segmentations, comFiles_images] = applyCOMAlignment(parentDir + "com_aligned", paddedFiles_segmentations, paddedFiles_images, processRaw=True)
-            
+
             """
             Apply centering
             """
             centerFiles_segmentations = center(parentDir + "centered/segmentations", comFiles_segmentations)
             centerFiles_images = center(parentDir + "centered/images", comFiles_images)
-            
+
             """
-            Rigid alignment needs a reference file to align all the input files, FindReferenceImage function defines the median file as the reference.        
+            Rigid alignment needs a reference file to align all the input files, FindReferenceImage function defines the median file as the reference.
             """
             medianFile = FindReferenceImage(centerFiles_segmentations)
-            
+
             """
             Apply rigid alignment
             This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
@@ -238,7 +238,7 @@ def Run_Pipeline(args):
             reflectedFiles_mesh = reflectMeshes(parentDir + 'reflected', files_mesh, reference_side)
 
             """
-            MeshesToVolumes - Shapeworks requires volumes so we need to convert 
+            MeshesToVolumes - Shapeworks requires volumes so we need to convert
             mesh segementaions to binary segmentations.
             """
             # set spacing
@@ -262,7 +262,7 @@ def Run_Pipeline(args):
             The segmentation and images are resampled independently to have uniform spacing.
             """
             resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, isBinary=True)
-            
+
             """
             Apply padding
             Both the segmentation and raw images are padded in case the seg lies on the image boundary.
@@ -274,17 +274,17 @@ def Run_Pipeline(args):
             This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
             """
             comFiles_segmentations = applyCOMAlignment(parentDir + "com_aligned", paddedFiles_segmentations, None)
-            
+
             """
             Apply centering
             """
             centerFiles_segmentations = center(parentDir + "centered/segmentations", comFiles_segmentations)
-            
+
             """
-            Rigid alignment needs a reference file to align all the input files, FindReferenceImage function defines the median file as the reference.        
+            Rigid alignment needs a reference file to align all the input files, FindReferenceImage function defines the median file as the reference.
             """
             medianFile = FindReferenceImage(centerFiles_segmentations)
-            
+
             """
             Apply rigid alignment
             This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
