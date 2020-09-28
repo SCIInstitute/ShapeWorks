@@ -22,7 +22,7 @@ if [[ "$(uname)" == "Linux" ]]; then                    # Linux
   QT=/scratch/cam/tools/Qt5.13.1/5.13.1
 
   export PATH=${BUILD_DIR}:${PATH}
-  export PYTHONPATH=${DEPS}/bin/lib/site-packages:${PYTHONPATH}
+  export PYTHONPATH=${DEPS}/lib/python3.7/site-packages:${PYTHONPATH}
   export LD_LIBRARY_PATH=${QT}/gcc_64/lib:${DEPS}/lib:${LD_LIBRARY_PATH}
 
 elif [[ "$(uname)" == "Darwin" ]]; then                 # OSX
