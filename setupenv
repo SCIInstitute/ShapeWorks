@@ -17,11 +17,17 @@ fi
 conda activate shapeworks
 
 if [[ "$(uname)" == "Linux" ]]; then                    # Linux
-  BUILD_DIR=`pwd`/build/bin
-  DEPS=`pwd`/../swdeps/install
-  QT=/scratch/cam/tools/Qt5.13.1/5.13.1
-
-  export PATH=${BUILD_DIR}:${PATH}
+  if false; then # Cameron's linux machine
+    BUILD_DIR=$HOME/code/ShapeWorks/build
+    DEPS=$HOME/code/swdeps/install
+    QT=$HOME/tools/Qt5.13.1/5.13.1
+  else             # GitHub actions machine
+    BUILD_DIR=/home/runner/work/ShapeWorks/ShapeWorks/build
+    DEPS=/home/runner/install
+    QT=/home/runner/work/ShapeWorks/Qt/5.9.9
+  fi
+  
+  export PATH=${BUILD_DIR}/bin:${PATH}
   export PYTHONPATH=${DEPS}/lib/python3.7/site-packages:${PYTHONPATH}
   export LD_LIBRARY_PATH=${QT}/gcc_64/lib:${DEPS}/lib:${LD_LIBRARY_PATH}
 
