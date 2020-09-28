@@ -10,7 +10,14 @@ void shapeworksEnvSetup() // fixme: use googletest's setup/teardown: https://git
   auto path(std::string(BUILD_DIR) + "\\bin\\Release" + ";" + std::string(DEPS_DIR) + "\\bin" + ";" + std::getenv("PATH"));
   _putenv_s("PATH", path.c_str());
   auto pythonpath(std::string(DEPS_DIR) + "\\bin\\lib\\site-packages" + ";" + std::getenv("PYTHONPATH"));
-  _putenv_s("PYTHONPATH", path.c_str());
+  _putenv_s("PYTHONPATH", pythonpath.c_str());
+#elif __linux__
+  auto path(std::string(BUILD_DIR) + "/bin" + ":" + std::getenv("PATH")); // fixme: could be /bin/Debug or /bin/Release for systems such as Xcode
+  setenv("PATH", path.c_str(), true);
+  auto pythonpath(std::string(DEPS_DIR) + "/lib/python3.7/site-packages" + ":" + std::getenv("PYTHONPATH"));
+  setenv("PYTHONPATH", pythonpath.c_str(), true);
+  auto ld_library_path(std::string(DEPS_DIR) + "/lib" + ":" + std::string("QT_LIBDIR") + ":" + std::getenv("LD_LIBRARY_PATH"));
+  setenv("LD_LIBRARY_PATH", ld_library_path.c_str(), true);
 #else
   auto path(std::string(BUILD_DIR) + "/bin" + ":" + std::getenv("PATH")); // fixme: could be /bin/Debug or /bin/Release for systems such as Xcode
   setenv("PATH", path.c_str(), true);

@@ -6,6 +6,7 @@ find_package(GTest REQUIRED)
 # Set the test data location
 set(TEST_DATA_DIR "${CMAKE_SOURCE_DIR}/Testing/data")
 set(DEPS_DIR "${CMAKE_SOURCE_DIR}/../new_swdeps/install")
+set(QT_LIBDIR "${QT5_WIDGETSLIBRARYPATH}")
 
 # Configure the TestConfiguration.h file
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/TestConfiguration.h.in

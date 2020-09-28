@@ -4,6 +4,8 @@
 
 #define DEPS_DIR "@DEPS_DIR@"
 
+#define QT_LIBDIR "@QT_LIBDIR@"
+
 #define BUILD_DIR "@CMAKE_BINARY_DIR@"
 
 #define INSTALL_DIR "@CMAKE_INSTALL_PREFIX@"
