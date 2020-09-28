@@ -87,9 +87,9 @@ def Run_Pipeline(args):
 
 	print("\n\n\nStep 3. Reformat Data for Pytorch\n") #######################################################################
 	'''
-	If down_sample is true, model will trian on images half the original size
+	If down_sample is true, model will train on images half the original size
 	If whiten is true, images and PCA scores will be whitened 
-	Hyper-paramter batch_size is for training
+	Hyper-parameter batch_size is for training
 		Higher batch size will help speed up training but uses more cuda memory, if you get a memory error try reducing the batch size
 	'''
 	
@@ -103,7 +103,7 @@ def Run_Pipeline(args):
 	print("\n\n\nStep 4. Train model.\n") #####################################################################################
 	'''
 	Set training parameters dict
-	val_freq sets how often too test on validation set and log
+	val_freq sets how often to test on validation set and log
 	for example val_freq=1 is every epoch and val_freq=2 is every other
 	'''
 	parameters = {"epochs":50, "learning_rate":0.001, "val_freq":1}
