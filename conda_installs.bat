@@ -10,7 +10,7 @@ call conda update --yes -n base -c defaults conda
 call conda update --yes --all
 
 REM create and activate shapeworks env
-call conda create --yes --name shapeworks python=3.7.8
+call conda create --yes --name shapeworks python=3.8.5
 call conda activate shapeworks
 
 REM install shapeworks deps
