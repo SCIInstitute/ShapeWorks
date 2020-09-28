@@ -25,7 +25,7 @@ TEST(PythonTests, ellipsoidTinyTest) {
   std::remove(check_file.c_str());
 
   // run the use case
-  std::string command = "source ../../setupenv && python RunUseCase.py --use_case ellipsoid --tiny_test";
+  std::string command = "python RunUseCase.py --use_case ellipsoid --tiny_test";
   std::cerr << "Running command: " << command << "\n";
   system(command.c_str());
 
