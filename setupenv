@@ -35,11 +35,14 @@ elif [[ "$(uname)" == "Darwin" ]]; then                 # OSX
   export LD_LIBRARY_PATH=${QT}/clang_64/lib:${DEPS}/lib:${LD_LIBRARY_PATH}
 
 else                                                    # Windows (git bash)
-  BUILD_DIR=`pwd`/build/bin/Release
-  DEPS=`pwd`/../swdeps/install
-
-  export PATH=${BUILD_DIR}:${PATH}
+  if true; then # Cameron's windows machine
+    BUILD_DIR=$HOME/code/ShapeWorks/build
+    DEPS=$HOME/code/new_swdeps/install
+  else             # GitHub actions machine uses command, not bash
+    echo "FAIL: github action expected to use setupenv.bat; should never see this."
+  fi
+  
+  export PATH=${BUILD_DIR}/bin/Release:${DEPS}/bin:${PATH}
   export PYTHONPATH=${DEPS}/bin/lib/site-packages:${PYTHONPATH}
-  export LD_LIBRARY_PATH=${DEPS}/lib:${LD_LIBRARY_PATH}
 fi
 

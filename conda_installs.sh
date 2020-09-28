@@ -46,7 +46,11 @@ function install_conda() {
 
   # create and activate shapeworks env
   CONDAENV=shapeworks
-  if ! conda create --yes --name $CONDAENV python=3.7.8; then return 1; fi
+  if [[ "$(uname)" != "Linux" && "$(uname)" != "Darwin" ]]; then
+    if ! conda create --yes --name $CONDAENV python=3.8.5; then return 1; fi
+  else
+    if ! conda create --yes --name $CONDAENV python=3.7.8; then return 1; fi
+  fi
   eval "$(conda shell.bash hook)"
   if ! conda activate $CONDAENV; then return 1; fi
 
