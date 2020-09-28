@@ -62,7 +62,7 @@ class Mixture_Sampler(Sampler):
 # instance of Sampler class that uses kernel density estimate
 class KDE_Sampler(Sampler):
 	def fit(self, embedded_matrix):
-		print("Fittting KDE...")
+		print("Fitting KDE...")
 		self.embedded_matrix = embedded_matrix
 		# get sigma squared
 		nearest_neighbor_dists = []
