@@ -102,7 +102,7 @@ def Run_Pipeline(args):
 
 	print("\n\n\nStep 4. Train model.\n") #####################################################################################
 	'''
-	Set training parameters dict
+	Set training parameters dictionary
 	val_freq sets how often to test on validation set and log
 	for example val_freq=1 is every epoch and val_freq=2 is every other
 	'''
