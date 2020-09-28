@@ -282,7 +282,12 @@ show_shapeworks_build()
     OPENMP_FLAG="-DUSE_OPENMP=OFF"
   fi
 
-  echo "cmake -DCMAKE_PREFIX_PATH=${INSTALL_DIR} ${OPENMP_FLAG} -DBuild_Studio=${BUILD_GUI} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}"
+  # only need to explicitly specify vxl directory on Windows
+  if [[ "$(uname)" != "Linux" && "$(uname)" != "Darwin" ]]; then
+    WINDOWS_VXL="-DVXL_DIR=${INSTALL_DIR}/vxl/build"
+  fi
+
+  echo "cmake -DCMAKE_PREFIX_PATH=${INSTALL_DIR} ${OPENMP_FLAG} ${WINDOWS_VXL} -DBuild_Studio=${BUILD_GUI} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}"
   echo "Have a nice day!"
 }
 
