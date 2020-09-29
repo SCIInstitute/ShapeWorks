@@ -236,7 +236,6 @@ def Run_Pipeline(args):
             Reflect - We have left and right femurs, so we reflect the non-reference side meshes so that all of the femurs can be aligned
             """
             reflectedFiles_mesh = reflectMeshes(parentDir + 'reflected', files_mesh, reference_side)
-
             """
             MeshesToVolumes - Shapeworks requires volumes so we need to convert 
             mesh segementaions to binary segmentations.
@@ -294,7 +293,7 @@ def Run_Pipeline(args):
 
             # If user chose option 2, define cutting plane on median sample
             if choice == 2:
-                input_file = medianFile.replace("centered", "aligned").replace(".nrrd", ".aligned.DT.nrrd")
+                input_file = medianFile.replace("centered/segmentations", "aligned").replace(".nrrd", ".aligned.DT.nrrd")
                 cutting_plane_points = SelectCuttingPlane(input_file)
 
             elif choice == 1:
