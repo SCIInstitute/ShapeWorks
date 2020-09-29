@@ -11,6 +11,7 @@ import argparse
 import glob
 import re
 import numpy as np
+import pickle
 
 from GroomUtils import *
 from OptimizeUtils import *
@@ -211,6 +212,8 @@ def Run_Pipeline(args):
             print("Cutting plane points: ")
             print(cutting_plane_points)
 
+            pickle.dump( [cutting_plane_points], open( inputDir + "groomed/groomed_pickle.p", "wb" ) )
+
             '''
             # Clip Binary Volumes - We have femurs of different shaft length so we will clip them all using the defined cutting plane.
             clippedFiles_segmentations = ClipBinaryVolumes(parentDir + 'clipped_segmentations', rigidFiles_segmentations, cutting_plane_points.flatten())
@@ -303,6 +306,8 @@ def Run_Pipeline(args):
             print("Cutting plane points: ")
             print(cutting_plane_points)
 
+            pickle.dump( [cutting_plane_points], open( inputDir + "groomed/groomed_pickle.p", "wb" ) )
+
             '''
             # Clip Binary Volumes - We have femurs of different shaft length so we will clip them all using the defined cutting plane.
             clippedFiles_segmentations = ClipBinaryVolumes(parentDir + 'clipped_segmentations', rigidFiles_segmentations, cutting_plane_points.flatten())
@@ -331,6 +336,8 @@ def Run_Pipeline(args):
 
         if args.tiny_test:
             dtFiles = dtFiles[:3]
+
+        [cutting_plane_points] = pickle.load( open( inputDir + "groomed/groomed_pickle.p", "rb" ) )
 
     """
     ## OPTIMIZE : Particle Based Optimization
