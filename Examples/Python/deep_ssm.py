@@ -30,7 +30,7 @@ def Run_Pipeline(args):
 	parent_dir = os.getcwd() + "/TestDeepSSM/"
 	if not os.path.exists(parent_dir):
 		os.makedirs(parent_dir)
-	datasetName = "femur"
+	datasetName = "femur-v0"
 	input_dir = parent_dir + datasetName + '/'
 	# get zipfile if not there
 	filename = datasetName + ".zip"
