@@ -1,0 +1,70 @@
+site_name: ShapeWorks
+site_url: http://www.sci.utah.edu/software/shapeworks.html
+repo_url: https://github.com/SCIInstitute/ShapeWorks
+edit_uri: edit/master/docs/ # should be changed to master branch
+site_description: The official documentation of ShapeWorks 
+site_author: Shireen Elhabian et al.
+copyright: Copyright © 1998 - 2020 Scientific Computing and Imaging Institute. All rights reserved.
+google_analytics: ['UA-36723568-3', 'mkdocs.org']
+
+nav:
+- Home: 'index.md'
+- Getting Started:
+   - 'Shapes, What & From Where?':           'getting-started/shapes.md'
+   - 'Shape Modeling Workflow':              'getting-started/workflow.md'
+   - 'ShapeWorks Interfaces':                'getting-started/interfaces.md'   
+   - 'Examples':                             'getting-started/examples.md'
+   - 'How-Tos':                              'getting-started/how-tos.md'
+- Workflow:
+   - 'How to Groom Your Dataset?':           'workflow/groom.md'
+   - 'How to Optimize Your Shape Model?' :   'workflow/optimize.md'        
+   - 'How to Analyze Your Shape Model?' :    'workflow/analyze.md'     
+- Use Cases:
+   - 'Getting Started with Use Cases':          'use-cases/use-cases.md'
+   - 'Ellipsoid: Basic Example':                'use-cases/ellipsoid.md'
+   - 'Fixed Domains: SSM on New Shapes':        'use-cases/fixed-domain-ellipsoid.md'
+   - 'Left Atrium: SSM from Segmentations':     'use-cases/left-atrium.md'
+   - 'Femur: SSM from Meshes':                  'use-cases/femur.md'
+   - 'Femur Mesh: SSM directly from meshes':    'use-cases/femur-mesh.md'
+   - 'Lumps: SSM directly from meshes':         'use-cases/lumps.md'
+   - 'Right Ventricle: Highly Variable Shapes': 'use-cases/right-ventricle.md'
+- For Users:
+   - 'How to Install ShapeWorks?':           'users/install.md'
+   - 'How to Cite ShapeWorks?':              'users/citation.md'
+   - 'Revelant Papers':                      'users/papers.md'
+- For Developers:
+   - 'How to Build ShapeWorks from Source?': 'dev/build.md'
+   - 'How to Contribute to ShapeWorks?':     'dev/contribute.md'
+   - 'How to Add ShapeWorks Commands?':      'dev/commands.md'
+   - 'How to Add Python APIs?':              'dev/python-apis.md'
+   - 'How to Add and Run Unit Tests?':       'dev/tests.md'
+   - 'How to Add New Use Cases?':            'dev/new-use-case.md'
+   - 'How to Add New Datasets?':             'dev/datasets.md'
+   - 'How to Auto-generate Documentation?':  'dev/autodoc.md'
+   - 'Getting Started with MkDocs':          'dev/mkdocs.md'
+   - 'Getting Started with GitHub Actions':  'dev/gh-actions.md'
+   - 'Getting Started with Markdown':        'dev/markdown.md'
+   - 'Adding to PATH Environment Variable':  'dev/paths.md'
+- ShapeWorks Tools:
+   - 'ShapeWorks Commands': 'tools/ShapeWorksCommands.md'
+- About:
+   - 'Amazing Team':  'about/team.md'
+   - 'Release Notes': 'about/release-notes.md'
+   - 'License':       'about/license.md'
+   - 'Contact Us':    'about/contact.md'
+ 
+
+theme:
+   name: readthedocs #rtd-dropdown #readthedocs #yeti  #united  #spacelab  #sandstone  #minty #lumen #flatly
+   include_sidebar: true
+   highlightjs: true
+   hljs_languages:
+      - yaml
+      - python
+
+markdown_extensions:
+   - fontawesome_markdown
+   - pymdownx.tasklist
+
+extra_css:
+    - css/custom.css

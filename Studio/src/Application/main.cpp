@@ -6,9 +6,14 @@
 #include <vtkObject.h>
 #include <itkMacro.h>
 
+#include <QSurfaceFormat>
+#include <QVTKOpenGLNativeWidget.h>
+
 int main(int argc, char** argv)
 {
   try {
+    // needed to ensure appropriate OpenGL context is created for VTK rendering.
+    QSurfaceFormat::setDefaultFormat(QVTKOpenGLNativeWidget::defaultFormat());
 
     std::cerr << "ShapeWorksStudio initializing...\n";
     vtkObject::GlobalWarningDisplayOff();

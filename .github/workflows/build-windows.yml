@@ -85,7 +85,7 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source 
       # and build directories, but this is only available with CMake 3.13 and higher.  
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: conda activate shapeworks && cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DSHAPEWORKS_SUPERBUILD=OFF -DVXL_DIR="${{runner.workspace}}\deps\vxl\build" -DITK_DIR="${{runner.workspace}}\deps\lib\cmake\ITK-5.0" -DVTK_DIR="${{runner.workspace}}\deps\lib\cmake\vtk-8.2" -DEigen3_DIR="${{runner.workspace}}\deps\share\eigen3\cmake" -DXLNT_DIR="${{runner.workspace}}\deps" -DOpenVDB_DIR="${{runner.workspace}}\deps\lib\cmake\OpenVDB" -DBuild_Studio=ON -DBuild_View2=ON
+      run: conda activate shapeworks && cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DSHAPEWORKS_SUPERBUILD=OFF -DVXL_DIR="${{runner.workspace}}\deps\vxl\build" -DITK_DIR="${{runner.workspace}}\deps\lib\cmake\ITK-5.0" -DVTK_DIR="${{runner.workspace}}\deps\lib\cmake\vtk-9.0" -DEigen3_DIR="${{runner.workspace}}\deps\share\eigen3\cmake" -DXLNT_DIR="${{runner.workspace}}\deps" -DOpenVDB_DIR="${{runner.workspace}}\deps\lib\cmake\OpenVDB" -DBuild_Studio=ON -DBuild_View2=ON
 
     - name: Build
       working-directory: ${{runner.workspace}}/build
@@ -103,8 +103,8 @@ jobs:
       run: cp /c/Miniconda3/envs/shapeworks/Library/bin/zlib.dll /c/Miniconda3/envs/shapeworks/Library/bin/tbb.dll /c/Miniconda3/envs/shapeworks/Library/bin/half.dll bin/Release
 
     - name: Build Binary Package
-      shell: bash
-      run: pwd ; ls ; cp Documentation/install/Windows_README.txt . ; cp Support/shapeworks.nsi . ; ./Support/package_windows.sh tag
+      shell: bash -l {0}
+      run: conda activate shapeworks && pwd ; ls ; cp docs/users/Windows_README.txt . ; cp Support/shapeworks.nsi . ; conda activate shapeworks && ./Support/package_windows.sh tag
       
     - name: Test
       working-directory: ${{runner.workspace}}/build
