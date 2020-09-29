@@ -5,7 +5,7 @@ find_package(GTest REQUIRED)
 
 # Set the test data location
 set(TEST_DATA_DIR "${CMAKE_SOURCE_DIR}/Testing/data")
-set(DEPS_DIR "$ENV{HOME}/install")  # github actions dependencies install dir
+file(TO_CMAKE_PATH "$ENV{HOME}/install" DEPS_DIR)  # by default set to github actions dependencies install dir
 message(STATUS "DEPS_DIR: ${DEPS_DIR}")
 set(QT_LIBDIR "${QT5_WIDGETSLIBRARYPATH}")
 message(STATUS "QT_LIBDIR: ${QT_LIBDIR}")
