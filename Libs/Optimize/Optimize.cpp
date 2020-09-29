@@ -29,6 +29,9 @@
 
 #include "Optimize.h"
 
+std::atomic<long> itk::ParticleDomain::euclideanDistanceCount(0);
+std::atomic<long> itk::ParticleDomain::sqEuclideanDistanceCount(0);
+
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
@@ -133,6 +136,10 @@ bool Optimize::Run()
   }
 
   this->UpdateExportablePoints();
+
+  std::cout << "euclidean Count: " << itk::ParticleDomain::euclideanDistanceCount << std::endl;
+  std::cout << "sqEuclidean Count: " << itk::ParticleDomain::sqEuclideanDistanceCount << std::endl;
+
   return true;
 }
 

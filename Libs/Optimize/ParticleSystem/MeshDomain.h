@@ -82,9 +82,11 @@ public:
   }
 
   inline double Distance(const PointType &a, const PointType &b) const override {
-      return meshWrapper->ComputeDistance(a, b);
+    itk::ParticleDomain::euclideanDistanceCount++;
+    return meshWrapper->ComputeDistance(a, b);
   }
   inline double SquaredDistance(const PointType &a, const PointType &b) const override {
+    itk::ParticleDomain::sqEuclideanDistanceCount++;
     double dist = meshWrapper->ComputeDistance(a, b);
     return dist * dist;
   }

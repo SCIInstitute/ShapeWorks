@@ -8,6 +8,7 @@
 =========================================================================*/
 #pragma once
 
+#include <atomic>
 #include "itkDataObject.h"
 #include "itkPoint.h"
 
@@ -21,6 +22,10 @@ namespace itk
 class ParticleDomain : public DataObject
 {
 public:
+
+  static std::atomic<long> euclideanDistanceCount;
+  static std::atomic<long> sqEuclideanDistanceCount;
+
   /** Standard class typedefs */
   typedef SmartPointer<ParticleDomain>  Pointer;
 
@@ -43,13 +48,16 @@ public:
 
   /** Distance between locations is used for computing energy and neighborhoods. */
   virtual double Distance(const PointType &a, const PointType &b) const {
+    throw std::runtime_error("boo");
+    euclideanDistanceCount++;
     return a.EuclideanDistanceTo(b);
   }
   /** Squared Distance between locations is used for computing sigma. */
   virtual double SquaredDistance(const PointType &a, const PointType &b) const {
+    throw std::runtime_error("boo");
+    sqEuclideanDistanceCount++;
     return a.SquaredEuclideanDistanceTo(b);
   }
-
 
   virtual double GetCurvature(const PointType &p) const = 0;
   virtual double GetSurfaceMeanCurvature() const = 0;
