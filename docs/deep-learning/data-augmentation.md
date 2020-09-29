@@ -1,18 +1,17 @@
 # ShapeWorks Data Augmentation 
 
 ShapeWorks includes a Python package for running data augmentation which is useful when a larger amount of data than what is available is required (such as when training DeepSSM).
-In data augmentation, realistic fabricated examples are generated based on the available real data in a way that preserves the population statistics.
-Here we explain the basic steps to data augmentation.
+Fabricated examples are generated based on the available real data, these examples are generated to preserve the population shape statistics as well as exhibit realistic intensity variations.
 
 ## Data Augmentation Steps
 #### 0. Collect Real Data
-As a preliminary step, the data which augmentation will be based off of is needed. This includes the shape model .particle files and can also include corresponding images.
+As a preliminary step, the data which augmentation will be based off of is needed. This includes the shape model .particle files and corresponding images. This can be acquired using ShapeWorks or any other method of generating particle distribution models.
 ![DataAug0.PNG](../img/deep-learning/DataAug0.PNG)
 #### 1. Embed Data
 First the true data is embedded into a lower dimensional subspace. This is done by creating a matrix which contains all of the real examples, then reducing the dimension via Principal Component Analysis (PCA).
 ![DataAug1.PNG](../img/deep-learning/DataAug1.PNG)
-#### 2. Fit a Distribution
-Next a distribution which can be sampled from is fit to the examples embedded in the low-dimension subspace.
+#### 2. Fit a Parametric Distribution
+Next a parametric distribution which can be sampled from is fit to the examples embedded in the low-dimension subspace.
 ![DataAug2.PNG](../img/deep-learning/DataAug2.PNG)
 #### 3. Sample from the Distribution 
 Samples are randomly drawn from this distribution and the closest real example to each sample is saved.

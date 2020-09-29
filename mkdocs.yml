@@ -24,7 +24,9 @@ nav:
    - 'Ellipsoid: Basic Example':                'use-cases/ellipsoid.md'
    - 'Fixed Domains: SSM on New Shapes':        'use-cases/fixed-domain-ellipsoid.md'
    - 'Left Atrium: SSM from Segmentations':     'use-cases/left-atrium.md'
-   - 'Femur: SSM from Meshes':                 'use-cases/femur.md'
+   - 'Femur: SSM from Meshes':                  'use-cases/femur.md'
+   - 'Femur Mesh: SSM directly from meshes':    'use-cases/femur-mesh.md'
+   - 'Lumps: SSM directly from meshes':         'use-cases/lumps.md'
    - 'Right Ventricle: Highly Variable Shapes': 'use-cases/right-ventricle.md'
 - For Users:
    - 'How to Install ShapeWorks?':           'users/install.md'

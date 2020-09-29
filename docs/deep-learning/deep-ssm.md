@@ -2,7 +2,7 @@
 DeepSSM is a convolutional neural network (CNN) model that can provide particles directly from unsegmented images after it has been trained. This documentation provides an overview of the DeepSSM process, for a full explanation see: [DeepSSM: A Deep Learning Framework for Statistical
 Shape Modeling from Raw Images](https://arxiv.org/abs/1810.00111).
 
-The input to the DeepSSM network are unsegmented 3D images of the anatomy of interest and the output are the particle-based shape models. DeepSSM requires training examples of image/PBM pairs which are generated via the traditional Shapeworks grooming and optimization pipeline or otherwise. Once the network has been trained on these examples it can predict the PBM of unseen examples given only images, bypassing the need for labor intensive segmentation, grooming, and optimization parameter tuning. 
+The input to the DeepSSM network are unsegmented 3D images of the anatomy of interest and the output is the point distribution model (PDM). DeepSSM requires training examples of image/PDM pairs which are generated via the traditional Shapeworks grooming and optimization pipeline or other particle distribution models. Once the network has been trained on these examples it can predict the PDM of unseen examples given only images, bypassing the need for labor intensive segmentation, grooming, and optimization parameter tuning. 
 
 The benefits of the DeepSSM pipeline include:
 * Less Labor  - DeepSSM does not require segmentation, only a bounding box about where the anatomy of interest lies in the image.  
@@ -17,7 +17,7 @@ The DeepSSM network is implemented in PyTorch and requires a GPU to run efficien
 
 The first step to creating a DeepSSM model is generating training data. Deep networks require thousands of training instances and so because medical imaging data is typically limited, data augmentation is necessary. The data augmentation process is described here:  [Running Data Augmentation](DataAugmentation.md).
 
-The data augmentation process involves reducing the PBM's to a low dimensional space via Principal Component Analysis (PCA), preserving a chosen percent of the variation. The PCA scores are saved and used as the labels for DeepSSM prediction. The PCA scores are deterministically mapped back to the PDM using the eigenvalues and vectors once the DeepSSM model makes a prediction. 
+The data augmentation process involves reducing the PDM's to a low dimensional space via Principal Component Analysis (PCA), preserving a chosen percent of the variation. The PCA scores are saved and used as the labels for DeepSSM prediction. The PCA scores are deterministically mapped back to the PDM using the eigenvalues and vectors once the DeepSSM model makes a prediction. 
 
 #### 2. Creation of Data Loaders
 
@@ -35,7 +35,7 @@ The trained model is then used to predict the PCA score from the images in the t
 
 #### 5. Evaluation
 
-To evaluate the accuracy of DeepSSM output, we compare a mesh created from segmentation to a mesh created from the predicted PDM. To obtain the original mesh, we use the ShapeWorks MeshFromDistanceTransforms command to get a mesh from the distance transform created from the true segmentation. To obtain the predicted mesh, we use the ShapeWorks ReconstructSurface command with the mean and predicted particles to reconstruct a surface.
+To evaluate the accuracy of DeepSSM output, we compare a mesh created from segmentation to a mesh created from the predicted PDM. To obtain the original mesh, we use the ShapeWorks `MeshFromDistanceTransforms` command to get a mesh from the distance transform created from the true segmentation. To obtain the predicted mesh, we use the ShapeWorks `ReconstructSurface` command with the mean and predicted particles to reconstruct a surface.
 
 We then compare the original mesh to the predicted mesh via surface-to-surface distance. To find the distance from the original to the predicted, we consider each vertex in the original and find the shortest distance to the surface of the predicted. This process is not symmetric as it depends on the vertices of one mesh, so the distance from the predicted to the original will be slightly different. We compute the Hausdorff distance which takes the max of these vertex-wise distances to return a single value as a measure of accuracy. We also consider the vertex-wise distances as a scalar field on the mesh vertices and visualize them as a heat map on the surface. This provides us with a way of seeing where the predicted PDM was more or less accurate.
 

@@ -2,7 +2,7 @@
 
 ## Install MkDocs and Themes 
 
-:fa-info-circle: _**Important:**_ The below installations are added to `conda_insalls` scripts.
+:fa-info-circle: _**Note:**_ The below installations have already been added to `conda_installs` scripts.
 
 Install mkdocs.  
 `pip install mkdocs`
@@ -15,6 +15,9 @@ See [this link](https://mkdocs.github.io/mkdocs-bootswatch/) for a list of boots
 
 Next, install font awesome for icons to display in the documentation.   
 `pip install fontawesome-markdown`
+
+and pymdown-extensions for tasklists:
+`pip install pymdown-extensions`
 
 
 ## Setting up the MkDocs project
@@ -66,6 +69,16 @@ Use `mkdocs gh-deploy --help` for a full list of options available for the gh-de
 ## Contributing to Documentation
 
 We use github issues to keep track of hanging fruits to improve ShapeWorks documentation. For an internal list of todos, which will be turned to issues, visit [Documentation ToDo List](../todo.md).
+
+## Inserting videos in documentation
+
+[Request on GitHub](https://github.com/SCIInstitute/ShapeWorks/issues/new) for your video to be uploaded to the SCI ShapeWorks server.
+
+Insert it in the markdown file using `<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/video.mp4" autoplay muted loop controls style="width:100%"></p>`.
+
+### Where are the videos stored?
+
+On SCI servers, at `/usr/sci/www/shapeworks/doc-resources/mp4s/`.
 
 ## See Also
 - [MkDocs documentation](https://mkdocs.readthedocs.io/en/stable/)
