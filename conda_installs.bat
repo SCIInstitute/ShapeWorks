@@ -17,6 +17,7 @@ call conda install --yes openblas=0.3.3
 call conda install --yes numpy=1.17.4
 call conda install --yes scikit-learn=0.22.1
 call conda install --yes gtest=1.10.0 cmake-3.15.5
+call conda install --yes pytorch torchvision cpuonly -c pytorch
 
 REM reactivate shapeworks environment
 call conda activate base
