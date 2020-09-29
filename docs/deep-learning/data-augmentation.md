@@ -4,22 +4,22 @@ ShapeWorks includes a Python package for running data augmentation which is usef
 Fabricated examples are generated based on the available real data, these examples are generated to preserve the population shape statistics as well as exhibit realistic intensity variations.
 
 ## Data Augmentation Steps
-#### 0. Collect Real Data
+### 0. Collect Real Data
 As a preliminary step, the data which augmentation will be based off of is needed. This includes the shape model .particle files and corresponding images. This can be acquired using ShapeWorks or any other method of generating particle distribution models.
 ![DataAug0.PNG](../img/deep-learning/DataAug0.PNG)
-#### 1. Embed Data
+### 1. Embed Data
 First the true data is embedded into a lower dimensional subspace. This is done by creating a matrix which contains all of the real examples, then reducing the dimension via Principal Component Analysis (PCA).
 ![DataAug1.PNG](../img/deep-learning/DataAug1.PNG)
-#### 2. Fit a Parametric Distribution
+### 2. Fit a Parametric Distribution
 Next a parametric distribution which can be sampled from is fit to the examples embedded in the low-dimension subspace.
 ![DataAug2.PNG](../img/deep-learning/DataAug2.PNG)
-#### 3. Sample from the Distribution 
+### 3. Sample from the Distribution 
 Samples are randomly drawn from this distribution and the closest real example to each sample is saved.
 ![DataAug3.PNG](../img/deep-learning/DataAug3.PNG)
-#### 4. Project Samples
+### 4. Project Samples
 The embedded samples are then projected back to data space, providing new generated examples.
 ![DataAug4.PNG](../img/deep-learning/DataAug4.PNG)
-#### 5. Complete Sample Generation
+### 5. Complete Sample Generation
 The closest real example to each sample is then used to generate any part of the sample that is still missing. 
 For example, if particles are used in embedding and sampling, the closest real example can be used to generate a corresponding image for the sampled particles to provide a complete generated example.
 ![DataAug5.PNG](../img/deep-learning/DataAug5.PNG)
