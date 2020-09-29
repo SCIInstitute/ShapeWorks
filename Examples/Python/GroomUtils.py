@@ -469,22 +469,20 @@ def reflectMeshes(outDir, seg_list, reference_side, printCmd=True):
     if not os.path.exists(outSegDir):
         os.makedirs(outSegDir)
     meshList = []
-    FLIP= True
     for seg in seg_list:
+        # if we have ref seg, copy seg over with appropriate name
         if ref in seg:
-            FLIP = False
+            seg_out = seg.replace(os.path.dirname(seg), outSegDir)
+            shutil.copy(seg, seg_out)
         # if we have a seg for the non-ref side, reflect it
-        if FLIP:
+        else:
             seg_out = rename(seg, outSegDir, 'reflect')
-            meshList.append(seg_out)
-            execCommand = ["ReflectMesh", "--inFilename", flip_seg, "--outFilename", seg_out, "--reflectCenterFilename", centerFilename, "--inputDirection", "0", "--meshFormat", flip_seg.split(".")[-1]]
+            mesh_format = seg.split(".")[-1]
+            centerFilename = seg_out.replace("." + mesh_format,"_origin.txt")
+            execCommand = ["ReflectMesh", "--inFilename", seg, "--outFilename", seg_out, "--reflectCenterFilename", centerFilename, "--inputDirection", "0", "--meshFormat", mesh_format]
             if printCmd:
                 print("CMD: " + " ".join(execCommand))
             subprocess.check_call(execCommand)   
-        # if we have ref seg, copy seg over with appropriate name
-        else:
-            seg_out = seg.replace(os.path.dirname(seg), outSegDir)
-            shutil.copy(seg, seg_out)
         meshList.append(seg_out)    
     return meshList
 
