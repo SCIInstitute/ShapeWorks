@@ -67,7 +67,7 @@
 #include "vtkFiltersModelingModule.h" // For export macro
 #include "vtkPointSetAlgorithm.h"
 
-class VTKFILTERSMODELING_EXPORT swHausdorffDistancePointSetFilter : public vtkPointSetAlgorithm
+class swHausdorffDistancePointSetFilter : public vtkPointSetAlgorithm
 {
 public:
   //@{
