@@ -24,7 +24,7 @@ To add the dataset associated with the new use case:
 
 ## Use case documentation 
  
-To add the documentation of the new dataset, add a markdown file `<use-case-name>.md` in `docs/use-cases` with the following structure. Please use the [Naming and Organization](../dev/mkdocs.md#naming-and-organization) conventions currently deployed for ShapeWorks documentation. Then, add a corresponding entry in mkdocs.yml.
+To add the documentation of the new dataset, add a markdown file `<use-case-name>.md` in `docs/use-cases` with the following structure. Please use the [Naming and Organization](../dev/docs.md#naming-and-organization) conventions currently deployed for ShapeWorks documentation. Then, add a corresponding entry in `mkdocs.yml`.
 
 :fa-info-circle: _**Important:**_ If you use the documentation of an existing use case as a starting point, PLEASE make sure to adapt the documentation to your new use case. 
 
