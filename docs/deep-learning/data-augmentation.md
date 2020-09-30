@@ -17,16 +17,15 @@ Next a parametric distribution which can be sampled from is fit to the examples 
 Samples are randomly drawn from this distribution and the closest real example to each sample is saved.
 ![DataAug3.PNG](../img/deep-learning/DataAug3.PNG)
 ### 4. Project Samples
-The embedded samples are then projected back to data space, providing new generated examples.
+The embedded samples are then projected back to data space, providing new generated shape/correspondence examples.
 ![DataAug4.PNG](../img/deep-learning/DataAug4.PNG)
 ### 5. Complete Sample Generation
-The closest real example to each sample is then used to generate any part of the sample that is still missing. 
-For example, if particles are used in embedding and sampling, the closest real example can be used to generate a corresponding image for the sampled particles to provide a complete generated example.
+The closest real example to each generated sample is then used to generate the image corresponding to the fabricated shape sample, which will give the the full pair of generated sample. This is done by finding the warp between the closest real correspondence points and the generated correspondece points, then applying that warp to the corresponding image of the closest real example. This provides us with an image with the intensity profile of the real example but the shape of the generated sample. 
 ![DataAug5.PNG](../img/deep-learning/DataAug5.PNG)
 
 ### Sampling Distributions
 
-The sampler_type variable determines which type of distribution to fit to the embedded data. The options are Gaussain ( a single multivariate Gaussian distribution), mixture (a mixture of Gaussian distributions) or KDE (kernel density estimate).
+The `sampler_type` parameter determines which type of distribution to fit to the embedded data. The options are Gaussain ( a single multivariate Gaussian distribution), mixture (a mixture of Gaussian distributions) or KDE (kernel density estimate).
 
 #### Multivariate Gaussian Distribution
 
