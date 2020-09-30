@@ -52,6 +52,9 @@ Use `mkdocs gh-deploy --help` for a full list of options available for the gh-de
 
 ## Contributing to Documentation
 
+:fa-info-circle: _**Important:**_ If you added a new markdown file to `docs/`, please make sure to include it in it relevant section in `mkdocs.yml` to make it accessible.
+
+
 We use github issues to keep track of hanging fruits to improve ShapeWorks documentation. For an internal list of todos, which will be turned to issues, visit [Documentation ToDo List](../todo.md).
 
 ## Inserting Videos in Documentation

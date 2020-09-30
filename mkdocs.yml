@@ -64,6 +64,7 @@ theme:
 markdown_extensions:
    - fontawesome_markdown
    - pymdownx.tasklist
+   - pymdownx.arithmatex
 
 extra_css:
     - css/custom.css
