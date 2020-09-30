@@ -4,7 +4,6 @@ set(Mesh_sources
  Mesh.cpp
  meshFIM.cpp
  MeshUtils.cpp
- GroomFemur.cpp
  )
 
 set(Mesh_headers
