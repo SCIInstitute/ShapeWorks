@@ -94,6 +94,7 @@ function install_conda() {
   if ! pip install itk==5.0.1; then return 1; fi
   if ! pip install mdutils; then return 1; fi # lib for writing markdown files needed for auto-documentation (not available through conda install)
   if ! pip install mkdocs; then return 1; fi # lib for generating documentation from markdown
+  if ! pip install python-markdown-math; then return 1; fi # lib for rendering equations in docs
   if ! pip install fontawesome-markdown; then return 1; fi # lib for icons in documentation
   if ! pip install --upgrade pymdown-extensions; then return 1; fi # lib to support checkbox lists in documentation
   if ! pip install Python/DatasetUtilsPackage; then return 1; fi   # install the local GirderConnector code as a package

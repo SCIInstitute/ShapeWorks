@@ -29,6 +29,7 @@ call pip install itk==5.0.1
 call pip install vtk==8.1.2
 call pip install mdutils
 call pip install mkdocs
+call pip install python-markdown-math
 call pip install fontawesome-markdown
 call pip install pymdown-extensions
 
@@ -37,7 +38,6 @@ call pip install Python/DatasetUtilsPackage
 call pip install Python/DocumentationUtilsPackage
   
 call conda info
-
 
 
 
