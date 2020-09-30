@@ -287,7 +287,7 @@ QLabel#view_label {
     font: bold;
 }
 
-QWidget#view_header {
+QPushButton#view_header {
     background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(0, 0, 0, 0), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(0, 0, 0, 25));
     border-radius: 3px;
 }
@@ -313,7 +313,7 @@ QLabel#surface_label {
     font: bold;
 }
 
-QWidget#surface_header {
+QPushButton#surface_header {
     background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(0, 0, 0, 0), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(0, 0, 0, 25));
     border-radius: 3px;
 }
@@ -338,7 +338,7 @@ QLabel#metrics_label {
     font: bold;
 }
 
-QWidget#metrics_header {
+QPushButton#metrics_header {
     background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(0, 0, 0, 0), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(0, 0, 0, 25));
     border-radius: 3px;
 }
@@ -408,7 +408,7 @@ QWidget#metrics_panel {
           <number>0</number>
          </property>
          <item>
-          <widget class="QWidget" name="view_header" native="true">
+          <widget class="QPushButton" name="view_header" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1088,7 +1088,7 @@ QWidget#metrics_panel {
           <number>0</number>
          </property>
          <item>
-          <widget class="QWidget" name="metrics_header" native="true">
+          <widget class="QPushButton" name="metrics_header" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1378,7 +1378,7 @@ QWidget#metrics_panel {
           <number>0</number>
          </property>
          <item>
-          <widget class="QWidget" name="surface_header" native="true">
+          <widget class="QPushButton" name="surface_header" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>

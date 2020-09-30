@@ -35,7 +35,17 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   this->ui_->setupUi(this);
   this->stats_ready_ = false;
 
-  // defautl to linear scale
+  connect(this->ui_->view_header, &QPushButton::clicked,
+          this->ui_->view_open_button, &QPushButton::toggle);
+  connect(this->ui_->metrics_header, &QPushButton::clicked,
+          this->ui_->metrics_open_button, &QPushButton::toggle);
+  connect(this->ui_->surface_header, &QPushButton::clicked,
+          this->ui_->surface_open_button, &QPushButton::toggle);
+  this->ui_->view_label->setAttribute(Qt::WA_TransparentForMouseEvents);
+  this->ui_->surface_label->setAttribute(Qt::WA_TransparentForMouseEvents);
+  this->ui_->metrics_label->setAttribute(Qt::WA_TransparentForMouseEvents);
+
+  // default to linear scale
   this->ui_->log_radio->setChecked(false);
   this->ui_->linear_radio->setChecked(true);
 
@@ -48,6 +58,9 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   connect(this->ui_->pcaAnimateCheckBox, SIGNAL(stateChanged(int)), this,
           SLOT(handle_pca_animate_state_changed()));
   connect(&this->pca_animate_timer_, SIGNAL(timeout()), this, SLOT(handle_pca_timer()));
+
+
+
 
   // group animation
   connect(this->ui_->group_animate_checkbox, &QCheckBox::stateChanged, this,
@@ -64,9 +77,9 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
           this, &AnalysisTool::group_changed);
 
   this->ui_->surface_open_button->setChecked(false);
-  this->on_surface_open_button_clicked();
+  //this->on_surface_open_button_toggled();
   this->ui_->metrics_open_button->setChecked(false);
-  this->on_metrics_open_button_clicked();
+  //this->on_metrics_open_button_toggled();
 
   /// TODO nothing there yet (regression tab)
   this->ui_->tabWidget->removeTab(3);
@@ -871,21 +884,21 @@ bool AnalysisTool::groups_active()
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::on_view_open_button_clicked()
+void AnalysisTool::on_view_open_button_toggled()
 {
   bool show = this->ui_->view_open_button->isChecked();
   this->ui_->view_content->setVisible(show);
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::on_surface_open_button_clicked()
+void AnalysisTool::on_surface_open_button_toggled()
 {
   bool show = this->ui_->surface_open_button->isChecked();
   this->ui_->surface_content->setVisible(show);
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::on_metrics_open_button_clicked()
+void AnalysisTool::on_metrics_open_button_toggled()
 {
   bool show = this->ui_->metrics_open_button->isChecked();
   this->ui_->metrics_content->setVisible(show);
