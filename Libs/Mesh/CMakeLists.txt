@@ -4,6 +4,7 @@ set(Mesh_sources
  Mesh.cpp
  meshFIM.cpp
  MeshUtils.cpp
+ swHausdorffDistancePointSetFilter.cxx
  )
 
 set(Mesh_headers
@@ -157,7 +158,7 @@ add_executable(ReflectMesh ReflectMesh.cxx )
 target_link_libraries(ReflectMesh Mesh Utils)
 INSTALL(TARGETS ReflectMesh RUNTIME DESTINATION bin)
 
-add_executable(SurfaceToSurfaceDistance SurfaceToSurfaceDistance.cxx swHausdorffDistancePointSetFilter.cxx )
+add_executable(SurfaceToSurfaceDistance SurfaceToSurfaceDistance.cxx )
 target_link_libraries(SurfaceToSurfaceDistance Mesh Utils)
 INSTALL(TARGETS SurfaceToSurfaceDistance RUNTIME DESTINATION bin)
 
