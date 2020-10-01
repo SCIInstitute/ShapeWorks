@@ -1,6 +1,5 @@
 # How to Analyze Your Shape Model?
 
-
 ## Surface Correspondences 
 
 ShapeWorks includes a Qt and VTK-based graphical user interface (GUI), **ShapeWorksStudio**, that allows visualizing the optimized particle system (i.e., correspondence model) for each shape sample where particle coloring is used to reflect correspondence among shapes. 
@@ -14,6 +13,51 @@ You can scroll through the dataset and zoom in and out to inspect fewer or more 
 
 *Correspondence model inspectation by scrolling though the dataset and zooming in & out*
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_scroll.mp4" autoplay muted loop controls style="width:100%"></p>
+
+
+## Running ShapeWorksStudio
+
+When you open ShapeWorksStudio without a project, either from terminal or double-clicking on the application binary/exe file, the splash screen is displayed to enable you to load a recent project, open existing projects on your local machine, or create a new project.
+
+*ShapeWorksStudio splash screen*
+![Template-deformation approach for surface reconstruction](../img/workflow/studio_splash.png)
+
+### Using XML Files
+
+You can run ShapeWorksStudio using an *XML* parameter file that includes the following tags.
+
+- `<point_files>` [required]: list of `_world.particles` files (output of the `shapeworks optimize`)
+- `<group_ids>` [optional]: the group id (1 or 2) in case the data contains groups
+- `<world_point_files>` [optional]: list of `_world.particles` files (output of the `shapeworks optimize`), same as `<point_files>`
+- `<local_point_files>` [optional]: list of `_local.particles` files (output of the `shapeworks optimize`)
+- `<distance_transform_files>` [optional]: list of distance transforms (input of the `shapeworks optimize`)
+
+
+Please note the following:
+
+- If the xml file only contains the `<point_files>` list, VTK-based surface reconstruction is used for surface reconstruction. 
+- To enable particle-based surface reconstruction,`<world_point_files>`, `<local_point_files>`, and `<distance_transform_files>` lists should be given.
+- `Examples/Python/<use-case-name>.py` include an analyze step that generates *`analyze.xml`*, which includes the path to the input data and corresponding particles. 
+- All lists should have the same order of shape samples
+
+
+Given the XML files, you can launch ShapeWorksStudio through the terminal using the following command.
+ 
+```
+$ ShapeWorksStudio analyze.xml
+```
+
+### Using Spreadsheets
+
+ShapeWorksStudio can also load datasets (and shape models) using spreadsheets, a more user-friendly user-editable file format. See the ellipsoid studio example in `Examples/Studio/ellipsoid.xlsx` for an example. 
+
+
+*ShapeWorksStudio keeps track of results from different phases in individual sheets*
+
+![Template-deformation approach for surface reconstruction](../img/workflow/studio_ellipsoid_sheet.png)
+
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_ellipsoid.mp4" autoplay muted loop controls style="width:100%"></p>
+
 
 
 ## Surface Reconstruction 
@@ -43,7 +87,7 @@ You can export any mesh using `File -> Export Current Mesh ...`.
 
 ## Statistical Analysis 
 
-Statistical analysis is performed using principal component analysis (PCA), where the mean and modes of shape variation are computed based on the optimized correspondence model. Automated animation is allowed to watch the shape morph at various standard deviations along a user-selected variation mode. 
+Statistical analysis is performed using principal component analysis (PCA), where the mean and modes of shape variation are computed based on the optimized correspondence model. Animation is allowed to watch the shape morph at various standard deviations along a user-selected variation mode. 
 
 *Animating the shape variation along with a principal component while passing through the mean shape*
 
@@ -89,52 +133,4 @@ If you are using an XML file to [load your data into ShapeWorksStudio](#running-
 
 *Then, select which groups you would like to compare (now support more than two groups)*
 ![Template-deformation approach for surface reconstruction](../img/workflow/studio_select_group.png)
-
-## Running ShapeWorksStudio
-
-When you open ShapeWorksStudio without a project, either from terminal or double-clicking on the application binary/exe file, the splash screen is displayed to enable you to load a recent project, open existing projects on your local machine, or create a new project.
-
-*ShapeWorksStudio splash screen*
-![Template-deformation approach for surface reconstruction](../img/workflow/studio_splash.png)
-
-### Using XML Files
-
-You can run ShapeWorksStudio using an *XML* parameter file that includes the following tags.
-
-- `<point_files>` [required]: list of `_world.particles` files (output of the `shapeworks optimize`)
-- `<group_ids>` [optional]: the group id (1 or 2) in case the data contains groups
-- `<world_point_files>` [optional]: list of `_world.particles` files (output of the `shapeworks optimize`), same as `<point_files>`
-- `<local_point_files>` [optional]: list of `_local.particles` files (output of the `shapeworks optimize`)
-- `<distance_transform_files>` [optional]: list of distance transforms (input of the `shapeworks optimize`)
-
-
-Please note the following:
-
-- If the xml file only contains the `<point_files>` list, VTK-based surface reconstruction is used for surface reconstruction. 
-- To enable particle-based surface reconstruction,`<world_point_files>`, `<local_point_files>`, and `<distance_transform_files>` lists should be given.
-- `Examples/Python/<use-case-name>.py` include an analyze step that generates *`analyze.xml`*, which includes the path to the input data and corresponding particles. 
-- All lists should have the same order of shape samples
-
-
-Given the XML files, you can launch ShapeWorksStudio through the terminal using the following command.
-
-  
-```
-$ ShapeWorksStudio analyze.xml
-```
-
-### Using Spreadsheets
-
-ShapeWorksStudio can also load datasets (and shape models) using spreadsheets, a more user-friendly user-editable file format. See []() for an example.
-
-
-
-*ShapeWorksStudio keeps track of results from different phases in individual sheets*
-
-![Template-deformation approach for surface reconstruction](../img/workflow/studio_ellipsoid_sheet.png)
-
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_ellipsoid.mp4" autoplay muted loop controls style="width:100%"></p>
-
-
-
 
