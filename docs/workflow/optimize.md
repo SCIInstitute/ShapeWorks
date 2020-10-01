@@ -63,7 +63,7 @@ In addition this method helps us with debugging the optimization parameters.
 To run each of these optimization methods we need a proper set of parameters in a *.xml* file.
 The command to run the optimization with parameter files ``parameters.xml`` is as follows.
 ```
-ShapeWorksRun parameters.xml
+shapeworks optimize --name=parameters.xml
 ``` 
 Here is the list of parameters and their descriptions.
 * inputs: Path to the directory containing the processed data in form of signed distance transform.
