@@ -11,7 +11,7 @@ set(Mesh_headers
  Mesh.h
  meshFIM.h
  MeshUtils.h
- )
+        BenchMeshFIM.cpp)
 
 FILE(GLOB PreviewMeshQC_sources ./PreviewMeshQC/*.cpp)
 FILE(GLOB PreviewMeshQC_headers ./PreviewMeshQC/*.h)
@@ -161,3 +161,7 @@ INSTALL(TARGETS ReflectMesh RUNTIME DESTINATION bin)
 #ADD_EXECUTABLE(fea2vtk fea2vtk.cxx)
 #TARGET_LINK_LIBRARIES(fea2vtk ${ITK_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS fea2vtk RUNTIME DESTINATION bin)
+
+ADD_EXECUTABLE(BenchMeshFIM BenchMeshFIM.cpp)
+TARGET_LINK_LIBRARIES(BenchMeshFIM Mesh tinyxml)
+INSTALL(TARGETS BenchMeshFIM RUNTIME DESTINATION bin)
