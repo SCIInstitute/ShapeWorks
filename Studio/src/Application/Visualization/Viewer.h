@@ -88,6 +88,7 @@ private:
 
   void update_actors();
 
+
   bool visible_;
 
   QSharedPointer<Shape> shape_;

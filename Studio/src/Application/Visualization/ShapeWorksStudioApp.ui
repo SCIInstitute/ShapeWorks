@@ -257,13 +257,6 @@
        <property name="bottomMargin">
         <number>3</number>
        </property>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Feature Map</string>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="1">
         <widget class="QComboBox" name="features">
          <property name="sizeAdjustPolicy">
@@ -271,7 +264,14 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="2">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Feature Map</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
         <spacer name="horizontalSpacer_2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -283,6 +283,13 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="0" column="2">
+        <widget class="QCheckBox" name="checkBox">
+         <property name="text">
+          <string>Uniform Scale</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

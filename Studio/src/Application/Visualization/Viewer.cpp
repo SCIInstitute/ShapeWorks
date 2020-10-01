@@ -169,9 +169,10 @@ Viewer::Viewer()
   this->scalar_bar_actor_->GetLabelTextProperty()->SetColor(1, 1, 1);
 
   this->corner_annotation_ = vtkSmartPointer<vtkCornerAnnotation>::New();
-  corner_annotation_->SetLinearFontScaleFactor(2);
-  corner_annotation_->SetNonlinearFontScaleFactor(1);
-  corner_annotation_->SetMaximumFontSize(16);
+  this->corner_annotation_->SetLinearFontScaleFactor(2);
+  this->corner_annotation_->SetNonlinearFontScaleFactor(1);
+  this->corner_annotation_->SetMaximumFontSize(16);
+
 }
 
 //-----------------------------------------------------------------------------
@@ -486,13 +487,13 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
     auto feature_map = this->visualizer_->get_feature_map();
 
     if (feature_map != "" && poly_data) {
-      std::cerr << "checking if mesh has scalar array for " << feature_map << "\n";
+      //std::cerr << "checking if mesh has scalar array for " << feature_map << "\n";
       auto scalar_array = poly_data->GetPointData()->GetArray(feature_map.c_str());
       if (scalar_array) {
-        std::cerr << "array present!\n";
+        //std::cerr << "array present!\n";
       }
       else {
-        std::cerr << "array NOT present! Loading...\n";
+        //std::cerr << "array NOT present! Loading...\n";
         this->shape_->load_feature(this->visualizer_->get_display_mode(), feature_map);
       }
     }
