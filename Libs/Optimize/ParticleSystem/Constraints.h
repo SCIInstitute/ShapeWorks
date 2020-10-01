@@ -77,6 +77,18 @@ public:
       return planesViolated;
   }
 
+  void PrintAll(){
+      for(size_t i = 0; i < planeConsts->size(); i++){
+          (*planeConsts)[i].printC();
+      }
+      for(size_t i = 0; i < sphereConsts->size(); i++){
+          (*sphereConsts)[i].printC();
+      }
+      for(size_t i = 0; i < freeFormConsts->size(); i++){
+          (*freeFormConsts)[i].printC();
+      }
+  }
+
 protected:
   std::vector<PlaneConstraint> *planeConsts;
   std::vector<SphereConstraint> *sphereConsts;

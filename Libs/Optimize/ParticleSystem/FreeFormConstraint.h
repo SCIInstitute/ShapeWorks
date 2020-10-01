@@ -14,6 +14,10 @@ public:
 
   bool isViolated(const Eigen::Vector3d &pt) const {return true;}
 
+  void printC() const{
+      std::cout << "FF" << std::endl;
+  }
+
 private:
 
 };

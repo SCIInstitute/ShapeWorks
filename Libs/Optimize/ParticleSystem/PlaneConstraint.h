@@ -23,6 +23,10 @@ public:
     return false;
   }
 
+  void printC() const{
+      std::cout << "normal " << planeNormal.transpose() << " point " << planePoint.transpose() << std::endl;
+  }
+
   Eigen::Vector3d GetPlaneNormal(){return planeNormal;}
   void SetPlaneNormal(const Eigen::Vector3d& inPlane){planeNormal = inPlane;}
   Eigen::Vector3d GetPlanePoint(){return planePoint;}

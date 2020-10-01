@@ -25,6 +25,10 @@ public:
     return false;
   }
 
+  void printC() const{
+      std::cout << "radius " << radius << " center " << center.transpose() << std::endl;
+  }
+
   Eigen::Vector3d GetCenter(){return center;}
   void SetCenter(Eigen::Vector3d inCenter){center = inCenter;}
   double GetRadius(){return radius;}
