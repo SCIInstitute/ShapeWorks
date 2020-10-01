@@ -668,6 +668,12 @@ void ShapeWorksStudioApp::handle_progress(size_t value)
 void ShapeWorksStudioApp::handle_new_mesh()
 {
   this->visualizer_->handle_new_mesh();
+
+  if (this->visualizer_->get_feature_map() != "" &&
+      this->analysis_tool_->get_analysis_mode() == AnalysisTool::MODE_MEAN_C) {
+    this->visualizer_->display_shape(this->analysis_tool_->get_mean_shape());
+  }
+
 }
 
 //---------------------------------------------------------------------------

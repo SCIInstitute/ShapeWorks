@@ -193,7 +193,7 @@ void Viewer::handle_new_mesh()
 {
   if (!this->mesh_ready_ && this->shape_ &&
       this->shape_->get_mesh(this->visualizer_->get_display_mode())) {
-    this->display_shape(this->shape_);
+      this->display_shape(this->shape_);
   }
 }
 
