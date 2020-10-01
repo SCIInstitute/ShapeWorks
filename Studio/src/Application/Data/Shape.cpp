@@ -189,12 +189,12 @@ QSharedPointer<Mesh> Shape::get_groomed_mesh()
     auto transforms = this->subject_->get_groomed_transforms();
     if (transforms.size() > 0) {
       this->groomed_transform_.set_size(transforms[0].size());
-      std::cerr << "loaded groomed transform from project: \n";
+      //std::cerr << "loaded groomed transform from project: \n";
       for (int i = 0; i < transforms[0].size(); i++) {
-        std::cerr << transforms[0][i] << " ";
+        //std::cerr << transforms[0][i] << " ";
         this->groomed_transform_[i] = transforms[0][i];
       }
-      std::cerr << "\n";
+      //std::cerr << "\n";
     }
   }
 
