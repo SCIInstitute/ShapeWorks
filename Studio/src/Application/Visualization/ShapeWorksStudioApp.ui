@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1187</width>
+    <width>1040</width>
     <height>705</height>
    </rect>
   </property>
@@ -18,7 +18,11 @@
     <normaloff>:/Studio/Images/shapeworks-logo.png</normaloff>:/Studio/Images/shapeworks-logo.png</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">QWidget#feature_widget {
+    border-radius: 3px;
+    border: 1px solid grey;
+}
+</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -75,16 +79,16 @@
            <number>6</number>
           </property>
           <property name="leftMargin">
-           <number>6</number>
+           <number>0</number>
           </property>
           <property name="topMargin">
-           <number>3</number>
+           <number>0</number>
           </property>
           <property name="rightMargin">
-           <number>6</number>
+           <number>0</number>
           </property>
           <property name="bottomMargin">
-           <number>3</number>
+           <number>0</number>
           </property>
           <item>
            <widget class="QToolButton" name="auto_view_button">
@@ -239,19 +243,19 @@
      <layout class="QHBoxLayout" name="horizontalLayout"/>
     </item>
     <item row="4" column="0">
-     <widget class="QWidget" name="widget_2" native="true">
+     <widget class="QWidget" name="feature_widget" native="true">
       <layout class="QGridLayout" name="gridLayout_3">
        <property name="leftMargin">
         <number>6</number>
        </property>
        <property name="topMargin">
-        <number>0</number>
+        <number>3</number>
        </property>
        <property name="rightMargin">
         <number>6</number>
        </property>
        <property name="bottomMargin">
-        <number>0</number>
+        <number>3</number>
        </property>
        <item row="0" column="0">
         <widget class="QLabel" name="label_2">
@@ -290,7 +294,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1187</width>
+     <width>1040</width>
      <height>22</height>
     </rect>
    </property>
@@ -309,11 +313,6 @@
      <addaction name="actionExport_Variance_Graph"/>
      <addaction name="action_export_pca_scores"/>
      <addaction name="actionExport_PCA_Mode_Points"/>
-    </widget>
-    <widget class="QMenu" name="menu">
-     <property name="title">
-      <string/>
-     </property>
     </widget>
     <addaction name="action_new_project"/>
     <addaction name="action_open_project"/>

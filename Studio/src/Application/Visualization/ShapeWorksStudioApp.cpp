@@ -50,6 +50,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->ui_->statusbar->addPermanentWidget(this->progress_bar_);
   this->progress_bar_->setVisible(false);
 
+  // default hide
+  this->ui_->feature_widget->hide();
   this->recent_file_actions_.append(this->ui_->action_recent1);
   this->recent_file_actions_.append(this->ui_->action_recent2);
   this->recent_file_actions_.append(this->ui_->action_recent3);
@@ -592,6 +594,8 @@ void ShapeWorksStudioApp::update_table()
     this->ui_->features->addItem(item);
   }
   this->ui_->features->setCurrentText(current_feature);
+
+  this->ui_->feature_widget->setVisible(feature_maps.size() > 0);
 
 }
 
