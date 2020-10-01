@@ -16,7 +16,9 @@
   
 To see local changes to documentation in realtime, `cd` to where source documentation (i.e., `mkdocs.yml`) is maintained and run the following command:
 
-`mkdocs serve`
+```
+mkdocs serve
+```
 
 This command builds markdown files into HTML and starts a development server to browse the documentation. 
 
@@ -31,21 +33,26 @@ We use Project Pages sites for documentation deployment. The site files are depl
 
 To generate static HTML files for the markdown files, [checkout](build.md#clone-source) the branch where source documentation (`mkdocs.yml`) is maintained and run the following command:
 
-`mkdocs gh-deploy`
+```
+mkdocs gh-deploy
+```
 
 Using this command, MkDocs builds the project documentation and uses the ghp-import tool to commit them to the gh-pages branch and push the gh-pages branch to GitHub. *All behind the scenes ...*
 
 
 :fa-info-circle: _**WARNING:**_  Running `mkdocs gh-deploy` will update the documentation seen by everyone on [GitHub](https://github.com/SCIInstitute/ShapeWorks). It is recommented that deployed documentation on [GitHub](https://github.com/SCIInstitute/ShapeWorks) should be synced with documentation in the `master` branch.
 
-:fa-info-circle: _**Important:**_ To deploy the documentation associated with software releases, please use `mkdocs gh-deploy -m "Release Number"`.
+:fa-info-circle: _**Important:**_ To deploy the documentation associated with software releases, please use the following command.
 
+```
+mkdocs gh-deploy -m "Release Number"
+```
 
 Use `mkdocs gh-deploy --clean` to start a fresh deployment.   
 
 Use `mkdocs gh-deploy --help` for a full list of options available for the gh-deploy command.
 
-:fa-info-circle: _**Important:**_ You can not review the built site before pushing it to GitHub. To verify any changes you made locally to the documentation, please use ``mkdocs build`` or `mkdocs serve`.  
+:fa-info-circle: _**Important:**_ You can not review the built site before pushing it to GitHub. To verify any changes you made locally to the documentation, please use `mkdocs build` or `mkdocs serve`.  
  
 :fa-info-circle: _**Important:**_ Never manually edit files on the `gh-pages` branch because you will lose your work the next time you run the `gh-deploy` command.
 
