@@ -18,14 +18,20 @@ nav:
 - Workflow:
    - 'How to Groom Your Dataset?':           'workflow/groom.md'
    - 'How to Optimize Your Shape Model?' :   'workflow/optimize.md'        
-   - 'How to Analyze Your Shape Model?' :    'workflow/analyze.md'     
+   - 'How to Analyze Your Shape Model?' :    'workflow/analyze.md'  
+- Deep Learning & SSMs:
+   - 'Data Augmentation for Deep Learning':  'deep-learning/data-augmentation.md'
+   - 'SSMs Directly from Images':            'deep-learning/deep-ssm.md'
 - Use Cases:
    - 'Getting Started with Use Cases':          'use-cases/use-cases.md'
    - 'Ellipsoid: Basic Example':                'use-cases/ellipsoid.md'
    - 'Fixed Domains: SSM on New Shapes':        'use-cases/fixed-domain-ellipsoid.md'
    - 'Left Atrium: SSM from Segmentations':     'use-cases/left-atrium.md'
-   - 'Femur: SSM from Meshes':                 'use-cases/femur.md'
+   - 'Femur: SSM from Meshes':                  'use-cases/femur.md'
+   - 'Femur Mesh: SSM directly from meshes':    'use-cases/femur-mesh.md'
+   - 'Lumps: SSM directly from meshes':         'use-cases/lumps.md'
    - 'Right Ventricle: Highly Variable Shapes': 'use-cases/right-ventricle.md'
+   - 'Femur SSM Directly from Images':          'use-cases/deep-ssm-femur.md'         
 - For Users:
    - 'How to Install ShapeWorks?':           'users/install.md'
    - 'How to Cite ShapeWorks?':              'users/citation.md'
