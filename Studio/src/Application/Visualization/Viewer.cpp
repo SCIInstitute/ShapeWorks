@@ -530,7 +530,6 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
 
     mapper->SetInputData(poly_data);
 
-    ///////mapper->Activ
     actor->SetMapper(mapper);
     actor->GetProperty()->SetDiffuseColor(color_schemes_[this->scheme_].foreground.r,
                                           color_schemes_[this->scheme_].foreground.g,
@@ -563,8 +562,8 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
       if (scalars) {
         double range[2];
         scalars->GetRange(range);
-        std::cerr << "range = " << range[0] << ":" << range[1] << "\n";
-
+        //std::cerr << "range = " << range[0] << ":" << range[1] << "\n";
+        this->visualizer_->update_feature_range(range);
         this->updateDifferenceLUT(range[0], range[1]);
         mapper->SetScalarRange(range[0], range[1]);
       }
@@ -875,9 +874,9 @@ void Viewer::updateDifferenceLUT(float r0, float r1)
   if (fabs(r0) > fabs(r1)) { maxrange = fabs(r0); }
   else { maxrange = fabs(r1); }
 
-  std::cerr << "r0 = " << r0 << "\n";
-  std::cerr << "r1 = " << r1 << "\n";
-  std::cerr << "maxrange = " << maxrange << "\n";
+  //std::cerr << "r0 = " << r0 << "\n";
+  //std::cerr << "r1 = " << r1 << "\n";
+  //std::cerr << "maxrange = " << maxrange << "\n";
   //this->differenceLUT->SetScalarRange(-maxrange, maxrange);
 
   //this->differenceLUT->SetColorSpaceToHSV();
@@ -898,4 +897,12 @@ void Viewer::updateDifferenceLUT(float r0, float r1)
 bool Viewer::showing_feature_map()
 {
   return this->visualizer_->get_feature_map() != "";
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::update_feature_range(double* range)
+{
+  this->visualizer_->update_feature_range(range);
+  this->updateDifferenceLUT(range[0], range[1]);
+  this->surface_mapper_->SetScalarRange(range[0], range[1]);
 }

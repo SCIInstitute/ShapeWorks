@@ -342,6 +342,7 @@ const std::string& Visualizer::get_feature_map() const
 void Visualizer::set_feature_map(const std::string& feature_map)
 {
   this->feature_map_ = feature_map;
+  this->reset_feature_range();
 }
 
 //-----------------------------------------------------------------------------
@@ -355,6 +356,42 @@ void Visualizer::clear_viewers()
 {
   QVector<ShapeHandle> shapes;
   this->lightbox_->set_shapes(shapes);
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::reset_feature_range()
+{
+  this->feature_range_valid_ = false;
+}
+
+//-----------------------------------------------------------------------------
+double* Visualizer::get_feature_range()
+{
+  return this->feature_range_;
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::update_feature_range(double* range)
+{
+  if (!this->feature_range_valid_) {
+    this->feature_range_[0] = range[0];
+    this->feature_range_[1] = range[1];
+  }
+  this->feature_range_[0] = std::min(this->feature_range_[0], range[0]);
+  this->feature_range_[1] = std::max(this->feature_range_[1], range[1]);
+  this->feature_range_valid_ = true;
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::set_uniform_feature_range(bool value)
+{
+  this->feature_range_uniform_ = value;
+}
+
+//-----------------------------------------------------------------------------
+bool Visualizer::get_uniform_feature_range(void)
+{
+  return feature_range_uniform_;
 }
 
 

@@ -221,6 +221,9 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   connect(this->ui_->features, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
           &ShapeWorksStudioApp::update_feature_map_selection);
 
+  connect(this->ui_->feature_uniform_scale, &QCheckBox::toggled, this,
+          &ShapeWorksStudioApp::set_feature_uniform_scale);
+
   //glyph options signals/slots
   connect(this->ui_->glyphs_visible_button, SIGNAL(clicked()), this, SLOT(handle_glyph_changed()));
   connect(this->ui_->surface_visible_button, SIGNAL(clicked()), this, SLOT(handle_glyph_changed()));
@@ -594,6 +597,7 @@ void ShapeWorksStudioApp::update_table()
     this->ui_->features->addItem(item);
   }
   this->ui_->features->setCurrentText(current_feature);
+  this->ui_->feature_uniform_scale->setChecked(this->get_feature_uniform_scale());
 
   this->ui_->feature_widget->setVisible(feature_maps.size() > 0);
 
@@ -756,6 +760,7 @@ void ShapeWorksStudioApp::update_view_mode()
     if (feature_map == "-none-") { feature_map = ""; }
     this->analysis_tool_->set_feature_map(feature_map);
     this->visualizer_->set_feature_map(feature_map);
+    this->visualizer_->set_uniform_feature_range(this->get_feature_uniform_scale());
     this->update_display(true);
   }
 }
@@ -1505,6 +1510,21 @@ std::string ShapeWorksStudioApp::get_feature_map()
 }
 
 //---------------------------------------------------------------------------
+bool ShapeWorksStudioApp::get_feature_uniform_scale()
+{
+  return this->session_->parameters().get("feature_uniform_scale", true);
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::set_feature_uniform_scale(bool value)
+{
+  if (!this->is_loading_) {
+    this->session_->parameters().set("feature_uniform_scale", value);
+    this->update_view_mode();
+  }
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::show_splash_screen()
 {
   this->splash_screen_->show();
@@ -1520,3 +1540,5 @@ void ShapeWorksStudioApp::about()
                      "\n\n"
                      "http://shapeworks.sci.utah.edu");
 }
+
+

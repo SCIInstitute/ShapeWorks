@@ -71,6 +71,8 @@ public:
 
   void set_visualizer(Visualizer* visualizer);
 
+  void update_feature_range(double *range);
+
 private:
 
   void display_vector_field();

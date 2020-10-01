@@ -153,6 +153,12 @@ void Lightbox::display_shapes()
     position++;
   }
 
+  if (this->visualizer_->get_uniform_feature_range()) {
+    for (int i = 0; i < this->viewers_.size(); i++) {
+      this->viewers_[i]->update_feature_range(this->visualizer_->get_feature_range());
+    }
+  }
+
   /*
      /// disabled for now
      ///

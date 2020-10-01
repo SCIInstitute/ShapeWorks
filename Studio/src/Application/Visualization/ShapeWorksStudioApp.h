@@ -85,6 +85,7 @@ public Q_SLOTS:
   void on_view_mode_combobox_currentIndexChanged(QString disp_mode);
   void on_auto_view_button_clicked();
 
+
   void handle_pca_changed();
   void handle_slider_update();
 
@@ -160,8 +161,10 @@ private:
   bool set_view_mode(std::string view_mode);
 
   bool set_feature_map(std::string feature_map);
-
   std::string get_feature_map();
+
+  bool get_feature_uniform_scale();
+  void set_feature_uniform_scale(bool value);
 
   void update_recent_files();
 
