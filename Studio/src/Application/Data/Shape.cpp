@@ -185,17 +185,6 @@ QSharedPointer<Mesh> Shape::get_groomed_mesh()
       this->generate_meshes(this->subject_->get_groomed_filenames(), this->groomed_mesh_);
     }
 
-    // single domain support
-    auto transforms = this->subject_->get_groomed_transforms();
-    if (transforms.size() > 0) {
-      this->groomed_transform_.set_size(transforms[0].size());
-      //std::cerr << "loaded groomed transform from project: \n";
-      for (int i = 0; i < transforms[0].size(); i++) {
-        //std::cerr << transforms[0][i] << " ";
-        this->groomed_transform_[i] = transforms[0][i];
-      }
-      //std::cerr << "\n";
-    }
   }
 
   return this->groomed_mesh_;
@@ -547,11 +536,11 @@ void Shape::load_feature(std::string display_mode, std::string feature)
 
     vnl_vector<double> transform;
     if (display_mode != Visualizer::MODE_ORIGINAL_C) {
-      transform = this->groomed_transform_;
+      transform = this->get_groomed_transform();
     }
 
-    //std::cerr << "Apply feature map for feature '" << feature << "' using filename "
-    //          << filenames[feature] << "\n";
+//    std::cerr << "Apply feature map for feature '" << feature << "' using filename "
+//              << filenames[feature] << "\n";
 
     // read the feature
     ReaderType::Pointer reader = ReaderType::New();
@@ -630,4 +619,23 @@ void Shape::set_point_features(std::string feature, itkeigen::VectorXf values)
   if (mesh) {
     mesh->interpolate_scalars_to_mesh(feature, this->global_correspondence_points_, values);
   }
+}
+
+//---------------------------------------------------------------------------
+TransformType Shape::get_groomed_transform()
+{
+  if (this->groomed_transform_.size() == 0) {
+    // single domain support
+    auto transforms = this->subject_->get_groomed_transforms();
+    if (transforms.size() > 0) {
+      this->groomed_transform_.set_size(transforms[0].size());
+      //std::cerr << "loaded groomed transform from project: \n";
+      for (int i = 0; i < transforms[0].size(); i++) {
+        //std::cerr << transforms[0][i] << " ";
+        this->groomed_transform_[i] = transforms[0][i];
+      }
+      //std::cerr << "\n";
+    }
+  }
+  return this->groomed_transform_;
 }
