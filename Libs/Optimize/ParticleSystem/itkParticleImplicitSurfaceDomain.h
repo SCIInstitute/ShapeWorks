@@ -70,10 +70,6 @@ public:
       differences in the input and output points. */
   virtual bool ApplyConstraints(PointType &p, bool dbg = false) const override;
 
-  /** Optionally add a repulsion from a planar boundar specified in
-      m_CuttingPlane */
-  virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const override;
-
 
   inline PointType UpdateParticlePosition(const PointType &point, vnl_vector_fixed<double, DIMENSION> &update) const override {
     PointType newpoint;
@@ -109,13 +105,6 @@ public:
     return newpoint;
   }
 
-  void SetCuttingPlane(const vnl_vector<double> &a, const vnl_vector<double> &b,
-                       const vnl_vector<double> &c);
-
-  /** Transform cutting planes based on base index. Base plane coordinates passed as argument. */
-  void TransformCuttingPlane(const vnl_matrix_fixed<double, DIMENSION + 1, DIMENSION + 1> &Trans) override;
-
-
   void SetMesh(TriMesh *mesh);
   void SetFeaMesh(const char *feaFile);
   void SetFeaGrad(const char *feaGradFile);
@@ -129,83 +118,6 @@ public:
       return m_mesh;
   }
 
-  bool IsCuttingPlaneDefined(){return m_UseCuttingPlane;}
-
-  bool IsCuttingSphereDefined(){return m_UseCuttingSphere;}
-
-  const vnl_vector_fixed<double, DIMENSION> &GetCuttingPlanePoint() const
-  { return m_CuttingPlanePoint[0]; }
-  const vnl_vector_fixed<double, DIMENSION> &GetCuttingPlaneNormal() const
-  { return m_CuttingPlaneNormal[0]; }
-
-  //Praful
-  const vnl_vector_fixed<double, DIMENSION> &GetCuttingPlanePoint(int i) const
-  { return m_CuttingPlanePoint[i]; }
-  const vnl_vector_fixed<double, DIMENSION> &GetCuttingPlaneNormal(int i) const
-  { return m_CuttingPlaneNormal[i]; }
-
-
-  // Prateep
-  const vnl_vector_fixed<double, DIMENSION> &GetA() const{ return m_a[0]; }
-  const vnl_vector_fixed<double, DIMENSION> &GetB() const{ return m_b[0]; }
-  const vnl_vector_fixed<double, DIMENSION> &GetC() const{ return m_c[0]; }
-
-  /** Maintain a list of spheres within the domain.  These are used as
-      soft constraints by some particle forcing functions. */
-  void AddSphere(const vnl_vector_fixed<double, DIMENSION> &v, double r) override
-  {
-//    if (r > 0) -- Praful, sign will be used to determine inwards or outwards
-//    {
-      m_SphereCenterList.push_back(v);
-      m_SphereRadiusList.push_back(r);
-      m_UseCuttingSphere = true;
-//    }
-  }
-
-  /** Returns the radius of sphere i, or 0.0 if sphere i does not exist */
-  double GetSphereRadius(unsigned int i) const
-  {
-    if (m_SphereRadiusList.size() > i) return m_SphereRadiusList[i];
-    else return 0.0;
-  }
-
-  /** Returns the center point of sphere i.  If sphere i does not exist,
-      returns 0 vector. */
-  vnl_vector_fixed<double, DIMENSION> GetSphereCenter(unsigned int i) const
-  {
-    if (m_SphereRadiusList.size() > i) return m_SphereCenterList[i];
-    else
-      {  return vnl_vector_fixed<double, DIMENSION>(0.0,0.0,0.0);  }
-  }
-
-  unsigned int GetNumberOfSpheres() const
-  {
-    return m_SphereCenterList.size();
-  }
-
-  unsigned int GetNumberOfPlanes() const
-  {
-      return m_CuttingPlanePoint.size();
-  }
-
-  void PrintCuttingPlaneConstraints(std::ofstream &out) const override {
-    for (unsigned int j = 0; j < GetNumberOfPlanes(); j++) {
-      vnl_vector_fixed<double, DIMENSION> a = m_a[j];
-      vnl_vector_fixed<double, DIMENSION> b = m_b[j];
-      vnl_vector_fixed<double, DIMENSION> c = m_c[j];
-      for (int d = 0; d < 3; d++) {
-        out << a[d] << " ";
-      }
-      for (int d = 0; d < 3; d++) {
-        out << b[d] << " ";
-      }
-      for (int d = 0; d < 3; d++) {
-        out << c[d] << " ";
-      }
-      out << std::endl;
-    }
-  }
-
   /** Get any valid point on the domain. This is used to place the first particle. */
     PointType GetZeroCrossingPoint() const override {
       PointType p;
@@ -215,7 +127,7 @@ public:
     }
 
 protected:
-  ParticleImplicitSurfaceDomain() : m_Tolerance(1.0e-4), m_UseCuttingPlane(false), m_UseCuttingSphere(false)
+  ParticleImplicitSurfaceDomain() : m_Tolerance(1.0e-4)
   {
     m_mesh = NULL;
   }
@@ -228,27 +140,9 @@ protected:
 
 private:
   T m_Tolerance;
-  bool m_UseCuttingPlane;
-  bool m_UseCuttingSphere;
-  //Praful - adding ability to use more than one cutting planes
-  std::vector < vnl_vector_fixed<double, DIMENSION> > m_CuttingPlanePoint;
-  std::vector < vnl_vector_fixed<double, DIMENSION> > m_CuttingPlaneNormal;
-
-  // Prateep -- Praful
-  std::vector < vnl_vector_fixed<double, DIMENSION> > m_a;
-  std::vector < vnl_vector_fixed<double, DIMENSION> > m_b;
-  std::vector < vnl_vector_fixed<double, DIMENSION> > m_c;
   
   meshFIM *m_mesh;
 
-  std::vector< vnl_vector_fixed<double, DIMENSION> > m_SphereCenterList;
-  std::vector< double > m_SphereRadiusList;
-
-
-
-  // Praful
-  bool SphereVectorConstraintMayOrMayNotWork(vnl_vector_fixed<double, DIMENSION>& gradE,
-    const PointType& pos) const;
 };
 
 } // end namespace itk

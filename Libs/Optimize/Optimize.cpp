@@ -1601,7 +1601,7 @@ void Optimize::WriteCuttingPlanePoints(int iter)
   this->PrintStartMessage(str, 1);
 
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
-    m_sampler->GetParticleSystem()->GetDomain(i)->PrintCuttingPlaneConstraints(out);
+    m_sampler->GetParticleSystem()->GetDomain(i)->GetConstraints()->PrintAll();
   }
   out.close();
   this->PrintDoneMessage(1);

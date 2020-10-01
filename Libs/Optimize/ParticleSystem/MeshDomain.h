@@ -29,7 +29,7 @@ public:
   }
 
   bool ApplyConstraints(PointType &p, bool dbg = false) const override;
-  bool ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const override;
+  bool ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const;
   vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const override;
   PointType UpdateParticlePosition(const PointType &point, vnl_vector_fixed<double, DIMENSION> &update) const override;
 
@@ -96,20 +96,6 @@ public:
     double dist = meshWrapper->ComputeDistance(a, b);
     return dist * dist;
   }
-
-  void PrintCuttingPlaneConstraints(std::ofstream& out) const override {
-    // TODO for Farshad: figure out constraint thing
-  }
-  void SetCuttingPlane(const vnl_vector<double>& a, const vnl_vector<double>& b, const vnl_vector<double>& c) {
-    // TODO for Farshad: figure out constraint thing
-  }
-  void TransformCuttingPlane(const vnl_matrix_fixed<double, DIMENSION + 1, DIMENSION + 1> & Trans) {
-    // TODO for Farshad: figure out constraint thing
-  }
-  void AddSphere(const vnl_vector_fixed<double, DIMENSION>& v, double r) {
-    // TODO for Farshad: figure out constraint thing
-  }
-
 
   void DeleteImages() override {
     // TODO Change this to a generic delete function

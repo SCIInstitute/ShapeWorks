@@ -34,7 +34,7 @@ public:
 
   /** Reduce magnitude of the vector so that applying point = point + gradE does not violate any constraints.
       This should have no effect if there are no constraints. ImageDomain may restrict vector magnitude based on the narrow band. */
-  inline bool ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> & gradE, const PointType &pos) const override {
+  inline bool ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> & gradE, const PointType &pos) const {
     return true;
   }
 
@@ -117,20 +117,9 @@ public:
     return 1;
   }
 
-
   void PrintCuttingPlaneConstraints(std::ofstream& out) const override {
     // TODO for Hong: figure out constraint thing
   }
-  void SetCuttingPlane(const vnl_vector<double>& a, const vnl_vector<double>& b, const vnl_vector<double>& c) {
-    // TODO for Hong: figure out constraint thing
-  }
-  void TransformCuttingPlane(const vnl_matrix_fixed<double, DIMENSION + 1, DIMENSION + 1> & Trans) {
-    // TODO for Hong: figure out constraint thing
-  }
-  void AddSphere(const vnl_vector_fixed<double, DIMENSION>& v, double r) {
-    // TODO for Hong: figure out constraint thing
-  }
-
 
   void DeleteImages() override {
     // TODO delete the contours

@@ -52,6 +52,7 @@ public:
 
   // Plane constraint
   std::vector<PlaneConstraint> *getPlaneConstraints(){return planeConsts;}
+  std::vector<SphereConstraint> *GetSphereConstraints(){return sphereConsts;}
 
   // Is any constraint violated by point pos?
   bool IsAnyViolated(const Point<double, 3> &pos){
@@ -78,12 +79,15 @@ public:
   }
 
   void PrintAll(){
+      std::cout << "Cutting planes " << planeConsts->size() << std::endl;
       for(size_t i = 0; i < planeConsts->size(); i++){
           (*planeConsts)[i].printC();
       }
+      std::cout << "Cutting spheres " << sphereConsts->size() << std::endl;
       for(size_t i = 0; i < sphereConsts->size(); i++){
           (*sphereConsts)[i].printC();
       }
+      std::cout << "Cutting Free form constraints " << freeFormConsts->size() << std::endl;
       for(size_t i = 0; i < freeFormConsts->size(); i++){
           (*freeFormConsts)[i].printC();
       }

@@ -26,6 +26,7 @@ void Constraints::addSphere(const vnl_vector_fixed<double, DIMENSION> &v, double
     SphereConstraint sphere_c;
     sphere_c.SetCenter(c);
     sphere_c.SetRadius(r);
+    sphereConsts->push_back(sphere_c);
 }
 
 bool Constraints::transformConstraints(const vnl_matrix_fixed<double, 4, 4> &Trans){

@@ -31,9 +31,6 @@ public:
   /** Apply any constraints to the given point location.
       This should force the point to a position on the surface that satisfies all constraints. */
   virtual bool ApplyConstraints(PointType& p, bool dbg = false) const = 0;
-  /** Reduce magnitude of the vector so that applying point = point + gradE does not violate any constraints.
-      This should have no effect if there are no constraints. ImageDomain may restrict vector magnitude based on the narrow band. */
-  virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION>& gradE, const PointType& pos) const = 0;
 
   /** Applies the update to the point and returns the new point position. */
   virtual PointType UpdateParticlePosition(const PointType &point, vnl_vector_fixed<double, DIMENSION> &update) const = 0;
@@ -75,13 +72,6 @@ public:
   virtual PointType GetValidLocationNear(PointType p) const = 0;
   /** GetMaxDiameter returns the maximum diameter of the domain and is used for computing sigma */
   virtual double GetMaxDiameter() const = 0;
-
-  // Cutting Plane constraint functionality
-  virtual void PrintCuttingPlaneConstraints(std::ofstream &out) const = 0;
-  virtual void SetCuttingPlane(const vnl_vector<double>& a, const vnl_vector<double>& b, const vnl_vector<double> &c) = 0;
-  virtual void TransformCuttingPlane(const vnl_matrix_fixed<double, DIMENSION + 1, DIMENSION + 1> &Trans) = 0;
-
-  virtual void AddSphere(const vnl_vector_fixed<double, DIMENSION> &v, double r) = 0;
 
   virtual void DeleteImages() = 0;
   virtual void DeletePartialDerivativeImages() = 0;
