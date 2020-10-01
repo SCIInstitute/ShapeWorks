@@ -153,13 +153,14 @@ Viewer::Viewer()
   this->scalar_bar_actor_ = vtkSmartPointer<vtkScalarBarActor>::New();
   this->scalar_bar_actor_->SetTitle("");
   this->scalar_bar_actor_->SetLookupTable(this->difference_lut_);
-  this->scalar_bar_actor_->SetOrientationToHorizontal();
+  //this->scalar_bar_actor_->SetOrientationToHorizontal();
+  this->scalar_bar_actor_->SetOrientationToVertical();
   this->scalar_bar_actor_->SetMaximumNumberOfColors(1000);
   this->scalar_bar_actor_->GetPositionCoordinate()->SetCoordinateSystemToNormalizedViewport();
   this->scalar_bar_actor_->GetPositionCoordinate()->SetValue(.2, .05);
-  this->scalar_bar_actor_->SetWidth(0.8);
-  this->scalar_bar_actor_->SetHeight(0.05);
-  this->scalar_bar_actor_->SetPosition(0.1, 0.01);
+  this->scalar_bar_actor_->SetWidth(0.05);
+  this->scalar_bar_actor_->SetHeight(0.7);
+  this->scalar_bar_actor_->SetPosition(0.9, 0.05);
   this->scalar_bar_actor_->SetLabelFormat("%.0f");
   this->scalar_bar_actor_->GetTitleTextProperty()->SetFontFamilyToArial();
   this->scalar_bar_actor_->GetTitleTextProperty()->SetFontSize(4);
@@ -564,6 +565,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
         scalars->GetRange(range);
         std::cerr << "range = " << range[0] << ":" << range[1] << "\n";
 
+        this->updateDifferenceLUT(range[0], range[1]);
         mapper->SetScalarRange(range[0], range[1]);
       }
 
@@ -737,6 +739,9 @@ void Viewer::update_actors()
     this->renderer_->AddActor(this->exclusion_sphere_actor_);
     if (this->arrows_visible_) {
       this->renderer_->AddActor(this->arrow_glyph_actor_);
+    }
+
+    if (this->arrows_visible_ || this->showing_feature_map()) {
       this->renderer_->AddActor(this->scalar_bar_actor_);
     }
   }
@@ -887,4 +892,10 @@ void Viewer::updateDifferenceLUT(float r0, float r1)
   this->difference_lut_->AddRGBPoint(r1, red[0], red[1], red[2]);
 
   return;
+}
+
+//-----------------------------------------------------------------------------
+bool Viewer::showing_feature_map()
+{
+  return this->visualizer_->get_feature_map() != "";
 }

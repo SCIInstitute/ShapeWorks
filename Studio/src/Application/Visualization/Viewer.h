@@ -88,6 +88,7 @@ private:
 
   void update_actors();
 
+  bool showing_feature_map();
 
   bool visible_;
 
@@ -120,7 +121,6 @@ private:
 
   vtkSmartPointer<vtkLookupTable> lut_;
 
-  vtkSmartPointer<StudioInteractorStyle> style_;
 
   vtkSmartPointer<vtkColorTransferFunction> difference_lut_;
   vtkSmartPointer<vtkArrowSource> arrow_source_;
