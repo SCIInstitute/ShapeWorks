@@ -29,7 +29,7 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    datasetName = "femur"
+    datasetName = "femur-v0"
     filename = datasetName + ".zip"
     # Check if the data is in the right place
     if not os.path.exists(filename):
@@ -177,7 +177,7 @@ def Run_Pipeline(args):
             """
             Apply centering
             """
-            centerFiles_segmentations = center(parentDir + "centered/segmentations", comFiles_segmentations)
+            centerFiles_segmentations = center(parentDir + "centered", comFiles_segmentations)
             centerFiles_images = center(parentDir + "centered/images", comFiles_images)
 
             """
@@ -190,7 +190,7 @@ def Run_Pipeline(args):
             This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
             This function uses the same transfrmation matrix for alignment of raw and segmentation files.
             """
-            [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir + "aligned/segmentations", centerFiles_segmentations, centerFiles_images, medianFile, processRaw = True)
+            [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir + "aligned", centerFiles_segmentations, centerFiles_images, medianFile, processRaw = True)
 
             # If user chose option 2, define cutting plane on median sample
             if choice == 2:
@@ -220,8 +220,8 @@ def Run_Pipeline(args):
             '''
 
             # Compute largest bounding box and apply cropping
-            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", rigidFiles_segmentations, parentDir + "aligned/segmentations/*.aligned.nrrd")
-            croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images, parentDir + "aligned/segmentations/*.aligned.nrrd")
+            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", rigidFiles_segmentations, parentDir + "aligned/*.aligned.nrrd")
+            croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images, parentDir + "aligned/*.aligned.nrrd")
 
 
         # BEGIN GROOMING WITHOUT IMAGES
@@ -284,11 +284,11 @@ def Run_Pipeline(args):
             This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
             This function uses the same transfrmation matrix for alignment of raw and segmentation files.
             """
-            rigidFiles_segmentations = applyRigidAlignment(parentDir + "aligned/segmentations", centerFiles_segmentations, None, medianFile, processRaw = False)
+            rigidFiles_segmentations = applyRigidAlignment(parentDir + "aligned", centerFiles_segmentations, None, medianFile, processRaw = False)
 
             # If user chose option 2, define cutting plane on median sample
             if choice == 2:
-                input_file = medianFile.replace("centered", "aligned").replace(".nrrd", ".aligned.DT.nrrd")
+                input_file = medianFile.replace("centered/segmentations", "aligned").replace(".nrrd", ".aligned.DT.nrrd")
                 cutting_plane_points = SelectCuttingPlane(input_file)
 
             elif choice == 1:
@@ -314,7 +314,7 @@ def Run_Pipeline(args):
             '''
 
             # Compute largest bounding box and apply cropping
-            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", rigidFiles_segmentations, parentDir + "aligned/segmentations/*.aligned.nrrd")
+            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", rigidFiles_segmentations, parentDir + "aligned/*.aligned.nrrd")
 
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
@@ -397,7 +397,7 @@ def Run_Pipeline(args):
         "debug_projection" : 0,
         "verbosity" : 2,
         "use_statistics_in_init" : 0,
-        "adaptivity_mode": 0,
+        "adaptivity_mode": 3,
         "cutting_plane_counts": cutting_plane_counts,
         "cutting_planes": cutting_planes
     }
