@@ -534,13 +534,10 @@ void Shape::load_feature(std::string display_mode, std::string feature)
   }
   vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
 
-  std::cerr << "checking if mesh has scalar array for " << feature << "\n";
+  //std::cerr << "checking if mesh has scalar array for " << feature << "\n";
   auto scalar_array = poly_data->GetPointData()->GetArray(feature.c_str());
-  if (scalar_array) {
-    std::cerr << "shape: array present!\n";
-  }
-  else {
-    std::cerr << "shape: array NOT present! Loading...\n";
+  if (!scalar_array) {
+    //std::cerr << "shape: array NOT present! Loading...\n";
 
     if (!this->subject_) {
       return;
@@ -553,8 +550,8 @@ void Shape::load_feature(std::string display_mode, std::string feature)
       transform = this->groomed_transform_;
     }
 
-    std::cerr << "Apply feature map for feature '" << feature << "' using filename "
-              << filenames[feature] << "\n";
+    //std::cerr << "Apply feature map for feature '" << feature << "' using filename "
+    //          << filenames[feature] << "\n";
 
     // read the feature
     ReaderType::Pointer reader = ReaderType::New();
@@ -565,9 +562,7 @@ void Shape::load_feature(std::string display_mode, std::string feature)
     mesh->apply_feature_map(feature, image, transform);
 
     this->apply_feature_to_points(feature, image);
-
   }
-
 }
 
 //---------------------------------------------------------------------------
