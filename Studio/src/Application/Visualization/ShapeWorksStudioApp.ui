@@ -298,19 +298,30 @@
     <property name="title">
      <string>File</string>
     </property>
+    <widget class="QMenu" name="menuExport">
+     <property name="title">
+      <string>Export...</string>
+     </property>
+     <addaction name="action_export_current_mesh"/>
+     <addaction name="action_export_mesh_scalars"/>
+     <addaction name="actionExport_Eigenvectors"/>
+     <addaction name="actionExport_Eigenvalues"/>
+     <addaction name="actionExport_Variance_Graph"/>
+     <addaction name="action_export_pca_scores"/>
+     <addaction name="actionExport_PCA_Mode_Points"/>
+    </widget>
+    <widget class="QMenu" name="menu">
+     <property name="title">
+      <string/>
+     </property>
+    </widget>
     <addaction name="action_new_project"/>
     <addaction name="action_open_project"/>
     <addaction name="action_save_project"/>
     <addaction name="action_save_project_as"/>
     <addaction name="separator"/>
     <addaction name="action_import"/>
-    <addaction name="action_export_current_mesh"/>
-    <addaction name="action_export_mesh_scalars"/>
-    <addaction name="actionExport_Eigenvectors"/>
-    <addaction name="actionExport_Eigenvalues"/>
-    <addaction name="actionExport_Variance_Graph"/>
-    <addaction name="action_export_pca_scores"/>
-    <addaction name="actionExport_PCA_Mode_Points"/>
+    <addaction name="menuExport"/>
     <addaction name="separator"/>
     <addaction name="action_recent1"/>
     <addaction name="action_recent2"/>
