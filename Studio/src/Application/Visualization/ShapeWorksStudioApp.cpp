@@ -1095,7 +1095,7 @@ void ShapeWorksStudioApp::on_action_preferences_triggered()
 void ShapeWorksStudioApp::on_action_export_current_mesh_triggered()
 {
   auto dir = preferences_.get_last_directory() + "/";
-  QString filename = QFileDialog::getSaveFileName(this, tr("Save Project As..."),
+  QString filename = QFileDialog::getSaveFileName(this, tr("Export Current Mesh"),
                                                   dir + "mesh",
                                                   tr("VTK files (*.vtk)"));
   if (filename.isEmpty()) {
@@ -1115,7 +1115,7 @@ void ShapeWorksStudioApp::on_action_export_current_mesh_triggered()
 void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered()
 {
   auto dir = preferences_.get_last_directory().toStdString() + "/";
-  QString filename = QFileDialog::getSaveFileName(this, tr("Save Project As..."),
+  QString filename = QFileDialog::getSaveFileName(this, tr("Export Mesh Scalars"),
                                                   QString::fromStdString(dir) + "scalars",
                                                   tr("CSV files (*.csv)"));
   if (filename.isEmpty()) {
@@ -1172,7 +1172,7 @@ void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered()
 void ShapeWorksStudioApp::on_action_export_pca_scores_triggered()
 {
   auto dir = preferences_.get_last_directory().toStdString() + "/";
-  QString filename = QFileDialog::getSaveFileName(this, tr("Save Project As..."),
+  QString filename = QFileDialog::getSaveFileName(this, tr("Export PCA Scores"),
                                                   QString::fromStdString(dir) + "scores",
                                                   tr("CSV files (*.csv)"));
   if (filename.isEmpty()) {
@@ -1333,7 +1333,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered()
 {
   auto dir = preferences_.get_last_directory().toStdString();
   dir = dir.substr(0, dir.find_last_of("/") + 1);
-  QString filename = QFileDialog::getSaveFileName(this, tr("Save Project As..."),
+  QString filename = QFileDialog::getSaveFileName(this, tr("Export PCA Mesh"),
                                                   QString::fromStdString(dir) + "newMesh",
                                                   tr("VTK files (*.vtk)"));
   if (filename.isEmpty()) {
@@ -1376,7 +1376,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvalues_triggered()
   QString fname("Untitled.eval");
 
   auto dir = this->preferences_.get_last_directory().toStdString() + "/";
-  QString filename = QFileDialog::getSaveFileName(this, tr("Save Eigenvalue EVAL file..."),
+  QString filename = QFileDialog::getSaveFileName(this, tr("Export Eigenvalue EVAL file..."),
                                                   QString::fromStdString(dir) + fname,
                                                   tr("EVAL files (*.eval)"));
   if (filename.isEmpty()) {
@@ -1398,7 +1398,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered()
   auto values = stats.Eigenvectors();
   QString fname("Untitled.eval");
   auto dir = this->preferences_.get_last_directory().toStdString() + "/";
-  QString filename = QFileDialog::getSaveFileName(this, tr("Save Eigenvector EVAL files..."),
+  QString filename = QFileDialog::getSaveFileName(this, tr("Export Eigenvector EVAL files..."),
                                                   QString::fromStdString(dir) + fname,
                                                   tr("EVAL files (*.eval)"));
   if (filename.isEmpty()) {
@@ -1459,7 +1459,7 @@ void ShapeWorksStudioApp::on_actionExport_Variance_Graph_triggered()
   QString fname("Untitled.png");
   auto dir = this->preferences_.get_last_directory().toStdString();
   dir = dir.substr(0, dir.find_last_of("/") + 1);
-  QString filename = QFileDialog::getSaveFileName(this, tr("Save Variance Graph..."),
+  QString filename = QFileDialog::getSaveFileName(this, tr("Export Variance Graph"),
                                                   QString::fromStdString(dir) + fname,
                                                   tr("PNG files (*.png)"));
   if (filename.isEmpty()) {
