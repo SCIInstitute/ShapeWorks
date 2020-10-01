@@ -40,6 +40,7 @@ nav:
    - 'How to Add and Run Unit Tests?':       'dev/tests.md'
    - 'How to Add New Use Cases?':            'dev/new-use-case.md'
    - 'How to Add New Datasets?':             'dev/datasets.md'
+   - 'When Modifying Existing Datasets':     'dev/modify-datasets.md'
    - 'Getting Started with Documentation':   'dev/docs.md'
    - 'Getting Started with GitHub Actions':  'dev/gh-actions.md'
    - 'Getting Started with Markdown':        'dev/markdown.md'
