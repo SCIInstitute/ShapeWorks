@@ -29,11 +29,11 @@ def Run_Pipeline(args):
         input("Press Enter to continue")
 
     datasetName = "lumps-v0"
-    testDirectory = f"TestLumps/"
+    testDirectory = "TestLumps/"
     originalDataDirectory = testDirectory + datasetName + "/"
     meshFileDirectory = originalDataDirectory + "meshes/"
-    pointFilesDirectory = testDirectory + "PointFiles/"
-    zipfilename = datasetName + ".zip"
+    shapeModelDirectory = testDirectory + "shape_models/"
+    zipfile = datasetName + ".zip"
 
     if not os.path.exists(testDirectory):
         os.makedirs(testDirectory)
@@ -41,12 +41,12 @@ def Run_Pipeline(args):
     # Check if the unzipped data is present
     if not os.path.exists(originalDataDirectory):
         # check if the zipped data is present
-        if not os.path.exists(zipfilename):
-            print("Can't find " + zipfilename + " in the current directory.")
+        if not os.path.exists(zipfile):
+            print("Can't find " + zipfile + " in the current directory.")
             import DatasetUtils
             DatasetUtils.downloadDataset(datasetName)
-        print("Unzipping " + zipfilename + " into " + testDirectory)
-        with ZipFile(zipfilename, 'r') as zipObj:
+        print("Unzipping " + zipfile + " into " + testDirectory)
+        with ZipFile(zipfile, 'r') as zipObj:
             zipObj.extractall(path=testDirectory)
 
 
@@ -60,8 +60,8 @@ def Run_Pipeline(args):
         meshFiles = meshFiles[:2]
 
 
-    if not os.path.exists(pointFilesDirectory):
-        os.makedirs(pointFilesDirectory)
+    if not os.path.exists(shapeModelDirectory):
+        os.makedirs(shapeModelDirectory)
 
     parameterDictionary = {
         "number_of_particles": 512,
@@ -96,12 +96,12 @@ def Run_Pipeline(args):
         parameterDictionary["use_shape_statistics_after"] = 32
 
 
-    [localPointFiles, worldPointFiles] = runShapeWorksOptimize(pointFilesDirectory, meshFiles, parameterDictionary)
+    [localPointFiles, worldPointFiles] = runShapeWorksOptimize(shapeModelDirectory, meshFiles, parameterDictionary)
 
     if args.tiny_test:
         print("Done with tiny test")
         exit()
     
 
-    launchShapeWorksStudio(pointFilesDirectory, meshFiles, localPointFiles, worldPointFiles)
+    launchShapeWorksStudio(shapeModelDirectory, meshFiles, localPointFiles, worldPointFiles)
 
