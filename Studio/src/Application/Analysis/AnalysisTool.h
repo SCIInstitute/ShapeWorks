@@ -172,6 +172,9 @@ private:
 
   ShapeHandle computed_shape_;
 
+  ShapeList group1_list_;
+  ShapeList group2_list_;
+
   std::string feature_map_;
 
   std::vector<std::string> current_group_names_;

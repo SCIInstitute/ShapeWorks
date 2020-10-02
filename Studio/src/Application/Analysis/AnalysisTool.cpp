@@ -407,6 +407,9 @@ bool AnalysisTool::compute_stats()
 
   bool groups_enabled = group_set != "-None-";
 
+  this->group1_list_.clear();
+  this->group2_list_.clear();
+
   for (ShapeHandle shape : this->session_->get_shapes()) {
 
     if (groups_enabled) {
@@ -414,10 +417,12 @@ bool AnalysisTool::compute_stats()
       if (value == left_group) {
         points.push_back(shape->get_global_correspondence_points());
         group_ids.push_back(1);
+        this->group1_list_.push_back(shape);
       }
       else if (value == right_group) {
         points.push_back(shape->get_global_correspondence_points());
         group_ids.push_back(2);
+        this->group2_list_.push_back(shape);
       }
       else {
         // we don't include it
@@ -748,10 +753,11 @@ ShapeHandle AnalysisTool::get_mean_shape()
     auto shapes = this->session_->get_shapes();
     Eigen::VectorXf sum(num_points);
     sum.setZero();
-    bool ready = true;
-    for (int i = 0; i < shapes.size(); i++) {
-      if (this->is_group_active(i)) {
 
+    bool ready = true;
+
+    if (!this->groups_active()) {
+      for (int i = 0; i < shapes.size(); i++) {
         shapes[i]->load_feature(Visualizer::MODE_RECONSTRUCTION_C, this->feature_map_);
         auto value = shapes[i]->get_point_features(this->feature_map_);
         if (value.rows() != sum.rows()) {
@@ -762,20 +768,47 @@ ShapeHandle AnalysisTool::get_mean_shape()
           sum = sum + value;
         }
       }
+      auto mean = sum / values.size();
 
+      if (ready) {
+        shape->set_point_features(this->feature_map_, mean);
+      }
     }
-    auto mean = sum / values.size();
+    else {
+      Eigen::VectorXf sum_left(num_points);
+      sum_left.setZero();
+      Eigen::VectorXf sum_right(num_points);
+      sum_right.setZero();
 
-    /*
-    std::cerr << "mean: ";
-    for (int j = 0; j < mean.size(); j++) {
-      std::cerr << mean[j] << " ";
-    }
-    std::cerr << "\n";
-*/
+      for (auto shape : this->group1_list_) {
+        shape->load_feature(Visualizer::MODE_RECONSTRUCTION_C, this->feature_map_);
+        auto value = shape->get_point_features(this->feature_map_);
+        if (value.rows() != sum.rows()) {
+          ready = false;
+        }
+        else {
+          sum_left = sum_left + value;
+        }
+      }
+      auto left_mean = sum_left / this->group1_list_.size();
 
-    if (ready) {
-      shape->set_point_features(this->feature_map_, mean);
+      for (auto shape : this->group2_list_) {
+        shape->load_feature(Visualizer::MODE_RECONSTRUCTION_C, this->feature_map_);
+        auto value = shape->get_point_features(this->feature_map_);
+        if (value.rows() != sum.rows()) {
+          ready = false;
+        }
+        else {
+          sum_right = sum_right + value;
+        }
+      }
+      auto right_mean = sum_right / this->group2_list_.size();
+
+      if (ready) {
+        double ratio = this->get_group_value();
+        auto blend = left_mean * ratio + right_mean * (1 - ratio);
+        shape->set_point_features(this->feature_map_, blend);
+      }
     }
   }
 
