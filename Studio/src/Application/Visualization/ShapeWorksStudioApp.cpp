@@ -71,6 +71,11 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
     (new WheelEventForwarder(this->ui_->vertical_scroll_bar));
   this->ui_->qvtkWidget->installEventFilter(this->wheel_event_forwarder_.data());
 
+  // set the splitter ratio
+  QList<int> splitter_ratio = {9000, 1000};
+  this->ui_->data_splitter->setSizes(splitter_ratio);
+
+
   // Glyph options in the render window.
   QMenu* menu = new QMenu();
   QWidget* widget = new QWidget();
@@ -1097,6 +1102,9 @@ void ShapeWorksStudioApp::open_project(QString filename)
   int zoom_value = this->session_->parameters().get(ShapeWorksStudioApp::SETTING_ZOOM_C, "4");
   this->ui_->zoom_slider->setValue(zoom_value);
 
+  this->ui_->notes->setText(QString::fromStdString(
+    this->session_->parameters().get("notes", "")));
+
   this->block_update_ = false;
   this->update_display(true);
 
@@ -1310,6 +1318,7 @@ void ShapeWorksStudioApp::save_project(std::string filename)
   this->session_->parameters().set(ShapeWorksStudioApp::SETTING_ZOOM_C,
                                    std::to_string(this->ui_->zoom_slider->value()));
 
+  this->session_->parameters().set("notes", this->ui_->notes->toHtml().toStdString());
   this->session_->parameters().set("analysis_mode", this->analysis_tool_->get_analysis_mode());
 
   this->groom_tool_->store_settings();
