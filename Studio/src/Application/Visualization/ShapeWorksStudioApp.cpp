@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QXmlStreamWriter>
+#include <QTextStream>
 
 // vtk
 #include <vtkRenderWindow.h>
@@ -72,9 +73,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->ui_->qvtkWidget->installEventFilter(this->wheel_event_forwarder_.data());
 
   // set the splitter ratio
-  QList<int> splitter_ratio = {9000, 1000};
-  this->ui_->data_splitter->setSizes(splitter_ratio);
-
+  this->ui_->data_splitter->setSizes(QList<int>({INT_MAX, INT_MAX}));
 
   // Glyph options in the render window.
   QMenu* menu = new QMenu();
