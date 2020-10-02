@@ -118,9 +118,9 @@ public:
 
 private:
 
-  void generate_original_meshes();
+  //void generate_original_meshes();
 
-  void generate_meshes(std::vector<std::string> filenames, QSharedPointer<Mesh>& mesh);
+  void generate_meshes(std::vector<std::string> filenames, QSharedPointer<Mesh>& mesh, bool save_transform);
 
   static bool import_point_file(QString filename, vnl_vector<double>& points);
 

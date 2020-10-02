@@ -129,7 +129,7 @@ public Q_SLOTS:
 
   void on_metrics_open_button_toggled();
 
-
+  bool is_group_active(int shape_index);
 
 signals:
 

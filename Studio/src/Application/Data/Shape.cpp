@@ -87,7 +87,11 @@ void Shape::import_original_image(std::string filename, float iso_value)
 QSharedPointer<Mesh> Shape::get_original_mesh()
 {
   if (!this->original_mesh_) {
-    this->generate_meshes(this->subject_->get_segmentation_filenames(), this->original_mesh_);
+    if (!this->subject_) {
+      // There is no original mesh for a computed shape (e.g. mean)
+      return nullptr;
+    }
+    this->generate_meshes(this->subject_->get_segmentation_filenames(), this->original_mesh_, true);
   }
   return this->original_mesh_;
 }
@@ -182,7 +186,7 @@ QSharedPointer<Mesh> Shape::get_groomed_mesh()
       //return this->groomed_mesh_;
     }
     else {
-      this->generate_meshes(this->subject_->get_groomed_filenames(), this->groomed_mesh_);
+      this->generate_meshes(this->subject_->get_groomed_filenames(), this->groomed_mesh_, false);
     }
 
   }
@@ -416,7 +420,7 @@ vnl_vector<double> Shape::get_transform()
 {
   return this->transform_;
 }
-
+/*
 //---------------------------------------------------------------------------
 void Shape::generate_original_meshes()
 {
@@ -448,10 +452,11 @@ void Shape::generate_original_meshes()
       //std::cerr << "no mesh yet from manager!\n";
     }
   }
-}
+}*/
 
 //---------------------------------------------------------------------------
-void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<Mesh>& mesh)
+void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<Mesh>& mesh,
+                            bool save_transform)
 {
   if (filenames.size() < 1) {
     return;
@@ -474,9 +479,11 @@ void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<Mesh>&
     double center[3];
     com->GetCenter(center);
 
-    this->transform_.set_size(12);
-    for (unsigned int i = 0; i < 3; i++) {
-      this->transform_[9 + i] = center[i];
+    if (save_transform) {
+      this->transform_.set_size(12);
+      for (unsigned int i = 0; i < 3; i++) {
+        this->transform_[9 + i] = center[i];
+      }
     }
   }
 }
@@ -564,7 +571,7 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
 
   auto region = image->GetLargestPossibleRegion();
 
-  vnl_vector<double> transform = this->groomed_transform_;
+  vnl_vector<double> transform = this->get_groomed_transform();
 
   int num_points = this->local_correspondence_points_.size() / 3;
 
@@ -578,10 +585,10 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
     pitk[1] = this->local_correspondence_points_[idx++];
     pitk[2] = this->local_correspondence_points_[idx++];
 
-    if (transform.size() == 3) {
-      pitk[0] = pitk[0] + transform[0];
-      pitk[1] = pitk[1] + transform[1];
-      pitk[2] = pitk[2] + transform[2];
+    if (transform.size() == 12) {
+      pitk[0] = pitk[0] + transform[9];
+      pitk[1] = pitk[1] + transform[10];
+      pitk[2] = pitk[2] + transform[11];
     }
 
     LinearInterpolatorType::ContinuousIndexType index;
@@ -610,7 +617,7 @@ Eigen::VectorXf Shape::get_point_features(std::string feature)
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_point_features(std::string feature, itkeigen::VectorXf values)
+void Shape::set_point_features(std::string feature, Eigen::VectorXf values)
 {
   this->point_features_[feature] = values;
 

@@ -511,6 +511,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
         this->visualizer_->get_center()) {
       transform = shape->get_transform();
     }
+    std::cerr << "transform size = " << transform.size() << "\n";
 
     if (transform.size() == 12) {
       double tx = -transform[9];

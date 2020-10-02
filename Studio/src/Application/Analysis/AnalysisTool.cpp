@@ -750,18 +750,29 @@ ShapeHandle AnalysisTool::get_mean_shape()
     sum.setZero();
     bool ready = true;
     for (int i = 0; i < shapes.size(); i++) {
-      shapes[i]->load_feature(Visualizer::MODE_RECONSTRUCTION_C, this->feature_map_);
-      auto value = shapes[i]->get_point_features(this->feature_map_);
-      if (value.rows() != sum.rows()) {
-        ready = false;
-      }
-      else {
-        values.push_back(value);
-        sum = sum + value;
+      if (this->is_group_active(i)) {
+
+        shapes[i]->load_feature(Visualizer::MODE_RECONSTRUCTION_C, this->feature_map_);
+        auto value = shapes[i]->get_point_features(this->feature_map_);
+        if (value.rows() != sum.rows()) {
+          ready = false;
+        }
+        else {
+          values.push_back(value);
+          sum = sum + value;
+        }
       }
 
     }
-    auto mean = sum / shapes.size();
+    auto mean = sum / values.size();
+
+    /*
+    std::cerr << "mean: ";
+    for (int j = 0; j < mean.size(); j++) {
+      std::cerr << mean[j] << " ";
+    }
+    std::cerr << "\n";
+*/
 
     if (ready) {
       shape->set_point_features(this->feature_map_, mean);
@@ -910,4 +921,45 @@ void AnalysisTool::on_metrics_open_button_toggled()
     this->ui_->compactness_label->setText(QString::number(this->stats_.get_compactness(1)));
     this->ui_->generalization_label->setText(QString::number(this->stats_.get_generalization(1)));
   }*/
+}
+
+//---------------------------------------------------------------------------
+bool AnalysisTool::is_group_active(int shape_index)
+{
+  std::string group_set = this->ui_->group_box->currentText().toStdString();
+  std::string left_group = this->ui_->group_left->currentText().toStdString();
+  std::string right_group = this->ui_->group_right->currentText().toStdString();
+
+  bool groups_enabled = group_set != "-None-";
+
+  auto shapes = this->session_->get_shapes();
+  auto shape = shapes[shape_index];
+
+  bool left = false;
+  bool right = false;
+  bool both = true;
+  if (this->ui_->group1_button->isChecked()) {
+    both = false;
+    left = true;
+  }
+  else if (this->ui_->group2_button->isChecked()) {
+    both = false;
+    right = true;
+  }
+
+  if (groups_enabled) {
+    auto value = shape->get_subject()->get_group_value(group_set);
+    if (left && value == left_group) {
+      return true;
+    }
+    else if (right && value == right_group) {
+      return true;
+    }
+    else if (both) {
+      return true;
+    }
+    else { return false; }
+  }
+
+  return true;
 }
