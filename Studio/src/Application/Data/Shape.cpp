@@ -89,9 +89,12 @@ QSharedPointer<Mesh> Shape::get_original_mesh()
   if (!this->original_mesh_) {
     if (!this->subject_) {
       // There is no original mesh for a computed shape (e.g. mean)
-      return nullptr;
+      std::cerr << "Error: asked for original mesh when none is present!\n";
     }
-    this->generate_meshes(this->subject_->get_segmentation_filenames(), this->original_mesh_, true);
+    else {
+      this->generate_meshes(this->subject_->get_segmentation_filenames(), this->original_mesh_,
+                            true);
+    }
   }
   return this->original_mesh_;
 }
@@ -180,15 +183,12 @@ void Shape::import_groomed_image(ImageType::Pointer img, double iso, TransformTy
 QSharedPointer<Mesh> Shape::get_groomed_mesh()
 {
   if (!this->groomed_mesh_) {
-
     if (!this->subject_) {
-      std::cerr << "Error: asked for groom mesh when none as present!\n";
-      //return this->groomed_mesh_;
+      std::cerr << "Error: asked for groomed mesh when none is present!\n";
     }
     else {
       this->generate_meshes(this->subject_->get_groomed_filenames(), this->groomed_mesh_, false);
     }
-
   }
 
   return this->groomed_mesh_;

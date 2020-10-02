@@ -73,6 +73,8 @@ public:
 
   void update_feature_range(double *range);
 
+  QSharedPointer<Shape> get_shape();
+
 private:
 
   void display_vector_field();
@@ -86,7 +88,7 @@ private:
 
   void draw_exclusion_spheres(QSharedPointer<Shape> object);
 
-  void updateDifferenceLUT(float r0, float r1);
+  void update_difference_lut(float r0, float r1);
 
   void update_actors();
 

@@ -193,7 +193,7 @@ void Viewer::handle_new_mesh()
 {
   if (!this->mesh_ready_ && this->shape_ &&
       this->shape_->get_mesh(this->visualizer_->get_display_mode())) {
-      this->display_shape(this->shape_);
+    this->display_shape(this->shape_);
   }
 }
 
@@ -345,7 +345,7 @@ void Viewer::compute_point_differences(const std::vector<Point>& points,
     vectors->InsertNextTuple3(normal[0] * mag, normal[1] * mag, normal[2] * mag);
     magnitudes->InsertNextTuple1(mag);
   }
-  this->updateDifferenceLUT(minmag, maxmag);
+  this->update_difference_lut(minmag, maxmag);
 }
 
 //-----------------------------------------------------------------------------
@@ -487,6 +487,11 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
 
     auto feature_map = this->visualizer_->get_feature_map();
 
+    std::vector<Point> vecs = this->shape_->get_vectors();
+    if (!vecs.empty()) {
+      feature_map = "";
+    }
+
     if (feature_map != "" && poly_data) {
       //std::cerr << "checking if mesh has scalar array for " << feature_map << "\n";
       auto scalar_array = poly_data->GetPointData()->GetArray(feature_map.c_str());
@@ -511,7 +516,6 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
         this->visualizer_->get_center()) {
       transform = shape->get_transform();
     }
-    std::cerr << "transform size = " << transform.size() << "\n";
 
     if (transform.size() == 12) {
       double tx = -transform[9];
@@ -565,7 +569,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
         scalars->GetRange(range);
         //std::cerr << "range = " << range[0] << ":" << range[1] << "\n";
         this->visualizer_->update_feature_range(range);
-        this->updateDifferenceLUT(range[0], range[1]);
+        this->update_difference_lut(range[0], range[1]);
         mapper->SetScalarRange(range[0], range[1]);
       }
 
@@ -575,22 +579,12 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
 
     }
 
-
-
-    //ren->AddActor( actor );
-    //ren->AddActor( this->glyph_actor_ );
-
     this->display_vector_field();
 
   }
 
   this->update_actors();
   this->update_glyph_properties();
-
-  ///this->update_actors();
-  ///this->update_glyph_properties();
-
-  //this->renderer_->ResetCameraClippingRange();
 
   ren->AddViewProp(this->corner_annotation_);
 }
@@ -845,7 +839,7 @@ void Viewer::draw_exclusion_spheres(QSharedPointer<Shape> object)
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::updateDifferenceLUT(float r0, float r1)
+void Viewer::update_difference_lut(float r0, float r1)
 {
 
   double black[3] = {0.0, 0.0, 0.0};
@@ -904,6 +898,12 @@ bool Viewer::showing_feature_map()
 void Viewer::update_feature_range(double* range)
 {
   this->visualizer_->update_feature_range(range);
-  this->updateDifferenceLUT(range[0], range[1]);
+  this->update_difference_lut(range[0], range[1]);
   this->surface_mapper_->SetScalarRange(range[0], range[1]);
+}
+
+//-----------------------------------------------------------------------------
+QSharedPointer<Shape> Viewer::get_shape()
+{
+  return this->shape_;
 }
