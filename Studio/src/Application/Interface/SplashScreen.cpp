@@ -1,3 +1,5 @@
+#include <iostream>
+
 // Qt includes
 #include <QFileDialog>
 #include <QMessageBox>
@@ -49,6 +51,8 @@ SplashScreen::SplashScreen(QWidget* parent, Preferences& preferences) :
           this, &SplashScreen::open_existing);
 
   this->ui_->new_project_button_->setFocus();
+
+
 }
 
 //---------------------------------------------------------------------------
@@ -150,6 +154,12 @@ void SplashScreen::populate_recent_projects()
 void SplashScreen::enable_load_recent_button(QListWidgetItem* not_used)
 {
   this->ui_->load_recent_button_->setEnabled(true);
+}
+
+//---------------------------------------------------------------------------
+void SplashScreen::resizeEvent(QResizeEvent* event)
+{
+  QDialog::resizeEvent(event);
 }
 
 }

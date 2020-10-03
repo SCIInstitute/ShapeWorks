@@ -50,6 +50,8 @@ Q_SIGNALS:
 
 private:
 
+  void resizeEvent(QResizeEvent* event) override;
+
   //! populate the recent project list
   void populate_recent_projects();
 

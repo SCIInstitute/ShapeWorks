@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>390</width>
+    <width>361</width>
     <height>599</height>
    </rect>
   </property>
@@ -324,12 +324,6 @@ background: rgb(255, 255, 127)
       </item>
       <item row="9" column="2">
        <widget class="QWidget" name="widget_2" native="true">
-        <property name="maximumSize">
-         <size>
-          <width>100</width>
-          <height>20</height>
-         </size>
-        </property>
         <layout class="QGridLayout" name="gridLayout_3">
          <property name="leftMargin">
           <number>0</number>
@@ -419,12 +413,6 @@ background: rgb(255, 255, 127)
       </item>
       <item row="10" column="2">
        <widget class="QWidget" name="widget_3" native="true">
-        <property name="maximumSize">
-         <size>
-          <width>100</width>
-          <height>20</height>
-         </size>
-        </property>
         <layout class="QGridLayout" name="gridLayout_4">
          <property name="leftMargin">
           <number>0</number>
@@ -476,12 +464,6 @@ background: rgb(255, 255, 127)
       </item>
       <item row="12" column="2">
        <widget class="QWidget" name="widget_4" native="true">
-        <property name="maximumSize">
-         <size>
-          <width>100</width>
-          <height>20</height>
-         </size>
-        </property>
         <layout class="QGridLayout" name="gridLayout_5">
          <property name="leftMargin">
           <number>0</number>
@@ -619,12 +601,6 @@ background: rgb(255, 255, 127)
       </item>
       <item row="7" column="2">
        <widget class="QWidget" name="widget" native="true">
-        <property name="maximumSize">
-         <size>
-          <width>100</width>
-          <height>20</height>
-         </size>
-        </property>
         <layout class="QGridLayout" name="gridLayout_2">
          <property name="leftMargin">
           <number>0</number>
@@ -750,12 +726,19 @@ background: rgb(255, 255, 127)
  </widget>
  <tabstops>
   <tabstop>number_of_particles</tabstop>
+  <tabstop>initial_relative_weighting</tabstop>
   <tabstop>relative_weighting</tabstop>
   <tabstop>starting_regularization</tabstop>
   <tabstop>ending_regularization</tabstop>
   <tabstop>iterations_per_split</tabstop>
   <tabstop>optimization_iterations</tabstop>
+  <tabstop>use_normals</tabstop>
+  <tabstop>normals_strength</tabstop>
+  <tabstop>procrustes</tabstop>
+  <tabstop>procrustes_scaling</tabstop>
   <tabstop>procrustes_interval</tabstop>
+  <tabstop>multiscale</tabstop>
+  <tabstop>multiscale_particles</tabstop>
   <tabstop>run_optimize_button</tabstop>
   <tabstop>restoreDefaults</tabstop>
  </tabstops>
