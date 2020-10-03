@@ -21,6 +21,9 @@ nav:
    - 'How to Analyze Your Shape Model?' :    'workflow/analyze.md'     
 - What is New?:
    - 'New in ShapeWorksStudio':              'new/new-studio.md'
+- Deep Learning & SSMs:
+   - 'Data Augmentation for Deep Learning':  'deep-learning/data-augmentation.md'
+   - 'SSMs Directly from Images':            'deep-learning/deep-ssm.md'
 - Use Cases:
    - 'Getting Started with Use Cases':          'use-cases/use-cases.md'
    - 'Ellipsoid: Basic Example':                'use-cases/ellipsoid.md'
@@ -30,6 +33,7 @@ nav:
    - 'Femur Mesh: SSM directly from meshes':    'use-cases/femur-mesh.md'
    - 'Lumps: SSM directly from meshes':         'use-cases/lumps.md'
    - 'Right Ventricle: Highly Variable Shapes': 'use-cases/right-ventricle.md'
+   - 'Femur SSM Directly from Images':          'use-cases/deep-ssm-femur.md'         
 - For Users:
    - 'How to Install ShapeWorks?':           'users/install.md'
    - 'How to Cite ShapeWorks?':              'users/citation.md'
