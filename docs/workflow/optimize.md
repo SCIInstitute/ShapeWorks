@@ -120,29 +120,29 @@ Here is the list of the parameters to be included in the `<parameters.xml>` file
 
 * `<inputs>`: List of surface meshes or distance transforms (i.e., groom stage output) that comprises your dataset.
 * `<output_dir>`:  The directory to save the output produced by the ShapeWorks optimization.
-* `<domain_type>`: The type of the domain in `<inputs>`, `image` for signed distance transforms, and `mesh` for triangular surface meshes.
-* `<domains_per_shape>`: The number of domains for anatomies with multiple structures (domains), e.g., joints. The list of `<inputs>` should be ordered to list a consistent order of the domains (surface mesh or distance transform) of each shape (e.g., shape1-domain1, shape1-domain2, shape2-domain1, shape2-domain2 ... etc.).
+* `<domain_type>`: (default: image) The type of the domain in `<inputs>`, `image` for signed distance transforms, and `mesh` for triangular surface meshes.
+* `<domains_per_shape>`: (default: 1) The number of domains for anatomies with multiple structures (domains), e.g., joints. The list of `<inputs>` should be ordered to list a consistent order of the domains (surface mesh or distance transform) of each shape (e.g., shape1-domain1, shape1-domain2, shape2-domain1, shape2-domain2 ... etc.).
 * `<narrow_band>`: (default: 4.0) The off-surface distance (in physical units) used to truncate (zero out) distance values for signed distance transforms beyond the narrow band radius (i.e., a narrow band of 4.0 preserve distance values within +/- 4.0 units off the surface). This is used to reduce the memory footprint required for keeping volumetric distance transforms in memory. If you get an error that particles are shooting outside the narrow band, please consider increasing this value.
 * `<number_of_particles>`: The desired number of particles to be placed. ShapeWorks will produce the smallest power-of-2 number of particles greater than or equal the given `<number_of_particles>`.
-* `<iterations_per_split>`: The number of iterations in the initialization step for each split (i.e., scale). 
-* `<optimization_iterations>`: Number of iterations for each optimization step.
+* `<iterations_per_split>`: (default: 1000) The number of iterations in the initialization step for each split (i.e., scale). 
+* `<optimization_iterations>`: (default: 2000) Number of iterations for each optimization step.
 * `<save_init_splits>`: (default: 1) A flag to save the particles for each split in the initialization steps. 
 * `<use_xyz>`: (default: 1) A flag to enable using the xyz coordinates for particles as a feature for correspondence.
-* `<use_normals>`: A flag to consider surface normals (along with particles positions, i.e., `<use_xyz> 1 </use_xyz>`) as a correspondence feature.
+* `<use_normals>`: (default: 0) A flag to consider surface normals (along with particles positions, i.e., `<use_xyz> 1 </use_xyz>`) as a correspondence feature.
 * `<attribute_scales>`: A vector of weights that scale each dimension considered in the correspondence entropy. For example, if only xyz coordinates are used for particles, so `<attribute_scales>` is a vector of three weights that scale the x- and y- and z- coordinates of the particle (default = 1). If surface normals are also used, `<attribute_scales>` should be a vector of 6 entries, 3 for the xyz coordinates, and 3 for the surface normal (usually in scale of 10), assuming 3D anatomies.
-* `<use_shape_statistics_after>`: (e.g., 32 or 64) The number of particles after which to use shape space entropy (i.e., the covariance structure) in the initialization and optimization steps.  
-* `<starting_regularization>`: (default:1000) Sets the starting regularization value (usually high value).
-* `<ending_regularization>`: (default:1e-4) Sets the ending regularization value (usually small value less than 1).
-* `<recompute_regularization_interval>`: Skip interval (i.e., number of iterations) to exponentially decay the regularization value.
+* `<use_shape_statistics_after>`: (default: -1) (e.g., 32 or 64) The number of particles after which to use shape space entropy (i.e., the covariance structure) in the initialization and optimization steps.  
+* `<starting_regularization>`: (default: 1000) Sets the starting regularization value (usually high value).
+* `<ending_regularization>`: (default: 1.0) Sets the ending regularization value (usually small value less than 1).
+* `<recompute_regularization_interval>`: (default: 1) Skip interval (i.e., number of iterations) to exponentially decay the regularization value.
 * `<initial_relative_weighting>`: (default: 0.05) The relative weight of the correspondence term in the initialization steps to make sure that optimization steps start with evenly spaced particle distributions that cover the entire surfaces (usually in the order of ~0.1 or 0.01).
 * `<relative_weighting>`: (default: 1) The relative weight of the correspondence term in the optimization steps.
-* `<procrustes_scaling>`: (default: 0) A flag to enable factoring out scaling in the shape space when performing Procrustes alignment.
-* `<procrustes_interval>`: (default: 0) Number of iterations (interval) between performing Procrustes alignment, use 0 to turn Procrustes off.
-* mesh_based_attributes: (default: 1) 
-* `<keep_checkpoints>`: A flag to save the shape (correspondence) models through the initialization/optimization steps for debugging and troubleshooting.  
-* `<checkpointing_interval>`: The interval (number of iterations) to be used to save the checkpoints.
-* `<verbosity>`: (default: '2') '0' : almost zero verbosity (error messages only), '1': minimal verbosity (notification of running initialization/optimization steps), '2': additional details about parameters read from xml and files written, '3': full verbosity.
-* `<debug_projection>`: A flag to run in a debug mode for troubleshooting particle projection on the surface.
+* `<procrustes_scaling>`: (default: 1) A flag to enable factoring out scaling in the shape space when performing Procrustes alignment.
+* `<procrustes_interval>`: (default: 3) Number of iterations (interval) between performing Procrustes alignment, use 0 to turn Procrustes off.
+* mesh_based_attributes: (default: 0) 
+* `<keep_checkpoints>`: (default: 0) A flag to save the shape (correspondence) models through the initialization/optimization steps for debugging and troubleshooting.  
+* `<checkpointing_interval>`: (default: 50) The interval (number of iterations) to be used to save the checkpoints.
+* `<verbosity>`: (default: 0) '0' : almost zero verbosity (error messages only), '1': minimal verbosity (notification of running initialization/optimization steps), '2': additional details about parameters read from xml and files written, '3': full verbosity.
+* `<debug_projection>`: (default: 0) A flag to run in a debug mode for troubleshooting particle projection on the surface.
 
 ### Parameter Dictionary in Python
 
@@ -162,7 +162,7 @@ Below is a list of the currently exposed algorithmic parameters. All the keys of
         "optimization_iterations" : 500, 
         "starting_regularization" : 10, 
         "ending_regularization" : 1, 
-        "recompute_regularization_interval" : 1,
+        "recompute_regularization_interval" : 2,
         "domains_per_shape" : 1,
         "domain_type" : 'mesh',
         "relative_weighting" : 10,
