@@ -885,7 +885,8 @@ void Viewer::update_difference_lut(float r0, float r1)
   this->difference_lut_->AddRGBPoint(r0 + rd * 0.5, green[0], green[1], green[2]);
   this->difference_lut_->AddRGBPoint(r1, red[0], red[1], red[2]);
 
-  return;
+  this->scalar_bar_actor_->SetLookupTable(this->difference_lut_);
+  this->scalar_bar_actor_->Modified();
 }
 
 //-----------------------------------------------------------------------------
