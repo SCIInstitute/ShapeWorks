@@ -44,7 +44,7 @@ cp docs/about/release-notes.md package/${VERSION}
 
 # Run auto-documentation
 PATH=$INSTALL_DIR/bin:$PATH
-python -c "import DocumentationUtils;DocumentationUtils.generateShapeWorksCommandDocumentation('docs/tools/ShapeWorksCommands.md')"
+python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
 mkdocs build
 mv site Documentation
 cp -a Documentation "package/${VERSION}"

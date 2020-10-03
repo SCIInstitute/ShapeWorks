@@ -11,7 +11,8 @@ def generateShapeWorksCommandDocumentation(mdFilename = '../../docs/tools/ShapeW
     indent     = 2
     spacedelim = ''.ljust(indent)
 
-    mdFile        = MdUtils(file_name = mdFilename, title = 'ShapeWorks Commands')
+    mdFile        = MdUtils(file_name = mdFilename, title = '')
+    mdFile.new_header(level = 1, title = 'ShapeWorks Commands')
     
     # add intro paragraph
     intro_paragraph = "`shapeworks` is a single executable for ShapeWorks with a set of sub-executables (commands) that are flexible, modular, loosely coupled, and standardized subcommands, with interactive help to perform individual operations needed for a typical shape modeling workflow that includes the Groom, Optimize, and Analyze phases.\n"

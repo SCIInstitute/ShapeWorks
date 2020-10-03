@@ -78,17 +78,20 @@ Insert it in the markdown file using `<p><video src="https://sci.utah.edu/~shape
 The `DocumentationUtils` package in `Python` has APIs for auto-documenting command-line tools and *to-come-soon* python APIs. We use the `docs` folder to save the generated documentation.
 
 
-To generate documentation for the `shapeworks` commands, use the `generateShapeWorksCommandDocumentation` function of the `DocumentationUtils` library. Be sure to run `conda_install.sh` as described in [How to Build ShapeWorks from Source?](build.md) to install `DocumentationUtils`.
+To generate documentation for the `shapeworks` commands, first be sure to run `conda_install.sh` as described in [How to Build ShapeWorks from Source?](build.md) to install `DocumentationUtils`.
 
-First, make sure that the `shapeworks` command is in your path (`set PATH=/path/to/shapeworks:$PATH`), then use Python to run the command:
 
-```python
-import DocumentationUtils
-DocumentationUtils.generateShapeWorksCommandDocumentation(mdFilename = '/path/to/ShapeWorks/docs/tools/ShapeWorksCommands.md')
+Then, make sure that the `shapeworks` command is in your path (`set PATH=/path/to/shapeworks:$PATH`), then use Python to run the following command:
+
+
+```shell
+$ python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
 ```
+    
+    
+**Parameters**:    
 
-**Parameters**:   
-  - **mdFilename** is the markdown file name for the documentation file to be generated
+  - `md_filename` is the markdown file name for the documentation file to be generated
 
 
 ## See Also
