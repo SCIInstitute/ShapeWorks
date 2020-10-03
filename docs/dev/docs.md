@@ -4,12 +4,15 @@
 
 ## Naming and Organization
 
-:fa-info-circle: _**Where are the documentation files?**_ ShapeWorks documentation is written using [Markdown](../dev/markdown.md#markdown-basics), a text layout language that enables simple formatting for section headers, code samples, weblinks, and images, yet is still readable as plain text. All documentation markdown files are located in the `docs/` folder. Documentation settings are configured by using the `mkdocs.yml` configuration file in the ShapeWorks directory.
+!!! note "Where are the documentation files?" 
+    ShapeWorks documentation is written using [Markdown](../dev/markdown.md#markdown-basics), a text layout language that enables simple formatting for section headers, code samples, weblinks, and images, yet is still readable as plain text. All documentation markdown files are located in the `docs/` folder. Documentation settings are configured by using the `mkdocs.yml` configuration file in the ShapeWorks directory.
 
 
-:fa-info-circle: **Naming convention:** To maintain consistency, please use lower-case letters and dashes for your markdown files, e.g., `fixed-domain-ellipsoid.md`.  
+!!! important "Naming convention"
+    To maintain consistency, please use lower-case letters and dashes for your markdown files, e.g., `fixed-domain-ellipsoid.md`.  
 
-:fa-info-circle: **Docs organization:** ShapeWorks documentation is organized into main sections (e.g., "Getting Started", "Use Cases", ... etc), which map to subfolders in the `docs/` folder (e.g., "getting-started", "use-cases", ... etc) and images used in their markdown files are located in the corresponding subfolders in the `docs/img` folder.
+!!! note "Docs organization"
+    ShapeWorks documentation is organized into main sections (e.g., "Getting Started", "Use Cases", ... etc), which map to subfolders in the `docs/` folder (e.g., "getting-started", "use-cases", ... etc) and images used in their markdown files are located in the corresponding subfolders in the `docs/img` folder.
 
 ## Adding Call-outs
 
@@ -39,6 +42,18 @@ It will render as follows.
 
 !!! note 
     This is a note without a title
+
+To make a note (or any call-out collapsable, use `???` as follows.
+
+```
+??? note 
+    This is a collapsable note without a title. This also applies to other call-outs.
+```
+
+It will render as follows.
+
+??? note 
+    This is a collapsable note without a title. This also applies to other call-outs.
 
 
 To add a danger block with a title, use the following markdown syntax.
@@ -94,26 +109,31 @@ mkdocs gh-deploy
 Using this command, MkDocs builds the project documentation and uses the ghp-import tool to commit them to the gh-pages branch and push the gh-pages branch to GitHub. *All behind the scenes ...*
 
 
-:fa-info-circle: _**WARNING:**_  Running `mkdocs gh-deploy` will update the documentation seen by everyone on [GitHub](https://github.com/SCIInstitute/ShapeWorks). It is recommented that deployed documentation on [GitHub](https://github.com/SCIInstitute/ShapeWorks) should be synced with documentation in the `master` branch.
+!!! danger  
+    Running `mkdocs gh-deploy` will update the documentation seen by everyone on [GitHub](https://github.com/SCIInstitute/ShapeWorks). It is recommented that deployed documentation on [GitHub](https://github.com/SCIInstitute/ShapeWorks) should be synced with documentation in the `master` branch.
 
-:fa-info-circle: _**Important:**_ To deploy the documentation associated with software releases, please use the following command.
+!!! important 
+    To deploy the documentation associated with software releases, please use the following command.
 
-```
-mkdocs gh-deploy -m "Release Number"
-```
+    ```
+    mkdocs gh-deploy -m "Release Number"
+    ```
 
 Use `mkdocs gh-deploy --clean` to start a fresh deployment.   
 
 Use `mkdocs gh-deploy --help` for a full list of options available for the gh-deploy command.
 
-:fa-info-circle: _**Important:**_ You can not review the built site before pushing it to GitHub. To verify any changes you made locally to the documentation, please use `mkdocs build` or `mkdocs serve`.  
+!!! danger "Take care when you deploy"
+    You can not review the built site before pushing it to GitHub. To verify any changes you made locally to the documentation, please use `mkdocs build` or `mkdocs serve`.  
  
-:fa-info-circle: _**Important:**_ Never manually edit files on the `gh-pages` branch because you will lose your work the next time you run the `gh-deploy` command.
+!!! danger "Do not edit gh-pages"
+    Never manually edit files on the `gh-pages` branch because you will lose your work the next time you run the `gh-deploy` command.
 
 
 ## Contributing to Documentation
 
-:fa-info-circle: _**Important:**_ If you added a new markdown file to `docs/`, please make sure to include it in it relevant section in `mkdocs.yml` to make it accessible.
+!!! important
+    If you added a new markdown file to `docs/`, please make sure to include it in it relevant section in `mkdocs.yml` to make it accessible.
 
 We use GitHub to keep track of issues pertaining to ShapeWorks documentation. For an internal list of todos, which will be turned to issues, visit [Documentation ToDo List](../todo.md).
 
@@ -123,7 +143,8 @@ We use GitHub to keep track of issues pertaining to ShapeWorks documentation. Fo
 
 Insert it in the markdown file using `<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/video.mp4" autoplay muted loop controls style="width:100%"></p>`.
 
-:fa-info-circle: _**Where are the videos stored?**_ On SCI servers, at `/usr/sci/www/shapeworks/doc-resources/mp4s/`.
+!!! note "Where are the videos stored?" 
+    On SCI servers, at `/usr/sci/www/shapeworks/doc-resources/mp4s/`.
 
 
 

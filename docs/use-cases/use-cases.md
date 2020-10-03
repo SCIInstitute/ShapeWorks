@@ -26,7 +26,8 @@ Username:
 
 ![ShapeWorks Portal Account Registration Screenshot](../img/use-cases/ShapeWorksPortalAccountRegistration.png)
 
-:fa-info-circle: _**Important:**_ Do not use the same password as for your bank account or email!  
+!!! danger
+    Do not use the same password as for your bank account or email!  
 
 
 After registering a free account, you can log in from within the script.
@@ -42,7 +43,8 @@ joeshmoe downloaded the ellipsoid dataset from the ShapeWorks Portal.
 
 The use cases are located at: `Examples/Python/`. When a use case is run, the dataset is automatically downloaded. 
 
-:fa-info-circle: _**Important:**_  You must first register of a *free* ShapeWorks account by visiting the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
+!!! important
+    You must first register of a *free* ShapeWorks account by visiting the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
 
 To run a use case, run the following command from the `Examples/Python/` directory:
 

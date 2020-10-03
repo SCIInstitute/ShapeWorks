@@ -26,9 +26,11 @@ To add the dataset associated with the new use case:
  
 To add the documentation of the new dataset, add a markdown file `<use-case-name>.md` in `docs/use-cases` with the following structure. Please use the [Naming and Organization](../dev/docs.md#naming-and-organization) conventions currently deployed for ShapeWorks documentation. Then, add a corresponding entry in `mkdocs.yml`.
 
-:fa-info-circle: _**Important:**_ If you use the documentation of an existing use case as a starting point, PLEASE make sure to adapt the documentation to your new use case. 
+!!! important
+    If you use the documentation of an existing use case as a starting point, PLEASE make sure to adapt the documentation to your new use case. 
 
-:fa-info-circle: _**Important:**_ PLEASE, use a spell and grammar checker (e.g., [grammarly](https://app.grammarly.com)).
+!!! important 
+    PLEASE, use a spell and grammar checker (e.g., [grammarly](https://app.grammarly.com)).
 
 - **What and Where is the Use Case?**: The goal of this use case, i.e., what does this use case demonstrate about ShapeWorks? Details about the dataset, e.g., number of samples, class of shapes, shape representation (meshes, segmentation, or contours), dataset source ... etc. Link to the use case python script.
 - **Running the Use Case**: Instructions to run the use case that highlights the specific use of `RunUseCase.py` (in `Examples/Python/`) tags specifically for this use case. 

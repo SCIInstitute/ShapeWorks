@@ -10,17 +10,16 @@ We also provide up-to-date development builds from the master branch for:
 [Mac](https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-mac)  
 [Linux](https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-linux)  
 
-:fa-info-circle: _**Important:**_  Please understand that these are in-progress development builds, not official releases.
+!!! important
+    Please understand that these are in-progress development builds, not official releases.
 
 Then follow the appropriate instructions for their platform:  
 [Windows](#installing-shapeworks-on-windows)   
 [Mac](#installing-shapeworks-on-mac)   
 [Linux](#installing-shapeworks-on-linux)   
 
-:fa-info-circle: _**Important:**_  Each time you use ShapeWorks from the command-line, you must first activate its environment:
-```
-$ conda activate shapeworks
-```
+!!! danger "Activate shapeworks environment"
+    Each time you use ShapeWorks from the command line, you must first activate its environment using the `conda activate shapeworks` command on the terminal.
 
 
 ## Installing ShapeWorks on Windows
@@ -73,16 +72,12 @@ $ python RunUseCase.py --help
 Running conda_installs.bat will activate the conda shapeworks environment
 into your current anaconda prompt. 
 
-:fa-info-circle: _**Important:**_ For subsequent usage, the shapeworks conda environment must be activated using:
+!!! danger "Activate shapeworks environment"
+    For subsequent usage, the shapeworks conda environment must be activated using the `conda activate shapeworks` command on the terminal.
 
-```
-$conda activate shapeworks
-```
 
-:fa-info-circle: **Note:** If you have installed ShapeWorks in a different location than
-"C:\Program Files\ShapeWorks", please add the path to the "bin"
-directory as the final argument to RunUseCase.py so that the path will
-be set correctly.
+!!! note 
+    If you have installed ShapeWorks in a different location than "C:\Program Files\ShapeWorks", please add the path to the "bin" directory as the final argument to RunUseCase.py so that the path will be set correctly.
 
 
 
@@ -123,11 +118,9 @@ $ python RunUseCase.py --help
 
 
 
-:fa-info-circle: _**Important:**_  For subsequent usage, the shapeworks conda environment must be activated using:
+!!! danger "Activate shapeworks environment"
+    For subsequent usage, the shapeworks conda environment must be activated using the `conda activate shapeworks` command on the terminal.
 
-```
-$ conda activate shapeworks
-```
 
 ## Installing ShapeWorks on Linux
 
@@ -157,8 +150,5 @@ $ python RunUseCase.py --help
 More information about running use cases can be found [here](../use-cases/use-cases.md#running-the-use-cases).
 
 
-:fa-info-circle: _**Important:**_  For subsequent usage, the shapeworks conda environment must be activated using:
-
-```
-$ conda activate shapeworks
-```
+!!! danger "Activate shapeworks environment"
+    For subsequent usage, the shapeworks conda environment must be activated using the `conda activate shapeworks` command on the terminal.

@@ -12,12 +12,14 @@ This use case demonstrates using ShapeWorks tools to perform the following.
 
 In this study, we have two sets of data, the control group with 6 subjects, and the patient group consists of 26 subjects. For each group, we have diastole and systole segmentations. The goal is to study the variation of the systole and diastole in the two groups. We pre-process/groom diastole and systole data and then optimize the particle system for them, independently. Then using the group difference analysis tool of ShapeWorks, we can quantify and study the difference of variation in control and patient groups from diastole to systole stage of heart.
 
-:fa-info-circle: _**Important:**_ This use case is not yet released!
+!!! important
+    This use case is not yet released!
 
 
 ## Running the Use Case
 
-:fa-info-circle: _**Important:**_ This use case is not yet added to the use case list!
+!!! important
+    This use case is not yet added to the use case list!
 
 
 

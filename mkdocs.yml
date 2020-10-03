@@ -73,6 +73,8 @@ markdown_extensions:
    - pymdownx.tasklist
    - mdx_math
    - admonition
+   - pymdownx.superfences
+   - pymdownx.details
    - pymdownx.arithmatex:
       generic: true
 
