@@ -11,7 +11,61 @@
 
 :fa-info-circle: **Docs organization:** ShapeWorks documentation is organized into main sections (e.g., "Getting Started", "Use Cases", ... etc), which map to subfolders in the `docs/` folder (e.g., "getting-started", "use-cases", ... etc) and images used in their markdown files are located in the corresponding subfolders in the `docs/img` folder.
 
+## Adding Call-outs
 
+We are now using the [Admonition](https://python-markdown.github.io/extensions/admonition/) extension to include side content that is minimally disruptive to the document flow. It is also very useful to a reader's draw attention. Below are some examples.
+
+To add a note block with a title, use the following markdown syntax.
+
+```
+!!! note "Title of the note"
+    Here is a note to keep in mind.
+```
+
+It will render as follows.
+
+!!! note "Title of the note"
+    Here is a note to keep in mind.
+    
+
+You can also add a note without a title.
+
+```
+!!! note 
+    This is a note without a title. This also applies to other call-outs.
+```
+
+It will render as follows.
+
+!!! note 
+    This is a note without a title
+
+
+To add a danger block with a title, use the following markdown syntax.
+
+```
+!!! danger "Don't try this at home"
+    Seriously don't try this; this is a dangerous step to take.
+```
+
+It will render as follows.
+
+!!! danger "Don't try this at home"
+    Seriously don't try this; this is a dangerous step to take.
+  
+  
+To add an important block without a title, use the following markdown syntax.   
+ 
+``` 
+!!! important 
+    This is an admonition box without a title.
+```    
+   
+It will render as follows.
+ 
+!!! important 
+    This is an admonition box without a title.
+    
 ## Locally Building Documentation
   
 To see local changes to documentation in realtime, `cd` to where source documentation (i.e., `mkdocs.yml`) is maintained and run the following command:
