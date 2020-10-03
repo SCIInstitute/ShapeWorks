@@ -19,6 +19,8 @@ nav:
    - 'How to Groom Your Dataset?':           'workflow/groom.md'
    - 'How to Optimize Your Shape Model?' :   'workflow/optimize.md'        
    - 'How to Analyze Your Shape Model?' :    'workflow/analyze.md'     
+- What is New?:
+   - 'New in ShapeWorksStudio':              'new/new-studio.md'
 - Use Cases:
    - 'Getting Started with Use Cases':          'use-cases/use-cases.md'
    - 'Ellipsoid: Basic Example':                'use-cases/ellipsoid.md'

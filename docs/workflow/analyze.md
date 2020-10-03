@@ -96,20 +96,6 @@ Statistical analysis is performed using principal component analysis (PCA), wher
 
 You can also export the eigenvalues and each shape's PCA loadings in an excel sheet for further analysis. 
 
-## Dynamic Loading
-
-ShapeWorksStudio support load-on-demand, which makes it more scalable by supporting loading in order of 100s of samples. For instance, an old small project that took 10+ seconds to load now starts instantly in Studio.
-
-
-*(old) without dynamic loading*
-
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_load_old.mp4" autoplay muted loop controls style="width:100%"></p>
-
-
-*(new) with dynamic loading*
-
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_load_new.mp4" autoplay muted loop controls style="width:100%"></p>
-
 
 ## Group Differences
 
