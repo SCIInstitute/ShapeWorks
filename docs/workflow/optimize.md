@@ -138,7 +138,7 @@ Here is the list of the parameters to be included in the `<parameters.xml>` file
 * `<relative_weighting>`: (default: 1) The relative weight of the correspondence term in the optimization steps.
 * `<procrustes_scaling>`: (default: 1) A flag to enable factoring out scaling in the shape space when performing Procrustes alignment.
 * `<procrustes_interval>`: (default: 3) Number of iterations (interval) between performing Procrustes alignment, use 0 to turn Procrustes off.
-* mesh_based_attributes: (default: 0) 
+* `<mesh_based_attributes>`: (default: 0) A flag that should be enabled when `<use_normals>` is enabled to cache and interpolate surface normals using isosurfaces.
 * `<keep_checkpoints>`: (default: 0) A flag to save the shape (correspondence) models through the initialization/optimization steps for debugging and troubleshooting.  
 * `<checkpointing_interval>`: (default: 50) The interval (number of iterations) to be used to save the checkpoints.
 * `<verbosity>`: (default: 0) '0' : almost zero verbosity (error messages only), '1': minimal verbosity (notification of running initialization/optimization steps), '2': additional details about parameters read from xml and files written, '3': full verbosity.
