@@ -46,3 +46,12 @@
   color: #1EBB52;
 }
 
+/* background color for nav side bar */
+.wy-side-nav-search, .wy-nav-top {
+    background: #2980B9; /*#0b750a;*/
+}
+
+/*font color for secitons*/
+.wy-menu-vertical {
+    color: #2980B9; /*#0b750a;*/
+}

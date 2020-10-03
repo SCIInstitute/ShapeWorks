@@ -18,11 +18,11 @@
 - [ ] Add illustrating images to the groom steps in groom and specific use cases
 - [ ] Update md files for groom/optimize and use cases to reflect the new workflow (icp, bounding box, crop) that does not apply explicitly resample images/segmentations beyond the isoresample step and use transforamtions as input to the optimization
 - [ ] For groom and use cases, update the reference selection documentation to reflect any recent updates in this process (e.g., meshes, pairwise distance matrix ... etc)
-- [ ] `workflow/XX.md`: Review and edit the workflow md files. Add/update the decription of single vs multiscale.
+- [x] `workflow/XX.md`: Review and edit the workflow md files. Add/update the decription of single vs multiscale.
 - [ ] `use-cases/ellipsoid.md`: Add video/snapshots for the optimized model and groomed data
 - [x] `use-cases/XX.md`: Update optimization parameters based on Examples/Python
 - [x] `use-cases/XX.md`: Update use cases to reflect multi-scale being integrated into the optimizer
-- [ ] Add documentation for femur_mesh and lumps use cases
+- [x] Add documentation for femur_mesh and lumps use cases
 - [ ] `use-cases/left-atrium.md`:Check the left atrium use case for saving txt files to carry over images to reflect recent changes (consolidation)
 - [ ] Consolidate docs/pdfs
 - [ ] Consolidate docs/backlog
