@@ -160,6 +160,10 @@ void SplashScreen::enable_load_recent_button(QListWidgetItem* not_used)
 void SplashScreen::resizeEvent(QResizeEvent* event)
 {
   QDialog::resizeEvent(event);
+
+  QFontMetrics fm(this->ui_->title_->font());
+  int width = fm.width(this->ui_->title_->text());
+  this->ui_->title_->setMinimumWidth(width);
 }
 
 }

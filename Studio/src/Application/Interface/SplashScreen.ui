@@ -285,12 +285,6 @@ All Rights Reserved</string>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>300</width>
-                <height>0</height>
-               </size>
-              </property>
               <property name="font">
                <font>
                 <pointsize>34</pointsize>
