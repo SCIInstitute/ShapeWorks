@@ -124,16 +124,15 @@ private:
   vtkSmartPointer<vtkActor> surface_actor_;
 
   vtkSmartPointer<vtkLookupTable> lut_;
+  vtkSmartPointer<vtkLookupTable> surface_lut_;
+  //vtkSmartPointer<vtkColorTransferFunction> surface_lut_;
 
-
-  vtkSmartPointer<vtkColorTransferFunction> difference_lut_;
   vtkSmartPointer<vtkArrowSource> arrow_source_;
   vtkSmartPointer<vtkTransformPolyDataFilter> arrow_flip_filter_;
   vtkSmartPointer<vtkGlyph3D> arrow_glyphs_;
   vtkSmartPointer<vtkPolyDataMapper> arrow_glyph_mapper_;
   vtkSmartPointer<vtkActor> arrow_glyph_actor_;
   vtkSmartPointer<vtkTransform> transform_180_;
-
   vtkSmartPointer<vtkScalarBarActor> scalar_bar_actor_;
 
   vtkSmartPointer<vtkCornerAnnotation> corner_annotation_;

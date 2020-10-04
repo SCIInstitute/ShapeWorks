@@ -41,8 +41,16 @@ Viewer::Viewer()
 
   this->sphere_source_ = vtkSmartPointer<vtkSphereSource>::New();
 
-  this->difference_lut_ = vtkSmartPointer<vtkColorTransferFunction>::New();
-  this->difference_lut_->SetColorSpaceToHSV();
+  //this->surface_lut_ = vtkSmartPointer<vtkColorTransferFunction>::New();
+  //this->surface_lut_->SetColorSpaceToHSV();
+
+  this->surface_lut_ = vtkSmartPointer<vtkLookupTable>::New();
+  this->surface_lut_->SetTableRange (0, 1);
+  this->surface_lut_->SetHueRange (0.667, 0.0);
+  this->surface_lut_->SetSaturationRange (1, 1);
+  this->surface_lut_->SetValueRange (1, 1);
+  this->surface_lut_->SetIndexedLookup(false);
+  this->surface_lut_->Build();
 
   this->glyph_points_ = vtkSmartPointer<vtkPoints>::New();
   this->glyph_points_->SetDataTypeToDouble();
@@ -152,7 +160,7 @@ Viewer::Viewer()
 
   this->scalar_bar_actor_ = vtkSmartPointer<vtkScalarBarActor>::New();
   this->scalar_bar_actor_->SetTitle("");
-  this->scalar_bar_actor_->SetLookupTable(this->difference_lut_);
+  this->scalar_bar_actor_->SetLookupTable(this->surface_lut_);
   //this->scalar_bar_actor_->SetOrientationToHorizontal();
   this->scalar_bar_actor_->SetOrientationToVertical();
   this->scalar_bar_actor_->SetMaximumNumberOfColors(1000);
@@ -268,13 +276,13 @@ void Viewer::display_vector_field()
   this->glyphs_->SetScaleModeToScaleByVector();
 
   // update glyph rendering
-  this->glyph_mapper_->SetLookupTable(this->difference_lut_);
-  this->arrow_glyph_mapper_->SetLookupTable(this->difference_lut_);
+  this->glyph_mapper_->SetLookupTable(this->surface_lut_);
+  this->arrow_glyph_mapper_->SetLookupTable(this->surface_lut_);
 
   // update surface rendering
   /// TODO : multi-domain support
   //for (int i = 0; i < this->numDomains; i++) {
-  this->surface_mapper_->SetLookupTable(this->difference_lut_);
+  this->surface_mapper_->SetLookupTable(this->surface_lut_);
   this->surface_mapper_->InterpolateScalarsBeforeMappingOn();
   this->surface_mapper_->SetColorModeToMapScalars();
   this->surface_mapper_->ScalarVisibilityOn();
@@ -857,7 +865,7 @@ void Viewer::update_difference_lut(float r0, float r1)
   double orange[3] = {1.0, 0.5, 0.0};
   double violet[3] = {2.0 / 3.0, 0.0, 1.0};
 
-  this->difference_lut_->RemoveAllPoints();
+//  this->surface_lut_->RemoveAllPoints();
 
   //const float yellow = 0.86666;
   //const float blue = 0.66666;
@@ -880,12 +888,25 @@ void Viewer::update_difference_lut(float r0, float r1)
 
   double rd = r1 - r0;
 
-  this->difference_lut_->SetColorSpaceToHSV();
-  this->difference_lut_->AddRGBPoint(r0, blue[0], blue[1], blue[2]);
-  this->difference_lut_->AddRGBPoint(r0 + rd * 0.5, green[0], green[1], green[2]);
-  this->difference_lut_->AddRGBPoint(r1, red[0], red[1], red[2]);
+  /*
+  this->surface_lut_->SetColorSpaceToHSV();
+  this->surface_lut_->AddRGBPoint(r0, blue[0], blue[1], blue[2]);
+  this->surface_lut_->AddRGBPoint(r0 + rd * 0.5, green[0], green[1], green[2]);
+  this->surface_lut_->AddRGBPoint(r1, red[0], red[1], red[2]);
+*/
+  //this->surface_lut_->SetTableRange()
+  double range[2];
+  range[0] = r0;
+  range[1] = r1;
+  //range[0] = -50;
+  //range[1] = 50;
+  this->surface_lut_->SetTableRange(range);
+  this->surface_lut_->Build();
 
-  this->scalar_bar_actor_->SetLookupTable(this->difference_lut_);
+  this->surface_mapper_->SetScalarRange(range[0], range[1]);
+  this->arrow_glyph_mapper_->SetScalarRange(range);
+  this->glyph_mapper_->SetScalarRange(range);
+  this->scalar_bar_actor_->SetLookupTable(this->surface_lut_);
   this->scalar_bar_actor_->Modified();
 }
 
@@ -900,7 +921,6 @@ void Viewer::update_feature_range(double* range)
 {
   this->visualizer_->update_feature_range(range);
   this->update_difference_lut(range[0], range[1]);
-  this->surface_mapper_->SetScalarRange(range[0], range[1]);
 }
 
 //-----------------------------------------------------------------------------
