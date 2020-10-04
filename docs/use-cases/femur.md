@@ -63,13 +63,13 @@ the cutting plane from listed options and press enter.
 ```
 Then the options are listed. After you have typed in the chosen sample prefix, an interactive window will pop up in which you can select the cutting plane. When you are content with your selection, you simply close this window, and the grooming process will continue. This process can be seen below.
 
-[![Femur option 1](../img/use-cases/femur_option1_thumbnail.png)](https://youtu.be/DWPuyLY8iRk)
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/femur_option1.mp4" autoplay muted loop controls style="width:100%"></p>
 
 Note that internally, whatever transformations are applied to the sample, you have defined the cutting plane on will be done to the cutting plane as well, so that when it is time to clip the samples, the cutting plane is still well-defined. 
 
 **Option 2**: If option 2 is selected, you will be asked to select a cutting plane for the femur shaft in the middle of the grooming process. Once the reference sample for alignment has been selected, an interactive window will pop up with the reference sample to define the cutting plane. Closing the window will continue the grooming process. 
 
-[![Femur option 2](../img/use-cases/femur_option2_thumbnail.png)](https://youtu.be/BRw2JAKUiEY)
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/femur_option2.mp4" autoplay muted loop controls style="width:100%"></p>
 
 
 ## Grooming Data
@@ -155,7 +155,7 @@ ShapeWorksStudio visualizes/analyzes the optimized particle-based shape model by
 
 Here is the mean shape of the optimized shape mode using single-scale optimization.
 
-[![Mean Shape of Femur](../img/use-cases/mean_femur_thumbnail.png)](https://youtu.be/CgCRYlD4Hdg)
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/femur_mean.mp4" autoplay muted loop controls style="width:100%"></p>
 
 Here are femur samples with their optimized correspondences.
 ![Femur Samples](../img/use-cases/femur_samples.png)
@@ -165,4 +165,4 @@ Zooming in some femur samples.
 
 Here is a video showing the shape modes of variation (computed using principal component analysis - PCA) of the femur dataset using single-scale optimization.
 
-[![Femur PCA](../img/use-cases/femur_PCA_thumbnail.png)](https://youtu.be/N4hmXSJsqRg)
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/femur_pca.mp4" autoplay muted loop controls style="width:100%"></p>

@@ -49,7 +49,7 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    datasetName = "left_atrium"
+    datasetName = "left_atrium-v0"
     filename = datasetName + ".zip"
     # Check if the data is in the right place
     if not os.path.exists(filename):
@@ -201,7 +201,7 @@ def Run_Pipeline(args):
                 input("Press Enter to continue")
 
             # create the output directory
-            parentDir = './TestLeftAtrium/PrepOutput/'
+            parentDir = './TestLeftAtrium/groomed/'
             if not os.path.exists(parentDir):
                 os.makedirs(parentDir)
 
@@ -286,26 +286,26 @@ def Run_Pipeline(args):
     if args.interactive:
         input("Press Enter to continue")
 
-    pointDir = './TestLeftAtrium/PointFiles/'
+    pointDir = './TestLeftAtrium/shape_models/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
     parameterDictionary = {
-        "number_of_particles": 1024,
-        "use_normals": 1,
+        "number_of_particles": 512,
+        "use_normals": 0,
         "normal_weight": 10.0,
         "checkpointing_interval": 200,
         "keep_checkpoints": 0,
         "iterations_per_split": 4000,
         "optimization_iterations": 4000,
-        "starting_regularization": 50000,
-        "ending_regularization": 0.1,
+        "starting_regularization": 1000,
+        "ending_regularization": 10,
         "recompute_regularization_interval": 2,
         "domains_per_shape": 1,
-        "relative_weighting": 50,
+        "relative_weighting": 10,
         "domain_type" : 'image',
         "initial_relative_weighting": 0.1,
-        "procrustes_interval": 0,
+        "procrustes_interval": 1,
         "procrustes_scaling": 1,
         "save_init_splits": 0,
         "debug_projection": 0,
