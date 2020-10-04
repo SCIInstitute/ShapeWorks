@@ -2,7 +2,7 @@
 
 //---------------------------------------------------------------------------
 // only need to run pythonEnvSetup once or it continuously appends to paths
-TEST(setupPythonTests, info)
+TEST(pythonTests, setup)
 {
   pythonEnvSetup();
   ASSERT_TRUE(true);

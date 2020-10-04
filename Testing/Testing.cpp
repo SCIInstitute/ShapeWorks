@@ -38,12 +38,14 @@ void shapeworksEnvSetup()
   std::cout << "ld_library_path: " << ld_library_path << std::endl;
   setenv("LD_LIBRARY_PATH", ld_library_path.c_str(), true);
 #else
-  auto path(std::string(BUILD_DIR) + "/bin/Debug" + ":");
-  path += (curr_path ? curr_path : ""); // fixme: could be /bin/Debug or /bin/Release for build systems such as Xcode
+  //auto path(std::string(BUILD_DIR) + "/bin/Debug" + ":"); // need to use /bin/[Debug|Release] for Xcode
+  auto path(std::string(BUILD_DIR) + "/bin" + ":");
+  path += (curr_path ? curr_path : "");
   std::cout << "path: " << path << std::endl;
   setenv("PATH", path.c_str(), true);
 
-  auto pythonpath(std::string(BUILD_DIR) + "/bin/Debug" + ":");
+  //auto pythonpath(std::string(BUILD_DIR) + "/bin/Debug" + ":");  // need to use /bin/[Debug|Release] for Xcode
+  auto pythonpath(std::string(BUILD_DIR) + "/bin" + ":");
   //pythonpath += std::string(DEPS_DIR) + "/lib/python3.7/site-packages" + ":";
   pythonpath += (curr_pythonpath ? curr_pythonpath : "");
   std::cout << "pythonpath: " << pythonpath << std::endl;
