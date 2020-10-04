@@ -7,6 +7,7 @@ Created on Tue Sep 10 14:32:27 2019
 """
 
 import numpy as np
+import sys
 import itk
 from sklearn.cluster import KMeans
 from sklearn.cluster import SpectralClustering

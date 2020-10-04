@@ -2,6 +2,8 @@
 #include "Image.h"
 #include "ImageUtils.h"
 #include "ShapeEvaluation.h"
+#include <Libs/Optimize/Optimize.h>
+#include <Libs/Optimize/OptimizeParameterFile.h>
 #include <limits>
 
 namespace shapeworks {
@@ -1525,6 +1527,36 @@ bool Coverage::execute(const optparse::Values &options, SharedCommandData &share
 
   sharedData.mesh->coverage(Mesh(other_mesh_path));
   return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+/// Optimize
+///////////////////////////////////////////////////////////////////////////////
+void OptimizeCommand::buildParser()
+{
+  const std::string prog = "optimize";
+  const std::string desc = "generate a particle system";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("Path to parameter file.");
+
+  Command::buildParser();
+}
+
+bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  const std::string& project_file(static_cast<std::string>(options.get("name")));
+
+  if (project_file.length() == 0)
+  {
+    std::cerr << "Must specify project name\n";
+    return false;
+  }
+
+  Optimize app;
+  OptimizeParameterFile param;
+  param.load_parameter_file(project_file.c_str(), &app);
+  return app.Run();
 }
 
 } // shapeworks
