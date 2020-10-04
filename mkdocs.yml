@@ -21,6 +21,9 @@ nav:
    - 'How to Analyze Your Shape Model?' :    'workflow/analyze.md'     
 - What is New?:
    - 'New in ShapeWorksStudio':              'new/new-studio.md'
+   - 'ShapeWorks Takes ~85% Less Memory':    'new/openvdb.md'
+   - 'ShapeWorks Directly on Meshes':        'new/sw-meshes.md'
+   - 'ShapeWorks API':                       'new/shapeworks-api.md'
 - Deep Learning & SSMs:
    - 'Data Augmentation for Deep Learning':  'deep-learning/data-augmentation.md'
    - 'SSMs Directly from Images':            'deep-learning/deep-ssm.md'
