@@ -28,7 +28,7 @@ void shapeworksEnvSetup()
   std::cout << "path: " << path << std::endl;
   setenv("PATH", path.c_str(), true);
 
-  auto pythonpath(std::string(BUILD_DIR) + "/bin" + ":");
+  auto pythonpath(std::string(BUILD_DIR) + "/lib" + ":");
   //pythonpath += std::string(DEPS_DIR) + "/lib/python3.7/site-packages" + ":";
   pythonpath += (curr_pythonpath ? curr_pythonpath : "");
   std::cout << "pythonpath: " << pythonpath << std::endl;
