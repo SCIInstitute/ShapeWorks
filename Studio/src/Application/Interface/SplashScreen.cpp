@@ -7,6 +7,7 @@
 #include "SplashScreen.h"
 
 #include <Applications/Configuration.h>
+#include <Data/StudioLog.h>
 
 #include "ui_SplashScreen.h"
 
@@ -164,6 +165,7 @@ void SplashScreen::resizeEvent(QResizeEvent* event)
   QFontMetrics fm(this->ui_->title_->font());
   int width = fm.width(this->ui_->title_->text());
   this->ui_->title_->setMinimumWidth(width);
+  this->resize(width*2, width*1.2);
 }
 
 }
