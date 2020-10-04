@@ -81,9 +81,9 @@ function install_conda() {
        git-lfs=2.11.0 \
        openblas=0.3.6 \
        doxygen=1.8.20 \
-       graphviz=2.42.3 \
-       vtk=9.0.1 \
-       scikit-learn=0.21.3 \
+       graphviz=2.38.0 \
+       vtk=8.2.0 \
+       scikit-learn=0.22.1 \
        tbb=2019.9 \
        tbb-devel=2019.9 \
        boost=1.74.0 \
@@ -112,7 +112,7 @@ function install_conda() {
   if ! pip install termcolor==1.1.0;                 then return 1; fi
   if ! pip install grip==4.5.2;                      then return 1; fi
   if ! pip install matplotlib==3.3.2;                then return 1; fi
-  if ! pip install itk==5.1.1;                       then return 1; fi
+  if ! pip install itk==5.0.1;                       then return 1; fi
   if ! pip install mdutils==1.3.0;                   then return 1; fi # lib for writing markdown files (auto-documentation)
   if ! pip install mkdocs==1.1.2;                    then return 1; fi # lib for generating documentation from markdown
   if ! pip install fontawesome-markdown==0.2.6;      then return 1; fi # lib for icons in documentation
