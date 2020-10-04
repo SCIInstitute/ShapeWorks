@@ -75,19 +75,19 @@ function install_conda() {
        cmake=3.18.2 \
        gtest=1.10.0 \
        colorama=0.4.3 \
-       requests=2.24.0 \
-       geotiff=1.6.0 \
-       numpy=1.19.1 \
-       git-lfs=2.11.0 \
-       openblas=0.3.6 \
-       doxygen=1.8.20 \
+       requests=2.22.0 \
+       geotiff=1.5.1 \
+       numpy=1.17.4 \
+       git-lfs=2.6.1 \
+       openblas=0.3.3 \
+       doxygen=1.8.16 \
        graphviz=2.38.0 \
        vtk=8.2.0 \
        scikit-learn=0.22.1 \
        tbb=2019.9 \
        tbb-devel=2019.9 \
-       boost=1.74.0 \
-       openexr=2.5.3 \
+       boost=1.72.0 \
+       openexr=2.4.1 \
        pybind11=2.5.0 \
        notebook=6.1.4
   then return 1; fi

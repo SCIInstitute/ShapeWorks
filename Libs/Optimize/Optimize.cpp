@@ -46,7 +46,6 @@ Optimize::Optimize()
 //---------------------------------------------------------------------------
 bool Optimize::Run()
 {
-
   if (this->m_python_filename != "") {
     py::initialize_interpreter();
 

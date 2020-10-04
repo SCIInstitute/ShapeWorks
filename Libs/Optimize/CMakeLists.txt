@@ -1,5 +1,3 @@
-find_package(pybind11 2.5.0 REQUIRED)
-
 FILE(GLOB ParticleSystem_sources ./ParticleSystem/*.t* ./ParticleSystem/*.cxx ./ParticleSystem/*.cpp ./ParticleSystem/*.h)
 
 add_library(Optimize STATIC
@@ -19,7 +17,7 @@ target_link_libraries(Optimize
   tinyxml
   Utils
   Particles
-  pybind11::embed
+  #pybind11::embed
   ${ITK_LIBRARIES}
   ${VTK_LIBRARIES}
   vgl
