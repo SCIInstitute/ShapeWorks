@@ -1,4 +1,4 @@
-find_package(pybind11 2.4.3 REQUIRED)
+find_package(pybind11 2.5.0 REQUIRED)
 
 FILE(GLOB ParticleSystem_sources ./ParticleSystem/*.t* ./ParticleSystem/*.cxx ./ParticleSystem/*.cpp ./ParticleSystem/*.h)
 
