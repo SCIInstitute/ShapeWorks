@@ -1,4 +1,4 @@
-find_package(pybind11 2.4.3 REQUIRED)
+find_package(pybind11 2.5.0 REQUIRED)
 
 pybind11_add_module(shapeworks_py ShapeworksPython.cpp)
 
