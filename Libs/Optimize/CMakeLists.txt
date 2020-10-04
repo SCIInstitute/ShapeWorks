@@ -31,9 +31,3 @@ target_include_directories(Optimize PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/ParticleSystem>
   $<INSTALL_INTERFACE:include>
   )
-
-add_executable(ShapeWorksRun ShapeWorksRun.cxx )
-set_target_properties(ShapeWorksRun PROPERTIES COMPILE_DEFINITIONS SW_USE_FEAMESH)
-target_link_libraries(ShapeWorksRun Optimize)
-install(TARGETS ShapeWorksRun RUNTIME DESTINATION bin)
-

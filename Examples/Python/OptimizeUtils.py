@@ -169,11 +169,11 @@ def runShapeWorksOptimize(parentDir, inDataFiles, parameterDictionary):
     outDir = parentDir + '/' + str(numP) + '/'
     if not os.path.exists(outDir):
         os.makedirs(outDir)
-    parameterFile = parentDir + "correspondence_" + str(numP) + '.xml'
+    parameterFile = parentDir + "correspondence_" + str(numP) + ".xml"
     create_SWRun_xml(parameterFile, inDataFiles, parameterDictionary, outDir)
     create_cpp_xml(parameterFile, parameterFile)
     print(parameterFile)
-    execCommand = ["ShapeWorksRun" , parameterFile]
+    execCommand = ["shapeworks", "optimize", "--name=" + parameterFile]
     subprocess.check_call(execCommand )
 
     outPointsLocal, outPointsWorld = _convertFilenamesToPointFilenames(inDataFiles, outDir)
@@ -229,11 +229,11 @@ def runShapeWorksOptimize_FixedDomains(parentDir, inDataFiles, parameterDictiona
             lclname = meanShapePath
             inparts.append(lclname)
     
-    parameterFile = parentDir + "correspondence_" + str(numP) + '.xml'
+    parameterFile = parentDir + "correspondence_" + str(numP) + ".xml"
     create_SWRun_fixed_domains(parameterFile, inDataFiles, parameterDictionary, outDir, numFD, inparts)
     create_cpp_xml(parameterFile, parameterFile)
     print(parameterFile)
-    execCommand = ["ShapeWorksRun" , parameterFile]
+    execCommand = ["shapeworks", "optimize", "--name=" + parameterFile]
     subprocess.check_call(execCommand )
     outPointsLocal, outPointsWorld = _convertFilenamesToPointFilenames(inDataFiles, outDir)
     return [outPointsLocal, outPointsWorld]

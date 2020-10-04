@@ -12,6 +12,26 @@ if [[ "$sourced" == "0" ]]; then
   exit 1
 fi
 
+# PyTorch installation
+function install_pytorch() {
+  echo "installing pytorch"
+  PYTORCH="cpuonly"
+  if ! [ -x "$(command -v nvidia-smi)" ]; then
+    echo 'Could not find nvidia-smi, using cpu-only PyTorch'
+  else
+    CUDA=`nvidia-smi | grep CUDA | sed -e "s/.*CUDA Version: //" -e "s/ .*//"`
+    echo "Found CUDA Version: ${CUDA}"
+
+    if [[ "$CUDA" == "9.2" || "$CUDA" == "10.1" || "$CUDA" == "10.2" ]]; then
+        PYTORCH="cudatoolkit=${CUDA}"
+    else
+        echo "CUDA version not compatible, using cpu-only"
+    fi
+  fi
+
+  conda install --yes pytorch torchvision $PYTORCH -c pytorch
+}
+
 function install_conda() {
   if ! command -v conda 2>/dev/null 1>&2; then
     echo "installing anaconda..."
@@ -42,62 +62,63 @@ function install_conda() {
 
   # create and activate shapeworks env
   CONDAENV=shapeworks
-  if ! conda create --yes --name $CONDAENV python=3.7; then return 1; fi
+  if ! conda create --yes --name $CONDAENV python=3.7.8; then return 1; fi
   eval "$(conda shell.bash hook)"
   if ! conda activate $CONDAENV; then return 1; fi
 
   # pip is needed in sub-environments or the base env's pip will silently install to base
-  if ! conda install --yes pip=20.1.1; then return 1; fi
+  if ! conda install --yes pip=20.2.3; then return 1; fi
   if ! python -m pip install --upgrade pip; then return 1; fi
 
   # install shapeworks deps
   if ! conda install --yes \
-       cmake=3.15.5 \
+       cmake=3.18.2 \
        gtest=1.10.0 \
        colorama=0.4.3 \
-       requests=2.22.0 \
-       geotiff=1.5.1 \
-       numpy=1.17.4 \
-       git-lfs=2.6.1 \
-       openblas=0.3.3 \
-       doxygen=1.8.16 \
-       graphviz=2.38.0 \
-       vtk=8.2.0 \
-#       itk=5.1.0 \
-       scikit-learn=0.22.1 \
-       pybind11=2.5.0 \
-       notebook=6.0.3 \
+       requests=2.24.0 \
+       geotiff=1.6.0 \
+       numpy=1.19.1 \
+       git-lfs=2.11.0 \
+       openblas=0.3.6 \
+       doxygen=1.8.20 \
+       graphviz=2.42.3 \
+       vtk=9.0.1 \
+       scikit-learn=0.21.3 \
        tbb=2019.9 \
        tbb-devel=2019.9 \
-       boost=1.72.0 \
-       openexr=2.4.1
+       boost=1.74.0 \
+       openexr=2.5.3 \
+       pybind11=2.5.0 \
+       notebook=6.1.4
   then return 1; fi
 
 
   # linux and mac (only) deps
   if [[ "$(uname)" == "Linux" || "$(uname)" == "Darwin" ]]; then
       if ! conda install --yes \
-           xorg-libx11=1.6.9 \
+           xorg-libx11=1.6.12 \
            xorg-libsm=1.2.3 \
            libxrandr-devel-cos6-x86_64=1.5.1 \
            libxinerama-devel-cos6-x86_64=1.1.3 \
            libxcursor-devel-cos6-x86_64=1.1.14 \
            libxi-devel-cos6-x86_64=1.7.8 \
-           git-lfs=2.6.1 \
            openmp=8.0.1 \
-           ncurses=6.1 \
+           ncurses=6.2 \
            libuuid=2.32.1
       then return 1; fi
   fi
 
   # pip installs
-  if ! pip install termcolor==1.1.0; then return 1; fi
-  if ! pip install grip==4.5.2; then return 1; fi
-  if ! pip install matplotlib==3.1.2; then return 1; fi
-  if ! pip install itk==5.0.1; then return 1; fi
-  if ! pip install Python/DatasetUtilsPackage; then return 1; fi   # install the local GirderConnector code as a package
-  if ! pip install mdutils; then return 1; fi # lib for writing markdown files needed for auto-documentation (not available through conda install)
-  if ! pip install Python/DocumentationUtilsPackage; then return 1; fi   # install shapeworks auto-documentation as a package
+  if ! pip install termcolor==1.1.0;                 then return 1; fi
+  if ! pip install grip==4.5.2;                      then return 1; fi
+  if ! pip install matplotlib==3.3.2;                then return 1; fi
+  if ! pip install itk==5.1.1;                       then return 1; fi
+  if ! pip install mdutils==1.3.0;                   then return 1; fi # lib for writing markdown files (auto-documentation)
+  if ! pip install mkdocs==1.1.2;                    then return 1; fi # lib for generating documentation from markdown
+  if ! pip install fontawesome-markdown==0.2.6;      then return 1; fi # lib for icons in documentation
+  if ! pip install pymdown-extensions==8.0;          then return 1; fi # lib to support checkbox lists in documentation
+  if ! pip install Python/DatasetUtilsPackage;       then return 1; fi # install the local GirderConnector code as a package
+  if ! pip install Python/DocumentationUtilsPackage; then return 1; fi # install shapeworks auto-documentation as a package
 
   conda info
   return 0
