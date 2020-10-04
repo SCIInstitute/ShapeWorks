@@ -95,6 +95,11 @@ As more particles are added to the correspondence model, we use the entropy of t
 
 This behavior is controlled by the `use_shape_statistics_after` parameter, which specifies the number of particles, after which shape statistics can be used in the initialization and optimization steps.
 
+
+*Using shape statistics (i.e., covaraince structure) results in a better correspondence over iterations, below we use `use_shape_statistics_after` after 1024 particles*
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/femur_mesh_live.mp4" autoplay muted loop controls style="width:100%"></p>
+
+
 ### Starting and Ending Regularization
 
 Particle movement during optimization (due to the correspondence term) entails computing the covariance matrix's inverse. We regularize the covariance matrix to handle degenerate covariances. 
