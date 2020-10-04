@@ -41,3 +41,31 @@ TEST(pythonTests, resample)
   pythonEnvSetup();
   ASSERT_FALSE(system("python resample.py"));
 }
+
+//---------------------------------------------------------------------------
+TEST(pythonTests, resize)
+{
+  pythonEnvSetup();
+  ASSERT_FALSE(system("python resize.py"));
+}
+
+//---------------------------------------------------------------------------
+TEST(pythonTests, recenter)
+{
+  pythonEnvSetup();
+  ASSERT_FALSE(system("python recenter.py"));
+}
+
+//---------------------------------------------------------------------------
+TEST(pythonTests, pad)
+{
+  pythonEnvSetup();
+  ASSERT_FALSE(system("python pad.py"));
+}
+
+//---------------------------------------------------------------------------
+TEST(pythonTests, translate)
+{
+  pythonEnvSetup();
+  ASSERT_FALSE(system("python translate.py"));
+}
