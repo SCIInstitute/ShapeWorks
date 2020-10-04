@@ -2,7 +2,7 @@
 
 #include <string>
 #include <Eigen/Core>
-#include "itkParticleShapeStatistics.h"
+#include "ParticleShapeStatistics.h"
 #include "ParticleSystem.h"
 
 namespace shapeworks {

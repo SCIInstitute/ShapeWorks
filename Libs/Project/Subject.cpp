@@ -1,4 +1,6 @@
 #include <Libs/Project/Subject.h>
+#include <map>
+
 using namespace shapeworks;
 
 //---------------------------------------------------------------------------
@@ -67,4 +69,46 @@ void Subject::set_number_of_domains(int number_of_domains)
 int Subject::get_number_of_domains()
 {
   return this->number_of_domains_;
+}
+
+//---------------------------------------------------------------------------
+std::map<std::string, std::string> Subject::get_feature_filenames() const
+{
+  return feature_filenames_;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_feature_filenames(const std::map<std::string, std::string>& feature_filenames)
+{
+  feature_filenames_ = feature_filenames;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::vector<double>> Subject::get_groomed_transforms() const
+{
+  return this->groomed_transforms_;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_groomed_transforms(std::vector<std::vector<double>> transforms)
+{
+  this->groomed_transforms_ = transforms;
+}
+
+//---------------------------------------------------------------------------
+std::map<std::string, std::string> Subject::get_group_values() const
+{
+  return this->group_values_;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_group_values(const std::map<std::string, std::string>& group_values)
+{
+  this->group_values_ = group_values;
+}
+
+//---------------------------------------------------------------------------
+std::string Subject::get_group_value(std::string group_name)
+{
+  return this->group_values_[group_name];
 }

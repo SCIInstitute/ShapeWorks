@@ -1,12 +1,12 @@
 set(sources
         ParticleSystem.cpp
-        itkParticleShapeStatistics.cpp
+        ParticleShapeStatistics.cpp
         itkParticlePositionReader.cpp
         itkParticlePositionWriter.cpp
         ShapeEvaluation.cpp)
 set(headers
         ParticleSystem.h
-        itkParticleShapeStatistics.h
+        ParticleShapeStatistics.h
         itkParticlePositionReader.h
         itkParticlePositionWriter.h
         EvaluationUtil.h
