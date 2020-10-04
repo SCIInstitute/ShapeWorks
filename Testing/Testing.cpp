@@ -34,7 +34,10 @@ void shapeworksEnvSetup()
   std::cout << "pythonpath: " << pythonpath << std::endl;
   setenv("PYTHONPATH", pythonpath.c_str(), true);
 
-  auto ld_library_path(std::string(DEPS_DIR) + "/lib" + ":" + std::string(QT_LIBDIR) + ":" + (curr_ld_library_path ? curr_ld_library_path : ""));
+  auto ld_library_path(std::string(BUILD_DIR) + "/lib" + ":");
+  //ld_library_path += std::string(DEPS_DIR) + "/lib" + ":";
+  //ld_library_path += std::string(QT_LIBDIR) + ":";
+  ld_library_path += (curr_ld_library_path ? curr_ld_library_path : "");
   std::cout << "ld_library_path: " << ld_library_path << std::endl;
   setenv("LD_LIBRARY_PATH", ld_library_path.c_str(), true);
 #else

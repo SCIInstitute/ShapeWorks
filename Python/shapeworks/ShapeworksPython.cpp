@@ -40,7 +40,12 @@ PYBIND11_MODULE(shapeworks, m)
   py::class_<Coord>(m, "Coord")
   .def(py::init<>())
   .def(py::init<unsigned, unsigned, unsigned>())
-  .def("__repr__", [](const Coord& c) { return (std::stringstream()<<c).str(); })
+
+  .def("__repr__", [](const Coord& c) {
+      std::ostringstream ss;
+      ss << c;
+      return ss.str();
+    })
   .def("__getitem__", [](const Coord& c, size_t idx) { return c[idx]; })
   .def("__setitem__", [](Coord& c, size_t idx, unsigned val) { c[idx] = val; })
   .def("__add__", [](const Coord& c1, const Coord& c2) { return c1 + c2; })
@@ -58,7 +63,11 @@ PYBIND11_MODULE(shapeworks, m)
   py::class_<Dims>(m, "Dims")
   .def(py::init<>())
   .def(py::init<unsigned, unsigned, unsigned>())
-  .def("__repr__", [](const Dims &d) { return (std::stringstream() << d).str(); })
+  .def("__repr__", [](const Dims &d) {
+      std::ostringstream ss;
+      ss << d;
+      return ss.str();
+    })
   .def("__getitem__", [](const Dims &d, size_t idx) { return d[idx]; })
   .def("__setitem__", [](Dims &d, size_t idx, unsigned val) { d[idx] = val; })
   .def("__add__", [](const Dims &d1, const Dims &d2) { return d1 + d2; })
@@ -81,7 +90,11 @@ PYBIND11_MODULE(shapeworks, m)
   //        self[0] = x; self[1] = y; self[2] = z;
   //      })
   .def(py::init([](double x, double y, double z) { return Point({x,y,z}); }))  // directly call initializer list ctor  (***the winner!***)
-  .def("__repr__", [](const Point& p) { return (std::stringstream()<<p).str(); })
+  .def("__repr__", [](const Point& p) {
+      std::ostringstream ss;
+      ss << p;
+      return ss.str();
+    })
   .def("__getitem__", [](const Point& d, size_t idx) { return d[idx]; })
   .def("__setitem__", [](Point& d, size_t idx, double val) { d[idx] = val; })
   .def("__add__", [](const Point& p1, const Point& p2) { return p1 + p2; })
@@ -98,7 +111,11 @@ PYBIND11_MODULE(shapeworks, m)
   py::class_<Vector>(m, "Vector")
   .def(py::init<>())
   .def(py::init([](double x, double y, double z) { return makeVector({x,y,z}); }))
-  .def("__repr__", [](const Vector& v) { return (std::stringstream()<<v).str(); })
+  .def("__repr__", [](const Vector& v) {
+      std::ostringstream ss;
+      ss << v;
+      return ss.str();
+    })
   .def("__getitem__", [](const Vector& v, size_t idx) { return v[idx]; })
   .def("__setitem__", [](Vector& v, size_t idx, double val) { v[idx] = val; })
   .def("__add__", [](const Vector& v1, const Vector& v2) { return v1 + v2; })
@@ -125,7 +142,11 @@ PYBIND11_MODULE(shapeworks, m)
   py::class_<IPoint3>(m, "IPoint3")
   .def(py::init<>())
   .def(py::init([](int x, int y, int z) { return IPoint3({x,y,z}); }))
-  .def("__repr__", [](const IPoint3& p) { return (std::stringstream()<<p).str(); })
+  .def("__repr__", [](const IPoint3& p) {
+      std::ostringstream ss;
+      ss << p;
+      return ss.str();
+    })
   .def("__getitem__", [](const IPoint3& p, size_t idx) { return p[idx]; })
   .def("__setitem__", [](IPoint3& p, size_t idx, int val) { p[idx] = val; })
   .def("__add__", [](const IPoint3& p1, const IPoint3& p2) { return p1 + p2; })
@@ -143,7 +164,11 @@ PYBIND11_MODULE(shapeworks, m)
   py::class_<FPoint3>(m, "FPoint3")
   .def(py::init<>())
   .def(py::init([](float x, float y, float z) { return Point({x,y,z}); }))
-  .def("__repr__", [](const FPoint3& p) { return (std::stringstream()<<p).str(); })
+  .def("__repr__", [](const FPoint3& p) {
+      std::ostringstream ss;
+      ss << p;
+      return ss.str();
+    })
   .def("__getitem__", [](const FPoint3& p, size_t idx) { return p[idx]; })
   .def("__setitem__", [](FPoint3& p, size_t idx, float val) { p[idx] = val; })
   .def("__add__", [](const FPoint3& p1, const FPoint3& p2) { return p1 + p2; })
