@@ -31,3 +31,13 @@ ShapeWorksStudio support load-on-demand, which makes it more scalable by support
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_load_new.mp4" autoplay muted loop controls style="width:100%"></p>
 
+## Live Particles Movement 
+
+ShapeWorksStudio allows for live introspection of the correpsondence placement optimization process and the ability to abort the optimization at any time (e.g., changing algorithmic parameters).
+
+
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_optimize_live.mp4" autoplay muted loop controls style="width:100%"></p>
+
+
+
+
