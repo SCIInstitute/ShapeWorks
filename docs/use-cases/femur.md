@@ -142,7 +142,6 @@ $python RunUseCase.py --use_case femur --use_single_scale
         "procrustes_interval" : 1,
         "procrustes_scaling" : 1,
         "save_init_splits" : 1,
-        "debug_projection" : 0,
         "verbosity" : 2,
         "use_statistics_in_init" : 0
 ```

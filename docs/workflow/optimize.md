@@ -174,7 +174,6 @@ Below is a list of the currently exposed algorithmic parameters. All the keys of
         "procrustes_interval" : 1,
         "procrustes_scaling" : 1,
         "save_init_splits" : 0,
-        "debug_projection" : 0,
         "verbosity" : 2,
 }
 ```
