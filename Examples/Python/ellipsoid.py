@@ -48,12 +48,12 @@ def Run_Pipeline(args):
         input("Press Enter to continue")
 
     datasetName = "ellipsoid-v0"
-    testDirectory = "TestEllipsoids/"
-    originalDataDirectory = testDirectory + datasetName + "/"
-    zipfile = datasetName + ".zip"
+    zipfile = 'Data/' + datasetName + ".zip"
+    outputDirectory = "Output/Ellipsoids/"
+    originalDataDirectory = outputDirectory + datasetName + "/"
     
-    if not os.path.exists(testDirectory):
-        os.makedirs(testDirectory)
+    if not os.path.exists(outputDirectory):
+        os.makedirs(outputDirectory)
         
     # Check if the unzipped data is present
     if not os.path.exists(originalDataDirectory):
@@ -61,13 +61,11 @@ def Run_Pipeline(args):
         if not os.path.exists(zipfile):
             print("Can't find " + zipfile)
             import DatasetUtils
-            DatasetUtils.downloadDataset(datasetName)
-        print("Unzipping " + zipfile + " into " + testDirectory)
+            DatasetUtils.downloadDataset(datasetName, destinationPath='./Data/')
+        print("Unzipping " + zipfile + " into " + outputDirectory)
         with ZipFile(zipfile, 'r') as zipObj:
-            zipObj.extractall(path=testDirectory)
-
-    parentDir = testDirectory + datasetName + "/"
-    fileList = sorted(glob.glob(parentDir + "segmentations/*.nrrd"))
+            zipObj.extractall(path=outputDirectory)
+    fileList = sorted(glob.glob(outputDirectory + datasetName + "/" + "segmentations/*.nrrd"))
 
     fileList = fileList[:15]
     if args.tiny_test:
@@ -90,9 +88,9 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    parentDir = 'TestEllipsoids/groomed/'
-    if not os.path.exists(parentDir):
-        os.makedirs(parentDir)
+    groomDir = outputDirectory + 'groomed/'
+    if not os.path.exists(groomDir):
+        os.makedirs(groomDir)
 
 
     if args.start_with_image_and_segmentation_data:
@@ -105,22 +103,22 @@ def Run_Pipeline(args):
         dtFiles = sorted(glob.glob('TestEllipsoids/' + datasetName + '/groomed/distance_transforms/*.nrrd'))
     else:
         """Apply isotropic resampling"""
-        resampledFiles = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList)
+        resampledFiles = applyIsotropicResampling(groomDir + "resampled/segmentations", fileList)
 
         """Apply centering"""
-        centeredFiles = center(parentDir + "centered/segmentations", resampledFiles)
+        centeredFiles = center(groomDir + "centered/segmentations", resampledFiles)
 
         """Apply padding"""
-        paddedFiles = applyPadding(parentDir + "padded/segmentations", centeredFiles, 10)
+        paddedFiles = applyPadding(groomDir + "padded/segmentations", centeredFiles, 10)
 
         """Apply center of mass alignment"""
-        comFiles = applyCOMAlignment(parentDir + "com_aligned/segmentations", paddedFiles, None)
+        comFiles = applyCOMAlignment(groomDir + "com_aligned/segmentations", paddedFiles, None)
 
         """Apply rigid alignment"""
-        rigidFiles = applyRigidAlignment(parentDir + "aligned/segmentations", comFiles, None, comFiles[0])
+        rigidFiles = applyRigidAlignment(groomDir + "aligned/segmentations", comFiles, None, comFiles[0])
 
         """Compute largest bounding box and apply cropping"""
-        croppedFiles = applyCropping(parentDir + "cropped/segmentations", rigidFiles, parentDir + "aligned/segmentations/*.aligned.nrrd")
+        croppedFiles = applyCropping(groomDir + "cropped/segmentations", rigidFiles, groomDir + "aligned/segmentations/*.aligned.nrrd")
 
         """
         We convert the scans to distance transforms, this step is common for both the 
@@ -131,7 +129,7 @@ def Run_Pipeline(args):
         if int(args.interactive) != 0:
             input("Press Enter to continue")
 
-        dtFiles = applyDistanceTransforms(parentDir, croppedFiles)
+        dtFiles = applyDistanceTransforms(groomDir, croppedFiles)
 
 
     """
