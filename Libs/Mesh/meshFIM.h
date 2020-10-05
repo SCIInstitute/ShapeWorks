@@ -84,7 +84,11 @@ public:
     void ReadFeatureFromFile(const char *infilename);
     void ReadFeatureGradientFromFile(const char *infilename);
     point GetFeatureDerivative(point p, int fIndex);
-  float GetGeodesicDistance(int v1, int v2);
+
+    // These methods used to private for some reason. Moved here.
+    float GetGeodesicDistance(int v1, int v2);
+    float GetBronsteinGeodesicDistance(TriMesh::Face Sa, TriMesh::Face Sb, vnl_vector <float> baryCoord_a, vnl_vector <float> baryCoord_b, char *method);
+    void loadGeodesicFile(TriMesh *mesh, const char *geoFilename);
 
 
     void need_abs_curvatures();
@@ -153,7 +157,6 @@ private:
 
   void GenerateReducedData();
 
-  void loadGeodesicFile(TriMesh *mesh, const char *geoFilename);
 
   void computeCoordXFiles(TriMesh *mesh, const char *vertT_filename);
   void computeCoordYFiles(TriMesh *mesh, const char *vertT_filename);
@@ -176,7 +179,6 @@ private:
   float GetVirtualSource(vnl_vector<float> baryCoord, vnl_matrix<float> X, vnl_vector<float> ds, vnl_vector< float > &x0);
   float ComputeThreePointApproximatedGeodesic(vnl_vector<float> x, vnl_vector<float> baryCoord, vnl_matrix<float> X, vnl_vector<float> ds, char *method);
   float ComputeCanonicalForm(point s, vnl_vector<float> &x, vnl_matrix<float> &X);
-  float GetBronsteinGeodesicDistance(TriMesh::Face Sa, TriMesh::Face Sb, vnl_vector <float> baryCoord_a, vnl_vector <float> baryCoord_b, char *method);
   void ComputeDistanceToLandmarksGivenTriangleInfo(TriMesh *mesh, const char *infilename, const char *outfilename);
 
   // SHIREEN - compute distance to landmarks based on geodesic approximation

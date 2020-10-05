@@ -11,8 +11,11 @@ struct Vec3d {
 class GeodesicMethod {
 public:
   virtual double distance(int i, int j) = 0;
-  virtual size_t numVerts() const = 0;
   virtual Vec3d point(int i) const = 0;
+  virtual size_t numVerts() const = 0;
+  virtual size_t numTris() const = 0;
+  virtual Vec3d point(int fi, const Vec3d& bary) const = 0;
+  virtual double distance(int fi, int fj, const Vec3d& baryi, const Vec3d& baryj) = 0;
 };
 
 class MeshFIMDistance : public GeodesicMethod {
@@ -20,11 +23,11 @@ private:
   TriMesh *mesh;
   meshFIM fim;
 public:
-  MeshFIMDistance(const std::string& plyFilePath, const std::string& meshFIMPath) {
+  MeshFIMDistance(const std::string& plyFilePath, const std::string& meshFIMPath, float stopDistance) {
     mesh = trimesh::TriMesh::read(plyFilePath);
     fim.SetMesh(mesh);
-    fim.SetStopDistance(3.1415f * 1.0f);
-    fim.computeFIM(mesh, meshFIMPath.c_str());
+    fim.SetStopDistance(stopDistance);
+    fim.loadGeodesicFile(mesh, meshFIMPath.c_str());
     // fim.ReadFaceIndexMap(meshFIMPath.c_str());
 
     // fim.need_edge_lengths();
@@ -49,6 +52,36 @@ public:
       mesh->vertices[i][2]
     };
   }
+
+  size_t numTris() const override {
+    return mesh->faces.size();
+  }
+
+  Vec3d point(int fi, const Vec3d &bary) const override {
+    const auto& f = mesh->faces[fi];
+    const auto& p0 = mesh->vertices[f[0]];
+    const auto& p1 = mesh->vertices[f[1]];
+    const auto& p2 = mesh->vertices[f[2]];
+
+    const auto p = bary.x*p0 + bary.y*p1 + bary.z*p2;
+    return {p[0], p[1], p[2]};
+  }
+
+  virtual double distance(int fi, int fj, const Vec3d& baryi, const Vec3d& baryj) override {
+    const auto tfi = mesh->faces[fi];
+    const auto tfj = mesh->faces[fj];
+    char *method = "Bary"; // TODO wut
+
+    vnl_vector<float> vbaryi(3);
+    vbaryi[0] = baryi.x;
+    vbaryi[1] = baryi.y;
+    vbaryi[2] = baryi.z;
+    vnl_vector<float> vbaryj(3);
+    vbaryj[0] = baryj.x;
+    vbaryj[1] = baryj.y;
+    vbaryj[2] = baryj.z;
+    return fim.GetBronsteinGeodesicDistance(tfi, tfj, vbaryi, vbaryj, method);
+  }
 };
 
 // assumes r=1.0
@@ -59,7 +92,6 @@ Vec3d cart_to_geo(const Vec3d& p) {
           1.0
   };
 }
-
 
 double analytic_geo_dist(double lon0, double lat0, double lon1, double lat1) {
   // https://en.wikipedia.org/wiki/Great-circle_distance
@@ -74,24 +106,47 @@ double analytic_geo_dist(double lon0, double lat0, double lon1, double lat1) {
   return r * central_angle;
 }
 
+std::uniform_real_distribution<float> dist01(0.0, 1.0);
+std::default_random_engine re01;
+Vec3d random_bary() {
+  float r = dist01(re01);
+  float s = dist01(re01);
+  if(r + s >= 1.0) {
+    r = 1.0 - r;
+    s = 1.0 - s;
+  }
+  return {
+    1.0 - r - s,
+    r,
+    s
+  };
+}
+
 int main(int argc, char *argv[]) {
+  if(argc != 3) {
+    std::cerr << "check args \n";
+    return 2;
+  }
   const std::string plyFilePath = argv[1];
   const std::string meshFIMPath = argv[2];
 
-  GeodesicMethod* geodesicFunc = new MeshFIMDistance(plyFilePath, meshFIMPath);
+  GeodesicMethod* geodesicFunc = new MeshFIMDistance(plyFilePath, meshFIMPath, 0.1f);
 
   // For random point generation
-  std::uniform_int_distribution<int> points_dist(0, geodesicFunc->numVerts());
+  std::uniform_int_distribution<int> points_dist(0, geodesicFunc->numTris());
   std::default_random_engine re;
 
   // Benchmark loop
   // gonna be biased, these rands
   for(int i=0; i<1000; i++) {
-    const int idx0 = points_dist(re);
-    const int idx1 = points_dist(re);
+    const int fidx0 = points_dist(re);
+    const int fidx1 = fidx0; // points_dist(re);
+    const auto bary0 = random_bary();
+    const auto bary1 = random_bary();
 
-    const Vec3d p0 = geodesicFunc->point(idx0);
-    const Vec3d p1 = geodesicFunc->point(idx1);
+
+    const Vec3d p0 = geodesicFunc->point(fidx0, bary0);
+    const Vec3d p1 = geodesicFunc->point(fidx1, bary1);
 
     Vec3d geo0 = cart_to_geo(p0);
     Vec3d geo1 = cart_to_geo(p1);
@@ -104,7 +159,7 @@ int main(int argc, char *argv[]) {
     // Find closest point
     using namespace std::chrono;
     const auto startTime = high_resolution_clock::now();
-    const double soln = geodesicFunc->distance(idx0, idx1);
+    const double soln = geodesicFunc->distance(fidx0, fidx1, bary0, bary1);
     const auto endTime = high_resolution_clock::now();
 
     // Print time taken
