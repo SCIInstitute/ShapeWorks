@@ -61,7 +61,6 @@ Below are the default optimization parameters for this use case. For a descripti
         "procrustes_interval" : 0,
         "procrustes_scaling" : 0,
         "save_init_splits" : 0,
-        "debug_projection" : 0,
         "verbosity" : 3,
         "number_fixed_domains": len(fileListDT),
         "fixed_domain_model_dir": shapemodelDir,

@@ -147,7 +147,6 @@ Here is the list of the parameters to be included in the `<parameters.xml>` file
 * `<keep_checkpoints>`: (default: 0) A flag to save the shape (correspondence) models through the initialization/optimization steps for debugging and troubleshooting.  
 * `<checkpointing_interval>`: (default: 50) The interval (number of iterations) to be used to save the checkpoints.
 * `<verbosity>`: (default: 0) '0' : almost zero verbosity (error messages only), '1': minimal verbosity (notification of running initialization/optimization steps), '2': additional details about parameters read from xml and files written, '3': full verbosity.
-* `<debug_projection>`: (default: 0) A flag to run in a debug mode for troubleshooting particle projection on the surface.
 
 ### Parameter Dictionary in Python
 
@@ -175,7 +174,6 @@ Below is a list of the currently exposed algorithmic parameters. All the keys of
         "procrustes_interval" : 1,
         "procrustes_scaling" : 1,
         "save_init_splits" : 0,
-        "debug_projection" : 0,
         "verbosity" : 2,
 }
 ```
