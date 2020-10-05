@@ -15,14 +15,15 @@
 //---------------------------------------------------------------------------
 MeshGenerator::MeshGenerator(Preferences& prefs)
   : prefs_(prefs),
-  legacy_reconstructor_(new LegacyMeshGenerator())
+    legacy_reconstructor_(new LegacyMeshGenerator())
 {}
 
 //---------------------------------------------------------------------------
-MeshGenerator::~MeshGenerator() {}
+MeshGenerator::~MeshGenerator()
+{}
 
 //---------------------------------------------------------------------------
-MeshHandle MeshGenerator::build_mesh(const MeshWorkItem &item)
+MeshHandle MeshGenerator::build_mesh(const MeshWorkItem& item)
 {
   if (item.filename != "") {
     return this->build_mesh_from_file(item.filename);
@@ -77,7 +78,7 @@ MeshHandle MeshGenerator::build_mesh_from_image(ImageType::Pointer image, float 
     marching->Update();
 
     mesh->set_poly_data(marching->GetOutput());
-  } catch (itk::ExceptionObject & excep) {
+  } catch (itk::ExceptionObject& excep) {
     std::cerr << "Exception caught!" << std::endl;
     std::cerr << excep << std::endl;
     mesh->set_error_message(std::string("Exception: ") + excep.what());
@@ -114,7 +115,7 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
     image = orienter->GetOutput();
 
     mesh = this->build_mesh_from_image(image, iso_value);
-  } catch (itk::ExceptionObject & excep) {
+  } catch (itk::ExceptionObject& excep) {
     std::cerr << "Exception caught!" << std::endl;
     std::cerr << excep << std::endl;
     mesh->set_error_message(std::string("Exception: ") + excep.what());
