@@ -65,7 +65,8 @@ def Run_Pipeline(args):
         print("Unzipping " + zipfile + " into " + outputDirectory)
         with ZipFile(zipfile, 'r') as zipObj:
             zipObj.extractall(path=outputDirectory)
-    fileList = sorted(glob.glob(outputDirectory + datasetName + "/" + "segmentations/*.nrrd"))
+            
+    fileList = sorted(glob.glob(originalDataDirectory + "segmentations/*.nrrd"))
 
     fileList = fileList[:15]
     if args.tiny_test:
