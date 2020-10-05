@@ -12,6 +12,7 @@ nav:
 - Getting Started:
    - 'Shapes, What & From Where?':           'getting-started/shapes.md'
    - 'Shape Modeling Workflow':              'getting-started/workflow.md'
+   - 'ShapeWorks Success Stories':           'getting-started/sw-stories.md'   
    - 'ShapeWorks Interfaces':                'getting-started/interfaces.md'   
    - 'Examples':                             'getting-started/examples.md'
    - 'How-Tos':                              'getting-started/how-tos.md'

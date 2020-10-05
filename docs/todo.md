@@ -3,13 +3,13 @@
 
 ## To add/edit for docs
 
-- [ ] `index.md#shapeworks-in-action`: Add the box bump examples and reference our benchmark study. 
+- [x] `index.md#shapeworks-in-action`: Add the box bump examples and reference our benchmark study. 
 - [ ] `index.md#shapeworks-in-action`: Add video for illustration
-- [ ] `index.md#with-shapeworks-you-can`: show case ShapeWorks in different studies (e.g., ortho and cardilogy) and cite relevant papers
-- [ ] `index.md` and repo readme: Showcase our SSM benchmark study
+- [x] `index.md#with-shapeworks-you-can`: show case ShapeWorks in different studies (e.g., ortho and cardilogy) and cite relevant papers
+- [x] `index.md` and repo readme: Showcase our SSM benchmark study
 - [ ] `users/papers.md`: Add links to the papers and update the list of papers with recent ones
 - [x] `about/release-notes.md`: Fix links in release notes
-- [ ] `about/team.md`: May be some pics
+- [x] `about/team.md`: May be some pics
 - [x] `dev/autodoc.md`: Which dir to use for autodoc for commands? 
 - [x] Spell and grammar check all markdown files 
 - [ ] `use-cases/ellipsoid.md`: Add a figure showing some samples of the dataset that highlight the mode of variation
@@ -31,7 +31,7 @@
 - [x] Review and edit ellipsoid use cases
 - [x] Review and edit femur use case
 - [x] Review and edit right ventricle use case
-- [ ] Once meshes work, update the femur use case to indicate that this is optional and add femur_mesh use case
+- [x] Once meshes work, update the femur use case to indicate that this is optional and add femur_mesh use case
 - [x] Instructions on how to add videos to the documentation (thumbnails that link to youtube)
 - [x] Instructions to add a new use case
 - [ ] Revise the right ventricle use case after release it. Might need more results to illustrate group differences.
@@ -61,3 +61,5 @@
 ## Misc
 - [ ] Add link to documentation http://sciinstitute.github.io/ShapeWorks/ to shapeworks.sci.utah.edu
 - [ ] Prepped vs groomed? Be consistent in documentation, tags for RunUseCase, and output folders from running use cases
+
+
