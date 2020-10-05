@@ -8,6 +8,7 @@
 
 // The interface from the designer
 #include "ui_PreferencesWindow.h"
+#include "StudioLog.h"
 
 //-----------------------------------------------------------------------------
 PreferencesWindow::PreferencesWindow(QWidget* parent, Preferences& prefs) : preferences_(prefs)
@@ -21,6 +22,8 @@ PreferencesWindow::PreferencesWindow(QWidget* parent, Preferences& prefs) : pref
   QPushButton* reset_button = this->ui_->button_box->button(QDialogButtonBox::RestoreDefaults);
   QObject::connect(reinterpret_cast<QObject*>(reset_button), SIGNAL(clicked()), this,
                    SLOT(restore_defaults()));
+
+  this->ui_->log_location->setText(shapeworks::StudioLog::Instance().get_log_filename());
 }
 
 //-----------------------------------------------------------------------------

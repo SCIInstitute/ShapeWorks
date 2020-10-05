@@ -2,7 +2,8 @@
   #include <direct.h>
   #define chdir _chdir
 #else
-   #include <unistd.h>
+
+  #include <unistd.h>
 #endif
 
 // qt
@@ -21,6 +22,7 @@
 #include <Libs/Project/Project.h>
 
 #include <Data/Session.h>
+#include <Data/StudioLog.h>
 #include <Data/Shape.h>
 #include <Data/Mesh.h>
 #include <Data/MeshManager.h>
@@ -34,8 +36,9 @@ const std::string Session::ANALYSIS_C("analysis");
 
 //---------------------------------------------------------------------------
 Session::Session(QWidget* parent, Preferences& prefs) : parent_(parent),
-  preferences_(prefs),
-  mesh_manager_(QSharedPointer<MeshManager>(new MeshManager(preferences_)))
+                                                        preferences_(prefs),
+                                                        mesh_manager_(QSharedPointer<MeshManager>(
+                                                          new MeshManager(preferences_)))
 {
   this->parent_ = NULL;
   connect(this->mesh_manager_.data(), &MeshManager::new_mesh, this, &Session::handle_new_mesh);
@@ -70,7 +73,7 @@ void Session::handle_clear_cache()
 {
   this->mesh_manager_->clear_cache();
 
-  for (auto &s : this->shapes_) {
+  for (auto& s : this->shapes_) {
     s->clear_reconstructed_mesh();
   }
 
@@ -156,7 +159,7 @@ bool Session::save_project(std::string fname)
       writer->SetUseCompression(true);
       std::cerr << "Writing distance transform: " << location << "\n";
       writer->Update();
-      std::vector<std::string> groomed_filenames {location};   // only single domain supported so far
+      std::vector<std::string> groomed_filenames{location};   // only single domain supported so far
       this->shapes_[i]->get_subject()->set_groomed_filenames(groomed_filenames);
 
       QApplication::processEvents();
@@ -187,11 +190,11 @@ bool Session::save_project(std::string fname)
 }
 
 //---------------------------------------------------------------------------
-void Session::save_particles_file(std::string filename, const vnl_vector<double> &points)
+void Session::save_particles_file(std::string filename, const vnl_vector<double>& points)
 {
   std::ofstream out(filename);
   size_t newline = 1;
-  for (auto &a : points) {
+  for (auto& a : points) {
     out << a << (newline % 3 == 0 ? "\n" : "    ");
     newline++;
   }
@@ -277,10 +280,10 @@ bool Session::load_light_project(QString filename)
       //std::cerr << "Found distance transform: " << distance_transform_filename << "\n";
 
       if (!QFile::exists(QString::fromStdString(distance_transform_filename))) {
-        QMessageBox::critical(NULL, "ShapeWorksStudio",
-                              "File does not exist: " +
-                              QString::fromStdString(distance_transform_filename),
-                              QMessageBox::Ok);
+        QString message = "File does not exist: " +
+                          QString::fromStdString(distance_transform_filename);
+        STUDIO_LOG_ERROR(message);
+        QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
         return false;
       }
 
@@ -407,6 +410,9 @@ bool Session::load_xl_project(QString filename)
      }
    */
 
+
+  this->groups_available_ = this->project_->get_group_names().size() > 0;
+
   this->params_ = this->project_->get_parameters(Parameters::STUDIO_PARAMS);
 
   return true;
@@ -483,8 +489,9 @@ void Session::load_original_files(std::vector<std::string> filenames)
 
     QString filename = QString::fromStdString(filenames[i]);
     if (!QFile::exists(filename)) {
-      QMessageBox::critical(NULL, "ShapeWorksStudio", "File does not exist: " + filename,
-                            QMessageBox::Ok);
+      QString message = "File does not exist: " + filename;
+      STUDIO_LOG_MESSAGE(message);
+      QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
       return;
     }
 
@@ -508,9 +515,11 @@ void Session::load_original_files(std::vector<std::string> filenames)
 }
 
 //---------------------------------------------------------------------------
-void Session::load_groomed_images(std::vector<ImageType::Pointer> images, double iso)
+void Session::load_groomed_images(std::vector<ImageType::Pointer> images,
+                                  double iso, std::vector<TransformType> transforms)
 {
-  QProgressDialog progress("Loading groomed images...", "Abort", 0, images.size(), this->parent_);
+  QProgressDialog progress("Loading groomed images...", "Abort",
+                           0, images.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
   progress.setMinimumDuration(2000);
 
@@ -525,7 +534,11 @@ void Session::load_groomed_images(std::vector<ImageType::Pointer> images, double
       new_shape->set_mesh_manager(this->mesh_manager_);
       this->shapes_.push_back(new_shape);
     }
-    this->shapes_[i]->import_groomed_image(images[i], iso);
+    TransformType transform;
+    if (i < transforms.size()) {
+      transform = transforms[i];
+    }
+    this->shapes_[i]->import_groomed_image(images[i], iso, transform);
   }
   progress.setValue(images.size());
   QApplication::processEvents();
@@ -554,7 +567,8 @@ void Session::load_groomed_files(std::vector<std::string> file_names, double iso
       this->shapes_.push_back(shape);
     }
 
-    std::vector<std::string> groomed_filenames {file_names[i]};   // only single domain supported so far
+    std::vector<std::string> groomed_filenames{
+      file_names[i]};   // only single domain supported so far
     this->shapes_[i]->get_subject()->set_groomed_filenames(groomed_filenames);
   }
 
@@ -672,7 +686,9 @@ bool Session::load_point_files(std::vector<std::string> list, bool local)
       }
     }
     else {
-      QMessageBox::critical(0, "Error", "Unable to open particle file:" + fname);
+      QString message = "Unable to open particle file:" + fname;
+      STUDIO_LOG_ERROR(message);
+      QMessageBox::critical(0, "Error", message);
       return false;
     }
   }
@@ -693,12 +709,12 @@ QVector<QSharedPointer<Shape>> Session::get_shapes()
 //---------------------------------------------------------------------------
 void Session::remove_shapes(QList<int> list)
 {
-  std::sort(list.begin(), list.end(), std::greater <>());
-  foreach(int i, list) {
-    auto subjects = this->project_->get_subjects();
-    subjects.erase(subjects.begin() + i);
-    this->shapes_.erase(this->shapes_.begin() + i);
-  }
+  std::sort(list.begin(), list.end(), std::greater<>());
+    foreach(int i, list) {
+      auto subjects = this->project_->get_subjects();
+      subjects.erase(subjects.begin() + i);
+      this->shapes_.erase(this->shapes_.begin() + i);
+    }
   this->renumber_shapes();
   this->project_->store_subjects();
   emit data_changed();
@@ -749,7 +765,16 @@ int Session::get_num_shapes()
 }
 
 //---------------------------------------------------------------------------
-Parameters &Session::parameters()
+Parameters& Session::parameters()
 {
   return this->params_;
+}
+
+//---------------------------------------------------------------------------
+QString Session::get_display_name()
+{
+  if (this->filename_ == "") {
+    return "New Project";
+  }
+  return QFileInfo(this->filename_).baseName();
 }

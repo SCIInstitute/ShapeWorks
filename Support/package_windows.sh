@@ -24,7 +24,7 @@ fi
 export SW_VERSION=$VERSION
 ROOT=`pwd`
 
-cp -r ../build/bin/Release bin
+cp -r ../build/bin/RelWithDebInfo bin
 rm -rf Post
 
 # Run auto-documentation

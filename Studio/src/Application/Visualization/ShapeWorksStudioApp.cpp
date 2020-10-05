@@ -7,10 +7,14 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QXmlStreamWriter>
+#include <QTextStream>
 
 // vtk
 #include <vtkRenderWindow.h>
 #include <vtkPolyDataWriter.h>
+
+// shapeworks
+#include <Applications/Configuration.h>
 
 // studio
 #include <Data/Preferences.h>
@@ -20,10 +24,12 @@
 #include <Data/Session.h>
 #include <Data/Shape.h>
 #include <Data/Mesh.h>
+#include <Data/StudioLog.h>
 #include <Visualization/ShapeWorksStudioApp.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/Visualizer.h>
 #include <Visualization/WheelEventForwarder.h>
+#include <Interface/SplashScreen.h>
 
 // ui
 #include <ui_ShapeWorksStudioApp.h>
@@ -34,6 +40,8 @@ static int ITEM_ROLE = Qt::UserRole - 1;
 
 const std::string ShapeWorksStudioApp::SETTING_ZOOM_C("zoom_state");
 
+using namespace shapeworks;
+
 //---------------------------------------------------------------------------
 ShapeWorksStudioApp::ShapeWorksStudioApp()
 {
@@ -43,6 +51,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->ui_->statusbar->addPermanentWidget(this->progress_bar_);
   this->progress_bar_->setVisible(false);
 
+  // default hide
+  this->ui_->feature_widget->hide();
   this->recent_file_actions_.append(this->ui_->action_recent1);
   this->recent_file_actions_.append(this->ui_->action_recent2);
   this->recent_file_actions_.append(this->ui_->action_recent3);
@@ -54,9 +64,16 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   }
   this->update_recent_files();
 
+  this->splash_screen_ = QSharedPointer<SplashScreen>(new SplashScreen(this, this->preferences_));
+  connect(this->splash_screen_.data(), &SplashScreen::open_project, this,
+          &ShapeWorksStudioApp::open_project);
+
   this->wheel_event_forwarder_ = QSharedPointer<WheelEventForwarder>
-                                   (new WheelEventForwarder(this->ui_->vertical_scroll_bar));
+    (new WheelEventForwarder(this->ui_->vertical_scroll_bar));
   this->ui_->qvtkWidget->installEventFilter(this->wheel_event_forwarder_.data());
+
+  // set the splitter ratio
+  this->ui_->data_splitter->setSizes(QList<int>({INT_MAX, INT_MAX}));
 
   // Glyph options in the render window.
   QMenu* menu = new QMenu();
@@ -113,6 +130,11 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           this, SLOT(handle_progress(size_t)));
   connect(this->analysis_tool_.data(), SIGNAL(reconstruction_complete()),
           this, SLOT(handle_reconstruction_complete()));
+  connect(this->analysis_tool_.data(), &AnalysisTool::message,
+          this, &ShapeWorksStudioApp::handle_message);
+  connect(this->analysis_tool_.data(), &AnalysisTool::error,
+          this, &ShapeWorksStudioApp::handle_error);
+
 
   // resize from preferences
   if (!this->preferences_.get_window_geometry().isEmpty()) {
@@ -132,7 +154,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->action_group_->addAction(this->ui_->action_optimize_mode);
   this->action_group_->addAction(this->ui_->action_analysis_mode);
 
-  this->ui_->statusbar->showMessage("ShapeWorksStudio");
+  this->ui_->statusbar->showMessage("ShapeWorks Studio");
   this->lightbox_ = LightboxHandle(new Lightbox());
 
   // visualizer initializations
@@ -200,6 +222,12 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, false);
 
+  connect(this->ui_->features, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
+          &ShapeWorksStudioApp::update_feature_map_selection);
+
+  connect(this->ui_->feature_uniform_scale, &QCheckBox::toggled, this,
+          &ShapeWorksStudioApp::set_feature_uniform_scale);
+
   //glyph options signals/slots
   connect(this->ui_->glyphs_visible_button, SIGNAL(clicked()), this, SLOT(handle_glyph_changed()));
   connect(this->ui_->surface_visible_button, SIGNAL(clicked()), this, SLOT(handle_glyph_changed()));
@@ -208,6 +236,12 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           SLOT(handle_glyph_changed()));
   this->preferences_.set_saved();
   this->enable_possible_actions();
+
+  QMenu* qmenu = this->ui_->menubar->addMenu("&Help");
+  auto qaction = qmenu->addAction(tr("&About"));
+  std::string about = std::string("About ShapeWorksStudio");
+  qaction->setToolTip(QString::fromStdString(about));
+  connect(qaction, &QAction::triggered, this, &ShapeWorksStudioApp::about);
 }
 
 //---------------------------------------------------------------------------
@@ -328,7 +362,7 @@ void ShapeWorksStudioApp::on_action_import_triggered()
 {
   QStringList filenames;
   std::cerr << "getOpenFileNames, last_dir = " <<
-    this->preferences_.get_last_directory().toStdString() << "\n";
+            this->preferences_.get_last_directory().toStdString() << "\n";
   filenames = QFileDialog::getOpenFileNames(this, tr("Import Files..."),
                                             this->preferences_.get_last_directory(),
                                             tr("NRRD files (*.nrrd);;MHA files (*.mha)"));
@@ -356,7 +390,7 @@ void ShapeWorksStudioApp::on_action_import_triggered()
 void ShapeWorksStudioApp::import_files(QStringList file_names)
 {
   std::vector<std::string> list;
-  for (auto &a : file_names) {
+  for (auto& a : file_names) {
     list.push_back(a.toStdString());
   }
   try {
@@ -381,7 +415,7 @@ void ShapeWorksStudioApp::import_files(QStringList file_names)
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_zoom_slider_valueChanged()
 {
-  if (!this->lightbox_->render_window_ready()) {return;}
+  if (!this->lightbox_->render_window_ready()) { return; }
 
   int value = this->ui_->zoom_slider->value();
 
@@ -414,7 +448,7 @@ void ShapeWorksStudioApp::disableAllActions()
   this->optimize_tool_->disable_actions();
   //recent
   QStringList recent_files = preferences_.get_recent_files();
-  int num_recent_files = qMin(recent_files.size(), (int)Preferences::MAX_RECENT_FILES);
+  int num_recent_files = qMin(recent_files.size(), 4);
   for (int i = 0; i < num_recent_files; i++) {
     this->recent_file_actions_[i]->setEnabled(false);
   }
@@ -452,7 +486,7 @@ void ShapeWorksStudioApp::enable_possible_actions()
   this->analysis_tool_->enable_actions();
   //recent
   QStringList recent_files = preferences_.get_recent_files();
-  int num_recent_files = qMin(recent_files.size(), (int)Preferences::MAX_RECENT_FILES);
+  int num_recent_files = qMin(recent_files.size(), 4);
   for (int i = 0; i < num_recent_files; i++) {
     this->recent_file_actions_[i]->setEnabled(true);
   }
@@ -554,12 +588,29 @@ void ShapeWorksStudioApp::update_table()
   this->ui_->table->resizeColumnsToContents();
   this->ui_->table->horizontalHeader()->setStretchLastSection(false);
   this->ui_->table->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+
+  /// todo: check if the list has changed before changing
+  auto current_feature = this->ui_->features->currentText();
+  this->ui_->features->clear();
+  this->ui_->features->addItem("-none-");
+  auto feature_maps = project->get_feature_names();
+  for (const std::string& feature : feature_maps) {
+    QString item = QString::fromStdString(feature);
+    item = item.remove(0, 8);
+    this->ui_->features->addItem(item);
+  }
+  this->ui_->features->setCurrentText(current_feature);
+  this->ui_->feature_uniform_scale->setChecked(this->get_feature_uniform_scale());
+
+  this->ui_->feature_widget->setVisible(feature_maps.size() > 0);
+
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_pca_changed()
 {
-  if (!this->session_->particles_present()) {return;}
+  if (!this->session_->particles_present()) { return; }
   this->session_->handle_clear_cache();
   this->visualizer_->update_lut();
   this->compute_mode_shape();
@@ -580,6 +631,7 @@ void ShapeWorksStudioApp::handle_pca_update()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_message(std::string str)
 {
+  STUDIO_LOG_MESSAGE(QString::fromStdString(str));
   this->ui_->statusbar->showMessage(QString::fromStdString(str));
   this->currentMessage_ = str;
 }
@@ -587,6 +639,7 @@ void ShapeWorksStudioApp::handle_message(std::string str)
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_error(std::string str)
 {
+  STUDIO_LOG_ERROR(QString::fromStdString(str));
   QMessageBox::critical(this, "Critical Error", str.c_str());
   this->handle_message(str);
   //this->handle_progress(100);
@@ -595,6 +648,7 @@ void ShapeWorksStudioApp::handle_error(std::string str)
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_warning(std::string str)
 {
+  STUDIO_LOG_MESSAGE(QString::fromStdString(str));
   QMessageBox::warning(this, "Warning!", str.c_str());
 }
 
@@ -612,15 +666,26 @@ void ShapeWorksStudioApp::handle_progress(size_t value)
     this->enable_possible_actions();
   }
   this->handle_message(this->currentMessage_);
-  qApp->processEvents();
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_new_mesh()
 {
   this->visualizer_->handle_new_mesh();
+
+  std::string mode = AnalysisTool::MODE_ALL_SAMPLES_C;
+  if (this->ui_->action_analysis_mode->isChecked()) {
+    mode = this->analysis_tool_->get_analysis_mode();
+  }
+
+  if (this->visualizer_->get_feature_map() != "" &&
+      mode == AnalysisTool::MODE_MEAN_C) {
+    this->visualizer_->display_shape(this->analysis_tool_->get_mean_shape());
+  }
+
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_clear_cache()
 {
   this->handle_pca_changed();
@@ -632,9 +697,11 @@ void ShapeWorksStudioApp::handle_clear_cache()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::new_session()
 {
+
   // project initializations
   this->session_ = QSharedPointer<Session>(new Session(this, preferences_));
   this->session_->set_parent(this);
+  this->setWindowTitle(this->session_->get_display_name());
 
   connect(this->session_->get_mesh_manager().data(), &MeshManager::error_encountered,
           this, &ShapeWorksStudioApp::handle_error);
@@ -648,6 +715,8 @@ void ShapeWorksStudioApp::new_session()
   connect(this->session_.data(), SIGNAL(update_display()), this,
           SLOT(handle_display_setting_changed()));
   connect(this->session_.data(), &Session::new_mesh, this, &ShapeWorksStudioApp::handle_new_mesh);
+
+  this->visualizer_->clear_viewers();
 
   this->analysis_tool_->set_session(this->session_);
   this->visualizer_->set_session(this->session_);
@@ -697,9 +766,16 @@ void ShapeWorksStudioApp::update_view_mode()
   auto view_mode = this->get_view_mode();
   this->ui_->view_mode_combobox->setCurrentText(QString::fromStdString(view_mode));
 
+  auto feature_map = this->get_feature_map();
+  this->ui_->features->setCurrentText(QString::fromStdString(feature_map));
+
   if (this->visualizer_) {
     //std::cerr << "Setting view mode to: " << view_mode << "\n";
     this->visualizer_->set_display_mode(view_mode);
+    if (feature_map == "-none-") { feature_map = ""; }
+    this->analysis_tool_->set_feature_map(feature_map);
+    this->visualizer_->set_feature_map(feature_map);
+    this->visualizer_->set_uniform_feature_range(this->get_feature_uniform_scale());
     this->update_display(true);
   }
 }
@@ -778,7 +854,7 @@ void ShapeWorksStudioApp::handle_optimize_complete()
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
   this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::GROOMED);
   this->visualizer_->set_display_mode(this->ui_->view_mode_combobox->currentText().toStdString());
-  this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape());
+  this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape_points());
   this->visualizer_->update_lut();
   this->update_display();
   this->enable_possible_actions();
@@ -791,7 +867,7 @@ void ShapeWorksStudioApp::handle_reconstruction_complete()
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
   this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::RECONSTRUCTED);
   this->visualizer_->set_display_mode(this->ui_->view_mode_combobox->currentText().toStdString());
-  this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape());
+  this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape_points());
   this->visualizer_->update_lut();
   this->update_display(true);
 }
@@ -813,7 +889,7 @@ void ShapeWorksStudioApp::handle_optimize_start()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_display_setting_changed()
 {
-  if (this->analysis_tool_->pcaAnimate()) {return;}
+  if (this->analysis_tool_->pcaAnimate()) { return; }
   this->update_display(true);
 }
 
@@ -833,7 +909,7 @@ void ShapeWorksStudioApp::handle_glyph_changed()
 void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
 {
   this->preferences_.set_center_checked(this->ui_->center_checkbox->isChecked());
-  this->update_display();
+  this->update_display(true);
 }
 
 //---------------------------------------------------------------------------
@@ -921,14 +997,7 @@ void ShapeWorksStudioApp::update_display(bool force)
 
       this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
 
-      if (this->analysis_tool_->get_group_difference_mode()) {
-        this->visualizer_->display_shape(
-          this->analysis_tool_->get_mean_shape(),
-          this->analysis_tool_->get_group_difference_vectors());
-      }
-      else {
-        this->visualizer_->display_shape(this->analysis_tool_->get_mean_shape());
-      }
+      this->visualizer_->display_shape(this->analysis_tool_->get_mean_shape());
     }
     else if (mode == AnalysisTool::MODE_PCA_C) {
       this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
@@ -979,10 +1048,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
 {
   this->new_session();
 
-  this->analysis_tool_->reset_stats();
-
-  try
-  {
+  try {
     if (!this->session_->load_project(filename)) {
       this->enable_possible_actions();
       return;
@@ -993,12 +1059,16 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   auto project = this->session_->get_project();
   if (project->get_version() > project->get_supported_version()) {
-    this->handle_warning("Warning: The project you have opened was created in a newer version of ShapeWorks\n\n"
-                         "Some features may not work and some settings may be incorrect or missing");
+    this->handle_warning(
+      "Warning: The project you have opened was created in a newer version of ShapeWorks\n\n"
+      "Some features may not work and some settings may be incorrect or missing");
   }
 
   this->is_loading_ = true;
 
+  this->block_update_ = true;
+
+  this->analysis_tool_->reset_stats();
   this->groom_tool_->load_settings();
   this->optimize_tool_->load_params();
   this->preferences_window_->set_values_from_preferences();
@@ -1007,11 +1077,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->preferences_.add_recent_file(filename);
   this->update_recent_files();
 
-  this->block_update_ = true;
-
   this->update_tool_mode();
-
-  this->update_view_mode();
 
   this->analysis_tool_->reset_stats();
 
@@ -1026,6 +1092,8 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   this->update_table();
 
+  this->update_view_mode();
+
   // load analysis state
   std::string analysis_mode = this->session_->parameters().get("analysis_mode", "mean");
   this->analysis_tool_->set_analysis_mode(analysis_mode);
@@ -1033,10 +1101,15 @@ void ShapeWorksStudioApp::open_project(QString filename)
   int zoom_value = this->session_->parameters().get(ShapeWorksStudioApp::SETTING_ZOOM_C, "4");
   this->ui_->zoom_slider->setValue(zoom_value);
 
+  this->ui_->notes->setText(QString::fromStdString(
+    this->session_->parameters().get("notes", "")));
+
   this->block_update_ = false;
   this->update_display(true);
 
   this->is_loading_ = false;
+
+  this->setWindowTitle(this->session_->get_display_name());
 }
 
 //---------------------------------------------------------------------------
@@ -1049,7 +1122,7 @@ void ShapeWorksStudioApp::on_action_preferences_triggered()
 void ShapeWorksStudioApp::on_action_export_current_mesh_triggered()
 {
   auto dir = preferences_.get_last_directory() + "/";
-  QString filename = QFileDialog::getSaveFileName(this, tr("Save Project As..."),
+  QString filename = QFileDialog::getSaveFileName(this, tr("Export Current Mesh"),
                                                   dir + "mesh",
                                                   tr("VTK files (*.vtk)"));
   if (filename.isEmpty()) {
@@ -1069,7 +1142,7 @@ void ShapeWorksStudioApp::on_action_export_current_mesh_triggered()
 void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered()
 {
   auto dir = preferences_.get_last_directory().toStdString() + "/";
-  QString filename = QFileDialog::getSaveFileName(this, tr("Save Project As..."),
+  QString filename = QFileDialog::getSaveFileName(this, tr("Export Mesh Scalars"),
                                                   QString::fromStdString(dir) + "scalars",
                                                   tr("CSV files (*.csv)"));
   if (filename.isEmpty()) {
@@ -1126,7 +1199,7 @@ void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered()
 void ShapeWorksStudioApp::on_action_export_pca_scores_triggered()
 {
   auto dir = preferences_.get_last_directory().toStdString() + "/";
-  QString filename = QFileDialog::getSaveFileName(this, tr("Save Project As..."),
+  QString filename = QFileDialog::getSaveFileName(this, tr("Export PCA Scores"),
                                                   QString::fromStdString(dir) + "scores",
                                                   tr("CSV files (*.csv)"));
   if (filename.isEmpty()) {
@@ -1168,6 +1241,7 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event)
 
   this->hide();
   this->optimize_tool_->shutdown_threads();
+  STUDIO_CLOSE_LOG();
   QCoreApplication::processEvents();
 }
 
@@ -1178,8 +1252,8 @@ void ShapeWorksStudioApp::compute_mode_shape()
   double pca_value = this->analysis_tool_->get_pca_value();
   double group_value = this->analysis_tool_->get_group_value();
 
-  this->visualizer_->display_shape(this->analysis_tool_->get_shape(pca_mode, pca_value,
-                                                                   group_value));
+  this->visualizer_->display_shape(this->analysis_tool_->get_shape_points(pca_mode, pca_value,
+                                                                          group_value));
 }
 
 //---------------------------------------------------------------------------
@@ -1198,7 +1272,7 @@ bool ShapeWorksStudioApp::set_view_mode(std::string view_mode)
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_recent_files()
 {
-  QStringList recent_files = preferences_.get_recent_files();
+  QStringList recent_files = this->preferences_.get_recent_files();
 
   QStringList existing_files;
   for (int i = 0; i < recent_files.size(); i++) {
@@ -1223,7 +1297,7 @@ void ShapeWorksStudioApp::update_recent_files()
   }
   recent_files = no_dupes;
 
-  int num_recent_files = qMin(recent_files.size(), (int)Preferences::MAX_RECENT_FILES);
+  int num_recent_files = qMin(recent_files.size(), 4); // only 4 max in the file menu
 
   for (int i = 0; i < num_recent_files; i++) {
     QString text = tr("&%1 %2").arg(i + 1).arg(QFileInfo(recent_files[i]).fileName());
@@ -1232,7 +1306,7 @@ void ShapeWorksStudioApp::update_recent_files()
     this->recent_file_actions_[i]->setVisible(true);
   }
 
-  for (int j = num_recent_files; j < Preferences::MAX_RECENT_FILES; ++j) {
+  for (int j = num_recent_files; j < 4; ++j) {
     this->recent_file_actions_[j]->setVisible(false);
   }
 }
@@ -1243,6 +1317,7 @@ void ShapeWorksStudioApp::save_project(std::string filename)
   this->session_->parameters().set(ShapeWorksStudioApp::SETTING_ZOOM_C,
                                    std::to_string(this->ui_->zoom_slider->value()));
 
+  this->session_->parameters().set("notes", this->ui_->notes->toHtml().toStdString());
   this->session_->parameters().set("analysis_mode", this->analysis_tool_->get_analysis_mode());
 
   this->groom_tool_->store_settings();
@@ -1254,6 +1329,8 @@ void ShapeWorksStudioApp::save_project(std::string filename)
   }
 
   this->update_table();
+  this->setWindowTitle(this->session_->get_display_name());
+
 }
 
 //---------------------------------------------------------------------------
@@ -1275,6 +1352,7 @@ void ShapeWorksStudioApp::handle_color_scheme()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_auto_view_button_clicked()
 {
+  std::cerr << "auto view button clicked\n";
   this->visualizer_->reset_camera();
 }
 
@@ -1283,7 +1361,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered()
 {
   auto dir = preferences_.get_last_directory().toStdString();
   dir = dir.substr(0, dir.find_last_of("/") + 1);
-  QString filename = QFileDialog::getSaveFileName(this, tr("Save Project As..."),
+  QString filename = QFileDialog::getSaveFileName(this, tr("Export PCA Mesh"),
                                                   QString::fromStdString(dir) + "newMesh",
                                                   tr("VTK files (*.vtk)"));
   if (filename.isEmpty()) {
@@ -1326,7 +1404,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvalues_triggered()
   QString fname("Untitled.eval");
 
   auto dir = this->preferences_.get_last_directory().toStdString() + "/";
-  QString filename = QFileDialog::getSaveFileName(this, tr("Save Eigenvalue EVAL file..."),
+  QString filename = QFileDialog::getSaveFileName(this, tr("Export Eigenvalue EVAL file..."),
                                                   QString::fromStdString(dir) + fname,
                                                   tr("EVAL files (*.eval)"));
   if (filename.isEmpty()) {
@@ -1348,7 +1426,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered()
   auto values = stats.Eigenvectors();
   QString fname("Untitled.eval");
   auto dir = this->preferences_.get_last_directory().toStdString() + "/";
-  QString filename = QFileDialog::getSaveFileName(this, tr("Save Eigenvector EVAL files..."),
+  QString filename = QFileDialog::getSaveFileName(this, tr("Export Eigenvector EVAL files..."),
                                                   QString::fromStdString(dir) + fname,
                                                   tr("EVAL files (*.eval)"));
   if (filename.isEmpty()) {
@@ -1361,7 +1439,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered()
     auto col = values.get_column(i);
     std::ofstream out(basename + std::to_string(ii) + ".eval");
     size_t newline = 1;
-    for (auto &a : col) {
+    for (auto& a : col) {
       out << a << (newline % 3 == 0 ? "\n" : "    ");
       newline++;
     }
@@ -1391,10 +1469,10 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered()
   auto increment = range * 2.f / steps;
   size_t i = 0;
   for (float pca = -range; pca <= range; pca += increment, i++) {
-    auto pts = this->analysis_tool_->get_shape(mode, pca);
+    auto pts = this->analysis_tool_->get_shape_points(mode, pca);
     std::ofstream out(basename + std::to_string(mode) + "-" + std::to_string(i) + ".pts");
     size_t newline = 1;
-    for (auto &a : pts) {
+    for (auto& a : pts) {
       out << a << (newline % 3 == 0 ? "\n" : "    ");
       newline++;
     }
@@ -1409,7 +1487,7 @@ void ShapeWorksStudioApp::on_actionExport_Variance_Graph_triggered()
   QString fname("Untitled.png");
   auto dir = this->preferences_.get_last_directory().toStdString();
   dir = dir.substr(0, dir.find_last_of("/") + 1);
-  QString filename = QFileDialog::getSaveFileName(this, tr("Save Variance Graph..."),
+  QString filename = QFileDialog::getSaveFileName(this, tr("Export Variance Graph"),
                                                   QString::fromStdString(dir) + fname,
                                                   tr("PNG files (*.png)"));
   if (filename.isEmpty()) {
@@ -1424,3 +1502,62 @@ void ShapeWorksStudioApp::on_actionExport_Variance_Graph_triggered()
     this->handle_message("Successfully exported Variance Graph: " + filename.toStdString());
   }
 }
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::update_feature_map_selection(const QString& feature_map)
+{
+  this->set_feature_map(feature_map.toStdString());
+}
+
+//---------------------------------------------------------------------------
+bool ShapeWorksStudioApp::set_feature_map(std::string feature_map)
+{
+  if (feature_map != this->get_feature_map()) {
+    if (!this->is_loading_) {
+      this->session_->parameters().set("feature_map", feature_map);
+    }
+    this->update_view_mode();
+    return true;
+  }
+  return false;
+}
+
+//---------------------------------------------------------------------------
+std::string ShapeWorksStudioApp::get_feature_map()
+{
+  return this->session_->parameters().get("feature_map", "");
+}
+
+//---------------------------------------------------------------------------
+bool ShapeWorksStudioApp::get_feature_uniform_scale()
+{
+  return this->session_->parameters().get("feature_uniform_scale", true);
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::set_feature_uniform_scale(bool value)
+{
+  if (!this->is_loading_) {
+    this->session_->parameters().set("feature_uniform_scale", value);
+    this->update_view_mode();
+  }
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::show_splash_screen()
+{
+  this->splash_screen_->show();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::about()
+{
+  std::string about = std::string("About ShapeWorksStudio");
+  QMessageBox::about(this, QString::fromStdString(about),
+                     "ShapeWorksStudio\n"
+                     SHAPEWORKS_VERSION
+                     "\n\n"
+                     "http://shapeworks.sci.utah.edu");
+}
+
+

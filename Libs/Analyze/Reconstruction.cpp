@@ -776,10 +776,10 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
             this->denseDone_ = true;
             throw std::runtime_error("Warning! MeshQC failed, but a dense mean was computed by VTK.");
         }
-    } catch (std::exception e) {
-        throw e;
+    } catch (itk::ExceptionObject& excep) {
+        throw std::runtime_error(excep.what());
     } catch (...) {
-        throw std::runtime_error("Optimize failed!");
+        throw std::runtime_error("Reconstruction failed!");
     }
     this->denseDone_ = true;
 }

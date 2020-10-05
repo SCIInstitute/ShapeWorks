@@ -22,8 +22,7 @@ typedef QSharedPointer<Mesh> MeshHandle;
  * It is responsible for loading the image and generating a mesh from it.
  *
  */
-class Mesh
-{
+class Mesh {
 public:
 
   //! Constructor
@@ -52,6 +51,12 @@ public:
 
   //! Return the error message
   std::string get_error_message();
+
+  //! Apply a feature map
+  void apply_feature_map(std::string name, ImageType::Pointer image, vnl_vector<double> transform);
+
+  void interpolate_scalars_to_mesh(std::string name,
+                                   vnl_vector<double> positions, Eigen::VectorXf scalar_values);
 
 private:
 

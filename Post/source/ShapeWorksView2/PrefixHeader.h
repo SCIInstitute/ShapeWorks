@@ -49,9 +49,4 @@
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkUnsignedLongArray.h>
 
-#include "itkParticleShapeLinearRegressionMatrixAttribute.h"
-#include "itkParticlePositionReader.h"
-#include "itkParticleShapeStatistics.h"
-#include "itkParticlePositionWriter.h"
-
 #include "tinyxml.h"

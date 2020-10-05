@@ -36,4 +36,9 @@ ParticleSystem::ParticleSystem(const std::vector<std::string> &_paths)
     P.col(i) = Eigen::Map<const Eigen::VectorXd>((double *) reader->GetOutput().data(), D);
   }
 }
+
+ParticleSystem::ParticleSystem(const Eigen::MatrixXd& matrix)
+{
+  this->P = matrix;
+}
 }
