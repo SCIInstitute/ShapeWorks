@@ -9,6 +9,7 @@
 #include <Data/Session.h>
 #include <Data/Mesh.h>
 #include <Data/Shape.h>
+#include <Data/StudioLog.h>
 
 #include <Optimize/QOptimize.h>
 
@@ -57,8 +58,6 @@ void OptimizeTool::handle_progress(int val)
     this->session_->update_points(local, true);
     this->session_->update_points(global, false);
   }
-
-  QApplication::processEvents();
 }
 
 //---------------------------------------------------------------------------

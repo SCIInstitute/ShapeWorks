@@ -6,17 +6,17 @@
 #include <map>
 
 #include <itkConnectedThresholdImageFilter.h>
-#include <itkTranslationTransform.h>
+#include <itkAffineTransform.h>
 #include <itkImage.h>
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
 
 typedef float PixelType;
-typedef itk::Image< PixelType, 3 > ImageType;
-typedef itk::ImageFileReader< ImageType > ReaderType;
-typedef itk::ImageFileWriter< ImageType > WriterType;
+typedef itk::Image<PixelType, 3> ImageType;
+typedef itk::ImageFileReader<ImageType> ReaderType;
+typedef itk::ImageFileWriter<ImageType> WriterType;
 typedef itk::ConnectedThresholdImageFilter<ImageType, ImageType> flood_fill_filter_type;
-typedef itk::TranslationTransform<double, 3>::ParametersType transform_type;
+typedef itk::AffineTransform<double, 3>::ParametersType TransformType;
 
 class ShapeWorksGroom {
 public:
@@ -30,6 +30,9 @@ public:
   std::vector<ImageType::Pointer> getImages();
   double foreground();
   std::map<std::string, bool> tools();
+
+  std::vector<TransformType> get_transforms();
+
 protected:
   void isolate(int which = -1);
   void hole_fill(int which = -1);
@@ -42,8 +45,7 @@ protected:
   std::vector<ImageType::Pointer> images_;
   bool verbose_;
   double background_, foreground_, blurSigma_;
-  flood_fill_filter_type::IndexType seed_;
-  transform_type transform_;
+  std::vector<TransformType> transforms_;
   size_t padding_, iterations_;
   std::map<std::string, bool> runTools_;
   ImageType::IndexType upper_;

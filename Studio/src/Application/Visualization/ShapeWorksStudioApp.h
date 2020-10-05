@@ -12,25 +12,34 @@
 #include <Data/PreferencesWindow.h>
 
 class Lightbox;
+
 class GroomTool;
+
 class OptimizeTool;
+
 class AnalysisTool;
+
 class Session;
+
 class Visualizer;
+
+namespace shapeworks {
+class SplashScreen;
+}
 
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
 
 class LightboxLayout;
+
 class WheelEventForwarder;
 
 //! Main ShapeWorksStudio window
 /*!
  * This class represents the primary ShapeWorksStudio window interface
  */
-class ShapeWorksStudioApp : public QMainWindow
-{
-  Q_OBJECT
+class ShapeWorksStudioApp : public QMainWindow {
+Q_OBJECT
 public:
 
   ShapeWorksStudioApp();
@@ -40,9 +49,10 @@ public:
 
   void initialize_vtk();
   void import_files(QStringList file_names);
-  void open_project(QString filename);
 
 public Q_SLOTS:
+
+  void open_project(QString filename);
 
   void on_action_new_project_triggered();
   void on_action_open_project_triggered();
@@ -75,6 +85,7 @@ public Q_SLOTS:
   void on_view_mode_combobox_currentIndexChanged(QString disp_mode);
   void on_auto_view_button_clicked();
 
+
   void handle_pca_changed();
   void handle_slider_update();
 
@@ -98,6 +109,10 @@ public Q_SLOTS:
   void handle_progress(size_t amt);
   void handle_new_mesh();
   void handle_clear_cache();
+
+  void update_feature_map_selection(const QString& feature_map);
+  void show_splash_screen();
+  void about();
 
 
 private:
@@ -145,6 +160,12 @@ private:
 
   bool set_view_mode(std::string view_mode);
 
+  bool set_feature_map(std::string feature_map);
+  std::string get_feature_map();
+
+  bool get_feature_uniform_scale();
+  void set_feature_uniform_scale(bool value);
+
   void update_recent_files();
 
   void save_project(std::string filename);
@@ -179,6 +200,8 @@ private:
   std::string currentMessage_;
 
   std::string current_display_mode_;
+
+  QSharedPointer<shapeworks::SplashScreen> splash_screen_;
 
   bool block_update_{false};
   bool is_loading_{false};

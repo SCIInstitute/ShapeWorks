@@ -53,8 +53,25 @@ bool Optimize::Run()
     std::log2(static_cast<double>(this->m_number_of_particles[0])));
   this->m_iteration_count = 0;
 
-  this->m_total_iterations = (number_of_splits * this->m_iterations_per_split) +
-                             this->m_optimization_iterations;
+  if (this->m_use_shape_statistics_after < 0) {
+    this->m_total_iterations = (number_of_splits * this->m_iterations_per_split) +
+                               this->m_optimization_iterations;
+  }
+  else
+  {
+    int number_of_splits_init = static_cast<int>(
+      std::log2(static_cast<double>(this->m_use_shape_statistics_after)));
+    int number_of_splits_opt = static_cast<int>(
+      std::log2(static_cast<double>(this->m_number_of_particles[0]))) - number_of_splits_init;
+
+    // initialization phase iterations
+    this->m_total_iterations = (number_of_splits_init * this->m_iterations_per_split) +
+                               this->m_optimization_iterations;
+    // optimization phase iterations
+    this->m_total_iterations +=
+      number_of_splits_opt * (this->m_iterations_per_split + this->m_optimization_iterations);
+
+  }
 
   if (this->m_verbosity_level > 0) {
     std::cout << "Total number of iterations = " << this->m_total_iterations << "\n";

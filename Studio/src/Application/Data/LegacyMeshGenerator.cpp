@@ -20,7 +20,6 @@
 
 #include <vtkMetaImageWriter.h>
 
-
 #include "CustomSurfaceReconstructionFilter.h"
 
 // local files
@@ -37,10 +36,10 @@ LegacyMeshGenerator::LegacyMeshGenerator()
   this->points = vtkSmartPointer<vtkPoints>::New();
   this->points->SetDataTypeToDouble();
   this->pointSet = vtkSmartPointer<vtkPolyData>::New();
-  this->pointSet->SetPoints( this->points );
+  this->pointSet->SetPoints(this->points);
 
   this->surfaceReconstruction = vtkSmartPointer<CustomSurfaceReconstructionFilter>::New();
-  this->surfaceReconstruction->SetInputData( this->pointSet );
+  this->surfaceReconstruction->SetInputData(this->pointSet);
 
 #ifdef SW_USE_POWERCRUST
   this->polydataToImageData = vtkSmartPointer<vtkPolyDataToImageData>::New();
@@ -52,13 +51,12 @@ LegacyMeshGenerator::LegacyMeshGenerator()
 #endif // ifdef SW_USE_POWERCRUST
 
   this->contourFilter = vtkSmartPointer<vtkContourFilter>::New();
-  this->contourFilter->SetInputConnection( this->surfaceReconstruction->GetOutputPort() );
-  this->contourFilter->SetValue( 0, 0.0 );
+  this->contourFilter->SetInputConnection(this->surfaceReconstruction->GetOutputPort());
+  this->contourFilter->SetValue(0, 0.0);
   this->contourFilter->ComputeNormalsOn();
 
   this->windowSincFilter = vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
-  this->windowSincFilter->SetInputConnection( this->contourFilter->GetOutputPort() );
-
+  this->windowSincFilter->SetInputConnection(this->contourFilter->GetOutputPort());
 
   this->polydataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
   this->polydataNormals->SplittingOff();
@@ -71,67 +69,64 @@ LegacyMeshGenerator::~LegacyMeshGenerator()
 {}
 
 //---------------------------------------------------------------------------
-void LegacyMeshGenerator::setNeighborhoodSize( int size )
+void LegacyMeshGenerator::setNeighborhoodSize(int size)
 {
-  this->surfaceReconstruction->SetNeighborhoodSize( size );
+  this->surfaceReconstruction->SetNeighborhoodSize(size);
 }
 
 //---------------------------------------------------------------------------
-void LegacyMeshGenerator::setSampleSpacing( double spacing )
+void LegacyMeshGenerator::setSampleSpacing(double spacing)
 {
-  this->surfaceReconstruction->SetSampleSpacing( spacing );
+  this->surfaceReconstruction->SetSampleSpacing(spacing);
 }
 
 //---------------------------------------------------------------------------
-void LegacyMeshGenerator::setUsePowerCrust( bool enabled )
+void LegacyMeshGenerator::setUsePowerCrust(bool enabled)
 {
   this->usePowerCrust = enabled;
   this->updatePipeline();
 }
 
 //---------------------------------------------------------------------------
-void LegacyMeshGenerator::setSmoothingAmount( float amount )
+void LegacyMeshGenerator::setSmoothingAmount(float amount)
 {
-  if ( amount <= 0 )
-  {
+  if (amount <= 0) {
     this->smoothingEnabled = false;
   }
-  else
-  {
+  else {
     this->smoothingEnabled = true;
-    this->windowSincFilter->SetNumberOfIterations( amount );
-    this->windowSincFilter->SetPassBand( 0.05 );
+    this->windowSincFilter->SetNumberOfIterations(amount);
+    this->windowSincFilter->SetPassBand(0.05);
   }
 
   this->updatePipeline();
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> LegacyMeshGenerator::buildMesh( const vnl_vector<double>& shape )
+vtkSmartPointer<vtkPolyData> LegacyMeshGenerator::buildMesh(const vnl_vector<double>& shape)
 {
   // copy shape points into point set
   int numPoints = shape.size() / 3;
-  this->points->SetNumberOfPoints( numPoints );
+  this->points->SetNumberOfPoints(numPoints);
   unsigned int k = 0;
-  for ( unsigned int i = 0; i < numPoints; i++ )
-  {
+  for (unsigned int i = 0; i < numPoints; i++) {
+    if (std::isnan(shape[k])) { // reconstruction will crash
+      return vtkSmartPointer<vtkPolyData>(nullptr);
+    }
     double x = shape[k++];
     double y = shape[k++];
     double z = shape[k++];
-    this->points->SetPoint( i, x, y, z );
+    this->points->SetPoint(i, x, y, z);
   }
   this->points->Modified();
 
-  if ( this->usePowerCrust )
-  {
-    if ( this->smoothingEnabled )
-    {
+  if (this->usePowerCrust) {
+    if (this->smoothingEnabled) {
       this->polydataToImageData->Update();
       this->contourFilter->Update();
     }
   }
-  else
-  {
+  else {
     this->surfaceReconstruction->Modified();
     this->surfaceReconstruction->Update();
     this->contourFilter->Update();
@@ -141,35 +136,30 @@ vtkSmartPointer<vtkPolyData> LegacyMeshGenerator::buildMesh( const vnl_vector<do
 
   // make a copy of the vtkPolyData output to return
   vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
-  polyData->DeepCopy( this->polydataNormals->GetOutput() );
+  polyData->DeepCopy(this->polydataNormals->GetOutput());
 
   return polyData;
 }
 
-
 //---------------------------------------------------------------------------
 void LegacyMeshGenerator::updatePipeline()
 {
-  if ( this->usePowerCrust && this->smoothingEnabled )
-  {
-    this->contourFilter->SetInputConnection( this->polydataToImageData->GetOutputPort() );
-    this->contourFilter->SetValue( 0, 0.5 );
-    this->polydataNormals->SetInputConnection( this->windowSincFilter->GetOutputPort() );
+  if (this->usePowerCrust && this->smoothingEnabled) {
+    this->contourFilter->SetInputConnection(this->polydataToImageData->GetOutputPort());
+    this->contourFilter->SetValue(0, 0.5);
+    this->polydataNormals->SetInputConnection(this->windowSincFilter->GetOutputPort());
   }
-  else if ( this->usePowerCrust && !this->smoothingEnabled )
-  {
+  else if (this->usePowerCrust && !this->smoothingEnabled) {
 #ifdef SW_USE_POWERCRUST
     this->polydataNormals->SetInputConnection( this->powercrust->GetOutputPort() );
 #endif
   }
-  else if ( !this->usePowerCrust && this->smoothingEnabled )
-  {
-    this->contourFilter->SetInputConnection( this->surfaceReconstruction->GetOutputPort() );
-    this->contourFilter->SetValue( 0, 0.0 );
-    this->polydataNormals->SetInputConnection( this->windowSincFilter->GetOutputPort() );
+  else if (!this->usePowerCrust && this->smoothingEnabled) {
+    this->contourFilter->SetInputConnection(this->surfaceReconstruction->GetOutputPort());
+    this->contourFilter->SetValue(0, 0.0);
+    this->polydataNormals->SetInputConnection(this->windowSincFilter->GetOutputPort());
   }
-  else if ( !this->usePowerCrust && !this->smoothingEnabled )
-  {
-    this->polydataNormals->SetInputConnection( this->contourFilter->GetOutputPort() );
+  else if (!this->usePowerCrust && !this->smoothingEnabled) {
+    this->polydataNormals->SetInputConnection(this->contourFilter->GetOutputPort());
   }
 }

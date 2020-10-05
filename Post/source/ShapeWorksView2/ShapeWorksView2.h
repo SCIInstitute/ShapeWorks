@@ -17,7 +17,7 @@
 
 //#include "itkParticleShapeLinearRegressionMatrixAttribute.h"
 #include "itkParticlePositionReader.h"
-#include "itkParticleShapeStatistics.h"
+#include "ParticleShapeStatistics.h"
 #include "itkParticlePositionWriter.h"
 
 #include <ColorSchemes.h>
@@ -184,7 +184,7 @@ private:
   //vtkSmartPointer<vtkPolyDataNormals>         m_surfNormals;
   //vtkSmartPointer<vtkDecimatePro>             m_surfDecimate;
 
-  ParticleShapeStatistics<3> stats;
+  ParticleShapeStatistics stats;
 //  itk::ParticleShapeLinearRegressionMatrixAttribute<double, 3>::Pointer regression;
 
   int numSamples;

@@ -1,29 +1,15 @@
-/*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticleShapeStatistics.h,v $
-  Date:      $Date: 2011/03/24 01:17:41 $
-  Version:   $Revision: 1.3 $
-  Author:    $Author: wmartin $
+#pragma once
 
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
-#ifndef _ParticleShapeStatistics_h
-#define _ParticleShapeStatistics_h
-
-#include <iostream>
-#include <vector>
 #include "vnl/vnl_vector.h"
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
 #include "vnl/vnl_matrix.h"
 #include "vnl/vnl_vector_fixed.h"
 #include "vnl/algo/vnl_matrix_inverse.h"
+#include <Eigen/Eigen>
+
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include <string>
 #include <cstdio>
 
@@ -35,10 +21,12 @@
  * This class computes various statistics for a set of correspondence positions
  * and group ids.
  */
-template <unsigned int VDimension>
-class ITK_EXPORT ParticleShapeStatistics
+class ParticleShapeStatistics
 {
 public:
+
+  constexpr static int VDimension = 3;
+
   ParticleShapeStatistics() {}
   ~ParticleShapeStatistics() {}
 
@@ -48,7 +36,7 @@ public:
 
  /** Dimensionality of the domain of the particle system. */
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
-  
+
   /** Loads a set of point files and pre-computes some statistics. */
   int ImportPoints( std::vector<vnl_vector<double> > points, std::vector<int> group_ids );
 
@@ -125,7 +113,7 @@ public:
       the index number of the median shape for Group A and Group B,
       respectively.*/
   int ComputeMedianShape(const int);
-  
+
     /** Returns the euclidean L1 norm between shape a and b */
   double L1Norm(unsigned int a, unsigned int b);
 
@@ -157,8 +145,16 @@ public:
   int SimpleLinearRegression(const std::vector<double> &y,
                               const std::vector<double> &x,
                               double &a, double &b) const;
-    
-protected:
+
+
+  double get_compactness(const int num_modes);
+  double get_specificity(const int num_modes);
+  double get_generalization(const int num_modes);
+
+private:
+
+  void compute_evaluation(int num_modes);
+
   unsigned int m_numSamples1;
   unsigned int m_numSamples2;
   unsigned int m_numSamples;
@@ -181,15 +177,20 @@ protected:
   std::vector<double> m_fishersProjection;
   std::vector<double> m_percentVarByMode;
   vnl_vector<double> m_fishersLD;
-  int m_top95;
   vnl_matrix<double> m_principals;
 
   vnl_vector<double> m_groupdiff;
   vnl_vector<double> m_groupdiffnorm;
 
   // used to keep the points' files that needs to be reloaded when new updates come in.
-  std::vector< std::string > m_pointsfiles; 
+  std::vector< std::string > m_pointsfiles;
+
+  Eigen::MatrixXd m_Matrix;
+  double compactness_ = 0;
+  double specificity_ = 0;
+  double generalization_ = 0;
+  bool evaluation_ready_ = false;
+  int evaluation_modes_ = 0;
+
 };
 
-#include "itkParticleShapeStatistics.cpp"
-#endif
