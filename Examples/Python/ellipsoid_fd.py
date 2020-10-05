@@ -48,12 +48,12 @@ def Run_Pipeline(args):
 
     
     datasetName = "ellipsoid_fd-v0"
-    testDirectory = "TestEllipsoidsFD/"
-    originalDataDirectory = testDirectory + datasetName + "/"
-    zipfile = datasetName + ".zip"
+    zipfile = 'Data/' + datasetName + ".zip"
+    outputDirectory = "Output/Ellipsoids_fd/"
+    originalDataDirectory = outputDirectory + datasetName + "/"
     
-    if not os.path.exists(testDirectory):
-        os.makedirs(testDirectory)
+    if not os.path.exists(outputDirectory):
+        os.makedirs(outputDirectory)
         
     # Check if the unzipped data is present
     if not os.path.exists(originalDataDirectory):
@@ -61,12 +61,11 @@ def Run_Pipeline(args):
         if not os.path.exists(zipfile):
             print("Can't find " + zipfile)
             import DatasetUtils
-            DatasetUtils.downloadDataset(datasetName)
-        print("Unzipping " + zipfile + " into " + testDirectory)
+            DatasetUtils.downloadDataset(datasetName, destinationPath='./Data/')
+        print("Unzipping " + zipfile + " into " + outputDirectory)
         with ZipFile(zipfile, 'r') as zipObj:
-            zipObj.extractall(path=testDirectory)
+            zipObj.extractall(path=outputDirectory)
 
-    parentDir = testDirectory + datasetName + "/"
     fileListDT = sorted(glob.glob(originalDataDirectory + "distance_transforms/*.nrrd"))
     fileListNew = sorted(glob.glob(originalDataDirectory + "new_distance_transforms/*.nrrd"))
 
@@ -76,15 +75,15 @@ def Run_Pipeline(args):
     distance transforms.
     """
 
-    outputDir = 'TestEllipsoidsFD/groomed/'
-    if not os.path.exists(outputDir):
-        os.makedirs(outputDir)
+    groomDir = outputDirectory + 'groomed/'
+    if not os.path.exists(groomDir):
+        os.makedirs(groomDir)
 
     print("\nStep 2. Groom - Convert to distance transforms\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    dtFilesNew = applyDistanceTransforms(outputDir, fileListNew)
+    dtFilesNew = applyDistanceTransforms(groomDir, fileListNew)
     dtFiles = fileListDT + dtFilesNew
 
     """
@@ -103,7 +102,7 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    pointDir = './TestEllipsoidsFD/shape_models/'
+    pointDir = outputDirectory + 'shape_models/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
@@ -111,7 +110,8 @@ def Run_Pipeline(args):
     Evaluate the meanshape of the existing shape model and use that to initialize the 
     particles on the new shapes
     """
-    shapemodelDir = parentDir + "shape_models/"
+    shapemodelDir = originalDataDirectory + "shape_models/pretrained/128/"
+    print(os.listdir(shapemodelDir))
     findMeanShape(shapemodelDir)
     meanShapePath = shapemodelDir + '/meanshape_local.particles'
 
