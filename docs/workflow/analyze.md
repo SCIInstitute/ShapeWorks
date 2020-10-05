@@ -82,7 +82,7 @@ The template mesh will then be constructed by triangulating the isosurface of th
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/particles_reconstruction.mp4" autoplay muted loop controls style="width:100%"></p>
 
 
-You can export any mesh using `File -> Export Current Mesh ...`. 
+You can export any mesh using `File -> Export -> Export Current Mesh ...`. 
 
 
 ## Statistical Analysis 
