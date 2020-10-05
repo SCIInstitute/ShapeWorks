@@ -8,7 +8,7 @@
 <procrustes_scaling> 0 </procrustes_scaling>
 <procrustes_interval> 0 </procrustes_interval>
 <save_init_splits>0</save_init_splits>
-<verbosity>1</verbosity>
+<verbosity>0</verbosity>
 
 <!-- needed to fully turn on cutting planes -->
 <adaptivity_mode> 3 </adaptivity_mode>

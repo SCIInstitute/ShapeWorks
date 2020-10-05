@@ -7,7 +7,7 @@
 <checkpointing_interval> 20 </checkpointing_interval>
 <procrustes_scaling> 0 </procrustes_scaling>
 <procrustes_interval> 0 </procrustes_interval>
-<verbosity>3</verbosity>
+<verbosity>0</verbosity>
 
 <output_dir>
 output
