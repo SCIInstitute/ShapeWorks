@@ -7,8 +7,6 @@ Full Example Pipeline for Statistical Shape Modeling with ShapeWorks
 In this example we provide a full pipeline with an example dataset of axis 
 aligned ellipsoid meshes.
 """
-
-from zipfile import ZipFile
 import os
 import sys
 import csv
@@ -17,6 +15,7 @@ import argparse
 from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
+import CommonUtils
 
 
 def Run_Pipeline(args):
@@ -25,21 +24,13 @@ def Run_Pipeline(args):
         input("Press Enter to continue")
 
     datasetName = "ellipsoid-v0"
-    filename = datasetName + ".zip"
-    # Check if the data is in the right place
-    if not os.path.exists(filename):
-        print("Can't find " + filename + " in the current directory.")
-        import DatasetUtils
-        DatasetUtils.downloadDataset(datasetName)
+    outputDirectory = "Output/Ellipsoids_mesh/"
+    if not os.path.exists(outputDirectory):
+        os.makedirs(outputDirectory)
+    CommonUtils.get_data(datasetName, outputDirectory)
 
-    parentDir = "TestEllipsoidsMesh/"
-    if not os.path.exists(parentDir):
-        os.makedirs(parentDir)
-    # extract the zipfile
-    with ZipFile(filename, 'r') as zipObj:
-        zipObj.extractall(path=parentDir)
-        meshFiles = sorted(glob.glob(parentDir + datasetName + "/meshes/*.ply"))
-        imageFiles = sorted(glob.glob(parentDir + datasetName + "/images/*.nrrd"))
+    meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))
+    imageFiles = sorted(glob.glob(outputDirectory + datasetName + "/images/*.nrrd"))
 
     meshFiles = meshFiles[:15]
     imageFiles = imageFiles[:15]
@@ -48,7 +39,7 @@ def Run_Pipeline(args):
         meshFiles = meshFiles[:2]
         imageFiles = imageFiles[:2]
 
-    pointDir = parentDir + 'PointFiles/'
+    pointDir = outputDirectory + 'shape_models/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
