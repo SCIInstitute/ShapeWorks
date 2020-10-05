@@ -18,7 +18,20 @@ import platform
 import shutil
 import xml.etree.ElementTree as ET
 from termcolor import colored, cprint
+from zipfile import ZipFile
 
+def get_data(datasetName, outputDirectory):
+    # Check if the unzipped data is present
+    if not os.path.exists(outputDirectory + datasetName + '/'):
+        # check if the zipped data is present
+        zipfile = 'Data/' + datasetName + ".zip"
+        if not os.path.exists(zipfile):
+            print("Can't find " + zipfile)
+            import DatasetUtils
+            DatasetUtils.downloadDataset(datasetName, destinationPath='./Data/')
+        print("Unzipping " + zipfile + " into " + outputDirectory)
+        with ZipFile(zipfile, 'r') as zipObj:
+            zipObj.extractall(path=outputDirectory)
 
 def create_cpp_xml(filename, outputfilename):
     '''

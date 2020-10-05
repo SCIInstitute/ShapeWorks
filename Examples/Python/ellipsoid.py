@@ -18,8 +18,6 @@ optimization and, the post ShapeWorks visualization.
 
 First import the necessary modules
 """
-
-from zipfile import ZipFile
 import os
 import sys
 import csv
@@ -28,6 +26,7 @@ import argparse
 from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
+import CommonUtils
 
 def Run_Pipeline(args):
     """
@@ -48,25 +47,12 @@ def Run_Pipeline(args):
         input("Press Enter to continue")
 
     datasetName = "ellipsoid-v0"
-    zipfile = 'Data/' + datasetName + ".zip"
     outputDirectory = "Output/Ellipsoids/"
-    originalDataDirectory = outputDirectory + datasetName + "/"
-    
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
-        
-    # Check if the unzipped data is present
-    if not os.path.exists(originalDataDirectory):
-        # check if the zipped data is present
-        if not os.path.exists(zipfile):
-            print("Can't find " + zipfile)
-            import DatasetUtils
-            DatasetUtils.downloadDataset(datasetName, destinationPath='./Data/')
-        print("Unzipping " + zipfile + " into " + outputDirectory)
-        with ZipFile(zipfile, 'r') as zipObj:
-            zipObj.extractall(path=outputDirectory)
-            
-    fileList = sorted(glob.glob(originalDataDirectory + "segmentations/*.nrrd"))
+    CommonUtils.get_data(datasetName, outputDirectory)
+
+    fileList = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))
 
     fileList = fileList[:15]
     if args.tiny_test:
