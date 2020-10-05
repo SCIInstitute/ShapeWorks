@@ -167,7 +167,7 @@ def Run_Pipeline(args):
         cutting_plane_counts.append(2)
 
     parameterDictionary = {
-        "number_of_particles": 128,
+        "number_of_particles": 32,
         "use_normals": 1,
         "normal_weight": 10.0,
         "checkpointing_interval": 200,
