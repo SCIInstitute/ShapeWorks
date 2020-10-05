@@ -14,8 +14,8 @@ set_target_properties(shapeworks_py PROPERTIES
   )
 
 install(TARGETS shapeworks_py
-  ARCHIVE DESTINATION lib
+  ARCHIVE DESTINATION bin
   RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
+  LIBRARY DESTINATION bin
   PUBLIC_HEADER DESTINATION include
   )
