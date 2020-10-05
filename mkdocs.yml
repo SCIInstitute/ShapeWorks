@@ -24,6 +24,7 @@ nav:
    - 'ShapeWorks Takes ~85% Less Memory':    'new/openvdb.md'
    - 'ShapeWorks Directly on Meshes':        'new/sw-meshes.md'
    - 'ShapeWorks API':                       'new/shapeworks-api.md'
+   - 'Shape Model Evaluation':               'new/ssm-eval.md'
 - Deep Learning & SSMs:
    - 'Data Augmentation for Deep Learning':  'deep-learning/data-augmentation.md'
    - 'SSMs Directly from Images':            'deep-learning/deep-ssm.md'
