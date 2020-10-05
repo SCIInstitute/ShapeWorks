@@ -29,23 +29,28 @@
 
 ShapeWorksGroom::ShapeWorksGroom(
   std::vector<ImageType::Pointer> inputs,
-  double background, double foreground, 
-  double blurSigma, size_t padding,  size_t iterations,
+  double background, double foreground,
+  double blurSigma, size_t padding, size_t iterations,
   bool verbose)
   : images_(inputs), background_(background), blurSigma_(blurSigma),
-  foreground_(foreground),  padding_(padding),
-  iterations_(iterations), verbose_(verbose) {
+    foreground_(foreground), padding_(padding),
+    iterations_(iterations), verbose_(verbose)
+{
+
   this->paddingInit_ = false;
-  this->upper_ = { 0,0,0 };
-  this->lower_ = { 0,0,0 };
+  this->upper_ = {0, 0, 0};
+  this->lower_ = {0, 0, 0};
+  this->transforms_.resize(this->images_.size());
 }
 
-void ShapeWorksGroom::queueTool(std::string tool) {
+void ShapeWorksGroom::queueTool(std::string tool)
+{
   this->runTools_.insert(std::make_pair(tool, true));
 }
 
-void ShapeWorksGroom::run() {
-  this->seed_.Fill(0);
+void ShapeWorksGroom::run()
+{
+
   size_t ran = 0;
   if (this->runTools_.count("center")) {
     this->center();
@@ -70,27 +75,31 @@ void ShapeWorksGroom::run() {
   }
 }
 
-std::map<std::string, bool> ShapeWorksGroom::tools() {
+std::map<std::string, bool> ShapeWorksGroom::tools()
+{
   return this->runTools_;
 }
 
-double ShapeWorksGroom::foreground() { return this->foreground_; }
+double ShapeWorksGroom::foreground()
+{ return this->foreground_; }
 
-std::vector<ImageType::Pointer> ShapeWorksGroom::getImages() {
+std::vector<ImageType::Pointer> ShapeWorksGroom::getImages()
+{
   return this->images_;
 }
 
-void ShapeWorksGroom::isolate(int which) {
+void ShapeWorksGroom::isolate(int which)
+{
   if (this->verbose_) {
     std::cout << "*** RUNNING TOOL: isolate on " <<
-      (which == -1 ? "all" : std::to_string(which)) << std::endl;
+              (which == -1 ? "all" : std::to_string(which)) << std::endl;
   }
   auto start = (which == -1 ? 0 : which);
   auto end = (which == -1 ? this->images_.size() : which + 1);
   for (size_t i = start; i < end; i++) {
     auto img = this->images_[i];
-    typedef itk::Image<unsigned char, 3>  IsolateType;
-    typedef itk::CastImageFilter< ImageType, IsolateType > ToIntType;
+    typedef itk::Image<unsigned char, 3> IsolateType;
+    typedef itk::CastImageFilter<ImageType, IsolateType> ToIntType;
     ToIntType::Pointer filter = ToIntType::New();
     filter->SetInput(img);
     filter->Update();
@@ -102,19 +111,19 @@ void ShapeWorksGroom::isolate(int which) {
     ccfilter->FullyConnectedOn();
     ccfilter->Update();
     typedef itk::RelabelComponentImageFilter<
-      IsolateType, IsolateType >  RelabelType;
+      IsolateType, IsolateType> RelabelType;
     RelabelType::Pointer relabel = RelabelType::New();
     relabel->SetInput(ccfilter->GetOutput());
     relabel->SortByObjectSizeOn();
     relabel->Update();
-    typedef itk::ThresholdImageFilter< IsolateType >  ThreshType;
+    typedef itk::ThresholdImageFilter<IsolateType> ThreshType;
     ThreshType::Pointer thresh = ThreshType::New();
     thresh->SetInput(relabel->GetOutput());
     thresh->SetOutsideValue(0);
     thresh->ThresholdBelow(0);
     thresh->ThresholdAbove(1.001);
     thresh->Update();
-    typedef itk::CastImageFilter< IsolateType, ImageType > FilterType;
+    typedef itk::CastImageFilter<IsolateType, ImageType> FilterType;
     FilterType::Pointer filter2 = FilterType::New();
     filter2->SetInput(thresh->GetOutput());
     filter2->Update();
@@ -125,19 +134,20 @@ void ShapeWorksGroom::isolate(int which) {
   }
 }
 
-void ShapeWorksGroom::hole_fill(int which) {
+void ShapeWorksGroom::hole_fill(int which)
+{
   if (this->verbose_) {
     std::cout << "*** RUNNING TOOL: antialias on " <<
-      (which == -1 ? "all" : std::to_string(which)) << std::endl;
+              (which == -1 ? "all" : std::to_string(which)) << std::endl;
   }
   auto start = (which == -1 ? 0 : which);
   auto end = (which == -1 ? this->images_.size() : which + 1);
   for (size_t i = start; i < end; i++) {
     auto img = this->images_[i];
-    typedef itk::BinaryFillholeImageFilter< ImageType > HoleType;
+    typedef itk::BinaryFillholeImageFilter<ImageType> HoleType;
     HoleType::Pointer hfilter = HoleType::New();
     hfilter->SetInput(img);
-    hfilter->SetForegroundValue(itk::NumericTraits< PixelType >::min());
+    hfilter->SetForegroundValue(itk::NumericTraits<PixelType>::min());
     hfilter->Update();
     this->images_[i] = hfilter->GetOutput();
   }
@@ -146,13 +156,15 @@ void ShapeWorksGroom::hole_fill(int which) {
   }
 }
 
-void ShapeWorksGroom::center(int which) {
+void ShapeWorksGroom::center(int which)
+{
   if (this->verbose_) {
     std::cout << "*** RUNNING TOOL: center on " <<
-      (which == -1 ? "all" : std::to_string(which)) << std::endl;
+              (which == -1 ? "all" : std::to_string(which)) << std::endl;
   }
   auto start = (which == -1 ? 0 : which);
   auto end = (which == -1 ? this->images_.size() : which + 1);
+
   for (size_t i = start; i < end; i++) {
     auto img = this->images_[i];
     ImageType::PointType origin = img->GetOrigin();
@@ -177,16 +189,17 @@ void ShapeWorksGroom::center(int which) {
         sit.Set(oit.Get());
         // Get the physical index from the image index.
         img->TransformIndexToPhysicalPoint(oit.GetIndex(), point);
-        for (unsigned int i = 0; i < 3; i++) {
-          params[i] += point[i];
+        for (unsigned int j = 0; j < 3; j++) {
+          params[j] += point[j];
         }
         count += 1.0;
-      } else { sit.Set(this->background_); }
+      }
+      else { sit.Set(this->background_); }
     }
 
     // Compute center of mass.
-    for (unsigned int i = 0; i < 3; i++) {
-      params[i] = params[i] / count;
+    for (unsigned int j = 0; j < 3; j++) {
+      params[j] = params[j] / count;
     }
 
     double new_origin[3];
@@ -199,14 +212,22 @@ void ShapeWorksGroom::center(int which) {
       std::cerr << "new origin = " << img->GetOrigin() << "\n";
     }
     // Zero out the original image.
-    for (oit.GoToBegin(); !oit.IsAtEnd(); ++oit){
+    for (oit.GoToBegin(); !oit.IsAtEnd(); ++oit) {
       oit.Set(this->background_);
     }
 
+    itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
+    //TransformType::OutputVectorType translation;
+
     // Translate the segmentation back into the original image.
-    itk::TranslationTransform<double, 3>::Pointer trans
-      = itk::TranslationTransform<double, 3>::New();
-    trans->SetParameters(params);
+    itk::AffineTransform<double, 3>::Pointer trans = itk::AffineTransform<double, 3>::New();
+    trans->SetIdentity();
+    tform[0] = params[0];
+    tform[1] = params[1];
+    tform[2] = params[2];
+    trans->SetTranslation(tform);
+
+    this->transforms_[i] = trans->GetParameters();
 
     itk::NearestNeighborInterpolateImageFunction<ImageType, double>::Pointer
       interp = itk::NearestNeighborInterpolateImageFunction<ImageType, double>::New();
@@ -231,10 +252,11 @@ void ShapeWorksGroom::center(int which) {
   }
 }
 
-void ShapeWorksGroom::auto_pad(int which) {
+void ShapeWorksGroom::auto_pad(int which)
+{
   if (this->verbose_) {
     std::cout << "*** RUNNING TOOL: auto_pad on " <<
-      (which == -1 ? "all" : std::to_string(which)) << std::endl;
+              (which == -1 ? "all" : std::to_string(which)) << std::endl;
   }
   bool first = true;
   auto start = (which == -1 ? 0 : which);
@@ -246,17 +268,18 @@ void ShapeWorksGroom::auto_pad(int which) {
         first = false;
         this->lower_ = img->GetLargestPossibleRegion().GetIndex();
         this->upper_ = lower_ + img->GetLargestPossibleRegion().GetSize();
-      } else {
+      }
+      else {
         // Keep the largest bounding box.
         ImageType::RegionType::IndexType lowerTmp
           = img->GetLargestPossibleRegion().GetIndex();
         ImageType::RegionType::IndexType upperTmp
           = lowerTmp + img->GetLargestPossibleRegion().GetSize();
         for (unsigned int i = 0; i < 3; i++) {
-          if (lowerTmp[i] < this->lower_[i]) { 
+          if (lowerTmp[i] < this->lower_[i]) {
             this->lower_[i] = lowerTmp[i];
           }
-          if (upperTmp[i] > this->upper_[i]){
+          if (upperTmp[i] > this->upper_[i]) {
             this->upper_[i] = upperTmp[i];
           }
         }
@@ -266,9 +289,9 @@ void ShapeWorksGroom::auto_pad(int which) {
   }
   if (this->verbose_) {
     std::cout << "Lower bound = " << this->lower_[0] << " " << this->lower_[1]
-      << " " << this->lower_[2] << std::endl;
+              << " " << this->lower_[2] << std::endl;
     std::cout << "Upper bound = " << this->upper_[0] << " " << this->upper_[1] << " "
-      << this->upper_[2] << std::endl;
+              << this->upper_[2] << std::endl;
   }
   // Make sure the origin is at the center of the image.
   double orig[3];
@@ -284,12 +307,12 @@ void ShapeWorksGroom::auto_pad(int which) {
 
     // set the desired padding
     auto pd = static_cast<unsigned long>((this->padding_ + 1) / 2);
-	itk::Size<3> hipad;
-	hipad[0] = pd;
-	hipad[1] = pd;
-	hipad[2] = pd;
-	
-    unsigned long lowpad[3] = { pd, pd, pd };
+    itk::Size<3> hipad;
+    hipad[0] = pd;
+    hipad[1] = pd;
+    hipad[2] = pd;
+
+    unsigned long lowpad[3] = {pd, pd, pd};
 
     padder->SetPadUpperBound(hipad);
     padder->SetPadLowerBound(hipad);
@@ -297,12 +320,12 @@ void ShapeWorksGroom::auto_pad(int which) {
 
     if (this->verbose_) {
       std::cout << "input region = "
-        << img->GetBufferedRegion().GetSize()
-        << std::endl;
+                << img->GetBufferedRegion().GetSize()
+                << std::endl;
       std::cout << "lowpad: " << lowpad[0] << " " << lowpad[1] << " " << lowpad[2]
-        << std::endl;
+                << std::endl;
       std::cout << "hipad: " << hipad[0] << " " << hipad[1] << " " << hipad[2]
-        << std::endl;
+                << std::endl;
     }
     this->images_[i] = padder->GetOutput();
   }
@@ -311,10 +334,11 @@ void ShapeWorksGroom::auto_pad(int which) {
   }
 }
 
-void ShapeWorksGroom::antialias(int which) {
+void ShapeWorksGroom::antialias(int which)
+{
   if (this->verbose_) {
     std::cout << "*** RUNNING TOOL: antialias on " <<
-      (which == -1 ? "all" : std::to_string(which)) << std::endl;
+              (which == -1 ? "all" : std::to_string(which)) << std::endl;
   }
   auto start = (which == -1 ? 0 : which);
   auto end = (which == -1 ? this->images_.size() : which + 1);
@@ -333,10 +357,11 @@ void ShapeWorksGroom::antialias(int which) {
   }
 }
 
-void ShapeWorksGroom::fastmarching(int which) {
+void ShapeWorksGroom::fastmarching(int which)
+{
   if (this->verbose_) {
     std::cout << "*** RUNNING TOOL: fastmarching on " <<
-      (which == -1 ? "all" : std::to_string(which)) << std::endl;
+              (which == -1 ? "all" : std::to_string(which)) << std::endl;
   }
   auto start = (which == -1 ? 0 : which);
   auto end = (which == -1 ? this->images_.size() : which + 1);
@@ -358,14 +383,15 @@ void ShapeWorksGroom::fastmarching(int which) {
   }
 }
 
-void ShapeWorksGroom::blur(int which) {
+void ShapeWorksGroom::blur(int which)
+{
   if (this->verbose_) {
-    std::cout << "*** RUNNING TOOL: blur on "<< 
-      (which == -1 ? "all" : std::to_string(which)) << std::endl;
+    std::cout << "*** RUNNING TOOL: blur on " <<
+              (which == -1 ? "all" : std::to_string(which)) << std::endl;
   }
   auto start = (which == -1 ? 0 : which);
   auto end = (which == -1 ? this->images_.size() : which + 1);
-  for (size_t i = start ; i < end; i++) {
+  for (size_t i = start; i < end; i++) {
     auto img = this->images_[i];
     itk::DiscreteGaussianImageFilter<ImageType, ImageType>::Pointer blur
       = itk::DiscreteGaussianImageFilter<ImageType, ImageType>::New();
@@ -377,4 +403,9 @@ void ShapeWorksGroom::blur(int which) {
   if (this->verbose_) {
     std::cout << "*** FINISHED RUNNING TOOL: blur" << std::endl;
   }
+}
+
+std::vector<TransformType> ShapeWorksGroom::get_transforms()
+{
+  return this->transforms_;
 }

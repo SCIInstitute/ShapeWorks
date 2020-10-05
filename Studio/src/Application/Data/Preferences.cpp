@@ -195,7 +195,7 @@ void Preferences::set_saved(bool saved)
 //-----------------------------------------------------------------------------
 QStringList Preferences::get_recent_files()
 {
-  return this->settings_.value("Main/recentFileList").toStringList();
+  return this->settings_.value("Main/recentFileListNew").toStringList();
 }
 
 //-----------------------------------------------------------------------------
@@ -208,7 +208,7 @@ void Preferences::add_recent_file(QString file)
     files.removeLast();
   }
 
-  this->settings_.setValue("Main/recentFileList", files);
+  this->settings_.setValue("Main/recentFileListNew", files);
 }
 
 //-----------------------------------------------------------------------------

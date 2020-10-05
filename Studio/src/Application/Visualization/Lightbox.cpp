@@ -8,6 +8,9 @@
 #include <vtkQImageToImageSource.h>
 #include <vtkImageData.h>
 #include <vtkBoundingBox.h>
+#include <vtkOrientationMarkerWidget.h>
+#include <vtkAnnotatedCubeActor.h>
+#include <vtkProperty.h>
 
 #include <Visualization/Lightbox.h>
 #include <Visualization/StudioInteractorStyle.h>
@@ -26,7 +29,7 @@ Lightbox::Lightbox()
   this->style_->AutoAdjustCameraClippingRangeOn();
   this->style_->set_lightbox(this);
 
-  
+
   // prepare the loading spinner
   QPixmap pixmap;
   pixmap.load(QString(":/Studio/Images/spinner.png"));
@@ -43,8 +46,7 @@ Lightbox::Lightbox()
 
     this->spinner_images_.push_back(image);
   }
-  
-  
+
   QObject::connect(
     &this->loading_timer_, SIGNAL(timeout()),
     this, SLOT(handle_timer_callback()));
@@ -146,9 +148,18 @@ void Lightbox::display_shapes()
   for (int i = start_object; i < end_object; i++) {
     this->insert_shape_into_viewer(this->shapes_[i], position);
     //if (!this->viewers_[position]->is_viewer_ready()) {
-      //need_loading_screen = true;
+    //need_loading_screen = true;
     //}
     position++;
+  }
+
+  if (this->visualizer_->get_uniform_feature_range()) {
+    for (int i = 0; i < this->viewers_.size(); i++) {
+      auto shape = this->viewers_[i]->get_shape();
+      if (shape && shape->get_vectors().empty()) {
+        this->viewers_[i]->update_feature_range(this->visualizer_->get_feature_range());
+      }
+    }
   }
 
   /*
@@ -170,6 +181,12 @@ void Lightbox::set_render_window(vtkRenderWindow* renderWindow)
   this->render_window_->AddRenderer(this->renderer_);
 
   this->render_window_->GetInteractor()->SetInteractorStyle(this->style_);
+
+  this->orientation_marker_widget_ = this->create_orientation_marker();
+  this->orientation_marker_widget_->SetInteractor(
+    this->renderer_->GetRenderWindow()->GetInteractor());
+  this->orientation_marker_widget_->EnabledOn();
+  this->orientation_marker_widget_->InteractiveOff();
 
   this->setup_renderers();
 }
@@ -194,6 +211,13 @@ void Lightbox::setup_renderers()
 
   float step_x = tile_width + margin;
   float step_y = tile_height + margin;
+
+  double cube_viewport[4];
+  cube_viewport[0] = 1.0 - (tile_width * 0.2);
+  cube_viewport[1] = 1.0 - (tile_height * 0.2);
+  cube_viewport[2] = 1.0;
+  cube_viewport[3] = 1.0;
+  this->orientation_marker_widget_->SetViewport(cube_viewport);
 
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
@@ -265,7 +289,7 @@ void Lightbox::set_tile_layout(int width, int height)
 //-----------------------------------------------------------------------------
 int Lightbox::get_num_rows()
 {
-  return std::ceil((float)this->shapes_.size() / (float)this->tile_layout_width_);
+  return std::ceil((float) this->shapes_.size() / (float) this->tile_layout_width_);
 }
 
 //-----------------------------------------------------------------------------
@@ -313,12 +337,12 @@ ViewerList Lightbox::get_viewers()
 void Lightbox::handle_pick(int* click_pos, bool one)
 {
   int id = -1;
-  foreach(ViewerHandle viewer, this->viewers_) {
-    int vid = viewer->handle_pick(click_pos);
-    if (vid != -1) {
-      id = vid;
+    foreach(ViewerHandle viewer, this->viewers_) {
+      int vid = viewer->handle_pick(click_pos);
+      if (vid != -1) {
+        id = vid;
+      }
     }
-  }
 
   if (one) {
     this->visualizer_->set_selected_point_one(id);
@@ -331,9 +355,9 @@ void Lightbox::handle_pick(int* click_pos, bool one)
 //-----------------------------------------------------------------------------
 void Lightbox::set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut)
 {
-  foreach(ViewerHandle viewer, this->viewers_) {
-    viewer->set_lut(lut);
-  }
+    foreach(ViewerHandle viewer, this->viewers_) {
+      viewer->set_lut(lut);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -348,9 +372,9 @@ void Lightbox::handle_timer_callback()
   this->timer_callback_count_ = (this->timer_callback_count_ + 1) % 19;
 
   //std::cerr << "timer!\n";
-  foreach(ViewerHandle viewer, this->get_viewers()) {
-    viewer->set_loading_screen(this->spinner_images_[this->timer_callback_count_]);
-  }
+    foreach(ViewerHandle viewer, this->get_viewers()) {
+      viewer->set_loading_screen(this->spinner_images_[this->timer_callback_count_]);
+    }
   //this->renderer_->ResetCameraClippingRange();
   this->renderer_->GetRenderWindow()->Render();
 }
@@ -375,7 +399,7 @@ void Lightbox::check_for_first_draw()
       this->viewers_[ready_viewer]->get_renderer()->ResetCamera();
       //this->viewers_[ready_viewer]->get_renderer()->ResetCamera();
       auto pos = this->viewers_[ready_viewer]->get_renderer()->GetActiveCamera()->GetPosition();
-      this->initPos_ = { { pos[0], pos[1], pos[2] } };
+      this->initPos_ = {{pos[0], pos[1], pos[2]}};
 /*
       for (int i = 0; i < this->viewers_.size(); i++) {
 
@@ -384,4 +408,40 @@ void Lightbox::check_for_first_draw()
  */
     }
   }
+}
+
+//-----------------------------------------------------------------------------
+vtkSmartPointer<vtkOrientationMarkerWidget> Lightbox::create_orientation_marker()
+{
+
+  // create the orientation cube
+  vtkSmartPointer<vtkAnnotatedCubeActor> cubeActor = vtkSmartPointer<vtkAnnotatedCubeActor>::New();
+  cubeActor->SetXPlusFaceText("L");
+  cubeActor->SetXMinusFaceText("R");
+  cubeActor->SetYPlusFaceText("P");
+  cubeActor->SetYMinusFaceText("A");
+  cubeActor->SetZPlusFaceText("S");
+  cubeActor->SetZMinusFaceText("I");
+  cubeActor->SetFaceTextScale(0.67);
+  cubeActor->GetTextEdgesProperty()->SetColor(0.5, 0.5, 0.5);
+  cubeActor->SetTextEdgesVisibility(1);
+  cubeActor->SetCubeVisibility(1);
+  cubeActor->SetFaceTextVisibility(1);
+  vtkProperty* prop = cubeActor->GetXPlusFaceProperty();
+  prop->SetColor(0, 0, 1);
+  prop = cubeActor->GetXMinusFaceProperty();
+  prop->SetColor(0, 0, 1);
+  prop = cubeActor->GetYPlusFaceProperty();
+  prop->SetColor(0, 1, 0);
+  prop = cubeActor->GetYMinusFaceProperty();
+  prop->SetColor(0, 1, 0);
+  prop = cubeActor->GetZPlusFaceProperty();
+  prop->SetColor(1, 0, 0);
+  prop = cubeActor->GetZMinusFaceProperty();
+  prop->SetColor(1, 0, 0);
+  vtkSmartPointer<vtkOrientationMarkerWidget> orientationMarketWidget =
+    vtkSmartPointer<vtkOrientationMarkerWidget>::New();
+  orientationMarketWidget->SetOrientationMarker(cubeActor);
+  orientationMarketWidget->SetViewport(0.85, 0.85, 1, 1);
+  return orientationMarketWidget;
 }

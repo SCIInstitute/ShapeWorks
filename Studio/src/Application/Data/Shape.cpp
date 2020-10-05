@@ -10,6 +10,7 @@
 #include <vtkCenterOfMass.h>
 
 #include <Data/MeshGenerator.h>
+#include <Data/StudioLog.h>
 #include <Visualization/Visualizer.h>
 
 using namespace shapeworks;
@@ -86,7 +87,14 @@ void Shape::import_original_image(std::string filename, float iso_value)
 QSharedPointer<Mesh> Shape::get_original_mesh()
 {
   if (!this->original_mesh_) {
-    this->generate_meshes(this->subject_->get_segmentation_filenames(), this->original_mesh_);
+    if (!this->subject_) {
+      // There is no original mesh for a computed shape (e.g. mean)
+      std::cerr << "Error: asked for original mesh when none is present!\n";
+    }
+    else {
+      this->generate_meshes(this->subject_->get_segmentation_filenames(), this->original_mesh_,
+                            true);
+    }
   }
   return this->original_mesh_;
 }
@@ -113,7 +121,7 @@ ImageType::Pointer Shape::get_original_image()
       orienter->SetInput(image);
       orienter->Update();
       image = orienter->GetOutput();
-    } catch (itk::ExceptionObject & excep) {
+    } catch (itk::ExceptionObject& excep) {
       std::cerr << "Exception caught!" << std::endl;
       std::cerr << excep << std::endl;
     }
@@ -131,11 +139,13 @@ ImageType::Pointer Shape::get_groomed_image()
       try {
         // read file using ITK
         ReaderType::Pointer reader = ReaderType::New();
+        STUDIO_LOG_MESSAGE(QString::fromStdString("Loading groomed file: " + filename));
         reader->SetFileName(filename);
         reader->Update();
         image = reader->GetOutput();
         // don't store to this->groomed_image_ so that we don't hold a pointer to it
-      } catch (itk::ExceptionObject & excep) {
+      } catch (itk::ExceptionObject& excep) {
+        STUDIO_LOG_ERROR(QString::fromStdString("Failed to loading groomed file: " + filename));
         std::cerr << "Exception caught!" << std::endl;
         std::cerr << excep << std::endl;
       }
@@ -146,29 +156,38 @@ ImageType::Pointer Shape::get_groomed_image()
 }
 
 //---------------------------------------------------------------------------
-void Shape::import_groomed_image(ImageType::Pointer img, double iso)
+void Shape::import_groomed_image(ImageType::Pointer img, double iso, TransformType transform)
 {
   this->groomed_mesh_ = QSharedPointer<Mesh>(new Mesh());
   this->groomed_image_ = img;
   this->groomed_mesh_->create_from_image(img, iso);
+  this->groomed_transform_ = transform;
   auto name = this->get_original_filename_with_path().toStdString();
   name = name.substr(0, name.find_last_of(".")) + "_DT.nrrd";
   this->groomed_filename_ = QString::fromStdString(name);
-  std::vector<std::string> groomed_filenames {name};   // only single domain supported so far
+  std::vector<std::string> groomed_filenames{name};   // only single domain supported so far
   this->subject_->set_groomed_filenames(groomed_filenames);
+
+  // single domain so far
+  std::vector<std::vector<double>> groomed_transforms;
+  std::vector<double> groomed_transform;
+  for (int i = 0; i < transform.size(); i++) {
+    groomed_transform.push_back(transform[i]);
+  }
+  groomed_transforms.push_back(groomed_transform);
+  this->subject_->set_groomed_transforms(groomed_transforms);
+
 }
 
 //---------------------------------------------------------------------------
 QSharedPointer<Mesh> Shape::get_groomed_mesh()
 {
   if (!this->groomed_mesh_) {
-
     if (!this->subject_) {
-      std::cerr << "Error: asked for groom mesh when none as present!\n";
-      //return this->groomed_mesh_;
+      std::cerr << "Error: asked for groomed mesh when none is present!\n";
     }
     else {
-      this->generate_meshes(this->subject_->get_groomed_filenames(), this->groomed_mesh_);
+      this->generate_meshes(this->subject_->get_groomed_filenames(), this->groomed_mesh_, false);
     }
   }
 
@@ -188,7 +207,7 @@ void Shape::clear_reconstructed_mesh()
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_global_particles(const vnl_vector<double> &points)
+void Shape::set_global_particles(const vnl_vector<double>& points)
 {
   this->global_correspondence_points_ = points;
 }
@@ -213,7 +232,7 @@ bool Shape::import_points(std::vector<itk::Point<double>> points, bool local)
 {
   vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
   size_t num_points = 0;
-  for (auto &a : points) {
+  for (auto& a : points) {
     double x = static_cast<double>(a[0]);
     double y = static_cast<double>(a[1]);
     double z = static_cast<double>(a[2]);
@@ -221,8 +240,8 @@ bool Shape::import_points(std::vector<itk::Point<double>> points, bool local)
     vtk_points->InsertNextPoint(x, y, z);
     num_points++;
   }
-  auto & point_list = local ? this->local_correspondence_points_ :
-                      this->global_correspondence_points_;
+  auto& point_list = local ? this->local_correspondence_points_ :
+                     this->global_correspondence_points_;
 
   point_list.clear();
   point_list.set_size(num_points * 3);
@@ -304,6 +323,7 @@ QString Shape::get_original_filename_with_path()
   }
   return QString::fromStdString(this->subject_->get_segmentation_filenames()[0]);
 }
+
 //---------------------------------------------------------------------------
 QString Shape::get_groomed_filename()
 {
@@ -390,7 +410,7 @@ void Shape::set_vectors(std::vector<Point> vectors)
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_transform(const vnl_vector<double> &transform)
+void Shape::set_transform(const vnl_vector<double>& transform)
 {
   this->transform_ = transform;
 }
@@ -400,7 +420,7 @@ vnl_vector<double> Shape::get_transform()
 {
   return this->transform_;
 }
-
+/*
 //---------------------------------------------------------------------------
 void Shape::generate_original_meshes()
 {
@@ -421,21 +441,22 @@ void Shape::generate_original_meshes()
       double center[3];
       com->GetCenter(center);
 
-      this->transform_.set_size(3);
+      this->transform_.set_size(12);
       for (unsigned int i = 0; i < 3; i++) {
-        this->transform_[i] = center[i];
+        this->transform_[9 + i] = center[i];
       }
 
-//      this->set_transform(this->original_mesh_->get_center_transform());
+      this->set_transform(this->original_mesh_->get_center_transform());
     }
     else {
       //std::cerr << "no mesh yet from manager!\n";
     }
   }
-}
+}*/
 
 //---------------------------------------------------------------------------
-void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<Mesh> &mesh)
+void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<Mesh>& mesh,
+                            bool save_transform)
 {
   if (filenames.size() < 1) {
     return;
@@ -458,15 +479,17 @@ void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<Mesh> 
     double center[3];
     com->GetCenter(center);
 
-    this->transform_.set_size(3);
-    for (unsigned int i = 0; i < 3; i++) {
-      this->transform_[i] = center[i];
+    if (save_transform) {
+      this->transform_.set_size(12);
+      for (unsigned int i = 0; i < 3; i++) {
+        this->transform_[9 + i] = center[i];
+      }
     }
   }
 }
 
 //---------------------------------------------------------------------------
-bool Shape::import_point_file(QString filename, vnl_vector<double> &points)
+bool Shape::import_point_file(QString filename, vnl_vector<double>& points)
 {
   std::ifstream in(filename.toStdString().c_str());
   if (!in.good()) {
@@ -479,7 +502,7 @@ bool Shape::import_point_file(QString filename, vnl_vector<double> &points)
   while (in.good()) {
     double x, y, z;
     in >> x >> y >> z;
-    if (!in.good()) {break;}
+    if (!in.good()) { break; }
     vtk_points->InsertNextPoint(x, y, z);
     num_points++;
   }
@@ -495,4 +518,131 @@ bool Shape::import_point_file(QString filename, vnl_vector<double> &points)
     points[idx++] = pos[2];
   }
   return true;
+}
+
+//---------------------------------------------------------------------------
+void Shape::load_feature(std::string display_mode, std::string feature)
+{
+  auto mesh = this->get_mesh(display_mode);
+  if (!mesh) {
+    // not ready yet
+    return;
+  }
+  vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
+
+  //std::cerr << "checking if mesh has scalar array for " << feature << "\n";
+  auto scalar_array = poly_data->GetPointData()->GetArray(feature.c_str());
+  if (!scalar_array) {
+    //std::cerr << "shape: array NOT present! Loading...\n";
+
+    if (!this->subject_) {
+      return;
+    }
+
+    auto filenames = this->subject_->get_feature_filenames();
+
+    vnl_vector<double> transform;
+    if (display_mode != Visualizer::MODE_ORIGINAL_C) {
+      transform = this->get_groomed_transform();
+    }
+
+//    std::cerr << "Apply feature map for feature '" << feature << "' using filename "
+//              << filenames[feature] << "\n";
+
+    // read the feature
+    ReaderType::Pointer reader = ReaderType::New();
+    reader->SetFileName(filenames[feature]);
+    reader->Update();
+    ImageType::Pointer image = reader->GetOutput();
+
+    mesh->apply_feature_map(feature, image, transform);
+
+    this->apply_feature_to_points(feature, image);
+  }
+}
+
+//---------------------------------------------------------------------------
+void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer image)
+{
+  using LinearInterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
+
+  LinearInterpolatorType::Pointer interpolator = LinearInterpolatorType::New();
+  interpolator->SetInputImage(image);
+
+  auto region = image->GetLargestPossibleRegion();
+
+  vnl_vector<double> transform = this->get_groomed_transform();
+
+  int num_points = this->local_correspondence_points_.size() / 3;
+
+  Eigen::VectorXf values(num_points);
+
+  int idx = 0;
+  for (int i = 0; i < num_points; ++i) {
+
+    ImageType::PointType pitk;
+    pitk[0] = this->local_correspondence_points_[idx++];
+    pitk[1] = this->local_correspondence_points_[idx++];
+    pitk[2] = this->local_correspondence_points_[idx++];
+
+    if (transform.size() == 12) {
+      pitk[0] = pitk[0] + transform[9];
+      pitk[1] = pitk[1] + transform[10];
+      pitk[2] = pitk[2] + transform[11];
+    }
+
+    LinearInterpolatorType::ContinuousIndexType index;
+    image->TransformPhysicalPointToContinuousIndex(pitk, index);
+
+    auto pixel = 0;
+    if (region.IsInside(index)) {
+      pixel = interpolator->EvaluateAtContinuousIndex(index);
+    }
+
+    values[i] = pixel;
+  }
+  this->point_features_[feature] = values;
+
+}
+
+//---------------------------------------------------------------------------
+Eigen::VectorXf Shape::get_point_features(std::string feature)
+{
+  auto it = this->point_features_.find(feature);
+  if (it == this->point_features_.end()) {
+    return Eigen::VectorXf();
+  }
+
+  return it->second;
+}
+
+//---------------------------------------------------------------------------
+void Shape::set_point_features(std::string feature, Eigen::VectorXf values)
+{
+  this->point_features_[feature] = values;
+
+  auto mesh = this->get_mesh(Visualizer::MODE_RECONSTRUCTION_C);
+
+  if (mesh) {
+    mesh->interpolate_scalars_to_mesh(feature, this->global_correspondence_points_, values);
+  }
+}
+
+//---------------------------------------------------------------------------
+TransformType Shape::get_groomed_transform()
+{
+  if (this->groomed_transform_.size() == 0) {
+    // single domain support
+    auto transforms = this->subject_->get_groomed_transforms();
+    if (transforms.size() > 0) {
+      this->groomed_transform_.set_size(transforms[0].size());
+      //std::cerr << "loaded groomed transform from project: \n";
+      for (int i = 0; i < transforms[0].size(); i++) {
+        //std::cerr << transforms[0][i] << " ";
+        this->groomed_transform_[i] = transforms[0][i];
+      }
+      //std::cerr << "\n";
+    }
+  }
+  return this->groomed_transform_;
 }

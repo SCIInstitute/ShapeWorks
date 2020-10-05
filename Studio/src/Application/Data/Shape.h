@@ -11,15 +11,13 @@ class Shape;
 using ShapeHandle = QSharedPointer<Shape>;
 using ShapeList = QVector<ShapeHandle>;
 
-class Point
-{
+class Point {
 public:
   double x, y, z;
 };
 
 //! Representation of a single shape/patient/subject.
-class Shape
-{
+class Shape {
 
 public:
 
@@ -48,7 +46,7 @@ public:
   ImageType::Pointer get_groomed_image();
 
   /// Import the groomed raw image file
-  void import_groomed_image(ImageType::Pointer img, double iso);
+  void import_groomed_image(ImageType::Pointer img, double iso, TransformType transform);
 
   /// Retrieve the groomed mesh
   QSharedPointer<Mesh> get_groomed_mesh();
@@ -75,8 +73,7 @@ public:
 
   void clear_reconstructed_mesh();
 
-  void set_global_particles(const vnl_vector<double> &points);
-
+  void set_global_particles(const vnl_vector<double>& points);
 
   /// Get the id of this shape
   int get_id();
@@ -111,13 +108,23 @@ public:
   void set_transform(const vnl_vector<double>& transform);
   vnl_vector<double> get_transform();
 
+  TransformType get_groomed_transform();
+
+  void load_feature(std::string display_mode, std::string feature);
+
+  Eigen::VectorXf get_point_features(std::string feature);
+
+  void set_point_features(std::string feature, Eigen::VectorXf values);
+
 private:
 
-  void generate_original_meshes();
+  //void generate_original_meshes();
 
-  void generate_meshes(std::vector<std::string> filenames, QSharedPointer<Mesh> &mesh);
+  void generate_meshes(std::vector<std::string> filenames, QSharedPointer<Mesh>& mesh, bool save_transform);
 
-  static bool import_point_file(QString filename, vnl_vector<double> &points);
+  static bool import_point_file(QString filename, vnl_vector<double>& points);
+
+  void apply_feature_to_points(std::string feature, ImageType::Pointer image);
 
   int id_;
 
@@ -134,6 +141,7 @@ private:
 
   vnl_vector<double> global_correspondence_points_;
   vnl_vector<double> local_correspondence_points_;
+  std::map<std::string, Eigen::VectorXf> point_features_;
 
   QList<Point> exclusion_sphere_centers_;
   QList<double> exclusion_sphere_radii_;
@@ -142,6 +150,8 @@ private:
 
   std::vector<Point> vectors_;
   vnl_vector<double> transform_;
+
+  TransformType groomed_transform_;
 
   QStringList corner_annotations_;
 

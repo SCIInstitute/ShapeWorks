@@ -37,7 +37,11 @@ default_subsample = 3
 
 parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
 parser.add_argument("--use_case", help="Specify which use case to run",
+<<<<<<< HEAD
                     choices=["ellipsoid", "ellipsoid_fd", "lumps", "left_atrium", "femur", "femur_mesh", "femur_cut", "ellipsoid_cut"])
+=======
+                    choices=["ellipsoid", "ellipsoid_fd", "lumps", "left_atrium", "femur", "femur_mesh", "deep_ssm"])
+>>>>>>> origin/master
 parser.add_argument("--use_subsample", help="Run the pipeline for a subset of data",action="store_true")
 parser.add_argument("--num_subsample", help="Size of subset to run on (default: "+str(default_subsample)+")", nargs='?', type=int, default=default_subsample)
 parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
@@ -56,7 +60,7 @@ if len(sys.argv)==1:
     parser.print_help(sys.stderr)
     sys.exit(1)
 
-module = __import__(args.use_case)
+module = __import__(args.use_case.lower())
 
 os.environ["PATH"] = explicit_binpath + os.pathsep + os.environ["PATH"] + os.pathsep + default_binpath
 
