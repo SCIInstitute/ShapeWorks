@@ -15,7 +15,7 @@ The DeepSSM network is implemented in PyTorch and requires a GPU to run efficien
 
 #### 1. Data Augmentation
 
-The first step to creating a DeepSSM model is generating training data. Deep networks require thousands of training instances and so because medical imaging data is typically limited, data augmentation is necessary. The data augmentation process is described here:  [Running Data Augmentation](DataAugmentation.md).
+The first step to creating a DeepSSM model is generating training data. Deep networks require thousands of training instances and so because medical imaging data is typically limited, data augmentation is necessary. The data augmentation process is described here:  [Running Data Augmentation](data-augmentation.md).
 
 The data augmentation process involves reducing the PDM's to a low dimensional space via Principal Component Analysis (PCA), preserving a chosen percent of the variation. The PCA scores are saved and used as the labels for DeepSSM prediction. The PCA scores are deterministically mapped back to the PDM using the eigenvalues and vectors once the DeepSSM model makes a prediction. 
 

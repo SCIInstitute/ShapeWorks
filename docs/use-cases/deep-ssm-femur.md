@@ -4,7 +4,7 @@
 
 This use case demonstrates how to get shape models from unsegmented images using deep learning on the femur data. This includes performing data augmentation as well as building, training and testing a DeepSSM model. For a detailed description of these processes, please see [Running Data Augmentation](../deep-learning/data-augmentation.md) and [SSM from Images](../deep-learning/deep-ssm.md). The data used in this use case is the same as the ([Femur Use Case](femur.md)) and the labels used in training are generated from running the femur use case. 
 
-The use case is located at: [Examples/Python/deep-ssm.py](../Examples/Python/deep-ssm.py)
+The use case is located at: `Examples/Python/deep-ssm.py`
 
 ## Running the Use Case
 
