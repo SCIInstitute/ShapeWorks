@@ -45,23 +45,30 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    datasetName = "ellipsoid_fd-v0"
-    filename = datasetName + ".zip"
-    # Check if the data is in the right place
-    if not os.path.exists(filename):
-        print("Can't find " + filename + " in the current directory.")
-        import DatasetUtils
-        DatasetUtils.downloadDataset(datasetName)
 
-    parentDir = "TestEllipsoidsFD/"
-    if not os.path.exists(parentDir):
-        os.makedirs(parentDir)
-    # extract the zipfile
-    with ZipFile(filename, 'r') as zipObj:
-        zipObj.extractall(path=parentDir)
-        parentDir = parentDir + datasetName + "/"
-        fileListDT = sorted(glob.glob(parentDir + "distance_transforms/*.nrrd"))
-        fileListNew = sorted(glob.glob(parentDir + "new_distance_transforms/*.nrrd"))
+    
+    datasetName = "ellipsoid_fd-v0"
+    testDirectory = "TestEllipsoidsFD/"
+    originalDataDirectory = testDirectory + datasetName + "/"
+    zipfile = datasetName + ".zip"
+    
+    if not os.path.exists(testDirectory):
+        os.makedirs(testDirectory)
+        
+    # Check if the unzipped data is present
+    if not os.path.exists(originalDataDirectory):
+        # check if the zipped data is present
+        if not os.path.exists(zipfile):
+            print("Can't find " + zipfile)
+            import DatasetUtils
+            DatasetUtils.downloadDataset(datasetName)
+        print("Unzipping " + zipfile + " into " + testDirectory)
+        with ZipFile(zipfile, 'r') as zipObj:
+            zipObj.extractall(path=testDirectory)
+
+    parentDir = testDirectory + datasetName + "/"
+    fileListDT = sorted(glob.glob(originalDataDirectory + "distance_transforms/*.nrrd"))
+    fileListNew = sorted(glob.glob(originalDataDirectory + "new_distance_transforms/*.nrrd"))
 
     """
     ## GROOM : Data Pre-processing 

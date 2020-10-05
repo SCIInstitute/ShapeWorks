@@ -48,21 +48,26 @@ def Run_Pipeline(args):
         input("Press Enter to continue")
 
     datasetName = "ellipsoid-v0"
-    filename = datasetName + ".zip"
-    # Check if the data is in the right place
-    if not os.path.exists(filename):
-        print("Can't find " + filename + " in the current directory.")
-        import DatasetUtils
-        DatasetUtils.downloadDataset(datasetName)
+    testDirectory = "TestEllipsoids/"
+    originalDataDirectory = testDirectory + datasetName + "/"
+    zipfile = datasetName + ".zip"
+    
+    if not os.path.exists(testDirectory):
+        os.makedirs(testDirectory)
+        
+    # Check if the unzipped data is present
+    if not os.path.exists(originalDataDirectory):
+        # check if the zipped data is present
+        if not os.path.exists(zipfile):
+            print("Can't find " + zipfile)
+            import DatasetUtils
+            DatasetUtils.downloadDataset(datasetName)
+        print("Unzipping " + zipfile + " into " + testDirectory)
+        with ZipFile(zipfile, 'r') as zipObj:
+            zipObj.extractall(path=testDirectory)
 
-    parentDir = "TestEllipsoids/"
-    if not os.path.exists(parentDir):
-        os.makedirs(parentDir)
-    # extract the zipfile
-    with ZipFile(filename, 'r') as zipObj:
-        zipObj.extractall(path=parentDir)
-        parentDir = parentDir + datasetName + "/"
-        fileList = sorted(glob.glob(parentDir + "segmentations/*.nrrd"))
+    parentDir = testDirectory + datasetName + "/"
+    fileList = sorted(glob.glob(parentDir + "segmentations/*.nrrd"))
 
     fileList = fileList[:15]
     if args.tiny_test:
