@@ -4,6 +4,7 @@ repo_url: https://github.com/SCIInstitute/ShapeWorks
 edit_uri: edit/master/docs/ # should be changed to master branch
 site_description: The official documentation of ShapeWorks 
 site_author: Shireen Elhabian et al.
+use_directory_urls: false
 copyright: Copyright © 1998 - 2020 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.
 google_analytics: ['UA-36723568-3', 'mkdocs.org']
 
