@@ -8,7 +8,7 @@
 <procrustes_scaling> 0 </procrustes_scaling>
 <procrustes_interval> 0 </procrustes_interval>
 <domain_type>mesh</domain_type>
-<verbosity>1</verbosity>
+<verbosity>0</verbosity>
 <save_init_splits>0</save_init_splits>
 
 <output_dir>
