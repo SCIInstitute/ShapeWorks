@@ -103,3 +103,9 @@ TEST(pythonTests, closeholes)
 {
   ASSERT_FALSE(system("python closeholes.py"));
 }
+
+//---------------------------------------------------------------------------
+TEST(pythonTests, binarize)
+{
+  ASSERT_FALSE(system("python binarize.py"));
+}
