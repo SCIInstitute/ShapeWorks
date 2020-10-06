@@ -120,3 +120,11 @@ If you are using an XML file to [load your data into ShapeWorksStudio](#running-
 *Then, select which groups you would like to compare (now support more than two groups)*
 ![Template-deformation approach for surface reconstruction](../img/workflow/studio_select_group.png)
 
+## Feature Maps
+
+ShapeWorksStudio has the ability to integrate **feature maps**.  A **feature map** is a 3d image volume that contains scalar values to be associated with each shape’s surface.  For example, this could be raw or processed CT/MRI data.  The feature map can be displayed for each surface by choosing the desired feature map in the feature map combobox at the bottom of the screen. 
+After the correspondence is generated, the average feature map can be displayed on the mean shape in the analysis tab.
+
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_feature_map.mp4" autoplay muted loop controls style="width:100%"></p>
+
+
