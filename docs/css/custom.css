@@ -55,3 +55,9 @@
 .wy-menu-vertical {
     color: #2980B9; /*#0b750a;*/
 }
+
+/* Remove the extra border and margins around code in highlighted sections */
+.rst-content div[class^="highlight"] {
+    border: none;
+    margin-bottom: 1px;
+}
