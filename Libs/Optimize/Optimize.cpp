@@ -262,6 +262,8 @@ void Optimize::SetParameters()
   // Now read the transform file if present.
   if (m_transform_file != "") { this->ReadTransformFile(); }
   if (m_prefix_transform_file != "") { this->ReadPrefixTransformFile(m_prefix_transform_file); }
+
+  //m_sampler->ApplyConstraintsToZeroCrossing();
 }
 
 //---------------------------------------------------------------------------
@@ -519,7 +521,6 @@ void Optimize::InitializeSampler()
   for (unsigned int i = 0; i < this->m_domain_flags.size(); i++) {
     this->GetSampler()->GetParticleSystem()->FlagDomain(this->m_domain_flags[i]);
   }
-
   m_sampler->Initialize();
 
   m_sampler->GetOptimizer()->SetTolerance(0.0);
@@ -529,6 +530,8 @@ void Optimize::InitializeSampler()
     this->GetSampler()->GetParticleSystem()
       ->SetFixedParticleFlag(this->m_particle_flags[2 * i], this->m_particle_flags[2 * i + 1]);
   }
+
+  m_sampler->ApplyConstraintsToZeroCrossing();
 }
 
 //---------------------------------------------------------------------------
@@ -561,6 +564,8 @@ void Optimize::AddSinglePoint()
       continue;
     }
     PointType pos = m_sampler->GetParticleSystem()->GetDomain(i)->GetValidLocationNear(firstPointPosition);
+    // debugg
+    //std::cout << "d" << i << " firstPointPosition " << firstPointPosition << " pos " << pos << std::endl;
     m_sampler->GetParticleSystem()->AddPosition(pos, i);
   }
 }
@@ -588,6 +593,7 @@ void Optimize::Initialize()
   }
   m_disable_procrustes = true;
 
+  // Does nothing
   m_sampler->GetParticleSystem()->SynchronizePositions();
 
   m_sampler->GetCurvatureGradientFunction()->SetRho(0.0);
@@ -627,20 +633,36 @@ void Optimize::Initialize()
   m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
   m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
 
+  // Debuggg
+  //std::cout << "Before adding single point" << std::endl;
+  //m_sampler->GetParticleSystem()->PrintParticleSystem();
+
   this->AddSinglePoint();
 
+  // Debuggg
+  //std::cout << "After adding single point" << std::endl;
+  //m_sampler->GetParticleSystem()->PrintParticleSystem();
+
   m_sampler->GetParticleSystem()->SynchronizePositions();
+
+  // Debuggg
+  //m_sampler->GetParticleSystem()->PrintParticleSystem();
 
   this->m_split_number = 0;
 
   int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
+
+
+  /*Old vector randomization
   vnl_vector_fixed<double, 3> random;
 
   for (int i = 0; i < 3; i++) {
     random[i] = static_cast < double > (this->m_rand());
   }
   random = random.normalize() * this->m_spacing;
+  */
 
+  double epsilon = this->m_spacing;
   bool flag_split = false;
 
   for (int i = 0; i < n; i++) {
@@ -652,22 +674,29 @@ void Optimize::Initialize()
   }
 
   while (flag_split) {
+      /*Old vector randomization
     for (int i = 0; i < 3; i++) {
       random[i] = static_cast <double> (this->m_rand());
     }
     
     // divide by 5 since m_spacing was artificially multiplied by 5 elsewhere
     random = random.normalize() * this->m_spacing / 5.0;
-    
+    */
+
     //        m_Sampler->GetEnsembleEntropyFunction()->PrintShapeMatrix();
     this->OptimizerStop();
+
+    /*Old vector randomization
     for (int i = 0; i < n; i++) {
       int d = i % m_domains_per_shape;
       if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d]) {
         m_sampler->GetParticleSystem()->SplitAllParticlesInDomain(random, i, 0);
       }
     }
+    */
 
+    m_sampler->GetParticleSystem()->AdvancedAllParticleSplitting(epsilon);
+      
     m_sampler->GetParticleSystem()->SynchronizePositions();
 
     this->m_split_number++;
@@ -1589,7 +1618,7 @@ void Optimize::WriteCuttingPlanePoints(int iter)
   this->PrintStartMessage(str, 1);
 
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
-    m_sampler->GetParticleSystem()->GetDomain(i)->PrintCuttingPlaneConstraints(out);
+    m_sampler->GetParticleSystem()->GetDomain(i)->GetConstraints()->PrintAll();
   }
   out.close();
   this->PrintDoneMessage(1);

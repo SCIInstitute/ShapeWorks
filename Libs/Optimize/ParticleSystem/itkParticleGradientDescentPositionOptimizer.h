@@ -25,6 +25,7 @@
 #include "itkParticleVectorFunction.h"
 #include "itkParticleImageDomainWithGradients.h"
 #include <algorithm>
+#include <limits>
 
 namespace itk
 {

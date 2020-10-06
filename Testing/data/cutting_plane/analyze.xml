@@ -1,6 +1,6 @@
 <point_files>
-output/sphere10_DT_world.particles
-output/sphere20_DT_world.particles
-output/sphere30_DT_world.particles
-output/sphere40_DT_world.particles
+output/sphere10_DT_local.particles
+output/sphere20_DT_local.particles
+output/sphere30_DT_local.particles
+output/sphere40_DT_local.particles
 </point_files>

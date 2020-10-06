@@ -8,8 +8,8 @@
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
 #ifndef __itkParticleSystem_txx
@@ -55,7 +55,7 @@ void ParticleSystem<VDimension>
 ::AddDomain( DomainType *input, int threadId)
 {
   this->Modified();
-  
+
   for (unsigned int idx = 0; idx < m_Domains.size(); ++idx)
     {
     if (!m_Domains[idx])
@@ -76,7 +76,7 @@ void ParticleSystem<VDimension>
   m_InverseTransforms[static_cast<int>( m_Domains.size() -1)].set_identity();
   m_PrefixTransforms[static_cast<int>( m_Domains.size() -1)].set_identity();
   m_InversePrefixTransforms[static_cast<int>( m_Domains.size() -1)].set_identity();
-  
+
   // Notify any observers.
   ParticleDomainAddEvent e;
   e.SetDomainIndex(m_Domains.size() - 1);
@@ -133,7 +133,7 @@ void ParticleSystem<VDimension>
   m_Neighborhoods[i] = N;
   m_Neighborhoods[i]->SetDomain(m_Domains[i]);
   m_Neighborhoods[i]->SetPointContainer(m_Positions[i]);
-  
+
   // Notify any observers.
   ParticleNeighborhoodSetEvent e;
   e.SetThreadID(threadId);
@@ -150,7 +150,11 @@ ParticleSystem<VDimension>
 
   // Potentially modifies position!
   if (m_DomainFlags[d] == false) {
+      // debugg
+      //std::cout << "d" << d << " before apply " << m_Positions[d]->operator[](m_IndexCounters[d]);
     m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](m_IndexCounters[d]));
+      // debugg
+      //std::cout << " after apply " << m_Positions[d]->operator[](m_IndexCounters[d]) << std::endl;
     m_Neighborhoods[d]->AddPosition( m_Positions[d]->operator[](m_IndexCounters[d]), m_IndexCounters[d], threadId);
   }
 
@@ -167,7 +171,7 @@ ParticleSystem<VDimension>
   e.SetPositionIndex(m_IndexCounters[d]);
   this->InvokeEvent(e);
   m_IndexCounters[d]++;
- 
+
   return m_Positions[d]->operator[](m_IndexCounters[d]-1);
 }
 
@@ -183,7 +187,11 @@ ParticleSystem<VDimension>
     if (m_DomainFlags[d] == false) {
       m_Positions[d]->operator[](k) = p;
 
+      // Debuggg
+      //std::cout << "SynchronizePositions Apply constraints " << m_Positions[d]->operator[](k);
       m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](k));
+      // Debuggg
+      //std::cout << " updated " << m_Positions[d]->operator[](k) << std::endl;
 
       m_Neighborhoods[d]->SetPosition( m_Positions[d]->operator[](k), k, threadId);
     }
@@ -195,9 +203,9 @@ ParticleSystem<VDimension>
   e.SetThreadID(threadId);
   e.SetDomainIndex(d);
   e.SetPositionIndex(k);
-  
+
   this->InvokeEvent(e);
-  
+
   return m_Positions[d]->operator[](k);
 }
 
@@ -208,9 +216,9 @@ ParticleSystem<VDimension>
                                         unsigned int d,  int threadId)
 {
   m_Positions[d]->Erase(k);
-  
+
   m_Neighborhoods[d]->RemovePosition(k, threadId);
-  
+
   // Notify any observers.
   ParticlePositionRemoveEvent e;
   e.SetThreadID(threadId);
@@ -228,8 +236,137 @@ ParticleSystem<VDimension>
 {
   // Traverse the list and add each point to the domain.
   for (typename std::vector<PointType>::const_iterator it= p.begin(); it != p.end(); it++) {
-    this->AddPosition(*it, d, threadId);    
+    this->AddPosition(*it, d, threadId);
   }
+}
+
+template <unsigned int VDimension>
+void
+ParticleSystem<VDimension>
+::PrintParticleSystem(){
+
+    for (unsigned int d = 0; d < this->GetNumberOfDomains(); d++)
+      {
+        std::vector<PointType> list;
+      for (unsigned int p = 0; p < this->GetNumberOfParticles(d); p++)
+        {
+        list.push_back(this->GetPosition(p,d));
+        }
+          std::cout << "D " << d << " Curr Pos ";
+          for(size_t i = 0; i < list.size(); i++)
+              std::cout << list[i] << " ";
+          std::cout << " List size " << list.size() << std::endl;
+      }
+
+    /*
+    size_t num_doms = this->GetNumberOfDomains();
+
+    for(size_t domain = 0; domain < num_doms; domain++){
+        std::vector<PointType> list;
+        typename PointContainerType::ConstIterator endIt = GetPositions(domain)->GetEnd();
+        for (typename PointContainerType::ConstIterator it = GetPositions(domain)->GetBegin();
+             it != endIt; it++)
+          {    list.push_back(*it);    }
+        std::cout << "D " << domain << " Curr Pos ";
+        for(size_t i = 0; i < list.size(); i++)
+            std::cout << list[i] << " ";
+        std::cout << " List size " << list.size() << std::endl;
+    }
+    */
+}
+
+template <unsigned int VDimension>
+void
+ParticleSystem<VDimension>
+::AdvancedAllParticleSplitting(double epsilon){
+
+    size_t num_doms = this->GetNumberOfDomains();
+
+    std::vector< std::vector<PointType> > lists;
+
+    for(size_t domain = 0; domain < num_doms; domain++){
+        std::vector<PointType> list;
+        typename PointContainerType::ConstIterator endIt = GetPositions(domain)->GetEnd();
+        for (typename PointContainerType::ConstIterator it = GetPositions(domain)->GetBegin();
+             it != endIt; it++)
+          {    list.push_back(*it);    }
+        lists.push_back(list);
+        // Debuggg
+        /*
+        std::cout << "Domain " << domain << " Curr Pos ";
+        for(size_t i = 0; i < list.size(); i++)
+            std::cout << list[i] << " ";
+        std::cout << " List size " << list.size() << std::endl;
+        */
+    }
+
+    /*
+    std::vector< std::vector<vnl_vector<double> > > lists;
+
+    for (int i = 0; i < n; i++) {
+      int d = i % m_domains_per_shape;
+      if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d]) {
+        std::vector<vnl_vector<double> > list = *(m_sampler->GetParticleSystem()->GetPositions(i));
+        std::cout << "list_size " << list.size() << std::endl;
+        //m_sampler->GetParticleSystem()->SplitAllParticlesInDomain(random, epsilon, i, 0);
+      }
+    }
+    */
+
+    if(lists.size()>0){
+        for(size_t i = 0; i < lists[0].size(); i++){
+            // While the random vector updated violates plane constraints
+            // Breaks when it doesn't violate for any domain
+            std::vector < PointType > newposs_good;
+
+            while(true){
+                // Generate random unit vector
+                std::mt19937 gen(42);
+                std::uniform_real_distribution<double> distr( -1000., 1000. ) ;
+
+                vnl_vector_fixed < double, 3 > random;
+
+                 for (int i = 0; i < 3; i++) {
+                     random[i] = distr(gen);
+                     //double seed = static_cast<double> (this->m_rand());
+                     //random[i] = distr(seed);//-2147483648;
+                 }
+                 double norm = random.magnitude();
+                 random /= norm;
+
+                 // Check where the update will take us after applying it to the point and th constraints.
+                 newposs_good.clear();
+                 bool good = true; // flag to check if the new update violates in any domain
+                 for(size_t j = 0; j < lists.size(); j++){
+                     // Add epsilon times random direction to existing point and apply domain
+                     // constraints to generate a new particle position.
+                     PointType newpos;
+                     for (unsigned int k = 0; k < 3; k++)
+                       {
+                       newpos[k] = lists[j][i][k] + epsilon * random[k] / 5.;
+                       }
+                     // Go to surface
+                     if (this->m_DomainFlags[j] == false) this->GetDomain(j)->ApplyConstraints(newpos);
+                     newposs_good.push_back(newpos);
+                     // Check for plane constraint violations
+                     if (this->GetDomain(j)->GetConstraints()->IsAnyViolated(newpos)){
+                        good = false;
+                        break;
+                     }
+                 }
+
+                 if(good){
+                    for(size_t j = 0; j < lists.size(); j++){
+                        this->AddPosition(newposs_good[j], j, 0);
+                        // Debuggg
+                        //std::cout << "Domain " << j << " Curr Pos " << lists[j][i] << " random " << random  << " epsilon " << epsilon << " picked " << newposs_good[j] << std::endl;
+                    }
+                    break;
+                 }
+
+                }// while end
+        } // for end
+    } // if end
 }
 
 template <unsigned int VDimension>
@@ -241,7 +378,7 @@ ParticleSystem<VDimension>
   // at an epsilon distance and random direction. Since we are going to add
   // positions to the list, we need to first copy the list.
   std::vector<PointType> list;
-  typename PointContainerType::ConstIterator endIt = GetPositions(domain)->GetEnd();     
+  typename PointContainerType::ConstIterator endIt = GetPositions(domain)->GetEnd();
   for (typename PointContainerType::ConstIterator it = GetPositions(domain)->GetBegin();
        it != endIt; it++)
     {    list.push_back(*it);    }
