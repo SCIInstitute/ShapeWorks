@@ -17,8 +17,6 @@ such as the same transformation matrices for the center of mass and rigid alignm
 
 First import the necessary modules
 """
-
-from zipfile import ZipFile
 import os
 import sys
 import csv
@@ -28,6 +26,7 @@ import glob
 from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
+import CommonUtils
 
 def Run_Pipeline(args):
     """
@@ -44,28 +43,18 @@ def Run_Pipeline(args):
     Extract the zipfile into proper directory and create necessary supporting
     files
     """
-
     print("\nStep 1. Extract Data\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
     datasetName = "left_atrium-v0"
-    filename = datasetName + ".zip"
-    # Check if the data is in the right place
-    if not os.path.exists(filename):
-        print("Can't find " + filename + " in the current directory.")
-        import DatasetUtils
-        DatasetUtils.downloadDataset(datasetName)
+    outputDirectory = "Output/Left_atrium/"
+    if not os.path.exists(outputDirectory):
+        os.makedirs(outputDirectory)
+    CommonUtils.get_data(datasetName, outputDirectory)
 
-    parentDir = "TestLeftAtrium/"
-    if not os.path.exists(parentDir):
-        os.makedirs(parentDir)
-    # extract the zipfile
-    with ZipFile(filename, 'r') as zipObj:
-        zipObj.extractall(path=parentDir)
-        parentDir = parentDir + datasetName + "/"
-        fileList_img = sorted(glob.glob(parentDir + "images/*.nrrd"))
-        fileList_seg = sorted(glob.glob(parentDir + "segmentations/*.nrrd"))
+    fileList_img = sorted(glob.glob(outputDirectory + datasetName + "/images/*.nrrd"))
+    fileList_seg = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))
 
     if args.tiny_test:
         # adding more samples to include different resolutions
@@ -79,14 +68,18 @@ def Run_Pipeline(args):
         fileList_img = [fileList_img[i] for i in sample_idx]
         
     if args.start_with_prepped_data:
-        dtFiles = sorted(glob.glob(parentDir + "groomed/distance_transforms/*.nrrd"))
+        dtFiles = sorted(glob.glob(outputDirectory + datasetName + "groomed/distance_transforms/*.nrrd"))
         
         if args.use_subsample:
             dtFiles = [dtFiles[i] for i in sample_idx]
         if args.tiny_test:
             dtFiles  = dtFiles[:2]
         
-    else:            
+    else:
+
+        groomDir = outputDirectory + 'groomed/'
+        if not os.path.exists(groomDir):
+            os.makedirs(groomDir)
         
         if args.start_with_image_and_segmentation_data and fileList_img:
             """
@@ -100,8 +93,6 @@ def Run_Pipeline(args):
             -- Largest Bounding Box and Cropping
             """
 
-            parentDir = './TestLeftAtrium/PrepOutput/'
-
             print("\nStep 2. Groom - Data Pre-processing\n")
             if args.interactive:
                 input("Press Enter to continue")
@@ -110,14 +101,14 @@ def Run_Pipeline(args):
             Apply isotropic resampling
             the segmentation and images are resampled independently and the result files are saved in two different directories.
             """
-            resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, isBinary=True)
-            resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", fileList_img, isBinary=False)
+            resampledFiles_segmentations = applyIsotropicResampling(groomDir + "resampled/segmentations", fileList_seg, isBinary=True)
+            resampledFiles_images = applyIsotropicResampling(groomDir + "resampled/images", fileList_img, isBinary=False)
 
             """
             Centering
             """
-            centeredFiles_segmentations = center(parentDir + "centered/segmentations", resampledFiles_segmentations)
-            centeredFiles_images = center(parentDir + "centered/images", resampledFiles_images)
+            centeredFiles_segmentations = center(groomDir + "centered/segmentations", resampledFiles_segmentations)
+            centeredFiles_images = center(groomDir + "centered/images", resampledFiles_images)
 
             """
             Apply padding
@@ -127,8 +118,8 @@ def Run_Pipeline(args):
 
             Both the segmentation and raw images are padded.
             """
-            paddedFiles_segmentations = applyPadding(parentDir + 'padded/segmentations', centeredFiles_segmentations, 10)
-            paddedFiles_images = applyPadding(parentDir+ 'padded/images', centeredFiles_images, 10)
+            paddedFiles_segmentations = applyPadding(groomDir + 'padded/segmentations', centeredFiles_segmentations, 10)
+            paddedFiles_images = applyPadding(groomDir+ 'padded/images', centeredFiles_images, 10)
 
             """
             Apply center of mass alignment
@@ -139,7 +130,7 @@ def Run_Pipeline(args):
             This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
             There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
             """
-            [comFiles_segmentations, comFiles_images] = applyCOMAlignment(parentDir + "com_aligned", paddedFiles_segmentations, paddedFiles_images, processRaw=True)
+            [comFiles_segmentations, comFiles_images] = applyCOMAlignment(groomDir + "com_aligned", paddedFiles_segmentations, paddedFiles_images, processRaw=True)
 
             """
             Apply rigid alignment
@@ -155,7 +146,7 @@ def Run_Pipeline(args):
             """
             medianFile = FindReferenceImage(comFiles_segmentations)
 
-            [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir + "aligned", comFiles_segmentations, comFiles_images, medianFile, processRaw = True)
+            [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(groomDir + "aligned", comFiles_segmentations, comFiles_images, medianFile, processRaw = True)
 
             """
             For detailed explainations of parameters for finding the largest bounding box and cropping, go to
@@ -167,8 +158,8 @@ def Run_Pipeline(args):
             The function uses the same bounding box to crop the raw and segemnattion data.
 
             """
-            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", rigidFiles_segmentations, parentDir + "aligned/segmentations/*.aligned.nrrd")
-            croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images, parentDir + "aligned/segmentations/*.aligned.nrrd")
+            croppedFiles_segmentations = applyCropping(groomDir + "cropped/segmentations", rigidFiles_segmentations, groomDir + "aligned/segmentations/*.aligned.nrrd")
+            croppedFiles_images = applyCropping(groomDir + "cropped/images", rigidFiles_images, groomDir + "aligned/segmentations/*.aligned.nrrd")
 
             print("\nStep 3. Groom - Convert to distance transforms\n")
             if args.interactive:
@@ -179,7 +170,7 @@ def Run_Pipeline(args):
             prepped as well as unprepped data, just provide correct filenames.
             """
             
-            dtFiles = applyDistanceTransforms(parentDir, croppedFiles_segmentations)
+            dtFiles = applyDistanceTransforms(groomDir, croppedFiles_segmentations)
 
         else:
             """
@@ -200,28 +191,23 @@ def Run_Pipeline(args):
             if args.interactive:
                 input("Press Enter to continue")
 
-            # create the output directory
-            parentDir = './TestLeftAtrium/groomed/'
-            if not os.path.exists(parentDir):
-                os.makedirs(parentDir)
-
             """
             Apply isotropic resampling
 
             For detailed explainations of parameters for resampling volumes, go to
             '/Documentation/PDFs/ImagePrepTools.pdf'
             """
-            resampledFiles = applyIsotropicResampling(parentDir + "resampled", fileList_seg)
+            resampledFiles = applyIsotropicResampling(groomDir + "resampled", fileList_seg)
 
             """Apply Centering"""
-            centeredFiles = center(parentDir + "centered", resampledFiles)
+            centeredFiles = center(groomDir + "centered", resampledFiles)
 
             """
             Apply padding
             For detailed explainations of parameters for padding volumes, go to
             '/Documentation/PDFs/ImagePrepTools.pdf'
             """
-            paddedFiles = applyPadding(parentDir + "padded", centeredFiles, 10)
+            paddedFiles = applyPadding(groomDir + "padded", centeredFiles, 10)
 
             """
             Apply center of mass alignment
@@ -230,7 +216,7 @@ def Run_Pipeline(args):
             '/Documentation/PDFs/AlgnmentTools.pdf'
 
             """
-            comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles, None)
+            comFiles = applyCOMAlignment(groomDir + "com_aligned", paddedFiles, None)
 
             """
             Apply rigid alignment
@@ -241,7 +227,7 @@ def Run_Pipeline(args):
             Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
             """
             medianFile = FindReferenceImage(comFiles)
-            rigidFiles = applyRigidAlignment(parentDir + "aligned", comFiles, None, medianFile)
+            rigidFiles = applyRigidAlignment(groomDir + "aligned", comFiles, None, medianFile)
 
             """
             Compute largest bounding box and apply cropping
@@ -249,7 +235,7 @@ def Run_Pipeline(args):
             For detailed explainations of parameters for finding the largest bounding box and cropping, go to 
             '/Documentation/PDFs/ImagePrepTools.pdf'
             """
-            croppedFiles = applyCropping(parentDir + "cropped", rigidFiles, parentDir + "aligned/*.aligned.nrrd")
+            croppedFiles = applyCropping(groomDir + "cropped", rigidFiles, groomDir + "aligned/*.aligned.nrrd")
 
             print("\nStep 3. Groom - Convert to distance transforms\n")
             if args.interactive:
@@ -259,7 +245,7 @@ def Run_Pipeline(args):
             We convert the scans to distance transforms, this step is common for both the
             prepped as well as unprepped data, just provide correct filenames.
             """
-            dtFiles = applyDistanceTransforms(parentDir, croppedFiles)
+            dtFiles = applyDistanceTransforms(groomDir, croppedFiles)
 
     """
     ## OPTIMIZE : Particle Based Optimization
@@ -286,7 +272,7 @@ def Run_Pipeline(args):
     if args.interactive:
         input("Press Enter to continue")
 
-    pointDir = './TestLeftAtrium/shape_models/'
+    pointDir = outputDirectory + 'shape_models/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
