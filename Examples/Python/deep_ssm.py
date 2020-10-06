@@ -19,10 +19,10 @@ def Run_Pipeline(args):
 	Get femur data
 	'''
 	datasetName = "femur-v0"
-    outputDirectory = "Output/DeepSSM/"
-    if not os.path.exists(outputDirectory):
-        os.makedirs(outputDirectory)
-    CommonUtils.get_data(datasetName, outputDirectory)
+	outputDirectory = "Output/DeepSSM/"
+	if not os.path.exists(outputDirectory):
+		os.makedirs(outputDirectory)
+	CommonUtils.get_data(datasetName, outputDirectory)
 
 	input_dir = outputDirectory + datasetName + '/'
 	# Get image path list
