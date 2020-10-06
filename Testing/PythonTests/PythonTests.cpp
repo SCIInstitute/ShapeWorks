@@ -47,27 +47,59 @@ TEST(pythonTests, resample)
 //---------------------------------------------------------------------------
 TEST(pythonTests, resize)
 {
-  pythonEnvSetup();
   ASSERT_FALSE(system("python resize.py"));
 }
 
 //---------------------------------------------------------------------------
 TEST(pythonTests, recenter)
 {
-  pythonEnvSetup();
   ASSERT_FALSE(system("python recenter.py"));
 }
 
 //---------------------------------------------------------------------------
 TEST(pythonTests, pad)
 {
-  pythonEnvSetup();
   ASSERT_FALSE(system("python pad.py"));
 }
 
 //---------------------------------------------------------------------------
 TEST(pythonTests, translate)
 {
-  pythonEnvSetup();
   ASSERT_FALSE(system("python translate.py"));
+}
+
+//---------------------------------------------------------------------------
+TEST(pythonTests, scale)
+{
+  ASSERT_FALSE(system("python scale.py"));
+}
+
+//---------------------------------------------------------------------------
+TEST(pythonTests, scalefail)
+{
+  ASSERT_TRUE(system("python scalefail.py"));
+}
+
+//---------------------------------------------------------------------------
+TEST(pythonTests, rotate)
+{
+  ASSERT_FALSE(system("python rotate.py"));
+}
+
+//---------------------------------------------------------------------------
+TEST(pythonTests, rotatefail)
+{
+  ASSERT_TRUE(system("python rotatefail.py"));
+}
+
+//---------------------------------------------------------------------------
+TEST(pythonTests, extractlabel)
+{
+  ASSERT_FALSE(system("python extractlabel.py"));
+}
+
+//---------------------------------------------------------------------------
+TEST(pythonTests, closeholes)
+{
+  ASSERT_FALSE(system("python closeholes.py"));
 }
