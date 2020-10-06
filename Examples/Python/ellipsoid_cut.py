@@ -55,7 +55,7 @@ def Run_Pipeline(args):
         import DatasetUtils
         DatasetUtils.downloadDataset(datasetName)
 
-    parentDir = "TestEllipsoids/"
+    parentDir = "TestEllipsoids_cut/"
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)
     # extract the zipfile
@@ -85,7 +85,7 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    parentDir = 'TestEllipsoids/groomed/'
+    parentDir = 'TestEllipsoids_cut/groomed/'
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)
 
@@ -127,7 +127,7 @@ def Run_Pipeline(args):
             input("Press Enter to continue")
 
         dtFiles = applyDistanceTransforms(parentDir, croppedFiles)
-        
+
     """
     ## OPTIMIZE : Particle Based Optimization
 
@@ -150,6 +150,7 @@ def Run_Pipeline(args):
 
     cutting_plane_points1 = [[10, 10, 0], [-10, -10, 0], [10, -10, 0]]
     cutting_plane_points2 = [[10, -3, 10], [-10, -3 ,10], [10, -3, -10]]
+    cp = [cutting_plane_points1, cutting_plane_points2]
 
     # Cutting planes
     cutting_planes = []
@@ -159,8 +160,16 @@ def Run_Pipeline(args):
         cutting_planes.append(cutting_plane_points2)
         cutting_plane_counts.append(2)
 
+    '''
+    postfix = ".isores.center.pad.com.aligned.DT.nrrd"
+    path = "aligned/segmentations/seg.ellipsoid_"
+    for i in range(15):
+        input_file = parentDir + path + "{:02}".format(i) + postfix
+        ShowCuttingPlanesOnImage(input_file, cp, printCmd=True)
+    '''
+
     parameterDictionary = {
-        "number_of_particles": 32,
+        "number_of_particles": 128,
         "use_normals": 1,
         "normal_weight": 10.0,
         "checkpointing_interval": 200,

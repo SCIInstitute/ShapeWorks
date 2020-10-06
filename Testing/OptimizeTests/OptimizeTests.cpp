@@ -274,7 +274,7 @@ TEST(OptimizeTests, sphere_constraint_test) {
   app.Run();
 
   // compute stats
-  ParticleShapeStatistics<3> stats;
+  ParticleShapeStatistics stats;
   stats.ReadPointFiles("analyze.xml");
   stats.ComputeModes();
   stats.PrincipalComponentProjections();
