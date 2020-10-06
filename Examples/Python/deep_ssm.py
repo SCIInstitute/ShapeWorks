@@ -32,7 +32,7 @@ def Run_Pipeline(args):
 		img_list.append(img_dir + file)
 	img_list = sorted(img_list)
 	# Get particles path list
-	model_dir =  input_dir + "shape_models/multi-scale/1024/" 
+	model_dir =  input_dir + "shape_models/femur/1024/" 
 	particle_list = []
 	for file in os.listdir(model_dir):
 		if "local" in file:
@@ -109,6 +109,6 @@ def Run_Pipeline(args):
 	'''
 	DT_dir = input_dir + "groomed/distance_transforms/"
 	out_dir = outputDirectory + "Results/"
-	mean_prefix = input_dir + "shape_models/mean/femur"
+	mean_prefix = input_dir + "shape_models/femur/mean/femur"
 	avg_distance = DeepSSMUtils.analyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix)
 	print("Average surface-to-surface distance from the original to predicted shape = " + str(avg_distance))
