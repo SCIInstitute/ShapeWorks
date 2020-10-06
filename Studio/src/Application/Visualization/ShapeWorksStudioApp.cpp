@@ -324,7 +324,6 @@ bool ShapeWorksStudioApp::on_action_save_project_triggered()
     return this->on_action_save_project_as_triggered();
   }
   else {
-
     this->save_project(this->session_->get_filename().toStdString());
   }
   return true;
@@ -462,7 +461,9 @@ void ShapeWorksStudioApp::enable_possible_actions()
 
   bool original_present = this->session_->get_project()->get_segmentations_present();
 
-  this->ui_->action_save_project->setEnabled(this->session_->get_filename().endsWith(".xlsx"));
+  auto filename = this->session_->get_filename();
+  bool save_enabled = filename == "" || filename.endsWith(".xlsx");
+  this->ui_->action_save_project->setEnabled(save_enabled);
   //this->ui_->action_save_project_as->setEnabled(original_present);
   this->ui_->action_save_project_as->setEnabled(true);
   this->ui_->actionExport_PCA_Mesh->setEnabled(reconstructed);
