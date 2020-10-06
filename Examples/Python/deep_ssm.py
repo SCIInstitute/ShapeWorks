@@ -5,18 +5,10 @@ Full Example Pipeline for Statistical Shape Modeling with ShapeWorks DeepSSM
 ====================================================================
 Jadie Adams
 """
-
-from zipfile import ZipFile
 import os
-import sys
-import csv
-import argparse
-import glob
-import re
-import numpy as np
-
 import DataAugmentationUtils
 import DeepSSMUtils
+import CommonUtils
 
 def Run_Pipeline(args):
 	if args.tiny_test:
@@ -26,23 +18,13 @@ def Run_Pipeline(args):
 	'''
 	Get femur data
 	'''
-	# set parent dir
-	parent_dir = os.getcwd() + "/TestDeepSSM/"
-	if not os.path.exists(parent_dir):
-		os.makedirs(parent_dir)
 	datasetName = "femur-v0"
-	input_dir = parent_dir + datasetName + '/'
-	# get zipfile if not there
-	filename = datasetName + ".zip"
-	if not os.path.exists(filename):
-		print("Can't find " + filename + " in the current directory.")
-		import DatasetUtils
-		DatasetUtils.downloadDataset(datasetName)
-	# extract the zipfile
-	if not os.path.exists(input_dir):
-		print("Extracting data from " + filename + "...")
-		with ZipFile(filename, 'r') as zipObj:
-			zipObj.extractall(path=parent_dir)
+    outputDirectory = "Output/DeepSSM/"
+    if not os.path.exists(outputDirectory):
+        os.makedirs(outputDirectory)
+    CommonUtils.get_data(datasetName, outputDirectory)
+
+	input_dir = outputDirectory + datasetName + '/'
 	# Get image path list
 	img_dir = input_dir + "groomed/images/"
 	img_list = []
@@ -81,8 +63,8 @@ def Run_Pipeline(args):
 	if args.tiny_test:
 		num_samples = 4
 		num_PCA = 3
-	DataAugmentationUtils.runDataAugmentation(parent_dir + "Augmentation/", train_img_list, train_particle_list, num_samples, num_PCA, sampler_type)
-	aug_data_csv = parent_dir + "Augmentation/TotalData.csv"
+	DataAugmentationUtils.runDataAugmentation(outputDirectory + "Augmentation/", train_img_list, train_particle_list, num_samples, num_PCA, sampler_type)
+	aug_data_csv = outputDirectory + "Augmentation/TotalData.csv"
 	DataAugmentationUtils.visualizeAugmentation(aug_data_csv)
 
 	print("\n\n\nStep 3. Reformat Data for Pytorch\n") #######################################################################
@@ -95,7 +77,7 @@ def Run_Pipeline(args):
 	
 	down_sample = True
 	batch_size = 8
-	loader_dir = parent_dir + 'TorchDataLoaders/'
+	loader_dir = outputDirectory + 'TorchDataLoaders/'
 	DeepSSMUtils.getTrainValLoaders(loader_dir, aug_data_csv, batch_size, down_sample)
 	DeepSSMUtils.getTestLoader(loader_dir, test_img_list, down_sample)
 
@@ -109,15 +91,15 @@ def Run_Pipeline(args):
 	parameters = {"epochs":50, "learning_rate":0.001, "val_freq":1}
 	if args.tiny_test:
 		parameters = {"epochs":5, "learning_rate":0.001, "val_freq":1}
-	model_path = DeepSSMUtils.trainDeepSSM(loader_dir, parameters, parent_dir)
+	model_path = DeepSSMUtils.trainDeepSSM(loader_dir, parameters, outputDirectory)
 
 
 	print("\n\n\nStep 5. Predict with DeepSSM\n") #####################################################################################
 	'''
 	Test DeepSSM
 	'''
-	PCA_scores_path = parent_dir + "Augmentation/PCA_Particle_Info/"
-	prediction_dir = parent_dir + 'Results/PredictedParticles/'
+	PCA_scores_path = outputDirectory + "Augmentation/PCA_Particle_Info/"
+	prediction_dir = outputDirectory + 'Results/PredictedParticles/'
 	DeepSSMUtils.testDeepSSM(prediction_dir, model_path, loader_dir, PCA_scores_path, num_PCA)
 	print('Predicted particles saved at: ' + prediction_dir)
 
@@ -126,7 +108,7 @@ def Run_Pipeline(args):
 	Analyze DeepSSM
 	'''
 	DT_dir = input_dir + "groomed/distance_transforms/"
-	out_dir = parent_dir + "Results/"
+	out_dir = outputDirectory + "Results/"
 	mean_prefix = input_dir + "shape_models/mean/femur"
 	avg_distance = DeepSSMUtils.analyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix)
 	print("Average surface-to-surface distance from the original to predicted shape = " + str(avg_distance))
