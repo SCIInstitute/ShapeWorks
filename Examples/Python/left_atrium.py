@@ -18,11 +18,7 @@ such as the same transformation matrices for the center of mass and rigid alignm
 First import the necessary modules
 """
 import os
-import sys
-import csv
-import argparse
 import glob
-
 from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
@@ -44,7 +40,6 @@ def Run_Pipeline(args):
     fileList_seg = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))
 
     if args.tiny_test:
-        # adding more samples to include different resolutions
         fileList_img = fileList_img[:5]
         fileList_seg = fileList_seg[:5]
         args.use_single_scale = True

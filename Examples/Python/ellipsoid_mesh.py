@@ -8,10 +8,6 @@ In this example we provide a full pipeline with an example dataset of axis
 aligned ellipsoid meshes.
 """
 import os
-import sys
-import csv
-import argparse
-
 from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *

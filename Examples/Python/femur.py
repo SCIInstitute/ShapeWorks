@@ -13,13 +13,8 @@ Optimization is single scale.
 First import the necessary modules
 """
 import os
-import sys
-import csv
-import argparse
-import glob
 import re
 import numpy as np
-
 from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *

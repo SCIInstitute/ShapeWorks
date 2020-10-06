@@ -19,10 +19,6 @@ optimization and, the post ShapeWorks visualization.
 First import the necessary modules
 """
 import os
-import sys
-import csv
-import argparse
-
 from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
