@@ -1,5 +1,20 @@
 # Release Notes
 
+## ShapeWorks 5.5.0 - 2020-10-??
+
+### What's New
+
+* ShapeWorks now supports optimization directly on open meshes. See the two new use cases femur_mesh and lumps for an example of how to get started. This allows for large memory savings(9.2GB to 53MB in the femur use case)
+* Studio supports integration of 3d volume feature maps.
+* Studio supports group definitions from spreadsheets.
+* Studio stores/loads a rich text notes section in the spreadsheet.
+
+### Improvements
+
+* UI Improvements to Studio including collapsable analysis panels to improve screen usable.
+
+### Fixes
+
 ## ShapeWorks 5.4.1 - 2020-06-15
 
 ### Fixes
