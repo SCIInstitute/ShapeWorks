@@ -29,20 +29,7 @@ from AnalyzeUtils import *
 import CommonUtils
 
 def Run_Pipeline(args):
-    """
-    Unzip the data for this tutorial.
 
-    The data is inside the leftatrium.zip, run the following function to unzip the
-    data and create necessary supporting files. The files will be Extracted in a
-    newly created Directory TestEllipsoids.
-    This data is LGE segmentation of left atrium.
-    For a detailed explanation of grooming steps see: https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Workflow/Groom.md
-    """
-
-    """
-    Extract the zipfile into proper directory and create necessary supporting
-    files
-    """
     print("\nStep 1. Extract Data\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")

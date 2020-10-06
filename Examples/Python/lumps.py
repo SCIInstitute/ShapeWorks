@@ -1,65 +1,31 @@
 # -*- coding: utf-8 -*-
-
-from zipfile import ZipFile
 import os
-import sys
-import csv
-import argparse
-
 from OptimizeUtils import *
 from AnalyzeUtils import *
+import CommonUtils
 
 def Run_Pipeline(args):
 
-    """
-    Unzip the data for this tutorial.
-
-    The data is inside the Ellipsoids.zip, run the following function to unzip the 
-    data and create necessary supporting files. The files will be Extracted in a
-    newly created Directory TestEllipsoids.
-    This data both prepped and unprepped are binary images of ellipsoids varying
-    one of the axes while the other two are kept fixed. 
-    """
-    """
-    Extract the zipfile into proper directory and create necessary supporting
-    files
-    """
     print("\nStep 1. Extract Data\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
     datasetName = "lumps-v0"
-    testDirectory = "TestLumps/"
-    originalDataDirectory = testDirectory + datasetName + "/"
-    meshFileDirectory = originalDataDirectory + "meshes/"
-    shapeModelDirectory = testDirectory + "shape_models/"
-    zipfile = datasetName + ".zip"
+    outputDirectory = "Output/Lumps/"
+    if not os.path.exists(outputDirectory):
+        os.makedirs(outputDirectory)
+    CommonUtils.get_data(datasetName, outputDirectory)
 
-    if not os.path.exists(testDirectory):
-        os.makedirs(testDirectory)
-    
-    # Check if the unzipped data is present
-    if not os.path.exists(originalDataDirectory):
-        # check if the zipped data is present
-        if not os.path.exists(zipfile):
-            print("Can't find " + zipfile + " in the current directory.")
-            import DatasetUtils
-            DatasetUtils.downloadDataset(datasetName)
-        print("Unzipping " + zipfile + " into " + testDirectory)
-        with ZipFile(zipfile, 'r') as zipObj:
-            zipObj.extractall(path=testDirectory)
-
-
+    meshFileDirectory = outputDirectory + datasetName + '/meshes/'
     meshFiles = sorted(os.listdir(meshFileDirectory))
     # need to prepend the directory to each file name so that relative paths work
     meshFiles = [meshFileDirectory + filename for filename in meshFiles]
-
 
     if args.tiny_test:
         args.use_single_scale = 1
         meshFiles = meshFiles[:2]
 
-
+    shapeModelDirectory = outputDirectory + 'shape_models/'
     if not os.path.exists(shapeModelDirectory):
         os.makedirs(shapeModelDirectory)
 
@@ -104,4 +70,3 @@ def Run_Pipeline(args):
     
 
     launchShapeWorksStudio(shapeModelDirectory, meshFiles, localPointFiles, worldPointFiles)
-
