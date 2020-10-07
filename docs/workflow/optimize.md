@@ -147,6 +147,9 @@ Here is the list of the parameters to be included in the `<parameters.xml>` file
 * `<keep_checkpoints>`: (default: 0) A flag to save the shape (correspondence) models through the initialization/optimization steps for debugging and troubleshooting.  
 * `<checkpointing_interval>`: (default: 50) The interval (number of iterations) to be used to save the checkpoints.
 * `<verbosity>`: (default: 0) '0' : almost zero verbosity (error messages only), '1': minimal verbosity (notification of running initialization/optimization steps), '2': additional details about parameters read from xml and files written, '3': full verbosity.
+* `<adaptivity_mode>`: (default: 0) Used to change the expected behavior of the particles sampler, where the sampler is expected to distribute evenly spaced particles to cover all the surface. Currently, 0 is used to trigger the update project method of cutting planes.
+* '<cutting_plane_counts>`: Number of cutting planes for each shape if constrained particle optimization is used.
+* `<cutting_planes>`: A list of cutting planes to be used for all shapes. Each cutting plane is defined by three points in an order that indicates the plane's normal, i.e., the direction where particles are allowed to be distributed.
 
 ### Parameter Dictionary in Python
 
