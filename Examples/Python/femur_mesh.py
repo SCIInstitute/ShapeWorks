@@ -56,7 +56,6 @@ def Run_Pipeline(args):
         "procrustes_interval" : 1,
         "procrustes_scaling" : 1,
         "save_init_splits" : 0,
-        "debug_projection" : 0,
         "verbosity" : 2,
         "visualizer_enable": 0,
         "visualizer_wireframe": 0,

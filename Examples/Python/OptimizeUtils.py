@@ -52,8 +52,6 @@ def create_SWRun_xml(xmlfilename, inDataFiles, parameterDictionary, outDir):
     procrustes_scaling.text = "\n" + str(parameterDictionary['procrustes_scaling']) + "\n"
     save_init_splits = ET.SubElement(root, 'save_init_splits')
     save_init_splits.text = "\n" + str(parameterDictionary['save_init_splits']) + "\n"
-    debug_projection = ET.SubElement(root, 'debug_projection')
-    debug_projection.text = "\n" + str(parameterDictionary['debug_projection']) + "\n"
     mesh_based_attributes = ET.SubElement(root, 'mesh_based_attributes')
     mesh_based_attributes.text = "\n" + str(1) + "\n"
     if 'use_shape_statistics_after' in parameterDictionary:
@@ -144,8 +142,6 @@ def create_SWRun_fixed_domains(xmlfilename, inDataFiles, parameterDictionary, ou
     procrustes_scaling.text = "\n" + str(parameterDictionary['procrustes_scaling']) + "\n"
     save_init_splits = ET.SubElement(root, 'save_init_splits')
     save_init_splits.text = "\n" + str(parameterDictionary['save_init_splits']) + "\n"
-    debug_projection = ET.SubElement(root, 'debug_projection')
-    debug_projection.text = "\n" + str(parameterDictionary['debug_projection']) + "\n"
     mesh_based_attributes = ET.SubElement(root, 'mesh_based_attributes')
     mesh_based_attributes.text = "\n" + str(1) + "\n"
     verbosity = ET.SubElement(root, 'verbosity')

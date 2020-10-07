@@ -182,7 +182,7 @@ void Optimize::SetParameters()
   }
   else {
     for (int i = 0; i < this->m_domains_per_shape; i++) {
-      this->m_sampler->SetXYZ(i, false);
+      this->m_sampler->SetXYZ(i, true);
     }
   }
 
