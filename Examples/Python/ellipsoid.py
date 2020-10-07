@@ -3,15 +3,6 @@
 ====================================================================
 Full Example Pipeline for Statistical Shape Modeling with ShapeWorks
 ====================================================================
-
-In this example we provide a full pipeline with an example dataset of axis 
-aligned ellipsoids. We provide two different datasets for two different 
-senarios, prepared data consists of the binary images which do not require 
-alignment/resampling/cropping as pre-processing and only require conversion to
-signed distance transforms before running the ShapeWorks particle based 
-optimization. Second is the unprepped data which requires additional 
-pre-processing steps before it can be fed into the optimization. 
-
 This example is set to serve as a test case for new ShapeWorks users, and each
 step is explained in the shapeworks including the pre-processing, the 
 optimization and, the post ShapeWorks visualization.
@@ -29,13 +20,8 @@ def Run_Pipeline(args):
     Unzip the data for this tutorial.
 
     The data is inside the Ellipsoids.zip, run the following function to unzip the 
-    data and create necessary supporting files. The files will be Extracted in a
-    newly created Directory TestEllipsoids.
-    This data both prepped and unprepped are binary images of ellipsoids varying
-    one of the axes while the other two are kept fixed. 
-
-    Extract the zipfile into proper directory and create necessary supporting
-    files
+    data and create necessary supporting files into the Data directory. 
+    The files will be Extracted in a newly created directory: Output/Ellipsoids.
     """
 
     print("\nStep 1. Extract Data\n")
@@ -49,8 +35,7 @@ def Run_Pipeline(args):
     CommonUtils.get_data(datasetName, outputDirectory)
 
     fileList = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))
-
-    fileList = fileList[:15]
+    
     if args.tiny_test:
         args.use_single_scale = 1
         fileList = fileList[0:10]
@@ -64,7 +49,7 @@ def Run_Pipeline(args):
     -- Center of Mass Alignment
     -- Rigid Alignment
     -- Largest Bounding Box and Cropping 
-    For a detailed explanation of grooming steps see: /Documentation/Workflow/Groom.md
+    For a detailed explanation of grooming steps see: /docs/workflow/groom.md
     """
 
     print("\nStep 2. Groom - Data Pre-processing\n")
@@ -120,9 +105,8 @@ def Run_Pipeline(args):
 
     Now that we have the distance transform representation of data we create 
     the parameter files for the shapeworks particle optimization routine.
-    For more details on the plethora of parameters for shapeworks please refer to 
-    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ParameterDescription.pdf'
-
+    For more details on the plethora of parameters for shapeworks please refer 
+    to docs/workflow/optimze.md
     First we need to create a dictionary for all the parameters required by this
     optimization routine
     """
