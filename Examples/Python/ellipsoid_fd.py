@@ -9,12 +9,6 @@ This examples is a use case for fixed domains, i.e. we have an existing
 shape model using some ellipsoids and we want to place correspondences 
 on new ellisoids (we are provided fully prepped binary images) according 
 to the existing shape model.
-
-This example is set to serve as a test case for new ShapeWorks users, and each
-step is explained in the shapeworks including the pre-processing, the 
-optimization and, the post ShapeWorks visualization.
-
-First import the necessary modules
 """
 import os
 import sys
@@ -32,12 +26,10 @@ def Run_Pipeline(args):
     Unzip the data for this tutorial.
 
     The data is inside the EllipsoidsFD.zip, run the following function to unzip the 
-    data and create necessary supporting files. The files will be Extracted in a
-    newly created Directory TestEllipsoidsFD. This contains the existing shape model and
-    all the necessary files plus the new scans to be processed.
-
-    Extract the zipfile into proper directory and create necessary supporting
-    files
+    data and create necessary supporting files. The zip will download to /Data and
+    the files will be extracted in a newly created directory Output/Ellipsoids_FD. 
+    This contains the existing shape model and all the necessary files plus the 
+    new scans to be processed.
     """
 
     print("\nStep 1. Extract Data\n")
@@ -45,7 +37,7 @@ def Run_Pipeline(args):
         input("Press Enter to continue")
 
     datasetName = "ellipsoid_fd-v0"
-    outputDirectory = "Output/Ellipsoids_fd/"
+    outputDirectory = "Output/ellipsoid_fd/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
     CommonUtils.get_data(datasetName, outputDirectory)
@@ -76,7 +68,7 @@ def Run_Pipeline(args):
     Now that we have the distance transform representation of data we create 
     the parameter files for the shapeworks particle optimization routine.
     For more details on the plethora of parameters for shapeworks please refer to
-    [link to documentation]
+    docs/workflow/optimize.md
 
     First we need to create a dictionary for all the parameters required by this
     optimization routine

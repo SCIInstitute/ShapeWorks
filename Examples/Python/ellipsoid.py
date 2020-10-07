@@ -29,7 +29,7 @@ def Run_Pipeline(args):
         input("Press Enter to continue")
 
     datasetName = "ellipsoid-v0"
-    outputDirectory = "Output/Ellipsoids/"
+    outputDirectory = "Output/ellipsoid/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
     CommonUtils.get_data(datasetName, outputDirectory)

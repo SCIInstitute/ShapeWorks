@@ -3,14 +3,10 @@
 ====================================================================
 Full Example Pipeline for Statistical Shape Modeling with ShapeWorks
 ====================================================================
-Jadie Adams
-
-The femur data set is comprised of segmented meshes of femurs and corresponding CT images that are not segmented.
-The first step in grooming is to turn the meshes into the binary volume format shapeworks expects.
-The full images and segmentations are through every stop of grooming. 
-Optimization is single scale.
-
-First import the necessary modules
+The femur data set is comprised of segmented meshes of femurs and corresponding CT 
+images that are not segmented. The first step in grooming is to turn the meshes into 
+the binary volume format shapeworks expects.
+The full images can be carried through every step of grooming. 
 """
 import os
 import re
@@ -24,7 +20,8 @@ def Run_Pipeline(args):
     """
     Get the data for this tutorial.
     If femur.zip is not there it will be downloaded from the ShapeWorks data portal.
-    femur.zip will be unzipped and the data will be extracted in a newly created Directory TestFemur.
+    femur.zip will be unzipped  in the /Data folder and the data will be extracted 
+    in a newly created Directory Output/Femur.
     This data is femur segmentation and the unsegmented hip CT scan.
     """
 
@@ -33,7 +30,7 @@ def Run_Pipeline(args):
         input("Press Enter to continue")
 
     datasetName = "femur-v0"
-    outputDirectory = "Output/Femur/"
+    outputDirectory = "Output/femur/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
     CommonUtils.get_data(datasetName, outputDirectory)
@@ -331,12 +328,10 @@ def Run_Pipeline(args):
 
     We provide two different mode of operations for the ShapeWorks particle opimization;
     1- Single Scale model takes fixed number of particles and performs the optimization.
-    For more detail about the optimization steps and parameters please refer to
-    '/Documentation/PDFs/ScriptUsage.pdf'
-
     2- Multi scale model optimizes for different number of particles in hierarchical manner.
+    
     For more detail about the optimization steps and parameters please refer to
-    '/Documentation/PDFs/ScriptUsage.pdf'
+    '/docs/workflow/optimize.md'
 
     First we need to create a dictionary for all the parameters required by these
     optimization routines

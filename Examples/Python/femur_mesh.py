@@ -4,8 +4,7 @@
 Full Example Pipeline for Statistical Shape Modeling with ShapeWorks
 ====================================================================
 
-In this example we provide a full pipeline with an example dataset of axis 
-aligned ellipsoid meshes.
+In this example we provide a full pipeline with optimizing on femur meshes.
 """
 import os
 from GroomUtils import *
@@ -15,7 +14,7 @@ import CommonUtils
 
 def Run_Pipeline(args):
     datasetName = "femur-v0"
-    outputDirectory = "Output/Femur_mesh/"
+    outputDirectory = "Output/femur_mesh/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
     CommonUtils.get_data(datasetName, outputDirectory)

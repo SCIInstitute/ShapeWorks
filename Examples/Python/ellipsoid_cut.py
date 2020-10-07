@@ -3,20 +3,8 @@
 ====================================================================
 Full Example Pipeline for Statistical Shape Modeling with ShapeWorks
 ====================================================================
-
-In this example we provide a full pipeline with an example dataset of axis
-aligned ellipsoids. We provide two different datasets for two different
-senarios, prepared data consists of the binary images which do not require
-alignment/resampling/cropping as pre-processing and only require conversion to
-signed distance transforms before running the ShapeWorks particle based
-optimization. Second is the unprepped data which requires additional
-pre-processing steps before it can be fed into the optimization.
-
-This example is set to serve as a test case for new ShapeWorks users, and each
-step is explained in the shapeworks including the pre-processing, the
-optimization and, the post ShapeWorks visualization.
-
-First import the necessary modules
+This example is similar to the ellipsoid use case but a cutting plane 
+is used in optimization.
 """
 import os
 import sys
@@ -30,16 +18,8 @@ import CommonUtils
 
 def Run_Pipeline(args):
     """
-    Unzip the data for this tutorial.
-
-    The data is inside the Ellipsoids.zip, run the following function to unzip the
-    data and create necessary supporting files. The files will be Extracted in a
-    newly created Directory TestEllipsoids.
-    This data both prepped and unprepped are binary images of ellipsoids varying
-    one of the axes while the other two are kept fixed.
-
-    Extract the zipfile into proper directory and create necessary supporting
-    files
+    The data (ellipsoid.zip) is dowloaded to /Data folder and extracted to 
+    /Output/ellpsoid_cut
     """
 
     print("\nStep 1. Extract Data\n")
@@ -47,7 +27,7 @@ def Run_Pipeline(args):
         input("Press Enter to continue")
 
     datasetName = "ellipsoid-v0"
-    outputDirectory = "Output/Ellipsoids_cut/"
+    outputDirectory = "Output/ellipsoid_cut/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
     CommonUtils.get_data(datasetName, outputDirectory)
@@ -123,7 +103,7 @@ def Run_Pipeline(args):
     Now that we have the distance transform representation of data we create
     the parameter files for the shapeworks particle optimization routine.
     For more details on the plethora of parameters for shapeworks please refer to
-    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ParameterDescription.pdf'
+    /docs/workflow/optimize.md
 
     First we need to create a dictionary for all the parameters required by this
     optimization routine
@@ -148,14 +128,6 @@ def Run_Pipeline(args):
         cutting_planes.append(cutting_plane_points1)
         cutting_planes.append(cutting_plane_points2)
         cutting_plane_counts.append(2)
-
-    '''
-    postfix = ".isores.center.pad.com.aligned.DT.nrrd"
-    path = "aligned/segmentations/seg.ellipsoid_"
-    for i in range(15):
-        input_file = groomDir + path + "{:02}".format(i) + postfix
-        ShowCuttingPlanesOnImage(input_file, cp, printCmd=True)
-    '''
 
     parameterDictionary = {
         "number_of_particles": 128,
