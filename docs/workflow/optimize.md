@@ -2,7 +2,7 @@
 
 ## Particle-based Shape Modeling
 
-ShapeWorks constructs *statistically optimal anatomical mapping across different shape samples* by automatically computing a dense set of corresponding landmark positions on a set of anatomy segmentations or surface meshes and *does not rely on any specific surface parameterization*. 
+ShapeWorks constructs *statistically optimal anatomical mapping across different shape samples* by automatically computing a dense set of corresponding landmark positions that are geometrically consistent on a set of anatomy segmentations or surface meshes and *does not rely on any specific surface parameterization*. 
 
 
 ShapeWorks uses a set of *interacting particle systems*, one for each shape, to produce optimal sets of surface correspondences in an ensemble. Particles interact with one another via mutually repelling forces to cover optimally and, therefore, describe surface geometry. Particles are positioned on surfaces automatically by optimizing the model's information content via an entropy optimization scheme. 
