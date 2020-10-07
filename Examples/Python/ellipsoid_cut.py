@@ -18,8 +18,6 @@ optimization and, the post ShapeWorks visualization.
 
 First import the necessary modules
 """
-
-from zipfile import ZipFile
 import os
 import sys
 import csv
@@ -28,6 +26,7 @@ import argparse
 from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
+import CommonUtils
 
 def Run_Pipeline(args):
     """
@@ -48,21 +47,11 @@ def Run_Pipeline(args):
         input("Press Enter to continue")
 
     datasetName = "ellipsoid-v0"
-    filename = datasetName + ".zip"
-    # Check if the data is in the right place
-    if not os.path.exists(filename):
-        print("Can't find " + filename + " in the current directory.")
-        import DatasetUtils
-        DatasetUtils.downloadDataset(datasetName)
-
-    parentDir = "TestEllipsoids_cut/"
-    if not os.path.exists(parentDir):
-        os.makedirs(parentDir)
-    # extract the zipfile
-    with ZipFile(filename, 'r') as zipObj:
-        zipObj.extractall(path=parentDir)
-        parentDir = parentDir + datasetName + "/"
-        fileList = sorted(glob.glob(parentDir + "segmentations/*.nrrd"))
+    outputDirectory = "Output/Ellipsoids_cut/"
+    if not os.path.exists(outputDirectory):
+        os.makedirs(outputDirectory)
+    CommonUtils.get_data(datasetName, outputDirectory)
+    fileList = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))
 
     fileList = fileList[:15]
     if args.tiny_test:
@@ -85,9 +74,9 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    parentDir = 'TestEllipsoids_cut/groomed/'
-    if not os.path.exists(parentDir):
-        os.makedirs(parentDir)
+    groomDir = outputDirectory + 'groomed/'
+    if not os.path.exists(groomDir):
+        os.makedirs(groomDir)
 
 
     if args.start_with_image_and_segmentation_data:
@@ -100,22 +89,22 @@ def Run_Pipeline(args):
         dtFiles = sorted(glob.glob('TestEllipsoids/' + datasetName + '/groomed/distance_transforms/*.nrrd'))
     else:
         """Apply isotropic resampling"""
-        resampledFiles = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList)
+        resampledFiles = applyIsotropicResampling(groomDir + "resampled/segmentations", fileList)
 
         """Apply centering"""
-        centeredFiles = center(parentDir + "centered/segmentations", resampledFiles)
+        centeredFiles = center(groomDir + "centered/segmentations", resampledFiles)
 
         """Apply padding"""
-        paddedFiles = applyPadding(parentDir + "padded/segmentations", centeredFiles, 10)
+        paddedFiles = applyPadding(groomDir + "padded/segmentations", centeredFiles, 10)
 
         """Apply center of mass alignment"""
-        comFiles = applyCOMAlignment(parentDir + "com_aligned/segmentations", paddedFiles, None)
+        comFiles = applyCOMAlignment(groomDir + "com_aligned/segmentations", paddedFiles, None)
 
         """Apply rigid alignment"""
-        rigidFiles = applyRigidAlignment(parentDir + "aligned/segmentations", comFiles, None, comFiles[0])
+        rigidFiles = applyRigidAlignment(groomDir + "aligned/segmentations", comFiles, None, comFiles[0])
 
         """Compute largest bounding box and apply cropping"""
-        croppedFiles = applyCropping(parentDir + "cropped/segmentations", rigidFiles, parentDir + "aligned/segmentations/*.aligned.nrrd")
+        croppedFiles = applyCropping(groomDir + "cropped/segmentations", rigidFiles, groomDir + "aligned/segmentations/*.aligned.nrrd")
 
         """
         We convert the scans to distance transforms, this step is common for both the
@@ -126,7 +115,7 @@ def Run_Pipeline(args):
         if int(args.interactive) != 0:
             input("Press Enter to continue")
 
-        dtFiles = applyDistanceTransforms(parentDir, croppedFiles)
+        dtFiles = applyDistanceTransforms(groomDir, croppedFiles)
 
     """
     ## OPTIMIZE : Particle Based Optimization
@@ -144,7 +133,7 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    pointDir = './TestEllipsoids_cut/shape_models/'
+    pointDir = outputDirectory + 'shape_models/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
@@ -164,7 +153,7 @@ def Run_Pipeline(args):
     postfix = ".isores.center.pad.com.aligned.DT.nrrd"
     path = "aligned/segmentations/seg.ellipsoid_"
     for i in range(15):
-        input_file = parentDir + path + "{:02}".format(i) + postfix
+        input_file = groomDir + path + "{:02}".format(i) + postfix
         ShowCuttingPlanesOnImage(input_file, cp, printCmd=True)
     '''
 
