@@ -29,7 +29,5 @@ TEST(PythonTests, ellipsoidTinyTest) {
   std::cerr << "Running command: " << command << "\n";
   system(command.c_str());
 
-  std::cout << "check_file " << check_file << std::endl;
-
   ASSERT_TRUE(file_exists(check_file));
 }
