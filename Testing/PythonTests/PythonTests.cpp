@@ -18,7 +18,7 @@ TEST(PythonTests, ellipsoidTinyTest) {
 
   // decide success by checking that one of the files created by the use case exists (todo: better measure of success)
   std::string check_file = test_location +
-    "/Output/Ellipsoids/shape_models/32/seg.ellipsoid_00.isores.center.pad.com.aligned.cropped.tpSmoothDT_local.particles";
+    "/Output/ellipsoid/shape_models/32/seg.ellipsoid_00.isores.center.pad.com.aligned.cropped.tpSmoothDT_local.particles";
 
   // delete the file to make sure it's remade
   chdir(test_location.c_str());
