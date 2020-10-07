@@ -20,7 +20,7 @@ def Run_Pipeline(args):
     Unzip the data for this tutorial.
 
     The data is inside the Ellipsoids.zip, run the following function to unzip the 
-    data and create necessary supporting files into the Data directory. 
+    data and create necessary supporting files into the Data/ directory. 
     The files will be Extracted in a newly created directory: Output/Ellipsoids.
     """
 

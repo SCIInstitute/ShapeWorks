@@ -13,6 +13,11 @@ from AnalyzeUtils import *
 import CommonUtils
 
 def Run_Pipeline(args):
+    """
+    If femur.zip is not there it will be downloaded from the ShapeWorks data portal.
+    femur.zip will be saved in the /Data folder and the data will be extracted 
+    in a newly created directory Output/femur_mesh.
+    """
     datasetName = "femur-v0"
     outputDirectory = "Output/femur_mesh/"
     if not os.path.exists(outputDirectory):

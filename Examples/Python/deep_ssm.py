@@ -17,9 +17,11 @@ def Run_Pipeline(args):
 	print("\nStep 1. Get Data") #############################################################################################
 	'''
 	Get femur data
+	Femur data is downloaded in a zip folder to Data/
+    It gets extracted to Output/deep_ssm
 	'''
 	datasetName = "femur-v0"
-	outputDirectory = "Output/DeepSSM/"
+	outputDirectory = "Output/deep_ssm/"
 	if not os.path.exists(outputDirectory):
 		os.makedirs(outputDirectory)
 	CommonUtils.get_data(datasetName, outputDirectory)

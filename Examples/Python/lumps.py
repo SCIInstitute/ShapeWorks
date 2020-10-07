@@ -5,13 +5,16 @@ from AnalyzeUtils import *
 import CommonUtils
 
 def Run_Pipeline(args):
-
+    """
+    Data is downloaded in a zip folder to Data/
+    It gets extracted to Output/lumps
+    """
     print("\nStep 1. Extract Data\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
     datasetName = "lumps-v0"
-    outputDirectory = "Output/Lumps/"
+    outputDirectory = "Output/lumps/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
     CommonUtils.get_data(datasetName, outputDirectory)

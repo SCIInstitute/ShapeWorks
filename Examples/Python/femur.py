@@ -20,11 +20,10 @@ def Run_Pipeline(args):
     """
     Get the data for this tutorial.
     If femur.zip is not there it will be downloaded from the ShapeWorks data portal.
-    femur.zip will be unzipped  in the /Data folder and the data will be extracted 
-    in a newly created Directory Output/Femur.
+    femur.zip will be saved in the /Data folder and the data will be extracted 
+    in a newly created directory Output/femur.
     This data is femur segmentation and the unsegmented hip CT scan.
     """
-
     print("\nStep 1. Get Data\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")

@@ -14,8 +14,6 @@ images as well as their binary segmentation images.
 
 In this example, the raw and segmentation data are sharing the same functions for pre-processing,
 such as the same transformation matrices for the center of mass and rigid alignment or same bounding box for cropping.
-
-First import the necessary modules
 """
 import os
 import glob
@@ -25,13 +23,16 @@ from AnalyzeUtils import *
 import CommonUtils
 
 def Run_Pipeline(args):
-
+    """
+    Data is downloaded in a zip folder to Data/
+    It gets extracted to Output/left_atrium
+    """
     print("\nStep 1. Extract Data\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
     datasetName = "left_atrium-v0"
-    outputDirectory = "Output/Left_atrium/"
+    outputDirectory = "Output/left_atrium/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
     CommonUtils.get_data(datasetName, outputDirectory)
@@ -94,10 +95,6 @@ def Run_Pipeline(args):
 
             """
             Apply padding
-
-            For detailed explainations of parameters for padding volumes, go to
-            '/Documentation/PDFs/ImagePrepTools.pdf'
-
             Both the segmentation and raw images are padded.
             """
             paddedFiles_segmentations = applyPadding(groomDir + 'padded/segmentations', centeredFiles_segmentations, 10)
@@ -105,10 +102,6 @@ def Run_Pipeline(args):
 
             """
             Apply center of mass alignment
-
-            For detailed explainations of parameters for center of mass(COM) alignment of volumes, go to
-            '/Documentation/PDFs/AlgnmentTools.pdf'
-
             This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
             There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
             """
@@ -116,10 +109,6 @@ def Run_Pipeline(args):
 
             """
             Apply rigid alignment
-
-            For detailed explainations of parameters for rigid alignment of volumes, go to
-            '/Documentation/PDFs/AlgnmentTools.pdf'
-
             This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
             There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
             processRaw = False, applies the center of mass alignment only on segemnattion data.
@@ -131,14 +120,10 @@ def Run_Pipeline(args):
             [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(groomDir + "aligned", comFiles_segmentations, comFiles_images, medianFile, processRaw = True)
 
             """
-            For detailed explainations of parameters for finding the largest bounding box and cropping, go to
-            '/Documentation/PDFs/ImagePrepTools.pdf'
-
             Compute largest bounding box and apply cropping
             processRaw = True, processes raw and binary images with shared parameters.
             processRaw = False, applies the center of mass alignment only on segemnattion data.
             The function uses the same bounding box to crop the raw and segemnattion data.
-
             """
             croppedFiles_segmentations = applyCropping(groomDir + "cropped/segmentations", rigidFiles_segmentations, groomDir + "aligned/segmentations/*.aligned.nrrd")
             croppedFiles_images = applyCropping(groomDir + "cropped/images", rigidFiles_images, groomDir + "aligned/segmentations/*.aligned.nrrd")
@@ -163,10 +148,6 @@ def Run_Pipeline(args):
             -- Center of Mass Alignment
             -- Rigid Alignment
             -- Largest Bounding Box and Cropping
-
-            For detailed explainations of parameters for each tool, go to
-            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ImagePrepTools.pdf'
-            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/AlgnmentTools.pdf'
             """
 
             print("\nStep 2. Groom - Data Pre-processing\n")
@@ -175,9 +156,6 @@ def Run_Pipeline(args):
 
             """
             Apply isotropic resampling
-
-            For detailed explainations of parameters for resampling volumes, go to
-            '/Documentation/PDFs/ImagePrepTools.pdf'
             """
             resampledFiles = applyIsotropicResampling(groomDir + "resampled", fileList_seg)
 
@@ -186,26 +164,16 @@ def Run_Pipeline(args):
 
             """
             Apply padding
-            For detailed explainations of parameters for padding volumes, go to
-            '/Documentation/PDFs/ImagePrepTools.pdf'
             """
             paddedFiles = applyPadding(groomDir + "padded", centeredFiles, 10)
 
             """
             Apply center of mass alignment
-
-            For detailed explainations of parameters for center of mass(COM) alignment of volumes, go to
-            '/Documentation/PDFs/AlgnmentTools.pdf'
-
             """
             comFiles = applyCOMAlignment(groomDir + "com_aligned", paddedFiles, None)
 
             """
             Apply rigid alignment
-
-            For detailed explainations of parameters for rigid alignment of volumes, go to
-            '/Documentation/PDFs/AlgnmentTools.pdf'
-
             Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
             """
             medianFile = FindReferenceImage(comFiles)
@@ -213,9 +181,6 @@ def Run_Pipeline(args):
 
             """
             Compute largest bounding box and apply cropping
-
-            For detailed explainations of parameters for finding the largest bounding box and cropping, go to 
-            '/Documentation/PDFs/ImagePrepTools.pdf'
             """
             croppedFiles = applyCropping(groomDir + "cropped", rigidFiles, groomDir + "aligned/*.aligned.nrrd")
 
@@ -235,16 +200,11 @@ def Run_Pipeline(args):
     Now that we have the distance transform representation of data we create
     the parameter files for the shapeworks particle optimization routine.
     For more details on the plethora of parameters for shapeworks please refer to
-    '/Documentation/PDFs/ParameterDescription.pdf'
+    /docs/workflow/optimize.md
 
     We provide two different mode of operations for the ShapeWorks particle opimization:
     1- Single Scale model takes fixed number of particles and performs the optimization.
-    For more detail about the optimization steps and parameters please refer to
-    '/Documentation/PDFs/ScriptUsage.pdf'
-
     2- Multi scale model optimizes for different number of particles in hierarchical manner.
-    For more detail about the optimization steps and parameters please refer to
-    '/Documentation/PDFs/ScriptUsage.pdf'
 
     First we need to create a dictionary for all the parameters required by these
     optimization routines
