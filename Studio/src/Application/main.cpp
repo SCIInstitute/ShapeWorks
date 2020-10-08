@@ -23,10 +23,12 @@ int main(int argc, char** argv)
   try {
     STUDIO_LOG_MESSAGE("ShapeWorksStudio initializing...");
 
+
     // needed to ensure appropriate OpenGL context is created for VTK rendering.
     QSurfaceFormat::setDefaultFormat(QVTKOpenGLNativeWidget::defaultFormat());
 
 #ifdef _WIN32
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     STUDIO_LOG_MESSAGE("ShapeWorksStudio win32 initializing...");
     init_crash_handler();
     ::SetErrorMode( 0 );

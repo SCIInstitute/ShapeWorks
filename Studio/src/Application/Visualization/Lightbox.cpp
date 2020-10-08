@@ -153,7 +153,8 @@ void Lightbox::display_shapes()
     position++;
   }
 
-  if (this->visualizer_->get_uniform_feature_range()) {
+  if (this->visualizer_->get_feature_map() != "" &&
+      this->visualizer_->get_uniform_feature_range()) {
     for (int i = 0; i < this->viewers_.size(); i++) {
       auto shape = this->viewers_[i]->get_shape();
       if (shape && shape->get_vectors().empty()) {
