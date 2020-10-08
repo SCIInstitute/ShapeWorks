@@ -121,7 +121,7 @@ void ShapeWorksGroom::isolate(int which)
     thresh->SetInput(relabel->GetOutput());
     thresh->SetOutsideValue(0);
     thresh->ThresholdBelow(0);
-    thresh->ThresholdAbove(1.001);
+    thresh->ThresholdAbove(1);
     thresh->Update();
     typedef itk::CastImageFilter<IsolateType, ImageType> FilterType;
     FilterType::Pointer filter2 = FilterType::New();
@@ -382,6 +382,7 @@ void ShapeWorksGroom::fastmarching(int which)
     std::cout << "*** FINISHED RUNNING TOOL: fastmarching" << std::endl;
   }
 }
+
 
 void ShapeWorksGroom::blur(int which)
 {
