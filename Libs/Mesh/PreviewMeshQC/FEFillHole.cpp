@@ -775,7 +775,7 @@ bool FEFillHole::AFM(FEMesh& mesh, EdgeRing& ring, vector<FACE>& tri_list, vecto
 		b = ring.m_r[prev] - ring.m_r[i];
 
 		double cos_theta = a.Normalize() * b.Normalize();
-		double angle = acos(cos_theta) * 180.0 / PI;
+		double angle = acos(cos_theta) * 180.0 / M_PI;
 		//check if we want theta or 360 - theta.
 		//node normal at prev and next
 		if (angle < 180)

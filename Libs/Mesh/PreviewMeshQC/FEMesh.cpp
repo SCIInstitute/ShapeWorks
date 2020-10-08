@@ -2039,7 +2039,7 @@ void FEMesh::AutoSmooth(double w)
 	int NF = Faces();
 
 	// smoothing threshold
-	double eps = (double) cos(w*PI/180);
+	double eps = (double) cos(w*M_PI/180);
 
 	// clear face group ID's
 	for (int i=0; i<NF; ++i) 
