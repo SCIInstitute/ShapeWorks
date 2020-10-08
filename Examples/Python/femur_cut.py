@@ -1,8 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-Same as femur.py, but uses the c++ implementation of cutting planes during optimization.
+Same as femur.py, but uses the c++ implementation of cutting planes.
 """
+
+from zipfile import ZipFile
 import os
+import sys
+import csv
+import argparse
+import glob
 import re
 import numpy as np
 import pickle
@@ -10,25 +16,38 @@ import pickle
 from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
-import CommonUtils
 
 def Run_Pipeline(args):
     """
+    Get the data for this tutorial.
     If femur.zip is not there it will be downloaded from the ShapeWorks data portal.
-    femur.zip will be saved in the /Data folder and the data will be extracted 
-    in a newly created directory Output/femur_cut.
+    femur.zip will be unzipped and the data will be extracted in a newly created Directory TestFemur_cut.
+    This data is femur segmentation and the unsegmented hip CT scan.
     """
+
     print("\nStep 1. Get Data\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
     datasetName = "femur-v0"
-    outputDirectory = "Output/femur_cut/"
-    if not os.path.exists(outputDirectory):
-        os.makedirs(outputDirectory)
-    CommonUtils.get_data(datasetName, outputDirectory)
-   
-    inputDir = outputDirectory + datasetName + '/'
+    filename = datasetName + ".zip"
+    # Check if the data is in the right place
+    if not os.path.exists(filename):
+        print("Can't find " + filename + " in the current directory.")
+        import DatasetUtils
+        DatasetUtils.downloadDataset(datasetName)
+
+    parentDir = "TestFemur_cut/"
+    inputDir = 'TestFemur_cut/' + datasetName + '/'
+
+    if not os.path.exists(parentDir):
+        os.makedirs(parentDir)
+
+    # extract the zipfile if needed
+    if not os.listdir(parentDir) :
+        print("Extracting data from " + filename + "...")
+        with ZipFile(filename, 'r') as zipObj:
+            zipObj.extractall(path=parentDir)
 
     print("\nStep 2. Groom - Data Pre-processing\n")
     if args.interactive:
@@ -52,9 +71,9 @@ def Run_Pipeline(args):
         -- find largest bounding box and crop
         """
         # Directory where grooming output folders will be added
-        groomDir = outputDirectory + 'groomed/'
-        if not os.path.exists(groomDir):
-            os.mkdir(groomDir)
+        parentDir = 'TestFemur_cut/groomed/'
+        if not os.path.exists(parentDir):
+            os.mkdir(parentDir)
 
         # set name specific variables
         img_suffix = "1x_hip"
@@ -127,39 +146,39 @@ def Run_Pipeline(args):
             Reflect - We have left and right femurs, so we reflect both image and mesh
             for the non-reference side so that all of the femurs can be aligned.
             """
-            reflectedFiles_mesh, reflectedFile_img = anatomyPairsToSingles(groomDir + 'reflected', files_mesh, files_img, reference_side)
+            reflectedFiles_mesh, reflectedFile_img = anatomyPairsToSingles(parentDir + 'reflected', files_mesh, files_img, reference_side)
 
             """
             MeshesToVolumes - Shapeworks requires volumes so we need to convert
             mesh segementaions to binary segmentations.
             """
-            fileList_seg = MeshesToVolumesUsingImages(groomDir + "volumes", reflectedFiles_mesh, reflectedFile_img)
+            fileList_seg = MeshesToVolumesUsingImages(parentDir + "volumes", reflectedFiles_mesh, reflectedFile_img)
 
             """
             Apply isotropic resampling
             The segmentation and images are resampled independently to have uniform spacing.
             """
-            resampledFiles_segmentations = applyIsotropicResampling(groomDir + "resampled/segmentations", fileList_seg, isBinary=True)
-            resampledFiles_images = applyIsotropicResampling(groomDir + "resampled/images", reflectedFile_img, isBinary=False)
+            resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, isBinary=True)
+            resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", reflectedFile_img, isBinary=False)
 
             """
             Apply padding
             Both the segmentation and raw images are padded in case the seg lies on the image boundary.
             """
-            paddedFiles_segmentations = applyPadding(groomDir + "padded/segementations", resampledFiles_segmentations, 10)
-            paddedFiles_images = applyPadding(groomDir + "padded/images", resampledFiles_images, 10)
+            paddedFiles_segmentations = applyPadding(parentDir + "padded/segementations", resampledFiles_segmentations, 10)
+            paddedFiles_images = applyPadding(parentDir + "padded/images", resampledFiles_images, 10)
 
             """
             Apply center of mass alignment
             This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
             """
-            [comFiles_segmentations, comFiles_images] = applyCOMAlignment(groomDir + "com_aligned", paddedFiles_segmentations, paddedFiles_images, processRaw=True)
+            [comFiles_segmentations, comFiles_images] = applyCOMAlignment(parentDir + "com_aligned", paddedFiles_segmentations, paddedFiles_images, processRaw=True)
 
             """
             Apply centering
             """
-            centerFiles_segmentations = center(groomDir + "centered", comFiles_segmentations)
-            centerFiles_images = center(groomDir + "centered/images", comFiles_images)
+            centerFiles_segmentations = center(parentDir + "centered", comFiles_segmentations)
+            centerFiles_images = center(parentDir + "centered/images", comFiles_images)
 
             """
             Rigid alignment needs a reference file to align all the input files, FindReferenceImage function defines the median file as the reference.
@@ -171,7 +190,7 @@ def Run_Pipeline(args):
             This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
             This function uses the same transfrmation matrix for alignment of raw and segmentation files.
             """
-            [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(groomDir + "aligned", centerFiles_segmentations, centerFiles_images, medianFile, processRaw = True)
+            [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir + "aligned", centerFiles_segmentations, centerFiles_images, medianFile, processRaw = True)
 
             # If user chose option 2, define cutting plane on median sample
             if choice == 2:
@@ -181,7 +200,7 @@ def Run_Pipeline(args):
             elif choice == 1:
                 postfix = "_femur.isores.pad.com.center.aligned.DT.nrrd"
                 path = "aligned/segmentations/"
-                input_file = groomDir + path + cp_prefix + postfix
+                input_file = parentDir + path + cp_prefix + postfix
                 cutting_plane_points = SelectCuttingPlane(input_file)
 
                 # catch for flipped norm
@@ -195,14 +214,9 @@ def Run_Pipeline(args):
 
             pickle.dump( [cutting_plane_points], open( inputDir + "groomed/groomed_pickle.p", "wb" ) )
 
-            '''
-            # Clip Binary Volumes - We have femurs of different shaft length so we will clip them all using the defined cutting plane.
-            clippedFiles_segmentations = ClipBinaryVolumes(groomDir + 'clipped_segmentations', rigidFiles_segmentations, cutting_plane_points.flatten())
-            '''
-
             # Compute largest bounding box and apply cropping
-            croppedFiles_segmentations = applyCropping(groomDir + "cropped/segmentations", rigidFiles_segmentations, groomDir + "aligned/segmentations/*.aligned.nrrd")
-            croppedFiles_images = applyCropping(groomDir + "cropped/images", rigidFiles_images, groomDir + "aligned/segmentations/*.aligned.nrrd")
+            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", rigidFiles_segmentations, parentDir + "aligned/*.aligned.nrrd")
+            croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images, parentDir + "aligned/*.aligned.nrrd")
 
 
         # BEGIN GROOMING WITHOUT IMAGES
@@ -210,7 +224,7 @@ def Run_Pipeline(args):
             """
             Reflect - We have left and right femurs, so we reflect the non-reference side meshes so that all of the femurs can be aligned
             """
-            reflectedFiles_mesh = reflectMeshes(groomDir + 'reflected', files_mesh, reference_side)
+            reflectedFiles_mesh = reflectMeshes(parentDir + 'reflected', files_mesh, reference_side)
 
             """
             MeshesToVolumes - Shapeworks requires volumes so we need to convert
@@ -230,30 +244,30 @@ def Run_Pipeline(args):
                     if answer2 == 'y':
                         done = True
 
-            fileList_seg = MeshesToVolumes(groomDir + "volumes", reflectedFiles_mesh, spacing)
+            fileList_seg = MeshesToVolumes(parentDir + "volumes", reflectedFiles_mesh, spacing)
 
             """
             Apply isotropic resampling
             The segmentation and images are resampled independently to have uniform spacing.
             """
-            resampledFiles_segmentations = applyIsotropicResampling(groomDir + "resampled/segmentations", fileList_seg, isBinary=True)
+            resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, isBinary=True)
 
             """
             Apply padding
             Both the segmentation and raw images are padded in case the seg lies on the image boundary.
             """
-            paddedFiles_segmentations = applyPadding(groomDir + "padded/segementations", resampledFiles_segmentations, 10)
+            paddedFiles_segmentations = applyPadding(parentDir + "padded/segementations", resampledFiles_segmentations, 10)
 
             """
             Apply center of mass alignment
             This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
             """
-            comFiles_segmentations = applyCOMAlignment(groomDir + "com_aligned", paddedFiles_segmentations, None)
+            comFiles_segmentations = applyCOMAlignment(parentDir + "com_aligned", paddedFiles_segmentations, None)
 
             """
             Apply centering
             """
-            centerFiles_segmentations = center(groomDir + "centered/segmentations", comFiles_segmentations)
+            centerFiles_segmentations = center(parentDir + "centered/segmentations", comFiles_segmentations)
 
             """
             Rigid alignment needs a reference file to align all the input files, FindReferenceImage function defines the median file as the reference.
@@ -265,7 +279,7 @@ def Run_Pipeline(args):
             This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
             This function uses the same transfrmation matrix for alignment of raw and segmentation files.
             """
-            rigidFiles_segmentations = applyRigidAlignment(groomDir + "aligned", centerFiles_segmentations, None, medianFile, processRaw = False)
+            rigidFiles_segmentations = applyRigidAlignment(parentDir + "aligned", centerFiles_segmentations, None, medianFile, processRaw = False)
 
             # If user chose option 2, define cutting plane on median sample
             if choice == 2:
@@ -275,7 +289,7 @@ def Run_Pipeline(args):
             elif choice == 1:
                 postfix = "_femur.isores.pad.com.center.aligned.DT.nrrd"
                 path = "aligned/"
-                input_file = groomDir + path + cp_prefix + postfix
+                input_file = parentDir + path + cp_prefix + postfix
                 cutting_plane_points = SelectCuttingPlane(input_file)
 
                 # catch for flipped norm
@@ -289,13 +303,8 @@ def Run_Pipeline(args):
 
             pickle.dump( [cutting_plane_points], open( inputDir + "groomed/groomed_pickle.p", "wb" ) )
 
-            '''
-            # Clip Binary Volumes - We have femurs of different shaft length so we will clip them all using the defined cutting plane.
-            clippedFiles_segmentations = ClipBinaryVolumes(groomDir + 'clipped_segmentations', rigidFiles_segmentations, cutting_plane_points.flatten())
-            '''
-
             # Compute largest bounding box and apply cropping
-            croppedFiles_segmentations = applyCropping(groomDir + "cropped/segmentations", rigidFiles_segmentations, groomDir + "aligned/*.aligned.nrrd")
+            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", rigidFiles_segmentations, parentDir + "aligned/*.aligned.nrrd")
 
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
@@ -306,7 +315,7 @@ def Run_Pipeline(args):
         We convert the scans to distance transforms, this step is common for both the
         prepped as well as unprepped data, just provide correct filenames.
         """
-        dtFiles = applyDistanceTransforms(groomDir, croppedFiles_segmentations)
+        dtFiles = applyDistanceTransforms(parentDir, croppedFiles_segmentations)
 
     else:
         print("Skipping grooming...")
@@ -345,7 +354,7 @@ def Run_Pipeline(args):
     if args.interactive:
         input("Press Enter to continue")
 
-    pointDir = outputDirectory + 'shape_models/'
+    pointDir = './TestFemur_cut/shape_models/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
