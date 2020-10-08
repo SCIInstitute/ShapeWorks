@@ -82,20 +82,22 @@ public:
   }
   virtual shapeworks::DomainType GetDomainType() const = 0;
 
-  Constraints *GetConstraints() const {return constraints;}
+  std::shared_ptr<Constraints> GetConstraints() const {return constraints;}
 
 protected:
 
   // is this a fixed domain or not?  We start as fixed and if an image or mesh is set, we set this to false
   bool m_FixedDomain{true};
 
-  ParticleDomain() {constraints = new Constraints();}
-  virtual ~ParticleDomain() {delete constraints;}
+  ParticleDomain() {
+      this->constraints = std::make_shared<Constraints>();
+  }
+  virtual ~ParticleDomain() {}
   void PrintSelf(std::ostream& os, Indent indent) const
   {
     Superclass::PrintSelf(os, indent);
   }
-  Constraints *constraints;
+  std::shared_ptr<Constraints> constraints;
 
 private:
   ParticleDomain(const ParticleDomain&); //purposely not implemented
