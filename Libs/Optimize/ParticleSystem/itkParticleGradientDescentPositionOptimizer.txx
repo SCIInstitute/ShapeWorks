@@ -247,6 +247,7 @@ namespace itk
                 }
                 else // keep the move with timestep 1.0 anyway
                 {
+                  if (gradmag > maxchange) maxchange = gradmag;
                   break;
                 }
               }
