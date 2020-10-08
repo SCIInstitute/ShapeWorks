@@ -25,6 +25,9 @@ ShapeWorks support quantitative evaluation of shape models, which can be used fo
 
 ![Specificity metric](../img/new/eval_spec.png)
 
+!!! danger "What is a good shape model?"
+    A good shape model should balance the trade-off between three requirements, namely specificity, generalization, and compactness. In particular, a shape model needs to generate samples that are plausible (i.e., respect the population statistics). It also needs to generate samples beyond the training data (i.e., generalizable) while describing the population with few parameters (i.e., compact).
+
 ## ShapeWorks Commands
 
 ```
