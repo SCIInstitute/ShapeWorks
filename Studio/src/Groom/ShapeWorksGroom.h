@@ -15,20 +15,19 @@ typedef float PixelType;
 typedef itk::Image<PixelType, 3> ImageType;
 typedef itk::ImageFileReader<ImageType> ReaderType;
 typedef itk::ImageFileWriter<ImageType> WriterType;
-typedef itk::ConnectedThresholdImageFilter<ImageType, ImageType> flood_fill_filter_type;
 typedef itk::AffineTransform<double, 3>::ParametersType TransformType;
 
 class ShapeWorksGroom {
 public:
-  ShapeWorksGroom(std::vector<ImageType::Pointer> inputs = std::vector<ImageType::Pointer>(),
+  explicit ShapeWorksGroom(std::vector<ImageType::Pointer> inputs = std::vector<ImageType::Pointer>(),
                   double background = 0., double foreground = 0.,
                   double sigma = 2.0,
                   size_t padding = 0, size_t iterations = 100,
                   bool verbose = false);
   virtual void run();
-  void queueTool(std::string tool);
+  void queueTool(const std::string& tool);
   std::vector<ImageType::Pointer> getImages();
-  double foreground();
+  double foreground() const;
   std::map<std::string, bool> tools();
 
   std::vector<TransformType> get_transforms();
@@ -48,7 +47,7 @@ protected:
   std::vector<TransformType> transforms_;
   size_t padding_, iterations_;
   std::map<std::string, bool> runTools_;
-  ImageType::IndexType upper_;
-  ImageType::IndexType lower_;
-  bool paddingInit_;
+  ImageType::IndexType upper_ = {0,0,0};
+  ImageType::IndexType lower_ = {0,0,0};
+  bool paddingInit_ = false;
 };
