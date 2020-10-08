@@ -244,6 +244,10 @@ void Visualizer::update_lut()
     else {
       // color by distance from the selected point
 
+      int check = this->selected_point_one_ * 3 + 2;
+      if (check >= this->cached_mean_.size()) {
+        return;
+      }
       double p1[3];
       p1[0] = this->cached_mean_[this->selected_point_one_ * 3 + 0];
       p1[1] = this->cached_mean_[this->selected_point_one_ * 3 + 1];
