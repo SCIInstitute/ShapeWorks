@@ -632,9 +632,11 @@ void ShapeWorksStudioApp::handle_pca_update()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_message(std::string str)
 {
-  STUDIO_LOG_MESSAGE(QString::fromStdString(str));
+  if (str != this->current_message_) {
+    STUDIO_LOG_MESSAGE(QString::fromStdString(str));
+  }
   this->ui_->statusbar->showMessage(QString::fromStdString(str));
-  this->currentMessage_ = str;
+  this->current_message_ = str;
 }
 
 //---------------------------------------------------------------------------
@@ -666,7 +668,7 @@ void ShapeWorksStudioApp::handle_progress(size_t value)
     this->progress_bar_->setVisible(false);
     this->enable_possible_actions();
   }
-  this->handle_message(this->currentMessage_);
+  this->handle_message(this->current_message_);
 }
 
 //---------------------------------------------------------------------------
