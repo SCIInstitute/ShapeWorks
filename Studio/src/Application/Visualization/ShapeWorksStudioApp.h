@@ -197,7 +197,7 @@ private:
   QList<QAction*> recent_file_actions_;
 
   QProgressBar* progress_bar_;
-  std::string currentMessage_;
+  std::string current_message_;
 
   std::string current_display_mode_;
 
