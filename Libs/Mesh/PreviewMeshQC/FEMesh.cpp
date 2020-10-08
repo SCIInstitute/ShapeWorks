@@ -1,6 +1,8 @@
 // FEMesh.cpp: implementation of the FEMesh class.
 //
 //////////////////////////////////////////////////////////////////////
+#define _USE_MATH_DEFINES
+#include <cmath>
 
 #include "stdafx.h"
 #include "FEMesh.h"

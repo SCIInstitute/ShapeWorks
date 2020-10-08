@@ -1,3 +1,5 @@
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include "stdafx.h"
 #include "FEFillHole.h"
 #include "FEAutoMesher.h"
