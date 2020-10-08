@@ -81,6 +81,7 @@ std::shared_ptr<Subject> Shape::get_subject()
 void Shape::import_original_image(std::string filename, float iso_value)
 {
   this->subject_->set_segmentation_filenames(std::vector<std::string>{filename});
+  this->corner_annotations_[0] = QString::fromStdString(filename);
 }
 
 //---------------------------------------------------------------------------

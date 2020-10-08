@@ -2,16 +2,14 @@
 
 #include <sstream>
 #include <iostream>
+#include <utility>
 #include <vector>
 #include <map>
-#include <stdexcept>
 
-#include "vnl/vnl_vector.h"
 #include "bounding_box.h"
 #include "itkConnectedComponentImageFilter.h"
 #include "itkImageRegionIterator.h"
 #include "itkImageRegionIteratorWithIndex.h"
-#include "itkConnectedComponentImageFilter.h"
 #include "itkNearestNeighborInterpolateImageFunction.h"
 #include "itkResampleImageFilter.h"
 #include "itkExtractImageFilter.h"
@@ -19,39 +17,30 @@
 #include "itkAntiAliasBinaryImageFilter.h"
 #include "itkReinitializeLevelSetImageFilter.h"
 #include "itkDiscreteGaussianImageFilter.h"
-#include "itkNrrdImageIOFactory.h"
-#include "itkMetaImageIOFactory.h"
 #include "itkCastImageFilter.h"
 #include "itkRelabelComponentImageFilter.h"
 #include "itkThresholdImageFilter.h"
 #include "itkBinaryFillholeImageFilter.h"
-#include "itkApproximateSignedDistanceMapImageFilter.h"
 
 ShapeWorksGroom::ShapeWorksGroom(
   std::vector<ImageType::Pointer> inputs,
   double background, double foreground,
   double blurSigma, size_t padding, size_t iterations,
   bool verbose)
-  : images_(inputs), background_(background), blurSigma_(blurSigma),
+  : images_(std::move(inputs)), background_(background), blurSigma_(blurSigma),
     foreground_(foreground), padding_(padding),
     iterations_(iterations), verbose_(verbose)
 {
-
-  this->paddingInit_ = false;
-  this->upper_ = {0, 0, 0};
-  this->lower_ = {0, 0, 0};
   this->transforms_.resize(this->images_.size());
 }
 
-void ShapeWorksGroom::queueTool(std::string tool)
+void ShapeWorksGroom::queueTool(const std::string& tool)
 {
   this->runTools_.insert(std::make_pair(tool, true));
 }
 
 void ShapeWorksGroom::run()
 {
-
-  size_t ran = 0;
   if (this->runTools_.count("center")) {
     this->center();
   }
@@ -80,7 +69,7 @@ std::map<std::string, bool> ShapeWorksGroom::tools()
   return this->runTools_;
 }
 
-double ShapeWorksGroom::foreground()
+double ShapeWorksGroom::foreground() const
 { return this->foreground_; }
 
 std::vector<ImageType::Pointer> ShapeWorksGroom::getImages()
@@ -110,8 +99,7 @@ void ShapeWorksGroom::isolate(int which)
     ccfilter->SetInput(filter->GetOutput());
     ccfilter->FullyConnectedOn();
     ccfilter->Update();
-    typedef itk::RelabelComponentImageFilter<
-      IsolateType, IsolateType> RelabelType;
+    typedef itk::RelabelComponentImageFilter<IsolateType, IsolateType> RelabelType;
     RelabelType::Pointer relabel = RelabelType::New();
     relabel->SetInput(ccfilter->GetOutput());
     relabel->SortByObjectSizeOn();
@@ -121,7 +109,7 @@ void ShapeWorksGroom::isolate(int which)
     thresh->SetInput(relabel->GetOutput());
     thresh->SetOutsideValue(0);
     thresh->ThresholdBelow(0);
-    thresh->ThresholdAbove(1.001);
+    thresh->ThresholdAbove(1);
     thresh->Update();
     typedef itk::CastImageFilter<IsolateType, ImageType> FilterType;
     FilterType::Pointer filter2 = FilterType::New();
@@ -167,7 +155,6 @@ void ShapeWorksGroom::center(int which)
 
   for (size_t i = start; i < end; i++) {
     auto img = this->images_[i];
-    ImageType::PointType origin = img->GetOrigin();
 
     // Copy the original image and find the center of mass.
     ImageType::Pointer simg = ImageType::New();
@@ -262,12 +249,11 @@ void ShapeWorksGroom::auto_pad(int which)
   auto start = (which == -1 ? 0 : which);
   auto end = (which == -1 ? this->images_.size() : which + 1);
   if (!this->paddingInit_) {
-    for (size_t i = 0; i < this->images_.size(); i++) {
-      auto img = this->images_[i];
-      if (first == true) {
+    for (const auto& img : this->images_) {
+      if (first) {
         first = false;
         this->lower_ = img->GetLargestPossibleRegion().GetIndex();
-        this->upper_ = lower_ + img->GetLargestPossibleRegion().GetSize();
+        this->upper_ = this->lower_ + img->GetLargestPossibleRegion().GetSize();
       }
       else {
         // Keep the largest bounding box.
@@ -275,12 +261,12 @@ void ShapeWorksGroom::auto_pad(int which)
           = img->GetLargestPossibleRegion().GetIndex();
         ImageType::RegionType::IndexType upperTmp
           = lowerTmp + img->GetLargestPossibleRegion().GetSize();
-        for (unsigned int i = 0; i < 3; i++) {
-          if (lowerTmp[i] < this->lower_[i]) {
-            this->lower_[i] = lowerTmp[i];
+        for (unsigned int j = 0; j < 3; j++) {
+          if (lowerTmp[j] < this->lower_[j]) {
+            this->lower_[j] = lowerTmp[j];
           }
-          if (upperTmp[i] > this->upper_[i]) {
-            this->upper_[i] = upperTmp[i];
+          if (upperTmp[j] > this->upper_[j]) {
+            this->upper_[j] = upperTmp[j];
           }
         }
       }
@@ -307,25 +293,17 @@ void ShapeWorksGroom::auto_pad(int which)
 
     // set the desired padding
     auto pd = static_cast<unsigned long>((this->padding_ + 1) / 2);
-    itk::Size<3> hipad;
-    hipad[0] = pd;
-    hipad[1] = pd;
-    hipad[2] = pd;
+    itk::Size<3> hi_pad{pd, pd, pd};
+    itk::Size<3> low_pad{pd, pd, pd};
 
-    unsigned long lowpad[3] = {pd, pd, pd};
-
-    padder->SetPadUpperBound(hipad);
-    padder->SetPadLowerBound(hipad);
+    padder->SetPadUpperBound(hi_pad);
+    padder->SetPadLowerBound(low_pad);
     padder->UpdateLargestPossibleRegion();
 
     if (this->verbose_) {
-      std::cout << "input region = "
-                << img->GetBufferedRegion().GetSize()
-                << std::endl;
-      std::cout << "lowpad: " << lowpad[0] << " " << lowpad[1] << " " << lowpad[2]
-                << std::endl;
-      std::cout << "hipad: " << hipad[0] << " " << hipad[1] << " " << hipad[2]
-                << std::endl;
+      std::cout << "input region = " << img->GetBufferedRegion().GetSize() << "\n";
+      std::cout << "lowpad: " << low_pad[0] << " " << low_pad[1] << " " << low_pad[2] << "\n";
+      std::cout << "hipad: " << hi_pad[0] << " " << hi_pad[1] << " " << hi_pad[2] << "\n";
     }
     this->images_[i] = padder->GetOutput();
   }

@@ -27,7 +27,7 @@ def Run_Pipeline(args):
 
     The data is inside the EllipsoidsFD.zip, run the following function to unzip the 
     data and create necessary supporting files. The zip will download to /Data and
-    the files will be extracted in a newly created directory Output/Ellipsoids_FD. 
+    the files will be extracted in a newly created directory Output/ellipsoids_fd. 
     This contains the existing shape model and all the necessary files plus the 
     new scans to be processed.
     """

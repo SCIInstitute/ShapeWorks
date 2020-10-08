@@ -15,12 +15,17 @@ import CommonUtils
 
 
 def Run_Pipeline(args):
+    """
+    If ellipsoid.zip is not there it will be downloaded from the ShapeWorks data portal.
+    femur.zip will be saved in the /Data folder and the data will be extracted 
+    in a newly created directory Output/ellipsoid_mesh.
+    """
     print("\nStep 1. Extract Data\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
     datasetName = "ellipsoid-v0"
-    outputDirectory = "Output/Ellipsoids_mesh/"
+    outputDirectory = "Output/ellipsoid_mesh/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
     CommonUtils.get_data(datasetName, outputDirectory)

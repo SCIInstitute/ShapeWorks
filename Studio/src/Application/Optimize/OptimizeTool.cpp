@@ -147,7 +147,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
   }
   this->optimize_->SetProcrustesInterval(procrustes_interval);
   this->optimize_->SetProcrustesScaling(this->ui_->procrustes_scaling->isChecked());
-  this->optimize_->SetVerbosity(5);
+  this->optimize_->SetVerbosity(0);
 
   int multiscale_particles = 0;
   if (this->ui_->multiscale->isChecked()) {
