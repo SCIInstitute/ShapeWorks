@@ -215,8 +215,9 @@ void Visualizer::update_lut()
 {
   int num_points = this->cached_mean_.size() / 3;
 
-  /// TMP
-  num_points = 512;
+  if (num_points < 1) {
+    num_points = 512;
+  }
 
   this->glyph_lut_->SetNumberOfTableValues(num_points + 1);
   this->glyph_lut_->SetTableRange(0.0, (double) num_points + 1.0);
@@ -228,7 +229,6 @@ void Visualizer::update_lut()
 
     if (this->selected_point_one_ >= 0 && this->selected_point_two_ >= 0) {
       // measurement mode
-
       for (int i = 0; i < num_points; i++) {
         this->glyph_lut_->SetTableValue(i, 0, 0, 0);
 
