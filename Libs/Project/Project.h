@@ -9,13 +9,11 @@
 #include "Parameters.h"
 
 // forward declaration
-namespace xlnt
-{
+namespace xlnt {
 class workbook;
 }
 
-namespace shapeworks
-{
+namespace shapeworks {
 
 //! Representation of a project.
 /*!
@@ -39,7 +37,7 @@ public:
   std::vector<std::string> get_headers();
 
   //! Return a column by name
-  std::vector<std::string> get_string_column(std::string name);
+  std::vector<std::string> get_string_column(std::string name) const;
 
   //! Return the number of subjects in the project
   int get_number_of_subjects();
@@ -48,7 +46,7 @@ public:
   int get_number_of_domains();
 
   //! Return the list of Subjects
-  std::vector<std::shared_ptr<Subject>> & get_subjects();
+  std::vector<std::shared_ptr<Subject>>& get_subjects();
 
   //! Return if segmentations are present
   bool get_segmentations_present();
@@ -58,6 +56,15 @@ public:
 
   //! Return if particle files are present
   bool get_particles_present();
+
+  //! Get feature names
+  std::vector<std::string> get_feature_names() const;
+
+  //! Get group names
+  std::vector<std::string> get_group_names() const;
+
+  //! Get possible group values
+  std::vector<std::string> get_group_values(std::string group_name) const;
 
   //! Retrieve parameters based on key
   Parameters get_parameters(std::string name);
@@ -79,14 +86,23 @@ private:
   // known prefixes
   static constexpr const char* SEGMENTATION_PREFIX = "segmentation_";
   static constexpr const char* GROOMED_PREFIX = "groomed_";
+  static constexpr const char* GROOMED_TRANSFORMS_PREFIX = "transform_";
   static constexpr const char* MESH_PREFIX = "mesh_";
+  static constexpr const char* FEATURE_PREFIX = "feature_";
   static constexpr const char* LOCAL_PARTICLES = "local_particles";
   static constexpr const char* WORLD_PARTICLES = "world_particles";
+  static constexpr const char* GROUP_PREFIX = "group_";
 
   std::vector<std::string> get_list(std::vector<std::string> columns, int subject);
   void set_list(std::vector<std::string> columns, int subject, std::vector<std::string> values);
 
-  std::vector<std::string> get_matching_columns(std::string prefix);
+  std::vector<std::vector<double>>
+  get_transform_list(std::vector<std::string> columns, int subject);
+
+  void set_transform_list(std::vector<std::string> columns, int subject,
+                          std::vector<std::vector<double>> transforms);
+
+  std::vector<std::string> get_matching_columns(std::string prefix) const;
 
   std::string get_value(int column, int subject_id);
   void set_value(int column, int subject_id, std::string value);
@@ -96,7 +112,7 @@ private:
 
   void load_subjects();
 
-  int get_index_for_column(std::string name, bool create_if_not_found = false);
+  int get_index_for_column(std::string name, bool create_if_not_found = false) const;
 
   void save_string_column(std::string name, std::vector<std::string> items);
 

@@ -3,6 +3,7 @@
 #include <xlnt/xlnt.hpp>
 
 #include <memory>
+#include <cstring>
 
 using namespace shapeworks;
 
@@ -31,10 +32,9 @@ Project::~Project()
 //---------------------------------------------------------------------------
 bool Project::load(std::string filename)
 {
-  try
-  {
+  try {
     this->wb_->load(filename);
-  } catch (xlnt::exception &e) {
+  } catch (xlnt::exception& e) {
 
     std::cerr << std::string("Error reading xlsx: ")
               << std::string(e.what()) << ", " << "\n";
@@ -66,7 +66,7 @@ bool Project::save(std::string filename)
 
     this->store_subjects();
     this->wb_->save(filename);
-  } catch (xlnt::exception &e) {
+  } catch (xlnt::exception& e) {
 
     std::cerr << std::string("Error writing xlsx: ")
               << std::string(e.what()) << ", " << "\n";
@@ -130,13 +130,13 @@ int Project::get_number_of_domains()
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::shared_ptr<Subject>> &Project::get_subjects()
+std::vector<std::shared_ptr<Subject>>& Project::get_subjects()
 {
   return this->subjects_;
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> Project::get_matching_columns(std::string prefix)
+std::vector<std::string> Project::get_matching_columns(std::string prefix) const
 {
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);
   auto headers = ws.rows(false)[0];
@@ -194,6 +194,9 @@ void Project::load_subjects()
 
   auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
   auto groomed_columns = this->get_matching_columns(GROOMED_PREFIX);
+  auto groomed_transform_columns = this->get_matching_columns(GROOMED_TRANSFORMS_PREFIX);
+  auto feature_columns = this->get_feature_names();
+  auto group_names = this->get_matching_columns(GROUP_PREFIX);
 
   int local_particle_column = this->get_index_for_column(LOCAL_PARTICLES);
   int global_particle_column = this->get_index_for_column(WORLD_PARTICLES);
@@ -202,9 +205,25 @@ void Project::load_subjects()
     std::shared_ptr<Subject> subject = std::make_shared<Subject>();
 
     subject->set_number_of_domains(this->num_domains_);
-
     subject->set_segmentation_filenames(this->get_list(seg_columns, i));
     subject->set_groomed_filenames(this->get_list(groomed_columns, i));
+    subject->set_groomed_transforms(this->get_transform_list(groomed_transform_columns, i));
+
+    auto feature_list = this->get_list(feature_columns, i);
+    std::map<std::string, std::string> map;
+    for (int i = 0; i < feature_columns.size(); i++) {
+      std::string feature = feature_columns[i].substr(std::strlen(FEATURE_PREFIX));
+      map[feature] = feature_list[i];
+    }
+    subject->set_feature_filenames(map);
+
+    auto group_values = this->get_list(group_names, i);
+    std::map<std::string, std::string> group_map;
+    for (int i = 0; i < group_names.size(); i++) {
+      std::string name = group_names[i].substr(std::strlen(GROUP_PREFIX));
+      group_map[name] = group_values[i];
+    }
+    subject->set_group_values(group_map);
 
     if (local_particle_column > 0) {
       this->particles_present_ = true;
@@ -233,9 +252,18 @@ void Project::store_subjects()
   std::vector<std::string> groomed_columns;
 
   for (int i = 0; i < seg_columns.size(); i++) {
-    std::string groom_column_name = replace_string(seg_columns[i], SEGMENTATION_PREFIX,
-                                                   GROOMED_PREFIX);
+    std::string groom_column_name = replace_string(seg_columns[i],
+                                                   SEGMENTATION_PREFIX, GROOMED_PREFIX);
     groomed_columns.push_back(groom_column_name);
+  }
+
+  std::vector<std::string> groomed_transform_columns;
+
+  for (int i = 0; i < groomed_columns.size(); i++) {
+    std::string groomed_transform_column_name = replace_string(groomed_columns[i],
+                                                               GROOMED_PREFIX,
+                                                               GROOMED_TRANSFORMS_PREFIX);
+    groomed_transform_columns.push_back(groomed_transform_column_name);
   }
 
   for (int i = 0; i < num_subjects; i++) {
@@ -255,6 +283,9 @@ void Project::store_subjects()
         groomed_columns.push_back(std::string(GROOMED_PREFIX) + "file");
       }
       this->set_list(groomed_columns, i, groomed_files);
+
+      this->set_transform_list(groomed_transform_columns, i, subject->get_groomed_transforms());
+
     }
 
     // local files
@@ -287,7 +318,7 @@ int Project::get_version()
 }
 
 //---------------------------------------------------------------------------
-int Project::get_index_for_column(std::string name, bool create_if_not_found)
+int Project::get_index_for_column(std::string name, bool create_if_not_found) const
 {
 
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);
@@ -320,7 +351,7 @@ int Project::get_index_for_column(std::string name, bool create_if_not_found)
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> Project::get_string_column(std::string name)
+std::vector<std::string> Project::get_string_column(std::string name) const
 {
   int index = this->get_index_for_column(name);
 
@@ -415,7 +446,7 @@ void Project::set_parameters(std::string name, Parameters params)
       ws.cell(xlnt::cell_reference(2, row)).value(kv.second);
       row++;
     }
-  } catch (xlnt::exception &e) {
+  } catch (xlnt::exception& e) {
 
     std::cerr << std::string("Error storing parameters: ")
               << std::string(e.what()) << ", " << "\n";
@@ -461,5 +492,85 @@ void Project::save_string_column(std::string name, std::vector<std::string> item
     ws.cell(xlnt::cell_reference(index + 1, i + 2)).value(items[i]);
   }
 }
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Project::get_feature_names() const
+{
+  auto feature_names = this->get_matching_columns(FEATURE_PREFIX);
+  return feature_names;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Project::get_group_names() const
+{
+  auto raw_names = this->get_matching_columns(GROUP_PREFIX);
+
+  std::vector<std::string> group_names;
+
+  for (std::string group : raw_names) {
+    group.erase(0, std::strlen(GROUP_PREFIX)); // erase "group_"
+    group_names.push_back(group);
+  }
+
+  return group_names;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::vector<double>>
+Project::get_transform_list(std::vector<std::string> columns, int subject)
+{
+  auto list = this->get_list(columns, subject);
+
+  std::vector<std::vector<double>> transforms;
+  for (int i = 0; i < list.size(); i++) {
+    std::string str = list[i];
+
+    std::istringstream ss(str);
+
+    std::vector<double> values;
+
+    for (double value; ss >> value;) {
+      values.push_back(value);
+    }
+
+    transforms.push_back(values);
+  }
+  return transforms;
+}
+
+//---------------------------------------------------------------------------
+void Project::set_transform_list(std::vector<std::string> columns, int subject,
+                                 std::vector<std::vector<double>> transforms)
+{
+  std::vector<std::string> transform_strings;
+  for (int i = 0; i < transforms.size(); i++) {
+    std::string str;
+    for (int j = 0; j < transforms[i].size(); j++) {
+      str = str + " " + std::to_string(transforms[i][j]);
+    }
+    transform_strings.push_back(str);
+  }
+
+  while (transform_strings.size() < columns.size()) {
+    transform_strings.push_back("");
+  }
+
+  this->set_list(columns, subject, transform_strings);
+
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Project::get_group_values(std::string group_name) const
+{
+
+  auto values = this->get_string_column(group_name);
+
+  // remove duplicates
+  std::sort(values.begin(), values.end());
+  values.erase(std::unique(values.begin(), values.end()), values.end());
+
+  return values;
+}
+
 
 //---------------------------------------------------------------------------

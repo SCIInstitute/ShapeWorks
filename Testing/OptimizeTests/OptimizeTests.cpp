@@ -8,7 +8,7 @@
 
 #include "Optimize.h"
 #include "OptimizeParameterFile.h"
-#include "itkParticleShapeStatistics.h"
+#include "ParticleShapeStatistics.h"
 
 using namespace shapeworks;
 
@@ -61,7 +61,7 @@ TEST(OptimizeTests, sample_test) {
   app.Run();
 
   // compute stats
-  ParticleShapeStatistics<3> stats;
+  ParticleShapeStatistics stats;
   stats.ReadPointFiles("analyze.xml");
   stats.ComputeModes();
   stats.PrincipalComponentProjections();
@@ -98,7 +98,7 @@ TEST(OptimizeTests, open_mesh_test) {
     std::cerr << "finished running\n";
 
   // compute stats
-  ParticleShapeStatistics<3> stats;
+  ParticleShapeStatistics stats;
   stats.ReadPointFiles("analyze.xml");
   stats.ComputeModes();
   stats.PrincipalComponentProjections();
@@ -139,7 +139,7 @@ TEST(OptimizeTests, fixed_domain_test) {
   app.Run();
 
   // compute stats
-  ParticleShapeStatistics<3> stats;
+  ParticleShapeStatistics stats;
   stats.ReadPointFiles("analyze.xml");
   stats.ComputeModes();
   stats.PrincipalComponentProjections();
@@ -180,7 +180,7 @@ TEST(OptimizeTests, use_normals_test) {
   app.Run();
 
   // compute stats
-  ParticleShapeStatistics<3> stats;
+  ParticleShapeStatistics stats;
   stats.ReadPointFiles("analyze.xml");
   stats.ComputeModes();
   stats.PrincipalComponentProjections();
@@ -220,7 +220,7 @@ TEST(OptimizeTests, cutting_plane_test) {
   app.Run();
 
   // compute stats
-  ParticleShapeStatistics<3> stats;
+  ParticleShapeStatistics stats;
   stats.ReadPointFiles("analyze.xml");
   stats.ComputeModes();
   stats.PrincipalComponentProjections();

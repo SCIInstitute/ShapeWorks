@@ -1,11 +1,12 @@
 TestEllipsoidsFD/
 TestEllipsoids/
 TestEllipsoidsMesh/
+TestLeftAtrium/
 TestFemur/
 TestFemurMesh/
 TestScapula/
 TestCan/
 TestLumps/
-left_atrium.zip
-femur.zip
-lumps.zip
+left_atrium*.zip
+femur*.zip
+lumps*.zip

@@ -36,7 +36,7 @@ default_subsample = 3
 
 parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
 parser.add_argument("--use_case", help="Specify which use case to run",
-                    choices=["ellipsoid", "ellipsoid_fd", "lumps", "left_atrium", "femur", "femur_mesh", "deep_ssm"])
+                    choices=["ellipsoid", "ellipsoid_mesh", "ellipsoid_fd", "lumps", "left_atrium", "femur", "femur_mesh", "deep_ssm"])
 parser.add_argument("--use_subsample", help="Run the pipeline for a subset of data",action="store_true")
 parser.add_argument("--num_subsample", help="Size of subset to run on (default: "+str(default_subsample)+")", nargs='?', type=int, default=default_subsample)
 parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")

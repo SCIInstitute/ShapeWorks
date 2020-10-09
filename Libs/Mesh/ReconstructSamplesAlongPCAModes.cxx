@@ -32,7 +32,7 @@
 #include "itkMetaImageIOFactory.h"
 
 // for pca modes
-#include "itkParticleShapeStatistics.h"
+#include "ParticleShapeStatistics.h"
 
 template < template < typename TCoordRep, unsigned > class TTransformType,
            template < typename ImageType, typename TCoordRep > class TInterpolatorType,
@@ -47,7 +47,7 @@ int DoIt(InputParams params)
     typedef typename ReconstructionType::PointType                                               PointType;
 
     ReconstructionType reconstructor;
-    ParticleShapeStatistics<Dimension> shapeStats;
+    ParticleShapeStatistics shapeStats;
 
     std::string denseFilename      ;
     std::string sparseFilename     ;
