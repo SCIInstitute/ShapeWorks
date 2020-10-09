@@ -678,7 +678,7 @@ void Optimize::Initialize()
     for (int i = 0; i < 3; i++) {
       random[i] = static_cast <double> (this->m_rand());
     }
-    
+
     // divide by 5 since m_spacing was artificially multiplied by 5 elsewhere
     random = random.normalize() * this->m_spacing / 5.0;
     */
@@ -696,7 +696,7 @@ void Optimize::Initialize()
     */
 
     m_sampler->GetParticleSystem()->AdvancedAllParticleSplitting(epsilon);
-      
+
     m_sampler->GetParticleSystem()->SynchronizePositions();
 
     this->m_split_number++;
@@ -1617,9 +1617,11 @@ void Optimize::WriteCuttingPlanePoints(int iter)
   std::string str = "Writing " + output_file + "...";
   this->PrintStartMessage(str, 1);
 
+  /*
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
     m_sampler->GetParticleSystem()->GetDomain(i)->GetConstraints()->PrintAll();
   }
+  */
   out.close();
   this->PrintDoneMessage(1);
   this->PrintDoneMessage();
