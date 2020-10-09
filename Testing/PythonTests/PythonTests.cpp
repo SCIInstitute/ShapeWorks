@@ -188,26 +188,23 @@ TEST(pythonTests, blur)
   ASSERT_FALSE(system("python blur.py"));
 }
 
-// TODO: access files with path name
 //---------------------------------------------------------------------------
-// TEST(pythonTests, boundingbox)
-// {
-//   ASSERT_FALSE(system("python boundingbox.py"));
-// }
+TEST(pythonTests, boundingbox)
+{
+  ASSERT_FALSE(system("python boundingbox.py"));
+}
 
-// TODO: access files with path name
 //---------------------------------------------------------------------------
-// TEST(pythonTests, boundingboxfail)
-// {
-//   ASSERT_TRUE(system("python boundingboxfail.py"));
-// }
+TEST(pythonTests, boundingboxfail)
+{
+  ASSERT_TRUE(system("python boundingboxfail.py"));
+}
 
-// // TODO: access files with path name and add test
-// //---------------------------------------------------------------------------
-// TEST(pythonTests, crop)
-// {
-//   ASSERT_FALSE(system("python crop.py"));
-// }
+//---------------------------------------------------------------------------
+TEST(pythonTests, crop)
+{
+  ASSERT_FALSE(system("python crop.py"));
+}
 
 // TODO: bind transform
 //---------------------------------------------------------------------------

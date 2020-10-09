@@ -3,25 +3,26 @@ from pythonTestSetup import *
 setup()
 
 from shapeworks import *
+import glob
 
 def boundingboxfailTest1():
-  filenames = os.environ["DATA"] + "empty/*.nrrd"
-  region = ImageUtils.boundingBox(filenames, 1.0)
+  filenames = os.environ["DATA"] + "empty/"
+  region = ImageUtils.boundingBox(glob.glob(filenames + "/*.nrrd"))
 
   return region.valid()
 
-val = boundingboxTest1()
+val = boundingboxfailTest1()
 
 if val is False:
   sys.exit(1)
 
 def boundingboxfailTest2():
-  filenames = os.environ["DATA"] + "single/*.nrrd"
-  region = ImageUtils.boundingBox(filenames, 1.0)
+  filenames = os.environ["DATA"] + "single/"
+  region = ImageUtils.boundingBox(glob.glob(filenames + "/*.nrrd"))
 
   return region.valid()
 
-val = boundingboxTest2()
+val = boundingboxfailTest2()
 
 if val is False:
   sys.exit(1)

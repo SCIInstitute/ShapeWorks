@@ -3,10 +3,11 @@ from pythonTestSetup import *
 setup()
 
 from shapeworks import *
+import glob
 
 def boundingboxTest():
-  filenames = os.environ["DATA"] + "many/*.nrrd"
-  region = ImageUtils.boundingBox(filenames, 1.0)
+  filenames = os.environ["DATA"] + "many/"
+  region = ImageUtils.boundingBox(glob.glob(filenames + "/*.nrrd"))
 
   return region.valid()
 
