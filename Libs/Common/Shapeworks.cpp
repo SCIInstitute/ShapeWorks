@@ -79,8 +79,8 @@ bool axis_is_valid(const Axis &axis)
 Axis toAxis(const std::string &str)
 {
   if (str == "X" || str == "x") return Axis::X;
-  if (str == "Y" || str == "y") return Axis::X;
-  if (str == "Z" || str == "z") return Axis::X;
+  if (str == "Y" || str == "y") return Axis::Y;
+  if (str == "Z" || str == "z") return Axis::Z;
   return Axis::invalid;
 }
 

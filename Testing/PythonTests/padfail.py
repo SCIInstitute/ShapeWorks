@@ -4,28 +4,28 @@ setup()
 
 from shapeworks import *
 
-def scalefailTest1():
+def padfailTest1():
   img = Image(os.environ["DATA"] + "1x2x2.nrrd")
-  img.scale()
+  img.pad()
 
-  compareImg = Image(os.environ["DATA"] + "scalefail.nrrd")
+  compareImg = Image(os.environ["DATA"] + "padfail.nrrd")
 
   return img.compare(compareImg)
 
-val = scalefailTest1()
+val = padfailTest1()
 
 if val is False:
   sys.exit(1)
 
-def scalefailTest2():
+def padfailTest2():
   img = Image(os.environ["DATA"] + "1x2x2.nrrd")
-  img.scale(Vector(1.0, 1.0, 1.0))
+  img.pad(0)
 
-  compareImg = Image(os.environ["DATA"] + "scalefail.nrrd")
+  compareImg = Image(os.environ["DATA"] + "padfail.nrrd")
 
   return img.compare(compareImg)
 
-val = scalefailTest2()
+val = padfailTest2()
 
 if val is False:
   sys.exit(1)

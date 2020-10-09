@@ -4,7 +4,7 @@ setup()
 
 from shapeworks import *
 
-def antialiasFailTest1():
+def antialiasfailTest():
   img = Image(os.environ["DATA"] + "1x2x2.nrrd")
   img.antialias(iterations=1)
 
@@ -12,7 +12,7 @@ def antialiasFailTest1():
 
   return img.compare(compareImg)
 
-val = antialiasFailTest1()
+val = antialiasfailTest()
 
 if val is False:
   sys.exit(1)

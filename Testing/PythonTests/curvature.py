@@ -4,28 +4,28 @@ setup()
 
 from shapeworks import *
 
-def scalefailTest1():
+def curvatureTest1():
   img = Image(os.environ["DATA"] + "1x2x2.nrrd")
-  img.scale()
+  img.applyCurvatureFilter()
 
-  compareImg = Image(os.environ["DATA"] + "scalefail.nrrd")
+  compareImg = Image(os.environ["DATA"] + "curvature1.nrrd")
 
   return img.compare(compareImg)
 
-val = scalefailTest1()
+val = curvatureTest1()
 
 if val is False:
   sys.exit(1)
 
-def scalefailTest2():
+def curvatureTest2():
   img = Image(os.environ["DATA"] + "1x2x2.nrrd")
-  img.scale(Vector(1.0, 1.0, 1.0))
+  img.applyCurvatureFilter(5)
 
-  compareImg = Image(os.environ["DATA"] + "scalefail.nrrd")
+  compareImg = Image(os.environ["DATA"] + "curvature2.nrrd")
 
   return img.compare(compareImg)
 
-val = scalefailTest2()
+val = curvatureTest2()
 
 if val is False:
   sys.exit(1)

@@ -200,11 +200,11 @@ public:
   /// sets values on the back side of cutting plane (normal n containing point p) to val (default 0.0)
   Image& clip(const Vector &n, const Point &q, const PixelType val = 0.0);
 
-  /// sets the iamge origin in physical space to the given value
-  Image& setOrigin(Point3 origin = Point3({0, 0, 0}));
-
   /// Reflect image around the plane specified by the logical center and the given normal (ex: <1,0,0> reflects across YZ-plane).
   Image& reflect(const Axis& axis);
+
+  /// sets the iamge origin in physical space to the given value
+  Image& setOrigin(Point3 origin = Point3({0, 0, 0}));
 
   // query functions //
 

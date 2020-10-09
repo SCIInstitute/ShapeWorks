@@ -189,7 +189,7 @@ PYBIND11_MODULE(shapeworks, m)
   // using TransformPtr = GenericTransform::Pointer;
   // using IdentityTransform = itk::IdentityTransform<double, 3>;
   // using IdentityTransformPtr = IdentityTransform::Pointer;
-  // py::object IdentityTransformPtr = py::cast(itk::Transform<double, 3>::New());
+  // py::object IdentityTransformPtr = py::cast(itkSmartPointer<itk::Transform<double, 3>>);
 
   // m.def("TransformPtr", [] { return itk::Transform<double, 3>::New(); });
   // m.def("IdentityTransformPtr", [] { return itk::IdentityTransform<double, 3>::New(); });
@@ -227,6 +227,13 @@ PYBIND11_MODULE(shapeworks, m)
   //                               &ShapeworksUtils::connectPipelines<itk::VTKImageExport<Image::ImageType::Pointer>, vtkImageImport::New()>, "exporter"_a, "importer"_a)
   ;
 
+  // Image::InterpolationType
+  py::enum_<Image::InterpolationType>(m, "InterpolationType")
+  .value("Linear", Image::InterpolationType::Linear)
+  .value("NearestNeighbor", Image::InterpolationType::NearestNeighbor)
+  .export_values();
+  ;
+
   // Image
   py::class_<Image>(m, "Image")
   .def(py::init<const std::string &>()) // can the argument for init be named (it's filename in this case)
@@ -255,7 +262,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("recenter",              &Image::recenter)
   .def("resample",              py::overload_cast<TransformPtr, Point3, Dims, Vector3, Image::ImageType::DirectionType, Image::InterpolationType>(&Image::resample))
   .def("resample",              py::overload_cast<const Vector&, Image::InterpolationType>(&Image::resample))
-  .def("resize",                &Image::resize, "logicalDims"_a, "value"_a=0.0)
+  .def("resize",                &Image::resize, "logicalDims"_a, "interp"_a=Image::InterpolationType::Linear)
   .def("pad",                   py::overload_cast<int, Image::PixelType>(&Image::pad))
   .def("pad",                   py::overload_cast<int, int, int, Image::PixelType>(&Image::pad))
   .def("translate",             &Image::translate, "v"_a)
@@ -309,12 +316,6 @@ PYBIND11_MODULE(shapeworks, m)
   .def("grow",                  &Image::Region::grow, "other"_a)
   .def("expand",                &Image::Region::expand, "other"_a)
   // .def("ImageType::RegionType")
-  ;
-
-  py::enum_<Image::InterpolationType>(m, "InterpolationType")
-  .value("Linear", Image::InterpolationType::Linear)
-  .value("NearestNeighbor", Image::InterpolationType::NearestNeighbor)
-  .export_values();
   ;
 
   // ImageUtils
