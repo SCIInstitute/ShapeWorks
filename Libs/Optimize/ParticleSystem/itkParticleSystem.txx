@@ -345,7 +345,7 @@ ParticleSystem<VDimension>
                        newpos[k] = lists[j][i][k] + epsilon * random[k] / 5.;
                        }
                      // Go to surface
-                     if (this->m_DomainFlags[j] == false) this->GetDomain(j)->ApplyConstraints(newpos);
+                     if (this->m_DomainFlags[j] == false && !this->GetDomain(j)->GetConstraints()->IsAnyViolated(newpos)) this->GetDomain(j)->ApplyConstraints(newpos);
                      newposs_good.push_back(newpos);
                      // Check for plane constraint violations
                      if (this->GetDomain(j)->GetConstraints()->IsAnyViolated(newpos)){
