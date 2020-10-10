@@ -12,6 +12,8 @@ ShapeWorks is a free, open-source suite of software tools that uses a flexible m
 !!! danger "Lastest & greatest"
     Please visit [Release Notes](about/release-notes.md) to know about the ShapeWorks' cutting-edge features and improvements.
 
+
+![](img/about/release5.5.png)
 ## Why use ShapeWorks?
 
 ShapeWorks is the only publicly available tool that learns a population-specific anatomical mapping in a way that respects population variability without relying on a user-defined template/atlas. 
