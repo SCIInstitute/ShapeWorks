@@ -321,14 +321,12 @@ ParticleSystem<VDimension>
 
             while(true){
                 // Generate random unit vector
-                std::uniform_real_distribution<double> distr( -1000., 1000. ) ;
+                std::uniform_real_distribution<double> distribution( -1000., 1000. ) ;
 
                 vnl_vector_fixed < double, 3 > random;
 
                  for (int i = 0; i < 3; i++) {
-                     random[i] = static_cast<double> (this->m_rand())-2147483648;
-                     //double seed = static_cast<double> (this->m_rand());
-                     //random[i] = distr(seed);//-2147483648;
+                     random[i] = distribution(this->m_rand);
                  }
                  double norm = random.magnitude();
                  random /= norm;
