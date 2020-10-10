@@ -56,7 +56,6 @@ $ python RunUseCase.py --use_case lumps
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,
-        "debug_projection": 0,
         "verbosity": 1
 }
 ```

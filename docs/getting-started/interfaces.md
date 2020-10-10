@@ -14,14 +14,13 @@ We are consolidating these tools into a single, reusable API that is shared acro
 The `shapeworks` executable is highly flexible, modular, and loosely coupled, with standardized subcommands and interactive help to perform individual operations needed for a typical shape modeling workflow that includes the Groom, Optimize, and Analyze phases. Please see [shapeworks commands documentation](../tools/ShapeWorksCommands.md) for the list of available commands.
 
 
-:fa-info-circle: _**Important:**_  Each time you use ShapeWorks from the command line, you must first activate its environment:
-```
-$ conda activate shapeworks
-```
-
+!!! danger "Activate shapeworks environment"
+    Each time you use ShapeWorks from the command line, you must first activate its environment using the `conda activate shapeworks` command on the terminal.
+    
 ## ShapeWorks in Python
 
-**Coming soon!**  We are developing Python bindings to enable users to script their customized shape modeling workflows. Exemplar [use cases](../use-cases/use-cases.md) will be updated to use these Python APIs to showcase their use and flexibility.
+!!! note "Coming soon!"  
+    We are developing Python bindings to enable users to script their customized shape modeling workflows. Exemplar [use cases](../use-cases/use-cases.md) will be updated to use these Python APIs to showcase their use and flexibility.
 
 
 ## ShapeWorksStudio

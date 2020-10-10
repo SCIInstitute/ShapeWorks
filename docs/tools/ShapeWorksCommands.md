@@ -1,59 +1,13 @@
 
-ShapeWorks Commands
-===================
+
+
+
+# ShapeWorks Commands
 
 
 `shapeworks` is a single executable for ShapeWorks with a set of sub-executables (commands) that are flexible, modular, loosely coupled, and standardized subcommands, with interactive help to perform individual operations needed for a typical shape modeling workflow that includes the Groom, Optimize, and Analyze phases.
 
-Table of Contents
-=================
-
-* [shapeworks](#shapeworks)
-* [Image Commands](#image-commands)
-	* [add](#add)
-	* [antialias](#antialias)
-	* [binarize](#binarize)
-	* [blur](#blur)
-	* [bounding-box](#bounding-box)
-	* [clip](#clip)
-	* [close-holes](#close-holes)
-	* [compare](#compare)
-	* [compute-dt](#compute-dt)
-	* [crop](#crop)
-	* [curvature](#curvature)
-	* [divide](#divide)
-	* [extract-label](#extract-label)
-	* [gradient](#gradient)
-	* [icp](#icp)
-	* [info](#info)
-	* [multiply](#multiply)
-	* [negate](#negate)
-	* [pad](#pad)
-	* [read-image](#read-image)
-	* [recenter](#recenter)
-	* [reflect](#reflect)
-	* [resample](#resample)
-	* [rotate](#rotate)
-	* [scale](#scale)
-	* [set-origin](#set-origin)
-	* [sigmoid](#sigmoid)
-	* [subtract](#subtract)
-	* [topo-preserving-smooth](#topo-preserving-smooth)
-	* [tp-levelset](#tp-levelset)
-	* [translate](#translate)
-	* [warp-image](#warp-image)
-	* [write-image](#write-image)
-* [Mesh Commands](#mesh-commands)
-	* [coverage](#coverage)
-	* [read-mesh](#read-mesh)
-	* [write-mesh](#write-mesh)
-* [ParticleSystem Commands](#particlesystem-commands)
-	* [compactness](#compactness)
-	* [generalization](#generalization)
-	* [read-particle-system](#read-particle-system)
-	* [specificity](#specificity)
-
-# shapeworks
+## shapeworks
 
 
 **Usage:**
@@ -76,9 +30,9 @@ Table of Contents
   
 <a href="#top">Back to Top</a>
 
-# Image Commands
+## Image Commands
 
-## add
+### add
 
 
 **Usage:**
@@ -88,21 +42,21 @@ shapeworks  add [args]...
 ```  
 
 
-**Description:** add a value to each pixel in this image and/or add another image in a pixelwise manner  
+**Description:** add a value to each pixel in the given image and/or add another image in a pixelwise manner  
 
 
 **Options:**
 
 **-h, --help:** show this help message and exit
 
-**-x DOUBLE, --value=DOUBLE:** Value to add to each pixel
+**-x DOUBLE, --value=DOUBLE:**  Value to add to each pixel.
 
-**--name=STRING:** Name of image to add pixelwise  
+**--name=STRING:** Name of image to add pixelwise.  
   
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## antialias
+### antialias
 
 
 **Usage:**
@@ -128,7 +82,7 @@ shapeworks  antialias [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## binarize
+### binarize
 
 
 **Usage:**
@@ -154,7 +108,7 @@ shapeworks  binarize [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## blur
+### blur
 
 
 **Usage:**
@@ -176,7 +130,7 @@ shapeworks  blur [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## bounding-box
+### bounding-box
 
 
 **Usage:**
@@ -186,14 +140,14 @@ shapeworks  bounding-box [args]...
 ```  
 
 
-**Description:** compute largest bounding box surrounding the specified isovalue of the specified set of binary images  
+**Description:** compute largest bounding box surrounding the specified isovalue of the specified set of images  
 
 
 **Options:**
 
 **-h, --help:** show this help message and exit
 
-**--names <list of strings>:** Paths to images (must be followed by `--`), ex: "bounding-box --names *.nrrd -- --isovalue 1.5")
+**--names <list of strings>:**  Paths to images (must be followed by `--`), ex: "bounding-box --names *.nrrd -- --isovalue 1.5")
 
 **--padding=INT:** Number of extra voxels in each direction to pad the largest bounding box [default: 0].
 
@@ -202,7 +156,7 @@ shapeworks  bounding-box [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## clip
+### clip
 
 
 **Usage:**
@@ -242,7 +196,7 @@ shapeworks  clip [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## close-holes
+### close-holes
 
 
 **Usage:**
@@ -264,7 +218,7 @@ shapeworks  close-holes [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## compare
+### compare
 
 
 **Usage:**
@@ -281,18 +235,18 @@ shapeworks  compare [args]...
 
 **-h, --help:** show this help message and exit
 
-**--name=STRING:** Compare this image with another
+**--name=STRING:** Compare this image with another.
 
-**--verifyall=BOOL:** Verify origin, spacing, and direction of both images match [default: true]
+**--verifyall=BOOL:** Also verify origin, spacing, and direction matches [default: true].
 
-**--tolerance=DOUBLE:** Allowed percentage of pixel differences [default: 0.0]
+**--tolerance=DOUBLE:** Allowed percentage of pixel differences [default: 0.0].
 
-**--precision=DOUBLE:** Allowed difference between two pixels for them to still be considered equal [default: 0.0]  
+**--precision=DOUBLE:** Allowed difference between two pixels for them to still be considered equal [default: 0.0].  
   
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## compute-dt
+### compute-dt
 
 
 **Usage:**
@@ -314,7 +268,7 @@ shapeworks  compute-dt [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## crop
+### crop
 
 
 **Usage:**
@@ -322,6 +276,9 @@ shapeworks  compute-dt [args]...
 ```
 shapeworks  crop [args]...
 ```  
+
+
+**Description:** crop image down to the current region (e.g., from bounding-box command), or the specified min/max in each direction [default: image dimensions]  
 
 
 **Options:**
@@ -343,7 +300,7 @@ shapeworks  crop [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## curvature
+### curvature
 
 
 **Usage:**
@@ -365,7 +322,7 @@ shapeworks  curvature [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## divide
+### divide
 
 
 **Usage:**
@@ -382,12 +339,12 @@ shapeworks  divide [args]...
 
 **-h, --help:** show this help message and exit
 
-**-x DOUBLE, --value=DOUBLE:** Value with which to divide  
+**-x DOUBLE, --value=DOUBLE:**  Value with which to divide.  
   
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## extract-label
+### extract-label
 
 
 **Usage:**
@@ -409,7 +366,7 @@ shapeworks  extract-label [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## gradient
+### gradient
 
 
 **Usage:**
@@ -429,7 +386,7 @@ shapeworks  gradient [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## icp
+### icp
 
 
 **Usage:**
@@ -450,14 +407,36 @@ shapeworks  icp [args]...
 
 **--target=STRING:** Distance map of target image.
 
-**--isovalue=DOUBLE:** isovalue of distance maps used to create ICPtransform [default: 0.0].
+**--isovalue=DOUBLE:** Isovalue of distance maps used to create ICPtransform [default: 0.0].
 
-**--iterations=UNSIGNED:** Number of iterations run ICP registration [default: 20].  
+**--iterations=UNSIGNED:**  Number of iterations run ICP registration [default: 20].  
   
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## info
+### image-to-mesh
+
+
+**Usage:**
+
+```
+shapeworks  image-to-mesh [args]...
+```  
+
+
+**Description:** converts the current image to a mesh  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**-v DOUBLE, --isovalue=DOUBLE:**  Isovalue to determine mesh boundary [default: 1.0].  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Image Commands](#image-commands)
+### info
 
 
 **Usage:**
@@ -467,30 +446,33 @@ shapeworks  info [args]...
 ```  
 
 
+**Description:** prints requested image dimensions, spacing, size, origin, direction (coordinate system), center, center of mass and bounding box [default: prints everything]  
+
+
 **Options:**
 
 **-h, --help:** show this help message and exit
 
-**--dims=BOOL:** Whether to display image dimensions
+**--dims:** Whether to display image dimensions
 
-**--spacing=BOOL:** Whether to display physical spacing
+**--spacing:** Whether to display physical spacing
 
-**--size=BOOL:** Whether to display size
+**--size:** Whether to display size
 
-**--origin=BOOL:** Whether to display physical origin
+**--origin:** Whether to display physical origin
 
-**--direction=BOOL:** Whether to display direction
+**--direction:** Whether to display direction
 
-**--center=BOOL:** Whether to display center
+**--center:** Whether to display center
 
-**--centerofmass=BOOL:** Whether to display center of mass
+**--centerofmass:** Whether to display center of mass
 
-**--boundingbox=BOOL:** Whether to display bounding box  
+**--boundingbox:** Whether to display bounding box  
   
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## multiply
+### multiply
 
 
 **Usage:**
@@ -507,12 +489,12 @@ shapeworks  multiply [args]...
 
 **-h, --help:** show this help message and exit
 
-**-x DOUBLE, --value=DOUBLE:** Value with which to multiply  
+**-x DOUBLE, --value=DOUBLE:**  Value with which to multiply.  
   
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## negate
+### negate
 
 
 **Usage:**
@@ -522,7 +504,7 @@ shapeworks  negate [args]...
 ```  
 
 
-**Description:** negate the values in this image  
+**Description:** negate the values in the given image  
 
 
 **Options:**
@@ -532,7 +514,7 @@ shapeworks  negate [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## pad
+### pad
 
 
 **Usage:**
@@ -542,7 +524,7 @@ shapeworks  pad [args]...
 ```  
 
 
-**Description:** padding to shrink an image is permitted)  
+**Description:** pads an image with specified value by specified number of voxels in the x-, y-, and/or z- directions; origin remains at the same location (note: negative padding to shrink an image is permitted)  
 
 
 **Options:**
@@ -562,7 +544,7 @@ shapeworks  pad [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## read-image
+### read-image
 
 
 **Usage:**
@@ -584,7 +566,7 @@ shapeworks  read-image [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## recenter
+### recenter
 
 
 **Usage:**
@@ -604,7 +586,7 @@ shapeworks  recenter [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## reflect
+### reflect
 
 
 **Usage:**
@@ -626,7 +608,7 @@ shapeworks  reflect [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## resample
+### resample
 
 
 **Usage:**
@@ -636,7 +618,7 @@ shapeworks  resample [args]...
 ```  
 
 
-**Description:** resamples an image  
+**Description:** resamples an image using new physical spacing (computes new dims)  
 
 
 **Options:**
@@ -645,22 +627,56 @@ shapeworks  resample [args]...
 
 **--isospacing=DOUBLE:** Use this spacing in all dimensions.
 
-**--spacex=DOUBLE:** Pixel spacing in x-direction [default: 1.0].
+**--spacex=DOUBLE:** Pixel spacing in x-direction [default: 1].
 
-**--spacey=DOUBLE:** Pixel spacing in y-direction [default: 1.0].
+**--spacey=DOUBLE:** Pixel spacing in y-direction [default: 1].
 
-**--spacez=DOUBLE:** Pixel spacing in z-direction [default: 1.0].
+**--spacez=DOUBLE:** Pixel spacing in z-direction [default: 1].
 
-**--sizex=UNSIGNED:** Output size in x-direction [default: calculated using current size and desired spacing].
+**--sizex=UNSIGNED:** Output size in x-direction [default: current size].
 
-**--sizey=UNSIGNED:** Output size in y-direction [default: calculated using current size and desired spacing].
+**--sizey=UNSIGNED:** Output size in y-direction [default: current size].
 
-**--sizez=UNSIGNED:** Output size in z-direction [default: calculated using current size and desired spacing].  
+**--sizez=UNSIGNED:** Output size in z-direction [default: current size].
+
+**--originx=DOUBLE:** Output origin in x-direction [default: current origin].
+
+**--originy=DOUBLE:** Output origin in y-direction [default: current origin].
+
+**--originz=DOUBLE:** Output origin in z-direction [default: current origin].
+
+**--interp=CHOICE:** Interpolation method to use [default: linear]. (choose from 'linear', 'nearest')  
   
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## rotate
+### resize
+
+
+**Usage:**
+
+```
+shapeworks  resize [args]...
+```  
+
+
+**Description:** resizes an image (computes new physical spacing)  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**-x UNSIGNED, --sizex=UNSIGNED:**  Output size in x-direction [default: current size].
+
+**-y UNSIGNED, --sizey=UNSIGNED:**  Output size in y-direction [default: current size].
+
+**-z UNSIGNED, --sizez=UNSIGNED:**  Output size in z-direction [default: current size].  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Image Commands](#image-commands)
+### rotate
 
 
 **Usage:**
@@ -677,11 +693,11 @@ shapeworks  rotate [args]...
 
 **-h, --help:** show this help message and exit
 
-**-x DOUBLE, --rx=DOUBLE:** Physical axis around which to rotate [default: z-axis]
+**-x DOUBLE, --rx=DOUBLE:**  Physical axis around which to rotate [default: z-axis]
 
-**-y DOUBLE, --ry=DOUBLE:** Physical axis around which to rotate [default: z-axis]
+**-y DOUBLE, --ry=DOUBLE:**  Physical axis around which to rotate [default: z-axis]
 
-**-z DOUBLE, --rz=DOUBLE:** Physical axis around which to rotate [default: z-axis]
+**-z DOUBLE, --rz=DOUBLE:**  Physical axis around which to rotate [default: z-axis]
 
 **--radians=DOUBLE:** Angle in radians
 
@@ -690,7 +706,7 @@ shapeworks  rotate [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## scale
+### scale
 
 
 **Usage:**
@@ -707,16 +723,16 @@ shapeworks  scale [args]...
 
 **-h, --help:** show this help message and exit
 
-**-x DOUBLE, --sx=DOUBLE:** X scale
+**-x DOUBLE, --sx=DOUBLE:**  X scale
 
-**-y DOUBLE, --sy=DOUBLE:** Y scale
+**-y DOUBLE, --sy=DOUBLE:**  Y scale
 
-**-z DOUBLE, --sz=DOUBLE:** Z scale  
+**-z DOUBLE, --sz=DOUBLE:**  Z scale  
   
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## set-origin
+### set-origin
 
 
 **Usage:**
@@ -733,16 +749,16 @@ shapeworks  set-origin [args]...
 
 **-h, --help:** show this help message and exit
 
-**-x DOUBLE, --x=DOUBLE:** x value of origin [default: 0.0].
+**-x DOUBLE, --x=DOUBLE:**  x value of origin [default: 0.0].
 
-**-y DOUBLE, --y=DOUBLE:** y value of origin [default: 0.0].
+**-y DOUBLE, --y=DOUBLE:**  y value of origin [default: 0.0].
 
-**-z DOUBLE, --z=DOUBLE:** z value of origin [default: 0.0].  
+**-z DOUBLE, --z=DOUBLE:**  z value of origin [default: 0.0].  
   
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## sigmoid
+### sigmoid
 
 
 **Usage:**
@@ -766,7 +782,7 @@ shapeworks  sigmoid [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## subtract
+### subtract
 
 
 **Usage:**
@@ -783,14 +799,14 @@ shapeworks  subtract [args]...
 
 **-h, --help:** show this help message and exit
 
-**-x DOUBLE, --value=DOUBLE:** Value to subtract from each pixel
+**-x DOUBLE, --value=DOUBLE:**  Value to subtract from each pixel.
 
-**--name=STRING:** Name of image to subtract pixelwise  
+**--name=STRING:** Name of image to subtract pixelwise.  
   
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## topo-preserving-smooth
+### topo-preserving-smooth
 
 
 **Usage:**
@@ -800,7 +816,7 @@ shapeworks  topo-preserving-smooth [args]...
 ```  
 
 
-**Description:** Helper command that applies gradient and sigmoid filters to create a feature image for the TPLevelSet filter; note that a curvature flow filter is sometimes applied to the image before this.  
+**Description:** Helper command that applies gradient and sigmoid filters to create a feature image for the TPLevelSet filter; note that a curvature flow filter is sometimes applied to the image before this  
 
 
 **Options:**
@@ -816,7 +832,7 @@ shapeworks  topo-preserving-smooth [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## tp-levelset
+### tp-levelset
 
 
 **Usage:**
@@ -833,14 +849,14 @@ shapeworks  tp-levelset [args]...
 
 **-h, --help:** show this help message and exit
 
-**--featureimage=STRING:** Path of feature image for filter
+**--featureimage=STRING:**  Path of feature image for filter
 
 **--scaling=DOUBLE:** Value of scale [default: 20.0].  
   
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## translate
+### translate
 
 
 **Usage:**
@@ -857,18 +873,18 @@ shapeworks  translate [args]...
 
 **-h, --help:** show this help message and exit
 
-**--centerofmass=BOOL:** Use center of mass [default: false].
+**--centerofmass:** Use center of mass [default: false].
 
-**-x DOUBLE, --tx=DOUBLE:** X distance
+**-x DOUBLE, --tx=DOUBLE:**  X distance
 
-**-y DOUBLE, --ty=DOUBLE:** Y distance
+**-y DOUBLE, --ty=DOUBLE:**  Y distance
 
-**-z DOUBLE, --tz=DOUBLE:** Z distance  
+**-z DOUBLE, --tz=DOUBLE:**  Z distance  
   
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## warp-image
+### warp-image
 
 
 **Usage:**
@@ -878,7 +894,7 @@ shapeworks  warp-image [args]...
 ```  
 
 
-**Description:** Finds the warp between the source and target landmarks and transforms image by this warp.  
+**Description:** finds the warp between the source and target landmarks and transforms image by this warp  
 
 
 **Options:**
@@ -894,7 +910,7 @@ shapeworks  warp-image [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-## write-image
+### write-image
 
 
 **Usage:**
@@ -918,9 +934,9 @@ shapeworks  write-image [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
-# Mesh Commands
+## Mesh Commands
 
-## coverage
+### coverage
 
 
 **Usage:**
@@ -930,19 +946,19 @@ shapeworks  coverage [args]...
 ```  
 
 
-**Description:** coverage between two meshes  
+**Description:** creates mesh of coverage between two meshes  
 
 
 **Options:**
 
 **-h, --help:** show this help message and exit
 
-**--second_mesh=STRING:** Second mesh to apply coverage.  
+**--name=STRING:** Path to other mesh with which to create coverage.  
   
 <a href="#top">Back to Top</a>
   
 [Back to Mesh Commands](#mesh-commands)
-## read-mesh
+### read-mesh
 
 
 **Usage:**
@@ -964,7 +980,7 @@ shapeworks  read-mesh [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Mesh Commands](#mesh-commands)
-## write-mesh
+### write-mesh
 
 
 **Usage:**
@@ -986,9 +1002,9 @@ shapeworks  write-mesh [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Mesh Commands](#mesh-commands)
-# ParticleSystem Commands
+## ParticleSystem Commands
 
-## compactness
+### compactness
 
 
 **Usage:**
@@ -1012,7 +1028,7 @@ shapeworks  compactness [args]...
 <a href="#top">Back to Top</a>
   
 [Back to ParticleSystem Commands](#particlesystem-commands)
-## generalization
+### generalization
 
 
 **Usage:**
@@ -1036,7 +1052,7 @@ shapeworks  generalization [args]...
 <a href="#top">Back to Top</a>
   
 [Back to ParticleSystem Commands](#particlesystem-commands)
-## read-particle-system
+### read-particle-system
 
 
 **Usage:**
@@ -1053,12 +1069,12 @@ shapeworks  read-particle-system [args]...
 
 **-h, --help:** show this help message and exit
 
-**--names <list of strings>:** paths to .particle files (must be followed by `--`), ex: "--names *.particle -- next-command...")  
+**--names <list of strings>:**  paths to .particle files (must be followed by `--`), ex: "--names *.particle -- next-command...")  
   
 <a href="#top">Back to Top</a>
   
 [Back to ParticleSystem Commands](#particlesystem-commands)
-## specificity
+### specificity
 
 
 **Usage:**

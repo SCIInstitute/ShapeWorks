@@ -50,10 +50,10 @@ $ git lfs fetch
 $ git lfs install
 $ git lfs checkout
 ```
-:fa-info-circle: _**Important:**_ Each time you build or use ShapeWorks, you must first activate its environment:
-```
-$ conda activate shapeworks
-```
+
+!!! danger "Activate shapeworks environment"
+    Each time you build or use ShapeWorks from the command line, you must first activate its environment using the `conda activate shapeworks` command on the terminal.
+
 
 #### Qt5  
 Download and install the latest version of [Qt5](https://download.qt.io/archive/qt/), selecting the LGPL (free) license (at least version 5.10 required).  
@@ -67,15 +67,19 @@ These dependencies can be installed using the `build_dependencies.sh` script.
 
 Use `$ ./build_dependencies.sh --help` for more details on the available options.  
 
-:fa-exclamation-circle: **If you get an error** that looks like this:  
-```
-which: no qmake in (...)
-## For GUI applications, please make sure at least version $QT_MIN_VER of Qt5 is installed and that its qmake is in the path.
-## Download Qt5 from: https://download.qt.io/archive/qt/
-```
-Make sure you added Qt to your path as explained in the Qt5 installation step.  
 
-:fa-info-circle: _**Important:**_ If you decide to build ITK yourself and you would like to use the ShapeWorks GUI applications, __ITK must be built with VTK__.  
+!!! note 
+    **If you get an error** that looks like this:  
+    ```
+    which: no qmake in (...) 
+    For GUI applications, please make sure at least version $QT_MIN_VER of Qt5 is installed and that its qmake is in the path.
+    Download Qt5 from: https://download.qt.io/archive/qt/
+    ```
+    
+    Make sure you added Qt to your path as explained in the Qt5 installation step.  
+
+!!! important
+    If you decide to build ITK yourself and you would like to use the ShapeWorks GUI applications, __ITK must be built with VTK__.  
 
 ### Windows
 
@@ -86,7 +90,8 @@ Download and install [[Visual Studio 2019]](https://visualstudio.microsoft.com/)
 #### Anaconda
 Download and install [[Anaconda]](https://www.anaconda.com/). 
 
-:fa-info-circle: _**Important:**_ It is recommended **not** to add Anaconda to your PATH and **not** to register Anaconda as your default Python.  
+!!! important
+    It is recommended **not** to add Anaconda to your PATH and **not** to register Anaconda as your default Python.  
 
 Using the *Anaconda Prompt*, run `conda_installs.bat`  
 
@@ -102,10 +107,12 @@ These dependencies can be installed using the `build_dependencies.sh` script. Us
 
 Use `$ ./build_dependencies.sh --help` for more details on the available build_dependencies options.  
 
-:fa-exclamation-circle: **If you get an error** that says: `which: no qmake in (...)`  
-Make sure you added Qt to your path as explained in the Qt5 installation step.
+!!! important 
+    **If you get an error** that says: `which: no qmake in (...)`  
+    Make sure you added Qt to your path as explained in the Qt5 installation step.
 
-:fa-info-circle: _**Important:**_ If you decide to build ITK yourself and you would like to use the ShapeWorks GUI applications, __ITK must be built with VTK__.  
+!!! important 
+    If you decide to build ITK yourself and you would like to use the ShapeWorks GUI applications, __ITK must be built with VTK__.  
 
 
 ## Configure and Build  

@@ -12,6 +12,10 @@ ShapeWorks is an open-source software that learns population-specific shape para
 
 <img src="docs/img/home/about-shapeworks.png" width="1000px" align="right" hspace="20">
 
+Latest Release
+=====================
+
+![](docs/img/about/release5.5.png)
 
 Quick Links
 =====================
