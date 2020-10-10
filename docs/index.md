@@ -9,11 +9,15 @@
 
 ShapeWorks is a free, open-source suite of software tools that uses a flexible method for automated construction of compact statistical landmark-based shape models of ensembles of anatomical shapes that do not rely on any specific surface parameterization. The method requires very little preprocessing or parameter tuning and applies to a wide range of shape analysis problems, including nonmanifold surfaces and arbitrary topology objects. ShapeWorks includes tools for preprocessing data, computing landmark-based shape models, and visualizing the results.
 
-!!! danger "Lastest & greatest"
+
+
+## Latest & Greatest
+    
+![](img/about/release5.5.png)
+
+!!! note "Release Notes"    
     Please visit [Release Notes](about/release-notes.md) to know about the ShapeWorks' cutting-edge features and improvements.
 
-
-![](img/about/release5.5.png)
 ## Why use ShapeWorks?
 
 ShapeWorks is the only publicly available tool that learns a population-specific anatomical mapping in a way that respects population variability without relying on a user-defined template/atlas. 
