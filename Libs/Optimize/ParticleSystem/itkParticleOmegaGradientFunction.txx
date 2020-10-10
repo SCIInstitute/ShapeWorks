@@ -178,41 +178,46 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
 
     for (unsigned int i = 0; i < VDimension; i++)  { x[i] = pos[i]; }
 
+    // Shadow particle plane constraints
     planePts.clear();
     spherePts.clear();
     CToP.clear();
     int numSpheres = 0;
     int numPlanes = 0;
 
-    if (domain->IsCuttingPlaneDefined())
+    std::vector<PlaneConstraint> planeConsts = *(domain->GetConstraints()->getPlaneConstraints());
+    numPlanes = planeConsts.size();
+    //std::cout << "Num planes " << numPlanes << std::endl;
+    Eigen::Vector3d x_eigen;
+    x_eigen(0) = double(x[0]); x_eigen(1) = double(x[1]); x_eigen(2) = double(x[2]);
+    for (unsigned int pidx = 0; pidx < numPlanes; pidx++)
     {
-        numPlanes = domain->GetNumberOfPlanes();
-        for (unsigned int pidx = 0; pidx < numPlanes; pidx++)
-        {
-            double D = dot_product( domain->GetCuttingPlaneNormal(pidx), x - domain->GetCuttingPlanePoint(pidx) );
-            itk::Point<double, VDimension> planept;
-            for ( unsigned int i = 0; i < VDimension; i++ )
-                planept[i] = x[i] - (domain->GetCuttingPlaneNormal(pidx)[i] * D);
-            planePts.push_back(planept);
-        }
+        double D = double(planeConsts[pidx].GetPlaneNormal().dot(x_eigen-planeConsts[pidx].GetPlanePoint()));
+        itk::Point<double, VDimension> planept;
+        for ( unsigned int i = 0; i < VDimension; i++ )
+            planept[i] = x[i] - (planeConsts[pidx].GetPlaneNormal()[i] * D);
+        planePts.push_back(planept);
     }
 
-    if (domain->IsCuttingSphereDefined())
+    std::vector<SphereConstraint> sphereConsts = *(domain->GetConstraints()->GetSphereConstraints());
+    // Shadow particle sphere constraints
+    numSpheres = sphereConsts.size();
+    //std::cout << "Num spheres " << numSpheres << std::endl;
+    for (unsigned int sidx = 0; sidx < numSpheres; sidx++)
     {
-        numSpheres = domain->GetNumberOfSpheres();
-        for (unsigned int sidx = 0; sidx < numSpheres; sidx++)
-        {
-            itk::Point<double, VDimension> spherept;
-            vnl_vector_fixed<double, VDimension> q;
-            for ( unsigned int j = 0; j < VDimension; j++ )
-                q[j] = pos[j] - domain->GetSphereCenter( sidx )[j];
+        itk::Point<double, VDimension> spherept;
+        vnl_vector_fixed<double, VDimension> q;
+        for ( unsigned int j = 0; j < VDimension; j++ )
+            q[j] = pos[j] - sphereConsts[ sidx ].GetCenter()(j);
 
-            q.normalize();
-            for ( unsigned int j = 0; j < VDimension; j++ )
-                spherept[j] = domain->GetSphereCenter( sidx )[j] + ( q[j] * abs(domain->GetSphereRadius( sidx )) );
-            spherePts.push_back(spherept);
-            CToP.push_back(sqrt(dot_product(x-domain->GetSphereCenter(sidx), x-domain->GetSphereCenter(sidx))));
+        q.normalize();
+        vnl_vector_fixed<double, VDimension> center;
+        for ( unsigned int j = 0; j < VDimension; j++ ){
+            spherept[j] = sphereConsts[ sidx ].GetCenter()(j) + ( q[j] * abs(sphereConsts[ sidx ].GetRadius()) );
+            center[j] = sphereConsts[ sidx ].GetCenter()(j);
         }
+        spherePts.push_back(spherept);
+        CToP.push_back(sqrt(dot_product(center, center)));
     }
 
     double myKappa = this->ComputeKappa( m_MeanCurvatureCache->operator[] ( this->GetDomainNumber() )->operator[] ( idx ), d, 0 );
@@ -238,23 +243,19 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
     // See http://mathworld.wolfram.com/Point-PlaneDistance.html, for example
     //  std::cout << planept << "\t" << D << std::endl;
 
-    if (domain->IsCuttingPlaneDefined())
+
+    for (unsigned int pidx = 0; pidx < domain->GetConstraints()->getPlaneConstraints()->size(); pidx++)
     {
-        for (unsigned int pidx = 0; pidx < domain->GetNumberOfPlanes(); pidx++)
-        {
-            m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( planePts[pidx], 0 ) );
-            // SHIREEN
-            m_CurrentWeights.push_back( 0.3 );
-            // end SHIREEN
-        }
+        m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( planePts[pidx], 0 ) );
+        // SHIREEN
+        m_CurrentWeights.push_back( 0.3 );
+        // end SHIREEN
     }
 
     // Add the closest points on any spheres that are defined in the domain.
-    if (domain->IsCuttingSphereDefined())
+    for ( unsigned int i = 0; i < domain->GetConstraints()->GetSphereConstraints()->size(); i++ )
     {
-        for ( unsigned int i = 0; i < domain->GetNumberOfSpheres(); i++ )
-        {
-            m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( spherePts[i], 0 ) );
+        m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( spherePts[i], 0 ) );
 //            if (CToP[i] > abs(domain->GetSphereRadius(i)) && domain->GetSphereRadius(i) < 0)
 //            {
 //                std::cerr << "Original position outside the sphere: " << d << "\t" << idx << std::endl;
@@ -266,9 +267,8 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
 //                m_CurrentWeights.push_back( -3 );
 //            }
 //            else
-                m_CurrentWeights.push_back( 0.3 );
+            m_CurrentWeights.push_back( 0.3 );
 
-        }
     }
 
     // Compute the weights based on angle between the neighbors and the center.
@@ -301,22 +301,19 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
 
         m_CurrentNeighborhood = system->FindNeighborhoodPoints( pos, m_CurrentWeights, neighborhood_radius, d );
 
-        if (domain->IsCuttingPlaneDefined())
+
+        for (unsigned int pidx = 0; pidx < domain->GetConstraints()->getPlaneConstraints()->size(); pidx++)
         {
-            for (unsigned int pidx = 0; pidx < domain->GetNumberOfPlanes(); pidx++)
-            {
-                m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( planePts[pidx], 0 ) );
-                // SHIREEN
-                m_CurrentWeights.push_back( 0.3 );
-                // end SHIREEN
-            }
+            m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( planePts[pidx], 0 ) );
+            // SHIREEN
+            m_CurrentWeights.push_back( 0.3 );
+            // end SHIREEN
         }
 
-        if (domain->IsCuttingSphereDefined())
+
+        for ( unsigned int i = 0; i < domain->GetConstraints()->GetSphereConstraints()->size(); i++ )
         {
-            for ( unsigned int i = 0; i < domain->GetNumberOfSpheres(); i++ )
-            {
-                m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( spherePts[i], 0 ) );
+            m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( spherePts[i], 0 ) );
 //                if (CToP[i] > abs(domain->GetSphereRadius(i)) && domain->GetSphereRadius(i) < 0)
 //                {
 //                    std::cerr << "Original position outside the sphere: " << d << "\t" << idx << std::endl;
@@ -328,9 +325,7 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
 //                    m_CurrentWeights.push_back( -3 );
 //                }
 //                else
-                    m_CurrentWeights.push_back( 0.3 );
-
-            }
+                m_CurrentWeights.push_back( 0.3 );
         }
 
         //  m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
@@ -349,22 +344,19 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
         m_CurrentNeighborhood = system->FindNeighborhoodPoints( pos, m_CurrentWeights,
                                                                 neighborhood_radius, d );
 
-        if (domain->IsCuttingPlaneDefined())
+
+        for (unsigned int pidx = 0; pidx < domain->GetConstraints()->getPlaneConstraints()->size(); pidx++)
         {
-            for (unsigned int pidx = 0; pidx < domain->GetNumberOfPlanes(); pidx++)
-            {
-                m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( planePts[pidx], 0 ) );
-                // SHIREEN
-                m_CurrentWeights.push_back( 0.3 );
-                // end SHIREEN
-            }
+            m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( planePts[pidx], 0 ) );
+            // SHIREEN
+            m_CurrentWeights.push_back( 0.3 );
+            // end SHIREEN
         }
 
-        if (domain->IsCuttingSphereDefined())
+
+        for ( unsigned int i = 0; i < domain->GetConstraints()->GetSphereConstraints()->size(); i++ )
         {
-            for ( unsigned int i = 0; i < domain->GetNumberOfSpheres(); i++ )
-            {
-                m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( spherePts[i], 0 ) );
+            m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( spherePts[i], 0 ) );
 //                if (CToP[i] > abs(domain->GetSphereRadius(i)) && domain->GetSphereRadius(i) < 0)
 //                {
 //                    std::cerr << "Original position outside the sphere: " << d << "\t" << idx << std::endl;
@@ -376,9 +368,9 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
 //                    m_CurrentWeights.push_back( -3 );
 //                }
 //                else
-                    m_CurrentWeights.push_back( 0.3 );
-            }
+                m_CurrentWeights.push_back( 0.3 );
         }
+
         //  m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
         //      this->ComputeAngularWeights(pos,m_CurrentNeighborhood,domain,m_CurrentWeights);
     }
@@ -403,12 +395,12 @@ typename ParticleOmegaGradientFunction<TGradientNumericType, VDimension>::Vector
             = static_cast<const ParticleImplicitSurfaceDomain<TGradientNumericType>*>( system->GetDomain( d ) );
 
     unsigned int numspheres = 0;
-    if (domain->IsCuttingSphereDefined())
-        numspheres = domain->GetNumberOfSpheres();
+    if (domain->GetConstraints()->IsCuttingSphereDefined())
+        numspheres = domain->GetConstraints()->GetSphereConstraints()->size();
 
     unsigned int numPlanes  = 0;
-    if (domain->IsCuttingPlaneDefined())
-        numPlanes = domain->GetNumberOfPlanes();
+    if (domain->GetConstraints()->getPlaneConstraints()->size()>0)
+        numPlanes = domain->GetConstraints()->getPlaneConstraints()->size();
 
     // Get the position for which we are computing the gradient.
     PointType pos = system->GetPosition( idx, d );
