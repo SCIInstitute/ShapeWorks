@@ -35,7 +35,7 @@ namespace shapeworks
 
   double TriMeshWrapper::ComputeDistance(PointType pointa, PointType pointb) const {
     const double dist = pointa.EuclideanDistanceTo(pointb);
-    if(logFile.is_open()) {
+    if(logQueries && logFile.is_open()) {
       const int triIdxA = GetTriangleForPoint(convert<PointType, point>(pointa));
       const int triIdxB = GetTriangleForPoint(convert<PointType, point>(pointb));
 
@@ -43,7 +43,7 @@ namespace shapeworks
       const auto& meshB = mesh->faces[triIdxB];
       for(int i=0; i<3; i++) {
         for(int j=0; j<3; j++) {
-          counts[std::make_pair(meshA[i], meshB[j])] += 1;
+          logFile << meshA[i] << ' ' << meshB[j] << std::endl;
         }
       }
     }

@@ -62,15 +62,21 @@ public:
     logFile.open(filepath);
     logFile.precision(dbl::max_digits10);
   }
+  bool logQueries { false };
+
+  /*
   void AddLineToLogFile(const std::string& line) {
     logFile << line;
   }
+  */
+  /*
   void WriteCountsAndClear() {
     for (auto it : counts) {
       logFile << it.first.first << ' ' << it.first.second<< ' '  << it.second << std::endl;
     }
     counts.clear();
   }
+  */
 
 private:
   Eigen::Vector3d GeodesicWalkOnFace(Eigen::Vector3d pointa__, Eigen::Vector3d projectedVector__, int faceIndex__, int prevFace__) const;
@@ -92,9 +98,9 @@ private:
   PointType meshLowerBound;
   PointType meshUpperBound;
   mutable std::ofstream logFile;
-  mutable std::unordered_map<
-  std::pair<int, int>,
-  unsigned long, pair_hash > counts;
+  // mutable std::unordered_map<
+  // std::pair<int, int>,
+  // unsigned long, pair_hash > counts;
 };
 
 }

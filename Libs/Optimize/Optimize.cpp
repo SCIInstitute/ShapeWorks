@@ -792,9 +792,9 @@ void Optimize::Initialize()
 
     const auto domain = (itk::MeshDomain *) m_sampler->GetParticleSystem()->GetDomain(0);
     auto wrapper = (TriMeshWrapper*)domain->GetMesh();
-    wrapper->AddLineToLogFile(
-            "# split " + std::to_string(m_sampler->GetParticleSystem()->GetNumberOfParticles(0)) + "\n");
-    wrapper->WriteCountsAndClear();
+    // wrapper->AddLineToLogFile(
+            // "# split " + std::to_string(m_sampler->GetParticleSystem()->GetNumberOfParticles(0)) + "\n");
+    // wrapper->WriteCountsAndClear();
 
     flag_split = false;
     for (int i = 0; i < n; i++) {
@@ -864,6 +864,9 @@ void Optimize::RunOptimize()
     std::cout << "*** Optimize Step\n";
     std::cout << "------------------------------\n";
   }
+  const auto domain = (itk::MeshDomain *) m_sampler->GetParticleSystem()->GetDomain(0);
+  auto wrapper = (TriMeshWrapper*)domain->GetMesh();
+  wrapper->logQueries = true;
 
   m_optimizing = true;
   m_sampler->GetCurvatureGradientFunction()->SetRho(m_adaptivity_strength);
@@ -971,11 +974,11 @@ void Optimize::RunOptimize()
   this->WriteParameters();
   if (m_verbosity_level > 0) {
     std::cout << "Finished optimization!!!" << std::endl;
-    const auto domain = (itk::MeshDomain *) m_sampler->GetParticleSystem()->GetDomain(0);
-    auto wrapper = (TriMeshWrapper*)domain->GetMesh();
-    wrapper->AddLineToLogFile(
-            "# final " + std::to_string(m_sampler->GetParticleSystem()->GetNumberOfParticles(0)) + "\n");
-    wrapper->WriteCountsAndClear();
+    // const auto domain = (itk::MeshDomain *) m_sampler->GetParticleSystem()->GetDomain(0);
+    // auto wrapper = (TriMeshWrapper*)domain->GetMesh();
+    // wrapper->AddLineToLogFile(
+            // "# final " + std::to_string(m_sampler->GetParticleSystem()->GetNumberOfParticles(0)) + "\n");
+    // wrapper->WriteCountsAndClear();
   }
 }
 
