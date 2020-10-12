@@ -225,7 +225,7 @@ namespace itk
         std::cout << std::endl;
       }
       else if (m_verbosity > 1) {
-        if (m_NumberOfIterations % (m_MaximumNumberOfIterations / 10) == 0) {
+        if (m_MaximumNumberOfIterations < 10 || m_NumberOfIterations % (m_MaximumNumberOfIterations / 10) == 0) {
           std::cerr << "Iteration " << m_NumberOfIterations << ", maxchange = " << maxchange << ", minimumTimeStep = " << minimumTimeStep << std::endl;
         }
       }
