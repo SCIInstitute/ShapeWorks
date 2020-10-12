@@ -65,7 +65,7 @@ public:
   void AddLineToLogFile(const std::string& line) {
     logFile << line;
   }
-  void WriteCounts() {
+  void WriteCountsAndClear() {
     for (auto it : counts) {
       logFile << it.first.first << ' ' << it.first.second<< ' '  << it.second << std::endl;
     }

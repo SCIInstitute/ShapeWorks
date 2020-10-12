@@ -710,12 +710,6 @@ void Optimize::Initialize()
         std::cout << m_sampler->GetParticleSystem()->GetNumberOfParticles(i) << "  ";
       }
       std::cout << std::endl;
-
-      const auto domain = (itk::MeshDomain *) m_sampler->GetParticleSystem()->GetDomain(0);
-      auto wrapper = (TriMeshWrapper*)domain->GetMesh();
-      wrapper->WriteCounts();
-      wrapper->AddLineToLogFile(
-      "# split " + std::to_string(m_sampler->GetParticleSystem()->GetNumberOfParticles(0)) + "\n");
     }
 
     if (m_save_init_splits == true) {
@@ -795,6 +789,12 @@ void Optimize::Initialize()
     this->WritePointFilesWithFeatures();
     this->WriteEnergyFiles();
     this->WriteTransformFile();
+
+    const auto domain = (itk::MeshDomain *) m_sampler->GetParticleSystem()->GetDomain(0);
+    auto wrapper = (TriMeshWrapper*)domain->GetMesh();
+    wrapper->AddLineToLogFile(
+            "# split " + std::to_string(m_sampler->GetParticleSystem()->GetNumberOfParticles(0)) + "\n");
+    wrapper->WriteCountsAndClear();
 
     flag_split = false;
     for (int i = 0; i < n; i++) {
@@ -971,6 +971,11 @@ void Optimize::RunOptimize()
   this->WriteParameters();
   if (m_verbosity_level > 0) {
     std::cout << "Finished optimization!!!" << std::endl;
+    const auto domain = (itk::MeshDomain *) m_sampler->GetParticleSystem()->GetDomain(0);
+    auto wrapper = (TriMeshWrapper*)domain->GetMesh();
+    wrapper->AddLineToLogFile(
+            "# final " + std::to_string(m_sampler->GetParticleSystem()->GetNumberOfParticles(0)) + "\n");
+    wrapper->WriteCountsAndClear();
   }
 }
 
