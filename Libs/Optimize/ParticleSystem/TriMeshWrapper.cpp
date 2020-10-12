@@ -41,9 +41,11 @@ namespace shapeworks
 
       const auto& meshA = mesh->faces[triIdxA];
       const auto& meshB = mesh->faces[triIdxB];
-      logFile << meshA[0] << ' ' << meshA[1] << ' ' << meshA[2] << ' ' <<
-                 meshB[0] << ' ' << meshB[1] << ' ' << meshB[2] << ' ' <<
-                 dist << std::endl;
+      for(int i=0; i<3; i++) {
+        for(int j=0; j<3; j++) {
+          counts[std::make_pair(meshA[i], meshB[j])] += 1;
+        }
+      }
     }
     return dist;
   }

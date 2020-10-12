@@ -13,6 +13,18 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
+#include <unordered_map>
+#include <utility>
+#include <hash_map>
+
+struct pair_hash {
+public:
+  size_t operator()(std::pair<int, int> x) const throw() {
+    size_t h = x.first * x.second;
+    return h;
+  }
+};
+
 using namespace trimesh;
 
 namespace shapeworks
@@ -53,6 +65,12 @@ public:
   void AddLineToLogFile(const std::string& line) {
     logFile << line;
   }
+  void WriteCounts() {
+    for (auto it : counts) {
+      logFile << it.first.first << ' ' << it.first.second<< ' '  << it.second << std::endl;
+    }
+    counts.clear();
+  }
 
 private:
   Eigen::Vector3d GeodesicWalkOnFace(Eigen::Vector3d pointa__, Eigen::Vector3d projectedVector__, int faceIndex__, int prevFace__) const;
@@ -74,6 +92,9 @@ private:
   PointType meshLowerBound;
   PointType meshUpperBound;
   mutable std::ofstream logFile;
+  mutable std::unordered_map<
+  std::pair<int, int>,
+  unsigned long, pair_hash > counts;
 };
 
 }
