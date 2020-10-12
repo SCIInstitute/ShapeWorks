@@ -2,8 +2,6 @@
 """
 Same as femur.py, but uses the c++ implementation of cutting planes.
 """
-
-from zipfile import ZipFile
 import os
 import sys
 import csv
@@ -16,6 +14,7 @@ import pickle
 from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
+import CommonUtils
 
 def Run_Pipeline(args):
     """
@@ -30,24 +29,11 @@ def Run_Pipeline(args):
         input("Press Enter to continue")
 
     datasetName = "femur-v0"
-    filename = datasetName + ".zip"
-    # Check if the data is in the right place
-    if not os.path.exists(filename):
-        print("Can't find " + filename + " in the current directory.")
-        import DatasetUtils
-        DatasetUtils.downloadDataset(datasetName)
-
-    parentDir = "TestFemur_cut/"
-    inputDir = 'TestFemur_cut/' + datasetName + '/'
-
-    if not os.path.exists(parentDir):
-        os.makedirs(parentDir)
-
-    # extract the zipfile if needed
-    if not os.listdir(parentDir) :
-        print("Extracting data from " + filename + "...")
-        with ZipFile(filename, 'r') as zipObj:
-            zipObj.extractall(path=parentDir)
+    outputDirectory = "Output/femur_cut/"
+    if not os.path.exists(outputDirectory):
+        os.makedirs(outputDirectory)
+    CommonUtils.get_data(datasetName, outputDirectory)
+    inputDir = outputDirectory + datasetName + '/'
 
     print("\nStep 2. Groom - Data Pre-processing\n")
     if args.interactive:
