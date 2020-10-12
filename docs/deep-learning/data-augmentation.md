@@ -94,7 +94,7 @@ The closest real shape example to each generated shape sample is then used to ge
 
 ## Sampling Distributions
 
-The `sampler_type` parameter determines which type of distribution to fit to the embedded data. The options are `Gaussain` (a single multivariate Gaussian distribution), `mixture` (a mixture of Gaussian distributions) or `KDE` (kernel density estimate).
+The `sampler_type` parameter determines which type of distribution to fit to the embedded data. The options are `Gaussian` (a single multivariate Gaussian distribution), `mixture` (a mixture of Gaussian distributions) or `KDE` (kernel density estimate).
 
 ### Multivariate Gaussian Distribution
 
