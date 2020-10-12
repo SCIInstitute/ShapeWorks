@@ -57,7 +57,7 @@ def Run_Pipeline(args):
         -- find largest bounding box and crop
         """
         # Directory where grooming output folders will be added
-        parentDir = 'TestFemur_cut/groomed/'
+        parentDir = outputDirectory + 'groomed/'
         if not os.path.exists(parentDir):
             os.mkdir(parentDir)
 
