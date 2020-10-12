@@ -68,7 +68,7 @@ def Run_Pipeline(args):
         print("*********************************************************\n\n")
 
     if int(args.start_with_prepped_data) == 1:
-        dtFiles = sorted(glob.glob(outputDirectory + '/' + datasetName + '/groomed/distance_transforms/*.nrrd'))
+        dtFiles = sorted(glob.glob(outputDirectory + datasetName + '/groomed/distance_transforms/*.nrrd'))
     else:
         """Apply isotropic resampling"""
         resampledFiles = applyIsotropicResampling(groomDir + "resampled/segmentations", fileList)
