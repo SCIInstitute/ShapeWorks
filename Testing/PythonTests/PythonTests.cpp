@@ -306,3 +306,39 @@ TEST(pythonTests, div)
 {
   ASSERT_FALSE(system("python div.py"));
 }
+
+//---------------------------------------------------------------------------
+TEST(pythonTests, coord)
+{
+  ASSERT_FALSE(system("python coord.py"));
+}
+
+//---------------------------------------------------------------------------
+TEST(pythonTests, dims)
+{
+  ASSERT_FALSE(system("python dims.py"));
+}
+
+//---------------------------------------------------------------------------
+TEST(pythonTests, point)
+{
+  ASSERT_FALSE(system("python point.py"));
+}
+
+//---------------------------------------------------------------------------
+TEST(pythonTests, vector)
+{
+  ASSERT_FALSE(system("python vector.py"));
+}
+
+//---------------------------------------------------------------------------
+TEST(pythonTests, ipoint3)
+{
+  ASSERT_FALSE(system("python ipoint3.py"));
+}
+
+//---------------------------------------------------------------------------
+TEST(pythonTests, fpoint3)
+{
+  ASSERT_FALSE(system("python fpoint3.py"));
+}

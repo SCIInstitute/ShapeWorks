@@ -40,7 +40,6 @@ PYBIND11_MODULE(shapeworks, m)
   py::class_<Coord>(m, "Coord")
   .def(py::init<>())
   .def(py::init<unsigned, unsigned, unsigned>())
-
   .def("__repr__", [](const Coord& c) {
       std::ostringstream ss;
       ss << c;
@@ -68,13 +67,13 @@ PYBIND11_MODULE(shapeworks, m)
       ss << d;
       return ss.str();
     })
-  .def("__getitem__", [](const Dims &d, size_t idx) { return d[idx]; })
-  .def("__setitem__", [](Dims &d, size_t idx, unsigned val) { d[idx] = val; })
-  .def("__add__", [](const Dims &d1, const Dims &d2) { return d1 + d2; })
-  .def("__sub__", [](const Dims &d1, const Dims &d2) { return d1 + d2; })
-  .def("__mul__", [](const Dims &d1, const Dims &d2) { return d1 * d2; })
-  .def("__iadd__", [](Dims &d1, const Dims &d2) { return d1 += d2; })
-  .def("__isub__", [](Dims &d1, const Dims &d2) { return d1 -= d2; })
+  .def("__getitem__", [](const Dims& d, size_t idx) { return d[idx]; })
+  .def("__setitem__", [](Dims& d, size_t idx, unsigned val) { d[idx] = val; })
+  .def("__add__", [](const Dims& d1, const Dims& d2) { return d1 + d2; })
+  .def("__sub__", [](const Dims& d1, const Dims& d2) { return d1 - d2; })
+  .def("__mul__", [](const Dims& d1, const Dims& d2) { return d1 * d2; })
+  .def("__iadd__", [](Dims& d1, const Dims& d2) { return d1 += d2; })
+  .def("__isub__", [](Dims& d1, const Dims& d2) { return d1 -= d2; })
   .def("__mul__", [](const Dims& d, const double x) { return d * x; })
   .def("__truediv__", [](const Dims& d, const double x) { return d / x; })
   .def("__imul__", [](Dims &d, const double x) { return d *= x; })
@@ -84,11 +83,6 @@ PYBIND11_MODULE(shapeworks, m)
   // Shapeworks Globals
   py::class_<Point>(m, "Point")
   .def(py::init<>())
-  // .def(py::init<double, double, double>()) // no constructor available
-  // .def(py::init<double, double, double>(), // this is one way to do it: constructs default then assigns values
-  //      [](double x, double y, double z) {
-  //        self[0] = x; self[1] = y; self[2] = z;
-  //      })
   .def(py::init([](double x, double y, double z) { return Point({x,y,z}); }))  // directly call initializer list ctor  (***the winner!***)
   .def("__repr__", [](const Point& p) {
       std::ostringstream ss;
@@ -124,18 +118,55 @@ PYBIND11_MODULE(shapeworks, m)
   .def("__iadd__", [](Vector& v1, const Vector& v2) { return v1 += v2; })
   .def("__isub__", [](Vector& v1, const Vector& v2) { return v1 -= v2; })
   .def("__mul__", [](const Vector& v, const double x) { return v * x; })
+  // .def("__truediv__", [](const Vector& v, const double x) { return v / x; })
+  // .def("__imul__", [](Vector& v, const double x) { return v *= x; })
+  // .def("__itruediv__", [](Vector& v, const double x) { return v /= x; })
   ;
 
   // Shapeworks Globals
   py::class_<Matrix44>(m, "Matrix44")
   .def(py::init<>())
-  // .def(py::init<unsigned, unsigned, unsigned>)
+  // .def(py::init([](double x, double y, double z) { 
+  //   return Point({x,y,z}); 
+  //   }))
+  // .def("__repr__", [](const IPoint3& p) {
+  //     std::ostringstream ss;
+  //     ss << p;
+  //     return ss.str();
+  //   })
+  // .def("__getitem__", [](const IPoint3& p, size_t idx) { return p[idx]; })
+  // .def("__setitem__", [](IPoint3& p, size_t idx, int val) { p[idx] = val; })
+  // .def("__add__", [](const IPoint3& p1, const IPoint3& p2) { return p1 + p2; })
+  // .def("__sub__", [](const IPoint3& p1, const IPoint3& p2) { return p1 - p2; })
+  // .def("__mul__", [](const IPoint3& p1, const IPoint3& p2) { return p1 * p2; })
+  // .def("__iadd__", [](IPoint3& p1, const IPoint3& p2) { return p1 += p2; })
+  // .def("__isub__", [](IPoint3& p1, const IPoint3& p2) { return p1 -= p2; })
+  // .def("__mul__", [](const IPoint3& p, const double x) { return p * x; })
+  // .def("__truediv__", [](const IPoint3& p, const double x) { return p / x; })
+  // .def("__imul__", [](IPoint3& p, const double x) { return p *= x; })
+  // .def("__itruediv__", [](IPoint3& p, const double x) { return p /= x; })
   ;
 
   // Shapeworks Globals
   py::class_<Matrix>(m, "Matrix")
   .def(py::init<>())
-  // .def(py::init<unsigned, unsigned, unsigned>)
+  // .def(py::init<>())
+  // .def("__repr__", [](const IPoint3& p) {
+  //     std::ostringstream ss;
+  //     ss << p;
+  //     return ss.str();
+  //   })
+  // .def("__getitem__", [](const IPoint3& p, size_t idx) { return p[idx]; })
+  // .def("__setitem__", [](IPoint3& p, size_t idx, int val) { p[idx] = val; })
+  // .def("__add__", [](const IPoint3& p1, const IPoint3& p2) { return p1 + p2; })
+  // .def("__sub__", [](const IPoint3& p1, const IPoint3& p2) { return p1 - p2; })
+  // .def("__mul__", [](const IPoint3& p1, const IPoint3& p2) { return p1 * p2; })
+  // .def("__iadd__", [](IPoint3& p1, const IPoint3& p2) { return p1 += p2; })
+  // .def("__isub__", [](IPoint3& p1, const IPoint3& p2) { return p1 -= p2; })
+  // .def("__mul__", [](const IPoint3& p, const double x) { return p * x; })
+  // .def("__truediv__", [](const IPoint3& p, const double x) { return p / x; })
+  // .def("__imul__", [](IPoint3& p, const double x) { return p *= x; })
+  // .def("__itruediv__", [](IPoint3& p, const double x) { return p /= x; })
   ;
 
   // Shapeworks Globals
@@ -194,6 +225,12 @@ PYBIND11_MODULE(shapeworks, m)
   // m.def("TransformPtr", [] { return itk::Transform<double, 3>::New(); });
   // m.def("IdentityTransformPtr", [] { return itk::IdentityTransform<double, 3>::New(); });
   // m.def("AffineTransformPtr", [] { return itk::AffineTransform<double, 3>::New(); });
+
+  // m.def_readwrite("TransformPtr",         &shapeworks::TransformPtr)
+
+  // py::class_<TransformPtr>(m, "TransformPtr")
+  // .def(py::init<>())
+  // ;
 
   // Shapeworks Globals
   m.def("toPoint", py::overload_cast<const Dims &>(&toPoint), "converts Dims to Point");

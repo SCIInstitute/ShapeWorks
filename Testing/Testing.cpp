@@ -11,14 +11,7 @@ void shapeworksEnvSetup()
   const char* curr_ld_library_path(std::getenv("LD_LIBRARY_PATH"));
 
 #ifdef _WIN32
-<<<<<<< HEAD
-  auto path(std::string(BUILD_DIR) + "\\bin\\Release" + ";");
-  //path += std::string(DEPS_DIR) + "\\bin" + ";";
-  path += (curr_path ? curr_path : ""); // fixme: could be /bin/Debug if we ever figure out how to build Windows Debug
-  std::cout << "path: " << path << std::endl;
-=======
   auto path(std::string(BUILD_DIR) + "\\bin\\RelWithDebInfo" + ";" + std::getenv("PATH"));
->>>>>>> origin/master
   _putenv_s("PATH", path.c_str());
 
   auto pythonpath(std::string(BUILD_DIR) + "/bin/Release" + ":"); // fixme: will be /bin/Debug if Windows Debug
