@@ -109,6 +109,10 @@ public:
     meshWrapper = mesh_;
   }
 
+  shapeworks::MeshWrapper* GetMesh() {
+    return meshWrapper;
+  }
+
   void UpdateZeroCrossingPoint() override {
   }
 

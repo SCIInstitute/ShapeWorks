@@ -24,6 +24,8 @@ const int global_iteration = 1;
 #include <sstream>
 #include "MemoryUsage.h"
 #include <chrono>
+#include "TriMeshWrapper.h"
+#include "MeshDomain.h"
 
 namespace itk
 {
@@ -227,6 +229,10 @@ namespace itk
           std::cerr << "Iteration " << m_NumberOfIterations << ", maxchange = " << maxchange << ", minimumTimeStep = " << minimumTimeStep << std::endl;
         }
       }
+      const auto domain = (itk::MeshDomain *) m_ParticleSystem->GetDomain(0);
+      auto wrapper = (shapeworks::TriMeshWrapper*)domain->GetMesh();
+      wrapper->AddLineToLogFile(
+              "# iter " + std::to_string(m_NumberOfIterations) + "\n");
 
       this->InvokeEvent(itk::IterationEvent());
 

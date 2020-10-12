@@ -34,7 +34,18 @@ namespace shapeworks
   }
 
   double TriMeshWrapper::ComputeDistance(PointType pointa, PointType pointb) const {
-    return pointa.EuclideanDistanceTo(pointb);
+    const double dist = pointa.EuclideanDistanceTo(pointb);
+    if(logFile.is_open()) {
+      const int triIdxA = GetTriangleForPoint(convert<PointType, point>(pointa));
+      const int triIdxB = GetTriangleForPoint(convert<PointType, point>(pointb));
+
+      const auto& meshA = mesh->faces[triIdxA];
+      const auto& meshB = mesh->faces[triIdxB];
+      logFile << meshA[0] << ' ' << meshA[1] << ' ' << meshA[2] << ' ' <<
+                 meshB[0] << ' ' << meshB[1] << ' ' << meshB[2] << ' ' <<
+                 dist << std::endl;
+    }
+    return dist;
   }
 
   /** start in barycentric coords of currentFace

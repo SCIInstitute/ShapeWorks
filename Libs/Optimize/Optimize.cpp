@@ -28,6 +28,7 @@
 #include "ParticleSystem/object_writer.h"
 
 #include "Optimize.h"
+#include "MeshDomain.h"
 
 namespace shapeworks {
 
@@ -709,6 +710,11 @@ void Optimize::Initialize()
         std::cout << m_sampler->GetParticleSystem()->GetNumberOfParticles(i) << "  ";
       }
       std::cout << std::endl;
+
+      const auto domain = (itk::MeshDomain *) m_sampler->GetParticleSystem()->GetDomain(0);
+      auto wrapper = (TriMeshWrapper*)domain->GetMesh();
+      wrapper->AddLineToLogFile(
+      "# split " + std::to_string(m_sampler->GetParticleSystem()->GetNumberOfParticles(0)) + "\n");
     }
 
     if (m_save_init_splits == true) {

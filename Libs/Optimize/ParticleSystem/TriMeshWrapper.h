@@ -1,5 +1,9 @@
 #pragma once
 
+#include <iostream>
+#include <fstream>
+#include <limits>
+
 #include "vnl/vnl_vector_fixed.h"
 #include "TriMesh.h"
 #include "KDtree.h"
@@ -41,6 +45,14 @@ public:
   inline const PointType &GetMeshUpperBound() const override {
     return meshUpperBound;
   }
+  void StartLogging(const std::string& filepath) {
+    typedef std::numeric_limits< double > dbl;
+    logFile.open(filepath);
+    logFile.precision(dbl::max_digits10);
+  }
+  void AddLineToLogFile(const std::string& line) {
+    logFile << line;
+  }
 
 private:
   Eigen::Vector3d GeodesicWalkOnFace(Eigen::Vector3d pointa__, Eigen::Vector3d projectedVector__, int faceIndex__, int prevFace__) const;
@@ -61,6 +73,7 @@ private:
 
   PointType meshLowerBound;
   PointType meshUpperBound;
+  mutable std::ofstream logFile;
 };
 
 }

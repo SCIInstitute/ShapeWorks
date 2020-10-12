@@ -498,7 +498,10 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
       }
       TriMesh *themesh = TriMesh::read(meshFiles[index].c_str());
       if (themesh != NULL) {
-        shapeworks::MeshWrapper *mesh = new shapeworks::TriMeshWrapper(themesh);
+        auto *mesh = new shapeworks::TriMeshWrapper(themesh);
+        if(index == 0) {
+          mesh->StartLogging("/scratch/karthik/projects/ShapeWorks/Examples/Python/Output/femur_mesh/shape_models/distance_queries.txt");
+        }
         optimize->AddMesh(mesh);
       }
       else {
