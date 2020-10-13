@@ -421,39 +421,6 @@ vnl_vector<double> Shape::get_transform()
 {
   return this->transform_;
 }
-/*
-//---------------------------------------------------------------------------
-void Shape::generate_original_meshes()
-{
-  if (this->subject_->get_segmentation_filenames().size() > 0) {
-    std::string filename = this->subject_->get_segmentation_filenames()[0];
-
-    MeshWorkItem item;
-    item.filename = filename;
-    MeshHandle mesh = this->mesh_manager_->get_mesh(item);
-    if (mesh) {
-      //std::cerr << "mesh was ready from manager!\n";
-      this->original_mesh_ = mesh;
-
-      /// Temporarily calculate it here
-      auto com = vtkSmartPointer<vtkCenterOfMass>::New();
-      com->SetInputData(mesh->get_poly_data());
-      com->Update();
-      double center[3];
-      com->GetCenter(center);
-
-      this->transform_.set_size(12);
-      for (unsigned int i = 0; i < 3; i++) {
-        this->transform_[9 + i] = center[i];
-      }
-
-      this->set_transform(this->original_mesh_->get_center_transform());
-    }
-    else {
-      //std::cerr << "no mesh yet from manager!\n";
-    }
-  }
-}*/
 
 //---------------------------------------------------------------------------
 void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<Mesh>& mesh,
@@ -470,10 +437,9 @@ void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<Mesh>&
   item.filename = filename;
   MeshHandle new_mesh = this->mesh_manager_->get_mesh(item);
   if (new_mesh) {
-    //std::cerr << "mesh was ready from manager!\n";
     mesh = new_mesh;
 
-    /// Temporarily calculate it here
+    /// Temporarily calculate the COM here
     auto com = vtkSmartPointer<vtkCenterOfMass>::New();
     com->SetInputData(mesh->get_poly_data());
     com->Update();
@@ -531,10 +497,8 @@ void Shape::load_feature(std::string display_mode, std::string feature)
   }
   vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
 
-  //std::cerr << "checking if mesh has scalar array for " << feature << "\n";
   auto scalar_array = poly_data->GetPointData()->GetArray(feature.c_str());
   if (!scalar_array) {
-    //std::cerr << "shape: array NOT present! Loading...\n";
 
     if (!this->subject_) {
       return;
@@ -546,9 +510,6 @@ void Shape::load_feature(std::string display_mode, std::string feature)
     if (display_mode != Visualizer::MODE_ORIGINAL_C) {
       transform = this->get_groomed_transform();
     }
-
-//    std::cerr << "Apply feature map for feature '" << feature << "' using filename "
-//              << filenames[feature] << "\n";
 
     // read the feature
     ReaderType::Pointer reader = ReaderType::New();
@@ -637,12 +598,9 @@ TransformType Shape::get_groomed_transform()
     auto transforms = this->subject_->get_groomed_transforms();
     if (transforms.size() > 0) {
       this->groomed_transform_.set_size(transforms[0].size());
-      //std::cerr << "loaded groomed transform from project: \n";
       for (int i = 0; i < transforms[0].size(); i++) {
-        //std::cerr << transforms[0][i] << " ";
         this->groomed_transform_[i] = transforms[0][i];
       }
-      //std::cerr << "\n";
     }
   }
   return this->groomed_transform_;
