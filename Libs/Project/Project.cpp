@@ -123,7 +123,8 @@ int Project::get_number_of_domains()
     return groom_columns.size();
   }
 
-  /// TODO: when only point files are specified, the user has to specify somewhere how many domains there are (if more than one)
+  /// TODO: when only point files are specified,
+  /// the user has to specify somewhere how many domains there are (if more than one)
 
   // default 1
   return 1;
@@ -141,8 +142,6 @@ std::vector<std::string> Project::get_matching_columns(std::string prefix) const
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);
   auto headers = ws.rows(false)[0];
   std::vector<std::string> list;
-
-  //std::cerr << "headers.length() = " << headers.length() << "\n";
 
   for (int i = 0; i < headers.length(); i++) {
     if (headers[i].to_string().substr(0, prefix.size()) == prefix) {
@@ -246,19 +245,19 @@ void Project::store_subjects()
 {
   int num_subjects = this->subjects_.size();
 
+  // segmentation columns
   auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
 
-  //auto groomed_columns = this->get_matching_columns(GROOMED_PREFIX);
+  // groomed columns
   std::vector<std::string> groomed_columns;
-
   for (int i = 0; i < seg_columns.size(); i++) {
     std::string groom_column_name = replace_string(seg_columns[i],
                                                    SEGMENTATION_PREFIX, GROOMED_PREFIX);
     groomed_columns.push_back(groom_column_name);
   }
 
+  // groomed transform columns (e.g. centering, etc)
   std::vector<std::string> groomed_transform_columns;
-
   for (int i = 0; i < groomed_columns.size(); i++) {
     std::string groomed_transform_column_name = replace_string(groomed_columns[i],
                                                                GROOMED_PREFIX,
@@ -275,6 +274,9 @@ void Project::store_subjects()
       seg_columns.push_back(std::string(SEGMENTATION_PREFIX) + "file");
     }
     this->set_list(seg_columns, i, seg_files);
+
+    auto groups = subject->get_group_values();
+    this->set_map(i, GROUP_PREFIX, groups);
 
     // groomed files
     auto groomed_files = subject->get_groomed_filenames();
@@ -480,6 +482,15 @@ void Project::set_list(std::vector<std::string> columns, int subject,
 }
 
 //---------------------------------------------------------------------------
+void Project::set_map(int subject, std::string prefix, std::map<std::string, std::string> map)
+{
+  for (const auto &pair : map) {
+    int column_index = get_index_for_column(prefix + pair.first, true);
+    this->set_value(column_index, subject + 2, pair.second); // +1 for header, +1 for 1-indexed
+  }
+}
+
+//---------------------------------------------------------------------------
 void Project::save_string_column(std::string name, std::vector<std::string> items)
 {
   int index = this->get_index_for_column(name, true);
@@ -562,7 +573,6 @@ void Project::set_transform_list(std::vector<std::string> columns, int subject,
 //---------------------------------------------------------------------------
 std::vector<std::string> Project::get_group_values(std::string group_name) const
 {
-
   auto values = this->get_string_column(group_name);
 
   // remove duplicates
@@ -571,6 +581,7 @@ std::vector<std::string> Project::get_group_values(std::string group_name) const
 
   return values;
 }
+
 
 
 //---------------------------------------------------------------------------

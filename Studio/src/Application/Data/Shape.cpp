@@ -395,6 +395,9 @@ int Shape::get_group_id()
 //---------------------------------------------------------------------------
 void Shape::set_group_id(int id)
 {
+  if (this->subject_) {
+    this->subject_->set_group_values({{"group", std::to_string(id)}});
+  }
   this->group_id_ = id;
 }
 
