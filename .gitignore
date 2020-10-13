@@ -31,10 +31,13 @@
 *.out
 *.app
 
-#Others
+# Others
 .DS_*
 .directory
 .idea/
+
+# PYC files
+*.pyc
 
 # Build directories
 build*/
