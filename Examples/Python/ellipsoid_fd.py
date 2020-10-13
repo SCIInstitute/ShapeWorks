@@ -9,15 +9,7 @@ This examples is a use case for fixed domains, i.e. we have an existing
 shape model using some ellipsoids and we want to place correspondences 
 on new ellisoids (we are provided fully prepped binary images) according 
 to the existing shape model.
-
-This example is set to serve as a test case for new ShapeWorks users, and each
-step is explained in the shapeworks including the pre-processing, the 
-optimization and, the post ShapeWorks visualization.
-
-First import the necessary modules
 """
-
-from zipfile import ZipFile
 import os
 import sys
 import csv
@@ -26,6 +18,7 @@ import argparse
 from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
+import CommonUtils
 
 def Run_Pipeline(args):
 
@@ -33,12 +26,10 @@ def Run_Pipeline(args):
     Unzip the data for this tutorial.
 
     The data is inside the EllipsoidsFD.zip, run the following function to unzip the 
-    data and create necessary supporting files. The files will be Extracted in a
-    newly created Directory TestEllipsoidsFD. This contains the existing shape model and
-    all the necessary files plus the new scans to be processed.
-
-    Extract the zipfile into proper directory and create necessary supporting
-    files
+    data and create necessary supporting files. The zip will download to /Data and
+    the files will be extracted in a newly created directory Output/ellipsoids_fd. 
+    This contains the existing shape model and all the necessary files plus the 
+    new scans to be processed.
     """
 
     print("\nStep 1. Extract Data\n")
@@ -46,22 +37,13 @@ def Run_Pipeline(args):
         input("Press Enter to continue")
 
     datasetName = "ellipsoid_fd-v0"
-    filename = datasetName + ".zip"
-    # Check if the data is in the right place
-    if not os.path.exists(filename):
-        print("Can't find " + filename + " in the current directory.")
-        import DatasetUtils
-        DatasetUtils.downloadDataset(datasetName)
+    outputDirectory = "Output/ellipsoid_fd/"
+    if not os.path.exists(outputDirectory):
+        os.makedirs(outputDirectory)
+    CommonUtils.get_data(datasetName, outputDirectory)
 
-    parentDir = "TestEllipsoidsFD/"
-    if not os.path.exists(parentDir):
-        os.makedirs(parentDir)
-    # extract the zipfile
-    with ZipFile(filename, 'r') as zipObj:
-        zipObj.extractall(path=parentDir)
-        parentDir = parentDir + datasetName + "/"
-        fileListDT = sorted(glob.glob(parentDir + "distance_transforms/*.nrrd"))
-        fileListNew = sorted(glob.glob(parentDir + "new_distance_transforms/*.nrrd"))
+    fileListDT = sorted(glob.glob(outputDirectory + datasetName + "/distance_transforms/*.nrrd"))
+    fileListNew = sorted(glob.glob(outputDirectory + datasetName + "/new_distance_transforms/*.nrrd"))
 
     """
     ## GROOM : Data Pre-processing 
@@ -69,15 +51,15 @@ def Run_Pipeline(args):
     distance transforms.
     """
 
-    outputDir = 'TestEllipsoidsFD/groomed/'
-    if not os.path.exists(outputDir):
-        os.makedirs(outputDir)
+    groomDir = outputDirectory + 'groomed/'
+    if not os.path.exists(groomDir):
+        os.makedirs(groomDir)
 
     print("\nStep 2. Groom - Convert to distance transforms\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    dtFilesNew = applyDistanceTransforms(outputDir, fileListNew)
+    dtFilesNew = applyDistanceTransforms(groomDir, fileListNew)
     dtFiles = fileListDT + dtFilesNew
 
     """
@@ -86,7 +68,7 @@ def Run_Pipeline(args):
     Now that we have the distance transform representation of data we create 
     the parameter files for the shapeworks particle optimization routine.
     For more details on the plethora of parameters for shapeworks please refer to
-    [link to documentation]
+    docs/workflow/optimize.md
 
     First we need to create a dictionary for all the parameters required by this
     optimization routine
@@ -96,7 +78,7 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    pointDir = './TestEllipsoidsFD/shape_models/'
+    pointDir = outputDirectory + 'shape_models/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
@@ -104,7 +86,8 @@ def Run_Pipeline(args):
     Evaluate the meanshape of the existing shape model and use that to initialize the 
     particles on the new shapes
     """
-    shapemodelDir = parentDir + "shape_models/"
+    shapemodelDir =  outputDirectory + datasetName + "/shape_models/pretrained/128/"
+    print(os.listdir(shapemodelDir))
     findMeanShape(shapemodelDir)
     meanShapePath = shapemodelDir + '/meanshape_local.particles'
 
@@ -131,7 +114,6 @@ def Run_Pipeline(args):
         "procrustes_interval" : 0,
         "procrustes_scaling" : 0,
         "save_init_splits" : 0,
-        "debug_projection" : 0,
         "verbosity" : 2,
         "number_fixed_domains": len(fileListDT),
         "fixed_domain_model_dir": shapemodelDir,

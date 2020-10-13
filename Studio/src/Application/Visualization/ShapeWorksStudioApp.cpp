@@ -324,7 +324,6 @@ bool ShapeWorksStudioApp::on_action_save_project_triggered()
     return this->on_action_save_project_as_triggered();
   }
   else {
-
     this->save_project(this->session_->get_filename().toStdString());
   }
   return true;
@@ -462,7 +461,9 @@ void ShapeWorksStudioApp::enable_possible_actions()
 
   bool original_present = this->session_->get_project()->get_segmentations_present();
 
-  this->ui_->action_save_project->setEnabled(this->session_->get_filename().endsWith(".xlsx"));
+  auto filename = this->session_->get_filename();
+  bool save_enabled = filename == "" || filename.endsWith(".xlsx");
+  this->ui_->action_save_project->setEnabled(save_enabled);
   //this->ui_->action_save_project_as->setEnabled(original_present);
   this->ui_->action_save_project_as->setEnabled(true);
   this->ui_->actionExport_PCA_Mesh->setEnabled(reconstructed);
@@ -631,9 +632,11 @@ void ShapeWorksStudioApp::handle_pca_update()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_message(std::string str)
 {
-  STUDIO_LOG_MESSAGE(QString::fromStdString(str));
+  if (str != this->current_message_) {
+    STUDIO_LOG_MESSAGE(QString::fromStdString(str));
+  }
   this->ui_->statusbar->showMessage(QString::fromStdString(str));
-  this->currentMessage_ = str;
+  this->current_message_ = str;
 }
 
 //---------------------------------------------------------------------------
@@ -665,7 +668,7 @@ void ShapeWorksStudioApp::handle_progress(size_t value)
     this->progress_bar_->setVisible(false);
     this->enable_possible_actions();
   }
-  this->handle_message(this->currentMessage_);
+  this->handle_message(this->current_message_);
 }
 
 //---------------------------------------------------------------------------
@@ -996,6 +999,7 @@ void ShapeWorksStudioApp::update_display(bool force)
       this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
 
       this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
+      this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape_points());
 
       this->visualizer_->display_shape(this->analysis_tool_->get_mean_shape());
     }

@@ -4,43 +4,30 @@
 Full Example Pipeline for Statistical Shape Modeling with ShapeWorks
 ====================================================================
 
-In this example we provide a full pipeline with an example dataset of axis 
-aligned ellipsoid meshes.
+In this example we provide a full pipeline with optimizing on femur meshes.
 """
-
-from zipfile import ZipFile
 import os
-import sys
-import csv
-import argparse
-
 from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
-
+import CommonUtils
 
 def Run_Pipeline(args):
-    datasetName = 'femur-v0'
-    filename = datasetName + '.zip'
-    parentDir = 'TestFemurMesh/'
-    prepDir = parentDir + 'groomed/'
-    meshDir = parentDir + datasetName + '/groomed/meshes/'
-    
-    if not os.path.exists(parentDir):
-        os.makedirs(parentDir)
-    
-    # Check if the data is in the right place
-    if not os.path.exists(meshDir):
-        print("Missing folder " + meshDir + ". Checking for " + filename)
-        if not os.path.exists(filename):
-            print("Can't find " + filename)
-            import DatasetUtils
-            DatasetUtils.downloadDataset(datasetName)
-        # extract the zipfile
-        print("Extracting data from " + filename + "...")
-        with ZipFile(filename, 'r') as zipObj:
-            zipObj.extractall(path=parentDir)
-
+    """
+    If femur.zip is not there it will be downloaded from the ShapeWorks data portal.
+    femur.zip will be saved in the /Data folder and the data will be extracted 
+    in a newly created directory Output/femur_mesh.
+    """
+    datasetName = "femur-v0"
+    outputDirectory = "Output/femur_mesh/"
+    if not os.path.exists(outputDirectory):
+        os.makedirs(outputDirectory)
+    CommonUtils.get_data(datasetName, outputDirectory)
+   
+    groomDir = outputDirectory + 'groomed/'
+    if not os.path.exists(groomDir):
+        os.makedirs(groomDir)
+    meshDir = outputDirectory + datasetName + '/groomed/meshes/'
     meshFiles = []
     for f in sorted(os.listdir(meshDir)):
         meshFiles.append(meshDir + f)
@@ -49,7 +36,7 @@ def Run_Pipeline(args):
         print('Zero mesh files found in', meshDir)
         return
 
-    pointDir = parentDir + 'shape_models/'
+    pointDir = outputDirectory + 'shape_models/'
 
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
@@ -73,7 +60,6 @@ def Run_Pipeline(args):
         "procrustes_interval" : 1,
         "procrustes_scaling" : 1,
         "save_init_splits" : 0,
-        "debug_projection" : 0,
         "verbosity" : 2,
         "visualizer_enable": 0,
         "visualizer_wireframe": 0,

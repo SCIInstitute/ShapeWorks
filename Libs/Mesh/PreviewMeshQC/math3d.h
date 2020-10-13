@@ -3,9 +3,6 @@
 #include <assert.h>
 #include <vector>
 using namespace std;
-#define PI 3.1415926
-#define RAD2DEG (180.0/PI)
-#define DEG2RAD (PI/180.0)
 
 //-----------------------------------------------------------------------------
 // class vec2d defines a 2D vector

@@ -273,7 +273,7 @@ bool Session::load_light_project(QString filename)
   std::string sparseFile, denseFile, goodPtsFile;
 
   TiXmlElement* elem = docHandle.FirstChild("distance_transform_files").Element();
-  if (elem) {
+  if (elem && elem->GetText()) {
     std::string distance_transform_filename;
     inputsBuffer.str(elem->GetText());
     while (inputsBuffer >> distance_transform_filename) {

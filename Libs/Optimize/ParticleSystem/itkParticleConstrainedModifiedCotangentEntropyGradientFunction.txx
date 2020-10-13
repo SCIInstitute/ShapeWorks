@@ -158,12 +158,18 @@ ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType
       // PRATEEP
       vnl_vector_fixed<double, VDimension> x;
       vnl_vector_fixed<float, VDimension> grad = system->GetDomain(d)->SampleGradientAtPoint(pos);
-      for (unsigned int i = 0; i < VDimension; i++) { x[i] = pos[i]; }
-      double D = dot_product(domain->GetCuttingPlaneNormal(),
-                             x - domain->GetCuttingPlanePoint());
+      vnl_vector_fixed<double, VDimension> cppt;
+      vnl_vector_fixed<double, VDimension> cpnorm;
+      for (unsigned int i = 0; i < VDimension; i++) {
+          x[i] = pos[i];
+          cppt[i] = (*system->GetDomain(d)->GetConstraints()->getPlaneConstraints())[0].GetPlaneNormal()(i);
+          cpnorm[i] = (*system->GetDomain(d)->GetConstraints()->getPlaneConstraints())[0].GetPlanePoint()(i);
+      }
+      double D = dot_product(cpnorm,
+                             x - cppt);
       D = -fabs(D);
       itk::Point<double, VDimension> planept;
-      for (unsigned int i = 0; i < VDimension; i++) { planept[i] = x[i] - (domain->GetCuttingPlaneNormal()[i] * D); }
+      for (unsigned int i = 0; i < VDimension; i++) { planept[i] = x[i] - (cpnorm[i] * D); }
       m_CurrentNeighborhood.push_back(itk::ParticlePointIndexPair<VDimension>(planept, 0));
       m_CurrentWeights.push_back(0.3);
       // end PRATEEP
@@ -207,17 +213,19 @@ ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType
       // Add the closest points on any spheres that are defined in the domain.
       //std::vector<itk::Point<double, VDimension> > spherepoints;
 
-      for (unsigned int i = 0; i < domain->GetNumberOfSpheres(); i++) {
+      std::vector<SphereConstraint> sphereConsts = *(domain->GetConstraints()->GetSphereConstraints());
+
+      for (unsigned int i = 0; i < domain->GetConstraints()->GetSphereConstraints()->size(); i++) {
         itk::Point<double, VDimension> spherept;
         vnl_vector_fixed<double, VDimension> q;
 
         for (unsigned int j = 0; j < VDimension; j++)
-          q[j] = pos[j] - domain->GetSphereCenter(i)[j];
+          q[j] = pos[j] - sphereConsts[ i ].GetCenter()(j);
 
         q.normalize();
 
         for (unsigned int j = 0; j < VDimension; j++)
-          spherept[j] = domain->GetSphereCenter(i)[j] + (q[j] * domain->GetSphereRadius(i));
+          spherept[j] = sphereConsts[ i ].GetCenter()(j) + (q[j] * sphereConsts[ i ].GetRadius());
 
         //spherepoints.push_back( spherept );
         m_CurrentNeighborhood.push_back(itk::ParticlePointIndexPair<VDimension>(spherept, 0));
