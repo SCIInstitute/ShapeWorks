@@ -19,7 +19,7 @@ Then follow the appropriate instructions for their platform:
 [Linux](#installing-shapeworks-on-linux)   
 
 !!! danger "Activate shapeworks environment"
-    Each time you use ShapeWorks from the command line, you must first activate its environment using the `conda activate shapeworks` command on the terminal.
+    Each time you use [ShapeWorks from the command line](../tools/ShapeWorksCommands.md), you must first activate its environment using the `conda activate shapeworks` command on the terminal.
 
 
 ## Installing ShapeWorks on Windows

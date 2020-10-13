@@ -16,6 +16,13 @@ def generateShapeWorksCommandDocumentation(mdFilename = '../../docs/tools/ShapeW
     
     # add intro paragraph
     intro_paragraph = "`shapeworks` is a single executable for ShapeWorks with a set of sub-executables (commands) that are flexible, modular, loosely coupled, and standardized subcommands, with interactive help to perform individual operations needed for a typical shape modeling workflow that includes the Groom, Optimize, and Analyze phases.\n"
+    intro_paragraph = intro_paragraph + "!!! danger " +  "\"" + "Activate shapeworks environment" + "\"" + "\n"
+    intro_paragraph = intro_paragraph + "\t Each time you use ShapeWorks from the command line, you must first activate its environment using the `conda activate shapeworks` command on the terminal. \n"
+    
+    intro_paragraph = intro_paragraph + "!!! danger " +  "\"" + "Add shapeworks to your path" + "\"" + "\n"
+    intro_paragraph = intro_paragraph + "\t Please make sure that `shapeworks` is in your path. See [Adding to PATH Environment Variable](../dev/paths.md). \n"
+    
+    
     mdFile.new_paragraph(intro_paragraph)
     
     if add_toc:

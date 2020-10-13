@@ -15,7 +15,7 @@ The `shapeworks` executable is highly flexible, modular, and loosely coupled, wi
 
 
 !!! danger "Activate shapeworks environment"
-    Each time you use ShapeWorks from the command line, you must first activate its environment using the `conda activate shapeworks` command on the terminal.
+    Each time you use [ShapeWorks from the command line](../tools/ShapeWorksCommands.md), you must first activate its environment using the `conda activate shapeworks` command on the terminal.
     
 ## ShapeWorks in Python
 

@@ -1,5 +1,26 @@
 # Getting Started with Documentation
 
+!!! danger "Which branch to use?"
+    Please use the `mkdocs` branch to add/edit your documentation according to the guidelines detailed in this page. Once you are done with your edits, please submit a Pull Request (PR) to get your changes reviewed and merged to the master branch.
+    
+!!! danger "For PRs that include documentation changes"
+    At the beginning of the PR, please add instructions on how one could compile the documentation and what pages should be reviewed. For example, these instructions could include the following: 
+    
+    - Checkout the `mkdocs` branch
+    - Run `mkdocs serve` from the root directory (containing mkdocs.yml)
+    - Open and review `path/to/edited-or-added-md-files`
+
+See the below discussion:
+
+how can I look at the compiled version of these docs? (you might simply direct me to the place where this is explained in the docs)
+You can find this link in the main readme.
+
+Please visit ShapeWorks website for more information.
+
+I can open the individual .md files, but can't really give a final review until I've seen it in action.
+I think the only way you can see it in action is to checkout the branch and run mkdocs serve. These changes won't be reflected in the compiled version (i.e., gh-pages branch) till it is merged to master. @akenmorris ?
+I think it's completely reasonable to check out the branch and run mkdocs serve then browse to localhost:8000.
+I recommend explaining this right at the top of the pull request so people don't have to dig through the developer docs to remember the command every time they want to thoroughly review the updates.
 
 
 ## Naming and Organization
