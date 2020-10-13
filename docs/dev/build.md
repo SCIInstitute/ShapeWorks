@@ -52,7 +52,7 @@ $ git lfs checkout
 ```
 
 !!! danger "Activate shapeworks environment"
-    Each time you build or use ShapeWorks from the command line, you must first activate its environment using the `conda activate shapeworks` command on the terminal.
+    Each time you build or use [ShapeWorks from the command line](../tools/ShapeWorksCommands.md), you must first activate its environment using the `conda activate shapeworks` command on the terminal.
 
 
 #### Qt5  
