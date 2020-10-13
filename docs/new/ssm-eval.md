@@ -1,7 +1,7 @@
 # Shape Model Evaluation
 
 
-ShapeWorks support quantitative evaluation of shape models, which can be used for algorithmic parameter tuning. Quantitative metrics are generalizability, specificity, and compactness. `Examples/Python/ellipse_evaluate.py` is an example python script to evaluate a given shape model of the ellipsoid data.
+ShapeWorks support quantitative evaluation of shape models, which can be used for algorithmic parameter tuning. Quantitative metrics are generalizability, specificity, and compactness. In `Examples/Python/`, run `python RunUseCase.py -use_case ellipsoid_evaluate` to see an example of how to compute these metrics.
 
 ![Evaluation metrics](../img/new/eval_metrics.png)
 
