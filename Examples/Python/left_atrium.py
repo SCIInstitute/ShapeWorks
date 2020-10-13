@@ -51,7 +51,7 @@ def Run_Pipeline(args):
         fileList_img = [fileList_img[i] for i in sample_idx]
         
     if args.start_with_prepped_data:
-        dtFiles = sorted(glob.glob(outputDirectory + datasetName + "groomed/distance_transforms/*.nrrd"))
+        dtFiles = sorted(glob.glob(outputDirectory + datasetName + "/groomed/distance_transforms/*.nrrd"))
         
         if args.use_subsample:
             dtFiles = [dtFiles[i] for i in sample_idx]
