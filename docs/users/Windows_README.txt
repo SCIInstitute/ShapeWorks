@@ -29,7 +29,7 @@ https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe
 
 6. Run "conda_installs.bat"
 
-   Note: If you already had anaconda/miniconda installed, this step may hang.  It is advised that you uninstall anaconda/miniconda and re-install it and then run conda_installs.bat.
+   Note: If you already have anaconda/miniconda installed, this step may hang.  If this step hangs, please uninstall anaconda/miniconda and re-install it and then run conda_installs.bat.
 
 7. CD to your copied Examples\Python location
 
