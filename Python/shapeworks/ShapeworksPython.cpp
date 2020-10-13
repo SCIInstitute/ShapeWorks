@@ -336,6 +336,12 @@ PYBIND11_MODULE(shapeworks, m)
   .def("toMesh",                &Image::toMesh, "isovalue"_a=1.0)
   // .def("__repr__",              &Image::print)
   // .def("__set__",               &Image::operator=, "img"_a)
+
+  // Try to give the Python direct access to the underlying ITK image; see issue #780
+  // .def("toITKImage",            &Image::operator Image::ImageType::Pointer) // cannot convert to itk::SmartPointer<itk::Image...
+  // .def("toITKImage",            &Image::getITKImage) // can't convert return value to a Python type! itk::Image<float, 3u>
+  // .def("toITKImage",            [](Image& I) { return *(static_cast<Image::ImageType::Pointer>(I); }) // ugly template errors
+  // .def("toITKImage",            [](Image& I) { return *(I.operator Image::ImageType::Pointer()); })   // same errors
   ;
 
   // Image::Region
