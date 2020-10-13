@@ -484,7 +484,7 @@ void Project::set_list(std::vector<std::string> columns, int subject,
 //---------------------------------------------------------------------------
 void Project::set_map(int subject, std::string prefix, std::map<std::string, std::string> map)
 {
-  for (const auto &pair : map) {
+  for (const auto& pair : map) {
     int column_index = get_index_for_column(prefix + pair.first, true);
     this->set_value(column_index, subject + 2, pair.second); // +1 for header, +1 for 1-indexed
   }
