@@ -5,6 +5,7 @@
     
 !!! danger "For PRs that include documentation changes"
     At the beginning of the PR, please add instructions on how one could compile the documentation and what pages should be reviewed. For example, these instructions could include the following: 
+    
     - Checkout the `mkdocs` branch
     - Run `mkdocs serve` from the root directory (containing mkdocs.yml)
     - Open and review `path/to/edited-or-added-md-files`
