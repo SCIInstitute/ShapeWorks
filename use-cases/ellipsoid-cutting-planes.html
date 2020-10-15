@@ -239,8 +239,9 @@
                 <h1 id="ellipsoid-cutting-planes">Ellipsoid: Cutting Planes</h1>
 <h2 id="what-and-where-is-the-use-case">What and Where is the Use Case?</h2>
 <p>The ellipsoid dataset comprises of axis-aligned ellipsoids with varying radii along a single axis. This example demonstrates using multiple cutting planes to constrain the distribution of particles. This can be used in modeling scenarios where statistical modeling/analysis is needed for a region-of-interest on the anatomy/object-class at hand without having to affect the input data.</p>
-<p><em>Ellipsoids (major radius as one mode of variation) with 2 cutting planes</em>
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ellipsoid_cut_trim.mp4" autoplay muted loop controls style="width:100%"></p></p>
+<p><em>Ellipsoids (major radius as one mode of variation) with 2 cutting planes</em></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ellipsoid_cut_trim.mp4" autoplay muted loop controls style="width:100%"></p>
+
 <p>The <code>ellipsoid_cut.py</code> (in <code>Examples/Python/</code>) use case represents the standard use version of a shape modeling workflow that entails one or more cutting planes using ShapeWorks. It includes the full pipeline for processed (i.e., groomed) as well as unprocessed data. </p>
 <p>The use case is located at: <code>Examples/Python/ellipsoid_cut.py</code></p>
 <h2 id="running-the-use-case">Running the Use Case</h2>
@@ -253,7 +254,6 @@
 <div class="highlight"><pre><span></span><code><span class="err">$</span> <span class="n">cd</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">shapeworks</span><span class="o">/</span><span class="n">Examples</span><span class="o">/</span><span class="n">Python</span>
 <span class="err">$</span><span class="n">python</span> <span class="n">RunUseCase</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">use_case</span> <span class="n">ellipsoid_cut</span> 
 </code></pre></div>
-
 <p>This calls <code>ellipsoid_cut.py</code> (in <code>Examples/Python/</code>) to perform the following.</p>
 <ul>
 <li>Loads the ellipsoid dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the <a href="http://cibc1.sci.utah.edu:8080/">ShapeWorks Data Portal</a>.</li>
@@ -269,7 +269,6 @@
 <p>If you wish to start with the optimization step using a previously groomed data, add <code>--start_with_prepped_data</code> tag.</p>
 <div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case ellipsoid_cut --start_with_prepped_data
 </code></pre></div>
-
 <h2 id="grooming-data">Grooming Data</h2>
 <p>The following preprocessing steps are only performed when you start with <em>unprepped</em> data, i.e., the tag <code>--start_with_prepped_data</code> is not used. For a description of the grooming tools and parameters, see: <a href="../workflow/groom.html">How to Groom Your Dataset?</a>.</p>
 <ol>
@@ -305,7 +304,6 @@
         &quot;cutting_plane_counts&quot;: cutting_plane_counts,
         &quot;cutting_planes&quot;: cutting_planes
 </code></pre></div>
-
 <h2 id="analyzing-shape-model">Analyzing Shape Model</h2>
 <p>ShapeWorksStudio visualizes/analyzes the optimized particle-based shape model by visualizing the mean shape, individual shape samples, and the shape modes of variations. For more information, see: <a href="../workflow/analyze.html">How to Analyze Your Shape Model?</a>. </p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ellipsoid_cut_studio.mp4" autoplay muted loop controls style="width:100%"></p>

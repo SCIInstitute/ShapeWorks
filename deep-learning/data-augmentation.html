@@ -271,7 +271,6 @@
 <p>To use the <code>DataAugmentationUtils</code> package, make sure you have the shapeworks conda environment is activated and add the following import to your Python code.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">DataAugmentationUtils</span>
 </code></pre></div>
-
 <h3 id="running-data-augmentation">Running Data Augmentation</h3>
 <p>To run the complete data augmentation process as detailed in <a href="#data-augmentation-steps">Data Augmentation Steps</a>, add the following to your Python code.</p>
 <div class="highlight"><pre><span></span><code><span class="n">DataAugmentationUtils</span><span class="o">.</span><span class="n">runDataAugmentation</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">img_list</span><span class="p">,</span> 
@@ -279,7 +278,6 @@
                                           <span class="n">num_dim</span><span class="p">,</span> <span class="n">sampler_type</span><span class="p">,</span> 
                                           <span class="n">mixture_num</span><span class="p">)</span>
 </code></pre></div>
-
 <p><strong>Input arguments:</strong></p>
 <ul>
 <li><code>out_dir</code>: Path to the directory where augmented data will be stored</li>
@@ -293,7 +291,6 @@
 <p>This function creates a visualization for augmented data. It creates a matrix of scatterplots that opens automatically in the default web browser. The scatterplots show the PCA values of the real and augmented data so that they can be compared pairwise across the PCA dimensions.</p>
 <div class="highlight"><pre><span></span><code><span class="n">DataAugmentationUtils</span><span class="o">.</span><span class="n">visualizeAugmentation</span><span class="p">(</span><span class="n">data_csv</span><span class="p">)</span>
 </code></pre></div>
-
 <p><strong>Input arguments:</strong></p>
 <ul>
 <li><code>data_csv</code>: The path to the CSV file created by running the data augmentation process.</li>

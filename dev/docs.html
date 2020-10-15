@@ -283,7 +283,6 @@ I recommend explaining this right at the top of the pull request so people don't
 <div class="highlight"><pre><span></span><code>!!! note &quot;Title of the note&quot;
     Here is a note to keep in mind.
 </code></pre></div>
-
 <p>It will render as follows.</p>
 <div class="admonition note">
 <p class="admonition-title">Title of the note</p>
@@ -293,7 +292,6 @@ I recommend explaining this right at the top of the pull request so people don't
 <div class="highlight"><pre><span></span><code>!!! note 
     This is a note without a title. This also applies to other call-outs.
 </code></pre></div>
-
 <p>It will render as follows.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -303,7 +301,6 @@ I recommend explaining this right at the top of the pull request so people don't
 <div class="highlight"><pre><span></span><code>??? note 
     This is a collapsable note without a title. This also applies to other call-outs.
 </code></pre></div>
-
 <p>It will render as follows.</p>
 <details class="note"><summary>Note</summary><p>This is a collapsable note without a title. This also applies to other call-outs.</p>
 </details>
@@ -311,7 +308,6 @@ I recommend explaining this right at the top of the pull request so people don't
 <div class="highlight"><pre><span></span><code>!!! danger &quot;Don&#39;t try this at home&quot;
     Seriously don&#39;t try this; this is a dangerous step to take.
 </code></pre></div>
-
 <p>It will render as follows.</p>
 <div class="admonition danger">
 <p class="admonition-title">Don't try this at home</p>
@@ -321,7 +317,6 @@ I recommend explaining this right at the top of the pull request so people don't
 <div class="highlight"><pre><span></span><code>!!! important 
     This is an admonition box without a title.
 </code></pre></div>
-
 <p>It will render as follows.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
@@ -331,7 +326,6 @@ I recommend explaining this right at the top of the pull request so people don't
 <p>To see local changes to documentation in realtime, <code>cd</code> to where source documentation (i.e., <code>mkdocs.yml</code>) is maintained and run the following command:</p>
 <div class="highlight"><pre><span></span><code>mkdocs serve
 </code></pre></div>
-
 <p>This command builds markdown files into HTML and starts a development server to browse the documentation. </p>
 <p>Open up <code>http://127.0.0.1:8000/</code> in your favorite browser to see the documentation. Changes you make to the markdown files are automatically rebuilt.</p>
 <h2 id="deploying-on-github-pages">Deploying on GitHub Pages</h2>
@@ -340,7 +334,6 @@ I recommend explaining this right at the top of the pull request so people don't
 <p>To generate static HTML files for the markdown files, <a href="build.html#clone-source">checkout</a> the branch where source documentation (<code>mkdocs.yml</code>) is maintained and run the following command:</p>
 <div class="highlight"><pre><span></span><code>mkdocs gh-deploy
 </code></pre></div>
-
 <p>Using this command, MkDocs builds the project documentation and uses the ghp-import tool to commit them to the gh-pages branch and push the gh-pages branch to GitHub. <em>All behind the scenes ...</em></p>
 <div class="admonition danger">
 <p class="admonition-title">Danger</p>
@@ -351,7 +344,6 @@ I recommend explaining this right at the top of the pull request so people don't
 <p>To deploy the documentation associated with software releases, please use the following command.</p>
 <div class="highlight"><pre><span></span><code>mkdocs gh-deploy -m &quot;Release Number&quot;
 </code></pre></div>
-
 </div>
 <p>Use <code>mkdocs gh-deploy --clean</code> to start a fresh deployment.   </p>
 <p>Use <code>mkdocs gh-deploy --help</code> for a full list of options available for the gh-deploy command.</p>
@@ -382,7 +374,6 @@ I recommend explaining this right at the top of the pull request so people don't
 <p>Then, make sure that the <code>shapeworks</code> command is in your path (<code>set PATH=/path/to/shapeworks:$PATH</code>), then use Python to run the following command:</p>
 <div class="highlight"><pre><span></span><code>$ python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
 </code></pre></div>
-
 <p><strong>Parameters</strong>:    </p>
 <ul>
 <li><code>md_filename</code> is the markdown file name for the documentation file to be generated</li>

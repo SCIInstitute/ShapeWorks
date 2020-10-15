@@ -247,7 +247,6 @@
 <div class="highlight"><pre><span></span><code>$ cd /path/to/shapeworks/Examples/Python
 $ python RunUseCase.py --use_case ellipsoid_fd
 </code></pre></div>
-
 <p>This calls <code>ellipsoid_fd.py</code> (in <code>Examples/Python/</code>) to perform the following.</p>
 <ul>
 <li>Loads the ellipsoid_fd dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the <a href="http://cibc1.sci.utah.edu:8080/">ShapeWorks Data Portal</a>.</li>
@@ -258,7 +257,6 @@ $ python RunUseCase.py --use_case ellipsoid_fd
 <p>If you wish to start with the optimization step using a previously groomed data, add <code>--start_with_prepped_data</code> tag.</p>
 <div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case ellipsoid_fd --start_with_prepped_data
 </code></pre></div>
-
 <h2 id="grooming-data">Grooming Data</h2>
 <p>This use case assumes that the new samples are already aligned with the existing shape model. The only grooming step is computing the signed distance transform for each new segmentation.</p>
 <h2 id="optimizing-shape-model">Optimizing Shape Model</h2>
@@ -285,7 +283,6 @@ $ python RunUseCase.py --use_case ellipsoid_fd
         &quot;fixed_domain_model_dir&quot;: shapemodelDir,
         &quot;mean_shape_path&quot;: meanShapePath,`
 </code></pre></div>
-
 <p>In <code>ellipsoid_fd.py</code> (in <code>Examples/Python/</code>), the following is defined.</p>
 <ul>
 <li><code>fileListDT</code> is the list of distance transforms for the existing shape model</li>

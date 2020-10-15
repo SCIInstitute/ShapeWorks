@@ -246,7 +246,6 @@
 <div class="highlight"><pre><span></span><code>$ cd /path/to/shapeworks/Examples/Python
 $ python RunUseCase.py --use_case lumps
 </code></pre></div>
-
 <p>This calls <code>lumps.py</code> (in <code>Examples/Python/</code>) to perform the following.</p>
 <ul>
 <li>Loads the lumps dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the <a href="http://cibc1.sci.utah.edu:8080/">ShapeWorks Data Portal</a>.</li>
@@ -259,7 +258,6 @@ $ python RunUseCase.py --use_case lumps
 <p>Below are the default optimization parameters when running this use case. For a description of the optimize tool and its algorithmic parameters, see: <a href="../workflow/optimize.html">How to Optimize Your Shape Model</a>.</p>
 <div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case lumps
 </code></pre></div>
-
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
         <span class="s2">&quot;number_of_particles&quot;</span><span class="p">:</span> <span class="mi">512</span><span class="p">,</span>
         <span class="s2">&quot;use_normals&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
@@ -281,7 +279,6 @@ $ python RunUseCase.py --use_case lumps
         <span class="s2">&quot;verbosity&quot;</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">}</span>
 </code></pre></div>
-
 <h2 id="analyzing-shape-model">Analyzing Shape Model</h2>
 <p>ShapeWorksStudio visualizes/analyzes the optimized particle-based shape model by visualizing the mean shape, individual shape samples, and the shape modes of variations. For more information, see: <a href="../workflow/analyze.html">How to Analyze Your Shape Model?</a>.            </p>
 <p>Here is the mean shape of the optimized shape mode using single-scale optimization. Note the two tiny lumps at the top, and towards the right.</p>

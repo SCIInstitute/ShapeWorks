@@ -237,10 +237,12 @@
 <p class="admonition-title">Compactness</p>
 <p>For fixed training data, a compact model pdf should describe the data's distribution using the smallest possible number of parameters.</p>
 </div>
-<p><em>Poor Model  (compactness = 0.3)</em>
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/eval_bad_pca.mov" autoplay muted loop controls style="width:100%"></p></p>
-<p><em>Compact Model  (compactness = 0.99)</em>
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/eval_good_pca.mov" autoplay muted loop controls style="width:100%"></p></p>
+<p><em>Poor Model  (compactness = 0.3)</em></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/eval_bad_pca.mov" autoplay muted loop controls style="width:100%"></p>
+
+<p><em>Compact Model  (compactness = 0.99)</em></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/eval_good_pca.mov" autoplay muted loop controls style="width:100%"></p>
+
 <div class="admonition note">
 <p class="admonition-title">Generalization</p>
 <p>The model should be able to generalize from the examples given in the training set, hence describing any valid instance of the class of object, not just those seen in the training set.</p>
@@ -260,7 +262,6 @@
 shapeworks readparticlesystem --name *.particles -- generalization --nmodes 1
 shapeworks readparticlesystem --name *.particles -- specificity    --nmodes 1
 </code></pre></div>
-
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/eval_ShellDemo.mp4" autoplay muted loop controls style="width:100%"></p>
 
 <h2 id="model-evaluation-in-studio">Model Evaluation in Studio</h2>
