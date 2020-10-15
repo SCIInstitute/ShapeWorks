@@ -18,13 +18,13 @@ jobs:
       with:
         miniconda-version: 'latest'
         
-    - name: conda installs
+    - name: Conda Installs
       shell: bash -l {0}
       run: source ./conda_installs.sh
 
     - name: Deploy Docs
       shell: bash -l {0}
-      run: conda activate shapeworks && mkdocs gh-deploy
+      run: conda activate shapeworks && ./Support/deploy_docs.sh
       env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
