@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Shireen Elhabian et al.">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/deep-learning/deep-ssm.html">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>SSMs Directly from Images - ShapeWorks</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../css/custom.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "SSMs Directly from Images";
+    var mkdocs_page_input_path = "deep-learning/deep-ssm.md";
+    var mkdocs_page_url = "/software/shapeworks.html/deep-learning/deep-ssm.html";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/python.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-36723568-3', 'mkdocs.org');
+      ga('send', 'pageview');
+  </script>
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> ShapeWorks</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Getting Started</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/shapes.html">Shapes, What & From Where?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/workflow.html">Shape Modeling Workflow</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/sw-stories.html">ShapeWorks Success Stories</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/interfaces.html">ShapeWorks Interfaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/examples.html">Examples</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/how-tos.html">How-Tos</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Users</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/install.html">How to Install ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/citation.html">How to Cite ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/papers.html">Revelant Papers</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Workflow</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/groom.html">How to Groom Your Dataset?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/optimize.html">How to Optimize Your Shape Model?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/analyze.html">How to Analyze Your Shape Model?</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">What is New?</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/new-studio.html">New in ShapeWorksStudio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/sw-meshes.html">ShapeWorks Directly on Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/shapeworks-api.html">ShapeWorks API</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/ssm-eval.html">Shape Model Evaluation</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
+                <ul class="current">
+                    <li class="toctree-l1"><a class="reference internal" href="data-augmentation.html">Data Augmentation for Deep Learning</a>
+                    </li>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="deep-ssm.html">SSMs Directly from Images</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#what-is-deepssm">What is DeepSSM?</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#why-deepssm">Why DeepSSM?</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#deepssm-steps">DeepSSM Steps</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-data-augmentation">1. Data Augmentation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-creation-of-data-loaders">2. Creation of Data Loaders</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-training">3. Training</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#4-testing">4. Testing</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#5-evaluation">5. Evaluation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#using-the-deepssm-python-package">Using the DeepSSM Python Package</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#get-train-and-validation-torch-loaders">Get train and validation torch loaders</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#get-test-torch-loader">Get test torch loader</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#train-deepssm">Train DeepSSM</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#test-deepssm">Test DeepSSM</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#analyze-results">Analyze Results</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Use Cases</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/use-cases.html">Getting Started with Use Cases</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid.html">Ellipsoid: Basic Example</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-cutting-planes.html">Ellipsoid: Cutting Planes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/fixed-domain-ellipsoid.html">Fixed Domains: SSM on New Shapes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/left-atrium.html">Left Atrium: SSM from Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/femur.html">Femur: SSM from Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/femur-cutting-planes.html">Femur with Cutting Planes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/femur-mesh.html">Femur Mesh: SSM directly from meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/lumps.html">Lumps: SSM directly from meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Developers</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/build.html">How to Build ShapeWorks from Source?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/contribute.html">How to Contribute to ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/commands.html">How to Add ShapeWorks Commands?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/python-apis.html">How to Add Python APIs?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/tests.html">How to Add and Run Unit Tests?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/new-use-case.html">How to Add New Use Cases?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/datasets.html">How to Add New Datasets?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/modify-datasets.html">When Modifying Existing Datasets</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/docs.html">Getting Started with Documentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/gh-actions.html">Getting Started with GitHub Actions</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/markdown.html">Getting Started with Markdown</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/paths.html">Adding to PATH Environment Variable</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/team.html">Meet ShapeWorkers!</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/release-notes.html">Release Notes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/license.html">License</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/contact.html">Contact Us</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">ShapeWorks</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Deep Learning & SSMs &raquo;</li>
+        
+      
+    
+    <li>SSMs Directly from Images</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/deep-learning/deep-ssm.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="ssms-directly-from-images">SSMs Directly from Images</h1>
+<p>DeepSSM is a deep learning framework that estimates statistical representations of shape directly from unsegmented images once trained. DeepSSM includes a data augmentation process and a convolutional neural network (CNN) model. This documentation provides an overview of the DeepSSM process; see relevant papers for a full explanation.</p>
+<div class="admonition note">
+<p class="admonition-title">Relevant papers</p>
+<ul>
+<li>Jadie Adams, Riddhish Bhalodia, Shireen Elhabian. Uncertain-DeepSSM: From Images to Probabilistic Shape Models. In MICCAI-ShapeMI, Springer, Cham, 2020.</li>
+<li>Riddhish Bhalodia, Shireen Elhabian, Ladislav Kavan, and Ross Whitaker. DeepSSM: a deep learning framework for statistical shape modeling from raw images. In MICCAI-ShapeMI, pp. 244-257. Springer, Cham, 2018.</li>
+<li>Riddhish Bhalodia, Anupama Goparaju, Tim Sodergren, Alan Morris, Evgueni Kholmovski, Nassir Marrouche, Joshua Cates, Ross Whitaker, Shireen Elhabian. Deep Learning for End-to-End Atrial Fibrillation Recurrence Estimation. Computing in Cardiology (CinC), 2018.</li>
+</ul>
+</div>
+<h2 id="what-is-deepssm">What is DeepSSM?</h2>
+<p>The input to the DeepSSM network is unsegmented 3D images of the anatomy of interest, and the output is the point distribution model (PDM). </p>
+<p><img alt="" src="../img/deep-learning/deepssm_pipeline.png" /></p>
+<p>DeepSSM requires training examples of image/PDM pairs that are generated via the traditional Shapeworks grooming and optimization pipeline or other particle distribution models. Once the network has been trained on these examples, it can predict the PDM of unseen examples given only images of the same anatomy/object class, bypassing the need for labor-intensive segmentation, grooming, and optimization parameter tuning. </p>
+<p><img alt="" src="../img/deep-learning/sw_pipeline.png" /></p>
+<h2 id="why-deepssm">Why DeepSSM?</h2>
+<p>The benefits of the DeepSSM pipeline include:</p>
+<ul>
+<li><strong>Less Labor</strong>: DeepSSM does not require segmentation, only a bounding box about where the anatomy of interest lies in the image.  </li>
+<li><strong>End-to-end</strong>: Does not require separate grooming and optimization steps; it is an end-to-end process. This also reduces memory requirement as images do not need to be saved after intermediate grooming steps.</li>
+<li><strong>Faster Results</strong>: Once a DeepSSM network has been trained, it can be used to predict the shape model on a new image in seconds on a GPU.</li>
+</ul>
+<p>The DeepSSM network is implemented in PyTorch and requires a GPU to run efficiently. </p>
+<h2 id="deepssm-steps">DeepSSM Steps</h2>
+<h3 id="1-data-augmentation">1. Data Augmentation</h3>
+<p>The first step to creating a DeepSSM model is generating training data. Deep networks require thousands of training instances and since medical imaging data is typically limited, data augmentation is necessary. The data augmentation process is described here:  <a href="data-augmentation.html">Data Augmentation for Deep Learning</a>.</p>
+<p>The data augmentation process involves reducing the PDM's to a low-dimensional space via Principal Component Analysis (PCA), preserving a chosen percentage of the variation. The PCA scores are saved and used as the target output for DeepSSM prediction. The PCA scores are deterministically mapped back to the PDM (i.e., shape space) using the eigenvalues and vectors once the DeepSSM model makes a prediction. </p>
+<h3 id="2-creation-of-data-loaders">2. Creation of Data Loaders</h3>
+<p>The next step is to reformat the data (original and augmented) into PyTorch tensors. 80% of the data is randomly selected to be training data, and the remaining 20% of the data is used as a validation set. The input images are whitened and turned into tensors. They can also be optionally downsampled to a smaller size to allow for faster training. The corresponding PCA scores are also normalized or whitened to avoid DeepSSM learning to favor the primary modes of variation and are then turned to tensors. PyTorch data loaders are then created with a batch size specified by the user. </p>
+<h3 id="3-training">3. Training</h3>
+<p>PyTorch is used in constructing and training DeepSSM. The network architecture is defined to have five convolution layers followed by two fully connected layers, as illustrated in the figure below. Parametric ReLU activation is used, and the weights are initialized using Xavier initialization. The network is trained for the specified number of epochs using Adam optimization to minimize the L2 loss function with a learning rate of 0.0001. The average training and validation error are printed and logged each epoch to determine convergence.</p>
+<p><img alt="DeepSSM Architecture" src="../img/deep-learning/Architecture.png" /></p>
+<h3 id="4-testing">4. Testing</h3>
+<p>The trained model is then used to predict the PCA score from the images in the test set. These PCA scores are then un-whitened and mapped back to the particle coordinates using the eigenvalues and eigenvectors from PCA. Thus a PDM is acquired for each test image.</p>
+<h3 id="5-evaluation">5. Evaluation</h3>
+<p>To evaluate the accuracy of DeepSSM output, we compare a mesh created from the ground truth segmentation to a mesh created from the predicted PDM. To obtain the original mesh, we use the ShapeWorks <code>MeshFromDistanceTransforms</code> command to the isosurface mesh from the distance transform created from the true segmentation. To obtain the predicted mesh, we use the ShapeWorks <code>ReconstructSurface</code> command with the mean and predicted particles to reconstruct a surface.</p>
+<p>We then compare the original mesh to the predicted mesh via surface-to-surface distance. To find the distance from the original to the predicted, we consider each vertex in the original and find the shortest distance to the predicted mesh's surface. This process is not symmetric as it depends on the vertices of one mesh, so the distance from the predicted to the original will be slightly different. We compute the Hausdorff distance that takes the max of these vertex-wise distances to return a single value as a measure of accuracy. We also consider the vertex-wise distances as a scalar field on the mesh vertices and visualize them as a heat map on the surface. This provides us with a way of seeing where the predicted PDM was more or less accurate.</p>
+<p><img alt="Mesh Distance" src="../img/deep-learning/mesh-distance.png" /></p>
+<h2 id="using-the-deepssm-python-package">Using the DeepSSM Python Package</h2>
+<p>The ShapeWorks DeepSSM package, <code>DeepSSMUtils</code>, is installed to the ShapeWorks anaconda environment when <code>conda_installs.sh</code> is run. </p>
+<div class="admonition danger">
+<p class="admonition-title">Activate shapeworks environment</p>
+<p>Each time you use ShapeWorks and/or its Python packages, you must first activate its environment using the <code>conda activate shapeworks</code> command on the terminal.</p>
+</div>
+<p>To use the <code>DeepSSMUtils</code> package, make sure you have the shapeworks conda environment is activated and add the following import to your Python code:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">DeepSSMUtils</span>
+</code></pre></div>
+<h3 id="get-train-and-validation-torch-loaders">Get train and validation torch loaders</h3>
+<p>This function turns the original and augmented data into training and validation torch loaders. The data provided is randomly split so that 80% is used in the training set and 20% is used in the validation set.</p>
+<div class="highlight"><pre><span></span><code><span class="n">DeepSSMUtils</span><span class="o">.</span><span class="n">getTrainValLoaders</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">data_aug_csv</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">down_sample</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Input arguments:</strong></p>
+<ul>
+<li><code>out_dir</code>: Path to the directory to store the torch loaders.</li>
+<li><code>data_aug_csv</code>: The path to the csv containing original and augmented data, which is the output when running data augmentation as detailed in <a href="data-augmentation.html">Data Augmentation for Deep Learning</a>.</li>
+<li><code>batch_size</code>: The batch size for training data. The default value is 1.</li>
+<li><code>down_sample</code>: If true, the images will be downsampled to a smaller size to decrease the time needed to train the network. If false, the full image will be used. The default is false.</li>
+</ul>
+<h3 id="get-test-torch-loader">Get test torch loader</h3>
+<p>This function turns the provided data into a test torch loader.</p>
+<div class="highlight"><pre><span></span><code><span class="n">DeepSSMUtils</span><span class="o">.</span><span class="n">getTestLoader</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">test_img_list</span><span class="p">,</span> <span class="n">down_sample</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Input arguments:</strong></p>
+<ul>
+<li><code>out_dir</code>: Path to the directory to store the torch loader.</li>
+<li><code>test_img_list</code>: A list of paths to the images that are in the test set.</li>
+<li><code>down_sample</code>: If true, the images will be downsampled. If false, the full image will be used. This should match what is done for the training and validation loaders. The default is false.</li>
+</ul>
+<h3 id="train-deepssm">Train DeepSSM</h3>
+<p>This function defines a DeepSSM model and trains it on the data provided.</p>
+<div class="highlight"><pre><span></span><code><span class="n">DeepSSMUtils</span><span class="o">.</span><span class="n">trainDeepSSM</span><span class="p">(</span><span class="n">loader_dir</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Input arguments:</strong></p>
+<ul>
+<li><code>loader_dir</code>: Path to directory where train and validation torch loaders are.</li>
+<li><code>parameters</code>: A dictionary of network parameters with the following keys.    <ul>
+<li><code>epochs</code>: The number of epochs to train for.</li>
+<li><code>learning_rate</code>: The value of the learning rate.</li>
+<li><code>val_freq</code>: How often to evaluate on the validation set. 1 means test on the validation set every epoch, 2 means every other epoch, and so on.</li>
+</ul>
+</li>
+<li><code>out_dir</code>: Directory to save the model and training/validation logs.</li>
+</ul>
+<h3 id="test-deepssm">Test DeepSSM</h3>
+<p>This function gets predicted shape models based on the images provided using a trained DeepSSM model.</p>
+<div class="highlight"><pre><span></span><code><span class="n">DeepSSMUtils</span><span class="o">.</span><span class="n">testDeepSSM</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">model_path</span><span class="p">,</span> <span class="n">loader_dir</span><span class="p">,</span> <span class="n">PCA_scores_path</span><span class="p">,</span> <span class="n">num_PCA</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Input arguments:</strong></p>
+<ul>
+<li><code>out_dir</code>: Path to directory where predictions are saved.</li>
+<li><code>model_path</code>: Path to train DeepSSM model.</li>
+<li><code>loader_dir</code>: Path to the directory containing test torch loader.</li>
+<li><code>PCA_scores_path</code>: Path to eigenvalues and eigenvectors from data augmentation that are used to map predicted PCA scores to particles.</li>
+<li><code>num_PCA</code>: The number of PCA scores the DeepSSM model is trained to predict.</li>
+</ul>
+<h3 id="analyze-results">Analyze Results</h3>
+<p>This function analyzes the shape models predicted by DeepSSM by comparing them to the true segmentation. </p>
+<div class="highlight"><pre><span></span><code><span class="n">DeepSSMUtils</span><span class="o">.</span><span class="n">analyzeResults</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">DT_dir</span><span class="p">,</span> <span class="n">prediction_dir</span><span class="p">,</span> <span class="n">mean_prefix</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Input arguments:</strong></p>
+<ul>
+<li><code>out_dir</code>: Path to the directory where meshes and analysis should be saved.</li>
+<li><code>DT_dir</code>: Path to the directory containing distance transforms based on the true segmentations of the test images.</li>
+<li><code>prediction_dir</code>: Path to the directory containing predicted particle files from testing DeepSSM.</li>
+<li><code>mean_prefix</code>: Path to the mean particle and mesh files for the dataset.</li>
+</ul>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../use-cases/use-cases.html" class="btn btn-neutral float-right" title="Getting Started with Use Cases">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="data-augmentation.html" class="btn btn-neutral" title="Data Augmentation for Deep Learning"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright © 1998 - 2020 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/SCIInstitute/ShapeWorks/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="data-augmentation.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../use-cases/use-cases.html" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../assets/mathjaxhelper.js" defer></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

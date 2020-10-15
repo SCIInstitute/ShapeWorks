@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Shireen Elhabian et al.">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/tools/ShapeWorksCommands.html">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>ShapeWorks Commands - ShapeWorks</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../css/custom.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "ShapeWorks Commands";
+    var mkdocs_page_input_path = "tools/ShapeWorksCommands.md";
+    var mkdocs_page_url = "/software/shapeworks.html/tools/ShapeWorksCommands.html";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/python.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-36723568-3', 'mkdocs.org');
+      ga('send', 'pageview');
+  </script>
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> ShapeWorks</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Getting Started</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/shapes.html">Shapes, What & From Where?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/workflow.html">Shape Modeling Workflow</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/sw-stories.html">ShapeWorks Success Stories</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/interfaces.html">ShapeWorks Interfaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/examples.html">Examples</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/how-tos.html">How-Tos</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Users</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/install.html">How to Install ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/citation.html">How to Cite ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/papers.html">Revelant Papers</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Workflow</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/groom.html">How to Groom Your Dataset?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/optimize.html">How to Optimize Your Shape Model?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/analyze.html">How to Analyze Your Shape Model?</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">What is New?</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/new-studio.html">New in ShapeWorksStudio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/sw-meshes.html">ShapeWorks Directly on Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/shapeworks-api.html">ShapeWorks API</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/ssm-eval.html">Shape Model Evaluation</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../deep-learning/deep-ssm.html">SSMs Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Use Cases</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/use-cases.html">Getting Started with Use Cases</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid.html">Ellipsoid: Basic Example</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-cutting-planes.html">Ellipsoid: Cutting Planes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/fixed-domain-ellipsoid.html">Fixed Domains: SSM on New Shapes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/left-atrium.html">Left Atrium: SSM from Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/femur.html">Femur: SSM from Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/femur-cutting-planes.html">Femur with Cutting Planes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/femur-mesh.html">Femur Mesh: SSM directly from meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/lumps.html">Lumps: SSM directly from meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Developers</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/build.html">How to Build ShapeWorks from Source?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/contribute.html">How to Contribute to ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/commands.html">How to Add ShapeWorks Commands?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/python-apis.html">How to Add Python APIs?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/tests.html">How to Add and Run Unit Tests?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/new-use-case.html">How to Add New Use Cases?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/datasets.html">How to Add New Datasets?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/modify-datasets.html">When Modifying Existing Datasets</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/docs.html">Getting Started with Documentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/gh-actions.html">Getting Started with GitHub Actions</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/markdown.html">Getting Started with Markdown</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/paths.html">Adding to PATH Environment Variable</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="ShapeWorksCommands.html">ShapeWorks Commands</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#shapeworks">shapeworks</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#image-commands">Image Commands</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#add">add</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#antialias">antialias</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#binarize">binarize</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#blur">blur</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#bounding-box">bounding-box</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#clip">clip</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#close-holes">close-holes</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#compare">compare</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#compute-dt">compute-dt</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#crop">crop</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#curvature">curvature</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#divide">divide</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#extract-label">extract-label</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#gradient">gradient</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#icp">icp</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#image-to-mesh">image-to-mesh</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#info">info</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#multiply">multiply</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#negate">negate</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pad">pad</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#read-image">read-image</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#recenter">recenter</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#reflect">reflect</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#resample">resample</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#resize">resize</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#rotate">rotate</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#scale">scale</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#set-origin">set-origin</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#sigmoid">sigmoid</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#subtract">subtract</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#topo-preserving-smooth">topo-preserving-smooth</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tp-levelset">tp-levelset</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#translate">translate</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#warp-image">warp-image</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#write-image">write-image</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#mesh-commands">Mesh Commands</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#coverage">coverage</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#read-mesh">read-mesh</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#write-mesh">write-mesh</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#particlesystem-commands">ParticleSystem Commands</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#compactness">compactness</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#generalization">generalization</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#read-particle-system">read-particle-system</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#specificity">specificity</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/team.html">Meet ShapeWorkers!</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/release-notes.html">Release Notes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/license.html">License</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/contact.html">Contact Us</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">ShapeWorks</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>ShapeWorks Tools &raquo;</li>
+        
+      
+    
+    <li>ShapeWorks Commands</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/tools/ShapeWorksCommands.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="shapeworks-commands">ShapeWorks Commands</h1>
+<div class="admonition danger">
+<p class="admonition-title">Activate shapeworks environment</p>
+<p>Each time you use ShapeWorks from the command line, you must first activate its environment using the <code>conda activate shapeworks</code> command on the terminal. </p>
+</div>
+<div class="admonition danger">
+<p class="admonition-title">Add shapeworks to your path</p>
+<p>Please make sure that <code>shapeworks</code> is in your path. See <a href="../dev/paths.html">Adding to PATH Environment Variable</a>. </p>
+</div>
+<h2 id="shapeworks">shapeworks</h2>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>  shapeworks &lt;command&gt; [args]...
+</code></pre></div>
+<p><strong>Description:</strong> Unified ShapeWorks executable that includes command line utilities for automated construction of compact statistical landmark-based shape models of ensembles of shapes  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--version:</strong> show program's version number and exit</p>
+<p><strong>-q, --quiet:</strong> don't print status messages  </p>
+<p><a href="#top">Back to Top</a></p>
+<h2 id="image-commands">Image Commands</h2>
+<h3 id="add">add</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  add [args]...
+</code></pre></div>
+<p><strong>Description:</strong> add a value to each pixel in the given image and/or add another image in a pixelwise manner  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>-x DOUBLE, --value=DOUBLE:</strong>  Value to add to each pixel.</p>
+<p><strong>--name=STRING:</strong> Name of image to add pixelwise.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="antialias">antialias</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  antialias [args]...
+</code></pre></div>
+<p><strong>Description:</strong> antialiases binary volumes  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--maxrmserror=DOUBLE:</strong> Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default: 0.01].</p>
+<p><strong>--iterations=INT:</strong> Maximum number of iterations [default: 50].</p>
+<p><strong>--layers=INT:</strong> Number of layers around a 3d pixel to use for this computation [default: 3].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="binarize">binarize</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  binarize [args]...
+</code></pre></div>
+<p><strong>Description:</strong> sets portion of image greater than min and less than or equal to max to the specified value  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--min=DOUBLE:</strong> Lower threshold level [default: 0.0].</p>
+<p><strong>--max=DOUBLE:</strong> Upper threshold level [default: inf ].</p>
+<p><strong>--value=DOUBLE:</strong> Value to set region [default: 1.0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="blur">blur</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  blur [args]...
+</code></pre></div>
+<p><strong>Description:</strong> applies gaussian blur  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--sigma=DOUBLE:</strong> Value of sigma [default: 0.0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="bounding-box">bounding-box</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  bounding-box [args]...
+</code></pre></div>
+<p><strong>Description:</strong> compute largest bounding box surrounding the specified isovalue of the specified set of images  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--names <list of strings>:</strong>  Paths to images (must be followed by <code>--</code>), ex: "bounding-box --names *.nrrd -- --isovalue 1.5")</p>
+<p><strong>--padding=INT:</strong> Number of extra voxels in each direction to pad the largest bounding box [default: 0].</p>
+<p><strong>--isovalue=DOUBLE:</strong> Threshold value [default: 1.0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="clip">clip</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  clip [args]...
+</code></pre></div>
+<p><strong>Description:</strong> clips volume with the specified cutting planes defined by three 3D points  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--x1=DOUBLE:</strong> Value of x1 for cutting plane [default: 0.0].</p>
+<p><strong>--y1=DOUBLE:</strong> Value of y1 for cutting plane [default: 0.0].</p>
+<p><strong>--z1=DOUBLE:</strong> Value of z1 for cutting plane [default: 0.0].</p>
+<p><strong>--x2=DOUBLE:</strong> Value of x2 for cutting plane [default: 0.0].</p>
+<p><strong>--y2=DOUBLE:</strong> Value of y2 for cutting plane [default: 0.0].</p>
+<p><strong>--z2=DOUBLE:</strong> Value of z2 for cutting plane [default: 0.0].</p>
+<p><strong>--x3=DOUBLE:</strong> Value of x3 for cutting plane [default: 0.0].</p>
+<p><strong>--y3=DOUBLE:</strong> Value of y3 for cutting plane [default: 0.0].</p>
+<p><strong>--z3=DOUBLE:</strong> Value of z3 for cutting plane [default: 0.0].</p>
+<p><strong>--value=DOUBLE:</strong> Value of clipped pixels [default: 0.0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="close-holes">close-holes</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  close-holes [args]...
+</code></pre></div>
+<p><strong>Description:</strong> closes holes in a volume defined by values larger than specified value  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--value=DOUBLE:</strong> Largest value not in volume [default: 0.0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="compare">compare</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  compare [args]...
+</code></pre></div>
+<p><strong>Description:</strong> compare two images  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--name=STRING:</strong> Compare this image with another.</p>
+<p><strong>--verifyall=BOOL:</strong> Also verify origin, spacing, and direction matches [default: true].</p>
+<p><strong>--tolerance=DOUBLE:</strong> Allowed percentage of pixel differences [default: 0.0].</p>
+<p><strong>--precision=DOUBLE:</strong> Allowed difference between two pixels for them to still be considered equal [default: 0.0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="compute-dt">compute-dt</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  compute-dt [args]...
+</code></pre></div>
+<p><strong>Description:</strong> computes signed distance transform volume from an image at the specified isovalue  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--isovalue=DOUBLE:</strong> Level set value that defines the interface between foreground and background [default: 0.0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="crop">crop</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  crop [args]...
+</code></pre></div>
+<p><strong>Description:</strong> crop image down to the current region (e.g., from bounding-box command), or the specified min/max in each direction [default: image dimensions]  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--xmin=UNSIGNED:</strong> Minimum X.</p>
+<p><strong>--xmax=UNSIGNED:</strong> Maximum X.</p>
+<p><strong>--ymin=UNSIGNED:</strong> Minimum Y.</p>
+<p><strong>--ymax=UNSIGNED:</strong> Maximum Y.</p>
+<p><strong>--zmin=UNSIGNED:</strong> Minimum Z.</p>
+<p><strong>--zmax=UNSIGNED:</strong> Maximum Z.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="curvature">curvature</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  curvature [args]...
+</code></pre></div>
+<p><strong>Description:</strong> denoises an image using curvature driven flow using curvature flow image filter  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--iterations=INT:</strong> Number of iterations [default: 10].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="divide">divide</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  divide [args]...
+</code></pre></div>
+<p><strong>Description:</strong> divide an image by a constant  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>-x DOUBLE, --value=DOUBLE:</strong>  Value with which to divide.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="extract-label">extract-label</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  extract-label [args]...
+</code></pre></div>
+<p><strong>Description:</strong> extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--label=DOUBLE:</strong> Label value to be extracted [default: 1.0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="gradient">gradient</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  gradient [args]...
+</code></pre></div>
+<p><strong>Description:</strong> computes gradient magnitude of an image region at each pixel using gradient magnitude filter  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="icp">icp</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  icp [args]...
+</code></pre></div>
+<p><strong>Description:</strong> transform current image using iterative closest point (ICP) 3D rigid registration computed from source to target distance maps  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--source=STRING:</strong> Distance map of source image.</p>
+<p><strong>--target=STRING:</strong> Distance map of target image.</p>
+<p><strong>--isovalue=DOUBLE:</strong> Isovalue of distance maps used to create ICPtransform [default: 0.0].</p>
+<p><strong>--iterations=UNSIGNED:</strong>  Number of iterations run ICP registration [default: 20].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="image-to-mesh">image-to-mesh</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  image-to-mesh [args]...
+</code></pre></div>
+<p><strong>Description:</strong> converts the current image to a mesh  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>-v DOUBLE, --isovalue=DOUBLE:</strong>  Isovalue to determine mesh boundary [default: 1.0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="info">info</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  info [args]...
+</code></pre></div>
+<p><strong>Description:</strong> prints requested image dimensions, spacing, size, origin, direction (coordinate system), center, center of mass and bounding box [default: prints everything]  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--dims:</strong> Whether to display image dimensions</p>
+<p><strong>--spacing:</strong> Whether to display physical spacing</p>
+<p><strong>--size:</strong> Whether to display size</p>
+<p><strong>--origin:</strong> Whether to display physical origin</p>
+<p><strong>--direction:</strong> Whether to display direction</p>
+<p><strong>--center:</strong> Whether to display center</p>
+<p><strong>--centerofmass:</strong> Whether to display center of mass</p>
+<p><strong>--boundingbox:</strong> Whether to display bounding box  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="multiply">multiply</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  multiply [args]...
+</code></pre></div>
+<p><strong>Description:</strong> multiply an image by a constant  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>-x DOUBLE, --value=DOUBLE:</strong>  Value with which to multiply.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="negate">negate</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  negate [args]...
+</code></pre></div>
+<p><strong>Description:</strong> negate the values in the given image  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="pad">pad</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  pad [args]...
+</code></pre></div>
+<p><strong>Description:</strong> pads an image with specified value by specified number of voxels in the x-, y-, and/or z- directions; origin remains at the same location (note: negative padding to shrink an image is permitted)  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--padding=INT:</strong> Pad this many voxels in ALL directions (used if set) [default: 0].</p>
+<p><strong>-x INT, --padx=INT:</strong> Pad this many voxels in the x-direction [default: 0].</p>
+<p><strong>-y INT, --pady=INT:</strong> Pad this many voxels in the y-direction [default: 0].</p>
+<p><strong>-z INT, --padz=INT:</strong> Pad this many voxels in the z-direction [default: 0].</p>
+<p><strong>--value=DOUBLE:</strong> Value used to fill padded voxels [default: 0.0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="read-image">read-image</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  read-image [args]...
+</code></pre></div>
+<p><strong>Description:</strong> reads an image  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--name=STRING:</strong> Name of file to read  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="recenter">recenter</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  recenter [args]...
+</code></pre></div>
+<p><strong>Description:</strong> recenters an image by changing its origin in the image header to the physical coordinates of the center of the image  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="reflect">reflect</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  reflect [args]...
+</code></pre></div>
+<p><strong>Description:</strong> reflect image with respect to logical image center and the specified axis  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--axis=STRING:</strong> Axis along which to reflect (X, Y, or Z).  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="resample">resample</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  resample [args]...
+</code></pre></div>
+<p><strong>Description:</strong> resamples an image using new physical spacing (computes new dims)  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--isospacing=DOUBLE:</strong> Use this spacing in all dimensions.</p>
+<p><strong>--spacex=DOUBLE:</strong> Pixel spacing in x-direction [default: 1].</p>
+<p><strong>--spacey=DOUBLE:</strong> Pixel spacing in y-direction [default: 1].</p>
+<p><strong>--spacez=DOUBLE:</strong> Pixel spacing in z-direction [default: 1].</p>
+<p><strong>--sizex=UNSIGNED:</strong> Output size in x-direction [default: current size].</p>
+<p><strong>--sizey=UNSIGNED:</strong> Output size in y-direction [default: current size].</p>
+<p><strong>--sizez=UNSIGNED:</strong> Output size in z-direction [default: current size].</p>
+<p><strong>--originx=DOUBLE:</strong> Output origin in x-direction [default: current origin].</p>
+<p><strong>--originy=DOUBLE:</strong> Output origin in y-direction [default: current origin].</p>
+<p><strong>--originz=DOUBLE:</strong> Output origin in z-direction [default: current origin].</p>
+<p><strong>--interp=CHOICE:</strong> Interpolation method to use [default: linear]. (choose from 'linear', 'nearest')  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="resize">resize</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  resize [args]...
+</code></pre></div>
+<p><strong>Description:</strong> resizes an image (computes new physical spacing)  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>-x UNSIGNED, --sizex=UNSIGNED:</strong>  Output size in x-direction [default: current size].</p>
+<p><strong>-y UNSIGNED, --sizey=UNSIGNED:</strong>  Output size in y-direction [default: current size].</p>
+<p><strong>-z UNSIGNED, --sizez=UNSIGNED:</strong>  Output size in z-direction [default: current size].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="rotate">rotate</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  rotate [args]...
+</code></pre></div>
+<p><strong>Description:</strong> rotates image by specified value  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>-x DOUBLE, --rx=DOUBLE:</strong>  Physical axis around which to rotate [default: z-axis]</p>
+<p><strong>-y DOUBLE, --ry=DOUBLE:</strong>  Physical axis around which to rotate [default: z-axis]</p>
+<p><strong>-z DOUBLE, --rz=DOUBLE:</strong>  Physical axis around which to rotate [default: z-axis]</p>
+<p><strong>--radians=DOUBLE:</strong> Angle in radians</p>
+<p><strong>--degrees=DOUBLE:</strong> Angle in degrees  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="scale">scale</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  scale [args]...
+</code></pre></div>
+<p><strong>Description:</strong> scales image by specified value  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>-x DOUBLE, --sx=DOUBLE:</strong>  X scale</p>
+<p><strong>-y DOUBLE, --sy=DOUBLE:</strong>  Y scale</p>
+<p><strong>-z DOUBLE, --sz=DOUBLE:</strong>  Z scale  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="set-origin">set-origin</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  set-origin [args]...
+</code></pre></div>
+<p><strong>Description:</strong> set origin  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>-x DOUBLE, --x=DOUBLE:</strong>  x value of origin [default: 0.0].</p>
+<p><strong>-y DOUBLE, --y=DOUBLE:</strong>  y value of origin [default: 0.0].</p>
+<p><strong>-z DOUBLE, --z=DOUBLE:</strong>  z value of origin [default: 0.0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="sigmoid">sigmoid</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  sigmoid [args]...
+</code></pre></div>
+<p><strong>Description:</strong> computes sigmoid function pixel-wise using sigmoid image filter  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--alpha=DOUBLE:</strong> Value of alpha [default: 10.0].</p>
+<p><strong>--beta=DOUBLE:</strong> Value of beta [default: 10.0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="subtract">subtract</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  subtract [args]...
+</code></pre></div>
+<p><strong>Description:</strong> subtract a value from each pixel in this image and/or subtract another image in a pixelwise manner  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>-x DOUBLE, --value=DOUBLE:</strong>  Value to subtract from each pixel.</p>
+<p><strong>--name=STRING:</strong> Name of image to subtract pixelwise.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="topo-preserving-smooth">topo-preserving-smooth</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  topo-preserving-smooth [args]...
+</code></pre></div>
+<p><strong>Description:</strong> Helper command that applies gradient and sigmoid filters to create a feature image for the TPLevelSet filter; note that a curvature flow filter is sometimes applied to the image before this  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--scaling=DOUBLE:</strong> Scale for TPLevelSet level set filter [default: 20.0].</p>
+<p><strong>--alpha=DOUBLE:</strong> Value of alpha for sigmoid fitler [default: 10.0].</p>
+<p><strong>--beta=DOUBLE:</strong> Value of beta for sigmoid fitler [default: 10.0.0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="tp-levelset">tp-levelset</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  tp-levelset [args]...
+</code></pre></div>
+<p><strong>Description:</strong> segments structures in image using topology preserving geodesic active contour level set filter  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--featureimage=STRING:</strong>  Path of feature image for filter</p>
+<p><strong>--scaling=DOUBLE:</strong> Value of scale [default: 20.0].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="translate">translate</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  translate [args]...
+</code></pre></div>
+<p><strong>Description:</strong> translates image by specified physical (image space) distance  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--centerofmass:</strong> Use center of mass [default: false].</p>
+<p><strong>-x DOUBLE, --tx=DOUBLE:</strong>  X distance</p>
+<p><strong>-y DOUBLE, --ty=DOUBLE:</strong>  Y distance</p>
+<p><strong>-z DOUBLE, --tz=DOUBLE:</strong>  Z distance  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="warp-image">warp-image</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  warp-image [args]...
+</code></pre></div>
+<p><strong>Description:</strong> finds the warp between the source and target landmarks and transforms image by this warp  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--source=STRING:</strong> Path to source landmarks.</p>
+<p><strong>--target=STRING:</strong> Path to target landmarks.</p>
+<p><strong>--stride=INT:</strong> Every <em>stride</em> points will be used for warping [default: 1].  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="write-image">write-image</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  write-image [args]...
+</code></pre></div>
+<p><strong>Description:</strong> writes the current image (determines type by its extension)  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--name=STRING:</strong> Name of file to write</p>
+<p><strong>--compressed=BOOL:</strong> Whether to compress file [default: true]  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h2 id="mesh-commands">Mesh Commands</h2>
+<h3 id="coverage">coverage</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  coverage [args]...
+</code></pre></div>
+<p><strong>Description:</strong> creates mesh of coverage between two meshes  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--name=STRING:</strong> Path to other mesh with which to create coverage.  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="read-mesh">read-mesh</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  read-mesh [args]...
+</code></pre></div>
+<p><strong>Description:</strong> reads a mesh  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--name=STRING:</strong> name of file to read  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h3 id="write-mesh">write-mesh</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  write-mesh [args]...
+</code></pre></div>
+<p><strong>Description:</strong> writes the current mesh (determines type by its extension)  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--name=STRING:</strong> name of file to write  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#mesh-commands">Back to Mesh Commands</a></p>
+<h2 id="particlesystem-commands">ParticleSystem Commands</h2>
+<h3 id="compactness">compactness</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  compactness [args]...
+</code></pre></div>
+<p><strong>Description:</strong> Compute compactness of a loaded particle system  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--nmodes=INT:</strong> Number of modes to use</p>
+<p><strong>--saveto=STRING:</strong> Save the scree plots for all modes to a file  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#particlesystem-commands">Back to ParticleSystem Commands</a></p>
+<h3 id="generalization">generalization</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  generalization [args]...
+</code></pre></div>
+<p><strong>Description:</strong> compute generalization of a loaded particle system  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--nmodes=INT:</strong> Number of modes to use</p>
+<p><strong>--saveto=STRING:</strong> Save the reconstructions sorted by generalization along with the mapping to the original shape  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#particlesystem-commands">Back to ParticleSystem Commands</a></p>
+<h3 id="read-particle-system">read-particle-system</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  read-particle-system [args]...
+</code></pre></div>
+<p><strong>Description:</strong> reads a particle system  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--names <list of strings>:</strong>  paths to .particle files (must be followed by <code>--</code>), ex: "--names *.particle -- next-command...")  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#particlesystem-commands">Back to ParticleSystem Commands</a></p>
+<h3 id="specificity">specificity</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  specificity [args]...
+</code></pre></div>
+<p><strong>Description:</strong> compute specificity of a loaded particle system  </p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--nmodes=INT:</strong> Number of modes to use</p>
+<p><strong>--saveto=STRING:</strong> Save the reconstructions sorted by specificity along with the mapping to the original shape  </p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#particlesystem-commands">Back to ParticleSystem Commands</a></p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../about/team.html" class="btn btn-neutral float-right" title="Meet ShapeWorkers!">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../dev/paths.html" class="btn btn-neutral" title="Adding to PATH Environment Variable"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright © 1998 - 2020 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/SCIInstitute/ShapeWorks/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="../dev/paths.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../about/team.html" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../assets/mathjaxhelper.js" defer></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

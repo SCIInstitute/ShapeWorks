@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Shireen Elhabian et al.">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/use-cases/femur-cutting-planes.html">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Femur with Cutting Planes - ShapeWorks</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../css/custom.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Femur with Cutting Planes";
+    var mkdocs_page_input_path = "use-cases/femur-cutting-planes.md";
+    var mkdocs_page_url = "/software/shapeworks.html/use-cases/femur-cutting-planes.html";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/python.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-36723568-3', 'mkdocs.org');
+      ga('send', 'pageview');
+  </script>
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> ShapeWorks</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Getting Started</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/shapes.html">Shapes, What & From Where?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/workflow.html">Shape Modeling Workflow</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/sw-stories.html">ShapeWorks Success Stories</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/interfaces.html">ShapeWorks Interfaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/examples.html">Examples</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/how-tos.html">How-Tos</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Users</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/install.html">How to Install ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/citation.html">How to Cite ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/papers.html">Revelant Papers</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Workflow</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/groom.html">How to Groom Your Dataset?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/optimize.html">How to Optimize Your Shape Model?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/analyze.html">How to Analyze Your Shape Model?</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">What is New?</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/new-studio.html">New in ShapeWorksStudio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/sw-meshes.html">ShapeWorks Directly on Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/shapeworks-api.html">ShapeWorks API</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/ssm-eval.html">Shape Model Evaluation</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../deep-learning/deep-ssm.html">SSMs Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Use Cases</span></p>
+                <ul class="current">
+                    <li class="toctree-l1"><a class="reference internal" href="use-cases.html">Getting Started with Use Cases</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid.html">Ellipsoid: Basic Example</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid-cutting-planes.html">Ellipsoid: Cutting Planes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="fixed-domain-ellipsoid.html">Fixed Domains: SSM on New Shapes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="left-atrium.html">Left Atrium: SSM from Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="femur.html">Femur: SSM from Meshes</a>
+                    </li>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="femur-cutting-planes.html">Femur with Cutting Planes</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#what-and-where-is-the-use-case">What and Where is the Use Case?</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#running-the-use-case">Running the Use Case</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#grooming-data">Grooming Data</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#optimizing-shape-model">Optimizing Shape Model</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#analyzing-shape-model">Analyzing Shape Model</a>
+    </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="femur-mesh.html">Femur Mesh: SSM directly from meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="lumps.html">Lumps: SSM directly from meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Developers</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/build.html">How to Build ShapeWorks from Source?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/contribute.html">How to Contribute to ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/commands.html">How to Add ShapeWorks Commands?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/python-apis.html">How to Add Python APIs?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/tests.html">How to Add and Run Unit Tests?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/new-use-case.html">How to Add New Use Cases?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/datasets.html">How to Add New Datasets?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/modify-datasets.html">When Modifying Existing Datasets</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/docs.html">Getting Started with Documentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/gh-actions.html">Getting Started with GitHub Actions</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/markdown.html">Getting Started with Markdown</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/paths.html">Adding to PATH Environment Variable</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/team.html">Meet ShapeWorkers!</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/release-notes.html">Release Notes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/license.html">License</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/contact.html">Contact Us</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">ShapeWorks</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Use Cases &raquo;</li>
+        
+      
+    
+    <li>Femur with Cutting Planes</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/use-cases/femur-cutting-planes.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="femur-with-cutting-planes">Femur with Cutting Planes</h1>
+<h2 id="what-and-where-is-the-use-case">What and Where is the Use Case?</h2>
+<p>This use case is similar to <a href="femur.html">Femur: SSM from Meshes</a>, but it demonstrates the use of cutting planes to constrain the particle distribution on the femur surface. The femur meshes in this data set have been segmented with various shaft lengths, as can be seen below. To remove this variability so that it is not captured in the shape model, cutting planes can be used to limit the statistical analysis to the common anatomical regions across all samples.</p>
+<p><img alt="Femur Lengths" src="../img/use-cases/femurLengths.png" /></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The given data (i.e., surface meshes) are not clipped using cutting planes as in <a href="femur.html">Femur: SSM from Meshes</a>, but the cutting planes are fed as an optimization parameter to <code>shapeworks optimize</code> command to prevent particles from moving beyond the cutting planes during optimization.</p>
+</div>
+<p>The use case has a pre-defined cutting plane, but you can choose to overwrite it and define the cutting plane interactively by running the use case with the <code>--interactive</code> tag. There are two ways to define the cutting plane interactively, as explained in <a href="femur.html#running-with-interactivity">Running with Interactivity</a>.</p>
+<p>The use case is located at: <code>Examples/Python/femur_cut.py</code></p>
+<h2 id="running-the-use-case">Running the Use Case</h2>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Minimum of 32GB of RAM required to run the full use case.</p>
+</div>
+<p>To run the use case, run <code>RunUseCase.py</code> (in <code>Examples/Python/</code>) with proper tags. The tags control the type of input data and the optimization method. See <a href="use-cases.html#running-use-case">Getting Started with Use Cases</a> for the full list of tags.</p>
+<ul>
+<li><code>--start_with_prepped_data</code>: to run the optimization on previously processed/groomed data.</li>
+<li><code>--interactive</code>: This tag is used to allow you to interactively select the cutting plane to be used for constraining particle distribution. If this tag is not used, the pre-defined cutting plane is used to clip the given meshes.</li>
+</ul>
+<p>To run the full pipeline with multi-scale and the pre-defined cutting plane:</p>
+<div class="highlight"><pre><span></span><code>$ cd /path/to/shapeworks/Examples/Python
+$ python RunUseCase.py --use_case femur_cut 
+</code></pre></div>
+<p>This calls <code>femur_cut.py</code> (in <code>Examples/Python/</code>) to perform the following.</p>
+<ul>
+<li>Loads the femur dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the <a href="http://cibc1.sci.utah.edu:8080/">ShapeWorks Data Portal</a>.</li>
+<li>Grooms the images and meshes by calling data preprocessing functions in <code>GroomUtils.py</code> (in <code>Examples/Python/</code>). See <a href="#grooming-data">Grooming Data</a> for details about these preprocessing steps.</li>
+<li>Optimizes particle distribution (i.e., the shape/correspondence model) by calling optimization functions in <code>OptimizeUtils.py</code> (in <code>Examples/Python/</code>). See <a href="#optimizing-shape-model">Optimizing Shape Model</a> for details about algorithmic parameters for optimizing the shape model.</li>
+<li>Launches ShapeWorksStudio to visualize the use case results (i.e., the optimized shape model and the groomed data) by calling functions in <code>AnalyzeUtils.py</code> (in <code>Examples/Python/</code>).</li>
+</ul>
+<p>If you wish to start with the optimization step using previously groomed data, add <code>--start_with_prepped_data</code> tag.</p>
+<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case femur_cut --start_with_prepped_data
+</code></pre></div>
+<p>To groom both the meshes and corresponding images, use <code>--start_with_image_and_segmentation_data</code> tag. The image origin, size, and spacing will be used in mesh rasterization. </p>
+<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case femur_cut --start_with_image_and_segmentation_data
+</code></pre></div>
+<p>If this tag is not used, grooming will be done on meshes only. The origin and size will be inferred from the meshes for rasterization, and isotropic spacing will be used unless the user specifies otherwise.</p>
+<h2 id="grooming-data">Grooming Data</h2>
+<p>We start with full unsegmented images (CT scans) of each femur's hip and segmented meshes in this use case. ShapeWorks needs a volumetric representation of shapes in the form of signed distance transforms to optimize the shape model. Hence, given surface meshes are first converted to image-based representation (i.e., binary segmentations).</p>
+<p>Additionally, the corresponding unsegmented images need to be carried through each grooming step with the meshes to be used for analysis.</p>
+<p>The following preprocessing steps are only performed when you start with <em>unprepped</em> data, i.e., the tag <code>--start_with_prepped_data</code> is not used. For a description of the grooming tools and parameters, see: <a href="../workflow/groom.html">How to Groom Your Dataset?</a>.</p>
+<p><strong>Cutting Plane</strong>: If interactive, define cutting plane either in the beginning or after rigid alignment using the interactive window. </p>
+<div class="highlight"><pre><span></span><code>    Within this window:
+            - Zoom in and out by scrolling 
+            - Rotate viewpoint by clicking in the surrounding area
+            - Move the cutting plane by clicking on it and dragging
+            - Change normal vector (represented with arrow) by clicking on it and dragging
+</code></pre></div>
+<ol>
+<li><strong>Reflect Meshes</strong>: In this use case, we often have both right and left femur surface meshes. To align all the femurs, we choose one side to reflect both the image and mesh.</li>
+<li><strong>Meshes to Volumes</strong>: Meshes must be turned into binary volumes using rasterization. The corresponding image origin, size, and spacing are used to generate the volume. </li>
+<li><strong>Isotropic Resampling</strong>: Both the image and rasterized segmentations are resampled to have an isotropic voxel spacing using a user-defined spacing. This step could also produce segmentations with smaller voxel spacing, thereby reducing aliasing artifacts (i.e., staircase/jagged surface) due to binarization. </li>
+<li><strong>Apply Padding</strong>: Segmentations that touch the image boundary will have an artificial hole at that intersection. Segmentations are padded by adding a user-defined number of voxels along each image direction (rows, cols, and slices) to avoid introducing artificial holes.</li>
+<li><strong>Center of Mass Alignment</strong>: This translational alignment step is performed before rigidly aligning the samples to a shape reference. This factors out translations to reduce the risk of misalignment and allow for a medoid sample to be automatically selected as the reference for rigid alignment. </li>
+<li><strong>Reference Selection</strong>: The reference is selected by first computing the mean (average) distance transform of the segmentations, then selecting the sample closest to that mean (i.e., medoid).</li>
+<li><strong>Rigid Alignment</strong>: All of the segmentations and images are then aligned to the selected reference using rigid alignment, which factors out the rotation and remaining translation. The alignment parameters are computed based on aligning segmentations and then applied to their corresponding images. The samples must be centered before they are aligned to a reference. This step can be performed with Isotropic Resampling as it is in the left atrium use case. In the Femur use case, we do so separately so that we can get the translation and apply it to the cutting plane if it has already been selected.</li>
+<li><strong>Cropping</strong>: The images and segmentations are cropped so that all of the samples are within the same bounding box. The bounding box parameters are computed based on the biggest bounding box that encapsulates all the given dataset segmentations.</li>
+<li><strong>Distance Transform</strong>: Finally, the signed distance transform is computed, and the dataset is now ready for the optimize phase.</li>
+</ol>
+<h2 id="optimizing-shape-model">Optimizing Shape Model</h2>
+<p>Below are the default optimization parameters when running this use case using the <code>--use_single_scale</code> tag. For a description of the optimize tool and its algorithmic parameters, see: <a href="../workflow/optimize.html">How to Optimize Your Shape Model</a>. Note that <code>use_shape_statistics_after</code> parameter is not used when <code>--use_single_scale</code> tag is given to the <code>RunUseCase.py</code> (in <code>Examples/Python/</code>). Also note the use of <code>adaptivity_mode</code>, <code>cutting_plane_counts</code>, and <code>cutting_planes</code> optimization parameters to trigger the constrained particles optimization.</p>
+<div class="highlight"><pre><span></span><code>$python RunUseCase.py --use_case femur_cut --use_single_scale
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>        &quot;number_of_particles&quot; : 1024,
+        &quot;use_normals&quot;: 0,
+        &quot;normal_weight&quot;: 10.0,
+        &quot;checkpointing_interval&quot; : 200,
+        &quot;keep_checkpoints&quot; : 1,
+        &quot;iterations_per_split&quot; : 4000,
+        &quot;optimization_iterations&quot; : 4000,
+        &quot;starting_regularization&quot; : 100,
+        &quot;ending_regularization&quot; : 0.1,
+        &quot;recompute_regularization_interval&quot; : 2,
+        &quot;domains_per_shape&quot; : 1,
+        &quot;domain_type&quot; : &#39;image&#39;,
+        &quot;relative_weighting&quot; : 10,
+        &quot;initial_relative_weighting&quot; : 1,
+        &quot;procrustes_interval&quot; : 1,
+        &quot;procrustes_scaling&quot; : 1,
+        &quot;save_init_splits&quot; : 1,
+        &quot;debug_projection&quot; : 0,
+        &quot;verbosity&quot; : 2,
+        &quot;use_statistics_in_init&quot; : 0,
+        &quot;adaptivity_mode&quot;: 0,
+        &quot;cutting_plane_counts&quot;: cutting_plane_counts,
+        &quot;cutting_planes&quot;: cutting_planes
+</code></pre></div>
+<p>This use case can be run using the multi-scale optimization without the <code>--use_single_scale</code> tag as follows.</p>
+<div class="highlight"><pre><span></span><code>$python RunUseCase.py --use_case femur_cut 
+</code></pre></div>
+<p>The <code>use_shape_statistics_after</code> parameter is used to trigger the multi-scale optimization mode.</p>
+<div class="highlight"><pre><span></span><code>        &quot;use_shape_statistics_after&quot;: 64
+</code></pre></div>
+<h2 id="analyzing-shape-model">Analyzing Shape Model</h2>
+<p>ShapeWorksStudio visualizes/analyzes the optimized particle-based shape model by visualizing the mean shape, individual shape samples, and the shape modes of variations. For more information, see: <a href="../workflow/analyze.html">How to Analyze Your Shape Model?</a>.            </p>
+<p>Here is the mean shape, individual samples, and modes of shape variations of the optimized shape mode using single-scale optimization.</p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/femur_cut.mp4" autoplay muted loop controls style="width:100%"></p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="femur-mesh.html" class="btn btn-neutral float-right" title="Femur Mesh: SSM directly from meshes">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="femur.html" class="btn btn-neutral" title="Femur: SSM from Meshes"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright © 1998 - 2020 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/SCIInstitute/ShapeWorks/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="femur.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="femur-mesh.html" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../assets/mathjaxhelper.js" defer></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Shireen Elhabian et al.">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/about/release-notes.html">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Release Notes - ShapeWorks</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../css/custom.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Release Notes";
+    var mkdocs_page_input_path = "about/release-notes.md";
+    var mkdocs_page_url = "/software/shapeworks.html/about/release-notes.html";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/python.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-36723568-3', 'mkdocs.org');
+      ga('send', 'pageview');
+  </script>
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> ShapeWorks</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Getting Started</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/shapes.html">Shapes, What & From Where?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/workflow.html">Shape Modeling Workflow</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/sw-stories.html">ShapeWorks Success Stories</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/interfaces.html">ShapeWorks Interfaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/examples.html">Examples</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/how-tos.html">How-Tos</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Users</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/install.html">How to Install ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/citation.html">How to Cite ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/papers.html">Revelant Papers</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Workflow</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/groom.html">How to Groom Your Dataset?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/optimize.html">How to Optimize Your Shape Model?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/analyze.html">How to Analyze Your Shape Model?</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">What is New?</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/new-studio.html">New in ShapeWorksStudio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/sw-meshes.html">ShapeWorks Directly on Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/shapeworks-api.html">ShapeWorks API</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/ssm-eval.html">Shape Model Evaluation</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../deep-learning/deep-ssm.html">SSMs Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Use Cases</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/use-cases.html">Getting Started with Use Cases</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid.html">Ellipsoid: Basic Example</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-cutting-planes.html">Ellipsoid: Cutting Planes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/fixed-domain-ellipsoid.html">Fixed Domains: SSM on New Shapes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/left-atrium.html">Left Atrium: SSM from Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/femur.html">Femur: SSM from Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/femur-cutting-planes.html">Femur with Cutting Planes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/femur-mesh.html">Femur Mesh: SSM directly from meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/lumps.html">Lumps: SSM directly from meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Developers</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/build.html">How to Build ShapeWorks from Source?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/contribute.html">How to Contribute to ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/commands.html">How to Add ShapeWorks Commands?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/python-apis.html">How to Add Python APIs?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/tests.html">How to Add and Run Unit Tests?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/new-use-case.html">How to Add New Use Cases?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/datasets.html">How to Add New Datasets?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/modify-datasets.html">When Modifying Existing Datasets</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/docs.html">Getting Started with Documentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/gh-actions.html">Getting Started with GitHub Actions</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/markdown.html">Getting Started with Markdown</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/paths.html">Adding to PATH Environment Variable</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul class="current">
+                    <li class="toctree-l1"><a class="reference internal" href="team.html">Meet ShapeWorkers!</a>
+                    </li>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="release-notes.html">Release Notes</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#shapeworks-550-2020-10-15">ShapeWorks 5.5.0 - 2020-10-15</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#whats-new">What's New</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#users-support">User's Support</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end">ShapeWorks Back-end</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#all-in-one-studio-front-end">All-in-one Studio Front-end</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#deep-learning-shape-modeling">Deep Learning &amp; Shape Modeling</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#improvements">Improvements</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#users-support_1">User's Support</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end_1">ShapeWorks Back-end</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#all-in-one-studio-front-end_1">All-in-one Studio Front-end</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#fixes">Fixes</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#shapeworks-back-end_2">ShapeWorks Back-end</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#shapeworks-541-2020-06-15">ShapeWorks 5.4.1 - 2020-06-15</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#fixes_1">Fixes</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#shapeworks-540-2020-06-10">ShapeWorks 5.4.0 - 2020-06-10</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#whats-new_1">What's New</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#improvements_1">Improvements</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#fixes_2">Fixes</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#shapeworks-530-2020-02-20">ShapeWorks 5.3.0 - 2020-02-20</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#whats-new_2">What's New</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#improvements_2">Improvements</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#shapeworks-522-2020-01-09">ShapeWorks 5.2.2 - 2020-01-09</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#fixes_3">Fixes</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#shapeworks-521-2019-11-09">ShapeWorks 5.2.1 - 2019-11-09</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#fixes_4">Fixes</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#shapeworks-520-2019-11-07">ShapeWorks 5.2.0 - 2019-11-07</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#whats-new_3">What's New</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#improvements_3">Improvements</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#fixes_5">Fixes</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="license.html">License</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="contact.html">Contact Us</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">ShapeWorks</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>About &raquo;</li>
+        
+      
+    
+    <li>Release Notes</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/about/release-notes.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="release-notes">Release Notes</h1>
+<h2 id="shapeworks-550-2020-10-15">ShapeWorks 5.5.0 - 2020-10-15</h2>
+<h3 id="whats-new">What's New</h3>
+<h4 id="users-support">User's Support</h4>
+<ul>
+<li>
+<p><strong>Revamped documentation:</strong> <a href="http://sciinstitute.github.io/ShapeWorks">New documentation</a> to support both end-users and open-source developer community in one easily navigable place. This documentation includes background information about statistical shape modeling, the scientific premise of ShapeWorks, and how to get started. It also demonstrates the latest software features, exemplar use cases, and instructions to build/install ShapeWorks.</p>
+</li>
+<li>
+<p><strong>Optimized shape models for use cases:</strong> All datasets on the <a href="http://cibc1.sci.utah.edu:8080/">ShapeWorks Data Portal</a> now have the shape model output from running the use cases with a corresponding <code>analyze.xml</code> for launching Studio. Users can <code>cd</code> to where the data is extracted and call <code>ShapeWorksStudio analyze.xml</code> to visualize these shape models.</p>
+</li>
+</ul>
+<h4 id="shapeworks-back-end">ShapeWorks Back-end</h4>
+<ul>
+<li>
+<p><strong>ShapeWorks directly on meshes:</strong> ShapeWorks now supports particle optimization directly on triangular surface meshes. This mesh support also enables working with open meshes without additional user inputs. See <a href="http://sciinstitute.github.io/ShapeWorks/new/sw-meshes">ShapeWorks Directly on Meshes</a> for more details. For exemplar use cases, see <a href="http://sciinstitute.github.io/ShapeWorks/use-cases/femur-mesh">Femur Mesh: SSM directly from meshes</a> and <a href="http://sciinstitute.github.io/ShapeWorks/use-cases/lumps">Lumps: SSM directly from meshes</a> to learn how to get started. <em>This mesh support allows for significant memory savings (9.2GB to 53MB in the femur use case)</em>.</p>
+</li>
+<li>
+<p><strong>New ShapeWorks API:</strong> Consolidation of image-based and segmentation-based grooming tools that creates a stable and reusable API making it much easier and more flexible for users to groom their datasets. This includes a full complement of unit tests. See <a href="http://sciinstitute.github.io/ShapeWorks/new/shapeworks-api">ShapeWorks API</a> for more details.</p>
+</li>
+</ul>
+<h4 id="all-in-one-studio-front-end">All-in-one Studio Front-end</h4>
+<ul>
+<li>
+<p><strong>Feature maps support:</strong> Studio supports the integration of 3d volume feature maps to map imaging data to the optimized shape model. See <a href="http://sciinstitute.github.io/ShapeWorks/new/new-studio#feature-maps">New in ShapeWorksStudio</a> for more details.</p>
+</li>
+<li>
+<p><strong>New interface for group analysis:</strong> Studio supports group definitions from spreadsheets. The new interface supports multiple group sets within the same project file and categorical groups compared to the old binary groups (i.e., yes/no) setting. See <a href="http://sciinstitute.github.io/ShapeWorks/workflow/analyze#group-differences">New in ShapeWorksStudio</a> for more details.</p>
+</li>
+<li>
+<p><strong>User notes in Studio:</strong> Studio stores/loads a rich text notes section in the spreadsheet.</p>
+</li>
+</ul>
+<h4 id="deep-learning-shape-modeling">Deep Learning &amp; Shape Modeling</h4>
+<ul>
+<li>
+<p><strong>New Python package for model-based data augmentation:</strong> A Python package for data augmentation has been added. See <a href="http://sciinstitute.github.io/ShapeWorks/deep-learning/data-augmentation">Data Augmentation for Deep Learning</a> for more details.</p>
+</li>
+<li>
+<p><strong>DeepSSM Python package:</strong> A Python package has been added for a deep learning framework that estimates statistical representations of shape directly from unsegmented images once trained. See <a href="http://sciinstitute.github.io/ShapeWorks/deep-learning/deep-ssm">SSMs Directly from Images</a> for more details. </p>
+</li>
+<li>
+<p><strong>New DeepSSM use case:</strong> We added a new use case called <code>deep_ssm</code> that demonstrates data augmentation and deep learning on the femur data. See <a href="http://sciinstitute.github.io/ShapeWorks/use-cases/deep-ssm-femur">Femur SSM Directly from Images</a> for more details. </p>
+</li>
+</ul>
+<h3 id="improvements">Improvements</h3>
+<h4 id="users-support_1">User's Support</h4>
+<ul>
+<li>
+<p><strong>Improved data/output organization for use cases:</strong> Use case organization has been updated such that downloaded data goes into one folder (<code>ShapeWorks/Examples/Python/Data/</code>) and use case output goes into another (<code>ShapeWorks/Examples/Python/Output/</code>). This organization will avoid re-downloading use case datasets if the user deleted the output folder. </p>
+</li>
+<li>
+<p><strong>Enable only-shape data for the femur use case:</strong> Femur use case demonstrates the processing workflow starting from surface meshes and can now be run without grooming images (in case they are not available). To groom with images, use the <code>--start_with_image_and_segmentation_data</code> tag. If this tag is not included, images will not be used in grooming.</p>
+</li>
+</ul>
+<h4 id="shapeworks-back-end_1">ShapeWorks Back-end</h4>
+<ul>
+<li><strong>Improved constrained particle optimization:</strong> An improved implementation for cutting planes that support single and multiple cutting planes per sample has been added. This can be used in modeling scenarios where statistical modeling/analysis is needed for a region-of-interest on the anatomy/object-class at hand without having to affect the input data. See <a href="http://sciinstitute.github.io/ShapeWorks/use-cases/ellipsoid-cutting-planes">Ellipsoid: Cutting Planes</a> and <a href="http://sciinstitute.github.io/ShapeWorks/use-cases/femur-cutting-planes">Femur with Cutting Planes</a> for exemplar use cases.</li>
+</ul>
+<h4 id="all-in-one-studio-front-end_1">All-in-one Studio Front-end</h4>
+<ul>
+<li><strong>Improved interface design for Studio:</strong> User interface improvements to Studio have been added. These improvements include collapsable analysis panels to improve screen usability, a cleaner file menu, an about box that shows website information and software version, and a splash screen that enables the opening of new/recent projects.</li>
+</ul>
+<h3 id="fixes">Fixes</h3>
+<h4 id="shapeworks-back-end_2">ShapeWorks Back-end</h4>
+<ul>
+<li>
+<p><strong>Constraint-aware particles initialization and optimization:</strong> The initialization and optimization steps now respect the user-defined constraints when using signed distance transforms. Hence, at no point, particles will violate the constraints, allowing for arbitrarily defined cutting planes. </p>
+</li>
+<li>
+<p><strong>Constraint-aware particles splitting:</strong> Added constraint aware particle splitting for signed distance transforms. The particle splitting only occurred towards a single quadrant. This is fixed by allowing particle splits to shift in a different direction for each particle in every domain.</p>
+</li>
+<li>
+<p><strong>Constraint-aware particle projection:</strong> Projecting particles on the surface while manipulating/optimizing particle position now respects the user-defined constraints.</p>
+</li>
+</ul>
+<h2 id="shapeworks-541-2020-06-15">ShapeWorks 5.4.1 - 2020-06-15</h2>
+<h3 id="fixes_1">Fixes</h3>
+<ul>
+<li><strong>ShapeWorksStudio:</strong> Fixed crash when importing data on a new/blank project. </li>
+</ul>
+<h2 id="shapeworks-540-2020-06-10">ShapeWorks 5.4.0 - 2020-06-10</h2>
+<h3 id="whats-new_1">What's New</h3>
+<ul>
+<li><strong>New, flexible ShapeWorks project file format:</strong> New spreadsheet (XLSX) based project file format that can easily handle multiple shape modeling scenarios. It is now fully integrated into Studio. See the ellipsoid studio example in <code>Examples/Studio/ellipsoid.xlsx</code> for an example.</li>
+<li><strong>Exporting shape parameters:</strong> Added PCA Raw Component Score Export to Studio.</li>
+<li><strong>New Getting Started documentation:</strong> New <a href="../getting-started/workflow.html">Getting started</a> documentation goes over shape modeling workflow documentation, different ShapeWorks interfaces with a video illustration for Studio.</li>
+<li><strong>Lower memory footprint and faster optimization:</strong> ShapeWorks is now using <a href="https://www.openvdb.org/">OpenVDB</a>, a more memory-efficient data structure, for signed distance transforms. Along with other refactoring and code optimizations, ShapeWorks now uses <em>85% less memory</em> (from 57.09GB to 9.67GB in one use case). Additionally, the particle optimizer is now <em>2X faster</em>.</li>
+<li><strong>Automated development builds:</strong> We now offer up-to-date development binary builds that track the master branch, available <a href="https://github.com/SCIInstitute/ShapeWorks/releases">here</a>. Please understand that these are in-progress development builds, not official releases.</li>
+</ul>
+<h3 id="improvements_1">Improvements</h3>
+<ul>
+<li><strong>Improved scalability for Studio:</strong> Files now loaded on-demand as necessary.</li>
+<li><strong>Restructured datasets portal:</strong> Better and more consistent directory structure for use cases datasets. See <a href="../dev/datasets.html">datasets guidelines</a> for more details. Visit our <a href="http://cibc1.sci.utah.edu:8080">ShapeWorks Portal</a> to register and download datasets to run <a href="../use-cases/use-cases.html">use cases</a>.</li>
+<li><strong>Lower memory footprint for estimating correspondences for new shapes on existing shape models:</strong> For <fixed_domains> usage, only distance transforms for the new shapes will be loaded.</li>
+<li><strong>Improved use case documentation:</strong> Better documentation for the <a href="../use-cases/use-cases.html">RunUseCase</a> input arguments.</li>
+<li><strong>Documentation for running existing shape models:</strong> Added <a href="../use-cases/use-cases.html#running-subsequent-analysis">instructions</a> on how to load a pre-trained shape model without running the full pipeline.</li>
+<li><strong>Consistent cross-platform splitting direction:</strong> Correspondence point splits take a random direction, but are now consistent and repeatable across platforms for reproducible shape models.</li>
+</ul>
+<h3 id="fixes_2">Fixes</h3>
+<ul>
+<li><strong>Mesh export in Studio:</strong> Changed exported meshes to be compatible with CloudCompare</li>
+</ul>
+<h2 id="shapeworks-530-2020-02-20">ShapeWorks 5.3.0 - 2020-02-20</h2>
+<h3 id="whats-new_2">What's New</h3>
+<ul>
+<li>Use cases: Added fixed domains use case that demonstrates adding a single shape to an existing shape model</li>
+<li>Use cases: Added ellipsoid evaluation use that demonstrates the quantitative evaluation of the ellipsoid</li>
+<li>New commands: Added commands to the <code>shapeworks</code> executable to quantitatively evaluate shape models: read-particle-system, compactness, generalization, specificity</li>
+<li>New shapeworks executables commands: read-image, write-image, antialias, isoresample, binarize, recenter-image, pad.</li>
+<li>New build method: Separate build_dependencies script (see Documentation/Build/BUILD.md)</li>
+</ul>
+<h3 id="improvements_2">Improvements</h3>
+<ul>
+<li>Use cases: Updated femur use case with an interactive cutting plane selection</li>
+<li>Studio: Replaced bar chart with explained variance chart</li>
+</ul>
+<h2 id="shapeworks-522-2020-01-09">ShapeWorks 5.2.2 - 2020-01-09</h2>
+<h3 id="fixes_3">Fixes</h3>
+<ul>
+<li>Returned to superbuild.sh build process</li>
+<li>Fixed non-Qt build</li>
+<li>Fixed Windows conda_installs.bat</li>
+<li>Studio: Fixed import and processing of non-RAI image volumes</li>
+<li>Studio: Fix centering of groomed and reconstructed volumes</li>
+</ul>
+<h2 id="shapeworks-521-2019-11-09">ShapeWorks 5.2.1 - 2019-11-09</h2>
+<h3 id="fixes_4">Fixes</h3>
+<ul>
+<li>Fix examples, binaries</li>
+</ul>
+<h2 id="shapeworks-520-2019-11-07">ShapeWorks 5.2.0 - 2019-11-07</h2>
+<h3 id="whats-new_3">What's New</h3>
+<ul>
+<li>Studio: Added live particle optimization updates</li>
+<li>Studio: Added "Stop optimization" button</li>
+<li>Use cases: Added a femur use case that demonstrates grooming surface meshes along with imaging data for shape modeling</li>
+<li>Use cases: Added a left atrium use case that demonstrates grooming images data along with shape data and build multi-scale shape models</li>
+<li>Use cases: New portal downloadable example data (ellipsoid, left atrium, and femurs)</li>
+<li>Windows installer and binary releases for Mac and Linux</li>
+<li>CMake-based superbuild with all dependencies built automatically</li>
+</ul>
+<h3 id="improvements_3">Improvements</h3>
+<ul>
+<li>Studio: Added support for reading View2 parameter files</li>
+<li>Studio: Added legacy (View2) surface reconstructor</li>
+<li>Studio: Replaced optimization library with same used by ShapeWorksRun</li>
+</ul>
+<h3 id="fixes_5">Fixes</h3>
+<ul>
+<li>Studio: Fixes crashes on exit during optimizations (clean shutdown of threads)</li>
+</ul>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="license.html" class="btn btn-neutral float-right" title="License">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="team.html" class="btn btn-neutral" title="Meet ShapeWorkers!"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright © 1998 - 2020 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/SCIInstitute/ShapeWorks/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="team.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="license.html" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../assets/mathjaxhelper.js" defer></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Shireen Elhabian et al.">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/deep-learning/data-augmentation.html">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Data Augmentation for Deep Learning - ShapeWorks</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../css/custom.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Data Augmentation for Deep Learning";
+    var mkdocs_page_input_path = "deep-learning/data-augmentation.md";
+    var mkdocs_page_url = "/software/shapeworks.html/deep-learning/data-augmentation.html";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/python.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-36723568-3', 'mkdocs.org');
+      ga('send', 'pageview');
+  </script>
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> ShapeWorks</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Getting Started</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/shapes.html">Shapes, What & From Where?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/workflow.html">Shape Modeling Workflow</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/sw-stories.html">ShapeWorks Success Stories</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/interfaces.html">ShapeWorks Interfaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/examples.html">Examples</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/how-tos.html">How-Tos</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Users</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/install.html">How to Install ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/citation.html">How to Cite ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/papers.html">Revelant Papers</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Workflow</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/groom.html">How to Groom Your Dataset?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/optimize.html">How to Optimize Your Shape Model?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/analyze.html">How to Analyze Your Shape Model?</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">What is New?</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/new-studio.html">New in ShapeWorksStudio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/sw-meshes.html">ShapeWorks Directly on Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/shapeworks-api.html">ShapeWorks API</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/ssm-eval.html">Shape Model Evaluation</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="data-augmentation.html">Data Augmentation for Deep Learning</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#using-the-data-augmentation-package">Using the Data Augmentation Package</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#running-data-augmentation">Running Data Augmentation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#visualizing-data-augmentation">Visualizing Data Augmentation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#data-augmentation-steps">Data Augmentation Steps</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#0-collect-real-data">0. Collect Real Data</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#1-embed-real-data">1. Embed Real Data</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-fit-a-parametric-distribution">2. Fit a Parametric Distribution</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-sample-from-the-distribution">3. Sample from the Distribution</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#4-project-samples">4. Project Samples</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#5-complete-sample-generation">5. Complete Sample Generation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#sampling-distributions">Sampling Distributions</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#multivariate-gaussian-distribution">Multivariate Gaussian Distribution</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mixture-of-multivariate-gaussians-distribution">Mixture of Multivariate Gaussians Distribution</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#kernel-density-estimate-distribution">Kernel Density Estimate Distribution</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="deep-ssm.html">SSMs Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Use Cases</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/use-cases.html">Getting Started with Use Cases</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid.html">Ellipsoid: Basic Example</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-cutting-planes.html">Ellipsoid: Cutting Planes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/fixed-domain-ellipsoid.html">Fixed Domains: SSM on New Shapes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/left-atrium.html">Left Atrium: SSM from Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/femur.html">Femur: SSM from Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/femur-cutting-planes.html">Femur with Cutting Planes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/femur-mesh.html">Femur Mesh: SSM directly from meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/lumps.html">Lumps: SSM directly from meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Developers</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/build.html">How to Build ShapeWorks from Source?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/contribute.html">How to Contribute to ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/commands.html">How to Add ShapeWorks Commands?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/python-apis.html">How to Add Python APIs?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/tests.html">How to Add and Run Unit Tests?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/new-use-case.html">How to Add New Use Cases?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/datasets.html">How to Add New Datasets?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/modify-datasets.html">When Modifying Existing Datasets</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/docs.html">Getting Started with Documentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/gh-actions.html">Getting Started with GitHub Actions</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/markdown.html">Getting Started with Markdown</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/paths.html">Adding to PATH Environment Variable</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/team.html">Meet ShapeWorkers!</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/release-notes.html">Release Notes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/license.html">License</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/contact.html">Contact Us</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">ShapeWorks</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Deep Learning & SSMs &raquo;</li>
+        
+      
+    
+    <li>Data Augmentation for Deep Learning</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/deep-learning/data-augmentation.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="data-augmentation-for-deep-learning">Data Augmentation for Deep Learning</h1>
+<p>ShapeWorks includes a Python package, <code>DataAugmentationUtils</code>, that supports model-based data augmentation. This package is useful to increase the training sample size to train deep networks such as DeepSSM (see <a href="deep-ssm.html">SSMs Directly from Images</a>). The <code>DataAugmentationUtils</code> particularly has tools to generate thousands of image-shape pairs based on the available real data. Fabricated (i.e., augmented) examples are generated to preserve the population shape statistics and exhibit realistic intensity variations.</p>
+<h2 id="using-the-data-augmentation-package">Using the Data Augmentation Package</h2>
+<p>The ShapeWorks data augmentation package, <code>DataAugmentationUtils</code>, is installed to the ShapeWorks anaconda environment when <code>conda_installs.sh</code> is run. </p>
+<div class="admonition danger">
+<p class="admonition-title">Activate shapeworks environment</p>
+<p>Each time you use ShapeWorks and/or its Python packages, you must first activate its environment using the <code>conda activate shapeworks</code> command on the terminal.</p>
+</div>
+<p>To use the <code>DataAugmentationUtils</code> package, make sure you have the shapeworks conda environment is activated and add the following import to your Python code.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">DataAugmentationUtils</span>
+</code></pre></div>
+<h3 id="running-data-augmentation">Running Data Augmentation</h3>
+<p>To run the complete data augmentation process as detailed in <a href="#data-augmentation-steps">Data Augmentation Steps</a>, add the following to your Python code.</p>
+<div class="highlight"><pre><span></span><code><span class="n">DataAugmentationUtils</span><span class="o">.</span><span class="n">runDataAugmentation</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">img_list</span><span class="p">,</span> 
+                                          <span class="n">point_list</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">,</span> 
+                                          <span class="n">num_dim</span><span class="p">,</span> <span class="n">sampler_type</span><span class="p">,</span> 
+                                          <span class="n">mixture_num</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Input arguments:</strong></p>
+<ul>
+<li><code>out_dir</code>: Path to the directory where augmented data will be stored</li>
+<li><code>img_list</code>: List of paths to images of the original dataset.</li>
+<li><code>point_list</code>: List of paths to <code>.particles</code> files of the original dataset. Note, this list should be ordered in correspondence with the <code>img_list</code>.</li>
+<li><code>num_dim</code>: The number of dimensions to reduce to in PCA embedding. If zero or not specified, <code>num_dim</code> will be automatically selected to preserve 95% of the population variation.</li>
+<li><code>sampler_type</code>: The type of parametric distribution to fit and sample from. Options: <code>Gaussian</code>, <code>mixture</code>, or <code>KDE</code>. Default: <code>KDE</code>.</li>
+<li><code>mixture_num</code>: Only necessary if <code>sampler_type</code> is <code>mixture</code>. The number of clusters (i.e., mixture components) to be used in fitting a mixture model. If zero or not specified, the optimal number of clusters will be automatically determined using the <a href="https://en.wikipedia.org/wiki/Elbow_method_(clustering)">elbow method</a>.</li>
+</ul>
+<h3 id="visualizing-data-augmentation">Visualizing Data Augmentation</h3>
+<p>This function creates a visualization for augmented data. It creates a matrix of scatterplots that opens automatically in the default web browser. The scatterplots show the PCA values of the real and augmented data so that they can be compared pairwise across the PCA dimensions.</p>
+<div class="highlight"><pre><span></span><code><span class="n">DataAugmentationUtils</span><span class="o">.</span><span class="n">visualizeAugmentation</span><span class="p">(</span><span class="n">data_csv</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Input arguments:</strong></p>
+<ul>
+<li><code>data_csv</code>: The path to the CSV file created by running the data augmentation process.</li>
+</ul>
+<h2 id="data-augmentation-steps">Data Augmentation Steps</h2>
+<h3 id="0-collect-real-data">0. Collect Real Data</h3>
+<p>As a preliminary step, the data on which augmentation will be based on is needed. This includes the shape model <code>.particles</code> files and their corresponding images. This can be acquired using ShapeWorks or any other method of generating point distribution models (PDM).</p>
+<p><img alt="DataAug0.PNG" src="../img/deep-learning/DataAug0.PNG" /></p>
+<h3 id="1-embed-real-data">1. Embed Real Data</h3>
+<p>First, the real shape data (i.e., PDM) is embedded into a lower-dimensional subspace. This is done by creating a matrix that contains all of the real examples, then reducing the dimension via Principal Component Analysis (PCA).</p>
+<p><img alt="DataAug1.PNG" src="../img/deep-learning/DataAug1.PNG" /></p>
+<h3 id="2-fit-a-parametric-distribution">2. Fit a Parametric Distribution</h3>
+<p>Next, a parametric distribution that can be sampled from is fit to the shape examples embedded in the low-dimension subspace.</p>
+<p><img alt="DataAug2.PNG" src="../img/deep-learning/DataAug2.PNG" /></p>
+<h3 id="3-sample-from-the-distribution">3. Sample from the Distribution</h3>
+<p>Shape samples are randomly drawn from this distribution, and the closest real shape example to each sample is saved.</p>
+<p><img alt="DataAug3.PNG" src="../img/deep-learning/DataAug3.PNG" /></p>
+<h3 id="4-project-samples">4. Project Samples</h3>
+<p>The embedded shape samples are then projected back to shape space, providing new generated shape/correspondence examples.</p>
+<p><img alt="DataAug4.PNG" src="../img/deep-learning/DataAug4.PNG" /></p>
+<h3 id="5-complete-sample-generation">5. Complete Sample Generation</h3>
+<p>The closest real shape example to each generated shape sample is then used to generate the image corresponding to the fabricated shape sample, giving the full pair of generated samples. This is done by finding the warp between the closest real correspondence points and the generated correspondence points, then applying that warp to the corresponding image of the closest real example. This provides us with an image with the intensity profile of the real example but the shape of the generated sample. </p>
+<p><img alt="DataAug5.PNG" src="../img/deep-learning/DataAug5.PNG" /></p>
+<h2 id="sampling-distributions">Sampling Distributions</h2>
+<p>The <code>sampler_type</code> parameter determines which type of distribution to fit to the embedded data. The options are <code>Gaussian</code> (a single multivariate Gaussian distribution), <code>mixture</code> (a mixture of Gaussian distributions) or <code>KDE</code> (kernel density estimate).</p>
+<h3 id="multivariate-gaussian-distribution">Multivariate Gaussian Distribution</h3>
+<p>To fit a multivariate Gaussian distribution (which can be seen in Step 2 of <a href="#data-augmentation-steps">Data Augmentation Steps</a>), the probability density function is parameterized by the mean and the covariance matrix of the embedded data matrix. New samples are then randomly sampled for this normal distribution. The closest real example to each sampled point is found by calculating the Mahalanobis distance within the embedded space. </p>
+<h3 id="mixture-of-multivariate-gaussians-distribution">Mixture of Multivariate Gaussians Distribution</h3>
+<p>A Gaussian mixture model can provide a more appropriate probability density function when the embedded data distribution is mutli-modal. To fit a mixture model, first we cluster the embedded samples and select the optimal number of clusters by minimizing Akaike information criterion (AIC) and Bayesian information criterion (BIC). This number determines how many Gaussian distributions (or components) should be used. Next, the expectation-maximization (EM) algorithm is used to fit a mixture-of-Gaussian model with this number of components. This distribution can then be randomly sampled from, and the closest real example is chosen using Mahalanobis distance within the embedded space.  </p>
+<p><img alt="mixture.png" src="../img/deep-learning/mixture.png" /></p>
+<h3 id="kernel-density-estimate-distribution">Kernel Density Estimate Distribution</h3>
+<p>Kernel density estimate (KDE) is a non-parametric way of estimating the probability density function of the embedded data. It is fit by defining a Gaussian ball around each real data point in the embedded space, the combination of which provides the distribution. The kernel bandwidth or variance of the Gaussian balls is computed as the average distance to the nearest neighbor computed using the Mahalanobis distance within the embedded space.  </p>
+<p>To sample from the KDE distribution, a real example is randomly selected, then a point is randomly sampled from its kernel. The selected real example is also returned to use its corresponding image to generate the augmented image-shape pair.</p>
+<p><img alt="KDE.png" src="../img/deep-learning/KDE.png" /></p>
+<div class="admonition note">
+<p class="admonition-title">Relevant papers</p>
+<ul>
+<li>Jadie Adams, Riddhish Bhalodia, Shireen Elhabian. Uncertain-DeepSSM: From Images to Probabilistic Shape Models. In MICCAI-ShapeMI, Springer, Cham, 2020.</li>
+<li>Riddhish Bhalodia, Shireen Elhabian, Ladislav Kavan, and Ross Whitaker. DeepSSM: a deep learning framework for statistical shape modeling from raw images. In MICCAI-ShapeMI, pp. 244-257. Springer, Cham, 2018.</li>
+<li>Riddhish Bhalodia, Anupama Goparaju, Tim Sodergren, Alan Morris, Evgueni Kholmovski, Nassir Marrouche, Joshua Cates, Ross Whitaker, Shireen Elhabian. Deep Learning for End-to-End Atrial Fibrillation Recurrence Estimation. Computing in Cardiology (CinC), 2018.</li>
+</ul>
+</div>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="deep-ssm.html" class="btn btn-neutral float-right" title="SSMs Directly from Images">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../new/ssm-eval.html" class="btn btn-neutral" title="Shape Model Evaluation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright © 1998 - 2020 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/SCIInstitute/ShapeWorks/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="../new/ssm-eval.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="deep-ssm.html" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../assets/mathjaxhelper.js" defer></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

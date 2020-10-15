@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Shireen Elhabian et al.">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/use-cases/left-atrium.html">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Left Atrium: SSM from Segmentations - ShapeWorks</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../css/custom.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Left Atrium: SSM from Segmentations";
+    var mkdocs_page_input_path = "use-cases/left-atrium.md";
+    var mkdocs_page_url = "/software/shapeworks.html/use-cases/left-atrium.html";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/python.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-36723568-3', 'mkdocs.org');
+      ga('send', 'pageview');
+  </script>
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> ShapeWorks</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Getting Started</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/shapes.html">Shapes, What & From Where?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/workflow.html">Shape Modeling Workflow</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/sw-stories.html">ShapeWorks Success Stories</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/interfaces.html">ShapeWorks Interfaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/examples.html">Examples</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/how-tos.html">How-Tos</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Users</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/install.html">How to Install ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/citation.html">How to Cite ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/papers.html">Revelant Papers</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Workflow</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/groom.html">How to Groom Your Dataset?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/optimize.html">How to Optimize Your Shape Model?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/analyze.html">How to Analyze Your Shape Model?</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">What is New?</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/new-studio.html">New in ShapeWorksStudio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/sw-meshes.html">ShapeWorks Directly on Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/shapeworks-api.html">ShapeWorks API</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/ssm-eval.html">Shape Model Evaluation</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../deep-learning/deep-ssm.html">SSMs Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Use Cases</span></p>
+                <ul class="current">
+                    <li class="toctree-l1"><a class="reference internal" href="use-cases.html">Getting Started with Use Cases</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid.html">Ellipsoid: Basic Example</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="ellipsoid-cutting-planes.html">Ellipsoid: Cutting Planes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="fixed-domain-ellipsoid.html">Fixed Domains: SSM on New Shapes</a>
+                    </li>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="left-atrium.html">Left Atrium: SSM from Segmentations</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#what-and-where-is-the-use-case">What and Where is the Use Case?</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#running-the-use-case">Running the Use Case</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#grooming-data">Grooming Data</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#optimizing-shape-model">Optimizing Shape Model</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#single-scale-optimization">Single-Scale Optimization</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#multi-scale-optimization">Multi-Scale Optimization</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#analyzing-shape-model">Analyzing Shape Model</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#single-scale-optimization_1">Single-Scale Optimization</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#multi-scale-optimization_1">Multi-Scale Optimization</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="femur.html">Femur: SSM from Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="femur-cutting-planes.html">Femur with Cutting Planes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="femur-mesh.html">Femur Mesh: SSM directly from meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="lumps.html">Lumps: SSM directly from meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Developers</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/build.html">How to Build ShapeWorks from Source?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/contribute.html">How to Contribute to ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/commands.html">How to Add ShapeWorks Commands?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/python-apis.html">How to Add Python APIs?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/tests.html">How to Add and Run Unit Tests?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/new-use-case.html">How to Add New Use Cases?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/datasets.html">How to Add New Datasets?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/modify-datasets.html">When Modifying Existing Datasets</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/docs.html">Getting Started with Documentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/gh-actions.html">Getting Started with GitHub Actions</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/markdown.html">Getting Started with Markdown</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/paths.html">Adding to PATH Environment Variable</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/team.html">Meet ShapeWorkers!</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/release-notes.html">Release Notes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/license.html">License</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/contact.html">Contact Us</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">ShapeWorks</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Use Cases &raquo;</li>
+        
+      
+    
+    <li>Left Atrium: SSM from Segmentations</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/use-cases/left-atrium.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="left-atrium-shape-model-from-segmentations">Left Atrium: Shape Model from Segmentations</h1>
+<h2 id="what-and-where-is-the-use-case">What and Where is the Use Case?</h2>
+<p>This use case demonstrates using ShapeWorks tools to perform the following.</p>
+<ul>
+<li>Build a shape model where shapes are given as binary segmentations</li>
+<li>Groom a dataset that contains both shapes (segmentations) and their corresponding imaging data (e.g., MRI)</li>
+<li>Showcase both single-scale and multi-scale optimization for particles optimization</li>
+</ul>
+<p>For this use case, we have 58 MRI images and their corresponding binary segmentations of the left atrium (visit <a href="https://www.insight-journal.org/midas/collection/view/197">MIDAS-NAMIC</a> for more details of the left atrium dataset).</p>
+<p>The use case is located at: <code>Examples/Python/left_atrium.py</code></p>
+<h2 id="running-the-use-case">Running the Use Case</h2>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Minimum of 32GB of RAM required to run the full use case.</p>
+</div>
+<p>To run the use case, run <code>RunUseCase.py</code> (in <code>Examples/Python/</code>) with proper tags. The tags control the type of input data and the optimization method. See <a href="use-cases.html#running-use-case">Getting Started with Use Cases</a> for the full list of tags.</p>
+<ul>
+<li><code>--start_with_image_and_segmentation_data</code>: to groom both raw images and segmentations using the segmentations to find the grooming parameters (e.g., bounding box, reference shape for alignment). The default is grooming only segmentations</li>
+<li><code>--use_single_scale</code>: to use the single-scale optimization. Default is multi-scale optimization</li>
+<li><code>--start_with_prepped_data</code>: to run the optimization on previously processed/groomed data</li>
+</ul>
+<p>To run the full pipeline with multi-scale:</p>
+<div class="highlight"><pre><span></span><code>$ cd /path/to/shapeworks/Examples/Python
+$python RunUseCase.py --use_case left_atrium 
+</code></pre></div>
+<p>This calls <code>left_atrium.py</code> (in <code>Examples/Python/</code>) to perform the following.</p>
+<ul>
+<li>Loads the left atrium dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the <a href="http://cibc1.sci.utah.edu:8080/">ShapeWorks Data Portal</a>.</li>
+<li>Grooms the images and segmentations by calling data preprocessing functions in <code>GroomUtils.py</code> (in <code>Examples/Python/</code>). See <a href="#grooming-data">Grooming Data</a> for details about these preprocessing steps.</li>
+<li>Optimizes particle distribution (i.e., the shape/correspondence model) by calling optimization functions in <code>OptimizeUtils.py</code> (in <code>Examples/Python/</code>). See <a href="#optimizing-shape-model">Optimizing Shape Model</a> for details about algorithmic parameters for optimizing the shape model.</li>
+<li>Launches ShapeWorksStudio to visualize the use case results (i.e., optimized shape model and the groomed data) by calling functions in <code>AnalyzeUtils.py</code> (in <code>Examples/Python/</code>).</li>
+</ul>
+<p>If you wish to start with the optimization step using a previously groomed data, add <code>--start_with_prepped_data</code> tag.</p>
+<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case left_atrium --start_with_prepped_data
+</code></pre></div>
+<h2 id="grooming-data">Grooming Data</h2>
+<p>The grooming stage entails rigid transformations to align samples for groupwise modeling and analysis. It also changes the origin, voxel size, image size, orientation, etc. of the shape data. Imaging data (CT/MRI) soon becomes out of alignment and cannot be tied to the resulting shape models. Although we do not need the raw images for the shape model optimization, carrying over images. However, the grooming stage enables streamlined construction of a correspondence model of surface geometry that simultaneously map imaging data and physical properties (e.g., functional measurements, cortical thickness, cartilage thickness, etc.) to each correspondence point. </p>
+<p>ShapeWorks image-based grooming tools and associated python scripts are developed to carry volumetric data through each grooming step with the shapes (meshes or segmentations) to be used for subsequent analysis visualization. In each step of grooming, we use the segmentation files to find the grooming parameters such as finding the reference shape for alignment or the bounding box for cropping. We save them in a TXT file and use the same set of parameters to groom the raw images. </p>
+<p>The following preprocessing steps are only performed when you start with <em>unprepped</em> data, i.e., the tag <code>--start_with_prepped_data</code> is not used. For a description of the grooming tools and parameters, see: <a href="../workflow/groom.html">How to Groom Your Dataset?</a>.</p>
+<ol>
+<li><strong>Isotropic Resampling</strong>: Both binary segmentations in <code>left_atrium/segmentations/</code> and their corresponding images in <code>left_atrium/images/</code> are resampled to have an isotropic voxel spacing using a user-defined spacing. This step could also be used to produce images and segmentations with smaller voxel spacing, and thereby reduce aliasing artifacts (i.e., staircase/jagged surface) due to binarization for segmentations.</li>
+<li><strong>Apply Padding</strong>: Segmentations that touch the image boundary will have an artificial hole at that intersection. Segmentations and images are padded by adding a user-defined number of voxels along each image direction (rows, cols, and slices) to avoid introducing artificial holes.</li>
+<li><strong>Center-of-Mass Alignment</strong>: This translational alignment step is performed before rigidly aligning the samples to a shape reference. This factors out translations to reduce the risk of misalignment and allow for a medoid sample to be automatically selected as the reference for rigid alignment.</li>
+<li><strong>Reference Selection</strong>: The reference is selected by first computing the mean (average) distance transform of the segmentations, then selecting the sample closest to that mean (i.e., medoid).</li>
+<li><strong>Rigid Alignment</strong>: All of the segmentations and images are then aligned to the selected reference using rigid alignment, which factors out the rotation and remaining translation. The alignment parameters are computed based on aligning segmentations and then applied to their corresponding images.</li>
+<li><strong>Cropping</strong>: The images and segmentations are cropped so that all of the samples are within the same bounding box. The bounding box parameters are computed based on the biggest bounding box that encapsulate all the segmentations of the given dataset.</li>
+<li><strong>Distance Transform</strong>: Finally, the signed distance transform is computed, and the dataset is now ready for the optimize phase.</li>
+</ol>
+<p><img alt="left Atrium Groom" src="../img/use-cases/leftatrium_groom.png" /></p>
+<p>At the end of the grooming stage, both segmentations, which are turned into distance transforms, and corresponding images data, are groomed and ready for the optimize stage.</p>
+<h2 id="optimizing-shape-model">Optimizing Shape Model</h2>
+<p>For a description of the optimize tool and its algorithmic parameters, see: <a href="../workflow/optimize.html">How to Optimize Your Shape Model</a>. </p>
+<p>The shape model can be optimized using either a single-scale or a multi-scale optimization. In both cases, particles on each shape sample are initialized using the particle splitting strategy starting from a single particle (or a given set of landmarks) until reaching the required number of particles (or the largest power of two number of particles that is closest to the required number of particles). The optimized particles at each scale are used to initialize the next scale. At each scale, particles undergo <em>initialization</em> and <em>optimization</em> stages. </p>
+<p>The multi-scale triggers both the initialization and optimization stages. The single-scale mode, on the other hand, uses the initialization stage at each scale and runs the optimization stage when the required number of particles is reached (i.e., at the last scale). The default mode is multi-scale; to run the single-scale optimization, use the <code>--use_single_scale</code> tag.</p>
+<p>The differences between <em>initialization</em> and <em>optimization</em> stages are: </p>
+<ul>
+<li>
+<p>How important the correspondence (inter-surface) objective is compared to the surface sampling (intra-surface) term using a relative weighting parameter. Hence, the  <code>initial_relative_weighting</code> parameter is the weight used in the initialization stage, and the <code>relative_weighting</code> is the weight used for the optimization stage.</p>
+</li>
+<li>
+<p>How the notion of correspondence (inter-surface) is quantified. In initialization, especially when we do not have enough particles to describe the geometry of each surface, we use mean energy (i.e., pushing all shapes in the shape space to the mean shape or, in other words, the covariance matrix is assumed to be identity). In optimization, we use the entropy of the distribution of the shapes (assuming Gaussian-distributed shapes), which is quantified based on the covariance matrix. In the multi-scale setting, we have the option to use shape statistics at later scales using the <code>use_shape_statistics_after</code> parameter, where we have more particles that can reveal the covariance structure.</p>
+</li>
+</ul>
+<h3 id="single-scale-optimization">Single-Scale Optimization</h3>
+<p>Below are the default optimization parameters when running this use case using the <code>--use_single_scale</code> tag.</p>
+<div class="highlight"><pre><span></span><code>$python RunUseCase.py --use_case left_atrium --use_single_scale
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>    &quot;number_of_particles&quot; : 512, 
+    &quot;use_normals&quot;: 0,
+    &quot;normal_weight&quot;: 10.0,
+    &quot;checkpointing_interval&quot; : 200,
+    &quot;keep_checkpoints&quot; : 0,
+    &quot;iterations_per_split&quot; : 4000,
+    &quot;optimization_iterations&quot; : 4000,
+    &quot;starting_regularization&quot; : 1000,
+    &quot;ending_regularization&quot; : 10,
+    &quot;recompute_regularization_interval&quot; : 2,
+    &quot;domains_per_shape&quot; : 1,
+    &quot;relative_weighting&quot; : 10,
+    &quot;initial_relative_weighting&quot; : 0.1,
+    &quot;procrustes_interval&quot; : 1,
+    &quot;procrustes_scaling&quot; : 1,
+    &quot;save_init_splits&quot; : 0,
+    &quot;verbosity&quot; : 3
+</code></pre></div>
+<h3 id="multi-scale-optimization">Multi-Scale Optimization</h3>
+<p>This use case can be run using the multi-scale optimization without the <code>--use_single_scale</code> tag as follows.</p>
+<p><div class="highlight"><pre><span></span><code>$python RunUseCase.py --use_case left_atrium 
+</code></pre></div>
+The <code>use_shape_statistics_after</code> parameter is used to trigger the multi-scale optimization mode.</p>
+<div class="highlight"><pre><span></span><code>        &quot;use_shape_statistics_after&quot;: 128
+</code></pre></div>
+<h2 id="analyzing-shape-model">Analyzing Shape Model</h2>
+<p>ShapeWorksStudio visualizes/analyzes the optimized particle-based shape model by visualizing the mean shape, individual shape samples, and the shape modes of variations. For more information, see: <a href="../workflow/analyze.html">How to Analyze Your Shape Model?</a>.            </p>
+<h3 id="single-scale-optimization_1">Single-Scale Optimization</h3>
+<p>Here is the mean shape of the optimized shape mode using single-scale optimization.
+<img alt="left Atrium singleScale" src="../img/use-cases/leftatrium_singlescale.png" /></p>
+<p>Here is a video showing the shape modes of variation (computed using principal component analysis - PCA) of the left atrium dataset using single-scale optimization.</p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/leftatrium_singlescale_pca.mp4" autoplay muted loop controls style="width:100%"></p>
+
+<h3 id="multi-scale-optimization_1">Multi-Scale Optimization</h3>
+<p>Here is the mean shape of the optimized shape mode using multi-scale optimization.</p>
+<p><img alt="left Atrium Multi-scale" src="../img/use-cases/leftatrium_multiscale.png" /></p>
+<p>Here is a video showing the shape modes of variation (computed using principal component analysis - PCA) of the left atrium dataset using multi-scale optimization.</p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/leftatrium_multiscale_pca.mp4" autoplay muted loop controls style="width:100%"></p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="femur.html" class="btn btn-neutral float-right" title="Femur: SSM from Meshes">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="fixed-domain-ellipsoid.html" class="btn btn-neutral" title="Fixed Domains: SSM on New Shapes"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright © 1998 - 2020 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/SCIInstitute/ShapeWorks/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="fixed-domain-ellipsoid.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="femur.html" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../assets/mathjaxhelper.js" defer></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

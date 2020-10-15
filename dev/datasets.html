@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Shireen Elhabian et al.">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/dev/datasets.html">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>How to Add New Datasets? - ShapeWorks</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../css/custom.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "How to Add New Datasets?";
+    var mkdocs_page_input_path = "dev/datasets.md";
+    var mkdocs_page_url = "/software/shapeworks.html/dev/datasets.html";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/python.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-36723568-3', 'mkdocs.org');
+      ga('send', 'pageview');
+  </script>
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> ShapeWorks</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Getting Started</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/shapes.html">Shapes, What & From Where?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/workflow.html">Shape Modeling Workflow</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/sw-stories.html">ShapeWorks Success Stories</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/interfaces.html">ShapeWorks Interfaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/examples.html">Examples</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/how-tos.html">How-Tos</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Users</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/install.html">How to Install ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/citation.html">How to Cite ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/papers.html">Revelant Papers</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Workflow</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/groom.html">How to Groom Your Dataset?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/optimize.html">How to Optimize Your Shape Model?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/analyze.html">How to Analyze Your Shape Model?</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">What is New?</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/new-studio.html">New in ShapeWorksStudio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/sw-meshes.html">ShapeWorks Directly on Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/shapeworks-api.html">ShapeWorks API</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/ssm-eval.html">Shape Model Evaluation</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../deep-learning/deep-ssm.html">SSMs Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Use Cases</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/use-cases.html">Getting Started with Use Cases</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid.html">Ellipsoid: Basic Example</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-cutting-planes.html">Ellipsoid: Cutting Planes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/fixed-domain-ellipsoid.html">Fixed Domains: SSM on New Shapes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/left-atrium.html">Left Atrium: SSM from Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/femur.html">Femur: SSM from Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/femur-cutting-planes.html">Femur with Cutting Planes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/femur-mesh.html">Femur Mesh: SSM directly from meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/lumps.html">Lumps: SSM directly from meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Developers</span></p>
+                <ul class="current">
+                    <li class="toctree-l1"><a class="reference internal" href="build.html">How to Build ShapeWorks from Source?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="contribute.html">How to Contribute to ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="commands.html">How to Add ShapeWorks Commands?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="python-apis.html">How to Add Python APIs?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="tests.html">How to Add and Run Unit Tests?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="new-use-case.html">How to Add New Use Cases?</a>
+                    </li>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="datasets.html">How to Add New Datasets?</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#dataset-requirements">Dataset Requirements</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#images">images/</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#segmentations">segmentations/</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#meshes">meshes/</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#landmarks">landmarks/</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#distance_transforms">distance_transforms/</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#shape_models">shape_models/</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#uploading-a-dataset">Uploading a Dataset</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#datasets-api">Datasets API</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#datasetutilsdownloaddatasetdatasetname-destinationpath-aszip-true-filelist-none">DatasetUtils.downloadDataset(datasetName, destinationPath='.', asZip = True, fileList = None)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#datasetutilsuploadnewdatasetdatasetname-datasetpath">DatasetUtils.uploadNewDataset(datasetName, datasetPath)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#datasetutilsgetdatasetlist">DatasetUtils.getDatasetList()</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#datasetutilsgetfilelistdatasetname">DatasetUtils.getFileList(datasetName)</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="modify-datasets.html">When Modifying Existing Datasets</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="docs.html">Getting Started with Documentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="gh-actions.html">Getting Started with GitHub Actions</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="markdown.html">Getting Started with Markdown</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="paths.html">Adding to PATH Environment Variable</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/team.html">Meet ShapeWorkers!</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/release-notes.html">Release Notes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/license.html">License</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/contact.html">Contact Us</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">ShapeWorks</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>For Developers &raquo;</li>
+        
+      
+    
+    <li>How to Add New Datasets?</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/dev/datasets.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="how-to-add-new-datasets">How to Add New Datasets?</h1>
+<p><a href="http://cibc1.sci.utah.edu:8080/">ShapeWorks Data Portal</a></p>
+<h2 id="dataset-requirements">Dataset Requirements</h2>
+<p>Each dataset must have a <strong>License.txt</strong>, which describes the terms of use and citation requirements for the data.<br />
+You can see an example in the Left Atrium dataset <a href="http://cibc1.sci.utah.edu:8080/#item/5e5600298886bab730d72cf5">License</a>.</p>
+<p>Data should be organized into appropriately named directories: <strong>images</strong>, <strong>segmentations</strong>, <strong>meshes</strong>, <strong>landmarks</strong>, <strong>distance_transforms</strong>, <strong>shape_models</strong>.  </p>
+<p><em>Note that each dataset will likely only have a subset of these directories. For example, the ellipsoid dataset only has a segmentations directory.</em>  </p>
+<h3 id="images">images/</h3>
+<p>contents: 3D images of the data<br />
+file types: <a href="https://insightsoftwareconsortium.github.io/itk-js/docs/image_formats.html">itk supported image formats</a>  </p>
+<h3 id="segmentations">segmentations/</h3>
+<p>contents: 3D segmentations of the data<br />
+file types: <a href="https://insightsoftwareconsortium.github.io/itk-js/docs/image_formats.html">itk supported image formats</a>  </p>
+<h3 id="meshes">meshes/</h3>
+<p>contents: meshes<br />
+file types: ply, vtk, stl  </p>
+<h3 id="landmarks">landmarks/</h3>
+<p>contents: sample specific files containing anatomical landmarks noted by the user<br />
+file types: csv with 4 columns: <em>x</em>, <em>y</em>, <em>z</em>, <em>label</em>  </p>
+<h3 id="distance_transforms">distance_transforms/</h3>
+<p>contents: 3D distance transform volumes<br />
+file types: <a href="https://insightsoftwareconsortium.github.io/itk-js/docs/image_formats.html">itk supported image formats</a>  </p>
+<h3 id="shape_models">shape_models/</h3>
+<p>contents: example shape models and parameters used to generate them<br />
+file types: xml  </p>
+<p>One subfolder per model stores all of the particles files<br />
+For example:<br />
+- shape_models/
+  - example_64.xml
+  - example_64/
+    - *.particles</p>
+<h2 id="uploading-a-dataset">Uploading a Dataset</h2>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Uploaded datasets are only restricted to ShapeWorks developers.</p>
+</div>
+<ol>
+<li>Create an account on the <a href="http://cibc1.sci.utah.edu:8080/#?dialog=register">ShapeWorks Data Portal</a></li>
+<li>Ask Oleks to add you to the list of developers. (oleks@sci.utah.edu)</li>
+<li>Prepare dataset directory with License.txt</li>
+<li>Use <code>DatasetUtils.uploadNewDataset(datasetName, datasetPath)</code> to upload.</li>
+<li>Name the dataset all lowercase with underscores separating words. For example: 'ellipsoid', 'ellipsoid_fd', 'left_atrium', 'femur'</li>
+</ol>
+<p>Example file structure:
+- TestFolder/
+  - dataset_name/
+    - License.txt
+    - images/
+    - segmentations/
+    - meshes/
+    - landmarks/
+    - distance_transforms/
+    - shape_models/</p>
+<p>Example python upload usage:
+<div class="highlight"><pre><span></span><code>import DatasetUtils
+DatasetUtils.uploadNewDataset(&#39;dataset_name&#39;, &#39;TestFolder/dataset_name/&#39;)
+</code></pre></div></p>
+<p>When calling <code>DatasetUtils.downloadDataset('dataset_name')</code>, you will get a zip file with the following structure:<br />
+- dataset_name.zip
+  - dataset_name/
+    - License.txt
+    - images/
+    - segmentations/
+    - meshes/
+    - landmarks/
+    - distance_transforms/
+    - shape_models/</p>
+<h2 id="datasets-api">Datasets API</h2>
+<h3 id="datasetutilsdownloaddatasetdatasetname-destinationpath-aszip-true-filelist-none">DatasetUtils.downloadDataset(datasetName, destinationPath='.', asZip = True, fileList = None)</h3>
+<ul>
+<li>Parameters:   </li>
+<li><strong>datasetName</strong> is one of the names returned by <code>DatasetUtils.getDatasetList()</code>  </li>
+<li><strong>destinationPath</strong> is where the zip file or folder will go once it is downloaded  </li>
+<li><strong>asZip</strong> toggles whether to download as zip or download individual files. (providing a fileList disables this functionality)   </li>
+<li><strong>fileList</strong> is a list of files to download. Example for femur: <code>['images/m03_1x_hip.nrrd', 'distance_transforms/m03_L_femur.ply']</code>   </li>
+<li>Returns: True on success and False on failure  </li>
+</ul>
+<h3 id="datasetutilsuploadnewdatasetdatasetname-datasetpath">DatasetUtils.uploadNewDataset(datasetName, datasetPath)</h3>
+<ul>
+<li>Parameters:   </li>
+<li><strong>datasetName</strong> is the name the dataset will have on the data portal </li>
+<li><strong>datasetPath</strong> is the path to the root folder of the dataset on the local file system  </li>
+<li>Returns: True on success and False on failure  </li>
+</ul>
+<h3 id="datasetutilsgetdatasetlist">DatasetUtils.getDatasetList()</h3>
+<ul>
+<li>Returns: a list of all existing datasets on the data portal  </li>
+</ul>
+<h3 id="datasetutilsgetfilelistdatasetname">DatasetUtils.getFileList(datasetName)</h3>
+<ul>
+<li>Parameters:  </li>
+<li><strong>datasetName</strong> is one of the names returned by <code>DatasetUtils.getDatasetList()</code>  </li>
+<li>Returns: a list of all files in the specified dataset on the data portal  </li>
+</ul>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="modify-datasets.html" class="btn btn-neutral float-right" title="When Modifying Existing Datasets">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="new-use-case.html" class="btn btn-neutral" title="How to Add New Use Cases?"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright © 1998 - 2020 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/SCIInstitute/ShapeWorks/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="new-use-case.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="modify-datasets.html" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../assets/mathjaxhelper.js" defer></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

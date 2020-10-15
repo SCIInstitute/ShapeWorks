@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Shireen Elhabian et al.">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/dev/contribute.html">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>How to Contribute to ShapeWorks? - ShapeWorks</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../css/custom.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "How to Contribute to ShapeWorks?";
+    var mkdocs_page_input_path = "dev/contribute.md";
+    var mkdocs_page_url = "/software/shapeworks.html/dev/contribute.html";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/python.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-36723568-3', 'mkdocs.org');
+      ga('send', 'pageview');
+  </script>
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> ShapeWorks</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Getting Started</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/shapes.html">Shapes, What & From Where?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/workflow.html">Shape Modeling Workflow</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/sw-stories.html">ShapeWorks Success Stories</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/interfaces.html">ShapeWorks Interfaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/examples.html">Examples</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/how-tos.html">How-Tos</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Users</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/install.html">How to Install ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/citation.html">How to Cite ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/papers.html">Revelant Papers</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Workflow</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/groom.html">How to Groom Your Dataset?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/optimize.html">How to Optimize Your Shape Model?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/analyze.html">How to Analyze Your Shape Model?</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">What is New?</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/new-studio.html">New in ShapeWorksStudio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/sw-meshes.html">ShapeWorks Directly on Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/shapeworks-api.html">ShapeWorks API</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/ssm-eval.html">Shape Model Evaluation</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../deep-learning/deep-ssm.html">SSMs Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Use Cases</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/use-cases.html">Getting Started with Use Cases</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid.html">Ellipsoid: Basic Example</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-cutting-planes.html">Ellipsoid: Cutting Planes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/fixed-domain-ellipsoid.html">Fixed Domains: SSM on New Shapes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/left-atrium.html">Left Atrium: SSM from Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/femur.html">Femur: SSM from Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/femur-cutting-planes.html">Femur with Cutting Planes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/femur-mesh.html">Femur Mesh: SSM directly from meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/lumps.html">Lumps: SSM directly from meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Developers</span></p>
+                <ul class="current">
+                    <li class="toctree-l1"><a class="reference internal" href="build.html">How to Build ShapeWorks from Source?</a>
+                    </li>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="contribute.html">How to Contribute to ShapeWorks?</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#source-and-branches">Source and Branches</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#commits">Commits</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#logs-and-diffs">Logs and diffs</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tags">Tags</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#advanced">Advanced</a>
+    </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="commands.html">How to Add ShapeWorks Commands?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="python-apis.html">How to Add Python APIs?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="tests.html">How to Add and Run Unit Tests?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="new-use-case.html">How to Add New Use Cases?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="datasets.html">How to Add New Datasets?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="modify-datasets.html">When Modifying Existing Datasets</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="docs.html">Getting Started with Documentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="gh-actions.html">Getting Started with GitHub Actions</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="markdown.html">Getting Started with Markdown</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="paths.html">Adding to PATH Environment Variable</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/team.html">Meet ShapeWorkers!</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/release-notes.html">Release Notes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/license.html">License</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/contact.html">Contact Us</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">ShapeWorks</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>For Developers &raquo;</li>
+        
+      
+    
+    <li>How to Contribute to ShapeWorks?</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/dev/contribute.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="how-to-contribute-to-shapeworks">How to Contribute to ShapeWorks?</h1>
+<!--## Source Management using Git
+-->
+
+<p>ShapeWorks uses <code>git</code> for managing source code so changes can be integrated from multiple people. Here are some of the basics to check out the repository, make and share modifications, and keep track of all your changes along the way.
+The ShapeWorks repositories are stored on <a href="https://github.com/SCIInstitute/ShapeWorks">GitHub</a>. </p>
+<div class="admonition imporant">
+<p class="admonition-title">Imporant</p>
+<p>If you want to contribute, first <em>make sure you have a developer account</em>.  </p>
+</div>
+<h2 id="source-and-branches">Source and Branches</h2>
+<p>To clone the ShapeWorks source, use one of the following commands:<br />
+<div class="highlight"><pre><span></span><code>$ git clone https://github.com/SCIInstitute/ShapeWorks
+</code></pre></div></p>
+<p>To avoid having to type your password every time you refresh your source code, you can copy your public ssh key (found in ~/.ssh/id_rsa.pub) and <a href="https://github.com/settings/keys">add it to your GitHub account</a>. Now you can use this version to clone the code: 
+<div class="highlight"><pre><span></span><code>$ git clone git@github.com:sciinstitute/ShapeWorks
+</code></pre></div>
+If you've already cloned your code, simply change the <code>[remote "origin"]</code> in .git/config to <code>url = git@github.com:SCIInstitute/ShapeWorks</code>. All git commands remain the same.</p>
+<p><em>Now that you've cloned the source you can <a href="build.html">build ShapeWorks</a> from source if you want.</em></p>
+<p>View current state (branch and modifications, both staged and unstaged):<br />
+<div class="highlight"><pre><span></span><code>$ git status
+</code></pre></div></p>
+<p>View all branches:<br />
+<div class="highlight"><pre><span></span><code>$ git branch -a
+</code></pre></div></p>
+<p>Checkout a branch (or a tag or a specific commit):<br />
+<div class="highlight"><pre><span></span><code>$ git checkout &lt;branchname&gt;
+</code></pre></div></p>
+<p>Fetch changes for a specific branch from GitHub:<br />
+<div class="highlight"><pre><span></span><code>$ git fetch origin &lt;branchname&gt;
+</code></pre></div></p>
+<p>Fetch changes for all branches from GitHub:<br />
+<div class="highlight"><pre><span></span><code>$ git fetch --all
+</code></pre></div></p>
+<p>Merge the fetched changes to your current branch:<br />
+<div class="highlight"><pre><span></span><code>$ git merge origin/&lt;branchname&gt;
+</code></pre></div>
+For example, use this command to merge the latest master to your current branch. After that, you can test as necessary, then push your branch and make a pull request when it's ready:
+<code>git merge origin/master</code></p>
+<p>Shortcut to both fetch and merge upstream changes to the current branch:<br />
+<div class="highlight"><pre><span></span><code>$ git pull
+</code></pre></div></p>
+<p>Push a branch to GitHub:<br />
+<div class="highlight"><pre><span></span><code>$ git push origin &lt;branchname&gt;
+</code></pre></div></p>
+<p>Delete a branch (e.g., after a pull request has been completed and merged ):<br />
+<div class="highlight"><pre><span></span><code>$ git branch -d &lt;branchname&gt;
+</code></pre></div></p>
+<p><em>Force</em> delete a branch whether or not it's been merged:<br />
+<div class="highlight"><pre><span></span><code>$ git branch -D &lt;branchname&gt;
+</code></pre></div></p>
+<p>Prune old branches that have been removed from GitHub (--dry-run will show you what will be pruned):<br />
+<div class="highlight"><pre><span></span><code>$ git remote prune origin [--dry-run]
+</code></pre></div></p>
+<h2 id="commits">Commits</h2>
+<p>Check the current status of your changes scheduled to be committed using:<br />
+<div class="highlight"><pre><span></span><code>$ git status
+</code></pre></div></p>
+<p>To commit your current changes to current <em>local</em> branch (first, use <code>git diff</code> to ensure they are correct):<br />
+<div class="highlight"><pre><span></span><code>$ git diff
+$ git commit -m &quot;description of changes&quot;
+</code></pre></div></p>
+<p>This commits only the files specifically scheduled to be committed.<br />
+If you want <em>all</em> changes to be committed, use the <code>-a</code> switch:<br />
+<div class="highlight"><pre><span></span><code>$ git commit -am &quot;description of changes&quot;
+</code></pre></div>
+If you only want to commit scheduled files and a file has been changed after being scheduled, add it again to be updated:<br />
+<div class="highlight"><pre><span></span><code>$ git add &lt;filename&gt;
+</code></pre></div></p>
+<p>To push your local changes for a given branch to GitHub, first use <code>git diff</code> to ensure they are correct, then push to origin:<br />
+<div class="highlight"><pre><span></span><code>$ git diff origin/&lt;branchname&gt; &lt;branchname&gt;
+$ git push origin &lt;branchname&gt;
+</code></pre></div></p>
+<div class="admonition danger">
+<p class="admonition-title">Never push directly to <strong>master</strong> </p>
+<p>After pushing, <a href="https://github.com/SCIInstitute/ShapeWorks/pull/new/master">submit a pull request</a> (click the "New pull request" button on the main GitHub page) for your changes to be checked and merged to the master branch.</p>
+</div>
+<h2 id="logs-and-diffs">Logs and diffs</h2>
+<p>View the diff of the most recent commit:<br />
+<div class="highlight"><pre><span></span><code>$ git diff HEAD~1
+</code></pre></div></p>
+<p>View the log of a particular file (including moves/renames):<br />
+<div class="highlight"><pre><span></span><code>$ git log --follow -- &lt;filename&gt;
+</code></pre></div></p>
+<p>View the commit history for a file showing the detailed diffs for each commit:<br />
+<div class="highlight"><pre><span></span><code>$ git log -p &lt;filename&gt;
+</code></pre></div></p>
+<p>View the commit history of a file/dir when its name is the same as a branch:<br />
+<div class="highlight"><pre><span></span><code>$ git log -- &lt;filename&gt;
+</code></pre></div></p>
+<p>View the diff between one commit and its predecessor:<br />
+<div class="highlight"><pre><span></span><code>$ git diff &lt;commit_SHA&gt;~1..&lt;commit_SHA&gt;
+</code></pre></div></p>
+<p>View only the files that changes for a given range of commits:<br />
+<div class="highlight"><pre><span></span><code>$ git diff --name-only &lt;SHA1&gt; &lt;SHA2&gt;
+</code></pre></div></p>
+<h2 id="tags">Tags</h2>
+<p>Specific versions and releases can be identified using tags. </p>
+<p>List current tags:
+<div class="highlight"><pre><span></span><code>$ git tag --list
+</code></pre></div></p>
+<p>Show details for a specific tag (<code>--quiet</code> hides the diffs):
+<div class="highlight"><pre><span></span><code>$ git show &lt;tagname&gt; --quiet
+</code></pre></div></p>
+<p>By default, checking out a tag puts your repo into a 'detached head' state. Use the following command the first time you check out a tag or a specific commit to create a local branch with that name (this happens automatically when checking out branches):<br />
+<div class="highlight"><pre><span></span><code>$ git checkout origin/&lt;tag&gt; -b &lt;tagname&gt;
+</code></pre></div></p>
+<p>Create a new tag using the following:<br />
+<div class="highlight"><pre><span></span><code>$ git tag &lt;tagname&gt;
+</code></pre></div></p>
+<p>Tags must be explicitly pushed to GitHub. Push your new tag using:<br />
+<div class="highlight"><pre><span></span><code>$ git push origin &lt;tagname&gt;
+</code></pre></div></p>
+<p>Delete a tag using:<br />
+<div class="highlight"><pre><span></span><code>$ git tag delete &lt;tagname&gt;
+$ git push origin --delete &lt;tagname&gt;
+</code></pre></div>
+The second command is only necessary if the tag has been pushed to Github.  </p>
+<h2 id="advanced">Advanced</h2>
+<p>There are many other things that can be done, such as mashing together commits, temporarily "stashing" and retrieving stashed changes, etc.
+Please add anything here that seems useful.</p>
+<p>Stash your current changes (temporarily set them aside without committing):
+<div class="highlight"><pre><span></span><code>$ git stash -m &quot;what is being stashed&quot;
+</code></pre></div></p>
+<p>Retrieve the stashed changes:
+<div class="highlight"><pre><span></span><code>$ git stash pop
+</code></pre></div></p>
+<p>Modify the description of the most recent commit:  </p>
+<div class="admonition imporant">
+<p class="admonition-title">Imporant</p>
+<p>Only use this if the commit has not yet been pushed to GitHub. </p>
+</div>
+<div class="highlight"><pre><span></span><code>$ git commit --amend
+</code></pre></div>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="commands.html" class="btn btn-neutral float-right" title="How to Add ShapeWorks Commands?">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="build.html" class="btn btn-neutral" title="How to Build ShapeWorks from Source?"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright © 1998 - 2020 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/SCIInstitute/ShapeWorks/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="build.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="commands.html" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../assets/mathjaxhelper.js" defer></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

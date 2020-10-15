@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Shireen Elhabian et al.">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/dev/build.html">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>How to Build ShapeWorks from Source? - ShapeWorks</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../css/custom.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "How to Build ShapeWorks from Source?";
+    var mkdocs_page_input_path = "dev/build.md";
+    var mkdocs_page_url = "/software/shapeworks.html/dev/build.html";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/python.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-36723568-3', 'mkdocs.org');
+      ga('send', 'pageview');
+  </script>
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> ShapeWorks</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Getting Started</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/shapes.html">Shapes, What & From Where?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/workflow.html">Shape Modeling Workflow</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/sw-stories.html">ShapeWorks Success Stories</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/interfaces.html">ShapeWorks Interfaces</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/examples.html">Examples</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../getting-started/how-tos.html">How-Tos</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Users</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/install.html">How to Install ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/citation.html">How to Cite ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../users/papers.html">Revelant Papers</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Workflow</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/groom.html">How to Groom Your Dataset?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/optimize.html">How to Optimize Your Shape Model?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../workflow/analyze.html">How to Analyze Your Shape Model?</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">What is New?</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/new-studio.html">New in ShapeWorksStudio</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/openvdb.html">ShapeWorks Takes ~85% Less Memory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/sw-meshes.html">ShapeWorks Directly on Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/shapeworks-api.html">ShapeWorks API</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/ssm-eval.html">Shape Model Evaluation</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../deep-learning/deep-ssm.html">SSMs Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Use Cases</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/use-cases.html">Getting Started with Use Cases</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid.html">Ellipsoid: Basic Example</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/ellipsoid-cutting-planes.html">Ellipsoid: Cutting Planes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/fixed-domain-ellipsoid.html">Fixed Domains: SSM on New Shapes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/left-atrium.html">Left Atrium: SSM from Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/femur.html">Femur: SSM from Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/femur-cutting-planes.html">Femur with Cutting Planes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/femur-mesh.html">Femur Mesh: SSM directly from meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/lumps.html">Lumps: SSM directly from meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/right-ventricle.html">Right Ventricle: Highly Variable Shapes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../use-cases/deep-ssm-femur.html">Femur SSM Directly from Images</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">For Developers</span></p>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="build.html">How to Build ShapeWorks from Source?</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#minimum-requirements">Minimum Requirements</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#linux">Linux</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mac">Mac</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#windows">Windows</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#clone-source">Clone source</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#install-dependencies">Install dependencies</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#linux-and-mac">Linux and Mac</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#anaconda">Anaconda</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#qt5">Qt5</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#vxl-vtk-itk-eigen-and-openvdb">VXL, VTK, ITK, Eigen and OpenVDB</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#windows_1">Windows</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#cmake">CMake</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#anaconda_1">Anaconda</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#qt5_1">Qt5</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#vxl-vtk-itk-eigen-and-openvdb_1">VXL, VTK, ITK, Eigen and OpenVDB</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#configure-and-build">Configure and Build</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#linux-mac">Linux &amp; Mac</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#options">Options</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#building">Building</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#before-running-examplespython-scripts">Before running Examples/Python scripts</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#windows_2">Windows</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#options_1">Options</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#examples_1">Examples</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="contribute.html">How to Contribute to ShapeWorks?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="commands.html">How to Add ShapeWorks Commands?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="python-apis.html">How to Add Python APIs?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="tests.html">How to Add and Run Unit Tests?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="new-use-case.html">How to Add New Use Cases?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="datasets.html">How to Add New Datasets?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="modify-datasets.html">When Modifying Existing Datasets</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="docs.html">Getting Started with Documentation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="gh-actions.html">Getting Started with GitHub Actions</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="markdown.html">Getting Started with Markdown</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="paths.html">Adding to PATH Environment Variable</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks Tools</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../tools/ShapeWorksCommands.html">ShapeWorks Commands</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/team.html">Meet ShapeWorkers!</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/release-notes.html">Release Notes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/license.html">License</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/contact.html">Contact Us</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">ShapeWorks</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>For Developers &raquo;</li>
+        
+      
+    
+    <li>How to Build ShapeWorks from Source?</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/dev/build.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="how-to-build-shapeworks-from-source">How to Build ShapeWorks from Source?</h1>
+<p>If you encounter problems, have questions, or need help, please contact <code>&lt;shapeworks-dev-support@sci.utah.edu&gt;</code>.</p>
+<h2 id="minimum-requirements">Minimum Requirements</h2>
+<h3 id="linux">Linux</h3>
+<ul>
+<li>CMake 3.11 (provided by conda below if not already installed)</li>
+<li>GCC 7.5.0</li>
+<li>Qt 5.9.8 (optional for GUI components)</li>
+</ul>
+<h3 id="mac">Mac</h3>
+<ul>
+<li>CMake 3.11 (provided by conda below if not already installed)</li>
+<li>Clang 10.0.0</li>
+<li>Qt 5.9.8 (optional for GUI components)</li>
+</ul>
+<h3 id="windows">Windows</h3>
+<!--See **[BUILD_Windows.md](BUILD_Windows.md)**-->
+
+<ul>
+<li>CMake 3.11 (provided by conda below if not already installed)</li>
+<li>MSVC 2019</li>
+<li>Qt 5.9.8 (optional for GUI components)</li>
+</ul>
+<h2 id="clone-source">Clone source</h2>
+<p>To clone the ShapeWorks source:<br />
+<div class="highlight"><pre><span></span><code>$ git clone https://github.com/SCIInstitute/ShapeWorks
+</code></pre></div>
+See <a href="contribute.html">How to Contribute?</a> for more details on git commands.  </p>
+<h2 id="install-dependencies">Install dependencies</h2>
+<h3 id="linux-and-mac">Linux and Mac</h3>
+<h4 id="anaconda">Anaconda</h4>
+<p>We use Anaconda (conda) to install many dependencies required for both building and running ShapeWorks. Conda [sub]environments do not affect a machine's global setup in any way, do not require sudo to install, and are only available at the user level when activated.</p>
+<p>To install conda and the dependencies it provides (currently requires either bash or zsh shell), run:
+<div class="highlight"><pre><span></span><code>$ source conda_installs.sh
+</code></pre></div></p>
+<p>ShapeWorks uses <em><a href="https://github.com/git-lfs/git-lfs/">git-lfs</a></em> to store image data for testing.  If git-lfs was not already installed before cloning ShapeWorks, please use the following commands to get this data:<br />
+<div class="highlight"><pre><span></span><code>$ git lfs fetch
+$ git lfs install
+$ git lfs checkout
+</code></pre></div></p>
+<div class="admonition danger">
+<p class="admonition-title">Activate shapeworks environment</p>
+<p>Each time you build or use <a href="../tools/ShapeWorksCommands.html">ShapeWorks from the command line</a>, you must first activate its environment using the <code>conda activate shapeworks</code> command on the terminal.</p>
+</div>
+<h4 id="qt5">Qt5</h4>
+<p>Download and install the latest version of <a href="https://download.qt.io/archive/qt/">Qt5</a>, selecting the LGPL (free) license (at least version 5.10 required).  </p>
+<p>After installing Qt5, add the directory containing <code>qmake.exe</code> to your PATH. See <a href="paths.html">Adding to PATH Environment Variable</a> for help with this.  </p>
+<p>Example qmake directory Linux: <code>/opt/Qt5.14.0/5.14.0/gcc_64/bin</code>  </p>
+<h4 id="vxl-vtk-itk-eigen-and-openvdb">VXL, VTK, ITK, Eigen and OpenVDB</h4>
+<p>These dependencies can be installed using the <code>build_dependencies.sh</code> script.  </p>
+<p>Use <code>$ ./build_dependencies.sh --help</code> for more details on the available options.  </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>If you get an error</strong> that looks like this:<br />
+<div class="highlight"><pre><span></span><code>which: no qmake in (...) 
+For GUI applications, please make sure at least version $QT_MIN_VER of Qt5 is installed and that its qmake is in the path.
+Download Qt5 from: https://download.qt.io/archive/qt/
+</code></pre></div></p>
+<p>Make sure you added Qt to your path as explained in the Qt5 installation step.  </p>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>If you decide to build ITK yourself and you would like to use the ShapeWorks GUI applications, <strong>ITK must be built with VTK</strong>.  </p>
+</div>
+<h3 id="windows_1">Windows</h3>
+<h4 id="cmake">CMake</h4>
+<p>Download and install <a href="https://cmake.org/">[CMake]</a><br />
+Download and install <a href="https://visualstudio.microsoft.com/">[Visual Studio 2019]</a></p>
+<h4 id="anaconda_1">Anaconda</h4>
+<p>Download and install <a href="https://www.anaconda.com/">[Anaconda]</a>. </p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>It is recommended <strong>not</strong> to add Anaconda to your PATH and <strong>not</strong> to register Anaconda as your default Python.  </p>
+</div>
+<p>Using the <em>Anaconda Prompt</em>, run <code>conda_installs.bat</code>  </p>
+<h4 id="qt5_1">Qt5</h4>
+<p>Download and install the latest version of <a href="https://download.qt.io/archive/qt/">Qt5</a>, selecting the LGPL (free) license (at least version 5.10 required).   </p>
+<p>After installing Qt5, add the directory containing <code>qmake.exe</code> to your PATH. See <a href="paths.html">Adding to PATH Environment Variable</a> for help with this.  </p>
+<p>Example qmake directory: <code>D:\Qt\5.14.0\winrt_x64_msvc2017\bin</code>  </p>
+<h4 id="vxl-vtk-itk-eigen-and-openvdb_1">VXL, VTK, ITK, Eigen and OpenVDB</h4>
+<p>These dependencies can be installed using the <code>build_dependencies.sh</code> script. Use an msys shell (e.g., git bash) to do this on Windows.  </p>
+<p>Use <code>$ ./build_dependencies.sh --help</code> for more details on the available build_dependencies options.  </p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><strong>If you get an error</strong> that says: <code>which: no qmake in (...)</code><br />
+Make sure you added Qt to your path as explained in the Qt5 installation step.</p>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>If you decide to build ITK yourself and you would like to use the ShapeWorks GUI applications, <strong>ITK must be built with VTK</strong>.  </p>
+</div>
+<h2 id="configure-and-build">Configure and Build</h2>
+<h3 id="linux-mac">Linux &amp; Mac</h3>
+<p>Make a build directory and use cmake to configure your build:<br />
+<div class="highlight"><pre><span></span><code>mkdir build
+cd build
+cmake &lt;options&gt; ..
+</code></pre></div>
+There is a CMake GUI to see and change any of the options:
+- On OSX/Linux, you can use the GUI by running <code>ccmake</code> instead of <code>cmake</code>.  </p>
+<h4 id="options">Options</h4>
+<p>If you used the <code>build_dependencies.sh</code> script above, the prefix for all dependencies is the same.
+Otherwise, the specific paths to VTK, VXL, ITK, and Eigen3 are all required.</p>
+<p>Required (if you used build_dependencies.sh):<br />
+<div class="highlight"><pre><span></span><code>  -DCMAKE_PREFIX_PATH=&lt;dependencies install path&gt;
+</code></pre></div></p>
+<p>Required (otherwise):<br />
+<div class="highlight"><pre><span></span><code>  -DVXL_DIR=&lt;vxl cmake path&gt;           (contains VXLConfig.cmake)
+  -DVTK_DIR=&lt;vtk cmake path&gt;           (contains VTKConfig.cmake)
+  -DITK_DIR=&lt;itk cmake path&gt;           (contains ITKConfig.cmake)
+  -DEigen3_DIR=&lt;eigen3 cmake path&gt;     (contains Eigen3Config.cmake)
+  -DOpenVDB_DIR=&lt;openvdb cmake path&gt;   (contains FindOpenVDB.cmake)
+</code></pre></div></p>
+<p>Optional:
+<div class="highlight"><pre><span></span><code>  -G&lt;generator&gt;                       default: Unix Makefiles (ex: -GXCode or -G&quot;Visual Studio 16 2019&quot; -Ax64)  
+  -DBuild_Studio=[OFF|ON]             default: OFF
+  -DBuild_View2=[OFF|ON]              default: OFF
+  -DBuild_Post=[OFF|ON]               default: OFF
+  -DCMAKE_INSTALL_PREFIX=&lt;path&gt;       default: ./install
+  -DCMAKE_BUILD_TYPE=[Debug|Release]  default: Release (only required is default generator is used)
+</code></pre></div>
+<i class="fa fa-info-circle"></i> See <strong>Examples</strong> below for common values of the variables.</p>
+<h4 id="building">Building</h4>
+<ul>
+<li><strong>Makefiles:</strong> <ul>
+<li><code>make -j&lt;num_procs&gt;</code> where num_procs is the number of parallel processes, say 8.  </li>
+<li>You might need to build using <code>cmake --build . -j 16</code> to pass parallel flags to dependent projects (e.g., vtk) </li>
+</ul>
+</li>
+<li><strong>XCode project:</strong> <code>open ShapeWorks.xcodeproj</code> and build from there.  </li>
+</ul>
+<h4 id="before-running-examplespython-scripts">Before running Examples/Python scripts</h4>
+<p>Add the ShapeWorks and dependency binaries to the path:<br />
+<code>$ export PATH=/path/to/shapeworks/build/bin:/path/to/dependencies/bin:$PATH</code>  </p>
+<h4 id="examples">Examples</h4>
+<p><em>OSX</em> example that builds dependencies separately, then generates an XCode project for ShapeWorks:  </p>
+<div class="highlight"><pre><span></span><code>$ ./build_dependencies.sh
+mkdir build
+cd build
+cmake -DCMAKE_PREFIX_PATH=&quot;${PWD}/../dependencies/install&quot; -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON -DUSE_OPENMP=OFF -Wno-dev -Wno-deprecated -GXcode ..
+open ShapeWorks.xcodeproj
+</code></pre></div>
+<h3 id="windows_2">Windows</h3>
+<p>Use the cmake from the Anaconda Prompt with shapeworks env activated to configure and generate project files for your preferred build system (e.g., Visual Studio 16 2019).  </p>
+<h4 id="options_1">Options</h4>
+<p>Required:<br />
+<div class="highlight"><pre><span></span><code>  -DCMAKE_PREFIX_PATH=&lt;qt cmake path&gt;  (This is different from qmake path in the Install Qt5 step
+  -DVXL_DIR=&lt;vxl cmake path&gt;           (contains VXLConfig.cmake)
+  -DVTK_DIR=&lt;vtk cmake path&gt;           (contains VTKConfig.cmake)
+  -DITK_DIR=&lt;itk cmake path&gt;           (contains ITKConfig.cmake)
+  -DEigen3_DIR=&lt;eigen cmake path&gt;      (contains Eigen3Config.cmake)
+  -DOpenVDB_DIR=&lt;openvdb cmake path&gt;   (contains FindOpenVDB.cmake)
+</code></pre></div>
+Optional:
+<div class="highlight"><pre><span></span><code>  -D Build_Studio=[OFF|ON]             default: OFF
+  -D Build_View2=[OFF|ON]              default: OFF
+  -D Build_Post=[OFF|ON]               default: ON
+  -D CMAKE_INSTALL_PREFIX=&lt;path&gt;       default: ./install
+  -D CMAKE_BUILD_TYPE=[Debug|Release]  
+</code></pre></div></p>
+<h4 id="examples_1">Examples</h4>
+<p>An example that builds dependencies separately then generates a Visual Studio project for ShapeWorks:<br />
+<div class="highlight"><pre><span></span><code>&gt; conda activate shapeworks
+&gt; ./build_dependencies.sh --build-dir=../dependencies --install-dir=../dependencies
+&gt; mkdir build
+&gt; cd build
+&gt; cmake -G&quot;Visual Studio 16 2019&quot; -Ax64 -DVXL_DIR=../dependencies/vxl/build -DCMAKE_PREFIX_PATH=../dependencies -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON ..
+</code></pre></div></p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="contribute.html" class="btn btn-neutral float-right" title="How to Contribute to ShapeWorks?">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../use-cases/deep-ssm-femur.html" class="btn btn-neutral" title="Femur SSM Directly from Images"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright © 1998 - 2020 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/SCIInstitute/ShapeWorks/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="../use-cases/deep-ssm-femur.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="contribute.html" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../assets/mathjaxhelper.js" defer></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
