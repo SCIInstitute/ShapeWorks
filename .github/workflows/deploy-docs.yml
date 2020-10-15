@@ -2,7 +2,7 @@ name: Publish docs via GitHub Pages
 on:
   push:
     branches:
-      - deploy_gh_pages
+      - master
 
 jobs:
   build:
