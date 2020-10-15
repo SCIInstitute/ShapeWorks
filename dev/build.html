@@ -304,7 +304,7 @@
 <li>Qt 5.9.8 (optional for GUI components)</li>
 </ul>
 <h3 id="windows">Windows</h3>
-<!--See **[BUILD_Windows.md](BUILD_Windows.md)**-->
+<!--See **<a href="BUILD_Windows.md">BUILD_Windows.md</a>**-->
 
 <ul>
 <li>CMake 3.11 (provided by conda below if not already installed)</li>
@@ -430,6 +430,7 @@ cd build
 cmake -DCMAKE_PREFIX_PATH=&quot;${PWD}/../dependencies/install&quot; -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON -DUSE_OPENMP=OFF -Wno-dev -Wno-deprecated -GXcode ..
 open ShapeWorks.xcodeproj
 </code></pre></div>
+
 <h3 id="windows_2">Windows</h3>
 <p>Use the cmake from the Anaconda Prompt with shapeworks env activated to configure and generate project files for your preferred build system (e.g., Visual Studio 16 2019).  </p>
 <h4 id="options_1">Options</h4>

@@ -248,6 +248,7 @@
                                --isoSpacing &lt;voxel-spacing&gt;
                               [--isBinaryImage] [--isCenterImageOn]
 </code></pre></div>
+
 </div>
 <p><strong>Disadvantages of the old command-line tool:</strong>        </p>
 <ul>
@@ -265,6 +266,7 @@
                                --isoSpacing &lt;voxel-spacing&gt;
                                --isCenterImageOn
 </code></pre></div>
+
 </div>
 <div class="admonition important">
 <p class="admonition-title">New command-line: <code>isoresample</code> (for images)</p>
@@ -272,6 +274,7 @@
            isoresample --isospacing &lt;voxel-spacing&gt;
            writeimage --name &lt;output-file&gt;
 </code></pre></div>
+
 </div>
 <div class="admonition important">
 <p class="admonition-title">C++ (without chaining): <code>isoresample</code> (for images)</p>
@@ -280,11 +283,13 @@
 <span class="n">img</span><span class="p">.</span><span class="n">isoresample</span><span class="p">(</span><span class="o">&lt;</span><span class="n">voxel</span><span class="o">-</span><span class="n">spacing</span><span class="o">&gt;</span><span class="p">);</span>
 <span class="n">img</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="o">&lt;</span><span class="n">output</span><span class="o">-</span><span class="n">file</span><span class="o">&gt;</span><span class="p">);</span>
 </code></pre></div>
+
 </div>
 <div class="admonition important">
 <p class="admonition-title">C++ (with chaining): <code>isoresample</code> (for images)</p>
 <div class="highlight"><pre><span></span><code><span class="n">Image</span> <span class="nf">img</span><span class="p">(</span><span class="o">&lt;</span><span class="n">input</span><span class="o">-</span><span class="n">file</span><span class="o">&gt;</span><span class="p">).</span><span class="n">recenter</span><span class="p">().</span><span class="n">isoresample</span><span class="p">(</span><span class="o">&lt;</span><span class="n">voxel</span><span class="o">-</span><span class="n">spacing</span><span class="o">&gt;</span><span class="p">).</span><span class="n">write</span><span class="p">(</span><span class="o">&lt;</span><span class="n">output</span><span class="o">-</span><span class="n">file</span><span class="o">&gt;</span><span class="p">);</span>
 </code></pre></div>
+
 </div>
 <p><img alt="Isoresampling for images" src="../img/new/isoresample_img.png" /></p>
 <h3 id="resampling-segmentations">Resampling segmentations</h3>
@@ -294,6 +299,7 @@
                                --isoSpacing &lt;voxel-spacing&gt;
                               --isBinaryImage --isCenterImageOn
 </code></pre></div>
+
 </div>
 <p>The old executable’s functionalities are broken down further to make it more modular:</p>
 <ul>
@@ -316,6 +322,7 @@
            isoresample --isospacing &lt;voxel-spacing&gt; binarize 
            writeimage --name &lt;output-file&gt;
 </code></pre></div>
+
 </div>
 <div class="admonition important">
 <p class="admonition-title">C++ (without chaining): <code>isoresample</code> (for segmentations)</p>
@@ -326,11 +333,13 @@
 <span class="n">img</span><span class="p">.</span><span class="n">binarize</span><span class="p">();</span>
 <span class="n">img</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="o">&lt;</span><span class="n">output</span><span class="o">-</span><span class="n">file</span><span class="o">&gt;</span><span class="p">);</span>
 </code></pre></div>
+
 </div>
 <div class="admonition important">
 <p class="admonition-title">C++ (with chaining): <code>isoresample</code> (for images)</p>
 <div class="highlight"><pre><span></span><code><span class="n">Image</span> <span class="nf">img</span><span class="p">(</span><span class="o">&lt;</span><span class="n">input</span><span class="o">-</span><span class="n">file</span><span class="o">&gt;</span><span class="p">).</span><span class="n">recenter</span><span class="p">().</span><span class="n">antialias</span><span class="p">(</span><span class="o">&lt;</span><span class="n">num</span><span class="o">-</span><span class="n">iter</span><span class="o">&gt;</span><span class="p">).</span><span class="n">isoresample</span><span class="p">(</span><span class="o">&lt;</span><span class="n">voxel</span><span class="o">-</span><span class="n">spacing</span><span class="o">&gt;</span><span class="p">).</span><span class="n">binarize</span><span class="p">().</span><span class="n">write</span><span class="p">(</span><span class="o">&lt;</span><span class="n">output</span><span class="o">-</span><span class="n">file</span><span class="o">&gt;</span><span class="p">);</span>
 </code></pre></div>
+
 </div>
 <p><img alt="Isoresampling for segmentations" src="../img/new/isoresample_seg.png" /></p>
               

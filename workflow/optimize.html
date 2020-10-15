@@ -277,16 +277,14 @@
 <h2 id="particles-initialization-optimization">Particles Initialization &amp; Optimization</h2>
 <p>ShapeWorks entails a nonconvex optimization problem. Hence, it is not practical to perform the optimization of the configuration space (intra-surface) and the shape space (inter-surface) with a full set of correspondence points (or particles) in one step.</p>
 <p>We address this using a coarse-to-fine optimization scheme to speed up convergence to an acceptable local minimum. In particular, the optimization is performed as a multi-step process where particles are added via spitting each particle to produce a new, nearby particle at each step until the desired number of particles is reached. </p>
-<p><em>ShapeWorks uses a particle splitting strategy, in which the full set of particles is optimized in a multi-scale (i.e., coarse-to-fine) fashion</em></p>
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_ellipsoid_optimize.mp4" autoplay muted loop controls style="width:100%"></p>
-
+<p><em>ShapeWorks uses a particle splitting strategy, in which the full set of particles is optimized in a multi-scale (i.e., coarse-to-fine) fashion</em>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_ellipsoid_optimize.mp4" autoplay muted loop controls style="width:100%"></p></p>
 <p>For these steps, the optimization of the configuration space (intra-surface) and the shape space (inter-surface) is weighted to downplay the effect of the correspondence term (default <span class="arithmatex">\(\alpha = 0.05\)</span>), which results in an evenly spaced distribution of particles on each surface. These steps are collectively called the <em>initialization</em> steps.</p>
 <p>At each scale, the initialization step is followed by an <em>optimization</em> step. For this step, the optimization of the configuration space (intra-surface) and the shape space (inter-surface) are weighted (equally or sometimes using <span class="arithmatex">\(\alpha &gt; 1\)</span> to emphasize the correspondence term).</p>
 <p>Thus, the initialization proceeds simultaneously with the optimization in a multi-scale fashion, generating progressively more detailed correspondence models with each split. </p>
 <p>For both, the initialization and optimization steps, the weighting to the shape space may be set by the user. Further, as each step of the optimization is an iterative process, the number of iterations may be set by the user.</p>
-<p><em>At each scale, the number of iterations could impact the quality of the optimized model</em></p>
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_torus_optimize.mp4" autoplay muted loop controls style="width:100%"></p>
-
+<p><em>At each scale, the number of iterations could impact the quality of the optimized model</em>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_torus_optimize.mp4" autoplay muted loop controls style="width:100%"></p></p>
 <p><strong>The first particle:</strong> The particle system is initialized with a single particle on each shape. The first particle is found by raster-scanning the signed distance map and finding the first zero crossing. The particle system can also be initialized using user-defined sparse corresponding landmarks across all shapes.</p>
 <h2 id="on-algorithmic-parameters">On Algorithmic Parameters</h2>
 <p>Optimizing the shape models entails several algorithmic parameters. Below, we highlight the most important ones that might need tuning depending on the dataset at hand. </p>
@@ -303,9 +301,8 @@
 <p>At earlier scales, we do not have enough particles to describe the geometry of each surface. Hence, to quantify the notion of correspondence (inter-surface), we use mean energy (i.e., pushing all shapes in the shape space to the mean shape or, in other words, the covariance matrix is assumed to be identity). </p>
 <p>As more particles are added to the correspondence model, we use the entropy of the distribution of the shapes (assumed to be Gaussian distributed), where we have more particles that can reveal the covariance structure of the shape space.</p>
 <p>This behavior is controlled by the <code>use_shape_statistics_after</code> parameter, which specifies the number of particles, after which shape statistics can be used in the initialization and optimization steps.</p>
-<p><em>Using shape statistics (i.e., covaraince structure) results in a better correspondence over iterations, below we use <code>use_shape_statistics_after</code> after 1024 particles</em></p>
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/femur_mesh_live.mp4" autoplay muted loop controls style="width:100%"></p>
-
+<p><em>Using shape statistics (i.e., covaraince structure) results in a better correspondence over iterations, below we use <code>use_shape_statistics_after</code> after 1024 particles</em>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/femur_mesh_live.mp4" autoplay muted loop controls style="width:100%"></p></p>
 <h3 id="starting-and-ending-regularization">Starting and Ending Regularization</h3>
 <p>Particle movement during optimization (due to the correspondence term) entails computing the covariance matrix's inverse. We regularize the covariance matrix to handle degenerate covariances. </p>
 <p><code>starting_regularization</code> and <code>ending_regularization</code> parameters determine the covariance matrix's regularization for the shape-space entropy estimation. This regularization exponentially decays along with optimization iterations where better covariance structure can be estimated with a better correspondence model. </p>
@@ -371,6 +368,7 @@
         &quot;verbosity&quot; : 2,
 }
 </code></pre></div>
+
 <h2 id="correspondences-on-new-samples">Correspondences on New Samples</h2>
 <p>ShapeWorks supports an optimization mode, namely <em>fixed domains</em>, to place (i.e., optimize) correspondences on new shapes using a pre-existing shape model. In the fixed domains mode, particles on selected shapes that construct the pre-existing shape model are fixed, and particles on new shapes are optimized to represent them in the context of this shape model. See <a href="../use-cases/fixed-domain-ellipsoid.html">Fixed Domains for Ellipsoid: Correspondences on New Shape</a> for an example. </p>
 <p>To enable the fixed domains mode, the XML should have the below additional tags. For this mode, you can use <code>"use_shape_statistics_after": 0</code> to enable shape statistics in all the steps as the pre-existing shape model already has enough particles optimized to reflect the covariance structure in the shape space.</p>

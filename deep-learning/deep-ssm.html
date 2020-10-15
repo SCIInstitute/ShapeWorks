@@ -305,10 +305,12 @@
 <p>To use the <code>DeepSSMUtils</code> package, make sure you have the shapeworks conda environment is activated and add the following import to your Python code:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">DeepSSMUtils</span>
 </code></pre></div>
+
 <h3 id="get-train-and-validation-torch-loaders">Get train and validation torch loaders</h3>
 <p>This function turns the original and augmented data into training and validation torch loaders. The data provided is randomly split so that 80% is used in the training set and 20% is used in the validation set.</p>
 <div class="highlight"><pre><span></span><code><span class="n">DeepSSMUtils</span><span class="o">.</span><span class="n">getTrainValLoaders</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">data_aug_csv</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">down_sample</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
+
 <p><strong>Input arguments:</strong></p>
 <ul>
 <li><code>out_dir</code>: Path to the directory to store the torch loaders.</li>
@@ -320,6 +322,7 @@
 <p>This function turns the provided data into a test torch loader.</p>
 <div class="highlight"><pre><span></span><code><span class="n">DeepSSMUtils</span><span class="o">.</span><span class="n">getTestLoader</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">test_img_list</span><span class="p">,</span> <span class="n">down_sample</span><span class="p">)</span>
 </code></pre></div>
+
 <p><strong>Input arguments:</strong></p>
 <ul>
 <li><code>out_dir</code>: Path to the directory to store the torch loader.</li>
@@ -330,6 +333,7 @@
 <p>This function defines a DeepSSM model and trains it on the data provided.</p>
 <div class="highlight"><pre><span></span><code><span class="n">DeepSSMUtils</span><span class="o">.</span><span class="n">trainDeepSSM</span><span class="p">(</span><span class="n">loader_dir</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">)</span>
 </code></pre></div>
+
 <p><strong>Input arguments:</strong></p>
 <ul>
 <li><code>loader_dir</code>: Path to directory where train and validation torch loaders are.</li>
@@ -345,6 +349,7 @@
 <p>This function gets predicted shape models based on the images provided using a trained DeepSSM model.</p>
 <div class="highlight"><pre><span></span><code><span class="n">DeepSSMUtils</span><span class="o">.</span><span class="n">testDeepSSM</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">model_path</span><span class="p">,</span> <span class="n">loader_dir</span><span class="p">,</span> <span class="n">PCA_scores_path</span><span class="p">,</span> <span class="n">num_PCA</span><span class="p">)</span>
 </code></pre></div>
+
 <p><strong>Input arguments:</strong></p>
 <ul>
 <li><code>out_dir</code>: Path to directory where predictions are saved.</li>
@@ -357,6 +362,7 @@
 <p>This function analyzes the shape models predicted by DeepSSM by comparing them to the true segmentation. </p>
 <div class="highlight"><pre><span></span><code><span class="n">DeepSSMUtils</span><span class="o">.</span><span class="n">analyzeResults</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">DT_dir</span><span class="p">,</span> <span class="n">prediction_dir</span><span class="p">,</span> <span class="n">mean_prefix</span><span class="p">)</span>
 </code></pre></div>
+
 <p><strong>Input arguments:</strong></p>
 <ul>
 <li><code>out_dir</code>: Path to the directory where meshes and analysis should be saved.</li>

@@ -250,9 +250,8 @@
 <p><em>Particles' coloring reflects surface correspondences across different shape samples</em>
 <img alt="Template-deformation approach for surface reconstruction" src="../img/workflow/corres.png" /></p>
 <p>You can scroll through the dataset and zoom in and out to inspect fewer or more samples. ShapeWorksStudio keeps a consistent camera view across all shape samples to facilitate qualitative comparisons of different samples relative to each other.</p>
-<p><em>Correspondence model inspectation by scrolling though the dataset and zooming in &amp; out</em></p>
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_scroll.mp4" autoplay muted loop controls style="width:100%"></p>
-
+<p><em>Correspondence model inspectation by scrolling though the dataset and zooming in &amp; out</em>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_scroll.mp4" autoplay muted loop controls style="width:100%"></p></p>
 <h2 id="running-shapeworksstudio">Running ShapeWorksStudio</h2>
 <p>When you open ShapeWorksStudio without a project, either from terminal or double-clicking on the application binary/exe file, the splash screen is displayed to enable you to load a recent project, open existing projects on your local machine, or create a new project.</p>
 <p><em>ShapeWorksStudio splash screen</em>
@@ -276,6 +275,7 @@
 <p>Given the XML files, you can launch ShapeWorksStudio through the terminal using the following command.</p>
 <div class="highlight"><pre><span></span><code>$ ShapeWorksStudio analyze.xml
 </code></pre></div>
+
 <h3 id="using-spreadsheets">Using Spreadsheets</h3>
 <p>ShapeWorksStudio can also load datasets (and shape models) using spreadsheets, a more user-friendly user-editable file format. See the ellipsoid studio example in <code>Examples/Studio/ellipsoid.xlsx</code> for an example. </p>
 <p><em>ShapeWorksStudio keeps track of results from different phases in individual sheets</em></p>
@@ -292,12 +292,10 @@
 <p>The template mesh will then be constructed by triangulating the isosurface of this mean DT. A warping function is constructed to deform the dense template mesh to the sample space using the sample's and mean particle systems as control points to reconstruct a sample-specific surface mesh.</p>
 <p><em>Particle-based surface reconstruction currently supported by ShapeWorksStudio</em>
 <img alt="Template-deformation approach for surface reconstruction" src="../img/workflow/dt_based_recons.png" /></p>
-<p><em>(old) VTK-based surface reconstruction</em></p>
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/vtk_reconstruction.mp4" autoplay muted loop controls style="width:100%"></p>
-
-<p><em>(new) particle-based surface reconstruction</em></p>
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/particles_reconstruction.mp4" autoplay muted loop controls style="width:100%"></p>
-
+<p><em>(old) VTK-based surface reconstruction</em>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/vtk_reconstruction.mp4" autoplay muted loop controls style="width:100%"></p></p>
+<p><em>(new) particle-based surface reconstruction</em>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/particles_reconstruction.mp4" autoplay muted loop controls style="width:100%"></p></p>
 <p>You can export any mesh using <code>File -&gt; Export -&gt; Export Current Mesh ...</code>. </p>
 <h2 id="statistical-analysis">Statistical Analysis</h2>
 <p>Statistical analysis is performed using principal component analysis (PCA), where the mean and modes of shape variation are computed based on the optimized correspondence model. Animation is allowed to watch the shape morph at various standard deviations along a user-selected variation mode. </p>
