@@ -24,7 +24,7 @@ jobs:
 
     - name: Deploy Docs
       shell: bash -l {0}
-      run: conda activate shapeworks && ./Support/deploy_docs.sh
+      run: conda activate shapeworks && pwd && ls && ./Support/deploy_docs.sh
       env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
