@@ -8,6 +8,6 @@ remote_repo="https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITO
 git remote rm origin
 git remote add origin "${remote_repo}"
 
-mkdocs gh-deploy --config-file "${GITHUB_WORKSPACE}/mkdocs.yml"
+mkdocs gh-deploy --config-file "${GITHUB_WORKSPACE}/mkdocs.yml" --force
 
       
