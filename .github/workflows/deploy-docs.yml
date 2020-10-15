@@ -9,10 +9,21 @@ jobs:
     name: Deploy docs
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout master
-        uses: actions/checkout@v1
 
-      - name: Deploy docs
-        uses: mhausenblas/mkdocs-deploy-gh-pages@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Checkout master
+      uses: actions/checkout@v1
+
+    - name: Setup Conda
+      uses: goanpeca/setup-miniconda@v1
+      with:
+        miniconda-version: 'latest'
+        
+    - name: conda installs
+      shell: bash -l {0}
+      run: source ./conda_installs.sh
+
+    - name: make test
+      shell: bash -l {0}
+      run: conda activate shapeworks && mkdocs gh-deploy
+      env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
