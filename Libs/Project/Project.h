@@ -96,6 +96,8 @@ private:
   std::vector<std::string> get_list(std::vector<std::string> columns, int subject);
   void set_list(std::vector<std::string> columns, int subject, std::vector<std::string> values);
 
+  void set_map(int subject, std::string prefix, std::map<std::string, std::string> map);
+
   std::vector<std::vector<double>>
   get_transform_list(std::vector<std::string> columns, int subject);
 
