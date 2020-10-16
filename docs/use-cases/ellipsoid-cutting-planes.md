@@ -16,7 +16,7 @@ The use case is located at: `Examples/Python/ellipsoid_cut.py`
 
 To run the use case, run `RunUseCase.py` (in `Examples/Python/`) with proper tags. The tags control the type of input data and the optimization method. See [Getting Started with Use Cases](../use-cases/use-cases.md#running-use-case) for the full list of tags.
 
-* `--start_with_prepped_data`: to run the optimization on previously processed/groomed data
+* `--skip_grooming`: to run the optimization on previously processed/groomed data
 * `--use_single_scale`: to use the single-scale optimization. Default is multi-scale optimization
 
 To run the full pipeline with multi-scale:
