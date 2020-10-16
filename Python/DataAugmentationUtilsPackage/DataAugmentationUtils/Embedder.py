@@ -19,11 +19,12 @@ class Embedder(ABC):
 # instance of embedder that uses PCA for dimension reduction
 class PCA_Embbeder(Embedder):
 	# overriding abstract methods
-	def __init__(self, data_matrix, num_PCA=0):
+	def __init__(self, data_matrix, num_PCA=0, percent_variability=.95):
 		self.data_matrix = data_matrix
-		self.run_PCA(num_PCA)
+		percent_variability = float(percent_variability)
+		self.run_PCA(num_PCA, percent_variability)
 	# run PCA on data_matrix for PCA_Embedder
-	def run_PCA(self, num_PCA):
+	def run_PCA(self, num_PCA, percent_variability):
 		# get covariance matrix (uses compact trick)
 		N = self.data_matrix.shape[0]
 		data_matrix_2d = self.data_matrix.reshape(self.data_matrix.shape[0], -1).T # flatten data instances and transpose
@@ -39,9 +40,11 @@ class PCA_Embbeder(Embedder):
 		eigen_vectors = np.flip(eigen_vectors, 1)
 		# get num PCA components
 		cumDst = np.cumsum(eigen_values) / np.sum(eigen_values)
+
 		if num_PCA == 0:
+			percent_varability = input("Enter the proportion of variability to preserve. \nFor example, to preserve at least 95% of variability enter: 0.95\n")
 			cumDst = np.cumsum(eigen_values) / np.sum(eigen_values)
-			num_PCA = np.where(cumDst > 0.95)[0][0] + 1
+			num_PCA = np.where(cumDst > percent_variability)[0][0] + 1
 		W = eigen_vectors[:, :num_PCA]
 		PCA_scores = np.matmul(centered_data_matrix_2d.T, W)
 		print("The PCA modes of particles being retained : ", num_PCA)
