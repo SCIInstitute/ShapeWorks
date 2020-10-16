@@ -18,13 +18,13 @@ def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_PC
 	PointEmbedder.write_PCA(out_dir + "PCA_Particle_Info/", "particles") # write PCA info for DeepSSM testing
 	embedded_matrix = PointEmbedder.getEmbeddedMatrix()
 	# Get sampler
-	if sampler_type == "Gaussian":
+	if sampler_type == "gaussian":
 		PointSampler = Sampler.Gaussian_Sampler()
 		PointSampler.fit(embedded_matrix) 
 	elif sampler_type == "mixture":
 		PointSampler = Sampler.Mixture_Sampler()
 		PointSampler.fit(embedded_matrix, mixture_num) 
-	elif sampler_type == "KDE":
+	elif sampler_type == "kde":
 		PointSampler = Sampler.KDE_Sampler()
 		PointSampler.fit(embedded_matrix) 
 	else:

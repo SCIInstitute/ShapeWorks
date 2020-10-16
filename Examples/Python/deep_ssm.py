@@ -57,11 +57,11 @@ def Run_Pipeline(args):
 	- num_samples is how many samples to generate 
 	- num_PCA is the number of PCA scores to use
 	- aug_type is the augmentation method to use (1 is based on just particles wheras 2 is based on images and particles)
-	- sample type is the distribution to use for sampling. Can be Gaussian, mixture, or KDE
+	- sample type is the distribution to use for sampling. Can be gaussian, mixture, or kde
 	'''
 	num_samples = 4960
 	num_PCA = 6
-	sampler_type = "KDE"
+	sampler_type = "kde"
 	if args.tiny_test:
 		num_samples = 4
 		num_PCA = 3
