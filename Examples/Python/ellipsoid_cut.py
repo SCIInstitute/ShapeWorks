@@ -58,14 +58,7 @@ def Run_Pipeline(args):
     if not os.path.exists(groomDir):
         os.makedirs(groomDir)
 
-
-    if args.start_with_image_and_segmentation_data:
-        print("\n\n************************ WARNING ************************")
-        print("'start_with_image_and_segmentation_data' tag was used \nbut Ellipsoid data set does not have images.")
-        print("Continuing to run use case with segmentations only.")
-        print("*********************************************************\n\n")
-
-    if int(args.start_with_prepped_data) == 1:
+    if int(args.skip_grooming) == 1:
         dtFiles = sorted(glob.glob(outputDirectory + datasetName + '/groomed/distance_transforms/*.nrrd'))
     else:
         """Apply isotropic resampling"""

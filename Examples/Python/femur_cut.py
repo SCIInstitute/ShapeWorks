@@ -39,7 +39,19 @@ def Run_Pipeline(args):
     if args.interactive:
         input("Press Enter to continue")
 
-    if not args.start_with_prepped_data:
+    if args.skip_grooming:
+        print("Skipping grooming...")
+        dtFiles = []
+        dt_dir = inputDir + 'groomed/distance_transforms/'
+        for file in sorted(os.listdir(dt_dir)):
+            dtFiles.append(dt_dir + file)
+
+        if args.tiny_test:
+            dtFiles = dtFiles[:3]
+
+        [cutting_plane_points] = pickle.load( open( inputDir + "groomed/groomed_pickle.p", "rb" ) )
+
+    else:
         """
         ## GROOM : Data Pre-processing
         For the unprepped data the first few steps are
@@ -127,7 +139,7 @@ def Run_Pipeline(args):
                 reference_side = "right"
 
         # BEGIN GROOMING WITH IMAGES
-        if args.start_with_image_and_segmentation_data and files_img:
+        if args.groom_images and files_img:
             """
             Reflect - We have left and right femurs, so we reflect both image and mesh
             for the non-reference side so that all of the femurs can be aligned.
@@ -303,17 +315,6 @@ def Run_Pipeline(args):
         """
         dtFiles = applyDistanceTransforms(parentDir, croppedFiles_segmentations)
 
-    else:
-        print("Skipping grooming...")
-        dtFiles = []
-        dt_dir = inputDir + 'groomed/distance_transforms/'
-        for file in sorted(os.listdir(dt_dir)):
-            dtFiles.append(dt_dir + file)
-
-        if args.tiny_test:
-            dtFiles = dtFiles[:3]
-
-        [cutting_plane_points] = pickle.load( open( inputDir + "groomed/groomed_pickle.p", "rb" ) )
 
     """
     ## OPTIMIZE : Particle Based Optimization

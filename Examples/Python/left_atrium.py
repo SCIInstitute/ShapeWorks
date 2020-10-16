@@ -50,7 +50,7 @@ def Run_Pipeline(args):
         fileList_seg= [fileList_seg[i] for i in sample_idx]
         fileList_img = [fileList_img[i] for i in sample_idx]
         
-    if args.start_with_prepped_data:
+    if args.skip_grooming:
         dtFiles = sorted(glob.glob(outputDirectory + datasetName + "/groomed/distance_transforms/*.nrrd"))
         
         if args.use_subsample:
@@ -64,7 +64,7 @@ def Run_Pipeline(args):
         if not os.path.exists(groomDir):
             os.makedirs(groomDir)
         
-        if args.start_with_image_and_segmentation_data and fileList_img:
+        if args.groom_images and fileList_img:
             """
             ## GROOM : Data Pre-processing
             For the unprepped data the first few steps are
