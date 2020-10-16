@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - master
-      - release_v5.5
-      - deploy_gh_pages
     tags:
     - '*'
   pull_request:
