@@ -11,7 +11,7 @@ from DataAugmentationUtils import Sampler
 
 ################################# Augmentaiton Pipelines ###############################################
 
-def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_PCA=0, sampler_type="KDE", mixture_num=0):
+def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_PCA=0, sampler_type="kde", mixture_num=0):
 	# Get Embedder
 	point_matrix = create_data_matrix(orig_point_list)
 	PointEmbedder = Embedder.PCA_Embbeder(point_matrix, num_PCA)
