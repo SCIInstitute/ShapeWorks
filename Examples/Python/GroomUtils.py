@@ -89,7 +89,7 @@ def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False):
     if not os.path.exists(segDir):
         os.makedirs(segDir)
     if processRaw:
-        imageDir = os.path.join(outDir, 'images') 
+        imageDir = os.path.join(outDir, 'images')
         if not os.path.exists(imageDir):
             os.makedirs(imageDir)
 
@@ -297,7 +297,7 @@ def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoot
         shutil.copy(tpdtnrrdfilename, finalDTDir)
     return outDataList
 
-### Mesh Grooming 
+### Mesh Grooming
 
 # Reflects images and meshes to reference side
 def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side, printCmd=True):
@@ -309,7 +309,7 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side, printCmd=T
         flip = 'R'
     else:
         raise Exception("reference_side must be 'left' or 'right'")
-    
+
     if not os.path.exists(outDir):
         os.makedirs(outDir)
     outSegDir = os.path.join(outDir, "segmentations")
@@ -350,13 +350,13 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side, printCmd=T
             imageList.append(img_out)
             centerFilename = os.path.join(outDir, prefix + "_origin.txt")
             img = Image(image)
-            img.reflext("X").write(img_out)
+            img.reflect("X").write(img_out)
             seg_out = rename(flip_seg, outSegDir, 'reflect')
             meshList.append(seg_out)
             execCommand = ["ReflectMesh", "--inFilename", flip_seg, "--outFilename", seg_out, "--reflectCenterFilename", centerFilename, "--inputDirection", "0", "--meshFormat", flip_seg.split(".")[-1]]
             if printCmd:
                 print("CMD: " + " ".join(execCommand))
-            subprocess.check_call(execCommand)        
+            subprocess.check_call(execCommand)
     return meshList, imageList
 
 
@@ -387,8 +387,8 @@ def reflectMeshes(outDir, seg_list, reference_side, printCmd=True):
             execCommand = ["ReflectMesh", "--inFilename", seg, "--outFilename", seg_out, "--reflectCenterFilename", centerFilename, "--inputDirection", "0", "--meshFormat", mesh_format]
             if printCmd:
                 print("CMD: " + " ".join(execCommand))
-            subprocess.check_call(execCommand)   
-        meshList.append(seg_out)    
+            subprocess.check_call(execCommand)
+        meshList.append(seg_out)
     return meshList
 
 # turns meshes in list into PLY format
@@ -562,7 +562,7 @@ def MeshesToVolumes(outDir, meshList, spacing, printCmd=True):
     return segList
 
 def getMeshInfo(outDir, meshList, spacing, printCmd=True):
-    # get meshes in vtk format 
+    # get meshes in vtk format
     meshList = getVTKmeshes(meshList)
     meshListStr = ''
     for mesh in meshList:
@@ -608,6 +608,112 @@ def ClipBinaryVolumes(outDir, segList, cutting_plane_points, printCmd=True):
                  cutting_plane_points[6], cutting_plane_points[7], cutting_plane_points[8]).write(outname)
     return outListSeg
 
+def ShowCuttingPlanesOnImage(input_file, cutting_planes, printCmd=True):
+    ## Get vtk format
+    file_format = input_file.split(".")[-1]
+    input_vtk = input_file.replace(file_format, "vtk")
+    if file_format == "nrrd":
+        print("\nCreating mesh from: " + input_file)
+        print("\nSaving as: " + input_vtk)
+        xml_filename = os.path.join(os.path.dirname(input_file), "cutting_plane_nrrd2vtk.xml")
+        create_meshfromDT_xml(xml_filename, input_file, input_vtk)
+        execCommand = ["MeshFromDistanceTransforms", xml_filename]
+        if printCmd:
+            print("CMD: " + " ".join(execCommand))
+        subprocess.check_call(execCommand)
+    elif file_format == "ply":
+        execCommand = ["ply2vtk", input_file, input_vtk]
+        if printCmd:
+            print("CMD: " + " ".join(execCommand))
+        subprocess.check_call(execCommand)
+    elif file_format == "stl":
+        execCommand = ["stl2vtk", input_file, input_vtk]
+        if printCmd:
+            print("CMD: " + " ".join(execCommand))
+        subprocess.check_call(execCommand)
+    elif file_format == "vtk":
+        pass
+    else:
+        print("Error, file format unrecognized: " + input_file)
+
+    ## VTK interactive window
+    print('\n Use the interactive window to select your cutting plane. When you are content with your selection, simply close the window. \n')
+    # read data from file
+    reader = vtk.vtkPolyDataReader()
+    reader.SetFileName(input_vtk)
+    reader.ReadAllVectorsOn()
+    reader.ReadAllScalarsOn()
+    reader.Update()
+    # get data
+    data = reader.GetOutput()
+    (xcenter, ycenter, zcenter) = data.GetCenter()
+    #create mapper
+    mapper = vtk.vtkPolyDataMapper()
+    mapper.SetInputData(data)
+    # The actor is a grouping mechanism
+    actor = vtk.vtkActor()
+    actor.SetMapper(mapper)
+    # create camera
+    camera = vtk.vtkCamera()
+    camera.SetFocalPoint(xcenter, ycenter, zcenter)
+    camera.SetPosition(100, -300, -50)
+    camera.SetViewUp(0,0,1)
+    # create a renderer
+    renderer = vtk.vtkRenderer()
+    renderer.SetActiveCamera(camera)
+    renderer.SetBackground(0.2, 0.2, 0.5)
+    renderer.SetBackground2(0.4, 0.4, 1.0)
+    renderer.SetGradientBackground(True)
+    renderer.AddActor(actor)
+    # create a render_window
+    render_window = vtk.vtkRenderWindow()
+    render_window.AddRenderer(renderer)
+    render_window.SetSize(1000,1000)
+    # create a renderwindowiren
+    iren = vtk.vtkRenderWindowInteractor()
+    iren.SetRenderWindow(render_window)
+    iren.Initialize()
+    # Create a vtkImagePlaneWidget and activate it
+    reps = []
+    plane_widgets = []
+    print(len(cutting_planes))
+    for plane in cutting_planes:
+        print(plane)
+        A = np.array(plane[0])
+        B = np.array(plane[1])
+        C = np.array(plane[2])
+        n = np.cross(B-A, C-A)
+        n = n/np.linalg.norm(n)
+        d = -np.dot(A, n)
+        print(n, d)
+        rep = vtk.vtkImplicitPlaneRepresentation()
+        rep.SetPlaceFactor(1.5)
+        rep.SetOrigin(A)
+        rep.PlaceWidget(actor.GetBounds())
+        rep.SetNormal(n[0],n[1],n[2])
+        reps.append(rep)
+        plane_widget = vtk.vtkImplicitPlaneWidget2()
+        plane_widget.SetInteractor(iren)
+        plane_widget.SetRepresentation(rep)
+        plane_widget.On()
+        plane_widgets.append(plane_widget)
+    iren.Initialize()
+    iren.Start()
+    '''
+    # use orgin as one point and use normla to solve for two others
+    (o1,o2,o3) = rep.GetOrigin()
+    (n1,n2,n3) = rep.GetNormal()
+    # using x = 1 and y =-1 solve for z
+    pt1_z = (-n1+(n1*o1)+n2+(n2*o2)+(n3*o3))/n3
+    # using x = -1 and y = 1 solve for z
+    pt2_z = (n1+(n1*o1)-n2+(n2*o2)+(n3*o3))/n3
+    # fix 0 edge case
+    if o1 == 0 and o2 == 0:
+        o1 = -1
+        o2 = -1
+    return np.array([[o1, o2, o3], [1, -1, pt1_z], [-1, 1, pt2_z]])
+    '''
+
 def SelectCuttingPlane(input_file, printCmd=True):
     ## Get vtk format
     file_format = input_file.split(".")[-1]
@@ -647,13 +753,13 @@ def SelectCuttingPlane(input_file, printCmd=True):
     # get data
     data = reader.GetOutput()
     (xcenter, ycenter, zcenter) = data.GetCenter()
-    #create mapper 
+    #create mapper
     mapper = vtk.vtkPolyDataMapper()
     mapper.SetInputData(data)
     # The actor is a grouping mechanism
     actor = vtk.vtkActor()
     actor.SetMapper(mapper)
-    # create camera 
+    # create camera
     camera = vtk.vtkCamera()
     camera.SetFocalPoint(xcenter, ycenter, zcenter)
     camera.SetPosition(100, -300, -50)

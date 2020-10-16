@@ -134,11 +134,17 @@ TEST(pythonTests, computedt)
   ASSERT_FALSE(system("python computedt.py"));
 }
 
+<<<<<<< HEAD
 //---------------------------------------------------------------------------
 TEST(pythonTests, curvature)
 {
   ASSERT_FALSE(system("python curvature.py"));
 }
+=======
+  // decide success by checking that one of the files created by the use case exists (todo: better measure of success)
+  std::string check_file = test_location +
+    "/Output/ellipsoid/shape_models/32/seg.ellipsoid_00.isores.center.pad.com.aligned.cropped.tpSmoothDT_local.particles";
+>>>>>>> origin/master
 
 //---------------------------------------------------------------------------
 TEST(pythonTests, curvaturefail)

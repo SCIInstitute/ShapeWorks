@@ -41,10 +41,6 @@ install(TARGETS Mesh
  LIBRARY DESTINATION lib
  PUBLIC_HEADER DESTINATION include
  )
- 
-ADD_EXECUTABLE(GroomFemur GroomFemur.cpp)
-TARGET_LINK_LIBRARIES(GroomFemur ${ITK_LIBRARIES} Mesh tinyxml)
-INSTALL(TARGETS GroomFemur RUNTIME DESTINATION bin)
 
 ADD_EXECUTABLE(GenerateBinaryAndDTImagesFromMeshes GenerateBinaryAndDTImagesFromMeshes.cxx )
 TARGET_LINK_LIBRARIES(GenerateBinaryAndDTImagesFromMeshes ${ITK_LIBRARIES} Mesh tinyxml)

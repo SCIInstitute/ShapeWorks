@@ -553,10 +553,6 @@ void Session::load_groomed_images(std::vector<ImageType::Pointer> images,
 //---------------------------------------------------------------------------
 void Session::load_groomed_files(std::vector<std::string> file_names, double iso)
 {
-  //QProgressDialog progress("Loading groomed images...", "Abort", 0,
-  //                         file_names.size(), this->parent_);
-  //progress.setWindowModality(Qt::WindowModal);
-
   for (int i = 0; i < file_names.size(); i++) {
     if (this->shapes_.size() <= i) {
       auto shape = QSharedPointer<Shape>(new Shape);
@@ -567,8 +563,8 @@ void Session::load_groomed_files(std::vector<std::string> file_names, double iso
       this->shapes_.push_back(shape);
     }
 
-    std::vector<std::string> groomed_filenames{
-      file_names[i]};   // only single domain supported so far
+    // only single domain supported so far
+    std::vector<std::string> groomed_filenames{ file_names[i]};
     this->shapes_[i]->get_subject()->set_groomed_filenames(groomed_filenames);
   }
 
