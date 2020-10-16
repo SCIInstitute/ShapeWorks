@@ -98,7 +98,7 @@ public:
 
   // return this as an ITK image
   operator ImageType::Pointer() { return image; }
-  ImageType& getITKImage() { return *image; }
+  ImageType::Pointer getITKImage() { return image; }
   
   // modification functions //
 

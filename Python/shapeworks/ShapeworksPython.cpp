@@ -30,6 +30,8 @@ int add(int i, int j) {
     return i + j;
 }
 
+// PYBIND11_DECLARE_HOLDER_TYPE(image, SmartPtr<itk::Image<float, 3>>);
+
 PYBIND11_MODULE(shapeworks, m)
 {
   m.doc() = "ShapeWorks Python API";
@@ -125,48 +127,50 @@ PYBIND11_MODULE(shapeworks, m)
 
   // Shapeworks Globals
   py::class_<Matrix44>(m, "Matrix44")
-  .def(py::init<>())
-  // .def(py::init([](double x, double y, double z) { 
-  //   return Point({x,y,z}); 
-  //   }))
-  // .def("__repr__", [](const IPoint3& p) {
-  //     std::ostringstream ss;
-  //     ss << p;
-  //     return ss.str();
-  //   })
-  // .def("__getitem__", [](const IPoint3& p, size_t idx) { return p[idx]; })
-  // .def("__setitem__", [](IPoint3& p, size_t idx, int val) { p[idx] = val; })
-  // .def("__add__", [](const IPoint3& p1, const IPoint3& p2) { return p1 + p2; })
-  // .def("__sub__", [](const IPoint3& p1, const IPoint3& p2) { return p1 - p2; })
-  // .def("__mul__", [](const IPoint3& p1, const IPoint3& p2) { return p1 * p2; })
-  // .def("__iadd__", [](IPoint3& p1, const IPoint3& p2) { return p1 += p2; })
-  // .def("__isub__", [](IPoint3& p1, const IPoint3& p2) { return p1 -= p2; })
-  // .def("__mul__", [](const IPoint3& p, const double x) { return p * x; })
-  // .def("__truediv__", [](const IPoint3& p, const double x) { return p / x; })
-  // .def("__imul__", [](IPoint3& p, const double x) { return p *= x; })
-  // .def("__itruediv__", [](IPoint3& p, const double x) { return p /= x; })
+  .def(py::init([] { Matrix44 m;
+    m.SetIdentity();
+    return m; 
+    }))
+  .def("__repr__", [](const Matrix44& m) {
+      std::ostringstream ss;
+      ss << m;
+      return ss.str();
+    })
+  .def("__getitem__", [](const Matrix44& m, size_t r, size_t c) { return m(r, c); })
+  .def("__setitem__", [](Matrix44& m, size_t r, size_t c, int val) { m[r][c] = val; })
+  .def("__add__", [](const Matrix44& m1, const Matrix44& m2) { return m1 + m2; })
+  .def("__sub__", [](const Matrix44& m1, const Matrix44& m2) { return m1 - m2; })
+  .def("__mul__", [](const Matrix44& m1, const Matrix44& m2) { return m1 * m2; })
+  .def("__iadd__", [](Matrix44& m1, const Matrix44& m2) { return m1 += m2; })
+  .def("__isub__", [](Matrix44& m1, const Matrix44& m2) { return m1 -= m2; })
+  .def("__mul__", [](const Matrix44& m, const double x) { return m * x; })
+  .def("__truediv__", [](const Matrix44& m, const double x) { return m / x; })
+  .def("__imul__", [](Matrix44& m, const double x) { return m *= x; })
+  .def("__itruediv__", [](Matrix44& m, const double x) { return m /= x; })
   ;
 
   // Shapeworks Globals
   py::class_<Matrix>(m, "Matrix")
-  .def(py::init<>())
-  // .def(py::init<>())
-  // .def("__repr__", [](const IPoint3& p) {
-  //     std::ostringstream ss;
-  //     ss << p;
-  //     return ss.str();
-  //   })
+  .def(py::init([] { Matrix m;
+    m.SetIdentity();
+    return m; 
+    }))
+  .def("__repr__", [](const Matrix& m) {
+      std::ostringstream ss;
+      ss << m;
+      return ss.str();
+    })
   // .def("__getitem__", [](const IPoint3& p, size_t idx) { return p[idx]; })
   // .def("__setitem__", [](IPoint3& p, size_t idx, int val) { p[idx] = val; })
-  // .def("__add__", [](const IPoint3& p1, const IPoint3& p2) { return p1 + p2; })
-  // .def("__sub__", [](const IPoint3& p1, const IPoint3& p2) { return p1 - p2; })
-  // .def("__mul__", [](const IPoint3& p1, const IPoint3& p2) { return p1 * p2; })
-  // .def("__iadd__", [](IPoint3& p1, const IPoint3& p2) { return p1 += p2; })
-  // .def("__isub__", [](IPoint3& p1, const IPoint3& p2) { return p1 -= p2; })
-  // .def("__mul__", [](const IPoint3& p, const double x) { return p * x; })
-  // .def("__truediv__", [](const IPoint3& p, const double x) { return p / x; })
-  // .def("__imul__", [](IPoint3& p, const double x) { return p *= x; })
-  // .def("__itruediv__", [](IPoint3& p, const double x) { return p /= x; })
+  .def("__add__", [](const Matrix& m1, const Matrix& m2) { return m1 + m2; })
+  .def("__sub__", [](const Matrix& m1, const Matrix& m2) { return m1 - m2; })
+  .def("__mul__", [](const Matrix& m1, const Matrix& m2) { return m1 * m2; })
+  .def("__iadd__", [](Matrix& m1, const Matrix& m2) { return m1 += m2; })
+  .def("__isub__", [](Matrix& m1, const Matrix& m2) { return m1 -= m2; })
+  .def("__mul__", [](const Matrix& m, const double x) { return m * x; })
+  .def("__truediv__", [](const Matrix& m, const double x) { return m / x; })
+  .def("__imul__", [](Matrix& m, const double x) { return m *= x; })
+  .def("__itruediv__", [](Matrix& m, const double x) { return m /= x; })
   ;
 
   // Shapeworks Globals
@@ -215,33 +219,28 @@ PYBIND11_MODULE(shapeworks, m)
 
   // Shapeworks Globals
   // TODO: bind transforms
-  // typedef itk::Transform<double, 3> GenericTransform;
-  // using GenericTransform = itk::Transform<double, 3>;
-  // using TransformPtr = GenericTransform::Pointer;
-  // using IdentityTransform = itk::IdentityTransform<double, 3>;
-  // using IdentityTransformPtr = IdentityTransform::Pointer;
-  // py::object IdentityTransformPtr = py::cast(itkSmartPointer<itk::Transform<double, 3>>);
 
   // m.def("TransformPtr", [] { return itk::Transform<double, 3>::New(); });
   // m.def("IdentityTransformPtr", [] { return itk::IdentityTransform<double, 3>::New(); });
   // m.def("AffineTransformPtr", [] { return itk::AffineTransform<double, 3>::New(); });
-
   // m.def_readwrite("TransformPtr",         &shapeworks::TransformPtr)
 
-  // py::class_<TransformPtr>(m, "TransformPtr")
-  // .def(py::init<>())
-  // ;
-
   // Shapeworks Globals
-  m.def("toPoint", py::overload_cast<const Dims &>(&toPoint), "converts Dims to Point");
-  m.def("toPoint", py::overload_cast<const Coord &>(&toPoint), "converts Coord to Point");
-  m.def("toPoint", py::overload_cast<const Vector &>(&toPoint), "converts Vector to Point");
-  m.def("toVector", py::overload_cast<const Dims &>(&toVector), "converts Dims to Vector");
-  m.def("toVector", py::overload_cast<const Point &>(&toVector), "converts Point to Vector");
-  // m.def("negate", &negate<Point>, "p"_a);
-  // m.def("invert", invert, "v"_a);
-  // m.def("dot", dot, "a"_a, "b"_a);
-  // m.def("cross", cross, "a"_a, "b"_a);
+  m.def("toPoint", py::overload_cast<const Dims &>(toPoint), "converts Dims to Point");
+  m.def("toPoint", py::overload_cast<const Coord &>(toPoint), "converts Coord to Point");
+  m.def("toPoint", py::overload_cast<const Vector &>(toPoint), "converts Vector to Point");
+  m.def("toVector", py::overload_cast<const Dims &>(toVector), "converts Dims to Vector");
+  m.def("toVector", py::overload_cast<const Point &>(toVector), "converts Point to Vector");
+  m.def("negate", negate<Coord>);
+  m.def("negate", negate<Dims>);
+  m.def("negate", negate<Point>);
+  m.def("negate", negate<Vector>);
+  m.def("negate", negate<IPoint3>);
+  m.def("negate", negate<FPoint3>);
+  m.def("invertValue", invertValue<Point>);
+  m.def("invertValue", invertValue<Vector>);
+  m.def("dotProduct", dotProduct, "a"_a, "b"_a);
+  m.def("crossProduct", crossProduct, "a"_a, "b"_a);
 
   py::enum_<Axis>(m, "Axis")
   .value("invalid", Axis::invalid)
@@ -275,12 +274,11 @@ PYBIND11_MODULE(shapeworks, m)
   py::class_<Image>(m, "Image")
   .def(py::init<const std::string &>()) // can the argument for init be named (it's filename in this case)
   .def(py::init<Image::ImageType::Pointer>())
-  // .def(py::init<const Image &&>())
+  // .def(py::init<Image &&>())
   .def(py::init<const Image &>())
-  // .def(py::self = Image&())
-  // .def(py::self = const Image &&)
-  // .def(operator ImageType::Pointer)
-  // .def(-py::self)
+  .def("__set__",               py::overload_cast<const Image&>(&Image::operator=))
+  // .def("__set__",               py::overload_cast<Image&&>(&Image::operator=))
+  .def("__neg__", [](Image& img) { return -img; })
   .def(py::self + py::self)
   .def(py::self += py::self)
   .def(py::self - py::self)
@@ -320,7 +318,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("clip",                  py::overload_cast<const Point&, const Point&, const Point&, const Image::PixelType>(&Image::clip))
   .def("clip",                  py::overload_cast<const Vector&, const Point&, const Image::PixelType>(&Image::clip))
   .def("setOrigin",             &Image::setOrigin, "origin"_a=Point3({0,0,0}))
-  .def("reflect",                &Image::reflect, "axis"_a)
+  .def("reflect",               &Image::reflect, "axis"_a)
   .def("dims",                  &Image::dims)
   .def("size",                  &Image::size)
   .def("spacing",               &Image::spacing)
@@ -335,13 +333,13 @@ PYBIND11_MODULE(shapeworks, m)
   .def_static("getPolyData",    &Image::getPolyData, "image"_a, "isoValue"_a=0.0)
   .def("toMesh",                &Image::toMesh, "isovalue"_a=1.0)
   // .def("__repr__",              &Image::print)
-  // .def("__set__",               &Image::operator=, "img"_a)
 
   // Try to give the Python direct access to the underlying ITK image; see issue #780
   // .def("toITKImage",            &Image::operator Image::ImageType::Pointer) // cannot convert to itk::SmartPointer<itk::Image...
   // .def("toITKImage",            &Image::getITKImage) // can't convert return value to a Python type! itk::Image<float, 3u>
   // .def("toITKImage",            [](Image& I) { return *(static_cast<Image::ImageType::Pointer>(I); }) // ugly template errors
   // .def("toITKImage",            [](Image& I) { return *(I.operator Image::ImageType::Pointer()); })   // same errors
+  // .def("toITKImage",            []() { return Image::ImageType::Pointer(); })
   ;
 
   // Image::Region
@@ -360,7 +358,6 @@ PYBIND11_MODULE(shapeworks, m)
   .def("shrink",                &Image::Region::shrink, "other"_a)
   .def("grow",                  &Image::Region::grow, "other"_a)
   .def("expand",                &Image::Region::expand, "other"_a)
-  // .def("ImageType::RegionType")
   ;
 
   // ImageUtils

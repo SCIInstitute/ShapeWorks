@@ -13,14 +13,17 @@ Point toPoint(const Vector &v) { return Point({v[0], v[1], v[2]}); }
 Vector3 makeVector(std::array<double, 3>&& arr) { return Vector3(arr.data()); }
 
 template<>
-Vector3 invert(Vector3 &&v) { return makeVector({1.0/v[0], 1.0/v[1], 1.0/v[2]}); }
+Vector3 negate(const Vector3 &v) { return makeVector({-v[0], -v[1], -v[2]}); }
 
-Vector3 cross(const Vector3 &a, const Vector3 &b)
+template<>                                            
+Vector3 invertValue(const Vector3 &v) { return makeVector({1.0/v[0], 1.0/v[1], 1.0/v[2]}); }
+                                                    
+Vector3 crossProduct(const Vector3 &a, const Vector3 &b)
 {
   return makeVector({a[1]*b[2] - a[2]*b[1], -(a[0]*b[2] - a[2]*b[0]), a[0]*b[1] - a[1]*b[0]});
 }
 
-Vector3 dot(const Vector3 &a, const Vector3 &b)
+Vector3 dotProduct(const Vector3 &a, const Vector3 &b)
 {
   return makeVector({a[0]*b[0], a[1]*b[1], a[2]*b[2]});
 }
