@@ -1,6 +1,20 @@
 #!/bin/bash
 
+# Don't run this script if you are not a GitHub Action
+
+if [[ -z "${GITHUB_TOKEN}" ]]; then
+    echo "This script should only be run by GitHub Actions"
+    exit 1
+fi
+
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 <install_dir>"
+    exit 1
+fi
+INSTALL_DIR=$1
+
 # Update auto-documentation
+PATH=$INSTALL_DIR/bin:$PATH
 python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
 
 git config --global user.name "${GITHUB_ACTOR}"
