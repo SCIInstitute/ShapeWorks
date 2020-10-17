@@ -109,24 +109,25 @@ namespace itk
             m_GradientFunction->BeforeIteration();
         counter++;
 
-#pragma omp parallel
-      {
         // Iterate over each domain
-#pragma omp for
-        for (int dom = 0; dom < numdomains; dom++)
-        {
+      tbb::parallel_for(
+        tbb::blocked_range<size_t>{0, numdomains},
+        [&](const tbb::blocked_range<size_t>& r) {
+          for (size_t dom = r.begin(); dom < r.end(); ++dom) {
+
           // skip any flagged domains
           if (m_ParticleSystem->GetDomainFlag(dom) == true)
           {
-            continue;
+            return;
           }
 
           const ParticleDomain *domain = m_ParticleSystem->GetDomain(dom);
 
           typename GradientFunctionType::Pointer localGradientFunction = m_GradientFunction;
 #ifdef SW_USE_OPENMP
-          localGradientFunction = m_GradientFunction->Clone();
+//            localGradientFunction = m_GradientFunction->Clone();
 #endif
+          localGradientFunction = m_GradientFunction->Clone();
 
           // Tell function which domain we are working on.
           localGradientFunction->SetDomainNumber(dom);
@@ -204,7 +205,7 @@ namespace itk
             } // end while(true)
           } // for each particle
         }// for each domain
-      }
+      });
 
       m_NumberOfIterations++;
       m_GradientFunction->AfterIteration();
