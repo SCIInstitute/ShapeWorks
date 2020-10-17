@@ -54,7 +54,6 @@ void shapeworksEnvSetup()
 
   // set location of shapeworks DATA used by shell scripts
   std::string data(TEST_DATA_DIR);
-  data += "/shapeworks";
 #ifdef _WIN32
   _putenv_s("DATA", data.c_str());
 #else

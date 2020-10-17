@@ -17,5 +17,5 @@ def setup():
                 + os.pathsep + item + "/ShapeWorksStudio.app/Contents/MacOS"
     os.environ["PATH"] = build_dir + os.pathsep + os.environ["PATH"]
 
-    test_dir = "../data/shapeworks/"
+    test_dir = "../data/"
     os.environ["DATA"] = test_dir

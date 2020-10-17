@@ -359,7 +359,6 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side, printCmd=T
             subprocess.check_call(execCommand)
     return meshList, imageList
 
-
 # Reflects meshes to reference side
 def reflectMeshes(outDir, seg_list, reference_side, printCmd=True):
     if reference_side == 'right':
@@ -592,7 +591,6 @@ def getMeshInfo(outDir, meshList, spacing, printCmd=True):
     size_file = open(out_size, 'r')
     size = np.array(size_file.read().split()).astype(int)
     return origin, size
-
 
 def ClipBinaryVolumes(outDir, segList, cutting_plane_points, printCmd=True):
     if not os.path.exists(outDir):
