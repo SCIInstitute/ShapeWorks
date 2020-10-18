@@ -13,7 +13,7 @@ lines_per_iter = total_lines / total_iters
 cache_size = 256
 cache = pylru.lrucache(cache_size)
 cache_size_bytes = cache_size * N * 8
-viz_queries_per_frame = 100000
+viz_queries_per_frame = 1000
 
 pygame.init()
 screen = pygame.display.set_mode([DIM, DIM])
@@ -43,6 +43,7 @@ while running:
 
         c = (0, 0, 255)
         if i in cache:
+            _ = cache[i] # force it to be "recently used"
             cache_hits += 1
         else:
             c = (255, 0, 0)
@@ -53,7 +54,7 @@ while running:
         # to in pygame coordinates
         y = int((i/N) * DIM)
         x = int((j/N) * DIM)
-        pygame.draw.circle(screen, c, (x, y), c[0]//255*5+5)
+        pygame.draw.circle(screen, c, (x, y), c[0]//255*2+5)
 
     img = font.render(f'Number of acceses: {n_lines} / ~{total_lines}', True, (0, 0, 0))
     screen.blit(img, (20, 20))
