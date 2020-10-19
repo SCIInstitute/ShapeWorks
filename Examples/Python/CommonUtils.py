@@ -33,6 +33,17 @@ def get_data(datasetName, outputDirectory):
         with ZipFile(zipfile, 'r') as zipObj:
             zipObj.extractall(path=outputDirectory)
 
+def get_groomed_data(dtDirecory, tiny_test, use_subsample, sample_idx=[]):
+    dtFiles = []
+    for file in sorted(os.listdir(dtDirecory)):
+        if ".nrrd" in file:
+            dtFiles.append(dtDirecory + file)
+    if tiny_test:
+        dtFiles = dtFiles[:3]   
+    if use_subsample:
+        dtFiles = [dtFiles[i] for i in sample_idx]
+    return dtFiles
+
 def create_cpp_xml(filename, outputfilename):
     '''
         This creates a xml for cpp Shape warp binary

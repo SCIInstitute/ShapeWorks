@@ -25,18 +25,23 @@ def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
-
+    # Get data
     datasetName = "ellipsoid-v0"
     outputDirectory = "Output/ellipsoid_cut/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
     CommonUtils.get_data(datasetName, outputDirectory)
     fileList = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))
-
-    fileList = fileList[:15]
+    # Select data for tiny test
     if args.tiny_test:
         args.use_single_scale = 1
-        fileList = fileList[0:10]
+        fileList = fileList[:3]
+    # Select data if using subsample
+    if args.use_subsample:
+        sample_idx = sampledata(fileList, int(args.use_subsample))
+        fileList = [fileList[i] for i in sample_idx]
+    else:
+        sample_idx = []
 
     """
     ## GROOM : Data Pre-processing
@@ -49,18 +54,19 @@ def Run_Pipeline(args):
     -- Largest Bounding Box and Cropping
     For a detailed explanation of grooming steps see: /Documentation/Workflow/Groom.md
     """
-
-    print("\nStep 2. Groom - Data Pre-processing\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
-
-    groomDir = outputDirectory + 'groomed/'
-    if not os.path.exists(groomDir):
-        os.makedirs(groomDir)
-
     if args.skip_grooming:
-        dtFiles = sorted(glob.glob(outputDirectory + datasetName + '/groomed/distance_transforms/*.nrrd'))
+        print("Skipping grooming.")
+        dtDirecory = outputDirectory + datasetName + '/groomed/distance_transforms/'
+        dtFiles = CommonUtils.get_groomed_data(dtDirecory, args.tiny_test, args.use_subsample, sample_idx)
     else:
+        print("\nStep 2. Groom - Data Pre-processing\n")
+        if int(args.interactive) != 0:
+            input("Press Enter to continue")
+
+        groomDir = outputDirectory + 'groomed/'
+        if not os.path.exists(groomDir):
+            os.makedirs(groomDir)
+            
         """Apply isotropic resampling"""
         resampledFiles = applyIsotropicResampling(groomDir + "resampled/segmentations", fileList)
 
