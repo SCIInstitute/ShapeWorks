@@ -60,7 +60,7 @@ def Run_Pipeline(args):
     if not os.path.exists(groomDir):
         os.makedirs(groomDir)
 
-    if int(args.skip_grooming) == 1:
+    if args.skip_grooming:
         dtFiles = sorted(glob.glob(outputDirectory + datasetName + '/groomed/distance_transforms/*.nrrd'))
     else:
         """Apply isotropic resampling"""
