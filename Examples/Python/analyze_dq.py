@@ -6,7 +6,7 @@ c = 'C0'
 cmap = colors.LinearSegmentedColormap.from_list(
         'incr_alpha', [(0, (*colors.to_rgb(c),0.1)), (1, (1.0, 0.0, 0.0, 1.0))])
 
-filepath = 'distance_queries.txt'
+filepath = '/scratch/karthik/projects/ShapeWorks/Examples/Python/Output/femur_mesh/shape_models/distance_queries_counts.txt'
 
 curr = {}
 n = 0
@@ -20,6 +20,7 @@ with open(filepath) as fd:
         curr[n][x,y] = v
 
 print(n)
+print(f'Sparsity: {(curr[n] > 0).sum()} / {curr[n].size}')
 nz_x, nz_y = np.nonzero(curr[n])
 max_value = np.max(curr[n])
 plt.spy(curr[n])

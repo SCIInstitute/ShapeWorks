@@ -16,7 +16,7 @@ lines_per_iter = total_lines // total_iters
 caches = {}
 cache_hits = {}
 cache_misses = {}
-for cache_size in [1, 2, 8, 16, 128, 512]:
+for cache_size in [1024, 1536, 2048, 3072, 4096, 8192]:
     caches[cache_size] = pylru.lrucache(cache_size)
     cache_hits[cache_size] = 0
     cache_misses[cache_size] = 0
