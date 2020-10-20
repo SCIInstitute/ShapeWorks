@@ -33,11 +33,11 @@ Vector3 makeVector(std::array<double, 3>&& arr);
 using GenericTransform   = itk::Transform<double, 3>;
 using IdentityTransform  = itk::IdentityTransform<double, 3>;
 using TransformPtr       = GenericTransform::Pointer;
+TransformPtr createTransform(const Matrix33 &mat, const Vector3 &translate = makeVector({0,0,0}));
 
 /// Affine transforms are used for many Image manipulation commands
 using AffineTransform    = itk::AffineTransform<double, 3>;
 using AffineTransformPtr = AffineTransform::Pointer;
-AffineTransformPtr createAffineTransform(const Matrix33 &mat, const Vector3 &translate = makeVector({0,0,0}));
 
 /// For deliberate conversions between types
 Point toPoint(const Dims &d);

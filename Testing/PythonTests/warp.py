@@ -4,16 +4,16 @@ setup()
 
 from shapeworks import *
 
-def warpTest1():
+def warpTest():
   img = Image(os.environ["DATA"] + "input.nrrd")
-  Image
-  img.reflect(Axis.Z)
+  transform = ImageUtils.createWarpTransform(os.environ["DATA"] + "source.particles", os.environ["DATA"] + "target.particles", 1)
+  img.applyTransform(transform, InterpolationType.Linear)
 
-  compareImg = Image(os.environ["DATA"] + "reflect1.nrrd")
+  compareImg = Image(os.environ["DATA"] + "warp.nrrd")
 
   return img.compare(compareImg)
 
-val = warpTest1()
+val = warpTest()
 
 if val is False:
   sys.exit(1)

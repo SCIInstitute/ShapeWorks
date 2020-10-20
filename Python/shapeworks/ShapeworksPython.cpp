@@ -21,17 +21,6 @@ using namespace pybind11::literals;
 
 using namespace shapeworks;
 
-// TODO
-// - add operator= to the pybind11 (for Image, Mesh, etc) // won't this just work? There could be memory issues with refs...
-// - split these out into separate files (e.g., one for each directory under Libs)
-
-// used for demonstration code below
-int add(int i, int j) {
-    return i + j;
-}
-
-// PYBIND11_DECLARE_HOLDER_TYPE(image, SmartPtr<itk::Image<float, 3>>);
-
 PYBIND11_MODULE(shapeworks, m)
 {
   m.doc() = "ShapeWorks Python API";
@@ -136,8 +125,8 @@ PYBIND11_MODULE(shapeworks, m)
       ss << m;
       return ss.str();
     })
-  .def("__getitem__", [](const Matrix44& m, size_t r, size_t c) { return m(r, c); })
-  .def("__setitem__", [](Matrix44& m, size_t r, size_t c, int val) { m[r][c] = val; })
+  // .def("__getitem__", [](const Matrix44& m, size_t r, size_t c) { return m(r, c); })
+  // .def("__setitem__", [](Matrix44& m, size_t r, size_t c, int val) { m[r][c] = val; })
   .def("__add__", [](const Matrix44& m1, const Matrix44& m2) { return m1 + m2; })
   .def("__sub__", [](const Matrix44& m1, const Matrix44& m2) { return m1 - m2; })
   .def("__mul__", [](const Matrix44& m1, const Matrix44& m2) { return m1 * m2; })
@@ -218,14 +207,11 @@ PYBIND11_MODULE(shapeworks, m)
   ;
 
   // Shapeworks Globals
-  // TODO: bind transforms
-
-  // m.def("TransformPtr", [] { return itk::Transform<double, 3>::New(); });
-  // m.def("IdentityTransformPtr", [] { return itk::IdentityTransform<double, 3>::New(); });
-  // m.def("AffineTransformPtr", [] { return itk::AffineTransform<double, 3>::New(); });
-  // m.def_readwrite("TransformPtr",         &shapeworks::TransformPtr)
+  py::class_<itk::SmartPointer<itk::Transform<double, 3u, 3u> >>(m, "TransformPtr");
+  // py::class_<itk::SmartPointer<itk::AffineTransform<double, 3u> >>(m, "AffineTransformPtr");
 
   // Shapeworks Globals
+  m.def("createTransform", createTransform, "mat"_a, "translate"_a=makeVector({0,0,0}));
   m.def("toPoint", py::overload_cast<const Dims &>(toPoint), "converts Dims to Point");
   m.def("toPoint", py::overload_cast<const Coord &>(toPoint), "converts Coord to Point");
   m.def("toPoint", py::overload_cast<const Vector &>(toPoint), "converts Vector to Point");
@@ -253,6 +239,7 @@ PYBIND11_MODULE(shapeworks, m)
   m.def("axis_is_valid", py::overload_cast<const Vector &>(&axis_is_valid));
   m.def("axis_is_valid", py::overload_cast<const Axis &>(&axis_is_valid));
   m.def("degToRad", degToRad, "deg"_a);
+  m.def("toAxis", toAxis, "str"_a);
   
   // ShapeworksUtils
   py::class_<ShapeworksUtils>(m, "ShapeworksUtils")
@@ -292,12 +279,12 @@ PYBIND11_MODULE(shapeworks, m)
   .def(py::self - Image::PixelType())
   .def(py::self -= Image::PixelType())
   .def(py::self == py::self)
-  .def("write",                 &Image::write, "filename"_a, "compressed"_a=true)
-  .def("antialias",             &Image::antialias, "smooth the image", "iterations"_a=50, "maxRMSErr"_a=0.01f, "layers"_a=0)
-  .def("recenter",              &Image::recenter)
+  .def("write",                 &Image::write, "writes the current image (determines type by its extension)", "filename"_a, "compressed"_a=true)
+  .def("antialias",             &Image::antialias, "antialiases binary volumes", "iterations"_a=50, "maxRMSErr"_a=0.01f, "layers"_a=0)
   .def("resample",              py::overload_cast<TransformPtr, Point3, Dims, Vector3, Image::ImageType::DirectionType, Image::InterpolationType>(&Image::resample))
   .def("resample",              py::overload_cast<const Vector&, Image::InterpolationType>(&Image::resample))
   .def("resize",                &Image::resize, "logicalDims"_a, "interp"_a=Image::InterpolationType::Linear)
+  .def("recenter",              &Image::recenter)
   .def("pad",                   py::overload_cast<int, Image::PixelType>(&Image::pad))
   .def("pad",                   py::overload_cast<int, int, int, Image::PixelType>(&Image::pad))
   .def("translate",             &Image::translate, "v"_a)
@@ -363,12 +350,18 @@ PYBIND11_MODULE(shapeworks, m)
   // ImageUtils
   py::class_<ImageUtils>(m, "ImageUtils")
   .def_static("boundingBox",    &ImageUtils::boundingBox, "filenames"_a, "isoValue"_a=1.0)
-  .def_static("createCenterOfMassTransform",
-                                &ImageUtils::createCenterOfMassTransform, "image"_a)
-  .def_static("createRigidRegistrationTransform",
-                                &ImageUtils::createRigidRegistrationTransform, "source_dt"_a, "target_dt"_a, "isoValue"_a=0.0, "iterations"_a=20)
-  .def_static("createWarpTransform",    
-                                &ImageUtils::createWarpTransform, "source_landmarks"_a, "target_landmarks"_a, "stride"_a=1)
+  .def_static("createCenterOfMassTransform", [](const Image& img){
+    auto xform_ptr = shapeworks::ImageUtils::createCenterOfMassTransform(img);
+    return xform_ptr;
+  })
+  .def_static("createRigidRegistrationTransform", [](const Image& source_dt, const Image& target_dt, float isoValue = 0.0, unsigned iterations = 20){
+    auto xform_ptr = shapeworks::ImageUtils::createRigidRegistrationTransform(source_dt, target_dt, isoValue, iterations);
+    return xform_ptr;
+  })
+  .def_static("createWarpTransform", [](const std::string &source_landmarks, const std::string &target_landmarks, const int stride = 1){
+    auto xform_ptr = shapeworks::ImageUtils::createWarpTransform(source_landmarks, target_landmarks, stride);
+    return xform_ptr;
+  })
   .def_static("topologyPreservingSmooth", 
                                 &ImageUtils::topologyPreservingSmooth, "image"_a, "scaling"_a=20.0, "sigmoidAlpha"_a=10.5, "sigmoidBeta"_a=10.0)
   .def_static("isoresample",    &ImageUtils::isoresample, "image"_a, "isoSpacing"_a = 1.0, "interp"_a = Image::InterpolationType::Linear)
@@ -416,5 +409,5 @@ PYBIND11_MODULE(shapeworks, m)
   
   // this is simply a demonstration of creating a submodule, which may not be necessary (could add Groom, Optimize, etc)
   py::module sub_module = m.def_submodule("submodule", "ShapeWorks submodule classes and functions");
-  sub_module.def("add", &add, "adds two numbers", "i"_a=1, "j"_a=2);
+  // sub_module.def("add", &add, "adds two numbers", "i"_a=1, "j"_a=2);
 }

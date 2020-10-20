@@ -103,7 +103,7 @@ def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False):
         T = img.centerOfMass() - img.center()
 
         # binarize result since linear interpolation makes image blurry again
-        img.translate(T[0], T[1], T[2]).binarize().write(outname)
+        img.translate(T).binarize().write(outname)
 
         if processRaw:
             innameImg = inDataListImg[i]
@@ -230,7 +230,8 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
         isoimg.write(isonrrdfilename)
 
         img = Image(seginname)
-        img.icp(ref_tpdtnrrdfilename, tpdtnrrdfilename, icpIterations).write(segoutname)
+        transform = createTransform(Matrix())
+        img.resample(transform, img.origin(), img.dims(), img.spacing(), img.coordsys(), InterpolationType.NearestNeighbor).write(segoutname)
 
         if processRaw:
             img = Image(rawinname)

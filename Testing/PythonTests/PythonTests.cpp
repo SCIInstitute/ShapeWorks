@@ -21,7 +21,7 @@ TEST(pythonTests, compare)
 }
 
 //---------------------------------------------------------------------------
-TEST(pythonTests, compareFail)
+TEST(pythonTests, comparefail)
 {
   ASSERT_TRUE(system("python compareFail.py"));
 }
@@ -33,7 +33,7 @@ TEST(pythonTests, antialias)
 }
 
 //---------------------------------------------------------------------------
-TEST(pythonTests, antialiasFail)
+TEST(pythonTests, antialiasfail)
 {
   ASSERT_TRUE(system("python antialiasFail.py"));
 }
@@ -84,6 +84,12 @@ TEST(pythonTests, translate)
 TEST(pythonTests, translatefail)
 {
   ASSERT_TRUE(system("python translatefail.py"));
+}
+
+//---------------------------------------------------------------------------
+TEST(pythonTests, centerofmass)
+{
+  ASSERT_FALSE(system("python centerofmass.py"));
 }
 
 //---------------------------------------------------------------------------
@@ -206,19 +212,17 @@ TEST(pythonTests, crop)
   ASSERT_FALSE(system("python crop.py"));
 }
 
-// TODO: bind transform
 //---------------------------------------------------------------------------
-// TEST(pythonTests, icp)
-// {
-//   ASSERT_FALSE(system("python icp.py"));
-// }
+TEST(pythonTests, icp)
+{
+  ASSERT_FALSE(system("python icp.py"));
+}
 
-// // TODO: bind transform
-// //---------------------------------------------------------------------------
-// TEST(pythonTests, icpfail)
-// {
-//   ASSERT_TRUE(system("python icpfail.py"));
-// }
+//---------------------------------------------------------------------------
+TEST(pythonTests, icpfail)
+{
+  ASSERT_TRUE(system("python icpfail.py"));
+}
 
 //---------------------------------------------------------------------------
 TEST(pythonTests, clip)
@@ -244,19 +248,17 @@ TEST(pythonTests, reflectfail)
   ASSERT_TRUE(system("python reflectfail.py"));
 }
 
-// TODO: bind transform
 //---------------------------------------------------------------------------
-// TEST(pythonTests, warp)
-// {
-//   ASSERT_FALSE(system("python warp.py"));
-// }
+TEST(pythonTests, warp)
+{
+  ASSERT_FALSE(system("python warp.py"));
+}
 
-// // TODO: bind transform
-// //---------------------------------------------------------------------------
-// TEST(pythonTests, warpfail)
-// {
-//   ASSERT_TRUE(system("python warpfail.py"));
-// }
+//---------------------------------------------------------------------------
+TEST(pythonTests, warpfail)
+{
+  ASSERT_TRUE(system("python warpfail.py"));
+}
 
 //---------------------------------------------------------------------------
 TEST(pythonTests, setorigin)
@@ -264,12 +266,11 @@ TEST(pythonTests, setorigin)
   ASSERT_FALSE(system("python setorigin.py"));
 }
 
-// TODO: bind negate
 //---------------------------------------------------------------------------
-// TEST(pythonTests, negate)
-// {
-//   ASSERT_FALSE(system("python negate.py"));
-// }
+TEST(pythonTests, negate)
+{
+  ASSERT_FALSE(system("python negate.py"));
+}
 
 //---------------------------------------------------------------------------
 TEST(pythonTests, add)

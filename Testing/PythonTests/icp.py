@@ -9,7 +9,7 @@ def icpTest():
   imgSource = Image(os.environ["DATA"] + "smooth1.nrrd")
   imgTarget = Image(os.environ["DATA"] + "smooth2.nrrd")
   xform = ImageUtils.createRigidRegistrationTransform(imgSource, imgTarget, 1.0, 5)
-  img.applyTransform(xform, imgTarget.origin(), imgTarget.dims(), imgTarget.spacing(), imgTarget.coordsys())
+  img.applyTransform(xform, imgTarget.origin(), imgTarget.dims(), imgTarget.spacing(), imgTarget.coordsys(), InterpolationType.NearestNeighbor)
 
   compareImg = Image(os.environ["DATA"] + "icp.nrrd")
 
