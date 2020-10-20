@@ -4,7 +4,8 @@
 
 using namespace shapeworks;
 
-TEST(MeshTests, coverage_test) {
+TEST(MeshTests, coverage)
+{
   std::string test_location(std::string(TEST_DATA_DIR) + "/coverage/");
 
   Mesh femur(test_location + "femur.vtk");

@@ -193,9 +193,8 @@ TEST(OptimizeTests, useNormals)
   ASSERT_LT(values[values.size() - 2], 300);
 }
 
-//---------------------------------------------------------------------------
-TEST(OptimizeTests, cutting_plane_test) {
-
+TEST(OptimizeTests, cuttingPlane) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/cutting_plane_multi");
   chdir(test_location.c_str());
 
@@ -247,9 +246,8 @@ TEST(OptimizeTests, cutting_plane_test) {
   }
 }
 
-//---------------------------------------------------------------------------
-TEST(OptimizeTests, sphere_constraint_test) {
-
+TEST(OptimizeTests, sphereConstraint)
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sphere_constraint");
   chdir(test_location.c_str());
 
