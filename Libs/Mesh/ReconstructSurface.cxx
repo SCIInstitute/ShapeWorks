@@ -87,7 +87,7 @@ int DoIt(InputParams params)
 
         vtkSmartPointer<vtkPolyData> curDense = reconstructor.getMesh(curSparse);
 
-        std::string outfilename = params.out_path + '/'+ Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_dense.vtk";
+        std::string outfilename = params.out_prefix + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_dense.vtk";
         std::cout << "Writing: " << outfilename << std::endl;
 
         vtkSmartPointer<vtkPolyDataWriter> writer = vtkPolyDataWriter::New();
@@ -98,13 +98,13 @@ int DoIt(InputParams params)
         vtkSmartPointer<vtkPoints> vertices = vtkSmartPointer<vtkPoints>::New();
         vertices->DeepCopy( curDense->GetPoints() );
 
-        std::string ptsfilename = params.out_path + '/'+ Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_dense.particles";
+        std::string ptsfilename = params.out_prefix + '/'+ Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_dense.particles";
         Utils::writeSparseShape((char*) ptsfilename.c_str(), vertices);
 
         vtkSmartPointer<vtkPoints> curSparse_ = vtkSmartPointer<vtkPoints>::New();
         Utils::readSparseShape(curSparse_, const_cast<char*> (params.localPointsFilenames[shapeNo].c_str()));
 
-        ptsfilename = params.out_path + '/'+ Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_sparse.particles";
+        ptsfilename = params.out_prefix + '/'+ Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_sparse.particles";
         Utils::writeSparseShape((char*) ptsfilename.c_str(), curSparse_);
 
         if(params.display)

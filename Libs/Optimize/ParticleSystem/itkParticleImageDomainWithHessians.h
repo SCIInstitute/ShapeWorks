@@ -155,6 +155,11 @@ public:
     }
     return vdbAns;
   }
+
+
+  inline vnl_matrix_fixed<float, DIMENSION, DIMENSION> SampleHessianAtPoint(const PointType &p) const override {
+    return SampleHessianVnl(p);
+  }
   
   /** Set /Get the standard deviation for blurring the image prior to
       computation of the Hessian derivatives.  This value must be set prior to

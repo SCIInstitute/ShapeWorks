@@ -1,6 +1,5 @@
 #!/bin/bash -x
 
-
 if [ "$#" -ne 1 ]; then
     echo "Usage: $0 <version>"
     exit 1
@@ -25,12 +24,15 @@ fi
 export SW_VERSION=$VERSION
 ROOT=`pwd`
 
-cp -r ../build/bin/Release bin
+cp -r ../build/bin/RelWithDebInfo bin
 rm -rf Post
 
 # Run auto-documentation
 PATH=../build/bin/Release:$PATH
-python -c "import DocumentationUtils;DocumentationUtils.generateShapeWorksCommandDocumentation('Documentation/ShapeWorksCommands/ShapeWorksCommands.md')"
+python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
+mkdocs build
+mv site Documentation
+cp -a Documentation bin/
 
 # Remove tests, they won't work for users anyway
 rm bin/*Tests.exe

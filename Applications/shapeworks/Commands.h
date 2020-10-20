@@ -60,4 +60,7 @@ COMMAND_DECLARE(ReflectMesh, MeshCommand);
 COMMAND_DECLARE(ICP, MeshCommand);
 COMMAND_DECLARE(FillHoles, MeshCommand);
 
+// Optimize Commands
+COMMAND_DECLARE(OptimizeCommand, OptimizeCommandGroup);
+
 } // shapeworks

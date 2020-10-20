@@ -9,6 +9,7 @@
 #include <Data/Session.h>
 #include <Data/Mesh.h>
 #include <Data/Shape.h>
+#include <Data/StudioLog.h>
 
 #include <Optimize/QOptimize.h>
 
@@ -57,8 +58,6 @@ void OptimizeTool::handle_progress(int val)
     this->session_->update_points(local, true);
     this->session_->update_points(global, false);
   }
-
-  QApplication::processEvents();
 }
 
 //---------------------------------------------------------------------------
@@ -148,7 +147,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
   }
   this->optimize_->SetProcrustesInterval(procrustes_interval);
   this->optimize_->SetProcrustesScaling(this->ui_->procrustes_scaling->isChecked());
-  this->optimize_->SetVerbosity(5);
+  this->optimize_->SetVerbosity(0);
 
   int multiscale_particles = 0;
   if (this->ui_->multiscale->isChecked()) {

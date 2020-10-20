@@ -155,7 +155,7 @@ def listItemsInFolder(serverAddress, accessToken, folderId):
     actionMessage = 'listing items in folder'
     response = _makeGetRequest(
         url = serverAddress + "api/v1/item", 
-        params = {'folderId': folderId}, 
+        params = {'folderId': folderId, 'limit': 99999}, 
         headers = {'Girder-Token': accessToken}, 
         actionMessage = actionMessage)
     return response.json()

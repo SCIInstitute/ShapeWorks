@@ -2,8 +2,8 @@
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
 #pragma once
@@ -28,14 +28,10 @@ public:
     return shapeworks::DomainType::Mesh;
   }
 
-  /** Apply any constraints to the given point location.  This method may, for
-      example, implement boundary conditions or restrict points to lie on a
-      surface.  Default behavior does nothing.  Returns true if the value of
-      the point was modified and false otherwise. */
-  bool ApplyConstraints(PointType &p) const override;
-  bool ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const override;
+  bool ApplyConstraints(PointType &p, bool dbg = false) const override;
+  bool ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const;
   vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const override;
-  PointType UpdateParticlePosition(PointType &point, vnl_vector_fixed<double, DIMENSION> &update) const override;
+  PointType UpdateParticlePosition(const PointType &point, vnl_vector_fixed<double, DIMENSION> &update) const override;
 
   double GetCurvature(const PointType &p) const override {
     return GetSurfaceMeanCurvature();
@@ -60,37 +56,46 @@ public:
     return meshWrapper->GetMeshUpperBound();
   }
 
+
   PointType GetZeroCrossingPoint() const override {
+    // TODO Hong
+    // Apply constraints somehow
     return meshWrapper->GetPointOnMesh();
   }
+
+  PointType GetValidLocationNear(PointType p) const override {
+    PointType valid;
+    valid[0] = p[0]; valid[1] = p[1]; valid[2] = p[2];
+    ApplyConstraints(valid);
+    return valid;
+  }
+
   double GetSurfaceArea() const override {
     // TODO return actual surface area
     return 0;
   }
 
-  double GetMaxDimRadius() const override;
+  double GetMaxDiameter() const override;
 
+  inline vnl_vector_fixed<float, DIMENSION> SampleGradientAtPoint(const PointType &point) const override {
+    return meshWrapper->SampleNormalAtPoint(point);
+  }
   inline vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType & point) const override {
     return meshWrapper->SampleNormalAtPoint(point);
+  }
+  inline vnl_matrix_fixed<float, DIMENSION, DIMENSION> SampleHessianAtPoint(const PointType &p) const override {
+    //return meshWrapper->SampleHessianAtPoint(p);
+    // TODO need to figure out how to compute Hessians at mesh vertices.
+    return vnl_matrix_fixed<float, DIMENSION, DIMENSION>();
   }
 
   inline double Distance(const PointType &a, const PointType &b) const override {
       return meshWrapper->ComputeDistance(a, b);
   }
-
-  void PrintCuttingPlaneConstraints(std::ofstream& out) const override {
-    // TODO for Farshad: figure out constraint thing
+  inline double SquaredDistance(const PointType &a, const PointType &b) const override {
+    double dist = meshWrapper->ComputeDistance(a, b);
+    return dist * dist;
   }
-  void SetCuttingPlane(const vnl_vector<double>& a, const vnl_vector<double>& b, const vnl_vector<double>& c) {
-    // TODO for Farshad: figure out constraint thing
-  }
-  void TransformCuttingPlane(const vnl_matrix_fixed<double, DIMENSION + 1, DIMENSION + 1> & Trans) {
-    // TODO for Farshad: figure out constraint thing
-  }
-  void AddSphere(const vnl_vector_fixed<double, DIMENSION>& v, double r) {
-    // TODO for Farshad: figure out constraint thing
-  }
-
 
   void DeleteImages() override {
     // TODO Change this to a generic delete function
@@ -99,9 +104,12 @@ public:
     // TODO Change this to a generic delete function
   }
 
-  void SetMesh(shapeworks::MeshWrapper* mesh_) {
+  void SetMesh(shapeworks::MeshWrapper* mesh_)  {
     this->m_FixedDomain = false;
     meshWrapper = mesh_;
+  }
+
+  void UpdateZeroCrossingPoint() override {
   }
 
   MeshDomain() { }
@@ -113,9 +121,10 @@ protected:
     DataObject::Superclass::PrintSelf(os, indent);
     os << indent << "MeshDomain\n";
   }
-  
+
 private:
   shapeworks::MeshWrapper* meshWrapper;
+  PointType m_ZeroCrossingPoint;
 
 };
 

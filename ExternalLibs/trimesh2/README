@@ -80,10 +80,12 @@ In addition, the following keys invoke various options:
         Space bar:   Reset to initial view
         e:           Toggle display of mesh edges
         l:           Toggle lighting
+        f:           Toggle false-color rendering
         q:           Exit
         s:           Toggle specular component in reflection
-        2:           Toggle 2-sided lighting
+        Shift-2:     Toggle 2-sided lighting
         x:           Write current viewpoint as a ".xf" file
+        1, 2, etc.:  Toggle the n-th mesh off and on
 
 
 Using the library:
@@ -95,7 +97,9 @@ see how it's used.  Here's a trivial program to help you get started:
 
 
 #include "TriMesh.h"
+#include <cstdlib>
 #include <iostream>
+using namespace trimesh;
 using namespace std;
 
 int main(int argc, char *argv[])
@@ -121,10 +125,10 @@ int main(int argc, char *argv[])
 Compiling:
 ----------
 
-The code is written in C++, and is known to compile using a recent (3.x-4.x)
-version of g++.  Compiling under Windows is possible using Cygwin or
-Mingw32.  Other compilers have not been tested - let me know of any
-successes or failures.
+The code is written in C++, and is known to compile using a recent version
+of g++ (4.0.1 or later, but avoid 4.1.2).  Compiling under Windows is
+possible using Cygwin or MinGW32.  Other compilers have not been tested -
+let me know of any successes or failures.
 
 After unpacking the code, edit the appropriate "Makedefs.*" file to
 specify the compiler and any necessary options.  If there is no Makedefs

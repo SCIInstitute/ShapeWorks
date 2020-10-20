@@ -1,3 +1,4 @@
+
 #include "Utils.h"
 
 #include <vtkMath.h>
@@ -121,7 +122,7 @@ void Utils::readSparseShape(std::vector<itk::Point<double> > & points, char* fil
 
 void Utils::writeSparseShape(char* filename, vtkSmartPointer<vtkPoints> particles)
 {
-    ofstream ofs;
+    std::ofstream ofs;
     ofs.open(filename);
     for(unsigned int ii = 0 ; ii < particles->GetNumberOfPoints(); ii++)
     {
@@ -135,7 +136,7 @@ void Utils::writeSparseShape(char* filename, vtkSmartPointer<vtkPoints> particle
 
 void Utils::writeSparseShape(char* filename, std::vector<itk::Point<double, 3> > points)
 {
-    ofstream ofs;
+    std::ofstream ofs;
     ofs.open(filename);
     for(unsigned int ii = 0 ; ii < points.size(); ii++)
     {
@@ -171,7 +172,7 @@ std::vector<int> Utils::readParticleIds(char* filename)
 
 void Utils::writeParticleIds(char* filename, std::vector<int> ids)
 {
-    ofstream ofs;
+    std::ofstream ofs;
     ofs.open(filename);
     for(unsigned int ii = 0 ; ii < ids.size(); ii++)
     {

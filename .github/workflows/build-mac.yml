@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - release_v5.4
     tags:
     - '*'
   pull_request:
@@ -102,7 +101,9 @@ jobs:
       run: conda activate shapeworks && cd build && make install
 
     - name: Build Binary Package
-      run: pwd ; ls ; ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
+      shell: bash -l {0}
+      run: conda activate shapeworks && ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
+
     - name: make test
       shell: bash -l {0}
       run: conda activate shapeworks && cd build && ctest -VV

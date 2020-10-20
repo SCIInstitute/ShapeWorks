@@ -63,6 +63,15 @@ public:
 private:
 };
 
+class OptimizeCommandGroup : public Command
+{
+public:
+  const std::string type() override { return "Optimize"; }
+
+private:
+};
+
+
 class ParticleSystemCommand : public Command
 {
 public:

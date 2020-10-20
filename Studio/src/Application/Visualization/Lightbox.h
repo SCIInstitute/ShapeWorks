@@ -16,6 +16,7 @@ class Mesh;
 class Shape;
 class StudioInteractorStyle;
 class Visualizer;
+class vtkOrientationMarkerWidget;
 
 class Lightbox;
 typedef QSharedPointer< Lightbox > LightboxHandle;
@@ -74,6 +75,8 @@ public Q_SLOTS:
 
 private:
 
+  vtkSmartPointer<vtkOrientationMarkerWidget> create_orientation_marker();
+
   void check_for_first_draw();
 
   void display_shapes();
@@ -111,4 +114,7 @@ private:
   int timer_callback_count_ = 0;
 
   std::array<double, 3> initPos_;
+
+  vtkSmartPointer<vtkOrientationMarkerWidget> orientation_marker_widget_;
+
 };

@@ -3,71 +3,39 @@
 ====================================================================
 Full Example Pipeline for Statistical Shape Modeling with ShapeWorks
 ====================================================================
-
-In this example we provide a full pipeline with an example dataset of axis 
-aligned ellipsoids. We provide two different datasets for two different 
-senarios, prepared data consists of the binary images which do not require 
-alignment/resampling/cropping as pre-processing and only require conversion to
-signed distance transforms before running the ShapeWorks particle based 
-optimization. Second is the unprepped data which requires additional 
-pre-processing steps before it can be fed into the optimization. 
-
 This example is set to serve as a test case for new ShapeWorks users, and each
 step is explained in the shapeworks including the pre-processing, the 
 optimization and, the post ShapeWorks visualization.
 
 First import the necessary modules
 """
-
-from zipfile import ZipFile
 import os
-import sys
-import csv
-import argparse
-
 from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
+import CommonUtils
 
 def Run_Pipeline(args):
     """
     Unzip the data for this tutorial.
 
     The data is inside the Ellipsoids.zip, run the following function to unzip the 
-    data and create necessary supporting files. The files will be Extracted in a
-    newly created Directory TestEllipsoids.
-    This data both prepped and unprepped are binary images of ellipsoids varying
-    one of the axes while the other two are kept fixed. 
-
-    Extract the zipfile into proper directory and create necessary supporting
-    files
+    data and create necessary supporting files into the Data/ directory. 
+    The files will be Extracted in a newly created directory: Output/Ellipsoids.
     """
 
     print("\nStep 1. Extract Data\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    datasetName = "ellipsoid"
-    filename = datasetName + ".zip"
-    # Check if the data is in the right place
-    if not os.path.exists(filename):
-        print("Can't find " + filename + " in the current directory.")
-        import DatasetUtils
-        DatasetUtils.downloadDataset(datasetName)
+    datasetName = "ellipsoid-v0"
+    outputDirectory = "Output/ellipsoid/"
+    if not os.path.exists(outputDirectory):
+        os.makedirs(outputDirectory)
+    CommonUtils.get_data(datasetName, outputDirectory)
 
-    parentDir = "TestEllipsoids/"
-    if not os.path.exists(parentDir):
-        os.makedirs(parentDir)
-    # extract the zipfile
-    with ZipFile(filename, 'r') as zipObj:
-        zipObj.extractall(path=parentDir)
-        parentDir = parentDir + datasetName + "/"
-        if not args.start_with_prepped_data:
-            fileList = sorted(glob.glob(parentDir + "images/*.nrrd"))
-        else:
-            fileList = sorted(glob.glob(parentDir + "segmentations/*.nrrd"))
-
-    fileList = fileList[:15]
+    fileList = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))
+    
     if args.tiny_test:
         args.use_single_scale = 1
         fileList = fileList[0:10]
@@ -81,58 +49,64 @@ def Run_Pipeline(args):
     -- Center of Mass Alignment
     -- Rigid Alignment
     -- Largest Bounding Box and Cropping 
-    For a detailed explanation of grooming steps see: /Documentation/Workflow/Groom.md
+    For a detailed explanation of grooming steps see: /docs/workflow/groom.md
     """
 
     print("\nStep 2. Groom - Data Pre-processing\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    parentDir = 'TestEllipsoids/PrepOutput/'
-    if not os.path.exists(parentDir):
-        os.makedirs(parentDir)
+    groomDir = outputDirectory + 'groomed/'
+    if not os.path.exists(groomDir):
+        os.makedirs(groomDir)
 
-    if int(args.start_with_prepped_data) == 0:
+
+    if args.start_with_image_and_segmentation_data:
+        print("\n\n************************ WARNING ************************")
+        print("'start_with_image_and_segmentation_data' tag was used \nbut Ellipsoid data set does not have images.")
+        print("Continuing to run use case with segmentations only.")
+        print("*********************************************************\n\n")
+
+    if int(args.start_with_prepped_data) == 1:
+        dtFiles = sorted(glob.glob(outputDirectory + datasetName + '/groomed/distance_transforms/*.nrrd'))
+    else:
         """Apply isotropic resampling"""
-        resampledFiles = applyIsotropicResampling(parentDir + "resampled", fileList)
+        resampledFiles = applyIsotropicResampling(groomDir + "resampled/segmentations", fileList)
 
         """Apply centering"""
-        centeredFiles = center(parentDir + "centered", resampledFiles)
+        centeredFiles = center(groomDir + "centered/segmentations", resampledFiles)
 
         """Apply padding"""
-        paddedFiles = applyPadding(parentDir + "padded", centeredFiles, 10)
+        paddedFiles = applyPadding(groomDir + "padded/segmentations", centeredFiles, 10)
 
         """Apply center of mass alignment"""
-        comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles, None)
+        comFiles = applyCOMAlignment(groomDir + "com_aligned/segmentations", paddedFiles, None)
 
         """Apply rigid alignment"""
-        rigidFiles = applyRigidAlignment(parentDir + "aligned", comFiles, None, comFiles[0])
+        rigidFiles = applyRigidAlignment(groomDir + "aligned/segmentations", comFiles, None, comFiles[0])
 
         """Compute largest bounding box and apply cropping"""
-        croppedFiles = applyCropping(parentDir + "cropped", rigidFiles, parentDir + "aligned/*.aligned.nrrd")
+        croppedFiles = applyCropping(groomDir + "cropped/segmentations", rigidFiles, groomDir + "aligned/segmentations/*.aligned.nrrd")
 
-    """
-    We convert the scans to distance transforms, this step is common for both the 
-    prepped as well as unprepped data, just provide correct filenames.
-    """
+        """
+        We convert the scans to distance transforms, this step is common for both the 
+        prepped as well as unprepped data, just provide correct filenames.
+        """
 
-    print("\nStep 3. Groom - Convert to distance transforms\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
+        print("\nStep 3. Groom - Convert to distance transforms\n")
+        if int(args.interactive) != 0:
+            input("Press Enter to continue")
 
-    if int(args.start_with_prepped_data) == 0:
-        dtFiles = applyDistanceTransforms(parentDir, croppedFiles)
-    else:
-        dtFiles = applyDistanceTransforms(parentDir, fileList)
+        dtFiles = applyDistanceTransforms(groomDir, croppedFiles)
+
 
     """
     ## OPTIMIZE : Particle Based Optimization
 
     Now that we have the distance transform representation of data we create 
     the parameter files for the shapeworks particle optimization routine.
-    For more details on the plethora of parameters for shapeworks please refer to 
-    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ParameterDescription.pdf'
-
+    For more details on the plethora of parameters for shapeworks please refer 
+    to docs/workflow/optimze.md
     First we need to create a dictionary for all the parameters required by this
     optimization routine
     """
@@ -141,7 +115,7 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    pointDir = './TestEllipsoids/PointFiles/'
+    pointDir = outputDirectory + 'shape_models/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
@@ -151,10 +125,10 @@ def Run_Pipeline(args):
         "normal_weight": 10.0,
         "checkpointing_interval": 200,
         "keep_checkpoints": 0,
-        "iterations_per_split": 100,
-        "optimization_iterations": 2000,
+        "iterations_per_split": 2000,
+        "optimization_iterations": 1000,
         "starting_regularization": 100,
-        "ending_regularization": 0.1,
+        "ending_regularization": 10,
         "recompute_regularization_interval": 2,
         "domains_per_shape": 1,
         "domain_type": 'image',
@@ -163,8 +137,7 @@ def Run_Pipeline(args):
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,
-        "debug_projection": 0,
-        "verbosity": 3
+        "verbosity": 2
     }
 
     if args.tiny_test:

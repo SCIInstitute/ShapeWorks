@@ -31,10 +31,13 @@
 *.out
 *.app
 
-#Others
+# Others
 .DS_*
 .directory
 .idea/
+
+# PYC files
+*.pyc
 
 # Build directories
 build*/
@@ -51,3 +54,6 @@ Python/DatasetUtilsPackage/DatasetUtils.egg-info
 Examples/Python/shapeworksPortalLogin.txt
 
 __pycache__/
+
+# mkdocs generated site
+site/

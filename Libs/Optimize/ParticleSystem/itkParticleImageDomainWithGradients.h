@@ -46,27 +46,11 @@ public:
     m_VDBGradient = openvdb::tools::gradient(*this->GetVDBImage());
   }
 
-  /** Sample the image at a point.  This method performs no bounds checking.
-      To check bounds, use IsInsideBuffer.  SampleGradientsVnl returns a vnl
-      vector of length VDimension instead of an itk::CovariantVector
-      (itk::FixedArray). */
-  inline VectorType SampleGradient(const PointType &p) const
-  {
-    if(this->IsInsideBuffer(p)) {
-      const auto coord = this->ToVDBCoord(p);
-      const auto _v = openvdb::tools::BoxSampler::sample(m_VDBGradient->tree(), coord);
-      const VectorType v(_v.asPointer()); // This copies 3 floats from a VDB vector to a vnl vector
-      return v;
-    } else {
-      itkExceptionMacro("Gradient queried for a Point, " << p << ", outside the given image domain." );
-    }
+  inline vnl_vector_fixed<float, DIMENSION> SampleGradientAtPoint(const PointType &p) const {
+    return this->SampleGradientVnl(p);
   }
-  inline VnlVectorType SampleGradientVnl(const PointType &p) const
-  { 
-    return VnlVectorType( this->SampleGradient(p).GetDataPointer() ); 
-  }
-  inline vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType &p) const
-  {
+
+  inline vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType &p) const {
     vnl_vector_fixed<float, DIMENSION> grad = this->SampleGradientVnl(p);
     return grad.normalize();
   }
@@ -102,6 +86,29 @@ protected:
   }
   
 private:
+
+
+
+  inline VnlVectorType SampleGradientVnl(const PointType &p) const {
+    return VnlVectorType(this->SampleGradient(p).GetDataPointer());
+  }
+  /** Sample the image at a point.  This method performs no bounds checking.
+      To check bounds, use IsInsideBuffer.  SampleGradientsVnl returns a vnl
+      vector of length VDimension instead of an itk::CovariantVector
+      (itk::FixedArray). */
+  inline VectorType SampleGradient(const PointType &p) const {
+    if (this->IsInsideBuffer(p)) {
+      const auto coord = this->ToVDBCoord(p);
+      const auto _v = openvdb::tools::BoxSampler::sample(m_VDBGradient->tree(), coord);
+      const VectorType v(_v.asPointer()); // This copies 3 floats from a VDB vector to a vnl vector
+      return v;
+    }
+    else {
+      itkExceptionMacro("Gradient queried for a Point, " << p << ", outside the given image domain.");
+    }
+  }
+
+
   openvdb::VectorGrid::Ptr m_VDBGradient;
 };
 

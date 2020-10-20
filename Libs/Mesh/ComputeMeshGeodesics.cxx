@@ -149,21 +149,21 @@ int main(int argc, char *argv[])
         if (!mesh->tstrips.empty()) mesh->tstrips.clear();
         mesh->need_tstrips();
 
-        mesh->need_faceedges();
-        mesh->need_oneringfaces();
-        mesh->need_abs_curvatures();
-        mesh->need_speed();
-        mesh->setSpeedType(1);
-        mesh->need_kdtree();
 
-        double stopDist = mesh->bsphere.r * PI * 2.0f * stopping_distance_factor;
+        double stopDist = mesh->bsphere.r * M_PI * 2.0f * stopping_distance_factor;
 
         meshFIM *fim = new meshFIM;
         fim->SetMesh(mesh);
         fim->SetStopDistance( stopDist );
 
+        fim->need_edge_lengths();
+        fim->need_oneringfaces();
+        fim->need_abs_curvatures();
+        fim->need_speed();
+        fim->setSpeedType(1);
+        fim->need_kdtree();
+
         int numVert = mesh->vertices.size();
-        mesh->geodesicMap.resize(numVert);
         fim->computeFIM(mesh,geoFilename[shCount].c_str());
 
         std::cout << "Done\n";

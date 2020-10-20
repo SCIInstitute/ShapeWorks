@@ -55,16 +55,9 @@ ParticleSurfaceNeighborhood<TImage>
   for (typename PointTreeType::PointIteratorListType::const_iterator it = pointlist.begin();
        it != pointlist.end(); it++)
     {
-    //    double dist = this->GetDomain()->Distance(center, (*it)->Point);
-    double sum = 0.0;
-    for (unsigned int i = 0; i < Dimension; i++)
-      {
-      double q = center[i] - (*it)->Point[i];
-      sum += q*q;
-      }
-    sum = sqrt(sum);
+      double distance = this->GetDomain()->Distance(center, (*it)->Point);
     
-    if ( sum < radius && sum > 0.0 )
+    if (distance < radius && distance > 0.0 )
       {
       GradientVectorType pn = domain->SampleNormalAtPoint((*it)->Point);
       double cosine   = dot_product(posnormal,pn); // normals already normalized

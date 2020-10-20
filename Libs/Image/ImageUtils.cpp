@@ -115,10 +115,9 @@ Image& ImageUtils::topologyPreservingSmooth(Image& image, float scaling, float s
   return image.applyTPLevelSetFilter(featureImage, scaling);
 }
 
-Image& ImageUtils::isoresample(Image& image, double isoSpacing)
+Image& ImageUtils::isoresample(Image& image, double isoSpacing, Image::InterpolationType interp)
 {
-  Point3 spacing({isoSpacing, isoSpacing, isoSpacing});
-  return image.resample(spacing);
+  return image.resample(makeVector({isoSpacing, isoSpacing, isoSpacing}), interp);
 }
 
 std::unique_ptr<Mesh> &ImageUtils::meshFromDT(const Image &image, double levelset, double reduction, double angle, int leveliterations, int meshiterations, bool preservetopology)

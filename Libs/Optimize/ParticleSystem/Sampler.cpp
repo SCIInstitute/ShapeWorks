@@ -91,13 +91,13 @@ void Sampler::AllocateDomainsAndNeighborhoods()
     auto domain = m_DomainList[i];
     if (m_CuttingPlanes.size() > i) {
       for (unsigned int j = 0; j < m_CuttingPlanes[i].size(); j++)
-        domain->SetCuttingPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b,
+        domain->GetConstraints()->addPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b,
                                 m_CuttingPlanes[i][j].c);
     }
 
     if (m_Spheres.size() > i) {
       for (unsigned int j = 0; j < m_Spheres[i].size(); j++) {
-        domain->AddSphere(m_Spheres[i][j].center, m_Spheres[i][j].radius);
+        domain->GetConstraints()->addSphere(m_Spheres[i][j].center, m_Spheres[i][j].radius);
       }
     }
 
@@ -127,11 +127,11 @@ void Sampler::AllocateDomainsAndNeighborhoods()
             themesh->across_edge.clear();
           }
           themesh->need_across_edge();
-          themesh->need_faceedges();
-          themesh->need_oneringfaces();
-          themesh->need_abs_curvatures();
-          themesh->need_speed();
-          themesh->setSpeedType(1);
+          //themesh->need_faceedges();
+          //themesh->need_oneringfaces();
+          //themesh->need_abs_curvatures();
+          //themesh->need_speed();
+          //themesh->setSpeedType(1);
 
           imageDomain->SetMesh(themesh);
           imageDomain->SetFids(m_FidsFiles[i].c_str());
@@ -175,34 +175,34 @@ void Sampler::InitializeOptimizationFunctions()
   // domain of the 1st input image.
   unsigned int maxdim = 0;
   double maxradius = -1.0;
-  double spacing = this->m_Spacing;
+  double minimumNeighborhoodRadius = this->m_Spacing;
 
   for (unsigned int d = 0; d < this->GetParticleSystem()->GetNumberOfDomains(); d++) {
     if (!GetParticleSystem()->GetDomain(d)->IsDomainFixed()) {
-      double radius = GetParticleSystem()->GetDomain(d)->GetMaxDimRadius();
+      double radius = GetParticleSystem()->GetDomain(d)->GetMaxDiameter();
       maxradius = radius > maxradius ? radius : maxradius;
     }
   }
 
-  m_GradientFunction->SetMinimumNeighborhoodRadius(spacing * 5.0);
+  m_GradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
   m_GradientFunction->SetMaximumNeighborhoodRadius(maxradius);
 
-  m_CurvatureGradientFunction->SetMinimumNeighborhoodRadius(spacing * 5.0);
+  m_CurvatureGradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
   m_CurvatureGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
   m_CurvatureGradientFunction->SetParticleSystem(this->GetParticleSystem());
   m_CurvatureGradientFunction->SetDomainNumber(0);
 
-  m_ModifiedCotangentGradientFunction->SetMinimumNeighborhoodRadius(spacing * 5.0);
+  m_ModifiedCotangentGradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
   m_ModifiedCotangentGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
   m_ModifiedCotangentGradientFunction->SetParticleSystem(this->GetParticleSystem());
   m_ModifiedCotangentGradientFunction->SetDomainNumber(0);
 
-  m_ConstrainedModifiedCotangentGradientFunction->SetMinimumNeighborhoodRadius(spacing * 5.0);
+  m_ConstrainedModifiedCotangentGradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
   m_ConstrainedModifiedCotangentGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
   m_ConstrainedModifiedCotangentGradientFunction->SetParticleSystem(this->GetParticleSystem());
   m_ConstrainedModifiedCotangentGradientFunction->SetDomainNumber(0);
 
-  m_OmegaGradientFunction->SetMinimumNeighborhoodRadius(spacing * 5.0);
+  m_OmegaGradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
   m_OmegaGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
   m_OmegaGradientFunction->SetParticleSystem(this->GetParticleSystem());
   m_OmegaGradientFunction->SetDomainNumber(0);
@@ -304,7 +304,7 @@ void Sampler::TransformCuttingPlanes(unsigned int i)
           this->GetParticleSystem()->GetTransform(d)
           *
           this->GetParticleSystem()->GetPrefixTransform(d));
-        m_ParticleSystem->GetDomain(d)->TransformCuttingPlane(T2 * T1);
+        m_ParticleSystem->GetDomain(d)->GetConstraints()->transformPlanes(T2 * T1);
       }
     }
   }
@@ -325,7 +325,8 @@ void Sampler::SetCuttingPlane(unsigned int i, const vnl_vector_fixed<double, Dim
   m_CuttingPlanes[i][m_CuttingPlanes[i].size() - 1].c = vc;
 
   if (m_Initialized == true) {
-    m_ParticleSystem->GetDomain(i)->SetCuttingPlane(va, vb, vc);
+      std::cout << "Initialized plane" << std::endl;
+      m_ParticleSystem->GetDomain(i)->GetConstraints()->addPlane(va,vb,vc);
   }
 }
 
@@ -340,7 +341,8 @@ void Sampler::AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, 
   m_Spheres[i][m_Spheres[i].size() - 1].radius = r;
 
   if (m_Initialized == true) {
-    m_ParticleSystem->GetDomain(i)->AddSphere(c, r);
+    std::cout << "Initialized sphere" << std::endl;
+    m_ParticleSystem->GetDomain(i)->GetConstraints()->addSphere(c, r);
   }
 }
 

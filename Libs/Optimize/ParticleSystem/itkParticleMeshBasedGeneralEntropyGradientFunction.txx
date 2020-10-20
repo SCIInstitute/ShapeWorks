@@ -247,7 +247,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
     }
 
     vnl_matrix_type tmp1(sz_Yidx, sz_Yidx, 0.0);
-    
+
     if (this->m_UseMeanEnergy)
         tmp1.set_identity();
     else

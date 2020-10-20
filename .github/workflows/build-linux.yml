@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - release_v5.4
     tags:
     - '*'
   pull_request:
@@ -136,3 +135,11 @@ jobs:
         title: "Development Build for Linux"
         files: |
              ${{runner.workspace}}/ShapeWorks/artifacts/*.zip
+
+    - name: Deploy Docs
+      shell: bash -l {0}
+      run: conda activate shapeworks && pwd && ls && ./Support/deploy_docs.sh ${GITHUB_WORKSPACE}/shapeworks-install
+      env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+             

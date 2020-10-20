@@ -31,6 +31,8 @@ public:
 
 private:
 
+  bool set_visualizer_parameters(TiXmlHandle *docHandle, Optimize *optimize);
+
   bool set_io_parameters(TiXmlHandle* docHandle, Optimize* optimize);
 
   bool set_optimization_parameters(TiXmlHandle* docHandle, Optimize* optimize);

@@ -61,6 +61,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(ReflectMesh::getCommand());
   shapeworks.addCommand(ICP::getCommand());
   shapeworks.addCommand(FillHoles::getCommand());
+  shapeworks.addCommand(OptimizeCommand::getCommand());
 
   try {
     return shapeworks.run(argc, argv);

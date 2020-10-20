@@ -53,8 +53,25 @@ bool Optimize::Run()
     std::log2(static_cast<double>(this->m_number_of_particles[0])));
   this->m_iteration_count = 0;
 
-  this->m_total_iterations = (number_of_splits * this->m_iterations_per_split) +
-                             this->m_optimization_iterations;
+  if (this->m_use_shape_statistics_after < 0) {
+    this->m_total_iterations = (number_of_splits * this->m_iterations_per_split) +
+                               this->m_optimization_iterations;
+  }
+  else
+  {
+    int number_of_splits_init = static_cast<int>(
+      std::log2(static_cast<double>(this->m_use_shape_statistics_after)));
+    int number_of_splits_opt = static_cast<int>(
+      std::log2(static_cast<double>(this->m_number_of_particles[0]))) - number_of_splits_init;
+
+    // initialization phase iterations
+    this->m_total_iterations = (number_of_splits_init * this->m_iterations_per_split) +
+                               this->m_optimization_iterations;
+    // optimization phase iterations
+    this->m_total_iterations +=
+      number_of_splits_opt * (this->m_iterations_per_split + this->m_optimization_iterations);
+
+  }
 
   if (this->m_verbosity_level > 0) {
     std::cout << "Total number of iterations = " << this->m_total_iterations << "\n";
@@ -165,7 +182,7 @@ void Optimize::SetParameters()
   }
   else {
     for (int i = 0; i < this->m_domains_per_shape; i++) {
-      this->m_sampler->SetXYZ(i, false);
+      this->m_sampler->SetXYZ(i, true);
     }
   }
 
@@ -245,6 +262,8 @@ void Optimize::SetParameters()
   // Now read the transform file if present.
   if (m_transform_file != "") { this->ReadTransformFile(); }
   if (m_prefix_transform_file != "") { this->ReadPrefixTransformFile(m_prefix_transform_file); }
+
+  //m_sampler->ApplyConstraintsToZeroCrossing();
 }
 
 //---------------------------------------------------------------------------
@@ -502,7 +521,6 @@ void Optimize::InitializeSampler()
   for (unsigned int i = 0; i < this->m_domain_flags.size(); i++) {
     this->GetSampler()->GetParticleSystem()->FlagDomain(this->m_domain_flags[i]);
   }
-
   m_sampler->Initialize();
 
   m_sampler->GetOptimizer()->SetTolerance(0.0);
@@ -512,6 +530,8 @@ void Optimize::InitializeSampler()
     this->GetSampler()->GetParticleSystem()
       ->SetFixedParticleFlag(this->m_particle_flags[2 * i], this->m_particle_flags[2 * i + 1]);
   }
+
+  m_sampler->ApplyConstraintsToZeroCrossing();
 }
 
 //---------------------------------------------------------------------------
@@ -535,13 +555,18 @@ void Optimize::AddSinglePoint()
 {
   typedef itk::ParticleSystem<3> ParticleSystemType;
   typedef ParticleSystemType::PointType PointType;
+
+  PointType firstPointPosition;
+  firstPointPosition = m_sampler->GetParticleSystem()->GetDomain(0)->GetValidLocationNear(firstPointPosition);
+
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
     if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) > 0) {
       continue;
     }
-
-    const auto zcPos = m_sampler->GetParticleSystem()->GetDomain(i)->GetZeroCrossingPoint();
-    m_sampler->GetParticleSystem()->AddPosition(zcPos, i);
+    PointType pos = m_sampler->GetParticleSystem()->GetDomain(i)->GetValidLocationNear(firstPointPosition);
+    // debugg
+    //std::cout << "d" << i << " firstPointPosition " << firstPointPosition << " pos " << pos << std::endl;
+    m_sampler->GetParticleSystem()->AddPosition(pos, i);
   }
 }
 
@@ -568,6 +593,7 @@ void Optimize::Initialize()
   }
   m_disable_procrustes = true;
 
+  // Does nothing
   m_sampler->GetParticleSystem()->SynchronizePositions();
 
   m_sampler->GetCurvatureGradientFunction()->SetRho(0.0);
@@ -607,20 +633,34 @@ void Optimize::Initialize()
   m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
   m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
 
+  // Debuggg
+  //std::cout << "Before adding single point" << std::endl;
+  //m_sampler->GetParticleSystem()->PrintParticleSystem();
+
   this->AddSinglePoint();
 
+  // Debuggg
+  //std::cout << "After adding single point" << std::endl;
+  //m_sampler->GetParticleSystem()->PrintParticleSystem();
+
   m_sampler->GetParticleSystem()->SynchronizePositions();
+
+  // Debuggg
+  //m_sampler->GetParticleSystem()->PrintParticleSystem();
 
   this->m_split_number = 0;
 
   int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
+
+
+  /*Old vector randomization
   vnl_vector_fixed<double, 3> random;
 
   for (int i = 0; i < 3; i++) {
     random[i] = static_cast < double > (this->m_rand());
   }
-  double norm = random.magnitude();
-  random /= norm;
+  random = random.normalize() * this->m_spacing;
+  */
 
   double epsilon = this->m_spacing;
   bool flag_split = false;
@@ -634,14 +674,28 @@ void Optimize::Initialize()
   }
 
   while (flag_split) {
+      /*Old vector randomization
+    for (int i = 0; i < 3; i++) {
+      random[i] = static_cast <double> (this->m_rand());
+    }
+
+    // divide by 5 since m_spacing was artificially multiplied by 5 elsewhere
+    random = random.normalize() * this->m_spacing / 5.0;
+    */
+
     //        m_Sampler->GetEnsembleEntropyFunction()->PrintShapeMatrix();
     this->OptimizerStop();
+
+    /*Old vector randomization
     for (int i = 0; i < n; i++) {
       int d = i % m_domains_per_shape;
       if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d]) {
-        m_sampler->GetParticleSystem()->SplitAllParticlesInDomain(random, epsilon, i, 0);
+        m_sampler->GetParticleSystem()->SplitAllParticlesInDomain(random, i, 0);
       }
     }
+    */
+
+    m_sampler->GetParticleSystem()->AdvancedAllParticleSplitting(epsilon);
 
     m_sampler->GetParticleSystem()->SynchronizePositions();
 
@@ -932,9 +986,14 @@ void Optimize::AbortOptimization()
   this->m_sampler->GetOptimizer()->AbortProcessing();
 }
 
+
 //---------------------------------------------------------------------------
 void Optimize::IterateCallback(itk::Object*, const itk::EventObject&)
 {
+  if (this->GetShowVisualizer()) {
+    this->GetVisualizer().IterationCallback(m_sampler->GetParticleSystem());
+  }
+
   if (m_perform_good_bad == true) {
     std::vector<std::vector<int >> tmp;
     tmp = m_good_bad->RunAssessment(m_sampler->GetParticleSystem(),
@@ -962,25 +1021,6 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject&)
   }
 
   this->ComputeEnergyAfterIteration();
-
-  int lnth = m_total_energy.size();
-  if (lnth > 1) {
-    double val = std::abs(m_total_energy[lnth - 1] - m_total_energy[lnth - 2]) / std::abs(
-      m_total_energy[lnth - 2]);
-    if ((m_optimizing == false && val < m_initialization_criterion) ||
-        (m_optimizing == true && val < m_optimization_criterion)) {
-      m_saturation_counter++;
-    }
-    else {
-      m_saturation_counter = 0;
-    }
-    if (m_saturation_counter > 10) {
-      if (m_verbosity_level > 2) {
-        std::cout << " \n ----Early termination due to minimal energy decay---- \n";
-      }
-      this->OptimizerStop();
-    }
-  }
 
   if (m_checkpointing_interval != 0 && m_disable_checkpointing == false) {
     m_checkpoint_counter++;
@@ -1042,6 +1082,13 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject&)
 //---------------------------------------------------------------------------
 void Optimize::ComputeEnergyAfterIteration()
 {
+  // The energy computed here is only used for writing to file
+  if (!this->m_file_output_enabled) {
+    return;
+  }
+  if (!this->m_log_energy) {
+    return;
+  }
   int numShapes = m_sampler->GetParticleSystem()->GetNumberOfDomains();
   double corrEnergy = 0.0;
 
@@ -1570,9 +1617,11 @@ void Optimize::WriteCuttingPlanePoints(int iter)
   std::string str = "Writing " + output_file + "...";
   this->PrintStartMessage(str, 1);
 
+  /*
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
-    m_sampler->GetParticleSystem()->GetDomain(i)->PrintCuttingPlaneConstraints(out);
+    m_sampler->GetParticleSystem()->GetDomain(i)->GetConstraints()->PrintAll();
   }
+  */
   out.close();
   this->PrintDoneMessage(1);
   this->PrintDoneMessage();
@@ -1926,7 +1975,7 @@ void Optimize::AddImage(ImageType::Pointer image)
   this->m_sampler->AddImage(image, this->GetNarrowBand());
   this->m_num_shapes++;
   if (image) {
-    this->m_spacing = image->GetSpacing()[0];
+    this->m_spacing = image->GetSpacing()[0] * 5;
   }
 }
 
@@ -1935,7 +1984,7 @@ void Optimize::AddMesh(shapeworks::MeshWrapper* mesh)
 {
   this->m_sampler->AddMesh(mesh);
   this->m_num_shapes++;
-  this->m_spacing = 1;
+  this->m_spacing = 0.5;
 }
 
 //---------------------------------------------------------------------------
@@ -1954,6 +2003,21 @@ void Optimize::SetPointFiles(const std::vector<std::string>& point_files)
 int Optimize::GetNumShapes()
 {
   return this->m_num_shapes;
+}
+
+shapeworks::OptimizationVisualizer& Optimize::GetVisualizer() {
+  return visualizer;
+}
+
+void Optimize::SetShowVisualizer(bool show) {
+  if (show && this->m_verbosity_level > 0) {
+    std::cout << "WARNING Using the visualizer will increase run time!\n";
+  }
+  this->show_visualizer = show;
+}
+
+bool Optimize::GetShowVisualizer() {
+  return this->show_visualizer;
 }
 
 //---------------------------------------------------------------------------
@@ -2063,9 +2127,9 @@ int Optimize::GetUseShapeStatisticsAfter()
 //---------------------------------------------------------------------------
 void Optimize::SetIterationCallback()
 {
-  this->m_iterate_command = itk::MemberCommand<Optimize>::New();
-  this->m_iterate_command->SetCallbackFunction(this, &Optimize::IterateCallback);
-  this->m_sampler->GetOptimizer()->AddObserver(itk::IterationEvent(), m_iterate_command);
+  itk::MemberCommand<Optimize>::Pointer m_iterate_command = itk::MemberCommand<Optimize>::New();
+  m_iterate_command->SetCallbackFunction(this, &Optimize::IterateCallback);
+  m_sampler->GetOptimizer()->AddObserver(itk::IterationEvent(), m_iterate_command);
 }
 
 //---------------------------------------------------------------------------
