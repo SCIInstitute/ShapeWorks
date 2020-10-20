@@ -620,6 +620,21 @@ Image& Image::applyTPLevelSetFilter(const Image& featureImage, double scaling)
   return *this;
 }
 
+Image& Image::applyWindowingFilter(double minVal, double maxVal)
+{
+  using FilterType = itk::IntensityWindowingImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+
+  filter->SetWindowMinimum(minVal);
+  filter->SetWindowMaximum(maxVal);
+  filter->SetOutputMinimum(0.0);
+  filter->SetOutputMaximum(255.0);
+  filter->SetInput(this->image);
+  this->image = filter->GetOutput();
+
+  return *this;
+}
+
 Image& Image::gaussianBlur(double sigma)
 {
   using BlurType = itk::DiscreteGaussianImageFilter<ImageType, ImageType>;

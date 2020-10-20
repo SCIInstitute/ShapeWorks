@@ -4,7 +4,7 @@
 
 using namespace shapeworks;
 
-TEST(MeshTests, coverageTest) 
+TEST(MeshTests, coverage) 
 {
   std::string test_location(std::string(TEST_DATA_DIR) + "/coverage/");
 
@@ -18,7 +18,7 @@ TEST(MeshTests, coverageTest)
   ASSERT_TRUE(pelvis.compare_scalars_equal(baseline));
 }
 
-TEST(MeshTests, smoothTest) 
+TEST(MeshTests, smooth) 
 {
   std::string test_location(std::string(TEST_DATA_DIR) + "/smooth/");
 
@@ -29,7 +29,7 @@ TEST(MeshTests, smoothTest)
   ASSERT_TRUE(femur.compare_points_equal(ground_truth));
 }
 
-TEST(MeshTests, reflectTest)
+TEST(MeshTests, reflect)
 {
   std::string test_location(std::string(TEST_DATA_DIR) + "/reflect-mesh/");
 

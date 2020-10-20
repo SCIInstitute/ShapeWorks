@@ -1058,6 +1058,35 @@ bool WarpImage::execute(const optparse::Values &options, SharedCommandData &shar
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// WindowingFilter
+///////////////////////////////////////////////////////////////////////////////
+void WindowingFilter::buildParser()
+{
+  const std::string prog = "windowing";
+  const std::string desc = "applies intensity windowing image filter";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--min").action("store").type("double").set_default(0.0).help("Description of optionName.");
+  parser.add_option("--max").action("store").type("double").set_default(0.0).help("Description of optionName.");
+  
+  Command::buildParser();
+}
+
+bool WindowingFilter::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validImage())
+  {
+    std::cerr << "No image to operate on\n";
+    return false;
+  }
+
+  double min = static_cast<double>(options.get("min"));
+  double max = static_cast<double>(options.get("max"));
+
+  return sharedData.image.applyWindowingFilter(min, mal);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // Compare
 ///////////////////////////////////////////////////////////////////////////////
 void Compare::buildParser()

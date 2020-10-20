@@ -27,29 +27,23 @@ const std::vector<std::string> filenames = {
   test_dir + "seg.ellipsoid_21.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles"
 };
 
-//---------------------------------------------------------------------------
-TEST(ParticlesTests, compactness_test)
+TEST(ParticlesTests, compactness)
 {
   ParticleSystem particleSystem(filenames);
-
   const double compactness = ShapeEvaluation::ComputeCompactness(particleSystem, 1);
   ASSERT_DOUBLE_EQ(compactness, 0.99178682878009183);
 }
 
-//---------------------------------------------------------------------------
-TEST(ParticlesTests, generalization_test)
+TEST(ParticlesTests, generalization)
 {
   ParticleSystem particleSystem(filenames);
-
   const double generalization = ShapeEvaluation::ComputeGeneralization(particleSystem, 1);
   ASSERT_DOUBLE_EQ(generalization, 0.19815116412998687);
 }
 
-//---------------------------------------------------------------------------
-TEST(ParticlesTests, specificity_test)
+TEST(ParticlesTests, specificity)
 {
   ParticleSystem particleSystem(filenames);
-
   const double specificity = ShapeEvaluation::ComputeSpecificity(particleSystem, 1);
   ASSERT_NEAR(specificity, 0.262809, 1e-1f);
 }

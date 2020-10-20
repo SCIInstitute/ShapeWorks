@@ -4,14 +4,13 @@
 
 #include "Testing.h"
 
-//---------------------------------------------------------------------------
 static bool file_exists(const std::string &filename)
 {
   return access(filename.c_str(), 0) == 0;
 }
 
-//---------------------------------------------------------------------------
-TEST(PythonTests, ellipsoidTinyTest) {
+TEST(PythonTests, ellipsoid) 
+{
   shapeworksEnvSetup();
 
   std::string test_location(std::string(TEST_DATA_DIR) + "/../../Examples/Python");

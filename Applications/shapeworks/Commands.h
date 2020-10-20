@@ -41,6 +41,7 @@ COMMAND_DECLARE(MultiplyImage, ImageCommand);
 COMMAND_DECLARE(DivideImage, ImageCommand);
 COMMAND_DECLARE(ImageToMesh, ImageCommand);
 COMMAND_DECLARE(MeshFromDT, ImageCommand);
+COMMAND_DECLARE(WindowingFilter, ImageCommand);
 
 // Particle System Commands
 COMMAND_DECLARE(ReadParticleSystem, ParticleSystemCommand);

@@ -12,7 +12,6 @@
 
 using namespace shapeworks;
 
-//---------------------------------------------------------------------------
 // until we have a "groom" library we can call
 static void prep_distance_transform(std::string input, std::string output)
 {
@@ -38,9 +37,8 @@ static void prep_distance_transform(std::string input, std::string output)
   writer->Update();
 }
 
-//---------------------------------------------------------------------------
-TEST(OptimizeTests, sample_test) {
-
+TEST(OptimizeTests, sample) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sphere");
   chdir(test_location.c_str());
 
@@ -79,9 +77,8 @@ TEST(OptimizeTests, sample_test) {
   ASSERT_LT(value, 100);
 }
 
-//---------------------------------------------------------------------------
-TEST(OptimizeTests, fixed_domain_test) {
-
+TEST(OptimizeTests, fixedDomain) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/fixed_domain");
   chdir(test_location.c_str());
 
@@ -120,9 +117,8 @@ TEST(OptimizeTests, fixed_domain_test) {
   ASSERT_GT(value, 5000);
 }
 
-//---------------------------------------------------------------------------
-TEST(OptimizeTests, use_normals_test) {
-
+TEST(OptimizeTests, useNormals) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/use_normals");
   chdir(test_location.c_str());
 
@@ -160,9 +156,8 @@ TEST(OptimizeTests, use_normals_test) {
   ASSERT_LT(values[values.size() - 2], 100);
 }
 
-//---------------------------------------------------------------------------
-TEST(OptimizeTests, cutting_plane_test) {
-
+TEST(OptimizeTests, cuttingPlane) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/cutting_plane");
   chdir(test_location.c_str());
 

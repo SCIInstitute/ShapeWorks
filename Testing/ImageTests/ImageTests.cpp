@@ -1109,4 +1109,3 @@ TEST(ImageTests, resize2)
 
   ASSERT_TRUE(image == ground_truth);
 }
-

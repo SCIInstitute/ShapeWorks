@@ -181,8 +181,11 @@ public:
   /// computes sigmoid function pixel-wise using sigmoid image filter
   Image& applySigmoidFilter(double alpha = 10.0, double beta = 10.0);
 
-  /// segemnts structures in images using topology preserving geodesic active contour level set filter
+  /// segements structures in images using topology preserving geodesic active contour level set filter
   Image& applyTPLevelSetFilter(const Image& featureImage, double scaling = 20.0);
+
+  /// applies intensity windowing image filter
+  Image& applyWindowingFilter(const Image& featureImage, double scaling = 20.0);
 
   /// applies gaussian blur with given sigma
   Image& gaussianBlur(double sigma = 0.0);
