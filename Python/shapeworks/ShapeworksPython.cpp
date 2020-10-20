@@ -115,30 +115,6 @@ PYBIND11_MODULE(shapeworks, m)
   ;
 
   // Shapeworks Globals
-  py::class_<Matrix44>(m, "Matrix44")
-  .def(py::init([] { Matrix44 m;
-    m.SetIdentity();
-    return m; 
-    }))
-  .def("__repr__", [](const Matrix44& m) {
-      std::ostringstream ss;
-      ss << m;
-      return ss.str();
-    })
-  // .def("__getitem__", [](const Matrix44& m, size_t r, size_t c) { return m(r, c); })
-  // .def("__setitem__", [](Matrix44& m, size_t r, size_t c, int val) { m[r][c] = val; })
-  .def("__add__", [](const Matrix44& m1, const Matrix44& m2) { return m1 + m2; })
-  .def("__sub__", [](const Matrix44& m1, const Matrix44& m2) { return m1 - m2; })
-  .def("__mul__", [](const Matrix44& m1, const Matrix44& m2) { return m1 * m2; })
-  .def("__iadd__", [](Matrix44& m1, const Matrix44& m2) { return m1 += m2; })
-  .def("__isub__", [](Matrix44& m1, const Matrix44& m2) { return m1 -= m2; })
-  .def("__mul__", [](const Matrix44& m, const double x) { return m * x; })
-  .def("__truediv__", [](const Matrix44& m, const double x) { return m / x; })
-  .def("__imul__", [](Matrix44& m, const double x) { return m *= x; })
-  .def("__itruediv__", [](Matrix44& m, const double x) { return m /= x; })
-  ;
-
-  // Shapeworks Globals
   py::class_<Matrix>(m, "Matrix")
   .def(py::init([] { Matrix m;
     m.SetIdentity();
@@ -149,8 +125,8 @@ PYBIND11_MODULE(shapeworks, m)
       ss << m;
       return ss.str();
     })
-  // .def("__getitem__", [](const IPoint3& p, size_t idx) { return p[idx]; })
-  // .def("__setitem__", [](IPoint3& p, size_t idx, int val) { p[idx] = val; })
+  .def("__getitem__", [](const Matrix& m, size_t r, size_t c) { return m[r][c]; })
+  .def("__setitem__", [](Matrix& m, size_t r, size_t c, int val) { m[r][c] = val; })
   .def("__add__", [](const Matrix& m1, const Matrix& m2) { return m1 + m2; })
   .def("__sub__", [](const Matrix& m1, const Matrix& m2) { return m1 - m2; })
   .def("__mul__", [](const Matrix& m1, const Matrix& m2) { return m1 * m2; })
@@ -160,6 +136,30 @@ PYBIND11_MODULE(shapeworks, m)
   .def("__truediv__", [](const Matrix& m, const double x) { return m / x; })
   .def("__imul__", [](Matrix& m, const double x) { return m *= x; })
   .def("__itruediv__", [](Matrix& m, const double x) { return m /= x; })
+  ;
+
+  // Shapeworks Globals
+  py::class_<Matrix44>(m, "Matrix44")
+  .def(py::init([] { Matrix44 m;
+    m.SetIdentity();
+    return m; 
+    }))
+  .def("__repr__", [](const Matrix44& m) {
+      std::ostringstream ss;
+      ss << m;
+      return ss.str();
+    })
+  .def("__getitem__", [](const Matrix44& m, size_t r, size_t c) { return m[r, c]; })
+  .def("__setitem__", [](Matrix44& m, size_t r, size_t c, int val) { m[r][c] = val; })
+  .def("__add__", [](const Matrix44& m1, const Matrix44& m2) { return m1 + m2; })
+  .def("__sub__", [](const Matrix44& m1, const Matrix44& m2) { return m1 - m2; })
+  .def("__mul__", [](const Matrix44& m1, const Matrix44& m2) { return m1 * m2; })
+  .def("__iadd__", [](Matrix44& m1, const Matrix44& m2) { return m1 += m2; })
+  .def("__isub__", [](Matrix44& m1, const Matrix44& m2) { return m1 -= m2; })
+  .def("__mul__", [](const Matrix44& m, const double x) { return m * x; })
+  .def("__truediv__", [](const Matrix44& m, const double x) { return m / x; })
+  .def("__imul__", [](Matrix44& m, const double x) { return m *= x; })
+  .def("__itruediv__", [](Matrix44& m, const double x) { return m /= x; })
   ;
 
   // Shapeworks Globals
@@ -208,7 +208,6 @@ PYBIND11_MODULE(shapeworks, m)
 
   // Shapeworks Globals
   py::class_<itk::SmartPointer<itk::Transform<double, 3u, 3u> >>(m, "TransformPtr");
-  // py::class_<itk::SmartPointer<itk::AffineTransform<double, 3u> >>(m, "AffineTransformPtr");
 
   // Shapeworks Globals
   m.def("createTransform", createTransform, "mat"_a, "translate"_a=makeVector({0,0,0}));
@@ -246,8 +245,6 @@ PYBIND11_MODULE(shapeworks, m)
   .def_static("is_directory",   &ShapeworksUtils::is_directory, "pathname"_a)
   .def_static("getMatrix",      &ShapeworksUtils::getMatrix, "mat"_a)
   .def_static("getOffset",      &ShapeworksUtils::getOffset, "mat"_a)
-  // .def_static("connectPipelines",
-  //                               &ShapeworksUtils::connectPipelines<itk::VTKImageExport<Image::ImageType::Pointer>, vtkImageImport::New()>, "exporter"_a, "importer"_a)
   ;
 
   // Image::InterpolationType
@@ -319,7 +316,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("compare",               &Image::compare, "other"_a, "verifyall"_a=true, "tolerance"_a=0.0, "precision"_a=1e-12)
   .def_static("getPolyData",    &Image::getPolyData, "image"_a, "isoValue"_a=0.0)
   .def("toMesh",                &Image::toMesh, "isovalue"_a=1.0)
-  // .def("__repr__",              &Image::print)
+  // .def("__repr__",              operator<<)
 
   // Try to give the Python direct access to the underlying ITK image; see issue #780
   // .def("toITKImage",            &Image::operator Image::ImageType::Pointer) // cannot convert to itk::SmartPointer<itk::Image...
@@ -354,17 +351,17 @@ PYBIND11_MODULE(shapeworks, m)
     auto xform_ptr = shapeworks::ImageUtils::createCenterOfMassTransform(img);
     return xform_ptr;
   })
-  .def_static("createRigidRegistrationTransform", [](const Image& source_dt, const Image& target_dt, float isoValue = 0.0, unsigned iterations = 20){
+  .def_static("createRigidRegistrationTransform", [](const Image& source_dt, const Image& target_dt, float isoValue=0.0, unsigned iterations=20){
     auto xform_ptr = shapeworks::ImageUtils::createRigidRegistrationTransform(source_dt, target_dt, isoValue, iterations);
     return xform_ptr;
   })
-  .def_static("createWarpTransform", [](const std::string &source_landmarks, const std::string &target_landmarks, const int stride = 1){
+  .def_static("createWarpTransform", [](const std::string &source_landmarks, const std::string &target_landmarks, const int stride=1){
     auto xform_ptr = shapeworks::ImageUtils::createWarpTransform(source_landmarks, target_landmarks, stride);
     return xform_ptr;
   })
   .def_static("topologyPreservingSmooth", 
                                 &ImageUtils::topologyPreservingSmooth, "image"_a, "scaling"_a=20.0, "sigmoidAlpha"_a=10.5, "sigmoidBeta"_a=10.0)
-  .def_static("isoresample",    &ImageUtils::isoresample, "image"_a, "isoSpacing"_a = 1.0, "interp"_a = Image::InterpolationType::Linear)
+  .def_static("isoresample",    &ImageUtils::isoresample, "image"_a, "isoSpacing"_a=1.0, "interp"_a=Image::InterpolationType::Linear)
   ;
 
   // Mesh
