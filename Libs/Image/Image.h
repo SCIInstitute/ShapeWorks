@@ -190,7 +190,7 @@ public:
   Image& applyTPLevelSetFilter(const Image& featureImage, double scaling = 20.0);
 
   /// applies intensity windowing image filter
-  Image& applyWindowingFilter(const Image& featureImage, double scaling = 20.0);
+  Image& applyWindowingFilter(double minVal, double maxVal);
 
   /// applies gaussian blur with given sigma
   Image& gaussianBlur(double sigma = 0.0);

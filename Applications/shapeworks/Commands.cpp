@@ -1110,7 +1110,8 @@ bool WindowingFilter::execute(const optparse::Values &options, SharedCommandData
   double min = static_cast<double>(options.get("min"));
   double max = static_cast<double>(options.get("max"));
 
-  return sharedData.image.applyWindowingFilter(min, mal);
+  sharedData.image.applyWindowingFilter(min, max);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1852,6 +1853,6 @@ bool FillHoles::execute(const optparse::Values &options, SharedCommandData &shar
   
   sharedData.mesh->fillHoles();
   return sharedData.validMesh();
-
+}
 
 } // shapeworks

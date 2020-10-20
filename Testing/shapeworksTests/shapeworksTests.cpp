@@ -160,6 +160,7 @@ TEST(shapeworksTests, blur)
 {
   shapeworksEnvSetup();
   ASSERT_FALSE(system("bash blur.sh"));
+}
 
 TEST(shapeworksTests, boundingbox)
 {
