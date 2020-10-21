@@ -16,7 +16,8 @@ The use case is located at: `Examples/Python/left_atrium.py`
 
 ## Running the Use Case
 
-:fa-info-circle: _**Important:**_ Minimum of 32GB of RAM required to run the full use case.
+!!! important
+    Minimum of 32GB of RAM required to run the full use case.
 
 To run the use case, run `RunUseCase.py` (in `Examples/Python/`) with proper tags. The tags control the type of input data and the optimization method. See [Getting Started with Use Cases](../use-cases/use-cases.md#running-use-case) for the full list of tags.
 
@@ -93,25 +94,23 @@ $python RunUseCase.py --use_case left_atrium --use_single_scale
 ```
 
 ```
-        "number_of_particles": 1024,
-        "use_normals": 1,
-        "normal_weight": 10.0,
-        "checkpointing_interval": 200,
-        "keep_checkpoints": 0,
-        "iterations_per_split": 4000,
-        "optimization_iterations": 4000,
-        "starting_regularization": 50000,
-        "ending_regularization": 0.1,
-        "recompute_regularization_interval": 2,
-        "domains_per_shape": 1,
-        "relative_weighting": 50,
-        "domain_type" : 'image',
-        "initial_relative_weighting": 0.1,
-        "procrustes_interval": 0,
-        "procrustes_scaling": 1,
-        "save_init_splits": 0,
-        "debug_projection": 0,
-        "verbosity": 3
+    "number_of_particles" : 512, 
+    "use_normals": 0,
+    "normal_weight": 10.0,
+    "checkpointing_interval" : 200,
+    "keep_checkpoints" : 0,
+    "iterations_per_split" : 4000,
+    "optimization_iterations" : 4000,
+    "starting_regularization" : 1000,
+    "ending_regularization" : 10,
+    "recompute_regularization_interval" : 2,
+    "domains_per_shape" : 1,
+    "relative_weighting" : 10,
+    "initial_relative_weighting" : 0.1,
+    "procrustes_interval" : 1,
+    "procrustes_scaling" : 1,
+    "save_init_splits" : 0,
+    "verbosity" : 3
 ```
 
 ### Multi-Scale Optimization
@@ -138,7 +137,7 @@ Here is the mean shape of the optimized shape mode using single-scale optimizati
 ![left Atrium singleScale](../img/use-cases/leftatrium_singlescale.png)
 
 Here is a video showing the shape modes of variation (computed using principal component analysis - PCA) of the left atrium dataset using single-scale optimization.
-[![left Atrium singleScale PCA mode](../img/use-cases/leftatrium_singlescale_pca_thumbnail.png)](https://youtu.be/Coj6-xqw8dw)
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/leftatrium_singlescale_pca.mp4" autoplay muted loop controls style="width:100%"></p>
 
 
 ### Multi-Scale Optimization
@@ -149,4 +148,4 @@ Here is the mean shape of the optimized shape mode using multi-scale optimizatio
 
 Here is a video showing the shape modes of variation (computed using principal component analysis - PCA) of the left atrium dataset using multi-scale optimization.
 
-[![left Atrium Multi Scale PCA mode](../img/use-cases/leftatrium_multiscale_pca_thumbnail.png)](https://youtu.be/ojTKiSsordA)
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/leftatrium_multiscale_pca.mp4" autoplay muted loop controls style="width:100%"></p>

@@ -14,6 +14,8 @@ set(shapeworks_headers
 add_executable(shapeworks
   ${shapeworks_sources}
   ${shapeworks_headers})
+
+
 target_include_directories(shapeworks PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:include>)

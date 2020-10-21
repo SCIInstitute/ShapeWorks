@@ -26,7 +26,8 @@ Username:
 
 ![ShapeWorks Portal Account Registration Screenshot](../img/use-cases/ShapeWorksPortalAccountRegistration.png)
 
-:fa-info-circle: _**Important:**_ Do not use the same password as for your bank account or email!  
+!!! danger
+    Do not use the same password as for your bank account or email!  
 
 
 After registering a free account, you can log in from within the script.
@@ -37,12 +38,24 @@ Password:
 [1/1 MB]
 joeshmoe downloaded the ellipsoid dataset from the ShapeWorks Portal.
 ```
+### Downloaded Data
 
+When a use case is run, it downloads the appropriate zipped data to `Examples/Python/Data/`. The data is then extracted to `Examples/Python/output/use_case_name/` where all of the output from running the use case is also saved.
+
+The downloaded data includes the raw data the use case starts with (segmentations, meshes, and/or images) as well as the output from the final grooming step of the use case (i.e. distance transforms) and the shape model generated from running the use case (particle files and xmls). 
+
+To visualize a shape model, open the included "analyze.xml" file can be opened in Studio. 
+For example, to view the shape model downloaded for the ellipsoid use case run:
+```
+$ cd Examples/Python/Output/ellipsoid/
+$ ShapeWorksStudio ellipsoid-v0/shape_models/ellipsoid/analyze_128.xml
+```
 ## Running Use Case
 
 The use cases are located at: `Examples/Python/`. When a use case is run, the dataset is automatically downloaded. 
 
-:fa-info-circle: _**Important:**_  You must first register of a *free* ShapeWorks account by visiting the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
+!!! important
+    You must first register of a *free* ShapeWorks account by visiting the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
 
 To run a use case, run the following command from the `Examples/Python/` directory:
 
@@ -57,13 +70,13 @@ For names for the use cases that are currently released and the full list of opt
 $ python RunUseCase.py --help
 ```
             
-* `--use_subsample`: To run on a subset of the data in the use case, add the `--use_subsample` tag followed by the number of samples you wish to use. For example:
+* `--use_subsample`: To run on a subset of the data in the use case, add the `--use_subsample` tag followed by the `--num_subsample` tag with the number of samples you wish to use. For example:
 
 ```
-$ python RunUseCase.py --use_case [insert name of use case here] --use_subsample 4
+$ python RunUseCase.py --use_case [insert name of use case here] --use_subsample --num_subsample 10
 ```
 
-This will select a representative subset of the specified sample size to run through the pipeline so that the use case runs faster and uses less memory. The subset is selected by running clustering, then picking one sample from each cluster so that the resulting subset is representative of all the data.
+This will select a representative subset of the specified sample size to run through the pipeline so that the use case runs faster and uses less memory. The subset is selected by running clustering, then picking one sample from each cluster so that the resulting subset is representative of all the data. If `--use_subsample` is used without `--num_subsample` it will use the default number of subsamples which is 3.
 
 * `--interactive`: When the interactive tag is used, the user must press enter after each step. This allows the user to inspect the intermediate output between steps of the pipeline.
 

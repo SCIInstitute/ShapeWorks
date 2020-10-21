@@ -7,39 +7,31 @@ Full Example Pipeline for Statistical Shape Modeling with ShapeWorks
 In this example we provide a full pipeline with an example dataset of axis 
 aligned ellipsoid meshes.
 """
-
-from zipfile import ZipFile
 import os
-import sys
-import csv
-import argparse
-
 from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
+import CommonUtils
 
 
 def Run_Pipeline(args):
+    """
+    If ellipsoid.zip is not there it will be downloaded from the ShapeWorks data portal.
+    femur.zip will be saved in the /Data folder and the data will be extracted 
+    in a newly created directory Output/ellipsoid_mesh.
+    """
     print("\nStep 1. Extract Data\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    datasetName = "ellipsoid"
-    filename = datasetName + ".zip"
-    # Check if the data is in the right place
-    if not os.path.exists(filename):
-        print("Can't find " + filename + " in the current directory.")
-        import DatasetUtils
-        DatasetUtils.downloadDataset(datasetName)
+    datasetName = "ellipsoid-v0"
+    outputDirectory = "Output/ellipsoid_mesh/"
+    if not os.path.exists(outputDirectory):
+        os.makedirs(outputDirectory)
+    CommonUtils.get_data(datasetName, outputDirectory)
 
-    parentDir = "TestEllipsoidsMesh/"
-    if not os.path.exists(parentDir):
-        os.makedirs(parentDir)
-    # extract the zipfile
-    with ZipFile(filename, 'r') as zipObj:
-        zipObj.extractall(path=parentDir)
-        meshFiles = sorted(glob.glob(parentDir + datasetName + "/meshes/*.ply"))
-        imageFiles = sorted(glob.glob(parentDir + datasetName + "/images/*.nrrd"))
+    meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))
+    imageFiles = sorted(glob.glob(outputDirectory + datasetName + "/images/*.nrrd"))
 
     meshFiles = meshFiles[:15]
     imageFiles = imageFiles[:15]
@@ -48,7 +40,7 @@ def Run_Pipeline(args):
         meshFiles = meshFiles[:2]
         imageFiles = imageFiles[:2]
 
-    pointDir = parentDir + 'PointFiles/'
+    pointDir = outputDirectory + 'shape_models/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
@@ -70,7 +62,6 @@ def Run_Pipeline(args):
         "procrustes_interval" : 0,
         "procrustes_scaling" : 0,
         "save_init_splits" : 0,
-        "debug_projection" : 0,
         "verbosity" : 3
       }
 

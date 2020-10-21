@@ -4,7 +4,7 @@ set(Mesh_sources
  Mesh.cpp
  meshFIM.cpp
  MeshUtils.cpp
- GroomFemur.cpp
+ swHausdorffDistancePointSetFilter.cxx
  )
 
 set(Mesh_headers
@@ -41,10 +41,6 @@ install(TARGETS Mesh
  LIBRARY DESTINATION lib
  PUBLIC_HEADER DESTINATION include
  )
- 
-ADD_EXECUTABLE(GroomFemur GroomFemur.cpp)
-TARGET_LINK_LIBRARIES(GroomFemur ${ITK_LIBRARIES} Mesh tinyxml)
-INSTALL(TARGETS GroomFemur RUNTIME DESTINATION bin)
 
 ADD_EXECUTABLE(GenerateBinaryAndDTImagesFromMeshes GenerateBinaryAndDTImagesFromMeshes.cxx )
 TARGET_LINK_LIBRARIES(GenerateBinaryAndDTImagesFromMeshes ${ITK_LIBRARIES} Mesh tinyxml)
@@ -157,6 +153,10 @@ INSTALL(TARGETS ComputeRasterizationVolumeOriginAndSize RUNTIME DESTINATION bin)
 add_executable(ReflectMesh ReflectMesh.cxx )
 target_link_libraries(ReflectMesh Mesh Utils)
 INSTALL(TARGETS ReflectMesh RUNTIME DESTINATION bin)
+
+add_executable(SurfaceToSurfaceDistance SurfaceToSurfaceDistance.cxx )
+target_link_libraries(SurfaceToSurfaceDistance Mesh Utils)
+INSTALL(TARGETS SurfaceToSurfaceDistance RUNTIME DESTINATION bin)
 
 #ADD_EXECUTABLE(fea2vtk fea2vtk.cxx)
 #TARGET_LINK_LIBRARIES(fea2vtk ${ITK_LIBRARIES} Mesh tinyxml)

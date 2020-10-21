@@ -14,14 +14,13 @@ We are consolidating these tools into a single, reusable API that is shared acro
 The `shapeworks` executable is highly flexible, modular, and loosely coupled, with standardized subcommands and interactive help to perform individual operations needed for a typical shape modeling workflow that includes the Groom, Optimize, and Analyze phases. Please see [shapeworks commands documentation](../tools/ShapeWorksCommands.md) for the list of available commands.
 
 
-:fa-info-circle: _**Important:**_  Each time you use ShapeWorks from the command line, you must first activate its environment:
-```
-$ conda activate shapeworks
-```
-
+!!! danger "Activate shapeworks environment"
+    Each time you use [ShapeWorks from the command line](../tools/ShapeWorksCommands.md), you must first activate its environment using the `conda activate shapeworks` command on the terminal.
+    
 ## ShapeWorks in Python
 
-**Coming soon!**  We are developing Python bindings to enable users to script their customized shape modeling workflows. Exemplar [use cases](../use-cases/use-cases.md) will be updated to use these Python APIs to showcase their use and flexibility.
+!!! note "Coming soon!"  
+    We are developing Python bindings to enable users to script their customized shape modeling workflows. Exemplar [use cases](../use-cases/use-cases.md) will be updated to use these Python APIs to showcase their use and flexibility.
 
 
 ## ShapeWorksStudio
@@ -30,7 +29,7 @@ $ conda activate shapeworks
 ShapeWorksStudio is a cross-platform graphical user interface (GUI) to support the standard shape analysis workflow needed by most ShapeWorks users, enabling a wide variety of research scenarios. It is currently supporting image-based grooming and is actively under development to support surface meshes, more sophisticated grooming operations (including user annotations), and offline processing.  ShapeWorksStudio enables real-time parameter tuning and visualization of the optimization process and statistical analyses.
 
 
-[![ShapeWorksStudio](../img/getting-started/studio_thumbnail.png)](https://youtu.be/RX4uSB_ot3U "ShapeWorksStudio - Click to Watch!")
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_demo.mp4" autoplay muted loop controls style="width:100%"></p>
 
 ## ShapeWorks in the Cloud 
 

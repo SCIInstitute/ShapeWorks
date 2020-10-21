@@ -5,13 +5,12 @@
 #include <QWidget>
 
 // ShapeWorks
-#include <itkParticleShapeStatistics.h>
+#include <ParticleShapeStatistics.h>
 
 // Studio
 #include <Data/Shape.h>
 #include <Data/Preferences.h>
 #include <Visualization/Visualizer.h>
-#include <itkParticleShapeStatistics.h>
 #include <Visualization/BarGraph.h>
 
 class Session;
@@ -20,7 +19,7 @@ class ShapeWorksStudioApp;
 class Ui_AnalysisTool;
 
 class AnalysisTool : public QWidget {
-  Q_OBJECT;
+Q_OBJECT;
 public:
 
   using PointType = itk::Point<double, 3>;
@@ -33,10 +32,6 @@ public:
 
   /// set the pointer to the application
   void set_app(ShapeWorksStudioApp* app);
-
-  void set_shapes(ShapeList shapes);
-
-  void activate();
 
   bool get_group_difference_mode();
 
@@ -54,7 +49,7 @@ public:
   double get_pca_value();
 
   bool pcaAnimate();
-  bool groupAnimate();
+
 
   int get_sample_number();
 
@@ -65,11 +60,14 @@ public:
   void reset_stats();
   void enable_actions();
 
-  const vnl_vector<double>& get_mean_shape();
+  const vnl_vector<double>& get_mean_shape_points();
+  ShapeHandle get_mean_shape();
 
-  const vnl_vector<double>& get_shape(int mode, double value, double group_value = 0.5);
+  const vnl_vector<double>& get_shape_points(int mode, double value, double group_value = 0.5);
 
-  ParticleShapeStatistics<3> get_stats();
+  ShapeHandle get_shape(int mode, double value, double group_value = 0.5);
+
+  ParticleShapeStatistics get_stats();
   void load_settings();
   void store_settings();
 
@@ -91,7 +89,7 @@ public Q_SLOTS:
   void handle_analysis_options();
   void handle_median();
 
-  void on_overall_button_clicked();
+  void on_mean_button_clicked();
   void on_group1_button_clicked();
   void on_group2_button_clicked();
   void on_difference_button_clicked();
@@ -113,32 +111,54 @@ public Q_SLOTS:
 
   void on_reconstructionButton_clicked();
 
+  //! Set the currently selected feature map
+  void set_feature_map(const std::string& feature_map);
+
+  void handle_error(std::string message);
+  void handle_warning(std::string message);
+  void handle_message(std::string message);
+
+  void group_changed();
+
+
+  bool groups_active();
+
+  void on_view_open_button_toggled();
+
+  void on_surface_open_button_toggled();
+
+  void on_metrics_open_button_toggled();
+
+  bool is_group_active(int shape_index);
+
 signals:
 
   void update_view();
   void pca_update();
   void progress(size_t);
   void message(std::string);
+  void error(std::string);
   void reconstruction_complete();
 
 private:
 
-  //private methods
   void pca_labels_changed(QString value, QString eigen, QString lambda);
   void compute_mode_shape();
   void update_analysis_mode();
 
-  Preferences & preferences_;
-  //private members
+  void update_group_boxes();
+  void update_group_values();
+
+  ShapeHandle create_shape_from_points(const vnl_vector<double>& points);
+
+  Preferences& preferences_;
 
   Ui_AnalysisTool* ui_;
   QSharedPointer<Session> session_;
   ShapeWorksStudioApp* app_;
 
-  VisualizerHandle visualizer_;
-
   /// itk particle shape statistics
-  ParticleShapeStatistics<3> stats_;
+  ParticleShapeStatistics stats_;
   bool stats_ready_;
 
   vnl_vector<double> empty_shape_;
@@ -149,4 +169,15 @@ private:
 
   bool group_animate_direction_ = true;
   QTimer group_animate_timer_;
+
+  ShapeHandle computed_shape_;
+
+  ShapeList group1_list_;
+  ShapeList group2_list_;
+
+  std::string feature_map_;
+
+  std::vector<std::string> current_group_names_;
+  std::vector<std::string> current_group_values_;
+
 };

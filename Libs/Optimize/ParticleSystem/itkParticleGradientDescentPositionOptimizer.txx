@@ -161,7 +161,8 @@ namespace itk
               VectorType gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
 
               // Step B Constrain the gradient so that the resulting position will not violate any domain constraints
-              m_ParticleSystem->GetDomain(dom)->ApplyVectorConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
+              m_ParticleSystem->GetDomain(dom)->GetConstraints()->applyBoundaryConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
+
               gradmag = gradient.magnitude();
 
               // Step C if the magnitude is larger than the Sampler allows, scale the gradient down to an acceptable magnitude
@@ -176,7 +177,7 @@ namespace itk
               // Step F update the point position in the particle system
               m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);
 
-              // Step G compute the new energy of the particle system 
+              // Step G compute the new energy of the particle system
               newenergy = localGradientFunction->Energy(it.GetIndex(), dom, m_ParticleSystem);
 
               if (newenergy < energy) // good move, increase timestep for next time

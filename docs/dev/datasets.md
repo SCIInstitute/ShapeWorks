@@ -45,7 +45,8 @@ For example:
 
 ## Uploading a Dataset
 
-:fa-info-circle: _**Important:**_ Uploaded datasets are only restricted to ShapeWorks developers.
+!!! important
+    Uploaded datasets are only restricted to ShapeWorks developers.
 
 1. Create an account on the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/#?dialog=register)
 2. Ask Oleks to add you to the list of developers. (oleks@sci.utah.edu)
@@ -99,3 +100,8 @@ When calling `DatasetUtils.downloadDataset('dataset_name')`, you will get a zip 
 
 ### DatasetUtils.getDatasetList()  
 - Returns: a list of all existing datasets on the data portal  
+
+### DatasetUtils.getFileList(datasetName)  
+- Parameters:  
+  - **datasetName** is one of the names returned by `DatasetUtils.getDatasetList()`  
+- Returns: a list of all files in the specified dataset on the data portal  

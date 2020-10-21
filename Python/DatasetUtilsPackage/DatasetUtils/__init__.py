@@ -12,6 +12,14 @@ def getDatasetList(loginState = None):
     return GirderConnector.getDatasetList(accessToken)
 
 
+## Returns None if failed to get list, otherwise returns list of file names: ['meshes/ellipsoid_00.ply', 'meshes/ellipsoid_00.vtk', ...]
+def getFileList(datasetName, loginState = None):
+    GirderConnector.printDataPortalWelcome()
+    print('Getting file list of', datasetName , 'from the ShapeWorks Portal')
+    accessToken = GirderConnector.login(loginState)
+    return GirderConnector.getFileList(accessToken, datasetName)
+
+
 ## fileList is list of file path strings 
 def downloadDataset(datasetName, destinationPath='.', fileList = None, asZip = True, loginState = None):
     GirderConnector.printDataPortalWelcome()
@@ -29,11 +37,13 @@ def downloadDataset(datasetName, destinationPath='.', fileList = None, asZip = T
     print('Downloaded the', datasetName, 'dataset from the ShapeWorks Portal.')
 
 
-def uploadNewDataset(datasetName, datasetPath, loginState = None):
+## Uploads dataset to the data portal without overwriting anything.
+## To replace files, delete them on the data portal before uploading.
+def uploadDataset(datasetName, datasetPath, loginState = None):
     GirderConnector.printDataPortalWelcome()
     print('Uploading the %s dataset from %s to the ShapeWorks Portal' % (datasetName, datasetPath))
     accessToken = GirderConnector.login(loginState)
 
-    GirderConnector.uploadNewDataset(accessToken, datasetName, datasetPath)
+    GirderConnector.uploadDataset(accessToken, datasetName, datasetPath)
 
     print('Uploaded the', datasetName, 'dataset to the ShapeWorks Portal.')

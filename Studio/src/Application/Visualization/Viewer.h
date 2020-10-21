@@ -1,6 +1,5 @@
 #pragma once
 
-//#include <array>
 
 #include <QSharedPointer>
 #include <Visualization/ColorSchemes.h>
@@ -13,7 +12,6 @@ class vtkImageData;
 class vtkCamera;
 class vtkGlyph3D;
 class vtkSphereSource;
-class vtkImageActor;
 class vtkColorTransferFunction;
 class vtkArrowSource;
 class vtkTransformPolyDataFilter;
@@ -22,29 +20,25 @@ class vtkCornerAnnotation;
 class vtkPolyDataMapper;
 class vtkActor;
 class vtkTransform;
-
 class Shape;
-
 class Viewer;
 class Visualizer;
-
 class StudioInteractorStyle;
 
-typedef QSharedPointer< Viewer > ViewerHandle;
-typedef QVector< ViewerHandle > ViewerList;
+typedef QSharedPointer<Viewer> ViewerHandle;
+typedef QVector<ViewerHandle> ViewerList;
 
 //! 3D Viewer
 /*!
  * The Viewer class encapsulates all the functionality for visualizing a single subject/shape
  *
  */
-class Viewer
-{
+class Viewer {
 
 public:
 
   Viewer();
-  ~Viewer();
+  ~Viewer() = default;
 
   void set_renderer(vtkSmartPointer<vtkRenderer> renderer);
   vtkSmartPointer<vtkRenderer> get_renderer();
@@ -77,11 +71,15 @@ public:
 
   void set_visualizer(Visualizer* visualizer);
 
+  void update_feature_range(double *range);
+
+  QSharedPointer<Shape> get_shape();
+
 private:
 
   void display_vector_field();
 
-  void compute_point_differences(const std::vector<Point> &vecs,
+  void compute_point_differences(const std::vector<Point>& points,
                                  vtkSmartPointer<vtkFloatArray> magnitudes,
                                  vtkSmartPointer<vtkFloatArray> vectors);
 
@@ -90,53 +88,51 @@ private:
 
   void draw_exclusion_spheres(QSharedPointer<Shape> object);
 
-  void updateDifferenceLUT(float r0, float r1);
+  void update_difference_lut(float r0, float r1);
+
+  void update_actors();
+
+  bool showing_feature_map();
 
   bool visible_;
 
   QSharedPointer<Shape> shape_;
 
-  void update_actors();
+  bool show_glyphs_ = true;
+  bool show_surface_ = true;
 
-  bool show_glyphs_;
-  bool show_surface_;
+  double glyph_size_ = 1.0f;
+  double glyph_quality_ = 5.0f;
 
-  double glyph_size_;
-  double glyph_quality_;
+  vtkSmartPointer<vtkRenderer> renderer_;
 
-  vtkSmartPointer<vtkRenderer>             renderer_;
+  vtkSmartPointer<vtkSphereSource> sphere_source_;
 
-  vtkSmartPointer<vtkSphereSource>         sphere_source_;
+  vtkSmartPointer<vtkPoints> glyph_points_;
+  vtkSmartPointer<vtkPolyData> glyph_point_set_;
+  vtkSmartPointer<vtkGlyph3D> glyphs_;
+  vtkSmartPointer<vtkPolyDataMapper> glyph_mapper_;
+  vtkSmartPointer<vtkActor> glyph_actor_;
 
-  vtkSmartPointer<vtkPoints>               glyph_points_;
-  vtkSmartPointer<vtkPolyData>             glyph_point_set_;
-  vtkSmartPointer<vtkGlyph3D>              glyphs_;
-  vtkSmartPointer<vtkPolyDataMapper>       glyph_mapper_;
-  vtkSmartPointer<vtkActor>                glyph_actor_;
+  vtkSmartPointer<vtkPoints> exclusion_sphere_points_;
+  vtkSmartPointer<vtkPolyData> exclusion_sphere_point_set_;
+  vtkSmartPointer<vtkGlyph3D> exclusion_sphere_glyph_;
+  vtkSmartPointer<vtkPolyDataMapper> exclusion_sphere_mapper_;
+  vtkSmartPointer<vtkActor> exclusion_sphere_actor_;
 
-  vtkSmartPointer<vtkPoints>               exclusion_sphere_points_;
-  vtkSmartPointer<vtkPolyData>             exclusion_sphere_point_set_;
-  vtkSmartPointer<vtkGlyph3D>              exclusion_sphere_glyph_;
-  vtkSmartPointer<vtkPolyDataMapper>       exclusion_sphere_mapper_;
-  vtkSmartPointer<vtkActor>                exclusion_sphere_actor_;
+  vtkSmartPointer<vtkPolyDataMapper> surface_mapper_;
+  vtkSmartPointer<vtkActor> surface_actor_;
 
-  vtkSmartPointer<vtkPolyDataMapper>       surface_mapper_;
-  vtkSmartPointer<vtkActor>                surface_actor_;
+  vtkSmartPointer<vtkLookupTable> lut_;
+  vtkSmartPointer<vtkLookupTable> surface_lut_;
+  //vtkSmartPointer<vtkColorTransferFunction> surface_lut_;
 
-  vtkSmartPointer<vtkLookupTable>          lut_;
-
-  vtkSmartPointer<StudioInteractorStyle>   style_;
-
-  //vtkSmartPointer<vtkImageActor>           image_actor_;
-
-  vtkSmartPointer<vtkColorTransferFunction>   difference_lut_;
-  vtkSmartPointer<vtkArrowSource>             arrow_source_;
+  vtkSmartPointer<vtkArrowSource> arrow_source_;
   vtkSmartPointer<vtkTransformPolyDataFilter> arrow_flip_filter_;
-  vtkSmartPointer<vtkGlyph3D>                 arrow_glyphs_;
-  vtkSmartPointer<vtkPolyDataMapper>          arrow_glyph_mapper_;
-  vtkSmartPointer<vtkActor>                   arrow_glyph_actor_;
-  vtkSmartPointer<vtkTransform>               transform_180_;
-
+  vtkSmartPointer<vtkGlyph3D> arrow_glyphs_;
+  vtkSmartPointer<vtkPolyDataMapper> arrow_glyph_mapper_;
+  vtkSmartPointer<vtkActor> arrow_glyph_actor_;
+  vtkSmartPointer<vtkTransform> transform_180_;
   vtkSmartPointer<vtkScalarBarActor> scalar_bar_actor_;
 
   vtkSmartPointer<vtkCornerAnnotation> corner_annotation_;

@@ -4,7 +4,7 @@
 
 The ellipsoid dataset comprises of axis-aligned ellipsoids with varying radii along a single axis. This example is a stepping stone for the user to get familiar with the workflow of ShapeWorks. 
 
-The `ellipsoid.py` (in `Examples/Python/`) use case represents the standard use version of a shape modeling workflow using ShapeWorks. It includes the full pipeline for processed (i.e., prepped/groomed) as well as unprocessed data. 
+The `ellipsoid.py` (in `Examples/Python/`) use case represents the standard use version of a shape modeling workflow using ShapeWorks. It includes the full pipeline for processed (i.e., groomed) as well as unprocessed data. 
 
 The use case is located at: `Examples/Python/ellipsoid.py`
 
@@ -49,7 +49,7 @@ The following preprocessing steps are only performed when you start with *unprep
 
 ## Optimizing Shape Model
 
-Below are the default optimization parameters for this use case. For a description of the optimize tool and its algorithmic parameters, see: [How to Optimize Your Shape Model](../workflow/optimize.md). Note that `use_shape_statistics_after` parameter is not used when `--use_single_scale` tag is given to the `RunUseCase.py` (in `Examples/Python/`)
+Below are the default optimization parameters for this use case. For a description of the optimize tool and its algorithmic parameters, see: [How to Optimize Your Shape Model](../workflow/optimize.md). Note that `use_shape_statistics_after` parameter is not used when `--use_single_scale` tag is given to the `RunUseCase.py` (in `Examples/Python/`).
 
 ```
         "number_of_particles": 128,
@@ -69,7 +69,6 @@ Below are the default optimization parameters for this use case. For a descripti
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,
-        "debug_projection": 0,
         "verbosity": 2
         "use_shape_statistics_after": 32
 ```

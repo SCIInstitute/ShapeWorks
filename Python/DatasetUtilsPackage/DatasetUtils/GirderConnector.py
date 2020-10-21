@@ -9,7 +9,7 @@ from DatasetUtils import GirderAPI
 _API_KEY_NAME = 'python_script'
 _LOGIN_FILE_NAME = 'shapeworksPortalLogin.txt'
 _CONTACT_SUPPORT_STRING = 'Please contact support: shapeworks-dev-support@sci.utah.edu'
-_VERSION = 'v1'
+_VERSION = 'v2'
 _USE_CASE_DATA_COLLECTION = 'use-case-data-%s' % _VERSION
 
 serverAddress = 'http://cibc1.sci.utah.edu:8080/'
@@ -160,25 +160,62 @@ def downloadDatasetZip(accessToken, datasetName, destinationPath):
     GirderAPI.downloadFolder(serverAddress, accessToken, path=destinationPath, folderInfo=datasetFolder)
 
 
-def _uploadFolder(accessToken, folderName, folderPath, parentId, parentType):
-    GirderAPI.createFolder(serverAddress, accessToken, parentId, folderName, parentType=parentType)
+def _uploadFolder(accessToken, folderName, folderPath, parentId, parentType, existingFileList = []):
+    try:
+        folderInfo = GirderAPI.getFolderInfo(serverAddress, accessToken, parentType=parentType, parentId=parentId, folderName=folderName)
+        print('Skip creating folder ' + folderPath)
+    except:
+        GirderAPI.createFolder(serverAddress, accessToken, parentId, folderName, parentType=parentType)
+
     folderInfo = GirderAPI.getFolderInfo(serverAddress, accessToken, parentType=parentType, parentId=parentId, folderName=folderName)
     for item in os.listdir(folderPath):
+        # must use / here to match girder file paths
         itempath = os.path.join(folderPath, item)
         if os.path.isfile(itempath):
-            GirderAPI.uploadFile(serverAddress, accessToken, folderInfo['_id'], item, itempath, parentType='folder')
+            if itempath in existingFileList:
+                print('Skip uploading ' + itempath)
+            else:
+                GirderAPI.uploadFile(serverAddress, accessToken, folderInfo['_id'], item, itempath, parentType='folder')
         else:
-            _uploadFolder(accessToken, item, itempath, folderInfo['_id'], 'folder')
+            _uploadFolder(accessToken, item, itempath, folderInfo['_id'], 'folder', existingFileList)
 
 
-def uploadNewDataset(accessToken, datasetName, datasetPath):
+## Uploads dataset to the data portal without overwriting anything.
+## To replace files, delete them on the data portal before uploading.
+def uploadDataset(accessToken, datasetName, datasetPath):
     useCaseCollection = GirderAPI.getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
     if useCaseCollection is None:
         return False
-    return _uploadFolder(accessToken, datasetName, datasetPath, useCaseCollection['_id'], parentType='collection')
+    
+    existingFileList = []
+    if datasetName in getDatasetList(accessToken):
+        # Get list of existing files to avoid overriding
+        existingFileList = [os.path.join(datasetPath, f) for f in getFileList(accessToken, datasetName)]
+    return _uploadFolder(accessToken, datasetName, datasetPath, useCaseCollection['_id'], parentType='collection', existingFileList=existingFileList)
 
 
 def getDatasetList(accessToken):
     useCaseCollection = GirderAPI.getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
     jsonList = GirderAPI.getFolderList(serverAddress, accessToken, 'collection', useCaseCollection['_id'])
     return [element['name'] for element in jsonList]
+
+
+def getFileList(accessToken, datasetName):
+    useCaseCollection = GirderAPI.getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
+    datasetFolder = GirderAPI.getFolderInfo(serverAddress, accessToken, parentType='collection', parentId=useCaseCollection['_id'], folderName=datasetName)
+
+    # Add items and folders of base directory
+    items = GirderAPI.listItemsInFolder(serverAddress, accessToken, datasetFolder['_id'])
+    subfolders = [(sf, '') for sf in GirderAPI.getFolderList(serverAddress, accessToken, parentType='folder', parentId=datasetFolder['_id'])]
+    itemPaths = [element['name'] for element in items]
+
+    # Iterate through subfolders to get all the items
+    while len(subfolders) > 0:
+        subfolder = subfolders.pop(0)
+        path = subfolder[1] + subfolder[0]['name'] + os.path.sep
+        items = GirderAPI.listItemsInFolder(serverAddress, accessToken, subfolder[0]['_id'])
+        itemPaths += [path + element['name'] for element in items]
+        subfolders = [(sf, path) for sf in GirderAPI.getFolderList(serverAddress, accessToken, parentType='folder', parentId=subfolder[0]['_id'])] + subfolders
+
+    return itemPaths
+

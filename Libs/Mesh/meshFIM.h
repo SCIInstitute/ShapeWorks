@@ -47,7 +47,6 @@
 #define CURVATURE 2 
 
 
-#define  PI 3.141592653589793
 
 // SHIREEN
 #define GENERATE_GEO_FILES 1 // now disable till we incorporate the geodesic repulsion
