@@ -40,6 +40,8 @@ public:
   /// finds holes in a mesh and closes them
   Mesh& fillHoles();
 
+  Mesh& probeFeature(const Image &img);
+
   /// compare if points in two meshes are equal
   bool compare_points_equal(const Mesh& other_mesh);
 

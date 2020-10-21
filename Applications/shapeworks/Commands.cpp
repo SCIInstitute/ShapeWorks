@@ -32,7 +32,8 @@ bool Example::execute(const optparse::Values &options, SharedCommandData &shared
   double optionName = static_cast<double>(options.get("optionName"));
   //read additional options... 
 
-  return sharedData.image.example(optionName, ...);
+  sharedData.image.example(optionName, ...);
+  return true;
 }
 #endif
 
@@ -1852,6 +1853,31 @@ bool FillHoles::execute(const optparse::Values &options, SharedCommandData &shar
   }
   
   sharedData.mesh->fillHoles();
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ProbeFeature
+///////////////////////////////////////////////////////////////////////////////
+void ProbeFeature::buildParser()
+{
+  const std::string prog = "probe-feature";
+  const std::string desc = "probe feature volumes at each mesh vertex and 
+                            output vtk meshes with scalar field defined based on such probing process";
+  parser.prog(prog).description(desc);
+
+  Command::buildParser();
+}
+
+bool ProbeFeature::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+  
+  sharedData.mesh->ProbeFeature();
   return sharedData.validMesh();
 }
 

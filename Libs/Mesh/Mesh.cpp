@@ -1,4 +1,5 @@
 #include "Mesh.h"
+#include "Image.h"
 #include <PreviewMeshQC/FEAreaCoverage.h>
 #include <PreviewMeshQC/FEVTKImport.h>
 #include <PreviewMeshQC/FEVTKExport.h>
@@ -15,6 +16,7 @@
 #include <vtkReverseSense.h>
 #include <vtkFillHolesFilter.h>
 #include <vtkPolyDataNormals.h>
+#include <vtkProbeFilter.h>
 
 static bool compare_double(double a, double b)
 {
@@ -178,6 +180,17 @@ Mesh &Mesh::fillHoles()
   normals->GetOutput()->GetPointData()->SetNormals(copyMesh.mesh->GetPointData()->GetNormals());
   this->mesh = normals->GetOutput();
 
+  return *this;
+}
+
+Mesh &Mesh::probeFeature(const Image &img)
+{
+  vtkSmartPointer<vtkProbeFilter> probeFilter = vtkSmartPointer<vtkProbeFilter>::New();
+  probeFilter->SetInputData(this->mesh);
+  probeFilter->SetSourceData(Image::img.getVTK());
+  probeFilter->Update();
+
+  this->mesh = probeFilter->GetPolyDataOutput();
   return *this;
 }
 
