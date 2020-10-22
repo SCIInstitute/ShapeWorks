@@ -33,10 +33,19 @@ namespace shapeworks
     }
   }
 
-  double TriMeshWrapper::ComputeDistance(PointType pointa, PointType pointb, const std::string& whoAsked) const {
+  double TriMeshWrapper::ComputeDistance(PointType pointa, PointType pointb) const {
     const double dist = pointa.EuclideanDistanceTo(pointb);
     if(logQueries && logFile.is_open()) {
-      counts[whoAsked]++;
+      const int triIdxA = GetTriangleForPoint(convert<PointType, point>(pointa));
+      const int triIdxB = GetTriangleForPoint(convert<PointType, point>(pointb));
+
+      const auto& meshA = mesh->faces[triIdxA];
+      const auto& meshB = mesh->faces[triIdxB];
+      for(int i=0; i<3; i++) {
+        for(int j=0; j<3; j++) {
+          logFile << meshA[i] << ' ' << meshB[j] << std::endl;
+        }
+      }
     }
     return dist;
   }

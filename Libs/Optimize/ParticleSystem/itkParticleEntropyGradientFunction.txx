@@ -88,7 +88,7 @@ ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
       {
       if (weights[i] < epsilon) continue;
 
-      double sqrdistance = domain->SquaredDistance(pos, neighborhood[i].Point, "sigma");
+      double sqrdistance = domain->SquaredDistance(pos, neighborhood[i].Point);
       double alpha = exp(-sqrdistance / sigma22) * weights[i];
       A += alpha;
       B += sqrdistance * alpha;

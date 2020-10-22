@@ -22,7 +22,7 @@ template <class TImage>
 typename ParticleSurfaceNeighborhood<TImage>::PointVectorType
 ParticleSurfaceNeighborhood<TImage>
 ::FindNeighborhoodPoints(const PointType &center,
-                         std::vector<double> &weights, double radius, const std::string& whoAsked) const
+                         std::vector<double> &weights, double radius) const
 {
   const auto *domain = this->GetDomain();
   GradientVectorType posnormal = domain->SampleNormalAtPoint(center);
@@ -55,7 +55,7 @@ ParticleSurfaceNeighborhood<TImage>
   for (typename PointTreeType::PointIteratorListType::const_iterator it = pointlist.begin();
        it != pointlist.end(); it++)
     {
-      double distance = this->GetDomain()->Distance(center, (*it)->Point, whoAsked);
+      double distance = this->GetDomain()->Distance(center, (*it)->Point);
     
     if (distance < radius && distance > 0.0 )
       {
