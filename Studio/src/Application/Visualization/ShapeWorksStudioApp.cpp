@@ -6,7 +6,6 @@
 #include <QWidgetAction>
 #include <QMessageBox>
 #include <QCloseEvent>
-#include <QXmlStreamWriter>
 #include <QTextStream>
 
 // vtk
@@ -1104,6 +1103,10 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->update_display(true);
 
   this->is_loading_ = false;
+
+  if (this->session_->is_light_project()) {
+    this->reset_num_viewers();
+  }
 
   this->setWindowTitle(this->session_->get_display_name());
 }
