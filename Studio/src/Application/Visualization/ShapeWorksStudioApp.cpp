@@ -417,8 +417,17 @@ void ShapeWorksStudioApp::on_zoom_slider_valueChanged()
   if (!this->lightbox_->render_window_ready()) { return; }
 
   int value = this->ui_->zoom_slider->value();
+  if (value == 0)
+  {
+    this->lightbox_->set_tile_layout(1, 1);
+  } else if (value == 1)
+  {
+    this->lightbox_->set_tile_layout(2, 1);
+  }
+  else{
+    this->lightbox_->set_tile_layout(value, value);
+  }
 
-  this->lightbox_->set_tile_layout(value, value);
   this->visualizer_->update_viewer_properties();
 
   this->update_scrollbar();
@@ -1030,8 +1039,8 @@ void ShapeWorksStudioApp::update_display(bool force)
                                         reconstruct_ready);
     } //TODO regression?
 
-    if (1 != this->ui_->zoom_slider->value()) {
-      this->ui_->zoom_slider->setValue(1);
+    if (0 != this->ui_->zoom_slider->value()) {
+      this->ui_->zoom_slider->setValue(0);
     }
   }
 
