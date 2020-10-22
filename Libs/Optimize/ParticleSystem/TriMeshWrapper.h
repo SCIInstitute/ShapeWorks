@@ -36,7 +36,7 @@ public:
 
   typedef typename MeshWrapper::PointType PointType;
 
-  double ComputeDistance(PointType pointa, PointType pointb) const override;
+  double ComputeDistance(PointType pointa, PointType pointb, const std::string& whoAsked) const override;
 
   PointType GeodesicWalk(PointType pointa, vnl_vector_fixed<double, DIMENSION> vector) const override;
 
@@ -64,19 +64,15 @@ public:
   }
   bool logQueries { false };
 
-  /*
   void AddLineToLogFile(const std::string& line) {
     logFile << line;
   }
-  */
-  /*
   void WriteCountsAndClear() {
     for (auto it : counts) {
-      logFile << it.first.first << ' ' << it.first.second<< ' '  << it.second << std::endl;
+      logFile << it.first << ' ' << it.second << std::endl;
     }
     counts.clear();
   }
-  */
 
 private:
   Eigen::Vector3d GeodesicWalkOnFace(Eigen::Vector3d pointa__, Eigen::Vector3d projectedVector__, int faceIndex__, int prevFace__) const;
@@ -98,6 +94,8 @@ private:
   PointType meshLowerBound;
   PointType meshUpperBound;
   mutable std::ofstream logFile;
+
+  mutable std::unordered_map<std::string, unsigned long> counts;
   // mutable std::unordered_map<
   // std::pair<int, int>,
   // unsigned long, pair_hash > counts;
