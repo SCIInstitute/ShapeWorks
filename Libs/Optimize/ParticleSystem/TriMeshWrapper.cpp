@@ -352,7 +352,7 @@ namespace shapeworks
     mesh->need_curvatures();
     ComputeMeshBounds();
 
-    kdTree = new KDtree(mesh->vertices);
+    kdTree = std::make_shared<KDtree>(mesh->vertices);
   }
 
   TriMeshWrapper::PointType TriMeshWrapper::GetPointOnMesh() const {

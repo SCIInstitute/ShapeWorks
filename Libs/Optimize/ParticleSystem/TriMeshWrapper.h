@@ -57,7 +57,7 @@ private:
   vec3 ComputeBarycentricCoordinates(point pt, int face) const;
 
   TriMesh* mesh;
-  KDtree *kdTree;
+  std::shared_ptr<KDtree> kdTree;
 
   PointType meshLowerBound;
   PointType meshUpperBound;
