@@ -22,6 +22,10 @@ const int global_iteration = 1;
 #include "MemoryUsage.h"
 #include <chrono>
 
+#include <tbb/parallel_for.h>
+#include <tbb/task_scheduler_init.h>
+
+
 namespace itk
 {
   template <class TGradientNumericType, unsigned int VDimension>
@@ -64,6 +68,9 @@ namespace itk
   void ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
     ::StartAdaptiveGaussSeidelOptimization()
   {
+    /// uncomment this to run single threaded
+    //tbb::task_scheduler_init init(1);
+
     if (this->m_AbortProcessing) {
       return;
     }
