@@ -31,7 +31,21 @@ namespace shapeworks
     }
   }
 
-  double TriMeshWrapper::ComputeDistance(PointType pointa, PointType pointb) const {
+TriMeshWrapper::TriMeshWrapper(std::shared_ptr<trimesh::TriMesh> mesh) {
+  mesh_ = mesh;
+  mesh_->need_neighbors();
+  mesh_->need_faces();
+  mesh_->need_adjacentfaces();
+  mesh_->need_across_edge();
+  mesh_->need_normals();
+  mesh_->need_curvatures();
+  ComputeMeshBounds();
+
+  kd_tree_ = std::make_shared<KDtree>(mesh_->vertices);
+}
+
+
+double TriMeshWrapper::ComputeDistance(PointType pointa, PointType pointb) const {
     return pointa.EuclideanDistanceTo(pointb);
   }
 
@@ -50,7 +64,7 @@ namespace shapeworks
 
     point inter(0, 0, 0);
     for (int q = 0; q < 3; q++) {
-      inter += mesh->vertices[mesh->faces[currentFace][q]] * intersect[q];
+      inter += mesh_->vertices[mesh_->faces[currentFace][q]] * intersect[q];
     }
     return inter;
   }
@@ -103,14 +117,14 @@ namespace shapeworks
       vec3 targetBary = ComputeBarycentricCoordinates(point(targetPoint[0], targetPoint[1], targetPoint[2]), currentFace);
 
       if (facesTraversed.size() >= 3 && facesTraversed[facesTraversed.size() - 1] == facesTraversed[facesTraversed.size() - 3]) {
-        // When at the intersection of two faces while also being at the edge of the mesh, the edge-sliding will keep alternating 
+        // When at the intersection of two faces while also being at the edge of the mesh, the edge-sliding will keep alternating
         // between the two faces without actually going anywhere since it is at a corner in the mesh.
         //std::cerr << "exiting due to face repetition\n";
         break;
       }
       if (facesTraversed.size() > 100) {
         for (int i = 0; i < facesTraversed.size(); i++) {
-          std::cerr << facesTraversed[i] << ": " << PrintValue<TriMesh::Face>(mesh->faces[facesTraversed[i]]) << ", ";
+          std::cerr << facesTraversed[i] << ": " << PrintValue<TriMesh::Face>(mesh_->faces[facesTraversed[i]]) << ", ";
         }
         std::cerr << "Current point: " << PrintValue<Eigen::Vector3d>(currentPoint) << "\n";
         std::cerr << "remaining vector: " << PrintValue<Eigen::Vector3d>(remainingVector) << "\n";
@@ -164,9 +178,9 @@ namespace shapeworks
       }
 
       Eigen::Vector3d remaining = targetPoint - intersect;
-      int nextFace = mesh->across_edge[currentFace][negativeEdge];
+      int nextFace = mesh_->across_edge[currentFace][negativeEdge];
       if (nextFace == -1) {
-        nextFace = SlideAlongEdge(intersect, remaining, currentFace, negativeEdge, mesh);
+        nextFace = SlideAlongEdge(intersect, remaining, currentFace, negativeEdge, mesh_);
       }
       remainingVector = remaining;
       if (nextFace != -1) {
@@ -225,24 +239,24 @@ namespace shapeworks
 
     vnl_vector_fixed<float, DIMENSION> weightedNormal(0, 0, 0);
     for (int i = 0; i < 3; i++) {
-      vnl_vector_fixed<float, DIMENSION> normal = convert<vec3, vnl_vector_fixed<float, DIMENSION>>(mesh->normals[mesh->faces[face][i]]);
+      vnl_vector_fixed<float, DIMENSION> normal = convert<vec3, vnl_vector_fixed<float, DIMENSION>>(mesh_->normals[mesh_->faces[face][i]]);
       weightedNormal += normal.normalize() * bary[i];
     }
     return weightedNormal;
   }
 
   int TriMeshWrapper::GetNearestVertex(point pt) const {
-    const float * match = kdTree->closest_to_pt(pt, 99999999);
-    int match_ind = ( const point *) match - &(mesh->vertices[0]);
+    const float * match = kd_tree_->closest_to_pt(pt, 99999999);
+    int match_ind = ( const point *) match - &(mesh_->vertices[0]);
     return match_ind;
   }
 
   std::vector<int> TriMeshWrapper::GetKNearestVertices(point pt, int k) const {
     std::vector<const float *> knn;
-    kdTree->find_k_closest_to_pt(knn, k, pt, 9999999);
+    kd_tree_->find_k_closest_to_pt(knn, k, pt, 9999999);
     std::vector<int> vertices;
     for (int i = 0; i < knn.size(); i++) {
-      int match_ind = ( const point *) knn[i] - &(mesh->vertices[0]);
+      int match_ind = ( const point *) knn[i] - &(mesh_->vertices[0]);
       vertices.push_back(match_ind);
     }
     return vertices;
@@ -264,8 +278,8 @@ namespace shapeworks
     std::set<int> faceCandidatesSet;
     for (int j = 0; j < vertices.size(); j++) {
       int vert = vertices[j];
-      for (int i = 0; i < mesh->adjacentfaces[vert].size(); i++) {
-        int face = mesh->adjacentfaces[vert][i];
+      for (int i = 0; i < mesh_->adjacentfaces[vert].size(); i++) {
+        int face = mesh_->adjacentfaces[vert][i];
 
         // Only check each face once
         if (faceCandidatesSet.find(face) == faceCandidatesSet.end()) {
@@ -300,9 +314,9 @@ namespace shapeworks
   vec3 TriMeshWrapper::ComputeBarycentricCoordinates(point pt, int face) const {
     vec3 bCoords; bCoords.clear();
     point a, b, c;
-    a = mesh->vertices[mesh->faces[face][0]];
-    b = mesh->vertices[mesh->faces[face][1]];
-    c = mesh->vertices[mesh->faces[face][2]];
+    a = mesh_->vertices[mesh_->faces[face][0]];
+    b = mesh_->vertices[mesh_->faces[face][1]];
+    c = mesh_->vertices[mesh_->faces[face][2]];
 
     point n = (b - a) CROSS(c - a);
     normalize(n);
@@ -334,54 +348,41 @@ namespace shapeworks
     bary[0] /= sum; bary[1] /= sum; bary[2] /= sum;
     point snappedPoint(0, 0, 0);
     for (int i = 0; i < 3; i++) {
-      snappedPoint += mesh->vertices[mesh->faces[face][i]] * bary[i];
+      snappedPoint += mesh_->vertices[mesh_->faces[face][i]] * bary[i];
     }
     return convert<point, PointType>(snappedPoint);
   }
 
-  TriMeshWrapper::TriMeshWrapper(std::shared_ptr<trimesh::TriMesh> _mesh) {
-    mesh = _mesh;
-    mesh->need_neighbors();
-    mesh->need_faces();
-    mesh->need_adjacentfaces();
-    mesh->need_across_edge();
-    mesh->need_normals();
-    mesh->need_curvatures();
-    ComputeMeshBounds();
-
-    kdTree = std::make_shared<KDtree>(mesh->vertices);
-  }
-
   TriMeshWrapper::PointType TriMeshWrapper::GetPointOnMesh() const {
     int faceIndex = 0;
-    vec center = mesh->centroid(faceIndex);
+    vec center = mesh_->centroid(faceIndex);
     return convert<vec, PointType>(center);
   }
 
-  const Eigen::Vector3d TriMeshWrapper::GetFaceNormal(int faceIndex) const {
-    vec n = mesh->trinorm(faceIndex);
+  const Eigen::Vector3d TriMeshWrapper::GetFaceNormal(int face_index) const {
+    vec n = mesh_->trinorm(face_index);
     Eigen::Vector3d normal = convert<vec, Eigen::Vector3d>(n);
     return normal.normalized();
   }
 
   void TriMeshWrapper::ComputeMeshBounds() {
-    meshLowerBound = GetPointOnMesh();
-    meshUpperBound = GetPointOnMesh();
-    for (int index = 0; index < mesh->vertices.size(); index++) {
+    mesh_lower_bound_ = GetPointOnMesh();
+    mesh_upper_bound_ = GetPointOnMesh();
+    for (int index = 0; index < mesh_->vertices.size(); index++) {
       for (int dimension = 0; dimension < 3; dimension++) {
-        meshLowerBound[dimension] = std::min<double>(mesh->vertices[index][dimension],
-                                                     meshLowerBound[dimension]);
-        meshUpperBound[dimension] = std::max<double>(mesh->vertices[index][dimension],
-                                                     meshUpperBound[dimension]);
+        mesh_lower_bound_[dimension] = std::min<double>(mesh_->vertices[index][dimension],
+                                                        mesh_lower_bound_[dimension]);
+        mesh_upper_bound_[dimension] = std::max<double>(mesh_->vertices[index][dimension],
+                                                        mesh_upper_bound_[dimension]);
       }
     }
     double buffer = 1;
     for (int i = 0; i < 3; i++) {
-      meshLowerBound[i] = meshLowerBound[i] - buffer;
-      meshUpperBound[i] = meshUpperBound[i] + buffer;
+      mesh_lower_bound_[i] = mesh_lower_bound_[i] - buffer;
+      mesh_upper_bound_[i] = mesh_upper_bound_[i] + buffer;
     }
     if (TriMesh::verbose) {
-      std::cerr << "Mesh bounds: " << PrintValue<PointType>(meshLowerBound) << " -> " << PrintValue<PointType>(meshUpperBound) << "\n";
+      std::cerr << "Mesh bounds: " << PrintValue<PointType>(mesh_lower_bound_) << " -> " << PrintValue<PointType>(mesh_upper_bound_) << "\n";
     }
   }
 }
