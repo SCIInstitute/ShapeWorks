@@ -359,20 +359,18 @@ void ShapeWorksStudioApp::on_action_quit_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_import_triggered()
 {
-  QStringList filenames;
-  std::cerr << "getOpenFileNames, last_dir = " <<
-            this->preferences_.get_last_directory().toStdString() << "\n";
-  filenames = QFileDialog::getOpenFileNames(this, tr("Import Files..."),
+  auto filenames = QFileDialog::getOpenFileNames(this, tr("Import Files..."),
                                             this->preferences_.get_last_directory(),
-                                            tr("NRRD files (*.nrrd);;MHA files (*.mha)"));
+                                            tr("NRRD files (*.nrrd);;MHA files (*.mha);;VTK files (*.vtk)"));
 
   if (filenames.size() == 0) {
+    // was cancelled
     return;
   }
 
   this->preferences_.set_last_directory(QFileInfo(filenames[0]).absolutePath());
-  //need to re-run everything if something new is added.
 
+  //need to re-run everything if something new is added.
   this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::ORIGINAL);
   this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, true);
   this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
