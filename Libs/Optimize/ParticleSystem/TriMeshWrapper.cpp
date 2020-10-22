@@ -55,7 +55,7 @@ namespace shapeworks
     return inter;
   }
 
-  int SlideAlongEdge(Eigen::Vector3d &point_, Eigen::Vector3d &remainingVector_, int face_, int edge_, TriMesh *mesh) {
+  int SlideAlongEdge(Eigen::Vector3d &point_, Eigen::Vector3d &remainingVector_, int face_, int edge_, std::shared_ptr<trimesh::TriMesh> mesh) {
     int indexa = (edge_ + 1) % 3;
     int indexb = (edge_ + 2) % 3;
     int vertexindexa = mesh->faces[face_][indexa];
@@ -339,7 +339,7 @@ namespace shapeworks
     return convert<point, PointType>(snappedPoint);
   }
 
-  TriMeshWrapper::TriMeshWrapper(TriMesh *_mesh) {
+  TriMeshWrapper::TriMeshWrapper(std::shared_ptr<trimesh::TriMesh> _mesh) {
     mesh = _mesh;
     mesh->need_neighbors();
     mesh->need_faces();

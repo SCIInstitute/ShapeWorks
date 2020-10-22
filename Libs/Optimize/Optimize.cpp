@@ -1975,7 +1975,7 @@ void Optimize::AddImage(ImageType::Pointer image)
 }
 
 //---------------------------------------------------------------------------
-void Optimize::AddMesh(shapeworks::MeshWrapper* mesh)
+void Optimize::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh)
 {
   this->m_sampler->AddMesh(mesh);
   this->m_num_shapes++;

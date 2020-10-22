@@ -17,6 +17,9 @@ class TriMeshWrapper : public MeshWrapper
 {
 public:
 
+  TriMeshWrapper(std::shared_ptr<trimesh::TriMesh> _mesh);
+  ~TriMeshWrapper() {}
+
   typedef typename MeshWrapper::PointType PointType;
 
   double ComputeDistance(PointType pointa, PointType pointb) const override;
@@ -29,8 +32,6 @@ public:
 
   PointType SnapToMesh(PointType pointa) const override;
 
-  TriMeshWrapper(trimesh::TriMesh *_mesh);
-  ~TriMeshWrapper() {}
 
   PointType GetPointOnMesh() const override;
 
@@ -55,7 +56,7 @@ private:
   std::vector<int> GetKNearestVertices(trimesh::point pt, int k) const;
   trimesh::vec3 ComputeBarycentricCoordinates(trimesh::point pt, int face) const;
 
-  trimesh::TriMesh* mesh;
+  std::shared_ptr<trimesh::TriMesh> mesh;
   std::shared_ptr<trimesh::KDtree> kdTree;
 
   PointType meshLowerBound;
