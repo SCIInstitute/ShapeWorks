@@ -114,11 +114,9 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
     // Jacobian.  Each shape gradient must be transformed by a different Jacobian
     // so we have to do this individually for each shape (sample).
 
-#pragma omp parallel
     {
     vnl_matrix_type Jmatrix;
     vnl_matrix_type v;
-#pragma omp for
     for (int j = 0; j < num_samples; j++)
     {
         int num = 0;
