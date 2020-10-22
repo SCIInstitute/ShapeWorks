@@ -913,6 +913,7 @@ void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
 {
   this->preferences_.set_center_checked(this->ui_->center_checkbox->isChecked());
   this->update_display(true);
+  this->visualizer_->reset_camera();
 }
 
 //---------------------------------------------------------------------------
@@ -1045,6 +1046,7 @@ void ShapeWorksStudioApp::update_display(bool force)
 void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged(QString disp_mode)
 {
   this->set_view_mode(disp_mode.toStdString());
+  this->visualizer_->reset_camera();
 }
 
 //---------------------------------------------------------------------------
