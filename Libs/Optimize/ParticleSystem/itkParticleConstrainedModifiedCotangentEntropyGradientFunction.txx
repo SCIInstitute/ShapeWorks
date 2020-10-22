@@ -148,7 +148,7 @@ ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType
     }
 
     // Get the neighborhood surrounding the point "pos".
-    m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, m_CurrentWeights, neighborhood_radius, d);
+    m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, m_CurrentWeights, neighborhood_radius, "cot::be", d);
 
     if (system->GetDomain(d)->GetDomainType() == shapeworks::DomainType::Image) {
       // Grab a pointer to the domain.  We need a Domain that has surface normal

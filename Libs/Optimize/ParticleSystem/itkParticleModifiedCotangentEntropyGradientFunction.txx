@@ -39,7 +39,7 @@ ParticleModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimensio
     double rmag;
     energy = epsilon;
     //m_GlobalSigma - 1 per domain
-    typename ParticleSystemType::PointVectorType m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, m_GlobalSigma[d], d);
+    typename ParticleSystemType::PointVectorType m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, m_GlobalSigma[d], "cot::e", d);
 
     if (m_CurrentNeighborhood.size()==0)
     {
@@ -61,7 +61,7 @@ ParticleModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimensio
     for (unsigned int k = 0; k < m_CurrentNeighborhood.size(); k++)
     {
         PointType pos_k = m_CurrentNeighborhood[k].Point;
-        typename ParticleSystemType::PointVectorType k_neighborhood = system->FindNeighborhoodPoints(pos_k, m_GlobalSigma[d], d);
+        typename ParticleSystemType::PointVectorType k_neighborhood = system->FindNeighborhoodPoints(pos_k, m_GlobalSigma[d], "cot:e2", d);
         double energy_k = epsilon;
 
         for (unsigned int j = 0; j < k_neighborhood.size(); j++)

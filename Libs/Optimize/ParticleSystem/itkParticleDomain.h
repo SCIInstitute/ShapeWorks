@@ -42,11 +42,13 @@ public:
   virtual vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType & point) const = 0;
   virtual vnl_matrix_fixed<float, DIMENSION, DIMENSION> SampleHessianAtPoint(const PointType &p) const = 0;
   /** Distance between locations is used for computing energy and neighborhoods. */
-  virtual double Distance(const PointType &a, const PointType &b) const {
+  virtual double Distance(const PointType &a, const PointType &b, const std::string& whoAsked) const {
+    throw std::runtime_error("this is hacky mesh geodesic version");
     return a.EuclideanDistanceTo(b);
   }
   /** Squared Distance between locations is used for computing sigma. */
-  virtual double SquaredDistance(const PointType &a, const PointType &b) const {
+  virtual double SquaredDistance(const PointType &a, const PointType &b, const std::string& whoAsked) const {
+    throw std::runtime_error("this is hacky mesh geodesic version");
     return a.SquaredEuclideanDistanceTo(b);
   }
 

@@ -75,18 +75,18 @@ public:
 
   /** Compile a list of points that are within a specified radius of a given
       point.  The default implementation will throw an exception. */
-  virtual PointVectorType FindNeighborhoodPoints(const PointType &, double) const
+  virtual PointVectorType FindNeighborhoodPoints(const PointType &, double, const std::string& whoAsked) const
   {
     itkExceptionMacro("No algorithm for finding neighbors has been specified.");
   }
   /** This method finds neighborhood points as in the previous method, but also
       computes a vector of weights associated with each of those points. */
   virtual PointVectorType FindNeighborhoodPoints(const PointType &, std::vector<double> &,
-                                                 double) const
+                                                 double, const std::string& whoAsked) const
   {
     itkExceptionMacro("No algorithm for finding neighbors has been specified.");
   }
-  virtual unsigned int  FindNeighborhoodPoints(const PointType &, double, PointVectorType &) const
+  virtual unsigned int  FindNeighborhoodPoints(const PointType &, double, PointVectorType &, const std::string& whoAsked) const
   {
     itkExceptionMacro("No algorithm for finding neighbors has been specified.");
     return 0;

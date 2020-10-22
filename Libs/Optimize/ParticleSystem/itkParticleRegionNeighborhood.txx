@@ -72,7 +72,7 @@ void ParticleRegionNeighborhood<VDimension>::SetDomain(DomainType *d)
 template <unsigned int VDimension>
 typename ParticleRegionNeighborhood<VDimension>::PointVectorType
 ParticleRegionNeighborhood<VDimension>
-::FindNeighborhoodPoints(const PointType &center, double radius) const
+::FindNeighborhoodPoints(const PointType &center, double radius, const std::string& whoAsked) const
 {
   // Compute bounding box of the given hypersphere.
   PointType l, u;
@@ -94,7 +94,7 @@ ParticleRegionNeighborhood<VDimension>
   for (typename PointTreeType::PointIteratorListType::const_iterator it = pointlist.begin();
        it != pointlist.end(); it++)
   {
-    double distance = this->GetDomain()->Distance(center, (*it)->Point);
+    double distance = this->GetDomain()->Distance(center, (*it)->Point, whoAsked);
     
     if (distance < radius && distance > 0 )
     {

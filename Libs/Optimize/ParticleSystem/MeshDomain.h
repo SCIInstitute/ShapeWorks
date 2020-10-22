@@ -89,11 +89,11 @@ public:
     return vnl_matrix_fixed<float, DIMENSION, DIMENSION>();
   }
 
-  inline double Distance(const PointType &a, const PointType &b) const override {
-      return meshWrapper->ComputeDistance(a, b);
+  inline double Distance(const PointType &a, const PointType &b, const std::string& whoAsked) const override {
+      return meshWrapper->ComputeDistance(a, b, whoAsked);
   }
-  inline double SquaredDistance(const PointType &a, const PointType &b) const override {
-    double dist = meshWrapper->ComputeDistance(a, b);
+  inline double SquaredDistance(const PointType &a, const PointType &b, const std::string& whoAsked) const override {
+    double dist = meshWrapper->ComputeDistance(a, b, whoAsked);
     return dist * dist;
   }
 
