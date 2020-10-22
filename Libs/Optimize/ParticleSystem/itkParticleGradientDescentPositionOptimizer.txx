@@ -9,9 +9,6 @@
 #ifndef __itkParticleGradientDescentPositionOptimizer_txx
 #define __itkParticleGradientDescentPositionOptimizer_txx
 
-#ifdef SW_USE_OPENMP
-#include <omp.h>
-#endif /* SW_USE_OPENMP */
 const int global_iteration = 1;
 
 #include <algorithm>
@@ -118,15 +115,16 @@ namespace itk
           // skip any flagged domains
           if (m_ParticleSystem->GetDomainFlag(dom) == true)
           {
+            // note that this is really a 'continue' statement for the loop, but using TBB,
+            // we are in an anonymous function, not a loop, so return is equivalent to continue here
             return;
           }
 
           const ParticleDomain *domain = m_ParticleSystem->GetDomain(dom);
 
           typename GradientFunctionType::Pointer localGradientFunction = m_GradientFunction;
-#ifdef SW_USE_OPENMP
-//            localGradientFunction = m_GradientFunction->Clone();
-#endif
+
+          // must clone this as we are in a thread and the gradient function is not thread-safe
           localGradientFunction = m_GradientFunction->Clone();
 
           // Tell function which domain we are working on.
