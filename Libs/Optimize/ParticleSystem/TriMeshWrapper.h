@@ -9,7 +9,6 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-using namespace trimesh;
 
 namespace shapeworks
 {
@@ -30,7 +29,7 @@ public:
 
   PointType SnapToMesh(PointType pointa) const override;
 
-  TriMeshWrapper(TriMesh *_mesh);
+  TriMeshWrapper(trimesh::TriMesh *_mesh);
   ~TriMeshWrapper() {}
 
   PointType GetPointOnMesh() const override;
@@ -49,15 +48,15 @@ private:
   const Eigen::Vector3d GetFaceNormal(int faceIndex) const;
   void ComputeMeshBounds();
 
-  point GetBarycentricIntersection(vec3 start, vec3 end, int currentFace, int edge) const;
+  trimesh::point GetBarycentricIntersection(trimesh::vec3 start, trimesh::vec3 end, int currentFace, int edge) const;
 
-  int GetNearestVertex(point pt) const;
-  int GetTriangleForPoint(point pt) const;
-  std::vector<int> GetKNearestVertices(point pt, int k) const;
-  vec3 ComputeBarycentricCoordinates(point pt, int face) const;
+  int GetNearestVertex(trimesh::point pt) const;
+  int GetTriangleForPoint(trimesh::point pt) const;
+  std::vector<int> GetKNearestVertices(trimesh::point pt, int k) const;
+  trimesh::vec3 ComputeBarycentricCoordinates(trimesh::point pt, int face) const;
 
-  TriMesh* mesh;
-  std::shared_ptr<KDtree> kdTree;
+  trimesh::TriMesh* mesh;
+  std::shared_ptr<trimesh::KDtree> kdTree;
 
   PointType meshLowerBound;
   PointType meshUpperBound;
