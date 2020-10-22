@@ -14,10 +14,9 @@ namespace shapeworks {
 class TriMeshWrapper : public MeshWrapper {
 public:
 
-  TriMeshWrapper(std::shared_ptr<trimesh::TriMesh> mesh);
+  explicit TriMeshWrapper(std::shared_ptr<trimesh::TriMesh> mesh);
 
-  ~TriMeshWrapper()
-  {}
+  ~TriMeshWrapper() = default;
 
   typedef typename MeshWrapper::PointType PointType;
 
@@ -49,8 +48,8 @@ public:
 private:
 
   Eigen::Vector3d
-  GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d projected_vector, int face_index,
-                     int prev_face) const;
+  GeodesicWalkOnFace(Eigen::Vector3d point_a,
+                     Eigen::Vector3d projected_vector, int face_index) const;
 
   Eigen::Vector3d
   ProjectVectorToFace(const Eigen::Vector3d& normal, const Eigen::Vector3d& vector) const;
