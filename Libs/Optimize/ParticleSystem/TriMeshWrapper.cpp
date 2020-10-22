@@ -2,7 +2,6 @@
 #include "TriMeshWrapper.h"
 
 #include <set>
-#include <random>
 
 using namespace trimesh;
 
@@ -10,7 +9,6 @@ namespace shapeworks
 {
   namespace {
     static float epsilon = 1e-6;
-    static std::mt19937 m_rand{42};
 
     template<class T>
     inline std::string PrintValue(T value) {
@@ -297,7 +295,6 @@ namespace shapeworks
         }
       }
     }
-    vec bary = this->ComputeBarycentricCoordinates(pt, closestFace);
     return closestFace;
   }
   vec3 TriMeshWrapper::ComputeBarycentricCoordinates(point pt, int face) const {
@@ -356,9 +353,8 @@ namespace shapeworks
   }
 
   TriMeshWrapper::PointType TriMeshWrapper::GetPointOnMesh() const {
-    int faceIndex = m_rand() % mesh->faces.size();
+    int faceIndex = 0;
     vec center = mesh->centroid(faceIndex);
-    vec bary = ComputeBarycentricCoordinates(center, faceIndex);
     return convert<vec, PointType>(center);
   }
 
@@ -373,10 +369,10 @@ namespace shapeworks
     meshUpperBound = GetPointOnMesh();
     for (int index = 0; index < mesh->vertices.size(); index++) {
       for (int dimension = 0; dimension < 3; dimension++) {
-        meshLowerBound[dimension] = mesh->vertices[index][dimension] < meshLowerBound[dimension]
-          ? mesh->vertices[index][dimension] : meshLowerBound[dimension];
-        meshUpperBound[dimension] = mesh->vertices[index][dimension] > meshUpperBound[dimension]
-          ? mesh->vertices[index][dimension] : meshUpperBound[dimension];
+        meshLowerBound[dimension] = std::min<double>(mesh->vertices[index][dimension],
+                                                     meshLowerBound[dimension]);
+        meshUpperBound[dimension] = std::max<double>(mesh->vertices[index][dimension],
+                                                     meshUpperBound[dimension]);
       }
     }
     double buffer = 1;
