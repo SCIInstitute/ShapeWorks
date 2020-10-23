@@ -15,6 +15,10 @@
 #ifndef __itkParticleSystem_h
 #define __itkParticleSystem_h
 
+#define KK_S1(x) #x
+#define KK_S2(x) KK_S1(x)
+#define KK_LOCATION __FILE__ " : " KK_S2(__LINE__)
+
 #include "itkDataObject.h"
 #include "itkObjectFactory.h"
 #include "itkPoint.h"

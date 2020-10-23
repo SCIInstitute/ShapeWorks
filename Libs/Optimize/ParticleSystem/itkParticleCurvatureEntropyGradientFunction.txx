@@ -65,7 +65,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 
       avgKappa += kappa;
       
-      double sqrdistance = domain->SquaredDistance(pos, neighborhood[i].Point, "cSigma");
+      double sqrdistance = domain->SquaredDistance(pos, neighborhood[i].Point, KK_LOCATION);
       sqrdistance = sqrdistance * kappa * kappa;
 
       double alpha = exp(-sqrdistance / sigma22) * weights[i];
@@ -161,7 +161,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   
   
   // Get the neighborhood surrounding the point "pos".
-   m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, m_CurrentWeights, neighborhood_radius, "cot::e3", d);
+   m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, m_CurrentWeights, neighborhood_radius, KK_LOCATION, d);
 
    //    m_CurrentNeighborhood
    //   = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
@@ -195,7 +195,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
       }
     
     m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, m_CurrentWeights,    
-                                                               neighborhood_radius, d);
+                                                               neighborhood_radius, KK_LOCATION, d);
     //  m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
     //    this->ComputeAngularWeights(pos,m_CurrentNeighborhood,domain,m_CurrentWeights);
     
@@ -210,7 +210,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
     m_CurrentSigma = this->GetMaximumNeighborhoodRadius() / this->GetNeighborhoodToSigmaRatio();
     neighborhood_radius = this->GetMaximumNeighborhoodRadius();
         m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, m_CurrentWeights,
-                                                               neighborhood_radius, d);
+                                                               neighborhood_radius, KK_LOCATION, d);
         //  m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
         //      this->ComputeAngularWeights(pos,m_CurrentNeighborhood,domain,m_CurrentWeights);
     }

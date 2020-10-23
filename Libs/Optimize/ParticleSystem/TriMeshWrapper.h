@@ -58,6 +58,7 @@ public:
     return meshUpperBound;
   }
   void StartLogging(const std::string& filepath) {
+    logQueries = true;
     typedef std::numeric_limits< double > dbl;
     logFile.open(filepath);
     logFile.precision(dbl::max_digits10);

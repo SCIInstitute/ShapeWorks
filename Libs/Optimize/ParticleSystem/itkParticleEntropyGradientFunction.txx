@@ -170,7 +170,7 @@ ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
   
   // Get the neighborhood surrounding the point "pos".
   typename ParticleSystemType::PointVectorType neighborhood
-    = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
+    = system->FindNeighborhoodPoints(pos, neighborhood_radius,"entropy::e", d);
   
   // Compute the weights based on angle between the neighbors and the center.
   std::vector<double> weights;
@@ -199,7 +199,7 @@ ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
       sigma = neighborhood_radius / this->GetNeighborhoodToSigmaRatio();
       }
     
-    neighborhood = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
+    neighborhood = system->FindNeighborhoodPoints(pos, neighborhood_radius, "entropy::e2", d);
     this->ComputeAngularWeights(pos,neighborhood,domain,weights);
     sigma = this->EstimateSigma(idx, neighborhood, domain, weights, pos, sigma, epsilon, err);
     } // done while err
@@ -210,7 +210,7 @@ ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
     {
     sigma = this->GetMaximumNeighborhoodRadius() / this->GetNeighborhoodToSigmaRatio();
     neighborhood_radius = this->GetMaximumNeighborhoodRadius();
-    neighborhood = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
+    neighborhood = system->FindNeighborhoodPoints(pos, neighborhood_radius, "entropy::e3", d);
     this->ComputeAngularWeights(pos,neighborhood,domain,weights);
     }
 

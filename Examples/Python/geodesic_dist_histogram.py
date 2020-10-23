@@ -19,6 +19,7 @@ hists = {}
 key = ''
 stop_distance = 45.0
 misses = 0
+total_queries = 0
 with open(filepath) as fd:
     for line in fd:
         if line.startswith('#'):
@@ -31,13 +32,13 @@ with open(filepath) as fd:
         if dist > stop_distance:
             misses += 1
         hists[key][dist] += count
+        total_queries += count
 
 # print(f'Misses with stop_distance=={stop_distance}: {misses}')
 # print(f'Total: {sum(hist.values())}')
 # print(f'Unique: {len(hist)} / {10982*10982}')
 
 
-total_queries = 0
 for i,(key, hist) in enumerate(hists.items()):
     val, weight = zip(*[(k, v) for k,v in hist.items()])
     c1 = np.array([0, 1.0, 0])
@@ -45,7 +46,6 @@ for i,(key, hist) in enumerate(hists.items()):
     t = i / len(hists)
     c = (1-t) * c1  + t * c2;
 
-    total_queries += sum(hist.values())
 
     plt.hist(val, weights=weight, bins=400, label=key, histtype='step', stacked=True, fill=True, color=c)
 print('total queries: {}', total_queries)
