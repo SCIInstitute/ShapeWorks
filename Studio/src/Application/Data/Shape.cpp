@@ -422,6 +422,16 @@ void Shape::set_transform(const vnl_vector<double>& transform)
 //---------------------------------------------------------------------------
 vnl_vector<double> Shape::get_transform()
 {
+  auto groom_transform = this->get_groomed_transform();
+  if (groom_transform.size() != 12) {
+    return this->transform_;
+  }
+
+  this->transform_.set_size(12);
+  for (unsigned int i = 0; i < 12; i++) {
+    this->transform_[i] = groom_transform[i];
+  }
+
   return this->transform_;
 }
 
