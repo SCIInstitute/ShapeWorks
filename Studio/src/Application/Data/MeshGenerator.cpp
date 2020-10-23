@@ -97,6 +97,16 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
     return mesh;
   }
 
+  if (QString::fromStdString(filename).toLower().endsWith(".vtk")) {
+
+    vtkSmartPointer<vtkPolyDataReader> reader = vtkSmartPointer<vtkPolyDataReader>::New();
+    reader->SetFileName(filename.c_str());
+    reader->Update();
+    mesh->set_poly_data(reader->GetOutput());
+
+    return mesh;
+  }
+
   try {
     // read file using ITK
     ReaderType::Pointer reader = ReaderType::New();
