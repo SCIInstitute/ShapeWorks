@@ -152,14 +152,22 @@ bool Session::save_project(std::string fname)
 
       groomed_list.push_back(location);
 
-      //try writing the groomed to file
-      WriterType::Pointer writer = WriterType::New();
-      writer->SetFileName(location);
-      writer->SetInput(this->shapes_[i]->get_groomed_image());
-      writer->SetUseCompression(true);
-      std::cerr << "Writing distance transform: " << location << "\n";
-      writer->Update();
-      std::vector<std::string> groomed_filenames{location};   // only single domain supported so far
+      if (loc.toLower().endsWith(".vtk")) {
+        vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+        writer->SetInputData(this->shapes_[i]->get_groomed_mesh()->get_poly_data());
+        writer->SetFileName(location.c_str());
+        writer->Update();
+      }
+      else {
+        //try writing the groomed to file
+        WriterType::Pointer writer = WriterType::New();
+        writer->SetFileName(location);
+        writer->SetInput(this->shapes_[i]->get_groomed_image());
+        writer->SetUseCompression(true);
+        std::cerr << "Writing distance transform: " << location << "\n";
+        writer->Update();
+      }
+      std::vector<std::string> groomed_filenames{location}; // only single domain supported so far
       this->shapes_[i]->get_subject()->set_groomed_filenames(groomed_filenames);
 
       QApplication::processEvents();
@@ -551,6 +559,13 @@ void Session::load_groomed_images(std::vector<ImageType::Pointer> images,
 }
 
 //---------------------------------------------------------------------------
+void Session::set_groomed_mesh(int i, vtkSmartPointer<vtkPolyData> mesh, TransformType transform)
+{
+  this->shapes_[i]->import_groomed_mesh(mesh, transform);
+
+}
+
+//---------------------------------------------------------------------------
 void Session::load_groomed_files(std::vector<std::string> file_names, double iso)
 {
   for (int i = 0; i < file_names.size(); i++) {
@@ -564,7 +579,7 @@ void Session::load_groomed_files(std::vector<std::string> file_names, double iso
     }
 
     // only single domain supported so far
-    std::vector<std::string> groomed_filenames{ file_names[i]};
+    std::vector<std::string> groomed_filenames{file_names[i]};
     this->shapes_[i]->get_subject()->set_groomed_filenames(groomed_filenames);
   }
 
@@ -774,3 +789,10 @@ QString Session::get_display_name()
   }
   return QFileInfo(this->filename_).baseName();
 }
+
+//---------------------------------------------------------------------------
+void Session::set_groom_unsaved(bool value)
+{
+  this->unsaved_groomed_files_ = true;
+}
+

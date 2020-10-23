@@ -181,6 +181,29 @@ void Shape::import_groomed_image(ImageType::Pointer img, double iso, TransformTy
 }
 
 //---------------------------------------------------------------------------
+void Shape::import_groomed_mesh(vtkSmartPointer<vtkPolyData> mesh, TransformType transform)
+{
+  this->groomed_mesh_ = QSharedPointer<Mesh>(new Mesh());
+  this->groomed_mesh_->set_poly_data(mesh);
+  this->groomed_transform_ = transform;
+  auto name = this->get_original_filename_with_path().toStdString();
+  name = name.substr(0, name.find_last_of(".")) + "_groom.vtk";
+  this->groomed_filename_ = QString::fromStdString(name);
+  std::vector<std::string> groomed_filenames{name};   // only single domain supported so far
+  this->subject_->set_groomed_filenames(groomed_filenames);
+
+  // single domain so far
+  std::vector<std::vector<double>> groomed_transforms;
+  std::vector<double> groomed_transform;
+  for (int i = 0; i < transform.size(); i++) {
+    groomed_transform.push_back(transform[i]);
+  }
+  groomed_transforms.push_back(groomed_transform);
+  this->subject_->set_groomed_transforms(groomed_transforms);
+}
+
+
+//---------------------------------------------------------------------------
 QSharedPointer<Mesh> Shape::get_groomed_mesh()
 {
   if (!this->groomed_mesh_) {
@@ -608,3 +631,4 @@ TransformType Shape::get_groomed_transform()
   }
   return this->groomed_transform_;
 }
+

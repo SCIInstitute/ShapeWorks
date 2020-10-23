@@ -16,16 +16,15 @@ using namespace shapeworks;
 class Shape;
 
 class Session;
-typedef QSharedPointer< Session > SessionHandle;
+typedef QSharedPointer<Session> SessionHandle;
 
 //! Representation of a session.
 /*!
  * The Session class encapsulates everything about a session/project.
  *
  */
-class Session : public QObject
-{
-  Q_OBJECT;
+class Session : public QObject {
+Q_OBJECT;
 
 public:
 
@@ -62,6 +61,8 @@ public:
   void load_groomed_images(std::vector<ImageType::Pointer> images, double iso,
                            std::vector<TransformType> transforms = std::vector<TransformType>());
 
+  void set_groomed_mesh(int i, vtkSmartPointer<vtkPolyData> mesh, TransformType transform);
+
   /// load point files
   bool load_point_files(std::vector<std::string> file_names, bool local);
   bool update_points(std::vector<std::vector<itk::Point<double>>> points, bool local);
@@ -90,7 +91,10 @@ public:
   bool groups_available();
   int get_num_shapes();
 
-  QSharedPointer<MeshManager> get_mesh_manager() { return this->mesh_manager_; }
+  void set_groom_unsaved(bool value);
+
+  QSharedPointer<MeshManager> get_mesh_manager()
+  { return this->mesh_manager_; }
 
   Parameters& parameters();
 
@@ -119,7 +123,7 @@ private:
 
   Preferences& preferences_;
 
-  void save_particles_file(std::string filename, const vnl_vector<double> &points);
+  void save_particles_file(std::string filename, const vnl_vector<double>& points);
 
   void renumber_shapes();
 

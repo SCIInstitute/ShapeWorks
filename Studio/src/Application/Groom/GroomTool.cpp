@@ -187,7 +187,6 @@ void GroomTool::handle_thread_complete()
                                       this->ui_->fastmarching_checkbox->isChecked() ? 0. : 0.5,
                                       this->groom_->get_transforms());
 
-
   auto duration = this->timer_.elapsed();
   STUDIO_LOG_MESSAGE("Groom duration: " + QString::number(duration) + "ms");
 
@@ -209,16 +208,27 @@ void GroomTool::on_skipButton_clicked()
 {
   this->store_settings();
   QVector<QSharedPointer<Shape>> shapes = this->session_->get_shapes();
+
   std::vector<ImageType::Pointer> imgs;
   for (QSharedPointer<Shape> s : shapes) {
-    auto image = s->get_original_image();
-    if (!image) {
-      emit error_message("Error loading original images");
-      return;
+    if (s->get_original_filename().toLower().endsWith(".vtk")) {
+      TransformType transform;
+      s->import_groomed_mesh(s->get_original_mesh()->get_poly_data(), transform);
+      this->session_->set_groom_unsaved(true);
+
     }
-    imgs.push_back(image);
+    else {
+      auto image = s->get_original_image();
+      if (!image) {
+        emit error_message("Error loading original images");
+        return;
+      }
+      imgs.push_back(image);
+    }
   }
   this->session_->load_groomed_images(imgs, 0.);
+  this->session_->get_project()->store_subjects();
+
   emit message("Skipped groom.");
   emit groom_complete();
 }
