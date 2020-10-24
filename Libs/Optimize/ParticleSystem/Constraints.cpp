@@ -208,14 +208,16 @@ std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3>
             // Solving for d, we have d = (p0 - l0).n / l.n
             // if l.n==0, then the plane and the line are parallel. If (p0 - l0).n==0, the plane contains the line.
 
-            double d = (p0-l0).dot(n)/l.dot(n);
-            Ds.push_back(d);
+            if(l.dot(n)!= 0){
+                double d = (p0-l0).dot(n)/l.dot(n);
+                Ds.push_back(d);
 
-            minD = d;
-            minDInd = i;
+                minD = d;
+                minDInd = i;
 
-            violations.push_back(i);
-            distances.push_back(d);
+                violations.push_back(i);
+                distances.push_back(d);
+            }
         }
         else{
             Ds.push_back(-1.);

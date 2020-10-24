@@ -28,8 +28,8 @@ cp -r ../build/bin/RelWithDebInfo bin
 rm -rf Post
 
 # Run auto-documentation
-PATH=../build/bin/RelWithDebInfo:$PATH
-python -c "import DocumentationUtils;DocumentationUtils.generateShapeWorksCommandDocumentation('docs/tools/ShapeWorksCommands.md')"
+PATH=../build/bin/Release:$PATH
+python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
 mkdocs build
 mv site Documentation
 cp -a Documentation bin/

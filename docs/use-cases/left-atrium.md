@@ -16,7 +16,8 @@ The use case is located at: `Examples/Python/left_atrium.py`
 
 ## Running the Use Case
 
-:fa-info-circle: _**Important:**_ Minimum of 32GB of RAM required to run the full use case.
+!!! important
+    Minimum of 32GB of RAM required to run the full use case.
 
 To run the use case, run `RunUseCase.py` (in `Examples/Python/`) with proper tags. The tags control the type of input data and the optimization method. See [Getting Started with Use Cases](../use-cases/use-cases.md#running-use-case) for the full list of tags.
 
@@ -109,7 +110,6 @@ $python RunUseCase.py --use_case left_atrium --use_single_scale
     "procrustes_interval" : 1,
     "procrustes_scaling" : 1,
     "save_init_splits" : 0,
-    "debug_projection" : 0,
     "verbosity" : 3
 ```
 
