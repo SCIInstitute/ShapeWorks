@@ -78,6 +78,26 @@ public:
       return planesViolated;
   }
 
+  // Energy gradient computations
+  vnl_vector_fixed<double, 3> ConstraintsGradient(const Point<double, 3> &pos) const{
+      Eigen::Vector3d pt; pt(0) = pos[0]; pt(1) = pos[1]; pt(2) = pos[2];
+      Eigen::Vector3d grad;
+      for(size_t i = 0; i < planeConsts->size(); i++){
+          grad -= (*planeConsts)[i].ConstraintGradient(pt);
+      }
+      for(size_t i = 0; i < sphereConsts->size(); i++){
+          grad -= (*sphereConsts)[i].ConstraintGradient(pt);
+      }
+      for(size_t i = 0; i < freeFormConsts->size(); i++){
+          grad -= (*sphereConsts)[i].ConstraintGradient(pt);
+      }
+      vnl_vector_fixed<double, 3> gradE;
+      for(size_t i = 0; i < 3; i++){
+          gradE[i] = grad(i);
+      }
+      return gradE;
+  }
+
   void PrintAll(){
       std::cout << "Cutting planes " << planeConsts->size() << std::endl;
       for(size_t i = 0; i < planeConsts->size(); i++){

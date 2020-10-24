@@ -102,6 +102,7 @@ ParticleImplicitSurfaceDomain<T>::ApplyConstraints(PointType &p, bool dbg) const
     vnl_vector_fixed<double, DIMENSION> vec = grad * (double(f) / (gradmag + double(epsilon)));
 
     vnl_vector_fixed<double, DIMENSION> vec_old = vec;
+    //std::stringstream msg;
     std::stringstream msg = this->GetConstraints()->applyBoundaryConstraints(vec, p);
     if(dbg){
         msg << std::endl;

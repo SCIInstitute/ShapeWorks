@@ -175,7 +175,8 @@ namespace itk
               PointType oldpoint = m_ParticleSystem->GetPosition(it.GetIndex(), dom);
 
               // New good implementation of cutting plane
-              std::stringstream stream = m_ParticleSystem->GetDomain(dom)->GetConstraints()->applyBoundaryConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
+              std::stringstream stream;
+              //std::stringstream stream = m_ParticleSystem->GetDomain(dom)->GetConstraints()->applyBoundaryConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
               typedef std::numeric_limits< double > dbl;
               std::cout.precision(18);
               // Old broken implementation. Constraints don't work

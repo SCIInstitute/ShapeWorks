@@ -25,6 +25,11 @@ public:
     return false;
   }
 
+  Eigen::Vector3d ConstraintGradient(const Eigen::Vector3d &pt) const{
+    Eigen::Vector3d grad;
+    return grad;
+  }
+
   void printC() const{
       std::cout << "radius " << radius << " center " << center.transpose() << std::endl;
   }

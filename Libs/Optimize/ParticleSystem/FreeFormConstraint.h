@@ -14,6 +14,11 @@ public:
 
   bool isViolated(const Eigen::Vector3d &pt) const {return true;}
 
+  Eigen::Vector3d ConstraintGradient(const Eigen::Vector3d &pt) const{
+    Eigen::Vector3d grad;
+    return grad;
+  }
+
   void printC() const{
       std::cout << "FF" << std::endl;
   }

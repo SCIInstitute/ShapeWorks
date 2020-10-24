@@ -23,6 +23,13 @@ public:
     return false;
   }
 
+  Eigen::Vector3d ConstraintGradient(const Eigen::Vector3d &pt) const{
+    double d = -planeNormal.dot(planePoint);
+    double denom = planeNormal.dot(pt) + d;
+    Eigen::Vector3d grad = planeNormal / denom;
+    return grad;
+  }
+
   void printC() const{
       std::cout << "normal " << planeNormal.transpose() << " point " << planePoint.transpose() << std::endl;
   }
