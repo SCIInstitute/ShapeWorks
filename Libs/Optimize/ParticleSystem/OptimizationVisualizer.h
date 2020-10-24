@@ -22,7 +22,7 @@ namespace shapeworks
   {
   public:
 
-    void AddMesh(vtkPolyData *mesh, trimesh::TriMesh *tmesh);
+    void AddMesh(vtkPolyData *mesh, std::shared_ptr<trimesh::TriMesh> tmesh);
     void IterationCallback(itk::ParticleSystem<3> * particleSystem);
 
     void SetWireFrame(bool enabled);
@@ -46,7 +46,7 @@ namespace shapeworks
     double radius;
 
     std::vector<vtkSmartPointer<vtkPolyData>> meshes;
-    std::vector<trimesh::TriMesh *> tmeshes;
+    std::vector<std::shared_ptr<trimesh::TriMesh>> tmeshes;
 
     vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
     vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
