@@ -3,6 +3,7 @@
 #include <QFileDialog>
 #include <QThread>
 #include <QMessageBox>
+#include <QTemporaryDir>
 
 #include <Optimize/OptimizeTool.h>
 #include <Visualization/ShapeWorksWorker.h>
@@ -12,6 +13,8 @@
 #include <Data/StudioLog.h>
 
 #include <Optimize/QOptimize.h>
+
+#include <vtkPLYWriter.h>
 
 #include <ui_OptimizeTool.h>
 
@@ -137,7 +140,6 @@ void OptimizeTool::on_run_optimize_button_clicked()
   this->optimize_->SetUseMeshBasedAttributes(this->ui_->use_normals->isChecked());
   this->optimize_->SetAttributeScales(attr_scales);
 
-
   std::vector<int> attributes_per_domain;
   this->optimize_->SetAttributesPerDomain(attributes_per_domain);
 
@@ -161,18 +163,47 @@ void OptimizeTool::on_run_optimize_button_clicked()
   for (auto s : shapes) {
     auto image = s->get_groomed_image();
     if (!image) {
-      emit error_message("Error loading groomed images");
-      return;
+      if (s->get_groomed_mesh()) {
+
+        /// temporary hack to convert to trimesh2
+        QTemporaryDir dir;
+        if (!dir.isValid()) {
+          // dir.path() returns the unique directory path
+          emit error_message("Failed to create temporary directory");
+          return;
+        }
+
+        std::string filename = (dir.path() + "/file.ply").toStdString();
+
+        auto vtk = s->get_groomed_mesh()->get_poly_data();
+
+        auto writer = vtkSmartPointer<vtkPLYWriter>::New();
+        writer->SetFileName(filename.c_str());
+        writer->SetInputData(vtk);
+        writer->Write();
+
+        auto trimesh = std::shared_ptr<TriMesh>(TriMesh::read(filename.c_str()));
+        if (trimesh) {
+          this->optimize_->AddMesh(std::make_shared<shapeworks::TriMeshWrapper>(trimesh));
+        }
+
+      }
+      else {
+        emit error_message("Error loading groomed images");
+        return;
+      }
     }
-    this->optimize_->AddImage(image);
+    else {
+      this->optimize_->AddImage(image);
+    }
   }
 
   QThread* thread = new QThread;
   ShapeworksWorker* worker = new ShapeworksWorker(
-          ShapeworksWorker::OptimizeType, NULL, this->optimize_, this->session_,
-          std::vector<std::vector<itk::Point<double>>>(),
-          std::vector<std::vector<itk::Point<double>>>(),
-          std::vector<ImageType::Pointer>());
+    ShapeworksWorker::OptimizeType, NULL, this->optimize_, this->session_,
+    std::vector<std::vector<itk::Point<double>>>(),
+    std::vector<std::vector<itk::Point<double>>>(),
+    std::vector<ImageType::Pointer>());
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_optimize_complete()));

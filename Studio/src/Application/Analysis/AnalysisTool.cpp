@@ -2,11 +2,8 @@
 #include <iostream>
 
 // qt
-#include <QXmlStreamWriter>
 #include <QThread>
-#include <QTemporaryFile>
 #include <QFileDialog>
-#include <QProcess>
 #include <QMessageBox>
 
 // shapeworks
