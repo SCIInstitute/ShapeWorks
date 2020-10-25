@@ -120,6 +120,7 @@ private:
   void new_session();
   void update_tool_mode();
   void update_view_mode();
+  void reset_num_viewers();
 
   enum VIEW_MODE {
     ORIGINAL = 0,

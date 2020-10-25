@@ -292,7 +292,7 @@ background: rgb(255, 255, 127)
          </size>
         </property>
         <property name="maximum">
-         <double>1.000000000000000</double>
+         <double>99999.000000000000000</double>
         </property>
         <property name="singleStep">
          <double>0.100000000000000</double>
@@ -401,7 +401,7 @@ background: rgb(255, 255, 127)
          </size>
         </property>
         <property name="maximum">
-         <double>1.000000000000000</double>
+         <double>99999.000000000000000</double>
         </property>
         <property name="singleStep">
          <double>0.100000000000000</double>
