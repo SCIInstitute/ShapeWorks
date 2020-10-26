@@ -6,7 +6,6 @@
 #include <QWidgetAction>
 #include <QMessageBox>
 #include <QCloseEvent>
-#include <QXmlStreamWriter>
 #include <QTextStream>
 
 // vtk
@@ -417,8 +416,16 @@ void ShapeWorksStudioApp::on_zoom_slider_valueChanged()
   if (!this->lightbox_->render_window_ready()) { return; }
 
   int value = this->ui_->zoom_slider->value();
+  if (value == 0) {
+    this->lightbox_->set_tile_layout(1, 1);
+  }
+  else if (value == 1) {
+    this->lightbox_->set_tile_layout(2, 1);
+  }
+  else {
+    this->lightbox_->set_tile_layout(value, value);
+  }
 
-  this->lightbox_->set_tile_layout(value, value);
   this->visualizer_->update_viewer_properties();
 
   this->update_scrollbar();
@@ -913,6 +920,7 @@ void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
 {
   this->preferences_.set_center_checked(this->ui_->center_checkbox->isChecked());
   this->update_display(true);
+  this->visualizer_->reset_camera();
 }
 
 //---------------------------------------------------------------------------
@@ -953,6 +961,11 @@ void ShapeWorksStudioApp::update_display(bool force)
     mode = this->analysis_tool_->get_analysis_mode();
   }
 
+  bool change = false;
+  if (this->current_display_mode_ != mode) {
+    change = true;
+  }
+
   if (this->current_display_mode_ == mode && !force) {
     this->block_update_ = false;
     return;
@@ -969,28 +982,6 @@ void ShapeWorksStudioApp::update_display(bool force)
 
     this->session_->calculate_reconstructed_samples();
     this->visualizer_->display_samples();
-
-    if (!this->is_loading_) { // do not override if loading
-      size_t num_samples = this->session_->get_shapes().size();
-      if (num_samples == 0) {
-        num_samples = 9;
-      }
-
-      double root = std::sqrt(static_cast<double>(num_samples));
-      if (std::fmod(root, 1.0) > 1e-6) {
-        root += 1.;
-      }
-
-      if (root > 4) {
-        // don't default to more than 4x4
-        root = 4;
-      }
-
-      int zoom_val = static_cast<int>(root);
-      if (zoom_val != this->ui_->zoom_slider->value()) {
-        this->ui_->zoom_slider->setValue(zoom_val);
-      }
-    }
   }
   else {
     if (mode == AnalysisTool::MODE_MEAN_C) {
@@ -1029,22 +1020,22 @@ void ShapeWorksStudioApp::update_display(bool force)
                                         reconstruct_ready);
     } //TODO regression?
 
-    if (1 != this->ui_->zoom_slider->value()) {
-      this->ui_->zoom_slider->setValue(1);
-    }
+  }
+
+  if (change && !this->is_loading_) { // do not override if loading
+    this->reset_num_viewers();
   }
 
   this->update_scrollbar();
 
   this->block_update_ = false;
-
-  //this->preferences_.set_preference("zoom_state", this->ui_->thumbnail_size_slider->value());
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged(QString disp_mode)
 {
   this->set_view_mode(disp_mode.toStdString());
+  this->visualizer_->reset_camera();
 }
 
 //---------------------------------------------------------------------------
@@ -1112,6 +1103,10 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->update_display(true);
 
   this->is_loading_ = false;
+
+  if (this->session_->is_light_project()) {
+    this->reset_num_viewers();
+  }
 
   this->setWindowTitle(this->session_->get_display_name());
 }
@@ -1460,7 +1455,8 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered()
   QString filename = QFileDialog::getSaveFileName(this, tr("Save PCA Mode PCA files..."),
                                                   QString::fromStdString(dir) + fname,
                                                   tr("PTS files (*.pts)"));
-  auto basename = filename.toStdString().substr(0, filename.toStdString().find_last_of(".pts") - 3);
+  auto basename = filename.toStdString().substr(0,
+                                                filename.toStdString().find_last_of(".pts") - 3);
   if (filename.isEmpty()) {
     return;
   }
@@ -1562,6 +1558,43 @@ void ShapeWorksStudioApp::about()
                      SHAPEWORKS_VERSION
                      "\n\n"
                      "http://shapeworks.sci.utah.edu");
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::reset_num_viewers()
+{
+  std::string mode = AnalysisTool::MODE_ALL_SAMPLES_C;
+
+  if (this->ui_->action_analysis_mode->isChecked()) {
+    mode = this->analysis_tool_->get_analysis_mode();
+  }
+
+  if (mode == AnalysisTool::MODE_ALL_SAMPLES_C) {
+    size_t num_samples = this->session_->get_shapes().size();
+    if (num_samples == 0) {
+      num_samples = 9;
+    }
+
+    double root = std::sqrt(static_cast<double>(num_samples));
+    if (std::fmod(root, 1.0) > 1e-6) {
+      root += 1.;
+    }
+
+    if (root > 4) {
+      // don't default to more than 4x4
+      root = 4;
+    }
+
+    int zoom_val = static_cast<int>(root);
+    if (zoom_val != this->ui_->zoom_slider->value()) {
+      this->ui_->zoom_slider->setValue(zoom_val);
+    }
+  }
+  else {
+    if (0 != this->ui_->zoom_slider->value()) {
+      this->ui_->zoom_slider->setValue(0);
+    }
+  }
 }
 
 

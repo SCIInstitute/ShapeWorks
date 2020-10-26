@@ -104,7 +104,7 @@ public:
     // TODO Change this to a generic delete function
   }
 
-  void SetMesh(shapeworks::MeshWrapper* mesh_)  {
+  void SetMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh_)  {
     this->m_FixedDomain = false;
     meshWrapper = mesh_;
   }
@@ -123,7 +123,7 @@ protected:
   }
 
 private:
-  shapeworks::MeshWrapper* meshWrapper;
+  std::shared_ptr<shapeworks::MeshWrapper> meshWrapper;
   PointType m_ZeroCrossingPoint;
 
 };

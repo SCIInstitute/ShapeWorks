@@ -98,6 +98,11 @@ public:
     void setSmoothingIterations(int smoothingIterations);
     void setOutputEnabled(bool enabled);
 
+    //! Set if the mean DT before warp is enabled or not
+    //! Disabling this allows Reconstruction to use DTs that are of
+    //! different sizes and with different origins
+    void setMeanBeforeWarpEnabled(bool enabled);
+
     vtkSmartPointer<vtkPolyData> getMesh(PointArrayType local_pts);
     void readMeanInfo(std::string dense,
                       std::string sparse, std::string goodPoints);
@@ -199,6 +204,8 @@ private:
     std::string out_prefix_; // to save intermediate files in case needed
     bool output_enabled_ = true;
     bool usePairwiseNormalsDifferencesForGoodBad_ = false;
+
+    bool mean_before_warp_enabled_ = true;
 };
 
 #include "Reconstruction.cpp"  //need to include template definition in order for it to be instantiated

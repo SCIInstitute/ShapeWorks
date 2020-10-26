@@ -29,7 +29,7 @@ namespace shapeworks {
     this->wireFrame = enabled;
   }
 
-  void OptimizationVisualizer::AddMesh(vtkPolyData* mesh, trimesh::TriMesh * tmesh) {
+  void OptimizationVisualizer::AddMesh(vtkPolyData* mesh, std::shared_ptr<trimesh::TriMesh> tmesh) {
     if (this->wireFrame) {
       vtkSmartPointer<vtkExtractEdges> edges = vtkSmartPointer<vtkExtractEdges>::New();
       edges->SetInputData(mesh);

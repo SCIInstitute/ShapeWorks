@@ -134,7 +134,7 @@ public:
       }
   }
 
-  void AddMesh(shapeworks::MeshWrapper* mesh);
+  void AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh);
 
   void SetFidsFiles(const std::vector<std::string>& s)
   { m_FidsFiles = s; }
