@@ -24,7 +24,7 @@ def Run_Pipeline(args):
 	outputDirectory = "Output/deep_ssm/"
 	if not os.path.exists(outputDirectory):
 		os.makedirs(outputDirectory)
-	CommonUtils.get_data(datasetName, outputDirectory)
+	CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
 
 	input_dir = outputDirectory + datasetName + '/'
 	# Get image path list

@@ -32,7 +32,7 @@ def Run_Pipeline(args):
     outputDirectory = "Output/femur_cut/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
-    CommonUtils.get_data(datasetName, outputDirectory)
+    CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
     inputDir = outputDirectory + datasetName + '/'
     # Get image ane mesh segmentation file lists
     inputDir = outputDirectory + datasetName + '/'

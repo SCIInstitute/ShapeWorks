@@ -20,7 +20,7 @@ import xml.etree.ElementTree as ET
 from termcolor import colored, cprint
 from zipfile import ZipFile
 
-def get_data(datasetName, outputDirectory):
+def download_and_unzip_dataset(datasetName, outputDirectory):
     # Check if the unzipped data is present
     if not os.path.exists(outputDirectory + datasetName + '/'):
         # check if the zipped data is present

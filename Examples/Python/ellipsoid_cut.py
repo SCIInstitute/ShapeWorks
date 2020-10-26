@@ -30,7 +30,7 @@ def Run_Pipeline(args):
     outputDirectory = "Output/ellipsoid_cut/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
-    CommonUtils.get_data(datasetName, outputDirectory)
+    CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
     fileList = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))
     # Select data for tiny test
     if args.tiny_test:
