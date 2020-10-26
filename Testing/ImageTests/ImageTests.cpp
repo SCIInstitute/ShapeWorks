@@ -178,7 +178,7 @@ TEST(ImageTests, comTest1)
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
   TransformPtr xform = ImageUtils::createCenterOfMassTransform(image);
   image.applyTransform(xform);
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/com_baseline.nrrd");
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/centerofmass1.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -197,7 +197,7 @@ TEST(ImageTests, comTest3)
   Image image(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
   TransformPtr xform = ImageUtils::createCenterOfMassTransform(image);
   image.applyTransform(xform, Image::NearestNeighbor);
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/com_baseline3.nrrd");
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/centerofmass3.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -373,8 +373,8 @@ TEST(ImageTests, topopreservingsmoothTest)
 TEST(ImageTests, blurTest)
 {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
-  image.gaussianBlur(2.0);
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/blur_baseline.nrrd");
+  image.gaussianBlur(1.0);
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/blur2.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -492,7 +492,7 @@ TEST(ImageTests, reflectTest1)
   // reflect across XZ plane (looks like vertical direction facing "front" of volume, X-axis pointing right, Y-axis pointing up)
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
   image.reflect(Axis::X);
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/reflect_baseline1.nrrd");
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/reflect_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -510,7 +510,7 @@ TEST(ImageTests, setoriginTest)
 {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
   image.setOrigin();
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/setorigin_baseline.nrrd");
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/setorigin1.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -523,7 +523,7 @@ TEST(ImageTests, warpTest1)
 
   TransformPtr transform(ImageUtils::createWarpTransform(src_filename, dst_filename));
   image.applyTransform(transform);
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/warp_baseline1.nrrd");
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/warp.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -537,7 +537,7 @@ TEST(ImageTests, warpTest2)
   // only use every 3rd landmark point
   TransformPtr transform(ImageUtils::createWarpTransform(src_filename, dst_filename, 3));
   image.applyTransform(transform);
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/warp_baseline2.nrrd");
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/warp2.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -735,7 +735,7 @@ TEST(ImageTests, negationTest1)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
   image = -image;
-  Image baseline(std::string(TEST_DATA_DIR) + "/negation1_baseline.nrrd");
+  Image baseline(std::string(TEST_DATA_DIR) + "/la-bin-negative.nrrd");
   
   ASSERT_TRUE(image == baseline);
 }
@@ -766,7 +766,7 @@ TEST(ImageTests, additionTest2)
   Image image1(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
   Image image2(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
   Image image3(image1 + image2);
-  Image baseline(std::string(TEST_DATA_DIR) + "/baseline_addition.nrrd");
+  Image baseline(std::string(TEST_DATA_DIR) + "/la-bin-doubled.nrrd");
 
   ASSERT_TRUE(image3 == baseline);
   ASSERT_TRUE(image1 == image2);
@@ -777,7 +777,7 @@ TEST(ImageTests, additionTest3)
   Image image1(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
   Image image2(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
   image1 += image2;
-  Image baseline(std::string(TEST_DATA_DIR) + "/baseline_addition.nrrd");
+  Image baseline(std::string(TEST_DATA_DIR) + "/la-bin-doubled.nrrd");
 
   ASSERT_TRUE(image1 == baseline);
 }
@@ -800,7 +800,7 @@ TEST(ImageTests, subtractionTest2)
   Image image2(std::string(TEST_DATA_DIR) + "/img2.nrrd");
 
   Image image3(image1 - image2);
-  Image baseline(std::string(TEST_DATA_DIR) + "/baseline_subtraction.nrrd");
+  Image baseline(std::string(TEST_DATA_DIR) + "/img_diff.nrrd");
   ASSERT_TRUE(image3 == baseline);
 
   Image orig_image1(std::string(TEST_DATA_DIR) + "/img1.nrrd");
@@ -812,7 +812,7 @@ TEST(ImageTests, subtractionTest3)
   Image image1(std::string(TEST_DATA_DIR) + "/img1.nrrd");
   Image image2(std::string(TEST_DATA_DIR) + "/img2.nrrd");
   image1 -= image2;
-  Image baseline(std::string(TEST_DATA_DIR) + "/baseline_subtraction.nrrd");
+  Image baseline(std::string(TEST_DATA_DIR) + "/img_diff.nrrd");
 
   ASSERT_TRUE(image1 == baseline);
 }
@@ -821,7 +821,7 @@ TEST(ImageTests, addTest1)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
   Image added(image + 3.14);
-  Image baseline(std::string(TEST_DATA_DIR) + "/baseline_add.nrrd");
+  Image baseline(std::string(TEST_DATA_DIR) + "/la-bin-plus-pi.nrrd");
 
   ASSERT_TRUE(added == baseline);
 
@@ -833,7 +833,7 @@ TEST(ImageTests, addTest2)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
   image += 3.14;
-  Image baseline(std::string(TEST_DATA_DIR) + "/baseline_add.nrrd");
+  Image baseline(std::string(TEST_DATA_DIR) + "/la-bin-plus-pi.nrrd");
 
   ASSERT_TRUE(image == baseline);
 }
@@ -842,7 +842,7 @@ TEST(ImageTests, subtractTest1)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
   Image subtracted(image - 3.14);
-  Image baseline(std::string(TEST_DATA_DIR) + "/baseline_subtract.nrrd");
+  Image baseline(std::string(TEST_DATA_DIR) + "/la-bin-minus-pi.nrrd");
 
   ASSERT_TRUE(subtracted == baseline);
 
@@ -854,7 +854,7 @@ TEST(ImageTests, subtractTest2)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
   image -= 3.14;
-  Image baseline(std::string(TEST_DATA_DIR) + "/baseline_subtract.nrrd");
+  Image baseline(std::string(TEST_DATA_DIR) + "/la-bin-minus-pi.nrrd");
 
   ASSERT_TRUE(image == baseline);
 }
@@ -904,8 +904,8 @@ TEST(ImageTests, divideTest2)
 TEST(ImageTests, resample1)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
-  image.resample(makeVector({0.78, 1.0, 10.0}));
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/baseline_resample1.nrrd");
+  image.resample(makeVector({1, 1, 1}));
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/resample1.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -913,8 +913,8 @@ TEST(ImageTests, resample1)
 TEST(ImageTests, resample2)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
-  image.resample(makeVector({0.98, 1.02, 3.14159}));
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/baseline_resample2.nrrd");
+  image.resample(makeVector({1.5, 1.5, 1.5}));
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/resample3.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -976,8 +976,8 @@ TEST(ImageTests, resample6)
 TEST(ImageTests, resize1)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
-  image.resize(Dims({20, 40, 60}));
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/baseline_resize1.nrrd");
+  image.resize(Dims({2, 0, 0}));
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/resize2.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -985,8 +985,8 @@ TEST(ImageTests, resize1)
 TEST(ImageTests, resize2)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
-  image.resize(Dims({12, 14, 80}));
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/baseline_resize2.nrrd");
+  image.resize(Dims({96, 96, 12}));
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/resize3.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -995,8 +995,7 @@ TEST(ImageTests, resize3)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
   image.resize(Dims({12, 14, 80}), Image::NearestNeighbor);
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/baseline_resize3.nrrd");
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/resize5.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
-
