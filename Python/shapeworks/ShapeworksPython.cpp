@@ -435,8 +435,5 @@ PYBIND11_MODULE(shapeworks, m)
   // Optimize (TODO)
   py::class_<Optimize>(m, "Optimize")
   ;
-  
-  // this is simply a demonstration of creating a submodule, which may not be necessary (could add Groom, Optimize, etc)
-  py::module sub_module = m.def_submodule("submodule", "ShapeWorks submodule classes and functions");
-  // sub_module.def("add", &add, "adds two numbers", "i"_a=1, "j"_a=2);
+
 }
