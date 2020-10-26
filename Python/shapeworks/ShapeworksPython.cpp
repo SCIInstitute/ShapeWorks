@@ -39,7 +39,13 @@ PYBIND11_MODULE(shapeworks, m)
   .def("__getitem__", [](const Coord& c, size_t idx) { return c[idx]; })
   .def("__setitem__", [](Coord& c, size_t idx, unsigned val) { c[idx] = val; })
   .def("__add__", [](const Coord& c1, const Coord& c2) { return c1 + c2; })
-  .def("__sub__", [](const Coord& c1, const Coord& c2) { return c1 - c2; })
+  .def("__sub__", [](const Coord& c1, const Coord& c2) {
+    Coord c;
+    c[0] = c1[0] - c2[0];
+    c[1] = c1[1] - c2[1];
+    c[2] = c1[2] - c2[2];
+    return c;
+  })
   .def("__mul__", [](const Coord& c1, const Coord& c2) { return c1 * c2; })
   .def("__iadd__", [](Coord& c1, const Coord& c2) { return c1 += c2; })
   .def("__isub__", [](Coord& c1, const Coord& c2) { return c1 -= c2; })
@@ -109,9 +115,25 @@ PYBIND11_MODULE(shapeworks, m)
   .def("__iadd__", [](Vector& v1, const Vector& v2) { return v1 += v2; })
   .def("__isub__", [](Vector& v1, const Vector& v2) { return v1 -= v2; })
   .def("__mul__", [](const Vector& v, const double x) { return v * x; })
-  // .def("__truediv__", [](const Vector& v, const double x) { return v / x; })
-  // .def("__imul__", [](Vector& v, const double x) { return v *= x; })
-  // .def("__itruediv__", [](Vector& v, const double x) { return v /= x; })
+  .def("__truediv__", [](const Vector& v, const double x) {
+    Vector v_;
+    v_[0] = v[0]/x;
+    v_[1] = v[1]/x;
+    v_[2] = v[2]/x;
+    return v_;
+  })
+  .def("__imul__", [](Vector& v, const double x) {
+    v[0] = v[0]*x;
+    v[1] = v[1]*x;
+    v[2] = v[2]*x;
+    return v;
+   })
+  .def("__itruediv__", [](Vector& v, const double x) {
+    v[0] = v[0]/x;
+    v[1] = v[1]/x;
+    v[2] = v[2]/x;
+    return v;
+   })
   ;
 
   // Shapeworks Globals
@@ -174,7 +196,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("__getitem__", [](const IPoint3& p, size_t idx) { return p[idx]; })
   .def("__setitem__", [](IPoint3& p, size_t idx, int val) { p[idx] = val; })
   .def("__add__", [](const IPoint3& p1, const IPoint3& p2) { return p1 + p2; })
-  .def("__sub__", [](const IPoint3& p1, const IPoint3& p2) { return p1 - p2; })
+  .def("__sub__", [](const IPoint3& p1, const IPoint3& p2) { return IPoint3(p1 - p2); })
   .def("__mul__", [](const IPoint3& p1, const IPoint3& p2) { return p1 * p2; })
   .def("__iadd__", [](IPoint3& p1, const IPoint3& p2) { return p1 += p2; })
   .def("__isub__", [](IPoint3& p1, const IPoint3& p2) { return p1 -= p2; })
@@ -196,7 +218,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("__getitem__", [](const FPoint3& p, size_t idx) { return p[idx]; })
   .def("__setitem__", [](FPoint3& p, size_t idx, float val) { p[idx] = val; })
   .def("__add__", [](const FPoint3& p1, const FPoint3& p2) { return p1 + p2; })
-  .def("__sub__", [](const FPoint3& p1, const FPoint3& p2) { return p1 - p2; })
+  .def("__sub__", [](const FPoint3& p1, const FPoint3& p2) { return FPoint3(p1 - p2); })
   .def("__mul__", [](const FPoint3& p1, const FPoint3& p2) { return p1 * p2; })
   .def("__iadd__", [](FPoint3& p1, const FPoint3& p2) { return p1 += p2; })
   .def("__isub__", [](FPoint3& p1, const FPoint3& p2) { return p1 -= p2; })
@@ -276,6 +298,11 @@ PYBIND11_MODULE(shapeworks, m)
   .def(py::self - Image::PixelType())
   .def(py::self -= Image::PixelType())
   .def(py::self == py::self)
+  .def("__repr__", [](const Image &img) {
+    std::stringstream stream;
+    stream << img;
+    return stream.str();
+  })
   .def("write",                 &Image::write, "writes the current image (determines type by its extension)", "filename"_a, "compressed"_a=true)
   .def("antialias",             &Image::antialias, "antialiases binary volumes", "iterations"_a=50, "maxRMSErr"_a=0.01f, "layers"_a=0)
   .def("resample",              py::overload_cast<TransformPtr, Point3, Dims, Vector3, Image::ImageType::DirectionType, Image::InterpolationType>(&Image::resample), "resamples by applying transform then sampling from given origin along direction axes at spacing physical units per pixel for dims pixels using specified interpolator")
@@ -316,7 +343,6 @@ PYBIND11_MODULE(shapeworks, m)
   .def("compare",               &Image::compare, "compares two images", "other"_a, "verifyall"_a=true, "tolerance"_a=0.0, "precision"_a=1e-12)
   .def_static("getPolyData",    &Image::getPolyData, "creates a vtkPolyData for the given image", "image"_a, "isoValue"_a=0.0)
   .def("toMesh",                &Image::toMesh, "converts to Mesh", "isovalue"_a=1.0)
-  // .def("__repr__",              operator<<)
 
   // Try to give the Python direct access to the underlying ITK image; see issue #780
   // .def("toITKImage",            &Image::operator Image::ImageType::Pointer) // cannot convert to itk::SmartPointer<itk::Image...
@@ -332,6 +358,11 @@ PYBIND11_MODULE(shapeworks, m)
   .def(py::init<Coord, Coord>())
   .def(py::init<>())
   .def(py::self == py::self)
+  .def("__repr__", [](const Image::Region &region) {
+    std::stringstream stream;
+    stream << region;
+    return stream.str();
+  })
   .def_readwrite("min",         &Image::Region::min)
   .def_readwrite("max",         &Image::Region::max)
   .def("valid",                 &Image::Region::valid, "ensure if region is valid")
@@ -347,15 +378,15 @@ PYBIND11_MODULE(shapeworks, m)
   // ImageUtils
   py::class_<ImageUtils>(m, "ImageUtils")
   .def_static("boundingBox",    &ImageUtils::boundingBox, "compute largest bounding box surrounding the specified isovalue of the specified set of images", "filenames"_a, "isoValue"_a=1.0)
-  .def_static("createCenterOfMassTransform", [](const Image& img){
+  .def_static("createCenterOfMassTransform", [](const Image& img) {
     auto xform_ptr = shapeworks::ImageUtils::createCenterOfMassTransform(img);
     return xform_ptr;
   }, "generates the Transform necessary to move the contents of this binary image to the center")
-  .def_static("createRigidRegistrationTransform", [](const Image& source_dt, const Image& target_dt, float isoValue=0.0, unsigned iterations=20){
+  .def_static("createRigidRegistrationTransform", [](const Image& source_dt, const Image& target_dt, float isoValue=0.0, unsigned iterations=20) {
     auto xform_ptr = shapeworks::ImageUtils::createRigidRegistrationTransform(source_dt, target_dt, isoValue, iterations);
     return xform_ptr;
   }, "creates transform from source distance map to target using ICP registration (isovalue is used to create meshes from dts passed to ICP)")
-  .def_static("createWarpTransform", [](const std::string &source_landmarks, const std::string &target_landmarks, const int stride=1){
+  .def_static("createWarpTransform", [](const std::string &source_landmarks, const std::string &target_landmarks, const int stride=1) {
     auto xform_ptr = shapeworks::ImageUtils::createWarpTransform(source_landmarks, target_landmarks, stride);
     return xform_ptr;
   }, "computes a warp transform from the source to the target landmarks")

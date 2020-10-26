@@ -9,7 +9,7 @@ Vector toVector(const Point &p) { return makeVector({p[0], p[1], p[2]}); }
 Point toPoint(const Vector &v) { return Point({v[0], v[1], v[2]}); }
 
 /// Enables construction using an initializer list: `Vector3 f() { return makeVector({1,2,3}); }`
-//itkVector doesn't have this handy ctor like itkPoint; `Point p({a,b,c})` works, but `Vector3 v({1,2,3})` doesn't.
+// itkVector doesn't have this handy ctor like itkPoint; `Point p({a,b,c})` works, but `Vector3 v({1,2,3})` doesn't.
 Vector3 makeVector(std::array<double, 3>&& arr) { return Vector3(arr.data()); }
 
 template<>
