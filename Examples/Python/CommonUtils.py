@@ -33,7 +33,7 @@ def download_and_unzip_dataset(datasetName, outputDirectory):
         with ZipFile(zipfile, 'r') as zipObj:
             zipObj.extractall(path=outputDirectory)
 
-def get_groomed_data(dtDirecory, tiny_test, use_subsample, sample_idx=[]):
+def get_distance_transform_list(dtDirecory, tiny_test, use_subsample, sample_idx=[]):
     dtFiles = []
     for file in sorted(os.listdir(dtDirecory)):
         if ".nrrd" in file:

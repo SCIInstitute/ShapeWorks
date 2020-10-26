@@ -77,7 +77,7 @@ def Run_Pipeline(args):
     if args.skip_grooming:
         print("Skipping grooming.")
         dtDirecory = outputDirectory + datasetName + '/groomed/distance_transforms/'
-        dtFiles = CommonUtils.get_groomed_data(dtDirecory, args.tiny_test, args.use_subsample, sample_idx)
+        dtFiles = CommonUtils.get_distance_transform_list(dtDirecory, args.tiny_test, args.use_subsample, sample_idx)
         [cutting_plane_points] = pickle.load( open( inputDir + "groomed/groomed_pickle.p", "rb" ) )
     else:
         print("\nStep 2. Groom - Data Pre-processing\n")
