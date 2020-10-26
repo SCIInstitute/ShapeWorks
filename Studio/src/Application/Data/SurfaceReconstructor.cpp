@@ -23,6 +23,7 @@ void SurfaceReconstructor::initializeReconstruction(
   this->reconstructor_.setDecimation(decimationPercent);
   this->reconstructor_.setMaxAngle(maxAngle);
   this->reconstructor_.setNumClusters(numClusters);
+  this->reconstructor_.setMeanBeforeWarpEnabled(false);
 
   // compute the dense shape
   vtkSmartPointer<vtkPolyData> denseMean = this->reconstructor_.getDenseMean(local_pts, global_pts,

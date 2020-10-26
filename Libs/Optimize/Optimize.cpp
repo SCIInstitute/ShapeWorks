@@ -1147,11 +1147,6 @@ void Optimize::PrintParamInfo()
     return;
   }
 
-#ifdef SW_USE_OPENMP
-  std::cout << "OpenMP is enabled ... \n" << std::flush;
-#else
-  std::cout << "OpenMP is disabled ... \n" << std::flush;
-#endif
   // Write out the parameters
   std::cout << "---------------------" << std::endl;
   std::cout << "   I/O parameters" << std::endl;
@@ -1980,7 +1975,7 @@ void Optimize::AddImage(ImageType::Pointer image)
 }
 
 //---------------------------------------------------------------------------
-void Optimize::AddMesh(shapeworks::MeshWrapper* mesh)
+void Optimize::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh)
 {
   this->m_sampler->AddMesh(mesh);
   this->m_num_shapes++;

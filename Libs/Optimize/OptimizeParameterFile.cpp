@@ -496,10 +496,9 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
       if (this->verbosity_level_ <= 1) {
         TriMesh::set_verbose(0);
       }
-      TriMesh *themesh = TriMesh::read(meshFiles[index].c_str());
-      if (themesh != NULL) {
-        shapeworks::MeshWrapper *mesh = new shapeworks::TriMeshWrapper(themesh);
-        optimize->AddMesh(mesh);
+      auto themesh = std::shared_ptr<TriMesh>(TriMesh::read(meshFiles[index].c_str()));
+      if (themesh) {
+        optimize->AddMesh(std::make_shared<shapeworks::TriMeshWrapper>(themesh));
       }
       else {
         std::cerr << "Failed to read " << meshFiles[index] << "\n";
