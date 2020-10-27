@@ -33,16 +33,14 @@ def download_and_unzip_dataset(datasetName, outputDirectory):
         with ZipFile(zipfile, 'r') as zipObj:
             zipObj.extractall(path=outputDirectory)
 
-def get_distance_transform_list(dtDirecory, tiny_test, use_subsample, sample_idx=[]):
-    dtFiles = []
-    for file in sorted(os.listdir(dtDirecory)):
-        if ".nrrd" in file:
-            dtFiles.append(dtDirecory + file)
-    if tiny_test:
-        dtFiles = dtFiles[:3]   
-    if use_subsample:
-        dtFiles = [dtFiles[i] for i in sample_idx]
-    return dtFiles
+def get_file_list(directory, ending='', indices=[]):
+    file_list = []
+    for file in sorted(os.listdir(directory)):
+        if ending in file:
+            file_list.append(directory + file)
+    if indices:
+        file_list = [file_list[i] for i in indices]
+    return file_list
 
 def create_cpp_xml(filename, outputfilename):
     '''

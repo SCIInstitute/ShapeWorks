@@ -59,7 +59,12 @@ def Run_Pipeline(args):
     if args.skip_grooming:
         print("Skipping grooming.")
         dtDirecory = outputDirectory + datasetName + '/groomed/distance_transforms/'
-        dtFiles = CommonUtils.get_distance_transform_list(dtDirecory, args.tiny_test, args.use_subsample, sample_idx)
+        indices = []
+        if args.tiny_test:
+            indices = [0,1,2]
+        elif args.use_subsample:
+            indices = sample_idx
+        dtFiles = CommonUtils.get_file_list(dtDirecory, ending=".nrrd", indices=indices)
     else:
         print("\nStep 2. Groom - Data Pre-processing\n")
         if int(args.interactive) != 0:
