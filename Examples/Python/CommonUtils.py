@@ -20,7 +20,7 @@ import xml.etree.ElementTree as ET
 from termcolor import colored, cprint
 from zipfile import ZipFile
 
-def get_data(datasetName, outputDirectory):
+def download_and_unzip_dataset(datasetName, outputDirectory):
     # Check if the unzipped data is present
     if not os.path.exists(outputDirectory + datasetName + '/'):
         # check if the zipped data is present
@@ -32,6 +32,15 @@ def get_data(datasetName, outputDirectory):
         print("Unzipping " + zipfile + " into " + outputDirectory)
         with ZipFile(zipfile, 'r') as zipObj:
             zipObj.extractall(path=outputDirectory)
+
+def get_file_list(directory, ending='', indices=[]):
+    file_list = []
+    for file in sorted(os.listdir(directory)):
+        if ending in file:
+            file_list.append(directory + file)
+    if indices:
+        file_list = [file_list[i] for i in indices]
+    return file_list
 
 def create_cpp_xml(filename, outputfilename):
     '''
