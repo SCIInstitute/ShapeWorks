@@ -71,8 +71,7 @@ public:
   }
 
   double GetSurfaceArea() const override {
-    // TODO return actual surface area
-    return 0;
+    return meshWrapper->GetSurfaceArea();
   }
 
   double GetMaxDiameter() const override;

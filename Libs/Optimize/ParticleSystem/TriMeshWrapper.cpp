@@ -355,6 +355,7 @@ namespace shapeworks
     mesh->need_normals();
     mesh->need_curvatures();
     ComputeMeshBounds();
+    ComputeSurfaceArea();
 
     kdTree = new KDtree(mesh->vertices);
   }
@@ -392,4 +393,23 @@ namespace shapeworks
       std::cerr << "Mesh bounds: " << PrintValue<PointType>(meshLowerBound) << " -> " << PrintValue<PointType>(meshUpperBound) << "\n";
     }
   }
+
+void TriMeshWrapper::ComputeSurfaceArea() {
+  surfaceArea = 0.0;
+
+  for(const auto& tri : mesh->faces) {
+    const auto& a = mesh->vertices[tri[0]];
+    const auto& b = mesh->vertices[tri[1]];
+    const auto& c = mesh->vertices[tri[2]];
+    const auto ab = b - a;
+    const auto ac = c - a;
+
+    const double area = std::abs(0.5 * trimesh::len(ab.cross(ac)));
+    surfaceArea += area;
+  }
+}
+double TriMeshWrapper::GetSurfaceArea() const {
+    std::cout << "somebody want area: " << surfaceArea << std::endl;
+  return surfaceArea;
+}
 }

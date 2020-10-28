@@ -1141,6 +1141,7 @@ void Optimize::ComputeEnergyAfterIteration()
 //---------------------------------------------------------------------------
 void Optimize::SetCotanSigma()
 {
+  std::cout << "Using COTAN" << std::endl;
   itk::ImageToVTKImageFilter<ImageType>::Pointer itk2vtkConnector;
   m_sampler->GetModifiedCotangentGradientFunction()->ClearGlobalSigma();
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {

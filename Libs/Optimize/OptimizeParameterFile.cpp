@@ -500,7 +500,7 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
       if (themesh != NULL) {
         auto *mesh = new shapeworks::TriMeshWrapper(themesh);
         if(index == 0) {
-          mesh->StartLogging("/scratch/karthik/projects/ShapeWorks/Examples/Python/Output/femur_mesh/shape_models/dq_whocalled.txt");
+          // mesh->StartLogging("/scratch/karthik/projects/ShapeWorks/Examples/Python/Output/femur_mesh/shape_models/dq_cotan.txt");
         }
         optimize->AddMesh(mesh);
       }

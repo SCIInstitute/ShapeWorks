@@ -75,6 +75,9 @@ public:
     counts.clear();
   }
 
+  void ComputeSurfaceArea();
+  double GetSurfaceArea() const override;
+
 private:
   Eigen::Vector3d GeodesicWalkOnFace(Eigen::Vector3d pointa__, Eigen::Vector3d projectedVector__, int faceIndex__, int prevFace__) const;
   Eigen::Vector3d ProjectVectorToFace(const Eigen::Vector3d &normal, const Eigen::Vector3d &vector) const;
@@ -100,6 +103,8 @@ private:
   // mutable std::unordered_map<
   // std::pair<int, int>,
   // unsigned long, pair_hash > counts;
+
+  double surfaceArea;
 };
 
 }
