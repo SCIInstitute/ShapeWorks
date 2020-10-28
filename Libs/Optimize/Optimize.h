@@ -354,7 +354,7 @@ protected:
   double m_starting_regularization = 1000;
   double m_ending_regularization = 1.0;
   int m_recompute_regularization_interval = 1;
-  bool m_save_init_splits = true;
+  bool m_save_init_splits = false;
   unsigned int m_checkpointing_interval = 50;
   int m_keep_checkpoints = 0;
   double m_cotan_sigma_factor = 5.0;
