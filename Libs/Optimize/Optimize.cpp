@@ -2120,22 +2120,31 @@ void Optimize::PrintDoneMessage(unsigned int vlevel) const
 //---------------------------------------------------------------------------
 std::string Optimize::GetCheckpointDir()
 {
-
   int num_digits = std::to_string(abs(m_total_iterations)).length();
   std::stringstream ss;
-  ss << std::setw(num_digits) << std::setfill('0')
+  ss << std::setw(num_digits) << std::setfill('0') // set leading zeros
      << m_iteration_count + m_optimization_iterations_completed;
 
+  int num_particles = this->m_number_of_particles[0];   // size from domain 0
+  num_digits = std::to_string(num_particles).length();
   std::stringstream ssp;
-  ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles();   // size from domain 0
+  ssp << std::setw(num_digits) << std::setfill('0') // set leading zeros
+      << m_sampler->GetParticleSystem()->GetNumberOfParticles();
 
   std::string suffix = "_init";
   if (this->m_optimizing) {
     suffix = "_opt";
   }
 
-  std::string out_path = m_output_dir;
-  out_path = out_path + "/iter" + ss.str() + "_p" + ssp.str() + suffix;
+  std::string out_path = m_output_dir + "/checkpoints";
+
+#ifdef _WIN32
+  mkdir(out_path.c_str());
+#else
+  mkdir(out_path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+#endif
+
+  out_path = out_path + "/p" + ssp.str() + suffix + "_iter" + ss.str();
 
   return out_path;
 }
