@@ -1,14 +1,12 @@
-from pythonTestSetup import *
-
-setup()
-
+import os
+import sys
 from shapeworks import *
 
 def padfailTest1():
-  img = Image(os.environ["DATA"] + "1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.pad()
 
-  compareImg = Image(os.environ["DATA"] + "padfail.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/padfail.nrrd")
 
   return img.compare(compareImg)
 
@@ -18,10 +16,10 @@ if val is False:
   sys.exit(1)
 
 def padfailTest2():
-  img = Image(os.environ["DATA"] + "1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.pad(0)
 
-  compareImg = Image(os.environ["DATA"] + "padfail.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/padfail.nrrd")
 
   return img.compare(compareImg)
 

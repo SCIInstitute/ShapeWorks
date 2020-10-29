@@ -1,11 +1,9 @@
-from pythonTestSetup import *
-
-setup()
-
+import os
+import sys
 from shapeworks import *
 
 def cropTest():
-  img = Image(os.environ["DATA"] + "1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
 
   region = Region(img.dims())
   region.min[0] = 25
@@ -17,7 +15,7 @@ def cropTest():
   
   img.crop(region)
 
-  compareImg = Image(os.environ["DATA"] + "cropped.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/cropped.nrrd")
 
   return img.compare(compareImg)
 

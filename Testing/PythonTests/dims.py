@@ -1,7 +1,5 @@
-from pythonTestSetup import *
-
-setup()
-
+import os
+import sys
 from shapeworks import *
 
 def dimsTest():

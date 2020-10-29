@@ -1,14 +1,12 @@
-from pythonTestSetup import *
-
-setup()
-
+import os
+import sys
 from shapeworks import *
 
 def translateTest1():
-  img = Image(os.environ["DATA"] + "1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.translate(Vector(10.0, 10.0, 10.0))
 
-  compareImg = Image(os.environ["DATA"] + "translate1.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/translate1.nrrd")
 
   return img.compare(compareImg)
 
@@ -18,10 +16,10 @@ if val is False:
   sys.exit(1)
 
 def translateTest2():
-  img = Image(os.environ["DATA"] + "1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.translate(Vector(-10.0, -10.0, -10.0))
 
-  compareImg = Image(os.environ["DATA"] + "translate2.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/translate2.nrrd")
 
   return img.compare(compareImg)
 

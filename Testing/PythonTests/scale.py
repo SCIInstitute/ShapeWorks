@@ -1,14 +1,12 @@
-from pythonTestSetup import *
-
-setup()
-
+import os
+import sys
 from shapeworks import *
 
 def scaleTest1():
-  img = Image(os.environ["DATA"] + "1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.scale(Vector(1.0, 2.0, 2.0))
 
-  compareImg = Image(os.environ["DATA"] + "scale1.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/scale1.nrrd")
 
   return img.compare(compareImg)
 
@@ -18,10 +16,10 @@ if val is False:
   sys.exit(1)
 
 def scaleTest2():
-  img = Image(os.environ["DATA"] + "la-bin-centered.nrrd")
+  img = Image(os.environ["DATA"] + "/la-bin-centered.nrrd")
   img.scale(Vector(1.0, -2.0, -1.0))
 
-  compareImg = Image(os.environ["DATA"] + "scale2.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/scale2.nrrd")
 
   return img.compare(compareImg)
 

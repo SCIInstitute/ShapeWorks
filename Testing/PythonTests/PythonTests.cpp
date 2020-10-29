@@ -23,7 +23,7 @@ TEST(pythonTests, compare)
 //---------------------------------------------------------------------------
 TEST(pythonTests, comparefail)
 {
-  ASSERT_TRUE(system("python compareFail.py"));
+  ASSERT_TRUE(system("python comparefail.py"));
 }
 
 //---------------------------------------------------------------------------
@@ -35,7 +35,7 @@ TEST(pythonTests, antialias)
 //---------------------------------------------------------------------------
 TEST(pythonTests, antialiasfail)
 {
-  ASSERT_TRUE(system("python antialiasFail.py"));
+  ASSERT_TRUE(system("python antialiasfail.py"));
 }
 
 //---------------------------------------------------------------------------
