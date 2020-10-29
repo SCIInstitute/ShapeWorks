@@ -24,7 +24,7 @@ def Run_Pipeline(args):
 	outputDirectory = "Output/deep_ssm/"
 	if not os.path.exists(outputDirectory):
 		os.makedirs(outputDirectory)
-	CommonUtils.get_data(datasetName, outputDirectory)
+	CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
 
 	input_dir = outputDirectory + datasetName + '/'
 	# Get image path list
@@ -55,17 +55,19 @@ def Run_Pipeline(args):
 	print("\n\n\nStep 2. Augment data\n") ###################################################################################
 	'''
 	- num_samples is how many samples to generate 
-	- num_PCA is the number of PCA scores to use
+	- num_dim is the number of PCA scores to use
 	- aug_type is the augmentation method to use (1 is based on just particles wheras 2 is based on images and particles)
-	- sample type is the distribution to use for sampling. Can be Gaussian, mixture, or KDE
+	- sample type is the distribution to use for sampling. Can be gaussian, mixture, or kde
 	'''
 	num_samples = 4960
-	num_PCA = 6
-	sampler_type = "KDE"
+	num_dim = 6
+	variability_percent = 0.95
+	sampler_type = "kde"
 	if args.tiny_test:
 		num_samples = 4
-		num_PCA = 3
-	DataAugmentationUtils.runDataAugmentation(outputDirectory + "Augmentation/", train_img_list, train_particle_list, num_samples, num_PCA, sampler_type)
+		num_dim = 0
+		variability_percent = 0.99
+	DataAugmentationUtils.runDataAugmentation(outputDirectory + "Augmentation/", train_img_list, train_particle_list, num_samples, num_dim, variability_percent, sampler_type)
 	aug_data_csv = outputDirectory + "Augmentation/TotalData.csv"
 	DataAugmentationUtils.visualizeAugmentation(aug_data_csv)
 
@@ -102,7 +104,7 @@ def Run_Pipeline(args):
 	'''
 	PCA_scores_path = outputDirectory + "Augmentation/PCA_Particle_Info/"
 	prediction_dir = outputDirectory + 'Results/PredictedParticles/'
-	DeepSSMUtils.testDeepSSM(prediction_dir, model_path, loader_dir, PCA_scores_path, num_PCA)
+	DeepSSMUtils.testDeepSSM(prediction_dir, model_path, loader_dir, PCA_scores_path, num_dim)
 	print('Predicted particles saved at: ' + prediction_dir)
 
 	print("\n\n\nStep 6. Analyze results.\n") #####################################################################################

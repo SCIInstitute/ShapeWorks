@@ -40,7 +40,7 @@ def Run_Pipeline(args):
     outputDirectory = "Output/ellipsoid_fd/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
-    CommonUtils.get_data(datasetName, outputDirectory)
+    CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
 
     fileListDT = sorted(glob.glob(outputDirectory + datasetName + "/distance_transforms/*.nrrd"))
     fileListNew = sorted(glob.glob(outputDirectory + datasetName + "/new_distance_transforms/*.nrrd"))
