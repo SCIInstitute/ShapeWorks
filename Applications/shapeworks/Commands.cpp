@@ -1553,6 +1553,7 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
     return false;
   }
 
+  tbb::task_scheduler_init init(1);
   Optimize app;
   OptimizeParameterFile param;
   param.load_parameter_file(project_file.c_str(), &app);

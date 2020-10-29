@@ -69,7 +69,7 @@ namespace itk
     ::StartAdaptiveGaussSeidelOptimization()
   {
     /// uncomment this to run single threaded
-    //tbb::task_scheduler_init init(1);
+    tbb::task_scheduler_init init(1);
 
     if (this->m_AbortProcessing) {
       return;
@@ -114,17 +114,15 @@ namespace itk
         counter++;
 
         // Iterate over each domain
-      tbb::parallel_for(
-        tbb::blocked_range<size_t>{0, numdomains},
-        [&](const tbb::blocked_range<size_t>& r) {
-          for (size_t dom = r.begin(); dom < r.end(); ++dom) {
+          for (size_t dom = 0; dom < numdomains; ++dom) {
 
           // skip any flagged domains
           if (m_ParticleSystem->GetDomainFlag(dom) == true)
           {
             // note that this is really a 'continue' statement for the loop, but using TBB,
             // we are in an anonymous function, not a loop, so return is equivalent to continue here
-            return;
+            // return;
+            break;
           }
 
           const ParticleDomain *domain = m_ParticleSystem->GetDomain(dom);
@@ -210,7 +208,6 @@ namespace itk
             } // end while(true)
           } // for each particle
         }// for each domain
-      });
 
       m_NumberOfIterations++;
       m_GradientFunction->AfterIteration();
