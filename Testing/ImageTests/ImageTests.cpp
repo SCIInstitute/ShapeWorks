@@ -523,7 +523,7 @@ TEST(ImageTests, warpTest1)
 
   TransformPtr transform(ImageUtils::createWarpTransform(src_filename, dst_filename));
   image.applyTransform(transform);
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/warp.nrrd");
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/warp1.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -903,7 +903,7 @@ TEST(ImageTests, divideTest2)
 
 TEST(ImageTests, resample1)
 {
-  Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
+  Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
   image.resample(makeVector({1, 1, 1}));
   Image ground_truth(std::string(TEST_DATA_DIR) + "/resample1.nrrd");
 
@@ -912,7 +912,7 @@ TEST(ImageTests, resample1)
 
 TEST(ImageTests, resample2)
 {
-  Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
+  Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
   image.resample(makeVector({1.5, 1.5, 1.5}));
   Image ground_truth(std::string(TEST_DATA_DIR) + "/resample3.nrrd");
 

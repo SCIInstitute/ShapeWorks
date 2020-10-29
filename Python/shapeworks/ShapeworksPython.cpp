@@ -343,6 +343,12 @@ PYBIND11_MODULE(shapeworks, m)
   .def("compare",               &Image::compare, "compares two images", "other"_a, "verifyall"_a=true, "tolerance"_a=0.0, "precision"_a=1e-12)
   .def_static("getPolyData",    &Image::getPolyData, "creates a vtkPolyData for the given image", "image"_a, "isoValue"_a=0.0)
   .def("toMesh",                &Image::toMesh, "converts to Mesh", "isovalue"_a=1.0)
+  .def("to_pyarray", [](const Image &image) {
+                          Image::ImageType::Pointer img = image.getITKImage();
+                          const auto size = img->GetLargestPossibleRegion().GetSize();
+                          const auto shape = std::vector<size_t>{size[0], size[1], size[2]};
+                          return py::array(py::dtype::of<typename Image::ImageType::Pointer::ObjectType::PixelType>(), shape, img->GetBufferPointer());
+                        })
 
   // Try to give the Python direct access to the underlying ITK image; see issue #780
   // .def("toITKImage",            &Image::operator Image::ImageType::Pointer) // cannot convert to itk::SmartPointer<itk::Image...
