@@ -556,6 +556,9 @@ void Optimize::AddSinglePoint()
   typedef ParticleSystemType::PointType PointType;
 
   PointType firstPointPosition;
+  firstPointPosition[0] = 0;
+  firstPointPosition[1] = 0;
+  firstPointPosition[2] = 0;
   firstPointPosition = m_sampler->GetParticleSystem()->GetDomain(0)->GetValidLocationNear(firstPointPosition);
 
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
