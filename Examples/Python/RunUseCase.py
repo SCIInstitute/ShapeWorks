@@ -35,14 +35,13 @@ if platform.system() == "Darwin":
 default_subsample = 3
 
 parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
-parser.add_argument("--use_case", help="Specify which use case to run",
-                    choices=["ellipsoid", "ellipsoid_mesh", "ellipsoid_fd", "lumps", "left_atrium", "femur", "femur_mesh", "deep_ssm"])
+parser.add_argument("--use_case", help="Specify which use case to run", choices=["ellipsoid", "ellipsoid_evaluate", "ellipsoid_mesh", "ellipsoid_fd", "ellipsoid_cut", "lumps", "left_atrium", "femur", "femur_mesh", "femur_cut", "deep_ssm"])
 parser.add_argument("--use_subsample", help="Run the pipeline for a subset of data",action="store_true")
 parser.add_argument("--num_subsample", help="Size of subset to run on (default: "+str(default_subsample)+")", nargs='?', type=int, default=default_subsample)
 parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
-parser.add_argument("--start_with_prepped_data", help="Start with already prepped data", action="store_true")
-parser.add_argument("--start_with_image_and_segmentation_data", help = "use images and segmentations data for preprocessing", action="store_true")
-parser.add_argument("--use_single_scale", help="Single scale or multi scale optimization", action="store_true")
+parser.add_argument("--skip_grooming", help="Skip the grooming steps and start with already prepped (i.e., groomed) data", action="store_true")
+parser.add_argument("--groom_images", help = "Apply grooming steps to both the shapes (segmentations or surface meshes) and raw images", action="store_true")
+parser.add_argument("--use_single_scale", help="Use single scale optimization (default: multi scale)", action="store_true")
 parser.add_argument("--tiny_test", help="Run as a short test", action="store_true")
 parser.add_argument("--shapeworks_path", help="Path to ShapeWorks executables (default: "+default_binpath+")", nargs='?', type=str, default=os.pathsep)
 args = parser.parse_args()
@@ -65,7 +64,12 @@ os.environ["PATH"] = explicit_binpath + os.pathsep + os.environ["PATH"] + os.pat
 # make sure the shapeworks executables can be found
 robustifyShapeworksPaths()
 
-module = __import__(args.use_case)
+image_use_cases = ['femur', 'femur_cut', 'left_atrium']
+if args.groom_images and args.use_case.lower() not in image_use_cases:
+    print("\n\n*************************** WARNING ***************************")
+    print("'groom_images' tag was used but use case does not have images.")
+    print("Running use case with segmentations or meshes only.")
+    print("***************************************************************\n\n")
 
 try:
     module.Run_Pipeline(args)

@@ -1,19 +1,17 @@
-from pythonTestSetup import *
-
-setup()
-
+import os
+import sys
 from shapeworks import *
 
-def warpTest1():
-  img = Image(os.environ["DATA"] + "input.nrrd")
-  Image
-  img.reflect(Axis.Z)
+def warpTest():
+  img = Image(os.environ["DATA"] + "/input.nrrd")
+  transform = ImageUtils.createWarpTransform(os.environ["DATA"] + "/source.particles", os.environ["DATA"] + "/target.particles", 1)
+  img.applyTransform(transform, InterpolationType.Linear)
 
-  compareImg = Image(os.environ["DATA"] + "reflect1.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/warp1.nrrd")
 
   return img.compare(compareImg)
 
-val = warpTest1()
+val = warpTest()
 
 if val is False:
   sys.exit(1)

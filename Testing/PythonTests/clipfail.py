@@ -1,14 +1,12 @@
-from pythonTestSetup import *
-
-setup()
-
+import os
+import sys
 from shapeworks import *
 
 def clipfailTest1():
-  img = Image(os.environ["DATA"] + "1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.clip(Point(1, 0.0, 0.0), Point(0.0, 0.0, 0.0), Point(0.0, 0.0, 0.0), 0.0)
 
-  compareImg = Image(os.environ["DATA"] + "clipfail.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/clipfail.nrrd")
 
   return img.compare(compareImg)
 
@@ -18,10 +16,10 @@ if val is False:
   sys.exit(1)
 
 def clipfailTest2():
-  img = Image(os.environ["DATA"] + "1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.clip(Point(0.0, 0.0, 0.0), Point(0.0, 0.0, 0.0), Point(0.0, 0.0, 0.0), 0.0)
 
-  compareImg = Image(os.environ["DATA"] + "clipfail.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/clipfail.nrrd")
 
   return img.compare(compareImg)
 

@@ -1,14 +1,12 @@
-from pythonTestSetup import *
-
-setup()
-
+import os
+import sys
 from shapeworks import *
 
 def clipTest1():
-  img = Image(os.environ["DATA"] + "1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.clip(Point(0, 20, 0), Point(1, 55, 0), Point(1, 75, 0), 0.0)
 
-  compareImg = Image(os.environ["DATA"] + "clip1.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/clip1.nrrd")
 
   return img.compare(compareImg)
 
@@ -18,10 +16,10 @@ if val is False:
   sys.exit(1)
 
 def clipTest2():
-  img = Image(os.environ["DATA"] + "1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.clip(Point(0, 20, 0), Point(1, 55, 0), Point(1, 75, 0), 3.14)
 
-  compareImg = Image(os.environ["DATA"] + "clip2.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/clip2.nrrd")
 
   return img.compare(compareImg)
 
@@ -31,10 +29,10 @@ if val is False:
   sys.exit(1)
 
 def clipTest3():
-  img = Image(os.environ["DATA"] + "1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.clip(Point(0, 20, 0), Point(1, 55, 1), Point(1, 75, 1), 0.0)
 
-  compareImg = Image(os.environ["DATA"] + "clip3.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/clip3.nrrd")
 
   return img.compare(compareImg)
 

@@ -1,7 +1,5 @@
-from pythonTestSetup import *
-
-setup()
-
+import os
+import sys
 from shapeworks import *
 
 def vectorTest():
@@ -16,11 +14,11 @@ def vectorTest():
   v1 += v2
   v1 -= v2
   v6 = v2 * 10
-#   v7 = v2 / 2 # TODO: need to bind them
-#   v6 *= 4 # TODO: need to bind them
-#   v6 /= 2 # TODO: need to bind them
+  v7 = v2 / 2.0
+  v6 *= 4
+  v6 /= 2
 
-  return v6[0] == 20 and v6[1] == 20 and v6[2] == 20
+  return v6[0] == 40 and v6[1] == 40 and v6[2] == 40
 
 val = vectorTest()
 
