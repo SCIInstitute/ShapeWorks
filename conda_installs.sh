@@ -72,40 +72,39 @@ function install_conda() {
 
   # install shapeworks deps
   if ! conda install --yes \
-       cmake=3.18.2 \
-       gtest=1.10.0 \
-       colorama=0.4.3 \
-       requests=2.24.0 \
-       geotiff=1.6.0 \
-       numpy=1.19.1 \
-       git-lfs=2.11.0 \
-       openblas=0.3.6 \
-       doxygen=1.8.20 \
-       graphviz=2.42.3 \
-       vtk=9.0.1 \
-       scikit-learn=0.21.3 \
-       tbb=2019.9 \
-       tbb-devel=2019.9 \
-       boost=1.74.0 \
-       openexr=2.5.3 \
-       pybind11=2.5.0 \
-       notebook=6.1.4
+    cmake=3.18.2 \
+    gtest=1.10.0 \
+    colorama=0.4.3 \
+    requests=2.24.0 \
+    geotiff=1.6.0 \
+    numpy=1.19.1 \
+    git-lfs=2.11.0 \
+    openblas=0.3.6 \
+    doxygen=1.8.20 \
+    graphviz=2.42.3 \
+    vtk=8.2.0 \
+    scikit-learn=0.22.1 \
+    tbb=2019.9 \
+    tbb-devel=2019.9 \
+    boost=1.72.0 \
+    openexr=2.5.3 \
+    pybind11=2.5.0 \
+    notebook=6.1.4
   then return 1; fi
-
 
   # linux and mac (only) deps
   if [[ "$(uname)" == "Linux" || "$(uname)" == "Darwin" ]]; then
-      if ! conda install --yes \
-           xorg-libx11=1.6.12 \
-           xorg-libsm=1.2.3 \
-           libxrandr-devel-cos6-x86_64=1.5.1 \
-           libxinerama-devel-cos6-x86_64=1.1.3 \
-           libxcursor-devel-cos6-x86_64=1.1.14 \
-           libxi-devel-cos6-x86_64=1.7.8 \
-           openmp=8.0.1 \
-           ncurses=6.2 \
-           libuuid=2.32.1
-      then return 1; fi
+    if ! conda install --yes \
+      xorg-libx11=1.6.12 \
+      xorg-libsm=1.2.3 \
+      libxrandr-devel-cos6-x86_64=1.5.1 \
+      libxinerama-devel-cos6-x86_64=1.1.3 \
+      libxcursor-devel-cos6-x86_64=1.1.14 \
+      libxi-devel-cos6-x86_64=1.7.8 \
+      openmp=8.0.1 \
+      ncurses=6.2 \
+      libuuid=2.32.1
+    then return 1; fi
   fi
 
   if ! pip install termcolor==1.1.0; then return 1; fi
@@ -118,10 +117,10 @@ function install_conda() {
   if ! pip install python-markdown-math; then return 1; fi # lib for rendering equations in docs
   if ! pip install fontawesome-markdown; then return 1; fi # lib for icons in documentation
   if ! pip install --upgrade pymdown-extensions; then return 1; fi # lib to support checkbox lists in documentation
-  if ! pip install Python/DatasetUtilsPackage; then return 1; fi   # install the local GirderConnector code as a package
-  if ! pip install Python/DocumentationUtilsPackage; then return 1; fi   # install shapeworks auto-documentation as a package
-  if ! pip install Python/DataAugmentationUtilsPackage; then return 1; fi   # install data augmentation code as a package
-  if ! pip install Python/DeepSSMUtilsPackage; then return 1; fi   # install DeepSSM code as a package
+  if ! pip install Python/DatasetUtilsPackage; then return 1; fi # install the local GirderConnector code as a package
+  if ! pip install Python/DocumentationUtilsPackage; then return 1; fi # install shapeworks auto-documentation as a package
+  if ! pip install Python/DataAugmentationUtilsPackage; then return 1; fi # install data augmentation code as a package
+  if ! pip install Python/DeepSSMUtilsPackage; then return 1; fi # install DeepSSM code as a package
 
   # install any additional Linux dependencies
   if [[ "$(uname)" == "Linux" ]]; then

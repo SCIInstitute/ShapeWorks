@@ -8,6 +8,7 @@ namespace py = pybind11;
 using namespace pybind11::literals;
 
 #include <sstream>
+#include <itkImportImageFilter.h>
 
 #include "Shapeworks.h"
 #include "ShapeworksUtils.h"
@@ -343,19 +344,35 @@ PYBIND11_MODULE(shapeworks, m)
   .def("compare",               &Image::compare, "compares two images", "other"_a, "verifyall"_a=true, "tolerance"_a=0.0, "precision"_a=1e-12)
   .def_static("getPolyData",    &Image::getPolyData, "creates a vtkPolyData for the given image", "image"_a, "isoValue"_a=0.0)
   .def("toMesh",                &Image::toMesh, "converts to Mesh", "isovalue"_a=1.0)
-  .def("to_pyarray", [](const Image &image) {
-                          Image::ImageType::Pointer img = image.getITKImage();
-                          const auto size = img->GetLargestPossibleRegion().GetSize();
-                          const auto shape = std::vector<size_t>{size[0], size[1], size[2]};
-                          return py::array(py::dtype::of<typename Image::ImageType::Pointer::ObjectType::PixelType>(), shape, img->GetBufferPointer());
-                        })
+  .def("imageToArray", [](const Image &image) {
+    Image::ImageType::Pointer img = image.getITKImage();
+    const auto size = img->GetLargestPossibleRegion().GetSize();
+    const auto shape = std::vector<size_t>{size[0], size[1], size[2]};
+    return py::array(py::dtype::of<typename Image::ImageType::Pointer::ObjectType::PixelType>(), shape, img->GetBufferPointer());
+  })
+  .def("arrayToImage", [](const Image &image, py::array_t<typename Image::ImageType::Pointer::ObjectType::PixelType> np_array) {
+    Image::ImageType::Pointer img = image.getITKImage();
+    using ImporterType = itk::ImportImageFilter<Image::PixelType, 3>;
+    auto importer = ImporterType::New();
 
-  // Try to give the Python direct access to the underlying ITK image; see issue #780
-  // .def("toITKImage",            &Image::operator Image::ImageType::Pointer) // cannot convert to itk::SmartPointer<itk::Image...
-  // .def("toITKImage",            &Image::getITKImage) // can't convert return value to a Python type! itk::Image<float, 3u>
-  // .def("toITKImage",            [](Image& I) { return *(static_cast<Image::ImageType::Pointer>(I); }) // ugly template errors
-  // .def("toITKImage",            [](Image& I) { return *(I.operator Image::ImageType::Pointer()); })   // same errors
-  // .def("toITKImage",            []() { return Image::ImageType::Pointer(); })
+    auto info = np_array.request();
+    auto region = img->GetLargestPossibleRegion();
+    auto size = region.GetSize();
+    const bool importImageFilterWillOwnTheBuffer = false;
+    const auto data = static_cast<typename Image::ImageType::Pointer::ObjectType::PixelType *>(info.ptr);
+    const auto numberOfPixels = np_array.size();
+    std::copy(info.shape.begin(), info.shape.end(), size.begin());
+
+    region.SetSize(size);
+    importer->SetRegion(region);
+    importer->SetOrigin(img->GetOrigin());
+    importer->SetSpacing(img->GetSpacing());
+    importer->SetDirection(img->GetDirection());
+    importer->SetImportPointer(data, numberOfPixels, importImageFilterWillOwnTheBuffer);
+    importer->Update();
+
+    return Image(importer->GetOutput());
+  })
   ;
 
   // Image::Region
