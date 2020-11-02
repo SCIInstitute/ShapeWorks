@@ -36,6 +36,10 @@ def Run_Pipeline(args):
         print('Zero mesh files found in', meshDir)
         return
 
+    if args.tiny_test:
+        args.use_single_scale = 1
+        meshFiles = meshFiles[:3]
+
     pointDir = outputDirectory + 'shape_models/'
 
     if not os.path.exists(pointDir):
