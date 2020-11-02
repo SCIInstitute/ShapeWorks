@@ -87,7 +87,16 @@ public:
     virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystemType *,
                                 double&, double & ) const;
 
-    virtual void BeforeEvaluate(unsigned int, unsigned int, const ParticleSystemType *) {}
+    virtual void BeforeEvaluate(unsigned int, unsigned int d, const ParticleSystemType * system) {
+    }
+    virtual void setup_neighborhoods(unsigned int d, const ParticleSystemType * system) override{
+      neighbourhoods.clear();
+      for(int i=0; i<system->GetNumberOfParticles(); i++) {
+        PointType pos = system->GetPosition(i, d);
+        neighbourhoods.push_back( system->FindNeighborhoodPoints(pos, m_GlobalSigma[d], d) );
+      }
+    }
+    std::vector<typename ParticleSystemType::PointVectorType> neighbourhoods;
 
     inline virtual double Energy(unsigned int a, unsigned int b, const ParticleSystemType *c) const
     {

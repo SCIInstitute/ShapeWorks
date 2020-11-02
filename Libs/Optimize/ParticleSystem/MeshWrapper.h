@@ -30,6 +30,8 @@ public:
 
   // Returns closest point on mesh to pointa.
   virtual PointType SnapToMesh(PointType pointa) const = 0;
+
+  virtual double GetSurfaceArea() const = 0;
 };
 
 }

@@ -39,29 +39,33 @@ ParticleModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimensio
     double rmag;
     energy = epsilon;
     //m_GlobalSigma - 1 per domain
-    typename ParticleSystemType::PointVectorType m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, m_GlobalSigma[d], d);
+    // typename ParticleSystemType::PointVectorType m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, m_GlobalSigma[d], d);
+   const double m_CurrentNeighborhood = 0.0;
 
-    if (m_CurrentNeighborhood.size()==0)
+
+
+    if (neighbourhoods[idx].size()==0)
     {
         energy = 0;
         return gradE;
     }
 
-    for (unsigned int k = 0; k < m_CurrentNeighborhood.size(); k++)
+    for (unsigned int k = 0; k < neighbourhoods[idx].size(); k++)
     {
-        PointType pos_k = m_CurrentNeighborhood[k].Point;
+        PointType pos_k = neighbourhoods[idx][k].Point;
         for (unsigned int n = 0; n < VDimension; n++)
             r[n] = pos[n] - pos_k[n];
         rmag = r.magnitude();
         energy += this->ComputeModifiedCotangent(rmag, d);
     }
 
-    energy = std::log(energy/m_CurrentNeighborhood.size());
+    energy = std::log(energy/neighbourhoods[idx].size());
 
-    for (unsigned int k = 0; k < m_CurrentNeighborhood.size(); k++)
+    for (unsigned int k = 0; k < neighbourhoods[idx].size(); k++)
     {
-        PointType pos_k = m_CurrentNeighborhood[k].Point;
-        typename ParticleSystemType::PointVectorType k_neighborhood = system->FindNeighborhoodPoints(pos_k, m_GlobalSigma[d], d);
+        PointType pos_k = neighbourhoods[idx][k].Point;
+        auto idx_k = neighbourhoods[idx][k].Index;
+        const typename ParticleSystemType::PointVectorType& k_neighborhood = neighbourhoods[idx_k];
         double energy_k = epsilon;
 
         for (unsigned int j = 0; j < k_neighborhood.size(); j++)
@@ -86,10 +90,10 @@ ParticleModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimensio
         energy += std::log(energy_k/k_neighborhood.size());
     }
 
-    energy /= m_CurrentNeighborhood.size()+1;
+    energy /= neighbourhoods[idx].size()+1;
 
     for (unsigned int n = 0; n < VDimension; n++)
-        gradE[n] /= m_CurrentNeighborhood.size();
+        gradE[n] /= neighbourhoods[idx].size();
 
     maxmove = m_GlobalSigma[d]; // deprecated - not used in gradient descent class
 

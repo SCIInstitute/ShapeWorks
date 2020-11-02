@@ -55,6 +55,10 @@ public:
     /** Dimensionality of the domain of the particle system. */
     itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
+  virtual void setup_neighborhoods(unsigned int d, const ParticleSystemType* s ) override {
+    m_FunctionA->setup_neighborhoods(d,s);
+    m_FunctionB->setup_neighborhoods(d,s);
+  }
     /** The first argument is a pointer to the particle system.  The second
       argument is the index of the domain within that particle system.  The
       third argument is the index of the particle location within the given
