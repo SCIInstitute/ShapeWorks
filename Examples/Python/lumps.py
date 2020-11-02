@@ -26,7 +26,7 @@ def Run_Pipeline(args):
 
     if args.tiny_test:
         args.use_single_scale = 1
-        meshFiles = meshFiles[:2]
+        meshFiles = meshFiles[:3]
 
     shapeModelDirectory = outputDirectory + 'shape_models/'
     if not os.path.exists(shapeModelDirectory):

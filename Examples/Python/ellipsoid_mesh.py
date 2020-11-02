@@ -37,8 +37,8 @@ def Run_Pipeline(args):
     imageFiles = imageFiles[:15]
     if args.tiny_test:
         args.use_single_scale = 1
-        meshFiles = meshFiles[:2]
-        imageFiles = imageFiles[:2]
+        meshFiles = meshFiles[:3]
+        imageFiles = imageFiles[:3]
 
     pointDir = outputDirectory + 'shape_models/'
     if not os.path.exists(pointDir):
