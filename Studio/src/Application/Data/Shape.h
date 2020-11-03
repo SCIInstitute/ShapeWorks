@@ -40,7 +40,7 @@ public:
   void import_original_image(std::string filename, float iso_value);
 
   /// Retrieve the original mesh
-  QSharedPointer<Mesh> get_original_mesh();
+  QSharedPointer<Mesh> get_original_mesh(bool wait = false);
 
   ImageType::Pointer get_original_image();
   ImageType::Pointer get_groomed_image();
@@ -123,7 +123,7 @@ private:
 
   //void generate_original_meshes();
 
-  void generate_meshes(std::vector<std::string> filenames, QSharedPointer<Mesh>& mesh, bool save_transform);
+  void generate_meshes(std::vector<std::string> filenames, QSharedPointer<Mesh>& mesh, bool save_transform, bool wait = false);
 
   static bool import_point_file(QString filename, vnl_vector<double>& points);
 

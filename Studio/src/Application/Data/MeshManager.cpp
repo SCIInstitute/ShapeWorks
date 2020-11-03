@@ -50,7 +50,7 @@ void MeshManager::generate_mesh(const MeshWorkItem item)
 }
 
 //---------------------------------------------------------------------------
-MeshHandle MeshManager::get_mesh(const MeshWorkItem &item)
+MeshHandle MeshManager::get_mesh(const MeshWorkItem &item, bool wait)
 {
   MeshHandle mesh;
 
@@ -58,8 +58,7 @@ MeshHandle MeshManager::get_mesh(const MeshWorkItem &item)
   if (this->prefs_.get_cache_enabled()) {
     mesh = this->mesh_cache_.get_mesh(item);
     if (!mesh) {
-      if (prefs_.get_parallel_enabled() &&
-          (this->prefs_.get_num_threads() > 0)) {
+      if (!wait && this->prefs_.get_parallel_enabled() && this->prefs_.get_num_threads() > 0) {
         this->generate_mesh(item);
       }
       else {

@@ -213,7 +213,7 @@ void GroomTool::on_skipButton_clicked()
   for (QSharedPointer<Shape> s : shapes) {
     if (s->get_original_filename().toLower().endsWith(".vtk")) {
       TransformType transform;
-      s->import_groomed_mesh(s->get_original_mesh()->get_poly_data(), transform);
+      s->import_groomed_mesh(s->get_original_mesh(true)->get_poly_data(), transform);
       this->session_->set_groom_unsaved(true);
 
     }

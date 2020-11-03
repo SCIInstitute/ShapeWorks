@@ -85,7 +85,7 @@ void Shape::import_original_image(std::string filename, float iso_value)
 }
 
 //---------------------------------------------------------------------------
-QSharedPointer<Mesh> Shape::get_original_mesh()
+QSharedPointer<Mesh> Shape::get_original_mesh(bool wait)
 {
   if (!this->original_mesh_) {
     if (!this->subject_) {
@@ -94,7 +94,7 @@ QSharedPointer<Mesh> Shape::get_original_mesh()
     }
     else {
       this->generate_meshes(this->subject_->get_segmentation_filenames(), this->original_mesh_,
-                            true);
+                            true, wait);
     }
   }
   return this->original_mesh_;
@@ -460,7 +460,7 @@ vnl_vector<double> Shape::get_transform()
 
 //---------------------------------------------------------------------------
 void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<Mesh>& mesh,
-                            bool save_transform)
+                            bool save_transform, bool wait)
 {
   if (filenames.size() < 1) {
     return;
@@ -471,7 +471,7 @@ void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<Mesh>&
 
   MeshWorkItem item;
   item.filename = filename;
-  MeshHandle new_mesh = this->mesh_manager_->get_mesh(item);
+  MeshHandle new_mesh = this->mesh_manager_->get_mesh(item, wait);
   if (new_mesh) {
     mesh = new_mesh;
 
