@@ -39,6 +39,10 @@ def Run_Pipeline(args):
     if args.tiny_test:
         args.use_single_scale = 1
         meshFiles = meshFiles[:3]
+    # Select data if using subsample
+    if args.use_subsample:
+        sample_idx = samplemesh(meshFiles, int(args.num_subsample))
+        meshFiles = [meshFiles[i] for i in sample_idx]
 
     pointDir = outputDirectory + 'shape_models/'
 
