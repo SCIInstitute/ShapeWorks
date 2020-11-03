@@ -3,7 +3,6 @@
 ====================================================================
 Full Example Pipeline for Statistical Shape Modeling with ShapeWorks
 ====================================================================
-
 In this example we provide a full pipeline with an example dataset of axis 
 aligned ellipsoid meshes.
 """
