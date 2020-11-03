@@ -3,10 +3,18 @@
 #include <PreviewMeshQC/FEVTKImport.h>
 #include <PreviewMeshQC/FEVTKExport.h>
 
+#include <Libs/Utils/Utils.h>
+
 #include <vtkPolyDataReader.h>
-#include <vtkPLYReader.h>
 #include <vtkPolyDataWriter.h>
+#include <vtkPLYReader.h>
 #include <vtkPLYWriter.h>
+#include <vtkSTLReader.h>
+#include <vtkSTLWriter.h>
+#include <vtkOBJReader.h>
+#include <vtkOBJWriter.h>
+#include <vtkXMLPolyDataReader.h>
+#include <vtkXMLPolyDataWriter.h>
 #include <vtkPointData.h>
 #include <itkImageToVTKImageFilter.h>
 
@@ -27,25 +35,50 @@ Mesh::MeshType Mesh::read(const std::string &pathname)
 {
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
 
-  // TODO: enable reading of different kinds of meshes
-  // if (pref == "ply")
-  //   using ReaderType = vtkSmartPointer<vtkPLYReader>;
-  // else 
-  //   using ReaderType = vtkSmartPointer<vtkPolyDataReader>;
-
-  using ReaderType = vtkSmartPointer<vtkPolyDataReader>;
-  ReaderType reader = ReaderType::New();
-  reader->SetFileName(pathname.c_str());
-
   try {
-    reader->Update();
+
+    if (Utils::hasSuffix(pathname, "vtk")) {
+      auto reader = vtkSmartPointer<vtkPolyDataReader>::New();
+      reader->SetFileName(pathname.c_str());
+      reader->SetReadAllScalars(1);
+      reader->Update();
+      return reader->GetOutput();
+    }
+
+    if (Utils::hasSuffix(pathname, "vtp")) {
+      auto reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
+      reader->SetFileName(pathname.c_str());
+      reader->Update();
+      return reader->GetOutput();
+    }
+
+    if (Utils::hasSuffix(pathname, "stl")) {
+      auto reader = vtkSmartPointer<vtkSTLReader>::New();
+      reader->SetFileName(pathname.c_str());
+      reader->Update();
+      return reader->GetOutput();
+    }
+
+    if (Utils::hasSuffix(pathname, "obj")) {
+      auto reader = vtkSmartPointer<vtkOBJReader>::New();
+      reader->SetFileName(pathname.c_str());
+      reader->Update();
+      return reader->GetOutput();
+    }
+
+    if (Utils::hasSuffix(pathname, "ply")) {
+      auto reader = vtkSmartPointer<vtkPLYReader>::New();
+      reader->SetFileName(pathname.c_str());
+      reader->Update();
+      return reader->GetOutput();
+    }
+
+    throw std::invalid_argument("Unsupported file type");
   }
   catch (const std::exception &exp)
   {
-    throw std::invalid_argument(pathname + " does not exist");
+    throw std::invalid_argument("Failed to read: " + pathname);
   }
-
-  return reader->GetOutput();
 }
 
 /// write
@@ -58,18 +91,41 @@ bool Mesh::write(const std::string &pathname)
   if (!this->mesh) { throw std::invalid_argument("Mesh invalid"); }
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
 
-  // if (pref == "ply")
-  //   using WriterType = vtkSmartPointer<vtkPLYWriter>;
-  // else
-  //   using WriterType = vtkSmartPointer<vtkPolyDataWriter>;
-
-  using WriterType = vtkSmartPointer<vtkPolyDataWriter>;
-  WriterType writer = WriterType::New();
-  writer->SetInputData(this->mesh);
-  writer->SetFileName(pathname.c_str());
-
   try {
-    writer->Update();
+    if (Utils::hasSuffix(pathname, "vtk")) {
+      auto writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+      writer->SetFileName(pathname.c_str());
+      writer->SetInputData(this->mesh);
+      writer->Update();
+    }
+
+    if (Utils::hasSuffix(pathname, "vtp")) {
+      auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+      writer->SetFileName(pathname.c_str());
+      writer->SetInputData(this->mesh);
+      writer->Update();
+    }
+
+    if (Utils::hasSuffix(pathname, "stl")) {
+      auto writer = vtkSmartPointer<vtkSTLWriter>::New();
+      writer->SetFileName(pathname.c_str());
+      writer->SetInputData(this->mesh);
+      writer->Update();
+    }
+
+    if (Utils::hasSuffix(pathname, "obj")) {
+      auto writer = vtkSmartPointer<vtkOBJWriter>::New();
+      writer->SetFileName(pathname.c_str());
+      writer->SetInputData(this->mesh);
+      writer->Update();
+    }
+
+    if (Utils::hasSuffix(pathname, "ply")) {
+      auto writer = vtkSmartPointer<vtkPLYWriter>::New();
+      writer->SetFileName(pathname.c_str());
+      writer->SetInputData(this->mesh);
+      writer->Update();
+    }
   }
   catch (const std::exception &exp) {
     std::cerr << "Failed to write mesh to " << pathname << std::endl;
