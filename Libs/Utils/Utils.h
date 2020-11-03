@@ -96,6 +96,9 @@ public:
     static std::string removeExtension( std::string const& filename );
     static std::string getPath( std::string const& filename );
     static std::string getFilename( std::string const& pathname );
+    static std::string toLower(std::string s );
+    static bool hasSuffix( std::string const& filename, std::string const& suffix );
+
 
     //--------------- coordinates transformations --------------------------------
     static void spherical2cartesian(const double inPoint[3], double outPoint[3]);

@@ -307,12 +307,29 @@ std::string Utils::getPath( std::string const& filename )
             : std::string( filename.begin(), pivot.base() - 1 );
 }
 
+std::string Utils::toLower(std::string s)
+{
+  std::transform(s.begin(), s.end(), s.begin(),
+                 [](unsigned char c){ return std::tolower(c); } );
+  return s;
+}
+
 std::string Utils::getFilename( std::string const& pathname )
 {
     return std::string(
                 std::find_if( pathname.rbegin(), pathname.rend(),
                               utils::MatchPathSeparator() ).base(),
                 pathname.end() );
+}
+
+bool Utils::hasSuffix(const std::string& filename, const std::string& suffix)
+{
+  auto file = Utils::toLower(filename);
+  auto ext = Utils::toLower(suffix);
+
+  return file.size() >= ext.size()
+         && 0 == file.compare(file.size() - ext.size(), ext.size(), ext);
+
 }
 
 // ------------------- coordinates transformations -----------------------------
@@ -588,5 +605,8 @@ double Utils::averageThetaArc(std::vector<double> thetas)
 
     return mod2pi(bestTheta);
 }
+
+
+
 
 // } //shapeworks
