@@ -10,6 +10,8 @@
 #include <Groom/GroomTool.h>
 #include <Visualization/ShapeWorksWorker.h>
 
+#include <Libs/Groom/GroomParameters.h>
+
 #include <ui_GroomTool.h>
 
 //---------------------------------------------------------------------------
@@ -69,17 +71,20 @@ void GroomTool::on_restoreDefaults_clicked()
 //---------------------------------------------------------------------------
 void GroomTool::load_settings()
 {
-  Parameters params = this->session_->get_project()->get_parameters(Parameters::GROOM_PARAMS);
-  this->ui_->center_checkbox->setChecked(params.get("center", true));
-  this->ui_->antialias_checkbox->setChecked(params.get("antialias", true));
-  this->ui_->autopad_checkbox->setChecked(params.get("pad", true));
-  this->ui_->fastmarching_checkbox->setChecked(params.get("fastmarching", true));
-  this->ui_->blur_checkbox->setChecked(params.get("blur", true));
-  this->ui_->isolate_checkbox->setChecked(params.get("isolate", true));
-  this->ui_->fill_holes_checkbox->setChecked(params.get("fill_holes", true));
-  this->ui_->antialias_iterations->setValue(params.get("antialias_amount", 10));
-  this->ui_->blur_sigma->setValue(params.get("blur_sigma", 2.0));
-  this->ui_->padding_amount->setValue(params.get("pad_value", 10));
+  auto params = GroomParameters(this->session_->get_project());
+
+
+
+  this->ui_->center_checkbox->setChecked(params.get_center_tool());
+  this->ui_->antialias_checkbox->setChecked(params.get_antialias_tool());
+  this->ui_->autopad_checkbox->setChecked(params.get_auto_pad_tool());
+  this->ui_->fastmarching_checkbox->setChecked(params.get_fast_marching());
+  this->ui_->blur_checkbox->setChecked(params.get_blur_tool());
+  this->ui_->isolate_checkbox->setChecked(params.get_isolate_tool());
+  this->ui_->fill_holes_checkbox->setChecked(params.get_fill_holes_tool());
+  this->ui_->antialias_iterations->setValue(params.get_antialias_iterations());
+  this->ui_->blur_sigma->setValue(params.get_blur_amount());
+  this->ui_->padding_amount->setValue(params.get_padding_amount());
 }
 
 //---------------------------------------------------------------------------
@@ -99,20 +104,20 @@ void GroomTool::enable_actions()
 //---------------------------------------------------------------------------
 void GroomTool::store_settings()
 {
-  Parameters params = this->session_->get_project()->get_parameters(Parameters::GROOM_PARAMS);
+  auto params = GroomParameters(this->session_->get_project());
 
-  params.set("center", this->ui_->center_checkbox->isChecked());
-  params.set("antialias", this->ui_->antialias_checkbox->isChecked());
-  params.set("pad", this->ui_->autopad_checkbox->isChecked());
-  params.set("fastmarching", this->ui_->fastmarching_checkbox->isChecked());
-  params.set("blur", this->ui_->blur_checkbox->isChecked());
-  params.set("isolate", this->ui_->isolate_checkbox->isChecked());
-  params.set("fill_holes", this->ui_->fill_holes_checkbox->isChecked());
-  params.set("antialias_amount", this->ui_->antialias_iterations->value());
-  params.set("blur_sigma", this->ui_->blur_sigma->value());
-  params.set("pad_value", this->ui_->padding_amount->value());
+  params.set_center_tool(this->ui_->center_checkbox->isChecked());
+  params.set_antialias_tool(this->ui_->antialias_checkbox->isChecked());
+  params.set_auto_pad_tool(this->ui_->autopad_checkbox->isChecked());
+  params.set_padding_amount(this->ui_->padding_amount->value());
+  params.set_fast_marching(this->ui_->fastmarching_checkbox->isChecked());
+  params.set_blur_tool(this->ui_->blur_checkbox->isChecked());
+  params.set_blur_amount(this->ui_->blur_sigma->value());
+  params.set_isolate_tool(this->ui_->isolate_checkbox->isChecked());
+  params.set_fill_holes_tool(this->ui_->fill_holes_checkbox->isChecked());
+  params.set_antialias_iterations(this->ui_->antialias_iterations->value());
 
-  this->session_->get_project()->set_parameters(Parameters::GROOM_PARAMS, params);
+  params.save_to_project();
 }
 
 //---------------------------------------------------------------------------

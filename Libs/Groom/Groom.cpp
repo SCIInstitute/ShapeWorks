@@ -40,7 +40,6 @@ void Groom::run()
     [&](const tbb::blocked_range<size_t>& r) {
       for (size_t i = r.begin(); i < r.end(); ++i) {
 
-        std::cerr << "groom i = " << i << "\n";
         if (subjects[i]->get_domain_types()[0] == DomainType::Image) {
           this->image_pipeline(subjects[i]);
         }
@@ -51,15 +50,18 @@ void Groom::run()
 
       }
     });
-  this->project_->store_subjects();
 
+  // store back to project
+  this->project_->store_subjects();
 }
 
 //---------------------------------------------------------------------------
 void Groom::image_pipeline(std::shared_ptr<Subject> subject)
 {
+  // grab parameters
   auto params = GroomParameters(this->project_);
 
+  // single domain support right now
   auto path = subject->get_segmentation_filenames()[0];
 
   // load the image

@@ -37,7 +37,7 @@ void GroomParameters::set_isolate_tool(bool value)
 //---------------------------------------------------------------------------
 bool GroomParameters::get_fill_holes_tool()
 {
-  return this->params_.get("fille_holes", true);
+  return this->params_.get("fill_holes", true);
 }
 
 //---------------------------------------------------------------------------
@@ -79,7 +79,7 @@ bool GroomParameters::get_antialias_tool()
 //---------------------------------------------------------------------------
 void GroomParameters::set_antialias_tool(bool value)
 {
-  this->params_.set("antilias", value);
+  this->params_.set("antialias", value);
 }
 
 //---------------------------------------------------------------------------
