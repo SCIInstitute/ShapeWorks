@@ -194,6 +194,7 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   ShapeWorksGroom
   Alignment
   Analyze
+  Groom
   Optimize
   Utils
   Project

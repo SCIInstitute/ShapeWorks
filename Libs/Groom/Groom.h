@@ -1,6 +1,9 @@
 #pragma once
 
 #include <Libs/Project/Project.h>
+#include <Libs/Image/Image.h>
+
+#include <tbb/atomic.h>
 
 namespace shapeworks {
 
@@ -14,7 +17,7 @@ class Groom {
 
 public:
 
-  explicit Groom(shapeworks::ProjectHandle project);
+  Groom(ProjectHandle project);
 
   //! Return the progress (0-100)
   float get_current_progress();

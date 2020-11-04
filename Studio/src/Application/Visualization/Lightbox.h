@@ -12,7 +12,7 @@
 
 #include <Visualization/Viewer.h>
 
-class Mesh;
+class StudioMesh;
 class Shape;
 class StudioInteractorStyle;
 class Visualizer;

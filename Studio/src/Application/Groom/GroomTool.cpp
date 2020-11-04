@@ -4,7 +4,7 @@
 #include <QThread>
 
 #include <Data/Session.h>
-#include <Data/Mesh.h>
+#include <Data/StudioMesh.h>
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
 #include <Groom/GroomTool.h>
@@ -123,47 +123,10 @@ void GroomTool::on_run_groom_button_clicked()
   this->store_settings();
   std::cerr << "################## on run groom\n";
   emit message("Please wait: running groom step...");
-  emit progress(5);
-  QVector<QSharedPointer<Shape>> shapes = this->session_->get_shapes();
-  std::vector<ImageType::Pointer> imgs;
-  for (QSharedPointer<Shape> s : shapes) {
-    auto image = s->get_original_image();
-    if (!image) {
-      emit error_message("Error loading original images");
-      emit progress(100);
-      return;
-    }
-    imgs.push_back(image);
-  }
-  this->groom_ = new QGroom(this, imgs, 0., 1.,
-                            this->ui_->blur_sigma->value(),
-                            this->ui_->padding_amount->value(),
-                            this->ui_->antialias_iterations->value(),
-                            true);
+  emit progress(0);
 
-  emit progress(15);
-  if (this->ui_->center_checkbox->isChecked()) {
-    this->groom_->queueTool("center");
-  }
-  if (this->ui_->isolate_checkbox->isChecked()) {
-    this->groom_->queueTool("isolate");
-  }
-  if (this->ui_->fill_holes_checkbox->isChecked()) {
-    this->groom_->queueTool("hole_fill");
-  }
-  if (this->ui_->autopad_checkbox->isChecked()) {
-    this->groom_->queueTool("auto_pad");
-  }
-  if (this->ui_->antialias_checkbox->isChecked()) {
-    this->groom_->queueTool("antialias");
-  }
-  if (this->ui_->fastmarching_checkbox->isChecked()) {
-    this->groom_->queueTool("fastmarching");
-  }
-  if (this->ui_->blur_checkbox->isChecked()) {
-    this->groom_->queueTool("blur");
-  }
-  emit progress(10);
+  this->groom_ = QSharedPointer<QGroom>(new QGroom(this->session_->get_project()));
+
   this->ui_->run_groom_button->setEnabled(false);
   this->ui_->skipButton->setEnabled(false);
   QThread* thread = new QThread;
@@ -172,7 +135,7 @@ void GroomTool::on_run_groom_button_clicked()
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_thread_complete()));
-  connect(this->groom_, SIGNAL(progress(int)), this, SLOT(handle_progress(int)));
+  connect(this->groom_.data(), &QGroom::progress, this, &GroomTool::handle_progress);
   connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   thread->start();
@@ -183,10 +146,7 @@ void GroomTool::handle_thread_complete()
 {
   emit progress(95);
 
-  this->session_->load_groomed_images(this->groom_->getImages(),
-                                      this->ui_->fastmarching_checkbox->isChecked() ? 0. : 0.5,
-                                      this->groom_->get_transforms());
-
+  // trigger reload of project
   auto duration = this->timer_.elapsed();
   STUDIO_LOG_MESSAGE("Groom duration: " + QString::number(duration) + "ms");
 

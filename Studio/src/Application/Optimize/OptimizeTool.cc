@@ -10,7 +10,7 @@
 #include <Optimize/OptimizeTool.h>
 #include <Visualization/ShapeworksWorker.h>
 #include <Data/Project.h>
-#include <Data/Mesh.h>
+#include <Data/StudioMesh.h>
 #include <Data/Shape.h>
 
 #include <ui_OptimizeTool.h>

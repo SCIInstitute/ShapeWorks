@@ -15,7 +15,7 @@
 #include <Visualization/Lightbox.h>
 #include <Visualization/StudioInteractorStyle.h>
 #include <Visualization/Visualizer.h>
-#include <Data/Mesh.h>
+#include <Data/StudioMesh.h>
 #include <Data/Shape.h>
 
 //-----------------------------------------------------------------------------

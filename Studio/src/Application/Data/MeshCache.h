@@ -19,7 +19,7 @@
 
 #include <vnl/vnl_vector.h>
 
-#include <Data/Mesh.h>
+#include <Data/StudioMesh.h>
 #include <Data/MeshWorkQueue.h>
 #include <Data/Preferences.h>
 

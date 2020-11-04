@@ -24,7 +24,7 @@
 #include <Data/Session.h>
 #include <Data/StudioLog.h>
 #include <Data/Shape.h>
-#include <Data/Mesh.h>
+#include <Data/StudioMesh.h>
 #include <Data/MeshManager.h>
 #include <Visualization/ShapeWorksWorker.h>
 #include <Visualization/Visualizer.h>

@@ -31,7 +31,7 @@ Shape::~Shape()
 {}
 
 //---------------------------------------------------------------------------
-QSharedPointer<Mesh> Shape::get_mesh(std::string display_mode)
+QSharedPointer<StudioMesh> Shape::get_mesh(std::string display_mode)
 {
   if (display_mode == Visualizer::MODE_ORIGINAL_C) {
     return this->get_original_mesh();
@@ -85,7 +85,7 @@ void Shape::import_original_image(std::string filename, float iso_value)
 }
 
 //---------------------------------------------------------------------------
-QSharedPointer<Mesh> Shape::get_original_mesh(bool wait)
+QSharedPointer<StudioMesh> Shape::get_original_mesh(bool wait)
 {
   if (!this->original_mesh_) {
     if (!this->subject_) {
@@ -159,7 +159,7 @@ ImageType::Pointer Shape::get_groomed_image()
 //---------------------------------------------------------------------------
 void Shape::import_groomed_image(ImageType::Pointer img, double iso, TransformType transform)
 {
-  this->groomed_mesh_ = QSharedPointer<Mesh>(new Mesh());
+  this->groomed_mesh_ = QSharedPointer<StudioMesh>(new StudioMesh());
   this->groomed_image_ = img;
   this->groomed_mesh_->create_from_image(img, iso);
   this->groomed_transform_ = transform;
@@ -183,7 +183,7 @@ void Shape::import_groomed_image(ImageType::Pointer img, double iso, TransformTy
 //---------------------------------------------------------------------------
 void Shape::import_groomed_mesh(vtkSmartPointer<vtkPolyData> mesh, TransformType transform)
 {
-  this->groomed_mesh_ = QSharedPointer<Mesh>(new Mesh());
+  this->groomed_mesh_ = QSharedPointer<StudioMesh>(new StudioMesh());
   this->groomed_mesh_->set_poly_data(mesh);
   this->groomed_transform_ = transform;
   auto name = this->get_original_filename_with_path().toStdString();
@@ -204,7 +204,7 @@ void Shape::import_groomed_mesh(vtkSmartPointer<vtkPolyData> mesh, TransformType
 
 
 //---------------------------------------------------------------------------
-QSharedPointer<Mesh> Shape::get_groomed_mesh()
+QSharedPointer<StudioMesh> Shape::get_groomed_mesh()
 {
   if (!this->groomed_mesh_) {
     if (!this->subject_) {
@@ -295,7 +295,7 @@ bool Shape::import_local_point_file(QString filename)
 }
 
 //---------------------------------------------------------------------------
-QSharedPointer<Mesh> Shape::get_reconstructed_mesh()
+QSharedPointer<StudioMesh> Shape::get_reconstructed_mesh()
 {
   if (!this->reconstructed_mesh_) {
     this->reconstructed_mesh_ = this->mesh_manager_->get_mesh(this->global_correspondence_points_);
@@ -386,13 +386,13 @@ QString Shape::get_local_point_filename_with_path()
 }
 
 //---------------------------------------------------------------------------
-QList<Point> Shape::get_exclusion_sphere_centers()
+QList<Shape::Point> Shape::get_exclusion_sphere_centers()
 {
   return this->exclusion_sphere_centers_;
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_exclusion_sphere_centers(QList<Point> centers)
+void Shape::set_exclusion_sphere_centers(QList<Shape::Point> centers)
 {
   this->exclusion_sphere_centers_ = centers;
 }
@@ -425,13 +425,13 @@ void Shape::set_group_id(int id)
 }
 
 //---------------------------------------------------------------------------
-std::vector<Point> Shape::get_vectors()
+std::vector<Shape::Point> Shape::get_vectors()
 {
   return this->vectors_;
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_vectors(std::vector<Point> vectors)
+void Shape::set_vectors(std::vector<Shape::Point> vectors)
 {
   this->vectors_ = vectors;
 }
@@ -459,7 +459,7 @@ vnl_vector<double> Shape::get_transform()
 }
 
 //---------------------------------------------------------------------------
-void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<Mesh>& mesh,
+void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<StudioMesh>& mesh,
                             bool save_transform, bool wait)
 {
   if (filenames.size() < 1) {

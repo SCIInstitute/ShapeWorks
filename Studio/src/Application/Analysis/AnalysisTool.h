@@ -35,7 +35,7 @@ public:
 
   bool get_group_difference_mode();
 
-  std::vector<Point> get_group_difference_vectors();
+  std::vector<Shape::Point> get_group_difference_vectors();
 
   std::string get_analysis_mode();
   void set_analysis_mode(std::string mode);

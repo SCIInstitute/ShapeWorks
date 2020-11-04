@@ -7,11 +7,12 @@
 
 #include <Visualization/ShapeWorksWorker.h>
 #include <Libs/Optimize/Optimize.h>
+#include <Application/Groom/QGroom.h>
 
 using namespace shapeworks;
 
 ShapeworksWorker::ShapeworksWorker(ThreadType type,
-                                   ShapeWorksGroom* groom,
+                                   QSharedPointer<QGroom> groom,
                                    Optimize* optimize,
                                    QSharedPointer<Session> project,
                                    std::vector<std::vector<itk::Point<double>>> local_pts,

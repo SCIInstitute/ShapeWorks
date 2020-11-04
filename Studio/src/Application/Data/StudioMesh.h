@@ -14,22 +14,22 @@
 #include <vnl/vnl_vector.h>
 #include <Groom/ShapeWorksGroom.h>
 
-class Mesh;
-typedef QSharedPointer<Mesh> MeshHandle;
+class StudioMesh;
+typedef QSharedPointer<StudioMesh> MeshHandle;
 //! Representation of a single mesh.
 /*!
  * The Mesh class represents a single mesh generated from an image file or set of particles.
  * It is responsible for loading the image and generating a mesh from it.
  *
  */
-class Mesh {
+class StudioMesh {
 public:
 
   //! Constructor
-  Mesh();
+  StudioMesh();
 
   //! Destructor
-  ~Mesh();
+  ~StudioMesh();
 
   //! Create a mesh from an image
   void create_from_image(ImageType::Pointer img, double iso_value);

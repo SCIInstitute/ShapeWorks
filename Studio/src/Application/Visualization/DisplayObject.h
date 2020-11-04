@@ -7,7 +7,7 @@
 
 #include <Data/Shape.h>
 
-class Mesh;
+class StudioMesh;
 
 class DisplayObject;
 typedef QSharedPointer< DisplayObject > DisplayObjectHandle;
@@ -24,8 +24,8 @@ public:
   DisplayObject();
   ~DisplayObject();
 
-  void set_mesh(QSharedPointer<Mesh> mesh);
-  QSharedPointer<Mesh> get_mesh();
+  void set_mesh(QSharedPointer<StudioMesh> mesh);
+  QSharedPointer<StudioMesh> get_mesh();
 
   void set_annotations(QStringList annotations);
   QStringList get_annotations();
@@ -36,23 +36,23 @@ public:
   void set_transform(const vnl_vector<double>& transform);
   vnl_vector<double> get_transform();
 
-  QList<Point> get_exclusion_sphere_centers();
-  void set_exclusion_sphere_centers(QList<Point> centers);
+  QList<Shape::Point> get_exclusion_sphere_centers();
+  void set_exclusion_sphere_centers(QList<Shape::Point> centers);
 
   QList<double> get_exclusion_sphere_radii();
   void set_exclusion_sphere_radii(QList<double> radii);
 
-  std::vector<Point> get_vectors();
-  void set_vectors(std::vector<Point> vectors);
+  std::vector<Shape::Point> get_vectors();
+  void set_vectors(std::vector<Shape::Point> vectors);
 
 private:
-  QSharedPointer<Mesh> mesh_;
+  QSharedPointer<StudioMesh> mesh_;
   vnl_vector<double> correspondence_points_;
   QStringList corner_annotations_;
   vnl_vector<double> transform_;
 
-  std::vector<Point> vectors_;
+  std::vector<Shape::Point> vectors_;
 
-  QList<Point> exclusion_sphere_centers_;
+  QList<Shape::Point> exclusion_sphere_centers_;
   QList<double> exclusion_sphere_radii_;
 };

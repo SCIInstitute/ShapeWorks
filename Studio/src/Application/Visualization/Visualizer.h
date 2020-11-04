@@ -54,7 +54,7 @@ public:
 
   void display_shape(const vnl_vector<double>& points);
 
-  void display_shape(const vnl_vector<double>& points, const std::vector<Point>& vectors);
+  void display_shape(const vnl_vector<double>& points, const std::vector<Shape::Point>& vectors);
 
   void display_shape(ShapeHandle shape);
 
@@ -107,7 +107,7 @@ public Q_SLOTS:
 
 private:
   ShapeHandle create_display_object(const vnl_vector<double>& points,
-                                    const std::vector<Point>& vectors);
+                                    const std::vector<Shape::Point>& vectors);
   Preferences& preferences_;
 
   void compute_measurements();

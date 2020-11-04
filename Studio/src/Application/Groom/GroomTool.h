@@ -64,7 +64,7 @@ private:
   Ui_GroomTool* ui_;
   QSharedPointer<Session> session_;
 
-  QGroom* groom_;
+  QSharedPointer<shapeworks::QGroom> groom_;
 
   QElapsedTimer timer_;
 };

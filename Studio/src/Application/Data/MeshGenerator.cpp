@@ -37,7 +37,7 @@ MeshHandle MeshGenerator::build_mesh(const MeshWorkItem& item)
 MeshHandle MeshGenerator::build_mesh_from_points(const vnl_vector<double>& shape,
                                                  int domain)
 {
-  MeshHandle mesh(new Mesh);
+  MeshHandle mesh(new StudioMesh);
 
   if (this->surface_reconstructor_ &&
       this->surface_reconstructor_->get_surface_reconstruction_available()) {
@@ -60,7 +60,7 @@ MeshHandle MeshGenerator::build_mesh_from_points(const vnl_vector<double>& shape
 //---------------------------------------------------------------------------
 MeshHandle MeshGenerator::build_mesh_from_image(ImageType::Pointer image, float iso_value)
 {
-  MeshHandle mesh(new Mesh);
+  MeshHandle mesh(new StudioMesh);
 
   try {
     // connect to VTK
@@ -90,7 +90,7 @@ MeshHandle MeshGenerator::build_mesh_from_image(ImageType::Pointer image, float 
 MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_value)
 {
   //std::cerr << "build_mesh from " << filename << "\n";
-  MeshHandle mesh(new Mesh);
+  MeshHandle mesh(new StudioMesh);
 
   if (!QFileInfo(QString::fromStdString(filename)).exists()) {
     mesh->set_error_message("File does not exist: " + filename);

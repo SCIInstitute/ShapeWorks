@@ -40,6 +40,7 @@ void Groom::run()
     [&](const tbb::blocked_range<size_t>& r) {
       for (size_t i = r.begin(); i < r.end(); ++i) {
 
+        std::cerr << "groom i = " << i << "\n";
         if (subjects[i]->get_domain_types()[0] == DomainType::Image) {
           this->image_pipeline(subjects[i]);
         }
@@ -228,7 +229,7 @@ void Groom::increment_progress()
 {
   ++this->progress_counter_;
   this->progress_ = static_cast<float>(this->progress_counter_)
-                    / static_cast<float>(this->total_ops_);
+                    / static_cast<float>(this->total_ops_) * 100.0;
   this->update_progress();
 }
 

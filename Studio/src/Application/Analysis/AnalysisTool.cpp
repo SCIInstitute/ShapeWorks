@@ -10,7 +10,7 @@
 #include <Visualization/ShapeWorksStudioApp.h>
 #include <Visualization/ShapeWorksWorker.h>
 #include <Data/Session.h>
-#include <Data/Mesh.h>
+#include <Data/StudioMesh.h>
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
 #include <Analysis/AnalysisTool.h>
@@ -111,13 +111,13 @@ bool AnalysisTool::get_group_difference_mode()
 }
 
 //---------------------------------------------------------------------------
-std::vector<Point> AnalysisTool::get_group_difference_vectors()
+std::vector<Shape::Point> AnalysisTool::get_group_difference_vectors()
 {
-  std::vector<Point> vecs;
+  std::vector<Shape::Point> vecs;
 
   auto num_points = this->stats_.Mean().size() / 3;
   for (unsigned int i = 0; i < num_points; i++) {
-    Point tmp;
+    Shape::Point tmp;
     tmp.x = this->stats_.Group2Mean()[i * 3] - this->stats_.Group1Mean()[i * 3];
     tmp.y = this->stats_.Group2Mean()[i * 3 + 1] - this->stats_.Group1Mean()[i * 3 + 1];
     tmp.z = this->stats_.Group2Mean()[i * 3 + 2] - this->stats_.Group1Mean()[i * 3 + 2];
