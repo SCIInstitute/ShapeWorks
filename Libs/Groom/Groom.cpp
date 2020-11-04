@@ -99,23 +99,23 @@ void Groom::image_pipeline(std::shared_ptr<Subject> subject)
 
   // fill holes
   if (params.get_fill_holes_tool()) {
-    this->hole_fill(image);
+    image.closeHoles();
     this->increment_progress();
   }
 
   // autopad
   if (params.get_auto_pad_tool()) {
-    this->auto_pad(image, params.get_padding_amount());
+    image.pad(params.get_padding_amount());
     this->increment_progress();
   }
 
   // antialias
   if (params.get_antialias_tool()) {
-    this->antialias(image, params.get_antialias_iterations());
+    image.antialias(params.get_antialias_iterations());
     this->increment_progress();
   }
 
-  // fastmarching
+  // create distance transform
   if (params.get_fast_marching()) {
     image.computeDT();
     this->increment_progress();
@@ -127,9 +127,11 @@ void Groom::image_pipeline(std::shared_ptr<Subject> subject)
     this->increment_progress();
   }
 
+  // groomed filename
   std::string dt_name = path;
   dt_name = dt_name.substr(0, dt_name.find_last_of(".")) + "_DT.nrrd";
 
+  // save image
   image.write(dt_name);
 
   // only single domain supported so far
@@ -147,8 +149,9 @@ void Groom::image_mesh_pipeline(std::shared_ptr<Subject> subject)
   Mesh mesh(path);
 
   std::string groom_name = path;
-  groom_name = groom_name.substr(0, groom_name.find_last_of(".")) + "_groomed.ply";
+  groom_name = groom_name.substr(0, groom_name.find_last_of('.')) + "_groomed.ply";
 
+  // save the groomed mesh
   mesh.write(groom_name);
 }
 
@@ -189,12 +192,6 @@ void Groom::isolate(Image& image)
 }
 
 //---------------------------------------------------------------------------
-void Groom::hole_fill(Image& image)
-{
-  image.closeHoles();
-}
-
-//---------------------------------------------------------------------------
 Vector3 Groom::center(Image& image)
 {
   auto com = image.centerOfMass();
@@ -206,18 +203,6 @@ Vector3 Groom::center(Image& image)
   image.translate(translation, Image::InterpolationType::NearestNeighbor);
 
   return translation;
-}
-
-//---------------------------------------------------------------------------
-void Groom::auto_pad(Image& image, int padding_amount)
-{
-  image.pad(padding_amount);
-}
-
-//---------------------------------------------------------------------------
-void Groom::antialias(Image& image, int iterations)
-{
-  image.antialias(iterations);
 }
 
 //---------------------------------------------------------------------------

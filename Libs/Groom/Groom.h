@@ -4,6 +4,12 @@
 
 namespace shapeworks {
 
+//! High level groom API.
+/*!
+ * The Groom class operates on a Project.  It is used by Studio and other tools to perform
+ * Grooming operations.
+ *
+ */
 class Groom {
 
 public:
@@ -24,7 +30,7 @@ protected:
 
   tbb::atomic<float> progress_ = 0;
   tbb::atomic<int> total_ops_ = 0;
-  tbb::atomic<int> progress_counter_;
+  tbb::atomic<int> progress_counter_ = 0;
 
 private:
 
@@ -42,12 +48,10 @@ private:
 
   Vector3 center(Image& image);
   void isolate(Image& image);
-  void hole_fill(Image& image);
-  void auto_pad(Image& image, int padding_amount);
-  void antialias(Image& image, int iterations);
+
 
   bool verbose_;
 
-  shapeworks::ProjectHandle project_;
+  ProjectHandle project_;
 };
 }
