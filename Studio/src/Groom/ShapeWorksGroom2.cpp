@@ -5,8 +5,8 @@
 
 #include <ShapeWorksGroom2.h>
 #include <GroomParameters.h>
+#include <Libs/Utils/Utils.h>
 
-#include <utility>
 #include <vector>
 
 #include "bounding_box.h"
@@ -36,95 +36,103 @@ void ShapeWorksGroom2::run()
 
   auto subjects = this->project_->get_subjects();
 
-  auto params = GroomParameters(this->project_);
-
   tbb::parallel_for(
     tbb::blocked_range<size_t>{0, subjects.size()},
     [&](const tbb::blocked_range<size_t>& r) {
       for (size_t i = r.begin(); i < r.end(); ++i) {
 
-        auto path = subjects[i]->get_segmentation_filenames()[0];
-
-        // load the image
-        Image image(path);
-
-        // define a groom transform
-        auto transform = itk::AffineTransform<double, 3>::New();
-        transform->SetIdentity();
-
-        // centering
-        if (params.get_center_tool()) {
-          auto centering = this->center(image);
-
-          itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
-          tform[0] = centering[0];
-          tform[1] = centering[1];
-          tform[2] = centering[2];
-          transform->SetTranslation(tform);
-
-          this->increment_progress();
+        if (subjects[i]->get_domain_types()[0] == DomainType::Image) {
+          this->image_groom_pipeline(subjects[i]);
         }
-
-        // store transform
-        std::vector<std::vector<double>> groomed_transforms;
-        std::vector<double> groomed_transform;
-        auto tform_params = transform->GetParameters();
-        for (int i = 0; i < tform_params.size(); i++) {
-          groomed_transform.push_back(tform_params[i]);
-        }
-        groomed_transforms.push_back(groomed_transform);
-        subjects[i]->set_groomed_transforms(groomed_transforms);
-
-        // isolate
-        if (params.get_isolate_tool()) {
-          this->isolate(image);
-          this->increment_progress();
-        }
-
-        // fill holes
-        if (params.get_fill_holes_tool()) {
-          this->hole_fill(image);
-          this->increment_progress();
-        }
-
-        // autopad
-        if (params.get_auto_pad_tool()) {
-          this->auto_pad(image, params.get_padding_amount());
-          this->increment_progress();
-        }
-
-        // antialias
-        if (params.get_antialias_tool()) {
-          this->antialias(image, params.get_antialias_iterations());
-          this->increment_progress();
-        }
-
-        // fastmarching
-        if (params.get_fast_marching()) {
-          image.computeDT();
-          this->increment_progress();
-        }
-
-        // blur
-        if (params.get_blur_tool()) {
-          image.gaussianBlur(params.get_blur_amount());
-          this->increment_progress();
-        }
-
-        std::string dt_name = path;
-        dt_name = dt_name.substr(0, dt_name.find_last_of(".")) + "_DT.nrrd";
-
-        image.write(dt_name);
-
-        // only single domain supported so far
-        std::vector<std::string> groomed_filenames{dt_name};
-        // store filename back to subject
-        subjects[i]->set_groomed_filenames(groomed_filenames);
 
       }
     });
   this->project_->store_subjects();
 
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksGroom2::image_groom_pipeline(std::shared_ptr<Subject> subject)
+{
+  auto params = GroomParameters(this->project_);
+
+  auto path = subject->get_segmentation_filenames()[0];
+
+  // load the image
+  Image image(path);
+
+  // define a groom transform
+  auto transform = itk::AffineTransform<double, 3>::New();
+  transform->SetIdentity();
+
+  // centering
+  if (params.get_center_tool()) {
+    auto centering = this->center(image);
+
+    itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
+    tform[0] = centering[0];
+    tform[1] = centering[1];
+    tform[2] = centering[2];
+    transform->SetTranslation(tform);
+
+    this->increment_progress();
+  }
+
+  // store transform
+  std::vector<std::vector<double>> groomed_transforms;
+  std::vector<double> groomed_transform;
+  auto tform_params = transform->GetParameters();
+  for (int i = 0; i < tform_params.size(); i++) {
+    groomed_transform.push_back(tform_params[i]);
+  }
+  groomed_transforms.push_back(groomed_transform);
+  subject->set_groomed_transforms(groomed_transforms);
+
+  // isolate
+  if (params.get_isolate_tool()) {
+    this->isolate(image);
+    this->increment_progress();
+  }
+
+  // fill holes
+  if (params.get_fill_holes_tool()) {
+    this->hole_fill(image);
+    this->increment_progress();
+  }
+
+  // autopad
+  if (params.get_auto_pad_tool()) {
+    this->auto_pad(image, params.get_padding_amount());
+    this->increment_progress();
+  }
+
+  // antialias
+  if (params.get_antialias_tool()) {
+    this->antialias(image, params.get_antialias_iterations());
+    this->increment_progress();
+  }
+
+  // fastmarching
+  if (params.get_fast_marching()) {
+    image.computeDT();
+    this->increment_progress();
+  }
+
+  // blur
+  if (params.get_blur_tool()) {
+    image.gaussianBlur(params.get_blur_amount());
+    this->increment_progress();
+  }
+
+  std::string dt_name = path;
+  dt_name = dt_name.substr(0, dt_name.find_last_of(".")) + "_DT.nrrd";
+
+  image.write(dt_name);
+
+  // only single domain supported so far
+  std::vector<std::string> groomed_filenames{dt_name};
+  // store filename back to subject
+  subject->set_groomed_filenames(groomed_filenames);
 }
 
 //---------------------------------------------------------------------------
