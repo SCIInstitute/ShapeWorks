@@ -9,11 +9,11 @@
 
 namespace shapeworks {
 
-class ShapeWorksGroom2 {
+class Groom {
 
 public:
 
-  explicit ShapeWorksGroom2(shapeworks::ProjectHandle project);
+  explicit Groom(shapeworks::ProjectHandle project);
 
   //! Return the progress (0-100)
   float get_current_progress();

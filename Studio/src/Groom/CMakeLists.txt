@@ -3,5 +3,5 @@ include_directories(${CMAKE_SOURCE_DIR}/Application)
 
 FILE(GLOB SRCS "*.txx" "*.h" "*.cpp")
 
-ADD_LIBRARY(ShapeWorksGroom STATIC ${SRCS} GroomParameters.cpp GroomParameters.h)
+ADD_LIBRARY(ShapeWorksGroom STATIC ${SRCS})
 TARGET_LINK_LIBRARIES(ShapeWorksGroom ${ITK_LIBRARIES} tinyxml OpenVDB::openvdb)

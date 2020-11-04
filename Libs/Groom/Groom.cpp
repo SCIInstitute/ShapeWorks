@@ -1,16 +1,14 @@
 #include <tbb/parallel_for.h>
 #include <tbb/task_scheduler_init.h>
 
+#include <vector>
+
 #include <Libs/Image/Image.h>
 #include <Libs/Mesh/Mesh.h>
 
-#include <ShapeWorksGroom2.h>
+#include <Groom.h>
 #include <GroomParameters.h>
-#include <Libs/Utils/Utils.h>
 
-#include <vector>
-
-#include "bounding_box.h"
 #include "itkConnectedComponentImageFilter.h"
 #include "itkImageRegionIterator.h"
 #include "itkCastImageFilter.h"
@@ -23,13 +21,13 @@ typedef float PixelType;
 typedef itk::Image<PixelType, 3> ImageType;
 
 //---------------------------------------------------------------------------
-ShapeWorksGroom2::ShapeWorksGroom2(shapeworks::ProjectHandle project)
+Groom::Groom(ProjectHandle project)
 {
   this->project_ = project;
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksGroom2::run()
+void Groom::run()
 {
   this->progress_ = 0;
   this->progress_counter_ = 0;
@@ -57,7 +55,7 @@ void ShapeWorksGroom2::run()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksGroom2::image_groom_pipeline(std::shared_ptr<Subject> subject)
+void Groom::image_groom_pipeline(std::shared_ptr<Subject> subject)
 {
   auto params = GroomParameters(this->project_);
 
@@ -141,7 +139,7 @@ void ShapeWorksGroom2::image_groom_pipeline(std::shared_ptr<Subject> subject)
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksGroom2::image_mesh_pipeline(std::shared_ptr<Subject> subject)
+void Groom::image_mesh_pipeline(std::shared_ptr<Subject> subject)
 {
   auto path = subject->get_segmentation_filenames()[0];
 
@@ -155,7 +153,7 @@ void ShapeWorksGroom2::image_mesh_pipeline(std::shared_ptr<Subject> subject)
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksGroom2::isolate(Image& image)
+void Groom::isolate(Image& image)
 {
   ImageType::Pointer img = image;
 
@@ -191,13 +189,13 @@ void ShapeWorksGroom2::isolate(Image& image)
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksGroom2::hole_fill(Image& image)
+void Groom::hole_fill(Image& image)
 {
   image.closeHoles();
 }
 
 //---------------------------------------------------------------------------
-Vector3 ShapeWorksGroom2::center(Image& image)
+Vector3 Groom::center(Image& image)
 {
   auto com = image.centerOfMass();
   auto diff = image.center() - com;
@@ -211,19 +209,19 @@ Vector3 ShapeWorksGroom2::center(Image& image)
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksGroom2::auto_pad(Image& image, int padding_amount)
+void Groom::auto_pad(Image& image, int padding_amount)
 {
   image.pad(padding_amount);
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksGroom2::antialias(Image& image, int iterations)
+void Groom::antialias(Image& image, int iterations)
 {
   image.antialias(iterations);
 }
 
 //---------------------------------------------------------------------------
-int ShapeWorksGroom2::get_total_ops()
+int Groom::get_total_ops()
 {
   int num_subjects = this->project_->get_subjects().size();
   auto params = GroomParameters(this->project_);
@@ -241,7 +239,7 @@ int ShapeWorksGroom2::get_total_ops()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksGroom2::increment_progress()
+void Groom::increment_progress()
 {
   ++this->progress_counter_;
   this->progress_ = static_cast<float>(this->progress_counter_)
