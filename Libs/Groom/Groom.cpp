@@ -41,11 +41,11 @@ void Groom::run()
       for (size_t i = r.begin(); i < r.end(); ++i) {
 
         if (subjects[i]->get_domain_types()[0] == DomainType::Image) {
-          this->image_groom_pipeline(subjects[i]);
+          this->image_pipeline(subjects[i]);
         }
 
         if (subjects[i]->get_domain_types()[0] == DomainType::Mesh) {
-          this->image_groom_pipeline(subjects[i]);
+          this->image_pipeline(subjects[i]);
         }
 
       }
@@ -55,7 +55,7 @@ void Groom::run()
 }
 
 //---------------------------------------------------------------------------
-void Groom::image_groom_pipeline(std::shared_ptr<Subject> subject)
+void Groom::image_pipeline(std::shared_ptr<Subject> subject)
 {
   auto params = GroomParameters(this->project_);
 
@@ -244,6 +244,7 @@ void Groom::increment_progress()
   ++this->progress_counter_;
   this->progress_ = static_cast<float>(this->progress_counter_)
                     / static_cast<float>(this->total_ops_);
+  this->update_progress();
 }
 
 

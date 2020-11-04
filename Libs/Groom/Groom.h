@@ -1,10 +1,5 @@
 #pragma once
 
-//#include <cstdlib>
-//#include <string>
-//#include <vector>
-//#include <map>
-
 #include <Libs/Project/Project.h>
 
 namespace shapeworks {
@@ -18,10 +13,12 @@ public:
   //! Return the progress (0-100)
   float get_current_progress();
 
+  //! Run the grooming
   virtual void run();
 
 protected:
 
+  //! call to be overridden by subclasses
   virtual void update_progress()
   {};
 
@@ -34,10 +31,13 @@ private:
   //! Return the number of operations that will be performed
   int get_total_ops();
 
-  virtual void increment_progress();
+  //! Increment the progress one step
+  void increment_progress();
 
-  void image_groom_pipeline(std::shared_ptr<Subject> subject);
+  //! Run image based pipeline on a single subject
+  void image_pipeline(std::shared_ptr<Subject> subject);
 
+  //! Run the mesh based pipeline on a single subject
   void image_mesh_pipeline(std::shared_ptr<Subject> subject);
 
   Vector3 center(Image& image);
