@@ -765,7 +765,7 @@ ShapeHandle AnalysisTool::get_mean_shape()
           sum = sum + value;
         }
       }
-      auto mean = sum / values.size();
+      Eigen::VectorXf mean = sum / values.size();
 
       if (ready) {
         shape->set_point_features(this->feature_map_, mean);
@@ -787,7 +787,7 @@ ShapeHandle AnalysisTool::get_mean_shape()
           sum_left = sum_left + value;
         }
       }
-      auto left_mean = sum_left / this->group1_list_.size();
+      Eigen::VectorXf left_mean = sum_left / static_cast<double>(this->group1_list_.size());
 
       for (auto shape : this->group2_list_) {
         shape->load_feature(Visualizer::MODE_RECONSTRUCTION_C, this->feature_map_);
@@ -799,7 +799,7 @@ ShapeHandle AnalysisTool::get_mean_shape()
           sum_right = sum_right + value;
         }
       }
-      auto right_mean = sum_right / this->group2_list_.size();
+      Eigen::VectorXf right_mean = sum_right / static_cast<double>(this->group2_list_.size());
 
       if (ready) {
         double ratio = this->get_group_value();

@@ -1,6 +1,9 @@
 #pragma once
 
+#include <cstdlib>
+#include <string>
 #include <vector>
+#include <map>
 
 #include <QSharedPointer>
 #include <QVector>
@@ -9,7 +12,7 @@
 
 #include <Data/Preferences.h>
 #include <Data/MeshManager.h>
-#include <Groom/ShapeWorksGroom.h>
+
 
 using namespace shapeworks;
 
@@ -17,6 +20,9 @@ class Shape;
 
 class Session;
 typedef QSharedPointer<Session> SessionHandle;
+
+//! TODO: replace this
+using TransformType = itk::MatrixOffsetTransformBase<double, 3, 3>::ParametersType;
 
 //! Representation of a session.
 /*!

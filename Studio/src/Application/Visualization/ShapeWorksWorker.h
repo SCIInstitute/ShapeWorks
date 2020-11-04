@@ -2,7 +2,6 @@
 
 #include <QObject>
 
-#include <Groom/ShapeWorksGroom.h>
 #include <Data/Session.h>
 
 namespace shapeworks {

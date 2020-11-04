@@ -15,6 +15,8 @@
 
 using namespace shapeworks;
 
+using ReaderType = itk::ImageFileReader<ImageType>;
+
 //---------------------------------------------------------------------------
 Shape::Shape()
 {
@@ -201,7 +203,6 @@ void Shape::import_groomed_mesh(vtkSmartPointer<vtkPolyData> mesh, TransformType
   groomed_transforms.push_back(groomed_transform);
   this->subject_->set_groomed_transforms(groomed_transforms);
 }
-
 
 //---------------------------------------------------------------------------
 QSharedPointer<StudioMesh> Shape::get_groomed_mesh()
@@ -615,18 +616,6 @@ Eigen::VectorXf Shape::get_point_features(std::string feature)
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_point_features(std::string feature, Eigen::VectorXf values)
-{
-  this->point_features_[feature] = values;
-
-  auto mesh = this->get_mesh(Visualizer::MODE_RECONSTRUCTION_C);
-
-  if (mesh) {
-    mesh->interpolate_scalars_to_mesh(feature, this->global_correspondence_points_, values);
-  }
-}
-
-//---------------------------------------------------------------------------
 TransformType Shape::get_groomed_transform()
 {
   if (this->groomed_transform_.size() == 0) {
@@ -642,3 +631,14 @@ TransformType Shape::get_groomed_transform()
   return this->groomed_transform_;
 }
 
+//---------------------------------------------------------------------------
+void Shape::set_point_features(std::string feature, Eigen::VectorXf values)
+{
+  this->point_features_[feature] = values;
+
+  auto mesh = this->get_mesh(Visualizer::MODE_RECONSTRUCTION_C);
+
+  if (mesh) {
+    mesh->interpolate_scalars_to_mesh(feature, this->global_correspondence_points_, values);
+  }
+}

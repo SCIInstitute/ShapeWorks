@@ -1,13 +1,8 @@
-#ifdef _WIN32
-  #include <direct.h>
-  #define chdir _chdir
-#else
 
-  #include <unistd.h>
-#endif
+#include <vector>
 
 // qt
-#include <QThread>
+//#include <QThread>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -16,6 +11,15 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #include <QProgressDialog>
+
+
+#ifdef _WIN32
+#include <direct.h>
+  #define chdir _chdir
+#else
+
+  #include <unistd.h>
+#endif
 
 #include <tinyxml.h>
 
@@ -160,7 +164,7 @@ bool Session::save_project(std::string fname)
       }
       else {
         //try writing the groomed to file
-        WriterType::Pointer writer = WriterType::New();
+        auto writer = itk::ImageFileWriter<ImageType>::New();
         writer->SetFileName(location);
         writer->SetInput(this->shapes_[i]->get_groomed_image());
         writer->SetUseCompression(true);
@@ -721,7 +725,7 @@ QVector<QSharedPointer<Shape>> Session::get_shapes()
 void Session::remove_shapes(QList<int> list)
 {
   std::sort(list.begin(), list.end(), std::greater<>());
-    foreach(int i, list) {
+    foreach(size_t i, list) {
       auto subjects = this->project_->get_subjects();
       subjects.erase(subjects.begin() + i);
       this->shapes_.erase(this->shapes_.begin() + i);

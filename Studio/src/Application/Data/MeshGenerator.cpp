@@ -108,7 +108,9 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
   }
 
   try {
+
     // read file using ITK
+    using ReaderType = itk::ImageFileReader<ImageType>;
     ReaderType::Pointer reader = ReaderType::New();
     reader->SetFileName(filename);
     reader->Update();

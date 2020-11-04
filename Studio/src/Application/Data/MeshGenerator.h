@@ -17,8 +17,6 @@
 #include <Data/LegacyMeshGenerator.h>
 #include <Data/MeshWorkQueue.h>
 
-#include <Groom/ShapeWorksGroom.h>
-
 class MeshGenerator
 {
 public:

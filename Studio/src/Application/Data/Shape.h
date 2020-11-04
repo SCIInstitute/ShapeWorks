@@ -2,7 +2,6 @@
 
 #include <QSharedPointer>
 #include <QString>
-#include <Groom/ShapeWorksGroom.h>
 #include <Data/StudioMesh.h>
 #include <Libs/Project/Subject.h>
 #include <Data/MeshManager.h>
@@ -11,10 +10,14 @@ class Shape;
 using ShapeHandle = QSharedPointer<Shape>;
 using ShapeList = QVector<ShapeHandle>;
 
+//! TODO: replace this
+using TransformType = itk::MatrixOffsetTransformBase<double, 3, 3>::ParametersType;
+
 //! Representation of a single shape/patient/subject.
 class Shape {
 
 public:
+
 
   //! TODO: replace this wherever it is used
   class Point {
