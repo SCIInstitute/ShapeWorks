@@ -78,8 +78,6 @@ void StudioInteractorStyle::OnKeyDown()
     break;
 
   case 'r':
-    std::cerr << "r\n";
-
     this->lightbox_->reset_camera();
     break;
   }

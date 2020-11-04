@@ -163,7 +163,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   // groom tool initializations
   this->groom_tool_ = QSharedPointer<GroomTool>(new GroomTool());
   this->ui_->stacked_widget->addWidget(this->groom_tool_.data());
-  connect(this->groom_tool_.data(), SIGNAL(groom_complete()), this, SLOT(handle_groom_complete()));
+  connect(this->groom_tool_.data(), SIGNAL(groom_complete()),
+          this, SLOT(handle_groom_complete()));
   connect(this->groom_tool_.data(), SIGNAL(error_message(std::string)),
           this, SLOT(handle_error(std::string)));
   connect(this->groom_tool_.data(), SIGNAL(message(std::string)),
@@ -886,6 +887,7 @@ void ShapeWorksStudioApp::handle_groom_complete()
   this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, true);
   this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::GROOMED);
   this->update_display(true);
+  this->visualizer_->reset_camera();
 }
 
 //---------------------------------------------------------------------------
