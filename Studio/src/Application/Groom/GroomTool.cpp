@@ -73,8 +73,6 @@ void GroomTool::load_settings()
 {
   auto params = GroomParameters(this->session_->get_project());
 
-
-
   this->ui_->center_checkbox->setChecked(params.get_center_tool());
   this->ui_->antialias_checkbox->setChecked(params.get_antialias_tool());
   this->ui_->autopad_checkbox->setChecked(params.get_auto_pad_tool());
