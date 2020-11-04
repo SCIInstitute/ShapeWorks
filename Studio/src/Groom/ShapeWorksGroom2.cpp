@@ -45,28 +45,55 @@ void ShapeWorksGroom2::run()
 
         auto path = subjects[i]->get_segmentation_filenames()[0];
 
+        // load the image
         Image image(path);
 
+        // define a groom transform
+        auto transform = itk::AffineTransform<double, 3>::New();
+        transform->SetIdentity();
+
+        // centering
         if (params.get_center_tool()) {
-          this->center(image);
+          auto centering = this->center(image);
+
+          itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
+          tform[0] = centering[0];
+          tform[1] = centering[1];
+          tform[2] = centering[2];
+          transform->SetTranslation(tform);
+
           this->increment_progress();
         }
 
+        // store transform
+        std::vector<std::vector<double>> groomed_transforms;
+        std::vector<double> groomed_transform;
+        auto tform_params = transform->GetParameters();
+        for (int i = 0; i < tform_params.size(); i++) {
+          groomed_transform.push_back(tform_params[i]);
+        }
+        groomed_transforms.push_back(groomed_transform);
+        subjects[i]->set_groomed_transforms(groomed_transforms);
+
+        // isolate
         if (params.get_isolate_tool()) {
           this->isolate(image);
           this->increment_progress();
         }
 
+        // fill holes
         if (params.get_fill_holes_tool()) {
           this->hole_fill(image);
           this->increment_progress();
         }
 
+        // autopad
         if (params.get_auto_pad_tool()) {
           this->auto_pad(image, params.get_padding_amount());
           this->increment_progress();
         }
 
+        // antialias
         if (params.get_antialias_tool()) {
           this->antialias(image, params.get_antialias_iterations());
           this->increment_progress();
@@ -94,8 +121,6 @@ void ShapeWorksGroom2::run()
         // store filename back to subject
         subjects[i]->set_groomed_filenames(groomed_filenames);
 
-
-        //this->center(static_cast<int>(i));
       }
     });
   this->project_->store_subjects();
@@ -119,22 +144,19 @@ void ShapeWorksGroom2::isolate(Image& image)
   cc_filter->FullyConnectedOn();
   cc_filter->Update();
 
-  typedef itk::RelabelComponentImageFilter<IsolateType, IsolateType> RelabelType;
-  auto relabel = RelabelType::New();
+  auto relabel = itk::RelabelComponentImageFilter<IsolateType, IsolateType>::New();
   relabel->SetInput(cc_filter->GetOutput());
   relabel->SortByObjectSizeOn();
   relabel->Update();
 
-  typedef itk::ThresholdImageFilter<IsolateType> ThreshType;
-  auto thresh = ThreshType::New();
+  auto thresh = itk::ThresholdImageFilter<IsolateType>::New();
   thresh->SetInput(relabel->GetOutput());
   thresh->SetOutsideValue(0);
   thresh->ThresholdBelow(0);
   thresh->ThresholdAbove(1);
   thresh->Update();
 
-  typedef itk::CastImageFilter<IsolateType, ImageType> FilterType;
-  auto cast_filter = FilterType::New();
+  auto cast_filter = itk::CastImageFilter<IsolateType, ImageType>::New();
   cast_filter->SetInput(thresh->GetOutput());
   cast_filter->Update();
 
@@ -148,7 +170,7 @@ void ShapeWorksGroom2::hole_fill(Image& image)
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksGroom2::center(Image& image)
+Vector3 ShapeWorksGroom2::center(Image& image)
 {
   auto com = image.centerOfMass();
   auto diff = image.center() - com;
@@ -157,6 +179,8 @@ void ShapeWorksGroom2::center(Image& image)
   translation[1] = diff[1];
   translation[2] = diff[2];
   image.translate(translation, Image::InterpolationType::NearestNeighbor);
+
+  return translation;
 }
 
 //---------------------------------------------------------------------------
