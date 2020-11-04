@@ -87,9 +87,9 @@ void Groom::image_pipeline(std::shared_ptr<Subject> subject)
   // store transform
   std::vector<std::vector<double>> groomed_transforms;
   std::vector<double> groomed_transform;
-  auto tform_params = transform->GetParameters();
-  for (int i = 0; i < tform_params.size(); i++) {
-    groomed_transform.push_back(tform_params[i]);
+  auto transform_params = transform->GetParameters();
+  for (int i = 0; i < transform_params.size(); i++) {
+    groomed_transform.push_back(transform_params[i]);
   }
   groomed_transforms.push_back(groomed_transform);
   subject->set_groomed_transforms(groomed_transforms);
@@ -197,14 +197,17 @@ void Groom::isolate(Image& image)
 //---------------------------------------------------------------------------
 Vector3 Groom::center(Image& image)
 {
+  image.recenter();
   auto com = image.centerOfMass();
   auto diff = image.center() - com;
   Vector3 translation;
-  translation[0] = diff[0];
-  translation[1] = diff[1];
-  translation[2] = diff[2];
+  translation[0] = -diff[0];
+  translation[1] = -diff[1];
+  translation[2] = -diff[2];
   image.translate(translation, Image::InterpolationType::NearestNeighbor);
-
+  translation[0] = com[0];
+  translation[1] = com[1];
+  translation[2] = com[2];
   return translation;
 }
 
