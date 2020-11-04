@@ -2,6 +2,7 @@
 #include <tbb/task_scheduler_init.h>
 
 #include <Libs/Image/Image.h>
+#include <Libs/Mesh/Mesh.h>
 
 #include <ShapeWorksGroom2.h>
 #include <GroomParameters.h>
@@ -42,6 +43,10 @@ void ShapeWorksGroom2::run()
       for (size_t i = r.begin(); i < r.end(); ++i) {
 
         if (subjects[i]->get_domain_types()[0] == DomainType::Image) {
+          this->image_groom_pipeline(subjects[i]);
+        }
+
+        if (subjects[i]->get_domain_types()[0] == DomainType::Mesh) {
           this->image_groom_pipeline(subjects[i]);
         }
 
@@ -133,6 +138,20 @@ void ShapeWorksGroom2::image_groom_pipeline(std::shared_ptr<Subject> subject)
   std::vector<std::string> groomed_filenames{dt_name};
   // store filename back to subject
   subject->set_groomed_filenames(groomed_filenames);
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksGroom2::image_mesh_pipeline(std::shared_ptr<Subject> subject)
+{
+  auto path = subject->get_segmentation_filenames()[0];
+
+  // load the image
+  Mesh mesh(path);
+
+  std::string groom_name = path;
+  groom_name = groom_name.substr(0, groom_name.find_last_of(".")) + "_groomed.ply";
+
+  mesh.write(groom_name);
 }
 
 //---------------------------------------------------------------------------
@@ -228,4 +247,5 @@ void ShapeWorksGroom2::increment_progress()
   this->progress_ = static_cast<float>(this->progress_counter_)
                     / static_cast<float>(this->total_ops_);
 }
+
 

@@ -38,6 +38,8 @@ private:
 
   void image_groom_pipeline(std::shared_ptr<Subject> subject);
 
+  void image_mesh_pipeline(std::shared_ptr<Subject> subject);
+
   Vector3 center(Image& image);
   void isolate(Image& image);
   void hole_fill(Image& image);
