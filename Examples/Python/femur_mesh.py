@@ -22,7 +22,7 @@ def Run_Pipeline(args):
     outputDirectory = "Output/femur_mesh/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
-    CommonUtils.get_data(datasetName, outputDirectory)
+    CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
    
     groomDir = outputDirectory + 'groomed/'
     if not os.path.exists(groomDir):

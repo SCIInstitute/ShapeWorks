@@ -30,56 +30,57 @@ def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
-
+    # Get data
     datasetName = "left_atrium-v0"
     outputDirectory = "Output/left_atrium/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
-    CommonUtils.get_data(datasetName, outputDirectory)
-
+    CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
     fileList_img = sorted(glob.glob(outputDirectory + datasetName + "/images/*.nrrd"))
     fileList_seg = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))
-
+    # Get data for tiny test
     if args.tiny_test:
-        fileList_img = fileList_img[:5]
-        fileList_seg = fileList_seg[:5]
+        fileList_img = fileList_img[:3]
+        fileList_seg = fileList_seg[:3]
         args.use_single_scale = True
-        
+    # Get data if using subsample
     if args.use_subsample:
         sample_idx = sampledata(fileList_seg, int(args.use_subsample))
         fileList_seg= [fileList_seg[i] for i in sample_idx]
         fileList_img = [fileList_img[i] for i in sample_idx]
-        
-    if args.start_with_prepped_data:
-        dtFiles = sorted(glob.glob(outputDirectory + datasetName + "/groomed/distance_transforms/*.nrrd"))
-        
-        if args.use_subsample:
-            dtFiles = [dtFiles[i] for i in sample_idx]
-        if args.tiny_test:
-            dtFiles  = dtFiles[:2]
-        
     else:
+        sample_idx = []
+    
+    """
+    ## GROOM : Data Pre-processing
+    For the unprepped data the first few steps are
+    -- Isotropic resampling
+    -- Center
+    -- Padding
+    -- Center of Mass Alignment
+    -- Rigid Alignment
+    -- Largest Bounding Box and Cropping
+    """  
+    if args.skip_grooming:
+        print("Skipping grooming.")
+        dtDirecory = outputDirectory + datasetName + '/groomed/distance_transforms/'
+        indices = []
+        if args.tiny_test:
+            indices = [0,1,2]
+        elif args.use_subsample:
+            indices = sample_idx
+        dtFiles = CommonUtils.get_file_list(dtDirecory, ending=".nrrd", indices=indices)
+    else:
+        print("\nStep 2. Groom - Data Pre-processing\n")
+        if args.interactive:
+            input("Press Enter to continue")
 
         groomDir = outputDirectory + 'groomed/'
         if not os.path.exists(groomDir):
             os.makedirs(groomDir)
         
-        if args.start_with_image_and_segmentation_data and fileList_img:
-            """
-            ## GROOM : Data Pre-processing
-            For the unprepped data the first few steps are
-            -- Isotropic resampling
-            -- Center
-            -- Padding
-            -- Center of Mass Alignment
-            -- Rigid Alignment
-            -- Largest Bounding Box and Cropping
-            """
-
-            print("\nStep 2. Groom - Data Pre-processing\n")
-            if args.interactive:
-                input("Press Enter to continue")
-
+        # Groom with images
+        if args.groom_images and fileList_img:
             """
             Apply isotropic resampling
             the segmentation and images are resampled independently and the result files are saved in two different directories.
@@ -139,21 +140,8 @@ def Run_Pipeline(args):
             
             dtFiles = applyDistanceTransforms(groomDir, croppedFiles_segmentations)
 
+        # Groom without images
         else:
-            """
-            ## GROOM : Data Pre-processing
-            For the unprepped data the first few steps are
-            -- Isotropic resampling
-            -- Padding
-            -- Center of Mass Alignment
-            -- Rigid Alignment
-            -- Largest Bounding Box and Cropping
-            """
-
-            print("\nStep 2. Groom - Data Pre-processing\n")
-            if args.interactive:
-                input("Press Enter to continue")
-
             """
             Apply isotropic resampling
             """
