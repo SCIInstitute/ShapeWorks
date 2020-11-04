@@ -22,6 +22,16 @@
 #include "itkThresholdImageFilter.h"
 #include "itkBinaryFillholeImageFilter.h"
 
+using namespace shapeworks;
+
+//---------------------------------------------------------------------------
+ShapeWorksGroom::ShapeWorksGroom(shapeworks::ProjectHandle project)
+{
+  this->project_ = project;
+}
+
+
+//---------------------------------------------------------------------------
 ShapeWorksGroom::ShapeWorksGroom(
   std::vector<ImageType::Pointer> inputs,
   double background, double foreground,
@@ -34,11 +44,13 @@ ShapeWorksGroom::ShapeWorksGroom(
   this->transforms_.resize(this->images_.size());
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksGroom::queueTool(const std::string& tool)
 {
   this->runTools_.insert(std::make_pair(tool, true));
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksGroom::run()
 {
   if (this->runTools_.count("center")) {
@@ -64,19 +76,23 @@ void ShapeWorksGroom::run()
   }
 }
 
+//---------------------------------------------------------------------------
 std::map<std::string, bool> ShapeWorksGroom::tools()
 {
   return this->runTools_;
 }
 
+//---------------------------------------------------------------------------
 double ShapeWorksGroom::foreground() const
 { return this->foreground_; }
 
+//---------------------------------------------------------------------------
 std::vector<ImageType::Pointer> ShapeWorksGroom::getImages()
 {
   return this->images_;
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksGroom::isolate(int which)
 {
   if (this->verbose_) {
@@ -122,6 +138,7 @@ void ShapeWorksGroom::isolate(int which)
   }
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksGroom::hole_fill(int which)
 {
   if (this->verbose_) {
@@ -144,6 +161,7 @@ void ShapeWorksGroom::hole_fill(int which)
   }
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksGroom::center(int which)
 {
   if (this->verbose_) {
@@ -239,6 +257,7 @@ void ShapeWorksGroom::center(int which)
   }
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksGroom::auto_pad(int which)
 {
   if (this->verbose_) {
@@ -312,6 +331,7 @@ void ShapeWorksGroom::auto_pad(int which)
   }
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksGroom::antialias(int which)
 {
   if (this->verbose_) {
@@ -335,6 +355,7 @@ void ShapeWorksGroom::antialias(int which)
   }
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksGroom::fastmarching(int which)
 {
   if (this->verbose_) {
@@ -361,6 +382,7 @@ void ShapeWorksGroom::fastmarching(int which)
   }
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksGroom::blur(int which)
 {
   if (this->verbose_) {
@@ -383,6 +405,7 @@ void ShapeWorksGroom::blur(int which)
   }
 }
 
+//---------------------------------------------------------------------------
 std::vector<TransformType> ShapeWorksGroom::get_transforms()
 {
   return this->transforms_;

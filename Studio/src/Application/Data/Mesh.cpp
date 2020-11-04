@@ -117,7 +117,7 @@ void Mesh::create_from_image(ImageType::Pointer image, double iso_value)
     // store isosurface polydata
     this->poly_data_ = marching->GetOutput();
   } catch (itk::ExceptionObject& excep) {
-    std::cerr << "3Exception caught!" << std::endl;
+    std::cerr << "Exception caught!" << std::endl;
     std::cerr << excep << std::endl;
   }
 }

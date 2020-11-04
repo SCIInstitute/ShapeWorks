@@ -11,6 +11,8 @@
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
 
+#include <Libs/Project/Project.h>
+
 typedef float PixelType;
 typedef itk::Image<PixelType, 3> ImageType;
 typedef itk::ImageFileReader<ImageType> ReaderType;
@@ -19,6 +21,9 @@ typedef itk::AffineTransform<double, 3>::ParametersType TransformType;
 
 class ShapeWorksGroom {
 public:
+
+  explicit ShapeWorksGroom(shapeworks::ProjectHandle project);
+
   explicit ShapeWorksGroom(std::vector<ImageType::Pointer> inputs = std::vector<ImageType::Pointer>(),
                   double background = 0., double foreground = 0.,
                   double sigma = 2.0,
@@ -50,4 +55,6 @@ protected:
   ImageType::IndexType upper_ = {0,0,0};
   ImageType::IndexType lower_ = {0,0,0};
   bool paddingInit_ = false;
+
+  shapeworks::ProjectHandle project_;
 };

@@ -15,6 +15,9 @@ class workbook;
 
 namespace shapeworks {
 
+class Project;
+using ProjectHandle = std::shared_ptr<Project>;
+
 //! Representation of a project.
 /*!
  * The Project class encapsulates the spreadsheet based file format for storing project data.
