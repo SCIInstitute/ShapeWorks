@@ -4,6 +4,7 @@
 #include "ShapeEvaluation.h"
 #include <Libs/Optimize/Optimize.h>
 #include <Libs/Optimize/OptimizeParameterFile.h>
+#include <Libs/Groom/Groom.h>
 #include <limits>
 
 namespace shapeworks {
@@ -1549,7 +1550,7 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
 
   if (project_file.length() == 0)
   {
-    std::cerr << "Must specify project name\n";
+    std::cerr << "Must specify projects name\n";
     return false;
   }
 
@@ -1557,6 +1558,41 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
   OptimizeParameterFile param;
   param.load_parameter_file(project_file.c_str(), &app);
   return app.Run();
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+/// Groom
+///////////////////////////////////////////////////////////////////////////////
+void GroomCommand::buildParser()
+{
+  const std::string prog = "groom";
+  const std::string desc = "Groom a shapeworks project";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help(
+    "Path to parameter file.");
+
+  Command::buildParser();
+}
+
+bool GroomCommand::execute(const optparse::Values& options, SharedCommandData& sharedData)
+{
+  const std::string& project_file(static_cast<std::string>(options.get("name")));
+
+  if (project_file.length() == 0) {
+    std::cerr << "Must specify project name\n";
+    return false;
+  }
+
+  ProjectHandle project = std::make_shared<Project>();
+  project->load(project_file);
+  Groom app(project);
+  bool success = app.run();
+  if (success) {
+    project->save(project_file);
+  }
+  return success;
 }
 
 } // shapeworks

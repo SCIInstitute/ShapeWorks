@@ -4,6 +4,7 @@
 #include <Libs/Image/Image.h>
 
 #include <tbb/atomic.h>
+#include <tbb/mutex.h>
 
 namespace shapeworks {
 
@@ -23,7 +24,7 @@ public:
   float get_current_progress();
 
   //! Run the grooming
-  virtual void run();
+  virtual bool run();
 
   //! Set if grooming steps should be skipped
   void set_skip_grooming(bool skip);
@@ -47,10 +48,16 @@ private:
   void increment_progress(int amount = 1);
 
   //! Run image based pipeline on a single subject
-  void image_pipeline(std::shared_ptr<Subject> subject);
+  bool image_pipeline(std::shared_ptr<Subject> subject);
 
   //! Run the mesh based pipeline on a single subject
-  void image_mesh_pipeline(std::shared_ptr<Subject> subject);
+  bool image_mesh_pipeline(std::shared_ptr<Subject> subject);
+
+  //! Load a mesh
+  std::shared_ptr<Mesh> load_mesh(std::string filename);
+
+  //! Save a mesh
+  bool save_mesh(std::shared_ptr<Mesh> mesh, std::string filename);
 
   Vector3 center(Image& image);
   void isolate(Image& image);
@@ -60,5 +67,8 @@ private:
   ProjectHandle project_;
 
   bool skip_grooming_ = false;
+
+  // locking to handle non-thread-safe code
+  tbb::mutex mutex_;
 };
 }

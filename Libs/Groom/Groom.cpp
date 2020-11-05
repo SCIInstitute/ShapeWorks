@@ -27,7 +27,7 @@ Groom::Groom(ProjectHandle project)
 }
 
 //---------------------------------------------------------------------------
-void Groom::run()
+bool Groom::run()
 {
   this->progress_ = 0;
   this->progress_counter_ = 0;
@@ -35,17 +35,23 @@ void Groom::run()
 
   auto subjects = this->project_->get_subjects();
 
+  tbb::atomic<bool> success = true;
+
   tbb::parallel_for(
     tbb::blocked_range<size_t>{0, subjects.size()},
     [&](const tbb::blocked_range<size_t>& r) {
       for (size_t i = r.begin(); i < r.end(); ++i) {
 
         if (subjects[i]->get_domain_types()[0] == DomainType::Image) {
-          this->image_pipeline(subjects[i]);
+          if (!this->image_pipeline(subjects[i])) {
+            success = false;
+          }
         }
 
         if (subjects[i]->get_domain_types()[0] == DomainType::Mesh) {
-          this->image_mesh_pipeline(subjects[i]);
+          if (!this->image_mesh_pipeline(subjects[i])) {
+            success = false;
+          }
         }
 
       }
@@ -53,10 +59,11 @@ void Groom::run()
 
   // store back to project
   this->project_->store_subjects();
+  return success;
 }
 
 //---------------------------------------------------------------------------
-void Groom::image_pipeline(std::shared_ptr<Subject> subject)
+bool Groom::image_pipeline(std::shared_ptr<Subject> subject)
 {
   // grab parameters
   auto params = GroomParameters(this->project_);
@@ -85,7 +92,7 @@ void Groom::image_pipeline(std::shared_ptr<Subject> subject)
     std::vector<std::string> groomed_filenames{path};
     // store filename back to subject
     subject->set_groomed_filenames(groomed_filenames);
-    return;
+    return true;
   }
 
   // centering
@@ -158,10 +165,12 @@ void Groom::image_pipeline(std::shared_ptr<Subject> subject)
   std::vector<std::string> groomed_filenames{dt_name};
   // store filename back to subject
   subject->set_groomed_filenames(groomed_filenames);
+
+  return true;
 }
 
 //---------------------------------------------------------------------------
-void Groom::image_mesh_pipeline(std::shared_ptr<Subject> subject)
+bool Groom::image_mesh_pipeline(std::shared_ptr<Subject> subject)
 {
   // grab parameters
   auto params = GroomParameters(this->project_);
@@ -170,8 +179,11 @@ void Groom::image_mesh_pipeline(std::shared_ptr<Subject> subject)
 
   try {
     // load the image
-    Mesh mesh(path);
-    
+    std::shared_ptr<Mesh> mesh = this->load_mesh(path);
+    if (!mesh) {
+      return false;
+    }
+
     // define a groom transform
     auto transform = itk::AffineTransform<double, 3>::New();
     transform->SetIdentity();
@@ -190,18 +202,18 @@ void Groom::image_mesh_pipeline(std::shared_ptr<Subject> subject)
       std::vector<std::string> groomed_filenames{path};
       // store filename back to subject
       subject->set_groomed_filenames(groomed_filenames);
-      return;
+      return true;
     }
 
     // centering
     if (params.get_center_tool()) {
-      auto com = mesh.centerOfMass();
+      auto com = mesh->centerOfMass();
 
       Vector3 vector;
       vector[0] = -com[0];
       vector[1] = -com[1];
       vector[2] = -com[2];
-      mesh.translate(vector);
+      mesh->translate(vector);
 
       itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
       tform[0] = com[0];
@@ -228,7 +240,7 @@ void Groom::image_mesh_pipeline(std::shared_ptr<Subject> subject)
     groom_name = groom_name.substr(0, groom_name.find_last_of('.')) + "_groomed.ply";
 
     // save the groomed mesh
-    mesh.write(groom_name);
+    this->save_mesh(mesh, groom_name);
 
     // only single domain supported so far
     std::vector<std::string> groomed_filenames{groom_name};
@@ -237,7 +249,9 @@ void Groom::image_mesh_pipeline(std::shared_ptr<Subject> subject)
 
   } catch (std::exception e) {
     std::cerr << "Exception: " << e.what() << "\n";
+    return false;
   }
+  return true;
 }
 
 //---------------------------------------------------------------------------
@@ -324,6 +338,32 @@ void Groom::increment_progress(int amount)
 void Groom::set_skip_grooming(bool skip)
 {
   this->skip_grooming_ = skip;
+}
+
+//---------------------------------------------------------------------------
+std::shared_ptr<Mesh> Groom::load_mesh(std::string filename)
+{
+  tbb::mutex::scoped_lock lock(this->mutex_);
+  try {
+    auto mesh = std::make_shared<Mesh>(filename);
+    return mesh;
+  } catch (std::exception e) {
+    std::cerr << "Exception: " << e.what() << "\n";
+  }
+  return nullptr;
+}
+
+//---------------------------------------------------------------------------
+bool Groom::save_mesh(std::shared_ptr<Mesh> mesh, std::string filename)
+{
+  tbb::mutex::scoped_lock lock(this->mutex_);
+  try {
+    mesh->write(filename);
+    return true;
+  } catch (std::exception e) {
+    std::cerr << "Exception: " << e.what() << "\n";
+  }
+  return false;
 }
 
 

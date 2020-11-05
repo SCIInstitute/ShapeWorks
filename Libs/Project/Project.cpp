@@ -442,7 +442,6 @@ void Project::set_parameters(const std::string& name, Parameters params)
     ws.cell(xlnt::cell_reference(2, 1)).value("value");
     int row = 2; // skip header
     for (const auto& kv : params.get_map()) {
-      std::cout << "Storing " << kv.first << " with value " << kv.second << std::endl;
       ws.cell(xlnt::cell_reference(1, row)).value(kv.first);
       ws.cell(xlnt::cell_reference(2, row)).value(kv.second);
       row++;
