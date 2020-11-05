@@ -49,8 +49,8 @@ public Q_SLOTS:
   void on_antialias_checkbox_stateChanged(int state);
   void on_blur_checkbox_stateChanged(int state);
   void on_autopad_checkbox_stateChanged(int state);
-  void on_skipButton_clicked();
-  void on_restoreDefaults_clicked();
+  void on_skip_button_clicked();
+  void on_restore_defaults_clicked();
 
   //! Run groom tool
   void on_run_groom_button_clicked();

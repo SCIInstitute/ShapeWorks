@@ -48,8 +48,7 @@ void GroomTool::on_autopad_checkbox_stateChanged(int state)
 void GroomTool::handle_error(std::string msg)
 {
   emit error_message(msg);
-  this->ui_->run_groom_button->setEnabled(true);
-  this->ui_->skipButton->setEnabled(true);
+  this->enable_actions();
 }
 
 //---------------------------------------------------------------------------
@@ -59,7 +58,7 @@ void GroomTool::handle_progress(int val)
 }
 
 //---------------------------------------------------------------------------
-void GroomTool::on_restoreDefaults_clicked()
+void GroomTool::on_restore_defaults_clicked()
 {
   // store a set of blank settings
   Parameters params;
@@ -88,14 +87,14 @@ void GroomTool::load_settings()
 //---------------------------------------------------------------------------
 void GroomTool::disable_actions()
 {
-  this->ui_->skipButton->setEnabled(false);
+  this->ui_->skip_button->setEnabled(false);
   this->ui_->run_groom_button->setEnabled(false);
 }
 
 //---------------------------------------------------------------------------
 void GroomTool::enable_actions()
 {
-  this->ui_->skipButton->setEnabled(true);
+  this->ui_->skip_button->setEnabled(true);
   this->ui_->run_groom_button->setEnabled(true);
 }
 
@@ -124,14 +123,12 @@ void GroomTool::on_run_groom_button_clicked()
   this->timer_.start();
 
   this->store_settings();
-  std::cerr << "################## on run groom\n";
   emit message("Please wait: running groom step...");
   emit progress(0);
 
   this->groom_ = QSharedPointer<QGroom>(new QGroom(this->session_->get_project()));
 
-  this->ui_->run_groom_button->setEnabled(false);
-  this->ui_->skipButton->setEnabled(false);
+  this->disable_actions();
   QThread* thread = new QThread;
   ShapeworksWorker* worker = new ShapeworksWorker(
     ShapeworksWorker::GroomType, this->groom_, nullptr, this->session_);
@@ -156,8 +153,8 @@ void GroomTool::handle_thread_complete()
   emit progress(100);
   emit message("Groom Complete");
   emit groom_complete();
-  this->ui_->run_groom_button->setEnabled(true);
-  this->ui_->skipButton->setEnabled(true);
+
+  this->enable_actions();
 }
 
 //---------------------------------------------------------------------------
@@ -167,7 +164,7 @@ void GroomTool::set_session(QSharedPointer<Session> session)
 }
 
 //---------------------------------------------------------------------------
-void GroomTool::on_skipButton_clicked()
+void GroomTool::on_skip_button_clicked()
 {
   this->store_settings();
   this->groom_ = QSharedPointer<QGroom>(new QGroom(this->session_->get_project()));

@@ -298,7 +298,7 @@ background: rgb(255, 255, 127)
       <number>0</number>
      </property>
      <item>
-      <widget class="QPushButton" name="skipButton">
+      <widget class="QPushButton" name="skip_button">
        <property name="text">
         <string>Skip</string>
        </property>
@@ -314,7 +314,7 @@ background: rgb(255, 255, 127)
     </layout>
    </item>
    <item>
-    <widget class="QPushButton" name="restoreDefaults">
+    <widget class="QPushButton" name="restore_defaults">
      <property name="text">
       <string>Restore Defaults</string>
      </property>
@@ -346,9 +346,9 @@ background: rgb(255, 255, 127)
   <tabstop>blur_checkbox</tabstop>
   <tabstop>blur_sigma</tabstop>
   <tabstop>fastmarching_checkbox</tabstop>
-  <tabstop>skipButton</tabstop>
+  <tabstop>skip_button</tabstop>
   <tabstop>run_groom_button</tabstop>
-  <tabstop>restoreDefaults</tabstop>
+  <tabstop>restore_defaults</tabstop>
  </tabstops>
  <resources/>
  <connections/>
