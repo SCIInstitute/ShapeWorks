@@ -38,6 +38,7 @@ static void prep_distance_transform(std::string input, std::string output)
   writer->Update();
 }
 
+/*
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, sample_test) {
 
@@ -196,6 +197,7 @@ TEST(OptimizeTests, use_normals_test) {
   ASSERT_GT(values[values.size() - 1], 2500);
   ASSERT_LT(values[values.size() - 2], 300);
 }
+*/
 
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, cutting_plane_test) {
@@ -251,6 +253,7 @@ TEST(OptimizeTests, cutting_plane_test) {
   }
 }
 
+/*
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, sphere_constraint_test) {
 
@@ -290,3 +293,4 @@ TEST(OptimizeTests, sphere_constraint_test) {
   ASSERT_GT(values[values.size() - 1], 2500);
   ASSERT_LT(values[values.size() - 2], 150);
 }
+*/

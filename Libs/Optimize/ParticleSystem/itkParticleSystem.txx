@@ -276,94 +276,100 @@ ParticleSystem<VDimension>
 }
 
 template<unsigned int VDimension>
-void ParticleSystem<VDimension>::AdvancedAllParticleSplitting(double epsilon)
+void ParticleSystem<VDimension>::AdvancedAllParticleSplitting(double epsilon, const std::vector<unsigned int>& number_of_particles)
 {
   size_t num_doms = this->GetNumberOfDomains();
 
-  std::vector<std::vector<PointType> > lists;
+  for (int n = 0; n < m_DomainsPerShape; n++) {
 
-  for (size_t domain = 0; domain < num_doms; domain++) {
-    std::vector<PointType> list;
-    typename PointContainerType::ConstIterator endIt = GetPositions(domain)->GetEnd();
-    for (typename PointContainerType::ConstIterator it = GetPositions(domain)->GetBegin();
-         it != endIt; it++) { list.push_back(*it); }
-    lists.push_back(list);
-    // Debuggg
-    /*
-    std::cout << "Domain " << domain << " Curr Pos ";
-    for(size_t i = 0; i < list.size(); i++)
-        std::cout << list[i] << " ";
-    std::cout << " List size " << list.size() << std::endl;
-    */
-  }
+      std::vector<std::vector<PointType> > lists;
+      std::vector<size_t> dom_inds;
 
-  /*
-  std::vector< std::vector<vnl_vector<double> > > lists;
+      for (size_t domain = n; domain < num_doms; domain+=m_DomainsPerShape) {
+        std::vector<PointType> list;
+        typename PointContainerType::ConstIterator endIt = GetPositions(domain)->GetEnd();
+        for (typename PointContainerType::ConstIterator it = GetPositions(domain)->GetBegin();
+             it != endIt; it++) { list.push_back(*it); }
+        lists.push_back(list);
+        dom_inds.push_back(domain);
+        // Debuggg
+        /*
+        std::cout << "Domain " << domain << " Curr Pos ";
+        for(size_t i = 0; i < list.size(); i++)
+            std::cout << list[i] << " ";
+        std::cout << " List size " << list.size() << std::endl;
+        */
+      }
 
-  for (int i = 0; i < n; i++) {
-    int d = i % m_domains_per_shape;
-    if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d]) {
-      std::vector<vnl_vector<double> > list = *(m_sampler->GetParticleSystem()->GetPositions(i));
-      std::cout << "list_size " << list.size() << std::endl;
-      //m_sampler->GetParticleSystem()->SplitAllParticlesInDomain(random, epsilon, i, 0);
-    }
-  }
-  */
+      /*
+      std::vector< std::vector<vnl_vector<double> > > lists;
 
-  if (lists.size() > 0) {
-    for (size_t i = 0; i < lists[0].size(); i++) {
-      // While the random vector updated violates plane constraints
-      // Breaks when it doesn't violate for any domain
-      std::vector<PointType> newposs_good;
-
-      while (true) {
-        // Generate random unit vector
-        std::uniform_real_distribution<double> distribution(-1000., 1000.);
-
-        vnl_vector_fixed<double, 3> random;
-
-        for (int i = 0; i < 3; i++) {
-          random[i] = distribution(this->m_rand);
+      for (int i = 0; i < n; i++) {
+        int d = i % m_domains_per_shape;
+        if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d]) {
+          std::vector<vnl_vector<double> > list = *(m_sampler->GetParticleSystem()->GetPositions(i));
+          std::cout << "list_size " << list.size() << std::endl;
+          //m_sampler->GetParticleSystem()->SplitAllParticlesInDomain(random, epsilon, i, 0);
         }
-        double norm = random.magnitude();
-        random /= norm;
+      }
+      */
 
-        // Check where the update will take us after applying it to the point and th constraints.
-        newposs_good.clear();
-        bool good = true; // flag to check if the new update violates in any domain
-        for (size_t j = 0; j < lists.size(); j++) {
-          // Add epsilon times random direction to existing point and apply domain
-          // constraints to generate a new particle position.
-          PointType newpos;
-          for (unsigned int k = 0; k < 3; k++) {
-            newpos[k] = lists[j][i][k] + epsilon * random[k] / 5.;
-          }
-          // Go to surface
-          if (!this->m_DomainFlags[j] &&
-              !this->GetDomain(j)->GetConstraints()->IsAnyViolated(newpos)) {
-            this->GetDomain(j)->ApplyConstraints(newpos);
-          }
-          newposs_good.push_back(newpos);
-          // Check for plane constraint violations
-          if (this->GetDomain(j)->GetConstraints()->IsAnyViolated(newpos)) {
-            good = false;
-            break;
-          }
-        }
+      if (lists.size() > 0 && lists[0].size() < number_of_particles[n]) {
+        for (size_t i = 0; i < lists[0].size(); i++) {
+          // While the random vector updated violates plane constraints
+          // Breaks when it doesn't violate for any domain
+          std::vector<PointType> newposs_good;
 
-        if (good) {
-          for (size_t j = 0; j < lists.size(); j++) {
-            this->AddPosition(newposs_good[j], j, 0);
-            // Debuggg
-            //std::cout << "Domain " << j << " Curr Pos " << lists[j][i] << " random "
-            // << random  << " epsilon " << epsilon << " picked " << newposs_good[j] << std::endl;
-          }
-          break;
-        }
+          while (true) {
+            // Generate random unit vector
+            std::uniform_real_distribution<double> distribution(-1000., 1000.);
 
-      }// while end
-    } // for end
-  } // if end
+            vnl_vector_fixed<double, 3> random;
+
+            for (int i = 0; i < 3; i++) {
+              random[i] = distribution(this->m_rand);
+            }
+            double norm = random.magnitude();
+            random /= norm;
+
+            // Check where the update will take us after applying it to the point and th constraints.
+            newposs_good.clear();
+            bool good = true; // flag to check if the new update violates in any domain
+            for (size_t j = 0; j < lists.size(); j++) {
+              // Add epsilon times random direction to existing point and apply domain
+              // constraints to generate a new particle position.
+              PointType newpos;
+              for (unsigned int k = 0; k < 3; k++) {
+                newpos[k] = lists[j][i][k] + epsilon * random[k] / 5.;
+              }
+              // Go to surface
+              if (!this->m_DomainFlags[j] &&
+                  !this->GetDomain(j)->GetConstraints()->IsAnyViolated(newpos)) {
+                this->GetDomain(j)->ApplyConstraints(newpos);
+              }
+              newposs_good.push_back(newpos);
+              // Check for plane constraint violations
+              if (this->GetDomain(j)->GetConstraints()->IsAnyViolated(newpos)) {
+                good = false;
+                break;
+              }
+            }
+
+            if (good) {
+              for (size_t j = 0; j < lists.size(); j++) {
+                this->AddPosition(newposs_good[j], dom_inds[j], 0);
+                // Debuggg
+                //std::cout << "Domain " << dom_inds[j] << " Curr Pos " << lists[j][i] << " random "
+                // << random  << " epsilon " << epsilon << " picked " << newposs_good[j] << std::endl;
+              }
+              break;
+            }
+
+          }// while end
+        } // sample for end
+      } // if end
+  } // domain for end
+
 }
 
 template <unsigned int VDimension>

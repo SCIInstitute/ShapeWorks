@@ -697,7 +697,7 @@ void Optimize::Initialize()
     }
     */
 
-    m_sampler->GetParticleSystem()->AdvancedAllParticleSplitting(epsilon);
+    m_sampler->GetParticleSystem()->AdvancedAllParticleSplitting(epsilon, m_number_of_particles);
 
     m_sampler->GetParticleSystem()->SynchronizePositions();
 
