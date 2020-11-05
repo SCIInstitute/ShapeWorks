@@ -527,42 +527,6 @@ void Session::load_original_files(std::vector<std::string> filenames)
 }
 
 //---------------------------------------------------------------------------
-void Session::load_groomed_images(std::vector<ImageType::Pointer> images,
-                                  double iso, std::vector<TransformType> transforms)
-{
-  QProgressDialog progress("Loading groomed images...", "Abort",
-                           0, images.size(), this->parent_);
-  progress.setWindowModality(Qt::WindowModal);
-  progress.setMinimumDuration(2000);
-
-  for (int i = 0; i < images.size(); i++) {
-    progress.setValue(i);
-    QApplication::processEvents();
-    if (progress.wasCanceled()) {
-      break;
-    }
-    if (this->shapes_.size() <= i) {
-      QSharedPointer<Shape> new_shape = QSharedPointer<Shape>(new Shape);
-      new_shape->set_mesh_manager(this->mesh_manager_);
-      this->shapes_.push_back(new_shape);
-    }
-    TransformType transform;
-    if (i < transforms.size()) {
-      transform = transforms[i];
-    }
-    this->shapes_[i]->import_groomed_image(images[i], iso, transform);
-  }
-  progress.setValue(images.size());
-  QApplication::processEvents();
-
-  this->project_->store_subjects();
-  if (images.size() > 0) {
-    this->unsaved_groomed_files_ = true;
-    emit data_changed();
-  }
-}
-
-//---------------------------------------------------------------------------
 void Session::set_groomed_mesh(int i, vtkSmartPointer<vtkPolyData> mesh, TransformType transform)
 {
   this->shapes_[i]->import_groomed_mesh(mesh, transform);
