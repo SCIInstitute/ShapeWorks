@@ -171,8 +171,7 @@ void Groom::image_mesh_pipeline(std::shared_ptr<Subject> subject)
   try {
     // load the image
     Mesh mesh(path);
-
-
+    
     // define a groom transform
     auto transform = itk::AffineTransform<double, 3>::New();
     transform->SetIdentity();
@@ -222,7 +221,6 @@ void Groom::image_mesh_pipeline(std::shared_ptr<Subject> subject)
     }
     groomed_transforms.push_back(groomed_transform);
     subject->set_groomed_transforms(groomed_transforms);
-
 
 
     // store groomed mesh
