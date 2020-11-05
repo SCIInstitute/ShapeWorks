@@ -16,6 +16,10 @@
 #include <vtkXMLPolyDataReader.h>
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkPointData.h>
+#include <vtkCenterOfMass.h>
+#include <vtkTransform.h>
+#include <vtkTransformPolyDataFilter.h>
+
 #include <itkImageToVTKImageFilter.h>
 
 static bool compare_double(double a, double b)
@@ -226,6 +230,34 @@ bool Mesh::compare_scalars_equal(const Mesh &other_mesh)
   }
 
   return true;
+}
+
+Point3 Mesh::centerOfMass() const
+{
+  auto com = vtkSmartPointer<vtkCenterOfMass>::New();
+  com->SetInputData(this->mesh);
+  com->Update();
+  double center[3];
+  com->GetCenter(center);
+  return center;
+}
+
+Mesh& Mesh::translate(const Vector3& v)
+{
+  auto translation = vtkSmartPointer<vtkTransform>::New();
+  translation->Translate(v[0], v[1], v[2]);
+  auto transform_filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  transform_filter->SetInputData(this->mesh);
+  transform_filter->SetTransform(translation);
+  transform_filter->Update();
+  this->mesh = transform_filter->GetOutput();
+
+  return *this;
+}
+
+Mesh::MeshType Mesh::get_poly_data()
+{
+  return this->mesh;
 }
 
 } // shapeworks

@@ -749,6 +749,7 @@ void ShapeWorksStudioApp::update_tool_mode()
   }
   else if (tool_state == Session::GROOM_C) {
     this->ui_->stacked_widget->setCurrentWidget(this->groom_tool_.data());
+    this->groom_tool_->activate();
     this->ui_->controlsDock->setWindowTitle("Groom");
     this->set_view_mode(Visualizer::MODE_ORIGINAL_C);
     this->ui_->action_groom_mode->setChecked(true);

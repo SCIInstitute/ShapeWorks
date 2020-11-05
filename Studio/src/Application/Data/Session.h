@@ -65,7 +65,6 @@ public:
   /// load groomed files
   void load_groomed_files(std::vector<std::string> file_names, double iso);
 
-  void set_groomed_mesh(int i, vtkSmartPointer<vtkPolyData> mesh, TransformType transform);
 
   /// load point files
   bool load_point_files(std::vector<std::string> file_names, bool local);

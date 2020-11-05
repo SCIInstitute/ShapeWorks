@@ -18,7 +18,6 @@ class Shape {
 
 public:
 
-
   //! TODO: replace this wherever it is used
   class Point {
   public:
@@ -54,9 +53,6 @@ public:
 
   /// Retrieve the groomed mesh
   QSharedPointer<StudioMesh> get_groomed_mesh();
-
-  /// Import the groomed mesh file
-  void import_groomed_mesh(vtkSmartPointer<vtkPolyData> mesh, TransformType transform);
 
   /// Import global correspondence point file
   bool import_global_point_file(QString filename);

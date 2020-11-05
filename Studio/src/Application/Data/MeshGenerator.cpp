@@ -9,8 +9,12 @@
 
 #include <Data/MeshGenerator.h>
 #include <Data/ItkToVtk.h>
+#include <Data/StudioLog.h>
+
 #include <itkVTKImageExport.h>
 #include <itkOrientImageFilter.h>
+
+#include <Libs/Mesh/Mesh.h>
 
 //---------------------------------------------------------------------------
 MeshGenerator::MeshGenerator(Preferences& prefs)
@@ -97,42 +101,51 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
     return mesh;
   }
 
-  if (QString::fromStdString(filename).toLower().endsWith(".vtk")) {
-
-    vtkSmartPointer<vtkPolyDataReader> reader = vtkSmartPointer<vtkPolyDataReader>::New();
-    reader->SetFileName(filename.c_str());
-    reader->Update();
-    mesh->set_poly_data(reader->GetOutput());
-
-    return mesh;
+  bool is_mesh = false;
+  for (auto type : shapeworks::Mesh::get_supported_types()) {
+    if (Utils::hasSuffix(filename, type)) {
+      is_mesh = true;
+    }
   }
 
-  try {
+  if (is_mesh) {
+    try {
+      shapeworks::Mesh reader(filename);
+      mesh->set_poly_data(reader.get_poly_data());
+    } catch (std::exception e) {
+      std::string message = std::string("Exception: ") + e.what();
+      STUDIO_LOG_ERROR(QString::fromStdString(message));
+      mesh->set_error_message(message);
+    }
+  }
+  else {
+    try {
+      // read file using ITK
+      using ReaderType = itk::ImageFileReader<ImageType>;
+      ReaderType::Pointer reader = ReaderType::New();
+      reader->SetFileName(filename);
+      reader->Update();
+      ImageType::Pointer image = reader->GetOutput();
 
-    // read file using ITK
-    using ReaderType = itk::ImageFileReader<ImageType>;
-    ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileName(filename);
-    reader->Update();
-    ImageType::Pointer image = reader->GetOutput();
+      // set orientation to RAI
+      using Orienter = itk::OrientImageFilter<ImageType, ImageType>;
+      Orienter::Pointer orienter = Orienter::New();
+      orienter->UseImageDirectionOn();
+      orienter->SetDesiredCoordinateOrientation(
+        itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
+      orienter->SetInput(image);
+      orienter->Update();
+      image = orienter->GetOutput();
 
-    // set orientation to RAI
-    using Orienter = itk::OrientImageFilter<ImageType, ImageType>;
-    Orienter::Pointer orienter = Orienter::New();
-    orienter->UseImageDirectionOn();
-    orienter->SetDesiredCoordinateOrientation(
-      itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
-    orienter->SetInput(image);
-    orienter->Update();
-    image = orienter->GetOutput();
-
-    mesh = this->build_mesh_from_image(image, iso_value);
-  } catch (itk::ExceptionObject& excep) {
-    std::cerr << "Exception caught!" << std::endl;
-    std::cerr << excep << std::endl;
-    mesh->set_error_message(std::string("Exception: ") + excep.what());
+      mesh = this->build_mesh_from_image(image, iso_value);
+    } catch (itk::ExceptionObject& excep) {
+      std::cerr << "Exception caught!" << std::endl;
+      std::cerr << excep << std::endl;
+      mesh->set_error_message(std::string("Exception: ") + excep.what());
+    }
   }
   return mesh;
+
 }
 
 //---------------------------------------------------------------------------

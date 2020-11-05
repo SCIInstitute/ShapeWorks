@@ -23,8 +23,11 @@ public:
   GroomTool();
   ~GroomTool();
 
-  /// set the pointer to the project
+  //! Set the pointer to the session
   void set_session(QSharedPointer<Session> session);
+
+  //! activate this tool
+  void activate();
 
   //! Store settings to session
   void store_settings();

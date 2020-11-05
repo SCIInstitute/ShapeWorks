@@ -12,7 +12,6 @@
 #include <QXmlStreamReader>
 #include <QProgressDialog>
 
-
 #ifdef _WIN32
 #include <direct.h>
   #define chdir _chdir
@@ -524,13 +523,6 @@ void Session::load_original_files(std::vector<std::string> filenames)
   if (filenames.size() > 0) {
     emit data_changed();
   }
-}
-
-//---------------------------------------------------------------------------
-void Session::set_groomed_mesh(int i, vtkSmartPointer<vtkPolyData> mesh, TransformType transform)
-{
-  this->shapes_[i]->import_groomed_mesh(mesh, transform);
-
 }
 
 //---------------------------------------------------------------------------

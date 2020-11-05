@@ -157,11 +157,6 @@ void GroomTool::handle_thread_complete()
   this->enable_actions();
 }
 
-//---------------------------------------------------------------------------
-void GroomTool::set_session(QSharedPointer<Session> session)
-{
-  this->session_ = session;
-}
 
 //---------------------------------------------------------------------------
 void GroomTool::on_skip_button_clicked()
@@ -174,3 +169,25 @@ void GroomTool::on_skip_button_clicked()
   emit message("Skipped Grooming");
   emit groom_complete();
 }
+
+
+//---------------------------------------------------------------------------
+void GroomTool::set_session(QSharedPointer<Session> session)
+{
+  this->session_ = session;
+}
+
+//---------------------------------------------------------------------------
+void GroomTool::activate()
+{
+  auto subjects = this->session_->get_project()->get_subjects();
+  if (subjects.size() > 0 && subjects[0]->get_domain_types().size() > 0) {
+    if (subjects[0]->get_domain_types()[0] == DomainType::Image) {
+      this->ui_->stacked_widget->setCurrentWidget(this->ui_->image_page);
+    }
+    if (subjects[0]->get_domain_types()[0] == DomainType::Mesh) {
+      this->ui_->stacked_widget->setCurrentWidget(this->ui_->mesh_page);
+    }
+  }
+}
+
