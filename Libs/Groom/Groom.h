@@ -25,6 +25,9 @@ public:
   //! Run the grooming
   virtual void run();
 
+  //! Set if grooming steps should be skipped
+  void set_skip_grooming(bool skip);
+
 protected:
 
   //! call to be overridden by subclasses
@@ -52,8 +55,10 @@ private:
   Vector3 center(Image& image);
   void isolate(Image& image);
 
-  bool verbose_;
+  bool verbose_ = false;
 
   ProjectHandle project_;
+
+  bool skip_grooming_ = false;
 };
 }

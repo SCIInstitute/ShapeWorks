@@ -170,28 +170,10 @@ void GroomTool::set_session(QSharedPointer<Session> session)
 void GroomTool::on_skipButton_clicked()
 {
   this->store_settings();
-  QVector<QSharedPointer<Shape>> shapes = this->session_->get_shapes();
+  this->groom_ = QSharedPointer<QGroom>(new QGroom(this->session_->get_project()));
+  this->groom_->set_skip_grooming(true);
+  this->groom_->run();
 
-  std::vector<ImageType::Pointer> imgs;
-  for (QSharedPointer<Shape> s : shapes) {
-    if (s->get_original_filename().toLower().endsWith(".vtk")) {
-      TransformType transform;
-      s->import_groomed_mesh(s->get_original_mesh(true)->get_poly_data(), transform);
-      this->session_->set_groom_unsaved(true);
-
-    }
-    else {
-      auto image = s->get_original_image();
-      if (!image) {
-        emit error_message("Error loading original images");
-        return;
-      }
-      imgs.push_back(image);
-    }
-  }
-  this->session_->load_groomed_images(imgs, 0.);
-  this->session_->get_project()->store_subjects();
-
-  emit message("Skipped groom.");
+  emit message("Skipped Grooming");
   emit groom_complete();
 }

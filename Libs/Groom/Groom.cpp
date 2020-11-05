@@ -71,6 +71,23 @@ void Groom::image_pipeline(std::shared_ptr<Subject> subject)
   auto transform = itk::AffineTransform<double, 3>::New();
   transform->SetIdentity();
 
+  if (this->skip_grooming_) {
+    std::vector<std::vector<double>> groomed_transforms;
+    std::vector<double> groomed_transform;
+    auto transform_params = transform->GetParameters();
+    for (int i = 0; i < transform_params.size(); i++) {
+      groomed_transform.push_back(transform_params[i]);
+    }
+    groomed_transforms.push_back(groomed_transform);
+    subject->set_groomed_transforms(groomed_transforms);
+
+    // only single domain supported so far
+    std::vector<std::string> groomed_filenames{path};
+    // store filename back to subject
+    subject->set_groomed_filenames(groomed_filenames);
+    return;
+  }
+
   // centering
   if (params.get_center_tool()) {
     auto centering = this->center(image);
@@ -236,6 +253,12 @@ void Groom::increment_progress(int amount)
   this->progress_ = static_cast<float>(this->progress_counter_)
                     / static_cast<float>(this->total_ops_) * 100.0;
   this->update_progress();
+}
+
+//---------------------------------------------------------------------------
+void Groom::set_skip_grooming(bool skip)
+{
+  this->skip_grooming_ = skip;
 }
 
 
