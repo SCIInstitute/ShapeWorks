@@ -121,7 +121,7 @@ void Groom::image_pipeline(std::shared_ptr<Subject> subject)
   // create distance transform
   if (params.get_fast_marching()) {
     image.computeDT();
-    this->increment_progress();
+    this->increment_progress(10);
   }
 
   // blur
@@ -223,16 +223,16 @@ int Groom::get_total_ops()
   num_tools += params.get_fill_holes_tool() ? 1 : 0;
   num_tools += params.get_auto_pad_tool() ? 1 : 0;
   num_tools += params.get_antialias_tool() ? 1 : 0;
-  num_tools += params.get_fast_marching() ? 1 : 0;
+  num_tools += params.get_fast_marching() ? 10 : 0;
   num_tools += params.get_blur_tool() ? 1 : 0;
 
   return num_subjects * num_tools;
 }
 
 //---------------------------------------------------------------------------
-void Groom::increment_progress()
+void Groom::increment_progress(int amount)
 {
-  ++this->progress_counter_;
+  this->progress_counter_ += amount;
   this->progress_ = static_cast<float>(this->progress_counter_)
                     / static_cast<float>(this->total_ops_) * 100.0;
   this->update_progress();

@@ -41,7 +41,7 @@ private:
   int get_total_ops();
 
   //! Increment the progress one step
-  void increment_progress();
+  void increment_progress(int amount = 1);
 
   //! Run image based pipeline on a single subject
   void image_pipeline(std::shared_ptr<Subject> subject);
@@ -51,7 +51,6 @@ private:
 
   Vector3 center(Image& image);
   void isolate(Image& image);
-
 
   bool verbose_;
 
