@@ -44,9 +44,9 @@ def Run_Pipeline(args):
         os.makedirs(pointDir)
 
     parameterDictionary = {
-        "number_of_particles" : 128,
-        "use_normals": 0, 
-        "normal_weight": 10.0,
+        "number_of_particles" : [128,128],
+        "use_normals": [1,1],
+        "normal_weight": [10.0,10.0],
         "checkpointing_interval" : 200,
         "keep_checkpoints" : 0,
         "iterations_per_split" : 500,
@@ -54,7 +54,7 @@ def Run_Pipeline(args):
         "starting_regularization" : 100,
         "ending_regularization" : 0.1,
         "recompute_regularization_interval" : 2,
-        "domains_per_shape" : 1,
+        "domains_per_shape" : 2,
         "domain_type" : 'mesh',
         "relative_weighting" : 10,
         "initial_relative_weighting" : 0.01,
@@ -77,7 +77,8 @@ def Run_Pipeline(args):
     Now we execute a single scale particle optimization function.
     """
     print("CALLING OPTIMIZATION CODE")
-    [localPointFiles, worldPointFiles] = runShapeWorksOptimize(pointDir, meshFiles, parameterDictionary)
+    # [localPointFiles, worldPointFiles] = runShapeWorksOptimize(pointDir, meshFiles, parameterDictionary)
+    runShapeWorksOptimize(pointDir, meshFiles, parameterDictionary)
 
     if args.tiny_test:
         print("Done with tiny test")
@@ -88,4 +89,4 @@ def Run_Pipeline(args):
         input("Press Enter to continue")
 
     # Image files are passed because Studio does not support viewing meshes yet.
-    launchShapeWorksStudio(pointDir, meshFiles, localPointFiles, worldPointFiles)
+    # launchShapeWorksStudio(pointDir, meshFiles, localPointFiles, worldPointFiles)
