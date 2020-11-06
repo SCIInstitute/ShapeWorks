@@ -7,7 +7,9 @@ namespace shapeworks {
 class GroomParameters {
 
 public:
+
   explicit GroomParameters(ProjectHandle project);
+  void save_to_project();
 
   bool get_center_tool();
   void set_center_tool(bool value);
@@ -38,9 +40,7 @@ public:
 
   bool get_fast_marching();
   void set_fast_marching(bool value);
-
-
-  void save_to_project();
+  
 private:
 
   Parameters params_;
