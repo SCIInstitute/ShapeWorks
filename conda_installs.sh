@@ -81,7 +81,7 @@ function install_conda() {
     git-lfs=2.11.0 \
     openblas=0.3.6 \
     doxygen=1.8.20 \
-    graphviz=2.42.3 \
+    graphviz=2.38.0 \
     vtk=8.2.0 \
     scikit-learn=0.22.1 \
     tbb=2019.9 \

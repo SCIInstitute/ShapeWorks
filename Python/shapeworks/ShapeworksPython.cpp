@@ -87,8 +87,8 @@ PYBIND11_MODULE(shapeworks, m)
       ss << p;
       return ss.str();
     })
-  .def("__getitem__", [](const Point& d, size_t idx) { return d[idx]; })
-  .def("__setitem__", [](Point& d, size_t idx, double val) { d[idx] = val; })
+  .def("__getitem__", [](const Point& p, size_t idx) { return p[idx]; })
+  .def("__setitem__", [](Point& p, size_t idx, double val) { p[idx] = val; })
   .def("__add__", [](const Point& p1, const Point& p2) { return p1 + p2; })
   .def("__sub__", [](const Point& p1, const Point& p2) { return p1 - p2; })
   .def("__mul__", [](const Point& p1, const Point& p2) { return p1 * p2; })
@@ -347,7 +347,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("imageToArray", [](const Image &image) {
     Image::ImageType::Pointer img = image.getITKImage();
     const auto size = img->GetLargestPossibleRegion().GetSize();
-    const auto shape = std::vector<size_t>{size[0], size[1], size[2]};
+    const auto shape = std::vector<size_t>{size[2], size[1], size[0]};
     return py::array(py::dtype::of<typename Image::ImageType::Pointer::ObjectType::PixelType>(), shape, img->GetBufferPointer());
   })
   .def("arrayToImage", [](const Image &image, py::array_t<typename Image::ImageType::Pointer::ObjectType::PixelType> np_array) {
