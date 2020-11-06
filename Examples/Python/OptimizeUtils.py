@@ -9,21 +9,40 @@ import xml.etree.ElementTree as ET
 
 from CommonUtils import *
 
+def get_parameter_text(parameterKey,parameterValue,domains_per_shape):
+    if(type(parameterValue) is not list):
+        parameterValue  = list([parameterValue])
+    assert(len(parameterValue)==domains_per_shape),str(parameterKey)+" parameter should be an array of length = domains_per_shape= " + str(domains_per_shape)
+    text = "\n"
+    for i in range(domains_per_shape):
+        text = text + str(parameterValue[i]) + "\n"
+    return text
+     
+def get_attribute_scales_text(use_normals,normal_weight,domains_per_shape):
+
+    text = "\n"
+    for i in range(domains_per_shape):
+
+        if(use_normals[i]==0):
+            text = text + "1.0 \n 1.0 \n 1.0\n"
+        else:
+            text = text + "1.0 \n 1.0 \n 1.0 \n "+ str(normal_weight[i])+ "\n "  + str(normal_weight[i])+ "\n " + str(normal_weight[i])+ "\n"
+    return text
+
+
 def create_SWRun_xml(xmlfilename, inDataFiles, parameterDictionary, outDir):
     root = ET.Element('sample')
     output_dir = ET.SubElement(root, 'output_dir')
     output_dir.text = "\n" + outDir + "\n"
     number_of_particles = ET.SubElement(root, 'number_of_particles')
-    number_of_particles.text = "\n" + str(parameterDictionary['number_of_particles']) + "\n"
+    number_of_particles.text = get_parameter_text('number_of_particles',parameterDictionary['number_of_particles'],parameterDictionary['domains_per_shape'])
     use_normals = ET.SubElement(root, 'use_normals')
-    use_normals.text = "\n" + str(parameterDictionary['use_normals']) + "\n"
+    use_normals.text = get_parameter_text('use_normals',parameterDictionary['use_normals'],parameterDictionary['domains_per_shape'])
     normal_weight = parameterDictionary['normal_weight']
-    if parameterDictionary['use_normals'] == 0:
-        attribute_scales = ET.SubElement(root, 'attribute_scales')
-        attribute_scales.text = "\n 1.0 \n 1.0 \n 1.0\n"
-    else:
-        attribute_scales = ET.SubElement(root, 'attribute_scales')
-        attribute_scales.text = "\n 1.0 \n 1.0 \n 1.0 \n "+ str(normal_weight)+ "\n "  + str(normal_weight)+ "\n " + str(normal_weight)+ "\n"
+    
+    attribute_scales = ET.SubElement(root, 'attribute_scales')
+    attribute_scales.text = get_attribute_scales_text(parameterDictionary['use_normals'],parameterDictionary['normal_weight'],parameterDictionary['domains_per_shape'])
+    
     checkpointing_interval = ET.SubElement(root, 'checkpointing_interval')
     checkpointing_interval.text = "\n" + str(parameterDictionary['checkpointing_interval']) + "\n"
     keep_checkpoints = ET.SubElement(root, 'keep_checkpoints')
@@ -59,8 +78,11 @@ def create_SWRun_xml(xmlfilename, inDataFiles, parameterDictionary, outDir):
         use_shape_statistics_after.text = "\n" + str(parameterDictionary['use_shape_statistics_after']) + "\n"
     verbosity = ET.SubElement(root, 'verbosity')
     verbosity.text = "\n" + str(parameterDictionary['verbosity']) + "\n"
+
     use_xyz = ET.SubElement(root, 'use_xyz')
-    use_xyz.text = "\n" + str(1) + "\n"
+    parameterValue = [1 for _ in range(parameterDictionary['domains_per_shape'])]
+    use_xyz.text = get_parameter_text('use_xyz',parameterValue,parameterDictionary['domains_per_shape'])
+    
     if 'visualizer_enable' in parameterDictionary:
         visualizer_enable = ET.SubElement(root, 'visualizer_enable')
         visualizer_enable.text = "\n" + str(parameterDictionary['visualizer_enable']) + "\n"
