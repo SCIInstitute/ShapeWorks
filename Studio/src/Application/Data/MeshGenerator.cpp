@@ -113,7 +113,7 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
       shapeworks::Mesh reader(filename);
       mesh->set_poly_data(reader.get_poly_data());
     } catch (std::exception e) {
-      std::string message = std::string("Exception: ") + e.what();
+      std::string message = std::string("Error reading: ") + filename;
       STUDIO_LOG_ERROR(QString::fromStdString(message));
       mesh->set_error_message(message);
     }

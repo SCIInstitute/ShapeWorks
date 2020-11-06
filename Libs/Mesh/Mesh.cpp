@@ -46,6 +46,10 @@ Mesh::MeshType Mesh::read(const std::string &pathname)
       reader->SetFileName(pathname.c_str());
       reader->SetReadAllScalars(1);
       reader->Update();
+      vtkSmartPointer<vtkPolyData> poly_data = reader->GetOutput();
+      if (poly_data->GetNumberOfPolys() < 1) {
+        throw std::invalid_argument("Failed to read: " + pathname);
+      }
       return reader->GetOutput();
     }
 
