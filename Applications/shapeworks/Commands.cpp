@@ -1555,8 +1555,10 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
     return false;
   }
 
+  bool is_project =StringUtils::hasSuffix(project_file, "xlsx");
+
   Optimize app;
-  if (StringUtils::hasSuffix(project_file, "xlsx")) {
+  if (is_project) {
     // load spreadsheet project
     ProjectHandle project = std::make_shared<Project>();
     project->load(project_file);
@@ -1564,13 +1566,21 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
     // set up Optimize class based on project parameters
     OptimizeParameters params(project);
     params.set_up_optimize(&app);
+
+    bool success = app.Run();
+
+    if (success) {
+      project->save(project_file);
+    }
+
+    return success;
   }
   else {
     OptimizeParameterFile param;
     param.load_parameter_file(project_file.c_str(), &app);
+    return app.Run();
   }
 
-  return app.Run();
 }
 
 

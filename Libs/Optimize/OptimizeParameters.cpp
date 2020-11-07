@@ -268,10 +268,15 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
       Image image(filename);
       optimize->AddImage(image);
     }
+
+    auto name = StringUtils::getFileNameWithoutExtension(filename);
+    s->set_global_particle_filename(name + "_world.particles");
+    s->set_local_particle_filename(name + "_local.particles");
   }
 
   optimize->SetOutputDir(".");
   optimize->SetFilenames(StringUtils::getFileNamesFromPaths(filenames));
   optimize->SetOutputTransformFile("transform");
+
   return true;
 }
