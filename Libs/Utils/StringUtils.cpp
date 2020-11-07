@@ -1,6 +1,10 @@
 
 #include "StringUtils.h"
 
+#include <algorithm>
+#include <cstdlib>
+#include <cstring>
+
 using namespace shapeworks;
 
 //---------------------------------------------------------------------------

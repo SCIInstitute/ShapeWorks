@@ -1,5 +1,6 @@
 #include "Variant.h"
 
+#include <iterator>
 #include <sstream>
 #include <algorithm>
 
