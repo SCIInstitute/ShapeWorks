@@ -3,6 +3,7 @@
 #include "ImageUtils.h"
 #include "ShapeEvaluation.h"
 #include <Libs/Optimize/Optimize.h>
+#include <Libs/Optimize/OptimizeParameters.h>
 #include <Libs/Optimize/OptimizeParameterFile.h>
 #include <Libs/Groom/Groom.h>
 #include <limits>
@@ -57,7 +58,7 @@ bool ReadImage::execute(const optparse::Values &options, SharedCommandData &shar
     std::cerr << "readimage error: no filename specified, must pass `--name <filename>`\n";
     return false;
   }
-  
+
   try {
     sharedData.image = Image(filename);
     return true;
@@ -100,7 +101,7 @@ bool WriteImage::execute(const optparse::Values &options, SharedCommandData &sha
   }
 
   bool compressed = static_cast<bool>(options.get("compressed"));
-  
+
   sharedData.image.write(filename, compressed);
   return true;
 }
@@ -164,7 +165,7 @@ bool ImageInfo::execute(const optparse::Values &options, SharedCommandData &shar
   if (direction)
     std::cout << "direction (coordsys):  " << std::endl
               << sharedData.image.coordsys();
-  
+
   return true;
 }
 
@@ -256,7 +257,7 @@ bool ResampleImage::execute(const optparse::Values &options, SharedCommandData &
 
   if (isoSpacing > 0.0)
     ImageUtils::isoresample(sharedData.image, isoSpacing, interp);
-  else if (sizeX == 0 || sizeY == 0 || sizeX == 0) 
+  else if (sizeX == 0 || sizeY == 0 || sizeX == 0)
     sharedData.image.resample(makeVector({spaceX, spaceY, spaceZ}), interp);
   else {
     Point3 origin({originX, originY, originZ});
@@ -362,7 +363,7 @@ bool PadImage::execute(const optparse::Values &options, SharedCommandData &share
 
   if (padding < 0 || padding > 0)
     sharedData.image.pad(padding, value);
-  else 
+  else
     sharedData.image.pad(padx, pady, padz, value);
   return true;
 }
@@ -569,7 +570,7 @@ void Binarize::buildParser()
   parser.add_option("--min").action("store").type("double").set_default(std::numeric_limits<double>::epsilon()).help("Lower threshold level [default: 0.0].");
   parser.add_option("--max").action("store").type("double").set_default(std::numeric_limits<double>::max()).help("Upper threshold level [default: inf ].");
   parser.add_option("--value").action("store").type("double").set_default(1.0).help("Value to set region [default: 1.0].");
-  
+
   Command::buildParser();
 }
 
@@ -662,7 +663,7 @@ void GradientFilter::buildParser()
   const std::string prog = "gradient";
   const std::string desc = "computes gradient magnitude of an image region at each pixel using gradient magnitude filter";
   parser.prog(prog).description(desc);
-  
+
   Command::buildParser();
 }
 
@@ -700,7 +701,7 @@ bool SigmoidFilter::execute(const optparse::Values &options, SharedCommandData &
     std::cerr << "No image to operate on\n";
     return false;
   }
-  
+
   double alpha = static_cast<double>(options.get("alpha"));
   double beta = static_cast<double>(options.get("beta"));
 
@@ -719,7 +720,7 @@ void TPLevelSetFilter::buildParser()
 
   parser.add_option("--featureimage").action("store").type("string").set_default("").help("Path of feature image for filter");
   parser.add_option("--scaling").action("store").type("double").set_default(20.0).help("Value of scale [default: 20.0].");
-  
+
   Command::buildParser();
 }
 
@@ -804,7 +805,7 @@ bool Blur::execute(const optparse::Values &options, SharedCommandData &sharedDat
   }
 
   double sigma = static_cast<double>(options.get("sigma"));
-  
+
   sharedData.image.gaussianBlur(sigma);
   return true;
 }
@@ -1548,15 +1549,26 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
 {
   const std::string& project_file(static_cast<std::string>(options.get("name")));
 
-  if (project_file.length() == 0)
-  {
+  if (project_file.length() == 0) {
     std::cerr << "Must specify projects name\n";
     return false;
   }
 
   Optimize app;
-  OptimizeParameterFile param;
-  param.load_parameter_file(project_file.c_str(), &app);
+  if (Utils::hasSuffix(project_file, "xlsx")) {
+    // load spreadsheet project
+    ProjectHandle project = std::make_shared<Project>();
+    project->load(project_file);
+
+    // set up Optimize class based on project parameters
+    OptimizeParameters params(project);
+    params.set_up_optimize(&app);
+  }
+  else {
+    OptimizeParameterFile param;
+    param.load_parameter_file(project_file.c_str(), &app);
+  }
+
   return app.Run();
 }
 
