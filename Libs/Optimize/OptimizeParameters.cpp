@@ -2,6 +2,7 @@
 #include "OptimizeParameters.h"
 #include "Optimize.h"
 #include <Libs/Image/Image.h>
+#include <Libs/Utils/StringUtils.h>
 
 using namespace shapeworks;
 
@@ -246,19 +247,20 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
 
   // should add the images last
   auto subjects = this->project_->get_subjects();
+
+  std::vector<std::string> filenames;
   for (auto s : subjects) {
     auto files = s->get_groomed_filenames();
     auto filename = files[0];
     auto domain_type = s->get_domain_types()[0];
-
+    filenames.push_back(filename);
 
     if (domain_type == DomainType::Mesh) {
       auto trimesh = std::shared_ptr<TriMesh>(TriMesh::read(filename.c_str()));
       if (trimesh) {
         optimize->AddMesh(std::make_shared<shapeworks::TriMeshWrapper>(trimesh));
       }
-      else
-      {
+      else {
         throw std::invalid_argument("Error loading mesh: " + filename);
       }
     }
@@ -267,5 +269,9 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
       optimize->AddImage(image);
     }
   }
+
+  optimize->SetOutputDir(".");
+  optimize->SetFilenames(StringUtils::getFileNamesFromPaths(filenames));
+  optimize->SetOutputTransformFile("transform");
   return true;
 }
