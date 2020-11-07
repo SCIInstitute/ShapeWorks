@@ -62,7 +62,7 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
   }
 
 
-  std::vector<unsigned int> number_of_particles;
+  std::vector<int> number_of_particles;
   elem = doc_handle.FirstChild("number_of_particles").Element();
   if (elem) {
     std::istringstream inputsBuffer;

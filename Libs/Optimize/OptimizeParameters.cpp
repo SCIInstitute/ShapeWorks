@@ -1,5 +1,7 @@
 
 #include "OptimizeParameters.h"
+#include "Optimize.h"
+#include <Libs/Image/Image.h>
 
 using namespace shapeworks;
 
@@ -182,4 +184,89 @@ int OptimizeParameters::get_multiscale_particles()
 void OptimizeParameters::set_multiscale_particles(int value)
 {
   this->params_.set("multiscale_particles", value);
+}
+
+//---------------------------------------------------------------------------
+bool OptimizeParameters::set_up_optimize(Optimize* optimize)
+{
+
+  optimize->SetFileOutputEnabled(false);
+
+  optimize->SetDomainsPerShape(1); /// only one domain per shape right now
+
+  optimize->SetNumberOfParticles(this->get_number_of_particles());
+  optimize->SetInitialRelativeWeighting(this->get_initial_relative_weighting());
+  optimize->SetRelativeWeighting(this->get_relative_weighting());
+  optimize->SetStartingRegularization(this->get_starting_regularization());
+  optimize->SetEndingRegularization(this->get_ending_regularization());
+  optimize->SetIterationsPerSplit(this->get_iterations_per_split());
+  optimize->SetOptimizationIterations(this->get_optimization_iterations());
+
+  std::vector<bool> use_normals;
+  std::vector<bool> use_xyz;
+  std::vector<double> attr_scales;
+
+  attr_scales.push_back(1);
+  attr_scales.push_back(1);
+  attr_scales.push_back(1);
+
+  if (this->get_use_normals()[0]) {
+    use_normals.push_back(1);
+    use_xyz.push_back(1);
+    double normals_strength = this->get_normals_strength();
+    attr_scales.push_back(normals_strength);
+    attr_scales.push_back(normals_strength);
+    attr_scales.push_back(normals_strength);
+  }
+  else {
+    use_normals.push_back(0);
+    use_xyz.push_back(0);
+  }
+  optimize->SetUseNormals(use_normals);
+  optimize->SetUseXYZ(use_xyz);
+  optimize->SetUseMeshBasedAttributes(this->get_use_normals()[0]);
+  optimize->SetAttributeScales(attr_scales);
+
+  std::vector<int> attributes_per_domain;
+  optimize->SetAttributesPerDomain(attributes_per_domain);
+
+  int procrustes_interval = 0;
+  if (this->get_use_procrustes()) {
+    procrustes_interval = this->get_procrustes_interval();
+  }
+  optimize->SetProcrustesInterval(procrustes_interval);
+  optimize->SetProcrustesScaling(this->get_use_procrustes_scaling());
+  optimize->SetVerbosity(0);
+
+  int multiscale_particles = 0;
+  if (this->get_use_multiscale()) {
+    multiscale_particles = this->get_multiscale_particles();
+  }
+  optimize->SetUseShapeStatisticsAfter(multiscale_particles);
+
+
+  // should add the images last
+  auto subjects = this->project_->get_subjects();
+  for (auto s : subjects) {
+    auto files = s->get_groomed_filenames();
+    auto filename = files[0];
+    auto domain_type = s->get_domain_types()[0];
+
+
+    if (domain_type == DomainType::Mesh) {
+      auto trimesh = std::shared_ptr<TriMesh>(TriMesh::read(filename.c_str()));
+      if (trimesh) {
+        optimize->AddMesh(std::make_shared<shapeworks::TriMeshWrapper>(trimesh));
+      }
+      else
+      {
+        throw std::invalid_argument("Error loading mesh: " + filename);
+      }
+    }
+    else {
+      Image image(filename);
+      optimize->AddImage(image);
+    }
+  }
+  return true;
 }

@@ -103,7 +103,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
   emit progress(1);
 
   this->optimize_ = new QOptimize(this);
-  std::vector<unsigned int> numbers_of_particles;
+  std::vector<int> numbers_of_particles;
   numbers_of_particles.push_back(this->ui_->number_of_particles->value());
   this->optimize_->SetFileOutputEnabled(false);
 

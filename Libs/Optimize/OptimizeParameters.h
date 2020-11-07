@@ -4,6 +4,8 @@
 
 namespace shapeworks {
 
+class Optimize;
+
 class OptimizeParameters {
 
 public:
@@ -11,6 +13,7 @@ public:
   explicit OptimizeParameters(ProjectHandle project);
   void save_to_project();
 
+  bool set_up_optimize(Optimize *optimize);
 
   std::vector<int> get_number_of_particles();
   void set_number_of_particles(std::vector<int> number_of_particles);
