@@ -15,6 +15,9 @@
 #include <itkOrientImageFilter.h>
 
 #include <Libs/Mesh/Mesh.h>
+#include <Libs/Utils/StringUtils.h>
+
+using namespace shapeworks;
 
 //---------------------------------------------------------------------------
 MeshGenerator::MeshGenerator(Preferences& prefs)
@@ -103,7 +106,7 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
 
   bool is_mesh = false;
   for (auto type : shapeworks::Mesh::get_supported_types()) {
-    if (Utils::hasSuffix(filename, type)) {
+    if (StringUtils::hasSuffix(filename, type)) {
       is_mesh = true;
     }
   }

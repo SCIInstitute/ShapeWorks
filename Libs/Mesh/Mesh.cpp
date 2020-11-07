@@ -3,7 +3,7 @@
 #include <PreviewMeshQC/FEVTKImport.h>
 #include <PreviewMeshQC/FEVTKExport.h>
 
-#include <Libs/Utils/Utils.h>
+#include <Libs/Utils/StringUtils.h>
 
 #include <vtkPolyDataReader.h>
 #include <vtkPolyDataWriter.h>
@@ -41,7 +41,7 @@ Mesh::MeshType Mesh::read(const std::string &pathname)
 
   try {
 
-    if (Utils::hasSuffix(pathname, "vtk")) {
+    if (StringUtils::hasSuffix(pathname, "vtk")) {
       auto reader = vtkSmartPointer<vtkPolyDataReader>::New();
       reader->SetFileName(pathname.c_str());
       reader->SetReadAllScalars(1);
@@ -53,28 +53,28 @@ Mesh::MeshType Mesh::read(const std::string &pathname)
       return reader->GetOutput();
     }
 
-    if (Utils::hasSuffix(pathname, "vtp")) {
+    if (StringUtils::hasSuffix(pathname, "vtp")) {
       auto reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
       reader->SetFileName(pathname.c_str());
       reader->Update();
       return reader->GetOutput();
     }
 
-    if (Utils::hasSuffix(pathname, "stl")) {
+    if (StringUtils::hasSuffix(pathname, "stl")) {
       auto reader = vtkSmartPointer<vtkSTLReader>::New();
       reader->SetFileName(pathname.c_str());
       reader->Update();
       return reader->GetOutput();
     }
 
-    if (Utils::hasSuffix(pathname, "obj")) {
+    if (StringUtils::hasSuffix(pathname, "obj")) {
       auto reader = vtkSmartPointer<vtkOBJReader>::New();
       reader->SetFileName(pathname.c_str());
       reader->Update();
       return reader->GetOutput();
     }
 
-    if (Utils::hasSuffix(pathname, "ply")) {
+    if (StringUtils::hasSuffix(pathname, "ply")) {
       auto reader = vtkSmartPointer<vtkPLYReader>::New();
       reader->SetFileName(pathname.c_str());
       reader->Update();
@@ -100,35 +100,35 @@ bool Mesh::write(const std::string &pathname)
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
 
   try {
-    if (Utils::hasSuffix(pathname, "vtk")) {
+    if (StringUtils::hasSuffix(pathname, "vtk")) {
       auto writer = vtkSmartPointer<vtkPolyDataWriter>::New();
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
       writer->Update();
     }
 
-    if (Utils::hasSuffix(pathname, "vtp")) {
+    if (StringUtils::hasSuffix(pathname, "vtp")) {
       auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
       writer->Update();
     }
 
-    if (Utils::hasSuffix(pathname, "stl")) {
+    if (StringUtils::hasSuffix(pathname, "stl")) {
       auto writer = vtkSmartPointer<vtkSTLWriter>::New();
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
       writer->Update();
     }
 
-    if (Utils::hasSuffix(pathname, "obj")) {
+    if (StringUtils::hasSuffix(pathname, "obj")) {
       auto writer = vtkSmartPointer<vtkOBJWriter>::New();
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
       writer->Update();
     }
 
-    if (Utils::hasSuffix(pathname, "ply")) {
+    if (StringUtils::hasSuffix(pathname, "ply")) {
       auto writer = vtkSmartPointer<vtkPLYWriter>::New();
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);

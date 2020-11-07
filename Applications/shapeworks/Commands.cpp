@@ -6,6 +6,7 @@
 #include <Libs/Optimize/OptimizeParameters.h>
 #include <Libs/Optimize/OptimizeParameterFile.h>
 #include <Libs/Groom/Groom.h>
+#include <Libs/Utils/StringUtils.h>
 #include <limits>
 
 namespace shapeworks {
@@ -1555,7 +1556,7 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
   }
 
   Optimize app;
-  if (Utils::hasSuffix(project_file, "xlsx")) {
+  if (StringUtils::hasSuffix(project_file, "xlsx")) {
     // load spreadsheet project
     ProjectHandle project = std::make_shared<Project>();
     project->load(project_file);

@@ -43,23 +43,6 @@ namespace utils //TODO: -> namespace shapeworks (need to change everywhere it's 
 #define RANDN2(mu, sigma) (mu + (rand()%2 ? -1.0 : 1.0)*sigma*pow(-log(0.99999*RANDU), 0.5))
 #define RANDN RANDN2(0, 1.0)
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-struct MatchPathSeparator
-{
-    bool operator()( char ch ) const
-    {
-        return ch == '\\' || ch == '/';
-    }
-};
-#else
-struct MatchPathSeparator
-{
-    bool operator()( char ch ) const
-    {
-        return ch == '/';
-    }
-};
-#endif
 }
 
 class Utils{
@@ -91,13 +74,6 @@ public:
                                         double& min_x, double& min_y, double& min_z,
                                         double& max_x, double& max_y, double& max_z);
 
-
-    //------------------------- string manipulation-------------------------------
-    static std::string removeExtension( std::string const& filename );
-    static std::string getPath( std::string const& filename );
-    static std::string getFilename( std::string const& pathname );
-    static std::string toLower(std::string s );
-    static bool hasSuffix( std::string const& filename, std::string const& suffix );
 
 
     //--------------- coordinates transformations --------------------------------

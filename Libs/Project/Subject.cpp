@@ -1,6 +1,6 @@
 #include <Libs/Project/Subject.h>
 #include <Libs/Mesh/Mesh.h>
-#include <Libs/Utils/Utils.h>
+#include <Libs/Utils/StringUtils.h>
 
 #include <map>
 
@@ -125,7 +125,7 @@ std::vector<DomainType> Subject::get_domain_types()
     std::transform(name.begin(), name.end(), name.begin(), ::tolower);
 
     for (auto type : Mesh::get_supported_types()) {
-      if (Utils::hasSuffix(name, type)) {
+      if (StringUtils::hasSuffix(name, type)) {
         domain_types.push_back(DomainType::Mesh);
       }
       else {
