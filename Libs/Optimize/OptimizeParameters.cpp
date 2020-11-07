@@ -105,7 +105,9 @@ void OptimizeParameters::set_optimization_iterations(int value)
 //---------------------------------------------------------------------------
 std::vector<bool> OptimizeParameters::get_use_normals()
 {
-  return this->params_.get("use_normals", {false});
+  std::vector<bool> use_normals = this->params_.get("use_normals", {false});
+  if (use_normals.empty()) use_normals.push_back(false);
+  return use_normals;
 }
 
 //---------------------------------------------------------------------------
@@ -190,10 +192,7 @@ void OptimizeParameters::set_multiscale_particles(int value)
 bool OptimizeParameters::set_up_optimize(Optimize* optimize)
 {
 
-  optimize->SetFileOutputEnabled(false);
-
   optimize->SetDomainsPerShape(1); /// only one domain per shape right now
-
   optimize->SetNumberOfParticles(this->get_number_of_particles());
   optimize->SetInitialRelativeWeighting(this->get_initial_relative_weighting());
   optimize->SetRelativeWeighting(this->get_relative_weighting());
