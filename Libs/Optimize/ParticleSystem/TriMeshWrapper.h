@@ -19,6 +19,11 @@ public:
 
   ~TriMeshWrapper() = default;
 
+  virtual void PrintStats() override {
+    double hitRate = (double) triQueriesHits / (double) triQueries;
+    std::cout << "Hits: " << triQueriesHits << " / " << triQueries << " | " << hitRate << std::endl;
+  }
+
   typedef typename MeshWrapper::PointType PointType;
 
   double ComputeDistance(PointType pointa, PointType pointb) const override;
@@ -75,6 +80,8 @@ private:
   std::shared_ptr<trimesh::KDtree> kd_tree_;
 
   mutable std::unordered_map<int, int> particleIdx2faceIdx;
+  mutable unsigned long triQueries{0};
+  mutable unsigned long triQueriesHits{0};
 
   PointType mesh_lower_bound_;
   PointType mesh_upper_bound_;

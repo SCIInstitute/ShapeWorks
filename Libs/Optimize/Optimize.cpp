@@ -964,6 +964,10 @@ void Optimize::RunOptimize()
   this->WriteParameters();
   if (m_verbosity_level > 0) {
     std::cout << "Finished optimization!!!" << std::endl;
+    for(int i=0; i< m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
+      const auto& dom = m_sampler->GetParticleSystem()->GetDomain(i);
+      dom->PrintStats();
+    }
   }
 }
 

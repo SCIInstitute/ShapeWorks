@@ -131,6 +131,9 @@ public:
   inline PointType GetOrigin() const {
     return m_Origin;
   }
+  void PrintStats() {
+
+  }
 
   inline typename ImageType::SizeType GetSize() const
   {

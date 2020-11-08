@@ -59,7 +59,7 @@ ParticleSurfaceNeighborhood<TImage>
     
     if (distance < radius && distance > 0.0 )
       {
-      GradientVectorType pn = domain->SampleNormalAtPoint((*it)->Point, idx);
+      GradientVectorType pn = domain->SampleNormalAtPoint((*it)->Point, (*it)->Index);
       double cosine   = dot_product(posnormal,pn); // normals already normalized
       // double cosine = proj / (posnormalmag * pn.magnitude() + 1.0e-6);
 
