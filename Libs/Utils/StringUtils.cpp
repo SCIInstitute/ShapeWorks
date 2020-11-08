@@ -7,22 +7,21 @@
 
 using namespace shapeworks;
 
-
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-  struct MatchPathSeparator
+static struct MatchPathSeparator
 {
-    bool operator()( char ch ) const
-    {
-        return ch == '\\' || ch == '/';
-    }
+  bool operator()( char ch ) const
+  {
+      return ch == '\\' || ch == '/';
+  }
 };
 #else
-  struct MatchPathSeparator {
-    bool operator()(char ch) const
-    {
-      return ch == '/';
-    }
-  };
+static struct MatchPathSeparator {
+  bool operator()(char ch) const
+  {
+    return ch == '/';
+  }
+};
 #endif
 
 //---------------------------------------------------------------------------
@@ -58,7 +57,7 @@ std::string StringUtils::getFilename(std::string const& pathname)
 {
   return std::string(
     std::find_if(pathname.rbegin(), pathname.rend(),
-                 StringUtils::MatchPathSeparator()).base(),
+                 MatchPathSeparator()).base(),
     pathname.end());
 }
 
