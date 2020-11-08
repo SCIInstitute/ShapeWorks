@@ -7,8 +7,9 @@
 
 using namespace shapeworks;
 
+namespace {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-static struct MatchPathSeparator
+struct MatchPathSeparator
 {
   bool operator()( char ch ) const
   {
@@ -16,13 +17,14 @@ static struct MatchPathSeparator
   }
 };
 #else
-static struct MatchPathSeparator {
+struct MatchPathSeparator {
   bool operator()(char ch) const
   {
     return ch == '/';
   }
 };
 #endif
+}
 
 //---------------------------------------------------------------------------
 std::string StringUtils::removeExtension(std::string const& filename)
