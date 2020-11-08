@@ -42,10 +42,11 @@ jobs:
         key: QtCache-windows
 
     - name: Install Qt
-      uses: akenmorris/install-qt-action@v5
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2.9.0
       with:
-        version: "5.9.9"
-        cached: ${{ steps.cache-qt.outputs.cache-hit }}
+        version: "5.12.10"
+        cached: ${{ steps.cache-qt.outputs.cache-hit-5.12.10 }}
 
     - name: Setup Conda
       uses: goanpeca/setup-miniconda@v1
