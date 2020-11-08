@@ -45,6 +45,7 @@ public:
     return mesh_upper_bound_;
   }
 
+  void ComputeGradNormalX();
 private:
 
   Eigen::Vector3d
@@ -75,6 +76,7 @@ private:
 
   PointType mesh_lower_bound_;
   PointType mesh_upper_bound_;
+
 };
 
 }

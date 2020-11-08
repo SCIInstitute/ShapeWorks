@@ -468,6 +468,12 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
     return false;
   }
 
+  using namespace std::chrono;
+  auto TEMPOMESHO = std::shared_ptr<TriMesh>(TriMesh::read("/scratch/karthik/projects/ShapeWorks/Examples/Python/TestFemurMesh/femur/meshes/m03_L_femur.ply"));
+  auto wrapper = std::make_shared<shapeworks::TriMeshWrapper>(TEMPOMESHO);
+  wrapper->ComputeGradNormalX();
+  throw std::runtime_error("DONE!");
+
   std::istringstream inputsBuffer;
 
   inputsBuffer.str(elem->GetText());

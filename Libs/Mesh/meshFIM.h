@@ -103,6 +103,8 @@ public:
         throw(1);
       }
     }
+  std::vector< std::vector<float> > features;
+  point ComputeFeatureDerivative(int v, int nFeature);
 
 
     meshFIM() {
@@ -191,7 +193,6 @@ private:
   void WriteFeaFile(std::vector<float> fea, char *outfilename);
   // end SHIREEN
 
-  point ComputeFeatureDerivative(int v, int nFeature);
 
 
 
@@ -223,7 +224,6 @@ private:
 
   std::vector< std::vector<TriMesh::Face> > vertOneringFaces;
 
-  std::vector< std::vector<float> > features;
 
   std::vector < std::vector<point> > featureGradients;
 

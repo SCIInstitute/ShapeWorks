@@ -1,5 +1,7 @@
 
 #include "TriMeshWrapper.h"
+#include "Libs/Mesh/meshFIM.h"
+#include <chrono>
 
 #include <set>
 
@@ -436,5 +438,36 @@ void TriMeshWrapper::ComputeMeshBounds()
     std::cerr << "Mesh bounds: " << PrintValue<PointType>(mesh_lower_bound_) << " -> "
               << PrintValue<PointType>(mesh_upper_bound_) << "\n";
   }
+}
+
+void TriMeshWrapper::ComputeGradNormalX()
+{
+  using namespace std::chrono;
+  auto TEMPO_start = high_resolution_clock::now();
+
+  Eigen::MatrixXd grad_normal_x;
+
+  meshFIM fim;
+  fim.SetMesh(mesh_.get());
+  fim.features.resize(1);
+
+  for(const auto& n : mesh_->normals) {
+    fim.features[0].push_back(n[0]);
+  }
+
+  grad_normal_x.resize(15002, 3);
+  for(int i=0; i<mesh_->vertices.size(); i++) {
+    const auto grad = fim.ComputeFeatureDerivative(i, 0);
+    grad_normal_x(i, 0) = grad[0];
+    grad_normal_x(i, 1) = grad[1];
+    grad_normal_x(i, 2) = grad[2];
+  }
+  auto dur = duration_cast<microseconds>(high_resolution_clock::now() - TEMPO_start);
+  std::cout << "Took " << dur.count() << std::endl;
+
+  const auto fname = "/scratch/karthik/projects/geodesic-sandbox/python/random/meshfim_gradx.bin";
+  std::ofstream f(fname, std::ios::out | std::ios::binary);
+  f.write(reinterpret_cast<const char *>(grad_normal_x.data()), grad_normal_x.size() * sizeof(double));
+  f.close();
 }
 }
