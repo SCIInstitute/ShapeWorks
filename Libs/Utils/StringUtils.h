@@ -10,22 +10,6 @@ class StringUtils {
 
 public:
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-  struct MatchPathSeparator
-{
-    bool operator()( char ch ) const
-    {
-        return ch == '\\' || ch == '/';
-    }
-};
-#else
-  struct MatchPathSeparator {
-    bool operator()(char ch) const
-    {
-      return ch == '/';
-    }
-  };
-#endif
 
   static std::string removeExtension(std::string const& filename);
   static std::string getPath(std::string const& filename);
