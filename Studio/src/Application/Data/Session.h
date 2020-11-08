@@ -14,8 +14,6 @@
 #include <Data/MeshManager.h>
 
 
-using namespace shapeworks;
-
 class Shape;
 
 class Session;
@@ -57,7 +55,7 @@ public:
 
   void set_project_path(QString relative_path);
 
-  std::shared_ptr<Project> get_project();
+  std::shared_ptr<shapeworks::Project> get_project();
 
   /// import files
   void load_original_files(std::vector<std::string> filenames);
@@ -99,7 +97,7 @@ public:
   QSharedPointer<MeshManager> get_mesh_manager()
   { return this->mesh_manager_; }
 
-  Parameters& parameters();
+  shapeworks::Parameters& parameters();
 
 public Q_SLOTS:
   void handle_clear_cache();
@@ -148,7 +146,7 @@ private:
   bool unsaved_groomed_files_{false};
   bool unsaved_particle_files_{false};
 
-  Parameters params_;
+  shapeworks::Parameters params_;
 
-  std::shared_ptr<Project> project_{new Project()};
+  std::shared_ptr<shapeworks::Project> project_{new shapeworks::Project()};
 };

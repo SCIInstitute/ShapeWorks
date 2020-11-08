@@ -24,6 +24,8 @@ const std::string AnalysisTool::MODE_PCA_C("pca");
 const std::string AnalysisTool::MODE_SINGLE_SAMPLE_C("single sample");
 const std::string AnalysisTool::MODE_REGRESSION_C("regression");
 
+using namespace shapeworks;
+
 //---------------------------------------------------------------------------
 AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
 {

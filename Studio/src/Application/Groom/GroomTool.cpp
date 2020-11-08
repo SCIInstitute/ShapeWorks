@@ -14,6 +14,8 @@
 
 #include <ui_GroomTool.h>
 
+using namespace shapeworks;
+
 //---------------------------------------------------------------------------
 GroomTool::GroomTool()
 {
