@@ -11,10 +11,11 @@ from DataAugmentationUtils import Sampler
 
 ################################# Augmentaiton Pipelines ###############################################
 
-def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_dims=0, percent_variability=0.95, sampler_type="kde", mixture_num=0):
+def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_dim=0, percent_variability=0.95, sampler_type="kde", mixture_num=0):
 	# Get Embedder
 	point_matrix = create_data_matrix(orig_point_list)
-	PointEmbedder = Embedder.PCA_Embbeder(point_matrix, num_dims, percent_variability)
+	PointEmbedder = Embedder.PCA_Embbeder(point_matrix, num_dim, percent_variability)
+	num_dim = PointEmbedder.num_dim
 	PointEmbedder.write_PCA(out_dir + "PCA_Particle_Info/", "particles") # write PCA info for DeepSSM testing
 	embedded_matrix = PointEmbedder.getEmbeddedMatrix()
 	# Get sampler
@@ -60,7 +61,7 @@ def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_di
 		gen_image_paths.append(gen_image_path)
 	csv_file = out_dir + "TotalData.csv"
 	makeCSV(out_dir + "TotalData.csv", orig_img_list, orig_point_list, embedded_matrix, gen_image_paths, gen_points_paths, gen_embeddings)
-	return
+	return num_dim
 
 ############################ Augmentaiton Pipeline Helper Methods ##################################
 

@@ -13,8 +13,9 @@ Runs data augmentation and takes the following arguements:
 '''
 def runDataAugmentation(out_dir, img_list, point_list, num_samples, num_dim=0, percent_variability=0.95, sampler_type="kde", mixture_num=0):
     print("Running point based data augmentation.")
-    DataAugmentation.point_based_aug(out_dir, img_list, point_list, num_samples, num_dim, percent_variability, sampler_type, mixture_num)
+    num_dim = DataAugmentation.point_based_aug(out_dir, img_list, point_list, num_samples, num_dim, percent_variability, sampler_type, mixture_num)
     print("Done.")
+    return num_dim
 
 def visualizeAugmentation(data_csv):
     Visualize.splom(data_csv)

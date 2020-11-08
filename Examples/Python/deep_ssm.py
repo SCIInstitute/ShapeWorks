@@ -67,7 +67,7 @@ def Run_Pipeline(args):
 		num_samples = 4
 		num_dim = 0
 		variability_percent = 0.99
-	DataAugmentationUtils.runDataAugmentation(outputDirectory + "Augmentation/", train_img_list, train_particle_list, num_samples, num_dim, variability_percent, sampler_type)
+	embedded_dim = DataAugmentationUtils.runDataAugmentation(outputDirectory + "Augmentation/", train_img_list, train_particle_list, num_samples, num_dim, variability_percent, sampler_type)
 	aug_data_csv = outputDirectory + "Augmentation/TotalData.csv"
 	DataAugmentationUtils.visualizeAugmentation(aug_data_csv)
 
@@ -104,7 +104,7 @@ def Run_Pipeline(args):
 	'''
 	PCA_scores_path = outputDirectory + "Augmentation/PCA_Particle_Info/"
 	prediction_dir = outputDirectory + 'Results/PredictedParticles/'
-	DeepSSMUtils.testDeepSSM(prediction_dir, model_path, loader_dir, PCA_scores_path, num_dim)
+	DeepSSMUtils.testDeepSSM(prediction_dir, model_path, loader_dir, PCA_scores_path, embedded_dim)
 	print('Predicted particles saved at: ' + prediction_dir)
 
 	print("\n\n\nStep 6. Analyze results.\n") #####################################################################################
