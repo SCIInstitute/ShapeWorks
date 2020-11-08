@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - studio_mesh
     tags:
     - '*'
   pull_request:
