@@ -97,32 +97,6 @@ def sampledata(inDataList, num_sample):
     print("###########################################\n")
     return samples_idx
 
-def convert_to_vtk_mesh(input_file, printCmd=False):
-    file_format = input_file.split(".")[-1]
-    input_vtk = input_file.replace(file_format, "vtk")
-    if file_format == "nrrd":
-        print("\nCreating mesh from: " + input_file)
-        print("\nSaving as: " + input_vtk)
-        xml_filename = os.path.join(os.path.dirname(input_file), "cutting_plane_nrrd2vtk.xml")
-        create_meshfromDT_xml(xml_filename, input_file, input_vtk)
-        execCommand = ["MeshFromDistanceTransforms", xml_filename]
-        if printCmd:
-            print("CMD: " + " ".join(execCommand))
-        subprocess.check_call(execCommand)
-    elif file_format == "ply":
-        execCommand = ["ply2vtk", input_file, input_vtk]
-        if printCmd:
-            print("CMD: " + " ".join(execCommand))
-        subprocess.check_call(execCommand)
-    elif file_format == "stl":
-        execCommand = ["stl2vtk", input_file, input_vtk]
-        if printCmd:
-            print("CMD: " + " ".join(execCommand))
-        subprocess.check_call(execCommand)
-    elif file_format == "vtk":
-        pass
-    return input_vtk
-
 def samplemesh(inMeshList, num_sample, printCmd=False):
     D = np.zeros((len(inMeshList), len(inMeshList)))
     inMeshList = GroomUtils.getVTKmeshes(inMeshList, printCmd)
