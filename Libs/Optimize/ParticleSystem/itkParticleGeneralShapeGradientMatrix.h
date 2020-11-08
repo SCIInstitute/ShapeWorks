@@ -156,10 +156,10 @@ public:
             }
             else
             {
-                vnl_vector_fixed<float, DIMENSION> gradient = ps->GetDomain(d)->SampleGradientAtPoint(posLocal);
+                vnl_vector_fixed<float, DIMENSION> gradient = ps->GetDomain(d)->SampleGradientAtPoint(posLocal, idx);
                 vnl_vector_fixed<float, DIMENSION> normal = gradient.normalize();
                 float grad_mag = gradient.magnitude();
-                typename ParticleImageDomainWithHessians<float>::VnlMatrixType hessian = ps->GetDomain(d)->SampleHessianAtPoint(posLocal);
+                typename ParticleImageDomainWithHessians<float>::VnlMatrixType hessian = ps->GetDomain(d)->SampleHessianAtPoint(posLocal, idx);
 
                 typename ParticleImageDomainWithHessians<float>::VnlMatrixType mat1;
                 mat1.set_identity();

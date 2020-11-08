@@ -212,11 +212,11 @@ Eigen::Vector3d TriMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a,
 }
 
 TriMeshWrapper::PointType
-TriMeshWrapper::GeodesicWalk(PointType pointa, vnl_vector_fixed<double, DIMENSION> vector) const
+TriMeshWrapper::GeodesicWalk(PointType pointa, int idx, vnl_vector_fixed<double, DIMENSION> vector) const
 {
 
-  PointType snapped = this->SnapToMesh(pointa);
-  int faceIndex = GetTriangleForPoint(convert<PointType, point>(snapped));
+  PointType snapped = this->SnapToMesh(pointa, idx);
+  int faceIndex = GetTriangleForPoint(convert<PointType, point>(snapped), idx);
 
   Eigen::Vector3d vectorEigen = convert<vnl_vector_fixed<double, DIMENSION>, Eigen::Vector3d>(
     vector);
@@ -234,10 +234,10 @@ TriMeshWrapper::GeodesicWalk(PointType pointa, vnl_vector_fixed<double, DIMENSIO
 }
 
 vnl_vector_fixed<double, DIMENSION>
-TriMeshWrapper::ProjectVectorToSurfaceTangent(const PointType& pointa,
+TriMeshWrapper::ProjectVectorToSurfaceTangent(const PointType& pointa, int idx,
                                               vnl_vector_fixed<double, DIMENSION>& vector) const
 {
-  int faceIndex = GetTriangleForPoint(convert<const PointType, point>(pointa));
+  int faceIndex = GetTriangleForPoint(convert<const PointType, point>(pointa), idx);
   const Eigen::Vector3d normal = GetFaceNormal(faceIndex);
   Eigen::Vector3d result = ProjectVectorToFace(normal,
                                                convert<vnl_vector_fixed<double, DIMENSION>, Eigen::Vector3d>(
@@ -268,10 +268,10 @@ Eigen::Vector3d TriMeshWrapper::RotateVectorToFace(const Eigen::Vector3d& prevno
   return rotated;
 }
 
-vnl_vector_fixed<float, DIMENSION> TriMeshWrapper::SampleNormalAtPoint(PointType p) const
+vnl_vector_fixed<float, DIMENSION> TriMeshWrapper::SampleNormalAtPoint(PointType p, int idx) const
 {
   point pointa = convert<PointType, point>(p);
-  int face = GetTriangleForPoint(pointa);
+  int face = GetTriangleForPoint(pointa, idx);
   vec3 bary = ComputeBarycentricCoordinates(pointa, face);
 
   vnl_vector_fixed<float, DIMENSION> weightedNormal(0, 0, 0);
@@ -310,8 +310,20 @@ vec normalizeBary(const vec& bary)
 
 // Checks all of the neighbor faces of the 10 nearest vertices to pt.
 // Returns index of the first face that has valid barycentric coordinates.
-int TriMeshWrapper::GetTriangleForPoint(point pt) const
+//TODO Return barycentric coordinate as well, everyone seems to want it
+int TriMeshWrapper::GetTriangleForPoint(point pt, int idx) const
 {
+  // given a guess, just check whether it is still valid.
+  if(idx != -1) {
+    int guess = particleIdx2faceIdx[idx];
+    vec bary = this->ComputeBarycentricCoordinates(pt, guess);
+    bary = normalizeBary(bary);
+    if (((bary[0] >= -epsilon) && (bary[0] <= 1 + epsilon)) &&
+        ((bary[1] >= -epsilon) && (bary[1] <= 1 + epsilon)) &&
+        ((bary[2] >= -epsilon) && (bary[2] <= 1 + epsilon))) {
+      return guess;
+    }
+  }
 
   double closestDistance = 99999999;
   int closestFace = -1;
@@ -351,6 +363,9 @@ int TriMeshWrapper::GetTriangleForPoint(point pt) const
       }
     }
   }
+  if(idx != -1) {
+    particleIdx2faceIdx[idx] = closestFace;
+  }
   return closestFace;
 }
 
@@ -381,10 +396,10 @@ vec3 TriMeshWrapper::ComputeBarycentricCoordinates(point pt, int face) const
 }
 
 // snaps the point to the mesh by getting the barycentric coordinates and normalizing them to sum to 1.
-TriMeshWrapper::PointType TriMeshWrapper::SnapToMesh(PointType pointtype) const
+TriMeshWrapper::PointType TriMeshWrapper::SnapToMesh(PointType pointtype, int idx) const
 {
   point pt = convert<PointType, point>(pointtype);
-  int face = GetTriangleForPoint(pt);
+  int face = GetTriangleForPoint(pt, idx);
   vec bary = ComputeBarycentricCoordinates(pt, face);
   for (int i = 0; i < 3; i++) {
     if (bary[i] < -epsilon) bary[i] = 0;

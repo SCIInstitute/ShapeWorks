@@ -237,7 +237,7 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
     }
 
     // Get the neighborhood surrounding the point "pos".
-    m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, m_CurrentWeights, neighborhood_radius, d);
+    m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, idx, m_CurrentWeights, neighborhood_radius, d);
 
     // Add the closest point on the plane as another neighbor.
     // See http://mathworld.wolfram.com/Point-PlaneDistance.html, for example
@@ -299,7 +299,7 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
             m_CurrentSigma = neighborhood_radius / this->GetNeighborhoodToSigmaRatio();
         }
 
-        m_CurrentNeighborhood = system->FindNeighborhoodPoints( pos, m_CurrentWeights, neighborhood_radius, d );
+        m_CurrentNeighborhood = system->FindNeighborhoodPoints( pos, idx, m_CurrentWeights, neighborhood_radius, d );
 
 
         for (unsigned int pidx = 0; pidx < domain->GetConstraints()->getPlaneConstraints()->size(); pidx++)
@@ -341,7 +341,7 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
     {
         m_CurrentSigma = this->GetMaximumNeighborhoodRadius() / this->GetNeighborhoodToSigmaRatio();
         neighborhood_radius = this->GetMaximumNeighborhoodRadius();
-        m_CurrentNeighborhood = system->FindNeighborhoodPoints( pos, m_CurrentWeights,
+        m_CurrentNeighborhood = system->FindNeighborhoodPoints( pos, idx,m_CurrentWeights,
                                                                 neighborhood_radius, d );
 
 
