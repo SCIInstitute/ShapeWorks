@@ -45,8 +45,8 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v2.9.0
       with:
-        version: "5.12.10"
-        cached: ${{ steps.cache-qt.outputs.cache-hit-5-12-10 }}
+        version: "5.12.9"
+        cached: ${{ steps.cache-qt.outputs.cache-hit-5-12-9 }}
 
     - name: Setup Conda
       uses: goanpeca/setup-miniconda@v1
