@@ -316,6 +316,7 @@ int TriMeshWrapper::GetTriangleForPoint(point pt, int idx) const
   // given a guess, just check whether it is still valid.
   if(idx != -1) {
     int guess = particleIdx2faceIdx[idx];
+    //TODO does this suffice or do we have to check the normal
     vec bary = this->ComputeBarycentricCoordinates(pt, guess);
     bary = normalizeBary(bary);
     if (((bary[0] >= -epsilon) && (bary[0] <= 1 + epsilon)) &&
