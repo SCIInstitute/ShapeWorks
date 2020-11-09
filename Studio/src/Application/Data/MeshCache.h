@@ -20,9 +20,7 @@
 #include <vnl/vnl_vector.h>
 
 #include <Data/StudioMesh.h>
-#ifndef Q_MOC_RUN
 #include <Data/MeshWorkQueue.h>
-#endif
 #include <Data/Preferences.h>
 
 namespace shapeworks {

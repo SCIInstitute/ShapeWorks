@@ -16,7 +16,6 @@
 // vnl
 #include "vnl/vnl_vector.h"
 
-Q_DECLARE_METATYPE(shapeworks::MeshWorkItem);
 
 namespace shapeworks {
 
@@ -34,6 +33,7 @@ public:
   friend bool operator==(const MeshWorkItem &a, const MeshWorkItem &b);
 };
 
+Q_DECLARE_METATYPE(MeshWorkItem);
 
 
 class MeshWorkQueue

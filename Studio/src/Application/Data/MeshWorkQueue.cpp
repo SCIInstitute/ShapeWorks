@@ -1,5 +1,6 @@
 #include <Data/MeshWorkQueue.h>
 
+namespace shapeworks {
 //---------------------------------------------------------------------------
 bool operator<(const MeshWorkItem &a, const MeshWorkItem &b)
 {
@@ -130,4 +131,5 @@ bool MeshWorkQueue::in_inside_list(const MeshWorkItem &item, const WorkList &lis
     }
   }
   return false;
+}
 }
