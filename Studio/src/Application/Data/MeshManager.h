@@ -14,13 +14,13 @@
 #include <QThreadPool>
 
 
-#ifndef Q_MOC_RUN
 #include <Data/MeshCache.h>
+//#ifndef Q_MOC_RUN
 #include <Data/MeshGenerator.h>
 #include <Data/MeshWorkQueue.h>
 #include <Data/MeshWorker.h>
 
-#endif
+//#endif
 
 #include <Data/Preferences.h>
 #include <Data/SurfaceReconstructor.h>
