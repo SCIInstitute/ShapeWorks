@@ -465,9 +465,23 @@ void TriMeshWrapper::ComputeGradNormalX()
   auto dur = duration_cast<microseconds>(high_resolution_clock::now() - TEMPO_start);
   std::cout << "Took " << dur.count() << std::endl;
 
-  const auto fname = "/scratch/karthik/projects/geodesic-sandbox/python/random/meshfim_gradx.bin";
-  std::ofstream f(fname, std::ios::out | std::ios::binary);
-  f.write(reinterpret_cast<const char *>(grad_normal_x.data()), grad_normal_x.size() * sizeof(double));
-  f.close();
+  {
+    const auto fname = "/scratch/karthik/projects/geodesic-sandbox/python/random/meshfim_gradx.bin";
+    std::ofstream f(fname, std::ios::out | std::ios::binary);
+    f.write(reinterpret_cast<const char *>(grad_normal_x.data()), grad_normal_x.size() * sizeof(double));
+    f.close();
+  }
+
+  {
+    Eigen::VectorXd feat;
+    feat.resize(fim.features[0].size());
+    for(int i=0; i<fim.features[0].size(); i++) {
+      feat(i) = fim.features[0][i];
+    }
+    const auto fname = "/scratch/karthik/projects/geodesic-sandbox/python/random/meshfim_normalx.bin";
+    std::ofstream f(fname, std::ios::out | std::ios::binary);
+    f.write(reinterpret_cast<const char *>(feat.data()), feat.size() * sizeof(double));
+    f.close();
+  }
 }
 }
