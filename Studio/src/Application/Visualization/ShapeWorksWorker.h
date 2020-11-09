@@ -2,9 +2,7 @@
 
 #include <QObject>
 
-//#ifndef Q_MOC_RUN
 #include <Data/Session.h>
-//#endif
 
 namespace shapeworks {
 class Optimize;
