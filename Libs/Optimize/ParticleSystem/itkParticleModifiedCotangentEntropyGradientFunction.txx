@@ -57,45 +57,18 @@ ParticleModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimensio
             r[n] = pos[n] - pos_k[n];
         rmag = r.magnitude();
         energy += this->ComputeModifiedCotangent(rmag, d);
-    }
 
-    energy = std::log(energy/neighbourhoods[idx].size());
-
-    for (unsigned int k = 0; k < neighbourhoods[idx].size(); k++)
-    {
-        PointType pos_k = neighbourhoods[idx][k].Point;
-        auto idx_k = neighbourhoods[idx][k].Index;
-        const typename ParticleSystemType::PointVectorType& k_neighborhood = neighbourhoods[idx_k];
-        double energy_k = epsilon;
-
-        for (unsigned int j = 0; j < k_neighborhood.size(); j++)
-        {
-            for (unsigned int n = 0; n < VDimension; n++)
-                r[n] = pos_k[n] - k_neighborhood[j].Point[n];
-            rmag = r.magnitude();
-            energy_k += this->ComputeModifiedCotangent(rmag, d);
-        }
-
-        for (unsigned int n = 0; n < VDimension; n++)
-            r[n] = pos[n] - pos_k[n];
-        rmag = r.magnitude();
         double forc = this->ComputeModifiedCotangentDerivative(rmag, d);
 
         for (unsigned int n = 0; n < VDimension; n++)
-            gradE[n] += (forc * r[n])/(rmag * energy_k);
-
-        for (unsigned int n = 0; n < VDimension; n++)
-            gradE[n] += (forc * r[n])/(rmag * energy);
-
-        energy += std::log(energy_k/k_neighborhood.size());
+          gradE[n] += (forc * r[n])/rmag;
     }
-
-    energy /= neighbourhoods[idx].size()+1;
 
     for (unsigned int n = 0; n < VDimension; n++)
         gradE[n] /= neighbourhoods[idx].size();
 
     maxmove = m_GlobalSigma[d]; // deprecated - not used in gradient descent class
+    energy *= -1;
 
     return gradE ;
 }

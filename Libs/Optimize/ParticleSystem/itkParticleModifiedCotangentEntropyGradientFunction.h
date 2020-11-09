@@ -123,11 +123,11 @@ public:
         const double epsilon = 1.0e-6;
         rij += epsilon;
         double r     = itk::Math::pi_over_2 * rij/m_GlobalSigma[d] ;
-        double cotan = cos(r)/sin(r);
+        double cotan = 1.0 / std::tan(r);
         double val   = cotan + r - itk::Math::pi_over_2;
-        double A     = -1.0 *itk::Math::pi_over_4 * m_GlobalSigma[d] - itk::Math::pi_over_4 * std::pow(epsilon, 2) / m_GlobalSigma[d] + itk::Math::pi_over_2 * epsilon;
-        A -= (m_GlobalSigma[d]/itk::Math::pi_over_2) * std::log( std::sin(epsilon * itk::Math::pi_over_2 / m_GlobalSigma[d]) );
-        val /= A;
+        // double A     = -1.0 *itk::Math::pi_over_4 * m_GlobalSigma[d] - itk::Math::pi_over_4 * std::pow(epsilon, 2) / m_GlobalSigma[d] + itk::Math::pi_over_2 * epsilon;
+        // A -= (m_GlobalSigma[d]/itk::Math::pi_over_2) * std::log( std::sin(epsilon * itk::Math::pi_over_2 / m_GlobalSigma[d]) );
+        // val /= A;
         return val;
     }
 
@@ -142,11 +142,11 @@ public:
         double sin_2 = 1.0 / pow(sin(r),2.0);
         double val   = (itk::Math::pi_over_2 / m_GlobalSigma[d]) * (1.0 - sin_2);
 
-        double A     = -1.0 *itk::Math::pi_over_4 * m_GlobalSigma[d] - itk::Math::pi_over_4 * std::pow(epsilon, 2) / m_GlobalSigma[d] + itk::Math::pi_over_2 * epsilon;
-        A -= (m_GlobalSigma[d]/itk::Math::pi_over_2) * std::log( std::sin(epsilon * itk::Math::pi_over_2 / m_GlobalSigma[d]) );
+        // double A     = -1.0 *itk::Math::pi_over_4 * m_GlobalSigma[d] - itk::Math::pi_over_4 * std::pow(epsilon, 2) / m_GlobalSigma[d] + itk::Math::pi_over_2 * epsilon;
+        // A -= (m_GlobalSigma[d]/itk::Math::pi_over_2) * std::log( std::sin(epsilon * itk::Math::pi_over_2 / m_GlobalSigma[d]) );
+        // val /= A;
 
-        val /= A;
-        return val;
+      return val;
     }
 
     void ClearGlobalSigma()
