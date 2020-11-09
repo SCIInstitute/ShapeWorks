@@ -3,6 +3,7 @@
 #include "Shapeworks.h"
 
 #include <vtkPolyData.h>
+#include <vtkPlane.h>
 #include <string>
 
 namespace shapeworks {
@@ -22,7 +23,7 @@ public:
   Mesh& write(const std::string &pathname);
 
   /// creates mesh of coverage between two meshes
-  Mesh& coverage(const Mesh& other_mesh); // TODO: everything should be like this and return reference to self
+  Mesh& coverage(const Mesh& other_mesh);
 
   Mesh& march(double levelset = 0.0);
 
@@ -40,13 +41,30 @@ public:
   /// finds holes in a mesh and closes them
   Mesh& fillHoles();
 
-  Mesh& probeFeature(const Image &img);
+  Mesh& probeVolume(const Image &img);
+
+  /// clips a mesh using a cutting plane
+  Mesh& clip(vtkSmartPointer<vtkPlane> plane);
+
+  /// helper to translate mesh
+  Mesh& translate(const Vector3 &v);
+
+  /// helper to scale mesh
+  Mesh& scale(const Vector3 &v);
 
   /// compare if points in two meshes are equal
   bool compare_points_equal(const Mesh& other_mesh);
 
   /// compare if scalars in two meshes are equal
   bool compare_scalars_equal(const Mesh& other_mesh);
+
+  // query functions //
+
+  /// center of mesh
+  double* center() const { return mesh->GetCenter(); }
+
+  /// bounds of mesh
+  double* bounds() const { return mesh->GetBounds(); }
 
 private:
   Mesh() {}

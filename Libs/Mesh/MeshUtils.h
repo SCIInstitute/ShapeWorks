@@ -18,6 +18,8 @@ public:
   /// Creates transform from source mesh to target using ICP registration
   static vtkTransform createRegistrationTransform(const std::unique_ptr<Mesh> &sourceMesh, const std::unique_ptr<Mesh> &targetMesh, const std::string type, unsigned iterations = 20);
 
+  /// Create plane
+  vtkSmartPointer<vtkPlane> createPlane(const Mesh &mesh);
 };
 
 } // shapeworks

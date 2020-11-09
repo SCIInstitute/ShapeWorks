@@ -46,4 +46,15 @@ vtkTransform MeshUtils::createRegistrationTransform(const std::unique_ptr<Mesh> 
   return createvtkTransform(mat);
 }
 
+vtkSmartPointer<vtkPlane> MeshUtils::createPlane(const Mesh &mesh)
+{
+  double* bounds = mesh.bounds();
+
+  vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
+  plane->SetNormal(0, 0, 1);
+  plane->SetOrigin(0.0, 0.0, bounds[4] + 2);
+
+  return plane;
+}
+
 } // shapeworks

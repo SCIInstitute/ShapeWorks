@@ -17,6 +17,7 @@
 #include <vtkFillHolesFilter.h>
 #include <vtkPolyDataNormals.h>
 #include <vtkProbeFilter.h>
+#include <vtkClipPolyData.h>
 
 static bool compare_double(double a, double b)
 {
@@ -183,15 +184,42 @@ Mesh &Mesh::fillHoles()
   return *this;
 }
 
-Mesh &Mesh::probeFeature(const Image &img)
+Mesh &Mesh::probeVolume(const Image &img)
 {
   vtkSmartPointer<vtkProbeFilter> probeFilter = vtkSmartPointer<vtkProbeFilter>::New();
   probeFilter->SetInputData(this->mesh);
-  probeFilter->SetSourceData(Image::img.getVTK());
+  // probeFilter->SetSourceData(Image::img.getVTK());
   probeFilter->Update();
 
   this->mesh = probeFilter->GetPolyDataOutput();
   return *this;
+}
+
+Mesh &Mesh::clip(vtkSmartPointer<vtkPlane> plane)
+{
+  vtkSmartPointer<vtkClipPolyData> clipper = vtkSmartPointer<vtkClipPolyData>::New();
+  clipper->SetInputData(this->mesh);
+  clipper->SetClipFunction(plane);
+  clipper->Update();
+
+  this->mesh = clipper->GetOutput();
+  return *this;
+}
+
+Mesh &Mesh::translate(const Vector3 &v)
+{
+  vtkTransform transform(vtkTransform::New());
+  transform->Translate(v[0], v[1], v[2]);
+
+  applyTransform(transform);
+}
+
+Mesh &Mesh::scale(const Vector3 &v)
+{
+  vtkTransform transform(vtkTransform::New());
+  transform->Scale(v[0], v[1], v[2]);
+
+  applyTransform(transform);
 }
 
 bool Mesh::compare_points_equal(const Mesh &other_mesh)

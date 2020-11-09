@@ -1857,27 +1857,38 @@ bool FillHoles::execute(const optparse::Values &options, SharedCommandData &shar
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// ProbeFeature
+// ProbeVolume
 ///////////////////////////////////////////////////////////////////////////////
-void ProbeFeature::buildParser()
+void ProbeVolume::buildParser()
 {
-  const std::string prog = "probe-feature";
-  const std::string desc = "probe feature volumes at each mesh vertex and 
-                            output vtk meshes with scalar field defined based on such probing process";
+  const std::string prog = "probe-volume";
+  const std::string desc = "probe feature volumes at each mesh vertex and output vtk meshes with scalar field defined based on such probing process";
   parser.prog(prog).description(desc);
+
+  parser.add_option("--image").action("store").type("string").set_default("").help("Path of image.");
 
   Command::buildParser();
 }
 
-bool ProbeFeature::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool ProbeVolume::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validMesh())
   {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
+
+  std::string filename = static_cast<std::string>(options.get("image"));
+
+  if (filename == "")
+  {
+    std::cerr << "Must specify an image\n";
+    return false;
+  }
+
+  Image img(filename);
   
-  sharedData.mesh->ProbeFeature();
+  sharedData.mesh->probeVolume(img);
   return sharedData.validMesh();
 }
 
