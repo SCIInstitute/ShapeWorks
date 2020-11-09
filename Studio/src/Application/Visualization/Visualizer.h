@@ -139,4 +139,5 @@ private:
   bool feature_range_uniform_ = true;
 
 };
+
 }

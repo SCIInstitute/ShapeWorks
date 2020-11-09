@@ -10,6 +10,7 @@
 #include <Data/MeshManager.h>
 
 #endif
+#include <itkMatrixOffsetTransformBase.h>
 
 namespace shapeworks {
 

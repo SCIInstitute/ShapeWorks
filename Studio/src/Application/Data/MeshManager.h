@@ -79,4 +79,5 @@ private:
 
   bool error_emitted_ = false;
 };
+
 }

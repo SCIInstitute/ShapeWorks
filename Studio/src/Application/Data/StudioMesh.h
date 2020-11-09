@@ -13,10 +13,8 @@
 
 #include <vnl/vnl_vector.h>
 
-#include <Libs/Image/Image.h>
-
-typedef float PixelType;
-typedef itk::Image<PixelType, 3> ImageType;
+using PixelType = float;
+using ImageType = itk::Image<PixelType, 3>;
 
 namespace shapeworks {
 
@@ -38,7 +36,7 @@ public:
   ~StudioMesh();
 
   //! Create a mesh from an image
-  void create_from_image(shapeworks::Image::ImageType::Pointer img, double iso_value);
+  void create_from_image(ImageType::Pointer img, double iso_value);
 
   //! Get the dimensions as a string for display (if loaded from an image)
   QString get_dimension_string();
@@ -59,7 +57,7 @@ public:
   std::string get_error_message();
 
   //! Apply a feature map
-  void apply_feature_map(std::string name, shapeworks::Image::ImageType::Pointer image,
+  void apply_feature_map(std::string name, ImageType::Pointer image,
                          vnl_vector<double> transform);
 
   void interpolate_scalars_to_mesh(std::string name,

@@ -8,6 +8,8 @@
 #include <QSharedPointer>
 #include <QVector>
 
+#include <itkMatrixOffsetTransformBase.h>
+
 #include <Libs/Project/Project.h>
 
 #include <Data/Preferences.h>
