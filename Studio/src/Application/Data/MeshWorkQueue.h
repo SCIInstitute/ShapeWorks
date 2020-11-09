@@ -16,6 +16,10 @@
 // vnl
 #include "vnl/vnl_vector.h"
 
+Q_DECLARE_METATYPE(shapeworks::MeshWorkItem);
+
+namespace shapeworks {
+
 class MeshWorkItem
 {
 public:
@@ -30,14 +34,15 @@ public:
   friend bool operator==(const MeshWorkItem &a, const MeshWorkItem &b);
 };
 
-Q_DECLARE_METATYPE(MeshWorkItem);
 
-using WorkList = std::list<MeshWorkItem>;
 
 class MeshWorkQueue
 {
 
 public:
+
+  using WorkList = std::list<MeshWorkItem>;
+
   MeshWorkQueue();
   ~MeshWorkQueue();
 
@@ -64,3 +69,4 @@ private:
 
   WorkList processing_list_;
 };
+}
