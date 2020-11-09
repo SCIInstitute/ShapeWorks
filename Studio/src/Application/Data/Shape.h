@@ -2,9 +2,14 @@
 
 #include <QSharedPointer>
 #include <QString>
+
+#ifndef Q_MOC_RUN
+
 #include <Data/StudioMesh.h>
 #include <Libs/Project/Subject.h>
 #include <Data/MeshManager.h>
+
+#endif
 
 namespace shapeworks {
 

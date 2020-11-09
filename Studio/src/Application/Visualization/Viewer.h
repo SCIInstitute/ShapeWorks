@@ -3,7 +3,10 @@
 
 #include <QSharedPointer>
 #include <Visualization/ColorSchemes.h>
+
+//#ifndef Q_MOC_RUN
 #include <Application/Data/Shape.h>
+//#endif
 
 class vtkRenderer;
 class vtkLookupTable;

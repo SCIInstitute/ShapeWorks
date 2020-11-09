@@ -6,8 +6,11 @@
 #include <QSharedPointer>
 #include <QProgressDialog>
 #include <QElapsedTimer>
+#include <QObject>
 
+#ifndef Q_MOC_RUN
 #include <Groom/QGroom.h>
+#endif
 
 class Ui_GroomTool;
 

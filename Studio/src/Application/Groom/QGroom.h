@@ -1,7 +1,10 @@
 #pragma once
 
-#include <Libs/Groom/Groom.h>
 #include <QObject>
+
+#ifndef Q_MOC_RUN
+#include <Libs/Groom/Groom.h>
+#endif
 
 namespace shapeworks {
 

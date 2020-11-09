@@ -8,10 +8,12 @@
 #include <QSharedPointer>
 #include <QVector>
 
+#ifndef Q_MOC_RUN
 #include <Libs/Project/Project.h>
 
 #include <Data/Preferences.h>
 #include <Data/MeshManager.h>
+#endif
 
 namespace shapeworks {
 

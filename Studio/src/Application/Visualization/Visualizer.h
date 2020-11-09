@@ -3,9 +3,11 @@
 #include <map>
 #include <string>
 
+#ifndef Q_MOC_RUN
 #include <Data/Session.h>
 #include <Data/Preferences.h>
 #include <Visualization/Lightbox.h>
+#endif
 
 namespace shapeworks {
 
