@@ -8,14 +8,14 @@
 #include <ParticleShapeStatistics.h>
 
 // Studio
-#ifndef Q_MOC_RUN
+//#ifndef Q_MOC_RUN
 
 #include <Data/Shape.h>
 #include <Data/Preferences.h>
 #include <Visualization/Visualizer.h>
 #include <Visualization/BarGraph.h>
 
-#endif
+//#endif
 
 class Ui_AnalysisTool;
 
