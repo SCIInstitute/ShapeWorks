@@ -10,8 +10,8 @@
 
 #include <Libs/Project/Project.h>
 
-#ifndef Q_MOC_RUN
 #include <Data/Preferences.h>
+#ifndef Q_MOC_RUN
 #include <Data/MeshManager.h>
 #endif
 
