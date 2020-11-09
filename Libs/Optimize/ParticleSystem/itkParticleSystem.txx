@@ -280,6 +280,10 @@ void ParticleSystem<VDimension>::AdvancedAllParticleSplitting(double epsilon)
 {
   size_t num_doms = this->GetNumberOfDomains();
 
+  for (size_t domain = 0; domain < num_doms; domain++) {
+      this->GetDomain(domain)->GetConstraints()->InitializeLagrangianParameters(1,1,1);
+  }
+
   std::vector<std::vector<PointType> > lists;
 
   for (size_t domain = 0; domain < num_doms; domain++) {

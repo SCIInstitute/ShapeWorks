@@ -19,6 +19,11 @@ public:
     return grad;
   }
 
+  double ConstraintEval(const Eigen::Vector3d &pt) const{
+    double val;
+    return val;
+  }
+
   void printC() const{
       std::cout << "FF" << std::endl;
   }

@@ -283,13 +283,14 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   gradE = gradE / m_avgKappa;
 
   // Energy stuff
-  double constraint_energy_weight = 0.15;
-  VectorType constraint_energy = system->GetDomain(d)->GetConstraints()->ConstraintsGradient(pos);
-  //std::cout << constraint_energy << std::endl;
+  system->GetDomain(d)->GetConstraints()->UpdateZs(pos, 1);
+  VectorType constraint_energy = system->GetDomain(d)->GetConstraints()->ConstraintsLagrangianGradient(pos, 1);
+  std::cout << constraint_energy << std::endl;
   for (unsigned int n = 0; n < VDimension; n++)
     {
-        gradE[n] += constraint_energy_weight * constraint_energy[n];
+        gradE[n] += constraint_energy[n];
     }
+  system->GetDomain(d)->GetConstraints()->UpdateMus(pos, 1);
 
   return gradE;
 }

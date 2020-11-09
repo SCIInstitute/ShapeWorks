@@ -78,6 +78,9 @@ public:
       return planesViolated;
   }
 
+  // ============================
+  // Augmented Lagragian Fuctions
+  // ============================
   // Energy gradient computations
   vnl_vector_fixed<double, 3> ConstraintsGradient(const Point<double, 3> &pos) const{
       Eigen::Vector3d pt; pt(0) = pos[0]; pt(1) = pos[1]; pt(2) = pos[2];
@@ -97,6 +100,73 @@ public:
       }
       return gradE;
   }
+
+  // Lagragian gradient computation
+  vnl_vector_fixed<double, 3> ConstraintsLagrangianGradient(const Point<double, 3> &pos, double C) const{
+      Eigen::Vector3d pt; pt(0) = pos[0]; pt(1) = pos[1]; pt(2) = pos[2];
+      Eigen::Vector3d grad;
+      for(size_t i = 0; i < planeConsts->size(); i++){
+          grad += (*planeConsts)[i].LagragianGradient(pt, C);
+      }
+      for(size_t i = 0; i < sphereConsts->size(); i++){
+          grad += (*sphereConsts)[i].LagragianGradient(pt, C);
+      }
+      for(size_t i = 0; i < freeFormConsts->size(); i++){
+          grad += (*freeFormConsts)[i].LagragianGradient(pt, C);
+      }
+      vnl_vector_fixed<double, 3> gradE;
+      for(size_t i = 0; i < 3; i++){
+          gradE[i] = grad(i);
+      }
+      return gradE;
+  }
+
+  // Parameters lambda, mu and z initialization
+  void InitializeLagrangianParameters(double lambda, double mu, double z) const{
+      for(size_t i = 0; i < planeConsts->size(); i++){
+          (*planeConsts)[i].SetLambda(lambda);
+          (*planeConsts)[i].SetMu(mu);
+          (*planeConsts)[i].SetZ(z);
+      }
+      for(size_t i = 0; i < sphereConsts->size(); i++){
+          (*sphereConsts)[i].SetLambda(lambda);
+          (*sphereConsts)[i].SetMu(mu);
+          (*sphereConsts)[i].SetZ(z);
+      }
+      for(size_t i = 0; i < freeFormConsts->size(); i++){
+          (*freeFormConsts)[i].SetLambda(lambda);
+          (*freeFormConsts)[i].SetMu(mu);
+          (*freeFormConsts)[i].SetZ(z);
+      }
+  }
+
+  void UpdateZs(const Point<double, 3> &pos, double C){
+      Eigen::Vector3d pt; pt(0) = pos[0]; pt(1) = pos[1]; pt(2) = pos[2];
+      for(size_t i = 0; i < planeConsts->size(); i++){
+          (*planeConsts)[i].UpdateZ(pt,C);
+      }
+      for(size_t i = 0; i < sphereConsts->size(); i++){
+          (*sphereConsts)[i].UpdateZ(pt,C);
+      }
+      for(size_t i = 0; i < freeFormConsts->size(); i++){
+          (*sphereConsts)[i].UpdateZ(pt,C);
+      }
+  }
+
+  void UpdateMus(const Point<double, 3> &pos, double C){
+      Eigen::Vector3d pt; pt(0) = pos[0]; pt(1) = pos[1]; pt(2) = pos[2];
+      for(size_t i = 0; i < planeConsts->size(); i++){
+          (*planeConsts)[i].UpdateMu(pt,C);
+      }
+      for(size_t i = 0; i < sphereConsts->size(); i++){
+          (*sphereConsts)[i].UpdateMu(pt,C);
+      }
+      for(size_t i = 0; i < freeFormConsts->size(); i++){
+          (*sphereConsts)[i].UpdateMu(pt,C);
+      }
+  }
+
+  // ============================
 
   void PrintAll(){
       std::cout << "Cutting planes " << planeConsts->size() << std::endl;
