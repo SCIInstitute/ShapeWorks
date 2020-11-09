@@ -191,7 +191,7 @@ public:
 
   //! Set the shape input images
   void AddImage(ImageType::Pointer image);
-  void AddMesh(shapeworks::MeshWrapper* mesh);
+  void AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh);
 
   //! Set the shape filenames (TODO: details)
   void SetFilenames(const std::vector<std::string>& filenames);
@@ -287,7 +287,7 @@ protected:
   void WritePointFilesWithFeatures(std::string iter_prefix);
   void WriteEnergyFiles();
   void WriteCuttingPlanePoints(int iter = -1);
-  void WriteParameters(int iter = -1);
+  void WriteParameters(std::string output_dir = "");
   void ReportBadParticles();
 
   void SetParameters();
@@ -298,6 +298,9 @@ protected:
   void PrintDoneMessage(unsigned int vlevel = 0) const;
 
   virtual void UpdateExportablePoints();
+
+  // return a checkpoint dir for the current iteration
+  std::string GetCheckpointDir();
 
   std::shared_ptr<Sampler> m_sampler;
   itk::ParticleProcrustesRegistration<3>::Pointer m_procrustes;
@@ -311,7 +314,6 @@ protected:
   int m_procrustes_counter = 0;
   int m_saturation_counter = 0;
   bool m_disable_procrustes = true;
-  bool m_disable_checkpointing = true;
   bool m_use_cutting_planes = false;
   bool m_optimizing = false;
   bool m_use_regression = false;
@@ -352,7 +354,7 @@ protected:
   double m_starting_regularization = 1000;
   double m_ending_regularization = 1.0;
   int m_recompute_regularization_interval = 1;
-  bool m_save_init_splits = true;
+  bool m_save_init_splits = false;
   unsigned int m_checkpointing_interval = 50;
   int m_keep_checkpoints = 0;
   double m_cotan_sigma_factor = 5.0;
@@ -391,7 +393,7 @@ protected:
 
   //itk::MemberCommand<Optimize>::Pointer m_iterate_command;
   int m_total_iterations = 0;
-  size_t m_iteration_count = 0;
+  int m_iteration_count = 0;
 
   int m_split_number{0};
 
