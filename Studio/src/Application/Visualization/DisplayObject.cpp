@@ -1,5 +1,6 @@
 #include <Data/StudioMesh.h>
 #include <Visualization/DisplayObject.h>
+namespace shapeworks {
 
 //-----------------------------------------------------------------------------
 DisplayObject::DisplayObject()
@@ -91,4 +92,5 @@ std::vector<Shape::Point> DisplayObject::get_vectors()
 void DisplayObject::set_vectors(std::vector<Shape::Point> vectors)
 {
   this->vectors_ = vectors;
+}
 }

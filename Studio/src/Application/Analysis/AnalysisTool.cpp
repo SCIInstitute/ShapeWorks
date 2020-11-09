@@ -18,13 +18,13 @@
 
 #include <ui_AnalysisTool.h>
 
+namespace shapeworks {
+
 const std::string AnalysisTool::MODE_ALL_SAMPLES_C("all samples");
 const std::string AnalysisTool::MODE_MEAN_C("mean");
 const std::string AnalysisTool::MODE_PCA_C("pca");
 const std::string AnalysisTool::MODE_SINGLE_SAMPLE_C("single sample");
 const std::string AnalysisTool::MODE_REGRESSION_C("regression");
-
-using namespace shapeworks;
 
 //---------------------------------------------------------------------------
 AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
@@ -994,4 +994,6 @@ bool AnalysisTool::is_group_active(int shape_index)
   }
 
   return true;
+}
+
 }

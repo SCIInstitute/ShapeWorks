@@ -20,7 +20,7 @@
 
 #include <ui_OptimizeTool.h>
 
-using namespace shapeworks;
+namespace shapeworks {
 
 //---------------------------------------------------------------------------
 OptimizeTool::OptimizeTool()
@@ -254,4 +254,5 @@ void OptimizeTool::update_ui_elements()
   this->ui_->procrustes_scaling->setEnabled(this->ui_->procrustes->isChecked());
   this->ui_->procrustes_interval->setEnabled(this->ui_->procrustes->isChecked());
   this->ui_->multiscale_particles->setEnabled(this->ui_->multiscale->isChecked());
+}
 }

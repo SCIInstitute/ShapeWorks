@@ -18,6 +18,8 @@
 typedef float PixelType;
 typedef itk::Image<PixelType, 3> ImageType;
 
+namespace shapeworks {
+
 class StudioMesh;
 typedef QSharedPointer<StudioMesh> MeshHandle;
 //! Representation of a single mesh.
@@ -76,3 +78,4 @@ private:
   std::string error_message_;
 
 };
+}

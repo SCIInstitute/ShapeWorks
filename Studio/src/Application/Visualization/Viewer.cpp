@@ -31,6 +31,8 @@
 #include <Visualization/Viewer.h>
 #include <Visualization/Visualizer.h>
 
+namespace shapeworks {
+
 //-----------------------------------------------------------------------------
 Viewer::Viewer()
 {
@@ -45,10 +47,10 @@ Viewer::Viewer()
   //this->surface_lut_->SetColorSpaceToHSV();
 
   this->surface_lut_ = vtkSmartPointer<vtkLookupTable>::New();
-  this->surface_lut_->SetTableRange (0, 1);
-  this->surface_lut_->SetHueRange (0.667, 0.0);
-  this->surface_lut_->SetSaturationRange (1, 1);
-  this->surface_lut_->SetValueRange (1, 1);
+  this->surface_lut_->SetTableRange(0, 1);
+  this->surface_lut_->SetHueRange(0.667, 0.0);
+  this->surface_lut_->SetSaturationRange(1, 1);
+  this->surface_lut_->SetValueRange(1, 1);
   this->surface_lut_->SetIndexedLookup(false);
   this->surface_lut_->Build();
 
@@ -927,4 +929,5 @@ void Viewer::update_feature_range(double* range)
 QSharedPointer<Shape> Viewer::get_shape()
 {
   return this->shape_;
+}
 }

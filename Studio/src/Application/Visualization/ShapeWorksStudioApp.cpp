@@ -33,13 +33,14 @@
 // ui
 #include <ui_ShapeWorksStudioApp.h>
 
+
+namespace shapeworks {
+
 static QVariant ITEM_DISABLE(0);
 static QVariant ITEM_ENABLE(1 | 32);
 static int ITEM_ROLE = Qt::UserRole - 1;
 
 const std::string ShapeWorksStudioApp::SETTING_ZOOM_C("zoom_state");
-
-using namespace shapeworks;
 
 //---------------------------------------------------------------------------
 ShapeWorksStudioApp::ShapeWorksStudioApp()
@@ -360,8 +361,9 @@ void ShapeWorksStudioApp::on_action_quit_triggered()
 void ShapeWorksStudioApp::on_action_import_triggered()
 {
   auto filenames = QFileDialog::getOpenFileNames(this, tr("Import Files..."),
-                                            this->preferences_.get_last_directory(),
-                                            tr("NRRD files (*.nrrd);;MHA files (*.mha);;VTK files (*.vtk)"));
+                                                 this->preferences_.get_last_directory(),
+                                                 tr(
+                                                   "NRRD files (*.nrrd);;MHA files (*.mha);;VTK files (*.vtk)"));
 
   if (filenames.size() == 0) {
     // was cancelled
@@ -1598,4 +1600,4 @@ void ShapeWorksStudioApp::reset_num_viewers()
   }
 }
 
-
+}

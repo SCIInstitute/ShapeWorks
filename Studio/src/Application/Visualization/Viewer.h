@@ -20,6 +20,9 @@ class vtkCornerAnnotation;
 class vtkPolyDataMapper;
 class vtkActor;
 class vtkTransform;
+
+namespace shapeworks {
+
 class Shape;
 class Viewer;
 class Visualizer;
@@ -71,7 +74,7 @@ public:
 
   void set_visualizer(Visualizer* visualizer);
 
-  void update_feature_range(double *range);
+  void update_feature_range(double* range);
 
   QSharedPointer<Shape> get_shape();
 
@@ -150,3 +153,4 @@ private:
 
   Visualizer* visualizer_{nullptr};
 };
+}

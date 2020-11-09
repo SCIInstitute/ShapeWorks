@@ -13,6 +13,7 @@
 #include <Data/Preferences.h>
 #include <Data/MeshManager.h>
 
+namespace shapeworks {
 
 class Shape;
 
@@ -62,7 +63,6 @@ public:
 
   /// load groomed files
   void load_groomed_files(std::vector<std::string> file_names, double iso);
-
 
   /// load point files
   bool load_point_files(std::vector<std::string> file_names, bool local);
@@ -150,3 +150,5 @@ private:
 
   std::shared_ptr<shapeworks::Project> project_{new shapeworks::Project()};
 };
+
+}

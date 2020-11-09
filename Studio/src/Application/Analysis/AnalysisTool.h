@@ -13,10 +13,13 @@
 #include <Visualization/Visualizer.h>
 #include <Visualization/BarGraph.h>
 
+class Ui_AnalysisTool;
+
+namespace shapeworks {
+
 class Session;
 class Lightbox;
 class ShapeWorksStudioApp;
-class Ui_AnalysisTool;
 
 class AnalysisTool : public QWidget {
 Q_OBJECT;
@@ -49,7 +52,6 @@ public:
   double get_pca_value();
 
   bool pcaAnimate();
-
 
   int get_sample_number();
 
@@ -120,7 +122,6 @@ public Q_SLOTS:
 
   void group_changed();
 
-
   bool groups_active();
 
   void on_view_open_button_toggled();
@@ -181,3 +182,5 @@ private:
   std::vector<std::string> current_group_values_;
 
 };
+
+}

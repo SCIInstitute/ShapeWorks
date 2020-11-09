@@ -17,7 +17,7 @@
 #include <Libs/Mesh/Mesh.h>
 #include <Libs/Utils/StringUtils.h>
 
-using namespace shapeworks;
+namespace shapeworks {
 
 //---------------------------------------------------------------------------
 MeshGenerator::MeshGenerator(Preferences& prefs)
@@ -155,4 +155,5 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
 void MeshGenerator::set_surface_reconstructor(QSharedPointer<SurfaceReconstructor> reconstructor)
 {
   this->surface_reconstructor_ = reconstructor;
+}
 }

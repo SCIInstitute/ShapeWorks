@@ -17,15 +17,16 @@
 #include <Data/LegacyMeshGenerator.h>
 #include <Data/MeshWorkQueue.h>
 
-class MeshGenerator
-{
+namespace shapeworks {
+
+class MeshGenerator {
 public:
 
   MeshGenerator(Preferences& prefs);
 
   ~MeshGenerator();
 
-  MeshHandle build_mesh(const MeshWorkItem &item);
+  MeshHandle build_mesh(const MeshWorkItem& item);
 
   MeshHandle build_mesh_from_points(const vnl_vector<double>& shape, int domain);
 
@@ -40,3 +41,4 @@ private:
   QSharedPointer<SurfaceReconstructor> surface_reconstructor_;
   QSharedPointer<LegacyMeshGenerator> legacy_reconstructor_;
 };
+}

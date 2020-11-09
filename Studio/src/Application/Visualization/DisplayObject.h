@@ -7,18 +7,19 @@
 
 #include <Data/Shape.h>
 
+namespace shapeworks {
+
 class StudioMesh;
 
 class DisplayObject;
-typedef QSharedPointer< DisplayObject > DisplayObjectHandle;
+typedef QSharedPointer<DisplayObject> DisplayObjectHandle;
 
 //! Representation of everything displayed in a single Viewer
 /*!
  * The DisplayObject class encapsulates all the data displayed by a single viewer
  *
  */
-class DisplayObject
-{
+class DisplayObject {
 public:
 
   DisplayObject();
@@ -56,3 +57,4 @@ private:
   QList<Shape::Point> exclusion_sphere_centers_;
   QList<double> exclusion_sphere_radii_;
 };
+}

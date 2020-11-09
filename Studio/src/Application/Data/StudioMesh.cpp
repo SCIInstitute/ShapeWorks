@@ -21,6 +21,8 @@
 using NearestNeighborInterpolatorType = itk::NearestNeighborInterpolateImageFunction<ImageType, double>;
 using LinearInterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
 
+namespace shapeworks {
+
 //---------------------------------------------------------------------------
 StudioMesh::StudioMesh()
 {}
@@ -220,8 +222,7 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double
   point_locator->SetDivisions(100, 100, 100);
   point_locator->BuildLocator();
 
-  if (!this->poly_data_)
-  {
+  if (!this->poly_data_) {
     return;
   }
   auto points = this->poly_data_->GetPoints();
@@ -266,4 +267,5 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double
 
   this->poly_data_->GetPointData()->AddArray(scalars);
 
+}
 }

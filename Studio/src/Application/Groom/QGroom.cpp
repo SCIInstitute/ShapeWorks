@@ -1,6 +1,6 @@
 #include "QGroom.h"
 
-using namespace shapeworks;
+namespace shapeworks {
 
 void QGroom::update_progress()
 {
@@ -10,4 +10,5 @@ void QGroom::update_progress()
 QGroom::QGroom(ProjectHandle project) : Groom(project)
 {
 
+}
 }

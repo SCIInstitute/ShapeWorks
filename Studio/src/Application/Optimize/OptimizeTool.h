@@ -8,16 +8,14 @@
 
 #include <Data/Preferences.h>
 
-class Session;
 
 class Ui_OptimizeTool;
 
 namespace shapeworks {
 class QOptimize;
-}
+class Session;
 
-class OptimizeTool : public QWidget
-{
+class OptimizeTool : public QWidget {
 Q_OBJECT;
 
 public:
@@ -65,3 +63,4 @@ private:
   Ui_OptimizeTool* ui_;
   QSharedPointer<Session> session_;
 };
+}

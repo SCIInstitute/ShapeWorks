@@ -14,7 +14,7 @@
 
 #include <ui_GroomTool.h>
 
-using namespace shapeworks;
+namespace shapeworks {
 
 //---------------------------------------------------------------------------
 GroomTool::GroomTool()
@@ -159,7 +159,6 @@ void GroomTool::handle_thread_complete()
   this->enable_actions();
 }
 
-
 //---------------------------------------------------------------------------
 void GroomTool::on_skip_button_clicked()
 {
@@ -171,7 +170,6 @@ void GroomTool::on_skip_button_clicked()
   emit message("Skipped Grooming");
   emit groom_complete();
 }
-
 
 //---------------------------------------------------------------------------
 void GroomTool::set_session(QSharedPointer<Session> session)
@@ -193,3 +191,4 @@ void GroomTool::activate()
   }
 }
 
+}

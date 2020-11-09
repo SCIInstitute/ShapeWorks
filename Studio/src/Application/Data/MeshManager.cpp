@@ -7,6 +7,8 @@
 
 #include <Data/MeshManager.h>
 
+namespace shapeworks {
+
 //---------------------------------------------------------------------------
 MeshManager::MeshManager(Preferences& prefs) :
   prefs_(prefs),
@@ -23,7 +25,8 @@ MeshManager::MeshManager(Preferences& prefs) :
 }
 
 //---------------------------------------------------------------------------
-MeshManager::~MeshManager() {}
+MeshManager::~MeshManager()
+{}
 
 //---------------------------------------------------------------------------
 void MeshManager::clear_cache()
@@ -50,7 +53,7 @@ void MeshManager::generate_mesh(const MeshWorkItem item)
 }
 
 //---------------------------------------------------------------------------
-MeshHandle MeshManager::get_mesh(const MeshWorkItem &item, bool wait)
+MeshHandle MeshManager::get_mesh(const MeshWorkItem& item, bool wait)
 {
   MeshHandle mesh;
 
@@ -74,7 +77,7 @@ MeshHandle MeshManager::get_mesh(const MeshWorkItem &item, bool wait)
 }
 
 //---------------------------------------------------------------------------
-MeshHandle MeshManager::get_mesh(const vnl_vector<double> &points)
+MeshHandle MeshManager::get_mesh(const vnl_vector<double>& points)
 {
   MeshWorkItem item;
   item.points = points;
@@ -82,7 +85,7 @@ MeshHandle MeshManager::get_mesh(const vnl_vector<double> &points)
 }
 
 //---------------------------------------------------------------------------
-void MeshManager::handle_thread_complete(const MeshWorkItem &item, MeshHandle mesh)
+void MeshManager::handle_thread_complete(const MeshWorkItem& item, MeshHandle mesh)
 {
   this->mesh_cache_.insert_mesh(item, mesh);
   this->work_queue_.remove(item);
@@ -101,4 +104,5 @@ void MeshManager::handle_thread_complete(const MeshWorkItem &item, MeshHandle me
 QSharedPointer<SurfaceReconstructor> MeshManager::get_surface_reconstructor()
 {
   return this->surface_reconstructor_;
+}
 }

@@ -32,12 +32,12 @@
 #include <Visualization/ShapeWorksWorker.h>
 #include <Visualization/Visualizer.h>
 
+namespace shapeworks {
+
 const std::string Session::DATA_C("data");
 const std::string Session::GROOM_C("groom");
 const std::string Session::OPTIMIZE_C("optimize");
 const std::string Session::ANALYSIS_C("analysis");
-
-using namespace shapeworks;
 
 //---------------------------------------------------------------------------
 Session::Session(QWidget* parent, Preferences& prefs) : parent_(parent),
@@ -758,3 +758,4 @@ void Session::set_groom_unsaved(bool value)
   this->unsaved_groomed_files_ = true;
 }
 
+}

@@ -5,7 +5,6 @@
 #include <cstdlib>
 #include <cstring>
 
-using namespace shapeworks;
 
 namespace {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
@@ -25,6 +24,8 @@ struct MatchPathSeparator {
 };
 #endif
 }
+
+namespace shapeworks {
 
 //---------------------------------------------------------------------------
 std::string StringUtils::removeExtension(std::string const& filename)
@@ -108,4 +109,5 @@ std::vector<std::string> StringUtils::getFileNamesFromPaths(const std::vector<st
     filenames.push_back(std::string(fname));
   }
   return filenames;
+}
 }

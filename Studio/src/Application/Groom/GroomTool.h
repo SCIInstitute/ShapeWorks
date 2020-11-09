@@ -9,15 +9,17 @@
 
 #include <Groom/QGroom.h>
 
-class Session;
 class Ui_GroomTool;
-class ShapeWorksStudioApp;
 
 Q_DECLARE_METATYPE(std::string)
 
-class GroomTool : public QWidget
-{
-  Q_OBJECT;
+namespace shapeworks {
+
+class Session;
+class ShapeWorksStudioApp;
+
+class GroomTool : public QWidget {
+Q_OBJECT;
 public:
 
   GroomTool();
@@ -71,3 +73,4 @@ private:
 
   QElapsedTimer timer_;
 };
+}

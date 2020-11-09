@@ -20,6 +20,8 @@
 #include <Data/Preferences.h>
 #include <Data/SurfaceReconstructor.h>
 
+namespace shapeworks {
+
 class MeshManager : public QObject {
 Q_OBJECT
 
@@ -71,3 +73,4 @@ private:
 
   bool error_emitted_ = false;
 };
+}

@@ -23,14 +23,15 @@
 #include <Data/MeshWorkQueue.h>
 #include <Data/Preferences.h>
 
+namespace shapeworks {
+
 // mesh cache type
 using CacheMap = std::map<MeshWorkItem, MeshHandle>;
 
 // LRC list
 using CacheList = std::list<MeshWorkItem>;
 
-class MeshCache
-{
+class MeshCache {
 
 public:
 
@@ -52,7 +53,7 @@ private:
   static long long get_total_addressible_memory();
   static long long get_total_addressible_physical_memory();
 
-  Preferences &preferences_;
+  Preferences& preferences_;
 
   // mesh cache
   CacheMap mesh_cache_;
@@ -69,3 +70,4 @@ private:
   // for concurrent access
   QMutex mutex_;
 };
+}

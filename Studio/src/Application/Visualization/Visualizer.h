@@ -7,6 +7,8 @@
 #include <Data/Preferences.h>
 #include <Visualization/Lightbox.h>
 
+namespace shapeworks {
+
 class Visualizer;
 
 typedef QSharedPointer<Visualizer> VisualizerHandle;
@@ -95,10 +97,10 @@ public:
   void reset_feature_range();
 
   //! Get the current feature range
-  double *get_feature_range();
+  double* get_feature_range();
 
   //! Update the feature range with a given range
-  void update_feature_range(double *range);
+  void update_feature_range(double* range);
 
 public Q_SLOTS:
 
@@ -132,8 +134,9 @@ private:
   vnl_vector<double> cached_mean_;
   vnl_vector<double> current_shape_;
 
-  double feature_range_[2] = {0,0};
+  double feature_range_[2] = {0, 0};
   bool feature_range_valid_ = false;
   bool feature_range_uniform_ = true;
 
 };
+}

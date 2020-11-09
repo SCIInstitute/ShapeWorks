@@ -13,9 +13,10 @@
 #include <Data/StudioLog.h>
 #include <Visualization/Visualizer.h>
 
-using namespace shapeworks;
 
 using ReaderType = itk::ImageFileReader<ImageType>;
+
+namespace shapeworks {
 
 //---------------------------------------------------------------------------
 Shape::Shape()
@@ -619,4 +620,6 @@ void Shape::set_point_features(std::string feature, Eigen::VectorXf values)
   if (mesh) {
     mesh->interpolate_scalars_to_mesh(feature, this->global_correspondence_points_, values);
   }
+}
+
 }

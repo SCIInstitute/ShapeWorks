@@ -6,6 +6,8 @@
 #include <Libs/Project/Subject.h>
 #include <Data/MeshManager.h>
 
+namespace shapeworks {
+
 class Shape;
 using ShapeHandle = QSharedPointer<Shape>;
 using ShapeList = QVector<ShapeHandle>;
@@ -161,3 +163,5 @@ private:
 
   QSharedPointer<MeshManager> mesh_manager_;
 };
+
+}
