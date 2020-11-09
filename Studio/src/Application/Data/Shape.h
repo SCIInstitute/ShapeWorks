@@ -6,6 +6,8 @@
 #include <Libs/Project/Subject.h>
 #include <Data/MeshManager.h>
 
+#include <itkMatrixOffsetTransformBase.h>
+
 namespace shapeworks {
 
 class Shape;
