@@ -10,18 +10,21 @@
 
 #include <vtkSmartPointer.h>
 
-#ifndef Q_MOC_RUN
 #include <QWaitCondition>
 #include <QThreadPool>
 
+
+#ifndef Q_MOC_RUN
 #include <Data/MeshCache.h>
 #include <Data/MeshGenerator.h>
 #include <Data/MeshWorkQueue.h>
 #include <Data/MeshWorker.h>
+
+#endif
+
 #include <Data/Preferences.h>
 #include <Data/SurfaceReconstructor.h>
 
-#endif
 
 namespace shapeworks {
 
