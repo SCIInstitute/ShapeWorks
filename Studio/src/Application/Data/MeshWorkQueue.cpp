@@ -1,5 +1,7 @@
 #include <Data/MeshWorkQueue.h>
 
+
+
 namespace shapeworks {
 //---------------------------------------------------------------------------
 bool operator<(const MeshWorkItem &a, const MeshWorkItem &b)
