@@ -44,7 +44,7 @@ def Run_Pipeline(args):
         os.makedirs(pointDir)
 
     parameterDictionary = {
-        "number_of_particles" : [128,128],
+        "number_of_particles" : [32,32],
         "use_normals": [1,1],
         "normal_weight": [10.0,10.0],
         "checkpointing_interval" : 200,
