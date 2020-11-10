@@ -44,13 +44,21 @@ public:
   Mesh& probeVolume(const Image &img);
 
   /// clips a mesh using a cutting plane
-  Mesh& clip(vtkSmartPointer<vtkPlane> plane);
+  Mesh& clip(const vtkSmartPointer<vtkPlane> plane);
 
   /// helper to translate mesh
   Mesh& translate(const Vector3 &v);
 
   /// helper to scale mesh
   Mesh& scale(const Vector3 &v);
+
+  void computeDistance(const Mesh &other_mesh, bool target=false);
+
+  Vector getHausdorffDistance(const Mesh &other_mesh, bool target=false);
+
+  Vector getRelativeDistanceAtoB(const Mesh &other_mesh, bool target=false);
+
+  Vector getRelativeDistanceBtoA(const Mesh &other_mesh, bool target=false);
 
   /// compare if points in two meshes are equal
   bool compare_points_equal(const Mesh& other_mesh);

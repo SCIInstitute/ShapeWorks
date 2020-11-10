@@ -369,11 +369,11 @@ bool PadImage::execute(const optparse::Values &options, SharedCommandData &share
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Translate
+// TranslateImage
 ///////////////////////////////////////////////////////////////////////////////
-void Translate::buildParser()
+void TranslateImage::buildParser()
 {
-  const std::string prog = "translate";
+  const std::string prog = "translate-image";
   const std::string desc = "translates image by specified physical (image space) distance";
   parser.prog(prog).description(desc);
 
@@ -385,7 +385,7 @@ void Translate::buildParser()
   Command::buildParser();
 }
 
-bool Translate::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool TranslateImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validImage())
   {
@@ -412,11 +412,11 @@ bool Translate::execute(const optparse::Values &options, SharedCommandData &shar
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Scale
+// ScaleImage
 ///////////////////////////////////////////////////////////////////////////////
-void Scale::buildParser()
+void ScaleImage::buildParser()
 {
-  const std::string prog = "scale";
+  const std::string prog = "scale-image";
   const std::string desc = "scales image by specified value";
   parser.prog(prog).description(desc);
 
@@ -427,7 +427,7 @@ void Scale::buildParser()
   Command::buildParser();
 }
 
-bool Scale::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool ScaleImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validImage())
   {
@@ -938,11 +938,11 @@ bool CropImage::execute(const optparse::Values &options, SharedCommandData &shar
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// ClipVolume
+// ClipImage
 ///////////////////////////////////////////////////////////////////////////////
-void ClipVolume::buildParser()
+void ClipImage::buildParser()
 {
-  const std::string prog = "clip";
+  const std::string prog = "clip-image";
   const std::string desc = "clips volume with the specified cutting planes defined by three 3D points";
   parser.prog(prog).description(desc);
 
@@ -960,7 +960,7 @@ void ClipVolume::buildParser()
   Command::buildParser();
 }
 
-bool ClipVolume::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool ClipImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validImage())
   {
@@ -1890,6 +1890,103 @@ bool ProbeVolume::execute(const optparse::Values &options, SharedCommandData &sh
   
   sharedData.mesh->probeVolume(img);
   return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ClipMesh
+///////////////////////////////////////////////////////////////////////////////
+void ClipMesh::buildParser()
+{
+  const std::string prog = "clip-mesh";
+  const std::string desc = "clips mesh";
+  parser.prog(prog).description(desc);
+
+  Command::buildParser();
+}
+
+bool ClipMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+  
+  // vtkSmartPointer<vtkPlane> plane = 
+  sharedData.mesh->clip(MeshUtils::createPlane(sharedData.mesh));
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// TranslateMesh
+///////////////////////////////////////////////////////////////////////////////
+void TranslateMesh::buildParser()
+{
+  const std::string prog = "translate-mesh";
+  const std::string desc = "translates mesh";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--tx", "-x").action("store").type("double").set_default(0).help("X distance");
+  parser.add_option("--ty", "-y").action("store").type("double").set_default(0).help("Y distance");
+  parser.add_option("--tz", "-z").action("store").type("double").set_default(0).help("Z distance");
+
+  Command::buildParser();
+}
+
+bool TranslateMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  double tx = static_cast<double>(options.get("tx"));
+  double ty = static_cast<double>(options.get("ty"));
+  double tz = static_cast<double>(options.get("tz"));
+  
+  sharedData.mesh->translate(makeVector({tx, ty, tz}));
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ScaleMesh
+///////////////////////////////////////////////////////////////////////////////
+void ScaleMesh::buildParser()
+{
+  const std::string prog = "scale-mesh";
+  const std::string desc = "scales mesh";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--sx", "-x").action("store").type("double").set_default(1.0).help("X scale");
+  parser.add_option("--sy", "-y").action("store").type("double").set_default(1.0).help("Y scale");
+  parser.add_option("--sz", "-z").action("store").type("double").set_default(1.0).help("Z scale");
+
+  Command::buildParser();
+}
+
+bool ScaleMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  double sx = static_cast<double>(options.get("sx"));
+  double sy = static_cast<double>(options.get("sy"));
+  double sz = static_cast<double>(options.get("sz"));
+
+  if (sx == 0 || sy == 0 || sz == 0)
+  {
+    std::cerr << "Error: cannot scale by 0 in any dimension\n";
+    return false;
+  }
+  else
+  {
+    sharedData.mesh->scale(makeVector({sx, sy, sz}));
+    return sharedData.validMesh();
+  }
 }
 
 } // shapeworks

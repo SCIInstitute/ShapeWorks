@@ -18,6 +18,7 @@
 #include <vtkPolyDataNormals.h>
 #include <vtkProbeFilter.h>
 #include <vtkClipPolyData.h>
+#include <swHausdorffDistancePointSetFilter.h>
 
 static bool compare_double(double a, double b)
 {
@@ -195,7 +196,7 @@ Mesh &Mesh::probeVolume(const Image &img)
   return *this;
 }
 
-Mesh &Mesh::clip(vtkSmartPointer<vtkPlane> plane)
+Mesh &Mesh::clip(const vtkSmartPointer<vtkPlane> plane)
 {
   vtkSmartPointer<vtkClipPolyData> clipper = vtkSmartPointer<vtkClipPolyData>::New();
   clipper->SetInputData(this->mesh);
@@ -211,7 +212,7 @@ Mesh &Mesh::translate(const Vector3 &v)
   vtkTransform transform(vtkTransform::New());
   transform->Translate(v[0], v[1], v[2]);
 
-  applyTransform(transform);
+  return applyTransform(transform);
 }
 
 Mesh &Mesh::scale(const Vector3 &v)
@@ -219,7 +220,37 @@ Mesh &Mesh::scale(const Vector3 &v)
   vtkTransform transform(vtkTransform::New());
   transform->Scale(v[0], v[1], v[2]);
 
-  applyTransform(transform);
+  return applyTransform(transform);
+}
+
+void Mesh::computeDistance(const Mesh &other_mesh, bool target)
+{
+  vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = vtkSmartPointer<swHausdorffDistancePointSetFilter>::New();
+  filter->SetInputData(this->mesh);
+  filter->SetInputData(1, other_mesh.mesh);
+
+  if (target)
+    filter->SetTargetDistanceMethod(1);
+  
+  filter->Update();
+}
+
+Vector Mesh::getHausdorffDistance(const Mesh &other_mesh, bool target)
+{
+  computeDistance(other_mesh, target);
+  return filter->GetOutput(0)->GetFieldData()->GetArray("HausdorffDistance")->GetComponent(0,0);
+}
+
+Vector Mesh::getRelativeDistanceAtoB(const Mesh &other_mesh, bool target)
+{
+  computeDistance(other_mesh, target);
+  return filter->GetOutputDataObject(0)->GetFieldData()->GetArray("RelativeDistanceAtoB")->GetComponent(0,0);
+}
+
+Vector Mesh::getRelativeDistanceBtoA(const Mesh &other_mesh, bool target)
+{
+  computeDistance(other_mesh, target);
+  return filter->GetOutputDataObject(1)->GetFieldData()->GetArray("RelativeDistanceBtoA")->GetComponent(0,0);
 }
 
 bool Mesh::compare_points_equal(const Mesh &other_mesh)

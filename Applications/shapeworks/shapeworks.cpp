@@ -26,8 +26,8 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(ResizeImage::getCommand());
   shapeworks.addCommand(RecenterImage::getCommand());
   shapeworks.addCommand(PadImage::getCommand());
-  shapeworks.addCommand(Translate::getCommand());
-  shapeworks.addCommand(Scale::getCommand());
+  shapeworks.addCommand(TranslateImage::getCommand());
+  shapeworks.addCommand(ScaleImage::getCommand());
   shapeworks.addCommand(Rotate::getCommand());
   shapeworks.addCommand(ExtractLabel::getCommand());
   shapeworks.addCommand(CloseHoles::getCommand());
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(BoundingBox::getCommand());
   shapeworks.addCommand(CropImage::getCommand());
   shapeworks.addCommand(ICPRigid::getCommand());
-  shapeworks.addCommand(ClipVolume::getCommand());
+  shapeworks.addCommand(ClipImage::getCommand());
   shapeworks.addCommand(ReflectImage::getCommand());
   shapeworks.addCommand(SetOrigin::getCommand());
   shapeworks.addCommand(WarpImage::getCommand());
@@ -61,6 +61,9 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(ReflectMesh::getCommand());
   shapeworks.addCommand(ICP::getCommand());
   shapeworks.addCommand(FillHoles::getCommand());
+  shapeworks.addCommand(ClipMesh::getCommand());
+  shapeworks.addCommand(TranslateMesh::getCommand());
+  shapeworks.addCommand(ScaleMesh::getCommand());
   shapeworks.addCommand(OptimizeCommand::getCommand());
 
   try {
