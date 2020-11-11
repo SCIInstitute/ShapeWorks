@@ -35,6 +35,9 @@ bool Groom::run()
 
   auto subjects = this->project_->get_subjects();
 
+  if (subjects.empty()) {
+    throw std::invalid_argument("No subjects to groom");
+  }
   tbb::atomic<bool> success = true;
 
   tbb::parallel_for(

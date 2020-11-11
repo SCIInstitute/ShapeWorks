@@ -1608,14 +1608,20 @@ bool GroomCommand::execute(const optparse::Values& options, SharedCommandData& s
     return false;
   }
 
-  ProjectHandle project = std::make_shared<Project>();
-  project->load(project_file);
-  Groom app(project);
-  bool success = app.run();
-  if (success) {
-    project->save(project_file);
+  try {
+    ProjectHandle project = std::make_shared<Project>();
+    project->load(project_file);
+    Groom app(project);
+    bool success = app.run();
+    if (success) {
+      project->save(project_file);
+    }
+    return success;
   }
-  return success;
+  catch (std::exception& e) {
+    std::cerr << "Error: " << e.what() << "\n";
+    return false;
+  }
 }
 
 } // shapeworks
