@@ -264,6 +264,7 @@ void Project::store_subjects()
     groomed_transform_columns.push_back(groomed_transform_column_name);
   }
 
+  bool groomed_present = false;
   for (int i = 0; i < num_subjects; i++) {
     std::shared_ptr<Subject> subject = this->subjects_[i];
 
@@ -280,6 +281,7 @@ void Project::store_subjects()
     // groomed files
     auto groomed_files = subject->get_groomed_filenames();
     if (groomed_files.size() >= groomed_columns.size()) {
+      groomed_present = true;
       while (groomed_files.size() > groomed_columns.size()) {
         groomed_columns.push_back(std::string(GROOMED_PREFIX) + "file");
       }
@@ -303,7 +305,7 @@ void Project::store_subjects()
   }
 
   this->segmentations_present_ = !seg_columns.empty();
-  this->groomed_present_ = !groomed_columns.empty();
+  this->groomed_present_ = groomed_present;
 }
 
 //---------------------------------------------------------------------------

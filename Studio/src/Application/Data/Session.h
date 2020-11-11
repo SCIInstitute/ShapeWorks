@@ -148,9 +148,9 @@ private:
   bool unsaved_groomed_files_{false};
   bool unsaved_particle_files_{false};
 
-  shapeworks::Parameters params_;
+  Parameters params_;
 
-  std::shared_ptr<shapeworks::Project> project_{new shapeworks::Project()};
+  std::shared_ptr<Project> project_{new Project()};
 };
 
 }

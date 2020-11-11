@@ -760,7 +760,9 @@ void ShapeWorksStudioApp::update_tool_mode()
     this->ui_->stacked_widget->setCurrentWidget(this->optimize_tool_.data());
     this->optimize_tool_->activate();
     this->ui_->controlsDock->setWindowTitle("Optimize");
-    this->set_view_mode(Visualizer::MODE_GROOMED_C);
+    if (this->session_->groomed_present()) {
+      this->set_view_mode(Visualizer::MODE_GROOMED_C);
+    }
     this->update_display();
     this->ui_->action_optimize_mode->setChecked(true);
   }
