@@ -32,15 +32,13 @@ public:
   //! activate this tool
   void activate();
 
-  //! Store settings to session
-  void store_settings();
-
-  //! Load settings from session
-  void load_settings();
+  //! Load params from project
+  void load_params();
+  //! Store params to project
+  void store_params();
 
   //! Disable action buttons
   void disable_actions();
-
   //! Enable action buttons
   void enable_actions();
 

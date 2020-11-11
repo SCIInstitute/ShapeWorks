@@ -104,8 +104,15 @@ void OptimizeTool::on_run_optimize_button_clicked()
 
   this->optimize_ = new QOptimize(this);
 
-  OptimizeParameters params(this->session_->get_project());
-  params.set_up_optimize(this->optimize_);
+  try {
+    OptimizeParameters params(this->session_->get_project());
+    params.set_up_optimize(this->optimize_);
+  } catch (std::exception& e) {
+    emit error_message(std::string("Error running optimize: ") + e.what());
+    this->optimization_is_running_ = false;
+    this->enable_actions();
+    return;
+  }
 
   this->optimize_->SetFileOutputEnabled(false);
 
@@ -205,7 +212,8 @@ void OptimizeTool::store_params()
 //---------------------------------------------------------------------------
 void OptimizeTool::enable_actions()
 {
-  //this->ui_->run_optimize_button->setEnabled(true);
+  this->ui_->run_optimize_button->setEnabled(this->session_->get_groomed_present());
+
   if (this->optimization_is_running_) {
     this->ui_->run_optimize_button->setText("Abort Optimize");
   }
@@ -235,15 +243,6 @@ void OptimizeTool::shutdown_threads()
       this->threads_[i]->wait(1000);
       std::cerr << "done waiting...\n";
     }
-    //this->threads_[i]->exit();
-
-    //std::cerr << "Terminate!\n";
-    //this->threads_[i]->terminate();
-    //this->threads_[i]->wait(1000);
-    //  }
-  }
-  for (size_t i = 0; i < this->threads_.size(); i++) {
-    //delete this->threads_[i];
   }
 }
 
@@ -254,5 +253,11 @@ void OptimizeTool::update_ui_elements()
   this->ui_->procrustes_scaling->setEnabled(this->ui_->procrustes->isChecked());
   this->ui_->procrustes_interval->setEnabled(this->ui_->procrustes->isChecked());
   this->ui_->multiscale_particles->setEnabled(this->ui_->multiscale->isChecked());
+}
+
+//---------------------------------------------------------------------------
+void OptimizeTool::activate()
+{
+  this->enable_actions();
 }
 }

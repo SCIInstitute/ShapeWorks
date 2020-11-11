@@ -487,7 +487,7 @@ void ShapeWorksStudioApp::enable_possible_actions()
   //available modes
   this->ui_->action_import_mode->setEnabled(true);
   this->ui_->action_groom_mode->setEnabled(original_present);
-  this->ui_->action_optimize_mode->setEnabled(this->session_->groomed_present());
+  this->ui_->action_optimize_mode->setEnabled(original_present);
   this->ui_->action_analysis_mode->setEnabled(reconstructed);
   //subtools
   this->groom_tool_->enable_actions();
@@ -511,7 +511,7 @@ void ShapeWorksStudioApp::update_from_preferences()
   this->glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
 
   this->ui_->center_checkbox->setChecked(preferences_.get_center_checked());
-  this->groom_tool_->load_settings();
+  this->groom_tool_->load_params();
   this->optimize_tool_->load_params();
   this->analysis_tool_->load_settings();
 }
@@ -758,6 +758,7 @@ void ShapeWorksStudioApp::update_tool_mode()
   }
   else if (tool_state == Session::OPTIMIZE_C) {
     this->ui_->stacked_widget->setCurrentWidget(this->optimize_tool_.data());
+    this->optimize_tool_->activate();
     this->ui_->controlsDock->setWindowTitle("Optimize");
     this->set_view_mode(Visualizer::MODE_GROOMED_C);
     this->update_display();
@@ -1067,7 +1068,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->block_update_ = true;
 
   this->analysis_tool_->reset_stats();
-  this->groom_tool_->load_settings();
+  this->groom_tool_->load_params();
   this->optimize_tool_->load_params();
   this->preferences_window_->set_values_from_preferences();
   this->update_from_preferences();
@@ -1322,7 +1323,7 @@ void ShapeWorksStudioApp::save_project(std::string filename)
   this->session_->parameters().set("notes", this->ui_->notes->toHtml().toStdString());
   this->session_->parameters().set("analysis_mode", this->analysis_tool_->get_analysis_mode());
 
-  this->groom_tool_->store_settings();
+  this->groom_tool_->store_params();
   this->optimize_tool_->store_params();
   this->analysis_tool_->store_settings();
 
