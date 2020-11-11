@@ -135,7 +135,8 @@ find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 find_package (XLNT REQUIRED)
 
 ### Libigl set include path
-include_directories("${CMAKE_INSTALL_PREFIX}/../build/libigl/include")
+include_directories("${CMAKE_PREFIX_PATH}/../build/libigl/include/")
+#MESSAGE("THIS ISNISANOSBCDOSCF ${CMAKE_PREFIX_PATH}")
 
 if(USE_OPENMP)
   find_package(OpenMP REQUIRED)
