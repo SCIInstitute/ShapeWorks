@@ -276,6 +276,8 @@ build_igl()
   git clone https://github.com/libigl/libigl.git
   cd libigl
   git checkout -f tags/${libigl_VER}
+
+  LIBIGL_DIR=${BUILD_DIR}/libigl/include
 }
 
 show_shapeworks_build()
@@ -366,6 +368,7 @@ build_all()
   echo "  ITK_DIR: ${ITK_DIR}"
   echo "  EIGEN_DIR: ${EIGEN_DIR}"
   echo "  OpenVDB_DIR: ${OpenVDB_DIR}"
+  echo "  LIBIGL_DIR: ${LIBIGL_DIR}"
   echo ""
   
   show_shapeworks_build
