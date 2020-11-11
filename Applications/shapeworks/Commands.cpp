@@ -1559,21 +1559,27 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
 
   Optimize app;
   if (is_project) {
-    // load spreadsheet project
-    ProjectHandle project = std::make_shared<Project>();
-    project->load(project_file);
+    try {
+      // load spreadsheet project
+      ProjectHandle project = std::make_shared<Project>();
+      project->load(project_file);
 
-    // set up Optimize class based on project parameters
-    OptimizeParameters params(project);
-    params.set_up_optimize(&app);
+      // set up Optimize class based on project parameters
+      OptimizeParameters params(project);
+      params.set_up_optimize(&app);
 
-    bool success = app.Run();
+      bool success = app.Run();
 
-    if (success) {
-      project->save(project_file);
+      if (success) {
+        project->save(project_file);
+      }
+
+      return success;
     }
-
-    return success;
+    catch (std::exception& e) {
+      std::cerr << "Error: " << e.what() << "\n";
+      return false;
+    }
   }
   else {
     OptimizeParameterFile param;
