@@ -1,3 +1,4 @@
+cmake_policy(SET CMP0094 NEW)   # stop when the first python in the path is found
 find_package(pybind11 2.5.0 REQUIRED)
 
 pybind11_add_module(shapeworks_py ShapeworksPython.cpp)
