@@ -52,7 +52,7 @@ bool Groom::run()
         }
 
         if (subjects[i]->get_domain_types()[0] == DomainType::Mesh) {
-          if (!this->image_mesh_pipeline(subjects[i])) {
+          if (!this->mesh_pipeline(subjects[i])) {
             success = false;
           }
         }
@@ -173,12 +173,16 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject)
 }
 
 //---------------------------------------------------------------------------
-bool Groom::image_mesh_pipeline(std::shared_ptr<Subject> subject)
+bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject)
 {
   // grab parameters
   auto params = GroomParameters(this->project_);
 
   auto path = subject->get_segmentation_filenames()[0];
+
+  // groomed mesh name
+  std::string groom_name = path;
+  groom_name = groom_name.substr(0, groom_name.find_last_of('.')) + "_groomed.ply";
 
   try {
     // load the image
@@ -191,40 +195,26 @@ bool Groom::image_mesh_pipeline(std::shared_ptr<Subject> subject)
     auto transform = itk::AffineTransform<double, 3>::New();
     transform->SetIdentity();
 
-    if (this->skip_grooming_) {
-      std::vector<std::vector<double>> groomed_transforms;
-      std::vector<double> groomed_transform;
-      auto transform_params = transform->GetParameters();
-      for (int i = 0; i < transform_params.size(); i++) {
-        groomed_transform.push_back(transform_params[i]);
+    if (!this->skip_grooming_) {
+
+      // centering
+      if (params.get_center_tool()) {
+        auto com = mesh->centerOfMass();
+
+        Vector3 vector;
+        vector[0] = -com[0];
+        vector[1] = -com[1];
+        vector[2] = -com[2];
+        mesh->translate(vector);
+
+        itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
+        tform[0] = com[0];
+        tform[1] = com[1];
+        tform[2] = com[2];
+        transform->SetTranslation(tform);
+
+        this->increment_progress();
       }
-      groomed_transforms.push_back(groomed_transform);
-      subject->set_groomed_transforms(groomed_transforms);
-
-      // only single domain supported so far
-      std::vector<std::string> groomed_filenames{path};
-      // store filename back to subject
-      subject->set_groomed_filenames(groomed_filenames);
-      return true;
-    }
-
-    // centering
-    if (params.get_center_tool()) {
-      auto com = mesh->centerOfMass();
-
-      Vector3 vector;
-      vector[0] = -com[0];
-      vector[1] = -com[1];
-      vector[2] = -com[2];
-      mesh->translate(vector);
-
-      itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
-      tform[0] = com[0];
-      tform[1] = com[1];
-      tform[2] = com[2];
-      transform->SetTranslation(tform);
-
-      this->increment_progress();
     }
 
     // store transform
@@ -236,12 +226,7 @@ bool Groom::image_mesh_pipeline(std::shared_ptr<Subject> subject)
     }
     groomed_transforms.push_back(groomed_transform);
     subject->set_groomed_transforms(groomed_transforms);
-
-
-    // store groomed mesh
-    std::string groom_name = path;
-    groom_name = groom_name.substr(0, groom_name.find_last_of('.')) + "_groomed.ply";
-
+    
     // save the groomed mesh
     this->save_mesh(mesh, groom_name);
 
