@@ -435,7 +435,7 @@ void ShapeWorksStudioApp::on_zoom_slider_valueChanged()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::disableAllActions()
+void ShapeWorksStudioApp::disable_all_actions()
 {
   // export / save / new / open
   this->ui_->action_save_project->setEnabled(false);
@@ -449,6 +449,7 @@ void ShapeWorksStudioApp::disableAllActions()
   this->ui_->action_import->setEnabled(false);
   this->ui_->add_button->setEnabled(false);
   this->ui_->delete_button->setEnabled(false);
+  this->ui_->menuExport->setEnabled(false);
 
   //subtools
   this->groom_tool_->disable_actions();
@@ -669,7 +670,7 @@ void ShapeWorksStudioApp::handle_progress(size_t value)
   if (value < 100) {
     this->progress_bar_->setVisible(true);
     this->progress_bar_->setValue(static_cast<int>(value));
-    this->disableAllActions();
+    this->disable_all_actions();
   }
   else {
     this->progress_bar_->setValue(100);

@@ -91,6 +91,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
     this->shutdown_threads();
     this->optimization_is_running_ = false;
     this->enable_actions();
+    emit progress(100);
     return;
   }
   this->optimization_is_running_ = true;
