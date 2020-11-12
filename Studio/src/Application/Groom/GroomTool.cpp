@@ -152,6 +152,10 @@ void GroomTool::handle_thread_complete()
   auto duration = this->timer_.elapsed();
   STUDIO_LOG_MESSAGE("Groom duration: " + QString::number(duration) + "ms");
 
+  for (auto shape : this->session_->get_shapes()) {
+    shape->reset_groomed_mesh();
+  }
+
   emit progress(100);
   emit message("Groom Complete");
   emit groom_complete();

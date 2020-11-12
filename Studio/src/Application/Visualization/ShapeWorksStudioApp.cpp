@@ -894,6 +894,7 @@ void ShapeWorksStudioApp::handle_groom_complete()
 {
   this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, true);
   this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::GROOMED);
+  this->session_->handle_clear_cache();
   this->update_display(true);
   this->visualizer_->reset_camera();
 }

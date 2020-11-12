@@ -199,6 +199,12 @@ QSharedPointer<StudioMesh> Shape::get_groomed_mesh()
 }
 
 //---------------------------------------------------------------------------
+void Shape::reset_groomed_mesh()
+{
+  this->groomed_mesh_.reset();
+}
+
+//---------------------------------------------------------------------------
 void Shape::set_reconstructed_mesh(MeshHandle mesh)
 {
   this->reconstructed_mesh_ = mesh;
@@ -621,5 +627,6 @@ void Shape::set_point_features(std::string feature, Eigen::VectorXf values)
     mesh->interpolate_scalars_to_mesh(feature, this->global_correspondence_points_, values);
   }
 }
+
 
 }

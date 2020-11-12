@@ -60,6 +60,9 @@ public:
   /// Retrieve the groomed mesh
   QSharedPointer<StudioMesh> get_groomed_mesh();
 
+  /// Reset the groomed mesh so that it will be re-created
+  void reset_groomed_mesh();
+
   /// Import global correspondence point file
   bool import_global_point_file(QString filename);
 

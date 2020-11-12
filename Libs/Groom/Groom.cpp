@@ -226,7 +226,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject)
     }
     groomed_transforms.push_back(groomed_transform);
     subject->set_groomed_transforms(groomed_transforms);
-    
+
     // save the groomed mesh
     this->save_mesh(mesh, groom_name);
 

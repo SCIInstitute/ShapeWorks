@@ -58,7 +58,7 @@ long long MeshCache::get_total_physical_memory()
 }
 
 //-----------------------------------------------------------------------------
-long long MeshCache::get_total_addressible_memory()
+long long MeshCache::get_total_addressable_memory()
 {
   if (sizeof(void*) == 8) {
     return 1ULL << 62;
@@ -69,9 +69,9 @@ long long MeshCache::get_total_addressible_memory()
 }
 
 //-----------------------------------------------------------------------------
-long long MeshCache::get_total_addressible_physical_memory()
+long long MeshCache::get_total_addressable_physical_memory()
 {
-  long long addressable = MeshCache::get_total_addressible_memory();
+  long long addressable = MeshCache::get_total_addressable_memory();
   long long physical = MeshCache::get_total_physical_memory();
   if (physical > addressable) { return addressable; } else { return physical; }
 }
@@ -79,7 +79,7 @@ long long MeshCache::get_total_addressible_physical_memory()
 //-----------------------------------------------------------------------------
 MeshCache::MeshCache(Preferences& prefs) : preferences_(prefs)
 {
-  this->max_memory_ = MeshCache::get_total_addressible_physical_memory();
+  this->max_memory_ = MeshCache::get_total_addressable_physical_memory();
   this->memory_size_ = 0;
   this->pref_ref_ = &this->preferences_;
 }
