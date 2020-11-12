@@ -45,8 +45,13 @@ public:
     return mesh_upper_bound_;
   }
 
+  void ComputeSurfaceArea();
+  double GetSurfaceArea() const override;
+
+
 private:
 
+  double surfaceArea;
   Eigen::Vector3d
   GeodesicWalkOnFace(Eigen::Vector3d point_a,
                      Eigen::Vector3d projected_vector, int face_index) const;

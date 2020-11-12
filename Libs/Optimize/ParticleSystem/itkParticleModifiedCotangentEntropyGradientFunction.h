@@ -87,7 +87,16 @@ public:
     virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystemType *,
                                 double&, double & ) const;
 
-    virtual void BeforeEvaluate(unsigned int, unsigned int, const ParticleSystemType *) {}
+    virtual void BeforeEvaluate(unsigned int, unsigned int d, const ParticleSystemType * system) {
+    }
+    virtual void setup_neighborhoods(unsigned int d, const ParticleSystemType * system) override{
+      neighbourhoods.clear();
+      for(int i=0; i<system->GetNumberOfParticles(); i++) {
+        PointType pos = system->GetPosition(i, d);
+        neighbourhoods.push_back( system->FindNeighborhoodPoints(pos, m_GlobalSigma[d], d) );
+      }
+    }
+    std::vector<typename ParticleSystemType::PointVectorType> neighbourhoods;
 
     inline virtual double Energy(unsigned int a, unsigned int b, const ParticleSystemType *c) const
     {
@@ -114,11 +123,11 @@ public:
         const double epsilon = 1.0e-6;
         rij += epsilon;
         double r     = itk::Math::pi_over_2 * rij/m_GlobalSigma[d] ;
-        double cotan = cos(r)/sin(r);
+        double cotan = 1.0 / std::tan(r);
         double val   = cotan + r - itk::Math::pi_over_2;
-        double A     = -1.0 *itk::Math::pi_over_4 * m_GlobalSigma[d] - itk::Math::pi_over_4 * std::pow(epsilon, 2) / m_GlobalSigma[d] + itk::Math::pi_over_2 * epsilon;
-        A -= (m_GlobalSigma[d]/itk::Math::pi_over_2) * std::log( std::sin(epsilon * itk::Math::pi_over_2 / m_GlobalSigma[d]) );
-        val /= A;
+        // double A     = -1.0 *itk::Math::pi_over_4 * m_GlobalSigma[d] - itk::Math::pi_over_4 * std::pow(epsilon, 2) / m_GlobalSigma[d] + itk::Math::pi_over_2 * epsilon;
+        // A -= (m_GlobalSigma[d]/itk::Math::pi_over_2) * std::log( std::sin(epsilon * itk::Math::pi_over_2 / m_GlobalSigma[d]) );
+        // val /= A;
         return val;
     }
 
@@ -133,11 +142,11 @@ public:
         double sin_2 = 1.0 / pow(sin(r),2.0);
         double val   = (itk::Math::pi_over_2 / m_GlobalSigma[d]) * (1.0 - sin_2);
 
-        double A     = -1.0 *itk::Math::pi_over_4 * m_GlobalSigma[d] - itk::Math::pi_over_4 * std::pow(epsilon, 2) / m_GlobalSigma[d] + itk::Math::pi_over_2 * epsilon;
-        A -= (m_GlobalSigma[d]/itk::Math::pi_over_2) * std::log( std::sin(epsilon * itk::Math::pi_over_2 / m_GlobalSigma[d]) );
+        // double A     = -1.0 *itk::Math::pi_over_4 * m_GlobalSigma[d] - itk::Math::pi_over_4 * std::pow(epsilon, 2) / m_GlobalSigma[d] + itk::Math::pi_over_2 * epsilon;
+        // A -= (m_GlobalSigma[d]/itk::Math::pi_over_2) * std::log( std::sin(epsilon * itk::Math::pi_over_2 / m_GlobalSigma[d]) );
+        // val /= A;
 
-        val /= A;
-        return val;
+      return val;
     }
 
     void ClearGlobalSigma()

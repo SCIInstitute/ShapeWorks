@@ -22,6 +22,8 @@ const int global_iteration = 1;
 #include "MemoryUsage.h"
 #include <chrono>
 
+#include "itkParticleModifiedCotangentEntropyGradientFunction.h"
+
 #include <tbb/parallel_for.h>
 #include <tbb/task_scheduler_init.h>
 
@@ -69,7 +71,7 @@ namespace itk
     ::StartAdaptiveGaussSeidelOptimization()
   {
     /// uncomment this to run single threaded
-    //tbb::task_scheduler_init init(1);
+    // tbb::task_scheduler_init init(1);
 
     if (this->m_AbortProcessing) {
       return;
@@ -136,6 +138,8 @@ namespace itk
 
           // Tell function which domain we are working on.
           localGradientFunction->SetDomainNumber(dom);
+          localGradientFunction->setup_neighborhoods(dom, m_ParticleSystem);
+
 
           // Iterate over each particle position
           unsigned int k = 0;

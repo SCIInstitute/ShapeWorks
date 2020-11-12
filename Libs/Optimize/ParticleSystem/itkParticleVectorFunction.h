@@ -65,6 +65,10 @@ public:
                               double &maxtimestep, double &energy) const = 0;
   virtual double Energy(unsigned int, unsigned int, const ParticleSystemType *) const =0;
 
+  virtual void setup_neighborhoods(unsigned int, const ParticleSystemType*) {
+    // throw std::runtime_error("NOT IMPLEMENTED");
+  }
+
 
   /** May be called by the solver class. */
   virtual void ResetBuffers() { }

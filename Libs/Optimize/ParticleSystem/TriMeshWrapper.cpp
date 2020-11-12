@@ -45,6 +45,7 @@ TriMeshWrapper::TriMeshWrapper(std::shared_ptr<trimesh::TriMesh> mesh)
   mesh_->need_normals();
   mesh_->need_curvatures();
   ComputeMeshBounds();
+  ComputeSurfaceArea();
 
   kd_tree_ = std::make_shared<KDtree>(mesh_->vertices);
 }
@@ -437,4 +438,21 @@ void TriMeshWrapper::ComputeMeshBounds()
               << PrintValue<PointType>(mesh_upper_bound_) << "\n";
   }
 }
+
+void TriMeshWrapper::ComputeSurfaceArea() {
+    surfaceArea = 0.0;
+
+    for(const auto& tri : mesh_->faces) {
+      const auto& a = mesh_->vertices[tri[0]];
+      const auto& b = mesh_->vertices[tri[1]];
+      const auto& c = mesh_->vertices[tri[2]];
+      const auto ab = b - a;
+      const auto ac = c - a;
+      const double area = std::abs(0.5 * trimesh::len(ab.cross(ac)));
+      surfaceArea += area;
+    }
+  }
+  double TriMeshWrapper::GetSurfaceArea() const {
+    return surfaceArea;
+  }
 }
