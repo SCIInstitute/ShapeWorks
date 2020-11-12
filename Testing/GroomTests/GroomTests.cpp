@@ -1,21 +1,15 @@
-#include <cstdio>
-
-#include <itkImageFileReader.h>
-#include <itkImageFileWriter.h>
-#include <itkApproximateSignedDistanceMapImageFilter.h>
+//#include <cstdio>
 
 #include "Testing.h"
 
 #include <Libs/Groom/Groom.h>
 #include <Libs/Project/Project.h>
-#include "ParticleShapeStatistics.h"
 
 using namespace shapeworks;
 
 //---------------------------------------------------------------------------
-TEST(GroomTests, sample_test)
+TEST(GroomTests, basic_test)
 {
-
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sphere");
   chdir(test_location.c_str());
 
