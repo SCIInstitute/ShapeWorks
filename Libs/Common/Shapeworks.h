@@ -78,7 +78,14 @@ bool axis_is_valid(const Axis &axis);
 double degToRad(const double deg);
 
 /// Handy functions to perform operations on Points and Vectors with which ITK is more restrictive
-template <typename P>
+class Image;
+template<typename P, typename = std::enable_if_t<std::is_same<Image, P>::value ||
+                                                 std::is_same<Coord, P>::value ||
+                                                 std::is_same<Dims, P>::value ||
+                                                 std::is_same<Vector, P>::value ||
+                                                 std::is_same<Point, P>::value ||
+                                                 std::is_same<IPoint3, P>::value ||
+                                                 std::is_same<FPoint3, P>::value> >
 P operator+(const P &p, const P &q)
 {
   P ret;
@@ -87,7 +94,13 @@ P operator+(const P &p, const P &q)
   return ret;
 }
 
-template <typename P>
+template<typename P, typename = std::enable_if_t<std::is_same<Image, P>::value ||
+                                                 std::is_same<Coord, P>::value ||
+                                                 std::is_same<Dims, P>::value ||
+                                                 std::is_same<Vector, P>::value ||
+                                                 std::is_same<Point, P>::value ||
+                                                 std::is_same<IPoint3, P>::value ||
+                                                 std::is_same<FPoint3, P>::value> >
 P operator-(const P &p, const P &q)
 {
   P ret;
@@ -121,7 +134,6 @@ P& operator-=(P &p, const P &q)
   return p;
 }
 
-class Image;
 template<typename P, typename = std::enable_if_t<std::is_same<Image, P>::value ||
                                                  std::is_same<Coord, P>::value ||
                                                  std::is_same<Dims, P>::value ||
@@ -137,7 +149,13 @@ P operator*(const P &p, const double x)
   return std::move(ret);
 }
 
-template <typename P>
+template<typename P, typename = std::enable_if_t<std::is_same<Image, P>::value ||
+                                                 std::is_same<Coord, P>::value ||
+                                                 std::is_same<Dims, P>::value ||
+                                                 std::is_same<Vector, P>::value ||
+                                                 std::is_same<Point, P>::value ||
+                                                 std::is_same<IPoint3, P>::value ||
+                                                 std::is_same<FPoint3, P>::value> >
 P operator/(const P &p, const double x)
 {
   P ret;
@@ -154,7 +172,13 @@ P& operator*=(P &p, const double x)
   return p;
 }
 
-template <typename P>
+template<typename P, typename = std::enable_if_t<std::is_same<Image, P>::value ||
+                                                 std::is_same<Coord, P>::value ||
+                                                 std::is_same<Dims, P>::value ||
+                                                 std::is_same<Vector, P>::value ||
+                                                 std::is_same<Point, P>::value ||
+                                                 std::is_same<IPoint3, P>::value ||
+                                                 std::is_same<FPoint3, P>::value> >
 P& operator/=(P &p, const double x)
 {
   for (unsigned i = 0; i < 3; i++)
