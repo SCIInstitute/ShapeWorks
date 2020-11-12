@@ -212,7 +212,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject)
         tform[1] = com[1];
         tform[2] = com[2];
         transform->SetTranslation(tform);
-
+        std::cerr << "translating!\n";
         this->increment_progress();
       }
     }

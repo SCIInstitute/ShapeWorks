@@ -42,6 +42,7 @@ public:
   //! Enable action buttons
   void enable_actions();
 
+
 Q_SIGNALS:
   void groom_complete();
   void error_message(std::string);
@@ -55,6 +56,8 @@ public Q_SLOTS:
   void on_autopad_checkbox_stateChanged(int state);
   void on_skip_button_clicked();
   void on_restore_defaults_clicked();
+
+  void centering_changed(int state);
 
   //! Run groom tool
   void on_run_groom_button_clicked();

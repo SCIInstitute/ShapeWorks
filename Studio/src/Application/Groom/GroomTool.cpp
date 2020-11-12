@@ -22,6 +22,11 @@ GroomTool::GroomTool()
   this->ui_ = new Ui_GroomTool;
   this->ui_->setupUi(this);
   qRegisterMetaType<std::string>();
+
+  this->connect(this->ui_->mesh_center, &QCheckBox::stateChanged,
+                this, &GroomTool::centering_changed);
+  this->connect(this->ui_->center_checkbox, &QCheckBox::stateChanged,
+                this, &GroomTool::centering_changed);
 }
 
 //---------------------------------------------------------------------------
@@ -75,6 +80,7 @@ void GroomTool::load_params()
   auto params = GroomParameters(this->session_->get_project());
 
   this->ui_->center_checkbox->setChecked(params.get_center_tool());
+  this->ui_->mesh_center->setChecked(params.get_center_tool());
   this->ui_->antialias_checkbox->setChecked(params.get_antialias_tool());
   this->ui_->autopad_checkbox->setChecked(params.get_auto_pad_tool());
   this->ui_->fastmarching_checkbox->setChecked(params.get_fast_marching());
@@ -193,6 +199,13 @@ void GroomTool::activate()
       this->ui_->stacked_widget->setCurrentWidget(this->ui_->mesh_page);
     }
   }
+}
+
+//---------------------------------------------------------------------------
+void GroomTool::centering_changed(int state)
+{
+  this->ui_->mesh_center->setChecked(state);
+  this->ui_->center_checkbox->setChecked(state);
 }
 
 }
