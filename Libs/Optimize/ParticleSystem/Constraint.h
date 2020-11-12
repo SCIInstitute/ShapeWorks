@@ -34,10 +34,12 @@ public:
     double c = 2*mu + 2*C*ConstraintEval(pt);
     if(c >= 0){
         z = 0;
+        //std::cout << "if    z: " << z << std::endl;
     }
     else{
-        double z1 = std::sqrt(-C/a);
+        double z1 = std::sqrt(-c/a);
         double z2 = -z1;
+        //std::cout << "else    z: " << z1 << std::endl;
 
         double pteval = ConstraintEval(pt);
 
@@ -51,7 +53,7 @@ public:
             z = z2;
         }
     }
-    std::cout << "z: " << z << std::endl;
+    //std::cout << "z: " << z << std::endl;
   }
 
   void UpdateMu(const Eigen::Vector3d &pt, double C){
@@ -62,7 +64,7 @@ public:
       else{
           mu = 0;
       }
-      std::cout << "mu: " << mu << std::endl;
+      //std::cout << "mu: " << mu << std::endl;
   }
 
   Eigen::Vector3d LagragianGradient(const Eigen::Vector3d &pt, double C){

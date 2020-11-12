@@ -102,10 +102,19 @@ ParticleImplicitSurfaceDomain<T>::ApplyConstraints(PointType &p, bool dbg) const
     vnl_vector_fixed<double, DIMENSION> vec = grad * (double(f) / (gradmag + double(epsilon)));
 
     vnl_vector_fixed<double, DIMENSION> vec_old = vec;
-    //std::stringstream msg;
-    std::stringstream msg = this->GetConstraints()->applyBoundaryConstraints(vec, p);
+    std::stringstream msg;
+    //std::stringstream msg = this->GetConstraints()->applyBoundaryConstraints(vec, p);
 
     // Energy stuff
+    double c = 1e10;
+    this->GetConstraints()->UpdateZs(p, c);
+    vnl_vector_fixed<double, DIMENSION> constraint_energy = this->GetConstraints()->ConstraintsLagrangianGradient(p, c);
+    //std::cout << "p " << p << " constraint_energy " <<  constraint_energy << std::endl;
+    for (unsigned int n = 0; n < 3; n++)
+      {
+          vec[n] -= constraint_energy[n];
+      }
+    this->GetConstraints()->UpdateMus(p, c);
     /*
     double constraint_energy_weight = 0.1;
     //itk::FixedArray<double,3> itkp;
