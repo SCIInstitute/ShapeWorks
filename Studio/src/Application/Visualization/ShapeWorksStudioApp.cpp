@@ -484,6 +484,7 @@ void ShapeWorksStudioApp::enable_possible_actions()
   this->ui_->action_import->setEnabled(true);
   this->ui_->add_button->setEnabled(true);
   this->ui_->delete_button->setEnabled(true);
+  this->ui_->menuExport->setEnabled(true);
 
   //available modes
   this->ui_->action_import_mode->setEnabled(true);
