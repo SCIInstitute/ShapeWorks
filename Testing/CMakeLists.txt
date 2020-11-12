@@ -48,6 +48,7 @@ install(TARGETS Testing
 # Individual library tests
 add_subdirectory(ImageTests)
 add_subdirectory(MeshTests)
+add_subdirectory(GroomTests)
 add_subdirectory(OptimizeTests)
 add_subdirectory(PythonTests)
 add_subdirectory(ParticlesTests)
