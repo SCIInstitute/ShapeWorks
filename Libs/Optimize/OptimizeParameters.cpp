@@ -98,6 +98,12 @@ int OptimizeParameters::get_optimization_iterations()
 }
 
 //---------------------------------------------------------------------------
+int OptimizeParameters::get_pairwise_potential_type()
+{
+  return this->params_.get("pairwise_potential_type", 1);
+}
+
+//---------------------------------------------------------------------------
 void OptimizeParameters::set_optimization_iterations(int value)
 {
   this->params_.set("optimization_iterations", value);
@@ -201,6 +207,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
   optimize->SetEndingRegularization(this->get_ending_regularization());
   optimize->SetIterationsPerSplit(this->get_iterations_per_split());
   optimize->SetOptimizationIterations(this->get_optimization_iterations());
+  optimize->SetPairwisePotentialType(this->get_pairwise_potential_type());
 
   std::vector<bool> use_normals;
   std::vector<bool> use_xyz;

@@ -121,6 +121,7 @@ void
 ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 ::BeforeEvaluate(unsigned int idx, unsigned int d, const ParticleSystemType * system)
 {
+  throw std::runtime_error("MAKE SURE I AM NOT USING CURVATURE ENTROPY GRADIENT FUNCTION");
     m_MaxMoveFactor = 0.1;
 
   // Compute the neighborhood size and the optimal sigma.

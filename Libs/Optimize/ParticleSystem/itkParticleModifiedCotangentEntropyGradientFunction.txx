@@ -68,7 +68,6 @@ ParticleModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimensio
         gradE[n] /= neighbourhoods[idx].size();
 
     maxmove = m_GlobalSigma[d]; // deprecated - not used in gradient descent class
-    energy *= -1;
 
     return gradE ;
 }

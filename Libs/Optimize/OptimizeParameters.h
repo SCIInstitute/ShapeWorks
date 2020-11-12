@@ -36,6 +36,9 @@ public:
   int get_optimization_iterations();
   void set_optimization_iterations(int value);
 
+  int get_pairwise_potential_type();
+  void set_pairwise_potential_type(int value);
+
   std::vector<bool> get_use_normals();
   void set_use_normals(std::vector<bool> use_normals);
 

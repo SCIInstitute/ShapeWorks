@@ -338,7 +338,7 @@ protected:
   int m_processing_mode = 3;
   int m_adaptivity_mode = 0;
   double m_adaptivity_strength = 0.0;
-  int m_pairwise_potential_type = 0;   // 0 - gaussian (Cates work), 1 - modified cotangent (Meyer),
+  int m_pairwise_potential_type = 1;   // 0 - gaussian (Cates work), 1 - modified cotangent (Meyer),
 
   unsigned int m_timepts_per_subject = 1;
   int m_optimization_iterations = 2000;
