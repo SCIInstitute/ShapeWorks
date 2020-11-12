@@ -772,7 +772,8 @@ std::ostream& operator<<(std::ostream &os, const Image::Region &r)
 std::ostream& operator<<(std::ostream &os, const Image& img)
 {
   return os << "{\n\tdims: " << img.dims() << ",\n\torigin: "
-            << img.origin() << ",\n\tsize: " << img.size() << "\n}";
+            << img.origin() << ",\n\tsize: " << img.size()
+            << ",\n\tspacing: " << img.spacing() <<  "\n}";
 }
 
 } // shapeworks

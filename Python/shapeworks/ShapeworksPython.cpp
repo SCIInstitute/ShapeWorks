@@ -33,10 +33,10 @@ PYBIND11_MODULE(shapeworks, m)
   .def(py::init<>())
   .def(py::init<unsigned, unsigned, unsigned>())
   .def("__repr__", [](const Coord& c) {
-      std::ostringstream ss;
-      ss << c;
-      return ss.str();
-    })
+    std::ostringstream ss;
+    ss << c;
+    return ss.str();
+  })
   .def("__getitem__", [](const Coord& c, size_t idx) { return c[idx]; })
   .def("__setitem__", [](Coord& c, size_t idx, unsigned val) { c[idx] = val; })
   .def("__add__", [](const Coord& c1, const Coord& c2) { return c1 + c2; })
@@ -61,10 +61,10 @@ PYBIND11_MODULE(shapeworks, m)
   .def(py::init<>())
   .def(py::init<unsigned, unsigned, unsigned>())
   .def("__repr__", [](const Dims &d) {
-      std::ostringstream ss;
-      ss << d;
-      return ss.str();
-    })
+    std::ostringstream ss;
+    ss << d;
+    return ss.str();
+  })
   .def("__getitem__", [](const Dims& d, size_t idx) { return d[idx]; })
   .def("__setitem__", [](Dims& d, size_t idx, unsigned val) { d[idx] = val; })
   .def("__add__", [](const Dims& d1, const Dims& d2) { return d1 + d2; })
@@ -83,10 +83,10 @@ PYBIND11_MODULE(shapeworks, m)
   .def(py::init<>())
   .def(py::init([](double x, double y, double z) { return Point({x,y,z}); }))  // directly call initializer list ctor  (***the winner!***)
   .def("__repr__", [](const Point& p) {
-      std::ostringstream ss;
-      ss << p;
-      return ss.str();
-    })
+    std::ostringstream ss;
+    ss << p;
+    return ss.str();
+  })
   .def("__getitem__", [](const Point& p, size_t idx) { return p[idx]; })
   .def("__setitem__", [](Point& p, size_t idx, double val) { p[idx] = val; })
   .def("__add__", [](const Point& p1, const Point& p2) { return p1 + p2; })
@@ -100,14 +100,15 @@ PYBIND11_MODULE(shapeworks, m)
   .def("__itruediv__", [](Point& p, const double x) { return p /= x; })
   ;
 
+  // Shapeworks Globals
   py::class_<Vector>(m, "Vector")
   .def(py::init<>())
   .def(py::init([](double x, double y, double z) { return makeVector({x,y,z}); }))
   .def("__repr__", [](const Vector& v) {
-      std::ostringstream ss;
-      ss << v;
-      return ss.str();
-    })
+    std::ostringstream ss;
+    ss << v;
+    return ss.str();
+  })
   .def("__getitem__", [](const Vector& v, size_t idx) { return v[idx]; })
   .def("__setitem__", [](Vector& v, size_t idx, double val) { v[idx] = val; })
   .def("__add__", [](const Vector& v1, const Vector& v2) { return v1 + v2; })
@@ -139,15 +140,16 @@ PYBIND11_MODULE(shapeworks, m)
 
   // Shapeworks Globals
   py::class_<Matrix>(m, "Matrix")
-  .def(py::init([] { Matrix m;
+  .def(py::init([] {
+    Matrix m;
     m.SetIdentity();
     return m; 
-    }))
+  }))
   .def("__repr__", [](const Matrix& m) {
-      std::ostringstream ss;
-      ss << m;
-      return ss.str();
-    })
+    std::ostringstream ss;
+    ss << m;
+    return ss.str();
+  })
   .def("__getitem__", [](const Matrix& m, size_t r, size_t c) { return m[r][c]; })
   .def("__setitem__", [](Matrix& m, size_t r, size_t c, int val) { m[r][c] = val; })
   .def("__add__", [](const Matrix& m1, const Matrix& m2) { return m1 + m2; })
@@ -163,15 +165,16 @@ PYBIND11_MODULE(shapeworks, m)
 
   // Shapeworks Globals
   py::class_<Matrix44>(m, "Matrix44")
-  .def(py::init([] { Matrix44 m;
+  .def(py::init([] {
+    Matrix44 m;
     m.SetIdentity();
     return m; 
-    }))
+  }))
   .def("__repr__", [](const Matrix44& m) {
-      std::ostringstream ss;
-      ss << m;
-      return ss.str();
-    })
+    std::ostringstream ss;
+    ss << m;
+    return ss.str();
+  })
   .def("__getitem__", [](const Matrix44& m, size_t r, size_t c) { return m[r, c]; })
   .def("__setitem__", [](Matrix44& m, size_t r, size_t c, int val) { m[r][c] = val; })
   .def("__add__", [](const Matrix44& m1, const Matrix44& m2) { return m1 + m2; })
@@ -190,10 +193,10 @@ PYBIND11_MODULE(shapeworks, m)
   .def(py::init<>())
   .def(py::init([](int x, int y, int z) { return IPoint3({x,y,z}); }))
   .def("__repr__", [](const IPoint3& p) {
-      std::ostringstream ss;
-      ss << p;
-      return ss.str();
-    })
+    std::ostringstream ss;
+    ss << p;
+    return ss.str();
+  })
   .def("__getitem__", [](const IPoint3& p, size_t idx) { return p[idx]; })
   .def("__setitem__", [](IPoint3& p, size_t idx, int val) { p[idx] = val; })
   .def("__add__", [](const IPoint3& p1, const IPoint3& p2) { return p1 + p2; })
@@ -212,10 +215,10 @@ PYBIND11_MODULE(shapeworks, m)
   .def(py::init<>())
   .def(py::init([](float x, float y, float z) { return Point({x,y,z}); }))
   .def("__repr__", [](const FPoint3& p) {
-      std::ostringstream ss;
-      ss << p;
-      return ss.str();
-    })
+    std::ostringstream ss;
+    ss << p;
+    return ss.str();
+  })
   .def("__getitem__", [](const FPoint3& p, size_t idx) { return p[idx]; })
   .def("__setitem__", [](FPoint3& p, size_t idx, float val) { p[idx] = val; })
   .def("__add__", [](const FPoint3& p1, const FPoint3& p2) { return p1 + p2; })
@@ -344,13 +347,13 @@ PYBIND11_MODULE(shapeworks, m)
   .def("compare",               &Image::compare, "compares two images", "other"_a, "verifyall"_a=true, "tolerance"_a=0.0, "precision"_a=1e-12)
   .def_static("getPolyData",    &Image::getPolyData, "creates a vtkPolyData for the given image", "image"_a, "isoValue"_a=0.0)
   .def("toMesh",                &Image::toMesh, "converts to Mesh", "isovalue"_a=1.0)
-  .def("imageToArray", [](const Image &image) {
+  .def("toArray", [](const Image &image) {
     Image::ImageType::Pointer img = image.getITKImage();
     const auto size = img->GetLargestPossibleRegion().GetSize();
     const auto shape = std::vector<size_t>{size[2], size[1], size[0]};
     return py::array(py::dtype::of<typename Image::ImageType::Pointer::ObjectType::PixelType>(), shape, img->GetBufferPointer());
   })
-  .def("arrayToImage", [](const Image &image, py::array_t<typename Image::ImageType::Pointer::ObjectType::PixelType> np_array) {
+  .def("toImage", [](const Image &image, py::array_t<typename Image::ImageType::Pointer::ObjectType::PixelType> np_array) {
     Image::ImageType::Pointer img = image.getITKImage();
     using ImporterType = itk::ImportImageFilter<Image::PixelType, 3>;
     auto importer = ImporterType::New();
