@@ -310,7 +310,7 @@ vec normalizeBary(const vec& bary)
   return vec(bary / sum);
 }
 
-inline bool TriMeshWrapper::IsBarycentricCoordinateValid(trimesh::vec3 &bary) {
+inline bool TriMeshWrapper::IsBarycentricCoordinateValid(trimesh::vec3& bary) {
   return ((bary[0] >= -epsilon) && (bary[0] <= 1 + epsilon)) &&
          ((bary[1] >= -epsilon) && (bary[1] <= 1 + epsilon)) &&
          ((bary[2] >= -epsilon) && (bary[2] <= 1 + epsilon));
@@ -323,16 +323,15 @@ int TriMeshWrapper::GetTriangleForPoint(point pt, int idx, vec& baryOut) const
 {
   // given a guess, just check whether it is still valid.
   if(idx != -1) {
-    triQueries++;
     // ensure that the cache has enough elements. this will never be resized to more than the number of particles,
-    // and will be a noop if the vector is already correctly resized
-    particle2tri.resize(idx+1, 0);
+    if(idx >= particle2tri.size()) {
+      particle2tri.resize(idx+1, 0);
+    }
 
     const int guess = particle2tri[idx];
     baryOut = this->ComputeBarycentricCoordinates(pt, guess);
     baryOut = normalizeBary(baryOut);
     if(IsBarycentricCoordinateValid(baryOut)) {
-      triQueriesHits++;
       return guess;
     }
   }

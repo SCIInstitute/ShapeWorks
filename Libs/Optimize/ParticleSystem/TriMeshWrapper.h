@@ -19,11 +19,6 @@ public:
 
   ~TriMeshWrapper() = default;
 
-  virtual void PrintStats() override {
-    double hitRate = (double) triQueriesHits / (double) triQueries;
-    std::cout << "Hits: " << triQueriesHits << " / " << triQueries << " | " << hitRate << std::endl;
-  }
-
   typedef typename MeshWrapper::PointType PointType;
 
   double ComputeDistance(PointType pointa, PointType pointb) const override;
@@ -84,8 +79,6 @@ private:
   // Maintains a map of particle index -> triangle index
   // Has to be mutable because all of the accessor APIs are const
   mutable std::vector<int> particle2tri; //todo convention _
-  mutable unsigned long triQueriesHits{0};
-  mutable unsigned long triQueries{0};
 
   PointType mesh_lower_bound_;
   PointType mesh_upper_bound_;

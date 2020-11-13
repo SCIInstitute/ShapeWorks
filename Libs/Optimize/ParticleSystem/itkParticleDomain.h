@@ -51,8 +51,6 @@ public:
     return a.SquaredEuclideanDistanceTo(b);
   }
 
-  virtual void PrintStats() =0;
-
   /** Used in ParticleMeanCurvatureAttribute */
   virtual double GetCurvature(const PointType &p, int idx) const = 0;
   /** Used in ParticleMeanCurvatureAttribute */
