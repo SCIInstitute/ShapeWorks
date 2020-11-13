@@ -8,7 +8,7 @@
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
-#include <unordered_map>
+#include <vector>
 
 namespace shapeworks {
 
@@ -78,7 +78,7 @@ private:
 
   // Maintains a map of particle index -> triangle index
   // Has to be mutable because all of the accessor APIs are const
-  mutable std::vector<int> particle2tri; //todo convention _
+  mutable std::vector<int> particle2tri_;
 
   PointType mesh_lower_bound_;
   PointType mesh_upper_bound_;

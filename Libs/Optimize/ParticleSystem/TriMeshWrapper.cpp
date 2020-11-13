@@ -324,11 +324,11 @@ int TriMeshWrapper::GetTriangleForPoint(point pt, int idx, vec& baryOut) const
   // given a guess, just check whether it is still valid.
   if(idx != -1) {
     // ensure that the cache has enough elements. this will never be resized to more than the number of particles,
-    if(idx >= particle2tri.size()) {
-      particle2tri.resize(idx+1, 0);
+    if(idx >= particle2tri_.size()) {
+      particle2tri_.resize(idx + 1, 0);
     }
 
-    const int guess = particle2tri[idx];
+    const int guess = particle2tri_[idx];
     baryOut = this->ComputeBarycentricCoordinates(pt, guess);
     baryOut = normalizeBary(baryOut);
     if(IsBarycentricCoordinateValid(baryOut)) {
@@ -354,7 +354,7 @@ int TriMeshWrapper::GetTriangleForPoint(point pt, int idx, vec& baryOut) const
         if (IsBarycentricCoordinateValid(baryOut)) {
           if(idx != -1) {
             // update cache
-            particle2tri[idx] = face;
+            particle2tri_[idx] = face;
           }
           return face;
         }
@@ -378,7 +378,7 @@ int TriMeshWrapper::GetTriangleForPoint(point pt, int idx, vec& baryOut) const
   }
   if(idx != -1) {
     // update cache
-    particle2tri[idx] = closestFace;
+    particle2tri_[idx] = closestFace;
   }
   return closestFace;
 }

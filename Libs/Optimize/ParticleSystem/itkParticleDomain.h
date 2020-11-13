@@ -30,7 +30,6 @@ public:
 
   /** Apply any constraints to the given point location.
       This should force the point to a position on the surface that satisfies all constraints. */
-  //TODO: default value for ALL idx?
   virtual bool ApplyConstraints(PointType& p, int idx, bool dbg = false) const = 0;
 
   /** Applies the update to the point and returns the new point position. */

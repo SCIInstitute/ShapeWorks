@@ -33,10 +33,6 @@ public:
   vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos, int idx) const override;
   PointType UpdateParticlePosition(const PointType &point, int idx, vnl_vector_fixed<double, DIMENSION> &update) const override;
 
-  void PrintStats() override {
-    meshWrapper->PrintStats();
-  }
-
   double GetCurvature(const PointType &p, int idx) const override {
     //TODO Why not return the actual curvature
     return GetSurfaceMeanCurvature();

@@ -121,7 +121,7 @@ protected:
     // Rendering..." for detailss
     
     // Get the normal vector associated with this position.
-    typename Superclass::VnlVectorType posnormal = this->SampleNormalAtPoint(pos, -1); //TODO Wha
+    typename Superclass::VnlVectorType posnormal = this->SampleNormalAtPoint(pos, -1);
 
     // Sample the Hessian for this point and compute gradient of the normal.
     typename Superclass::VnlMatrixType I;
