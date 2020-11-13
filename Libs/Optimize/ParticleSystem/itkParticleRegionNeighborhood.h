@@ -85,6 +85,7 @@ public:
       RemovePosition is called when a particle location is removed.*/
   virtual void AddPosition(const PointType &p, unsigned int idx, int threadId = 0);
   virtual void SetPosition(const PointType &p, unsigned int idx, int threadId = 0);
+  virtual void RemovePosition(unsigned int idx, int threadId = 0);
 
 protected:
   ParticleRegionNeighborhood() : m_TreeLevels(3)
