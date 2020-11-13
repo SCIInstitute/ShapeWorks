@@ -285,9 +285,9 @@ void ParticleSystem<VDimension>::AdvancedAllParticleSplitting(double epsilon)
 
   for (size_t domain = 0; domain < num_doms; domain++) {
     std::vector<PointType> list;
-    typename PointContainerType::ConstIterator endIt = GetPositions(domain)->GetEnd();
-    for (typename PointContainerType::ConstIterator it = GetPositions(domain)->GetBegin();
-         it != endIt; it++) { list.push_back(*it); }
+    for (auto k=0; k<GetPositions(domain)->GetSize(); k++) {
+      list.push_back(GetPositions(domain)->Get(k));
+    }
     lists.push_back(list);
     // Debuggg
     /*

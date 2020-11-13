@@ -141,15 +141,6 @@ void ParticleRegionNeighborhood<VDimension>
   pr.Iterator->Point = p;
 }
 
-template <unsigned int VDimension>
-void ParticleRegionNeighborhood<VDimension>
-::RemovePosition(unsigned int idx, int)
-{
-  IteratorNodePair pr = m_IteratorMap->operator[](idx);
-  m_IteratorMap->Erase(idx);
-  pr.NodePointer->GetList().erase(pr.Iterator); 
-}
-
 
 
 }
