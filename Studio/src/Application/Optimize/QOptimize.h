@@ -32,7 +32,7 @@ private:
   itk::MemberCommand<QOptimize>::Pointer iterate_command_;
 
   // for concurrent access
-  QMutex qmutex;
+  QMutex qmutex_;
 
   QElapsedTimer time_since_last_update_;
 

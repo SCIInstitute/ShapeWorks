@@ -9,18 +9,21 @@ Vector toVector(const Point &p) { return makeVector({p[0], p[1], p[2]}); }
 Point toPoint(const Vector &v) { return Point({v[0], v[1], v[2]}); }
 
 /// Enables construction using an initializer list: `Vector3 f() { return makeVector({1,2,3}); }`
-//itkVector doesn't have this handy ctor like itkPoint; `Point p({a,b,c})` works, but `Vector3 v({1,2,3})` doesn't.
+// itkVector doesn't have this handy ctor like itkPoint; `Point p({a,b,c})` works, but `Vector3 v({1,2,3})` doesn't.
 Vector3 makeVector(std::array<double, 3>&& arr) { return Vector3(arr.data()); }
 
 template<>
-Vector3 invert(Vector3 &&v) { return makeVector({1.0/v[0], 1.0/v[1], 1.0/v[2]}); }
+Vector3 negate(const Vector3 &v) { return makeVector({-v[0], -v[1], -v[2]}); }
 
-Vector3 cross(const Vector3 &a, const Vector3 &b)
+template<>                                            
+Vector3 invertValue(const Vector3 &v) { return makeVector({1.0/v[0], 1.0/v[1], 1.0/v[2]}); }
+                                                    
+Vector3 crossProduct(const Vector3 &a, const Vector3 &b)
 {
   return makeVector({a[1]*b[2] - a[2]*b[1], -(a[0]*b[2] - a[2]*b[0]), a[0]*b[1] - a[1]*b[0]});
 }
 
-Vector3 dot(const Vector3 &a, const Vector3 &b)
+Vector3 dotProduct(const Vector3 &a, const Vector3 &b)
 {
   return makeVector({a[0]*b[0], a[1]*b[1], a[2]*b[2]});
 }
@@ -79,8 +82,8 @@ bool axis_is_valid(const Axis &axis)
 Axis toAxis(const std::string &str)
 {
   if (str == "X" || str == "x") return Axis::X;
-  if (str == "Y" || str == "y") return Axis::X;
-  if (str == "Z" || str == "z") return Axis::X;
+  if (str == "Y" || str == "y") return Axis::Y;
+  if (str == "Z" || str == "z") return Axis::Z;
   return Axis::invalid;
 }
 
@@ -89,7 +92,8 @@ double degToRad(const double deg)
   return deg * Pi / 180.0;
 }
 
-AffineTransformPtr createAffineTransform(const Matrix33 &mat, const Vector3 &translate) {
+TransformPtr createTransform(const Matrix33 &mat, const Vector3 &translate) 
+{
   AffineTransformPtr xform(AffineTransform::New());
   xform->SetMatrix(mat);
   xform->SetOffset(translate);

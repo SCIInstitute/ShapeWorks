@@ -11,9 +11,8 @@ class QAbstractButton;
  * The PreferenceWindow provides controls over preferences for the
  * application.  It is synchronized with the singleton Preference object
  */
-class PreferencesWindow : public QDialog
-{
-  Q_OBJECT
+class PreferencesWindow : public QDialog {
+Q_OBJECT
 
 public:
   PreferencesWindow(QWidget* parent, Preferences& prefs);
@@ -31,12 +30,13 @@ public Q_SLOTS:
   void on_caching_epsilon_valueChanged(int i);
 
   void restore_defaults();
-signals:
+
+Q_SIGNALS:
   void clear_cache();
   void update_view();
   void slider_update();
 
 private:
-  Preferences &preferences_;
+  Preferences& preferences_;
   Ui_PreferencesWindow* ui_;
 };

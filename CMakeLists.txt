@@ -1,6 +1,17 @@
 cmake_minimum_required(VERSION 3.11)
 set(CMAKE_CXX_STANDARD 14)             # available options are [98, 11, 14, 17. 20]
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake")
+find_package(Python3 3.7 EXACT REQUIRED)
+
+
+###########################################
+# SHAPEWORKS VERSION
+###########################################
+SET(SHAPEWORKS_MAJOR_VERSION 5 CACHE INTERNAL "Major version number" FORCE)
+SET(SHAPEWORKS_MINOR_VERSION 5 CACHE INTERNAL "Minor version number" FORCE)
+SET(SHAPEWORKS_PATCH_VERSION 0 CACHE INTERNAL "Patch version number" FORCE)
+SET(SHAPEWORKS_VERSION_STRING "5.6.0-dev")
+
 
 find_package(Python3 3.7 EXACT REQUIRED)
 
@@ -131,7 +142,7 @@ if(USE_OPENMP)
   find_package(OpenMP REQUIRED)
   add_definitions(-DSW_USE_OPENMP) # used in ExternalLibs/trimesh2/include/TriMesh.h
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -fPIC")
 endif(USE_OPENMP)
 
 if(APPLE)

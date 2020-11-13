@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QSharedPointer>
 #include <QProgressDialog>
+#include <QElapsedTimer>
 
 #include <Groom/QGroom.h>
 
@@ -64,4 +65,6 @@ private:
   QSharedPointer<Session> session_;
 
   QGroom* groom_;
+
+  QElapsedTimer timer_;
 };

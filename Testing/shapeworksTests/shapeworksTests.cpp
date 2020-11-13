@@ -169,6 +169,18 @@ TEST(shapeworksTests, blur)
 }
 
 //---------------------------------------------------------------------------
+TEST(shapeworksTests, icp)
+{
+  ASSERT_FALSE(system("bash icp.sh"));
+}
+
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, icpfail)
+{
+  ASSERT_TRUE(system("bash icpfail.sh"));
+}
+
+//---------------------------------------------------------------------------
 TEST(shapeworksTests, boundingbox)
 {
   ASSERT_FALSE(system("bash boundingbox.sh"));
@@ -181,15 +193,9 @@ TEST(shapeworksTests, boundingboxfail)
 }
 
 //---------------------------------------------------------------------------
-TEST(shapeworksTests, icp)
+TEST(shapeworksTests, crop)
 {
-  ASSERT_FALSE(system("bash icp.sh"));
-}
-
-//---------------------------------------------------------------------------
-TEST(shapeworksTests, icpfail)
-{
-  ASSERT_TRUE(system("bash icpfail.sh"));
+  ASSERT_FALSE(system("bash crop.sh"));
 }
 
 //---------------------------------------------------------------------------
@@ -211,6 +217,12 @@ TEST(shapeworksTests, reflect)
 }
 
 //---------------------------------------------------------------------------
+TEST(shapeworksTests, reflectfail)
+{
+  ASSERT_TRUE(system("bash reflectfail.sh"));
+}
+
+//---------------------------------------------------------------------------
 TEST(shapeworksTests, warp)
 {
   ASSERT_FALSE(system("bash warp.sh"));
@@ -220,12 +232,6 @@ TEST(shapeworksTests, warp)
 TEST(shapeworksTests, warpfail)
 {
   ASSERT_TRUE(system("bash warpfail.sh"));
-}
-
-//---------------------------------------------------------------------------
-TEST(shapeworksTests, reflectfail)
-{
-  ASSERT_TRUE(system("bash reflectfail.sh"));
 }
 
 //---------------------------------------------------------------------------
@@ -263,10 +269,3 @@ TEST(shapeworksTests, division)
 {
   ASSERT_FALSE(system("bash div.sh"));
 }
-
-//---------------------------------------------------------------------------
-TEST(shapeworksTests, crop)
-{
-  ASSERT_FALSE(system("bash crop.sh"));
-}
-

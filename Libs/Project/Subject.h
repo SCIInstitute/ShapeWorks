@@ -2,9 +2,9 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
-namespace shapeworks
-{
+namespace shapeworks {
 
 //! Representation of a single subject.
 /*!
@@ -41,9 +41,27 @@ public:
 
   //! Set the number of domains
   void set_number_of_domains(int number_of_domains);
-
   //! Get the number of domains
   int get_number_of_domains();
+
+  //! Get the feature map filenames
+  std::map<std::string, std::string> get_feature_filenames() const;
+  //! Set the feature map filenames
+  void set_feature_filenames(const std::map<std::string, std::string>& feature_filenames);
+
+  //! Get the groomed transforms (one vector per domain)
+  std::vector<std::vector<double>> get_groomed_transforms() const;
+  //! Set the groomed transforms (one vector per domain)
+  void set_groomed_transforms(std::vector<std::vector<double>> transforms);
+
+  //! Get the group values
+  std::map<std::string, std::string> get_group_values() const;
+  //! Get a specific group value
+  std::string get_group_value(std::string group_name);
+
+  //! Set the group values
+  void set_group_values(const std::map<std::string, std::string>& group_values);
+
 
 private:
 
@@ -54,5 +72,9 @@ private:
   std::vector<std::string> groomed_filenames_;
   std::string local_particle_filename_;
   std::string global_particle_filename_;
+  std::vector<std::vector<double>> groomed_transforms_;
+
+  std::map<std::string, std::string> feature_filenames_;
+  std::map<std::string, std::string> group_values_;
 };
 }

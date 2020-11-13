@@ -454,7 +454,7 @@ Image& Image::scale(const Vector3 &s)
   recenter();
 
   AffineTransformPtr xform(AffineTransform::New());
-  xform->Scale(invert(Vector(s))); // invert scale ratio because ITK applies transformations backwards.  
+  xform->Scale(invertValue(Vector(s))); // invert scale ratio because ITK applies transformations backwards.  
   applyTransform(xform);
   setOrigin(origOrigin);           // restore origin
   
@@ -671,7 +671,7 @@ Image& Image::clip(const Point &o, const Point &p1, const Point &p2, const Pixel
   Vector v1(makeVector({p1[0] - o[0], p1[1] - o[1], p1[2] - o[2]}));
   Vector v2(makeVector({p2[0] - o[0], p2[1] - o[1], p2[2] - o[2]}));
 
-  return clip(cross(v1, v2), o, val);
+  return clip(crossProduct(v1, v2), o, val);
 }
 
 Image& Image::clip(const Vector &n, const Point &q, const PixelType val)
@@ -772,7 +772,8 @@ std::ostream& operator<<(std::ostream &os, const Image::Region &r)
 std::ostream& operator<<(std::ostream &os, const Image& img)
 {
   return os << "{\n\tdims: " << img.dims() << ",\n\torigin: "
-            << img.origin() << ",\n\tsize: " << img.size() << "\n}";
+            << img.origin() << ",\n\tsize: " << img.size()
+            << ",\n\tspacing: " << img.spacing() <<  "\n}";
 }
 
 } // shapeworks

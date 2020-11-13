@@ -6,7 +6,8 @@
 ShapeWorks uses `git` for managing source code so changes can be integrated from multiple people. Here are some of the basics to check out the repository, make and share modifications, and keep track of all your changes along the way.
 The ShapeWorks repositories are stored on [GitHub](https://github.com/SCIInstitute/ShapeWorks). 
 
-:fa-info-circle: _**Important:**_ If you want to contribute, first _make sure you have a developer account_.  
+!!! imporant
+    If you want to contribute, first _make sure you have a developer account_.  
   
 
 ## Source and Branches
@@ -109,7 +110,9 @@ To push your local changes for a given branch to GitHub, first use `git diff` to
 $ git diff origin/<branchname> <branchname>
 $ git push origin <branchname>
 ```
-:fa-exclamation-circle: _Never push directly to **master**_. After pushing, [submit a pull request](https://github.com/SCIInstitute/ShapeWorks/pull/new/master) (click the "New pull request" button on the main GitHub page) for your changes to be checked and merged to the master branch.
+
+!!! danger "Never push directly to **master** "
+    After pushing, [submit a pull request](https://github.com/SCIInstitute/ShapeWorks/pull/new/master) (click the "New pull request" button on the main GitHub page) for your changes to be checked and merged to the master branch.
 
 ## Logs and diffs
 
@@ -194,7 +197,10 @@ $ git stash pop
 ```
 
 Modify the description of the most recent commit:  
-:fa-info-circle:**_WARNING:_** only use this if the commit has not yet been pushed to GitHub.  
+
+!!! imporant 
+    Only use this if the commit has not yet been pushed to GitHub. 
+     
 ```
 $ git commit --amend
 ```

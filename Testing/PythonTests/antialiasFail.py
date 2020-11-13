@@ -1,18 +1,16 @@
-from pythonTestSetup import *
-
-setup()
-
+import os
+import sys
 from shapeworks import *
 
-def antialiasFailTest1():
-  img = Image(os.environ["DATA"] + "1x2x2.nrrd")
+def antialiasfailTest():
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.antialias(iterations=1)
 
-  compareImg = Image(os.environ["DATA"] + "antialias3.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/antialias3.nrrd")
 
   return img.compare(compareImg)
 
-val = antialiasFailTest1()
+val = antialiasfailTest()
 
 if val is False:
   sys.exit(1)

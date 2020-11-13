@@ -6,6 +6,7 @@
 #include <Data/Session.h>
 #include <Data/Mesh.h>
 #include <Data/Shape.h>
+#include <Data/StudioLog.h>
 #include <Groom/GroomTool.h>
 #include <Visualization/ShapeWorksWorker.h>
 
@@ -117,7 +118,10 @@ void GroomTool::store_settings()
 //---------------------------------------------------------------------------
 void GroomTool::on_run_groom_button_clicked()
 {
+  this->timer_.start();
+
   this->store_settings();
+  std::cerr << "################## on run groom\n";
   emit message("Please wait: running groom step...");
   emit progress(5);
   QVector<QSharedPointer<Shape>> shapes = this->session_->get_shapes();
@@ -178,8 +182,15 @@ void GroomTool::on_run_groom_button_clicked()
 void GroomTool::handle_thread_complete()
 {
   emit progress(95);
+
   this->session_->load_groomed_images(this->groom_->getImages(),
-                                      this->ui_->fastmarching_checkbox->isChecked() ? 0. : 0.5);
+                                      this->ui_->fastmarching_checkbox->isChecked() ? 0. : 0.5,
+                                      this->groom_->get_transforms());
+
+
+  auto duration = this->timer_.elapsed();
+  STUDIO_LOG_MESSAGE("Groom duration: " + QString::number(duration) + "ms");
+
   emit progress(100);
   emit message("Groom Complete");
   emit groom_complete();

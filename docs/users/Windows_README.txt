@@ -17,9 +17,9 @@ Visual Studio 2015, 2017 and 2019." :
 
 https://aka.ms/vs/16/release/vc_redist.x64.exe
 
-2. Download and install Anaconda for Windows:
+2. Download and install Miniconda for Windows:
 
-https://repo.anaconda.com/archive/Anaconda3-2019.10-Windows-x86_64.exe
+https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe
 
 3. Copy "C:\Program Files\ShapeWorks\Examples" to another location
 
@@ -28,6 +28,8 @@ https://repo.anaconda.com/archive/Anaconda3-2019.10-Windows-x86_64.exe
 5. CD to "C:\Program Files\ShapeWorks"
 
 6. Run "conda_installs.bat"
+
+   Note: If you already have anaconda/miniconda installed, this step may hang.  If this step hangs, please uninstall anaconda/miniconda and re-install it and then run conda_installs.bat.
 
 7. CD to your copied Examples\Python location
 

@@ -134,6 +134,8 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
     return false;
   }
 
+  //optimize->GetSampler()->ApplyConstraintsToZeroCrossing();
+
   return true;
 }
 
@@ -500,10 +502,9 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
       if (this->verbosity_level_ <= 1) {
         TriMesh::set_verbose(0);
       }
-      TriMesh *themesh = TriMesh::read(meshFiles[index].c_str());
-      if (themesh != NULL) {
-        shapeworks::MeshWrapper *mesh = new shapeworks::TriMeshWrapper(themesh);
-        optimize->AddMesh(mesh);
+      auto themesh = std::shared_ptr<TriMesh>(TriMesh::read(meshFiles[index].c_str()));
+      if (themesh) {
+        optimize->AddMesh(std::make_shared<shapeworks::TriMeshWrapper>(themesh));
       }
       else {
         std::cerr << "Failed to read " << meshFiles[index] << "\n";
@@ -932,6 +933,7 @@ bool OptimizeParameterFile::read_cutting_planes(TiXmlHandle* docHandle, Optimize
           c[2] = pc[2];
         }
 
+        std::cout << "Adding plane" << std::endl;
         optimize->GetSampler()->SetCuttingPlane(shapeCount, a, b, c);
       }
     }
@@ -1020,6 +1022,7 @@ bool OptimizeParameterFile::read_cutting_spheres(TiXmlHandle* doc_handle, Optimi
 
               rad = radList[r_ctr++];
 
+              std::cout << "Adding sphere" << std::endl;
               optimize->GetSampler()->AddSphere(shapeCount, center, rad);
             }
           }

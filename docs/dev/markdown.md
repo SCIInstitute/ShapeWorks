@@ -3,7 +3,8 @@
 
 ShapeWorks documentation is written using [Markdown](#markdown-basics), a text layout language that enables simple formatting for section headers, code samples, weblinks, and images, yet is still readable as plain text. 
 
-:fa-info-circle: If you're viewing this document in GitHub, you can click on the pencil icon in the top-right corner to see its source. On GitHub, it can be used for issues and wiki documentation and edited inline.
+!!! note 
+    If you are viewing this document in GitHub, you can click on the pencil icon in the top-right corner to see its source. On GitHub, it can be used for issues and wiki documentation and edited inline.
 
 ## Grip
 

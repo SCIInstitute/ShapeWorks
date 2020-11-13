@@ -31,9 +31,9 @@ public:
 
   MeshHandle build_mesh_from_points(const vnl_vector<double>& shape, int domain);
 
-  MeshHandle build_mesh_from_image(ImageType::Pointer image, float iso_value = 0.5);
+  MeshHandle build_mesh_from_image(ImageType::Pointer image, float iso_value = 0.0001);
 
-  MeshHandle build_mesh_from_file(string filename, float iso_value = 0.5);
+  MeshHandle build_mesh_from_file(string filename, float iso_value = 0.0001);
 
   void set_surface_reconstructor(QSharedPointer<SurfaceReconstructor> reconstructor);
 

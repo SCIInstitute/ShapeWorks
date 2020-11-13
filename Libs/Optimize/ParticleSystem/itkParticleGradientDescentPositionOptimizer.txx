@@ -9,9 +9,6 @@
 #ifndef __itkParticleGradientDescentPositionOptimizer_txx
 #define __itkParticleGradientDescentPositionOptimizer_txx
 
-#ifdef SW_USE_OPENMP
-#include <omp.h>
-#endif /* SW_USE_OPENMP */
 const int global_iteration = 1;
 
 #include <algorithm>
@@ -24,6 +21,10 @@ const int global_iteration = 1;
 #include <sstream>
 #include "MemoryUsage.h"
 #include <chrono>
+
+#include <tbb/parallel_for.h>
+#include <tbb/task_scheduler_init.h>
+
 
 namespace itk
 {
@@ -67,6 +68,9 @@ namespace itk
   void ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
     ::StartAdaptiveGaussSeidelOptimization()
   {
+    /// uncomment this to run single threaded
+    //tbb::task_scheduler_init init(1);
+
     if (this->m_AbortProcessing) {
       return;
     }
@@ -109,24 +113,26 @@ namespace itk
             m_GradientFunction->BeforeIteration();
         counter++;
 
-#pragma omp parallel
-      {
         // Iterate over each domain
-#pragma omp for
-        for (int dom = 0; dom < numdomains; dom++)
-        {
+      tbb::parallel_for(
+        tbb::blocked_range<size_t>{0, numdomains},
+        [&](const tbb::blocked_range<size_t>& r) {
+          for (size_t dom = r.begin(); dom < r.end(); ++dom) {
+
           // skip any flagged domains
           if (m_ParticleSystem->GetDomainFlag(dom) == true)
           {
-            continue;
+            // note that this is really a 'continue' statement for the loop, but using TBB,
+            // we are in an anonymous function, not a loop, so return is equivalent to continue here
+            return;
           }
 
           const ParticleDomain *domain = m_ParticleSystem->GetDomain(dom);
 
           typename GradientFunctionType::Pointer localGradientFunction = m_GradientFunction;
-#ifdef SW_USE_OPENMP
+
+          // must clone this as we are in a thread and the gradient function is not thread-safe
           localGradientFunction = m_GradientFunction->Clone();
-#endif
 
           // Tell function which domain we are working on.
           localGradientFunction->SetDomainNumber(dom);
@@ -161,7 +167,8 @@ namespace itk
               VectorType gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
 
               // Step B Constrain the gradient so that the resulting position will not violate any domain constraints
-              m_ParticleSystem->GetDomain(dom)->ApplyVectorConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
+              m_ParticleSystem->GetDomain(dom)->GetConstraints()->applyBoundaryConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
+
               gradmag = gradient.magnitude();
 
               // Step C if the magnitude is larger than the Sampler allows, scale the gradient down to an acceptable magnitude
@@ -176,7 +183,7 @@ namespace itk
               // Step F update the point position in the particle system
               m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);
 
-              // Step G compute the new energy of the particle system 
+              // Step G compute the new energy of the particle system
               newenergy = localGradientFunction->Energy(it.GetIndex(), dom, m_ParticleSystem);
 
               if (newenergy < energy) // good move, increase timestep for next time
@@ -203,7 +210,7 @@ namespace itk
             } // end while(true)
           } // for each particle
         }// for each domain
-      }
+      });
 
       m_NumberOfIterations++;
       m_GradientFunction->AfterIteration();
