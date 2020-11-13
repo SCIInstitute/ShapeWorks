@@ -22,11 +22,11 @@ void shapeworksEnvSetup()
   std::cout << "path: " << path << std::endl;
   _putenv_s("PATH", path.c_str());
 
-  auto pythonpath(std::string(BUILD_DIR) + "/bin/Release" + ":"
-                  + std::string(BUILD_DIR) + "/bin/RelWithDebInfo" + ":"
-                  + std::string(BUILD_DIR) + "/bin/Debug" + ":"
-                  + std::string(INSTALL_DIR) + "/bin" + ":"
-                  + std::string(INSTALL_DIR) + "/lib" + ":");
+  auto pythonpath(std::string(BUILD_DIR) + "\\bin\\Release" + ";"
+                  + std::string(BUILD_DIR) + "\\bin\\RelWithDebInfo" + ";"
+                  + std::string(BUILD_DIR) + "\\bin\\Debug" + ";"
+                  + std::string(INSTALL_DIR) + "\\bin" + ";"
+                  + std::string(INSTALL_DIR) + "\\lib" + ";");
   //pythonpath += std::string(DEPS_DIR) + "\\bin\\lib\\site-packages" + ";";
   pythonpath += (curr_pythonpath ? curr_pythonpath : "");
   std::cout << "pythonpath: " << pythonpath << std::endl;
