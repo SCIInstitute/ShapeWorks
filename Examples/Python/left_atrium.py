@@ -45,7 +45,7 @@ def Run_Pipeline(args):
         args.use_single_scale = True
     # Get data if using subsample
     if args.use_subsample:
-        sample_idx = sampledata(fileList_seg, int(args.use_subsample))
+        sample_idx = sampledata(fileList_seg, int(args.num_subsample))
         fileList_seg= [fileList_seg[i] for i in sample_idx]
         fileList_img = [fileList_img[i] for i in sample_idx]
     else:

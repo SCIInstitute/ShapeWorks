@@ -40,7 +40,7 @@ def Run_Pipeline(args):
         fileList = fileList[:3]
     # Select data if using subsample
     if args.use_subsample:
-        sample_idx = sampledata(fileList, int(args.use_subsample))
+        sample_idx = sampledata(fileList, int(args.num_subsample))
         fileList = [fileList[i] for i in sample_idx]
     else:
         sample_idx = []
