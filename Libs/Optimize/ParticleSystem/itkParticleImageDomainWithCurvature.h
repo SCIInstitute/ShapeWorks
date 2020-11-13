@@ -58,6 +58,7 @@ public:
     f->Update();
 
     m_VDBCurvature->clear();
+    m_VDBCurvatureAccessor = m_VDBCurvature->getConstAccessor();
 
     auto vdbAccessor = m_VDBCurvature->getAccessor(); // this is a non-const accessor
 

@@ -59,6 +59,7 @@ public:
 
     m_VDBImage->clear();
     m_VDBImage->setGridClass(openvdb::GRID_LEVEL_SET);
+    m_VDBImageAccessor = m_VDBImage->getConstAccessor();
 
     // Save properties of the Image needed for the optimizer
     m_Size = I->GetRequestedRegion().GetSize();

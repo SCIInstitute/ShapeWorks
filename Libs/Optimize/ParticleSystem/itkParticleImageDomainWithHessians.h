@@ -52,7 +52,6 @@ public:
 
     // Load the i-th hessian from an itk Image
     const auto LoadVDBHessian = [&](const int i, const typename ImageType::Pointer hess) {
-      m_VDBHessians[i].image->clear();
       m_VDBHessians[i].image->setTransform(this->transform());
 
       auto vdbAccessor = m_VDBHessians[i].image->getAccessor(); // this is a non-const accessor
