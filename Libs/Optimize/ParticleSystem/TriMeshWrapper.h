@@ -72,16 +72,20 @@ private:
                                             int currentFace, int edge) const;
 
   int GetNearestVertex(trimesh::point pt) const;
-  int GetTriangleForPoint(trimesh::point pt, int idx) const;
+  int GetTriangleForPoint(trimesh::point pt, int idx, trimesh::vec& bary) const;
   std::vector<int> GetKNearestVertices(trimesh::point pt, int k) const;
   trimesh::vec3 ComputeBarycentricCoordinates(trimesh::point pt, int face) const;
+
+  static inline bool IsBarycentricCoordinateValid(trimesh::vec3& b);
 
   std::shared_ptr<trimesh::TriMesh> mesh_;
   std::shared_ptr<trimesh::KDtree> kd_tree_;
 
-  mutable std::unordered_map<int, int> particleIdx2faceIdx;
-  mutable unsigned long triQueries{0};
+  // Maintains a map of particle index -> triangle index
+  // Has to be mutable because all of the accessor APIs are const
+  mutable std::vector<int> particle2tri; //todo convention _
   mutable unsigned long triQueriesHits{0};
+  mutable unsigned long triQueries{0};
 
   PointType mesh_lower_bound_;
   PointType mesh_upper_bound_;
