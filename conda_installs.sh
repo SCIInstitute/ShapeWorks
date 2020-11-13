@@ -89,7 +89,7 @@ function install_conda() {
     boost=1.72.0 \
     openexr=2.5.3 \
     pybind11=2.5.0 \
-    notebook=6.0.3
+    notebook=6.1.5
   then return 1; fi
 
   # linux and mac (only) deps
@@ -107,20 +107,20 @@ function install_conda() {
     then return 1; fi
   fi
 
-  if ! pip install termcolor==1.1.0; then return 1; fi
-  if ! pip install grip==4.5.2; then return 1; fi
-  if ! pip install matplotlib==3.1.2; then return 1; fi
-  if ! pip install itk==5.0.1; then return 1; fi
-  if ! pip install bokeh==2.2; then return 1; fi
-  if ! pip install mdutils; then return 1; fi # lib for writing markdown files needed for auto-documentation (not available through conda install)
-  if ! pip install mkdocs; then return 1; fi # lib for generating documentation from markdown
-  if ! pip install python-markdown-math; then return 1; fi # lib for rendering equations in docs
-  if ! pip install fontawesome-markdown; then return 1; fi # lib for icons in documentation
-  if ! pip install --upgrade pymdown-extensions; then return 1; fi # lib to support checkbox lists in documentation
-  if ! pip install Python/DatasetUtilsPackage; then return 1; fi # install the local GirderConnector code as a package
-  if ! pip install Python/DocumentationUtilsPackage; then return 1; fi # install shapeworks auto-documentation as a package
+  if ! pip install termcolor==1.1.0;                    then return 1; fi
+  if ! pip install grip==4.5.2;                         then return 1; fi
+  if ! pip install matplotlib==3.3.2;                   then return 1; fi
+  if ! pip install itk==5.0.1;                          then return 1; fi
+  if ! pip install bokeh==2.2;                          then return 1; fi
+  if ! pip install mdutils==1.3.0;                      then return 1; fi # lib for writing markdown files (auto-documentation)
+  if ! pip install mkdocs==1.1.2;                       then return 1; fi # lib for generating documentation from markdown
+  if ! pip install python-markdown-math==0.8;           then return 1; fi # lib for rendering equations in docs
+  if ! pip install fontawesome-markdown==0.2.6;         then return 1; fi # lib for icons in documentation
+  if ! pip install pymdown-extensions==8.0.1;           then return 1; fi # lib to support checkbox lists in documentation
+  if ! pip install Python/DatasetUtilsPackage;          then return 1; fi # install the local GirderConnector code as a package
+  if ! pip install Python/DocumentationUtilsPackage;    then return 1; fi # install shapeworks auto-documentation as a package
   if ! pip install Python/DataAugmentationUtilsPackage; then return 1; fi # install data augmentation code as a package
-  if ! pip install Python/DeepSSMUtilsPackage; then return 1; fi # install DeepSSM code as a package
+  if ! pip install Python/DeepSSMUtilsPackage;          then return 1; fi # install DeepSSM code as a package
 
   # install any additional Linux dependencies
   if [[ "$(uname)" == "Linux" ]]; then

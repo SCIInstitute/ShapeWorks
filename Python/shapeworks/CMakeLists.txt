@@ -9,16 +9,13 @@ target_link_libraries(shapeworks_py PUBLIC
   ${ITK_LIBRARIES}
   )
 
-  # tinyxml  vgl vgl_algo  Utils trimesh2
-  # gtest_main ${ITK_LIBRARIES} ${VTK_LIBRARIES})
-
 set_target_properties(shapeworks_py PROPERTIES
   OUTPUT_NAME shapeworks
   )
 
 install(TARGETS shapeworks_py
-  ARCHIVE DESTINATION lib
+  ARCHIVE DESTINATION bin
   RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
+  LIBRARY DESTINATION bin
   PUBLIC_HEADER DESTINATION include
   )
