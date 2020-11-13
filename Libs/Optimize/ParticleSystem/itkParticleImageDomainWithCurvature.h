@@ -57,8 +57,9 @@ public:
     f->SetUseImageSpacingOn();
     f->Update();
 
-    m_VDBCurvature = openvdb::FloatGrid::create();
-    auto vdbAccessor = m_VDBCurvature->getAccessor();
+    m_VDBCurvature->clear();
+
+    auto vdbAccessor = m_VDBCurvature->getAccessor(); // this is a non-const accessor
 
     itk::ImageRegionIteratorWithIndex<ImageType> it(I, I->GetRequestedRegion());
     itk::ImageRegionIteratorWithIndex<ImageType> curvIt(f->GetOutput(),
@@ -106,7 +107,9 @@ public:
   }
 
 protected:
-  ParticleImageDomainWithCurvature() {}
+  ParticleImageDomainWithCurvature() : m_VDBCurvature(openvdb::FloatGrid::create()),
+                                       m_VDBCurvatureAccessor(m_VDBCurvature->getConstAccessor())
+  {}
 
   void PrintSelf(std::ostream& os, Indent indent) const
   {
@@ -164,6 +167,7 @@ protected:
   
 private:
   openvdb::FloatGrid::Ptr m_VDBCurvature;
+  openvdb::FloatGrid::ConstAccessor m_VDBCurvatureAccessor;
 
   // Cache surface statistics
   double m_SurfaceMeanCurvature;

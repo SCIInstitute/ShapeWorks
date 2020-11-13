@@ -52,9 +52,10 @@ public:
 
     // Load the i-th hessian from an itk Image
     const auto LoadVDBHessian = [&](const int i, const typename ImageType::Pointer hess) {
-      m_VDBHessians[i] = openvdb::FloatGrid::create(0.0);
-      m_VDBHessians[i]->setTransform(this->transform());
-      auto vdbAccessor = m_VDBHessians[i]->getAccessor();
+      m_VDBHessians[i].image->clear();
+      m_VDBHessians[i].image->setTransform(this->transform());
+
+      auto vdbAccessor = m_VDBHessians[i].image->getAccessor(); // this is a non-const accessor
 
       ImageRegionIterator<ImageType> hessIt(hess, hess->GetRequestedRegion());
       ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
@@ -141,7 +142,7 @@ public:
     VnlMatrixType vdbAns;
     for (unsigned int i = 0; i < DIMENSION; i++)
     {
-      vdbAns[i][i] = openvdb::tools::BoxSampler::sample(m_VDBHessians[i]->tree(), coord);
+      vdbAns[i][i] = openvdb::tools::BoxSampler::sample(m_VDBHessians[i].accessor, coord);
     }
 
     // Cross derivatives
@@ -150,7 +151,7 @@ public:
     {
       for (unsigned int j = i+1; j < DIMENSION; j++, k++)
       {
-        vdbAns[i][j] = vdbAns[j][i] = openvdb::tools::BoxSampler::sample(m_VDBHessians[k]->tree(), coord);
+        vdbAns[i][j] = vdbAns[j][i] = openvdb::tools::BoxSampler::sample(m_VDBHessians[k].accessor, coord);
       }
     }
     return vdbAns;
@@ -177,8 +178,8 @@ public:
 
   void DeletePartialDerivativeImages() override
   {
-    for (unsigned int i = 0; i < DIMENSION + ((DIMENSION * DIMENSION) - DIMENSION) / 2; i++) {
-      m_VDBHessians[i] = 0;
+    for (unsigned int i = 0; i < NUM_COMPONENTS; i++) {
+      m_VDBHessians[i] = VDBHessian();
     }
   }
 
@@ -190,7 +191,7 @@ public:
   }
 
 protected:
-  ParticleImageDomainWithHessians() : m_Sigma(0.0) {}
+  ParticleImageDomainWithHessians() {}
   virtual ~ParticleImageDomainWithHessians() {};
 
   void PrintSelf(std::ostream& os, Indent indent) const
@@ -200,13 +201,24 @@ protected:
 
   
 private:
-  double m_Sigma;
+  double m_Sigma{0.0};
   // Partials are stored:
   //     0: dxx  3: dxy  4: dxz
   //             1: dyy  5: dyz
   //                     2: dzz
-  typename openvdb::FloatGrid::Ptr m_VDBHessians[
-          DIMENSION + ((DIMENSION * DIMENSION) - DIMENSION) / 2];
+  static const size_t NUM_COMPONENTS = DIMENSION + ((DIMENSION * DIMENSION) - DIMENSION) / 2;
+
+  // We have to initialize the VDB accessor with a valid VDB grid, and creating an array of that is impossible in
+  // C++ without an intermediate struct with a default constructor
+  struct VDBHessian {
+    typename openvdb::FloatGrid::Ptr image;
+    typename openvdb::FloatGrid::ConstAccessor accessor;
+
+    VDBHessian() : image(openvdb::FloatGrid::create(1e8)),
+                   accessor(image->getConstAccessor())
+    {
+    }
+  } m_VDBHessians[NUM_COMPONENTS];
 };
 
 } // end namespace itk

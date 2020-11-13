@@ -44,6 +44,7 @@ public:
   void SetImage(ImageType *I, double narrow_band) {
     ParticleImageDomain<T>::SetImage(I, narrow_band);
     m_VDBGradient = openvdb::tools::gradient(*this->GetVDBImage());
+    m_VDBGradientAccessor = m_VDBGradient->getConstAccessor();
   }
 
   inline vnl_vector_fixed<float, DIMENSION> SampleGradientAtPoint(const PointType &p, int idx) const {
@@ -76,7 +77,9 @@ public:
   }
   
 protected:
-  ParticleImageDomainWithGradients() {}
+  ParticleImageDomainWithGradients() : m_VDBGradient(openvdb::VectorGrid::create()),
+                                       m_VDBGradientAccessor(m_VDBGradient->getConstAccessor())
+  {}
   virtual ~ParticleImageDomainWithGradients() {}
 
   void PrintSelf(std::ostream& os, Indent indent) const
@@ -99,7 +102,7 @@ private:
   inline VectorType SampleGradient(const PointType &p, int idx) const {
     if (this->IsInsideBuffer(p)) {
       const auto coord = this->ToVDBCoord(p);
-      const auto _v = openvdb::tools::BoxSampler::sample(m_VDBGradient->tree(), coord);
+      const auto _v = openvdb::tools::BoxSampler::sample(m_VDBGradientAccessor, coord);
       const VectorType v(_v.asPointer()); // This copies 3 floats from a VDB vector to a vnl vector
       return v;
     }
@@ -110,6 +113,7 @@ private:
 
 
   openvdb::VectorGrid::Ptr m_VDBGradient;
+  openvdb::VectorGrid::ConstAccessor m_VDBGradientAccessor;
 };
 
 } // end namespace itk

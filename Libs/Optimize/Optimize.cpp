@@ -20,6 +20,13 @@
 #include <itkImageRegionIteratorWithIndex.h>
 #include <itkImageToVTKImageFilter.h>
 
+// openvdb global initialization
+// we have to undef foreach here because both Qt and OpenVDB define foreach
+#undef foreach
+#ifndef Q_MOC_RUN
+#include <openvdb/openvdb.h>
+#endif
+
 // shapeworks
 #include "TriMesh.h"
 #include "ParticleSystem/itkParticleImageDomain.h"
@@ -35,6 +42,7 @@ namespace shapeworks {
 Optimize::Optimize()
 {
   this->m_sampler = std::make_shared<Sampler>();
+  openvdb::initialize();
 }
 
 //---------------------------------------------------------------------------

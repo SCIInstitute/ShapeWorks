@@ -57,13 +57,8 @@ public:
     this->m_FixedDomain = false;
     this->Modified();
 
-    openvdb::initialize(); // It is safe to initialize multiple times.
-
-    // Set a large background value, so that we quickly catch particles outside or on the edge the narrow band.
-    // (Downside: its more difficult to display the correct location of the point of failure.)
-    m_VDBImage = openvdb::FloatGrid::create(1e8);
+    m_VDBImage->clear();
     m_VDBImage->setGridClass(openvdb::GRID_LEVEL_SET);
-    auto vdbAccessor = m_VDBImage->getAccessor();
 
     // Save properties of the Image needed for the optimizer
     m_Size = I->GetRequestedRegion().GetSize();
@@ -82,6 +77,7 @@ public:
     ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
     it.GoToBegin();
 
+    auto vdbAccessor = m_VDBImage->getAccessor(); // this is a non-const accessor
     while(!it.IsAtEnd()) {
       const auto idx = it.GetIndex();
       const auto pixel = it.Get();
@@ -156,7 +152,7 @@ public:
   {
     if(this->IsInsideBuffer(p)) {
       const auto coord = this->ToVDBCoord(p);
-      return openvdb::tools::BoxSampler::sample(m_VDBImage->tree(), coord);
+      return openvdb::tools::BoxSampler::sample(m_VDBImageAccessor, coord);
     } else {
       itkExceptionMacro("Distance transform queried for a Point, " << p << ", outside the given image domain. Consider increasing the narrow band" );
     }
@@ -202,7 +198,9 @@ protected:
     return m_VDBImage;
   }
 
-  ParticleImageDomain() { }
+  ParticleImageDomain() : m_VDBImage(openvdb::FloatGrid::create(1e8)),
+                          m_VDBImageAccessor(m_VDBImage->getConstAccessor()) // needs to be initialized.
+  { }
   virtual ~ParticleImageDomain() {};
 
   void PrintSelf(std::ostream& os, Indent indent) const
@@ -236,6 +234,7 @@ protected:
 private:
 
   openvdb::FloatGrid::Ptr m_VDBImage;
+  openvdb::FloatGrid::ConstAccessor m_VDBImageAccessor;
   typename ImageType::SizeType m_Size;
   typename ImageType::SpacingType m_Spacing;
   PointType m_Origin;
