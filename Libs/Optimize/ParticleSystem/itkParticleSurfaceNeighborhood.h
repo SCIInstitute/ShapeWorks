@@ -8,8 +8,8 @@
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
 #ifndef __itkParticleSurfaceNeighborhood_h
@@ -27,7 +27,7 @@ namespace itk
  * computes neighborhoods based on distance from a point.  It requires a domain
  * that provides bounds information and a distance metric.  This class uses a
  * PowerOfTwoPointTree to cache point and index values so that
- * FindNeighborhoodPoints is somewhat optimized. 
+ * FindNeighborhoodPoints is somewhat optimized.
  */
 template <class TImage>
 class ITK_EXPORT ParticleSurfaceNeighborhood : public ParticleRegionNeighborhood<TImage::ImageDimension>
@@ -44,10 +44,10 @@ public:
   typedef typename Superclass::PointTreeType PointTreeType;
 
   typedef  vnl_vector_fixed<NumericType, TImage::ImageDimension> GradientVectorType;
-  
+
   /**Expose the image dimension. */
   itkStaticConstMacro(Dimension, unsigned int, TImage::ImageDimension);
-  
+
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 

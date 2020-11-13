@@ -1,14 +1,12 @@
-from pythonTestSetup import *
-
-setup()
-
+import os
+import sys
 from shapeworks import *
 
 def resizeTest1():
-  img = Image(os.environ["DATA"] + "1x2x2.nrrd")
-  img.resize(Dims(0, 0, 0), InterpolationType.Linear)
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img.resize(Dims(0, 0, 0))
 
-  compareImg = Image(os.environ["DATA"] + "1x2x2.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/1x2x2.nrrd")
 
   return img.compare(compareImg)
 
@@ -18,10 +16,10 @@ if val is False:
   sys.exit(1)
 
 def resizeTest2():
-  img = Image(os.environ["DATA"] + "la1-small.nrrd")
-  img.resize(Dims(2, 0, 0), InterpolationType.Linear)
+  img = Image(os.environ["DATA"] + "/la1-small.nrrd")
+  img.resize(Dims(2, 0, 0))
 
-  compareImg = Image(os.environ["DATA"] + "resize2.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/resize2.nrrd")
 
   return img.compare(compareImg)
 
@@ -31,10 +29,10 @@ if val is False:
   sys.exit(1)
 
 def resizeTest3():
-  img = Image(os.environ["DATA"] + "la1-small.nrrd")
-  img.resize(Dims(96, 96, 12), InterpolationType.Linear)
+  img = Image(os.environ["DATA"] + "/la1-small.nrrd")
+  img.resize(Dims(96, 96, 12))
 
-  compareImg = Image(os.environ["DATA"] + "resize3.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/resize3.nrrd")
 
   return img.compare(compareImg)
 
@@ -44,10 +42,10 @@ if val is False:
   sys.exit(1)
 
 def resizeTest4():
-  img = Image(os.environ["DATA"] + "la1-small.nrrd")
-  img.resize(Dims(24, 120, 6), InterpolationType.Linear)
+  img = Image(os.environ["DATA"] + "/la1-small.nrrd")
+  img.resize(Dims(24, 120, 6))
 
-  compareImg = Image(os.environ["DATA"] + "resize4.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/resize4.nrrd")
 
   return img.compare(compareImg)
 

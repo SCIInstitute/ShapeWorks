@@ -2,8 +2,8 @@
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
 
@@ -11,7 +11,7 @@
 
 namespace itk
 {
-  bool MeshDomain::ApplyConstraints(PointType &p) const {
+  bool MeshDomain::ApplyConstraints(PointType &p, bool dbg) const {
     p = meshWrapper->SnapToMesh(p);
     return true;
   }

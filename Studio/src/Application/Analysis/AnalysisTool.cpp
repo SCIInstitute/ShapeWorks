@@ -15,6 +15,7 @@
 #include <Data/Session.h>
 #include <Data/Mesh.h>
 #include <Data/Shape.h>
+#include <Data/StudioLog.h>
 #include <Analysis/AnalysisTool.h>
 #include <Visualization/Lightbox.h>
 
@@ -34,7 +35,17 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   this->ui_->setupUi(this);
   this->stats_ready_ = false;
 
-  // defautl to linear scale
+  connect(this->ui_->view_header, &QPushButton::clicked,
+          this->ui_->view_open_button, &QPushButton::toggle);
+  connect(this->ui_->metrics_header, &QPushButton::clicked,
+          this->ui_->metrics_open_button, &QPushButton::toggle);
+  connect(this->ui_->surface_header, &QPushButton::clicked,
+          this->ui_->surface_open_button, &QPushButton::toggle);
+  this->ui_->view_label->setAttribute(Qt::WA_TransparentForMouseEvents);
+  this->ui_->surface_label->setAttribute(Qt::WA_TransparentForMouseEvents);
+  this->ui_->metrics_label->setAttribute(Qt::WA_TransparentForMouseEvents);
+
+  // default to linear scale
   this->ui_->log_radio->setChecked(false);
   this->ui_->linear_radio->setChecked(true);
 
@@ -48,21 +59,40 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
           SLOT(handle_pca_animate_state_changed()));
   connect(&this->pca_animate_timer_, SIGNAL(timeout()), this, SLOT(handle_pca_timer()));
 
+
+
+
   // group animation
-  connect(this->ui_->group_animate_checkbox, &QCheckBox::clicked, this,
+  connect(this->ui_->group_animate_checkbox, &QCheckBox::stateChanged, this,
           &AnalysisTool::handle_group_animate_state_changed);
   connect(&this->group_animate_timer_, &QTimer::timeout, this, &AnalysisTool::handle_group_timer);
 
-  connect(this->ui_->pca_radio_button, &QRadioButton::clicked, this, &AnalysisTool::pca_update);
-  connect(this->ui_->group_radio_button, &QRadioButton::clicked, this, &AnalysisTool::pca_update);
+  connect(this->ui_->group_box, qOverload<const QString&>(&QComboBox::currentIndexChanged),
+          this, &AnalysisTool::update_group_values);
+
+  connect(this->ui_->group_left, qOverload<const QString&>(&QComboBox::currentIndexChanged),
+          this, &AnalysisTool::group_changed);
+
+  connect(this->ui_->group_right, qOverload<const QString&>(&QComboBox::currentIndexChanged),
+          this, &AnalysisTool::group_changed);
+
+  this->ui_->surface_open_button->setChecked(false);
+  //this->on_surface_open_button_toggled();
+  this->ui_->metrics_open_button->setChecked(false);
+  //this->on_metrics_open_button_toggled();
+
+  /// TODO nothing there yet (regression tab)
+  this->ui_->tabWidget->removeTab(3);
+
+  this->ui_->evaluation_widget->hide();
 }
 
 //---------------------------------------------------------------------------
 std::string AnalysisTool::get_analysis_mode()
 {
   if (this->ui_->tabWidget->currentWidget() == this->ui_->samples_tab) {
-    if (this->ui_->allSamplesRadio->isChecked()) { return AnalysisTool::MODE_ALL_SAMPLES_C;}
-    if (this->ui_->singleSamplesRadio->isChecked()) { return AnalysisTool::MODE_SINGLE_SAMPLE_C;}
+    if (this->ui_->allSamplesRadio->isChecked()) { return AnalysisTool::MODE_ALL_SAMPLES_C; }
+    if (this->ui_->singleSamplesRadio->isChecked()) { return AnalysisTool::MODE_SINGLE_SAMPLE_C; }
   }
 
   if (this->ui_->tabWidget->currentWidget() == this->ui_->mean_tab) {
@@ -143,7 +173,7 @@ void AnalysisTool::on_reconstructionButton_clicked()
   global.resize(shapes.size());
   images.resize(shapes.size());
   size_t ii = 0;
-  for (auto &s : shapes) {
+  for (auto& s : shapes) {
     auto l = s->get_local_correspondence_points();
     auto g = s->get_global_correspondence_points();
     for (size_t i = 0; i < l.size(); i += 3) {
@@ -169,9 +199,11 @@ void AnalysisTool::on_reconstructionButton_clicked()
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_reconstruction_complete()));
-  connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
-  connect(worker, SIGNAL(warning_message(std::string)), this, SLOT(handle_warning(std::string)));
-  connect(worker, SIGNAL(message(std::string)), this, SLOT(handle_message(std::string)));
+
+  connect(worker, &ShapeworksWorker::error_message, this, &AnalysisTool::handle_error);
+  connect(worker, &ShapeworksWorker::warning_message, this, &AnalysisTool::handle_warning);
+  connect(worker, &ShapeworksWorker::message, this, &AnalysisTool::handle_message);
+
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   thread->start();
   emit progress(15);
@@ -195,12 +227,6 @@ double AnalysisTool::get_group_value()
 bool AnalysisTool::pcaAnimate()
 {
   return this->ui_->pcaAnimateCheckBox->isChecked();
-}
-
-//---------------------------------------------------------------------------
-bool AnalysisTool::groupAnimate()
-{
-  return this->ui_->group_animate_checkbox->isChecked();
 }
 
 //---------------------------------------------------------------------------
@@ -240,12 +266,6 @@ void AnalysisTool::set_app(ShapeWorksStudioApp* app)
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::activate()
-{
-  this->update_analysis_mode();
-}
-
-//---------------------------------------------------------------------------
 void AnalysisTool::update_analysis_mode()
 {
   // update UI
@@ -261,6 +281,7 @@ void AnalysisTool::compute_mode_shape()
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_analysis_options()
 {
+
   if (this->ui_->tabWidget->currentWidget() == this->ui_->samples_tab) {
     if (this->ui_->singleSamplesRadio->isChecked()) {
       //one sample mode
@@ -313,32 +334,56 @@ void AnalysisTool::handle_analysis_options()
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_median()
 {
-  if (!this->compute_stats()) { return;}
-  this->ui_->sampleSpinBox->setValue(this->stats_.ComputeMedianShape(-32));       //-32 = both groups
+  if (!this->compute_stats()) { return; }
+  this->ui_->sampleSpinBox->setValue(
+    this->stats_.ComputeMedianShape(-32));       //-32 = both groups
   emit update_view();
 }
 
 //-----------------------------------------------------------------------------
-void AnalysisTool::on_overall_button_clicked()
+void AnalysisTool::on_mean_button_clicked()
 {
+  this->ui_->group1_button->setChecked(false);
+  this->ui_->group2_button->setChecked(false);
+  this->ui_->difference_button->setChecked(false);
+  this->ui_->group_animate_checkbox->setChecked(false);
+  this->ui_->mean_button->setChecked(true);
   emit update_view();
 }
 
 //-----------------------------------------------------------------------------
 void AnalysisTool::on_group1_button_clicked()
 {
+  this->ui_->group_slider->setValue(this->ui_->group_slider->minimum());
+  this->ui_->mean_button->setChecked(false);
+  this->ui_->group2_button->setChecked(false);
+  this->ui_->difference_button->setChecked(false);
+  this->ui_->group_animate_checkbox->setChecked(false);
+  this->ui_->group1_button->setChecked(true);
   emit update_view();
 }
 
 //-----------------------------------------------------------------------------
 void AnalysisTool::on_group2_button_clicked()
 {
+  this->ui_->group_slider->setValue(this->ui_->group_slider->maximum());
+  this->ui_->mean_button->setChecked(false);
+  this->ui_->group1_button->setChecked(false);
+  this->ui_->difference_button->setChecked(false);
+  this->ui_->group_animate_checkbox->setChecked(false);
+  this->ui_->group2_button->setChecked(true);
   emit update_view();
 }
 
 //-----------------------------------------------------------------------------
 void AnalysisTool::on_difference_button_clicked()
 {
+  this->ui_->group_slider->setValue(this->ui_->group_slider->minimum());
+  this->ui_->mean_button->setChecked(false);
+  this->ui_->group1_button->setChecked(false);
+  this->ui_->group2_button->setChecked(false);
+  this->ui_->group_animate_checkbox->setChecked(false);
+  this->ui_->difference_button->setChecked(true);
   emit update_view();
 }
 
@@ -353,11 +398,44 @@ bool AnalysisTool::compute_stats()
     return false;
   }
 
-  std::vector < vnl_vector < double >> points;
+  std::vector<vnl_vector<double>> points;
   std::vector<int> group_ids;
-  foreach(ShapeHandle shape, this->session_->get_shapes()) {
-    points.push_back(shape->get_global_correspondence_points());
-    group_ids.push_back(shape->get_group_id());
+
+  std::string group_set = this->ui_->group_box->currentText().toStdString();
+  std::string left_group = this->ui_->group_left->currentText().toStdString();
+  std::string right_group = this->ui_->group_right->currentText().toStdString();
+
+  bool groups_enabled = group_set != "-None-";
+
+  this->group1_list_.clear();
+  this->group2_list_.clear();
+
+  for (ShapeHandle shape : this->session_->get_shapes()) {
+
+    if (groups_enabled) {
+      auto value = shape->get_subject()->get_group_value(group_set);
+      if (value == left_group) {
+        points.push_back(shape->get_global_correspondence_points());
+        group_ids.push_back(1);
+        this->group1_list_.push_back(shape);
+      }
+      else if (value == right_group) {
+        points.push_back(shape->get_global_correspondence_points());
+        group_ids.push_back(2);
+        this->group2_list_.push_back(shape);
+      }
+      else {
+        // we don't include it
+      }
+    }
+    else {
+      points.push_back(shape->get_global_correspondence_points());
+      group_ids.push_back(shape->get_group_id());
+    }
+  }
+
+  if (points.empty()) {
+    return false;
   }
 
   this->stats_.ImportPoints(points, group_ids);
@@ -373,40 +451,44 @@ bool AnalysisTool::compute_stats()
 
   this->ui_->graph_->repaint();
 
-  // set widget enable state for groups
-  bool groups_available = this->session_->groups_available();
-
-  this->ui_->group_slider->setEnabled(groups_available);
-  this->ui_->group_animate_checkbox->setEnabled(groups_available);
-  this->ui_->group_radio_button->setEnabled(groups_available);
-
   return true;
 }
 
 //-----------------------------------------------------------------------------
-const vnl_vector<double>& AnalysisTool::get_mean_shape()
+const vnl_vector<double>& AnalysisTool::get_mean_shape_points()
 {
   if (!this->compute_stats()) {
     return this->empty_shape_;
   }
 
-  if (this->ui_->group1_button->isChecked()) {
+  if (this->ui_->group1_button->isChecked() || this->ui_->difference_button->isChecked()) {
     return this->stats_.Group1Mean();
   }
   else if (this->ui_->group2_button->isChecked()) {
     return this->stats_.Group2Mean();
+  }
+  else if (this->ui_->mean_button->isChecked()) {
+    return this->stats_.Mean();
+  }
+
+  if (this->groups_active()) {
+    auto group_value = this->get_group_value();
+    this->temp_shape_ = this->stats_.Group1Mean() + (this->stats_.GroupDifference() * group_value);
+    return this->temp_shape_;
   }
 
   return this->stats_.Mean();
 }
 
 //-----------------------------------------------------------------------------
-const vnl_vector<double>& AnalysisTool::get_shape(int mode, double value, double group_value)
+const vnl_vector<double>& AnalysisTool::get_shape_points(int mode, double value, double group_value)
 {
   if (!this->compute_stats() || this->stats_.Eigenvectors().size() <= 1) {
     return this->empty_shape_;
   }
-  if (mode + 2 > this->stats_.Eigenvalues().size()) {mode = this->stats_.Eigenvalues().size() - 2;}
+  if (mode + 2 > this->stats_.Eigenvalues().size()) {
+    mode = this->stats_.Eigenvalues().size() - 2;
+  }
 
   unsigned int m = this->stats_.Eigenvectors().columns() - (mode + 1);
 
@@ -418,18 +500,23 @@ const vnl_vector<double>& AnalysisTool::get_shape(int mode, double value, double
                            QString::number(this->stats_.Eigenvalues()[m]),
                            QString::number(value * lambda));
 
+  ///TODO: fix for multi-group
+  /*
   if (this->ui_->group_radio_button->isChecked()) {
     this->temp_shape_ = this->stats_.Group1Mean() + (this->stats_.GroupDifference() * group_value);
   }
   else {
     this->temp_shape_ = this->stats_.Mean() + (e * (value * lambda));
   }
+*/
+
+  this->temp_shape_ = this->stats_.Mean() + (e * (value * lambda));
 
   return this->temp_shape_;
 }
 
 //---------------------------------------------------------------------------
-ParticleShapeStatistics<3> AnalysisTool::get_stats()
+ParticleShapeStatistics AnalysisTool::get_stats()
 {
   this->compute_stats();
   return this->stats_;
@@ -442,6 +529,12 @@ void AnalysisTool::load_settings()
   this->ui_->numClusters->setValue(params.get("reconstruction_clusters", 3));
   this->ui_->meshDecimation->setValue(params.get("reconstruction_decimation", 0.30));
   this->ui_->maxAngle->setValue(params.get("reconstruction_max_angle", 60));
+
+  this->update_group_boxes();
+
+  this->ui_->group_box->setCurrentText(
+    QString::fromStdString(params.get("current_group", "-None-")));
+
 }
 
 //---------------------------------------------------------------------------
@@ -485,9 +578,14 @@ void AnalysisTool::on_pcaSlider_valueChanged()
 void AnalysisTool::on_group_slider_valueChanged()
 {
   // this will make the slider handle redraw making the UI appear more responsive
-  QCoreApplication::processEvents();
+  //QCoreApplication::processEvents();
 
-  emit pca_update();
+  this->ui_->group1_button->setChecked(false);
+  this->ui_->group2_button->setChecked(false);
+  this->ui_->difference_button->setChecked(false);
+  this->ui_->mean_button->setChecked(false);
+
+  emit update_view();
 }
 
 //---------------------------------------------------------------------------
@@ -531,12 +629,14 @@ void AnalysisTool::handle_pca_timer()
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_group_animate_state_changed()
 {
-  if (this->groupAnimate()) {
+  if (this->ui_->group_animate_checkbox->isChecked()) {
     //this->setPregenSteps();
+    std::cerr << "group animating\n";
     this->group_animate_timer_.setInterval(10);
     this->group_animate_timer_.start();
   }
   else {
+    std::cerr << "group NOT animating\n";
     this->group_animate_timer_.stop();
   }
 }
@@ -567,7 +667,7 @@ double AnalysisTool::get_pca_value()
   float range = preferences_.get_pca_range();
   int halfRange = this->ui_->pcaSlider->maximum();
 
-  double value = (double)slider_value / (double)halfRange * range;
+  double value = (double) slider_value / (double) halfRange * range;
   return value;
 }
 
@@ -600,7 +700,7 @@ void AnalysisTool::reset_stats()
   this->ui_->pcaModeSpinBox->setEnabled(false);
   this->ui_->pcaAnimateCheckBox->setChecked(false);
   this->stats_ready_ = false;
-  this->stats_ = ParticleShapeStatistics<3>();
+  this->stats_ = ParticleShapeStatistics();
 }
 
 //---------------------------------------------------------------------------
@@ -609,10 +709,7 @@ void AnalysisTool::enable_actions()
   this->ui_->reconstructionButton->setEnabled(
     this->session_->particles_present() && this->session_->get_groomed_present());
 
-  this->ui_->group1_button->setEnabled(this->session_->groups_available());
-  this->ui_->group2_button->setEnabled(this->session_->groups_available());
-  this->ui_->difference_button->setEnabled(this->session_->groups_available());
-  this->ui_->group_slider_widget->setEnabled(this->session_->groups_available());
+  this->update_group_boxes();
 }
 
 //---------------------------------------------------------------------------
@@ -632,4 +729,270 @@ void AnalysisTool::set_analysis_mode(std::string mode)
   else if (mode == "regression") {
     this->ui_->tabWidget->setCurrentWidget(this->ui_->regression_tab);
   }
+}
+
+//---------------------------------------------------------------------------
+ShapeHandle AnalysisTool::get_shape(int mode, double value, double group_value)
+{
+  return this->create_shape_from_points(this->get_shape_points(mode, value, group_value));
+}
+
+//---------------------------------------------------------------------------
+ShapeHandle AnalysisTool::get_mean_shape()
+{
+  auto shape_points = this->get_mean_shape_points();
+  ShapeHandle shape = this->create_shape_from_points(shape_points);
+  if (this->get_group_difference_mode()) {
+    shape->set_vectors(this->get_group_difference_vectors());
+  }
+
+  int num_points = shape_points.size() / 3;
+  std::vector<Eigen::VectorXf> values;
+
+  if (this->feature_map_ != "") {
+    auto shapes = this->session_->get_shapes();
+    Eigen::VectorXf sum(num_points);
+    sum.setZero();
+
+    bool ready = true;
+
+    if (!this->groups_active()) {
+      for (int i = 0; i < shapes.size(); i++) {
+        shapes[i]->load_feature(Visualizer::MODE_RECONSTRUCTION_C, this->feature_map_);
+        auto value = shapes[i]->get_point_features(this->feature_map_);
+        if (value.rows() != sum.rows()) {
+          ready = false;
+        }
+        else {
+          values.push_back(value);
+          sum = sum + value;
+        }
+      }
+      auto mean = sum / values.size();
+
+      if (ready) {
+        shape->set_point_features(this->feature_map_, mean);
+      }
+    }
+    else {
+      Eigen::VectorXf sum_left(num_points);
+      sum_left.setZero();
+      Eigen::VectorXf sum_right(num_points);
+      sum_right.setZero();
+
+      for (auto shape : this->group1_list_) {
+        shape->load_feature(Visualizer::MODE_RECONSTRUCTION_C, this->feature_map_);
+        auto value = shape->get_point_features(this->feature_map_);
+        if (value.rows() != sum.rows()) {
+          ready = false;
+        }
+        else {
+          sum_left = sum_left + value;
+        }
+      }
+      auto left_mean = sum_left / this->group1_list_.size();
+
+      for (auto shape : this->group2_list_) {
+        shape->load_feature(Visualizer::MODE_RECONSTRUCTION_C, this->feature_map_);
+        auto value = shape->get_point_features(this->feature_map_);
+        if (value.rows() != sum.rows()) {
+          ready = false;
+        }
+        else {
+          sum_right = sum_right + value;
+        }
+      }
+      auto right_mean = sum_right / this->group2_list_.size();
+
+      if (ready) {
+        double ratio = this->get_group_value();
+        auto blend = left_mean * ratio + right_mean * (1 - ratio);
+        shape->set_point_features(this->feature_map_, blend);
+      }
+    }
+  }
+
+  return shape;
+}
+
+//---------------------------------------------------------------------------
+ShapeHandle AnalysisTool::create_shape_from_points(const vnl_vector<double>& points)
+{
+  MeshHandle mesh = this->session_->get_mesh_manager()->get_mesh(points);
+  ShapeHandle shape = ShapeHandle(new Shape());
+  shape->set_mesh_manager(this->session_->get_mesh_manager());
+  shape->set_reconstructed_mesh(mesh);
+  shape->set_global_particles(points);
+  return shape;
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_error(std::string message_string)
+{
+  STUDIO_LOG_ERROR(QString::fromStdString(message_string));
+  emit error(message_string);
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_warning(std::string message_string)
+{
+  STUDIO_LOG_ERROR(QString::fromStdString(message_string));
+  emit error(message_string);
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_message(std::string message_string)
+{
+  STUDIO_LOG_MESSAGE(QString::fromStdString(message_string));
+  emit message(message_string);
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::set_feature_map(const std::string& feature_map)
+{
+  this->feature_map_ = feature_map;
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::update_group_boxes()
+{
+  // populate the group sets
+  auto group_names = this->session_->get_project()->get_group_names();
+
+  this->ui_->group_widget->setEnabled(!group_names.empty());
+
+  if (group_names != this->current_group_names_) { // only update if different
+    this->ui_->group_box->clear();
+    this->ui_->group_box->addItem("-None-");
+    for (const std::string& group : group_names) {
+      this->ui_->group_box->addItem(QString::fromStdString(group));
+    }
+    this->current_group_names_ = group_names;
+  }
+
+  this->group_changed();
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::update_group_values()
+{
+  auto values = this->session_->get_project()->
+    get_group_values(std::string("group_")
+                     + this->ui_->group_box->currentText().toStdString());
+
+  if (values != this->current_group_values_) {
+    // populate group values
+    this->ui_->group_left->clear();
+    this->ui_->group_right->clear();
+    for (const std::string& value : values) {
+      QString item = QString::fromStdString(value);
+      this->ui_->group_left->addItem(item);
+      this->ui_->group_right->addItem(item);
+    }
+    this->current_group_values_ = values;
+
+    // try to set the right one to a different value than left
+    int i = 0;
+    while (this->ui_->group_left->currentIndex() == this->ui_->group_right->currentIndex() &&
+           i < this->current_group_values_.size()) {
+      this->ui_->group_right->setCurrentIndex(i++);
+    }
+  }
+
+  bool groups_on = this->ui_->group_box->currentText() != "-None-";
+
+  this->ui_->group1_button->setEnabled(groups_on);
+  this->ui_->group2_button->setEnabled(groups_on);
+  this->ui_->difference_button->setEnabled(groups_on);
+  this->ui_->group_slider->setEnabled(groups_on);
+  this->ui_->group_left->setEnabled(groups_on);
+  this->ui_->group_right->setEnabled(groups_on);
+  this->ui_->group_animate_checkbox->setEnabled(groups_on);
+
+  this->group_changed();
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::group_changed()
+{
+  this->stats_ready_ = false;
+  this->compute_stats();
+}
+
+//---------------------------------------------------------------------------
+bool AnalysisTool::groups_active()
+{
+  std::string group_set = this->ui_->group_box->currentText().toStdString();
+  bool groups_enabled = group_set != "" && group_set != "-None-";
+  return groups_enabled;
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::on_view_open_button_toggled()
+{
+  bool show = this->ui_->view_open_button->isChecked();
+  this->ui_->view_content->setVisible(show);
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::on_surface_open_button_toggled()
+{
+  bool show = this->ui_->surface_open_button->isChecked();
+  this->ui_->surface_content->setVisible(show);
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::on_metrics_open_button_toggled()
+{
+  bool show = this->ui_->metrics_open_button->isChecked();
+  this->ui_->metrics_content->setVisible(show);
+
+  /// Disabled for now
+  /*
+  if (show) {
+    this->ui_->specificity_label->setText(QString::number(this->stats_.get_specificity(1)));
+    this->ui_->compactness_label->setText(QString::number(this->stats_.get_compactness(1)));
+    this->ui_->generalization_label->setText(QString::number(this->stats_.get_generalization(1)));
+  }*/
+}
+
+//---------------------------------------------------------------------------
+bool AnalysisTool::is_group_active(int shape_index)
+{
+  std::string group_set = this->ui_->group_box->currentText().toStdString();
+  std::string left_group = this->ui_->group_left->currentText().toStdString();
+  std::string right_group = this->ui_->group_right->currentText().toStdString();
+
+  bool groups_enabled = group_set != "-None-";
+
+  auto shapes = this->session_->get_shapes();
+  auto shape = shapes[shape_index];
+
+  bool left = false;
+  bool right = false;
+  bool both = true;
+  if (this->ui_->group1_button->isChecked()) {
+    both = false;
+    left = true;
+  }
+  else if (this->ui_->group2_button->isChecked()) {
+    both = false;
+    right = true;
+  }
+
+  if (groups_enabled) {
+    auto value = shape->get_subject()->get_group_value(group_set);
+    if (left && value == left_group) {
+      return true;
+    }
+    else if (right && value == right_group) {
+      return true;
+    }
+    else if (both) {
+      return true;
+    }
+    else { return false; }
+  }
+
+  return true;
 }

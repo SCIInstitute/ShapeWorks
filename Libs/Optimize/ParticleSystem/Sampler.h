@@ -127,7 +127,14 @@ public:
 
   void AddImage(ImageType::Pointer image, double narrow_band);
 
-  void AddMesh(shapeworks::MeshWrapper* mesh);
+  void ApplyConstraintsToZeroCrossing(){
+      std::cout << "ApplyConstraintsToZeroCrossing " << m_DomainList.size() << std::endl;
+      for(size_t i = 0; i < m_DomainList.size(); i++){
+          this->m_DomainList[i]->UpdateZeroCrossingPoint();
+      }
+  }
+
+  void AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh);
 
   void SetFidsFiles(const std::vector<std::string>& s)
   { m_FidsFiles = s; }

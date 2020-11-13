@@ -151,6 +151,14 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
 }
 
 template < template < typename TCoordRep, unsigned > class TTransformType,
+  template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+  typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::setMeanBeforeWarpEnabled(bool enabled) {
+  this->mean_before_warp_enabled_ = enabled;
+}
+
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
            template < typename ImageType, typename TCoordRep > class TInterpolatorType,
            typename TCoordRep, typename PixelType, typename ImageType>
 void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::setSmoothingIterations(int smoothingIterations){
@@ -723,15 +731,17 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
                 duplicator->Update();
                 meanDistanceTransform = duplicator->GetOutput();
 
-                // before warp
-                sumfilterBeforeWarp->SetInput1(meanDistanceTransformBeforeWarp);
-                sumfilterBeforeWarp->SetInput2(distance_transform[shape]);
-                sumfilterBeforeWarp->Update();
+                if (this->mean_before_warp_enabled_) {
+                  // before warp
+                  sumfilterBeforeWarp->SetInput1(meanDistanceTransformBeforeWarp);
+                  sumfilterBeforeWarp->SetInput2(distance_transform[shape]);
+                  sumfilterBeforeWarp->Update();
 
-                typename DuplicatorType::Pointer duplicator2 = DuplicatorType::New();
-                duplicator2->SetInputImage(sumfilterBeforeWarp->GetOutput());
-                duplicator2->Update();
-                meanDistanceTransformBeforeWarp = duplicator2->GetOutput();
+                  typename DuplicatorType::Pointer duplicator2 = DuplicatorType::New();
+                  duplicator2->SetInputImage(sumfilterBeforeWarp->GetOutput());
+                  duplicator2->Update();
+                  meanDistanceTransformBeforeWarp = duplicator2->GetOutput();
+                }
             }
 
         }
@@ -758,9 +768,11 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
             writer->SetInput( multiplyImageFilter->GetOutput() );
             writer->Update();
 
-            writer->SetFileName( meanDTBeforeWarp_filename.c_str());
-            writer->SetInput( multiplyImageFilterBeforeWarp->GetOutput() );
-            writer->Update();
+            if (this->mean_before_warp_enabled_) {
+              writer->SetFileName(meanDTBeforeWarp_filename.c_str());
+              writer->SetInput(multiplyImageFilterBeforeWarp->GetOutput());
+              writer->Update();
+            }
         }
 
         // going to vtk to extract the template mesh (mean dense shape)
@@ -776,10 +788,10 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
             this->denseDone_ = true;
             throw std::runtime_error("Warning! MeshQC failed, but a dense mean was computed by VTK.");
         }
-    } catch (std::exception e) {
-        throw e;
+    } catch (itk::ExceptionObject& excep) {
+        throw std::runtime_error(excep.what());
     } catch (...) {
-        throw std::runtime_error("Optimize failed!");
+        throw std::runtime_error("Reconstruction failed!");
     }
     this->denseDone_ = true;
 }

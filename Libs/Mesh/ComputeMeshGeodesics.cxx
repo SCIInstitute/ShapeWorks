@@ -150,7 +150,7 @@ int main(int argc, char *argv[])
         mesh->need_tstrips();
 
 
-        double stopDist = mesh->bsphere.r * PI * 2.0f * stopping_distance_factor;
+        double stopDist = mesh->bsphere.r * M_PI * 2.0f * stopping_distance_factor;
 
         meshFIM *fim = new meshFIM;
         fim->SetMesh(mesh);

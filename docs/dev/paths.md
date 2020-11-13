@@ -1,6 +1,7 @@
 # Adding to PATH Environment Variable
 
-:fa-exclamation-circle: **Be careful** doing this! You are responsible for messing up your own PATH.  
+!!! danger
+    **Be careful** doing this! You are responsible for messing up your own PATH.  
 
 ## Adding to the PATH on OSX/Linux
 `$ export PATH=path/to/add:$PATH`  

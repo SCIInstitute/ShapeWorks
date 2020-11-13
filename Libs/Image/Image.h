@@ -20,7 +20,7 @@ public:
   using PixelType = float;
   using ImageType = itk::Image<PixelType, 3>;
 
-  /// Logical region of an image (may be negative for relative regions to a given location in an image).
+  /// logical region of an image (may be negative for relative regions to a given location in an image).
   struct Region
   {
     Coord min = Coord({ 1000000000, 1000000000, 1000000000 });
@@ -98,6 +98,7 @@ public:
 
   // return this as an ITK image
   operator ImageType::Pointer() { return image; }
+  ImageType::Pointer getITKImage() const { return image; }
   
   // modification functions //
 
@@ -134,13 +135,13 @@ public:
   /// helper identical to setOrigin(image.center()) changing origin (in the image header) to physcial center of the image
   Image& recenter();
 
-  /// Resamples by applying transform then sampling from given origin along direction axes at spacing physical units per pixel for dims pixels using specified interpolator
+  /// resamples by applying transform then sampling from given origin along direction axes at spacing physical units per pixel for dims pixels using specified interpolator
   Image& resample(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);
 
-  /// Resamples image using new physical spacing, updating logical dims to keep all image data for this spacing
+  /// resamples image using new physical spacing, updating logical dims to keep all image data for this spacing
   Image& resample(const Vector& physicalSpacing, InterpolationType interp = Linear);
   
-  /// Changes logical image size, computing new physical spacing based on this size (i.e., physical image size remains the same)
+  /// changes logical image size, computing new physical spacing based on this size (i.e., physical image size remains the same)
   Image& resize(Dims logicalDims, InterpolationType interp = Linear);
 
   /// pads an image in all directions with constant value
@@ -185,7 +186,7 @@ public:
   /// computes sigmoid function pixel-wise using sigmoid image filter
   Image& applySigmoidFilter(double alpha = 10.0, double beta = 10.0);
 
-  /// segemnts structures in images using topology preserving geodesic active contour level set filter
+  /// segments structures in images using topology preserving geodesic active contour level set filter
   Image& applyTPLevelSetFilter(const Image& featureImage, double scaling = 20.0);
 
   /// applies gaussian blur with given sigma
@@ -200,11 +201,11 @@ public:
   /// sets values on the back side of cutting plane (normal n containing point p) to val (default 0.0)
   Image& clip(const Vector &n, const Point &q, const PixelType val = 0.0);
 
-  /// sets the iamge origin in physical space to the given value
-  Image& setOrigin(Point3 origin = Point3({0, 0, 0}));
-
-  /// Reflect image around the plane specified by the logical center and the given normal (ex: <1,0,0> reflects across YZ-plane).
+  /// reflect image around the plane specified by the logical center and the given normal (ex: <1,0,0> reflects across YZ-plane).
   Image& reflect(const Axis& axis);
+
+  /// sets the image origin in physical space to the given value
+  Image& setOrigin(Point3 origin = Point3({0, 0, 0}));
 
   // query functions //
 

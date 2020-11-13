@@ -36,14 +36,6 @@ Image::Region ImageUtils::boundingBox(std::vector<std::string> &filenames, Image
   return bbox;
 }
 
-/// createCenterOfMassTransform
-///
-/// Generates the Transform necessary to move the contents of this binary image to the center.
-/// Example:
-///   TransformPtr xform = ImageUtils::createCenterOfMassTransform(image);
-///   image.applyTransform(xform);
-///
-/// \param image      the binary image from which to generate the transform
 TransformPtr ImageUtils::createCenterOfMassTransform(const Image &image)
 {
   AffineTransformPtr xform(AffineTransform::New());
@@ -56,7 +48,7 @@ TransformPtr ImageUtils::createRigidRegistrationTransform(const Image &source_dt
   vtkSmartPointer<vtkPolyData> sourceContour = Image::getPolyData(source_dt, isoValue);
   vtkSmartPointer<vtkPolyData> targetContour = Image::getPolyData(target_dt, isoValue);
   const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createIcpTransform(sourceContour, targetContour, iterations));
-  return createAffineTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
+  return createTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
 }
 
 TransformPtr ImageUtils::createWarpTransform(const std::string &source_landmarks, const std::string &target_landmarks, const int stride)

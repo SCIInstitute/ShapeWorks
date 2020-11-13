@@ -12,8 +12,10 @@ void shapeworksEnvSetup()
 
 #ifdef _WIN32
   auto path(std::string(BUILD_DIR) + "\\bin\\Release" + ";"
+            + std::string(BUILD_DIR) + "\\bin\\RelWithDebInfo" + ";"
             + std::string(BUILD_DIR) + "\\bin\\Debug" + ";"
             + std::string(INSTALL_DIR) + "\\bin\\Release" + ";"
+            + std::string(INSTALL_DIR) + "\\bin\\RelWithDebInfo" + ";"
             + std::string(INSTALL_DIR) + "\\bin\\Debug" + ";");
   //path += std::string(DEPS_DIR) + "\\bin" + ";";
   path += (curr_path ? curr_path : ""); // fixme: could be /bin/Debug if we ever figure out how to build Windows Debug
@@ -21,6 +23,7 @@ void shapeworksEnvSetup()
   _putenv_s("PATH", path.c_str());
 
   auto pythonpath(std::string(BUILD_DIR) + "/bin/Release" + ":"
+                  + std::string(BUILD_DIR) + "/bin/RelWithDebInfo" + ":"
                   + std::string(BUILD_DIR) + "/bin/Debug" + ":"
                   + std::string(INSTALL_DIR) + "/bin" + ":"
                   + std::string(INSTALL_DIR) + "/lib" + ":");
@@ -78,7 +81,6 @@ void shapeworksEnvSetup()
 
   // set location of shapeworks DATA used by shell scripts
   std::string data(TEST_DATA_DIR);
-  data += "/shapeworks";
 #ifdef _WIN32
   _putenv_s("DATA", data.c_str());
 #else
