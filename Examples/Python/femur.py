@@ -51,7 +51,7 @@ def Run_Pipeline(args):
         args.interactive = False
     # Select data if using subsample
     if args.use_subsample:
-        sample_idx = sampledata(files_img, int(args.use_subsample))
+        sample_idx = sampledata(files_img, int(args.num_subsample))
         files_img = [files_img[i] for i in sample_idx]
         files_mesh = [files_mesh[i] for i in sample_idx]
     else:
