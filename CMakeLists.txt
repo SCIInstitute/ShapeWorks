@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.11)
 set(CMAKE_CXX_STANDARD 14)             # available options are [98, 11, 14, 17. 20]
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake")
+find_package(Python3 3.7 EXACT REQUIRED)
 
 
 ###########################################
@@ -152,13 +153,15 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/Libs/Common")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/ExternalLibs/optparse")
 
+if(Build_PythonAPI)
+  SET(PYBIND11_PYTHON_VERSION 3.7)
+  find_package(pybind11 2.5.0 REQUIRED)
+  add_subdirectory(Python/shapeworks)
+endif()
+
 add_subdirectory(ExternalLibs)
 add_subdirectory(Libs)
 add_subdirectory(Applications)
-
-if(Build_PythonAPI)
-  add_subdirectory(Python/shapeworks)
-endif()
 
 if(Build_Post)
   add_subdirectory(Post/source/ShapeWorksPost-V1)
