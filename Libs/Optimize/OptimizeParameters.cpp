@@ -248,9 +248,16 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
   // should add the images last
   auto subjects = this->project_->get_subjects();
 
+  if (subjects.empty()) {
+    throw std::invalid_argument("No subjects to optimize");
+  }
+
   std::vector<std::string> filenames;
   for (auto s : subjects) {
     auto files = s->get_groomed_filenames();
+    if (files.empty()) {
+      throw std::invalid_argument("No groomed inputs for optimization");
+    }
     auto filename = files[0];
     auto domain_type = s->get_domain_types()[0];
     filenames.push_back(filename);

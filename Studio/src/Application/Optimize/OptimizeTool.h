@@ -26,12 +26,20 @@ public:
   /// set the pointer to the project
   void set_session(QSharedPointer<Session> session);
 
+  //! activate this tool
+  void activate();
+
+  //! Load params from project
   void load_params();
+  //! Store params to project
   void store_params();
 
+  //! Enable action buttons
   void enable_actions();
+  //! Disable action buttons
   void disable_actions();
 
+  //! shut down any running threads
   void shutdown_threads();
 
 public Q_SLOTS:

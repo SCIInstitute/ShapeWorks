@@ -33,8 +33,6 @@ public:
   friend bool operator==(const MeshWorkItem &a, const MeshWorkItem &b);
 };
 
-Q_DECLARE_METATYPE(MeshWorkItem);
-
 
 class MeshWorkQueue
 {
@@ -70,3 +68,5 @@ private:
   WorkList processing_list_;
 };
 }
+
+Q_DECLARE_METATYPE(shapeworks::MeshWorkItem);

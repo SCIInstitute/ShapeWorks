@@ -32,17 +32,16 @@ public:
   //! activate this tool
   void activate();
 
-  //! Store settings to session
-  void store_settings();
-
-  //! Load settings from session
-  void load_settings();
+  //! Load params from project
+  void load_params();
+  //! Store params to project
+  void store_params();
 
   //! Disable action buttons
   void disable_actions();
-
   //! Enable action buttons
   void enable_actions();
+
 
 Q_SIGNALS:
   void groom_complete();
@@ -57,6 +56,8 @@ public Q_SLOTS:
   void on_autopad_checkbox_stateChanged(int state);
   void on_skip_button_clicked();
   void on_restore_defaults_clicked();
+
+  void centering_changed(int state);
 
   //! Run groom tool
   void on_run_groom_button_clicked();

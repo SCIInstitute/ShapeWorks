@@ -50,8 +50,8 @@ private:
   void freeSpaceForAmount(size_t allocation);
 
   static long long get_total_physical_memory();
-  static long long get_total_addressible_memory();
-  static long long get_total_addressible_physical_memory();
+  static long long get_total_addressable_memory();
+  static long long get_total_addressable_physical_memory();
 
   Preferences& preferences_;
 
