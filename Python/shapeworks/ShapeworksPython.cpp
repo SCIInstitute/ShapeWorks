@@ -1,3 +1,13 @@
+#include <Eigen/Eigen>
+
+#include <Libs/Optimize/Optimize.h>
+
+Eigen::MatrixXd optimize_get_particle_system(shapeworks::Optimize *opt)
+{
+  shapeworks::MatrixContainer container = opt->GetParticleSystem();
+  return container.matrix_;
+}
+
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 //#include <pybind11/stl_bind.h>  // look at Binding STL containers portion of manual; not sure we even use any in ShapeWorks
@@ -23,6 +33,7 @@ using namespace pybind11::literals;
 #include "ShapeEvaluation.h"
 
 using namespace shapeworks;
+
 
 PYBIND11_MODULE(shapeworks, m)
 {
@@ -466,7 +477,6 @@ PYBIND11_MODULE(shapeworks, m)
     .def("LoadParameterFile", &Optimize::LoadParameterFile)
     .def("Run",&Optimize::Run)
     .def("SetIterationCallbackFunction", &Optimize::SetIterationCallbackFunction)
-    .def("GetParticleSystem", &Optimize::GetParticleSystem)
+    .def("GetParticleSystem", &optimize_get_particle_system)
   ;
-
 }
