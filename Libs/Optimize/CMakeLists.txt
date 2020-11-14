@@ -23,7 +23,7 @@ target_link_libraries(Optimize
   ${VTK_LIBRARIES}
   vgl
   vgl_algo
-  ${PYTHON_LIBRARIES}
+#  ${PYTHON_LIBRARIES}
   )
 
 target_include_directories(Optimize PUBLIC

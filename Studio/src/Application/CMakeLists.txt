@@ -198,6 +198,7 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   Utils
   Project
   xlnt::xlnt
+  pybind11::embed
   )
 
 INSTALL(TARGETS ShapeWorksStudio

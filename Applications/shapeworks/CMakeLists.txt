@@ -25,6 +25,7 @@ target_link_libraries(shapeworks_exe
   Analyze
   Particles
   ${ITK_LIBRARIES}
+  pybind11::embed
   )
 
 # Install

@@ -3,6 +3,8 @@
 //#include <pybind11/stl_bind.h>  // look at Binding STL containers portion of manual; not sure we even use any in ShapeWorks
 #include <pybind11/operators.h>
 #include <pybind11/eigen.h>
+#include <pybind11/functional.h>
+
 
 namespace py = pybind11;
 using namespace pybind11::literals;
