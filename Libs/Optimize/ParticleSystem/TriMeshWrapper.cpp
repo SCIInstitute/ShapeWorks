@@ -310,7 +310,7 @@ vec normalizeBary(const vec& bary)
   return vec(bary / sum);
 }
 
-inline bool TriMeshWrapper::IsBarycentricCoordinateValid(trimesh::vec3& bary) {
+inline bool TriMeshWrapper::IsBarycentricCoordinateValid(const trimesh::vec3& bary) {
   return ((bary[0] >= -epsilon) && (bary[0] <= 1 + epsilon)) &&
          ((bary[1] >= -epsilon) && (bary[1] <= 1 + epsilon)) &&
          ((bary[2] >= -epsilon) && (bary[2] <= 1 + epsilon));
@@ -330,8 +330,8 @@ int TriMeshWrapper::GetTriangleForPoint(point pt, int idx, vec& baryOut) const
 
     const int guess = particle2tri_[idx];
     baryOut = this->ComputeBarycentricCoordinates(pt, guess);
-    baryOut = normalizeBary(baryOut);
-    if(IsBarycentricCoordinateValid(baryOut)) {
+    const vec norBary = normalizeBary(baryOut);
+    if(IsBarycentricCoordinateValid(norBary)) {
       return guess;
     }
   }
@@ -350,8 +350,8 @@ int TriMeshWrapper::GetTriangleForPoint(point pt, int idx, vec& baryOut) const
       if (faceCandidatesSet.find(face) == faceCandidatesSet.end()) {
         faceCandidatesSet.insert(face);
         baryOut = this->ComputeBarycentricCoordinates(pt, face);
-        baryOut = normalizeBary(baryOut);
-        if (IsBarycentricCoordinateValid(baryOut)) {
+        const vec norBary = normalizeBary(baryOut);
+        if (IsBarycentricCoordinateValid(norBary)) {
           if(idx != -1) {
             // update cache
             particle2tri_[idx] = face;
@@ -361,11 +361,11 @@ int TriMeshWrapper::GetTriangleForPoint(point pt, int idx, vec& baryOut) const
         else {
           float distance = 0;
           for (int k = 0; k < 3; k++) {
-            if (baryOut[k] < 0) {
-              distance += -baryOut[k];
+            if (norBary[k] < 0) {
+              distance += -norBary[k];
             }
-            else if (baryOut[k] > 1) {
-              distance += baryOut[k] - 1;
+            else if (norBary[k] > 1) {
+              distance += norBary[k] - 1;
             }
           }
           if (distance < closestDistance) {
@@ -376,6 +376,7 @@ int TriMeshWrapper::GetTriangleForPoint(point pt, int idx, vec& baryOut) const
       }
     }
   }
+  baryOut = this->ComputeBarycentricCoordinates(pt, closestFace);
   if(idx != -1) {
     // update cache
     particle2tri_[idx] = closestFace;
