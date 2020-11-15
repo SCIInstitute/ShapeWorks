@@ -28,7 +28,6 @@
 #include <vtkImageImport.h>
 #include <vtkContourFilter.h>
 #include <vtkImageData.h>
-#include <itkImageToVTKImageFilter.h>
 #include <itkIntensityWindowingImageFilter.h>
 
 #include <exception>
@@ -680,16 +679,6 @@ vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image& image, PixelType is
   targetContour->Update();
 
   return targetContour->GetOutput();
-}
-
-vtkImageData* Image::getVTK() const
-{
-  using connectorType = itk::ImageToVTKImageFilter<ImageType>;
-  connectorType::Pointer connector = connectorType::New();
-  connector->SetInput(this->image);
-  connector->Update();
-
-  return connector->GetOutput();
 }
 
 Image &Image::clip(const Point &o, const Point &p1, const Point &p2, const PixelType val)

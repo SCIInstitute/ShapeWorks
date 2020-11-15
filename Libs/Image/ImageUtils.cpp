@@ -7,6 +7,7 @@
 #include <itkTranslationTransform.h>
 #include <itkThinPlateSplineKernelTransform.h>
 #include <itkPointSet.h>
+#include <itkImageToVTKImageFilter.h>
 
 namespace shapeworks {
 
@@ -118,6 +119,16 @@ Image& ImageUtils::topologyPreservingSmooth(Image& image, float scaling, float s
 Image& ImageUtils::isoresample(Image& image, double isoSpacing, Image::InterpolationType interp)
 {
   return image.resample(makeVector({isoSpacing, isoSpacing, isoSpacing}), interp);
+}
+
+vtkImageData* ImageUtils::getVTK(const Image &image)
+{
+  using connectorType = itk::ImageToVTKImageFilter<Image::ImageType>;
+  connectorType::Pointer connector = connectorType::New();
+  connector->SetInput(image.getITKImage());
+  connector->Update();
+
+  return connector->GetOutput();
 }
 
 std::unique_ptr<Mesh> &ImageUtils::meshFromDT(const Image &image, double levelset, double reduction, double angle, int leveliterations, int meshiterations, bool preservetopology)

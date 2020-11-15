@@ -3,6 +3,8 @@
 #include "Image.h"
 #include "ShapeworksUtils.h"
 
+#include <vtkImageData.h>
+
 namespace shapeworks {
 
 /// Helper functions for image 
@@ -35,6 +37,9 @@ public:
   /// \param isoSpacing     size of an [isotropic (n x n x n)] output voxel [default n=1]
   /// \param outputSize     image size can be changed [default stays the same]
   static Image& isoresample(Image& image, double isoSpacing = 1.0, Image::InterpolationType interp = Image::Linear);
+
+  /// creates a VTK filter for the given image
+  static vtkImageData* getVTK(const Image &image);
 
   /// create mesh from distance transform
   static std::unique_ptr<Mesh>& meshFromDT(const Image &image, double levelset = 0.0, double reduction = 0.0, double angle = 0.0, int leveliterations = 0, int meshiteraations = 0, bool preservetopology = false);

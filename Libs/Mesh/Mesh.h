@@ -1,9 +1,11 @@
 #pragma once
 
 #include "Shapeworks.h"
+#include "ImageUtils.h"
 
 #include <vtkPolyData.h>
 #include <vtkPlane.h>
+#include <swHausdorffDistancePointSetFilter.h>
 #include <string>
 
 namespace shapeworks {
@@ -52,7 +54,7 @@ public:
   /// helper to scale mesh
   Mesh& scale(const Vector3 &v);
 
-  void computeDistance(const Mesh &other_mesh, bool target=false);
+  vtkSmartPointer<swHausdorffDistancePointSetFilter> computeDistance(const Mesh &other_mesh, bool target=false);
 
   Vector getHausdorffDistance(const Mesh &other_mesh, bool target=false);
 
