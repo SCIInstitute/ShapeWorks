@@ -1,6 +1,10 @@
 
 #include "TriMeshWrapper.h"
 
+#include <igl/grad.h>
+#include <igl/per_face_normals.h>
+#include <igl/per_vertex_normals.h>
+
 #include <set>
 
 using namespace trimesh;
@@ -45,6 +49,7 @@ TriMeshWrapper::TriMeshWrapper(std::shared_ptr<trimesh::TriMesh> mesh)
   mesh_->need_normals();
   mesh_->need_curvatures();
   ComputeMeshBounds();
+  ComputeGradN();
 
   kd_tree_ = std::make_shared<KDtree>(mesh_->vertices);
 }
@@ -285,6 +290,20 @@ vnl_vector_fixed<float, DIMENSION> TriMeshWrapper::SampleNormalAtPoint(PointType
   return weightedNormal;
 }
 
+TriMeshWrapper::HessianType TriMeshWrapper::SampleGradNAtPoint(PointType p, int idx) const
+{
+  point pointa = convert<PointType, point>(p);
+  vec3 bary;
+  const int face = GetTriangleForPoint(pointa, idx, bary);
+
+  HessianType weighted_grad_normal = HessianType(0.0);
+  for (int i = 0; i < 3; i++) {
+    HessianType grad_normal = grad_normals_[mesh_->faces[face][i]];
+    weighted_grad_normal += grad_normal * bary[i];
+  }
+  return weighted_grad_normal;
+}
+
 int TriMeshWrapper::GetNearestVertex(point pt) const
 {
   const float* match = kd_tree_->closest_to_pt(pt, 99999999);
@@ -465,5 +484,55 @@ void TriMeshWrapper::ComputeMeshBounds()
     std::cerr << "Mesh bounds: " << PrintValue<PointType>(mesh_lower_bound_) << " -> "
               << PrintValue<PointType>(mesh_upper_bound_) << "\n";
   }
+}
+
+void TriMeshWrapper::ComputeGradN()
+{
+  const int n_verts = mesh_->vertices.size();
+  const int n_faces = mesh_->faces.size();
+
+  // TODO why does float not work
+  Eigen::MatrixXd V(n_verts, 3);
+  Eigen::MatrixXi F(n_faces, 3);
+  for(int i=0; i<n_verts; i++) {
+    V(i, 0) = mesh_->vertices[i][0];
+    V(i, 1) = mesh_->vertices[i][1];
+    V(i, 2) = mesh_->vertices[i][2];
+  }
+  for(int i=0; i<n_faces; i++) {
+    F(i, 0) = mesh_->faces[i][0];
+    F(i, 1) = mesh_->faces[i][1];
+    F(i, 2) = mesh_->faces[i][2];
+  }
+
+  // Compute normals
+  Eigen::MatrixXd N;
+  igl::per_vertex_normals(V, F, N);
+
+  // Compute gradient operator
+  Eigen::SparseMatrix<double> G;
+  igl::grad(V, F, G);
+
+  // Compute gradient of normals per face
+  const Eigen::MatrixXd GN = Eigen::Map<const Eigen::MatrixXd>((G*N).eval().data(), n_faces, 9);
+
+  grad_normals_.resize(n_verts);
+
+  // Compute per vertex gradient of normals
+  // igl::per_vertex_normals only works on [n_face, 3] matrices, so we have to run it thrice
+  // TODO: This returns the _normalized_ gradient.  vertify that this is fine for shapeworks
+  for(int i=0; i<3; i++) {
+    Eigen::MatrixXd GN_pervertex;
+    igl::per_vertex_normals(V, F, GN.block(0, 3*i, n_faces, 3), GN_pervertex);
+
+    //TODO Is the convention correct
+    //TODO figure out one-liner for this
+    for(int j=0; j<n_verts; j++) {
+      grad_normals_[j].set(0, i, GN_pervertex(j, 0));
+      grad_normals_[j].set(1, i, GN_pervertex(j, 1));
+      grad_normals_[j].set(2, i, GN_pervertex(j, 2));
+    }
+  }
+
 }
 }
