@@ -71,7 +71,7 @@ private:
   std::vector<int> GetKNearestVertices(trimesh::point pt, int k) const;
   trimesh::vec3 ComputeBarycentricCoordinates(trimesh::point pt, int face) const;
 
-  static inline bool IsBarycentricCoordinateValid(trimesh::vec3& b);
+  static inline bool IsBarycentricCoordinateValid(const trimesh::vec3& b);
 
   std::shared_ptr<trimesh::TriMesh> mesh_;
   std::shared_ptr<trimesh::KDtree> kd_tree_;
