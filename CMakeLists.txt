@@ -136,7 +136,6 @@ find_package (XLNT REQUIRED)
 
 ### Libigl set include path
 include_directories("${CMAKE_PREFIX_PATH}/../build/libigl/include/")
-#MESSAGE("THIS ISNISANOSBCDOSCF ${CMAKE_PREFIX_PATH}")
 
 if(USE_OPENMP)
   find_package(OpenMP REQUIRED)
