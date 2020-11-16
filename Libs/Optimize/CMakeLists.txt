@@ -18,12 +18,19 @@ target_link_libraries(Optimize
   tinyxml
   Utils
   Particles
-  #pybind11::embed
   ${ITK_LIBRARIES}
   ${VTK_LIBRARIES}
-  vgl
-  vgl_algo
-#  ${PYTHON_LIBRARIES}
+  )
+
+# Create an interface library that will bring pybind11::embed along
+# This can't be used to create the shared libary for the Python API
+# Otherwise, you have two pythons and the init clashes an gives a
+# GIL mutex error
+add_library(OptimizeLibraries INTERFACE)
+
+target_link_libraries(OptimizeLibraries INTERFACE
+  Optimize
+  pybind11::embed
   )
 
 target_include_directories(Optimize PUBLIC

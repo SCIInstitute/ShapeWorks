@@ -194,11 +194,10 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   ShapeWorksGroom
   Alignment
   Analyze
-  Optimize
+  OptimizeLibraries
   Utils
   Project
   xlnt::xlnt
-  pybind11::embed
   )
 
 INSTALL(TARGETS ShapeWorksStudio
