@@ -163,7 +163,7 @@ void OptimizeTool::load_params()
   auto params = OptimizeParameters(this->session_->get_project());
 
   this->ui_->number_of_particles->setValue(params.get_number_of_particles()[0]);
-  this->ui_->initial_relative_weighting->setValue(params.get_relative_weighting());
+  this->ui_->initial_relative_weighting->setValue(params.get_initial_relative_weighting());
   this->ui_->relative_weighting->setValue(params.get_relative_weighting());
   this->ui_->starting_regularization->setValue(params.get_starting_regularization());
   this->ui_->ending_regularization->setValue(params.get_ending_regularization());
