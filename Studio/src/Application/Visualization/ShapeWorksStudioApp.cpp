@@ -828,6 +828,7 @@ void ShapeWorksStudioApp::on_action_optimize_mode_triggered()
 {
   this->session_->parameters().set("tool_state", Session::OPTIMIZE_C);
   this->update_tool_mode();
+  this->visualizer_->reset_camera();
 }
 
 //---------------------------------------------------------------------------
@@ -835,6 +836,7 @@ void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
 {
   this->session_->parameters().set("tool_state", Session::ANALYSIS_C);
   this->update_tool_mode();
+  this->visualizer_->reset_camera();
 }
 
 //---------------------------------------------------------------------------
@@ -1360,7 +1362,6 @@ void ShapeWorksStudioApp::handle_color_scheme()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_auto_view_button_clicked()
 {
-  std::cerr << "auto view button clicked\n";
   this->visualizer_->reset_camera();
 }
 
