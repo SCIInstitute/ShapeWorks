@@ -95,7 +95,7 @@ def Run_Pipeline(args):
 	parameters = {"epochs":50, "learning_rate":0.001, "val_freq":1}
 	if args.tiny_test:
 		parameters["epochs"] = 5
-	model_path = DeepSSMUtils.trainDeepSSM(loader_dir, parameters, outputDirectory)
+	final_model_path, best_model_path = DeepSSMUtils.trainDeepSSM(loader_dir, parameters, outputDirectory)
 
 
 	print("\n\n\nStep 5. Predict with DeepSSM\n") #####################################################################################
@@ -104,7 +104,7 @@ def Run_Pipeline(args):
 	'''
 	PCA_scores_path = outputDirectory + "Augmentation/PCA_Particle_Info/"
 	prediction_dir = outputDirectory + 'Results/PredictedParticles/'
-	DeepSSMUtils.testDeepSSM(prediction_dir, model_path, loader_dir, PCA_scores_path, embedded_dim)
+	DeepSSMUtils.testDeepSSM(prediction_dir, best_model_path, loader_dir, PCA_scores_path, embedded_dim)
 	print('Predicted particles saved at: ' + prediction_dir)
 
 	print("\n\n\nStep 6. Analyze results.\n") #####################################################################################

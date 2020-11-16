@@ -186,7 +186,7 @@ def train(loader_dir, parameters, parent_dir):
 	print("Training complete.")
 	print("Best model saved after epoch " + str(best_epoch) + ".")
 	print("Final model saved after epoch " + str(e) + ".")
-	return os.path.join(parent_dir, 'model.torch')
+	return os.path.join(parent_dir, 'final_model.torch'), os.path.join(parent_dir, 'best_model.torch')
 
 ############################## Test Model #################################
 '''
