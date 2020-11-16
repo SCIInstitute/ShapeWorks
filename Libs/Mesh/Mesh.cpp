@@ -222,11 +222,11 @@ Mesh &Mesh::scale(const Vector3 &v)
   return applyTransform(transform);
 }
 
-vtkSmartPointer<swHausdorffDistancePointSetFilter> Mesh::computeDistance(const Mesh &other_mesh, bool target)
+vtkSmartPointer<swHausdorffDistancePointSetFilter> Mesh::computeDistance(const std::unique_ptr<Mesh> &other_mesh, bool target)
 {
   vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = vtkSmartPointer<swHausdorffDistancePointSetFilter>::New();
   filter->SetInputData(this->mesh);
-  filter->SetInputData(1, other_mesh.mesh);
+  filter->SetInputData(1, other_mesh->mesh);
 
   if (target)
     filter->SetTargetDistanceMethod(1);
@@ -235,19 +235,19 @@ vtkSmartPointer<swHausdorffDistancePointSetFilter> Mesh::computeDistance(const M
   return filter;
 }
 
-Vector Mesh::getHausdorffDistance(const Mesh &other_mesh, bool target)
+Vector Mesh::getHausdorffDistance(const std::unique_ptr<Mesh> &other_mesh, bool target)
 {
   vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = computeDistance(other_mesh, target);
   return filter->GetOutput(0)->GetFieldData()->GetArray("HausdorffDistance")->GetComponent(0,0);
 }
 
-Vector Mesh::getRelativeDistanceAtoB(const Mesh &other_mesh, bool target)
+Vector Mesh::getRelativeDistanceAtoB(const std::unique_ptr<Mesh> &other_mesh, bool target)
 {
   vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = computeDistance(other_mesh, target);
   return filter->GetOutputDataObject(0)->GetFieldData()->GetArray("RelativeDistanceAtoB")->GetComponent(0,0);
 }
 
-Vector Mesh::getRelativeDistanceBtoA(const Mesh &other_mesh, bool target)
+Vector Mesh::getRelativeDistanceBtoA(const std::unique_ptr<Mesh> &other_mesh, bool target)
 {
   vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = computeDistance(other_mesh, target);
   return filter->GetOutputDataObject(1)->GetFieldData()->GetArray("RelativeDistanceBtoA")->GetComponent(0,0);

@@ -54,13 +54,13 @@ public:
   /// helper to scale mesh
   Mesh& scale(const Vector3 &v);
 
-  vtkSmartPointer<swHausdorffDistancePointSetFilter> computeDistance(const Mesh &other_mesh, bool target=false);
+  vtkSmartPointer<swHausdorffDistancePointSetFilter> computeDistance(const std::unique_ptr<Mesh> &other_mesh, bool target=false);
 
-  Vector getHausdorffDistance(const Mesh &other_mesh, bool target=false);
+  Vector getHausdorffDistance(const std::unique_ptr<Mesh> &other_mesh, bool target=false);
 
-  Vector getRelativeDistanceAtoB(const Mesh &other_mesh, bool target=false);
+  Vector getRelativeDistanceAtoB(const std::unique_ptr<Mesh> &other_mesh, bool target=false);
 
-  Vector getRelativeDistanceBtoA(const Mesh &other_mesh, bool target=false);
+  Vector getRelativeDistanceBtoA(const std::unique_ptr<Mesh> &other_mesh, bool target=false);
 
   /// compare if points in two meshes are equal
   bool compare_points_equal(const Mesh& other_mesh);

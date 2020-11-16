@@ -37,6 +37,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(GradientFilter::getCommand());
   shapeworks.addCommand(SigmoidFilter::getCommand());
   shapeworks.addCommand(TPLevelSetFilter::getCommand());
+  shapeworks.addCommand(IntensityFilter::getCommand());
   shapeworks.addCommand(TopologyPreservingFilter::getCommand());
   shapeworks.addCommand(Blur::getCommand());
   shapeworks.addCommand(BoundingBox::getCommand());
@@ -61,9 +62,11 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(ReflectMesh::getCommand());
   shapeworks.addCommand(ICP::getCommand());
   shapeworks.addCommand(FillHoles::getCommand());
+  shapeworks.addCommand(ProbeVolume::getCommand());
   shapeworks.addCommand(ClipMesh::getCommand());
   shapeworks.addCommand(TranslateMesh::getCommand());
   shapeworks.addCommand(ScaleMesh::getCommand());
+  shapeworks.addCommand(HausdorffDistance::getCommand());
   shapeworks.addCommand(OptimizeCommand::getCommand());
 
   try {

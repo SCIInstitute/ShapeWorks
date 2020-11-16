@@ -259,11 +259,10 @@ bool ResampleImage::execute(const optparse::Values &options, SharedCommandData &
     ImageUtils::isoresample(sharedData.image, isoSpacing, interp);
   else if (sizeX == 0 || sizeY == 0 || sizeX == 0) 
     sharedData.image.resample(makeVector({spaceX, spaceY, spaceZ}), interp);
-  else {
+  else 
+  {
     Point3 origin({originX, originY, originZ});
-    if (originX >= 1e9 ||
-        originY >= 1e9 ||
-        originZ >= 1e9)
+    if (originX >= 1e9 || originY >= 1e9 || originZ >= 1e9)
       origin = sharedData.image.origin();
     sharedData.image.resample(IdentityTransform::New(), origin,
                               Dims({sizeX, sizeY, sizeZ}), makeVector({spaceX, spaceY, spaceZ}),
@@ -750,6 +749,36 @@ bool TPLevelSetFilter::execute(const optparse::Values &options, SharedCommandDat
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// IntensityFilter
+///////////////////////////////////////////////////////////////////////////////
+void IntensityFilter::buildParser()
+{
+  const std::string prog = "intensity";
+  const std::string desc = "applies intensity windowing image filter";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--min").action("store").type("double").set_default(0.0).help("Description of optionName.");
+  parser.add_option("--max").action("store").type("double").set_default(0.0).help("Description of optionName.");
+
+  Command::buildParser();
+}
+
+bool IntensityFilter::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validImage())
+  {
+    std::cerr << "No image to operate on\n";
+    return false;
+  }
+
+  double min = static_cast<double>(options.get("min"));
+  double max = static_cast<double>(options.get("max"));
+
+  sharedData.image.applyIntensityFilter(min, max);
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // TopologyPreservingFilter
 ///////////////////////////////////////////////////////////////////////////////
 void TopologyPreservingFilter::buildParser()
@@ -1082,36 +1111,6 @@ bool WarpImage::execute(const optparse::Values &options, SharedCommandData &shar
   TransformPtr transform(ImageUtils::createWarpTransform(source, target, stride));
   sharedData.image.applyTransform(transform);
 
-  return true;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// WindowingFilter
-///////////////////////////////////////////////////////////////////////////////
-void WindowingFilter::buildParser()
-{
-  const std::string prog = "windowing";
-  const std::string desc = "applies intensity windowing image filter";
-  parser.prog(prog).description(desc);
-
-  parser.add_option("--min").action("store").type("double").set_default(0.0).help("Description of optionName.");
-  parser.add_option("--max").action("store").type("double").set_default(0.0).help("Description of optionName.");
-  
-  Command::buildParser();
-}
-
-bool WindowingFilter::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validImage())
-  {
-    std::cerr << "No image to operate on\n";
-    return false;
-  }
-
-  double min = static_cast<double>(options.get("min"));
-  double max = static_cast<double>(options.get("max"));
-
-  sharedData.image.applyWindowingFilter(min, max);
   return true;
 }
 
@@ -1912,7 +1911,6 @@ bool ClipMesh::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
   
-  // vtkSmartPointer<vtkPlane> plane = 
   sharedData.mesh->clip(MeshUtils::createPlane(sharedData.mesh));
   return sharedData.validMesh();
 }
@@ -1985,6 +1983,49 @@ bool ScaleMesh::execute(const optparse::Values &options, SharedCommandData &shar
   else
   {
     sharedData.mesh->scale(makeVector({sx, sy, sz}));
+    return sharedData.validMesh();
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// HausdorffDistance
+///////////////////////////////////////////////////////////////////////////////
+void HausdorffDistance::buildParser()
+{
+  const std::string prog = "hausdorff-distance";
+  const std::string desc = "get the hausdorff distance between two meshes";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--other").action("store").type("string").set_default("").help("Filename of other mesh.");
+  parser.add_option("--distanceAtoB").action("store").type("bool").set_default(true).help("Relative distance from A to B.");
+  parser.add_option("--distanceBtoA").action("store").type("bool").set_default(true).help("Relative distance from B to A.");
+
+  Command::buildParser();
+}
+
+bool HausdorffDistance::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  std::string otherMesh = static_cast<std::string>(options.get("other"));
+  bool distanceAtoB = static_cast<bool>(options.get("distanceAtoB"));
+  bool distanceBtoA = static_cast<bool>(options.get("distanceBtoA"));
+
+  if (otherMesh == "")
+  {
+    std::cerr << "Must specify a mesh\n";
+    return false;
+  }
+  else
+  {
+    std::unique_ptr<Mesh> other = std::make_unique<Mesh>(otherMesh);
+    std::cout << "Hausdorff Distance:      " << sharedData.mesh->getHausdorffDistance(other) << std::endl;
+    std::cout << "Relative Distance from A to B:      " << sharedData.mesh->getRelativeDistanceAtoB(other) << std::endl;
+    std::cout << "Relative Distance from B to A:      " << sharedData.mesh->getRelativeDistanceBtoA(other) << std::endl;
     return sharedData.validMesh();
   }
 }

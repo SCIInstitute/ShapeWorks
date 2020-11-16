@@ -25,6 +25,7 @@ COMMAND_DECLARE(GradientFilter, ImageCommand);
 COMMAND_DECLARE(SigmoidFilter, ImageCommand);
 COMMAND_DECLARE(TPLevelSetFilter, ImageCommand);
 COMMAND_DECLARE(TopologyPreservingFilter, ImageCommand);
+COMMAND_DECLARE(IntensityFilter, ImageCommand);
 COMMAND_DECLARE(Blur, ImageCommand);
 COMMAND_DECLARE(BoundingBox, ImageCommand);
 COMMAND_DECLARE(CropImage, ImageCommand);
@@ -41,7 +42,6 @@ COMMAND_DECLARE(MultiplyImage, ImageCommand);
 COMMAND_DECLARE(DivideImage, ImageCommand);
 COMMAND_DECLARE(ImageToMesh, ImageCommand);
 COMMAND_DECLARE(MeshFromDT, ImageCommand);
-COMMAND_DECLARE(WindowingFilter, ImageCommand);
 
 // Particle System Commands
 COMMAND_DECLARE(ReadParticleSystem, ParticleSystemCommand);
@@ -63,6 +63,7 @@ COMMAND_DECLARE(ProbeVolume, MeshCommand);
 COMMAND_DECLARE(ClipMesh, MeshCommand);
 COMMAND_DECLARE(TranslateMesh, MeshCommand);
 COMMAND_DECLARE(ScaleMesh, MeshCommand);
+COMMAND_DECLARE(HausdorffDistance, MeshCommand);
 
 // Optimize Commands
 COMMAND_DECLARE(OptimizeCommand, OptimizeCommandGroup);
