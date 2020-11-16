@@ -48,7 +48,7 @@ jobs:
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
     - name: Setup Conda
-      uses: goanpeca/setup-miniconda@v1
+      uses: conda-incubator/setup-miniconda@v2.0.0
       with:
           miniconda-version: 'latest'
           
