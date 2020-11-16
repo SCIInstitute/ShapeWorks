@@ -72,6 +72,11 @@ if (APPLE)
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-inconsistent-missing-override")
 endif()
 
+if(MSVC)
+  # turn on unwind semantics
+  SET(CMAKE_CXX_FLAGS "/EHsc")
+endif(msvc)
+
 # GUI
 if (SHAPEWORKS_GUI)
     
