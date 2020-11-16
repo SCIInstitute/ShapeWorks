@@ -92,7 +92,7 @@ def Run_Pipeline(args):
 	val_freq sets how often to test on validation set and log
 	for example val_freq=1 is every epoch and val_freq=2 is every other
 	'''
-	parameters = {"epochs":50, "learning_rate":0.001, "val_freq":1, "early_stopping":True}
+	parameters = {"epochs":50, "learning_rate":0.001, "val_freq":1}
 	if args.tiny_test:
 		parameters["epochs"] = 5
 	model_path = DeepSSMUtils.trainDeepSSM(loader_dir, parameters, outputDirectory)

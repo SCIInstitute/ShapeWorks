@@ -121,7 +121,6 @@ def train(loader_dir, parameters, parent_dir):
 	num_epochs = parameters['epochs']
 	learning_rate = parameters['learning_rate']
 	eval_freq = parameters['val_freq']
-	early_stopping = parameters['early_stopping']
 	# intialize model weights
 	model.apply(weight_init(module=nn.Conv2d, initf=nn.init.xavier_normal_))	
 	model.apply(weight_init(module=nn.Linear, initf=nn.init.xavier_normal_))
@@ -175,18 +174,18 @@ def train(loader_dir, parameters, parent_dir):
 			log_print(logger, [e, train_mr_MSE, train_rel_err, val_mr_MSE, val_rel_err, time.time()-t0])
 			if val_rel_loss < smallest_val_rel_loss:
 				smallest_val_rel_loss = val_rel_loss
-				ending_epoch = e
+				best_epoch = e
 				count = 0
-				torch.save(model.state_dict(), os.path.join(parent_dir, 'model.torch'))
-				torch.save(opt.state_dict(), os.path.join(parent_dir, 'opt.torch'))
+				torch.save(model.state_dict(), os.path.join(parent_dir, 'best_model.torch'))
+				torch.save(opt.state_dict(), os.path.join(parent_dir, 'best_opt.torch'))
 			t0 = time.time()
 	# save
 	logger.close()
-	if not early_stopping:
-		ending_epoch = e
-		torch.save(model.state_dict(), os.path.join(parent_dir, 'model.torch'))
-		torch.save(opt.state_dict(), os.path.join(parent_dir, 'opt.torch'))
-	print("Training complete, model last saved after epoch " + str(ending_epoch))
+	torch.save(model.state_dict(), os.path.join(parent_dir, 'final_model.torch'))
+	torch.save(opt.state_dict(), os.path.join(parent_dir, 'final_opt.torch'))
+	print("Training complete.")
+	print("Best model saved after epoch " + str(best_epoch) + ".")
+	print("Final model saved after epoch " + str(e) + ".")
 	return os.path.join(parent_dir, 'model.torch')
 
 ############################## Test Model #################################
