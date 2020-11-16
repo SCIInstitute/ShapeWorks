@@ -17,7 +17,7 @@ TEST(GroomTests, basic_test)
   std::remove("sphere10_DT.nrrd");
 
   ProjectHandle project = std::make_shared<Project>();
-  project->load("sphere.xlsx");
+  project->load("groom.xlsx");
   Groom app(project);
   bool success = app.run();
   ASSERT_TRUE(success);
