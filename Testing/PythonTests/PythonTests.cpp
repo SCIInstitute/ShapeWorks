@@ -343,3 +343,9 @@ TEST(pythonTests, fpoint3)
 {
   ASSERT_FALSE(system("python fpoint3.py"));
 }
+
+//---------------------------------------------------------------------------
+TEST(pythonTests, optimize)
+{
+  ASSERT_FALSE(system("python optimize.py"));
+}
