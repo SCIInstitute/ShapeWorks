@@ -37,7 +37,7 @@ jobs:
           ${{ runner.os }}-ccache-
     
     - name: Setup Conda
-      uses: goanpeca/setup-miniconda@v1
+      uses: conda-incubator/setup-miniconda@v2.0.0
       with:
           miniconda-version: 'latest'
 
@@ -71,7 +71,7 @@ jobs:
         key: QtCache-linux
 
     - name: Install Qt
-      uses: jurplel/install-qt-action@v2
+      uses: jurplel/install-qt-action@v2.9.0
       with:
         version: "5.9.9"
         mirror: 'http://mirrors.ocf.berkeley.edu/qt/'
