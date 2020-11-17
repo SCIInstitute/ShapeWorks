@@ -40,6 +40,7 @@ call pip install Python/DatasetUtilsPackage
 call pip install Python/DocumentationUtilsPackage
 call pip install Python/DataAugmentationUtilsPackage
 call pip install Python/DeepSSMUtilsPackage
+call pip install Python/ShapeCohortGenPackage
   
 call conda info
 

@@ -121,6 +121,7 @@ function install_conda() {
   if ! pip install Python/DocumentationUtilsPackage; then return 1; fi   # install shapeworks auto-documentation as a package
   if ! pip install Python/DataAugmentationUtilsPackage; then return 1; fi   # install data augmentation code as a package
   if ! pip install Python/DeepSSMUtilsPackage; then return 1; fi   # install DeepSSM code as a package
+  if ! pip install Python/ShapeCohortGenPackage; then return 1; fi # install shape cohort generation code as a package
 
   # install any additional Linux dependencies
   if [[ "$(uname)" == "Linux" ]]; then
