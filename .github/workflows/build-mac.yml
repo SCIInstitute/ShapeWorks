@@ -48,7 +48,7 @@ jobs:
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
     - name: Setup Conda
-      uses: goanpeca/setup-miniconda@v1
+      uses: conda-incubator/setup-miniconda@v2.0.0
       with:
           miniconda-version: 'latest'
           
@@ -71,7 +71,7 @@ jobs:
         key: QtCache-mac
 
     - name: Install Qt
-      uses: akenmorris/install-qt-action@v5
+      uses: jurplel/install-qt-action@v2.9.0
       with:
         version: "5.9.9"
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
