@@ -77,7 +77,8 @@ public:
   double* bounds() const { return mesh->GetBounds(); }
 
 private:
-  Mesh() {}
+  friend struct SharedCommandData;
+  Mesh() : mesh(nullptr) {} // only for use by SharedCommandData since a Mesh should always be valid, never "empty"
 
   /// reads mesh (used only by constructor)
   MeshType read(const std::string& pathname);

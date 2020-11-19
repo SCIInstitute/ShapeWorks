@@ -190,7 +190,7 @@ public:
   Image& applyTPLevelSetFilter(const Image& featureImage, double scaling = 20.0);
 
   /// applies intensity windowing image filter
-  Image& applyWindowingFilter(double minVal, double maxVal);
+  Image& applyIntensityFilter(double minVal, double maxVal);
 
   /// applies gaussian blur with given sigma
   Image& gaussianBlur(double sigma = 0.0);
@@ -209,9 +209,6 @@ public:
 
   /// Reflect image around the plane specified by the logical center and the given normal (ex: <1,0,0> reflects across YZ-plane).
   Image& reflect(const Axis& axis);
-
-  /// applies intensity windowing filter
-  Image& applyIntensityFilter(PixelType minval, PixelType maxval);
 
   // query functions //
 

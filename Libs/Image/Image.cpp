@@ -600,7 +600,7 @@ Image& Image::applyTPLevelSetFilter(const Image& featureImage, double scaling)
   return *this;
 }
 
-Image& Image::applyWindowingFilter(double minVal, double maxVal)
+Image& Image::applyIntensityFilter(double minVal, double maxVal)
 {
   using FilterType = itk::IntensityWindowingImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
@@ -722,20 +722,6 @@ Image& Image::reflect(const Axis &axis)
   xform->SetScale(scale);
   Point3 currentOrigin(origin());
   recenter().applyTransform(xform).setOrigin(currentOrigin);
-
-  return *this;
-}
-
-Image& Image::applyIntensityFilter(PixelType minval, PixelType maxval)
-{
-  using FilterType = itk::IntensityWindowingImageFilter<ImageType, ImageType>;
-  FilterType::Pointer filter = FilterType::New();
-  filter->SetWindowMinimum(minval);
-  filter->SetWindowMaximum(maxval);
-  filter->SetOutputMinimum(0.0);
-  filter->SetOutputMaximum(255.0);
-  filter->SetInput(this->image);
-  this->image = filter->GetOutput();
 
   return *this;
 }

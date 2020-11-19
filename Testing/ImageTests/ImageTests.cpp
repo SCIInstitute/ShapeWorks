@@ -423,6 +423,16 @@ TEST(ImageTests, sigmoidTest)
   ASSERT_TRUE(image == ground_truth);
 }
 
+TEST(ImageTests, intensityTest)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
+  image.applyIntensityFilter(0, 1);
+  image.write(std::string(TEST_DATA_DIR) + "/intensity_baseline.nrrd");
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/intensity_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
 TEST(ImageTests, setlevelTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/set-level/");
@@ -584,7 +594,7 @@ TEST(ImageTests, clip4Test)
 
 TEST(ImageTests, reflectTest1)
 {
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/reflect/");
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/reflect-image/");
 
   // reflect across XZ plane (looks like vertical direction facing "front" of volume, X-axis pointing right, Y-axis pointing up)
   Image image(test_location + "1x2x2.nrrd");
@@ -596,7 +606,7 @@ TEST(ImageTests, reflectTest1)
 
 TEST(ImageTests, reflectTest2)
 {
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/reflect/");
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/reflect-image/");
 
   Image image(test_location + "la-bin.nrrd");
   image.reflect(Axis::X);
