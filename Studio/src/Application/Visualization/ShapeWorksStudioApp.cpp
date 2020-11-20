@@ -363,7 +363,7 @@ void ShapeWorksStudioApp::on_action_import_triggered()
   auto filenames = QFileDialog::getOpenFileNames(this, tr("Import Files..."),
                                                  this->preferences_.get_last_directory(),
                                                  tr(
-                                                   "NRRD files (*.nrrd);;MHA files (*.mha);;VTK files (*.vtk)"));
+                                                   "Image files (*.nrrd *.mha);;Mesh files (*.vtk *.ply *.vtp *.obj *stl)"));
 
   if (filenames.size() == 0) {
     // was cancelled
