@@ -146,9 +146,9 @@ void ParticleRegionNeighborhood<VDimension>
 ::RemovePosition(unsigned int idx, int)
 {
   IteratorNodePair pr = m_IteratorMap->operator[](idx);
-  m_IteratorMap->Erase(idx);
-  pr.NodePointer->GetList().erase(pr.Iterator); 
+  pr.NodePointer->GetList().erase(pr.Iterator);
 }
+
 
 
 
