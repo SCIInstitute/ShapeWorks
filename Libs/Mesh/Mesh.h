@@ -1,5 +1,6 @@
 #pragma once
 
+#include "MeshBase.h"
 #include "Shapeworks.h"
 #include "ImageUtils.h"
 
@@ -13,13 +14,13 @@ namespace shapeworks {
 class Mesh
 {
 public:
-  using MeshType = vtkSmartPointer<vtkPolyData>; // TODO: we need to support multiple mesh types, such as vtkPolyData and vtkPLYData; probably use vtk mesh base class (if one exists)
+  // using MeshType = vtkSmartPointer<vtkPolyData>; // TODO: we need to support multiple mesh types, such as vtkPolyData and vtkPLYData; probably use vtk mesh base class (if one exists)
 
-  Mesh(vtkSmartPointer<vtkPolyData>&& rhs) : mesh(std::move(rhs)) {}
+  Mesh(MeshBase::MeshType&& rhs) : mesh(std::move(rhs)) {}
   Mesh(const std::string& pathname) : mesh(read(pathname)) {}
 
   // return the current mesh
-  MeshType getMesh() const { return this->mesh; }
+  MeshBase::MeshType getMesh() const { return this->mesh; }
 
   /// writes mesh, format specified by filename extension
   Mesh& write(const std::string &pathname);
@@ -81,9 +82,9 @@ private:
   Mesh() : mesh(nullptr) {} // only for use by SharedCommandData since a Mesh should always be valid, never "empty"
 
   /// reads mesh (used only by constructor)
-  MeshType read(const std::string& pathname);
+  MeshBase::MeshType read(const std::string& pathname);
 
-  MeshType mesh;
+  MeshBase::MeshType mesh;
 };
 
 } // shapeworks
