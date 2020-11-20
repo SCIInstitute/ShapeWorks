@@ -159,7 +159,7 @@ namespace itk
             PointType pt = *it;
 
             // Step 1 Project the gradient vector onto the tangent plane
-            VectorType original_gradient_projectedOntoTangentSpace = domain->ProjectVectorToSurfaceTangent(original_gradient, pt);
+            VectorType original_gradient_projectedOntoTangentSpace = domain->ProjectVectorToSurfaceTangent(original_gradient, pt, k);
 
             double newenergy, gradmag;
             while (true) {
@@ -178,7 +178,7 @@ namespace itk
               }
 
               // Step D compute the new point position
-              PointType newpoint = domain->UpdateParticlePosition(pt, gradient);
+              PointType newpoint = domain->UpdateParticlePosition(pt, k, gradient);
 
               // Step F update the point position in the particle system
               m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);
@@ -196,7 +196,7 @@ namespace itk
               {// bad move, reset point position and back off on timestep
                 if (m_TimeSteps[dom][k] > minimumTimeStep)
                 {
-                  domain->ApplyConstraints(pt);
+                  domain->ApplyConstraints(pt, k);
                   m_ParticleSystem->SetPosition(pt, it.GetIndex(), dom);
 
                   m_TimeSteps[dom][k] /= factor;

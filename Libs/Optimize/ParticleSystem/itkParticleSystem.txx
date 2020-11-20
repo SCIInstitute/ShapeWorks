@@ -152,10 +152,11 @@ ParticleSystem<VDimension>
   if (m_DomainFlags[d] == false) {
       // debugg
       //std::cout << "d" << d << " before apply " << m_Positions[d]->operator[](m_IndexCounters[d]);
-    m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](m_IndexCounters[d]));
+    const auto idx = m_IndexCounters[d];
+    m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](idx), idx);
       // debugg
       //std::cout << " after apply " << m_Positions[d]->operator[](m_IndexCounters[d]) << std::endl;
-    m_Neighborhoods[d]->AddPosition( m_Positions[d]->operator[](m_IndexCounters[d]), m_IndexCounters[d], threadId);
+    m_Neighborhoods[d]->AddPosition( m_Positions[d]->operator[](idx), idx, threadId);
   }
 
   // Increase the FixedParticleFlag list size if necessary.
@@ -189,7 +190,7 @@ ParticleSystem<VDimension>
 
       // Debuggg
       //std::cout << "SynchronizePositions Apply constraints " << m_Positions[d]->operator[](k);
-      m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](k));
+      m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](k), -1);
       // Debuggg
       //std::cout << " updated " << m_Positions[d]->operator[](k) << std::endl;
 
@@ -341,7 +342,7 @@ void ParticleSystem<VDimension>::AdvancedAllParticleSplitting(double epsilon)
           // Go to surface
           if (!this->m_DomainFlags[j] &&
               !this->GetDomain(j)->GetConstraints()->IsAnyViolated(newpos)) {
-            this->GetDomain(j)->ApplyConstraints(newpos);
+            this->GetDomain(j)->ApplyConstraints(newpos, -1);
           }
           newposs_good.push_back(newpos);
           // Check for plane constraint violations

@@ -157,7 +157,7 @@ public:
   }
 
 
-  inline vnl_matrix_fixed<float, DIMENSION, DIMENSION> SampleHessianAtPoint(const PointType &p) const override {
+  inline vnl_matrix_fixed<float, DIMENSION, DIMENSION> SampleHessianAtPoint(const PointType &p, int idx) const override {
     return SampleHessianVnl(p);
   }
   
