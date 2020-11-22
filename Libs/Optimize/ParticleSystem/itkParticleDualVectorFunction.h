@@ -61,7 +61,7 @@ public:
       domain. */
     virtual VectorType Evaluate(unsigned int idx, unsigned int d,
                                 const ParticleSystemType *system,
-                                double &maxmove) const
+                                double &maxmove)
     {
 
         double maxA, maxB, maxC;
@@ -153,7 +153,7 @@ public:
         return ansB;
     }
 
-    virtual double Energy(unsigned int idx, unsigned int d, const ParticleSystemType *system) const
+    virtual double Energy(unsigned int idx, unsigned int d, const ParticleSystemType *system)
     {
         double ansA = 0.0;
         double ansB = 0.0;
@@ -200,7 +200,7 @@ public:
 
     virtual VectorType Evaluate(unsigned int idx, unsigned int d,
                                 const ParticleSystemType *system,
-                                double &maxmove, double &energy) const
+                                double &maxmove, double &energy)
     {
         double maxA = 0.0;
         double maxB = 0.0;

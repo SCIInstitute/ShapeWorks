@@ -112,6 +112,9 @@ public:
   void UpdateZeroCrossingPoint() override {
   }
 
+  inline float Sample(const PointType &p) const override
+  {return 0;}
+
   MeshDomain() { }
   virtual ~MeshDomain() {}
 

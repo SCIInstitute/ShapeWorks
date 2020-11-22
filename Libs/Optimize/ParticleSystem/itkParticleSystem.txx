@@ -281,7 +281,7 @@ void ParticleSystem<VDimension>::AdvancedAllParticleSplitting(double epsilon)
   size_t num_doms = this->GetNumberOfDomains();
 
   for (size_t domain = 0; domain < num_doms; domain++) {
-      this->GetDomain(domain)->GetConstraints()->InitializeLagrangianParameters(1,1,1);
+      this->GetDomain(domain)->GetConstraints()->InitializeLagrangianParameters(1,1);
   }
 
   std::vector<std::vector<PointType> > lists;
@@ -348,19 +348,22 @@ void ParticleSystem<VDimension>::AdvancedAllParticleSplitting(double epsilon)
             this->GetDomain(j)->ApplyConstraints(newpos);
           }
           newposs_good.push_back(newpos);
+          /*
           // Check for plane constraint violations
           if (this->GetDomain(j)->GetConstraints()->IsAnyViolated(newpos)) {
             good = false;
             break;
           }
+          */
+
         }
 
         if (good) {
           for (size_t j = 0; j < lists.size(); j++) {
             this->AddPosition(newposs_good[j], j, 0);
             // Debuggg
-            //std::cout << "Domain " << j << " Curr Pos " << lists[j][i] << " random "
-            // << random  << " epsilon " << epsilon << " picked " << newposs_good[j] << std::endl;
+            std::cout << "Domain " << j << " Curr Pos " << lists[j][i] << " random "
+             << random  << " epsilon " << epsilon << " picked " << newposs_good[j] << std::endl;
           }
           break;
         }

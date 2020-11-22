@@ -228,7 +228,7 @@ template <class TGradientNumericType, unsigned int VDimension>
 typename ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>::VectorType
 ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 ::Evaluate(unsigned int idx, unsigned int d, const ParticleSystemType * system,
-           double &maxmove, double &energy) const
+           double &maxmove, double &energy)
 {
   const double epsilon = 1.0e-6;
 
@@ -282,16 +282,34 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 
   gradE = gradE / m_avgKappa;
 
-  // Energy stuff
-  double c = 1e4;
-  system->GetDomain(d)->GetConstraints()->UpdateZs(pos, c);
-  VectorType constraint_energy = system->GetDomain(d)->GetConstraints()->ConstraintsLagrangianGradient(pos, c);
-  //std::cout << constraint_energy << std::endl;
+  // Augmented Lagrangian Parameters
+  double c_in = 1e5;
+  double c_eq = 1e-5;
+
+  // Inequality constraint stuff
+  system->GetDomain(d)->GetConstraints()->UpdateZs(pos, c_in);
+  VectorType ineq_constraint_energy = system->GetDomain(d)->GetConstraints()->ConstraintsLagrangianGradient(pos, c_in);
+
+  // Equality constraint stuff
+  vnl_vector_fixed<float, 3> h_grad = system->GetDomain(d)->SampleGradientAtPoint(pos);
+  float hx = system->GetDomain(d)->Sample(pos);
+  VectorType eq_constraint_energy;
   for (unsigned int n = 0; n < VDimension; n++)
     {
-        gradE[n] += constraint_energy[n];
+        eq_constraint_energy[n] = m_lambda * h_grad[n] + c_eq * h_grad[n] * std::fabs(hx);
     }
-  system->GetDomain(d)->GetConstraints()->UpdateMus(pos, c);
+
+  std::cout << "Inequality " << ineq_constraint_energy << std::endl;
+  std::cout << "Equality " << eq_constraint_energy << std::endl;
+  for (unsigned int n = 0; n < VDimension; n++)
+    {
+      gradE[n] += ineq_constraint_energy[n] + eq_constraint_energy[n];
+      //gradE[n] +=  eq_constraint_energy[n];
+    }
+
+  // Augmented lagrangian updates
+  system->GetDomain(d)->GetConstraints()->UpdateMus(pos, c_in);
+  m_lambda = m_lambda + c_eq*hx;
 
   return gradE;
 }

@@ -164,6 +164,8 @@ namespace itk
             double newenergy, gradmag;
             while (true) {
 
+              std::cout << "SAGSO steps" << std::endl;
+
               // Step A scale the projected gradient by the current time step
               VectorType gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
 
@@ -243,7 +245,7 @@ namespace itk
               {// bad move, reset point position and back off on timestep
                 if (m_TimeSteps[dom][k] > minimumTimeStep)
                 {
-                  domain->ApplyConstraints(pt);
+                  //domain->ApplyConstraints(pt);
                   m_ParticleSystem->SetPosition(pt, it.GetIndex(), dom);
 
                   // Debuggg

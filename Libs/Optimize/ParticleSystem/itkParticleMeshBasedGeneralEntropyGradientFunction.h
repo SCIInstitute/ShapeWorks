@@ -69,10 +69,10 @@ public:
          domain. */
 
     virtual VectorType Evaluate(unsigned int, unsigned int,
-                                const ParticleSystemType *, double &, double&) const;
+                                const ParticleSystemType *, double &, double&);
 
     virtual VectorType Evaluate(unsigned int a,  unsigned int b,
-                                const ParticleSystemType *c, double &d) const
+                                const ParticleSystemType *c, double &d)
     {
         double e;
         return this->Evaluate(a,b,c,d,e);
@@ -80,7 +80,7 @@ public:
 
 
     virtual double Energy(unsigned int a, unsigned int b,
-                          const ParticleSystemType *c) const
+                          const ParticleSystemType *c)
     {
         double e, d;
         this->Evaluate(a,b,c,d,e);

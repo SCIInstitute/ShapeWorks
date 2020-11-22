@@ -208,7 +208,7 @@ template <unsigned int VDimension>
 typename ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>::VectorType
 ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 ::Evaluate(unsigned int idx, unsigned int d, const ParticleSystemType * system,
-           double &maxdt, double &energy) const
+           double &maxdt, double &energy)
 {
     // NOTE: This code requires that indices be contiguous, i.e. it won't work if
     // you start deleting particles.

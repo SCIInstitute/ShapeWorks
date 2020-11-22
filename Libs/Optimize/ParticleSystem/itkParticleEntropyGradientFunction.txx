@@ -144,7 +144,7 @@ template <class TGradientNumericType, unsigned int VDimension>
 typename ParticleEntropyGradientFunction<TGradientNumericType, VDimension>::VectorType
 ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
 ::Evaluate(unsigned int idx,unsigned int d, const ParticleSystemType * system,
-           double &maxdt) const
+           double &maxdt)
 {
   // Grab a pointer to the domain.  We need a Domain that has surface normal information.
   auto domain = system->GetDomain(d);

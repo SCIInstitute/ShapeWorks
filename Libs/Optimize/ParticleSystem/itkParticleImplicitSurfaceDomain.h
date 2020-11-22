@@ -86,7 +86,7 @@ public:
     //for (unsigned int i = 0; i < DIMENSION; i++) { newpoint[i] = point[i] - update[i]; }
 
     // debuggg
-    ApplyConstraints(newpoint);
+    //ApplyConstraints(newpoint);
 
     // debuggg
     /*
@@ -140,7 +140,7 @@ protected:
 
 private:
   T m_Tolerance;
-  
+
   meshFIM *m_mesh;
 
 };

@@ -386,7 +386,7 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
 template <class TGradientNumericType, unsigned int VDimension>
 typename ParticleOmegaGradientFunction<TGradientNumericType, VDimension>::VectorType ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
 ::Evaluate( unsigned int idx, unsigned int d, const ParticleSystemType* system,
-            double &maxmove, double &energy ) const
+            double &maxmove, double &energy )
 {
     const double epsilon = 1.0e-6;
 

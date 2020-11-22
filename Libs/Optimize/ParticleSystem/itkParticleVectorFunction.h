@@ -60,10 +60,10 @@ public:
       third argument is the index of the particle location within the given
       domain. */
   virtual VectorType Evaluate(unsigned int , unsigned int, const ParticleSystemType *,
-                              double &maxtimestep) const = 0;
+                              double &maxtimestep) = 0;
   virtual VectorType Evaluate(unsigned int , unsigned int, const ParticleSystemType *,
-                              double &maxtimestep, double &energy) const = 0;
-  virtual double Energy(unsigned int, unsigned int, const ParticleSystemType *) const =0;
+                              double &maxtimestep, double &energy) = 0;
+  virtual double Energy(unsigned int, unsigned int, const ParticleSystemType *) =0;
 
 
   /** May be called by the solver class. */

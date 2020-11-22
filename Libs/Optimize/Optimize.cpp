@@ -695,6 +695,7 @@ void Optimize::Initialize()
     }
     */
 
+    m_sampler->GetCurvatureGradientFunction()->SetLambda(1.);
     m_sampler->GetParticleSystem()->AdvancedAllParticleSplitting(epsilon);
 
     m_sampler->GetParticleSystem()->SynchronizePositions();

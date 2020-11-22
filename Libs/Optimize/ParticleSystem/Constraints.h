@@ -122,19 +122,16 @@ public:
   }
 
   // Parameters lambda, mu and z initialization
-  void InitializeLagrangianParameters(double lambda, double mu, double z) const{
+  void InitializeLagrangianParameters(double mu, double z) const{
       for(size_t i = 0; i < planeConsts->size(); i++){
-          (*planeConsts)[i].SetLambda(lambda);
           (*planeConsts)[i].SetMu(mu);
           (*planeConsts)[i].SetZ(z);
       }
       for(size_t i = 0; i < sphereConsts->size(); i++){
-          (*sphereConsts)[i].SetLambda(lambda);
           (*sphereConsts)[i].SetMu(mu);
           (*sphereConsts)[i].SetZ(z);
       }
       for(size_t i = 0; i < freeFormConsts->size(); i++){
-          (*freeFormConsts)[i].SetLambda(lambda);
           (*freeFormConsts)[i].SetMu(mu);
           (*freeFormConsts)[i].SetZ(z);
       }

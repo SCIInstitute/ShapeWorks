@@ -242,7 +242,7 @@ template <class TGradientNumericType, unsigned int VDimension>
 typename ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimension>::VectorType
 ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimension>
 ::Evaluate(unsigned int idx, unsigned int d, const ParticleSystemType * system,
-           double &maxmove, double &energy) const
+           double &maxmove, double &energy)
 {
     const double epsilon = 1.0e-6;
 

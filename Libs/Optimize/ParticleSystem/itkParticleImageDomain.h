@@ -152,7 +152,7 @@ public:
   }
 
   /** Sample the image at a point.  This method performs bounds checking. */
-  inline T Sample(const PointType &p) const
+  inline float Sample(const PointType &p) const override
   {
     if(this->IsInsideBuffer(p)) {
       const auto coord = this->ToVDBCoord(p);

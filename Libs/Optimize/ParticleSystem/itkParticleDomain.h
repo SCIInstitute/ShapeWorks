@@ -77,6 +77,8 @@ public:
   virtual void DeletePartialDerivativeImages() = 0;
   virtual void UpdateZeroCrossingPoint() = 0;
 
+  virtual float Sample(const PointType &p) const = 0;
+
   bool IsDomainFixed() const {
     return m_FixedDomain;
   }

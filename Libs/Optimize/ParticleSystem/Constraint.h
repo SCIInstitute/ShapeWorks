@@ -23,8 +23,6 @@ public:
   double GetZ(){return z;}
   void SetMu(double inmu){mu = inmu;}
   double GetMu(){return mu;}
-  void SetLambda(double inLambda){lambda = inLambda;}
-  double GetLambda(){return lambda;}
 
   virtual Eigen::Vector3d ConstraintGradient(const Eigen::Vector3d &pt) const = 0;
   virtual double ConstraintEval(const Eigen::Vector3d &pt) const = 0;
@@ -77,7 +75,6 @@ private:
   // For augmented lagrangian
   double z;
   double mu;
-  double lambda;
 };
 
 

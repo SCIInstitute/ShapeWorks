@@ -69,17 +69,17 @@ public:
       third argument is the index of the particle location within the given
       domain. */
   inline virtual VectorType Evaluate( unsigned int a, unsigned int b, const ParticleSystemType* c,
-                                      double& d ) const
+                                      double& d )
   {
     double e;
     return this->Evaluate( a, b, c, d, e );
   }
   virtual VectorType Evaluate( unsigned int, unsigned int, const ParticleSystemType*,
-                               double&, double & ) const;
+                               double&, double & );
 
   virtual void BeforeEvaluate( unsigned int, unsigned int, const ParticleSystemType* );
 
-  inline virtual double Energy( unsigned int a, unsigned int b, const ParticleSystemType* c ) const
+  inline virtual double Energy( unsigned int a, unsigned int b, const ParticleSystemType* c )
   {
     double d, e;
     this->Evaluate( a, b, c, d, e );
