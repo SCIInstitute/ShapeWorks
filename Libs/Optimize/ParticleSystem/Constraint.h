@@ -66,7 +66,19 @@ public:
   }
 
   Eigen::Vector3d LagragianGradient(const Eigen::Vector3d &pt, double C){
-      return mu*ConstraintGradient(pt) + C/2*(2*ConstraintEval(pt)*ConstraintGradient(pt) + Eigen::Vector3d(2*z*z,2*z*z,2*z*z));
+      // debuggg
+      /*
+      std::stringstream stream;
+      Eigen::Vector3d lag_grad = mu*ConstraintGradient(pt) + C*(ConstraintEval(pt)*ConstraintGradient(pt) + Eigen::Vector3d(z*z,z*z,z*z));
+      stream << "pt " << pt.transpose() << " lag grad " << lag_grad.transpose() << std::endl;
+      stream << "\t ConstraintEval(pt) " << ConstraintEval(pt) << std::endl;
+      stream << "\t ConstraintGradient(pt) " << ConstraintGradient(pt).transpose() << std::endl;
+      stream << "\t z " << z << std::endl;
+      stream << "\t z^2 " << z*z << std::endl;
+      stream << "\t mu " << mu << std::endl;
+      std::cout << stream.str();
+      */
+      return mu*ConstraintGradient(pt) + C*(ConstraintEval(pt)*ConstraintGradient(pt) + Eigen::Vector3d(z*z,z*z,z*z));
   }
 
 private:

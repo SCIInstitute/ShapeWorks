@@ -189,7 +189,7 @@ ParticleSystem<VDimension>
 
       // Debuggg
       //std::cout << "SynchronizePositions Apply constraints " << m_Positions[d]->operator[](k);
-      m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](k));
+      //m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](k));
       // Debuggg
       //std::cout << " updated " << m_Positions[d]->operator[](k) << std::endl;
 

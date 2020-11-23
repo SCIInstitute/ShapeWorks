@@ -250,7 +250,7 @@ namespace itk
 
                   // Debuggg
                   stream << "Not good energy " << pt << std::endl;
-                  //stream << std::endl;
+                  stream << std::endl;
 
                   m_TimeSteps[dom][k] /= factor;
                 }
