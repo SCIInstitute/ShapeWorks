@@ -277,7 +277,7 @@ build_igl()
   cd libigl
   git checkout -f tags/${libigl_VER}
 
-  LIBIGL_DIR=${INSTALL_DIR}/libigl/include
+  LIBIGL_DIR=${INSTALL_DIR}/libigl/cmake
 }
 
 show_shapeworks_build()
@@ -326,8 +326,8 @@ verify_qt()
 build_all()
 {
   ## create build and install directories
-  if [[ -z $BUILD_DIR ]];   then BUILD_DIR=${SRC}/dependencies/build;     fi
-  if [[ -z $INSTALL_DIR ]]; then INSTALL_DIR=${SRC}/dependencies/install; fi
+  if [[ -z $BUILD_DIR ]];   then BUILD_DIR=${SRC}/dependencies3/build;     fi
+  if [[ -z $INSTALL_DIR ]]; then INSTALL_DIR=${SRC}/dependencies3/install; fi
   mkdir -p ${BUILD_DIR}
   mkdir -p ${INSTALL_DIR}
 
