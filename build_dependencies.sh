@@ -279,9 +279,9 @@ show_shapeworks_build()
     OPENMP_FLAG="-DUSE_OPENMP=OFF"
   fi
 
-  FINDQT = ""
+  FINDQT=""
   if [[ ${BUILD_GUI} -eq 1 ]]; then
-    FINDQT = "-DQt5_DIR=`qmake -query QT_INSTALL_PREFIX`"
+    FINDQT="-DQt5_DIR=`qmake -query QT_INSTALL_PREFIX`"
   fi
 
   echo "cmake -DCMAKE_PREFIX_PATH=${INSTALL_DIR} ${OPENMP_FLAG} -DBuild_Studio=${BUILD_GUI} ${FIND_QT} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}"
