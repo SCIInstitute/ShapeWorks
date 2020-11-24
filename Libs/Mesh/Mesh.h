@@ -83,7 +83,7 @@ private:
 
   /// reads mesh (used only by constructor)
   MeshBase::MeshType read(const std::string& pathname);
-
+  MeshBase m;
   MeshBase::MeshType mesh;
 };
 

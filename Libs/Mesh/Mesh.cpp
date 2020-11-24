@@ -29,7 +29,8 @@ namespace shapeworks {
 
 MeshBase::MeshType Mesh::read(const std::string &pathname)
 {
-  MeshBase::read(pathname);
+  m.read(pathname);
+  // read(pathname);
 }
 
 Mesh& Mesh::write(const std::string &pathname)
