@@ -33,7 +33,7 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, isBinary=True):
     """
     This function takes in a filelist and produces the resampled files in the appropriate directory.
     """
-    print("\n########### Resampling ###############")
+    print("\n########### Isotropic Resampling ###############")
     if not os.path.exists(outDir):
         os.makedirs(outDir)
     outDataList = []
@@ -109,8 +109,8 @@ def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False):
             innameImg = inDataListImg[i]
             outnameImg = rename(innameImg, imageDir, 'com')
             outDataListImg.append(outnameImg)
-            segImg = Image(innameImg)
-            segImg.translate(T[0], T[1], T[2]).write(outnameImg)
+            rawImg = Image(innameImg)
+            rawImg.translate(T).write(outnameImg)
 
     return [outDataListSeg, outDataListImg] if processRaw else outDataListSeg
 
@@ -155,51 +155,19 @@ def FindReferenceImage(inDataList):
     print(" ")
     return inDataList[idx]
 
-def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
-                        antialiasIterations=20, smoothingIterations=1, alpha=10.5, beta=10.0,
-                        scaling=0.0, isoValue=0, icpIterations=10, processRaw=False):
+def applyResampling(outDir, refFile, inDataListSeg, inDataListImg=[]):
     """
-    This function takes in a filelists(binary and raw) and produces rigid aligned
-    files in the appropriate directory. If the process_raw flag is set True,
-    then it also applys the same transformation on the corresponding list of
-    raw files (MRI/CT ...)
+    This function takes in a filelists(binary and raw) and makes the 
+    size and spacing the same as the reference
     """
-    print("\n############# Rigid Alignment #############")
-    if not os.path.exists(outDir):
-        os.makedirs(outDir)
-
-    # identify and process the reference scan
-    refDir = os.path.join(outDir, 'reference')
-    if not os.path.exists(refDir):
-        os.makedirs(refDir)
-    initPath = os.path.dirname(refFile)
-    newRefFile = refFile.replace(initPath, refDir)
-    ref_dtnrrdfilename = newRefFile.replace('.nrrd', '.DT.nrrd')
-    ref_tpdtnrrdfilename = newRefFile.replace('.nrrd', '.tpSmoothDT.nrrd')
-    ref_isonrrdfilename = newRefFile.replace('.nrrd', '.ISO.nrrd')
-
-    # reference image processing
-    img = Image(refFile)
-    img.extractLabel(1.0).closeHoles().write(refFile)
-    img.antialias(antialiasIterations).computeDT(isoValue).write(ref_dtnrrdfilename)
-    img.applyCurvatureFilter(smoothingIterations).write(ref_tpdtnrrdfilename)
-    isoimg = ImageUtils.topologyPreservingSmooth(img, scaling, alpha, beta)
-    isoimg.write(ref_isonrrdfilename)
+    print("\n############# Resample #############")
+    ref_img = Image(refFile)
 
     # create output dirs
-    segoutDir = os.path.join(outDir, 'segmentations') if processRaw else outDir
+    segoutDir = os.path.join(outDir, 'segmentations') if inDataListImg else outDir
     if not os.path.exists(segoutDir):
         os.makedirs(segoutDir)
-    if processRaw:
-        rawoutDir = os.path.join(outDir, 'images')
-        if not os.path.exists(rawoutDir):
-            os.makedirs(rawoutDir)
-
-    # create output dirs
-    segoutDir = os.path.join(outDir, 'segmentations') if processRaw else outDir
-    if not os.path.exists(segoutDir):
-        os.makedirs(segoutDir)
-    if processRaw:
+    if inDataListImg:
         rawoutDir = os.path.join(outDir, 'images')
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
@@ -208,36 +176,21 @@ def applyRigidAlignment(outDir, inDataListSeg, inDataListImg, refFile,
     outSegDataList = []
     outRawDataList = []
     for i in range(len(inDataListSeg)):
-        seginname = inDataListSeg[i]
-        segoutname = seginname.replace(os.path.dirname(seginname), segoutDir)
-        segoutname = segoutname.replace('.nrrd', '.aligned.nrrd')
+        # get names
+        segoutname = rename(inDataListSeg[i], segoutDir, 'resized')
         outSegDataList.append(segoutname)
-        dtnrrdfilename = segoutname.replace('.aligned.nrrd', '.aligned.DT.nrrd')
-        tpdtnrrdfilename = segoutname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.nrrd')
-        isonrrdfilename = segoutname.replace('.aligned.nrrd', '.aligned.ISO.nrrd')
-
-        if processRaw:
-            rawinname = inDataListImg[i]
-            rawoutname = rawinname.replace(os.path.dirname(rawinname), rawoutDir)
-            rawoutname = rawoutname.replace('.nrrd', '.aligned.nrrd')
+        if inDataListImg:
+            rawoutname = rename(inDataListImg[i], rawoutDir, 'resized')
             outRawDataList.append(rawoutname)
+        # resize
+        img = Image(inDataListSeg[i])
+        transform = createTransform(Matrix()) # identity
+        img.resample(transform, ref_img.origin(), ref_img.dims(), ref_img.spacing(), ref_img.coordsys(), InterpolationType.NearestNeighbor).write(segoutname)
+        if inDataListImg:
+            img = Image(inDataListImg[i])
+            img.resample(transform, ref_img.origin(), ref_img.dims(), ref_img.spacing(), ref_img.coordsys(), InterpolationType.NearestNeighbor).write(rawoutname)
 
-        img = Image(seginname)
-        img.extractLabel(1.0).closeHoles().write(seginname)
-        img.antialias(antialiasIterations).computeDT(isoValue).write(dtnrrdfilename)
-        img.applyCurvatureFilter(smoothingIterations).write(tpdtnrrdfilename)
-        isoimg = ImageUtils.topologyPreservingSmooth(img, scaling, alpha, beta)
-        isoimg.write(isonrrdfilename)
-
-        img = Image(seginname)
-        transform = createTransform(Matrix())
-        img.resample(transform, img.origin(), img.dims(), img.spacing(), img.coordsys(), InterpolationType.NearestNeighbor).write(segoutname)
-
-        if processRaw:
-            img = Image(rawinname)
-            img.icp(ref_tpdtnrrdfilename, tpdtnrrdfilename, icpIterations).write(rawoutname)
-
-    return [outSegDataList, outRawDataList] if processRaw else outSegDataList
+    return [outSegDataList, outRawDataList] if inDataListImg else outSegDataList
 
 def applyCropping(outDir, inDataList, path, paddingSize=10):
     """
@@ -248,6 +201,8 @@ def applyCropping(outDir, inDataList, path, paddingSize=10):
     if not os.path.exists(outDir):
         os.makedirs(outDir)
     outDataList = []
+    region = ImageUtils.boundingBox(glob.glob(path))
+    region.pad(paddingSize)
     for i in range(len(inDataList)):
         inname = inDataList[i]
         initPath = os.path.dirname(inname)
@@ -255,8 +210,6 @@ def applyCropping(outDir, inDataList, path, paddingSize=10):
         outname = outname.replace('.nrrd', '.cropped.nrrd')
         outDataList.append(outname)
         img = Image(inname)
-        region = ImageUtils.boundingBox(glob.glob(initPath+"/*.nrrd"))
-        region.pad(paddingSize)
         img.crop(region).write(outname)
     return outDataList
 
