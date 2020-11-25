@@ -547,6 +547,7 @@ def getMeshInfo(outDir, meshList, spacing, printCmd=True):
     return origin, size
 
 def ClipBinaryVolumes(outDir, segList, cutting_plane_points, printCmd=True):
+    print("\n############## Clipping ##############")
     if not os.path.exists(outDir):
         os.makedirs(outDir)
     outListSeg = []
@@ -555,9 +556,9 @@ def ClipBinaryVolumes(outDir, segList, cutting_plane_points, printCmd=True):
         outname = rename(inname, outDir, "clipped")
         outListSeg.append(outname)
         img = Image(inname)
-        img.clip(cutting_plane_points[0], cutting_plane_points[1], cutting_plane_points[2],
-                 cutting_plane_points[3], cutting_plane_points[4], cutting_plane_points[5],
-                 cutting_plane_points[6], cutting_plane_points[7], cutting_plane_points[8]).write(outname)
+        img.clip(Point(cutting_plane_points[0], cutting_plane_points[1], cutting_plane_points[2]),
+                 Point(cutting_plane_points[3], cutting_plane_points[4], cutting_plane_points[5]),
+                 Point(cutting_plane_points[6], cutting_plane_points[7], cutting_plane_points[8]),0.0).write(outname)
     return outListSeg
 
 def ShowCuttingPlanesOnImage(input_file, cutting_planes, printCmd=True):
