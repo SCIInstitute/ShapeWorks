@@ -419,6 +419,10 @@ public:
   }
   unsigned int GetDomainsPerShape()
   { return m_DomainsPerShape; }
+
+  void SetLambdaI(double lambda, int domain){m_lambdas[domain] = lambda;}
+  double GetLambdaI(int domain){return m_lambdas[domain];}
+  void SetLambdaVec(std::vector<double> lambdas){m_lambdas = lambdas;}
   
 protected:
   ParticleSystem();
@@ -520,6 +524,8 @@ private:
   std::vector< std::vector<bool> > m_FixedParticleFlags;
 
   std::mt19937 m_rand{42};
+
+  std::vector<double> m_lambdas;
 };
 
 } // end namespace itk

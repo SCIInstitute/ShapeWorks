@@ -181,8 +181,15 @@ public:
     return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
   }
 
-  void SetLambda(double g)
-  { m_lambda= g; }
+  void SetLambdaI(double lambda, int domain){m_lambdas[domain] = lambda;}
+  double GetLambdaI(int domain){return m_lambdas[domain];}
+  void SetLambdaVec(size_t size, double value){
+      m_lambdas.clear();
+      for (size_t i = 0; i < size; i++){
+          m_lambdas.push_back(value);
+      }
+      std::cout << "size " << m_lambdas.size() << " value " << m_lambdas[0] << std::endl;
+  }
 
 protected:
   ParticleCurvatureEntropyGradientFunction() :  m_Counter(0),
@@ -207,7 +214,7 @@ protected:
 
   float m_MaxMoveFactor;
 
-  double m_lambda; // Augmented Lagrangian parameter lambda_0
+  std::vector<double> m_lambdas;
   
 };
 

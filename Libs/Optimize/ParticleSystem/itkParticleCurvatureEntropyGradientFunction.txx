@@ -283,8 +283,10 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   gradE = gradE / m_avgKappa;
 
   // Augmented Lagrangian Parameters
+  std::cout << "m_lambdas.size() " << m_lambdas.size() << " d " << d << std::endl;
   double c_eq = 1e-4; // equalities: Surface constraints
   double c_in = 1e0; // inequalities/boundary: cutting plane, sphere or free form
+  double lambda = m_lambdas[d];
 
   // Inequality constraint stuff
   system->GetDomain(d)->GetConstraints()->UpdateZs(pos, c_in);
@@ -296,11 +298,11 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   VectorType eq_constraint_energy;
   for (unsigned int n = 0; n < VDimension; n++)
     {
-        eq_constraint_energy[n] = m_lambda * h_grad[n] + c_eq * h_grad[n] * std::fabs(hx);
+        eq_constraint_energy[n] = lambda * h_grad[n] + c_eq * h_grad[n] * std::fabs(hx);
     }
 
   // std::cout << "pos " << pos << " Inequality " << ineq_constraint_energy << std::endl;
-  std::cout << "m_lambda " << m_lambda << " pos " << pos << " Equality " << eq_constraint_energy << std::endl;
+  std::cout << "m_lambda " << lambda << " pos " << pos << " Equality " << eq_constraint_energy << std::endl;
   for (unsigned int n = 0; n < VDimension; n++)
     {
       //gradE[n] += ineq_constraint_energy[n] + eq_constraint_energy[n];
@@ -309,7 +311,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 
   // Augmented lagrangian updates
   system->GetDomain(d)->GetConstraints()->UpdateMus(pos, c_in);
-  m_lambda = m_lambda + c_eq*hx;
+  m_lambdas[d]= lambda + c_eq*hx;
 
   return gradE;
 }

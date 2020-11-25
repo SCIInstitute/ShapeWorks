@@ -121,7 +121,7 @@ public:
       return gradE;
   }
 
-  // Parameters lambda, mu and z initialization
+  // Parameters mu and z initialization
   void InitializeLagrangianParameters(double mu, double z) const{
       for(size_t i = 0; i < planeConsts->size(); i++){
           (*planeConsts)[i].SetMu(mu);

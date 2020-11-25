@@ -652,6 +652,8 @@ void Optimize::Initialize()
 
   int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
 
+  // Set lambdas
+  m_sampler->GetCurvatureGradientFunction()->SetLambdaVec(n, 1.);
 
   /*Old vector randomization
   vnl_vector_fixed<double, 3> random;
@@ -695,7 +697,10 @@ void Optimize::Initialize()
     }
     */
 
-    m_sampler->GetCurvatureGradientFunction()->SetLambda(1.);
+    // Reset lambdas
+    // m_sampler->GetParticleSystem()->SetLambdaVec(lam_vec);
+    m_sampler->GetCurvatureGradientFunction()->SetLambdaVec(n, 1.);
+
     m_sampler->GetParticleSystem()->AdvancedAllParticleSplitting(epsilon);
 
     m_sampler->GetParticleSystem()->SynchronizePositions();
