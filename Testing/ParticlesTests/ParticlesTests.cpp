@@ -32,7 +32,7 @@ TEST(ParticlesTests, compactness_test)
 {
   ParticleSystem particleSystem(filenames);
 
-  const double compactness = ShapeEvaluation<3>::ComputeCompactness(particleSystem, 1);
+  const double compactness = ShapeEvaluation::ComputeCompactness(particleSystem, 1);
   ASSERT_DOUBLE_EQ(compactness, 0.99178682878009183);
 }
 
@@ -41,7 +41,7 @@ TEST(ParticlesTests, generalization_test)
 {
   ParticleSystem particleSystem(filenames);
 
-  const double generalization = ShapeEvaluation<3>::ComputeGeneralization(particleSystem, 1);
+  const double generalization = ShapeEvaluation::ComputeGeneralization(particleSystem, 1);
   ASSERT_DOUBLE_EQ(generalization, 0.19815116412998687);
 }
 
@@ -50,6 +50,6 @@ TEST(ParticlesTests, specificity_test)
 {
   ParticleSystem particleSystem(filenames);
 
-  const double specificity = ShapeEvaluation<3>::ComputeSpecificity(particleSystem, 1);
+  const double specificity = ShapeEvaluation::ComputeSpecificity(particleSystem, 1);
   ASSERT_NEAR(specificity, 0.262809, 1e-1f);
 }

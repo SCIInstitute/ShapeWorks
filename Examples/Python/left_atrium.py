@@ -109,25 +109,19 @@ def Run_Pipeline(args):
             [comFiles_segmentations, comFiles_images] = applyCOMAlignment(groomDir + "com_aligned", paddedFiles_segmentations, paddedFiles_images, processRaw=True)
 
             """
-            Apply rigid alignment
-            This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
-            There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
-            processRaw = False, applies the center of mass alignment only on segemnattion data.
-            This function uses the same transfrmation matrix for alignment of raw and segmentation files.
-            Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
+            Resample all images to be the same size and spacing as reference
             """
             medianFile = FindReferenceImage(comFiles_segmentations)
-
-            [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(groomDir + "aligned", comFiles_segmentations, comFiles_images, medianFile, processRaw = True)
-
+            [resampled_segmentations, resampled_images] = applyResampling(groomDir + "resized", medianFile, comFiles_segmentations, comFiles_images)
+            
             """
             Compute largest bounding box and apply cropping
             processRaw = True, processes raw and binary images with shared parameters.
             processRaw = False, applies the center of mass alignment only on segemnattion data.
             The function uses the same bounding box to crop the raw and segemnattion data.
             """
-            croppedFiles_segmentations = applyCropping(groomDir + "cropped/segmentations", rigidFiles_segmentations, groomDir + "aligned/segmentations/*.aligned.nrrd")
-            croppedFiles_images = applyCropping(groomDir + "cropped/images", rigidFiles_images, groomDir + "aligned/segmentations/*.aligned.nrrd")
+            croppedFiles_segmentations = applyCropping(groomDir + "cropped/segmentations", resampled_segmentations, groomDir + "resized/segmentations/*.resized.nrrd")
+            croppedFiles_images = applyCropping(groomDir + "cropped/images", resampled_images, groomDir + "resized/images/*.resized.nrrd")
 
             print("\nStep 3. Groom - Convert to distance transforms\n")
             if args.interactive:
@@ -161,16 +155,15 @@ def Run_Pipeline(args):
             comFiles = applyCOMAlignment(groomDir + "com_aligned", paddedFiles, None)
 
             """
-            Apply rigid alignment
-            Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
+            Resample all images to be the same size and spacing as reference
             """
             medianFile = FindReferenceImage(comFiles)
-            rigidFiles = applyRigidAlignment(groomDir + "aligned", comFiles, None, medianFile)
-
+            resampledFiles = applyResampling(groomDir + "resized", medianFile, comFiles)
+            
             """
             Compute largest bounding box and apply cropping
             """
-            croppedFiles = applyCropping(groomDir + "cropped", rigidFiles, groomDir + "aligned/*.aligned.nrrd")
+            croppedFiles = applyCropping(groomDir + "cropped", resampledFiles, groomDir + "resized/*.resized.nrrd")
 
             print("\nStep 3. Groom - Convert to distance transforms\n")
             if args.interactive:

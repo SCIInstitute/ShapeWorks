@@ -18,7 +18,7 @@ bool ShapeworksUtils::is_directory(const std::string &pathname)
 
 Matrix33 ShapeworksUtils::getMatrix(const vtkSmartPointer<vtkMatrix4x4>& mat)
 {
-  Matrix m;
+  Matrix33 m;
 
   for (int i = 0; i < 3; i++)
   {

@@ -6,13 +6,14 @@
 #include "ParticleSystem.h"
 
 namespace shapeworks {
-template<unsigned int VDimension = 3>
+
 class ShapeEvaluation
 {
 public:
+  static const unsigned VDimension = 3;
   ShapeEvaluation();
 
-  static double ComputeCompactness(const ParticleSystem &particleSystem, const int nModes, const std::string &saveScreePlotTo = "");
+  static double ComputeCompactness(const ParticleSystem &particleSystem, const int nModes, const std::string &saveTo = "");
 
   static double ComputeGeneralization(const ParticleSystem &particleSystem, const int nModes, const std::string &saveTo = "");
 

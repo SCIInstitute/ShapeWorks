@@ -14,9 +14,6 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/TestConfiguration.h.in
 # To find TestConfiguration.h
 include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
-
-
-
 # Shared Testing library
 set(Testing_sources
   Testing.cpp
@@ -41,9 +38,6 @@ install(TARGETS Testing
   LIBRARY DESTINATION lib
   PUBLIC_HEADER DESTINATION include
   )
-
-
-
 
 # Individual library tests
 add_subdirectory(ImageTests)
