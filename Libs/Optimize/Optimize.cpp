@@ -1114,9 +1114,10 @@ void Optimize::SetCotanSigma()
   m_sampler->GetModifiedCotangentGradientFunction()->ClearGlobalSigma();
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
     double area = m_sampler->GetParticleSystem()->GetDomain(i)->GetSurfaceArea();
+    const auto numParticles = m_sampler->GetParticleSystem()->GetNumberOfParticles(i);
     double sigma = m_cotan_sigma_factor *
                    std::sqrt(area /
-                             (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) * M_PI));
+                             (numParticles * M_PI));
     m_sampler->GetModifiedCotangentGradientFunction()->SetGlobalSigma(sigma);
   }
 }

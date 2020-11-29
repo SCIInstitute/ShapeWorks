@@ -26,6 +26,11 @@ ParticleModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimensio
 ::Evaluate(unsigned int idx, unsigned int d, const ParticleSystemType * system,
            double &maxmove, double &energy) const
 {
+  /*
+  if(d == 0) {
+    std::cout << "__sigma__: " << m_GlobalSigma[d] << "\n";
+  }
+   */
     VectorType gradE;
     for (unsigned int n = 0; n < VDimension; n++)
         gradE[n] = 0.0;

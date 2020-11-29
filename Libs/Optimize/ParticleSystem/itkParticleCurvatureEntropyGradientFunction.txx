@@ -231,6 +231,11 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 ::Evaluate(unsigned int idx, unsigned int d, const ParticleSystemType * system,
            double &maxmove, double &energy) const
 {
+  /*
+  if(d == 0) {
+    std::cout << "__sigma__: " << m_CurrentSigma << "\n";
+  }
+   */
   const double epsilon = 1.0e-6;
 
    // Get the position for which we are computing the gradient.
