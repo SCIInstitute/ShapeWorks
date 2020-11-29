@@ -10,19 +10,16 @@ import subprocess
 import matplotlib as plt
 import scipy
 from scipy.stats import chi2
+import shapeworks as sw
 
 '''
 Generates super shapes and saves implicit and mesh form
 Mesh is not in aligment with implicit and should just be used for visualization
 '''
-def get_shapes(m, num_samples, blur_factor, start_id, outDir, nGridPointsPerDimension=200):
-	do_mesh = False
+def get_shapes(m, num_samples, start_id, outDir, nGridPointsPerDimension=200):
 	# make folders
-	implicitDir = outDir + "implicit/"
+	implicitDir = outDir + "distance_transforms/"
 	make_dir(implicitDir)
-	if do_mesh:
-		meshDir= outDir + "mesh/"
-		make_dir(meshDir)
 	# for implicit resolution
 	unitCubeSize = 2 
 	# make params csv
@@ -32,25 +29,19 @@ def get_shapes(m, num_samples, blur_factor, start_id, outDir, nGridPointsPerDime
 		print("Generating shape " + str(i+1) + " out of " + str(num_samples))
 		name = "id" + get_id_str(i+start_id) + "_ss" + str(m)
 		# shape params
-		n1 = np.random.uniform(0.75,1)
-		n2 = np.random.uniform(0.75,1)
+		n1 = np.random.uniform(0.5,1.5)
+		n2 = np.random.uniform(0.5,1.5)
 		n3 = n2
 		a = 1
 		b = 1
-		outParams.write(str(i)+','+str(m)+','+str(n1)+','+str(n2)+','+str(n3)+','+str(a)+','+str(b)+','+str(blur_factor)+'\n')
-		# get mesh
-		if do_mesh:
-			X, Y, Z, triIndices = super_formula_3D(m, n1, n2, n3, a, b, 100000)
-			verts = np.column_stack((X,Y,Z))
-			shapeMesh = trimesh.Trimesh(vertices=verts, faces=triIndices)
-			shapeMesh.export(meshDir + name + ".stl")
-		# get image
+		outParams.write(str(i)+','+str(m)+','+str(n1)+','+str(n2)+','+str(n3)+','+str(a)+','+str(b)+'\n')
+		# get dt
 		grid = supershape_3D_implicit(unitCubeSize, nGridPointsPerDimension, a, b, m, n1, n2, n3)
 		np_grid = np.float32(grid)
 		itk_im_view = itk.image_view_from_array(np_grid)
 		itk.imwrite(itk_im_view, implicitDir + name + ".nrrd")
 	outParams.close()
-	return implicitDir
+	return get_files(implicitDir)
 
 '''
 get_shapes helper
@@ -104,92 +95,37 @@ def super_formula_2D(m, n1, n2, n3, a, b, theta):
 '''
 Generates segmentation from implicit form by binarizing
 '''
-def get_segmentation(implicitDir, outDir):
+def get_segmentations(implicit_shapes, outDir):
 	segDir = outDir + 'segmentations/'
 	make_dir(segDir)
-	index = 0
-	for file in os.listdir(implicitDir):
+	index = 1
+	for dt in implicit_shapes:
 		print("Generating segmentation " + str(index))
-		name = file.replace('.nrrd', '_seg.nrrd')
-		binarize(implicitDir + file, segDir + name)
+		seg_name = dt.replace('distance_transforms/','segmentations/').replace('.nrrd', '_seg.nrrd')
+		img = sw.Image(dt)
+		img.binarize(0).write(seg_name,0)
 		index += 1
 	return get_files(segDir)
 
 '''
-get_segmentation helper
-'''
-def binarize(image, bin_image):
-	cmd = ["shapeworks", "read-image", "--name", image]
-	cmd.extend(["binarize"])
-	cmd.extend(["write-image", "--name", bin_image, "--compressed", "0"])
-	try:
-		subprocess.check_call(cmd)
-	except:
-		cmd = ["shapeworks", "read-image", "--name", image]
-		cmd.extend(["binarize"])
-		cmd.extend(["write-image", "--name", bin_image])
-		subprocess.check_call(cmd)
-
-'''
-Get distance transforms of binary images
-'''
-def get_distance_transforms(seg_folder, out_dir):
-	segmentations = get_files(seg_folder)
-	mesh_dir = os.path.join(out_dir, 'groom')
-	make_dir(mesh_dir)
-	dt_dir = os.path.join(out_dir, 'distance_transforms')
-	make_dir(dt_dir)
-	antialiasIterations=20
-	smoothingIterations=1
-	alpha=10.5
-	beta=10.0
-	scaling=20.0
-	isoValue=0
-	for i in range(len(segmentations)):
-		print("Generating distance transform " + str(i))
-		inname = segmentations[i]
-		outname = inname.replace(os.path.dirname(inname), mesh_dir)
-		dtnrrdfilename = outname.replace('.nrrd', '.DT.nrrd')
-		tpdtnrrdfilename = outname.replace('.nrrd', '.tpSmoothDT.nrrd')
-		isonrrdfilename = outname.replace('.nrrd', '.ISO.nrrd')
-		finalnm = tpdtnrrdfilename.replace(mesh_dir, dt_dir)
-		cmd = ["shapeworks",
-			   "read-image", "--name", inname,
-			   "extract-label", "--label", str(1.0),
-			   "close-holes",
-			   "write-image", "--name", inname,
-			   "antialias", "--iterations", str(antialiasIterations),
-			   "compute-dt", "--isovalue", str(isoValue),
-			   "write-image", "--name", dtnrrdfilename,
-			   "curvature", "--iterations", str(smoothingIterations),
-			   "write-image", "--name", tpdtnrrdfilename,
-			   "topo-preserving-smooth", "--scaling", str(scaling), "--alpha", str(alpha), "--beta", str(beta),
-			   "write-image", "--name", isonrrdfilename]
-		subprocess.check_call(cmd)
-		shutil.copy(tpdtnrrdfilename, dt_dir)
-	return dt_dir
-
-'''
 Generates image by blurring and adding noise to segmentation
 '''
-def get_image(blur_factor, segDir, outDir, intensityDiff=False):
+def get_images(segs, outDir, blur_factor, foreground_mean, foreground_var, background_mean, background_var):
 	imgDir = outDir + 'images/'
 	make_dir(imgDir)
-	index = 0
-	for file in os.listdir(segDir):
+	index = 1
+	for seg in segs:
 		print("Generating image " + str(index))
-		name = file.replace('_seg.nrrd', '_blur' + str(blur_factor) + '.nrrd')
-		itk_bin = itk.imread(segDir + file, itk.F)
+		name = seg.replace('segmentations/','images/').replace('_seg.nrrd', '_blur' + str(blur_factor) + '.nrrd')
+		itk_bin = itk.imread(seg, itk.F)
 		img_array = itk.array_from_image(itk_bin)
 		img_array = blur(img_array, blur_factor)
-		if intensityDiff:
-			img_array = apply_noise_diff(img_array, 40)
-		else:
-			img_array = apply_noise(img_array, 30)
+		img_array = apply_noise(img_array, foreground_mean, foreground_var, background_mean, background_var)
 		img_array = np.float32(img_array)
 		itk_img_view = itk.image_view_from_array(img_array)
-		itk.imwrite(itk_img_view, imgDir + name)
+		itk.imwrite(itk_img_view, name)
 		index += 1
+	return get_files(imgDir)
 
 '''
 get_image helper
@@ -201,40 +137,17 @@ def blur(img, size):
 '''
 get_image helper
 '''
-def apply_noise(img, var):
-	img = img*80
-	img = img + np.ones(img.shape)*100
-	mean = 0
-	row,col,ch= img.shape
-	sigma = var**0.5
-	gauss = np.random.normal(0,sigma,(row,col,ch))
-	gauss = gauss.reshape(row,col,ch)
-	noisy = img + gauss
-	return noisy
-
-'''
-get_image helper
-'''
-def apply_noise_diff(img, var):
-	img = img*50
-	img = img + np.ones(img.shape)*70
-	mean = 0
-	row,col,ch= img.shape
-	sigma = var**0.5
-	gauss = np.random.normal(0,sigma,(row,col,ch))
-	gauss = gauss.reshape(row,col,ch)
-	noisy = img + gauss
-	return noisy
-
-'''
-Generates shape in implicit form
-Binarizes to make segmentation, blurs and adds noise to make image
-'''
-def generate(m, num_samples, blur_factor, start_id, outDir,nGridPointsPerDimension=200, intensityDiff=False):
-	implicitDir = get_shapes(m, num_samples, blur_factor, start_id, outDir, nGridPointsPerDimension)
-	segDir = get_segmentation(implicitDir, outDir)
-	dtDir = get_distance_transforms(segDir, outDir)
-	imgDir = get_image(blur_factor, segDir, outDir,intensityDiff)
+def apply_noise(img, foreground_mean, foreground_var, background_mean, background_var):
+	img = img*(foreground_mean-background_mean)
+	img = img + np.ones(img.shape)*background_mean
+	background_indices = np.where(img < 0.5)
+	foreground_indices = np.where(img > 0.5)
+	foreground_noise = np.random.normal(0, foreground_var**0.5, img.shape)
+	foreground_noise[background_indices] = 0
+	background_noise = np.random.normal(0, background_var**0.5, img.shape)
+	background_noise[foreground_indices] = 0
+	noisy_img = img + foreground_noise + background_noise
+	return noisy_img
 
 '''
 Make folder
