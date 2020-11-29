@@ -1,8 +1,8 @@
-import vtk
-import numpy as np
+from ShapeCohortGen import Supershapes
 
 class CohortGenerator():
-	def __init__(self):
+	def __init__(self,out_dir):
+		self.out_dir = out_dir
 		self.meshes = []
 		self.segs = []
 		self.images = []
@@ -10,14 +10,12 @@ class CohortGenerator():
 		pass
 	def get_images(self):
 		pass
-	def write_cohort(self, wrtie_dir):
-		print("Writing cohort to " + str(wrtie_dir) + ".")
 	def get_cohort_csv():
 		pass
 
 class EllipsoidCohortGenerator(CohortGenerator):
-	def __init__(self):
-		super().__init__()
+	def __init__(self,out_dir):
+		super().__init__(out_dir)
 	def generate(self, num_samples=3):
 		for index in range(num_samples):
 			self.meshes.append(self.generate_mesh())
@@ -25,9 +23,11 @@ class EllipsoidCohortGenerator(CohortGenerator):
 		pass
 
 class SupershapesCohortGenerator(CohortGenerator):
-	def __init__(self):
-		super().__init__()
-	def generate(self, num_samples=3):
-		pass
-	def generate_mesh(self, n1, n2):
-		pass
+	def __init__(self, out_dir):
+		super().__init__(out_dir)
+	def generate(self, num_samples=3, m=3, size=98, start_id=0, blur_factor=1):
+		implicit_dir = Supershapes.get_shapes(m, num_samples, blur_factor, start_id, self.out_dir, size)
+		self.segs = Supershapes.get_segmentation(implicit_dir, self.out_dir)
+		# dtDir = get_distance_transforms(segDir, outDir)
+		# imgDir = get_image(blur_factor, segDir, outDir,intensityDiff)
+		return self.segs
