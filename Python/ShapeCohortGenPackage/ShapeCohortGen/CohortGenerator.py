@@ -1,4 +1,4 @@
-from ShapeCohortGen import Supershapes
+from ShapeCohortGen import Supershapes,Ellipsoids
 
 class CohortGenerator():
 	def __init__(self,out_dir):
@@ -26,7 +26,7 @@ class EllipsoidCohortGenerator(CohortGenerator):
 	def __init__(self,out_dir):
 		super().__init__(out_dir)
 	def generate(self, num_samples=3):
-		pass
+		Ellipsoids.get_ellispoids(num_samples,self.out_dir)
 
 class SupershapesCohortGenerator(CohortGenerator):
 	def __init__(self, out_dir):
