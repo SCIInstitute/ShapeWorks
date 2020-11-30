@@ -11,7 +11,7 @@ import matplotlib as plt
 import scipy
 from scipy.stats import chi2
 import shapeworks as sw
-
+from CohortGenUtils import *
 '''
 Generates super shapes and saves implicit and mesh form
 Mesh is not in aligment with implicit and should just be used for visualization
@@ -149,21 +149,4 @@ def apply_noise(img, foreground_mean, foreground_var, background_mean, backgroun
 	noisy_img = img + foreground_noise + background_noise
 	return noisy_img
 
-'''
-Make folder
-'''
-def make_dir(dirPath):
-    if not os.path.exists(dirPath):
-        os.makedirs(dirPath)
 
-'''
-Get list of full paths for files in dir
-'''
-def get_files(folder):
-	file_list = []
-	for file in os.listdir(folder):
-		file_path = folder + file
-		file_path = file_path.replace(" ","")
-		file_list.append(file_path)
-	file_list = sorted(file_list)
-	return file_list

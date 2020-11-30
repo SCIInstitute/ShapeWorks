@@ -1,6 +1,6 @@
 import vtk
 import numpy as np
-
+from CohortGenUtils import *
 def addEllipsoid(center, radii, rotation, resolution=24):
 
 	"""
@@ -26,7 +26,9 @@ def addEllipsoid(center, radii, rotation, resolution=24):
 	transformFilter.Update()
 	return transformFilter
 
-def generate_ellipsoids(filename,out_dir):
+def generate_ellipsoids(filename,meshDir):
+	vtkFileName = meshDir+"ellipsoid_"+filename+".vtk"
+	plyFileName = meshDir+"ellipsoid_"+filename+".ply"
 	center_loc = list(np.random.randint(low = 0,high=50,size=3))
 	x_radius = np.random.randint(low =15,high=25,size =1)
 	y_radius = np.random.randint(low =5,high=15,size =1)
@@ -36,16 +38,22 @@ def generate_ellipsoids(filename,out_dir):
 	ellipsoid = addEllipsoid(center_loc,radii,0)
 	vtk_writer = vtk.vtkPolyDataWriter()
 	vtk_writer.SetInputData(ellipsoid.GetOutput())
-	vtk_writer.SetFileName(out_dir+"ellipsoid_"+filename+".vtk")
+	vtk_writer.SetFileName(vtkFileName)
 	vtk_writer.Update()
 
 	ply_writer = vtk.vtkPLYWriter()
 	ply_writer.SetInputData(ellipsoid.GetOutput())
-	ply_writer.SetFileName(out_dir+"ellipsoid_"+filename+".ply")
+	ply_writer.SetFileName(plyFileName)
 	ply_writer.Update()
+	
 
-
-def get_ellispoids(num_samples,out_dir):
+def get_meshes(num_samples,out_dir):
+	meshDir = out_dir + "meshes/"
+	make_dir(meshDir)
 	for i in range(num_samples):
 		filename = str(i).zfill(2)
-		generate_ellipsoids(filename,out_dir)
+		generate_ellipsoids(filename,meshDir)
+	return get_files(meshDir)
+
+
+
