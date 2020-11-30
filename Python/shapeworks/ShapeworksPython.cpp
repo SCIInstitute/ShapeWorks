@@ -31,7 +31,11 @@ PYBIND11_MODULE(shapeworks, m)
   // Shapeworks Globals
   py::class_<Coord>(m, "Coord")
   .def(py::init<>())
-  .def(py::init<unsigned, unsigned, unsigned>())
+  .def(py::init<long, long, long>())
+  .def(py::init([](std::vector<long>& c) {
+    assert(c.size() == 3);
+    return Coord({c[0], c[1], c[2]});
+  }))
   .def("__repr__", [](const Coord& c) {
     std::ostringstream ss;
     ss << c;
@@ -175,7 +179,7 @@ PYBIND11_MODULE(shapeworks, m)
     ss << m;
     return ss.str();
   })
-  .def("__getitem__", [](const Matrix44& m, size_t r, size_t c) { return m[r, c]; })
+  .def("__getitem__", [](const Matrix44& m, size_t r, size_t c) { return m[r][c]; })
   .def("__setitem__", [](Matrix44& m, size_t r, size_t c, int val) { m[r][c] = val; })
   .def("__add__", [](const Matrix44& m1, const Matrix44& m2) { return m1 + m2; })
   .def("__sub__", [](const Matrix44& m1, const Matrix44& m2) { return m1 - m2; })
@@ -284,6 +288,18 @@ PYBIND11_MODULE(shapeworks, m)
   py::class_<Image>(m, "Image")
   .def(py::init<const std::string &>()) // can the argument for init be named (it's filename in this case)
   .def(py::init<Image::ImageType::Pointer>())
+  .def(py::init([](py::array_t<typename Image::ImageType::Pointer::ObjectType::PixelType> np_array) { // FIX THIS
+    using ImporterType = itk::ImportImageFilter<Image::PixelType, 3>;
+    auto importer = ImporterType::New();
+    auto info = np_array.request();
+    const bool importImageFilterWillOwnTheBuffer = false;
+    const auto data = static_cast<typename Image::ImageType::Pointer::ObjectType::PixelType *>(info.ptr);
+    const auto numberOfPixels = np_array.size();
+    // std::copy(info.shape.begin(), info.shape.end(), size.begin());
+    importer->SetImportPointer(data, numberOfPixels, importImageFilterWillOwnTheBuffer);
+    importer->Update();
+    return Image(importer->GetOutput());
+  }))
   // .def(py::init<Image &&>())
   .def(py::init<const Image &>())
   .def("__set__",               py::overload_cast<const Image&>(&Image::operator=))
@@ -342,7 +358,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("coordsys",              &Image::coordsys, "return coordinate system in which this image lives in physical space")
   .def("centerOfMass",          &Image::centerOfMass, "returns average physical coordinate of pixels in range (minval, maxval]", "minVal"_a=0.0, "maxVal"_a=1.0)
   .def("boundingBox",           &Image::boundingBox, "computes the logical coordinates of the largest region of data <= the given isoValue", "isovalue"_a=1.0)
-  .def("logicalToPhysical",     &Image::logicalToPhysical, "converts from pixel coordinates to physical space", "v"_a)
+  .def("logicalToPhysical", [](Image& image, std::vector<long>& c) { return image.logicalToPhysical(Coord({c[0], c[1], c[2]})); })
   .def("physicalToLogical",     &Image::physicalToLogical, "converts from a physical coordinate to a logical coordinate", "p"_a)
   .def("compare",               &Image::compare, "compares two images", "other"_a, "verifyall"_a=true, "tolerance"_a=0.0, "precision"_a=1e-12)
   .def_static("getPolyData",    &Image::getPolyData, "creates a vtkPolyData for the given image", "image"_a, "isoValue"_a=0.0)
@@ -352,29 +368,6 @@ PYBIND11_MODULE(shapeworks, m)
     const auto size = img->GetLargestPossibleRegion().GetSize();
     const auto shape = std::vector<size_t>{size[2], size[1], size[0]};
     return py::array(py::dtype::of<typename Image::ImageType::Pointer::ObjectType::PixelType>(), shape, img->GetBufferPointer());
-  })
-  .def("toImage", [](const Image &image, py::array_t<typename Image::ImageType::Pointer::ObjectType::PixelType> np_array) {
-    Image::ImageType::Pointer img = image.getITKImage();
-    using ImporterType = itk::ImportImageFilter<Image::PixelType, 3>;
-    auto importer = ImporterType::New();
-
-    auto info = np_array.request();
-    auto region = img->GetLargestPossibleRegion();
-    auto size = region.GetSize();
-    const bool importImageFilterWillOwnTheBuffer = false;
-    const auto data = static_cast<typename Image::ImageType::Pointer::ObjectType::PixelType *>(info.ptr);
-    const auto numberOfPixels = np_array.size();
-    std::copy(info.shape.begin(), info.shape.end(), size.begin());
-
-    region.SetSize(size);
-    importer->SetRegion(region);
-    importer->SetOrigin(img->GetOrigin());
-    importer->SetSpacing(img->GetSpacing());
-    importer->SetDirection(img->GetDirection());
-    importer->SetImportPointer(data, numberOfPixels, importImageFilterWillOwnTheBuffer);
-    importer->Update();
-
-    return Image(importer->GetOutput());
   })
   ;
 
