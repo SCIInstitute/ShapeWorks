@@ -25,7 +25,10 @@ target_link_libraries(shapeworks_exe
   Analyze
   Particles
   ${ITK_LIBRARIES}
+  OptimizeLibraries
   )
+
+message(STATUS "opt libs ${OPTIMIZE_LIBRARIES}")
 
 # Install
 set_target_properties(shapeworks_exe PROPERTIES

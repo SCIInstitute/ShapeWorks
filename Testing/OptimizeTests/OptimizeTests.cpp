@@ -290,3 +290,20 @@ TEST(OptimizeTests, sphere_constraint_test) {
   ASSERT_GT(values[values.size() - 1], 2500);
   ASSERT_LT(values[values.size() - 2], 150);
 }
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, embedded_python_test) {
+  pythonEnvSetup();
+
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/simple");
+  chdir(test_location.c_str());
+
+  // run with parameter file
+  std::string paramfile = std::string("python_embedded.xml");
+  Optimize app;
+  OptimizeParameterFile param;
+  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
+  bool result = app.Run();
+
+  ASSERT_TRUE(result);
+}

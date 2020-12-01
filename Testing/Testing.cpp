@@ -2,6 +2,24 @@
 
 #include "Testing.h"
 
+#ifdef _WIN32
+static std::string find_in_path(std::string file) {
+  std::stringstream path(getenv("PATH"));
+  while (! path.eof()) {
+    std::string test;
+    struct stat info;
+    getline(path, test, ';');
+    std::string base = test;
+    test.append("/");
+    test.append(file);
+    if (stat(test.c_str(), &info) == 0) {
+      return base;
+    }
+  }
+  return "";
+}
+#endif
+
 /// set necessary env vars for running shapeworks executable and using python api
 // TODO: use googletest's setup/teardown: https://github.com/google/googletest/blob/master/googletest/docs/advanced.md
 void shapeworksEnvSetup()
@@ -31,6 +49,13 @@ void shapeworksEnvSetup()
   pythonpath += (curr_pythonpath ? curr_pythonpath : "");
   std::cout << "pythonpath: " << pythonpath << std::endl;
   _putenv_s("PYTHONPATH", pythonpath.c_str());
+
+  std::string found_path = find_in_path("python.exe");
+  if (found_path != "") {
+     std::cerr << "python.exe found in: " << found_path << "\n";
+     _putenv_s("PYTHONHOME", found_path.c_str());
+  }
+
 #elif __linux__
   auto path(std::string(BUILD_DIR) + "/bin" + ":"
             + std::string(BUILD_DIR) + "/lib" + ":"
