@@ -13,6 +13,8 @@ SET(SHAPEWORKS_PATCH_VERSION 0 CACHE INTERNAL "Patch version number" FORCE)
 SET(SHAPEWORKS_VERSION_STRING "5.6.0-dev")
 
 
+find_package(Python3 3.7 EXACT REQUIRED)
+
 #
 # ShapeWorks options
 #
