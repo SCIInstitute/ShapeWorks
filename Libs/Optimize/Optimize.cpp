@@ -2190,12 +2190,6 @@ MatrixContainer Optimize::GetParticleSystem()
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetPythonFile(std::string filename)
-{
-  this->m_python_filename = filename;
-}
-
-//---------------------------------------------------------------------------
 std::string Optimize::GetCheckpointDir()
 {
   int num_digits = std::to_string(abs(m_total_iterations)).length();
