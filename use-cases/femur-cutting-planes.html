@@ -253,7 +253,7 @@
 </div>
 <p>To run the use case, run <code>RunUseCase.py</code> (in <code>Examples/Python/</code>) with proper tags. The tags control the type of input data and the optimization method. See <a href="use-cases.html#running-use-case">Getting Started with Use Cases</a> for the full list of tags.</p>
 <ul>
-<li><code>--start_with_prepped_data</code>: to run the optimization on previously processed/groomed data.</li>
+<li><code>--skip_grooming</code>: to run the optimization on previously processed/groomed data.</li>
 <li><code>--interactive</code>: This tag is used to allow you to interactively select the cutting plane to be used for constraining particle distribution. If this tag is not used, the pre-defined cutting plane is used to clip the given meshes.</li>
 </ul>
 <p>To run the full pipeline with multi-scale and the pre-defined cutting plane:</p>
@@ -267,11 +267,11 @@ $ python RunUseCase.py --use_case femur_cut
 <li>Optimizes particle distribution (i.e., the shape/correspondence model) by calling optimization functions in <code>OptimizeUtils.py</code> (in <code>Examples/Python/</code>). See <a href="#optimizing-shape-model">Optimizing Shape Model</a> for details about algorithmic parameters for optimizing the shape model.</li>
 <li>Launches ShapeWorksStudio to visualize the use case results (i.e., the optimized shape model and the groomed data) by calling functions in <code>AnalyzeUtils.py</code> (in <code>Examples/Python/</code>).</li>
 </ul>
-<p>If you wish to start with the optimization step using previously groomed data, add <code>--start_with_prepped_data</code> tag.</p>
-<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case femur_cut --start_with_prepped_data
+<p>If you wish to start with the optimization step using previously groomed data, add <code>--skip_grooming</code> tag.</p>
+<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case femur_cut --skip_grooming
 </code></pre></div>
-<p>To groom both the meshes and corresponding images, use <code>--start_with_image_and_segmentation_data</code> tag. The image origin, size, and spacing will be used in mesh rasterization. </p>
-<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case femur_cut --start_with_image_and_segmentation_data
+<p>To groom both the meshes and their corresponding images, use <code>--groom_images</code> tag. The image origin, size, and spacing will be used in mesh rasterization. </p>
+<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case femur_cut --groom_images
 </code></pre></div>
 <p>If this tag is not used, grooming will be done on meshes only. The origin and size will be inferred from the meshes for rasterization, and isotropic spacing will be used unless the user specifies otherwise.</p>
 <h2 id="grooming-data">Grooming Data</h2>

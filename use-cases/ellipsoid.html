@@ -244,7 +244,7 @@
 <h2 id="running-the-use-case">Running the Use Case</h2>
 <p>To run the use case, run <code>RunUseCase.py</code> (in <code>Examples/Python/</code>) with proper tags. The tags control the type of input data and the optimization method. See <a href="use-cases.html#running-use-case">Getting Started with Use Cases</a> for the full list of tags.</p>
 <ul>
-<li><code>--start_with_prepped_data</code>: to run the optimization on previously processed/groomed data</li>
+<li><code>--skip_grooming</code>: to run the optimization on previously processed/groomed data</li>
 <li><code>--use_single_scale</code>: to use the single-scale optimization. Default is multi-scale optimization</li>
 </ul>
 <p>To run the full pipeline with multi-scale:</p>
@@ -258,8 +258,8 @@ $python RunUseCase.py --use_case ellipsoid
 <li>Optimizes particle distribution (i.e., the shape/correspondence model) by calling optimization functions in <code>OptimizeUtils.py</code> (in <code>Examples/Python/</code>). See <a href="#optimizing-shape-model">Optimizing Shape Model</a> for details about algorithmic parameters for optimizing the shape model.</li>
 <li>Launches ShapeWorksStudio to visualize the use case results (i.e., optimized shape model and the groomed data) by calling functions in <code>AnalyzeUtils.py</code> (in <code>Examples/Python/</code>).</li>
 </ul>
-<p>If you wish to start with the optimization step using a previously groomed data, add <code>--start_with_prepped_data</code> tag.</p>
-<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case ellipsoid --start_with_prepped_data
+<p>If you wish to start with the optimization step using a previously groomed data, add <code>--skip_grooming</code> tag.</p>
+<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case ellipsoid --skip_grooming
 </code></pre></div>
 <h2 id="grooming-data">Grooming Data</h2>
 <p>The following preprocessing steps are only performed when you start with <em>unprepped</em> data, i.e., the tag <code>--start_with_prepped_data</code> is not used. For a description of the grooming tools and parameters, see: <a href="../workflow/groom.html">How to Groom Your Dataset?</a>.</p>

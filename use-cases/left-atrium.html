@@ -265,9 +265,9 @@
 </div>
 <p>To run the use case, run <code>RunUseCase.py</code> (in <code>Examples/Python/</code>) with proper tags. The tags control the type of input data and the optimization method. See <a href="use-cases.html#running-use-case">Getting Started with Use Cases</a> for the full list of tags.</p>
 <ul>
-<li><code>--start_with_image_and_segmentation_data</code>: to groom both raw images and segmentations using the segmentations to find the grooming parameters (e.g., bounding box, reference shape for alignment). The default is grooming only segmentations</li>
+<li><code>--groom_images</code>: to groom both raw images and segmentations using the segmentations to find the grooming parameters (e.g., bounding box, reference shape for alignment). The default is grooming only segmentations</li>
 <li><code>--use_single_scale</code>: to use the single-scale optimization. Default is multi-scale optimization</li>
-<li><code>--start_with_prepped_data</code>: to run the optimization on previously processed/groomed data</li>
+<li><code>--skip_grooming</code>: to run the optimization on previously processed/groomed data</li>
 </ul>
 <p>To run the full pipeline with multi-scale:</p>
 <div class="highlight"><pre><span></span><code>$ cd /path/to/shapeworks/Examples/Python
@@ -280,8 +280,8 @@ $python RunUseCase.py --use_case left_atrium
 <li>Optimizes particle distribution (i.e., the shape/correspondence model) by calling optimization functions in <code>OptimizeUtils.py</code> (in <code>Examples/Python/</code>). See <a href="#optimizing-shape-model">Optimizing Shape Model</a> for details about algorithmic parameters for optimizing the shape model.</li>
 <li>Launches ShapeWorksStudio to visualize the use case results (i.e., optimized shape model and the groomed data) by calling functions in <code>AnalyzeUtils.py</code> (in <code>Examples/Python/</code>).</li>
 </ul>
-<p>If you wish to start with the optimization step using a previously groomed data, add <code>--start_with_prepped_data</code> tag.</p>
-<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case left_atrium --start_with_prepped_data
+<p>If you wish to start with the optimization step using a previously groomed data, add <code>--skip_grooming</code> tag.</p>
+<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case left_atrium --skip_grooming
 </code></pre></div>
 <h2 id="grooming-data">Grooming Data</h2>
 <p>The grooming stage entails rigid transformations to align samples for groupwise modeling and analysis. It also changes the origin, voxel size, image size, orientation, etc. of the shape data. Imaging data (CT/MRI) soon becomes out of alignment and cannot be tied to the resulting shape models. Although we do not need the raw images for the shape model optimization, carrying over images. However, the grooming stage enables streamlined construction of a correspondence model of surface geometry that simultaneously map imaging data and physical properties (e.g., functional measurements, cortical thickness, cartilage thickness, etc.) to each correspondence point. </p>

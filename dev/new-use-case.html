@@ -244,6 +244,8 @@
 <ul>
 <li>Add <code>&lt;use-case-name&gt;.py</code> python script to <code>Examples/Python/</code>, where the <code>&lt;use-case-name&gt;</code> is a descriptive name for the use case, typically associated with the class of shapes to be modeled (e.g., anatomy name)</li>
 <li>Update <code>Examples/Python/RunUseCase.py</code> to add the new use case to the list of cases. Look for the line <code>parser.add_argument("--use_case" ...)</code>. Make sure to use the <code>&lt;use-case-name&gt;</code> to the use case list.</li>
+<li>Each use case needs to include the option to run a tiny test, which typically runs on only the first three shapes. </li>
+<li>Each use case needs to have the option to run on a representative subsample of the dataset of any size. This subsample is selected via clustering on the shapes and selecting one shape from each cluster. </li>
 </ul>
 <h2 id="use-case-dataset">Use case dataset</h2>
 <p>To add the dataset associated with the new use case:</p>

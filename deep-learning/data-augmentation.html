@@ -275,16 +275,17 @@
 <p>To run the complete data augmentation process as detailed in <a href="#data-augmentation-steps">Data Augmentation Steps</a>, add the following to your Python code.</p>
 <div class="highlight"><pre><span></span><code><span class="n">DataAugmentationUtils</span><span class="o">.</span><span class="n">runDataAugmentation</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">img_list</span><span class="p">,</span> 
                                           <span class="n">point_list</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">,</span> 
-                                          <span class="n">num_dim</span><span class="p">,</span> <span class="n">sampler_type</span><span class="p">,</span> 
-                                          <span class="n">mixture_num</span><span class="p">)</span>
+                                          <span class="n">num_dim</span><span class="p">,</span> <span class="n">percent_variability</span><span class="p">,</span> 
+                                          <span class="n">sampler_type</span><span class="p">,</span> <span class="n">mixture_num</span><span class="p">)</span>
 </code></pre></div>
 <p><strong>Input arguments:</strong></p>
 <ul>
 <li><code>out_dir</code>: Path to the directory where augmented data will be stored</li>
 <li><code>img_list</code>: List of paths to images of the original dataset.</li>
 <li><code>point_list</code>: List of paths to <code>.particles</code> files of the original dataset. Note, this list should be ordered in correspondence with the <code>img_list</code>.</li>
-<li><code>num_dim</code>: The number of dimensions to reduce to in PCA embedding. If zero or not specified, <code>num_dim</code> will be automatically selected to preserve 95% of the population variation.</li>
-<li><code>sampler_type</code>: The type of parametric distribution to fit and sample from. Options: <code>Gaussian</code>, <code>mixture</code>, or <code>KDE</code>. Default: <code>KDE</code>.</li>
+<li><code>num_dim</code>: The number of dimensions to reduce to in PCA embedding. If zero or not specified, the percent_variability option is used to select the numnber of dimensions.</li>
+<li><code>percent_variability</code>: The proportion of variability in the data to be preserved in embedding. Used if <code>num_dim</code> is zero or not specified. Default value is 0.95 which preserves 95% of the varibaility in the data.</li>
+<li><code>sampler_type</code>: The type of parametric distribution to fit and sample from. Options: <code>gaussian</code>, <code>mixture</code>, or <code>kde</code>. Default: <code>kde</code>.</li>
 <li><code>mixture_num</code>: Only necessary if <code>sampler_type</code> is <code>mixture</code>. The number of clusters (i.e., mixture components) to be used in fitting a mixture model. If zero or not specified, the optimal number of clusters will be automatically determined using the <a href="https://en.wikipedia.org/wiki/Elbow_method_(clustering)">elbow method</a>.</li>
 </ul>
 <h3 id="visualizing-data-augmentation">Visualizing Data Augmentation</h3>
