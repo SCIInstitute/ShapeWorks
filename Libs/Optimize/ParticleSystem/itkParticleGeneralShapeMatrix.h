@@ -140,7 +140,7 @@ public:
         }
         if (m_use_normals[dom])
         {
-            vnl_vector_fixed<float, DIMENSION> pN = ps->GetDomain(d)->SampleNormalAtPoint(posLocal);
+            vnl_vector_fixed<float, DIMENSION> pN = ps->GetDomain(d)->SampleNormalAtPoint(posLocal, idx);
             typename ParticleSystemType::VectorType tmp;
             tmp[0] = pN[0]; tmp[1] = pN[1]; tmp[2] = pN[2];
             tmp = ps->TransformVector(tmp, ps->GetTransform(d) * ps->GetPrefixTransform(d));

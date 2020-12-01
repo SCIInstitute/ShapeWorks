@@ -185,20 +185,20 @@ public:
       Neighborhood objects. FindTransformedNeighborhoodPoints returns the list
       with all points transformed by the transform associated with the given
       domain.*/
-  inline PointVectorType FindNeighborhoodPoints(const PointType &p,
+  inline PointVectorType FindNeighborhoodPoints(const PointType &p, int idx,
                                                 double r, unsigned int d = 0) const
-  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(p, r); }
-  inline PointVectorType FindNeighborhoodPoints(const PointType &p,
+  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(p, idx, r); }
+  inline PointVectorType FindNeighborhoodPoints(const PointType &p, int idx,
                                                 std::vector<double> &w,
                                                 double r, unsigned int d = 0) const
-  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(p,w,r); }
+  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(p,idx,w,r); }
   inline PointVectorType FindNeighborhoodPoints(unsigned int idx,
                                                 double r, unsigned int d = 0) const
-  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(this->GetPosition(idx,d), r); }
+  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(this->GetPosition(idx,d),idx, r); }
   inline PointVectorType FindNeighborhoodPoints(unsigned int idx,
                                                 std::vector<double> &w,
                                                 double r, unsigned int d = 0) const
-  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(this->GetPosition(idx,d),w, r); }
+  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(this->GetPosition(idx,d),idx,w, r); }
 
   //  inline int FindNeighborhoodPoints(const PointType &p,  double r, PointVectorType &vec, unsigned int d = 0) const
   //  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(p, r, vec); }

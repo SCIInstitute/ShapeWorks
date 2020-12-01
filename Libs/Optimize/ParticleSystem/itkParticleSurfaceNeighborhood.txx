@@ -21,11 +21,11 @@ namespace itk
 template <class TImage>
 typename ParticleSurfaceNeighborhood<TImage>::PointVectorType
 ParticleSurfaceNeighborhood<TImage>
-::FindNeighborhoodPoints(const PointType &center,
+::FindNeighborhoodPoints(const PointType &center, int idx,
                          std::vector<double> &weights, double radius) const
 {
   const auto *domain = this->GetDomain();
-  GradientVectorType posnormal = domain->SampleNormalAtPoint(center);
+  GradientVectorType posnormal = domain->SampleNormalAtPoint(center, idx);
   //  double posnormalmag = posnormal.magnitude();
   weights.clear();
 
@@ -59,7 +59,7 @@ ParticleSurfaceNeighborhood<TImage>
     
     if (distance < radius && distance > 0.0 )
       {
-      GradientVectorType pn = domain->SampleNormalAtPoint((*it)->Point);
+      GradientVectorType pn = domain->SampleNormalAtPoint((*it)->Point, (*it)->Index);
       double cosine   = dot_product(posnormal,pn); // normals already normalized
       // double cosine = proj / (posnormalmag * pn.magnitude() + 1.0e-6);
 
