@@ -10,12 +10,10 @@ endif()
 set(LIBIGL_DIR "$ENV{LIBIGL_DIR}" CACHE PATH "LIBIGL root directory.")
 message("Looking for LIBIGL in ${LIBIGL_DIR}")
 
-find_path(LIBIGL_INCLUDE_DIR libigl/include/igl/readOBJ.h
-    PATHS
-        ${CMAKE_SOURCE_DIR}
-        /usr
-        /usr/local
-        /usr/local/igl/libigl
+find_path(LIBIGL_INCLUDE_DIR
+  NAMES libigl/include/igl/readOBJ.h
+  HINTS ${CMAKE_SOURCE_DIR}
+  HINTS ${LIBIGL_DIR}
 )
 
 set(LIBIGL_INCLUDE_DIR ${LIBIGL_INCLUDE_DIR}/libigl/cmake)
