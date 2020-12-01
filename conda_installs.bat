@@ -3,6 +3,7 @@ REM update anaconda
 call conda config --add channels anaconda
 call conda config --add channels conda-forge
 
+call conda activate base
 call conda update --yes -n base -c defaults conda
 call conda update --yes --all
 

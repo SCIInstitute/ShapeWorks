@@ -57,6 +57,7 @@ function install_conda() {
   conda config --add channels conda-forge
   
   # update anaconda
+  conda activate base
   if ! conda update --yes -n base conda; then return 1; fi
   if ! conda update --yes --all; then return 1; fi
 
