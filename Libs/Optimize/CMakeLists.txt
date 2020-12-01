@@ -18,14 +18,17 @@ target_link_libraries(Optimize
   tinyxml
   Utils
   Particles
+  #pybind11::embed
   ${ITK_LIBRARIES}
   ${VTK_LIBRARIES}
   vgl
   vgl_algo
+  ${PYTHON_LIBRARIES}
   )
 
 target_include_directories(Optimize PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/ParticleSystem>
+  $<BUILD_INTERFACE:${PYTHON_INCLUDE_DIRS}>
   $<INSTALL_INTERFACE:include>
   )

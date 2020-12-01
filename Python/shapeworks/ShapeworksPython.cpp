@@ -460,6 +460,11 @@ PYBIND11_MODULE(shapeworks, m)
 
   // Optimize (TODO)
   py::class_<Optimize>(m, "Optimize")
+    .def(py::init<>())
+    .def("LoadParameterFile", &Optimize::LoadParameterFile)
+    .def("Run",&Optimize::Run)
+    .def("SetIterationCallbackFunction", &Optimize::SetIterationCallbackFunction)
+    .def("GetParticleSystem", &Optimize::GetParticleSystem)
   ;
 
 }
