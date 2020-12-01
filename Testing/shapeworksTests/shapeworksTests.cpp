@@ -2,6 +2,7 @@
 
 //---------------------------------------------------------------------------
 // only need to run shapeworksEnvSetup once or it continuously appends to paths
+// FIXME: This is a problem if you only need to execute a single test (same problem in PythonTests)
 TEST(shapeworksTests, setup)
 {
   shapeworksEnvSetup();
