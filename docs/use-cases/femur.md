@@ -47,7 +47,7 @@ If you wish to start with the optimization step using previously groomed data, a
 $ python RunUseCase.py --use_case femur --skip_grooming
 ```
 
-To groom both the meshes and corresponding images, use `--groom_images` tag. The image origin, size, and spacing will be used in mesh rasterization. 
+To groom both the meshes and their corresponding images, use `--groom_images` tag. The image origin, size, and spacing will be used in mesh rasterization. 
 
 ```
 $ python RunUseCase.py --use_case femur --groom_images
