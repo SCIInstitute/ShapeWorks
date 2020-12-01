@@ -288,14 +288,13 @@ PYBIND11_MODULE(shapeworks, m)
   py::class_<Image>(m, "Image")
   .def(py::init<const std::string &>()) // can the argument for init be named (it's filename in this case)
   .def(py::init<Image::ImageType::Pointer>())
-  .def(py::init([](py::array_t<typename Image::ImageType::Pointer::ObjectType::PixelType> np_array) { // FIX THIS
+  .def(py::init([](py::array_t<typename Image::ImageType::Pointer::ObjectType::PixelType> np_array) {
     using ImporterType = itk::ImportImageFilter<Image::PixelType, 3>;
     auto importer = ImporterType::New();
     auto info = np_array.request();
     const bool importImageFilterWillOwnTheBuffer = false;
     const auto data = static_cast<typename Image::ImageType::Pointer::ObjectType::PixelType *>(info.ptr);
     const auto numberOfPixels = np_array.size();
-    // std::copy(info.shape.begin(), info.shape.end(), size.begin());
     importer->SetImportPointer(data, numberOfPixels, importImageFilterWillOwnTheBuffer);
     importer->Update();
     return Image(importer->GetOutput());
