@@ -90,7 +90,7 @@ $ python RunUseCase.py --use_case [insert name of use case here] --interactive
 $ python RunUseCase.py --use_case [insert name of use case here] --skip_grooming
 ```
            
-* `--groom_images`: Some use cases can be run on just segmentations or on segmentations plus the corresponding imaging data. To carry the images through the grooming process with the segmentation, the `--groom_images` tag must be used. Note if this tag is used with a use case that does not have images, a warning will beprinted and the tag will be ignored.
+* `--groom_images`: Some use cases can be run on just segmentations or on segmentations plus the corresponding imaging data. To carry the images through the grooming process with the segmentation, the `--groom_images` tag must be used. Note if this tag is used with a use case that does not have images, a warning will be printed and the tag will be ignored.
 
 ```
 $ python RunUseCase.py --use_case [insert name of use case here] --groom_images
