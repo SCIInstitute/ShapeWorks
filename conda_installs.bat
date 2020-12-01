@@ -42,6 +42,22 @@ call pip install Python/DocumentationUtilsPackage
 call pip install Python/DataAugmentationUtilsPackage
 call pip install Python/DeepSSMUtilsPackage
   
+REM installs for jupyter notebooks
+call pip install nbstripout
+call pip install pyvista
+call pip install ipyvtk_simple
+call pip install ipywidgets
+call pip install mkdocs-jupyter
+
+REM for spell check markdown cells in jupyter notebooks
+call pip install jupyter_contrib_nbextensions
+call jupyter contrib nbextension install --user
+call jupyter nbextension enable spellchecker/main
+
+REM installing nbstripout to strip out notebooks cell outputs before committing 
+call nbstripout --install
+call nbstripout --install --attributes .gitattributes
+
 call conda info
 
 
