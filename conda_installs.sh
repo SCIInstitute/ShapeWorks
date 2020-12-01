@@ -111,6 +111,7 @@ function install_conda() {
   if ! pip install grip==4.5.2;                         then return 1; fi
   if ! pip install matplotlib==3.3.2;                   then return 1; fi
   if ! pip install itk==5.0.1;                          then return 1; fi
+  if ! pip install itkwidgets==0.32.0;                  then return 1; fi
   if ! pip install bokeh==2.2;                          then return 1; fi
   if ! pip install mdutils==1.3.0;                      then return 1; fi # lib for writing markdown files (auto-documentation)
   if ! pip install mkdocs==1.1.2;                       then return 1; fi # lib for generating documentation from markdown

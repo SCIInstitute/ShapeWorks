@@ -20,9 +20,6 @@
 #include <itkImageRegionIteratorWithIndex.h>
 #include <itkImageToVTKImageFilter.h>
 
-// pybind
-#include <pybind11/embed.h>
-
 // shapeworks
 #include "TriMesh.h"
 #include "ParticleSystem/itkParticleImageDomain.h"
@@ -32,6 +29,9 @@
 #include "OptimizeParameterFile.h"
 
 #include "Optimize.h"
+
+// pybind
+#include <pybind11/embed.h>
 
 namespace py = pybind11;
 
@@ -1024,11 +1024,11 @@ void Optimize::AbortOptimization()
 //---------------------------------------------------------------------------
 void Optimize::IterateCallback(itk::Object*, const itk::EventObject&)
 {
-  this->m_iteration_count++;
-
   if (this->m_iter_callback) {
     this->m_iter_callback();
   }
+
+  this->m_iteration_count++;
 
   if (this->GetShowVisualizer()) {
     this->GetVisualizer().IterationCallback(m_sampler->GetParticleSystem());
@@ -2170,8 +2170,9 @@ bool Optimize::LoadParameterFile(std::string filename)
 }
 
 //---------------------------------------------------------------------------
-Optimize::MatrixType Optimize::GetParticleSystem()
+MatrixContainer Optimize::GetParticleSystem()
 {
+  
   auto shape_matrix = m_sampler->GetGeneralShapeMatrix();
 
   MatrixType matrix;
@@ -2183,7 +2184,9 @@ Optimize::MatrixType Optimize::GetParticleSystem()
     }
   }
 
-  return matrix;
+  MatrixContainer container;
+  container.matrix_ = matrix;
+  return container;
 }
 
 //---------------------------------------------------------------------------
@@ -2224,4 +2227,9 @@ std::string Optimize::GetCheckpointDir()
   return out_path;
 }
 
+//---------------------------------------------------------------------------
+void Optimize::SetPythonFile(std::string filename)
+{
+  this->m_python_filename = filename;
+}
 }

@@ -25,7 +25,14 @@
 #include "ParticleSystem/MeshWrapper.h"
 #include "ParticleSystem/OptimizationVisualizer.h"
 
+
+
 namespace shapeworks {
+
+class MatrixContainer {
+  public:
+  Eigen::MatrixXd matrix_;
+};
 
 /**
  * \class Optimize
@@ -256,7 +263,7 @@ public:
   { return m_sampler; }
 
   //! Return the particle system as a matrix
-  MatrixType GetParticleSystem();
+  MatrixContainer GetParticleSystem();
 
   //! Set the python file to run at startup
   void SetPythonFile(std::string filename);
