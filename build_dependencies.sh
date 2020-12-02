@@ -326,8 +326,8 @@ verify_qt()
 build_all()
 {
   ## create build and install directories
-  if [[ -z $BUILD_DIR ]];   then BUILD_DIR=${SRC}/dependencies3/build;     fi
-  if [[ -z $INSTALL_DIR ]]; then INSTALL_DIR=${SRC}/dependencies3/install; fi
+  if [[ -z $BUILD_DIR ]];   then BUILD_DIR=${SRC}/dependencies/build;     fi
+  if [[ -z $INSTALL_DIR ]]; then INSTALL_DIR=${SRC}/dependencies/install; fi
   mkdir -p ${BUILD_DIR}
   mkdir -p ${INSTALL_DIR}
 
