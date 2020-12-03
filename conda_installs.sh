@@ -89,7 +89,7 @@ function install_conda() {
     boost=1.72.0 \
     openexr=2.5.3 \
     pybind11=2.5.0 \
-    notebook=6.1.5
+    notebook=6.1.5 
   then return 1; fi
 
   # linux and mac (only) deps
@@ -107,6 +107,7 @@ function install_conda() {
     then return 1; fi
   fi
 
+  if ! pip install trimesh;                             then return 1; fi
   if ! pip install termcolor==1.1.0;                    then return 1; fi
   if ! pip install grip==4.5.2;                         then return 1; fi
   if ! pip install matplotlib==3.3.2;                   then return 1; fi
