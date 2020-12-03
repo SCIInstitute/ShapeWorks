@@ -529,9 +529,9 @@ void TriMeshWrapper::ComputeGradN()
     //TODO Is the convention correct
     //TODO figure out one-liner for this
     for(int j=0; j<n_verts; j++) {
-      grad_normals_[j].set(0, i, GN_pervertex(j, 0));
-      grad_normals_[j].set(1, i, GN_pervertex(j, 1));
-      grad_normals_[j].set(2, i, GN_pervertex(j, 2));
+      grad_normals_[j].set(i, 0, GN_pervertex(j, 0));
+      grad_normals_[j].set(i, 1, GN_pervertex(j, 1));
+      grad_normals_[j].set(i, 2, GN_pervertex(j, 2));
     }
   }
 

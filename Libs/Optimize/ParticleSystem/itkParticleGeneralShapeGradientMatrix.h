@@ -186,9 +186,13 @@ public:
                         tmp(c,vd) = mat3(c,vd);
                 }
 
-                tmp = ps->TransformNormalDerivative(tmp, ps->GetTransform(d) * ps->GetPrefixTransform(d));
+                // std::cout << "Before: \n" << tmp << "\n\n";
+                const auto blah = ps->GetTransform(d) * ps->GetPrefixTransform(d);
+                // std::cout << " blah: \n" << blah << "\n\n";
+                tmp = ps->TransformNormalDerivative(tmp, blah);
+                // std::cout << "After: \n" << tmp << "\n\n";
 
-                for (unsigned int c = s; c < s+VDimension; c++)
+              for (unsigned int c = s; c < s+VDimension; c++)
                 {
                     for (unsigned int vd = 0; vd < VDimension; vd++)
                         this->operator()(c-s+k, vd + 3 * (d / m_DomainsPerShape)) = tmp(c-s, vd)*m_AttributeScales[num+c];

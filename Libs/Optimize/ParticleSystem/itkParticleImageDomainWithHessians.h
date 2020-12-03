@@ -78,9 +78,9 @@ public:
     for(int i=0; i<DIMENSION; i++) {
       auto grad_n = openvdb::tools::BoxSampler::sample(m_VDBGradNorms[i]->tree(), coord);
       grad_n.normalize();
-      hess.set(0, i, grad_n[0]);
-      hess.set(1, i, grad_n[1]);
-      hess.set(2, i, grad_n[2]);
+      hess.set(i, 0, grad_n[0]);
+      hess.set(i, 1, grad_n[1]);
+      hess.set(i, 2, grad_n[2]);
     }
     return hess;
   }
