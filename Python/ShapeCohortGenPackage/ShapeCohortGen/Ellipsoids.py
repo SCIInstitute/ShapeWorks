@@ -1,8 +1,8 @@
 import vtk
 import numpy as np
-from CohortGenUtils import *
-def addEllipsoid(center, radii, rotation, resolution=24):
+from ShapeCohortGen.CohortGenUtils import *
 
+def addEllipsoid(center, radii, rotation, resolution=24):
 	"""
 	Add an ellipsoid centered at [center] with x, y, and z principal axis radii given by
 	radii = [x_scale, y_scale, z_scale]
@@ -47,13 +47,10 @@ def generate_ellipsoids(filename,meshDir):
 	ply_writer.Update()
 	
 
-def get_meshes(num_samples,out_dir):
+def generate(num_samples,out_dir):
 	meshDir = out_dir + "meshes/"
 	make_dir(meshDir)
 	for i in range(num_samples):
 		filename = str(i).zfill(2)
 		generate_ellipsoids(filename,meshDir)
 	return get_files(meshDir)
-
-
-

@@ -1,5 +1,7 @@
 from ShapeCohortGen import CohortGenerator
 from ShapeCohortGen import Supershapes
+from ShapeCohortGen import Ellipsoids
+from ShapeCohortGen import CohortGenUtils
 import os
 
 def EllipsoidCohortGenerator(out_dir=os.getcwd()+'/generated_ellipsoid_cohort/'):
