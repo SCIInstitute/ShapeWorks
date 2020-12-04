@@ -22,6 +22,22 @@ from zipfile import ZipFile
 import subprocess
 import GroomUtils
 
+
+
+
+def dataset_exists_check(use_case):
+    
+    existsFlag = False
+    dataDirectory = "Output/"
+    for filename in os.listdir(dataDirectory):
+        # filename = filename.split("-")[0]
+        if(use_case == filename):
+            existsFlag = True
+    return existsFlag
+            
+
+
+    
 def download_and_unzip_dataset(datasetName, outputDirectory):
     # Check if the unzipped data is present
     if not os.path.exists(outputDirectory + datasetName + '/'):
