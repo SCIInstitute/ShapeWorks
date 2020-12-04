@@ -8,7 +8,7 @@ from ShapeCohortGen.CohortGenUtils import *
 '''
 Generates super shapes and saves mesh form
 '''
-def generate(num_samples, self.out_dir, m, start_id, size):
+def generate(num_samples, out_dir, m, start_id, size):
     # make folders
     implicitDir = outDir + "implicit/"
     make_dir(implicitDir)
