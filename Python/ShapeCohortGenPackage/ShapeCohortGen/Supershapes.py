@@ -10,9 +10,7 @@ Generates super shapes and saves mesh form
 '''
 def generate(num_samples, out_dir, m, start_id, size):
     # make folders
-    implicitDir = outDir + "implicit/"
-    make_dir(implicitDir)
-    meshDir= outDir + "mesh/"
+    meshDir= out_dir + "meshes/"
     make_dir(meshDir)
     # for implicit resolution
     unitCubeSize = 2 
@@ -32,7 +30,7 @@ def generate(num_samples, out_dir, m, start_id, size):
         ply_mesh_file = open(meshDir + name + '.ply', 'wb')
         ply_mesh_file.write(ply_mesh)
         ply_mesh_file.close()
-    return meshDir
+    return get_files(meshDir)
 
 def get_id_str(num):
 	string = str(num)

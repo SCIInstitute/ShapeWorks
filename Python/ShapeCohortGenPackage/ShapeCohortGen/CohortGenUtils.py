@@ -1,17 +1,20 @@
 import os
 import itk
 import numpy as np
+import scipy
 import subprocess
 import shutil
 import sys
 sys.path.append("../../../Examples/Python/")
 import GroomUtils
+
 '''
 Make folder
 '''
 def make_dir(dir_path):
-    if not os.path.exists(dir_path):
-        os.makedirs(dir_path)
+	if os.path.exists(dir_path):
+		shutil.rmtree(dir_path)
+	os.makedirs(dir_path)
 
 '''
 Get list of full paths for files in dir
@@ -24,7 +27,6 @@ def get_files(folder):
 		file_list.append(file_path)
 	file_list = sorted(file_list)
 	return file_list
-
 
 '''
 Get files with specific extensions
@@ -48,19 +50,9 @@ def clean_dir(folder,extension):
 			os.remove(folder+"/"+filename)
 
 '''
-Generates segmentation from meshes by rasterizing
-'''
-def generate_segmentations(meshes, out_dir):
-	se_dDir = out_dir + 'segmentations/'
-	make_dir(segDir)
-	# TODO
-	return get_files(segDir)
-
-
-'''
 Generates image by blurring and adding noise to segmentation
 '''
-def get_images(segs, outDir, blur_factor, foreground_mean, foreground_var, background_mean, background_var):
+def generate_images(segs, outDir, blur_factor, foreground_mean, foreground_var, background_mean, background_var):
 	imgDir = outDir + 'images/'
 	make_dir(imgDir)
 	index = 1
@@ -99,59 +91,52 @@ def apply_noise(img, foreground_mean, foreground_var, background_mean, backgroun
 	noisy_img = img + foreground_noise + background_noise
 	return noisy_img
 
-
 def getMeshInfo(outDir, meshList, spacing):
-    # get meshes in vtk format
-    if(len(meshList)>1):
-    	meshListStr = ''
-    	name = "_"
-    	for mesh in meshList:
-    		meshListStr += mesh + '\n'
-    elif(len(meshList) ==1):
-    	meshListStr = meshList[0]
-    	name = meshList[0].split("/")[1].split(".")[0]
-
-    # Write XML
-    xmlfilename = outDir + "MeshInfo.xml"
-    out_origin = outDir + "origin.txt"
-    out_size = outDir + "size.txt"
-    xml = open(xmlfilename, "a")
-    xml.write("<?xml version=\"1.0\" ?>\n")
-    xml.write("<mesh>\n")
-    xml.write(meshListStr+"\n")
-    xml.write("</mesh>\n")
-    xml.write("<spacing_x>\n" + str(spacing[0]) + "\n</spacing_x>\n")
-    xml.write("<spacing_y>\n" + str(spacing[1]) + "\n</spacing_y>\n")
-    xml.write("<spacing_z>\n" + str(spacing[2]) + "\n</spacing_z>\n")
-    xml.write("<out_origin_filename>\n" + out_origin + "\n</out_origin_filename>\n")
-    xml.write("<out_size_filename>\n" + out_size + "\n</out_size_filename>\n")
-    xml.close()
-    execCommand = ["ComputeRasterizationVolumeOriginAndSize", xmlfilename]
-    
-    subprocess.check_call(execCommand)
-    os.remove(xmlfilename)
-    origin_file = open(out_origin, 'r')
-    origin = np.array(origin_file.read().split()).astype(int)
-    size_file = open(out_size, 'r')
-    size = np.array(size_file.read().split()).astype(int)
-    os.remove(out_origin)
-    os.remove(out_size)
-    return origin, size
+	# Get VTK meshes
+	meshListStr = ''
+	for index in range(len(meshList)):
+		mesh = meshList[index]
+		VTKmesh = mesh.replace("ply" , "vtk")
+		subprocess.check_call(["ply2vtk", mesh, VTKmesh])
+		meshListStr += VTKmesh + '\n'
+	# Write XML
+	xmlfilename = outDir + "MeshInfo.xml"
+	out_origin = outDir + "origin.txt"
+	out_size = outDir + "size.txt"
+	xml = open(xmlfilename, "a")
+	xml.write("<?xml version=\"1.0\" ?>\n")
+	xml.write("<mesh>\n")
+	xml.write(meshListStr+"\n")
+	xml.write("</mesh>\n")
+	xml.write("<spacing_x>\n" + str(spacing[0]) + "\n</spacing_x>\n")
+	xml.write("<spacing_y>\n" + str(spacing[1]) + "\n</spacing_y>\n")
+	xml.write("<spacing_z>\n" + str(spacing[2]) + "\n</spacing_z>\n")
+	xml.write("<out_origin_filename>\n" + out_origin + "\n</out_origin_filename>\n")
+	xml.write("<out_size_filename>\n" + out_size + "\n</out_size_filename>\n")
+	xml.close()
+	# Get origin and size
+	execCommand = ["ComputeRasterizationVolumeOriginAndSize", xmlfilename]
+	subprocess.check_call(execCommand)
+	os.remove(xmlfilename)
+	origin_file = open(out_origin, 'r')
+	origin = np.array(origin_file.read().split()).astype(int)
+	size_file = open(out_size, 'r')
+	size = np.array(size_file.read().split()).astype(int)
+	os.remove(out_origin)
+	os.remove(out_size)
+	return origin, size
 
 
-def generate_segmentations(meshes,out_dir):
-	segDir = out_dir+"/segmentations"
-	meshDir = out_dir+"/meshes"
+def generate_segmentations(meshList,out_dir):
+	segDir = out_dir + "segmentations/"
+	meshDir = out_dir + "meshes/"
+	make_dir(segDir)
 
-	#Get Mesh lists
-	PLYmeshList = get_file_with_ext(meshes,'ply')
-	VTKMeshList = get_file_with_ext(meshes,'vtk')
-	
 	#Spacing should this be user defned ? 
 	spacing = [1,1,2]
 
 	#get the origin and size based on all the meshes in the VTKMeshList
-	origin, size = getMeshInfo(meshDir, VTKMeshList, spacing)
+	origin, size = getMeshInfo(meshDir, meshList, spacing)
 	all_mesh_data = {}
 	all_mesh_data["origin"] = origin
 	all_mesh_data["size"] = size
@@ -159,15 +144,14 @@ def generate_segmentations(meshes,out_dir):
 
 	segList= []
 	meshIndex=0
-
-	numMeshes = len(VTKMeshList)
+	numMeshes = len(meshList)
 	meshIndexArray = np.array(list(range(numMeshes)))
 	#Randomly select 20% meshes for boundary touching samples
 	subSampleSize = int(0.2*numMeshes)
 	randomSamples = np.random.choice(meshIndexArray,subSampleSize,replace=False)
 
 	#Use the PLY format of meshes to generate Segmentation images
-	for mesh in PLYmeshList:
+	for mesh in meshList:
 		mesh_name = os.path.basename(mesh)
 		prefix = mesh_name.split(".")[0] 
 		print("prefix is " , prefix)
@@ -186,7 +170,7 @@ def generate_segmentations(meshes,out_dir):
 		#If the meshIndex is in the randomly selected samples, get the origin and size 
 		# of that mesh so that the segmentation image touch the boundary
 		if(meshIndex in randomSamples):
-			m_origin, m_size = getMeshInfo(meshDir, [VTKMeshList[meshIndex]], spacing)
+			m_origin, m_size = getMeshInfo(meshDir, [meshList[meshIndex]], spacing)
 			m_data = {}
 			m_data["origin"] = m_origin
 			m_data["size"] = m_size 
@@ -229,4 +213,5 @@ def generate_segmentations(meshes,out_dir):
 		segList.append(segFile)
 	# Clean the mesh directory of all the unwanted .nrrd files
 	clean_dir(meshDir,'nrrd')
+	clean_dir(meshDir,'vtk')
 	return segList
