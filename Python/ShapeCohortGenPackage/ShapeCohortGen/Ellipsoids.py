@@ -35,7 +35,8 @@ def generate_ellipsoids(filename,meshDir):
 	z_radius = np.random.randint(low =5,high=15,size =1)
 
 	radii = [x_radius[0],y_radius[0],z_radius[0]]
-	ellipsoid = addEllipsoid(center_loc,radii,0)
+	rotation = np.random.randint(low=0,high=180,size=1)[0]
+	ellipsoid = addEllipsoid(center_loc,radii,rotation)
 	vtk_writer = vtk.vtkPolyDataWriter()
 	vtk_writer.SetInputData(ellipsoid.GetOutput())
 	vtk_writer.SetFileName(vtkFileName)
