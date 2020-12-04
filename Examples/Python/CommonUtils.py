@@ -28,13 +28,35 @@ import GroomUtils
 def dataset_exists_check(use_case):
     
     existsFlag = False
-    dataDirectory = "Output/"
-    for filename in os.listdir(dataDirectory):
-        # filename = filename.split("-")[0]
+    OutputDirectory = "Output/"
+    for filename in os.listdir(OutputDirectory):
         if(use_case == filename):
             existsFlag = True
     return existsFlag
             
+def download_subset(use_case,datasetName,outputDirectory):
+    import DatasetUtils
+    import re
+    fileList = DatasetUtils.getFileList(datasetName)
+
+    if(use_case in ["ellipsoid","ellipsoid_cut","left_atrium"]):
+        segFilesList = sorted([files for files in fileList if re.search("^segmentations/.*nrrd$",files)])[:3]
+        DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = segFilesList)
+    elif(use_case in ["ellipsoid_mesh","femur","femur_cut","lumps"]):
+        meshFilesList = sorted([files for files in fileList if re.search("^meshes/.*ply$",files)])[:3]
+        DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
+    if(use_case in ["femur","femur_cut","left_atrium"]):
+        imageFilelist = sorted([files for files in fileList if re.search("^images/.*nrrd$",files)])[:3]
+        DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = imageFilelist)
+    elif(use_case=="femur_mesh"):
+        meshFilesList = sorted([files for files in fileList if re.search("^groomed/meshes/.*ply$",files)])[:3]
+        DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
+
+
+
+
+
+
 
 
     
