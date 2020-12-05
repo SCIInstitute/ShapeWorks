@@ -5,7 +5,8 @@ from ShapeCohortGen.CohortGenUtils import *
 def addEllipsoid(center, radii, rotation, resolution=24):
 	"""
 	Add an ellipsoid centered at [center] with x, y, and z principal axis radii given by
-	radii = [x_scale, y_scale, z_scale]
+	radii = [radii] pass by generate function = [x_radius,y_radius,z_radius].
+	The ellipsoids are rotated with the an angle specified by 'rotation'
 	"""
 	sphere = vtk.vtkSphereSource()
 	sphere.SetCenter([0,0,0])
@@ -16,8 +17,8 @@ def addEllipsoid(center, radii, rotation, resolution=24):
 
 	transform = vtk.vtkTransform()
 	transform.RotateY(rotation)
-	transform.Translate(center)
 	transform.Scale(radii)
+	transform.Translate(center)
 
 	transformFilter = vtk.vtkTransformPolyDataFilter()
 	transformFilter.SetTransform(transform)
