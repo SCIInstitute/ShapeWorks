@@ -15,8 +15,10 @@
 #include <Visualization/Lightbox.h>
 #include <Visualization/StudioInteractorStyle.h>
 #include <Visualization/Visualizer.h>
-#include <Data/Mesh.h>
+#include <Data/StudioMesh.h>
 #include <Data/Shape.h>
+
+namespace shapeworks {
 
 //-----------------------------------------------------------------------------
 Lightbox::Lightbox()
@@ -445,4 +447,5 @@ vtkSmartPointer<vtkOrientationMarkerWidget> Lightbox::create_orientation_marker(
   orientationMarketWidget->SetOrientationMarker(cubeActor);
   orientationMarketWidget->SetViewport(0.85, 0.85, 1, 1);
   return orientationMarketWidget;
+}
 }

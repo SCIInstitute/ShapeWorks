@@ -4,14 +4,15 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkPropPicker.h>
 
+namespace shapeworks {
+
 class Lightbox;
 
 // Handle mouse events
-class StudioInteractorStyle : public vtkInteractorStyleTrackballCamera
-{
+class StudioInteractorStyle : public vtkInteractorStyleTrackballCamera {
 public:
   static StudioInteractorStyle* New();
-  vtkTypeMacro(StudioInteractorStyle, vtkInteractorStyleTrackballCamera);
+vtkTypeMacro(StudioInteractorStyle, vtkInteractorStyleTrackballCamera);
 
   void set_lightbox(Lightbox* lightbox);
 
@@ -30,11 +31,12 @@ public:
 
   void Rotate() override;
 
-
 protected:
 
-   void Dolly(double factor) override;
+  void Dolly(double factor) override;
 private:
 
   Lightbox* lightbox_;
 };
+
+}

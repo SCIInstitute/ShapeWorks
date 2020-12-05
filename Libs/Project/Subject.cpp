@@ -1,7 +1,11 @@
 #include <Libs/Project/Subject.h>
+#include <Libs/Mesh/Mesh.h>
+#include <Libs/Utils/StringUtils.h>
+
 #include <map>
 
 using namespace shapeworks;
+
 
 //---------------------------------------------------------------------------
 Subject::Subject()
@@ -111,4 +115,24 @@ void Subject::set_group_values(const std::map<std::string, std::string>& group_v
 std::string Subject::get_group_value(std::string group_name)
 {
   return this->group_values_[group_name];
+}
+
+//---------------------------------------------------------------------------
+std::vector<DomainType> Subject::get_domain_types()
+{
+  std::vector<DomainType> domain_types;
+  for (auto name: this->segmentation_filenames_) {
+    std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+
+    for (auto type : Mesh::get_supported_types()) {
+      if (StringUtils::hasSuffix(name, type)) {
+        domain_types.push_back(DomainType::Mesh);
+      }
+      else {
+        domain_types.push_back(DomainType::Image);
+      }
+
+    }
+  }
+  return domain_types;
 }

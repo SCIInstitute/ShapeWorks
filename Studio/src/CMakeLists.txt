@@ -9,6 +9,6 @@ ENDIF (WIN32 AND MSVC)
 ### Projects
 #--------------------------------------------------------------------------------
 
-add_subdirectory(Groom)
+#add_subdirectory(Groom)
 add_subdirectory(Application)
 

@@ -3,19 +3,24 @@
 #include <QFileDialog>
 #include <QThread>
 #include <QMessageBox>
+#include <QTemporaryDir>
 
 #include <Optimize/OptimizeTool.h>
+#include <Libs/Optimize/OptimizeParameters.h>
+
 #include <Visualization/ShapeWorksWorker.h>
 #include <Data/Session.h>
-#include <Data/Mesh.h>
+#include <Data/StudioMesh.h>
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
 
 #include <Optimize/QOptimize.h>
 
+#include <vtkPLYWriter.h>
+
 #include <ui_OptimizeTool.h>
 
-using namespace shapeworks;
+namespace shapeworks {
 
 //---------------------------------------------------------------------------
 OptimizeTool::OptimizeTool()
@@ -98,81 +103,18 @@ void OptimizeTool::on_run_optimize_button_clicked()
   emit progress(1);
 
   this->optimize_ = new QOptimize(this);
-  std::vector<unsigned int> numbers_of_particles;
-  numbers_of_particles.push_back(this->ui_->number_of_particles->value());
+
+  OptimizeParameters params(this->session_->get_project());
+  params.set_up_optimize(this->optimize_);
+
   this->optimize_->SetFileOutputEnabled(false);
-
-  this->optimize_->SetDomainsPerShape(1); /// only one domain per shape right now
-
-  this->optimize_->SetNumberOfParticles(numbers_of_particles);
-  this->optimize_->SetInitialRelativeWeighting(this->ui_->initial_relative_weighting->value());
-  this->optimize_->SetRelativeWeighting(this->ui_->relative_weighting->value());
-  this->optimize_->SetStartingRegularization(this->ui_->starting_regularization->value());
-  this->optimize_->SetEndingRegularization(this->ui_->ending_regularization->value());
-  this->optimize_->SetIterationsPerSplit(this->ui_->iterations_per_split->value());
-  this->optimize_->SetOptimizationIterations(this->ui_->optimization_iterations->value());
-
-  std::vector<bool> use_normals;
-  std::vector<bool> use_xyz;
-  std::vector<double> attr_scales;
-
-  attr_scales.push_back(1);
-  attr_scales.push_back(1);
-  attr_scales.push_back(1);
-
-  if (this->ui_->use_normals->isChecked()) {
-    use_normals.push_back(1);
-    use_xyz.push_back(1);
-    double normals_strength = this->ui_->normals_strength->value();
-    attr_scales.push_back(normals_strength);
-    attr_scales.push_back(normals_strength);
-    attr_scales.push_back(normals_strength);
-  }
-  else {
-    use_normals.push_back(0);
-    use_xyz.push_back(0);
-  }
-  this->optimize_->SetUseNormals(use_normals);
-  this->optimize_->SetUseXYZ(use_xyz);
-  this->optimize_->SetUseMeshBasedAttributes(this->ui_->use_normals->isChecked());
-  this->optimize_->SetAttributeScales(attr_scales);
-
-
-  std::vector<int> attributes_per_domain;
-  this->optimize_->SetAttributesPerDomain(attributes_per_domain);
-
-  int procrustes_interval = 0;
-  if (this->ui_->procrustes->isChecked()) {
-    procrustes_interval = this->ui_->procrustes_interval->value();
-  }
-  this->optimize_->SetProcrustesInterval(procrustes_interval);
-  this->optimize_->SetProcrustesScaling(this->ui_->procrustes_scaling->isChecked());
-  this->optimize_->SetVerbosity(0);
-
-  int multiscale_particles = 0;
-  if (this->ui_->multiscale->isChecked()) {
-    multiscale_particles = this->ui_->multiscale_particles->value();
-  }
-  this->optimize_->SetUseShapeStatisticsAfter(multiscale_particles);
-
-
-  // should add the images last
-  auto shapes = this->session_->get_shapes();
-  for (auto s : shapes) {
-    auto image = s->get_groomed_image();
-    if (!image) {
-      emit error_message("Error loading groomed images");
-      return;
-    }
-    this->optimize_->AddImage(image);
-  }
 
   QThread* thread = new QThread;
   ShapeworksWorker* worker = new ShapeworksWorker(
-          ShapeworksWorker::OptimizeType, NULL, this->optimize_, this->session_,
-          std::vector<std::vector<itk::Point<double>>>(),
-          std::vector<std::vector<itk::Point<double>>>(),
-          std::vector<ImageType::Pointer>());
+    ShapeworksWorker::OptimizeType, NULL, this->optimize_, this->session_,
+    std::vector<std::vector<itk::Point<double>>>(),
+    std::vector<std::vector<itk::Point<double>>>(),
+    std::vector<ImageType::Pointer>());
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_optimize_complete()));
@@ -210,25 +152,25 @@ void OptimizeTool::set_session(QSharedPointer<Session> session)
 //---------------------------------------------------------------------------
 void OptimizeTool::load_params()
 {
-  Parameters params = this->session_->get_project()->get_parameters(Parameters::OPTIMIZE_PARAMS);
+  auto params = OptimizeParameters(this->session_->get_project());
 
-  this->ui_->number_of_particles->setValue(params.get("number_of_particles", 128));
-  this->ui_->initial_relative_weighting->setValue(params.get("initial_relative_weighting", 1.0));
-  this->ui_->relative_weighting->setValue(params.get("relative_weighting", 1.0));
-  this->ui_->starting_regularization->setValue(params.get("starting_regularization", 10.0));
-  this->ui_->ending_regularization->setValue(params.get("ending_regularization", 1.0));
-  this->ui_->iterations_per_split->setValue(params.get("iterations_per_split", 1000));
-  this->ui_->optimization_iterations->setValue(params.get("optimization_iterations", 1000));
+  this->ui_->number_of_particles->setValue(params.get_number_of_particles()[0]);
+  this->ui_->initial_relative_weighting->setValue(params.get_relative_weighting());
+  this->ui_->relative_weighting->setValue(params.get_relative_weighting());
+  this->ui_->starting_regularization->setValue(params.get_starting_regularization());
+  this->ui_->ending_regularization->setValue(params.get_ending_regularization());
+  this->ui_->iterations_per_split->setValue(params.get_iterations_per_split());
+  this->ui_->optimization_iterations->setValue(params.get_optimization_iterations());
 
-  this->ui_->use_normals->setChecked(params.get("use_normals", false));
-  this->ui_->normals_strength->setValue(params.get("normals_strength", 10));
+  this->ui_->use_normals->setChecked(params.get_use_normals()[0]);
+  this->ui_->normals_strength->setValue(params.get_normals_strength());
 
-  this->ui_->procrustes->setChecked(params.get("procrustes", false));
-  this->ui_->procrustes_scaling->setChecked(params.get("procrustes_scaling", false));
-  this->ui_->procrustes_interval->setValue(params.get("procrustes_interval", 0));
+  this->ui_->procrustes->setChecked(params.get_use_procrustes());
+  this->ui_->procrustes_scaling->setChecked(params.get_use_procrustes_scaling());
+  this->ui_->procrustes_interval->setValue(params.get_procrustes_interval());
 
-  this->ui_->multiscale->setChecked(params.get("multiscale", false));
-  this->ui_->multiscale_particles->setValue(params.get("multiscale_particles", 32));
+  this->ui_->multiscale->setChecked(params.get_use_multiscale());
+  this->ui_->multiscale_particles->setValue(params.get_multiscale_particles());
 
   this->update_ui_elements();
 
@@ -237,26 +179,27 @@ void OptimizeTool::load_params()
 //---------------------------------------------------------------------------
 void OptimizeTool::store_params()
 {
-  Parameters params = this->session_->get_project()->get_parameters(Parameters::OPTIMIZE_PARAMS);
-  params.set("number_of_particles", this->ui_->number_of_particles->value());
-  params.set("initial_relative_weighting", this->ui_->initial_relative_weighting->value());
-  params.set("relative_weighting", this->ui_->relative_weighting->value());
-  params.set("starting_regularization", this->ui_->starting_regularization->value());
-  params.set("ending_regularization", this->ui_->ending_regularization->value());
-  params.set("iterations_per_split", this->ui_->iterations_per_split->value());
-  params.set("optimization_iterations", this->ui_->optimization_iterations->value());
+  auto params = OptimizeParameters(this->session_->get_project());
 
-  params.set("use_normals", this->ui_->use_normals->isChecked());
-  params.set("normals_strength", this->ui_->normals_strength->value());
+  params.set_number_of_particles({this->ui_->number_of_particles->value()});
+  params.set_initial_relative_weighting(this->ui_->initial_relative_weighting->value());
+  params.set_relative_weighting(this->ui_->relative_weighting->value());
+  params.set_starting_regularization(this->ui_->starting_regularization->value());
+  params.set_ending_regularization(this->ui_->ending_regularization->value());
+  params.set_iterations_per_split(this->ui_->iterations_per_split->value());
+  params.set_optimization_iterations(this->ui_->optimization_iterations->value());
 
-  params.set("procrustes", this->ui_->procrustes->isChecked());
-  params.set("procrustes_scaling", this->ui_->procrustes_scaling->isChecked());
-  params.set("procrustes_interval", this->ui_->procrustes_interval->value());
+  params.set_use_normals({this->ui_->use_normals->isChecked()});
+  params.set_normals_strength(this->ui_->normals_strength->value());
 
-  params.set("multiscale", this->ui_->multiscale->isChecked());
-  params.set("multiscale_particles", this->ui_->multiscale_particles->value());
+  params.set_use_procrustes(this->ui_->procrustes->isChecked());
+  params.set_use_procrustes_scaling(this->ui_->procrustes_scaling->isChecked());
+  params.set_procrustes_interval(this->ui_->procrustes_interval->value());
 
-  this->session_->get_project()->set_parameters(Parameters::OPTIMIZE_PARAMS, params);
+  params.set_use_multiscale(this->ui_->multiscale->isChecked());
+  params.set_multiscale_particles(this->ui_->multiscale_particles->value());
+
+  params.save_to_project();
 }
 
 //---------------------------------------------------------------------------
@@ -311,4 +254,5 @@ void OptimizeTool::update_ui_elements()
   this->ui_->procrustes_scaling->setEnabled(this->ui_->procrustes->isChecked());
   this->ui_->procrustes_interval->setEnabled(this->ui_->procrustes->isChecked());
   this->ui_->multiscale_particles->setEnabled(this->ui_->multiscale->isChecked());
+}
 }

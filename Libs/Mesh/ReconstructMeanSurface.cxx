@@ -226,10 +226,10 @@ int DoIt(InputParams params)
 #endif
     for (unsigned int shapeNo = 0; shapeNo < params.worldPointsFilenames.size(); shapeNo++)
     {
-       std::string curfilename = global_points_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_global.particles";
+       std::string curfilename = global_points_path + "/" + shapeworks::StringUtils::removeExtension(shapeworks::StringUtils::getFilename(params.localPointsFilenames[shapeNo])) + "_global.particles";
        Utils::writeSparseShape((char*)curfilename.c_str(), global_pts[shapeNo]);
 
-       std::string curfilename_local = local_points_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_local.particles";
+       std::string curfilename_local = local_points_path + "/" + shapeworks::StringUtils::removeExtension(shapeworks::StringUtils::getFilename(params.localPointsFilenames[shapeNo])) + "_local.particles";
        Utils::writeSparseShape((char*)curfilename_local.c_str(), local_pts[shapeNo]);
     }
 
@@ -261,8 +261,8 @@ int DoIt(InputParams params)
         std::string outfilenameBad;
         std::ofstream ofsG, ofsB;
 
-        outfilenameGood = local_good_bad_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_local-good.particles";
-        outfilenameBad  = local_good_bad_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_local-bad.particles";
+        outfilenameGood = local_good_bad_path + "/" + shapeworks::StringUtils::removeExtension(shapeworks::StringUtils::getFilename(params.localPointsFilenames[shapeNo])) + "_local-good.particles";
+        outfilenameBad  = local_good_bad_path + "/" + shapeworks::StringUtils::removeExtension(shapeworks::StringUtils::getFilename(params.localPointsFilenames[shapeNo])) + "_local-bad.particles";
 
         ofsG.open(outfilenameGood.c_str());
         ofsB.open(outfilenameBad.c_str());
@@ -279,8 +279,8 @@ int DoIt(InputParams params)
         ofsG.close();
         ofsB.close();
 
-        outfilenameGood = global_good_bad_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_global-good.particles";
-        outfilenameBad  = global_good_bad_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_global-bad.particles";
+        outfilenameGood = global_good_bad_path + "/" + shapeworks::StringUtils::removeExtension(shapeworks::StringUtils::getFilename(params.localPointsFilenames[shapeNo])) + "_global-good.particles";
+        outfilenameBad  = global_good_bad_path + "/" + shapeworks::StringUtils::removeExtension(shapeworks::StringUtils::getFilename(params.localPointsFilenames[shapeNo])) + "_global-bad.particles";
 
         ofsG.open(outfilenameGood.c_str());
         ofsB.open(outfilenameBad.c_str());

@@ -2,24 +2,23 @@
 #include <iostream>
 
 // qt
-#include <QXmlStreamWriter>
 #include <QThread>
-#include <QTemporaryFile>
 #include <QFileDialog>
-#include <QProcess>
 #include <QMessageBox>
 
 // shapeworks
 #include <Visualization/ShapeWorksStudioApp.h>
 #include <Visualization/ShapeWorksWorker.h>
 #include <Data/Session.h>
-#include <Data/Mesh.h>
+#include <Data/StudioMesh.h>
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
 #include <Analysis/AnalysisTool.h>
 #include <Visualization/Lightbox.h>
 
 #include <ui_AnalysisTool.h>
+
+namespace shapeworks {
 
 const std::string AnalysisTool::MODE_ALL_SAMPLES_C("all samples");
 const std::string AnalysisTool::MODE_MEAN_C("mean");
@@ -114,13 +113,13 @@ bool AnalysisTool::get_group_difference_mode()
 }
 
 //---------------------------------------------------------------------------
-std::vector<Point> AnalysisTool::get_group_difference_vectors()
+std::vector<Shape::Point> AnalysisTool::get_group_difference_vectors()
 {
-  std::vector<Point> vecs;
+  std::vector<Shape::Point> vecs;
 
   auto num_points = this->stats_.Mean().size() / 3;
   for (unsigned int i = 0; i < num_points; i++) {
-    Point tmp;
+    Shape::Point tmp;
     tmp.x = this->stats_.Group2Mean()[i * 3] - this->stats_.Group1Mean()[i * 3];
     tmp.y = this->stats_.Group2Mean()[i * 3 + 1] - this->stats_.Group1Mean()[i * 3 + 1];
     tmp.z = this->stats_.Group2Mean()[i * 3 + 2] - this->stats_.Group1Mean()[i * 3 + 2];
@@ -768,7 +767,7 @@ ShapeHandle AnalysisTool::get_mean_shape()
           sum = sum + value;
         }
       }
-      auto mean = sum / values.size();
+      Eigen::VectorXf mean = sum / values.size();
 
       if (ready) {
         shape->set_point_features(this->feature_map_, mean);
@@ -790,7 +789,7 @@ ShapeHandle AnalysisTool::get_mean_shape()
           sum_left = sum_left + value;
         }
       }
-      auto left_mean = sum_left / this->group1_list_.size();
+      Eigen::VectorXf left_mean = sum_left / static_cast<double>(this->group1_list_.size());
 
       for (auto shape : this->group2_list_) {
         shape->load_feature(Visualizer::MODE_RECONSTRUCTION_C, this->feature_map_);
@@ -802,7 +801,7 @@ ShapeHandle AnalysisTool::get_mean_shape()
           sum_right = sum_right + value;
         }
       }
-      auto right_mean = sum_right / this->group2_list_.size();
+      Eigen::VectorXf right_mean = sum_right / static_cast<double>(this->group2_list_.size());
 
       if (ready) {
         double ratio = this->get_group_value();
@@ -995,4 +994,6 @@ bool AnalysisTool::is_group_active(int shape_index)
   }
 
   return true;
+}
+
 }

@@ -8,6 +8,8 @@
 #include <Data/MeshManager.h>
 #include <QThread>
 
+namespace shapeworks {
+
 const std::string Visualizer::MODE_ORIGINAL_C("Original");
 const std::string Visualizer::MODE_GROOMED_C("Groomed");
 const std::string Visualizer::MODE_RECONSTRUCTION_C("Reconstructed");
@@ -87,12 +89,13 @@ void Visualizer::update_samples()
 //-----------------------------------------------------------------------------
 void Visualizer::display_shape(const vnl_vector<double>& points)
 {
-  std::vector<Point> empty_vectors;
+  std::vector<Shape::Point> empty_vectors;
   this->display_shape(points, empty_vectors);
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::display_shape(const vnl_vector<double>& points, const std::vector<Point>& vectors)
+void Visualizer::display_shape(const vnl_vector<double>& points,
+                               const std::vector<Shape::Point>& vectors)
 {
   QVector<ShapeHandle> shapes;
   shapes.push_back(this->create_display_object(points, vectors));
@@ -155,7 +158,7 @@ void Visualizer::display_sample(int i)
 
 //-----------------------------------------------------------------------------
 ShapeHandle Visualizer::create_display_object(const vnl_vector<double>& points,
-                                              const std::vector<Point>& vectors)
+                                              const std::vector<Shape::Point>& vectors)
 {
 
   MeshHandle mesh = this->session_->get_mesh_manager()->get_mesh(points);
@@ -398,4 +401,4 @@ bool Visualizer::get_uniform_feature_range(void)
   return feature_range_uniform_;
 }
 
-
+}

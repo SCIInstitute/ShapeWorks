@@ -22,7 +22,7 @@
 #include <Analysis/AnalysisTool.h>
 #include <Data/Session.h>
 #include <Data/Shape.h>
-#include <Data/Mesh.h>
+#include <Data/StudioMesh.h>
 #include <Data/StudioLog.h>
 #include <Visualization/ShapeWorksStudioApp.h>
 #include <Visualization/Lightbox.h>
@@ -33,13 +33,14 @@
 // ui
 #include <ui_ShapeWorksStudioApp.h>
 
+
+namespace shapeworks {
+
 static QVariant ITEM_DISABLE(0);
 static QVariant ITEM_ENABLE(1 | 32);
 static int ITEM_ROLE = Qt::UserRole - 1;
 
 const std::string ShapeWorksStudioApp::SETTING_ZOOM_C("zoom_state");
-
-using namespace shapeworks;
 
 //---------------------------------------------------------------------------
 ShapeWorksStudioApp::ShapeWorksStudioApp()
@@ -163,7 +164,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   // groom tool initializations
   this->groom_tool_ = QSharedPointer<GroomTool>(new GroomTool());
   this->ui_->stacked_widget->addWidget(this->groom_tool_.data());
-  connect(this->groom_tool_.data(), SIGNAL(groom_complete()), this, SLOT(handle_groom_complete()));
+  connect(this->groom_tool_.data(), SIGNAL(groom_complete()),
+          this, SLOT(handle_groom_complete()));
   connect(this->groom_tool_.data(), SIGNAL(error_message(std::string)),
           this, SLOT(handle_error(std::string)));
   connect(this->groom_tool_.data(), SIGNAL(message(std::string)),
@@ -358,20 +360,19 @@ void ShapeWorksStudioApp::on_action_quit_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_import_triggered()
 {
-  QStringList filenames;
-  std::cerr << "getOpenFileNames, last_dir = " <<
-            this->preferences_.get_last_directory().toStdString() << "\n";
-  filenames = QFileDialog::getOpenFileNames(this, tr("Import Files..."),
-                                            this->preferences_.get_last_directory(),
-                                            tr("NRRD files (*.nrrd);;MHA files (*.mha)"));
+  auto filenames = QFileDialog::getOpenFileNames(this, tr("Import Files..."),
+                                                 this->preferences_.get_last_directory(),
+                                                 tr(
+                                                   "NRRD files (*.nrrd);;MHA files (*.mha);;VTK files (*.vtk)"));
 
   if (filenames.size() == 0) {
+    // was cancelled
     return;
   }
 
   this->preferences_.set_last_directory(QFileInfo(filenames[0]).absolutePath());
-  //need to re-run everything if something new is added.
 
+  //need to re-run everything if something new is added.
   this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::ORIGINAL);
   this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, true);
   this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
@@ -750,6 +751,7 @@ void ShapeWorksStudioApp::update_tool_mode()
   }
   else if (tool_state == Session::GROOM_C) {
     this->ui_->stacked_widget->setCurrentWidget(this->groom_tool_.data());
+    this->groom_tool_->activate();
     this->ui_->controlsDock->setWindowTitle("Groom");
     this->set_view_mode(Visualizer::MODE_ORIGINAL_C);
     this->ui_->action_groom_mode->setChecked(true);
@@ -888,6 +890,7 @@ void ShapeWorksStudioApp::handle_groom_complete()
   this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, true);
   this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::GROOMED);
   this->update_display(true);
+  this->visualizer_->reset_camera();
 }
 
 //---------------------------------------------------------------------------
@@ -1597,4 +1600,4 @@ void ShapeWorksStudioApp::reset_num_viewers()
   }
 }
 
-
+}
