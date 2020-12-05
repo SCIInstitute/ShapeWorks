@@ -51,7 +51,7 @@ private:
   bool image_pipeline(std::shared_ptr<Subject> subject);
 
   //! Run the mesh based pipeline on a single subject
-  bool image_mesh_pipeline(std::shared_ptr<Subject> subject);
+  bool mesh_pipeline(std::shared_ptr<Subject> subject);
 
   //! Load a mesh
   std::shared_ptr<Mesh> load_mesh(std::string filename);

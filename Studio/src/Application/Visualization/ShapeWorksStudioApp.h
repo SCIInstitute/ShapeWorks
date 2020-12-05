@@ -142,7 +142,7 @@ private:
 
   void set_view_combo_item_enabled(int item, bool value);
 
-  void disableAllActions();
+  void disable_all_actions();
 
   void enable_possible_actions();
 

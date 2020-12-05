@@ -363,7 +363,7 @@ void ShapeWorksStudioApp::on_action_import_triggered()
   auto filenames = QFileDialog::getOpenFileNames(this, tr("Import Files..."),
                                                  this->preferences_.get_last_directory(),
                                                  tr(
-                                                   "NRRD files (*.nrrd);;MHA files (*.mha);;VTK files (*.vtk)"));
+                                                   "Image files (*.nrrd *.mha);;Mesh files (*.vtk *.ply *.vtp *.obj *stl)"));
 
   if (filenames.size() == 0) {
     // was cancelled
@@ -435,7 +435,7 @@ void ShapeWorksStudioApp::on_zoom_slider_valueChanged()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::disableAllActions()
+void ShapeWorksStudioApp::disable_all_actions()
 {
   // export / save / new / open
   this->ui_->action_save_project->setEnabled(false);
@@ -449,6 +449,7 @@ void ShapeWorksStudioApp::disableAllActions()
   this->ui_->action_import->setEnabled(false);
   this->ui_->add_button->setEnabled(false);
   this->ui_->delete_button->setEnabled(false);
+  this->ui_->menuExport->setEnabled(false);
 
   //subtools
   this->groom_tool_->disable_actions();
@@ -483,11 +484,12 @@ void ShapeWorksStudioApp::enable_possible_actions()
   this->ui_->action_import->setEnabled(true);
   this->ui_->add_button->setEnabled(true);
   this->ui_->delete_button->setEnabled(true);
+  this->ui_->menuExport->setEnabled(true);
 
   //available modes
   this->ui_->action_import_mode->setEnabled(true);
   this->ui_->action_groom_mode->setEnabled(original_present);
-  this->ui_->action_optimize_mode->setEnabled(this->session_->groomed_present());
+  this->ui_->action_optimize_mode->setEnabled(original_present);
   this->ui_->action_analysis_mode->setEnabled(reconstructed);
   //subtools
   this->groom_tool_->enable_actions();
@@ -511,7 +513,7 @@ void ShapeWorksStudioApp::update_from_preferences()
   this->glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
 
   this->ui_->center_checkbox->setChecked(preferences_.get_center_checked());
-  this->groom_tool_->load_settings();
+  this->groom_tool_->load_params();
   this->optimize_tool_->load_params();
   this->analysis_tool_->load_settings();
 }
@@ -669,7 +671,7 @@ void ShapeWorksStudioApp::handle_progress(size_t value)
   if (value < 100) {
     this->progress_bar_->setVisible(true);
     this->progress_bar_->setValue(static_cast<int>(value));
-    this->disableAllActions();
+    this->disable_all_actions();
   }
   else {
     this->progress_bar_->setValue(100);
@@ -758,8 +760,11 @@ void ShapeWorksStudioApp::update_tool_mode()
   }
   else if (tool_state == Session::OPTIMIZE_C) {
     this->ui_->stacked_widget->setCurrentWidget(this->optimize_tool_.data());
+    this->optimize_tool_->activate();
     this->ui_->controlsDock->setWindowTitle("Optimize");
-    this->set_view_mode(Visualizer::MODE_GROOMED_C);
+    if (this->session_->groomed_present()) {
+      this->set_view_mode(Visualizer::MODE_GROOMED_C);
+    }
     this->update_display();
     this->ui_->action_optimize_mode->setChecked(true);
   }
@@ -823,6 +828,7 @@ void ShapeWorksStudioApp::on_action_optimize_mode_triggered()
 {
   this->session_->parameters().set("tool_state", Session::OPTIMIZE_C);
   this->update_tool_mode();
+  this->visualizer_->reset_camera();
 }
 
 //---------------------------------------------------------------------------
@@ -830,6 +836,7 @@ void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
 {
   this->session_->parameters().set("tool_state", Session::ANALYSIS_C);
   this->update_tool_mode();
+  this->visualizer_->reset_camera();
 }
 
 //---------------------------------------------------------------------------
@@ -889,6 +896,7 @@ void ShapeWorksStudioApp::handle_groom_complete()
 {
   this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, true);
   this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::GROOMED);
+  this->session_->handle_clear_cache();
   this->update_display(true);
   this->visualizer_->reset_camera();
 }
@@ -1067,7 +1075,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->block_update_ = true;
 
   this->analysis_tool_->reset_stats();
-  this->groom_tool_->load_settings();
+  this->groom_tool_->load_params();
   this->optimize_tool_->load_params();
   this->preferences_window_->set_values_from_preferences();
   this->update_from_preferences();
@@ -1322,7 +1330,7 @@ void ShapeWorksStudioApp::save_project(std::string filename)
   this->session_->parameters().set("notes", this->ui_->notes->toHtml().toStdString());
   this->session_->parameters().set("analysis_mode", this->analysis_tool_->get_analysis_mode());
 
-  this->groom_tool_->store_settings();
+  this->groom_tool_->store_params();
   this->optimize_tool_->store_params();
   this->analysis_tool_->store_settings();
 
@@ -1354,7 +1362,6 @@ void ShapeWorksStudioApp::handle_color_scheme()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_auto_view_button_clicked()
 {
-  std::cerr << "auto view button clicked\n";
   this->visualizer_->reset_camera();
 }
 

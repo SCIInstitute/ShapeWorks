@@ -22,6 +22,11 @@ GroomTool::GroomTool()
   this->ui_ = new Ui_GroomTool;
   this->ui_->setupUi(this);
   qRegisterMetaType<std::string>();
+
+  this->connect(this->ui_->mesh_center, &QCheckBox::stateChanged,
+                this, &GroomTool::centering_changed);
+  this->connect(this->ui_->center_checkbox, &QCheckBox::stateChanged,
+                this, &GroomTool::centering_changed);
 }
 
 //---------------------------------------------------------------------------
@@ -66,15 +71,16 @@ void GroomTool::on_restore_defaults_clicked()
   Parameters params;
   this->session_->get_project()->set_parameters(Parameters::GROOM_PARAMS, params);
   // now load those settings
-  this->load_settings();
+  this->load_params();
 }
 
 //---------------------------------------------------------------------------
-void GroomTool::load_settings()
+void GroomTool::load_params()
 {
   auto params = GroomParameters(this->session_->get_project());
 
   this->ui_->center_checkbox->setChecked(params.get_center_tool());
+  this->ui_->mesh_center->setChecked(params.get_center_tool());
   this->ui_->antialias_checkbox->setChecked(params.get_antialias_tool());
   this->ui_->autopad_checkbox->setChecked(params.get_auto_pad_tool());
   this->ui_->fastmarching_checkbox->setChecked(params.get_fast_marching());
@@ -101,7 +107,7 @@ void GroomTool::enable_actions()
 }
 
 //---------------------------------------------------------------------------
-void GroomTool::store_settings()
+void GroomTool::store_params()
 {
   auto params = GroomParameters(this->session_->get_project());
 
@@ -124,7 +130,7 @@ void GroomTool::on_run_groom_button_clicked()
 {
   this->timer_.start();
 
-  this->store_settings();
+  this->store_params();
   emit message("Please wait: running groom step...");
   emit progress(0);
 
@@ -152,6 +158,10 @@ void GroomTool::handle_thread_complete()
   auto duration = this->timer_.elapsed();
   STUDIO_LOG_MESSAGE("Groom duration: " + QString::number(duration) + "ms");
 
+  for (auto shape : this->session_->get_shapes()) {
+    shape->reset_groomed_mesh();
+  }
+
   emit progress(100);
   emit message("Groom Complete");
   emit groom_complete();
@@ -162,7 +172,7 @@ void GroomTool::handle_thread_complete()
 //---------------------------------------------------------------------------
 void GroomTool::on_skip_button_clicked()
 {
-  this->store_settings();
+  this->store_params();
   this->groom_ = QSharedPointer<QGroom>(new QGroom(this->session_->get_project()));
   this->groom_->set_skip_grooming(true);
   this->groom_->run();
@@ -189,6 +199,13 @@ void GroomTool::activate()
       this->ui_->stacked_widget->setCurrentWidget(this->ui_->mesh_page);
     }
   }
+}
+
+//---------------------------------------------------------------------------
+void GroomTool::centering_changed(int state)
+{
+  this->ui_->mesh_center->setChecked(state);
+  this->ui_->center_checkbox->setChecked(state);
 }
 
 }

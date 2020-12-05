@@ -17,7 +17,12 @@
 #include <Libs/Mesh/Mesh.h>
 #include <Libs/Utils/StringUtils.h>
 
+#include <tbb/mutex.h>
+
 namespace shapeworks {
+
+// locking to handle non-thread-safe code
+static tbb::mutex mesh_mutex;
 
 //---------------------------------------------------------------------------
 MeshGenerator::MeshGenerator(Preferences& prefs)
@@ -113,6 +118,7 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
 
   if (is_mesh) {
     try {
+      tbb::mutex::scoped_lock lock(mesh_mutex);
       shapeworks::Mesh reader(filename);
       mesh->set_poly_data(reader.get_poly_data());
     } catch (std::exception e) {

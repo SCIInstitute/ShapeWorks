@@ -1555,25 +1555,31 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
     return false;
   }
 
-  bool is_project =StringUtils::hasSuffix(project_file, "xlsx");
+  bool is_project = StringUtils::hasSuffix(project_file, "xlsx");
 
   Optimize app;
   if (is_project) {
-    // load spreadsheet project
-    ProjectHandle project = std::make_shared<Project>();
-    project->load(project_file);
+    try {
+      // load spreadsheet project
+      ProjectHandle project = std::make_shared<Project>();
+      project->load(project_file);
 
-    // set up Optimize class based on project parameters
-    OptimizeParameters params(project);
-    params.set_up_optimize(&app);
+      // set up Optimize class based on project parameters
+      OptimizeParameters params(project);
+      params.set_up_optimize(&app);
 
-    bool success = app.Run();
+      bool success = app.Run();
 
-    if (success) {
-      project->save(project_file);
+      if (success) {
+        project->save(project_file);
+      }
+
+      return success;
     }
-
-    return success;
+    catch (std::exception& e) {
+      std::cerr << "Error: " << e.what() << "\n";
+      return false;
+    }
   }
   else {
     OptimizeParameterFile param;
@@ -1608,14 +1614,20 @@ bool GroomCommand::execute(const optparse::Values& options, SharedCommandData& s
     return false;
   }
 
-  ProjectHandle project = std::make_shared<Project>();
-  project->load(project_file);
-  Groom app(project);
-  bool success = app.run();
-  if (success) {
-    project->save(project_file);
+  try {
+    ProjectHandle project = std::make_shared<Project>();
+    project->load(project_file);
+    Groom app(project);
+    bool success = app.run();
+    if (success) {
+      project->save(project_file);
+    }
+    return success;
   }
-  return success;
+  catch (std::exception& e) {
+    std::cerr << "Error: " << e.what() << "\n";
+    return false;
+  }
 }
 
 } // shapeworks
