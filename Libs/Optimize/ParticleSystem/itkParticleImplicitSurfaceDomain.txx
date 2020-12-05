@@ -74,7 +74,7 @@ SetFids(const char *fidsFile)
 
 template<class T>
 bool
-ParticleImplicitSurfaceDomain<T>::ApplyConstraints(PointType &p, bool dbg) const
+ParticleImplicitSurfaceDomain<T>::ApplyConstraints(PointType &p, int idx, bool dbg) const
 {
   // First apply and constraints imposed by superclasses.  This will
   // guarantee the point starts in the correct image domain.
@@ -92,7 +92,7 @@ ParticleImplicitSurfaceDomain<T>::ApplyConstraints(PointType &p, bool dbg) const
     {
     PointType p_old = p;
     //vnl_vector_fixed<T, DIMENSION> grad = -this->SampleGradientAtPoint(p);
-    vnl_vector_fixed<T, DIMENSION> gradf = this->SampleGradientAtPoint(p);
+    vnl_vector_fixed<T, DIMENSION> gradf = this->SampleGradientAtPoint(p, idx);
     vnl_vector_fixed<double, DIMENSION> grad;
     grad[0] = double(gradf[0]); grad[1] = double(gradf[1]); grad[2] = double(gradf[2]);
 

@@ -84,16 +84,16 @@ This will select a representative subset of the specified sample size to run thr
 $ python RunUseCase.py --use_case [insert name of use case here] --interactive
 ```
 
-* `--start_with_prepped_data`: When this tag is used, the grooming steps are skipped. Instead of generating the distance transforms from segmentations via grooming, the distance transforms from the data .zip folder are used in optimization. If a user wishes to start with the optimization step, add `--start_with_prepped_data` tag.
+* `--skip_grooming`: When this tag is used, the grooming steps are skipped. Instead of generating the distance transforms from segmentations via grooming, the distance transforms from the data .zip folder are used in optimization. If a user wishes to start with the optimization step, add `--skip_grooming` tag.
 
 ```
-$ python RunUseCase.py --use_case [insert name of use case here] --start_with_prepped_data
+$ python RunUseCase.py --use_case [insert name of use case here] --skip_grooming
 ```
            
-* `--start_with_image_and_segmentation_data`: Some use cases can be run on just segmentations or on segmentations plus the corresponding imaging data. To carry the image through the grooming process with the segmentation, the `--start_with_image_and_segmentation_data` tag must be used.
+* `--groom_images`: Some use cases can be run on just segmentations or on segmentations plus the corresponding imaging data. To carry the images through the grooming process with the segmentation, the `--groom_images` tag must be used. Note if this tag is used with a use case that does not have images, a warning will be printed and the tag will be ignored.
 
 ```
-$ python RunUseCase.py --use_case [insert name of use case here] --start_with_image_and_segmentation_data
+$ python RunUseCase.py --use_case [insert name of use case here] --groom_images
 ```
           
 * `--use_single_scale`: Use cases can be run with multi-scale or single-scale optimization. In both cases, particles on each shape sample are initialized using the particle splitting strategy starting from a single particle (or a given set of landmarks) until reaching the required number of particles. The optimized particles at each scale are used to initialize the next scale. At each scale, particles undergo *initialization* and *optimization* stages. The multi-scale triggers both the initialization and optimization stages, while the single-scale mode uses the initialization stage at each scale and runs the optimization stage when the required number of particles is reached (i.e., at the last scale). The default mode is mutli-scale. To run single-scale, use the `--use_single_scale` tag.

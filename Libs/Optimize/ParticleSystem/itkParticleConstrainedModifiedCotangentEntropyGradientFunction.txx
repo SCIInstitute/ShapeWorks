@@ -148,7 +148,7 @@ ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType
     }
 
     // Get the neighborhood surrounding the point "pos".
-    m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, m_CurrentWeights, neighborhood_radius, d);
+    m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, idx,m_CurrentWeights, neighborhood_radius, d);
 
     if (system->GetDomain(d)->GetDomainType() == shapeworks::DomainType::Image) {
       // Grab a pointer to the domain.  We need a Domain that has surface normal
@@ -157,7 +157,7 @@ ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType
         = static_cast<const ParticleImplicitSurfaceDomain<TGradientNumericType> *>(system->GetDomain(d));
       // PRATEEP
       vnl_vector_fixed<double, VDimension> x;
-      vnl_vector_fixed<float, VDimension> grad = system->GetDomain(d)->SampleGradientAtPoint(pos);
+      vnl_vector_fixed<float, VDimension> grad = system->GetDomain(d)->SampleGradientAtPoint(pos, idx);
       vnl_vector_fixed<double, VDimension> cppt;
       vnl_vector_fixed<double, VDimension> cpnorm;
       for (unsigned int i = 0; i < VDimension; i++) {

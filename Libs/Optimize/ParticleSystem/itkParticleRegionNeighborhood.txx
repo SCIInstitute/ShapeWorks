@@ -72,7 +72,7 @@ void ParticleRegionNeighborhood<VDimension>::SetDomain(DomainType *d)
 template <unsigned int VDimension>
 typename ParticleRegionNeighborhood<VDimension>::PointVectorType
 ParticleRegionNeighborhood<VDimension>
-::FindNeighborhoodPoints(const PointType &center, double radius) const
+::FindNeighborhoodPoints(const PointType &center, int idx, double radius) const
 {
   // Compute bounding box of the given hypersphere.
   PointType l, u;
@@ -146,9 +146,9 @@ void ParticleRegionNeighborhood<VDimension>
 ::RemovePosition(unsigned int idx, int)
 {
   IteratorNodePair pr = m_IteratorMap->operator[](idx);
-  m_IteratorMap->Erase(idx);
-  pr.NodePointer->GetList().erase(pr.Iterator); 
+  pr.NodePointer->GetList().erase(pr.Iterator);
 }
+
 
 
 
