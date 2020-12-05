@@ -18,13 +18,22 @@ def addEllipsoid(center, radii, rotation, resolution=24):
 	transform = vtk.vtkTransform()
 	transform.RotateY(rotation)
 	transform.Scale(radii)
+	
+
+	rotation_scaleFilter = vtk.vtkTransformPolyDataFilter()
+	rotation_scaleFilter.SetTransform(transform)
+	rotation_scaleFilter.SetInputConnection(sphere.GetOutputPort())
+	rotation_scaleFilter.Update()
+
+	transform = vtk.vtkTransform()
 	transform.Translate(center)
 
-	transformFilter = vtk.vtkTransformPolyDataFilter()
-	transformFilter.SetTransform(transform)
-	transformFilter.SetInputConnection(sphere.GetOutputPort())
-	transformFilter.Update()
-	return transformFilter
+	translateFilter = vtk.vtkTransformPolyDataFilter()
+	translateFilter.SetTransform(transform)
+	translateFilter.SetInputConnection(rotation_scaleFilter.GetOutputPort())
+	translateFilter.Update()
+
+	return translateFilter
 
 def generate_ellipsoids(filename,meshDir):
 	vtkFileName = meshDir+"ellipsoid_"+filename+".vtk"
