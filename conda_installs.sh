@@ -125,10 +125,12 @@ function install_conda() {
   if ! pip install Python/DeepSSMUtilsPackage;          then return 1; fi # install DeepSSM code as a package
   
   # installs for jupyter notebooks
+
   if ! pip install nbstripout;         then return 1; fi # to stripout notebooks output before committing  
   if ! pip install pyvista;            then return 1; fi # for visualizations on notebooks
   if ! pip install ipyvtk_simple;      then return 1; fi # for visualizations on notebooks
   if ! pip install ipywidgets;         then return 1; fi # for visualizations on notebooks
+  if ! pip install itkwidgets;         then return 1; fi # for visualizations on notebooks
   if ! pip install mkdocs-jupyter;     then return 1; fi # for adding notebooks to our documentation (supports toc and excutation before deployment)
 
   # for spell check markdown cells in jupyter notebooks

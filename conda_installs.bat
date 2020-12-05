@@ -47,6 +47,7 @@ call pip install nbstripout
 call pip install pyvista
 call pip install ipyvtk_simple
 call pip install ipywidgets
+call pip install itkwidgets
 call pip install mkdocs-jupyter
 
 REM for spell check markdown cells in jupyter notebooks
