@@ -53,12 +53,6 @@ jobs:
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
-    - name: Temp check package Build Binary Package
-      shell: bash -l {0}
-      env:
-        PR_NUMBER: ${{ github.event.number }}
-      run: ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
-    
     - name: conda installs
       shell: bash -l {0}
       run: source ./conda_installs.sh

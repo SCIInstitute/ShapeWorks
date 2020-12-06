@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - pr_package
     tags:
     - '*'
   pull_request:
@@ -103,6 +104,8 @@ jobs:
 
     - name: Build Binary Package
       shell: bash -l {0}
+      env:
+        PR_NUMBER: ${{ github.event.number }}
       run: conda activate shapeworks && pwd ; ls ; cp docs/users/Windows_README.txt . ; cp Support/shapeworks.nsi . ; conda activate shapeworks && ./Support/package_windows.sh tag
       
     - name: Test
