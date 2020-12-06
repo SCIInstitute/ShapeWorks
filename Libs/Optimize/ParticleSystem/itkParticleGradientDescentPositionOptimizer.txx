@@ -138,28 +138,23 @@ namespace itk
           localGradientFunction->SetDomainNumber(dom);
 
           // Iterate over each particle position
-          unsigned int k = 0;
-          typename ParticleSystemType::PointContainerType::ConstIterator endit =
-            m_ParticleSystem->GetPositions(dom)->GetEnd();
-          for (typename ParticleSystemType::PointContainerType::ConstIterator it
-            = m_ParticleSystem->GetPositions(dom)->GetBegin(); it != endit; it++, k++)
+          for (auto k=0; k<m_ParticleSystem->GetPositions(dom)->GetSize(); k++)
           {
             if (m_TimeSteps[dom][k] < minimumTimeStep) {
               m_TimeSteps[dom][k] = minimumTimeStep;
             }
             // Compute gradient update.
             double energy = 0.0;
-            localGradientFunction->BeforeEvaluate(it.GetIndex(), dom, m_ParticleSystem);
+            localGradientFunction->BeforeEvaluate(k, dom, m_ParticleSystem);
             // maximumUpdateAllowed is set based on some fraction of the distance between particles
             // This is to avoid particles shooting past their neighbors
             double maximumUpdateAllowed;
-            VectorType original_gradient = localGradientFunction->Evaluate(it.GetIndex(), dom, m_ParticleSystem, maximumUpdateAllowed, energy);
+            VectorType original_gradient = localGradientFunction->Evaluate(k, dom, m_ParticleSystem, maximumUpdateAllowed, energy);
 
-            unsigned int idx = it.GetIndex();
-            PointType pt = *it;
+            PointType pt = m_ParticleSystem->GetPositions(dom)->Get(k);
 
             // Step 1 Project the gradient vector onto the tangent plane
-            VectorType original_gradient_projectedOntoTangentSpace = domain->ProjectVectorToSurfaceTangent(original_gradient, pt);
+            VectorType original_gradient_projectedOntoTangentSpace = domain->ProjectVectorToSurfaceTangent(original_gradient, pt, k);
 
             double newenergy, gradmag;
             while (true) {
@@ -167,7 +162,7 @@ namespace itk
               VectorType gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
 
               // Step B Constrain the gradient so that the resulting position will not violate any domain constraints
-              m_ParticleSystem->GetDomain(dom)->GetConstraints()->applyBoundaryConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
+              m_ParticleSystem->GetDomain(dom)->GetConstraints()->applyBoundaryConstraints(gradient, m_ParticleSystem->GetPosition(k, dom));
 
               gradmag = gradient.magnitude();
 
@@ -178,13 +173,13 @@ namespace itk
               }
 
               // Step D compute the new point position
-              PointType newpoint = domain->UpdateParticlePosition(pt, gradient);
+              PointType newpoint = domain->UpdateParticlePosition(pt, k, gradient);
 
               // Step F update the point position in the particle system
-              m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);
+              m_ParticleSystem->SetPosition(newpoint, k, dom);
 
               // Step G compute the new energy of the particle system
-              newenergy = localGradientFunction->Energy(it.GetIndex(), dom, m_ParticleSystem);
+              newenergy = localGradientFunction->Energy(k, dom, m_ParticleSystem);
 
               if (newenergy < energy) // good move, increase timestep for next time
               {
@@ -196,8 +191,8 @@ namespace itk
               {// bad move, reset point position and back off on timestep
                 if (m_TimeSteps[dom][k] > minimumTimeStep)
                 {
-                  domain->ApplyConstraints(pt);
-                  m_ParticleSystem->SetPosition(pt, it.GetIndex(), dom);
+                  domain->ApplyConstraints(pt, k);
+                  m_ParticleSystem->SetPosition(pt, k, dom);
 
                   m_TimeSteps[dom][k] /= factor;
                 }

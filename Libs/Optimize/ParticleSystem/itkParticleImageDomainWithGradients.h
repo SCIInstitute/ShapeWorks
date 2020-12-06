@@ -46,22 +46,22 @@ public:
     m_VDBGradient = openvdb::tools::gradient(*this->GetVDBImage());
   }
 
-  inline vnl_vector_fixed<float, DIMENSION> SampleGradientAtPoint(const PointType &p) const {
-    return this->SampleGradientVnl(p);
+  inline vnl_vector_fixed<float, DIMENSION> SampleGradientAtPoint(const PointType &p, int idx) const {
+    return this->SampleGradientVnl(p, idx);
   }
 
-  inline vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType &p) const {
-    vnl_vector_fixed<float, DIMENSION> grad = this->SampleGradientVnl(p);
+  inline vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType &p, int idx) const {
+    vnl_vector_fixed<float, DIMENSION> grad = this->SampleGradientVnl(p, idx);
     return grad.normalize();
   }
 
   /** This method is called by an optimizer after a call to Evaluate and may be
       used to apply any constraints the resulting vector, such as a projection
       to the surface tangent plane. Returns true if the gradient was modified.*/
-  vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const override
+  vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos, int idx) const override
   {
     double dotprod = 0.0;  
-    VnlVectorType normal =  this->SampleNormalAtPoint(pos);
+    VnlVectorType normal =  this->SampleNormalAtPoint(pos, idx);
     for (unsigned int i = 0; i < DIMENSION; i++) {   dotprod  += normal[i] * gradE[i]; }
     vnl_vector_fixed<double, DIMENSION> result;
     for (unsigned int i = 0; i < DIMENSION; i++) { result[i] = gradE[i] - normal[i] * dotprod; }
@@ -89,14 +89,14 @@ private:
 
 
 
-  inline VnlVectorType SampleGradientVnl(const PointType &p) const {
-    return VnlVectorType(this->SampleGradient(p).GetDataPointer());
+  inline VnlVectorType SampleGradientVnl(const PointType &p, int idx) const {
+    return VnlVectorType(this->SampleGradient(p, idx).GetDataPointer());
   }
   /** Sample the image at a point.  This method performs no bounds checking.
       To check bounds, use IsInsideBuffer.  SampleGradientsVnl returns a vnl
       vector of length VDimension instead of an itk::CovariantVector
       (itk::FixedArray). */
-  inline VectorType SampleGradient(const PointType &p) const {
+  inline VectorType SampleGradient(const PointType &p, int idx) const {
     if (this->IsInsideBuffer(p)) {
       const auto coord = this->ToVDBCoord(p);
       const auto _v = openvdb::tools::BoxSampler::sample(m_VDBGradient->tree(), coord);
