@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - pr_package
     tags:
     - '*'
   pull_request:
@@ -106,6 +107,8 @@ jobs:
 
     - name: Build Binary Package
       shell: bash -l {0}
+      env:
+        PR_NUMBER: ${{ github.event.number }}
       run: conda activate shapeworks && PATH=$HOME:$PATH ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
 
     - name: make test

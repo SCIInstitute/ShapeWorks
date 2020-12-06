@@ -15,9 +15,13 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 else
     PLATFORM="linux"
 fi
-    
+
+echo "PR_NUMBER = $PR_NUMBER"
+echo "GITHUB_REF = $GITHUB_REF"
+
 if [[ "$VERSION" == "tag" ]]; then
     VERSION="ShapeWorks-$(git describe --tags)-${PLATFORM}"
+    VERSION="ShapeWorks-PR-${PR_NUMBER}-${PLATFORM}"
 fi
 
 # Special case for when we are on the master branch (dev releases)
