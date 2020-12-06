@@ -59,7 +59,7 @@ void OptimizeTool::handle_progress(int val)
   auto local = this->optimize_->GetLocalPoints();
   auto global = this->optimize_->GetGlobalPoints();
 
-  if (local.size() > 1 && global.size() > 1) {
+  if (local.size() > 0 && global.size() > 0) {
     this->session_->update_points(local, true);
     this->session_->update_points(global, false);
   }
