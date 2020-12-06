@@ -9,7 +9,8 @@ VERSION=$1
 PLATFORM="windows"
 
 if [[ "$VERSION" == "tag" ]]; then
-    VERSION="ShapeWorks-$(git describe --tags)-${PLATFORM}"
+    #    VERSION="ShapeWorks-$(git describe --tags)-${PLATFORM}"
+    VERSION="ShapeWorks-PR-${PR_NUMBER}-${PLATFORM}"
 fi
 
 # Special case for when we are on the master branch (dev releases)

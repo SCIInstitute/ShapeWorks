@@ -21,9 +21,9 @@ The use case is located at: `Examples/Python/left_atrium.py`
 
 To run the use case, run `RunUseCase.py` (in `Examples/Python/`) with proper tags. The tags control the type of input data and the optimization method. See [Getting Started with Use Cases](../use-cases/use-cases.md#running-use-case) for the full list of tags.
 
-* `--start_with_image_and_segmentation_data`: to groom both raw images and segmentations using the segmentations to find the grooming parameters (e.g., bounding box, reference shape for alignment). The default is grooming only segmentations
+* `--groom_images`: to groom both raw images and segmentations using the segmentations to find the grooming parameters (e.g., bounding box, reference shape for alignment). The default is grooming only segmentations
 * `--use_single_scale`: to use the single-scale optimization. Default is multi-scale optimization
-* `--start_with_prepped_data`: to run the optimization on previously processed/groomed data
+* `--skip_grooming`: to run the optimization on previously processed/groomed data
 
 
 To run the full pipeline with multi-scale:
@@ -40,10 +40,10 @@ This calls `left_atrium.py` (in `Examples/Python/`) to perform the following.
 * Optimizes particle distribution (i.e., the shape/correspondence model) by calling optimization functions in `OptimizeUtils.py` (in `Examples/Python/`). See [Optimizing Shape Model](#optimizing-shape-model) for details about algorithmic parameters for optimizing the shape model.
 * Launches ShapeWorksStudio to visualize the use case results (i.e., optimized shape model and the groomed data) by calling functions in `AnalyzeUtils.py` (in `Examples/Python/`).
 
-If you wish to start with the optimization step using a previously groomed data, add `--start_with_prepped_data` tag.
+If you wish to start with the optimization step using a previously groomed data, add `--skip_grooming` tag.
 
 ```
-$ python RunUseCase.py --use_case left_atrium --start_with_prepped_data
+$ python RunUseCase.py --use_case left_atrium --skip_grooming
 ```
 
 ## Grooming Data

@@ -181,6 +181,7 @@ public:
       central point and each of its neighbors.  Difference of > 90 degrees
       results in a weight of 0. */
   void ComputeAngularWeights(const PointType &,
+                             int,
                              const typename ParticleSystemType::PointVectorType &,
                              const ParticleDomain *,
                              std::vector<double> &) const;
