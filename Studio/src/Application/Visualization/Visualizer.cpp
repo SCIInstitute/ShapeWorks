@@ -128,6 +128,9 @@ vnl_vector<double> Visualizer::getCurrentShape()
 void Visualizer::handle_new_mesh()
 {
   this->lightbox_->handle_new_mesh();
+  if (this->needs_camera_reset_) {
+    this->reset_camera();
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -135,7 +138,6 @@ vtkSmartPointer<vtkPolyData> Visualizer::get_current_mesh()
 {
   auto shapes = this->lightbox_->get_shapes();
   if (shapes.size() > 0) {
-    std::cerr << "returning something nice\n";
     return shapes[0]->get_mesh(this->display_mode_)->get_poly_data();
   }
   return nullptr;
@@ -330,12 +332,17 @@ void Visualizer::set_mean(const vnl_vector<double>& mean)
 //-----------------------------------------------------------------------------
 void Visualizer::reset_camera()
 {
+  this->needs_camera_reset_ = false;
   if (this->lightbox_) {
     auto trans = this->lightbox_->initPos();
     for (auto a : this->lightbox_->get_viewers()) {
+      if (!a->is_viewer_ready()) {
+        this->needs_camera_reset_ = true;
+      }
       a->reset_camera(trans);
     }
   }
+
   this->update_viewer_properties();
 }
 
