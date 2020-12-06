@@ -6,7 +6,6 @@
 
 using namespace shapeworks;
 
-
 //---------------------------------------------------------------------------
 Subject::Subject()
 {}
@@ -124,15 +123,21 @@ std::vector<DomainType> Subject::get_domain_types()
   for (auto name: this->segmentation_filenames_) {
     std::transform(name.begin(), name.end(), name.begin(), ::tolower);
 
+    bool mesh = false;
+
     for (auto type : Mesh::get_supported_types()) {
       if (StringUtils::hasSuffix(name, type)) {
-        domain_types.push_back(DomainType::Mesh);
+        mesh = true;
       }
-      else {
-        domain_types.push_back(DomainType::Image);
-      }
-
     }
+
+    if (mesh) {
+      domain_types.push_back(DomainType::Mesh);
+    }
+    else {
+      domain_types.push_back(DomainType::Image);
+    }
+
   }
   return domain_types;
 }
