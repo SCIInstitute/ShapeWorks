@@ -14,6 +14,7 @@
 
 class vtkOrientationMarkerWidget;
 
+
 namespace shapeworks {
 
 class StudioMesh;
