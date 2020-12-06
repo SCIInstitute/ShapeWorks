@@ -29,6 +29,6 @@ class EllipsoidCohortGenerator(CohortGenerator):
 class SupershapesCohortGenerator(CohortGenerator):
 	def __init__(self, out_dir):
 		super().__init__(out_dir)
-	def generate(self, num_samples=3, m=3, start_id=0, size=10000):
+	def generate(self, num_samples=3, m=3, start_id=0, size=100):
 		self.meshes = Supershapes.generate(num_samples, self.out_dir, m, start_id, size)
 		return self.meshes

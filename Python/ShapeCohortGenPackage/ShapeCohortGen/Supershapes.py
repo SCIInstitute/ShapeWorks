@@ -3,6 +3,7 @@ import math
 import trimesh
 import numpy as np
 import matplotlib.tri as mtri
+import subprocess
 from ShapeCohortGen.CohortGenUtils import *
 
 '''
@@ -23,14 +24,46 @@ def generate(num_samples, out_dir, m, start_id, size):
         n3 = n2
         a = 1
         b = 1
-        X, Y, Z, triIndices = super_formula_3D(m, n1, n2, n3, a, b, size)
+        X, Y, Z, triIndices = super_formula_3D(m, n1, n2, n3, a, b)
        	verts = np.column_stack((X,Y,Z))
         shapeMesh = trimesh.Trimesh(vertices=verts, faces=triIndices)
-        ply_mesh = trimesh.exchange.ply.export_ply(shapeMesh, encoding='ascii')
-        ply_mesh_file = open(meshDir + name + '.ply', 'wb')
-        ply_mesh_file.write(ply_mesh)
-        ply_mesh_file.close()
+        matrix = np.array([[size,0,0,0], [0,size,0,0], [0,0,size,0],[0,0,0,1]])
+        shapeMesh = shapeMesh.apply_transform(matrix)
+        shapeMesh.export(meshDir + name + ".stl")
+        execCommand = ["stl2ply", meshDir + name + ".stl", meshDir + name + ".ply"]
+        subprocess.check_call(execCommand)
+        os.remove(meshDir + name + ".stl")
     return get_files(meshDir)
+
+# turns meshes in list into PLY format
+def getPLYmeshes(meshList, printCmd=True):
+    PLYmeshList = []
+    for mesh in meshList:
+        mesh_name = os.path.basename(mesh)
+        extension = mesh_name.split(".")[-1]
+        prefix = mesh_name.split("_")[0] + "_" + mesh_name.split("_")[1]
+        # change to ply if needed
+        if extension == "vtk":
+            mesh_vtk = mesh
+            mesh = mesh[:-4] + ".ply"
+            execCommand = ["vtk2ply", mesh_vtk, mesh]
+            if printCmd:
+                print("CMD: " + " ".join(execCommand))
+            subprocess.check_call(execCommand)
+        elif extension == "stl":
+            mesh_stl = mesh
+            mesh = mesh[:-4] + ".ply"
+            execCommand = ["stl2ply", mesh_stl, mesh]
+            if printCmd:
+                print("CMD: " + " ".join(execCommand))
+            subprocess.check_call(execCommand)
+        elif  extension == "ply":
+            pass
+        else:
+            print("error: Mesh format unrecognized.")
+            break
+        PLYmeshList.append(mesh)
+    return PLYmeshList
 
 def get_id_str(num):
 	string = str(num)
@@ -38,7 +71,7 @@ def get_id_str(num):
 		string = '0' + string
 	return(string)
 
-def super_formula_3D(m, n1, n2, n3, a, b, numPoints):
+def super_formula_3D(m, n1, n2, n3, a, b, numPoints=100000):
 	numPointsRoot = round(math.sqrt(numPoints))
 	theta = np.linspace(-math.pi, math.pi, endpoint=True, num=numPointsRoot)
 	phi = np.linspace(-math.pi / 2.0, math.pi/2.0, endpoint=True, num=numPointsRoot)
