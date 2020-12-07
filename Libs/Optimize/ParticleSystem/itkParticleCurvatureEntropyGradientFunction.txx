@@ -283,10 +283,10 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   gradE = gradE / m_avgKappa;
 
   // Augmented Lagrangian Parameters
-  std::cout << "m_lambdas.size() " << m_lambdas.size() << " d " << d << std::endl;
-  double c_eq = 1e-4; // equalities: Surface constraints
-  double c_in = 1e0; // inequalities/boundary: cutting plane, sphere or free form
-  double lambda = m_lambdas[d];
+  std::cout << "m_lambdas.size() " << this->GetLambdaI(d, idx) << " d " << d << " c_eq " << this->GetCEq() << std::endl;
+  double c_eq = this->GetCEq(); // equalities: Surface constraints
+  double c_in = this->GetCIn(); // inequalities/boundary: cutting plane, sphere or free form
+  double lambda = this->GetLambdaI(d, idx);
 
   // Inequality constraint stuff
   system->GetDomain(d)->GetConstraints()->UpdateZs(pos, c_in);
@@ -302,16 +302,24 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
     }
 
   // std::cout << "pos " << pos << " Inequality " << ineq_constraint_energy << std::endl;
-  std::cout << "m_lambda " << lambda << " pos " << pos << " Equality " << eq_constraint_energy << std::endl;
+  std::stringstream stream;
+  stream << "m_lambda " << lambda << " pos " << pos << " Equality " << eq_constraint_energy << std::endl;
+  double pos_norm = sqrt(pos[0]*pos[0] + pos[1]*pos[1] + pos[2]*pos[2]);
+  double eq_en_norm = sqrt(eq_constraint_energy[0]*eq_constraint_energy[0] + eq_constraint_energy[1]*eq_constraint_energy[1] + eq_constraint_energy[2]*eq_constraint_energy[2]);
+  stream << "pos_norm " << pos_norm << " pos_unit [" << pos[0]/pos_norm << " " << pos[1]/pos_norm << " " << pos[2]/pos_norm << "]" << std::endl <<
+          "eq_en norm " << eq_en_norm << " eq_en unit [" << eq_constraint_energy[0]/eq_en_norm << " " << eq_constraint_energy[1]/eq_en_norm << " "<< eq_constraint_energy[2]/eq_en_norm << "] " << std::endl;
+  std::cout << stream.str();
   for (unsigned int n = 0; n < VDimension; n++)
     {
       //gradE[n] += ineq_constraint_energy[n] + eq_constraint_energy[n];
       gradE[n] +=  eq_constraint_energy[n];
     }
 
-  // Augmented lagrangian updates
+  // Augmented lagrangian updates and scaling C updates
   system->GetDomain(d)->GetConstraints()->UpdateMus(pos, c_in);
-  m_lambdas[d]= lambda + c_eq*hx;
+  this->SetLambdaI(lambda + c_eq*hx, d, idx);
+  this->SetCEq(c_eq*this->GetCEqFactor());
+  this->SetCIn(c_in*this->GetCInFactor());
 
   return gradE;
 }

@@ -8,8 +8,8 @@
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
 #ifndef __itkParticleEntropyGradientFunction_h
@@ -97,7 +97,7 @@ public:
   typedef typename Superclass::VectorType VectorType;
   typedef typename ParticleSystemType::PointType PointType;
   typedef  vnl_vector_fixed<TGradientNumericType, VDimension> GradientVectorType;
-  
+
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
@@ -127,8 +127,8 @@ public:
   {
     m_SpatialSigmaCache->ZeroAllValues();
   }
-    
-  
+
+
   /** Estimate the best sigma for Parzen windowing in a given neighborhood.
       The best sigma is the sigma that maximizes probability at the given point  */
   virtual double EstimateSigma(unsigned int idx, const typename ParticleSystemType::PointVectorType &neighborhood, const ParticleDomain *domain,
@@ -140,7 +140,7 @@ public:
      normals approaches 90 degrees. */
   TGradientNumericType AngleCoefficient(const GradientVectorType&,
                                         const GradientVectorType&) const;
-  
+
   /** Minimum radius of the neighborhood of points that are considered in the
       calculation. The neighborhood is a spherical radius in 3D space. The
       actual radius used in a calculation may exceed this value, but will not
@@ -187,7 +187,7 @@ public:
 
 
   //  void ComputeNeighborho0d();
-  
+
 
   virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
   {
@@ -204,13 +204,18 @@ public:
     copy->m_MinimumNeighborhoodRadius = this->m_MinimumNeighborhoodRadius;
     copy->m_NeighborhoodToSigmaRatio = this->m_NeighborhoodToSigmaRatio;
     copy->m_SpatialSigmaCache =  this->m_SpatialSigmaCache;
+    copy->m_lambdas = this->m_lambdas;
+    copy->m_c_eq = this->m_c_eq;
+    copy->m_c_in = this->m_c_in;
+    copy->m_c_eq_factor = this->m_c_eq_factor;
+    copy->m_c_in_factor = this->m_c_in_factor;
 
     return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
 
   }
 
 protected:
-  
+
   ParticleEntropyGradientFunction() : m_FlatCutoff(0.05), m_NeighborhoodToSigmaRatio(3.0) {}
   virtual ~ParticleEntropyGradientFunction() {}
   void operator=(const ParticleEntropyGradientFunction &);

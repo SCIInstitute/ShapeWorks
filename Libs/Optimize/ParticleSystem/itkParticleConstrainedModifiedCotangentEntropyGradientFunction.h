@@ -198,6 +198,11 @@ public:
         copy->m_DomainsPerShape    = this->m_DomainsPerShape;
         copy->m_diagnostics_prefix = this->m_diagnostics_prefix;
         copy->m_RunStatus          = this->m_RunStatus;
+        copy->m_lambdas = this->m_lambdas;
+        copy->m_c_eq = this->m_c_eq;
+        copy->m_c_in = this->m_c_in;
+        copy->m_c_eq_factor = this->m_c_eq_factor;
+        copy->m_c_in_factor = this->m_c_in_factor;
 
         return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
     }

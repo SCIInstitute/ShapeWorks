@@ -94,7 +94,7 @@ public:
     // over/undersampling regions that are statistical outliers wrt curvature.
     // --jc
 
-    
+
     //  double myKappa =  (1.0 + m_Rho * m_MeanCurvatureCache->operator[](
     //  this->GetDomainNumber())->operator[](idx) * (m_SamplesPerCurvature /
     //  twopi)) /
@@ -197,6 +197,12 @@ public:
     copy->spherePts = this->spherePts;
     copy->CToP = this->CToP;
 
+    copy->m_lambdas = this->m_lambdas;
+    copy->m_c_eq = this->m_c_eq;
+    copy->m_c_in = this->m_c_in;
+    copy->m_c_eq_factor = this->m_c_eq_factor;
+    copy->m_c_in_factor = this->m_c_in_factor;
+
     return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
   }
 
@@ -214,7 +220,7 @@ protected:
   unsigned int m_Counter;
   double m_Rho;
   double m_avgKappa;
-  
+
   double m_CurrentSigma;
   typename ParticleSystemType::PointVectorType m_CurrentNeighborhood;
 

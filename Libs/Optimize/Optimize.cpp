@@ -652,8 +652,20 @@ void Optimize::Initialize()
 
   int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
 
-  // Set lambdas
+  // Augmented Lagragian Parameters
+  double c_eq0 = 1e4;
+  double c_in0 = 1e5;
+
+  double c_eq_factor = 1.01;
+  double c_in_factor = 1.01;
+
+  // Set lambdas and Cs
   m_sampler->GetCurvatureGradientFunction()->SetLambdaVec(n, 1.);
+  m_sampler->GetCurvatureGradientFunction()->SetCEq(c_eq0);
+  m_sampler->GetCurvatureGradientFunction()->SetCIn(c_in0);
+  m_sampler->GetCurvatureGradientFunction()->SetCEqFactor(c_eq_factor);
+  m_sampler->GetCurvatureGradientFunction()->SetCInFactor(c_in_factor);
+  //m_sampler->GetOptimizer()->GetGradientFunction()->SetLambdaVec(n, 1.);
 
   /*Old vector randomization
   vnl_vector_fixed<double, 3> random;
@@ -697,9 +709,13 @@ void Optimize::Initialize()
     }
     */
 
-    // Reset lambdas
+    // Adds NumberOfParticles lambdas and reset Cs
     // m_sampler->GetParticleSystem()->SetLambdaVec(lam_vec);
-    m_sampler->GetCurvatureGradientFunction()->SetLambdaVec(n, 1.);
+    //m_sampler->GetCurvatureGradientFunction()->SetLambdaVec(n, 1.);
+    //m_sampler->GetOptimizer()->GetGradientFunction()->SetLambdaVec(n, 1.);
+    m_sampler->GetCurvatureGradientFunction()->CopyDoubleTheLambdas();
+    m_sampler->GetCurvatureGradientFunction()->SetCEq(c_eq0);
+    m_sampler->GetCurvatureGradientFunction()->SetCIn(c_in0);
 
     m_sampler->GetParticleSystem()->AdvancedAllParticleSplitting(epsilon);
 

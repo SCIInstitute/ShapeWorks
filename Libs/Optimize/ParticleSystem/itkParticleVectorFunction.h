@@ -8,8 +8,8 @@
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
 #ifndef __itkParticleVectorFunction_h
@@ -29,7 +29,7 @@ namespace itk
  *
  * This is the base class defining the API for a function that takes a particle
  * system, domain, and location index as arguments and returns a vector-valued
- * result. 
+ * result.
  *
  */
 template <unsigned int VDimension>
@@ -51,7 +51,7 @@ public:
 
   /** Method for object allocation through the factory. */
   //  itkNewMacro(Self);
-  
+
   /** Dimensionality of the domain of the particle system. */
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
@@ -68,7 +68,7 @@ public:
 
   /** May be called by the solver class. */
   virtual void ResetBuffers() { }
-  
+
   /** This method is called by a solver after each iteration.  Subclasses may
       or may not implement this method.*/
   virtual void AfterIteration() { }
@@ -83,7 +83,7 @@ public:
       Energy as well as the Gradients.  Typically this is only necessary for
       the adaptive gradient descent algorithm.*/
   virtual void BeforeEvaluate(unsigned int , unsigned int, const ParticleSystemType *) {}
-  
+
   /** Some subclasses may require a pointer to the particle system and its
       domain number.  These methods set/get those values. */
   virtual void SetParticleSystem( ParticleSystemType *p)
@@ -102,6 +102,38 @@ public:
     return nullptr;
   }
 
+  void SetLambdaI(double lambda, size_t domain, size_t id){m_lambdas[domain][id] = lambda;}
+  double GetLambdaI(size_t domain, size_t id){
+      //std::cout << "m_lambda " << m_lambdas.size() << " domain " << domain << std::endl;
+      return m_lambdas[domain][id];
+  }
+  void SetLambdaVec(size_t size, double value){
+      m_lambdas.clear();
+      std::vector<double> lambdas;
+      lambdas.push_back(value);
+      for (size_t i = 0; i < size; i++){
+          m_lambdas.push_back(lambdas);
+      }
+      std::cout << "size " << m_lambdas.size() << " value " << m_lambdas[0][0] << std::endl;
+  }
+  void CopyDoubleTheLambdas(){
+      for (size_t i = 0; i < m_lambdas.size(); i++){
+          size_t num = m_lambdas[i].size();
+          for (size_t j = 0; j < num; j++){
+            m_lambdas[i].push_back(m_lambdas[i][j]);
+          }
+      }
+  }
+
+  double GetCEq(){return m_c_eq;}
+  double GetCIn(){return m_c_in;}
+  void SetCEq(double eq){m_c_eq = eq;}
+  void SetCIn(double in){m_c_in = in;}
+  double GetCEqFactor(){return m_c_eq_factor;}
+  double GetCInFactor(){return m_c_in_factor;}
+  void SetCEqFactor(double factor){m_c_eq_factor = factor;}
+  void SetCInFactor(double factor){m_c_in_factor = factor;}
+
 protected:
   ParticleVectorFunction() : m_ParticleSystem(0), m_DomainNumber(0) {}
   virtual ~ParticleVectorFunction() {}
@@ -109,7 +141,15 @@ protected:
   ParticleVectorFunction(const ParticleVectorFunction &);
 
   ParticleSystemType *m_ParticleSystem;
-  unsigned int m_DomainNumber;  
+  unsigned int m_DomainNumber;
+
+  std::vector<std::vector<double> > m_lambdas;
+
+  double m_c_eq; // equalities: Surface constraints
+  double m_c_in; // inequalities/boundary: cutting plane, sphere or free form
+  double m_c_eq_factor;
+  double m_c_in_factor;
+
 };
 
 

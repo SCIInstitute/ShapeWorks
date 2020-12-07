@@ -37,3 +37,7 @@ sphere40_DT.nrrd
   10 10 0 -10 -10 0 10 -10 0
   10 10 0 -10 -10 0 10 -10 0
 </cutting_planes>
+
+<narrow_band>
+100000
+</narrow_band>

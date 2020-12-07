@@ -438,6 +438,11 @@ public:
 
         copy->m_DomainNumber = this->m_DomainNumber;
         copy->m_ParticleSystem = this->m_ParticleSystem;
+        copy->m_lambdas = this->m_lambdas;
+        copy->m_c_eq = this->m_c_eq;
+        copy->m_c_in = this->m_c_in;
+        copy->m_c_eq_factor = this->m_c_eq_factor;
+        copy->m_c_in_factor = this->m_c_in_factor;
 
         return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
     }

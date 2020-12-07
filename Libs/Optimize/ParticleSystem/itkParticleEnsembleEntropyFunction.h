@@ -8,8 +8,8 @@
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
 #ifndef __itkParticleEnsembleEntropyFunction_h
@@ -43,13 +43,13 @@ public:
   typedef ParticleShapeMatrixAttribute<double, VDimension> ShapeMatrixType;
 
   typedef typename ShapeMatrixType::DataType DataType;
-  
+
   /** Vector & Point types. */
   typedef typename Superclass::VectorType VectorType;
   typedef typename ParticleSystemType::PointType PointType;
   typedef vnl_vector<DataType> vnl_vector_type;
   typedef vnl_matrix<DataType> vnl_matrix_type;
-  
+
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
@@ -59,16 +59,16 @@ public:
   /** The first argument is a pointer to the particle system.  The second
       argument is the index of the domain within that particle system.  The
       third argument is the index of the particle location within the given
-      domain. */  
+      domain. */
   virtual VectorType Evaluate(unsigned int, unsigned int,
                               const ParticleSystemType *, double &, double&);
-  virtual VectorType Evaluate(unsigned int a,  unsigned int b, 
+  virtual VectorType Evaluate(unsigned int a,  unsigned int b,
                               const ParticleSystemType *c, double &d)
   {
     double e;
     return this->Evaluate(a,b,c,d,e);
   }
-  
+
   virtual double Energy(unsigned int a, unsigned int b,
                         const ParticleSystemType *c)
   {
@@ -76,12 +76,12 @@ public:
     this->Evaluate(a,b,c,d,e);
     return e;
   }
-  
+
   /** Write the first n modes to +- 3 std dev and the mean of the model
       described by the covariance matrix.  The string argument is a prefix to
       the file names. */
   void WriteModes(const std::string &, int) const;
-  
+
   /**Access the shape matrix. */
   void SetShapeMatrix( ShapeMatrixType *s)
   {    m_ShapeMatrix = s;  }
@@ -122,18 +122,18 @@ public:
   { m_MinimumVariance = d;}
   double GetMinimumVariance() const
   { return m_MinimumVariance; }
-  
+
   void SetMinimumVarianceDecay(double initial_value, double final_value, double time_period)
   {
     m_MinimumVarianceDecayConstant =  exp(log(final_value / initial_value) / time_period);
     m_MinimumVariance = initial_value;
     m_HoldMinimumVariance = false;
-  } 
+  }
   bool GetMinimumVarianceDecayConstant() const
   {
     return m_MinimumVarianceDecayConstant;
   }
-  
+
   void PrintShapeMatrix()
   {
       m_ShapeMatrix->PrintMatrix();
@@ -175,6 +175,11 @@ public:
     copy->m_InverseCovMatrix = this->m_InverseCovMatrix;
     copy->m_points_mean = this->m_points_mean;
     copy->m_UseMeanEnergy = this->m_UseMeanEnergy;
+    copy->m_lambdas = this->m_lambdas;
+    copy->m_c_eq = this->m_c_eq;
+    copy->m_c_in = this->m_c_in;
+    copy->m_c_eq_factor = this->m_c_eq_factor;
+    copy->m_c_in_factor = this->m_c_in_factor;
 
     return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
 

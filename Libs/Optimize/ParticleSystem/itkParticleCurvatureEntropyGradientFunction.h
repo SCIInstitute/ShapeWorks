@@ -8,8 +8,8 @@
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
 #ifndef __itkParticleCurvatureEntropyGradientFunction_h
@@ -52,7 +52,7 @@ public:
   typedef typename Superclass::VectorType VectorType;
   typedef typename Superclass::PointType PointType;
   typedef typename Superclass::GradientVectorType GradientVectorType;
-  
+
   typedef ParticleMeanCurvatureAttribute<TGradientNumericType, VDimension> MeanCurvatureCacheType;
 
   typedef typename ParticleImageDomainWithCurvature<TGradientNumericType>::VnlMatrixType VnlMatrixType;
@@ -82,9 +82,9 @@ public:
   {
     double d, e;
     this->Evaluate(a, b, c, d, e);
-   return e;  
+   return e;
   }
-  
+
   inline double ComputeKappa(double mc, unsigned int d) const
   {
     // Miriah code
@@ -105,7 +105,7 @@ public:
 
 
   }
-  
+
   /** */
   virtual void AfterIteration()  {  }
 
@@ -123,17 +123,17 @@ public:
 
   /** */
   //  void ComputeKappaValues();
-  
+
   /** Access the cache of curvature-based weight values for each particle
       position. */
   void SetMeanCurvatureCache( MeanCurvatureCacheType *s)
   {    m_MeanCurvatureCache = s;  }
   MeanCurvatureCacheType *GetMeanCurvatureCache()
   {   return  m_MeanCurvatureCache.GetPointer();  }
-  
+
   const MeanCurvatureCacheType *GetMeanCurvatureCache() const
   {   return  m_MeanCurvatureCache.GetPointer();  }
- 
+
   /** Set/Get the parameters in the kappa function. */
   //  void SetGamma(double g)
   //  { m_Gamma = g; }
@@ -177,18 +177,13 @@ public:
 
     copy->m_DomainNumber = this->m_DomainNumber;
     copy->m_ParticleSystem = this->m_ParticleSystem;
+    copy->m_lambdas = this->m_lambdas;
+    copy->m_c_eq = this->m_c_eq;
+    copy->m_c_in = this->m_c_in;
+    copy->m_c_eq_factor = this->m_c_eq_factor;
+    copy->m_c_in_factor = this->m_c_in_factor;
 
     return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
-  }
-
-  void SetLambdaI(double lambda, int domain){m_lambdas[domain] = lambda;}
-  double GetLambdaI(int domain){return m_lambdas[domain];}
-  void SetLambdaVec(size_t size, double value){
-      m_lambdas.clear();
-      for (size_t i = 0; i < size; i++){
-          m_lambdas.push_back(value);
-      }
-      std::cout << "size " << m_lambdas.size() << " value " << m_lambdas[0] << std::endl;
   }
 
 protected:
@@ -204,9 +199,9 @@ protected:
   //  double m_SamplesPerCurvature;
   unsigned int m_Counter;
   double m_Rho;
-  
+
   double m_avgKappa;
-  
+
   double m_CurrentSigma;
   typename ParticleSystemType::PointVectorType m_CurrentNeighborhood;
 
@@ -214,8 +209,6 @@ protected:
 
   float m_MaxMoveFactor;
 
-  std::vector<double> m_lambdas;
-  
 };
 
 } //end namespace
