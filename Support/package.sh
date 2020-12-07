@@ -45,6 +45,13 @@ cp docs/about/release-notes.md package/${VERSION}
 # Run auto-documentation
 PATH=$INSTALL_DIR/bin:$PATH
 python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
+if [ $? -eq 0 ]; then
+    echo "Documentation generated successfully"
+else
+    echo "Failed to generate documentation"
+    exit 1
+fi
+
 mkdocs build
 mv site Documentation
 cp -a Documentation "package/${VERSION}"
@@ -67,6 +74,12 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     install_name_tool -add_rpath @executable_path/../../../../lib ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio
     QT_LIB_LOCATION="@executable_path/ShapeWorksStudio.app/Contents/Frameworks"
 
+    # Copy libraries from anaconda
+    conda_libs="libpython"
+    for clib in $conda_libs; do
+        cp ${CONDA_PREFIX}/lib/${clib}* lib
+    done
+
     # copy platform plugins for View2
     cp -a ShapeWorksStudio.app/Contents/PlugIns .
 
@@ -85,7 +98,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     cd ..
 else
     # Copy libraries from anaconda
-    conda_libs="libboost_iostreams libbz2 liblzma liblz4 libtbb libHalf"
+    conda_libs="libboost_iostreams libbz2 liblzma liblz4 libtbb libHalf libpython"
     for clib in $conda_libs; do
         cp ${CONDA_PREFIX}/lib/${clib}* lib
     done

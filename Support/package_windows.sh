@@ -31,6 +31,12 @@ rm -rf Post
 # Run auto-documentation
 PATH=../build/bin/Release:$PATH
 python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
+if [ $? -eq 0 ]; then
+    echo "Documentation generated successfully"
+else
+    echo "Failed to generate documentation"
+    exit 1
+fi
 mkdocs build
 mv site Documentation
 cp -a Documentation bin/
