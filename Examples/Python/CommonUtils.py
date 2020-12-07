@@ -53,12 +53,6 @@ def download_subset(use_case,datasetName,outputDirectory):
         DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
 
 
-
-
-
-
-
-
     
 def download_and_unzip_dataset(datasetName, outputDirectory):
     # Check if the unzipped data is present
