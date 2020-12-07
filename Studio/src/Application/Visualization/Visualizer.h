@@ -120,6 +120,7 @@ private:
 private:
 
   bool center_;
+  bool needs_camera_reset_ = true;
 
   bool show_glyphs_;
   bool show_surface_;
