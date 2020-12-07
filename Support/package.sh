@@ -104,7 +104,7 @@ fi
 
 # Run auto-documentation
 cd $ROOT
-PATH=$INSTALL_DIR/bin:$PATH
+PATH=$ROOT/package/${VERSION}/bin:$PATH
 # check that 'shapeworks -h' is working
 shapeworks -h
 if [ $? -eq 0 ]; then
