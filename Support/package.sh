@@ -42,25 +42,18 @@ cp -a Python "package/${VERSION}"
 cp conda_installs.sh package/${VERSION}
 cp docs/about/release-notes.md package/${VERSION}
 
-# Run auto-documentation
-PATH=$INSTALL_DIR/bin:$PATH
-# check that 'shapeworks -h' is working
-shapeworks -h
-if [ $? -eq 0 ]; then
-    echo "shapeworks -h is working"
-else
-    echo "shapeworks -h is not working"
-    exit 1
-fi
-python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
-mkdocs build
-mv site Documentation
-cp -a Documentation "package/${VERSION}"
-
 if [[ "$OSTYPE" == "darwin"* ]]; then
     cp docs/users/Mac_README.txt package/${VERSION}/README.txt
+    if [ $? -ne 0 ]; then
+	echo "Failed to copy Mac package README"
+	exit 1
+    else
 else
     cp docs/users/Linux_README.txt package/${VERSION}/README.txt
+    if [ $? -ne 0 ]; then
+	echo "Failed to copy Linux package README"
+	exit 1
+    else
 fi
 
 cd "package/${VERSION}"
@@ -109,10 +102,29 @@ else
     linuxdeployqt ShapeWorksStudio -verbose=2
 fi
 
+# Run auto-documentation
+cd $ROOT
+PATH=$INSTALL_DIR/bin:$PATH
+# check that 'shapeworks -h' is working
+shapeworks -h
+if [ $? -eq 0 ]; then
+    echo "shapeworks -h is working"
+else
+    echo "shapeworks -h is not working"
+    exit 1
+fi
+python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
+mkdocs build
+mv site Documentation
+cp -a Documentation "${ROOT}/package/${VERSION}"
+
 mkdir ${ROOT}/artifacts
 cd ${ROOT}/package
-cp ${ROOT}/docs/users/PACKAGE_README.txt ${VERSION}/README.txt
 zip -r ${ROOT}/artifacts/${VERSION}.zip ${VERSION}
+if [ $? -ne 0 ]; then
+    echo "Failed to zip artifact"
+    exit 1
+else
 
 # Additionally on Mac, create an installer
 if [[ "$OSTYPE" == "darwin"* ]]; then
