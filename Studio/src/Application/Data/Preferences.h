@@ -84,6 +84,8 @@ public:
   OrientationMarkerType get_orientation_marker_type();
   void set_orientation_marker_type(OrientationMarkerType type);
 
+  OrientationMarkerCorner get_orientation_marker_corner();
+  void set_orientation_marker_corner(OrientationMarkerCorner corner);
 
 Q_SIGNALS:
 
