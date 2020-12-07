@@ -68,11 +68,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     install_name_tool -add_rpath @executable_path/../../../../lib ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio
     QT_LIB_LOCATION="@executable_path/ShapeWorksStudio.app/Contents/Frameworks"
 
-    # Copy libraries from anaconda
-    conda_libs="libpython"
-    for clib in $conda_libs; do
-        cp ${CONDA_PREFIX}/lib/${clib}* "package/${VERSION}/lib"
-    done
 
     # copy platform plugins for View2
     cp -a ShapeWorksStudio.app/Contents/PlugIns .
@@ -81,8 +76,13 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 	install_name_tool -add_rpath $QT_LIB_LOCATION $i
     done
 
-    # Fix transitive loaded libs
     cd ../lib
+    # Copy libraries from anaconda
+    conda_libs="libpython"
+    for clib in $conda_libs; do
+        cp ${CONDA_PREFIX}/lib/${clib}* .
+    done
+    # Fix transitive loaded libs
     for i in *.dylib ; do
 	install_name_tool -change ${BASE_LIB}/libitkgdcmopenjp2-5.0.1.dylib @rpath/libitkgdcmopenjp2-5.0.1.dylib $i
     done
