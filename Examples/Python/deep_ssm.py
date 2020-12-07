@@ -35,39 +35,44 @@ def Run_Pipeline(args):
 	img_list = sorted(img_list)
 	# Get particles path list
 	model_dir =  input_dir + "shape_models/femur/1024/" 
-	particle_list = []
+	world_particle_list = []
+	local_particle_list = []
 	for file in os.listdir(model_dir):
 		if "local" in file:
-			particle_list.append(model_dir + file)
-	particle_list = sorted(particle_list)
+			local_particle_list.append(model_dir + file)
+		if "world" in file:
+			world_particle_list.append(model_dir + file)
+	local_particle_list = sorted(local_particle_list)
+	world_particle_list = sorted(world_particle_list)
 	# split into train and test
 	train_img_list = img_list[:40]
-	train_particle_list = particle_list[:40]
+	train_local_particle_list = local_particle_list[:40]
+	train_world_particle_list = world_particle_list[:40]
 	test_img_list = img_list[40:]
-	test_particle_list = particle_list[40:]
 	# shorten lists for tiny test 
 	if args.tiny_test:
 		train_img_list = train_img_list[:4]
-		train_particle_list = train_particle_list[:4]
+		train_local_particle_list = train_local_particle_list[:4]
+		train_world_particle_list = train_world_particle_list[:4]
 		test_img_list = test_img_list[:3]
-		test_particle_list = test_particle_list[:3]
 
 	print("\n\n\nStep 2. Augment data\n") ###################################################################################
 	'''
 	- num_samples is how many samples to generate 
 	- num_dim is the number of PCA scores to use
+	- percent_dim what percent of variablity to retain (used if num_dim is 0)
 	- aug_type is the augmentation method to use (1 is based on just particles wheras 2 is based on images and particles)
 	- sample type is the distribution to use for sampling. Can be gaussian, mixture, or kde
 	'''
 	num_samples = 4960
 	num_dim = 6
-	variability_percent = 0.95
+	percent_variability = 0.95
 	sampler_type = "kde"
 	if args.tiny_test:
 		num_samples = 4
 		num_dim = 0
-		variability_percent = 0.99
-	embedded_dim = DataAugmentationUtils.runDataAugmentation(outputDirectory + "Augmentation/", train_img_list, train_particle_list, num_samples, num_dim, variability_percent, sampler_type)
+		percent_variability = 0.99
+	embedded_dim = DataAugmentationUtils.runDataAugmentation(outputDirectory + "Augmentation/", train_img_list, train_local_particle_list, num_samples, num_dim, percent_variability, sampler_type, mixture_num=0, processes=3, world_point_list=train_world_particle_list)
 	aug_data_csv = outputDirectory + "Augmentation/TotalData.csv"
 	DataAugmentationUtils.visualizeAugmentation(aug_data_csv)
 
