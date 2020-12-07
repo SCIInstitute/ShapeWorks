@@ -9,7 +9,7 @@ from ShapeCohortGen.CohortGenUtils import *
 '''
 Generates super shapes and saves mesh form
 '''
-def generate(num_samples, out_dir, m, start_id, size):
+def generate(num_samples, out_dir, m, start_id, size, randomize_center):
     # make folders
     meshDir= out_dir + "meshes/"
     make_dir(meshDir)
@@ -27,8 +27,13 @@ def generate(num_samples, out_dir, m, start_id, size):
         X, Y, Z, triIndices = super_formula_3D(m, n1, n2, n3, a, b)
        	verts = np.column_stack((X,Y,Z))
         shapeMesh = trimesh.Trimesh(vertices=verts, faces=triIndices)
-        matrix = np.array([[size,0,0,0], [0,size,0,0], [0,0,size,0],[0,0,0,1]])
-        shapeMesh = shapeMesh.apply_transform(matrix)
+        # transform
+        if randomize_center:
+            center_loc = list(np.random.randint(low = 0,high=30,size=3))
+        else:
+            center_loc = [0,0,0]
+        transform_matrix = np.array([[size,0,0,center_loc[0]], [0,size,0,center_loc[1]], [0,0,size,center_loc[2]],[0,0,0,1]])
+        shapeMesh = shapeMesh.apply_transform(transform_matrix)
         shapeMesh.export(meshDir + name + ".stl")
         execCommand = ["stl2ply", meshDir + name + ".stl", meshDir + name + ".ply"]
         subprocess.check_call(execCommand)
