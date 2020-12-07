@@ -71,7 +71,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     # Copy libraries from anaconda
     conda_libs="libpython"
     for clib in $conda_libs; do
-        cp ${CONDA_PREFIX}/lib/${clib}* lib
+        cp ${CONDA_PREFIX}/lib/${clib}* "package/${VERSION}/lib"
     done
 
     # copy platform plugins for View2
