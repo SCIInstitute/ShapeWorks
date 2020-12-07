@@ -29,7 +29,8 @@ cp -r ../build/bin/RelWithDebInfo bin
 rm -rf Post
 
 # Run auto-documentation
-PATH=../build/bin/Release:$PATH
+cd $ROOT
+PATH=../build/bin/Release:bin:$PATH
 # check that 'shapeworks -h' is working
 shapeworks -h
 if [ $? -eq 0 ]; then
