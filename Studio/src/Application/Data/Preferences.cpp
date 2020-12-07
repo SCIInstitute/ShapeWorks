@@ -217,3 +217,16 @@ void Preferences::restore_defaults()
   this->settings_.clear();
   return;
 }
+
+//-----------------------------------------------------------------------------
+Preferences::OrientationMarkerType Preferences::get_orientation_marker_type()
+{
+  return static_cast<OrientationMarkerType>(
+    this->settings_.value("Viewer/orientation_marker_type", Preferences::medical).toInt());
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_orientation_marker_type(Preferences::OrientationMarkerType type)
+{
+  this->settings_.setValue("Viewer/orientation_marker_type", type);
+}
