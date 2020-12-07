@@ -6,11 +6,11 @@ class CohortGenerator():
 		self.meshes = []
 		self.segs = []
 		self.images = []
-	def generate_segmentations(self):
+	def generate_segmentations(self, randomize_size=True, spacing=[1,1,1], allow_on_boundary=True):
 		if not self.meshes:
 			print("Error: No meshes have been generated to get segmentations from.\n Call 'generate' first.")
 			return
-		self.segs = CohortGenUtils.generate_segmentations(self.meshes, self.out_dir)
+		self.segs = CohortGenUtils.generate_segmentations(self.meshes, self.out_dir, randomize_size, spacing, allow_on_boundary)
 		return self.segs
 	def generate_images(self):
 		if not self.segs:

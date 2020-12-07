@@ -127,13 +127,10 @@ def getMeshInfo(outDir, meshList, spacing):
 	return origin, size
 
 
-def generate_segmentations(meshList,out_dir):
+def generate_segmentations(meshList, out_dir, randomize_size, spacing, allow_on_boundary):
 	segDir = out_dir + "segmentations/"
 	meshDir = out_dir + "meshes/"
 	make_dir(segDir)
-
-	#Spacing should this be user defned ? 
-	spacing = [1,1,2]
 
 	#get the origin and size based on all the meshes in the VTKMeshList
 	origin, size = getMeshInfo(meshDir, meshList, spacing)
@@ -169,7 +166,7 @@ def generate_segmentations(meshList,out_dir):
 
 		#If the meshIndex is in the randomly selected samples, get the origin and size 
 		# of that mesh so that the segmentation image touch the boundary
-		if(meshIndex in randomSamples):
+		if(meshIndex in randomSamples) and allow_on_boundary:
 			m_origin, m_size = getMeshInfo(meshDir, [meshList[meshIndex]], spacing)
 			m_data = {}
 			m_data["origin"] = m_origin
@@ -192,7 +189,7 @@ def generate_segmentations(meshList,out_dir):
 			index = 0
 			for dim in ["x","y","z"]:
 				#If the dim is in the random selection of axes, add padding
-				if dim in selectedAxes and key=="size":
+				if dim in selectedAxes and key=="size" and randomize_size:
 					#Random padding
 					e = np.random.randint(20,30,size=1)
 					val = str(value[index] + e[0] )
