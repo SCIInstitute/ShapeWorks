@@ -106,7 +106,7 @@ ParticleGoodBadAssessment<TGradientNumericType, VDimension>::computeParticlesNor
     for (int i = 0; i < num; i++)
     {
         PointType pt = m_ParticleSystem->GetPosition(i, d);
-        NormalType n = m_ParticleSystem->GetDomain(d)->SampleNormalAtPoint(pt);
+        NormalType n = m_ParticleSystem->GetDomain(d)->SampleNormalAtPoint(pt, -1);
         for (int j = 0; j < VDimension; j++)
             normals[i][j] = n[j];
     }

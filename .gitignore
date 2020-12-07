@@ -57,3 +57,6 @@ __pycache__/
 
 # mkdocs generated site
 site/
+
+# notebooks related
+.ipynb_checkpoints

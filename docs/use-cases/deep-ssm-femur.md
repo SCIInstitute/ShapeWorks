@@ -22,10 +22,10 @@ $ python RunUseCase.py --use_case deep_ssm
 
 See [Getting Started with Use Cases](../use-cases/use-cases.md#running-use-case) for the full list of tags. Note the following tags are not applicable to this use case:
 
-* `--start_with_prepped_data`
+* `--skip_grooming`
 * `--use_single_scale`
 * `--interactive`
-* `--start_with_image_and_segmentation_data`
+* `--groom_images`
 
 This calls `deep_ssm.py` (in `Examples/Python/`) to perform the following.
 

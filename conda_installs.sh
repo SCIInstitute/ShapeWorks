@@ -57,6 +57,7 @@ function install_conda() {
   conda config --add channels conda-forge
   
   # update anaconda
+  conda activate base
   if ! conda update --yes -n base conda; then return 1; fi
   if ! conda update --yes --all; then return 1; fi
 
@@ -122,6 +123,24 @@ function install_conda() {
   if ! pip install Python/DocumentationUtilsPackage;    then return 1; fi # install shapeworks auto-documentation as a package
   if ! pip install Python/DataAugmentationUtilsPackage; then return 1; fi # install data augmentation code as a package
   if ! pip install Python/DeepSSMUtilsPackage;          then return 1; fi # install DeepSSM code as a package
+  
+  # installs for jupyter notebooks
+
+  if ! pip install nbstripout;         then return 1; fi # to stripout notebooks output before committing  
+  if ! pip install pyvista;            then return 1; fi # for visualizations on notebooks
+  if ! pip install ipyvtk_simple;      then return 1; fi # for visualizations on notebooks
+  if ! pip install ipywidgets;         then return 1; fi # for visualizations on notebooks
+  if ! pip install itkwidgets;         then return 1; fi # for visualizations on notebooks
+  if ! pip install mkdocs-jupyter;     then return 1; fi # for adding notebooks to our documentation (supports toc and excutation before deployment)
+
+  # for spell check markdown cells in jupyter notebooks
+  pip install jupyter_contrib_nbextensions
+  jupyter contrib nbextension install --user
+  jupyter nbextension enable spellchecker/main
+
+  # installing nbstripout to strip out notebooks cell outputs before committing 
+  nbstripout --install
+  nbstripout --install --attributes .gitattributes
 
   # install any additional Linux dependencies
   if [[ "$(uname)" == "Linux" ]]; then

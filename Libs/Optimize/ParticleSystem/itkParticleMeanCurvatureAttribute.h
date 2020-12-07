@@ -93,7 +93,7 @@ public:
   {
     //  Get the position and index.
     PointType pos = system->GetPosition(idx, dom);
-    this->operator[](dom)->operator[](idx) = system->GetDomain(dom)->GetCurvature(pos);
+    this->operator[](dom)->operator[](idx) = system->GetDomain(dom)->GetCurvature(pos, idx);
   }
   
   /** Compute the mean and std deviation of the curvature on the image

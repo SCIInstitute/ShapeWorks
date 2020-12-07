@@ -2,6 +2,7 @@
 
 //---------------------------------------------------------------------------
 // only need to run pythonEnvSetup once or it continuously appends to paths
+// FIXME: This is a problem if you only need to execute a single test (same problem in ShapeworksTests)
 TEST(pythonTests, setup)
 {
   pythonEnvSetup();
@@ -342,4 +343,10 @@ TEST(pythonTests, ipoint3)
 TEST(pythonTests, fpoint3)
 {
   ASSERT_FALSE(system("python fpoint3.py"));
+}
+
+//---------------------------------------------------------------------------
+TEST(pythonTests, optimize)
+{
+  ASSERT_FALSE(system("python optimize.py"));
 }

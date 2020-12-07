@@ -162,7 +162,7 @@ public:
   /// applies the given transformation to the image by using resampling filter
   Image& applyTransform(const TransformPtr transform, InterpolationType interp = Linear);
 
-  /// applies the given transformation to the image by using resampling filter
+  /// applies the given transformation to the image by using resampling filter with new origin, dims, spacing and direction values
   Image& applyTransform(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);
 
   /// extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image

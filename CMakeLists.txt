@@ -22,7 +22,6 @@ endif()
 option(Build_Post      "Build post"         OFF)
 option(Build_View2     "Build view2"        OFF)
 option(Build_Studio    "Build studio"       OFF)
-option(Build_PythonAPI "Build Python API"   ON)
 option(BUILD_TESTS     "Build tests"        ON)
 
 if ("${Build_Post}" OR "${Build_View2}" OR "${Build_Studio}")
@@ -136,6 +135,9 @@ find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 ### XLNT
 find_package (XLNT REQUIRED)
 
+### Libigl set include path
+find_package(LIBIGL REQUIRED QUIET)
+
 if(USE_OPENMP)
   find_package(OpenMP REQUIRED)
   add_definitions(-DSW_USE_OPENMP) # used in ExternalLibs/trimesh2/include/TriMesh.h
@@ -153,11 +155,9 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/Libs/Common")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/ExternalLibs/optparse")
 
-if(Build_PythonAPI)
-  SET(PYBIND11_PYTHON_VERSION 3.7)
-  find_package(pybind11 2.5.0 REQUIRED)
-  add_subdirectory(Python/shapeworks)
-endif()
+SET(PYBIND11_PYTHON_VERSION 3.7)
+find_package(pybind11 2.5.0 REQUIRED)
+add_subdirectory(Python/shapeworks)
 
 add_subdirectory(ExternalLibs)
 add_subdirectory(Libs)
