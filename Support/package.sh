@@ -85,7 +85,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     cd ..
 else
     # Copy libraries from anaconda
-    conda_libs="libboost_iostreams libbz2 liblzma liblz4 libtbb libHalf"
+    conda_libs="libboost_iostreams libbz2 liblzma liblz4 libtbb libHalf libpython"
     for clib in $conda_libs; do
         cp ${CONDA_PREFIX}/lib/${clib}* lib
     done
