@@ -188,7 +188,7 @@ PYBIND11_MODULE(shapeworks, m)
     ss << m;
     return ss.str();
   })
-  .def("__getitem__", [](const Matrix44& m, size_t r, size_t c) { return m[r, c]; })
+  .def("__getitem__", [](const Matrix44& m, size_t r, size_t c) { return m[r][c]; })
   .def("__setitem__", [](Matrix44& m, size_t r, size_t c, int val) { m[r][c] = val; })
   .def("__add__", [](const Matrix44& m1, const Matrix44& m2) { return m1 + m2; })
   .def("__sub__", [](const Matrix44& m1, const Matrix44& m2) { return m1 - m2; })
@@ -250,11 +250,11 @@ PYBIND11_MODULE(shapeworks, m)
 
   // Shapeworks Globals
   m.def("createTransform", createTransform, "creates transform from matrix", "mat"_a, "translate"_a=makeVector({0,0,0}));
-  m.def("toPoint", py::overload_cast<const Dims &>(toPoint), "converts Dims to Point");
-  m.def("toPoint", py::overload_cast<const Coord &>(toPoint), "converts Coord to Point");
-  m.def("toPoint", py::overload_cast<const Vector &>(toPoint), "converts Vector to Point");
-  m.def("toVector", py::overload_cast<const Dims &>(toVector), "converts Dims to Vector");
-  m.def("toVector", py::overload_cast<const Point &>(toVector), "converts Point to Vector");
+  m.def("toPoint", py::overload_cast<const Dims &>(toPoint), "converts Dims to Point", "d"_a);
+  m.def("toPoint", py::overload_cast<const Coord &>(toPoint), "converts Coord to Point", "c"_a);
+  m.def("toPoint", py::overload_cast<const Vector &>(toPoint), "converts Vector to Point", "d"_a);
+  m.def("toVector", py::overload_cast<const Dims &>(toVector), "converts Dims to Vector", "p"_a);
+  m.def("toVector", py::overload_cast<const Point &>(toVector), "converts Point to Vector", "v"_a);
   m.def("negate", negate<Coord>, "negate function for Coord");
   m.def("negate", negate<Dims>, "negate function for Dims");
   m.def("negate", negate<Point>, "negate function for Point");
@@ -274,8 +274,8 @@ PYBIND11_MODULE(shapeworks, m)
   .export_values();
   ;
 
-  m.def("axis_is_valid", py::overload_cast<const Vector &>(&axis_is_valid), "ensure an axis is valid");
-  m.def("axis_is_valid", py::overload_cast<const Axis &>(&axis_is_valid), "ensure an axis is valid");
+  m.def("axis_is_valid", py::overload_cast<const Vector &>(&axis_is_valid), "ensure an axis is valid", "axis"_a);
+  m.def("axis_is_valid", py::overload_cast<const Axis &>(&axis_is_valid), "ensure an axis is valid", "axis"_a);
   m.def("degToRad", degToRad, "convert degrees to radians", "deg"_a);
   m.def("toAxis", toAxis, "convert to axis", "str"_a);
   
@@ -323,16 +323,16 @@ PYBIND11_MODULE(shapeworks, m)
   .def("write",                 &Image::write, "writes the current image (determines type by its extension)", "filename"_a, "compressed"_a=true)
   .def("antialias",             &Image::antialias, "antialiases binary volumes", "iterations"_a=50, "maxRMSErr"_a=0.01f, "layers"_a=0)
   .def("resample",              py::overload_cast<TransformPtr, Point3, Dims, Vector3, Image::ImageType::DirectionType, Image::InterpolationType>(&Image::resample), "resamples by applying transform then sampling from given origin along direction axes at spacing physical units per pixel for dims pixels using specified interpolator")
-  .def("resample",              py::overload_cast<const Vector&, Image::InterpolationType>(&Image::resample), "resamples image using new physical spacing, updating logical dims to keep all image data for this spacing")
+  .def("resample",              py::overload_cast<const Vector&, Image::InterpolationType>(&Image::resample), "resamples image using new physical spacing, updating logical dims to keep all image data for this spacing", "physicalSpacing"_a, "interp"_a=Image::InterpolationType::Linear)
   .def("resize",                &Image::resize, "resizes an image (computes new physical spacing)", "logicalDims"_a, "interp"_a=Image::InterpolationType::Linear)
   .def("recenter",              &Image::recenter, "recenters an image by changing its origin in the image header to the physical coordinates of the center of the image")
-  .def("pad",                   py::overload_cast<int, Image::PixelType>(&Image::pad), "pads an image with specified value by specified number of voxels in the x-, y-, and/or z- directions; origin remains at the same location (note: negative padding to shrink an image is permitted)")
-  .def("pad",                   py::overload_cast<int, int, int, Image::PixelType>(&Image::pad), "pads an image with specified value by specified number of voxels in the x-, y-, and/or z- directions; origin remains at the same location (note: negative padding to shrink an image is permitted)")
+  .def("pad",                   py::overload_cast<int, Image::PixelType>(&Image::pad), "pads an image in all directions with constant value", "pad"_a, "value"_a=0.0)
+  .def("pad",                   py::overload_cast<int, int, int, Image::PixelType>(&Image::pad), "pads an image by desired number of voxels in each direction with constant value", "padx"_a, "pady"_a, "padz"_a, "value"_a=0.0)
   .def("translate",             &Image::translate, "translates image", "v"_a)
   .def("scale",                 &Image::scale, "scale image around center (not origin)", "v"_a)
   .def("rotate",                &Image::rotate, "rotate around center (not origin) using axis (default z-axis) by angle (in radians)", "angle"_a, "axis"_a)
-  .def("applyTransform",        py::overload_cast<TransformPtr, Image::InterpolationType>(&Image::applyTransform), "applies the given transformation to the image by using resampling filter")
-  .def("applyTransform",        py::overload_cast<TransformPtr, Point3, Dims, Vector3, Image::ImageType::DirectionType, Image::InterpolationType>(&Image::applyTransform), "applies the given transformation to the image by using resampling filter")
+  .def("applyTransform",        py::overload_cast<TransformPtr, Image::InterpolationType>(&Image::applyTransform), "applies the given transformation to the image by using resampling filter", "transform"_a, "interp"_a=Image::InterpolationType::Linear)
+  .def("applyTransform",        py::overload_cast<TransformPtr, Point3, Dims, Vector3, Image::ImageType::DirectionType, Image::InterpolationType>(&Image::applyTransform), "applies the given transformation to the image by using resampling filter with new origin, dims, spacing and direction values", "transform"_a, "origin"_a, "dims"_a, "spacing"_a, "direction"_a, "interp"_a=Image::InterpolationType::NearestNeighbor)
   .def("extractLabel",          &Image::extractLabel, "extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image", "label"_a=1.0)
   .def("closeHoles",            &Image::closeHoles, "closes holes in a volume defined by values larger than specified value", "foreground"_a=0.0)
   .def("binarize",              &Image::binarize, "sets portion of image greater than min and less than or equal to max to the specified value", "minVal"_a=0.0, "maxVal"_a=std::numeric_limits<Image::PixelType>::max(), "innerVal"_a=1.0, "outerVal"_a=0.0)
@@ -343,8 +343,8 @@ PYBIND11_MODULE(shapeworks, m)
   .def("applyTPLevelSetFilter", &Image::applyTPLevelSetFilter, "segments structures in image using topology preserving geodesic active contour level set filter", "featureImage"_a, "scaling"_a=20.0)
   .def("gaussianBlur",          &Image::gaussianBlur, "applies gaussian blur", "sigma"_a=0.0)
   .def("crop",                  &Image::crop, "crop image down to the current region (e.g., from bounding-box), or the specified min/max in each direction", "region"_a)
-  .def("clip",                  py::overload_cast<const Point&, const Point&, const Point&, const Image::PixelType>(&Image::clip), "sets values on the back side of cutting plane (containing three non-colinear points) to val (default 0.0)")
-  .def("clip",                  py::overload_cast<const Vector&, const Point&, const Image::PixelType>(&Image::clip), "sets values on the back side of cutting plane (normal n containing point p) to val (default 0.0)")
+  .def("clip",                  py::overload_cast<const Point&, const Point&, const Point&, const Image::PixelType>(&Image::clip), "sets values on the back side of cutting plane (containing three non-colinear points) to val (default 0.0)", "o"_a, "p1"_a, "p2"_a, "val"_a=0.0)
+  .def("clip",                  py::overload_cast<const Vector&, const Point&, const Image::PixelType>(&Image::clip), "sets values on the back side of cutting plane (normal n containing point p) to val (default 0.0)", "n"_a, "q"_a, "val"_a=0.0)
   .def("setOrigin",             &Image::setOrigin, "sets the image origin in physical space to the given value", "origin"_a=Point3({0,0,0}))
   .def("reflect",               &Image::reflect, "reflect image with respect to logical image center and the specified axis", "axis"_a)
   .def("dims",                  &Image::dims, "logical dimensions of the image")
