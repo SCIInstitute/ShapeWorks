@@ -47,13 +47,13 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     if [ $? -ne 0 ]; then
 	echo "Failed to copy Mac package README"
 	exit 1
-    else
+    fi
 else
     cp docs/users/Linux_README.txt package/${VERSION}/README.txt
     if [ $? -ne 0 ]; then
 	echo "Failed to copy Linux package README"
 	exit 1
-    else
+    fi
 fi
 
 cd "package/${VERSION}"
@@ -124,7 +124,7 @@ zip -r ${ROOT}/artifacts/${VERSION}.zip ${VERSION}
 if [ $? -ne 0 ]; then
     echo "Failed to zip artifact"
     exit 1
-else
+fi
 
 # Additionally on Mac, create an installer
 if [[ "$OSTYPE" == "darwin"* ]]; then
