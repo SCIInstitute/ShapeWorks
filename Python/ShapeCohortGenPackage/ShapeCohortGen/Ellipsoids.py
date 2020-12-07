@@ -35,16 +35,22 @@ def addEllipsoid(center, radii, rotation, resolution=24):
 
 	return translateFilter
 
-def generate_ellipsoids(filename,meshDir):
+def generate_ellipsoids(filename, meshDir, randomize_center, randomize_rotation):
 	vtkFileName = meshDir+"ellipsoid_"+filename+".vtk"
 	plyFileName = meshDir+"ellipsoid_"+filename+".ply"
-	center_loc = list(np.random.randint(low = 0,high=50,size=3))
+	if randomize_center:
+		center_loc = list(np.random.randint(low = 0,high=50,size=3))
+	else:
+		center_loc = [0,0,0]
 	x_radius = np.random.randint(low =15,high=25,size =1)
 	y_radius = np.random.randint(low =5,high=15,size =1)
 	z_radius = np.random.randint(low =5,high=15,size =1)
 
 	radii = [x_radius[0],y_radius[0],z_radius[0]]
-	rotation = np.random.randint(low=0,high=180,size=1)[0]
+	if randomize_rotation:
+		rotation = np.random.randint(low=0,high=180,size=1)[0]
+	else:
+		rotation = 0
 	ellipsoid = addEllipsoid(center_loc,radii,rotation)
 
 	ply_writer = vtk.vtkPLYWriter()
@@ -53,10 +59,10 @@ def generate_ellipsoids(filename,meshDir):
 	ply_writer.Update()
 	
 
-def generate(num_samples,out_dir):
+def generate(num_samples,out_dir,randomize_center, randomize_rotation):
 	meshDir = out_dir + "meshes/"
 	make_dir(meshDir)
 	for i in range(num_samples):
 		filename = str(i).zfill(2)
-		generate_ellipsoids(filename,meshDir)
+		generate_ellipsoids(filename, meshDir, randomize_center, randomize_rotation)
 	return get_files(meshDir)

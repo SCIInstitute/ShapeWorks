@@ -9,7 +9,7 @@ from ShapeCohortGen.CohortGenUtils import *
 '''
 Generates super shapes and saves mesh form
 '''
-def generate(num_samples, out_dir, m, start_id, size, randomize_center):
+def generate(num_samples, out_dir, randomize_center, randomize_rotation, m, start_id, size):
     # make folders
     meshDir= out_dir + "meshes/"
     make_dir(meshDir)
@@ -32,7 +32,14 @@ def generate(num_samples, out_dir, m, start_id, size, randomize_center):
             center_loc = list(np.random.randint(low = 0,high=30,size=3))
         else:
             center_loc = [0,0,0]
-        transform_matrix = np.array([[size,0,0,center_loc[0]], [0,size,0,center_loc[1]], [0,0,size,center_loc[2]],[0,0,0,1]])
+        if randomize_rotation:
+            rotation = np.random.rand(3)
+        else:
+            rotation = 0
+        S = trimesh.transformations.scale_matrix(size, [0,0,0])
+        T = trimesh.transformations.translation_matrix(center_loc)
+        R = trimesh.transformations.random_rotation_matrix(rotation)
+        transform_matrix = trimesh.transformations.concatenate_matrices(T, R, S)
         shapeMesh = shapeMesh.apply_transform(transform_matrix)
         shapeMesh.export(meshDir + name + ".stl")
         execCommand = ["stl2ply", meshDir + name + ".stl", meshDir + name + ".ply"]
