@@ -7,18 +7,15 @@ import subprocess
 from ShapeCohortGen.CohortGenUtils import *
 
 '''
-Generates super shapes and saves mesh form
+Generates super shapes and saves PLY mesh form
 '''
 def generate(num_samples, out_dir, randomize_center, randomize_rotation, m, start_id, size):
-    # make folders
     meshDir= out_dir + "meshes/"
     make_dir(meshDir)
-    # for implicit resolution
-    unitCubeSize = 2 
     for i in range(num_samples):
         print("Generating shape " + str(i+1) + " out of " + str(num_samples))
         name = "id" + get_id_str(i+start_id) + "_ss" + str(m)
-        # shape params
+        # Define shape params
         n1 = np.random.uniform(0.5,1.5)
         n2 = np.random.uniform(0.5,1.5)
         n3 = n2
@@ -26,8 +23,9 @@ def generate(num_samples, out_dir, randomize_center, randomize_rotation, m, star
         b = 1
         X, Y, Z, triIndices = super_formula_3D(m, n1, n2, n3, a, b)
        	verts = np.column_stack((X,Y,Z))
+        # Generate shape
         shapeMesh = trimesh.Trimesh(vertices=verts, faces=triIndices)
-        # transform
+        # Apply transform
         if randomize_center:
             center_loc = list(np.random.randint(low = 0,high=30,size=3))
         else:
@@ -41,48 +39,21 @@ def generate(num_samples, out_dir, randomize_center, randomize_rotation, m, star
         R = trimesh.transformations.random_rotation_matrix(rotation)
         transform_matrix = trimesh.transformations.concatenate_matrices(T, R, S)
         shapeMesh = shapeMesh.apply_transform(transform_matrix)
+        # Save mesh as ply
         shapeMesh.export(meshDir + name + ".stl")
         execCommand = ["stl2ply", meshDir + name + ".stl", meshDir + name + ".ply"]
         subprocess.check_call(execCommand)
         os.remove(meshDir + name + ".stl")
     return get_files(meshDir)
 
-# turns meshes in list into PLY format
-def getPLYmeshes(meshList, printCmd=True):
-    PLYmeshList = []
-    for mesh in meshList:
-        mesh_name = os.path.basename(mesh)
-        extension = mesh_name.split(".")[-1]
-        prefix = mesh_name.split("_")[0] + "_" + mesh_name.split("_")[1]
-        # change to ply if needed
-        if extension == "vtk":
-            mesh_vtk = mesh
-            mesh = mesh[:-4] + ".ply"
-            execCommand = ["vtk2ply", mesh_vtk, mesh]
-            if printCmd:
-                print("CMD: " + " ".join(execCommand))
-            subprocess.check_call(execCommand)
-        elif extension == "stl":
-            mesh_stl = mesh
-            mesh = mesh[:-4] + ".ply"
-            execCommand = ["stl2ply", mesh_stl, mesh]
-            if printCmd:
-                print("CMD: " + " ".join(execCommand))
-            subprocess.check_call(execCommand)
-        elif  extension == "ply":
-            pass
-        else:
-            print("error: Mesh format unrecognized.")
-            break
-        PLYmeshList.append(mesh)
-    return PLYmeshList
-
+# Name helper
 def get_id_str(num):
 	string = str(num)
 	while len(string) < 4:
 		string = '0' + string
 	return(string)
 
+# Shape generation helper
 def super_formula_3D(m, n1, n2, n3, a, b, numPoints=100000):
 	numPointsRoot = round(math.sqrt(numPoints))
 	theta = np.linspace(-math.pi, math.pi, endpoint=True, num=numPointsRoot)
@@ -97,6 +68,7 @@ def super_formula_3D(m, n1, n2, n3, a, b, numPoints=100000):
 	tri = mtri.Triangulation(theta, phi)
 	return x, y, z, tri.triangles
 
+# Shape generation helper
 def super_formula_2D(m, n1, n2, n3, a, b, theta):
 	r = abs((1 / a) * np.cos(m * theta / 4.0))**n2  +  abs((1 / b) * np.sin(m * theta / 4.0))**n3
 	return r**(-1 / n1)
