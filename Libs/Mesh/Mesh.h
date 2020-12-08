@@ -23,7 +23,18 @@ public:
 
   // query functions //
 
+  /// number of vertices
   vtkIdType numVertices() const { return mesh->GetNumberOfVerts(); }
+
+  /// number of faces
+  vtkIdType numFaces() const { return mesh->GetNumberOfCells(); }
+
+  /// get bounds
+  double* bounds() const {
+    double bb[6];
+    mesh->GetBounds(bb);
+    return bb;
+  }
 
 private:
   Mesh() {}

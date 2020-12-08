@@ -364,7 +364,7 @@ PYBIND11_MODULE(shapeworks, m)
   })
   .def("write",                 &Image::write, "writes the current image (determines type by its extension)", "filename"_a, "compressed"_a=true)
   .def("antialias",             &Image::antialias, "antialiases binary volumes", "iterations"_a=50, "maxRMSErr"_a=0.01f, "layers"_a=0)
-  .def("resample",              py::overload_cast<TransformPtr, Point3, Dims, Vector3, Image::ImageType::DirectionType, Image::InterpolationType>(&Image::resample), "resamples by applying transform then sampling from given origin along direction axes at spacing physical units per pixel for dims pixels using specified interpolator")
+  .def("resample",              py::overload_cast<TransformPtr, Point3, Dims, Vector3, Image::ImageType::DirectionType, Image::InterpolationType>(&Image::resample), "resamples by applying transform then sampling from given origin along direction axes at spacing physical units per pixel for dims pixels using specified interpolator", "transform"_a, "origin"_a, "dims"_a, "spacing"_a, "direction"_a, "interp"_a=Image::InterpolationType::NearestNeighbor)
   .def("resample",              py::overload_cast<const Vector&, Image::InterpolationType>(&Image::resample), "resamples image using new physical spacing, updating logical dims to keep all image data for this spacing", "physicalSpacing"_a, "interp"_a=Image::InterpolationType::Linear)
   .def("resize",                &Image::resize, "resizes an image (computes new physical spacing)", "logicalDims"_a, "interp"_a=Image::InterpolationType::Linear)
   .def("recenter",              &Image::recenter, "recenters an image by changing its origin in the image header to the physical coordinates of the center of the image")
@@ -398,7 +398,9 @@ PYBIND11_MODULE(shapeworks, m)
   .def("coordsys",              &Image::coordsys, "return coordinate system in which this image lives in physical space")
   .def("centerOfMass",          &Image::centerOfMass, "returns average physical coordinate of pixels in range (minval, maxval]", "minVal"_a=0.0, "maxVal"_a=1.0)
   .def("boundingBox",           &Image::boundingBox, "computes the logical coordinates of the largest region of data <= the given isoValue", "isovalue"_a=1.0)
-  .def("logicalToPhysical", [](Image& image, std::vector<long>& c) { return image.logicalToPhysical(Coord({c[0], c[1], c[2]})); })
+  .def("logicalToPhysical", [](Image& image, std::vector<long>& c) {
+    return image.logicalToPhysical(Coord({c[0], c[1], c[2]}));
+  }, "converts from pixel coordinates to physical space")
   .def("physicalToLogical",     &Image::physicalToLogical, "converts from a physical coordinate to a logical coordinate", "p"_a)
   .def("compare",               &Image::compare, "compares two images", "other"_a, "verifyall"_a=true, "tolerance"_a=0.0, "precision"_a=1e-12)
   .def_static("getPolyData",    &Image::getPolyData, "creates a vtkPolyData for the given image", "image"_a, "isoValue"_a=0.0)
@@ -459,8 +461,16 @@ PYBIND11_MODULE(shapeworks, m)
   py::class_<Mesh>(m, "Mesh")
   .def(py::init<const std::string &>())
   .def(py::init<vtkSmartPointer<vtkPolyData>>())
+  .def("__repr__", [](const Mesh &mesh) {
+    std::stringstream stream;
+    stream << mesh;
+    return stream.str();
+  })
   .def("write",                 &Mesh::write, "pathname"_a)
   .def("coverage",              &Mesh::coverage, "other_mesh"_a)
+  .def("numVertices",           &Mesh::numVertices)
+  .def("numFaces",              &Mesh::numFaces)
+  .def("bounds",                &Mesh::bounds)
   .def("compare_points_equal",  &Mesh::compare_points_equal, "other_mesh"_a)
   .def("compare_scalars_equal", &Mesh::compare_scalars_equal, "other_mesh"_a)
   ;
@@ -493,10 +503,11 @@ PYBIND11_MODULE(shapeworks, m)
 
   // Optimize (TODO)
   py::class_<Optimize>(m, "Optimize")
-    .def(py::init<>())
-    .def("LoadParameterFile", &Optimize::LoadParameterFile)
-    .def("Run",&Optimize::Run)
-    .def("SetIterationCallbackFunction", &Optimize::SetIterationCallbackFunction)
-    .def("GetParticleSystem", &optimize_get_particle_system)
+  .def(py::init<>())
+  .def("LoadParameterFile",     &Optimize::LoadParameterFile)
+  .def("Run",                   &Optimize::Run)
+  .def("SetIterationCallbackFunction",
+                                &Optimize::SetIterationCallbackFunction)
+  .def("GetParticleSystem",     &optimize_get_particle_system)
   ;
 }
