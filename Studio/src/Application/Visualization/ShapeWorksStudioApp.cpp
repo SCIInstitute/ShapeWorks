@@ -554,7 +554,6 @@ void ShapeWorksStudioApp::on_delete_button_clicked()
   QList<int> index_list;
   for (int i = list.size() - 1; i >= 0; i--) {
     index_list << list[i].row();
-    std::cerr << "Remove " << list[i].row() << "\n";
   }
 
   this->session_->remove_shapes(index_list);

@@ -395,7 +395,6 @@ bool Session::load_xl_project(QString filename)
   this->project_->load(QFileInfo(filename).fileName().toStdString());
 
   int num_subjects = this->project_->get_number_of_subjects();
-  std::cerr << "num_subjects = " << num_subjects << "\n";
 
   auto subjects = this->project_->get_subjects();
 

@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include <set>
 
 #include "Subject.h"
 #include "Parameters.h"
@@ -61,10 +62,10 @@ public:
   bool get_particles_present() const;
 
   //! Get feature names
-  std::vector<std::string> get_feature_names() const;
+  std::vector<std::string> get_feature_names();
 
   //! Get group names
-  std::vector<std::string> get_group_names() const;
+  std::vector<std::string> get_group_names();
 
   //! Get possible group values
   std::vector<std::string> get_group_values(const std::string& group_name) const;
@@ -107,7 +108,9 @@ private:
   void set_transform_list(const std::vector<std::string>& columns, int subject,
                           std::vector<std::vector<double>> transforms);
 
-  std::vector<std::string> get_matching_columns(const std::string& prefix) const;
+  std::vector<std::string> get_matching_columns(const std::string& prefix);
+
+  std::vector<std::string> get_extra_columns() const;
 
   std::string get_value(int column, int subject_id);
   void set_value(int column, int subject_id, const std::string& value);
@@ -132,6 +135,9 @@ private:
   bool segmentations_present_{false};
   bool groomed_present_{false};
   bool particles_present_{false};
+
+  std::set<std::string> matching_columns_;
+
 
   const int supported_version_{1};
   int version_{1};
