@@ -305,8 +305,8 @@ void Project::store_subjects()
     // features
     auto features = subject->get_feature_filenames();
     for (auto const& x : features) {
-      int idx = this->get_index_for_column(x.first, true);
-      this->set_value(idx, i, x.second);
+      int idx = this->get_index_for_column("feature_" + x.first, true);
+      this->set_value(idx, i+2, x.second); // +1 for header, +1 for 1-based index
     }
 
     // local files
