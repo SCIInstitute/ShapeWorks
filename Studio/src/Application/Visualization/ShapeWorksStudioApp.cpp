@@ -33,7 +33,6 @@
 // ui
 #include <ui_ShapeWorksStudioApp.h>
 
-
 namespace shapeworks {
 
 static QVariant ITEM_DISABLE(0);
@@ -555,6 +554,7 @@ void ShapeWorksStudioApp::on_delete_button_clicked()
   QList<int> index_list;
   for (int i = list.size() - 1; i >= 0; i--) {
     index_list << list[i].row();
+    std::cerr << "Remove " << list[i].row() << "\n";
   }
 
   this->session_->remove_shapes(index_list);
@@ -563,6 +563,7 @@ void ShapeWorksStudioApp::on_delete_button_clicked()
     this->analysis_tool_->reset_stats();
     this->lightbox_->clear_renderers();
   }
+  this->update_table();
   this->update_display(true);
   this->enable_possible_actions();
 }
@@ -601,7 +602,7 @@ void ShapeWorksStudioApp::update_table()
   this->ui_->table->setSelectionBehavior(QAbstractItemView::SelectRows);
 
 
-  /// todo: check if the list has changed before changing
+  /// todo: check if the lmist has changed before changing
   auto current_feature = this->ui_->features->currentText();
   this->ui_->features->clear();
   this->ui_->features->addItem("-none-");

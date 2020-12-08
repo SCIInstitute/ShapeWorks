@@ -9,11 +9,11 @@
 #include <vtkActor.h>
 #include <vtkPoints.h>
 #include <vtkCamera.h>
+#include <Data/Preferences.h>
 
 #include <Visualization/Viewer.h>
 
 class vtkOrientationMarkerWidget;
-
 
 namespace shapeworks {
 
@@ -74,6 +74,11 @@ public:
 
   void reset_camera_clipping_range();
 
+  void set_orientation_marker(Preferences::OrientationMarkerType type,
+                              Preferences::OrientationMarkerCorner corner);
+
+  void set_orientation_marker_viewport();
+
 public Q_SLOTS:
   void handle_timer_callback();
 
@@ -121,5 +126,9 @@ private:
 
   vtkSmartPointer<vtkOrientationMarkerWidget> orientation_marker_widget_;
 
+  Preferences::OrientationMarkerType current_orientation_marker_type_
+    = Preferences::OrientationMarkerType::none;
+  Preferences::OrientationMarkerCorner current_orientation_marker_corner_
+    = Preferences::OrientationMarkerCorner::upper_right;
 };
 }

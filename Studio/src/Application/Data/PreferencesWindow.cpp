@@ -27,6 +27,8 @@ PreferencesWindow::PreferencesWindow(QWidget* parent, Preferences& prefs) : pref
 
   this->connect(this->ui_->orientation_marker_type, qOverload<int>(&QComboBox::currentIndexChanged),
                 this, &PreferencesWindow::save_to_preferences);
+  this->connect(this->ui_->orientation_marker_corner, qOverload<int>(&QComboBox::currentIndexChanged),
+                this, &PreferencesWindow::save_to_preferences);
 }
 
 //-----------------------------------------------------------------------------

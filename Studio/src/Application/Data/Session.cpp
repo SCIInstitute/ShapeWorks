@@ -684,6 +684,7 @@ void Session::remove_shapes(QList<int> list)
 {
   std::sort(list.begin(), list.end(), std::greater<>());
     foreach(size_t i, list) {
+      std::cerr << "erasing " << i << "\n";
       auto subjects = this->project_->get_subjects();
       subjects.erase(subjects.begin() + i);
       this->shapes_.erase(this->shapes_.begin() + i);
