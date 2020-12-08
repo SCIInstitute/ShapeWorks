@@ -101,7 +101,7 @@ int Project::get_number_of_subjects()
 }
 
 //---------------------------------------------------------------------------
-int Project::get_number_of_domains()
+int Project::get_number_of_domains_per_subject()
 {
   auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
   if (!seg_columns.empty()) {
@@ -180,7 +180,7 @@ void Project::load_subjects()
 
   this->subjects_.clear();
 
-  this->num_domains_ = this->get_number_of_domains();
+  this->num_domains_per_subject_ = this->get_number_of_domains_per_subject();
 
   auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
   auto groomed_columns = this->get_matching_columns(GROOMED_PREFIX);
@@ -195,7 +195,7 @@ void Project::load_subjects()
   for (int i = 0; i < num_subjects; i++) {
     std::shared_ptr<Subject> subject = std::make_shared<Subject>();
 
-    subject->set_number_of_domains(this->num_domains_);
+    subject->set_number_of_domains(this->num_domains_per_subject_);
     subject->set_segmentation_filenames(this->get_list(seg_columns, i));
     subject->set_groomed_filenames(this->get_list(groomed_columns, i));
     subject->set_groomed_transforms(this->get_transform_list(groomed_transform_columns, i));

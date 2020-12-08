@@ -47,7 +47,7 @@ public:
   int get_number_of_subjects();
 
   //! Return the number of domains
-  int get_number_of_domains();
+  int get_number_of_domains_per_subject();
 
   //! Return the list of Subjects
   std::vector<std::shared_ptr<Subject>>& get_subjects();
@@ -123,7 +123,7 @@ private:
 
   void save_string_column(const std::string& name, std::vector<std::string> items);
 
-  int num_domains_ = 0;
+  int num_domains_per_subject_ = 0;
 
   std::unique_ptr<xlnt::workbook> wb_;
 
