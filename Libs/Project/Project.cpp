@@ -265,6 +265,18 @@ void Project::store_subjects()
   }
 
   bool groomed_present = false;
+
+  xlnt::worksheet ws = this->wb_->sheet_by_index(0);
+
+  std::cerr << "delete_rows(" << (num_subjects) << "," << ((ws.highest_row() - 1) - num_subjects)
+            << ")\n";
+
+  ws.delete_rows(num_subjects + 1, ws.highest_row() - num_subjects);
+
+
+  /// test full clear
+  ws.delete_rows(2, ws.highest_row() - 2);
+
   for (int i = 0; i < num_subjects; i++) {
     std::shared_ptr<Subject> subject = this->subjects_[i];
 
@@ -288,7 +300,13 @@ void Project::store_subjects()
       this->set_list(groomed_columns, i, groomed_files);
 
       this->set_transform_list(groomed_transform_columns, i, subject->get_groomed_transforms());
+    }
 
+    // features
+    auto features = subject->get_feature_filenames();
+    for (auto const& x : features) {
+      int idx = this->get_index_for_column(x.first, true);
+      this->set_value(idx, i, x.second);
     }
 
     // local files

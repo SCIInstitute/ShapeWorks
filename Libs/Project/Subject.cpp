@@ -83,7 +83,7 @@ std::map<std::string, std::string> Subject::get_feature_filenames() const
 //---------------------------------------------------------------------------
 void Subject::set_feature_filenames(const std::map<std::string, std::string>& feature_filenames)
 {
-  feature_filenames_ = feature_filenames;
+  this->feature_filenames_ = feature_filenames;
 }
 
 //---------------------------------------------------------------------------

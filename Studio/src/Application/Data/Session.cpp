@@ -473,6 +473,15 @@ void Session::set_project_path(QString relative_path)
       auto full_path = old_path.absoluteFilePath(QString::fromStdString(path));
       subject->set_global_particle_filename(new_path.relativeFilePath(full_path).toStdString());
     }
+
+    // features
+    auto features = subject->get_feature_filenames();
+    std::map<std::string, std::string> new_features;
+    for (auto const& x : features) {
+      auto full_path = old_path.absoluteFilePath(QString::fromStdString(x.second));
+      new_features[x.first] = new_path.relativeFilePath(full_path).toStdString();
+    }
+    subject->set_feature_filenames(new_features);
   }
 
   this->project_path_ = relative_path;
@@ -683,12 +692,13 @@ QVector<QSharedPointer<Shape>> Session::get_shapes()
 void Session::remove_shapes(QList<int> list)
 {
   std::sort(list.begin(), list.end(), std::greater<>());
-    foreach(size_t i, list) {
-      std::cerr << "erasing " << i << "\n";
-      auto subjects = this->project_->get_subjects();
+    foreach(int i, list) {
+      std::vector<std::shared_ptr<Subject>>& subjects = this->project_->get_subjects();
       subjects.erase(subjects.begin() + i);
       this->shapes_.erase(this->shapes_.begin() + i);
     }
+
+  this->project_->get_subjects();
   this->renumber_shapes();
   this->project_->store_subjects();
   emit data_changed();
