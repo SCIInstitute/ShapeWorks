@@ -86,14 +86,10 @@ std::vector<std::string> Project::get_headers()
 int Project::get_number_of_subjects()
 {
   auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
-  auto mesh_columns = this->get_matching_columns(MESH_PREFIX);
   auto dt_columns = this->get_matching_columns(GROOMED_PREFIX);
   auto local_particle_files = this->get_matching_columns(LOCAL_PARTICLES);
   if (!seg_columns.empty()) {
     return this->get_string_column(seg_columns[0]).size();
-  }
-  if (!mesh_columns.empty()) {
-    return this->get_string_column(mesh_columns[0]).size();
   }
   if (!dt_columns.empty()) {
     return this->get_string_column(dt_columns[0]).size();
@@ -110,11 +106,6 @@ int Project::get_number_of_domains()
   auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
   if (!seg_columns.empty()) {
     return seg_columns.size();
-  }
-
-  auto mesh_columns = this->get_matching_columns(MESH_PREFIX);
-  if (!mesh_columns.empty()) {
-    return mesh_columns.size();
   }
 
   auto groom_columns = this->get_matching_columns(GROOMED_PREFIX);

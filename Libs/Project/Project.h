@@ -91,7 +91,6 @@ private:
   static constexpr const char* SEGMENTATION_PREFIX = "segmentation_";
   static constexpr const char* GROOMED_PREFIX = "groomed_";
   static constexpr const char* GROOMED_TRANSFORMS_PREFIX = "transform_";
-  static constexpr const char* MESH_PREFIX = "mesh_";
   static constexpr const char* FEATURE_PREFIX = "feature_";
   static constexpr const char* LOCAL_PARTICLES = "local_particles";
   static constexpr const char* WORLD_PARTICLES = "world_particles";
