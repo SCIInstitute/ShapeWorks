@@ -36,7 +36,7 @@ def addEllipsoid(center, radii, rotation, resolution=24):
 	return translateFilter
 
 def generate_ellipsoids(filename, meshDir, randomize_center, randomize_rotation):
-	vtkFileName = meshDir+"ellipsoid_"+filename+".vtk"
+	
 	plyFileName = meshDir+"ellipsoid_"+filename+".ply"
 	if randomize_center:
 		center_loc = list(np.random.randint(low = 0,high=50,size=3))
