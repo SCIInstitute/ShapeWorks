@@ -237,7 +237,8 @@ void Project::load_subjects()
 
     std::map<std::string, std::string> extra_values;
     for (auto elem : this->get_extra_columns()) {
-      auto value = this->get_value(this->get_index_for_column(elem), i+2); //+1 for header, +1 for 1-based index
+      auto value = this->get_value(this->get_index_for_column(elem),
+                                   i + 2); //+1 for header, +1 for 1-based index
       extra_values[elem] = value;
     }
     subject->set_extra_values(extra_values);
@@ -275,11 +276,9 @@ void Project::store_subjects()
 
   bool groomed_present = false;
 
+  // clear
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);
-
-  ws.delete_rows(num_subjects + 1, ws.highest_row() - num_subjects);
-  /// test full clear
-  ws.delete_rows(2, ws.highest_row() - 2);
+  ws.delete_rows(ws.highest_row(), ws.highest_row() - 1);
 
   for (int i = 0; i < num_subjects; i++) {
     std::shared_ptr<Subject> subject = this->subjects_[i];
