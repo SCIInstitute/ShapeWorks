@@ -108,11 +108,12 @@ function install_conda() {
 
   if [[ "$GITHUB_ACTION" != "" ]]; then
       echo "Running under GitHub Action"
-      cd $HOME/miniconda3/envs/shapeworks/lib
+      pushd $HOME/miniconda3/envs/shapeworks/lib
       ls libffi*
       if [ ! -f libffi.6.dylib ]; then
 	  ln -s libffi.7.dylib libffi.6.dylib
       fi
+      popd
   fi
   
   if ! pip install termcolor==1.1.0; then return 1; fi
