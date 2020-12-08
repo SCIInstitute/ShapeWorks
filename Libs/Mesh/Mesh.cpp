@@ -172,4 +172,9 @@ bool Mesh::compare_scalars_equal(const Mesh &other_mesh)
   return true;
 }
 
+std::ostream& operator<<(std::ostream &os, const Mesh& mesh)
+{
+
+}
+
 } // shapeworks

@@ -207,6 +207,9 @@ public:
   /// sets the image origin in physical space to the given value
   Image& setOrigin(Point3 origin = Point3({0, 0, 0}));
 
+  /// sets the image spacing to the given value
+  Image& setSpacing(Vector3 spacing = makeVector({1.0, 1.0, 1.0}));
+
   // query functions //
 
   /// logical dimensions of the image

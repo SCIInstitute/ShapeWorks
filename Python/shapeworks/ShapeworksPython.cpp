@@ -250,7 +250,23 @@ PYBIND11_MODULE(shapeworks, m)
   ;
 
   // Shapeworks Globals
-  py::class_<itk::SmartPointer<itk::Transform<double, 3u, 3u> >>(m, "TransformPtr");
+  py::class_<itk::SmartPointer<itk::Transform<double, 3u, 3u> >>(m, "TransformPtr")
+  .def("__repr__", [](const TransformPtr &transform) {
+    std::stringstream stream;
+    itk::Transform<double, 3, 3>::ParametersType p = transform->GetParameters();
+    int r = 0;
+    for (int i=0; i<4; i++)
+    {
+      stream << "\n";
+      for (int j=0; j<3; j++)
+      {
+        stream << p[r] << " ";
+        r++;
+      }
+    }
+    return stream.str();
+  })
+  ;
 
   // Shapeworks Globals
   m.def("createTransform", createTransform, "creates transform from matrix", "mat"_a, "translate"_a=makeVector({0,0,0}));
@@ -301,14 +317,25 @@ PYBIND11_MODULE(shapeworks, m)
   py::class_<Image>(m, "Image")
   .def(py::init<const std::string &>()) // can the argument for init be named (it's filename in this case)
   .def(py::init<Image::ImageType::Pointer>())
-  .def(py::init([](py::array_t<typename Image::ImageType::Pointer::ObjectType::PixelType> np_array) {
-    using ImporterType = itk::ImportImageFilter<Image::PixelType, 3>;
-    auto importer = ImporterType::New();
+  .def(py::init([](py::array_t<long> np_array) {
+    using ImportType = itk::ImportImageFilter<Image::PixelType, 3>;
+    auto importer = ImportType::New();
     auto info = np_array.request();
-    const bool importImageFilterWillOwnTheBuffer = false;
-    const auto data = static_cast<typename Image::ImageType::Pointer::ObjectType::PixelType *>(info.ptr);
-    const auto numberOfPixels = np_array.size();
-    importer->SetImportPointer(data, numberOfPixels, importImageFilterWillOwnTheBuffer);
+    importer->SetImportPointer(static_cast<float *>(info.ptr), np_array.size(), false);
+
+    ImportType::SizeType size;
+    size[0] = np_array.shape()[2];
+    size[1] = np_array.shape()[1];
+    size[2] = np_array.shape()[0];
+
+    ImportType::IndexType start;
+    start.assign(*np_array.data());
+
+    ImportType::RegionType region;
+    region.SetIndex(start);
+    region.SetSize(size);
+
+    importer->SetRegion(region);
     importer->Update();
     return Image(importer->GetOutput());
   }))
@@ -361,6 +388,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("clip",                  py::overload_cast<const Point&, const Point&, const Point&, const Image::PixelType>(&Image::clip), "sets values on the back side of cutting plane (containing three non-colinear points) to val (default 0.0)", "o"_a, "p1"_a, "p2"_a, "val"_a=0.0)
   .def("clip",                  py::overload_cast<const Vector&, const Point&, const Image::PixelType>(&Image::clip), "sets values on the back side of cutting plane (normal n containing point p) to val (default 0.0)", "n"_a, "q"_a, "val"_a=0.0)
   .def("setOrigin",             &Image::setOrigin, "sets the image origin in physical space to the given value", "origin"_a=Point3({0,0,0}))
+  .def("setSpacing",            &Image::setSpacing, "sets the image spacing to the given value", "spacing"_a=makeVector({1.0, 1.0, 1.0}))
   .def("reflect",               &Image::reflect, "reflect image with respect to logical image center and the specified axis", "axis"_a)
   .def("dims",                  &Image::dims, "logical dimensions of the image")
   .def("size",                  &Image::size, "physical dimensions of the image (dims * spacing)")

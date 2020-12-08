@@ -21,11 +21,18 @@ public:
   bool compare_points_equal(const Mesh& other_mesh);
   bool compare_scalars_equal(const Mesh& other_mesh);
 
+  // query functions //
+
+  vtkIdType numVertices() const { return mesh->GetNumberOfVerts(); }
+
 private:
   Mesh() {}
   MeshType read(const std::string& pathname);
 
   MeshType mesh;
 };
+
+/// stream insertion operators for Mesh
+std::ostream& operator<<(std::ostream &os, const Mesh& mesh);
 
 } // shapeworks
