@@ -87,5 +87,4 @@ private:
   std::map<std::string, std::string> group_values_;
   std::map<std::string, std::string> extra_values_;
 };
-};
 }
