@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QResource>
 #include <QMessageBox>
+#include <QDir>
 
 #include <Visualization/ShapeWorksStudioApp.h>
 #include <iostream>
@@ -59,10 +60,12 @@ int main(int argc, char** argv)
       }
       else {
         QStringList files;
+        QDir dir(".");
         for (int i = 1; i < argc; i++) {
-          files << argv[i];
+          // need to rewrite as the project path will be set to the first file
+          files << dir.absoluteFilePath(argv[i]);
         }
-        QTimer::singleShot(100, [=]() {
+        QTimer::singleShot(0, [=]() {
           studio_app->import_files(files);
         });
       }
