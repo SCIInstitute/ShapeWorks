@@ -161,7 +161,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   
   
   // Get the neighborhood surrounding the point "pos".
-   m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, m_CurrentWeights, neighborhood_radius, d);
+   m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, idx, m_CurrentWeights, neighborhood_radius, d);
 
    //    m_CurrentNeighborhood
    //   = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
@@ -194,7 +194,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
       m_CurrentSigma = neighborhood_radius / this->GetNeighborhoodToSigmaRatio();
       }
     
-    m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, m_CurrentWeights,    
+    m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, idx, m_CurrentWeights,
                                                                neighborhood_radius, d);
     //  m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
     //    this->ComputeAngularWeights(pos,m_CurrentNeighborhood,domain,m_CurrentWeights);
@@ -209,7 +209,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
     {
     m_CurrentSigma = this->GetMaximumNeighborhoodRadius() / this->GetNeighborhoodToSigmaRatio();
     neighborhood_radius = this->GetMaximumNeighborhoodRadius();
-        m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, m_CurrentWeights,
+        m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, idx,m_CurrentWeights,
                                                                neighborhood_radius, d);
         //  m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
         //      this->ComputeAngularWeights(pos,m_CurrentNeighborhood,domain,m_CurrentWeights);

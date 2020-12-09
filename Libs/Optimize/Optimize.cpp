@@ -1518,7 +1518,7 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
         }
 
         if (m_use_normals[i % m_domains_per_shape]) {
-          vnl_vector_fixed<float, DIMENSION> pG = domain->SampleNormalAtPoint(pos);
+          vnl_vector_fixed<float, DIMENSION> pG = domain->SampleNormalAtPoint(pos, j);
           VectorType pN;
           pN[0] = pG[0];
           pN[1] = pG[1];

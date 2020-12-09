@@ -162,7 +162,7 @@ public:
   /// applies the given transformation to the image by using resampling filter
   Image& applyTransform(const TransformPtr transform, InterpolationType interp = Linear);
 
-  /// applies the given transformation to the image by using resampling filter
+  /// applies the given transformation to the image by using resampling filter with new origin, dims, spacing and direction values
   Image& applyTransform(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);
 
   /// extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image
@@ -206,6 +206,9 @@ public:
 
   /// sets the image origin in physical space to the given value
   Image& setOrigin(Point3 origin = Point3({0, 0, 0}));
+
+  /// sets the image spacing to the given value
+  Image& setSpacing(Vector3 spacing = makeVector({1.0, 1.0, 1.0}));
 
   // query functions //
 
