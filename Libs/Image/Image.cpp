@@ -764,11 +764,11 @@ Point3 Image::centerOfMass(PixelType minVal, PixelType maxVal) const
   return com;
 }
 
-Point3 Image::logicalToPhysical(const Coord &v) const
+Point3 Image::logicalToPhysical(const Coord &c) const
 {
   // return image->TransformIndexToPhysicalPoint(v); // not sure why this call won't work directly
   Point3 value;
-  image->TransformIndexToPhysicalPoint(v, value);
+  image->TransformIndexToPhysicalPoint(c, value);
   return value;
 }
 

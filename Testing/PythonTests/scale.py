@@ -4,7 +4,7 @@ from shapeworks import *
 
 def scaleTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
-  img.scale(Vector(1.0, 2.0, 2.0))
+  img.scale([1.0, 2.0, 2.0])
 
   compareImg = Image(os.environ["DATA"] + "/scale1.nrrd")
 
@@ -17,7 +17,7 @@ if val is False:
 
 def scaleTest2():
   img = Image(os.environ["DATA"] + "/la-bin-centered.nrrd")
-  img.scale(Vector(1.0, -2.0, -1.0))
+  img.scale([1.0, -2.0, -1.0])
 
   compareImg = Image(os.environ["DATA"] + "/scale2.nrrd")
 

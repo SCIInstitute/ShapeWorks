@@ -237,7 +237,7 @@ public:
   Image::Region boundingBox(PixelType isovalue = 1.0) const;
 
   /// converts from pixel coordinates to physical space
-  Point3 logicalToPhysical(const Coord &v) const;
+  Point3 logicalToPhysical(const Coord &c) const;
 
   /// converts from a physical coordinate to a logical coordinate
   Coord physicalToLogical(const Point3 &p) const;
