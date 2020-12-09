@@ -133,10 +133,11 @@ function install_conda() {
   if ! pip install itkwidgets;         then return 1; fi # for visualizations on notebooks
   if ! pip install mkdocs-jupyter;     then return 1; fi # for adding notebooks to our documentation (supports toc and excutation before deployment)
 
-  # for spell check markdown cells in jupyter notebooks
-  pip install jupyter_contrib_nbextensions
+  # for spell check markdown cells in jupyter notebooks and table of contents (toc2)
+  conda install jupyter_contrib_nbextensions
   jupyter contrib nbextension install --user
   jupyter nbextension enable spellchecker/main
+  jupyter nbextension enable toc2/main
 
   # installing nbstripout to strip out notebooks cell outputs before committing 
   nbstripout --install
