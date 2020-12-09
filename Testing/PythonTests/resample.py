@@ -4,7 +4,7 @@ from shapeworks import *
 
 def resampleTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
-  img.resample(Vector(1, 1, 1), InterpolationType.Linear)
+  img.resample([1, 1, 1])
 
   compareImg = Image(os.environ["DATA"] + "/resample1.nrrd")
 
@@ -30,7 +30,7 @@ if val is False:
 
 def resampleTest3():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
-  img.resample(Vector(1.5, 1.5, 1.5), InterpolationType.Linear)
+  img.resample([1.5, 1.5, 1.5])
 
   compareImg = Image(os.environ["DATA"] + "/resample3.nrrd")
 
@@ -43,7 +43,7 @@ if val is False:
 
 def resampleTest4():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
-  img.resample(Vector(0.9, 3.14159, 2.5), InterpolationType.Linear)
+  img.resample([0.9, 3.14159, 2.5])
 
   compareImg = Image(os.environ["DATA"] + "/resample4.nrrd")
 
@@ -57,7 +57,7 @@ if val is False:
 def resampleTest5():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
   transform = createTransform(Matrix())
-  img.resample(transform, Point(-100, -63.2, -42.9), Dims(32, 32, 4), Vector(6.25, 6.25, 13.75), img.coordsys(), InterpolationType.NearestNeighbor)
+  img.resample(transform, [-100, -63.2, -42.9], [32, 32, 4], [6.25, 6.25, 13.75], img.coordsys())
 
   compareImg = Image(os.environ["DATA"] + "/resample5.nrrd")
 

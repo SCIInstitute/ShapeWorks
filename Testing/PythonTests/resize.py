@@ -4,7 +4,7 @@ from shapeworks import *
 
 def resizeTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
-  img.resize(Dims(0, 0, 0))
+  img.resize([0, 0, 0])
 
   compareImg = Image(os.environ["DATA"] + "/1x2x2.nrrd")
 
@@ -17,7 +17,7 @@ if val is False:
 
 def resizeTest2():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
-  img.resize(Dims(2, 0, 0))
+  img.resize([2, 0, 0])
 
   compareImg = Image(os.environ["DATA"] + "/resize2.nrrd")
 
@@ -30,7 +30,7 @@ if val is False:
 
 def resizeTest3():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
-  img.resize(Dims(96, 96, 12))
+  img.resize([96, 96, 12])
 
   compareImg = Image(os.environ["DATA"] + "/resize3.nrrd")
 
@@ -43,7 +43,7 @@ if val is False:
 
 def resizeTest4():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
-  img.resize(Dims(24, 120, 6))
+  img.resize([24, 120, 6])
 
   compareImg = Image(os.environ["DATA"] + "/resize4.nrrd")
 
