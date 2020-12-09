@@ -27,10 +27,23 @@ static bool compare_double(double a, double b)
 
 namespace shapeworks {
 
-MeshBase::MeshType Mesh::read(const std::string &pathname)
+Mesh::MeshType Mesh::read(const std::string &pathname)
 {
-  m.read(pathname);
-  // read(pathname);
+  if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
+
+  using ReaderType = vtkSmartPointer<vtkPolyDataReader>;
+  ReaderType reader = ReaderType::New();
+  reader->SetFileName(pathname.c_str());
+
+  try {
+    reader->Update();
+  }
+  catch (const std::exception &exp)
+  {
+    throw std::invalid_argument(pathname + " does not exist");
+  }
+
+  return reader->GetOutput();
 }
 
 Mesh& Mesh::write(const std::string &pathname)
