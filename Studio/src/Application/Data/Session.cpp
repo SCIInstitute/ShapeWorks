@@ -480,7 +480,6 @@ void Session::load_original_files(std::vector<std::string> filenames)
   for (int i = 0; i < filenames.size(); i++) {
     QDir dir(".");
     QString new_filename = dir.relativeFilePath(QString::fromStdString(filenames[i]));
-    std::cerr << filenames[i] << " -> " << new_filename.toStdString() << "\n";
     new_filenames.push_back(new_filename.toStdString());
   }
   filenames = new_filenames;

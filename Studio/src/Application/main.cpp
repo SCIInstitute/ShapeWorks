@@ -52,14 +52,26 @@ int main(int argc, char** argv)
     // do this after "show" for mac initialization
     studio_app->initialize_vtk();
 
-    if (argc == 2) {
-      studio_app->open_project(QString(argv[1]));
+    if (argc > 1) {
+      QString filename = QString(argv[1]);
+      if (filename.toLower().endsWith(".xlsx") || filename.toLower().endsWith(".xml")) {
+        studio_app->open_project(filename);
+      }
+      else {
+        QStringList files;
+        for (int i = 1; i < argc; i++) {
+          files << argv[i];
+        }
+        QTimer::singleShot(100, [=]() {
+          studio_app->import_files(files);
+        });
+      }
     }
     else {
       studio_app->show_splash_screen();
     }
     return app.exec();
-  } catch (itk::ExceptionObject & excep) {
+  } catch (itk::ExceptionObject& excep) {
     std::cerr << excep << std::endl;
   } catch (std::exception e) {
     std::cerr << "Exception caught!" << std::endl;
