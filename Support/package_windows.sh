@@ -8,8 +8,18 @@ fi
 VERSION=$1
 PLATFORM="windows"
 
-if [[ "$VERSION" == "tag" ]]; then
-    VERSION="ShapeWorks-$(git describe --tags)-${PLATFORM}"
+
+echo "VERSION = $VERSION"
+echo "PR_NUMBER = $PR_NUMBER"
+echo "GITHUB_REF = $GITHUB_REF"
+echo "PLATFORM = $PLATFORM"
+
+if [[ "$PR_NUMBER" != "" ]]; then
+    VERSION="ShapeWorks-PR-${PR_NUMBER}-${PLATFORM}"
+else
+    if [[ "$VERSION" == "tag" ]]; then
+	VERSION="ShapeWorks-$(git describe --tags)-${PLATFORM}"
+    fi
 fi
 
 # Special case for when we are on the master branch (dev releases)

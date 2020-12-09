@@ -13,6 +13,8 @@ To add a new use case to the codebase:
 
 - Add `<use-case-name>.py` python script to `Examples/Python/`, where the `<use-case-name>` is a descriptive name for the use case, typically associated with the class of shapes to be modeled (e.g., anatomy name)
 - Update `Examples/Python/RunUseCase.py` to add the new use case to the list of cases. Look for the line `parser.add_argument("--use_case" ...)`. Make sure to use the `<use-case-name>` to the use case list.
+- Each use case needs to include the option to run a tiny test, which typically runs on only the first three shapes. 
+- Each use case needs to have the option to run on a representative subsample of the dataset of any size. This subsample is selected via clustering on the shapes and selecting one shape from each cluster. 
 
 
 ## Use case dataset
