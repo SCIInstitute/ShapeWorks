@@ -375,12 +375,15 @@ PYBIND11_MODULE(shapeworks, m)
   .def("recenter",              &Image::recenter, "recenters an image by changing its origin in the image header to the physical coordinates of the center of the image")
   .def("pad",                   py::overload_cast<int, Image::PixelType>(&Image::pad), "pads an image in all directions with constant value", "pad"_a, "value"_a=0.0)
   .def("pad",                   py::overload_cast<int, int, int, Image::PixelType>(&Image::pad), "pads an image by desired number of voxels in each direction with constant value", "padx"_a, "pady"_a, "padz"_a, "value"_a=0.0)
+  .def("translate",             &Image::translate, "translates image", "v"_a)
   .def("translate", [](Image& image, const std::vector<double>& v) {
     return image.translate(makeVector({v[0], v[1], v[2]}));
   }, "translates image", "v"_a)
+  .def("scale",                 &Image::scale, "scale image around center (not origin)", "v"_a)
   .def("scale", [](Image& image, const std::vector<double>& v) {
     return image.scale(makeVector({v[0], v[1], v[2]}));
   }, "scale image around center (not origin)", "v"_a)
+  .def("rotate",                &Image::rotate, "rotate around center (not origin) using axis (default z-axis) by angle (in radians)", "angle"_a, "axis"_a)
   .def("rotate", [](Image& image, const double angle, const std::vector<double>& v) {
     return image.rotate(angle, makeVector({v[0], v[1], v[2]}));
   }, "rotate around center (not origin) using axis (default z-axis) by angle (in radians)", "angle"_a, "axis"_a)
