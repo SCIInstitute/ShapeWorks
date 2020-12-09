@@ -12,6 +12,9 @@ public:
   /// calculate bounding box incrementally for images using the region of data <= the given isoValue
   static Image::Region boundingBox(std::vector<std::string> &filenames, Image::PixelType isoValue = 1.0);
 
+  /// calculate bounding box incrementally for shapework images using the region of data <= the given isoValue
+  static Image::Region boundingBox(std::vector<Image> &images, Image::PixelType isoValue = 1.0);
+
   /// generates the Transform necessary to move the contents of this binary image to the center
   static TransformPtr createCenterOfMassTransform(const Image &image);
 

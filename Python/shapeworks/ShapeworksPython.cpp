@@ -467,7 +467,12 @@ PYBIND11_MODULE(shapeworks, m)
 
   // ImageUtils
   py::class_<ImageUtils>(m, "ImageUtils")
-  .def_static("boundingBox",    &ImageUtils::boundingBox, "compute largest bounding box surrounding the specified isovalue of the specified set of images", "filenames"_a, "isoValue"_a=1.0)
+  .def_static("boundingBox", [](std::vector<std::string> filenames, Image::PixelType val) {
+    return shapeworks::ImageUtils::boundingBox(filenames, val);
+  }, "compute largest bounding box surrounding the specified isovalue of the specified set of filenames", "filenames"_a, "isoValue"_a=1.0)
+  .def_static("boundingBox", [](std::vector<Image> images, Image::PixelType val) {
+    return shapeworks::ImageUtils::boundingBox(images, val);
+  }, "compute largest bounding box surrounding the specified isovalue of the specified set of images", "images"_a, "isoValue"_a=1.0)
   .def_static("createCenterOfMassTransform", [](const Image& img) {
     auto xform_ptr = shapeworks::ImageUtils::createCenterOfMassTransform(img);
     return xform_ptr;
