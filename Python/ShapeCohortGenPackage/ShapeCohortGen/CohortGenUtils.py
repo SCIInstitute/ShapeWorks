@@ -38,6 +38,7 @@ def get_file_with_ext(file_list,extension):
 		ext = file.split(".")[1]
 		if(ext==extension):
 			extList.append(file)
+	extList = sorted(extList)
 	return extList
 
 '''
@@ -95,9 +96,9 @@ def getMeshInfo(outDir, meshList, spacing):
 	# Get VTK meshes
 	meshListStr = ''
 	for index in range(len(meshList)):
-		mesh = meshList[index]
-		VTKmesh = mesh.replace("ply" , "vtk")
-		subprocess.check_call(["ply2vtk", mesh, VTKmesh])
+		VTKmesh = meshList[index]
+		# VTKmesh = mesh.replace("ply" , "vtk")
+		# subprocess.check_call(["ply2vtk", mesh, VTKmesh])
 		meshListStr += VTKmesh + '\n'
 	# Write XML
 	xmlfilename = outDir + "MeshInfo.xml"
@@ -131,9 +132,11 @@ def generate_segmentations(meshList, out_dir, randomize_size, spacing, allow_on_
 	segDir = out_dir + "segmentations/"
 	meshDir = out_dir + "meshes/"
 	make_dir(segDir)
-
+		#Get Mesh lists
+	PLYmeshList = get_file_with_ext(meshList,'ply')
+	VTKMeshList = get_file_with_ext(meshList,'vtk')
 	#get the origin and size based on all the meshes in the VTKMeshList
-	origin, size = getMeshInfo(meshDir, meshList, spacing)
+	origin, size = getMeshInfo(meshDir, VTKMeshList, spacing)
 	all_mesh_data = {}
 	all_mesh_data["origin"] = origin
 	all_mesh_data["size"] = size
@@ -141,14 +144,14 @@ def generate_segmentations(meshList, out_dir, randomize_size, spacing, allow_on_
 
 	segList= []
 	meshIndex=0
-	numMeshes = len(meshList)
+	numMeshes = len(VTKMeshList)
 	meshIndexArray = np.array(list(range(numMeshes)))
 	#Randomly select 20% meshes for boundary touching samples
 	subSampleSize = int(0.2*numMeshes)
 	randomSamples = np.random.choice(meshIndexArray,subSampleSize,replace=False)
 
 	#Use the PLY format of meshes to generate Segmentation images
-	for mesh in meshList:
+	for mesh in PLYmeshList:
 		mesh_name = os.path.basename(mesh)
 		prefix = mesh_name.split(".")[0] 
 		print("prefix is " , prefix)
@@ -167,7 +170,7 @@ def generate_segmentations(meshList, out_dir, randomize_size, spacing, allow_on_
 		#If the meshIndex is in the randomly selected samples, get the origin and size 
 		# of that mesh so that the segmentation image touch the boundary
 		if(meshIndex in randomSamples) and allow_on_boundary:
-			m_origin, m_size = getMeshInfo(meshDir, [meshList[meshIndex]], spacing)
+			m_origin, m_size = getMeshInfo(meshDir, [VTKMeshList[meshIndex]], spacing)
 			m_data = {}
 			m_data["origin"] = m_origin
 			m_data["size"] = m_size 
@@ -210,5 +213,5 @@ def generate_segmentations(meshList, out_dir, randomize_size, spacing, allow_on_
 		segList.append(segFile)
 	# Clean the mesh directory of all the unwanted .nrrd files
 	clean_dir(meshDir,'nrrd')
-	clean_dir(meshDir,'vtk')
+	#clean_dir(meshDir,'vtk')
 	return segList
