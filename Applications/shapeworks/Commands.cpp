@@ -1900,6 +1900,13 @@ void ClipMesh::buildParser()
   const std::string desc = "clips mesh";
   parser.prog(prog).description(desc);
 
+  parser.add_option("--x1").action("store").type("double").set_default(0.0).help("Value of normal[0] for cutting plane [default: 0.0].");
+  parser.add_option("--y1").action("store").type("double").set_default(0.0).help("Value of normal[1] for cutting plane [default: 0.0].");
+  parser.add_option("--z1").action("store").type("double").set_default(0.0).help("Value of normal[2] for cutting plane [default: 0.0].");
+  parser.add_option("--x2").action("store").type("double").set_default(0.0).help("Value of origin[0] for cutting plane [default: 0.0].");
+  parser.add_option("--y2").action("store").type("double").set_default(0.0).help("Value of origin[1] for cutting plane [default: 0.0].");
+  parser.add_option("--z1").action("store").type("double").set_default(0.0).help("Value of origin[2] for cutting plane [default: 0.0].");
+
   Command::buildParser();
 }
 
@@ -1910,8 +1917,14 @@ bool ClipMesh::execute(const optparse::Values &options, SharedCommandData &share
     std::cerr << "No mesh to operate on\n";
     return false;
   }
+
+  double x = static_cast<double>(options.get("x1"));
+  double y = static_cast<double>(options.get("y1"));
+  double z = static_cast<double>(options.get("z1"));
+
+  Point origin({static_cast<double>(options.get("y1")), static_cast<double>(options.get("y2")), static_cast<double>(options.get("y3"))});
   
-  sharedData.mesh->clip(MeshUtils::createPlane(sharedData.mesh));
+  sharedData.mesh->clip(MeshUtils::createPlane(makeVector({x,y,z}), origin));
   return sharedData.validMesh();
 }
 

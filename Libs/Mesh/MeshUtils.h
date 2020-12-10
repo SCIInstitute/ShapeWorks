@@ -19,7 +19,7 @@ public:
   static vtkTransform createRegistrationTransform(const std::unique_ptr<Mesh> &sourceMesh, const std::unique_ptr<Mesh> &targetMesh, const std::string type, unsigned iterations = 20);
 
   /// Create plane
-  static vtkSmartPointer<vtkPlane> createPlane(const std::unique_ptr<Mesh> &mesh);
+  static vtkSmartPointer<vtkPlane> createPlane(const Vector3 &n, const Point &o);
 };
 
 } // shapeworks

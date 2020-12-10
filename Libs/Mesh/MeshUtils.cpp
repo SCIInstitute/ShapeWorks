@@ -46,13 +46,11 @@ vtkTransform MeshUtils::createRegistrationTransform(const std::unique_ptr<Mesh> 
   return createvtkTransform(mat);
 }
 
-vtkSmartPointer<vtkPlane> MeshUtils::createPlane(const std::unique_ptr<Mesh> &mesh)
+vtkSmartPointer<vtkPlane> MeshUtils::createPlane(const Vector3 &n, const Point &o)
 {
-  double* bounds = mesh->bounds();
-
   vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
-  plane->SetNormal(0, 0, 1);
-  plane->SetOrigin(0.0, 0.0, bounds[4] + 2);
+  plane->SetNormal(n[0], n[1], n[2]);
+  plane->SetOrigin(o[0], o[1], o[2]);
 
   return plane;
 }
