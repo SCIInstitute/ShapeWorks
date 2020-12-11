@@ -404,6 +404,8 @@ bool AnalysisTool::compute_stats()
     return false;
   }
 
+  this->ui_->pcaModeSpinBox->setMaximum(this->session_->get_shapes().size() - 2);
+
   std::vector<vnl_vector<double>> points;
   std::vector<int> group_ids;
 
