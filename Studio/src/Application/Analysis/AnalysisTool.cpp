@@ -404,6 +404,7 @@ bool AnalysisTool::compute_stats()
     return false;
   }
 
+
   this->ui_->pcaModeSpinBox->setMaximum(this->session_->get_shapes().size() - 2);
 
   std::vector<vnl_vector<double>> points;
@@ -876,9 +877,8 @@ void AnalysisTool::update_group_boxes()
       this->ui_->group_box->addItem(QString::fromStdString(group));
     }
     this->current_group_names_ = group_names;
+    this->group_changed();
   }
-
-  this->group_changed();
 }
 
 //---------------------------------------------------------------------------

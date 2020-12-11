@@ -1071,10 +1071,10 @@ void ShapeWorksStudioApp::open_project(QString filename)
   }
 
   this->is_loading_ = true;
+  this->analysis_tool_->reset_stats();
 
   this->block_update_ = true;
 
-  this->analysis_tool_->reset_stats();
   this->groom_tool_->load_params();
   this->optimize_tool_->load_params();
   this->preferences_window_->set_values_from_preferences();
@@ -1085,7 +1085,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   this->update_tool_mode();
 
-  this->analysis_tool_->reset_stats();
 
   // set the zoom state
   //this->ui_->thumbnail_size_slider->setValue(
