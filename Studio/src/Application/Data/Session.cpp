@@ -342,9 +342,23 @@ bool Session::load_light_project(QString filename)
     inputsBuffer.str("");
   }
 
-  this->load_groomed_files(groom_files, 0.5);
+  if (groom_files.size() > 0) {
+    if (groom_files.size() != local_point_files.size()) {
+      QString message = "Error, mismatch in number of distance_transforms and particle files";
+      STUDIO_LOG_ERROR(message);
+      QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+      return false;
+    }
+  }
 
-  //this->project_->
+  if (local_point_files.size() != global_point_files.size()) {
+    QString message = "Error, mismatch in number of local and world particle files";
+    STUDIO_LOG_ERROR(message);
+    QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+    return false;
+  }
+
+  this->load_groomed_files(groom_files, 0.5);
 
   if (!this->load_point_files(local_point_files, true)) {
     return false;
@@ -353,7 +367,7 @@ bool Session::load_light_project(QString filename)
   if (!this->load_point_files(global_point_files, false)) {
     return false;
   }
-
+  
   // read group ids
   std::vector<int> group_ids;
   elem = docHandle.FirstChild("group_ids").Element();
