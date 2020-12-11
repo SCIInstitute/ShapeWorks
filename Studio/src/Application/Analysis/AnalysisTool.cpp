@@ -449,7 +449,6 @@ bool AnalysisTool::compute_stats()
 
   this->stats_.ImportPoints(points, group_ids);
   this->stats_.ComputeModes();
-  this->stats_.PrincipalComponentProjections();
 
   this->stats_ready_ = true;
   std::vector<double> vals;

@@ -1217,6 +1217,8 @@ void ShapeWorksStudioApp::on_action_export_pca_scores_triggered()
   this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
 
   auto stats = this->analysis_tool_->get_stats();
+  stats.PrincipalComponentProjections();
+
   stats.WriteCSVFile2(filename.toStdString());
 }
 
