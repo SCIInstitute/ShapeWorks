@@ -137,6 +137,11 @@ ImageType::Pointer Shape::get_original_image()
 ImageType::Pointer Shape::get_groomed_image()
 {
   if (!this->groomed_image_) {
+    if (this->subject_->get_groomed_filenames().size() < 1) {
+      STUDIO_LOG_ERROR("No groomed file for subject");
+      ImageType::Pointer image;
+      return image;
+    }
     std::string filename = this->subject_->get_groomed_filenames()[0]; // single domain supported
     if (filename != "") {
       ImageType::Pointer image;

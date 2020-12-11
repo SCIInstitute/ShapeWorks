@@ -186,7 +186,14 @@ void AnalysisTool::on_reconstructionButton_clicked()
       local[ii].push_back(pt);
       global[ii].push_back(pt2);
     }
-    images[ii] = s->get_groomed_image();
+    ImageType::Pointer image = s->get_groomed_image();
+    if (!image) {
+      emit error(
+        QString("Unable to load groomed image for shape " + QString::number(ii)).toStdString());
+      emit progress(100);
+      return;
+    }
+    images[ii] = image;
     ii++;
   }
   ShapeworksWorker* worker = new ShapeworksWorker(
