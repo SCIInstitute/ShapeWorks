@@ -27,6 +27,17 @@ GroomTool::GroomTool()
                 this, &GroomTool::centering_changed);
   this->connect(this->ui_->center_checkbox, &QCheckBox::stateChanged,
                 this, &GroomTool::centering_changed);
+
+  this->ui_->center_checkbox->setToolTip("Center image segmentations");
+  this->ui_->isolate_checkbox->setToolTip("Isolate the largest object in the image segmentation");
+  this->ui_->fill_holes_checkbox->setToolTip("Fill small holes in the image segmentation");
+  this->ui_->autopad_checkbox->setToolTip("Add padding around the edges of the image");
+  this->ui_->padding_amount->setToolTip("Padding amount");
+  this->ui_->antialias_checkbox->setToolTip("Antialias the image segmentation");
+  this->ui_->antialias_iterations->setToolTip("Number of antialias iterations");
+  this->ui_->blur_checkbox->setToolTip("Blur/smooth image segmentation");
+  this->ui_->blur_sigma->setToolTip("Gaussian blur sigma");
+  this->ui_->fastmarching_checkbox->setToolTip("Create distance transform");
 }
 
 //---------------------------------------------------------------------------
