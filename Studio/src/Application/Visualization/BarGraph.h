@@ -5,9 +5,8 @@
 #include <QTimer>
 #include <vector>
 
-class BarGraph : public QWidget
-{
-  Q_OBJECT
+class BarGraph : public QWidget {
+Q_OBJECT
 
 public:
   BarGraph(QWidget* parent = 0);
@@ -46,6 +45,6 @@ private:
   QRect font_rect_;
 
   QPoint hover_position_;
-  QPointF tooltipPosition_;
+  QPointF tooltip_position_;
   QTimer hover_timer_;
 };
