@@ -27,7 +27,7 @@ COMMAND_DECLARE(TPLevelSetFilter, ImageCommand);
 COMMAND_DECLARE(TopologyPreservingFilter, ImageCommand);
 COMMAND_DECLARE(IntensityFilter, ImageCommand);
 COMMAND_DECLARE(Blur, ImageCommand);
-COMMAND_DECLARE(BoundingBox, ImageCommand);
+COMMAND_DECLARE(BoundingBoxImage, ImageCommand);
 COMMAND_DECLARE(CropImage, ImageCommand);
 COMMAND_DECLARE(ICPRigid, ImageCommand);
 COMMAND_DECLARE(ClipImage, ImageCommand);
@@ -63,7 +63,10 @@ COMMAND_DECLARE(ProbeVolume, MeshCommand);
 COMMAND_DECLARE(ClipMesh, MeshCommand);
 COMMAND_DECLARE(TranslateMesh, MeshCommand);
 COMMAND_DECLARE(ScaleMesh, MeshCommand);
+COMMAND_DECLARE(BoundingBoxMesh, MeshCommand);
 COMMAND_DECLARE(HausdorffDistance, MeshCommand);
+COMMAND_DECLARE(RasterizationOrigin, MeshCommand);
+COMMAND_DECLARE(RasterizationSize, MeshCommand);
 
 // Optimize Commands
 COMMAND_DECLARE(OptimizeCommand, OptimizeCommandGroup);

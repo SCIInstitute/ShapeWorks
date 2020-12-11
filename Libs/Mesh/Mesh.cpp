@@ -222,7 +222,30 @@ Mesh &Mesh::scale(const Vector3 &v)
   return applyTransform(transform);
 }
 
-vtkSmartPointer<swHausdorffDistancePointSetFilter> Mesh::computeDistance(const std::unique_ptr<Mesh> &other_mesh, bool target)
+Mesh::Region Mesh::boundingBox(bool center) const
+{
+  Mesh::Region bbox;
+  double bb[6];
+  mesh->GetBounds(bb);
+
+  for(int i = 0; i < 3; i++)
+  {
+    bbox.min[i] = bb[2*i];
+    bbox.max[i] = bb[2*i+1];
+  }
+
+  if (center)
+  {
+    Dims size = bbox.size();
+    Dims offset = size * -0.5 - toDims(bbox.min);
+    bbox.min = toCoord(size * -0.5);
+    bbox.max = toCoord(size * 0.5);
+  }
+
+  return bbox;
+}
+
+vtkSmartPointer<swHausdorffDistancePointSetFilter> Mesh::distance(const std::unique_ptr<Mesh> &other_mesh, bool target)
 {
   vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = vtkSmartPointer<swHausdorffDistancePointSetFilter>::New();
   filter->SetInputData(this->mesh);
@@ -235,80 +258,127 @@ vtkSmartPointer<swHausdorffDistancePointSetFilter> Mesh::computeDistance(const s
   return filter;
 }
 
-Vector Mesh::getHausdorffDistance(const std::unique_ptr<Mesh> &other_mesh, bool target)
+Vector Mesh::hausdorffDistance(const std::unique_ptr<Mesh> &other_mesh, bool target)
 {
-  vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = computeDistance(other_mesh, target);
+  vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = distance(other_mesh, target);
   return filter->GetOutput(0)->GetFieldData()->GetArray("HausdorffDistance")->GetComponent(0,0);
 }
 
-Vector Mesh::getRelativeDistanceAtoB(const std::unique_ptr<Mesh> &other_mesh, bool target)
+Vector Mesh::relativeDistanceAtoB(const std::unique_ptr<Mesh> &other_mesh, bool target)
 {
-  vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = computeDistance(other_mesh, target);
+  vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = distance(other_mesh, target);
   return filter->GetOutputDataObject(0)->GetFieldData()->GetArray("RelativeDistanceAtoB")->GetComponent(0,0);
 }
 
-Vector Mesh::getRelativeDistanceBtoA(const std::unique_ptr<Mesh> &other_mesh, bool target)
+Vector Mesh::relativeDistanceBtoA(const std::unique_ptr<Mesh> &other_mesh, bool target)
 {
-  vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = computeDistance(other_mesh, target);
+  vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = distance(other_mesh, target);
   return filter->GetOutputDataObject(1)->GetFieldData()->GetArray("RelativeDistanceBtoA")->GetComponent(0,0);
+}
+
+Point3 Mesh::rasterizationOrigin(int padding, Vector3 spacing)
+{
+  Mesh::Region region = boundingBox();
+  Point3 origin;
+
+  for (int i = 0; i < 3; i++)
+  {
+    region.min[i] -= padding * spacing[i];
+    origin[i] = floor(region.min[i]) - 1;
+  }
+
+  return origin;
+}
+
+Dims Mesh::rasterizationSize(int padding, Vector3 spacing)
+{
+  Region region = boundingBox();
+  Dims size;
+  Point3 origin = rasterizationOrigin(padding, spacing);
+  Coord offset = toCoord(origin/toPoint(spacing));
+
+  for (int i = 0; i < 3; i++)
+  {
+    region.max[i] += padding * spacing[i];
+    size[i] = ceil(region.max[i] - offset[i]) + 1;
+  }
+
+  return size;
 }
 
 bool Mesh::compare_points_equal(const Mesh &other_mesh)
 {
-  if (!this->mesh || !other_mesh.mesh) {
+  if (!this->mesh || !other_mesh.mesh)
+  {
+    std::cout << "both polydata don't exist";
     return false;
   }
 
-  if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints()) {
+  if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints())
+  {
+    std::cout << "both polydata differ in number of points";
     return false;
   }
 
-  for (int i = 0; i < this->mesh->GetNumberOfPoints(); i++) {
+  for (int i = 0; i < this->mesh->GetNumberOfPoints(); i++) 
+  {
     double* point1 = this->mesh->GetPoint(i);
     double* point2 = other_mesh.mesh->GetPoint(i);
-    if (!compare_double(point1[0], point2[0])
-        || !compare_double(point1[1], point2[1])
-        || !compare_double(point1[2], point2[2]))
+    if (!compare_double(point1[0], point2[0]) || !compare_double(point1[1], point2[1]) || !compare_double(point1[2], point2[2]))
       return false;
   }
+
   return true;
 }
 
 bool Mesh::compare_scalars_equal(const Mesh &other_mesh)
 {
-  if (!this->mesh || !other_mesh.mesh) {
-    std::cout << "Mesh Compare: both polydata don't exist";
+  if (!this->mesh || !other_mesh.mesh)
+  {
+    std::cout << "both polydata don't exist";
     return false;
   }
 
-  if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints()) {
-    std::cout << "Mesh Compare: both polydata differ in number of points";
+  if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints())
+  {
+    std::cout << "both polydata differ in number of points";
     return false;
   }
 
   vtkDataArray* scalars1 = this->mesh->GetPointData()->GetScalars();
   vtkDataArray* scalars2 = other_mesh.mesh->GetPointData()->GetScalars();
 
-  if (!scalars1 || !scalars2) {
-    std::cout << "Mesh Compare: no scalars";
+  if (!scalars1 || !scalars2)
+  {
+    std::cout << "no scalars";
     return false;
   }
 
-  if (scalars1->GetNumberOfValues() != scalars2->GetNumberOfValues()) {
-    std::cout << "Mesh Compare: different number of scalars";
+  if (scalars1->GetNumberOfValues() != scalars2->GetNumberOfValues())
+  {
+    std::cout << "different number of scalars";
     return false;
   }
 
-  for (int i = 0; i < scalars1->GetNumberOfValues(); i++) {
+  for (int i = 0; i < scalars1->GetNumberOfValues(); i++)
+  {
     vtkVariant var1 = scalars1->GetVariantValue(i);
     vtkVariant var2 = scalars2->GetVariantValue(i);
-    if (var1 != var2) {
-      std::cout << "Mesh Compare: values differ: " << var1 << " != " << var2 << "\n";
+    if (var1 != var2)
+    {
+      std::cout << "values differ: " << var1 << " != " << var2 << "\n";
       return false;
     }
   }
 
   return true;
+}
+
+Point3 Mesh::center() const
+{
+  double c[3];
+  mesh->GetCenter(c);
+  return Point3({c[0], c[1], c[2]});
 }
 
 } // shapeworks

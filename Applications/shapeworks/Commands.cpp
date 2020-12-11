@@ -890,11 +890,11 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// BoundingBox
+// BoundingBoxImage
 ///////////////////////////////////////////////////////////////////////////////
-void BoundingBox::buildParser()
+void BoundingBoxImage::buildParser()
 {
-  const std::string prog = "bounding-box";
+  const std::string prog = "bounding-box-image";
   const std::string desc = "compute largest bounding box surrounding the specified isovalue of the specified set of images";
   parser.prog(prog).description(desc);
 
@@ -905,7 +905,7 @@ void BoundingBox::buildParser()
   Command::buildParser();
 }
 
-bool BoundingBox::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool BoundingBoxImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::vector<std::string> filenames = options.get("names");
   int padding = static_cast<int>(options.get("padding"));
@@ -2001,6 +2001,34 @@ bool ScaleMesh::execute(const optparse::Values &options, SharedCommandData &shar
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// BoundingBoxMesh
+///////////////////////////////////////////////////////////////////////////////
+void BoundingBoxMesh::buildParser()
+{
+  const std::string prog = "bounding-box-mesh";
+  const std::string desc = "compute bounding box of mesh";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--center").action("store").type("bool").set_default(false).help("flag for centering");
+
+  Command::buildParser();
+}
+
+bool BoundingBoxMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  bool center = static_cast<bool>(options.get("center"));
+
+  sharedData.mesh->boundingBox();
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // HausdorffDistance
 ///////////////////////////////////////////////////////////////////////////////
 void HausdorffDistance::buildParser()
@@ -2036,11 +2064,79 @@ bool HausdorffDistance::execute(const optparse::Values &options, SharedCommandDa
   else
   {
     std::unique_ptr<Mesh> other = std::make_unique<Mesh>(otherMesh);
-    std::cout << "Hausdorff Distance:      " << sharedData.mesh->getHausdorffDistance(other) << std::endl;
-    std::cout << "Relative Distance from A to B:      " << sharedData.mesh->getRelativeDistanceAtoB(other) << std::endl;
-    std::cout << "Relative Distance from B to A:      " << sharedData.mesh->getRelativeDistanceBtoA(other) << std::endl;
+    std::cout << "Hausdorff Distance:      " << sharedData.mesh->hausdorffDistance(other) << std::endl;
+    std::cout << "Relative Distance from A to B:      " << sharedData.mesh->relativeDistanceAtoB(other) << std::endl;
+    std::cout << "Relative Distance from B to A:      " << sharedData.mesh->relativeDistanceBtoA(other) << std::endl;
     return sharedData.validMesh();
   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// RasterizationOrigin
+///////////////////////////////////////////////////////////////////////////////
+void RasterizationOrigin::buildParser()
+{
+  const std::string prog = "rasterization-origin";
+  const std::string desc = "compute origin of volume that would contain the rasterization of each mesh";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--padding").action("store").type("int").set_default(0.0).help("padding value");
+  parser.add_option("--x").action("store").type("double").set_default(1.0).help("x value of spacing");
+  parser.add_option("--y").action("store").type("double").set_default(1.0).help("y value of spacing");
+  parser.add_option("--z").action("store").type("double").set_default(1.0).help("z value of spacing");
+
+  Command::buildParser();
+}
+
+bool RasterizationOrigin::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  int padding = static_cast<int>(options.get("padding"));
+  double x = static_cast<double>(options.get("x"));
+  double y = static_cast<double>(options.get("y"));
+  double z = static_cast<double>(options.get("z"));
+
+  sharedData.mesh->rasterizationOrigin(padding, makeVector({x, y, z}));
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// RasterizationSize
+///////////////////////////////////////////////////////////////////////////////
+void RasterizationSize::buildParser()
+{
+  const std::string prog = "rasterization-size";
+  const std::string desc = "compute size of volume that would contain the rasterization of each mesh";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--padding").action("store").type("int").set_default(0.0).help("padding value");
+  parser.add_option("--x").action("store").type("double").set_default(1.0).help("x value of spacing");
+  parser.add_option("--y").action("store").type("double").set_default(1.0).help("y value of spacing");
+  parser.add_option("--z").action("store").type("double").set_default(1.0).help("z value of spacing");
+
+  Command::buildParser();
+}
+
+bool RasterizationSize::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  int padding = static_cast<int>(options.get("padding"));
+  double x = static_cast<double>(options.get("x"));
+  double y = static_cast<double>(options.get("y"));
+  double z = static_cast<double>(options.get("z"));
+
+  sharedData.mesh->rasterizationSize(padding, makeVector({x, y, z}));
+  return sharedData.validMesh();
 }
 
 } // shapeworks

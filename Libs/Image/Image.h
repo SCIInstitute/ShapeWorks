@@ -228,7 +228,7 @@ public:
   Point3 center() const { return origin() + size() / 2.0; }
 
   /// return coordinate system in which this image lives in physical space
-  const ImageType::DirectionType coordsys() const { return image->GetDirection(); };
+  ImageType::DirectionType coordsys() const { return image->GetDirection(); };
 
   /// returns average physical coordinate of pixels in range (minval, maxval]
   Point3 centerOfMass(PixelType minval = 0.0, PixelType maxval = 1.0) const;  

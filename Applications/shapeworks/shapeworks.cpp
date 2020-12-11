@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(IntensityFilter::getCommand());
   shapeworks.addCommand(TopologyPreservingFilter::getCommand());
   shapeworks.addCommand(Blur::getCommand());
-  shapeworks.addCommand(BoundingBox::getCommand());
+  shapeworks.addCommand(BoundingBoxImage::getCommand());
   shapeworks.addCommand(CropImage::getCommand());
   shapeworks.addCommand(ICPRigid::getCommand());
   shapeworks.addCommand(ClipImage::getCommand());
@@ -66,7 +66,10 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(ClipMesh::getCommand());
   shapeworks.addCommand(TranslateMesh::getCommand());
   shapeworks.addCommand(ScaleMesh::getCommand());
+  shapeworks.addCommand(BoundingBoxMesh::getCommand());
   shapeworks.addCommand(HausdorffDistance::getCommand());
+  shapeworks.addCommand(RasterizationOrigin::getCommand());
+  shapeworks.addCommand(RasterizationSize::getCommand());
   shapeworks.addCommand(OptimizeCommand::getCommand());
 
   try {

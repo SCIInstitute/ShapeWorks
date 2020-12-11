@@ -51,6 +51,9 @@ Point toPoint(const Coord &c);
 Vector toVector(const Dims &d);
 Vector toVector(const Point &p);
 Point toPoint(const Vector &v);
+Coord toCoord(const Dims &d);
+Dims toDims(const Coord &c);
+Coord toCoord(const Point &p);
 
 /// Negation operator (ITK only has it for Vectors, but sometimes useful for Points)
 template<typename P>
@@ -104,6 +107,15 @@ P operator*(const P &p, const P &q)
   P ret;
   for (unsigned i = 0; i < 3; i++)
     ret[i] = p[i] * q[i];
+  return ret;
+}
+
+template <typename P>
+P operator/(const P &p, const P &q)
+{
+  P ret;
+  for (unsigned i = 0; i < 3; i++)
+    ret[i] = p[i] / q[i];
   return ret;
 }
 
