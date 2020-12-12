@@ -4,6 +4,7 @@
 
 #include <vtkSmartPointer.h>
 #include <vtkMatrix4x4.h>
+#include <vtkPolyData.h>
 
 namespace shapeworks {
 
@@ -36,6 +37,8 @@ public:
     importer->SetBufferPointerCallback(exporter->GetBufferPointerCallback());
     importer->SetCallbackUserData(exporter->GetCallbackUserData());
   }
+
+  vtkSmartPointer<vtkPolyData> toVTK(const std::string &pathname);
 
 };
 

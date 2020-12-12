@@ -1,6 +1,8 @@
 #include "ShapeworksUtils.h"
 
 #include <sys/stat.h>
+#include <vtkPLYReader.h>
+#include <vtkPolyDataReader.h>
 
 namespace shapeworks {
 
@@ -34,6 +36,24 @@ Matrix33 ShapeworksUtils::getMatrix(const vtkSmartPointer<vtkMatrix4x4>& mat)
 Vector3 ShapeworksUtils::getOffset(const vtkSmartPointer<vtkMatrix4x4>& mat)
 {
   return makeVector({mat->GetElement(0,3), mat->GetElement(1,3), mat->GetElement(2,3)});
+}
+
+vtkSmartPointer<vtkPolyData> ShapeworksUtils::toVTK(const std::string &pathname)
+{
+  vtkSmartPointer<vtkPLYReader> readerPLY = vtkSmartPointer<vtkPLYReader>::New();
+  readerPLY->SetFileName(pathname.c_str());
+
+  vtkSmartPointer<vtkPolyDataReader> readerVTK = vtkSmartPointer<vtkPolyDataReader>::New();
+  readerVTK->SetInputConnection(readerPLY->GetOutputPort());
+  // readerVTK->SetFileTypeASCII();
+
+  return readerVTK->GetOutput();
+
+  // vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+  // writer->SetInputConnection(reader->GetOutputPort());
+  // writer->SetFileTypeToASCII();
+  // writer->SetFileName( outputFilename.c_str() );
+  // writer->Update();
 }
 
 } // shapeworks
