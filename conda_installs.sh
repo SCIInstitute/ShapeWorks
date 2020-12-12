@@ -134,7 +134,7 @@ function install_conda() {
   if ! pip install mkdocs-jupyter;     then return 1; fi # for adding notebooks to our documentation (supports toc and excutation before deployment)
 
   # for spell check markdown cells in jupyter notebooks and table of contents (toc2)
-  conda install jupyter_contrib_nbextensions
+  conda install --yes jupyter_contrib_nbextensions
   jupyter contrib nbextension install --user
   jupyter nbextension enable spellchecker/main
   jupyter nbextension enable toc2/main

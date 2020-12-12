@@ -51,7 +51,7 @@ call pip install itkwidgets
 call pip install mkdocs-jupyter
 
 REM for spell check markdown cells in jupyter notebooks and table of content
-call conda install jupyter_contrib_nbextensions
+call conda install --yes jupyter_contrib_nbextensions
 call jupyter contrib nbextension install --user
 call jupyter nbextension enable spellchecker/main
 call jupyter nbextension enable toc2/main
