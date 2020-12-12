@@ -38,8 +38,6 @@ public:
     importer->SetCallbackUserData(exporter->GetCallbackUserData());
   }
 
-  vtkSmartPointer<vtkPolyData> toVTK(const std::string &pathname);
-
 };
 
 } // shapeworks

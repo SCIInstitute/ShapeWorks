@@ -70,6 +70,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(HausdorffDistance::getCommand());
   shapeworks.addCommand(RasterizationOrigin::getCommand());
   shapeworks.addCommand(RasterizationSize::getCommand());
+  shapeworks.addCommand(Preview::getCommand());
   shapeworks.addCommand(OptimizeCommand::getCommand());
 
   try {

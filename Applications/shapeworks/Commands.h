@@ -67,6 +67,7 @@ COMMAND_DECLARE(BoundingBoxMesh, MeshCommand);
 COMMAND_DECLARE(HausdorffDistance, MeshCommand);
 COMMAND_DECLARE(RasterizationOrigin, MeshCommand);
 COMMAND_DECLARE(RasterizationSize, MeshCommand);
+COMMAND_DECLARE(Preview, MeshCommand);
 
 // Optimize Commands
 COMMAND_DECLARE(OptimizeCommand, OptimizeCommandGroup);

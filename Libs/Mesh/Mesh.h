@@ -128,6 +128,9 @@ public:
   /// compute size of volume that would contain the rasterization of each mesh
   Dims rasterizationSize(int padding, Vector3 spacing);
 
+  /// process meshes using Preview in batch mode
+  Mesh& preview(bool wind = true, bool smoothBefore = true, bool smoothAfter = true, double lambda = 0.5, int iterations = 1, bool decimate = true, double percentage = 0.5);
+
   // query functions //
 
   /// center of mesh
