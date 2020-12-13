@@ -30,7 +30,7 @@ nav:
    - 'New in ShapeWorksStudio':              'new/new-studio.md'
    - 'ShapeWorks Takes ~85% Less Memory':    'new/openvdb.md'
    - 'ShapeWorks Directly on Meshes':        'new/sw-meshes.md'
-   - 'ShapeWorks API':                       'new/shapeworks-api.md'
+   - 'ShapeWorks Command':                   'new/shapeworks-command.md'
    - 'Shape Model Evaluation':               'new/ssm-eval.md'
    - 'ShapeWorks in Python':                 'new/shapeworks-python.md'
 - ShapeWorks in Python:

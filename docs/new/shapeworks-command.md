@@ -1,4 +1,4 @@
-# ShapeWorks API
+# ShapeWorks Command
 
 ShapeWorks was a conglomeration of independent executables for grooming and optimization with a GUI (ShapeWorksStudio) for analysis and visualization. This design is highly inflexible, task specific, and poorly documented, and Studio duplicated a significant portion of their functionality.
 
