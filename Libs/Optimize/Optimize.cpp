@@ -1468,7 +1468,8 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
     const itk::ParticleImplicitSurfaceDomain<float>* domain
       = dynamic_cast <const itk::ParticleImplicitSurfaceDomain<float>*> (m_sampler->GetParticleSystem()
         ->GetDomain(i));
-    if (domain) {
+    //TODO get this right for image + mesh domain
+    if (true) {
       std::vector<float> fVals;
 
       for (unsigned int j = 0; j < m_sampler->GetParticleSystem()->GetNumberOfParticles(i); j++) {
@@ -1480,7 +1481,7 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
         }
 
         if (m_use_normals[i % m_domains_per_shape]) {
-          vnl_vector_fixed<float, DIMENSION> pG = domain->SampleNormalAtPoint(pos, j);
+          vnl_vector_fixed<float, DIMENSION> pG = m_sampler->GetParticleSystem()->GetDomain(i)->SampleNormalAtPoint(pos, j);
           VectorType pN;
           pN[0] = pG[0];
           pN[1] = pG[1];
@@ -1493,7 +1494,7 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
           outw << pN[0] << " " << pN[1] << " " << pN[2] << " ";
         }
 
-        if (m_attributes_per_domain.size() > 0) {
+        if (domain && m_attributes_per_domain.size() > 0) {
           if (m_attributes_per_domain[i % m_domains_per_shape] > 0) {
             point pt;
             pt.clear();
