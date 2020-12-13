@@ -36,6 +36,30 @@ Image::Region ImageUtils::boundingBox(std::vector<std::string> &filenames, Image
   return bbox;
 }
 
+Image::Region ImageUtils::boundingBox(std::vector<Image> &images, Image::PixelType isoValue)
+{
+  if (images.empty())
+    throw std::invalid_argument("No images provided to compute a bounding box");
+  
+  if (images.size() == 1)
+    throw std::invalid_argument("Only one image provided to compute a bounding box");
+
+  Image::Region bbox(images[0].boundingBox());
+  Dims dims(images[0].dims()); // images must all be the same size
+
+  for (auto img : images)
+  {
+    if (img.dims() != dims)
+    {
+      throw std::invalid_argument("Image sizes do not match");
+    }
+
+    bbox.grow(img.boundingBox(isoValue));
+  }
+
+  return bbox;
+}
+
 TransformPtr ImageUtils::createCenterOfMassTransform(const Image &image)
 {
   AffineTransformPtr xform(AffineTransform::New());

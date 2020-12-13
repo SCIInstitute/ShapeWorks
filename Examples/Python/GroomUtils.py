@@ -161,7 +161,6 @@ def applyResampling(outDir, refFile, inDataListSeg, inDataListImg=[]):
     size and spacing the same as the reference
     """
     print("\n############# Resample #############")
-    ref_img = Image(refFile)
 
     # create output dirs
     segoutDir = os.path.join(outDir, 'segmentations') if inDataListImg else outDir
@@ -175,20 +174,24 @@ def applyResampling(outDir, refFile, inDataListSeg, inDataListImg=[]):
     # apply rigid alignment
     outSegDataList = []
     outRawDataList = []
+
+    # get reference image
+    refImg = Image(refFile)
+
     for i in range(len(inDataListSeg)):
-        # get names
         segoutname = rename(inDataListSeg[i], segoutDir, 'resized')
         outSegDataList.append(segoutname)
         if inDataListImg:
             rawoutname = rename(inDataListImg[i], rawoutDir, 'resized')
             outRawDataList.append(rawoutname)
-        # resize
+
+        # resize images to reference images
         img = Image(inDataListSeg[i])
-        transform = createTransform(Matrix()) # identity
-        img.resample(transform, ref_img.origin(), ref_img.dims(), ref_img.spacing(), ref_img.coordsys(), InterpolationType.NearestNeighbor).write(segoutname)
+        transform = createTransform(Matrix()) # create identity matrix
+        img.resample(transform, refImg.origin(), refImg.dims(), refImg.spacing(), refImg.coordsys(), InterpolationType.NearestNeighbor).write(segoutname)
         if inDataListImg:
             img = Image(inDataListImg[i])
-            img.resample(transform, ref_img.origin(), ref_img.dims(), ref_img.spacing(), ref_img.coordsys(), InterpolationType.NearestNeighbor).write(rawoutname)
+            img.resample(transform, refImg.origin(), refImg.dims(), refImg.spacing(), refImg.coordsys(), InterpolationType.NearestNeighbor).write(rawoutname)
 
     return [outSegDataList, outRawDataList] if inDataListImg else outSegDataList
 
@@ -201,13 +204,15 @@ def applyCropping(outDir, inDataList, path, paddingSize=10):
     if not os.path.exists(outDir):
         os.makedirs(outDir)
     outDataList = []
+
+    # find region by computing bounding box
     region = ImageUtils.boundingBox(glob.glob(path))
     region.pad(paddingSize)
+
     for i in range(len(inDataList)):
         inname = inDataList[i]
         initPath = os.path.dirname(inname)
-        outname = inname.replace(initPath, outDir)
-        outname = outname.replace('.nrrd', '.cropped.nrrd')
+        outname = rename(inname, outDir, 'cropped')
         outDataList.append(outname)
         img = Image(inname)
         img.crop(region).write(outname)

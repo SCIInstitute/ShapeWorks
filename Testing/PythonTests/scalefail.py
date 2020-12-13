@@ -17,7 +17,7 @@ if val is False:
 
 def scalefailTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
-  img.scale(Vector(1.0, 1.0, 1.0))
+  img.scale([1.0, 1.0, 1.0])
 
   compareImg = Image(os.environ["DATA"] + "/scalefail.nrrd")
 

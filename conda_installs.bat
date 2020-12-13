@@ -52,10 +52,11 @@ call pip install ipywidgets
 call pip install itkwidgets
 call pip install mkdocs-jupyter
 
-REM for spell check markdown cells in jupyter notebooks
-call pip install jupyter_contrib_nbextensions
+REM for spell check markdown cells in jupyter notebooks and table of content
+call conda install --yes jupyter_contrib_nbextensions
 call jupyter contrib nbextension install --user
 call jupyter nbextension enable spellchecker/main
+call jupyter nbextension enable toc2/main
 
 REM installing nbstripout to strip out notebooks cell outputs before committing 
 call nbstripout --install

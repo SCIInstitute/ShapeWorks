@@ -4,7 +4,7 @@ from shapeworks import *
 
 def clipfailTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
-  img.clip(Point(1, 0.0, 0.0), Point(0.0, 0.0, 0.0), Point(0.0, 0.0, 0.0), 0.0)
+  img.clip([1, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], 0.0)
 
   compareImg = Image(os.environ["DATA"] + "/clipfail.nrrd")
 
@@ -17,7 +17,7 @@ if val is False:
 
 def clipfailTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
-  img.clip(Point(0.0, 0.0, 0.0), Point(0.0, 0.0, 0.0), Point(0.0, 0.0, 0.0), 0.0)
+  img.clip([0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], 0.0)
 
   compareImg = Image(os.environ["DATA"] + "/clipfail.nrrd")
 

@@ -1043,6 +1043,38 @@ bool SetOrigin::execute(const optparse::Values &options, SharedCommandData &shar
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// SetSpacing
+///////////////////////////////////////////////////////////////////////////////
+void SetSpacing::buildParser()
+{
+  const std::string prog = "set-spacing";
+  const std::string desc = "set spacing";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--x", "-x").action("store").type("double").set_default(0).help("x value of spacing [default: 1.0].");
+  parser.add_option("--y", "-y").action("store").type("double").set_default(0).help("y value of spacing [default: 1.0].");
+  parser.add_option("--z", "-z").action("store").type("double").set_default(0).help("z value of spacing [default: 1.0].");
+
+  Command::buildParser();
+}
+
+bool SetSpacing::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validImage())
+  {
+    std::cerr << "No image to operate on\n";
+    return false;
+  }
+
+  double x = static_cast<double>(options.get("x"));
+  double y = static_cast<double>(options.get("y"));
+  double z = static_cast<double>(options.get("z"));
+
+  sharedData.image.setSpacing(makeVector({x, y, z}));
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // Warp Image
 ///////////////////////////////////////////////////////////////////////////////
 void WarpImage::buildParser()

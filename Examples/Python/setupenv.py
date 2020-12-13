@@ -20,7 +20,7 @@ def print_env_path():
         
 # helper function to add shapeworks bin directory to the path
 def setup_shapeworks_env(shapeworks_bin_dir,   # path to the binary directory of shapeworks
-                         dependencies_bin_dir, # path to the binary directory of shapeworks dependencies used when running build_dependencies.sh
+                         dependencies_bin_dir = None, # only needed if shapeworks is built from source: path to the binary directory of shapeworks dependencies used when running build_dependencies.sh
                          verbose = True):
     
     # add shapeworks (and studio on mac) directory to python path 
@@ -30,7 +30,8 @@ def setup_shapeworks_env(shapeworks_bin_dir,   # path to the binary directory of
     
     # add shapeworks and studio to the system path
     os.environ["PATH"] = shapeworks_bin_dir   + os.pathsep + os.environ["PATH"]
-    os.environ["PATH"] = dependencies_bin_dir + os.pathsep + os.environ["PATH"]
+    if dependencies_bin_dir is not None:
+        os.environ["PATH"] = dependencies_bin_dir + os.pathsep + os.environ["PATH"]
     if platform.system() == "Darwin": # MacOS
         os.environ["PATH"] = shapeworks_bin_dir + "/ShapeWorksStudio.app/Contents/MacOS" + os.pathsep + os.environ["PATH"]
     

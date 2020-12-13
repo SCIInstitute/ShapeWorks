@@ -17,7 +17,7 @@ if val is False:
 
 def rotatefailTest2():
   img = Image(os.environ["DATA"] + "/la-bin-centered.nrrd")
-  img.rotate(0.785, Vector(0.0, 0.0, 1.0))
+  img.rotate(0.785, [0.0, 0.0, 1.0])
 
   compareImg = Image(os.environ["DATA"] + "/rotate1.nrrd")
 
@@ -30,7 +30,7 @@ if val is False:
 
 def rotatefailTest3():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
-  img.rotate(0, Vector(0.0, 0.0, 1.0))
+  img.rotate(0, [0.0, 0.0, 1.0])
 
   compareImg = Image(os.environ["DATA"] + "/rotatefail.nrrd")
 

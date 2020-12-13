@@ -725,6 +725,20 @@ Image& Image::setOrigin(Point3 origin)
   return *this;
 }
 
+Image& Image::setSpacing(Vector3 spacing)
+{
+  using FilterType = itk::ChangeInformationImageFilter<ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+
+  filter->SetInput(this->image);
+  filter->SetOutputSpacing(spacing);
+  filter->ChangeSpacingOn();
+  filter->Update();
+  this->image = filter->GetOutput();
+
+  return *this;
+}
+
 Point3 Image::centerOfMass(PixelType minVal, PixelType maxVal) const
 {
   itk::ImageRegionIteratorWithIndex<ImageType> imageIt(this->image, image->GetLargestPossibleRegion());
@@ -750,11 +764,11 @@ Point3 Image::centerOfMass(PixelType minVal, PixelType maxVal) const
   return com;
 }
 
-Point3 Image::logicalToPhysical(const Coord &v) const
+Point3 Image::logicalToPhysical(const Coord &c) const
 {
   // return image->TransformIndexToPhysicalPoint(v); // not sure why this call won't work directly
   Point3 value;
-  image->TransformIndexToPhysicalPoint(v, value);
+  image->TransformIndexToPhysicalPoint(c, value);
   return value;
 }
 
