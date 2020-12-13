@@ -35,7 +35,7 @@ def get_file_with_ext(file_list,extension):
 
 	extList =[]
 	for file in file_list:
-		ext = file.split(".")[1]
+		ext = file.split(".")[-1]
 		if(ext==extension):
 			extList.append(file)
 	extList = sorted(extList)
