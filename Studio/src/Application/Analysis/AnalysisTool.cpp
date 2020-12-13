@@ -166,7 +166,7 @@ void AnalysisTool::on_reconstructionButton_clicked()
   this->ui_->reconstructionButton->setEnabled(false);
   QThread* thread = new QThread;
   std::vector<std::vector<itk::Point<double>>> local, global;
-  std::vector<ImageType::Pointer> images;
+  std::vector<std::string> images;
   auto shapes = this->session_->get_shapes();
   local.resize(shapes.size());
   global.resize(shapes.size());
@@ -186,13 +186,7 @@ void AnalysisTool::on_reconstructionButton_clicked()
       local[ii].push_back(pt);
       global[ii].push_back(pt2);
     }
-    ImageType::Pointer image = s->get_groomed_image();
-    if (!image) {
-      emit error(
-        QString("Unable to load groomed image for shape " + QString::number(ii)).toStdString());
-      emit progress(100);
-      return;
-    }
+    std::string image = s->get_groomed_filename_with_path().toStdString();
     images[ii] = image;
     ii++;
   }

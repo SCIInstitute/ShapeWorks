@@ -141,7 +141,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
     ShapeworksWorker::OptimizeType, NULL, this->optimize_, this->session_,
     std::vector<std::vector<itk::Point<double>>>(),
     std::vector<std::vector<itk::Point<double>>>(),
-    std::vector<ImageType::Pointer>());
+    std::vector<std::string>());
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_optimize_complete()));

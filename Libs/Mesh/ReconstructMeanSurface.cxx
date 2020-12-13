@@ -58,21 +58,11 @@ int DoIt(InputParams params)
     reconstructor.reset();
 
     // read distance transforms
-    std::vector<typename ImageType::Pointer> distance_transforms;
+    std::vector<std::string> distance_transforms;
     for (unsigned int shapeNo = 0; shapeNo < params.distanceTransformFilenames.size(); shapeNo++)
     {
         std::string filename = params.distanceTransformFilenames[shapeNo];
-
-        if (filename.find(".nrrd") != std::string::npos) {
-            itk::NrrdImageIOFactory::RegisterOneFactory();
-        } else if (filename.find(".mha") != std::string::npos) {
-            itk::MetaImageIOFactory::RegisterOneFactory();
-        }
-        typename ReaderType::Pointer reader = ReaderType::New();
-        std::cout << "Reading distance transform file : " << filename << std::endl;
-        reader->SetFileName( filename.c_str() );
-        reader->Update();
-        distance_transforms.push_back(reader->GetOutput());
+        distance_transforms.push_back(filename);
     }
 
     // read local points and world points if given
@@ -194,7 +184,13 @@ int DoIt(InputParams params)
                   << "origin_global(2) = " << origin_global[2] << std::endl;
 
         // origin of the distance transforms (assume all dts are sharing the same origin)
-        typename ImageType::PointType  origin_dt = distance_transforms[0]->GetOrigin();
+
+
+        typename ReaderType::Pointer reader = ReaderType::New();
+        reader->SetFileName( distance_transforms[0].c_str() );
+        reader->Update();
+        typename ImageType::Pointer dt = reader->GetOutput();
+        typename ImageType::PointType origin_dt = dt->GetOrigin();
 
         double offset_x = origin_dt[0] - origin_local[0];
         double offset_y = origin_dt[1] - origin_local[1];

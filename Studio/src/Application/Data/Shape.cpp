@@ -342,14 +342,21 @@ QString Shape::get_original_filename_with_path()
 //---------------------------------------------------------------------------
 QString Shape::get_groomed_filename()
 {
-  QFileInfo qfi(this->groomed_filename_);
-  return qfi.fileName();
+  if (this->subject_->get_groomed_filenames().size() < 1) {
+    return "";
+  }
+  auto string = QString::fromStdString(this->subject_->get_groomed_filenames()[0]);
+  QFileInfo info(string);
+  return info.fileName();
 }
 
 //---------------------------------------------------------------------------
 QString Shape::get_groomed_filename_with_path()
 {
-  return this->groomed_filename_;
+  if (this->subject_->get_groomed_filenames().size() < 1) {
+    return "";
+  }
+  return QString::fromStdString(this->subject_->get_groomed_filenames()[0]);
 }
 
 //---------------------------------------------------------------------------
