@@ -19,7 +19,7 @@ The `shapeworks` executable is highly flexible, modular, and loosely coupled, wi
     
 ## ShapeWorks in Python
 
-We are developing Python bindings to enable users to script their customized shape modeling workflows. See [ShapeWorks in Python](../new/shapeworks-python.md) for more details and pointers to step-by-step hands-on tutorials on different aspects of the shape modeling workflow in a transparent, reproducible, and sharable manner.
+We are developing Python bindings to enable users to script their customized shape modeling workflows. See [ShapeWorks in Python](../new/shapeworks-python.md) for more details and pointers to step-by-step, hands-on tutorials on different aspects of the shape modeling workflow in a transparent, reproducible, and sharable manner.
 
 !!! important "ShapeWorks with Python support"
     ShapeWorks Python library is currently under active development and is part of our major releases as of **ShapeWorks 6**. 

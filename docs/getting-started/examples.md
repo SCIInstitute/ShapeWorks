@@ -24,7 +24,7 @@ This mesh-based [use case](../use-cases/femur.md) demonstrates using ShapeWorks 
 
 You can use any of these use cases as a starting point and customize it to your own dataset. 
 
-In `Examples/notebooks/tutorials`, we also provide a step-by-step hands-on tutorials on different aspects of the shape modeling workflow in a transparent, reproducible, and sharable manner. For this purpose, we have chosen Juypter Notebooks as the front-end tools for these demonstrations. These hands-on tutorials are designed to reflect the thought process that a non-expert user could go through at different phases of shape modeling, starting from processing or grooming your data to analyzing your optimized shape model. See [ShapeWorks in Python](../new/shapeworks-python.md) for more details.
+In `Examples/notebooks/tutorials`, we also provide step-by-step, hands-on tutorials on different aspects of the shape modeling workflow in a transparent, reproducible, and sharable manner. For this purpose, we have chosen Juypter Notebooks as the front-end tools for these demonstrations. These hands-on tutorials are designed to reflect the thought process that a non-expert user could go through at different shape modeling phases, starting from processing or grooming your data to analyzing your optimized shape model. See [ShapeWorks in Python](../new/shapeworks-python.md) for more details.
 
 !!! important "ShapeWorks with Python support"
     ShapeWorks Python library is currently under active development and is part of our major releases as of **ShapeWorks 6**. 
