@@ -19,5 +19,11 @@ def runDataAugmentation(out_dir, img_list, local_point_list, num_samples=3, num_
     print("Done.")
     return num_dim
 
-def visualizeAugmentation(data_csv):
-    Visualize.splom(data_csv)
+def visualizeAugmentation(data_csv, viz_type='splom'):
+    print("Creating visualization.")
+    if viz_type == 'splom':
+        Visualize.splom(data_csv)
+    elif viz_type == 'violin':
+        Visualize.violin(data_csv)
+    else:
+        print("Error visualization type unrecognized.")

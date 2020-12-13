@@ -121,6 +121,7 @@ function install_conda() {
   if ! pip install matplotlib==3.1.2; then return 1; fi
   if ! pip install itk==5.0.1; then return 1; fi
   if ! pip install bokeh==2.2; then return 1; fi
+  if ! pip install seaborn; then return 1; fi
   if ! pip install mdutils; then return 1; fi # lib for writing markdown files needed for auto-documentation (not available through conda install)
   if ! pip install mkdocs; then return 1; fi # lib for generating documentation from markdown
   if ! pip install python-markdown-math; then return 1; fi # lib for rendering equations in docs
