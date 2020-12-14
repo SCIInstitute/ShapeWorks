@@ -79,7 +79,7 @@ void BarGraph::paint_bar_graph(QPainter& painter)
     this->font_height_ = rect.height();
   }
 
-  QString y_axis_label = "Explained Variance";
+  QString y_axis_label = this->y_label_;
 
   if (this->y_axis_text_width_ < 0) {
     QFontMetrics metrics(painter.font());
@@ -141,7 +141,7 @@ void BarGraph::paint_bar_graph(QPainter& painter)
   painter.save();
   painter.translate(10, this->height() / 2 + this->y_axis_text_width_ / 2);
   painter.rotate(-90);
-  painter.drawText(0, 0, "Explained Variance");
+  painter.drawText(0, 0, this->y_label_);
   painter.restore();
 
   // Y Labels
@@ -261,4 +261,10 @@ double BarGraph::get_height_for_value(double value)
   double return_value = val * this->get_graph_height() / range;
 
   return return_value;
+}
+
+//---------------------------------------------------------------------------
+void BarGraph::set_y_label(QString label)
+{
+  this->y_label_ = label;
 }

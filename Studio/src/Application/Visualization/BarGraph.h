@@ -15,6 +15,8 @@ public:
   void set_data(const std::vector<double>& values);
   void set_log_scale(bool b);
 
+  void set_y_label(QString label);
+
 public Q_SLOTS:
   void hover_timer_event();
 
@@ -33,6 +35,7 @@ private:
   double get_height_for_value(double value);
 
   // members
+  QString y_label_;
   std::vector<double> values_;
   std::vector<double> accumulation_;
   std::vector<QRect> bars_;

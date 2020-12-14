@@ -83,7 +83,9 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   /// TODO nothing there yet (regression tab)
   this->ui_->tabWidget->removeTab(3);
 
-  this->ui_->evaluation_widget->hide();
+  this->ui_->graph_->set_y_label("Explained Variance");
+  this->ui_->compactness_graph->set_y_label("Compactness");
+//  this->ui_->evaluation_widget->hide();
 }
 
 //---------------------------------------------------------------------------
@@ -450,8 +452,19 @@ bool AnalysisTool::compute_stats()
     vals.push_back(this->stats_.Eigenvalues()[i]);
   }
   this->ui_->graph_->set_data(vals);
-
   this->ui_->graph_->repaint();
+
+  this->ui_->chart_scroll_area_compactness->hide();
+/*
+  vals.clear();
+  for (int i = this->stats_.Eigenvalues().size() - 1; i > 0; i--) {
+    vals.push_back(this->stats_.get_compactness(0));
+    //vals.push_back(this->stats_.get_compactness(i));
+  }
+  this->ui_->compactness_graph->set_data(vals);
+  this->ui_->compactness_graph->repaint();
+*/
+
 
   return true;
 }
@@ -948,6 +961,9 @@ void AnalysisTool::on_metrics_open_button_toggled()
   bool show = this->ui_->metrics_open_button->isChecked();
   this->ui_->metrics_content->setVisible(show);
 
+  if (show) {
+    this->compute_stats();
+  }
   /// Disabled for now
   /*
   if (show) {
