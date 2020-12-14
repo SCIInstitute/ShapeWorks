@@ -43,10 +43,8 @@ def generate(num_samples, out_dir, randomize_center, randomize_rotation, m, star
         shapeMesh.export(meshDir + name + ".stl")
         execCommand = ["stl2ply", meshDir + name + ".stl", meshDir + name + ".ply"]
         subprocess.check_call(execCommand)
+        subprocess.check_call(["stl2vtk", meshDir + name + ".stl", meshDir + name + ".vtk"])
         os.remove(meshDir + name + ".stl")
-        VTKmesh = name + ".vtk"
-        PLYmesh = name + ".ply"
-        subprocess.check_call(["ply2vtk", PLYmesh, VTKmesh])
     return get_files(meshDir)
 
 # Name helper
