@@ -45,6 +45,8 @@ bool Groom::run()
     [&](const tbb::blocked_range<size_t>& r) {
       for (size_t i = r.begin(); i < r.end(); ++i) {
 
+        if (this->abort_) { success = false; continue; }
+
         if (subjects[i]->get_domain_types()[0] == DomainType::Image) {
           if (!this->image_pipeline(subjects[i])) {
             success = false;
@@ -111,6 +113,8 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject)
     this->increment_progress();
   }
 
+  if (this->abort_) { return false; }
+
   // store transform
   std::vector<std::vector<double>> groomed_transforms;
   std::vector<double> groomed_transform;
@@ -127,11 +131,15 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject)
     this->increment_progress();
   }
 
+  if (this->abort_) { return false; }
+
   // fill holes
   if (params.get_fill_holes_tool()) {
     image.closeHoles();
     this->increment_progress();
   }
+
+  if (this->abort_) { return false; }
 
   // autopad
   if (params.get_auto_pad_tool()) {
@@ -139,11 +147,15 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject)
     this->increment_progress();
   }
 
+  if (this->abort_) { return false; }
+
   // antialias
   if (params.get_antialias_tool()) {
     image.antialias(params.get_antialias_iterations());
     this->increment_progress();
   }
+
+  if (this->abort_) { return false; }
 
   // create distance transform
   if (params.get_fast_marching()) {
@@ -151,11 +163,15 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject)
     this->increment_progress(10);
   }
 
+  if (this->abort_) { return false; }
+
   // blur
   if (params.get_blur_tool()) {
     image.gaussianBlur(params.get_blur_amount());
     this->increment_progress();
   }
+
+  if (this->abort_) { return false; }
 
   // groomed filename
   std::string dt_name = path;
@@ -212,7 +228,6 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject)
         tform[1] = com[1];
         tform[2] = com[2];
         transform->SetTranslation(tform);
-        std::cerr << "translating!\n";
         this->increment_progress();
       }
     }
@@ -243,7 +258,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject)
 }
 
 //---------------------------------------------------------------------------
-void Groom::isolate(Image& image)
+void Groom::isolate(Image &image)
 {
   ImageType::Pointer img = image;
 
@@ -279,7 +294,7 @@ void Groom::isolate(Image& image)
 }
 
 //---------------------------------------------------------------------------
-Vector3 Groom::center(Image& image)
+Vector3 Groom::center(Image &image)
 {
   image.recenter();
   auto com = image.centerOfMass();
@@ -352,6 +367,18 @@ bool Groom::save_mesh(std::shared_ptr<Mesh> mesh, std::string filename)
     std::cerr << "Exception: " << e.what() << "\n";
   }
   return false;
+}
+
+//---------------------------------------------------------------------------
+void Groom::abort()
+{
+  this->abort_ = true;
+}
+
+//---------------------------------------------------------------------------
+bool Groom::get_aborted()
+{
+  return this->abort_;
 }
 
 

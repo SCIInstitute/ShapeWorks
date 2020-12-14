@@ -49,6 +49,10 @@ void ShapeworksWorker::process()
         emit error_message(std::string("Error during optimization!"));
         return;
       }
+      if (this->groom_->get_aborted()) {
+        emit error_message(std::string("Groom Aborted!"));
+        return;
+      }
       break;
     case ShapeworksWorker::OptimizeType:
       try {

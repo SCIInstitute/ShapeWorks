@@ -136,12 +136,13 @@ void OptimizeTool::on_run_optimize_button_clicked()
 
   this->optimize_->SetFileOutputEnabled(false);
 
-  QThread* thread = new QThread;
   ShapeworksWorker* worker = new ShapeworksWorker(
     ShapeworksWorker::OptimizeType, NULL, this->optimize_, this->session_,
     std::vector<std::vector<itk::Point<double>>>(),
     std::vector<std::vector<itk::Point<double>>>(),
     std::vector<std::string>());
+
+  QThread* thread = new QThread;
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_optimize_complete()));
