@@ -80,7 +80,9 @@ def Run_Pipeline(args):
             os.makedirs(groomDir)
 
         """Apply isotropic resampling"""
+        print(fileList)
         resampledFiles = applyIsotropicResampling(groomDir + "resampled/segmentations", fileList)
+        print(resampledFiles)
 
         """Apply centering"""
         centeredFiles = center(groomDir + "centered/segmentations", resampledFiles)

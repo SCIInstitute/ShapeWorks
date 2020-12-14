@@ -67,7 +67,7 @@ def Run_Pipeline(args):
             indices = [0,1,2]
         elif args.use_subsample:
             indices = sample_idx
-        dtFiles = CommonUtils.get_file_list(dtDirecory, ending=".nrrd", indices=indices)    else:
+        dtFiles = CommonUtils.get_file_list(dtDirecory, ending=".nrrd", indices=indices)    
     else:
         print("\nStep 2. Groom - Data Pre-processing\n")
         if int(args.interactive) != 0:
