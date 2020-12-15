@@ -11,23 +11,22 @@
 
 #include "vnl/vnl_vector.h"
 
-#include <Data/Mesh.h>
+#include <Data/StudioMesh.h>
 #include <Data/Preferences.h>
 #include <Data/SurfaceReconstructor.h>
 #include <Data/LegacyMeshGenerator.h>
 #include <Data/MeshWorkQueue.h>
 
-#include <Groom/ShapeWorksGroom.h>
+namespace shapeworks {
 
-class MeshGenerator
-{
+class MeshGenerator {
 public:
 
   MeshGenerator(Preferences& prefs);
 
   ~MeshGenerator();
 
-  MeshHandle build_mesh(const MeshWorkItem &item);
+  MeshHandle build_mesh(const MeshWorkItem& item);
 
   MeshHandle build_mesh_from_points(const vnl_vector<double>& shape, int domain);
 
@@ -42,3 +41,4 @@ private:
   QSharedPointer<SurfaceReconstructor> surface_reconstructor_;
   QSharedPointer<LegacyMeshGenerator> legacy_reconstructor_;
 };
+}

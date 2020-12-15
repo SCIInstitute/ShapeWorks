@@ -9,25 +9,28 @@
 #include <vtkActor.h>
 #include <vtkPoints.h>
 #include <vtkCamera.h>
+#include <Data/Preferences.h>
 
 #include <Visualization/Viewer.h>
 
-class Mesh;
+class vtkOrientationMarkerWidget;
+
+namespace shapeworks {
+
+class StudioMesh;
 class Shape;
 class StudioInteractorStyle;
 class Visualizer;
-class vtkOrientationMarkerWidget;
 
 class Lightbox;
-typedef QSharedPointer< Lightbox > LightboxHandle;
+typedef QSharedPointer<Lightbox> LightboxHandle;
 
 //! Display multiple Viewers in a tiled display
 /*!
  * The LightBox class displays multiple Viewers in a tiled display
  */
-class Lightbox : public QObject
-{
-  Q_OBJECT;
+class Lightbox : public QObject {
+Q_OBJECT;
 public:
   Lightbox();
   ~Lightbox();
@@ -58,7 +61,8 @@ public:
 
   void set_visualizer(Visualizer* visualizer);
 
-  bool render_window_ready() { return render_window_ != NULL; }
+  bool render_window_ready()
+  { return render_window_ != NULL; }
 
   void clear_renderers();
 
@@ -69,6 +73,11 @@ public:
   void reset_camera();
 
   void reset_camera_clipping_range();
+
+  void set_orientation_marker(Preferences::OrientationMarkerType type,
+                              Preferences::OrientationMarkerCorner corner);
+
+  void set_orientation_marker_viewport();
 
 public Q_SLOTS:
   void handle_timer_callback();
@@ -117,4 +126,9 @@ private:
 
   vtkSmartPointer<vtkOrientationMarkerWidget> orientation_marker_widget_;
 
+  Preferences::OrientationMarkerType current_orientation_marker_type_
+    = Preferences::OrientationMarkerType::none;
+  Preferences::OrientationMarkerCorner current_orientation_marker_corner_
+    = Preferences::OrientationMarkerCorner::upper_right;
 };
+}

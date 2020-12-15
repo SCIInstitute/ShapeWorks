@@ -94,9 +94,9 @@ public:
   shapeworks::DomainType GetDomainType();
 
   //! Set the numbers of particles (vector of numbers, one for each domain)
-  void SetNumberOfParticles(std::vector<unsigned int> number_of_particles);
+  void SetNumberOfParticles(std::vector<int> number_of_particles);
   //! Return the numbers of particles per domain
-  std::vector<unsigned int> GetNumberOfParticles();
+  std::vector<int> GetNumberOfParticles();
 
   //! Set the transform file
   void SetTransformFile(std::string filename);
@@ -344,7 +344,7 @@ protected:
   // IO Parameters
   unsigned int m_domains_per_shape = 1;
   shapeworks::DomainType m_domain_type = shapeworks::DomainType::Image;
-  std::vector<unsigned int> m_number_of_particles;
+  std::vector<int> m_number_of_particles;
   std::string m_transform_file;
   std::string m_prefix_transform_file;
   std::string m_output_dir;

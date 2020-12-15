@@ -4,16 +4,20 @@
 #include <Data/MeshWorker.h>
 #include <QThread>
 
+namespace shapeworks {
+
 //---------------------------------------------------------------------------
 MeshWorker::MeshWorker(Preferences& prefs,
-                       const MeshWorkItem &item,
+                       const MeshWorkItem& item,
                        MeshWorkQueue* queue,
                        MeshCache* cache)
   : prefs_(prefs), mesh_generator_(prefs),
-  item_(item), queue_(queue), cache_(cache) {}
+    item_(item), queue_(queue), cache_(cache)
+{}
 
 //---------------------------------------------------------------------------
-MeshWorker::~MeshWorker() {}
+MeshWorker::~MeshWorker()
+{}
 
 //---------------------------------------------------------------------------
 void MeshWorker::run()
@@ -39,4 +43,5 @@ void MeshWorker::run()
 MeshGenerator* MeshWorker::get_mesh_generator()
 {
   return &(this->mesh_generator_);
+}
 }

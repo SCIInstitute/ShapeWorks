@@ -56,6 +56,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(WriteMesh::getCommand());
   shapeworks.addCommand(Coverage::getCommand());
   shapeworks.addCommand(OptimizeCommand::getCommand());
+  shapeworks.addCommand(GroomCommand::getCommand());
 
   try {
     return shapeworks.run(argc, argv);

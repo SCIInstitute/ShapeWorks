@@ -286,35 +286,6 @@ void Utils::getBoundingBoxForShape (std::vector< itk::Point< double, 3 > >  poin
 }
 
 
-// ------------------- string manipulation ------------------------------------
-std::string Utils::removeExtension( std::string const& filename )
-{
-    std::string::const_reverse_iterator
-            pivot
-            = std::find( filename.rbegin(), filename.rend(), '.' );
-    return pivot == filename.rend()
-            ? filename
-            : std::string( filename.begin(), pivot.base() - 1 );
-}
-
-std::string Utils::getPath( std::string const& filename )
-{
-    std::string::const_reverse_iterator
-            pivot
-            = std::find( filename.rbegin(), filename.rend(), '/' );
-    return pivot == filename.rend()
-            ? filename
-            : std::string( filename.begin(), pivot.base() - 1 );
-}
-
-std::string Utils::getFilename( std::string const& pathname )
-{
-    return std::string(
-                std::find_if( pathname.rbegin(), pathname.rend(),
-                              utils::MatchPathSeparator() ).base(),
-                pathname.end() );
-}
-
 // ------------------- coordinates transformations -----------------------------
 void Utils::spherical2cartesian(const double inPoint[3], double outPoint[3])
 {
@@ -588,5 +559,8 @@ double Utils::averageThetaArc(std::vector<double> thetas)
 
     return mod2pi(bestTheta);
 }
+
+
+
 
 // } //shapeworks

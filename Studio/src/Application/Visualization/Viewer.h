@@ -3,6 +3,7 @@
 
 #include <QSharedPointer>
 #include <Visualization/ColorSchemes.h>
+
 #include <Application/Data/Shape.h>
 
 class vtkRenderer;
@@ -20,6 +21,9 @@ class vtkCornerAnnotation;
 class vtkPolyDataMapper;
 class vtkActor;
 class vtkTransform;
+
+namespace shapeworks {
+
 class Shape;
 class Viewer;
 class Visualizer;
@@ -71,7 +75,7 @@ public:
 
   void set_visualizer(Visualizer* visualizer);
 
-  void update_feature_range(double *range);
+  void update_feature_range(double* range);
 
   QSharedPointer<Shape> get_shape();
 
@@ -79,7 +83,7 @@ private:
 
   void display_vector_field();
 
-  void compute_point_differences(const std::vector<Point>& points,
+  void compute_point_differences(const std::vector<Shape::Point>& points,
                                  vtkSmartPointer<vtkFloatArray> magnitudes,
                                  vtkSmartPointer<vtkFloatArray> vectors);
 
@@ -146,7 +150,8 @@ private:
   bool viewer_ready_ = false;
   bool loading_displayed_ = false;
 
-  QSharedPointer<Mesh> mesh_;
+  QSharedPointer<StudioMesh> mesh_;
 
   Visualizer* visualizer_{nullptr};
 };
+}

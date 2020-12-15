@@ -6,7 +6,7 @@
 #include <QDir>
 #include <QStandardPaths>
 
-using namespace shapeworks;
+namespace shapeworks {
 
 const QString StudioLog::log_datetime_format_ = "yyyy-MM-dd_HH_mm_ss";
 const QString StudioLog::datetime_format_ = "yyyy-MM-dd HH:mm:ss.zzz";
@@ -139,3 +139,4 @@ QString StudioLog::get_log_filename()
   return this->log_filename_;
 }
 
+}

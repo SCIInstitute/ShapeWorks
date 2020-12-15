@@ -1,9 +1,11 @@
 # Build
 set(Utils_sources
   Utils.cpp
+  StringUtils.cpp
   )
 set(Utils_headers
   Utils.h
+  StringUtils.h
   )
 add_library(Utils STATIC
   ${Utils_sources}

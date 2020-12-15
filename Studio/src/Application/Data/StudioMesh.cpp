@@ -15,40 +15,42 @@
 #include <vtkPolyDataWriter.h>
 #include <vtkPointLocator.h>
 
-#include <Data/Mesh.h>
+#include <Data/StudioMesh.h>
 #include <Data/ItkToVtk.h>
 
 using NearestNeighborInterpolatorType = itk::NearestNeighborInterpolateImageFunction<ImageType, double>;
 using LinearInterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
 
+namespace shapeworks {
+
 //---------------------------------------------------------------------------
-Mesh::Mesh()
+StudioMesh::StudioMesh()
 {}
 
 //---------------------------------------------------------------------------
-Mesh::~Mesh()
+StudioMesh::~StudioMesh()
 {}
 
 //---------------------------------------------------------------------------
-void Mesh::set_poly_data(vtkSmartPointer<vtkPolyData> poly_data)
+void StudioMesh::set_poly_data(vtkSmartPointer<vtkPolyData> poly_data)
 {
   this->poly_data_ = poly_data;
 }
 
 //---------------------------------------------------------------------------
-void Mesh::set_error_message(std::string error_message)
+void StudioMesh::set_error_message(std::string error_message)
 {
   this->error_message_ = error_message;
 }
 
 //---------------------------------------------------------------------------
-std::string Mesh::get_error_message()
+std::string StudioMesh::get_error_message()
 {
   return this->error_message_;
 }
 
 //---------------------------------------------------------------------------
-QString Mesh::get_dimension_string()
+QString StudioMesh::get_dimension_string()
 {
   QString str = "[" + QString::number(this->dimensions_[0]) +
                 ", " + QString::number(this->dimensions_[1]) +
@@ -57,13 +59,13 @@ QString Mesh::get_dimension_string()
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> Mesh::get_poly_data()
+vtkSmartPointer<vtkPolyData> StudioMesh::get_poly_data()
 {
   return this->poly_data_;
 }
 
 //---------------------------------------------------------------------------
-void Mesh::create_from_image(ImageType::Pointer image, double iso_value)
+void StudioMesh::create_from_image(ImageType::Pointer image, double iso_value)
 {
   try {
     // get image dimensions
@@ -117,20 +119,20 @@ void Mesh::create_from_image(ImageType::Pointer image, double iso_value)
     // store isosurface polydata
     this->poly_data_ = marching->GetOutput();
   } catch (itk::ExceptionObject& excep) {
-    std::cerr << "3Exception caught!" << std::endl;
+    std::cerr << "Exception caught!" << std::endl;
     std::cerr << excep << std::endl;
   }
 }
 
 //---------------------------------------------------------------------------
-vnl_vector<double> Mesh::get_center_transform()
+vnl_vector<double> StudioMesh::get_center_transform()
 {
   return this->center_transform_;
 }
 
 //---------------------------------------------------------------------------
-void Mesh::apply_feature_map(std::string name, ImageType::Pointer image,
-                             vnl_vector<double> transform)
+void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image,
+                                   vnl_vector<double> transform)
 {
   if (!this->poly_data_ || name == "") {
     return;
@@ -189,8 +191,8 @@ void Mesh::apply_feature_map(std::string name, ImageType::Pointer image,
 }
 
 //---------------------------------------------------------------------------
-void Mesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double> positions,
-                                       itkeigen::VectorXf scalar_values)
+void StudioMesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double> positions,
+                                             itkeigen::VectorXf scalar_values)
 {
 
   int num_points = positions.size() / 3;
@@ -220,8 +222,7 @@ void Mesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double> posi
   point_locator->SetDivisions(100, 100, 100);
   point_locator->BuildLocator();
 
-  if (!this->poly_data_)
-  {
+  if (!this->poly_data_) {
     return;
   }
   auto points = this->poly_data_->GetPoints();
@@ -266,4 +267,5 @@ void Mesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double> posi
 
   this->poly_data_->GetPointData()->AddArray(scalars);
 
+}
 }

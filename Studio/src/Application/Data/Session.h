@@ -1,31 +1,37 @@
 #pragma once
 
+#include <cstdlib>
+#include <string>
 #include <vector>
+#include <map>
 
 #include <QSharedPointer>
 #include <QVector>
+
+#include <itkMatrixOffsetTransformBase.h>
 
 #include <Libs/Project/Project.h>
 
 #include <Data/Preferences.h>
 #include <Data/MeshManager.h>
-#include <Groom/ShapeWorksGroom.h>
 
-using namespace shapeworks;
+namespace shapeworks {
 
 class Shape;
 
 class Session;
-typedef QSharedPointer< Session > SessionHandle;
+typedef QSharedPointer<Session> SessionHandle;
+
+//! TODO: replace this
+using TransformType = itk::MatrixOffsetTransformBase<double, 3, 3>::ParametersType;
 
 //! Representation of a session.
 /*!
  * The Session class encapsulates everything about a session/project.
  *
  */
-class Session : public QObject
-{
-  Q_OBJECT;
+class Session : public QObject {
+Q_OBJECT;
 
 public:
 
@@ -52,15 +58,13 @@ public:
 
   void set_project_path(QString relative_path);
 
-  std::shared_ptr<Project> get_project();
+  std::shared_ptr<shapeworks::Project> get_project();
 
   /// import files
   void load_original_files(std::vector<std::string> filenames);
 
   /// load groomed files
   void load_groomed_files(std::vector<std::string> file_names, double iso);
-  void load_groomed_images(std::vector<ImageType::Pointer> images, double iso,
-                           std::vector<TransformType> transforms = std::vector<TransformType>());
 
   /// load point files
   bool load_point_files(std::vector<std::string> file_names, bool local);
@@ -90,9 +94,12 @@ public:
   bool groups_available();
   int get_num_shapes();
 
-  QSharedPointer<MeshManager> get_mesh_manager() { return this->mesh_manager_; }
+  void set_groom_unsaved(bool value);
 
-  Parameters& parameters();
+  QSharedPointer<MeshManager> get_mesh_manager()
+  { return this->mesh_manager_; }
+
+  shapeworks::Parameters& parameters();
 
 public Q_SLOTS:
   void handle_clear_cache();
@@ -119,7 +126,7 @@ private:
 
   Preferences& preferences_;
 
-  void save_particles_file(std::string filename, const vnl_vector<double> &points);
+  void save_particles_file(std::string filename, const vnl_vector<double>& points);
 
   void renumber_shapes();
 
@@ -145,3 +152,5 @@ private:
 
   std::shared_ptr<Project> project_{new Project()};
 };
+
+}

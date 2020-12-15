@@ -1,4 +1,7 @@
 #include <Libs/Project/Subject.h>
+#include <Libs/Mesh/Mesh.h>
+#include <Libs/Utils/StringUtils.h>
+
 #include <map>
 
 using namespace shapeworks;
@@ -80,7 +83,7 @@ std::map<std::string, std::string> Subject::get_feature_filenames() const
 //---------------------------------------------------------------------------
 void Subject::set_feature_filenames(const std::map<std::string, std::string>& feature_filenames)
 {
-  feature_filenames_ = feature_filenames;
+  this->feature_filenames_ = feature_filenames;
 }
 
 //---------------------------------------------------------------------------
@@ -111,4 +114,42 @@ void Subject::set_group_values(const std::map<std::string, std::string>& group_v
 std::string Subject::get_group_value(std::string group_name)
 {
   return this->group_values_[group_name];
+}
+
+//---------------------------------------------------------------------------
+std::vector<DomainType> Subject::get_domain_types()
+{
+  std::vector<DomainType> domain_types;
+  for (auto name: this->segmentation_filenames_) {
+    std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+
+    bool mesh = false;
+
+    for (auto type : Mesh::get_supported_types()) {
+      if (StringUtils::hasSuffix(name, type)) {
+        mesh = true;
+      }
+    }
+
+    if (mesh) {
+      domain_types.push_back(DomainType::Mesh);
+    }
+    else {
+      domain_types.push_back(DomainType::Image);
+    }
+
+  }
+  return domain_types;
+}
+
+//---------------------------------------------------------------------------
+std::map<std::string, std::string> Subject::get_extra_values() const
+{
+  return this->extra_values_;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_extra_values(std::map<std::string, std::string> extra_values)
+{
+  this->extra_values_ = extra_values;
 }
