@@ -283,7 +283,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   gradE = gradE / m_avgKappa;
 
   // Augmented Lagrangian Parameters
-  std::cout << "m_lambdas.size() " << this->GetLambdaI(d, idx) << " d " << d << " c_eq " << this->GetCEq() << std::endl;
+  //std::cout << "m_lambdas.size() " << this->GetLambdaI(d, idx) << " d " << d << " c_eq " << this->GetCEq() << std::endl;
   double c_eq = this->GetCEq(); // equalities: Surface constraints
   double c_in = this->GetCIn(); // inequalities/boundary: cutting plane, sphere or free form
   double lambda = this->GetLambdaI(d, idx);
@@ -303,12 +303,14 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 
   // std::cout << "pos " << pos << " Inequality " << ineq_constraint_energy << std::endl;
   std::stringstream stream;
+  // debuggg
+  stream << "d " << d << " idx " << idx << std::endl;
   stream << "m_lambda " << lambda << " pos " << pos << " Equality " << eq_constraint_energy << std::endl;
   double pos_norm = sqrt(pos[0]*pos[0] + pos[1]*pos[1] + pos[2]*pos[2]);
   double eq_en_norm = sqrt(eq_constraint_energy[0]*eq_constraint_energy[0] + eq_constraint_energy[1]*eq_constraint_energy[1] + eq_constraint_energy[2]*eq_constraint_energy[2]);
+  stream << "Coeff " << lambda + c_eq * std::fabs(hx) << " c_eq " << c_eq << " lambda " << lambda << " h_grad " << h_grad << " hx " << hx << std::endl;
   stream << "pos_norm " << pos_norm << " pos_unit [" << pos[0]/pos_norm << " " << pos[1]/pos_norm << " " << pos[2]/pos_norm << "]" << std::endl <<
           "eq_en norm " << eq_en_norm << " eq_en unit [" << eq_constraint_energy[0]/eq_en_norm << " " << eq_constraint_energy[1]/eq_en_norm << " "<< eq_constraint_energy[2]/eq_en_norm << "] " << std::endl;
-  std::cout << stream.str();
   for (unsigned int n = 0; n < VDimension; n++)
     {
       //gradE[n] += ineq_constraint_energy[n] + eq_constraint_energy[n];
@@ -320,6 +322,37 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   this->SetLambdaI(lambda + c_eq*hx, d, idx);
   this->SetCEq(c_eq*this->GetCEqFactor());
   this->SetCIn(c_in*this->GetCInFactor());
+
+  // debuggg
+  stream << "gradE " << gradE << std::endl;
+
+  // Consider point bounds
+  PointType posUpd;
+  for (unsigned int n = 0; n < VDimension; n++)
+    {
+      posUpd[n] = pos[n] + gradE[n];
+    }
+  /*
+  system->GetDomain(d)->ApplyBoundaryConstraints(posUpd);
+  for (unsigned int n = 0; n < VDimension; n++)
+    {
+      gradE[n] = posUpd[n] - pos[n];
+    }
+  */
+
+
+  // debuggg
+  //stream << "posUpd " << posUpd << " new gradE " << gradE << std::endl << std::endl;
+  double dfrom0 = sqrt(posUpd[0]*posUpd[0] + posUpd[1]*posUpd[1] + posUpd[2]*posUpd[2]);
+  if((std::fmod(dfrom0, 10) > 2 && std::fmod(dfrom0, 10) < 8) || dfrom0 > 50){
+    stream << dfrom0 << std::endl << std::endl;
+    std::cerr << stream.str();
+   }
+  else{
+  stream << dfrom0 << std::endl << std::endl;
+  std::cout << stream.str();
+  }
+
 
   return gradE;
 }

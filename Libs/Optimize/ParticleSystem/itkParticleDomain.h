@@ -86,6 +86,24 @@ public:
 
   std::shared_ptr<Constraints> GetConstraints() const {return constraints;}
 
+  /** This function will clip the point to the boundaries. */
+    virtual bool ApplyBoundaryConstraints(PointType &p) const
+    {
+      bool changed = false;
+      for (unsigned int i = 0; i < DIMENSION; i++)
+      {
+          if (p[i] < GetLowerBound()[i]) {
+              changed = true;
+              p[i] = GetLowerBound()[i];
+          }
+          else if (p[i] > GetUpperBound()[i]) {
+              changed = true;
+              p[i] = GetUpperBound()[i];
+          }
+      }
+      return changed;
+    }
+
 protected:
 
   // is this a fixed domain or not?  We start as fixed and if an image or mesh is set, we set this to false

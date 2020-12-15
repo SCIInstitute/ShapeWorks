@@ -85,7 +85,8 @@ public:
 
     //for (unsigned int i = 0; i < DIMENSION; i++) { newpoint[i] = point[i] - update[i]; }
 
-    // debuggg
+    // Optionnn
+    //Superclass::ApplyConstraints(newpoint);
     //ApplyConstraints(newpoint);
 
     // debuggg

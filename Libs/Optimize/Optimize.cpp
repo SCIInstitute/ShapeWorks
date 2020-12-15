@@ -653,11 +653,11 @@ void Optimize::Initialize()
   int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
 
   // Augmented Lagragian Parameters
-  double c_eq0 = 1e4;
+  double c_eq0 = 1e0;
   double c_in0 = 1e5;
 
   double c_eq_factor = 1.01;
-  double c_in_factor = 1.01;
+  double c_in_factor = 1.0;
 
   // Set lambdas and Cs
   m_sampler->GetCurvatureGradientFunction()->SetLambdaVec(n, 1.);
