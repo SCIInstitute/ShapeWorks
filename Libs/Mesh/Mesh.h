@@ -1,13 +1,9 @@
 #pragma once
 
 #include "Shapeworks.h"
-<<<<<<< HEAD
 #include "ImageUtils.h"
 
-=======
-
 #include <vtkSmartPointer.h>
->>>>>>> origin/master
 #include <vtkPolyData.h>
 #include <vtkPlane.h>
 #include <swHausdorffDistancePointSetFilter.h>
@@ -137,6 +133,9 @@ public:
   /// center of mesh
   Point3 center() const;
 
+  /// center of mass of mesh
+  Point3 centerOfMass() const;
+
   /// compare if points in two meshes are equal
   bool compare_points_equal(const Mesh& other_mesh) const;
 
@@ -150,8 +149,6 @@ public:
   {
     return {"vtk", "vtp", "ply", "stl", "obj"};
   }
-
-  MeshType get_poly_data();
 
 private:
   friend struct SharedCommandData;

@@ -31,6 +31,7 @@ target_include_directories(Mesh PUBLIC
 target_link_libraries(
   Mesh 
   Common
+  Utils
   trimesh2 
   vgl 
   vgl_algo 

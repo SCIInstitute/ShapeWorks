@@ -1571,12 +1571,6 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
     return false;
   }
 
-  parser.add_option("--image").action("store").type("string").set_default("").help("Path of image.");
-  if (project_file.length() == 0) {
-    std::cerr << "Must specify projects name\n";
-    return false;
-  }
-
   bool is_project = StringUtils::hasSuffix(project_file, "xlsx");
 
   Optimize app;
@@ -1608,11 +1602,6 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
     param.load_parameter_file(project_file.c_str(), &app);
     return app.Run();
   }
-
-  Optimize app;
-  OptimizeParameterFile param;
-  param.load_parameter_file(project_file.c_str(), &app);
-  return app.Run();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

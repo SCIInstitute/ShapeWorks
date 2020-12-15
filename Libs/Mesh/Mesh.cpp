@@ -1,10 +1,9 @@
 #include "Mesh.h"
 #include "Image.h"
+#include "StringUtils.h"
 #include <PreviewMeshQC/FEAreaCoverage.h>
 #include <PreviewMeshQC/FEVTKImport.h>
 #include <PreviewMeshQC/FEVTKExport.h>
-
-#include <Libs/Utils/StringUtils.h>
 
 #include <vtkPolyDataReader.h>
 #include <vtkPolyDataWriter.h>
@@ -26,6 +25,7 @@
 #include <vtkPolyDataNormals.h>
 #include <vtkProbeFilter.h>
 #include <vtkClipPolyData.h>
+#include <vtkCenterOfMass.h>
 
 static bool compare_double(double a, double b)
 {
@@ -128,12 +128,12 @@ Mesh& Mesh::write(const std::string &pathname)
       writer->SetInputData(this->mesh);
       writer->Update();
     }
+
+    throw std::invalid_argument("Unsupported file type");
   }
   catch (const std::exception &exp) {
-    std::cerr << "Failed to write mesh to " << pathname << std::endl;
-    return false;
+    throw std::invalid_argument("Failed to write mesh to " + pathname);
   }
-  return true;
 }
 
 Mesh& Mesh::coverage(const Mesh &other_mesh)
@@ -436,6 +436,7 @@ bool Mesh::compare_scalars_equal(const Mesh &other_mesh) const
   return true;
 }
 
+// TODO: does this work?
 Point3 Mesh::centerOfMass() const
 {
   auto com = vtkSmartPointer<vtkCenterOfMass>::New();
