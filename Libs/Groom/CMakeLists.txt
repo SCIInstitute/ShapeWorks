@@ -7,6 +7,7 @@ target_link_libraries(Groom
   Image
   Mesh
   TBB::tbb
+  Utils
   )
 
 target_include_directories(Groom PUBLIC
