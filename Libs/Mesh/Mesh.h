@@ -65,8 +65,10 @@ public:
     }
   };
 
-  Mesh(vtkSmartPointer<vtkPolyData>&& rhs) : mesh(std::move(rhs)) {}
   Mesh(const std::string& pathname) : mesh(read(pathname)) {}
+  Mesh(MeshType meshPtr) : mesh(meshPtr) { if (!mesh) throw std::invalid_argument("null meshPtr"); }
+  Mesh& operator=(const Mesh& mesh); /// lvalue assignment operator
+  Mesh& operator=(std::unique_ptr<Mesh>);      /// rvalue assignment operator
 
   // return the current mesh
   MeshType getMesh() const { return this->mesh; }
@@ -76,9 +78,6 @@ public:
 
   /// creates mesh of coverage between two meshes
   Mesh& coverage(const Mesh& other_mesh);
-
-  /// applies filter to generates isosurface
-  Mesh& march(double levelset = 0.0);
 
   /// applies laplacian smoothing
   Mesh& smooth(int iterations = 0, double relaxation = 0.0);
@@ -134,10 +133,13 @@ public:
   Point3 center() const;
 
   /// compare if points in two meshes are equal
-  bool compare_points_equal(const Mesh& other_mesh);
+  bool compare_points_equal(const Mesh& other_mesh) const;
 
   /// compare if scalars in two meshes are equal
-  bool compare_scalars_equal(const Mesh& other_mesh);
+  bool compare_scalars_equal(const Mesh& other_mesh) const;
+
+  /// compares this with another mesh by comparing points
+  bool operator==(const Mesh& other) const { return compare_points_equal(other); }
 
 private:
   friend struct SharedCommandData;

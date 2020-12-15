@@ -259,6 +259,9 @@ public:
   /// converts to Mesh
   std::unique_ptr<Mesh> toMesh(PixelType isovalue = 1.0) const;
 
+  /// applies filter to generates isosurface
+  vtkSmartPointer<vtkPolyData> march(double levelset=0.0);
+
 private:
   friend struct SharedCommandData;
   Image() : image(nullptr) {} // only for use by SharedCommandData since an Image should always be valid, never "empty"

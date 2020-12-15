@@ -41,6 +41,7 @@ COMMAND_DECLARE(SubtractImage, ImageCommand);
 COMMAND_DECLARE(MultiplyImage, ImageCommand);
 COMMAND_DECLARE(DivideImage, ImageCommand);
 COMMAND_DECLARE(ImageToMesh, ImageCommand);
+COMMAND_DECLARE(March, ImageCommand);
 COMMAND_DECLARE(MeshFromDT, ImageCommand);
 
 // Particle System Commands
@@ -53,7 +54,6 @@ COMMAND_DECLARE(Specificity, ParticleSystemCommand);
 COMMAND_DECLARE(ReadMesh, MeshCommand);
 COMMAND_DECLARE(WriteMesh, MeshCommand);
 COMMAND_DECLARE(Coverage, MeshCommand);
-COMMAND_DECLARE(March, MeshCommand);
 COMMAND_DECLARE(Smooth, MeshCommand);
 COMMAND_DECLARE(Decimate, MeshCommand);
 COMMAND_DECLARE(ReflectMesh, MeshCommand);

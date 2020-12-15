@@ -29,6 +29,8 @@
 #include <vtkContourFilter.h>
 #include <vtkImageData.h>
 #include <itkIntensityWindowingImageFilter.h>
+#include <vtkMarchingCubes.h>
+#include <itkImageToVTKImageFilter.h>
 
 #include <exception>
 #include <cmath>
@@ -628,24 +630,6 @@ Image& Image::gaussianBlur(double sigma)
   return *this;
 }
 
-Image::Region Image::boundingBox(PixelType isoValue) const
-{
-  Image::Region bbox;
-
-  itk::ImageRegionIteratorWithIndex<ImageType> imageIterator(image, image->GetLargestPossibleRegion());
-  while (!imageIterator.IsAtEnd())
-  {
-    PixelType val = imageIterator.Get();
-
-    if (val >= isoValue)
-      bbox.expand(imageIterator.GetIndex());
-
-    ++imageIterator;
-  }
-
-  return bbox;
-}
-
 Image& Image::crop(const Region &region)
 {
   if (!region.valid())
@@ -661,24 +645,6 @@ Image& Image::crop(const Region &region)
   this->image = filter->GetOutput();
 
   return *this;
-}
-
-vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image& image, PixelType isoValue)
-{
-  using FilterType = itk::VTKImageExport<ImageType>;
-  FilterType::Pointer itkTargetExporter = FilterType::New();
-  itkTargetExporter->SetInput(image.image);
-
-  vtkImageImport *vtkTargetImporter = vtkImageImport::New();
-  ShapeworksUtils::connectPipelines(itkTargetExporter, vtkTargetImporter);
-  vtkTargetImporter->Update();
-
-  vtkContourFilter *targetContour = vtkContourFilter::New();
-  targetContour->SetInputData(vtkTargetImporter->GetOutput());
-  targetContour->SetValue(0, isoValue);
-  targetContour->Update();
-
-  return targetContour->GetOutput();
 }
 
 Image &Image::clip(const Point &o, const Point &p1, const Point &p2, const PixelType val)
@@ -709,6 +675,20 @@ Image& Image::clip(const Vector &n, const Point &q, const PixelType val)
   return *this;
 }
 
+Image& Image::setOrigin(Point3 origin)
+{
+  using FilterType = itk::ChangeInformationImageFilter<ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+
+  filter->SetInput(this->image);
+  filter->SetOutputOrigin(origin);
+  filter->ChangeOriginOn();
+  filter->Update();
+  this->image = filter->GetOutput();
+
+  return *this;
+}
+
 Image& Image::reflect(const Axis &axis)
 {
   if (!axis_is_valid(axis))
@@ -722,20 +702,6 @@ Image& Image::reflect(const Axis &axis)
   xform->SetScale(scale);
   Point3 currentOrigin(origin());
   recenter().applyTransform(xform).setOrigin(currentOrigin);
-
-  return *this;
-}
-
-Image& Image::setOrigin(Point3 origin)
-{
-  using FilterType = itk::ChangeInformationImageFilter<ImageType>;
-  FilterType::Pointer filter = FilterType::New();
-
-  filter->SetInput(this->image);
-  filter->SetOutputOrigin(origin);
-  filter->ChangeOriginOn();
-  filter->Update();
-  this->image = filter->GetOutput();
 
   return *this;
 }
@@ -765,6 +731,24 @@ Point3 Image::centerOfMass(PixelType minval, PixelType maxval) const
   return com;
 }
 
+Image::Region Image::boundingBox(PixelType isoValue) const
+{
+  Image::Region bbox;
+
+  itk::ImageRegionIteratorWithIndex<ImageType> imageIterator(image, image->GetLargestPossibleRegion());
+  while (!imageIterator.IsAtEnd())
+  {
+    PixelType val = imageIterator.Get();
+
+    if (val >= isoValue)
+      bbox.expand(imageIterator.GetIndex());
+
+    ++imageIterator;
+  }
+
+  return bbox;
+}
+
 Point3 Image::logicalToPhysical(const Coord &v) const
 {
   // return image->TransformIndexToPhysicalPoint(v); // not sure why this call won't work directly
@@ -776,6 +760,39 @@ Point3 Image::logicalToPhysical(const Coord &v) const
 Coord Image::physicalToLogical(const Point3 &p) const
 {
   return image->TransformPhysicalPointToIndex(p);
+}
+
+vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image& image, PixelType isoValue)
+{
+  using FilterType = itk::VTKImageExport<ImageType>;
+  FilterType::Pointer itkTargetExporter = FilterType::New();
+  itkTargetExporter->SetInput(image.image);
+
+  vtkImageImport *vtkTargetImporter = vtkImageImport::New();
+  ShapeworksUtils::connectPipelines(itkTargetExporter, vtkTargetImporter);
+  vtkTargetImporter->Update();
+
+  vtkContourFilter *targetContour = vtkContourFilter::New();
+  targetContour->SetInputData(vtkTargetImporter->GetOutput());
+  targetContour->SetValue(0, isoValue);
+  targetContour->Update();
+
+  return targetContour->GetOutput();
+}
+
+vtkSmartPointer<vtkPolyData> Image::march(double levelset)
+{
+  using connectorType = itk::ImageToVTKImageFilter<Image::ImageType>;
+  connectorType::Pointer connector = connectorType::New();
+  connector->SetInput(this->image);
+
+  vtkSmartPointer<vtkMarchingCubes> cube = vtkSmartPointer<vtkMarchingCubes>::New();
+
+  cube->SetInputData(connector->GetOutput());
+  cube->SetValue(0, levelset);
+  cube->Update();
+   
+  return cube->GetOutput();
 }
 
 std::ostream& operator<<(std::ostream &os, const Image::Region &r)

@@ -84,18 +84,6 @@ Mesh& Mesh::coverage(const Mesh &other_mesh)
   return *this;
 }
 
-Mesh& Mesh::march(double levelset)
-{
-  vtkSmartPointer<vtkMarchingCubes> cube = vtkSmartPointer<vtkMarchingCubes>::New();
-
-  cube->SetInputData(this->mesh);
-  cube->SetValue(0, levelset);
-  cube->Update();
-  this->mesh = cube->GetOutput();
-
-  return *this;
-}
-
 Mesh &Mesh::smooth(int iterations, double relaxation)
 {
   vtkSmartPointer<vtkSmoothPolyDataFilter> smoother = vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
@@ -164,8 +152,6 @@ Mesh &Mesh::applyTransform(const vtkTransform transform)
 
 Mesh &Mesh::fillHoles()
 {
-  Mesh copyMesh = *this;
-
   vtkSmartPointer<vtkFillHolesFilter> filter = vtkSmartPointer<vtkFillHolesFilter>::New();
   filter->SetInputData(this->mesh);
   filter->SetHoleSize(1000.0);
@@ -178,7 +164,7 @@ Mesh &Mesh::fillHoles()
   normals->Update();
 
   // Restore the original normals
-  normals->GetOutput()->GetPointData()->SetNormals(copyMesh.mesh->GetPointData()->GetNormals());
+  normals->GetOutput()->GetPointData()->SetNormals(mesh->GetPointData()->GetNormals());
   this->mesh = normals->GetOutput();
 
   return *this;
@@ -306,7 +292,7 @@ Dims Mesh::rasterizationSize(int padding, Vector3 spacing)
   return size;
 }
 
-bool Mesh::compare_points_equal(const Mesh &other_mesh)
+bool Mesh::compare_points_equal(const Mesh &other_mesh) const
 {
   if (!this->mesh || !other_mesh.mesh)
   {
@@ -331,7 +317,7 @@ bool Mesh::compare_points_equal(const Mesh &other_mesh)
   return true;
 }
 
-bool Mesh::compare_scalars_equal(const Mesh &other_mesh)
+bool Mesh::compare_scalars_equal(const Mesh &other_mesh) const
 {
   if (!this->mesh || !other_mesh.mesh)
   {

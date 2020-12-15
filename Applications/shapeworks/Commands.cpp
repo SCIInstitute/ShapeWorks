@@ -1352,7 +1352,35 @@ bool ImageToMesh::execute(const optparse::Values &options, SharedCommandData &sh
   double isovalue = static_cast<double>(options.get("isovalue"));
 
   sharedData.mesh = sharedData.image.toMesh(isovalue);
-  return true;
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// March
+///////////////////////////////////////////////////////////////////////////////
+void March::buildParser()
+{
+  const std::string prog = "march";
+  const std::string desc = "takes an image and generates an isosurface";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--levelset").action("store").type("double").set_default(0.0).help("Value of levelset [default: 0.0].");
+
+  Command::buildParser();
+}
+
+bool March::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validImage())
+  {
+    std::cerr << "No image to operate on\n";
+    return false;
+  }
+
+  double levelset = static_cast<double>(options.get("levelset"));
+
+  sharedData.mesh = std::make_unique<Mesh>(sharedData.image.march(levelset));
+  return sharedData.validMesh();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1389,9 +1417,8 @@ bool MeshFromDT::execute(const optparse::Values &options, SharedCommandData &sha
   int meshiterations = static_cast<int>(options.get("meshiterations"));
   bool preservetopology = static_cast<bool>(options.get("preservetopology"));
 
-  // we probably don't need this because of base mesh class (todo)
-  // sharedData.mesh = ImageUtils::meshFromDT(sharedData.image, levelset, reduction, angle, leveliterations, meshiterations, preservetopology);
-  return true;
+  sharedData.mesh = std::make_unique<Mesh>(ImageUtils::meshFromDT(sharedData.image, levelset, reduction, angle, leveliterations, meshiterations, preservetopology));
+  return sharedData.validMesh();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1644,34 +1671,6 @@ bool Coverage::execute(const optparse::Values &options, SharedCommandData &share
   }
 
   sharedData.mesh->coverage(Mesh(other_mesh_path));
-  return sharedData.validMesh();
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// March
-///////////////////////////////////////////////////////////////////////////////
-void March::buildParser()
-{
-  const std::string prog = "march";
-  const std::string desc = "brief description of command";
-  parser.prog(prog).description(desc);
-
-  parser.add_option("--levelset").action("store").type("double").set_default(0.0).help("Value of levelset [default: 0.0].");
-
-  Command::buildParser();
-}
-
-bool March::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
-    std::cerr << "No mesh to operate on\n";
-    return false;
-  }
-
-  double levelset = static_cast<double>(options.get("levelset"));
-
-  sharedData.mesh->march(levelset);
   return sharedData.validMesh();
 }
 

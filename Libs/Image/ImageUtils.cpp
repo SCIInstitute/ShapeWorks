@@ -131,13 +131,12 @@ vtkImageData* ImageUtils::getVTK(const Image &image)
   return connector->GetOutput();
 }
 
-std::unique_ptr<Mesh> &ImageUtils::meshFromDT(const Image &image, double levelset, double reduction, double angle, int leveliterations, int meshiterations, bool preservetopology)
+Mesh &ImageUtils::meshFromDT(Image &image, double levelset, double reduction, double angle, int leveliterations, int meshiterations, bool preservetopology)
 {
-  // TODO: add vtkImageData to base mesh class
-  // vtkImageData* mesh = image.getVTK();
-  // mesh.march(levelset).smooth(leveliterations).decimate(reduction, angle).smooth(meshiterations);
+  Mesh mesh(image.march(levelset));
+  mesh.smooth(leveliterations).decimate(reduction, angle).smooth(meshiterations);
 
-  // return mesh;
+  return mesh;
 }
 
 } //shapeworks

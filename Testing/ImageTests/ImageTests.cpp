@@ -2,6 +2,7 @@
 
 #include "Image.h"
 #include "ImageUtils.h"
+#include "Mesh.h"
 
 using namespace shapeworks;
 
@@ -1200,4 +1201,22 @@ TEST(ImageTests, resize3)
   Image ground_truth(test_location + "baseline_resize3.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, marchTest1)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
+  Mesh mesh(image.march());
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/march1.vtk");
+
+  ASSERT_TRUE(mesh == ground_truth);
+}
+
+TEST(ImageTests, marchTest2)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
+  Mesh mesh(image.march(1.0));
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/march2.vtk");
+
+  ASSERT_TRUE(mesh == ground_truth);
 }
