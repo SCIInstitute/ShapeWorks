@@ -3,6 +3,7 @@
 #include <QEvent>
 #include <QApplication>
 
+namespace shapeworks {
 WheelEventForwarder::WheelEventForwarder(QScrollBar* target) :
   QObject(),
   target_(target)
@@ -31,4 +32,5 @@ bool WheelEventForwarder::eventFilter(QObject* obj, QEvent* event)
 
   // do not filter the event
   return false;
+}
 }

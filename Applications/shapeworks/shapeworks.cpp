@@ -71,6 +71,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(RasterizationOrigin::getCommand());
   shapeworks.addCommand(RasterizationSize::getCommand());
   shapeworks.addCommand(OptimizeCommand::getCommand());
+  shapeworks.addCommand(GroomCommand::getCommand());
 
   try {
     return shapeworks.run(argc, argv);

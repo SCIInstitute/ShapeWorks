@@ -151,7 +151,7 @@ public:
   Image& pad(int padx, int pady, int padz, PixelType value = 0.0);
 
   /// helper to simply translate image
-  Image& translate(const Vector3 &v);
+  Image& translate(const Vector3 &v, InterpolationType interp = Linear);
 
   /// helper to simply scale image around center (not origin)
   Image& scale(const Vector3 &v);

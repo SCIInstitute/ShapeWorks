@@ -2,30 +2,39 @@
 
 #include <QSharedPointer>
 #include <QString>
-#include <Groom/ShapeWorksGroom.h>
-#include <Data/Mesh.h>
+
+
+#include <Data/StudioMesh.h>
 #include <Libs/Project/Subject.h>
 #include <Data/MeshManager.h>
+
+#include <itkMatrixOffsetTransformBase.h>
+
+namespace shapeworks {
 
 class Shape;
 using ShapeHandle = QSharedPointer<Shape>;
 using ShapeList = QVector<ShapeHandle>;
 
-class Point {
-public:
-  double x, y, z;
-};
+//! TODO: replace this
+using TransformType = itk::MatrixOffsetTransformBase<double, 3, 3>::ParametersType;
 
 //! Representation of a single shape/patient/subject.
 class Shape {
 
 public:
 
+  //! TODO: replace this wherever it is used
+  class Point {
+  public:
+    double x, y, z;
+  };
+
   Shape();
 
   ~Shape();
 
-  QSharedPointer<Mesh> get_mesh(string display_mode);
+  QSharedPointer<StudioMesh> get_mesh(string display_mode);
 
   void set_annotations(QStringList annotations);
   QStringList get_annotations();
@@ -40,7 +49,7 @@ public:
   void import_original_image(std::string filename, float iso_value);
 
   /// Retrieve the original mesh
-  QSharedPointer<Mesh> get_original_mesh();
+  QSharedPointer<StudioMesh> get_original_mesh(bool wait = false);
 
   ImageType::Pointer get_original_image();
   ImageType::Pointer get_groomed_image();
@@ -49,7 +58,10 @@ public:
   void import_groomed_image(ImageType::Pointer img, double iso, TransformType transform);
 
   /// Retrieve the groomed mesh
-  QSharedPointer<Mesh> get_groomed_mesh();
+  QSharedPointer<StudioMesh> get_groomed_mesh();
+
+  /// Reset the groomed mesh so that it will be re-created
+  void reset_groomed_mesh();
 
   /// Import global correspondence point file
   bool import_global_point_file(QString filename);
@@ -61,7 +73,7 @@ public:
   bool import_points(std::vector<itk::Point<double>> points, bool local);
 
   /// Retrieve the reconstructed mesh
-  QSharedPointer<Mesh> get_reconstructed_mesh();
+  QSharedPointer<StudioMesh> get_reconstructed_mesh();
 
   /// Get the global correspondence points
   vnl_vector<double> get_global_correspondence_points();
@@ -120,7 +132,8 @@ private:
 
   //void generate_original_meshes();
 
-  void generate_meshes(std::vector<std::string> filenames, QSharedPointer<Mesh>& mesh, bool save_transform);
+  void generate_meshes(std::vector<std::string> filenames, QSharedPointer<StudioMesh>& mesh,
+                       bool save_transform, bool wait = false);
 
   static bool import_point_file(QString filename, vnl_vector<double>& points);
 
@@ -128,9 +141,9 @@ private:
 
   int id_;
 
-  QSharedPointer<Mesh> original_mesh_;
-  QSharedPointer<Mesh> groomed_mesh_;
-  QSharedPointer<Mesh> reconstructed_mesh_;
+  QSharedPointer<StudioMesh> original_mesh_;
+  QSharedPointer<StudioMesh> groomed_mesh_;
+  QSharedPointer<StudioMesh> reconstructed_mesh_;
   ImageType::Pointer original_image_, groomed_image_;
   int group_id_ = 1;
 
@@ -157,3 +170,5 @@ private:
 
   QSharedPointer<MeshManager> mesh_manager_;
 };
+
+}

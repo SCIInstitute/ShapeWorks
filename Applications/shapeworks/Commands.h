@@ -71,4 +71,7 @@ COMMAND_DECLARE(RasterizationSize, MeshCommand);
 // Optimize Commands
 COMMAND_DECLARE(OptimizeCommand, OptimizeCommandGroup);
 
+// Groom Commands
+COMMAND_DECLARE(GroomCommand, GroomCommandGroup);
+
 } // shapeworks

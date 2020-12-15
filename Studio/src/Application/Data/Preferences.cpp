@@ -217,3 +217,30 @@ void Preferences::restore_defaults()
   this->settings_.clear();
   return;
 }
+
+//-----------------------------------------------------------------------------
+Preferences::OrientationMarkerType Preferences::get_orientation_marker_type()
+{
+  return static_cast<OrientationMarkerType>(
+    this->settings_.value("Viewer/orientation_marker_type",
+                          OrientationMarkerType::medical).toInt());
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_orientation_marker_type(Preferences::OrientationMarkerType type)
+{
+  this->settings_.setValue("Viewer/orientation_marker_type", type);
+}
+
+//-----------------------------------------------------------------------------
+Preferences::OrientationMarkerCorner Preferences::get_orientation_marker_corner()
+{
+  return static_cast<OrientationMarkerCorner>(this->settings_.value(
+    "Viewer/orientation_marker_corner", OrientationMarkerCorner::upper_right).toInt());
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_orientation_marker_corner(Preferences::OrientationMarkerCorner corner)
+{
+  this->settings_.setValue("Viewer/orientation_marker_corner", corner);
+}

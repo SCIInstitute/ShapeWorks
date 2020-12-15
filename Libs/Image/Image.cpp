@@ -440,12 +440,12 @@ Image& Image::pad(int padx, int pady, int padz, PixelType value)
   return *this;
 }
 
-Image& Image::translate(const Vector3 &v)
+Image& Image::translate(const Vector3 &v, InterpolationType interp)
 {
   AffineTransformPtr xform(AffineTransform::New());
   xform->Translate(-v);            // negate v because ITK applies transformations backwards.
 
-  return applyTransform(xform);
+  return applyTransform(xform, interp);
 }
 
 Image& Image::scale(const Vector3 &s)

@@ -25,6 +25,9 @@ target_link_libraries(shapeworks_exe
   Mesh
   Analyze
   Particles
+  Optimize
+  Groom
+  Project
   ${ITK_LIBRARIES}
   )
 

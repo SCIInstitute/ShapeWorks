@@ -1,8 +1,13 @@
 #pragma once
 
 #include "Shapeworks.h"
+<<<<<<< HEAD
 #include "ImageUtils.h"
 
+=======
+
+#include <vtkSmartPointer.h>
+>>>>>>> origin/master
 #include <vtkPolyData.h>
 #include <vtkPlane.h>
 #include <swHausdorffDistancePointSetFilter.h>
@@ -13,7 +18,7 @@ namespace shapeworks {
 class Mesh
 {
 public:
-  using MeshType = vtkSmartPointer<vtkPolyData>; // TODO: we need to support multiple mesh types, such as vtkPolyData and vtkPLYData; probably use vtk mesh base class (if one exists)
+  using MeshType = vtkSmartPointer<vtkPolyData>;
 
   /// Logical region of a mesh
   struct Region
@@ -140,6 +145,13 @@ public:
 
   /// compares this with another mesh by comparing points
   bool operator==(const Mesh& other) const { return compare_points_equal(other); }
+
+  static std::vector<std::string> get_supported_types()
+  {
+    return {"vtk", "vtp", "ply", "stl", "obj"};
+  }
+
+  MeshType get_poly_data();
 
 private:
   friend struct SharedCommandData;
