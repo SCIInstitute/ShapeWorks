@@ -32,6 +32,25 @@ OptimizeTool::OptimizeTool()
   connect(this->ui_->procrustes, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
   connect(this->ui_->multiscale, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
 
+  this->ui_->number_of_particles->setToolTip("Number of correspondence points to generate");
+  this->ui_->initial_relative_weighting->setToolTip(
+    "Relative weighting of correspondence term during initialization");
+  this->ui_->relative_weighting->setToolTip(
+    "Relative weighting of correspondence term during optimization");
+  this->ui_->starting_regularization->setToolTip(
+    "Starting regularization of correspondence covariance matrix");
+  this->ui_->ending_regularization->setToolTip(
+    "Ending regularization of correspondence covariance matrix");
+  this->ui_->iterations_per_split->setToolTip("Number of iterations for each particle split");
+  this->ui_->optimization_iterations->setToolTip("Number of optimizations to run");
+  this->ui_->use_normals->setToolTip("Use surface normals as part of optimization");
+  this->ui_->normals_strength->setToolTip("Strength of surface normals relative to position");
+  this->ui_->procrustes->setToolTip("Use procrustes registration during optimization");
+  this->ui_->procrustes_interval->setToolTip("How often to run procrustes during optimization");
+  this->ui_->procrustes_scaling->setToolTip("Use procrustes scaling");
+  this->ui_->multiscale->setToolTip("Use multiscale optimization mode");
+  this->ui_->multiscale_particles->setToolTip(
+    "Start multiscale optimization after this many particles");
 }
 
 //---------------------------------------------------------------------------
@@ -117,12 +136,13 @@ void OptimizeTool::on_run_optimize_button_clicked()
 
   this->optimize_->SetFileOutputEnabled(false);
 
-  QThread* thread = new QThread;
   ShapeworksWorker* worker = new ShapeworksWorker(
     ShapeworksWorker::OptimizeType, NULL, this->optimize_, this->session_,
     std::vector<std::vector<itk::Point<double>>>(),
     std::vector<std::vector<itk::Point<double>>>(),
-    std::vector<ImageType::Pointer>());
+    std::vector<std::string>());
+
+  QThread* thread = new QThread;
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_optimize_complete()));

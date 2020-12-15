@@ -137,6 +137,11 @@ ImageType::Pointer Shape::get_original_image()
 ImageType::Pointer Shape::get_groomed_image()
 {
   if (!this->groomed_image_) {
+    if (this->subject_->get_groomed_filenames().size() < 1) {
+      STUDIO_LOG_ERROR("No groomed file for subject");
+      ImageType::Pointer image;
+      return image;
+    }
     std::string filename = this->subject_->get_groomed_filenames()[0]; // single domain supported
     if (filename != "") {
       ImageType::Pointer image;
@@ -337,14 +342,21 @@ QString Shape::get_original_filename_with_path()
 //---------------------------------------------------------------------------
 QString Shape::get_groomed_filename()
 {
-  QFileInfo qfi(this->groomed_filename_);
-  return qfi.fileName();
+  if (this->subject_->get_groomed_filenames().size() < 1) {
+    return "";
+  }
+  auto string = QString::fromStdString(this->subject_->get_groomed_filenames()[0]);
+  QFileInfo info(string);
+  return info.fileName();
 }
 
 //---------------------------------------------------------------------------
 QString Shape::get_groomed_filename_with_path()
 {
-  return this->groomed_filename_;
+  if (this->subject_->get_groomed_filenames().size() < 1) {
+    return "";
+  }
+  return QString::fromStdString(this->subject_->get_groomed_filenames()[0]);
 }
 
 //---------------------------------------------------------------------------

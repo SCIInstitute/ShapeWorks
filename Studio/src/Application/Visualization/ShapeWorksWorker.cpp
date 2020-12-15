@@ -17,7 +17,7 @@ ShapeworksWorker::ShapeworksWorker(ThreadType type,
                                    QSharedPointer<Session> project,
                                    std::vector<std::vector<itk::Point<double>>> local_pts,
                                    std::vector<std::vector<itk::Point<double>>> global_pts,
-                                   std::vector<ImageType::Pointer> distance_transform,
+                                   std::vector<std::string> distance_transform,
                                    double maxAngle,
                                    float decimationPercent,
                                    int numClusters) : type_(type), groom_(groom),
@@ -47,6 +47,10 @@ void ShapeworksWorker::process()
         return;
       } catch (...) {
         emit error_message(std::string("Error during optimization!"));
+        return;
+      }
+      if (this->groom_->get_aborted()) {
+        emit error_message(std::string("Groom Aborted!"));
         return;
       }
       break;

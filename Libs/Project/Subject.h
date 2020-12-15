@@ -67,6 +67,10 @@ public:
   //! Set the group values
   void set_group_values(const std::map<std::string, std::string>& group_values);
 
+  //! Get extra values (extra columns we don't interpret)
+  std::map<std::string, std::string> get_extra_values() const;
+  void set_extra_values(std::map<std::string, std::string> extra_values);
+
 
 private:
 
@@ -81,5 +85,6 @@ private:
 
   std::map<std::string, std::string> feature_filenames_;
   std::map<std::string, std::string> group_values_;
+  std::map<std::string, std::string> extra_values_;
 };
 }

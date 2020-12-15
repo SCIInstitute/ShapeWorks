@@ -209,6 +209,8 @@ void Visualizer::update_viewer_properties()
         viewer->set_color_scheme(this->preferences_.get_color_scheme());
       }
 
+    this->lightbox_->set_orientation_marker(this->preferences_.get_orientation_marker_type(),
+                                            this->preferences_.get_orientation_marker_corner());
     this->update_lut();
 
     this->lightbox_->redraw();

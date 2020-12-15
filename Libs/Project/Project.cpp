@@ -86,14 +86,10 @@ std::vector<std::string> Project::get_headers()
 int Project::get_number_of_subjects()
 {
   auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
-  auto mesh_columns = this->get_matching_columns(MESH_PREFIX);
   auto dt_columns = this->get_matching_columns(GROOMED_PREFIX);
   auto local_particle_files = this->get_matching_columns(LOCAL_PARTICLES);
   if (!seg_columns.empty()) {
     return this->get_string_column(seg_columns[0]).size();
-  }
-  if (!mesh_columns.empty()) {
-    return this->get_string_column(mesh_columns[0]).size();
   }
   if (!dt_columns.empty()) {
     return this->get_string_column(dt_columns[0]).size();
@@ -105,16 +101,11 @@ int Project::get_number_of_subjects()
 }
 
 //---------------------------------------------------------------------------
-int Project::get_number_of_domains()
+int Project::get_number_of_domains_per_subject()
 {
   auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
   if (!seg_columns.empty()) {
     return seg_columns.size();
-  }
-
-  auto mesh_columns = this->get_matching_columns(MESH_PREFIX);
-  if (!mesh_columns.empty()) {
-    return mesh_columns.size();
   }
 
   auto groom_columns = this->get_matching_columns(GROOMED_PREFIX);
@@ -136,8 +127,9 @@ std::vector<std::shared_ptr<Subject>>& Project::get_subjects()
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> Project::get_matching_columns(const std::string& prefix) const
+std::vector<std::string> Project::get_matching_columns(const std::string& prefix)
 {
+  this->matching_columns_.insert(prefix);
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);
   auto headers = ws.rows(false)[0];
   std::vector<std::string> list;
@@ -188,21 +180,22 @@ void Project::load_subjects()
 
   this->subjects_.clear();
 
-  this->num_domains_ = this->get_number_of_domains();
+  this->num_domains_per_subject_ = this->get_number_of_domains_per_subject();
 
   auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
   auto groomed_columns = this->get_matching_columns(GROOMED_PREFIX);
   auto groomed_transform_columns = this->get_matching_columns(GROOMED_TRANSFORMS_PREFIX);
   auto feature_columns = this->get_feature_names();
   auto group_names = this->get_matching_columns(GROUP_PREFIX);
-
   int local_particle_column = this->get_index_for_column(LOCAL_PARTICLES);
   int global_particle_column = this->get_index_for_column(WORLD_PARTICLES);
+
+  auto extra_columns = this->get_extra_columns();
 
   for (int i = 0; i < num_subjects; i++) {
     std::shared_ptr<Subject> subject = std::make_shared<Subject>();
 
-    subject->set_number_of_domains(this->num_domains_);
+    subject->set_number_of_domains(this->num_domains_per_subject_);
     subject->set_segmentation_filenames(this->get_list(seg_columns, i));
     subject->set_groomed_filenames(this->get_list(groomed_columns, i));
     subject->set_groomed_transforms(this->get_transform_list(groomed_transform_columns, i));
@@ -232,6 +225,14 @@ void Project::load_subjects()
       this->particles_present_ = true;
       subject->set_global_particle_filename(this->get_subject_value(global_particle_column, i));
     }
+
+    std::map<std::string, std::string> extra_values;
+    for (auto elem : this->get_extra_columns()) {
+      auto value = this->get_value(this->get_index_for_column(elem),
+                                   i + 2); //+1 for header, +1 for 1-based index
+      extra_values[elem] = value;
+    }
+    subject->set_extra_values(extra_values);
 
     this->segmentations_present_ = !seg_columns.empty();
     this->groomed_present_ = !groomed_columns.empty();
@@ -265,6 +266,11 @@ void Project::store_subjects()
   }
 
   bool groomed_present = false;
+
+  // clear
+  xlnt::worksheet ws = this->wb_->sheet_by_index(0);
+  ws.delete_rows(ws.highest_row(), ws.highest_row() - 1);
+
   for (int i = 0; i < num_subjects; i++) {
     std::shared_ptr<Subject> subject = this->subjects_[i];
 
@@ -288,7 +294,20 @@ void Project::store_subjects()
       this->set_list(groomed_columns, i, groomed_files);
 
       this->set_transform_list(groomed_transform_columns, i, subject->get_groomed_transforms());
+    }
 
+    // features
+    auto features = subject->get_feature_filenames();
+    for (auto const& x : features) {
+      int idx = this->get_index_for_column("feature_" + x.first, true);
+      this->set_value(idx, i + 2, x.second); // +1 for header, +1 for 1-based index
+    }
+
+    // extra values
+    auto extra_values = subject->get_extra_values();
+    for (auto const& x : extra_values) {
+      int idx = this->get_index_for_column(x.first, true);
+      this->set_value(idx, i + 2, x.second);  // +1 for header, +1 for 1-based index
     }
 
     // local files
@@ -506,14 +525,14 @@ void Project::save_string_column(const std::string& name, std::vector<std::strin
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> Project::get_feature_names() const
+std::vector<std::string> Project::get_feature_names()
 {
   auto feature_names = this->get_matching_columns(FEATURE_PREFIX);
   return feature_names;
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> Project::get_group_names() const
+std::vector<std::string> Project::get_group_names()
 {
   auto raw_names = this->get_matching_columns(GROUP_PREFIX);
 
@@ -581,6 +600,27 @@ std::vector<std::string> Project::get_group_values(const std::string& group_name
   values.erase(std::unique(values.begin(), values.end()), values.end());
 
   return values;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Project::get_extra_columns() const
+{
+  xlnt::worksheet ws = this->wb_->sheet_by_index(0);
+  auto headers = ws.rows(false)[0];
+  std::vector<std::string> list;
+
+  for (int i = 0; i < headers.length(); i++) {
+    bool match = false;
+    for (auto prefix : this->matching_columns_) {
+      if (headers[i].to_string().substr(0, prefix.size()) == prefix) {
+        match = true;
+      }
+    }
+    if (!match) {
+      list.push_back(headers[i].to_string());
+    }
+  }
+  return list;
 }
 
 

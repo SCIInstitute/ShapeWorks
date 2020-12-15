@@ -27,6 +27,17 @@ GroomTool::GroomTool()
                 this, &GroomTool::centering_changed);
   this->connect(this->ui_->center_checkbox, &QCheckBox::stateChanged,
                 this, &GroomTool::centering_changed);
+
+  this->ui_->center_checkbox->setToolTip("Center image segmentations");
+  this->ui_->isolate_checkbox->setToolTip("Isolate the largest object in the image segmentation");
+  this->ui_->fill_holes_checkbox->setToolTip("Fill small holes in the image segmentation");
+  this->ui_->autopad_checkbox->setToolTip("Add padding around the edges of the image");
+  this->ui_->padding_amount->setToolTip("Padding amount");
+  this->ui_->antialias_checkbox->setToolTip("Antialias the image segmentation");
+  this->ui_->antialias_iterations->setToolTip("Number of antialias iterations");
+  this->ui_->blur_checkbox->setToolTip("Blur/smooth image segmentation");
+  this->ui_->blur_sigma->setToolTip("Gaussian blur sigma");
+  this->ui_->fastmarching_checkbox->setToolTip("Create distance transform");
 }
 
 //---------------------------------------------------------------------------
@@ -61,7 +72,9 @@ void GroomTool::handle_error(std::string msg)
 //---------------------------------------------------------------------------
 void GroomTool::handle_progress(int val)
 {
-  emit progress(static_cast<size_t>(val));
+  if (this->groom_is_running_) {
+    emit progress(static_cast<size_t>(val));
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -96,14 +109,23 @@ void GroomTool::load_params()
 void GroomTool::disable_actions()
 {
   this->ui_->skip_button->setEnabled(false);
-  this->ui_->run_groom_button->setEnabled(false);
+  //this->ui_->run_groom_button->setEnabled(false);
 }
 
 //---------------------------------------------------------------------------
 void GroomTool::enable_actions()
 {
-  this->ui_->skip_button->setEnabled(true);
-  this->ui_->run_groom_button->setEnabled(true);
+  //this->ui_->run_groom_button->setEnabled(true);
+
+  if (this->groom_is_running_) {
+    this->ui_->skip_button->setEnabled(false);
+    this->ui_->run_groom_button->setText("Abort Groom");
+  }
+  else {
+    this->ui_->skip_button->setEnabled(true);
+    this->ui_->run_groom_button->setText("Groom");
+  }
+
 }
 
 //---------------------------------------------------------------------------
@@ -128,6 +150,15 @@ void GroomTool::store_params()
 //---------------------------------------------------------------------------
 void GroomTool::on_run_groom_button_clicked()
 {
+  if (this->groom_is_running_) {
+    this->shutdown_threads();
+    this->groom_is_running_ = false;
+    this->enable_actions();
+    emit progress(100);
+    return;
+  }
+  this->groom_is_running_ = true;
+
   this->timer_.start();
 
   this->store_params();
@@ -136,17 +167,22 @@ void GroomTool::on_run_groom_button_clicked()
 
   this->groom_ = QSharedPointer<QGroom>(new QGroom(this->session_->get_project()));
 
-  this->disable_actions();
-  QThread* thread = new QThread;
+  this->enable_actions();
+
   ShapeworksWorker* worker = new ShapeworksWorker(
     ShapeworksWorker::GroomType, this->groom_, nullptr, this->session_);
+
+  QThread* thread = new QThread;
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
-  connect(worker, SIGNAL(result_ready()), this, SLOT(handle_thread_complete()));
+  connect(worker, &ShapeworksWorker::result_ready, this, &GroomTool::handle_thread_complete);
   connect(this->groom_.data(), &QGroom::progress, this, &GroomTool::handle_progress);
   connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
+  connect(worker, SIGNAL(message(std::string)), this, SLOT(handle_message(std::string)));
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   thread->start();
+
+  this->threads_ << thread;
 }
 
 //---------------------------------------------------------------------------
@@ -206,6 +242,25 @@ void GroomTool::centering_changed(int state)
 {
   this->ui_->mesh_center->setChecked(state);
   this->ui_->center_checkbox->setChecked(state);
+}
+
+//---------------------------------------------------------------------------
+void GroomTool::shutdown_threads()
+{
+  std::cerr << "Shut Down Groom Threads\n";
+  if (!this->groom_) {
+    return;
+  }
+  this->groom_->abort();
+
+  for (size_t i = 0; i < this->threads_.size(); i++) {
+    if (this->threads_[i]->isRunning()) {
+      std::cerr << "waiting...\n";
+      this->threads_[i]->wait(1000);
+      std::cerr << "done waiting...\n";
+    }
+  }
+
 }
 
 }

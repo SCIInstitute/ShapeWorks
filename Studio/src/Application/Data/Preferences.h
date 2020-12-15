@@ -14,6 +14,19 @@ class Preferences : public QObject
 
 public:
 
+  enum OrientationMarkerType {
+    medical = 0,
+    triad = 1,
+    none = 2
+  };
+
+  enum OrientationMarkerCorner {
+    upper_right = 0,
+    lower_right = 1,
+    lower_left = 2,
+    upper_left = 3
+  };
+
   Preferences();
 
   enum { MAX_RECENT_FILES = 32 };
@@ -67,6 +80,12 @@ public:
 
   bool get_center_checked();
   void set_center_checked(bool value);
+
+  OrientationMarkerType get_orientation_marker_type();
+  void set_orientation_marker_type(OrientationMarkerType type);
+
+  OrientationMarkerCorner get_orientation_marker_corner();
+  void set_orientation_marker_corner(OrientationMarkerCorner corner);
 
 Q_SIGNALS:
 

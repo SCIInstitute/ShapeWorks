@@ -22,6 +22,8 @@
 #include <itkImageFileReader.h>
 #include "itkNrrdImageIOFactory.h"
 #include "itkMetaImageIOFactory.h"
+#include "Reconstruction.h"
+
 #include <vtkLoopSubdivisionFilter.h>
 #include <vtkButterflySubdivisionFilter.h>
 
@@ -64,7 +66,7 @@ template < template < typename TCoordRep, unsigned > class TTransformType,
 vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::getDenseMean(
         std::vector< PointArrayType > local_pts,
         std::vector< PointArrayType > global_pts,
-        std::vector<typename ImageType::Pointer> distance_transform) {
+        std::vector<std::string> distance_transform) {
     if (!this->denseDone_ || !local_pts.empty() ||
             !distance_transform.empty() || !global_pts.empty()) {
         this->denseDone_ = false;
@@ -436,7 +438,7 @@ template < template < typename TCoordRep, unsigned > class TTransformType,
 void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::computeDenseMean(
         std::vector< PointArrayType > local_pts,
         std::vector< PointArrayType > global_pts,
-        std::vector<typename ImageType::Pointer> distance_transform) {
+        std::vector<std::string> distance_transform) {
     try {
         //turn the sets of global points to one sparse global mean.
         float init[] = { 0.f,0.f,0.f };
@@ -469,7 +471,7 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
             }
             //calculate the normals from the DT
             normals.push_back(this->computeParticlesNormals(
-                                  subjectPts[shape], distance_transform[shape]));
+                                  subjectPts[shape], loadImage(distance_transform[shape])));
         }
 
         // now decide whether each particle is a good based on dispersion from mean
@@ -577,11 +579,12 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
         // The parameters of the output image are taken from the input image.
         // NOTE: all distance transforms were generated throughout shapeworks pipeline
         // as such they have the same parameters
-        const typename ImageType::SpacingType& spacing = distance_transform[0]->GetSpacing();
-        const typename ImageType::PointType& origin = distance_transform[0]->GetOrigin();
-        const typename ImageType::DirectionType& direction = distance_transform[0]->GetDirection();
-        typename ImageType::SizeType size = distance_transform[0]->GetLargestPossibleRegion().GetSize();
-        typename ImageType::RegionType region = distance_transform[0]->GetBufferedRegion();
+        typename ImageType::Pointer image = loadImage(distance_transform[0]);
+        const typename ImageType::SpacingType& spacing = image->GetSpacing();
+        const typename ImageType::PointType& origin = image->GetOrigin();
+        const typename ImageType::DirectionType& direction = image->GetDirection();
+        typename ImageType::SizeType size = image->GetLargestPossibleRegion().GetSize();
+        typename ImageType::RegionType region = image->GetBufferedRegion();
 
         // define the mean dense shape (mean distance transform)
         typename ImageType::Pointer meanDistanceTransform = ImageType::New();
@@ -658,7 +661,7 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
         //Praful - clustering
         for (unsigned int cnt = 0; cnt < centroidIndices.size(); cnt++) {
             size_t shape = size_t(centroidIndices[cnt]);
-            auto dt = distance_transform[shape];
+            typename ImageType::Pointer dt = loadImage(distance_transform[shape]);
             typename PointSetType::Pointer targetLandMarks = PointSetType::New();
             PointType pt;
             typename PointSetType::PointsContainer::Pointer
@@ -706,7 +709,7 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
             resampler->SetTransform(transform);
             resampler->SetDefaultPixelValue((PixelType)-100.0);
             resampler->SetOutputStartIndex(region.GetIndex());
-            resampler->SetInput(distance_transform[shape]);
+            resampler->SetInput(dt);
             resampler->Update();
 
             if (cnt == 0) {
@@ -717,7 +720,7 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
                 meanDistanceTransform = duplicator->GetOutput();
                 // before warp
                 typename DuplicatorType::Pointer duplicator2 = DuplicatorType::New();
-                duplicator2->SetInputImage(distance_transform[shape]);
+                duplicator2->SetInputImage(dt);
                 duplicator2->Update();
                 meanDistanceTransformBeforeWarp = duplicator2->GetOutput();
             } else {
@@ -734,7 +737,7 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
                 if (this->mean_before_warp_enabled_) {
                   // before warp
                   sumfilterBeforeWarp->SetInput1(meanDistanceTransformBeforeWarp);
-                  sumfilterBeforeWarp->SetInput2(distance_transform[shape]);
+                  sumfilterBeforeWarp->SetInput2(dt);
                   sumfilterBeforeWarp->Update();
 
                   typename DuplicatorType::Pointer duplicator2 = DuplicatorType::New();
@@ -1594,4 +1597,20 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
     polywriter->SetInputData(meshIn);
 #endif
     polywriter->Update();
+}
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+  template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+  typename TCoordRep, typename PixelType, typename ImageType>
+typename ImageType::Pointer Reconstruction<TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType>::loadImage(
+  std::string filename)
+{
+  typedef itk::ImageFileReader< ImageType > ReaderType;
+  typename ReaderType::Pointer reader = ReaderType::New();
+
+  std::cout << "Reading distance transform file : " << filename << std::endl;
+  reader->SetFileName( filename.c_str() );
+  reader->Update();
+  typename ImageType::Pointer image = reader->GetOutput();
+  return image;
 }

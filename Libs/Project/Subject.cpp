@@ -83,7 +83,7 @@ std::map<std::string, std::string> Subject::get_feature_filenames() const
 //---------------------------------------------------------------------------
 void Subject::set_feature_filenames(const std::map<std::string, std::string>& feature_filenames)
 {
-  feature_filenames_ = feature_filenames;
+  this->feature_filenames_ = feature_filenames;
 }
 
 //---------------------------------------------------------------------------
@@ -140,4 +140,16 @@ std::vector<DomainType> Subject::get_domain_types()
 
   }
   return domain_types;
+}
+
+//---------------------------------------------------------------------------
+std::map<std::string, std::string> Subject::get_extra_values() const
+{
+  return this->extra_values_;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_extra_values(std::map<std::string, std::string> extra_values)
+{
+  this->extra_values_ = extra_values;
 }

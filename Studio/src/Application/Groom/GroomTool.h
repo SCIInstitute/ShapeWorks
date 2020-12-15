@@ -42,6 +42,8 @@ public:
   //! Enable action buttons
   void enable_actions();
 
+  //! shut down any running threads
+  void shutdown_threads();
 
 Q_SIGNALS:
   void groom_complete();
@@ -67,6 +69,7 @@ public Q_SLOTS:
   void handle_error(std::string msg);
 
 private:
+  QList<QThread*> threads_;
 
   Ui_GroomTool* ui_;
   QSharedPointer<Session> session_;
@@ -74,5 +77,8 @@ private:
   QSharedPointer<shapeworks::QGroom> groom_;
 
   QElapsedTimer timer_;
+
+  bool groom_is_running_ = false;
+
 };
 }

@@ -140,8 +140,7 @@ find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 find_package (XLNT REQUIRED)
 
 ### Libigl set include path
-include_directories("/scratch/karthik/projects/ShapeWorks/dependencies/build/libigl/include")
-#MESSAGE("THIS ISNISANOSBCDOSCF ${CMAKE_PREFIX_PATH}")
+find_package(LIBIGL REQUIRED QUIET)
 
 if(USE_OPENMP)
   find_package(OpenMP REQUIRED)

@@ -83,7 +83,9 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   /// TODO nothing there yet (regression tab)
   this->ui_->tabWidget->removeTab(3);
 
-  this->ui_->evaluation_widget->hide();
+  this->ui_->graph_->set_y_label("Explained Variance");
+  this->ui_->compactness_graph->set_y_label("Compactness");
+//  this->ui_->evaluation_widget->hide();
 }
 
 //---------------------------------------------------------------------------
@@ -166,7 +168,7 @@ void AnalysisTool::on_reconstructionButton_clicked()
   this->ui_->reconstructionButton->setEnabled(false);
   QThread* thread = new QThread;
   std::vector<std::vector<itk::Point<double>>> local, global;
-  std::vector<ImageType::Pointer> images;
+  std::vector<std::string> images;
   auto shapes = this->session_->get_shapes();
   local.resize(shapes.size());
   global.resize(shapes.size());
@@ -186,7 +188,8 @@ void AnalysisTool::on_reconstructionButton_clicked()
       local[ii].push_back(pt);
       global[ii].push_back(pt2);
     }
-    images[ii] = s->get_groomed_image();
+    std::string image = s->get_groomed_filename_with_path().toStdString();
+    images[ii] = image;
     ii++;
   }
   ShapeworksWorker* worker = new ShapeworksWorker(
@@ -397,6 +400,9 @@ bool AnalysisTool::compute_stats()
     return false;
   }
 
+
+  this->ui_->pcaModeSpinBox->setMaximum(this->session_->get_shapes().size() - 2);
+
   std::vector<vnl_vector<double>> points;
   std::vector<int> group_ids;
 
@@ -439,7 +445,6 @@ bool AnalysisTool::compute_stats()
 
   this->stats_.ImportPoints(points, group_ids);
   this->stats_.ComputeModes();
-  this->stats_.PrincipalComponentProjections();
 
   this->stats_ready_ = true;
   std::vector<double> vals;
@@ -447,8 +452,19 @@ bool AnalysisTool::compute_stats()
     vals.push_back(this->stats_.Eigenvalues()[i]);
   }
   this->ui_->graph_->set_data(vals);
-
   this->ui_->graph_->repaint();
+
+  this->ui_->chart_scroll_area_compactness->hide();
+/*
+  vals.clear();
+  for (int i = this->stats_.Eigenvalues().size() - 1; i > 0; i--) {
+    vals.push_back(this->stats_.get_compactness(0));
+    //vals.push_back(this->stats_.get_compactness(i));
+  }
+  this->ui_->compactness_graph->set_data(vals);
+  this->ui_->compactness_graph->repaint();
+*/
+
 
   return true;
 }
@@ -867,9 +883,8 @@ void AnalysisTool::update_group_boxes()
       this->ui_->group_box->addItem(QString::fromStdString(group));
     }
     this->current_group_names_ = group_names;
+    this->group_changed();
   }
-
-  this->group_changed();
 }
 
 //---------------------------------------------------------------------------
@@ -946,6 +961,9 @@ void AnalysisTool::on_metrics_open_button_toggled()
   bool show = this->ui_->metrics_open_button->isChecked();
   this->ui_->metrics_content->setVisible(show);
 
+  if (show) {
+    this->compute_stats();
+  }
   /// Disabled for now
   /*
   if (show) {

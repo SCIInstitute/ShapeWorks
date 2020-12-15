@@ -272,12 +272,12 @@ build_igl()
 {
   echo " "
   echo "## Building Libigl..."
-  cd ${BUILD_DIR}
+  cd ${INSTALL_DIR}
   git clone https://github.com/libigl/libigl.git
   cd libigl
   git checkout -f tags/${libigl_VER}
 
-  LIBIGL_DIR=${BUILD_DIR}/libigl/include
+  LIBIGL_DIR=${INSTALL_DIR}/libigl/cmake
 }
 
 show_shapeworks_build()

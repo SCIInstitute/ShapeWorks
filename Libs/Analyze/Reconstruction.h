@@ -84,8 +84,8 @@ public:
             std::vector< PointArrayType >(),
             std::vector< PointArrayType > global_pts =
             std::vector< PointArrayType >(),
-            std::vector<typename ImageType::Pointer> distance_transform =
-            std::vector<typename ImageType::Pointer>() );
+            std::vector<std::string> distance_transform =
+            std::vector<std::string>() );
     void reset();
 
     void setDecimation(float dec);
@@ -141,7 +141,7 @@ private:
     void computeDenseMean(
             std::vector< PointArrayType > local_pts,
             std::vector< PointArrayType > global_pts,
-            std::vector<typename ImageType::Pointer> distance_transform);
+            std::vector<std::string> distance_transform);
     vnl_matrix<double> computeParticlesNormals(
             vtkSmartPointer< vtkPoints > particles,
             typename ImageType::Pointer distance_transform);
@@ -172,6 +172,8 @@ private:
             bool preserveTopology      = true);
     vtkSmartPointer<vtkPolyData> MeshQC(
             vtkSmartPointer<vtkPolyData> meshIn);
+
+    typename ImageType::Pointer loadImage(std::string filename);
 
     void performKMeansClustering(
             std::vector< PointArrayType > global_pts,

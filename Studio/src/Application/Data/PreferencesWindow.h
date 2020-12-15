@@ -31,6 +31,8 @@ public Q_SLOTS:
 
   void restore_defaults();
 
+  void save_to_preferences();
+
 Q_SIGNALS:
   void clear_cache();
   void update_view();

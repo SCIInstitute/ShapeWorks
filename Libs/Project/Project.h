@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include <set>
 
 #include "Subject.h"
 #include "Parameters.h"
@@ -46,7 +47,7 @@ public:
   int get_number_of_subjects();
 
   //! Return the number of domains
-  int get_number_of_domains();
+  int get_number_of_domains_per_subject();
 
   //! Return the list of Subjects
   std::vector<std::shared_ptr<Subject>>& get_subjects();
@@ -61,10 +62,10 @@ public:
   bool get_particles_present() const;
 
   //! Get feature names
-  std::vector<std::string> get_feature_names() const;
+  std::vector<std::string> get_feature_names();
 
   //! Get group names
-  std::vector<std::string> get_group_names() const;
+  std::vector<std::string> get_group_names();
 
   //! Get possible group values
   std::vector<std::string> get_group_values(const std::string& group_name) const;
@@ -90,7 +91,6 @@ private:
   static constexpr const char* SEGMENTATION_PREFIX = "segmentation_";
   static constexpr const char* GROOMED_PREFIX = "groomed_";
   static constexpr const char* GROOMED_TRANSFORMS_PREFIX = "transform_";
-  static constexpr const char* MESH_PREFIX = "mesh_";
   static constexpr const char* FEATURE_PREFIX = "feature_";
   static constexpr const char* LOCAL_PARTICLES = "local_particles";
   static constexpr const char* WORLD_PARTICLES = "world_particles";
@@ -107,7 +107,9 @@ private:
   void set_transform_list(const std::vector<std::string>& columns, int subject,
                           std::vector<std::vector<double>> transforms);
 
-  std::vector<std::string> get_matching_columns(const std::string& prefix) const;
+  std::vector<std::string> get_matching_columns(const std::string& prefix);
+
+  std::vector<std::string> get_extra_columns() const;
 
   std::string get_value(int column, int subject_id);
   void set_value(int column, int subject_id, const std::string& value);
@@ -121,7 +123,7 @@ private:
 
   void save_string_column(const std::string& name, std::vector<std::string> items);
 
-  int num_domains_ = 0;
+  int num_domains_per_subject_ = 0;
 
   std::unique_ptr<xlnt::workbook> wb_;
 
@@ -132,6 +134,9 @@ private:
   bool segmentations_present_{false};
   bool groomed_present_{false};
   bool particles_present_{false};
+
+  std::set<std::string> matching_columns_;
+
 
   const int supported_version_{1};
   int version_{1};

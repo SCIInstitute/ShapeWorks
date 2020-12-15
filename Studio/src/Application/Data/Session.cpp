@@ -342,9 +342,23 @@ bool Session::load_light_project(QString filename)
     inputsBuffer.str("");
   }
 
-  this->load_groomed_files(groom_files, 0.5);
+  if (groom_files.size() > 0) {
+    if (groom_files.size() != local_point_files.size()) {
+      QString message = "Error, mismatch in number of distance_transforms and particle files";
+      STUDIO_LOG_ERROR(message);
+      QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+      return false;
+    }
+  }
 
-  //this->project_->
+  if (local_point_files.size() != global_point_files.size()) {
+    QString message = "Error, mismatch in number of local and world particle files";
+    STUDIO_LOG_ERROR(message);
+    QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+    return false;
+  }
+
+  this->load_groomed_files(groom_files, 0.5);
 
   if (!this->load_point_files(local_point_files, true)) {
     return false;
@@ -353,7 +367,7 @@ bool Session::load_light_project(QString filename)
   if (!this->load_point_files(global_point_files, false)) {
     return false;
   }
-
+  
   // read group ids
   std::vector<int> group_ids;
   elem = docHandle.FirstChild("group_ids").Element();
@@ -395,7 +409,6 @@ bool Session::load_xl_project(QString filename)
   this->project_->load(QFileInfo(filename).fileName().toStdString());
 
   int num_subjects = this->project_->get_number_of_subjects();
-  std::cerr << "num_subjects = " << num_subjects << "\n";
 
   auto subjects = this->project_->get_subjects();
 
@@ -473,6 +486,15 @@ void Session::set_project_path(QString relative_path)
       auto full_path = old_path.absoluteFilePath(QString::fromStdString(path));
       subject->set_global_particle_filename(new_path.relativeFilePath(full_path).toStdString());
     }
+
+    // features
+    auto features = subject->get_feature_filenames();
+    std::map<std::string, std::string> new_features;
+    for (auto const& x : features) {
+      auto full_path = old_path.absoluteFilePath(QString::fromStdString(x.second));
+      new_features[x.first] = new_path.relativeFilePath(full_path).toStdString();
+    }
+    subject->set_feature_filenames(new_features);
   }
 
   this->project_path_ = relative_path;
@@ -493,7 +515,6 @@ void Session::load_original_files(std::vector<std::string> filenames)
   for (int i = 0; i < filenames.size(); i++) {
     QDir dir(".");
     QString new_filename = dir.relativeFilePath(QString::fromStdString(filenames[i]));
-    std::cerr << filenames[i] << " -> " << new_filename.toStdString() << "\n";
     new_filenames.push_back(new_filename.toStdString());
   }
   filenames = new_filenames;
@@ -683,11 +704,13 @@ QVector<QSharedPointer<Shape>> Session::get_shapes()
 void Session::remove_shapes(QList<int> list)
 {
   std::sort(list.begin(), list.end(), std::greater<>());
-    foreach(size_t i, list) {
-      auto subjects = this->project_->get_subjects();
+    foreach(int i, list) {
+      std::vector<std::shared_ptr<Subject>>& subjects = this->project_->get_subjects();
       subjects.erase(subjects.begin() + i);
       this->shapes_.erase(this->shapes_.begin() + i);
     }
+
+  this->project_->get_subjects();
   this->renumber_shapes();
   this->project_->store_subjects();
   emit data_changed();

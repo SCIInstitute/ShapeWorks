@@ -29,6 +29,12 @@ public:
   //! Set if grooming steps should be skipped
   void set_skip_grooming(bool skip);
 
+  //! Set abort as soon as possible
+  void abort();
+
+  //! Return if grooming was aborted
+  bool get_aborted();
+
 protected:
 
   //! call to be overridden by subclasses
@@ -67,6 +73,8 @@ private:
   ProjectHandle project_;
 
   bool skip_grooming_ = false;
+
+  bool abort_ = false;
 
   // locking to handle non-thread-safe code
   tbb::mutex mutex_;

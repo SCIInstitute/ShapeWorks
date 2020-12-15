@@ -34,7 +34,7 @@ void OptimizeParameters::set_number_of_particles(std::vector<int> number_of_part
 //---------------------------------------------------------------------------
 double OptimizeParameters::get_initial_relative_weighting()
 {
-  return this->params_.get("initial_relative_weighting", 1.0);
+  return this->params_.get("initial_relative_weighting", 0.1);
 }
 
 //---------------------------------------------------------------------------

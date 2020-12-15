@@ -20,8 +20,8 @@ public:
                    std::vector<std::vector<itk::Point<double>>>(),
                    std::vector<std::vector<itk::Point<double>>> global_pts =
                    std::vector<std::vector<itk::Point<double>>>(),
-                   std::vector<ImageType::Pointer> distance_transform =
-                   std::vector<ImageType::Pointer>(),
+                   std::vector<std::string> distance_transform =
+                   std::vector<std::string>(),
                    double maxAngle = 45.,
                    float decimationPercent = 0.3f,
                    int numClusters = 5);
@@ -45,7 +45,7 @@ private:
   ThreadType type_;
   std::vector<std::vector<itk::Point<double>>> local_pts_;
   std::vector<std::vector<itk::Point<double>>> global_pts_;
-  std::vector<ImageType::Pointer> distance_transform_;
+  std::vector<std::string> distance_transform_;
   float decimationPercent_;
   double maxAngle_;
   int numClusters_;

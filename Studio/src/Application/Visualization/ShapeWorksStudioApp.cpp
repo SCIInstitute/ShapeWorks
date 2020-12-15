@@ -33,7 +33,6 @@
 // ui
 #include <ui_ShapeWorksStudioApp.h>
 
-
 namespace shapeworks {
 
 static QVariant ITEM_DISABLE(0);
@@ -563,6 +562,7 @@ void ShapeWorksStudioApp::on_delete_button_clicked()
     this->analysis_tool_->reset_stats();
     this->lightbox_->clear_renderers();
   }
+  this->update_table();
   this->update_display(true);
   this->enable_possible_actions();
 }
@@ -601,7 +601,7 @@ void ShapeWorksStudioApp::update_table()
   this->ui_->table->setSelectionBehavior(QAbstractItemView::SelectRows);
 
 
-  /// todo: check if the list has changed before changing
+  /// todo: check if the lmist has changed before changing
   auto current_feature = this->ui_->features->currentText();
   this->ui_->features->clear();
   this->ui_->features->addItem("-none-");
@@ -1071,10 +1071,10 @@ void ShapeWorksStudioApp::open_project(QString filename)
   }
 
   this->is_loading_ = true;
+  this->analysis_tool_->reset_stats();
 
   this->block_update_ = true;
 
-  this->analysis_tool_->reset_stats();
   this->groom_tool_->load_params();
   this->optimize_tool_->load_params();
   this->preferences_window_->set_values_from_preferences();
@@ -1085,7 +1085,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   this->update_tool_mode();
 
-  this->analysis_tool_->reset_stats();
 
   // set the zoom state
   //this->ui_->thumbnail_size_slider->setValue(
@@ -1218,6 +1217,8 @@ void ShapeWorksStudioApp::on_action_export_pca_scores_triggered()
   this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
 
   auto stats = this->analysis_tool_->get_stats();
+  stats.PrincipalComponentProjections();
+
   stats.WriteCSVFile2(filename.toStdString());
 }
 
