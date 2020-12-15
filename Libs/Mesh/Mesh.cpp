@@ -236,6 +236,15 @@ bool Mesh::compare_scalars_equal(const Mesh &other_mesh)
   return true;
 }
 
+std::ostream& operator<<(std::ostream &os, const Mesh& mesh)
+{
+  return os << "{\n\tnumber of vertices: " << mesh.numVertices()
+            << ",\n\tnumber of faces: " << mesh.numFaces()
+            << ",\n\tmin x: " << mesh.bounds()[0] << ",\n\tmax x: " << mesh.bounds()[1]
+            << ",\n\tmin y: " << mesh.bounds()[2] << ",\n\tmax y: " << mesh.bounds()[3]
+            << ",\n\tmin z: " << mesh.bounds()[4] << ",\n\tmax z: " << mesh.bounds()[5] << "\n}";
+}
+
 Point3 Mesh::centerOfMass() const
 {
   auto com = vtkSmartPointer<vtkCenterOfMass>::New();
@@ -246,7 +255,7 @@ Point3 Mesh::centerOfMass() const
   return center;
 }
 
-Mesh& Mesh::translate(const Vector3& v)
+Mesh& Mesh::translate_mesh(const Vector3& v)
 {
   auto translation = vtkSmartPointer<vtkTransform>::New();
   translation->Translate(v[0], v[1], v[2]);

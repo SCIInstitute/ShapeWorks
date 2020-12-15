@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(ClipVolume::getCommand());
   shapeworks.addCommand(ReflectVolume::getCommand());
   shapeworks.addCommand(SetOrigin::getCommand());
+  shapeworks.addCommand(SetSpacing::getCommand());
   shapeworks.addCommand(WarpImage::getCommand());
   shapeworks.addCommand(Compare::getCommand());
   shapeworks.addCommand(ReadParticleSystem::getCommand());

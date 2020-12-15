@@ -756,7 +756,7 @@ bool TPLevelSetFilter::execute(const optparse::Values &options, SharedCommandDat
 void TopologyPreservingFilter::buildParser()
 {
   const std::string prog = "topo-preserving-smooth";
-  const std::string desc = "Helper command that applies gradient and sigmoid filters to create a feature image for the TPLevelSet filter; note that a curvature flow filter is sometimes applied to the image before this";
+  const std::string desc = "helper command that applies gradient and sigmoid filters to create a feature image for the TPLevelSet filter; note that a curvature flow filter is sometimes applied to the image before this";
   parser.prog(prog).description(desc);
 
   parser.add_option("--scaling").action("store").type("double").set_default(20.0).help("Scale for TPLevelSet level set filter [default: 20.0].");
@@ -1042,6 +1042,38 @@ bool SetOrigin::execute(const optparse::Values &options, SharedCommandData &shar
   double z = static_cast<double>(options.get("z"));
 
   sharedData.image.setOrigin(Point3({x, y, z}));
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// SetSpacing
+///////////////////////////////////////////////////////////////////////////////
+void SetSpacing::buildParser()
+{
+  const std::string prog = "set-spacing";
+  const std::string desc = "set spacing";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--x", "-x").action("store").type("double").set_default(0).help("x value of spacing [default: 1.0].");
+  parser.add_option("--y", "-y").action("store").type("double").set_default(0).help("y value of spacing [default: 1.0].");
+  parser.add_option("--z", "-z").action("store").type("double").set_default(0).help("z value of spacing [default: 1.0].");
+
+  Command::buildParser();
+}
+
+bool SetSpacing::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validImage())
+  {
+    std::cerr << "No image to operate on\n";
+    return false;
+  }
+
+  double x = static_cast<double>(options.get("x"));
+  double y = static_cast<double>(options.get("y"));
+  double z = static_cast<double>(options.get("z"));
+
+  sharedData.image.setSpacing(makeVector({x, y, z}));
   return true;
 }
 
@@ -1379,7 +1411,7 @@ bool Compactness::execute(const optparse::Values &options, SharedCommandData &sh
 
   const int nModes = static_cast<int>(options.get("nmodes"));
   const std::string saveTo = static_cast<std::string>(options.get("saveto"));
-  const double r = ShapeEvaluation<3>::ComputeCompactness(sharedData.particleSystem, nModes, saveTo);
+  const double r = ShapeEvaluation::ComputeCompactness(sharedData.particleSystem, nModes, saveTo);
   std::cout << "Particle system compactness: " << r << std::endl;
 
   return true;
@@ -1411,7 +1443,7 @@ bool Generalization::execute(const optparse::Values &options, SharedCommandData 
 
   const int nModes = static_cast<int>(options.get("nmodes"));
   const std::string saveTo = static_cast<std::string>(options.get("saveto"));
-  const double r = ShapeEvaluation<3>::ComputeGeneralization(sharedData.particleSystem, nModes, saveTo);
+  const double r = ShapeEvaluation::ComputeGeneralization(sharedData.particleSystem, nModes, saveTo);
   std::cout << "Particle system generalization: " << r << std::endl;
 
   return true;
@@ -1443,7 +1475,7 @@ bool Specificity::execute(const optparse::Values &options, SharedCommandData &sh
 
   const int nModes = static_cast<int>(options.get("nmodes"));
   const std::string saveTo = static_cast<std::string>(options.get("saveto"));
-  const double r = ShapeEvaluation<3>::ComputeSpecificity(sharedData.particleSystem, nModes, saveTo);
+  const double r = ShapeEvaluation::ComputeSpecificity(sharedData.particleSystem, nModes, saveTo);
   std::cout << "Particle system specificity: " << r << std::endl;
 
   return true;

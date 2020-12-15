@@ -4,12 +4,12 @@
 ShapeWorks tools are designed to support different usage scenarios, including execution on a local computing platform through the terminal ([command line](#shapeworks-commands)) and the user-friendly [Studio](#shapeworksstudio) application, APIs including [Python](#shapeworks-in-python), and remote systems such as private or public [clouds](#shapeworks-in-the-cloud). 
 
 
-## ShapeWorks Commands
+## ShapeWorks Command
 
 
 ShapeWorks consists of a set of independent command line tools for preprocessing binary segmentations and surface meshes ([Groom](../workflow/groom.md)) and computing landmark-based shape models ([Optimize](../workflow/optimize.md)). It also includes an interactive user interface called [ShapeWorksStudio](#shapeworksstudio) to analyze and visualize the optimized shape models ([Analyze](../workflow/analyze.md)). 
 
-We are consolidating these tools into a single, reusable API that is shared across different computational libraries in ShapeWorks, and a standalone `shapeworks` command. 
+We are consolidating these tools into a [single, reusable API](../new/shapeworks-command.md) that is shared across different computational libraries in ShapeWorks, and a standalone `shapeworks` command. Visit [ShapeWorks Command](../new/shapeworks-command.md) for an illustrative example.
 
 The `shapeworks` executable is highly flexible, modular, and loosely coupled, with standardized subcommands and interactive help to perform individual operations needed for a typical shape modeling workflow that includes the Groom, Optimize, and Analyze phases. Please see [shapeworks commands documentation](../tools/ShapeWorksCommands.md) for the list of available commands.
 
@@ -19,8 +19,13 @@ The `shapeworks` executable is highly flexible, modular, and loosely coupled, wi
     
 ## ShapeWorks in Python
 
-!!! note "Coming soon!"  
-    We are developing Python bindings to enable users to script their customized shape modeling workflows. Exemplar [use cases](../use-cases/use-cases.md) will be updated to use these Python APIs to showcase their use and flexibility.
+We are developing Python bindings to enable users to script their customized shape modeling workflows. See [ShapeWorks in Python](../new/shapeworks-python.md) for more details and pointers to step-by-step, hands-on tutorials on different aspects of the shape modeling workflow in a transparent, reproducible, and sharable manner.
+
+!!! important "ShapeWorks with Python support"
+    ShapeWorks Python library is currently under active development and is part of our major releases as of **ShapeWorks 6**. 
+
+!!! note "About use cases"
+    Exemplar [use cases](../use-cases/use-cases.md) will be updated to use these Python APIs to showcase their use and flexibility.
 
 
 ## ShapeWorksStudio

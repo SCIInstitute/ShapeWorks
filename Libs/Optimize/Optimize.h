@@ -13,6 +13,8 @@
 #include <itkImage.h>
 #include <itkCommand.h>
 
+#include <Eigen/Eigen>
+
 // shapeworks particle system
 #include "ParticleSystem/itkParticleSystem.h"
 #include "ParticleSystem/Sampler.h"
@@ -23,7 +25,14 @@
 #include "ParticleSystem/MeshWrapper.h"
 #include "ParticleSystem/OptimizationVisualizer.h"
 
+
+
 namespace shapeworks {
+
+class MatrixContainer {
+  public:
+  Eigen::MatrixXd matrix_;
+};
 
 /**
  * \class Optimize
@@ -41,6 +50,7 @@ class Optimize {
 public:
   using ImageType = itk::Image<float, 3>;
   using VectorType = itk::ParticleVectorFunction<3>::VectorType;
+  using MatrixType = Eigen::MatrixXd;
 
   //! Constructor
   Optimize();
@@ -50,6 +60,12 @@ public:
 
   //! Run the optimization
   bool Run();
+
+  //! Load a parameter file
+  bool LoadParameterFile(std::string filename);
+
+  void SetIterationCallbackFunction(const std::function<void(void)> &f)
+  { this->m_iter_callback = f; }
 
   //! Abort optimization
   void AbortOptimization();
@@ -246,6 +262,12 @@ public:
   std::shared_ptr<Sampler> GetSampler()
   { return m_sampler; }
 
+  //! Return the particle system as a matrix
+  MatrixContainer GetParticleSystem();
+
+  //! Set the python file to run at startup
+  void SetPythonFile(std::string filename);
+
   shapeworks::OptimizationVisualizer &GetVisualizer();
   void SetShowVisualizer(bool show);
   bool GetShowVisualizer();
@@ -364,6 +386,7 @@ protected:
   bool m_narrow_band_set = false;
   bool m_fixed_domains_present = false;
   int m_use_shape_statistics_after = -1;
+  std::string m_python_filename;
 
   // Keeps track of which state the optimization is in.
   unsigned int m_mode = 0;
@@ -399,6 +422,7 @@ protected:
 
   std::mt19937 m_rand{42};
 
+  std::function<void(void)> m_iter_callback;
   bool show_visualizer = false;
   shapeworks::OptimizationVisualizer visualizer;
 };
