@@ -65,6 +65,7 @@ private:
 
   void ComputeMeshBounds();
   void ComputeGradN(); // Gradient of normals
+  void ComputeLeastCurvatureFace(); // Gradient of normals
   // void IntoIGLMesh(Eigen::MatrixXd &V, Eigen::MatrixXi &F);
 
   trimesh::point GetBarycentricIntersection(trimesh::vec3 start, trimesh::vec3 end,
@@ -86,6 +87,8 @@ private:
   mutable std::vector<int> particle2tri_;
 
   std::vector<HessianType> grad_normals_;
+
+  int least_curvature_face_ = 0;
 
   PointType mesh_lower_bound_;
   PointType mesh_upper_bound_;

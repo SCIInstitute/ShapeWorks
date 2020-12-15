@@ -50,6 +50,7 @@ TriMeshWrapper::TriMeshWrapper(std::shared_ptr<trimesh::TriMesh> mesh)
   mesh_->need_curvatures();
   ComputeMeshBounds();
   ComputeGradN();
+  ComputeLeastCurvatureFace();
 
   kd_tree_ = std::make_shared<KDtree>(mesh_->vertices);
 }
@@ -454,6 +455,7 @@ TriMeshWrapper::PointType TriMeshWrapper::GetPointOnMesh() const
 {
   int faceIndex = 0;
   vec center = mesh_->centroid(faceIndex);
+  // vec center = mesh_->vertices[least_curvature_face_];
   return convert<vec, PointType>(center);
 }
 
@@ -535,5 +537,22 @@ void TriMeshWrapper::ComputeGradN()
     }
   }
 
+}
+void TriMeshWrapper::ComputeLeastCurvatureFace()
+{
+  if(mesh_->vertices.size() != mesh_->curv1.size()) {
+    throw std::runtime_error("BAD BAD BAD");
+  }
+
+  float bestCurv = 1e9;
+  for(int i=0; i<mesh_->vertices.size(); i++) {
+    const float c1 = mesh_->curv1[i];
+    const float c2 = mesh_->curv2[i];
+    const float c = c1*c1 + c2*c2;
+    if(c < bestCurv) {
+      least_curvature_face_ = i;
+      bestCurv = c;
+    }
+  }
 }
 }
