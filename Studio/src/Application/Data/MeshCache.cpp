@@ -24,6 +24,8 @@
 
 #include <vtkPolyData.h>
 
+namespace shapeworks {
+
 Preferences* MeshCache::pref_ref_ = nullptr;
 
 //-----------------------------------------------------------------------------
@@ -37,9 +39,9 @@ long long MeshCache::get_total_physical_memory()
 #else
 #ifdef __APPLE__
   unsigned long long total_physical_memory;
-  int name[ 2 ];
-  name[ 0 ] = CTL_HW;
-  name[ 1 ] = HW_MEMSIZE;
+  int name[2];
+  name[0] = CTL_HW;
+  name[1] = HW_MEMSIZE;
   size_t length = sizeof(unsigned long long);
   sysctl(name, 2, &total_physical_memory, &length, NULL, 0);
   return total_physical_memory;
@@ -56,9 +58,9 @@ long long MeshCache::get_total_physical_memory()
 }
 
 //-----------------------------------------------------------------------------
-long long MeshCache::get_total_addressible_memory()
+long long MeshCache::get_total_addressable_memory()
 {
-  if (sizeof (void*) == 8) {
+  if (sizeof(void*) == 8) {
     return 1ULL << 62;
   }
   else {
@@ -67,23 +69,23 @@ long long MeshCache::get_total_addressible_memory()
 }
 
 //-----------------------------------------------------------------------------
-long long MeshCache::get_total_addressible_physical_memory()
+long long MeshCache::get_total_addressable_physical_memory()
 {
-  long long addressable = MeshCache::get_total_addressible_memory();
+  long long addressable = MeshCache::get_total_addressable_memory();
   long long physical = MeshCache::get_total_physical_memory();
-  if (physical > addressable) {return addressable; } else {return physical; }
+  if (physical > addressable) { return addressable; } else { return physical; }
 }
 
 //-----------------------------------------------------------------------------
 MeshCache::MeshCache(Preferences& prefs) : preferences_(prefs)
 {
-  this->max_memory_ = MeshCache::get_total_addressible_physical_memory();
+  this->max_memory_ = MeshCache::get_total_addressable_physical_memory();
   this->memory_size_ = 0;
   this->pref_ref_ = &this->preferences_;
 }
 
 //-----------------------------------------------------------------------------
-MeshHandle MeshCache::get_mesh(const MeshWorkItem &shape)
+MeshHandle MeshCache::get_mesh(const MeshWorkItem& shape)
 {
   QMutexLocker locker(&mutex_);
 
@@ -148,4 +150,5 @@ void MeshCache::freeSpaceForAmount(size_t allocation)
     std::cerr << "erasing item for " << item.memory_size / 1024 << " kb savings\n";
     this->mesh_cache_.erase(item);
   }
+}
 }

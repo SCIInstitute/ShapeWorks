@@ -43,23 +43,6 @@ namespace utils //TODO: -> namespace shapeworks (need to change everywhere it's 
 #define RANDN2(mu, sigma) (mu + (rand()%2 ? -1.0 : 1.0)*sigma*pow(-log(0.99999*RANDU), 0.5))
 #define RANDN RANDN2(0, 1.0)
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-struct MatchPathSeparator
-{
-    bool operator()( char ch ) const
-    {
-        return ch == '\\' || ch == '/';
-    }
-};
-#else
-struct MatchPathSeparator
-{
-    bool operator()( char ch ) const
-    {
-        return ch == '/';
-    }
-};
-#endif
 }
 
 class Utils{
@@ -92,10 +75,6 @@ public:
                                         double& max_x, double& max_y, double& max_z);
 
 
-    //------------------------- string manipulation-------------------------------
-    static std::string removeExtension( std::string const& filename );
-    static std::string getPath( std::string const& filename );
-    static std::string getFilename( std::string const& pathname );
 
     //--------------- coordinates transformations --------------------------------
     static void spherical2cartesian(const double inPoint[3], double outPoint[3]);

@@ -16,7 +16,7 @@ SurfaceReconstructor::SurfaceReconstructor()
 void SurfaceReconstructor::initializeReconstruction(
   std::vector<std::vector<itk::Point<double>>> local_pts,
   std::vector<std::vector<itk::Point<double>>> global_pts,
-  std::vector<ImageType::Pointer> distance_transforms,
+  std::vector<std::string> distance_transforms,
   double maxAngle, float decimationPercent, int numClusters)
 {
 
