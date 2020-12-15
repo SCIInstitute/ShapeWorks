@@ -34,7 +34,7 @@ COMMAND_DECLARE(ClipImage, ImageCommand);
 COMMAND_DECLARE(ReflectImage, ImageCommand);
 COMMAND_DECLARE(SetOrigin, ImageCommand);
 COMMAND_DECLARE(WarpImage, ImageCommand);
-COMMAND_DECLARE(Compare, ImageCommand);
+COMMAND_DECLARE(CompareImage, ImageCommand);
 COMMAND_DECLARE(NegateImage, ImageCommand);
 COMMAND_DECLARE(AddImage, ImageCommand);
 COMMAND_DECLARE(SubtractImage, ImageCommand);
@@ -67,6 +67,7 @@ COMMAND_DECLARE(BoundingBoxMesh, MeshCommand);
 COMMAND_DECLARE(HausdorffDistance, MeshCommand);
 COMMAND_DECLARE(RasterizationOrigin, MeshCommand);
 COMMAND_DECLARE(RasterizationSize, MeshCommand);
+COMMAND_DECLARE(CompareMesh, MeshCommand);
 
 // Optimize Commands
 COMMAND_DECLARE(OptimizeCommand, OptimizeCommandGroup);

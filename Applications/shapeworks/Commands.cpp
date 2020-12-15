@@ -1118,11 +1118,11 @@ bool WarpImage::execute(const optparse::Values &options, SharedCommandData &shar
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Compare
+// CompareImage
 ///////////////////////////////////////////////////////////////////////////////
-void Compare::buildParser()
+void CompareImage::buildParser()
 {
-  const std::string prog = "compare";
+  const std::string prog = "compare-image";
   const std::string desc = "compare two images";
   parser.prog(prog).description(desc);
 
@@ -1134,7 +1134,7 @@ void Compare::buildParser()
   Command::buildParser();
 }
 
-bool Compare::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool CompareImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validImage())
   {
@@ -1144,7 +1144,7 @@ bool Compare::execute(const optparse::Values &options, SharedCommandData &shared
 
   std::string filename = options["name"];
   if (filename.length() == 0) {
-    std::cerr << "compare error: no filename specified with which to compare, must pass `--name <filename>`\n";
+    std::cerr << "compareimage error: no filename specified with which to compare, must pass `--name <filename>`\n";
     return false;
   }
 
@@ -2166,6 +2166,46 @@ bool RasterizationSize::execute(const optparse::Values &options, SharedCommandDa
 
   sharedData.mesh->rasterizationSize(padding, makeVector({x, y, z}));
   return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// CompareMesh
+///////////////////////////////////////////////////////////////////////////////
+void CompareMesh::buildParser()
+{
+  const std::string prog = "compare-mesh";
+  const std::string desc = "compare two meshes";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("Compare this mesh with another.");
+
+  Command::buildParser();
+}
+
+bool CompareMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  std::string filename = options["name"];
+  if (filename.length() == 0) {
+    std::cerr << "compare-mesh error: no filename specified with which to compare, must pass `--name <filename>`\n";
+    return false;
+  }
+
+  if (sharedData.mesh->compare_points_equal(Mesh(filename)))
+  {
+    std::cout << "compare success\n";
+    return true;
+  }
+  else
+  {
+    std::cout << "compare failure\n";
+    return false;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
