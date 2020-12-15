@@ -80,10 +80,10 @@ background: rgb(255, 255, 127)
          </size>
         </property>
         <property name="decimals">
-         <number>1</number>
+         <number>2</number>
         </property>
         <property name="minimum">
-         <double>0.100000000000000</double>
+         <double>0.000000000000000</double>
         </property>
         <property name="maximum">
          <double>99999.000000000000000</double>
@@ -544,7 +544,7 @@ background: rgb(255, 255, 127)
          <number>2</number>
         </property>
         <property name="minimum">
-         <double>0.010000000000000</double>
+         <double>0.000000000000000</double>
         </property>
         <property name="maximum">
          <double>99999.000000000000000</double>
