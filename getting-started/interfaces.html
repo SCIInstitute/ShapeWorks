@@ -74,7 +74,7 @@
                     </li>
                     <li class="toctree-l1 current"><a class="reference internal current" href="interfaces.html">ShapeWorks Interfaces</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#shapeworks-commands">ShapeWorks Commands</a>
+    <li class="toctree-l2"><a class="reference internal" href="#shapeworks-command">ShapeWorks Command</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#shapeworks-in-python">ShapeWorks in Python</a>
     </li>
@@ -115,9 +115,26 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../new/sw-meshes.html">ShapeWorks Directly on Meshes</a>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../new/shapeworks-api.html">ShapeWorks API</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/shapeworks-command.html">ShapeWorks Command</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../new/ssm-eval.html">Shape Model Evaluation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/shapeworks-python.html">ShapeWorks in Python</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-jupyter-notebooks.html">Getting Started with Juypter Notebooks</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../notebooks/setting-up-shapeworks-environment.html">Setting up ShapeWorks Environment</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-segmentations.html">Getting Started with Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-meshes.html">Getting Started with Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-exploring-segmentations.html">Getting Started with Exploring Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-grooming-segmentations.html">Getting Started with Grooming Segmentations</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
@@ -236,18 +253,23 @@
               
                 <h1 id="shapeworks-interfaces">ShapeWorks Interfaces</h1>
 <p>ShapeWorks tools are designed to support different usage scenarios, including execution on a local computing platform through the terminal (<a href="#shapeworks-commands">command line</a>) and the user-friendly <a href="#shapeworksstudio">Studio</a> application, APIs including <a href="#shapeworks-in-python">Python</a>, and remote systems such as private or public <a href="#shapeworks-in-the-cloud">clouds</a>. </p>
-<h2 id="shapeworks-commands">ShapeWorks Commands</h2>
+<h2 id="shapeworks-command">ShapeWorks Command</h2>
 <p>ShapeWorks consists of a set of independent command line tools for preprocessing binary segmentations and surface meshes (<a href="../workflow/groom.html">Groom</a>) and computing landmark-based shape models (<a href="../workflow/optimize.html">Optimize</a>). It also includes an interactive user interface called <a href="#shapeworksstudio">ShapeWorksStudio</a> to analyze and visualize the optimized shape models (<a href="../workflow/analyze.html">Analyze</a>). </p>
-<p>We are consolidating these tools into a single, reusable API that is shared across different computational libraries in ShapeWorks, and a standalone <code>shapeworks</code> command. </p>
+<p>We are consolidating these tools into a <a href="../new/shapeworks-command.html">single, reusable API</a> that is shared across different computational libraries in ShapeWorks, and a standalone <code>shapeworks</code> command. Visit <a href="../new/shapeworks-command.html">ShapeWorks Command</a> for an illustrative example.</p>
 <p>The <code>shapeworks</code> executable is highly flexible, modular, and loosely coupled, with standardized subcommands and interactive help to perform individual operations needed for a typical shape modeling workflow that includes the Groom, Optimize, and Analyze phases. Please see <a href="../tools/ShapeWorksCommands.html">shapeworks commands documentation</a> for the list of available commands.</p>
 <div class="admonition danger">
 <p class="admonition-title">Activate shapeworks environment</p>
 <p>Each time you use <a href="../tools/ShapeWorksCommands.html">ShapeWorks from the command line</a>, you must first activate its environment using the <code>conda activate shapeworks</code> command on the terminal.</p>
 </div>
 <h2 id="shapeworks-in-python">ShapeWorks in Python</h2>
+<p>We are developing Python bindings to enable users to script their customized shape modeling workflows. See <a href="../new/shapeworks-python.html">ShapeWorks in Python</a> for more details and pointers to step-by-step, hands-on tutorials on different aspects of the shape modeling workflow in a transparent, reproducible, and sharable manner.</p>
+<div class="admonition important">
+<p class="admonition-title">ShapeWorks with Python support</p>
+<p>ShapeWorks Python library is currently under active development and is part of our major releases as of <strong>ShapeWorks 6</strong>. </p>
+</div>
 <div class="admonition note">
-<p class="admonition-title">Coming soon!</p>
-<p>We are developing Python bindings to enable users to script their customized shape modeling workflows. Exemplar <a href="../use-cases/use-cases.html">use cases</a> will be updated to use these Python APIs to showcase their use and flexibility.</p>
+<p class="admonition-title">About use cases</p>
+<p>Exemplar <a href="../use-cases/use-cases.html">use cases</a> will be updated to use these Python APIs to showcase their use and flexibility.</p>
 </div>
 <h2 id="shapeworksstudio">ShapeWorksStudio</h2>
 <p>ShapeWorksStudio is a cross-platform graphical user interface (GUI) to support the standard shape analysis workflow needed by most ShapeWorks users, enabling a wide variety of research scenarios. It is currently supporting image-based grooming and is actively under development to support surface meshes, more sophisticated grooming operations (including user annotations), and offline processing.  ShapeWorksStudio enables real-time parameter tuning and visualization of the optimization process and statistical analyses.</p>

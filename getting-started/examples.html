@@ -117,9 +117,26 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../new/sw-meshes.html">ShapeWorks Directly on Meshes</a>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../new/shapeworks-api.html">ShapeWorks API</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/shapeworks-command.html">ShapeWorks Command</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../new/ssm-eval.html">Shape Model Evaluation</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../new/shapeworks-python.html">ShapeWorks in Python</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-jupyter-notebooks.html">Getting Started with Juypter Notebooks</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../notebooks/setting-up-shapeworks-environment.html">Setting up ShapeWorks Environment</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-segmentations.html">Getting Started with Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-meshes.html">Getting Started with Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-exploring-segmentations.html">Getting Started with Exploring Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-grooming-segmentations.html">Getting Started with Grooming Segmentations</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
@@ -247,7 +264,13 @@
 <h2 id="femurs-ssm-from-meshes">Femurs: SSM from Meshes</h2>
 <p>This mesh-based <a href="../use-cases/femur.html">use case</a> demonstrates using ShapeWorks tools to convert shapes (femurs in this case) given as surface meshes to signed distance maps (the currently supported data type to optimize the particle system). It also shows grooming imaging data (CT scans) of the hip to be tied with the groomed shape data. As femur meshes in this dataset have been segmented with various shaft lengths, this use case includes an interactive tool for the user to select a cutting plane on a single mesh (e.g., representative sample) to remove this variability so that it is not captured in the shape model. </p>
 <h2 id="your-own-use-case">Your Own Use Case</h2>
-<p>You can use any of these use cases as a starting point and customize it to your own dataset. Please <a href="../about/contact.html">contact ShapeWorks team</a> for questions and guidance to customize a use case to your data.</p>
+<p>You can use any of these use cases as a starting point and customize it to your own dataset. </p>
+<p>In <code>Examples/notebooks/tutorials</code>, we also provide step-by-step, hands-on tutorials on different aspects of the shape modeling workflow in a transparent, reproducible, and sharable manner. For this purpose, we have chosen Juypter Notebooks as the front-end tools for these demonstrations. These hands-on tutorials are designed to reflect the thought process that a non-expert user could go through at different shape modeling phases, starting from processing or grooming your data to analyzing your optimized shape model. See <a href="../new/shapeworks-python.html">ShapeWorks in Python</a> for more details.</p>
+<div class="admonition important">
+<p class="admonition-title">ShapeWorks with Python support</p>
+<p>ShapeWorks Python library is currently under active development and is part of our major releases as of <strong>ShapeWorks 6</strong>. </p>
+</div>
+<p>Please <a href="../about/contact.html">contact ShapeWorks team</a> if you need further questions and guidance. <em>Software maintenance and support are provided within the funding period.</em></p>
               
             </div>
           </div>

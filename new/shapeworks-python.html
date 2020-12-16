@@ -7,9 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <meta name="author" content="Shireen Elhabian et al.">
-  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/new/shapeworks-api.html">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/new/shapeworks-python.html">
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>ShapeWorks API - ShapeWorks</title>
+  <title>ShapeWorks in Python - ShapeWorks</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
   <link rel="stylesheet" href="../css/theme.css" />
@@ -19,9 +19,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "ShapeWorks API";
-    var mkdocs_page_input_path = "new/shapeworks-api.md";
-    var mkdocs_page_url = "/software/shapeworks.html/new/shapeworks-api.html";
+    var mkdocs_page_name = "ShapeWorks in Python";
+    var mkdocs_page_input_path = "new/shapeworks-python.md";
+    var mkdocs_page_url = "/software/shapeworks.html/new/shapeworks-python.html";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js" defer></script>
@@ -105,19 +105,44 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="sw-meshes.html">ShapeWorks Directly on Meshes</a>
                     </li>
-                    <li class="toctree-l1 current"><a class="reference internal current" href="shapeworks-api.html">ShapeWorks API</a>
+                    <li class="toctree-l1"><a class="reference internal" href="shapeworks-command.html">ShapeWorks Command</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="ssm-eval.html">Shape Model Evaluation</a>
+                    </li>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="shapeworks-python.html">ShapeWorks in Python</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#example-resamplevolumestobeisotropic">Example: ResampleVolumesToBeIsotropic</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#resampling-images">Resampling images</a>
+    <li class="toctree-l2"><a class="reference internal" href="#why-shapeworks-in-python">Why ShapeWorks in Python?</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#resampling-segmentations">Resampling segmentations</a>
+    <li class="toctree-l2"><a class="reference internal" href="#diving-into-shapeworks-clear-box">Diving into ShapeWorks' "Clear" Box</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#getting-started-with-juypter-notebooks">Getting Started with Juypter Notebooks</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#getting-started-with-segmentations">Getting Started with Segmentations</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#getting-started-with-meshes">Getting Started with Meshes</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#getting-started-with-exploring-segmentations">Getting Started with Exploring Segmentations</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#getting-started-with-grooming-segmentations">Getting Started with Grooming Segmentations</a>
     </li>
         </ul>
     </li>
     </ul>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="ssm-eval.html">Shape Model Evaluation</a>
+                </ul>
+                <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-jupyter-notebooks.html">Getting Started with Juypter Notebooks</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../notebooks/setting-up-shapeworks-environment.html">Setting up ShapeWorks Environment</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-segmentations.html">Getting Started with Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-meshes.html">Getting Started with Meshes</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-exploring-segmentations.html">Getting Started with Exploring Segmentations</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../notebooks/getting-started-with-grooming-segmentations.html">Getting Started with Grooming Segmentations</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
@@ -220,10 +245,10 @@
         
       
     
-    <li>ShapeWorks API</li>
+    <li>ShapeWorks in Python</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/new/shapeworks-api.md"
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/new/shapeworks-python.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -234,105 +259,36 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="shapeworks-api">ShapeWorks API</h1>
-<p>ShapeWorks was a conglomeration of independent executables for grooming and optimization with a GUI (ShapeWorksStudio) for analysis and visualization. This design is highly inflexible, task specific, and poorly documented, and Studio duplicated a significant portion of their functionality.</p>
-<p>We have made significant efforts in organizing the codebase based on functionalities, implementing them as libraries rather than executables to provide a common backbone to command-line and GUI-based tools, and syncing ShapeWorksStudio to use the same underlying libraries.</p>
-<p>To retain command line usage, we have created a single <a href="../tools/ShapeWorksCommands.html"><code>shapeworks</code></a> command with subcommands exposing this functionality along with greater flexibility and interactive <code>--help</code> for each subcommand. </p>
-<p>This consolidation makes the framework more powerful and flexible. It also enables ShapeWorks functionality to be used as libraries linked to new applications. </p>
-<p>All the executables used for the segmentation-driven grooming have been consolidated, documented, tested against the original command line tools, and functionally debugged</p>
-<p>Comprehensive unit testing is implemented and executed as part of automatic validation run with each addition to the code. This also serves as independent examples of its use </p>
-<h2 id="example-resamplevolumestobeisotropic">Example: ResampleVolumesToBeIsotropic</h2>
-<div class="admonition note">
-<p class="admonition-title">Old command-line: <code>ResampleVolumesToBeIsotropic</code></p>
-<div class="highlight"><pre><span></span><code>./ResampleVolumesToBeIsotropic --inFilename &lt;input-file&gt; --outFilename &lt;output-file&gt; 
-                               --isoSpacing &lt;voxel-spacing&gt;
-                              [--isBinaryImage] [--isCenterImageOn]
-</code></pre></div>
-</div>
-<p><strong>Disadvantages of the old command-line tool:</strong>        </p>
-<ul>
-<li>Cannot be used by other classes or other APIs or other functions</li>
-<li>Not adaptable (need to edit script files to customize it)</li>
-<li>Each command needs to be given input and output paths</li>
-<li>Creates IO bottlenecks</li>
-<li>Fixed parameters cannot be changed (e.g., num iterations for binarization)</li>
-<li>All logic is buried behind a single command line tool</li>
-</ul>
-<h3 id="resampling-images">Resampling images</h3>
-<div class="admonition note">
-<p class="admonition-title">Old command-line: <code>ResampleVolumesToBeIsotropic</code> (for images)</p>
-<div class="highlight"><pre><span></span><code>./ResampleVolumesToBeIsotropic --inFilename &lt;input-file&gt; --outFilename &lt;output-file&gt; 
-                               --isoSpacing &lt;voxel-spacing&gt;
-                               --isCenterImageOn
-</code></pre></div>
-</div>
+                <h1 id="shapeworks-in-python">ShapeWorks in Python</h1>
 <div class="admonition important">
-<p class="admonition-title">New command-line: <code>isoresample</code> (for images)</p>
-<div class="highlight"><pre><span></span><code>shapeworks readimage --name &lt;input-file&gt; recenter 
-           isoresample --isospacing &lt;voxel-spacing&gt;
-           writeimage --name &lt;output-file&gt;
-</code></pre></div>
+<p class="admonition-title">ShapeWorks with Python support</p>
+<p>ShapeWorks Python library is currently under active development and is part of our major releases as of <strong>ShapeWorks 6</strong>. </p>
 </div>
-<div class="admonition important">
-<p class="admonition-title">C++ (without chaining): <code>isoresample</code> (for images)</p>
-<div class="highlight"><pre><span></span><code><span class="n">Image</span> <span class="nf">img</span><span class="p">(</span><span class="o">&lt;</span><span class="n">input</span><span class="o">-</span><span class="n">file</span><span class="o">&gt;</span><span class="p">);</span>
-<span class="n">img</span><span class="p">.</span><span class="n">recenter</span><span class="p">();</span>
-<span class="n">img</span><span class="p">.</span><span class="n">isoresample</span><span class="p">(</span><span class="o">&lt;</span><span class="n">voxel</span><span class="o">-</span><span class="n">spacing</span><span class="o">&gt;</span><span class="p">);</span>
-<span class="n">img</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="o">&lt;</span><span class="n">output</span><span class="o">-</span><span class="n">file</span><span class="o">&gt;</span><span class="p">);</span>
-</code></pre></div>
+<p>There is no one-size-fits-all when it comes to grooming your data for shape modeling. Instead, there are general guidelines that one could consider when deciding on his/her own workflow. </p>
+<div class="admonition danger">
+<p class="admonition-title">NO one-size-fits-all workflow</p>
+<p>Looking at your data as it goes through different processing steps is a <strong>must-do</strong>!</p>
 </div>
-<div class="admonition important">
-<p class="admonition-title">C++ (with chaining): <code>isoresample</code> (for images)</p>
-<div class="highlight"><pre><span></span><code><span class="n">Image</span> <span class="nf">img</span><span class="p">(</span><span class="o">&lt;</span><span class="n">input</span><span class="o">-</span><span class="n">file</span><span class="o">&gt;</span><span class="p">).</span><span class="n">recenter</span><span class="p">().</span><span class="n">isoresample</span><span class="p">(</span><span class="o">&lt;</span><span class="n">voxel</span><span class="o">-</span><span class="n">spacing</span><span class="o">&gt;</span><span class="p">).</span><span class="n">write</span><span class="p">(</span><span class="o">&lt;</span><span class="n">output</span><span class="o">-</span><span class="n">file</span><span class="o">&gt;</span><span class="p">);</span>
-</code></pre></div>
-</div>
-<p><img alt="Isoresampling for images" src="../img/new/isoresample_img.png" /></p>
-<h3 id="resampling-segmentations">Resampling segmentations</h3>
-<div class="admonition note">
-<p class="admonition-title">Old command-line: <code>ResampleVolumesToBeIsotropic</code> (for segmentations)</p>
-<div class="highlight"><pre><span></span><code>./ResampleVolumesToBeIsotropic --inFilename &lt;input-file&gt; --outFilename &lt;output-file&gt; 
-                               --isoSpacing &lt;voxel-spacing&gt;
-                              --isBinaryImage --isCenterImageOn
-</code></pre></div>
-</div>
-<p>The old executable’s functionalities are broken down further to make it more modular:</p>
-<ul>
-<li>Antialias using <code>shapeworks antialias</code> </li>
-<li>Recenter using <code>shapeworks recenter</code></li>
-<li>Binarize using <code>shapeworks binarize</code></li>
-</ul>
-<p><strong>Advantages for the new shapeworks API:</strong></p>
-<ul>
-<li>Promotes user’s understanding of the underlying functionality (more transparency and equivalent simplicity)</li>
-<li>Allows the user to choose the set of commands to be run</li>
-<li>User can know what parameters are considered to perform each command</li>
-<li>User can modify parameter values each step of the way</li>
-<li>User can save/visualize intermediate outputs for troubleshooting </li>
-</ul>
-<div class="admonition important">
-<p class="admonition-title">New command-line: <code>isoresample</code> (for segmentations)</p>
-<div class="highlight"><pre><span></span><code>shapeworks readimage --name &lt;input-file&gt; 
-           recenter antialias --iterations &lt;num-iter&gt; 
-           isoresample --isospacing &lt;voxel-spacing&gt; binarize 
-           writeimage --name &lt;output-file&gt;
-</code></pre></div>
-</div>
-<div class="admonition important">
-<p class="admonition-title">C++ (without chaining): <code>isoresample</code> (for segmentations)</p>
-<div class="highlight"><pre><span></span><code><span class="n">Image</span> <span class="nf">img</span><span class="p">(</span><span class="o">&lt;</span><span class="n">input</span><span class="o">-</span><span class="n">file</span><span class="o">&gt;</span><span class="p">);</span>
-<span class="n">img</span><span class="p">.</span><span class="n">recenter</span><span class="p">();</span>
-<span class="n">img</span><span class="p">.</span><span class="n">antialias</span><span class="p">(</span><span class="o">&lt;</span><span class="n">num</span><span class="o">-</span><span class="n">iter</span><span class="o">&gt;</span><span class="p">);</span>
-<span class="n">img</span><span class="p">.</span><span class="n">isoresample</span><span class="p">(</span><span class="o">&lt;</span><span class="n">voxel</span><span class="o">-</span><span class="n">spacing</span><span class="o">&gt;</span><span class="p">);</span>
-<span class="n">img</span><span class="p">.</span><span class="n">binarize</span><span class="p">();</span>
-<span class="n">img</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="o">&lt;</span><span class="n">output</span><span class="o">-</span><span class="n">file</span><span class="o">&gt;</span><span class="p">);</span>
-</code></pre></div>
-</div>
-<div class="admonition important">
-<p class="admonition-title">C++ (with chaining): <code>isoresample</code> (for images)</p>
-<div class="highlight"><pre><span></span><code><span class="n">Image</span> <span class="nf">img</span><span class="p">(</span><span class="o">&lt;</span><span class="n">input</span><span class="o">-</span><span class="n">file</span><span class="o">&gt;</span><span class="p">).</span><span class="n">recenter</span><span class="p">().</span><span class="n">antialias</span><span class="p">(</span><span class="o">&lt;</span><span class="n">num</span><span class="o">-</span><span class="n">iter</span><span class="o">&gt;</span><span class="p">).</span><span class="n">isoresample</span><span class="p">(</span><span class="o">&lt;</span><span class="n">voxel</span><span class="o">-</span><span class="n">spacing</span><span class="o">&gt;</span><span class="p">).</span><span class="n">binarize</span><span class="p">().</span><span class="n">write</span><span class="p">(</span><span class="o">&lt;</span><span class="n">output</span><span class="o">-</span><span class="n">file</span><span class="o">&gt;</span><span class="p">);</span>
-</code></pre></div>
-</div>
-<p><img alt="Isoresampling for segmentations" src="../img/new/isoresample_seg.png" /></p>
+<p>To support your workflow discovery process, we have been making significant strides in developing ShapeWorks tools to be more modular, generic, and transparent. Our efforts entail consolidating the underlying computational libraries, providing a flexible and <a href="shapeworks-command.html">unified shapeworks command line tool</a>, and <strong>now the ShapeWorks Python library!</strong>.</p>
+<h2 id="why-shapeworks-in-python">Why ShapeWorks in Python?</h2>
+<p>One primary goal of the ShapeWorks Python library is to open and reveal what is in the ShapeWorks black box and lay down all steps involved in preprocessing your data, optimizing and analyzing your statistical shape models in a way that supports interactive workflow discovery and makes you as a user takes the full control of your own study and analysis.</p>
+<p>In <code>Examples/notebooks/tutorials</code>, we provide step-by-step, hands-on tutorials on different aspects of the shape modeling workflow in a transparent, reproducible, and sharable manner. For this purpose, we have chosen Juypter Notebooks as the front-end tools for these demonstrations. These hands-on tutorials are designed to reflect the thought process that a non-expert user could go through at different shape modeling phases, starting from processing or grooming your data to analyzing your optimized shape model.</p>
+<h2 id="diving-into-shapeworks-clear-box">Diving into ShapeWorks' "Clear" Box</h2>
+<p>A growing list of fully-documented and self-contained notebooks demonstrate various ShapeWorks tools and shape modeling workflows.</p>
+<h3 id="getting-started-with-juypter-notebooks"><a href="../notebooks/getting-started-with-jupyter-notebooks.html">Getting Started with Juypter Notebooks</a></h3>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/jupyter-run-cell.mp4" autoplay muted loop controls style="width:100%"></p>
+
+<h3 id="getting-started-with-segmentations"><a href="../notebooks/getting-started-with-segmentations.html">Getting Started with Segmentations</a></h3>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-seg-vol-slices-label.mp4" autoplay muted loop controls style="width:100%"></p>
+
+<h3 id="getting-started-with-meshes"><a href="../notebooks/getting-started-with-meshes.html">Getting Started with Meshes</a></h3>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-mesh-itkw-2surfs-same-win.mp4" autoplay muted loop controls style="width:100%"></p>
+
+<h3 id="getting-started-with-exploring-segmentations"><a href="../notebooks/getting-started-with-exploring-segmentations.html">Getting Started with Exploring Segmentations</a></h3>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-explore-iso-align-pv.mp4" autoplay muted loop controls style="width:100%"></p>
+
+<h3 id="getting-started-with-grooming-segmentations"><a href="../notebooks/getting-started-with-grooming-segmentations.html">Getting Started with Grooming Segmentations</a></h3>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-groom-mean-align.mp4" autoplay muted loop controls style="width:100%"></p>
               
             </div>
           </div>
@@ -340,10 +296,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="ssm-eval.html" class="btn btn-neutral float-right" title="Shape Model Evaluation">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../notebooks/getting-started-with-jupyter-notebooks.html" class="btn btn-neutral float-right" title="Getting Started with Juypter Notebooks">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="sw-meshes.html" class="btn btn-neutral" title="ShapeWorks Directly on Meshes"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="ssm-eval.html" class="btn btn-neutral" title="Shape Model Evaluation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -373,10 +329,10 @@
           <a href="https://github.com/SCIInstitute/ShapeWorks/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
-        <span><a href="sw-meshes.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="ssm-eval.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="ssm-eval.html" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../notebooks/getting-started-with-jupyter-notebooks.html" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
