@@ -185,16 +185,16 @@ def Run_Pipeline(args):
             This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
             This function uses the same transfrmation matrix for alignment of raw and segmentation files.
             """
-            [resampledFiles_segmentations, resampledFiles_images] = applyResampling(parentDir + "aligned", medianFile centerFiles_segmentations, centerFiles_images)
+            [resampledFiles_segmentations, resampledFiles_images] = applyResampling(parentDir + "resized", medianFile,centerFiles_segmentations, centerFiles_images)
 
             # If user chose option 2, define cutting plane on median sample
             if choice == 2:
-                input_file = medianFile.replace("centered", "aligned/segmentations").replace(".nrrd", ".aligned.DT.nrrd")
+                input_file = medianFile.replace("centered", "resized/segmentations").replace(".nrrd", ".resized.DT.nrrd")
                 cutting_plane_points = SelectCuttingPlane(input_file)
 
             elif choice == 1:
-                postfix = "_femur.isores.pad.com.center.aligned.DT.nrrd"
-                path = "aligned/segmentations/"
+                postfix = "_femur.isores.pad.com.center.resized.DT.nrrd"
+                path = "resized/segmentations/"
                 input_file = parentDir + path + cp_prefix + postfix
                 cutting_plane_points = SelectCuttingPlane(input_file)
 
@@ -210,8 +210,8 @@ def Run_Pipeline(args):
             pickle.dump( [cutting_plane_points], open( inputDir + "groomed/groomed_pickle.p", "wb" ) )
 
             # Compute largest bounding box and apply cropping
-            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", resampledFiles_segmentations, parentDir + "aligned/*.aligned.nrrd")
-            croppedFiles_images = applyCropping(parentDir + "cropped/images", resampledFiles_images, parentDir + "aligned/*.aligned.nrrd")
+            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", resampledFiles_segmentations, parentDir + "resized/*.resized.nrrd")
+            croppedFiles_images = applyCropping(parentDir + "cropped/images", resampledFiles_images, parentDir + "resized/*.resized.nrrd")
 
 
         # BEGIN GROOMING WITHOUT IMAGES
@@ -274,16 +274,16 @@ def Run_Pipeline(args):
             This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
             This function uses the same transfrmation matrix for alignment of raw and segmentation files.
             """
-            resampledFiles_segmentations = applyResampling(parentDir + "aligned", medianFile,centerFiles_segmentations, None)
+            resampledFiles_segmentations = applyResampling(parentDir + "resized", medianFile,centerFiles_segmentations, None)
 
             # If user chose option 2, define cutting plane on median sample
             if choice == 2:
-                input_file = medianFile.replace("centered/segmentations", "aligned").replace(".nrrd", ".aligned.DT.nrrd")
+                input_file = medianFile.replace("centered/segmentations", "resized").replace(".nrrd", ".resized.DT.nrrd")
                 cutting_plane_points = SelectCuttingPlane(input_file)
 
             elif choice == 1:
-                postfix = "_femur.isores.pad.com.center.aligned.DT.nrrd"
-                path = "aligned/"
+                postfix = "_femur.isores.pad.com.center.resized.DT.nrrd"
+                path = "resized/"
                 input_file = parentDir + path + cp_prefix + postfix
                 cutting_plane_points = SelectCuttingPlane(input_file)
 
@@ -299,7 +299,7 @@ def Run_Pipeline(args):
             pickle.dump( [cutting_plane_points], open( inputDir + "groomed/groomed_pickle.p", "wb" ) )
 
             # Compute largest bounding box and apply cropping
-            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", resampledFiles_segmentations, parentDir + "aligned/*.aligned.nrrd")
+            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", resampledFiles_segmentations, parentDir + "resized/*.resized.nrrd")
 
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
