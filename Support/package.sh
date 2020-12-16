@@ -76,6 +76,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     install_name_tool -add_rpath @executable_path/../Frameworks ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio
     install_name_tool -add_rpath @executable_path/../../../../lib ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio
     QT_LIB_LOCATION="@executable_path/ShapeWorksStudio.app/Contents/Frameworks"
+    QT_LOADER_LIB_LOCATION="@loader_path/ShapeWorksStudio.app/Contents/Frameworks"
 
 
     # copy platform plugins for View2
@@ -85,6 +86,11 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 	install_name_tool -add_rpath $QT_LIB_LOCATION $i
     done
 
+    for i in *.so ; do
+	install_name_tool -add_rpath $QT_LOADER_LIB_LOCATION $i
+	install_name_tool -add_rpath "@loader_path/../lib" $i
+    done
+	
     cd ../lib
     # Copy libraries from anaconda
     conda_libs="libpython"
