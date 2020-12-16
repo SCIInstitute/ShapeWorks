@@ -64,7 +64,7 @@ COMMAND_DECLARE(ClipMesh, MeshCommand);
 COMMAND_DECLARE(TranslateMesh, MeshCommand);
 COMMAND_DECLARE(ScaleMesh, MeshCommand);
 COMMAND_DECLARE(BoundingBoxMesh, MeshCommand);
-COMMAND_DECLARE(HausdorffDistance, MeshCommand);
+COMMAND_DECLARE(ComputeDistance, MeshCommand);
 COMMAND_DECLARE(RasterizationOrigin, MeshCommand);
 COMMAND_DECLARE(RasterizationSize, MeshCommand);
 COMMAND_DECLARE(CompareMesh, MeshCommand);

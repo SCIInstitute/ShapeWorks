@@ -55,4 +55,21 @@ vtkSmartPointer<vtkPlane> MeshUtils::createPlane(const Vector3 &n, const Point &
   return plane;
 }
 
+Mesh::Region MeshUtils::boundingBox(std::vector<std::string> &filenames, bool center)
+{
+  if (filenames.empty())
+    throw std::invalid_argument("No filenames provided to compute a bounding box");
+  
+  Mesh mesh(filenames[0]);
+  Mesh::Region bbox(mesh.boundingBox());
+
+  for (auto filename : filenames)
+  {
+    Mesh mesh(filename);
+    bbox.grow(mesh.boundingBox());
+  }
+
+  return bbox;
+}
+
 } // shapeworks

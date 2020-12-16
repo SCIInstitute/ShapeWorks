@@ -795,16 +795,16 @@ vtkSmartPointer<vtkPolyData> Image::march(double levelset)
   return cube->GetOutput();
 }
 
-std::ostream& operator<<(std::ostream &os, const Image::Region &r)
-{
-  return os << "{\n\tmin: [" << r.min[0] << ", " << r.min[1] << ", " << r.min[2] << "]"
-            << ",\n\tmax: [" << r.max[0] << ", " << r.max[1] << ", " << r.max[2] << "]\n}";
-}
-
 std::ostream& operator<<(std::ostream &os, const Image& img)
 {
   return os << "{\n\tdims: " << img.dims() << ",\n\torigin: "
             << img.origin() << ",\n\tsize: " << img.size() << "\n}";
+}
+
+std::ostream& operator<<(std::ostream &os, const Image::Region &r)
+{
+  return os << "{\n\tmin: [" << r.min[0] << ", " << r.min[1] << ", " << r.min[2] << "]"
+            << ",\n\tmax: [" << r.max[0] << ", " << r.max[1] << ", " << r.max[2] << "]\n}";
 }
 
 } // shapeworks

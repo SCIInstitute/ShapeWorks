@@ -131,7 +131,7 @@ vtkImageData* ImageUtils::getVTK(const Image &image)
   return connector->GetOutput();
 }
 
-Mesh &ImageUtils::meshFromDT(Image &image, double levelset, double reduction, double angle, int leveliterations, int meshiterations, bool preservetopology)
+Mesh &ImageUtils::toMesh(Image &image, double levelset, double reduction, double angle, int leveliterations, int meshiterations, bool preservetopology)
 {
   Mesh mesh(image.march(levelset));
   mesh.smooth(leveliterations).decimate(reduction, angle).smooth(meshiterations);

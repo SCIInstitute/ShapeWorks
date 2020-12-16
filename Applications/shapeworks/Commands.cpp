@@ -901,7 +901,7 @@ void BoundingBoxImage::buildParser()
   const std::string desc = "compute largest bounding box surrounding the specified isovalue of the specified set of images";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to images (must be followed by `--`), ex: \"bounding-box --names *.nrrd -- --isovalue 1.5\")");
+  parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to images (must be followed by `--`), ex: \"bounding-box-image --names *.nrrd -- --isovalue 1.5\")");
   parser.add_option("--padding").action("store").type("int").set_default(0).help("Number of extra voxels in each direction to pad the largest bounding box [default: 0].");
   parser.add_option("--isovalue").action("store").type("double").set_default(1.0).help("Threshold value [default: 1.0].");
 
@@ -914,9 +914,9 @@ bool BoundingBoxImage::execute(const optparse::Values &options, SharedCommandDat
   int padding = static_cast<int>(options.get("padding"));
   double isovalue = static_cast<double>(options.get("isovalue"));
 
-  sharedData.region = ImageUtils::boundingBox(filenames, isovalue);
-  sharedData.region.pad(padding);
-  std::cout << "Bounding box:\n" << sharedData.region;
+  sharedData.imgRegion = ImageUtils::boundingBox(filenames, isovalue);
+  sharedData.imgRegion.pad(padding);
+  std::cout << "Bounding box:\n" << sharedData.imgRegion;
   return true;
 }
 
@@ -957,7 +957,7 @@ bool CropImage::execute(const optparse::Values &options, SharedCommandData &shar
 
   if (xmin == 0 && ymin == 0 && zmin == 0 &&
       xmax == 0 && ymax == 0 && zmax == 0)
-    sharedData.image.crop(sharedData.region); // use the previous region (maybe set by boundingbox cmd)
+    sharedData.image.crop(sharedData.imgRegion); // use the previous region (maybe set by boundingbox cmd)
   else
   {
     Image::Region region(sharedData.image.dims());
@@ -1391,15 +1391,15 @@ bool March::execute(const optparse::Values &options, SharedCommandData &sharedDa
 ///////////////////////////////////////////////////////////////////////////////
 void MeshFromDT::buildParser()
 {
-  const std::string prog = "mesh-from-dt";
+  const std::string prog = "dt-to-mesh";
   const std::string desc = "create mesh from distance transform";
   parser.prog(prog).description(desc);
 
   parser.add_option("--levelset").action("store").type("double").set_default(0.0).help("Value of levelset [default: 0.0].");
-  parser.add_option("--reduction").action("store").type("double").set_default(0.0).help("Percentage to decimate [default: 0.0].");
-  parser.add_option("--angle").action("store").type("int").set_default(0).help("Value of feature angle in degrees [default: 0].");
-  parser.add_option("--leveliterations").action("store").type("int").set_default(0).help("Number of iterations to smooth the level set [default: 0].");
-  parser.add_option("--meshiterations").action("store").type("int").set_default(0).help("Number of iterations to smooth the initial mesh [default: 0].");
+  parser.add_option("--reduction").action("store").type("double").set_default(0.01).help("Percentage to decimate [default: 0.01].");
+  parser.add_option("--angle").action("store").type("int").set_default(30).help("Value of feature angle in degrees [default: 30].");
+  parser.add_option("--leveliterations").action("store").type("int").set_default(1).help("Number of iterations to smooth the level set [default: 1].");
+  parser.add_option("--meshiterations").action("store").type("int").set_default(1).help("Number of iterations to smooth the initial mesh [default: 1].");
   parser.add_option("--preservetopology").action("store_true").set_default("false").help("Whether to preserve topology [default: true].");
 
   Command::buildParser();
@@ -1420,7 +1420,7 @@ bool MeshFromDT::execute(const optparse::Values &options, SharedCommandData &sha
   int meshiterations = static_cast<int>(options.get("meshiterations"));
   bool preservetopology = static_cast<bool>(options.get("preservetopology"));
 
-  sharedData.mesh = std::make_unique<Mesh>(ImageUtils::meshFromDT(sharedData.image, levelset, reduction, angle, leveliterations, meshiterations, preservetopology));
+  sharedData.mesh = std::make_unique<Mesh>(ImageUtils::toMesh(sharedData.image, levelset, reduction, angle, leveliterations, meshiterations, preservetopology));
   return sharedData.validMesh();
 }
 
@@ -1545,63 +1545,6 @@ bool Specificity::execute(const optparse::Values &options, SharedCommandData &sh
   std::cout << "Particle system specificity: " << r << std::endl;
 
   return true;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-/// Optimize
-///////////////////////////////////////////////////////////////////////////////
-void OptimizeCommand::buildParser()
-{
-  const std::string prog = "optimize";
-  const std::string desc = "generate a particle system";
-  parser.prog(prog).description(desc);
-
-  parser.add_option("--name").action("store").type("string").set_default("").help("Path to parameter file.");
-
-  Command::buildParser();
-}
-
-bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  const std::string& project_file(static_cast<std::string>(options.get("name")));
-
-  if (project_file.length() == 0)
-  {
-    std::cerr << "Must specify project name\n";
-    return false;
-  }
-
-  bool is_project = StringUtils::hasSuffix(project_file, "xlsx");
-
-  Optimize app;
-  if (is_project) {
-    try {
-      // load spreadsheet project
-      ProjectHandle project = std::make_shared<Project>();
-      project->load(project_file);
-
-      // set up Optimize class based on project parameters
-      OptimizeParameters params(project);
-      params.set_up_optimize(&app);
-
-      bool success = app.Run();
-
-      if (success) {
-        project->save(project_file);
-      }
-
-      return success;
-    }
-    catch (std::exception& e) {
-      std::cerr << "Error: " << e.what() << "\n";
-      return false;
-    }
-  }
-  else {
-    OptimizeParameterFile param;
-    param.load_parameter_file(project_file.c_str(), &app);
-    return app.Run();
-  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2038,6 +1981,7 @@ void BoundingBoxMesh::buildParser()
   const std::string desc = "compute bounding box of mesh";
   parser.prog(prog).description(desc);
 
+  parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to meshes (must be followed by `--`), ex: \"bounding-box-mesh --names *.vtk -- --center 1\")");
   parser.add_option("--center").action("store").type("bool").set_default(false).help("flag for centering");
 
   Command::buildParser();
@@ -2045,24 +1989,20 @@ void BoundingBoxMesh::buildParser()
 
 bool BoundingBoxMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  if (!sharedData.validMesh())
-  {
-    std::cerr << "No mesh to operate on\n";
-    return false;
-  }
-
+  std::vector<std::string> filenames = options.get("names");
   bool center = static_cast<bool>(options.get("center"));
 
-  sharedData.mesh->boundingBox();
-  return sharedData.validMesh();
+  sharedData.meshRegion = MeshUtils::boundingBox(filenames, center);
+  std::cout << "Bounding box:\n" << sharedData.meshRegion;
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// HausdorffDistance
+// ComputeDistance
 ///////////////////////////////////////////////////////////////////////////////
-void HausdorffDistance::buildParser()
+void ComputeDistance::buildParser()
 {
-  const std::string prog = "hausdorff-distance";
+  const std::string prog = "compute-distance";
   const std::string desc = "get the hausdorff distance between two meshes";
   parser.prog(prog).description(desc);
 
@@ -2073,7 +2013,7 @@ void HausdorffDistance::buildParser()
   Command::buildParser();
 }
 
-bool HausdorffDistance::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool ComputeDistance::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validMesh())
   {
@@ -2092,10 +2032,12 @@ bool HausdorffDistance::execute(const optparse::Values &options, SharedCommandDa
   }
   else
   {
-    std::unique_ptr<Mesh> other = std::make_unique<Mesh>(otherMesh);
+    Mesh other(otherMesh);
     std::cout << "Hausdorff Distance:      " << sharedData.mesh->hausdorffDistance(other) << std::endl;
-    std::cout << "Relative Distance from A to B:      " << sharedData.mesh->relativeDistanceAtoB(other) << std::endl;
-    std::cout << "Relative Distance from B to A:      " << sharedData.mesh->relativeDistanceBtoA(other) << std::endl;
+    if (distanceAtoB)
+      std::cout << "Relative Distance from A to B:      " << sharedData.mesh->relativeDistanceAtoB(other) << std::endl;
+    if (distanceBtoA)
+      std::cout << "Relative Distance from B to A:      " << sharedData.mesh->relativeDistanceBtoA(other) << std::endl;
     return sharedData.validMesh();
   }
 }
@@ -2109,29 +2051,31 @@ void RasterizationOrigin::buildParser()
   const std::string desc = "compute origin of volume that would contain the rasterization of each mesh";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--padding").action("store").type("int").set_default(0.0).help("padding value");
+  parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to meshes (must be followed by `--`), ex: \"bounding-box-mesh --names *.vtk -- --center 1\")");
+  parser.add_option("--center").action("store").type("bool").set_default(false).help("flag for centering");
   parser.add_option("--x").action("store").type("double").set_default(1.0).help("x value of spacing");
   parser.add_option("--y").action("store").type("double").set_default(1.0).help("y value of spacing");
   parser.add_option("--z").action("store").type("double").set_default(1.0).help("z value of spacing");
+  parser.add_option("--padding").action("store").type("int").set_default(0.0).help("padding value");
 
   Command::buildParser();
 }
 
 bool RasterizationOrigin::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  if (!sharedData.validMesh())
-  {
-    std::cerr << "No mesh to operate on\n";
-    return false;
-  }
-
+  std::vector<std::string> filenames = options.get("names");
+  bool center = static_cast<bool>(options.get("center"));
   int padding = static_cast<int>(options.get("padding"));
   double x = static_cast<double>(options.get("x"));
   double y = static_cast<double>(options.get("y"));
   double z = static_cast<double>(options.get("z"));
 
-  sharedData.mesh->rasterizationOrigin(padding, makeVector({x, y, z}));
-  return sharedData.validMesh();
+  if (filenames.size() == 1)
+    sharedData.meshRegion = sharedData.mesh->boundingBox();
+  else
+    sharedData.meshRegion = MeshUtils::boundingBox(filenames, center);
+  std::cout << "Rasterization Origin:      " << sharedData.mesh->rasterizationOrigin(sharedData.meshRegion, makeVector({x, y, z}), padding) << std::endl;
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2143,28 +2087,30 @@ void RasterizationSize::buildParser()
   const std::string desc = "compute size of volume that would contain the rasterization of each mesh";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--padding").action("store").type("int").set_default(0.0).help("padding value");
+  parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to meshes (must be followed by `--`), ex: \"bounding-box-mesh --names *.vtk -- --center 1\")");
+  parser.add_option("--center").action("store").type("bool").set_default(false).help("flag for centering");
   parser.add_option("--x").action("store").type("double").set_default(1.0).help("x value of spacing");
   parser.add_option("--y").action("store").type("double").set_default(1.0).help("y value of spacing");
   parser.add_option("--z").action("store").type("double").set_default(1.0).help("z value of spacing");
+  parser.add_option("--padding").action("store").type("int").set_default(0.0).help("padding value");
 
   Command::buildParser();
 }
 
 bool RasterizationSize::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  if (!sharedData.validMesh())
-  {
-    std::cerr << "No mesh to operate on\n";
-    return false;
-  }
-
-  int padding = static_cast<int>(options.get("padding"));
+  std::vector<std::string> filenames = options.get("names");
+  bool center = static_cast<bool>(options.get("center"));
   double x = static_cast<double>(options.get("x"));
   double y = static_cast<double>(options.get("y"));
   double z = static_cast<double>(options.get("z"));
+  int padding = static_cast<int>(options.get("padding"));
 
-  sharedData.mesh->rasterizationSize(padding, makeVector({x, y, z}));
+  if (filenames.size() == 1)
+    sharedData.meshRegion = sharedData.mesh->boundingBox();
+  else
+    sharedData.meshRegion = MeshUtils::boundingBox(filenames, center);
+  std::cout << "Rasterization Size:      " << sharedData.mesh->rasterizationSize(sharedData.meshRegion, makeVector({x, y, z}), padding) << std::endl;
   return sharedData.validMesh();
 }
 
@@ -2205,6 +2151,63 @@ bool CompareMesh::execute(const optparse::Values &options, SharedCommandData &sh
   {
     std::cout << "compare failure\n";
     return false;
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+/// Optimize
+///////////////////////////////////////////////////////////////////////////////
+void OptimizeCommand::buildParser()
+{
+  const std::string prog = "optimize";
+  const std::string desc = "generate a particle system";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("Path to parameter file.");
+
+  Command::buildParser();
+}
+
+bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  const std::string& project_file(static_cast<std::string>(options.get("name")));
+
+  if (project_file.length() == 0)
+  {
+    std::cerr << "Must specify project name\n";
+    return false;
+  }
+
+  bool is_project = StringUtils::hasSuffix(project_file, "xlsx");
+
+  Optimize app;
+  if (is_project) {
+    try {
+      // load spreadsheet project
+      ProjectHandle project = std::make_shared<Project>();
+      project->load(project_file);
+
+      // set up Optimize class based on project parameters
+      OptimizeParameters params(project);
+      params.set_up_optimize(&app);
+
+      bool success = app.Run();
+
+      if (success) {
+        project->save(project_file);
+      }
+
+      return success;
+    }
+    catch (std::exception& e) {
+      std::cerr << "Error: " << e.what() << "\n";
+      return false;
+    }
+  }
+  else {
+    OptimizeParameterFile param;
+    param.load_parameter_file(project_file.c_str(), &app);
+    return app.Run();
   }
 }
 

@@ -40,7 +40,8 @@ Mesh::MeshType Mesh::read(const std::string &pathname)
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
 
   try {
-    if (StringUtils::hasSuffix(pathname, "vtk")) {
+    if (StringUtils::hasSuffix(pathname, "vtk"))
+    {
       auto reader = vtkSmartPointer<vtkPolyDataReader>::New();
       reader->SetFileName(pathname.c_str());
       reader->SetReadAllScalars(1);
@@ -52,28 +53,32 @@ Mesh::MeshType Mesh::read(const std::string &pathname)
       return reader->GetOutput();
     }
 
-    if (StringUtils::hasSuffix(pathname, "vtp")) {
+    if (StringUtils::hasSuffix(pathname, "vtp"))
+    {
       auto reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
       reader->SetFileName(pathname.c_str());
       reader->Update();
       return reader->GetOutput();
     }
 
-    if (StringUtils::hasSuffix(pathname, "stl")) {
+    if (StringUtils::hasSuffix(pathname, "stl"))
+    {
       auto reader = vtkSmartPointer<vtkSTLReader>::New();
       reader->SetFileName(pathname.c_str());
       reader->Update();
       return reader->GetOutput();
     }
 
-    if (StringUtils::hasSuffix(pathname, "obj")) {
+    if (StringUtils::hasSuffix(pathname, "obj"))
+    {
       auto reader = vtkSmartPointer<vtkOBJReader>::New();
       reader->SetFileName(pathname.c_str());
       reader->Update();
       return reader->GetOutput();
     }
 
-    if (StringUtils::hasSuffix(pathname, "ply")) {
+    if (StringUtils::hasSuffix(pathname, "ply"))
+    {
       auto reader = vtkSmartPointer<vtkPLYReader>::New();
       reader->SetFileName(pathname.c_str());
       reader->Update();
@@ -82,8 +87,7 @@ Mesh::MeshType Mesh::read(const std::string &pathname)
 
     throw std::invalid_argument("Unsupported file type");
   }
-  catch (const std::exception &exp)
-  {
+  catch (const std::exception &exp) {
     throw std::invalid_argument("Failed to read: " + pathname);
   }
 }
@@ -94,39 +98,49 @@ Mesh& Mesh::write(const std::string &pathname)
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
 
   try {
-    if (StringUtils::hasSuffix(pathname, "vtk")) {
+    if (StringUtils::hasSuffix(pathname, "vtk"))
+    {
       auto writer = vtkSmartPointer<vtkPolyDataWriter>::New();
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
       writer->Update();
+      return *this;
     }
 
-    if (StringUtils::hasSuffix(pathname, "vtp")) {
+    if (StringUtils::hasSuffix(pathname, "vtp"))
+    {
       auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
       writer->Update();
+      return *this;
     }
 
-    if (StringUtils::hasSuffix(pathname, "stl")) {
+    if (StringUtils::hasSuffix(pathname, "stl"))
+    {
       auto writer = vtkSmartPointer<vtkSTLWriter>::New();
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
       writer->Update();
+      return *this;
     }
 
-    if (StringUtils::hasSuffix(pathname, "obj")) {
+    if (StringUtils::hasSuffix(pathname, "obj"))
+    {
       auto writer = vtkSmartPointer<vtkOBJWriter>::New();
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
       writer->Update();
+      return *this;
     }
 
-    if (StringUtils::hasSuffix(pathname, "ply")) {
+    if (StringUtils::hasSuffix(pathname, "ply"))
+    {
       auto writer = vtkSmartPointer<vtkPLYWriter>::New();
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
       writer->Update();
+      return *this;
     }
 
     throw std::invalid_argument("Unsupported file type");
@@ -307,11 +321,11 @@ Mesh::Region Mesh::boundingBox(bool center) const
   return bbox;
 }
 
-vtkSmartPointer<swHausdorffDistancePointSetFilter> Mesh::distance(const std::unique_ptr<Mesh> &other_mesh, bool target)
+vtkSmartPointer<swHausdorffDistancePointSetFilter> Mesh::distance(const Mesh &other_mesh, bool target)
 {
   vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = vtkSmartPointer<swHausdorffDistancePointSetFilter>::New();
   filter->SetInputData(this->mesh);
-  filter->SetInputData(1, other_mesh->mesh);
+  filter->SetInputData(1, other_mesh.mesh);
 
   if (target)
     filter->SetTargetDistanceMethod(1);
@@ -320,27 +334,28 @@ vtkSmartPointer<swHausdorffDistancePointSetFilter> Mesh::distance(const std::uni
   return filter;
 }
 
-Vector Mesh::hausdorffDistance(const std::unique_ptr<Mesh> &other_mesh, bool target)
+Vector Mesh::hausdorffDistance(const Mesh &other_mesh, bool target)
 {
   vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = distance(other_mesh, target);
-  return filter->GetOutput(0)->GetFieldData()->GetArray("HausdorffDistance")->GetComponent(0,0);
+  return makeVector({filter->GetOutput(0)->GetFieldData()->GetArray("HausdorffDistance")->GetComponent(0,0),
+                     filter->GetOutput(0)->GetFieldData()->GetArray("HausdorffDistance")->GetComponent(0,1),
+                     filter->GetOutput(0)->GetFieldData()->GetArray("HausdorffDistance")->GetComponent(0,2)});
 }
 
-Vector Mesh::relativeDistanceAtoB(const std::unique_ptr<Mesh> &other_mesh, bool target)
+Vector Mesh::relativeDistanceAtoB(const Mesh &other_mesh, bool target)
 {
   vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = distance(other_mesh, target);
   return filter->GetOutputDataObject(0)->GetFieldData()->GetArray("RelativeDistanceAtoB")->GetComponent(0,0);
 }
 
-Vector Mesh::relativeDistanceBtoA(const std::unique_ptr<Mesh> &other_mesh, bool target)
+Vector Mesh::relativeDistanceBtoA(const Mesh &other_mesh, bool target)
 {
   vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = distance(other_mesh, target);
   return filter->GetOutputDataObject(1)->GetFieldData()->GetArray("RelativeDistanceBtoA")->GetComponent(0,0);
 }
 
-Point3 Mesh::rasterizationOrigin(int padding, Vector3 spacing)
+Point3 Mesh::rasterizationOrigin(Mesh::Region region, Vector3 spacing, int padding)
 {
-  Mesh::Region region = boundingBox();
   Point3 origin;
 
   for (int i = 0; i < 3; i++)
@@ -352,11 +367,10 @@ Point3 Mesh::rasterizationOrigin(int padding, Vector3 spacing)
   return origin;
 }
 
-Dims Mesh::rasterizationSize(int padding, Vector3 spacing)
+Dims Mesh::rasterizationSize(Mesh::Region region, Vector3 spacing, int padding)
 {
-  Region region = boundingBox();
   Dims size;
-  Point3 origin = rasterizationOrigin(padding, spacing);
+  Point3 origin = rasterizationOrigin(region, spacing, padding);
   Coord offset = toCoord(origin/toPoint(spacing));
 
   for (int i = 0; i < 3; i++)
@@ -452,6 +466,12 @@ Point3 Mesh::center() const
   double c[3];
   mesh->GetCenter(c);
   return Point3({c[0], c[1], c[2]});
+}
+
+std::ostream& operator<<(std::ostream &os, const Mesh::Region &r)
+{
+  return os << "{\n\tmin: [" << r.min[0] << ", " << r.min[1] << ", " << r.min[2] << "]"
+            << ",\n\tmax: [" << r.max[0] << ", " << r.max[1] << ", " << r.max[2] << "]\n}";
 }
 
 } // shapeworks

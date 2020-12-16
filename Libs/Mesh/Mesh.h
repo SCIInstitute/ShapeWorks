@@ -111,22 +111,22 @@ public:
   Mesh::Region boundingBox(bool center=false) const;
 
   /// compute surface to surface distance
-  vtkSmartPointer<swHausdorffDistancePointSetFilter> distance(const std::unique_ptr<Mesh> &other_mesh, bool target=false);
+  vtkSmartPointer<swHausdorffDistancePointSetFilter> distance(const Mesh &other_mesh, bool target=false);
 
   /// returns surface to surface distance or hausdorff distance
-  Vector hausdorffDistance(const std::unique_ptr<Mesh> &other_mesh, bool target=false);
+  Vector hausdorffDistance(const Mesh &other_mesh, bool target=false);
 
   /// returns relative distance from mesh A to mesh B
-  Vector relativeDistanceAtoB(const std::unique_ptr<Mesh> &other_mesh, bool target=false);
+  Vector relativeDistanceAtoB(const Mesh &other_mesh, bool target=false);
 
   /// returns relative distance from mesh B to mesh A
-  Vector relativeDistanceBtoA(const std::unique_ptr<Mesh> &other_mesh, bool target=false);
+  Vector relativeDistanceBtoA(const Mesh &other_mesh, bool target=false);
 
   /// compute origin of volume that would contain the rasterization of each mesh
-  Point3 rasterizationOrigin(int padding, Vector3 spacing);
+  Point3 rasterizationOrigin(Mesh::Region region, Vector3 spacing=makeVector({1.0,1.0,1.0}), int padding=0);
 
   /// compute size of volume that would contain the rasterization of each mesh
-  Dims rasterizationSize(int padding, Vector3 spacing);
+  Dims rasterizationSize(Mesh::Region region, Vector3 spacing=makeVector({1.0,1.0,1.0}), int padding=0);
 
   // query functions //
 
@@ -159,5 +159,7 @@ private:
 
   MeshType mesh;
 };
+
+std::ostream& operator<<(std::ostream &os, const Mesh::Region &region);
 
 } // shapeworks

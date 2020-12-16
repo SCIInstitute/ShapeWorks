@@ -42,7 +42,7 @@ public:
   static vtkImageData* getVTK(const Image &image);
 
   /// create mesh from distance transform
-  static Mesh& meshFromDT(Image &image, double levelset = 0.0, double reduction = 0.0, double angle = 0.0, int leveliterations = 0, int meshiteraations = 0, bool preservetopology = false);
+  static Mesh& toMesh(Image &image, double levelset = 0.0, double reduction = 0.01, double angle = 30, int leveliterations = 1, int meshiteraations = 1, bool preservetopology = true);
 };
 
 } // shapeworks

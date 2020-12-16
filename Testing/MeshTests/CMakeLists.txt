@@ -7,10 +7,9 @@ add_executable(MeshTests
   )
 
 target_link_libraries(MeshTests
-  tinyxml Mesh vgl vgl_algo Mesh Optimize Utils trimesh2
+  tinyxml Mesh vgl vgl_algo Optimize Utils trimesh2
   ${ITK_LIBRARIES} ${VTK_LIBRARIES}
   Testing
   )
-
 
 add_test(NAME MeshTests COMMAND MeshTests)
