@@ -207,6 +207,7 @@ def applyCropping(outDir, inDataList, path, paddingSize=10):
 
     # find region by computing bounding box
     region = ImageUtils.boundingBox(glob.glob(path))
+    print(region)
     region.pad(paddingSize)
 
     for i in range(len(inDataList)):
@@ -561,9 +562,9 @@ def ClipBinaryVolumes(outDir, segList, cutting_plane_points, printCmd=True):
         outname = rename(inname, outDir, "clipped")
         outListSeg.append(outname)
         img = Image(inname)
-        img.clip(Point(cutting_plane_points[0], cutting_plane_points[1], cutting_plane_points[2]),
-                 Point(cutting_plane_points[3], cutting_plane_points[4], cutting_plane_points[5]),
-                 Point(cutting_plane_points[6], cutting_plane_points[7], cutting_plane_points[8]),0.0).write(outname)
+        img.clip([cutting_plane_points[0], cutting_plane_points[1], cutting_plane_points[2]],
+                 [cutting_plane_points[3], cutting_plane_points[4], cutting_plane_points[5]],
+                 [cutting_plane_points[6], cutting_plane_points[7], cutting_plane_points[8]],0.0).write(outname)
     return outListSeg
 
 def ShowCuttingPlanesOnImage(input_file, cutting_planes, printCmd=True):
