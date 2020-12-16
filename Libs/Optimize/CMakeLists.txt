@@ -23,6 +23,7 @@ target_link_libraries(Optimize
   ${VTK_LIBRARIES}
   vgl
   vgl_algo
+  igl::core
   )
 
 target_include_directories(Optimize PUBLIC
