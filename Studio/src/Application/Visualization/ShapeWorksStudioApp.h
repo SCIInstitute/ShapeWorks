@@ -11,6 +11,10 @@
 
 #include <Data/PreferencesWindow.h>
 
+// Forward Qt class declarations
+class Ui_ShapeWorksStudioApp;
+
+namespace shapeworks {
 class Lightbox;
 
 class GroomTool;
@@ -23,12 +27,7 @@ class Session;
 
 class Visualizer;
 
-namespace shapeworks {
 class SplashScreen;
-}
-
-// Forward Qt class declarations
-class Ui_ShapeWorksStudioApp;
 
 class LightboxLayout;
 
@@ -85,7 +84,6 @@ public Q_SLOTS:
   void on_view_mode_combobox_currentIndexChanged(QString disp_mode);
   void on_auto_view_button_clicked();
 
-
   void handle_pca_changed();
   void handle_slider_update();
 
@@ -113,7 +111,6 @@ public Q_SLOTS:
   void update_feature_map_selection(const QString& feature_map);
   void show_splash_screen();
   void about();
-
 
 private:
 
@@ -145,7 +142,7 @@ private:
 
   void set_view_combo_item_enabled(int item, bool value);
 
-  void disableAllActions();
+  void disable_all_actions();
 
   void enable_possible_actions();
 
@@ -208,3 +205,4 @@ private:
   bool is_loading_{false};
 
 };
+}

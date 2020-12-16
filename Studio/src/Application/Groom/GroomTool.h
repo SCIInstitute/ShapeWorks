@@ -6,37 +6,44 @@
 #include <QSharedPointer>
 #include <QProgressDialog>
 #include <QElapsedTimer>
+#include <QObject>
 
 #include <Groom/QGroom.h>
 
-class Session;
 class Ui_GroomTool;
-class ShapeWorksStudioApp;
 
 Q_DECLARE_METATYPE(std::string)
 
-class GroomTool : public QWidget
-{
-  Q_OBJECT;
+namespace shapeworks {
+
+class Session;
+class ShapeWorksStudioApp;
+
+class GroomTool : public QWidget {
+Q_OBJECT;
 public:
 
   GroomTool();
   ~GroomTool();
 
-  /// set the pointer to the project
+  //! Set the pointer to the session
   void set_session(QSharedPointer<Session> session);
 
-  //! Store settings to session
-  void store_settings();
+  //! activate this tool
+  void activate();
 
-  //! Load settings from session
-  void load_settings();
+  //! Load params from project
+  void load_params();
+  //! Store params to project
+  void store_params();
 
   //! Disable action buttons
   void disable_actions();
-
   //! Enable action buttons
   void enable_actions();
+
+  //! shut down any running threads
+  void shutdown_threads();
 
 Q_SIGNALS:
   void groom_complete();
@@ -49,8 +56,10 @@ public Q_SLOTS:
   void on_antialias_checkbox_stateChanged(int state);
   void on_blur_checkbox_stateChanged(int state);
   void on_autopad_checkbox_stateChanged(int state);
-  void on_skipButton_clicked();
-  void on_restoreDefaults_clicked();
+  void on_skip_button_clicked();
+  void on_restore_defaults_clicked();
+
+  void centering_changed(int state);
 
   //! Run groom tool
   void on_run_groom_button_clicked();
@@ -60,11 +69,16 @@ public Q_SLOTS:
   void handle_error(std::string msg);
 
 private:
+  QList<QThread*> threads_;
 
   Ui_GroomTool* ui_;
   QSharedPointer<Session> session_;
 
-  QGroom* groom_;
+  QSharedPointer<shapeworks::QGroom> groom_;
 
   QElapsedTimer timer_;
+
+  bool groom_is_running_ = false;
+
 };
+}

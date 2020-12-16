@@ -56,7 +56,10 @@ if len(sys.argv)==1:
 
 module = __import__(args.use_case.lower())
 
+# local path for imports, etc
 os.environ["PATH"] = explicit_binpath + os.pathsep + os.environ["PATH"] + os.pathsep + default_binpath
+# sys.path.insert(0, binpath + "/ShapeWorksStudio.app/Contents/MacOS")
+# sys.path.insert(0, binpath)
 
 # make sure the shapeworks executables can be found
 robustifyShapeworksPaths()

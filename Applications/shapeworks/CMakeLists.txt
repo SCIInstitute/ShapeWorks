@@ -11,30 +11,36 @@ set(shapeworks_headers
   Commands.h
   SharedCommandData.h
   )
-add_executable(shapeworks
+add_executable(shapeworks_exe
   ${shapeworks_sources}
   ${shapeworks_headers})
-
-
-target_include_directories(shapeworks PUBLIC
+target_include_directories(shapeworks_exe PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:include>)
-target_link_libraries(shapeworks
+target_link_libraries(shapeworks_exe
+  Utils
   Image
   Common
   Mesh
   Analyze
   Particles
+  Optimize
+  Groom
+  Project
   ${ITK_LIBRARIES}
+  OptimizeLibraries
   )
 
+message(STATUS "opt libs ${OPTIMIZE_LIBRARIES}")
+
 # Install
-set_target_properties(shapeworks PROPERTIES
+set_target_properties(shapeworks_exe PROPERTIES
   PUBLIC_HEADER "${shapeworks_headers}"
+  OUTPUT_NAME shapeworks
   #ENABLE_EXPORTS TRUE  # needed to enable dependency of shapeworksTests (fixme: doesn't work with gcc, but works with Xcode)
   # https://gitlab.kitware.com/cmake/cmake/-/issues/19527
   )
-install(TARGETS shapeworks
+install(TARGETS shapeworks_exe
   ARCHIVE DESTINATION bin
   RUNTIME DESTINATION bin
   PUBLIC_HEADER DESTINATION include
