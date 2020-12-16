@@ -83,7 +83,7 @@ def Run_Pipeline(args):
         elif args.use_subsample:
             indices = sample_idx
         dtFiles = CommonUtils.get_file_list(dtDirecory, ending=".nrrd", indices=indices)
-        [cutting_plane_points] = pickle.load( open( inputDir + "groomed/groomed_pickle.p", "rb" ) )
+        [cutting_plane_points] = pickle.load( open( outputDirectory + "groomed/groomed_pickle.p", "rb" ) )
     else:
         print("\nStep 2. Groom - Data Pre-processing\n")
         if args.interactive:
@@ -207,7 +207,7 @@ def Run_Pipeline(args):
             print("Cutting plane points: ")
             print(cutting_plane_points)
 
-            pickle.dump( [cutting_plane_points], open( inputDir + "groomed/groomed_pickle.p", "wb" ) )
+            pickle.dump( [cutting_plane_points], open( outputDirectory + "groomed/groomed_pickle.p", "wb" ) )
 
             # Compute largest bounding box and apply cropping
             croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", resampledFiles_segmentations, parentDir + "resized/*.resized.nrrd")
@@ -296,7 +296,7 @@ def Run_Pipeline(args):
             print("Cutting plane points: ")
             print(cutting_plane_points)
 
-            pickle.dump( [cutting_plane_points], open( inputDir + "groomed/groomed_pickle.p", "wb" ) )
+            pickle.dump( [cutting_plane_points], open( outputDirectory + "groomed/groomed_pickle.p", "wb" ) )
 
             # Compute largest bounding box and apply cropping
             croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", resampledFiles_segmentations, parentDir + "resized/*.resized.nrrd")
