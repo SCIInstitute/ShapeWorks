@@ -146,6 +146,7 @@ void SplashScreen::populate_recent_projects()
     QListWidgetItem* new_item = new QListWidgetItem(text);
     // set the full file path as user data
     new_item->setData(Qt::UserRole, QVariant(recent_files[i]));
+    new_item->setToolTip(recent_files[i]);
     this->ui_->recent_project_listwidget_->addItem(new_item);
   }
 

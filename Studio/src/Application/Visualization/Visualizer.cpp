@@ -8,6 +8,8 @@
 #include <Data/MeshManager.h>
 #include <QThread>
 
+namespace shapeworks {
+
 const std::string Visualizer::MODE_ORIGINAL_C("Original");
 const std::string Visualizer::MODE_GROOMED_C("Groomed");
 const std::string Visualizer::MODE_RECONSTRUCTION_C("Reconstructed");
@@ -87,12 +89,13 @@ void Visualizer::update_samples()
 //-----------------------------------------------------------------------------
 void Visualizer::display_shape(const vnl_vector<double>& points)
 {
-  std::vector<Point> empty_vectors;
+  std::vector<Shape::Point> empty_vectors;
   this->display_shape(points, empty_vectors);
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::display_shape(const vnl_vector<double>& points, const std::vector<Point>& vectors)
+void Visualizer::display_shape(const vnl_vector<double>& points,
+                               const std::vector<Shape::Point>& vectors)
 {
   QVector<ShapeHandle> shapes;
   shapes.push_back(this->create_display_object(points, vectors));
@@ -125,6 +128,9 @@ vnl_vector<double> Visualizer::getCurrentShape()
 void Visualizer::handle_new_mesh()
 {
   this->lightbox_->handle_new_mesh();
+  if (this->needs_camera_reset_) {
+    this->reset_camera();
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -132,7 +138,6 @@ vtkSmartPointer<vtkPolyData> Visualizer::get_current_mesh()
 {
   auto shapes = this->lightbox_->get_shapes();
   if (shapes.size() > 0) {
-    std::cerr << "returning something nice\n";
     return shapes[0]->get_mesh(this->display_mode_)->get_poly_data();
   }
   return nullptr;
@@ -155,7 +160,7 @@ void Visualizer::display_sample(int i)
 
 //-----------------------------------------------------------------------------
 ShapeHandle Visualizer::create_display_object(const vnl_vector<double>& points,
-                                              const std::vector<Point>& vectors)
+                                              const std::vector<Shape::Point>& vectors)
 {
 
   MeshHandle mesh = this->session_->get_mesh_manager()->get_mesh(points);
@@ -204,6 +209,8 @@ void Visualizer::update_viewer_properties()
         viewer->set_color_scheme(this->preferences_.get_color_scheme());
       }
 
+    this->lightbox_->set_orientation_marker(this->preferences_.get_orientation_marker_type(),
+                                            this->preferences_.get_orientation_marker_corner());
     this->update_lut();
 
     this->lightbox_->redraw();
@@ -327,12 +334,17 @@ void Visualizer::set_mean(const vnl_vector<double>& mean)
 //-----------------------------------------------------------------------------
 void Visualizer::reset_camera()
 {
+  this->needs_camera_reset_ = false;
   if (this->lightbox_) {
     auto trans = this->lightbox_->initPos();
     for (auto a : this->lightbox_->get_viewers()) {
+      if (!a->is_viewer_ready()) {
+        this->needs_camera_reset_ = true;
+      }
       a->reset_camera(trans);
     }
   }
+
   this->update_viewer_properties();
 }
 
@@ -398,4 +410,4 @@ bool Visualizer::get_uniform_feature_range(void)
   return feature_range_uniform_;
 }
 
-
+}

@@ -8,6 +8,8 @@
 
 #include "Optimize.h"
 #include "OptimizeParameterFile.h"
+#include <Libs/Project/Project.h>
+#include <Libs/Optimize/OptimizeParameters.h>
 #include "ParticleShapeStatistics.h"
 
 using namespace shapeworks;
@@ -289,4 +291,68 @@ TEST(OptimizeTests, sphere_constraint_test) {
   // and higher modes should contain very little
   ASSERT_GT(values[values.size() - 1], 2500);
   ASSERT_LT(values[values.size() - 2], 150);
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, embedded_python_test) {
+  pythonEnvSetup();
+
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/simple");
+  chdir(test_location.c_str());
+
+  // run with parameter file
+  std::string paramfile = std::string("python_embedded.xml");
+  Optimize app;
+  OptimizeParameterFile param;
+  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
+  bool result = app.Run();
+
+  ASSERT_TRUE(result);
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, project_test) {
+
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sphere");
+  chdir(test_location.c_str());
+
+  // prep/groom
+  prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
+  prep_distance_transform("sphere20.nrrd", "sphere20_DT.nrrd");
+  prep_distance_transform("sphere30.nrrd", "sphere30_DT.nrrd");
+  prep_distance_transform("sphere40.nrrd", "sphere40_DT.nrrd");
+
+  // make sure we clean out at least one necessary file to make sure we re-run
+  std::remove("output/sphere10_DT_world.particles");
+
+  Optimize app;
+
+  // set up optimizer from project
+  ProjectHandle project = std::make_shared<Project>();
+  project->load("optimize.xlsx");
+  OptimizeParameters params(project);
+  params.set_up_optimize(&app);
+  app.SetOutputDir("output");
+
+  // run optimize
+  bool success = app.Run();
+  ASSERT_TRUE(success);
+
+  // compute stats
+  ParticleShapeStatistics stats;
+  stats.ReadPointFiles("analyze.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+
+  // check the first mode of variation.
+  // If Procrustes scaling is working, this should be small.
+  // Otherwise it is quite large (>4000).
+  double value = values[values.size() - 1];
+  ASSERT_LT(value, 100);
 }

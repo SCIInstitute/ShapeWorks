@@ -3,6 +3,7 @@ REM update anaconda
 call conda config --add channels anaconda
 call conda config --add channels conda-forge
 
+call conda activate base
 call conda update --yes -n base -c defaults conda
 call conda update --yes --all
 
@@ -18,6 +19,7 @@ call conda install --yes numpy=1.17.4
 call conda install --yes scikit-learn=0.22.1
 call conda install --yes gtest=1.10.0 cmake-3.15.5
 call conda install --yes pytorch torchvision cpuonly -c pytorch
+call conda install --yes notebook=6.1.5
 
 REM reactivate shapeworks environment
 call conda activate base
@@ -41,6 +43,24 @@ call pip install Python/DocumentationUtilsPackage
 call pip install Python/DataAugmentationUtilsPackage
 call pip install Python/DeepSSMUtilsPackage
   
+REM installs for jupyter notebooks
+call pip install nbstripout
+call pip install pyvista
+call pip install ipyvtk_simple
+call pip install ipywidgets
+call pip install itkwidgets
+call pip install mkdocs-jupyter
+
+REM for spell check markdown cells in jupyter notebooks and table of content
+call conda install --yes jupyter_contrib_nbextensions
+call jupyter contrib nbextension install --user
+call jupyter nbextension enable spellchecker/main
+call jupyter nbextension enable toc2/main
+
+REM installing nbstripout to strip out notebooks cell outputs before committing 
+call nbstripout --install
+call nbstripout --install --attributes .gitattributes
+
 call conda info
 
 

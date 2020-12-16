@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(ClipVolume::getCommand());
   shapeworks.addCommand(ReflectVolume::getCommand());
   shapeworks.addCommand(SetOrigin::getCommand());
+  shapeworks.addCommand(SetSpacing::getCommand());
   shapeworks.addCommand(WarpImage::getCommand());
   shapeworks.addCommand(Compare::getCommand());
   shapeworks.addCommand(ReadParticleSystem::getCommand());
@@ -55,6 +56,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(WriteMesh::getCommand());
   shapeworks.addCommand(Coverage::getCommand());
   shapeworks.addCommand(OptimizeCommand::getCommand());
+  shapeworks.addCommand(GroomCommand::getCommand());
 
   try {
     return shapeworks.run(argc, argv);

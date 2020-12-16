@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<number_of_particles> 32 </number_of_particles>
+<iterations_per_split> 5 </iterations_per_split>
+<starting_regularization> 1000.0 </starting_regularization>
+<ending_regularization> 1.0 </ending_regularization>
+<optimization_iterations> 5 </optimization_iterations>
+<verbosity>3</verbosity>
+<procrustes_scaling>0</procrustes_scaling>
+<procrustes_interval>0</procrustes_interval>
+<initial_relative_weighting>0.05</initial_relative_weighting>
+<relative_weighting>0.01</relative_weighting>
+<mesh_based_attributes>1</mesh_based_attributes>
+<use_xyz>1</use_xyz>
+<use_normals>0</use_normals>
+<output_dir>output/</output_dir>
+<attribute_scales>
+100.0
+100.0
+100.0
+</attribute_scales>
+
+<inputs>
+  sphere_DT.nrrd
+  sphere_DT.nrrd
+</inputs>
+
+<python_filename>python_embedded.py</python_filename>
+

@@ -71,6 +71,13 @@ public:
 private:
 };
 
+class GroomCommandGroup : public Command
+{
+public:
+  const std::string type() override { return "Groom"; }
+
+private:
+};
 
 class ParticleSystemCommand : public Command
 {
