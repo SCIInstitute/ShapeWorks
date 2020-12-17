@@ -5,7 +5,6 @@
 #include <exception>
 #include "Executable.h"
 #include "Commands.h"
-#include <tbb/task_scheduler_init.h>
 
 using namespace shapeworks;
 
@@ -59,7 +58,6 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(GroomCommand::getCommand());
 
   try {
-    // tbb::task_scheduler_init init(1);
     return shapeworks.run(argc, argv);
   } catch (const std::exception &e) {
     std::cout << e.what() << std::endl;
