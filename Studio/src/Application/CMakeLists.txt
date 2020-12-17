@@ -193,8 +193,8 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   tinyxml
   Alignment
   Analyze
+  OptimizeLibraries
   Groom
-  Optimize
   Utils
   Project
   xlnt::xlnt

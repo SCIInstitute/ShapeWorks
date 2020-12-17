@@ -57,3 +57,10 @@ __pycache__/
 
 # mkdocs generated site
 site/
+
+# notebooks related
+.ipynb_checkpoints
+
+# data and output dirs
+Data/
+Output/

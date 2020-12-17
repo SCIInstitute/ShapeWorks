@@ -20,7 +20,7 @@ public:
   using PixelType = float;
   using ImageType = itk::Image<PixelType, 3>;
 
-  /// Logical region of an image (may be negative for relative regions to a given location in an image).
+  /// logical region of an image (may be negative for relative regions to a given location in an image).
   struct Region
   {
     Coord min = Coord({ 1000000000, 1000000000, 1000000000 });
@@ -135,13 +135,13 @@ public:
   /// helper identical to setOrigin(image.center()) changing origin (in the image header) to physcial center of the image
   Image& recenter();
 
-  /// Resamples by applying transform then sampling from given origin along direction axes at spacing physical units per pixel for dims pixels using specified interpolator
+  /// resamples by applying transform then sampling from given origin along direction axes at spacing physical units per pixel for dims pixels using specified interpolator
   Image& resample(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);
 
-  /// Resamples image using new physical spacing, updating logical dims to keep all image data for this spacing
-  Image& resample(const Vector3& physicalSpacing, InterpolationType interp = Linear);
+  /// resamples image using new physical spacing, updating logical dims to keep all image data for this spacing
+  Image& resample(const Vector& physicalSpacing, InterpolationType interp = Linear);
   
-  /// Changes logical image size, computing new physical spacing based on this size (i.e., physical image size remains the same)
+  /// changes logical image size, computing new physical spacing based on this size (i.e., physical image size remains the same)
   Image& resize(Dims logicalDims, InterpolationType interp = Linear);
 
   /// pads an image in all directions with constant value
@@ -151,7 +151,7 @@ public:
   Image& pad(int padx, int pady, int padz, PixelType value = 0.0);
 
   /// helper to simply translate image
-  Image& translate(const Vector3 &v, InterpolationType interp = Linear);
+  Image& translate(const Vector3 &v);
 
   /// helper to simply scale image around center (not origin)
   Image& scale(const Vector3 &v);
@@ -162,7 +162,7 @@ public:
   /// applies the given transformation to the image by using resampling filter
   Image& applyTransform(const TransformPtr transform, InterpolationType interp = Linear);
 
-  /// applies the given transformation to the image by using resampling filter
+  /// applies the given transformation to the image by using resampling filter with new origin, dims, spacing and direction values
   Image& applyTransform(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);
 
   /// extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image
@@ -172,7 +172,7 @@ public:
   Image& closeHoles(const PixelType foreground = 0.0);
   
   /// threholds image into binary label based on upper and lower intensity bounds given by user
-  Image& binarize(PixelType minval = 0.0, PixelType maxval = std::numeric_limits<PixelType>::max(), PixelType inner_value = 1.0, PixelType outer_value = 0.0);
+  Image& binarize(PixelType minVal = 0.0, PixelType maxVal = std::numeric_limits<PixelType>::max(), PixelType innerVal = 1.0, PixelType outerVal = 0.0);
 
   /// computes distance transform volume from a (preferably antialiased) binary image using the specified isovalue
   Image& computeDT(PixelType isoValue = 0.0);
@@ -204,11 +204,14 @@ public:
   /// sets values on the back side of cutting plane (normal n containing point p) to val (default 0.0)
   Image& clip(const Vector &n, const Point &q, const PixelType val = 0.0);
 
-  /// sets the iamge origin in physical space to the given value
+  /// reflect image around the plane specified by the logical center and the given normal (ex: <1,0,0> reflects across YZ-plane).
+  Image& reflect(const Axis& axis);
+
+  /// sets the image origin in physical space to the given value
   Image& setOrigin(Point3 origin = Point3({0, 0, 0}));
 
-  /// Reflect image around the plane specified by the logical center and the given normal (ex: <1,0,0> reflects across YZ-plane).
-  Image& reflect(const Axis& axis);
+  /// sets the image spacing to the given value
+  Image& setSpacing(Vector3 spacing = makeVector({1.0, 1.0, 1.0}));
 
   // query functions //
 
@@ -231,13 +234,13 @@ public:
   ImageType::DirectionType coordsys() const { return image->GetDirection(); };
 
   /// returns average physical coordinate of pixels in range (minval, maxval]
-  Point3 centerOfMass(PixelType minval = 0.0, PixelType maxval = 1.0) const;  
+  Point3 centerOfMass(PixelType minVal = 0.0, PixelType maxVal = 1.0) const;
 
   /// computes the logical coordinates of the largest region of data <= the given isoValue
-  Image::Region boundingBox(PixelType isoValue = 1.0) const;
+  Image::Region boundingBox(PixelType isovalue = 1.0) const;
 
   /// converts from pixel coordinates to physical space
-  Point3 logicalToPhysical(const Coord &v) const;
+  Point3 logicalToPhysical(const Coord &c) const;
 
   /// converts from a physical coordinate to a logical coordinate
   Coord physicalToLogical(const Point3 &p) const;

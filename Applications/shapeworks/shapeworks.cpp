@@ -46,6 +46,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(ClipImage::getCommand());
   shapeworks.addCommand(ReflectImage::getCommand());
   shapeworks.addCommand(SetOrigin::getCommand());
+  shapeworks.addCommand(SetSpacing::getCommand());
   shapeworks.addCommand(WarpImage::getCommand());
   shapeworks.addCommand(CompareImage::getCommand());
   shapeworks.addCommand(MeshFromDT::getCommand());

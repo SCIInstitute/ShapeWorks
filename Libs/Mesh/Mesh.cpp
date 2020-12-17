@@ -468,6 +468,12 @@ Point3 Mesh::center() const
   return Point3({c[0], c[1], c[2]});
 }
 
+std::ostream& operator<<(std::ostream &os, const Mesh& mesh)
+{
+  return os << "{\n\tnumber of vertices: " << mesh.numVertices()
+            << ",\n\tnumber of faces: " << mesh.numFaces() << "\n}";
+}
+
 std::ostream& operator<<(std::ostream &os, const Mesh::Region &r)
 {
   return os << "{\n\tmin: [" << r.min[0] << ", " << r.min[1] << ", " << r.min[2] << "]"

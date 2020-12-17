@@ -125,7 +125,6 @@ def samplemesh(inMeshList, num_sample, printCmd=False):
     print("###########################################\n")
     return samples_idx
 
-
 # make sure the shapeworks executables can be found, adding path to osx studio app bundle if necessary
 def robustifyShapeworksPaths():
     swpath = shutil.which("shapeworks")

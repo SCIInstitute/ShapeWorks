@@ -1,4 +1,3 @@
-
 add_library(Groom STATIC
   Groom.cpp
   GroomParameters.cpp
@@ -6,8 +5,9 @@ add_library(Groom STATIC
 
 target_link_libraries(Groom
   Image
-  Optimize
   Mesh
+  TBB::tbb
+  Utils
   )
 
 target_include_directories(Groom PUBLIC

@@ -33,6 +33,7 @@ COMMAND_DECLARE(ICPRigid, ImageCommand);
 COMMAND_DECLARE(ClipImage, ImageCommand);
 COMMAND_DECLARE(ReflectImage, ImageCommand);
 COMMAND_DECLARE(SetOrigin, ImageCommand);
+COMMAND_DECLARE(SetSpacing, ImageCommand);
 COMMAND_DECLARE(WarpImage, ImageCommand);
 COMMAND_DECLARE(CompareImage, ImageCommand);
 COMMAND_DECLARE(NegateImage, ImageCommand);

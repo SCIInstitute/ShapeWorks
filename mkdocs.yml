@@ -5,6 +5,7 @@ edit_uri: edit/master/docs/ # should be changed to master branch
 site_description: The official documentation of ShapeWorks 
 site_author: Shireen Elhabian et al.
 use_directory_urls: false
+docs_dir: 'docs/'
 copyright: Copyright © 1998 - 2020 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.
 google_analytics: ['UA-36723568-3', 'mkdocs.org']
 
@@ -29,8 +30,16 @@ nav:
    - 'New in ShapeWorksStudio':              'new/new-studio.md'
    - 'ShapeWorks Takes ~85% Less Memory':    'new/openvdb.md'
    - 'ShapeWorks Directly on Meshes':        'new/sw-meshes.md'
-   - 'ShapeWorks API':                       'new/shapeworks-api.md'
+   - 'ShapeWorks Command':                   'new/shapeworks-command.md'
    - 'Shape Model Evaluation':               'new/ssm-eval.md'
+   - 'ShapeWorks in Python':                 'new/shapeworks-python.md'
+- ShapeWorks in Python:
+   - 'Getting Started with Juypter Notebooks' :       'notebooks/getting-started-with-jupyter-notebooks.ipynb'  
+   - 'Setting up ShapeWorks Environment' :            'notebooks/setting-up-shapeworks-environment.ipynb'
+   - 'Getting Started with Segmentations' :           'notebooks/getting-started-with-segmentations.ipynb'  
+   - 'Getting Started with Meshes' :                  'notebooks/getting-started-with-meshes.ipynb'
+   - 'Getting Started with Exploring Segmentations' : 'notebooks/getting-started-with-exploring-segmentations.ipynb'
+   - 'Getting Started with Grooming Segmentations' :  'notebooks/getting-started-with-grooming-segmentations.ipynb'
 - Deep Learning & SSMs:
    - 'Data Augmentation for Deep Learning':  'deep-learning/data-augmentation.md'
    - 'SSMs Directly from Images':            'deep-learning/deep-ssm.md'
@@ -96,3 +105,6 @@ extra_javascript:
 
 plugins:
   - search
+  - mkdocs-jupyter:
+      execute: False
+      include_source: True

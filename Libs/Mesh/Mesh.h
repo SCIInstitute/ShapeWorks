@@ -136,6 +136,12 @@ public:
   /// center of mass of mesh
   Point3 centerOfMass() const;
 
+  /// number of vertices
+  vtkIdType numVertices() const { return mesh->GetNumberOfVerts(); }
+
+  /// number of faces
+  vtkIdType numFaces() const { return mesh->GetNumberOfCells(); }
+
   /// compare if points in two meshes are equal
   bool compare_points_equal(const Mesh& other_mesh) const;
 
@@ -145,10 +151,7 @@ public:
   /// compares this with another mesh by comparing points
   bool operator==(const Mesh& other) const { return compare_points_equal(other); }
 
-  static std::vector<std::string> get_supported_types()
-  {
-    return {"vtk", "vtp", "ply", "stl", "obj"};
-  }
+  static std::vector<std::string> get_supported_types() { return {"vtk", "vtp", "ply", "stl", "obj"}; }
 
 private:
   friend struct SharedCommandData;
@@ -160,6 +163,8 @@ private:
   MeshType mesh;
 };
 
+/// stream insertion operators for Mesh and Mesh::Region
+std::ostream& operator<<(std::ostream &os, const Mesh& mesh);
 std::ostream& operator<<(std::ostream &os, const Mesh::Region &region);
 
 } // shapeworks

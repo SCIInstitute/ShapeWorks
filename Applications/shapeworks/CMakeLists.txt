@@ -14,7 +14,6 @@ set(shapeworks_headers
 add_executable(shapeworks_exe
   ${shapeworks_sources}
   ${shapeworks_headers})
-
 target_include_directories(shapeworks_exe PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:include>)
@@ -29,7 +28,10 @@ target_link_libraries(shapeworks_exe
   Groom
   Project
   ${ITK_LIBRARIES}
+  OptimizeLibraries
   )
+
+message(STATUS "opt libs ${OPTIMIZE_LIBRARIES}")
 
 # Install
 set_target_properties(shapeworks_exe PROPERTIES
