@@ -110,17 +110,17 @@ public:
   /// computes bounding box of current mesh
   Mesh::Region boundingBox(bool center=false) const;
 
-  /// compute surface to surface distance
-  vtkSmartPointer<swHausdorffDistancePointSetFilter> distance(const Mesh &other_mesh, bool target=false);
+  /// compute surface to surface distance using a filter
+  vtkSmartPointer<swHausdorffDistancePointSetFilter> computeDistance(const Mesh &other_mesh, bool target=false);
 
   /// returns surface to surface distance or hausdorff distance
-  Vector hausdorffDistance(const Mesh &other_mesh, bool target=false);
+  double hausdorffDistance(const Mesh &other_mesh, bool target=false);
 
   /// returns relative distance from mesh A to mesh B
-  Vector relativeDistanceAtoB(const Mesh &other_mesh, bool target=false);
+  double relativeDistanceAtoB(const Mesh &other_mesh, bool target=false);
 
   /// returns relative distance from mesh B to mesh A
-  Vector relativeDistanceBtoA(const Mesh &other_mesh, bool target=false);
+  double relativeDistanceBtoA(const Mesh &other_mesh, bool target=false);
 
   /// compute origin of volume that would contain the rasterization of each mesh
   Point3 rasterizationOrigin(Mesh::Region region, Vector3 spacing=makeVector({1.0,1.0,1.0}), int padding=0);

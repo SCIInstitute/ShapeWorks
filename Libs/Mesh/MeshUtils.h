@@ -23,6 +23,9 @@ public:
 
   /// calculate bounding box incrementally for meshes
   static Mesh::Region boundingBox(std::vector<std::string> &filenames, bool center = false);
+
+  /// calculate bounding box incrementally for shapework meshes
+  static Mesh::Region boundingBox(std::vector<Mesh> &meshes, bool center = false);
 };
 
 } // shapeworks

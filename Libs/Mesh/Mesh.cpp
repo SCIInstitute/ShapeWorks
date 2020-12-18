@@ -27,12 +27,6 @@
 #include <vtkClipPolyData.h>
 #include <vtkCenterOfMass.h>
 
-static bool compare_double(double a, double b)
-{
-  const double EPSILON = 1e-1;
-  return fabs(a - b) < EPSILON;
-}
-
 namespace shapeworks {
 
 Mesh::MeshType Mesh::read(const std::string &pathname)
@@ -46,10 +40,6 @@ Mesh::MeshType Mesh::read(const std::string &pathname)
       reader->SetFileName(pathname.c_str());
       reader->SetReadAllScalars(1);
       reader->Update();
-      vtkSmartPointer<vtkPolyData> poly_data = reader->GetOutput();
-      if (poly_data->GetNumberOfPolys() < 1) {
-        throw std::invalid_argument("Failed to read: " + pathname);
-      }
       return reader->GetOutput();
     }
 
@@ -306,8 +296,8 @@ Mesh::Region Mesh::boundingBox(bool center) const
 
   for(int i = 0; i < 3; i++)
   {
-    bbox.min[i] = bb[2*i];
-    bbox.max[i] = bb[2*i+1];
+    bbox.min[i] = floor(bb[2*i]);
+    bbox.max[i] = ceil(bb[2*i+1]);
   }
 
   if (center)
@@ -321,7 +311,7 @@ Mesh::Region Mesh::boundingBox(bool center) const
   return bbox;
 }
 
-vtkSmartPointer<swHausdorffDistancePointSetFilter> Mesh::distance(const Mesh &other_mesh, bool target)
+vtkSmartPointer<swHausdorffDistancePointSetFilter> Mesh::computeDistance(const Mesh &other_mesh, bool target)
 {
   vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = vtkSmartPointer<swHausdorffDistancePointSetFilter>::New();
   filter->SetInputData(this->mesh);
@@ -334,23 +324,21 @@ vtkSmartPointer<swHausdorffDistancePointSetFilter> Mesh::distance(const Mesh &ot
   return filter;
 }
 
-Vector Mesh::hausdorffDistance(const Mesh &other_mesh, bool target)
+double Mesh::hausdorffDistance(const Mesh &other_mesh, bool target)
 {
-  vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = distance(other_mesh, target);
-  return makeVector({filter->GetOutput(0)->GetFieldData()->GetArray("HausdorffDistance")->GetComponent(0,0),
-                     filter->GetOutput(0)->GetFieldData()->GetArray("HausdorffDistance")->GetComponent(0,1),
-                     filter->GetOutput(0)->GetFieldData()->GetArray("HausdorffDistance")->GetComponent(0,2)});
+  vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = computeDistance(other_mesh, target);
+  return filter->GetOutput(0)->GetFieldData()->GetArray("HausdorffDistance")->GetComponent(0,0);
 }
 
-Vector Mesh::relativeDistanceAtoB(const Mesh &other_mesh, bool target)
+double Mesh::relativeDistanceAtoB(const Mesh &other_mesh, bool target)
 {
-  vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = distance(other_mesh, target);
+  vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = computeDistance(other_mesh, target);
   return filter->GetOutputDataObject(0)->GetFieldData()->GetArray("RelativeDistanceAtoB")->GetComponent(0,0);
 }
 
-Vector Mesh::relativeDistanceBtoA(const Mesh &other_mesh, bool target)
+double Mesh::relativeDistanceBtoA(const Mesh &other_mesh, bool target)
 {
-  vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = distance(other_mesh, target);
+  vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = computeDistance(other_mesh, target);
   return filter->GetOutputDataObject(1)->GetFieldData()->GetArray("RelativeDistanceBtoA")->GetComponent(0,0);
 }
 
@@ -361,7 +349,7 @@ Point3 Mesh::rasterizationOrigin(Mesh::Region region, Vector3 spacing, int paddi
   for (int i = 0; i < 3; i++)
   {
     region.min[i] -= padding * spacing[i];
-    origin[i] = floor(region.min[i]) - 1;
+    origin[i] = region.min[i] - 1;
   }
 
   return origin;

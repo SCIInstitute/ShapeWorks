@@ -86,6 +86,13 @@ bool axis_is_valid(const Axis &axis);
 /// convert degrees to radians
 double degToRad(const double deg);
 
+// compare double
+static bool compare_double(double a, double b)
+{
+  const double EPSILON = 1e-1;
+  return fabs(a - b) < EPSILON;
+}
+
 /// Handy functions to perform operations on Points and Vectors with which ITK is more restrictive
 class Image;
 

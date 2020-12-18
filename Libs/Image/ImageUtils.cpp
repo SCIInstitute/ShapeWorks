@@ -51,9 +51,7 @@ Image::Region ImageUtils::boundingBox(std::vector<Image> &images, Image::PixelTy
   for (auto img : images)
   {
     if (img.dims() != dims)
-    {
       throw std::invalid_argument("Image sizes do not match");
-    }
 
     bbox.grow(img.boundingBox(isoValue));
   }

@@ -70,19 +70,19 @@ int main(int argc,char** argv)
     vtkAlgorithm* readerA;
     vtkAlgorithm* readerB;
 
-    if( xmlReader )
-    {
-        vtkXMLPolyDataReader* xmlReaderA = vtkXMLPolyDataReader::New();
-        readerA = xmlReaderA;
+    // if( xmlReader )
+    // {
+    //     vtkXMLPolyDataReader* xmlReaderA = vtkXMLPolyDataReader::New();
+    //     readerA = xmlReaderA;
 
-        vtkXMLPolyDataReader* xmlReaderB = vtkXMLPolyDataReader::New();
-        readerB = xmlReaderB;
+    //     vtkXMLPolyDataReader* xmlReaderB = vtkXMLPolyDataReader::New();
+    //     readerB = xmlReaderB;
 
-        xmlReaderA->SetFileName(argv[inputAParam]);
-        xmlReaderB->SetFileName(argv[inputBParam]);
-    }
-    else
-    {
+    //     xmlReaderA->SetFileName(argv[inputAParam]);
+    //     xmlReaderB->SetFileName(argv[inputBParam]);
+    // }
+    // else
+    // {
         vtkPolyDataReader* legacyReaderA = vtkPolyDataReader::New();
         readerA = legacyReaderA;
 
@@ -91,7 +91,7 @@ int main(int argc,char** argv)
 
         legacyReaderA->SetFileName(argv[inputAParam]);
         legacyReaderB->SetFileName(argv[inputBParam]);
-    }
+    // }
 
     vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = vtkSmartPointer<swHausdorffDistancePointSetFilter>::New();
     filter->SetInputConnection(readerA->GetOutputPort());
