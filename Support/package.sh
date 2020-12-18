@@ -82,15 +82,15 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     # copy platform plugins for View2
     cp -a ShapeWorksStudio.app/Contents/PlugIns .
 
+    for i in *.so ; do
+	install_name_tool -add_rpath "@loader_path/../lib" $i
+	install_name_tool -add_rpath $QT_LOADER_LIB_LOCATION $i
+    done
+
     for i in * ; do
 	install_name_tool -add_rpath $QT_LIB_LOCATION $i
     done
 
-    for i in *.so ; do
-	install_name_tool -add_rpath $QT_LOADER_LIB_LOCATION $i
-	install_name_tool -add_rpath "@loader_path/../lib" $i
-    done
-	
     cd ../lib
     # Copy libraries from anaconda
     conda_libs="libpython"
@@ -101,9 +101,8 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     for i in *.dylib ; do
 	install_name_tool -change ${BASE_LIB}/libitkgdcmopenjp2-5.0.1.dylib @rpath/libitkgdcmopenjp2-5.0.1.dylib $i
     done
-
     install_name_tool -id @rpath/libitkgdcmopenjp2-5.0.1.dylib libitkgdcmopenjp2-5.0.1.dylib
-    
+
     cd ..
 else
     # Copy libraries from anaconda
