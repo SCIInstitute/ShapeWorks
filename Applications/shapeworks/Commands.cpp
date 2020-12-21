@@ -1688,7 +1688,7 @@ void Smooth::buildParser()
   const std::string desc = "applies laplacian smoothing";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--iterations").action("store").type("int").set_default(1).help("Number of iterations [default: 1].");
+  parser.add_option("--iterations").action("store").type("int").set_default(0).help("Number of iterations [default: 0].");
   parser.add_option("--relaxation").action("store").type("double").set_default(0.0).help("Amount of displacement for a vertex to move in each iteration [default: 0.0].");
 
   Command::buildParser();
