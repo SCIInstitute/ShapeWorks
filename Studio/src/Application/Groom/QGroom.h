@@ -1,18 +1,32 @@
 #pragma once
 
-#include <Groom/ShapeWorksGroom.h>
 #include <QObject>
 
-class QGroom : public QObject, public ShapeWorksGroom {
-  Q_OBJECT;
+#ifndef Q_MOC_RUN
+#include <Libs/Groom/Groom.h>
+#endif
+
+namespace shapeworks {
+
+//! Qt Wrapper for Groom
+/*!
+ * The QGroom class wraps the Groom class to provide a QObject with a progress signal
+ *
+ */
+class QGroom : public QObject, public Groom {
+
+Q_OBJECT;
+
 public:
-  QGroom(QObject* parent = nullptr,
-         std::vector<ImageType::Pointer> inputs = std::vector<ImageType::Pointer>(),
-         double background = 0., double foreground = 0.,
-         double sigma = 2.0, size_t padding = 0,
-         size_t iterations = 100, bool verbose = false);
-signals:
+
+  QGroom(ProjectHandle project);
+
+protected:
+  // override update_progress to emit q_signal
+  void update_progress();
+
+Q_SIGNALS:
   void progress(int);
-public:
-  virtual void run();
+
 };
+}

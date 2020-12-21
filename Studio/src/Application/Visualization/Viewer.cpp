@@ -31,6 +31,8 @@
 #include <Visualization/Viewer.h>
 #include <Visualization/Visualizer.h>
 
+namespace shapeworks {
+
 //-----------------------------------------------------------------------------
 Viewer::Viewer()
 {
@@ -45,10 +47,10 @@ Viewer::Viewer()
   //this->surface_lut_->SetColorSpaceToHSV();
 
   this->surface_lut_ = vtkSmartPointer<vtkLookupTable>::New();
-  this->surface_lut_->SetTableRange (0, 1);
-  this->surface_lut_->SetHueRange (0.667, 0.0);
-  this->surface_lut_->SetSaturationRange (1, 1);
-  this->surface_lut_->SetValueRange (1, 1);
+  this->surface_lut_->SetTableRange(0, 1);
+  this->surface_lut_->SetHueRange(0.667, 0.0);
+  this->surface_lut_->SetSaturationRange(1, 1);
+  this->surface_lut_->SetValueRange(1, 1);
   this->surface_lut_->SetIndexedLookup(false);
   this->surface_lut_->Build();
 
@@ -220,7 +222,7 @@ void Viewer::set_visualizer(Visualizer* visualizer)
 //-----------------------------------------------------------------------------
 void Viewer::display_vector_field()
 {
-  std::vector<Point> vecs = this->shape_->get_vectors();
+  std::vector<Shape::Point> vecs = this->shape_->get_vectors();
   if (vecs.empty()) {
     // restore things to normal
     this->glyphs_->SetSourceConnection(sphere_source_->GetOutputPort());
@@ -300,7 +302,7 @@ void Viewer::display_vector_field()
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::compute_point_differences(const std::vector<Point>& points,
+void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
                                        vtkSmartPointer<vtkFloatArray> magnitudes,
                                        vtkSmartPointer<vtkFloatArray> vectors)
 {
@@ -495,7 +497,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
 
     auto feature_map = this->visualizer_->get_feature_map();
 
-    std::vector<Point> vecs = this->shape_->get_vectors();
+    std::vector<Shape::Point> vecs = this->shape_->get_vectors();
     if (!vecs.empty()) {
       feature_map = "";
     }
@@ -815,7 +817,7 @@ void Viewer::set_loading_screen(vtkSmartPointer<vtkImageData> loading_screen)
 //-----------------------------------------------------------------------------
 void Viewer::draw_exclusion_spheres(QSharedPointer<Shape> object)
 {
-  QList<Point> centers = object->get_exclusion_sphere_centers();
+  QList<Shape::Point> centers = object->get_exclusion_sphere_centers();
   QList<double> radii = object->get_exclusion_sphere_radii();
 
   int num_points = centers.size();
@@ -837,7 +839,7 @@ void Viewer::draw_exclusion_spheres(QSharedPointer<Shape> object)
     this->exclusion_sphere_points_->SetNumberOfPoints(num_points);
 
     for (int i = 0; i < num_points; i++) {
-      Point p = centers[i];
+      Shape::Point p = centers[i];
       scalars->InsertValue(i, radii[i]);
       this->exclusion_sphere_points_->InsertPoint(i, p.x, p.y, p.z);
     }
@@ -927,4 +929,5 @@ void Viewer::update_feature_range(double* range)
 QSharedPointer<Shape> Viewer::get_shape()
 {
   return this->shape_;
+}
 }

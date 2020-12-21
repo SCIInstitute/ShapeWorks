@@ -16,13 +16,14 @@ SurfaceReconstructor::SurfaceReconstructor()
 void SurfaceReconstructor::initializeReconstruction(
   std::vector<std::vector<itk::Point<double>>> local_pts,
   std::vector<std::vector<itk::Point<double>>> global_pts,
-  std::vector<ImageType::Pointer> distance_transforms,
+  std::vector<std::string> distance_transforms,
   double maxAngle, float decimationPercent, int numClusters)
 {
 
   this->reconstructor_.setDecimation(decimationPercent);
   this->reconstructor_.setMaxAngle(maxAngle);
   this->reconstructor_.setNumClusters(numClusters);
+  this->reconstructor_.setMeanBeforeWarpEnabled(false);
 
   // compute the dense shape
   vtkSmartPointer<vtkPolyData> denseMean = this->reconstructor_.getDenseMean(local_pts, global_pts,

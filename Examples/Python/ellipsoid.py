@@ -27,18 +27,23 @@ def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
-
+    # Get data
     datasetName = "ellipsoid-v0"
     outputDirectory = "Output/ellipsoid/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
-    CommonUtils.get_data(datasetName, outputDirectory)
-
+    CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
     fileList = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))
-    
+    # Select data for tiny test
     if args.tiny_test:
         args.use_single_scale = 1
-        fileList = fileList[0:10]
+        fileList = fileList[:3]
+    # Select data if using subsample
+    if args.use_subsample:
+        sample_idx = sampledata(fileList, int(args.num_subsample))
+        fileList = [fileList[i] for i in sample_idx]
+    else:
+        sample_idx = []
 
     """
     ## GROOM : Data Pre-processing 
@@ -51,42 +56,41 @@ def Run_Pipeline(args):
     -- Largest Bounding Box and Cropping 
     For a detailed explanation of grooming steps see: /docs/workflow/groom.md
     """
-
-    print("\nStep 2. Groom - Data Pre-processing\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
-
-    groomDir = outputDirectory + 'groomed/'
-    if not os.path.exists(groomDir):
-        os.makedirs(groomDir)
-
-
-    if args.start_with_image_and_segmentation_data:
-        print("\n\n************************ WARNING ************************")
-        print("'start_with_image_and_segmentation_data' tag was used \nbut Ellipsoid data set does not have images.")
-        print("Continuing to run use case with segmentations only.")
-        print("*********************************************************\n\n")
-
-    if int(args.start_with_prepped_data) == 1:
-        dtFiles = sorted(glob.glob(outputDirectory + datasetName + '/groomed/distance_transforms/*.nrrd'))
+    if args.skip_grooming:
+        print("Skipping grooming.")
+        dtDirecory = outputDirectory + datasetName + '/groomed/distance_transforms/'
+        indices = []
+        if args.tiny_test:
+            indices = [0,1,2]
+        elif args.use_subsample:
+            indices = sample_idx
+        dtFiles = CommonUtils.get_file_list(dtDirecory, ending=".nrrd", indices=indices)
     else:
+        print("\nStep 2. Groom - Data Pre-processing\n")
+        if int(args.interactive) != 0:
+            input("Press Enter to continue")
+
+        groomDir = outputDirectory + 'groomed/'
+        if not os.path.exists(groomDir):
+            os.makedirs(groomDir)
+
         """Apply isotropic resampling"""
-        resampledFiles = applyIsotropicResampling(groomDir + "resampled/segmentations", fileList)
+        isoresampledFiles = applyIsotropicResampling(groomDir + "resampled/segmentations", fileList)
 
         """Apply centering"""
-        centeredFiles = center(groomDir + "centered/segmentations", resampledFiles)
+        centeredFiles = center(groomDir + "centered/segmentations", isoresampledFiles)
 
         """Apply padding"""
         paddedFiles = applyPadding(groomDir + "padded/segmentations", centeredFiles, 10)
 
         """Apply center of mass alignment"""
-        comFiles = applyCOMAlignment(groomDir + "com_aligned/segmentations", paddedFiles, None)
+        comFiles = applyCOMAlignment(groomDir + "com_aligned/segmentations", centeredFiles, None)
 
-        """Apply rigid alignment"""
-        rigidFiles = applyRigidAlignment(groomDir + "aligned/segmentations", comFiles, None, comFiles[0])
+        """ Apply resmapling"""
+        resampledFiles = applyResampling(groomDir + "resized/segmentations", comFiles[0], comFiles)
 
         """Compute largest bounding box and apply cropping"""
-        croppedFiles = applyCropping(groomDir + "cropped/segmentations", rigidFiles, groomDir + "aligned/segmentations/*.aligned.nrrd")
+        croppedFiles = applyCropping(groomDir + "cropped/segmentations", resampledFiles, groomDir + "resized/segmentations/*.resized.nrrd")
 
         """
         We convert the scans to distance transforms, this step is common for both the 

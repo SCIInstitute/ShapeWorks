@@ -22,7 +22,7 @@ def Run_Pipeline(args):
     outputDirectory = "Output/femur_mesh/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
-    CommonUtils.get_data(datasetName, outputDirectory)
+    CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
    
     groomDir = outputDirectory + 'groomed/'
     if not os.path.exists(groomDir):
@@ -35,6 +35,14 @@ def Run_Pipeline(args):
     if len(meshFiles) == 0:
         print('Zero mesh files found in', meshDir)
         return
+
+    if args.tiny_test:
+        args.use_single_scale = 1
+        meshFiles = meshFiles[:3]
+    # Select data if using subsample
+    if args.use_subsample:
+        sample_idx = samplemesh(meshFiles, int(args.num_subsample))
+        meshFiles = [meshFiles[i] for i in sample_idx]
 
     pointDir = outputDirectory + 'shape_models/'
 

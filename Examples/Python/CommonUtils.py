@@ -19,8 +19,10 @@ import shutil
 import xml.etree.ElementTree as ET
 from termcolor import colored, cprint
 from zipfile import ZipFile
+import subprocess
+import GroomUtils
 
-def get_data(datasetName, outputDirectory):
+def download_and_unzip_dataset(datasetName, outputDirectory):
     # Check if the unzipped data is present
     if not os.path.exists(outputDirectory + datasetName + '/'):
         # check if the zipped data is present
@@ -32,6 +34,15 @@ def get_data(datasetName, outputDirectory):
         print("Unzipping " + zipfile + " into " + outputDirectory)
         with ZipFile(zipfile, 'r') as zipObj:
             zipObj.extractall(path=outputDirectory)
+
+def get_file_list(directory, ending='', indices=[]):
+    file_list = []
+    for file in sorted(os.listdir(directory)):
+        if ending in file:
+            file_list.append(directory + file)
+    if indices:
+        file_list = [file_list[i] for i in indices]
+    return file_list
 
 def create_cpp_xml(filename, outputfilename):
     '''
@@ -86,6 +97,33 @@ def sampledata(inDataList, num_sample):
     print("###########################################\n")
     return samples_idx
 
+def samplemesh(inMeshList, num_sample, printCmd=False):
+    D = np.zeros((len(inMeshList), len(inMeshList)))
+    inMeshList = GroomUtils.getVTKmeshes(inMeshList, printCmd)
+    for i in range(len(inMeshList)):
+        for j in range(i, len(inMeshList)):
+            execCommand = ["SurfaceToSurfaceDistance", "-a", inMeshList[i],
+                "-b", inMeshList[j], "-p"]
+            if printCmd:
+                print("CMD: " + " ".join(execCommand))
+            process = subprocess.Popen(execCommand, stdout=subprocess.PIPE)
+            stdout = process.communicate()[0]
+            dist = float(str(stdout).split()[1])
+            D[i, j] = dist
+    D += D.T
+    A = np.exp(- D ** 2 / (2. * np.std(np.triu(D))**2))
+    print("########## Sample subset of data #########")
+    print("Run Spectral Clustering for {} clusters ...".format(num_sample))
+    model = SpectralClustering(n_clusters=num_sample,
+                                    assign_labels="discretize",
+                                    random_state=0, affinity='precomputed').fit(A)
+    labels = list(model.labels_)
+    samples_idx = []
+    print("sample one data per cluster to have diverse samples!")
+    for i in range(num_sample):
+        samples_idx.append(labels.index(i))
+    print("###########################################\n")
+    return samples_idx
 
 # make sure the shapeworks executables can be found, adding path to osx studio app bundle if necessary
 def robustifyShapeworksPaths():

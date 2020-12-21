@@ -27,35 +27,68 @@ def Run_Pipeline(args):
     print("\nStep 1. Get Data\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
-
+    # Get data
     datasetName = "femur-v0"
     outputDirectory = "Output/femur_cut/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
-    CommonUtils.get_data(datasetName, outputDirectory)
+    CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
     inputDir = outputDirectory + datasetName + '/'
+    # Get image ane mesh segmentation file lists
+    inputDir = outputDirectory + datasetName + '/'
+    files_img = []
+    img_dir = inputDir + 'images/'
+    for file in sorted(os.listdir(img_dir)):
+        files_img.append(img_dir + file)
+    files_mesh = []
+    mesh_dir = inputDir + 'meshes/'
+    for file in sorted(os.listdir(mesh_dir)):
+        files_mesh.append(mesh_dir + file)
+    # Select data for tiny test
+    if args.tiny_test:
+        files_img = files_img[:3]
+        files_mesh = files_mesh[:3]
+        args.use_single_scale = True
+        args.interactive = False
+    # Select data if using subsample
+    if args.use_subsample:
+        sample_idx = sampledata(files_img, int(args.num_subsample))
+        files_img = [files_img[i] for i in sample_idx]
+        files_mesh = [files_mesh[i] for i in sample_idx]
+    else:
+        sample_idx = []
 
-    print("\nStep 2. Groom - Data Pre-processing\n")
-    if args.interactive:
-        input("Press Enter to continue")
+    """
+    ## GROOM : Data Pre-processing
+    For the unprepped data the first few steps are
+    -- if no interactive tag - use pre-defined cutting plane
+    -- if interacitve tag and option 1 is chosen - define cutting plane on sample of users choice
+    -- Reflect images and meshes
+    -- Turn meshes to volumes
+    -- Isotropic resampling
+    -- Padding
+    -- Center of Mass Alignment
+    -- Centering
+    -- Rigid Alignment
+    -- if interactive tag and option 2 was chosen - define cutting plane on mean sample
+    -- clip segementations with cutting plane
+    -- find largest bounding box and crop
+    """
+    if args.skip_grooming:
+        print("Skipping grooming.")
+        dtDirecory = outputDirectory + datasetName + '/groomed/distance_transforms/'
+        indices = []
+        if args.tiny_test:
+            indices = [0,1,2]
+        elif args.use_subsample:
+            indices = sample_idx
+        dtFiles = CommonUtils.get_file_list(dtDirecory, ending=".nrrd", indices=indices)
+        [cutting_plane_points] = pickle.load( open( inputDir + "groomed/groomed_pickle.p", "rb" ) )
+    else:
+        print("\nStep 2. Groom - Data Pre-processing\n")
+        if args.interactive:
+            input("Press Enter to continue")
 
-    if not args.start_with_prepped_data:
-        """
-        ## GROOM : Data Pre-processing
-        For the unprepped data the first few steps are
-        -- if no interactive tag - use pre-defined cutting plane
-        -- if interacitve tag and option 1 is chosen - define cutting plane on sample of users choice
-        -- Reflect images and meshes
-        -- Turn meshes to volumes
-        -- Isotropic resampling
-        -- Padding
-        -- Center of Mass Alignment
-        -- Centering
-        -- Rigid Alignment
-        -- if interactive tag and option 2 was chosen - define cutting plane on mean sample
-        -- clip segementations with cutting plane
-        -- find largest bounding box and crop
-        """
         # Directory where grooming output folders will be added
         parentDir = outputDirectory + 'groomed/'
         if not os.path.exists(parentDir):
@@ -64,30 +97,6 @@ def Run_Pipeline(args):
         # set name specific variables
         img_suffix = "1x_hip"
         reference_side = "left" # somewhat arbitrary, could be right
-
-        # Get image ane mesh segmentation file lists
-        files_img = []
-        img_dir = inputDir + 'images/'
-        for file in sorted(os.listdir(img_dir)):
-            files_img.append(img_dir + file)
-        files_mesh = []
-        mesh_dir = inputDir + 'meshes/'
-        for file in sorted(os.listdir(mesh_dir)):
-            files_mesh.append(mesh_dir + file)
-
-
-        # use 3 sample if running a tiny test
-        if args.tiny_test:
-            files_img = files_img[:3]
-            files_mesh = files_mesh[:3]
-            args.use_single_scale = True
-            args.interactive = False
-
-        # run clustering if running on a subset
-        if args.use_subsample:
-            sample_idx = sampledata(files_img, int(args.use_subsample))
-            files_img = [files_img[i] for i in sample_idx]
-            files_mesh = [files_mesh[i] for i in sample_idx]
 
         # If not interactive, set cutting plane
         if not args.interactive:
@@ -127,7 +136,7 @@ def Run_Pipeline(args):
                 reference_side = "right"
 
         # BEGIN GROOMING WITH IMAGES
-        if args.start_with_image_and_segmentation_data and files_img:
+        if args.groom_images and files_img:
             """
             Reflect - We have left and right femurs, so we reflect both image and mesh
             for the non-reference side so that all of the femurs can be aligned.
@@ -303,17 +312,6 @@ def Run_Pipeline(args):
         """
         dtFiles = applyDistanceTransforms(parentDir, croppedFiles_segmentations)
 
-    else:
-        print("Skipping grooming...")
-        dtFiles = []
-        dt_dir = inputDir + 'groomed/distance_transforms/'
-        for file in sorted(os.listdir(dt_dir)):
-            dtFiles.append(dt_dir + file)
-
-        if args.tiny_test:
-            dtFiles = dtFiles[:3]
-
-        [cutting_plane_points] = pickle.load( open( inputDir + "groomed/groomed_pickle.p", "rb" ) )
 
     """
     ## OPTIMIZE : Particle Based Optimization

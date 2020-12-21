@@ -282,7 +282,7 @@ void Sampler::ReInitialize()
   this->m_MeanCurvatureCache->ZeroAllValues();
 }
 
-void Sampler::AddMesh(shapeworks::MeshWrapper* mesh)
+void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh)
 {
   itk::MeshDomain* domain = new itk::MeshDomain();
   m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());

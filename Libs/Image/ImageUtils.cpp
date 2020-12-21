@@ -36,14 +36,30 @@ Image::Region ImageUtils::boundingBox(std::vector<std::string> &filenames, Image
   return bbox;
 }
 
-/// createCenterOfMassTransform
-///
-/// Generates the Transform necessary to move the contents of this binary image to the center.
-/// Example:
-///   TransformPtr xform = ImageUtils::createCenterOfMassTransform(image);
-///   image.applyTransform(xform);
-///
-/// \param image      the binary image from which to generate the transform
+Image::Region ImageUtils::boundingBox(std::vector<Image> &images, Image::PixelType isoValue)
+{
+  if (images.empty())
+    throw std::invalid_argument("No images provided to compute a bounding box");
+  
+  if (images.size() == 1)
+    throw std::invalid_argument("Only one image provided to compute a bounding box");
+
+  Image::Region bbox(images[0].boundingBox());
+  Dims dims(images[0].dims()); // images must all be the same size
+
+  for (auto img : images)
+  {
+    if (img.dims() != dims)
+    {
+      throw std::invalid_argument("Image sizes do not match");
+    }
+
+    bbox.grow(img.boundingBox(isoValue));
+  }
+
+  return bbox;
+}
+
 TransformPtr ImageUtils::createCenterOfMassTransform(const Image &image)
 {
   AffineTransformPtr xform(AffineTransform::New());
@@ -56,7 +72,7 @@ TransformPtr ImageUtils::createRigidRegistrationTransform(const Image &source_dt
   vtkSmartPointer<vtkPolyData> sourceContour = Image::getPolyData(source_dt, isoValue);
   vtkSmartPointer<vtkPolyData> targetContour = Image::getPolyData(target_dt, isoValue);
   const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createIcpTransform(sourceContour, targetContour, iterations));
-  return createAffineTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
+  return createTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
 }
 
 TransformPtr ImageUtils::createWarpTransform(const std::string &source_landmarks, const std::string &target_landmarks, const int stride)

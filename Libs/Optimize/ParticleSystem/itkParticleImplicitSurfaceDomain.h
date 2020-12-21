@@ -68,10 +68,10 @@ public:
       bounding box domain, since movement off the surface will be very
       common.  Consider subclassing this method to add a check for significant
       differences in the input and output points. */
-  virtual bool ApplyConstraints(PointType &p, bool dbg = false) const override;
+  virtual bool ApplyConstraints(PointType &p, int idx, bool dbg = false) const override;
 
 
-  inline PointType UpdateParticlePosition(const PointType &point, vnl_vector_fixed<double, DIMENSION> &update) const override {
+  inline PointType UpdateParticlePosition(const PointType &point, int idx, vnl_vector_fixed<double, DIMENSION> &update) const override {
     PointType newpoint;
 
     // Master merge conflict
@@ -86,7 +86,7 @@ public:
     //for (unsigned int i = 0; i < DIMENSION; i++) { newpoint[i] = point[i] - update[i]; }
 
     // debuggg
-    ApplyConstraints(newpoint);
+    ApplyConstraints(newpoint, idx);
 
     // debuggg
     /*

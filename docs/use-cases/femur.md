@@ -22,7 +22,7 @@ The use case is located at: `Examples/Python/femur.py`
 
 To run the use case, run `RunUseCase.py` (in `Examples/Python/`) with proper tags. The tags control the type of input data and the optimization method. See [Getting Started with Use Cases](../use-cases/use-cases.md#running-use-case) for the full list of tags.
 
-* `--start_with_prepped_data`: to run the optimization on previously processed/groomed data.
+* `--skip_grooming`: to run the optimization on previously processed/groomed data.
 * `--interactive`: This tag is used to allow you to interactively select the cutting plane to be used for clipping all meshes. If this tag is not used, the pre-defined cutting plane is used to clip the given meshes.
 
 
@@ -41,16 +41,16 @@ This calls `femur.py` (in `Examples/Python/`) to perform the following.
 * Launches ShapeWorksStudio to visualize the use case results (i.e., the optimized shape model and the groomed data) by calling functions in `AnalyzeUtils.py` (in `Examples/Python/`).
 
 
-If you wish to start with the optimization step using previously groomed data, add `--start_with_prepped_data` tag.
+If you wish to start with the optimization step using previously groomed data, add `--skip_grooming` tag.
 
 ```
-$ python RunUseCase.py --use_case femur --start_with_prepped_data
+$ python RunUseCase.py --use_case femur --skip_grooming
 ```
 
-To groom both the meshes and corresponding images, use `-start_with_image_and_segmentation_data` tag. The image origin, size, and spacing will be used in mesh rasterization. 
+To groom both the meshes and their corresponding images, use `--groom_images` tag. The image origin, size, and spacing will be used in mesh rasterization. 
 
 ```
-$ python RunUseCase.py --use_case femur --start_with_image_and_segmentation_data
+$ python RunUseCase.py --use_case femur --groom_images
 ```
 
 If this tag is not used, grooming will be done on meshes only. The origin and size will be inferred from the meshes, and isotropic spacing will be used unless the user specifies otherwise for rasterization.

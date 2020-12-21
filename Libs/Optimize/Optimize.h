@@ -13,6 +13,8 @@
 #include <itkImage.h>
 #include <itkCommand.h>
 
+#include <Eigen/Eigen>
+
 // shapeworks particle system
 #include "ParticleSystem/itkParticleSystem.h"
 #include "ParticleSystem/Sampler.h"
@@ -23,7 +25,14 @@
 #include "ParticleSystem/MeshWrapper.h"
 #include "ParticleSystem/OptimizationVisualizer.h"
 
+
+
 namespace shapeworks {
+
+class MatrixContainer {
+  public:
+  Eigen::MatrixXd matrix_;
+};
 
 /**
  * \class Optimize
@@ -41,6 +50,7 @@ class Optimize {
 public:
   using ImageType = itk::Image<float, 3>;
   using VectorType = itk::ParticleVectorFunction<3>::VectorType;
+  using MatrixType = Eigen::MatrixXd;
 
   //! Constructor
   Optimize();
@@ -50,6 +60,12 @@ public:
 
   //! Run the optimization
   bool Run();
+
+  //! Load a parameter file
+  bool LoadParameterFile(std::string filename);
+
+  void SetIterationCallbackFunction(const std::function<void(void)> &f)
+  { this->m_iter_callback = f; }
 
   //! Abort optimization
   void AbortOptimization();
@@ -78,9 +94,9 @@ public:
   shapeworks::DomainType GetDomainType();
 
   //! Set the numbers of particles (vector of numbers, one for each domain)
-  void SetNumberOfParticles(std::vector<unsigned int> number_of_particles);
+  void SetNumberOfParticles(std::vector<int> number_of_particles);
   //! Return the numbers of particles per domain
-  std::vector<unsigned int> GetNumberOfParticles();
+  std::vector<int> GetNumberOfParticles();
 
   //! Set the transform file
   void SetTransformFile(std::string filename);
@@ -191,7 +207,7 @@ public:
 
   //! Set the shape input images
   void AddImage(ImageType::Pointer image);
-  void AddMesh(shapeworks::MeshWrapper* mesh);
+  void AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh);
 
   //! Set the shape filenames (TODO: details)
   void SetFilenames(const std::vector<std::string>& filenames);
@@ -246,6 +262,12 @@ public:
   std::shared_ptr<Sampler> GetSampler()
   { return m_sampler; }
 
+  //! Return the particle system as a matrix
+  MatrixContainer GetParticleSystem();
+
+  //! Set the python file to run at startup
+  void SetPythonFile(std::string filename);
+
   shapeworks::OptimizationVisualizer &GetVisualizer();
   void SetShowVisualizer(bool show);
   bool GetShowVisualizer();
@@ -287,7 +309,7 @@ protected:
   void WritePointFilesWithFeatures(std::string iter_prefix);
   void WriteEnergyFiles();
   void WriteCuttingPlanePoints(int iter = -1);
-  void WriteParameters(int iter = -1);
+  void WriteParameters(std::string output_dir = "");
   void ReportBadParticles();
 
   void SetParameters();
@@ -298,6 +320,9 @@ protected:
   void PrintDoneMessage(unsigned int vlevel = 0) const;
 
   virtual void UpdateExportablePoints();
+
+  // return a checkpoint dir for the current iteration
+  std::string GetCheckpointDir();
 
   std::shared_ptr<Sampler> m_sampler;
   itk::ParticleProcrustesRegistration<3>::Pointer m_procrustes;
@@ -311,7 +336,6 @@ protected:
   int m_procrustes_counter = 0;
   int m_saturation_counter = 0;
   bool m_disable_procrustes = true;
-  bool m_disable_checkpointing = true;
   bool m_use_cutting_planes = false;
   bool m_optimizing = false;
   bool m_use_regression = false;
@@ -320,7 +344,7 @@ protected:
   // IO Parameters
   unsigned int m_domains_per_shape = 1;
   shapeworks::DomainType m_domain_type = shapeworks::DomainType::Image;
-  std::vector<unsigned int> m_number_of_particles;
+  std::vector<int> m_number_of_particles;
   std::string m_transform_file;
   std::string m_prefix_transform_file;
   std::string m_output_dir;
@@ -352,7 +376,7 @@ protected:
   double m_starting_regularization = 1000;
   double m_ending_regularization = 1.0;
   int m_recompute_regularization_interval = 1;
-  bool m_save_init_splits = true;
+  bool m_save_init_splits = false;
   unsigned int m_checkpointing_interval = 50;
   int m_keep_checkpoints = 0;
   double m_cotan_sigma_factor = 5.0;
@@ -362,6 +386,7 @@ protected:
   bool m_narrow_band_set = false;
   bool m_fixed_domains_present = false;
   int m_use_shape_statistics_after = -1;
+  std::string m_python_filename;
 
   // Keeps track of which state the optimization is in.
   unsigned int m_mode = 0;
@@ -391,12 +416,13 @@ protected:
 
   //itk::MemberCommand<Optimize>::Pointer m_iterate_command;
   int m_total_iterations = 0;
-  size_t m_iteration_count = 0;
+  int m_iteration_count = 0;
 
   int m_split_number{0};
 
   std::mt19937 m_rand{42};
 
+  std::function<void(void)> m_iter_callback;
   bool show_visualizer = false;
   shapeworks::OptimizationVisualizer visualizer;
 };

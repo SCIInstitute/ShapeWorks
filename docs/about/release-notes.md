@@ -2,6 +2,8 @@
 
 ## ShapeWorks 5.5.0 - 2020-10-15
 
+![](../img/about/release5.5.png)
+
 ### What's New
 
 

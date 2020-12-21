@@ -454,7 +454,7 @@ Image& Image::scale(const Vector3 &s)
   recenter();
 
   AffineTransformPtr xform(AffineTransform::New());
-  xform->Scale(invert(Vector(s))); // invert scale ratio because ITK applies transformations backwards.  
+  xform->Scale(invertValue(Vector(s))); // invert scale ratio because ITK applies transformations backwards.  
   applyTransform(xform);
   setOrigin(origOrigin);           // restore origin
   
@@ -507,16 +507,16 @@ Image& Image::closeHoles(const PixelType foreground)
   return *this;
 }
 
-Image& Image::binarize(PixelType minval, PixelType maxval, PixelType inner_value, PixelType outer_value)
+Image& Image::binarize(PixelType minVal, PixelType maxVal, PixelType innerVal, PixelType outerVal)
 {
   using FilterType = itk::BinaryThresholdImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
   filter->SetInput(this->image);
-  filter->SetLowerThreshold(minval + std::numeric_limits<PixelType>::epsilon());
-  filter->SetUpperThreshold(maxval);
-  filter->SetInsideValue(inner_value);
-  filter->SetOutsideValue(outer_value);
+  filter->SetLowerThreshold(minVal + std::numeric_limits<PixelType>::epsilon());
+  filter->SetUpperThreshold(maxVal);
+  filter->SetInsideValue(innerVal);
+  filter->SetOutsideValue(outerVal);
   filter->Update();
   this->image = filter->GetOutput();
 
@@ -612,7 +612,7 @@ Image& Image::gaussianBlur(double sigma)
   return *this;
 }
 
-Image::Region Image::boundingBox(PixelType isoValue) const
+Image::Region Image::boundingBox(PixelType isovalue) const
 {
   Image::Region bbox;
 
@@ -621,7 +621,7 @@ Image::Region Image::boundingBox(PixelType isoValue) const
   {
     PixelType val = imageIterator.Get();
 
-    if (val >= isoValue)
+    if (val >= isovalue)
       bbox.expand(imageIterator.GetIndex());
 
     ++imageIterator;
@@ -647,11 +647,11 @@ Image& Image::crop(const Region &region)
   return *this;
 }
 
-vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image& img, PixelType isoValue)
+vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image& image, PixelType isoValue)
 {
   using FilterType = itk::VTKImageExport<ImageType>;
   FilterType::Pointer itkTargetExporter = FilterType::New();
-  itkTargetExporter->SetInput(img.image);
+  itkTargetExporter->SetInput(image.image);
 
   vtkImageImport *vtkTargetImporter = vtkImageImport::New();
   ShapeworksUtils::connectPipelines(itkTargetExporter, vtkTargetImporter);
@@ -671,7 +671,7 @@ Image& Image::clip(const Point &o, const Point &p1, const Point &p2, const Pixel
   Vector v1(makeVector({p1[0] - o[0], p1[1] - o[1], p1[2] - o[2]}));
   Vector v2(makeVector({p2[0] - o[0], p2[1] - o[1], p2[2] - o[2]}));
 
-  return clip(cross(v1, v2), o, val);
+  return clip(crossProduct(v1, v2), o, val);
 }
 
 Image& Image::clip(const Vector &n, const Point &q, const PixelType val)
@@ -725,7 +725,21 @@ Image& Image::setOrigin(Point3 origin)
   return *this;
 }
 
-Point3 Image::centerOfMass(PixelType minval, PixelType maxval) const
+Image& Image::setSpacing(Vector3 spacing)
+{
+  using FilterType = itk::ChangeInformationImageFilter<ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+
+  filter->SetInput(this->image);
+  filter->SetOutputSpacing(spacing);
+  filter->ChangeSpacingOn();
+  filter->Update();
+  this->image = filter->GetOutput();
+
+  return *this;
+}
+
+Point3 Image::centerOfMass(PixelType minVal, PixelType maxVal) const
 {
   itk::ImageRegionIteratorWithIndex<ImageType> imageIt(this->image, image->GetLargestPossibleRegion());
   int numPixels = 0;
@@ -734,7 +748,7 @@ Point3 Image::centerOfMass(PixelType minval, PixelType maxval) const
   while (!imageIt.IsAtEnd())
   {
     PixelType val = imageIt.Get();
-    if (val > minval && val <= maxval)
+    if (val > minVal && val <= maxVal)
     {
       numPixels++;
       com += image->TransformIndexToPhysicalPoint<double>(imageIt.GetIndex());
@@ -750,11 +764,11 @@ Point3 Image::centerOfMass(PixelType minval, PixelType maxval) const
   return com;
 }
 
-Point3 Image::logicalToPhysical(const Coord &v) const
+Point3 Image::logicalToPhysical(const Coord &c) const
 {
   // return image->TransformIndexToPhysicalPoint(v); // not sure why this call won't work directly
   Point3 value;
-  image->TransformIndexToPhysicalPoint(v, value);
+  image->TransformIndexToPhysicalPoint(c, value);
   return value;
 }
 
@@ -772,7 +786,8 @@ std::ostream& operator<<(std::ostream &os, const Image::Region &r)
 std::ostream& operator<<(std::ostream &os, const Image& img)
 {
   return os << "{\n\tdims: " << img.dims() << ",\n\torigin: "
-            << img.origin() << ",\n\tsize: " << img.size() << "\n}";
+            << img.origin() << ",\n\tsize: " << img.size()
+            << ",\n\tspacing: " << img.spacing() <<  "\n}";
 }
 
 } // shapeworks

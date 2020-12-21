@@ -63,7 +63,7 @@ public:
   /** Compile a list of points that are within a specified radius of a given
       point.  This implementation uses a PowerOfTwoTree to sort points
       according to location. */
-  virtual PointVectorType FindNeighborhoodPoints(const PointType &, std::vector<double> &, double) const;
+  virtual PointVectorType FindNeighborhoodPoints(const PointType &, int idx, std::vector<double> &, double) const;
   //  virtual unsigned int  FindNeighborhoodPoints(const PointType &, double, PointVectorType &) const;
 
   void PrintSelf(std::ostream& os, Indent indent) const

@@ -19,6 +19,7 @@ add_library(Project STATIC
 
 target_link_libraries(Project
   xlnt::xlnt
+  Mesh
   )
 
 target_include_directories(Project PUBLIC

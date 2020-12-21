@@ -24,6 +24,11 @@ PreferencesWindow::PreferencesWindow(QWidget* parent, Preferences& prefs) : pref
                    SLOT(restore_defaults()));
 
   this->ui_->log_location->setText(shapeworks::StudioLog::Instance().get_log_filename());
+
+  this->connect(this->ui_->orientation_marker_type, qOverload<int>(&QComboBox::currentIndexChanged),
+                this, &PreferencesWindow::save_to_preferences);
+  this->connect(this->ui_->orientation_marker_corner, qOverload<int>(&QComboBox::currentIndexChanged),
+                this, &PreferencesWindow::save_to_preferences);
 }
 
 //-----------------------------------------------------------------------------
@@ -83,6 +88,9 @@ void PreferencesWindow::set_values_from_preferences()
   this->ui_->parallel_enabled->setChecked(preferences_.get_parallel_enabled());
   this->ui_->pca_range->setValue(preferences_.get_pca_range());
   this->ui_->pca_steps->setValue(preferences_.get_pca_steps());
+  this->ui_->orientation_marker_type->setCurrentIndex(preferences_.get_orientation_marker_type());
+  this->ui_->orientation_marker_corner->setCurrentIndex(
+    preferences_.get_orientation_marker_corner());
 }
 
 //-----------------------------------------------------------------------------
@@ -103,4 +111,14 @@ void PreferencesWindow::on_caching_epsilon_valueChanged(int i)
 {
   this->preferences_.set_cache_epsilon(std::pow(10., static_cast<double>(i)));
   emit clear_cache();
+}
+
+//-----------------------------------------------------------------------------
+void PreferencesWindow::save_to_preferences()
+{
+  this->preferences_.set_orientation_marker_type(
+    static_cast<Preferences::OrientationMarkerType>(this->ui_->orientation_marker_type->currentIndex()));
+  this->preferences_.set_orientation_marker_corner(
+    static_cast<Preferences::OrientationMarkerCorner>(this->ui_->orientation_marker_corner->currentIndex()));
+  emit update_view();
 }
