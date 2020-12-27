@@ -76,9 +76,11 @@ private:
 
   static inline bool IsBarycentricCoordinateValid(const trimesh::vec3& b);
 
+  // IGL Helper functions
+  void GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F);
+
   std::shared_ptr<trimesh::TriMesh> mesh_;
   std::shared_ptr<trimesh::KDtree> kd_tree_;
-
 
   // Maintains a map of particle index -> triangle index
   // Has to be mutable because all of the accessor APIs are const

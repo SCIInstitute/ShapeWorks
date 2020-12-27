@@ -2,8 +2,8 @@
 #include "TriMeshWrapper.h"
 
 #include <igl/grad.h>
-#include <igl/per_face_normals.h>
 #include <igl/per_vertex_normals.h>
+#include <igl/doublearea.h>
 
 #include <set>
 
@@ -493,18 +493,9 @@ void TriMeshWrapper::ComputeGradN()
   const int n_faces = mesh_->faces.size();
 
   // Copy from trimesh to libigl data structures
-  Eigen::MatrixXd V(n_verts, 3);
-  Eigen::MatrixXi F(n_faces, 3);
-  for(int i=0; i<n_verts; i++) {
-    V(i, 0) = mesh_->vertices[i][0];
-    V(i, 1) = mesh_->vertices[i][1];
-    V(i, 2) = mesh_->vertices[i][2];
-  }
-  for(int i=0; i<n_faces; i++) {
-    F(i, 0) = mesh_->faces[i][0];
-    F(i, 1) = mesh_->faces[i][1];
-    F(i, 2) = mesh_->faces[i][2];
-  }
+  Eigen::MatrixXd V;
+  Eigen::MatrixXi F;
+  GetIGLMesh(V, F);
 
   // Compute normals
   Eigen::MatrixXd N;
@@ -517,22 +508,20 @@ void TriMeshWrapper::ComputeGradN()
   // Compute gradient of normals per face
   const Eigen::MatrixXd GN = Eigen::Map<const Eigen::MatrixXd>((G*N).eval().data(), n_faces, 9);
 
-  // Convert per-face values to per-vertex
-  // (igl::per_vertex_normals cannot be used because it has no checks to avoid divide-by-zero)
-  Eigen::MatrixXd GN_pervertex(n_verts, 9);
-  GN_pervertex.setZero();
+  // Convert per-face values to per-vertex using face area as weight
+  Eigen::MatrixXd GN_pervertex(n_verts, 9); GN_pervertex.setZero();
+  Eigen::MatrixXd A_perface; igl::doublearea(V,F,A_perface);
+  Eigen::VectorXd A_pervertex(n_verts); A_pervertex.setZero();
   // scatter the per-face values
-  for(int i=0; i<F.rows(); i++) {
+  for(int i=0; i<n_faces; i++) {
     for(int j=0; j<3; j++) {
-      GN_pervertex.row(F(i,j)) += GN.row(i);
+      GN_pervertex.row(F(i,j)) += A_perface(i, 0)*GN.row(i);
+      A_pervertex(F(i, j)) += A_perface(i, 0);
     }
   }
-
-  // normalize (TODO might be worthwhile investigating other weighting schema like area, angle etc)
   for(int i=0; i<n_verts; i++) {
-    const double mag = GN_pervertex.row(i).norm();
-    if(mag != 0.0) {
-      GN_pervertex.row(i) /= mag;
+    if(A_pervertex(i) != 0.0) {
+      GN_pervertex.row(i) /= A_pervertex(i);
     }
   }
 
@@ -546,6 +535,25 @@ void TriMeshWrapper::ComputeGradN()
     }
   }
 
+}
+
+void TriMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F)
+{
+  const int n_verts = mesh_->vertices.size();
+  const int n_faces = mesh_->faces.size();
+
+  V.resize(n_verts, 3);
+  F.resize(n_faces, 3);
+  for(int i=0; i<n_verts; i++) {
+    V(i, 0) = mesh_->vertices[i][0];
+    V(i, 1) = mesh_->vertices[i][1];
+    V(i, 2) = mesh_->vertices[i][2];
+  }
+  for(int i=0; i<n_faces; i++) {
+    F(i, 0) = mesh_->faces[i][0];
+    F(i, 1) = mesh_->faces[i][1];
+    F(i, 2) = mesh_->faces[i][2];
+  }
 }
 
 }
