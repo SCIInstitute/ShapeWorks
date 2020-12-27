@@ -27,7 +27,7 @@ public:
 
   /** Point type used to store particle locations. */
   typedef Point<double, DIMENSION> PointType;
-  //TODO Hessian != Gradient of normals! Consistent naming
+  //TODO Hessian != Gradient of normals! Consistent naming after implementing gradient of normals for image domain
   typedef vnl_matrix_fixed<float, DIMENSION, DIMENSION> HessianType;
 
   /** Apply any constraints to the given point location.

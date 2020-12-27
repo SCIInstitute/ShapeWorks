@@ -158,9 +158,8 @@ public:
             {
                 vnl_vector_fixed<float, DIMENSION> gradient = ps->GetDomain(d)->SampleGradientAtPoint(posLocal, idx);
                 vnl_vector_fixed<float, DIMENSION> normal = gradient.normalize();
-                float grad_mag = gradient.magnitude(); //TODO This is always 1.0
+                float grad_mag = gradient.magnitude(); //TODO This is always 1.0. Fix when correcting image gradient of normals
                 typename ParticleDomain::HessianType hessian = ps->GetDomain(d)->SampleHessianAtPoint(posLocal, idx);
-                // std::cout << hessian << "\n\n";
 
                 typename ParticleImageDomainWithHessians<float>::VnlMatrixType mat1;
                 mat1.set_identity();
@@ -187,11 +186,7 @@ public:
                         tmp(c,vd) = mat3(c,vd);
                 }
 
-                // std::cout << "Before: \n" << tmp << "\n\n";
-                const auto blah = ps->GetTransform(d) * ps->GetPrefixTransform(d);
-                // std::cout << " blah: \n" << blah << "\n\n";
-                tmp = ps->TransformNormalDerivative(tmp, blah);
-                // std::cout << "After: \n" << tmp << "\n\n";
+              tmp = ps->TransformNormalDerivative(tmp, ps->GetTransform(d) * ps->GetPrefixTransform(d));
 
               for (unsigned int c = s; c < s+VDimension; c++)
                 {

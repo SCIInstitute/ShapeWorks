@@ -69,7 +69,7 @@ namespace itk
     ::StartAdaptiveGaussSeidelOptimization()
   {
     /// uncomment this to run single threaded
-    // tbb::task_scheduler_init init(1);
+    //tbb::task_scheduler_init init(1);
 
     if (this->m_AbortProcessing) {
       return;
