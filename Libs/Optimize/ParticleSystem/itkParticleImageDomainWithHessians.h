@@ -50,19 +50,83 @@ public:
   {
     Superclass::SetImage(I, narrow_band);
 
-    const auto grad = this->GetVDBGradient();
+    // Load the i-th hessian from an itk Image
+    const auto LoadVDBHessian = [&](const int i, const typename ImageType::Pointer hess) {
+      m_VDBHessians[i] = openvdb::FloatGrid::create(0.0);
+      m_VDBHessians[i]->setTransform(this->transform());
+      auto vdbAccessor = m_VDBHessians[i]->getAccessor();
 
-    for(int i=0; i<3; i++) {
-      auto norm_i = openvdb::FloatGrid::create();
-      norm_i->setTransform(this->transform());
-      auto norm_i_accessor = norm_i->getAccessor();
-      for(openvdb::VectorGrid::ValueOnCIter it = grad->cbeginValueOn(); it.test(); ++it) {
-        const openvdb::Vec3f& v = *it;
-        norm_i_accessor.setValue(it.getCoord(), v[i] / v.length());
+      ImageRegionIterator<ImageType> hessIt(hess, hess->GetRequestedRegion());
+      ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
+      for (; !hessIt.IsAtEnd(); ++hessIt, ++it) {
+        const auto idx = hessIt.GetIndex();
+        if(idx != it.GetIndex()) {
+          // We are relying on the assumption that the iteration over the
+          // distance transform and its hessian proceed in the same order.
+          // If this assumption is violated, throw an error.
+          throw std::runtime_error("Bad index: iterators for Image and Hessian out of sync");
+        }
+        const auto hess = hessIt.Get();
+        const auto pixel = it.Get();
+        if(abs(pixel) > narrow_band) {
+          continue;
+        }
+
+        const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
+        vdbAccessor.setValue(coord, hess);
+      }
+    };
+
+    typename DiscreteGaussianImageFilter<ImageType, ImageType>::Pointer
+      gaussian = DiscreteGaussianImageFilter<ImageType, ImageType>::New();
+    gaussian->SetVariance(m_Sigma * m_Sigma);
+    gaussian->SetInput(I);
+    gaussian->SetUseImageSpacingOn();
+    gaussian->Update();
+    
+    // Compute the second derivatives
+    for (unsigned int i = 0; i < DIMENSION; i++)
+      {
+      typename DerivativeImageFilter<ImageType, ImageType>::Pointer
+        deriv = DerivativeImageFilter<ImageType, ImageType>::New();
+      deriv->SetInput(gaussian->GetOutput());
+      deriv->SetDirection(i);
+      deriv->SetOrder(2);
+      deriv->SetUseImageSpacingOn();
+      deriv->Update();
+
+      const auto hess = deriv->GetOutput();
+      LoadVDBHessian(i, hess);
+
       }
 
-      m_VDBGradNorms[i] = openvdb::tools::gradient(*norm_i);
-    }
+    // Compute the cross derivatives and set up the interpolators
+    unsigned int k = DIMENSION;
+    for (unsigned int i = 0; i < DIMENSION; i++)
+      {
+      for (unsigned int j = i+1; j < DIMENSION; j++, k++)
+        {
+        typename DerivativeImageFilter<ImageType, ImageType>::Pointer
+          deriv1 = DerivativeImageFilter<ImageType, ImageType>::New();
+        deriv1->SetInput(gaussian->GetOutput());
+        deriv1->SetDirection(i);
+        deriv1->SetUseImageSpacingOn();
+        deriv1->SetOrder(1);
+        deriv1->Update();
+
+        typename DerivativeImageFilter<ImageType, ImageType>::Pointer
+          deriv2 = DerivativeImageFilter<ImageType, ImageType>::New();
+        deriv2->SetInput(deriv1->GetOutput());
+        deriv2->SetDirection(j);
+        deriv2->SetUseImageSpacingOn();
+        deriv2->SetOrder(1);
+        
+        deriv2->Update();
+
+        const auto hess = deriv2->GetOutput();
+        LoadVDBHessian(k, hess);
+        }
+      }
 
 
   } // end setimage
@@ -74,15 +138,22 @@ public:
   {
     const auto coord = this->ToVDBCoord(p);
 
-    VnlMatrixType hess;
-    for(int i=0; i<DIMENSION; i++) {
-      auto grad_n = openvdb::tools::BoxSampler::sample(m_VDBGradNorms[i]->tree(), coord);
-      grad_n.normalize();
-      hess.set(i, 0, grad_n[0]);
-      hess.set(i, 1, grad_n[1]);
-      hess.set(i, 2, grad_n[2]);
+    VnlMatrixType vdbAns;
+    for (unsigned int i = 0; i < DIMENSION; i++)
+    {
+      vdbAns[i][i] = openvdb::tools::BoxSampler::sample(m_VDBHessians[i]->tree(), coord);
     }
-    return hess;
+
+    // Cross derivatives
+    unsigned int k = DIMENSION;
+    for (unsigned int i =0; i < DIMENSION; i++)
+    {
+      for (unsigned int j = i+1; j < DIMENSION; j++, k++)
+      {
+        vdbAns[i][j] = vdbAns[j][i] = openvdb::tools::BoxSampler::sample(m_VDBHessians[k]->tree(), coord);
+      }
+    }
+    return vdbAns;
   }
 
 
@@ -106,8 +177,8 @@ public:
 
   void DeletePartialDerivativeImages() override
   {
-    for (unsigned int i = 0; i < DIMENSION; i++) {
-      m_VDBGradNorms[i] = 0;
+    for (unsigned int i = 0; i < DIMENSION + ((DIMENSION * DIMENSION) - DIMENSION) / 2; i++) {
+      m_VDBHessians[i] = 0;
     }
   }
 
@@ -130,7 +201,12 @@ protected:
   
 private:
   double m_Sigma;
-  typename openvdb::VectorGrid::Ptr m_VDBGradNorms[3];
+  // Partials are stored:
+  //     0: dxx  3: dxy  4: dxz
+  //             1: dyy  5: dyz
+  //                     2: dzz
+  typename openvdb::FloatGrid::Ptr m_VDBHessians[
+          DIMENSION + ((DIMENSION * DIMENSION) - DIMENSION) / 2];
 };
 
 } // end namespace itk
