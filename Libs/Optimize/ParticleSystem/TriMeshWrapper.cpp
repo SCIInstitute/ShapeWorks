@@ -494,7 +494,7 @@ void TriMeshWrapper::ComputeGradN()
   const int n_verts = mesh_->vertices.size();
   const int n_faces = mesh_->faces.size();
 
-  // TODO why does float not work
+  // Copy from trimesh to libigl data structures
   Eigen::MatrixXd V(n_verts, 3);
   Eigen::MatrixXi F(n_faces, 3);
   for(int i=0; i<n_verts; i++) {
@@ -519,25 +519,37 @@ void TriMeshWrapper::ComputeGradN()
   // Compute gradient of normals per face
   const Eigen::MatrixXd GN = Eigen::Map<const Eigen::MatrixXd>((G*N).eval().data(), n_faces, 9);
 
+  // Convert per-face values to per-vertex
+  // (igl::per_vertex_normals cannot be used because it has no checks to avoid divide-by-zero)
+  Eigen::MatrixXd GN_pervertex(n_verts, 9);
+  GN_pervertex.setZero();
+  // scatter the per-face values
+  for(int i=0; i<F.rows(); i++) {
+    for(int j=0; j<3; j++) {
+      GN_pervertex.row(F(i,j)) += GN.row(i);
+    }
+  }
+
+  // normalize (TODO might be worthwhile investigating other weighting schema like area, angle etc)
+  for(int i=0; i<n_verts; i++) {
+    const double mag = GN_pervertex.row(i).norm();
+    if(mag != 0.0) {
+      GN_pervertex.row(i) /= mag;
+    }
+  }
+
+  // Copy back to VNL data structure
   grad_normals_.resize(n_verts);
-
-  // Compute per vertex gradient of normals
-  // igl::per_vertex_normals only works on [n_face, 3] matrices, so we have to run it thrice
-  // TODO: This returns the _normalized_ gradient.  vertify that this is fine for shapeworks
-  for(int i=0; i<3; i++) {
-    Eigen::MatrixXd GN_pervertex;
-    igl::per_vertex_normals(V, F, GN.block(0, 3*i, n_faces, 3), GN_pervertex);
-
-    //TODO Is the convention correct
-    //TODO figure out one-liner for this
-    for(int j=0; j<n_verts; j++) {
-      grad_normals_[j].set(i, 0, GN_pervertex(j, 0));
-      grad_normals_[j].set(i, 1, GN_pervertex(j, 1));
-      grad_normals_[j].set(i, 2, GN_pervertex(j, 2));
+  for(int j=0; j<n_verts; j++) {
+    for(int i=0; i<3; i++) {
+      grad_normals_[j].set(i, 0, GN_pervertex(j, i*3+0));
+      grad_normals_[j].set(i, 1, GN_pervertex(j, i*3+1));
+      grad_normals_[j].set(i, 2, GN_pervertex(j, i*3+2));
     }
   }
 
 }
+
 void TriMeshWrapper::ComputeLeastCurvatureFace()
 {
   if(mesh_->vertices.size() != mesh_->curv1.size()) {
