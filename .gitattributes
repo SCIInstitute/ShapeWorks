@@ -2,3 +2,6 @@
 *.vtk filter=lfs diff=lfs merge=lfs -text
 *.dcm filter=lfs diff=lfs merge=lfs -text
 *.zip filter=lfs diff=lfs merge=lfs -text
+
+*.ipynb filter=nbstripout
+*.ipynb diff=ipynb

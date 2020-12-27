@@ -26,8 +26,14 @@
 #include "ParticleSystem/itkParticleImplicitSurfaceDomain.h"
 #include "ParticleSystem/object_reader.h"
 #include "ParticleSystem/object_writer.h"
+#include "OptimizeParameterFile.h"
 
 #include "Optimize.h"
+
+// pybind
+#include <pybind11/embed.h>
+
+namespace py = pybind11;
 
 namespace shapeworks {
 
@@ -40,6 +46,28 @@ Optimize::Optimize()
 //---------------------------------------------------------------------------
 bool Optimize::Run()
 {
+  if (this->m_python_filename != "") {
+    py::initialize_interpreter();
+
+    auto dir = this->m_python_filename;
+
+    auto filename = dir.substr(dir.find_last_of("/") + 1);
+    std::cerr << "Running Python File: " << filename << "\n";
+    filename = filename.substr(0, filename.length() - 3); // remove .py
+    dir = dir.substr(0, dir.find_last_of("/") + 1);
+
+    py::module sys = py::module::import("sys");
+    py::print(sys.attr("path"));
+    sys.attr("path").attr("insert")(1, dir);
+    py::print(sys.attr("path"));
+
+    py::module module = py::module::import(filename.c_str());
+    py::object result = module.attr("run")(this);
+
+  }
+
+
+
   // sanity check
   if (this->m_domains_per_shape != this->m_number_of_particles.size()) {
     std::cerr <<
@@ -149,6 +177,12 @@ bool Optimize::Run()
   }
 
   this->UpdateExportablePoints();
+
+  if (this->m_python_filename != "") {
+      this->m_iter_callback = nullptr;
+      py::finalize_interpreter();
+  }
+
   return true;
 }
 
@@ -990,6 +1024,10 @@ void Optimize::AbortOptimization()
 //---------------------------------------------------------------------------
 void Optimize::IterateCallback(itk::Object*, const itk::EventObject&)
 {
+  if (this->m_iter_callback) {
+    this->m_iter_callback();
+  }
+
   this->m_iteration_count++;
 
   if (this->GetShowVisualizer()) {
@@ -2122,6 +2160,37 @@ void Optimize::PrintDoneMessage(unsigned int vlevel) const
 }
 
 //---------------------------------------------------------------------------
+bool Optimize::LoadParameterFile(std::string filename)
+{
+  OptimizeParameterFile param;
+  if (!param.load_parameter_file(filename, this)) {
+    std::cerr << "Error reading parameter file\n";
+    return false;
+  }
+  return true;
+}
+
+//---------------------------------------------------------------------------
+MatrixContainer Optimize::GetParticleSystem()
+{
+  
+  auto shape_matrix = m_sampler->GetGeneralShapeMatrix();
+
+  MatrixType matrix;
+  matrix.resize(shape_matrix->rows(), shape_matrix->cols());
+
+  for (int i = 0; i < shape_matrix->rows(); i++) {
+    for (int j = 0; j < shape_matrix->cols(); j++) {
+      matrix(i, j) = shape_matrix->get(i, j);
+    }
+  }
+
+  MatrixContainer container;
+  container.matrix_ = matrix;
+  return container;
+}
+
+//---------------------------------------------------------------------------
 std::string Optimize::GetCheckpointDir()
 {
   int num_digits = std::to_string(abs(m_total_iterations)).length();
@@ -2153,4 +2222,9 @@ std::string Optimize::GetCheckpointDir()
   return out_path;
 }
 
+//---------------------------------------------------------------------------
+void Optimize::SetPythonFile(std::string filename)
+{
+  this->m_python_filename = filename;
+}
 }

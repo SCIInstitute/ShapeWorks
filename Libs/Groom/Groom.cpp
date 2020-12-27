@@ -221,7 +221,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject)
         vector[0] = -com[0];
         vector[1] = -com[1];
         vector[2] = -com[2];
-        mesh->translate(vector);
+        mesh->translate_mesh(vector);
 
         itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
         tform[0] = com[0];
@@ -303,7 +303,14 @@ Vector3 Groom::center(Image &image)
   translation[0] = -diff[0];
   translation[1] = -diff[1];
   translation[2] = -diff[2];
-  image.translate(translation, Image::InterpolationType::NearestNeighbor);
+
+  //image.translate(translation, Image::InterpolationType::NearestNeighbor);
+
+  AffineTransformPtr xform(AffineTransform::New());
+  xform->Translate(-translation);
+  image.applyTransform(xform,Image::NearestNeighbor);
+
+
   translation[0] = com[0];
   translation[1] = com[1];
   translation[2] = com[2];

@@ -13,8 +13,8 @@ class Mesh
 public:
   using MeshType = vtkSmartPointer<vtkPolyData>;
 
-  Mesh(vtkSmartPointer<vtkPolyData>&& rhs) : mesh(std::move(rhs)) {}
   Mesh(const std::string& pathname) : mesh(read(pathname)) {}
+  Mesh(vtkSmartPointer<vtkPolyData>&& rhs) : mesh(std::move(rhs)) {}
 
   /// Write mesh to path, filename based on extension
   bool write(const std::string &pathname);
@@ -23,7 +23,7 @@ public:
   Point3 centerOfMass() const;
 
   /// translate mesh by a given vector
-  Mesh& translate(const Vector3 &v);
+  Mesh& translate_mesh(const Vector3 &v);
 
   /// determine the coverage between this mesh and another one (e.g. acetabular cup / femoral head)
   Mesh& coverage(const Mesh& other_mesh);
@@ -35,6 +35,21 @@ public:
 
   bool compare_points_equal(const Mesh& other_mesh);
   bool compare_scalars_equal(const Mesh& other_mesh);
+
+  // query functions //
+
+  /// number of vertices
+  vtkIdType numVertices() const { return mesh->GetNumberOfVerts(); }
+
+  /// number of faces
+  vtkIdType numFaces() const { return mesh->GetNumberOfCells(); }
+
+  /// get bounds
+  double* bounds() const {
+    double bb[6];
+    mesh->GetBounds(bb);
+    return bb;
+  }
 
   static std::vector<std::string> get_supported_types()
   {
@@ -49,5 +64,8 @@ private:
 
   MeshType mesh;
 };
+
+/// stream insertion operators for Mesh
+std::ostream& operator<<(std::ostream &os, const Mesh& mesh);
 
 } // shapeworks

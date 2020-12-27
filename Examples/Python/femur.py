@@ -179,20 +179,18 @@ def Run_Pipeline(args):
             medianFile = FindReferenceImage(centerFiles_segmentations)
             
             """
-            Apply rigid alignment
-            This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
-            This function uses the same transfrmation matrix for alignment of raw and segmentation files.
+            Apply resampling
             """
-            [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(groomDir + "aligned", centerFiles_segmentations, centerFiles_images, medianFile, processRaw = True)
+            resized_segmentations, resized_images = applyResampling(groomDir + "resized", medianFile, centerFiles_segmentations, centerFiles_images)
 
             # If user chose option 2, define cutting plane on median sample
             if choice == 2:
-                input_file = medianFile.replace("centered", "aligned").replace(".nrrd", ".aligned.DT.nrrd")
+                input_file = medianFile.replace("centered", "resized").replace(".nrrd", ".resized.nrrd")
                 cutting_plane_points = SelectCuttingPlane(input_file)
 
             elif choice == 1:
-                postfix = "_femur.isores.pad.com.center.aligned.DT.nrrd"
-                path = "aligned/segmentations/"
+                postfix = "_femur.isores.pad.com.center.resized.nrrd"
+                path = "resized/segmentations/"
                 input_file = groomDir + path + cp_prefix + postfix
                 cutting_plane_points = SelectCuttingPlane(input_file)
 
@@ -208,11 +206,11 @@ def Run_Pipeline(args):
             """
             Clip Binary Volumes - We have femurs of different shaft length so we will clip them all using the defined cutting plane.
             """
-            clippedFiles_segmentations = ClipBinaryVolumes(groomDir + 'clipped_segmentations', rigidFiles_segmentations, cutting_plane_points.flatten())
+            clippedFiles_segmentations = ClipBinaryVolumes(groomDir + 'clipped_segmentations', resized_segmentations, cutting_plane_points.flatten())
 
             """Compute largest bounding box and apply cropping"""
             croppedFiles_segmentations = applyCropping(groomDir + "cropped/segmentations", clippedFiles_segmentations, groomDir + "clipped_segmentations/*.nrrd")
-            croppedFiles_images = applyCropping(groomDir + "cropped/images", rigidFiles_images, groomDir + "clipped_segmentations/*.nrrd")
+            croppedFiles_images = applyCropping(groomDir + "cropped/images", resized_images, groomDir + "clipped_segmentations/*.nrrd")
 
         # BEGIN GROOMING WITHOUT IMAGES
         else:
@@ -269,20 +267,18 @@ def Run_Pipeline(args):
             medianFile = FindReferenceImage(centerFiles_segmentations)
             
             """
-            Apply rigid alignment
-            This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
-            This function uses the same transfrmation matrix for alignment of raw and segmentation files.
+            Apply resampling
             """
-            rigidFiles_segmentations = applyRigidAlignment(groomDir + "aligned", centerFiles_segmentations, None, medianFile, processRaw = False)
+            resized_segmentations = applyResampling(groomDir + "resized", medianFile, centerFiles_segmentations)
 
             # If user chose option 2, define cutting plane on median sample
             if choice == 2:
-                input_file = medianFile.replace("centered/segmentations", "aligned").replace(".nrrd", ".aligned.DT.nrrd")
+                input_file = medianFile.replace("centered/segmentations", "resized").replace(".nrrd", ".resized.nrrd")
                 cutting_plane_points = SelectCuttingPlane(input_file)
 
             elif choice == 1:
-                postfix = "_femur.isores.pad.com.center.aligned.DT.nrrd"
-                path = "aligned/"
+                postfix = "_femur.isores.pad.com.center.resized.nrrd"
+                path = "resized/"
                 input_file = groomDir + path + cp_prefix + postfix
                 cutting_plane_points = SelectCuttingPlane(input_file)
 
@@ -298,7 +294,7 @@ def Run_Pipeline(args):
             """
             Clip Binary Volumes - We have femurs of different shaft length so we will clip them all using the defined cutting plane.
             """
-            clippedFiles_segmentations = ClipBinaryVolumes(groomDir + 'clipped_segmentations', rigidFiles_segmentations, cutting_plane_points.flatten())
+            clippedFiles_segmentations = ClipBinaryVolumes(groomDir + 'clipped_segmentations', resized_segmentations, cutting_plane_points.flatten())
 
             """Compute largest bounding box and apply cropping"""
             croppedFiles_segmentations = applyCropping(groomDir + "cropped/segmentations", clippedFiles_segmentations, groomDir + "clipped_segmentations/*.nrrd")
