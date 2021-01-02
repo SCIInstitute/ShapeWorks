@@ -49,14 +49,98 @@ TriMeshWrapper::TriMeshWrapper(std::shared_ptr<trimesh::TriMesh> mesh)
   mesh_->need_normals();
   mesh_->need_curvatures();
   ComputeMeshBounds();
+  //TODO: Both the following need libigl data structures, pass it in so they both don't have to do the conversion
   ComputeGradN();
+  PrecomputeGeodesics();
 
   kd_tree_ = std::make_shared<KDtree>(mesh_->vertices);
 }
 
-double TriMeshWrapper::ComputeDistance(PointType pointa, PointType pointb) const
+double TriMeshWrapper::ComputeDistance(PointType pt_a, PointType pt_b) const
 {
-  return pointa.EuclideanDistanceTo(pointb);
+  // Euclidean
+#if 0
+  return pt_a.EuclideanDistanceTo(pt_b);
+#endif
+
+  //TODO get index passed in to use cache
+  //TODO do we need to snap to mesh or this already done by this point?
+  //TODO this SnapToMesh function should just return the triangle it ends up on?
+  // PointType snapped_a = this->SnapToMesh(pt_a, -1);
+  // PointType snapped_b = this->SnapToMesh(pt_b, -1);
+  PointType snapped_a = pt_a;
+  PointType snapped_b = pt_b;
+
+  // Find the triangle for the points
+  vec3 bary_a, bary_b;
+  const int face_a = GetTriangleForPoint(convert<PointType, point>(snapped_a), -1, bary_a);
+  const int face_b = GetTriangleForPoint(convert<PointType, point>(snapped_b), -1, bary_b);
+
+  if(face_a == face_b) {
+    return pt_a.EuclideanDistanceTo(pt_b);
+  }
+
+  // Consider 9 paths:
+  // a -> [vertex on triangle for a] -> [vertex on triangle for b] -> b
+  double best_dist = std::numeric_limits<double>::max();
+  int best_idx_a, best_idx_b;
+
+  // Convenience method for euclidean distance between itk point and vertex on mesh
+  // If the point is on the triangle of the vertex, this is equivalent to the geodesic distance
+  const auto dist_to_vertex =[&](const PointType& pt, int v) {
+    const double dx = pt[0] - mesh_->vertices[v][0];
+    const double dy = pt[1] - mesh_->vertices[v][1];
+    const double dz = pt[2] - mesh_->vertices[v][2];
+    return std::sqrt(dx*dx + dy*dy + dz*dz);
+  };
+
+  //TODO gradient of geodesic
+  for(int i=0; i<3; i++) {
+    // geodesic(==euclidean) distance between point a and face i
+    const double d_ai = dist_to_vertex(snapped_a, mesh_->faces[face_a][i]);
+
+    for(int j=0; j<3; j++) {
+      // geodesic distance between the two vertices on the mesh
+      const double g_ij = GeodesicDistance(mesh_->faces[face_a][i],
+                                           mesh_->faces[face_b][j]);
+
+      // geodesic(==euclidean) distance between point b and face j
+      const double d_bi = dist_to_vertex(snapped_b, mesh_->faces[face_b][j]);
+
+      // total geodesic distance
+      const double g = d_ai + g_ij + d_bi;
+
+      if(g < best_dist) {
+        best_dist = g;
+        best_idx_a = i;
+        best_idx_b = j;
+      }
+    }
+  }
+
+  return best_dist;
+}
+
+double TriMeshWrapper::GeodesicDistance(int v1, int v2) const
+{
+  if(v1 > v2) {
+    std::swap(v1, v2);
+  }
+
+  const auto entry = geodesic_cache_.cache.find(v1);
+  if(entry != geodesic_cache_.cache.end()) {
+    // TODO this seems correct, but just make sure the std::pair doesn't copy the entire Eigen vector
+    return entry->second(v2);
+  }
+
+  Eigen::VectorXi gamma;
+  Eigen::VectorXd D;
+  gamma.resize(1); gamma << v1;
+  igl::heat_geodesics_solve(geodesic_cache_.heat_data, gamma, D);
+
+  geodesic_cache_.cache[v1] = D;
+
+  return D(v2);
 }
 
 /** start in barycentric coords of currentFace
@@ -535,6 +619,16 @@ void TriMeshWrapper::ComputeGradN()
     }
   }
 
+}
+
+void TriMeshWrapper::PrecomputeGeodesics()
+{
+  // Copy from trimesh to libigl data structures
+  Eigen::MatrixXd V;
+  Eigen::MatrixXi F;
+  GetIGLMesh(V, F);
+
+  igl::heat_geodesics_precompute(V, F, geodesic_cache_.heat_data);
 }
 
 void TriMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F)

@@ -3,12 +3,14 @@
 #include "vnl/vnl_vector_fixed.h"
 #include "TriMesh.h"
 #include "KDtree.h"
+#include <unordered_map>
 
 #include "MeshWrapper.h"
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #include <vector>
+#include "igl/heat_geodesics.h"
 
 namespace shapeworks {
 
@@ -87,6 +89,16 @@ private:
   mutable std::vector<int> particle2tri_;
 
   std::vector<HessianType> grad_normals_;
+
+  // Geodesic distances
+  void PrecomputeGeodesics(); // Precomputation for geodesic distances
+  double GeodesicDistance(int v1, int v2) const;
+  mutable struct {
+    igl::HeatGeodesicsData<double> heat_data;
+
+    //TODO lru_cache https://github.com/lamerman/cpp-lru-cache/blob/master/include/lrucache.hpp
+    std::unordered_map<int, Eigen::VectorXd> cache;
+  } geodesic_cache_;
 
   PointType mesh_lower_bound_;
   PointType mesh_upper_bound_;
