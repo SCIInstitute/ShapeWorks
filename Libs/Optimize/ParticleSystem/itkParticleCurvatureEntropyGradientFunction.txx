@@ -65,7 +65,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 
       avgKappa += kappa;
       
-      double sqrdistance = domain->SquaredDistance(pos, neighborhood[i].Point);
+      double sqrdistance = domain->SquaredDistance(pos, idx, neighborhood[i].Point, neighborhood[i].Index);
       sqrdistance = sqrdistance * kappa * kappa;
 
       double alpha = exp(-sqrdistance / sigma22) * weights[i];

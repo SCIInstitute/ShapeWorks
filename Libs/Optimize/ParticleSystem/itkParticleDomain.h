@@ -44,11 +44,11 @@ public:
   virtual vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType & point, int idx) const = 0;
   virtual HessianType SampleHessianAtPoint(const PointType &p, int idx) const = 0;
   /** Distance between locations is used for computing energy and neighborhoods. */
-  virtual double Distance(const PointType &a, const PointType &b) const {
+  virtual double Distance(const PointType &a, int idx_a, const PointType &b, int idx_b) const {
     return a.EuclideanDistanceTo(b);
   }
   /** Squared Distance between locations is used for computing sigma. */
-  virtual double SquaredDistance(const PointType &a, const PointType &b) const {
+  virtual double SquaredDistance(const PointType &a, int idx_a, const PointType &b, int idx_b) const {
     return a.SquaredEuclideanDistanceTo(b);
   }
 

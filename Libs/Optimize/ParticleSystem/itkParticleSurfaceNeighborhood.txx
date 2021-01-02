@@ -55,7 +55,7 @@ ParticleSurfaceNeighborhood<TImage>
   for (typename PointTreeType::PointIteratorListType::const_iterator it = pointlist.begin();
        it != pointlist.end(); it++)
     {
-      double distance = this->GetDomain()->Distance(center, (*it)->Point);
+      double distance = this->GetDomain()->Distance(center, idx, (*it)->Point, (*it)->Index);
     
     if (distance < radius && distance > 0.0 )
       {

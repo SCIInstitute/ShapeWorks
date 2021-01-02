@@ -56,26 +56,18 @@ TriMeshWrapper::TriMeshWrapper(std::shared_ptr<trimesh::TriMesh> mesh)
   kd_tree_ = std::make_shared<KDtree>(mesh_->vertices);
 }
 
-double TriMeshWrapper::ComputeDistance(PointType pt_a, PointType pt_b) const
+double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a, PointType pt_b, int idx_b) const
 {
-  // Euclidean
 #if 0
   return pt_a.EuclideanDistanceTo(pt_b);
 #endif
 
-  //TODO get index passed in to use cache
-  //TODO do we need to snap to mesh or this already done by this point?
-  //TODO this SnapToMesh function should just return the triangle it ends up on?
-  // PointType snapped_a = this->SnapToMesh(pt_a, -1);
-  // PointType snapped_b = this->SnapToMesh(pt_b, -1);
-  PointType snapped_a = pt_a;
-  PointType snapped_b = pt_b;
-
   // Find the triangle for the points
   vec3 bary_a, bary_b;
-  const int face_a = GetTriangleForPoint(convert<PointType, point>(snapped_a), -1, bary_a);
-  const int face_b = GetTriangleForPoint(convert<PointType, point>(snapped_b), -1, bary_b);
+  const int face_a = GetTriangleForPoint(convert<PointType, point>(pt_a), idx_a, bary_a);
+  const int face_b = GetTriangleForPoint(convert<PointType, point>(pt_b), idx_b, bary_b);
 
+  // Both points on the same triangle, just return euclidean distance
   if(face_a == face_b) {
     return pt_a.EuclideanDistanceTo(pt_b);
   }
@@ -97,7 +89,7 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, PointType pt_b) const
   //TODO gradient of geodesic
   for(int i=0; i<3; i++) {
     // geodesic(==euclidean) distance between point a and face i
-    const double d_ai = dist_to_vertex(snapped_a, mesh_->faces[face_a][i]);
+    const double d_ai = dist_to_vertex(pt_a, mesh_->faces[face_a][i]);
 
     for(int j=0; j<3; j++) {
       // geodesic distance between the two vertices on the mesh
@@ -105,7 +97,7 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, PointType pt_b) const
                                            mesh_->faces[face_b][j]);
 
       // geodesic(==euclidean) distance between point b and face j
-      const double d_bi = dist_to_vertex(snapped_b, mesh_->faces[face_b][j]);
+      const double d_bi = dist_to_vertex(pt_b, mesh_->faces[face_b][j]);
 
       // total geodesic distance
       const double g = d_ai + g_ij + d_bi;
@@ -135,12 +127,15 @@ double TriMeshWrapper::GeodesicDistance(int v1, int v2) const
 
   Eigen::VectorXi gamma;
   Eigen::VectorXd D;
+  //TODO heat API accepts multiple source vertices. this can allow us to skip some stuff in the distance computation,
+  // but will change how we cache things. (based on triangle instead of vertices?) [think about this]
   gamma.resize(1); gamma << v1;
   igl::heat_geodesics_solve(geodesic_cache_.heat_data, gamma, D);
 
-  geodesic_cache_.cache[v1] = D;
+  const double d = D(v2);
+  geodesic_cache_.cache[v1] = std::move(D);
 
-  return D(v2);
+  return d;
 }
 
 /** start in barycentric coords of currentFace

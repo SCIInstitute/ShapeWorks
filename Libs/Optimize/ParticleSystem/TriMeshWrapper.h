@@ -23,7 +23,7 @@ public:
   typedef typename MeshWrapper::PointType PointType;
   typedef typename MeshWrapper::HessianType HessianType;
 
-  double ComputeDistance(PointType pointa, PointType pointb) const override;
+  double ComputeDistance(PointType pointa, int idx_a, PointType pointb, int idx_b) const override;
 
   PointType
   GeodesicWalk(PointType pointa, int idx, vnl_vector_fixed<double, DIMENSION> vector) const override;
