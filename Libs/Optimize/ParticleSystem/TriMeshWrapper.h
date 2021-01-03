@@ -23,7 +23,9 @@ public:
   typedef typename MeshWrapper::PointType PointType;
   typedef typename MeshWrapper::HessianType HessianType;
 
-  double ComputeDistance(PointType pointa, int idx_a, PointType pointb, int idx_b) const override;
+  double ComputeDistance(PointType pointa, int idx_a,
+                         PointType pointb, int idx_b,
+                         vnl_vector_fixed<double, DIMENSION> *out_grad=nullptr) const override;
 
   PointType
   GeodesicWalk(PointType pointa, int idx, vnl_vector_fixed<double, DIMENSION> vector) const override;
@@ -98,6 +100,9 @@ private:
 
     //TODO lru_cache https://github.com/lamerman/cpp-lru-cache/blob/master/include/lrucache.hpp
     std::unordered_map<int, Eigen::VectorXd> cache;
+
+    //TODO should we just recompute this every time?
+    Eigen::SparseMatrix<double> G;
   } geodesic_cache_;
 
   PointType mesh_lower_bound_;

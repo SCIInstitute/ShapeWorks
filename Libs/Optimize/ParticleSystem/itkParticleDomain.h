@@ -43,12 +43,26 @@ public:
   virtual vnl_vector_fixed<float, DIMENSION> SampleGradientAtPoint(const PointType &point, int idx) const = 0;
   virtual vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType & point, int idx) const = 0;
   virtual HessianType SampleHessianAtPoint(const PointType &p, int idx) const = 0;
-  /** Distance between locations is used for computing energy and neighborhoods. */
-  virtual double Distance(const PointType &a, int idx_a, const PointType &b, int idx_b) const {
-    return a.EuclideanDistanceTo(b);
+
+  /** Distance between locations is used for computing energy and neighborhoods. Optionally
+      return the gradient of the distance */
+  virtual double Distance(const PointType &a, int idx_a,
+                          const PointType &b, int idx_b,
+                          vnl_vector_fixed<double, DIMENSION> *out_grad=nullptr) const {
+    const auto d = a.EuclideanDistanceTo(b);
+
+    //TODO make sure image domain is working as before after this change
+    if(out_grad != nullptr) {
+      for(int i=0; i<DIMENSION; i++) {
+        (*out_grad)[i] = a[i] - b[i];
+      }
+    }
+
+    return d;
   }
   /** Squared Distance between locations is used for computing sigma. */
-  virtual double SquaredDistance(const PointType &a, int idx_a, const PointType &b, int idx_b) const {
+  virtual double SquaredDistance(const PointType &a, int idx_a,
+                                 const PointType &b, int idx_b) const {
     return a.SquaredEuclideanDistanceTo(b);
   }
 

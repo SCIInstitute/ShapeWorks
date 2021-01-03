@@ -56,7 +56,9 @@ TriMeshWrapper::TriMeshWrapper(std::shared_ptr<trimesh::TriMesh> mesh)
   kd_tree_ = std::make_shared<KDtree>(mesh_->vertices);
 }
 
-double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a, PointType pt_b, int idx_b) const
+double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
+                                       PointType pt_b, int idx_b,
+                                       vnl_vector_fixed<double, DIMENSION> *out_grad) const
 {
 #if 0
   return pt_a.EuclideanDistanceTo(pt_b);
@@ -107,6 +109,12 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a, PointType pt_b
         best_idx_a = i;
         best_idx_b = j;
       }
+    }
+  }
+
+  if(out_grad != nullptr) {
+    for(int i=0; i<DIMENSION; i++) {
+      (*out_grad)[i] = pt_a[i] - pt_b[i];
     }
   }
 
@@ -299,6 +307,8 @@ TriMeshWrapper::PointType
 TriMeshWrapper::GeodesicWalk(PointType pointa, int idx, vnl_vector_fixed<double, DIMENSION> vector) const
 {
 
+  // TODO SnapToMesh internally calls GetTriangleForPoint: it can/should return the face index and barycentric
+  // coordinates avoiding another GetTriangleForPoint call
   PointType snapped = this->SnapToMesh(pointa, idx);
   vec3 bary;
   int faceIndex = GetTriangleForPoint(convert<PointType, point>(snapped), idx, bary);
@@ -623,7 +633,11 @@ void TriMeshWrapper::PrecomputeGeodesics()
   Eigen::MatrixXi F;
   GetIGLMesh(V, F);
 
+  // Precompute heat data structure for geodesics
   igl::heat_geodesics_precompute(V, F, geodesic_cache_.heat_data);
+
+  // Precompute gradient operator to find gradient of geodesics
+  igl::grad(V, F, geodesic_cache_.G);
 }
 
 void TriMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F)

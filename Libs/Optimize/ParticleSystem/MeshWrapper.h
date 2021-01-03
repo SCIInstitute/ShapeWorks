@@ -13,8 +13,11 @@ public:
   typedef typename itk::ParticleDomain::PointType PointType;
   typedef typename itk::ParticleDomain::HessianType HessianType;
 
-  // Computed distance between points. (Currently euclidean)
-  virtual double ComputeDistance(PointType pointa, int idx_a, PointType pointb, int idx_b) const = 0;
+  // Computed distance between points. If out_grad != nullptr, returns the gradient of the distance in that vector
+  virtual double ComputeDistance(PointType pointa, int idx_a,
+                                 PointType pointb, int idx_b,
+                                 vnl_vector_fixed<double, 3> *out_grad=nullptr) const = 0;
+
   // Returns updated point position after applying the update vector to the initial position.
   virtual PointType GeodesicWalk(PointType pointa, int idx, vnl_vector_fixed<double, DIMENSION> vector) const = 0;
 

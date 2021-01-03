@@ -88,8 +88,10 @@ public:
     return meshWrapper->SampleGradNAtPoint(p, idx);
   }
 
-  inline double Distance(const PointType &a, int idx_a, const PointType &b, int idx_b) const override {
-      return meshWrapper->ComputeDistance(a, idx_a, b, idx_b);
+  inline double Distance(const PointType &a, int idx_a,
+                         const PointType &b, int idx_b,
+                         vnl_vector_fixed<double, DIMENSION> *out_grad=nullptr) const override {
+      return meshWrapper->ComputeDistance(a, idx_a, b, idx_b, out_grad);
   }
   inline double SquaredDistance(const PointType &a, int idx_a, const PointType &b, int idx_b) const override {
     double dist = meshWrapper->ComputeDistance(a, idx_a, b, idx_b);

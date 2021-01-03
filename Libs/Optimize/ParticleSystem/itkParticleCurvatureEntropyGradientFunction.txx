@@ -253,11 +253,20 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
     double kappa = this->ComputeKappa(Dij, d);
 
     VectorType r;
+    //TODO Is this where the gradient of geodesic will end up?
+    const double distance = system->GetDomain(d)->Distance(
+            pos, idx,
+            m_CurrentNeighborhood[i].Point, m_CurrentNeighborhood[i].Index,
+            &r
+    );
+    r *= kappa;
+    /* TODO OLD CODE DELETE ME
     for (unsigned int n = 0; n < VDimension; n++) {
       // Note that the Neighborhood object has already filtered the
       // neighborhood for points whose normals differ by > 90 degrees.
       r[n] = (pos[n] - m_CurrentNeighborhood[i].Point[n]) * kappa;
     }
+     */
 
     double q = kappa * exp( -dot_product(r, r) * sigma2inv);
     A += q;
