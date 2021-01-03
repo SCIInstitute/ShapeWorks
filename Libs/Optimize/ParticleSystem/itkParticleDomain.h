@@ -49,8 +49,6 @@ public:
   virtual double Distance(const PointType &a, int idx_a,
                           const PointType &b, int idx_b,
                           vnl_vector_fixed<double, DIMENSION> *out_grad=nullptr) const {
-    const auto d = a.EuclideanDistanceTo(b);
-
     //TODO make sure image domain is working as before after this change
     if(out_grad != nullptr) {
       for(int i=0; i<DIMENSION; i++) {
@@ -58,7 +56,7 @@ public:
       }
     }
 
-    return d;
+    return a.EuclideanDistanceTo(b);
   }
   /** Squared Distance between locations is used for computing sigma. */
   virtual double SquaredDistance(const PointType &a, int idx_a,

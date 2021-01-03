@@ -61,16 +61,27 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
                                        vnl_vector_fixed<double, DIMENSION> *out_grad) const
 {
 #if 0
+  if(out_grad != nullptr) {
+    for(int i=0; i<DIMENSION; i++) {
+      (*out_grad)[i] = pt_a[i] - pt_b[i];
+    }
+  }
   return pt_a.EuclideanDistanceTo(pt_b);
 #endif
 
   // Find the triangle for the points
   vec3 bary_a, bary_b;
+  //TODO need to Snap ???
   const int face_a = GetTriangleForPoint(convert<PointType, point>(pt_a), idx_a, bary_a);
   const int face_b = GetTriangleForPoint(convert<PointType, point>(pt_b), idx_b, bary_b);
 
   // Both points on the same triangle, just return euclidean distance
   if(face_a == face_b) {
+    if(out_grad != nullptr) {
+      for(int i=0; i<DIMENSION; i++) {
+        (*out_grad)[i] = pt_a[i] - pt_b[i];
+      }
+    }
     return pt_a.EuclideanDistanceTo(pt_b);
   }
 
@@ -113,7 +124,7 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
   }
 
   if(out_grad != nullptr) {
-    // TODO this treats the gradient of geodesics as constant over face_b, is this alright?
+    // TODO this treats the gradient of geodesics as constant over a face, is this alright?
     const int src_v = mesh_->faces[face_b][best_idx_b];
 
     const auto& G = geodesic_cache_.G;
@@ -127,17 +138,30 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
     }
 
     // const Eigen::MatrixXd GN = Eigen::Map<const Eigen::MatrixXd>((G*D).eval().data(), n_faces, 9);
-    const Eigen::MatrixXd GD = G.block(3*face_a, 0, 3, G.cols()) * D;
+    // const Eigen::MatrixXd GD = G.block(3*face_b, 0, 3, G.cols()) * D;
 
-    if(GD.rows() != 3 || GD.cols() != 1) {
+    const Eigen::MatrixXd GD_all = Eigen::Map<const Eigen::MatrixXd>((G*D).eval().data(), mesh_->faces.size(), 3);
+    const Eigen::MatrixXd GD = GD_all.row(face_a);
+
+    if(GD.rows() != 1 || GD.cols() != 3) {
       std::cout << "GD: " << GD.rows() << " " << GD.cols() << "\n";
       throw std::runtime_error("Bad bad GD");
     }
 
+    std::cout << "------\n";
     for(int i=0; i<DIMENSION; i++) {
-      (*out_grad)[i] = -GD(i,0);
+      (*out_grad)[i] = GD(0,i);
+      std::cout << out_grad->get(i) << " | " << (pt_a[i] - pt_b[i]) << "\n";
     }
+    const double angle_geo = std::atan2(out_grad->get(1), out_grad->get(0));
+    const double angle_eucl = std::atan2(pt_a[1] - pt_b[1], pt_a[0] - pt_b[0]);
+    std::cout << "angle: " << angle_geo << " | " << angle_eucl << "(diff: " << angle_geo - angle_eucl << ")\n";
+    const double dist_eucl = pt_a.EuclideanDistanceTo(pt_b);
+    std::cout << "distance: " << best_dist << " | " << dist_eucl << "(diff: " << best_dist - dist_eucl << ")\n";
+    std::cout << "------\n";
+
   }
+
 #if 0
   if(out_grad != nullptr) {
     for(int i=0; i<DIMENSION; i++) {
