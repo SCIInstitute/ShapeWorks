@@ -113,19 +113,50 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
   }
 
   if(out_grad != nullptr) {
+    // TODO this treats the gradient of geodesics as constant over face_b, is this alright?
+    const int src_v = mesh_->faces[face_b][best_idx_b];
+
+    const auto& G = geodesic_cache_.G;
+
+    // TODO neater somehow?
+    GeodesicDistance(src_v, mesh_->vertices.size()-1); // make sure its in cache
+    const auto& D = geodesic_cache_.cache[src_v];
+
+    if(D.size() != mesh_->vertices.size()) {
+      throw std::runtime_error("Bad bad D");
+    }
+
+    // const Eigen::MatrixXd GN = Eigen::Map<const Eigen::MatrixXd>((G*D).eval().data(), n_faces, 9);
+    const Eigen::MatrixXd GD = G.block(3*face_a, 0, 3, G.cols()) * D;
+
+    if(GD.rows() != 3 || GD.cols() != 1) {
+      std::cout << "GD: " << GD.rows() << " " << GD.cols() << "\n";
+      throw std::runtime_error("Bad bad GD");
+    }
+
+    for(int i=0; i<DIMENSION; i++) {
+      (*out_grad)[i] = -GD(i,0);
+    }
+  }
+#if 0
+  if(out_grad != nullptr) {
     for(int i=0; i<DIMENSION; i++) {
       (*out_grad)[i] = pt_a[i] - pt_b[i];
     }
   }
+#endif
 
   return best_dist;
 }
 
 double TriMeshWrapper::GeodesicDistance(int v1, int v2) const
 {
+  // TODO Bring this back or think about why its not necessary
+  /*
   if(v1 > v2) {
     std::swap(v1, v2);
   }
+  */
 
   const auto entry = geodesic_cache_.cache.find(v1);
   if(entry != geodesic_cache_.cache.end()) {
