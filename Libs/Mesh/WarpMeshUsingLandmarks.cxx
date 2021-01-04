@@ -188,7 +188,6 @@ int main(int argc, char *argv[])
 	for(int i = 0; i < pointPaths.size(); i++){	
 		Vcontrol_moving = pointReadFormat(pointPaths[i], numP);
 		Eigen::MatrixXd Voutput = W * (Vcontrol_moving.rowwise() + Eigen::RowVector3d(1,0,0));
-		// Save Output Mesh
 		vtkSmartPointer<vtkPolyData> outmesh = vtkSmartPointer<vtkPolyData>::New();
 		vtkSmartPointer<vtkPoints> outpoints = vtkSmartPointer<vtkPoints>::New();
 		outpoints->SetNumberOfPoints(numVertices);
@@ -197,7 +196,6 @@ int main(int argc, char *argv[])
 		{
 			outpoints->SetPoint(i, Voutput(i, 0), Voutput(i, 1), Voutput(i, 2));
 		}
-
 		vtkSmartPointer<vtkCellArray> polys = vtkSmartPointer<vtkCellArray>::New();
 		for (vtkIdType i = 0; i < numFaces; i++)
 		{
