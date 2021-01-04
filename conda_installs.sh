@@ -3,6 +3,7 @@
 #
 echo ""
 echo "Note: this script only supports bash and zsh shells"
+echo "      It must be called using \"source ./conda_installs.sh\""
 echo ""
 
 (return 0 2>/dev/null) && sourced=1 || sourced=0
@@ -36,9 +37,9 @@ function install_conda() {
   if ! command -v conda 2>/dev/null 1>&2; then
     echo "installing anaconda..."
     if [[ "$(uname)" == "Darwin" ]]; then
-      curl -o ./Miniconda3-latest-MacOSX-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
-      bash ./Miniconda3-latest-MacOSX-x86_64.sh
-      rm ./Miniconda3-latest-MacOSX-x86_64.sh
+      curl -o /tmp/Miniconda3-latest-MacOSX-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
+      bash /tmp/Miniconda3-latest-MacOSX-x86_64.sh
+      rm /tmp/Miniconda3-latest-MacOSX-x86_64.sh
     elif [[ "$(uname)" == "Linux" ]]; then
       curl -o ./Miniconda3-latest-Linux-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
       bash ./Miniconda3-latest-Linux-x86_64.sh
