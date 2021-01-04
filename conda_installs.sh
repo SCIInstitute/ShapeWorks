@@ -125,6 +125,18 @@ function install_conda() {
   if ! pip install Python/DataAugmentationUtilsPackage; then return 1; fi # install data augmentation code as a package
   if ! pip install Python/DeepSSMUtilsPackage;          then return 1; fi # install DeepSSM code as a package
   if ! pip install Python/ShapeCohortGenPackage;        then return 1; fi # install shape cohort generation code as a package
+
+
+  if [[ "$GITHUB_ACTION" != "" ]]; then
+      echo "Running under GitHub Action"
+      pushd $HOME/miniconda3/envs/shapeworks/lib
+      ls libffi*
+      if [ ! -f libffi.6.dylib ]; then
+	  ln -s libffi.7.dylib libffi.6.dylib
+      fi
+      popd
+  fi
+
   
   # installs for jupyter notebooks
 

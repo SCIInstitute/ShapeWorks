@@ -18,13 +18,14 @@
 
 Q_DECLARE_METATYPE(vtkSmartPointer<vtkPolyData>);
 
-class MeshWorker : public QObject, public QRunnable
-{
-  Q_OBJECT
+namespace shapeworks {
+
+class MeshWorker : public QObject, public QRunnable {
+Q_OBJECT
 
 public:
   MeshWorker(Preferences& prefs,
-             const MeshWorkItem &item,
+             const MeshWorkItem& item,
              MeshWorkQueue* queue,
              MeshCache* cache);
   ~MeshWorker();
@@ -33,7 +34,7 @@ public:
   void run();
 
 Q_SIGNALS:
-  void result_ready(const MeshWorkItem &item, MeshHandle mesh);
+  void result_ready(const MeshWorkItem& item, MeshHandle mesh);
   void finished();
 
 private:
@@ -43,3 +44,4 @@ private:
   MeshWorkQueue* queue_;
   MeshCache* cache_;
 };
+}

@@ -107,7 +107,7 @@ bool Optimize::Run()
 
   m_disable_procrustes = true;
 
-  std::vector<unsigned int> final_number_of_particles = this->m_number_of_particles;
+  std::vector<int> final_number_of_particles = this->m_number_of_particles;
   int scale = 1;
   if (this->m_use_shape_statistics_after > 0) {
     this->m_use_shape_statistics_in_init = false;
@@ -335,13 +335,13 @@ shapeworks::DomainType Optimize::GetDomainType()
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetNumberOfParticles(std::vector<unsigned int> number_of_particles)
+void Optimize::SetNumberOfParticles(std::vector<int> number_of_particles)
 {
   this->m_number_of_particles = number_of_particles;
 }
 
 //---------------------------------------------------------------------------
-std::vector<unsigned int> Optimize::GetNumberOfParticles()
+std::vector<int> Optimize::GetNumberOfParticles()
 {
   return this->m_number_of_particles;
 }

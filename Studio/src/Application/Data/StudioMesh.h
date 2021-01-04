@@ -12,24 +12,28 @@
 #include <itkImage.h>
 
 #include <vnl/vnl_vector.h>
-#include <Groom/ShapeWorksGroom.h>
 
-class Mesh;
-typedef QSharedPointer<Mesh> MeshHandle;
+using PixelType = float;
+using ImageType = itk::Image<PixelType, 3>;
+
+namespace shapeworks {
+
+class StudioMesh;
+typedef QSharedPointer<StudioMesh> MeshHandle;
 //! Representation of a single mesh.
 /*!
  * The Mesh class represents a single mesh generated from an image file or set of particles.
  * It is responsible for loading the image and generating a mesh from it.
  *
  */
-class Mesh {
+class StudioMesh {
 public:
 
   //! Constructor
-  Mesh();
+  StudioMesh();
 
   //! Destructor
-  ~Mesh();
+  ~StudioMesh();
 
   //! Create a mesh from an image
   void create_from_image(ImageType::Pointer img, double iso_value);
@@ -53,7 +57,8 @@ public:
   std::string get_error_message();
 
   //! Apply a feature map
-  void apply_feature_map(std::string name, ImageType::Pointer image, vnl_vector<double> transform);
+  void apply_feature_map(std::string name, ImageType::Pointer image,
+                         vnl_vector<double> transform);
 
   void interpolate_scalars_to_mesh(std::string name,
                                    vnl_vector<double> positions, Eigen::VectorXf scalar_values);
@@ -71,3 +76,4 @@ private:
   std::string error_message_;
 
 };
+}

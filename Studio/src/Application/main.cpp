@@ -39,8 +39,8 @@ int main(int argc, char** argv)
 
     QApplication app(argc, argv);
 
-    QSharedPointer<ShapeWorksStudioApp> studio_app =
-      QSharedPointer<ShapeWorksStudioApp>(new ShapeWorksStudioApp());
+    QSharedPointer<shapeworks::ShapeWorksStudioApp> studio_app =
+      QSharedPointer<shapeworks::ShapeWorksStudioApp>(new shapeworks::ShapeWorksStudioApp());
     QResource::registerResource(RSCS_FILE);
     studio_app->setWindowIcon(QIcon(ICON_FILE));
     studio_app->show();
