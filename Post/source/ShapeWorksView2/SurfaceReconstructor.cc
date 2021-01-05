@@ -73,22 +73,10 @@ void SurfaceReconstructor::generate_mean_dense()
   }
 
   // read distance transforms
-  std::vector<typename ImageType::Pointer> distance_transforms;
+  std::vector<std::string> distance_transforms;
   for (unsigned int shapeNo = 0; shapeNo < this->distance_transform_filenames_.size(); shapeNo++) {
     std::string filename = this->distance_transform_filenames_[shapeNo];
-
-    if (filename.find(".nrrd") != std::string::npos) {
-      itk::NrrdImageIOFactory::RegisterOneFactory();
-    }
-    else
-    if (filename.find(".mha") != std::string::npos) {
-      itk::MetaImageIOFactory::RegisterOneFactory();
-    }
-    typename ReaderType::Pointer reader = ReaderType::New();
-    std::cout << "Reading distance transform file : " << filename << std::endl;
-    reader->SetFileName(filename.c_str());
-    reader->Update();
-    distance_transforms.push_back(reader->GetOutput());
+    distance_transforms.push_back(filename);
   }
 
   std::cout << "Computing mean sparse shape .... \n ";

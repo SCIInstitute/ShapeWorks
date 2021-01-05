@@ -15,14 +15,14 @@
 BarGraph::BarGraph(QWidget* parent) :
   QWidget(parent)
 {
-
   this->setMouseTracking(true);
   this->hover_timer_.setSingleShot(true);
   this->connect(&this->hover_timer_, &QTimer::timeout, this, &BarGraph::hover_timer_event);
 }
 
 //---------------------------------------------------------------------------
-BarGraph::~BarGraph() {}
+BarGraph::~BarGraph()
+{}
 
 //---------------------------------------------------------------------------
 void BarGraph::set_log_scale(bool b)
@@ -39,8 +39,6 @@ void BarGraph::hover_timer_event()
   double bar = std::floor((x - 45) / (this->bar_width_ + 5));
 
   if (bar >= 0 && bar < this->values_.size()) {
-    //QString message("x=" + QString::number(x) + "\nbar=" + QString::number(bar));
-
     double explained_variance = this->values_[bar];
     double accumulated_variance = this->accumulation_[bar];
 
@@ -48,7 +46,7 @@ void BarGraph::hover_timer_event()
                     + "\nExplained Variance: " + QString::number(explained_variance, 'f', 1)
                     + "\nCumulative Variance: " + QString::number(accumulated_variance, 'f', 1));
 
-    QPoint point(this->tooltipPosition_.x(), this->tooltipPosition_.y());
+    QPoint point(this->tooltip_position_.x(), this->tooltip_position_.y());
     QToolTip::showText(point, message);
   }
 }
@@ -67,12 +65,12 @@ void BarGraph::set_data(const std::vector<double>& values)
   }
 
   this->recalculate_bars();
-  this->setMinimumSize((int)(this->margin_ * this->values_.size() * 2) + 45,
+  this->setMinimumSize((int) (this->margin_ * this->values_.size() * 2) + 45,
                        200 + this->margin_ * 5);
 }
 
 //---------------------------------------------------------------------------
-void BarGraph::paint_bar_graph(QPainter &painter)
+void BarGraph::paint_bar_graph(QPainter& painter)
 {
 
   if (this->font_height_ < 0) {
@@ -81,7 +79,7 @@ void BarGraph::paint_bar_graph(QPainter &painter)
     this->font_height_ = rect.height();
   }
 
-  QString y_axis_label = "Explained Variance";
+  QString y_axis_label = this->y_label_;
 
   if (this->y_axis_text_width_ < 0) {
     QFontMetrics metrics(painter.font());
@@ -124,7 +122,7 @@ void BarGraph::paint_bar_graph(QPainter &painter)
     }
 
     int ypos = 5 + graph_height - static_cast<int>(this->get_height_for_value(
-                                                     this->accumulation_[i]));
+      this->accumulation_[i]));
 
     QPoint start_pos(this->bars_[i].x(), ypos);
     QPoint end_pos(this->bars_[i].x() + this->bars_[i].width() + this->margin_, ypos);
@@ -143,7 +141,7 @@ void BarGraph::paint_bar_graph(QPainter &painter)
   painter.save();
   painter.translate(10, this->height() / 2 + this->y_axis_text_width_ / 2);
   painter.rotate(-90);
-  painter.drawText(0, 0, "Explained Variance");
+  painter.drawText(0, 0, this->y_label_);
   painter.restore();
 
   // Y Labels
@@ -198,12 +196,10 @@ void BarGraph::mouseMoveEvent(QMouseEvent* event)
   this->hover_timer_.stop();
   QToolTip::hideText();
 
-  this->tooltipPosition_ = event->screenPos();
+  this->tooltip_position_ = event->screenPos();
   this->hover_position_ = event->pos();
 
-  //hover_timer_event();
-  hover_timer_.start(250);
-  //prev_pos_ = histogram_->to_histogram_pct( e->scenePos().x() );
+  this->hover_timer_.start(250);
 }
 
 //---------------------------------------------------------------------------
@@ -215,7 +211,7 @@ void BarGraph::recalculate_bars()
   int graph_height = this->get_graph_height();
 
   this->bar_width_ =
-    std::max(this->margin_, (int)(width_to_work_with / (num_bars)));
+    std::max(this->margin_, (int) (width_to_work_with / (num_bars)));
 
   if (this->bars_.size() != this->values_.size()) {
     this->bars_.resize(this->values_.size());
@@ -229,8 +225,8 @@ void BarGraph::recalculate_bars()
     double val = this->values_[i];
     sum = sum + val;
     this->accumulation_.push_back(sum);
-    int barheight = static_cast<int>(this->get_height_for_value(val));
-    this->bars_[i].setRect(x, 5 + graph_height - barheight, this->bar_width_, barheight);
+    int bar_height = static_cast<int>(this->get_height_for_value(val));
+    this->bars_[i].setRect(x, 5 + graph_height - bar_height, this->bar_width_, bar_height);
     x += this->margin_ + this->bar_width_;
   }
 }
@@ -265,4 +261,10 @@ double BarGraph::get_height_for_value(double value)
   double return_value = val * this->get_graph_height() / range;
 
   return return_value;
+}
+
+//---------------------------------------------------------------------------
+void BarGraph::set_y_label(QString label)
+{
+  this->y_label_ = label;
 }

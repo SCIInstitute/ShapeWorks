@@ -4,6 +4,8 @@
 #include <vector>
 #include <map>
 
+#include <Libs/Optimize/ParticleSystem/DomainType.h>
+
 namespace shapeworks {
 
 //! Representation of a single subject.
@@ -23,6 +25,9 @@ public:
   void set_segmentation_filenames(std::vector<std::string> filenames);
   //! Get segmentation filenames
   std::vector<std::string> get_segmentation_filenames();
+
+  //! Return the domain types
+  std::vector<DomainType> get_domain_types();
 
   //! Set groomed filenames
   void set_groomed_filenames(std::vector<std::string> filenames);
@@ -62,6 +67,10 @@ public:
   //! Set the group values
   void set_group_values(const std::map<std::string, std::string>& group_values);
 
+  //! Get extra values (extra columns we don't interpret)
+  std::map<std::string, std::string> get_extra_values() const;
+  void set_extra_values(std::map<std::string, std::string> extra_values);
+
 
 private:
 
@@ -76,5 +85,6 @@ private:
 
   std::map<std::string, std::string> feature_filenames_;
   std::map<std::string, std::string> group_values_;
+  std::map<std::string, std::string> extra_values_;
 };
 }

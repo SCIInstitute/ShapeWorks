@@ -29,9 +29,10 @@ COMMAND_DECLARE(Blur, ImageCommand);
 COMMAND_DECLARE(BoundingBox, ImageCommand);
 COMMAND_DECLARE(CropImage, ImageCommand);
 COMMAND_DECLARE(ICPRigid, ImageCommand);
-COMMAND_DECLARE(ClipVolume, ImageCommand );
+COMMAND_DECLARE(ClipVolume, ImageCommand);
 COMMAND_DECLARE(ReflectVolume, ImageCommand);
-COMMAND_DECLARE(SetOrigin, ImageCommand );
+COMMAND_DECLARE(SetOrigin, ImageCommand);
+COMMAND_DECLARE(SetSpacing, ImageCommand);
 COMMAND_DECLARE(WarpImage, ImageCommand);
 COMMAND_DECLARE(Compare, ImageCommand);
 COMMAND_DECLARE(NegateImage, ImageCommand);
@@ -39,7 +40,7 @@ COMMAND_DECLARE(AddImage, ImageCommand);
 COMMAND_DECLARE(SubtractImage, ImageCommand);
 COMMAND_DECLARE(MultiplyImage, ImageCommand);
 COMMAND_DECLARE(DivideImage, ImageCommand);
-COMMAND_DECLARE(ImageToMesh, ImageCommand );
+COMMAND_DECLARE(ImageToMesh, ImageCommand);
 
 // Particle System Commands
 COMMAND_DECLARE(ReadParticleSystem, ParticleSystemCommand);
@@ -54,5 +55,8 @@ COMMAND_DECLARE(Coverage, MeshCommand);
 
 // Optimize Commands
 COMMAND_DECLARE(OptimizeCommand, OptimizeCommandGroup);
+
+// Groom Commands
+COMMAND_DECLARE(GroomCommand, GroomCommandGroup);
 
 } // shapeworks

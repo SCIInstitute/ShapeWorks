@@ -38,7 +38,16 @@ cp -r ../build/bin/RelWithDebInfo bin
 rm -rf Post
 
 # Run auto-documentation
-PATH=../build/bin/Release:$PATH
+cd $ROOT
+PATH=../build/bin/Release:bin:$PATH
+# check that 'shapeworks -h' is working
+shapeworks -h
+if [ $? -eq 0 ]; then
+    echo "shapeworks -h is working"
+else
+    echo "shapeworks -h is not working"
+    exit 1
+fi
 python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
 mkdocs build
 mv site Documentation

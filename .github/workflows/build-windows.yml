@@ -42,7 +42,7 @@ jobs:
         key: QtCache-windows
 
     - name: Install Qt
-      uses: jurplel/install-qt-action@v2.9.0
+      uses: jurplel/install-qt-action@v2.11.1
       with:
         version: "5.9.9"
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
@@ -99,7 +99,7 @@ jobs:
     - name: Copy Anaconda Libraries
       working-directory: ${{runner.workspace}}/build
       shell: bash -l {0}
-      run: cp /c/Miniconda3/envs/shapeworks/Library/bin/zlib.dll /c/Miniconda3/envs/shapeworks/Library/bin/tbb.dll /c/Miniconda3/envs/shapeworks/Library/bin/half.dll bin/RelWithDebInfo
+      run: cp /c/Miniconda3/envs/shapeworks/python*.dll /c/Miniconda3/envs/shapeworks/Library/bin/zlib.dll /c/Miniconda3/envs/shapeworks/Library/bin/tbb.dll /c/Miniconda3/envs/shapeworks/Library/bin/half.dll bin/RelWithDebInfo
 
     - name: Build Binary Package
       shell: bash -l {0}

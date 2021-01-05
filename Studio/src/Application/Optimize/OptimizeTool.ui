@@ -80,10 +80,10 @@ background: rgb(255, 255, 127)
          </size>
         </property>
         <property name="decimals">
-         <number>1</number>
+         <number>2</number>
         </property>
         <property name="minimum">
-         <double>0.100000000000000</double>
+         <double>0.000000000000000</double>
         </property>
         <property name="maximum">
          <double>99999.000000000000000</double>
@@ -185,37 +185,6 @@ background: rgb(255, 255, 127)
        <widget class="QLabel" name="label_19">
         <property name="text">
          <string>Optimization Iterations</string>
-        </property>
-       </widget>
-      </item>
-      <item row="8" column="2">
-       <widget class="QSpinBox" name="normals_strength">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>100</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>100</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>999999</number>
-        </property>
-        <property name="value">
-         <number>10</number>
         </property>
        </widget>
       </item>
@@ -572,10 +541,10 @@ background: rgb(255, 255, 127)
          </size>
         </property>
         <property name="decimals">
-         <number>1</number>
+         <number>2</number>
         </property>
         <property name="minimum">
-         <double>0.100000000000000</double>
+         <double>0.000000000000000</double>
         </property>
         <property name="maximum">
          <double>99999.000000000000000</double>
@@ -684,6 +653,34 @@ background: rgb(255, 255, 127)
          </size>
         </property>
        </spacer>
+      </item>
+      <item row="8" column="2">
+       <widget class="QDoubleSpinBox" name="normals_strength">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>100</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="maximum">
+         <double>999999999.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>10.000000000000000</double>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

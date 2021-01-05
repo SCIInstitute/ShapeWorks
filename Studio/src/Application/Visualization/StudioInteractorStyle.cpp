@@ -3,6 +3,8 @@
 #include <Visualization/Lightbox.h>
 #include <Visualization/StudioInteractorStyle.h>
 
+namespace shapeworks {
+
 vtkStandardNewMacro(StudioInteractorStyle);
 
 //-----------------------------------------------------------------------------
@@ -69,19 +71,17 @@ void StudioInteractorStyle::OnKeyDown()
   char keycode = this->GetInteractor()->GetKeyCode();
 
   switch (keycode) {
-  case '1':
-    this->lightbox_->handle_pick(click_pos, true);
-    break;
+    case '1':
+      this->lightbox_->handle_pick(click_pos, true);
+      break;
 
-  case '2':
-    this->lightbox_->handle_pick(click_pos, false);
-    break;
+    case '2':
+      this->lightbox_->handle_pick(click_pos, false);
+      break;
 
-  case 'r':
-    std::cerr << "r\n";
-
-    this->lightbox_->reset_camera();
-    break;
+    case 'r':
+      this->lightbox_->reset_camera();
+      break;
   }
 
   this->GetInteractor()->Render();
@@ -134,4 +134,5 @@ void StudioInteractorStyle::Dolly(double factor)
   }
 
   this->Interactor->Render();
+}
 }
