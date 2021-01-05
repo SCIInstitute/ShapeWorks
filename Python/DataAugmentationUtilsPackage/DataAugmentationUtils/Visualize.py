@@ -115,5 +115,5 @@ def violin(data_csv):
                         data=df, palette="Set2", split=True, scale="count")
     # Save and show
     plt.savefig("violin.png")                                                                          
-    img = Image.open('violin.png')
-    img.show() 
+    # img = Image.open('violin.png')
+    # img.show() 
