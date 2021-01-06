@@ -51,7 +51,7 @@ def Run_Pipeline(args):
 	test_img_list = img_list[40:]
 	# shorten lists for tiny test 
 	if args.tiny_test:
-		test_img_list = train_img_list[4:9]
+		test_img_list = train_img_list[4:7]
 		train_img_list = train_img_list[:4]
 		train_local_particle_list = train_local_particle_list[:4]
 		train_world_particle_list = train_world_particle_list[:4]
