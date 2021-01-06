@@ -95,6 +95,8 @@ private:
   // Geodesic distances
   void PrecomputeGeodesics(); // Precomputation for geodesic distances
   double GeodesicDistance(int v1, int v2) const;
+  trimesh::vec3 GeodesicDistanceFromFace(int f1, int f2) const;
+  Eigen::VectorXd GeodesicDistanceFromFace(int f1) const;
   mutable struct {
     igl::HeatGeodesicsData<double> heat_data;
 

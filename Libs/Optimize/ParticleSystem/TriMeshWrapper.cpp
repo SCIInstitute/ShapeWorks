@@ -123,15 +123,19 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
     }
   }
 
+  //TODO ALL THIS is VERRYY wrong we are not considering pt_b->face_b and just read more about this
+  // const auto vec_dists = GeodesicDistanceFromFace(face_b, face_a);
+  // best_dist = bary_a.dot(vec_dists);
+
   if(out_grad != nullptr) {
     // TODO this treats the gradient of geodesics as constant over a face, is this alright?
     const int src_v = mesh_->faces[face_b][best_idx_b];
 
     const auto& G = geodesic_cache_.G;
 
-    // TODO neater somehow?
     GeodesicDistance(src_v, mesh_->vertices.size()-1); // make sure its in cache
     const auto& D = geodesic_cache_.cache[src_v];
+    // const auto D = GeodesicDistanceFromFace(face_b);
 
     if(D.size() != mesh_->vertices.size()) {
       throw std::runtime_error("Bad bad D");
@@ -148,21 +152,22 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
       throw std::runtime_error("Bad bad GD");
     }
 
-    std::cout << "------\n";
+    // std::cout << "------\n";
     for(int i=0; i<DIMENSION; i++) {
       (*out_grad)[i] = GD(0,i);
-      std::cout << out_grad->get(i) << " | " << (pt_a[i] - pt_b[i]) << "\n";
+      // std::cout << out_grad->get(i) << " | " << (pt_a[i] - pt_b[i]) << "\n";
     }
     const double angle_geo = std::atan2(out_grad->get(1), out_grad->get(0));
     const double angle_eucl = std::atan2(pt_a[1] - pt_b[1], pt_a[0] - pt_b[0]);
-    std::cout << "angle: " << angle_geo << " | " << angle_eucl << "(diff: " << angle_geo - angle_eucl << ")\n";
     const double dist_eucl = pt_a.EuclideanDistanceTo(pt_b);
-    std::cout << "distance: " << best_dist << " | " << dist_eucl << "(diff: " << best_dist - dist_eucl << ")\n";
-    std::cout << "------\n";
+    // std::cout << "angle: " << angle_geo << " | " << angle_eucl << "(diff: " << angle_geo - angle_eucl << ")\n";
+    // std::cout << "distance: " << best_dist << " | " << dist_eucl << "(diff: " << best_dist - dist_eucl << ")\n";
+    // std::cout << "------\n";
 
   }
 
 #if 0
+  best_dist = pt_a.EuclideanDistanceTo(pt_b);
   if(out_grad != nullptr) {
     for(int i=0; i<DIMENSION; i++) {
       (*out_grad)[i] = pt_a[i] - pt_b[i];
@@ -199,6 +204,32 @@ double TriMeshWrapper::GeodesicDistance(int v1, int v2) const
   geodesic_cache_.cache[v1] = std::move(D);
 
   return d;
+}
+
+// inefficient, doesn't cache anything
+vec3 TriMeshWrapper::GeodesicDistanceFromFace(int f1, int f2) const
+{
+  const auto D = GeodesicDistanceFromFace(f1);
+
+  vec3 out;
+  for(int i=0; i<3; i++) {
+    out[i] = D(mesh_->faces[f2][i]);
+  }
+  return out;
+}
+
+// inefficient, doesn't cache anything
+Eigen::VectorXd TriMeshWrapper::GeodesicDistanceFromFace(int f1) const
+{
+  Eigen::VectorXi gamma;
+  Eigen::VectorXd D;
+  gamma.resize(3);
+  for(int i=0; i<3; i++) {
+    gamma(i) = mesh_->faces[f1][i];
+  }
+
+  igl::heat_geodesics_solve(geodesic_cache_.heat_data, gamma, D);
+  return D;
 }
 
 /** start in barycentric coords of currentFace
