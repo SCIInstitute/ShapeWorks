@@ -100,7 +100,7 @@ def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False):
         outname = rename(inname, segDir, 'com')
         outDataListSeg.append(outname)
         img = Image(inname)
-        T = img.centerOfMass() - img.center()
+        T = img.center() - img.centerOfMass()
 
         # binarize result since linear interpolation makes image blurry again
         img.translate(T).binarize().write(outname)
