@@ -26,7 +26,7 @@ public:
   Mesh& translate_mesh(const Vector3 &v);
 
   /// determine the coverage between this mesh and another one (e.g. acetabular cup / femoral head)
-  Mesh& coverage(const Mesh& other_mesh);
+  Mesh& coverage(const Mesh& other_mesh, bool ignore_back_intersections = false);
 
   /// Not yet implemented
   Mesh& smooth(unsigned iterations = 1);

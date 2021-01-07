@@ -1540,6 +1540,7 @@ void Coverage::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Path to other mesh with which to create coverage.");
+  parser.add_option("--ignore_back_intersections").action("store_true").set_default(false).help("Ignore back-intersections in coverage calculation.");
 
   Command::buildParser();
 }
@@ -1554,13 +1555,15 @@ bool Coverage::execute(const optparse::Values &options, SharedCommandData &share
 
   const std::string& other_mesh_path(static_cast<std::string>(options.get("name")));
 
+  bool ignore_back_intersections = static_cast<bool>(options.get("ignore_back_intersections"));
+
   if (other_mesh_path.length() == 0)
   {
     std::cerr << "Must specify path to other mesh\n";
     return false;
   }
 
-  sharedData.mesh->coverage(Mesh(other_mesh_path));
+  sharedData.mesh->coverage(Mesh(other_mesh_path), ignore_back_intersections);
   return sharedData.validMesh();
 }
 

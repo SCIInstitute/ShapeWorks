@@ -76,19 +76,19 @@ void FEAreaCoverage::Surface::Create(FEMesh& mesh)
 //-----------------------------------------------------------------------------
 FEAreaCoverage::FEAreaCoverage()
 {
-  	m_bignoreBackIntersections = true;
+  m_ignoreBackIntersections = true;
 }
 
 //-----------------------------------------------------------------------------
-void FEAreaCoverage::IgnoreBackIntersection(bool b)
+void FEAreaCoverage::SetIgnoreBackIntersection(bool b)
 {
-	m_bignoreBackIntersections = b;
+  m_ignoreBackIntersections = b;
 }
 
 //-----------------------------------------------------------------------------
-bool FEAreaCoverage::IgnoreBackIntersection() const
+bool FEAreaCoverage::GetIgnoreBackIntersection() const
 {
-	return m_bignoreBackIntersections;
+	return m_ignoreBackIntersections;
 }
 
 //-----------------------------------------------------------------------------
@@ -215,7 +215,7 @@ bool FEAreaCoverage::faceIntersect(FEAreaCoverage::Surface& surf, const Ray& ray
   break;
   }
 
-  if (bfound && (m_bignoreBackIntersections))  
+  if (bfound && m_ignoreBackIntersections)
   {
     // make sure the projection is in the direction of the ray
     bfound = (ray.direction * (q.point - ray.origin) > 0.f);

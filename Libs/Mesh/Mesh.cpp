@@ -142,8 +142,8 @@ bool Mesh::write(const std::string &pathname)
   return true;
 }
 
-/// creates mesh of coverage between two meshes
-Mesh& Mesh::coverage(const Mesh &other_mesh)
+/// creates mesh with scalars describing the "coverage" between two meshes
+Mesh& Mesh::coverage(const Mesh &other_mesh, bool ignore_back_intersections)
 {
   FEVTKimport importer;
   FEMesh* surf1 = importer.Load(this->mesh);
@@ -151,6 +151,7 @@ Mesh& Mesh::coverage(const Mesh &other_mesh)
   if (surf1 == nullptr || surf2 == nullptr) { throw std::invalid_argument("Mesh invalid"); }
 
   FEAreaCoverage areaCoverage;
+  areaCoverage.SetIgnoreBackIntersection(ignore_back_intersections);
 
   vector<double> map1 = areaCoverage.Apply(*surf1, *surf2);
 

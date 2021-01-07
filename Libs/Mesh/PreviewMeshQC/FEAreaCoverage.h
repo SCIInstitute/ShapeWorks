@@ -43,8 +43,8 @@ public:
   vector<double> Apply(FEMesh& mesh1, FEMesh& mesh2);
 
   // set/get back intersection flag
-	void IgnoreBackIntersection(bool b);
-	bool IgnoreBackIntersection() const;
+	void SetIgnoreBackIntersection(bool b);
+	bool GetIgnoreBackIntersection() const;
 
 protected:
   // build node normal list
@@ -57,5 +57,5 @@ protected:
 protected:
   Surface m_surf1;
   Surface m_surf2;
-	bool		m_bignoreBackIntersections;
+	bool		m_ignoreBackIntersections;
 };
