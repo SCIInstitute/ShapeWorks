@@ -42,6 +42,10 @@ public:
   // returns one value per node
   vector<double> Apply(FEMesh& mesh1, FEMesh& mesh2);
 
+  // set/get back intersection flag
+	void IgnoreBackIntersection(bool b);
+	bool IgnoreBackIntersection() const;
+
 protected:
   // build node normal list
   void UpdateSurface(FEAreaCoverage::Surface& s);
@@ -53,4 +57,5 @@ protected:
 protected:
   Surface m_surf1;
   Surface m_surf2;
+	bool		m_bignoreBackIntersections;
 };

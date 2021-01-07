@@ -1,6 +1,10 @@
 
 #include "TriMeshWrapper.h"
 
+#include <igl/grad.h>
+#include <igl/per_vertex_normals.h>
+#include <igl/doublearea.h>
+
 #include <set>
 
 using namespace trimesh;
@@ -45,6 +49,7 @@ TriMeshWrapper::TriMeshWrapper(std::shared_ptr<trimesh::TriMesh> mesh)
   mesh_->need_normals();
   mesh_->need_curvatures();
   ComputeMeshBounds();
+  ComputeGradN();
 
   kd_tree_ = std::make_shared<KDtree>(mesh_->vertices);
 }
@@ -285,6 +290,20 @@ vnl_vector_fixed<float, DIMENSION> TriMeshWrapper::SampleNormalAtPoint(PointType
   return weightedNormal;
 }
 
+TriMeshWrapper::HessianType TriMeshWrapper::SampleGradNAtPoint(PointType p, int idx) const
+{
+  point pointa = convert<PointType, point>(p);
+  vec3 bary;
+  const int face = GetTriangleForPoint(pointa, idx, bary);
+
+  HessianType weighted_grad_normal = HessianType(0.0);
+  for (int i = 0; i < 3; i++) {
+    HessianType grad_normal = grad_normals_[mesh_->faces[face][i]];
+    weighted_grad_normal += grad_normal * bary[i];
+  }
+  return weighted_grad_normal;
+}
+
 int TriMeshWrapper::GetNearestVertex(point pt) const
 {
   const float* match = kd_tree_->closest_to_pt(pt, 99999999);
@@ -467,4 +486,74 @@ void TriMeshWrapper::ComputeMeshBounds()
               << PrintValue<PointType>(mesh_upper_bound_) << "\n";
   }
 }
+
+void TriMeshWrapper::ComputeGradN()
+{
+  const int n_verts = mesh_->vertices.size();
+  const int n_faces = mesh_->faces.size();
+
+  // Copy from trimesh to libigl data structures
+  Eigen::MatrixXd V;
+  Eigen::MatrixXi F;
+  GetIGLMesh(V, F);
+
+  // Compute normals
+  Eigen::MatrixXd N;
+  igl::per_vertex_normals(V, F, N);
+
+  // Compute gradient operator
+  Eigen::SparseMatrix<double> G;
+  igl::grad(V, F, G);
+
+  // Compute gradient of normals per face
+  const Eigen::MatrixXd GN = Eigen::Map<const Eigen::MatrixXd>((G*N).eval().data(), n_faces, 9);
+
+  // Convert per-face values to per-vertex using face area as weight
+  Eigen::MatrixXd GN_pervertex(n_verts, 9); GN_pervertex.setZero();
+  Eigen::MatrixXd A_perface; igl::doublearea(V,F,A_perface);
+  Eigen::VectorXd A_pervertex(n_verts); A_pervertex.setZero();
+  // scatter the per-face values
+  for(int i=0; i<n_faces; i++) {
+    for(int j=0; j<3; j++) {
+      GN_pervertex.row(F(i,j)) += A_perface(i, 0)*GN.row(i);
+      A_pervertex(F(i, j)) += A_perface(i, 0);
+    }
+  }
+  for(int i=0; i<n_verts; i++) {
+    if(A_pervertex(i) != 0.0) {
+      GN_pervertex.row(i) /= A_pervertex(i);
+    }
+  }
+
+  // Copy back to VNL data structure
+  grad_normals_.resize(n_verts);
+  for(int j=0; j<n_verts; j++) {
+    for(int i=0; i<3; i++) {
+      grad_normals_[j].set(i, 0, GN_pervertex(j, i*3+0));
+      grad_normals_[j].set(i, 1, GN_pervertex(j, i*3+1));
+      grad_normals_[j].set(i, 2, GN_pervertex(j, i*3+2));
+    }
+  }
+
+}
+
+void TriMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F)
+{
+  const int n_verts = mesh_->vertices.size();
+  const int n_faces = mesh_->faces.size();
+
+  V.resize(n_verts, 3);
+  F.resize(n_faces, 3);
+  for(int i=0; i<n_verts; i++) {
+    V(i, 0) = mesh_->vertices[i][0];
+    V(i, 1) = mesh_->vertices[i][1];
+    V(i, 2) = mesh_->vertices[i][2];
+  }
+  for(int i=0; i<n_faces; i++) {
+    F(i, 0) = mesh_->faces[i][0];
+    F(i, 1) = mesh_->faces[i][1];
+    F(i, 2) = mesh_->faces[i][2];
+  }
+}
+
 }
