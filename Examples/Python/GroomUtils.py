@@ -457,13 +457,14 @@ def MeshesToVolumesUsingImages(outDir, meshList, imgList, printCmd=True):
             print("CMD: " + " ".join(execCommand))
         subprocess.check_call(execCommand)
 
+        spacing_string = str(img.spacing()[0]).replace(".0","")
         # save output volume
-        output_volume = mesh.replace(".ply", ".rasterized_sp" + str(img.spacing()[0]) + ".nrrd")
+        output_volume = mesh.replace(".ply", ".rasterized_sp" + spacing_string + ".nrrd")
         shutil.move(output_volume, segFile)
         segList.append(segFile)
 
         # save output DT
-        output_DT =  mesh.replace(".ply", ".DT_sp" + str(img.spacing()[0]) + ".nrrd")
+        output_DT =  mesh.replace(".ply", ".DT_sp" + spacing_string+ ".nrrd")
         dtFile = segFile.replace(".nrrd", "_DT.nrrd")
         shutil.move(output_DT, dtFile)
 
@@ -510,11 +511,12 @@ def MeshesToVolumes(outDir, meshList, spacing, printCmd=True):
             print("CMD: " + " ".join(execCommand))
         subprocess.check_call(execCommand)
         # save output volume
-        output_volume = mesh.replace(".ply", ".rasterized_sp" + str(spacing[0]) + ".nrrd")
+        spacing_string = str(spacing[0]).replace(".0","")
+        output_volume = mesh.replace(".ply", ".rasterized_sp" + spacing_string+ ".nrrd")
         shutil.move(output_volume, segFile)
         segList.append(segFile)
         # save output DT
-        output_DT =  mesh.replace(".ply", ".DT_sp" + str(spacing[0]) + ".nrrd")
+        output_DT =  mesh.replace(".ply", ".DT_sp" + spacing_string + ".nrrd")
         dtFile = segFile.replace(".nrrd", "_DT.nrrd")
         shutil.move(output_DT, dtFile)
     return segList
