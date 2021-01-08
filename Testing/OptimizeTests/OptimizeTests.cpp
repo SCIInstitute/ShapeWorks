@@ -195,8 +195,43 @@ TEST(OptimizeTests, useNormals)
   ASSERT_LT(values[values.size() - 2], 300);
 }
 
-TEST(OptimizeTests, cuttingPlane) 
-{
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, mesh_use_normals_test) {
+
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/mesh_use_normals");
+  chdir(test_location.c_str());
+
+  // make sure we clean out at least one output file
+  std::remove("output/sphere_00_world.particles");
+
+  // run with parameter file
+  std::string paramfile = std::string("mesh_use_normals.xml");
+  Optimize app;
+  OptimizeParameterFile param;
+  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
+  app.Run();
+
+  // compute stats
+  ParticleShapeStatistics stats;
+  stats.ReadPointFiles("analyze.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+
+  // Check the modes of variation.  The first mode should contain almost all the variation and the 2nd
+  // and higher modes should contain very little
+  ASSERT_GT(values[values.size() - 1], 750.0);
+  ASSERT_LT(values[values.size() - 2], 10);
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, cutting_plane_test) {
+
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/cutting_plane_multi");
   chdir(test_location.c_str());
 
