@@ -914,9 +914,9 @@ bool BoundingBoxImage::execute(const optparse::Values &options, SharedCommandDat
   int padding = static_cast<int>(options.get("padding"));
   double isovalue = static_cast<double>(options.get("isovalue"));
 
-  sharedData.imgRegion = ImageUtils::boundingBox(filenames, isovalue);
-  sharedData.imgRegion.pad(padding);
-  std::cout << "Bounding box:\n" << sharedData.imgRegion;
+  sharedData.region = ImageUtils::boundingBox(filenames, isovalue);
+  sharedData.region.pad(padding);
+  std::cout << "Bounding box:\n" << sharedData.region;
   return true;
 }
 
@@ -957,10 +957,10 @@ bool CropImage::execute(const optparse::Values &options, SharedCommandData &shar
 
   if (xmin == 0 && ymin == 0 && zmin == 0 &&
       xmax == 0 && ymax == 0 && zmax == 0)
-    sharedData.image.crop(sharedData.imgRegion); // use the previous region (maybe set by boundingbox cmd)
+    sharedData.image.crop(sharedData.region); // use the previous region (maybe set by boundingbox cmd)
   else
   {
-    Image::Region region(sharedData.image.dims());
+    Region region(sharedData.image.dims());
     if (xmin < xmax) { region.min[0] = xmin; region.max[0] = xmax; }
     if (ymin < ymax) { region.min[1] = ymin; region.max[1] = ymax; }
     if (zmin < zmax) { region.min[2] = zmin; region.max[2] = zmax; }
@@ -1419,12 +1419,12 @@ bool March::execute(const optparse::Values &options, SharedCommandData &sharedDa
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// MeshFromDT
+// DTToMesh
 ///////////////////////////////////////////////////////////////////////////////
-void MeshFromDT::buildParser()
+void DTToMesh::buildParser()
 {
   const std::string prog = "dt-to-mesh";
-  const std::string desc = "create mesh from distance transform";
+  const std::string desc = "converts current distance transform to mesh";
   parser.prog(prog).description(desc);
 
   parser.add_option("--levelset").action("store").type("double").set_default(0.0).help("Value of levelset [default: 0.0].");
@@ -1437,7 +1437,7 @@ void MeshFromDT::buildParser()
   Command::buildParser();
 }
 
-bool MeshFromDT::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool DTToMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validImage())
   {
@@ -2024,8 +2024,8 @@ bool BoundingBoxMesh::execute(const optparse::Values &options, SharedCommandData
   std::vector<std::string> filenames = options.get("names");
   bool center = static_cast<bool>(options.get("center"));
 
-  sharedData.meshRegion = MeshUtils::boundingBox(filenames, center);
-  std::cout << "Bounding box:\n" << sharedData.meshRegion;
+  sharedData.region = MeshUtils::boundingBox(filenames, center);
+  std::cout << "Bounding box:\n" << sharedData.region;
   return true;
 }
 
@@ -2103,10 +2103,10 @@ bool RasterizationOrigin::execute(const optparse::Values &options, SharedCommand
   double z = static_cast<double>(options.get("z"));
 
   if (filenames.size() == 1)
-    sharedData.meshRegion = sharedData.mesh->boundingBox();
+    sharedData.region = sharedData.mesh->boundingBox();
   else
-    sharedData.meshRegion = MeshUtils::boundingBox(filenames, center);
-  std::cout << "Rasterization Origin:      " << sharedData.mesh->rasterizationOrigin(sharedData.meshRegion, makeVector({x, y, z}), padding) << std::endl;
+    sharedData.region = MeshUtils::boundingBox(filenames, center);
+  std::cout << "Rasterization Origin:      " << sharedData.mesh->rasterizationOrigin(sharedData.region, makeVector({x, y, z}), padding) << std::endl;
   return true;
 }
 
@@ -2139,11 +2139,107 @@ bool RasterizationSize::execute(const optparse::Values &options, SharedCommandDa
   int padding = static_cast<int>(options.get("padding"));
 
   if (filenames.size() == 1)
-    sharedData.meshRegion = sharedData.mesh->boundingBox();
+    sharedData.region = sharedData.mesh->boundingBox();
   else
-    sharedData.meshRegion = MeshUtils::boundingBox(filenames, center);
-  std::cout << "Rasterization Size:      " << sharedData.mesh->rasterizationSize(sharedData.meshRegion, makeVector({x, y, z}), padding) << std::endl;
+    sharedData.region = MeshUtils::boundingBox(filenames, center);
+  std::cout << "Rasterization Size:      " << sharedData.mesh->rasterizationSize(sharedData.region, makeVector({x, y, z}), padding) << std::endl;
   return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// MeshToImage
+///////////////////////////////////////////////////////////////////////////////
+void MeshToImage::buildParser()
+{
+  const std::string prog = "mesh-to-image";
+  const std::string desc = "converts current mesh to image";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--spacex").action("store").type("double").set_default(1.0).help("Spacing of output image in x-direction [default: %default].");
+  parser.add_option("--spacey").action("store").type("double").set_default(1.0).help("Spacing of output image in y-direction [default: %default].");
+  parser.add_option("--spacez").action("store").type("double").set_default(1.0).help("Spacing of output image in z-direction [default: %default].");
+  parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Size of output image in x-direction [default: current size].");
+  parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Size of output image in y-direction [default: current size].");
+  parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Size of output image in z-direction [default: current size].");
+  parser.add_option("--originx").action("store").type("double").set_default(0.0).help("Origin of output image in x-direction [default: current origin].");
+  parser.add_option("--originy").action("store").type("double").set_default(0.0).help("Origin of output image in y-direction [default: current origin].");
+  parser.add_option("--originz").action("store").type("double").set_default(0.0).help("Origin of output image in z-direction [default: current origin].");
+
+  Command::buildParser();
+}
+
+bool MeshToImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  double spaceX = static_cast<double>(options.get("spacex"));
+  double spaceY = static_cast<double>(options.get("spacey"));
+  double spaceZ = static_cast<double>(options.get("spacez"));
+  unsigned sizeX = static_cast<unsigned>(options.get("sizex"));
+  unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
+  unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
+  double originX = static_cast<double>(options.get("originx"));
+  double originY = static_cast<double>(options.get("originy"));
+  double originZ = static_cast<double>(options.get("originz"));
+
+  Vector3 spacing(makeVector({spaceX,spaceY,spaceZ}));
+  Dims size({sizeX,sizeY, sizeZ});
+  Point3 origin({originX,originY,originZ});
+
+  sharedData.image = sharedData.mesh->toImage(spacing, size, origin);
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// MeshToDT
+///////////////////////////////////////////////////////////////////////////////
+void MeshToDT::buildParser()
+{
+  const std::string prog = "mesh-to-dt";
+  const std::string desc = "converts current mesh to distance transform";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--spacex").action("store").type("double").set_default(1.0).help("Spacing of output image in x-direction [default: %default].");
+  parser.add_option("--spacey").action("store").type("double").set_default(1.0).help("Spacing of output image in y-direction [default: %default].");
+  parser.add_option("--spacez").action("store").type("double").set_default(1.0).help("Spacing of output image in z-direction [default: %default].");
+  parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Size of output image in x-direction [default: current size].");
+  parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Size of output image in y-direction [default: current size].");
+  parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Size of output image in z-direction [default: current size].");
+  parser.add_option("--originx").action("store").type("double").set_default(0.0).help("Origin of output image in x-direction [default: current origin].");
+  parser.add_option("--originy").action("store").type("double").set_default(0.0).help("Origin of output image in y-direction [default: current origin].");
+  parser.add_option("--originz").action("store").type("double").set_default(0.0).help("Origin of output image in z-direction [default: current origin].");
+
+  Command::buildParser();
+}
+
+bool MeshToDT::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  double spaceX = static_cast<double>(options.get("spacex"));
+  double spaceY = static_cast<double>(options.get("spacey"));
+  double spaceZ = static_cast<double>(options.get("spacez"));
+  unsigned sizeX = static_cast<unsigned>(options.get("sizex"));
+  unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
+  unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
+  double originX = static_cast<double>(options.get("originx"));
+  double originY = static_cast<double>(options.get("originy"));
+  double originZ = static_cast<double>(options.get("originz"));
+
+  Vector3 spacing(makeVector({spaceX,spaceY,spaceZ}));
+  Dims size({sizeX,sizeY, sizeZ});
+  Point3 origin({originX,originY,originZ});
+
+  sharedData.image = sharedData.mesh->toDistanceTransform(spacing, size, origin);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

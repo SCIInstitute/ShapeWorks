@@ -55,13 +55,13 @@ vtkSmartPointer<vtkPlane> MeshUtils::createPlane(const Vector3 &n, const Point &
   return plane;
 }
 
-Mesh::Region MeshUtils::boundingBox(std::vector<std::string> &filenames, bool center)
+Region MeshUtils::boundingBox(std::vector<std::string> &filenames, bool center)
 {
   if (filenames.empty())
     throw std::invalid_argument("No filenames provided to compute a bounding box");
   
   Mesh mesh(filenames[0]);
-  Mesh::Region bbox(mesh.boundingBox());
+  Region bbox(mesh.boundingBox());
 
   for (auto filename : filenames)
   {
@@ -72,12 +72,12 @@ Mesh::Region MeshUtils::boundingBox(std::vector<std::string> &filenames, bool ce
   return bbox;
 }
 
-Mesh::Region MeshUtils::boundingBox(std::vector<Mesh> &meshes, bool center)
+Region MeshUtils::boundingBox(std::vector<Mesh> &meshes, bool center)
 {
   if (meshes.empty())
     throw std::invalid_argument("No meshes provided to compute a bounding box");
 
-  Mesh::Region bbox(meshes[0].boundingBox());
+  Region bbox(meshes[0].boundingBox());
 
   for (auto mesh : meshes)
     bbox.grow(mesh.boundingBox());

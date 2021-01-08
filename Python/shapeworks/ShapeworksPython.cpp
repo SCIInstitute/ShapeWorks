@@ -442,27 +442,26 @@ PYBIND11_MODULE(shapeworks, m)
   })
   ;
 
-  // Image::Region
-  py::class_<Image::Region>(m, "Region")
+  // Region
+  py::class_<Region>(m, "Region")
   .def(py::init<Dims>())
   .def(py::init<Coord, Coord>())
   .def(py::init<>())
   .def(py::self == py::self)
-  .def("__repr__", [](const Image::Region &region) {
+  .def("__repr__", [](const Region &region) {
     std::stringstream stream;
     stream << region;
     return stream.str();
   })
-  .def_readwrite("min",         &Image::Region::min)
-  .def_readwrite("max",         &Image::Region::max)
-  .def("valid",                 &Image::Region::valid, "ensure if region is valid")
-  .def("origin",                &Image::Region::origin, "return origin of region")
-  .def("size",                  &Image::Region::size, "return size of region")
-  .def("clip",                  &Image::Region::clip, "clip region to fit inside image", "image"_a)
-  .def("pad",                   &Image::Region::pad, "grows or shrinks the region by the specified amount", "padding"_a)
-  .def("shrink",                &Image::Region::shrink, "shrink this region down to the smallest portions of both", "other"_a)
-  .def("grow",                  &Image::Region::grow, "grow this region up to the largest portions of both", "other"_a)
-  .def("expand",                &Image::Region::expand, "expand this region to include this point", "other"_a)
+  .def_readwrite("min",         &Region::min)
+  .def_readwrite("max",         &Region::max)
+  .def("valid",                 &Region::valid, "ensure if region is valid")
+  .def("origin",                &Region::origin, "return origin of region")
+  .def("size",                  &Region::size, "return size of region")
+  .def("pad",                   &Region::pad, "grows or shrinks the region by the specified amount", "padding"_a)
+  .def("shrink",                &Region::shrink, "shrink this region down to the smallest portions of both", "other"_a)
+  .def("grow",                  &Region::grow, "grow this region up to the largest portions of both", "other"_a)
+  .def("expand",                &Region::expand, "expand this region to include this point", "other"_a)
   ;
 
   // ImageUtils

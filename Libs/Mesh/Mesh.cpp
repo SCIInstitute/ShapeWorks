@@ -26,6 +26,9 @@
 #include <vtkProbeFilter.h>
 #include <vtkClipPolyData.h>
 #include <vtkCenterOfMass.h>
+#include <vtkImageData.h>
+#include <vtkPolyDataToImageStencil.h>
+#include <vtkImageStencil.h>
 
 namespace shapeworks {
 
@@ -288,9 +291,9 @@ Mesh &Mesh::scale(const Vector3 &v)
   return applyTransform(transform);
 }
 
-Mesh::Region Mesh::boundingBox(bool center) const
+Region Mesh::boundingBox(bool center) const
 {
-  Mesh::Region bbox;
+  Region bbox;
   double bb[6];
   mesh->GetBounds(bb);
 
@@ -342,7 +345,7 @@ double Mesh::relativeDistanceBtoA(const Mesh &other_mesh, bool target)
   return filter->GetOutputDataObject(1)->GetFieldData()->GetArray("RelativeDistanceBtoA")->GetComponent(0,0);
 }
 
-Point3 Mesh::rasterizationOrigin(Mesh::Region region, Vector3 spacing, int padding)
+Point3 Mesh::rasterizationOrigin(Region region, Vector3 spacing, int padding)
 {
   Point3 origin;
 
@@ -355,7 +358,7 @@ Point3 Mesh::rasterizationOrigin(Mesh::Region region, Vector3 spacing, int paddi
   return origin;
 }
 
-Dims Mesh::rasterizationSize(Mesh::Region region, Vector3 spacing, int padding)
+Dims Mesh::rasterizationSize(Region region, Vector3 spacing, int padding)
 {
   Dims size;
   Point3 origin = rasterizationOrigin(region, spacing, padding);
@@ -368,6 +371,68 @@ Dims Mesh::rasterizationSize(Mesh::Region region, Vector3 spacing, int padding)
   }
 
   return size;
+}
+
+Image Mesh::toImage(Vector3 spacing, Dims size, Point3 origin)
+{
+  vtkSmartPointer<vtkImageData> whiteImage = vtkSmartPointer<vtkImageData>::New();
+  whiteImage->SetSpacing(spacing[0], spacing[1], spacing[2]);
+  whiteImage->SetDimensions(size[0], size[1], size[2]);
+  whiteImage->SetExtent(0, size[0] - 1, 0, size[1] - 1, 0, size[2] - 1);
+  whiteImage->SetOrigin(origin[0], origin[1], origin[2]);
+  whiteImage->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
+
+  vtkIdType count = whiteImage->GetNumberOfPoints();
+  for (vtkIdType i = 0; i < count; ++i)
+    whiteImage->GetPointData()->GetScalars()->SetTuple1(i, 1);
+
+  // polygonal data --> image stencil:
+  vtkSmartPointer<vtkPolyDataToImageStencil> pol2stenc = vtkSmartPointer<vtkPolyDataToImageStencil>::New();
+  pol2stenc->SetInputData(this->mesh);
+  pol2stenc->SetOutputOrigin(origin[0], origin[1], origin[2]);
+  pol2stenc->SetOutputSpacing(spacing[0], spacing[1], spacing[2]);
+  pol2stenc->SetOutputWholeExtent(whiteImage->GetExtent());
+  pol2stenc->Update();
+
+  // cut the corresponding white image and set the background:
+  vtkSmartPointer<vtkImageStencil> imgstenc = vtkSmartPointer<vtkImageStencil>::New();
+  imgstenc->SetInputData(whiteImage);
+  imgstenc->SetStencilConnection(pol2stenc->GetOutputPort());
+  imgstenc->ReverseStencilOff();
+  imgstenc->SetBackgroundValue(0);
+  imgstenc->Update();
+
+  // vtk image to itk img
+  Region region(size);
+
+  Image::ImageType::Pointer itkImg;
+  itkImg->SetRegions(Image::ImageType::RegionType(region.origin(), region.size()));
+  itkImg->SetOrigin(origin);
+  itkImg->SetSpacing(spacing);
+  itkImg->Allocate();
+
+  Image::ImageType::IndexType index;
+  int pixel;
+
+  for (index[0] = 0; index[0] < size[0]; index[0]++)
+  {
+    for (index[1] = 0; index[1] < size[1]; index[1]++)
+    {
+      for (index[2] = 0; index[2] < size[2]; index[2]++)
+      {
+        pixel = imgstenc->GetOutput()->GetScalarComponentAsFloat(index[0], index[1], index[2], 0);
+        itkImg->SetPixel(index, pixel);
+      }
+    }
+  }
+
+  return itkImg;
+}
+
+Image Mesh::toDistanceTransform(Vector3 spacing, Dims size, Point3 origin)
+{
+  Image img(toImage(spacing, size, origin));
+  return img.antialias(30, 0.0).computeDT();
 }
 
 bool Mesh::compare_points_equal(const Mesh &other_mesh) const
@@ -460,12 +525,6 @@ std::ostream& operator<<(std::ostream &os, const Mesh& mesh)
 {
   return os << "{\n\tnumber of vertices: " << mesh.numVertices()
             << ",\n\tnumber of faces: " << mesh.numFaces() << "\n}";
-}
-
-std::ostream& operator<<(std::ostream &os, const Mesh::Region &r)
-{
-  return os << "{\n\tmin: [" << r.min[0] << ", " << r.min[1] << ", " << r.min[2] << "]"
-            << ",\n\tmax: [" << r.max[0] << ", " << r.max[1] << ", " << r.max[2] << "]\n}";
 }
 
 } // shapeworks

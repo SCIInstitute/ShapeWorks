@@ -43,7 +43,7 @@ COMMAND_DECLARE(MultiplyImage, ImageCommand);
 COMMAND_DECLARE(DivideImage, ImageCommand);
 COMMAND_DECLARE(ImageToMesh, ImageCommand);
 COMMAND_DECLARE(March, ImageCommand);
-COMMAND_DECLARE(MeshFromDT, ImageCommand);
+COMMAND_DECLARE(DTToMesh, ImageCommand);
 
 // Particle System Commands
 COMMAND_DECLARE(ReadParticleSystem, ParticleSystemCommand);
@@ -68,6 +68,8 @@ COMMAND_DECLARE(BoundingBoxMesh, MeshCommand);
 COMMAND_DECLARE(ComputeDistance, MeshCommand);
 COMMAND_DECLARE(RasterizationOrigin, MeshCommand);
 COMMAND_DECLARE(RasterizationSize, MeshCommand);
+COMMAND_DECLARE(MeshToImage, MeshCommand);
+COMMAND_DECLARE(MeshToDT, MeshCommand);
 COMMAND_DECLARE(CompareMesh, MeshCommand);
 
 // Optimize Commands

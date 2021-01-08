@@ -11,7 +11,7 @@
 
 namespace shapeworks {
 
-Image::Region ImageUtils::boundingBox(std::vector<std::string> &filenames, Image::PixelType isoValue)
+Region ImageUtils::boundingBox(std::vector<std::string> &filenames, Image::PixelType isoValue)
 {
   if (filenames.empty())
     throw std::invalid_argument("No filenames provided to compute a bounding box");
@@ -20,7 +20,7 @@ Image::Region ImageUtils::boundingBox(std::vector<std::string> &filenames, Image
     throw std::invalid_argument("Only one filename provided to compute a bounding box");
 
   Image img(filenames[0]);
-  Image::Region bbox(img.boundingBox());
+  Region bbox(img.boundingBox());
   Dims dims(img.dims()); // images must all be the same size
 
   for (auto filename : filenames)
@@ -37,7 +37,7 @@ Image::Region ImageUtils::boundingBox(std::vector<std::string> &filenames, Image
   return bbox;
 }
 
-Image::Region ImageUtils::boundingBox(std::vector<Image> &images, Image::PixelType isoValue)
+Region ImageUtils::boundingBox(std::vector<Image> &images, Image::PixelType isoValue)
 {
   if (images.empty())
     throw std::invalid_argument("No images provided to compute a bounding box");
@@ -45,7 +45,7 @@ Image::Region ImageUtils::boundingBox(std::vector<Image> &images, Image::PixelTy
   if (images.size() == 1)
     throw std::invalid_argument("Only one image provided to compute a bounding box");
 
-  Image::Region bbox(images[0].boundingBox());
+  Region bbox(images[0].boundingBox());
   Dims dims(images[0].dims()); // images must all be the same size
 
   for (auto img : images)

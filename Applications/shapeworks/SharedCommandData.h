@@ -11,9 +11,8 @@ namespace shapeworks {
 struct SharedCommandData
 {
   Image image;
-  Image::Region imgRegion;
   std::unique_ptr<Mesh> mesh;
-  Mesh::Region meshRegion;
+  Region region;
   ParticleSystem particleSystem;
 
   bool validImage() const { return image.image != nullptr; }

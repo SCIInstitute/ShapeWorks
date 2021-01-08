@@ -405,7 +405,7 @@ TEST(ImageTests, cropTest)
   };
 
   Image image(std::string(TEST_DATA_DIR) + "/seg.ellipsoid_1.nrrd");
-  Image::Region region;
+  Region region;
   region = ImageUtils::boundingBox(images);
   image.crop(region);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/crop_baseline.nrrd");

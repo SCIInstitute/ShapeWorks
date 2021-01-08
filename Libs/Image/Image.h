@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Shapeworks.h"
+#include "Region.h"
 
 #include <itkImage.h>
 #include <vtkSmartPointer.h>
@@ -19,74 +20,6 @@ public:
 
   using PixelType = float;
   using ImageType = itk::Image<PixelType, 3>;
-
-  /// logical region of an image (may be negative for relative regions to a given location in an image).
-  struct Region
-  {
-    Coord min = Coord({ 1000000000, 1000000000, 1000000000 });
-    Coord max = Coord({ -1000000000, -1000000000, -1000000000 });
-    Region(const Dims &dims) : min({0, 0, 0}) {
-      if (0 != (dims[0] + dims[1] + dims[2])) 
-        max = Coord({static_cast<long>(dims[0])-1,
-                     static_cast<long>(dims[1])-1,
-                     static_cast<long>(dims[2])-1});
-    }
-    Region(const Coord &_min, const Coord &_max) : min(_min), max(_max) {}
-    Region() = default;
-    bool operator==(const Region &other) const { return min == other.min && max == other.max; }
-
-    /// verified min/max do not create an inverted or an empty region
-    bool valid() const { return max[0] > min[0] && max[1] > min[1] && max[2] > min[2]; }
-
-    Coord origin() const { return min; }
-    Dims size() const {
-      return Dims({static_cast<unsigned long>(max[0]-min[0]),
-                   static_cast<unsigned long>(max[1]-min[1]),
-                   static_cast<unsigned long>(max[2]-min[2])});
-    }
-
-    /// clip region to fit inside image
-    Region& clip(const Image& image)
-    {
-      shrink(Region(image.dims()));
-      return *this;
-    }
-    
-    /// grows or shrinks the region by the specified amount
-    void pad(int padding) {
-      for (auto i=0; i<3; i++) {
-        min[i] -= padding;
-        max[i] += padding;
-      }
-    }
-
-    /// shrink this region down to the smallest portions of both
-    void shrink(const Region &other) {
-      for (auto i=0; i<3; i++) {
-        min[i] = std::max(min[i], other.min[i]);
-        max[i] = std::min(max[i], other.max[i]);
-      }
-    }
-
-    /// grow this region up to the largest portions of both
-    void grow(const Region &other) {
-      for (auto i=0; i<3; i++) {
-        min[i] = std::min(min[i], other.min[i]);
-        max[i] = std::max(max[i], other.max[i]);
-      }
-    }
-
-    /// expand this region to include this point
-    void expand(const Coord &pt) {
-      for (auto i=0; i<3; i++) {
-        min[i] = std::min(min[i], pt[i]);
-        max[i] = std::max(max[i], pt[i]);
-      }
-    }
-
-    /// implicit conversion to an itk region
-    operator ImageType::RegionType() const { return ImageType::RegionType(origin(), size()); }
-  };
 
   // constructors and assignment operators //
   Image(const std::string &pathname) : image(read(pathname)) {}
@@ -237,7 +170,7 @@ public:
   Point3 centerOfMass(PixelType minVal = 0.0, PixelType maxVal = 1.0) const;
 
   /// computes the logical coordinates of the largest region of data <= the given isoValue
-  Image::Region boundingBox(PixelType isovalue = 1.0) const;
+  Region boundingBox(PixelType isovalue = 1.0) const;
 
   /// converts from pixel coordinates to physical space
   Point3 logicalToPhysical(const Coord &c) const;
@@ -279,9 +212,8 @@ private:
   ImageType::Pointer image;
 };
 
-/// stream insertion operators for Image and Image::Region
+/// stream insertion operators for Image
 std::ostream& operator<<(std::ostream &os, const Image& img);
-std::ostream& operator<<(std::ostream &os, const Image::Region &region);
 
 /// override templates defined in Shapeworks.h
 template<>

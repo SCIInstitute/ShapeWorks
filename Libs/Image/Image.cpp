@@ -638,7 +638,8 @@ Image& Image::crop(const Region &region)
   using FilterType = itk::ExtractImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
-  filter->SetExtractionRegion(Region(region).clip(*this));
+  Region(region).shrink(Region(dims())); // clip region to fit inside image
+  filter->SetExtractionRegion(ImageType::RegionType(region.origin(), region.size()));
   filter->SetInput(this->image);
   filter->SetDirectionCollapseToIdentity();
   filter->Update();
@@ -745,9 +746,9 @@ Point3 Image::centerOfMass(PixelType minVal, PixelType maxVal) const
   return com;
 }
 
-Image::Region Image::boundingBox(PixelType isoValue) const
+Region Image::boundingBox(PixelType isoValue) const
 {
-  Image::Region bbox;
+  Region bbox;
 
   itk::ImageRegionIteratorWithIndex<ImageType> imageIterator(image, image->GetLargestPossibleRegion());
   while (!imageIterator.IsAtEnd())
@@ -814,12 +815,6 @@ std::ostream& operator<<(std::ostream &os, const Image& img)
   return os << "{\n\tdims: " << img.dims() << ",\n\torigin: "
             << img.origin() << ",\n\tsize: " << img.size()
             << ",\n\tspacing: " << img.spacing() <<  "\n}";
-}
-
-std::ostream& operator<<(std::ostream &os, const Image::Region &r)
-{
-  return os << "{\n\tmin: [" << r.min[0] << ", " << r.min[1] << ", " << r.min[2] << "]"
-            << ",\n\tmax: [" << r.max[0] << ", " << r.max[1] << ", " << r.max[2] << "]\n}";
 }
 
 } // shapeworks

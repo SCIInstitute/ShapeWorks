@@ -138,7 +138,7 @@ TEST(MeshTests, relativeDistanceBATest)
 TEST(MeshTests, rasterizationOriginTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  Mesh::Region region = femur.boundingBox();
+  Region region = femur.boundingBox();
   Point3 origin({-114, -22, 1209});
 
   ASSERT_TRUE(femur.rasterizationOrigin(region) == origin);
@@ -151,7 +151,7 @@ TEST(MeshTests, rasterizationOriginTest2)
   std::vector <Mesh> meshes;
   meshes.push_back(femur);
   meshes.push_back(pelvis);
-  Mesh::Region region = MeshUtils::boundingBox(meshes);
+  Region region = MeshUtils::boundingBox(meshes);
   Point3 origin({-114, -22, 1202});
 
   ASSERT_TRUE(femur.rasterizationOrigin(region) == origin);
@@ -160,7 +160,7 @@ TEST(MeshTests, rasterizationOriginTest2)
 TEST(MeshTests, rasterizationSizeTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  Mesh::Region region = femur.boundingBox();
+  Region region = femur.boundingBox();
   Dims size({45, 45, 41});
 
   ASSERT_TRUE(femur.rasterizationSize(region) == size);
@@ -173,7 +173,7 @@ TEST(MeshTests, rasterizationSizeTest2)
   std::vector <Mesh> meshes;
   meshes.push_back(femur);
   meshes.push_back(pelvis);
-  Mesh::Region region = MeshUtils::boundingBox(meshes);
+  Region region = MeshUtils::boundingBox(meshes);
   Dims size({48, 51, 54});
 
   ASSERT_TRUE(femur.rasterizationSize(region) == size);
