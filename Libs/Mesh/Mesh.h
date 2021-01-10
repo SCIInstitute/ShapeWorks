@@ -19,7 +19,7 @@ public:
   Mesh(const std::string& pathname) : mesh(read(pathname)) {}
   Mesh(MeshType meshPtr) : mesh(meshPtr) { if (!mesh) throw std::invalid_argument("null meshPtr"); }
   Mesh& operator=(const Mesh& mesh); /// lvalue assignment operator
-  Mesh& operator=(std::unique_ptr<Mesh>);      /// rvalue assignment operator
+  Mesh& operator=(std::unique_ptr<Mesh> mesh);      /// rvalue assignment operator
 
   // return the current mesh
   MeshType getMesh() const { return this->mesh; }

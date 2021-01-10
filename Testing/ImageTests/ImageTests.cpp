@@ -14,7 +14,7 @@ TEST(ImageTests, dicomReadTest)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, readTestNoImage)
+TEST(ImageTests, readTest)
 {
   try {
     Image image(std::string(TEST_DATA_DIR) + "foo.nrrd");
@@ -911,7 +911,7 @@ TEST(ImageTests, divideTest2)
   ASSERT_TRUE(image == baseline);
 }
 
-TEST(ImageTests, resample1)
+TEST(ImageTests, resampleTest1)
 {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
   image.resample(makeVector({1, 1, 1}));
@@ -920,7 +920,7 @@ TEST(ImageTests, resample1)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, resample2)
+TEST(ImageTests, resampleTest2)
 {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
   image.resample(makeVector({1.5, 1.5, 1.5}));
@@ -929,7 +929,7 @@ TEST(ImageTests, resample2)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, resample3)
+TEST(ImageTests, resampleTest3)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
   image.resample(makeVector({0.98, 1.02, 3.14159}), Image::NearestNeighbor);
@@ -938,7 +938,7 @@ TEST(ImageTests, resample3)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, resample4)
+TEST(ImageTests, resampleTest4)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
 
@@ -953,7 +953,7 @@ TEST(ImageTests, resample4)
 }
 
 /* fails to compile on linux due to weird template conflicts with itkeigen
-TEST(ImageTests, resample5)
+TEST(ImageTests, resampleTest5)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
 
@@ -969,7 +969,7 @@ TEST(ImageTests, resample5)
 }
 */
 
-TEST(ImageTests, resample6)
+TEST(ImageTests, resampleTest6)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
 
@@ -983,7 +983,7 @@ TEST(ImageTests, resample6)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, resize1)
+TEST(ImageTests, resizeTest1)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
   image.resize(Dims({2, 0, 0}));
@@ -992,7 +992,7 @@ TEST(ImageTests, resize1)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, resize2)
+TEST(ImageTests, resizeTest2)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
   image.resize(Dims({96, 96, 12}));
@@ -1001,7 +1001,7 @@ TEST(ImageTests, resize2)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, resize3)
+TEST(ImageTests, resizeTest3)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
   image.resize(Dims({12, 14, 80}), Image::NearestNeighbor);
@@ -1009,3 +1009,24 @@ TEST(ImageTests, resize3)
 
   ASSERT_TRUE(image == ground_truth);
 }
+
+// TODO: fix these tests
+// TEST(ImageTests, toMeshTest1)
+// {
+//   Image image(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
+//   Mesh mesh = image.toMesh(1.0);
+//   mesh.write(std::string(TEST_DATA_DIR) + "/mesh1.nrrd");
+//   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/mesh1.nrrd");
+
+//   ASSERT_TRUE(mesh == ground_truth);
+// }
+
+// TEST(ImageTests, toMeshTest2)
+// {
+//   Image image(std::string(TEST_DATA_DIR) + "/computedt1.nrrd");
+//   Mesh mesh(image.toMesh(0.0, 0.01, 30, 1, 1, true));
+//   mesh.write(std::string(TEST_DATA_DIR) + "/mesh2.nrrd");
+//   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/mesh2.nrrd");
+
+//   ASSERT_TRUE(mesh == ground_truth);
+// }
