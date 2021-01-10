@@ -192,11 +192,15 @@ public:
   /// creates a vtkPolyData for the given image
   static vtkSmartPointer<vtkPolyData> getPolyData(const Image& image, PixelType isoValue = 0.0);
 
-  /// converts to Mesh
+  /// applies filter to generates isosurface
+  static vtkSmartPointer<vtkPolyData> march(const Image& image, double levelset=0.0);
+
+  /// converts image to mesh
   std::unique_ptr<Mesh> toMesh(PixelType isovalue = 1.0) const;
 
-  /// applies filter to generates isosurface
-  vtkSmartPointer<vtkPolyData> march(double levelset=0.0);
+  /// converts distance transform to mesh
+  std::unique_ptr<Mesh> toMesh(double levelset = 0.0, double reduction = 0.01, double angle = 30,
+                               int leveliterations = 1, int meshiterations = 1, bool preservetopology = true) const;
 
 private:
   friend struct SharedCommandData;

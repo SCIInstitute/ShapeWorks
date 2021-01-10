@@ -57,7 +57,6 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(ReadMesh::getCommand());
   shapeworks.addCommand(WriteMesh::getCommand());
   shapeworks.addCommand(Coverage::getCommand());
-  shapeworks.addCommand(March::getCommand());
   shapeworks.addCommand(Smooth::getCommand());
   shapeworks.addCommand(Decimate::getCommand());
   shapeworks.addCommand(ReflectMesh::getCommand());

@@ -795,11 +795,11 @@ vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image& image, PixelType is
   return targetContour->GetOutput();
 }
 
-vtkSmartPointer<vtkPolyData> Image::march(double levelset)
+vtkSmartPointer<vtkPolyData> Image::march(const Image& image, double levelset)
 {
   using connectorType = itk::ImageToVTKImageFilter<Image::ImageType>;
   connectorType::Pointer connector = connectorType::New();
-  connector->SetInput(this->image);
+  connector->SetInput(image.image);
 
   vtkSmartPointer<vtkMarchingCubes> cube = vtkSmartPointer<vtkMarchingCubes>::New();
 

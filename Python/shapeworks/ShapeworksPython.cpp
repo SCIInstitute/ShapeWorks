@@ -432,8 +432,12 @@ PYBIND11_MODULE(shapeworks, m)
     return image.physicalToLogical(Point({p[0], p[1], p[2]}));
   }, "converts from a physical coordinate to a logical coordinate", "p"_a)
   .def("compare",               &Image::compare, "compares two images", "other"_a, "verifyall"_a=true, "tolerance"_a=0.0, "precision"_a=1e-12)
-  .def_static("getPolyData",    &Image::getPolyData, "creates a vtkPolyData for the given image", "image"_a, "isoValue"_a=0.0)
-  .def("toMesh",                &Image::toMesh, "converts to Mesh", "isovalue"_a=1.0)
+  .def("toMesh", [](Image &image, Image::PixelType isovalue) {
+    return image.toMesh(isovalue);
+  }, "converts image to mesh", "isovalue"_a=1.0)
+  .def("toMesh", [](Image &image, double levelset, double reduction, double angle, int leveliterations, int meshiterations, bool preservetopology) {
+    return image.toMesh(levelset, reduction, angle, leveliterations, meshiterations, preservetopology);
+  }, "converts distance transform to mesh", "levelset"_a=0.0, "reduction"_a=0.01, "angle"_a=30, "leveliterations"_a=1, "meshiterations"_a=1, "preservetopology"_a=true)
   .def("toArray", [](const Image &image) {
     Image::ImageType::Pointer img = image.getITKImage();
     const auto size = img->GetLargestPossibleRegion().GetSize();

@@ -1391,34 +1391,6 @@ bool ImageToMesh::execute(const optparse::Values &options, SharedCommandData &sh
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// March
-///////////////////////////////////////////////////////////////////////////////
-void March::buildParser()
-{
-  const std::string prog = "march";
-  const std::string desc = "takes an image and generates an isosurface";
-  parser.prog(prog).description(desc);
-
-  parser.add_option("--levelset").action("store").type("double").set_default(0.0).help("Value of levelset [default: 0.0].");
-
-  Command::buildParser();
-}
-
-bool March::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validImage())
-  {
-    std::cerr << "No image to operate on\n";
-    return false;
-  }
-
-  double levelset = static_cast<double>(options.get("levelset"));
-
-  sharedData.mesh = std::make_unique<Mesh>(sharedData.image.march(levelset));
-  return sharedData.validMesh();
-}
-
-///////////////////////////////////////////////////////////////////////////////
 // DTToMesh
 ///////////////////////////////////////////////////////////////////////////////
 void DTToMesh::buildParser()
@@ -1452,7 +1424,7 @@ bool DTToMesh::execute(const optparse::Values &options, SharedCommandData &share
   int meshiterations = static_cast<int>(options.get("meshiterations"));
   bool preservetopology = static_cast<bool>(options.get("preservetopology"));
 
-  sharedData.mesh = std::make_unique<Mesh>(ImageUtils::toMesh(sharedData.image, levelset, reduction, angle, leveliterations, meshiterations, preservetopology));
+  sharedData.mesh = sharedData.image.toMesh(levelset, reduction, angle, leveliterations, meshiterations, preservetopology);
   return sharedData.validMesh();
 }
 

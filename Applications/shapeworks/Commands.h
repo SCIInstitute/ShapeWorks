@@ -42,7 +42,6 @@ COMMAND_DECLARE(SubtractImage, ImageCommand);
 COMMAND_DECLARE(MultiplyImage, ImageCommand);
 COMMAND_DECLARE(DivideImage, ImageCommand);
 COMMAND_DECLARE(ImageToMesh, ImageCommand);
-COMMAND_DECLARE(March, ImageCommand);
 COMMAND_DECLARE(DTToMesh, ImageCommand);
 
 // Particle System Commands
