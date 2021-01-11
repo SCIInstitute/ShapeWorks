@@ -33,7 +33,7 @@ def generate(num_samples, out_dir, randomize_center, randomize_rotation, m, star
         if randomize_rotation:
             rotation = np.random.rand(3)
         else:
-            rotation = 0
+            rotation = np.zeros(3)
         S = trimesh.transformations.scale_matrix(size, [0,0,0])
         T = trimesh.transformations.translation_matrix(center_loc)
         R = trimesh.transformations.random_rotation_matrix(rotation)
