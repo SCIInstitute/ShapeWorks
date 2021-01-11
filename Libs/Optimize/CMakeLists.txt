@@ -21,6 +21,7 @@ target_link_libraries(Optimize
   Particles
   ${ITK_LIBRARIES}
   ${VTK_LIBRARIES}
+  igl::core
   )
 
 # Create an interface library that will bring pybind11::embed along

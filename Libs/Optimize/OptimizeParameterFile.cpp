@@ -123,6 +123,9 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
     if (!this->read_mesh_inputs(&doc_handle, optimize)) {
       return false;
     }
+    if (!this->read_mesh_attributes(&doc_handle, optimize)) {
+      return false;
+    }
   }
   if (!this->read_point_files(&doc_handle, optimize)) {
     return false;
@@ -489,15 +492,6 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
       optimize->AddMesh(nullptr);
     }
   }
-  std::vector<double> attr_scales;
-  attr_scales.push_back(1);
-  attr_scales.push_back(1);
-  attr_scales.push_back(1);
-  if (attr_scales.size() != 3) {
-    std::cerr << "not enough attribute scale values!!!" << std::endl;
-    return false;
-  }
-  optimize->SetAttributeScales(attr_scales);
 
   optimize->SetFilenames(StringUtils::getFileNamesFromPaths(meshFiles));
 
