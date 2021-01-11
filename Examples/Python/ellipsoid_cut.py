@@ -84,7 +84,7 @@ def Run_Pipeline(args):
         """Apply center of mass alignment"""
         comFiles = applyCOMAlignment(groomDir + "com_aligned/segmentations", paddedFiles, None)
 
-        """ Apply resmapling"""
+        """ Apply resampling"""
         resampledFiles = applyResampling(groomDir + "resized/segmentations", comFiles[0], comFiles)
 
         """Compute largest bounding box and apply cropping"""
