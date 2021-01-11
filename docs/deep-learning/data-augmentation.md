@@ -49,12 +49,13 @@ This function creates a visualization for augmented data. It creates a matrix of
 
 
 ```python
-DataAugmentationUtils.visualizeAugmentation(data_csv)
+DataAugmentationUtils.visualizeAugmentation(data_csv, viz_type)
 ```
 
 **Input arguments:**
 
 * `data_csv`: The path to the CSV file created by running the data augmentation process.
+* `viz_type`: The type of visulazation to display. Options `splom` or `violin` (default: `splom`). If set to `splom`, a scatterplot matrix of pairwise PCA comparisions will open in the default browser. If set to `violin` a violin plot or rotated kernel density plot will be displayed. 
 
 
 ## Data Augmentation Steps
