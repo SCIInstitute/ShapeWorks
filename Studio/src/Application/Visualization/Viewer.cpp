@@ -603,6 +603,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
 void Viewer::clear_viewer()
 {
   this->renderer_->RemoveAllViewProps();
+  this->shape_ = nullptr;
   this->visible_ = false;
   this->viewer_ready_ = false;
   this->mesh_ready_ = false;
