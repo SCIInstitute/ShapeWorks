@@ -108,10 +108,15 @@ public Q_SLOTS:
   void handle_new_mesh();
   void handle_clear_cache();
 
-  void update_feature_map_selection(const QString& feature_map);
+  void update_feature_map_selection(const QString &feature_map);
   void show_splash_screen();
   void about();
   void keyboard_shortcuts();
+
+protected:
+  void dragEnterEvent(QDragEnterEvent* event) override;
+  void dragLeaveEvent(QDragLeaveEvent* event) override;
+  void dropEvent(QDropEvent* event) override;
 
 private:
 

@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QTextStream>
+#include <QMimeData>
 
 // vtk
 #include <vtkRenderWindow.h>
@@ -14,6 +15,8 @@
 
 // shapeworks
 #include <Applications/Configuration.h>
+#include <Libs/Utils/StringUtils.h>
+#include <Libs/Mesh/Mesh.h>
 
 // studio
 #include <Data/Preferences.h>
@@ -47,6 +50,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
 {
   this->ui_ = new Ui_ShapeWorksStudioApp;
   this->ui_->setupUi(this);
+  this->setAcceptDrops(true);
   this->progress_bar_ = new QProgressBar(this);
   this->ui_->statusbar->addPermanentWidget(this->progress_bar_);
   this->progress_bar_->setVisible(false);
@@ -223,7 +227,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, false);
 
-  connect(this->ui_->features, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
+  connect(this->ui_->features, qOverload<const QString &>(&QComboBox::currentIndexChanged), this,
           &ShapeWorksStudioApp::update_feature_map_selection);
 
   connect(this->ui_->feature_uniform_scale, &QCheckBox::toggled, this,
@@ -239,7 +243,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->enable_possible_actions();
 
   connect(this->ui_->actionAbout, &QAction::triggered, this, &ShapeWorksStudioApp::about);
-  connect(this->ui_->actionKeyboard_Shortcuts, &QAction::triggered, this, &ShapeWorksStudioApp::keyboard_shortcuts);
+  connect(this->ui_->actionKeyboard_Shortcuts, &QAction::triggered, this,
+          &ShapeWorksStudioApp::keyboard_shortcuts);
 }
 
 //---------------------------------------------------------------------------
@@ -386,7 +391,7 @@ void ShapeWorksStudioApp::on_action_import_triggered()
 void ShapeWorksStudioApp::import_files(QStringList file_names)
 {
   std::vector<std::string> list;
-  for (auto& a : file_names) {
+  for (auto &a : file_names) {
     list.push_back(a.toStdString());
   }
   try {
@@ -574,7 +579,7 @@ void ShapeWorksStudioApp::update_table()
   auto headers = project->get_headers();
 
   QStringList table_headers;
-  for (const std::string& header : headers) {
+  for (const std::string &header : headers) {
     //std::cerr << "header: " << header << "\n";
     table_headers << QString::fromStdString(header);
   }
@@ -604,7 +609,7 @@ void ShapeWorksStudioApp::update_table()
   this->ui_->features->clear();
   this->ui_->features->addItem("-none-");
   auto feature_maps = project->get_feature_names();
-  for (const std::string& feature : feature_maps) {
+  for (const std::string &feature : feature_maps) {
     QString item = QString::fromStdString(feature);
     item = item.remove(0, 8);
     this->ui_->features->addItem(item);
@@ -1447,7 +1452,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered()
     auto col = values.get_column(i);
     std::ofstream out(basename + std::to_string(ii) + ".eval");
     size_t newline = 1;
-    for (auto& a : col) {
+    for (auto &a : col) {
       out << a << (newline % 3 == 0 ? "\n" : "    ");
       newline++;
     }
@@ -1481,7 +1486,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered()
     auto pts = this->analysis_tool_->get_shape_points(mode, pca);
     std::ofstream out(basename + std::to_string(mode) + "-" + std::to_string(i) + ".pts");
     size_t newline = 1;
-    for (auto& a : pts) {
+    for (auto &a : pts) {
       out << a << (newline % 3 == 0 ? "\n" : "    ");
       newline++;
     }
@@ -1513,7 +1518,7 @@ void ShapeWorksStudioApp::on_actionExport_Variance_Graph_triggered()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::update_feature_map_selection(const QString& feature_map)
+void ShapeWorksStudioApp::update_feature_map_selection(const QString &feature_map)
 {
   this->set_feature_map(feature_map.toStdString());
 }
@@ -1610,6 +1615,88 @@ void ShapeWorksStudioApp::reset_num_viewers()
     if (0 != this->ui_->zoom_slider->value()) {
       this->ui_->zoom_slider->setValue(0);
     }
+  }
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::dragEnterEvent(QDragEnterEvent* event)
+{
+  bool accept = false;
+
+  if (event->mimeData()->hasUrls()) {
+    QList<QUrl> urls = event->mimeData()->urls();
+
+    for (int i = 0; i < urls.size(); ++i) {
+      std::string filename = urls[i].toLocalFile().toStdString();
+      for (auto type : Mesh::get_supported_types()) {
+        if (StringUtils::hasSuffix(filename, type)) {
+          accept = true;
+        }
+      }
+
+      if (StringUtils::hasSuffix(filename, "nrrd")) {
+        accept = true;
+      }
+      if (StringUtils::hasSuffix(filename, "mha")) {
+        accept = true;
+      }
+    }
+  }
+
+  if (accept) {
+    this->setFocus();
+    event->accept();
+  }
+  else {
+    event->ignore();
+  }
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::dragLeaveEvent(QDragLeaveEvent* event)
+{
+  this->clearFocus();
+  QWidget::dragLeaveEvent(event);
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::dropEvent(QDropEvent* event)
+{
+  bool accept = false;
+
+  QStringList files_to_load;
+
+  if (event->mimeData()->hasUrls()) {
+    QList<QUrl> urls = event->mimeData()->urls();
+
+    for (int i = 0; i < urls.size(); ++i) {
+      std::string filename = urls[i].toLocalFile().toStdString();
+
+      for (auto type : Mesh::get_supported_types()) {
+        if (StringUtils::hasSuffix(filename, type)) {
+          accept = true;
+        }
+      }
+
+      if (StringUtils::hasSuffix(filename, "nrrd")) {
+        accept = true;
+      }
+      if (StringUtils::hasSuffix(filename, "mha")) {
+        accept = true;
+      }
+
+      if (accept) {
+        files_to_load << QString::fromStdString(filename);
+      }
+    }
+  }
+
+  if (accept) {
+    this->import_files(files_to_load);
+    event->accept();
+  }
+  else {
+    event->ignore();
   }
 }
 
