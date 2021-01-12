@@ -604,7 +604,7 @@ void ShapeWorksStudioApp::update_table()
   this->ui_->table->setSelectionBehavior(QAbstractItemView::SelectRows);
 
 
-  /// todo: check if the lmist has changed before changing
+  /// todo: check if the list has changed before changing
   auto current_feature = this->ui_->features->currentText();
   this->ui_->features->clear();
   this->ui_->features->addItem("-none-");

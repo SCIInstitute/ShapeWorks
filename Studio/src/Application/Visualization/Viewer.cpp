@@ -23,6 +23,7 @@
 #include <vtkPolyDataNormals.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkScalarBarActor.h>
+#include <vtkColorSeries.h>
 
 #include <Application/Data/CustomSurfaceReconstructionFilter.h>
 #include <Data/Preferences.h>
@@ -302,7 +303,7 @@ void Viewer::display_vector_field()
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
+void Viewer::compute_point_differences(const std::vector<Shape::Point> &points,
                                        vtkSmartPointer<vtkFloatArray> magnitudes,
                                        vtkSmartPointer<vtkFloatArray> vectors)
 {
@@ -553,44 +554,23 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
     actor->GetProperty()->SetSpecularPower(15);
 
     if (feature_map != "" && poly_data) {
-
       poly_data->GetPointData()->SetActiveScalars(feature_map.c_str());
-
       mapper->ScalarVisibilityOn();
-
       mapper->SetScalarModeToUsePointData();
-/*
-      auto rainbow = vtkColorTransferFunction::New();
-      rainbow->SetColorSpaceToHSV();
-      rainbow->HSVWrapOff();
-      rainbow->AddHSVPoint(0.0, 0.0, 1.0, 1.0);
-      rainbow->AddHSVPoint(1.0, 0.66667, 1.0, 1.0);
-
-      mapper->SetLookupTable(rainbow);
-      //mapper->SetScalarRange(-500,500);
-*/
-
-      //mapper->SetScalarRange(24, 80);
-      //mapper->SetScalarRange(-773, 1806);
 
       auto scalars = poly_data->GetPointData()->GetScalars(feature_map.c_str());
       if (scalars) {
         double range[2];
         scalars->GetRange(range);
-        //std::cerr << "range = " << range[0] << ":" << range[1] << "\n";
         this->visualizer_->update_feature_range(range);
         this->update_difference_lut(range[0], range[1]);
         mapper->SetScalarRange(range[0], range[1]);
       }
-
     }
     else {
       mapper->ScalarVisibilityOff();
-
     }
-
     this->display_vector_field();
-
   }
 
   this->update_actors();
@@ -891,20 +871,13 @@ void Viewer::update_difference_lut(float r0, float r1)
 
   double rd = r1 - r0;
 
-  /*
-  this->surface_lut_->SetColorSpaceToHSV();
-  this->surface_lut_->AddRGBPoint(r0, blue[0], blue[1], blue[2]);
-  this->surface_lut_->AddRGBPoint(r0 + rd * 0.5, green[0], green[1], green[2]);
-  this->surface_lut_->AddRGBPoint(r1, red[0], red[1], red[2]);
-*/
-  //this->surface_lut_->SetTableRange()
   double range[2];
   range[0] = r0;
   range[1] = r1;
-  //range[0] = -50;
-  //range[1] = 50;
+
   this->surface_lut_->SetTableRange(range);
   this->surface_lut_->Build();
+  this->surface_mapper_->SetLookupTable(this->surface_lut_);
 
   this->surface_mapper_->SetScalarRange(range[0], range[1]);
   this->arrow_glyph_mapper_->SetScalarRange(range);
