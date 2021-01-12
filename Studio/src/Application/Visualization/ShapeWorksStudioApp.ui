@@ -365,8 +365,16 @@
     <addaction name="action_preferences"/>
     <addaction name="actionShow_Tool_Window"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+    <addaction name="actionKeyboard_Shortcuts"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuOptions"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="controlsDock">
@@ -880,6 +888,16 @@ p, li { white-space: pre-wrap; }
   <action name="action_export_pca_scores">
    <property name="text">
     <string>Export PCA Component Scores...</string>
+   </property>
+  </action>
+  <action name="actionKeyboard_Shortcuts">
+   <property name="text">
+    <string>Keyboard Shortcuts</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>&amp;About</string>
    </property>
   </action>
  </widget>

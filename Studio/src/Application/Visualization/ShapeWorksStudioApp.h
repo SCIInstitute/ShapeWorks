@@ -111,6 +111,7 @@ public Q_SLOTS:
   void update_feature_map_selection(const QString& feature_map);
   void show_splash_screen();
   void about();
+  void keyboard_shortcuts();
 
 private:
 

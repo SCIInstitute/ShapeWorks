@@ -29,6 +29,7 @@
 #include <Visualization/Visualizer.h>
 #include <Visualization/WheelEventForwarder.h>
 #include <Interface/SplashScreen.h>
+#include <Interface/KeyboardShortcuts.h>
 
 // ui
 #include <ui_ShapeWorksStudioApp.h>
@@ -237,11 +238,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->preferences_.set_saved();
   this->enable_possible_actions();
 
-  QMenu* qmenu = this->ui_->menubar->addMenu("&Help");
-  auto qaction = qmenu->addAction(tr("&About"));
-  std::string about = std::string("About ShapeWorksStudio");
-  qaction->setToolTip(QString::fromStdString(about));
-  connect(qaction, &QAction::triggered, this, &ShapeWorksStudioApp::about);
+  connect(this->ui_->actionAbout, &QAction::triggered, this, &ShapeWorksStudioApp::about);
+  connect(this->ui_->actionKeyboard_Shortcuts, &QAction::triggered, this, &ShapeWorksStudioApp::keyboard_shortcuts);
 }
 
 //---------------------------------------------------------------------------
@@ -1572,6 +1570,13 @@ void ShapeWorksStudioApp::about()
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::keyboard_shortcuts()
+{
+  KeyboardShortcuts dialog(this);
+  dialog.exec();
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::reset_num_viewers()
 {
   std::string mode = AnalysisTool::MODE_ALL_SAMPLES_C;
@@ -1607,5 +1612,8 @@ void ShapeWorksStudioApp::reset_num_viewers()
     }
   }
 }
+
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 
 }
