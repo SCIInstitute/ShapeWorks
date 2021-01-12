@@ -860,15 +860,6 @@ void Viewer::update_difference_lut(float r0, float r1)
   if (fabs(r0) > fabs(r1)) { maxrange = fabs(r0); }
   else { maxrange = fabs(r1); }
 
-  //std::cerr << "r0 = " << r0 << "\n";
-  //std::cerr << "r1 = " << r1 << "\n";
-  //std::cerr << "maxrange = " << maxrange << "\n";
-  //this->differenceLUT->SetScalarRange(-maxrange, maxrange);
-
-  //this->differenceLUT->SetColorSpaceToHSV();
-  //this->differenceLUT->AddHSVPoint(-maxrange, 0.33, 1.0, 1.0);
-  //this->differenceLUT->AddHSVPoint(maxrange, 0.66, 1.0, 1.0);
-
   double rd = r1 - r0;
 
   double range[2];

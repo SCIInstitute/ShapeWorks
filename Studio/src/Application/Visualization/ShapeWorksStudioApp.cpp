@@ -408,6 +408,9 @@ void ShapeWorksStudioApp::import_files(QStringList file_names)
     this->update_table();
     this->enable_possible_actions();
     this->update_display(true);
+
+    this->reset_num_viewers();
+
   } catch (std::runtime_error e) {
     this->handle_error(e.what());
   }
@@ -1592,23 +1595,24 @@ void ShapeWorksStudioApp::reset_num_viewers()
 
   if (mode == AnalysisTool::MODE_ALL_SAMPLES_C) {
     size_t num_samples = this->session_->get_shapes().size();
-    if (num_samples == 0) {
-      num_samples = 9;
+    int value = 4;
+    if (num_samples == 1) {
+      value = 0; // single
     }
-
-    double root = std::sqrt(static_cast<double>(num_samples));
-    if (std::fmod(root, 1.0) > 1e-6) {
-      root += 1.;
+    else if (num_samples == 2) {
+      value = 1; // two side by side
     }
-
-    if (root > 4) {
-      // don't default to more than 4x4
-      root = 4;
+    else if (num_samples <= 4) {
+      value = 2; // 2x2
     }
-
-    int zoom_val = static_cast<int>(root);
-    if (zoom_val != this->ui_->zoom_slider->value()) {
-      this->ui_->zoom_slider->setValue(zoom_val);
+    else if (num_samples <= 9) {
+      value = 3; // 3x3
+    }
+    else if (num_samples > 9) {
+      value = 4; // 4x4
+    }
+    if (value != this->ui_->zoom_slider->value()) {
+      this->ui_->zoom_slider->setValue(value);
     }
   }
   else {
@@ -1616,6 +1620,7 @@ void ShapeWorksStudioApp::reset_num_viewers()
       this->ui_->zoom_slider->setValue(0);
     }
   }
+  this->on_zoom_slider_valueChanged();
 }
 
 //---------------------------------------------------------------------------
