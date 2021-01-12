@@ -396,8 +396,11 @@ void ShapeWorksStudioApp::import_files(QStringList file_names)
   }
   try {
 
+    bool first_load = false;
+
     if (this->session_->get_num_shapes() == 0 && file_names.size() > 0) {
       // if nothing is loaded, take the path of the first one as the relative path
+      first_load = true;
       this->session_->set_project_path(QFileInfo(file_names[0]).absolutePath());
     }
 
@@ -410,6 +413,23 @@ void ShapeWorksStudioApp::import_files(QStringList file_names)
     this->update_display(true);
 
     this->reset_num_viewers();
+
+    if (first_load) {
+      // On first load, we can check if there was an active scalar on loaded meshes
+      if (!this->session_->get_project()->get_subjects().empty()) {
+        auto subject = this->session_->get_project()->get_subjects()[0];
+        if (!subject->get_segmentation_filenames().empty()) {
+          Mesh m(subject->get_segmentation_filenames()[0]);
+          auto poly_data = m.get_poly_data();
+          if (poly_data) {
+            auto scalars = poly_data->GetPointData()->GetScalars();
+            if (scalars) {
+              this->set_feature_map(scalars->GetName());
+            }
+          }
+        }
+      }
+    }
 
   } catch (std::runtime_error e) {
     this->handle_error(e.what());
