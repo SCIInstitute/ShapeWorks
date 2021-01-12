@@ -2,7 +2,6 @@
 #include <vector>
 
 // qt
-//#include <QThread>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -11,6 +10,8 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #include <QProgressDialog>
+
+#include <Libs/Mesh/Mesh.h>
 
 #ifdef _WIN32
 #include <direct.h>
@@ -40,7 +41,7 @@ const std::string Session::OPTIMIZE_C("optimize");
 const std::string Session::ANALYSIS_C("analysis");
 
 //---------------------------------------------------------------------------
-Session::Session(QWidget* parent, Preferences& prefs) : parent_(parent),
+Session::Session(QWidget* parent, Preferences &prefs) : parent_(parent),
                                                         preferences_(prefs),
                                                         mesh_manager_(QSharedPointer<MeshManager>(
                                                           new MeshManager(preferences_)))
@@ -78,7 +79,7 @@ void Session::handle_clear_cache()
 {
   this->mesh_manager_->clear_cache();
 
-  for (auto& s : this->shapes_) {
+  for (auto &s : this->shapes_) {
     s->clear_reconstructed_mesh();
   }
 
@@ -203,11 +204,11 @@ bool Session::save_project(std::string fname)
 }
 
 //---------------------------------------------------------------------------
-void Session::save_particles_file(std::string filename, const vnl_vector<double>& points)
+void Session::save_particles_file(std::string filename, const vnl_vector<double> &points)
 {
   std::ofstream out(filename);
   size_t newline = 1;
-  for (auto& a : points) {
+  for (auto &a : points) {
     out << a << (newline % 3 == 0 ? "\n" : "    ");
     newline++;
   }
@@ -367,7 +368,7 @@ bool Session::load_light_project(QString filename)
   if (!this->load_point_files(global_point_files, false)) {
     return false;
   }
-  
+
   // read group ids
   std::vector<int> group_ids;
   elem = docHandle.FirstChild("group_ids").Element();
@@ -490,7 +491,7 @@ void Session::set_project_path(QString relative_path)
     // features
     auto features = subject->get_feature_filenames();
     std::map<std::string, std::string> new_features;
-    for (auto const& x : features) {
+    for (auto const &x : features) {
       auto full_path = old_path.absoluteFilePath(QString::fromStdString(x.second));
       new_features[x.first] = new_path.relativeFilePath(full_path).toStdString();
     }
@@ -705,7 +706,7 @@ void Session::remove_shapes(QList<int> list)
 {
   std::sort(list.begin(), list.end(), std::greater<>());
     foreach(int i, list) {
-      std::vector<std::shared_ptr<Subject>>& subjects = this->project_->get_subjects();
+      std::vector<std::shared_ptr<Subject>> &subjects = this->project_->get_subjects();
       subjects.erase(subjects.begin() + i);
       this->shapes_.erase(this->shapes_.begin() + i);
     }
@@ -761,7 +762,7 @@ int Session::get_num_shapes()
 }
 
 //---------------------------------------------------------------------------
-Parameters& Session::parameters()
+Parameters &Session::parameters()
 {
   return this->params_;
 }
@@ -779,6 +780,25 @@ QString Session::get_display_name()
 void Session::set_groom_unsaved(bool value)
 {
   this->unsaved_groomed_files_ = true;
+}
+
+//---------------------------------------------------------------------------
+std::string Session::get_default_feature_map()
+{
+  if (!this->get_project()->get_subjects().empty()) {
+    auto subject = this->get_project()->get_subjects()[0];
+    if (!subject->get_segmentation_filenames().empty()) {
+      Mesh m(subject->get_segmentation_filenames()[0]);
+      auto poly_data = m.get_poly_data();
+      if (poly_data) {
+        auto scalars = poly_data->GetPointData()->GetScalars();
+        if (scalars) {
+          return scalars->GetName();
+        }
+      }
+    }
+  }
+  return "";
 }
 
 }

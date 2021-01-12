@@ -416,19 +416,7 @@ void ShapeWorksStudioApp::import_files(QStringList file_names)
 
     if (first_load) {
       // On first load, we can check if there was an active scalar on loaded meshes
-      if (!this->session_->get_project()->get_subjects().empty()) {
-        auto subject = this->session_->get_project()->get_subjects()[0];
-        if (!subject->get_segmentation_filenames().empty()) {
-          Mesh m(subject->get_segmentation_filenames()[0]);
-          auto poly_data = m.get_poly_data();
-          if (poly_data) {
-            auto scalars = poly_data->GetPointData()->GetScalars();
-            if (scalars) {
-              this->set_feature_map(scalars->GetName());
-            }
-          }
-        }
-      }
+      this->set_feature_map(this->session_->get_default_feature_map());
     }
 
   } catch (std::runtime_error e) {

@@ -96,6 +96,8 @@ public:
 
   void set_groom_unsaved(bool value);
 
+  std::string get_default_feature_map();
+
   QSharedPointer<MeshManager> get_mesh_manager()
   { return this->mesh_manager_; }
 
