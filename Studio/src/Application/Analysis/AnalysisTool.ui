@@ -504,7 +504,7 @@ QWidget#metrics_panel {
             <item row="0" column="0">
              <widget class="QTabWidget" name="tabWidget">
               <property name="currentIndex">
-               <number>0</number>
+               <number>3</number>
               </property>
               <widget class="QWidget" name="mean_tab">
                <attribute name="title">
@@ -541,6 +541,9 @@ QWidget#metrics_panel {
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
+                  <property name="toolTip">
+                   <string>Display overall mean shape</string>
+                  </property>
                   <property name="text">
                    <string>Overall Mean</string>
                   </property>
@@ -569,12 +572,19 @@ QWidget#metrics_panel {
                     </widget>
                    </item>
                    <item row="0" column="1" colspan="2">
-                    <widget class="QComboBox" name="group_box"/>
+                    <widget class="QComboBox" name="group_box">
+                     <property name="toolTip">
+                      <string>Select group set</string>
+                     </property>
+                    </widget>
                    </item>
                    <item row="4" column="2">
                     <widget class="QPushButton" name="group2_button">
                      <property name="enabled">
                       <bool>true</bool>
+                     </property>
+                     <property name="toolTip">
+                      <string>Mean of right group</string>
                      </property>
                      <property name="text">
                       <string>Mean</string>
@@ -591,12 +601,19 @@ QWidget#metrics_panel {
                     </widget>
                    </item>
                    <item row="2" column="0">
-                    <widget class="QComboBox" name="group_left"/>
+                    <widget class="QComboBox" name="group_left">
+                     <property name="toolTip">
+                      <string>Group 1</string>
+                     </property>
+                    </widget>
                    </item>
                    <item row="4" column="1">
                     <widget class="QPushButton" name="difference_button">
                      <property name="enabled">
                       <bool>true</bool>
+                     </property>
+                     <property name="toolTip">
+                      <string>Diff of left to right</string>
                      </property>
                      <property name="text">
                       <string>Diff --&gt;</string>
@@ -611,6 +628,9 @@ QWidget#metrics_panel {
                    </item>
                    <item row="2" column="1">
                     <widget class="QSlider" name="group_slider">
+                     <property name="toolTip">
+                      <string>Group slider</string>
+                     </property>
                      <property name="maximum">
                       <number>20</number>
                      </property>
@@ -661,6 +681,9 @@ QWidget#metrics_panel {
                       </item>
                       <item>
                        <widget class="QCheckBox" name="group_animate_checkbox">
+                        <property name="toolTip">
+                         <string>Group slider animation</string>
+                        </property>
                         <property name="text">
                          <string>Animate</string>
                         </property>
@@ -687,6 +710,9 @@ QWidget#metrics_panel {
                      <property name="enabled">
                       <bool>true</bool>
                      </property>
+                     <property name="toolTip">
+                      <string>Mean of left group</string>
+                     </property>
                      <property name="text">
                       <string>Mean</string>
                      </property>
@@ -702,7 +728,11 @@ QWidget#metrics_panel {
                     </widget>
                    </item>
                    <item row="2" column="2">
-                    <widget class="QComboBox" name="group_right"/>
+                    <widget class="QComboBox" name="group_right">
+                     <property name="toolTip">
+                      <string>Group 2</string>
+                     </property>
+                    </widget>
                    </item>
                    <item row="1" column="0" colspan="3">
                     <widget class="Line" name="line">
@@ -742,10 +772,16 @@ QWidget#metrics_panel {
                   <property name="enabled">
                    <bool>false</bool>
                   </property>
+                  <property name="toolTip">
+                   <string>Sample selection</string>
+                  </property>
                  </widget>
                 </item>
                 <item row="1" column="0">
                  <widget class="QRadioButton" name="singleSamplesRadio">
+                  <property name="toolTip">
+                   <string>Show a single sample</string>
+                  </property>
                   <property name="text">
                    <string>Single Sample:</string>
                   </property>
@@ -753,6 +789,9 @@ QWidget#metrics_panel {
                 </item>
                 <item row="0" column="0">
                  <widget class="QRadioButton" name="allSamplesRadio">
+                  <property name="toolTip">
+                   <string>Show all samples</string>
+                  </property>
                   <property name="text">
                    <string>All Samples</string>
                   </property>
@@ -765,6 +804,9 @@ QWidget#metrics_panel {
                  <widget class="QPushButton" name="medianButton">
                   <property name="enabled">
                    <bool>false</bool>
+                  </property>
+                  <property name="toolTip">
+                   <string>Show median sample</string>
                   </property>
                   <property name="text">
                    <string>Median</string>
@@ -814,6 +856,9 @@ QWidget#metrics_panel {
                          <width>100</width>
                          <height>0</height>
                         </size>
+                       </property>
+                       <property name="toolTip">
+                        <string>Standard deviation slider</string>
                        </property>
                        <property name="minimum">
                         <number>-20</number>
@@ -917,6 +962,9 @@ QWidget#metrics_panel {
                           <property name="enabled">
                            <bool>false</bool>
                           </property>
+                          <property name="toolTip">
+                           <string>Standard deviation animation</string>
+                          </property>
                           <property name="text">
                            <string>Animate</string>
                           </property>
@@ -1019,6 +1067,9 @@ QWidget#metrics_panel {
                       <widget class="QSpinBox" name="pcaModeSpinBox">
                        <property name="enabled">
                         <bool>false</bool>
+                       </property>
+                       <property name="toolTip">
+                        <string>PCA Mode</string>
                        </property>
                        <property name="maximum">
                         <number>500</number>
@@ -1244,8 +1295,8 @@ QWidget#metrics_panel {
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>410</width>
-              <height>234</height>
+              <width>416</width>
+              <height>236</height>
              </rect>
             </property>
             <property name="sizePolicy">
@@ -1318,8 +1369,8 @@ QWidget#metrics_panel {
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>400</width>
-              <height>234</height>
+              <width>410</width>
+              <height>236</height>
              </rect>
             </property>
             <property name="sizePolicy">
