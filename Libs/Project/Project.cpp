@@ -534,13 +534,15 @@ std::vector<std::string> Project::get_feature_names()
   if (!this->subjects_.empty() && this->mesh_scalars_.empty()) {
     auto subject = this->subjects_[0];
     if (subject->get_domain_types()[0] == DomainType::Mesh) {
-      Mesh m(subject->get_segmentation_filenames()[0]);
-      auto poly_data = m.get_poly_data();
-      if (poly_data) {
-        vtkIdType numberOfPointArrays = poly_data->GetPointData()->GetNumberOfArrays();
-        for (vtkIdType i = 0; i < numberOfPointArrays; i++) {
-          this->mesh_scalars_.push_back(std::string("FEATURE_")
-                                        + poly_data->GetPointData()->GetArrayName(i));
+      if (!subject->get_segmentation_filenames().empty()) {
+        Mesh m(subject->get_segmentation_filenames()[0]);
+        auto poly_data = m.get_poly_data();
+        if (poly_data) {
+          vtkIdType numberOfPointArrays = poly_data->GetPointData()->GetNumberOfArrays();
+          for (vtkIdType i = 0; i < numberOfPointArrays; i++) {
+            this->mesh_scalars_.push_back(std::string("FEATURE_")
+                                          + poly_data->GetPointData()->GetArrayName(i));
+          }
         }
       }
     }
