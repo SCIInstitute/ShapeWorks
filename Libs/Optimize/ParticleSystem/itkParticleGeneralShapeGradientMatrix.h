@@ -159,7 +159,7 @@ public:
                 vnl_vector_fixed<float, DIMENSION> gradient = ps->GetDomain(d)->SampleGradientAtPoint(posLocal, idx);
                 vnl_vector_fixed<float, DIMENSION> normal = gradient.normalize();
                 float grad_mag = gradient.magnitude(); //TODO This is always 1.0. Fix when correcting image gradient of normals
-                typename ParticleDomain::GradNType hessian = ps->GetDomain(d)->SampleGradNAtPoint(posLocal, idx);
+                typename ParticleDomain::GradNType grad_n = ps->GetDomain(d)->SampleGradNAtPoint(posLocal, idx);
 
                 typename ParticleImageDomainWithGradN<float>::VnlMatrixType mat1;
                 mat1.set_identity();
@@ -171,12 +171,12 @@ public:
                 for (unsigned int x1 = 0; x1 < VDimension; x1++) {
                     for (unsigned int x2 = 0; x2 < VDimension; x2++) {
                         mat1(x1, x2) -= mat2(x1, x2);
-                        hessian(x1, x2)   /= grad_mag;
+                        grad_n(x1, x2)   /= grad_mag;
                     }
                 }
 
                 // mat3 = H/|grad_f| * (I - n*n');
-                typename ParticleImageDomainWithGradN<float>::VnlMatrixType mat3 = hessian * mat1;
+                typename ParticleImageDomainWithGradN<float>::VnlMatrixType mat3 = grad_n * mat1;
                 typename itk::ParticleSystem<VDimension>::VnlMatrixType tmp;
                 tmp.set_size(VDimension, VDimension);
                 tmp.fill(0.0);
