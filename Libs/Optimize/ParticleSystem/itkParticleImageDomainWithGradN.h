@@ -51,6 +51,7 @@ public:
 
     const auto grad = this->GetVDBGradient();
 
+    // Compute the gradient of normals component-wise
     for(int i=0; i<3; i++) {
       auto norm_i = openvdb::FloatGrid::create();
       norm_i->setTransform(this->transform());
@@ -62,8 +63,6 @@ public:
 
       m_VDBGradNorms[i] = openvdb::tools::gradient(*norm_i);
     }
-
-
   } // end setimage
 
   /** Sample the GradN at a point.  This method performs no bounds checking.
@@ -76,26 +75,11 @@ public:
     GradNType grad_n;
     for(int i=0; i<3; i++) {
       auto grad_ni = openvdb::tools::BoxSampler::sample(m_VDBGradNorms[i]->tree(), coord);
-      // grad_n.normalize();
       grad_n.set(i, 0, grad_ni[0]);
       grad_n.set(i, 1, grad_ni[1]);
       grad_n.set(i, 2, grad_ni[2]);
     }
     return grad_n;
-  }
-
-  /** Set /Get the standard deviation for blurring the image prior to
-      computation of the Hessian derivatives.  This value must be set prior to
-      initializing this class with an input image pointer and cannot be changed
-      once the class is initialized.. */
-  virtual void SetSigma(const double _Sigma) {
-    if (this->m_Sigma != _Sigma) {
-      this->m_Sigma = _Sigma;
-      this->Modified();
-    }
-  }
-  virtual double GetSigma() const {
-    return m_Sigma;
   }
 
   void DeletePartialDerivativeImages() override
@@ -113,7 +97,7 @@ public:
   }
 
 protected:
-  ParticleImageDomainWithGradN() : m_Sigma(0.0) {}
+  ParticleImageDomainWithGradN() {}
   virtual ~ParticleImageDomainWithGradN() {};
 
   void PrintSelf(std::ostream& os, Indent indent) const
@@ -123,7 +107,6 @@ protected:
 
   
 private:
-  double m_Sigma;
   typename openvdb::VectorGrid::Ptr m_VDBGradNorms[3];
 };
 
