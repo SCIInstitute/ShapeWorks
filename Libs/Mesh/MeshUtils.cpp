@@ -60,7 +60,7 @@ Eigen::MatrixXd MeshUtils::pointReadFormat(std::string refPointPath, int numP){
   return Vout;
 }
 
-std::vector<Eigen::MatrixXd> MeshUtils::distilToEigen(const vtkSmartPointer<vtkPolyData> mesh){
+void MeshUtils::distilToEigen(const vtkSmartPointer<vtkPolyData> mesh, Eigen::MatrixXd* Vref, Eigen::MatrixXi* Fref){
   
   // first get the eigen TF and TT
   vtkSmartPointer<vtkPoints> points = mesh->GetPoints();
@@ -69,29 +69,28 @@ std::vector<Eigen::MatrixXd> MeshUtils::distilToEigen(const vtkSmartPointer<vtkP
   int numVertices = points->GetNumberOfPoints();
 	int numFaces = mesh->GetNumberOfCells();
 	
-	Eigen::MatrixXd Vref(numVertices, 3);
-	Eigen::MatrixXi Fref(numFaces, 3);
+	Eigen::MatrixXd Vref_new(numVertices, 3);
+	Eigen::MatrixXi Fref_new(numFaces, 3);
 
-	// for(int i=0; i<numVertices;i++){
-	// 	Vref(i, 0) = dataArray->GetComponent(i, 0);
-	// 	Vref(i, 1) = dataArray->GetComponent(i, 1);
-	// 	Vref(i, 2) = dataArray->GetComponent(i, 2);
-	// }
-	// vtkIdType cellId = 0;
+	for(int i=0; i<numVertices;i++){
+		Vref_new(i, 0) = dataArray->GetComponent(i, 0);
+		Vref_new(i, 1) = dataArray->GetComponent(i, 1);
+		Vref_new(i, 2) = dataArray->GetComponent(i, 2);
+	}
+	vtkIdType cellId = 0;
 
-	// vtkSmartPointer<vtkIdList> cellIdList =
-  //     vtkSmartPointer<vtkIdList>::New();
+	vtkSmartPointer<vtkIdList> cellIdList =
+      vtkSmartPointer<vtkIdList>::New();
 	
-	// for(int j = 0; j < numFaces; j++){
-	// 	mesh->GetCellPoints(j, cellIdList);
-	// 	Fref(j, 0) = cellIdList->GetId(0);
-	// 	Fref(j, 1) = cellIdList->GetId(1);
-	// 	Fref(j, 2) = cellIdList->GetId(2);
-	// }
-  std::vector<Eigen::MatrixXd> outVec;
-  outVec.push_back(Vref);
-  outVec.push_back(Fref);
-  return outVec;
+	for(int j = 0; j < numFaces; j++){
+		mesh->GetCellPoints(j, cellIdList);
+		Fref_new(j, 0) = cellIdList->GetId(0);
+		Fref_new(j, 1) = cellIdList->GetId(1);
+		Fref_new(j, 2) = cellIdList->GetId(2);
+	}
+
+  *Vref = Vref_new;
+  *Fref = Fref_new;
 }
 
 Eigen::MatrixXd MeshUtils::generateWarpMatrix(Eigen::MatrixXd TV , Eigen::MatrixXi TF, Eigen::MatrixXd Vref){

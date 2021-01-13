@@ -19,7 +19,7 @@ public:
   Eigen::MatrixXd pointReadFormat(std::string refPointPath, int numP);
 
   /// Distils the vertex and face information from VTK poly data to Eigen matrices
-  std::vector<Eigen::MatrixXd> distilToEigen(const vtkSmartPointer<vtkPolyData> mesh);
+  void distilToEigen(const vtkSmartPointer<vtkPolyData> mesh, Eigen::MatrixXd* Vref, Eigen::MatrixXi* Fref);
 
   /// Compute the warp matrix using the mesh and reference points
   Eigen::MatrixXd generateWarpMatrix(Eigen::MatrixXd TV , Eigen::MatrixXi TF, Eigen::MatrixXd Vref);
