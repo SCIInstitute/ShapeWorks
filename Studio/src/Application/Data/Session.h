@@ -98,6 +98,8 @@ public:
 
   std::string get_default_feature_map();
 
+  static bool is_supported_file_format(std::string filename);
+
   QSharedPointer<MeshManager> get_mesh_manager()
   { return this->mesh_manager_; }
 

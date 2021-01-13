@@ -12,6 +12,7 @@
 #include <QProgressDialog>
 
 #include <Libs/Mesh/Mesh.h>
+#include <Libs/Utils/StringUtils.h>
 
 #ifdef _WIN32
 #include <direct.h>
@@ -788,17 +789,37 @@ std::string Session::get_default_feature_map()
   if (!this->get_project()->get_subjects().empty()) {
     auto subject = this->get_project()->get_subjects()[0];
     if (!subject->get_segmentation_filenames().empty()) {
-      Mesh m(subject->get_segmentation_filenames()[0]);
-      auto poly_data = m.get_poly_data();
-      if (poly_data) {
-        auto scalars = poly_data->GetPointData()->GetScalars();
-        if (scalars) {
-          return scalars->GetName();
+      if (subject->get_domain_types()[0] == DomainType::Mesh) {
+        Mesh m(subject->get_segmentation_filenames()[0]);
+        auto poly_data = m.get_poly_data();
+        if (poly_data) {
+          auto scalars = poly_data->GetPointData()->GetScalars();
+          if (scalars) {
+            return scalars->GetName();
+          }
         }
       }
     }
   }
   return "";
+}
+
+//---------------------------------------------------------------------------
+bool Session::is_supported_file_format(std::string filename)
+{
+  for (auto type : Mesh::get_supported_types()) {
+    if (StringUtils::hasSuffix(filename, type)) {
+      return true;
+    }
+  }
+
+  if (StringUtils::hasSuffix(filename, ".nrrd")
+      || StringUtils::hasSuffix(filename, ".mha")
+      || StringUtils::hasSuffix(filename, ".nii")
+      || StringUtils::hasSuffix(filename, ".nii.gz")) {
+    return true;
+  }
+  return false;
 }
 
 }

@@ -370,7 +370,7 @@ void ShapeWorksStudioApp::on_action_import_triggered()
   auto filenames = QFileDialog::getOpenFileNames(this, tr("Import Files..."),
                                                  this->preferences_.get_last_directory(),
                                                  tr(
-                                                   "Image files (*.nrrd *.mha);;Mesh files (*.vtk *.ply *.vtp *.obj *stl)"));
+                                                   "Supported types (*.nrrd *.nii *.nii.gz *.mha *.vtk *.ply *.vtp *.obj *stl)"));
 
   if (filenames.size() == 0) {
     // was cancelled
@@ -1646,16 +1646,7 @@ void ShapeWorksStudioApp::dragEnterEvent(QDragEnterEvent* event)
 
     for (int i = 0; i < urls.size(); ++i) {
       std::string filename = urls[i].toLocalFile().toStdString();
-      for (auto type : Mesh::get_supported_types()) {
-        if (StringUtils::hasSuffix(filename, type)) {
-          accept = true;
-        }
-      }
-
-      if (StringUtils::hasSuffix(filename, ".nrrd")) {
-        accept = true;
-      }
-      if (StringUtils::hasSuffix(filename, ".mha")) {
+      if (Session::is_supported_file_format(filename)) {
         accept = true;
       }
     }
@@ -1690,20 +1681,8 @@ void ShapeWorksStudioApp::dropEvent(QDropEvent* event)
     for (int i = 0; i < urls.size(); ++i) {
       std::string filename = urls[i].toLocalFile().toStdString();
 
-      for (auto type : Mesh::get_supported_types()) {
-        if (StringUtils::hasSuffix(filename, type)) {
-          accept = true;
-        }
-      }
-
-      if (StringUtils::hasSuffix(filename, ".nrrd")) {
+      if (Session::is_supported_file_format(filename)) {
         accept = true;
-      }
-      if (StringUtils::hasSuffix(filename, ".mha")) {
-        accept = true;
-      }
-
-      if (accept) {
         files_to_load << QString::fromStdString(filename);
       }
     }
