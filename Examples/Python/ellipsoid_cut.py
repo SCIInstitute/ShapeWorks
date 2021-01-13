@@ -62,7 +62,7 @@ def Run_Pipeline(args):
             indices = [0,1,2]
         elif args.use_subsample:
             indices = sample_idx
-        dtFiles = CommonUtils.get_file_list(dtDirecory, ending=".nrrd", indices=indices)    else:
+        dtFiles = CommonUtils.get_file_list(dtDirecory, ending=".nrrd", indices=indices)    
     else:
         print("\nStep 2. Groom - Data Pre-processing\n")
         if int(args.interactive) != 0:
@@ -84,11 +84,11 @@ def Run_Pipeline(args):
         """Apply center of mass alignment"""
         comFiles = applyCOMAlignment(groomDir + "com_aligned/segmentations", paddedFiles, None)
 
-        """Apply rigid alignment"""
-        rigidFiles = applyRigidAlignment(groomDir + "aligned/segmentations", comFiles, None, comFiles[0])
+        """ Apply resampling"""
+        resampledFiles = applyResampling(groomDir + "resized/segmentations", comFiles[0], comFiles)
 
         """Compute largest bounding box and apply cropping"""
-        croppedFiles = applyCropping(groomDir + "cropped/segmentations", rigidFiles, groomDir + "aligned/segmentations/*.aligned.nrrd")
+        croppedFiles = applyCropping(groomDir + "cropped/segmentations", resampledFiles, groomDir + "resized/segmentations/*.resized.nrrd")
 
         """
         We convert the scans to distance transforms, this step is common for both the
