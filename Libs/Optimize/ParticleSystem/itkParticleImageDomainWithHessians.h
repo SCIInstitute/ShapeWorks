@@ -58,7 +58,7 @@ public:
       auto norm_i_accessor = norm_i->getAccessor();
       for(openvdb::VectorGrid::ValueOnCIter it = grad->cbeginValueOn(); it.test(); ++it) {
         const openvdb::Vec3f& v = *it;
-        norm_i_accessor.setValue(it.getCoord(), v[i]/* / v.length()*/);
+        norm_i_accessor.setValue(it.getCoord(), v[i] / v.length());
       }
 
       m_VDBGradNorms[i] = openvdb::tools::gradient(*norm_i);
