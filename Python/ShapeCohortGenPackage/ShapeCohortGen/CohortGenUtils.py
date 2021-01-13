@@ -66,6 +66,7 @@ def generate_images(segs, outDir, blur_factor, foreground_mean, foreground_var, 
 		img_array = apply_noise(img_array, foreground_mean, foreground_var, background_mean, background_var)
 		img_array = np.float32(img_array)
 		itk_img_view = itk.image_view_from_array(img_array)
+		itk_img_view.SetOrigin(itk_bin.GetOrigin())
 		itk.imwrite(itk_img_view, name)
 		index += 1
 	return get_files(imgDir)
@@ -81,10 +82,10 @@ def blur(img, size):
 get_image helper
 '''
 def apply_noise(img, foreground_mean, foreground_var, background_mean, background_var):
-	img = img*(foreground_mean-background_mean)
-	img = img + np.ones(img.shape)*background_mean
 	background_indices = np.where(img < 0.5)
 	foreground_indices = np.where(img > 0.5)
+	img = img*(foreground_mean-background_mean)
+	img = img + np.ones(img.shape)*background_mean
 	foreground_noise = np.random.normal(0, foreground_var**0.5, img.shape)
 	foreground_noise[background_indices] = 0
 	background_noise = np.random.normal(0, background_var**0.5, img.shape)
