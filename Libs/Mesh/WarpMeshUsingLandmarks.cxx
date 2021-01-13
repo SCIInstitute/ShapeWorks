@@ -25,8 +25,6 @@
 #include <igl/cotmatrix.h>
 #include <igl/matrix_to_list.h>
 #include <igl/point_mesh_squared_distance.h>
-#include <igl/readPLY.h>
-#include <igl/writePLY.h>
 #include <igl/remove_unreferenced.h>
 #include <igl/slice.h>
 
@@ -184,7 +182,7 @@ int main(int argc, char *argv[])
   	Eigen::MatrixXi TF = Fref;
   	Eigen::MatrixXi TT = TF;  
 	Eigen::MatrixXd W = W_precomputation(Vcontrol_static, TV, TT, TF);	 
-
+	
 	for(int i = 0; i < pointPaths.size(); i++){	
 		Vcontrol_moving = pointReadFormat(pointPaths[i], numP);
 		Eigen::MatrixXd Voutput = W * (Vcontrol_moving.rowwise() + Eigen::RowVector3d(1,0,0));
