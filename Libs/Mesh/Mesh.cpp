@@ -1,4 +1,5 @@
 #include "Mesh.h"
+#include "MeshUtils.h"
 #include "Image.h"
 #include "StringUtils.h"
 #include <PreviewMeshQC/FEAreaCoverage.h>
@@ -259,8 +260,8 @@ Mesh &Mesh::probeVolume(const Image &img)
   probeFilter->SetInputData(this->mesh);
   probeFilter->SetSourceData(ImageUtils::getVTK(img));
   probeFilter->Update();
-
   this->mesh = probeFilter->GetPolyDataOutput();
+
   return *this;
 }
 
@@ -270,8 +271,8 @@ Mesh &Mesh::clip(const vtkSmartPointer<vtkPlane> plane)
   clipper->SetInputData(this->mesh);
   clipper->SetClipFunction(plane);
   clipper->Update();
-
   this->mesh = clipper->GetOutput();
+
   return *this;
 }
 
@@ -373,7 +374,7 @@ Dims Mesh::rasterizationSize(Region region, Vector3 spacing, int padding)
   return size;
 }
 
-Image Mesh::toImage(Vector3 spacing, Dims size, Point3 origin)
+Image Mesh::rasterize(const Mesh &mesh, Vector3 spacing, Dims size, Point3 origin)
 {
   vtkSmartPointer<vtkImageData> whiteImage = vtkSmartPointer<vtkImageData>::New();
   whiteImage->SetSpacing(spacing[0], spacing[1], spacing[2]);
@@ -388,7 +389,7 @@ Image Mesh::toImage(Vector3 spacing, Dims size, Point3 origin)
 
   // polygonal data --> image stencil:
   vtkSmartPointer<vtkPolyDataToImageStencil> pol2stenc = vtkSmartPointer<vtkPolyDataToImageStencil>::New();
-  pol2stenc->SetInputData(this->mesh);
+  pol2stenc->SetInputData(mesh.mesh);
   pol2stenc->SetOutputOrigin(origin[0], origin[1], origin[2]);
   pol2stenc->SetOutputSpacing(spacing[0], spacing[1], spacing[2]);
   pol2stenc->SetOutputWholeExtent(whiteImage->GetExtent());
@@ -403,36 +404,7 @@ Image Mesh::toImage(Vector3 spacing, Dims size, Point3 origin)
   imgstenc->Update();
 
   // vtk image to itk img
-  Region region(size);
-
-  Image::ImageType::Pointer itkImg;
-  itkImg->SetRegions(Image::ImageType::RegionType(region.origin(), region.size()));
-  itkImg->SetOrigin(origin);
-  itkImg->SetSpacing(spacing);
-  itkImg->Allocate();
-
-  Image::ImageType::IndexType index;
-  int pixel;
-
-  for (index[0] = 0; index[0] < size[0]; index[0]++)
-  {
-    for (index[1] = 0; index[1] < size[1]; index[1]++)
-    {
-      for (index[2] = 0; index[2] < size[2]; index[2]++)
-      {
-        pixel = imgstenc->GetOutput()->GetScalarComponentAsFloat(index[0], index[1], index[2], 0);
-        itkImg->SetPixel(index, pixel);
-      }
-    }
-  }
-
-  return itkImg;
-}
-
-Image Mesh::toDistanceTransform(Vector3 spacing, Dims size, Point3 origin)
-{
-  Image img(toImage(spacing, size, origin));
-  return img.antialias(30, 0.0).computeDT();
+  return MeshUtils::getITK(imgstenc->GetOutput());
 }
 
 bool Mesh::compare_points_equal(const Mesh &other_mesh) const

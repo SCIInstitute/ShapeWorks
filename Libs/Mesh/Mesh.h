@@ -78,11 +78,14 @@ public:
   /// compute size of volume that would contain the rasterization of each mesh
   Dims rasterizationSize(Region region, Vector3 spacing=makeVector({1.0,1.0,1.0}), int padding=0);
 
-  /// rasterizes mesh to generate binary image using rasterizationOrigin and rasterizationSize
-  Image toImage(Vector3 spacing, Dims size, Point3 origin);
+  /// rasterizes mesh to create binary images rasterizationOrigin and rasterizationSize
+  static Image rasterize(const Mesh &mesh, Vector3 spacing, Dims size, Point3 origin);
 
-  /// rasterizes mesh to generate distance transform using rasterizationOrigin and rasterizationSize
-  Image toDistanceTransform(Vector3 spacing, Dims size, Point3 origin);
+  /// converts mesh to image
+  Image toImage(Vector3 spacing, Dims size, Point3 origin) const;
+
+  /// converts mesh to distance transform
+  Image toDistanceTransform(Vector3 spacing, Dims size, Point3 origin) const;
 
   // query functions //
 

@@ -2,8 +2,20 @@
 
 #include "Mesh.h"
 #include "MeshUtils.h"
+#include "Image.h"
 
 using namespace shapeworks;
+
+TEST(MeshTests, readTest)
+{
+  try {
+    Mesh mesh(std::string(TEST_DATA_DIR) + "/foo.vtk");
+  } catch(...) {
+    return;
+  }
+
+  ASSERT_TRUE(true);
+}
 
 TEST(MeshTests, coverageTest)
 {
@@ -43,7 +55,6 @@ TEST(MeshTests, decimateTest1)
 
   ASSERT_TRUE(femur == ground_truth);
 }
-
 
 TEST(MeshTests, decimateTest2)
 {
@@ -177,4 +188,24 @@ TEST(MeshTests, rasterizationSizeTest2)
   Dims size({48, 51, 54});
 
   ASSERT_TRUE(femur.rasterizationSize(region) == size);
+}
+
+TEST(MeshTests, toImageTest1)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
+  Region region = femur.boundingBox();
+  Image image = femur.toImage(makeVector({1.0,1.0,1.0}), femur.rasterizationSize(region), femur.rasterizationOrigin(region));
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/oldFemurImage.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(MeshTests, toDistanceTransformTest1)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
+  Region region = femur.boundingBox();
+  Image image = femur.toDistanceTransform(makeVector({1.0,1.0,1.0}), femur.rasterizationSize(region), femur.rasterizationOrigin(region));
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/oldFemurDT.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
 }

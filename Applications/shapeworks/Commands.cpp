@@ -760,8 +760,8 @@ void IntensityFilter::buildParser()
   const std::string desc = "applies intensity windowing image filter";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--min").action("store").type("double").set_default(0.0).help("Description of optionName.");
-  parser.add_option("--max").action("store").type("double").set_default(0.0).help("Description of optionName.");
+  parser.add_option("--min").action("store").type("double").set_default(0.0).help("Minimum value of window [default:0.0].");
+  parser.add_option("--max").action("store").type("double").set_default(0.0).help("Maximum value of window [default:0.0].");
 
   Command::buildParser();
 }
@@ -2074,7 +2074,7 @@ bool RasterizationOrigin::execute(const optparse::Values &options, SharedCommand
   double y = static_cast<double>(options.get("y"));
   double z = static_cast<double>(options.get("z"));
 
-  if (filenames.size() == 1)
+  if (filenames.size() <= 1)
     sharedData.region = sharedData.mesh->boundingBox();
   else
     sharedData.region = MeshUtils::boundingBox(filenames, center);
@@ -2110,7 +2110,7 @@ bool RasterizationSize::execute(const optparse::Values &options, SharedCommandDa
   double z = static_cast<double>(options.get("z"));
   int padding = static_cast<int>(options.get("padding"));
 
-  if (filenames.size() == 1)
+  if (filenames.size() <= 1)
     sharedData.region = sharedData.mesh->boundingBox();
   else
     sharedData.region = MeshUtils::boundingBox(filenames, center);

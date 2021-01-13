@@ -26,6 +26,8 @@ public:
 
   /// calculate bounding box incrementally for shapework meshes
   static Region boundingBox(std::vector<Mesh> &meshes, bool center = false);
+
+  static Image getITK(vtkImageData* vtkImg);
 };
 
 } // shapeworks

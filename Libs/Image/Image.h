@@ -6,6 +6,7 @@
 #include <itkImage.h>
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
+#include <vtkImageData.h>
 
 #include <limits>
 

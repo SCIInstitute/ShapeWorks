@@ -15,4 +15,14 @@ std::unique_ptr<Mesh> Image::toMesh(double levelset, double reduction, double an
   return std::make_unique<Mesh>(mesh);
 }
 
+Image Mesh::toImage(Vector3 spacing, Dims size, Point3 origin) const
+{
+  return rasterize(*this, spacing, size, origin);
+}
+
+Image Mesh::toDistanceTransform(Vector3 spacing, Dims size, Point3 origin) const
+{
+  return rasterize(*this, spacing, size, origin).antialias(30, 0.0).computeDT();
+}
+
 } // shapeworks
