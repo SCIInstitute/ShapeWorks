@@ -144,7 +144,7 @@ Mesh& Mesh::write(const std::string &pathname)
   }
 }
 
-Mesh& Mesh::coverage(const Mesh &other_mesh)
+Mesh& Mesh::coverage(const Mesh &other_mesh, bool allow_back_intersections)
 {
   FEVTKimport importer;
   FEMesh* surf1 = importer.Load(this->mesh);
@@ -152,6 +152,7 @@ Mesh& Mesh::coverage(const Mesh &other_mesh)
   if (surf1 == nullptr || surf2 == nullptr) { throw std::invalid_argument("Mesh invalid"); }
 
   FEAreaCoverage areaCoverage;
+  areaCoverage.AllowBackIntersection(allow_back_intersections);
 
   vector<double> map1 = areaCoverage.Apply(*surf1, *surf2);
 
