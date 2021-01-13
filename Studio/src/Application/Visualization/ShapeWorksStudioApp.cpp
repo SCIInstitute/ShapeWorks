@@ -343,10 +343,10 @@ bool ShapeWorksStudioApp::on_action_save_project_as_triggered()
     return false;
   }
 
-  if (!StringUtils::hasSuffix(filename.toStdString(), "xlsx")) {
+  if (!StringUtils::hasSuffix(filename.toStdString(), ".xlsx")) {
     filename = filename + ".xlsx";
   }
-      
+
   this->preferences_.add_recent_file(filename);
   this->update_recent_files();
 
@@ -1652,10 +1652,10 @@ void ShapeWorksStudioApp::dragEnterEvent(QDragEnterEvent* event)
         }
       }
 
-      if (StringUtils::hasSuffix(filename, "nrrd")) {
+      if (StringUtils::hasSuffix(filename, ".nrrd")) {
         accept = true;
       }
-      if (StringUtils::hasSuffix(filename, "mha")) {
+      if (StringUtils::hasSuffix(filename, ".mha")) {
         accept = true;
       }
     }
@@ -1696,10 +1696,10 @@ void ShapeWorksStudioApp::dropEvent(QDropEvent* event)
         }
       }
 
-      if (StringUtils::hasSuffix(filename, "nrrd")) {
+      if (StringUtils::hasSuffix(filename, ".nrrd")) {
         accept = true;
       }
-      if (StringUtils::hasSuffix(filename, "mha")) {
+      if (StringUtils::hasSuffix(filename, ".mha")) {
         accept = true;
       }
 
