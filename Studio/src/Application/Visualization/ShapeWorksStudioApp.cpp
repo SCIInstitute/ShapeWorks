@@ -342,6 +342,11 @@ bool ShapeWorksStudioApp::on_action_save_project_as_triggered()
   if (filename.isEmpty()) {
     return false;
   }
+
+  if (!StringUtils::hasSuffix(filename.toStdString(), "xlsx")) {
+    filename = filename + ".xlsx";
+  }
+      
   this->preferences_.add_recent_file(filename);
   this->update_recent_files();
 
