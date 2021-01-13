@@ -352,6 +352,7 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band)
   m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
 
   if (image) {
+    this->m_Spacing = image->GetSpacing()[0];
     domain->SetImage(image, narrow_band);
   }
 
