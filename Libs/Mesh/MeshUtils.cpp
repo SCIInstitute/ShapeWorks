@@ -131,54 +131,56 @@ Eigen::MatrixXd MeshUtils::generateWarpMatrix(Eigen::MatrixXd TV , Eigen::Matrix
   return W;
 }
 
-// static bool MeshUtils::warpMeshes(const std::string &movingPointspath, const std::string &outputMeshPaths, Eigen::MatrixXd W, Eigen::MatrixXd Fref, const int numP){
+bool MeshUtils::warpMeshes(const std::string &movingPointspath, const std::string &outputMeshPaths, Eigen::MatrixXd W, Eigen::MatrixXd Fref, const int numP){
 
-//   std::vector< std::string > pointPaths;
-// 	std::vector< std::string > outMeshPaths;
+  std::vector< std::string > pointPaths;
+	std::vector< std::string > outMeshPaths;
 	
-// 	std::string line;
-//   std::ifstream file_pts(movingPointspath.c_str());
-//   while (file_pts.good()){
-//       std::getline(file_pts, line);
-//       pointPaths.push_back(line);
-//   }
+	std::string line;
+  std::ifstream file_pts(movingPointspath.c_str());
+  while (file_pts.good()){
+      std::getline(file_pts, line);
+      pointPaths.push_back(line);
+  }
 
-//   std::ifstream file_mesh(outputMeshPaths.c_str());
-//   while (file_mesh.good()){
-//       std::getline(file_mesh, line);
-//       outMeshPaths.push_back(line);
-//   }
-//   // assert for pointsPath.size() == outMeshPaths.size()
-//   Eigen::MatrixXd Vcontrol_moving;
-//   // now tranform the meshes
-//   for(int i = 0; i < pointPaths.size(); i++){	
-// 		Vcontrol_moving = pointReadFormat(pointPaths[i], numP);
-// 		Eigen::MatrixXd Voutput = W * (Vcontrol_moving.rowwise() + Eigen::RowVector3d(1,0,0));
-// 		vtkSmartPointer<vtkPolyData> outmesh = vtkSmartPointer<vtkPolyData>::New();
-// 		vtkSmartPointer<vtkPoints> outpoints = vtkSmartPointer<vtkPoints>::New();
-// 		outpoints->SetNumberOfPoints(numVertices);
+  std::ifstream file_mesh(outputMeshPaths.c_str());
+  while (file_mesh.good()){
+      std::getline(file_mesh, line);
+      outMeshPaths.push_back(line);
+  }
+  // assert for pointsPath.size() == outMeshPaths.size()
+  Eigen::MatrixXd Vcontrol_moving;
+  int numVertices = W.rows();
+  int numFaces = Fref.rows();
+  // now tranform the meshes
+  for(int i = 0; i < pointPaths.size(); i++){	
+		Vcontrol_moving = pointReadFormat(pointPaths[i], numP);
+		Eigen::MatrixXd Voutput = W * (Vcontrol_moving.rowwise() + Eigen::RowVector3d(1,0,0));
+		vtkSmartPointer<vtkPolyData> outmesh = vtkSmartPointer<vtkPolyData>::New();
+		vtkSmartPointer<vtkPoints> outpoints = vtkSmartPointer<vtkPoints>::New();
+		outpoints->SetNumberOfPoints(numVertices);
 
-// 		for (vtkIdType i = 0; i < numVertices; i++)
-// 		{
-// 			outpoints->SetPoint(i, Voutput(i, 0), Voutput(i, 1), Voutput(i, 2));
-// 		}
-// 		vtkSmartPointer<vtkCellArray> polys = vtkSmartPointer<vtkCellArray>::New();
-// 		for (vtkIdType i = 0; i < numFaces; i++)
-// 		{
-// 			vtkIdType a, b, c;
-// 			polys->InsertNextCell(3);
-// 			polys->InsertCellPoint(Fref(i, 0));
-// 			polys->InsertCellPoint(Fref(i, 1));
-// 			polys->InsertCellPoint(Fref(i, 2));
-// 		}
-// 		outmesh->SetPoints(outpoints);
-// 		outmesh->SetPolys(polys);
-// 		vtkSmartPointer<vtkPLYWriter> writer = vtkSmartPointer<vtkPLYWriter>::New();
-// 		writer->SetInputData( outmesh );
-// 		writer->SetFileName( outMeshPaths[i].c_str() );
-// 		writer->Update();
-// 	}
-//   return true;
+		for (vtkIdType i = 0; i < numVertices; i++)
+		{
+			outpoints->SetPoint(i, Voutput(i, 0), Voutput(i, 1), Voutput(i, 2));
+		}
+		vtkSmartPointer<vtkCellArray> polys = vtkSmartPointer<vtkCellArray>::New();
+		for (vtkIdType i = 0; i < numFaces; i++)
+		{
+			vtkIdType a, b, c;
+			polys->InsertNextCell(3);
+			polys->InsertCellPoint(Fref(i, 0));
+			polys->InsertCellPoint(Fref(i, 1));
+			polys->InsertCellPoint(Fref(i, 2));
+		}
+		outmesh->SetPoints(outpoints);
+		outmesh->SetPolys(polys);
+		vtkSmartPointer<vtkPLYWriter> writer = vtkSmartPointer<vtkPLYWriter>::New();
+		writer->SetInputData( outmesh );
+		writer->SetFileName( outMeshPaths[i].c_str() );
+		writer->Update();
+	}
+  return true;
+}
 
-// }
 } // shapeworks
