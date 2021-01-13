@@ -8,7 +8,7 @@
 =========================================================================*/
 #pragma once
 
-#include "itkParticleImageDomainWithHessians.h"
+#include "itkParticleImageDomainWithGradN.h"
 #include "itkImageRegionIteratorWithIndex.h"
 #include "itkImageRegionIterator.h"
 #include "itkDiscreteGaussianImageFilter.h"
@@ -17,21 +17,19 @@ namespace itk
 {
 /** \class ParticleImageDomainWithCurvature
  *
- * An image domain that extends ParticleImageDomainWithHessianGradients with Hessian
- * information.  Hessian values are interpolated with the SampleCurvature(point)
- * method.  Curvature may be smoothed by specifying a sigma for Gaussian
- * blurring of the image prior to initialization.
+ * An image domain that extends ParticleImageDomainWithGradN with curvature
+ * information.
  *
  * \sa ParticleImageDomain
  * \sa ParticleClipRegionDomain
  * \sa ParticleDomain
  */
 template <class T>
-class ParticleImageDomainWithCurvature : public ParticleImageDomainWithHessians<T>
+class ParticleImageDomainWithCurvature : public ParticleImageDomainWithGradN<T>
 {
 public:
   /** Standard class typedefs */
-  typedef ParticleImageDomainWithHessians<T> Superclass;
+  typedef ParticleImageDomainWithGradN<T> Superclass;
 
   typedef typename Superclass::PointType PointType;  
   typedef typename Superclass::ImageType ImageType;
@@ -51,7 +49,7 @@ public:
     typename DiscreteGaussianImageFilter<ImageType, ImageType>::Pointer f = DiscreteGaussianImageFilter<ImageType, ImageType>::New();
 
     double sig =  this->GetSpacing()[0] * 0.5;
-    
+
     f->SetVariance(sig);
     f->SetInput(I);
     f->SetUseImageSpacingOn();
@@ -119,18 +117,18 @@ protected:
   {
     // See Kindlmann paper "Curvature-Based Transfer Functions for Direct Volume
     // Rendering..." for detailss
-    
+
     // Get the normal vector associated with this position.
     typename Superclass::VnlVectorType posnormal = this->SampleNormalAtPoint(pos, -1);
 
-    // Sample the Hessian for this point and compute gradient of the normal.
+    // Sample the GradN for this point and compute gradient of the normal.
     typename Superclass::VnlMatrixType I;
     I.set_identity();
-    
-    typename Superclass::VnlMatrixType H = this->SampleHessianVnl(pos);
+
+    typename Superclass::VnlMatrixType H = this->SampleGradNAtPoint(pos, -1);
     typename Superclass::VnlMatrixType P = I - outer_product(posnormal, posnormal);
     typename Superclass::VnlMatrixType G = P.transpose() * H * P;
-  
+
     // Compute the principal curvatures k1 and k2
     double frobnorm = sqrt(fabs(this->vnl_trace(G * G.transpose())) + 1.0e-10);
     double trace = this->vnl_trace(G);
@@ -149,7 +147,7 @@ protected:
     //        std::cout << "k2= " << k2 << std::endl;
     // Compute the mean curvature.
     //  double mc = fabs((k1 + k2) / 2.0);
-    return sqrt(k1 * k1 + k2 * k2);  
+    return sqrt(k1 * k1 + k2 * k2);
   }
 
   inline double vnl_trace(const VnlMatrixType &m) const
@@ -161,7 +159,7 @@ protected:
       }
     return sum;
   }
-  
+
 private:
   openvdb::FloatGrid::Ptr m_VDBCurvature;
 

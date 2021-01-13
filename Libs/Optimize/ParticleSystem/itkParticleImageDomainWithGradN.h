@@ -19,30 +19,29 @@
 
 namespace itk
 {
-/** \class ParticleImageDomainWithHessians
+/** \class ParticleImageDomainWithGradN
  *
- * An image domain that extends ParticleImageDomainWithHessianGradients with Hessian
- * information.  Hessian values are interpolated with the SampleHessians(point)
- * method.  Hessians may be smoothed by specifying a sigma for Gaussian
- * blurring of the image prior to initialization.
+ * An image domain that extends ParticleImageDomainWithGradients with gradient of normals
+ * information.
  *
  * \sa ParticleImageDomain
  * \sa ParticleClipRegionDomain
  * \sa ParticleDomain
  */
 template <class T>
-class ParticleImageDomainWithHessians : public ParticleImageDomainWithGradients<T>
+class ParticleImageDomainWithGradN : public ParticleImageDomainWithGradients<T>
 {
 public:
   /** Standard class typedefs */
   typedef ParticleImageDomainWithGradients<T> Superclass;
-  typedef SmartPointer<ParticleImageDomainWithHessians>  Pointer;
+  typedef SmartPointer<ParticleImageDomainWithGradN>  Pointer;
 
     /** Point type of the domain (not necessarily of the image). */
   typedef typename Superclass::PointType PointType;
   typedef typename Superclass::ImageType ImageType;
 
-  typedef vnl_matrix_fixed<T, DIMENSION, DIMENSION> VnlMatrixType;
+  typedef typename Superclass::GradNType GradNType;
+  typedef typename Superclass::GradNType VnlMatrixType;
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
@@ -67,29 +66,24 @@ public:
 
   } // end setimage
 
-  /** Sample the Hessian at a point.  This method performs no bounds checking.
-      To check bounds, use IsInsideBuffer.  SampleHessiansVnl returns a vnl
+  /** Sample the GradN at a point.  This method performs no bounds checking.
+      To check bounds, use IsInsideBuffer.  SampleGradN returns a vnl
       matrix of size VDimension x VDimension. */
-  inline VnlMatrixType SampleHessianVnl(const PointType &p) const
+  inline GradNType SampleGradNAtPoint(const PointType &p, int idx) const override
   {
     const auto coord = this->ToVDBCoord(p);
 
-    VnlMatrixType hess;
+    GradNType grad_n;
     for(int i=0; i<3; i++) {
-      auto grad_n = openvdb::tools::BoxSampler::sample(m_VDBGradNorms[i]->tree(), coord);
+      auto grad_ni = openvdb::tools::BoxSampler::sample(m_VDBGradNorms[i]->tree(), coord);
       // grad_n.normalize();
-      hess.set(i, 0, grad_n[0]);
-      hess.set(i, 1, grad_n[1]);
-      hess.set(i, 2, grad_n[2]);
+      grad_n.set(i, 0, grad_ni[0]);
+      grad_n.set(i, 1, grad_ni[1]);
+      grad_n.set(i, 2, grad_ni[2]);
     }
-    return hess;
+    return grad_n;
   }
 
-
-  inline vnl_matrix_fixed<float, DIMENSION, DIMENSION> SampleHessianAtPoint(const PointType &p, int idx) const override {
-    return SampleHessianVnl(p);
-  }
-  
   /** Set /Get the standard deviation for blurring the image prior to
       computation of the Hessian derivatives.  This value must be set prior to
       initializing this class with an input image pointer and cannot be changed
@@ -119,8 +113,8 @@ public:
   }
 
 protected:
-  ParticleImageDomainWithHessians() : m_Sigma(0.0) {}
-  virtual ~ParticleImageDomainWithHessians() {};
+  ParticleImageDomainWithGradN() : m_Sigma(0.0) {}
+  virtual ~ParticleImageDomainWithGradN() {};
 
   void PrintSelf(std::ostream& os, Indent indent) const
   {
