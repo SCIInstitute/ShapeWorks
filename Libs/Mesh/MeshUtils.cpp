@@ -60,7 +60,7 @@ Eigen::MatrixXd MeshUtils::pointReadFormat(std::string refPointPath, int numP){
   return Vout;
 }
 
-void MeshUtils::distilToEigen(const vtkSmartPointer<vtkPolyData> mesh, Eigen::MatrixXd* Vref, Eigen::MatrixXi* Fref){
+void MeshUtils::distilToEigen(vtkSmartPointer<vtkPolyData> mesh, Eigen::MatrixXd* Vref, Eigen::MatrixXi* Fref){
   
   // first get the eigen TF and TT
   vtkSmartPointer<vtkPoints> points = mesh->GetPoints();
@@ -131,7 +131,7 @@ Eigen::MatrixXd MeshUtils::generateWarpMatrix(Eigen::MatrixXd TV , Eigen::Matrix
   return W;
 }
 
-Mesh MeshUtils::warpMesh(std::string &movingPointPath, Eigen::MatrixXd W, Eigen::MatrixXd Fref, const int numP){
+Mesh MeshUtils::warpMesh(std::string &movingPointPath, Eigen::MatrixXd W, Eigen::MatrixXi Fref, const int numP){
   
   int numVertices = W.rows();
   int numFaces = Fref.rows();
@@ -162,7 +162,7 @@ Mesh MeshUtils::warpMesh(std::string &movingPointPath, Eigen::MatrixXd W, Eigen:
   return Mesh(outmesh);
 }
 
-bool MeshUtils::warpMeshes(std::vector< std::string> &movingPointpaths, std::vector< std::string> &outputMeshPaths, Eigen::MatrixXd W, Eigen::MatrixXd Fref, const int numP){
+bool MeshUtils::warpMeshes(std::vector< std::string> &movingPointpaths, std::vector< std::string> &outputMeshPaths, Eigen::MatrixXd W, Eigen::MatrixXi Fref, const int numP){
   
   // assert for pointsPath.size() == outMeshPaths.size()
   // now tranform the meshes
