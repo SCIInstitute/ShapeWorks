@@ -32,23 +32,7 @@ def Run_Pipeline(args):
     outputDirectory = "Output/femur/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
-    # CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
-    # # Get image ane mesh segmentation file lists
-    # inputDir = outputDirectory + datasetName + '/'
-    # files_img = []
-    # img_dir = inputDir + 'images/'
-    # for file in sorted(os.listdir(img_dir)):
-    #     files_img.append(img_dir + file)
-    # files_mesh = []
-    # mesh_dir = inputDir + 'meshes/'
-    # for file in sorted(os.listdir(mesh_dir)):
-    #     files_mesh.append(mesh_dir + file)
-    # # Select data for tiny test
-    # if args.tiny_test:
-    #     files_img = files_img[:3]
-    #     files_mesh = files_mesh[:3]
-    #     args.use_single_scale = True
-    #     args.interactive = False
+    
 
     if args.tiny_test:
         args.use_single_scale = True
