@@ -136,6 +136,12 @@ void OptimizeTool::on_run_optimize_button_clicked()
 
   this->optimize_->SetFileOutputEnabled(false);
 
+  std::vector<bool> use_xyz;
+  for(int i=0; i<this->optimize_->GetNumShapes(); i++) {
+    use_xyz.push_back(false);
+  }
+  this->optimize_->SetUseXYZ(use_xyz);
+
   ShapeworksWorker* worker = new ShapeworksWorker(
     ShapeworksWorker::OptimizeType, NULL, this->optimize_, this->session_,
     std::vector<std::vector<itk::Point<double>>>(),
