@@ -35,7 +35,7 @@ public:
 
   bool compare_points_equal(const Mesh& other_mesh);
   bool compare_scalars_equal(const Mesh& other_mesh);
-  bool warp_meshes(const std::string &movingPointspath, const std::string &outputMeshPaths, const std::string &pathname, const int numP);
+  // bool warp_meshes(const std::string &movingPointspath, const std::string &outputMeshPaths, const std::string &pathname, const int numP);
 
   // query functions //
 
