@@ -37,12 +37,14 @@ def dataset_exists_check(use_case):
 
 def generate_download_flag(outputDirectory,folder):
 	download_flag = False
-	#if output/ellipsoid + segmentation exits 
+	#if output/dataset + subfolders exits 
 	if(os.path.exists(outputDirectory+folder)):
 			# if the folder is empty or has less than 3 files then download
 			if(len(os.listdir(outputDirectory+folder))==0 or len(os.listdir(outputDirectory+folder))<3):
 				download_flag = True
-	#if the segmentation folder does not exists then download
+            else:
+                print("Data available is sufficient for tiny test")
+	#if the subfolder folder does not exists then download
 	else:
 		download_flag = True		
 	return download_flag
