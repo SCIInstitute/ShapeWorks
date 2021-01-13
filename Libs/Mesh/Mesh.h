@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Shapeworks.h"
+#include "ImageUtils.h"
 
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
@@ -14,8 +15,10 @@ public:
   using MeshType = vtkSmartPointer<vtkPolyData>;
 
   Mesh(const std::string& pathname) : mesh(read(pathname)) {}
-  Mesh(vtkSmartPointer<vtkPolyData>&& rhs) : mesh(std::move(rhs)) {}
-
+  // Mesh(vtkSmartPointer<vtkPolyData>&& rhs) : mesh(std::move(rhs)) {}
+  Mesh(MeshType meshPtr) : mesh(meshPtr) { if (!mesh) throw std::invalid_argument("null meshPtr"); }
+  Mesh& operator=(const Mesh& mesh); /// lvalue assignment operator
+  Mesh& operator=(std::unique_ptr<Mesh> mesh);
   /// Write mesh to path, filename based on extension
   bool write(const std::string &pathname);
 
@@ -35,7 +38,6 @@ public:
 
   bool compare_points_equal(const Mesh& other_mesh);
   bool compare_scalars_equal(const Mesh& other_mesh);
-  // bool warp_meshes(const std::string &movingPointspath, const std::string &outputMeshPaths, const std::string &pathname, const int numP);
 
   // query functions //
 

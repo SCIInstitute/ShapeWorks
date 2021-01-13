@@ -25,11 +25,12 @@ public:
   /// Compute the warp matrix using the mesh and reference points
   Eigen::MatrixXd generateWarpMatrix(Eigen::MatrixXd TV , Eigen::MatrixXi TF, Eigen::MatrixXd Vref);
 
-  /// Compute transformation from set of points files using template mesh warp&face matrices
-  bool warpMeshes(const std::string &movingPointspath, const std::string &outputMeshPaths, Eigen::MatrixXd W, Eigen::MatrixXd Fref, const int numP);
+  /// Compute individual warp
+  Mesh warpMesh(std::string &movingPointspath, Eigen::MatrixXd W, Eigen::MatrixXd Fref, const int numP);
 
-  /// comput individual warp
-  Mesh warpMesh(std::string &movingPointspath, std::string &outputMeshPaths, Eigen::MatrixXd W, Eigen::MatrixXd Fref, const int numP)
+  /// Compute transformation from set of points files using template mesh warp&face matrices
+  bool warpMeshes(std::vector< std::string> &movingPointpaths, std::vector< std::string> &outputMeshPaths, Eigen::MatrixXd W, Eigen::MatrixXd Fref, const int numP);
+
 };
 
 } // shapeworks
