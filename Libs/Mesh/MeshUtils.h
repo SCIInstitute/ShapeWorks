@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ShapeworksUtils.h"
+#include "Mesh.h"
 #include "Eigen/Core"
 #include "Eigen/Dense"
 #include <vtkPolyData.h>
@@ -26,6 +27,9 @@ public:
 
   /// Compute transformation from set of points files using template mesh warp&face matrices
   bool warpMeshes(const std::string &movingPointspath, const std::string &outputMeshPaths, Eigen::MatrixXd W, Eigen::MatrixXd Fref, const int numP);
+
+  /// comput individual warp
+  Mesh warpMesh(std::string &movingPointspath, std::string &outputMeshPaths, Eigen::MatrixXd W, Eigen::MatrixXd Fref, const int numP)
 };
 
 } // shapeworks

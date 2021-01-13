@@ -131,6 +131,37 @@ Eigen::MatrixXd MeshUtils::generateWarpMatrix(Eigen::MatrixXd TV , Eigen::Matrix
   return W;
 }
 
+Mesh MeshUtils::warpMesh(std::string &movingPointPath, Eigen::MatrixXd W, Eigen::MatrixXd Fref, const int numP){
+  
+  int numVertices = W.rows();
+  int numFaces = Fref.rows();
+  Eigen::MatrixXd Vcontrol_moving = pointReadFormat(movingPointPath, numP);
+	Eigen::MatrixXd Voutput = W * (Vcontrol_moving.rowwise() + Eigen::RowVector3d(1,0,0));
+	vtkSmartPointer<vtkPolyData> outmesh = vtkSmartPointer<vtkPolyData>::New();
+	vtkSmartPointer<vtkPoints> outpoints = vtkSmartPointer<vtkPoints>::New();
+	outpoints->SetNumberOfPoints(numVertices);
+  for (vtkIdType i = 0; i < numVertices; i++)
+	{
+		outpoints->SetPoint(i, Voutput(i, 0), Voutput(i, 1), Voutput(i, 2));
+  }
+	vtkSmartPointer<vtkCellArray> polys = vtkSmartPointer<vtkCellArray>::New();
+	for (vtkIdType i = 0; i < numFaces; i++)
+	{
+		vtkIdType a, b, c;
+		polys->InsertNextCell(3);
+		polys->InsertCellPoint(Fref(i, 0));
+		polys->InsertCellPoint(Fref(i, 1));
+		polys->InsertCellPoint(Fref(i, 2));
+	}
+	outmesh->SetPoints(outpoints);
+	outmesh->SetPolys(polys);
+	// vtkSmartPointer<vtkPLYWriter> writer = vtkSmartPointer<vtkPLYWriter>::New();
+	// writer->SetInputData( outmesh );
+	// writer->SetFileName( outputMeshPath.c_str() );
+	// writer->Update();
+  return Mesh(outmesh);
+}
+
 bool MeshUtils::warpMeshes(const std::string &movingPointspath, const std::string &outputMeshPaths, Eigen::MatrixXd W, Eigen::MatrixXd Fref, const int numP){
 
   std::vector< std::string > pointPaths;
@@ -182,5 +213,7 @@ bool MeshUtils::warpMeshes(const std::string &movingPointspath, const std::strin
 	}
   return true;
 }
+
+
 
 } // shapeworks
