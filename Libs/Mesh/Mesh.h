@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Shapeworks.h"
-#include "ImageUtils.h"
+
 
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
@@ -62,7 +62,8 @@ public:
   MeshType get_poly_data();
 
 private:
-  Mesh() {}
+  // Mesh() {}
+  // Mesh() : mesh(nullptr) {} // only for use by SharedCommandData since a Mesh should always be valid, never "empty"
   MeshType read(const std::string& pathname);
 
   MeshType mesh;
