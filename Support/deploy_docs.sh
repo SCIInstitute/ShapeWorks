@@ -13,6 +13,9 @@ if [ "$#" -ne 1 ]; then
 fi
 INSTALL_DIR=$1
 
+# Update auto-documentation
+PATH=$INSTALL_DIR/bin:$PATH
+
 # check that 'shapeworks -h' is working
 shapeworks -h
 if [ $? -eq 0 ]; then
@@ -22,8 +25,6 @@ else
     exit 1
 fi
 
-# Update auto-documentation
-PATH=$INSTALL_DIR/bin:$PATH
 python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
 
 git config --global user.name "${GITHUB_ACTOR}"
