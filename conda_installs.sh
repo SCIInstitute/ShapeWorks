@@ -91,7 +91,8 @@ function install_conda() {
     boost=1.72.0 \
     openexr=2.5.3 \
     pybind11=2.5.0 \
-    notebook=6.1.5
+    notebook=6.1.5 \
+    nbformat=4.4.0
   then return 1; fi
 
   # linux and mac (only) deps
@@ -160,6 +161,10 @@ function install_conda() {
   fi
 
   conda info
+
+  echo "Installed packages:"
+  conda list
+  
   return 0
 }
 
