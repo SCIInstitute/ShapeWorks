@@ -178,7 +178,7 @@ void GroomTool::on_run_groom_button_clicked()
   connect(worker, &ShapeworksWorker::result_ready, this, &GroomTool::handle_thread_complete);
   connect(this->groom_.data(), &QGroom::progress, this, &GroomTool::handle_progress);
   connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
-  connect(worker, SIGNAL(message(std::string)), this, SLOT(handle_message(std::string)));
+  connect(worker, &ShapeworksWorker::message, this, &GroomTool::message);
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   thread->start();
 
