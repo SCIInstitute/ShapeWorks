@@ -173,10 +173,12 @@ Mesh MeshUtils::warpMesh(std::string movingPointPath, Eigen::MatrixXd W, Eigen::
   int numVertices = W.rows();
   int numFaces = Fref.rows();
   Eigen::MatrixXd Vcontrol_moving = pointReadFormat(movingPointPath, numP);
-	Eigen::MatrixXd Voutput = W * (Vcontrol_moving.rowwise() + Eigen::RowVector3d(1,0,0));
+  // std::cout<< (Vcontrol_moving.rowwise() + Eigen::RowVector3d(0,0,0)) <<std::endl;
+	Eigen::MatrixXd Voutput = W * (Vcontrol_moving.rowwise() + Eigen::RowVector3d(0,0,0));
 	vtkSmartPointer<vtkPolyData> outmesh = vtkSmartPointer<vtkPolyData>::New();
 	vtkSmartPointer<vtkPoints> outpoints = vtkSmartPointer<vtkPoints>::New();
 	outpoints->SetNumberOfPoints(numVertices);
+  std::cout << numVertices <<", " << numFaces <<std::endl;
   for (vtkIdType i = 0; i < numVertices; i++)
 	{
 		outpoints->SetPoint(i, Voutput(i, 0), Voutput(i, 1), Voutput(i, 2));

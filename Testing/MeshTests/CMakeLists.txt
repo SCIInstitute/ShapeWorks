@@ -7,7 +7,7 @@ add_executable(MeshTests
   )
 
 target_link_libraries(MeshTests
-  tinyxml Mesh vgl vgl_algo Optimize Utils trimesh2 Eigen3::Eigen
+  tinyxml Mesh vgl vgl_algo Optimize Utils trimesh2 Eigen3::Eigen igl::core
   ${ITK_LIBRARIES} ${VTK_LIBRARIES}
   Testing
   )
