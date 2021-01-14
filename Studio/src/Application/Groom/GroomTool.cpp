@@ -202,6 +202,7 @@ void GroomTool::handle_thread_complete()
   emit message("Groom Complete");
   emit groom_complete();
 
+  this->groom_is_running_ = false;
   this->enable_actions();
 }
 
