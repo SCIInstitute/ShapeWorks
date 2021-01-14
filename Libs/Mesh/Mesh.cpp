@@ -4,7 +4,7 @@
 #include <PreviewMeshQC/FEVTKExport.h>
 #include "Eigen/Core"
 #include "Eigen/Dense"
-// #include "StringUtils.h"
+#include "MeshUtils.h"
 
 #include <Libs/Utils/StringUtils.h>
 
@@ -185,63 +185,67 @@ Mesh& Mesh::coverage(const Mesh &other_mesh)
 /// Compare if points in two meshes are equal
 ///
 /// \param other_mesh
-bool Mesh::compare_points_equal(const Mesh &other_mesh)
+bool Mesh::compare_points_equal(const Mesh &other_mesh) const
 {
-  if (!this->mesh || !other_mesh.mesh) {
+  if (!this->mesh || !other_mesh.mesh)
+  {
+    std::cout << "both polydata don't exist";
     return false;
   }
 
-  if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints()) {
+  if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints())
+  {
+    std::cout << "both polydata differ in number of points";
     return false;
   }
 
-  for (int i = 0; i < this->mesh->GetNumberOfPoints(); i++) {
+  for (int i = 0; i < this->mesh->GetNumberOfPoints(); i++) 
+  {
     double* point1 = this->mesh->GetPoint(i);
     double* point2 = other_mesh.mesh->GetPoint(i);
-    if (!compare_double(point1[0], point2[0])
-        || !compare_double(point1[1], point2[1])
-        || !compare_double(point1[2], point2[2])) {
+    if (!compare_double(point1[0], point2[0]) || !compare_double(point1[1], point2[1]) || !compare_double(point1[2], point2[2]))
       return false;
-    }
   }
+
   return true;
 }
 
-/// compare_scalars_equal
-///
-/// Compare if scalars in two meshes are equal
-///
-/// \param other_mesh
-bool Mesh::compare_scalars_equal(const Mesh &other_mesh)
+bool Mesh::compare_scalars_equal(const Mesh &other_mesh) const
 {
-  if (!this->mesh || !other_mesh.mesh) {
-    std::cout << "Mesh Compare: both polydata don't exist";
+  if (!this->mesh || !other_mesh.mesh)
+  {
+    std::cout << "both polydata don't exist";
     return false;
   }
 
-  if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints()) {
-    std::cout << "Mesh Compare: both polydata differ in number of points";
+  if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints())
+  {
+    std::cout << "both polydata differ in number of points";
     return false;
   }
 
   vtkDataArray* scalars1 = this->mesh->GetPointData()->GetScalars();
   vtkDataArray* scalars2 = other_mesh.mesh->GetPointData()->GetScalars();
 
-  if (!scalars1 || !scalars2) {
-    std::cout << "Mesh Compare: no scalars";
+  if (!scalars1 || !scalars2)
+  {
+    std::cout << "no scalars";
     return false;
   }
 
-  if (scalars1->GetNumberOfValues() != scalars2->GetNumberOfValues()) {
-    std::cout << "Mesh Compare: different number of scalars";
+  if (scalars1->GetNumberOfValues() != scalars2->GetNumberOfValues())
+  {
+    std::cout << "different number of scalars";
     return false;
   }
 
-  for (int i = 0; i < scalars1->GetNumberOfValues(); i++) {
+  for (int i = 0; i < scalars1->GetNumberOfValues(); i++)
+  {
     vtkVariant var1 = scalars1->GetVariantValue(i);
     vtkVariant var2 = scalars2->GetVariantValue(i);
-    if (var1 != var2) {
-      std::cout << "Mesh Compare: values differ: " << var1 << " != " << var2 << "\n";
+    if (var1 != var2)
+    {
+      std::cout << "values differ: " << var1 << " != " << var2 << "\n";
       return false;
     }
   }

@@ -2,7 +2,7 @@
 
 #include "Shapeworks.h"
 
-
+#include <vtkPlane.h>
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
 #include <string>
@@ -35,9 +35,18 @@ public:
   Mesh& smooth(unsigned iterations = 1);
   /// Not yet implemented
   Mesh& decimate(float reduction = 0.01, float angle = 30, bool preserve_topology = false);
+  
 
-  bool compare_points_equal(const Mesh& other_mesh);
-  bool compare_scalars_equal(const Mesh& other_mesh);
+  // bool compare_points_equal(const Mesh& other_mesh);
+  // bool compare_scalars_equal(const Mesh& other_mesh);
+   /// compare if points in two meshes are equal
+  bool compare_points_equal(const Mesh& other_mesh) const;
+
+  /// compare if scalars in two meshes are equal
+  bool compare_scalars_equal(const Mesh& other_mesh) const;
+
+  /// compares this with another mesh by comparing points
+  bool operator==(const Mesh& other) const { return compare_points_equal(other); }
 
   // query functions //
 

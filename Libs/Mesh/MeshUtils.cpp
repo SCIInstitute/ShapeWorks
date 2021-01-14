@@ -60,23 +60,61 @@ Eigen::MatrixXd MeshUtils::pointReadFormat(std::string refPointPath, int numP){
   return Vout;
 }
 
-void MeshUtils::distilToEigen(vtkSmartPointer<vtkPolyData> mesh, Eigen::MatrixXd* Vref, Eigen::MatrixXi* Fref){
+
+// void MeshUtils::distilToEigen(vtkSmartPointer<vtkPolyData> mesh, Eigen::MatrixXd* Vref, Eigen::MatrixXi* Fref){
   
-  // first get the eigen TF and TT
+//   // first get the eigen TF and TT
+//   vtkSmartPointer<vtkPoints> points = mesh->GetPoints();
+// 	vtkSmartPointer<vtkDataArray> dataArray = points->GetData();
+	
+//   int numVertices = points->GetNumberOfPoints();
+// 	int numFaces = mesh->GetNumberOfCells();
+	
+// 	Eigen::MatrixXd Vref_new(numVertices, 3);
+// 	Eigen::MatrixXi Fref_new(numFaces, 3);
+
+// 	for(int i=0; i<numVertices;i++){
+// 		Vref_new(i, 0) = dataArray->GetComponent(i, 0);
+// 		Vref_new(i, 1) = dataArray->GetComponent(i, 1);
+// 		Vref_new(i, 2) = dataArray->GetComponent(i, 2);
+// 	}
+// 	vtkIdType cellId = 0;
+
+// 	vtkSmartPointer<vtkIdList> cellIdList =
+//       vtkSmartPointer<vtkIdList>::New();
+	
+// 	for(int j = 0; j < numFaces; j++){
+// 		mesh->GetCellPoints(j, cellIdList);
+// 		Fref_new(j, 0) = cellIdList->GetId(0);
+// 		Fref_new(j, 1) = cellIdList->GetId(1);
+// 		Fref_new(j, 2) = cellIdList->GetId(2);
+// 	}
+
+//   *Vref = Vref_new;
+//   *Fref = Fref_new;
+// }
+
+Eigen::MatrixXd MeshUtils::distilVertexInfo(vtkSmartPointer<vtkPolyData> mesh){
   vtkSmartPointer<vtkPoints> points = mesh->GetPoints();
 	vtkSmartPointer<vtkDataArray> dataArray = points->GetData();
 	
   int numVertices = points->GetNumberOfPoints();
-	int numFaces = mesh->GetNumberOfCells();
 	
 	Eigen::MatrixXd Vref_new(numVertices, 3);
-	Eigen::MatrixXi Fref_new(numFaces, 3);
-
+	
 	for(int i=0; i<numVertices;i++){
 		Vref_new(i, 0) = dataArray->GetComponent(i, 0);
 		Vref_new(i, 1) = dataArray->GetComponent(i, 1);
 		Vref_new(i, 2) = dataArray->GetComponent(i, 2);
 	}
+  return Vref_new;
+}
+
+Eigen::MatrixXi MeshUtils::distilFaceInfo(vtkSmartPointer<vtkPolyData> mesh){
+  
+  int numFaces = mesh->GetNumberOfCells();
+  Eigen::MatrixXi Fref_new(numFaces, 3);
+	
 	vtkIdType cellId = 0;
 
 	vtkSmartPointer<vtkIdList> cellIdList =
@@ -88,10 +126,9 @@ void MeshUtils::distilToEigen(vtkSmartPointer<vtkPolyData> mesh, Eigen::MatrixXd
 		Fref_new(j, 1) = cellIdList->GetId(1);
 		Fref_new(j, 2) = cellIdList->GetId(2);
 	}
-
-  *Vref = Vref_new;
-  *Fref = Fref_new;
+  return Fref_new;
 }
+
 
 Eigen::MatrixXd MeshUtils::generateWarpMatrix(Eigen::MatrixXd TV , Eigen::MatrixXi TF, Eigen::MatrixXd Vref){
   
@@ -131,7 +168,7 @@ Eigen::MatrixXd MeshUtils::generateWarpMatrix(Eigen::MatrixXd TV , Eigen::Matrix
   return W;
 }
 
-Mesh MeshUtils::warpMesh(std::string &movingPointPath, Eigen::MatrixXd W, Eigen::MatrixXi Fref, const int numP){
+Mesh MeshUtils::warpMesh(std::string movingPointPath, Eigen::MatrixXd W, Eigen::MatrixXi Fref, const int numP){
   
   int numVertices = W.rows();
   int numFaces = Fref.rows();
@@ -155,14 +192,11 @@ Mesh MeshUtils::warpMesh(std::string &movingPointPath, Eigen::MatrixXd W, Eigen:
 	}
 	outmesh->SetPoints(outpoints);
 	outmesh->SetPolys(polys);
-	// vtkSmartPointer<vtkPLYWriter> writer = vtkSmartPointer<vtkPLYWriter>::New();
-	// writer->SetInputData( outmesh );
-	// writer->SetFileName( outputMeshPath.c_str() );
-	// writer->Update();
+	
   return Mesh(outmesh);
 }
 
-bool MeshUtils::warpMeshes(std::vector< std::string> &movingPointpaths, std::vector< std::string> &outputMeshPaths, Eigen::MatrixXd W, Eigen::MatrixXi Fref, const int numP){
+bool MeshUtils::warpMeshes(std::vector< std::string> movingPointpaths, std::vector< std::string> outputMeshPaths, Eigen::MatrixXd W, Eigen::MatrixXi Fref, const int numP){
   
   // assert for pointsPath.size() == outMeshPaths.size()
   // now tranform the meshes
