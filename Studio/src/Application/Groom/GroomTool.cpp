@@ -123,7 +123,7 @@ void GroomTool::enable_actions()
   }
   else {
     this->ui_->skip_button->setEnabled(true);
-    this->ui_->run_groom_button->setText("Groom");
+    this->ui_->run_groom_button->setText("Run Groom");
   }
 
 }
