@@ -1123,6 +1123,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->analysis_tool_->set_analysis_mode(analysis_mode);
 
   int zoom_value = this->session_->parameters().get(ShapeWorksStudioApp::SETTING_ZOOM_C, "4");
+
   this->ui_->zoom_slider->setValue(zoom_value);
 
   this->ui_->notes->setText(QString::fromStdString(
@@ -1130,6 +1131,8 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   this->block_update_ = false;
   this->update_display(true);
+
+  this->on_zoom_slider_valueChanged();
 
   this->is_loading_ = false;
 
