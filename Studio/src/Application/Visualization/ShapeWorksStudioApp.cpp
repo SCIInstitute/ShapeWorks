@@ -748,6 +748,8 @@ void ShapeWorksStudioApp::new_session()
           SLOT(handle_display_setting_changed()));
   connect(this->session_.data(), &Session::new_mesh, this, &ShapeWorksStudioApp::handle_new_mesh);
 
+  this->ui_->notes->setText("");
+
   this->visualizer_->clear_viewers();
 
   this->analysis_tool_->set_session(this->session_);
