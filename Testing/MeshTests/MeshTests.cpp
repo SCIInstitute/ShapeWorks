@@ -21,13 +21,13 @@ TEST(MeshTests, coverage_test) {
 
 TEST(MeshTests, warpTest1)
 {
-  Mesh ellipsoid( std::string(TEST_DATA_DIR) + "/mesh/ellipsoid_0.ply");
+  Mesh ellipsoid( std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
   Mesh::MeshType inMesh = ellipsoid.get_poly_data();
 
   // read points and load Eigen stuff
   Eigen::MatrixXd Vref = MeshUtils::distilVertexInfo(inMesh);
   Eigen::MatrixXi Fref = MeshUtils::distilFaceInfo(inMesh);
-  std::string particlePath = std::string(TEST_DATA_DIR) + "/mesh/ellipsoid_0.particles";
+  std::string particlePath = std::string(TEST_DATA_DIR) + "/ellipsoid_0.particles";
   Eigen::MatrixXd staticControl = MeshUtils::pointReadFormat(particlePath, 128);
 
   // obtain the warp matrix
