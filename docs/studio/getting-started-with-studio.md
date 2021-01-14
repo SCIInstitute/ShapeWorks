@@ -56,7 +56,7 @@ The samples tab of the view panel allows us to view all of the samples, view a s
 
 The PCA tab of the view panel shows reconstructed shapes along PCA modes of variation.
 
-You can control the location along the PCA mode with the Standard Deviation Slider.  The extent of this slider is configurable in Preferences.
+You can control the location along the PCA mode with the Standard Deviation Slider.  The extent of this slider is configurable in [Preferences](#preferences).
 
 Displayed with each reconstruction is the Lambda value for this position on the slider and the Eigenvalue for this PCA mode.
 
@@ -97,8 +97,104 @@ Studio provides a number of preference options.
 | Mesh Parallel Number of Threads | How many threads to use for parallelized mesh reconstruction |
 | Log Location | A display of where the current log file is located |
 
-
 <br/>
 ## Viewer Controls
 
+At the bottom of the viewers are the controls for the viewers:
+
+![ShapeWorks Studio Viewer Controls](../img/studio/studio_viewer_controls.png)
+
+Each button has tooltips with descriptions.  The controls from left to right are
+
+* Autoview / reset view
+* Glyph visibility with dropdown for glyph size and detail
+* Isosurface visibility
+* View mode (original/groomed/reconstructed)
+* Center (whether to center each object based on center of mass)
+* Number of views in lightbox (1,2,4,9,16,25,36,49,64)
+
+Additionally, when feature volumes or meshes with scalars are loaded, the extended panel will be displayed:
+
+![ShapeWorks Studio Viewer Extended Controls](../img/studio/studio_viewer_controls_extended.png)
+
+This adds the feature map / scalar selection and a checkbox to apply a uniform scale to all viewers, vs local scale for each.
+
 ## Keyboard Shortcuts
+
+The keyboard shortcuts are available from the Help -> Keyboard Shortcuts menu item.
+
+![ShapeWorks Studio Keyboard Shortcuts](../img/studio/studio_keyboard_shortcuts.png)
+
+### Point selection 
+
+As shown in the keyboard shortcuts panel, you can hover over a particle and press the '1' key.  This will select this point on all viewers.
+
+The selected point will become white and all other points will change to a color based on the distance to the chosen point.
+
+![ShapeWorks Studio Particle Selection](../img/studio/studio_particle_selection.png)
+
+To turn off this display, press '1' while hovering over something other than a particle.
+
+Additionally, after selecting a point, you may select another point by pressing '2' while hovering.  This will set the first point to white, the second point to yellow and the rest to black.  This is an easy way to see how particlar particles vary over shapes.
+
+![ShapeWorks Studio Particle Selection2](../img/studio/studio_particle_selection2.png)
+
+
+## File menus
+
+Studio's file menu is shown below.
+
+![ShapeWorks Studio File Menu](../img/studio/studio_file_menu.png)
+
+* New Project - Create a new project
+* Open Project - Open a project from disk
+* Save Project - Save project to disk
+* Save Project As - Save a copy of the project to a new file
+* Import Images... - Import new shapes
+* Export - See export below
+* Up to 4 recent projects are shown at the bottom
+
+The File -> Export menu is shown below.
+
+![ShapeWorks Studio Export Menu](../img/studio/studio_export_menu.png)
+
+* Export Current Mesh - Export the current mesh as a VTK mesh file
+* Export Mesh Scalars - Export the mesh scalars as a CSV file
+* Export Eigenvectors - Export the PCA eigenvectors
+* Export Eigenvalues - Export the PCA eigenvalues
+* Export Variance Graph - Export the variance graph as a PNG file
+* Export PCA Component Scores - Export the raw PCA component scores for each subject as a CSV file
+* Export PCA Mode Points - Export the PCA mode points at each step of the PCA slider
+
+
+## Project setup
+
+ShapeWorks Studio and the `shapeworks` commands `groom` and `optimize` are using a new project format based off of XLSX.  The new spreadsheet format profiles a uniform, easy to edit, easy to organize way of inputing data into shapeworks for grooming, optimizing and analyzing data.
+
+![ShapeWorks Studio Spreadsheet](../img/workflow/studio_ellipsoid_sheet.png)
+
+Users input shapes (either binary segmentations or meshes) in the first sheet (or data sheet) using special column names to indiate type:
+
+
+| Prefix | Description |
+| --- | ----------- |
+| segmentation_&lt;name&gt; | An input segmentation with a given name |
+| group_&lt;name&gt; | An group column with categorical types |
+| feature_&lt;name&gt; | A feature volume (such as an MRI or CT) |
+
+<br/>
+Many other columns will be filled in automatically by the ShapeWorks tools.
+
+A more complete example is provided in Examples/Studio/FeatureMap/feature_map_example.xlsx :
+
+![ShapeWorks Studio FeatureMap Example](../img/studio/studio_feature_map_example.png)
+
+After completing groom and optimize steps, this worksheet will look like this:
+
+![ShapeWorks Studio FeatureMap Example Complete](../img/studio/studio_feature_map_example_complete.png)
+
+There will also be new worksheets with parameters from those tools and other studio settings.
+
+
+
+
