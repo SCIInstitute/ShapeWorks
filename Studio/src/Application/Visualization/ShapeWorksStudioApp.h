@@ -104,7 +104,7 @@ public Q_SLOTS:
   void handle_message(std::string str);
   void handle_error(std::string str);
   void handle_warning(std::string str);
-  void handle_progress(size_t amt);
+  void handle_progress(int amt);
   void handle_new_mesh();
   void handle_clear_cache();
 

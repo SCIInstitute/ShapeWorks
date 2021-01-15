@@ -130,8 +130,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   connect(this->analysis_tool_.data(), SIGNAL(update_view()), this,
           SLOT(handle_display_setting_changed()));
   connect(this->analysis_tool_.data(), SIGNAL(pca_update()), this, SLOT(handle_pca_update()));
-  connect(this->analysis_tool_.data(), SIGNAL(progress(size_t)),
-          this, SLOT(handle_progress(size_t)));
+  connect(this->analysis_tool_.data(), &AnalysisTool::progress,
+          this, &ShapeWorksStudioApp::handle_progress);
   connect(this->analysis_tool_.data(), SIGNAL(reconstruction_complete()),
           this, SLOT(handle_reconstruction_complete()));
   connect(this->analysis_tool_.data(), &AnalysisTool::message,
@@ -174,8 +174,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           this, SLOT(handle_error(std::string)));
   connect(this->groom_tool_.data(), SIGNAL(message(std::string)),
           this, SLOT(handle_message(std::string)));
-  connect(this->groom_tool_.data(), SIGNAL(progress(size_t)),
-          this, SLOT(handle_progress(size_t)));
+  connect(this->groom_tool_.data(), &GroomTool::progress,
+          this, &ShapeWorksStudioApp::handle_progress);
 
   // optimize tool initializations
   this->optimize_tool_ = QSharedPointer<OptimizeTool>(new OptimizeTool());
@@ -192,8 +192,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           this, SLOT(handle_warning(std::string)));
   connect(this->optimize_tool_.data(), SIGNAL(message(std::string)),
           this, SLOT(handle_message(std::string)));
-  connect(this->optimize_tool_.data(), SIGNAL(progress(size_t)),
-          this, SLOT(handle_progress(size_t)));
+  connect(this->optimize_tool_.data(), &OptimizeTool::progress,
+          this, &ShapeWorksStudioApp::handle_progress);
 
   // set up preferences window
   this->preferences_window_ =
@@ -685,11 +685,11 @@ void ShapeWorksStudioApp::handle_warning(std::string str)
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::handle_progress(size_t value)
+void ShapeWorksStudioApp::handle_progress(int value)
 {
   if (value < 100) {
     this->progress_bar_->setVisible(true);
-    this->progress_bar_->setValue(static_cast<int>(value));
+    this->progress_bar_->setValue(value);
     this->disable_all_actions();
   }
   else {

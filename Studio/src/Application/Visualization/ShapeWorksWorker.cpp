@@ -60,7 +60,9 @@ void ShapeworksWorker::process()
       break;
     case ShapeworksWorker::OptimizeType:
       try {
+        emit message(std::string("Loading data..."));
         this->optimize_parameters_->set_up_optimize(this->optimize_);
+        emit message(std::string("Optimizing correspondence..."));
         this->optimize_->Run();
       } catch (std::runtime_error e) {
         std::cerr << "Exception: " << e.what() << "\n";

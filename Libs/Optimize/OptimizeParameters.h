@@ -58,11 +58,15 @@ public:
   void set_multiscale_particles(int value);
 
   void set_abort_load(bool value);
-  
+
+  void set_load_callback(const std::function<void(int)> &f);
+
 private:
 
   Parameters params_;
   ProjectHandle project_;
+
+  std::function<void(int)> load_callback_;
 
   bool abort_load_ = false;
 

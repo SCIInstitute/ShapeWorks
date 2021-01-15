@@ -73,7 +73,7 @@ void GroomTool::handle_error(std::string msg)
 void GroomTool::handle_progress(int val)
 {
   if (this->groom_is_running_) {
-    emit progress(static_cast<size_t>(val));
+    emit progress(val);
   }
 }
 

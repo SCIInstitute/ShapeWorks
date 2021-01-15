@@ -137,7 +137,7 @@ signals:
 
   void update_view();
   void pca_update();
-  void progress(size_t);
+  void progress(int);
   void message(std::string);
   void error(std::string);
   void reconstruction_complete();

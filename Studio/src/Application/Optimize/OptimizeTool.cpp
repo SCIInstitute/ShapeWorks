@@ -73,7 +73,7 @@ void OptimizeTool::handle_warning(std::string msg)
 //---------------------------------------------------------------------------
 void OptimizeTool::handle_progress(int val)
 {
-  emit progress(static_cast<size_t>(val));
+  emit progress(val);
 
   auto local = this->optimize_->GetLocalPoints();
   auto global = this->optimize_->GetGlobalPoints();
@@ -126,17 +126,9 @@ void OptimizeTool::on_run_optimize_button_clicked()
 
   this->optimize_parameters_ = QSharedPointer<OptimizeParameters>(
     new OptimizeParameters(this->session_->get_project()));
-  /*
-  try {
-    OptimizeParameters params(this->session_->get_project());
-    params.set_up_optimize(this->optimize_);
-  } catch (std::exception& e) {
-    emit error_message(std::string("Error running optimize: ") + e.what());
-    this->optimization_is_running_ = false;
-    this->enable_actions();
-    return;
-  }
-*/
+
+  this->optimize_parameters_->set_load_callback(
+    std::bind(&OptimizeTool::load_progress, this, std::placeholders::_1));
   this->optimize_->SetFileOutputEnabled(false);
 
   ShapeworksWorker* worker = new ShapeworksWorker(
@@ -287,5 +279,14 @@ void OptimizeTool::update_ui_elements()
 void OptimizeTool::activate()
 {
   this->enable_actions();
+}
+
+//---------------------------------------------------------------------------
+void OptimizeTool::load_progress(int count)
+{
+  double value = static_cast<double>(count) / this->session_->get_shapes().size() * 100.0f;
+  if (value < 100) { // cannot emit 100 or the main interface will think the job is done
+    emit progress(static_cast<int>(value));
+  }
 }
 }
