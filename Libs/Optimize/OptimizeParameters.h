@@ -57,11 +57,14 @@ public:
   int get_multiscale_particles();
   void set_multiscale_particles(int value);
 
+  void set_abort_load(bool value);
   
 private:
 
   Parameters params_;
   ProjectHandle project_;
+
+  bool abort_load_ = false;
 
 };
 

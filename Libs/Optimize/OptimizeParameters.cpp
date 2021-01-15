@@ -254,6 +254,9 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
 
   std::vector<std::string> filenames;
   for (auto s : subjects) {
+    if (this->abort_load_) {
+      return false;
+    }
     auto files = s->get_groomed_filenames();
     if (files.empty()) {
       throw std::invalid_argument("No groomed inputs for optimization");
@@ -286,4 +289,10 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
   optimize->SetOutputTransformFile("transform");
 
   return true;
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_abort_load(bool value)
+{
+  this->abort_load_ = value;
 }

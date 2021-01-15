@@ -7,6 +7,7 @@
 namespace shapeworks {
 class Optimize;
 class QGroom;
+class OptimizeParameters;
 
 class ShapeworksWorker : public QObject {
 Q_OBJECT
@@ -15,7 +16,8 @@ public:
   enum ThreadType { GroomType, OptimizeType, ReconstructType };
   ShapeworksWorker(ThreadType type, QSharedPointer<shapeworks::QGroom> groom,
                    shapeworks::Optimize* optimize,
-                   QSharedPointer<Session> project,
+                   QSharedPointer<OptimizeParameters> optimize_parameters,
+                   QSharedPointer<Session> session,
                    std::vector<std::vector<itk::Point<double>>> local_pts =
                    std::vector<std::vector<itk::Point<double>>>(),
                    std::vector<std::vector<itk::Point<double>>> global_pts =
@@ -41,13 +43,14 @@ Q_SIGNALS:
 private:
   QSharedPointer<shapeworks::QGroom> groom_;
   shapeworks::Optimize* optimize_;
-  QSharedPointer<Session> project_;
+  QSharedPointer<OptimizeParameters> optimize_parameters_;
+  QSharedPointer<Session> session_;
   ThreadType type_;
   std::vector<std::vector<itk::Point<double>>> local_pts_;
   std::vector<std::vector<itk::Point<double>>> global_pts_;
   std::vector<std::string> distance_transform_;
-  float decimationPercent_;
-  double maxAngle_;
-  int numClusters_;
+  float decimation_percent_;
+  double max_angle_;
+  int num_clusters_;
 };
 }

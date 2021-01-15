@@ -170,7 +170,7 @@ void GroomTool::on_run_groom_button_clicked()
   this->enable_actions();
 
   ShapeworksWorker* worker = new ShapeworksWorker(
-    ShapeworksWorker::GroomType, this->groom_, nullptr, this->session_);
+    ShapeworksWorker::GroomType, this->groom_, nullptr, nullptr, this->session_);
 
   QThread* thread = new QThread;
   worker->moveToThread(thread);

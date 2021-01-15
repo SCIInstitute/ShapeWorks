@@ -209,7 +209,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
 
   //regression tool TODO
   /*this->analysis_tool_ = QSharedPointer<AnalysisTool> (new AnalysisTool());
-     this->analysis_tool_->set_project( this->project_ );
+     this->analysis_tool_->set_project( this->session_ );
      this->analysis_tool_->set_app( this );
      this->ui_->lower_stacked_widget->addWidget( this->analysis_tool_.data() );*/
 
@@ -1419,7 +1419,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered()
   }
   auto shape = this->visualizer_->getCurrentShape();
   /// TODO: fix
-  //auto msh = this->project_->get_mesh_manager()->get_mesh(shape);
+  //auto msh = this->session_->get_mesh_manager()->get_mesh(shape);
 
   vtkPolyDataWriter* writer = vtkPolyDataWriter::New();
   writer->SetFileName(filename.toStdString().c_str());

@@ -146,7 +146,7 @@ bool Session::save_project(std::string fname)
     for (int i = 0; i < this->shapes_.size(); i++) {
       original_list.push_back(this->shapes_[i]->get_original_filename_with_path().toStdString());
     }
-    //this->project_->set_original_files(original_list);
+    //this->session_->set_original_files(original_list);
   }
 
   // distance transforms

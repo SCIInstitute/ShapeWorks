@@ -124,6 +124,9 @@ void OptimizeTool::on_run_optimize_button_clicked()
 
   this->optimize_ = new QOptimize(this);
 
+  this->optimize_parameters_ = QSharedPointer<OptimizeParameters>(
+    new OptimizeParameters(this->session_->get_project()));
+  /*
   try {
     OptimizeParameters params(this->session_->get_project());
     params.set_up_optimize(this->optimize_);
@@ -133,11 +136,12 @@ void OptimizeTool::on_run_optimize_button_clicked()
     this->enable_actions();
     return;
   }
-
+*/
   this->optimize_->SetFileOutputEnabled(false);
 
   ShapeworksWorker* worker = new ShapeworksWorker(
-    ShapeworksWorker::OptimizeType, NULL, this->optimize_, this->session_,
+    ShapeworksWorker::OptimizeType, NULL, this->optimize_, this->optimize_parameters_,
+    this->session_,
     std::vector<std::vector<itk::Point<double>>>(),
     std::vector<std::vector<itk::Point<double>>>(),
     std::vector<std::string>());
@@ -255,6 +259,9 @@ void OptimizeTool::shutdown_threads()
   std::cerr << "Shut Down Optimization Threads\n";
   if (!this->optimize_) {
     return;
+  }
+  if (this->optimize_parameters_) {
+    this->optimize_parameters_->set_abort_load(true);
   }
   this->optimize_->AbortOptimization();
 

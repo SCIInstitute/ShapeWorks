@@ -27,7 +27,7 @@ const std::string AnalysisTool::MODE_SINGLE_SAMPLE_C("single sample");
 const std::string AnalysisTool::MODE_REGRESSION_C("regression");
 
 //---------------------------------------------------------------------------
-AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
+AnalysisTool::AnalysisTool(Preferences &prefs) : preferences_(prefs)
 {
 
   this->ui_ = new Ui_AnalysisTool;
@@ -66,13 +66,13 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
           &AnalysisTool::handle_group_animate_state_changed);
   connect(&this->group_animate_timer_, &QTimer::timeout, this, &AnalysisTool::handle_group_timer);
 
-  connect(this->ui_->group_box, qOverload<const QString&>(&QComboBox::currentIndexChanged),
+  connect(this->ui_->group_box, qOverload<const QString &>(&QComboBox::currentIndexChanged),
           this, &AnalysisTool::update_group_values);
 
-  connect(this->ui_->group_left, qOverload<const QString&>(&QComboBox::currentIndexChanged),
+  connect(this->ui_->group_left, qOverload<const QString &>(&QComboBox::currentIndexChanged),
           this, &AnalysisTool::group_changed);
 
-  connect(this->ui_->group_right, qOverload<const QString&>(&QComboBox::currentIndexChanged),
+  connect(this->ui_->group_right, qOverload<const QString &>(&QComboBox::currentIndexChanged),
           this, &AnalysisTool::group_changed);
 
   this->ui_->surface_open_button->setChecked(false);
@@ -174,7 +174,7 @@ void AnalysisTool::on_reconstructionButton_clicked()
   global.resize(shapes.size());
   images.resize(shapes.size());
   size_t ii = 0;
-  for (auto& s : shapes) {
+  for (auto &s : shapes) {
     auto l = s->get_local_correspondence_points();
     auto g = s->get_global_correspondence_points();
     for (size_t i = 0; i < l.size(); i += 3) {
@@ -193,7 +193,7 @@ void AnalysisTool::on_reconstructionButton_clicked()
     ii++;
   }
   ShapeworksWorker* worker = new ShapeworksWorker(
-    ShapeworksWorker::ReconstructType, NULL, NULL, this->session_,
+    ShapeworksWorker::ReconstructType, nullptr, nullptr, nullptr, this->session_,
     local, global, images,
     this->ui_->maxAngle->value(),
     this->ui_->meshDecimation->value(),
@@ -400,7 +400,6 @@ bool AnalysisTool::compute_stats()
     return false;
   }
 
-
   this->ui_->pcaModeSpinBox->setMaximum(this->session_->get_shapes().size() - 2);
 
   std::vector<vnl_vector<double>> points;
@@ -470,7 +469,7 @@ bool AnalysisTool::compute_stats()
 }
 
 //-----------------------------------------------------------------------------
-const vnl_vector<double>& AnalysisTool::get_mean_shape_points()
+const vnl_vector<double> &AnalysisTool::get_mean_shape_points()
 {
   if (!this->compute_stats()) {
     return this->empty_shape_;
@@ -496,7 +495,7 @@ const vnl_vector<double>& AnalysisTool::get_mean_shape_points()
 }
 
 //-----------------------------------------------------------------------------
-const vnl_vector<double>& AnalysisTool::get_shape_points(int mode, double value, double group_value)
+const vnl_vector<double> &AnalysisTool::get_shape_points(int mode, double value, double group_value)
 {
   if (!this->compute_stats() || this->stats_.Eigenvectors().size() <= 1) {
     return this->empty_shape_;
@@ -831,7 +830,7 @@ ShapeHandle AnalysisTool::get_mean_shape()
 }
 
 //---------------------------------------------------------------------------
-ShapeHandle AnalysisTool::create_shape_from_points(const vnl_vector<double>& points)
+ShapeHandle AnalysisTool::create_shape_from_points(const vnl_vector<double> &points)
 {
   MeshHandle mesh = this->session_->get_mesh_manager()->get_mesh(points);
   ShapeHandle shape = ShapeHandle(new Shape());
@@ -863,7 +862,7 @@ void AnalysisTool::handle_message(std::string message_string)
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::set_feature_map(const std::string& feature_map)
+void AnalysisTool::set_feature_map(const std::string &feature_map)
 {
   this->feature_map_ = feature_map;
 }
@@ -879,7 +878,7 @@ void AnalysisTool::update_group_boxes()
   if (group_names != this->current_group_names_) { // only update if different
     this->ui_->group_box->clear();
     this->ui_->group_box->addItem("-None-");
-    for (const std::string& group : group_names) {
+    for (const std::string &group : group_names) {
       this->ui_->group_box->addItem(QString::fromStdString(group));
     }
     this->current_group_names_ = group_names;
@@ -898,7 +897,7 @@ void AnalysisTool::update_group_values()
     // populate group values
     this->ui_->group_left->clear();
     this->ui_->group_right->clear();
-    for (const std::string& value : values) {
+    for (const std::string &value : values) {
       QString item = QString::fromStdString(value);
       this->ui_->group_left->addItem(item);
       this->ui_->group_right->addItem(item);
