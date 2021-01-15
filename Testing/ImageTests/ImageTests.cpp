@@ -706,6 +706,25 @@ TEST(ImageTests, spacingTest)
   ASSERT_TRUE(image.spacing() == spacing);
 }
 
+TEST(ImageTests, setSpacingTest)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
+  Vector spacing(makeVector({1,2,2}));
+  image.setSpacing(spacing);
+
+  ASSERT_TRUE(image.spacing() == spacing);
+}
+
+TEST(ImageTests, chainedSpacingTest)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
+  Vector spacing1(makeVector({1,2,2}));
+  Vector spacing2(makeVector({0.2,0.2,1}));
+  image.setSpacing(spacing1).setSpacing(spacing2);
+
+  ASSERT_TRUE(image.spacing() == spacing2);
+}
+
 TEST(ImageTests, originTest)
 {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");

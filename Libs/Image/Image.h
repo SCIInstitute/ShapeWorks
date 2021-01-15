@@ -144,7 +144,7 @@ public:
   /// changes logical image size, computing new physical spacing based on this size (i.e., physical image size remains the same)
   Image& resize(Dims logicalDims, InterpolationType interp = Linear);
 
-  /// pads an image in all directions with constant value
+  /// pads an image by same number of voxels in all directions with constant value
   Image& pad(int padding, PixelType value = 0.0);
 
   /// pads an image by desired number of voxels in each direction with constant value

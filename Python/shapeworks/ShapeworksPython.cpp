@@ -34,7 +34,6 @@ using namespace pybind11::literals;
 
 using namespace shapeworks;
 
-
 PYBIND11_MODULE(shapeworks, m)
 {
   m.doc() = "ShapeWorks Python API";
@@ -373,7 +372,7 @@ PYBIND11_MODULE(shapeworks, m)
     return image.resize(Dims({d[0], d[1], d[2]}), interp);
   }, "resizes an image (computes new physical spacing)", "logicalDims"_a, "interp"_a=Image::InterpolationType::Linear)
   .def("recenter",              &Image::recenter, "recenters an image by changing its origin in the image header to the physical coordinates of the center of the image")
-  .def("pad",                   py::overload_cast<int, Image::PixelType>(&Image::pad), "pads an image in all directions with constant value", "pad"_a, "value"_a=0.0)
+  .def("pad",                   py::overload_cast<int, Image::PixelType>(&Image::pad), "pads an image by same number of voxels in all directions with constant value", "pad"_a, "value"_a=0.0)
   .def("pad",                   py::overload_cast<int, int, int, Image::PixelType>(&Image::pad), "pads an image by desired number of voxels in each direction with constant value", "padx"_a, "pady"_a, "padz"_a, "value"_a=0.0)
   .def("translate",             &Image::translate, "translates image", "v"_a)
   .def("translate", [](Image& image, const std::vector<double>& v) {
@@ -412,9 +411,9 @@ PYBIND11_MODULE(shapeworks, m)
   .def("setOrigin", [](Image& image, std::vector<double>& p) {
     return image.setOrigin(Point({p[0], p[1], p[2]}));
   }, "sets the image origin in physical space to the given value", "origin"_a=Point3({0,0,0}))
-  .def("setSpacing",            &Image::setSpacing, "sets the image spacing to the given value", "spacing"_a=makeVector({1.0, 1.0, 1.0}))
-  .def("setSpacing", [](Image& image, std::vector<double>& v) {
-    return image.setSpacing(makeVector({v[0], v[1], v[2]}));
+  //.def("setSpacing",            &Image::setSpacing, "sets the image spacing to the given value", "spacing"_a=makeVector({1.0, 1.0, 1.0}))
+  .def("setSpacing", [](Image& self, std::vector<double>& v) -> decltype(auto) {
+    return self.setSpacing(makeVector({v[0], v[1], v[2]}));
   }, "sets the image spacing to the given value", "spacing"_a=makeVector({1.0, 1.0, 1.0}))
   .def("reflect",               &Image::reflect, "reflect image with respect to logical image center and the specified axis", "axis"_a)
   .def("dims",                  &Image::dims, "logical dimensions of the image")

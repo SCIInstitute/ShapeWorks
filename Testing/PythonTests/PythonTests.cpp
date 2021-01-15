@@ -268,6 +268,12 @@ TEST(pythonTests, setorigin)
 }
 
 //---------------------------------------------------------------------------
+TEST(pythonTests, setspacing)
+{
+  ASSERT_FALSE(system("python setspacing.py"));
+}
+
+//---------------------------------------------------------------------------
 TEST(pythonTests, negate)
 {
   ASSERT_FALSE(system("python negate.py"));
