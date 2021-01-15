@@ -121,13 +121,13 @@ void OptimizeTool::on_run_optimize_button_clicked()
   this->store_params();
   emit message("Please wait: running optimize step...");
 
-  this->optimize_ = new QOptimize(this);
+  this->optimize_ = QSharedPointer<QOptimize>::create(this);
 
   this->clear_particles();
 
   this->handle_progress(1);
-  this->optimize_parameters_ = QSharedPointer<OptimizeParameters>(
-    new OptimizeParameters(this->session_->get_project()));
+  this->optimize_parameters_ = QSharedPointer<OptimizeParameters>::create(
+    this->session_->get_project());
 
   this->optimize_parameters_->set_load_callback(
     std::bind(&OptimizeTool::handle_load_progress, this, std::placeholders::_1));
@@ -144,7 +144,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_optimize_complete()));
-  connect(this->optimize_, SIGNAL(progress(int)), this, SLOT(handle_progress(int)));
+  connect(this->optimize_.data(), &QOptimize::progress, this, &OptimizeTool::handle_progress);
   connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
   connect(worker, SIGNAL(message(std::string)), this, SLOT(handle_message(std::string)));
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));

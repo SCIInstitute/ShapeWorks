@@ -14,7 +14,7 @@ namespace shapeworks {
 
 ShapeworksWorker::ShapeworksWorker(ThreadType type,
                                    QSharedPointer<QGroom> groom,
-                                   Optimize* optimize,
+                                   QSharedPointer<Optimize> optimize,
                                    QSharedPointer<OptimizeParameters> optimize_parameters,
                                    QSharedPointer<Session> session,
                                    std::vector<std::vector<itk::Point<double>>> local_pts,
@@ -61,7 +61,7 @@ void ShapeworksWorker::process()
     case ShapeworksWorker::OptimizeType:
       try {
         emit message(std::string("Loading data..."));
-        this->optimize_parameters_->set_up_optimize(this->optimize_);
+        this->optimize_parameters_->set_up_optimize(this->optimize_.data());
         emit message(std::string("Optimizing correspondence..."));
         this->optimize_->Run();
       } catch (std::runtime_error e) {

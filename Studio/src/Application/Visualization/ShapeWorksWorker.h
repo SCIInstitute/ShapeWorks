@@ -14,8 +14,9 @@ Q_OBJECT
 
 public:
   enum ThreadType { GroomType, OptimizeType, ReconstructType };
-  ShapeworksWorker(ThreadType type, QSharedPointer<shapeworks::QGroom> groom,
-                   shapeworks::Optimize* optimize,
+  ShapeworksWorker(ThreadType type,
+                   QSharedPointer<QGroom> groom,
+                   QSharedPointer<Optimize> optimize,
                    QSharedPointer<OptimizeParameters> optimize_parameters,
                    QSharedPointer<Session> session,
                    std::vector<std::vector<itk::Point<double>>> local_pts =
@@ -41,8 +42,8 @@ Q_SIGNALS:
   void message(std::string);
 
 private:
-  QSharedPointer<shapeworks::QGroom> groom_;
-  shapeworks::Optimize* optimize_;
+  QSharedPointer<QGroom> groom_;
+  QSharedPointer<Optimize> optimize_;
   QSharedPointer<OptimizeParameters> optimize_parameters_;
   QSharedPointer<Session> session_;
   ThreadType type_;
