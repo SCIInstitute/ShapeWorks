@@ -8,7 +8,6 @@
 
 #include <Data/Preferences.h>
 
-
 class Ui_OptimizeTool;
 
 namespace shapeworks {
@@ -65,10 +64,11 @@ signals:
   void progress(int);
   void message(std::string);
 
-
 private:
 
-  void load_progress(int count);
+  void handle_load_progress(int count);
+
+  void clear_particles();
 
   QList<QThread*> threads_;
   bool optimization_is_running_ = false;

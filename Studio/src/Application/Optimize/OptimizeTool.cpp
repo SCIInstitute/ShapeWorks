@@ -120,15 +120,17 @@ void OptimizeTool::on_run_optimize_button_clicked()
 
   this->store_params();
   emit message("Please wait: running optimize step...");
-  emit progress(1);
 
   this->optimize_ = new QOptimize(this);
 
+  this->clear_particles();
+
+  this->handle_progress(1);
   this->optimize_parameters_ = QSharedPointer<OptimizeParameters>(
     new OptimizeParameters(this->session_->get_project()));
 
   this->optimize_parameters_->set_load_callback(
-    std::bind(&OptimizeTool::load_progress, this, std::placeholders::_1));
+    std::bind(&OptimizeTool::handle_load_progress, this, std::placeholders::_1));
   this->optimize_->SetFileOutputEnabled(false);
 
   ShapeworksWorker* worker = new ShapeworksWorker(
@@ -282,11 +284,24 @@ void OptimizeTool::activate()
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::load_progress(int count)
+void OptimizeTool::handle_load_progress(int count)
 {
   double value = static_cast<double>(count) / this->session_->get_shapes().size() * 100.0f;
   if (value < 100) { // cannot emit 100 or the main interface will think the job is done
     emit progress(static_cast<int>(value));
   }
+}
+
+//---------------------------------------------------------------------------
+void OptimizeTool::clear_particles()
+{
+  // clear out old points
+  std::vector<itk::Point<double>> empty;
+  std::vector<std::vector<itk::Point<double>>> lists;
+  for (int i = 0; i < this->session_->get_num_shapes(); i++) {
+    lists.push_back(empty);
+  }
+  this->session_->update_points(lists, true);
+  this->session_->update_points(lists, false);
 }
 }
