@@ -121,7 +121,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
   this->store_params();
   emit message("Please wait: running optimize step...");
 
-  this->optimize_ = QSharedPointer<QOptimize>::create(this);
+  this->optimize_ = QSharedPointer<QOptimize>::create();
 
   this->clear_particles();
 
