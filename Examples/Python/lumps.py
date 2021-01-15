@@ -27,7 +27,7 @@ def Run_Pipeline(args):
     #else download the entire dataset
     else:
         CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
-         meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))
+        meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))
 
     # Select data if using subsample
     if args.use_subsample:
