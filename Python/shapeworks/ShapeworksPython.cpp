@@ -372,8 +372,8 @@ PYBIND11_MODULE(shapeworks, m)
     return image.resize(Dims({d[0], d[1], d[2]}), interp);
   }, "resizes an image (computes new physical spacing)", "logicalDims"_a, "interp"_a=Image::InterpolationType::Linear)
   .def("recenter",              &Image::recenter, "recenters an image by changing its origin in the image header to the physical coordinates of the center of the image")
-  .def("pad",                   py::overload_cast<int, Image::PixelType>(&Image::pad), "pads an image by same number of voxels in all directions with constant value", "pad"_a, "value"_a=0.0)
-  .def("pad",                   py::overload_cast<int, int, int, Image::PixelType>(&Image::pad), "pads an image by desired number of voxels in each direction with constant value", "padx"_a, "pady"_a, "padz"_a, "value"_a=0.0)
+  .def("pad",                   py::overload_cast<int, Image::PixelType>(&Image::pad), "pads an image by same number of pixels in all directions with constant value", "pad"_a, "value"_a=0.0)
+  .def("pad",                   py::overload_cast<int, int, int, Image::PixelType>(&Image::pad), "pads an image by desired number of pixels in each direction with constant value", "padx"_a, "pady"_a, "padz"_a, "value"_a=0.0)
   .def("translate",             &Image::translate, "translates image", "v"_a)
   .def("translate", [](Image& image, const std::vector<double>& v) {
     return image.translate(makeVector({v[0], v[1], v[2]}));
@@ -391,7 +391,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("applyTransform", [](Image& image, const TransformPtr transform, const std::vector<double>& p, const std::vector<unsigned>& d, const std::vector<double>& v, const Image::ImageType::DirectionType direction, Image::InterpolationType interp) {
     return image.applyTransform(transform, Point({p[0], p[1], p[2]}), Dims({d[0], d[1], d[2]}), makeVector({v[0], v[1], v[2]}), direction, interp);
   }, "applies the given transformation to the image by using resampling filter with new origin, dims, spacing and direction values", "transform"_a, "origin"_a, "dims"_a, "spacing"_a, "direction"_a, "interp"_a=Image::InterpolationType::NearestNeighbor)
-  .def("extractLabel",          &Image::extractLabel, "extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image", "label"_a=1.0)
+  .def("extractLabel",          &Image::extractLabel, "extracts/isolates a specific pixel label from a given multi-label volume and outputs the corresponding binary image", "label"_a=1.0)
   .def("closeHoles",            &Image::closeHoles, "closes holes in a volume defined by values larger than specified value", "foreground"_a=0.0)
   .def("binarize",              &Image::binarize, "sets portion of image greater than min and less than or equal to max to the specified value", "minVal"_a=0.0, "maxVal"_a=std::numeric_limits<Image::PixelType>::max(), "innerVal"_a=1.0, "outerVal"_a=0.0)
   .def("computeDT",             &Image::computeDT, "computes signed distance transform volume from an image at the specified isovalue", "isovalue"_a=0.0)
@@ -411,34 +411,48 @@ PYBIND11_MODULE(shapeworks, m)
   .def("setOrigin", [](Image& image, std::vector<double>& p) {
     return image.setOrigin(Point({p[0], p[1], p[2]}));
   }, "sets the image origin in physical space to the given value", "origin"_a=Point3({0,0,0}))
-  //.def("setSpacing",            &Image::setSpacing, "sets the image spacing to the given value", "spacing"_a=makeVector({1.0, 1.0, 1.0}))
-  .def("setSpacing", [](Image& self, std::vector<double>& v) -> decltype(auto) {
-    return self.setSpacing(makeVector({v[0], v[1], v[2]}));
-  }, "sets the image spacing to the given value", "spacing"_a=makeVector({1.0, 1.0, 1.0}))
+  .def("setSpacing",
+       [](Image& self, std::vector<double>& v) -> decltype(auto) {
+         return self.setSpacing(makeVector({v[0], v[1], v[2]}));
+       },
+       "set image spacing, the size of each pixel",
+       "spacing"_a=makeVector({1.0, 1.0, 1.0}))
   .def("reflect",               &Image::reflect, "reflect image with respect to logical image center and the specified axis", "axis"_a)
   .def("dims",                  &Image::dims, "logical dimensions of the image")
   .def("size",                  &Image::size, "physical dimensions of the image (dims * spacing)")
-  .def("spacing",               &Image::spacing, "physical spacing of the image")
-  .def("origin",                &Image::origin, "physical coordinates of image origin")
+  .def("spacing",
+       [](Image& self) -> decltype(auto) { return py::array(3, self.spacing().GetDataPointer()); },
+       "physical spacing of the image")
+  .def("origin",
+       [](Image& self) -> decltype(auto) { return py::array(3, self.origin().GetDataPointer()); },
+       "physical coordinates of image origin")
   .def("center",                &Image::center, "physical coordinates of center of this image")
   .def("coordsys",              &Image::coordsys, "return coordinate system in which this image lives in physical space")
   .def("centerOfMass",          &Image::centerOfMass, "returns average physical coordinate of pixels in range (minval, maxval]", "minVal"_a=0.0, "maxVal"_a=1.0)
   .def("boundingBox",           &Image::boundingBox, "computes the logical coordinates of the largest region of data <= the given isoValue", "isovalue"_a=1.0)
-  .def("logicalToPhysical", [](Image& image, std::vector<long>& c) {
-    return image.logicalToPhysical(Coord({c[0], c[1], c[2]}));
-  }, "converts from pixel coordinates to physical space", "c"_a)
-  .def("physicalToLogical", [](Image& image, std::vector<double>& p) {
-    return image.physicalToLogical(Point({p[0], p[1], p[2]}));
-  }, "converts from a physical coordinate to a logical coordinate", "p"_a)
+  .def("logicalToPhysical",
+       [](Image& image, std::vector<long>& c) -> decltype(auto) {
+         return image.logicalToPhysical(Coord({c[0], c[1], c[2]}));
+       },
+       "converts from pixel coordinates to physical space",
+       "c"_a)
+  .def("physicalToLogical",
+       [](Image& image, std::vector<double>& p) -> decltype(auto) {
+         return image.physicalToLogical(Point({p[0], p[1], p[2]}));
+       },
+       "converts from a physical coordinate to a logical coordinate",
+       "p"_a)
   .def("compare",               &Image::compare, "compares two images", "other"_a, "verifyall"_a=true, "tolerance"_a=0.0, "precision"_a=1e-12)
   .def_static("getPolyData",    &Image::getPolyData, "creates a vtkPolyData for the given image", "image"_a, "isoValue"_a=0.0)
   .def("toMesh",                &Image::toMesh, "converts to Mesh", "isovalue"_a=1.0)
-  .def("toArray", [](const Image &image) {
-    Image::ImageType::Pointer img = image.getITKImage();
-    const auto size = img->GetLargestPossibleRegion().GetSize();
-    const auto shape = std::vector<size_t>{size[2], size[1], size[0]};
-    return py::array(py::dtype::of<typename Image::ImageType::Pointer::ObjectType::PixelType>(), shape, img->GetBufferPointer());
-  })
+  .def("toArray",
+       [](const Image &image) {
+         Image::ImageType::Pointer img = image.getITKImage();
+         const auto size = img->GetLargestPossibleRegion().GetSize();
+         const auto shape = std::vector<size_t>{size[2], size[1], size[0]};
+         return py::array(py::dtype::of<typename Image::ImageType::Pointer::ObjectType::PixelType>(), shape, img->GetBufferPointer());
+       },
+       "returns raw array of image data (note: spacing, origin, coordsys are not preserved)")
   ;
 
   // Image::Region
