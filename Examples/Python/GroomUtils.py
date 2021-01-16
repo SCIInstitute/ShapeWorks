@@ -103,7 +103,7 @@ def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False):
         T = img.center() - img.centerOfMass()
 
         # binarize result since linear interpolation makes image blurry again
-        img.translate(T).binarize().write(outname)
+        img.translate(T).binarize().recenter().write(outname)
 
         if processRaw:
             innameImg = inDataListImg[i]
@@ -155,12 +155,16 @@ def FindReferenceImage(inDataList):
     print(" ")
     return inDataList[idx]
 
-def applyResampling(outDir, refFile, inDataListSeg, inDataListImg=[]):
+def applyRigidAlignment(outDir, refFile, inDataListSeg, inDataListImg=[]):
     """
     This function takes in a filelists(binary and raw) and makes the 
     size and spacing the same as the reference
     """
-    print("\n############# Resample #############")
+    isoValue       = 1e-20
+    icp_iterations = 200
+    antialias_iterations = 1 
+
+    print("\n############# Rigidly Align #############")
 
     # create output dirs
     segoutDir = os.path.join(outDir, 'segmentations') if inDataListImg else outDir
@@ -177,21 +181,23 @@ def applyResampling(outDir, refFile, inDataListSeg, inDataListImg=[]):
 
     # get reference image
     refImg = Image(refFile)
+    refImg.antialias(antialias_iterations)
 
     for i in range(len(inDataListSeg)):
-        segoutname = rename(inDataListSeg[i], segoutDir, 'resized')
+        segoutname = rename(inDataListSeg[i], segoutDir, 'aligned')
         outSegDataList.append(segoutname)
         if inDataListImg:
-            rawoutname = rename(inDataListImg[i], rawoutDir, 'resized')
+            rawoutname = rename(inDataListImg[i], rawoutDir, 'aligned')
             outRawDataList.append(rawoutname)
 
         # resize images to reference images
         img = Image(inDataListSeg[i])
-        transform = createTransform(Matrix()) # create identity matrix
-        img.resample(transform, refImg.origin(), refImg.dims(), refImg.spacing(), refImg.coordsys(), InterpolationType.NearestNeighbor).write(segoutname)
+        rigidTransform = ImageUtils.createRigidRegistrationTransform(Image(inDataListSeg[i]).antialias(antialias_iterations), refImg, isoValue, icp_iterations)
+        img.resample(rigidTransform, refImg.origin(), refImg.dims(), refImg.spacing(), refImg.coordsys(), InterpolationType.Linear).write(segoutname)
+
         if inDataListImg:
             img = Image(inDataListImg[i])
-            img.resample(transform, refImg.origin(), refImg.dims(), refImg.spacing(), refImg.coordsys(), InterpolationType.NearestNeighbor).write(rawoutname)
+            img.resample(rigidTransform, refImg.origin(), refImg.dims(), refImg.spacing(), refImg.coordsys(), InterpolationType.Linear).write(rawoutname)
 
     return [outSegDataList, outRawDataList] if inDataListImg else outSegDataList
 
