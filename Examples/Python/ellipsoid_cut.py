@@ -84,11 +84,12 @@ def Run_Pipeline(args):
         """Apply center of mass alignment"""
         comFiles = applyCOMAlignment(groomDir + "com_aligned/segmentations", paddedFiles, None)
 
-        """ Apply resampling"""
-        resampledFiles = applyResampling(groomDir + "resized/segmentations", comFiles[0], comFiles)
+        """ Apply rigid alignment """
+        ref = FindReferenceImage(comFiles)
+        alignedFiles = applyRigidAlignment(groomDir + "aligned/segmentations", ref, comFiles)
 
         """Compute largest bounding box and apply cropping"""
-        croppedFiles = applyCropping(groomDir + "cropped/segmentations", resampledFiles, groomDir + "resized/segmentations/*.resized.nrrd")
+        croppedFiles = applyCropping(groomDir + "cropped/segmentations", alignedFiles, groomDir + "aligned/segmentations/*.aligned.nrrd")
 
         """
         We convert the scans to distance transforms, this step is common for both the
