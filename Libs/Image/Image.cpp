@@ -612,6 +612,7 @@ Image& Image::applyIntensityFilter(double minVal, double maxVal)
   filter->SetOutputMinimum(0.0);
   filter->SetOutputMaximum(255.0);
   filter->SetInput(this->image);
+  filter->Update();
   this->image = filter->GetOutput();
 
   return *this;

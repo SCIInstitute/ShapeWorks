@@ -124,6 +124,11 @@ TEST(shapeworksTests, sigmoid)
   ASSERT_FALSE(system("bash sigmoid.sh"));
 }
 
+TEST(shapeworksTests, intensity)
+{
+  ASSERT_FALSE(system("bash intensity.sh"));
+}
+
 TEST(shapeworksTests, tplevelset)
 {
   ASSERT_FALSE(system("bash tplevelset.sh"));

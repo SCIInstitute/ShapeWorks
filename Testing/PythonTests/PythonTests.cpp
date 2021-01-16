@@ -178,6 +178,12 @@ TEST(pythonTests, tplevelsetfail)
 }
 
 //---------------------------------------------------------------------------
+TEST(pythonTests, intensity)
+{
+  ASSERT_FALSE(system("python intensity.py"));
+}
+
+//---------------------------------------------------------------------------
 TEST(pythonTests, topo)
 {
   ASSERT_FALSE(system("python topo.py"));

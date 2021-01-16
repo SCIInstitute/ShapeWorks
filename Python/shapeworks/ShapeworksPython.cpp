@@ -400,6 +400,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("applyGradientFilter",   &Image::applyGradientFilter, "computes gradient magnitude of an image region at each pixel using gradient magnitude filter")
   .def("applySigmoidFilter",    &Image::applySigmoidFilter, "computes sigmoid function pixel-wise using sigmoid image filter", "alpha"_a=10.0, "beta"_a=10.0)
   .def("applyTPLevelSetFilter", &Image::applyTPLevelSetFilter, "segments structures in image using topology preserving geodesic active contour level set filter", "featureImage"_a, "scaling"_a=20.0)
+  .def("applyIntensityFilter",  &Image::applyIntensityFilter, "applies intensity windowing image filter", "min"_a=0.0, "max"_a=0.0)
   .def("gaussianBlur",          &Image::gaussianBlur, "applies gaussian blur", "sigma"_a=0.0)
   .def("crop",                  &Image::crop, "crop image down to the current region (e.g., from bounding-box), or the specified min/max in each direction", "region"_a)
   .def("clip", [](Image& image, const std::vector<double>& o, std::vector<double>& p1, std::vector<double>& p2, const Image::PixelType val) {

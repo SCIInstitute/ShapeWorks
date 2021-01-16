@@ -355,8 +355,8 @@ TEST(ImageTests, sigmoidTest)
 TEST(ImageTests, intensityTest)
 {
   Image image(std::string(TEST_DATA_DIR) + "/nonBinary.nrrd");
-  image.applyIntensityFilter(0, 1);
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/intensity_baseline.nrrd");
+  image.applyIntensityFilter(0, 100);
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/intensity.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
