@@ -100,7 +100,7 @@ def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False):
         outname = rename(inname, segDir, 'com')
         outDataListSeg.append(outname)
         img = Image(inname)
-        T = img.centerOfMass() - img.center()
+        T = img.center() - img.centerOfMass()
 
         # binarize result since linear interpolation makes image blurry again
         img.translate(T).binarize().write(outname)
@@ -468,13 +468,14 @@ def MeshesToVolumesUsingImages(outDir, meshList, imgList, printCmd=True):
             print("CMD: " + " ".join(execCommand))
         subprocess.check_call(execCommand)
 
+        spacing_string = str(img.spacing()[0]).replace(".0","")
         # save output volume
-        output_volume = mesh.replace(".ply", ".rasterized_sp" + str(spacing[0]) + ".nrrd")
+        output_volume = mesh.replace(".ply", ".rasterized_sp" + spacing_string + ".nrrd")
         shutil.move(output_volume, segFile)
         segList.append(segFile)
 
         # save output DT
-        output_DT =  mesh.replace(".ply", ".DT_sp" + str(spacing[0]) + ".nrrd")
+        output_DT =  mesh.replace(".ply", ".DT_sp" + spacing_string+ ".nrrd")
         dtFile = segFile.replace(".nrrd", "_DT.nrrd")
         shutil.move(output_DT, dtFile)
 
@@ -521,11 +522,12 @@ def MeshesToVolumes(outDir, meshList, spacing, printCmd=True):
             print("CMD: " + " ".join(execCommand))
         subprocess.check_call(execCommand)
         # save output volume
-        output_volume = mesh.replace(".ply", ".rasterized_sp" + str(spacing[0]) + ".nrrd")
+        spacing_string = str(spacing[0]).replace(".0","")
+        output_volume = mesh.replace(".ply", ".rasterized_sp" + spacing_string+ ".nrrd")
         shutil.move(output_volume, segFile)
         segList.append(segFile)
         # save output DT
-        output_DT =  mesh.replace(".ply", ".DT_sp" + str(spacing[0]) + ".nrrd")
+        output_DT =  mesh.replace(".ply", ".DT_sp" + spacing_string + ".nrrd")
         dtFile = segFile.replace(".nrrd", "_DT.nrrd")
         shutil.move(output_DT, dtFile)
     return segList
@@ -572,9 +574,9 @@ def ClipBinaryVolumes(outDir, segList, cutting_plane_points, printCmd=True):
         outname = rename(inname, outDir, "clipped")
         outListSeg.append(outname)
         img = Image(inname)
-        img.clip(Point(cutting_plane_points[0], cutting_plane_points[1], cutting_plane_points[2]),
-                 Point(cutting_plane_points[3], cutting_plane_points[4], cutting_plane_points[5]),
-                 Point(cutting_plane_points[6], cutting_plane_points[7], cutting_plane_points[8]),0.0).write(outname)
+        img.clip([cutting_plane_points[0], cutting_plane_points[1], cutting_plane_points[2]],
+                 [cutting_plane_points[3], cutting_plane_points[4], cutting_plane_points[5]],
+                 [cutting_plane_points[6], cutting_plane_points[7], cutting_plane_points[8]],0.0).write(outname)
     return outListSeg
 
 def ShowCuttingPlanesOnImage(input_file, cutting_planes, printCmd=True):

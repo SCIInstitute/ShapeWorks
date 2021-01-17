@@ -134,6 +134,7 @@ def train(loader_dir, parameters, parent_dir):
 	logger = open(parent_dir + "train_log.csv", "w+")
 	log_print(logger, ["Epoch", "Train_Err", "Train_Rel_Err", "Val_Err", "Val_Rel_Err", "Sec"])
 	t0 = time.time()
+	smallest_val_rel_loss = np.Inf
 	for e in range(1, num_epochs + 1):
 		torch.cuda.empty_cache()
 		# train
@@ -171,16 +172,21 @@ def train(loader_dir, parameters, parent_dir):
 			train_rel_err = np.mean(train_rel_losses)
 			val_rel_err =  np.mean(val_rel_losses)
 			log_print(logger, [e, train_mr_MSE, train_rel_err, val_mr_MSE, val_rel_err, time.time()-t0])
-			# save
-			torch.save(model.state_dict(), os.path.join(parent_dir, 'model.torch'))
-			torch.save(opt.state_dict(), os.path.join(parent_dir, 'opt.torch'))
+			if val_rel_loss < smallest_val_rel_loss:
+				smallest_val_rel_loss = val_rel_loss
+				best_epoch = e
+				count = 0
+				torch.save(model.state_dict(), os.path.join(parent_dir, 'best_model.torch'))
+				torch.save(opt.state_dict(), os.path.join(parent_dir, 'best_opt.torch'))
 			t0 = time.time()
 	# save
 	logger.close()
-	torch.save(model.state_dict(), os.path.join(parent_dir, 'model.torch'))
-	torch.save(opt.state_dict(), os.path.join(parent_dir, 'opt.torch'))
-	print("Training complete, model saved.")
-	return os.path.join(parent_dir, 'model.torch')
+	torch.save(model.state_dict(), os.path.join(parent_dir, 'final_model.torch'))
+	torch.save(opt.state_dict(), os.path.join(parent_dir, 'final_opt.torch'))
+	print("Training complete.")
+	print("Best model saved after epoch " + str(best_epoch) + ".")
+	print("Final model saved after epoch " + str(e) + ".")
+	return os.path.join(parent_dir, 'final_model.torch'), os.path.join(parent_dir, 'best_model.torch')
 
 ############################## Test Model #################################
 '''
