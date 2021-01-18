@@ -18,7 +18,7 @@ import CommonUtils
 
 def Run_Pipeline(args):
     """
-    The data (ellipsoid.zip) is dowloaded to /Data folder and extracted to 
+    The data (ellipsoid-aligned.zip) is dowloaded to /Data folder and extracted to 
     /Output/ellpsoid_cut
     """
 
@@ -26,7 +26,7 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
     # Get data
-    datasetName = "ellipsoid-v0"
+    datasetName = "ellipsoid_aligned-v0"
     outputDirectory = "Output/ellipsoid_cut/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
@@ -43,64 +43,11 @@ def Run_Pipeline(args):
     else:
         sample_idx = []
 
-    """
-    ## GROOM : Data Pre-processing
-    For the unprepped data the first few steps are
-    -- Isotropic resampling
-    -- Center
-    -- Padding
-    -- Center of Mass Alignment
-    -- Rigid Alignment
-    -- Largest Bounding Box and Cropping
-    For a detailed explanation of grooming steps see: /Documentation/Workflow/Groom.md
-    """
-    if args.skip_grooming:
-        print("Skipping grooming.")
-        dtDirecory = outputDirectory + datasetName + '/groomed/distance_transforms/'
-        indices = []
-        if args.tiny_test:
-            indices = [0,1,2]
-        elif args.use_subsample:
-            indices = sample_idx
-        dtFiles = CommonUtils.get_file_list(dtDirecory, ending=".nrrd", indices=indices)    
-    else:
-        print("\nStep 2. Groom - Data Pre-processing\n")
-        if int(args.interactive) != 0:
-            input("Press Enter to continue")
-
-        groomDir = outputDirectory + 'groomed/'
-        if not os.path.exists(groomDir):
-            os.makedirs(groomDir)
-            
-        """Apply isotropic resampling"""
-        resampledFiles = applyIsotropicResampling(groomDir + "resampled/segmentations", fileList)
-
-        """Apply centering"""
-        centeredFiles = center(groomDir + "centered/segmentations", resampledFiles)
-
-        """Apply padding"""
-        paddedFiles = applyPadding(groomDir + "padded/segmentations", centeredFiles, 10)
-
-        """Apply center of mass alignment"""
-        comFiles = applyCOMAlignment(groomDir + "com_aligned/segmentations", paddedFiles, None)
-
-        """ Apply rigid alignment """
-        ref = FindReferenceImage(comFiles)
-        alignedFiles = applyRigidAlignment(groomDir + "aligned/segmentations", ref, comFiles)
-
-        """Compute largest bounding box and apply cropping"""
-        croppedFiles = applyCropping(groomDir + "cropped/segmentations", alignedFiles, groomDir + "aligned/segmentations/*.aligned.nrrd")
-
-        """
-        We convert the scans to distance transforms, this step is common for both the
-        prepped as well as unprepped data, just provide correct filenames.
-        """
-
-        print("\nStep 3. Groom - Convert to distance transforms\n")
-        if int(args.interactive) != 0:
-            input("Press Enter to continue")
-
-        dtFiles = applyDistanceTransforms(groomDir, croppedFiles)
+    print("\nStep 2. Get distance transforms\n")
+    groomDir = outputDirectory + 'groomed/'
+    if not os.path.exists(groomDir):
+        os.makedirs(groomDir)
+    dtFiles = applyDistanceTransforms(groomDir, fileList)
 
     """
     ## OPTIMIZE : Particle Based Optimization
