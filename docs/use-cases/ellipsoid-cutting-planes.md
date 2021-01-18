@@ -2,9 +2,9 @@
 
 ## What and Where is the Use Case? 
 
-The ellipsoid dataset comprises of axis-aligned ellipsoids with varying radii along a single axis. This example demonstrates using multiple cutting planes to constrain the distribution of particles. This can be used in modeling scenarios where statistical modeling/analysis is needed for a region-of-interest on the anatomy/object-class at hand without having to affect the input data.
+This example demonstrates using multiple cutting planes to constrain the distribution of particles on ellipsoids which are already aligned. This can be used in modeling scenarios where statistical modeling/analysis is needed for a region-of-interest on the anatomy/object-class at hand without having to affect the input data. 
 
-*Ellipsoids (major radius as one mode of variation) with 2 cutting planes*
+*Ellipsoids with 2 cutting planes*
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ellipsoid_cut_trim.mp4" autoplay muted loop controls style="width:100%"></p>
 
 
@@ -16,7 +16,6 @@ The use case is located at: `Examples/Python/ellipsoid_cut.py`
 
 To run the use case, run `RunUseCase.py` (in `Examples/Python/`) with proper tags. The tags control the type of input data and the optimization method. See [Getting Started with Use Cases](../use-cases/use-cases.md#running-use-case) for the full list of tags.
 
-* `--skip_grooming`: to run the optimization on previously processed/groomed data
 * `--use_single_scale`: to use the single-scale optimization. Default is multi-scale optimization
 
 To run the full pipeline with multi-scale:
@@ -29,7 +28,7 @@ $python RunUseCase.py --use_case ellipsoid_cut
 This calls `ellipsoid_cut.py` (in `Examples/Python/`) to perform the following.
 
 * Loads the ellipsoid dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
-* Grooms the segmentations by calling data preprocessing functions in `GroomUtils.py` (in `Examples/Python/`). See [Grooming Data](#grooming-data) for details about these preprocessing steps.
+* Creates distance transforms from the aleardy aligned segmentations by calling the function in `GroomUtils.py` (in `Examples/Python/`).
 * Defines two cutting planes to be used to constrain the particle optimization on all ellipsoid. Note that this dataset contains a set of roughly aligned ellispoids; hence a common set of cutting planes can be used for all samples. 
 ```
     cutting_plane_points1 = [[10, 10, 0], [-10, -10, 0], [10, -10, 0]]
@@ -47,15 +46,7 @@ $ python RunUseCase.py --use_case ellipsoid_cut --start_with_prepped_data
 
 ## Grooming Data
 
-The following preprocessing steps are only performed when you start with *unprepped* data, i.e., the tag `--start_with_prepped_data` is not used. For a description of the grooming tools and parameters, see: [How to Groom Your Dataset?](../workflow/groom.md).
-
-1. **Isotropic Resampling**: Binary segmentations in `ellipsoid/segmentations/` are resampled to have an isotropic voxel spacing using a user-defined spacing. This step could also be used to produce segmentations with smaller voxel spacing, and thereby reduce aliasing artifacts (i.e., staircase/jagged surface) due to binarization.
-2. **Apply Padding**: Segmentations that touch the image boundary will have an artificial hole at that intersection. Segmentations are padded by adding a user-defined number of voxels along each image direction (rows, cols, and slices) to avoid introducing artificial holes.
-3. **Center-of-Mass Alignment**: This translational alignment step is performed before rigidly aligning the samples to a shape reference. This factors out translations to reduce the risk of misalignment and allow for a medoid sample to be automatically selected as the reference for rigid alignment.
-4. **Reference Selection**: The reference is selected by first computing the mean (average) distance transform of the segmentations, then selecting the sample closest to that mean (i.e., medoid).
-5. **Rigid Alignment**: All of the segmentations are then aligned to the selected reference using rigid alignment, which factors out the rotation and remaining translation.
-6. **Cropping**: The segmentations are cropped so that all of the samples are within the same bounding box.
-7. **Distance Transform**: Finally, the signed distance transform is computed, and the dataset is now ready for the optimize phase.
+The segmentations used in this use case are already aligned so the only grooming step neccesary is converting them to distance transforms. For a description of the grooming tools and parameters, see: [How to Groom Your Dataset?](../workflow/groom.md).
 
 ## Optimizing Shape Model
 
