@@ -97,11 +97,13 @@ private:
   double GeodesicDistance(int v1, int v2) const;
   trimesh::vec3 GeodesicDistanceFromFace(int f1, int f2) const;
   Eigen::VectorXd GeodesicDistanceFromFace(int f1) const;
+  Eigen::Vector3d Gradient(int src_v, int f) const;
   mutable struct {
     igl::HeatGeodesicsData<double> heat_data;
 
     //TODO lru_cache https://github.com/lamerman/cpp-lru-cache/blob/master/include/lrucache.hpp
     std::unordered_map<int, Eigen::VectorXd> cache;
+    std::unordered_map<int, Eigen::MatrixXd> grad_cache;
 
     //TODO should we just recompute this every time?
     Eigen::SparseMatrix<double> G;

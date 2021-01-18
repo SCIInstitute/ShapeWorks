@@ -254,7 +254,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 
     VectorType r;
     //TODO Is this where the gradient of geodesic will end up?
-    const double distance = system->GetDomain(d)->Distance(
+    system->GetDomain(d)->Distance(
             pos, idx,
             m_CurrentNeighborhood[i].Point, m_CurrentNeighborhood[i].Index,
             &r
@@ -278,7 +278,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   }
 
   double p = 0.0;
-  if (A > epsilon) {    
+  if (A > epsilon) {
     p = -1.0 / (A * m_CurrentSigma * m_CurrentSigma);
   }
   

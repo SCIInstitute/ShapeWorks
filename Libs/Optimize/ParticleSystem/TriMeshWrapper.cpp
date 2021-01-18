@@ -127,7 +127,11 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
   // const auto vec_dists = GeodesicDistanceFromFace(face_b, face_a);
   // best_dist = bary_a.dot(vec_dists);
 
-  if(out_grad != nullptr) {
+  /*if(out_grad != nullptr && best_dist < 16.0) {
+    for (int i = 0; i < DIMENSION; i++) {
+      (*out_grad)[i] = pt_a[i] - pt_b[i];
+    }
+  } else*/ if(out_grad != nullptr) {
     // TODO this treats the gradient of geodesics as constant over a face, is this alright?
     const int src_v = mesh_->faces[face_b][best_idx_b];
 
@@ -144,17 +148,15 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
     // const Eigen::MatrixXd GN = Eigen::Map<const Eigen::MatrixXd>((G*D).eval().data(), n_faces, 9);
     // const Eigen::MatrixXd GD = G.block(3*face_b, 0, 3, G.cols()) * D;
 
-    const Eigen::MatrixXd GD_all = Eigen::Map<const Eigen::MatrixXd>((G*D).eval().data(), mesh_->faces.size(), 3);
-    const Eigen::MatrixXd GD = GD_all.row(face_a);
+    // const Eigen::MatrixXd GD_all = Eigen::Map<const Eigen::MatrixXd>((G*D).eval().data(), mesh_->faces.size(), 3);
+    // const Eigen::MatrixXd GD = GD_all.row(face_a);
 
-    if(GD.rows() != 1 || GD.cols() != 3) {
-      std::cout << "GD: " << GD.rows() << " " << GD.cols() << "\n";
-      throw std::runtime_error("Bad bad GD");
-    }
+    const auto GD = Gradient(src_v, face_a);
+
 
     // std::cout << "------\n";
     for(int i=0; i<DIMENSION; i++) {
-      (*out_grad)[i] = GD(0,i);
+      (*out_grad)[i] = GD(i) * best_dist;
       // std::cout << out_grad->get(i) << " | " << (pt_a[i] - pt_b[i]) << "\n";
     }
     const double angle_geo = std::atan2(out_grad->get(1), out_grad->get(0));
@@ -230,6 +232,21 @@ Eigen::VectorXd TriMeshWrapper::GeodesicDistanceFromFace(int f1) const
 
   igl::heat_geodesics_solve(geodesic_cache_.heat_data, gamma, D);
   return D;
+}
+
+Eigen::Vector3d TriMeshWrapper::Gradient(int src_v, int f) const
+{
+  auto entry = geodesic_cache_.grad_cache.find(src_v);
+  if(entry == geodesic_cache_.grad_cache.end()) {
+    GeodesicDistance(src_v, mesh_->vertices.size()-1); // make sure its in cache
+    const auto& D = geodesic_cache_.cache[src_v];
+    const auto& G = geodesic_cache_.G;
+    const Eigen::MatrixXd GD_all = Eigen::Map<const Eigen::MatrixXd>((G*D).eval().data(), mesh_->faces.size(), 3);
+    geodesic_cache_.grad_cache[src_v] = std::move(GD_all);
+    entry = geodesic_cache_.grad_cache.find(src_v);
+  }
+
+  return entry->second.row(f);
 }
 
 /** start in barycentric coords of currentFace
