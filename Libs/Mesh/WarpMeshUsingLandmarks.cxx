@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
 {
     if (argc != 5)
     {
-        std::cout << "Usage: " << argv[0] << " plyMeshFilePath inPointsPath  outXMLFile numParticles" << std::endl;
+        std::cout << "Usage: " << argv[0] << " plyMeshFilePath inPointsPath outXMLFile numParticles" << std::endl;
         return EXIT_FAILURE;
     }
     std::string inMeshname  = std::string(argv[1]);
