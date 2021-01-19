@@ -2,63 +2,57 @@
 
 ShapeWorks Studio provides an all-in-one GUI based interface to the
 ShapeWorks toolkit.  In Studio, you can Groom, Optimize and Analyze
-your data all within a single interface
-
-![ShapeWorks Studio Interface with Splash Screen](../img/studio/studio_interface.png)
+your data all within a single interface.
 
 ## Splash Screen
 
-The splash screen provides access to recent projects and an option to create a new blank project
+The splash screen provides access to recent projects and an option to create a new blank project.
+
+![ShapeWorks Studio Interface with Splash Screen](../img/studio/studio_interface.png)
 
 ## Data Module
 
-The Data Module shows the project data table as well as notes and provides buttons to add or remove shapes.
+The Data Module shows the project data table as well as user-defined/saved notes. This module enables you to add and remove shapes (segmentations and surface meshes) to your cohort for further analysis.
 
 ![ShapeWorks Studio Data Module](../img/studio/studio_data.png)
 
 ## Groom Module
 
-The Groom Module provides options to preprocess/groom the input data.  Options differ for binary segmentations and meshes.
-
-You also have the option of skipping grooming if your data is already prepped.
+The Groom module provides options to preprocess/groom the input data.  Options differ for binary segmentations and meshes. You also have the option of skipping grooming if your data is already prepped.
 
 ![ShapeWorks Studio Groom Module](../img/studio/studio_groom.png)
 
 ## Optimize Module
 
-The Optimize Module provides options for the particle based optimization.  After selecting options and clicking "Run Optimize", you can monitor the process of the optimization in real time.  Particle positions will be displayed on individual shapes as they progress.
+The Optimize module provides options for the particle-based optimization.  After selecting options and clicking "Run Optimize", you can monitor the process of the optimization in real-time.  Particle positions will be displayed on individual shapes as they progress where color encodes surface correspondences across different shapes in your cohort.
 
 ![ShapeWorks Studio Optimize Module](../img/studio/studio_optimize.png)
 
 ## Analysis Module
 
-After optimization is complete, you may analyze the data in Studio using the Analysis Module.  There are several panels available in the Analysis Module.
+After optimization is complete, you may analyze the data in Studio using the Analysis module.  There are several panels available in the Analysis Module.
 
 ### View Panel
 
-The view panel contains all of the options for controlling the analyis viewer options.
+The View panel contains all of the options for controlling the analyis viewer options.
 
 ![ShapeWorks Studio Analysis View Panel](../img/studio/studio_analyze_view.png)
 
 #### Group
 
-The group mode allows for group comparison.  Each column of group values from the project can be selected and the differences between any two values in the groups can be displayed by selecting the group values in the left and right dropdown boxes.  A group difference display showing vectors and a colormap of distance can be shown using the "Diff -->" button.
+The Group mode allows for group comparison to quantify and visualize population-level differences.  Each `group_<value>` column from the project can be selected and the differences between any two values (i.e., group identifiers) in the groups can be displayed by selecting the group values in the left and right dropdown boxes.  A group difference display showing vectors and a colormap of distance can be shown using the "Diff -->" button.
 
 ![ShapeWorks Studio Analysis View Panel Group Display](../img/studio/studio_analyze_view_group.png)
 
 #### Samples
 
-The samples tab of the view panel allows us to view all of the samples, view a single sample by index, or view the median sample.
+The Samples tab of the view panel allows you to view all of the samples in your cohort, view a single sample by index, or view the median sample.
 
 ![ShapeWorks Studio Analysis View Panel Sample Display](../img/studio/studio_analyze_view_samples.png)
 
 #### PCA
 
-The PCA tab of the view panel shows reconstructed shapes along PCA modes of variation.
-
-You can control the location along the PCA mode with the Standard Deviation Slider.  The extent of this slider is configurable in [Preferences](#preferences).
-
-Displayed with each reconstruction is the Lambda value for this position on the slider and the Eigenvalue for this PCA mode.
+The PCA tab of the View panel shows reconstructed shapes (surface meshes) along PCA modes of variation. Modes of variations are shape parameters learned/discovered from your data that describes shape variations. You can control the location along the PCA mode with the Standard Deviation slider.  The extent of this slider is configurable in [Preferences](#preferences). Displayed with each reconstruction is the Lambda value for this position on the slider and the Eigenvalue for this PCA mode.
 
 ![ShapeWorks Studio Analysis View Panel PCA Display](../img/studio/studio_analyze_view_pca.png)
 
@@ -98,6 +92,7 @@ Studio provides a number of preference options.
 | Log Location | A display of where the current log file is located |
 
 <br/>
+
 ## Viewer Controls
 
 At the bottom of the viewers are the controls for the viewers:
@@ -135,7 +130,7 @@ The selected point will become white and all other points will change to a color
 
 To turn off this display, press '1' while hovering over something other than a particle.
 
-Additionally, after selecting a point, you may select another point by pressing '2' while hovering.  This will set the first point to white, the second point to yellow and the rest to black.  This is an easy way to see how particlar particles vary over shapes.
+Additionally, after selecting a point, you may select another point by pressing '2' while hovering.  This will set the first point to white, the second point to yellow and the rest to black.  This is an easy way to see how particlar particles vary and correspond across shapes.
 
 ![ShapeWorks Studio Particle Selection2](../img/studio/studio_particle_selection2.png)
 
