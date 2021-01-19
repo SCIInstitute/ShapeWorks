@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.11)
 set(CMAKE_CXX_STANDARD 14)             # available options are [98, 11, 14, 17. 20]
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake")
+find_package(Python3 3.7 EXACT REQUIRED)
 
 
 ###########################################
@@ -21,7 +22,6 @@ endif()
 option(Build_Post      "Build post"         OFF)
 option(Build_View2     "Build view2"        OFF)
 option(Build_Studio    "Build studio"       OFF)
-option(Build_PythonAPI "Build Python API"   ON)
 option(BUILD_TESTS     "Build tests"        ON)
 
 if ("${Build_Post}" OR "${Build_View2}" OR "${Build_Studio}")
@@ -64,6 +64,7 @@ if(LINUX)
 endif(LINUX)
 
 # put executables in bin directory (under build dir) so they are easy to find
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 SET(CMAKE_BUNDLE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
@@ -71,6 +72,11 @@ SET(CMAKE_BUNDLE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 if (APPLE)
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-inconsistent-missing-override")
 endif()
+
+if(MSVC)
+  # turn on unwind semantics
+  SET(CMAKE_CXX_FLAGS "/EHsc")
+endif(msvc)
 
 # GUI
 if (SHAPEWORKS_GUI)
@@ -134,11 +140,14 @@ find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 ### XLNT
 find_package (XLNT REQUIRED)
 
+### Libigl set include path
+find_package(LIBIGL REQUIRED QUIET)
+
 if(USE_OPENMP)
   find_package(OpenMP REQUIRED)
   add_definitions(-DSW_USE_OPENMP) # used in ExternalLibs/trimesh2/include/TriMesh.h
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -fPIC")
 endif(USE_OPENMP)
 
 if(APPLE)
@@ -150,6 +159,10 @@ endif()
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/Libs/Common")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/ExternalLibs/optparse")
+
+SET(PYBIND11_PYTHON_VERSION 3.7)
+find_package(pybind11 2.5.0 REQUIRED)
+add_subdirectory(Python/shapeworks)
 
 add_subdirectory(ExternalLibs)
 add_subdirectory(Libs)

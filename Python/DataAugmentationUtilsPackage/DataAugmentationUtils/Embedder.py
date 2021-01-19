@@ -21,7 +21,8 @@ class PCA_Embbeder(Embedder):
 	# overriding abstract methods
 	def __init__(self, data_matrix, num_dim=0, percent_variability=0.95):
 		self.data_matrix = data_matrix
-		self.run_PCA(num_dim, percent_variability)
+		num_dim = self.run_PCA(num_dim, percent_variability)
+		self.num_dim = num_dim
 	# run PCA on data_matrix for PCA_Embedder
 	def run_PCA(self, num_dim, percent_variability):
 		# get covariance matrix (uses compact trick)
@@ -50,6 +51,7 @@ class PCA_Embbeder(Embedder):
 		self.PCA_scores = PCA_scores
 		self.eigen_vectors = eigen_vectors
 		self.eigen_values = eigen_values
+		return num_dim
 	# write PCA info to files 
 	# @TODO do we need all of this?
 	def write_PCA(self, out_dir, suffix):

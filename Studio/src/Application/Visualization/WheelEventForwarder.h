@@ -4,9 +4,10 @@
 
 class QScrollBar;
 
-class WheelEventForwarder : public QObject
-{
-  Q_OBJECT
+namespace shapeworks {
+
+class WheelEventForwarder : public QObject {
+Q_OBJECT
 public:
   explicit WheelEventForwarder(QScrollBar* target);
   ~WheelEventForwarder();
@@ -16,3 +17,5 @@ public:
 private:
   QScrollBar* target_;
 };
+
+}

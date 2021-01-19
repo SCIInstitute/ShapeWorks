@@ -28,12 +28,13 @@ public:
     return shapeworks::DomainType::Mesh;
   }
 
-  bool ApplyConstraints(PointType &p, bool dbg = false) const override;
+  bool ApplyConstraints(PointType &p, int idx, bool dbg = false) const override;
   bool ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const;
-  vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const override;
-  PointType UpdateParticlePosition(const PointType &point, vnl_vector_fixed<double, DIMENSION> &update) const override;
+  vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos, int idx) const override;
+  PointType UpdateParticlePosition(const PointType &point, int idx, vnl_vector_fixed<double, DIMENSION> &update) const override;
 
-  double GetCurvature(const PointType &p) const override {
+  double GetCurvature(const PointType &p, int idx) const override {
+    //TODO Why not return the actual curvature
     return GetSurfaceMeanCurvature();
   }
 
@@ -66,7 +67,7 @@ public:
   PointType GetValidLocationNear(PointType p) const override {
     PointType valid;
     valid[0] = p[0]; valid[1] = p[1]; valid[2] = p[2];
-    ApplyConstraints(valid);
+    ApplyConstraints(valid, -1);
     return valid;
   }
 
@@ -77,16 +78,14 @@ public:
 
   double GetMaxDiameter() const override;
 
-  inline vnl_vector_fixed<float, DIMENSION> SampleGradientAtPoint(const PointType &point) const override {
-    return meshWrapper->SampleNormalAtPoint(point);
+  inline vnl_vector_fixed<float, DIMENSION> SampleGradientAtPoint(const PointType &point, int idx) const override {
+    return meshWrapper->SampleNormalAtPoint(point, idx);
   }
-  inline vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType & point) const override {
-    return meshWrapper->SampleNormalAtPoint(point);
+  inline vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType & point, int idx) const override {
+    return meshWrapper->SampleNormalAtPoint(point, idx);
   }
-  inline vnl_matrix_fixed<float, DIMENSION, DIMENSION> SampleHessianAtPoint(const PointType &p) const override {
-    //return meshWrapper->SampleHessianAtPoint(p);
-    // TODO need to figure out how to compute Hessians at mesh vertices.
-    return vnl_matrix_fixed<float, DIMENSION, DIMENSION>();
+  inline HessianType SampleHessianAtPoint(const PointType &p, int idx) const override {
+    return meshWrapper->SampleGradNAtPoint(p, idx);
   }
 
   inline double Distance(const PointType &a, const PointType &b) const override {

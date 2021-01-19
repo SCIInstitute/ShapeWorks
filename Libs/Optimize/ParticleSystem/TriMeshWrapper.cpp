@@ -1,6 +1,10 @@
 
 #include "TriMeshWrapper.h"
 
+#include <igl/grad.h>
+#include <igl/per_vertex_normals.h>
+#include <igl/doublearea.h>
+
 #include <set>
 
 using namespace trimesh;
@@ -45,6 +49,7 @@ TriMeshWrapper::TriMeshWrapper(std::shared_ptr<trimesh::TriMesh> mesh)
   mesh_->need_normals();
   mesh_->need_curvatures();
   ComputeMeshBounds();
+  ComputeGradN();
 
   kd_tree_ = std::make_shared<KDtree>(mesh_->vertices);
 }
@@ -212,11 +217,12 @@ Eigen::Vector3d TriMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a,
 }
 
 TriMeshWrapper::PointType
-TriMeshWrapper::GeodesicWalk(PointType pointa, vnl_vector_fixed<double, DIMENSION> vector) const
+TriMeshWrapper::GeodesicWalk(PointType pointa, int idx, vnl_vector_fixed<double, DIMENSION> vector) const
 {
 
-  PointType snapped = this->SnapToMesh(pointa);
-  int faceIndex = GetTriangleForPoint(convert<PointType, point>(snapped));
+  PointType snapped = this->SnapToMesh(pointa, idx);
+  vec3 bary;
+  int faceIndex = GetTriangleForPoint(convert<PointType, point>(snapped), idx, bary);
 
   Eigen::Vector3d vectorEigen = convert<vnl_vector_fixed<double, DIMENSION>, Eigen::Vector3d>(
     vector);
@@ -234,10 +240,11 @@ TriMeshWrapper::GeodesicWalk(PointType pointa, vnl_vector_fixed<double, DIMENSIO
 }
 
 vnl_vector_fixed<double, DIMENSION>
-TriMeshWrapper::ProjectVectorToSurfaceTangent(const PointType& pointa,
+TriMeshWrapper::ProjectVectorToSurfaceTangent(const PointType& pointa, int idx,
                                               vnl_vector_fixed<double, DIMENSION>& vector) const
 {
-  int faceIndex = GetTriangleForPoint(convert<const PointType, point>(pointa));
+  vec3 bary;
+  int faceIndex = GetTriangleForPoint(convert<const PointType, point>(pointa), idx, bary);
   const Eigen::Vector3d normal = GetFaceNormal(faceIndex);
   Eigen::Vector3d result = ProjectVectorToFace(normal,
                                                convert<vnl_vector_fixed<double, DIMENSION>, Eigen::Vector3d>(
@@ -268,11 +275,11 @@ Eigen::Vector3d TriMeshWrapper::RotateVectorToFace(const Eigen::Vector3d& prevno
   return rotated;
 }
 
-vnl_vector_fixed<float, DIMENSION> TriMeshWrapper::SampleNormalAtPoint(PointType p) const
+vnl_vector_fixed<float, DIMENSION> TriMeshWrapper::SampleNormalAtPoint(PointType p, int idx) const
 {
   point pointa = convert<PointType, point>(p);
-  int face = GetTriangleForPoint(pointa);
-  vec3 bary = ComputeBarycentricCoordinates(pointa, face);
+  vec3 bary;
+  int face = GetTriangleForPoint(pointa, idx, bary);
 
   vnl_vector_fixed<float, DIMENSION> weightedNormal(0, 0, 0);
   for (int i = 0; i < 3; i++) {
@@ -281,6 +288,20 @@ vnl_vector_fixed<float, DIMENSION> TriMeshWrapper::SampleNormalAtPoint(PointType
     weightedNormal += normal.normalize() * bary[i];
   }
   return weightedNormal;
+}
+
+TriMeshWrapper::HessianType TriMeshWrapper::SampleGradNAtPoint(PointType p, int idx) const
+{
+  point pointa = convert<PointType, point>(p);
+  vec3 bary;
+  const int face = GetTriangleForPoint(pointa, idx, bary);
+
+  HessianType weighted_grad_normal = HessianType(0.0);
+  for (int i = 0; i < 3; i++) {
+    HessianType grad_normal = grad_normals_[mesh_->faces[face][i]];
+    weighted_grad_normal += grad_normal * bary[i];
+  }
+  return weighted_grad_normal;
 }
 
 int TriMeshWrapper::GetNearestVertex(point pt) const
@@ -308,10 +329,31 @@ vec normalizeBary(const vec& bary)
   return vec(bary / sum);
 }
 
+inline bool TriMeshWrapper::IsBarycentricCoordinateValid(const trimesh::vec3& bary) {
+  return ((bary[0] >= -epsilon) && (bary[0] <= 1 + epsilon)) &&
+         ((bary[1] >= -epsilon) && (bary[1] <= 1 + epsilon)) &&
+         ((bary[2] >= -epsilon) && (bary[2] <= 1 + epsilon));
+}
+
 // Checks all of the neighbor faces of the 10 nearest vertices to pt.
-// Returns index of the first face that has valid barycentric coordinates.
-int TriMeshWrapper::GetTriangleForPoint(point pt) const
+// Returns index of the first face that has valid barycentric coordinates, and its
+// barycentric coordinates in baryOut
+int TriMeshWrapper::GetTriangleForPoint(point pt, int idx, vec& baryOut) const
 {
+  // given a guess, just check whether it is still valid.
+  if(idx != -1) {
+    // ensure that the cache has enough elements. this will never be resized to more than the number of particles,
+    if(idx >= particle2tri_.size()) {
+      particle2tri_.resize(idx + 1, 0);
+    }
+
+    const int guess = particle2tri_[idx];
+    baryOut = this->ComputeBarycentricCoordinates(pt, guess);
+    const vec norBary = normalizeBary(baryOut);
+    if(IsBarycentricCoordinateValid(norBary)) {
+      return guess;
+    }
+  }
 
   double closestDistance = 99999999;
   int closestFace = -1;
@@ -326,21 +368,23 @@ int TriMeshWrapper::GetTriangleForPoint(point pt) const
       // Only check each face once
       if (faceCandidatesSet.find(face) == faceCandidatesSet.end()) {
         faceCandidatesSet.insert(face);
-        vec bary = this->ComputeBarycentricCoordinates(pt, face);
-        bary = normalizeBary(bary);
-        if (((bary[0] >= -epsilon) && (bary[0] <= 1 + epsilon)) &&
-            ((bary[1] >= -epsilon) && (bary[1] <= 1 + epsilon)) &&
-            ((bary[2] >= -epsilon) && (bary[2] <= 1 + epsilon))) {
+        baryOut = this->ComputeBarycentricCoordinates(pt, face);
+        const vec norBary = normalizeBary(baryOut);
+        if (IsBarycentricCoordinateValid(norBary)) {
+          if(idx != -1) {
+            // update cache
+            particle2tri_[idx] = face;
+          }
           return face;
         }
         else {
           float distance = 0;
           for (int k = 0; k < 3; k++) {
-            if (bary[k] < 0) {
-              distance += -bary[k];
+            if (norBary[k] < 0) {
+              distance += -norBary[k];
             }
-            else if (bary[k] > 1) {
-              distance += bary[k] - 1;
+            else if (norBary[k] > 1) {
+              distance += norBary[k] - 1;
             }
           }
           if (distance < closestDistance) {
@@ -350,6 +394,11 @@ int TriMeshWrapper::GetTriangleForPoint(point pt) const
         }
       }
     }
+  }
+  baryOut = this->ComputeBarycentricCoordinates(pt, closestFace);
+  if(idx != -1) {
+    // update cache
+    particle2tri_[idx] = closestFace;
   }
   return closestFace;
 }
@@ -381,11 +430,11 @@ vec3 TriMeshWrapper::ComputeBarycentricCoordinates(point pt, int face) const
 }
 
 // snaps the point to the mesh by getting the barycentric coordinates and normalizing them to sum to 1.
-TriMeshWrapper::PointType TriMeshWrapper::SnapToMesh(PointType pointtype) const
+TriMeshWrapper::PointType TriMeshWrapper::SnapToMesh(PointType pointtype, int idx) const
 {
   point pt = convert<PointType, point>(pointtype);
-  int face = GetTriangleForPoint(pt);
-  vec bary = ComputeBarycentricCoordinates(pt, face);
+  vec bary;
+  int face = GetTriangleForPoint(pt, idx, bary);
   for (int i = 0; i < 3; i++) {
     if (bary[i] < -epsilon) bary[i] = 0;
     else if (bary[i] > 1 + epsilon) bary[i] = 1;
@@ -437,4 +486,74 @@ void TriMeshWrapper::ComputeMeshBounds()
               << PrintValue<PointType>(mesh_upper_bound_) << "\n";
   }
 }
+
+void TriMeshWrapper::ComputeGradN()
+{
+  const int n_verts = mesh_->vertices.size();
+  const int n_faces = mesh_->faces.size();
+
+  // Copy from trimesh to libigl data structures
+  Eigen::MatrixXd V;
+  Eigen::MatrixXi F;
+  GetIGLMesh(V, F);
+
+  // Compute normals
+  Eigen::MatrixXd N;
+  igl::per_vertex_normals(V, F, N);
+
+  // Compute gradient operator
+  Eigen::SparseMatrix<double> G;
+  igl::grad(V, F, G);
+
+  // Compute gradient of normals per face
+  const Eigen::MatrixXd GN = Eigen::Map<const Eigen::MatrixXd>((G*N).eval().data(), n_faces, 9);
+
+  // Convert per-face values to per-vertex using face area as weight
+  Eigen::MatrixXd GN_pervertex(n_verts, 9); GN_pervertex.setZero();
+  Eigen::MatrixXd A_perface; igl::doublearea(V,F,A_perface);
+  Eigen::VectorXd A_pervertex(n_verts); A_pervertex.setZero();
+  // scatter the per-face values
+  for(int i=0; i<n_faces; i++) {
+    for(int j=0; j<3; j++) {
+      GN_pervertex.row(F(i,j)) += A_perface(i, 0)*GN.row(i);
+      A_pervertex(F(i, j)) += A_perface(i, 0);
+    }
+  }
+  for(int i=0; i<n_verts; i++) {
+    if(A_pervertex(i) != 0.0) {
+      GN_pervertex.row(i) /= A_pervertex(i);
+    }
+  }
+
+  // Copy back to VNL data structure
+  grad_normals_.resize(n_verts);
+  for(int j=0; j<n_verts; j++) {
+    for(int i=0; i<3; i++) {
+      grad_normals_[j].set(i, 0, GN_pervertex(j, i*3+0));
+      grad_normals_[j].set(i, 1, GN_pervertex(j, i*3+1));
+      grad_normals_[j].set(i, 2, GN_pervertex(j, i*3+2));
+    }
+  }
+
+}
+
+void TriMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F)
+{
+  const int n_verts = mesh_->vertices.size();
+  const int n_faces = mesh_->faces.size();
+
+  V.resize(n_verts, 3);
+  F.resize(n_faces, 3);
+  for(int i=0; i<n_verts; i++) {
+    V(i, 0) = mesh_->vertices[i][0];
+    V(i, 1) = mesh_->vertices[i][1];
+    V(i, 2) = mesh_->vertices[i][2];
+  }
+  for(int i=0; i<n_faces; i++) {
+    F(i, 0) = mesh_->faces[i][0];
+    F(i, 1) = mesh_->faces[i][1];
+    F(i, 2) = mesh_->faces[i][2];
+  }
+}
+
 }

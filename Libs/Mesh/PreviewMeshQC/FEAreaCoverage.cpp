@@ -75,7 +75,45 @@ void FEAreaCoverage::Surface::Create(FEMesh& mesh)
 
 //-----------------------------------------------------------------------------
 FEAreaCoverage::FEAreaCoverage()
-{}
+{
+	m_ballowBackIntersections = false;
+	m_angleThreshold = 0.0;
+	m_backSearchRadius = 0.0;
+}
+
+//-----------------------------------------------------------------------------
+void FEAreaCoverage::AllowBackIntersection(bool b)
+{
+	m_ballowBackIntersections = b;
+}
+
+//-----------------------------------------------------------------------------
+bool FEAreaCoverage::AllowBackIntersection() const
+{
+	return m_ballowBackIntersections;
+}
+
+//-----------------------------------------------------------------------------
+void FEAreaCoverage::SetAngleThreshold(double w)
+{
+	m_angleThreshold = w;
+}
+
+//-----------------------------------------------------------------------------
+double FEAreaCoverage::GetAngleThreshold() const
+{
+	return m_angleThreshold;
+}
+
+void FEAreaCoverage::SetBackSearchRadius(double R)
+{
+	m_backSearchRadius = R;
+}
+
+double FEAreaCoverage::GetBackSearchRadius() const
+{
+	return m_backSearchRadius;
+}
 
 //-----------------------------------------------------------------------------
 vector<double> FEAreaCoverage::Apply(FEMesh& mesh1, FEMesh& mesh2)
@@ -93,15 +131,34 @@ vector<double> FEAreaCoverage::Apply(FEMesh& mesh1, FEMesh& mesh2)
 
   // repeat over all nodes of surface 1
   vector<float> a(m_surf1.Nodes(), 0.f);
-  for (int i = 0; i < m_surf1.Nodes(); ++i) {
+  for (int i = 0; i < m_surf1.Nodes(); ++i)
+  {
     int inode = m_surf1.m_node[i];
     FENode& node = mesh1.Node(inode);
     vec3d ri = node.r;
     vec3d Ni = m_surf1.m_norm[i];
 
     // see if it intersects the other surface
-    if (intersect(ri, Ni, m_surf2)) {
-      val[inode] = 1.f;
+	Intersection q;
+    if (intersect(ri, Ni, m_surf2, q)) 
+    {
+      // see if this is a back intersection
+		vec3d e = q.point - ri;
+		double L1 = e.Length();
+		if (e*Ni < 0.f) L1 = -L1;
+
+		// make sure back intersections are contrained to search radius
+		bool bintersect = true;
+		if ((L1 < 0) && (m_backSearchRadius > 0))
+		{
+			if (-L1 > m_backSearchRadius) bintersect = false;
+		}
+
+		// if the intersection remains, tag it
+		if (bintersect)
+		{
+			val[inode] = 1.f;
+		}      
     }
   }
 
@@ -150,27 +207,36 @@ void FEAreaCoverage::UpdateSurface(FEAreaCoverage::Surface& s)
 }
 
 //-----------------------------------------------------------------------------
-bool FEAreaCoverage::intersect(const vec3d& r, const vec3d& N, FEAreaCoverage::Surface& surf)
+bool FEAreaCoverage::intersect(const vec3d& r, const vec3d& N, FEAreaCoverage::Surface& surf, Intersection& qmin)
 {
   // create the ray
   Ray ray = {r, N};
 
-  // loop over all facets connected to this node
-  Intersection q;
-  for (int i = 0; i < (int)surf.m_face.size(); ++i) {
-    // see if the ray intersects this face
-    if (faceIntersect(surf, ray, i)) {
-      return true;
-    }
-  }
+	// loop over all facets connected to this node
+	Intersection q;
+	int imin = -1;
+	double Lmin;
+	for (int i = 0; i<(int)surf.m_face.size(); ++i)
+	{
+		// see if the ray intersects this face
+		if (faceIntersect(surf, ray, i, q))
+		{
+			double L = (q.point - r).Length();
+			if ((imin == -1) || (L < Lmin))
+			{
+				imin = i;
+				Lmin = L;
+				qmin = q;
+			}
+		}
+	}
 
-  return false;
+	return (imin != -1);
 }
 
 //-----------------------------------------------------------------------------
-bool FEAreaCoverage::faceIntersect(FEAreaCoverage::Surface& surf, const Ray& ray, int nface)
+bool FEAreaCoverage::faceIntersect(FEAreaCoverage::Surface& surf, const Ray& ray, int nface, Intersection& q)
 {
-  Intersection q;
   q.m_index = -1;
   FEMesh& mesh = *surf.m_mesh;
 
@@ -187,6 +253,9 @@ bool FEAreaCoverage::faceIntersect(FEAreaCoverage::Surface& surf, const Ray& ray
 
     Triangle tri = { rn[0], rn[1], rn[2], surf.m_fnorm[nface] };
     bfound = IntersectTriangle(ray, tri, q, false);
+
+    // check angle threshold
+    bfound = (bfound && (ray.direction * tri.fn < -m_angleThreshold));
   }
   break;
   case 4:
@@ -201,7 +270,8 @@ bool FEAreaCoverage::faceIntersect(FEAreaCoverage::Surface& surf, const Ray& ray
   break;
   }
 
-  if (bfound) {
+	if (bfound && (m_ballowBackIntersections == false))
+  {
     // make sure the projection is in the direction of the ray
     bfound = (ray.direction * (q.point - ray.origin) > 0.f);
   }

@@ -19,9 +19,11 @@
 
 #include <vnl/vnl_vector.h>
 
-#include <Data/Mesh.h>
+#include <Data/StudioMesh.h>
 #include <Data/MeshWorkQueue.h>
 #include <Data/Preferences.h>
+
+namespace shapeworks {
 
 // mesh cache type
 using CacheMap = std::map<MeshWorkItem, MeshHandle>;
@@ -29,8 +31,7 @@ using CacheMap = std::map<MeshWorkItem, MeshHandle>;
 // LRC list
 using CacheList = std::list<MeshWorkItem>;
 
-class MeshCache
-{
+class MeshCache {
 
 public:
 
@@ -49,10 +50,10 @@ private:
   void freeSpaceForAmount(size_t allocation);
 
   static long long get_total_physical_memory();
-  static long long get_total_addressible_memory();
-  static long long get_total_addressible_physical_memory();
+  static long long get_total_addressable_memory();
+  static long long get_total_addressable_physical_memory();
 
-  Preferences &preferences_;
+  Preferences& preferences_;
 
   // mesh cache
   CacheMap mesh_cache_;
@@ -69,3 +70,4 @@ private:
   // for concurrent access
   QMutex mutex_;
 };
+}

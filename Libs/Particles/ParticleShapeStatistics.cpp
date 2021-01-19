@@ -699,9 +699,9 @@ void ParticleShapeStatistics::compute_evaluation(int num_modes)
 {
   if (!this->evaluation_ready_ || num_modes != this->evaluation_modes_) {
     auto ps = shapeworks::ParticleSystem(this->m_Matrix);
-    this->compactness_ = shapeworks::ShapeEvaluation<3>::ComputeCompactness(ps, num_modes);
-    this->specificity_ = shapeworks::ShapeEvaluation<3>::ComputeSpecificity(ps, num_modes);
-    this->generalization_ = shapeworks::ShapeEvaluation<3>::ComputeGeneralization(ps, num_modes);
+    this->compactness_ = shapeworks::ShapeEvaluation::ComputeCompactness(ps, num_modes);
+    this->specificity_ = shapeworks::ShapeEvaluation::ComputeSpecificity(ps, num_modes);
+    this->generalization_ = shapeworks::ShapeEvaluation::ComputeGeneralization(ps, num_modes);
     this->evaluation_ready_ = true;
     this->evaluation_modes_ = num_modes;
   }

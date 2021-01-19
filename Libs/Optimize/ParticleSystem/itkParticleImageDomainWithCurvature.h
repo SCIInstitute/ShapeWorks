@@ -86,7 +86,7 @@ public:
     this->ComputeSurfaceStatistics(I);
   } // end setimage
 
-  double GetCurvature(const PointType &p) const override
+  double GetCurvature(const PointType &p, int idx) const override
   {
     if (this->m_FixedDomain) {
       return 0;
@@ -121,7 +121,7 @@ protected:
     // Rendering..." for detailss
     
     // Get the normal vector associated with this position.
-    typename Superclass::VnlVectorType posnormal = this->SampleNormalAtPoint(pos);
+    typename Superclass::VnlVectorType posnormal = this->SampleNormalAtPoint(pos, -1);
 
     // Sample the Hessian for this point and compute gradient of the normal.
     typename Superclass::VnlMatrixType I;
@@ -208,7 +208,7 @@ private:
 
         // Compute curvature at point.
 //      std::cout << "pos : " << pos[0] << ' ' << pos[1] << ' ' << pos[2] << std::endl;
-        double mc = this->GetCurvature(pos);
+        double mc = this->GetCurvature(pos, -1);
         m_SurfaceMeanCurvature += mc;
         datalist.push_back(mc);
       }

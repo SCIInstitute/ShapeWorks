@@ -12,8 +12,7 @@ target_include_directories(Analyze PUBLIC
 target_link_libraries(Analyze PUBLIC
   Mesh
   Alignment
-  Utils
-  Optimize)
+  Utils)
 
 # set
 set_target_properties(Analyze PROPERTIES PUBLIC_HEADER

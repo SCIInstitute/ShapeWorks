@@ -9,6 +9,7 @@
 
 #include "ParticleSystem/MeshWrapper.h"
 #include "ParticleSystem/TriMeshWrapper.h"
+#include <Libs/Utils/StringUtils.h>
 
 namespace shapeworks {
 
@@ -56,13 +57,12 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
   optimize->SetDomainType(domain_type);
 
   if (optimize->GetDomainType() == shapeworks::DomainType::Mesh) {
-      if (!this->set_visualizer_parameters(&doc_handle, optimize)) {
-        return false;
-      }
+    if (!this->set_visualizer_parameters(&doc_handle, optimize)) {
+      return false;
+    }
   }
 
-
-  std::vector<unsigned int> number_of_particles;
+  std::vector<int> number_of_particles;
   elem = doc_handle.FirstChild("number_of_particles").Element();
   if (elem) {
     std::istringstream inputsBuffer;
@@ -123,6 +123,9 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
     if (!this->read_mesh_inputs(&doc_handle, optimize)) {
       return false;
     }
+    if (!this->read_mesh_attributes(&doc_handle, optimize)) {
+      return false;
+    }
   }
   if (!this->read_point_files(&doc_handle, optimize)) {
     return false;
@@ -139,18 +142,18 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
   return true;
 }
 
-bool OptimizeParameterFile::set_visualizer_parameters(TiXmlHandle *docHandle, Optimize *optimize)
+bool OptimizeParameterFile::set_visualizer_parameters(TiXmlHandle* docHandle, Optimize* optimize)
 {
-  TiXmlElement *elem = nullptr;
+  TiXmlElement* elem = nullptr;
   // Currently the visualizer only works if you call AddMesh on it for every domain.
   // In order to get it working for image domains, need to add code that extracts meshes from each image and adds them to the visualizer.
   elem = docHandle->FirstChild("visualizer_enable").Element();
   if (elem) {
-    optimize->SetShowVisualizer(( bool) atoi(elem->GetText()));
+    optimize->SetShowVisualizer((bool) atoi(elem->GetText()));
 
     elem = docHandle->FirstChild("visualizer_wireframe").Element();
     if (elem) {
-      optimize->GetVisualizer().SetWireFrame(( bool) atoi(elem->GetText()));
+      optimize->GetVisualizer().SetWireFrame((bool) atoi(elem->GetText()));
     }
     elem = docHandle->FirstChild("visualizer_screenshot_directory").Element();
     if (elem) {
@@ -190,6 +193,12 @@ bool OptimizeParameterFile::set_io_parameters(TiXmlHandle* docHandle, Optimize* 
   elem = docHandle->FirstChild("output_transform_file").Element();
   if (elem) { output_transform_file = elem->GetText(); }
   optimize->SetOutputTransformFile(output_transform_file);
+
+  // python filename
+  std::string python_file = "";
+  elem = docHandle->FirstChild("python_filename").Element();
+  if (elem) { python_file = elem->GetText(); }
+  optimize->SetPythonFile(python_file);
 
   // mesh based attributes
   bool use_mesh_based_attributes = false;
@@ -250,7 +259,8 @@ bool OptimizeParameterFile::set_io_parameters(TiXmlHandle* docHandle, Optimize* 
 
     if (optimize->GetDomainsPerShape() != attributes_per_domain.size()) {
       std::cerr <<
-                "Inconsistency in parameters... m_domains_per_shape != m_attributes_per_domain.size()" <<
+                "Inconsistency in parameters... m_domains_per_shape != m_attributes_per_domain.size()"
+                <<
                 std::endl;
       return false;
     }
@@ -369,40 +379,6 @@ bool OptimizeParameterFile::set_debug_parameters(TiXmlHandle* docHandle, Optimiz
   return true;
 }
 
-std::string OptimizeParameterFile::getFileNameWithoutExtension(std::string path)
-{
-  char* str = new char[path.length() + 1];
-  strcpy(str, path.c_str());
-
-  // separate filename from the full path
-  char* fname;
-  char* pch;
-  pch = strtok(str, "/");
-  while (pch != NULL) {
-    fname = pch;
-    pch = strtok(NULL, "/");
-  }
-
-  // separate filename from the extension
-  char* pch2;
-  pch2 = strrchr(fname, '.');
-  int num = pch2 - fname + 1;
-  int num2 = strlen(fname);
-  strncpy(pch2, "", num2 - num);
-
-  return std::string(fname);
-}
-
-void OptimizeParameterFile::ParseFileNamesFromPaths(std::vector<std::string>& filePaths, Optimize* optimize)
-{
-  std::vector<std::string> filenames;
-  for (int i = 0; i < filePaths.size(); i++) {
-    std::string fname = this->getFileNameWithoutExtension(filePaths[i]);
-    filenames.push_back(std::string(fname));
-  }
-  optimize->SetFilenames(filenames);
-}
-
 //---------------------------------------------------------------------------
 bool OptimizeParameterFile::read_image_inputs(TiXmlHandle* docHandle, Optimize* optimize)
 {
@@ -453,7 +429,7 @@ bool OptimizeParameterFile::read_image_inputs(TiXmlHandle* docHandle, Optimize* 
   inputsBuffer.clear();
   inputsBuffer.str("");
 
-  ParseFileNamesFromPaths(imageFiles, optimize);
+  optimize->SetFilenames(StringUtils::getFileNamesFromPaths(imageFiles));
   return true;
 }
 
@@ -516,17 +492,9 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
       optimize->AddMesh(nullptr);
     }
   }
-  std::vector<double> attr_scales;
-  attr_scales.push_back(1);
-  attr_scales.push_back(1);
-  attr_scales.push_back(1);
-  if (attr_scales.size() != 3) {
-    std::cerr << "not enough attribute scale values!!!" << std::endl;
-    return false;
-  }
-  optimize->SetAttributeScales(attr_scales);
 
-  ParseFileNamesFromPaths(meshFiles, optimize);
+  optimize->SetFilenames(StringUtils::getFileNamesFromPaths(meshFiles));
+
   return true;
 }
 

@@ -13,7 +13,10 @@
 #include <Data/StudioLog.h>
 #include <Visualization/Visualizer.h>
 
-using namespace shapeworks;
+
+using ReaderType = itk::ImageFileReader<ImageType>;
+
+namespace shapeworks {
 
 //---------------------------------------------------------------------------
 Shape::Shape()
@@ -31,7 +34,7 @@ Shape::~Shape()
 {}
 
 //---------------------------------------------------------------------------
-QSharedPointer<Mesh> Shape::get_mesh(std::string display_mode)
+QSharedPointer<StudioMesh> Shape::get_mesh(std::string display_mode)
 {
   if (display_mode == Visualizer::MODE_ORIGINAL_C) {
     return this->get_original_mesh();
@@ -85,7 +88,7 @@ void Shape::import_original_image(std::string filename, float iso_value)
 }
 
 //---------------------------------------------------------------------------
-QSharedPointer<Mesh> Shape::get_original_mesh()
+QSharedPointer<StudioMesh> Shape::get_original_mesh(bool wait)
 {
   if (!this->original_mesh_) {
     if (!this->subject_) {
@@ -94,7 +97,7 @@ QSharedPointer<Mesh> Shape::get_original_mesh()
     }
     else {
       this->generate_meshes(this->subject_->get_segmentation_filenames(), this->original_mesh_,
-                            true);
+                            true, wait);
     }
   }
   return this->original_mesh_;
@@ -134,6 +137,11 @@ ImageType::Pointer Shape::get_original_image()
 ImageType::Pointer Shape::get_groomed_image()
 {
   if (!this->groomed_image_) {
+    if (this->subject_->get_groomed_filenames().size() < 1) {
+      STUDIO_LOG_ERROR("No groomed file for subject");
+      ImageType::Pointer image;
+      return image;
+    }
     std::string filename = this->subject_->get_groomed_filenames()[0]; // single domain supported
     if (filename != "") {
       ImageType::Pointer image;
@@ -159,7 +167,7 @@ ImageType::Pointer Shape::get_groomed_image()
 //---------------------------------------------------------------------------
 void Shape::import_groomed_image(ImageType::Pointer img, double iso, TransformType transform)
 {
-  this->groomed_mesh_ = QSharedPointer<Mesh>(new Mesh());
+  this->groomed_mesh_ = QSharedPointer<StudioMesh>(new StudioMesh());
   this->groomed_image_ = img;
   this->groomed_mesh_->create_from_image(img, iso);
   this->groomed_transform_ = transform;
@@ -181,7 +189,7 @@ void Shape::import_groomed_image(ImageType::Pointer img, double iso, TransformTy
 }
 
 //---------------------------------------------------------------------------
-QSharedPointer<Mesh> Shape::get_groomed_mesh()
+QSharedPointer<StudioMesh> Shape::get_groomed_mesh()
 {
   if (!this->groomed_mesh_) {
     if (!this->subject_) {
@@ -193,6 +201,12 @@ QSharedPointer<Mesh> Shape::get_groomed_mesh()
   }
 
   return this->groomed_mesh_;
+}
+
+//---------------------------------------------------------------------------
+void Shape::reset_groomed_mesh()
+{
+  this->groomed_mesh_.reset();
 }
 
 //---------------------------------------------------------------------------
@@ -272,7 +286,7 @@ bool Shape::import_local_point_file(QString filename)
 }
 
 //---------------------------------------------------------------------------
-QSharedPointer<Mesh> Shape::get_reconstructed_mesh()
+QSharedPointer<StudioMesh> Shape::get_reconstructed_mesh()
 {
   if (!this->reconstructed_mesh_) {
     this->reconstructed_mesh_ = this->mesh_manager_->get_mesh(this->global_correspondence_points_);
@@ -328,14 +342,21 @@ QString Shape::get_original_filename_with_path()
 //---------------------------------------------------------------------------
 QString Shape::get_groomed_filename()
 {
-  QFileInfo qfi(this->groomed_filename_);
-  return qfi.fileName();
+  if (this->subject_->get_groomed_filenames().size() < 1) {
+    return "";
+  }
+  auto string = QString::fromStdString(this->subject_->get_groomed_filenames()[0]);
+  QFileInfo info(string);
+  return info.fileName();
 }
 
 //---------------------------------------------------------------------------
 QString Shape::get_groomed_filename_with_path()
 {
-  return this->groomed_filename_;
+  if (this->subject_->get_groomed_filenames().size() < 1) {
+    return "";
+  }
+  return QString::fromStdString(this->subject_->get_groomed_filenames()[0]);
 }
 
 //---------------------------------------------------------------------------
@@ -363,13 +384,13 @@ QString Shape::get_local_point_filename_with_path()
 }
 
 //---------------------------------------------------------------------------
-QList<Point> Shape::get_exclusion_sphere_centers()
+QList<Shape::Point> Shape::get_exclusion_sphere_centers()
 {
   return this->exclusion_sphere_centers_;
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_exclusion_sphere_centers(QList<Point> centers)
+void Shape::set_exclusion_sphere_centers(QList<Shape::Point> centers)
 {
   this->exclusion_sphere_centers_ = centers;
 }
@@ -402,13 +423,13 @@ void Shape::set_group_id(int id)
 }
 
 //---------------------------------------------------------------------------
-std::vector<Point> Shape::get_vectors()
+std::vector<Shape::Point> Shape::get_vectors()
 {
   return this->vectors_;
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_vectors(std::vector<Point> vectors)
+void Shape::set_vectors(std::vector<Shape::Point> vectors)
 {
   this->vectors_ = vectors;
 }
@@ -436,8 +457,8 @@ vnl_vector<double> Shape::get_transform()
 }
 
 //---------------------------------------------------------------------------
-void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<Mesh>& mesh,
-                            bool save_transform)
+void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<StudioMesh>& mesh,
+                            bool save_transform, bool wait)
 {
   if (filenames.size() < 1) {
     return;
@@ -448,7 +469,7 @@ void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<Mesh>&
 
   MeshWorkItem item;
   item.filename = filename;
-  MeshHandle new_mesh = this->mesh_manager_->get_mesh(item);
+  MeshHandle new_mesh = this->mesh_manager_->get_mesh(item, wait);
   if (new_mesh) {
     mesh = new_mesh;
 
@@ -592,18 +613,6 @@ Eigen::VectorXf Shape::get_point_features(std::string feature)
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_point_features(std::string feature, Eigen::VectorXf values)
-{
-  this->point_features_[feature] = values;
-
-  auto mesh = this->get_mesh(Visualizer::MODE_RECONSTRUCTION_C);
-
-  if (mesh) {
-    mesh->interpolate_scalars_to_mesh(feature, this->global_correspondence_points_, values);
-  }
-}
-
-//---------------------------------------------------------------------------
 TransformType Shape::get_groomed_transform()
 {
   if (this->groomed_transform_.size() == 0) {
@@ -617,4 +626,19 @@ TransformType Shape::get_groomed_transform()
     }
   }
   return this->groomed_transform_;
+}
+
+//---------------------------------------------------------------------------
+void Shape::set_point_features(std::string feature, Eigen::VectorXf values)
+{
+  this->point_features_[feature] = values;
+
+  auto mesh = this->get_mesh(Visualizer::MODE_RECONSTRUCTION_C);
+
+  if (mesh) {
+    mesh->interpolate_scalars_to_mesh(feature, this->global_correspondence_points_, values);
+  }
+}
+
+
 }

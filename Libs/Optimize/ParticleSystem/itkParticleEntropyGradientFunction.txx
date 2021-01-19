@@ -43,17 +43,18 @@ template <class TGradientNumericType, unsigned int VDimension>
 void
 ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
 ::ComputeAngularWeights(const PointType &pos,
+                        int idx,
                         const typename ParticleSystemType::PointVectorType &neighborhood,
                         const ParticleDomain *domain,
                         std::vector<double> &weights) const
 {
-  GradientVectorType posnormal = domain->SampleNormalAtPoint(pos);
+  GradientVectorType posnormal = domain->SampleNormalAtPoint(pos, idx);
   weights.resize(neighborhood.size());
   
   for (unsigned int i = 0; i < neighborhood.size(); i++)
     {
     weights[i] = this->AngleCoefficient(posnormal,
-                                        domain->SampleNormalAtPoint(neighborhood[i].Point));
+                                        domain->SampleNormalAtPoint(neighborhood[i].Point, neighborhood[i].Index));
     if (weights[i] < 1.0e-5) weights[i] = 0.0;
     }
 }
@@ -170,11 +171,11 @@ ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
   
   // Get the neighborhood surrounding the point "pos".
   typename ParticleSystemType::PointVectorType neighborhood
-    = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
+    = system->FindNeighborhoodPoints(pos, idx, neighborhood_radius, d);
   
   // Compute the weights based on angle between the neighbors and the center.
   std::vector<double> weights;
-  this->ComputeAngularWeights(pos,neighborhood,domain,weights);
+  this->ComputeAngularWeights(pos,idx,neighborhood,domain,weights);
   
   // Estimate the best sigma for Parzen windowing.  In some cases, such as when
   // the neighborhood does not include enough points, the value will be bogus.
@@ -200,7 +201,7 @@ ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
       }
     
     neighborhood = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
-    this->ComputeAngularWeights(pos,neighborhood,domain,weights);
+    this->ComputeAngularWeights(pos,idx,neighborhood,domain,weights);
     sigma = this->EstimateSigma(idx, neighborhood, domain, weights, pos, sigma, epsilon, err);
     } // done while err
   
@@ -211,7 +212,7 @@ ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
     sigma = this->GetMaximumNeighborhoodRadius() / this->GetNeighborhoodToSigmaRatio();
     neighborhood_radius = this->GetMaximumNeighborhoodRadius();
     neighborhood = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
-    this->ComputeAngularWeights(pos,neighborhood,domain,weights);
+    this->ComputeAngularWeights(pos,idx,neighborhood,domain,weights);
     }
 
   //  std::cout << idx <<  "\t SIGMA = " << sigma << "\t NEIGHBORHOOD SIZE = " << neighborhood.size()

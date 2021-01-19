@@ -3,11 +3,23 @@
 #include <PreviewMeshQC/FEVTKImport.h>
 #include <PreviewMeshQC/FEVTKExport.h>
 
+#include <Libs/Utils/StringUtils.h>
+
 #include <vtkPolyDataReader.h>
-#include <vtkPLYReader.h>
 #include <vtkPolyDataWriter.h>
+#include <vtkPLYReader.h>
 #include <vtkPLYWriter.h>
+#include <vtkSTLReader.h>
+#include <vtkSTLWriter.h>
+#include <vtkOBJReader.h>
+#include <vtkOBJWriter.h>
+#include <vtkXMLPolyDataReader.h>
+#include <vtkXMLPolyDataWriter.h>
 #include <vtkPointData.h>
+#include <vtkCenterOfMass.h>
+#include <vtkTransform.h>
+#include <vtkTransformPolyDataFilter.h>
+
 #include <itkImageToVTKImageFilter.h>
 
 static bool compare_double(double a, double b)
@@ -27,25 +39,54 @@ Mesh::MeshType Mesh::read(const std::string &pathname)
 {
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
 
-  // TODO: enable reading of different kinds of meshes
-  // if (pref == "ply")
-  //   using ReaderType = vtkSmartPointer<vtkPLYReader>;
-  // else 
-  //   using ReaderType = vtkSmartPointer<vtkPolyDataReader>;
-
-  using ReaderType = vtkSmartPointer<vtkPolyDataReader>;
-  ReaderType reader = ReaderType::New();
-  reader->SetFileName(pathname.c_str());
-
   try {
-    reader->Update();
+
+    if (StringUtils::hasSuffix(pathname, "vtk")) {
+      auto reader = vtkSmartPointer<vtkPolyDataReader>::New();
+      reader->SetFileName(pathname.c_str());
+      reader->SetReadAllScalars(1);
+      reader->Update();
+      vtkSmartPointer<vtkPolyData> poly_data = reader->GetOutput();
+      if (poly_data->GetNumberOfPolys() < 1) {
+        throw std::invalid_argument("Failed to read: " + pathname);
+      }
+      return reader->GetOutput();
+    }
+
+    if (StringUtils::hasSuffix(pathname, "vtp")) {
+      auto reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
+      reader->SetFileName(pathname.c_str());
+      reader->Update();
+      return reader->GetOutput();
+    }
+
+    if (StringUtils::hasSuffix(pathname, "stl")) {
+      auto reader = vtkSmartPointer<vtkSTLReader>::New();
+      reader->SetFileName(pathname.c_str());
+      reader->Update();
+      return reader->GetOutput();
+    }
+
+    if (StringUtils::hasSuffix(pathname, "obj")) {
+      auto reader = vtkSmartPointer<vtkOBJReader>::New();
+      reader->SetFileName(pathname.c_str());
+      reader->Update();
+      return reader->GetOutput();
+    }
+
+    if (StringUtils::hasSuffix(pathname, "ply")) {
+      auto reader = vtkSmartPointer<vtkPLYReader>::New();
+      reader->SetFileName(pathname.c_str());
+      reader->Update();
+      return reader->GetOutput();
+    }
+
+    throw std::invalid_argument("Unsupported file type");
   }
   catch (const std::exception &exp)
   {
-    throw std::invalid_argument(pathname + " does not exist");
+    throw std::invalid_argument("Failed to read: " + pathname);
   }
-
-  return reader->GetOutput();
 }
 
 /// write
@@ -58,18 +99,41 @@ bool Mesh::write(const std::string &pathname)
   if (!this->mesh) { throw std::invalid_argument("Mesh invalid"); }
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
 
-  // if (pref == "ply")
-  //   using WriterType = vtkSmartPointer<vtkPLYWriter>;
-  // else
-  //   using WriterType = vtkSmartPointer<vtkPolyDataWriter>;
-
-  using WriterType = vtkSmartPointer<vtkPolyDataWriter>;
-  WriterType writer = WriterType::New();
-  writer->SetInputData(this->mesh);
-  writer->SetFileName(pathname.c_str());
-
   try {
-    writer->Update();
+    if (StringUtils::hasSuffix(pathname, "vtk")) {
+      auto writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+      writer->SetFileName(pathname.c_str());
+      writer->SetInputData(this->mesh);
+      writer->Update();
+    }
+
+    if (StringUtils::hasSuffix(pathname, "vtp")) {
+      auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+      writer->SetFileName(pathname.c_str());
+      writer->SetInputData(this->mesh);
+      writer->Update();
+    }
+
+    if (StringUtils::hasSuffix(pathname, "stl")) {
+      auto writer = vtkSmartPointer<vtkSTLWriter>::New();
+      writer->SetFileName(pathname.c_str());
+      writer->SetInputData(this->mesh);
+      writer->Update();
+    }
+
+    if (StringUtils::hasSuffix(pathname, "obj")) {
+      auto writer = vtkSmartPointer<vtkOBJWriter>::New();
+      writer->SetFileName(pathname.c_str());
+      writer->SetInputData(this->mesh);
+      writer->Update();
+    }
+
+    if (StringUtils::hasSuffix(pathname, "ply")) {
+      auto writer = vtkSmartPointer<vtkPLYWriter>::New();
+      writer->SetFileName(pathname.c_str());
+      writer->SetInputData(this->mesh);
+      writer->Update();
+    }
   }
   catch (const std::exception &exp) {
     std::cerr << "Failed to write mesh to " << pathname << std::endl;
@@ -78,8 +142,9 @@ bool Mesh::write(const std::string &pathname)
   return true;
 }
 
-/// creates mesh of coverage between two meshes
-Mesh& Mesh::coverage(const Mesh &other_mesh)
+/// creates mesh with scalars describing the "coverage" between two meshes
+Mesh& Mesh::coverage(const Mesh &other_mesh, bool allow_back_intersections,
+                     double angle_threshold, double back_search_radius)
 {
   FEVTKimport importer;
   FEMesh* surf1 = importer.Load(this->mesh);
@@ -87,6 +152,9 @@ Mesh& Mesh::coverage(const Mesh &other_mesh)
   if (surf1 == nullptr || surf2 == nullptr) { throw std::invalid_argument("Mesh invalid"); }
 
   FEAreaCoverage areaCoverage;
+  areaCoverage.AllowBackIntersection(allow_back_intersections);
+  areaCoverage.SetAngleThreshold(angle_threshold);
+  areaCoverage.SetBackSearchRadius(back_search_radius);
 
   vector<double> map1 = areaCoverage.Apply(*surf1, *surf2);
 
@@ -170,6 +238,43 @@ bool Mesh::compare_scalars_equal(const Mesh &other_mesh)
   }
 
   return true;
+}
+
+std::ostream& operator<<(std::ostream &os, const Mesh& mesh)
+{
+  return os << "{\n\tnumber of vertices: " << mesh.numVertices()
+            << ",\n\tnumber of faces: " << mesh.numFaces()
+            << ",\n\tmin x: " << mesh.bounds()[0] << ",\n\tmax x: " << mesh.bounds()[1]
+            << ",\n\tmin y: " << mesh.bounds()[2] << ",\n\tmax y: " << mesh.bounds()[3]
+            << ",\n\tmin z: " << mesh.bounds()[4] << ",\n\tmax z: " << mesh.bounds()[5] << "\n}";
+}
+
+Point3 Mesh::centerOfMass() const
+{
+  auto com = vtkSmartPointer<vtkCenterOfMass>::New();
+  com->SetInputData(this->mesh);
+  com->Update();
+  double center[3];
+  com->GetCenter(center);
+  return center;
+}
+
+Mesh& Mesh::translate_mesh(const Vector3& v)
+{
+  auto translation = vtkSmartPointer<vtkTransform>::New();
+  translation->Translate(v[0], v[1], v[2]);
+  auto transform_filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  transform_filter->SetInputData(this->mesh);
+  transform_filter->SetTransform(translation);
+  transform_filter->Update();
+  this->mesh = transform_filter->GetOutput();
+
+  return *this;
+}
+
+Mesh::MeshType Mesh::get_poly_data()
+{
+  return this->mesh;
 }
 
 } // shapeworks

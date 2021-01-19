@@ -8,15 +8,19 @@
 #include <ParticleShapeStatistics.h>
 
 // Studio
+
 #include <Data/Shape.h>
 #include <Data/Preferences.h>
 #include <Visualization/Visualizer.h>
 #include <Visualization/BarGraph.h>
 
+class Ui_AnalysisTool;
+
+namespace shapeworks {
+
 class Session;
 class Lightbox;
 class ShapeWorksStudioApp;
-class Ui_AnalysisTool;
 
 class AnalysisTool : public QWidget {
 Q_OBJECT;
@@ -35,7 +39,7 @@ public:
 
   bool get_group_difference_mode();
 
-  std::vector<Point> get_group_difference_vectors();
+  std::vector<Shape::Point> get_group_difference_vectors();
 
   std::string get_analysis_mode();
   void set_analysis_mode(std::string mode);
@@ -49,7 +53,6 @@ public:
   double get_pca_value();
 
   bool pcaAnimate();
-
 
   int get_sample_number();
 
@@ -120,7 +123,6 @@ public Q_SLOTS:
 
   void group_changed();
 
-
   bool groups_active();
 
   void on_view_open_button_toggled();
@@ -181,3 +183,5 @@ private:
   std::vector<std::string> current_group_values_;
 
 };
+
+}
