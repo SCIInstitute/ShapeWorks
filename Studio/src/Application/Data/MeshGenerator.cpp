@@ -120,7 +120,7 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
     try {
       tbb::mutex::scoped_lock lock(mesh_mutex);
       shapeworks::Mesh reader(filename);
-      mesh->set_poly_data(reader.get_poly_data());
+      mesh->set_poly_data(reader.getMesh());
     } catch (std::exception e) {
       std::string message = std::string("Error reading: ") + filename;
       STUDIO_LOG_ERROR(QString::fromStdString(message));
