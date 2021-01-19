@@ -76,7 +76,7 @@ $ python RunUseCase.py --help
 $ python RunUseCase.py --use_case [insert name of use case here] --use_subsample --num_subsample 10
 ```
 
-This will select a representative subset of the specified sample size to run through the pipeline so that the use case runs faster and uses less memory. The subset is selected by running clustering, then picking one sample from each cluster so that the resulting subset is representative of all the data. If `--use_subsample` is used without `--num_subsample` it will use the default number of subsamples which is 3.
+This will select a representative subset of the specified sample size to run through the pipeline so that the use case runs faster and uses less memory. The subset is selected by running clustering, then picking one sample from each cluster so that the resulting subset is representative of all the data. If `--use_subsample` is used without `--num_subsample` it will use the default number of subsamples which is 3.In order to run the clustering, the entire dataset will be downloaded.
 
 * `--interactive`: When the interactive tag is used, the user must press enter after each step. This allows the user to inspect the intermediate output between steps of the pipeline.
 
@@ -102,7 +102,8 @@ $ python RunUseCase.py --use_case [insert name of use case here] --groom_images
 $ python RunUseCase.py --use_case [insert name of use case here] --use_single_scale
 ```
          
-* `--tiny_test`: Users can run a fast version of the use case by using the `--tiny_test tag`. This runs on a subset of the data for fewer optimization iterations to verify ShapeWorks has been properly installed. It is meant to test that use cases can run, not to create a good correspondence model.
+* `--tiny_test`: Users can run a fast version of the use case by using the `--tiny_test tag`. This runs on a subset of the data for fewer optimization iterations to verify ShapeWorks has been properly installed. It is meant to test that use cases can run, not to create a good correspondence model.For tiny test,only a subset of the data will be downloaded directly in the `Output` folder and no zip file will be donwloaded in the `Data` folder.If the data has already been unzipped in `Output` folder, no new data will be downloaded.
+
 
 ```
 $ python RunUseCase.py --use_case [insert name of use case here] --tiny_test
