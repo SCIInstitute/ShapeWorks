@@ -1,3 +1,4 @@
+#include <functional>
 
 #include "OptimizeParameters.h"
 #include "Optimize.h"
