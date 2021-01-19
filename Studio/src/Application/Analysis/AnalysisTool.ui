@@ -985,7 +985,7 @@ QWidget#metrics_panel {
                         </size>
                        </property>
                        <property name="text">
-                        <string>Eig-val.</string>
+                        <string>Eigenvalue</string>
                        </property>
                       </widget>
                      </item>
