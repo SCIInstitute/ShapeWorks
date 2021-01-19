@@ -514,16 +514,6 @@ const vnl_vector<double> &AnalysisTool::get_shape_points(int mode, double value,
                            QString::number(this->stats_.Eigenvalues()[m]),
                            QString::number(value * lambda));
 
-  ///TODO: fix for multi-group
-  /*
-  if (this->ui_->group_radio_button->isChecked()) {
-    this->temp_shape_ = this->stats_.Group1Mean() + (this->stats_.GroupDifference() * group_value);
-  }
-  else {
-    this->temp_shape_ = this->stats_.Mean() + (e * (value * lambda));
-  }
-*/
-
   this->temp_shape_ = this->stats_.Mean() + (e * (value * lambda));
 
   return this->temp_shape_;
