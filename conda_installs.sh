@@ -30,7 +30,7 @@ function install_pytorch() {
     fi
   fi
 
-  conda install pytorch torchvision torchaudio $PYTORCH -c pytorch
+  conda install pytorch==1.7.1 torchvision==0.7.0 $PYTORCH -c pytorch
 }
 
 function install_conda() {
