@@ -193,11 +193,11 @@ def applyRigidAlignment(outDir, refFile, inDataListSeg, inDataListImg=[]):
         # resize images to reference images
         img = Image(inDataListSeg[i])
         rigidTransform = ImageUtils.createRigidRegistrationTransform(Image(inDataListSeg[i]).antialias(antialias_iterations), refImg, isoValue, icp_iterations)
-        img.resample(rigidTransform, refImg.origin(), refImg.dims(), refImg.spacing(), refImg.coordsys(), InterpolationType.Linear).write(segoutname)
+        img.applyTransform(rigidTransform, refImg.origin(), refImg.dims(), refImg.spacing(), refImg.coordsys(), InterpolationType.Linear).write(segoutname)
 
         if inDataListImg:
             img = Image(inDataListImg[i])
-            img.resample(rigidTransform, refImg.origin(), refImg.dims(), refImg.spacing(), refImg.coordsys(), InterpolationType.Linear).write(rawoutname)
+            img.applyTransform(rigidTransform, refImg.origin(), refImg.dims(), refImg.spacing(), refImg.coordsys(), InterpolationType.Linear).write(rawoutname)
 
     return [outSegDataList, outRawDataList] if inDataListImg else outSegDataList
 
