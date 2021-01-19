@@ -505,7 +505,7 @@ PYBIND11_MODULE(shapeworks, m)
     return stream.str();
   })
   .def("write",                 &Mesh::write, "pathname"_a)
-  .def("coverage",              &Mesh::coverage, "other_mesh"_a, "ignore_back_intersections"_a)
+  .def("coverage",              &Mesh::coverage, "other_mesh"_a, "ignore_back_intersections"_a, "angle_threshold"_a, "back_search_radius"_a)
   .def("numVertices",           &Mesh::numVertices)
   .def("numFaces",              &Mesh::numFaces)
   .def("compare_points_equal",  &Mesh::compare_points_equal, "other_mesh"_a)

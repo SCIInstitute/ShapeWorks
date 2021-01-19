@@ -1628,6 +1628,8 @@ void Coverage::buildParser()
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Path to other mesh with which to create coverage.");
   parser.add_option("--allow_back_intersections").action("store_true").set_default(false).help("Allow back-intersections in coverage calculation.");
+  parser.add_option("--angle_threshold").action("store").type("double").set_default(0.0).help("This checks the cosine between the ray’s direction vector (e1) and the normal at the intersection point (e2).");
+  parser.add_option("--back_search_radius").action("store").type("double").set_default(0.0).help("Max distance of a back-intersection");
 
   Command::buildParser();
 }
@@ -1643,6 +1645,8 @@ bool Coverage::execute(const optparse::Values &options, SharedCommandData &share
   const std::string& other_mesh_path(static_cast<std::string>(options.get("name")));
 
   bool allow_back_intersections = static_cast<bool>(options.get("allow_back_intersections"));
+  double angle_threshold = static_cast<double>(options.get("angle_threshold"));
+  double back_search_radius = static_cast<double>(options.get("back_search_radius"));
 
   if (other_mesh_path.length() == 0)
   {
@@ -1650,7 +1654,7 @@ bool Coverage::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
-  sharedData.mesh->coverage(Mesh(other_mesh_path), allow_back_intersections);
+  sharedData.mesh->coverage(Mesh(other_mesh_path), allow_back_intersections, angle_threshold, back_search_radius);
   return sharedData.validMesh();
 }
 

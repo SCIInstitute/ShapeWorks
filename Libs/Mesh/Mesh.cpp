@@ -144,7 +144,7 @@ Mesh& Mesh::write(const std::string &pathname)
   }
 }
 
-Mesh& Mesh::coverage(const Mesh &other_mesh, bool allow_back_intersections)
+Mesh& Mesh::coverage(const Mesh &other_mesh, bool allow_back_intersections, double angle_threshold, double back_search_radius)
 {
   FEVTKimport importer;
   FEMesh* surf1 = importer.Load(this->mesh);
@@ -153,6 +153,8 @@ Mesh& Mesh::coverage(const Mesh &other_mesh, bool allow_back_intersections)
 
   FEAreaCoverage areaCoverage;
   areaCoverage.AllowBackIntersection(allow_back_intersections);
+  areaCoverage.SetAngleThreshold(angle_threshold);
+  areaCoverage.SetBackSearchRadius(back_search_radius);
 
   vector<double> map1 = areaCoverage.Apply(*surf1, *surf2);
 

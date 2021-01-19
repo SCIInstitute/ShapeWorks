@@ -27,8 +27,9 @@ public:
   /// writes mesh, format specified by filename extension
   Mesh& write(const std::string &pathname);
 
-  /// determines coverage between current mesh and another one (e.g. acetabular cup / femoral head)
-  Mesh& coverage(const Mesh& other_mesh, bool allow_back_intersections = false);
+  /// determines coverage between current mesh and another mesh (e.g. acetabular cup / femoral head)
+  Mesh& coverage(const Mesh& other_mesh, bool allow_back_intersections = false,
+                 double angle_threshold = 0, double back_search_radius = 0);
 
   /// applies laplacian smoothing
   Mesh& smooth(int iterations = 0, double relaxation = 0.0);
