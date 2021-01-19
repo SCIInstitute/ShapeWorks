@@ -495,7 +495,7 @@ const vnl_vector<double> &AnalysisTool::get_mean_shape_points()
 }
 
 //-----------------------------------------------------------------------------
-const vnl_vector<double> &AnalysisTool::get_shape_points(int mode, double value, double group_value)
+const vnl_vector<double> &AnalysisTool::get_shape_points(int mode, double value)
 {
   if (!this->compute_stats() || this->stats_.Eigenvectors().size() <= 1) {
     return this->empty_shape_;
@@ -733,12 +733,6 @@ void AnalysisTool::set_analysis_mode(std::string mode)
   else if (mode == "regression") {
     this->ui_->tabWidget->setCurrentWidget(this->ui_->regression_tab);
   }
-}
-
-//---------------------------------------------------------------------------
-ShapeHandle AnalysisTool::get_shape(int mode, double value, double group_value)
-{
-  return this->create_shape_from_points(this->get_shape_points(mode, value, group_value));
 }
 
 //---------------------------------------------------------------------------

@@ -1285,10 +1285,8 @@ void ShapeWorksStudioApp::compute_mode_shape()
 {
   int pca_mode = this->analysis_tool_->getPCAMode();
   double pca_value = this->analysis_tool_->get_pca_value();
-  double group_value = this->analysis_tool_->get_group_value();
 
-  this->visualizer_->display_shape(this->analysis_tool_->get_shape_points(pca_mode, pca_value,
-                                                                          group_value));
+  this->visualizer_->display_shape(this->analysis_tool_->get_shape_points(pca_mode, pca_value));
 }
 
 //---------------------------------------------------------------------------
