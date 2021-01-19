@@ -10,9 +10,9 @@ TEST(pythonTests, setup)
 }
   
 //---------------------------------------------------------------------------
-TEST(pythonTests, info)
+TEST(pythonTests, imageinfo)
 {
-  ASSERT_FALSE(system("python info.py"));
+  ASSERT_FALSE(system("python imageinfo.py"));
 }
 
 //---------------------------------------------------------------------------

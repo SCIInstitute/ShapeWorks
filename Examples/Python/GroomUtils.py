@@ -325,9 +325,16 @@ def reflectMeshes(outDir, seg_list, reference_side, printCmd=True):
         # if we have a seg for the non-ref side, reflect it
         else:
             seg_out = rename(seg, outSegDir, 'reflect')
+
             cmd = ["shapeworks",
                    "read-mesh", "--name", seg,
-                   "reflect-mesh",
+                   "mesh-info", "--center"]
+            output = subprocess.run(cmd, capture_output=True, text=True).stdout.splitlines()
+            origin = makeVector(output[0].split(":")[1])
+
+            cmd = ["shapeworks",
+                   "read-mesh", "--name", seg,
+                   "reflect-mesh", "--originx", str(origin[0]), "--originy", str(origin[1]), "--originz", str(origin[2]),
                    "write-mesh", "--name", seg_out]
             if printCmd:
                 print("CMD: " + " ".join(cmd))

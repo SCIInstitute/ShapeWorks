@@ -53,9 +53,11 @@ COMMAND_DECLARE(Specificity, ParticleSystemCommand);
 // Mesh Commands
 COMMAND_DECLARE(ReadMesh, MeshCommand);
 COMMAND_DECLARE(WriteMesh, MeshCommand);
+COMMAND_DECLARE(MeshInfo, MeshCommand);
 COMMAND_DECLARE(Coverage, MeshCommand);
 COMMAND_DECLARE(Smooth, MeshCommand);
 COMMAND_DECLARE(Decimate, MeshCommand);
+COMMAND_DECLARE(InvertNormal, MeshCommand);
 COMMAND_DECLARE(ReflectMesh, MeshCommand);
 COMMAND_DECLARE(ICP, MeshCommand);
 COMMAND_DECLARE(FillHoles, MeshCommand);

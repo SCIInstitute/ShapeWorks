@@ -9,9 +9,9 @@ TEST(shapeworksTests, setup)
   ASSERT_TRUE(true);
 }
 
-TEST(shapeworksTests, info)
+TEST(shapeworksTests, imageinfo)
 {
-  ASSERT_FALSE(system("bash info.sh"));
+  ASSERT_FALSE(system("bash imageinfo.sh"));
 }
 
 TEST(shapeworksTests, compare)
@@ -207,6 +207,16 @@ TEST(shapeworksTests, warpfail)
 TEST(shapeworksTests, setorigin)
 {
   ASSERT_FALSE(system("bash setorigin.sh"));
+}
+
+TEST(shapeworksTests, setspacing)
+{
+  ASSERT_FALSE(system("bash setspacing.sh"));
+}
+
+TEST(shapeworksTests, toMesh)
+{
+  ASSERT_FALSE(system("bash tomesh.sh"));
 }
 
 TEST(shapeworksTests, negate)

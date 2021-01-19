@@ -114,7 +114,7 @@ bool WriteImage::execute(const optparse::Values &options, SharedCommandData &sha
 ///////////////////////////////////////////////////////////////////////////////
 void ImageInfo::buildParser()
 {
-  const std::string prog = "info";
+  const std::string prog = "image-info";
   const std::string desc = "prints requested image dimensions, spacing, size, origin, direction (coordinate system), center, center of mass and bounding box [default: prints everything]";
   parser.prog(prog).description(desc);
 
@@ -1618,6 +1618,56 @@ bool WriteMesh::execute(const optparse::Values &options, SharedCommandData &shar
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// MeshInfo
+///////////////////////////////////////////////////////////////////////////////
+void MeshInfo::buildParser()
+{
+  const std::string prog = "mesh-info";
+  const std::string desc = "prints requested mesh center, center of mass, number of vertices, number of faces and bounding box [default: prints everything]";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--vertices").action("store_true").set_default(false).help("Whether to display number of vertices.");
+  parser.add_option("--faces").action("store_true").set_default(false).help("Whether to display number of faces.");
+  parser.add_option("--center").action("store_true").set_default(false).help("Whether to display center.");
+  parser.add_option("--centerofmass").action("store_true").set_default(false).help("Whether to display center of mass.");
+  parser.add_option("--boundingbox").action("store_true").set_default(false).help("Whether to display bounding box.");
+
+  Command::buildParser();
+}
+
+bool MeshInfo::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validImage())
+  {
+    std::cerr << "No image to operate on\n";
+    return false;
+  }
+
+  bool vertices = static_cast<bool>(options.get("vertices"));
+  bool faces = static_cast<bool>(options.get("faces"));
+  bool center = static_cast<bool>(options.get("center"));
+  bool centerofmass = static_cast<bool>(options.get("centerofmass"));
+  bool boundingbox = static_cast<bool>(options.get("boundingbox"));
+
+  // by default: print everything
+  if (options.num_set() == 0)
+    vertices = faces = center = centerofmass = boundingbox = true;
+
+  if (vertices)
+    std::cout << "number of vertices:      " << sharedData.mesh->numVertices() << std::endl;
+  if (faces)
+    std::cout << "number of faces:      " << sharedData.mesh->numFaces() << std::endl;
+  if (center)
+    std::cout << "center:                " << sharedData.mesh->center() << std::endl;
+  if (centerofmass)
+    std::cout << "center of mass (0,1]:  " << sharedData.mesh->centerOfMass() << std::endl;
+  if (boundingbox)
+    std::cout << "bounding box:          " << sharedData.mesh->boundingBox() << std::endl;
+
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 /// Coverage
 ///////////////////////////////////////////////////////////////////////////////
 void Coverage::buildParser()
@@ -1717,6 +1767,30 @@ bool Decimate::execute(const optparse::Values &options, SharedCommandData &share
   bool preservetopology = static_cast<bool>(options.get("preservetopology"));
 
   sharedData.mesh->decimate(reduction, angle, preservetopology);
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// InvertNormal
+///////////////////////////////////////////////////////////////////////////////
+void InvertNormal::buildParser()
+{
+  const std::string prog = "invert-normal";
+  const std::string desc = "flips the normal";
+  parser.prog(prog).description(desc);
+
+  Command::buildParser();
+}
+
+bool InvertNormal::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  sharedData.mesh->invertNormal();
   return sharedData.validMesh();
 }
 

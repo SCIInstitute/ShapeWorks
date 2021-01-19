@@ -204,6 +204,19 @@ Mesh &Mesh::decimate(double reduction, double angle, bool preservetopology)
   return *this;
 }
 
+Mesh &Mesh::invertNormal()
+{
+  vtkSmartPointer<vtkReverseSense> reverseSense = vtkSmartPointer<vtkReverseSense>::New();
+
+  reverseSense->SetInputData(this->mesh);
+  reverseSense->ReverseNormalsOff();
+  reverseSense->ReverseCellsOn();
+  reverseSense->Update();
+  this->mesh = reverseSense->GetOutput();
+
+  return *this;
+}
+
 Mesh &Mesh::reflect(const Axis &axis, const Vector3 &origin)
 {
   Vector scale(makeVector({1,1,1}));
@@ -214,15 +227,7 @@ Mesh &Mesh::reflect(const Axis &axis, const Vector3 &origin)
   transform->Scale(scale[0], scale[1], scale[2]);
   transform->Translate(origin[0], origin[1], origin[2]);
 
-  // handle flipping normals under negative scaling
-  vtkSmartPointer<vtkReverseSense> reverseSense = vtkSmartPointer<vtkReverseSense>::New();
-  reverseSense->SetInputData(this->mesh);
-  reverseSense->ReverseNormalsOff();
-  reverseSense->ReverseCellsOn();
-  reverseSense->Update();
-  this->mesh = reverseSense->GetOutput();
-
-  return applyTransform(transform);
+  return invertNormal().applyTransform(transform);
 }
 
 Mesh &Mesh::applyTransform(const vtkTransform transform)

@@ -1009,6 +1009,24 @@ TEST(ImageTests, resizeTest3)
   ASSERT_TRUE(image == ground_truth);
 }
 
+TEST(ImageTests, setSpacingTest1)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
+  image.setSpacing();
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/spacing1.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, setSpacingTest2)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
+  image.setSpacing(makeVector({2.0,2.0,2.0}));
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/spacing2.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
 TEST(ImageTests, toMeshTest1)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");

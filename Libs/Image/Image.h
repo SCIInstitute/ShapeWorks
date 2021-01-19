@@ -201,7 +201,7 @@ public:
 
   /// converts distance transform to mesh
   Mesh toMesh(double levelset = 0.0, double reduction = 0.01, double angle = 30,
-                               int leveliterations = 1, int meshiterations = 1, bool preservetopology = true) const;
+              int leveliterations = 1, int meshiterations = 1, bool preservetopology = true) const;
 
 private:
   friend struct SharedCommandData;
