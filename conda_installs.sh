@@ -23,7 +23,7 @@ function install_pytorch() {
     CUDA=`nvidia-smi | grep CUDA | sed -e "s/.*CUDA Version: //" -e "s/ .*//"`
     echo "Found CUDA Version: ${CUDA}"
 
-    if [[ "$CUDA" == "9.2" || "$CUDA" == "10.1" || "$CUDA" == "10.2" || "$CUDA" == "11.0" ]]; then
+    if [[ "$CUDA" == "9.2" || "$CUDA" == "10.1" || "$CUDA" == "10.2" || "$CUDA" == "11.0" || "$CUDA" == "11.1" ]]; then
         PYTORCH="cudatoolkit=${CUDA}"
     else
         echo "CUDA version not compatible, using cpu-only"
