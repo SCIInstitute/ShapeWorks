@@ -23,14 +23,14 @@ function install_pytorch() {
     CUDA=`nvidia-smi | grep CUDA | sed -e "s/.*CUDA Version: //" -e "s/ .*//"`
     echo "Found CUDA Version: ${CUDA}"
 
-    if [[ "$CUDA" == "9.2" || "$CUDA" == "10.1" || "$CUDA" == "10.2" ]]; then
+    if [[ "$CUDA" == "9.2" || "$CUDA" == "10.1" || "$CUDA" == "10.2" || "$CUDA" == "11.0" ]]; then
         PYTORCH="cudatoolkit=${CUDA}"
     else
         echo "CUDA version not compatible, using cpu-only"
     fi
   fi
 
-  conda install --yes pytorch torchvision $PYTORCH -c pytorch
+  conda install pytorch torchvision torchaudio $PYTORCH -c pytorch
 }
 
 function install_conda() {
@@ -164,6 +164,7 @@ function install_conda() {
 }
 
 if install_conda; then
+  install_pytorch
   echo "$CONDAENV environment successfully created/updated!"
   conda activate $CONDAENV
 else
