@@ -1386,7 +1386,7 @@ bool ImageToMesh::execute(const optparse::Values &options, SharedCommandData &sh
 
   double isovalue = static_cast<double>(options.get("isovalue"));
 
-  sharedData.mesh = sharedData.image.toMesh(isovalue);
+  sharedData.mesh = std::make_unique<Mesh>(sharedData.image.toMesh(isovalue));
   return sharedData.validMesh();
 }
 
@@ -1424,7 +1424,7 @@ bool DTToMesh::execute(const optparse::Values &options, SharedCommandData &share
   int meshiterations = static_cast<int>(options.get("meshiterations"));
   bool preservetopology = static_cast<bool>(options.get("preservetopology"));
 
-  sharedData.mesh = sharedData.image.toMesh(levelset, reduction, angle, leveliterations, meshiterations, preservetopology);
+  sharedData.mesh = std::make_unique<Mesh>(sharedData.image.toMesh(levelset, reduction, angle, leveliterations, meshiterations, preservetopology));
   return sharedData.validMesh();
 }
 

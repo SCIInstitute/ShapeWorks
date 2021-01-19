@@ -197,10 +197,10 @@ public:
   static vtkSmartPointer<vtkPolyData> march(const Image& image, double levelset=0.0);
 
   /// converts image to mesh
-  std::unique_ptr<Mesh> toMesh(PixelType isovalue = 1.0) const;
+  Mesh toMesh(PixelType isovalue = 1.0) const;
 
   /// converts distance transform to mesh
-  std::unique_ptr<Mesh> toMesh(double levelset = 0.0, double reduction = 0.01, double angle = 30,
+  Mesh toMesh(double levelset = 0.0, double reduction = 0.01, double angle = 30,
                                int leveliterations = 1, int meshiterations = 1, bool preservetopology = true) const;
 
 private:

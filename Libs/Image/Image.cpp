@@ -48,7 +48,7 @@ Image::ImageType::Pointer Image::cloneData(const Image::ImageType::Pointer image
 
 Image& Image::operator=(const Image& img)
 {
-  this->image = Image::cloneData(image);
+  this->image = Image::cloneData(img.image);
   return *this;
 }
 
@@ -801,13 +801,13 @@ vtkSmartPointer<vtkPolyData> Image::march(const Image& image, double levelset)
   using connectorType = itk::ImageToVTKImageFilter<Image::ImageType>;
   connectorType::Pointer connector = connectorType::New();
   connector->SetInput(image.image);
+  connector->Update();
 
   vtkSmartPointer<vtkMarchingCubes> cube = vtkSmartPointer<vtkMarchingCubes>::New();
 
   cube->SetInputData(connector->GetOutput());
   cube->SetValue(0, levelset);
   cube->Update();
-   
   return cube->GetOutput();
 }
 
