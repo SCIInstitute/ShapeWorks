@@ -703,7 +703,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="action_import">
    <property name="text">
-    <string>Import Images...</string>
+    <string>Import Shapes...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+I</string>

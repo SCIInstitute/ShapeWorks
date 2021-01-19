@@ -139,19 +139,19 @@ Additionally, after selecting a point, you may select another point by pressing 
 
 Studio's file menu is shown below.
 
-![ShapeWorks Studio File Menu](../img/studio/studio_file_menu.png)
+![ShapeWorks Studio File Menu](../img/studio/studio_file_menu.png){: width="200" }
 
-* New Project - Create a new project
-* Open Project - Open a project from disk
-* Save Project - Save project to disk
-* Save Project As - Save a copy of the project to a new file
-* Import Images... - Import new shapes
-* Export - See export below
+* `New Project` - Create a new project
+* `Open Project` - Open a project from disk
+* `Save Project` - Save project to disk
+* `Save Project As` - Save a copy of the project to a new file
+* `Import Shapes...` - Import new shapes
+* `Export` - See export below
 * Up to 4 recent projects are shown at the bottom
 
 The File -> Export menu is shown below.
 
-![ShapeWorks Studio Export Menu](../img/studio/studio_export_menu.png)
+![ShapeWorks Studio Export Menu](../img/studio/studio_export_menu.png){: width="200" }
 
 * Export Current Mesh - Export the current mesh as a VTK mesh file
 * Export Mesh Scalars - Export the mesh scalars as a CSV file
