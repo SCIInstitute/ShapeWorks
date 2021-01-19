@@ -14,19 +14,19 @@ The splash screen provides access to recent projects and an option to create a n
 
 The Data Module shows the project data table as well as user-defined/saved notes. This module enables you to add and remove shapes (segmentations and surface meshes) to your cohort for further analysis.
 
-![ShapeWorks Studio Data Module](../img/studio/studio_data.png)
+![ShapeWorks Studio Data Module](../img/studio/studio_data.png){: width="300" }
 
 ## Groom Module
 
 The Groom module provides options to preprocess/groom the input data.  Options differ for binary segmentations and meshes. You also have the option of skipping grooming if your data is already prepped.
 
-![ShapeWorks Studio Groom Module](../img/studio/studio_groom.png)
+![ShapeWorks Studio Groom Module](../img/studio/studio_groom.png){: width="300" }
 
 ## Optimize Module
 
 The Optimize module provides options for the particle-based optimization.  After selecting options and clicking "Run Optimize", you can monitor the process of the optimization in real-time.  Particle positions will be displayed on individual shapes as they progress where color encodes surface correspondences across different shapes in your cohort.
 
-![ShapeWorks Studio Optimize Module](../img/studio/studio_optimize.png)
+![ShapeWorks Studio Optimize Module](../img/studio/studio_optimize.png){: width="300" }
 
 ## Analysis Module
 
