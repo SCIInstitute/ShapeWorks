@@ -49,3 +49,24 @@ TEST(MeshTests, warpTest1)
   bool chkdst = (!(sqrD.sum())) && (!(sqrD.maxCoeff()));
   ASSERT_TRUE(chkdst);
 }
+
+TEST(MeshTests, warpTest2)
+{
+  Mesh ellipsoid( std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
+  Mesh ellipsoid_warped( std::string(TEST_DATA_DIR) + "/ellipsoid_warped.ply");
+  Mesh::MeshType inMesh = ellipsoid.get_poly_data();
+
+  // read points and load Eigen stuff
+  Eigen::MatrixXd Vref = MeshUtils::distilVertexInfo(inMesh);
+  Eigen::MatrixXi Fref = MeshUtils::distilFaceInfo(inMesh);
+  std::string staticPath = std::string(TEST_DATA_DIR) + "/ellipsoid_0.particles";
+  Eigen::MatrixXd staticPts = MeshUtils::pointReadFormat(staticPath, 128);
+  std::string movingPath = std::string(TEST_DATA_DIR) + "/ellipsoid_1.particles";
+
+  // obtain the warp matrix
+  Eigen::MatrixXd W = MeshUtils::generateWarpMatrix(Vref, Fref, staticPts);
+  // warp the image 
+  Mesh output = MeshUtils::warpMesh(movingPath, W, Fref, 128);
+  
+  ASSERT_TRUE(output == ellipsoid_warped);
+}
