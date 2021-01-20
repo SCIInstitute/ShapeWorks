@@ -27,7 +27,7 @@ public:
   static Eigen::MatrixXd generateWarpMatrix(Eigen::MatrixXd TV , Eigen::MatrixXi TF, Eigen::MatrixXd Vref);
 
   /// Compute individual warp
-  static Mesh warpMesh(std::string movingPointspath, Eigen::MatrixXd W, Eigen::MatrixXi Fref, const int numP);
+  static Mesh warpMesh(Eigen::MatrixXd movPts, Eigen::MatrixXd W, Eigen::MatrixXi Fref);
 
   /// Compute transformation from set of points files using template mesh warp&face matrices
   static bool warpMeshes(std::vector< std::string> movingPointpaths, std::vector< std::string> outputMeshPaths, Eigen::MatrixXd W, Eigen::MatrixXi Fref, const int numP);

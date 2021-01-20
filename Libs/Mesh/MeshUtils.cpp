@@ -7,6 +7,7 @@
 #include <vtkPLYWriter.h>
 #include "Eigen/Core"
 #include "Eigen/Dense"
+#include "ParticleSystem.h"
 
 // IGL dependencies
 #include <igl/biharmonic_coordinates.h>
@@ -134,17 +135,15 @@ Eigen::MatrixXd MeshUtils::generateWarpMatrix(Eigen::MatrixXd TV , Eigen::Matrix
   return W;
 }
 
-Mesh MeshUtils::warpMesh(std::string movingPointPath, Eigen::MatrixXd W, Eigen::MatrixXi Fref, const int numP){
+Mesh MeshUtils::warpMesh(Eigen::MatrixXd movPts, Eigen::MatrixXd W, Eigen::MatrixXi Fref){
   
   int numVertices = W.rows();
   int numFaces = Fref.rows();
-  Eigen::MatrixXd Vcontrol_moving = pointReadFormat(movingPointPath, numP);
   // std::cout<< (Vcontrol_moving.rowwise() + Eigen::RowVector3d(0,0,0)) <<std::endl;
-	Eigen::MatrixXd Voutput = W * (Vcontrol_moving.rowwise() + Eigen::RowVector3d(0,0,0));
+	Eigen::MatrixXd Voutput = W * (movPts.rowwise() + Eigen::RowVector3d(0,0,0));
 	vtkSmartPointer<vtkPolyData> outmesh = vtkSmartPointer<vtkPolyData>::New();
 	vtkSmartPointer<vtkPoints> outpoints = vtkSmartPointer<vtkPoints>::New();
 	outpoints->SetNumberOfPoints(numVertices);
-  std::cout << numVertices <<", " << numFaces <<std::endl;
   for (vtkIdType i = 0; i < numVertices; i++)
 	{
 		outpoints->SetPoint(i, Voutput(i, 0), Voutput(i, 1), Voutput(i, 2));
@@ -168,8 +167,13 @@ bool MeshUtils::warpMeshes(std::vector< std::string> movingPointpaths, std::vect
   
   // assert for pointsPath.size() == outMeshPaths.size()
   // now tranform the meshes
+  ParticleSystem particlesystem(movingPointpaths);
+  Eigen::MatrixXd pts = particlesystem.Particles();
+  Eigen::MatrixXd temp;
   for(int i = 0; i < movingPointpaths.size(); i++){	
-		Mesh warped = warpMesh(movingPointpaths[i], W, Fref, numP);
+    temp = pts.col(i);
+    temp.resize(3, numP);
+		Mesh warped = warpMesh(temp.transpose(), W, Fref);
     // write the mesh
     warped.write(outputMeshPaths[i]);
 	}
