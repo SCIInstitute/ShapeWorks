@@ -74,7 +74,7 @@ class KDE_Sampler(Sampler):
 				if dist < smallest and dist != 0:
 					smallest = dist
 			nearest_neighbor_dists.append(smallest)
-		self.sigma_squared = np.mean(np.array(nearest_neighbor_dists))
+		self.sigma_squared = np.mean(np.array(nearest_neighbor_dists))/embedded_matrix.shape[1]
 	def sample(self):
 		base_index = np.random.randint(self.embedded_matrix.shape[0])
 		base_PCA_score = self.embedded_matrix[base_index]
