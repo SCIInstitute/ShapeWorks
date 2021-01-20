@@ -710,6 +710,9 @@ Image& Image::setOrigin(Point3 origin)
 
 Image& Image::setSpacing(Vector3 spacing)
 {
+  if (spacing[0] <= 0 || spacing[1] <= 0 || spacing[2] <= 0)
+    { throw std::invalid_argument("Spacing cannot b <= 0"); }
+
   using FilterType = itk::ChangeInformationImageFilter<ImageType>;
   FilterType::Pointer filter = FilterType::New();
 

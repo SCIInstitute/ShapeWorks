@@ -183,7 +183,7 @@ void Antialias::buildParser()
 
   parser.add_option("--maxrmserror").action("store").type("double").set_default(0.01).help("Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default: 0.01].");
   parser.add_option("--iterations").action("store").type("int").set_default(50).help("Maximum number of iterations [default: 50].");
-  parser.add_option("--layers").action("store").type("int").set_default(0).help("Number of layers around a 3d pixel to use for this computation [default: 3].");
+  parser.add_option("--layers").action("store").type("int").set_default(3).help("Number of layers around a 3d pixel to use for this computation [default: 3].");
 
   Command::buildParser();
 }
@@ -1086,9 +1086,9 @@ void SetSpacing::buildParser()
   const std::string desc = "set spacing";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--x", "-x").action("store").type("double").set_default(0).help("x value of spacing [default: 1.0].");
-  parser.add_option("--y", "-y").action("store").type("double").set_default(0).help("y value of spacing [default: 1.0].");
-  parser.add_option("--z", "-z").action("store").type("double").set_default(0).help("z value of spacing [default: 1.0].");
+  parser.add_option("--x", "-x").action("store").type("double").set_default(1.0).help("x value of spacing [default: 1.0].");
+  parser.add_option("--y", "-y").action("store").type("double").set_default(1.0).help("y value of spacing [default: 1.0].");
+  parser.add_option("--z", "-z").action("store").type("double").set_default(1.0).help("z value of spacing [default: 1.0].");
 
   Command::buildParser();
 }
@@ -1104,6 +1104,7 @@ bool SetSpacing::execute(const optparse::Values &options, SharedCommandData &sha
   double x = static_cast<double>(options.get("x"));
   double y = static_cast<double>(options.get("y"));
   double z = static_cast<double>(options.get("z"));
+
 
   sharedData.image.setSpacing(makeVector({x, y, z}));
   return true;

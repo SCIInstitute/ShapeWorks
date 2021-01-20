@@ -64,7 +64,7 @@ public:
   Image& operator-=(const PixelType x);
 
   /// antialiases image
-  Image& antialias(unsigned iterations = 50, double maxRMSErr = 0.01f, int layers = 0);
+  Image& antialias(unsigned iterations = 50, double maxRMSErr = 0.01f, int layers = 3);
   
   /// helper identical to setOrigin(image.center()) changing origin (in the image header) to physcial center of the image
   Image& recenter();

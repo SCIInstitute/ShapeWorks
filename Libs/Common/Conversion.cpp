@@ -22,7 +22,9 @@ Image Mesh::toImage(Vector3 spacing, Dims size, Point3 origin) const
 
 Image Mesh::toDistanceTransform(Vector3 spacing, Dims size, Point3 origin) const
 {
-  return rasterize(*this, spacing, size, origin).antialias(30, 0.0).computeDT();
+  Image image(rasterize(*this, spacing, size, origin));
+  image.antialias(30, 0.0).computeDT();
+  return image;
 }
 
 } // shapeworks

@@ -388,7 +388,7 @@ TEST(ImageTests, blurTest)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, cropTest)
+TEST(ImageTests, cropTest1)
 {
   std::string images_location = std::string(TEST_DATA_DIR) + std::string("/images/");
   std::vector<std::string> images = {
@@ -402,6 +402,29 @@ TEST(ImageTests, cropTest)
     images_location + "seg.ellipsoid_8.nrrd",
     images_location + "seg.ellipsoid_9.nrrd",
   };
+
+  Image image(std::string(TEST_DATA_DIR) + "/seg.ellipsoid_1.nrrd");
+  Region region;
+  region = ImageUtils::boundingBox(images);
+  image.crop(region);
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/crop_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, cropTest2)
+{
+  std::string images_location = std::string(TEST_DATA_DIR) + std::string("/images/");
+  std::vector<Image> images;
+  Image img1(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_1.nrrd")); images.push_back(img1);
+  Image img2(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_2.nrrd")); images.push_back(img2);
+  Image img3(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_3.nrrd")); images.push_back(img3);
+  Image img4(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_4.nrrd")); images.push_back(img4);
+  Image img5(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_5.nrrd")); images.push_back(img5);
+  Image img6(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_6.nrrd")); images.push_back(img6);
+  Image img7(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_7.nrrd")); images.push_back(img7);
+  Image img8(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_8.nrrd")); images.push_back(img8);
+  Image img9(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_9.nrrd")); images.push_back(img9);
 
   Image image(std::string(TEST_DATA_DIR) + "/seg.ellipsoid_1.nrrd");
   Region region;
@@ -1012,10 +1035,10 @@ TEST(ImageTests, resizeTest3)
 TEST(ImageTests, setSpacingTest1)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
-  image.setSpacing();
+  image.setSpacing(makeVector({-2.0,-2.0,-2.0}));
   Image ground_truth(std::string(TEST_DATA_DIR) + "/spacing1.nrrd");
 
-  ASSERT_TRUE(image == ground_truth);
+  ASSERT_FALSE(image == ground_truth);
 }
 
 TEST(ImageTests, setSpacingTest2)
@@ -1023,6 +1046,15 @@ TEST(ImageTests, setSpacingTest2)
   Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
   image.setSpacing(makeVector({2.0,2.0,2.0}));
   Image ground_truth(std::string(TEST_DATA_DIR) + "/spacing2.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, setSpacingTest3)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
+  image.setSpacing();
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/spacing1.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }

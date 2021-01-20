@@ -1,5 +1,5 @@
 import os
-
+import sys
 from shapeworks import *
 
 def setoriginTest1():

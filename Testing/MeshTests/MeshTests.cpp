@@ -204,7 +204,12 @@ TEST(MeshTests, toDistanceTransformTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
   Region region = femur.boundingBox();
-  Image image = femur.toDistanceTransform(makeVector({1.0,1.0,1.0}), femur.rasterizationSize(region), femur.rasterizationOrigin(region));
+  Image image = femur.toImage(makeVector({1.0,1.0,1.0}), femur.rasterizationSize(region), femur.rasterizationOrigin(region));
+  image.write(std::string(TEST_DATA_DIR) + "/femurImg.nrrd");
+  image.antialias(30, 0.0);
+  // image.computeDT();
+  image.write(std::string(TEST_DATA_DIR) + "/antialiasC.nrrd");
+  // Image image = femur.toDistanceTransform(makeVector({1.0,1.0,1.0}), femur.rasterizationSize(region), femur.rasterizationOrigin(region));
   Image ground_truth(std::string(TEST_DATA_DIR) + "/femurDT.nrrd");
 
   ASSERT_TRUE(image == ground_truth);

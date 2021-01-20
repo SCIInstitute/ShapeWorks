@@ -214,7 +214,12 @@ TEST(shapeworksTests, setspacing)
   ASSERT_FALSE(system("bash setspacing.sh"));
 }
 
-TEST(shapeworksTests, toMesh)
+TEST(shapeworksTests, setspacingfail)
+{
+  ASSERT_TRUE(system("bash setspacingfail.sh"));
+}
+
+TEST(shapeworksTests, tomesh)
 {
   ASSERT_FALSE(system("bash tomesh.sh"));
 }
