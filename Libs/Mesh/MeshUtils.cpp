@@ -42,25 +42,6 @@ const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createIcpTransform(const vtkSmart
   return m;
 }
 
-Eigen::MatrixXd MeshUtils::pointReadFormat(std::string refPointPath, int numP){
-  Eigen::MatrixXd Vout(numP, 3);
-  std::ifstream inFile;
-  inFile.open(refPointPath.c_str());
-  int count = 0;
-  float a, b, c;
-  while(!inFile.eof()){
-	inFile >> a >> b >> c;
-	if(count < numP){
-		Vout(count, 0) = a;
-		Vout(count, 1) = b;
-		Vout(count, 2) = c;
-	}
-    count++;
-  }
-  inFile.close();
-  return Vout;
-}
-
 Eigen::MatrixXd MeshUtils::distilVertexInfo(vtkSmartPointer<vtkPolyData> mesh){
   vtkSmartPointer<vtkPoints> points = mesh->GetPoints();
 	vtkSmartPointer<vtkDataArray> dataArray = points->GetData();
