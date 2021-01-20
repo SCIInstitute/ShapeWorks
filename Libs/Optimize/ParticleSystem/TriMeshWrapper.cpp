@@ -106,6 +106,7 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
 
     for(int j=0; j<3; j++) {
       // geodesic distance between the two vertices on the mesh
+      //TODO: Change API of GeodesicDistance to return a ref to all geodesics so we have to do fewer lookups
       const double g_ij = GeodesicDistance(mesh_->faces[face_a][i],
                                            mesh_->faces[face_b][j]);
 
