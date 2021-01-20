@@ -30,6 +30,9 @@
 #include <vtkImageData.h>
 #include <vtkPolyDataToImageStencil.h>
 #include <vtkImageStencil.h>
+#include <FEFixMesh.h>
+#include <FEMeshSmoothingModifier.h>
+#include <FECVDDecimationModifier.h>
 
 namespace shapeworks {
 
@@ -146,9 +149,9 @@ Mesh& Mesh::write(const std::string &pathname)
 
 Mesh& Mesh::coverage(const Mesh &other_mesh, bool allow_back_intersections, double angle_threshold, double back_search_radius)
 {
-  FEVTKimport importer;
-  FEMesh* surf1 = importer.Load(this->mesh);
-  FEMesh* surf2 = importer.Load(other_mesh.mesh);
+  FEVTKimport import;
+  FEMesh* surf1 = import.Load(this->mesh);
+  FEMesh* surf2 = import.Load(other_mesh.mesh);
   if (surf1 == nullptr || surf2 == nullptr) { throw std::invalid_argument("Mesh invalid"); }
 
   FEAreaCoverage areaCoverage;
@@ -162,11 +165,11 @@ Mesh& Mesh::coverage(const Mesh &other_mesh, bool allow_back_intersections, doub
     surf1->Node(i).m_ndata = map1[i];
   }
 
-  FEVTKExport vtkout;
-  VTKEXPORT ops = { false, true };
-  vtkout.SetOptions(ops);
+  FEVTKExport vtkOut;
+  VTKEXPORT ops = {false, true};
+  vtkOut.SetOptions(ops);
 
-  this->mesh = vtkout.ExportToVTK(*surf1);
+  this->mesh = vtkOut.ExportToVTK(*surf1);
 
   return *this;
 }
@@ -413,6 +416,50 @@ Image Mesh::rasterize(const Mesh &mesh, Vector3 spacing, Dims size, Point3 origi
 
   // vtk image to itk img
   return MeshUtils::getITK(imgstenc->GetOutput());
+}
+
+Mesh& Mesh::preview(bool wind, bool smoothBefore, bool smoothAfter, double lambda, int iterations, bool decimate, double percentage)
+{
+	FEVTKimport import;
+  FEMesh* meshFE = import.Load(this->mesh);
+
+	if (meshFE == 0) { throw std::invalid_argument("Unable to read file"); }
+
+	FEFixMesh fix;
+  FEMesh* meshFix;
+  if (wind)
+    meshFix = fix.FixElementWinding(meshFE);
+
+  if (smoothBefore)
+  {
+    FEMeshSmoothingModifier lap;
+    lap.m_threshold1 = lambda;
+    lap.m_iteration = iterations;
+    meshFix = lap.Apply(meshFix);
+  }
+
+  if (decimate)
+  {
+    FECVDDecimationModifier cvd;
+    cvd.m_pct = percentage;
+    cvd.m_gradient = 1;
+    meshFix = cvd.Apply(meshFix);
+
+    if (smoothAfter)
+    {
+      FEMeshSmoothingModifier lap;
+      lap.m_threshold1 = lambda;
+      lap.m_iteration = iterations;
+      meshFix = lap.Apply(meshFix);
+    }
+  }
+
+	FEVTKExport vtkOut;
+  VTKEXPORT ops = {false, true};
+  vtkOut.SetOptions(ops);
+  this->mesh = vtkOut.ExportToVTK(*meshFix);
+
+  return *this;
 }
 
 bool Mesh::compare_points_equal(const Mesh &other_mesh) const

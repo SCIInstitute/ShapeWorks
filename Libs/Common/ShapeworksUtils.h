@@ -4,6 +4,7 @@
 
 #include <vtkSmartPointer.h>
 #include <vtkMatrix4x4.h>
+#include <vtkPolyData.h>
 
 namespace shapeworks {
 

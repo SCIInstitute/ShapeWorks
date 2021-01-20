@@ -118,14 +118,14 @@ void ImageInfo::buildParser()
   const std::string desc = "prints requested image dimensions, spacing, size, origin, direction (coordinate system), center, center of mass and bounding box [default: prints everything]";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--dims").action("store_true").set_default(false).help("Whether to display image dimensions.");
-  parser.add_option("--spacing").action("store_true").set_default(false).help("Whether to display physical spacing.");
-  parser.add_option("--size").action("store_true").set_default(false).help("Whether to display size.");
-  parser.add_option("--origin").action("store_true").set_default(false).help("Whether to display physical origin.");
-  parser.add_option("--direction").action("store_true").set_default(false).help("Whether to display direction.");
-  parser.add_option("--center").action("store_true").set_default(false).help("Whether to display center.");
-  parser.add_option("--centerofmass").action("store_true").set_default(false).help("Whether to display center of mass.");
-  parser.add_option("--boundingbox").action("store_true").set_default(false).help("Whether to display bounding box.");
+  parser.add_option("--dims").action("store_true").set_default(false).help("Whether to display image dimensions [default: true].");
+  parser.add_option("--spacing").action("store_true").set_default(false).help("Whether to display physical spacing [default: true].");
+  parser.add_option("--size").action("store_true").set_default(false).help("Whether to display size [default: true].");
+  parser.add_option("--origin").action("store_true").set_default(false).help("Whether to display physical origin [default: true].");
+  parser.add_option("--direction").action("store_true").set_default(false).help("Whether to display direction [default: true].");
+  parser.add_option("--center").action("store_true").set_default(false).help("Whether to display center. [default: true]");
+  parser.add_option("--centerofmass").action("store_true").set_default(false).help("Whether to display center of mass. [default: true]");
+  parser.add_option("--boundingbox").action("store_true").set_default(false).help("Whether to display bounding box. [default: true]");
 
   Command::buildParser();
 }
@@ -380,9 +380,9 @@ void TranslateImage::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--centerofmass").action("store_true").set_default(false).help("Use center of mass [default: false].");
-  parser.add_option("--tx", "-x").action("store").type("double").set_default(0).help("X distance");
-  parser.add_option("--ty", "-y").action("store").type("double").set_default(0).help("Y distance");
-  parser.add_option("--tz", "-z").action("store").type("double").set_default(0).help("Z distance");
+  parser.add_option("--tx", "-x").action("store").type("double").set_default(0).help("X distance.");
+  parser.add_option("--ty", "-y").action("store").type("double").set_default(0).help("Y distance.");
+  parser.add_option("--tz", "-z").action("store").type("double").set_default(0).help("Z distance.");
 
   Command::buildParser();
 }
@@ -422,9 +422,9 @@ void ScaleImage::buildParser()
   const std::string desc = "scales image by specified value";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--sx", "-x").action("store").type("double").set_default(1.0).help("X scale");
-  parser.add_option("--sy", "-y").action("store").type("double").set_default(1.0).help("Y scale");
-  parser.add_option("--sz", "-z").action("store").type("double").set_default(1.0).help("Z scale");
+  parser.add_option("--sx", "-x").action("store").type("double").set_default(1.0).help("X scale.");
+  parser.add_option("--sy", "-y").action("store").type("double").set_default(1.0).help("Y scale.");
+  parser.add_option("--sz", "-z").action("store").type("double").set_default(1.0).help("Z scale.");
 
   Command::buildParser();
 }
@@ -462,11 +462,11 @@ void Rotate::buildParser()
   const std::string desc = "rotates image by specified value";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--rx", "-x").action("store").type("double").help("Physical axis around which to rotate [default: z-axis]");
-  parser.add_option("--ry", "-y").action("store").type("double").help("Physical axis around which to rotate [default: z-axis]");
-  parser.add_option("--rz", "-z").action("store").type("double").set_default(1.0).help("Physical axis around which to rotate [default: z-axis]");
-  parser.add_option("--radians").action("store").type("double").help("Angle in radians");
-  parser.add_option("--degrees").action("store").type("double").help("Angle in degrees");
+  parser.add_option("--rx", "-x").action("store").type("double").help("Physical axis around which to rotate [default: z-axis].");
+  parser.add_option("--ry", "-y").action("store").type("double").help("Physical axis around which to rotate [default: z-axis].");
+  parser.add_option("--rz", "-z").action("store").type("double").set_default(1.0).help("Physical axis around which to rotate [default: z-axis].");
+  parser.add_option("--radians").action("store").type("double").help("Angle in radians.");
+  parser.add_option("--degrees").action("store").type("double").help("Angle in degrees.");
 
   Command::buildParser();
 }
@@ -1054,9 +1054,9 @@ void SetOrigin::buildParser()
   const std::string desc = "set origin";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--x", "-x").action("store").type("double").set_default(0).help("x value of origin [default: 0.0].");
-  parser.add_option("--y", "-y").action("store").type("double").set_default(0).help("y value of origin [default: 0.0].");
-  parser.add_option("--z", "-z").action("store").type("double").set_default(0).help("z value of origin [default: 0.0].");
+  parser.add_option("--x", "-x").action("store").type("double").set_default(0).help("X value of origin [default: 0.0].");
+  parser.add_option("--y", "-y").action("store").type("double").set_default(0).help("Y value of origin [default: 0.0].");
+  parser.add_option("--z", "-z").action("store").type("double").set_default(0).help("Z value of origin [default: 0.0].");
 
   Command::buildParser();
 }
@@ -1236,7 +1236,7 @@ void AddImage::buildParser()
   const std::string desc = "add a value to each pixel in the given image and/or add another image in a pixelwise manner";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--value", "-x").action("store").type("double").set_default("0.0").help("Value to add to each pixel.");
+  parser.add_option("--value", "-x").action("store").type("double").set_default("0.0").help("Value to add to each pixel [default: 0.0].");
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of image to add pixelwise.");
 
   Command::buildParser();
@@ -1276,7 +1276,7 @@ void SubtractImage::buildParser()
   const std::string desc = "subtract a value from each pixel in this image and/or subtract another image in a pixelwise manner";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--value", "-x").action("store").type("double").set_default("0.0").help("Value to subtract from each pixel.");
+  parser.add_option("--value", "-x").action("store").type("double").set_default("0.0").help("Value to subtract from each pixel [default: 0.0].");
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of image to subtract pixelwise.");
 
   Command::buildParser();
@@ -1316,7 +1316,7 @@ void MultiplyImage::buildParser()
   const std::string desc = "multiply an image by a constant";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--value", "-x").action("store").type("double").set_default("0.0").help("Value with which to multiply.");
+  parser.add_option("--value", "-x").action("store").type("double").set_default("1.0").help("Value with which to multiply [default: 1.0]");
 
   Command::buildParser();
 }
@@ -1344,7 +1344,7 @@ void DivideImage::buildParser()
   const std::string desc = "divide an image by a constant";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--value", "-x").action("store").type("double").set_default("0.0").help("Value with which to divide.");
+  parser.add_option("--value", "-x").action("store").type("double").set_default("0.0").help("Value with which to divide [default: 1.0].");
 
   Command::buildParser();
 }
@@ -1438,7 +1438,7 @@ void ReadParticleSystem::buildParser()
   const std::string desc = "reads a particle system";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--names").action("store").type("multistring").set_default("").help("paths to .particle files (must be followed by `--`), ex: \"--names *.particle -- next-command...\")");
+  parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to .particle files (must be followed by `--`), ex: \"--names *.particle -- next-command...\")");
 
   Command::buildParser();
 }
@@ -1465,8 +1465,8 @@ void Compactness::buildParser()
   const std::string desc = "Compute compactness of a loaded particle system";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--nmodes").action("store").type("int").set_default("1").help("Number of modes to use");
-  parser.add_option("--saveto").action("store").type("string").set_default("").help("Save the scree plots for all modes to a file");
+  parser.add_option("--nmodes").action("store").type("int").set_default("1").help("Number of modes to use [default: 1].");
+  parser.add_option("--saveto").action("store").type("string").set_default("").help("Save the scree plots for all modes to a file.");
 
   Command::buildParser();
 }
@@ -1497,8 +1497,8 @@ void Generalization::buildParser()
   const std::string desc = "compute generalization of a loaded particle system";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--nmodes").action("store").type("int").set_default("1").help("Number of modes to use");
-  parser.add_option("--saveto").action("store").type("string").set_default("").help("Save the reconstructions sorted by generalization along with the mapping to the original shape");
+  parser.add_option("--nmodes").action("store").type("int").set_default("1").help("Number of modes to use [default: 1].");
+  parser.add_option("--saveto").action("store").type("string").set_default("").help("Save the reconstructions sorted by generalization along with the mapping to the original shape.");
 
   Command::buildParser();
 }
@@ -1529,8 +1529,8 @@ void Specificity::buildParser()
   const std::string desc = "compute specificity of a loaded particle system";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--nmodes").action("store").type("int").set_default("1").help("Number of modes to use");
-  parser.add_option("--saveto").action("store").type("string").set_default("").help("Save the reconstructions sorted by specificity along with the mapping to the original shape");
+  parser.add_option("--nmodes").action("store").type("int").set_default("1").help("Number of modes to use [default: 1].");
+  parser.add_option("--saveto").action("store").type("string").set_default("").help("Save the reconstructions sorted by specificity along with the mapping to the original shape.");
 
   Command::buildParser();
 }
@@ -1995,9 +1995,9 @@ void TranslateMesh::buildParser()
   const std::string desc = "translates mesh";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--tx", "-x").action("store").type("double").set_default(0).help("X distance");
-  parser.add_option("--ty", "-y").action("store").type("double").set_default(0).help("Y distance");
-  parser.add_option("--tz", "-z").action("store").type("double").set_default(0).help("Z distance");
+  parser.add_option("--tx", "-x").action("store").type("double").set_default(0).help("X distance.");
+  parser.add_option("--ty", "-y").action("store").type("double").set_default(0).help("Y distance.");
+  parser.add_option("--tz", "-z").action("store").type("double").set_default(0).help("Z distance.");
 
   Command::buildParser();
 }
@@ -2027,9 +2027,9 @@ void ScaleMesh::buildParser()
   const std::string desc = "scales mesh";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--sx", "-x").action("store").type("double").set_default(1.0).help("X scale");
-  parser.add_option("--sy", "-y").action("store").type("double").set_default(1.0).help("Y scale");
-  parser.add_option("--sz", "-z").action("store").type("double").set_default(1.0).help("Z scale");
+  parser.add_option("--sx", "-x").action("store").type("double").set_default(1.0).help("X scale.");
+  parser.add_option("--sy", "-y").action("store").type("double").set_default(1.0).help("Y scale.");
+  parser.add_option("--sz", "-z").action("store").type("double").set_default(1.0).help("Z scale.");
 
   Command::buildParser();
 }
@@ -2068,7 +2068,7 @@ void BoundingBoxMesh::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to meshes (must be followed by `--`), ex: \"bounding-box-mesh --names *.vtk -- --center 1\")");
-  parser.add_option("--center").action("store").type("bool").set_default(false).help("flag for centering");
+  parser.add_option("--center").action("store").type("bool").set_default(false).help("Flag for centering [default: false].");
 
   Command::buildParser();
 }
@@ -2093,8 +2093,8 @@ void ComputeDistance::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--other").action("store").type("string").set_default("").help("Filename of other mesh.");
-  parser.add_option("--distanceAtoB").action("store").type("bool").set_default(true).help("Relative distance from A to B.");
-  parser.add_option("--distanceBtoA").action("store").type("bool").set_default(true).help("Relative distance from B to A.");
+  parser.add_option("--distanceAtoB").action("store").type("bool").set_default(true).help("Relative distance from A to B [default: true].");
+  parser.add_option("--distanceBtoA").action("store").type("bool").set_default(true).help("Relative distance from B to A [default: true].");
 
   Command::buildParser();
 }
@@ -2138,11 +2138,11 @@ void RasterizationOrigin::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to meshes (must be followed by `--`), ex: \"bounding-box-mesh --names *.vtk -- --center 1\")");
-  parser.add_option("--center").action("store").type("bool").set_default(false).help("flag for centering");
-  parser.add_option("--x").action("store").type("double").set_default(1.0).help("x value of spacing");
-  parser.add_option("--y").action("store").type("double").set_default(1.0).help("y value of spacing");
-  parser.add_option("--z").action("store").type("double").set_default(1.0).help("z value of spacing");
-  parser.add_option("--padding").action("store").type("int").set_default(0.0).help("padding value");
+  parser.add_option("--center").action("store").type("bool").set_default(false).help("Flag for centering [default: false].");
+  parser.add_option("--padding").action("store").type("int").set_default(0.0).help("Padding value [default: 0.0].");
+  parser.add_option("--x").action("store").type("double").set_default(1.0).help("X value of spacing [default: 1.0].");
+  parser.add_option("--y").action("store").type("double").set_default(1.0).help("Y value of spacing [default: 1.0].");
+  parser.add_option("--z").action("store").type("double").set_default(1.0).help("Z value of spacing [default: 1.0].");
 
   Command::buildParser();
 }
@@ -2174,11 +2174,11 @@ void RasterizationSize::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to meshes (must be followed by `--`), ex: \"bounding-box-mesh --names *.vtk -- --center 1\")");
-  parser.add_option("--center").action("store").type("bool").set_default(false).help("flag for centering");
-  parser.add_option("--x").action("store").type("double").set_default(1.0).help("x value of spacing");
-  parser.add_option("--y").action("store").type("double").set_default(1.0).help("y value of spacing");
-  parser.add_option("--z").action("store").type("double").set_default(1.0).help("z value of spacing");
-  parser.add_option("--padding").action("store").type("int").set_default(0.0).help("padding value");
+  parser.add_option("--center").action("store").type("bool").set_default(false).help("Flag for centering [default: false].");
+  parser.add_option("--padding").action("store").type("int").set_default(0.0).help("Padding value [default: 0.0].");
+  parser.add_option("--x").action("store").type("double").set_default(1.0).help("X value of spacing [default: 1.0].");
+  parser.add_option("--y").action("store").type("double").set_default(1.0).help("Y value of spacing [default: 1.0].");
+  parser.add_option("--z").action("store").type("double").set_default(1.0).help("Z value of spacing [default: 1.0].");
 
   Command::buildParser();
 }
@@ -2197,6 +2197,46 @@ bool RasterizationSize::execute(const optparse::Values &options, SharedCommandDa
   else
     sharedData.region = MeshUtils::boundingBox(filenames, center);
   std::cout << "Rasterization Size:      " << sharedData.mesh->rasterizationSize(sharedData.region, makeVector({x, y, z}), padding) << std::endl;
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Preview
+///////////////////////////////////////////////////////////////////////////////
+void Preview::buildParser()
+{
+  const std::string prog = "preview";
+  const std::string desc = "process meshes using Preview in batch mode";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--winding").action("store").type("bool").set_default(true).help("Fix element window [default: true]");
+  parser.add_option("--smoothBefore").action("store").type("bool").set_default(true).help("Perform laplacian smoothing before decimation [default: true].");
+  parser.add_option("--smoothAfter").action("store").type("bool").set_default(true).help("Perform laplacian smoothing after decimation [default: true].");
+  parser.add_option("--lambda").action("store").type("double").set_default(0.5).help("Laplacian smoothing lambda [default: 0.5].");
+  parser.add_option("--iterations").action("store").type("int").set_default(1).help("Number of laplacian smoothing iterations [default: 1].");
+  parser.add_option("--decimate").action("store").type("bool").set_default(1).help("Perform mesh decimation [default: true].");
+  parser.add_option("--percentage").action("store").type("double").set_default(0.5).help("Percentage of target number of clusters/vertices [default: 0.5].");
+
+  Command::buildParser();
+}
+
+bool Preview::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  bool wind = static_cast<bool>(options.get("wind"));
+  bool smoothBefore = static_cast<bool>(options.get("smoothBefore"));
+  bool smoothAfter = static_cast<bool>(options.get("smoothAfter"));
+  double lambda = static_cast<double>(options.get("lambda"));
+  int iterations = static_cast<int>(options.get("iterations"));
+  bool decimate = static_cast<bool>(options.get("decimate"));
+  double percentage = static_cast<double>(options.get("percentage"));
+
+  sharedData.mesh->preview(wind, smoothBefore, smoothAfter, lambda, iterations, decimate, percentage);
   return sharedData.validMesh();
 }
 

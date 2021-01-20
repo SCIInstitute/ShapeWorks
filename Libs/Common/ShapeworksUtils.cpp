@@ -1,6 +1,8 @@
 #include "ShapeworksUtils.h"
 
 #include <sys/stat.h>
+#include <vtkPLYReader.h>
+#include <vtkPolyDataReader.h>
 
 namespace shapeworks {
 
