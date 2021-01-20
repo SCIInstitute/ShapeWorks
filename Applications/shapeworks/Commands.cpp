@@ -2246,7 +2246,7 @@ bool Preview::execute(const optparse::Values &options, SharedCommandData &shared
 void MeshToImage::buildParser()
 {
   const std::string prog = "mesh-to-image";
-  const std::string desc = "converts current mesh to image";
+  const std::string desc = "converts current mesh to binary segmentation";
   parser.prog(prog).description(desc);
 
   parser.add_option("--spacex").action("store").type("double").set_default(1.0).help("Spacing of output image in x-direction [default: %default].");
