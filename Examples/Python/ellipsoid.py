@@ -32,12 +32,17 @@ def Run_Pipeline(args):
     outputDirectory = "Output/ellipsoid/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
-    CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
-    fileList = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))
-    # Select data for tiny test
+    #If tiny_test then download subset of the data
     if args.tiny_test:
         args.use_single_scale = 1
-        fileList = fileList[:3]
+        CommonUtils.download_subset(args.use_case,datasetName, outputDirectory)
+        fileList = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))[:3]
+    #else download the entire dataset
+    else:
+        CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
+
+        fileList = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))
+    
     # Select data if using subsample
     if args.use_subsample:
         sample_idx = sampledata(fileList, int(args.num_subsample))
@@ -76,6 +81,7 @@ def Run_Pipeline(args):
 
         """Apply isotropic resampling"""
         isoresampledFiles = applyIsotropicResampling(groomDir + "resampled/segmentations", fileList)
+
 
         """Apply centering"""
         centeredFiles = center(groomDir + "centered/segmentations", isoresampledFiles)
@@ -126,7 +132,7 @@ def Run_Pipeline(args):
     parameterDictionary = {
         "number_of_particles": 128,
         "use_normals": 1,
-        "normal_weight": 10.0,
+        "normal_weight": 15.0,
         "checkpointing_interval": 200,
         "keep_checkpoints": 0,
         "iterations_per_split": 2000,
@@ -136,8 +142,8 @@ def Run_Pipeline(args):
         "recompute_regularization_interval": 2,
         "domains_per_shape": 1,
         "domain_type": 'image',
-        "relative_weighting": 10,
-        "initial_relative_weighting": 0.01,
+        "relative_weighting": 15,
+        "initial_relative_weighting": 0.05,
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,

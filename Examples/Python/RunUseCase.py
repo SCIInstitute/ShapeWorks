@@ -14,7 +14,7 @@ import platform
 import argparse
 import subprocess
 import sys
-from CommonUtils import robustifyShapeworksPaths
+from CommonUtils import robustifyShapeworksPaths,dataset_exists_check
 
 # check that required modules are found
 try:
@@ -48,7 +48,11 @@ args = parser.parse_args()
 explicit_binpath = args.shapeworks_path
 
 if args.use_subsample:
+    dataExists = dataset_exists_check(args.use_case)
     args.use_subsample = args.num_subsample
+    if(dataExists==False):
+        print("Please note : For --use_subsample argument the entire dataset will be downloaded.For a quick test use the --tiny_test argument")
+        input("Press any key to continue")
 
 if len(sys.argv)==1:
     parser.print_help(sys.stderr)

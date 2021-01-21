@@ -15,6 +15,16 @@ INSTALL_DIR=$1
 
 # Update auto-documentation
 PATH=$INSTALL_DIR/bin:$PATH
+
+# check that 'shapeworks -h' is working
+shapeworks -h
+if [ $? -eq 0 ]; then
+    echo "shapeworks -h is working"
+else
+    echo "shapeworks -h is not working"
+    exit 1
+fi
+
 python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
 
 git config --global user.name "${GITHUB_ACTOR}"

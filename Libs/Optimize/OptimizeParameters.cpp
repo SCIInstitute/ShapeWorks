@@ -1,3 +1,4 @@
+#include <functional>
 
 #include "OptimizeParameters.h"
 #include "Optimize.h"
@@ -253,7 +254,11 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
   }
 
   std::vector<std::string> filenames;
+  int count = 0;
   for (auto s : subjects) {
+    if (this->abort_load_) {
+      return false;
+    }
     auto files = s->get_groomed_filenames();
     if (files.empty()) {
       throw std::invalid_argument("No groomed inputs for optimization");
@@ -279,6 +284,10 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
     auto name = StringUtils::getFileNameWithoutExtension(filename);
     s->set_global_particle_filename(name + "_world.particles");
     s->set_local_particle_filename(name + "_local.particles");
+    count++;
+    if (this->load_callback_) {
+      this->load_callback_(count);
+    }
   }
 
   optimize->SetOutputDir(".");
@@ -287,3 +296,16 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
 
   return true;
 }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_abort_load(bool value)
+{
+  this->abort_load_ = value;
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_load_callback(const std::function<void(int)> &f)
+{
+  this->load_callback_ = f;
+}
+
