@@ -330,7 +330,9 @@ Image& Image::resample(const Vector3& spacing, Image::InterpolationType interp)
               static_cast<unsigned>(std::floor(inputDims[1] * inputSpacing[1] / spacing[1])),
               static_cast<unsigned>(std::floor(inputDims[2] * inputSpacing[2] / spacing[2])) });
   
-  return resample(IdentityTransform::New(), origin(), dims, spacing, coordsys(), interp);
+  Point3 new_origin = origin() + toPoint(0.5 * (spacing - inputSpacing));  // O' += 0.5 * (p' - p)
+
+  return resample(IdentityTransform::New(), new_origin, dims, spacing, coordsys(), interp);
 }
 
 Image& Image::resize(Dims dims, Image::InterpolationType interp)
