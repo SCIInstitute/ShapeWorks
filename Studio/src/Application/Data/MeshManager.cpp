@@ -16,6 +16,7 @@ MeshManager::MeshManager(Preferences& prefs) :
   mesh_generator_(prefs),
   surface_reconstructor_(new SurfaceReconstructor())
 {
+  this->mesh_generator_.set_mesh_warper(this->mesh_warper_);
   this->mesh_generator_.set_surface_reconstructor(this->surface_reconstructor_);
 
   qRegisterMetaType<MeshWorkItem>("MeshWorkItem");
@@ -44,6 +45,7 @@ void MeshManager::generate_mesh(const MeshWorkItem item)
 
     MeshWorker* worker = new MeshWorker(this->prefs_, item,
                                         &this->work_queue_, &this->mesh_cache_);
+    worker->get_mesh_generator()->set_mesh_warper(this->mesh_warper_);
     worker->get_mesh_generator()->set_surface_reconstructor(this->surface_reconstructor_);
 
     connect(worker, &MeshWorker::result_ready, this, &MeshManager::handle_thread_complete);
@@ -104,5 +106,11 @@ void MeshManager::handle_thread_complete(const MeshWorkItem& item, MeshHandle me
 QSharedPointer<SurfaceReconstructor> MeshManager::get_surface_reconstructor()
 {
   return this->surface_reconstructor_;
+}
+
+//---------------------------------------------------------------------------
+QSharedPointer<MeshWarper> MeshManager::get_mesh_warper()
+{
+  return this->mesh_warper_;
 }
 }

@@ -21,6 +21,7 @@
 
 #include <Data/Preferences.h>
 #include <Data/SurfaceReconstructor.h>
+#include <Data/MeshWarper.h>
 
 
 namespace shapeworks {
@@ -43,6 +44,9 @@ public:
 
   //! return the surface reconstructor
   QSharedPointer<SurfaceReconstructor> get_surface_reconstructor();
+
+  //! return the mesh warper
+  QSharedPointer<MeshWarper> get_mesh_warper();
 
   //! clear the cache
   void clear_cache();
@@ -71,6 +75,8 @@ private:
   MeshWorkQueue work_queue_;
 
   QSharedPointer<SurfaceReconstructor> surface_reconstructor_;
+
+  QSharedPointer<MeshWarper> mesh_warper_ = QSharedPointer<MeshWarper>::create();
 
   QThreadPool thread_pool_;
 
