@@ -713,6 +713,8 @@ void AnalysisTool::enable_actions()
   this->ui_->reconstructionButton->setEnabled(
     this->session_->particles_present() && this->session_->get_groomed_present());
 
+  this->initialize_mesh_warper();
+
   this->update_group_boxes();
 }
 
@@ -995,6 +997,25 @@ bool AnalysisTool::is_group_active(int shape_index)
   }
 
   return true;
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::initialize_mesh_warper()
+{
+  std::vector<DomainType> domain_types = this->session_->get_domain_types();
+  if (this->session_->particles_present() && domain_types.size() > 0 &&
+      domain_types[0] == DomainType::Mesh) {
+
+    this->compute_stats();
+    int median = this->stats_.ComputeMedianShape(-32); //-32 = both groups
+
+    QSharedPointer<Shape> median_shape = this->session_->get_shapes()[median];
+    vtkSmartPointer<vtkPolyData> poly_data = median_shape->get_groomed_mesh(true)->get_poly_data();
+
+    this->session_->get_mesh_manager()->get_mesh_warper()->set_reference_mesh(poly_data,
+                                                                              median_shape->get_local_correspondence_points());
+
+  }
 }
 
 }

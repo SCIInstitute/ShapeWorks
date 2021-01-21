@@ -146,6 +146,8 @@ private:
   void compute_mode_shape();
   void update_analysis_mode();
 
+  void initialize_mesh_warper();
+
   void update_group_boxes();
   void update_group_values();
 
