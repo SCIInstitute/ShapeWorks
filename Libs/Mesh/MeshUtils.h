@@ -27,6 +27,7 @@ public:
   /// calculate bounding box incrementally for shapework meshes
   static Region boundingBox(std::vector<Mesh> &meshes, bool center = false);
 
+  /// creates ITK filter for the given image
   static Image getITK(vtkImageData* vtkImg);
 };
 

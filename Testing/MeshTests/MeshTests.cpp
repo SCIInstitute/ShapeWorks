@@ -65,6 +65,8 @@ TEST(MeshTests, decimateTest2)
   ASSERT_TRUE(femur == ground_truth);
 }
 
+// TODO: Karthik will add MeshTest for inverNormal
+
 TEST(MeshTests, reflectTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
@@ -91,6 +93,8 @@ TEST(MeshTests, fillHolesTest)
 
   ASSERT_TRUE(femur == ground_truth);
 }
+
+// TODO: Add test for ProbeVolume after getting data
 
 TEST(MeshTests, clipTest)
 {
