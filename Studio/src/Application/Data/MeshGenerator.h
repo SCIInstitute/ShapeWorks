@@ -14,6 +14,7 @@
 #include <Data/StudioMesh.h>
 #include <Data/Preferences.h>
 #include <Data/SurfaceReconstructor.h>
+#include <Data/MeshWarper.h>
 #include <Data/LegacyMeshGenerator.h>
 #include <Data/MeshWorkQueue.h>
 
@@ -36,9 +37,12 @@ public:
 
   void set_surface_reconstructor(QSharedPointer<SurfaceReconstructor> reconstructor);
 
+  void set_mesh_warper(QSharedPointer<MeshWarper> mesh_warper);
+
 private:
   Preferences& prefs_;
   QSharedPointer<SurfaceReconstructor> surface_reconstructor_;
   QSharedPointer<LegacyMeshGenerator> legacy_reconstructor_;
+  QSharedPointer<MeshWarper> mesh_warper_;
 };
 }

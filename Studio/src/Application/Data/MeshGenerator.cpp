@@ -63,6 +63,17 @@ MeshHandle MeshGenerator::build_mesh_from_points(const vnl_vector<double>& shape
 
     mesh->set_poly_data(poly_data);
   }
+  else if (this->mesh_warper_ && this->mesh_warper_->get_warp_available()) {
+    vtkSmartPointer<vtkPolyData> poly_data = this->mesh_warper_->build_mesh(shape);
+
+    vtkSmartPointer<vtkPolyDataNormals> polydata_normals =
+      vtkSmartPointer<vtkPolyDataNormals>::New();
+    polydata_normals->SetInputData(poly_data);
+    polydata_normals->Update();
+    poly_data = polydata_normals->GetOutput();
+
+    mesh->set_poly_data(poly_data);
+  }
   else {
     mesh->set_poly_data(this->legacy_reconstructor_->buildMesh(shape));
   }
@@ -161,5 +172,11 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
 void MeshGenerator::set_surface_reconstructor(QSharedPointer<SurfaceReconstructor> reconstructor)
 {
   this->surface_reconstructor_ = reconstructor;
+}
+
+//---------------------------------------------------------------------------
+void MeshGenerator::set_mesh_warper(QSharedPointer<MeshWarper> mesh_warper)
+{
+  this->mesh_warper_ = mesh_warper;
 }
 }
