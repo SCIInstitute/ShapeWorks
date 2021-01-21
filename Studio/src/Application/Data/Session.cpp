@@ -822,4 +822,14 @@ bool Session::is_supported_file_format(std::string filename)
   return false;
 }
 
+//---------------------------------------------------------------------------
+std::vector<DomainType> Session::get_domain_types()
+{
+  auto subjects = this->get_project()->get_subjects();
+  if (subjects.size() > 0 && subjects[0]->get_domain_types().size() > 0) {
+    return subjects[0]->get_domain_types();
+  }
+  return std::vector<DomainType>();
+}
+
 }

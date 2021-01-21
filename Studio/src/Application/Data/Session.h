@@ -105,6 +105,8 @@ public:
 
   shapeworks::Parameters& parameters();
 
+  std::vector<DomainType> get_domain_types();
+
 public Q_SLOTS:
   void handle_clear_cache();
   void handle_new_mesh();
