@@ -247,8 +247,8 @@ normalizes PCA scores, returns mean and std for reconstruction
 '''
 def whitenPCAscores(scores, loader_dir):
 	scores = np.array(scores)
-	mean_score = np.mean(scores)
-	std_score = np.std(scores)
+	mean_score = np.mean(scores, axis=0)
+	std_score = np.std(scores, axis=0)
 	np.save(loader_dir + 'mean_PCA.npy', mean_score)
 	np.save(loader_dir + 'std_PCA.npy', std_score)
 	norm_scores = []

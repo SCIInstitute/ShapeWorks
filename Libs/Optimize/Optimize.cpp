@@ -1502,57 +1502,55 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
       throw 1;
     }
 
-    // Only run the following code if we are dealing with ImplicitSurfaceDomains
-    const itk::ParticleImplicitSurfaceDomain<float>* domain
-      = dynamic_cast <const itk::ParticleImplicitSurfaceDomain<float>*> (m_sampler->GetParticleSystem()
-        ->GetDomain(i));
-    if (domain) {
-      std::vector<float> fVals;
+    std::vector<float> fVals;
 
-      for (unsigned int j = 0; j < m_sampler->GetParticleSystem()->GetNumberOfParticles(i); j++) {
-        PointType pos = m_sampler->GetParticleSystem()->GetPosition(j, i);
-        PointType wpos = m_sampler->GetParticleSystem()->GetTransformedPosition(j, i);
+    for (unsigned int j = 0; j < m_sampler->GetParticleSystem()->GetNumberOfParticles(i); j++) {
+      PointType pos = m_sampler->GetParticleSystem()->GetPosition(j, i);
+      PointType wpos = m_sampler->GetParticleSystem()->GetTransformedPosition(j, i);
 
-        for (unsigned int k = 0; k < 3; k++) {
-          outw << wpos[k] << " ";
-        }
+      for (unsigned int k = 0; k < 3; k++) {
+        outw << wpos[k] << " ";
+      }
 
-        if (m_use_normals[i % m_domains_per_shape]) {
-          vnl_vector_fixed<float, DIMENSION> pG = domain->SampleNormalAtPoint(pos, j);
-          VectorType pN;
-          pN[0] = pG[0];
-          pN[1] = pG[1];
-          pN[2] = pG[2];
-          pN = m_sampler->GetParticleSystem()->TransformVector(pN,
-                                                               m_sampler->GetParticleSystem()->GetTransform(
-                                                                 i) *
-                                                               m_sampler->GetParticleSystem()->GetPrefixTransform(
-                                                                 i));
-          outw << pN[0] << " " << pN[1] << " " << pN[2] << " ";
-        }
+      if (m_use_normals[i % m_domains_per_shape]) {
+        vnl_vector_fixed<float, DIMENSION> pG = m_sampler->GetParticleSystem()->GetDomain(i)->SampleNormalAtPoint(pos, j);
+        VectorType pN;
+        pN[0] = pG[0];
+        pN[1] = pG[1];
+        pN[2] = pG[2];
+        pN = m_sampler->GetParticleSystem()->TransformVector(pN,
+                                                             m_sampler->GetParticleSystem()->GetTransform(
+                                                               i) *
+                                                             m_sampler->GetParticleSystem()->GetPrefixTransform(
+                                                               i));
+        outw << pN[0] << " " << pN[1] << " " << pN[2] << " ";
+      }
 
-        if (m_attributes_per_domain.size() > 0) {
-          if (m_attributes_per_domain[i % m_domains_per_shape] > 0) {
-            point pt;
-            pt.clear();
-            pt[0] = pos[0];
-            pt[1] = pos[1];
-            pt[2] = pos[2];
-            fVals.clear();
-            if (m_mesh_based_attributes) {
-              domain->GetMesh()->GetFeatureValues(pt, fVals);
-            }
-            for (unsigned int k = 0; k < m_attributes_per_domain[i % m_domains_per_shape]; k++) {
-              outw << fVals[k] << " ";
-            }
+      // Only run the following code if we are dealing with ImplicitSurfaceDomains
+      const itk::ParticleImplicitSurfaceDomain<float>* domain
+              = dynamic_cast <const itk::ParticleImplicitSurfaceDomain<float>*> (m_sampler->GetParticleSystem()
+                      ->GetDomain(i));
+      if (domain && m_attributes_per_domain.size() > 0) {
+        if (m_attributes_per_domain[i % m_domains_per_shape] > 0) {
+          point pt;
+          pt.clear();
+          pt[0] = pos[0];
+          pt[1] = pos[1];
+          pt[2] = pos[2];
+          fVals.clear();
+          if (m_mesh_based_attributes) {
+            domain->GetMesh()->GetFeatureValues(pt, fVals);
+          }
+          for (unsigned int k = 0; k < m_attributes_per_domain[i % m_domains_per_shape]; k++) {
+            outw << fVals[k] << " ";
           }
         }
+      }
 
-        outw << std::endl;
+      outw << std::endl;
 
-        counter++;
-      }      // end for points
-    }
+      counter++;
+    }      // end for points
 
     outw.close();
     this->PrintDoneMessage(1);

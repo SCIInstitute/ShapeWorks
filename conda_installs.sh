@@ -3,6 +3,7 @@
 #
 echo ""
 echo "Note: this script only supports bash and zsh shells"
+echo "      It must be called using \"source ./conda_installs.sh\""
 echo ""
 
 (return 0 2>/dev/null) && sourced=1 || sourced=0
@@ -36,9 +37,9 @@ function install_conda() {
   if ! command -v conda 2>/dev/null 1>&2; then
     echo "installing anaconda..."
     if [[ "$(uname)" == "Darwin" ]]; then
-      curl -o ./Miniconda3-latest-MacOSX-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
-      bash ./Miniconda3-latest-MacOSX-x86_64.sh
-      rm ./Miniconda3-latest-MacOSX-x86_64.sh
+      curl -o /tmp/Miniconda3-latest-MacOSX-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
+      bash /tmp/Miniconda3-latest-MacOSX-x86_64.sh
+      rm /tmp/Miniconda3-latest-MacOSX-x86_64.sh
     elif [[ "$(uname)" == "Linux" ]]; then
       curl -o ./Miniconda3-latest-Linux-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
       bash ./Miniconda3-latest-Linux-x86_64.sh
@@ -90,7 +91,7 @@ function install_conda() {
     boost=1.72.0 \
     openexr=2.5.3 \
     pybind11=2.5.0 \
-    notebook=6.1.5
+    notebook=6.1.5 
   then return 1; fi
 
   # linux and mac (only) deps
@@ -108,6 +109,7 @@ function install_conda() {
     then return 1; fi
   fi
 
+  if ! pip install trimesh;                             then return 1; fi
   if ! pip install termcolor==1.1.0;                    then return 1; fi
   if ! pip install grip==4.5.2;                         then return 1; fi
   if ! pip install matplotlib==3.3.2;                   then return 1; fi
@@ -119,10 +121,13 @@ function install_conda() {
   if ! pip install python-markdown-math==0.8;           then return 1; fi # lib for rendering equations in docs
   if ! pip install fontawesome-markdown==0.2.6;         then return 1; fi # lib for icons in documentation
   if ! pip install pymdown-extensions==8.0.1;           then return 1; fi # lib to support checkbox lists in documentation
+  if ! pip install pyyaml==5.3.1;                       then return 1; fi # for mkdocs
   if ! pip install Python/DatasetUtilsPackage;          then return 1; fi # install the local GirderConnector code as a package
   if ! pip install Python/DocumentationUtilsPackage;    then return 1; fi # install shapeworks auto-documentation as a package
   if ! pip install Python/DataAugmentationUtilsPackage; then return 1; fi # install data augmentation code as a package
   if ! pip install Python/DeepSSMUtilsPackage;          then return 1; fi # install DeepSSM code as a package
+  if ! pip install Python/ShapeCohortGenPackage;        then return 1; fi # install shape cohort generation code as a package
+
 
   if [[ "$GITHUB_ACTION" != "" ]]; then
       echo "Running under GitHub Action"
@@ -133,6 +138,7 @@ function install_conda() {
       fi
       popd
   fi
+
   
   # installs for jupyter notebooks
 
