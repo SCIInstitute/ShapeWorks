@@ -73,8 +73,14 @@ FILE(GLOB STUDIO_GROOM_HDRS Groom/*.h)
 FILE(GLOB STUDIO_UTILS_SRCS Utils/*.cpp)
 FILE(GLOB STUDIO_UTILS_HDRS Utils/*.h)
 
-FILE(GLOB STUDIO_INTERFACE_SRCS Interface/*.cpp)
-FILE(GLOB STUDIO_INTERFACE_HDRS Interface/*.h)
+SET(STUDIO_INTERFACE_SRCS
+  Interface/SplashScreen.cpp
+  Interface/KeyboardShortcuts.cpp
+  )
+SET(STUDIO_INTERFACE_HDRS
+  Interface/SplashScreen.h
+  Interface/KeyboardShortcuts.h
+  )
 
 FILE(GLOB STUDIO_OPTIMIZE_SRCS Optimize/*.cpp)
 FILE(GLOB STUDIO_OPTIMIZE_HDRS Optimize/*.h)

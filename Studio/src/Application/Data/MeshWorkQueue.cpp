@@ -17,6 +17,10 @@ bool operator<(const MeshWorkItem &a, const MeshWorkItem &b)
       if (a.points.size() < b.points.size()) {
         return true;
       }
+      if (b.points.size() < a.points.size()) {
+        return false;
+      }
+
       double eps = 1e-3f;
       //double eps = MeshCache::pref_ref_->get_preference("cache_epsilon", 1e-3f);
       for (unsigned i = 0; i < a.points.size(); i++) {

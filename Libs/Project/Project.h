@@ -136,7 +136,7 @@ private:
   bool particles_present_{false};
 
   std::set<std::string> matching_columns_;
-
+  std::vector<std::string> mesh_scalars_;
 
   const int supported_version_{1};
   int version_{1};
