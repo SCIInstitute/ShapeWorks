@@ -29,11 +29,12 @@ def cropTest2():
   img2 = Image(os.environ["DATA"] + "/many/seg.ellipsoid_3.nrrd")
   img3 = Image(os.environ["DATA"] + "/many/seg.ellipsoid_4.nrrd")
 
+  region = ImageUtils.boundingBox([img1, img2, img3])
   img1.crop(region)
 
   compareImg = Image(os.environ["DATA"] + "/cropped2.nrrd")
 
-  return img.compare(compareImg)
+  return img1.compare(compareImg)
 
 val = cropTest2()
 
