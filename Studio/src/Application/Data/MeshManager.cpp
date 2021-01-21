@@ -13,11 +13,10 @@ namespace shapeworks {
 MeshManager::MeshManager(Preferences& prefs) :
   prefs_(prefs),
   mesh_cache_(prefs),
-  mesh_generator_(prefs),
   surface_reconstructor_(new SurfaceReconstructor())
 {
-  this->mesh_generator_.set_mesh_warper(this->mesh_warper_);
-  this->mesh_generator_.set_surface_reconstructor(this->surface_reconstructor_);
+  this->mesh_generator_->set_mesh_warper(this->mesh_warper_);
+  this->mesh_generator_->set_surface_reconstructor(this->surface_reconstructor_);
 
   qRegisterMetaType<MeshWorkItem>("MeshWorkItem");
   qRegisterMetaType<MeshHandle>("MeshHandle");
@@ -45,8 +44,7 @@ void MeshManager::generate_mesh(const MeshWorkItem item)
 
     MeshWorker* worker = new MeshWorker(this->prefs_, item,
                                         &this->work_queue_, &this->mesh_cache_);
-    worker->get_mesh_generator()->set_mesh_warper(this->mesh_warper_);
-    worker->get_mesh_generator()->set_surface_reconstructor(this->surface_reconstructor_);
+    worker->set_mesh_generator(this->mesh_generator_);
 
     connect(worker, &MeshWorker::result_ready, this, &MeshManager::handle_thread_complete);
 
@@ -67,13 +65,13 @@ MeshHandle MeshManager::get_mesh(const MeshWorkItem& item, bool wait)
         this->generate_mesh(item);
       }
       else {
-        mesh = this->mesh_generator_.build_mesh(item);
+        mesh = this->mesh_generator_->build_mesh(item);
         this->mesh_cache_.insert_mesh(item, mesh);
       }
     }
   }
   else {
-    mesh = this->mesh_generator_.build_mesh(item);
+    mesh = this->mesh_generator_->build_mesh(item);
   }
   return mesh;
 }
@@ -89,6 +87,7 @@ MeshHandle MeshManager::get_mesh(const vnl_vector<double>& points)
 //---------------------------------------------------------------------------
 void MeshManager::handle_thread_complete(const MeshWorkItem& item, MeshHandle mesh)
 {
+  std::cerr << "thread complete!\n";
   this->mesh_cache_.insert_mesh(item, mesh);
   this->work_queue_.remove(item);
 

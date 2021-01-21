@@ -48,6 +48,10 @@ public:
   //! return the mesh warper
   QSharedPointer<MeshWarper> get_mesh_warper();
 
+  //! return the mesh generator
+  QSharedPointer<MeshGenerator> get_mesh_generator()
+  { return this->mesh_generator_; }
+
   //! clear the cache
   void clear_cache();
 
@@ -68,8 +72,8 @@ private:
   // cache of shape meshes
   MeshCache mesh_cache_;
 
-  // our own mesh generator
-  MeshGenerator mesh_generator_;
+  // the mesh generator
+  QSharedPointer<MeshGenerator> mesh_generator_ = QSharedPointer<MeshGenerator>::create();
 
   // queue of meshes to build
   MeshWorkQueue work_queue_;

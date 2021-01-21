@@ -131,6 +131,8 @@ public Q_SLOTS:
 
   bool is_group_active(int shape_index);
 
+  void reconstruction_method_changed();
+
 signals:
 
   void update_view();
