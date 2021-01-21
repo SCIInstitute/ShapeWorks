@@ -480,31 +480,19 @@ bool Mesh::compare_points_equal(const Mesh &other_mesh) const
 bool Mesh::compare_scalars_equal(const Mesh &other_mesh) const
 {
   if (!this->mesh || !other_mesh.mesh)
-  {
-    std::cout << "both polydata don't exist";
-    return false;
-  }
+    { throw std::invalid_argument("Meshes don't exist"); }
 
   if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints())
-  {
-    std::cout << "both polydata differ in number of points";
-    return false;
-  }
+  { throw std::invalid_argument("Both meshes differ in number of points"); }
 
   vtkDataArray* scalars1 = this->mesh->GetPointData()->GetScalars();
   vtkDataArray* scalars2 = other_mesh.mesh->GetPointData()->GetScalars();
 
   if (!scalars1 || !scalars2)
-  {
-    std::cout << "no scalars";
-    return false;
-  }
+    { throw std::invalid_argument("No scalars"); }
 
   if (scalars1->GetNumberOfValues() != scalars2->GetNumberOfValues())
-  {
-    std::cout << "different number of scalars";
-    return false;
-  }
+    { throw std::invalid_argument("Different number of scalars"); }
 
   for (int i = 0; i < scalars1->GetNumberOfValues(); i++)
   {
@@ -520,7 +508,6 @@ bool Mesh::compare_scalars_equal(const Mesh &other_mesh) const
   return true;
 }
 
-// TODO: does this work?
 Point3 Mesh::centerOfMass() const
 {
   auto com = vtkSmartPointer<vtkCenterOfMass>::New();
