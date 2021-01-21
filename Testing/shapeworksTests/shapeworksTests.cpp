@@ -283,3 +283,9 @@ TEST(shapeworksTests, scalemesh)
 {
   ASSERT_FALSE(system("bash scalemesh.sh"));
 }
+
+
+TEST(shapeworksTests, shapeevaluation)
+{
+  ASSERT_FALSE(system("bash shapeevaluation.sh"));
+}

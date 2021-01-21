@@ -40,6 +40,7 @@ nav:
    - 'Getting Started with Meshes' :                  'notebooks/getting-started-with-meshes.ipynb'
    - 'Getting Started with Exploring Segmentations' : 'notebooks/getting-started-with-exploring-segmentations.ipynb'
    - 'Getting Started with Grooming Segmentations' :  'notebooks/getting-started-with-grooming-segmentations.ipynb'
+   - 'Getting Started with Shape Cohort Generation' :  'notebooks/getting-started-with-shape-cohort-generation.ipynb'
 - Deep Learning & SSMs:
    - 'Data Augmentation for Deep Learning':  'deep-learning/data-augmentation.md'
    - 'SSMs Directly from Images':            'deep-learning/deep-ssm.md'
