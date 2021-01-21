@@ -32,23 +32,22 @@ def Run_Pipeline(args):
     outputDirectory = "Output/femur/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
-    CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
-    # Get image ane mesh segmentation file lists
-    inputDir = outputDirectory + datasetName + '/'
-    files_img = []
-    img_dir = inputDir + 'images/'
-    for file in sorted(os.listdir(img_dir)):
-        files_img.append(img_dir + file)
-    files_mesh = []
-    mesh_dir = inputDir + 'meshes/'
-    for file in sorted(os.listdir(mesh_dir)):
-        files_mesh.append(mesh_dir + file)
-    # Select data for tiny test
+    
+
     if args.tiny_test:
-        files_img = files_img[:3]
-        files_mesh = files_mesh[:3]
         args.use_single_scale = True
         args.interactive = False
+        CommonUtils.download_subset(args.use_case,datasetName, outputDirectory)
+        files_mesh = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))[:3]
+        files_img = sorted(glob.glob(outputDirectory + datasetName + "/images/*.nrrd"))[:3]
+    #else download the entire dataset
+    else:
+        CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
+        files_mesh = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))
+        files_img = sorted(glob.glob(outputDirectory + datasetName + "/images/*.nrrd"))
+
+
+    
     # Select data if using subsample
     if args.use_subsample:
         sample_idx = sampledata(files_img, int(args.num_subsample))

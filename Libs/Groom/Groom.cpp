@@ -296,20 +296,20 @@ void Groom::isolate(Image &image)
 //---------------------------------------------------------------------------
 Vector3 Groom::center(Image &image)
 {
-  image.recenter();
+  // capture full translation
   auto com = image.centerOfMass();
-  auto diff = image.center() - com;
+  // set center to origin
+  image.recenter();
+  // calculate translation for center of mass to new center
+  auto diff = image.centerOfMass();
   Vector3 translation;
   translation[0] = -diff[0];
   translation[1] = -diff[1];
   translation[2] = -diff[2];
 
-  //image.translate(translation, Image::InterpolationType::NearestNeighbor);
-
   AffineTransformPtr xform(AffineTransform::New());
   xform->Translate(-translation);
   image.applyTransform(xform,Image::NearestNeighbor);
-
 
   translation[0] = com[0];
   translation[1] = com[1];

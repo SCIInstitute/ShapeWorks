@@ -8,6 +8,8 @@
 #include "vtkSmartPointer.h"
 #include "vtkPointSet.h"
 #include "vtkFieldData.h"
+#include "vtkPolyData.h"
+#include "vtkPointData.h"
 
 
 int main(int argc,char** argv)
@@ -103,12 +105,16 @@ int main(int argc,char** argv)
 
     if( !printOnlyParam )
     {
+        auto data = filter->GetOutput(0);
+        data->GetPointData()->SetActiveScalars("Distance");
         vtkSmartPointer<vtkPolyDataWriter> polyDataWriter = vtkSmartPointer<vtkPolyDataWriter>::New();
-        polyDataWriter->SetInputConnection(filter->GetOutputPort(0));
+        polyDataWriter->SetInputData(data);
         polyDataWriter->SetFileName(argv[outputAParam]);
         polyDataWriter->Update();
 
-        polyDataWriter->SetInputConnection(filter->GetOutputPort(1));
+        data = filter->GetOutput(1);
+        data->GetPointData()->SetActiveScalars("Distance");
+        polyDataWriter->SetInputData(data);
         polyDataWriter->SetFileName(argv[outputBParam]);
         polyDataWriter->Update();
     }

@@ -35,14 +35,19 @@ def Run_Pipeline(args):
     outputDirectory = "Output/left_atrium/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
-    CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
-    fileList_img = sorted(glob.glob(outputDirectory + datasetName + "/images/*.nrrd"))
-    fileList_seg = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))
-    # Get data for tiny test
+   
     if args.tiny_test:
-        fileList_img = fileList_img[:3]
-        fileList_seg = fileList_seg[:3]
         args.use_single_scale = True
+        CommonUtils.download_subset(args.use_case,datasetName, outputDirectory)
+        fileList_img = sorted(glob.glob(outputDirectory + datasetName + "/images/*.nrrd"))[:3]
+        fileList_seg = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))[:3]
+    #else download the entire dataset
+    else:
+        CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
+        fileList_img = sorted(glob.glob(outputDirectory + datasetName + "/images/*.nrrd"))
+        fileList_seg = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))
+
+
     # Get data if using subsample
     if args.use_subsample:
         sample_idx = sampledata(fileList_seg, int(args.num_subsample))
