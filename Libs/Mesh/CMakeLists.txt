@@ -26,7 +26,8 @@ add_library(Mesh STATIC
 target_include_directories(Mesh PUBLIC
  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/PreviewMeshQC>
- $<INSTALL_INTERFACE:include>)
+ $<INSTALL_INTERFACE:include>
+ )
 
 target_link_libraries(
   Mesh 
@@ -49,10 +50,6 @@ install(TARGETS Mesh
  LIBRARY DESTINATION lib
  PUBLIC_HEADER DESTINATION include
  )
-
-ADD_EXECUTABLE(GenerateBinaryAndDTImagesFromMeshes GenerateBinaryAndDTImagesFromMeshes.cxx)
-TARGET_LINK_LIBRARIES(GenerateBinaryAndDTImagesFromMeshes ${ITK_LIBRARIES} Mesh tinyxml)
-INSTALL(TARGETS GenerateBinaryAndDTImagesFromMeshes RUNTIME DESTINATION bin)
 
 ADD_EXECUTABLE(ComputeMeshGeodesics ComputeMeshGeodesics.cxx)
 TARGET_LINK_LIBRARIES(ComputeMeshGeodesics ${ITK_LIBRARIES} Mesh tinyxml)

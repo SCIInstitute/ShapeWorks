@@ -1035,22 +1035,13 @@ TEST(ImageTests, resizeTest3)
 TEST(ImageTests, setSpacingTest1)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
-  image.setSpacing(makeVector({-2.0,-2.0,-2.0}));
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/spacing1.nrrd");
-
-  ASSERT_FALSE(image == ground_truth);
-}
-
-TEST(ImageTests, setSpacingTest2)
-{
-  Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
   image.setSpacing(makeVector({2.0,2.0,2.0}));
   Image ground_truth(std::string(TEST_DATA_DIR) + "/spacing2.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, setSpacingTest3)
+TEST(ImageTests, setSpacingTest2)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
   image.setSpacing();
@@ -1071,7 +1062,7 @@ TEST(ImageTests, toMeshTest1)
 TEST(ImageTests, toMeshTest2)
 {
   Image image(std::string(TEST_DATA_DIR) + "/computedt1.nrrd");
-  Mesh mesh(image.toMesh(1.0, 0.01, 30, 1, 1, true));
+  Mesh mesh(image.toMesh(10, 0.01, 30, 1, 1, true));
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/mesh2.vtk");
 
   ASSERT_TRUE(mesh == ground_truth);

@@ -418,7 +418,7 @@ Image Mesh::rasterize(const Mesh &mesh, Vector3 spacing, Dims size, Point3 origi
   return MeshUtils::getITK(imgstenc->GetOutput());
 }
 
-Mesh& Mesh::preview(bool wind, bool smoothBefore, bool smoothAfter, double lambda, int iterations, bool decimate, double percentage)
+Mesh& Mesh::fix(bool wind, bool smoothBefore, bool smoothAfter, double lambda, int iterations, bool decimate, double percentage)
 {
 	FEVTKimport import;
   FEMesh* meshFE = import.Load(this->mesh);

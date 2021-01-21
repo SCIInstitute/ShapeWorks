@@ -1105,7 +1105,6 @@ bool SetSpacing::execute(const optparse::Values &options, SharedCommandData &sha
   double y = static_cast<double>(options.get("y"));
   double z = static_cast<double>(options.get("z"));
 
-
   sharedData.image.setSpacing(makeVector({x, y, z}));
   return true;
 }
@@ -2201,12 +2200,12 @@ bool RasterizationSize::execute(const optparse::Values &options, SharedCommandDa
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Preview
+// MeshFix
 ///////////////////////////////////////////////////////////////////////////////
-void Preview::buildParser()
+void MeshFix::buildParser()
 {
-  const std::string prog = "preview";
-  const std::string desc = "process meshes using Preview in batch mode";
+  const std::string prog = "mesh-fix";
+  const std::string desc = "quality control meshes";
   parser.prog(prog).description(desc);
 
   parser.add_option("--winding").action("store").type("bool").set_default(true).help("Fix element window [default: true]");
@@ -2220,7 +2219,7 @@ void Preview::buildParser()
   Command::buildParser();
 }
 
-bool Preview::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool MeshFix::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validMesh())
   {
@@ -2236,7 +2235,7 @@ bool Preview::execute(const optparse::Values &options, SharedCommandData &shared
   bool decimate = static_cast<bool>(options.get("decimate"));
   double percentage = static_cast<double>(options.get("percentage"));
 
-  sharedData.mesh->preview(wind, smoothBefore, smoothAfter, lambda, iterations, decimate, percentage);
+  sharedData.mesh->fix(wind, smoothBefore, smoothAfter, lambda, iterations, decimate, percentage);
   return sharedData.validMesh();
 }
 

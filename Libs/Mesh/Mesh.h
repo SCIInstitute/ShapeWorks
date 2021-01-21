@@ -91,8 +91,8 @@ public:
   /// converts mesh to distance transform
   Image toDistanceTransform(Vector3 spacing, Dims size, Point3 origin) const;
 
-  /// process meshes using Preview in batch mode
-  Mesh& preview(bool wind = true, bool smoothBefore = true, bool smoothAfter = true, double lambda = 0.5, int iterations = 1, bool decimate = true, double percentage = 0.5);
+  /// quality control mesh
+  Mesh& fix(bool wind = true, bool smoothBefore = true, bool smoothAfter = true, double lambda = 0.5, int iterations = 1, bool decimate = true, double percentage = 0.5);
 
   // query functions //
 

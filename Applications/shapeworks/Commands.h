@@ -69,7 +69,7 @@ COMMAND_DECLARE(BoundingBoxMesh, MeshCommand);
 COMMAND_DECLARE(ComputeDistance, MeshCommand);
 COMMAND_DECLARE(RasterizationOrigin, MeshCommand);
 COMMAND_DECLARE(RasterizationSize, MeshCommand);
-COMMAND_DECLARE(Preview, MeshCommand);
+COMMAND_DECLARE(MeshFix, MeshCommand);
 COMMAND_DECLARE(MeshToImage, MeshCommand);
 COMMAND_DECLARE(MeshToDT, MeshCommand);
 COMMAND_DECLARE(CompareMesh, MeshCommand);
