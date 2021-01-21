@@ -202,6 +202,8 @@ def create_SWRun_fixed_domains(xmlfilename, inDataFiles, parameterDictionary, ou
 
 def runShapeWorksOptimize(parentDir, inDataFiles, parameterDictionary):
     numP = parameterDictionary['number_of_particles']
+    numP = str(numP)
+    numP = numP.replace('[',"").replace(']',"").replace(",","").replace(" ","_")
     outDir = parentDir + '/' + str(numP) + '/'
     if not os.path.exists(outDir):
         os.makedirs(outDir)

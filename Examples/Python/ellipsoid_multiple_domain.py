@@ -24,14 +24,14 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    datasetName = "ellipsoid_multiple_domain"
-    outputDirectory = "Output/ellipsoid_multiple_domain/"
+    datasetName = "ellipsoid_md_sps"
+    outputDirectory = "Output/ellipsoid_md_sps/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
     CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
 
     meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))
-    
+    print(meshFiles)
     #meshFiles = meshFiles[:15]
 
     if args.tiny_test:
@@ -44,20 +44,20 @@ def Run_Pipeline(args):
         os.makedirs(pointDir)
 
     parameterDictionary = {
-        "number_of_particles" : [32,32],
-        "use_normals": [1,1],
+        "number_of_particles" : [512,512],
+        "use_normals": [0,0],
         "normal_weight": [10.0,10.0],
         "checkpointing_interval" : 200,
         "keep_checkpoints" : 0,
         "iterations_per_split" : 500,
         "optimization_iterations" : 500,
-        "starting_regularization" : 100,
-        "ending_regularization" : 0.1,
+        "starting_regularization" : 10,
+        "ending_regularization" : 0.5,
         "recompute_regularization_interval" : 2,
         "domains_per_shape" : 2,
         "domain_type" : 'mesh',
-        "relative_weighting" : 10,
-        "initial_relative_weighting" : 0.01,
+        "relative_weighting" : 1,
+        "initial_relative_weighting" : 0.001,
         "procrustes_interval" : 0,
         "procrustes_scaling" : 0,
         "save_init_splits" : 0,

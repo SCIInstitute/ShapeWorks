@@ -23,13 +23,13 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    datasetName = "ellipsoid-v0"
-    outputDirectory = "Output/ellipsoid_mesh/"
+    datasetName = "ellipsoid_multiple_domain"
+    outputDirectory = "Output/ellipsoid_multiple_domain/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
     CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
 
-    meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))
+    meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*d2.ply"))
     
     if args.tiny_test:
         args.use_single_scale = 1
@@ -44,15 +44,15 @@ def Run_Pipeline(args):
         os.makedirs(pointDir)
 
     parameterDictionary = {
-        "number_of_particles" : 128,
-        "use_normals": 0,
-        "normal_weight": 10.0,
+        "number_of_particles" : [512],
+        "use_normals": [0],
+        "normal_weight":[10.0],
         "checkpointing_interval" : 200,
         "keep_checkpoints" : 0,
         "iterations_per_split" : 500,
         "optimization_iterations" : 500,
         "starting_regularization" : 100,
-        "ending_regularization" : 0.1,
+        "ending_regularization" : 0.5,
         "recompute_regularization_interval" : 2,
         "domains_per_shape" : 1,
         "domain_type" : 'mesh',
