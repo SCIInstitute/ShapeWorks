@@ -221,7 +221,7 @@ int main(int argc, char *argv[])
     for ( int i = 0 ; i < 3 ; i++ )
     {
         origin[i] = floor ( largestBoundaries[2*i] ) - 1  ;
-        size[i]   = ceil ( ( ceil ( largestBoundaries[2*i+1] ) - origin[i] ) / spacing[i] ) + 1 ;
+        size[i]   = ceil ( ( ceil ( largestBoundaries[2*i+1] ) - origin[i] ) / spacing[i] ) ;
     }
 
     std::cout << "Origin: " << origin[0] << " " << origin[1] << " " << origin[2] << std::endl ;

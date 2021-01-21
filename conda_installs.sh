@@ -110,6 +110,7 @@ function install_conda() {
     then return 1; fi
   fi
 
+  if ! pip install trimesh;                             then return 1; fi
   if ! pip install termcolor==1.1.0;                    then return 1; fi
   if ! pip install grip==4.5.2;                         then return 1; fi
   if ! pip install matplotlib==3.3.2;                   then return 1; fi
@@ -126,6 +127,8 @@ function install_conda() {
   if ! pip install Python/DocumentationUtilsPackage;    then return 1; fi # install shapeworks auto-documentation as a package
   if ! pip install Python/DataAugmentationUtilsPackage; then return 1; fi # install data augmentation code as a package
   if ! pip install Python/DeepSSMUtilsPackage;          then return 1; fi # install DeepSSM code as a package
+  if ! pip install Python/ShapeCohortGenPackage;        then return 1; fi # install shape cohort generation code as a package
+
 
   if [[ "$GITHUB_ACTION" != "" ]]; then
       echo "Running under GitHub Action"
@@ -136,6 +139,7 @@ function install_conda() {
       fi
       popd
   fi
+
   
   # installs for jupyter notebooks
 
