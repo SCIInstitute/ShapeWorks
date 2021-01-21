@@ -63,8 +63,6 @@ Eigen::MatrixXi MeshUtils::distilFaceInfo(vtkSmartPointer<vtkPolyData> mesh){
   int numFaces = mesh->GetNumberOfCells();
   Eigen::MatrixXi Fref_new(numFaces, 3);
 	
-	vtkIdType cellId = 0;
-
 	vtkSmartPointer<vtkIdList> cellIdList =
       vtkSmartPointer<vtkIdList>::New();
 	
