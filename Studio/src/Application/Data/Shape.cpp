@@ -13,7 +13,6 @@
 #include <Data/StudioLog.h>
 #include <Visualization/Visualizer.h>
 
-
 using ReaderType = itk::ImageFileReader<ImageType>;
 
 namespace shapeworks {
@@ -189,14 +188,15 @@ void Shape::import_groomed_image(ImageType::Pointer img, double iso, TransformTy
 }
 
 //---------------------------------------------------------------------------
-QSharedPointer<StudioMesh> Shape::get_groomed_mesh()
+QSharedPointer<StudioMesh> Shape::get_groomed_mesh(bool wait)
 {
   if (!this->groomed_mesh_) {
     if (!this->subject_) {
       std::cerr << "Error: asked for groomed mesh when none is present!\n";
     }
     else {
-      this->generate_meshes(this->subject_->get_groomed_filenames(), this->groomed_mesh_, false);
+      this->generate_meshes(this->subject_->get_groomed_filenames(), this->groomed_mesh_, false,
+                            wait);
     }
   }
 
@@ -639,6 +639,5 @@ void Shape::set_point_features(std::string feature, Eigen::VectorXf values)
     mesh->interpolate_scalars_to_mesh(feature, this->global_correspondence_points_, values);
   }
 }
-
 
 }
