@@ -32,12 +32,17 @@ def Run_Pipeline(args):
     outputDirectory = "Output/ellipsoid/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
-    CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
-    fileList = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))
-    # Select data for tiny test
+    #If tiny_test then download subset of the data
     if args.tiny_test:
         args.use_single_scale = 1
-        fileList = fileList[:3]
+        CommonUtils.download_subset(args.use_case,datasetName, outputDirectory)
+        fileList = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))[:3]
+    #else download the entire dataset
+    else:
+        CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
+
+        fileList = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))
+    
     # Select data if using subsample
     if args.use_subsample:
         sample_idx = sampledata(fileList, int(args.num_subsample))
@@ -76,6 +81,7 @@ def Run_Pipeline(args):
 
         """Apply isotropic resampling"""
         isoresampledFiles = applyIsotropicResampling(groomDir + "resampled/segmentations", fileList)
+
 
         """Apply centering"""
         centeredFiles = center(groomDir + "centered/segmentations", isoresampledFiles)
