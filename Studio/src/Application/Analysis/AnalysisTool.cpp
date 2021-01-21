@@ -214,7 +214,7 @@ void AnalysisTool::on_reconstructionButton_clicked()
 //---------------------------------------------------------------------------
 int AnalysisTool::getPCAMode()
 {
-  return this->ui_->pcaModeSpinBox->value();
+  return this->ui_->pcaModeSpinBox->value() - 1;
 }
 
 //---------------------------------------------------------------------------
@@ -400,7 +400,7 @@ bool AnalysisTool::compute_stats()
     return false;
   }
 
-  this->ui_->pcaModeSpinBox->setMaximum(this->session_->get_shapes().size() - 2);
+  this->ui_->pcaModeSpinBox->setMaximum(this->session_->get_shapes().size() - 1);
 
   std::vector<vnl_vector<double>> points;
   std::vector<int> group_ids;
