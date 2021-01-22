@@ -18,16 +18,28 @@ function install_pytorch() {
   echo "installing pytorch"
   PYTORCH="cpuonly"
   if ! [ -x "$(command -v nvidia-smi)" ]; then
-    echo 'Could not find nvidia-smi, using cpu-only PyTorch'
+    echo 'Could not find nvcc, trying nvidia-smi.'
+    if ! [ -x "$(command -v nvidia-smi)" ]; then
+      echo 'Could not find nvidia-smi, using cpu-only PyTorch'
+    else
+      CUDA=`nvidia-smi | grep CUDA | sed -e "s/.*CUDA Version: //" -e "s/ .*//"`
+      echo "Found CUDA Version: ${CUDA}"
+
+      if [[ "$CUDA" == "9.2" || "$CUDA" == "10.1" || "$CUDA" == "10.2" || "$CUDA" == "11.0" || "$CUDA" == "11.1" ]]; then
+          PYTORCH="cudatoolkit=${CUDA}"
+      else
+          echo "CUDA version not compatible, using cpu-only"
+      fi
+    fi
   else
-    CUDA=`nvidia-smi | grep CUDA | sed -e "s/.*CUDA Version: //" -e "s/ .*//"`
+    CUDA=`nvcc --version | grep release | sed "s/.*release //" | sed "s/\,.*//"`
     echo "Found CUDA Version: ${CUDA}"
 
     if [[ "$CUDA" == "9.2" || "$CUDA" == "10.1" || "$CUDA" == "10.2" || "$CUDA" == "11.0" || "$CUDA" == "11.1" ]]; then
         PYTORCH="cudatoolkit=${CUDA}"
     else
         echo "CUDA version not compatible, using cpu-only"
-    fi
+
   fi
 
   conda install pytorch==1.7.1 torchvision==0.7.0 $PYTORCH -c pytorch
