@@ -248,7 +248,7 @@ bool epsEqual(const P &a, const P &b, const typename P::ValueType &eps)
   return std::abs(a[0]-b[0]) < eps && std::abs(a[1]-b[1]) < eps && std::abs(a[2]-b[2]) < eps;
 }
 
-//https://stackoverflow.com/a/17382806/207044
+// https://stackoverflow.com/a/17382806/207044
 template<typename P>
 bool equalNSigDigits(P a, P b, int n) {  return std::abs(a - b) < std::pow(0.1, n) * std::max(std::abs(a), std::abs(b)); }
 

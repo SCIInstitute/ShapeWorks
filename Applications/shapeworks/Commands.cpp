@@ -2363,7 +2363,7 @@ bool CompareMesh::execute(const optparse::Values &options, SharedCommandData &sh
     return false;
   }
 
-  if (sharedData.mesh->compare_points_equal(Mesh(filename)))
+  if (sharedData.mesh->comparePointsEqual(Mesh(filename)))
   {
     std::cout << "compare success\n";
     return true;

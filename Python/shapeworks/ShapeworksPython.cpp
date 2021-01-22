@@ -15,7 +15,6 @@ Eigen::MatrixXd optimize_get_particle_system(shapeworks::Optimize *opt)
 #include <pybind11/eigen.h>
 #include <pybind11/functional.h>
 
-
 namespace py = pybind11;
 using namespace pybind11::literals;
 
@@ -368,7 +367,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("resample", [](Image& image, const std::vector<double>& v, Image::InterpolationType interp) {
     return image.resample(makeVector({v[0], v[1], v[2]}), interp);
   }, "resamples image using new physical spacing, updating logical dims to keep all image data for this spacing", "physicalSpacing"_a, "interp"_a=Image::InterpolationType::Linear)
-  .def("resample",              &Image::resample, "isotropically resamples image using giving isospacing", "isoSpacing"_a=1.0, "interp"_a=Image::InterpolationType::Linear)
+  .def("resample",              py::overload_cast<double, Image::InterpolationType>(&Image::resample), "isotropically resamples image using giving isospacing", "isoSpacing"_a=1.0, "interp"_a=Image::InterpolationType::Linear)
   .def("resize",                &Image::resize, "change logical dims (computes new physical spacing)", "logicalDims"_a, "interp"_a=Image::InterpolationType::Linear)
   .def("resize", [](Image& image, std::vector<unsigned>& d, Image::InterpolationType interp) {
     return image.resize(Dims({d[0], d[1], d[2]}), interp);
@@ -503,8 +502,8 @@ PYBIND11_MODULE(shapeworks, m)
   .def("coverage",              &Mesh::coverage, "other_mesh"_a, "ignore_back_intersections"_a, "angle_threshold"_a, "back_search_radius"_a)
   .def("numVertices",           &Mesh::numVertices)
   .def("numFaces",              &Mesh::numFaces)
-  .def("compare_points_equal",  &Mesh::compare_points_equal, "other_mesh"_a)
-  .def("compare_scalars_equal", &Mesh::compare_scalars_equal, "other_mesh"_a)
+  .def("comparePointsEqual",    &Mesh::comparePointsEqual, "other_mesh"_a, "numSignificantDigits"_a=4)
+  .def("compareScalarsEqual",   &Mesh::compareScalarsEqual, "other_mesh"_a)
   ;
 
   // MeshUtils

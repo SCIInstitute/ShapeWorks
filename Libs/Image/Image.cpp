@@ -56,7 +56,6 @@ Image::Image(const vtkSmartPointer<vtkImageData> vtkImage)
   filter->Update();
 
   this->image = filter->GetOutput();
-  return *this;
 }
 
 vtkSmartPointer<vtkImageData> Image::getVTKImage() const
