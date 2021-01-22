@@ -716,7 +716,10 @@ void AnalysisTool::reset_stats()
 //---------------------------------------------------------------------------
 void AnalysisTool::enable_actions()
 {
-  this->ui_->reconstructionButton->setEnabled(
+  this->ui_->distance_transfom_radio_button->setEnabled(
+    this->session_->particles_present() && this->session_->get_groomed_present());
+
+  this->ui_->mesh_warping_radio_button->setEnabled(
     this->session_->particles_present() && this->session_->get_groomed_present());
 
   this->initialize_mesh_warper();
@@ -1008,9 +1011,8 @@ bool AnalysisTool::is_group_active(int shape_index)
 //---------------------------------------------------------------------------
 void AnalysisTool::initialize_mesh_warper()
 {
-  std::vector<DomainType> domain_types = this->session_->get_domain_types();
-  if (this->session_->particles_present() && domain_types.size() > 0 &&
-      domain_types[0] == DomainType::Mesh) {
+
+  if (this->session_->particles_present() && this->session_->get_groomed_present()) {
 
     this->compute_stats();
     int median = this->stats_.ComputeMedianShape(-32); //-32 = both groups
@@ -1020,13 +1022,15 @@ void AnalysisTool::initialize_mesh_warper()
 
     this->session_->get_mesh_manager()->get_mesh_warper()->set_reference_mesh(poly_data,
                                                                               median_shape->get_local_correspondence_points());
-
   }
 }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::reconstruction_method_changed()
 {
+
+  this->ui_->reconstruction_options->setVisible(
+    this->ui_->distance_transfom_radio_button->isChecked());
   std::string method = MeshGenerator::RECONSTRUCTION_LEGACY_C;
   if (this->ui_->distance_transfom_radio_button->isChecked()) {
     method = MeshGenerator::RECONSTRUCTION_DISTANCE_TRANSFORM_C;

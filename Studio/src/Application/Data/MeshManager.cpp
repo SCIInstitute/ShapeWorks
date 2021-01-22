@@ -87,7 +87,6 @@ MeshHandle MeshManager::get_mesh(const vnl_vector<double>& points)
 //---------------------------------------------------------------------------
 void MeshManager::handle_thread_complete(const MeshWorkItem& item, MeshHandle mesh)
 {
-  std::cerr << "thread complete!\n";
   this->mesh_cache_.insert_mesh(item, mesh);
   this->work_queue_.remove(item);
 

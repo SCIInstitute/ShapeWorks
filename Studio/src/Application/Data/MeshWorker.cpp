@@ -34,7 +34,6 @@ void MeshWorker::run()
     size_t combined_size = (shape_size * 2) + mesh_size;
     item->memory_size = combined_size;
   }
-  std::cerr << "emitting\n";
   emit result_ready(*item, mesh);
   emit finished();
 }
