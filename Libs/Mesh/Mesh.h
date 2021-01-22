@@ -8,6 +8,7 @@
 #include <vtkPlane.h>
 #include <swHausdorffDistancePointSetFilter.h>
 #include <string>
+// #include <gtest/gtest.h>  // not getting found; needed in order to test private functions
 
 namespace shapeworks {
 
@@ -22,7 +23,7 @@ public:
   Mesh& operator=(std::unique_ptr<Mesh> mesh);      /// rvalue assignment operator
 
   // return the current mesh
-  MeshType getMesh() const { return this->mesh; }
+  MeshType getVTKMesh() const { return this->mesh; }
 
   /// writes mesh, format specified by filename extension
   Mesh& write(const std::string &pathname);
@@ -80,13 +81,6 @@ public:
 
   // </ctc>
 
-  // <ctc> move to private or does this need to be used by anything else?
-  /// compute origin of volume that would contain the rasterization of each mesh
-  Point3 rasterizationOrigin(Region region, Vector3 spacing = makeVector({1.0, 1.0, 1.0}), int padding = 0) const;
-
-  /// compute size of volume that would contain the rasterization of each mesh
-  Dims rasterizationSize(Region region, Vector3 spacing = makeVector({1.0, 1.0, 1.0}), int padding = 0, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;
-
   /// rasterizes mesh to create binary images, automatically computing size and origin if necessary
   Image toImage(Vector3 spacing = makeVector({1.0, 1.0, 1.0}), Dims size = {0, 0, 0}, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;
 
@@ -111,7 +105,7 @@ public:
   vtkIdType numFaces() const { return mesh->GetNumberOfCells(); }
 
   /// compare if values of the points in two meshes are equal within num significant digits
-  bool comparePointsEqual(const Mesh& other_mesh, int numSignificantDigits = 4) const;
+  bool comparePointsEqual(const Mesh& other_mesh) const;
 
   /// compare if scalars in two meshes are equal
   bool compareScalarsEqual(const Mesh& other_mesh) const;
@@ -121,6 +115,20 @@ public:
 
   /// getSupportedTypes
   static std::vector<std::string> getSupportedTypes() { return {"vtk", "vtp", "ply", "stl", "obj"}; }
+
+public:
+  // these two function should be private, but unable to test them b/c can't find gtest.h
+
+  /// compute origin of volume that would contain the rasterization of each mesh
+  //FRIEND_TEST(MeshTests, rasterizationOriginTest1);
+  //FRIEND_TEST(MeshTests, rasterizationOriginTest1);
+  Point3 rasterizationOrigin(Region region, Vector3 spacing = makeVector({1.0, 1.0, 1.0}), int padding = 0) const;
+
+  /// compute size of volume that would contain the rasterization of each mesh
+  // FRIEND_TEST(MeshTests, rasterizationSizeTest1);
+  // FRIEND_TEST(MeshTests, rasterizationSizeTest2);
+  Dims rasterizationSize(Region region, Vector3 spacing = makeVector({1.0, 1.0, 1.0}), int padding = 0, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;
+
 
 private:
   friend struct SharedCommandData;

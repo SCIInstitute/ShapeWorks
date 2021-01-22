@@ -1,3 +1,7 @@
+# still can't find gtest/gtest.h, not sure why
+# needed to test private functions
+#find_package(GTest REQUIRED)
+
 # Mesh library
 
 set(Mesh_sources

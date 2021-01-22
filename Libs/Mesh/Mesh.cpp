@@ -429,7 +429,7 @@ Image Mesh::toDistanceTransform(Vector3 spacing, Dims size, Point3 origin) const
 {
   // TODO: convert directly to DT (github #810)
   Image image(toImage(spacing, size, origin));
-  image.antialias().computeDT();
+  image.antialias(50, 0.00).computeDT(); // need maxrms = 0 to reproduce results
   return image;
 }
 
@@ -477,7 +477,7 @@ Mesh& Mesh::fix(bool wind, bool smoothBefore, bool smoothAfter, double lambda, i
   return *this;
 }
 
-bool Mesh::comparePointsEqual(const Mesh &other_mesh, int numSigDig) const
+bool Mesh::comparePointsEqual(const Mesh &other_mesh) const
 {
   if (!this->mesh || !other_mesh.mesh)
   {
@@ -495,8 +495,10 @@ bool Mesh::comparePointsEqual(const Mesh &other_mesh, int numSigDig) const
   {
     Point p1(this->mesh->GetPoint(i));
     Point p2(other_mesh.mesh->GetPoint(i));
-    if (!epsEqualN(p1, p2, numSigDig)) {
-      std::cout << i << "th points not equal (" << p1 << ", " << p2 << ")\n";
+    if (!epsEqualN(p1, p2, 5)) {
+      printf("%ith points not equal ([%0.8f, %0.8f, %0.8f], [%0.8f, %0.8f, %0.8f])\n",
+             i, p1[0], p1[1], p1[2], p2[0], p2[1], p2[2]);
+
       return false;
     }
   }
