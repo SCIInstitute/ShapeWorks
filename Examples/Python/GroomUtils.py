@@ -156,14 +156,13 @@ def FindReferenceImage(inDataList):
     print(" ")
     return inDataList[idx]
 
-def applyRigidAlignment(outDir, refFile, inDataListSeg, inDataListImg=[]):
+def applyRigidAlignment(outDir, refFile, inDataListSeg, inDataListImg=[], icp_iterations=200):
     """
     This function takes in a filelists(binary and raw) and makes the 
     size and spacing the same as the reference
     """
     isoValue       = 1e-20
-    icp_iterations = 200
-    antialias_iterations = 1 
+    antialias_iterations = 30
 
     print("\n############# Rigidly Align #############")
 
