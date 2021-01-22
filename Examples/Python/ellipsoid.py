@@ -50,7 +50,6 @@ def Run_Pipeline(args):
     For the unprepped data the first few steps are 
     -- Isotropic resampling
     -- Center
-    -- Padding
     -- Center of Mass Alignment
     -- Rigid Alignment
     -- Largest Bounding Box and Cropping 
@@ -80,11 +79,8 @@ def Run_Pipeline(args):
         """Apply centering"""
         centeredFiles = center(groomDir + "centered/segmentations", isoresampledFiles)
 
-        """Apply padding"""
-        paddedFiles = applyPadding(groomDir + "padded/segmentations", centeredFiles, 10)
-
         """Apply center of mass alignment"""
-        comFiles = applyCOMAlignment(groomDir + "com_aligned/segmentations", paddedFiles, None)
+        comFiles = applyCOMAlignment(groomDir + "com_aligned/segmentations", centeredFiles, None)
 
         """ Apply rigid alignment """
         ref = FindReferenceImage(comFiles)
