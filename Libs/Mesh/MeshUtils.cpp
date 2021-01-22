@@ -102,7 +102,7 @@ Eigen::MatrixXd MeshUtils::generateWarpMatrix(Eigen::MatrixXd TV , Eigen::Matrix
   const int k = 2;
   igl::biharmonic_coordinates(TV,TF,S,k,W);
   //std::cout<<"Reindexing..."<< std::endl;
-  std::cout << W.rows() << " " << W.cols() << std::endl;
+  //std::cout << W.rows() << " " << W.cols() << std::endl;
   // Throw away interior tet-vertices, keep weights and indices of boundary
   Eigen::VectorXi I,J;
   igl::remove_unreferenced(TV.rows(),TF,I,J);

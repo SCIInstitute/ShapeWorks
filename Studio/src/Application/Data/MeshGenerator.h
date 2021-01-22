@@ -48,7 +48,7 @@ private:
 
   QSharedPointer<SurfaceReconstructor> surface_reconstructor_;
   QSharedPointer<MeshWarper> mesh_warper_;
-  std::string reconstruction_method_;
+  std::string reconstruction_method_ = RECONSTRUCTION_MESH_WARPER_C;
 
 };
 }

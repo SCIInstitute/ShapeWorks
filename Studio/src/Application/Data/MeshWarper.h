@@ -21,13 +21,13 @@ public:
 
   //! Set the reference mesh and particles
   void set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
-                          const vnl_vector<double> &reference_particles);
+                          const vnl_vector<double>& reference_particles);
 
   //! Return if the warp is available
   bool get_warp_available();
 
   //! Build a mesh for a given set of particles
-  vtkSmartPointer<vtkPolyData> build_mesh(const vnl_vector<double> &particles);
+  vtkSmartPointer<vtkPolyData> build_mesh(const vnl_vector<double>& particles);
 
 private:
 

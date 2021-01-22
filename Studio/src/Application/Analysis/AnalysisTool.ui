@@ -1644,6 +1644,9 @@ QWidget#metrics_panel {
            <property name="text">
             <string>Mesh Warping Based</string>
            </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item row="0" column="3">
@@ -1665,7 +1668,7 @@ QWidget#metrics_panel {
             <string>Legacy</string>
            </property>
            <property name="checked">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
           </widget>
          </item>
