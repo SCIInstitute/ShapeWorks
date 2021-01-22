@@ -85,6 +85,7 @@ def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False):
     files in the appropriate directory.
     """
     print("\n############# COM Alignment ###############")
+    antialias_iterations = 30
     segDir = os.path.join(outDir, 'segmentations') if processRaw else outDir
     if not os.path.exists(segDir):
         os.makedirs(segDir)
@@ -103,14 +104,14 @@ def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False):
         T = img.center() - img.centerOfMass()
 
         # binarize result since linear interpolation makes image blurry again
-        img.translate(T).binarize().recenter().write(outname)
+        img.antialias(antialias_iterations).translate(T).binarize().recenter().write(outname)
 
         if processRaw:
             innameImg = inDataListImg[i]
             outnameImg = rename(innameImg, imageDir, 'com')
             outDataListImg.append(outnameImg)
             rawImg = Image(innameImg)
-            rawImg.translate(T).write(outnameImg)
+            rawImg.translate(T).recenter().write(outnameImg)
 
     return [outDataListSeg, outDataListImg] if processRaw else outDataListSeg
 
