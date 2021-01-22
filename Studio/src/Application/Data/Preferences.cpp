@@ -123,7 +123,7 @@ void Preferences::set_glyph_size(float value)
 //-----------------------------------------------------------------------------
 float Preferences::get_glyph_quality()
 {
-  return this->settings_.value("Project/glyph_quality", 5.0).toFloat();
+  return this->settings_.value("Project/glyph_quality", 10.0).toFloat();
 }
 
 //-----------------------------------------------------------------------------
