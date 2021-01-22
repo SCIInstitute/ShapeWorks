@@ -92,6 +92,9 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
     connect(button, &QRadioButton::clicked,
             this, &AnalysisTool::reconstruction_method_changed);
   }
+
+  this->ui_->reconstruction_options->hide();
+
 }
 
 //---------------------------------------------------------------------------
@@ -716,8 +719,10 @@ void AnalysisTool::reset_stats()
 //---------------------------------------------------------------------------
 void AnalysisTool::enable_actions()
 {
+  auto domain_types = this->session_->get_domain_types();
+  bool image_domain = domain_types.size() > 0 && domain_types[0] == DomainType::Image;
   this->ui_->distance_transfom_radio_button->setEnabled(
-    this->session_->particles_present() && this->session_->get_groomed_present());
+    this->session_->particles_present() && this->session_->get_groomed_present() && image_domain);
 
   this->ui_->mesh_warping_radio_button->setEnabled(
     this->session_->particles_present() && this->session_->get_groomed_present());
