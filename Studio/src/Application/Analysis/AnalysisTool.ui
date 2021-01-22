@@ -357,16 +357,16 @@ QWidget#metrics_panel {
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="leftMargin">
-    <number>0</number>
+    <number>3</number>
    </property>
    <property name="topMargin">
-    <number>0</number>
+    <number>3</number>
    </property>
    <property name="rightMargin">
-    <number>0</number>
+    <number>3</number>
    </property>
    <property name="bottomMargin">
-    <number>0</number>
+    <number>3</number>
    </property>
    <item>
     <widget class="QWidget" name="view_panel" native="true">
@@ -1277,7 +1277,7 @@ QWidget#metrics_panel {
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>416</width>
+              <width>410</width>
               <height>236</height>
              </rect>
             </property>
@@ -1351,7 +1351,7 @@ QWidget#metrics_panel {
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>410</width>
+              <width>404</width>
               <height>236</height>
              </rect>
             </property>
