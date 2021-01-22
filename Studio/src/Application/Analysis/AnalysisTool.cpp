@@ -727,6 +727,10 @@ void AnalysisTool::enable_actions()
   this->ui_->mesh_warping_radio_button->setEnabled(
     this->session_->particles_present() && this->session_->get_groomed_present());
 
+  if (!this->ui_->mesh_warping_radio_button->isEnabled()) {
+    this->ui_->legacy_radio_button->setChecked(true);
+  }
+
   this->initialize_mesh_warper();
 
   this->update_group_boxes();
