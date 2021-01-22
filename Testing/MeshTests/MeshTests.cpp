@@ -213,7 +213,8 @@ TEST(MeshTests, toImageTest1)
 TEST(MeshTests, antialiasTest3)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
-  Image image = femur.toImage().antialias(50, 0.0);
+  Image image = femur.toImage().antialias(1000, 0.0);
+  image.write("/tmp/aanew.nrrd");
   Image ground_truth(std::string(TEST_DATA_DIR) + "/antialias3.nrrd");
 
   ASSERT_TRUE(image == ground_truth);

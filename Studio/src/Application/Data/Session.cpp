@@ -807,7 +807,7 @@ std::string Session::get_default_feature_map()
 //---------------------------------------------------------------------------
 bool Session::is_supported_file_format(std::string filename)
 {
-  for (auto type : Mesh::get_supported_types()) {
+  for (auto type : Mesh::getSupportedTypes()) {
     if (StringUtils::hasSuffix(filename, type)) {
       return true;
     }
