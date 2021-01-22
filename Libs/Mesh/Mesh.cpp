@@ -429,7 +429,7 @@ Image Mesh::toDistanceTransform(Vector3 spacing, Dims size, Point3 origin) const
 {
   // TODO: convert directly to DT (github #810)
   Image image(toImage(spacing, size, origin));
-  image.antialias(1000, 0.00).computeDT(); // need maxrms = 0 to reproduce results
+  image.antialias(50, 0.00).computeDT(); // need maxrms = 0 to reproduce results
   return image;
 }
 
