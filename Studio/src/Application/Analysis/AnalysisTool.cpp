@@ -268,7 +268,10 @@ AnalysisTool::~AnalysisTool()
 void AnalysisTool::set_session(QSharedPointer<Session> session)
 {
   this->session_ = session;
+  // reset to original
+  this->ui_->mesh_warping_radio_button->setChecked(true);
 }
+
 
 //---------------------------------------------------------------------------
 void AnalysisTool::set_app(ShapeWorksStudioApp* app)
