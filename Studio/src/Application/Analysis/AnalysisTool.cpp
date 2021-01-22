@@ -282,10 +282,7 @@ void AnalysisTool::set_app(ShapeWorksStudioApp* app)
 //---------------------------------------------------------------------------
 void AnalysisTool::update_analysis_mode()
 {
-  // update UI
-
   this->handle_analysis_options();
-  // groups available
 }
 
 //---------------------------------------------------------------------------
@@ -737,8 +734,6 @@ void AnalysisTool::enable_actions()
     this->ui_->legacy_radio_button->setChecked(true);
   }
 
-  this->initialize_mesh_warper();
-
   this->update_group_boxes();
 }
 
@@ -1026,7 +1021,6 @@ bool AnalysisTool::is_group_active(int shape_index)
 //---------------------------------------------------------------------------
 void AnalysisTool::initialize_mesh_warper()
 {
-
   if (this->session_->particles_present() && this->session_->get_groomed_present()) {
 
     this->compute_stats();

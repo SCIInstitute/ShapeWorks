@@ -227,7 +227,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, false);
 
-  connect(this->ui_->features, qOverload<const QString &>(&QComboBox::currentIndexChanged), this,
+  connect(this->ui_->features, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
           &ShapeWorksStudioApp::update_feature_map_selection);
 
   connect(this->ui_->feature_uniform_scale, &QCheckBox::toggled, this,
@@ -396,7 +396,7 @@ void ShapeWorksStudioApp::on_action_import_triggered()
 void ShapeWorksStudioApp::import_files(QStringList file_names)
 {
   std::vector<std::string> list;
-  for (auto &a : file_names) {
+  for (auto& a : file_names) {
     list.push_back(a.toStdString());
   }
   try {
@@ -595,7 +595,7 @@ void ShapeWorksStudioApp::update_table()
   auto headers = project->get_headers();
 
   QStringList table_headers;
-  for (const std::string &header : headers) {
+  for (const std::string& header : headers) {
     //std::cerr << "header: " << header << "\n";
     table_headers << QString::fromStdString(header);
   }
@@ -625,7 +625,7 @@ void ShapeWorksStudioApp::update_table()
   this->ui_->features->clear();
   this->ui_->features->addItem("-none-");
   auto feature_maps = project->get_feature_names();
-  for (const std::string &feature : feature_maps) {
+  for (const std::string& feature : feature_maps) {
     QString item = QString::fromStdString(feature);
     item = item.remove(0, 8);
     this->ui_->features->addItem(item);
@@ -888,6 +888,7 @@ void ShapeWorksStudioApp::handle_points_changed()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_optimize_complete()
 {
+  this->analysis_tool_->initialize_mesh_warper();
   this->session_->get_mesh_manager()->get_surface_reconstructor()->resetReconstruct();
   this->analysis_tool_->reset_stats();
   this->session_->handle_clear_cache();
@@ -1073,7 +1074,10 @@ void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged(QString disp
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::open_project(QString filename)
 {
+  std::cerr << "1. New session!\n";
   this->new_session();
+
+  std::cerr << "2. Loading Project!\n";
 
   try {
     if (!this->session_->load_project(filename)) {
@@ -1092,6 +1096,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   }
 
   this->is_loading_ = true;
+  this->analysis_tool_->initialize_mesh_warper();
   this->analysis_tool_->reset_stats();
 
   this->block_update_ = true;
@@ -1141,6 +1146,11 @@ void ShapeWorksStudioApp::open_project(QString filename)
   if (this->session_->is_light_project()) {
     this->reset_num_viewers();
   }
+
+  this->session_->update_auto_glyph_size();
+  this->glyph_size_slider_->setValue(this->session_->get_auto_glyph_size() * 10.0);
+  std::cerr << "auto glyph size = " << this->session_->get_auto_glyph_size() << "\n";
+  this->handle_glyph_changed();
 
   this->setWindowTitle(this->session_->get_display_name());
 }
@@ -1471,7 +1481,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered()
     auto col = values.get_column(i);
     std::ofstream out(basename + std::to_string(ii) + ".eval");
     size_t newline = 1;
-    for (auto &a : col) {
+    for (auto& a : col) {
       out << a << (newline % 3 == 0 ? "\n" : "    ");
       newline++;
     }
@@ -1505,7 +1515,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered()
     auto pts = this->analysis_tool_->get_shape_points(mode, pca);
     std::ofstream out(basename + std::to_string(mode) + "-" + std::to_string(i) + ".pts");
     size_t newline = 1;
-    for (auto &a : pts) {
+    for (auto& a : pts) {
       out << a << (newline % 3 == 0 ? "\n" : "    ");
       newline++;
     }
@@ -1537,7 +1547,7 @@ void ShapeWorksStudioApp::on_actionExport_Variance_Graph_triggered()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::update_feature_map_selection(const QString &feature_map)
+void ShapeWorksStudioApp::update_feature_map_selection(const QString& feature_map)
 {
   this->set_feature_map(feature_map.toStdString());
 }

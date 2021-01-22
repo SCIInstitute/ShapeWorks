@@ -37,6 +37,9 @@ private:
   Eigen::MatrixXd warp_;
 
   bool warp_available_ = false;
+
+  vtkSmartPointer<vtkPolyData> reference_mesh_;
+  vnl_vector<double> reference_particles_;
 };
 
 }

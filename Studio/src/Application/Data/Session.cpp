@@ -42,7 +42,7 @@ const std::string Session::OPTIMIZE_C("optimize");
 const std::string Session::ANALYSIS_C("analysis");
 
 //---------------------------------------------------------------------------
-Session::Session(QWidget* parent, Preferences &prefs) : parent_(parent),
+Session::Session(QWidget* parent, Preferences& prefs) : parent_(parent),
                                                         preferences_(prefs),
                                                         mesh_manager_(QSharedPointer<MeshManager>(
                                                           new MeshManager(preferences_)))
@@ -80,7 +80,7 @@ void Session::handle_clear_cache()
 {
   this->mesh_manager_->clear_cache();
 
-  for (auto &s : this->shapes_) {
+  for (auto& s : this->shapes_) {
     s->clear_reconstructed_mesh();
   }
 
@@ -205,11 +205,11 @@ bool Session::save_project(std::string fname)
 }
 
 //---------------------------------------------------------------------------
-void Session::save_particles_file(std::string filename, const vnl_vector<double> &points)
+void Session::save_particles_file(std::string filename, const vnl_vector<double>& points)
 {
   std::ofstream out(filename);
   size_t newline = 1;
-  for (auto &a : points) {
+  for (auto& a : points) {
     out << a << (newline % 3 == 0 ? "\n" : "    ");
     newline++;
   }
@@ -492,7 +492,7 @@ void Session::set_project_path(QString relative_path)
     // features
     auto features = subject->get_feature_filenames();
     std::map<std::string, std::string> new_features;
-    for (auto const &x : features) {
+    for (auto const& x : features) {
       auto full_path = old_path.absoluteFilePath(QString::fromStdString(x.second));
       new_features[x.first] = new_path.relativeFilePath(full_path).toStdString();
     }
@@ -625,6 +625,38 @@ bool Session::update_points(std::vector<std::vector<itk::Point<double>>> points,
 }
 
 //---------------------------------------------------------------------------
+void Session::update_auto_glyph_size()
+{
+  double max_range = std::numeric_limits<double>::min();
+  for (auto& shape : this->shapes_) {
+    vnl_vector<double> points = shape->get_global_correspondence_points();
+    double max_x = std::numeric_limits<double>::min();
+    double min_x = std::numeric_limits<double>::max();
+    double max_y = max_x;
+    double min_y = min_x;
+    double max_z = max_x;
+    double min_z = min_x;
+    for (int i = 0; i < points.size() / 3; i++) {
+      Point3 p1 = Session::get_point(points, i);
+      max_x = std::max<double>(max_x, p1[0]);
+      min_x = std::min<double>(min_x, p1[0]);
+      max_y = std::max<double>(max_y, p1[1]);
+      min_y = std::min<double>(min_y, p1[1]);
+      max_z = std::max<double>(max_z, p1[2]);
+      min_z = std::min<double>(min_z, p1[2]);
+    }
+
+    double range_x = max_x - min_x;
+    double range_y = max_y - min_y;
+    double range_z = max_z - min_z;
+
+    max_range = std::max<double>({max_range, range_x, range_y, range_z});
+  }
+
+  this->auto_glyph_size_ = max_range / 25;
+}
+
+//---------------------------------------------------------------------------
 bool Session::is_light_project()
 {
   return this->is_light_project_;
@@ -707,7 +739,7 @@ void Session::remove_shapes(QList<int> list)
 {
   std::sort(list.begin(), list.end(), std::greater<>());
     foreach(int i, list) {
-      std::vector<std::shared_ptr<Subject>> &subjects = this->project_->get_subjects();
+      std::vector<std::shared_ptr<Subject>>& subjects = this->project_->get_subjects();
       subjects.erase(subjects.begin() + i);
       this->shapes_.erase(this->shapes_.begin() + i);
     }
@@ -763,7 +795,7 @@ int Session::get_num_shapes()
 }
 
 //---------------------------------------------------------------------------
-Parameters &Session::parameters()
+Parameters& Session::parameters()
 {
   return this->params_;
 }
@@ -830,6 +862,26 @@ std::vector<DomainType> Session::get_domain_types()
     return subjects[0]->get_domain_types();
   }
   return std::vector<DomainType>();
+}
+
+//---------------------------------------------------------------------------
+Point3 Session::get_point(const vnl_vector<double>& points, int i)
+{
+  if ((i * 3) + 2 > points.size() - 1) {
+    return Point3();
+  }
+  int pos = i * 3;
+  Point3 point;
+  point[0] = points[pos];
+  point[1] = points[pos + 1];
+  point[2] = points[pos + 2];
+  return point;
+}
+
+//---------------------------------------------------------------------------
+double Session::get_auto_glyph_size()
+{
+  return this->auto_glyph_size_;
 }
 
 }

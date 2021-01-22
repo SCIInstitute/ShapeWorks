@@ -133,6 +133,8 @@ public Q_SLOTS:
 
   void reconstruction_method_changed();
 
+  void initialize_mesh_warper();
+
 signals:
 
   void update_view();
@@ -148,7 +150,6 @@ private:
   void compute_mode_shape();
   void update_analysis_mode();
 
-  void initialize_mesh_warper();
 
   void update_group_boxes();
   void update_group_values();
