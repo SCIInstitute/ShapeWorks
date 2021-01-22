@@ -44,7 +44,7 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, isBinary=True):
         img = Image(inname)
         if isBinary:
             img.antialias()
-        ImageUtils.isoresample(img, isoSpacing)
+        img.resample(isoSpacing)
         if isBinary:
             img.binarize()
         img.write(outname)
@@ -242,8 +242,7 @@ def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoot
         img.extractLabel(1.0).closeHoles().write(inname)
         img.antialias(antialiasIterations).computeDT().write(dtnrrdfilename)
         img.applyCurvatureFilter(smoothingIterations).write(tpdtnrrdfilename)
-        isoimg = ImageUtils.topologyPreservingSmooth(img, scaling, alpha, beta)
-        isoimg.write(isonrrdfilename)
+        img.topologyPreservingSmooth(scaling, alpha, beta).write(isonrrdfilename)
         shutil.copy(tpdtnrrdfilename, finalDTDir)
     return outDataList
 

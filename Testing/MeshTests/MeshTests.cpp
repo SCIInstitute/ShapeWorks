@@ -17,18 +17,6 @@ TEST(MeshTests, readTest)
   ASSERT_TRUE(true);
 }
 
-TEST(MeshTests, coverageTest)
-{
-  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
-  pelvis.coverage(femur);
-
-  Mesh baseline(std::string(TEST_DATA_DIR) + "/coverage.vtk");
-  ASSERT_TRUE(pelvis.compare_points_equal(baseline));
-  ASSERT_TRUE(pelvis.compare_scalars_equal(baseline));
-  ASSERT_TRUE(true);
-}
-
 TEST(MeshTests, smoothTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
@@ -129,7 +117,7 @@ TEST(MeshTests, distanceTest)
   Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
   double distance = femur.hausdorffDistance(pelvis);
 
-  ASSERT_TRUE(compare_double(distance, 32.2215));
+  ASSERT_TRUE(std::abs(distance - 32.2215) < 1e-4);
 }
 
 TEST(MeshTests, relativeDistanceABTest)
@@ -138,7 +126,7 @@ TEST(MeshTests, relativeDistanceABTest)
   Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
   double relativeDistanceAB = femur.relativeDistanceAtoB(pelvis);
 
-  ASSERT_TRUE(compare_double(relativeDistanceAB, 32.2215));
+  ASSERT_TRUE(std::abs(relativeDistanceAB - 32.2215) < 1e-4);
 }
 
 TEST(MeshTests, relativeDistanceBATest)
@@ -147,7 +135,7 @@ TEST(MeshTests, relativeDistanceBATest)
   Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
   double relativeDistanceBA = femur.relativeDistanceBtoA(pelvis);
 
-  ASSERT_TRUE(compare_double(relativeDistanceBA, 16.1937));
+  ASSERT_TRUE(std::abs(relativeDistanceBA - 16.1937 < 1e-4));
 }
 
 TEST(MeshTests, rasterizationOriginTest1)
@@ -194,6 +182,24 @@ TEST(MeshTests, rasterizationSizeTest2)
   ASSERT_TRUE(femur.rasterizationSize(region) == size);
 }
 
+TEST(MeshTests, center)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
+  Point3 center(femur.center());
+  std::cout << "center: " << center << std::endl;
+
+  ASSERT_TRUE(epsEqual(center, Point3({90.7541, -160.557, -673.572}), 1e-3));
+}
+
+TEST(MeshTests, centerofmass)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
+  Point3 com(femur.centerOfMass());
+  std::cout << "com: " << com << std::endl;
+
+  ASSERT_TRUE(epsEqual(com, Point3({92.6201, -157.662, -666.611}), 1e-3));
+}
+
 TEST(MeshTests, toImageTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
@@ -209,7 +215,23 @@ TEST(MeshTests, toDistanceTransformTest1)
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
   Region region = femur.boundingBox();
   Image image = femur.toDistanceTransform(makeVector({1.0,1.0,1.0}), femur.rasterizationSize(region), femur.rasterizationOrigin(region));
+  image.write("/tmp/dt.nrrd");
   Image ground_truth(std::string(TEST_DATA_DIR) + "/femurDT.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
+}
+
+// <ctc> add toImage and toDT tests that specify params
+// also, think of a way to specify padding  automatically computing origin and size
+
+TEST(MeshTests, coverageTest)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
+  pelvis.coverage(femur);
+
+  Mesh baseline(std::string(TEST_DATA_DIR) + "/coverage.vtk");
+  ASSERT_TRUE(pelvis.comparePointsEqual(baseline));
+  ASSERT_TRUE(pelvis.compareScalarsEqual(baseline));
+  ASSERT_TRUE(true);
 }

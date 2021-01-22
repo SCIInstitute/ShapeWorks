@@ -1,6 +1,7 @@
 #include "Image.h"
 #include "ShapeworksUtils.h"
 #include "itkTPGACLevelSetImageFilter.h"  // actually a shapeworks class, not itk
+#include "MeshUtils.h"
 
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
@@ -25,18 +26,49 @@
 #include <itkExtractImageFilter.h>
 #include <itkImageDuplicator.h>
 #include <itkVTKImageExport.h>
+#include <itkIntensityWindowingImageFilter.h>
+#include <itkImageToVTKImageFilter.h>
+#include <itkVTKImageToImageFilter.h>
+
 #include <vtkImageImport.h>
 #include <vtkContourFilter.h>
 #include <vtkImageData.h>
-#include <itkIntensityWindowingImageFilter.h>
 #include <vtkMarchingCubes.h>
-#include <itkImageToVTKImageFilter.h>
+#include <vtkImageCast.h>
 
 #include <exception>
 #include <cmath>
 
 namespace shapeworks {
 
+Image::Image(const vtkSmartPointer<vtkImageData> vtkImage)
+{
+  // ensure input image data is PixelType (note: it'll either be float or double)
+  vtkSmartPointer<vtkImageCast> cast = vtkSmartPointer<vtkImageCast>::New();
+  cast->SetInputData(vtkImage);
+  if (typeid(PixelType) == typeid(float))
+    cast->SetOutputScalarTypeToFloat();
+  cast->Update();
+
+  using FilterType = itk::VTKImageToImageFilter<Image::ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+  filter->SetInput(cast->GetOutput());
+  filter->Update();
+
+  this->image = filter->GetOutput();
+  return *this;
+}
+
+vtkSmartPointer<vtkImageData> Image::getVTKImage() const
+{
+  using connectorType = itk::ImageToVTKImageFilter<Image::ImageType>;
+  connectorType::Pointer connector = connectorType::New();
+  connector->SetInput(this->image);
+  connector->Update();
+
+  return connector->GetOutput();
+}
+  
 Image::ImageType::Pointer Image::cloneData(const Image::ImageType::Pointer image)
 {
   using DuplicatorType = itk::ImageDuplicator<ImageType>;
@@ -335,6 +367,11 @@ Image& Image::resample(const Vector3& spacing, Image::InterpolationType interp)
   return resample(IdentityTransform::New(), new_origin, dims, spacing, coordsys(), interp);
 }
 
+Image& Image::resample(double isoSpacing, Image::InterpolationType interp)
+{
+  return resample(makeVector({isoSpacing, isoSpacing, isoSpacing}), interp);
+}
+
 Image& Image::resize(Dims dims, Image::InterpolationType interp)
 {
   // use existing dims for any that are unspecified
@@ -604,6 +641,14 @@ Image& Image::applyTPLevelSetFilter(const Image& featureImage, double scaling)
   return *this;
 }
 
+Image& Image::topologyPreservingSmooth(float scaling, float sigmoidAlpha, float sigmoidBeta)
+{
+  Image featureImage(*this);
+  featureImage.applyGradientFilter().applySigmoidFilter(sigmoidAlpha, sigmoidBeta);
+
+  return applyTPLevelSetFilter(featureImage, scaling);
+}
+
 Image& Image::applyIntensityFilter(double minVal, double maxVal)
 {
   using FilterType = itk::IntensityWindowingImageFilter<ImageType, ImageType>;
@@ -772,7 +817,6 @@ Region Image::boundingBox(PixelType isoValue) const
 
 Point3 Image::logicalToPhysical(const Coord &v) const
 {
-  // return image->TransformIndexToPhysicalPoint(v); // not sure why this call won't work directly
   Point3 value;
   image->TransformIndexToPhysicalPoint(v, value);
   return value;
@@ -781,6 +825,21 @@ Point3 Image::logicalToPhysical(const Coord &v) const
 Coord Image::physicalToLogical(const Point3 &p) const
 {
   return image->TransformPhysicalPointToIndex(p);
+}
+
+TransformPtr Image::createCenterOfMassTransform()
+{
+  AffineTransformPtr xform(AffineTransform::New());
+  xform->Translate(-(center() - centerOfMass())); // ITK translations go in a counterintuitive direction
+  return xform;
+}
+
+TransformPtr Image::createRigidRegistrationTransform(const Image &target_dt, float isoValue, unsigned iterations)
+{
+  vtkSmartPointer<vtkPolyData> sourceContour = Image::getPolyData(*this, isoValue);
+  vtkSmartPointer<vtkPolyData> targetContour = Image::getPolyData(target_dt, isoValue);
+  const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createIcpTransform(sourceContour, targetContour, "rigid", iterations));
+  return createTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
 }
 
 vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image& image, PixelType isoValue)

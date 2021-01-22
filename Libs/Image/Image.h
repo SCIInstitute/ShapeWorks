@@ -25,14 +25,18 @@ public:
   // constructors and assignment operators //
   Image(const std::string &pathname) : image(read(pathname)) {}
   Image(ImageType::Pointer imagePtr) : image(imagePtr) { if (!image) throw std::invalid_argument("null imagePtr"); }
+  Image(const vtkSmartPointer<vtkImageData> vtkImage);
   Image(Image&& img) : image(nullptr) { this->image.Swap(img.image); }
   Image(const Image& img) : image(cloneData(img.image)) {}
   Image& operator=(const Image& img); /// lvalue assignment operator
   Image& operator=(Image&& img);      /// rvalue assignment operator
 
-  // return this as an ITK image
+  /// return this as an ITK image
   operator ImageType::Pointer() { return image; }
   ImageType::Pointer getITKImage() const { return image; }
+
+  /// creates a VTK filter for the given image
+  vtkSmartPointer<vtkImageData> getVTKImage() const;
   
   // modification functions //
 
@@ -75,6 +79,9 @@ public:
   /// resamples image using new physical spacing, updating logical dims to keep all image data for this spacing
   Image& resample(const Vector& physicalSpacing, InterpolationType interp = Linear);
   
+  /// resamples image using isotropic physical spacing
+  Image& resample(double isoSpacing = 1.0, InterpolationType interp = Image::Linear);
+
   /// changes logical image size, computing new physical spacing based on this size (i.e., physical image size remains the same)
   Image& resize(Dims logicalDims, InterpolationType interp = Linear);
 
@@ -122,6 +129,9 @@ public:
 
   /// segements structures in images using topology preserving geodesic active contour level set filter
   Image& applyTPLevelSetFilter(const Image& featureImage, double scaling = 20.0);
+
+  /// creates a feature image (by applying gradient then sigmoid filters), then passes it to the TPLevelSet filter [curvature flow filter is often applied to the image before this filter]
+  Image& topologyPreservingSmooth(float scaling = 20.0, float sigmoidAlpha = 10.5, float sigmoidBeta = 10.0);
 
   /// applies intensity windowing image filter
   Image& applyIntensityFilter(double minVal, double maxVal);
@@ -185,21 +195,28 @@ public:
   /// compares this with another image using the region of interest filter
   bool operator==(const Image& other) const { return compare(other); }
 
+  /// generates the Transform necessary to move the contents of this binary image to the center
+  TransformPtr createCenterOfMassTransform();
+
+  /// creates transform to target using ICP registration (isovalue is used to create meshes from dt, which are then passed to ICP)
+  TransformPtr createRigidRegistrationTransform(const Image &target_dt, float isoValue = 0.0, unsigned iterations = 20);
+
   // export functions //
 
   /// writes image, format specified by filename extension
   Image& write(const std::string &filename, bool compressed = true);
 
+  // <ctc> why do we have this static function and a member function that calls it?
   /// creates a vtkPolyData for the given image
   static vtkSmartPointer<vtkPolyData> getPolyData(const Image& image, PixelType isoValue = 0.0);
 
   /// applies filter to generates isosurface
   static vtkSmartPointer<vtkPolyData> march(const Image& image, double levelset=0.0);
 
-  /// converts image to mesh
+  /// converts image to mesh (note: definition in Conversion.cpp)
   Mesh toMesh(PixelType isovalue = 1.0) const;
 
-  /// converts distance transform to mesh
+  /// converts distance transform to mesh (note: definition in Conversion.cpp)
   Mesh toMesh(double levelset = 0.0, double reduction = 0.01, double angle = 30,
               int leveliterations = 1, int meshiterations = 1, bool preservetopology = true) const;
 

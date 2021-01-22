@@ -4,7 +4,7 @@ from shapeworks import *
 
 def centerofmassTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
-  xform = ImageUtils.createCenterOfMassTransform(img)
+  xform = img.createCenterOfMassTransform()
   img.applyTransform(xform)
 
   compareImg = Image(os.environ["DATA"] + "/centerofmass1.nrrd")
@@ -18,7 +18,7 @@ if val is False:
 
 def centerofmassTest2():
   img = Image(os.environ["DATA"] + "/la-bin.nrrd")
-  xform = ImageUtils.createCenterOfMassTransform(img)
+  xform = img.createCenterOfMassTransform()
   img.applyTransform(xform)
 
   compareImg = Image(os.environ["DATA"] + "/centerofmass2.nrrd")

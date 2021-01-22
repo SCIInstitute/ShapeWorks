@@ -59,21 +59,6 @@ Region ImageUtils::boundingBox(std::vector<Image> &images, Image::PixelType isoV
   return bbox;
 }
 
-TransformPtr ImageUtils::createCenterOfMassTransform(const Image &image)
-{
-  AffineTransformPtr xform(AffineTransform::New());
-  xform->Translate(-(image.center() - image.centerOfMass())); // ITK translations go in a counterintuitive direction
-  return xform;
-}
-
-TransformPtr ImageUtils::createRigidRegistrationTransform(const Image &source_dt, const Image &target_dt, float isoValue, unsigned iterations)
-{
-  vtkSmartPointer<vtkPolyData> sourceContour = Image::getPolyData(source_dt, isoValue);
-  vtkSmartPointer<vtkPolyData> targetContour = Image::getPolyData(target_dt, isoValue);
-  const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createIcpTransform(sourceContour, targetContour, "rigid", iterations));
-  return createTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
-}
-
 TransformPtr ImageUtils::createWarpTransform(const std::string &source_landmarks, const std::string &target_landmarks, const int stride)
 { 
   typedef itk::ThinPlateSplineKernelTransform<double, 3> TPSTransform;
@@ -119,30 +104,6 @@ TransformPtr ImageUtils::createWarpTransform(const std::string &source_landmarks
   tps->ComputeWMatrix();
 
   return tps;
-}
-
-Image& ImageUtils::topologyPreservingSmooth(Image& image, float scaling, float sigmoidAlpha, float sigmoidBeta)
-{
-  Image featureImage(image);
-  featureImage.applyGradientFilter();
-  featureImage.applySigmoidFilter(sigmoidAlpha, sigmoidBeta);
-
-  return image.applyTPLevelSetFilter(featureImage, scaling);
-}
-
-Image& ImageUtils::isoresample(Image& image, double isoSpacing, Image::InterpolationType interp)
-{
-  return image.resample(makeVector({isoSpacing, isoSpacing, isoSpacing}), interp);
-}
-
-vtkImageData* ImageUtils::getVTK(const Image &image)
-{
-  using connectorType = itk::ImageToVTKImageFilter<Image::ImageType>;
-  connectorType::Pointer connector = connectorType::New();
-  connector->SetInput(image.getITKImage());
-  connector->Update();
-
-  return connector->GetOutput();
 }
 
 } //shapeworks

@@ -64,6 +64,8 @@ public:
   /// computes bounding box of current mesh
   Region boundingBox(bool center=false) const;
 
+  //<ctc>
+
   /// compute surface to surface distance using a filter
   vtkSmartPointer<swHausdorffDistancePointSetFilter> computeDistance(const Mesh &other_mesh, bool target=false);
 
@@ -76,20 +78,20 @@ public:
   /// returns relative distance from mesh B to mesh A
   double relativeDistanceBtoA(const Mesh &other_mesh, bool target=false);
 
+  // </ctc>
+
+  // <ctc> move to private or does this need to be used by anything else?
   /// compute origin of volume that would contain the rasterization of each mesh
-  Point3 rasterizationOrigin(Region region, Vector3 spacing=makeVector({1.0,1.0,1.0}), int padding=0);
+  Point3 rasterizationOrigin(Region region, Vector3 spacing = makeVector({1.0, 1.0, 1.0}), int padding = 0) const;
 
   /// compute size of volume that would contain the rasterization of each mesh
-  Dims rasterizationSize(Region region, Vector3 spacing=makeVector({1.0,1.0,1.0}), int padding=0);
+  Dims rasterizationSize(Region region, Vector3 spacing = makeVector({1.0, 1.0, 1.0}), int padding = 0, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;
 
-  /// rasterizes mesh to create binary images rasterizationOrigin and rasterizationSize
-  static Image rasterize(const Mesh &mesh, Vector3 spacing, Dims size, Point3 origin);
+  /// rasterizes mesh to create binary images, automatically computing size and origin if necessary
+  Image toImage(Vector3 spacing = makeVector({1.0, 1.0, 1.0}), Dims size = {0, 0, 0}, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;
 
-  /// converts mesh to image
-  Image toImage(Vector3 spacing, Dims size, Point3 origin) const;
-
-  /// converts mesh to distance transform
-  Image toDistanceTransform(Vector3 spacing, Dims size, Point3 origin) const;
+  /// converts mesh to distance transform, automatically computing size and origin if necessary
+  Image toDistanceTransform(Vector3 spacing = makeVector({1.0, 1.0, 1.0}), Dims size = {0, 0, 0}, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;
 
   /// quality control mesh
   Mesh& fix(bool wind = true, bool smoothBefore = true, bool smoothAfter = true, double lambda = 0.5, int iterations = 1, bool decimate = true, double percentage = 0.5);
@@ -108,16 +110,17 @@ public:
   /// number of faces
   vtkIdType numFaces() const { return mesh->GetNumberOfCells(); }
 
-  /// compare if points in two meshes are equal
-  bool compare_points_equal(const Mesh& other_mesh) const;
+  /// compare if values of the points in two meshes are equal within num significant digits
+  bool comparePointsEqual(const Mesh& other_mesh, int numSignificantDigits = 4) const;
 
   /// compare if scalars in two meshes are equal
-  bool compare_scalars_equal(const Mesh& other_mesh) const;
+  bool compareScalarsEqual(const Mesh& other_mesh) const;
 
-  /// compares this with another mesh by comparing points
-  bool operator==(const Mesh& other) const { return compare_points_equal(other); }
+  /// mesh comparison
+  bool operator==(const Mesh& other) const;
 
-  static std::vector<std::string> get_supported_types() { return {"vtk", "vtp", "ply", "stl", "obj"}; }
+  /// getSupportedTypes
+  static std::vector<std::string> getSupportedTypes() { return {"vtk", "vtp", "ply", "stl", "obj"}; }
 
 private:
   friend struct SharedCommandData;

@@ -62,7 +62,7 @@ TEST(ImageTests, isoresampleBinaryIsotropicTest)
 {
   Image image(std::string(TEST_DATA_DIR) + "/binary-isotropic-input.nrrd");
   image.antialias();
-  ImageUtils::isoresample(image);
+  image.resample();
   image.binarize().recenter();
   Image ground_truth(std::string(TEST_DATA_DIR) + "/binary-isotropic-isoresampled.nrrd");
 
@@ -73,7 +73,7 @@ TEST(ImageTests, isoresampleBinaryAnisotropicTest)
 {
   Image image(std::string(TEST_DATA_DIR) + "/binary-anisotropic-input.nrrd");
   image.antialias();
-  ImageUtils::isoresample(image);
+  image.resample();
   image.binarize().recenter();
   Image ground_truth(std::string(TEST_DATA_DIR) + "/binary-anisotropic-isoresampled.nrrd");
 
@@ -83,7 +83,7 @@ TEST(ImageTests, isoresampleBinaryAnisotropicTest)
 TEST(ImageTests, isoresampleSmoothIsotropicTest) 
 {
   Image image(std::string(TEST_DATA_DIR) + "/smooth-isotropic-input.nrrd");
-  ImageUtils::isoresample(image);
+  image.resample();
   image.recenter();
   Image ground_truth(std::string(TEST_DATA_DIR) + "/smooth-isotropic-isoresampled.nrrd");
 
@@ -93,7 +93,7 @@ TEST(ImageTests, isoresampleSmoothIsotropicTest)
 TEST(ImageTests, isoresampleSmoothAnisotropicTest) 
 {
   Image image(std::string(TEST_DATA_DIR) + "/smooth-anisotropic-input.nrrd");
-  ImageUtils::isoresample(image);
+  image.resample();
   image.recenter();
   Image ground_truth(std::string(TEST_DATA_DIR) + "/smooth-anisotropic-isoresampled.nrrd");
 
@@ -103,7 +103,7 @@ TEST(ImageTests, isoresampleSmoothAnisotropicTest)
 TEST(ImageTests, isoresampleImageAnisotropicTest) 
 {
   Image image(std::string(TEST_DATA_DIR) + "/image-anisotropic-input.nrrd");
-  ImageUtils::isoresample(image, 10.0);
+  image.resample(10.0);
   image.recenter();
   Image ground_truth(std::string(TEST_DATA_DIR) + "/image-anisotropic-isoresampled.nrrd");
 
@@ -176,7 +176,7 @@ TEST(ImageTests, translateTest3)
 TEST(ImageTests, comTest1)
 {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
-  TransformPtr xform = ImageUtils::createCenterOfMassTransform(image);
+  TransformPtr xform = image.createCenterOfMassTransform();
   image.applyTransform(xform);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/centerofmass1.nrrd");
 
@@ -195,7 +195,7 @@ TEST(ImageTests, comTest2)
 TEST(ImageTests, comTest3)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
-  TransformPtr xform = ImageUtils::createCenterOfMassTransform(image);
+  TransformPtr xform = image.createCenterOfMassTransform();
   image.applyTransform(xform, Image::NearestNeighbor);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/centerofmass3.nrrd");
 
@@ -373,7 +373,7 @@ TEST(ImageTests, setlevelTest)
 TEST(ImageTests, topopreservingsmoothTest)
 {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
-  ImageUtils::topologyPreservingSmooth(image, 10, 10.5, 10);
+  image.topologyPreservingSmooth(10, 10.5, 10);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/topo-preserving-smooth_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -440,7 +440,7 @@ TEST(ImageTests, icpTest)
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
   Image target(std::string(TEST_DATA_DIR) + "/target.nrrd");
   Image source(std::string(TEST_DATA_DIR) + "/source.nrrd");
-  TransformPtr transform(ImageUtils::createRigidRegistrationTransform(target, source));
+  TransformPtr transform(target.createRigidRegistrationTransform(source));
   image.applyTransform(transform, target.origin(), target.dims(), target.spacing(), target.coordsys());
   Image ground_truth(std::string(TEST_DATA_DIR) + "/icp_baseline.nrrd");
 
@@ -1066,4 +1066,22 @@ TEST(ImageTests, toMeshTest2)
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/mesh2.vtk");
 
   ASSERT_TRUE(mesh == ground_truth);
+}
+
+TEST(ImageTests, getItk)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
+  auto itkImage(image.getITKImage());
+  Image image2(itkImage);
+
+  ASSERT_TRUE(image == image2);
+}
+
+TEST(ImageTests, getVtk)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
+  auto vtkImage(image.getVTKImage());
+  Image image2(vtkImage);
+
+  ASSERT_TRUE(image == image2);
 }

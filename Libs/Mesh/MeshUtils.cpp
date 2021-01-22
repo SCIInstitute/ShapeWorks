@@ -4,8 +4,6 @@
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkLandmarkTransform.h>
 #include <vtkTransform.h>
-#include <vtkImageCast.h>
-#include <itkVTKImageToImageFilter.h>
 
 namespace shapeworks {
 
@@ -85,21 +83,6 @@ Region MeshUtils::boundingBox(std::vector<Mesh> &meshes, bool center)
     bbox.grow(mesh.boundingBox());
 
   return bbox;
-}
-
-Image MeshUtils::getITK(vtkImageData* vtkImg)
-{
-  vtkSmartPointer<vtkImageCast> cast = vtkSmartPointer<vtkImageCast>::New();
-  cast->SetInputData(vtkImg);
-  cast->SetOutputScalarTypeToFloat();
-  cast->Update();
-
-  using FilterType = itk::VTKImageToImageFilter<Image::ImageType>;
-  FilterType::Pointer filter = FilterType::New();
-  filter->SetInput(cast->GetOutput());
-  filter->Update();
-
-  return Image(filter->GetOutput());
 }
 
 } // shapeworks

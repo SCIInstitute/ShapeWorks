@@ -313,7 +313,7 @@ PYBIND11_MODULE(shapeworks, m)
   py::class_<Image>(m, "Image")
   .def(py::init<const std::string &>()) // can the argument for init be named (it's filename in this case)
   .def(py::init<Image::ImageType::Pointer>())
-  .def(py::init([](py::array_t<long> np_array) {
+  .def(py::init([](py::array_t<long> np_array) {  // FIXME: this is broken (or not even called)
     using ImportType = itk::ImportImageFilter<Image::PixelType, 3>;
     auto importer = ImportType::New();
     auto info = np_array.request();
@@ -368,10 +368,11 @@ PYBIND11_MODULE(shapeworks, m)
   .def("resample", [](Image& image, const std::vector<double>& v, Image::InterpolationType interp) {
     return image.resample(makeVector({v[0], v[1], v[2]}), interp);
   }, "resamples image using new physical spacing, updating logical dims to keep all image data for this spacing", "physicalSpacing"_a, "interp"_a=Image::InterpolationType::Linear)
-  .def("resize",                &Image::resize, "resizes an image (computes new physical spacing)", "logicalDims"_a, "interp"_a=Image::InterpolationType::Linear)
+  .def("resample",              &Image::resample, "isotropically resamples image using giving isospacing", "isoSpacing"_a=1.0, "interp"_a=Image::InterpolationType::Linear)
+  .def("resize",                &Image::resize, "change logical dims (computes new physical spacing)", "logicalDims"_a, "interp"_a=Image::InterpolationType::Linear)
   .def("resize", [](Image& image, std::vector<unsigned>& d, Image::InterpolationType interp) {
     return image.resize(Dims({d[0], d[1], d[2]}), interp);
-  }, "resizes an image (computes new physical spacing)", "logicalDims"_a, "interp"_a=Image::InterpolationType::Linear)
+  }, "change logical dims (computes new physical spacing)", "logicalDims"_a, "interp"_a=Image::InterpolationType::Linear)
   .def("recenter",              &Image::recenter, "recenters an image by changing its origin in the image header to the physical coordinates of the center of the image")
   .def("pad",                   py::overload_cast<int, Image::PixelType>(&Image::pad), "pads an image in all directions with constant value", "pad"_a, "value"_a=0.0)
   .def("pad",                   py::overload_cast<int, int, int, Image::PixelType>(&Image::pad), "pads an image by desired number of voxels in each direction with constant value", "padx"_a, "pady"_a, "padz"_a, "value"_a=0.0)
@@ -432,6 +433,12 @@ PYBIND11_MODULE(shapeworks, m)
   .def("physicalToLogical", [](Image& image, std::vector<double>& p) {
     return image.physicalToLogical(Point({p[0], p[1], p[2]}));
   }, "converts from a physical coordinate to a logical coordinate", "p"_a)
+  .def("createCenterOfMassTransform", &Image::createCenterOfMassTransform, "generates the Transform necessary to move the contents of this binary image to the center")
+  .def("createRigidRegistrationTransform", &Image::createRigidRegistrationTransform, "creates transform from source distance map to target using ICP registration (isovalue is used to create meshes from dts passed to ICP)", "target_dt"_a, "isoValue"_a=0.0, "iterations"_a=20)
+  .def("topologyPreservingSmooth",
+       &Image::topologyPreservingSmooth,
+       "creates a feature image (by applying gradient then sigmoid filters), then passes it to the TPLevelSet filter [curvature flow filter is often applied to the image before this filter]",
+       "scaling"_a=20.0, "sigmoidAlpha"_a=10.5, "sigmoidBeta"_a=10.0)
   .def("compare",               &Image::compare, "compares two images", "other"_a, "verifyall"_a=true, "tolerance"_a=0.0, "precision"_a=1e-12)
   .def("toMesh", [](Image &image, Image::PixelType isovalue) {
     return image.toMesh(isovalue);
@@ -477,22 +484,10 @@ PYBIND11_MODULE(shapeworks, m)
   .def_static("boundingBox", [](std::vector<Image> images, Image::PixelType val) {
     return shapeworks::ImageUtils::boundingBox(images, val);
   }, "compute largest bounding box surrounding the specified isovalue of the specified set of images", "images"_a, "isoValue"_a=1.0)
-  .def_static("createCenterOfMassTransform", [](const Image& img) {
-    auto xform_ptr = shapeworks::ImageUtils::createCenterOfMassTransform(img);
-    return xform_ptr;
-  }, "generates the Transform necessary to move the contents of this binary image to the center", "image"_a)
-  .def_static("createRigidRegistrationTransform", [](const Image& source_dt, const Image& target_dt, float isoValue, unsigned iterations) {
-    auto xform_ptr = shapeworks::ImageUtils::createRigidRegistrationTransform(source_dt, target_dt, isoValue, iterations);
-    return xform_ptr;
-  }, "creates transform from source distance map to target using ICP registration (isovalue is used to create meshes from dts passed to ICP)", "source_dt"_a, "target_dt"_a, "isoValue"_a=0.0, "iterations"_a=20)
   .def_static("createWarpTransform", [](const std::string &source_landmarks, const std::string &target_landmarks, const int stride) {
     auto xform_ptr = shapeworks::ImageUtils::createWarpTransform(source_landmarks, target_landmarks, stride);
     return xform_ptr;
   }, "computes a warp transform from the source to the target landmarks", "source_landmarks"_a, "target_landmarks"_a, "stride"_a=1)
-  .def_static("topologyPreservingSmooth", 
-                                &ImageUtils::topologyPreservingSmooth, "creates a feature image (by applying gradient then sigmoid filters), then passes it to the TPLevelSet filter [curvature flow filter is often applied to the image before this filter]",
-                                "image"_a, "scaling"_a=20.0, "sigmoidAlpha"_a=10.5, "sigmoidBeta"_a=10.0)
-  .def_static("isoresample",    &ImageUtils::isoresample, "create an isotropic resampling of the given image volume", "image"_a, "isoSpacing"_a=1.0, "interp"_a=Image::InterpolationType::Linear)
   ;
 
   // Mesh

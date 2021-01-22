@@ -118,13 +118,30 @@ int main(int argc,char** argv)
         polyDataWriter->SetFileName(argv[outputBParam]);
         polyDataWriter->Update();
     }
-    else
-    {
-        std::cout << static_cast<vtkPointSet*>(filter->GetOutput(0))->GetFieldData()->GetArray("HausdorffDistance")->GetComponent(0,0) << " "
-                  << filter->GetOutputDataObject(0)->GetFieldData()->GetArray("RelativeDistanceAtoB")->GetComponent(0,0) << " "
-                  << filter->GetOutputDataObject(1)->GetFieldData()->GetArray("RelativeDistanceBtoA")->GetComponent(0,0) << " "
+    // else
+    // {
+      auto hdist = static_cast<vtkPointSet*>(filter->GetOutput(0))->GetFieldData()->GetArray("HausdorffDistance");
+      auto a2b = filter->GetOutputDataObject(0)->GetFieldData()->GetArray("RelativeDistanceAtoB");
+      auto b2a = filter->GetOutputDataObject(1)->GetFieldData()->GetArray("RelativeDistanceBtoA");
+
+      // these should all be the same
+      std::cout << "hdist.size: " << hdist->GetNumberOfTuples() << std::endl;
+      std::cout << "a2b.size: " << a2b->GetNumberOfTuples() << std::endl;
+      std::cout << "b2a.size: " << b2a->GetNumberOfTuples() << std::endl;
+
+      // these should be the same for each (one component of each tuple)
+      std::cout << "hdist.totsize: " << hdist->GetNumberOfValues() << std::endl;
+      std::cout << "a2b.totsize: " << a2b->GetNumberOfValues() << std::endl;
+      std::cout << "b2a.totsize: " << b2a->GetNumberOfValues() << std::endl;
+
+      
+      for (auto i=0; i<hdist->GetNumberOfValues(); i++) {
+        std::cout << hdist->GetComponent(i,0) << " "
+                  << a2b->GetComponent(i,0) << " "
+                  << b2a->GetComponent(i,0) << " "
                   << std::endl;
-    }
+      }
+    // }
 
     readerA->Delete( );
     readerB->Delete( );

@@ -259,7 +259,7 @@ bool ResampleImage::execute(const optparse::Values &options, SharedCommandData &
   Image::InterpolationType interp = interpopt == "nearest" ? Image::NearestNeighbor : Image::Linear;
 
   if (isoSpacing > 0.0)
-    ImageUtils::isoresample(sharedData.image, isoSpacing, interp);
+    sharedData.image.resample(isoSpacing, interp);
   else if (sizeX == 0 || sizeY == 0 || sizeX == 0)
     sharedData.image.resample(makeVector({spaceX, spaceY, spaceZ}), interp);
   else 
@@ -399,7 +399,7 @@ bool TranslateImage::execute(const optparse::Values &options, SharedCommandData 
 
   if (centerofmass)
   {
-    sharedData.image.applyTransform(ImageUtils::createCenterOfMassTransform(sharedData.image));
+    sharedData.image.applyTransform(sharedData.image.createCenterOfMassTransform());
     return true;
   }
   else
@@ -809,7 +809,7 @@ bool TopologyPreservingFilter::execute(const optparse::Values &options, SharedCo
   double alpha = static_cast<double>(options.get("alpha"));
   double beta = static_cast<double>(options.get("beta"));
 
-  ImageUtils::topologyPreservingSmooth(sharedData.image, scaling, alpha, beta);
+  sharedData.image.topologyPreservingSmooth(scaling, alpha, beta);
   return true;
 }
 
@@ -886,7 +886,7 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
   {
     Image source_dt(sourceDT);
     Image target_dt(targetDT);
-    TransformPtr transform(ImageUtils::createRigidRegistrationTransform(source_dt, target_dt, isovalue, iterations));
+    TransformPtr transform(source_dt.createRigidRegistrationTransform(target_dt, isovalue, iterations));
     sharedData.image.applyTransform(transform, target_dt.origin(), target_dt.dims(), target_dt.spacing(), target_dt.coordsys());
     return true;
   }
