@@ -13,9 +13,28 @@
 
 namespace shapeworks {
 
+void segfault_sigaction(int signal, siginfo_t *si, void *arg) {
+  printf("Segfault caught at:\n Mesh: %s \n Point: %f %f %f \n k: %d\n",
+         TriMeshWrapper::knn_filename.c_str(),
+         TriMeshWrapper::knn_point.x,
+         TriMeshWrapper::knn_point.y,
+         TriMeshWrapper::knn_point.z,
+         TriMeshWrapper::knn_k
+         );
+  exit(2);
+}
+
 //---------------------------------------------------------------------------
 OptimizeParameterFile::OptimizeParameterFile()
-{}
+{
+  struct sigaction sa;
+
+  memset(&sa, 0, sizeof(struct sigaction));
+  sigemptyset(&sa.sa_mask);
+  sa.sa_sigaction = segfault_sigaction;
+  sa.sa_flags   = SA_SIGINFO;
+  sigaction(SIGSEGV, &sa, NULL);
+}
 
 //---------------------------------------------------------------------------
 bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* optimize)
@@ -474,7 +493,9 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
       }
       auto themesh = std::shared_ptr<TriMesh>(TriMesh::read(meshFiles[index].c_str()));
       if (themesh) {
-        optimize->AddMesh(std::make_shared<shapeworks::TriMeshWrapper>(themesh));
+        auto t = std::make_shared<shapeworks::TriMeshWrapper>(themesh);
+        t->filename_ = meshFiles[index];
+        optimize->AddMesh(t);
       }
       else {
         std::cerr << "Failed to read " << meshFiles[index] << "\n";

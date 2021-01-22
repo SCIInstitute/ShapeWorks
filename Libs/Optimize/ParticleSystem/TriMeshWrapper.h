@@ -48,7 +48,13 @@ public:
     return mesh_upper_bound_;
   }
 
+  std::string filename_;
+  static std::string knn_filename;
+  static trimesh::Vec<3, float> knn_point;
+  static int knn_k;
+
 private:
+
 
   Eigen::Vector3d
   GeodesicWalkOnFace(Eigen::Vector3d point_a,

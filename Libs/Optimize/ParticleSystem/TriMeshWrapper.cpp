@@ -39,6 +39,10 @@ inline TO convert(FROM& value)
 }
 }
 
+std::string TriMeshWrapper::knn_filename = "";
+trimesh::Vec<3, float> TriMeshWrapper::knn_point = {0.0, 0.0, 0.0};
+int TriMeshWrapper::knn_k = 0;
+
 TriMeshWrapper::TriMeshWrapper(std::shared_ptr<trimesh::TriMesh> mesh)
 {
   mesh_ = mesh;
@@ -314,6 +318,11 @@ int TriMeshWrapper::GetNearestVertex(point pt) const
 std::vector<int> TriMeshWrapper::GetKNearestVertices(point pt, int k) const
 {
   std::vector<const float*> knn;
+
+  TriMeshWrapper::knn_filename = this->filename_;
+  TriMeshWrapper::knn_point = pt;
+  TriMeshWrapper::knn_k = k;
+
   kd_tree_->find_k_closest_to_pt(knn, k, pt, 9999999);
   std::vector<int> vertices;
   for (int i = 0; i < knn.size(); i++) {

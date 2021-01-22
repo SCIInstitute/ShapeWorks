@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <signal.h>
 
 class TiXmlHandle;
 
@@ -19,6 +20,8 @@ class TiXmlHandle;
  */
 
 namespace shapeworks {
+void segfault_sigaction(int signal, siginfo_t *si, void *arg);
+
 class Optimize;
 
 class OptimizeParameterFile {
