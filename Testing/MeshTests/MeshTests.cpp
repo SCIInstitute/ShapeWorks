@@ -135,7 +135,7 @@ TEST(MeshTests, relativeDistanceBATest)
   Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
   double relativeDistanceBA = femur.relativeDistanceBtoA(pelvis);
 
-  ASSERT_TRUE(std::abs(relativeDistanceBA - 16.1937 < 1e-4));
+  ASSERT_TRUE(std::abs(relativeDistanceBA - 16.1937) < 1e-4);
 }
 
 TEST(MeshTests, rasterizationOriginTest1)
@@ -214,7 +214,7 @@ TEST(MeshTests, toDistanceTransformTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
   Region region = femur.boundingBox();
-  Image image = femur.toDistanceTransform(makeVector({1.0,1.0,1.0}), femur.rasterizationSize(region), femur.rasterizationOrigin(region));
+  Image image = femur.toDistanceTransform();
   image.write("/tmp/dt.nrrd");
   Image ground_truth(std::string(TEST_DATA_DIR) + "/femurDT.nrrd");
 

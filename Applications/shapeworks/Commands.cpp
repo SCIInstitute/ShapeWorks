@@ -181,9 +181,9 @@ void Antialias::buildParser()
   const std::string desc = "antialiases binary volumes";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--maxrmserror").action("store").type("double").set_default(0.01).help("Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default: 0.01].");
-  parser.add_option("--iterations").action("store").type("int").set_default(50).help("Maximum number of iterations [default: 50].");
-  parser.add_option("--layers").action("store").type("int").set_default(3).help("Number of layers around a 3d pixel to use for this computation [default: 3].");
+  parser.add_option("--maxrmserror").action("store").type("double").set_default(0.01).help("Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default: %default].");
+  parser.add_option("--iterations").action("store").type("int").set_default(50).help("Maximum number of iterations [default: %default].");
+  parser.add_option("--layers").action("store").type("int").set_default(3).help("Number of layers around a 3d pixel to use for this computation [default: %default].");
 
   Command::buildParser();
 }
@@ -2245,18 +2245,18 @@ bool MeshFix::execute(const optparse::Values &options, SharedCommandData &shared
 void MeshToImage::buildParser()
 {
   const std::string prog = "mesh-to-image";
-  const std::string desc = "converts current mesh to binary segmentation";
+  const std::string desc = "converts current mesh to a binary segmentation image";
   parser.prog(prog).description(desc);
 
   parser.add_option("--spacex").action("store").type("double").set_default(1.0).help("Spacing of output image in x-direction [default: %default].");
   parser.add_option("--spacey").action("store").type("double").set_default(1.0).help("Spacing of output image in y-direction [default: %default].");
   parser.add_option("--spacez").action("store").type("double").set_default(1.0).help("Spacing of output image in z-direction [default: %default].");
-  parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Size of output image in x-direction [default: current size].");
-  parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Size of output image in y-direction [default: current size].");
-  parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Size of output image in z-direction [default: current size].");
-  parser.add_option("--originx").action("store").type("double").set_default(0.0).help("Origin of output image in x-direction [default: current origin].");
-  parser.add_option("--originy").action("store").type("double").set_default(0.0).help("Origin of output image in y-direction [default: current origin].");
-  parser.add_option("--originz").action("store").type("double").set_default(0.0).help("Origin of output image in z-direction [default: current origin].");
+  parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Size of output image in x-direction [default: one pixel per unit of distance in mesh].");
+  parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Size of output image in y-direction [default: one pixel per unit of distance in mesh].");
+  parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Size of output image in z-direction [default: one pixel per unit of distance in mesh].");
+  parser.add_option("--originx").action("store").type("double").set_default(-1.0).help("Origin of output image in x-direction [default: current origin].");
+  parser.add_option("--originy").action("store").type("double").set_default(-1.0).help("Origin of output image in y-direction [default: current origin].");
+  parser.add_option("--originz").action("store").type("double").set_default(-1.0).help("Origin of output image in z-direction [default: current origin].");
 
   Command::buildParser();
 }
@@ -2299,12 +2299,12 @@ void MeshToDT::buildParser()
   parser.add_option("--spacex").action("store").type("double").set_default(1.0).help("Spacing of output image in x-direction [default: %default].");
   parser.add_option("--spacey").action("store").type("double").set_default(1.0).help("Spacing of output image in y-direction [default: %default].");
   parser.add_option("--spacez").action("store").type("double").set_default(1.0).help("Spacing of output image in z-direction [default: %default].");
-  parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Size of output image in x-direction [default: current size].");
-  parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Size of output image in y-direction [default: current size].");
-  parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Size of output image in z-direction [default: current size].");
-  parser.add_option("--originx").action("store").type("double").set_default(0.0).help("Origin of output image in x-direction [default: current origin].");
-  parser.add_option("--originy").action("store").type("double").set_default(0.0).help("Origin of output image in y-direction [default: current origin].");
-  parser.add_option("--originz").action("store").type("double").set_default(0.0).help("Origin of output image in z-direction [default: current origin].");
+  parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Size of output image in x-direction [default: one pixel per unit of distance in mesh].");
+  parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Size of output image in y-direction [default: one pixel per unit of distance in mesh].");
+  parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Size of output image in z-direction [default: one pixel per unit of distance in mesh].");
+  parser.add_option("--originx").action("store").type("double").set_default(-1.0).help("Origin of output image in x-direction [default: current origin].");
+  parser.add_option("--originy").action("store").type("double").set_default(-1.0).help("Origin of output image in y-direction [default: current origin].");
+  parser.add_option("--originz").action("store").type("double").set_default(-1.0).help("Origin of output image in z-direction [default: current origin].");
 
   Command::buildParser();
 }

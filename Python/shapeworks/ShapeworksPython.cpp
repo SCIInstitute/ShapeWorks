@@ -502,7 +502,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("coverage",              &Mesh::coverage, "other_mesh"_a, "ignore_back_intersections"_a, "angle_threshold"_a, "back_search_radius"_a)
   .def("numVertices",           &Mesh::numVertices)
   .def("numFaces",              &Mesh::numFaces)
-  .def("comparePointsEqual",    &Mesh::comparePointsEqual, "other_mesh"_a, "numSignificantDigits"_a=4)
+  .def("comparePointsEqual",    &Mesh::comparePointsEqual, "other_mesh"_a)
   .def("compareScalarsEqual",   &Mesh::compareScalarsEqual, "other_mesh"_a)
   ;
 

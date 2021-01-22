@@ -42,7 +42,7 @@ const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createIcpTransform(const vtkSmart
 
 vtkTransform MeshUtils::createRegistrationTransform(const std::unique_ptr<Mesh> &sourceMesh, const std::unique_ptr<Mesh> &targetMesh, const std::string type, unsigned iterations)
 {
-  const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createIcpTransform(sourceMesh->getMesh(), targetMesh->getMesh(), type, iterations));
+  const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createIcpTransform(sourceMesh->getVTKMesh(), targetMesh->getVTKMesh(), type, iterations));
   return createvtkTransform(mat);
 }
 

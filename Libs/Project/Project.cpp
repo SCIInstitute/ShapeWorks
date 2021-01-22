@@ -536,7 +536,7 @@ std::vector<std::string> Project::get_feature_names()
     if (subject->get_domain_types()[0] == DomainType::Mesh) {
       if (!subject->get_segmentation_filenames().empty()) {
         Mesh m(subject->get_segmentation_filenames()[0]);
-        auto poly_data = m.getMesh();
+        auto poly_data = m.getVTKMesh();
         if (poly_data) {
           vtkIdType numberOfPointArrays = poly_data->GetPointData()->GetNumberOfArrays();
           for (vtkIdType i = 0; i < numberOfPointArrays; i++) {
