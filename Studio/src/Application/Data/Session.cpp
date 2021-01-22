@@ -791,7 +791,7 @@ std::string Session::get_default_feature_map()
     if (!subject->get_segmentation_filenames().empty()) {
       if (subject->get_domain_types()[0] == DomainType::Mesh) {
         Mesh m(subject->get_segmentation_filenames()[0]);
-        auto poly_data = m.get_poly_data();
+        auto poly_data = m.getMesh();
         if (poly_data) {
           auto scalars = poly_data->GetPointData()->GetScalars();
           if (scalars) {
