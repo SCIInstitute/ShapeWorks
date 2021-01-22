@@ -39,6 +39,7 @@ public:
   void set_mesh_warper(QSharedPointer<MeshWarper> mesh_warper);
 
   void set_reconstruction_method(std::string method);
+  std::string get_reconstruction_method();
 
   static const std::string RECONSTRUCTION_LEGACY_C;
   static const std::string RECONSTRUCTION_DISTANCE_TRANSFORM_C;

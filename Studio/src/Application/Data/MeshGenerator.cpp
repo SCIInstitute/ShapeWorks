@@ -194,4 +194,10 @@ void MeshGenerator::set_reconstruction_method(std::string method)
 {
   this->reconstruction_method_ = method;
 }
+
+//---------------------------------------------------------------------------
+std::string MeshGenerator::get_reconstruction_method()
+{
+  return this->reconstruction_method_;
+}
 }

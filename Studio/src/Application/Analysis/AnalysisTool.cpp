@@ -719,6 +719,9 @@ void AnalysisTool::reset_stats()
 //---------------------------------------------------------------------------
 void AnalysisTool::enable_actions()
 {
+  if (this->session_->get_num_shapes() < 1) {
+    return;
+  }
   auto domain_types = this->session_->get_domain_types();
   bool image_domain = domain_types.size() > 0 && domain_types[0] == DomainType::Image;
   this->ui_->distance_transfom_radio_button->setEnabled(
@@ -1037,7 +1040,6 @@ void AnalysisTool::initialize_mesh_warper()
 //---------------------------------------------------------------------------
 void AnalysisTool::reconstruction_method_changed()
 {
-
   this->ui_->reconstruction_options->setVisible(
     this->ui_->distance_transfom_radio_button->isChecked());
   std::string method = MeshGenerator::RECONSTRUCTION_LEGACY_C;
@@ -1048,9 +1050,12 @@ void AnalysisTool::reconstruction_method_changed()
     method = MeshGenerator::RECONSTRUCTION_MESH_WARPER_C;
   }
 
-  this->session_->get_mesh_manager()->get_mesh_generator()->set_reconstruction_method(method);
-  this->session_->handle_clear_cache();
-  emit reconstruction_complete();
+  auto previous_method = this->session_->get_mesh_manager()->get_mesh_generator()->get_reconstruction_method();
+  if (previous_method != method) {
+    this->session_->get_mesh_manager()->get_mesh_generator()->set_reconstruction_method(method);
+    this->session_->handle_clear_cache();
+    emit reconstruction_complete();
+  }
 }
 
 }
