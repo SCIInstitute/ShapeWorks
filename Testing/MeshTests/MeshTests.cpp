@@ -210,12 +210,20 @@ TEST(MeshTests, toImageTest1)
   ASSERT_TRUE(image == ground_truth);
 }
 
+TEST(MeshTests, antialiasTest3)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
+  Image image = femur.toImage().antialias(50, 0.0);
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/antialias3.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
 TEST(MeshTests, toDistanceTransformTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
-  Region region = femur.boundingBox();
   Image image = femur.toDistanceTransform();
-  image.write("/tmp/dt.nrrd");
+  image.write("/tmp/dtnew.nrrd");
   Image ground_truth(std::string(TEST_DATA_DIR) + "/femurDT.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
