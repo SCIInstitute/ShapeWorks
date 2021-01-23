@@ -107,7 +107,7 @@ public:
 
   std::vector<DomainType> get_domain_types();
 
-  void update_auto_glyph_size();
+  double update_auto_glyph_size();
 
   double get_auto_glyph_size();
 

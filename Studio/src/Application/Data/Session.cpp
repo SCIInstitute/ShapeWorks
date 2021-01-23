@@ -360,8 +360,6 @@ bool Session::load_light_project(QString filename)
     return false;
   }
 
-  this->load_groomed_files(groom_files, 0.5);
-
   if (!this->load_point_files(local_point_files, true)) {
     return false;
   }
@@ -369,6 +367,8 @@ bool Session::load_light_project(QString filename)
   if (!this->load_point_files(global_point_files, false)) {
     return false;
   }
+
+  this->load_groomed_files(groom_files, 0.5);
 
   // read group ids
   std::vector<int> group_ids;
@@ -619,17 +619,26 @@ bool Session::update_points(std::vector<std::vector<itk::Point<double>>> points,
 
   if (points.size() > 0) {
     this->unsaved_particle_files_ = true;
+    this->update_auto_glyph_size();
     emit points_changed();
   }
   return true;
 }
 
 //---------------------------------------------------------------------------
-void Session::update_auto_glyph_size()
+double Session::update_auto_glyph_size()
 {
+  this->auto_glyph_size_ = 1;
+  if (this->shapes_.empty()) {
+    return this->auto_glyph_size_;
+  }
+
   double max_range = std::numeric_limits<double>::min();
   for (auto& shape : this->shapes_) {
     vnl_vector<double> points = shape->get_global_correspondence_points();
+    if (points.empty()) {
+      return this->auto_glyph_size_;
+    }
     double max_x = std::numeric_limits<double>::min();
     double min_x = std::numeric_limits<double>::max();
     double max_y = max_x;
@@ -653,7 +662,10 @@ void Session::update_auto_glyph_size()
     max_range = std::max<double>({max_range, range_x, range_y, range_z});
   }
 
-  this->auto_glyph_size_ = max_range / 25;
+  this->auto_glyph_size_ = std::max<double>(0.1, max_range / 25.0);
+  this->auto_glyph_size_ = std::min<double>(10.0, this->auto_glyph_size_);
+
+  return this->auto_glyph_size_;
 }
 
 //---------------------------------------------------------------------------
