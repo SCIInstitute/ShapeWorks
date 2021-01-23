@@ -272,7 +272,6 @@ void AnalysisTool::set_session(QSharedPointer<Session> session)
   this->ui_->mesh_warping_radio_button->setChecked(true);
 }
 
-
 //---------------------------------------------------------------------------
 void AnalysisTool::set_app(ShapeWorksStudioApp* app)
 {
@@ -409,7 +408,8 @@ bool AnalysisTool::compute_stats()
     return false;
   }
 
-  this->ui_->pcaModeSpinBox->setMaximum(this->session_->get_shapes().size() - 1);
+  this->ui_->pcaModeSpinBox->setMaximum(
+    std::max<double>(1, this->session_->get_shapes().size() - 1));
 
   std::vector<vnl_vector<double>> points;
   std::vector<int> group_ids;
