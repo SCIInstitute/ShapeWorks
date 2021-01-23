@@ -133,6 +133,18 @@ void Preferences::set_glyph_quality(float value)
 }
 
 //-----------------------------------------------------------------------------
+bool Preferences::get_glyph_auto_size()
+{
+  return this->settings_.value("Project/glyph_auto_size", true).toBool();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_glyph_auto_size(bool value)
+{
+  this->settings_.setValue("Project/glyph_auto_size", value);
+}
+
+//-----------------------------------------------------------------------------
 float Preferences::get_pca_range()
 {
   return this->settings_.value("Analysis/pca_range", 2.0).toFloat();
