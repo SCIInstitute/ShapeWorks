@@ -545,15 +545,29 @@ void Shape::load_feature(std::string display_mode, std::string feature)
       transform = this->get_groomed_transform();
     }
 
-    // read the feature
-    ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileName(filenames[feature]);
-    reader->Update();
-    ImageType::Pointer image = reader->GetOutput();
+    if (this->subject_->get_domain_types().size() > 0 &&
+        this->subject_->get_domain_types()[0] == DomainType::Image) {
 
-    mesh->apply_feature_map(feature, image, transform);
+      // read the feature
+      ReaderType::Pointer reader = ReaderType::New();
+      reader->SetFileName(filenames[feature]);
+      reader->Update();
+      ImageType::Pointer image = reader->GetOutput();
 
-    this->apply_feature_to_points(feature, image);
+      mesh->apply_feature_map(feature, image, transform);
+      this->apply_feature_to_points(feature, image);
+
+    }
+    else if (this->subject_->get_domain_types().size() > 0 &&
+             this->subject_->get_domain_types()[0] == DomainType::Mesh) {
+
+      auto original_mesh = this->get_original_mesh(true);
+
+      mesh->apply_scalars(original_mesh, transform);
+      this->apply_feature_to_points(feature, original_mesh);
+
+    }
+
   }
 }
 
@@ -601,6 +615,50 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
 
 }
 
+
+//---------------------------------------------------------------------------
+void Shape::apply_feature_to_points(std::string feature, QSharedPointer<StudioMesh> mesh)
+{
+  vtkSmartPointer<vtkPolyData> from_mesh = mesh->get_poly_data();
+
+  // Create the tree
+  vtkSmartPointer<vtkKdTreePointLocator> kDTree = vtkSmartPointer<vtkKdTreePointLocator>::New();
+  kDTree->SetDataSet(from_mesh);
+  kDTree->BuildLocator();
+
+  vnl_vector<double> transform = this->get_groomed_transform();
+
+  int num_points = this->local_correspondence_points_.size() / 3;
+
+  Eigen::VectorXf values(num_points);
+
+  vtkDataArray* from_array = from_mesh->GetPointData()->GetArray(feature.c_str());
+
+  int idx = 0;
+  for (int i = 0; i < num_points; ++i) {
+
+    double pt[3];
+    pt[0] = this->local_correspondence_points_[idx++];
+    pt[1] = this->local_correspondence_points_[idx++];
+    pt[2] = this->local_correspondence_points_[idx++];
+
+    if (transform.size() == 12) {
+      pt[0] = pt[0] + transform[9];
+      pt[1] = pt[1] + transform[10];
+      pt[2] = pt[2] + transform[11];
+    }
+
+
+    vtkIdType id = kDTree->FindClosestPoint(pt);
+    vtkVariant var = from_array->GetVariantValue(id);
+
+    values[i] = var.ToDouble();
+  }
+  this->point_features_[feature] = values;
+
+}
+
+
 //---------------------------------------------------------------------------
 Eigen::VectorXf Shape::get_point_features(std::string feature)
 {
@@ -639,5 +697,6 @@ void Shape::set_point_features(std::string feature, Eigen::VectorXf values)
     mesh->interpolate_scalars_to_mesh(feature, this->global_correspondence_points_, values);
   }
 }
+
 
 }

@@ -138,6 +138,7 @@ private:
   static bool import_point_file(QString filename, vnl_vector<double>& points);
 
   void apply_feature_to_points(std::string feature, ImageType::Pointer image);
+  void apply_feature_to_points(std::string feature, QSharedPointer<StudioMesh> mesh);
 
   int id_;
 
