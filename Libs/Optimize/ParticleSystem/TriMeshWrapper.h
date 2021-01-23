@@ -81,7 +81,7 @@ private:
   static inline bool IsBarycentricCoordinateValid(const trimesh::vec3& b);
 
   // IGL Helper functions
-  void GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F);
+  void GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const;
 
   std::shared_ptr<trimesh::TriMesh> mesh_;
   std::shared_ptr<trimesh::KDtree> kd_tree_;
@@ -92,25 +92,39 @@ private:
 
   std::vector<HessianType> grad_normals_;
 
+  PointType mesh_lower_bound_;
+  PointType mesh_upper_bound_;
+
+  /////////////////////////
   // Geodesic distances
-  void PrecomputeGeodesics(); // Precomputation for geodesic distances
-  double GeodesicDistance(int v1, int v2) const;
-  trimesh::vec3 GeodesicDistanceFromFace(int f1, int f2) const;
-  Eigen::VectorXd GeodesicDistanceFromFace(int f1) const;
-  Eigen::Vector3d Gradient(int src_v, int f) const;
+
+  // Precompute libigl heat data structures for faster geodesic lookups
+  void PrecomputeGeodesics();
+
+  // Returns (V, ) geodesic distances from a given source vertex to every other vertex
+  const Eigen::VectorXd& GeodesicsFromVertex(int v) const;
+
+  // Returns (V, 3) gradient of geodesic distances from a given source vertex to every other vertex
+  const Eigen::MatrixXd& GradGeodesicsFromVertex(int v) const;
+
+  // Returns true if face f_a is adjacent to face f_b
+  bool IsFaceAdjacent(int f_a, int f_b) const;
+
+  // Cache to store information for geodesics
   mutable struct {
     igl::HeatGeodesicsData<double> heat_data;
 
     //TODO lru_cache https://github.com/lamerman/cpp-lru-cache/blob/master/include/lrucache.hpp
     std::unordered_map<int, Eigen::VectorXd> cache;
+    //TODO Might be worth switching to RowMajor here because of the access patterns
     std::unordered_map<int, Eigen::MatrixXd> grad_cache;
 
-    //TODO should we just recompute this every time?
-    Eigen::SparseMatrix<double> G;
-  } geodesic_cache_;
+    Eigen::SparseMatrix<double> G; // Gradient operator
 
-  PointType mesh_lower_bound_;
-  PointType mesh_upper_bound_;
+    //TODO trimesh already computes adjacency, just use that
+    Eigen::MatrixXi TT; // Triangle-Triangle adjacency
+
+  } geodesic_cache_;
 };
 
 }

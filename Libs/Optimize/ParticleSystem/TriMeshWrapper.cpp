@@ -4,6 +4,7 @@
 #include <igl/grad.h>
 #include <igl/per_vertex_normals.h>
 #include <igl/doublearea.h>
+#include <igl/triangle_triangle_adjacency.h>
 
 #include <set>
 
@@ -71,7 +72,6 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
 
   // Find the triangle for the points
   vec3 bary_a, bary_b;
-  //TODO need to Snap ???
   const int face_a = GetTriangleForPoint(convert<PointType, point>(pt_a), idx_a, bary_a);
   const int face_b = GetTriangleForPoint(convert<PointType, point>(pt_b), idx_b, bary_b);
 
@@ -99,16 +99,13 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
     return std::sqrt(dx*dx + dy*dy + dz*dz);
   };
 
-  //TODO gradient of geodesic
   for(int i=0; i<3; i++) {
     // geodesic(==euclidean) distance between point a and face i
     const double d_ai = dist_to_vertex(pt_a, mesh_->faces[face_a][i]);
+    const Eigen::VectorXd& geo_from_ai = GeodesicsFromVertex(mesh_->faces[face_a][i]);
 
     for(int j=0; j<3; j++) {
-      // geodesic distance between the two vertices on the mesh
-      //TODO: Change API of GeodesicDistance to return a ref to all geodesics so we have to do fewer lookups
-      const double g_ij = GeodesicDistance(mesh_->faces[face_a][i],
-                                           mesh_->faces[face_b][j]);
+      const double g_ij = geo_from_ai[mesh_->faces[face_b][j]];
 
       // geodesic(==euclidean) distance between point b and face j
       const double d_bi = dist_to_vertex(pt_b, mesh_->faces[face_b][j]);
@@ -124,130 +121,68 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
     }
   }
 
-  //TODO ALL THIS is VERRYY wrong we are not considering pt_b->face_b and just read more about this
-  // const auto vec_dists = GeodesicDistanceFromFace(face_b, face_a);
-  // best_dist = bary_a.dot(vec_dists);
-
-  /*if(out_grad != nullptr && best_dist < 16.0) {
-    for (int i = 0; i < DIMENSION; i++) {
-      (*out_grad)[i] = pt_a[i] - pt_b[i];
-    }
-  } else*/ if(out_grad != nullptr) {
-    // TODO this treats the gradient of geodesics as constant over a face, is this alright?
-    const int src_v = mesh_->faces[face_b][best_idx_b];
-
-    const auto& G = geodesic_cache_.G;
-
-    GeodesicDistance(src_v, mesh_->vertices.size()-1); // make sure its in cache
-    const auto& D = geodesic_cache_.cache[src_v];
-    // const auto D = GeodesicDistanceFromFace(face_b);
-
-    if(D.size() != mesh_->vertices.size()) {
-      throw std::runtime_error("Bad bad D");
-    }
-
-    // const Eigen::MatrixXd GN = Eigen::Map<const Eigen::MatrixXd>((G*D).eval().data(), n_faces, 9);
-    // const Eigen::MatrixXd GD = G.block(3*face_b, 0, 3, G.cols()) * D;
-
-    // const Eigen::MatrixXd GD_all = Eigen::Map<const Eigen::MatrixXd>((G*D).eval().data(), mesh_->faces.size(), 3);
-    // const Eigen::MatrixXd GD = GD_all.row(face_a);
-
-    const auto GD = Gradient(src_v, face_a);
-
-
-    // std::cout << "------\n";
-    for(int i=0; i<DIMENSION; i++) {
-      (*out_grad)[i] = GD(i) * best_dist;
-      // std::cout << out_grad->get(i) << " | " << (pt_a[i] - pt_b[i]) << "\n";
-    }
-    const double angle_geo = std::atan2(out_grad->get(1), out_grad->get(0));
-    const double angle_eucl = std::atan2(pt_a[1] - pt_b[1], pt_a[0] - pt_b[0]);
-    const double dist_eucl = pt_a.EuclideanDistanceTo(pt_b);
-    // std::cout << "angle: " << angle_geo << " | " << angle_eucl << "(diff: " << angle_geo - angle_eucl << ")\n";
-    // std::cout << "distance: " << best_dist << " | " << dist_eucl << "(diff: " << best_dist - dist_eucl << ")\n";
-    // std::cout << "------\n";
-
-  }
-
-#if 0
-  best_dist = pt_a.EuclideanDistanceTo(pt_b);
   if(out_grad != nullptr) {
-    for(int i=0; i<DIMENSION; i++) {
-      (*out_grad)[i] = pt_a[i] - pt_b[i];
+    // Check if the particles are too close
+    if(IsFaceAdjacent(face_a, face_b)) {
+      for (int i = 0; i < DIMENSION; i++) {
+        (*out_grad)[i] = pt_a[i] - pt_b[i];
+      }
+    } else {
+      const Eigen::RowVectorXd& g0 = GradGeodesicsFromVertex(mesh_->faces[face_b][0]).row(face_a);
+      const Eigen::RowVectorXd& g1 = GradGeodesicsFromVertex(mesh_->faces[face_b][1]).row(face_a);
+      const Eigen::RowVectorXd& g2 = GradGeodesicsFromVertex(mesh_->faces[face_b][2]).row(face_a);
+      //todo get the scaling by distance stuff correctly
+      const Eigen::Vector3d grad_geo = (bary_b[0] * g0 + bary_b[1] * g1 + bary_b[2] * g2) * best_dist;
+
+      // std::cout << "------\n";
+      for(int i=0; i<DIMENSION; i++) {
+        (*out_grad)[i] = grad_geo(i);
+        // std::cout << out_grad->get(i) << " | " << (pt_a[i] - pt_b[i]) << "\n";
+      }
+      const double angle_geo = std::atan2(out_grad->get(1), out_grad->get(0));
+      const double angle_eucl = std::atan2(pt_a[1] - pt_b[1], pt_a[0] - pt_b[0]);
+      const double dist_eucl = pt_a.EuclideanDistanceTo(pt_b);
+      // std::cout << "angle: " << angle_geo << " | " << angle_eucl << "(diff: " << angle_geo - angle_eucl << ")\n";
+      // std::cout << "distance: " << best_dist << " | " << dist_eucl << "(diff: " << best_dist - dist_eucl << ")\n";
+      // std::cout << "------\n";
     }
   }
-#endif
 
   return best_dist;
 }
 
-double TriMeshWrapper::GeodesicDistance(int v1, int v2) const
-{
-  // TODO Bring this back or think about why its not necessary
-  /*
-  if(v1 > v2) {
-    std::swap(v1, v2);
-  }
-  */
+bool TriMeshWrapper::IsFaceAdjacent(int f_a, int f_b) const {
+  const auto& TT = geodesic_cache_.TT;
+  return TT(f_b, 0) == f_a || TT(f_b, 1) == f_a || TT(f_b, 2) == f_a;
+}
 
-  const auto entry = geodesic_cache_.cache.find(v1);
+const Eigen::VectorXd& TriMeshWrapper::GeodesicsFromVertex(int v) const {
+  const auto entry = geodesic_cache_.cache.find(v);
   if(entry != geodesic_cache_.cache.end()) {
-    // TODO this seems correct, but just make sure the std::pair doesn't copy the entire Eigen vector
-    return entry->second(v2);
+    return entry->second;
   }
 
   Eigen::VectorXi gamma;
   Eigen::VectorXd D;
-  //TODO heat API accepts multiple source vertices. this can allow us to skip some stuff in the distance computation,
-  // but will change how we cache things. (based on triangle instead of vertices?) [think about this]
-  gamma.resize(1); gamma << v1;
+  gamma.resize(1); gamma << v;
   igl::heat_geodesics_solve(geodesic_cache_.heat_data, gamma, D);
-
-  const double d = D(v2);
-  geodesic_cache_.cache[v1] = std::move(D);
-
-  return d;
+  geodesic_cache_.cache[v] = std::move(D);
+  return geodesic_cache_.cache[v]; //todo avoid this lookup
 }
 
-// inefficient, doesn't cache anything
-vec3 TriMeshWrapper::GeodesicDistanceFromFace(int f1, int f2) const
+const Eigen::MatrixXd& TriMeshWrapper::GradGeodesicsFromVertex(int v) const
 {
-  const auto D = GeodesicDistanceFromFace(f1);
-
-  vec3 out;
-  for(int i=0; i<3; i++) {
-    out[i] = D(mesh_->faces[f2][i]);
-  }
-  return out;
-}
-
-// inefficient, doesn't cache anything
-Eigen::VectorXd TriMeshWrapper::GeodesicDistanceFromFace(int f1) const
-{
-  Eigen::VectorXi gamma;
-  Eigen::VectorXd D;
-  gamma.resize(3);
-  for(int i=0; i<3; i++) {
-    gamma(i) = mesh_->faces[f1][i];
+  const auto entry = geodesic_cache_.grad_cache.find(v);
+  if(entry != geodesic_cache_.grad_cache.end()) {
+    return entry->second;
   }
 
-  igl::heat_geodesics_solve(geodesic_cache_.heat_data, gamma, D);
-  return D;
-}
-
-Eigen::Vector3d TriMeshWrapper::Gradient(int src_v, int f) const
-{
-  auto entry = geodesic_cache_.grad_cache.find(src_v);
-  if(entry == geodesic_cache_.grad_cache.end()) {
-    GeodesicDistance(src_v, mesh_->vertices.size()-1); // make sure its in cache
-    const auto& D = geodesic_cache_.cache[src_v];
-    const auto& G = geodesic_cache_.G;
-    const Eigen::MatrixXd GD_all = Eigen::Map<const Eigen::MatrixXd>((G*D).eval().data(), mesh_->faces.size(), 3);
-    geodesic_cache_.grad_cache[src_v] = std::move(GD_all);
-    entry = geodesic_cache_.grad_cache.find(src_v);
-  }
-
-  return entry->second.row(f);
+  const auto& D = GeodesicsFromVertex(v);
+  const auto& G = geodesic_cache_.G;
+  const Eigen::MatrixXd GD = Eigen::Map<const Eigen::MatrixXd>((G*D).eval().data(),
+                                                               mesh_->faces.size(), 3);
+  geodesic_cache_.grad_cache[v] = std::move(GD);
+  return geodesic_cache_.grad_cache[v]; //todo avoid this lookup
 }
 
 /** start in barycentric coords of currentFace
@@ -742,9 +677,12 @@ void TriMeshWrapper::PrecomputeGeodesics()
 
   // Precompute gradient operator to find gradient of geodesics
   igl::grad(V, F, geodesic_cache_.G);
+
+  // Store triangle-triangle adjacency
+  igl::triangle_triangle_adjacency(F, geodesic_cache_.TT);
 }
 
-void TriMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F)
+void TriMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const
 {
   const int n_verts = mesh_->vertices.size();
   const int n_faces = mesh_->faces.size();
