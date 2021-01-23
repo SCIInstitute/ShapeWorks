@@ -115,5 +115,6 @@ void ShapeworksWorker::process()
       break;
   }
   emit result_ready();
+  emit finished();
 }
 }
