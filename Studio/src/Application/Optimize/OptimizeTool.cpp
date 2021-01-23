@@ -147,7 +147,9 @@ void OptimizeTool::on_run_optimize_button_clicked()
   connect(this->optimize_.data(), &QOptimize::progress, this, &OptimizeTool::handle_progress);
   connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
   connect(worker, SIGNAL(message(std::string)), this, SLOT(handle_message(std::string)));
-  connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
+  //connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
+  //connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+  connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
   thread->start();
 
   this->threads_ << thread;
