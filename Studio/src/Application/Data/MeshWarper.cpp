@@ -1,6 +1,7 @@
 #include <Data/MeshWarper.h>
 
 #include <Libs/Mesh/MeshUtils.h>
+#include <Data/StudioLog.h>
 
 using namespace shapeworks;
 
@@ -15,6 +16,8 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const vnl_vector<double>& pa
   if (!this->warp_available_) {
     return nullptr;
   }
+
+  this->check_warp_ready();
 
   Eigen::MatrixXd points = Eigen::Map<const Eigen::VectorXd>((double*) particles.data_block(),
                                                              particles.size());
@@ -39,21 +42,16 @@ void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
       }
       if (same) {
         // we can skip the processing below, nothing has changed
-
         return;
       }
     }
   }
-  this->vertices_ = MeshUtils::distilVertexInfo(reference_mesh);
-  this->faces_ = MeshUtils::distilFaceInfo(reference_mesh);
-  this->points_ = Eigen::Map<const Eigen::VectorXd>((double*) reference_particles.data_block(),
-                                                    reference_particles.size());
-  this->points_.resize(3, reference_particles.size() / 3);
-  this->warp_ = MeshUtils::generateWarpMatrix(this->vertices_, this->faces_,
-                                              this->points_.transpose());
 
+  // mark that the warp needs to be generated
+  this->needs_warp_ = true;
   this->reference_mesh_ = reference_mesh;
   this->reference_particles_ = reference_particles;
+
   this->warp_available_ = true;
 }
 
@@ -61,6 +59,27 @@ void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
 bool MeshWarper::get_warp_available()
 {
   return this->warp_available_;
+}
+
+//---------------------------------------------------------------------------
+void MeshWarper::check_warp_ready()
+{
+  QMutexLocker locker(&this->mutex_);
+  if (!this->needs_warp_) {
+    // warp already done
+    return;
+  }
+
+  // perform warp
+  this->vertices_ = MeshUtils::distilVertexInfo(this->reference_mesh_);
+  this->faces_ = MeshUtils::distilFaceInfo(this->reference_mesh_);
+  this->points_ = Eigen::Map<const Eigen::VectorXd>(
+    (double*) this->reference_particles_.data_block(),
+    this->reference_particles_.size());
+  this->points_.resize(3, this->reference_particles_.size() / 3);
+  this->warp_ = MeshUtils::generateWarpMatrix(this->vertices_, this->faces_,
+                                              this->points_.transpose());
+  this->needs_warp_ = false;
 }
 
 //---------------------------------------------------------------------------

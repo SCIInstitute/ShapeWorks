@@ -10,6 +10,7 @@
 #include <vector>
 #include <string>
 #include <Libs/Mesh/Mesh.h>
+#include <QMutex>
 
 namespace shapeworks {
 
@@ -31,15 +32,22 @@ public:
 
 private:
 
+  void check_warp_ready();
+
   Eigen::MatrixXd vertices_;
   Eigen::MatrixXi faces_;
   Eigen::MatrixXd points_;
   Eigen::MatrixXd warp_;
 
+  bool needs_warp_ = true;
+
   bool warp_available_ = false;
 
   vtkSmartPointer<vtkPolyData> reference_mesh_;
   vnl_vector<double> reference_particles_;
+
+  // for concurrent access
+  QMutex mutex_;
 };
 
 }
