@@ -7,6 +7,7 @@
 #include <QDoubleSpinBox>
 #include <QLabel>
 #include <QTimer>
+#include <QCheckBox>
 #include <QProgressBar>
 
 #include <Data/PreferencesWindow.h>
@@ -16,21 +17,12 @@ class Ui_ShapeWorksStudioApp;
 
 namespace shapeworks {
 class Lightbox;
-
 class GroomTool;
-
 class OptimizeTool;
-
 class AnalysisTool;
-
 class Session;
-
 class Visualizer;
-
 class SplashScreen;
-
-class LightboxLayout;
-
 class WheelEventForwarder;
 
 //! Main ShapeWorksStudio window
@@ -198,6 +190,7 @@ private:
   QSlider* glyph_quality_slider_;
   QLabel* glyph_size_label_;
   QLabel* glyph_quality_label_;
+  QCheckBox* glyph_auto_size_;
   QList<QAction*> recent_file_actions_;
 
   QProgressBar* progress_bar_;

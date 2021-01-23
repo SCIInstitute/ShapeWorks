@@ -105,6 +105,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->glyph_size_slider_->setTickInterval(10);
   this->glyph_size_slider_->setMinimumWidth(200);
 
+  this->glyph_auto_size_ = new QCheckBox("Auto");
+
   this->glyph_quality_slider_ = new QSlider(widget);
   this->glyph_quality_slider_->setMinimum(1);
   this->glyph_quality_slider_->setMaximum(20);
@@ -116,6 +118,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->ui_->glyphs_visible_button->setMenu(menu);
 
   layout->addWidget(this->glyph_size_slider_, 0, 2, 1, 1);
+  layout->addWidget(this->glyph_auto_size_, 0, 3, 1, 1);
   layout->addWidget(this->glyph_quality_slider_, 1, 2, 1, 1);
   widget->setLayout(layout);
 
@@ -239,6 +242,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   connect(this->glyph_size_slider_, SIGNAL(valueChanged(int)), this, SLOT(handle_glyph_changed()));
   connect(this->glyph_quality_slider_, SIGNAL(valueChanged(int)), this,
           SLOT(handle_glyph_changed()));
+  connect(this->glyph_auto_size_, &QCheckBox::clicked,
+          this, &ShapeWorksStudioApp::handle_glyph_changed);
   this->preferences_.set_saved();
   this->enable_possible_actions();
 
@@ -526,6 +531,8 @@ void ShapeWorksStudioApp::update_from_preferences()
 {
   this->glyph_quality_slider_->setValue(preferences_.get_glyph_quality());
   this->glyph_size_slider_->setValue(preferences_.get_glyph_size() * 10.0);
+  this->glyph_auto_size_->setChecked(preferences_.get_glyph_auto_size());
+  this->glyph_size_slider_->setEnabled(!this->glyph_auto_size_->isChecked());
 
   this->glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
   this->glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
@@ -888,7 +895,6 @@ void ShapeWorksStudioApp::handle_points_changed()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_optimize_complete()
 {
-  this->analysis_tool_->initialize_mesh_warper();
   this->session_->get_mesh_manager()->get_surface_reconstructor()->resetReconstruct();
   this->analysis_tool_->reset_stats();
   this->session_->handle_clear_cache();
@@ -899,6 +905,7 @@ void ShapeWorksStudioApp::handle_optimize_complete()
   this->visualizer_->update_lut();
   this->update_display();
   this->enable_possible_actions();
+  this->analysis_tool_->initialize_mesh_warper();
 }
 
 //---------------------------------------------------------------------------
@@ -943,6 +950,15 @@ void ShapeWorksStudioApp::handle_glyph_changed()
   this->visualizer_->set_show_glyphs(this->ui_->glyphs_visible_button->isChecked());
   this->preferences_.set_glyph_size(this->glyph_size_slider_->value() / 10.0);
   this->preferences_.set_glyph_quality(this->glyph_quality_slider_->value());
+  this->preferences_.set_glyph_auto_size(this->glyph_auto_size_->isChecked());
+  this->glyph_size_slider_->setEnabled(!this->glyph_auto_size_->isChecked());
+  if (this->glyph_auto_size_->isChecked()) {
+    auto glyph_size = this->session_->get_auto_glyph_size();
+    if (glyph_size > 0) {
+      this->glyph_size_slider_->setValue(glyph_size * 10.0);
+    }
+  }
+
   this->glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
   this->glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
   this->update_display(true);
@@ -1148,8 +1164,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
   }
 
   this->session_->update_auto_glyph_size();
-  this->glyph_size_slider_->setValue(this->session_->get_auto_glyph_size() * 10.0);
-  std::cerr << "auto glyph size = " << this->session_->get_auto_glyph_size() << "\n";
   this->handle_glyph_changed();
 
   this->setWindowTitle(this->session_->get_display_name());
