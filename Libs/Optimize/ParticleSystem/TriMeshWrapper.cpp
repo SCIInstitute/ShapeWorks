@@ -50,9 +50,12 @@ TriMeshWrapper::TriMeshWrapper(std::shared_ptr<trimesh::TriMesh> mesh)
   mesh_->need_normals();
   mesh_->need_curvatures();
   ComputeMeshBounds();
-  //TODO: Both the following need libigl data structures, pass it in so they both don't have to do the conversion
-  ComputeGradN();
-  PrecomputeGeodesics();
+
+  Eigen::MatrixXd V;
+  Eigen::MatrixXi F;
+  GetIGLMesh(V, F);
+  ComputeGradN(V, F);
+  PrecomputeGeodesics(V, F);
 
   kd_tree_ = std::make_shared<KDtree>(mesh_->vertices);
 }
@@ -75,7 +78,7 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
   const int face_a = GetTriangleForPoint(convert<PointType, point>(pt_a), idx_a, bary_a);
   const int face_b = GetTriangleForPoint(convert<PointType, point>(pt_b), idx_b, bary_b);
 
-  // Both points on the same triangle, just return euclidean distance
+  // Both points lie on the same triangle, so we just return euclidean distance
   if(face_a == face_b) {
     if(out_grad != nullptr) {
       for(int i=0; i<DIMENSION; i++) {
@@ -85,75 +88,53 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
     return pt_a.EuclideanDistanceTo(pt_b);
   }
 
-  // Consider 9 paths:
-  // a -> [vertex on triangle for a] -> [vertex on triangle for b] -> b
-  double best_dist = std::numeric_limits<double>::max();
-  int best_idx_a, best_idx_b;
+  // Define for convenience
+  const auto& faces = mesh_->faces;
 
-  // Convenience method for euclidean distance between itk point and vertex on mesh
-  // If the point is on the triangle of the vertex, this is equivalent to the geodesic distance
-  const auto dist_to_vertex =[&](const PointType& pt, int v) {
-    const double dx = pt[0] - mesh_->vertices[v][0];
-    const double dy = pt[1] - mesh_->vertices[v][1];
-    const double dz = pt[2] - mesh_->vertices[v][2];
-    return std::sqrt(dx*dx + dy*dy + dz*dz);
-  };
-
+  // Compute geodesic distance via barycentric approximation
+  // Geometric Correspondence for Ensembles of Nonregular Shapes, Datar et al
+  // https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3346950/
+  double geo_dist = 0.0;
   for(int i=0; i<3; i++) {
-    // geodesic(==euclidean) distance between point a and face i
-    const double d_ai = dist_to_vertex(pt_a, mesh_->faces[face_a][i]);
-    const Eigen::VectorXd& geo_from_ai = GeodesicsFromVertex(mesh_->faces[face_a][i]);
-
-    for(int j=0; j<3; j++) {
-      const double g_ij = geo_from_ai[mesh_->faces[face_b][j]];
-
-      // geodesic(==euclidean) distance between point b and face j
-      const double d_bi = dist_to_vertex(pt_b, mesh_->faces[face_b][j]);
-
-      // total geodesic distance
-      const double g = d_ai + g_ij + d_bi;
-
-      if(g < best_dist) {
-        best_dist = g;
-        best_idx_a = i;
-        best_idx_b = j;
-      }
-    }
+    const Eigen::VectorXd& geo_from_ai = GeodesicsFromVertex(faces[face_a][i]);
+    const double g_i0 = geo_from_ai[faces[face_b][0]];
+    const double g_i1 = geo_from_ai[faces[face_b][1]];
+    const double g_i2 = geo_from_ai[faces[face_b][2]];
+    const double g_ib = bary_b[0]*g_i0 + bary_b[1]*g_i1 + bary_b[2]*g_i2;
+    geo_dist += bary_a[i] * g_ib;
   }
 
-  if(out_grad != nullptr) {
-    // Check if the particles are too close
-    if(IsFaceAdjacent(face_a, face_b)) {
-      for (int i = 0; i < DIMENSION; i++) {
-        (*out_grad)[i] = pt_a[i] - pt_b[i];
-      }
-    } else {
-      const Eigen::RowVectorXd& g0 = GradGeodesicsFromVertex(mesh_->faces[face_b][0]).row(face_a);
-      const Eigen::RowVectorXd& g1 = GradGeodesicsFromVertex(mesh_->faces[face_b][1]).row(face_a);
-      const Eigen::RowVectorXd& g2 = GradGeodesicsFromVertex(mesh_->faces[face_b][2]).row(face_a);
-      //todo get the scaling by distance stuff correctly
-      const Eigen::Vector3d grad_geo = (bary_b[0] * g0 + bary_b[1] * g1 + bary_b[2] * g2) * best_dist;
-
-      // std::cout << "------\n";
-      for(int i=0; i<DIMENSION; i++) {
-        (*out_grad)[i] = grad_geo(i);
-        // std::cout << out_grad->get(i) << " | " << (pt_a[i] - pt_b[i]) << "\n";
-      }
-      const double angle_geo = std::atan2(out_grad->get(1), out_grad->get(0));
-      const double angle_eucl = std::atan2(pt_a[1] - pt_b[1], pt_a[0] - pt_b[0]);
-      const double dist_eucl = pt_a.EuclideanDistanceTo(pt_b);
-      // std::cout << "angle: " << angle_geo << " | " << angle_eucl << "(diff: " << angle_geo - angle_eucl << ")\n";
-      // std::cout << "distance: " << best_dist << " | " << dist_eucl << "(diff: " << best_dist - dist_eucl << ")\n";
-      // std::cout << "------\n";
-    }
+  // Check if gradient is needed
+  if(out_grad == nullptr) {
+    return geo_dist;
   }
 
-  return best_dist;
+  // Check if the particles are too close. Gradient of geodesics is very inaccurate for
+  // 1-ring of the face
+  if(AreFacesAdjacent(face_a, face_b)) {
+    for (int i = 0; i < DIMENSION; i++) {
+      (*out_grad)[i] = pt_a[i] - pt_b[i];
+    }
+    return geo_dist;
+  }
+
+  const Eigen::RowVectorXd& g0 = GradGeodesicsFromVertex(faces[face_b][0]).row(face_a);
+  const Eigen::RowVectorXd& g1 = GradGeodesicsFromVertex(faces[face_b][1]).row(face_a);
+  const Eigen::RowVectorXd& g2 = GradGeodesicsFromVertex(faces[face_b][2]).row(face_a);
+  //todo get the scaling by distance stuff correctly
+  const Eigen::Vector3d grad_geo = (bary_b[0]*g0 + bary_b[1]*g1 + bary_b[2]*g2) * geo_dist;
+
+  // Copy gradient from Eigen to VNL data structures
+  for(int i=0; i<DIMENSION; i++) {
+    (*out_grad)[i] = grad_geo(i);
+  }
+
+  return geo_dist;
 }
 
-bool TriMeshWrapper::IsFaceAdjacent(int f_a, int f_b) const {
-  const auto& TT = geodesic_cache_.TT;
-  return TT(f_b, 0) == f_a || TT(f_b, 1) == f_a || TT(f_b, 2) == f_a;
+bool TriMeshWrapper::AreFacesAdjacent(int f_a, int f_b) const {
+  const auto& adj_b = mesh_->across_edge[f_b];
+  return adj_b[0] == f_a || adj_b[1] == f_a || adj_b[2] == f_a;
 }
 
 const Eigen::VectorXd& TriMeshWrapper::GeodesicsFromVertex(int v) const {
@@ -166,8 +147,8 @@ const Eigen::VectorXd& TriMeshWrapper::GeodesicsFromVertex(int v) const {
   Eigen::VectorXd D;
   gamma.resize(1); gamma << v;
   igl::heat_geodesics_solve(geodesic_cache_.heat_data, gamma, D);
-  geodesic_cache_.cache[v] = std::move(D);
-  return geodesic_cache_.cache[v]; //todo avoid this lookup
+  // insert into map, and return reference
+  return geodesic_cache_.cache[v] = std::move(D);
 }
 
 const Eigen::MatrixXd& TriMeshWrapper::GradGeodesicsFromVertex(int v) const
@@ -181,8 +162,8 @@ const Eigen::MatrixXd& TriMeshWrapper::GradGeodesicsFromVertex(int v) const
   const auto& G = geodesic_cache_.G;
   const Eigen::MatrixXd GD = Eigen::Map<const Eigen::MatrixXd>((G*D).eval().data(),
                                                                mesh_->faces.size(), 3);
-  geodesic_cache_.grad_cache[v] = std::move(GD);
-  return geodesic_cache_.grad_cache[v]; //todo avoid this lookup
+  // insert into map, and return reference
+  return geodesic_cache_.grad_cache[v] = std::move(GD);
 }
 
 /** start in barycentric coords of currentFace
@@ -615,15 +596,10 @@ void TriMeshWrapper::ComputeMeshBounds()
   }
 }
 
-void TriMeshWrapper::ComputeGradN()
+void TriMeshWrapper::ComputeGradN(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F)
 {
   const int n_verts = mesh_->vertices.size();
   const int n_faces = mesh_->faces.size();
-
-  // Copy from trimesh to libigl data structures
-  Eigen::MatrixXd V;
-  Eigen::MatrixXi F;
-  GetIGLMesh(V, F);
 
   // Compute normals
   Eigen::MatrixXd N;
@@ -665,21 +641,13 @@ void TriMeshWrapper::ComputeGradN()
 
 }
 
-void TriMeshWrapper::PrecomputeGeodesics()
+void TriMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F)
 {
-  // Copy from trimesh to libigl data structures
-  Eigen::MatrixXd V;
-  Eigen::MatrixXi F;
-  GetIGLMesh(V, F);
-
   // Precompute heat data structure for geodesics
   igl::heat_geodesics_precompute(V, F, geodesic_cache_.heat_data);
 
   // Precompute gradient operator to find gradient of geodesics
   igl::grad(V, F, geodesic_cache_.G);
-
-  // Store triangle-triangle adjacency
-  igl::triangle_triangle_adjacency(F, geodesic_cache_.TT);
 }
 
 void TriMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const

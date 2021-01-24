@@ -68,7 +68,7 @@ private:
   const Eigen::Vector3d GetFaceNormal(int face_index) const;
 
   void ComputeMeshBounds();
-  void ComputeGradN(); // Gradient of normals
+  void ComputeGradN(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F); // Gradient of normals
 
   trimesh::point GetBarycentricIntersection(trimesh::vec3 start, trimesh::vec3 end,
                                             int currentFace, int edge) const;
@@ -99,7 +99,7 @@ private:
   // Geodesic distances
 
   // Precompute libigl heat data structures for faster geodesic lookups
-  void PrecomputeGeodesics();
+  void PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
 
   // Returns (V, ) geodesic distances from a given source vertex to every other vertex
   const Eigen::VectorXd& GeodesicsFromVertex(int v) const;
@@ -108,7 +108,7 @@ private:
   const Eigen::MatrixXd& GradGeodesicsFromVertex(int v) const;
 
   // Returns true if face f_a is adjacent to face f_b
-  bool IsFaceAdjacent(int f_a, int f_b) const;
+  bool AreFacesAdjacent(int f_a, int f_b) const;
 
   // Cache to store information for geodesics
   mutable struct {
@@ -120,10 +120,6 @@ private:
     std::unordered_map<int, Eigen::MatrixXd> grad_cache;
 
     Eigen::SparseMatrix<double> G; // Gradient operator
-
-    //TODO trimesh already computes adjacency, just use that
-    Eigen::MatrixXi TT; // Triangle-Triangle adjacency
-
   } geodesic_cache_;
 };
 
