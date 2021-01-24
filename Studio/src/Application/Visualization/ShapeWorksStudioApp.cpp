@@ -694,6 +694,15 @@ void ShapeWorksStudioApp::handle_warning(std::string str)
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_progress(int value)
 {
+  if (value < 0) {
+    this->progress_bar_->setVisible(true);
+    this->progress_bar_->setMinimum(0);
+    this->progress_bar_->setMaximum(0);
+    return;
+  }
+  this->progress_bar_->setMinimum(0);
+  this->progress_bar_->setMaximum(100);
+
   if (value < 100) {
     this->progress_bar_->setVisible(true);
     this->progress_bar_->setValue(value);
@@ -1090,10 +1099,9 @@ void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged(QString disp
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::open_project(QString filename)
 {
-  std::cerr << "1. New session!\n";
   this->new_session();
-
-  std::cerr << "2. Loading Project!\n";
+  this->handle_message("Loading Project: " + filename.toStdString());
+  this->handle_progress(-1);
 
   try {
     if (!this->session_->load_project(filename)) {
@@ -1167,6 +1175,10 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->handle_glyph_changed();
 
   this->setWindowTitle(this->session_->get_display_name());
+
+  this->handle_message("Project loaded");
+  this->handle_progress(100);
+
 }
 
 //---------------------------------------------------------------------------

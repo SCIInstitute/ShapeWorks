@@ -59,7 +59,7 @@ public:
 
   /// get bounds
   double* bounds() const {
-    double bb[6];
+    double *bb = new double[6];
     mesh->GetBounds(bb);
     return bb;
   }
