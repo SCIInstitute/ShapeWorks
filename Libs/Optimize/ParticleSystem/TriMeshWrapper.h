@@ -11,6 +11,7 @@
 #include <Eigen/Geometry>
 #include <vector>
 #include "igl/heat_geodesics.h"
+#include "LRUCache11.hpp"
 
 namespace shapeworks {
 
@@ -80,11 +81,11 @@ private:
 
   static inline bool IsBarycentricCoordinateValid(const trimesh::vec3& b);
 
-  // IGL Helper functions
-  void GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const;
-
   std::shared_ptr<trimesh::TriMesh> mesh_;
   std::shared_ptr<trimesh::KDtree> kd_tree_;
+
+  // IGL Helper function
+  void GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const;
 
   // Maintains a map of particle index -> triangle index
   // Has to be mutable because all of the accessor APIs are const
@@ -99,7 +100,7 @@ private:
   // Geodesic distances
 
   // Precompute libigl heat data structures for faster geodesic lookups
-  void PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
+  void PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F, size_t max_cache_size);
 
   // Returns (V, ) geodesic distances from a given source vertex to every other vertex
   const Eigen::VectorXd& GeodesicsFromVertex(int v) const;
@@ -114,10 +115,9 @@ private:
   mutable struct {
     igl::HeatGeodesicsData<double> heat_data;
 
-    //TODO lru_cache https://github.com/lamerman/cpp-lru-cache/blob/master/include/lrucache.hpp
-    std::unordered_map<int, Eigen::VectorXd> cache;
+    lru11::Cache<int, Eigen::VectorXd> dist_cache;
     //TODO Might be worth switching to RowMajor here because of the access patterns
-    std::unordered_map<int, Eigen::MatrixXd> grad_cache;
+    lru11::Cache<int, Eigen::MatrixXd> grad_cache;
 
     Eigen::SparseMatrix<double> G; // Gradient operator
   } geodesic_cache_;

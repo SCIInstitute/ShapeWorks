@@ -54,8 +54,11 @@ TriMeshWrapper::TriMeshWrapper(std::shared_ptr<trimesh::TriMesh> mesh)
   Eigen::MatrixXd V;
   Eigen::MatrixXi F;
   GetIGLMesh(V, F);
+
   ComputeGradN(V, F);
-  PrecomputeGeodesics(V, F);
+
+  //todo get cache size as argument
+  PrecomputeGeodesics(V, F, 128*4);
 
   kd_tree_ = std::make_shared<KDtree>(mesh_->vertices);
 }
@@ -104,12 +107,12 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
     geo_dist += bary_a[i] * g_ib;
   }
 
-  // Check if gradient is needed
+  // Skip gradients if its not needed
   if(out_grad == nullptr) {
     return geo_dist;
   }
 
-  // Check if the particles are too close. Gradient of geodesics is very inaccurate for
+  // Check if the particles are too close. Gradient of geodesics is currently very inaccurate for
   // 1-ring of the face
   if(AreFacesAdjacent(face_a, face_b)) {
     for (int i = 0; i < DIMENSION; i++) {
@@ -118,9 +121,9 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
     return geo_dist;
   }
 
-  const Eigen::RowVectorXd& g0 = GradGeodesicsFromVertex(faces[face_b][0]).row(face_a);
-  const Eigen::RowVectorXd& g1 = GradGeodesicsFromVertex(faces[face_b][1]).row(face_a);
-  const Eigen::RowVectorXd& g2 = GradGeodesicsFromVertex(faces[face_b][2]).row(face_a);
+  const Eigen::RowVectorXd g0 = GradGeodesicsFromVertex(faces[face_b][0]).row(face_a);
+  const Eigen::RowVectorXd g1 = GradGeodesicsFromVertex(faces[face_b][1]).row(face_a);
+  const Eigen::RowVectorXd g2 = GradGeodesicsFromVertex(faces[face_b][2]).row(face_a);
   //todo get the scaling by distance stuff correctly
   const Eigen::Vector3d grad_geo = (bary_b[0]*g0 + bary_b[1]*g1 + bary_b[2]*g2) * geo_dist;
 
@@ -132,38 +135,43 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
   return geo_dist;
 }
 
-bool TriMeshWrapper::AreFacesAdjacent(int f_a, int f_b) const {
+bool TriMeshWrapper::AreFacesAdjacent(int f_a, int f_b) const
+{
   const auto& adj_b = mesh_->across_edge[f_b];
   return adj_b[0] == f_a || adj_b[1] == f_a || adj_b[2] == f_a;
 }
 
-const Eigen::VectorXd& TriMeshWrapper::GeodesicsFromVertex(int v) const {
-  const auto entry = geodesic_cache_.cache.find(v);
-  if(entry != geodesic_cache_.cache.end()) {
-    return entry->second;
+const Eigen::VectorXd& TriMeshWrapper::GeodesicsFromVertex(int v) const
+{
+  auto& cache = geodesic_cache_.dist_cache;
+
+  if(cache.contains(v)) {
+    return cache.get(v);
   }
 
   Eigen::VectorXi gamma;
   Eigen::VectorXd D;
   gamma.resize(1); gamma << v;
   igl::heat_geodesics_solve(geodesic_cache_.heat_data, gamma, D);
-  // insert into map, and return reference
-  return geodesic_cache_.cache[v] = std::move(D);
+
+  cache.insert(v, std::move(D));
+  return cache.get(v);
 }
 
 const Eigen::MatrixXd& TriMeshWrapper::GradGeodesicsFromVertex(int v) const
 {
-  const auto entry = geodesic_cache_.grad_cache.find(v);
-  if(entry != geodesic_cache_.grad_cache.end()) {
-    return entry->second;
+  auto& cache = geodesic_cache_.grad_cache;
+
+  if(cache.contains(v)) {
+    return cache.get(v);
   }
 
   const auto& D = GeodesicsFromVertex(v);
   const auto& G = geodesic_cache_.G;
-  const Eigen::MatrixXd GD = Eigen::Map<const Eigen::MatrixXd>((G*D).eval().data(),
-                                                               mesh_->faces.size(), 3);
-  // insert into map, and return reference
-  return geodesic_cache_.grad_cache[v] = std::move(GD);
+  Eigen::MatrixXd GD = Eigen::Map<const Eigen::MatrixXd>((G*D).eval().data(), mesh_->faces.size(), 3);
+
+  cache.insert(v, std::move(GD));
+  return cache.get(v);
 }
 
 /** start in barycentric coords of currentFace
@@ -641,13 +649,17 @@ void TriMeshWrapper::ComputeGradN(const Eigen::MatrixXd& V, const Eigen::MatrixX
 
 }
 
-void TriMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F)
+void TriMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F, size_t max_cache_size)
 {
   // Precompute heat data structure for geodesics
   igl::heat_geodesics_precompute(V, F, geodesic_cache_.heat_data);
 
   // Precompute gradient operator to find gradient of geodesics
   igl::grad(V, F, geodesic_cache_.G);
+
+  // Setup LRU Cache
+  geodesic_cache_.dist_cache.resize(max_cache_size, 10);
+  geodesic_cache_.grad_cache.resize(max_cache_size, 10);
 }
 
 void TriMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const
