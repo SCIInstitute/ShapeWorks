@@ -287,13 +287,29 @@ bool Session::load_light_project(QString filename)
   std::vector<std::string> import_files, groom_files, local_point_files, global_point_files;
   std::string sparseFile, denseFile, goodPtsFile;
 
-  TiXmlElement* elem = docHandle.FirstChild("distance_transform_files").Element();
+  TiXmlElement* elem = docHandle.FirstChild("mesh_files").Element();
   if (elem && elem->GetText()) {
+    std::string mesh_filename;
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> mesh_filename) {
+      if (!QFile::exists(QString::fromStdString(mesh_filename))) {
+        QString message = "File does not exist: " + QString::fromStdString(mesh_filename);
+        STUDIO_LOG_ERROR(message);
+        QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+        return false;
+      }
+      groom_files.push_back(mesh_filename);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+
+  elem = docHandle.FirstChild("distance_transform_files").Element();
+  if (elem && elem->GetText()) {
+    groom_files.clear(); // if someone specifies both, prefer the distance transforms
     std::string distance_transform_filename;
     inputsBuffer.str(elem->GetText());
     while (inputsBuffer >> distance_transform_filename) {
-      //std::cerr << "Found distance transform: " << distance_transform_filename << "\n";
-
       if (!QFile::exists(QString::fromStdString(distance_transform_filename))) {
         QString message = "File does not exist: " +
                           QString::fromStdString(distance_transform_filename);
