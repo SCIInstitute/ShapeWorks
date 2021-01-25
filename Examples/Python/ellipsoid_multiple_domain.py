@@ -5,7 +5,7 @@ Full Example Pipeline for Statistical Shape Modeling with ShapeWorks
 ====================================================================
 
 In this example we provide a full pipeline with an example dataset of axis 
-aligned ellipsoid meshes with multiple domains
+aligned ellipsoid images with multiple domains
 """
 import os
 from GroomUtils import *
@@ -32,24 +32,24 @@ def Run_Pipeline(args):
 
     meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))
     imgFiles = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))
-    print(imgFiles)
-    #meshFiles = meshFiles[:15]
+    
+    
     groomDir = outputDirectory + "groomed/"
     # """Apply centering"""
     centeredFiles = center(groomDir + "centered/segmentations", imgFiles)
-    paddedFiles = applyPadding(groomDir + "padded/segmentations",centeredFiles,20)
-    dtFiles = applyDistanceTransforms(groomDir, paddedFiles)
-    if args.tiny_test:
-        args.use_single_scale = 1
-        meshFiles = meshFiles[:2]
-        
 
+    # """ Apply padding"""
+    paddedFiles = applyPadding(groomDir + "padded/segmentations",centeredFiles,20)
+
+    #"""Get the distance transforms """
+    dtFiles = applyDistanceTransforms(groomDir, paddedFiles)
+  
     pointDir = outputDirectory + 'shape_models/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
     parameterDictionary = {
-        "number_of_particles" : [512,512],
+        "number_of_particles" : [32,32],
         "use_normals": [0,0],
         "normal_weight": [1.0,1.0],
         "checkpointing_interval" : 200,
@@ -74,10 +74,7 @@ def Run_Pipeline(args):
         parameterDictionary["number_of_particles"] = 32
         parameterDictionary["optimization_iterations"] = 25
 
-    if not args.use_single_scale:
-        parameterDictionary["use_shape_statistics_after"] = 32
-
-
+ 
     """
     Now we execute a single scale particle optimization function.
     """
