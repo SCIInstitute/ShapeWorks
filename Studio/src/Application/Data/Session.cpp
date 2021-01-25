@@ -685,7 +685,6 @@ bool Session::load_point_files(std::vector<std::string> list, bool local)
 {
   QProgressDialog progress("Loading point files...", "Abort", 0, list.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
-  progress.show();
   progress.setMinimumDuration(2000);
   for (int i = 0; i < list.size(); i++) {
     progress.setValue(i);

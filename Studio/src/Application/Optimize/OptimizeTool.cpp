@@ -147,8 +147,8 @@ void OptimizeTool::on_run_optimize_button_clicked()
   connect(this->optimize_.data(), &QOptimize::progress, this, &OptimizeTool::handle_progress);
   connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
   connect(worker, SIGNAL(message(std::string)), this, SLOT(handle_message(std::string)));
-  //connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
-  //connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+  connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
+  connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
   connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
   thread->start();
 
@@ -261,13 +261,6 @@ void OptimizeTool::shutdown_threads()
   }
   this->optimize_->AbortOptimization();
 
-  for (size_t i = 0; i < this->threads_.size(); i++) {
-    if (this->threads_[i]->isRunning()) {
-      std::cerr << "waiting...\n";
-      this->threads_[i]->wait(1000);
-      std::cerr << "done waiting...\n";
-    }
-  }
 }
 
 //---------------------------------------------------------------------------
