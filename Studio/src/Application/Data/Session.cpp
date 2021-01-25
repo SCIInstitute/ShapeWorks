@@ -634,11 +634,13 @@ double Session::update_auto_glyph_size()
   }
 
   double max_range = std::numeric_limits<double>::min();
+  int num_particles = 0;
   for (auto& shape : this->shapes_) {
     vnl_vector<double> points = shape->get_global_correspondence_points();
     if (points.empty()) {
       return this->auto_glyph_size_;
     }
+    num_particles = points.size() / 3;
     double max_x = std::numeric_limits<double>::min();
     double min_x = std::numeric_limits<double>::max();
     double max_y = max_x;
@@ -662,7 +664,8 @@ double Session::update_auto_glyph_size()
     max_range = std::max<double>({max_range, range_x, range_y, range_z});
   }
 
-  this->auto_glyph_size_ = std::max<double>(0.1, max_range / 25.0);
+  this->auto_glyph_size_ = num_particles / (max_range * 2.0);
+  this->auto_glyph_size_ = std::max<double>(0.1, this->auto_glyph_size_);
   this->auto_glyph_size_ = std::min<double>(10.0, this->auto_glyph_size_);
 
   return this->auto_glyph_size_;
