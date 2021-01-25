@@ -1712,6 +1712,10 @@ void ShapeWorksStudioApp::dropEvent(QDropEvent* event)
 {
   bool accept = false;
 
+  this->handle_message("Loading Files...");
+  this->handle_progress(-1);
+  QCoreApplication::processEvents();
+
   QStringList files_to_load;
 
   if (event->mimeData()->hasUrls()) {
@@ -1734,6 +1738,8 @@ void ShapeWorksStudioApp::dropEvent(QDropEvent* event)
   else {
     event->ignore();
   }
+  this->handle_message("Files loaded");
+  this->handle_progress(100);
 }
 
 //---------------------------------------------------------------------------
