@@ -898,6 +898,11 @@ void ShapeWorksStudioApp::handle_project_changed()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_points_changed()
 {
+  int old_size = this->session_->get_auto_glyph_size();
+  if (old_size != this->session_->update_auto_glyph_size()) {
+    this->handle_glyph_changed();
+  }
+
   this->visualizer_->update_samples();
 }
 

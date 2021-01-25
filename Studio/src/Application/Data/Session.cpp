@@ -633,9 +633,8 @@ bool Session::update_points(std::vector<std::vector<itk::Point<double>>> points,
   // update the project now that we have particles
   this->project_->store_subjects();
 
-  if (points.size() > 0) {
+  if (points.size() > 0 && !local) {
     this->unsaved_particle_files_ = true;
-    this->update_auto_glyph_size();
     emit points_changed();
   }
   return true;
