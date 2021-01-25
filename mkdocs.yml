@@ -32,6 +32,7 @@ nav:
    - 'ShapeWorks API':                       'new/shapeworks-api.md'
    - 'Shape Model Evaluation':               'new/ssm-eval.md'
 - Deep Learning & SSMs:
+   - 'PyTorch GPU Support for ShapeWorks':   'deep-learning/pytorch-gpu.md'
    - 'Data Augmentation for Deep Learning':  'deep-learning/data-augmentation.md'
    - 'SSMs Directly from Images':            'deep-learning/deep-ssm.md'
 - Use Cases:
