@@ -1120,8 +1120,8 @@ void ShapeWorksStudioApp::open_project(QString filename)
   }
 
   this->is_loading_ = true;
-  this->analysis_tool_->initialize_mesh_warper();
   this->analysis_tool_->reset_stats();
+  this->analysis_tool_->initialize_mesh_warper();
 
   this->block_update_ = true;
 
