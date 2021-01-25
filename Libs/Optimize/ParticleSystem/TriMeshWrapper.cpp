@@ -110,7 +110,7 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
   }
 
   // Check if the particles are too close. Gradient of geodesics is very inaccurate for
-  // 1-ring of the face
+  // 1-ring of the face, so we just fall back to euclidean gradient
   if(AreFacesAdjacent(face_a, face_b)) {
     for (int i = 0; i < DIMENSION; i++) {
       (*out_grad)[i] = pt_a[i] - pt_b[i];
@@ -118,11 +118,12 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
     return geo_dist;
   }
 
-  const Eigen::RowVectorXd& g0 = GradGeodesicsFromVertex(faces[face_b][0]).row(face_a);
-  const Eigen::RowVectorXd& g1 = GradGeodesicsFromVertex(faces[face_b][1]).row(face_a);
-  const Eigen::RowVectorXd& g2 = GradGeodesicsFromVertex(faces[face_b][2]).row(face_a);
+  Eigen::Vector3d grad_geo = {0.0, 0.0, 0.0};
+  grad_geo += bary_b[0] * GradGeodesicsFromVertex(faces[face_b][0]).row(face_a);
+  grad_geo += bary_b[1] * GradGeodesicsFromVertex(faces[face_b][1]).row(face_a);
+  grad_geo += bary_b[2] * GradGeodesicsFromVertex(faces[face_b][2]).row(face_a);
   //todo get the scaling by distance stuff correctly
-  const Eigen::Vector3d grad_geo = (bary_b[0]*g0 + bary_b[1]*g1 + bary_b[2]*g2) * geo_dist;
+  grad_geo *= geo_dist;
 
   // Copy gradient from Eigen to VNL data structures
   for(int i=0; i<DIMENSION; i++) {
