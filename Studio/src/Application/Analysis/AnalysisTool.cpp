@@ -1026,6 +1026,9 @@ void AnalysisTool::initialize_mesh_warper()
     this->compute_stats();
     int median = this->stats_.ComputeMedianShape(-32); //-32 = both groups
 
+    if (median >= this->session_->get_num_shapes()) {
+      return;
+    }
     QSharedPointer<Shape> median_shape = this->session_->get_shapes()[median];
     vtkSmartPointer<vtkPolyData> poly_data = median_shape->get_groomed_mesh(true)->get_poly_data();
 
