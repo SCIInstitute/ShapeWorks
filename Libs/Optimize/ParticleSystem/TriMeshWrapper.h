@@ -86,26 +86,45 @@ private:
   std::shared_ptr<trimesh::TriMesh> mesh_;
   std::shared_ptr<trimesh::KDtree> kd_tree_;
 
-  // Maintains a map of particle index -> triangle index
-  // Has to be mutable because all of the accessor APIs are const
-  mutable std::vector<int> particle2tri_;
 
   std::vector<HessianType> grad_normals_;
 
   PointType mesh_lower_bound_;
   PointType mesh_upper_bound_;
 
-  /////////////////////////
-  // Geodesic distances
+  struct ParticleCacheEntry {
+    int tri_idx{0};
+
+    bool is_geo_dist_valid{false};
+    Eigen::VectorXd dist[3];
+
+    bool is_geo_grad_valid{false};
+    Eigen::MatrixXd grad_dist[3];
+
+    void invalidate_geodesics() {
+      is_geo_dist_valid = is_geo_grad_valid = false;
+      std::cout << "invalidate: " << tri_idx <<"\n";
+    }
+  };
+  // Maintains a map of particle index -> triangle index
+  // Has to be mutable because all of the accessor APIs are const
+  mutable std::vector<ParticleCacheEntry> particle_cache_;
 
   // Precompute libigl heat data structures for faster geodesic lookups
   void PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
 
   // Returns (V, ) geodesic distances from a given source vertex to every other vertex
-  const Eigen::VectorXd& GeodesicsFromVertex(int v) const;
+  void GeodesicsFromVertex(int v, Eigen::VectorXd& D) const;
 
-  // Returns (V, 3) gradient of geodesic distances from a given source vertex to every other vertex
-  const Eigen::MatrixXd& GradGeodesicsFromVertex(int v) const;
+  // Returns (V, 3) gradient of geodesics given the geodesics to every vertex
+  //todo can we rename this
+  void GradGeodesicsFromGeodesics(const Eigen::VectorXd& D, Eigen::MatrixXd& GD) const;
+
+  // Ensure particle with idx has geodesic distances in cache
+  void EnsureHasGeodesics(int idx) const;
+
+  // Ensure particle with idx has gradient of geodesics in cache
+  void EnsureHasGradGeodesics(int idx) const;
 
   // Returns true if face f_a is adjacent to face f_b
   bool AreFacesAdjacent(int f_a, int f_b) const;
@@ -113,12 +132,6 @@ private:
   // Cache to store information for geodesics
   mutable struct {
     igl::HeatGeodesicsData<double> heat_data;
-
-    //TODO lru_cache https://github.com/lamerman/cpp-lru-cache/blob/master/include/lrucache.hpp
-    std::unordered_map<int, Eigen::VectorXd> cache;
-    //TODO Might be worth switching to RowMajor here because of the access patterns
-    std::unordered_map<int, Eigen::MatrixXd> grad_cache;
-
     Eigen::SparseMatrix<double> G; // Gradient operator
   } geodesic_cache_;
 };

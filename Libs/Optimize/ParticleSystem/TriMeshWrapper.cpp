@@ -90,13 +90,18 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
 
   // Define for convenience
   const auto& faces = mesh_->faces;
+  const auto& cache_a = particle_cache_[idx_a];
+  const auto& cache_b = particle_cache_[idx_b];
+
+  // Ensure that we have valid geodesics from this face
+  EnsureHasGeodesics(idx_a);
 
   // Compute geodesic distance via barycentric approximation
   // Geometric Correspondence for Ensembles of Nonregular Shapes, Datar et al
   // https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3346950/
   double geo_dist = 0.0;
   for(int i=0; i<3; i++) {
-    const Eigen::VectorXd& geo_from_ai = GeodesicsFromVertex(faces[face_a][i]);
+    const Eigen::VectorXd& geo_from_ai = cache_a.dist[i];
     const double g_i0 = geo_from_ai[faces[face_b][0]];
     const double g_i1 = geo_from_ai[faces[face_b][1]];
     const double g_i2 = geo_from_ai[faces[face_b][2]];
@@ -118,12 +123,15 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
     return geo_dist;
   }
 
-  Eigen::Vector3d grad_geo = {0.0, 0.0, 0.0};
-  grad_geo += bary_b[0] * GradGeodesicsFromVertex(faces[face_b][0]).row(face_a);
-  grad_geo += bary_b[1] * GradGeodesicsFromVertex(faces[face_b][1]).row(face_a);
-  grad_geo += bary_b[2] * GradGeodesicsFromVertex(faces[face_b][2]).row(face_a);
+  //TODO can we just use idx_a here somehow?
+  EnsureHasGradGeodesics(idx_b);
+
   //todo get the scaling by distance stuff correctly
-  grad_geo *= geo_dist;
+  const Eigen::Vector3d grad_geo = geo_dist * (
+          bary_b[0] * cache_b.grad_dist[0].row(face_a) +
+          bary_b[1] * cache_b.grad_dist[1].row(face_a) +
+          bary_b[2] * cache_b.grad_dist[2].row(face_a)
+          );
 
   // Copy gradient from Eigen to VNL data structures
   for(int i=0; i<DIMENSION; i++) {
@@ -133,38 +141,57 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
   return geo_dist;
 }
 
-bool TriMeshWrapper::AreFacesAdjacent(int f_a, int f_b) const {
+bool TriMeshWrapper::AreFacesAdjacent(int f_a, int f_b) const
+{
   const auto& adj_b = mesh_->across_edge[f_b];
   return adj_b[0] == f_a || adj_b[1] == f_a || adj_b[2] == f_a;
 }
 
-const Eigen::VectorXd& TriMeshWrapper::GeodesicsFromVertex(int v) const {
-  const auto entry = geodesic_cache_.cache.find(v);
-  if(entry != geodesic_cache_.cache.end()) {
-    return entry->second;
-  }
-
+void TriMeshWrapper::GeodesicsFromVertex(int v, Eigen::VectorXd& D) const
+{
   Eigen::VectorXi gamma;
-  Eigen::VectorXd D;
   gamma.resize(1); gamma << v;
   igl::heat_geodesics_solve(geodesic_cache_.heat_data, gamma, D);
-  // insert into map, and return reference
-  return geodesic_cache_.cache[v] = std::move(D);
 }
 
-const Eigen::MatrixXd& TriMeshWrapper::GradGeodesicsFromVertex(int v) const
+void TriMeshWrapper::GradGeodesicsFromGeodesics(const Eigen::VectorXd& D, Eigen::MatrixXd& GD) const
 {
-  const auto entry = geodesic_cache_.grad_cache.find(v);
-  if(entry != geodesic_cache_.grad_cache.end()) {
-    return entry->second;
+  const auto& G = geodesic_cache_.G;
+  GD.resize(mesh_->faces.size(), 3);
+  GD.noalias() = G * D;
+  GD.resize(mesh_->faces.size(), 3);
+}
+
+// Ensure particle with idx has geodesic distances in cache
+void TriMeshWrapper::EnsureHasGeodesics(int idx) const
+{
+  auto& entry = particle_cache_[idx];
+  if(entry.is_geo_dist_valid) {
+    return;
   }
 
-  const auto& D = GeodesicsFromVertex(v);
-  const auto& G = geodesic_cache_.G;
-  const Eigen::MatrixXd GD = Eigen::Map<const Eigen::MatrixXd>((G*D).eval().data(),
-                                                               mesh_->faces.size(), 3);
-  // insert into map, and return reference
-  return geodesic_cache_.grad_cache[v] = std::move(GD);
+  const int f = entry.tri_idx;
+  GeodesicsFromVertex(mesh_->faces[f][0], entry.dist[0]);
+  GeodesicsFromVertex(mesh_->faces[f][1], entry.dist[1]);
+  GeodesicsFromVertex(mesh_->faces[f][2], entry.dist[2]);
+
+  entry.is_geo_dist_valid = true;
+}
+
+// Ensure particle with idx has gradient of geodesics in cache
+void TriMeshWrapper::EnsureHasGradGeodesics(int idx) const
+{
+  auto& entry = particle_cache_[idx];
+  if(entry.is_geo_grad_valid) {
+    return;
+  }
+
+  EnsureHasGeodesics(idx);
+  GradGeodesicsFromGeodesics(entry.dist[0], entry.grad_dist[0]);
+  GradGeodesicsFromGeodesics(entry.dist[1], entry.grad_dist[1]);
+  GradGeodesicsFromGeodesics(entry.dist[2], entry.grad_dist[2]);
+
+  entry.is_geo_grad_valid = true;
 }
 
 /** start in barycentric coords of currentFace
@@ -453,11 +480,12 @@ int TriMeshWrapper::GetTriangleForPoint(point pt, int idx, vec& baryOut) const
   // given a guess, just check whether it is still valid.
   if(idx != -1) {
     // ensure that the cache has enough elements. this will never be resized to more than the number of particles,
-    if(idx >= particle2tri_.size()) {
-      particle2tri_.resize(idx + 1, 0);
+    if(idx >= particle_cache_.size()) {
+      particle_cache_.resize(idx + 1);
     }
 
-    const int guess = particle2tri_[idx];
+    auto& entry = particle_cache_[idx];
+    const int guess = entry.tri_idx;
     baryOut = this->ComputeBarycentricCoordinates(pt, guess);
     const vec norBary = normalizeBary(baryOut);
     if(IsBarycentricCoordinateValid(norBary)) {
@@ -483,7 +511,8 @@ int TriMeshWrapper::GetTriangleForPoint(point pt, int idx, vec& baryOut) const
         if (IsBarycentricCoordinateValid(norBary)) {
           if(idx != -1) {
             // update cache
-            particle2tri_[idx] = face;
+            particle_cache_[idx].tri_idx = face;
+            particle_cache_[idx].invalidate_geodesics();
           }
           return face;
         }
@@ -508,7 +537,8 @@ int TriMeshWrapper::GetTriangleForPoint(point pt, int idx, vec& baryOut) const
   baryOut = this->ComputeBarycentricCoordinates(pt, closestFace);
   if(idx != -1) {
     // update cache
-    particle2tri_[idx] = closestFace;
+    particle_cache_[idx].tri_idx = closestFace;
+    particle_cache_[idx].invalidate_geodesics();
   }
   return closestFace;
 }
