@@ -31,9 +31,14 @@ def Run_Pipeline(args):
     CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
 
     meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))
-    print(meshFiles)
+    imgFiles = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))
+    print(imgFiles)
     #meshFiles = meshFiles[:15]
-
+    groomDir = outputDirectory + "groomed/"
+    # """Apply centering"""
+    centeredFiles = center(groomDir + "centered/segmentations", imgFiles)
+    paddedFiles = applyPadding(groomDir + "padded/segmentations",centeredFiles,20)
+    dtFiles = applyDistanceTransforms(groomDir, paddedFiles)
     if args.tiny_test:
         args.use_single_scale = 1
         meshFiles = meshFiles[:2]
@@ -46,18 +51,18 @@ def Run_Pipeline(args):
     parameterDictionary = {
         "number_of_particles" : [512,512],
         "use_normals": [0,0],
-        "normal_weight": [10.0,10.0],
+        "normal_weight": [1.0,1.0],
         "checkpointing_interval" : 200,
         "keep_checkpoints" : 0,
         "iterations_per_split" : 500,
         "optimization_iterations" : 500,
-        "starting_regularization" : 10,
+        "starting_regularization" :1000,
         "ending_regularization" : 0.5,
         "recompute_regularization_interval" : 2,
         "domains_per_shape" : 2,
-        "domain_type" : 'mesh',
+        "domain_type" : 'imgage',
         "relative_weighting" : 1,
-        "initial_relative_weighting" : 0.001,
+        "initial_relative_weighting" : 0.1,
         "procrustes_interval" : 0,
         "procrustes_scaling" : 0,
         "save_init_splits" : 0,
@@ -78,7 +83,7 @@ def Run_Pipeline(args):
     """
     print("CALLING OPTIMIZATION CODE")
     # [localPointFiles, worldPointFiles] = runShapeWorksOptimize(pointDir, meshFiles, parameterDictionary)
-    runShapeWorksOptimize(pointDir, meshFiles, parameterDictionary)
+    runShapeWorksOptimize(pointDir, dtFiles, parameterDictionary)
 
     if args.tiny_test:
         print("Done with tiny test")

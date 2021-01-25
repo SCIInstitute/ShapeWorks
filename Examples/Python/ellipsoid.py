@@ -28,8 +28,8 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
     # Get data
-    datasetName = "ellipsoid-v0"
-    outputDirectory = "Output/ellipsoid/"
+    datasetName = "ellipsoid_md_sps"
+    outputDirectory = "Output/ellipsoid_md_sps/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
     CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
@@ -74,34 +74,34 @@ def Run_Pipeline(args):
         if not os.path.exists(groomDir):
             os.makedirs(groomDir)
 
-        """Apply isotropic resampling"""
-        isoresampledFiles = applyIsotropicResampling(groomDir + "resampled/segmentations", fileList)
+        # """Apply isotropic resampling"""
+        # isoresampledFiles = applyIsotropicResampling(groomDir + "resampled/segmentations", fileList)
 
-        """Apply centering"""
-        centeredFiles = center(groomDir + "centered/segmentations", isoresampledFiles)
+        # """Apply centering"""
+        # centeredFiles = center(groomDir + "centered/segmentations", isoresampledFiles)
 
-        """Apply padding"""
-        paddedFiles = applyPadding(groomDir + "padded/segmentations", centeredFiles, 10)
+        # """Apply padding"""
+        # paddedFiles = applyPadding(groomDir + "padded/segmentations", centeredFiles, 10)
 
-        """Apply center of mass alignment"""
-        comFiles = applyCOMAlignment(groomDir + "com_aligned/segmentations", centeredFiles, None)
+        # """Apply center of mass alignment"""
+        # comFiles = applyCOMAlignment(groomDir + "com_aligned/segmentations", centeredFiles, None)
 
-        """ Apply resmapling"""
-        resampledFiles = applyResampling(groomDir + "resized/segmentations", comFiles[0], comFiles)
+        # """ Apply resmapling"""
+        # resampledFiles = applyResampling(groomDir + "resized/segmentations", comFiles[0], comFiles)
 
-        """Compute largest bounding box and apply cropping"""
-        croppedFiles = applyCropping(groomDir + "cropped/segmentations", resampledFiles, groomDir + "resized/segmentations/*.resized.nrrd")
+        # """Compute largest bounding box and apply cropping"""
+        # croppedFiles = applyCropping(groomDir + "cropped/segmentations", resampledFiles, groomDir + "resized/segmentations/*.resized.nrrd")
 
-        """
-        We convert the scans to distance transforms, this step is common for both the 
-        prepped as well as unprepped data, just provide correct filenames.
-        """
+        # """
+        # We convert the scans to distance transforms, this step is common for both the 
+        # prepped as well as unprepped data, just provide correct filenames.
+        # """
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
         if int(args.interactive) != 0:
             input("Press Enter to continue")
-
-        dtFiles = applyDistanceTransforms(groomDir, croppedFiles)
+        print(fileList)
+        dtFiles = applyDistanceTransforms(groomDir, fileList)
 
 
     """
@@ -124,22 +124,22 @@ def Run_Pipeline(args):
         os.makedirs(pointDir)
 
     parameterDictionary = {
-        "number_of_particles": 128,
-        "use_normals": 1,
-        "normal_weight": 10.0,
+        "number_of_particles": [128,128],
+        "use_normals": [1,1],
+        "normal_weight": [10.0,10.0],
         "checkpointing_interval": 200,
         "keep_checkpoints": 0,
-        "iterations_per_split": 2000,
-        "optimization_iterations": 1000,
-        "starting_regularization": 100,
-        "ending_regularization": 10,
+        "iterations_per_split": 500,
+        "optimization_iterations": 500,
+        "starting_regularization": 1,
+        "ending_regularization": 0.1,
         "recompute_regularization_interval": 2,
-        "domains_per_shape": 1,
+        "domains_per_shape": 2,
         "domain_type": 'image',
-        "relative_weighting": 10,
-        "initial_relative_weighting": 0.01,
-        "procrustes_interval": 0,
-        "procrustes_scaling": 0,
+        "relative_weighting": 1,
+        "initial_relative_weighting": 0.1,
+        "procrustes_interval": 1,
+        "procrustes_scaling": 1,
         "save_init_splits": 0,
         "verbosity": 2
     }
