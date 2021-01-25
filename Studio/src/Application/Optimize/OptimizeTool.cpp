@@ -73,7 +73,7 @@ void OptimizeTool::handle_warning(std::string msg)
 //---------------------------------------------------------------------------
 void OptimizeTool::handle_progress(int val)
 {
-  emit progress(static_cast<size_t>(val));
+  emit progress(val);
 
   auto local = this->optimize_->GetLocalPoints();
   auto global = this->optimize_->GetGlobalPoints();
@@ -120,24 +120,22 @@ void OptimizeTool::on_run_optimize_button_clicked()
 
   this->store_params();
   emit message("Please wait: running optimize step...");
-  emit progress(1);
 
-  this->optimize_ = new QOptimize(this);
+  this->optimize_ = QSharedPointer<QOptimize>::create();
 
-  try {
-    OptimizeParameters params(this->session_->get_project());
-    params.set_up_optimize(this->optimize_);
-  } catch (std::exception& e) {
-    emit error_message(std::string("Error running optimize: ") + e.what());
-    this->optimization_is_running_ = false;
-    this->enable_actions();
-    return;
-  }
+  this->clear_particles();
 
+  this->handle_progress(1);
+  this->optimize_parameters_ = QSharedPointer<OptimizeParameters>::create(
+    this->session_->get_project());
+
+  this->optimize_parameters_->set_load_callback(
+    std::bind(&OptimizeTool::handle_load_progress, this, std::placeholders::_1));
   this->optimize_->SetFileOutputEnabled(false);
 
   ShapeworksWorker* worker = new ShapeworksWorker(
-    ShapeworksWorker::OptimizeType, NULL, this->optimize_, this->session_,
+    ShapeworksWorker::OptimizeType, NULL, this->optimize_, this->optimize_parameters_,
+    this->session_,
     std::vector<std::vector<itk::Point<double>>>(),
     std::vector<std::vector<itk::Point<double>>>(),
     std::vector<std::string>());
@@ -146,7 +144,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_optimize_complete()));
-  connect(this->optimize_, SIGNAL(progress(int)), this, SLOT(handle_progress(int)));
+  connect(this->optimize_.data(), &QOptimize::progress, this, &OptimizeTool::handle_progress);
   connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
   connect(worker, SIGNAL(message(std::string)), this, SLOT(handle_message(std::string)));
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
@@ -256,6 +254,9 @@ void OptimizeTool::shutdown_threads()
   if (!this->optimize_) {
     return;
   }
+  if (this->optimize_parameters_) {
+    this->optimize_parameters_->set_abort_load(true);
+  }
   this->optimize_->AbortOptimization();
 
   for (size_t i = 0; i < this->threads_.size(); i++) {
@@ -280,5 +281,27 @@ void OptimizeTool::update_ui_elements()
 void OptimizeTool::activate()
 {
   this->enable_actions();
+}
+
+//---------------------------------------------------------------------------
+void OptimizeTool::handle_load_progress(int count)
+{
+  double value = static_cast<double>(count) / this->session_->get_shapes().size() * 100.0f;
+  if (value < 100) { // cannot emit 100 or the main interface will think the job is done
+    emit progress(static_cast<int>(value));
+  }
+}
+
+//---------------------------------------------------------------------------
+void OptimizeTool::clear_particles()
+{
+  // clear out old points
+  std::vector<itk::Point<double>> empty;
+  std::vector<std::vector<itk::Point<double>>> lists;
+  for (int i = 0; i < this->session_->get_num_shapes(); i++) {
+    lists.push_back(empty);
+  }
+  this->session_->update_points(lists, true);
+  this->session_->update_points(lists, false);
 }
 }

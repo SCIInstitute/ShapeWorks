@@ -270,3 +270,9 @@ TEST(shapeworksTests, division)
 {
   ASSERT_FALSE(system("bash div.sh"));
 }
+
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, shapeevaluation)
+{
+  ASSERT_FALSE(system("bash shapeevaluation.sh"));
+}

@@ -6,7 +6,6 @@ Full Example Pipeline for Statistical Shape Modeling with ShapeWorks
 This example is set to serve as a test case for new ShapeWorks users, and each
 step is explained in the shapeworks including the pre-processing, the 
 optimization and, the post ShapeWorks visualization.
-
 First import the necessary modules
 """
 import os
@@ -18,7 +17,6 @@ import CommonUtils
 def Run_Pipeline(args):
     """
     Unzip the data for this tutorial.
-
     The data is inside the Ellipsoids.zip, run the following function to unzip the 
     data and create necessary supporting files into the Data/ directory. 
     The files will be Extracted in a newly created directory: Output/Ellipsoids.
@@ -28,16 +26,21 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
     # Get data
-    datasetName = "ellipsoid_md_sps"
-    outputDirectory = "Output/ellipsoid_md_sps/"
+    datasetName = "ellipsoid-v0"
+    outputDirectory = "Output/ellipsoid/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
-    CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
-    fileList = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))
-    # Select data for tiny test
+    #If tiny_test then download subset of the data
     if args.tiny_test:
         args.use_single_scale = 1
-        fileList = fileList[:3]
+        CommonUtils.download_subset(args.use_case,datasetName, outputDirectory)
+        fileList = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))[:3]
+    #else download the entire dataset
+    else:
+        CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
+
+        fileList = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))
+    
     # Select data if using subsample
     if args.use_subsample:
         sample_idx = sampledata(fileList, int(args.num_subsample))
@@ -74,39 +77,39 @@ def Run_Pipeline(args):
         if not os.path.exists(groomDir):
             os.makedirs(groomDir)
 
-        # """Apply isotropic resampling"""
-        # isoresampledFiles = applyIsotropicResampling(groomDir + "resampled/segmentations", fileList)
+        """Apply isotropic resampling"""
+        isoresampledFiles = applyIsotropicResampling(groomDir + "resampled/segmentations", fileList)
 
-        # """Apply centering"""
-        # centeredFiles = center(groomDir + "centered/segmentations", isoresampledFiles)
 
-        # """Apply padding"""
-        # paddedFiles = applyPadding(groomDir + "padded/segmentations", centeredFiles, 10)
+        """Apply centering"""
+        centeredFiles = center(groomDir + "centered/segmentations", isoresampledFiles)
 
-        # """Apply center of mass alignment"""
-        # comFiles = applyCOMAlignment(groomDir + "com_aligned/segmentations", centeredFiles, None)
+        """Apply padding"""
+        paddedFiles = applyPadding(groomDir + "padded/segmentations", centeredFiles, 10)
 
-        # """ Apply resmapling"""
-        # resampledFiles = applyResampling(groomDir + "resized/segmentations", comFiles[0], comFiles)
+        """Apply center of mass alignment"""
+        comFiles = applyCOMAlignment(groomDir + "com_aligned/segmentations", centeredFiles, None)
 
-        # """Compute largest bounding box and apply cropping"""
-        # croppedFiles = applyCropping(groomDir + "cropped/segmentations", resampledFiles, groomDir + "resized/segmentations/*.resized.nrrd")
+        """ Apply resmapling"""
+        resampledFiles = applyResampling(groomDir + "resized/segmentations", comFiles[0], comFiles)
 
-        # """
-        # We convert the scans to distance transforms, this step is common for both the 
-        # prepped as well as unprepped data, just provide correct filenames.
-        # """
+        """Compute largest bounding box and apply cropping"""
+        croppedFiles = applyCropping(groomDir + "cropped/segmentations", resampledFiles, groomDir + "resized/segmentations/*.resized.nrrd")
+
+        """
+        We convert the scans to distance transforms, this step is common for both the 
+        prepped as well as unprepped data, just provide correct filenames.
+        """
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
         if int(args.interactive) != 0:
             input("Press Enter to continue")
-        print(fileList)
-        dtFiles = applyDistanceTransforms(groomDir, fileList)
+
+        dtFiles = applyDistanceTransforms(groomDir, croppedFiles)
 
 
     """
     ## OPTIMIZE : Particle Based Optimization
-
     Now that we have the distance transform representation of data we create 
     the parameter files for the shapeworks particle optimization routine.
     For more details on the plethora of parameters for shapeworks please refer 
@@ -124,22 +127,22 @@ def Run_Pipeline(args):
         os.makedirs(pointDir)
 
     parameterDictionary = {
-        "number_of_particles": [128,128],
-        "use_normals": [1,1],
-        "normal_weight": [10.0,10.0],
+        "number_of_particles": 128,
+        "use_normals": 1,
+        "normal_weight": 15.0,
         "checkpointing_interval": 200,
         "keep_checkpoints": 0,
-        "iterations_per_split": 500,
-        "optimization_iterations": 500,
-        "starting_regularization": 1,
-        "ending_regularization": 0.1,
+        "iterations_per_split": 2000,
+        "optimization_iterations": 1000,
+        "starting_regularization": 100,
+        "ending_regularization": 10,
         "recompute_regularization_interval": 2,
-        "domains_per_shape": 2,
+        "domains_per_shape": 1,
         "domain_type": 'image',
-        "relative_weighting": 1,
-        "initial_relative_weighting": 0.1,
-        "procrustes_interval": 1,
-        "procrustes_scaling": 1,
+        "relative_weighting": 15,
+        "initial_relative_weighting": 0.05,
+        "procrustes_interval": 0,
+        "procrustes_scaling": 0,
         "save_init_splits": 0,
         "verbosity": 2
     }
@@ -162,7 +165,6 @@ def Run_Pipeline(args):
           
     """
     ## ANALYZE : Shape Analysis and Visualization
-
     Shapeworks yields relatively sparse correspondence models that may be inadequate to reconstruct 
     thin structures and high curvature regions of the underlying anatomical surfaces. 
     However, for many applications, we require a denser correspondence model, for example, 
@@ -170,7 +172,6 @@ def Run_Pipeline(args):
     or other simulations on mesh surfaces. One option for denser modeling is 
     to increase the number of particles per shape sample. However, this approach necessarily 
     increases the computational overhead, especially when modeling large clinical cohorts.
-
     Here we adopt a template-deformation approach to establish an inter-sample dense surface correspondence, 
     given a sparse set of optimized particles. To avoid introducing bias due to the template choice, we developed
     an unbiased framework for template mesh construction. The dense template mesh is then constructed 

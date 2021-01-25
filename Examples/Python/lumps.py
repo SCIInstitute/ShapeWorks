@@ -17,16 +17,18 @@ def Run_Pipeline(args):
     outputDirectory = "Output/lumps/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
-    CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
-
-    meshFileDirectory = outputDirectory + datasetName + '/meshes/'
-    meshFiles = sorted(os.listdir(meshFileDirectory))
-    # need to prepend the directory to each file name so that relative paths work
-    meshFiles = [meshFileDirectory + filename for filename in meshFiles]
-
+      
+    
+    #If tiny_test then download subset of the data
     if args.tiny_test:
         args.use_single_scale = 1
-        meshFiles = meshFiles[:3]
+        CommonUtils.download_subset(args.use_case,datasetName, outputDirectory)
+        meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))[:3]
+    #else download the entire dataset
+    else:
+        CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
+        meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))
+
     # Select data if using subsample
     if args.use_subsample:
         sample_idx = samplemesh(meshFiles, int(args.num_subsample))

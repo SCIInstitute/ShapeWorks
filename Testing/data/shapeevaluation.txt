@@ -1,0 +1,3 @@
+Particle system compactness: 0.991787
+Particle system generalization: 0.198151
+Particle system specificity: 0.252149
