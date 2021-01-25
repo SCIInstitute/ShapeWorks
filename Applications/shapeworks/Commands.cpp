@@ -1594,7 +1594,7 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
     return false;
   }
 
-  bool is_project = StringUtils::hasSuffix(project_file, "xlsx");
+  bool is_project = StringUtils::hasSuffix(project_file, ".xlsx");
 
   Optimize app;
   if (is_project) {

@@ -353,7 +353,6 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band)
 
   if (image) {
     this->m_Spacing = image->GetSpacing()[0];
-    domain->SetSigma(this->m_Spacing * 2.0);
     domain->SetImage(image, narrow_band);
   }
 

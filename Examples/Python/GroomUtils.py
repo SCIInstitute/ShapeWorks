@@ -207,6 +207,7 @@ def applyCropping(outDir, inDataList, path, paddingSize=10):
 
     # find region by computing bounding box
     region = ImageUtils.boundingBox(glob.glob(path))
+    print(region)
     region.pad(paddingSize)
 
     for i in range(len(inDataList)):

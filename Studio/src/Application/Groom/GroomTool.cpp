@@ -73,7 +73,7 @@ void GroomTool::handle_error(std::string msg)
 void GroomTool::handle_progress(int val)
 {
   if (this->groom_is_running_) {
-    emit progress(static_cast<size_t>(val));
+    emit progress(val);
   }
 }
 
@@ -123,7 +123,7 @@ void GroomTool::enable_actions()
   }
   else {
     this->ui_->skip_button->setEnabled(true);
-    this->ui_->run_groom_button->setText("Groom");
+    this->ui_->run_groom_button->setText("Run Groom");
   }
 
 }
@@ -170,7 +170,7 @@ void GroomTool::on_run_groom_button_clicked()
   this->enable_actions();
 
   ShapeworksWorker* worker = new ShapeworksWorker(
-    ShapeworksWorker::GroomType, this->groom_, nullptr, this->session_);
+    ShapeworksWorker::GroomType, this->groom_, nullptr, nullptr, this->session_);
 
   QThread* thread = new QThread;
   worker->moveToThread(thread);
@@ -178,7 +178,7 @@ void GroomTool::on_run_groom_button_clicked()
   connect(worker, &ShapeworksWorker::result_ready, this, &GroomTool::handle_thread_complete);
   connect(this->groom_.data(), &QGroom::progress, this, &GroomTool::handle_progress);
   connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
-  connect(worker, SIGNAL(message(std::string)), this, SLOT(handle_message(std::string)));
+  connect(worker, &ShapeworksWorker::message, this, &GroomTool::message);
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   thread->start();
 
@@ -202,6 +202,7 @@ void GroomTool::handle_thread_complete()
   emit message("Groom Complete");
   emit groom_complete();
 
+  this->groom_is_running_ = false;
   this->enable_actions();
 }
 

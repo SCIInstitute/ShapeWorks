@@ -28,13 +28,15 @@ We are developing Python bindings to enable users to script their customized sha
     Exemplar [use cases](../use-cases/use-cases.md) will be updated to use these Python APIs to showcase their use and flexibility.
 
 
-## ShapeWorksStudio
+## ShapeWorks Studio
 
 
-ShapeWorksStudio is a cross-platform graphical user interface (GUI) to support the standard shape analysis workflow needed by most ShapeWorks users, enabling a wide variety of research scenarios. It is currently supporting image-based grooming and is actively under development to support surface meshes, more sophisticated grooming operations (including user annotations), and offline processing.  ShapeWorksStudio enables real-time parameter tuning and visualization of the optimization process and statistical analyses.
+ShapeWorks Studio is a cross-platform graphical user interface (GUI) to support the standard shape analysis workflow needed by most ShapeWorks users, enabling a wide variety of research scenarios. It is currently supporting image-based grooming and is actively under development to support surface meshes, more sophisticated grooming operations (including user annotations), and offline processing.  ShapeWorksStudio enables real-time parameter tuning and visualization of the optimization process and statistical analyses.
 
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_demo.mp4" autoplay muted loop controls style="width:100%"></p>
+
+For more information about ShapeWorks Studio, see [here](../studio/getting-started-with-studio.md)
 
 ## ShapeWorks in the Cloud 
 
