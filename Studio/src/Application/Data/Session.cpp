@@ -584,7 +584,7 @@ void Session::load_groomed_files(std::vector<std::string> file_names, double iso
     this->shapes_[i]->get_subject()->set_groomed_filenames(groomed_filenames);
 
     QStringList list;
-    list << QString::fromStdString(file_names[i]);
+    list << QFileInfo(QString::fromStdString(file_names[i])).fileName();
     list << "";
     list << "";
     list << "";
@@ -736,6 +736,14 @@ bool Session::load_point_files(std::vector<std::string> list, bool local)
     QFileInfo fi(fname);
     QString basename = fi.completeBaseName();
     QString ext = fi.suffix();
+
+
+    QStringList list;
+    list << fi.fileName();
+    list << "";
+    list << "";
+    list << "";
+    shape->set_annotations(list);
 
     if (QFile::exists(fname)) {
       if (!local) {
