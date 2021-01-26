@@ -898,12 +898,29 @@ void ShapeWorksStudioApp::handle_project_changed()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_points_changed()
 {
-  int old_size = this->session_->get_auto_glyph_size();
-  if (old_size != this->session_->update_auto_glyph_size()) {
-    this->handle_glyph_changed();
+
+  bool update = false;
+  if (!this->time_since_last_update_.isValid()) {
+    update = true;
+  }
+  else {
+    auto time_since = this->time_since_last_update_.elapsed();
+    if (time_since > 100) {
+      update = true;
+    }
   }
 
-  this->visualizer_->update_samples();
+  if (update) {
+    double old_size = this->session_->get_auto_glyph_size();
+    if (fabs(old_size - this->session_->update_auto_glyph_size()) > 0.5) {
+      this->handle_glyph_changed();
+    }
+
+    this->visualizer_->update_samples();
+
+  }
+  this->time_since_last_update_.start();
+
 }
 
 //---------------------------------------------------------------------------
@@ -920,6 +937,9 @@ void ShapeWorksStudioApp::handle_optimize_complete()
   this->update_display();
   this->enable_possible_actions();
   this->analysis_tool_->initialize_mesh_warper();
+
+  this->visualizer_->update_samples();
+  this->handle_glyph_changed();
 }
 
 //---------------------------------------------------------------------------
