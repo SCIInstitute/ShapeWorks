@@ -3,6 +3,7 @@
 #include <memory>
 #include <xlnt/xlnt.hpp>
 #include <Libs/Mesh/Mesh.h>
+#include <Libs/Mesh/MeshUtils.h>
 #include <vtkPolyData.h>
 #include <vtkPointData.h>
 
@@ -11,8 +12,8 @@
 using namespace shapeworks;
 
 //---------------------------------------------------------------------------
-static std::string replace_string(std::string subject, const std::string &search,
-                                  const std::string &replace)
+static std::string replace_string(std::string subject, const std::string& search,
+                                  const std::string& replace)
 {
   size_t pos = 0;
   while ((pos = subject.find(search, pos)) != std::string::npos) {
@@ -32,11 +33,11 @@ Project::Project()
 Project::~Project() = default;
 
 //---------------------------------------------------------------------------
-bool Project::load(const std::string &filename)
+bool Project::load(const std::string& filename)
 {
   try {
     this->wb_->load(filename);
-  } catch (xlnt::exception &e) {
+  } catch (xlnt::exception& e) {
 
     std::cerr << std::string("Error reading xlsx: ")
               << std::string(e.what()) << ", " << "\n";
@@ -55,7 +56,7 @@ bool Project::load(const std::string &filename)
 }
 
 //---------------------------------------------------------------------------
-bool Project::save(const std::string &filename)
+bool Project::save(const std::string& filename)
 {
 
   try {
@@ -68,7 +69,7 @@ bool Project::save(const std::string &filename)
 
     this->store_subjects();
     this->wb_->save(filename);
-  } catch (xlnt::exception &e) {
+  } catch (xlnt::exception& e) {
 
     std::cerr << std::string("Error writing xlsx: ")
               << std::string(e.what()) << ", " << "\n";
@@ -124,13 +125,13 @@ int Project::get_number_of_domains_per_subject()
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::shared_ptr<Subject>> &Project::get_subjects()
+std::vector<std::shared_ptr<Subject>>& Project::get_subjects()
 {
   return this->subjects_;
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> Project::get_matching_columns(const std::string &prefix)
+std::vector<std::string> Project::get_matching_columns(const std::string& prefix)
 {
   this->matching_columns_.insert(prefix);
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);
@@ -153,7 +154,7 @@ std::string Project::get_value(int column, int subject_id)
 }
 
 //---------------------------------------------------------------------------
-void Project::set_value(int column, int subject_id, const std::string &value)
+void Project::set_value(int column, int subject_id, const std::string& value)
 {
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);
 
@@ -164,7 +165,7 @@ void Project::set_value(int column, int subject_id, const std::string &value)
 }
 
 //---------------------------------------------------------------------------
-void Project::set_value(const std::string &column_name, int subject_id, const std::string &value)
+void Project::set_value(const std::string& column_name, int subject_id, const std::string& value)
 {
   int column_index = get_index_for_column(column_name, true);
   this->set_value(column_index, subject_id + 2, value); // +1 for header, +1 for 1-indexed
@@ -301,14 +302,14 @@ void Project::store_subjects()
 
     // features
     auto features = subject->get_feature_filenames();
-    for (auto const &x : features) {
+    for (auto const& x : features) {
       int idx = this->get_index_for_column("feature_" + x.first, true);
       this->set_value(idx, i + 2, x.second); // +1 for header, +1 for 1-based index
     }
 
     // extra values
     auto extra_values = subject->get_extra_values();
-    for (auto const &x : extra_values) {
+    for (auto const& x : extra_values) {
       int idx = this->get_index_for_column(x.first, true);
       this->set_value(idx, i + 2, x.second);  // +1 for header, +1 for 1-based index
     }
@@ -343,7 +344,7 @@ int Project::get_version() const
 }
 
 //---------------------------------------------------------------------------
-int Project::get_index_for_column(const std::string &name, bool create_if_not_found) const
+int Project::get_index_for_column(const std::string& name, bool create_if_not_found) const
 {
 
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);
@@ -376,7 +377,7 @@ int Project::get_index_for_column(const std::string &name, bool create_if_not_fo
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> Project::get_string_column(const std::string &name) const
+std::vector<std::string> Project::get_string_column(const std::string& name) const
 {
   int index = this->get_index_for_column(name);
 
@@ -422,7 +423,7 @@ bool Project::get_particles_present() const
 }
 
 //---------------------------------------------------------------------------
-Parameters Project::get_parameters(const std::string &name)
+Parameters Project::get_parameters(const std::string& name)
 {
   Parameters params;
   std::map<std::string, std::string> map;
@@ -448,7 +449,7 @@ Parameters Project::get_parameters(const std::string &name)
 }
 
 //---------------------------------------------------------------------------
-void Project::set_parameters(const std::string &name, Parameters params)
+void Project::set_parameters(const std::string& name, Parameters params)
 {
   try {
     // remove the old sheet
@@ -465,12 +466,12 @@ void Project::set_parameters(const std::string &name, Parameters params)
     ws.cell(xlnt::cell_reference(1, 1)).value("key");
     ws.cell(xlnt::cell_reference(2, 1)).value("value");
     int row = 2; // skip header
-    for (const auto &kv : params.get_map()) {
+    for (const auto& kv : params.get_map()) {
       ws.cell(xlnt::cell_reference(1, row)).value(kv.first);
       ws.cell(xlnt::cell_reference(2, row)).value(kv.second);
       row++;
     }
-  } catch (xlnt::exception &e) {
+  } catch (xlnt::exception& e) {
 
     std::cerr << std::string("Error storing parameters: ")
               << std::string(e.what()) << ", " << "\n";
@@ -504,17 +505,17 @@ void Project::set_list(std::vector<std::string> columns, int subject,
 }
 
 //---------------------------------------------------------------------------
-void Project::set_map(int subject, const std::string &prefix,
-                      const std::map<std::string, std::string> &map)
+void Project::set_map(int subject, const std::string& prefix,
+                      const std::map<std::string, std::string>& map)
 {
-  for (const auto &pair : map) {
+  for (const auto& pair : map) {
     int column_index = get_index_for_column(prefix + pair.first, true);
     this->set_value(column_index, subject + 2, pair.second); // +1 for header, +1 for 1-indexed
   }
 }
 
 //---------------------------------------------------------------------------
-void Project::save_string_column(const std::string &name, std::vector<std::string> items)
+void Project::save_string_column(const std::string& name, std::vector<std::string> items)
 {
   int index = this->get_index_for_column(name, true);
 
@@ -533,10 +534,11 @@ std::vector<std::string> Project::get_feature_names()
   auto feature_names = this->get_matching_columns(FEATURE_PREFIX);
   if (!this->subjects_.empty() && this->mesh_scalars_.empty()) {
     auto subject = this->subjects_[0];
-    if (subject->get_domain_types().size() > 0 && subject->get_domain_types()[0] == DomainType::Mesh) {
+    if (subject->get_domain_types().size() > 0 &&
+        subject->get_domain_types()[0] == DomainType::Mesh) {
       if (!subject->get_segmentation_filenames().empty()) {
-        Mesh m(subject->get_segmentation_filenames()[0]);
-        auto poly_data = m.get_poly_data();
+        auto poly_data = MeshUtils::thread_safe_read_mesh(
+          subject->get_segmentation_filenames()[0]).get_poly_data();
         if (poly_data) {
           vtkIdType numberOfPointArrays = poly_data->GetPointData()->GetNumberOfArrays();
           for (vtkIdType i = 0; i < numberOfPointArrays; i++) {
@@ -590,7 +592,7 @@ Project::get_transform_list(std::vector<std::string> columns, int subject)
 }
 
 //---------------------------------------------------------------------------
-void Project::set_transform_list(const std::vector<std::string> &columns, int subject,
+void Project::set_transform_list(const std::vector<std::string>& columns, int subject,
                                  std::vector<std::vector<double>> transforms)
 {
   std::vector<std::string> transform_strings;
@@ -611,7 +613,7 @@ void Project::set_transform_list(const std::vector<std::string> &columns, int su
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> Project::get_group_values(const std::string &group_name) const
+std::vector<std::string> Project::get_group_values(const std::string& group_name) const
 {
   auto values = this->get_string_column(group_name);
 
@@ -642,8 +644,6 @@ std::vector<std::string> Project::get_extra_columns() const
   }
   return list;
 }
-
-
 
 
 //---------------------------------------------------------------------------
