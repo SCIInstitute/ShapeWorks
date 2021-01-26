@@ -717,11 +717,17 @@ void AnalysisTool::reset_stats()
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::enable_actions()
+void AnalysisTool::enable_actions(bool newly_enabled)
 {
   if (this->session_->get_num_shapes() < 1) {
     return;
   }
+
+  if (newly_enabled) {
+    std::cerr << "set mesh\n";
+    this->ui_->mesh_warping_radio_button->setChecked(true);
+  }
+
   auto domain_types = this->session_->get_domain_types();
   bool image_domain = domain_types.size() > 0 && domain_types[0] == DomainType::Image;
   this->ui_->distance_transfom_radio_button->setEnabled(
@@ -733,6 +739,7 @@ void AnalysisTool::enable_actions()
   if (!this->ui_->mesh_warping_radio_button->isEnabled()) {
     this->ui_->legacy_radio_button->setChecked(true);
   }
+  this->reconstruction_method_changed();
 
   this->update_group_boxes();
 }

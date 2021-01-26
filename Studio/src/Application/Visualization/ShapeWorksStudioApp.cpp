@@ -513,11 +513,15 @@ void ShapeWorksStudioApp::enable_possible_actions()
   this->ui_->action_import_mode->setEnabled(true);
   this->ui_->action_groom_mode->setEnabled(original_present);
   this->ui_->action_optimize_mode->setEnabled(original_present);
+  bool new_analysis = false;
+  if (!this->ui_->action_analysis_mode->isEnabled() && reconstructed) {
+    new_analysis = true;
+  }
   this->ui_->action_analysis_mode->setEnabled(reconstructed);
   //subtools
   this->groom_tool_->enable_actions();
   this->optimize_tool_->enable_actions();
-  this->analysis_tool_->enable_actions();
+  this->analysis_tool_->enable_actions(new_analysis);
   //recent
   QStringList recent_files = preferences_.get_recent_files();
   int num_recent_files = qMin(recent_files.size(), 4);

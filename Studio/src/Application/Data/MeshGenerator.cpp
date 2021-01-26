@@ -15,16 +15,13 @@
 #include <itkOrientImageFilter.h>
 
 #include <Libs/Mesh/Mesh.h>
+#include <Libs/Mesh/MeshUtils.h>
+
 #include <Libs/Utils/StringUtils.h>
 
 #include <Data/LegacyMeshGenerator.h>
 
-#include <tbb/mutex.h>
-
 namespace shapeworks {
-
-// locking to handle non-thread-safe code
-static tbb::mutex mesh_mutex;
 
 const std::string MeshGenerator::RECONSTRUCTION_LEGACY_C("legacy");
 const std::string MeshGenerator::RECONSTRUCTION_DISTANCE_TRANSFORM_C("distance_transform");
@@ -138,9 +135,7 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
 
   if (is_mesh) {
     try {
-      tbb::mutex::scoped_lock lock(mesh_mutex);
-      shapeworks::Mesh reader(filename);
-      mesh->set_poly_data(reader.get_poly_data());
+      mesh->set_poly_data(MeshUtils::thread_safe_read_mesh(filename).get_poly_data());
     } catch (std::exception e) {
       std::string message = std::string("Error reading: ") + filename;
       STUDIO_LOG_ERROR(QString::fromStdString(message));
@@ -200,4 +195,5 @@ std::string MeshGenerator::get_reconstruction_method()
 {
   return this->reconstruction_method_;
 }
+
 }
