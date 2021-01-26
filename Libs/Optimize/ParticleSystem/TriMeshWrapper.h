@@ -102,10 +102,14 @@ private:
   void PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
 
   // Returns (V, ) geodesic distances from a given source vertex to every other vertex
-  const Eigen::VectorXd& GeodesicsFromVertex(int v) const;
+  void GeodesicsFromVertex(int v, Eigen::VectorXd& D) const;
 
-  // Returns (V, 3) gradient of geodesic distances from a given source vertex to every other vertex
-  const Eigen::MatrixXd& GradGeodesicsFromVertex(int v) const;
+  // Returns (V, 3) gradient of geodesic distances given geodesics from a vertex
+  void GradGeodesics(const Eigen::VectorXd& D, Eigen::MatrixXd& GD) const;
+
+  const Eigen::VectorXd* GeodesicsFromTri(int tri) const;
+
+  const Eigen::MatrixXd* GradGeodesicsFromTri(int tri) const;
 
   // Returns true if face f_a is adjacent to face f_b
   bool AreFacesAdjacent(int f_a, int f_b) const;
@@ -114,10 +118,9 @@ private:
   mutable struct {
     igl::HeatGeodesicsData<double> heat_data;
 
-    //TODO lru_cache https://github.com/lamerman/cpp-lru-cache/blob/master/include/lrucache.hpp
-    std::unordered_map<int, Eigen::VectorXd> cache;
+    std::unordered_map<int, Eigen::VectorXd[3]> dist_cache;
     //TODO Might be worth switching to RowMajor here because of the access patterns
-    std::unordered_map<int, Eigen::MatrixXd> grad_cache;
+    std::unordered_map<int, Eigen::MatrixXd[3]> grad_cache;
 
     Eigen::SparseMatrix<double> G; // Gradient operator
   } geodesic_cache_;

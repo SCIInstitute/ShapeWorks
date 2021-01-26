@@ -95,8 +95,9 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
   // Geometric Correspondence for Ensembles of Nonregular Shapes, Datar et al
   // https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3346950/
   double geo_dist = 0.0;
+  const auto geo_from_a = GeodesicsFromTri(face_a);
   for(int i=0; i<3; i++) {
-    const Eigen::VectorXd& geo_from_ai = GeodesicsFromVertex(faces[face_a][i]);
+    const Eigen::VectorXd& geo_from_ai = geo_from_a[i];
     const double g_i0 = geo_from_ai[faces[face_b][0]];
     const double g_i1 = geo_from_ai[faces[face_b][1]];
     const double g_i2 = geo_from_ai[faces[face_b][2]];
@@ -118,10 +119,12 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
     return geo_dist;
   }
 
+  GeodesicsFromTri(face_b); //todo remove hack to get geodesics in cache
+  const auto grad_geo_from_b = GradGeodesicsFromTri(face_b);
   Eigen::Vector3d grad_geo = {0.0, 0.0, 0.0};
-  grad_geo += bary_b[0] * GradGeodesicsFromVertex(faces[face_b][0]).row(face_a);
-  grad_geo += bary_b[1] * GradGeodesicsFromVertex(faces[face_b][1]).row(face_a);
-  grad_geo += bary_b[2] * GradGeodesicsFromVertex(faces[face_b][2]).row(face_a);
+  grad_geo += bary_b[0] * grad_geo_from_b[0].row(face_a);
+  grad_geo += bary_b[1] * grad_geo_from_b[1].row(face_a);
+  grad_geo += bary_b[2] * grad_geo_from_b[2].row(face_a);
   //todo get the scaling by distance stuff correctly
   grad_geo *= geo_dist;
 
@@ -138,33 +141,73 @@ bool TriMeshWrapper::AreFacesAdjacent(int f_a, int f_b) const {
   return adj_b[0] == f_a || adj_b[1] == f_a || adj_b[2] == f_a;
 }
 
-const Eigen::VectorXd& TriMeshWrapper::GeodesicsFromVertex(int v) const {
-  const auto entry = geodesic_cache_.cache.find(v);
-  if(entry != geodesic_cache_.cache.end()) {
-    return entry->second;
-  }
-
+void TriMeshWrapper::GeodesicsFromVertex(int v, Eigen::VectorXd& D) const {
   Eigen::VectorXi gamma;
-  Eigen::VectorXd D;
   gamma.resize(1); gamma << v;
   igl::heat_geodesics_solve(geodesic_cache_.heat_data, gamma, D);
-  // insert into map, and return reference
-  return geodesic_cache_.cache[v] = std::move(D);
 }
 
-const Eigen::MatrixXd& TriMeshWrapper::GradGeodesicsFromVertex(int v) const
+void TriMeshWrapper::GradGeodesics(const Eigen::VectorXd& D, Eigen::MatrixXd& GD) const
 {
-  const auto entry = geodesic_cache_.grad_cache.find(v);
-  if(entry != geodesic_cache_.grad_cache.end()) {
+
+  const auto& G = geodesic_cache_.G;
+  GD.resize(mesh_->faces.size(), 3);
+  GD.noalias() = G * D;
+  GD.resize(mesh_->faces.size(), 3); //todo probably not necessary
+}
+
+const Eigen::VectorXd* TriMeshWrapper::GeodesicsFromTri(int tri) const
+{
+  auto& cache = geodesic_cache_.dist_cache;
+  const auto entry = cache.find(tri);
+  if(entry != cache.end()) {
     return entry->second;
   }
 
-  const auto& D = GeodesicsFromVertex(v);
-  const auto& G = geodesic_cache_.G;
-  const Eigen::MatrixXd GD = Eigen::Map<const Eigen::MatrixXd>((G*D).eval().data(),
-                                                               mesh_->faces.size(), 3);
-  // insert into map, and return reference
-  return geodesic_cache_.grad_cache[v] = std::move(GD);
+  if(cache.size() == 1000) {
+    std::set<int> valid(particle2tri_.begin(), particle2tri_.end());
+    for(auto it = cache.begin(); it != cache.end(); ) {
+      if(valid.find(it->first) == valid.end()) {
+        it = cache.erase(it);
+      } else {
+        it++;
+      }
+    }
+  }
+
+  auto new_entry = cache[tri];
+  GeodesicsFromVertex(mesh_->faces[tri][0], new_entry[0]);
+  GeodesicsFromVertex(mesh_->faces[tri][1], new_entry[1]);
+  GeodesicsFromVertex(mesh_->faces[tri][2], new_entry[2]);
+  return new_entry;
+}
+
+const Eigen::MatrixXd* TriMeshWrapper::GradGeodesicsFromTri(int tri) const
+{
+  //todo ensure geodesics in cache
+  auto& cache = geodesic_cache_.grad_cache;
+  const auto entry = cache.find(tri);
+  if(entry != cache.end()) {
+    return entry->second;
+  }
+
+  if(cache.size() == 1000) {
+    std::set<int> valid(particle2tri_.begin(), particle2tri_.end());
+    for(auto it = cache.begin(); it != cache.end(); ) {
+      if(valid.find(it->first) == valid.end()) {
+        it = cache.erase(it);
+      } else {
+        it++;
+      }
+    }
+  }
+
+  const auto geo = geodesic_cache_.dist_cache[tri];
+  auto new_entry = cache[tri];
+  GradGeodesics(geo[0], new_entry[0]);
+  GradGeodesics(geo[1], new_entry[1]);
+  GradGeodesics(geo[2], new_entry[2]);
+  return new_entry;
 }
 
 /** start in barycentric coords of currentFace
