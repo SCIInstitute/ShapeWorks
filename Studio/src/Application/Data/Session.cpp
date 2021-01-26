@@ -582,6 +582,13 @@ void Session::load_groomed_files(std::vector<std::string> file_names, double iso
     // only single domain supported so far
     std::vector<std::string> groomed_filenames{file_names[i]};
     this->shapes_[i]->get_subject()->set_groomed_filenames(groomed_filenames);
+
+    QStringList list;
+    list << QString::fromStdString(file_names[i]);
+    list << "";
+    list << "";
+    list << "";
+    this->shapes_[i]->set_annotations(list);
   }
 
   this->project_->store_subjects();

@@ -615,7 +615,6 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
 
 }
 
-
 //---------------------------------------------------------------------------
 void Shape::apply_feature_to_points(std::string feature, QSharedPointer<StudioMesh> mesh)
 {
@@ -647,7 +646,6 @@ void Shape::apply_feature_to_points(std::string feature, QSharedPointer<StudioMe
       pt[1] = pt[1] + transform[10];
       pt[2] = pt[2] + transform[11];
     }
-
 
     vtkIdType id = kDTree->FindClosestPoint(pt);
     vtkVariant var = from_array->GetVariantValue(id);
@@ -697,6 +695,5 @@ void Shape::set_point_features(std::string feature, Eigen::VectorXf values)
     mesh->interpolate_scalars_to_mesh(feature, this->global_correspondence_points_, values);
   }
 }
-
 
 }
