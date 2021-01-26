@@ -277,3 +277,15 @@ TEST(MeshTests, coverageTest)
   ASSERT_TRUE(pelvis.compareScalarsEqual(baseline));
   ASSERT_TRUE(true);
 }
+
+// TODO: Fix this test
+// TEST(MeshTests, icpTest)
+// {
+//   Mesh source(std::string(TEST_DATA_DIR) + "/femur.vtk");
+//   Mesh target(std::string(TEST_DATA_DIR) + "/m04_L_femur.vtk");
+//   shapeworks::vtkTransform transform = source.createTransform(target);
+//   source.applyTransform(transform);
+//   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/icp.vtk");
+
+//   ASSERT_TRUE(source == ground_truth);
+// }

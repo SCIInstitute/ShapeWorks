@@ -308,6 +308,13 @@ PYBIND11_MODULE(shapeworks, m)
   .export_values();
   ;
 
+  // Image::TransformType
+  py::enum_<Image::TransformType>(m, "TransformType")
+  .value("CenterOfMass", Image::TransformType::CenterOfMass)
+  .value("IterativeClosestPoint", Image::TransformType::IterativeClosestPoint)
+  .export_values();
+  ;
+
   // Image
   py::class_<Image>(m, "Image")
   .def(py::init<const std::string &>()) // can the argument for init be named (it's filename in this case)
@@ -432,8 +439,8 @@ PYBIND11_MODULE(shapeworks, m)
   .def("physicalToLogical", [](Image& image, std::vector<double>& p) {
     return image.physicalToLogical(Point({p[0], p[1], p[2]}));
   }, "converts from a physical coordinate to a logical coordinate", "p"_a)
-  .def("createCenterOfMassTransform", &Image::createCenterOfMassTransform, "generates the Transform necessary to move the contents of this binary image to the center")
-  .def("createRigidRegistrationTransform", &Image::createRigidRegistrationTransform, "creates transform from source distance map to target using ICP registration (isovalue is used to create meshes from dts passed to ICP)", "target_dt"_a, "isoValue"_a=0.0, "iterations"_a=20)
+  .def("createTransform",       py::overload_cast<Image::TransformType>(&Image::createTransform), "creates a transform based on transform type", "type"_a=Image::TransformType::CenterOfMass)
+  .def("createTransform",       py::overload_cast<const Image&, Image::TransformType, float, unsigned>(&Image::createTransform), "creates a transform based on transform type", "target"_a, "type"_a=Image::TransformType::IterativeClosestPoint, "isoValue"_a=0.0, "iterations"_a=20)
   .def("topologyPreservingSmooth",
        &Image::topologyPreservingSmooth,
        "creates a feature image (by applying gradient then sigmoid filters), then passes it to the TPLevelSet filter [curvature flow filter is often applied to the image before this filter]",
@@ -508,8 +515,8 @@ PYBIND11_MODULE(shapeworks, m)
 
   // MeshUtils
   py::class_<MeshUtils>(m, "MeshUtils")
-  .def_static("createIcpTransform",  
-                                &MeshUtils::createIcpTransform, "source"_a, "target"_a, "type"_a, "iterations"_a=20)
+  .def_static("createICPTransform",
+                                &MeshUtils::createICPTransform, "source"_a, "target"_a, "type"_a, "iterations"_a=20)
   ;
 
   // ParticleSystem

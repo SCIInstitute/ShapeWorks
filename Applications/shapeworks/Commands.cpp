@@ -340,11 +340,11 @@ void PadImage::buildParser()
   const std::string desc = "pads an image with specified value by specified number of voxels in the x-, y-, and/or z- directions; origin remains at the same location (note: negative padding to shrink an image is permitted)";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--padding").action("store").type("int").set_default(0).help("Pad this many voxels in ALL directions (used if set) [default: 0].");
-  parser.add_option("--padx","-x").action("store").type("int").set_default(0).help("Pad this many voxels in the x-direction [default: 0].");
-  parser.add_option("--pady","-y").action("store").type("int").set_default(0).help("Pad this many voxels in the y-direction [default: 0].");
-  parser.add_option("--padz","-z").action("store").type("int").set_default(0).help("Pad this many voxels in the z-direction [default: 0].");
-  parser.add_option("--value").action("store").type("double").set_default(0.0).help("Value used to fill padded voxels [default: 0.0].");
+  parser.add_option("--padding").action("store").type("int").set_default(0).help("Pad this many voxels in ALL directions (used if set) [default: %default].");
+  parser.add_option("--padx","-x").action("store").type("int").set_default(0).help("Pad this many voxels in the x-direction [default: %default].");
+  parser.add_option("--pady","-y").action("store").type("int").set_default(0).help("Pad this many voxels in the y-direction [default: %default].");
+  parser.add_option("--padz","-z").action("store").type("int").set_default(0).help("Pad this many voxels in the z-direction [default: %default].");
+  parser.add_option("--value").action("store").type("double").set_default(0.0).help("Value used to fill padded voxels [default: %default].");
 
   Command::buildParser();
 }
@@ -399,7 +399,7 @@ bool TranslateImage::execute(const optparse::Values &options, SharedCommandData 
 
   if (centerofmass)
   {
-    sharedData.image.applyTransform(sharedData.image.createCenterOfMassTransform());
+    sharedData.image.applyTransform(sharedData.image.createTransform(Image::TransformType::CenterOfMass));
     return true;
   }
   else
@@ -513,7 +513,7 @@ void ExtractLabel::buildParser()
   const std::string desc = "extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--label").action("store").type("double").set_default(1.0).help("Label value to be extracted [default: 1.0].");
+  parser.add_option("--label").action("store").type("double").set_default(1.0).help("Label value to be extracted [default: %default].");
 
   Command::buildParser();
 }
@@ -541,7 +541,7 @@ void CloseHoles::buildParser()
   const std::string desc = "closes holes in a volume defined by values larger than specified value";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--value").action("store").type("double").set_default(0.0).help("Largest value not in volume [default: 0.0].");
+  parser.add_option("--value").action("store").type("double").set_default(0.0).help("Largest value not in volume [default: %default].");
 
   Command::buildParser();
 }
@@ -571,7 +571,7 @@ void Binarize::buildParser()
 
   parser.add_option("--min").action("store").type("double").set_default(std::numeric_limits<double>::epsilon()).help("Lower threshold level [default: 0.0].");
   parser.add_option("--max").action("store").type("double").set_default(std::numeric_limits<double>::max()).help("Upper threshold level [default: inf ].");
-  parser.add_option("--value").action("store").type("double").set_default(1.0).help("Value to set region [default: 1.0].");
+  parser.add_option("--value").action("store").type("double").set_default(1.0).help("Value to set region [default: %default].");
 
   Command::buildParser();
 }
@@ -601,7 +601,7 @@ void ComputeDT::buildParser()
   const std::string desc = "computes signed distance transform volume from an image at the specified isovalue";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--isovalue").action("store").type("double").set_default(0.0).help("Level set value that defines the interface between foreground and background [default: 0.0].");
+  parser.add_option("--isovalue").action("store").type("double").set_default(0.0).help("Level set value that defines the interface between foreground and background [default: %default].");
 
   Command::buildParser();
 }
@@ -630,7 +630,7 @@ void CurvatureFilter::buildParser()
   const std::string desc = "denoises an image using curvature driven flow using curvature flow image filter";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--iterations").action("store").type("int").set_default(10).help("Number of iterations [default: 10].");
+  parser.add_option("--iterations").action("store").type("int").set_default(10).help("Number of iterations [default: %default].");
 
   Command::buildParser();
 }
@@ -690,8 +690,8 @@ void SigmoidFilter::buildParser()
   const std::string desc = "computes sigmoid function pixel-wise using sigmoid image filter";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--alpha").action("store").type("double").set_default(10.0).help("Value of alpha [default: 10.0].");
-  parser.add_option("--beta").action("store").type("double").set_default(10.0).help("Value of beta [default: 10.0].");
+  parser.add_option("--alpha").action("store").type("double").set_default(10.0).help("Value of alpha [default: %default].");
+  parser.add_option("--beta").action("store").type("double").set_default(10.0).help("Value of beta [default: %default].");
 
   Command::buildParser();
 }
@@ -721,7 +721,7 @@ void TPLevelSetFilter::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--featureimage").action("store").type("string").set_default("").help("Path of feature image for filter");
-  parser.add_option("--scaling").action("store").type("double").set_default(20.0).help("Value of scale [default: 20.0].");
+  parser.add_option("--scaling").action("store").type("double").set_default(20.0).help("Value of scale [default: %default].");
 
   Command::buildParser();
 }
@@ -760,8 +760,8 @@ void IntensityFilter::buildParser()
   const std::string desc = "applies intensity windowing image filter";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--min").action("store").type("double").set_default(0.0).help("Minimum value of window [default:0.0].");
-  parser.add_option("--max").action("store").type("double").set_default(0.0).help("Maximum value of window [default:0.0].");
+  parser.add_option("--min").action("store").type("double").set_default(0.0).help("Minimum value of window [default: %default].");
+  parser.add_option("--max").action("store").type("double").set_default(0.0).help("Maximum value of window [default: %default].");
 
   Command::buildParser();
 }
@@ -790,9 +790,9 @@ void TopologyPreservingFilter::buildParser()
   const std::string desc = "helper command that applies gradient and sigmoid filters to create a feature image for the TPLevelSet filter; note that a curvature flow filter is sometimes applied to the image before this";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--scaling").action("store").type("double").set_default(20.0).help("Scale for TPLevelSet level set filter [default: 20.0].");
-  parser.add_option("--alpha").action("store").type("double").set_default(10.0).help("Value of alpha for sigmoid fitler [default: 10.0].");
-  parser.add_option("--beta").action("store").type("double").set_default(10.0).help("Value of beta for sigmoid fitler [default: 10.0.0].");
+  parser.add_option("--scaling").action("store").type("double").set_default(20.0).help("Scale for TPLevelSet level set filter [default: %default].");
+  parser.add_option("--alpha").action("store").type("double").set_default(10.0).help("Value of alpha for sigmoid fitler [default: %default].");
+  parser.add_option("--beta").action("store").type("double").set_default(10.0).help("Value of beta for sigmoid fitler [default: %default].");
 
   Command::buildParser();
 }
@@ -822,7 +822,7 @@ void Blur::buildParser()
   const std::string desc = "applies gaussian blur";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--sigma").action("store").type("double").set_default(0.0).help("Value of sigma [default: 0.0].");
+  parser.add_option("--sigma").action("store").type("double").set_default(0.0).help("Value of sigma [default: %default].");
 
   Command::buildParser();
 }
@@ -848,13 +848,12 @@ bool Blur::execute(const optparse::Values &options, SharedCommandData &sharedDat
 void ICPRigid::buildParser()
 {
   const std::string prog = "icp-image";
-  const std::string desc = "transform current image using iterative closest point (ICP) 3D rigid registration computed from source to target distance maps";
+  const std::string desc = "transform current image using iterative closest point (ICP) 3D rigid registration computed from current distance map to target distance map";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--source").action("store").type("string").set_default("").help("Distance map of source image.");
   parser.add_option("--target").action("store").type("string").set_default("").help("Distance map of target image.");
-  parser.add_option("--isovalue").action("store").type("double").set_default(0.0).help("Isovalue of distance maps used to create ICPtransform [default: 0.0].");
-  parser.add_option("--iterations").action("store").type("unsigned").set_default(20).help("Number of iterations run ICP registration [default: 20].");
+  parser.add_option("--isovalue").action("store").type("double").set_default(0.0).help("Isovalue of distance maps used to create ICPtransform [default: %default].");
+  parser.add_option("--iterations").action("store").type("unsigned").set_default(20).help("Number of iterations run ICP registration [default: %default].");
 
   Command::buildParser();
 }
@@ -867,27 +866,20 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
-  std::string sourceDT = static_cast<std::string>(options.get("source"));
   std::string targetDT = static_cast<std::string>(options.get("target"));
   double isovalue = static_cast<double>(options.get("isovalue"));
   unsigned iterations = static_cast<unsigned>(options.get("iterations"));
 
-  if (sourceDT == "")
-  {
-    std::cerr << "Must specify a source distance map\n";
-    return false;
-  }
-  else if (targetDT == "")
+  if (targetDT == "")
   {
     std::cerr << "Must specify a target distance map\n";
     return false;
   }
   else
   {
-    Image source_dt(sourceDT);
-    Image target_dt(targetDT);
-    TransformPtr transform(source_dt.createRigidRegistrationTransform(target_dt, isovalue, iterations));
-    sharedData.image.applyTransform(transform, target_dt.origin(), target_dt.dims(), target_dt.spacing(), target_dt.coordsys());
+    Image target(targetDT);
+    TransformPtr transform(sharedData.image.createTransform(target, Image::TransformType::IterativeClosestPoint, isovalue, iterations));
+    sharedData.image.applyTransform(transform, target.origin(), target.dims(), target.spacing(), target.coordsys());
     return true;
   }
 }
@@ -902,8 +894,8 @@ void BoundingBoxImage::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to images (must be followed by `--`), ex: \"bounding-box-image --names *.nrrd -- --isovalue 1.5\")");
-  parser.add_option("--padding").action("store").type("int").set_default(0).help("Number of extra voxels in each direction to pad the largest bounding box [default: 0].");
-  parser.add_option("--isovalue").action("store").type("double").set_default(1.0).help("Threshold value [default: 1.0].");
+  parser.add_option("--padding").action("store").type("int").set_default(0).help("Number of extra voxels in each direction to pad the largest bounding box [default: %default].");
+  parser.add_option("--isovalue").action("store").type("double").set_default(1.0).help("Threshold value [default: %default].");
 
   Command::buildParser();
 }
@@ -978,16 +970,16 @@ void ClipImage::buildParser()
   const std::string desc = "clips volume with the specified cutting planes defined by three 3D points";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--x1").action("store").type("double").set_default(0.0).help("Value of x1 for cutting plane [default: 0.0].");
-  parser.add_option("--y1").action("store").type("double").set_default(0.0).help("Value of y1 for cutting plane [default: 0.0].");
-  parser.add_option("--z1").action("store").type("double").set_default(0.0).help("Value of z1 for cutting plane [default: 0.0].");
-  parser.add_option("--x2").action("store").type("double").set_default(0.0).help("Value of x2 for cutting plane [default: 0.0].");
-  parser.add_option("--y2").action("store").type("double").set_default(0.0).help("Value of y2 for cutting plane [default: 0.0].");
-  parser.add_option("--z2").action("store").type("double").set_default(0.0).help("Value of z2 for cutting plane [default: 0.0].");
-  parser.add_option("--x3").action("store").type("double").set_default(0.0).help("Value of x3 for cutting plane [default: 0.0].");
-  parser.add_option("--y3").action("store").type("double").set_default(0.0).help("Value of y3 for cutting plane [default: 0.0].");
-  parser.add_option("--z3").action("store").type("double").set_default(0.0).help("Value of z3 for cutting plane [default: 0.0].");
-  parser.add_option("--value").action("store").type("double").set_default(0.0).help("Value of clipped pixels [default: 0.0].");
+  parser.add_option("--x1").action("store").type("double").set_default(0.0).help("Value of x1 for cutting plane [default: %default].");
+  parser.add_option("--y1").action("store").type("double").set_default(0.0).help("Value of y1 for cutting plane [default: %default].");
+  parser.add_option("--z1").action("store").type("double").set_default(0.0).help("Value of z1 for cutting plane [default: %default].");
+  parser.add_option("--x2").action("store").type("double").set_default(0.0).help("Value of x2 for cutting plane [default: %default].");
+  parser.add_option("--y2").action("store").type("double").set_default(0.0).help("Value of y2 for cutting plane [default: %default].");
+  parser.add_option("--z2").action("store").type("double").set_default(0.0).help("Value of z2 for cutting plane [default: %default].");
+  parser.add_option("--x3").action("store").type("double").set_default(0.0).help("Value of x3 for cutting plane [default: %default].");
+  parser.add_option("--y3").action("store").type("double").set_default(0.0).help("Value of y3 for cutting plane [default: %default].");
+  parser.add_option("--z3").action("store").type("double").set_default(0.0).help("Value of z3 for cutting plane [default: %default].");
+  parser.add_option("--value").action("store").type("double").set_default(0.0).help("Value of clipped pixels [default: %default].");
 
   Command::buildParser();
 }
@@ -1054,9 +1046,9 @@ void SetOrigin::buildParser()
   const std::string desc = "set origin";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--x", "-x").action("store").type("double").set_default(0).help("X value of origin [default: 0.0].");
-  parser.add_option("--y", "-y").action("store").type("double").set_default(0).help("Y value of origin [default: 0.0].");
-  parser.add_option("--z", "-z").action("store").type("double").set_default(0).help("Z value of origin [default: 0.0].");
+  parser.add_option("--x", "-x").action("store").type("double").set_default(0).help("X value of origin [default: %default].");
+  parser.add_option("--y", "-y").action("store").type("double").set_default(0).help("Y value of origin [default: %default].");
+  parser.add_option("--z", "-z").action("store").type("double").set_default(0).help("Z value of origin [default: %default].");
 
   Command::buildParser();
 }
@@ -1086,9 +1078,9 @@ void SetSpacing::buildParser()
   const std::string desc = "set spacing";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--x", "-x").action("store").type("double").set_default(1.0).help("x value of spacing [default: 1.0].");
-  parser.add_option("--y", "-y").action("store").type("double").set_default(1.0).help("y value of spacing [default: 1.0].");
-  parser.add_option("--z", "-z").action("store").type("double").set_default(1.0).help("z value of spacing [default: 1.0].");
+  parser.add_option("--x", "-x").action("store").type("double").set_default(1.0).help("x value of spacing [default: %default].");
+  parser.add_option("--y", "-y").action("store").type("double").set_default(1.0).help("y value of spacing [default: %default].");
+  parser.add_option("--z", "-z").action("store").type("double").set_default(1.0).help("z value of spacing [default: %default].");
 
   Command::buildParser();
 }
@@ -1120,7 +1112,7 @@ void WarpImage::buildParser()
 
   parser.add_option("--source").action("store").type("string").set_default("").help("Path to source landmarks.");
   parser.add_option("--target").action("store").type("string").set_default("").help("Path to target landmarks.");
-  parser.add_option("--stride").action("store").type("int").set_default(1).help("Every _stride_ points will be used for warping [default: 1].");
+  parser.add_option("--stride").action("store").type("int").set_default(1).help("Every _stride_ points will be used for warping [default: %default].");
   Command::buildParser();
 }
 
@@ -1160,8 +1152,8 @@ void CompareImage::buildParser()
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Compare this image with another.");
   parser.add_option("--verifyall").action("store").type("bool").set_default(true).help("Also verify origin, spacing, and direction matches [default: true].");
-  parser.add_option("--tolerance").action("store").type("double").set_default(0.0).help("Allowed percentage of pixel differences [default: 0.0].");
-  parser.add_option("--precision").action("store").type("double").set_default(1e-12).help("Allowed difference between two pixels for them to still be considered equal [default: 0.0].");
+  parser.add_option("--tolerance").action("store").type("double").set_default(0.0).help("Allowed percentage of pixel differences [default: %default].");
+  parser.add_option("--precision").action("store").type("double").set_default(1e-12).help("Allowed difference between two pixels for them to still be considered equal [default: 1e-12].");
 
   Command::buildParser();
 }
@@ -1235,7 +1227,7 @@ void AddImage::buildParser()
   const std::string desc = "add a value to each pixel in the given image and/or add another image in a pixelwise manner";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--value", "-x").action("store").type("double").set_default("0.0").help("Value to add to each pixel [default: 0.0].");
+  parser.add_option("--value", "-x").action("store").type("double").set_default("0.0").help("Value to add to each pixel [default: %default].");
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of image to add pixelwise.");
 
   Command::buildParser();
@@ -1275,7 +1267,7 @@ void SubtractImage::buildParser()
   const std::string desc = "subtract a value from each pixel in this image and/or subtract another image in a pixelwise manner";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--value", "-x").action("store").type("double").set_default("0.0").help("Value to subtract from each pixel [default: 0.0].");
+  parser.add_option("--value", "-x").action("store").type("double").set_default("0.0").help("Value to subtract from each pixel [default: %default].");
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of image to subtract pixelwise.");
 
   Command::buildParser();
@@ -1315,7 +1307,7 @@ void MultiplyImage::buildParser()
   const std::string desc = "multiply an image by a constant";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--value", "-x").action("store").type("double").set_default("1.0").help("Value with which to multiply [default: 1.0]");
+  parser.add_option("--value", "-x").action("store").type("double").set_default("1.0").help("Value with which to multiply [default: %default]");
 
   Command::buildParser();
 }
@@ -1343,7 +1335,7 @@ void DivideImage::buildParser()
   const std::string desc = "divide an image by a constant";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--value", "-x").action("store").type("double").set_default("0.0").help("Value with which to divide [default: 1.0].");
+  parser.add_option("--value", "-x").action("store").type("double").set_default("0.0").help("Value with which to divide [default: %default].");
 
   Command::buildParser();
 }
@@ -1371,7 +1363,7 @@ void ImageToMesh::buildParser()
   const std::string desc = "converts the current image to a mesh";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--isovalue", "-v").action("store").type("double").set_default(1.0).help("Isovalue to determine mesh boundary [default: 1.0].");
+  parser.add_option("--isovalue", "-v").action("store").type("double").set_default(1.0).help("Isovalue to determine mesh boundary [default: %default].");
 
   Command::buildParser();
 }
@@ -1399,11 +1391,11 @@ void DTToMesh::buildParser()
   const std::string desc = "converts current distance transform to mesh";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--levelset").action("store").type("double").set_default(0.0).help("Value of levelset [default: 0.0].");
-  parser.add_option("--reduction").action("store").type("double").set_default(0.01).help("Percentage to decimate [default: 0.01].");
-  parser.add_option("--angle").action("store").type("int").set_default(30).help("Value of feature angle in degrees [default: 30].");
-  parser.add_option("--leveliterations").action("store").type("int").set_default(1).help("Number of iterations to smooth the level set [default: 1].");
-  parser.add_option("--meshiterations").action("store").type("int").set_default(1).help("Number of iterations to smooth the initial mesh [default: 1].");
+  parser.add_option("--levelset").action("store").type("double").set_default(0.0).help("Value of levelset [default: %default].");
+  parser.add_option("--reduction").action("store").type("double").set_default(0.01).help("Percentage to decimate [default: %default].");
+  parser.add_option("--angle").action("store").type("int").set_default(30).help("Value of feature angle in degrees [default: %default].");
+  parser.add_option("--leveliterations").action("store").type("int").set_default(1).help("Number of iterations to smooth the level set [default: %default].");
+  parser.add_option("--meshiterations").action("store").type("int").set_default(1).help("Number of iterations to smooth the initial mesh [default: %default].");
   parser.add_option("--preservetopology").action("store_true").set_default("false").help("Whether to preserve topology [default: true].");
 
   Command::buildParser();
@@ -1464,7 +1456,7 @@ void Compactness::buildParser()
   const std::string desc = "Compute compactness of a loaded particle system";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--nmodes").action("store").type("int").set_default("1").help("Number of modes to use [default: 1].");
+  parser.add_option("--nmodes").action("store").type("int").set_default("1").help("Number of modes to use [default: %default].");
   parser.add_option("--saveto").action("store").type("string").set_default("").help("Save the scree plots for all modes to a file.");
 
   Command::buildParser();
@@ -1496,7 +1488,7 @@ void Generalization::buildParser()
   const std::string desc = "compute generalization of a loaded particle system";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--nmodes").action("store").type("int").set_default("1").help("Number of modes to use [default: 1].");
+  parser.add_option("--nmodes").action("store").type("int").set_default("1").help("Number of modes to use [default: %default].");
   parser.add_option("--saveto").action("store").type("string").set_default("").help("Save the reconstructions sorted by generalization along with the mapping to the original shape.");
 
   Command::buildParser();
@@ -1528,7 +1520,7 @@ void Specificity::buildParser()
   const std::string desc = "compute specificity of a loaded particle system";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--nmodes").action("store").type("int").set_default("1").help("Number of modes to use [default: 1].");
+  parser.add_option("--nmodes").action("store").type("int").set_default("1").help("Number of modes to use [default: %default].");
   parser.add_option("--saveto").action("store").type("string").set_default("").help("Save the reconstructions sorted by specificity along with the mapping to the original shape.");
 
   Command::buildParser();
@@ -1626,11 +1618,11 @@ void MeshInfo::buildParser()
   const std::string desc = "prints requested mesh center, center of mass, number of vertices, number of faces and bounding box [default: prints everything]";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--vertices").action("store_true").set_default(false).help("Whether to display number of vertices.");
-  parser.add_option("--faces").action("store_true").set_default(false).help("Whether to display number of faces.");
-  parser.add_option("--center").action("store_true").set_default(false).help("Whether to display center.");
-  parser.add_option("--centerofmass").action("store_true").set_default(false).help("Whether to display center of mass.");
-  parser.add_option("--boundingbox").action("store_true").set_default(false).help("Whether to display bounding box.");
+  parser.add_option("--vertices").action("store_true").set_default(false).help("Whether to display number of vertices [default: true].");
+  parser.add_option("--faces").action("store_true").set_default(false).help("Whether to display number of faces [default: true].");
+  parser.add_option("--center").action("store_true").set_default(false).help("Whether to display center [default: true].");
+  parser.add_option("--centerofmass").action("store_true").set_default(false).help("Whether to display center of mass [default: true].");
+  parser.add_option("--boundingbox").action("store_true").set_default(false).help("Whether to display bounding box [default: true].");
 
   Command::buildParser();
 }
@@ -1677,9 +1669,9 @@ void Coverage::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Path to other mesh with which to create coverage.");
-  parser.add_option("--allow_back_intersections").action("store_true").set_default(false).help("Allow back-intersections in coverage calculation.");
-  parser.add_option("--angle_threshold").action("store").type("double").set_default(0.0).help("This checks the cosine between the ray’s direction vector (e1) and the normal at the intersection point (e2).");
-  parser.add_option("--back_search_radius").action("store").type("double").set_default(0.0).help("Max distance of a back-intersection");
+  parser.add_option("--allow_back_intersections").action("store_true").set_default(false).help("Allow back-intersections in coverage calculation [default: true].");
+  parser.add_option("--angle_threshold").action("store").type("double").set_default(0.0).help("This checks the cosine between the ray’s direction vector (e1) and the normal at the intersection point (e2) [default: %default].");
+  parser.add_option("--back_search_radius").action("store").type("double").set_default(0.0).help("Max distance of a back-intersection [default: %default].");
 
   Command::buildParser();
 }
@@ -1717,8 +1709,8 @@ void Smooth::buildParser()
   const std::string desc = "applies laplacian smoothing";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--iterations").action("store").type("int").set_default(0).help("Number of iterations [default: 0].");
-  parser.add_option("--relaxation").action("store").type("double").set_default(0.0).help("Amount of displacement for a vertex to move in each iteration [default: 0.0].");
+  parser.add_option("--iterations").action("store").type("int").set_default(0).help("Number of iterations [default: %default].");
+  parser.add_option("--relaxation").action("store").type("double").set_default(0.0).help("Amount of displacement for a vertex to move in each iteration [default: %default].");
 
   Command::buildParser();
 }
@@ -1744,12 +1736,12 @@ bool Smooth::execute(const optparse::Values &options, SharedCommandData &sharedD
 void Decimate::buildParser()
 {
   const std::string prog = "decimate";
-  const std::string desc = "brief description of command";
+  const std::string desc = "brief description of command"; // TODO: add description
   parser.prog(prog).description(desc);
 
-  parser.add_option("--reduction").action("store").type("double").set_default(0.0).help("Description of optionName.");
-  parser.add_option("--angle").action("store").type("double").set_default(0.0).help("Angle in degrees [default: 0.0].");
-  parser.add_option("--preservetopology").action("store").type("bool").set_default(false).help("Whether to preserve topology [default: False].");
+  parser.add_option("--reduction").action("store").type("double").set_default(0.0).help("Description of optionName [default: %default]."); // TODO: add description
+  parser.add_option("--angle").action("store").type("double").set_default(0.0).help("Angle in degrees [default: %default].");
+  parser.add_option("--preservetopology").action("store").type("bool").set_default(false).help("Whether to preserve topology [default: false].");
 
   Command::buildParser();
 }
@@ -1804,9 +1796,9 @@ void ReflectMesh::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--axis").action("store").type("string").set_default("").help("Axis along which to reflect (X, Y, or Z).");
-  parser.add_option("--originx", "-x").action("store").type("double").set_default(0.0).help("Origin about which reflection occurs in x-direction [default: 0.0].");
-  parser.add_option("--originy", "-y").action("store").type("double").set_default(0.0).help("Origin about which reflection occurs in y-direction [default: 0.0].");
-  parser.add_option("--originz", "-z").action("store").type("double").set_default(0.0).help("Origin about which reflection occurs in z-direction [default: 0.0].");
+  parser.add_option("--originx", "-x").action("store").type("double").set_default(0.0).help("Origin about which reflection occurs in x-direction [default: %default].");
+  parser.add_option("--originy", "-y").action("store").type("double").set_default(0.0).help("Origin about which reflection occurs in y-direction [default: %default].");
+  parser.add_option("--originz", "-z").action("store").type("double").set_default(0.0).help("Origin about which reflection occurs in z-direction [default: %default].");
 
   Command::buildParser();
 }
@@ -1844,13 +1836,13 @@ bool ReflectMesh::execute(const optparse::Values &options, SharedCommandData &sh
 void ICP::buildParser()
 {
   const std::string prog = "icp-mesh";
-  const std::string desc = "transform current mesh using iterative closest point (ICP) 3D rigid registration computed from source to target meshes";
+  const std::string desc = "transform current mesh using iterative closest point (ICP) 3D rigid registration computed from current mesh to target mesh";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--source").action("store").type("string").set_default("").help("Filename of source mesh.");
   parser.add_option("--target").action("store").type("string").set_default("").help("Filename of target mesh.");
-  parser.add_option("--type").action("store").type("string").set_default("rigid").help("Type of registration to be used (rigid, similarity or affine) [default: rigid].");
-  parser.add_option("--iterations").action("store").type("unsigned").set_default(20).help("Number of iterations run ICP registration [default: 20].");
+  std::list<std::string> align{"rigid", "similarity", "affine"};
+  parser.add_option("--type").action("store").type("choice").choices(align.begin(), align.end()).set_default("similarity").help("Alignment type to use [default: %default].");
+  parser.add_option("--iterations").action("store").type("unsigned").set_default(10).help("Number of iterations run ICP registration [default: %default].");
 
   Command::buildParser();
 }
@@ -1863,26 +1855,26 @@ bool ICP::execute(const optparse::Values &options, SharedCommandData &sharedData
     return false;
   }
 
-  std::string sourceMesh = static_cast<std::string>(options.get("source"));
   std::string targetMesh = static_cast<std::string>(options.get("target"));
   unsigned iterations = static_cast<unsigned>(options.get("iterations"));
-  std::string type = static_cast<std::string>(options.get("type"));
+  std::string alignopt(options.get("align"));
+  Mesh::AlignmentType align;
+  if (alignopt == "rigid")
+    align = Mesh::Rigid;
+  else if (alignopt == "similarity")
+    align = Mesh::Similarity;
+  else
+    align = Mesh::Affine;
 
-  if (sourceMesh == "")
-  {
-    std::cerr << "Must specify a source mesh\n";
-    return false;
-  }
-  else if (targetMesh == "")
+  if (targetMesh == "")
   {
     std::cerr << "Must specify a target mesh\n";
     return false;
   }
   else
   {
-    std::unique_ptr<Mesh> source = std::make_unique<Mesh>(sourceMesh);
-    std::unique_ptr<Mesh> target = std::make_unique<Mesh>(targetMesh);
-    vtkTransform transform(MeshUtils::createRegistrationTransform(source, target, type, iterations));
+    Mesh target(targetMesh);
+    vtkTransform transform(sharedData.mesh->createTransform(target, Mesh::IterativeClosestPoint, align, iterations));
     sharedData.mesh->applyTransform(transform);
     return sharedData.validMesh();
   }
@@ -1957,12 +1949,12 @@ void ClipMesh::buildParser()
   const std::string desc = "clips mesh";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--x1").action("store").type("double").set_default(0.0).help("Value of normal[0] for cutting plane [default: 0.0].");
-  parser.add_option("--y1").action("store").type("double").set_default(0.0).help("Value of normal[1] for cutting plane [default: 0.0].");
-  parser.add_option("--z1").action("store").type("double").set_default(0.0).help("Value of normal[2] for cutting plane [default: 0.0].");
-  parser.add_option("--x2").action("store").type("double").set_default(0.0).help("Value of origin[0] for cutting plane [default: 0.0].");
-  parser.add_option("--y2").action("store").type("double").set_default(0.0).help("Value of origin[1] for cutting plane [default: 0.0].");
-  parser.add_option("--z1").action("store").type("double").set_default(0.0).help("Value of origin[2] for cutting plane [default: 0.0].");
+  parser.add_option("--x1").action("store").type("double").set_default(0.0).help("Value of normal[0] for cutting plane [default: %default].");
+  parser.add_option("--y1").action("store").type("double").set_default(0.0).help("Value of normal[1] for cutting plane [default: %default].");
+  parser.add_option("--z1").action("store").type("double").set_default(0.0).help("Value of normal[2] for cutting plane [default: %default].");
+  parser.add_option("--x2").action("store").type("double").set_default(0.0).help("Value of origin[0] for cutting plane [default: %default].");
+  parser.add_option("--y2").action("store").type("double").set_default(0.0).help("Value of origin[1] for cutting plane [default: %default].");
+  parser.add_option("--z1").action("store").type("double").set_default(0.0).help("Value of origin[2] for cutting plane [default: %default].");
 
   Command::buildParser();
 }
@@ -2138,10 +2130,10 @@ void RasterizationOrigin::buildParser()
 
   parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to meshes (must be followed by `--`), ex: \"bounding-box-mesh --names *.vtk -- --center 1\")");
   parser.add_option("--center").action("store").type("bool").set_default(false).help("Flag for centering [default: false].");
-  parser.add_option("--padding").action("store").type("int").set_default(0.0).help("Padding value [default: 0.0].");
-  parser.add_option("--x").action("store").type("double").set_default(1.0).help("X value of spacing [default: 1.0].");
-  parser.add_option("--y").action("store").type("double").set_default(1.0).help("Y value of spacing [default: 1.0].");
-  parser.add_option("--z").action("store").type("double").set_default(1.0).help("Z value of spacing [default: 1.0].");
+  parser.add_option("--padding").action("store").type("int").set_default(0.0).help("Padding value [default: %default].");
+  parser.add_option("--x").action("store").type("double").set_default(1.0).help("X value of spacing [default: %default].");
+  parser.add_option("--y").action("store").type("double").set_default(1.0).help("Y value of spacing [default: %default].");
+  parser.add_option("--z").action("store").type("double").set_default(1.0).help("Z value of spacing [default: %default].");
 
   Command::buildParser();
 }
@@ -2174,10 +2166,10 @@ void RasterizationSize::buildParser()
 
   parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to meshes (must be followed by `--`), ex: \"bounding-box-mesh --names *.vtk -- --center 1\")");
   parser.add_option("--center").action("store").type("bool").set_default(false).help("Flag for centering [default: false].");
-  parser.add_option("--padding").action("store").type("int").set_default(0.0).help("Padding value [default: 0.0].");
-  parser.add_option("--x").action("store").type("double").set_default(1.0).help("X value of spacing [default: 1.0].");
-  parser.add_option("--y").action("store").type("double").set_default(1.0).help("Y value of spacing [default: 1.0].");
-  parser.add_option("--z").action("store").type("double").set_default(1.0).help("Z value of spacing [default: 1.0].");
+  parser.add_option("--padding").action("store").type("int").set_default(0.0).help("Padding value [default: %default].");
+  parser.add_option("--x").action("store").type("double").set_default(1.0).help("X value of spacing [default: %default].");
+  parser.add_option("--y").action("store").type("double").set_default(1.0).help("Y value of spacing [default: %default].");
+  parser.add_option("--z").action("store").type("double").set_default(1.0).help("Z value of spacing [default: %default].");
 
   Command::buildParser();
 }
@@ -2211,10 +2203,10 @@ void MeshFix::buildParser()
   parser.add_option("--winding").action("store").type("bool").set_default(true).help("Fix element window [default: true]");
   parser.add_option("--smoothBefore").action("store").type("bool").set_default(true).help("Perform laplacian smoothing before decimation [default: true].");
   parser.add_option("--smoothAfter").action("store").type("bool").set_default(true).help("Perform laplacian smoothing after decimation [default: true].");
-  parser.add_option("--lambda").action("store").type("double").set_default(0.5).help("Laplacian smoothing lambda [default: 0.5].");
-  parser.add_option("--iterations").action("store").type("int").set_default(1).help("Number of laplacian smoothing iterations [default: 1].");
-  parser.add_option("--decimate").action("store").type("bool").set_default(1).help("Perform mesh decimation [default: true].");
-  parser.add_option("--percentage").action("store").type("double").set_default(0.5).help("Percentage of target number of clusters/vertices [default: 0.5].");
+  parser.add_option("--lambda").action("store").type("double").set_default(0.5).help("Laplacian smoothing lambda [default: %default].");
+  parser.add_option("--iterations").action("store").type("int").set_default(1).help("Number of laplacian smoothing iterations [default: %default].");
+  parser.add_option("--decimate").action("store").type("bool").set_default(true).help("Perform mesh decimation [default: true].");
+  parser.add_option("--percentage").action("store").type("double").set_default(0.5).help("Percentage of target number of clusters/vertices [default: %default].");
 
   Command::buildParser();
 }

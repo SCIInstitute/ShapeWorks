@@ -61,9 +61,7 @@ TEST(ImageTests, antialiasTest)
 TEST(ImageTests, isoresampleBinaryIsotropicTest) 
 {
   Image image(std::string(TEST_DATA_DIR) + "/binary-isotropic-input.nrrd");
-  image.antialias();
-  image.resample();
-  image.binarize().recenter();
+  image.antialias().resample().binarize().recenter();
   Image ground_truth(std::string(TEST_DATA_DIR) + "/binary-isotropic-isoresampled.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -72,9 +70,7 @@ TEST(ImageTests, isoresampleBinaryIsotropicTest)
 TEST(ImageTests, isoresampleBinaryAnisotropicTest) 
 {
   Image image(std::string(TEST_DATA_DIR) + "/binary-anisotropic-input.nrrd");
-  image.antialias();
-  image.resample();
-  image.binarize().recenter();
+  image.antialias().resample().binarize().recenter();
   Image ground_truth(std::string(TEST_DATA_DIR) + "/binary-anisotropic-isoresampled.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -83,8 +79,7 @@ TEST(ImageTests, isoresampleBinaryAnisotropicTest)
 TEST(ImageTests, isoresampleSmoothIsotropicTest) 
 {
   Image image(std::string(TEST_DATA_DIR) + "/smooth-isotropic-input.nrrd");
-  image.resample();
-  image.recenter();
+  image.resample().recenter();
   Image ground_truth(std::string(TEST_DATA_DIR) + "/smooth-isotropic-isoresampled.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -93,8 +88,7 @@ TEST(ImageTests, isoresampleSmoothIsotropicTest)
 TEST(ImageTests, isoresampleSmoothAnisotropicTest) 
 {
   Image image(std::string(TEST_DATA_DIR) + "/smooth-anisotropic-input.nrrd");
-  image.resample();
-  image.recenter();
+  image.resample().recenter();
   Image ground_truth(std::string(TEST_DATA_DIR) + "/smooth-anisotropic-isoresampled.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -103,8 +97,7 @@ TEST(ImageTests, isoresampleSmoothAnisotropicTest)
 TEST(ImageTests, isoresampleImageAnisotropicTest) 
 {
   Image image(std::string(TEST_DATA_DIR) + "/image-anisotropic-input.nrrd");
-  image.resample(10.0);
-  image.recenter();
+  image.resample(10.0).recenter();
   Image ground_truth(std::string(TEST_DATA_DIR) + "/image-anisotropic-isoresampled.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -176,7 +169,7 @@ TEST(ImageTests, translateTest3)
 TEST(ImageTests, comTest1)
 {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
-  TransformPtr xform = image.createCenterOfMassTransform();
+  TransformPtr xform = image.createTransform(Image::CenterOfMass);
   image.applyTransform(xform);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/centerofmass1.nrrd");
 
@@ -195,7 +188,7 @@ TEST(ImageTests, comTest2)
 TEST(ImageTests, comTest3)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
-  TransformPtr xform = image.createCenterOfMassTransform();
+  TransformPtr xform = image.createTransform(Image::CenterOfMass);
   image.applyTransform(xform, Image::NearestNeighbor);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/centerofmass3.nrrd");
 
@@ -440,7 +433,7 @@ TEST(ImageTests, icpTest)
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
   Image target(std::string(TEST_DATA_DIR) + "/target.nrrd");
   Image source(std::string(TEST_DATA_DIR) + "/source.nrrd");
-  TransformPtr transform(target.createRigidRegistrationTransform(source));
+  TransformPtr transform(target.createTransform(source));
   image.applyTransform(transform, target.origin(), target.dims(), target.spacing(), target.coordsys());
   Image ground_truth(std::string(TEST_DATA_DIR) + "/icp_baseline.nrrd");
 

@@ -223,6 +223,21 @@ Mesh &Mesh::reflect(const Axis &axis, const Vector3 &origin)
   return invertNormal().applyTransform(transform);
 }
 
+vtkTransform Mesh::createTransform(const Mesh &target, Mesh::TransformType type, Mesh::AlignmentType align, unsigned iterations)
+{
+  vtkTransform transform;
+
+  switch (type) {
+    case IterativeClosestPoint:
+      transform = createRegistrationTransform(target, align, iterations);
+      break;
+    default:
+      throw std::invalid_argument("Unknown Mesh::TranformType");
+  }
+
+  return transform;
+}
+
 Mesh &Mesh::applyTransform(const vtkTransform transform)
 {
   vtkSmartPointer<vtkTransformPolyDataFilter> resampler = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
@@ -565,6 +580,12 @@ bool Mesh::operator==(const Mesh& other) const
           comparePointsEqual(other) &&    // even only considering 4 significant digits, still fails for translate tests
           //compareScalarsEqual(other));  // <ctc> prints "no" at some point, unsure where or why
           true);
+}
+
+vtkTransform Mesh::createRegistrationTransform(const Mesh &target, Mesh::AlignmentType align, unsigned iterations)
+{
+  const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createICPTransform(this->mesh, target.getVTKMesh(), align, iterations));
+  return createvtkTransform(mat);
 }
 
 std::ostream& operator<<(std::ostream &os, const Mesh& mesh)

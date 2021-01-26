@@ -517,6 +517,42 @@ Image& Image::rotate(const double angle, const Vector3 &axis)
   return *this;
 }
 
+TransformPtr Image::createTransform(Image::TransformType type)
+{
+  TransformPtr transform;
+
+  switch (type) {
+    case CenterOfMass:
+      transform = createCenterOfMassTransform();
+      break;
+    case IterativeClosestPoint:
+      transform = createRigidRegistrationTransform(*this, 0.0, 20);
+      break;
+    default:
+      throw std::invalid_argument("Unknown Image::TranformType");
+  }
+
+  return transform;
+}
+
+TransformPtr Image::createTransform(const Image &target, Image::TransformType type, float isoValue, unsigned iterations)
+{
+  TransformPtr transform;
+
+  switch (type) {
+    case CenterOfMass:
+      transform = createCenterOfMassTransform();
+      break;
+    case IterativeClosestPoint:
+      transform = createRigidRegistrationTransform(target, isoValue, iterations);
+      break;
+    default:
+      throw std::invalid_argument("Unknown Image::TranformType");
+  }
+
+  return transform;
+}
+
 Image& Image::applyTransform(const TransformPtr transform, Image::InterpolationType interp)
 {
   return applyTransform(transform, origin(), dims(), spacing(), coordsys(), interp);
@@ -826,21 +862,6 @@ Coord Image::physicalToLogical(const Point3 &p) const
   return image->TransformPhysicalPointToIndex(p);
 }
 
-TransformPtr Image::createCenterOfMassTransform()
-{
-  AffineTransformPtr xform(AffineTransform::New());
-  xform->Translate(-(center() - centerOfMass())); // ITK translations go in a counterintuitive direction
-  return xform;
-}
-
-TransformPtr Image::createRigidRegistrationTransform(const Image &target_dt, float isoValue, unsigned iterations)
-{
-  vtkSmartPointer<vtkPolyData> sourceContour = Image::getPolyData(*this, isoValue);
-  vtkSmartPointer<vtkPolyData> targetContour = Image::getPolyData(target_dt, isoValue);
-  const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createIcpTransform(sourceContour, targetContour, "rigid", iterations));
-  return createTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
-}
-
 vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image& image, PixelType isoValue)
 {
   using FilterType = itk::VTKImageExport<ImageType>;
@@ -872,6 +893,21 @@ vtkSmartPointer<vtkPolyData> Image::march(const Image& image, double levelset)
   cube->SetValue(0, levelset);
   cube->Update();
   return cube->GetOutput();
+}
+
+TransformPtr Image::createCenterOfMassTransform()
+{
+  AffineTransformPtr xform(AffineTransform::New());
+  xform->Translate(-(center() - centerOfMass())); // ITK translations go in a counterintuitive direction
+  return xform;
+}
+
+TransformPtr Image::createRigidRegistrationTransform(const Image &target_dt, float isoValue, unsigned iterations)
+{
+  vtkSmartPointer<vtkPolyData> sourceContour = Image::getPolyData(*this, isoValue);
+  vtkSmartPointer<vtkPolyData> targetContour = Image::getPolyData(target_dt, isoValue);
+  const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createICPTransform(sourceContour, targetContour, Mesh::Rigid, iterations));
+  return shapeworks::createTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
 }
 
 std::ostream& operator<<(std::ostream &os, const Image& img)

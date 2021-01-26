@@ -15,6 +15,9 @@ namespace shapeworks {
 class Mesh
 {
 public:
+  enum TransformType { IterativeClosestPoint };
+  enum AlignmentType { Rigid, Similarity, Affine };
+
   using MeshType = vtkSmartPointer<vtkPolyData>;
 
   Mesh(const std::string& pathname) : mesh(read(pathname)) {}
@@ -43,6 +46,8 @@ public:
 
   /// reflect meshes with respect to a specified center and specific axis
   Mesh& reflect(const Axis &axis, const Vector3 &origin = makeVector({ 0.0, 0.0, 0.0 }));
+
+  vtkTransform createTransform(const Mesh &target, TransformType type = IterativeClosestPoint, AlignmentType align = Similarity, unsigned iterations = 10);
 
   /// applies the given transformation to the mesh
   Mesh& applyTransform(const vtkTransform transform);
@@ -136,6 +141,9 @@ private:
 
   /// reads mesh (used only by constructor)
   static MeshType read(const std::string& pathname);
+
+  /// Creates transform from source mesh to target using ICP registration
+  vtkTransform createRegistrationTransform(const Mesh &target, AlignmentType align = Similarity, unsigned iterations = 10);
 
   MeshType mesh;
 };

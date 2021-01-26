@@ -3,22 +3,21 @@
 #include <vtkIterativeClosestPointTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkLandmarkTransform.h>
-#include <vtkTransform.h>
 
 namespace shapeworks {
 
-const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createIcpTransform(const vtkSmartPointer<vtkPolyData> source,
+const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createICPTransform(const vtkSmartPointer<vtkPolyData> source,
                                                                   const vtkSmartPointer<vtkPolyData> target,
-                                                                  const std::string type,
+                                                                  Mesh::AlignmentType align,
                                                                   const unsigned iterations)
 {
   vtkSmartPointer<vtkIterativeClosestPointTransform> icp = vtkSmartPointer<vtkIterativeClosestPointTransform>::New();
   icp->SetSource(source);
   icp->SetTarget(target);
 
-  if (type.compare("rigid") == 0)
+  if (align == Mesh::Rigid)
     icp->GetLandmarkTransform()->SetModeToRigidBody();
-  else if (type.compare("similarity") == 0)
+  else if (align == Mesh::Similarity)
     icp->GetLandmarkTransform()->SetModeToSimilarity();
   else
     icp->GetLandmarkTransform()->SetModeToAffine();
@@ -38,12 +37,6 @@ const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createIcpTransform(const vtkSmart
   // ICPRigid3DMeshRegistration  does not invert the matrix (check results while testing)
   vtkMatrix4x4::Invert(icp->GetMatrix(), m);
   return m;
-}
-
-vtkTransform MeshUtils::createRegistrationTransform(const std::unique_ptr<Mesh> &sourceMesh, const std::unique_ptr<Mesh> &targetMesh, const std::string type, unsigned iterations)
-{
-  const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createIcpTransform(sourceMesh->getVTKMesh(), targetMesh->getVTKMesh(), type, iterations));
-  return createvtkTransform(mat);
 }
 
 vtkSmartPointer<vtkPlane> MeshUtils::createPlane(const Vector3 &n, const Point &o)

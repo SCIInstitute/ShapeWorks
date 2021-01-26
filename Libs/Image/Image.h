@@ -18,6 +18,7 @@ class Image
 {
 public:
   enum InterpolationType { Linear, NearestNeighbor };
+  enum TransformType { CenterOfMass, IterativeClosestPoint };
 
   using PixelType = float;
   using ImageType = itk::Image<PixelType, 3>;
@@ -80,7 +81,7 @@ public:
   Image& resample(const Vector& physicalSpacing, InterpolationType interp = Linear);
   
   /// resamples image using isotropic physical spacing
-  Image& resample(double isoSpacing = 1.0, InterpolationType interp = Image::Linear);
+  Image& resample(double isoSpacing = 1.0, InterpolationType interp = Linear);
 
   /// changes logical image size, computing new physical spacing based on this size (i.e., physical image size remains the same)
   Image& resize(Dims logicalDims, InterpolationType interp = Linear);
@@ -99,6 +100,12 @@ public:
 
   /// helper to simply rotate around center (not origin) using axis (default z-axis) by angle (in radians) 
   Image& rotate(const double angle, const Vector3 &axis);
+
+  /// creates a transform based on transform type
+  TransformPtr createTransform(TransformType type = CenterOfMass);
+
+  /// creates a transform based on transform type
+  TransformPtr createTransform(const Image &target, TransformType type = IterativeClosestPoint, float isoValue = 0.0, unsigned iterations = 20);
 
   /// applies the given transformation to the image by using resampling filter
   Image& applyTransform(const TransformPtr transform, InterpolationType interp = Linear);
@@ -195,12 +202,6 @@ public:
   /// compares this with another image using the region of interest filter
   bool operator==(const Image& other) const { return compare(other); }
 
-  /// generates the Transform necessary to move the contents of this binary image to the center
-  TransformPtr createCenterOfMassTransform();
-
-  /// creates transform to target using ICP registration (isovalue is used to create meshes from dt, which are then passed to ICP)
-  TransformPtr createRigidRegistrationTransform(const Image &target_dt, float isoValue = 0.0, unsigned iterations = 20);
-
   // export functions //
 
   /// writes image, format specified by filename extension
@@ -230,6 +231,12 @@ private:
 
   /// clones the underlying ImageType (ITK) data
   static ImageType::Pointer cloneData(const ImageType::Pointer img);
+
+  /// generates the Transform necessary to move the contents of this binary image to the center
+  TransformPtr createCenterOfMassTransform();
+
+  /// creates transform to target using ICP registration (isovalue is used to create meshes from dt, which are then passed to ICP)
+  TransformPtr createRigidRegistrationTransform(const Image &target, float isoValue = 0.0, unsigned iterations = 20);
 
   ImageType::Pointer image;
 };

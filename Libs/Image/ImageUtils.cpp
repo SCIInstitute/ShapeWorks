@@ -1,13 +1,7 @@
 #include "ImageUtils.h"
-#include "MeshUtils.h"
 
-#include <vtkSmartPointer.h>
-#include <vtkPolyData.h>
-
-#include <itkTranslationTransform.h>
-#include <itkThinPlateSplineKernelTransform.h>
 #include <itkPointSet.h>
-#include <itkImageToVTKImageFilter.h>
+#include <itkThinPlateSplineKernelTransform.h>
 
 namespace shapeworks {
 

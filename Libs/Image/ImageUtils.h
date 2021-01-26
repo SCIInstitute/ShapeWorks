@@ -3,8 +3,6 @@
 #include "Image.h"
 #include "ShapeworksUtils.h"
 
-#include <vtkImageData.h>
-
 namespace shapeworks {
 
 /// Helper functions for image 
