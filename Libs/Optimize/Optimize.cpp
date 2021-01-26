@@ -662,12 +662,14 @@ void Optimize::Initialize()
   double lambda0 = 1e0;
 
   // Set lambdas and Cs
-  m_sampler->GetCurvatureGradientFunction()->SetLambdaVec(n, lambda0);
-  m_sampler->GetCurvatureGradientFunction()->SetCEq(c_eq0);
-  m_sampler->GetCurvatureGradientFunction()->SetCIn(c_in0);
-  m_sampler->GetCurvatureGradientFunction()->SetCEqFactor(c_eq_factor);
-  m_sampler->GetCurvatureGradientFunction()->SetCInFactor(c_in_factor);
-  //m_sampler->GetOptimizer()->GetGradientFunction()->SetLambdaVec(n, 1.);
+  for (int i = 0; i < n; i++) {
+      m_sampler->GetParticleSystem()->GetDomain(i)->GetConstraints()->SetLambdaVec(n, lambda0);
+      m_sampler->GetParticleSystem()->GetDomain(i)->GetConstraints()->SetCEq(c_eq0);
+      m_sampler->GetParticleSystem()->GetDomain(i)->GetConstraints()->SetCIn(c_in0);
+      m_sampler->GetParticleSystem()->GetDomain(i)->GetConstraints()->SetCEqFactor(c_eq_factor);
+      m_sampler->GetParticleSystem()->GetDomain(i)->GetConstraints()->SetCInFactor(c_in_factor);
+      //m_sampler->GetOptimizer()->GetGradientFunction()->SetLambdaVec(n, 1.);
+  }
 
   /*Old vector randomization
   vnl_vector_fixed<double, 3> random;
@@ -715,11 +717,18 @@ void Optimize::Initialize()
     // m_sampler->GetParticleSystem()->SetLambdaVec(lam_vec);
     //m_sampler->GetCurvatureGradientFunction()->SetLambdaVec(n, lambda0);
     //m_sampler->GetOptimizer()->GetGradientFunction()->SetLambdaVec(n, lambda0);
-    m_sampler->GetCurvatureGradientFunction()->CopyDoubleTheLambdas();
-    m_sampler->GetCurvatureGradientFunction()->SetCEq(c_eq0);
-    m_sampler->GetCurvatureGradientFunction()->SetCIn(c_in0);
+      for (int i = 0; i < n; i++) {
+          m_sampler->GetParticleSystem()->GetDomain(i)->GetConstraints()->CopyDoubleTheLambdas();
+          m_sampler->GetParticleSystem()->GetDomain(i)->GetConstraints()->SetCEq(c_eq0);
+          m_sampler->GetParticleSystem()->GetDomain(i)->GetConstraints()->SetCIn(c_in0);
+          //m_sampler->GetOptimizer()->GetGradientFunction()->SetLambdaVec(n, 1.);
+      }
 
     m_sampler->GetParticleSystem()->AdvancedAllParticleSplitting(epsilon);
+
+    std::stringstream stream2;
+    stream2 << "+++" << std::endl;
+    std::cout << stream2.str();
 
     m_sampler->GetParticleSystem()->SynchronizePositions();
 

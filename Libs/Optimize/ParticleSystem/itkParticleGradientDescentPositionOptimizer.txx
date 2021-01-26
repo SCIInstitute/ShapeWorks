@@ -164,8 +164,6 @@ namespace itk
             double newenergy, gradmag;
             while (true) {
 
-              std::cout << "SAGSO steps" << std::endl;
-
               // Step A scale the projected gradient by the current time step
               VectorType gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
 
@@ -227,6 +225,20 @@ namespace itk
 
               // Step G compute the new energy of the particle system
               newenergy = localGradientFunction->Energy(it.GetIndex(), dom, m_ParticleSystem);
+
+              // Step F Compute the Augmented Lagrangian gradient and apply it to point repeatedly.
+              size_t maxi = 10;
+              for(size_t i = 0; i < maxi; i++){
+                vnl_vector_fixed<float, 3> npt; npt[0] = newpoint[0]; npt[1] = newpoint[1]; npt[2] = newpoint[2];
+                vnl_vector_fixed<float, 3> h_grad = m_ParticleSystem->GetDomain(dom)->SampleGradientAtPoint(newpoint);
+                float hx = m_ParticleSystem->GetDomain(dom)->Sample(newpoint);
+                vnl_vector_fixed<double, 3> algrad = m_ParticleSystem->GetDomain(dom)->GetConstraints()->augmented_lagrangian_grad(it.GetIndex(), dom, npt, h_grad, hx);
+                newpoint = domain->UpdateParticlePosition(newpoint, algrad);
+                m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);
+                std::stringstream stream2;
+                stream2 << "---" << dom << " " << it.GetIndex() << " " << hx << std::endl;
+                std::cout << stream2.str();
+              }
 
               if (newenergy < energy) // good move, increase timestep for next time
               {
