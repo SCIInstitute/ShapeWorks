@@ -2,7 +2,6 @@
 #include <vector>
 
 // qt
-//#include <QThread>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -11,6 +10,9 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #include <QProgressDialog>
+
+#include <Libs/Mesh/Mesh.h>
+#include <Libs/Utils/StringUtils.h>
 
 #ifdef _WIN32
 #include <direct.h>
@@ -144,7 +146,7 @@ bool Session::save_project(std::string fname)
     for (int i = 0; i < this->shapes_.size(); i++) {
       original_list.push_back(this->shapes_[i]->get_original_filename_with_path().toStdString());
     }
-    //this->project_->set_original_files(original_list);
+    //this->session_->set_original_files(original_list);
   }
 
   // distance transforms
@@ -285,13 +287,29 @@ bool Session::load_light_project(QString filename)
   std::vector<std::string> import_files, groom_files, local_point_files, global_point_files;
   std::string sparseFile, denseFile, goodPtsFile;
 
-  TiXmlElement* elem = docHandle.FirstChild("distance_transform_files").Element();
+  TiXmlElement* elem = docHandle.FirstChild("mesh_files").Element();
   if (elem && elem->GetText()) {
+    std::string mesh_filename;
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> mesh_filename) {
+      if (!QFile::exists(QString::fromStdString(mesh_filename))) {
+        QString message = "File does not exist: " + QString::fromStdString(mesh_filename);
+        STUDIO_LOG_ERROR(message);
+        QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+        return false;
+      }
+      groom_files.push_back(mesh_filename);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+
+  elem = docHandle.FirstChild("distance_transform_files").Element();
+  if (elem && elem->GetText()) {
+    groom_files.clear(); // if someone specifies both, prefer the distance transforms
     std::string distance_transform_filename;
     inputsBuffer.str(elem->GetText());
     while (inputsBuffer >> distance_transform_filename) {
-      //std::cerr << "Found distance transform: " << distance_transform_filename << "\n";
-
       if (!QFile::exists(QString::fromStdString(distance_transform_filename))) {
         QString message = "File does not exist: " +
                           QString::fromStdString(distance_transform_filename);
@@ -358,8 +376,6 @@ bool Session::load_light_project(QString filename)
     return false;
   }
 
-  this->load_groomed_files(groom_files, 0.5);
-
   if (!this->load_point_files(local_point_files, true)) {
     return false;
   }
@@ -367,7 +383,9 @@ bool Session::load_light_project(QString filename)
   if (!this->load_point_files(global_point_files, false)) {
     return false;
   }
-  
+
+  this->load_groomed_files(groom_files, 0.5);
+
   // read group ids
   std::vector<int> group_ids;
   elem = docHandle.FirstChild("group_ids").Element();
@@ -615,11 +633,57 @@ bool Session::update_points(std::vector<std::vector<itk::Point<double>>> points,
   // update the project now that we have particles
   this->project_->store_subjects();
 
-  if (points.size() > 0) {
+  if (points.size() > 0 && !local) {
     this->unsaved_particle_files_ = true;
     emit points_changed();
   }
   return true;
+}
+
+//---------------------------------------------------------------------------
+double Session::update_auto_glyph_size()
+{
+  this->auto_glyph_size_ = 1;
+  if (this->shapes_.empty()) {
+    return this->auto_glyph_size_;
+  }
+
+  double max_range = std::numeric_limits<double>::min();
+  int num_particles = 0;
+  for (auto& shape : this->shapes_) {
+    vnl_vector<double> points = shape->get_global_correspondence_points();
+    if (points.empty()) {
+      return this->auto_glyph_size_;
+    }
+    num_particles = points.size() / 3;
+    double max_x = std::numeric_limits<double>::min();
+    double min_x = std::numeric_limits<double>::max();
+    double max_y = max_x;
+    double min_y = min_x;
+    double max_z = max_x;
+    double min_z = min_x;
+    for (int i = 0; i < points.size() / 3; i++) {
+      Point3 p1 = Session::get_point(points, i);
+      max_x = std::max<double>(max_x, p1[0]);
+      min_x = std::min<double>(min_x, p1[0]);
+      max_y = std::max<double>(max_y, p1[1]);
+      min_y = std::min<double>(min_y, p1[1]);
+      max_z = std::max<double>(max_z, p1[2]);
+      min_z = std::min<double>(min_z, p1[2]);
+    }
+
+    double range_x = max_x - min_x;
+    double range_y = max_y - min_y;
+    double range_z = max_z - min_z;
+
+    max_range = std::max<double>({max_range, range_x, range_y, range_z});
+  }
+
+  this->auto_glyph_size_ = max_range / std::sqrt(static_cast<double>(num_particles)) / 2;
+  this->auto_glyph_size_ = std::max<double>(0.1, this->auto_glyph_size_);
+  this->auto_glyph_size_ = std::min<double>(10.0, this->auto_glyph_size_);
+
+  return this->auto_glyph_size_;
 }
 
 //---------------------------------------------------------------------------
@@ -639,8 +703,7 @@ bool Session::load_point_files(std::vector<std::string> list, bool local)
 {
   QProgressDialog progress("Loading point files...", "Abort", 0, list.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
-  //progress.show();
-  //progress.setMinimumDuration(2000);
+  progress.setMinimumDuration(2000);
   for (int i = 0; i < list.size(); i++) {
     progress.setValue(i);
     QApplication::processEvents();
@@ -779,6 +842,75 @@ QString Session::get_display_name()
 void Session::set_groom_unsaved(bool value)
 {
   this->unsaved_groomed_files_ = true;
+}
+
+//---------------------------------------------------------------------------
+std::string Session::get_default_feature_map()
+{
+  if (!this->get_project()->get_subjects().empty()) {
+    auto subject = this->get_project()->get_subjects()[0];
+    if (!subject->get_segmentation_filenames().empty()) {
+      if (subject->get_domain_types()[0] == DomainType::Mesh) {
+        Mesh m(subject->get_segmentation_filenames()[0]);
+        auto poly_data = m.get_poly_data();
+        if (poly_data) {
+          auto scalars = poly_data->GetPointData()->GetScalars();
+          if (scalars) {
+            return scalars->GetName();
+          }
+        }
+      }
+    }
+  }
+  return "";
+}
+
+//---------------------------------------------------------------------------
+bool Session::is_supported_file_format(std::string filename)
+{
+  for (auto type : Mesh::get_supported_types()) {
+    if (StringUtils::hasSuffix(filename, type)) {
+      return true;
+    }
+  }
+
+  if (StringUtils::hasSuffix(filename, ".nrrd")
+      || StringUtils::hasSuffix(filename, ".mha")
+      || StringUtils::hasSuffix(filename, ".nii")
+      || StringUtils::hasSuffix(filename, ".nii.gz")) {
+    return true;
+  }
+  return false;
+}
+
+//---------------------------------------------------------------------------
+std::vector<DomainType> Session::get_domain_types()
+{
+  auto subjects = this->get_project()->get_subjects();
+  if (subjects.size() > 0 && subjects[0]->get_domain_types().size() > 0) {
+    return subjects[0]->get_domain_types();
+  }
+  return std::vector<DomainType>();
+}
+
+//---------------------------------------------------------------------------
+Point3 Session::get_point(const vnl_vector<double>& points, int i)
+{
+  if ((i * 3) + 2 > points.size() - 1) {
+    return Point3();
+  }
+  int pos = i * 3;
+  Point3 point;
+  point[0] = points[pos];
+  point[1] = points[pos + 1];
+  point[2] = points[pos + 2];
+  return point;
+}
+
+//---------------------------------------------------------------------------
+double Session::get_auto_glyph_size()
+{
+  return this->auto_glyph_size_;
 }
 
 }

@@ -8,11 +8,11 @@
 
 #include <Data/Preferences.h>
 
-
 class Ui_OptimizeTool;
 
 namespace shapeworks {
 class QOptimize;
+class OptimizeParameters;
 class Session;
 
 class OptimizeTool : public QWidget {
@@ -61,14 +61,21 @@ signals:
 
   void error_message(std::string);
   void warning_message(std::string);
-  void progress(size_t);
+  void progress(int);
   void message(std::string);
 
 private:
+
+  void handle_load_progress(int count);
+
+  void clear_particles();
+
   QList<QThread*> threads_;
   bool optimization_is_running_ = false;
-  shapeworks::QOptimize* optimize_ = nullptr;
-  Ui_OptimizeTool* ui_;
+  QSharedPointer<QOptimize> optimize_;
+  QSharedPointer<OptimizeParameters> optimize_parameters_;
   QSharedPointer<Session> session_;
+
+  Ui_OptimizeTool* ui_;
 };
 }

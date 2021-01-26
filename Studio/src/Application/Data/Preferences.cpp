@@ -123,13 +123,25 @@ void Preferences::set_glyph_size(float value)
 //-----------------------------------------------------------------------------
 float Preferences::get_glyph_quality()
 {
-  return this->settings_.value("Project/glyph_quality", 5.0).toFloat();
+  return this->settings_.value("Project/glyph_quality", 10.0).toFloat();
 }
 
 //-----------------------------------------------------------------------------
 void Preferences::set_glyph_quality(float value)
 {
   this->settings_.setValue("Project/glyph_quality", value);
+}
+
+//-----------------------------------------------------------------------------
+bool Preferences::get_glyph_auto_size()
+{
+  return this->settings_.value("Project/glyph_auto_size", true).toBool();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_glyph_auto_size(bool value)
+{
+  this->settings_.setValue("Project/glyph_auto_size", value);
 }
 
 //-----------------------------------------------------------------------------

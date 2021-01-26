@@ -17,6 +17,7 @@ call conda install --yes requests=2.22.0
 call conda install --yes openblas=0.3.3
 call conda install --yes numpy=1.17.4
 call conda install --yes scikit-learn=0.22.1
+call conda install --yes trimesh=3.8.15
 call conda install --yes gtest=1.10.0 cmake-3.15.5
 call conda install --yes pytorch torchvision cpuonly -c pytorch
 call conda install --yes notebook=6.1.5
@@ -42,6 +43,7 @@ call pip install Python/DatasetUtilsPackage
 call pip install Python/DocumentationUtilsPackage
 call pip install Python/DataAugmentationUtilsPackage
 call pip install Python/DeepSSMUtilsPackage
+call pip install Python/ShapeCohortGenPackage
   
 REM installs for jupyter notebooks
 call pip install nbstripout

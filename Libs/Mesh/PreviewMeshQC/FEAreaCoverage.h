@@ -67,6 +67,6 @@ protected:
   Surface m_surf2;
 
 	bool		  m_ballowBackIntersections;	// include back intersections
-	double		m_angleThreshold;			      // angular threshold (between 0 and 1)
+  double		m_angleThreshold;			      // angular threshold (between 0 and 1)
 	double		m_backSearchRadius;			    // search radius for back intersections (set to 0 to ignore)
 };

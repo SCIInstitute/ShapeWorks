@@ -58,7 +58,7 @@ public:
   void import_groomed_image(ImageType::Pointer img, double iso, TransformType transform);
 
   /// Retrieve the groomed mesh
-  QSharedPointer<StudioMesh> get_groomed_mesh();
+  QSharedPointer<StudioMesh> get_groomed_mesh(bool wait = false);
 
   /// Reset the groomed mesh so that it will be re-created
   void reset_groomed_mesh();
@@ -138,6 +138,7 @@ private:
   static bool import_point_file(QString filename, vnl_vector<double>& points);
 
   void apply_feature_to_points(std::string feature, ImageType::Pointer image);
+  void apply_feature_to_points(std::string feature, QSharedPointer<StudioMesh> mesh);
 
   int id_;
 

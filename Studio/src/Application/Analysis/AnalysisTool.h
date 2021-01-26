@@ -66,9 +66,7 @@ public:
   const vnl_vector<double>& get_mean_shape_points();
   ShapeHandle get_mean_shape();
 
-  const vnl_vector<double>& get_shape_points(int mode, double value, double group_value = 0.5);
-
-  ShapeHandle get_shape(int mode, double value, double group_value = 0.5);
+  const vnl_vector<double>& get_shape_points(int mode, double value);
 
   ParticleShapeStatistics get_stats();
   void load_settings();
@@ -133,11 +131,15 @@ public Q_SLOTS:
 
   bool is_group_active(int shape_index);
 
+  void reconstruction_method_changed();
+
+  void initialize_mesh_warper();
+
 signals:
 
   void update_view();
   void pca_update();
-  void progress(size_t);
+  void progress(int);
   void message(std::string);
   void error(std::string);
   void reconstruction_complete();
@@ -147,6 +149,7 @@ private:
   void pca_labels_changed(QString value, QString eigen, QString lambda);
   void compute_mode_shape();
   void update_analysis_mode();
+
 
   void update_group_boxes();
   void update_group_values();

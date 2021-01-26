@@ -28,7 +28,7 @@ target_include_directories(Mesh PUBLIC
  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/PreviewMeshQC>
  $<INSTALL_INTERFACE:include>)
 
-target_link_libraries(Mesh trimesh2 vgl vgl_algo ${VTK_LIBRARIES})
+target_link_libraries(Mesh Utils trimesh2 vgl vgl_algo ${VTK_LIBRARIES} Eigen3::Eigen igl::core Particles)
 
 # Install
 set_target_properties(Mesh PROPERTIES PUBLIC_HEADER
@@ -161,3 +161,7 @@ INSTALL(TARGETS SurfaceToSurfaceDistance RUNTIME DESTINATION bin)
 #ADD_EXECUTABLE(fea2vtk fea2vtk.cxx)
 #TARGET_LINK_LIBRARIES(fea2vtk ${ITK_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS fea2vtk RUNTIME DESTINATION bin)
+
+ADD_EXECUTABLE(WarpMeshUsingLandmarks WarpMeshUsingLandmarks.cxx )
+TARGET_LINK_LIBRARIES(WarpMeshUsingLandmarks ${ITK_LIBRARIES} Mesh tinyxml Eigen3::Eigen igl::core)
+INSTALL(TARGETS WarpMeshUsingLandmarks RUNTIME DESTINATION bin)

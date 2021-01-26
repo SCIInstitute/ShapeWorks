@@ -62,5 +62,5 @@ site/
 .ipynb_checkpoints
 
 # data and output dirs
-Data/
+Examples/Python/Data/
 Output/
