@@ -65,6 +65,9 @@ public:
   /// computes bounding box of current mesh
   Region boundingBox(bool center=false) const;
 
+  /// quality control mesh
+  Mesh& fix(bool wind = true, bool smoothBefore = true, bool smoothAfter = true, double lambda = 0.5, int iterations = 1, bool decimate = true, double percentage = 0.5);
+
   //<ctc>
 
   /// compute surface to surface distance using a filter
@@ -86,9 +89,6 @@ public:
 
   /// converts mesh to distance transform, automatically computing size and origin if necessary
   Image toDistanceTransform(Vector3 spacing = makeVector({1.0, 1.0, 1.0}), Dims size = {0, 0, 0}, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;
-
-  /// quality control mesh
-  Mesh& fix(bool wind = true, bool smoothBefore = true, bool smoothAfter = true, double lambda = 0.5, int iterations = 1, bool decimate = true, double percentage = 0.5);
 
   // query functions //
 
@@ -120,8 +120,8 @@ public:
   // these two function should be private, but unable to test them b/c can't find gtest.h
 
   /// compute origin of volume that would contain the rasterization of each mesh
-  //FRIEND_TEST(MeshTests, rasterizationOriginTest1);
-  //FRIEND_TEST(MeshTests, rasterizationOriginTest1);
+  // FRIEND_TEST(MeshTests, rasterizationOriginTest1);
+  // FRIEND_TEST(MeshTests, rasterizationOriginTest1);
   Point3 rasterizationOrigin(Region region, Vector3 spacing = makeVector({1.0, 1.0, 1.0}), int padding = 0) const;
 
   /// compute size of volume that would contain the rasterization of each mesh

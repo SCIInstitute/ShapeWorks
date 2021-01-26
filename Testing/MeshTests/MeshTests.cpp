@@ -82,7 +82,14 @@ TEST(MeshTests, fillHolesTest)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-// TODO: Add test for ProbeVolume after getting data
+TEST(MeshTests, probeTest)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.probeVolume(std::string(TEST_DATA_DIR) + "/femurVtkDT.nrrd");
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/probe.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
 
 TEST(MeshTests, clipTest)
 {
@@ -93,7 +100,7 @@ TEST(MeshTests, clipTest)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, translateTest)
+TEST(MeshTests, translateTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   femur.translate(makeVector({1.0,1.0,1.0}));
@@ -102,7 +109,25 @@ TEST(MeshTests, translateTest)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, scaleTest)
+TEST(MeshTests, translateTest2)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.translate(makeVector({-10.0,-10.0,-10.0}));
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/translate2.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
+TEST(MeshTests, translateTest3)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.translate(makeVector({0,0,1.0}));
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/translate3.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
+TEST(MeshTests, scaleTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   femur.scale(makeVector({1.0,1.0,1.0}));
@@ -110,6 +135,25 @@ TEST(MeshTests, scaleTest)
 
   ASSERT_TRUE(femur == ground_truth);
 }
+
+TEST(MeshTests, scaleTest2)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.scale(makeVector({-1.0, 1.5, 1.0}));
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/scale2.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
+// TODO: PreviewCmd results in seg fault. WHY?
+// TEST(MeshTests, fixTest)
+// {
+//   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+//   femur.fix();
+//   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/scale1.vtk");
+
+//   ASSERT_TRUE(femur == ground_truth);
+// }
 
 TEST(MeshTests, distanceTest)
 {
@@ -210,28 +254,17 @@ TEST(MeshTests, toImageTest1)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(MeshTests, antialiasTest3)
-{
-  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
-  Image image = femur.toImage().antialias(1000, 0.0);
-  image.write("/tmp/aanew.nrrd");
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/antialias3.nrrd");
-
-  ASSERT_TRUE(image == ground_truth);
-}
-
 TEST(MeshTests, toDistanceTransformTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
   Image image = femur.toDistanceTransform();
-  image.write("/tmp/dtnew.nrrd");
   Image ground_truth(std::string(TEST_DATA_DIR) + "/femurDT.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
 
 // <ctc> add toImage and toDT tests that specify params
-// also, think of a way to specify padding  automatically computing origin and size
+// also, think of a way to specify padding automatically computing origin and size
 
 TEST(MeshTests, coverageTest)
 {

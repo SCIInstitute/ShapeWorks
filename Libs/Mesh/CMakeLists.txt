@@ -143,10 +143,6 @@ ADD_EXECUTABLE(RemoveFidsDTLeakage RemoveFidsDTLeakage.cxx)
 TARGET_LINK_LIBRARIES(RemoveFidsDTLeakage ${ITK_LIBRARIES} Mesh tinyxml)
 INSTALL(TARGETS RemoveFidsDTLeakage RUNTIME DESTINATION bin)
 
-ADD_EXECUTABLE(ProbeFeatureVolumesAtMeshVertices ProbeFeatureVolumesAtMeshVertices.cxx)
-TARGET_LINK_LIBRARIES(ProbeFeatureVolumesAtMeshVertices ${ITK_LIBRARIES} Mesh tinyxml)
-INSTALL(TARGETS ProbeFeatureVolumesAtMeshVertices RUNTIME DESTINATION bin)
-
 add_executable(SurfaceToSurfaceDistance SurfaceToSurfaceDistance.cxx )
 target_link_libraries(SurfaceToSurfaceDistance Mesh Utils)
 INSTALL(TARGETS SurfaceToSurfaceDistance RUNTIME DESTINATION bin)
