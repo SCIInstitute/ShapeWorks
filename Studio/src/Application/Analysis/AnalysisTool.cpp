@@ -724,7 +724,6 @@ void AnalysisTool::enable_actions(bool newly_enabled)
   }
 
   if (newly_enabled) {
-    std::cerr << "set mesh\n";
     this->ui_->mesh_warping_radio_button->setChecked(true);
   }
 

@@ -715,7 +715,7 @@ void ShapeWorksStudioApp::handle_progress(int value)
   else {
     this->progress_bar_->setValue(100);
     this->progress_bar_->setVisible(false);
-    this->enable_possible_actions();
+    //this->enable_possible_actions();
   }
   this->handle_message(this->current_message_);
 }
@@ -932,6 +932,7 @@ void ShapeWorksStudioApp::handle_optimize_complete()
 {
   this->session_->get_mesh_manager()->get_surface_reconstructor()->resetReconstruct();
   this->analysis_tool_->reset_stats();
+  this->analysis_tool_->initialize_mesh_warper();
   this->session_->handle_clear_cache();
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
   this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::GROOMED);
@@ -939,11 +940,10 @@ void ShapeWorksStudioApp::handle_optimize_complete()
   this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape_points());
   this->visualizer_->update_lut();
   this->update_display();
-  this->enable_possible_actions();
-  this->analysis_tool_->initialize_mesh_warper();
 
   this->visualizer_->update_samples();
   this->handle_glyph_changed();
+  this->enable_possible_actions();
 }
 
 //---------------------------------------------------------------------------
@@ -956,6 +956,7 @@ void ShapeWorksStudioApp::handle_reconstruction_complete()
   this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape_points());
   this->visualizer_->update_lut();
   this->update_display(true);
+  this->enable_possible_actions();
 }
 
 //---------------------------------------------------------------------------
@@ -966,6 +967,7 @@ void ShapeWorksStudioApp::handle_groom_complete()
   this->session_->handle_clear_cache();
   this->update_display(true);
   this->visualizer_->reset_camera();
+  this->enable_possible_actions();
 }
 
 //---------------------------------------------------------------------------
