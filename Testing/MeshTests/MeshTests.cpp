@@ -269,7 +269,7 @@ TEST(MeshTests, toDistanceTransformTest1)
   Image image = femur.toDistanceTransform();
   Image ground_truth(std::string(TEST_DATA_DIR) + "/femurDT.nrrd");
 
-  ASSERT_TRUE(image.compare(ground_truth, true, 0.0, 1.54));
+  ASSERT_TRUE(image == ground_truth);
 }
 
 // <ctc> add toImage and toDT tests that specify params
