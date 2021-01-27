@@ -944,6 +944,7 @@ void ShapeWorksStudioApp::handle_optimize_complete()
   this->visualizer_->update_samples();
   this->handle_glyph_changed();
   this->enable_possible_actions();
+  this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
 }
 
 //---------------------------------------------------------------------------
@@ -951,8 +952,6 @@ void ShapeWorksStudioApp::handle_reconstruction_complete()
 {
   this->session_->handle_clear_cache();
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
-  this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::RECONSTRUCTED);
-  this->visualizer_->set_display_mode(this->ui_->view_mode_combobox->currentText().toStdString());
   this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape_points());
   this->visualizer_->update_lut();
   this->update_display(true);
