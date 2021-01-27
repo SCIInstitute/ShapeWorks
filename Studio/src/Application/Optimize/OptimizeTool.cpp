@@ -46,7 +46,7 @@ OptimizeTool::OptimizeTool()
   this->ui_->use_normals->setToolTip("Use surface normals as part of optimization");
   this->ui_->normals_strength->setToolTip("Strength of surface normals relative to position");
   this->ui_->procrustes->setToolTip("Use procrustes registration during optimization");
-  this->ui_->procrustes_interval->setToolTip("How often to run procrustes during optimization");
+  this->ui_->procrustes_interval->setToolTip("How often to run procrustes during optimization (0 = disabled)");
   this->ui_->procrustes_scaling->setToolTip("Use procrustes scaling");
   this->ui_->multiscale->setToolTip("Use multiscale optimization mode");
   this->ui_->multiscale_particles->setToolTip(
