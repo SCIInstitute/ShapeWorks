@@ -114,10 +114,10 @@ def Run_Pipeline(args):
             [comFiles_segmentations, comFiles_images] = applyCOMAlignment(groomDir + "com_aligned", paddedFiles_segmentations, paddedFiles_images, processRaw=True)
 
             """
-            Resample all images to be the same size and spacing as reference
+            Rigidly align to a reference
             """
             medianFile = FindReferenceImage(comFiles_segmentations)
-            [resampled_segmentations, resampled_images] = applyResampling(groomDir + "resized", medianFile, comFiles_segmentations, comFiles_images)
+            [aligned_segmentations, aligned_images] = applyRigidAlignment(groomDir + "aligned", medianFile, comFiles_segmentations, comFiles_images)
             
             """
             Compute largest bounding box and apply cropping
@@ -125,8 +125,8 @@ def Run_Pipeline(args):
             processRaw = False, applies the center of mass alignment only on segemnattion data.
             The function uses the same bounding box to crop the raw and segemnattion data.
             """
-            croppedFiles_segmentations = applyCropping(groomDir + "cropped/segmentations", resampled_segmentations, groomDir + "resized/segmentations/*.resized.nrrd")
-            croppedFiles_images = applyCropping(groomDir + "cropped/images", resampled_images, groomDir + "resized/images/*.resized.nrrd")
+            croppedFiles_segmentations = applyCropping(groomDir + "cropped/segmentations", aligned_segmentations, groomDir + "aligned/segmentations/*.aligned.nrrd")
+            croppedFiles_images = applyCropping(groomDir + "cropped/images", aligned_images, groomDir + "aligned/images/*.aligned.nrrd")
 
             print("\nStep 3. Groom - Convert to distance transforms\n")
             if args.interactive:
@@ -160,15 +160,15 @@ def Run_Pipeline(args):
             comFiles = applyCOMAlignment(groomDir + "com_aligned", paddedFiles, None)
 
             """
-            Resample all images to be the same size and spacing as reference
+            Rigidly alignment to a reference
             """
             medianFile = FindReferenceImage(comFiles)
-            resampledFiles = applyResampling(groomDir + "resized", medianFile, comFiles)
+            alignedFiles = applyRigidAlignment(groomDir + "aligned", medianFile, comFiles)
             
             """
             Compute largest bounding box and apply cropping
             """
-            croppedFiles = applyCropping(groomDir + "cropped", resampledFiles, groomDir + "resized/*.resized.nrrd")
+            croppedFiles = applyCropping(groomDir + "cropped", alignedFiles, groomDir + "aligned/*.aligned.nrrd")
 
             print("\nStep 3. Groom - Convert to distance transforms\n")
             if args.interactive:
