@@ -109,7 +109,7 @@ public:
   /// number of faces
   vtkIdType numFaces() const { return mesh->GetNumberOfCells(); }
 
-  /// compare if values of the points in two meshes are equal within num significant digits
+  /// compare if values of the points in two (corresponding) meshes are equal within num significant digits
   bool comparePointsEqual(const Mesh& other_mesh) const;
 
   /// compare if scalars in two meshes are equal

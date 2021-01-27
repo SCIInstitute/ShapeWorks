@@ -254,6 +254,15 @@ TEST(MeshTests, toImageTest1)
   ASSERT_TRUE(image == ground_truth);
 }
 
+TEST(MeshTests, antialiasTest3)
+{
+  Image aa1(Mesh(std::string(TEST_DATA_DIR) + "/femur.ply").toImage());
+  aa1.antialias(50, 0.0).write("/tmp/aa1.nrrd");
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/antialias3.nrrd");
+
+  ASSERT_TRUE(aa1 == ground_truth);
+}
+
 TEST(MeshTests, toDistanceTransformTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
