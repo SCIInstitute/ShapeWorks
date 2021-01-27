@@ -9,288 +9,287 @@ TEST(shapeworksTests, setup)
   ASSERT_TRUE(true);
 }
 
-TEST(shapeworksTests, imageinfo)
+TEST(shapeworksTests, imageinfoTest)
 {
   ASSERT_FALSE(system("bash imageinfo.sh"));
 }
 
-TEST(shapeworksTests, compare)
+TEST(shapeworksTests, compareTest)
 {
   ASSERT_FALSE(system("bash compare.sh"));
 }
 
-TEST(shapeworksTests, comparefail)
+TEST(shapeworksTests, compareFailTest)
 {
   ASSERT_TRUE(system("bash comparefail.sh"));
 }
 
-TEST(shapeworksTests, antialias)
+TEST(shapeworksTests, antialiasTest)
 {
   ASSERT_FALSE(system("bash antialias.sh"));
 }
 
-TEST(shapeworksTests, antialiasfail)
+TEST(shapeworksTests, antialiasFailTest)
 {
   ASSERT_TRUE(system("bash antialiasfail.sh"));
 }
 
-TEST(shapeworksTests, resample)
+TEST(shapeworksTests, resampleTest)
 {
   ASSERT_FALSE(system("bash resample.sh"));
 }
 
-TEST(shapeworksTests, resize)
+TEST(shapeworksTests, resizeTest)
 {
   ASSERT_FALSE(system("bash resize.sh"));
 }
 
-TEST(shapeworksTests, recenter)
+TEST(shapeworksTests, recenterTest)
 {
   ASSERT_FALSE(system("bash recenter.sh"));
 }
 
-TEST(shapeworksTests, pad)
+TEST(shapeworksTests, padTest)
 {
   ASSERT_FALSE(system("bash pad.sh"));
 }
 
-TEST(shapeworksTests, translateimage)
+TEST(shapeworksTests, translateimageTest)
 {
   ASSERT_FALSE(system("bash translateimage.sh"));
 }
 
-TEST(shapeworksTests, centerofmass)
+TEST(shapeworksTests, centerofmassTest)
 {
   ASSERT_FALSE(system("bash centerofmass.sh"));
 }
 
-TEST(shapeworksTests, scaleimage)
+TEST(shapeworksTests, scaleimageTest)
 {
   ASSERT_FALSE(system("bash scaleimage.sh"));
 }
 
-TEST(shapeworksTests, scaleimagefail)
+TEST(shapeworksTests, scaleimageFailTest)
 {
   ASSERT_TRUE(system("bash scaleimagefail.sh"));
 }
 
-TEST(shapeworksTests, rotate)
+TEST(shapeworksTests, rotateTest)
 {
   ASSERT_FALSE(system("bash rotate.sh"));
 }
 
-TEST(shapeworksTests, rotatefail)
+TEST(shapeworksTests, rotateFailTest)
 {
   ASSERT_TRUE(system("bash rotatefail.sh"));
 }
 
-TEST(shapeworksTests, extractlabel)
+TEST(shapeworksTests, extractabelTest)
 {
   ASSERT_FALSE(system("bash extractlabel.sh"));
 }
 
-TEST(shapeworksTests, closeholes)
+TEST(shapeworksTests, closeholesTest)
 {
   ASSERT_FALSE(system("bash closeholes.sh"));
 }
 
-TEST(shapeworksTests, binarize)
+TEST(shapeworksTests, binarizeTest)
 {
   ASSERT_FALSE(system("bash binarize.sh"));
 }
 
-TEST(shapeworksTests, computedt)
+TEST(shapeworksTests, computedtTest)
 {
   ASSERT_FALSE(system("bash computedt.sh"));
 }
 
-TEST(shapeworksTests, curvature)
+TEST(shapeworksTests, curvatureTest)
 {
   ASSERT_FALSE(system("bash curvature.sh"));
 }
 
-TEST(shapeworksTests, curvaturefail)
+TEST(shapeworksTests, curvatureFailTest)
 {
   ASSERT_TRUE(system("bash curvaturefail.sh"));
 }
 
-TEST(shapeworksTests, gradient)
+TEST(shapeworksTests, gradientTest)
 {
   ASSERT_FALSE(system("bash gradient.sh"));
 }
 
-TEST(shapeworksTests, sigmoid)
+TEST(shapeworksTests, sigmoidTest)
 {
   ASSERT_FALSE(system("bash sigmoid.sh"));
 }
 
-TEST(shapeworksTests, intensity)
+TEST(shapeworksTests, intensityTest)
 {
   ASSERT_FALSE(system("bash intensity.sh"));
 }
 
-TEST(shapeworksTests, tplevelset)
+TEST(shapeworksTests, tplevelsetTest)
 {
   ASSERT_FALSE(system("bash tplevelset.sh"));
 }
 
-TEST(shapeworksTests, tplevelsetfail)
+TEST(shapeworksTests, tplevelsetFailTest)
 {
   ASSERT_TRUE(system("bash tplevelsetfail.sh"));
 }
 
-TEST(shapeworksTests, topo)
+TEST(shapeworksTests, topoTest)
 {
   ASSERT_FALSE(system("bash topo.sh"));
 }
 
-TEST(shapeworksTests, blur)
+TEST(shapeworksTests, blurTest)
 {
   ASSERT_FALSE(system("bash blur.sh"));
 }
 
-TEST(shapeworksTests, icpimage)
+TEST(shapeworksTests, icpimageTest)
 {
   ASSERT_FALSE(system("bash icpimage.sh"));
 }
 
-TEST(shapeworksTests, icpimagefail)
+TEST(shapeworksTests, icpimageFailTest)
 {
   ASSERT_TRUE(system("bash icpimagefail.sh"));
 }
 
-TEST(shapeworksTests, boundingboximage)
+TEST(shapeworksTests, boundingboximageTest)
 {
   ASSERT_FALSE(system("bash boundingboximage.sh"));
 }
 
-TEST(shapeworksTests, boundingboximagefail)
+TEST(shapeworksTests, boundingboximageFailTest)
 {
   ASSERT_TRUE(system("bash boundingboximagefail.sh"));
 }
 
-TEST(shapeworksTests, crop)
+TEST(shapeworksTests, cropTest)
 {
   ASSERT_FALSE(system("bash crop.sh"));
 }
 
-TEST(shapeworksTests, clipimage)
+TEST(shapeworksTests, clipimageTest)
 {
   ASSERT_FALSE(system("bash clipimage.sh"));
 }
 
-TEST(shapeworksTests, clipimagefail)
+TEST(shapeworksTests, clipimageFailTest)
 {
   ASSERT_TRUE(system("bash clipimagefail.sh"));
 }
 
-TEST(shapeworksTests, reflectimage)
+TEST(shapeworksTests, reflectimageTest)
 {
   ASSERT_FALSE(system("bash reflectimage.sh"));
 }
 
-TEST(shapeworksTests, reflectimagefail)
+TEST(shapeworksTests, reflectimageFailTest)
 {
   ASSERT_TRUE(system("bash reflectimagefail.sh"));
 }
 
-TEST(shapeworksTests, warp)
+TEST(shapeworksTests, warpTest)
 {
   ASSERT_FALSE(system("bash warp.sh"));
 }
 
-TEST(shapeworksTests, warpfail)
+TEST(shapeworksTests, warpFailTest)
 {
   ASSERT_TRUE(system("bash warpfail.sh"));
 }
 
-TEST(shapeworksTests, setorigin)
+TEST(shapeworksTests, setoriginTest)
 {
   ASSERT_FALSE(system("bash setorigin.sh"));
 }
 
-TEST(shapeworksTests, setspacing)
+TEST(shapeworksTests, setspacingTest)
 {
   ASSERT_FALSE(system("bash setspacing.sh"));
 }
 
-TEST(shapeworksTests, setspacingfail)
+TEST(shapeworksTests, setspacingFailTest)
 {
   ASSERT_TRUE(system("bash setspacingfail.sh"));
 }
 
-TEST(shapeworksTests, tomesh)
+TEST(shapeworksTests, tomeshTest)
 {
   ASSERT_FALSE(system("bash tomesh.sh"));
 }
 
-TEST(shapeworksTests, negate)
+TEST(shapeworksTests, negateTest)
 {
   ASSERT_FALSE(system("bash negate.sh"));
 }
 
-TEST(shapeworksTests, addition)
+TEST(shapeworksTests, additionTest)
 {
   ASSERT_FALSE(system("bash add.sh"));
 }
 
-TEST(shapeworksTests, subtraction)
+TEST(shapeworksTests, subtractionTest)
 {
   ASSERT_FALSE(system("bash sub.sh"));
 }
 
-TEST(shapeworksTests, multiplication)
+TEST(shapeworksTests, multiplicationTest)
 {
   ASSERT_FALSE(system("bash mul.sh"));
 }
 
-TEST(shapeworksTests, division)
+TEST(shapeworksTests, divisionTest)
 {
   ASSERT_FALSE(system("bash div.sh"));
 }
 
-TEST(shapeworksTests, smooth)
+TEST(shapeworksTests, smoothTest)
 {
   ASSERT_FALSE(system("bash smooth.sh"));
 }
 
-TEST(shapeworksTests, decimate)
+TEST(shapeworksTests, decimateTest)
 {
   ASSERT_FALSE(system("bash decimate.sh"));
 }
 
-TEST(shapeworksTests, reflectmesh)
+TEST(shapeworksTests, reflectmeshTest)
 {
   ASSERT_FALSE(system("bash reflectmesh.sh"));
 }
 
-TEST(shapeworksTests, fillholes)
+TEST(shapeworksTests, fillholesTest)
 {
   ASSERT_FALSE(system("bash fillholes.sh"));
 }
 
-TEST(shapeworksTests, clipmesh)
+TEST(shapeworksTests, clipmeshTest)
 {
   ASSERT_FALSE(system("bash fillholes.sh"));
 }
 
-TEST(shapeworksTests, translatemesh)
+TEST(shapeworksTests, translatemeshTest)
 {
   ASSERT_FALSE(system("bash translatemesh.sh"));
 }
 
-TEST(shapeworksTests, scalemesh)
+TEST(shapeworksTests, scalemeshTest)
 {
   ASSERT_FALSE(system("bash scalemesh.sh"));
 }
 
-TEST(shapeworksTests, shapeevaluation)
+TEST(shapeworksTests, shapeevaluationTest)
 {
   ASSERT_FALSE(system("bash shapeevaluation.sh"));
 }
 
-TEST(shapeworksTests, meshcomputedt)
+TEST(shapeworksTests, meshtodtTest)
 {
-  ASSERT_FALSE(system("bash meshcomputedt.sh"));
+  ASSERT_FALSE(system("bash meshtodt.sh"));
 }
-

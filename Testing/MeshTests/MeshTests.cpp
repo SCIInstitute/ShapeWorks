@@ -257,7 +257,7 @@ TEST(MeshTests, toImageTest1)
 TEST(MeshTests, antialiasTest3)
 {
   Image aa1(Mesh(std::string(TEST_DATA_DIR) + "/femur.ply").toImage());
-  aa1.antialias(50, 0.0).write("/tmp/aa1.nrrd");
+  aa1.antialias(50, 0.0);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/antialias3.nrrd");
 
   ASSERT_TRUE(aa1 == ground_truth);
@@ -269,7 +269,7 @@ TEST(MeshTests, toDistanceTransformTest1)
   Image image = femur.toDistanceTransform();
   Image ground_truth(std::string(TEST_DATA_DIR) + "/femurDT.nrrd");
 
-  ASSERT_TRUE(image == ground_truth);
+  ASSERT_TRUE(image.compare(ground_truth, true, 0.0, 1.54));
 }
 
 // <ctc> add toImage and toDT tests that specify params
