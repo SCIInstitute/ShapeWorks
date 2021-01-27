@@ -140,8 +140,8 @@ Mesh& Mesh::write(const std::string &pathname)
 Mesh& Mesh::coverage(const Mesh &otherMesh, bool allowBackIntersections, double angleThreshold, double backSearchRadius)
 {
   FEVTKimport import;
-  FEMesh* surf1 = import.Load(this->mesh);
-  FEMesh* surf2 = import.Load(otherMesh.mesh);
+  std::unique_ptr<FEMesh> surf1{import.Load(this->mesh)};
+  std::unique_ptr<FEMesh> surf2{import.Load(otherMesh.mesh)};
   if (surf1 == nullptr || surf2 == nullptr) { throw std::invalid_argument("Mesh invalid"); }
 
   FEAreaCoverage areaCoverage;
