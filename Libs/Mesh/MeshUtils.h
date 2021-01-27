@@ -13,7 +13,11 @@ class MeshUtils
 public:
 
   /// Computes a rigid transformation from source to target using vtkIterativeClosestPointTransform
-  static const vtkSmartPointer<vtkMatrix4x4> createICPTransform(const vtkSmartPointer<vtkPolyData> source, const vtkSmartPointer<vtkPolyData> target, Mesh::AlignmentType align, const unsigned iterations = 20);
+  static const vtkSmartPointer<vtkMatrix4x4> createICPTransform(const vtkSmartPointer<vtkPolyData> source,
+                                                                const vtkSmartPointer<vtkPolyData> target,
+                                                                Mesh::AlignmentType align,
+                                                                const unsigned iterations = 20,
+                                                                bool meshTransform = false);
 
   /// Create plane
   static vtkSmartPointer<vtkPlane> createPlane(const Vector3 &n, const Point &o);

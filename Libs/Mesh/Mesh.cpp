@@ -137,17 +137,17 @@ Mesh& Mesh::write(const std::string &pathname)
   }
 }
 
-Mesh& Mesh::coverage(const Mesh &other_mesh, bool allow_back_intersections, double angle_threshold, double back_search_radius)
+Mesh& Mesh::coverage(const Mesh &otherMesh, bool allowBackIntersections, double angleThreshold, double backSearchRadius)
 {
   FEVTKimport import;
   FEMesh* surf1 = import.Load(this->mesh);
-  FEMesh* surf2 = import.Load(other_mesh.mesh);
+  FEMesh* surf2 = import.Load(otherMesh.mesh);
   if (surf1 == nullptr || surf2 == nullptr) { throw std::invalid_argument("Mesh invalid"); }
 
   FEAreaCoverage areaCoverage;
-  areaCoverage.AllowBackIntersection(allow_back_intersections);
-  areaCoverage.SetAngleThreshold(angle_threshold);
-  areaCoverage.SetBackSearchRadius(back_search_radius);
+  areaCoverage.AllowBackIntersection(allowBackIntersections);
+  areaCoverage.SetAngleThreshold(angleThreshold);
+  areaCoverage.SetBackSearchRadius(backSearchRadius);
 
   vector<double> map1 = areaCoverage.Apply(*surf1, *surf2);
 
@@ -240,7 +240,7 @@ vtkTransform Mesh::createTransform(const Mesh &target, Mesh::TransformType type,
 
 Mesh &Mesh::applyTransform(const vtkTransform transform)
 {
-  vtkSmartPointer<vtkTransformPolyDataFilter> resampler = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  vtkTransformPolyDataFilter* resampler = vtkTransformPolyDataFilter::New();
 
   resampler->SetTransform(transform);
   resampler->SetInputData(this->mesh);
@@ -584,7 +584,7 @@ bool Mesh::operator==(const Mesh& other) const
 
 vtkTransform Mesh::createRegistrationTransform(const Mesh &target, Mesh::AlignmentType align, unsigned iterations)
 {
-  const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createICPTransform(this->mesh, target.getVTKMesh(), align, iterations));
+  const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createICPTransform(this->mesh, target.getVTKMesh(), align, iterations, true));
   return createvtkTransform(mat);
 }
 

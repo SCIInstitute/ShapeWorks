@@ -1669,9 +1669,9 @@ void Coverage::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Path to other mesh with which to create coverage.");
-  parser.add_option("--allow_back_intersections").action("store_true").set_default(false).help("Allow back-intersections in coverage calculation [default: true].");
-  parser.add_option("--angle_threshold").action("store").type("double").set_default(0.0).help("This checks the cosine between the ray’s direction vector (e1) and the normal at the intersection point (e2) [default: %default].");
-  parser.add_option("--back_search_radius").action("store").type("double").set_default(0.0).help("Max distance of a back-intersection [default: %default].");
+  parser.add_option("--allowBackIntersections").action("store_true").set_default(false).help("Allow back-intersections in coverage calculation [default: true].");
+  parser.add_option("--angleThreshold").action("store").type("double").set_default(0.0).help("This checks the cosine between the ray’s direction vector (e1) and the normal at the intersection point (e2) [default: %default].");
+  parser.add_option("--backSearchRadius").action("store").type("double").set_default(0.0).help("Max distance of a back-intersection [default: %default].");
 
   Command::buildParser();
 }
@@ -1684,19 +1684,18 @@ bool Coverage::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
-  const std::string& other_mesh_path(static_cast<std::string>(options.get("name")));
+  const std::string otherMesh(static_cast<std::string>(options.get("name")));
+  bool allowBackIntersections = static_cast<bool>(options.get("allowBackIntersections"));
+  double angleThreshold = static_cast<double>(options.get("angleThreshold"));
+  double backSearchRadius = static_cast<double>(options.get("backSearchRadius"));
 
-  bool allow_back_intersections = static_cast<bool>(options.get("allow_back_intersections"));
-  double angle_threshold = static_cast<double>(options.get("angle_threshold"));
-  double back_search_radius = static_cast<double>(options.get("back_search_radius"));
-
-  if (other_mesh_path.length() == 0)
+  if (otherMesh.length() == 0)
   {
     std::cerr << "Must specify path to other mesh\n";
     return false;
   }
 
-  sharedData.mesh->coverage(Mesh(other_mesh_path), allow_back_intersections, angle_threshold, back_search_radius);
+  sharedData.mesh->coverage(Mesh(otherMesh), allowBackIntersections, angleThreshold, backSearchRadius);
   return sharedData.validMesh();
 }
 

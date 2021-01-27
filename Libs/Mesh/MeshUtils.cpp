@@ -9,7 +9,8 @@ namespace shapeworks {
 const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createICPTransform(const vtkSmartPointer<vtkPolyData> source,
                                                                   const vtkSmartPointer<vtkPolyData> target,
                                                                   Mesh::AlignmentType align,
-                                                                  const unsigned iterations)
+                                                                  const unsigned iterations,
+                                                                  bool meshTransform)
 {
   vtkSmartPointer<vtkIterativeClosestPointTransform> icp = vtkSmartPointer<vtkIterativeClosestPointTransform>::New();
   icp->SetSource(source);
@@ -23,8 +24,8 @@ const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createICPTransform(const vtkSmart
     icp->GetLandmarkTransform()->SetModeToAffine();
 
   icp->SetMaximumNumberOfIterations(iterations);
-  // ICPRigid3DMeshRegistration uses this (check results while testing)
-  // icp->StartByMatchingCentroidsOn();
+  if (meshTransform)
+    icp->StartByMatchingCentroidsOn();
   icp->Modified();
   icp->Update();
 
@@ -34,8 +35,11 @@ const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createICPTransform(const vtkSmart
   icpTransformFilter->Update();
 
   vtkSmartPointer<vtkMatrix4x4> m = vtkMatrix4x4::New();
-  // ICPRigid3DMeshRegistration  does not invert the matrix (check results while testing)
-  vtkMatrix4x4::Invert(icp->GetMatrix(), m);
+  if (meshTransform)
+    m = icp->GetMatrix();
+  else
+    vtkMatrix4x4::Invert(icp->GetMatrix(), m);
+
   return m;
 }
 

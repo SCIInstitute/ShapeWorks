@@ -32,8 +32,8 @@ public:
   Mesh& write(const std::string &pathname);
 
   /// determines coverage between current mesh and another mesh (e.g. acetabular cup / femoral head)
-  Mesh& coverage(const Mesh& other_mesh, bool allow_back_intersections = false,
-                 double angle_threshold = 0, double back_search_radius = 0);
+  Mesh& coverage(const Mesh& otherMesh, bool allowBackIntersections = true,
+                 double angleThreshold = 0, double backSearchRadius = 0);
 
   /// applies laplacian smoothing
   Mesh& smooth(int iterations = 0, double relaxation = 0.0);
@@ -73,7 +73,7 @@ public:
   /// quality control mesh
   Mesh& fix(bool wind = true, bool smoothBefore = true, bool smoothAfter = true, double lambda = 0.5, int iterations = 1, bool decimate = true, double percentage = 0.5);
 
-  //<ctc>
+  // <ctc> <as>
 
   /// compute surface to surface distance using a filter
   vtkSmartPointer<swHausdorffDistancePointSetFilter> computeDistance(const Mesh &other_mesh, bool target=false);
@@ -86,8 +86,6 @@ public:
 
   /// returns relative distance from mesh B to mesh A
   double relativeDistanceBtoA(const Mesh &other_mesh, bool target=false);
-
-  // </ctc>
 
   /// rasterizes mesh to create binary images, automatically computing size and origin if necessary
   Image toImage(Vector3 spacing = makeVector({1.0, 1.0, 1.0}), Dims size = {0, 0, 0}, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;

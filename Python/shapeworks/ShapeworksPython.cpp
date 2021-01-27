@@ -515,8 +515,6 @@ PYBIND11_MODULE(shapeworks, m)
 
   // MeshUtils
   py::class_<MeshUtils>(m, "MeshUtils")
-  .def_static("createICPTransform",
-                                &MeshUtils::createICPTransform, "source"_a, "target"_a, "type"_a, "iterations"_a=20)
   ;
 
   // ParticleSystem
