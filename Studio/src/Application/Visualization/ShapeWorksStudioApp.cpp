@@ -944,7 +944,6 @@ void ShapeWorksStudioApp::handle_optimize_complete()
   this->visualizer_->update_samples();
   this->handle_glyph_changed();
   this->enable_possible_actions();
-  this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
 }
 
 //---------------------------------------------------------------------------
