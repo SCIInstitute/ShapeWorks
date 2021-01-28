@@ -2,9 +2,6 @@
 #include <PreviewMeshQC/FEAreaCoverage.h>
 #include <PreviewMeshQC/FEVTKImport.h>
 #include <PreviewMeshQC/FEVTKExport.h>
-#include "Eigen/Core"
-#include "Eigen/Dense"
-#include "MeshUtils.h"
 
 #include <Libs/Utils/StringUtils.h>
 
@@ -23,15 +20,6 @@
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 
-// IGL dependencies
-#include <igl/biharmonic_coordinates.h>
-#include <igl/cat.h>
-#include <igl/cotmatrix.h>
-#include <igl/matrix_to_list.h>
-#include <igl/point_mesh_squared_distance.h>
-#include <igl/remove_unreferenced.h>
-#include <igl/slice.h>
-
 #include <itkImageToVTKImageFilter.h>
 
 static bool compare_double(double a, double b)
@@ -39,7 +27,6 @@ static bool compare_double(double a, double b)
   const double EPSILON = 1e-1;
   return fabs(a - b) < EPSILON;
 }
-
 
 namespace shapeworks {
 
@@ -189,67 +176,63 @@ Mesh& Mesh::coverage(const Mesh &other_mesh, bool allow_back_intersections,
 /// Compare if points in two meshes are equal
 ///
 /// \param other_mesh
-bool Mesh::compare_points_equal(const Mesh &other_mesh) const
+bool Mesh::compare_points_equal(const Mesh &other_mesh)
 {
-  if (!this->mesh || !other_mesh.mesh)
-  {
-    std::cout << "both polydata don't exist";
+  if (!this->mesh || !other_mesh.mesh) {
     return false;
   }
 
-  if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints())
-  {
-    std::cout << "both polydata differ in number of points";
+  if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints()) {
     return false;
   }
 
-  for (int i = 0; i < this->mesh->GetNumberOfPoints(); i++) 
-  {
+  for (int i = 0; i < this->mesh->GetNumberOfPoints(); i++) {
     double* point1 = this->mesh->GetPoint(i);
     double* point2 = other_mesh.mesh->GetPoint(i);
-    if (!compare_double(point1[0], point2[0]) || !compare_double(point1[1], point2[1]) || !compare_double(point1[2], point2[2]))
+    if (!compare_double(point1[0], point2[0])
+        || !compare_double(point1[1], point2[1])
+        || !compare_double(point1[2], point2[2])) {
       return false;
+    }
   }
-
   return true;
 }
 
-bool Mesh::compare_scalars_equal(const Mesh &other_mesh) const
+/// compare_scalars_equal
+///
+/// Compare if scalars in two meshes are equal
+///
+/// \param other_mesh
+bool Mesh::compare_scalars_equal(const Mesh &other_mesh)
 {
-  if (!this->mesh || !other_mesh.mesh)
-  {
-    std::cout << "both polydata don't exist";
+  if (!this->mesh || !other_mesh.mesh) {
+    std::cout << "Mesh Compare: both polydata don't exist";
     return false;
   }
 
-  if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints())
-  {
-    std::cout << "both polydata differ in number of points";
+  if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints()) {
+    std::cout << "Mesh Compare: both polydata differ in number of points";
     return false;
   }
 
   vtkDataArray* scalars1 = this->mesh->GetPointData()->GetScalars();
   vtkDataArray* scalars2 = other_mesh.mesh->GetPointData()->GetScalars();
 
-  if (!scalars1 || !scalars2)
-  {
-    std::cout << "no scalars";
+  if (!scalars1 || !scalars2) {
+    std::cout << "Mesh Compare: no scalars";
     return false;
   }
 
-  if (scalars1->GetNumberOfValues() != scalars2->GetNumberOfValues())
-  {
-    std::cout << "different number of scalars";
+  if (scalars1->GetNumberOfValues() != scalars2->GetNumberOfValues()) {
+    std::cout << "Mesh Compare: different number of scalars";
     return false;
   }
 
-  for (int i = 0; i < scalars1->GetNumberOfValues(); i++)
-  {
+  for (int i = 0; i < scalars1->GetNumberOfValues(); i++) {
     vtkVariant var1 = scalars1->GetVariantValue(i);
     vtkVariant var2 = scalars2->GetVariantValue(i);
-    if (var1 != var2)
-    {
-      std::cout << "values differ: " << var1 << " != " << var2 << "\n";
+    if (var1 != var2) {
+      std::cout << "Mesh Compare: values differ: " << var1 << " != " << var2 << "\n";
       return false;
     }
   }
@@ -293,6 +276,5 @@ Mesh::MeshType Mesh::get_poly_data()
 {
   return this->mesh;
 }
-
 
 } // shapeworks
