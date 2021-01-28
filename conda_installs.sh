@@ -117,6 +117,7 @@ function install_conda() {
   if ! pip install itk==5.0.1;                          then return 1; fi
   if ! pip install itkwidgets==0.32.0;                  then return 1; fi
   if ! pip install bokeh==2.2;                          then return 1; fi
+  if ! pip install seaborn; then return 1; fi
   if ! pip install mdutils==1.3.0;                      then return 1; fi # lib for writing markdown files (auto-documentation)
   if ! pip install mkdocs==1.1.2;                       then return 1; fi # lib for generating documentation from markdown
   if ! pip install python-markdown-math==0.8;           then return 1; fi # lib for rendering equations in docs
