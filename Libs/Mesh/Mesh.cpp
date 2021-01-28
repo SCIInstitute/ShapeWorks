@@ -39,6 +39,7 @@ namespace shapeworks {
 Mesh::MeshType Mesh::read(const std::string &pathname)
 {
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
+  if (!ShapeworksUtils::exists(pathname)) { throw std::invalid_argument("File doesn't exist"); }
 
   try {
     if (StringUtils::hasSuffix(pathname, ".vtk")) {

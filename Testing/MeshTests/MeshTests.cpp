@@ -6,15 +6,16 @@
 
 using namespace shapeworks;
 
-TEST(MeshTests, readTest)
+TEST(MeshTests, readfail)
 {
   try {
     Mesh mesh(std::string(TEST_DATA_DIR) + "/foo.vtk");
   } catch(...) {
+    ASSERT_TRUE(true);
     return;
   }
 
-  ASSERT_TRUE(true);
+  ASSERT_TRUE(false);
 }
 
 TEST(MeshTests, smoothTest1)
