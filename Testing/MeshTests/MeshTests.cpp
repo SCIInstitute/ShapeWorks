@@ -6,7 +6,7 @@
 
 using namespace shapeworks;
 
-TEST(MeshTests, readfail)
+TEST(MeshTests, readFailTest)
 {
   try {
     Mesh mesh(std::string(TEST_DATA_DIR) + "/foo.vtk");
@@ -95,7 +95,7 @@ TEST(MeshTests, probeTest)
 TEST(MeshTests, clipTest)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.clip(MeshUtils::createPlane(makeVector({0.0,0.0,0.0}), Point3({0.0,0.0,0.0})));
+  femur.clip(MeshUtils::createPlane(makeVector({1.0,1.0,1.0}), Point3({0.0,0.0,0.0})));
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/clip1.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
@@ -146,15 +146,23 @@ TEST(MeshTests, scaleTest2)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-// TODO: PreviewCmd results in seg fault. WHY?
-// TEST(MeshTests, fixTest)
-// {
-//   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-//   femur.fix();
-//   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/scale1.vtk");
+TEST(MeshTests, fixTest1)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
+  femur.fix();
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fix1.vtk");
 
-//   ASSERT_TRUE(femur == ground_truth);
-// }
+  ASSERT_TRUE(femur == ground_truth);
+}
+
+TEST(MeshTests, fixTest2)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
+  femur.fix(true, true, true, 1.0, 10, true, 1.0);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fix2.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
 
 TEST(MeshTests, distanceTest)
 {
@@ -227,7 +235,7 @@ TEST(MeshTests, rasterizationSizeTest2)
   ASSERT_TRUE(femur.rasterizationSize(region) == size);
 }
 
-TEST(MeshTests, center)
+TEST(MeshTests, centerTest)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
   Point3 center(femur.center());
@@ -235,7 +243,7 @@ TEST(MeshTests, center)
   ASSERT_TRUE(epsEqual(center, Point3({90.7541, -160.557, -673.572}), 1e-3));
 }
 
-TEST(MeshTests, centerofmass)
+TEST(MeshTests, centerofmassTest)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
   Point3 com(femur.centerOfMass());

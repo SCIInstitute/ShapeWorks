@@ -249,7 +249,7 @@ TEST(shapeworksTests, divisionTest)
   ASSERT_FALSE(system("bash div.sh"));
 }
 
-TEST(shapeworksTests, meshcoverage)
+TEST(shapeworksTests, coverageTest)
 {
   ASSERT_FALSE(system("bash coverage.sh"));
 }
@@ -281,7 +281,7 @@ TEST(shapeworksTests, probeTest)
 
 TEST(shapeworksTests, clipmeshTest)
 {
-  ASSERT_FALSE(system("bash fillholes.sh"));
+  ASSERT_FALSE(system("bash clipmesh.sh"));
 }
 
 TEST(shapeworksTests, translatemeshTest)
@@ -294,6 +294,11 @@ TEST(shapeworksTests, scalemeshTest)
   ASSERT_FALSE(system("bash scalemesh.sh"));
 }
 
+TEST(shapeworksTests, meshfixTest)
+{
+  ASSERT_FALSE(system("bash meshfix.sh"));
+}
+
 TEST(shapeworksTests, meshtoimageTest)
 {
   ASSERT_FALSE(system("bash meshtoimage.sh"));
@@ -304,13 +309,12 @@ TEST(shapeworksTests, meshtodtTest)
   ASSERT_FALSE(system("bash meshtodt.sh"));
 }
 
-TEST(shapeworksTests, shapeevaluationTest)
-{
-  ASSERT_FALSE(system("bash shapeevaluation.sh"));
-}
-
-TEST(shapeworksTests, meshtransform)
+TEST(shapeworksTests, meshtransformTest)
 {
   ASSERT_FALSE(system("bash meshtransform.sh"));
 }
 
+TEST(shapeworksTests, shapeevaluationTest)
+{
+  ASSERT_FALSE(system("bash shapeevaluation.sh"));
+}

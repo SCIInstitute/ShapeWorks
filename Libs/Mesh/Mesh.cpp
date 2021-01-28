@@ -486,9 +486,14 @@ Mesh& Mesh::fix(bool wind, bool smoothBefore, bool smoothAfter, double lambda, i
   }
 
 	FEVTKExport vtkOut;
-  VTKEXPORT ops = {false, true};
-  vtkOut.SetOptions(ops);
   this->mesh = vtkOut.ExportToVTK(*meshFix);
+
+  return *this;
+}
+
+Mesh& Mesh::addField(const char *name)
+{
+  mesh->GetPointData()->SetActiveScalars(name);
 
   return *this;
 }
