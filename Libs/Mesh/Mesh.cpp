@@ -33,6 +33,7 @@
 #include <FEFixMesh.h>
 #include <FEMeshSmoothingModifier.h>
 #include <FECVDDecimationModifier.h>
+#include <vtkDoubleArray.h>
 
 namespace shapeworks {
 
@@ -491,9 +492,16 @@ Mesh& Mesh::fix(bool wind, bool smoothBefore, bool smoothAfter, double lambda, i
   return *this;
 }
 
-Mesh& Mesh::addField(const char *name)
+Mesh& Mesh::addField(const std::string name, double value)
 {
-  mesh->GetPointData()->SetActiveScalars(name);
+  double arrayValue[1] = {value};
+
+  vtkSmartPointer<vtkDoubleArray> array = vtkSmartPointer<vtkDoubleArray>::New();
+  array->SetNumberOfComponents(1);
+  array->SetName(name.c_str());
+  array->InsertNextTuple(arrayValue);
+
+  mesh->GetFieldData()->AddArray(array);
 
   return *this;
 }

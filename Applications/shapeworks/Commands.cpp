@@ -2240,6 +2240,42 @@ bool MeshFix::execute(const optparse::Values &options, SharedCommandData &shared
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// AddField
+///////////////////////////////////////////////////////////////////////////////
+void AddField::buildParser()
+{
+  const std::string prog = "add-field";
+  const std::string desc = "adds a scalar field to mesh";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
+  parser.add_option("--value").action("store").type("double").set_default(0.0).help("Value of scalar field.");
+
+  Command::buildParser();
+}
+
+bool AddField::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  std::string name = static_cast<std::string>(options.get("name"));
+  double value = static_cast<double>(options.get("value"));
+
+  if (name == "")
+  {
+    std::cerr << "Must specify a name\n";
+    return false;
+  }
+
+  sharedData.mesh->addField(name, value);
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // MeshToImage
 ///////////////////////////////////////////////////////////////////////////////
 void MeshToImage::buildParser()

@@ -73,7 +73,7 @@ public:
   /// quality control mesh
   Mesh& fix(bool wind = true, bool smoothBefore = true, bool smoothAfter = true, double lambda = 0.5, int iterations = 1, bool decimate = true, double percentage = 0.5);
 
-  Mesh& addField(const char *name);
+  Mesh& addField(const std::string name, double value);
 
   // <ctc> <as>
 
