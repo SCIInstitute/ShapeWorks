@@ -57,8 +57,9 @@ const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createICPTransform(const vtkSmart
   return m;
 }
 
-Eigen::MatrixXd MeshUtils::distilVertexInfo(vtkSmartPointer<vtkPolyData> mesh){
-  vtkSmartPointer<vtkPoints> points = mesh->GetPoints();
+Eigen::MatrixXd MeshUtils::distilVertexInfo(Mesh mesh) {
+  vtkSmartPointer<vtkPolyData> poly_data = mesh.getVTKMesh();
+  vtkSmartPointer<vtkPoints> points = poly_data->GetPoints();
 	vtkSmartPointer<vtkDataArray> dataArray = points->GetData();
 	
   int numVertices = points->GetNumberOfPoints();
@@ -73,16 +74,16 @@ Eigen::MatrixXd MeshUtils::distilVertexInfo(vtkSmartPointer<vtkPolyData> mesh){
   return Vref_new;
 }
 
-Eigen::MatrixXi MeshUtils::distilFaceInfo(vtkSmartPointer<vtkPolyData> mesh){
-  
-  int numFaces = mesh->GetNumberOfCells();
+Eigen::MatrixXi MeshUtils::distilFaceInfo(Mesh mesh){
+  vtkSmartPointer<vtkPolyData> poly_data = mesh.getVTKMesh();
+  int numFaces = poly_data->GetNumberOfCells();
   Eigen::MatrixXi Fref_new(numFaces, 3);
 	
 	vtkSmartPointer<vtkIdList> cellIdList =
       vtkSmartPointer<vtkIdList>::New();
 	
 	for(int j = 0; j < numFaces; j++){
-		mesh->GetCellPoints(j, cellIdList);
+		poly_data->GetCellPoints(j, cellIdList);
 		Fref_new(j, 0) = cellIdList->GetId(0);
 		Fref_new(j, 1) = cellIdList->GetId(1);
 		Fref_new(j, 2) = cellIdList->GetId(2);

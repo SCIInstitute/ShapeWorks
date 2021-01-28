@@ -21,8 +21,8 @@ public:
                                                                 bool meshTransform = false);
 
   /// Distils the vertex and face information from VTK poly data to Eigen matrices
-  static Eigen::MatrixXd distilVertexInfo(vtkSmartPointer<vtkPolyData> mesh);
-  static Eigen::MatrixXi distilFaceInfo(vtkSmartPointer<vtkPolyData> mesh);
+  static Eigen::MatrixXd distilVertexInfo(Mesh mesh);
+  static Eigen::MatrixXi distilFaceInfo(Mesh mesh);
 
   /// Compute the warp matrix using the mesh and reference points
   static Eigen::MatrixXd generateWarpMatrix(Eigen::MatrixXd TV , Eigen::MatrixXi TF, Eigen::MatrixXd Vref);

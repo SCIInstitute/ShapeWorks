@@ -304,9 +304,8 @@ TEST(MeshTests, icpTest)
 TEST(MeshTests, warpTest1)
 {
   Mesh ellipsoid( std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
-  Mesh::MeshType inMesh = ellipsoid.get_poly_data();
-  Eigen::MatrixXd Vref = MeshUtils::distilVertexInfo(inMesh);
-  Eigen::MatrixXi Fref = MeshUtils::distilFaceInfo(inMesh);
+  Eigen::MatrixXd Vref = MeshUtils::distilVertexInfo(ellipsoid);
+  Eigen::MatrixXi Fref = MeshUtils::distilFaceInfo(ellipsoid);
   std::string particlePath = std::string(TEST_DATA_DIR) + "/ellipsoid_0.particles";
   std::vector<std::string> paths;
   paths.push_back(particlePath);
@@ -315,9 +314,8 @@ TEST(MeshTests, warpTest1)
   staticPts.resize(3, 128);
   Eigen::MatrixXd W1 = MeshUtils::generateWarpMatrix(Vref, Fref, staticPts.transpose());
   Mesh output = MeshUtils::warpMesh(staticPts.transpose(), W1, Fref);
-  Mesh::MeshType inMesh2 = output.get_poly_data();
-  Eigen::MatrixXd Vref2 = MeshUtils::distilVertexInfo(inMesh2);
-  Eigen::MatrixXi Fref2 = MeshUtils::distilFaceInfo(inMesh2);
+  Eigen::MatrixXd Vref2 = MeshUtils::distilVertexInfo(output);
+  Eigen::MatrixXi Fref2 = MeshUtils::distilFaceInfo(output);
   Eigen::VectorXi J = Eigen::VectorXi::LinSpaced(Vref2.rows(),0,Vref2.rows()-1);
 	Eigen::VectorXd sqrD;
 	Eigen::MatrixXd _2;
@@ -331,9 +329,8 @@ TEST(MeshTests, warpTest2)
 {
   Mesh ellipsoid( std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
   Mesh ellipsoid_warped( std::string(TEST_DATA_DIR) + "/ellipsoid_warped.ply");
-  Mesh::MeshType inMesh = ellipsoid.get_poly_data();
-  Eigen::MatrixXd Vref = MeshUtils::distilVertexInfo(inMesh);
-  Eigen::MatrixXi Fref = MeshUtils::distilFaceInfo(inMesh);
+  Eigen::MatrixXd Vref = MeshUtils::distilVertexInfo(ellipsoid);
+  Eigen::MatrixXi Fref = MeshUtils::distilFaceInfo(ellipsoid);
   std::string staticPath = std::string(TEST_DATA_DIR) + "/ellipsoid_0.particles";
   std::string movingPath = std::string(TEST_DATA_DIR) + "/ellipsoid_1.particles";
   std::vector<std::string> paths;
