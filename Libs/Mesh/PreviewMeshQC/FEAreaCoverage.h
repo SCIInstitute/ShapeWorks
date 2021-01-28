@@ -5,22 +5,20 @@
 #include <string>
 using namespace std;
 
-class FEModel;
-
 class FEAreaCoverage
 {
   class Surface
   {
-public:
-    Surface() : m_mesh(nullptr) {}
+
+  public:
+    Surface() {}
     int Faces() { return (int)m_face.size(); }
 
-    void Create(FEMesh& m);
+    void Create(std::shared_ptr<FEMesh> m);
 
     int Nodes() { return (int)m_node.size(); }
 
-public:
-    FEMesh*       m_mesh;
+    std::shared_ptr<FEMesh> m_mesh;
     vector<int>   m_face;                     // face list
     vector<int>   m_node;                     // node list
     vector<vec3d> m_pos;                      // node positions
@@ -40,7 +38,7 @@ public:
 
   // apply the map
   // returns one value per node
-  vector<double> Apply(FEMesh& mesh1, FEMesh& mesh2);
+  vector<double> Apply(std::shared_ptr<FEMesh> mesh1, std::shared_ptr<FEMesh> mesh2);
 
   // get/set back intersection flag
 	void AllowBackIntersection(bool b);
