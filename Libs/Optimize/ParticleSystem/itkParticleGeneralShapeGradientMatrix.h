@@ -9,7 +9,7 @@
 
 #include "itkParticleImplicitSurfaceDomain.h"
 #include "itkParticleImageDomainWithGradients.h"
-#include "itkParticleImageDomainWithHessians.h"
+#include "itkParticleImageDomainWithGradN.h"
 #include "TriMesh.h"
 
 #include "itkParticleSystem.h"
@@ -159,24 +159,24 @@ public:
                 vnl_vector_fixed<float, DIMENSION> gradient = ps->GetDomain(d)->SampleGradientAtPoint(posLocal, idx);
                 vnl_vector_fixed<float, DIMENSION> normal = gradient.normalize();
                 float grad_mag = gradient.magnitude(); //TODO This is always 1.0. Fix when correcting image gradient of normals
-                typename ParticleDomain::HessianType hessian = ps->GetDomain(d)->SampleHessianAtPoint(posLocal, idx);
+                typename ParticleDomain::GradNType grad_n = ps->GetDomain(d)->SampleGradNAtPoint(posLocal, idx);
 
-                typename ParticleImageDomainWithHessians<float>::VnlMatrixType mat1;
+                typename ParticleImageDomainWithGradN<float>::VnlMatrixType mat1;
                 mat1.set_identity();
                 vnl_matrix<float> nrml(VDimension, 1);
                 nrml.fill(0.0);
                 nrml(0,0) = normal[0]; nrml(1,0) = normal[1]; nrml(2,0) = normal[2];
-                typename ParticleImageDomainWithHessians<float>::VnlMatrixType mat2 = nrml * nrml.transpose();
+                typename ParticleImageDomainWithGradN<float>::VnlMatrixType mat2 = nrml * nrml.transpose();
 
                 for (unsigned int x1 = 0; x1 < VDimension; x1++) {
                     for (unsigned int x2 = 0; x2 < VDimension; x2++) {
                         mat1(x1, x2) -= mat2(x1, x2);
-                        hessian(x1, x2)   /= grad_mag;
+                        grad_n(x1, x2)   /= grad_mag;
                     }
                 }
 
                 // mat3 = H/|grad_f| * (I - n*n');
-                typename ParticleImageDomainWithHessians<float>::VnlMatrixType mat3 = hessian * mat1;
+                typename ParticleImageDomainWithGradN<float>::VnlMatrixType mat3 = grad_n * mat1;
                 typename itk::ParticleSystem<VDimension>::VnlMatrixType tmp;
                 tmp.set_size(VDimension, VDimension);
                 tmp.fill(0.0);

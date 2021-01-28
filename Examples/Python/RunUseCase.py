@@ -14,7 +14,7 @@ import platform
 import argparse
 import subprocess
 import sys
-from CommonUtils import robustifyShapeworksPaths
+from CommonUtils import robustifyShapeworksPaths,dataset_exists_check
 
 # check that required modules are found
 try:
@@ -35,7 +35,7 @@ if platform.system() == "Darwin":
 default_subsample = 3
 
 parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
-parser.add_argument("--use_case", help="Specify which use case to run", choices=["ellipsoid", "ellipsoid_evaluate", "ellipsoid_mesh", "ellipsoid_fd", "ellipsoid_cut", "lumps", "left_atrium", "femur", "femur_mesh", "femur_cut", "deep_ssm"])
+parser.add_argument("--use_case", help="Specify which use case to run", choices=["ellipsoid", "ellipsoid_evaluate", "ellipsoid_mesh", "ellipsoid_fd", "ellipsoid_cut", "lumps", "left_atrium", "femur", "femur_mesh", "femur_cut", "deep_ssm", "data_augmentation"])
 parser.add_argument("--use_subsample", help="Run the pipeline for a subset of data",action="store_true")
 parser.add_argument("--num_subsample", help="Size of subset to run on (default: "+str(default_subsample)+")", nargs='?', type=int, default=default_subsample)
 parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
@@ -48,7 +48,11 @@ args = parser.parse_args()
 explicit_binpath = args.shapeworks_path
 
 if args.use_subsample:
+    dataExists = dataset_exists_check(args.use_case)
     args.use_subsample = args.num_subsample
+    if(dataExists==False):
+        print("Please note : For --use_subsample argument the entire dataset will be downloaded.For a quick test use the --tiny_test argument")
+        input("Press any key to continue")
 
 if len(sys.argv)==1:
     parser.print_help(sys.stderr)

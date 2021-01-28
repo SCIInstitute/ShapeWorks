@@ -49,7 +49,7 @@ Q_SIGNALS:
   void groom_complete();
   void error_message(std::string);
   void message(std::string);
-  void progress(size_t);
+  void progress(int);
 
 public Q_SLOTS:
 
