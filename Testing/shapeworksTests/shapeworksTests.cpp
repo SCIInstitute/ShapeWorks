@@ -249,11 +249,10 @@ TEST(shapeworksTests, divisionTest)
   ASSERT_FALSE(system("bash div.sh"));
 }
 
-// TODO: Fix this test
-// TEST(shapeworksTests, coverageTest)
-// {
-//   ASSERT_FALSE(system("bash coverage.sh"));
-// }
+TEST(shapeworksTests, meshcoverage)
+{
+  ASSERT_FALSE(system("bash coverage.sh"));
+}
 
 TEST(shapeworksTests, smoothTest)
 {
