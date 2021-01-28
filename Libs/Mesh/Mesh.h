@@ -75,6 +75,8 @@ public:
 
   Mesh& addField(const std::string name, double value);
 
+  vtkAbstractArray* getFieldValue(const std::string name);
+
   // <ctc> <as>
 
   /// compute surface to surface distance using a filter

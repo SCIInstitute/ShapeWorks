@@ -494,16 +494,26 @@ Mesh& Mesh::fix(bool wind, bool smoothBefore, bool smoothAfter, double lambda, i
 
 Mesh& Mesh::addField(const std::string name, double value)
 {
-  double arrayValue[1] = {value};
+  int numVertices = mesh->GetPoints()->GetNumberOfPoints();
 
   vtkSmartPointer<vtkDoubleArray> array = vtkSmartPointer<vtkDoubleArray>::New();
   array->SetNumberOfComponents(1);
   array->SetName(name.c_str());
-  array->InsertNextTuple(arrayValue);
+  for (int i=0; i<numVertices; i++)
+  {
+    double val[1] = {static_cast<double>(value)}; // we used i instead of value here to set range
+    array->InsertNextTuple(val);
+  }
 
   mesh->GetFieldData()->AddArray(array);
 
   return *this;
+}
+
+// can return vtkArray but vtk doc says "not recomended"
+vtkAbstractArray* Mesh::getFieldValue(const std::string name)
+{
+  return mesh->GetFieldData()->GetAbstractArray(name.c_str());
 }
 
 bool Mesh::comparePointsEqual(const Mesh &other_mesh) const
