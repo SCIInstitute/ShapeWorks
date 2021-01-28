@@ -210,6 +210,14 @@ namespace itk
       m_NumberOfIterations++;
       m_GradientFunction->AfterIteration();
 
+      if(m_NumberOfIterations % 10 == 0) {
+        for(auto& d : m_ParticleSystem->neighbors) {
+          for(auto& p : d) {
+            p.second.reset();
+          }
+        }
+      }
+
       const auto accTimerEnd = std::chrono::steady_clock::now();
       const auto msElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(accTimerEnd - accTimerBegin).count();
 

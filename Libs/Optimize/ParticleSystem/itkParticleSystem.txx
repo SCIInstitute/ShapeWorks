@@ -44,6 +44,7 @@ ParticleSystem<VDimension>
   m_Positions.resize(num);
   m_IndexCounters.resize(num);
   m_Neighborhoods.resize(num);
+  neighbors.resize(num);
   while(num >= this->m_DomainFlags.size()) {
     m_DomainFlags.push_back(false);
   }

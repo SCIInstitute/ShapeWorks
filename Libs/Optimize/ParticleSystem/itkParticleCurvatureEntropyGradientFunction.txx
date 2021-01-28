@@ -158,10 +158,31 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
     {
     neighborhood_radius = this->GetMaximumNeighborhoodRadius();
     }
-  
-  
+
+  int step_testing = 0;
+  auto testing_thing = [&](){
+    return;
+    std::set<int> new_neighbors;
+    for(const auto &pi : m_CurrentNeighborhood) {
+      new_neighbors.insert(pi.Index);
+    }
+    std::set<int> result;
+    std::set<int> &prev_neighbors = system->neighbors[d][idx].n;
+    double &prev_r = system->neighbors[d][idx].sigma;
+    double sigma_diff = prev_r - neighborhood_radius;
+    std::set_difference(new_neighbors.begin(), new_neighbors.end(), prev_neighbors.begin(), prev_neighbors.end(),
+                        std::inserter(result, result.end()));
+    std::set_difference(prev_neighbors.begin(), prev_neighbors.end(), new_neighbors.begin(), new_neighbors.end(),
+                        std::inserter(result, result.end()));
+    std::cout << "d: " << d << " | p: " << idx << " | " << "step: " << step_testing << "| diff: " << result.size()
+      << " | sigma_diff: " << (sigma_diff) << "\n";
+    prev_neighbors = std::move(new_neighbors);
+    prev_r = neighborhood_radius;
+  };
+
   // Get the neighborhood surrounding the point "pos".
-   m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, idx, m_CurrentWeights, neighborhood_radius, d);
+   m_CurrentNeighborhood = this->FindNeighborhoodPoints(pos, idx, m_CurrentWeights, neighborhood_radius, d, system);
+  testing_thing();
 
    //    m_CurrentNeighborhood
    //   = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
@@ -177,8 +198,12 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   m_CurrentSigma = EstimateSigma(idx, d, m_CurrentNeighborhood, system->GetDomain(d), m_CurrentWeights, pos,
                                   m_CurrentSigma, epsilon, err, m_avgKappa);
 
+
+
+  int steps = 0;
   while (err != 0)
     {
+    steps++;
     neighborhood_radius *= 2.0;
 
     // Constrain the neighborhood size.  If we have reached a maximum
@@ -194,14 +219,18 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
       m_CurrentSigma = neighborhood_radius / this->GetNeighborhoodToSigmaRatio();
       }
     
-    m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, idx, m_CurrentWeights,
-                                                               neighborhood_radius, d);
+      m_CurrentNeighborhood = this->FindNeighborhoodPoints(pos, idx, m_CurrentWeights, neighborhood_radius, d, system);
+    testing_thing();
     //  m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
     //    this->ComputeAngularWeights(pos,m_CurrentNeighborhood,domain,m_CurrentWeights);
     
     m_CurrentSigma = EstimateSigma(idx, d, m_CurrentNeighborhood, system->GetDomain(d), m_CurrentWeights, pos,
                                    m_CurrentSigma, epsilon, err, m_avgKappa);
     } // done while err
+    /*
+    std::cout << "estimate sigma steps: " << steps <<"  | particles: " <<  system->GetNumberOfParticles()
+    << "| sigma: " << m_CurrentSigma << " | count: " << m_CurrentNeighborhood.size() << "\n";
+     */
 
   // Constrain sigma to a maximum reasonable size based on the user-supplied
   // limit to neighborhood size.
@@ -209,8 +238,9 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
     {
     m_CurrentSigma = this->GetMaximumNeighborhoodRadius() / this->GetNeighborhoodToSigmaRatio();
     neighborhood_radius = this->GetMaximumNeighborhoodRadius();
-        m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, idx,m_CurrentWeights,
-                                                               neighborhood_radius, d);
+      m_CurrentNeighborhood = FindNeighborhoodPoints(pos, idx,m_CurrentWeights,
+                                                     neighborhood_radius, d,system);
+      testing_thing();
         //  m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
         //      this->ComputeAngularWeights(pos,m_CurrentNeighborhood,domain,m_CurrentWeights);
     }

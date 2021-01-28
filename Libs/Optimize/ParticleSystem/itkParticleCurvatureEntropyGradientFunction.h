@@ -105,7 +105,51 @@ public:
 
 
   }
-  
+
+  std::vector<ParticlePointIndexPair<VDimension>> FindNeighborhoodPoints(const PointType &p, int idx,
+                                                std::vector<double> &weights,
+                                                double r, unsigned int d, const ParticleSystemType* system) {
+    auto& prev = system->neighbors[d][idx];
+    if(prev.n.size() == 0) {
+      const auto ret = system->FindNeighborhoodPoints(p, idx, m_CurrentWeights, r, d);
+      for(const auto& pi : ret) {
+        prev.n.insert(pi.Index);
+      }
+
+      return ret;
+    }
+
+    const auto& domain = system->GetDomain(d);
+    std::vector<ParticlePointIndexPair<VDimension>> ret;
+    double m_FlatCutoff = 0.3;
+    weights.clear();
+    GradientVectorType posnormal = domain->SampleNormalAtPoint(p, idx);
+    for(auto& n_idx : prev.n) {
+
+      auto pt = system->GetPositions(d)->Get(n_idx);
+      double distance = domain->Distance(p, idx, pt, n_idx);
+      if(distance > r) {
+        continue; //todo invalidate ?
+      }
+
+        GradientVectorType pn = domain->SampleNormalAtPoint(pt, n_idx);
+        double cosine   = dot_product(posnormal,pn); // normals already normalized
+        if ( cosine >= m_FlatCutoff)
+        {
+          weights.push_back(1.0);
+        }
+        else
+        {
+          // Drop to zero influence over 90 degrees.
+          weights.push_back(cos((m_FlatCutoff - cosine) / (1.0+m_FlatCutoff) * 1.5708));
+        }
+
+        ret.push_back(ParticlePointIndexPair<VDimension>(pt, n_idx));
+      }
+
+    return ret;
+  }
+
   /** */
   virtual void AfterIteration()  {  }
 

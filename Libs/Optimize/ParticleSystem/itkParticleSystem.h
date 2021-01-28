@@ -32,6 +32,8 @@
 #include <map>
 #include <vector>
 #include <random>
+#include <set>
+#include <unordered_map>
 
 namespace itk
 {
@@ -60,6 +62,18 @@ public:
   typedef SmartPointer<Self>  Pointer;
   typedef SmartPointer<const Self>  ConstPointer;
   typedef WeakPointer<const Self>  ConstWeakPointer;
+
+
+  struct NeighborCache{
+    std::set<int> n;
+    double sigma{-1.0};
+
+    void reset() {
+      sigma = -1.0;
+      n.clear();
+    }
+  };
+  mutable std::vector<std::unordered_map<int, NeighborCache>> neighbors;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

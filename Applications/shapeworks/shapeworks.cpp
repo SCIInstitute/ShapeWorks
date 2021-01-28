@@ -5,12 +5,14 @@
 #include <exception>
 #include "Executable.h"
 #include "Commands.h"
+#include <tbb/task_scheduler_init.h>
 
 using namespace shapeworks;
 
 int main(int argc, char *argv[])
 {
   Executable shapeworks;
+  tbb::task_scheduler_init init(1);
 
   shapeworks.addCommand(ReadImage::getCommand());
   shapeworks.addCommand(WriteImage::getCommand());

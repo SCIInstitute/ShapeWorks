@@ -64,7 +64,7 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
                                        PointType pt_b, int idx_b,
                                        vnl_vector_fixed<double, DIMENSION> *out_grad) const
 {
-#if 0
+#if 1
   if(out_grad != nullptr) {
     for(int i=0; i<DIMENSION; i++) {
       (*out_grad)[i] = pt_a[i] - pt_b[i];
