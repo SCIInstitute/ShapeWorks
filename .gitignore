@@ -62,5 +62,4 @@ site/
 .ipynb_checkpoints
 
 # data and output dirs
-Data/
 Output/

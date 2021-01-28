@@ -230,7 +230,6 @@ TEST(MeshTests, center)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
   Point3 center(femur.center());
-  std::cout << "center: " << center << std::endl;
 
   ASSERT_TRUE(epsEqual(center, Point3({90.7541, -160.557, -673.572}), 1e-3));
 }
@@ -239,7 +238,6 @@ TEST(MeshTests, centerofmass)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
   Point3 com(femur.centerOfMass());
-  std::cout << "com: " << com << std::endl;
 
   ASSERT_TRUE(epsEqual(com, Point3({92.6201, -157.662, -666.611}), 1e-3));
 }
@@ -287,14 +285,13 @@ TEST(MeshTests, coverageTest)
   ASSERT_TRUE(true);
 }
 
-// TODO: Fix this test
-// TEST(MeshTests, icpTest)
-// {
-//   Mesh source(std::string(TEST_DATA_DIR) + "/femur.vtk");
-//   Mesh target(std::string(TEST_DATA_DIR) + "/m04_L_femur.vtk");
-//   shapeworks::vtkTransform transform = source.createTransform(target);
-//   source.applyTransform(transform);
-//   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/icp.vtk");
+TEST(MeshTests, icpTest)
+{
+  Mesh source(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
+  Mesh target(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
+  shapeworks::vtkTransform transform = source.createTransform(target);
+  source.applyTransform(transform);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/icp.ply");
 
-//   ASSERT_TRUE(source == ground_truth);
-// }
+  ASSERT_TRUE(source == ground_truth);
+}
