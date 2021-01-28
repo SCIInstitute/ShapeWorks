@@ -67,7 +67,7 @@ function install_conda() {
   if ! conda create --yes --name $CONDAENV python=3.7.8; then return 1; fi
   eval "$(conda shell.bash hook)"
   if ! conda activate $CONDAENV; then return 1; fi
-
+  
   # pip is needed in sub-environments or the base env's pip will silently install to base
   if ! conda install --yes pip=20.2.3; then return 1; fi
   if ! python -m pip install --upgrade pip; then return 1; fi

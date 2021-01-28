@@ -12,5 +12,4 @@ target_link_libraries(MeshTests
   Testing
   )
 
-
 add_test(NAME MeshTests COMMAND MeshTests)

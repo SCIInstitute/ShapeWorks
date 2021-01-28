@@ -44,7 +44,7 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, isBinary=True):
         img = Image(inname)
         if isBinary:
             img.antialias()
-        ImageUtils.isoresample(img, isoSpacing)
+        img.resample(isoSpacing)
         if isBinary:
             img.binarize()
         img.write(outname)
@@ -193,7 +193,7 @@ def applyRigidAlignment(outDir, refFile, inDataListSeg, inDataListImg=[], icp_it
         # resize images to reference images
         img = Image(inDataListSeg[i])
         img.antialias(antialias_iterations)
-        rigidTransform = ImageUtils.createRigidRegistrationTransform(img, refImg, isoValue, icp_iterations)
+        rigidTransform = img.createTransform(refImg, TransformType.IterativeClosestPoint, isoValue, icp_iterations)
         img.applyTransform(rigidTransform, refImg.origin(), refImg.dims(), refImg.spacing(), refImg.coordsys(), InterpolationType.Linear).binarize().write(segoutname)
 
         if inDataListImg:
@@ -226,16 +226,6 @@ def applyCropping(outDir, inDataList, path, paddingSize=10):
         img.crop(region).write(outname)
     return outDataList
 
-def create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename):
-    file = open(xmlfilename, "w+")
-    file.write("<lsSmootherIterations>\n1.0\n</lsSmootherIterations>")
-    file.write("<targetReduction>\n0.0001\n</targetReduction>")
-    file.write("<featureAngle>\n30.0\n</featureAngle>")
-    file.write("<preserveTopology>\n1\n</preserveTopology>")
-    file.write("<inputs>\n" + str(tpdtnrrdfilename) +"\n</inputs>")
-    file.write("<outputs>\n"+str(vtkfilename) + "\n</outputs>")
-    file.close()
-
 def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoothingIterations=1, alpha=10.5, beta=10.0, scaling=20.0, isoValue=0):
     outDir = os.path.join(parentDir, 'groom_and_meshes')
     if not os.path.exists(outDir):
@@ -259,15 +249,14 @@ def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoot
         img.extractLabel(1.0).closeHoles().write(inname)
         img.antialias(antialiasIterations).computeDT().write(dtnrrdfilename)
         img.applyCurvatureFilter(smoothingIterations).write(tpdtnrrdfilename)
-        isoimg = ImageUtils.topologyPreservingSmooth(img, scaling, alpha, beta)
-        isoimg.write(isonrrdfilename)
+        img.topologyPreservingSmooth(scaling, alpha, beta).write(isonrrdfilename)
         shutil.copy(tpdtnrrdfilename, finalDTDir)
     return outDataList
 
 ### Mesh Grooming
 
 # Reflects images and meshes to reference side
-def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side, printCmd=True):
+def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side):
     if reference_side == 'right':
         ref = 'R'
         flip = 'L'
@@ -315,15 +304,10 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side, printCmd=T
         if flip_seg != 'None':
             img_out = rename(image, outImgDir, 'reflect').replace(prefix, flip_prefix)
             imageList.append(img_out)
-            centerFilename = os.path.join(outDir, prefix + "_origin.txt")
             img = Image(image)
             img.reflect("X").write(img_out)
             seg_out = rename(flip_seg, outSegDir, 'reflect')
             meshList.append(seg_out)
-            execCommand = ["ReflectMesh", "--inFilename", flip_seg, "--outFilename", seg_out, "--reflectCenterFilename", centerFilename, "--inputDirection", "0", "--meshFormat", flip_seg.split(".")[-1]]
-            if printCmd:
-                print("CMD: " + " ".join(execCommand))
-            subprocess.check_call(execCommand)
     return meshList, imageList
 
 # Reflects meshes to reference side
@@ -348,12 +332,20 @@ def reflectMeshes(outDir, seg_list, reference_side, printCmd=True):
         # if we have a seg for the non-ref side, reflect it
         else:
             seg_out = rename(seg, outSegDir, 'reflect')
-            mesh_format = seg.split(".")[-1]
-            centerFilename = seg_out.replace("." + mesh_format,"_origin.txt")
-            execCommand = ["ReflectMesh", "--inFilename", seg, "--outFilename", seg_out, "--reflectCenterFilename", centerFilename, "--inputDirection", "0", "--meshFormat", mesh_format]
+
+            cmd = ["shapeworks",
+                   "read-mesh", "--name", seg,
+                   "mesh-info", "--center"]
+            output = subprocess.run(cmd, capture_output=True, text=True).stdout.splitlines()
+            origin = makeVector(output[0].split(":")[1])
+
+            cmd = ["shapeworks",
+                   "read-mesh", "--name", seg,
+                   "reflect-mesh", "--originx", str(origin[0]), "--originy", str(origin[1]), "--originz", str(origin[2]),
+                   "write-mesh", "--name", seg_out]
             if printCmd:
-                print("CMD: " + " ".join(execCommand))
-            subprocess.check_call(execCommand)
+                print("CMD: " + " ".join(cmd))
+            subprocess.check_call(cmd)
         meshList.append(seg_out)
     return meshList
 
@@ -416,7 +408,7 @@ def getPLYmeshes(meshList, printCmd=True):
         PLYmeshList.append(mesh)
     return PLYmeshList
 
-# rasterization for meshes to DT
+# rasterization for meshes to images using images
 def MeshesToVolumesUsingImages(outDir, meshList, imgList, printCmd=True):
     segList= []
     if not os.path.exists(outDir):
@@ -430,136 +422,64 @@ def MeshesToVolumesUsingImages(outDir, meshList, imgList, printCmd=True):
         # get image
         for image_file in imgList:
             if prefix in image_file:
-                img = Image(image_file)
+                image = image_file
 
         # get origin, size, and spacing data
-        data = {}
-        data["origin"] = img.origin()
-        data["size"] = img.dims()
-        data["spacing"] = img.spacing()
+        img = Image(image)
+        origin = img.origin()
+        size = img.size()
+        spacing = img.spacing()
 
-        # write xml file
-        infoPrefix = os.path.join(outDir, prefix)
-        xmlfilename = infoPrefix + "_GenerateBinaryAndDT.xml"
-        if os.path.exists(xmlfilename):
-            os.remove(xmlfilename)
-        xml = open(xmlfilename, "a")
-        xml.write("<?xml version=\"1.0\" ?>\n")
-        xml.write("<mesh>\n")
-        xml.write(mesh+"\n")
-        xml.write("</mesh>\n")
-
-        # write origin, size, and spacing data
-        for key,value in data.items():
-            index = 0
-            for dim in ["x","y","z"]:
-                xml.write("<" + key + "_" + dim + ">" + str(value[index]) + "</" + key + "_" + dim + ">\n")
-                index += 1
-        xml.close()
         print("########### Turning Mesh To Volume ##############")
         segFile = rename(mesh, outDir, "", ".nrrd")
-
-        # call generate binary and DT
-        execCommand = ["GenerateBinaryAndDTImagesFromMeshes", xmlfilename]
-        if printCmd:
-            print("CMD: " + " ".join(execCommand))
-        subprocess.check_call(execCommand)
-
-        spacing_string = str(img.spacing()[0]).replace(".0","")
-        # save output volume
-        output_volume = mesh.replace(".ply", ".rasterized_sp" + spacing_string + ".nrrd")
-        shutil.move(output_volume, segFile)
         segList.append(segFile)
-
-        # save output DT
-        output_DT =  mesh.replace(".ply", ".DT_sp" + spacing_string+ ".nrrd")
-        dtFile = segFile.replace(".nrrd", "_DT.nrrd")
-        shutil.move(output_DT, dtFile)
-
+        cmd = ["shapeworks",
+               "read-mesh", "--name", mesh,
+               "mesh-to-image", "--spacex", str(spacing[0]), "--spacey", str(spacing[1]), "--spacez", str(spacing[2]),
+                                "--sizex", str(size[0]), "--sizey", str(size[1]), "--sizez", str(size[2]),
+                                "--originx", str(origin[0]), "--originy", str(origin[1]), "--originz", str(origin[2]),
+                "write-image", "--name", segFile]
+        if printCmd:
+            print("CMD: " + " ".join(cmd))
+        subprocess.check_call(cmd)
     return segList
 
-# rasterization for meshes to DT
-def MeshesToVolumes(outDir, meshList, spacing, printCmd=True):
+def makeVector(str):
+    arr = np.array(str.replace("[", "").replace("]", "").split(","))
+    return np.asarray(arr, np.float64)
+
+# rasterization for meshes to images
+def MeshesToVolumes(outDir, meshPath, meshList, spacing, printCmd=True):
     if not os.path.exists(outDir):
         os.mkdir(outDir)
-    # get origin, size, and spacing data
-    origin, size = getMeshInfo(outDir, meshList, spacing, printCmd)
-    data = {}
-    data["origin"] = origin
-    data["size"] = size
-    data["spacing"] = spacing
 
-    segList= []
+    # get origin and size data
+    cmd = ["shapeworks",
+           "rasterization-origin", "--names"] + glob.glob(meshPath) + ["--", "--x", str(spacing[0]), "--y", str(spacing[1]), "--z", str(spacing[0])]
+    output = subprocess.run(cmd, capture_output=True, text=True).stdout.splitlines()
+    origin = makeVector(output[0].split(":")[1])
+
+    cmd = ["shapeworks",
+           "rasterization-size", "--names"] + glob.glob(meshPath) + ["--", "--x", str(spacing[0]), "--y", str(spacing[1]), "--z", str(spacing[0])]
+    output = subprocess.run(cmd, capture_output=True, text=True).stdout.splitlines()
+    size = makeVector(output[0].split(":")[1])
+
+    segList = []
     PLYmeshList = getPLYmeshes(meshList)
     for mesh in PLYmeshList:
-        mesh_name = os.path.basename(mesh)
-        prefix = mesh_name.split("_")[0] + "_" + mesh_name.split("_")[1]
-        # write xml file
-        infoPrefix = os.path.join(outDir, prefix)
-        xmlfilename = infoPrefix + "_GenerateBinaryAndDT.xml"
-        if os.path.exists(xmlfilename):
-            os.remove(xmlfilename)
-        xml = open(xmlfilename, "a")
-        xml.write("<?xml version=\"1.0\" ?>\n")
-        xml.write("<mesh>\n")
-        xml.write(mesh+"\n")
-        xml.write("</mesh>\n")
-        # write origin, size, and spacing data
-        for key,value in data.items():
-            index = 0
-            for dim in ["x","y","z"]:
-                xml.write("<" + key + "_" + dim + ">" + str(value[index]) + "</" + key + "_" + dim + ">\n")
-                index += 1
-        xml.close()
         print("########### Turning Mesh To Volume ##############")
         segFile = rename(mesh, outDir, "", ".nrrd")
-        # call generate binary and DT
-        execCommand = ["GenerateBinaryAndDTImagesFromMeshes", xmlfilename]
-        if printCmd:
-            print("CMD: " + " ".join(execCommand))
-        subprocess.check_call(execCommand)
-        # save output volume
-        spacing_string = str(spacing[0]).replace(".0","")
-        output_volume = mesh.replace(".ply", ".rasterized_sp" + spacing_string+ ".nrrd")
-        shutil.move(output_volume, segFile)
         segList.append(segFile)
-        # save output DT
-        output_DT =  mesh.replace(".ply", ".DT_sp" + spacing_string + ".nrrd")
-        dtFile = segFile.replace(".nrrd", "_DT.nrrd")
-        shutil.move(output_DT, dtFile)
+        cmd = ["shapeworks",
+               "read-mesh", "--name", mesh,
+               "mesh-to-image", "--spacex", str(spacing[0]), "--spacey", str(spacing[1]), "--spacez", str(spacing[2]),
+                                "--sizex", str(size[0]), "--sizey", str(size[1]), "--sizez", str(size[2]),
+                                "--originx", str(origin[0]), "--originy", str(origin[1]), "--originz", str(origin[2]),
+                "write-image", "--name", segFile]
+        if printCmd:
+            print("CMD: " + " ".join(cmd))
+        subprocess.check_call(cmd)
     return segList
-
-def getMeshInfo(outDir, meshList, spacing, printCmd=True):
-    # get meshes in vtk format
-    meshList = getVTKmeshes(meshList)
-    meshListStr = ''
-    for mesh in meshList:
-        meshListStr += mesh + '\n'
-    # Write XML
-    xmlfilename = outDir + "MeshInfo.xml"
-    out_origin = outDir + "origin.txt"
-    out_size = outDir + "size.txt"
-    xml = open(xmlfilename, "a")
-    xml.write("<?xml version=\"1.0\" ?>\n")
-    xml.write("<mesh>\n")
-    xml.write(meshListStr+"\n")
-    xml.write("</mesh>\n")
-    xml.write("<spacing_x>\n" + str(spacing[0]) + "\n</spacing_x>\n")
-    xml.write("<spacing_y>\n" + str(spacing[1]) + "\n</spacing_y>\n")
-    xml.write("<spacing_z>\n" + str(spacing[2]) + "\n</spacing_z>\n")
-    xml.write("<out_origin_filename>\n" + out_origin + "\n</out_origin_filename>\n")
-    xml.write("<out_size_filename>\n" + out_size + "\n</out_size_filename>\n")
-    xml.close()
-    execCommand = ["ComputeRasterizationVolumeOriginAndSize", xmlfilename]
-    if printCmd:
-        print("CMD: " + " ".join(execCommand))
-    subprocess.check_call(execCommand)
-    # os.remove(xmlfilename)
-    origin_file = open(out_origin, 'r')
-    origin = np.array(origin_file.read().split()).astype(int)
-    size_file = open(out_size, 'r')
-    size = np.array(size_file.read().split()).astype(int)
-    return origin, size
 
 def ClipBinaryVolumes(outDir, segList, cutting_plane_points, printCmd=True):
     print("\n############## Clipping ##############")
@@ -581,14 +501,15 @@ def ShowCuttingPlanesOnImage(input_file, cutting_planes, printCmd=True):
     file_format = input_file.split(".")[-1]
     input_vtk = input_file.replace(file_format, "vtk")
     if file_format == "nrrd":
+        cmd = ["shapeworks",
+                "read-image", "--name", input_file,
+                "dt-to-mesh", "--reduction", str(0.0001),
+                "write-mesh", "--name", input_vtk]
         print("\nCreating mesh from: " + input_file)
         print("\nSaving as: " + input_vtk)
-        xml_filename = os.path.join(os.path.dirname(input_file), "cutting_plane_nrrd2vtk.xml")
-        create_meshfromDT_xml(xml_filename, input_file, input_vtk)
-        execCommand = ["MeshFromDistanceTransforms", xml_filename]
         if printCmd:
-            print("CMD: " + " ".join(execCommand))
-        subprocess.check_call(execCommand)
+            print("CMD: " + " ".join(cmd))
+        subprocess.check_call(cmd)
     elif file_format == "ply":
         execCommand = ["ply2vtk", input_file, input_vtk]
         if printCmd:
@@ -689,12 +610,13 @@ def SelectCuttingPlane(input_file, printCmd=True):
     if file_format == "nrrd":
         print("\nCreating mesh from: " + input_file)
         print("\nSaving as: " + input_vtk)
-        xml_filename = os.path.join(os.path.dirname(input_file), "cutting_plane_nrrd2vtk.xml")
-        create_meshfromDT_xml(xml_filename, input_file, input_vtk)
-        execCommand = ["MeshFromDistanceTransforms", xml_filename]
+        cmd = ["shapeworks",
+                "read-image", "--name", input_file,
+                "dt-to-mesh", "--reduction", str(0.0001),
+                "write-mesh", "--name", input_vtk]
         if printCmd:
-            print("CMD: " + " ".join(execCommand))
-        subprocess.check_call(execCommand)
+            print("CMD: " + " ".join(cmd))
+        subprocess.check_call(cmd)
     elif file_format == "ply":
         execCommand = ["ply2vtk", input_file, input_vtk]
         if printCmd:

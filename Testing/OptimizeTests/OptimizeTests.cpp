@@ -14,7 +14,6 @@
 
 using namespace shapeworks;
 
-//---------------------------------------------------------------------------
 // until we have a "groom" library we can call
 static void prep_distance_transform(std::string input, std::string output)
 {
@@ -40,9 +39,8 @@ static void prep_distance_transform(std::string input, std::string output)
   writer->Update();
 }
 
-//---------------------------------------------------------------------------
-TEST(OptimizeTests, sample_test) {
-
+TEST(OptimizeTests, sample) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sphere");
   chdir(test_location.c_str());
 
@@ -118,9 +116,8 @@ TEST(OptimizeTests, open_mesh_test) {
   ASSERT_LT(value, 100);
 }
 
-//---------------------------------------------------------------------------
-TEST(OptimizeTests, fixed_domain_test) {
-
+TEST(OptimizeTests, fixedDomain) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/fixed_domain");
   chdir(test_location.c_str());
 
@@ -320,9 +317,8 @@ TEST(OptimizeTests, cutting_plane_test) {
   }
 }
 
-//---------------------------------------------------------------------------
-TEST(OptimizeTests, sphere_constraint_test) {
-
+TEST(OptimizeTests, sphereConstraint)
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sphere_constraint");
   chdir(test_location.c_str());
 
