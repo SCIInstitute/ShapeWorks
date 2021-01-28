@@ -1830,23 +1830,25 @@ bool ReflectMesh::execute(const optparse::Values &options, SharedCommandData &sh
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// ICP
+// Transform
 ///////////////////////////////////////////////////////////////////////////////
-void ICP::buildParser()
+void Transform::buildParser()
 {
-  const std::string prog = "icp-mesh";
-  const std::string desc = "transform current mesh using iterative closest point (ICP) 3D rigid registration computed from current mesh to target mesh";
+  const std::string prog = "transform-mesh";
+  const std::string desc = "transform mesh to target mesh using specified method (default: iterative closest point (ICP) 3D rigid registration)";
   parser.prog(prog).description(desc);
 
   parser.add_option("--target").action("store").type("string").set_default("").help("Filename of target mesh.");
-  std::list<std::string> align{"rigid", "similarity", "affine"};
-  parser.add_option("--type").action("store").type("choice").choices(align.begin(), align.end()).set_default("similarity").help("Alignment type to use [default: %default].");
-  parser.add_option("--iterations").action("store").type("unsigned").set_default(10).help("Number of iterations run ICP registration [default: %default].");
+  std::list<std::string> aligns{"rigid", "similarity", "affine"};
+  parser.add_option("--type").action("store").type("choice").choices(aligns.begin(), aligns.end()).set_default("similarity").help("Alignment type to use [default: %default].");
+  std::list<std::string> methods{"icp"};
+  parser.add_option("--method").action("store").type("choice").choices(methods.begin(), methods.end()).set_default("icp").help("Method used to compute transform [default: %default].");
+  parser.add_option("--iterations").action("store").type("unsigned").set_default(10).help("Number of iterations run [default: %default].");
 
   Command::buildParser();
 }
 
-bool ICP::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool Transform::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validMesh())
   {
@@ -1856,7 +1858,7 @@ bool ICP::execute(const optparse::Values &options, SharedCommandData &sharedData
 
   std::string targetMesh = static_cast<std::string>(options.get("target"));
   unsigned iterations = static_cast<unsigned>(options.get("iterations"));
-  std::string alignopt(options.get("align"));
+  std::string alignopt(options.get("type"));
   Mesh::AlignmentType align;
   if (alignopt == "rigid")
     align = Mesh::Rigid;
@@ -1864,6 +1866,13 @@ bool ICP::execute(const optparse::Values &options, SharedCommandData &sharedData
     align = Mesh::Similarity;
   else
     align = Mesh::Affine;
+
+  std::string methodopt(options.get("method"));
+  Mesh::TransformType method{Mesh::IterativeClosestPoint};
+  if (methodopt != "icp") {
+    std::cerr << "no such transform type: " << methodopt << std::endl;
+    return false;
+  }
 
   if (targetMesh == "")
   {
@@ -1873,7 +1882,7 @@ bool ICP::execute(const optparse::Values &options, SharedCommandData &sharedData
   else
   {
     Mesh target(targetMesh);
-    vtkTransform transform(sharedData.mesh->createTransform(target, Mesh::IterativeClosestPoint, align, iterations));
+    vtkTransform transform(sharedData.mesh->createTransform(target, method, align, iterations));
     sharedData.mesh->applyTransform(transform);
     return sharedData.validMesh();
   }

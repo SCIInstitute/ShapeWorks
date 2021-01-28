@@ -309,3 +309,9 @@ TEST(shapeworksTests, shapeevaluationTest)
 {
   ASSERT_FALSE(system("bash shapeevaluation.sh"));
 }
+
+TEST(shapeworksTests, meshtransform)
+{
+  ASSERT_FALSE(system("bash meshtransform.sh"));
+}
+

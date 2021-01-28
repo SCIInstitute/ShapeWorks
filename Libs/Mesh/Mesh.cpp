@@ -241,7 +241,7 @@ vtkTransform Mesh::createTransform(const Mesh &target, Mesh::TransformType type,
 
 Mesh &Mesh::applyTransform(const vtkTransform transform)
 {
-  vtkTransformPolyDataFilter* resampler = vtkTransformPolyDataFilter::New();
+  auto resampler = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
 
   resampler->SetTransform(transform);
   resampler->SetInputData(this->mesh);
