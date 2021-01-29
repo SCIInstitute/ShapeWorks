@@ -1,0 +1,8 @@
+number of points:      7190
+number of faces:      14160
+center:                [-91.1365, 0.287001, 1229.62]
+center of mass (0,1]:  [-88.9927, -0.855656, 1232.23]
+bounding box:          {
+	min: [-113, -21, 1210],
+	max: [-70, 22, 1249]
+}

@@ -283,7 +283,7 @@ Mesh &Mesh::probeVolume(const Image &img)
   return *this;
 }
 
-Mesh &Mesh::clip(const vtkSmartPointer<vtkPlane> plane)
+Mesh &Mesh::clip(const Plane plane)
 {
   vtkSmartPointer<vtkClipPolyData> clipper = vtkSmartPointer<vtkClipPolyData>::New();
   clipper->SetInputData(this->mesh);
@@ -595,11 +595,17 @@ Point3 Mesh::center() const
 
 bool Mesh::operator==(const Mesh& other) const
 {
-  const double eps(1e-3);
+  // todo: it not just for debugging, return false when one of these fails (don't want to do extra work)
+  if (!epsEqualN(center(), other.center()))             std::cout << "centers differ!\n";
+  if (!epsEqualN(centerOfMass(), other.centerOfMass())) std::cout << "coms differ!\n";
+  if (numPoints() != other.numPoints())                 std::cout << "num pts differ\n";
+  if (numFaces() != other.numFaces())                   std::cout << "num faces differ\n";
+  if (!comparePointsEqual(other))                       std::cout << "points differ\n";
+  //if (!compareScalarsEqual(other))                    std::cout << "scalars differ\n";   // throws "No scalars" exception
 
-  return (epsEqual(center(), other.center(), eps) &&
-          epsEqual(centerOfMass(), other.centerOfMass(), eps) &&
-          numVertices() == other.numVertices() &&
+  return (epsEqualN(center(), other.center(), 3) &&
+          epsEqualN(centerOfMass(), other.centerOfMass(), 3) &&
+          numPoints() == other.numPoints() &&
           numFaces() == other.numFaces() &&
           comparePointsEqual(other) &&    // even only considering 4 significant digits, still fails for translate tests
           //compareScalarsEqual(other));  // <ctc> prints "no" at some point, unsure where or why
@@ -614,8 +620,10 @@ vtkTransform Mesh::createRegistrationTransform(const Mesh &target, Mesh::Alignme
 
 std::ostream& operator<<(std::ostream &os, const Mesh& mesh)
 {
-  return os << "{\n\tnumber of vertices: " << mesh.numVertices()
-            << ",\n\tnumber of faces: " << mesh.numFaces() << "\n}";
+  return os << "{\n\tnumber of points: " << mesh.numPoints()
+            << ",\n\tnumber of faces: " << mesh.numFaces()
+            << ",\n\tcenter: " << mesh.center()
+            << ",\n\tcenter or mass: " << mesh.centerOfMass() << "\n}";
 }
 
 } // shapeworks

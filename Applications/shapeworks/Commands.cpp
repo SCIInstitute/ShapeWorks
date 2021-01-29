@@ -1629,9 +1629,9 @@ void MeshInfo::buildParser()
 
 bool MeshInfo::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  if (!sharedData.validImage())
+  if (!sharedData.validMesh())
   {
-    std::cerr << "No image to operate on\n";
+    std::cerr << "No mesh to operate on\n";
     return false;
   }
 
@@ -1646,7 +1646,7 @@ bool MeshInfo::execute(const optparse::Values &options, SharedCommandData &share
     vertices = faces = center = centerofmass = boundingbox = true;
 
   if (vertices)
-    std::cout << "number of vertices:      " << sharedData.mesh->numVertices() << std::endl;
+    std::cout << "number of points:      " << sharedData.mesh->numPoints() << std::endl;
   if (faces)
     std::cout << "number of faces:      " << sharedData.mesh->numFaces() << std::endl;
   if (center)
@@ -1957,12 +1957,12 @@ void ClipMesh::buildParser()
   const std::string desc = "clips mesh";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--x1").action("store").type("double").set_default(0.0).help("Value of normal[0] for cutting plane [default: %default].");
-  parser.add_option("--y1").action("store").type("double").set_default(0.0).help("Value of normal[1] for cutting plane [default: %default].");
-  parser.add_option("--z1").action("store").type("double").set_default(0.0).help("Value of normal[2] for cutting plane [default: %default].");
-  parser.add_option("--x2").action("store").type("double").set_default(0.0).help("Value of origin[0] for cutting plane [default: %default].");
-  parser.add_option("--y2").action("store").type("double").set_default(0.0).help("Value of origin[1] for cutting plane [default: %default].");
-  parser.add_option("--z1").action("store").type("double").set_default(0.0).help("Value of origin[2] for cutting plane [default: %default].");
+  parser.add_option("--nx").action("store").type("double").set_default(0.0).help("Value of normal.x for cutting plane [default: %default].");
+  parser.add_option("--ny").action("store").type("double").set_default(0.0).help("Value of normal.y for cutting plane [default: %default].");
+  parser.add_option("--nz").action("store").type("double").set_default(0.0).help("Value of normal.z for cutting plane [default: %default].");
+  parser.add_option("--ox").action("store").type("double").set_default(0.0).help("Value of origin.x for cutting plane [default: %default].");
+  parser.add_option("--oy").action("store").type("double").set_default(0.0).help("Value of origin.y for cutting plane [default: %default].");
+  parser.add_option("--oz").action("store").type("double").set_default(0.0).help("Value of origin.z for cutting plane [default: %default].");
 
   Command::buildParser();
 }
@@ -1975,13 +1975,15 @@ bool ClipMesh::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
-  double x = static_cast<double>(options.get("x1"));
-  double y = static_cast<double>(options.get("y1"));
-  double z = static_cast<double>(options.get("z1"));
+  Vector normal{makeVector({static_cast<double>(options.get("nx")),
+                            static_cast<double>(options.get("ny")),
+                            static_cast<double>(options.get("nz"))})};
 
-  Point origin({static_cast<double>(options.get("y1")), static_cast<double>(options.get("y2")), static_cast<double>(options.get("y3"))});
+  Point origin({static_cast<double>(options.get("ox")),
+                static_cast<double>(options.get("oy")),
+                static_cast<double>(options.get("oz"))});
   
-  sharedData.mesh->clip(MeshUtils::createPlane(makeVector({x,y,z}), origin));
+  sharedData.mesh->clip(makePlane(normal, origin));
   return sharedData.validMesh();
 }
 

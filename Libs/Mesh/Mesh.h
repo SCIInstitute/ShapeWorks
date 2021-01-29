@@ -5,10 +5,9 @@
 
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
-#include <vtkPlane.h>
 #include <swHausdorffDistancePointSetFilter.h>
 #include <string>
-// #include <gtest/gtest.h>  // not getting found; needed in order to test private functions
+// #include <gtest/gtest.h>  // fixme: not getting found; needed in order to test private functions
 
 namespace shapeworks {
 
@@ -59,7 +58,7 @@ public:
   Mesh& probeVolume(const Image &img);
 
   /// clips a mesh using a cutting plane
-  Mesh& clip(const vtkSmartPointer<vtkPlane> plane);
+  Mesh& clip(const Plane plane);
 
   /// helper to translate mesh
   Mesh& translate(const Vector3 &v);
@@ -77,7 +76,8 @@ public:
 
   vtkAbstractArray* getFieldValue(const std::string name);
 
-  // <ctc> <as>
+  // <ctc> <as> consolidate distance functions as in Image with one computeDistance that writes a new field of the mesh:
+  // Mesh& computeDistance(Mesh& other, ..., std::string distance_fieldname, std::string distance_fieldname_other, ...);
 
   /// compute surface to surface distance using a filter
   vtkSmartPointer<swHausdorffDistancePointSetFilter> computeDistance(const Mesh &other_mesh, bool target=false);
@@ -90,6 +90,11 @@ public:
 
   /// returns relative distance from mesh B to mesh A
   double relativeDistanceBtoA(const Mesh &other_mesh, bool target=false);
+
+
+
+
+
 
   /// rasterizes mesh to create binary images, automatically computing size and origin if necessary
   Image toImage(Vector3 spacing = makeVector({1.0, 1.0, 1.0}), Dims size = {0, 0, 0}, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;
@@ -106,7 +111,10 @@ public:
   Point3 centerOfMass() const;
 
   /// number of vertices
-  vtkIdType numVertices() const { return mesh->GetNumberOfVerts(); }
+  //vtkIdType numVertices() const { return mesh->GetNumberOfVerts(); }
+
+  /// number of points
+  vtkIdType numPoints() const { return mesh->GetNumberOfPoints(); }
 
   /// number of faces
   vtkIdType numFaces() const { return mesh->GetNumberOfCells(); }

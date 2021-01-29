@@ -43,15 +43,6 @@ const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createICPTransform(const vtkSmart
   return m;
 }
 
-vtkSmartPointer<vtkPlane> MeshUtils::createPlane(const Vector3 &n, const Point &o)
-{
-  vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
-  plane->SetNormal(n[0], n[1], n[2]);
-  plane->SetOrigin(o[0], o[1], o[2]);
-
-  return plane;
-}
-
 Region MeshUtils::boundingBox(std::vector<std::string> &filenames, bool center)
 {
   if (filenames.empty())
