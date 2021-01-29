@@ -4,7 +4,6 @@
 #include "Mesh.h"
 #include "Eigen/Core"
 #include "Eigen/Dense"
-#include <vtkPolyData.h>
 
 namespace shapeworks {
 

@@ -91,11 +91,6 @@ public:
   /// returns relative distance from mesh B to mesh A
   double relativeDistanceBtoA(const Mesh &other_mesh, bool target=false);
 
-
-
-
-
-
   /// rasterizes mesh to create binary images, automatically computing size and origin if necessary
   Image toImage(Vector3 spacing = makeVector({1.0, 1.0, 1.0}), Dims size = {0, 0, 0}, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;
 
@@ -109,9 +104,6 @@ public:
 
   /// center of mass of mesh
   Point3 centerOfMass() const;
-
-  /// number of vertices
-  //vtkIdType numVertices() const { return mesh->GetNumberOfVerts(); }
 
   /// number of points
   vtkIdType numPoints() const { return mesh->GetNumberOfPoints(); }

@@ -1,15 +1,9 @@
 #include "MeshUtils.h"
+#include "ParticleSystem.h"
 
 #include <vtkIterativeClosestPointTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkLandmarkTransform.h>
-#include <vtkTransform.h>
-#include <vtkPLYWriter.h>
-#include "Eigen/Core"
-#include "Eigen/Dense"
-#include "ParticleSystem.h"
-
-// IGL dependencies
 #include <igl/biharmonic_coordinates.h>
 #include <igl/cat.h>
 #include <igl/cotmatrix.h>

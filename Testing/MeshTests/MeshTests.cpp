@@ -1,12 +1,10 @@
 #include "Testing.h"
-#include "MeshUtils.h"
 #include "Mesh.h"
-#include <igl/point_mesh_squared_distance.h>
-#include "Eigen/Core"
-#include "Eigen/Dense"
-#include "ParticleSystem.h"
 #include "MeshUtils.h"
 #include "Image.h"
+#include "ParticleSystem.h"
+
+#include <igl/point_mesh_squared_distance.h>
 
 using namespace shapeworks;
 
@@ -99,8 +97,8 @@ TEST(MeshTests, probeTest)
 TEST(MeshTests, clipTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  // clip upper half of mesh from center
-  femur.clip(makePlane(makeVector({0.0,0.0,1.0}), Point3({-91.0, 0.0, 1230.0})));
+  femur.clip(makePlane(makeVector({0.0,0.0,1.0}),
+                       Point3({-91.0, 0.0, 1230.0}))); // clip upper half of mesh from center
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/clip1.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
@@ -109,8 +107,8 @@ TEST(MeshTests, clipTest1)
 TEST(MeshTests, clipTest2)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  // clip lower half of mesh from center
-  femur.clip(makePlane(makeVector({0.0,0.0,-1.0}), Point3({-91.0, 0.0, 1230.0})));
+  femur.clip(makePlane(makeVector({0.0,0.0,-1.0}),
+                       Point3({-91.0, 0.0, 1230.0}))); // clip lower half of mesh from center
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/clip2.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
@@ -119,8 +117,8 @@ TEST(MeshTests, clipTest2)
 TEST(MeshTests, clipTest3)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  // clip arbitrary mesh from an edge
-  femur.clip(makePlane(makeVector({-5.0,3.14159,1.0}), Point3({-60.0, 10.0, 1235.0})));
+  femur.clip(makePlane(makeVector({-5.0,3.14159,1.0}),
+                       Point3({-60.0, 10.0, 1235.0}))); // clip arbitrary mesh from an edge
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/clip3.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
