@@ -2307,7 +2307,9 @@ bool FieldValue::execute(const optparse::Values &options, SharedCommandData &sha
     return false;
   }
 
+  // double value = sharedData.mesh->getFieldValue(name);
   sharedData.mesh->getFieldValue(name);
+  // std::cout <<
   return sharedData.validMesh();
 }
 
@@ -2331,7 +2333,9 @@ bool FieldNames::execute(const optparse::Values &options, SharedCommandData &sha
     return false;
   }
 
-  sharedData.mesh->getFieldNames();
+  std::vector<std::string> fields = sharedData.mesh->getFieldNames();
+  for (int i=0; i<fields.size(); i++)
+    std::cout << fields[i] << "\n";
   return sharedData.validMesh();
 }
 
@@ -2459,7 +2463,7 @@ bool CompareMesh::execute(const optparse::Values &options, SharedCommandData &sh
     return false;
   }
 
-  if (sharedData.mesh->comparePointsEqual(Mesh(filename)))
+  if (sharedData.mesh->compare(Mesh(filename)))
   {
     std::cout << "compare success\n";
     return true;

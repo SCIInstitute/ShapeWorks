@@ -522,21 +522,26 @@ Mesh& Mesh::addField(const std::string name, double value)
   return *this;
 }
 
-void Mesh::getFieldValue(const std::string name)
+double* Mesh::getFieldValue(const std::string name) const
 {
+  if (!mesh->GetPointData()->GetArray(name.c_str()))
+    {throw std::invalid_argument("Field name does not exist"); }
+
   double range[2];
   mesh->GetPointData()->GetArray(name.c_str())->GetRange(range);
-  if (range[0] == range[1])
-    std::cout << range[0] << "\n";
-  else
-    std::cout << "[" << range[0] << "," << range[1] << "]" << "\n";
+
+  return range;
 }
 
-void Mesh::getFieldNames()
+std::vector<std::string> Mesh::getFieldNames() const
 {
+  std::vector<std::string> fields;
   int numFields = mesh->GetPointData()->GetNumberOfArrays();
+
   for (int i=0; i<numFields; i++)
-    std::cout << mesh->GetPointData()->GetArrayName(i) << "\n";
+    fields.push_back(mesh->GetPointData()->GetArrayName(i));
+
+  return fields;
 }
 
 bool Mesh::comparePointsEqual(const Mesh &other_mesh) const
@@ -599,6 +604,31 @@ bool Mesh::compareScalarsEqual(const Mesh &other_mesh) const
   return true;
 }
 
+bool Mesh::compareField(const std::string name1, const Mesh& other_mesh, const std::string name2) const
+{
+  if (getFieldValue(name1) != other_mesh.getFieldValue(name2))
+    { throw std::invalid_argument("Field values are not equal"); }
+
+  return true;
+}
+
+bool Mesh::compareFieldsEqual(const Mesh& other_mesh) const
+{
+  std::vector<std::string> fields1 = getFieldNames();
+  std::vector<std::string> fields2 = other_mesh.getFieldNames();
+
+  if (fields1.size() != fields2.size())
+    { throw std::invalid_argument("Different number of fields"); }
+
+  for (int i=0; i<fields1.size(); i++)
+  {
+    if (!compareField(fields1[i], other_mesh, fields2[i]))
+      { throw std::invalid_argument("Different field value"); }
+  }
+
+  return true;
+}
+
 Point3 Mesh::centerOfMass() const
 {
   auto com = vtkSmartPointer<vtkCenterOfMass>::New();
@@ -616,7 +646,7 @@ Point3 Mesh::center() const
   return Point3({c[0], c[1], c[2]});
 }
 
-bool Mesh::operator==(const Mesh& other) const
+bool Mesh::compare(const Mesh& other) const
 {
   // todo: it not just for debugging, return false when one of these fails (don't want to do extra work)
   if (!epsEqualN(center(), other.center()))             std::cout << "centers differ!\n";
@@ -624,14 +654,14 @@ bool Mesh::operator==(const Mesh& other) const
   if (numPoints() != other.numPoints())                 std::cout << "num pts differ\n";
   if (numFaces() != other.numFaces())                   std::cout << "num faces differ\n";
   if (!comparePointsEqual(other))                       std::cout << "points differ\n";
-  //if (!compareScalarsEqual(other))                    std::cout << "scalars differ\n";   // throws "No scalars" exception
+  if (!compareFieldsEqual(other))                       std::cout << "fields differ\n";
 
   return (epsEqualN(center(), other.center(), 3) &&
           epsEqualN(centerOfMass(), other.centerOfMass(), 3) &&
           numPoints() == other.numPoints() &&
           numFaces() == other.numFaces() &&
           comparePointsEqual(other) &&    // even only considering 4 significant digits, still fails for translate tests
-          //compareScalarsEqual(other));  // <ctc> prints "no" at some point, unsure where or why
+          compareFieldsEqual(other) &&
           true);
 }
 

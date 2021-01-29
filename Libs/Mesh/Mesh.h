@@ -114,10 +114,10 @@ public:
   Mesh& addField(const std::string name, double value);
 
   /// print value of given field name in mesh
-  void getFieldValue(const std::string name);
+  double* getFieldValue(const std::string name) const;
 
   /// print all field names in mesh
-  void getFieldNames();
+  std::vector<std::string> getFieldNames() const;
 
   /// compare if values of the points in two (corresponding) meshes are equal within num significant digits
   bool comparePointsEqual(const Mesh& other_mesh) const;
@@ -125,8 +125,17 @@ public:
   /// compare if scalars in two meshes are equal
   bool compareScalarsEqual(const Mesh& other_mesh) const;
 
-  /// mesh comparison
-  bool operator==(const Mesh& other) const;
+  /// compare if values in two meshes are equal
+  bool compareField(const std::string name1, const Mesh& other_mesh, const std::string name2) const;
+
+  /// compare if fields and field values in two meshes are equal
+  bool compareFieldsEqual(const Mesh& other_mesh) const;
+
+  /// compare meshes
+  bool compare(const Mesh& other_mesh) const;
+
+  /// compare meshes
+  bool operator==(const Mesh& other) const { return compare(other); }
 
   /// getSupportedTypes
   static std::vector<std::string> getSupportedTypes() { return {"vtk", "vtp", "ply", "stl", "obj"}; }
