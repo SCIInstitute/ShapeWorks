@@ -513,11 +513,15 @@ void ShapeWorksStudioApp::enable_possible_actions()
   this->ui_->action_import_mode->setEnabled(true);
   this->ui_->action_groom_mode->setEnabled(original_present);
   this->ui_->action_optimize_mode->setEnabled(original_present);
+  bool new_analysis = false;
+  if (!this->ui_->action_analysis_mode->isEnabled() && reconstructed) {
+    new_analysis = true;
+  }
   this->ui_->action_analysis_mode->setEnabled(reconstructed);
   //subtools
   this->groom_tool_->enable_actions();
   this->optimize_tool_->enable_actions();
-  this->analysis_tool_->enable_actions();
+  this->analysis_tool_->enable_actions(new_analysis);
   //recent
   QStringList recent_files = preferences_.get_recent_files();
   int num_recent_files = qMin(recent_files.size(), 4);
@@ -711,7 +715,7 @@ void ShapeWorksStudioApp::handle_progress(int value)
   else {
     this->progress_bar_->setValue(100);
     this->progress_bar_->setVisible(false);
-    this->enable_possible_actions();
+    //this->enable_possible_actions();
   }
   this->handle_message(this->current_message_);
 }
@@ -898,12 +902,29 @@ void ShapeWorksStudioApp::handle_project_changed()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_points_changed()
 {
-  int old_size = this->session_->get_auto_glyph_size();
-  if (old_size != this->session_->update_auto_glyph_size()) {
-    this->handle_glyph_changed();
+
+  bool update = false;
+  if (!this->time_since_last_update_.isValid()) {
+    update = true;
+  }
+  else {
+    auto time_since = this->time_since_last_update_.elapsed();
+    if (time_since > 100) {
+      update = true;
+    }
   }
 
-  this->visualizer_->update_samples();
+  if (update) {
+    double old_size = this->session_->get_auto_glyph_size();
+    if (fabs(old_size - this->session_->update_auto_glyph_size()) > 0.5) {
+      this->handle_glyph_changed();
+    }
+
+    this->visualizer_->update_samples();
+
+  }
+  this->time_since_last_update_.start();
+
 }
 
 //---------------------------------------------------------------------------
@@ -911,6 +932,7 @@ void ShapeWorksStudioApp::handle_optimize_complete()
 {
   this->session_->get_mesh_manager()->get_surface_reconstructor()->resetReconstruct();
   this->analysis_tool_->reset_stats();
+  this->analysis_tool_->initialize_mesh_warper();
   this->session_->handle_clear_cache();
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
   this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::GROOMED);
@@ -918,8 +940,10 @@ void ShapeWorksStudioApp::handle_optimize_complete()
   this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape_points());
   this->visualizer_->update_lut();
   this->update_display();
+
+  this->visualizer_->update_samples();
+  this->handle_glyph_changed();
   this->enable_possible_actions();
-  this->analysis_tool_->initialize_mesh_warper();
 }
 
 //---------------------------------------------------------------------------
@@ -927,11 +951,10 @@ void ShapeWorksStudioApp::handle_reconstruction_complete()
 {
   this->session_->handle_clear_cache();
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
-  this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::RECONSTRUCTED);
-  this->visualizer_->set_display_mode(this->ui_->view_mode_combobox->currentText().toStdString());
   this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape_points());
   this->visualizer_->update_lut();
   this->update_display(true);
+  this->enable_possible_actions();
 }
 
 //---------------------------------------------------------------------------
@@ -942,6 +965,7 @@ void ShapeWorksStudioApp::handle_groom_complete()
   this->session_->handle_clear_cache();
   this->update_display(true);
   this->visualizer_->reset_camera();
+  this->enable_possible_actions();
 }
 
 //---------------------------------------------------------------------------

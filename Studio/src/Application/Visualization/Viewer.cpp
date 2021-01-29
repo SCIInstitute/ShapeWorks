@@ -183,7 +183,8 @@ Viewer::Viewer()
   this->corner_annotation_ = vtkSmartPointer<vtkCornerAnnotation>::New();
   this->corner_annotation_->SetLinearFontScaleFactor(2);
   this->corner_annotation_->SetNonlinearFontScaleFactor(1);
-  this->corner_annotation_->SetMaximumFontSize(16);
+  this->corner_annotation_->SetMaximumFontSize(32);
+  this->corner_annotation_->SetMaximumLineHeight(0.03);
 
 }
 

@@ -9,6 +9,7 @@
 #include <QTimer>
 #include <QCheckBox>
 #include <QProgressBar>
+#include <QElapsedTimer>
 
 #include <Data/PreferencesWindow.h>
 
@@ -202,6 +203,9 @@ private:
 
   bool block_update_{false};
   bool is_loading_{false};
+
+  QElapsedTimer time_since_last_update_;
+
 
 };
 }

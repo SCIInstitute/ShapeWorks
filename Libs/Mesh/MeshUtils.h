@@ -28,6 +28,9 @@ public:
 
   /// Compute transformation from set of points files using template mesh warp&face matrices
   static bool warpMeshes(std::vector< std::string> movingPointpaths, std::vector< std::string> outputMeshPaths, Eigen::MatrixXd W, Eigen::MatrixXi Fref, const int numP);
+
+  static Mesh thread_safe_read_mesh(std::string filename);
+
 };
 
 } // shapeworks

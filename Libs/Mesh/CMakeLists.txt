@@ -28,7 +28,7 @@ target_include_directories(Mesh PUBLIC
  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/PreviewMeshQC>
  $<INSTALL_INTERFACE:include>)
 
-target_link_libraries(Mesh Utils trimesh2 vgl vgl_algo ${VTK_LIBRARIES} Eigen3::Eigen igl::core Particles)
+target_link_libraries(Mesh Utils trimesh2 vgl vgl_algo ${VTK_LIBRARIES} Eigen3::Eigen igl::core Particles TBB::tbb)
 
 # Install
 set_target_properties(Mesh PROPERTIES PUBLIC_HEADER

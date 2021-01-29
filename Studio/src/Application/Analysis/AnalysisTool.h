@@ -61,7 +61,7 @@ public:
   void updateSlider();
 
   void reset_stats();
-  void enable_actions();
+  void enable_actions(bool newly_enabled = false);
 
   const vnl_vector<double>& get_mean_shape_points();
   ShapeHandle get_mean_shape();
