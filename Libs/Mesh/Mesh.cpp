@@ -33,7 +33,6 @@
 #include <FEFixMesh.h>
 #include <FEMeshSmoothingModifier.h>
 #include <FECVDDecimationModifier.h>
-#include <vtkDoubleArray.h>
 
 namespace shapeworks {
 
@@ -492,28 +491,52 @@ Mesh& Mesh::fix(bool wind, bool smoothBefore, bool smoothAfter, double lambda, i
   return *this;
 }
 
-Mesh& Mesh::addField(const std::string name, double value)
+Mesh& Mesh::addField(const std::string name, Array array)
 {
   int numVertices = mesh->GetPoints()->GetNumberOfPoints();
 
-  vtkSmartPointer<vtkDoubleArray> array = vtkSmartPointer<vtkDoubleArray>::New();
   array->SetNumberOfComponents(1);
   array->SetName(name.c_str());
-  for (int i=0; i<numVertices; i++)
-  {
-    double val[1] = {static_cast<double>(value)}; // we used i instead of value here to set range
-    array->InsertNextTuple(val);
-  }
+  // for (int i=0; i<numVertices; i++)
+  // {
+  //   double val[1] = {static_cast<double>(value)};
+  //   array->InsertNextTuple(val);
+  // }
 
-  mesh->GetFieldData()->AddArray(array);
+  mesh->GetPointData()->AddArray(array);
 
   return *this;
 }
 
-// can return vtkArray but vtk doc says "not recomended"
-vtkAbstractArray* Mesh::getFieldValue(const std::string name)
+Mesh& Mesh::addField(const std::string name, double value)
 {
-  return mesh->GetFieldData()->GetAbstractArray(name.c_str());
+  double arr[1] = {value};
+
+  Array array = Array::New();
+  array->SetNumberOfComponents(1);
+  array->SetName(name.c_str());
+  array->InsertNextTuple(arr);
+
+  mesh->GetPointData()->AddArray(array);
+
+  return *this;
+}
+
+void Mesh::getFieldValue(const std::string name)
+{
+  double range[2];
+  mesh->GetPointData()->GetArray(name.c_str())->GetRange(range);
+  if (range[0] == range[1])
+    std::cout << range[0] << "\n";
+  else
+    std::cout << "[" << range[0] << "," << range[1] << "]" << "\n";
+}
+
+void Mesh::getFieldNames()
+{
+  int numFields = mesh->GetPointData()->GetNumberOfArrays();
+  for (int i=0; i<numFields; i++)
+    std::cout << mesh->GetPointData()->GetArrayName(i) << "\n";
 }
 
 bool Mesh::comparePointsEqual(const Mesh &other_mesh) const

@@ -2278,6 +2278,64 @@ bool AddField::execute(const optparse::Values &options, SharedCommandData &share
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// FieldValue
+///////////////////////////////////////////////////////////////////////////////
+void FieldValue::buildParser()
+{
+  const std::string prog = "field-value";
+  const std::string desc = "prints value of field of mesh";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
+
+  Command::buildParser();
+}
+
+bool FieldValue::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  std::string name = static_cast<std::string>(options.get("name"));
+
+  if (name == "")
+  {
+    std::cerr << "Must specify a name\n";
+    return false;
+  }
+
+  sharedData.mesh->getFieldValue(name);
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// FieldNames
+///////////////////////////////////////////////////////////////////////////////
+void FieldNames::buildParser()
+{
+  const std::string prog = "field-names";
+  const std::string desc = "prints all the field names present in mesh";
+  parser.prog(prog).description(desc);
+
+  Command::buildParser();
+}
+
+bool FieldNames::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  sharedData.mesh->getFieldNames();
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // MeshToImage
 ///////////////////////////////////////////////////////////////////////////////
 void MeshToImage::buildParser()

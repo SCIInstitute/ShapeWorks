@@ -72,10 +72,6 @@ public:
   /// quality control mesh
   Mesh& fix(bool wind = true, bool smoothBefore = true, bool smoothAfter = true, double lambda = 0.5, int iterations = 1, bool decimate = true, double percentage = 0.5);
 
-  Mesh& addField(const std::string name, double value);
-
-  vtkAbstractArray* getFieldValue(const std::string name);
-
   // <ctc> <as> consolidate distance functions as in Image with one computeDistance that writes a new field of the mesh:
   // Mesh& computeDistance(Mesh& other, ..., std::string distance_fieldname, std::string distance_fieldname_other, ...);
 
@@ -110,6 +106,18 @@ public:
 
   /// number of faces
   vtkIdType numFaces() const { return mesh->GetNumberOfCells(); }
+
+  /// add field with array value to mesh
+  Mesh& addField(const std::string name, Array array);
+
+  /// add field with value to mesh
+  Mesh& addField(const std::string name, double value);
+
+  /// print value of given field name in mesh
+  void getFieldValue(const std::string name);
+
+  /// print all field names in mesh
+  void getFieldNames();
 
   /// compare if values of the points in two (corresponding) meshes are equal within num significant digits
   bool comparePointsEqual(const Mesh& other_mesh) const;
