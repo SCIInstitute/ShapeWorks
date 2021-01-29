@@ -6,7 +6,7 @@ import subprocess
 import shutil
 import sys
 sys.path.append("../../../Examples/Python/")
-import GroomUtils
+from GroomUtils import *
 
 '''
 Make folder

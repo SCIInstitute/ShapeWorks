@@ -37,5 +37,5 @@ class EllipsoidJointsCohortGenerator(CohortGenerator):
 	def __init__(self,out_dir):
 		super().__init__(out_dir)
 	def generate(self, num_samples=3, randomize_center=True, separation=2):
-		self.meshes = Ellipsoids.generate(num_samples, self.out_dir, randomize_center,separation)
+		self.meshes = EllipsoidJoints.generate(num_samples, self.out_dir, randomize_center,separation)
 		return self.meshes
