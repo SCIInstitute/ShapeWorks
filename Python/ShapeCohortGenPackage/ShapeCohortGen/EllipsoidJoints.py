@@ -1,7 +1,8 @@
 import vtk
 import numpy as np
+from operator import add
 from ShapeCohortGen.CohortGenUtils import *
-from Ellipsoids import *
+from ShapeCohortGen.Ellipsoids import *
 
 
 
@@ -10,7 +11,7 @@ def generate_ellipsoid_joint(num_samples, meshDir, randomize_center,separation):
 	# If randomize center is selected
 	# Select center for ellipsoid 1
 	if randomize_center:
-		center_loc1 = list(np.random.randint(low = 0,high=50,size=3))
+		center_loc = list(np.random.randint(low = 0,high=50,size=3))
 	else:
 		center_loc = [0,0,0]
 
@@ -27,8 +28,8 @@ def generate_ellipsoid_joint(num_samples, meshDir, randomize_center,separation):
 
 		# Initialize file names for two domains
 		vtkFileName1 = meshDir+"ellipsoid_joint_"+filename+"_d1.vtk"
-		vtkFileName1 = meshDir+"ellipsoid_joint_"+filename+"_d1.vtk"
-		plyFileName2 = meshDir+"ellipsoid_joint_"+filename+"_d2.ply"
+		vtkFileName2 = meshDir+"ellipsoid_joint_"+filename+"_d2.vtk"
+		plyFileName1 = meshDir+"ellipsoid_joint_"+filename+"_d1.ply"
 		plyFileName2 = meshDir+"ellipsoid_joint_"+filename+"_d2.ply"
 		
 		ellipsoid_joint1 = addEllipsoid(center_loc,radii,0,joint=True)
@@ -44,7 +45,8 @@ def generate_ellipsoid_joint(num_samples, meshDir, randomize_center,separation):
 		vtk_writer.Update()
 
 		rotation = i*increments
-		ellipsoid_joint2 = addEllipsoid(center_loc + location_offset,radii,rotation,joint=True)
+		center_loc_new = list( map(add, center_loc, location_offset) )
+		ellipsoid_joint2 = addEllipsoid(center_loc_new,radii,rotation,joint=True)
 
 		ply_writer = vtk.vtkPLYWriter()
 		ply_writer.SetInputData(ellipsoid_joint2.GetOutput())

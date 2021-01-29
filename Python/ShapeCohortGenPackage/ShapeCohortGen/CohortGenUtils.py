@@ -5,8 +5,7 @@ import scipy
 import subprocess
 import shutil
 import sys
-sys.path.append("../../../Examples/Python/")
-from GroomUtils import *
+from termcolor import colored, cprint
 
 '''
 Make folder
@@ -15,6 +14,34 @@ def make_dir(dir_path):
 	if os.path.exists(dir_path):
 		shutil.rmtree(dir_path)
 	os.makedirs(dir_path)
+
+
+
+
+
+
+
+'''
+rename
+'''
+def rename(inname, outDir, extension_addition, extension_change=''):
+    """
+    Takes inname path and replaces dir with outdir and adds extension before file type
+    """
+    initPath = os.path.dirname(inname)
+    outname = inname.replace(initPath, outDir)
+    current_extension = "." + inname.split(".")[-1]
+    if extension_addition != '':
+        outname = outname.replace(current_extension, '.' + extension_addition + current_extension)
+    if extension_change != '':
+        outname = outname.replace(current_extension, extension_change)
+    cprint(("Input filename: " + inname), 'cyan')
+    cprint(("Output filename: " + outname), 'yellow')
+    return outname
+
+
+
+
 
 '''
 Get list of full paths for files in dir
@@ -203,7 +230,7 @@ def generate_segmentations(meshList, out_dir, randomize_size, spacing, allow_on_
 				index += 1
 		xml.close()
 		print("########### Turning Mesh To Volume ##############")
-		segFile = GroomUtils.rename(mesh, segDir, "", ".nrrd")
+		segFile = rename(mesh, segDir, "", ".nrrd")
 		# call generate binary and DT
 		execCommand = ["GenerateBinaryAndDTImagesFromMeshes", xmlfilename]
 		subprocess.check_call(execCommand)
