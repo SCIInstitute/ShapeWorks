@@ -41,6 +41,9 @@ target_link_libraries(
   vgl 
   vgl_algo 
   ${VTK_LIBRARIES}
+  Eigen3::Eigen
+  igl::core
+  Particles
   )
 
 # Install
