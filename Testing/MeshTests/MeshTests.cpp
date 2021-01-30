@@ -313,8 +313,7 @@ TEST(MeshTests, coverageTest)
   pelvis.coverage(femur);
 
   Mesh baseline(std::string(TEST_DATA_DIR) + "/fm_coverage.vtk");
-  ASSERT_TRUE(pelvis.comparePointsEqual(baseline));
-  ASSERT_TRUE(pelvis.compareScalarsEqual(baseline));
+  ASSERT_TRUE(pelvis == baseline);
 }
 
 TEST(MeshTests, icpTest)

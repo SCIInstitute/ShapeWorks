@@ -73,7 +73,6 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(RasterizationOrigin::getCommand());
   shapeworks.addCommand(RasterizationSize::getCommand());
   shapeworks.addCommand(MeshFix::getCommand());
-  shapeworks.addCommand(AddField::getCommand());
   shapeworks.addCommand(FieldValue::getCommand());
   shapeworks.addCommand(FieldNames::getCommand());
   shapeworks.addCommand(MeshToImage::getCommand());

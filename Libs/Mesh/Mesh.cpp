@@ -491,46 +491,97 @@ Mesh& Mesh::fix(bool wind, bool smoothBefore, bool smoothAfter, double lambda, i
   return *this;
 }
 
-Mesh& Mesh::addField(const std::string name, Array array)
+Mesh& Mesh::setField(Array array, std::string name)
 {
+  if (!array)
+    throw std::invalid_argument("Invalid array.");
+
   int numVertices = mesh->GetPoints()->GetNumberOfPoints();
+  if (array->GetNumberOfTuples() != numVertices) {
+    std::cerr << "WARNING: Added a mesh field with a different number of elements than points\n";
+  }
+  if (array->GetNumberOfComponents() != 1) {
+    std::cerr << "WARNING: Added a multi-component mesh field\n";
+  }
 
-  array->SetNumberOfComponents(1);
+  if (name.empty()) name = "scalars";
   array->SetName(name.c_str());
-  // for (int i=0; i<numVertices; i++)
-  // {
-  //   double val[1] = {static_cast<double>(value)};
-  //   array->InsertNextTuple(val);
-  // }
-
   mesh->GetPointData()->AddArray(array);
 
   return *this;
 }
 
-Mesh& Mesh::addField(const std::string name, double value)
+Array Mesh::getField(const std::string& name) const
 {
-  double arr[1] = {value};
+  if (mesh->GetPointData()->GetNumberOfArrays() < 1)
+    throw std::invalid_argument("Mesh has no fields.");
 
-  Array array = Array::New();
-  array->SetNumberOfComponents(1);
-  array->SetName(name.c_str());
-  array->InsertNextTuple(arr);
-
-  mesh->GetPointData()->AddArray(array);
-
-  return *this;
+  Array arr = dynamic_cast<vtkDoubleArray*>(mesh->GetPointData()->GetArray(name.c_str()));
+  return arr;
 }
 
-double* Mesh::getFieldValue(const std::string name) const
+double Mesh::getFieldValue(int idx, const std::string& name) const
 {
-  if (!mesh->GetPointData()->GetArray(name.c_str()))
-    {throw std::invalid_argument("Field name does not exist"); }
+  if (mesh->GetPointData()->GetNumberOfArrays() < 1)
+    throw std::invalid_argument("Mesh has no fields from which to retrieve a value.");
 
-  double range[2];
-  mesh->GetPointData()->GetArray(name.c_str())->GetRange(range);
+  auto arr = mesh->GetPointData()->GetArray(name.c_str());
+  if (arr->GetNumberOfTuples() > idx)
+    return arr->GetTuple1(idx);
+  else
+    throw std::invalid_argument("Requested index in field is out of range");
+}
+
+void Mesh::setFieldValue(int idx, double val, const std::string& name)
+{
+  if (mesh->GetPointData()->GetNumberOfArrays() < 1)
+    throw std::invalid_argument("Mesh has no fields for which to set a value.");
+
+  auto arr = mesh->GetPointData()->GetArray(name.c_str());
+  if (arr->GetNumberOfTuples() > idx)
+    arr->SetTuple1(idx, val);
+  else
+    throw std::invalid_argument("Intended index in field is out of range");
+}
+
+std::vector<double> Mesh::getFieldRange(const std::string& name) const
+{
+  if (mesh->GetPointData()->GetNumberOfArrays() < 1)
+    throw std::invalid_argument("Mesh has no fields for which to compute range.");
+
+  std::vector<double> range(2);
+  mesh->GetPointData()->GetArray(name.c_str())->GetRange(&range[0]);
 
   return range;
+}
+
+double Mesh::getFieldMean(const std::string& name) const
+{
+  if (mesh->GetPointData()->GetNumberOfArrays() < 1)
+    throw std::invalid_argument("Mesh has no fields for which to compute mean.");
+
+  auto arr = mesh->GetPointData()->GetArray(name.c_str());
+  double mean{0.0};
+  for (int i=0; i<arr->GetNumberOfTuples(); i++) {
+    // maybe compute running mean to avoid overflow? mean = (mean+value)/(i+1)
+    mean += arr->GetTuple1(i);
+  }
+
+  return mean / arr->GetNumberOfTuples();
+}
+
+double Mesh::getFieldSdv(const std::string& name) const
+{
+  if (mesh->GetPointData()->GetNumberOfArrays() < 1)
+    throw std::invalid_argument("Mesh has no fields for which to compute mean.");
+
+  auto arr = mesh->GetPointData()->GetArray(name.c_str());
+  double mean = getFieldMean();
+  for (int i=0; i<arr->GetNumberOfTuples(); i++) {
+    ; // todo: compute sdv
+  }
+
+  return 42.0; // todo
 }
 
 std::vector<std::string> Mesh::getFieldNames() const
@@ -544,17 +595,14 @@ std::vector<std::string> Mesh::getFieldNames() const
   return fields;
 }
 
-bool Mesh::comparePointsEqual(const Mesh &other_mesh) const
+bool Mesh::compareAllPoints(const Mesh &other_mesh) const
 {
   if (!this->mesh || !other_mesh.mesh)
-  {
-    std::cout << "both polydata don't exist";
-    return false;
-  }
-
+    throw std::invalid_argument("invalid meshes");
+    
   if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints())
   {
-    std::cout << "both polydata differ in number of points";
+    std::cout << "meshes differ in number of points";
     return false;
   }
 
@@ -573,30 +621,30 @@ bool Mesh::comparePointsEqual(const Mesh &other_mesh) const
   return true;
 }
 
-bool Mesh::compareScalarsEqual(const Mesh &other_mesh) const
+bool Mesh::compareAllFields(const Mesh &other_mesh) const
 {
   if (!this->mesh || !other_mesh.mesh)
-    { throw std::invalid_argument("Meshes don't exist"); }
+    throw std::invalid_argument("Invalid meshes");
 
-  if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints())
-  { throw std::invalid_argument("Both meshes differ in number of points"); }
+  auto fields1 = getFieldNames();
+  auto fields2 = other_mesh.getFieldNames();
 
-  vtkDataArray* scalars1 = this->mesh->GetPointData()->GetScalars();
-  vtkDataArray* scalars2 = other_mesh.mesh->GetPointData()->GetScalars();
+  // first make sure they even have the same fields to compare
+  if (fields1.size() != fields2.size()) {
+    std::cout << "Mesh have different number of fields\n";
+    return false;
+  }
+  for (int i=0; i<fields1.size(); i++) {
+    if (std::find(fields2.begin(), fields2.end(), fields1[i]) == fields2.end()) {
+      std::cout << "Both meshes don't have " << fields1[i] << " field\n";
+      return false;
+    }      
+  }
 
-  if (!scalars1 || !scalars2)
-    { throw std::invalid_argument("No scalars"); }
-
-  if (scalars1->GetNumberOfValues() != scalars2->GetNumberOfValues())
-    { throw std::invalid_argument("Different number of scalars"); }
-
-  for (int i = 0; i < scalars1->GetNumberOfValues(); i++)
-  {
-    vtkVariant var1 = scalars1->GetVariantValue(i);
-    vtkVariant var2 = scalars2->GetVariantValue(i);
-    if (var1 != var2)
-    {
-      std::cout << "values differ: " << var1 << " != " << var2 << "\n";
+  // now compare the actual fields
+  for (auto field: fields1) {
+    if (!compareField(other_mesh, field)) {
+      std::cout << field << " fields are not the same\n";
       return false;
     }
   }
@@ -604,26 +652,29 @@ bool Mesh::compareScalarsEqual(const Mesh &other_mesh) const
   return true;
 }
 
-bool Mesh::compareField(const std::string name1, const Mesh& other_mesh, const std::string name2) const
+bool Mesh::compareField(const Mesh& other_mesh, const std::string& name1, const std::string& name2) const
 {
-  if (getFieldValue(name1) != other_mesh.getFieldValue(name2))
-    { throw std::invalid_argument("Field values are not equal"); }
+  auto field1 = getField(name1);
+  auto field2 = getField(name2.empty() ? name1 : name2);
 
-  return true;
-}
+  if (!field1 || !field2) {
+    std::cout << "at least one mesh missing a field\n";
+    return false;
+  }
 
-bool Mesh::compareFieldsEqual(const Mesh& other_mesh) const
-{
-  std::vector<std::string> fields1 = getFieldNames();
-  std::vector<std::string> fields2 = other_mesh.getFieldNames();
+  if (field1->GetNumberOfValues() != field2->GetNumberOfValues()) {
+    std::cout << "Fields are not the same size\n";
+    return false;
+  }
 
-  if (fields1.size() != fields2.size())
-    { throw std::invalid_argument("Different number of fields"); }
-
-  for (int i=0; i<fields1.size(); i++)
+  for (int i = 0; i < field1->GetNumberOfValues(); i++)
   {
-    if (!compareField(fields1[i], other_mesh, fields2[i]))
-      { throw std::invalid_argument("Different field value"); }
+    auto v1(field1->GetTuple1(i));
+    auto v2(field2->GetTuple1(i));
+    if (!equalNSigDigits(v1, v2, 5)) {
+      printf("%ith values not equal (%0.8f != %0.8f)\n", i, v1, v2);
+      return false;
+    }
   }
 
   return true;
@@ -648,21 +699,14 @@ Point3 Mesh::center() const
 
 bool Mesh::compare(const Mesh& other) const
 {
-  // todo: it not just for debugging, return false when one of these fails (don't want to do extra work)
-  if (!epsEqualN(center(), other.center()))             std::cout << "centers differ!\n";
-  if (!epsEqualN(centerOfMass(), other.centerOfMass())) std::cout << "coms differ!\n";
-  if (numPoints() != other.numPoints())                 std::cout << "num pts differ\n";
-  if (numFaces() != other.numFaces())                   std::cout << "num faces differ\n";
-  if (!comparePointsEqual(other))                       std::cout << "points differ\n";
-  if (!compareFieldsEqual(other))                       std::cout << "fields differ\n";
+  if (!epsEqualN(center(), other.center(), 3))             { std::cout << "centers differ!\n"; return false; }
+  if (!epsEqualN(centerOfMass(), other.centerOfMass(), 3)) { std::cout << "coms differ!\n"; return false; }
+  if (numPoints() != other.numPoints())                    { std::cout << "num pts differ\n"; return false; }
+  if (numFaces() != other.numFaces())                      { std::cout << "num faces differ\n"; return false; }
+  if (!compareAllPoints(other))                            { std::cout << "points differ\n"; return false; }
+  if (!compareAllFields(other))                            { std::cout << "fields differ\n"; return false; }
 
-  return (epsEqualN(center(), other.center(), 3) &&
-          epsEqualN(centerOfMass(), other.centerOfMass(), 3) &&
-          numPoints() == other.numPoints() &&
-          numFaces() == other.numFaces() &&
-          comparePointsEqual(other) &&    // even only considering 4 significant digits, still fails for translate tests
-          compareFieldsEqual(other) &&
-          true);
+  return true;
 }
 
 vtkTransform Mesh::createRegistrationTransform(const Mesh &target, Mesh::AlignmentType align, unsigned iterations)
@@ -676,7 +720,14 @@ std::ostream& operator<<(std::ostream &os, const Mesh& mesh)
   return os << "{\n\tnumber of points: " << mesh.numPoints()
             << ",\n\tnumber of faces: " << mesh.numFaces()
             << ",\n\tcenter: " << mesh.center()
-            << ",\n\tcenter or mass: " << mesh.centerOfMass() << "\n}";
+            << ",\n\tcenter or mass: " << mesh.centerOfMass()
+            << ",\n\tfieldname: \n";
+
+  auto fields = mesh.getFieldNames();
+  for (auto field: fields)
+    std::cout << "\t\t" << field;
+
+  std::cout << "\n}";
 }
 
 } // shapeworks

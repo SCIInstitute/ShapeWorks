@@ -509,8 +509,10 @@ PYBIND11_MODULE(shapeworks, m)
   .def("coverage",              &Mesh::coverage, "other_mesh"_a, "ignore_back_intersections"_a, "angle_threshold"_a, "back_search_radius"_a)
   .def("numPoints",             &Mesh::numPoints)
   .def("numFaces",              &Mesh::numFaces)
-  .def("comparePointsEqual",    &Mesh::comparePointsEqual, "other_mesh"_a)
-  .def("compareScalarsEqual",   &Mesh::compareScalarsEqual, "other_mesh"_a)
+  .def("compareAllPoints",      &Mesh::compareAllPoints, "other_mesh"_a)
+  .def("compareAllFields",      &Mesh::compareAllFields, "other_mesh"_a)
+  // todo: add get/setFieldValue and getFieldRange/Mean/Sdv
+  // todo: get/setField to/from numpy arrays (similar to Image.toArray)
   ;
 
   // MeshUtils

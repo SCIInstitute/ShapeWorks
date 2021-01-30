@@ -9,6 +9,16 @@ TEST(shapeworksTests, setup)
   ASSERT_TRUE(true);
 }
 
+TEST(shapeworksTests, meshfieldnameTest)
+{
+  ASSERT_FALSE(system("bash meshfieldnames.sh"));
+}
+
+TEST(shapeworksTests, tomeshTest)
+{
+  ASSERT_FALSE(system("bash tomesh.sh"));
+}
+
 TEST(shapeworksTests, clipmeshTest)
 {
   ASSERT_FALSE(system("bash clipmesh.sh"));
@@ -17,6 +27,16 @@ TEST(shapeworksTests, clipmeshTest)
 TEST(shapeworksTests, meshinfoTest)
 {
   ASSERT_FALSE(system("bash meshinfo.sh"));
+}
+
+TEST(shapeworksTests, coverageTest)
+{
+  ASSERT_FALSE(system("bash coverage.sh"));
+}
+
+TEST(shapeworksTests, probeTest)
+{
+  ASSERT_FALSE(system("bash probe.sh"));
 }
 
 TEST(shapeworksTests, compareTest)
@@ -224,11 +244,6 @@ TEST(shapeworksTests, setspacingFailTest)
   ASSERT_TRUE(system("bash setspacingfail.sh"));
 }
 
-TEST(shapeworksTests, tomeshTest)
-{
-  ASSERT_FALSE(system("bash tomesh.sh"));
-}
-
 TEST(shapeworksTests, negateTest)
 {
   ASSERT_FALSE(system("bash negate.sh"));
@@ -254,11 +269,6 @@ TEST(shapeworksTests, divisionTest)
   ASSERT_FALSE(system("bash div.sh"));
 }
 
-TEST(shapeworksTests, coverageTest)
-{
-  ASSERT_FALSE(system("bash coverage.sh"));
-}
-
 TEST(shapeworksTests, smoothTest)
 {
   ASSERT_FALSE(system("bash smooth.sh"));
@@ -277,11 +287,6 @@ TEST(shapeworksTests, reflectmeshTest)
 TEST(shapeworksTests, fillholesTest)
 {
   ASSERT_FALSE(system("bash fillholes.sh"));
-}
-
-TEST(shapeworksTests, probeTest)
-{
-  ASSERT_FALSE(system("bash probe.sh"));
 }
 
 TEST(shapeworksTests, translatemeshTest)

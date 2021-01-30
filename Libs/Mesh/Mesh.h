@@ -107,29 +107,50 @@ public:
   /// number of faces
   vtkIdType numFaces() const { return mesh->GetNumberOfCells(); }
 
-  /// add field with array value to mesh
-  Mesh& addField(const std::string name, Array array);
 
-  /// add field with value to mesh
-  Mesh& addField(const std::string name, double value);
-
-  /// print value of given field name in mesh
-  double* getFieldValue(const std::string name) const;
+  // fields of mesh points //
 
   /// print all field names in mesh
   std::vector<std::string> getFieldNames() const;
 
-  /// compare if values of the points in two (corresponding) meshes are equal within num significant digits
-  bool comparePointsEqual(const Mesh& other_mesh) const;
+  /// sets the given field for points with array ('default' if name not provided) (*does not copy array's values)
+  Mesh& setField(Array array, std::string name = "");
 
-  /// compare if scalars in two meshes are equal
-  bool compareScalarsEqual(const Mesh& other_mesh) const;
+  /// gets the field (default field if none specified) (*does not copy array's values)
+  Array getField(const std::string& name = "") const;
 
-  /// compare if values in two meshes are equal
-  bool compareField(const std::string name1, const Mesh& other_mesh, const std::string name2) const;
+  /// sets the given index of field to value (default field if none specified)
+  void setFieldValue(int idx, double value, const std::string& name = "");
 
-  /// compare if fields and field values in two meshes are equal
-  bool compareFieldsEqual(const Mesh& other_mesh) const;
+  /// gets the value at the given index of field (default field if none specified)
+  double getFieldValue(int idx, const std::string& name = "") const;
+
+  /// returns the range of the given field (default field if none specified)
+  std::vector<double> getFieldRange(const std::string& name = "") const;
+
+  /// returns the mean the given field (default field if none specified)
+  double getFieldMean(const std::string& name = "") const;
+
+  /// returns the standard deviation of the given field (default field if none specified)
+  double getFieldSdv(const std::string& name = "") const;
+
+
+  // fields of mesh faces //
+  // todo: add support for fields of mesh faces (ex: their normals)
+
+
+  // mesh comparison //
+
+  /// compare if values of the points in two (corresponding) meshes are (eps)equal
+  bool compareAllPoints(const Mesh& other_mesh) const;
+
+  /// compare if all fields in two meshes are (eps)equal
+  bool compareAllFields(const Mesh& other_mesh) const;
+
+  /// compare field of meshes to be (eps)equal (default field if none specified, same field for both if only one specified)
+  bool compareField(const Mesh& other_mesh, const std::string& name1 = "", const std::string& name2 = "") const;
+
+  // todo: add support for comparison of fields of mesh faces (ex: their normals)
 
   /// compare meshes
   bool compare(const Mesh& other_mesh) const;
@@ -137,11 +158,14 @@ public:
   /// compare meshes
   bool operator==(const Mesh& other) const { return compare(other); }
 
+  
+  // public static functions //
+
   /// getSupportedTypes
   static std::vector<std::string> getSupportedTypes() { return {"vtk", "vtp", "ply", "stl", "obj"}; }
 
 public:
-  // these two function should be private, but unable to test them b/c can't find gtest.h
+  // todo: these two function should be private, but unable to test them b/c can't find gtest.h
 
   /// compute origin of volume that would contain the rasterization of each mesh
   // FRIEND_TEST(MeshTests, rasterizationOriginTest1);
@@ -152,7 +176,6 @@ public:
   // FRIEND_TEST(MeshTests, rasterizationSizeTest1);
   // FRIEND_TEST(MeshTests, rasterizationSizeTest2);
   Dims rasterizationSize(Region region, Vector3 spacing = makeVector({1.0, 1.0, 1.0}), int padding = 0, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;
-
 
 private:
   friend struct SharedCommandData;

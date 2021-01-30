@@ -1623,6 +1623,7 @@ void MeshInfo::buildParser()
   parser.add_option("--center").action("store_true").set_default(false).help("Whether to display center [default: true].");
   parser.add_option("--centerofmass").action("store_true").set_default(false).help("Whether to display center of mass [default: true].");
   parser.add_option("--boundingbox").action("store_true").set_default(false).help("Whether to display bounding box [default: true].");
+  parser.add_option("--fieldnames").action("store_true").set_default(false).help("Whether to display field names [default: true].");
 
   Command::buildParser();
 }
@@ -1640,21 +1641,28 @@ bool MeshInfo::execute(const optparse::Values &options, SharedCommandData &share
   bool center = static_cast<bool>(options.get("center"));
   bool centerofmass = static_cast<bool>(options.get("centerofmass"));
   bool boundingbox = static_cast<bool>(options.get("boundingbox"));
+  bool fieldnames = static_cast<bool>(options.get("fieldnames"));
 
   // by default: print everything
   if (options.num_set() == 0)
-    vertices = faces = center = centerofmass = boundingbox = true;
+    vertices = faces = center = centerofmass = boundingbox = fieldnames = true;
 
   if (vertices)
     std::cout << "number of points:      " << sharedData.mesh->numPoints() << std::endl;
   if (faces)
-    std::cout << "number of faces:      " << sharedData.mesh->numFaces() << std::endl;
+    std::cout << "number of faces:       " << sharedData.mesh->numFaces() << std::endl;
   if (center)
     std::cout << "center:                " << sharedData.mesh->center() << std::endl;
   if (centerofmass)
     std::cout << "center of mass (0,1]:  " << sharedData.mesh->centerOfMass() << std::endl;
   if (boundingbox)
     std::cout << "bounding box:          " << sharedData.mesh->boundingBox() << std::endl;
+  if (fieldnames) {
+    auto fields = sharedData.mesh->getFieldNames();
+    std::cout << "field names: ";
+    for (auto field : fields) std::cout << field << " ";
+    std::cout << std::endl;
+  }
 
   return true;
 }
@@ -2242,51 +2250,16 @@ bool MeshFix::execute(const optparse::Values &options, SharedCommandData &shared
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// AddField
-///////////////////////////////////////////////////////////////////////////////
-void AddField::buildParser()
-{
-  const std::string prog = "add-field";
-  const std::string desc = "adds a scalar field to mesh";
-  parser.prog(prog).description(desc);
-
-  parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
-  parser.add_option("--value").action("store").type("double").set_default(0.0).help("Value of scalar field.");
-
-  Command::buildParser();
-}
-
-bool AddField::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
-    std::cerr << "No mesh to operate on\n";
-    return false;
-  }
-
-  std::string name = static_cast<std::string>(options.get("name"));
-  double value = static_cast<double>(options.get("value"));
-
-  if (name == "")
-  {
-    std::cerr << "Must specify a name\n";
-    return false;
-  }
-
-  sharedData.mesh->addField(name, value);
-  return sharedData.validMesh();
-}
-
-///////////////////////////////////////////////////////////////////////////////
 // FieldValue
 ///////////////////////////////////////////////////////////////////////////////
 void FieldValue::buildParser()
 {
   const std::string prog = "field-value";
-  const std::string desc = "prints value of field of mesh";
+  const std::string desc = "prints value of element at index in given field of mesh (default if no field provided)";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field (optional).");
+  parser.add_option("--index", "-i").action("store").type("int").set_default(0).help("index of value to return [default: %default].");
 
   Command::buildParser();
 }
@@ -2299,17 +2272,10 @@ bool FieldValue::execute(const optparse::Values &options, SharedCommandData &sha
     return false;
   }
 
+  int index = static_cast<int>(options.get("index"));
   std::string name = static_cast<std::string>(options.get("name"));
 
-  if (name == "")
-  {
-    std::cerr << "Must specify a name\n";
-    return false;
-  }
-
-  // double value = sharedData.mesh->getFieldValue(name);
-  sharedData.mesh->getFieldValue(name);
-  // std::cout <<
+  std::cout << sharedData.mesh->getFieldValue(index, name);
   return sharedData.validMesh();
 }
 
