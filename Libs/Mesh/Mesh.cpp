@@ -516,7 +516,9 @@ Array Mesh::getField(const std::string& name) const
   if (mesh->GetPointData()->GetNumberOfArrays() < 1)
     throw std::invalid_argument("Mesh has no fields.");
 
-  Array arr = dynamic_cast<vtkDoubleArray*>(mesh->GetPointData()->GetArray(name.c_str()));
+  // fixme: rawarr is a vtkDataArray*, but not a vtkDoubleArray... till next time
+  auto rawarr = mesh->GetPointData()->GetArray(name.c_str());
+  Array arr = dynamic_cast<vtkDoubleArray*>(rawarr);
   return arr;
 }
 
@@ -589,8 +591,10 @@ std::vector<std::string> Mesh::getFieldNames() const
   std::vector<std::string> fields;
   int numFields = mesh->GetPointData()->GetNumberOfArrays();
 
-  for (int i=0; i<numFields; i++)
-    fields.push_back(mesh->GetPointData()->GetArrayName(i));
+  for (int i=0; i<numFields; i++) {
+    auto name = mesh->GetPointData()->GetArrayName(i);
+    fields.push_back(name ? std::string(name) : std::string("default"));
+  }
 
   return fields;
 }
@@ -655,7 +659,7 @@ bool Mesh::compareAllFields(const Mesh &other_mesh) const
 bool Mesh::compareField(const Mesh& other_mesh, const std::string& name1, const std::string& name2) const
 {
   auto field1 = getField(name1);
-  auto field2 = getField(name2.empty() ? name1 : name2);
+  auto field2 = other_mesh.getField(name2.empty() ? name1 : name2);
 
   if (!field1 || !field2) {
     std::cout << "at least one mesh missing a field\n";
