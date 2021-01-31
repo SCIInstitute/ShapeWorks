@@ -293,7 +293,7 @@ TEST(MeshTests, icpTest)
 {
   Mesh source(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
   Mesh target(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
-  shapeworks::vtkTransform transform = source.createTransform(target);
+  shapeworks::swTransform transform = source.createTransform(target);
   source.applyTransform(transform);
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/icp.ply");
 
