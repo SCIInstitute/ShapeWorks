@@ -182,11 +182,17 @@ bool MeshUtils::warpMeshes(std::vector< std::string> movingPointpaths, std::vect
   return true;
 }
 
-Mesh MeshUtils::thread_safe_read_mesh(std::string filename)
+Mesh MeshUtils::threadSafeReadMesh(std::string filename)
 {
   tbb::mutex::scoped_lock lock(mesh_mutex);
   Mesh mesh(filename);
   return mesh;
+}
+
+void MeshUtils::threadSafeWriteMesh(std::string filename, Mesh mesh)
+{
+  tbb::mutex::scoped_lock lock(mesh_mutex);
+  mesh.write(filename);
 }
 
 vtkSmartPointer<vtkPlane> MeshUtils::createPlane(const Vector3 &n, const Point &o)
@@ -227,5 +233,6 @@ Region MeshUtils::boundingBox(std::vector<Mesh> &meshes, bool center)
 
   return bbox;
 }
+
 
 } // shapeworks
