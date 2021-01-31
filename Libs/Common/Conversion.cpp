@@ -3,9 +3,19 @@
 
 namespace shapeworks {
 
-std::unique_ptr<Mesh> Image::toMesh(Image::PixelType isovalue) const
+// NOTE: these two functions from Image need to be here to avoid a dependency loop since Mesh
+// already depends on Image.
+
+Mesh Image::toMesh(Image::PixelType isovalue) const
 {
-  return std::make_unique<Mesh>(getPolyData(*this, isovalue));
+  return getPolyData(*this, isovalue);
+}
+
+Mesh Image::toMesh(double levelset, double reduction, double angle, int leveliterations, int meshiterations, bool preservetopology) const
+{
+  Mesh mesh(march(*this, levelset));
+  mesh.smooth(leveliterations).decimate(reduction, angle).smooth(meshiterations);
+  return mesh;
 }
 
 } // shapeworks

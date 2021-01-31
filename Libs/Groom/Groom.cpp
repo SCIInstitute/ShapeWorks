@@ -221,7 +221,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject)
         vector[0] = -com[0];
         vector[1] = -com[1];
         vector[2] = -com[2];
-        mesh->translate_mesh(vector);
+        mesh->translate(vector);
 
         itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
         tform[0] = com[0];

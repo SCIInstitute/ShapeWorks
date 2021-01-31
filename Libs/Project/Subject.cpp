@@ -129,7 +129,7 @@ std::vector<DomainType> Subject::get_domain_types()
 
     bool mesh = false;
 
-    for (auto type : Mesh::get_supported_types()) {
+    for (auto type : Mesh::getSupportedTypes()) {
       if (StringUtils::hasSuffix(name, type)) {
         mesh = true;
       }

@@ -25,7 +25,7 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const vnl_vector<double>& pa
   points.resize(3, particles.size() / 3);
 
   Mesh output = MeshUtils::warpMesh(points.transpose(), this->warp_, this->faces_);
-  return output.get_poly_data();
+  return output.getVTKMesh();
 }
 
 //---------------------------------------------------------------------------

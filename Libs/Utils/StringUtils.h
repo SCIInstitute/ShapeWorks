@@ -9,8 +9,6 @@ namespace shapeworks {
 class StringUtils {
 
 public:
-
-
   static std::string removeExtension(std::string const& filename);
   static std::string getPath(std::string const& filename);
   static std::string getFilename(std::string const& pathname);

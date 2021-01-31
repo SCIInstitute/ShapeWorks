@@ -7,6 +7,18 @@ Point toPoint(const Coord &c) { return Point({static_cast<double>(c[0]), static_
 Vector toVector(const Dims &d) { return makeVector({static_cast<double>(d[0]), static_cast<double>(d[1]), static_cast<double>(d[2])}); }
 Vector toVector(const Point &p) { return makeVector({p[0], p[1], p[2]}); } 
 Point toPoint(const Vector &v) { return Point({v[0], v[1], v[2]}); }
+Coord toCoord(const Dims &d) {
+  return Coord({static_cast<itk::IndexValueType>(d[0]),
+                static_cast<itk::IndexValueType>(d[1]),
+                static_cast<itk::IndexValueType>(d[2])}); }
+Dims toDims(const Coord &c) {
+  return Dims({static_cast<itk::SizeValueType>(c[0]),
+               static_cast<itk::SizeValueType>(c[1]),
+               static_cast<itk::SizeValueType>(c[2])}); }
+Coord toCoord(const Point &p) {
+  return Coord({static_cast<itk::IndexValueType>(p[0]),
+                static_cast<itk::IndexValueType>(p[1]),
+                static_cast<itk::IndexValueType>(p[2])}); }
 
 /// Enables construction using an initializer list: `Vector3 f() { return makeVector({1,2,3}); }`
 // itkVector doesn't have this handy ctor like itkPoint; `Point p({a,b,c})` works, but `Vector3 v({1,2,3})` doesn't.
@@ -97,6 +109,13 @@ TransformPtr createTransform(const Matrix33 &mat, const Vector3 &translate)
   AffineTransformPtr xform(AffineTransform::New());
   xform->SetMatrix(mat);
   xform->SetOffset(translate);
+  return xform;
+}
+
+swTransform createvtkTransform(const vtkSmartPointer<vtkMatrix4x4> &mat)
+{
+  swTransform xform(vtkTransform::New());
+  xform->SetMatrix(mat);
   return xform;
 }
 

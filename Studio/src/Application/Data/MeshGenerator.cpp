@@ -127,7 +127,7 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
   }
 
   bool is_mesh = false;
-  for (auto type : shapeworks::Mesh::get_supported_types()) {
+  for (auto type : shapeworks::Mesh::getSupportedTypes()) {
     if (StringUtils::hasSuffix(filename, type)) {
       is_mesh = true;
     }
@@ -135,7 +135,7 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
 
   if (is_mesh) {
     try {
-      mesh->set_poly_data(MeshUtils::thread_safe_read_mesh(filename).get_poly_data());
+      mesh->set_poly_data(MeshUtils::thread_safe_read_mesh(filename).getVTKMesh());
     } catch (std::exception e) {
       std::string message = std::string("Error reading: ") + filename;
       STUDIO_LOG_ERROR(QString::fromStdString(message));
