@@ -9,9 +9,29 @@ TEST(shapeworksTests, setup)
   ASSERT_TRUE(true);
 }
 
-TEST(shapeworksTests, meshfieldnameTest)
+TEST(shapeworksTests, fieldnameTest)
 {
   ASSERT_FALSE(system("bash meshfieldnames.sh"));
+}
+
+TEST(shapeworksTests, getfieldvalueTest)
+{
+  ASSERT_FALSE(system("bash getfieldvalue.sh"));
+}
+
+TEST(shapeworksTests, fieldrangeTest)
+{
+  ASSERT_FALSE(system("bash fieldrange.sh"));
+}
+
+TEST(shapeworksTests, fieldmeanTest)
+{
+  ASSERT_FALSE(system("bash fieldmean.sh"));
+}
+
+TEST(shapeworksTests, fieldsdvTest)
+{
+  ASSERT_FALSE(system("bash fieldsdv.sh"));
 }
 
 TEST(shapeworksTests, tomeshTest)

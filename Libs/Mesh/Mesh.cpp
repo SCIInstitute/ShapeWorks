@@ -528,6 +528,9 @@ double Mesh::getFieldValue(int idx, const std::string& name) const
     throw std::invalid_argument("Mesh has no fields from which to retrieve a value.");
 
   auto arr = mesh->GetPointData()->GetArray(name.c_str());
+  if (!arr)
+    throw std::invalid_argument("Field does not exist.");
+
   if (arr->GetNumberOfTuples() > idx)
     return arr->GetTuple1(idx);
   else
@@ -552,7 +555,12 @@ std::vector<double> Mesh::getFieldRange(const std::string& name) const
     throw std::invalid_argument("Mesh has no fields for which to compute range.");
 
   std::vector<double> range(2);
-  mesh->GetPointData()->GetArray(name.c_str())->GetRange(&range[0]);
+
+  auto arr = mesh->GetPointData()->GetArray(name.c_str());
+  if (!arr)
+    throw std::invalid_argument("Field does not exist.");
+
+  arr->GetRange(&range[0]);
 
   return range;
 }
@@ -563,6 +571,9 @@ double Mesh::getFieldMean(const std::string& name) const
     throw std::invalid_argument("Mesh has no fields for which to compute mean.");
 
   auto arr = mesh->GetPointData()->GetArray(name.c_str());
+  if (!arr)
+    throw std::invalid_argument("Field does not exist.");
+
   double mean{0.0};
   for (int i=0; i<arr->GetNumberOfTuples(); i++) {
     // maybe compute running mean to avoid overflow? mean = (mean+value)/(i+1)
@@ -578,7 +589,10 @@ double Mesh::getFieldSdv(const std::string& name) const
     throw std::invalid_argument("Mesh has no fields for which to compute mean.");
 
   auto arr = mesh->GetPointData()->GetArray(name.c_str());
-  double mean = getFieldMean();
+  if (!arr)
+    throw std::invalid_argument("Field does not exist.");
+
+  double mean = getFieldMean(name);
   double squaredDiff{0.0};
   for (int i=0; i<arr->GetNumberOfTuples(); i++) {
     squaredDiff += pow(arr->GetTuple1(i) - mean, 2);

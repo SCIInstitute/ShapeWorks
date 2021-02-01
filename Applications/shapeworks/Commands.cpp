@@ -2307,7 +2307,7 @@ bool GetFieldValue::execute(const optparse::Values &options, SharedCommandData &
   int index = static_cast<int>(options.get("index"));
   std::string name = static_cast<std::string>(options.get("name"));
 
-  std::cout << sharedData.mesh->getFieldValue(index, name);
+  std::cout << sharedData.mesh->getFieldValue(index, name) << "\n";
   return sharedData.validMesh();
 }
 
@@ -2336,7 +2336,7 @@ bool FieldRange::execute(const optparse::Values &options, SharedCommandData &sha
   std::string name = static_cast<std::string>(options.get("name"));
 
   std::vector<double> range = sharedData.mesh->getFieldRange(name);
-  std::cout << "[" << range[0] << "," << range[1] << "]";
+  std::cout << "[" << range[0] << "," << range[1] << "]\n";
   return sharedData.validMesh();
 }
 
@@ -2364,7 +2364,7 @@ bool FieldMean::execute(const optparse::Values &options, SharedCommandData &shar
 
   std::string name = static_cast<std::string>(options.get("name"));
 
-  std::cout << sharedData.mesh->getFieldMean(name);
+  std::cout << sharedData.mesh->getFieldMean(name) << "\n";
   return sharedData.validMesh();
 }
 
@@ -2392,7 +2392,7 @@ bool FieldSdv::execute(const optparse::Values &options, SharedCommandData &share
 
   std::string name = static_cast<std::string>(options.get("name"));
 
-  std::cout << sharedData.mesh->getFieldSdv(name);
+  std::cout << sharedData.mesh->getFieldSdv(name) << "\n";
   return sharedData.validMesh();
 }
 

@@ -327,7 +327,6 @@ TEST(MeshTests, icpTest)
   ASSERT_TRUE(source == ground_truth);
 }
 
-
 TEST(MeshTests, warpTest1)
 {
   Mesh ellipsoid( std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
