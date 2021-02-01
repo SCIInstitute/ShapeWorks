@@ -78,8 +78,9 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
   const int face_a = GetTriangleForPoint(convert<PointType, point>(pt_a), idx_a, bary_a);
   const int face_b = GetTriangleForPoint(convert<PointType, point>(pt_b), idx_b, bary_b);
 
-  // Both points lie on the same triangle, so we just return euclidean distance
-  if(face_a == face_b) {
+  // The geodesics(and more importantly, its gradient) are very inaccurate if both the points are on the
+  // same face, or share an edge. In this case, just return the euclidean distance
+  if(face_a == face_b || AreFacesAdjacent(face_a, face_b)) {
     if(out_grad != nullptr) {
       for(int i=0; i<DIMENSION; i++) {
         (*out_grad)[i] = pt_a[i] - pt_b[i];
@@ -110,27 +111,18 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
     return geo_dist;
   }
 
-  // Check if the particles are too close. Gradient of geodesics is very inaccurate for
-  // 1-ring of the face, so we just fall back to euclidean gradient
-  if(AreFacesAdjacent(face_a, face_b)) {
-    for (int i = 0; i < DIMENSION; i++) {
-      (*out_grad)[i] = pt_a[i] - pt_b[i];
-    }
-    return geo_dist;
-  }
+  // Map out_grad to an Eigen data structure
+  Eigen::Map<Eigen::Vector3d> out_grad_eigen(out_grad->data_block());
 
+  // Compute gradient of geodesics using barycentric approximation from point b over face a.
   const auto& grad_geo_from_b = GradGeodesicsFromTriangle(face_b);
-  Eigen::Vector3d grad_geo = {0.0, 0.0, 0.0};
-  grad_geo += bary_b[0] * grad_geo_from_b[0].row(face_a);
-  grad_geo += bary_b[1] * grad_geo_from_b[1].row(face_a);
-  grad_geo += bary_b[2] * grad_geo_from_b[2].row(face_a);
-  //todo get the scaling by distance stuff correctly
-  grad_geo *= geo_dist;
+  out_grad_eigen = bary_b[0] * grad_geo_from_b[0].row(face_a)
+                 + bary_b[1] * grad_geo_from_b[1].row(face_a)
+                 + bary_b[2] * grad_geo_from_b[2].row(face_a);
 
-  // Copy gradient from Eigen to VNL data structures
-  for(int i=0; i<DIMENSION; i++) {
-    (*out_grad)[i] = grad_geo(i);
-  }
+  //todo double check this math
+  out_grad_eigen.normalize();
+  out_grad_eigen *= geo_dist;
 
   return geo_dist;
 }
@@ -182,10 +174,10 @@ const std::array<Eigen::MatrixXd, 3>& TriMeshWrapper::GradGeodesicsFromTriangle(
 
   for(int i=0; i<3; i++) {
     Eigen::MatrixXd& GD = cache.entries[cache_idx][i];
-    GD.resize(mesh_->faces.size(), 3);
-    GD.noalias() = G*D[i];
-    GD.resize(mesh_->faces.size(), 3);
-    // GD.noalias() = Eigen::Map<const Eigen::MatrixXd>((G*D).eval().data(), mesh_->faces.size(), 3);
+
+    GD.resize(mesh_->faces.size(), 3); // ensure enough memory if first time cache entry used
+    GD.noalias() = G*D[i]; // makes GD a (3F, 1) matrix
+    GD.resize(mesh_->faces.size(), 3); // correct rows and columns
   }
 
   cache.tri2entry[f] = cache_idx;

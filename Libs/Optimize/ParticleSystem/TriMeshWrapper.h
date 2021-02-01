@@ -110,7 +110,7 @@ private:
   // Returns true if face f_a is adjacent to face f_b
   bool AreFacesAdjacent(int f_a, int f_b) const;
 
-  size_t max_cache_entries_ {15000};
+  size_t max_cache_entries_ {2000};
 
   template<class T>
   struct GeoCache {
