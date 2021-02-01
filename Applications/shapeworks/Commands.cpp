@@ -2250,21 +2250,53 @@ bool MeshFix::execute(const optparse::Values &options, SharedCommandData &shared
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// FieldValue
+// SetFieldValue
 ///////////////////////////////////////////////////////////////////////////////
-void FieldValue::buildParser()
+void SetFieldValue::buildParser()
 {
-  const std::string prog = "field-value";
-  const std::string desc = "prints value of element at index in given field of mesh (default if no field provided)";
+  const std::string prog = "set-field-value";
+  const std::string desc = "sets value of element at index in given field of mesh (default if no field provided)";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field (optional).");
   parser.add_option("--index", "-i").action("store").type("int").set_default(0).help("index of value to return [default: %default].");
+  parser.add_option("--value").action("store").type("double").set_default(0).help("value to be set [default: %default].");
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field (optional).");
 
   Command::buildParser();
 }
 
-bool FieldValue::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool SetFieldValue::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  int index = static_cast<int>(options.get("index"));
+  double value = static_cast<double>(options.get("value"));
+  std::string name = static_cast<std::string>(options.get("name"));
+
+  sharedData.mesh->setFieldValue(index, value, name);
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// GetFieldValue
+///////////////////////////////////////////////////////////////////////////////
+void GetFieldValue::buildParser()
+{
+  const std::string prog = "get-field-value";
+  const std::string desc = "prints value of element at index in given field of mesh (default if no field provided)";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--index", "-i").action("store").type("int").set_default(0).help("index of value to return [default: %default].");
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field (optional).");
+
+  Command::buildParser();
+}
+
+bool GetFieldValue::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validMesh())
   {
@@ -2276,6 +2308,91 @@ bool FieldValue::execute(const optparse::Values &options, SharedCommandData &sha
   std::string name = static_cast<std::string>(options.get("name"));
 
   std::cout << sharedData.mesh->getFieldValue(index, name);
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// FieldRange
+///////////////////////////////////////////////////////////////////////////////
+void FieldRange::buildParser()
+{
+  const std::string prog = "field-range";
+  const std::string desc = "prints the range of the given field (default field if none specified)";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field (optional).");
+
+  Command::buildParser();
+}
+
+bool FieldRange::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  std::string name = static_cast<std::string>(options.get("name"));
+
+  std::vector<double> range = sharedData.mesh->getFieldRange(name);
+  std::cout << "[" << range[0] << "," << range[1] << "]";
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// FieldMean
+///////////////////////////////////////////////////////////////////////////////
+void FieldMean::buildParser()
+{
+  const std::string prog = "field-mean";
+  const std::string desc = "prints the mean of the given field (default field if none specified)";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field (optional).");
+
+  Command::buildParser();
+}
+
+bool FieldMean::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  std::string name = static_cast<std::string>(options.get("name"));
+
+  std::cout << sharedData.mesh->getFieldMean(name);
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// FieldSdv
+///////////////////////////////////////////////////////////////////////////////
+void FieldSdv::buildParser()
+{
+  const std::string prog = "field-sdv";
+  const std::string desc = "prints the standard deviation of the given field (default field if none specified)";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field (optional).");
+
+  Command::buildParser();
+}
+
+bool FieldSdv::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  std::string name = static_cast<std::string>(options.get("name"));
+
+  std::cout << sharedData.mesh->getFieldSdv(name);
   return sharedData.validMesh();
 }
 

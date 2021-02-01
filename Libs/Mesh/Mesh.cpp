@@ -579,11 +579,12 @@ double Mesh::getFieldSdv(const std::string& name) const
 
   auto arr = mesh->GetPointData()->GetArray(name.c_str());
   double mean = getFieldMean();
+  double squaredDiff{0.0};
   for (int i=0; i<arr->GetNumberOfTuples(); i++) {
-    ; // todo: compute sdv
+    squaredDiff += pow(arr->GetTuple1(i) - mean, 2);
   }
 
-  return 42.0; // todo
+  return sqrt(squaredDiff / arr->GetNumberOfTuples());
 }
 
 std::vector<std::string> Mesh::getFieldNames() const

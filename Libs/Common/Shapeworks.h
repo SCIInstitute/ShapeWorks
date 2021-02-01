@@ -45,7 +45,7 @@ TransformPtr createTransform(const Matrix33 &mat, const Vector3 &translate = mak
 Plane makePlane(const Vector3 &n, const Point &o);
 
 /// make array
-Array makeArray();
+Array makeArray(std::vector<double> arr);
 
 /// Affine transforms are used for many Image manipulation commands
 using AffineTransform    = itk::AffineTransform<double, 3>;

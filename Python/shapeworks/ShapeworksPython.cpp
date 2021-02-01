@@ -511,8 +511,17 @@ PYBIND11_MODULE(shapeworks, m)
   .def("numFaces",              &Mesh::numFaces)
   .def("compareAllPoints",      &Mesh::compareAllPoints, "other_mesh"_a)
   .def("compareAllFields",      &Mesh::compareAllFields, "other_mesh"_a)
-  // todo: add get/setFieldValue and getFieldRange/Mean/Sdv
-  // todo: get/setField to/from numpy arrays (similar to Image.toArray)
+  .def("getFieldNames",         &Mesh::getFieldNames)
+  .def("setField",              &Mesh::setField, "array"_a, "name"_a)
+  .def("setField", [](Mesh &mesh, std::vector<double>& a, std::string name) {
+    return mesh.setField(makeArray({a[0],a[1], a[2]}), name);
+  })
+  .def("getField",              &Mesh::getField, "name"_a="")
+  .def("setFieldValue",         &Mesh::setFieldValue, "idx"_a, "value"_a, "name"_a="")
+  .def("getFieldValue",         &Mesh::getFieldValue, "idx"_a, "name"_a)
+  .def("getFieldRange",         &Mesh::getFieldRange, "name"_a)
+  .def("getFieldMean",          &Mesh::getFieldMean, "name"_a)
+  .def("getFieldSdv",           &Mesh::getFieldSdv, "name"_a)
   ;
 
   // MeshUtils
