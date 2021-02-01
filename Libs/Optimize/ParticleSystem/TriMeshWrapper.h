@@ -101,23 +101,31 @@ private:
   // Precompute libigl heat data structures for faster geodesic lookups
   void PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
 
-  // Returns (V, ) geodesic distances from a given source vertex to every other vertex
-  const Eigen::VectorXd& GeodesicsFromVertex(int v) const;
+  // Returns 3 x (V, ) geodesic distances from a given source triangle's vertices to every other vertex
+  const std::array<Eigen::VectorXd, 3>& GeodesicsFromTriangle(int f) const;
 
-  // Returns (V, 3) gradient of geodesic distances from a given source vertex to every other vertex
-  const Eigen::MatrixXd& GradGeodesicsFromVertex(int v) const;
+  // Returns 3 x (F, 3) gradient of geodesic distances from a given source triangle's vertices to every other face
+  const std::array<Eigen::MatrixXd, 3>& GradGeodesicsFromTriangle(int f) const;
 
   // Returns true if face f_a is adjacent to face f_b
   bool AreFacesAdjacent(int f_a, int f_b) const;
+
+  size_t max_cache_entries_ {15000};
+
+  template<class T>
+  struct GeoCache {
+    std::unordered_map<int, int> tri2entry;
+    std::vector<T> entries;
+  };
 
   // Cache to store information for geodesics
   mutable struct {
     igl::HeatGeodesicsData<double> heat_data;
 
-    //TODO lru_cache https://github.com/lamerman/cpp-lru-cache/blob/master/include/lrucache.hpp
-    std::unordered_map<int, Eigen::VectorXd> cache;
-    //TODO Might be worth switching to RowMajor here because of the access patterns
-    std::unordered_map<int, Eigen::MatrixXd> grad_cache;
+    // cache for geodesic distances from a triangle
+    GeoCache<std::array<Eigen::VectorXd, 3>> geo;
+    // cache for gradient of geodesic distances from a triangle
+    GeoCache<std::array<Eigen::MatrixXd, 3>> grad_geo;
 
     Eigen::SparseMatrix<double> G; // Gradient operator
   } geodesic_cache_;
