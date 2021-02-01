@@ -400,6 +400,10 @@ void ShapeWorksStudioApp::on_action_import_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::import_files(QStringList file_names)
 {
+  this->handle_message("Loading Files...");
+  this->handle_progress(-1);
+  QCoreApplication::processEvents();
+
   std::vector<std::string> list;
   for (auto& a : file_names) {
     list.push_back(a.toStdString());
@@ -432,6 +436,8 @@ void ShapeWorksStudioApp::import_files(QStringList file_names)
   } catch (std::runtime_error e) {
     this->handle_error(e.what());
   }
+  this->handle_message("Files loaded");
+  this->handle_progress(100);
 }
 
 //---------------------------------------------------------------------------
@@ -1741,10 +1747,6 @@ void ShapeWorksStudioApp::dropEvent(QDropEvent* event)
 {
   bool accept = false;
 
-  this->handle_message("Loading Files...");
-  this->handle_progress(-1);
-  QCoreApplication::processEvents();
-
   QStringList files_to_load;
 
   if (event->mimeData()->hasUrls()) {
@@ -1767,8 +1769,6 @@ void ShapeWorksStudioApp::dropEvent(QDropEvent* event)
   else {
     event->ignore();
   }
-  this->handle_message("Files loaded");
-  this->handle_progress(100);
 }
 
 //---------------------------------------------------------------------------
