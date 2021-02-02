@@ -173,8 +173,6 @@ void AnalysisTool::on_reconstructionButton_clicked()
   this->store_settings();
   emit message("Please wait: running reconstruction step...");
   emit progress(5);
-  //this->ui_->run_optimize_button->setEnabled(false);
-  this->ui_->reconstructionButton->setEnabled(false);
   QThread* thread = new QThread;
   std::vector<std::vector<itk::Point<double>>> local, global;
   std::vector<std::string> images;
