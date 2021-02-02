@@ -317,7 +317,7 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side, printCmd=T
             imageList.append(img_out)
             centerFilename = os.path.join(outDir, prefix + "_origin.txt")
             img = Image(image)
-            img.reflect("X").write(img_out)
+            img.reflect(X).write(img_out)
             seg_out = rename(flip_seg, outSegDir, 'reflect')
             meshList.append(seg_out)
             execCommand = ["ReflectMesh", "--inFilename", flip_seg, "--outFilename", seg_out, "--reflectCenterFilename", centerFilename, "--inputDirection", "0", "--meshFormat", flip_seg.split(".")[-1]]
@@ -465,7 +465,8 @@ def MeshesToVolumesUsingImages(outDir, meshList, imgList, printCmd=True):
             print("CMD: " + " ".join(execCommand))
         subprocess.check_call(execCommand)
 
-        spacing_string = str(img.spacing()[0]).replace(".0","")
+        spacing = round(img.spacing()[0], 5)
+        spacing_string = str(spacing).replace(".0","")
         # save output volume
         output_volume = mesh.replace(".ply", ".rasterized_sp" + spacing_string + ".nrrd")
         shutil.move(output_volume, segFile)
