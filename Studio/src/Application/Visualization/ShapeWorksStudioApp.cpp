@@ -127,7 +127,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   menu->addAction(widget_action);
 
   //analysis tool initializations
-  this->analysis_tool_ = QSharedPointer<AnalysisTool>(new AnalysisTool(preferences_));
+  this->analysis_tool_ = QSharedPointer<AnalysisTool>::create(preferences_);
   this->analysis_tool_->set_app(this);
   this->ui_->stacked_widget->addWidget(this->analysis_tool_.data());
   connect(this->analysis_tool_.data(), SIGNAL(update_view()), this,
@@ -165,11 +165,11 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->lightbox_ = LightboxHandle(new Lightbox());
 
   // visualizer initializations
-  this->visualizer_ = QSharedPointer<Visualizer>(new Visualizer(preferences_));
+  this->visualizer_ = QSharedPointer<Visualizer>::create(preferences_);
   this->visualizer_->set_lightbox(this->lightbox_);
 
   // groom tool initializations
-  this->groom_tool_ = QSharedPointer<GroomTool>(new GroomTool());
+  this->groom_tool_ = QSharedPointer<GroomTool>::create(preferences_);
   this->ui_->stacked_widget->addWidget(this->groom_tool_.data());
   connect(this->groom_tool_.data(), SIGNAL(groom_complete()),
           this, SLOT(handle_groom_complete()));
@@ -181,7 +181,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           this, &ShapeWorksStudioApp::handle_progress);
 
   // optimize tool initializations
-  this->optimize_tool_ = QSharedPointer<OptimizeTool>(new OptimizeTool());
+  this->optimize_tool_ = QSharedPointer<OptimizeTool>::create();
   this->ui_->stacked_widget->addWidget(this->optimize_tool_.data());
   connect(this->optimize_tool_.data(), SIGNAL(optimize_complete()),
           this, SLOT(handle_optimize_complete()));

@@ -11,6 +11,9 @@ public:
   explicit GroomParameters(ProjectHandle project);
   void save_to_project();
 
+  std::string get_groom_output_prefix();
+  void set_groom_output_prefix(std::string prefix);
+
   bool get_center_tool();
   void set_center_tool(bool value);
 

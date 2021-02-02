@@ -135,3 +135,15 @@ void GroomParameters::save_to_project()
 {
   this->project_->set_parameters(Parameters::GROOM_PARAMS, this->params_);
 }
+
+//---------------------------------------------------------------------------
+std::string GroomParameters::get_groom_output_prefix()
+{
+  return this->params_.get("groom_output_prefix", "groomed");
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_groom_output_prefix(std::string prefix)
+{
+  this->params_.set("groom_output_prefix", prefix);
+}

@@ -17,7 +17,7 @@
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-GroomTool::GroomTool()
+GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
 {
   this->ui_ = new Ui_GroomTool;
   this->ui_->setupUi(this);
@@ -143,6 +143,7 @@ void GroomTool::store_params()
   params.set_isolate_tool(this->ui_->isolate_checkbox->isChecked());
   params.set_fill_holes_tool(this->ui_->fill_holes_checkbox->isChecked());
   params.set_antialias_iterations(this->ui_->antialias_iterations->value());
+  params.set_groom_output_prefix(this->preferences_.get_groom_file_template().toStdString());
 
   params.save_to_project();
 }

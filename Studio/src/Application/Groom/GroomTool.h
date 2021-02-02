@@ -8,6 +8,7 @@
 #include <QElapsedTimer>
 #include <QObject>
 
+#include <Data/Preferences.h>
 #include <Groom/QGroom.h>
 
 class Ui_GroomTool;
@@ -23,7 +24,7 @@ class GroomTool : public QWidget {
 Q_OBJECT;
 public:
 
-  GroomTool();
+  GroomTool(Preferences& prefs);
   ~GroomTool();
 
   //! Set the pointer to the session
@@ -69,6 +70,8 @@ public Q_SLOTS:
   void handle_error(std::string msg);
 
 private:
+  Preferences& preferences_;
+
   QList<QThread*> threads_;
 
   Ui_GroomTool* ui_;
