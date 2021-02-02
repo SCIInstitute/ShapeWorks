@@ -37,6 +37,9 @@ public:
   //! Save to XLSX file
   bool save(const std::string& filename);
 
+  //! Return the filename
+  std::string get_filename();
+
   //! Return the headers of the subject sheet
   std::vector<std::string> get_headers();
 
@@ -131,6 +134,8 @@ private:
   std::vector<std::shared_ptr<Subject>> subjects_;
 
   bool loaded_{false};
+
+  std::string filename_;
 
   bool segmentations_present_{false};
   bool groomed_present_{false};

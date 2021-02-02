@@ -37,6 +37,7 @@ bool Project::load(const std::string& filename)
 {
   try {
     this->wb_->load(filename);
+    this->filename_ = filename;
   } catch (xlnt::exception& e) {
 
     std::cerr << std::string("Error reading xlsx: ")
@@ -69,6 +70,7 @@ bool Project::save(const std::string& filename)
 
     this->store_subjects();
     this->wb_->save(filename);
+    this->filename_ = filename;
   } catch (xlnt::exception& e) {
 
     std::cerr << std::string("Error writing xlsx: ")
@@ -643,6 +645,12 @@ std::vector<std::string> Project::get_extra_columns() const
     }
   }
   return list;
+}
+
+//---------------------------------------------------------------------------
+std::string Project::get_filename()
+{
+  return this->filename_;
 }
 
 
