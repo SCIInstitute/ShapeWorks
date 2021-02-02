@@ -317,7 +317,7 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side, printCmd=T
             imageList.append(img_out)
             centerFilename = os.path.join(outDir, prefix + "_origin.txt")
             img = Image(image)
-            img.reflect("X").write(img_out)
+            img.reflect(X).write(img_out)
             seg_out = rename(flip_seg, outSegDir, 'reflect')
             meshList.append(seg_out)
             execCommand = ["ReflectMesh", "--inFilename", flip_seg, "--outFilename", seg_out, "--reflectCenterFilename", centerFilename, "--inputDirection", "0", "--meshFormat", flip_seg.split(".")[-1]]
