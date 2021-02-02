@@ -2255,12 +2255,12 @@ bool MeshFix::execute(const optparse::Values &options, SharedCommandData &shared
 void SetFieldValue::buildParser()
 {
   const std::string prog = "set-field-value";
-  const std::string desc = "sets value of element at index in given field of mesh (default if no field provided)";
+  const std::string desc = "sets value of element at index in given field of mesh";
   parser.prog(prog).description(desc);
 
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
   parser.add_option("--index", "-i").action("store").type("int").set_default(0).help("index of value to return [default: %default].");
   parser.add_option("--value").action("store").type("double").set_default(0).help("value to be set [default: %default].");
-  parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field (optional).");
 
   Command::buildParser();
 }
@@ -2273,11 +2273,11 @@ bool SetFieldValue::execute(const optparse::Values &options, SharedCommandData &
     return false;
   }
 
+  std::string name = static_cast<std::string>(options.get("name"));
   int index = static_cast<int>(options.get("index"));
   double value = static_cast<double>(options.get("value"));
-  std::string name = static_cast<std::string>(options.get("name"));
 
-  sharedData.mesh->setFieldValue(index, value, name);
+  sharedData.mesh->setFieldValue(name, index, value);
   return sharedData.validMesh();
 }
 
@@ -2287,11 +2287,11 @@ bool SetFieldValue::execute(const optparse::Values &options, SharedCommandData &
 void GetFieldValue::buildParser()
 {
   const std::string prog = "get-field-value";
-  const std::string desc = "prints value of element at index in given field of mesh (default if no field provided)";
+  const std::string desc = "prints value of element at index in given field of mesh";
   parser.prog(prog).description(desc);
 
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
   parser.add_option("--index", "-i").action("store").type("int").set_default(0).help("index of value to return [default: %default].");
-  parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field (optional).");
 
   Command::buildParser();
 }
@@ -2304,10 +2304,10 @@ bool GetFieldValue::execute(const optparse::Values &options, SharedCommandData &
     return false;
   }
 
-  int index = static_cast<int>(options.get("index"));
   std::string name = static_cast<std::string>(options.get("name"));
+  int index = static_cast<int>(options.get("index"));
 
-  std::cout << sharedData.mesh->getFieldValue(index, name) << "\n";
+  std::cout << sharedData.mesh->getFieldValue(name, index) << "\n";
   return sharedData.validMesh();
 }
 
@@ -2317,10 +2317,10 @@ bool GetFieldValue::execute(const optparse::Values &options, SharedCommandData &
 void FieldRange::buildParser()
 {
   const std::string prog = "field-range";
-  const std::string desc = "prints the range of the given field (default field if none specified)";
+  const std::string desc = "prints the range of the given field";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field (optional).");
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
 
   Command::buildParser();
 }
@@ -2346,10 +2346,10 @@ bool FieldRange::execute(const optparse::Values &options, SharedCommandData &sha
 void FieldMean::buildParser()
 {
   const std::string prog = "field-mean";
-  const std::string desc = "prints the mean of the given field (default field if none specified)";
+  const std::string desc = "prints the mean of the given field";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field (optional).");
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
 
   Command::buildParser();
 }
@@ -2374,10 +2374,10 @@ bool FieldMean::execute(const optparse::Values &options, SharedCommandData &shar
 void FieldSdv::buildParser()
 {
   const std::string prog = "field-sdv";
-  const std::string desc = "prints the standard deviation of the given field (default field if none specified)";
+  const std::string desc = "prints the standard deviation of the given field";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field (optional).");
+  parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
 
   Command::buildParser();
 }

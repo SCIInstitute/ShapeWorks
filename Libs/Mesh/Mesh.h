@@ -7,6 +7,7 @@
 #include <vtkPolyData.h>
 #include <swHausdorffDistancePointSetFilter.h>
 #include <string>
+#include <vtkPointData.h>
 // #include <gtest/gtest.h>  // fixme: not getting found; needed in order to test private functions
 
 namespace shapeworks {
@@ -113,26 +114,34 @@ public:
   /// print all field names in mesh
   std::vector<std::string> getFieldNames() const;
 
-  /// sets the given field for points with array ('default' if name not provided) (*does not copy array's values)
-  Mesh& setField(Array array, std::string name = "");
+  /// sets the given field for points with array (*does not copy array's values)
+  Mesh& setField(std::string name, Array array);
 
-  /// gets the field (default field if none specified) (*does not copy array's values)
-  Array getField(const std::string& name = "") const;
+  /// gets the field (*does not copy array's values)
+  template<typename T>
+  vtkSmartPointer<T> getField(const std::string& name) const
+  {
+    if (mesh->GetPointData()->GetNumberOfArrays() < 1)
+      throw std::invalid_argument("Mesh has no fields.");
 
-  /// sets the given index of field to value (default field if none specified)
-  void setFieldValue(int idx, double value, const std::string& name = "");
+    auto rawarr = mesh->GetPointData()->GetArray(name.c_str());
+    return rawarr;
+  }
 
-  /// gets the value at the given index of field (default field if none specified)
-  double getFieldValue(int idx, const std::string& name = "") const;
+  /// sets the given index of field to value
+  void setFieldValue(const std::string& name, int idx, double value);
 
-  /// returns the range of the given field (default field if none specified)
-  std::vector<double> getFieldRange(const std::string& name = "") const;
+  /// gets the value at the given index of field
+  double getFieldValue(const std::string& name, int idx) const;
 
-  /// returns the mean the given field (default field if none specified)
-  double getFieldMean(const std::string& name = "") const;
+  /// returns the range of the given field
+  std::vector<double> getFieldRange(const std::string& name) const;
 
-  /// returns the standard deviation of the given field (default field if none specified)
-  double getFieldSdv(const std::string& name = "") const;
+  /// returns the mean the given field
+  double getFieldMean(const std::string& name) const;
+
+  /// returns the standard deviation of the given field
+  double getFieldSdv(const std::string& name) const;
 
 
   // fields of mesh faces //
@@ -147,8 +156,8 @@ public:
   /// compare if all fields in two meshes are (eps)equal
   bool compareAllFields(const Mesh& other_mesh) const;
 
-  /// compare field of meshes to be (eps)equal (default field if none specified, same field for both if only one specified)
-  bool compareField(const Mesh& other_mesh, const std::string& name1 = "", const std::string& name2 = "") const;
+  /// compare field of meshes to be (eps)equal (same field for both if only one specified)
+  bool compareField(const Mesh& other_mesh, const std::string& name1, const std::string& name2="") const;
 
   // todo: add support for comparison of fields of mesh faces (ex: their normals)
 

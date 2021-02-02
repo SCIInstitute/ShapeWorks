@@ -33,16 +33,6 @@ Plane makePlane(const Vector3 &n, const Point &o)
   return plane;
 }
 
-Array makeArray(std::vector<double> arr)
-{
-  Array array = Array::New();
-  array->SetTuple(0, &arr[0]);
-  array->SetTuple(1, &arr[1]);
-  array->SetTuple(2, &arr[2]);
-
-  return array;
-}
-
 template<>
 Vector3 negate(const Vector3 &v) { return makeVector({-v[0], -v[1], -v[2]}); }
 

@@ -16,7 +16,6 @@
 #include <vtkOBJWriter.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkXMLPolyDataWriter.h>
-#include <vtkPointData.h>
 #include <vtkMarchingCubes.h>
 #include <vtkSmoothPolyDataFilter.h>
 #include <vtkDecimatePro.h>
@@ -491,10 +490,13 @@ Mesh& Mesh::fix(bool wind, bool smoothBefore, bool smoothAfter, double lambda, i
   return *this;
 }
 
-Mesh& Mesh::setField(Array array, std::string name)
+Mesh& Mesh::setField(std::string name, Array array)
 {
   if (!array)
     throw std::invalid_argument("Invalid array.");
+
+  if (name.empty())
+    throw std::invalid_argument("Provide name for the new field");
 
   int numVertices = mesh->GetPoints()->GetNumberOfPoints();
   if (array->GetNumberOfTuples() != numVertices) {
@@ -504,26 +506,17 @@ Mesh& Mesh::setField(Array array, std::string name)
     std::cerr << "WARNING: Added a multi-component mesh field\n";
   }
 
-  if (name.empty()) name = "scalars";
   array->SetName(name.c_str());
   mesh->GetPointData()->AddArray(array);
 
   return *this;
 }
 
-Array Mesh::getField(const std::string& name) const
+double Mesh::getFieldValue(const std::string& name, int idx) const
 {
-  if (mesh->GetPointData()->GetNumberOfArrays() < 1)
-    throw std::invalid_argument("Mesh has no fields.");
+  if (name.empty())
+    throw std::invalid_argument("Provide name for field");
 
-  // fixme: rawarr is a vtkDataArray*, but not a vtkDoubleArray... till next time
-  auto rawarr = mesh->GetPointData()->GetArray(name.c_str());
-  Array arr = dynamic_cast<vtkDoubleArray*>(rawarr);
-  return arr;
-}
-
-double Mesh::getFieldValue(int idx, const std::string& name) const
-{
   if (mesh->GetPointData()->GetNumberOfArrays() < 1)
     throw std::invalid_argument("Mesh has no fields from which to retrieve a value.");
 
@@ -537,8 +530,11 @@ double Mesh::getFieldValue(int idx, const std::string& name) const
     throw std::invalid_argument("Requested index in field is out of range");
 }
 
-void Mesh::setFieldValue(int idx, double val, const std::string& name)
+void Mesh::setFieldValue(const std::string& name, int idx, double val)
 {
+  if (name.empty())
+    throw std::invalid_argument("Provide name for the field");
+
   if (mesh->GetPointData()->GetNumberOfArrays() < 1)
     throw std::invalid_argument("Mesh has no fields for which to set a value.");
 
@@ -551,6 +547,9 @@ void Mesh::setFieldValue(int idx, double val, const std::string& name)
 
 std::vector<double> Mesh::getFieldRange(const std::string& name) const
 {
+  if (name.empty())
+    throw std::invalid_argument("Provide name for field");
+
   if (mesh->GetPointData()->GetNumberOfArrays() < 1)
     throw std::invalid_argument("Mesh has no fields for which to compute range.");
 
@@ -567,6 +566,9 @@ std::vector<double> Mesh::getFieldRange(const std::string& name) const
 
 double Mesh::getFieldMean(const std::string& name) const
 {
+  if (name.empty())
+    throw std::invalid_argument("Provide name for field");
+
   if (mesh->GetPointData()->GetNumberOfArrays() < 1)
     throw std::invalid_argument("Mesh has no fields for which to compute mean.");
 
@@ -585,6 +587,9 @@ double Mesh::getFieldMean(const std::string& name) const
 
 double Mesh::getFieldSdv(const std::string& name) const
 {
+  if (name.empty())
+    throw std::invalid_argument("Provide name for field");
+
   if (mesh->GetPointData()->GetNumberOfArrays() < 1)
     throw std::invalid_argument("Mesh has no fields for which to compute mean.");
 
@@ -673,8 +678,8 @@ bool Mesh::compareAllFields(const Mesh &other_mesh) const
 
 bool Mesh::compareField(const Mesh& other_mesh, const std::string& name1, const std::string& name2) const
 {
-  auto field1 = getField(name1);
-  auto field2 = other_mesh.getField(name2.empty() ? name1 : name2);
+  auto field1 = getField<vtkDataArray>(name1);
+  auto field2 = other_mesh.getField<vtkDataArray>(name2.empty() ? name1 : name2);
 
   if (!field1 || !field2) {
     std::cout << "at least one mesh missing a field\n";

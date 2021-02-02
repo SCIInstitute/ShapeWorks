@@ -10,7 +10,6 @@
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 #include <vtkPlane.h>
-#include <vtkDoubleArray.h>
 
 namespace shapeworks {
 
@@ -30,7 +29,7 @@ using Vector        = Vector3;
 using Point         = Point3;
 using Matrix        = Matrix33;
 using Plane         = vtkSmartPointer<vtkPlane>;
-using Array         = vtkSmartPointer<vtkDoubleArray>;
+using Array         = vtkSmartPointer<vtkDataArray>;
 
 /// Enables `makeVector({1,2,3});`, construction using an initializer list (likely an accidental omission in current ITK version)
 Vector3 makeVector(std::array<double, 3>&& arr);
@@ -43,9 +42,6 @@ TransformPtr createTransform(const Matrix33 &mat, const Vector3 &translate = mak
 
 /// make a plane
 Plane makePlane(const Vector3 &n, const Point &o);
-
-/// make array
-Array makeArray(std::vector<double> arr);
 
 /// Affine transforms are used for many Image manipulation commands
 using AffineTransform    = itk::AffineTransform<double, 3>;
