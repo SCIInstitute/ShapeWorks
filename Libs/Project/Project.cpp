@@ -653,5 +653,11 @@ std::string Project::get_filename()
   return this->filename_;
 }
 
+//---------------------------------------------------------------------------
+void Project::set_filename(std::string filename)
+{
+  this->filename_ = filename;
+}
+
 
 //---------------------------------------------------------------------------

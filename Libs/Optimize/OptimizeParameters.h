@@ -13,6 +13,9 @@ public:
   explicit OptimizeParameters(ProjectHandle project);
   void save_to_project();
 
+  std::string get_optimize_output_prefix();
+  void set_optimize_output_prefix(std::string prefix);
+
   bool set_up_optimize(Optimize *optimize);
 
   std::vector<int> get_number_of_particles();

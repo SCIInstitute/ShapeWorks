@@ -40,6 +40,9 @@ public:
   //! Return the filename
   std::string get_filename();
 
+  //! Set project filename
+  void set_filename(std::string filename);
+
   //! Return the headers of the subject sheet
   std::vector<std::string> get_headers();
 

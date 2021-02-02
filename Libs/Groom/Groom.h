@@ -59,12 +59,6 @@ private:
   //! Return the output filename for a given intpu tfile
   std::string get_output_filename(std::string input, DomainType domain_type);
 
-  //! Load a mesh
-  std::shared_ptr<Mesh> load_mesh(std::string filename);
-
-  //! Save a mesh
-  bool save_mesh(std::shared_ptr<Mesh> mesh, std::string filename);
-
   Vector3 center(Image& image);
   void isolate(Image& image);
 

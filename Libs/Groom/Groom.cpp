@@ -205,60 +205,51 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject)
   // groomed mesh name
   std::string groom_name = this->get_output_filename(path, DomainType::Mesh);
 
-  try {
-    // load the mesh
-    std::shared_ptr<Mesh> mesh = this->load_mesh(path);
-    if (!mesh) {
-      return false;
+  Mesh mesh = MeshUtils::threadSafeReadMesh(path);
+
+  // define a groom transform
+  auto transform = itk::AffineTransform<double, 3>::New();
+  transform->SetIdentity();
+
+  if (!this->skip_grooming_) {
+
+    // centering
+    if (params.get_center_tool()) {
+      auto com = mesh.centerOfMass();
+
+      Vector3 vector;
+      vector[0] = -com[0];
+      vector[1] = -com[1];
+      vector[2] = -com[2];
+      mesh.translate(vector);
+
+      itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
+      tform[0] = com[0];
+      tform[1] = com[1];
+      tform[2] = com[2];
+      transform->SetTranslation(tform);
+      this->increment_progress();
     }
-
-    // define a groom transform
-    auto transform = itk::AffineTransform<double, 3>::New();
-    transform->SetIdentity();
-
-    if (!this->skip_grooming_) {
-
-      // centering
-      if (params.get_center_tool()) {
-        auto com = mesh->centerOfMass();
-
-        Vector3 vector;
-        vector[0] = -com[0];
-        vector[1] = -com[1];
-        vector[2] = -com[2];
-        mesh->translate(vector);
-
-        itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
-        tform[0] = com[0];
-        tform[1] = com[1];
-        tform[2] = com[2];
-        transform->SetTranslation(tform);
-        this->increment_progress();
-      }
-    }
-
-    // store transform
-    std::vector<std::vector<double>> groomed_transforms;
-    std::vector<double> groomed_transform;
-    auto transform_params = transform->GetParameters();
-    for (int i = 0; i < transform_params.size(); i++) {
-      groomed_transform.push_back(transform_params[i]);
-    }
-    groomed_transforms.push_back(groomed_transform);
-    subject->set_groomed_transforms(groomed_transforms);
-
-    // save the groomed mesh
-    this->save_mesh(mesh, groom_name);
-
-    // only single domain supported so far
-    std::vector<std::string> groomed_filenames{groom_name};
-    // store filename back to subject
-    subject->set_groomed_filenames(groomed_filenames);
-
-  } catch (std::exception e) {
-    std::cerr << "Exception: " << e.what() << "\n";
-    return false;
   }
+
+  // store transform
+  std::vector<std::vector<double>> groomed_transforms;
+  std::vector<double> groomed_transform;
+  auto transform_params = transform->GetParameters();
+  for (int i = 0; i < transform_params.size(); i++) {
+    groomed_transform.push_back(transform_params[i]);
+  }
+  groomed_transforms.push_back(groomed_transform);
+  subject->set_groomed_transforms(groomed_transforms);
+
+  // save the groomed mesh
+  MeshUtils::threadSafeWriteMesh(groom_name, mesh);
+
+  // only single domain supported so far
+  std::vector<std::string> groomed_filenames{groom_name};
+  // store filename back to subject
+  subject->set_groomed_filenames(groomed_filenames);
+
   return true;
 }
 
@@ -356,30 +347,6 @@ void Groom::set_skip_grooming(bool skip)
 }
 
 //---------------------------------------------------------------------------
-std::shared_ptr<Mesh> Groom::load_mesh(std::string filename)
-{
-  try {
-    auto mesh = std::make_shared<Mesh>(MeshUtils::threadSafeReadMesh(filename));
-    return mesh;
-  } catch (std::exception e) {
-    std::cerr << "Exception: " << e.what() << "\n";
-  }
-  return nullptr;
-}
-
-//---------------------------------------------------------------------------
-bool Groom::save_mesh(std::shared_ptr<Mesh> mesh, std::string filename)
-{
-  try {
-    MeshUtils::threadSafeWriteMesh(filename, *mesh);
-    return true;
-  } catch (std::exception e) {
-    std::cerr << "Exception: " << e.what() << "\n";
-  }
-  return false;
-}
-
-//---------------------------------------------------------------------------
 void Groom::abort()
 {
   this->abort_ = true;
@@ -421,6 +388,7 @@ std::string Groom::get_output_filename(std::string input, DomainType domain_type
 
   auto output = path + "/" + StringUtils::getFileNameWithoutExtension(input) + suffix;
 
+  std::cerr << "output: " << output << "\n";
   return output;
 }
 

@@ -2458,6 +2458,13 @@ bool GroomCommand::execute(const optparse::Values& options, SharedCommandData& s
   try {
     ProjectHandle project = std::make_shared<Project>();
     project->load(project_file);
+
+    auto base = StringUtils::getPath(project_file);
+    if (base != project_file) {
+      chdir(base.c_str());
+      project->set_filename(StringUtils::getFilename(project_file));
+    }
+
     Groom app(project);
     bool success = app.run();
     if (success) {

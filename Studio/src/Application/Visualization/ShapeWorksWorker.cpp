@@ -50,7 +50,7 @@ void ShapeworksWorker::process()
         emit error_message(std::string("Error: ") + e.what());
         return;
       } catch (...) {
-        emit error_message(std::string("Error during optimization!"));
+        emit error_message(std::string("Error during grooming!"));
         return;
       }
       if (this->groom_->get_aborted()) {

@@ -304,8 +304,20 @@ void OptimizeParameters::set_abort_load(bool value)
 }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_load_callback(const std::function<void(int)> &f)
+void OptimizeParameters::set_load_callback(const std::function<void(int)>& f)
 {
   this->load_callback_ = f;
+}
+
+//---------------------------------------------------------------------------
+std::string OptimizeParameters::get_optimize_output_prefix()
+{
+  return this->params_.get("optimize_output_prefix", "<project>_particles");
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_optimize_output_prefix(std::string prefix)
+{
+  this->params_.set("optimize_output_prefix", prefix);
 }
 
