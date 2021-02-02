@@ -20,9 +20,6 @@ public:
 
   Groom(ProjectHandle project);
 
-  //! Return the progress (0-100)
-  float get_current_progress();
-
   //! Run the grooming
   virtual bool run();
 
@@ -58,6 +55,9 @@ private:
 
   //! Run the mesh based pipeline on a single subject
   bool mesh_pipeline(std::shared_ptr<Subject> subject);
+
+  //! Return the output filename for a given intpu tfile
+  std::string get_output_filename(std::string input, DomainType domain_type);
 
   //! Load a mesh
   std::shared_ptr<Mesh> load_mesh(std::string filename);

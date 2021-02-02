@@ -1,11 +1,14 @@
 #include <tbb/parallel_for.h>
 #include <tbb/task_scheduler_init.h>
 
+#include <boost/filesystem.hpp>
+
 #include <vector>
 
 #include <Libs/Image/Image.h>
 #include <Libs/Mesh/Mesh.h>
 #include <Libs/Mesh/MeshUtils.h>
+#include <Libs/Utils/StringUtils.h>
 
 #include <Groom.h>
 #include <GroomParameters.h>
@@ -46,7 +49,10 @@ bool Groom::run()
     [&](const tbb::blocked_range<size_t>& r) {
       for (size_t i = r.begin(); i < r.end(); ++i) {
 
-        if (this->abort_) { success = false; continue; }
+        if (this->abort_) {
+          success = false;
+          continue;
+        }
 
         if (subjects[i]->get_domain_types()[0] == DomainType::Image) {
           if (!this->image_pipeline(subjects[i])) {
@@ -175,8 +181,7 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject)
   if (this->abort_) { return false; }
 
   // groomed filename
-  std::string dt_name = path;
-  dt_name = dt_name.substr(0, dt_name.find_last_of(".")) + "_DT.nrrd";
+  std::string dt_name = this->get_output_filename(path, DomainType::Image);
 
   // save image
   image.write(dt_name);
@@ -198,8 +203,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject)
   auto path = subject->get_segmentation_filenames()[0];
 
   // groomed mesh name
-  std::string groom_name = path;
-  groom_name = groom_name.substr(0, groom_name.find_last_of('.')) + "_groomed.ply";
+  std::string groom_name = this->get_output_filename(path, DomainType::Mesh);
 
   try {
     // load the mesh
@@ -259,7 +263,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject)
 }
 
 //---------------------------------------------------------------------------
-void Groom::isolate(Image &image)
+void Groom::isolate(Image& image)
 {
   ImageType::Pointer img = image;
 
@@ -295,7 +299,7 @@ void Groom::isolate(Image &image)
 }
 
 //---------------------------------------------------------------------------
-Vector3 Groom::center(Image &image)
+Vector3 Groom::center(Image& image)
 {
   // capture full translation
   auto com = image.centerOfMass();
@@ -310,7 +314,7 @@ Vector3 Groom::center(Image &image)
 
   AffineTransformPtr xform(AffineTransform::New());
   xform->Translate(-translation);
-  image.applyTransform(xform,Image::NearestNeighbor);
+  image.applyTransform(xform, Image::NearestNeighbor);
 
   translation[0] = com[0];
   translation[1] = com[1];
@@ -385,6 +389,39 @@ void Groom::abort()
 bool Groom::get_aborted()
 {
   return this->abort_;
+}
+
+//---------------------------------------------------------------------------
+std::string Groom::get_output_filename(std::string input, DomainType domain_type)
+{
+  // grab parameters
+  auto params = GroomParameters(this->project_);
+
+  // if the project is not saved, use the path of the input filename
+  auto filename = this->project_->get_filename();
+  if (filename == "") {
+    filename = input;
+  }
+
+  auto base = StringUtils::getPath(filename);
+  if (base == filename) {
+    base = ".";
+  }
+
+  auto prefix = params.get_groom_output_prefix();
+
+  std::string suffix = "_DT.nrrd";
+  if (domain_type == DomainType::Mesh) {
+    suffix = "_groomed.ply";
+  }
+
+  auto path = base + "/" + prefix;
+
+  boost::filesystem::create_directories(path);
+
+  auto output = path + "/" + StringUtils::getFileNameWithoutExtension(input) + suffix;
+
+  return output;
 }
 
 

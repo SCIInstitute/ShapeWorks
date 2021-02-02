@@ -163,6 +163,7 @@ void GroomTool::on_run_groom_button_clicked()
   this->timer_.start();
 
   this->store_params();
+
   emit message("Please wait: running groom step...");
   emit progress(0);
 
