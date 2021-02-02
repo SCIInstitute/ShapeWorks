@@ -226,8 +226,10 @@ void Preferences::add_recent_file(QString file)
 //-----------------------------------------------------------------------------
 void Preferences::restore_defaults()
 {
+  // Don't reset recent files
+  auto recent = this->get_recent_files();
   this->settings_.clear();
-  return;
+  this->settings_.setValue("Main/recentFileListNew", recent);
 }
 
 //-----------------------------------------------------------------------------
