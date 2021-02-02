@@ -85,6 +85,7 @@ def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False):
     files in the appropriate directory.
     """
     print("\n############# COM Alignment ###############")
+    antialias_iterations = 30
     segDir = os.path.join(outDir, 'segmentations') if processRaw else outDir
     if not os.path.exists(segDir):
         os.makedirs(segDir)
@@ -103,14 +104,14 @@ def applyCOMAlignment(outDir, inDataListSeg, inDataListImg, processRaw=False):
         T = img.center() - img.centerOfMass()
 
         # binarize result since linear interpolation makes image blurry again
-        img.translate(T).binarize().write(outname)
+        img.antialias(antialias_iterations).translate(T).binarize().recenter().write(outname)
 
         if processRaw:
             innameImg = inDataListImg[i]
             outnameImg = rename(innameImg, imageDir, 'com')
             outDataListImg.append(outnameImg)
             rawImg = Image(innameImg)
-            rawImg.translate(T).write(outnameImg)
+            rawImg.translate(T).recenter().write(outnameImg)
 
     return [outDataListSeg, outDataListImg] if processRaw else outDataListSeg
 
@@ -155,12 +156,15 @@ def FindReferenceImage(inDataList):
     print(" ")
     return inDataList[idx]
 
-def applyResampling(outDir, refFile, inDataListSeg, inDataListImg=[]):
+def applyRigidAlignment(outDir, refFile, inDataListSeg, inDataListImg=[], icp_iterations=200):
     """
     This function takes in a filelists(binary and raw) and makes the 
     size and spacing the same as the reference
     """
-    print("\n############# Resample #############")
+    isoValue       = 1e-20
+    antialias_iterations = 30
+
+    print("\n############# Rigidly Align #############")
 
     # create output dirs
     segoutDir = os.path.join(outDir, 'segmentations') if inDataListImg else outDir
@@ -177,21 +181,24 @@ def applyResampling(outDir, refFile, inDataListSeg, inDataListImg=[]):
 
     # get reference image
     refImg = Image(refFile)
+    refImg.antialias(antialias_iterations)
 
     for i in range(len(inDataListSeg)):
-        segoutname = rename(inDataListSeg[i], segoutDir, 'resized')
+        segoutname = rename(inDataListSeg[i], segoutDir, 'aligned')
         outSegDataList.append(segoutname)
         if inDataListImg:
-            rawoutname = rename(inDataListImg[i], rawoutDir, 'resized')
+            rawoutname = rename(inDataListImg[i], rawoutDir, 'aligned')
             outRawDataList.append(rawoutname)
 
         # resize images to reference images
         img = Image(inDataListSeg[i])
-        transform = createTransform(Matrix()) # create identity matrix
-        img.resample(transform, refImg.origin(), refImg.dims(), refImg.spacing(), refImg.coordsys(), InterpolationType.NearestNeighbor).write(segoutname)
+        img.antialias(antialias_iterations)
+        rigidTransform = ImageUtils.createRigidRegistrationTransform(img, refImg, isoValue, icp_iterations)
+        img.applyTransform(rigidTransform, refImg.origin(), refImg.dims(), refImg.spacing(), refImg.coordsys(), InterpolationType.Linear).binarize().write(segoutname)
+
         if inDataListImg:
             img = Image(inDataListImg[i])
-            img.resample(transform, refImg.origin(), refImg.dims(), refImg.spacing(), refImg.coordsys(), InterpolationType.NearestNeighbor).write(rawoutname)
+            img.applyTransform(rigidTransform, refImg.origin(), refImg.dims(), refImg.spacing(), refImg.coordsys(), InterpolationType.Linear).write(rawoutname)
 
     return [outSegDataList, outRawDataList] if inDataListImg else outSegDataList
 
@@ -310,7 +317,7 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side, printCmd=T
             imageList.append(img_out)
             centerFilename = os.path.join(outDir, prefix + "_origin.txt")
             img = Image(image)
-            img.reflect("X").write(img_out)
+            img.reflect(X).write(img_out)
             seg_out = rename(flip_seg, outSegDir, 'reflect')
             meshList.append(seg_out)
             execCommand = ["ReflectMesh", "--inFilename", flip_seg, "--outFilename", seg_out, "--reflectCenterFilename", centerFilename, "--inputDirection", "0", "--meshFormat", flip_seg.split(".")[-1]]
@@ -458,7 +465,8 @@ def MeshesToVolumesUsingImages(outDir, meshList, imgList, printCmd=True):
             print("CMD: " + " ".join(execCommand))
         subprocess.check_call(execCommand)
 
-        spacing_string = str(img.spacing()[0]).replace(".0","")
+        spacing = round(img.spacing()[0], 5)
+        spacing_string = str(spacing).replace(".0","")
         # save output volume
         output_volume = mesh.replace(".ply", ".rasterized_sp" + spacing_string + ".nrrd")
         shutil.move(output_volume, segFile)
