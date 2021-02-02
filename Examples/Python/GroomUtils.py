@@ -465,7 +465,8 @@ def MeshesToVolumesUsingImages(outDir, meshList, imgList, printCmd=True):
             print("CMD: " + " ".join(execCommand))
         subprocess.check_call(execCommand)
 
-        spacing_string = str(img.spacing()[0]).replace(".0","")
+        spacing = round(img.spacing()[0], 5)
+        spacing_string = str(spacing).replace(".0","")
         # save output volume
         output_volume = mesh.replace(".ply", ".rasterized_sp" + spacing_string + ".nrrd")
         shutil.move(output_volume, segFile)
