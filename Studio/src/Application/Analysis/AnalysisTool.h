@@ -66,9 +66,7 @@ public:
   const vnl_vector<double>& get_mean_shape_points();
   ShapeHandle get_mean_shape();
 
-  const vnl_vector<double>& get_shape_points(int mode, double value, double group_value = 0.5);
-
-  ShapeHandle get_shape(int mode, double value, double group_value = 0.5);
+  const vnl_vector<double>& get_shape_points(int mode, double value);
 
   ParticleShapeStatistics get_stats();
   void load_settings();
@@ -137,7 +135,7 @@ signals:
 
   void update_view();
   void pca_update();
-  void progress(size_t);
+  void progress(int);
   void message(std::string);
   void error(std::string);
   void reconstruction_complete();

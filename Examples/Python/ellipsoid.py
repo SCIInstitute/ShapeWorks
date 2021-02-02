@@ -28,16 +28,21 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
     # Get data
-    datasetName = "ellipsoid-v0"
+    datasetName = "ellipsoid-v1"
     outputDirectory = "Output/ellipsoid/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
-    CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
-    fileList = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))
-    # Select data for tiny test
+    #If tiny_test then download subset of the data
     if args.tiny_test:
         args.use_single_scale = 1
-        fileList = fileList[:3]
+        CommonUtils.download_subset(args.use_case,datasetName, outputDirectory)
+        fileList = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))[:3]
+    #else download the entire dataset
+    else:
+        CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
+
+        fileList = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))
+    
     # Select data if using subsample
     if args.use_subsample:
         sample_idx = sampledata(fileList, int(args.num_subsample))
@@ -50,7 +55,6 @@ def Run_Pipeline(args):
     For the unprepped data the first few steps are 
     -- Isotropic resampling
     -- Center
-    -- Padding
     -- Center of Mass Alignment
     -- Rigid Alignment
     -- Largest Bounding Box and Cropping 
@@ -77,20 +81,19 @@ def Run_Pipeline(args):
         """Apply isotropic resampling"""
         isoresampledFiles = applyIsotropicResampling(groomDir + "resampled/segmentations", fileList)
 
+
         """Apply centering"""
         centeredFiles = center(groomDir + "centered/segmentations", isoresampledFiles)
-
-        """Apply padding"""
-        paddedFiles = applyPadding(groomDir + "padded/segmentations", centeredFiles, 10)
 
         """Apply center of mass alignment"""
         comFiles = applyCOMAlignment(groomDir + "com_aligned/segmentations", centeredFiles, None)
 
-        """ Apply resmapling"""
-        resampledFiles = applyResampling(groomDir + "resized/segmentations", comFiles[0], comFiles)
+        """ Apply rigid alignment """
+        ref = FindReferenceImage(comFiles)
+        alignedFiles = applyRigidAlignment(groomDir + "aligned/segmentations", ref, comFiles)
 
         """Compute largest bounding box and apply cropping"""
-        croppedFiles = applyCropping(groomDir + "cropped/segmentations", resampledFiles, groomDir + "resized/segmentations/*.resized.nrrd")
+        croppedFiles = applyCropping(groomDir + "cropped/segmentations", alignedFiles, groomDir + "aligned/segmentations/*.aligned.nrrd")
 
         """
         We convert the scans to distance transforms, this step is common for both the 
@@ -126,7 +129,7 @@ def Run_Pipeline(args):
     parameterDictionary = {
         "number_of_particles": 128,
         "use_normals": 1,
-        "normal_weight": 10.0,
+        "normal_weight": 15.0,
         "checkpointing_interval": 200,
         "keep_checkpoints": 0,
         "iterations_per_split": 2000,
@@ -136,8 +139,8 @@ def Run_Pipeline(args):
         "recompute_regularization_interval": 2,
         "domains_per_shape": 1,
         "domain_type": 'image',
-        "relative_weighting": 10,
-        "initial_relative_weighting": 0.01,
+        "relative_weighting": 15,
+        "initial_relative_weighting": 0.05,
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,

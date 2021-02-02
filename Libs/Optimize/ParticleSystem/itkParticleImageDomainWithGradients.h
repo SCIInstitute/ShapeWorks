@@ -84,7 +84,12 @@ protected:
     ParticleImageDomain<T>::PrintSelf(os, indent);
     os << indent << "VDB Active Voxels = " << m_VDBGradient->activeVoxelCount() << std::endl;
   }
-  
+
+  openvdb::VectorGrid::Ptr GetVDBGradient() {
+    return m_VDBGradient;
+  }
+
+
 private:
 
 

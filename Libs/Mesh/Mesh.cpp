@@ -41,7 +41,7 @@ Mesh::MeshType Mesh::read(const std::string &pathname)
 
   try {
 
-    if (StringUtils::hasSuffix(pathname, "vtk")) {
+    if (StringUtils::hasSuffix(pathname, ".vtk")) {
       auto reader = vtkSmartPointer<vtkPolyDataReader>::New();
       reader->SetFileName(pathname.c_str());
       reader->SetReadAllScalars(1);
@@ -53,28 +53,28 @@ Mesh::MeshType Mesh::read(const std::string &pathname)
       return reader->GetOutput();
     }
 
-    if (StringUtils::hasSuffix(pathname, "vtp")) {
+    if (StringUtils::hasSuffix(pathname, ".vtp")) {
       auto reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
       reader->SetFileName(pathname.c_str());
       reader->Update();
       return reader->GetOutput();
     }
 
-    if (StringUtils::hasSuffix(pathname, "stl")) {
+    if (StringUtils::hasSuffix(pathname, ".stl")) {
       auto reader = vtkSmartPointer<vtkSTLReader>::New();
       reader->SetFileName(pathname.c_str());
       reader->Update();
       return reader->GetOutput();
     }
 
-    if (StringUtils::hasSuffix(pathname, "obj")) {
+    if (StringUtils::hasSuffix(pathname, ".obj")) {
       auto reader = vtkSmartPointer<vtkOBJReader>::New();
       reader->SetFileName(pathname.c_str());
       reader->Update();
       return reader->GetOutput();
     }
 
-    if (StringUtils::hasSuffix(pathname, "ply")) {
+    if (StringUtils::hasSuffix(pathname, ".ply")) {
       auto reader = vtkSmartPointer<vtkPLYReader>::New();
       reader->SetFileName(pathname.c_str());
       reader->Update();
@@ -100,35 +100,35 @@ bool Mesh::write(const std::string &pathname)
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
 
   try {
-    if (StringUtils::hasSuffix(pathname, "vtk")) {
+    if (StringUtils::hasSuffix(pathname, ".vtk")) {
       auto writer = vtkSmartPointer<vtkPolyDataWriter>::New();
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
       writer->Update();
     }
 
-    if (StringUtils::hasSuffix(pathname, "vtp")) {
+    if (StringUtils::hasSuffix(pathname, ".vtp")) {
       auto writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
       writer->Update();
     }
 
-    if (StringUtils::hasSuffix(pathname, "stl")) {
+    if (StringUtils::hasSuffix(pathname, ".stl")) {
       auto writer = vtkSmartPointer<vtkSTLWriter>::New();
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
       writer->Update();
     }
 
-    if (StringUtils::hasSuffix(pathname, "obj")) {
+    if (StringUtils::hasSuffix(pathname, ".obj")) {
       auto writer = vtkSmartPointer<vtkOBJWriter>::New();
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
       writer->Update();
     }
 
-    if (StringUtils::hasSuffix(pathname, "ply")) {
+    if (StringUtils::hasSuffix(pathname, ".ply")) {
       auto writer = vtkSmartPointer<vtkPLYWriter>::New();
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->mesh);
@@ -143,7 +143,8 @@ bool Mesh::write(const std::string &pathname)
 }
 
 /// creates mesh with scalars describing the "coverage" between two meshes
-Mesh& Mesh::coverage(const Mesh &other_mesh, bool allow_back_intersections)
+Mesh& Mesh::coverage(const Mesh &other_mesh, bool allow_back_intersections,
+                     double angle_threshold, double back_search_radius)
 {
   FEVTKimport importer;
   FEMesh* surf1 = importer.Load(this->mesh);
@@ -152,6 +153,8 @@ Mesh& Mesh::coverage(const Mesh &other_mesh, bool allow_back_intersections)
 
   FEAreaCoverage areaCoverage;
   areaCoverage.AllowBackIntersection(allow_back_intersections);
+  areaCoverage.SetAngleThreshold(angle_threshold);
+  areaCoverage.SetBackSearchRadius(back_search_radius);
 
   vector<double> map1 = areaCoverage.Apply(*surf1, *surf2);
 
