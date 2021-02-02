@@ -45,8 +45,12 @@ QSharedPointer<StudioMesh> Shape::get_mesh(std::string display_mode)
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_annotations(QStringList annotations)
+void Shape::set_annotations(QStringList annotations, bool only_overwrite_blank)
 {
+  if (only_overwrite_blank && this->corner_annotations_.size() > 0 &&
+      this->corner_annotations_[0] != "") {
+    return; // don't override
+  }
   this->corner_annotations_ = annotations;
 }
 

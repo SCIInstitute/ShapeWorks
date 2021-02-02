@@ -36,7 +36,7 @@ public:
 
   QSharedPointer<StudioMesh> get_mesh(string display_mode);
 
-  void set_annotations(QStringList annotations);
+  void set_annotations(QStringList annotations, bool only_overwrite_blank = true);
   QStringList get_annotations();
 
   void set_mesh_manager(QSharedPointer<MeshManager> mesh_manager);
