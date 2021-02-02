@@ -533,7 +533,8 @@ std::vector<std::string> Project::get_feature_names()
   auto feature_names = this->get_matching_columns(FEATURE_PREFIX);
   if (!this->subjects_.empty() && this->mesh_scalars_.empty()) {
     auto subject = this->subjects_[0];
-    if (subject->get_domain_types()[0] == DomainType::Mesh) {
+    if (subject->get_domain_types().size() > 0 &&
+        subject->get_domain_types()[0] == DomainType::Mesh) {
       if (!subject->get_segmentation_filenames().empty()) {
         Mesh m(subject->get_segmentation_filenames()[0]);
         auto poly_data = m.getVTKMesh();
