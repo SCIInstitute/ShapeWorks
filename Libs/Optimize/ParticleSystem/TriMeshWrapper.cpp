@@ -337,7 +337,7 @@ inline bool TriMeshWrapper::IsBarycentricCoordinateValid(const trimesh::vec3& ba
 
 bool TriMeshWrapper::IsBarycentricCoordinateNotNaN(const vec3& b)
 {
-  if (isnan(b[0]) || isnan(b[1]) || isnan(b[2])) {
+  if (std::isnan(b[0]) || std::isnan(b[1]) || std::isnan(b[2])) {
     return false;
   }
   return true;
