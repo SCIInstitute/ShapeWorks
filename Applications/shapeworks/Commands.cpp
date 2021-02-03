@@ -2104,6 +2104,7 @@ void MeshDistance::buildParser()
   parser.add_option("--name").action("store").type("string").set_default("").help("Filename of other mesh.");
   std::list<std::string> methods{"point-to-point", "point-to-cell"};
   parser.add_option("--method").action("store").type("choice").choices(methods.begin(), methods.end()).set_default("point-to-point").help("Method used to compute distance [default: %default].");
+  parser.add_option("--summary").action("store").type("bool").set_default(false).help("Print relative distance from source to target, from target to source, and Hausdorff distance (the max of these two) [default: %default].");
 
   Command::buildParser();
 }
@@ -2116,10 +2117,12 @@ bool MeshDistance::execute(const optparse::Values &options, SharedCommandData &s
     return false;
   }
 
+  bool summary = static_cast<bool>(options.get("summary"));
+
   std::string methodopt(options.get("method"));
   auto method{Mesh::DistanceMethod::POINT_TO_POINT};
   if (methodopt == "point-to-point") method = Mesh::DistanceMethod::POINT_TO_POINT;
-  else if (methodopt == "cell-to-cell") method = Mesh::DistanceMethod::POINT_TO_CELL;
+  else if (methodopt == "point-to-cell") method = Mesh::DistanceMethod::POINT_TO_CELL;
   else {
     std::cerr << "no such distance method: " << methodopt << std::endl;
     return false;
@@ -2131,15 +2134,23 @@ bool MeshDistance::execute(const optparse::Values &options, SharedCommandData &s
     std::cerr << "Must specify a mesh\n";
     return false;
   }
-  else
+
+  Mesh other(otherMesh);
+  sharedData.mesh->distance(other, method);
+
+  if (summary)
   {
-    Mesh other(otherMesh);
-    sharedData.mesh->distance(other, method);
-    std::cout << "Relative distance to other mesh:\n\t" << sharedData.mesh->getFieldValue("RelativeDistanceAtoB", 0) << std::endl;
-    std::cout << "Relative distance from other mesh:\n\t" << other.getFieldValue("RelativeDistanceBtoA", 0) << std::endl;
-    std::cout << "Hausdorff distance:\n\t" << sharedData.mesh->getFieldValue("HausdorffDistance", 0) << std::endl;
-    return sharedData.validMesh();
+    auto RangeAtoB = sharedData.mesh->getFieldRange("distance");
+    auto RangeBtoA = other.getFieldRange("distance");
+    auto AtoB = std::max(RangeAtoB[0], RangeAtoB[1]);
+    auto BtoA = std::max(RangeBtoA[0], RangeBtoA[1]);
+    auto Hausdorff = std::max(AtoB, BtoA);
+    std::cout << "Relative distance to other mesh:\n\t" << AtoB << std::endl;
+    std::cout << "Relative distance from other mesh:\n\t" << BtoA << std::endl;
+    std::cout << "Hausdorff distance:\n\t" << Hausdorff << std::endl;
   }
+
+  return sharedData.validMesh();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

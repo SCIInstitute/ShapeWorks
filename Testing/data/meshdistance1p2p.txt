@@ -1,0 +1,7 @@
+Relative distance to other mesh:
+	599.875
+Relative distance from other mesh:
+	488.466
+Hausdorff distance:
+	599.875
+compare success

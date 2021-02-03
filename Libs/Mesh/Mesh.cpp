@@ -340,39 +340,13 @@ Mesh& Mesh::distance(Mesh &target, DistanceMethod method)
   filter->SetTargetDistanceMethod(method);
   filter->Update();
   
-  // add the new fields to the current dataset //
+  // add the new source to target and target to source fields to the datasets
+  this->setField("distance", filter->GetOutput(0)->GetPointData()->GetArray("Distance"));
+  target.setField("distance", filter->GetOutput(1)->GetPointData()->GetArray("Distance"));
 
-  // source to target distance
-  auto data = filter->GetOutput(0)->GetPointData()->GetArray("Distance");
-  this->setField("Distance", data);
-
-  //AtoB
-  data = vtkDoubleArray::New();
-  data->SetNumberOfTuples(1);
-  data->SetTuple1(0,filter->RelativeDistance[0]);
-  this->setField("RelativeDistanceAtoB", data);
-
-  //HausdorffDistance
-  data = vtkDoubleArray::New();
-  data->SetNumberOfTuples(1);
-  data->SetTuple1(0,filter->HausdorffDistance);
-  this->setField("HausdorffDistance", data);
-
-  // target to source distance
-  data = filter->GetOutput(1)->GetPointData()->GetArray("Distance");
-  target.setField("Distance", data);
-
-  //BtoA
-  data = vtkDoubleArray::New();
-  data->SetNumberOfTuples(1);
-  data->SetTuple1(0,filter->RelativeDistance[1]);
-  target.setField("RelativeDistanceBtoA", data);
-
-  //HausdorffDistance
-  data = vtkDoubleArray::New();
-  data->SetNumberOfTuples(1);
-  data->SetTuple1(0,filter->HausdorffDistance);
-  target.setField("HausdorffDistance", data);
+  //RelativeDistanceAtoB: just call getRange("distance") and take the max
+  //RelativeDistanceBtoA: just call getRange("distance") of target and take the max
+  //HausdorffDistance:    call getRange("distance") of both this and target and take the max
 
   return *this;
 }
