@@ -6,4 +6,4 @@ bounding box:          {
 	min: [46, -193, -738],
 	max: [136, -128, -609]
 }
-field names: Distance
+field names: Distance 

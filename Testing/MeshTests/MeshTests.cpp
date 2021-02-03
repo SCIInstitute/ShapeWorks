@@ -56,7 +56,11 @@ TEST(MeshTests, decimateTest2)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-// TODO: Karthik will add MeshTest for inverNormal
+// https://github.com/SCIInstitute/ShapeWorks/issues/937
+// TEST(MeshTests, invertNormalTest1)
+// {
+//   // TODO
+// }
 
 TEST(MeshTests, reflectTest1)
 {
@@ -178,42 +182,14 @@ TEST(MeshTests, fixTest1)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-// TODO: fix is broken (lol)
+// https://github.com/SCIInstitute/ShapeWorks/issues/938
 // TEST(MeshTests, fixTest2)
 // {
 //   Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
 //   femur.fix(true, true, true, 1.0, 10, true, 1.0);
 //   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fix2.vtk");
-
 //   ASSERT_TRUE(femur == ground_truth);
 // }
-
-TEST(MeshTests, distanceTest)
-{
-  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
-  double distance = femur.hausdorffDistance(pelvis);
-
-  ASSERT_TRUE(std::abs(distance - 32.2215) < 1e-4);
-}
-
-TEST(MeshTests, relativeDistanceABTest)
-{
-  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
-  double relativeDistanceAB = femur.relativeDistanceAtoB(pelvis);
-
-  ASSERT_TRUE(std::abs(relativeDistanceAB - 32.2215) < 1e-4);
-}
-
-TEST(MeshTests, relativeDistanceBATest)
-{
-  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
-  double relativeDistanceBA = femur.relativeDistanceBtoA(pelvis);
-
-  ASSERT_TRUE(std::abs(relativeDistanceBA - 16.1937) < 1e-4);
-}
 
 TEST(MeshTests, rasterizationOriginTest1)
 {
@@ -303,9 +279,6 @@ TEST(MeshTests, toDistanceTransformTest1)
   ASSERT_TRUE(image == ground_truth);
 }
 
-// <ctc> add toImage and toDT tests that specify params
-// also, think of a way to specify padding automatically computing origin and size
-
 TEST(MeshTests, coverageTest)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
@@ -315,6 +288,62 @@ TEST(MeshTests, coverageTest)
   Mesh baseline(std::string(TEST_DATA_DIR) + "/fm_coverage.vtk");
   ASSERT_TRUE(pelvis == baseline);
 }
+
+// issues currently being fixed by Cameron and Archana...
+// TEST(MeshTests, distanceTest1)
+// {
+//   Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
+//   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+//   pelvis.distance(femur);  // ***
+//   pelvis.write("/tmp/pelvis_to_femur_from_pelvis_distance.vtk");
+//   femur.write("/tmp/femur_to_pelvis_from_pelvis_distance.vtk");
+//   std::cout << "source:" << pelvis << std::endl << "target: " << femur << std::endl;
+
+//   Mesh p2f(std::string(TEST_DATA_DIR) + "/pelvis_to_femur_distance_from_pelvis.vtk");
+//   Mesh f2p(std::string(TEST_DATA_DIR) + "/femur_to_pelvis_distance_from_pelvis.vtk");
+//   ASSERT_TRUE(pelvis == p2f && femur == f2p);
+// }
+
+// TEST(MeshTests, distanceTest2)
+// {
+//   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+//   Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
+//   femur.distance(pelvis);  // ***
+//   femur.write("/tmp/femur_to_pelvis_from_femur_distance.vtk");
+//   pelvis.write("/tmp/pelvis_to_femur_from_femur_distance.vtk");
+//   std::cout << "source: " << femur << std::endl << "target:" << pelvis << std::endl;
+
+//   Mesh p2f(std::string(TEST_DATA_DIR) + "/pelvis_to_femur_distance_from_femur.vtk");
+//   Mesh f2p(std::string(TEST_DATA_DIR) + "/femur_to_pelvis_distance_from_femur.vtk");
+//   ASSERT_TRUE(pelvis == p2f && femur == f2p);
+// }
+
+// TEST(MeshTests, fieldTest1)
+// {
+//   Mesh dist(std::string(TEST_DATA_DIR) + "/fieldTest1.vtk");
+//   double atob = dist.getFieldValue("RelativeDistanceAtoB", 0);
+//   double btoa = dist.getFieldValue("RelativeDistanceBtoA", 0);
+//   double haus = dist.getFieldValue("HausdorffDistance", 0);
+
+//   ASSERT_TRUE(std::abs(haus - 32.2215) < 1e-4);
+//   ASSERT_TRUE(std::abs(atob - 32.2215) < 1e-4);
+//   ASSERT_TRUE(std::abs(btoa - 16.1937) < 1e-4);
+// }
+
+// TEST(MeshTests, fieldTest2)
+// {
+//   Mesh mesh(std::string(TEST_DATA_DIR) + "/mesh1.vtk");
+//   double a = mesh.getFieldValue("scalars", 0);
+//   double b = mesh.getFieldValue("scalars", 1000);
+//   double c = mesh.getFieldValue("normals", 1000);
+//   double d = mesh.getFieldValue("normals", 0);
+//   std::cout << a << std::endl << b << std::endl << c << std::endl << d << std::endl;
+
+//   ASSERT_TRUE(a==a);
+//   ASSERT_TRUE(b==c);
+//   ASSERT_TRUE(c==d);
+//   ASSERT_TRUE(d==a);
+// }
 
 TEST(MeshTests, icpTest)
 {

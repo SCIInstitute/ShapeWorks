@@ -17,6 +17,7 @@ class Mesh
 public:
   enum TransformType { IterativeClosestPoint };
   enum AlignmentType { Rigid, Similarity, Affine };
+  using DistanceMethod = swHausdorffDistancePointSetFilter::DistanceMethod;
 
   using MeshType = vtkSmartPointer<vtkPolyData>;
 
@@ -73,20 +74,8 @@ public:
   /// quality control mesh
   Mesh& fix(bool wind = true, bool smoothBefore = true, bool smoothAfter = true, double lambda = 0.5, int iterations = 1, bool decimate = true, double percentage = 0.5);
 
-  // <ctc> <as> consolidate distance functions as in Image with one computeDistance that writes a new field of the mesh:
-  // Mesh& computeDistance(Mesh& other, ..., std::string distance_fieldname, std::string distance_fieldname_other, ...);
-
-  /// compute surface to surface distance using a filter
-  vtkSmartPointer<swHausdorffDistancePointSetFilter> computeDistance(const Mesh &other_mesh, bool target=false);
-
-  /// returns surface to surface distance or hausdorff distance
-  double hausdorffDistance(const Mesh &other_mesh, bool target=false);
-
-  /// returns relative distance from mesh A to mesh B
-  double relativeDistanceAtoB(const Mesh &other_mesh, bool target=false);
-
-  /// returns relative distance from mesh B to mesh A
-  double relativeDistanceBtoA(const Mesh &other_mesh, bool target=false);
+  /// computes surface to surface distance, compute method: POINT_TO_POINT (default) or POINT_TO_CELL
+  Mesh& distance(Mesh &target, DistanceMethod method = swHausdorffDistancePointSetFilter::POINT_TO_POINT);
 
   /// rasterizes mesh to create binary images, automatically computing size and origin if necessary
   Image toImage(Vector3 spacing = makeVector({1.0, 1.0, 1.0}), Dims size = {0, 0, 0}, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;

@@ -93,11 +93,11 @@ public:
   vtkGetMacro(HausdorffDistance, double);
   //@}
 
-  enum DistanceMethod
+  typedef enum DistanceMethod
   {
     POINT_TO_POINT,
     POINT_TO_CELL
-  };
+  } DistanceMethod;
 
   //@{
   /**

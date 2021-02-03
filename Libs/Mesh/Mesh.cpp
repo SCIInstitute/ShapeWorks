@@ -331,35 +331,15 @@ Region Mesh::boundingBox(bool center) const
   return bbox;
 }
 
-vtkSmartPointer<swHausdorffDistancePointSetFilter> Mesh::computeDistance(const Mesh &other_mesh, bool target)
+Mesh& Mesh::distance(Mesh &target, DistanceMethod method)
 {
   vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = vtkSmartPointer<swHausdorffDistancePointSetFilter>::New();
   filter->SetInputData(this->mesh);
-  filter->SetInputData(1, other_mesh.mesh);
-
-  if (target)
-    filter->SetTargetDistanceMethod(1);
-  
+  filter->SetInputData(1, target.mesh);
+  filter->SetTargetDistanceMethod(method);
   filter->Update();
-  return filter;
-}
 
-double Mesh::hausdorffDistance(const Mesh &other_mesh, bool target)
-{
-  vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = computeDistance(other_mesh, target);
-  return filter->GetOutput(0)->GetFieldData()->GetArray("HausdorffDistance")->GetComponent(0,0);
-}
-
-double Mesh::relativeDistanceAtoB(const Mesh &other_mesh, bool target)
-{
-  vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = computeDistance(other_mesh, target);
-  return filter->GetOutputDataObject(0)->GetFieldData()->GetArray("RelativeDistanceAtoB")->GetComponent(0,0);
-}
-
-double Mesh::relativeDistanceBtoA(const Mesh &other_mesh, bool target)
-{
-  vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = computeDistance(other_mesh, target);
-  return filter->GetOutputDataObject(1)->GetFieldData()->GetArray("RelativeDistanceBtoA")->GetComponent(0,0);
+  return *this;
 }
 
 Point3 Mesh::rasterizationOrigin(Region region, Vector3 spacing, int padding) const
@@ -741,17 +721,18 @@ vtkTransform Mesh::createRegistrationTransform(const Mesh &target, Mesh::Alignme
 
 std::ostream& operator<<(std::ostream &os, const Mesh& mesh)
 {
-  return os << "{\n\tnumber of points: " << mesh.numPoints()
-            << ",\n\tnumber of faces: " << mesh.numFaces()
-            << ",\n\tcenter: " << mesh.center()
-            << ",\n\tcenter or mass: " << mesh.centerOfMass()
-            << ",\n\tfieldname: \n";
+  os << "{\n\tnumber of points: " << mesh.numPoints()
+     << ",\n\tnumber of faces: " << mesh.numFaces()
+     << ",\n\tcenter: " << mesh.center()
+     << ",\n\tcenter or mass: " << mesh.centerOfMass()
+     << ",\n\tfieldnames: \n";
 
   auto fields = mesh.getFieldNames();
-  for (auto field: fields)
-    std::cout << "\t\t" << field;
+  for (auto field: fields) {
+    os << "\t\t" << field << std::endl;
+  }
 
-  std::cout << "\n}";
+  return os;
 }
 
 } // shapeworks
