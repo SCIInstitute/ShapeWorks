@@ -1,7 +1,2 @@
-Relative distance to other mesh:
-	505.565
-Relative distance from other mesh:
-	480.68
-Hausdorff distance:
-	505.565
+Maximum distance to target mesh: 505.565
 compare success

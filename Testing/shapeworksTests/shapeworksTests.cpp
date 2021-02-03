@@ -39,10 +39,11 @@ TEST(shapeworksTests, fieldstdTest)
   ASSERT_FALSE(system("bash fieldstd.sh"));
 }
 
-TEST(shapeworksTests, tomeshTest)
-{
-  ASSERT_FALSE(system("bash tomesh.sh"));
-}
+// https://github.com/SCIInstitute/ShapeWorks/issues/939
+// TEST(shapeworksTests, tomeshTest)
+// {
+//   ASSERT_FALSE(system("bash tomesh.sh"));
+// }
 
 TEST(shapeworksTests, clipmeshTest)
 {
