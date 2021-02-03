@@ -97,6 +97,7 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
   // https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3346950/
   double geo_dist = 0.0;
   const auto& geo_from_a = GeodesicsFromTriangle(face_a);
+  //todo try tbb::parallel over 9
   for(int i=0; i<3; i++) {
     const Eigen::VectorXd& geo_from_ai = geo_from_a[i];
     const double g_i0 = geo_from_ai[faces[face_b][0]];
@@ -532,6 +533,7 @@ int TriMeshWrapper::GetTriangleForPoint(point pt, int idx, vec& baryOut) const
 
 vec3 TriMeshWrapper::ComputeBarycentricCoordinates(point pt, int face) const
 {
+  //todo how do this more efficiently+accurately+robustness? see vtk/libigl
   vec3 bCoords;
   bCoords.clear();
   point a, b, c;
