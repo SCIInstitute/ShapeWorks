@@ -514,7 +514,7 @@ double Mesh::getFieldValue(const std::string& name, int idx) const
     throw std::invalid_argument("Field does not exist.");
 
   if (arr->GetNumberOfTuples() > idx)
-    return arr->GetTuple1(idx);
+    return arr->GetTuple(idx)[0];
   else
     throw std::invalid_argument("Requested index in field is out of range");
 }
@@ -574,7 +574,7 @@ double Mesh::getFieldMean(const std::string& name) const
   return mean / arr->GetNumberOfTuples();
 }
 
-double Mesh::getFieldSdv(const std::string& name) const
+double Mesh::getFieldStd(const std::string& name) const
 {
   if (name.empty())
     throw std::invalid_argument("Provide name for field");

@@ -114,10 +114,6 @@ INSTALL(TARGETS ComputeMeanNormals RUNTIME DESTINATION bin)
 #TARGET_LINK_LIBRARIES(ComputeGeodesicDistanceToLandmark ${ITK_LIBRARIES} ${VXL_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS ComputeGeodesicDistanceToLandmark RUNTIME DESTINATION bin)
 
-ADD_EXECUTABLE(PreviewCmd PreviewCmd.cxx)
-TARGET_LINK_LIBRARIES(PreviewCmd Utils Mesh)
-INSTALL(TARGETS PreviewCmd RUNTIME DESTINATION bin)
-
 ADD_EXECUTABLE(ReconstructMeanSurface ReconstructMeanSurface.cxx)
 TARGET_LINK_LIBRARIES(ReconstructMeanSurface ${ITK_LIBRARIES} tinyxml Utils Analyze)
 INSTALL(TARGETS ReconstructMeanSurface RUNTIME DESTINATION bin)

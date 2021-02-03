@@ -130,7 +130,7 @@ public:
   double getFieldMean(const std::string& name) const;
 
   /// returns the standard deviation of the given field
-  double getFieldSdv(const std::string& name) const;
+  double getFieldStd(const std::string& name) const;
 
 
   // fields of mesh faces //

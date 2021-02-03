@@ -186,8 +186,8 @@ TEST(MeshTests, fixTest1)
 // TEST(MeshTests, fixTest2)
 // {
 //   Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
-//   femur.fix(true, true, true, 1.0, 10, true, 1.0);
-//   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fix2.vtk");
+//   femur.fix(true, true, true, 0.5, 1, true, 0.5);
+//   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fix1.vtk");
 //   ASSERT_TRUE(femur == ground_truth);
 // }
 
@@ -330,20 +330,19 @@ TEST(MeshTests, coverageTest)
 //   ASSERT_TRUE(std::abs(btoa - 16.1937) < 1e-4);
 // }
 
-// TEST(MeshTests, fieldTest2)
-// {
-//   Mesh mesh(std::string(TEST_DATA_DIR) + "/mesh1.vtk");
-//   double a = mesh.getFieldValue("scalars", 0);
-//   double b = mesh.getFieldValue("scalars", 1000);
-//   double c = mesh.getFieldValue("normals", 1000);
-//   double d = mesh.getFieldValue("normals", 0);
-//   std::cout << a << std::endl << b << std::endl << c << std::endl << d << std::endl;
+TEST(MeshTests, fieldTest2)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + "/mesh1.vtk");
+  double a = mesh.getFieldValue("scalars", 0);
+  double b = mesh.getFieldValue("scalars", 1000);
+  double c = mesh.getFieldValue("normals", 1000);
+  double d = mesh.getFieldValue("normals", 3100);
 
-//   ASSERT_TRUE(a==a);
-//   ASSERT_TRUE(b==c);
-//   ASSERT_TRUE(c==d);
-//   ASSERT_TRUE(d==a);
-// }
+  ASSERT_TRUE(a==1);
+  ASSERT_TRUE(b==1);
+  ASSERT_TRUE(c==0);
+  ASSERT_TRUE(d==0);
+}
 
 TEST(MeshTests, icpTest)
 {

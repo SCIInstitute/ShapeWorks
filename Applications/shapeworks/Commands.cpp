@@ -2234,7 +2234,7 @@ void MeshFix::buildParser()
   const std::string desc = "quality control meshes";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--winding").action("store").type("bool").set_default(true).help("Fix element window [default: true]");
+  parser.add_option("--wind").action("store").type("bool").set_default(true).help("Fix element window [default: true]");
   parser.add_option("--smoothBefore").action("store").type("bool").set_default(true).help("Perform laplacian smoothing before decimation [default: true].");
   parser.add_option("--smoothAfter").action("store").type("bool").set_default(true).help("Perform laplacian smoothing after decimation [default: true].");
   parser.add_option("--lambda").action("store").type("double").set_default(0.5).help("Laplacian smoothing lambda [default: %default].");
@@ -2385,11 +2385,11 @@ bool FieldMean::execute(const optparse::Values &options, SharedCommandData &shar
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// FieldSdv
+// FieldStd
 ///////////////////////////////////////////////////////////////////////////////
-void FieldSdv::buildParser()
+void FieldStd::buildParser()
 {
-  const std::string prog = "field-sdv";
+  const std::string prog = "field-std";
   const std::string desc = "prints the standard deviation of the given field";
   parser.prog(prog).description(desc);
 
@@ -2398,7 +2398,7 @@ void FieldSdv::buildParser()
   Command::buildParser();
 }
 
-bool FieldSdv::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool FieldStd::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validMesh())
   {
@@ -2408,7 +2408,7 @@ bool FieldSdv::execute(const optparse::Values &options, SharedCommandData &share
 
   std::string name = static_cast<std::string>(options.get("name"));
 
-  std::cout << sharedData.mesh->getFieldSdv(name) << "\n";
+  std::cout << sharedData.mesh->getFieldStd(name) << "\n";
   return sharedData.validMesh();
 }
 

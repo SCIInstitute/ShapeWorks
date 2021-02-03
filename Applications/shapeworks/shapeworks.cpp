@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(GetFieldValue::getCommand());
   shapeworks.addCommand(FieldRange::getCommand());
   shapeworks.addCommand(FieldMean::getCommand());
-  shapeworks.addCommand(FieldSdv::getCommand());
+  shapeworks.addCommand(FieldStd::getCommand());
   shapeworks.addCommand(FieldNames::getCommand());
   shapeworks.addCommand(MeshToImage::getCommand());
   shapeworks.addCommand(MeshToDT::getCommand());

@@ -34,9 +34,9 @@ TEST(shapeworksTests, fieldmeanTest)
   ASSERT_FALSE(system("bash fieldmean.sh"));
 }
 
-TEST(shapeworksTests, fieldsdvTest)
+TEST(shapeworksTests, fieldstdTest)
 {
-  ASSERT_FALSE(system("bash fieldsdv.sh"));
+  ASSERT_FALSE(system("bash fieldstd.sh"));
 }
 
 TEST(shapeworksTests, tomeshTest)
@@ -324,11 +324,10 @@ TEST(shapeworksTests, scalemeshTest)
   ASSERT_FALSE(system("bash scalemesh.sh"));
 }
 
-// todo: fix is broken (lol)
-// TEST(shapeworksTests, meshfixTest)
-// {
-//   ASSERT_FALSE(system("bash meshfix.sh"));
-// }
+TEST(shapeworksTests, meshfixTest)
+{
+  ASSERT_FALSE(system("bash meshfix.sh"));
+}
 
 TEST(shapeworksTests, meshtoimageTest)
 {

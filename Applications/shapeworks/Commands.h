@@ -73,7 +73,7 @@ COMMAND_DECLARE(SetFieldValue, MeshCommand);
 COMMAND_DECLARE(GetFieldValue, MeshCommand);
 COMMAND_DECLARE(FieldRange, MeshCommand);
 COMMAND_DECLARE(FieldMean, MeshCommand);
-COMMAND_DECLARE(FieldSdv, MeshCommand);
+COMMAND_DECLARE(FieldStd, MeshCommand);
 COMMAND_DECLARE(FieldNames, MeshCommand);
 COMMAND_DECLARE(MeshFix, MeshCommand);
 COMMAND_DECLARE(MeshToImage, MeshCommand);
