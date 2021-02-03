@@ -2093,22 +2093,23 @@ bool BoundingBoxMesh::execute(const optparse::Values &options, SharedCommandData
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// ComputeDistance
+// MeshDistance
 ///////////////////////////////////////////////////////////////////////////////
-void ComputeDistance::buildParser()
+void MeshDistance::buildParser()
 {
-  const std::string prog = "compute-distance";
-  const std::string desc = "computes the distance between two meshes, printing the largest distance between any point from either mesh (the Hausdorff distance)";
+  const std::string prog = "mesh-distance";
+  const std::string desc = "computes the distance between two meshes, printing the largest distance between any point from source to target, target to source, and the Hausdorff distance (the largest of these two)";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--other").action("store").type("string").set_default("").help("Filename of other mesh.");
+  parser.add_option("--name").action("store").type("string").set_default("").help("Filename of other mesh.");
   std::list<std::string> methods{"point-to-point", "point-to-cell"};
   parser.add_option("--method").action("store").type("choice").choices(methods.begin(), methods.end()).set_default("point-to-point").help("Method used to compute distance [default: %default].");
+  parser.add_option("--summary").action("store").type("bool").set_default(false).help("Print largest distance of any point in mesh to target [default: %default].");
 
   Command::buildParser();
 }
 
-bool ComputeDistance::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool MeshDistance::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validMesh())
   {
@@ -2116,30 +2117,35 @@ bool ComputeDistance::execute(const optparse::Values &options, SharedCommandData
     return false;
   }
 
+  bool summary = static_cast<bool>(options.get("summary"));
+
   std::string methodopt(options.get("method"));
-  auto method{Mesh::DistanceMethod::POINT_TO_POINT};
-  if (methodopt == "point-to-point") method = Mesh::DistanceMethod::POINT_TO_POINT;
-  else if (methodopt == "cell-to-cell") method = Mesh::DistanceMethod::POINT_TO_CELL;
+  auto method{Mesh::POINT_TO_POINT};
+  if (methodopt == "point-to-point") method = Mesh::POINT_TO_POINT;
+  else if (methodopt == "point-to-cell") method = Mesh::POINT_TO_CELL;
   else {
     std::cerr << "no such distance method: " << methodopt << std::endl;
     return false;
   }
 
-  std::string otherMesh = static_cast<std::string>(options.get("other"));
+  std::string otherMesh = static_cast<std::string>(options.get("name"));
   if (otherMesh == "")
   {
     std::cerr << "Must specify a mesh\n";
     return false;
   }
-  else
+
+  Mesh other(otherMesh);
+  sharedData.mesh->distance(other, method);
+
+  if (summary)
   {
-    Mesh other(otherMesh);
-    sharedData.mesh->distance(other, method);
-    std::cout << "Hausdorff distance:\n\t" << sharedData.mesh->getFieldValue("HausdorffDistance", 0) << std::endl;
-    std::cout << "Relative distance to other mesh:\n\t" << sharedData.mesh->getFieldValue("RelativeDistanceAtoB", 0) << std::endl;
-    std::cout << "Relative distance from other mesh:\n\t" << sharedData.mesh->getFieldValue("RelativeDistanceBtoA", 0) << std::endl;
-    return sharedData.validMesh();
+    auto range = sharedData.mesh->getFieldRange("distance");
+    auto dist = std::max(range[0], range[1]);
+    std::cout << "Maximum distance to target mesh: " << dist << std::endl;
   }
+
+  return sharedData.validMesh();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2223,7 +2229,7 @@ void MeshFix::buildParser()
   const std::string desc = "quality control meshes";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--winding").action("store").type("bool").set_default(true).help("Fix element window [default: true]");
+  parser.add_option("--wind").action("store").type("bool").set_default(true).help("Fix element window [default: true]");
   parser.add_option("--smoothBefore").action("store").type("bool").set_default(true).help("Perform laplacian smoothing before decimation [default: true].");
   parser.add_option("--smoothAfter").action("store").type("bool").set_default(true).help("Perform laplacian smoothing after decimation [default: true].");
   parser.add_option("--lambda").action("store").type("double").set_default(0.5).help("Laplacian smoothing lambda [default: %default].");
@@ -2374,11 +2380,11 @@ bool FieldMean::execute(const optparse::Values &options, SharedCommandData &shar
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// FieldSdv
+// FieldStd
 ///////////////////////////////////////////////////////////////////////////////
-void FieldSdv::buildParser()
+void FieldStd::buildParser()
 {
-  const std::string prog = "field-sdv";
+  const std::string prog = "field-std";
   const std::string desc = "prints the standard deviation of the given field";
   parser.prog(prog).description(desc);
 
@@ -2387,7 +2393,7 @@ void FieldSdv::buildParser()
   Command::buildParser();
 }
 
-bool FieldSdv::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool FieldStd::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validMesh())
   {
@@ -2397,7 +2403,7 @@ bool FieldSdv::execute(const optparse::Values &options, SharedCommandData &share
 
   std::string name = static_cast<std::string>(options.get("name"));
 
-  std::cout << sharedData.mesh->getFieldSdv(name) << "\n";
+  std::cout << sharedData.mesh->getFieldStd(name) << "\n";
   return sharedData.validMesh();
 }
 

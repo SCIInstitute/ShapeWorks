@@ -186,8 +186,8 @@ TEST(MeshTests, fixTest1)
 // TEST(MeshTests, fixTest2)
 // {
 //   Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
-//   femur.fix(true, true, true, 1.0, 10, true, 1.0);
-//   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fix2.vtk");
+//   femur.fix(true, true, true, 0.5, 1, true, 0.5);
+//   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fix1.vtk");
 //   ASSERT_TRUE(femur == ground_truth);
 // }
 
@@ -289,61 +289,59 @@ TEST(MeshTests, coverageTest)
   ASSERT_TRUE(pelvis == baseline);
 }
 
-// issues currently being fixed by Cameron and Archana...
-// TEST(MeshTests, distanceTest1)
-// {
-//   Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
-//   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-//   pelvis.distance(femur);  // ***
-//   pelvis.write("/tmp/pelvis_to_femur_from_pelvis_distance.vtk");
-//   femur.write("/tmp/femur_to_pelvis_from_pelvis_distance.vtk");
-//   std::cout << "source:" << pelvis << std::endl << "target: " << femur << std::endl;
+TEST(MeshTests, distanceTest1)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
+  femur.distance(pelvis);
+  pelvis.distance(femur);
 
-//   Mesh p2f(std::string(TEST_DATA_DIR) + "/pelvis_to_femur_distance_from_pelvis.vtk");
-//   Mesh f2p(std::string(TEST_DATA_DIR) + "/femur_to_pelvis_distance_from_pelvis.vtk");
-//   ASSERT_TRUE(pelvis == p2f && femur == f2p);
-// }
+  Mesh f2p(std::string(TEST_DATA_DIR) + "/meshdistance2.vtk");
+  Mesh p2f(std::string(TEST_DATA_DIR) + "/meshdistance2rev.vtk");
+  ASSERT_TRUE(femur == f2p);
+  ASSERT_TRUE(pelvis == p2f);
+}
 
-// TEST(MeshTests, distanceTest2)
-// {
-//   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-//   Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
-//   femur.distance(pelvis);  // ***
-//   femur.write("/tmp/femur_to_pelvis_from_femur_distance.vtk");
-//   pelvis.write("/tmp/pelvis_to_femur_from_femur_distance.vtk");
-//   std::cout << "source: " << femur << std::endl << "target:" << pelvis << std::endl;
+TEST(MeshTests, distanceTest2)
+{
+  Mesh femur1(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
+  Mesh femur2(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
+  femur1.distance(femur2, Mesh::DistanceMethod::POINT_TO_CELL);
+  femur2.distance(femur1);
 
-//   Mesh p2f(std::string(TEST_DATA_DIR) + "/pelvis_to_femur_distance_from_femur.vtk");
-//   Mesh f2p(std::string(TEST_DATA_DIR) + "/femur_to_pelvis_distance_from_femur.vtk");
-//   ASSERT_TRUE(pelvis == p2f && femur == f2p);
-// }
+  Mesh fwd(std::string(TEST_DATA_DIR) + "/meshdistance1p2c.vtk");
+  Mesh rev(std::string(TEST_DATA_DIR) + "/meshdistance1rev.vtk");
+  ASSERT_TRUE(femur1 == fwd);
+  ASSERT_TRUE(femur2 == rev);
+}
 
-// TEST(MeshTests, fieldTest1)
-// {
-//   Mesh dist(std::string(TEST_DATA_DIR) + "/fieldTest1.vtk");
-//   double atob = dist.getFieldValue("RelativeDistanceAtoB", 0);
-//   double btoa = dist.getFieldValue("RelativeDistanceBtoA", 0);
-//   double haus = dist.getFieldValue("HausdorffDistance", 0);
+TEST(MeshTests, fieldTest1)
+{
+  Mesh dist(std::string(TEST_DATA_DIR) + "/meshdistance2.vtk");
+  double a = dist.getFieldValue("distance", 0);
+  double b = dist.getFieldValue("distance", 1000);
+  double c = dist.getFieldValue("distance", dist.numPoints()-1);
 
-//   ASSERT_TRUE(std::abs(haus - 32.2215) < 1e-4);
-//   ASSERT_TRUE(std::abs(atob - 32.2215) < 1e-4);
-//   ASSERT_TRUE(std::abs(btoa - 16.1937) < 1e-4);
-// }
+  ASSERT_TRUE(std::abs(a - 0.375761) < 1e-4);
+  ASSERT_TRUE(std::abs(b - 2.18114) < 1e-4);
+  ASSERT_TRUE(std::abs(c - 6.915) < 1e-4);
+}
 
-// TEST(MeshTests, fieldTest2)
-// {
-//   Mesh mesh(std::string(TEST_DATA_DIR) + "/mesh1.vtk");
-//   double a = mesh.getFieldValue("scalars", 0);
-//   double b = mesh.getFieldValue("scalars", 1000);
-//   double c = mesh.getFieldValue("normals", 1000);
-//   double d = mesh.getFieldValue("normals", 0);
-//   std::cout << a << std::endl << b << std::endl << c << std::endl << d << std::endl;
+TEST(MeshTests, fieldTest2)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + "/mesh1.vtk");
+  double a = mesh.getFieldValue("scalars", 0);
+  double b = mesh.getFieldValue("scalars", 1000);
+  double c = mesh.getFieldValue("normals", 1000);
+  double d = mesh.getFieldValue("normals", 3100);
 
-//   ASSERT_TRUE(a==a);
-//   ASSERT_TRUE(b==c);
-//   ASSERT_TRUE(c==d);
-//   ASSERT_TRUE(d==a);
-// }
+  ASSERT_TRUE(a==1);
+  ASSERT_TRUE(b==1);
+  ASSERT_TRUE(c==0);
+  ASSERT_TRUE(d==0);
+}
+
+//TODO: add tests for independent fields and fields on cells once #935 complete
 
 TEST(MeshTests, icpTest)
 {

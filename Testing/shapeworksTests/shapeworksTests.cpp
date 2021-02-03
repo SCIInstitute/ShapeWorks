@@ -14,6 +14,11 @@ TEST(shapeworksTests, fieldnameTest)
   ASSERT_FALSE(system("bash meshfieldnames.sh"));
 }
 
+TEST(shapeworksTests, meshDistanceTest)
+{
+  ASSERT_FALSE(system("bash meshdistance.sh"));
+}
+
 TEST(shapeworksTests, getfieldvalueTest)
 {
   ASSERT_FALSE(system("bash getfieldvalue.sh"));
@@ -29,15 +34,16 @@ TEST(shapeworksTests, fieldmeanTest)
   ASSERT_FALSE(system("bash fieldmean.sh"));
 }
 
-TEST(shapeworksTests, fieldsdvTest)
+TEST(shapeworksTests, fieldstdTest)
 {
-  ASSERT_FALSE(system("bash fieldsdv.sh"));
+  ASSERT_FALSE(system("bash fieldstd.sh"));
 }
 
-TEST(shapeworksTests, tomeshTest)
-{
-  ASSERT_FALSE(system("bash tomesh.sh"));
-}
+// https://github.com/SCIInstitute/ShapeWorks/issues/939
+// TEST(shapeworksTests, tomeshTest)
+// {
+//   ASSERT_FALSE(system("bash tomesh.sh"));
+// }
 
 TEST(shapeworksTests, clipmeshTest)
 {
@@ -319,11 +325,10 @@ TEST(shapeworksTests, scalemeshTest)
   ASSERT_FALSE(system("bash scalemesh.sh"));
 }
 
-// todo: fix is broken (lol)
-// TEST(shapeworksTests, meshfixTest)
-// {
-//   ASSERT_FALSE(system("bash meshfix.sh"));
-// }
+TEST(shapeworksTests, meshfixTest)
+{
+  ASSERT_FALSE(system("bash meshfix.sh"));
+}
 
 TEST(shapeworksTests, meshtoimageTest)
 {

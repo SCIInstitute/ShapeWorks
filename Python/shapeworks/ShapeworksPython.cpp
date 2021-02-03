@@ -535,7 +535,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("getFieldValue",         &Mesh::getFieldValue, "idx"_a, "name"_a)
   .def("getFieldRange",         &Mesh::getFieldRange, "name"_a)
   .def("getFieldMean",          &Mesh::getFieldMean, "name"_a)
-  .def("getFieldSdv",           &Mesh::getFieldSdv, "name"_a)
+  .def("getFieldStd",           &Mesh::getFieldStd, "name"_a)
   ;
 
   // MeshUtils

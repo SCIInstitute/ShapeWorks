@@ -2,9 +2,12 @@
 #include "MeshUtils.h"
 #include "Image.h"
 #include "StringUtils.h"
-#include <PreviewMeshQC/FEAreaCoverage.h>
-#include <PreviewMeshQC/FEVTKImport.h>
-#include <PreviewMeshQC/FEVTKExport.h>
+#include "PreviewMeshQC/FEAreaCoverage.h"
+#include "PreviewMeshQC/FEVTKImport.h"
+#include "PreviewMeshQC/FEVTKExport.h"
+#include "FEFixMesh.h"
+#include "FEMeshSmoothingModifier.h"
+#include "FECVDDecimationModifier.h"
 
 #include <vtkPolyDataReader.h>
 #include <vtkPolyDataWriter.h>
@@ -29,9 +32,10 @@
 #include <vtkImageData.h>
 #include <vtkPolyDataToImageStencil.h>
 #include <vtkImageStencil.h>
-#include <FEFixMesh.h>
-#include <FEMeshSmoothingModifier.h>
-#include <FECVDDecimationModifier.h>
+#include <vtkDoubleArray.h>
+#include <vtkKdTreePointLocator.h>
+#include <vtkCellLocator.h>
+#include <vtkGenericCell.h>
 
 namespace shapeworks {
 
@@ -331,13 +335,60 @@ Region Mesh::boundingBox(bool center) const
   return bbox;
 }
 
-Mesh& Mesh::distance(Mesh &target, DistanceMethod method)
+Mesh& Mesh::distance(const Mesh &target, const DistanceMethod method)
 {
-  vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = vtkSmartPointer<swHausdorffDistancePointSetFilter>::New();
-  filter->SetInputData(this->mesh);
-  filter->SetInputData(1, target.mesh);
-  filter->SetTargetDistanceMethod(method);
-  filter->Update();
+  if (target.numPoints() == 0 || numPoints() == 0)
+    throw std::invalid_argument("meshes must have points");
+
+  vtkSmartPointer<vtkKdTreePointLocator> targetPointLocator = vtkSmartPointer<vtkKdTreePointLocator>::New();
+  vtkSmartPointer<vtkCellLocator> targetCellLocator = vtkSmartPointer<vtkCellLocator>::New();
+  if (method == POINT_TO_POINT)
+  {
+    targetPointLocator->SetDataSet(target.mesh);
+    targetPointLocator->BuildLocator();
+  }
+  else
+  {
+    targetCellLocator->SetDataSet(target.mesh);
+    targetCellLocator->BuildLocator();
+  }
+
+  // allocate Array to store distances from each point to target
+  vtkSmartPointer<vtkDoubleArray> distance = vtkSmartPointer<vtkDoubleArray>::New();
+  distance->SetNumberOfComponents(1);
+  distance->SetNumberOfTuples(numPoints());
+  distance->SetName("distance");
+
+  // Find the nearest neighbors to each point and compute distance between them
+  double dist, currentPoint[3], closestPoint[3];
+  if (method == POINT_TO_POINT)
+  {
+    for (int i = 0; i < numPoints(); i++)
+    {
+      mesh->GetPoint(i, currentPoint);
+      vtkIdType closestPointId = targetPointLocator->FindClosestPoint(currentPoint);
+      target.mesh->GetPoint(closestPointId, closestPoint);
+      dist = std::sqrt(std::pow(currentPoint[0] - closestPoint[0], 2) +
+                       std::pow(currentPoint[1] - closestPoint[1], 2) +
+                       std::pow(currentPoint[2] - closestPoint[2], 2));
+      distance->SetValue(i, dist);
+    }
+  }
+  else
+  {
+    vtkIdType cellId;
+    vtkSmartPointer<vtkGenericCell> cell = vtkSmartPointer<vtkGenericCell>::New();
+    int subId;
+    for (int i = 0; i < numPoints(); i++)
+    {
+      mesh->GetPoint(i, currentPoint);
+      targetCellLocator->FindClosestPoint(currentPoint, closestPoint, cell, cellId, subId, dist);
+      distance->SetValue(i, std::sqrt(dist));
+    }
+  }
+    
+  // add distance field to this mesh
+  this->setField("distance", distance);
 
   return *this;
 }
@@ -505,7 +556,7 @@ double Mesh::getFieldValue(const std::string& name, int idx) const
     throw std::invalid_argument("Field does not exist.");
 
   if (arr->GetNumberOfTuples() > idx)
-    return arr->GetTuple1(idx);
+    return arr->GetTuple(idx)[0];
   else
     throw std::invalid_argument("Requested index in field is out of range");
 }
@@ -565,7 +616,7 @@ double Mesh::getFieldMean(const std::string& name) const
   return mean / arr->GetNumberOfTuples();
 }
 
-double Mesh::getFieldSdv(const std::string& name) const
+double Mesh::getFieldStd(const std::string& name) const
 {
   if (name.empty())
     throw std::invalid_argument("Provide name for field");
@@ -725,7 +776,7 @@ std::ostream& operator<<(std::ostream &os, const Mesh& mesh)
      << ",\n\tnumber of faces: " << mesh.numFaces()
      << ",\n\tcenter: " << mesh.center()
      << ",\n\tcenter or mass: " << mesh.centerOfMass()
-     << ",\n\tfieldnames: \n";
+     << ",\n\tfield names: \n";
 
   auto fields = mesh.getFieldNames();
   for (auto field: fields) {

@@ -115,16 +115,16 @@ public:
   const char* GetTargetDistanceMethodAsString();
   //@}
 
+  int TargetDistanceMethod;   //!< point-to-point if 0, point-to-cell if 1
+  double RelativeDistance[2]; //!< relative distance between inputs
+  double HausdorffDistance;   //!< hausdorff distance (max(relative distance))
+
 protected:
   swHausdorffDistancePointSetFilter();
   ~swHausdorffDistancePointSetFilter() override;
 
   int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
   int FillInputPortInformation(int port, vtkInformation* info) override;
-
-  int TargetDistanceMethod;   //!< point-to-point if 0, point-to-cell if 1
-  double RelativeDistance[2]; //!< relative distance between inputs
-  double HausdorffDistance;   //!< hausdorff distance (max(relative distance))
 
 private:
   swHausdorffDistancePointSetFilter(const swHausdorffDistancePointSetFilter&) = delete;
