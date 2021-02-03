@@ -335,6 +335,15 @@ inline bool TriMeshWrapper::IsBarycentricCoordinateValid(const trimesh::vec3& ba
          ((bary[2] >= -epsilon) && (bary[2] <= 1 + epsilon));
 }
 
+bool TriMeshWrapper::IsBarycentricCoordinateNotNaN(const vec3& b)
+{
+  if (isnan(b[0]) || isnan(b[1]) || isnan(b[2])) {
+    return false;
+  }
+  return true;
+}
+
+
 // Checks all of the neighbor faces of the 10 nearest vertices to pt.
 // Returns index of the first face that has valid barycentric coordinates, and its
 // barycentric coordinates in baryOut
@@ -370,26 +379,28 @@ int TriMeshWrapper::GetTriangleForPoint(point pt, int idx, vec& baryOut) const
         faceCandidatesSet.insert(face);
         baryOut = this->ComputeBarycentricCoordinates(pt, face);
         const vec norBary = normalizeBary(baryOut);
-        if (IsBarycentricCoordinateValid(norBary)) {
-          if(idx != -1) {
-            // update cache
-            particle2tri_[idx] = face;
-          }
-          return face;
-        }
-        else {
-          float distance = 0;
-          for (int k = 0; k < 3; k++) {
-            if (norBary[k] < 0) {
-              distance += -norBary[k];
+        if (IsBarycentricCoordinateNotNaN(baryOut)) {
+          if (IsBarycentricCoordinateValid(norBary)) {
+            if(idx != -1) {
+              // update cache
+              particle2tri_[idx] = face;
             }
-            else if (norBary[k] > 1) {
-              distance += norBary[k] - 1;
-            }
+            return face;
           }
-          if (distance < closestDistance) {
-            closestFace = face;
-            closestDistance = distance;
+          else {
+            float distance = 0;
+            for (int k = 0; k < 3; k++) {
+              if (norBary[k] < 0) {
+                distance += -norBary[k];
+              }
+              else if (norBary[k] > 1) {
+                distance += norBary[k] - 1;
+              }
+            }
+            if (distance < closestDistance) {
+              closestFace = face;
+              closestDistance = distance;
+            }
           }
         }
       }

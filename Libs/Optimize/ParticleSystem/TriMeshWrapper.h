@@ -76,6 +76,8 @@ private:
 
   static inline bool IsBarycentricCoordinateValid(const trimesh::vec3& b);
 
+  static inline bool IsBarycentricCoordinateNotNaN(const trimesh::vec3& b);
+
   // IGL Helper functions
   void GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F);
 
