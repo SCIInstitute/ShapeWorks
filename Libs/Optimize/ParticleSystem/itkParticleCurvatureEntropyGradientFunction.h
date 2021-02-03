@@ -117,8 +117,9 @@ public:
 
   /** Estimate the best sigma for Parzen windowing in a given neighborhood.
       The best sigma is the sigma that maximizes probability at the given point  */
-  virtual double EstimateSigma( unsigned int idx, unsigned int dom, const typename ParticleSystemType::PointVectorType &neighborhood, const ParticleDomain *domain,
-                                const std::vector<double> &weights,
+  virtual double EstimateSigma( unsigned int idx, unsigned int dom,
+                                const typename std::vector<itk::ParticleSystem<3>::Dist> &neighborhood,
+                                const ParticleDomain *domain,
                                 const PointType &pos, double initial_sigma,  double precision,  int &err, double &avgKappa) const;
 
   /** */
@@ -164,8 +165,7 @@ public:
     copy->m_Rho = this->m_Rho;
     copy->m_avgKappa = this->m_avgKappa;
     copy->m_CurrentSigma = this->m_CurrentSigma;
-    copy->m_CurrentWeights = this->m_CurrentWeights;
-    copy->m_CurrentNeighborhood = this->m_CurrentNeighborhood;
+    // copy->m_CurrentNeighborhood = this->m_CurrentNeighborhood;
 
     copy->m_MinimumNeighborhoodRadius = this->m_MinimumNeighborhoodRadius;
     copy->m_MaximumNeighborhoodRadius = this->m_MaximumNeighborhoodRadius;
@@ -198,9 +198,10 @@ protected:
   double m_avgKappa;
   
   double m_CurrentSigma;
-  typename ParticleSystemType::PointVectorType m_CurrentNeighborhood;
+  // typename ParticleSystemType::PointVectorType m_CurrentNeighborhood;
+  typename std::vector<itk::ParticleSystem<3>::Dist> m_CurrentNeighborhood;
 
-  std::vector<double> m_CurrentWeights;
+  // std::vector<double> m_CurrentWeights;
 
   float m_MaxMoveFactor;
   

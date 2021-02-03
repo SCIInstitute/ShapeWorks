@@ -114,10 +114,12 @@ namespace itk
         counter++;
 
         // Iterate over each domain
+        m_ParticleSystem->neighbor_cache.resize(numdomains);
       tbb::parallel_for(
         tbb::blocked_range<size_t>{0, numdomains},
         [&](const tbb::blocked_range<size_t>& r) {
           for (size_t dom = r.begin(); dom < r.end(); ++dom) {
+            // for (size_t dom = 0; dom < numdomains; ++dom) {
 
           // skip any flagged domains
           if (m_ParticleSystem->GetDomainFlag(dom) == true)
@@ -127,6 +129,7 @@ namespace itk
             return;
           }
 
+          m_ParticleSystem->UpdateNeighborCache(dom);
           const ParticleDomain *domain = m_ParticleSystem->GetDomain(dom);
 
           typename GradientFunctionType::Pointer localGradientFunction = m_GradientFunction;

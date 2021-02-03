@@ -61,6 +61,49 @@ public:
   typedef SmartPointer<const Self>  ConstPointer;
   typedef WeakPointer<const Self>  ConstWeakPointer;
 
+  struct Dist {
+    double geo_dist;
+    vnl_vector_fixed<double, 3> grad;
+    double weight;
+    int j;
+  };
+  // domain -> pi -> pj
+  mutable std::vector<std::vector<std::vector<Dist>>> neighbor_cache;
+
+  void UpdateNeighborCache(int d) const {
+    const auto& positions = m_Positions[d];
+
+    const auto N = GetNumberOfParticles(d);
+    neighbor_cache[d].resize(N);
+
+    const auto domain = GetDomain(d);
+
+    const double m_FlatCutoff = 0.30;
+    for(int i=0; i<N; i++) {
+      const auto& pi = positions->operator[](i);
+      neighbor_cache[d][i].resize(N);
+
+      const auto ni = domain->SampleNormalAtPoint(pi, i);
+
+      for(int j=0; j<N; j++) {
+        const auto& pj = positions->operator[](j);
+        const auto nj = domain->SampleNormalAtPoint(pj, j);
+        Dist& cache = neighbor_cache[d][i][j];
+        cache.j = j;
+        cache.geo_dist = domain->Distance(pi, i, pj, j, &cache.grad);
+        double cosine = dot_product(ni, nj);
+        if ( cosine >= m_FlatCutoff)
+        {
+          cache.weight = 1.0;
+        }
+        else
+        {
+          cache.weight = cos((m_FlatCutoff - cosine) / (1.0+m_FlatCutoff) * 1.5708);
+        }
+      }
+    }
+  }
+
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
@@ -187,18 +230,42 @@ public:
       domain.*/
   inline PointVectorType FindNeighborhoodPoints(const PointType &p, int idx,
                                                 double r, unsigned int d = 0) const
-  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(p, idx, r); }
+  {
+    throw std::runtime_error("dont use");
+    return m_Neighborhoods[d]->FindNeighborhoodPoints(p, idx, r); }
+
   inline PointVectorType FindNeighborhoodPoints(const PointType &p, int idx,
                                                 std::vector<double> &w,
                                                 double r, unsigned int d = 0) const
-  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(p,idx,w,r); }
+  {
+    throw std::runtime_error("dont use");
+  }
+
+  inline std::vector<Dist> filtered(int i, int d, double rad) const {
+    std::vector<Dist> result;
+    for(auto j : neighbor_cache[d][i]) {
+      if(j.j == i) {
+        continue;
+      }
+      if(j.geo_dist < rad) {
+        result.push_back(j);
+      }
+    }
+    return result;
+  }
+
   inline PointVectorType FindNeighborhoodPoints(unsigned int idx,
                                                 double r, unsigned int d = 0) const
-  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(this->GetPosition(idx,d),idx, r); }
+  {
+    throw std::runtime_error("dont use");
+    return m_Neighborhoods[d]->FindNeighborhoodPoints(this->GetPosition(idx,d),idx, r); }
+
   inline PointVectorType FindNeighborhoodPoints(unsigned int idx,
                                                 std::vector<double> &w,
                                                 double r, unsigned int d = 0) const
-  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(this->GetPosition(idx,d),idx,w, r); }
+  {
+    throw std::runtime_error("dont use");
+    return m_Neighborhoods[d]->FindNeighborhoodPoints(this->GetPosition(idx,d),idx,w, r); }
 
   //  inline int FindNeighborhoodPoints(const PointType &p,  double r, PointVectorType &vec, unsigned int d = 0) const
   //  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(p, r, vec); }
