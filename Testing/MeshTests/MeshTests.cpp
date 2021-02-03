@@ -289,46 +289,46 @@ TEST(MeshTests, coverageTest)
   ASSERT_TRUE(pelvis == baseline);
 }
 
-// issues currently being fixed by Cameron and Archana...
-// TEST(MeshTests, distanceTest1)
-// {
-//   Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
-//   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-//   pelvis.distance(femur);  // ***
-//   pelvis.write("/tmp/pelvis_to_femur_from_pelvis_distance.vtk");
-//   femur.write("/tmp/femur_to_pelvis_from_pelvis_distance.vtk");
-//   std::cout << "source:" << pelvis << std::endl << "target: " << femur << std::endl;
+TEST(MeshTests, distanceTest1)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
+  femur.distance(pelvis);
+  //pelvis.distance(femur);  todo after extracting function
 
-//   Mesh p2f(std::string(TEST_DATA_DIR) + "/pelvis_to_femur_distance_from_pelvis.vtk");
-//   Mesh f2p(std::string(TEST_DATA_DIR) + "/femur_to_pelvis_distance_from_pelvis.vtk");
-//   ASSERT_TRUE(pelvis == p2f && femur == f2p);
-// }
+  Mesh f2p(std::string(TEST_DATA_DIR) + "/meshdistance2.vtk");
+  Mesh p2f(std::string(TEST_DATA_DIR) + "/meshdistance2rev.vtk");
+  ASSERT_TRUE(pelvis == p2f);// && femur == f2p);
+}
 
-// TEST(MeshTests, distanceTest2)
-// {
-//   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-//   Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
-//   femur.distance(pelvis);  // ***
-//   femur.write("/tmp/femur_to_pelvis_from_femur_distance.vtk");
-//   pelvis.write("/tmp/pelvis_to_femur_from_femur_distance.vtk");
-//   std::cout << "source: " << femur << std::endl << "target:" << pelvis << std::endl;
+TEST(MeshTests, distanceTest2)
+{
+  Mesh femur1(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
+  Mesh femur2(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
+  femur1.distance(femur2, Mesh::DistanceMethod::POINT_TO_CELL);
+  //femur2.distance(femur1); // uncomment after extraction, and test will pass
 
-//   Mesh p2f(std::string(TEST_DATA_DIR) + "/pelvis_to_femur_distance_from_femur.vtk");
-//   Mesh f2p(std::string(TEST_DATA_DIR) + "/femur_to_pelvis_distance_from_femur.vtk");
-//   ASSERT_TRUE(pelvis == p2f && femur == f2p);
-// }
+  femur1.write("/tmp/f1f2distance.vtk");
+  femur2.write("/tmp/f2f1distance.vtk");
+  std::cout << "source: " << femur1 << std::endl << "target:" << femur2 << std::endl;
 
-// TEST(MeshTests, fieldTest1)
-// {
-//   Mesh dist(std::string(TEST_DATA_DIR) + "/fieldTest1.vtk");
-//   double atob = dist.getFieldValue("RelativeDistanceAtoB", 0);
-//   double btoa = dist.getFieldValue("RelativeDistanceBtoA", 0);
-//   double haus = dist.getFieldValue("HausdorffDistance", 0);
+  Mesh fwd(std::string(TEST_DATA_DIR) + "/meshdistance1p2c.vtk");
+  Mesh rev(std::string(TEST_DATA_DIR) + "/meshdistance1rev.vtk");
+  ASSERT_TRUE(femur1 == fwd && femur2 == rev);
+}
 
-//   ASSERT_TRUE(std::abs(haus - 32.2215) < 1e-4);
-//   ASSERT_TRUE(std::abs(atob - 32.2215) < 1e-4);
-//   ASSERT_TRUE(std::abs(btoa - 16.1937) < 1e-4);
-// }
+TEST(MeshTests, fieldTest1)
+{
+  Mesh dist(std::string(TEST_DATA_DIR) + "/meshdistance2.vtk");
+  double a = dist.getFieldValue("distance", 0);
+  double b = dist.getFieldValue("distance", 1000);
+  double c = dist.getFieldValue("distance", dist.numPoints()-1);
+  std::cout << a << " " << b << " " << c << std::endl;
+
+  ASSERT_TRUE(std::abs(a - 0.375761) < 1e-4);
+  ASSERT_TRUE(std::abs(b - 2.18114) < 1e-4);
+  ASSERT_TRUE(std::abs(c - 6.915) < 1e-4);
+}
 
 TEST(MeshTests, fieldTest2)
 {
@@ -343,6 +343,8 @@ TEST(MeshTests, fieldTest2)
   ASSERT_TRUE(c==0);
   ASSERT_TRUE(d==0);
 }
+
+//TODO: add tests for independent fields and fields on cells once #935 complete
 
 TEST(MeshTests, icpTest)
 {
