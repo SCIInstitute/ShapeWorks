@@ -17,7 +17,7 @@ class Mesh
 public:
   enum TransformType { IterativeClosestPoint };
   enum AlignmentType { Rigid, Similarity, Affine };
-  using DistanceMethod = swHausdorffDistancePointSetFilter::DistanceMethod;
+  enum DistanceMethod { POINT_TO_POINT, POINT_TO_CELL };
 
   using MeshType = vtkSmartPointer<vtkPolyData>;
 
@@ -75,7 +75,7 @@ public:
   Mesh& fix(bool wind = true, bool smoothBefore = true, bool smoothAfter = true, double lambda = 0.5, int iterations = 1, bool decimate = true, double percentage = 0.5);
 
   /// computes surface to surface distance, compute method: POINT_TO_POINT (default) or POINT_TO_CELL
-  Mesh& distance(Mesh &target, DistanceMethod method = swHausdorffDistancePointSetFilter::POINT_TO_POINT);
+  Mesh& distance(const Mesh &target, const DistanceMethod method = POINT_TO_POINT);
 
   /// rasterizes mesh to create binary images, automatically computing size and origin if necessary
   Image toImage(Vector3 spacing = makeVector({1.0, 1.0, 1.0}), Dims size = {0, 0, 0}, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;

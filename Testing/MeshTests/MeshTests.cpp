@@ -294,11 +294,12 @@ TEST(MeshTests, distanceTest1)
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
   femur.distance(pelvis);
-  //pelvis.distance(femur);  todo after extracting function
+  pelvis.distance(femur);
 
   Mesh f2p(std::string(TEST_DATA_DIR) + "/meshdistance2.vtk");
   Mesh p2f(std::string(TEST_DATA_DIR) + "/meshdistance2rev.vtk");
-  ASSERT_TRUE(pelvis == p2f);// && femur == f2p);
+  ASSERT_TRUE(femur == f2p);
+  ASSERT_TRUE(pelvis == p2f);
 }
 
 TEST(MeshTests, distanceTest2)
@@ -306,15 +307,12 @@ TEST(MeshTests, distanceTest2)
   Mesh femur1(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
   Mesh femur2(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
   femur1.distance(femur2, Mesh::DistanceMethod::POINT_TO_CELL);
-  //femur2.distance(femur1); // uncomment after extraction, and test will pass
-
-  femur1.write("/tmp/f1f2distance.vtk");
-  femur2.write("/tmp/f2f1distance.vtk");
-  std::cout << "source: " << femur1 << std::endl << "target:" << femur2 << std::endl;
+  femur2.distance(femur1);
 
   Mesh fwd(std::string(TEST_DATA_DIR) + "/meshdistance1p2c.vtk");
   Mesh rev(std::string(TEST_DATA_DIR) + "/meshdistance1rev.vtk");
-  ASSERT_TRUE(femur1 == fwd && femur2 == rev);
+  ASSERT_TRUE(femur1 == fwd);
+  ASSERT_TRUE(femur2 == rev);
 }
 
 TEST(MeshTests, fieldTest1)
@@ -323,7 +321,6 @@ TEST(MeshTests, fieldTest1)
   double a = dist.getFieldValue("distance", 0);
   double b = dist.getFieldValue("distance", 1000);
   double c = dist.getFieldValue("distance", dist.numPoints()-1);
-  std::cout << a << " " << b << " " << c << std::endl;
 
   ASSERT_TRUE(std::abs(a - 0.375761) < 1e-4);
   ASSERT_TRUE(std::abs(b - 2.18114) < 1e-4);

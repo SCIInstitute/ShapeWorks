@@ -2120,9 +2120,9 @@ bool MeshDistance::execute(const optparse::Values &options, SharedCommandData &s
   bool summary = static_cast<bool>(options.get("summary"));
 
   std::string methodopt(options.get("method"));
-  auto method{Mesh::DistanceMethod::POINT_TO_POINT};
-  if (methodopt == "point-to-point") method = Mesh::DistanceMethod::POINT_TO_POINT;
-  else if (methodopt == "point-to-cell") method = Mesh::DistanceMethod::POINT_TO_CELL;
+  auto method{Mesh::POINT_TO_POINT};
+  if (methodopt == "point-to-point") method = Mesh::POINT_TO_POINT;
+  else if (methodopt == "point-to-cell") method = Mesh::POINT_TO_CELL;
   else {
     std::cerr << "no such distance method: " << methodopt << std::endl;
     return false;

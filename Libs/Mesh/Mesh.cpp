@@ -2,9 +2,12 @@
 #include "MeshUtils.h"
 #include "Image.h"
 #include "StringUtils.h"
-#include <PreviewMeshQC/FEAreaCoverage.h>
-#include <PreviewMeshQC/FEVTKImport.h>
-#include <PreviewMeshQC/FEVTKExport.h>
+#include "PreviewMeshQC/FEAreaCoverage.h"
+#include "PreviewMeshQC/FEVTKImport.h"
+#include "PreviewMeshQC/FEVTKExport.h"
+#include "FEFixMesh.h"
+#include "FEMeshSmoothingModifier.h"
+#include "FECVDDecimationModifier.h"
 
 #include <vtkPolyDataReader.h>
 #include <vtkPolyDataWriter.h>
@@ -30,9 +33,9 @@
 #include <vtkPolyDataToImageStencil.h>
 #include <vtkImageStencil.h>
 #include <vtkDoubleArray.h>
-#include <FEFixMesh.h>
-#include <FEMeshSmoothingModifier.h>
-#include <FECVDDecimationModifier.h>
+#include <vtkKdTreePointLocator.h>
+#include <vtkCellLocator.h>
+#include <vtkGenericCell.h>
 
 namespace shapeworks {
 
@@ -332,21 +335,60 @@ Region Mesh::boundingBox(bool center) const
   return bbox;
 }
 
-Mesh& Mesh::distance(Mesh &target, DistanceMethod method)
+Mesh& Mesh::distance(const Mesh &target, const DistanceMethod method)
 {
-  vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = vtkSmartPointer<swHausdorffDistancePointSetFilter>::New();
-  filter->SetInputData(this->mesh);
-  filter->SetInputData(1, target.mesh);
-  filter->SetTargetDistanceMethod(method);
-  filter->Update();
-  
-  // add the new source to target and target to source fields to the datasets
-  this->setField("distance", filter->GetOutput(0)->GetPointData()->GetArray("Distance"));
-  target.setField("distance", filter->GetOutput(1)->GetPointData()->GetArray("Distance"));
+  if (target.numPoints() == 0 || numPoints() == 0)
+    throw std::invalid_argument("meshes must have points");
 
-  //RelativeDistanceAtoB: just call getRange("distance") and take the max
-  //RelativeDistanceBtoA: just call getRange("distance") of target and take the max
-  //HausdorffDistance:    call getRange("distance") of both this and target and take the max
+  vtkSmartPointer<vtkKdTreePointLocator> targetPointLocator = vtkSmartPointer<vtkKdTreePointLocator>::New();
+  vtkSmartPointer<vtkCellLocator> targetCellLocator = vtkSmartPointer<vtkCellLocator>::New();
+  if (method == POINT_TO_POINT)
+  {
+    targetPointLocator->SetDataSet(target.mesh);
+    targetPointLocator->BuildLocator();
+  }
+  else
+  {
+    targetCellLocator->SetDataSet(target.mesh);
+    targetCellLocator->BuildLocator();
+  }
+
+  // allocate Array to store distances from each point to target
+  vtkSmartPointer<vtkDoubleArray> distance = vtkSmartPointer<vtkDoubleArray>::New();
+  distance->SetNumberOfComponents(1);
+  distance->SetNumberOfTuples(numPoints());
+  distance->SetName("distance");
+
+  double dist;
+  double currentPoint[3];
+  double closestPoint[3];
+  vtkIdType cellId;
+  vtkSmartPointer<vtkGenericCell> cell = vtkSmartPointer<vtkGenericCell>::New();
+  int subId;
+
+  // Find the nearest neighbors to each point and compute distance between them
+  for (int i = 0; i < numPoints(); i++)
+  {
+    mesh->GetPoint(i, currentPoint);
+    if (method == POINT_TO_POINT)
+    {
+      vtkIdType closestPointId = targetPointLocator->FindClosestPoint(currentPoint);
+      target.mesh->GetPoint(closestPointId, closestPoint);
+      dist = std::sqrt(std::pow(currentPoint[0] - closestPoint[0], 2) +
+                       std::pow(currentPoint[1] - closestPoint[1], 2) +
+                       std::pow(currentPoint[2] - closestPoint[2], 2));
+    }
+    else
+    {
+      targetCellLocator->FindClosestPoint(currentPoint, closestPoint, cell, cellId, subId, dist);
+      dist = std::sqrt(dist);
+    }
+
+    distance->SetValue(i, dist);
+  }
+
+  // add distance field to this mesh
+  this->setField("distance", distance);
 
   return *this;
 }
