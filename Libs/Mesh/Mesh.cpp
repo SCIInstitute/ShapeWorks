@@ -359,34 +359,34 @@ Mesh& Mesh::distance(const Mesh &target, const DistanceMethod method)
   distance->SetNumberOfTuples(numPoints());
   distance->SetName("distance");
 
-  double dist;
-  double currentPoint[3];
-  double closestPoint[3];
-  vtkIdType cellId;
-  vtkSmartPointer<vtkGenericCell> cell = vtkSmartPointer<vtkGenericCell>::New();
-  int subId;
-
   // Find the nearest neighbors to each point and compute distance between them
-  for (int i = 0; i < numPoints(); i++)
+  double dist, currentPoint[3], closestPoint[3];
+  if (method == POINT_TO_POINT)
   {
-    mesh->GetPoint(i, currentPoint);
-    if (method == POINT_TO_POINT)
+    for (int i = 0; i < numPoints(); i++)
     {
+      mesh->GetPoint(i, currentPoint);
       vtkIdType closestPointId = targetPointLocator->FindClosestPoint(currentPoint);
       target.mesh->GetPoint(closestPointId, closestPoint);
       dist = std::sqrt(std::pow(currentPoint[0] - closestPoint[0], 2) +
                        std::pow(currentPoint[1] - closestPoint[1], 2) +
                        std::pow(currentPoint[2] - closestPoint[2], 2));
+      distance->SetValue(i, dist);
     }
-    else
-    {
-      targetCellLocator->FindClosestPoint(currentPoint, closestPoint, cell, cellId, subId, dist);
-      dist = std::sqrt(dist);
-    }
-
-    distance->SetValue(i, dist);
   }
-
+  else
+  {
+    vtkIdType cellId;
+    vtkSmartPointer<vtkGenericCell> cell = vtkSmartPointer<vtkGenericCell>::New();
+    int subId;
+    for (int i = 0; i < numPoints(); i++)
+    {
+      mesh->GetPoint(i, currentPoint);
+      targetCellLocator->FindClosestPoint(currentPoint, closestPoint, cell, cellId, subId, dist);
+      distance->SetValue(i, std::sqrt(dist));
+    }
+  }
+    
   // add distance field to this mesh
   this->setField("distance", distance);
 
