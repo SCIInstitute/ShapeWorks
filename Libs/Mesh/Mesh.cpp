@@ -29,6 +29,7 @@
 #include <vtkImageData.h>
 #include <vtkPolyDataToImageStencil.h>
 #include <vtkImageStencil.h>
+#include <vtkDoubleArray.h>
 #include <FEFixMesh.h>
 #include <FEMeshSmoothingModifier.h>
 #include <FECVDDecimationModifier.h>
@@ -338,6 +339,40 @@ Mesh& Mesh::distance(Mesh &target, DistanceMethod method)
   filter->SetInputData(1, target.mesh);
   filter->SetTargetDistanceMethod(method);
   filter->Update();
+  
+  // add the new fields to the current dataset //
+
+  // source to target distance
+  auto data = filter->GetOutput(0)->GetPointData()->GetArray("Distance");
+  this->setField("Distance", data);
+
+  //AtoB
+  data = vtkDoubleArray::New();
+  data->SetNumberOfTuples(1);
+  data->SetTuple1(0,filter->RelativeDistance[0]);
+  this->setField("RelativeDistanceAtoB", data);
+
+  //HausdorffDistance
+  data = vtkDoubleArray::New();
+  data->SetNumberOfTuples(1);
+  data->SetTuple1(0,filter->HausdorffDistance);
+  this->setField("HausdorffDistance", data);
+
+  // target to source distance
+  data = filter->GetOutput(1)->GetPointData()->GetArray("Distance");
+  target.setField("Distance", data);
+
+  //BtoA
+  data = vtkDoubleArray::New();
+  data->SetNumberOfTuples(1);
+  data->SetTuple1(0,filter->RelativeDistance[1]);
+  target.setField("RelativeDistanceBtoA", data);
+
+  //HausdorffDistance
+  data = vtkDoubleArray::New();
+  data->SetNumberOfTuples(1);
+  data->SetTuple1(0,filter->HausdorffDistance);
+  target.setField("HausdorffDistance", data);
 
   return *this;
 }
@@ -725,7 +760,7 @@ std::ostream& operator<<(std::ostream &os, const Mesh& mesh)
      << ",\n\tnumber of faces: " << mesh.numFaces()
      << ",\n\tcenter: " << mesh.center()
      << ",\n\tcenter or mass: " << mesh.centerOfMass()
-     << ",\n\tfieldnames: \n";
+     << ",\n\tfield names: \n";
 
   auto fields = mesh.getFieldNames();
   for (auto field: fields) {

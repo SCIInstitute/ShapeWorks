@@ -2093,22 +2093,22 @@ bool BoundingBoxMesh::execute(const optparse::Values &options, SharedCommandData
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// ComputeDistance
+// MeshDistance
 ///////////////////////////////////////////////////////////////////////////////
-void ComputeDistance::buildParser()
+void MeshDistance::buildParser()
 {
-  const std::string prog = "compute-distance";
-  const std::string desc = "computes the distance between two meshes, printing the largest distance between any point from either mesh (the Hausdorff distance)";
+  const std::string prog = "mesh-distance";
+  const std::string desc = "computes the distance between two meshes, printing the largest distance between any point from source to target, target to source, and the Hausdorff distance (the largest of these two)";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--other").action("store").type("string").set_default("").help("Filename of other mesh.");
+  parser.add_option("--name").action("store").type("string").set_default("").help("Filename of other mesh.");
   std::list<std::string> methods{"point-to-point", "point-to-cell"};
   parser.add_option("--method").action("store").type("choice").choices(methods.begin(), methods.end()).set_default("point-to-point").help("Method used to compute distance [default: %default].");
 
   Command::buildParser();
 }
 
-bool ComputeDistance::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool MeshDistance::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validMesh())
   {
@@ -2125,7 +2125,7 @@ bool ComputeDistance::execute(const optparse::Values &options, SharedCommandData
     return false;
   }
 
-  std::string otherMesh = static_cast<std::string>(options.get("other"));
+  std::string otherMesh = static_cast<std::string>(options.get("name"));
   if (otherMesh == "")
   {
     std::cerr << "Must specify a mesh\n";
@@ -2135,9 +2135,9 @@ bool ComputeDistance::execute(const optparse::Values &options, SharedCommandData
   {
     Mesh other(otherMesh);
     sharedData.mesh->distance(other, method);
-    std::cout << "Hausdorff distance:\n\t" << sharedData.mesh->getFieldValue("HausdorffDistance", 0) << std::endl;
     std::cout << "Relative distance to other mesh:\n\t" << sharedData.mesh->getFieldValue("RelativeDistanceAtoB", 0) << std::endl;
-    std::cout << "Relative distance from other mesh:\n\t" << sharedData.mesh->getFieldValue("RelativeDistanceBtoA", 0) << std::endl;
+    std::cout << "Relative distance from other mesh:\n\t" << other.getFieldValue("RelativeDistanceBtoA", 0) << std::endl;
+    std::cout << "Hausdorff distance:\n\t" << sharedData.mesh->getFieldValue("HausdorffDistance", 0) << std::endl;
     return sharedData.validMesh();
   }
 }
