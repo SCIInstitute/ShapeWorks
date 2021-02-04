@@ -305,9 +305,11 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side):
             img_out = rename(image, outImgDir, 'reflect').replace(prefix, flip_prefix)
             imageList.append(img_out)
             img = Image(image)
+            img2 = img
+            img2.recenter()
+            center = img2.origin() - img.origin()
             img.reflect(X).write(img_out)
 
-            center = img.center()
             cmd = ["shapeworks",
                    "read-mesh", "--name", seg,
                    "reflect-mesh", "--axis", "X", "--originx", str(center[0]), "--originy", str(center[1]), "--originz", str(center[2]),
