@@ -207,19 +207,8 @@ public:
   /// writes image, format specified by filename extension
   Image& write(const std::string &filename, bool compressed = true);
 
-  // <ctc> why do we have this static function and a member function that calls it?
-  /// creates a vtkPolyData for the given image
-  static vtkSmartPointer<vtkPolyData> getPolyData(const Image& image, PixelType isoValue = 0.0);
-
-  /// applies filter to generates isosurface
-  static vtkSmartPointer<vtkPolyData> march(const Image& image, double levelset=0.0);
-
   /// converts image to mesh (note: definition in Conversion.cpp)
   Mesh toMesh(PixelType isovalue) const;
-
-  /// converts distance transform to mesh (note: definition in Conversion.cpp)
-  Mesh toMesh(double levelset, double reduction, double angle,
-              int leveliterations, int meshiterations, bool preservetopology) const;
 
 private:
   friend struct SharedCommandData;
@@ -237,6 +226,9 @@ private:
 
   /// creates transform to target using ICP registration (isovalue is used to create meshes from dt, which are then passed to ICP)
   TransformPtr createRigidRegistrationTransform(const Image &target, float isoValue = 0.0, unsigned iterations = 20);
+
+  /// creates a vtkPolyData for the given image
+  static vtkSmartPointer<vtkPolyData> getPolyData(const Image& image, PixelType isoValue = 0.0);
 
   ImageType::Pointer image;
 };

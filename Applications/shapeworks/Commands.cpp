@@ -1383,44 +1383,6 @@ bool ImageToMesh::execute(const optparse::Values &options, SharedCommandData &sh
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// DTToMesh
-///////////////////////////////////////////////////////////////////////////////
-void DTToMesh::buildParser()
-{
-  const std::string prog = "dt-to-mesh";
-  const std::string desc = "converts current distance transform to mesh";
-  parser.prog(prog).description(desc);
-
-  parser.add_option("--levelset").action("store").type("double").set_default(0.0).help("Value of levelset [default: %default].");
-  parser.add_option("--reduction").action("store").type("double").set_default(0.01).help("Percentage to decimate [default: %default].");
-  parser.add_option("--angle").action("store").type("int").set_default(30).help("Value of feature angle in degrees [default: %default].");
-  parser.add_option("--leveliterations").action("store").type("int").set_default(1).help("Number of iterations to smooth the level set [default: %default].");
-  parser.add_option("--meshiterations").action("store").type("int").set_default(1).help("Number of iterations to smooth the initial mesh [default: %default].");
-  parser.add_option("--preservetopology").action("store_true").set_default("false").help("Whether to preserve topology [default: true].");
-
-  Command::buildParser();
-}
-
-bool DTToMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validImage())
-  {
-    std::cerr << "No image to operate on\n";
-    return false;
-  }
-
-  double levelset = static_cast<double>(options.get("levelset"));
-  double reduction = static_cast<double>(options.get("reduction"));
-  double angle = static_cast<double>(options.get("angle"));
-  int leveliterations = static_cast<int>(options.get("leveliterations"));
-  int meshiterations = static_cast<int>(options.get("meshiterations"));
-  bool preservetopology = static_cast<bool>(options.get("preservetopology"));
-
-  sharedData.mesh = std::make_unique<Mesh>(sharedData.image.toMesh(levelset, reduction, angle, leveliterations, meshiterations, preservetopology));
-  return sharedData.validMesh();
-}
-
-///////////////////////////////////////////////////////////////////////////////
 // ReadParticleSystem
 ///////////////////////////////////////////////////////////////////////////////
 void ReadParticleSystem::buildParser()

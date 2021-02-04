@@ -450,9 +450,6 @@ PYBIND11_MODULE(shapeworks, m)
   .def("toMesh", [](Image &image, Image::PixelType isovalue) {
     return image.toMesh(isovalue);
   }, "converts image to mesh", "isovalue"_a)
-  .def("toMesh", [](Image &image, double levelset, double reduction, double angle, int leveliterations, int meshiterations, bool preservetopology) {
-    return image.toMesh(levelset, reduction, angle, leveliterations, meshiterations, preservetopology);
-  }, "converts distance transform to mesh", "levelset"_a, "reduction"_a, "angle"_a, "leveliterations"_a, "meshiterations"_a, "preservetopology"_a)
   .def("toArray", [](const Image &image) {
     Image::ImageType::Pointer img = image.getITKImage();
     const auto size = img->GetLargestPossibleRegion().GetSize();
@@ -501,6 +498,7 @@ PYBIND11_MODULE(shapeworks, m)
   py::class_<Mesh>(m, "Mesh")
   .def(py::init<const std::string &>())
   .def(py::init<vtkSmartPointer<vtkPolyData>>())
+  .def(py::self == py::self)
   .def("__repr__", [](const Mesh &mesh) {
     std::stringstream stream;
     stream << mesh;

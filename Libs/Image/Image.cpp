@@ -33,7 +33,6 @@
 #include <vtkImageImport.h>
 #include <vtkContourFilter.h>
 #include <vtkImageData.h>
-#include <vtkMarchingCubes.h>
 #include <vtkImageCast.h>
 
 #include <exception>
@@ -872,16 +871,6 @@ vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image& image, PixelType is
   targetContour->Update();
 
   return targetContour->GetOutput();
-}
-
-vtkSmartPointer<vtkPolyData> Image::march(const Image& image, double levelset)
-{
-  vtkSmartPointer<vtkMarchingCubes> cube = vtkSmartPointer<vtkMarchingCubes>::New();
-
-  cube->SetInputData(image.getVTKImage());
-  cube->SetValue(0, levelset);
-  cube->Update();
-  return cube->GetOutput();
 }
 
 TransformPtr Image::createCenterOfMassTransform()

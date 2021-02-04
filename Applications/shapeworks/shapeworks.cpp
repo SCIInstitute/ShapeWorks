@@ -49,7 +49,6 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(SetSpacing::getCommand());
   shapeworks.addCommand(WarpImage::getCommand());
   shapeworks.addCommand(CompareImage::getCommand());
-  shapeworks.addCommand(DTToMesh::getCommand());
   shapeworks.addCommand(ReadParticleSystem::getCommand());
   shapeworks.addCommand(Compactness::getCommand());
   shapeworks.addCommand(Generalization::getCommand());

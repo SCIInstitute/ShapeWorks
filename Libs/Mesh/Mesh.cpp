@@ -657,7 +657,7 @@ bool Mesh::compareAllPoints(const Mesh &other_mesh) const
     
   if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints())
   {
-    std::cout << "meshes differ in number of points";
+    std::cerr << "meshes differ in number of points";
     return false;
   }
 
@@ -686,12 +686,12 @@ bool Mesh::compareAllFields(const Mesh &other_mesh) const
 
   // first make sure they even have the same fields to compare
   if (fields1.size() != fields2.size()) {
-    std::cout << "Mesh have different number of fields\n";
+    std::cerr << "Mesh have different number of fields\n";
     return false;
   }
   for (int i=0; i<fields1.size(); i++) {
     if (std::find(fields2.begin(), fields2.end(), fields1[i]) == fields2.end()) {
-      std::cout << "Both meshes don't have " << fields1[i] << " field\n";
+      std::cerr << "Both meshes don't have " << fields1[i] << " field\n";
       return false;
     }      
   }
@@ -699,7 +699,7 @@ bool Mesh::compareAllFields(const Mesh &other_mesh) const
   // now compare the actual fields
   for (auto field: fields1) {
     if (!compareField(other_mesh, field)) {
-      std::cout << field << " fields are not the same\n";
+      std::cerr << field << " fields are not the same\n";
       return false;
     }
   }
@@ -713,13 +713,13 @@ bool Mesh::compareField(const Mesh& other_mesh, const std::string& name1, const 
   auto field2 = other_mesh.getField<vtkDataArray>(name2.empty() ? name1 : name2);
 
   if (!field1 || !field2) {
-    std::cout << "at least one mesh missing a field\n";
+    std::cerr << "at least one mesh missing a field\n";
     return false;
   }
 
   if (field1->GetNumberOfTuples() != field2->GetNumberOfTuples() ||
       field1->GetNumberOfComponents() != field2->GetNumberOfComponents()) {
-    std::cout << "Fields are not the same size\n";
+    std::cerr << "Fields are not the same size\n";
     return false;
   }
 
@@ -758,12 +758,12 @@ Point3 Mesh::center() const
 
 bool Mesh::compare(const Mesh& other) const
 {
-  if (!epsEqualN(center(), other.center(), 3))             { std::cout << "centers differ!\n"; return false; }
-  if (!epsEqualN(centerOfMass(), other.centerOfMass(), 3)) { std::cout << "coms differ!\n"; return false; }
-  if (numPoints() != other.numPoints())                    { std::cout << "num pts differ\n"; return false; }
-  if (numFaces() != other.numFaces())                      { std::cout << "num faces differ\n"; return false; }
-  if (!compareAllPoints(other))                            { std::cout << "points differ\n"; return false; }
-  if (!compareAllFields(other))                            { std::cout << "fields differ\n"; return false; }
+  if (!epsEqualN(center(), other.center(), 3))             { std::cerr << "centers differ!\n"; return false; }
+  if (!epsEqualN(centerOfMass(), other.centerOfMass(), 3)) { std::cerr << "coms differ!\n"; return false; }
+  if (numPoints() != other.numPoints())                    { std::cerr << "num pts differ\n"; return false; }
+  if (numFaces() != other.numFaces())                      { std::cerr << "num faces differ\n"; return false; }
+  if (!compareAllPoints(other))                            { std::cerr << "points differ\n"; return false; }
+  if (!compareAllFields(other))                            { std::cerr << "fields differ\n"; return false; }
 
   return true;
 }

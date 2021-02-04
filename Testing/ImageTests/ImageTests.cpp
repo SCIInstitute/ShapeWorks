@@ -1052,17 +1052,6 @@ TEST(ImageTests, toMeshTest1)
   ASSERT_TRUE(mesh == ground_truth);
 }
 
-// https://github.com/SCIInstitute/ShapeWorks/issues/939
-TEST(ImageTests, toMeshTest2)
-{
-  Image image(std::string(TEST_DATA_DIR) + "/computedt1.nrrd");
-  Mesh mesh(image.toMesh(10, 0.01, 30, 1, 1, true));
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/mesh2.vtk");
-
-  std::cout << "mesh: " << mesh << std::endl << "comp: " << ground_truth << std::endl;
-  ASSERT_TRUE(mesh == ground_truth);
-}
-
 TEST(ImageTests, getItk)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
