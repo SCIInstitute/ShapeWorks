@@ -8,7 +8,6 @@ set(Mesh_sources
  Mesh.cpp
  meshFIM.cpp
  MeshUtils.cpp
- swHausdorffDistancePointSetFilter.cxx
  )
 
 set(Mesh_headers
@@ -141,10 +140,6 @@ INSTALL(TARGETS FixCuttingPlanes RUNTIME DESTINATION bin)
 ADD_EXECUTABLE(RemoveFidsDTLeakage RemoveFidsDTLeakage.cxx)
 TARGET_LINK_LIBRARIES(RemoveFidsDTLeakage ${ITK_LIBRARIES} Mesh tinyxml)
 INSTALL(TARGETS RemoveFidsDTLeakage RUNTIME DESTINATION bin)
-
-add_executable(SurfaceToSurfaceDistance SurfaceToSurfaceDistance.cxx )
-target_link_libraries(SurfaceToSurfaceDistance Mesh Utils)
-INSTALL(TARGETS SurfaceToSurfaceDistance RUNTIME DESTINATION bin)
 
 #ADD_EXECUTABLE(fea2vtk fea2vtk.cxx)
 #TARGET_LINK_LIBRARIES(fea2vtk ${ITK_LIBRARIES} Mesh tinyxml)
