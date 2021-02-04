@@ -324,10 +324,11 @@ TEST(shapeworksTests, scalemeshTest)
   ASSERT_FALSE(system("bash scalemesh.sh"));
 }
 
-TEST(shapeworksTests, meshfixTest)
-{
-  ASSERT_FALSE(system("bash meshfix.sh"));
-}
+// https://github.com/SCIInstitute/ShapeWorks/issues/938
+// TEST(shapeworksTests, meshfixTest)
+// {
+//   ASSERT_FALSE(system("bash meshfix.sh"));
+// }
 
 TEST(shapeworksTests, meshtoimageTest)
 {
