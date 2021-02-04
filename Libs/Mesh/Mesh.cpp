@@ -479,7 +479,7 @@ Image Mesh::toDistanceTransform(Vector3 spacing, Dims size, Point3 origin) const
   return image;
 }
 
-Mesh& Mesh::fix(bool wind, bool smoothBefore, bool smoothAfter, double lambda, int iterations, bool decimate, double percentage)
+Mesh& Mesh::fix(bool smoothBefore, bool smoothAfter, double lambda, int iterations, bool decimate, double percentage)
 {
 	FEVTKimport import;
   FEMesh* meshFE = import.Load(this->mesh);
@@ -488,8 +488,8 @@ Mesh& Mesh::fix(bool wind, bool smoothBefore, bool smoothAfter, double lambda, i
 
 	FEFixMesh fix;
   FEMesh* meshFix;
-  if (wind)
-    meshFix = fix.FixElementWinding(meshFE);
+
+  meshFix = fix.FixElementWinding(meshFE);
 
   if (smoothBefore)
   {

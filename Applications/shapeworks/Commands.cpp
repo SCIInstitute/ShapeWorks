@@ -2191,7 +2191,6 @@ void MeshFix::buildParser()
   const std::string desc = "quality control meshes";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--wind").action("store").type("bool").set_default(true).help("Fix element window [default: true]");
   parser.add_option("--smoothBefore").action("store").type("bool").set_default(true).help("Perform laplacian smoothing before decimation [default: true].");
   parser.add_option("--smoothAfter").action("store").type("bool").set_default(true).help("Perform laplacian smoothing after decimation [default: true].");
   parser.add_option("--lambda").action("store").type("double").set_default(0.5).help("Laplacian smoothing lambda [default: %default].");
@@ -2210,7 +2209,6 @@ bool MeshFix::execute(const optparse::Values &options, SharedCommandData &shared
     return false;
   }
 
-  bool wind = static_cast<bool>(options.get("wind"));
   bool smoothBefore = static_cast<bool>(options.get("smoothBefore"));
   bool smoothAfter = static_cast<bool>(options.get("smoothAfter"));
   double lambda = static_cast<double>(options.get("lambda"));
@@ -2218,7 +2216,7 @@ bool MeshFix::execute(const optparse::Values &options, SharedCommandData &shared
   bool decimate = static_cast<bool>(options.get("decimate"));
   double percentage = static_cast<double>(options.get("percentage"));
 
-  sharedData.mesh->fix(wind, smoothBefore, smoothAfter, lambda, iterations, decimate, percentage);
+  sharedData.mesh->fix(smoothBefore, smoothAfter, lambda, iterations, decimate, percentage);
   return sharedData.validMesh();
 }
 

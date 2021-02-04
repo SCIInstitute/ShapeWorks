@@ -186,7 +186,8 @@ TEST(MeshTests, fixTest1)
 // TEST(MeshTests, fixTest2)
 // {
 //   Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
-//   femur.fix(true, true, true, 0.5, 1, true, 0.5);
+//   // femur.fix(true, true, 0.5, 1, true, 0.5);
+//   femur.fix();
 //   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fix1.vtk");
 //   ASSERT_TRUE(femur == ground_truth);
 // }

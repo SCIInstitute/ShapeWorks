@@ -71,7 +71,7 @@ public:
   Region boundingBox(bool center=false) const;
 
   /// quality control mesh
-  Mesh& fix(bool wind = true, bool smoothBefore = true, bool smoothAfter = true, double lambda = 0.5, int iterations = 1, bool decimate = true, double percentage = 0.5);
+  Mesh& fix(bool smoothBefore = true, bool smoothAfter = true, double lambda = 0.5, int iterations = 1, bool decimate = true, double percentage = 0.5);
 
   /// computes surface to surface distance, compute method: POINT_TO_POINT (default) or POINT_TO_CELL
   Mesh& distance(const Mesh &target, const DistanceMethod method = POINT_TO_POINT);
