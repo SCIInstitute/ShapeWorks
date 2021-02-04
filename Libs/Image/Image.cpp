@@ -864,16 +864,10 @@ Coord Image::physicalToLogical(const Point3 &p) const
 
 vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image& image, PixelType isoValue)
 {
-  using FilterType = itk::VTKImageExport<ImageType>;
-  FilterType::Pointer itkTargetExporter = FilterType::New();
-  itkTargetExporter->SetInput(image.image);
-
-  vtkImageImport *vtkTargetImporter = vtkImageImport::New();
-  ShapeworksUtils::connectPipelines(itkTargetExporter, vtkTargetImporter);
-  vtkTargetImporter->Update();
+  auto vtkImage = image.getVTKImage();
 
   vtkContourFilter *targetContour = vtkContourFilter::New();
-  targetContour->SetInputData(vtkTargetImporter->GetOutput());
+  targetContour->SetInputData(vtkImage);
   targetContour->SetValue(0, isoValue);
   targetContour->Update();
 

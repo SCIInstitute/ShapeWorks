@@ -5,7 +5,6 @@
 
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
-#include <swHausdorffDistancePointSetFilter.h>
 #include <string>
 #include <vtkPointData.h>
 // #include <gtest/gtest.h>  // fixme: not getting found; needed in order to test private functions
