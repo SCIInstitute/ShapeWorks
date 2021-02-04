@@ -449,10 +449,10 @@ PYBIND11_MODULE(shapeworks, m)
   .def("compare",               &Image::compare, "compares two images", "other"_a, "verifyall"_a=true, "tolerance"_a=0.0, "precision"_a=1e-12)
   .def("toMesh", [](Image &image, Image::PixelType isovalue) {
     return image.toMesh(isovalue);
-  }, "converts image to mesh", "isovalue"_a=1.0)
+  }, "converts image to mesh", "isovalue"_a)
   .def("toMesh", [](Image &image, double levelset, double reduction, double angle, int leveliterations, int meshiterations, bool preservetopology) {
     return image.toMesh(levelset, reduction, angle, leveliterations, meshiterations, preservetopology);
-  }, "converts distance transform to mesh", "levelset"_a=0.0, "reduction"_a=0.01, "angle"_a=30, "leveliterations"_a=1, "meshiterations"_a=1, "preservetopology"_a=true)
+  }, "converts distance transform to mesh", "levelset"_a, "reduction"_a, "angle"_a, "leveliterations"_a, "meshiterations"_a, "preservetopology"_a)
   .def("toArray", [](const Image &image) {
     Image::ImageType::Pointer img = image.getITKImage();
     const auto size = img->GetLargestPossibleRegion().GetSize();
@@ -524,7 +524,6 @@ PYBIND11_MODULE(shapeworks, m)
   .def("getField", [](const Mesh &mesh, std::string name) {
     auto array = mesh.getField<vtkDataArray>(name);
     const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()), static_cast<unsigned long>(array->GetNumberOfComponents()), 1};
-    //std::vector<double> stdarr(array->GetNumberOfValues());
     auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
     vtkarr->SetNumberOfValues(array->GetNumberOfValues());
     // LOTS of copying going on here, see github #903

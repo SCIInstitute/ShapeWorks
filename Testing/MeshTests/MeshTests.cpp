@@ -332,12 +332,12 @@ TEST(MeshTests, fieldTest2)
   Mesh mesh(std::string(TEST_DATA_DIR) + "/mesh1.vtk");
   double a = mesh.getFieldValue("scalars", 0);
   double b = mesh.getFieldValue("scalars", 1000);
-  double c = mesh.getFieldValue("normals", 1000);
-  double d = mesh.getFieldValue("normals", 3100);
+  double c = mesh.getFieldValue("Normals", 4231);
+  double d = mesh.getFieldValue("Normals", 5634);
 
   ASSERT_TRUE(a==1);
   ASSERT_TRUE(b==1);
-  ASSERT_TRUE(c==0);
+  ASSERT_TRUE(std::abs(c - 0.57735) < 1e-4);
   ASSERT_TRUE(d==0);
 }
 

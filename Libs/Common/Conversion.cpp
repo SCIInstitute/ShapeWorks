@@ -14,7 +14,7 @@ Mesh Image::toMesh(Image::PixelType isovalue) const
 Mesh Image::toMesh(double levelset, double reduction, double angle, int leveliterations, int meshiterations, bool preservetopology) const
 {
   Mesh mesh(march(*this, levelset));
-  mesh.smooth(leveliterations).decimate(reduction, angle).smooth(meshiterations);
+  mesh.smooth(leveliterations).decimate(reduction, angle, preservetopology).smooth(meshiterations);
   return mesh;
 }
 

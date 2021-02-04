@@ -215,11 +215,11 @@ public:
   static vtkSmartPointer<vtkPolyData> march(const Image& image, double levelset=0.0);
 
   /// converts image to mesh (note: definition in Conversion.cpp)
-  Mesh toMesh(PixelType isovalue = 1.0) const;
+  Mesh toMesh(PixelType isovalue) const;
 
   /// converts distance transform to mesh (note: definition in Conversion.cpp)
-  Mesh toMesh(double levelset = 0.0, double reduction = 0.01, double angle = 30,
-              int leveliterations = 1, int meshiterations = 1, bool preservetopology = true) const;
+  Mesh toMesh(double levelset, double reduction, double angle,
+              int leveliterations, int meshiterations, bool preservetopology) const;
 
 private:
   friend struct SharedCommandData;

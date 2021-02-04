@@ -717,15 +717,15 @@ bool Mesh::compareField(const Mesh& other_mesh, const std::string& name1, const 
     return false;
   }
 
-  if (field1->GetNumberOfValues() != field2->GetNumberOfValues()) {
+  if (field1->GetNumberOfTuples() != field2->GetNumberOfTuples()) {
     std::cout << "Fields are not the same size\n";
     return false;
   }
 
-  for (int i = 0; i < field1->GetNumberOfValues(); i++)
+  for (int i = 0; i < field1->GetNumberOfTuples(); i++)
   {
-    auto v1(field1->GetTuple1(i));
-    auto v2(field2->GetTuple1(i));
+    auto v1(field1->GetTuple(i)[0]);
+    auto v2(field2->GetTuple(i)[0]);
     if (!equalNSigDigits(v1, v2, 5)) {
       printf("%ith values not equal (%0.8f != %0.8f)\n", i, v1, v2);
       return false;
