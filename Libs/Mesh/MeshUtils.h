@@ -32,6 +32,12 @@ public:
   /// Compute transformation from set of points files using template mesh warp&face matrices
   static bool warpMeshes(std::vector< std::string> movingPointpaths, std::vector< std::string> outputMeshPaths, Eigen::MatrixXd W, Eigen::MatrixXi Fref, const int numP);
 
+  /// Thread safe reading of a mesh, uses a lock
+  static Mesh threadSafeReadMesh(std::string filename);
+
+  /// Thread safe writing of a mesh, uses a lock
+  static void threadSafeWriteMesh(std::string filename, Mesh mesh);
+
   /// calculate bounding box incrementally for meshes
   static Region boundingBox(std::vector<std::string> &filenames, bool center = false);
 

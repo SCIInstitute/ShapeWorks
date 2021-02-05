@@ -87,7 +87,7 @@ void ShapeworksWorker::process()
       break;
     case ShapeworksWorker::ReconstructType:
       try {
-        emit message(std::string("Warping optimizations to mean space..."));
+        emit message(std::string("Warping to mean space..."));
         this->session_->get_mesh_manager()->get_surface_reconstructor()->initializeReconstruction(
           this->local_pts_, this->global_pts_, this->distance_transform_,
           this->max_angle_, this->decimation_percent_,
@@ -115,5 +115,6 @@ void ShapeworksWorker::process()
       break;
   }
   emit result_ready();
+  emit finished();
 }
 }

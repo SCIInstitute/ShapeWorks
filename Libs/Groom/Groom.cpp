@@ -5,6 +5,7 @@
 
 #include <Libs/Image/Image.h>
 #include <Libs/Mesh/Mesh.h>
+#include <Libs/Mesh/MeshUtils.h>
 
 #include <Groom.h>
 #include <GroomParameters.h>
@@ -201,7 +202,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject)
   groom_name = groom_name.substr(0, groom_name.find_last_of('.')) + "_groomed.ply";
 
   try {
-    // load the image
+    // load the mesh
     std::shared_ptr<Mesh> mesh = this->load_mesh(path);
     if (!mesh) {
       return false;
@@ -353,9 +354,8 @@ void Groom::set_skip_grooming(bool skip)
 //---------------------------------------------------------------------------
 std::shared_ptr<Mesh> Groom::load_mesh(std::string filename)
 {
-  tbb::mutex::scoped_lock lock(this->mutex_);
   try {
-    auto mesh = std::make_shared<Mesh>(filename);
+    auto mesh = std::make_shared<Mesh>(MeshUtils::threadSafeReadMesh(filename));
     return mesh;
   } catch (std::exception e) {
     std::cerr << "Exception: " << e.what() << "\n";
@@ -366,9 +366,8 @@ std::shared_ptr<Mesh> Groom::load_mesh(std::string filename)
 //---------------------------------------------------------------------------
 bool Groom::save_mesh(std::shared_ptr<Mesh> mesh, std::string filename)
 {
-  tbb::mutex::scoped_lock lock(this->mutex_);
   try {
-    mesh->write(filename);
+    MeshUtils::threadSafeWriteMesh(filename, *mesh);
     return true;
   } catch (std::exception e) {
     std::cerr << "Exception: " << e.what() << "\n";
