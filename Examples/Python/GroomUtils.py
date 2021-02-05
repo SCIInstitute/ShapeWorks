@@ -305,7 +305,17 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side):
             img_out = rename(image, outImgDir, 'reflect').replace(prefix, flip_prefix)
             imageList.append(img_out)
             img = Image(image)
-            img.reflect("X").write(img_out)
+            img2 = img
+            img2.recenter()
+            center = img2.origin() - img.origin()
+            img.reflect(X).write(img_out)
+
+            cmd = ["shapeworks",
+                   "read-mesh", "--name", seg,
+                   "reflect-mesh", "--axis", "X", "--originx", str(center[0]), "--originy", str(center[1]), "--originz", str(center[2]),
+                   "write-mesh", "--name", seg_out]
+            if printCmd:
+                print("CMD: " + " ".join(cmd))
             seg_out = rename(flip_seg, outSegDir, 'reflect')
             meshList.append(seg_out)
     return meshList, imageList
@@ -341,7 +351,7 @@ def reflectMeshes(outDir, seg_list, reference_side, printCmd=True):
 
             cmd = ["shapeworks",
                    "read-mesh", "--name", seg,
-                   "reflect-mesh", "--originx", str(origin[0]), "--originy", str(origin[1]), "--originz", str(origin[2]),
+                   "reflect-mesh", "--axis", "X", "--originx", str(origin[0]), "--originy", str(origin[1]), "--originz", str(origin[2]),
                    "write-mesh", "--name", seg_out]
             if printCmd:
                 print("CMD: " + " ".join(cmd))
@@ -502,9 +512,9 @@ def ShowCuttingPlanesOnImage(input_file, cutting_planes, printCmd=True):
     input_vtk = input_file.replace(file_format, "vtk")
     if file_format == "nrrd":
         cmd = ["shapeworks",
-                "read-image", "--name", input_file,
-                "dt-to-mesh", "--reduction", str(0.0001),
-                "write-mesh", "--name", input_vtk]
+               "read-image", "--name", input_file,
+               "dt-to-mesh", "--reduction", str(0.0001),
+               "write-mesh", "--name", input_vtk]
         print("\nCreating mesh from: " + input_file)
         print("\nSaving as: " + input_vtk)
         if printCmd:
@@ -611,9 +621,9 @@ def SelectCuttingPlane(input_file, printCmd=True):
         print("\nCreating mesh from: " + input_file)
         print("\nSaving as: " + input_vtk)
         cmd = ["shapeworks",
-                "read-image", "--name", input_file,
-                "dt-to-mesh", "--reduction", str(0.0001),
-                "write-mesh", "--name", input_vtk]
+               "read-image", "--name", input_file,
+               "dt-to-mesh", "--reduction", str(0.0001),
+               "write-mesh", "--name", input_vtk]
         if printCmd:
             print("CMD: " + " ".join(cmd))
         subprocess.check_call(cmd)

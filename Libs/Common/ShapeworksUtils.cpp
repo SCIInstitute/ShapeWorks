@@ -6,6 +6,16 @@
 
 namespace shapeworks {
 
+// Windows doesn't have S_ISDIR and S_ISREG macros
+#if !defined(S_ISREG) && defined(S_IFMT) && defined(S_IFREG)
+#define S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
+#endif
+
+#if !defined(S_ISDIR) && defined(S_IFMT) && defined(S_IFDIR)
+#define S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
+#endif
+
+
 /// looks at the pathname to see if it's a file or a directory or neither
 bool statdatpath(const std::string &pathname, bool isdir = false)
 {

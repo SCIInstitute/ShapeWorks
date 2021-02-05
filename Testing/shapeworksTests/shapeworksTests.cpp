@@ -9,9 +9,59 @@ TEST(shapeworksTests, setup)
   ASSERT_TRUE(true);
 }
 
-TEST(shapeworksTests, imageinfoTest)
+TEST(shapeworksTests, fieldnameTest)
 {
-  ASSERT_FALSE(system("bash imageinfo.sh"));
+  ASSERT_FALSE(system("bash meshfieldnames.sh"));
+}
+
+TEST(shapeworksTests, meshDistanceTest)
+{
+  ASSERT_FALSE(system("bash meshdistance.sh"));
+}
+
+TEST(shapeworksTests, getfieldvalueTest)
+{
+  ASSERT_FALSE(system("bash getfieldvalue.sh"));
+}
+
+TEST(shapeworksTests, fieldrangeTest)
+{
+  ASSERT_FALSE(system("bash fieldrange.sh"));
+}
+
+TEST(shapeworksTests, fieldmeanTest)
+{
+  ASSERT_FALSE(system("bash fieldmean.sh"));
+}
+
+TEST(shapeworksTests, fieldstdTest)
+{
+  ASSERT_FALSE(system("bash fieldstd.sh"));
+}
+
+TEST(shapeworksTests, tomeshTest)
+{
+  ASSERT_FALSE(system("bash tomesh.sh"));
+}
+
+TEST(shapeworksTests, clipmeshTest)
+{
+  ASSERT_FALSE(system("bash clipmesh.sh"));
+}
+
+TEST(shapeworksTests, meshinfoTest)
+{
+  ASSERT_FALSE(system("bash meshinfo.sh"));
+}
+
+TEST(shapeworksTests, coverageTest)
+{
+  ASSERT_FALSE(system("bash coverage.sh"));
+}
+
+TEST(shapeworksTests, probeTest)
+{
+  ASSERT_FALSE(system("bash probe.sh"));
 }
 
 TEST(shapeworksTests, compareTest)
@@ -219,11 +269,6 @@ TEST(shapeworksTests, setspacingFailTest)
   ASSERT_TRUE(system("bash setspacingfail.sh"));
 }
 
-TEST(shapeworksTests, tomeshTest)
-{
-  ASSERT_FALSE(system("bash tomesh.sh"));
-}
-
 TEST(shapeworksTests, negateTest)
 {
   ASSERT_FALSE(system("bash negate.sh"));
@@ -249,11 +294,6 @@ TEST(shapeworksTests, divisionTest)
   ASSERT_FALSE(system("bash div.sh"));
 }
 
-TEST(shapeworksTests, meshcoverage)
-{
-  ASSERT_FALSE(system("bash coverage.sh"));
-}
-
 TEST(shapeworksTests, smoothTest)
 {
   ASSERT_FALSE(system("bash smooth.sh"));
@@ -274,16 +314,6 @@ TEST(shapeworksTests, fillholesTest)
   ASSERT_FALSE(system("bash fillholes.sh"));
 }
 
-TEST(shapeworksTests, probeTest)
-{
-  ASSERT_FALSE(system("bash probe.sh"));
-}
-
-TEST(shapeworksTests, clipmeshTest)
-{
-  ASSERT_FALSE(system("bash fillholes.sh"));
-}
-
 TEST(shapeworksTests, translatemeshTest)
 {
   ASSERT_FALSE(system("bash translatemesh.sh"));
@@ -293,6 +323,12 @@ TEST(shapeworksTests, scalemeshTest)
 {
   ASSERT_FALSE(system("bash scalemesh.sh"));
 }
+
+// https://github.com/SCIInstitute/ShapeWorks/issues/938
+// TEST(shapeworksTests, meshfixTest)
+// {
+//   ASSERT_FALSE(system("bash meshfix.sh"));
+// }
 
 TEST(shapeworksTests, meshtoimageTest)
 {
@@ -304,13 +340,12 @@ TEST(shapeworksTests, meshtodtTest)
   ASSERT_FALSE(system("bash meshtodt.sh"));
 }
 
-TEST(shapeworksTests, shapeevaluationTest)
-{
-  ASSERT_FALSE(system("bash shapeevaluation.sh"));
-}
-
-TEST(shapeworksTests, meshtransform)
+TEST(shapeworksTests, meshtransformTest)
 {
   ASSERT_FALSE(system("bash meshtransform.sh"));
 }
 
+TEST(shapeworksTests, shapeevaluationTest)
+{
+  ASSERT_FALSE(system("bash shapeevaluation.sh"));
+}

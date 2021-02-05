@@ -5,10 +5,9 @@
 
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
-#include <vtkPlane.h>
-#include <swHausdorffDistancePointSetFilter.h>
 #include <string>
-// #include <gtest/gtest.h>  // not getting found; needed in order to test private functions
+#include <vtkPointData.h>
+// #include <gtest/gtest.h>  // fixme: not getting found; needed in order to test private functions
 
 namespace shapeworks {
 
@@ -17,13 +16,14 @@ class Mesh
 public:
   enum TransformType { IterativeClosestPoint };
   enum AlignmentType { Rigid, Similarity, Affine };
+  enum DistanceMethod { POINT_TO_POINT, POINT_TO_CELL };
 
   using MeshType = vtkSmartPointer<vtkPolyData>;
 
   Mesh(const std::string& pathname) : mesh(read(pathname)) {}
   Mesh(MeshType meshPtr) : mesh(meshPtr) { if (!mesh) throw std::invalid_argument("null meshPtr"); }
-  Mesh& operator=(const Mesh& mesh); /// lvalue assignment operator
-  Mesh& operator=(std::unique_ptr<Mesh> mesh);      /// rvalue assignment operator
+  Mesh& operator=(const Mesh& mesh);           /// lvalue assignment operator
+  Mesh& operator=(std::unique_ptr<Mesh> mesh); /// rvalue assignment operator
 
   // return the current mesh
   MeshType getVTKMesh() const { return this->mesh; }
@@ -59,7 +59,7 @@ public:
   Mesh& probeVolume(const Image &img);
 
   /// clips a mesh using a cutting plane
-  Mesh& clip(const vtkSmartPointer<vtkPlane> plane);
+  Mesh& clip(const Plane plane);
 
   /// helper to translate mesh
   Mesh& translate(const Vector3 &v);
@@ -71,21 +71,10 @@ public:
   Region boundingBox(bool center=false) const;
 
   /// quality control mesh
-  Mesh& fix(bool wind = true, bool smoothBefore = true, bool smoothAfter = true, double lambda = 0.5, int iterations = 1, bool decimate = true, double percentage = 0.5);
+  Mesh& fix(bool smoothBefore = true, bool smoothAfter = true, double lambda = 0.5, int iterations = 1, bool decimate = true, double percentage = 0.5);
 
-  // <ctc> <as>
-
-  /// compute surface to surface distance using a filter
-  vtkSmartPointer<swHausdorffDistancePointSetFilter> computeDistance(const Mesh &other_mesh, bool target=false);
-
-  /// returns surface to surface distance or hausdorff distance
-  double hausdorffDistance(const Mesh &other_mesh, bool target=false);
-
-  /// returns relative distance from mesh A to mesh B
-  double relativeDistanceAtoB(const Mesh &other_mesh, bool target=false);
-
-  /// returns relative distance from mesh B to mesh A
-  double relativeDistanceBtoA(const Mesh &other_mesh, bool target=false);
+  /// computes surface to surface distance, compute method: POINT_TO_POINT (default) or POINT_TO_CELL
+  Mesh& distance(const Mesh &target, const DistanceMethod method = POINT_TO_POINT);
 
   /// rasterizes mesh to create binary images, automatically computing size and origin if necessary
   Image toImage(Vector3 spacing = makeVector({1.0, 1.0, 1.0}), Dims size = {0, 0, 0}, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;
@@ -101,26 +90,79 @@ public:
   /// center of mass of mesh
   Point3 centerOfMass() const;
 
-  /// number of vertices
-  vtkIdType numVertices() const { return mesh->GetNumberOfVerts(); }
+  /// number of points
+  vtkIdType numPoints() const { return mesh->GetNumberOfPoints(); }
 
   /// number of faces
   vtkIdType numFaces() const { return mesh->GetNumberOfCells(); }
 
-  /// compare if values of the points in two (corresponding) meshes are equal within num significant digits
-  bool comparePointsEqual(const Mesh& other_mesh) const;
 
-  /// compare if scalars in two meshes are equal
-  bool compareScalarsEqual(const Mesh& other_mesh) const;
+  // fields of mesh points //
 
-  /// mesh comparison
-  bool operator==(const Mesh& other) const;
+  /// print all field names in mesh
+  std::vector<std::string> getFieldNames() const;
+
+  /// sets the given field for points with array (*does not copy array's values)
+  Mesh& setField(std::string name, Array array);
+
+  /// gets the field (*does not copy array's values)
+  template<typename T>
+  vtkSmartPointer<T> getField(const std::string& name) const
+  {
+    if (mesh->GetPointData()->GetNumberOfArrays() < 1)
+      throw std::invalid_argument("Mesh has no fields.");
+
+    auto rawarr = mesh->GetPointData()->GetArray(name.c_str());
+    return rawarr;
+  }
+
+  /// sets the given index of field to value
+  void setFieldValue(const std::string& name, int idx, double value);
+
+  /// gets the value at the given index of field
+  double getFieldValue(const std::string& name, int idx) const;
+
+  /// returns the range of the given field
+  std::vector<double> getFieldRange(const std::string& name) const;
+
+  /// returns the mean the given field
+  double getFieldMean(const std::string& name) const;
+
+  /// returns the standard deviation of the given field
+  double getFieldStd(const std::string& name) const;
+
+
+  // fields of mesh faces //
+  // todo: add support for fields of mesh faces (ex: their normals)
+
+
+  // mesh comparison //
+
+  /// compare if values of the points in two (corresponding) meshes are (eps)equal
+  bool compareAllPoints(const Mesh& other_mesh) const;
+
+  /// compare if all fields in two meshes are (eps)equal
+  bool compareAllFields(const Mesh& other_mesh) const;
+
+  /// compare field of meshes to be (eps)equal (same field for both if only one specified)
+  bool compareField(const Mesh& other_mesh, const std::string& name1, const std::string& name2="") const;
+
+  // todo: add support for comparison of fields of mesh faces (ex: their normals)
+
+  /// compare meshes
+  bool compare(const Mesh& other_mesh) const;
+
+  /// compare meshes
+  bool operator==(const Mesh& other) const { return compare(other); }
+
+  
+  // public static functions //
 
   /// getSupportedTypes
   static std::vector<std::string> getSupportedTypes() { return {"vtk", "vtp", "ply", "stl", "obj"}; }
 
 public:
-  // these two function should be private, but unable to test them b/c can't find gtest.h
+  // todo: these two function should be private, but unable to test them b/c can't find gtest.h
 
   /// compute origin of volume that would contain the rasterization of each mesh
   // FRIEND_TEST(MeshTests, rasterizationOriginTest1);
@@ -131,7 +173,6 @@ public:
   // FRIEND_TEST(MeshTests, rasterizationSizeTest1);
   // FRIEND_TEST(MeshTests, rasterizationSizeTest2);
   Dims rasterizationSize(Region region, Vector3 spacing = makeVector({1.0, 1.0, 1.0}), int padding = 0, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;
-
 
 private:
   friend struct SharedCommandData;

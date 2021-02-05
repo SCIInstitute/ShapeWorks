@@ -1,15 +1,9 @@
 #include "MeshUtils.h"
+#include "ParticleSystem.h"
 
 #include <vtkIterativeClosestPointTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkLandmarkTransform.h>
-#include <vtkTransform.h>
-#include <vtkPLYWriter.h>
-#include "Eigen/Core"
-#include "Eigen/Dense"
-#include "ParticleSystem.h"
-
-// IGL dependencies
 #include <igl/biharmonic_coordinates.h>
 #include <igl/cat.h>
 #include <igl/cotmatrix.h>
@@ -193,15 +187,6 @@ void MeshUtils::threadSafeWriteMesh(std::string filename, Mesh mesh)
 {
   tbb::mutex::scoped_lock lock(mesh_mutex);
   mesh.write(filename);
-}
-
-vtkSmartPointer<vtkPlane> MeshUtils::createPlane(const Vector3 &n, const Point &o)
-{
-  vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
-  plane->SetNormal(n[0], n[1], n[2]);
-  plane->SetOrigin(o[0], o[1], o[2]);
-
-  return plane;
 }
 
 Region MeshUtils::boundingBox(std::vector<std::string> &filenames, bool center)
