@@ -39,7 +39,7 @@ public:
   Mesh& smooth(int iterations = 0, double relaxation = 0.0);
 
   /// applies filter to reduce number of triangles in mesh
-  Mesh& decimate(double reduction = 0.0, double angle = 0.0, bool preservetopology = false);
+  Mesh& decimate(double reduction = 0.0, double angle = 0.0, bool preserveTopology = false);
 
   /// handle flipping normals
   Mesh& invertNormal();
@@ -56,7 +56,7 @@ public:
   Mesh& fillHoles();
 
   /// samples data values at specified point locations
-  Mesh& probeVolume(const Image &img);
+  Mesh& probeVolume(const Image &image);
 
   /// clips a mesh using a cutting plane
   Mesh& clip(const Plane plane);

@@ -494,6 +494,27 @@ PYBIND11_MODULE(shapeworks, m)
   }, "computes a warp transform from the source to the target landmarks", "source_landmarks"_a, "target_landmarks"_a, "stride"_a=1)
   ;
 
+  // Mesh::TransformType
+  py::enum_<Mesh::TransformType>(m, "TransformType")
+  .value("IterativeClosestPoint", Mesh::TransformType::IterativeClosestPoint)
+  .export_values();
+  ;
+
+  // Mesh::AlignmentType
+  py::enum_<Mesh::AlignmentType>(m, "AlignmentType")
+  .value("Rigid", Mesh::AlignmentType::Rigid)
+  .value("Similarity", Mesh::AlignmentType::Similarity)
+  .value("Affine", Mesh::AlignmentType::Affine)
+  .export_values();
+  ;
+
+  // Mesh::DistanceMethod
+  py::enum_<Mesh::DistanceMethod>(m, "DistanceMethod")
+  .value("POINT_TO_POINT", Mesh::DistanceMethod::POINT_TO_POINT)
+  .value("POINT_TO_CELL", Mesh::DistanceMethod::POINT_TO_CELL)
+  .export_values();
+  ;
+
   // Mesh
   py::class_<Mesh>(m, "Mesh")
   .def(py::init<const std::string &>())
@@ -505,7 +526,16 @@ PYBIND11_MODULE(shapeworks, m)
     return stream.str();
   })
   .def("write",                 &Mesh::write, "pathname"_a)
-  .def("coverage",              &Mesh::coverage, "other_mesh"_a, "ignore_back_intersections"_a, "angle_threshold"_a, "back_search_radius"_a)
+  .def("coverage",              &Mesh::coverage, "otherMesh"_a, "allowBackIntersections"_a=true, "angleThreshold"_a=0, "backSearchRadius"_a=0)
+  .def("smooth",                &Mesh::smooth, "iterations"_a=0, "relaxation"=0.0)
+  .def("decimate",              &Mesh::decimate, "reduction"_a=0.0, "angle"_a=0.0, "preserveTopology"=false)
+  .def("invertNormal",          &Mesh::invertNormal)
+  .def("reflect",               &Mesh::reflect, "axis"_a, "origin"_a=)
+  .def("createTransform",       &Mesh::createTransform, "target"_a, "type"_a=TransformType::IterativeClosestPoint, "align"_a=AlignmentType::Similarity, "iterations"_a=10)
+  .def("applyTransform",        &Mesh::applyTransform, "transform"_a)
+  .def("fillHoles",             &Mesh::fillHoles)
+  .def("probeVolume",           &Mesh::probeVolume, "image"_a)
+  
   .def("numPoints",             &Mesh::numPoints)
   .def("numFaces",              &Mesh::numFaces)
   .def("compareAllPoints",      &Mesh::compareAllPoints, "other_mesh"_a)
