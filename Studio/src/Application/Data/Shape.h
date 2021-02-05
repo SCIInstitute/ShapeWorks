@@ -3,7 +3,6 @@
 #include <QSharedPointer>
 #include <QString>
 
-
 #include <Data/StudioMesh.h>
 #include <Libs/Project/Subject.h>
 #include <Data/MeshManager.h>
@@ -50,11 +49,6 @@ public:
 
   /// Retrieve the original mesh
   MeshHandle get_original_mesh(bool wait = false);
-
-  ImageType::Pointer get_groomed_image();
-
-  /// Import the groomed raw image file
-  void import_groomed_image(ImageType::Pointer img, double iso, TransformType transform);
 
   /// Retrieve the groomed mesh
   MeshHandle get_groomed_mesh(bool wait = false);

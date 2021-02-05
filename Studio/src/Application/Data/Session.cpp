@@ -149,42 +149,6 @@ bool Session::save_project(std::string fname)
     //this->session_->set_original_files(original_list);
   }
 
-  // distance transforms
-  if (this->unsaved_groomed_files_) {
-    std::cerr << "unsaved groomed files detected, saving...\n";
-    std::vector<std::string> groomed_list;
-    for (int i = 0; i < this->shapes_.size(); i++) {
-      QString loc = this->shapes_[i]->get_groomed_filename_with_path();
-      std::string location = loc.toStdString();
-
-      groomed_list.push_back(location);
-
-      if (loc.toLower().endsWith(".vtk")) {
-        vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-        writer->SetInputData(this->shapes_[i]->get_groomed_mesh()->get_poly_data());
-        writer->SetFileName(location.c_str());
-        writer->Update();
-      }
-      else {
-        //try writing the groomed to file
-        auto writer = itk::ImageFileWriter<ImageType>::New();
-        writer->SetFileName(location);
-        writer->SetInput(this->shapes_[i]->get_groomed_image());
-        writer->SetUseCompression(true);
-        std::cerr << "Writing distance transform: " << location << "\n";
-        writer->Update();
-      }
-      std::vector<std::string> groomed_filenames{location}; // only single domain supported so far
-      this->shapes_[i]->get_subject()->set_groomed_filenames(groomed_filenames);
-
-      QApplication::processEvents();
-      if (progress.wasCanceled()) {
-        break;
-      }
-    }
-
-    this->unsaved_groomed_files_ = false;
-  }
 
   // correspondence points
   if (this->unsaved_particle_files_) {
@@ -853,11 +817,6 @@ QString Session::get_display_name()
   return QFileInfo(this->filename_).baseName();
 }
 
-//---------------------------------------------------------------------------
-void Session::set_groom_unsaved(bool value)
-{
-  this->unsaved_groomed_files_ = true;
-}
 
 //---------------------------------------------------------------------------
 std::string Session::get_default_feature_map()

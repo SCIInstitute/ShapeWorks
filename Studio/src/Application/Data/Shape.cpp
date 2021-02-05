@@ -106,63 +106,6 @@ MeshHandle Shape::get_original_mesh(bool wait)
   return this->original_mesh_;
 }
 
-
-//---------------------------------------------------------------------------
-ImageType::Pointer Shape::get_groomed_image()
-{
-  if (!this->groomed_image_) {
-    if (this->subject_->get_groomed_filenames().size() < 1) {
-      STUDIO_LOG_ERROR("No groomed file for subject");
-      ImageType::Pointer image;
-      return image;
-    }
-    std::string filename = this->subject_->get_groomed_filenames()[0]; // single domain supported
-    if (filename != "") {
-      ImageType::Pointer image;
-      try {
-        // read file using ITK
-        ReaderType::Pointer reader = ReaderType::New();
-        STUDIO_LOG_MESSAGE(QString::fromStdString("Loading groomed file: " + filename));
-        reader->SetFileName(filename);
-        reader->Update();
-        image = reader->GetOutput();
-        // don't store to this->groomed_image_ so that we don't hold a pointer to it
-      } catch (itk::ExceptionObject& excep) {
-        STUDIO_LOG_ERROR(QString::fromStdString("Failed to loading groomed file: " + filename));
-        std::cerr << "Exception caught!" << std::endl;
-        std::cerr << excep << std::endl;
-      }
-      return image;
-    }
-  }
-  return this->groomed_image_;
-}
-
-//---------------------------------------------------------------------------
-void Shape::import_groomed_image(ImageType::Pointer img, double iso, TransformType transform)
-{
-  this->groomed_mesh_ = std::make_shared<StudioMesh>();
-
-  this->groomed_image_ = img;
-  this->groomed_mesh_->create_from_image(img, iso);
-  this->groomed_transform_ = transform;
-  auto name = this->get_original_filename_with_path().toStdString();
-  name = name.substr(0, name.find_last_of(".")) + "_DT.nrrd";
-  this->groomed_filename_ = QString::fromStdString(name);
-  std::vector<std::string> groomed_filenames{name};   // only single domain supported so far
-  this->subject_->set_groomed_filenames(groomed_filenames);
-
-  // single domain so far
-  std::vector<std::vector<double>> groomed_transforms;
-  std::vector<double> groomed_transform;
-  for (int i = 0; i < transform.size(); i++) {
-    groomed_transform.push_back(transform[i]);
-  }
-  groomed_transforms.push_back(groomed_transform);
-  this->subject_->set_groomed_transforms(groomed_transforms);
-
-}
-
 //---------------------------------------------------------------------------
 MeshHandle Shape::get_groomed_mesh(bool wait)
 {

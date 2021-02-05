@@ -107,8 +107,6 @@ bool Optimize::Run()
   m_disable_procrustes = true;
 
   std::vector<int> final_number_of_particles = this->m_number_of_particles;
-  std::cerr << "final[0] = " << final_number_of_particles[0] << "\n";
-  std::cerr << "final[1] = " << final_number_of_particles[1] << "\n";
   int scale = 1;
   if (this->m_use_shape_statistics_after > 0) {
     this->m_use_shape_statistics_in_init = false;
@@ -2172,7 +2170,7 @@ bool Optimize::LoadParameterFile(std::string filename)
 //---------------------------------------------------------------------------
 MatrixContainer Optimize::GetParticleSystem()
 {
-  
+
   auto shape_matrix = m_sampler->GetGeneralShapeMatrix();
 
   MatrixType matrix;
