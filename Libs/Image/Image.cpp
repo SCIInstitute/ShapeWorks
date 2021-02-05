@@ -33,7 +33,6 @@
 #include <vtkImageImport.h>
 #include <vtkContourFilter.h>
 #include <vtkImageData.h>
-#include <vtkMarchingCubes.h>
 #include <vtkImageCast.h>
 
 #include <exception>
@@ -864,35 +863,14 @@ Coord Image::physicalToLogical(const Point3 &p) const
 
 vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image& image, PixelType isoValue)
 {
-  using FilterType = itk::VTKImageExport<ImageType>;
-  FilterType::Pointer itkTargetExporter = FilterType::New();
-  itkTargetExporter->SetInput(image.image);
-
-  vtkImageImport *vtkTargetImporter = vtkImageImport::New();
-  ShapeworksUtils::connectPipelines(itkTargetExporter, vtkTargetImporter);
-  vtkTargetImporter->Update();
+  auto vtkImage = image.getVTKImage();
 
   vtkContourFilter *targetContour = vtkContourFilter::New();
-  targetContour->SetInputData(vtkTargetImporter->GetOutput());
+  targetContour->SetInputData(vtkImage);
   targetContour->SetValue(0, isoValue);
   targetContour->Update();
 
   return targetContour->GetOutput();
-}
-
-vtkSmartPointer<vtkPolyData> Image::march(const Image& image, double levelset)
-{
-  using connectorType = itk::ImageToVTKImageFilter<Image::ImageType>;
-  connectorType::Pointer connector = connectorType::New();
-  connector->SetInput(image.image);
-  connector->Update();
-
-  vtkSmartPointer<vtkMarchingCubes> cube = vtkSmartPointer<vtkMarchingCubes>::New();
-
-  cube->SetInputData(connector->GetOutput());
-  cube->SetValue(0, levelset);
-  cube->Update();
-  return cube->GetOutput();
 }
 
 TransformPtr Image::createCenterOfMassTransform()

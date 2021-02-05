@@ -4,7 +4,6 @@
 #include "Mesh.h"
 #include "Eigen/Core"
 #include "Eigen/Dense"
-#include <vtkPolyData.h>
 
 namespace shapeworks {
 
@@ -38,9 +37,6 @@ public:
 
   /// Thread safe writing of a mesh, uses a lock
   static void threadSafeWriteMesh(std::string filename, Mesh mesh);
-
-  /// Create plane
-  static vtkSmartPointer<vtkPlane> createPlane(const Vector3 &n, const Point &o);
 
   /// calculate bounding box incrementally for meshes
   static Region boundingBox(std::vector<std::string> &filenames, bool center = false);

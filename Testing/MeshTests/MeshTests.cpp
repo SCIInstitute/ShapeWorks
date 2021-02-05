@@ -1,16 +1,14 @@
 #include "Testing.h"
-#include "MeshUtils.h"
 #include "Mesh.h"
-#include <igl/point_mesh_squared_distance.h>
-#include "Eigen/Core"
-#include "Eigen/Dense"
-#include "ParticleSystem.h"
 #include "MeshUtils.h"
 #include "Image.h"
+#include "ParticleSystem.h"
+
+#include <igl/point_mesh_squared_distance.h>
 
 using namespace shapeworks;
 
-TEST(MeshTests, readfail)
+TEST(MeshTests, readFailTest)
 {
   try {
     Mesh mesh(std::string(TEST_DATA_DIR) + "/foo.vtk");
@@ -58,7 +56,11 @@ TEST(MeshTests, decimateTest2)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-// TODO: Karthik will add MeshTest for inverNormal
+// https://github.com/SCIInstitute/ShapeWorks/issues/937
+// TEST(MeshTests, invertNormalTest1)
+// {
+//   // TODO
+// }
 
 TEST(MeshTests, reflectTest1)
 {
@@ -96,11 +98,32 @@ TEST(MeshTests, probeTest)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, clipTest)
+TEST(MeshTests, clipTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.clip(MeshUtils::createPlane(makeVector({0.0,0.0,0.0}), Point3({0.0,0.0,0.0})));
+  femur.clip(makePlane(makeVector({0.0,0.0,1.0}),
+                       Point3({-91.0, 0.0, 1230.0}))); // clip upper half of mesh from center
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/clip1.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
+TEST(MeshTests, clipTest2)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.clip(makePlane(makeVector({0.0,0.0,-1.0}),
+                       Point3({-91.0, 0.0, 1230.0}))); // clip lower half of mesh from center
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/clip2.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
+TEST(MeshTests, clipTest3)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.clip(makePlane(makeVector({-5.0,3.14159,1.0}),
+                       Point3({-60.0, 10.0, 1235.0}))); // clip arbitrary mesh from an edge
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/clip3.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
 }
@@ -150,42 +173,23 @@ TEST(MeshTests, scaleTest2)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-// TODO: PreviewCmd results in seg fault. WHY?
-// TEST(MeshTests, fixTest)
+// https://github.com/SCIInstitute/ShapeWorks/issues/938
+// TEST(MeshTests, fixTest1)
 // {
-//   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+//   Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
 //   femur.fix();
-//   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/scale1.vtk");
-
+//   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fix1.vtk");
 //   ASSERT_TRUE(femur == ground_truth);
 // }
 
-TEST(MeshTests, distanceTest)
-{
-  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
-  double distance = femur.hausdorffDistance(pelvis);
-
-  ASSERT_TRUE(std::abs(distance - 32.2215) < 1e-4);
-}
-
-TEST(MeshTests, relativeDistanceABTest)
-{
-  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
-  double relativeDistanceAB = femur.relativeDistanceAtoB(pelvis);
-
-  ASSERT_TRUE(std::abs(relativeDistanceAB - 32.2215) < 1e-4);
-}
-
-TEST(MeshTests, relativeDistanceBATest)
-{
-  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
-  double relativeDistanceBA = femur.relativeDistanceBtoA(pelvis);
-
-  ASSERT_TRUE(std::abs(relativeDistanceBA - 16.1937) < 1e-4);
-}
+// TEST(MeshTests, fixTest2)
+// {
+//   Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
+//   // femur.fix(true, true, 0.5, 1, true, 0.5);
+//   femur.fix();
+//   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fix1.vtk");
+//   ASSERT_TRUE(femur == ground_truth);
+// }
 
 TEST(MeshTests, rasterizationOriginTest1)
 {
@@ -231,7 +235,7 @@ TEST(MeshTests, rasterizationSizeTest2)
   ASSERT_TRUE(femur.rasterizationSize(region) == size);
 }
 
-TEST(MeshTests, center)
+TEST(MeshTests, centerTest)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
   Point3 center(femur.center());
@@ -239,7 +243,7 @@ TEST(MeshTests, center)
   ASSERT_TRUE(epsEqual(center, Point3({90.7541, -160.557, -673.572}), 1e-3));
 }
 
-TEST(MeshTests, centerofmass)
+TEST(MeshTests, centerofmassTest)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
   Point3 com(femur.centerOfMass());
@@ -275,9 +279,6 @@ TEST(MeshTests, toDistanceTransformTest1)
   ASSERT_TRUE(image == ground_truth);
 }
 
-// <ctc> add toImage and toDT tests that specify params
-// also, think of a way to specify padding automatically computing origin and size
-
 TEST(MeshTests, coverageTest)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
@@ -285,9 +286,62 @@ TEST(MeshTests, coverageTest)
   pelvis.coverage(femur);
 
   Mesh baseline(std::string(TEST_DATA_DIR) + "/fm_coverage.vtk");
-  ASSERT_TRUE(pelvis.comparePointsEqual(baseline));
-  ASSERT_TRUE(pelvis.compareScalarsEqual(baseline));
+  ASSERT_TRUE(pelvis == baseline);
 }
+
+TEST(MeshTests, distanceTest1)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
+  femur.distance(pelvis);
+  pelvis.distance(femur);
+
+  Mesh f2p(std::string(TEST_DATA_DIR) + "/meshdistance2.vtk");
+  Mesh p2f(std::string(TEST_DATA_DIR) + "/meshdistance2rev.vtk");
+  ASSERT_TRUE(femur == f2p);
+  ASSERT_TRUE(pelvis == p2f);
+}
+
+TEST(MeshTests, distanceTest2)
+{
+  Mesh femur1(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
+  Mesh femur2(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
+  femur1.distance(femur2, Mesh::DistanceMethod::POINT_TO_CELL);
+  femur2.distance(femur1);
+
+  Mesh fwd(std::string(TEST_DATA_DIR) + "/meshdistance1p2c.vtk");
+  Mesh rev(std::string(TEST_DATA_DIR) + "/meshdistance1rev.vtk");
+  ASSERT_TRUE(femur1 == fwd);
+  ASSERT_TRUE(femur2 == rev);
+}
+
+TEST(MeshTests, fieldTest1)
+{
+  Mesh dist(std::string(TEST_DATA_DIR) + "/meshdistance2.vtk");
+  double a = dist.getFieldValue("distance", 0);
+  double b = dist.getFieldValue("distance", 1000);
+  double c = dist.getFieldValue("distance", dist.numPoints()-1);
+
+  ASSERT_TRUE(std::abs(a - 0.375761) < 1e-4);
+  ASSERT_TRUE(std::abs(b - 2.18114) < 1e-4);
+  ASSERT_TRUE(std::abs(c - 6.915) < 1e-4);
+}
+
+TEST(MeshTests, fieldTest2)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + "/mesh1.vtk");
+  double a = mesh.getFieldValue("scalars", 0);
+  double b = mesh.getFieldValue("scalars", 1000);
+  double c = mesh.getFieldValue("Normals", 4231);
+  double d = mesh.getFieldValue("Normals", 5634);
+
+  ASSERT_TRUE(a==1);
+  ASSERT_TRUE(b==1);
+  ASSERT_TRUE(std::abs(c - 0.57735) < 1e-4);
+  ASSERT_TRUE(d==0);
+}
+
+//TODO: add tests for independent fields and fields on cells once #935 complete
 
 TEST(MeshTests, icpTest)
 {
@@ -299,7 +353,6 @@ TEST(MeshTests, icpTest)
 
   ASSERT_TRUE(source == ground_truth);
 }
-
 
 TEST(MeshTests, warpTest1)
 {

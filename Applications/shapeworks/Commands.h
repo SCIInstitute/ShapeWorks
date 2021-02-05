@@ -42,7 +42,6 @@ COMMAND_DECLARE(SubtractImage, ImageCommand);
 COMMAND_DECLARE(MultiplyImage, ImageCommand);
 COMMAND_DECLARE(DivideImage, ImageCommand);
 COMMAND_DECLARE(ImageToMesh, ImageCommand);
-COMMAND_DECLARE(DTToMesh, ImageCommand);
 
 // Particle System Commands
 COMMAND_DECLARE(ReadParticleSystem, ParticleSystemCommand);
@@ -66,9 +65,15 @@ COMMAND_DECLARE(ClipMesh, MeshCommand);
 COMMAND_DECLARE(TranslateMesh, MeshCommand);
 COMMAND_DECLARE(ScaleMesh, MeshCommand);
 COMMAND_DECLARE(BoundingBoxMesh, MeshCommand);
-COMMAND_DECLARE(ComputeDistance, MeshCommand);
+COMMAND_DECLARE(MeshDistance, MeshCommand);
 COMMAND_DECLARE(RasterizationOrigin, MeshCommand);
 COMMAND_DECLARE(RasterizationSize, MeshCommand);
+COMMAND_DECLARE(SetFieldValue, MeshCommand);
+COMMAND_DECLARE(GetFieldValue, MeshCommand);
+COMMAND_DECLARE(FieldRange, MeshCommand);
+COMMAND_DECLARE(FieldMean, MeshCommand);
+COMMAND_DECLARE(FieldStd, MeshCommand);
+COMMAND_DECLARE(FieldNames, MeshCommand);
 COMMAND_DECLARE(MeshFix, MeshCommand);
 COMMAND_DECLARE(MeshToImage, MeshCommand);
 COMMAND_DECLARE(MeshToDT, MeshCommand);

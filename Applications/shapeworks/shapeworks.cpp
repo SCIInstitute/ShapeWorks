@@ -49,7 +49,6 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(SetSpacing::getCommand());
   shapeworks.addCommand(WarpImage::getCommand());
   shapeworks.addCommand(CompareImage::getCommand());
-  shapeworks.addCommand(DTToMesh::getCommand());
   shapeworks.addCommand(ReadParticleSystem::getCommand());
   shapeworks.addCommand(Compactness::getCommand());
   shapeworks.addCommand(Generalization::getCommand());
@@ -69,10 +68,16 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(TranslateMesh::getCommand());
   shapeworks.addCommand(ScaleMesh::getCommand());
   shapeworks.addCommand(BoundingBoxMesh::getCommand());
-  shapeworks.addCommand(ComputeDistance::getCommand());
+  shapeworks.addCommand(MeshDistance::getCommand());
   shapeworks.addCommand(RasterizationOrigin::getCommand());
   shapeworks.addCommand(RasterizationSize::getCommand());
   shapeworks.addCommand(MeshFix::getCommand());
+  shapeworks.addCommand(SetFieldValue::getCommand());
+  shapeworks.addCommand(GetFieldValue::getCommand());
+  shapeworks.addCommand(FieldRange::getCommand());
+  shapeworks.addCommand(FieldMean::getCommand());
+  shapeworks.addCommand(FieldStd::getCommand());
+  shapeworks.addCommand(FieldNames::getCommand());
   shapeworks.addCommand(MeshToImage::getCommand());
   shapeworks.addCommand(MeshToDT::getCommand());
   shapeworks.addCommand(CompareMesh::getCommand());

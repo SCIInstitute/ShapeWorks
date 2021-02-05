@@ -20,6 +20,7 @@ using namespace pybind11::literals;
 
 #include <sstream>
 #include <itkImportImageFilter.h>
+#include <vtkDoubleArray.h>
 
 #include "Shapeworks.h"
 #include "ShapeworksUtils.h"
@@ -448,10 +449,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("compare",               &Image::compare, "compares two images", "other"_a, "verifyall"_a=true, "tolerance"_a=0.0, "precision"_a=1e-12)
   .def("toMesh", [](Image &image, Image::PixelType isovalue) {
     return image.toMesh(isovalue);
-  }, "converts image to mesh", "isovalue"_a=1.0)
-  .def("toMesh", [](Image &image, double levelset, double reduction, double angle, int leveliterations, int meshiterations, bool preservetopology) {
-    return image.toMesh(levelset, reduction, angle, leveliterations, meshiterations, preservetopology);
-  }, "converts distance transform to mesh", "levelset"_a=0.0, "reduction"_a=0.01, "angle"_a=30, "leveliterations"_a=1, "meshiterations"_a=1, "preservetopology"_a=true)
+  }, "converts image to mesh", "isovalue"_a)
   .def("toArray", [](const Image &image) {
     Image::ImageType::Pointer img = image.getITKImage();
     const auto size = img->GetLargestPossibleRegion().GetSize();
@@ -500,6 +498,7 @@ PYBIND11_MODULE(shapeworks, m)
   py::class_<Mesh>(m, "Mesh")
   .def(py::init<const std::string &>())
   .def(py::init<vtkSmartPointer<vtkPolyData>>())
+  .def(py::self == py::self)
   .def("__repr__", [](const Mesh &mesh) {
     std::stringstream stream;
     stream << mesh;
@@ -507,10 +506,33 @@ PYBIND11_MODULE(shapeworks, m)
   })
   .def("write",                 &Mesh::write, "pathname"_a)
   .def("coverage",              &Mesh::coverage, "other_mesh"_a, "ignore_back_intersections"_a, "angle_threshold"_a, "back_search_radius"_a)
-  .def("numVertices",           &Mesh::numVertices)
+  .def("numPoints",             &Mesh::numPoints)
   .def("numFaces",              &Mesh::numFaces)
-  .def("comparePointsEqual",    &Mesh::comparePointsEqual, "other_mesh"_a)
-  .def("compareScalarsEqual",   &Mesh::compareScalarsEqual, "other_mesh"_a)
+  .def("compareAllPoints",      &Mesh::compareAllPoints, "other_mesh"_a)
+  .def("compareAllFields",      &Mesh::compareAllFields, "other_mesh"_a)
+  .def("getFieldNames",         &Mesh::getFieldNames)
+  .def("setField", [](Mesh &mesh, std::vector<double>& v, std::string name) {
+    vtkSmartPointer<vtkDoubleArray> arr = vtkSmartPointer<vtkDoubleArray>::New();
+    arr->SetNumberOfValues(v.size());
+    for (int i=0; i<v.size(); i++) {
+      arr->SetTuple1(i, v[i]);
+    }
+    return mesh.setField(name, arr);
+  })
+  .def("getField", [](const Mesh &mesh, std::string name) {
+    auto array = mesh.getField<vtkDataArray>(name);
+    const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()), static_cast<unsigned long>(array->GetNumberOfComponents()), 1};
+    auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
+    vtkarr->SetNumberOfValues(array->GetNumberOfValues());
+    // LOTS of copying going on here, see github #903
+    array->GetData(0, array->GetNumberOfTuples()-1, 0, array->GetNumberOfComponents()-1, vtkarr); // copy1
+    return py::array(py::dtype::of<double>(), shape, vtkarr->GetVoidPointer(0)); // copy2 (not positive if py::array ctor copies or references)
+  })
+  .def("setFieldValue",         &Mesh::setFieldValue, "idx"_a, "value"_a, "name"_a="")
+  .def("getFieldValue",         &Mesh::getFieldValue, "idx"_a, "name"_a)
+  .def("getFieldRange",         &Mesh::getFieldRange, "name"_a)
+  .def("getFieldMean",          &Mesh::getFieldMean, "name"_a)
+  .def("getFieldStd",           &Mesh::getFieldStd, "name"_a)
   ;
 
   // MeshUtils

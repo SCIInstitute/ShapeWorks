@@ -16,21 +16,27 @@ fi
 # PyTorch installation
 function install_pytorch() {
   echo "installing pytorch"
-  PYTORCH="cpuonly"
-  if ! [ -x "$(command -v nvidia-smi)" ]; then
+  if [[ "$(uname)" == "Darwin" ]]; then
+    pip install torch torchvision torchaudio
+  elif ! [ -x "$(command -v nvidia-smi)" ]; then
     echo 'Could not find nvidia-smi, using cpu-only PyTorch'
+    pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
   else
     CUDA=`nvidia-smi | grep CUDA | sed -e "s/.*CUDA Version: //" -e "s/ .*//"`
     echo "Found CUDA Version: ${CUDA}"
-
-    if [[ "$CUDA" == "9.2" || "$CUDA" == "10.1" || "$CUDA" == "10.2" ]]; then
-        PYTORCH="cudatoolkit=${CUDA}"
+    if [[ "$CUDA" == "9.2" ]]; then
+        pip install torch==1.7.1+cu92 torchvision==0.8.2+cu92 torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+    elif [[ "$CUDA" == "10.1" ]]; then
+        pip install torch==1.7.1+cu101 torchvision==0.8.2+cu101 torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+    elif [[ "$CUDA" == "10.2" ]]; then
+        pip install torch===1.7.1 torchvision===0.8.2 torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+    elif [[ "$CUDA" == "11.0" ]]; then
+        pip install torch===1.7.1+cu110 torchvision===0.8.2+cu110 torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
     else
         echo "CUDA version not compatible, using cpu-only"
+        pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
     fi
   fi
-
-  conda install --yes pytorch torchvision $PYTORCH -c pytorch
 }
 
 function install_conda() {
@@ -175,6 +181,7 @@ function install_conda() {
 }
 
 if install_conda; then
+  install_pytorch
   echo "$CONDAENV environment successfully created/updated!"
   conda activate $CONDAENV
 else

@@ -21,8 +21,17 @@ Coord toCoord(const Point &p) {
                 static_cast<itk::IndexValueType>(p[2])}); }
 
 /// Enables construction using an initializer list: `Vector3 f() { return makeVector({1,2,3}); }`
-// itkVector doesn't have this handy ctor like itkPoint; `Point p({a,b,c})` works, but `Vector3 v({1,2,3})` doesn't.
+/// itkVector doesn't have this handy ctor like itkPoint; `Point p({a,b,c})` works, but `Vector3 v({1,2,3})` doesn't.
 Vector3 makeVector(std::array<double, 3>&& arr) { return Vector3(arr.data()); }
+
+Plane makePlane(const Vector3 &n, const Point &o)
+{
+  Plane plane = Plane::New();
+  plane->SetNormal(n[0], n[1], n[2]);
+  plane->SetOrigin(o[0], o[1], o[2]);
+
+  return plane;
+}
 
 template<>
 Vector3 negate(const Vector3 &v) { return makeVector({-v[0], -v[1], -v[2]}); }
@@ -112,9 +121,9 @@ TransformPtr createTransform(const Matrix33 &mat, const Vector3 &translate)
   return xform;
 }
 
-swTransform createvtkTransform(const vtkSmartPointer<vtkMatrix4x4> &mat)
+swTransform createswTransform(const vtkSmartPointer<vtkMatrix4x4> &mat)
 {
-  swTransform xform(vtkTransform::New());
+  swTransform xform(swTransform::New());
   xform->SetMatrix(mat);
   return xform;
 }

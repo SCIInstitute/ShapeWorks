@@ -2,9 +2,12 @@
 #include "MeshUtils.h"
 #include "Image.h"
 #include "StringUtils.h"
-#include <PreviewMeshQC/FEAreaCoverage.h>
-#include <PreviewMeshQC/FEVTKImport.h>
-#include <PreviewMeshQC/FEVTKExport.h>
+#include "PreviewMeshQC/FEAreaCoverage.h"
+#include "PreviewMeshQC/FEVTKImport.h"
+#include "PreviewMeshQC/FEVTKExport.h"
+#include "FEFixMesh.h"
+#include "FEMeshSmoothingModifier.h"
+#include "FECVDDecimationModifier.h"
 
 #include <vtkPolyDataReader.h>
 #include <vtkPolyDataWriter.h>
@@ -16,7 +19,6 @@
 #include <vtkOBJWriter.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkXMLPolyDataWriter.h>
-#include <vtkPointData.h>
 #include <vtkMarchingCubes.h>
 #include <vtkSmoothPolyDataFilter.h>
 #include <vtkDecimatePro.h>
@@ -30,9 +32,10 @@
 #include <vtkImageData.h>
 #include <vtkPolyDataToImageStencil.h>
 #include <vtkImageStencil.h>
-#include <FEFixMesh.h>
-#include <FEMeshSmoothingModifier.h>
-#include <FECVDDecimationModifier.h>
+#include <vtkDoubleArray.h>
+#include <vtkKdTreePointLocator.h>
+#include <vtkCellLocator.h>
+#include <vtkGenericCell.h>
 
 namespace shapeworks {
 
@@ -216,7 +219,7 @@ Mesh &Mesh::reflect(const Axis &axis, const Vector3 &origin)
   Vector scale(makeVector({1,1,1}));
   scale[axis] = -1;
 
-  swTransform transform(vtkTransform::New());
+  swTransform transform = swTransform::New();
   transform->Translate(-origin[0], -origin[1], -origin[2]);
   transform->Scale(scale[0], scale[1], scale[2]);
   transform->Translate(origin[0], origin[1], origin[2]);
@@ -282,7 +285,7 @@ Mesh &Mesh::probeVolume(const Image &img)
   return *this;
 }
 
-Mesh &Mesh::clip(const vtkSmartPointer<vtkPlane> plane)
+Mesh &Mesh::clip(const Plane plane)
 {
   vtkSmartPointer<vtkClipPolyData> clipper = vtkSmartPointer<vtkClipPolyData>::New();
   clipper->SetInputData(this->mesh);
@@ -295,7 +298,7 @@ Mesh &Mesh::clip(const vtkSmartPointer<vtkPlane> plane)
 
 Mesh &Mesh::translate(const Vector3 &v)
 {
-  swTransform transform(vtkTransform::New());
+  swTransform transform = swTransform::New();
   transform->Translate(v[0], v[1], v[2]);
 
   return applyTransform(transform);
@@ -303,7 +306,7 @@ Mesh &Mesh::translate(const Vector3 &v)
 
 Mesh &Mesh::scale(const Vector3 &v)
 {
-  swTransform transform(vtkTransform::New());
+  swTransform transform = swTransform::New();
   transform->Scale(v[0], v[1], v[2]);
 
   return applyTransform(transform);
@@ -332,35 +335,62 @@ Region Mesh::boundingBox(bool center) const
   return bbox;
 }
 
-vtkSmartPointer<swHausdorffDistancePointSetFilter> Mesh::computeDistance(const Mesh &other_mesh, bool target)
+Mesh& Mesh::distance(const Mesh &target, const DistanceMethod method)
 {
-  vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = vtkSmartPointer<swHausdorffDistancePointSetFilter>::New();
-  filter->SetInputData(this->mesh);
-  filter->SetInputData(1, other_mesh.mesh);
+  if (target.numPoints() == 0 || numPoints() == 0)
+    throw std::invalid_argument("meshes must have points");
 
-  if (target)
-    filter->SetTargetDistanceMethod(1);
-  
-  filter->Update();
-  return filter;
-}
+  vtkSmartPointer<vtkKdTreePointLocator> targetPointLocator = vtkSmartPointer<vtkKdTreePointLocator>::New();
+  vtkSmartPointer<vtkCellLocator> targetCellLocator = vtkSmartPointer<vtkCellLocator>::New();
+  if (method == POINT_TO_POINT)
+  {
+    targetPointLocator->SetDataSet(target.mesh);
+    targetPointLocator->BuildLocator();
+  }
+  else
+  {
+    targetCellLocator->SetDataSet(target.mesh);
+    targetCellLocator->BuildLocator();
+  }
 
-double Mesh::hausdorffDistance(const Mesh &other_mesh, bool target)
-{
-  vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = computeDistance(other_mesh, target);
-  return filter->GetOutput(0)->GetFieldData()->GetArray("HausdorffDistance")->GetComponent(0,0);
-}
+  // allocate Array to store distances from each point to target
+  vtkSmartPointer<vtkDoubleArray> distance = vtkSmartPointer<vtkDoubleArray>::New();
+  distance->SetNumberOfComponents(1);
+  distance->SetNumberOfTuples(numPoints());
+  distance->SetName("distance");
 
-double Mesh::relativeDistanceAtoB(const Mesh &other_mesh, bool target)
-{
-  vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = computeDistance(other_mesh, target);
-  return filter->GetOutputDataObject(0)->GetFieldData()->GetArray("RelativeDistanceAtoB")->GetComponent(0,0);
-}
+  // Find the nearest neighbors to each point and compute distance between them
+  double dist, currentPoint[3], closestPoint[3];
+  if (method == POINT_TO_POINT)
+  {
+    for (int i = 0; i < numPoints(); i++)
+    {
+      mesh->GetPoint(i, currentPoint);
+      vtkIdType closestPointId = targetPointLocator->FindClosestPoint(currentPoint);
+      target.mesh->GetPoint(closestPointId, closestPoint);
+      dist = std::sqrt(std::pow(currentPoint[0] - closestPoint[0], 2) +
+                       std::pow(currentPoint[1] - closestPoint[1], 2) +
+                       std::pow(currentPoint[2] - closestPoint[2], 2));
+      distance->SetValue(i, dist);
+    }
+  }
+  else
+  {
+    vtkIdType cellId;
+    vtkSmartPointer<vtkGenericCell> cell = vtkSmartPointer<vtkGenericCell>::New();
+    int subId;
+    for (int i = 0; i < numPoints(); i++)
+    {
+      mesh->GetPoint(i, currentPoint);
+      targetCellLocator->FindClosestPoint(currentPoint, closestPoint, cell, cellId, subId, dist);
+      distance->SetValue(i, std::sqrt(dist));
+    }
+  }
+    
+  // add distance field to this mesh
+  this->setField("distance", distance);
 
-double Mesh::relativeDistanceBtoA(const Mesh &other_mesh, bool target)
-{
-  vtkSmartPointer<swHausdorffDistancePointSetFilter> filter = computeDistance(other_mesh, target);
-  return filter->GetOutputDataObject(1)->GetFieldData()->GetArray("RelativeDistanceBtoA")->GetComponent(0,0);
+  return *this;
 }
 
 Point3 Mesh::rasterizationOrigin(Region region, Vector3 spacing, int padding) const
@@ -449,7 +479,7 @@ Image Mesh::toDistanceTransform(Vector3 spacing, Dims size, Point3 origin) const
   return image;
 }
 
-Mesh& Mesh::fix(bool wind, bool smoothBefore, bool smoothAfter, double lambda, int iterations, bool decimate, double percentage)
+Mesh& Mesh::fix(bool smoothBefore, bool smoothAfter, double lambda, int iterations, bool decimate, double percentage)
 {
 	FEVTKimport import;
   FEMesh* meshFE = import.Load(this->mesh);
@@ -458,8 +488,8 @@ Mesh& Mesh::fix(bool wind, bool smoothBefore, bool smoothAfter, double lambda, i
 
 	FEFixMesh fix;
   FEMesh* meshFix;
-  if (wind)
-    meshFix = fix.FixElementWinding(meshFE);
+
+  meshFix = fix.FixElementWinding(meshFE);
 
   if (smoothBefore)
   {
@@ -486,24 +516,148 @@ Mesh& Mesh::fix(bool wind, bool smoothBefore, bool smoothAfter, double lambda, i
   }
 
 	FEVTKExport vtkOut;
-  VTKEXPORT ops = {false, true};
-  vtkOut.SetOptions(ops);
   this->mesh = vtkOut.ExportToVTK(*meshFix);
 
   return *this;
 }
 
-bool Mesh::comparePointsEqual(const Mesh &other_mesh) const
+Mesh& Mesh::setField(std::string name, Array array)
 {
-  if (!this->mesh || !other_mesh.mesh)
-  {
-    std::cout << "both polydata don't exist";
-    return false;
+  if (!array)
+    throw std::invalid_argument("Invalid array.");
+
+  if (name.empty())
+    throw std::invalid_argument("Provide name for the new field");
+
+  int numVertices = mesh->GetPoints()->GetNumberOfPoints();
+  if (array->GetNumberOfTuples() != numVertices) {
+    std::cerr << "WARNING: Added a mesh field with a different number of elements than points\n";
+  }
+  if (array->GetNumberOfComponents() != 1) {
+    std::cerr << "WARNING: Added a multi-component mesh field\n";
   }
 
+  array->SetName(name.c_str());
+  mesh->GetPointData()->AddArray(array);
+
+  return *this;
+}
+
+double Mesh::getFieldValue(const std::string& name, int idx) const
+{
+  if (name.empty())
+    throw std::invalid_argument("Provide name for field");
+
+  if (mesh->GetPointData()->GetNumberOfArrays() < 1)
+    throw std::invalid_argument("Mesh has no fields from which to retrieve a value.");
+
+  auto arr = mesh->GetPointData()->GetArray(name.c_str());
+  if (!arr)
+    throw std::invalid_argument("Field does not exist.");
+
+  if (arr->GetNumberOfTuples() > idx)
+    return arr->GetTuple(idx)[0];
+  else
+    throw std::invalid_argument("Requested index in field is out of range");
+}
+
+void Mesh::setFieldValue(const std::string& name, int idx, double val)
+{
+  if (name.empty())
+    throw std::invalid_argument("Provide name for the field");
+
+  if (mesh->GetPointData()->GetNumberOfArrays() < 1)
+    throw std::invalid_argument("Mesh has no fields for which to set a value.");
+
+  auto arr = mesh->GetPointData()->GetArray(name.c_str());
+  if (arr->GetNumberOfTuples() > idx)
+    arr->SetTuple1(idx, val);
+  else
+    throw std::invalid_argument("Intended index in field is out of range");
+}
+
+std::vector<double> Mesh::getFieldRange(const std::string& name) const
+{
+  if (name.empty())
+    throw std::invalid_argument("Provide name for field");
+
+  if (mesh->GetPointData()->GetNumberOfArrays() < 1)
+    throw std::invalid_argument("Mesh has no fields for which to compute range.");
+
+  std::vector<double> range(2);
+
+  auto arr = mesh->GetPointData()->GetArray(name.c_str());
+  if (!arr)
+    throw std::invalid_argument("Field does not exist.");
+
+  arr->GetRange(&range[0]);
+
+  return range;
+}
+
+double Mesh::getFieldMean(const std::string& name) const
+{
+  if (name.empty())
+    throw std::invalid_argument("Provide name for field");
+
+  if (mesh->GetPointData()->GetNumberOfArrays() < 1)
+    throw std::invalid_argument("Mesh has no fields for which to compute mean.");
+
+  auto arr = mesh->GetPointData()->GetArray(name.c_str());
+  if (!arr)
+    throw std::invalid_argument("Field does not exist.");
+
+  double mean{0.0};
+  for (int i=0; i<arr->GetNumberOfTuples(); i++) {
+    // maybe compute running mean to avoid overflow? mean = (mean+value)/(i+1)
+    mean += arr->GetTuple1(i);
+  }
+
+  return mean / arr->GetNumberOfTuples();
+}
+
+double Mesh::getFieldStd(const std::string& name) const
+{
+  if (name.empty())
+    throw std::invalid_argument("Provide name for field");
+
+  if (mesh->GetPointData()->GetNumberOfArrays() < 1)
+    throw std::invalid_argument("Mesh has no fields for which to compute mean.");
+
+  auto arr = mesh->GetPointData()->GetArray(name.c_str());
+  if (!arr)
+    throw std::invalid_argument("Field does not exist.");
+
+  double mean = getFieldMean(name);
+  double squaredDiff{0.0};
+  for (int i=0; i<arr->GetNumberOfTuples(); i++) {
+    squaredDiff += pow(arr->GetTuple1(i) - mean, 2);
+  }
+
+  return sqrt(squaredDiff / arr->GetNumberOfTuples());
+}
+
+std::vector<std::string> Mesh::getFieldNames() const
+{
+  std::vector<std::string> fields;
+  int numFields = mesh->GetPointData()->GetNumberOfArrays();
+
+  for (int i=0; i<numFields; i++) {
+    auto name = mesh->GetPointData()->GetArrayName(i);
+    fields.push_back(name ? std::string(name) : std::string("default"));
+  }
+
+  return fields;
+}
+
+bool Mesh::compareAllPoints(const Mesh &other_mesh) const
+{
+  if (!this->mesh || !other_mesh.mesh)
+    throw std::invalid_argument("invalid meshes");
+    
   if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints())
   {
-    std::cout << "both polydata differ in number of points";
+    std::cerr << "meshes differ in number of points";
     return false;
   }
 
@@ -522,31 +676,63 @@ bool Mesh::comparePointsEqual(const Mesh &other_mesh) const
   return true;
 }
 
-bool Mesh::compareScalarsEqual(const Mesh &other_mesh) const
+bool Mesh::compareAllFields(const Mesh &other_mesh) const
 {
   if (!this->mesh || !other_mesh.mesh)
-    { throw std::invalid_argument("Meshes don't exist"); }
+    throw std::invalid_argument("Invalid meshes");
 
-  if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints())
-  { throw std::invalid_argument("Both meshes differ in number of points"); }
+  auto fields1 = getFieldNames();
+  auto fields2 = other_mesh.getFieldNames();
 
-  vtkDataArray* scalars1 = this->mesh->GetPointData()->GetScalars();
-  vtkDataArray* scalars2 = other_mesh.mesh->GetPointData()->GetScalars();
-
-  if (!scalars1 || !scalars2)
-    { throw std::invalid_argument("No scalars"); }
-
-  if (scalars1->GetNumberOfValues() != scalars2->GetNumberOfValues())
-    { throw std::invalid_argument("Different number of scalars"); }
-
-  for (int i = 0; i < scalars1->GetNumberOfValues(); i++)
-  {
-    vtkVariant var1 = scalars1->GetVariantValue(i);
-    vtkVariant var2 = scalars2->GetVariantValue(i);
-    if (var1 != var2)
-    {
-      std::cout << "values differ: " << var1 << " != " << var2 << "\n";
+  // first make sure they even have the same fields to compare
+  if (fields1.size() != fields2.size()) {
+    std::cerr << "Mesh have different number of fields\n";
+    return false;
+  }
+  for (int i=0; i<fields1.size(); i++) {
+    if (std::find(fields2.begin(), fields2.end(), fields1[i]) == fields2.end()) {
+      std::cerr << "Both meshes don't have " << fields1[i] << " field\n";
       return false;
+    }      
+  }
+
+  // now compare the actual fields
+  for (auto field: fields1) {
+    if (!compareField(other_mesh, field)) {
+      std::cerr << field << " fields are not the same\n";
+      return false;
+    }
+  }
+
+  return true;
+}
+
+bool Mesh::compareField(const Mesh& other_mesh, const std::string& name1, const std::string& name2) const
+{
+  auto field1 = getField<vtkDataArray>(name1);
+  auto field2 = other_mesh.getField<vtkDataArray>(name2.empty() ? name1 : name2);
+
+  if (!field1 || !field2) {
+    std::cerr << "at least one mesh missing a field\n";
+    return false;
+  }
+
+  if (field1->GetNumberOfTuples() != field2->GetNumberOfTuples() ||
+      field1->GetNumberOfComponents() != field2->GetNumberOfComponents()) {
+    std::cerr << "Fields are not the same size\n";
+    return false;
+  }
+
+  for (int i = 0; i < field1->GetNumberOfTuples(); i++)
+  {
+    for (int c = 0; c < field1->GetNumberOfComponents(); c++)
+    {
+      auto v1(field1->GetTuple(i)[c]);
+      auto v2(field2->GetTuple(i)[c]);
+      if (!equalNSigDigits(v1, v2, 5)) {
+        printf("%ith values not equal (%0.8f != %0.8f)\n", i, v1, v2);
+        return false;
+      }
     }
   }
 
@@ -570,29 +756,38 @@ Point3 Mesh::center() const
   return Point3({c[0], c[1], c[2]});
 }
 
-bool Mesh::operator==(const Mesh& other) const
+bool Mesh::compare(const Mesh& other) const
 {
-  const double eps(1e-3);
+  if (!epsEqualN(center(), other.center(), 3))             { std::cerr << "centers differ!\n"; return false; }
+  if (!epsEqualN(centerOfMass(), other.centerOfMass(), 3)) { std::cerr << "coms differ!\n"; return false; }
+  if (numPoints() != other.numPoints())                    { std::cerr << "num pts differ\n"; return false; }
+  if (numFaces() != other.numFaces())                      { std::cerr << "num faces differ\n"; return false; }
+  if (!compareAllPoints(other))                            { std::cerr << "points differ\n"; return false; }
+  if (!compareAllFields(other))                            { std::cerr << "fields differ\n"; return false; }
 
-  return (epsEqual(center(), other.center(), eps) &&
-          epsEqual(centerOfMass(), other.centerOfMass(), eps) &&
-          numVertices() == other.numVertices() &&
-          numFaces() == other.numFaces() &&
-          comparePointsEqual(other) &&    // even only considering 4 significant digits, still fails for translate tests
-          //compareScalarsEqual(other));  // <ctc> prints "no" at some point, unsure where or why
-          true);
+  return true;
 }
 
 swTransform Mesh::createRegistrationTransform(const Mesh &target, Mesh::AlignmentType align, unsigned iterations)
 {
   const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createICPTransform(this->mesh, target.getVTKMesh(), align, iterations, true));
-  return createvtkTransform(mat);
+  return createswTransform(mat);
 }
 
 std::ostream& operator<<(std::ostream &os, const Mesh& mesh)
 {
-  return os << "{\n\tnumber of vertices: " << mesh.numVertices()
-            << ",\n\tnumber of faces: " << mesh.numFaces() << "\n}";
+  os << "{\n\tnumber of points: " << mesh.numPoints()
+     << ",\n\tnumber of faces: " << mesh.numFaces()
+     << ",\n\tcenter: " << mesh.center()
+     << ",\n\tcenter or mass: " << mesh.centerOfMass()
+     << ",\n\tfield names: \n";
+
+  auto fields = mesh.getFieldNames();
+  for (auto field: fields) {
+    os << "\t\t" << field << std::endl;
+  }
+
+  return os;
 }
 
 } // shapeworks
