@@ -36,9 +36,6 @@ public:
   //! Destructor
   ~StudioMesh();
 
-  //! Create a mesh from an image
-  void create_from_image(ImageType::Pointer img, double iso_value);
-
   //! Get the dimensions as a string for display (if loaded from an image)
   QString get_dimension_string();
 

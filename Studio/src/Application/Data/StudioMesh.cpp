@@ -66,66 +66,6 @@ vtkSmartPointer<vtkPolyData> StudioMesh::get_poly_data()
 }
 
 //---------------------------------------------------------------------------
-void StudioMesh::create_from_image(ImageType::Pointer image, double iso_value)
-{
-  try {
-    // get image dimensions
-    ImageType::RegionType region = image->GetLargestPossibleRegion();
-    ImageType::SizeType size = region.GetSize();
-    this->dimensions_[0] = size[0];
-    this->dimensions_[1] = size[1];
-    this->dimensions_[2] = size[2];
-
-    // find the center of mass
-    itk::Array<double> params(3);
-    params.Fill(0.0);
-    double count = 0.0;
-    itk::Point<double, 3> point;
-    itk::ImageRegionIteratorWithIndex<ImageType> oit(image, image->GetLargestPossibleRegion());
-    for (oit.GoToBegin(); !oit.IsAtEnd(); ++oit) {
-      if (oit.Get() > 0) {
-        // Get the physical index from the image index.
-        image->TransformIndexToPhysicalPoint(oit.GetIndex(), point);
-        for (unsigned int i = 0; i < 3; i++) {
-          params[i] += point[i];
-        }
-        count += 1.0;
-      }
-    }
-
-    // compute center of mass
-    this->center_transform_.set_size(3);
-    for (unsigned int i = 0; i < 3; i++) {
-      this->center_transform_[i] = params[i] / count;
-    }
-
-    this->center_transform_[0] = 0;
-    this->center_transform_[1] = 0;
-    this->center_transform_[2] = 0;
-
-    // connect to VTK
-    vtkSmartPointer<vtkImageImport> vtk_image = vtkSmartPointer<vtkImageImport>::New();
-    itk::VTKImageExport<ImageType>::Pointer itk_exporter = itk::VTKImageExport<ImageType>::New();
-    itk_exporter->SetInput(image);
-    ConnectPipelines(itk_exporter, vtk_image.GetPointer());
-    vtk_image->Update();
-
-    // create isosurface
-    auto marching = vtkSmartPointer<vtkMarchingCubes>::New();
-    marching->SetInputConnection(vtk_image->GetOutputPort());
-    marching->SetNumberOfContours(1);
-    marching->SetValue(0, iso_value);
-    marching->Update();
-
-    // store isosurface polydata
-    this->poly_data_ = marching->GetOutput();
-  } catch (itk::ExceptionObject& excep) {
-    std::cerr << "Exception caught!" << std::endl;
-    std::cerr << excep << std::endl;
-  }
-}
-
-//---------------------------------------------------------------------------
 vnl_vector<double> StudioMesh::get_center_transform()
 {
   return this->center_transform_;
