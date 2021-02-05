@@ -256,7 +256,7 @@ def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoot
 ### Mesh Grooming
 
 # Reflects images and meshes to reference side
-def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side):
+def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side, printCmd=True):
     if reference_side == 'right':
         ref = 'R'
         flip = 'L'
