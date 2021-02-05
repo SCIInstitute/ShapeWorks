@@ -106,35 +106,6 @@ MeshHandle Shape::get_original_mesh(bool wait)
   return this->original_mesh_;
 }
 
-//---------------------------------------------------------------------------
-ImageType::Pointer Shape::get_original_image()
-{
-  ImageType::Pointer image;
-  std::string filename = this->subject_->get_segmentation_filenames()[0];
-  if (filename != "") {
-    try {
-      // read file using ITK
-      ReaderType::Pointer reader = ReaderType::New();
-      reader->SetFileName(filename);
-      reader->Update();
-      image = reader->GetOutput();
-
-      // set orientation to RAI
-      itk::OrientImageFilter<ImageType, ImageType>::Pointer orienter =
-        itk::OrientImageFilter<ImageType, ImageType>::New();
-      orienter->UseImageDirectionOn();
-      orienter->SetDesiredCoordinateOrientation(
-        itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
-      orienter->SetInput(image);
-      orienter->Update();
-      image = orienter->GetOutput();
-    } catch (itk::ExceptionObject& excep) {
-      std::cerr << "Exception caught!" << std::endl;
-      std::cerr << excep << std::endl;
-    }
-  }
-  return image;
-}
 
 //---------------------------------------------------------------------------
 ImageType::Pointer Shape::get_groomed_image()

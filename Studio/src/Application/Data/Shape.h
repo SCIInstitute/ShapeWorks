@@ -51,7 +51,6 @@ public:
   /// Retrieve the original mesh
   MeshHandle get_original_mesh(bool wait = false);
 
-  ImageType::Pointer get_original_image();
   ImageType::Pointer get_groomed_image();
 
   /// Import the groomed raw image file
