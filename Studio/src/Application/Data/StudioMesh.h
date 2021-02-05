@@ -19,7 +19,8 @@ using ImageType = itk::Image<PixelType, 3>;
 namespace shapeworks {
 
 class StudioMesh;
-typedef QSharedPointer<StudioMesh> MeshHandle;
+using MeshHandle = std::shared_ptr<StudioMesh>;
+
 //! Representation of a single mesh.
 /*!
  * The Mesh class represents a single mesh generated from an image file or set of particles.
@@ -61,7 +62,7 @@ public:
                          vnl_vector<double> transform);
 
   //! Apply scalars from another mesh, with a transform
-  void apply_scalars(QSharedPointer<StudioMesh> mesh, vnl_vector<double> transform);
+  void apply_scalars(MeshHandle mesh, vnl_vector<double> transform);
 
   //! Interpolation scalars at positions to this mesh
   void interpolate_scalars_to_mesh(std::string name,

@@ -34,7 +34,7 @@ public:
 
   ~Shape();
 
-  QSharedPointer<StudioMesh> get_mesh(string display_mode);
+  MeshHandle get_mesh(string display_mode);
 
   void set_annotations(QStringList annotations, bool only_overwrite_blank = true);
   QStringList get_annotations();
@@ -49,7 +49,7 @@ public:
   void import_original_image(std::string filename, float iso_value);
 
   /// Retrieve the original mesh
-  QSharedPointer<StudioMesh> get_original_mesh(bool wait = false);
+  MeshHandle get_original_mesh(bool wait = false);
 
   ImageType::Pointer get_original_image();
   ImageType::Pointer get_groomed_image();
@@ -58,7 +58,7 @@ public:
   void import_groomed_image(ImageType::Pointer img, double iso, TransformType transform);
 
   /// Retrieve the groomed mesh
-  QSharedPointer<StudioMesh> get_groomed_mesh(bool wait = false);
+  MeshHandle get_groomed_mesh(bool wait = false);
 
   /// Reset the groomed mesh so that it will be re-created
   void reset_groomed_mesh();
@@ -73,7 +73,7 @@ public:
   bool import_points(std::vector<itk::Point<double>> points, bool local);
 
   /// Retrieve the reconstructed mesh
-  QSharedPointer<StudioMesh> get_reconstructed_mesh();
+  MeshHandle get_reconstructed_mesh();
 
   /// Get the global correspondence points
   vnl_vector<double> get_global_correspondence_points();
@@ -132,19 +132,19 @@ private:
 
   //void generate_original_meshes();
 
-  void generate_meshes(std::vector<std::string> filenames, QSharedPointer<StudioMesh>& mesh,
+  void generate_meshes(std::vector<std::string> filenames, MeshHandle& mesh,
                        bool save_transform, bool wait = false);
 
   static bool import_point_file(QString filename, vnl_vector<double>& points);
 
   void apply_feature_to_points(std::string feature, ImageType::Pointer image);
-  void apply_feature_to_points(std::string feature, QSharedPointer<StudioMesh> mesh);
+  void apply_feature_to_points(std::string feature, MeshHandle mesh);
 
   int id_;
 
-  QSharedPointer<StudioMesh> original_mesh_;
-  QSharedPointer<StudioMesh> groomed_mesh_;
-  QSharedPointer<StudioMesh> reconstructed_mesh_;
+  MeshHandle original_mesh_;
+  MeshHandle groomed_mesh_;
+  MeshHandle reconstructed_mesh_;
   ImageType::Pointer original_image_, groomed_image_;
   int group_id_ = 1;
 

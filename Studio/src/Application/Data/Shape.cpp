@@ -33,7 +33,7 @@ Shape::~Shape()
 {}
 
 //---------------------------------------------------------------------------
-QSharedPointer<StudioMesh> Shape::get_mesh(std::string display_mode)
+MeshHandle Shape::get_mesh(std::string display_mode)
 {
   if (display_mode == Visualizer::MODE_ORIGINAL_C) {
     return this->get_original_mesh();
@@ -91,7 +91,7 @@ void Shape::import_original_image(std::string filename, float iso_value)
 }
 
 //---------------------------------------------------------------------------
-QSharedPointer<StudioMesh> Shape::get_original_mesh(bool wait)
+MeshHandle Shape::get_original_mesh(bool wait)
 {
   if (!this->original_mesh_) {
     if (!this->subject_) {
@@ -170,7 +170,8 @@ ImageType::Pointer Shape::get_groomed_image()
 //---------------------------------------------------------------------------
 void Shape::import_groomed_image(ImageType::Pointer img, double iso, TransformType transform)
 {
-  this->groomed_mesh_ = QSharedPointer<StudioMesh>(new StudioMesh());
+  this->groomed_mesh_ = std::make_shared<StudioMesh>();
+
   this->groomed_image_ = img;
   this->groomed_mesh_->create_from_image(img, iso);
   this->groomed_transform_ = transform;
@@ -192,7 +193,7 @@ void Shape::import_groomed_image(ImageType::Pointer img, double iso, TransformTy
 }
 
 //---------------------------------------------------------------------------
-QSharedPointer<StudioMesh> Shape::get_groomed_mesh(bool wait)
+MeshHandle Shape::get_groomed_mesh(bool wait)
 {
   if (!this->groomed_mesh_) {
     if (!this->subject_) {
@@ -290,7 +291,7 @@ bool Shape::import_local_point_file(QString filename)
 }
 
 //---------------------------------------------------------------------------
-QSharedPointer<StudioMesh> Shape::get_reconstructed_mesh()
+MeshHandle Shape::get_reconstructed_mesh()
 {
   if (!this->reconstructed_mesh_) {
     this->reconstructed_mesh_ = this->mesh_manager_->get_mesh(this->global_correspondence_points_);
@@ -461,7 +462,7 @@ vnl_vector<double> Shape::get_transform()
 }
 
 //---------------------------------------------------------------------------
-void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<StudioMesh>& mesh,
+void Shape::generate_meshes(std::vector<string> filenames, MeshHandle& mesh,
                             bool save_transform, bool wait)
 {
   if (filenames.size() < 1) {
@@ -620,7 +621,7 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
 }
 
 //---------------------------------------------------------------------------
-void Shape::apply_feature_to_points(std::string feature, QSharedPointer<StudioMesh> mesh)
+void Shape::apply_feature_to_points(std::string feature, MeshHandle mesh)
 {
   vtkSmartPointer<vtkPolyData> from_mesh = mesh->get_poly_data();
 

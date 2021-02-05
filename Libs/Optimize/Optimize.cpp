@@ -107,6 +107,8 @@ bool Optimize::Run()
   m_disable_procrustes = true;
 
   std::vector<int> final_number_of_particles = this->m_number_of_particles;
+  std::cerr << "final[0] = " << final_number_of_particles[0] << "\n";
+  std::cerr << "final[1] = " << final_number_of_particles[1] << "\n";
   int scale = 1;
   if (this->m_use_shape_statistics_after > 0) {
     this->m_use_shape_statistics_in_init = false;
@@ -163,6 +165,7 @@ bool Optimize::Run()
       for (int i = 0; i < this->m_number_of_particles.size(); i++) {
         if (this->m_number_of_particles[i] < final_number_of_particles[i]) {
           this->m_number_of_particles[i] *= 2;
+          std::cerr << "set " << i << " to: " << this->m_number_of_particles[i] << "\n";
           finished = false;
         }
       }

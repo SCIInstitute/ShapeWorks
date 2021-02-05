@@ -271,7 +271,7 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double
 }
 
 //---------------------------------------------------------------------------
-void StudioMesh::apply_scalars(QSharedPointer<StudioMesh> mesh, vnl_vector<double> transform)
+void StudioMesh::apply_scalars(MeshHandle mesh, vnl_vector<double> transform)
 {
   vtkSmartPointer<vtkPolyData> from_mesh = mesh->get_poly_data();
   vtkSmartPointer<vtkPolyData> to_mesh = this->get_poly_data();
