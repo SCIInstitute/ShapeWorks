@@ -219,7 +219,7 @@ Mesh &Mesh::reflect(const Axis &axis, const Vector3 &origin)
   Vector scale(makeVector({1,1,1}));
   scale[axis] = -1;
 
-  swTransform transform(vtkTransform::New());
+  swTransform transform = swTransform::New();
   transform->Translate(-origin[0], -origin[1], -origin[2]);
   transform->Scale(scale[0], scale[1], scale[2]);
   transform->Translate(origin[0], origin[1], origin[2]);
@@ -298,7 +298,7 @@ Mesh &Mesh::clip(const Plane plane)
 
 Mesh &Mesh::translate(const Vector3 &v)
 {
-  swTransform transform(vtkTransform::New());
+  swTransform transform = swTransform::New();
   transform->Translate(v[0], v[1], v[2]);
 
   return applyTransform(transform);
@@ -306,7 +306,7 @@ Mesh &Mesh::translate(const Vector3 &v)
 
 Mesh &Mesh::scale(const Vector3 &v)
 {
-  swTransform transform(vtkTransform::New());
+  swTransform transform = swTransform::New();
   transform->Scale(v[0], v[1], v[2]);
 
   return applyTransform(transform);
@@ -771,7 +771,7 @@ bool Mesh::compare(const Mesh& other) const
 swTransform Mesh::createRegistrationTransform(const Mesh &target, Mesh::AlignmentType align, unsigned iterations)
 {
   const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createICPTransform(this->mesh, target.getVTKMesh(), align, iterations, true));
-  return createvtkTransform(mat);
+  return createswTransform(mat);
 }
 
 std::ostream& operator<<(std::ostream &os, const Mesh& mesh)

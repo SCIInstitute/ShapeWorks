@@ -49,7 +49,7 @@ using AffineTransformPtr = AffineTransform::Pointer;
 
 /// Mesh transforms
 using swTransform = vtkSmartPointer<vtkTransform>;
-swTransform createvtkTransform(const vtkSmartPointer<vtkMatrix4x4> &mat);
+swTransform createswTransform(const vtkSmartPointer<vtkMatrix4x4> &mat);
 
 /// For deliberate conversions between types
 Point toPoint(const Dims &d);
