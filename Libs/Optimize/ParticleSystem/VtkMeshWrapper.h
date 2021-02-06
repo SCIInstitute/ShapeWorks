@@ -27,7 +27,7 @@ public:
 
   vnl_vector_fixed<double, DIMENSION>
   ProjectVectorToSurfaceTangent(const PointType& pointa, int idx,
-                                vnl_vector_fixed<double, DIMENSION>& vector);
+                                vnl_vector_fixed<double, DIMENSION>& vector) const override;
 
   vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(PointType p, int idx) const override;
   GradNType SampleGradNAtPoint(PointType p, int idx) const override;
@@ -56,7 +56,7 @@ private:
   int GetTriangleForPoint(const double pt[3], int idx) const;
 
   Eigen::Vector3d ProjectVectorToFace(const Eigen::Vector3d& normal,
-                                                      const Eigen::Vector3d& vector);
+                                                      const Eigen::Vector3d& vector) const;
 
 
   vtkSmartPointer<vtkPolyData> poly_data_;
@@ -93,7 +93,7 @@ private:
   PointType mesh_upper_bound_;
 
 
-  vtkSmartPointer<vtkCellLocator> cell_locator_ = vtkSmartPointer<vtkCellLocator>::New();
+  vtkSmartPointer<vtkCellLocator> cell_locator_;
 
 };
 }

@@ -40,12 +40,12 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
 
   this->poly_data_ = normals->GetOutput();
 
+  this->cell_locator_ = vtkSmartPointer<vtkCellLocator>::New();
   this->cell_locator_->SetDataSet(poly_data);
   this->cell_locator_->BuildLocator();
 
   ComputeMeshBounds();
   ComputeGradN();
-
 
 }
 
@@ -71,7 +71,7 @@ VtkMeshWrapper::PointType VtkMeshWrapper::GeodesicWalk(VtkMeshWrapper::PointType
 //---------------------------------------------------------------------------
 vnl_vector_fixed<double, DIMENSION>
 VtkMeshWrapper::ProjectVectorToSurfaceTangent(const VtkMeshWrapper::PointType& pointa, int idx,
-                                              vnl_vector_fixed<double, 3>& vector)
+                                              vnl_vector_fixed<double, 3>& vector) const
 {
 
   double point[3];
@@ -225,7 +225,7 @@ int VtkMeshWrapper::GetTriangleForPoint(const double pt[3], int idx) const
 
 //---------------------------------------------------------------------------
 Eigen::Vector3d
-VtkMeshWrapper::ProjectVectorToFace(const Eigen::Vector3d& normal, const Eigen::Vector3d& vector)
+VtkMeshWrapper::ProjectVectorToFace(const Eigen::Vector3d& normal, const Eigen::Vector3d& vector) const
 {
   return vector - normal * normal.dot(vector);
 }
@@ -314,5 +314,6 @@ void VtkMeshWrapper::ComputeGradN()
   }
 
 }
+
 
 }
