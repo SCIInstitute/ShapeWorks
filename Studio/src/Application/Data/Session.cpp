@@ -518,7 +518,7 @@ void Session::load_original_files(std::vector<std::string> filenames)
     shape->set_mesh_manager(this->mesh_manager_);
     shape->set_subject(subject);
     this->project_->get_subjects().push_back(subject);
-    shape->import_original_image(filenames[i], 0.5);
+    shape->import_original_image(filenames[i]);
 
     this->shapes_.push_back(shape);
   }

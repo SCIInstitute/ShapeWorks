@@ -8,7 +8,6 @@
 
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
-#include <vtkImageImport.h>
 #include <itkImage.h>
 
 #include <vnl/vnl_vector.h>

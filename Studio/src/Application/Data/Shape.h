@@ -45,7 +45,7 @@ public:
   std::shared_ptr<shapeworks::Subject> get_subject();
 
   /// Import the original raw image file
-  void import_original_image(std::string filename, float iso_value);
+  void import_original_image(std::string filename);
 
   /// Retrieve the original mesh
   MeshHandle get_original_mesh(bool wait = false);
