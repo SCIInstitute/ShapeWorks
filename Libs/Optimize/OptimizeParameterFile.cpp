@@ -484,8 +484,6 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
 
       auto poly_data = MeshUtils::threadSafeReadMesh(meshFiles[index].c_str()).getVTKMesh();
 
-      VtkMeshWrapper foo(poly_data);
-
       if (poly_data) {
         optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data));
       } else {

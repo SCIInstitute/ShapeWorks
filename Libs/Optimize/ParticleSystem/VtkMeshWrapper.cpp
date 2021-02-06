@@ -41,6 +41,7 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
   this->poly_data_ = normals->GetOutput();
 
   this->cell_locator_ = vtkSmartPointer<vtkCellLocator>::New();
+  this->cell_locator_->SetCacheCellBounds(true);
   this->cell_locator_->SetDataSet(poly_data);
   this->cell_locator_->BuildLocator();
 
@@ -266,10 +267,9 @@ void VtkMeshWrapper::ComputeGradN()
   }
   for (int i = 0; i < n_faces; i++) {
     auto cell = this->poly_data_->GetCell(i);
-    auto faces = cell->GetFaces();
-    F(i, 0) = faces[0];
-    F(i, 1) = faces[1];
-    F(i, 2) = faces[2];
+    F(i, 0) = cell->GetPointId(0);
+    F(i, 1) = cell->GetPointId(1);
+    F(i, 2) = cell->GetPointId(2);
   }
 
   // Compute normals
