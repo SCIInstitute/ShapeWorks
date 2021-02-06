@@ -49,6 +49,9 @@ public:
 
 private:
 
+  void ComputeMeshBounds();
+  void ComputeGradN(); // Gradient of normals
+
 
   int GetTriangleForPoint(const double pt[3], int idx) const;
 

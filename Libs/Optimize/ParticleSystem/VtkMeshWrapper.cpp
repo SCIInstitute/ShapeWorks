@@ -187,4 +187,23 @@ VtkMeshWrapper::ProjectVectorToFace(const Eigen::Vector3d& normal, const Eigen::
   return vector - normal * normal.dot(vector);
 }
 
+//---------------------------------------------------------------------------
+void VtkMeshWrapper::ComputeMeshBounds()
+{
+  double bounds[6];
+  this->poly_data_->GetBounds(bounds);
+  this->mesh_lower_bound_[0] = bounds[0];
+  this->mesh_lower_bound_[1] = bounds[2];
+  this->mesh_lower_bound_[2] = bounds[4];
+  this->mesh_upper_bound_[0] = bounds[1];
+  this->mesh_upper_bound_[1] = bounds[3];
+  this->mesh_upper_bound_[2] = bounds[5];
+}
+
+//---------------------------------------------------------------------------
+void VtkMeshWrapper::ComputeGradN()
+{
+
+}
+
 }
