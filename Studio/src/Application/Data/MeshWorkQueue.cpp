@@ -1,10 +1,9 @@
 #include <Data/MeshWorkQueue.h>
 
-
-
 namespace shapeworks {
+
 //---------------------------------------------------------------------------
-bool operator<(const MeshWorkItem &a, const MeshWorkItem &b)
+bool operator<(const MeshWorkItem& a, const MeshWorkItem& b)
 {
   if (a.filename == b.filename) {
     // either they are the same file, or both empty, meaning correspondence points and not a file
@@ -44,7 +43,7 @@ bool operator<(const MeshWorkItem &a, const MeshWorkItem &b)
 }
 
 //---------------------------------------------------------------------------
-bool operator==(const MeshWorkItem &a, const MeshWorkItem &b)
+bool operator==(const MeshWorkItem& a, const MeshWorkItem& b)
 {
   //a == b *equals* !(a < b) && !(b < a)
 
@@ -64,7 +63,7 @@ MeshWorkQueue::~MeshWorkQueue()
 {}
 
 //---------------------------------------------------------------------------
-void MeshWorkQueue::push(const MeshWorkItem &item)
+void MeshWorkQueue::push(const MeshWorkItem& item)
 {
   QMutexLocker locker(&this->mutex_);
   this->work_list_.push_back(item);
@@ -91,7 +90,7 @@ MeshWorkItem* MeshWorkQueue::get_next_work_item()
 }
 
 //---------------------------------------------------------------------------
-bool MeshWorkQueue::is_inside(const MeshWorkItem &item)
+bool MeshWorkQueue::is_inside(const MeshWorkItem& item)
 {
   QMutexLocker locker(&this->mutex_);
 
@@ -100,7 +99,7 @@ bool MeshWorkQueue::is_inside(const MeshWorkItem &item)
 }
 
 //---------------------------------------------------------------------------
-void MeshWorkQueue::remove(const MeshWorkItem &item)
+void MeshWorkQueue::remove(const MeshWorkItem& item)
 {
   QMutexLocker locker(&this->mutex_);
 
@@ -122,7 +121,7 @@ int MeshWorkQueue::size()
 }
 
 //---------------------------------------------------------------------------
-bool MeshWorkQueue::in_inside_list(const MeshWorkItem &item, const WorkList &list)
+bool MeshWorkQueue::in_inside_list(const MeshWorkItem& item, const WorkList& list)
 {
   for (WorkList::const_iterator it = list.begin(); it != list.end(); ++it) {
     if (it->filename != "") {

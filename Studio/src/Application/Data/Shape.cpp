@@ -29,8 +29,7 @@ Shape::Shape()
 }
 
 //---------------------------------------------------------------------------
-Shape::~Shape()
-{}
+Shape::~Shape() = default;
 
 //---------------------------------------------------------------------------
 MeshHandle Shape::get_mesh(std::string display_mode)
@@ -47,7 +46,7 @@ MeshHandle Shape::get_mesh(std::string display_mode)
 //---------------------------------------------------------------------------
 void Shape::set_annotations(QStringList annotations, bool only_overwrite_blank)
 {
-  if (only_overwrite_blank && this->corner_annotations_.size() > 0 &&
+  if (only_overwrite_blank && !this->corner_annotations_.empty() &&
       this->corner_annotations_[0] != "") {
     return; // don't override
   }
@@ -71,7 +70,7 @@ void Shape::set_subject(std::shared_ptr<Subject> subject)
 {
   this->subject_ = subject;
 
-  if (this->subject_->get_segmentation_filenames().size() > 0) {
+  if (!this->subject_->get_segmentation_filenames().empty()) {
     std::string filename = this->subject_->get_segmentation_filenames()[0];
     this->corner_annotations_[0] = QString::fromStdString(filename);
   }
@@ -379,7 +378,7 @@ vnl_vector<double> Shape::get_transform()
 void Shape::generate_meshes(std::vector<string> filenames, MeshHandle& mesh,
                             bool save_transform, bool wait)
 {
-  if (filenames.size() < 1) {
+  if (filenames.empty()) {
     return;
   }
 
@@ -590,10 +589,10 @@ Eigen::VectorXf Shape::get_point_features(std::string feature)
 //---------------------------------------------------------------------------
 TransformType Shape::get_groomed_transform()
 {
-  if (this->groomed_transform_.size() == 0) {
+  if (this->groomed_transform_.empty()) {
     // single domain support
     auto transforms = this->subject_->get_groomed_transforms();
-    if (transforms.size() > 0) {
+    if (!transforms.empty()) {
       this->groomed_transform_.set_size(transforms[0].size());
       for (int i = 0; i < transforms[0].size(); i++) {
         this->groomed_transform_[i] = transforms[0][i];
