@@ -4,6 +4,7 @@
 #include <vtkPolyDataNormals.h>
 #include <vtkCellData.h>
 #include <vtkPointData.h>
+#include <vtkTriangleFilter.h>
 
 #include <igl/grad.h>
 #include <igl/per_vertex_normals.h>
@@ -26,8 +27,13 @@ inline TO convert(FROM& value)
 VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
 {
 
+  vtkSmartPointer<vtkTriangleFilter> triangleFilter =
+    vtkSmartPointer<vtkTriangleFilter>::New();
+  triangleFilter->SetInputData(poly_data);
+  triangleFilter->Update();
+
   vtkSmartPointer<vtkPolyDataNormals> normals = vtkSmartPointer<vtkPolyDataNormals>::New();
-  normals->SetInputData(poly_data);
+  normals->SetInputData(triangleFilter->GetOutput());
   normals->ComputeCellNormalsOn();
   normals->ComputePointNormalsOn();
   normals->Update();
@@ -36,6 +42,10 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
 
   this->cell_locator_->SetDataSet(poly_data);
   this->cell_locator_->BuildLocator();
+
+  ComputeMeshBounds();
+  ComputeGradN();
+
 
 }
 
