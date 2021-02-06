@@ -5,6 +5,9 @@
 #include <vtkCellData.h>
 #include <vtkPointData.h>
 
+#include <igl/grad.h>
+#include <igl/per_vertex_normals.h>
+
 namespace shapeworks {
 
 namespace {
@@ -126,7 +129,37 @@ VtkMeshWrapper::SampleNormalAtPoint(VtkMeshWrapper::PointType p, int idx) const
 VtkMeshWrapper::GradNType
 VtkMeshWrapper::SampleGradNAtPoint(VtkMeshWrapper::PointType p, int idx) const
 {
-  return shapeworks::VtkMeshWrapper::GradNType();
+
+  double point[3];
+  point[0] = p[0];
+  point[1] = p[1];
+  point[2] = p[2];
+
+  int face_index = this->GetTriangleForPoint(point, idx);
+
+  auto cell = this->poly_data_->GetCell(face_index);
+
+  double closest[3];
+  int sub_id;
+  double pcoords[3];
+  double dist2;
+  double weights[3];
+  cell->EvaluatePosition(point, closest, sub_id, pcoords, dist2, weights);
+
+  GradNType weighted_grad_normal = GradNType(0.0);
+
+  for (int i = 0; i < cell->GetNumberOfPoints(); i++) {
+
+    auto id = cell->GetPointId(i);
+
+    GradNType grad_normal = grad_normals_[id];
+
+    grad_normal *= weights[i];
+
+    weighted_grad_normal += grad_normal;
+
+  }
+  return weighted_grad_normal;
 }
 
 //---------------------------------------------------------------------------
@@ -203,6 +236,72 @@ void VtkMeshWrapper::ComputeMeshBounds()
 //---------------------------------------------------------------------------
 void VtkMeshWrapper::ComputeGradN()
 {
+
+  const int n_verts = this->poly_data_->GetNumberOfPoints();
+  const int n_faces = this->poly_data_->GetNumberOfCells();
+
+  // Copy from vtk to libigl data structures
+  Eigen::MatrixXd V;
+  Eigen::MatrixXi F;
+  V.resize(n_verts, 3);
+  F.resize(n_faces, 3);
+
+  auto points = this->poly_data_->GetPoints();
+  for (int i = 0; i < n_verts; i++) {
+    double p[3];
+    points->GetPoint(i, p);
+    V(i, 0) = p[0];
+    V(i, 1) = p[1];
+    V(i, 2) = p[2];
+  }
+  for (int i = 0; i < n_faces; i++) {
+    auto cell = this->poly_data_->GetCell(i);
+    auto faces = cell->GetFaces();
+    F(i, 0) = faces[0];
+    F(i, 1) = faces[1];
+    F(i, 2) = faces[2];
+  }
+
+  // Compute normals
+  Eigen::MatrixXd N;
+  igl::per_vertex_normals(V, F, N);
+
+  // Compute gradient operator
+  Eigen::SparseMatrix<double> G;
+  igl::grad(V, F, G);
+
+  // Compute gradient of normals per face
+  const Eigen::MatrixXd GN = Eigen::Map<const Eigen::MatrixXd>((G * N).eval().data(), n_faces, 9);
+
+  // Convert per-face values to per-vertex using face area as weight
+  Eigen::MatrixXd GN_pervertex(n_verts, 9);
+  GN_pervertex.setZero();
+  Eigen::MatrixXd A_perface;
+  igl::doublearea(V, F, A_perface);
+  Eigen::VectorXd A_pervertex(n_verts);
+  A_pervertex.setZero();
+  // scatter the per-face values
+  for (int i = 0; i < n_faces; i++) {
+    for (int j = 0; j < 3; j++) {
+      GN_pervertex.row(F(i, j)) += A_perface(i, 0) * GN.row(i);
+      A_pervertex(F(i, j)) += A_perface(i, 0);
+    }
+  }
+  for (int i = 0; i < n_verts; i++) {
+    if (A_pervertex(i) != 0.0) {
+      GN_pervertex.row(i) /= A_pervertex(i);
+    }
+  }
+
+  // Copy back to VNL data structure
+  grad_normals_.resize(n_verts);
+  for (int j = 0; j < n_verts; j++) {
+    for (int i = 0; i < 3; i++) {
+      grad_normals_[j].set(i, 0, GN_pervertex(j, i * 3 + 0));
+      grad_normals_[j].set(i, 1, GN_pervertex(j, i * 3 + 1));
+      grad_normals_[j].set(i, 2, GN_pervertex(j, i * 3 + 2));
+    }
+  }
 
 }
 
