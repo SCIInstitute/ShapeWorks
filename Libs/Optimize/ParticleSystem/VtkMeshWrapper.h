@@ -5,6 +5,8 @@
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
+class vtkCellLocator;
+
 namespace shapeworks {
 
 class VtkMeshWrapper : public MeshWrapper {
@@ -25,7 +27,7 @@ public:
 
   vnl_vector_fixed<double, DIMENSION>
   ProjectVectorToSurfaceTangent(const PointType& pointa, int idx,
-                                vnl_vector_fixed<double, DIMENSION>& vector) const override;
+                                vnl_vector_fixed<double, DIMENSION>& vector);
 
   vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(PointType p, int idx) const override;
   GradNType SampleGradNAtPoint(PointType p, int idx) const override;
@@ -46,6 +48,14 @@ public:
   }
 
 private:
+
+
+  int GetTriangleForPoint(const double pt[3], int idx) const;
+
+  Eigen::Vector3d ProjectVectorToFace(const Eigen::Vector3d& normal,
+                                                      const Eigen::Vector3d& vector);
+
+
   vtkSmartPointer<vtkPolyData> poly_data_;
 
   /*
@@ -78,6 +88,9 @@ private:
 
   PointType mesh_lower_bound_;
   PointType mesh_upper_bound_;
+
+
+  vtkSmartPointer<vtkCellLocator> cell_locator_ = vtkSmartPointer<vtkCellLocator>::New();
 
 };
 }
