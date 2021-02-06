@@ -3,6 +3,7 @@
 #include <vtkCellLocator.h>
 #include <vtkPolyDataNormals.h>
 #include <vtkCellData.h>
+#include <vtkPointData.h>
 
 namespace shapeworks {
 
@@ -29,7 +30,6 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
   normals->Update();
 
   this->poly_data_ = normals->GetOutput();
-
 
   this->cell_locator_->SetDataSet(poly_data);
   this->cell_locator_->BuildLocator();
@@ -68,8 +68,7 @@ VtkMeshWrapper::ProjectVectorToSurfaceTangent(const VtkMeshWrapper::PointType& p
 
   int faceIndex = this->GetTriangleForPoint(point, idx);
 
-  double *normal = this->poly_data_->GetCellData()->GetNormals()->GetTuple(faceIndex);
-
+  double* normal = this->poly_data_->GetCellData()->GetNormals()->GetTuple(faceIndex);
 
   Eigen::Vector3d vec_normal;
   vec_normal[0] = normal[0];
@@ -81,20 +80,46 @@ VtkMeshWrapper::ProjectVectorToSurfaceTangent(const VtkMeshWrapper::PointType& p
   vec_vector[1] = vector[1];
   vec_vector[2] = vector[2];
 
-
   Eigen::Vector3d result = this->ProjectVectorToFace(vec_normal, vec_vector);
   vnl_vector_fixed<double, DIMENSION> resultvnl(result[0], result[1], result[2]);
   return resultvnl;
 
-
-  return vnl_vector_fixed<double, 3>();
 }
 
 //---------------------------------------------------------------------------
 vnl_vector_fixed<float, DIMENSION>
 VtkMeshWrapper::SampleNormalAtPoint(VtkMeshWrapper::PointType p, int idx) const
 {
-  return vnl_vector_fixed<float, 3>();
+
+  double point[3];
+  point[0] = p[0];
+  point[1] = p[1];
+  point[2] = p[2];
+
+  int face_index = this->GetTriangleForPoint(point, idx);
+
+  auto cell = this->poly_data_->GetCell(face_index);
+
+  vnl_vector_fixed<float, DIMENSION> weightedNormal(0, 0, 0);
+
+  double closest[3];
+  int sub_id;
+  double pcoords[3];
+  double dist2;
+  double weights[3];
+  cell->EvaluatePosition(point, closest, sub_id, pcoords, dist2, weights);
+
+  for (int i = 0; i < cell->GetNumberOfPoints(); i++) {
+
+    auto id = cell->GetPointId(i);
+
+    double* normal = this->poly_data_->GetPointData()->GetNormals()->GetTuple(id);
+
+    weightedNormal[0] = weightedNormal[0] + normal[0] * weights[i];
+    weightedNormal[1] = weightedNormal[1] + normal[1] * weights[i];
+    weightedNormal[2] = weightedNormal[2] + normal[2] * weights[i];
+  }
+  return weightedNormal;
 }
 
 //---------------------------------------------------------------------------
@@ -130,7 +155,16 @@ VtkMeshWrapper::SnapToMesh(VtkMeshWrapper::PointType pointa, int idx) const
 //---------------------------------------------------------------------------
 VtkMeshWrapper::PointType VtkMeshWrapper::GetPointOnMesh() const
 {
-  return shapeworks::VtkMeshWrapper::PointType();
+  int face_index = 0;
+
+  double* point = this->poly_data_->GetPoint(face_index);
+
+  PointType p;
+  p[0] = point[0];
+  p[1] = point[1];
+  p[2] = point[2];
+
+  return p;
 }
 
 //---------------------------------------------------------------------------
@@ -146,6 +180,7 @@ int VtkMeshWrapper::GetTriangleForPoint(const double pt[3], int idx) const
   return cell_id;
 }
 
+//---------------------------------------------------------------------------
 Eigen::Vector3d
 VtkMeshWrapper::ProjectVectorToFace(const Eigen::Vector3d& normal, const Eigen::Vector3d& vector)
 {
