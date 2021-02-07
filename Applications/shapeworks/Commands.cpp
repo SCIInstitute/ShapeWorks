@@ -1737,7 +1737,7 @@ bool Decimate::execute(const optparse::Values &options, SharedCommandData &share
 void InvertNormals::buildParser()
 {
   const std::string prog = "invert-normals";
-  const std::string desc = "flips the normal";
+  const std::string desc = "flips the normals";
   parser.prog(prog).description(desc);
 
   Command::buildParser();
