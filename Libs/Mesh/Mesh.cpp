@@ -676,6 +676,58 @@ bool Mesh::compareAllPoints(const Mesh &other_mesh) const
   return true;
 }
 
+bool Mesh::compareAllFaces(const Mesh &other_mesh) const
+{
+  if (!this->mesh || !other_mesh.mesh)
+    throw std::invalid_argument("invalid meshes");
+
+  if (this->mesh->GetNumberOfCells() != other_mesh.mesh->GetNumberOfCells())
+  {
+    std::cerr << "meshes differ in number of faces";
+    return false;
+  }
+
+  // helper function to print out the cell indices
+  auto printCells = [](vtkCell* cell1, vtkCell* cell2){
+    printf("[ ");
+    for(int i = 0; i < cell1->GetNumberOfPoints(); i++) {
+      printf("%lld ", cell1->GetPointId(i));
+    }
+    printf("], [ ");
+    for(int i = 0; i < cell2->GetNumberOfPoints(); i++) {
+      printf("%lld ", cell2->GetPointId(i));
+    }
+    printf("]");
+  };
+
+  for (int i = 0; i < this->mesh->GetNumberOfCells(); i++)
+  {
+    vtkCell* cell1 = this->mesh->GetCell(i);
+    vtkCell* cell2 = other_mesh.mesh->GetCell(i);
+
+    if(cell1->GetNumberOfPoints() != cell2->GetNumberOfPoints())
+    {
+      printf("%ith face not equal (", i);
+      printCells(cell1, cell2);
+      printf(")\n");
+      return false;
+    }
+
+    for(int pi=0; pi<cell1->GetNumberOfPoints(); pi++)
+    {
+      if(cell1->GetPointId(pi) != cell2->GetPointId(pi))
+      {
+        printf("%ith face not equal (", i);
+        printCells(cell1, cell2);
+        printf(")\n");
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
 bool Mesh::compareAllFields(const Mesh &other_mesh) const
 {
   if (!this->mesh || !other_mesh.mesh)
@@ -763,6 +815,7 @@ bool Mesh::compare(const Mesh& other) const
   if (numPoints() != other.numPoints())                    { std::cerr << "num pts differ\n"; return false; }
   if (numFaces() != other.numFaces())                      { std::cerr << "num faces differ\n"; return false; }
   if (!compareAllPoints(other))                            { std::cerr << "points differ\n"; return false; }
+  if (!compareAllFaces(other))                             { std::cerr << "faces differ\n"; return false; }
   if (!compareAllFields(other))                            { std::cerr << "fields differ\n"; return false; }
 
   return true;

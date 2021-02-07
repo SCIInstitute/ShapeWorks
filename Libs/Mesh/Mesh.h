@@ -141,6 +141,9 @@ public:
   /// compare if values of the points in two (corresponding) meshes are (eps)equal
   bool compareAllPoints(const Mesh& other_mesh) const;
 
+  /// compare if face indices in two (corresponding) meshes are equal
+  bool compareAllFaces(const Mesh& other_mesh) const;
+
   /// compare if all fields in two meshes are (eps)equal
   bool compareAllFields(const Mesh& other_mesh) const;
 
