@@ -201,7 +201,7 @@ Mesh &Mesh::decimate(double reduction, double angle, bool preservetopology)
   return *this;
 }
 
-Mesh &Mesh::invertNormal()
+Mesh &Mesh::invertNormals()
 {
   vtkSmartPointer<vtkReverseSense> reverseSense = vtkSmartPointer<vtkReverseSense>::New();
 
@@ -224,7 +224,7 @@ Mesh &Mesh::reflect(const Axis &axis, const Vector3 &origin)
   transform->Scale(scale[0], scale[1], scale[2]);
   transform->Translate(origin[0], origin[1], origin[2]);
 
-  return invertNormal().applyTransform(transform);
+  return invertNormals().applyTransform(transform);
 }
 
 swTransform Mesh::createTransform(const Mesh &target, Mesh::TransformType type, Mesh::AlignmentType align, unsigned iterations)

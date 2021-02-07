@@ -42,7 +42,7 @@ public:
   Mesh& decimate(double reduction = 0.0, double angle = 0.0, bool preservetopology = false);
 
   /// handle flipping normals
-  Mesh& invertNormal();
+  Mesh& invertNormals();
 
   /// reflect meshes with respect to a specified center and specific axis
   Mesh& reflect(const Axis &axis, const Vector3 &origin = makeVector({ 0.0, 0.0, 0.0 }));
