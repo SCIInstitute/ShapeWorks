@@ -19,9 +19,10 @@ target_link_libraries(Optimize
   tinyxml
   Utils
   Particles
+  Eigen3::Eigen
+  igl::core
   ${ITK_LIBRARIES}
   ${VTK_LIBRARIES}
-  igl::core
   )
 
 # Create an interface library that will bring pybind11::embed along

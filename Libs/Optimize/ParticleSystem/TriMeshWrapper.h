@@ -11,8 +11,15 @@
 #include <Eigen/Geometry>
 #include <vector>
 #include "igl/heat_geodesics.h"
+#include <unordered_map>
 
 namespace shapeworks {
+
+template<class T>
+struct GeoCache {
+  std::unordered_map<int, int> tri2entry;
+  std::vector<T> entries;
+};
 
 class TriMeshWrapper : public MeshWrapper {
 public:
@@ -95,6 +102,8 @@ private:
   PointType mesh_lower_bound_;
   PointType mesh_upper_bound_;
 
+  void InvalidateBary(const PointType& p, int idx) const override;
+
   /////////////////////////
   // Geodesic distances
 
@@ -110,25 +119,17 @@ private:
   // Returns true if face f_a is adjacent to face f_b
   bool AreFacesAdjacent(int f_a, int f_b) const;
 
-  size_t max_cache_entries_ {2000};
-
-  template<class T>
-  struct GeoCache {
-    std::unordered_map<int, int> tri2entry;
-    std::vector<T> entries;
-  };
+  size_t max_cache_entries_ {256};
 
   // Cache to store information for geodesics
-  mutable struct {
-    igl::HeatGeodesicsData<double> heat_data;
-
-    // cache for geodesic distances from a triangle
-    GeoCache<std::array<Eigen::VectorXd, 3>> geo;
-    // cache for gradient of geodesic distances from a triangle
-    GeoCache<std::array<Eigen::MatrixXd, 3>> grad_geo;
-
-    Eigen::SparseMatrix<double> G; // Gradient operator
-  } geodesic_cache_;
+  mutable igl::HeatGeodesicsData<double> heat_data;
+  // cache for geodesic distances from a triangle
+  mutable GeoCache<std::array<Eigen::VectorXd, 3>> geo;
+  // cache for gradient of geodesic distances from a triangle
+  mutable GeoCache<std::array<Eigen::MatrixXd, 3>> grad_geo;
+  // Gradient operator
+  mutable Eigen::SparseMatrix<double> grad_operator_;
+  mutable std::vector<trimesh::vec3> particle2bary_;
 };
 
 }

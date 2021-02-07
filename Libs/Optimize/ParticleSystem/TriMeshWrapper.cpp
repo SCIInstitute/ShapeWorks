@@ -1,9 +1,7 @@
 
 #include "TriMeshWrapper.h"
 
-#include <igl/grad.h>
 #include <igl/per_vertex_normals.h>
-#include <igl/doublearea.h>
 #include <igl/triangle_triangle_adjacency.h>
 
 #include <set>
@@ -60,6 +58,14 @@ TriMeshWrapper::TriMeshWrapper(std::shared_ptr<trimesh::TriMesh> mesh)
   kd_tree_ = std::make_shared<KDtree>(mesh_->vertices);
 }
 
+void TriMeshWrapper::InvalidateBary(const PointType& p, int idx) const
+{
+  if(particle2bary_.size() <= idx) {
+    particle2bary_.resize(idx+1, {0.0, 0.0, 0.0});
+  }
+  GetTriangleForPoint(convert<const PointType&, point>(p), idx, particle2bary_[idx]);
+}
+
 double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
                                        PointType pt_b, int idx_b,
                                        vnl_vector_fixed<double, DIMENSION> *out_grad) const
@@ -74,9 +80,10 @@ double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
 #endif
 
   // Find the triangle for the points
-  vec3 bary_a, bary_b;
-  const int face_a = GetTriangleForPoint(convert<PointType, point>(pt_a), idx_a, bary_a);
-  const int face_b = GetTriangleForPoint(convert<PointType, point>(pt_b), idx_b, bary_b);
+  const vec3& bary_a = particle2bary_[idx_a];
+  const vec3& bary_b = particle2bary_[idx_b];
+  const int face_a = particle2tri_[idx_a];
+  const int face_b = particle2tri_[idx_b];
 
   // The geodesics(and more importantly, its gradient) are very inaccurate if both the points are on the
   // same face, or share an edge. In this case, just return the euclidean distance
@@ -134,7 +141,7 @@ bool TriMeshWrapper::AreFacesAdjacent(int f_a, int f_b) const {
 }
 
 const std::array<Eigen::VectorXd, 3>& TriMeshWrapper::GeodesicsFromTriangle(int f) const {
-  auto& cache = geodesic_cache_.geo;
+  auto& cache = geo;
   const auto map_entry = cache.tri2entry.find(f);
   if(map_entry != cache.tri2entry.end()) {
     return cache.entries[map_entry->second];
@@ -147,9 +154,10 @@ const std::array<Eigen::VectorXd, 3>& TriMeshWrapper::GeodesicsFromTriangle(int 
 
   const int cache_idx = cache.tri2entry.size();
   for(int i=0; i<3; i++) {
+    auto& D = cache.entries[cache_idx][i];
     Eigen::VectorXi gamma;
     gamma.resize(1); gamma << mesh_->faces[f][i];
-    igl::heat_geodesics_solve(geodesic_cache_.heat_data, gamma, cache.entries[cache_idx][i]);
+    igl::heat_geodesics_solve(heat_data, gamma, D);
   }
 
   cache.tri2entry[f] = cache_idx;
@@ -157,7 +165,7 @@ const std::array<Eigen::VectorXd, 3>& TriMeshWrapper::GeodesicsFromTriangle(int 
 }
 
 const std::array<Eigen::MatrixXd, 3>& TriMeshWrapper::GradGeodesicsFromTriangle(int f) const {
-  auto& cache = geodesic_cache_.grad_geo;
+  auto& cache = grad_geo;
   const auto map_entry = cache.tri2entry.find(f);
   if(map_entry != cache.tri2entry.end()) {
     return cache.entries[map_entry->second];
@@ -171,12 +179,11 @@ const std::array<Eigen::MatrixXd, 3>& TriMeshWrapper::GradGeodesicsFromTriangle(
   const int cache_idx = cache.tri2entry.size();
 
   const std::array<Eigen::VectorXd, 3>& D = GeodesicsFromTriangle(f);
-  const auto& G = geodesic_cache_.G;
+  const auto& G = grad_operator_;
 
   for(int i=0; i<3; i++) {
     Eigen::MatrixXd& GD = cache.entries[cache_idx][i];
 
-    GD.resize(mesh_->faces.size(), 3); // ensure enough memory if first time cache entry used
     GD.noalias() = G*D[i]; // makes GD a (3F, 1) matrix
     GD.resize(mesh_->faces.size(), 3); // correct rows and columns
   }
@@ -664,14 +671,25 @@ void TriMeshWrapper::ComputeGradN(const Eigen::MatrixXd& V, const Eigen::MatrixX
 void TriMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F)
 {
   // Precompute heat data structure for geodesics
-  igl::heat_geodesics_precompute(V, F, geodesic_cache_.heat_data);
+  igl::heat_geodesics_precompute(V, F, heat_data);
 
   // Precompute gradient operator to find gradient of geodesics
-  igl::grad(V, F, geodesic_cache_.G);
+  igl::grad(V, F, grad_operator_);
 
   // Resize cache to correct size
-  geodesic_cache_.geo.entries.resize(max_cache_entries_);
-  geodesic_cache_.grad_geo.entries.resize(max_cache_entries_);
+  geo.entries.resize(max_cache_entries_);
+  grad_geo.entries.resize(max_cache_entries_);
+
+  for(auto& entry : geo.entries) {
+    entry[0].resize(mesh_->vertices.size());
+    entry[1].resize(mesh_->vertices.size());
+    entry[2].resize(mesh_->vertices.size());
+  }
+  for(auto& entry : grad_geo.entries) {
+    entry[0].resize(mesh_->faces.size(), 3);
+    entry[1].resize(mesh_->faces.size(), 3);
+    entry[2].resize(mesh_->faces.size(), 3);
+  }
 }
 
 void TriMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const

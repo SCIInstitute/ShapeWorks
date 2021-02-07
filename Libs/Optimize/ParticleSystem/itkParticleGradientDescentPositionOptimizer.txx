@@ -24,6 +24,7 @@ const int global_iteration = 1;
 
 #include <tbb/parallel_for.h>
 #include <tbb/task_scheduler_init.h>
+#include "MeshDomain.h"
 
 
 namespace itk
@@ -94,6 +95,13 @@ namespace itk
     unsigned int numdomains = m_ParticleSystem->GetNumberOfDomains();
 
     unsigned int counter = 0;
+
+    for(int i=0; i<numdomains; i++) {
+      MeshDomain* dom = (MeshDomain*)m_ParticleSystem->GetDomain(i);
+      for(int pi=0; pi<m_ParticleSystem->GetNumberOfParticles(i); pi++) {
+        dom->InvalidateBary(m_ParticleSystem->GetPosition(pi, i), pi);
+      }
+    }
 
     double maxchange = 0.0;
     while (m_StopOptimization == false) // iterations loop
@@ -177,6 +185,10 @@ namespace itk
 
               // Step F update the point position in the particle system
               m_ParticleSystem->SetPosition(newpoint, k, dom);
+              {
+                MeshDomain* mesh_domain = (MeshDomain*)m_ParticleSystem->GetDomain(dom);
+                mesh_domain->InvalidateBary(m_ParticleSystem->GetPosition(k, dom), k);
+              }
 
               // Step G compute the new energy of the particle system
               newenergy = localGradientFunction->Energy(k, dom, m_ParticleSystem);
@@ -193,6 +205,10 @@ namespace itk
                 {
                   domain->ApplyConstraints(pt, k);
                   m_ParticleSystem->SetPosition(pt, k, dom);
+                  {
+                    MeshDomain* mesh_domain = (MeshDomain*)m_ParticleSystem->GetDomain(dom);
+                    mesh_domain->InvalidateBary(m_ParticleSystem->GetPosition(k, dom), k);
+                  }
 
                   m_TimeSteps[dom][k] /= factor;
                 }

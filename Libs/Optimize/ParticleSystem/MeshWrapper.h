@@ -13,6 +13,8 @@ public:
   typedef typename itk::ParticleDomain::PointType PointType;
   typedef typename itk::ParticleDomain::HessianType HessianType;
 
+  virtual void InvalidateBary(const PointType& p, int idx) const = 0;
+
   // Computed distance between points. If out_grad != nullptr, returns the gradient of the distance in that vector
   virtual double ComputeDistance(PointType pointa, int idx_a,
                                  PointType pointb, int idx_b,

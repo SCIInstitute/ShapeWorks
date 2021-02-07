@@ -11,6 +11,7 @@
 #include "itkParticleDomain.h"
 #include "MeshWrapper.h"
 #include "TriMeshWrapper.h"
+#include "TriMeshWrapper.h"
 
 namespace itk
 {
@@ -108,6 +109,10 @@ public:
   void SetMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh_)  {
     this->m_FixedDomain = false;
     meshWrapper = mesh_;
+  }
+
+  void InvalidateBary(const PointType& p, int idx) const {
+    meshWrapper->InvalidateBary(p, idx);
   }
 
   void UpdateZeroCrossingPoint() override {
