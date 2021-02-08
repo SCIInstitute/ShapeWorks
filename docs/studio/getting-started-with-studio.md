@@ -68,7 +68,13 @@ The Metrics panel shows the Explained Variance chart.  This chart shows how much
 
 ### Surface Reconstruction Panel
 
-The surface reconstruction panel provides options for the surface reconstruction method.  Using this option will provide smoother reconstructions.
+The surface reconstruction panel provides options for the surface reconstruction method.  There are three surface reconstruction methods available depending on the data you supply.
+
+`Legacy` - If an older XML file with only particle files is supplied, then only this option is available.  This is the fallback option since it requires only the particles.
+
+`Mesh Warping Based` - Mesh warping based method that utilizes the mean mesh.  You must have either meshes supplied or image based (distance transforms).
+
+`Distance Transform Based` - Surface reconstruction based on distance transforms.  Project must have distance transforms.
 
 ![ShapeWorks Studio Analysis Surface Reconstruction Panel](../img/studio/studio_analyze_surface_reconstruction.png)
 

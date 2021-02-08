@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(Coverage::getCommand());
   shapeworks.addCommand(Smooth::getCommand());
   shapeworks.addCommand(Decimate::getCommand());
-  shapeworks.addCommand(InvertNormal::getCommand());
+  shapeworks.addCommand(InvertNormals::getCommand());
   shapeworks.addCommand(ReflectMesh::getCommand());
   shapeworks.addCommand(TransformMesh::getCommand());
   shapeworks.addCommand(FillHoles::getCommand());

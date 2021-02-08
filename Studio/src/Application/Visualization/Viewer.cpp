@@ -183,7 +183,8 @@ Viewer::Viewer()
   this->corner_annotation_ = vtkSmartPointer<vtkCornerAnnotation>::New();
   this->corner_annotation_->SetLinearFontScaleFactor(2);
   this->corner_annotation_->SetNonlinearFontScaleFactor(1);
-  this->corner_annotation_->SetMaximumFontSize(16);
+  this->corner_annotation_->SetMaximumFontSize(32);
+  this->corner_annotation_->SetMaximumLineHeight(0.03);
 
 }
 
@@ -197,6 +198,17 @@ void Viewer::set_color_scheme(int scheme)
   this->renderer_->SetBackground(color_schemes_[scheme].background.r,
                                  color_schemes_[scheme].background.g,
                                  color_schemes_[scheme].background.b);
+
+  double average = (color_schemes_[scheme].background.r + color_schemes_[scheme].background.g +
+                    color_schemes_[scheme].background.b) / 3.0;
+
+  double color = 1;
+  if (average > 0.5) {
+    color = 0;
+  }
+
+  this->scalar_bar_actor_->GetLabelTextProperty()->SetColor(color, color, color);
+
 }
 
 //-----------------------------------------------------------------------------
@@ -303,7 +315,7 @@ void Viewer::display_vector_field()
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::compute_point_differences(const std::vector<Shape::Point> &points,
+void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
                                        vtkSmartPointer<vtkFloatArray> magnitudes,
                                        vtkSmartPointer<vtkFloatArray> vectors)
 {

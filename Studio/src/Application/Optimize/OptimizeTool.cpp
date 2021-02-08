@@ -46,7 +46,7 @@ OptimizeTool::OptimizeTool()
   this->ui_->use_normals->setToolTip("Use surface normals as part of optimization");
   this->ui_->normals_strength->setToolTip("Strength of surface normals relative to position");
   this->ui_->procrustes->setToolTip("Use procrustes registration during optimization");
-  this->ui_->procrustes_interval->setToolTip("How often to run procrustes during optimization");
+  this->ui_->procrustes_interval->setToolTip("How often to run procrustes during optimization (0 = disabled)");
   this->ui_->procrustes_scaling->setToolTip("Use procrustes scaling");
   this->ui_->multiscale->setToolTip("Use multiscale optimization mode");
   this->ui_->multiscale_particles->setToolTip(
@@ -148,6 +148,8 @@ void OptimizeTool::on_run_optimize_button_clicked()
   connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
   connect(worker, SIGNAL(message(std::string)), this, SLOT(handle_message(std::string)));
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
+  connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+  connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
   thread->start();
 
   this->threads_ << thread;
@@ -259,13 +261,6 @@ void OptimizeTool::shutdown_threads()
   }
   this->optimize_->AbortOptimization();
 
-  for (size_t i = 0; i < this->threads_.size(); i++) {
-    if (this->threads_[i]->isRunning()) {
-      std::cerr << "waiting...\n";
-      this->threads_[i]->wait(1000);
-      std::cerr << "done waiting...\n";
-    }
-  }
 }
 
 //---------------------------------------------------------------------------

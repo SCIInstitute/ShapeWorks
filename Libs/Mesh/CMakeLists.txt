@@ -43,7 +43,10 @@ target_link_libraries(
   Eigen3::Eigen
   igl::core
   Particles
+  TBB::tbb
   )
+
+
 
 # Install
 set_target_properties(Mesh PROPERTIES PUBLIC_HEADER

@@ -60,6 +60,10 @@ public:
   void apply_feature_map(std::string name, ImageType::Pointer image,
                          vnl_vector<double> transform);
 
+  //! Apply scalars from another mesh, with a transform
+  void apply_scalars(QSharedPointer<StudioMesh> mesh, vnl_vector<double> transform);
+
+  //! Interpolation scalars at positions to this mesh
   void interpolate_scalars_to_mesh(std::string name,
                                    vnl_vector<double> positions, Eigen::VectorXf scalar_values);
 
