@@ -529,7 +529,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("coverage",              &Mesh::coverage, "determines coverage between current mesh and another mesh (e.g. acetabular cup / femoral head)", "otherMesh"_a, "allowBackIntersections"_a=true, "angleThreshold"_a=0, "backSearchRadius"_a=0)
   .def("smooth",                &Mesh::smooth, "applies laplacian smoothing", "iterations"_a=0, "relaxation"_a=0.0)
   .def("decimate",              &Mesh::decimate, "applies filter to reduce number of triangles in mesh", "reduction"_a=0.0, "angle"_a=0.0, "preserveTopology"_a=true)
-  .def("invertNormal",          &Mesh::invertNormal, "handle flipping normals")
+  .def("invertNormals",         &Mesh::invertNormals, "handle flipping normals")
   .def("reflect",               &Mesh::reflect, "reflect meshes with respect to a specified center and specific axis", "axis"_a, "origin"_a=makeVector({0.0, 0.0, 0.0}))
   .def("reflect", [](Mesh& self, const Axis &axis, std::vector<double>& v) -> decltype(auto) {
     return self.reflect(axis, makeVector({v[0], v[1], v[2]}));

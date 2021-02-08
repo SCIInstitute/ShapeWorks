@@ -230,9 +230,9 @@ bool Decimate::execute(const optparse::Values &options, SharedCommandData &share
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// InvertNormal
+// InvertNormals
 ///////////////////////////////////////////////////////////////////////////////
-void InvertNormal::buildParser()
+void InvertNormals::buildParser()
 {
   const std::string prog = "invert-normal";
   const std::string desc = "flips the normal";
@@ -241,7 +241,7 @@ void InvertNormal::buildParser()
   Command::buildParser();
 }
 
-bool InvertNormal::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool InvertNormals::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validMesh())
   {
@@ -249,7 +249,7 @@ bool InvertNormal::execute(const optparse::Values &options, SharedCommandData &s
     return false;
   }
 
-  sharedData.mesh->invertNormal();
+  sharedData.mesh->invertNormals();
   return sharedData.validMesh();
 }
 
