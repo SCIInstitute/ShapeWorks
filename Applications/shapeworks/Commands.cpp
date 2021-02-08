@@ -1852,7 +1852,7 @@ bool Transform::execute(const optparse::Values &options, SharedCommandData &shar
   else
   {
     Mesh target(targetMesh);
-    vtkTransform transform(sharedData.mesh->createTransform(target, method, align, iterations));
+    swTransform transform(sharedData.mesh->createTransform(target, method, align, iterations));
     sharedData.mesh->applyTransform(transform);
     return sharedData.validMesh();
   }

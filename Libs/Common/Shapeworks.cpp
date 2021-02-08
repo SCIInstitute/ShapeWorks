@@ -121,9 +121,9 @@ TransformPtr createTransform(const Matrix33 &mat, const Vector3 &translate)
   return xform;
 }
 
-vtkTransform createvtkTransform(const vtkSmartPointer<vtkMatrix4x4> &mat)
+swTransform createswTransform(const vtkSmartPointer<vtkMatrix4x4> &mat)
 {
-  vtkTransform xform(vtkTransform::New());
+  swTransform xform(swTransform::New());
   xform->SetMatrix(mat);
   return xform;
 }

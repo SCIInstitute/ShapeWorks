@@ -48,8 +48,8 @@ using AffineTransform    = itk::AffineTransform<double, 3>;
 using AffineTransformPtr = AffineTransform::Pointer;
 
 /// Mesh transforms
-using vtkTransform = vtkSmartPointer<vtkTransform>;
-vtkTransform createvtkTransform(const vtkSmartPointer<vtkMatrix4x4> &mat);
+using swTransform = vtkSmartPointer<vtkTransform>;
+swTransform createswTransform(const vtkSmartPointer<vtkMatrix4x4> &mat);
 
 /// For deliberate conversions between types
 Point toPoint(const Dims &d);

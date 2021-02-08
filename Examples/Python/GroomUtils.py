@@ -304,11 +304,11 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side):
         if flip_seg != 'None':
             img_out = rename(image, outImgDir, 'reflect').replace(prefix, flip_prefix)
             imageList.append(img_out)
-            img = Image(image)
-            img2 = img
+            img1 = Image(image)
+            img2 = Image(image)
             img2.recenter()
-            center = img2.origin() - img.origin()
-            img.reflect(X).write(img_out)
+            center = img2.origin() - img1.origin()
+            img1.reflect(X).write(img_out)
 
             cmd = ["shapeworks",
                    "read-mesh", "--name", seg,
