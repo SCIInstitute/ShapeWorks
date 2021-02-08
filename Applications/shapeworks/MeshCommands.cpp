@@ -332,8 +332,12 @@ bool TransformMesh::execute(const optparse::Values &options, SharedCommandData &
     align = Mesh::Rigid;
   else if (alignopt == "similarity")
     align = Mesh::Similarity;
-  else
+  else if (alignopt == "affine")
     align = Mesh::Affine;
+  else {
+    std::cerr << "no such alignment type: " << alignopt << std::endl;
+    return false;
+  }
 
   std::string methodopt(options.get("method"));
   Mesh::TransformType method{Mesh::IterativeClosestPoint};
