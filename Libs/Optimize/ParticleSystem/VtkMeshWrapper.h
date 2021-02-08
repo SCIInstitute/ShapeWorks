@@ -59,6 +59,9 @@ private:
                                                       const Eigen::Vector3d& vector) const;
 
 
+  bool IsInTriangle(const double pt[3], int face_index) const;
+
+
   vtkSmartPointer<vtkPolyData> poly_data_;
 
   /*

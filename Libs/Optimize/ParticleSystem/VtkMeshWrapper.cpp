@@ -182,7 +182,7 @@ VtkMeshWrapper::SnapToMesh(VtkMeshWrapper::PointType pointa, int idx) const
   point[1] = pointa[1];
   point[2] = pointa[2];
 
-  double closest_point[3];//the coordinates of the closest point will be returned here
+  double closest_point[3]; //the coordinates of the closest point will be returned here
   double closest_point_dist2; //the squared distance to the closest point will be returned here
   vtkIdType cell_id; //the cell id of the cell containing the closest point will be returned here
   int sub_id; //this is rarely used (in triangle strips only, I believe)
@@ -193,6 +193,12 @@ VtkMeshWrapper::SnapToMesh(VtkMeshWrapper::PointType pointa, int idx) const
   out[0] = closest_point[0];
   out[1] = closest_point[1];
   out[2] = closest_point[2];
+
+  // update cache
+  if (idx > 0) {
+    particle2tri_[idx] = cell_id;
+  }
+
   return out;
 }
 
@@ -214,6 +220,19 @@ VtkMeshWrapper::PointType VtkMeshWrapper::GetPointOnMesh() const
 //---------------------------------------------------------------------------
 int VtkMeshWrapper::GetTriangleForPoint(const double pt[3], int idx) const
 {
+  // given a guess, just check whether it is still valid.
+  if (idx > 0) {
+    // ensure that the cache has enough elements. this will never be resized to more than the number of particles,
+    if (idx >= particle2tri_.size()) {
+      particle2tri_.resize(idx + 1, 0);
+    }
+
+    const int guess = particle2tri_[idx];
+    if (this->IsInTriangle(pt, guess)) {
+      return guess;
+    }
+  }
+
   double closest_point[3];//the coordinates of the closest point will be returned here
   double closest_point_dist2; //the squared distance to the closest point will be returned here
   vtkIdType cell_id; //the cell id of the cell containing the closest point will be returned here
@@ -221,12 +240,16 @@ int VtkMeshWrapper::GetTriangleForPoint(const double pt[3], int idx) const
 
   this->cell_locator_->FindClosestPoint(pt, closest_point, cell_id, sub_id, closest_point_dist2);
 
+  if (idx > 0) {
+    particle2tri_[idx] = cell_id;
+  }
   return cell_id;
 }
 
 //---------------------------------------------------------------------------
 Eigen::Vector3d
-VtkMeshWrapper::ProjectVectorToFace(const Eigen::Vector3d& normal, const Eigen::Vector3d& vector) const
+VtkMeshWrapper::ProjectVectorToFace(const Eigen::Vector3d& normal,
+                                    const Eigen::Vector3d& vector) const
 {
   return vector - normal * normal.dot(vector);
 }
@@ -315,5 +338,17 @@ void VtkMeshWrapper::ComputeGradN()
 
 }
 
+//---------------------------------------------------------------------------
+bool VtkMeshWrapper::IsInTriangle(const double* pt, int face_index) const
+{
+  double closest[3];
+  int sub_id;
+  double pcoords[3];
+  double dist2;
+  double weights[3];
+  auto cell = this->poly_data_->GetCell(face_index);
+  int ret = cell->EvaluatePosition(pt, closest, sub_id, pcoords, dist2, weights);
+  return ret == 1;
+}
 
 }
