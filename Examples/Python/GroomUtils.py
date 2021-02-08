@@ -193,7 +193,7 @@ def applyRigidAlignment(outDir, refFile, inDataListSeg, inDataListImg=[], icp_it
         # resize images to reference images
         img = Image(inDataListSeg[i])
         img.antialias(antialias_iterations)
-        rigidTransform = img.createTransform(refImg, TransformType.IterativeClosestPoint, isoValue, icp_iterations)
+        rigidTransform = img.createTransform(refImg, ImageTransformType.IterativeClosestPoint, isoValue, icp_iterations)
         img.applyTransform(rigidTransform, refImg.origin(), refImg.dims(), refImg.spacing(), refImg.coordsys(), InterpolationType.Linear).binarize().write(segoutname)
 
         if inDataListImg:
@@ -219,7 +219,6 @@ def applyCropping(outDir, inDataList, path, paddingSize=10):
 
     for i in range(len(inDataList)):
         inname = inDataList[i]
-        initPath = os.path.dirname(inname)
         outname = rename(inname, outDir, 'cropped')
         outDataList.append(outname)
         img = Image(inname)
@@ -304,24 +303,22 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side):
         if flip_seg != 'None':
             img_out = rename(image, outImgDir, 'reflect').replace(prefix, flip_prefix)
             imageList.append(img_out)
+            meshList.append(seg_out)
+
             img1 = Image(image)
             img2 = Image(image)
             img2.recenter()
             center = img2.origin() - img1.origin()
             img1.reflect(X).write(img_out)
 
-            cmd = ["shapeworks",
-                   "read-mesh", "--name", seg,
-                   "reflect-mesh", "--axis", "X", "--originx", str(center[0]), "--originy", str(center[1]), "--originz", str(center[2]),
-                   "write-mesh", "--name", seg_out]
-            if printCmd:
-                print("CMD: " + " ".join(cmd))
+            mesh = Mesh(seg)
+            mesh.reflect(X, center).write(seg_out)
+
             seg_out = rename(flip_seg, outSegDir, 'reflect')
-            meshList.append(seg_out)
     return meshList, imageList
 
 # Reflects meshes to reference side
-def reflectMeshes(outDir, seg_list, reference_side, printCmd=True):
+def reflectMeshes(outDir, seg_list, reference_side):
     if reference_side == 'right':
         ref = 'R'
         flip = 'L'
@@ -343,19 +340,8 @@ def reflectMeshes(outDir, seg_list, reference_side, printCmd=True):
         else:
             seg_out = rename(seg, outSegDir, 'reflect')
 
-            cmd = ["shapeworks",
-                   "read-mesh", "--name", seg,
-                   "mesh-info", "--center"]
-            output = subprocess.run(cmd, capture_output=True, text=True).stdout.splitlines()
-            origin = makeVector(output[0].split(":")[1])
-
-            cmd = ["shapeworks",
-                   "read-mesh", "--name", seg,
-                   "reflect-mesh", "--axis", "X", "--originx", str(origin[0]), "--originy", str(origin[1]), "--originz", str(origin[2]),
-                   "write-mesh", "--name", seg_out]
-            if printCmd:
-                print("CMD: " + " ".join(cmd))
-            subprocess.check_call(cmd)
+            mesh = Mesh(seg)
+            mesh.reflect(X, mesh.center()).write(seg_out)
         meshList.append(seg_out)
     return meshList
 
@@ -419,79 +405,49 @@ def getPLYmeshes(meshList, printCmd=True):
     return PLYmeshList
 
 # rasterization for meshes to images using images
-def MeshesToVolumesUsingImages(outDir, meshList, imgList, printCmd=True):
+def MeshesToVolumesUsingImages(outDir, meshList, imgList):
     segList= []
     if not os.path.exists(outDir):
         os.mkdir(outDir)
 
     PLYmeshList = getPLYmeshes(meshList)
-    for mesh in PLYmeshList:
+    for mesh_ in PLYmeshList:
         mesh_name = os.path.basename(mesh)
         prefix = mesh_name.split("_")[0] + "_" + mesh_name.split("_")[1]
 
         # get image
         for image_file in imgList:
             if prefix in image_file:
-                image = image_file
-
-        # get origin, size, and spacing data
-        img = Image(image)
-        origin = img.origin()
-        size = img.size()
-        spacing = img.spacing()
+                image_ = image_file
 
         print("########### Turning Mesh To Volume ##############")
         segFile = rename(mesh, outDir, "", ".nrrd")
         segList.append(segFile)
-        cmd = ["shapeworks",
-               "read-mesh", "--name", mesh,
-               "mesh-to-image", "--spacex", str(spacing[0]), "--spacey", str(spacing[1]), "--spacez", str(spacing[2]),
-                                "--sizex", str(size[0]), "--sizey", str(size[1]), "--sizez", str(size[2]),
-                                "--originx", str(origin[0]), "--originy", str(origin[1]), "--originz", str(origin[2]),
-                "write-image", "--name", segFile]
-        if printCmd:
-            print("CMD: " + " ".join(cmd))
-        subprocess.check_call(cmd)
+
+        img = Image(image_)
+        mesh = Mesh(mesh_)
+        image = mesh.toImage(img.spacing(), img.size(), img.origin())
+        image.write(segFile)
     return segList
 
-def makeVector(str):
-    arr = np.array(str.replace("[", "").replace("]", "").split(","))
-    return np.asarray(arr, np.float64)
-
 # rasterization for meshes to images
-def MeshesToVolumes(outDir, meshPath, meshList, spacing, printCmd=True):
+def MeshesToVolumes(outDir, meshList, spacing):
     if not os.path.exists(outDir):
         os.mkdir(outDir)
 
-    # get origin and size data
-    cmd = ["shapeworks",
-           "rasterization-origin", "--names"] + glob.glob(meshPath) + ["--", "--x", str(spacing[0]), "--y", str(spacing[1]), "--z", str(spacing[0])]
-    output = subprocess.run(cmd, capture_output=True, text=True).stdout.splitlines()
-    origin = makeVector(output[0].split(":")[1])
-
-    cmd = ["shapeworks",
-           "rasterization-size", "--names"] + glob.glob(meshPath) + ["--", "--x", str(spacing[0]), "--y", str(spacing[1]), "--z", str(spacing[0])]
-    output = subprocess.run(cmd, capture_output=True, text=True).stdout.splitlines()
-    size = makeVector(output[0].split(":")[1])
-
     segList = []
     PLYmeshList = getPLYmeshes(meshList)
-    for mesh in PLYmeshList:
+    for mesh_ in PLYmeshList:
         print("########### Turning Mesh To Volume ##############")
-        segFile = rename(mesh, outDir, "", ".nrrd")
+        segFile = rename(mesh_, outDir, "", ".nrrd")
         segList.append(segFile)
-        cmd = ["shapeworks",
-               "read-mesh", "--name", mesh,
-               "mesh-to-image", "--spacex", str(spacing[0]), "--spacey", str(spacing[1]), "--spacez", str(spacing[2]),
-                                "--sizex", str(size[0]), "--sizey", str(size[1]), "--sizez", str(size[2]),
-                                "--originx", str(origin[0]), "--originy", str(origin[1]), "--originz", str(origin[2]),
-                "write-image", "--name", segFile]
-        if printCmd:
-            print("CMD: " + " ".join(cmd))
-        subprocess.check_call(cmd)
+
+        mesh = Mesh(mesh_)
+        image = mesh.toImage(Vector(spacing[0],spacing[1],spacing[2]))
+        image.write(segFile)
     return segList
 
-def ClipBinaryVolumes(outDir, segList, cutting_plane_points, printCmd=True):
+def ClipBinaryVolumes(outDir, segList, cutting_plane_points):
     print("\n############## Clipping ##############")
     if not os.path.exists(outDir):
         os.makedirs(outDir)
@@ -511,15 +467,11 @@ def ShowCuttingPlanesOnImage(input_file, cutting_planes, printCmd=True):
     file_format = input_file.split(".")[-1]
     input_vtk = input_file.replace(file_format, "vtk")
     if file_format == "nrrd":
-        cmd = ["shapeworks",
-               "read-image", "--name", input_file,
-               "dt-to-mesh", "--reduction", str(0.0001),
-               "write-mesh", "--name", input_vtk]
+        image = Image(input_file)
+        mesh = image.toMesh()
+        mesh.write(input_vtk)
         print("\nCreating mesh from: " + input_file)
         print("\nSaving as: " + input_vtk)
-        if printCmd:
-            print("CMD: " + " ".join(cmd))
-        subprocess.check_call(cmd)
     elif file_format == "ply":
         execCommand = ["ply2vtk", input_file, input_vtk]
         if printCmd:
@@ -624,9 +576,6 @@ def SelectCuttingPlane(input_file, printCmd=True):
                "read-image", "--name", input_file,
                "dt-to-mesh", "--reduction", str(0.0001),
                "write-mesh", "--name", input_vtk]
-        if printCmd:
-            print("CMD: " + " ".join(cmd))
-        subprocess.check_call(cmd)
     elif file_format == "ply":
         execCommand = ["ply2vtk", input_file, input_vtk]
         if printCmd:

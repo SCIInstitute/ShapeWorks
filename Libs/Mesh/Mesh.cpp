@@ -439,7 +439,7 @@ Image Mesh::toImage(Vector3 spacing, Dims size, Point3 origin) const
     {
       size = rasterizationSize(bbox, spacing, 1, origin);
     }
-  }    
+  }
 
   vtkSmartPointer<vtkImageData> whiteImage = vtkSmartPointer<vtkImageData>::New();
   whiteImage->SetSpacing(spacing[0], spacing[1], spacing[2]);
