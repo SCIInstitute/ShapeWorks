@@ -42,7 +42,7 @@ public:
   Mesh& decimate(double reduction = 0.0, double angle = 0.0, bool preservetopology = false);
 
   /// handle flipping normals
-  Mesh& invertNormal();
+  Mesh& invertNormals();
 
   /// reflect meshes with respect to a specified center and specific axis
   Mesh& reflect(const Axis &axis, const Vector3 &origin = makeVector({ 0.0, 0.0, 0.0 }));
@@ -140,6 +140,9 @@ public:
 
   /// compare if values of the points in two (corresponding) meshes are (eps)equal
   bool compareAllPoints(const Mesh& other_mesh) const;
+
+  /// compare if face indices in two (corresponding) meshes are equal
+  bool compareAllFaces(const Mesh& other_mesh) const;
 
   /// compare if all fields in two meshes are (eps)equal
   bool compareAllFields(const Mesh& other_mesh) const;

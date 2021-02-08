@@ -56,11 +56,14 @@ TEST(MeshTests, decimateTest2)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-// https://github.com/SCIInstitute/ShapeWorks/issues/937
-// TEST(MeshTests, invertNormalTest1)
-// {
-//   // TODO
-// }
+TEST(MeshTests, invertNormalsTest)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.invertNormals();
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/invertnormals.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
 
 TEST(MeshTests, reflectTest1)
 {
