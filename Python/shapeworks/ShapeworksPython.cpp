@@ -530,16 +530,29 @@ PYBIND11_MODULE(shapeworks, m)
   .def("smooth",                &Mesh::smooth, "iterations"_a=0, "relaxation"_a=0.0)
   .def("decimate",              &Mesh::decimate, "reduction"_a=0.0, "angle"_a=0.0, "preserveTopology"_a=true)
   .def("invertNormal",          &Mesh::invertNormal)
-  // .def("reflect",               &Mesh::reflect, "axis"_a, "origin"_a=)
+  .def("reflect", [](Mesh& self, const Axis &axis, std::vector<double>& v) -> decltype(auto) {
+    return self.reflect(axis, makeVector({v[0], v[1], v[2]}));
+  })
   .def("createTransform",       &Mesh::createTransform, "target"_a, "type"_a=Mesh::TransformType::IterativeClosestPoint, "align"_a=Mesh::AlignmentType::Similarity, "iterations"_a=10)
   .def("applyTransform",        &Mesh::applyTransform, "transform"_a)
   .def("fillHoles",             &Mesh::fillHoles)
   .def("probeVolume",           &Mesh::probeVolume, "image"_a)
-  
+  .def("clip",                  &Mesh::clip, "plane"_a)
+  .def("translate",             &Mesh::translate, "v"_a)
+  .def("scale",                 &Mesh::scale, "v"_a)
+  .def("boundingBox",           &Mesh::boundingBox, "center"_a=false)
+  .def("fix",                   &Mesh::fix, "smoothBefore"_a=true, "smoothAfter"_a=true, "lambda"_a=0.5, "iterations"_a=1, "decimate"_a=true, "percentage"_a=0.5)
+  .def("distance",              &Mesh::distance, "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
+  .def("toImage", [](Mesh& self, std::vector<double>& v, std::vector<unsigned>& d, std::vector<double>& p) {
+    self.toImage(makeVector({v[0], v[1], v[2]}), Dims({d[0], d[1], d[2]}), Point3({p[0], p[1], p[2]}));
+  })
+  .def("toDistanceTransform", [](Mesh& self, std::vector<double>& v, std::vector<unsigned>& d, std::vector<double>& p) {
+    self.toDistanceTransform(makeVector({v[0], v[1], v[2]}), Dims({d[0], d[1], d[2]}), Point3({p[0], p[1], p[2]}));
+  })
+  .def("center",                &Mesh::center)
+  .def("centerOfMass",          &Mesh::centerOfMass)
   .def("numPoints",             &Mesh::numPoints)
   .def("numFaces",              &Mesh::numFaces)
-  .def("compareAllPoints",      &Mesh::compareAllPoints, "other_mesh"_a)
-  .def("compareAllFields",      &Mesh::compareAllFields, "other_mesh"_a)
   .def("getFieldNames",         &Mesh::getFieldNames)
   .def("setField", [](Mesh &mesh, std::vector<double>& v, std::string name) {
     vtkSmartPointer<vtkDoubleArray> arr = vtkSmartPointer<vtkDoubleArray>::New();
@@ -567,6 +580,19 @@ PYBIND11_MODULE(shapeworks, m)
 
   // MeshUtils
   py::class_<MeshUtils>(m, "MeshUtils")
+  .def_static("distilVertexInfo",
+                                &MeshUtils::distilVertexInfo, "mesh"_a)
+  .def_static("distilFaceInfo", &MeshUtils::distilFaceInfo, "mesh"_a)
+  .def_static("generateWarpMatrix",
+                                &MeshUtils::generateWarpMatrix, "TV"_a, "TF"_a, "Vref"_a)
+  .def_static("warpMesh",       &MeshUtils::warpMesh, "movPts"_a, "W"_a, "Fref"_a)
+  .def_static("warpMeshes",     &MeshUtils::warpMeshes, "movingPointPaths"_a, "outputMeshPaths"_a, "W"_a, "Fref"_a, "numP"_a)
+  .def_static("boundingBox", [](std::vector<std::string> filenames, bool center) {
+    return shapeworks::MeshUtils::boundingBox(filenames, center);
+  }, "filenames"_a, "center"_a=false)
+  .def_static("boundingBox", [](std::vector<Mesh> meshes, bool center) {
+    return shapeworks::MeshUtils::boundingBox(meshes, center);
+  }, "meshes"_a, "center"_a=false)
   ;
 
   // ParticleSystem

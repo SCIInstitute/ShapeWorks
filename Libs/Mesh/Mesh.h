@@ -25,7 +25,7 @@ public:
   Mesh& operator=(const Mesh& mesh);           /// lvalue assignment operator
   Mesh& operator=(std::unique_ptr<Mesh> mesh); /// rvalue assignment operator
 
-  // return the current mesh
+  /// return the current mesh
   MeshType getVTKMesh() const { return this->mesh; }
 
   /// writes mesh, format specified by filename extension
@@ -96,7 +96,6 @@ public:
   /// number of faces
   vtkIdType numFaces() const { return mesh->GetNumberOfCells(); }
 
-
   // fields of mesh points //
 
   /// print all field names in mesh
@@ -131,10 +130,8 @@ public:
   /// returns the standard deviation of the given field
   double getFieldStd(const std::string& name) const;
 
-
   // fields of mesh faces //
   // todo: add support for fields of mesh faces (ex: their normals)
-
 
   // mesh comparison //
 
@@ -155,7 +152,6 @@ public:
   /// compare meshes
   bool operator==(const Mesh& other) const { return compare(other); }
 
-  
   // public static functions //
 
   /// getSupportedTypes
