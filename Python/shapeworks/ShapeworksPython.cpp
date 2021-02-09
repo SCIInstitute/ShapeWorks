@@ -528,7 +528,6 @@ PYBIND11_MODULE(shapeworks, m)
   .def("smooth",                &Mesh::smooth, "applies laplacian smoothing", "iterations"_a=0, "relaxation"_a=0.0)
   .def("decimate",              &Mesh::decimate, "applies filter to reduce number of triangles in mesh", "reduction"_a=0.0, "angle"_a=0.0, "preserveTopology"_a=true)
   .def("invertNormals",         &Mesh::invertNormals, "handle flipping normals")
-  .def("reflect",               &Mesh::reflect, "reflect meshes with respect to a specified center and specific axis", "axis"_a, "origin"_a=makeVector({0.0, 0.0, 0.0}))
   .def("reflect", [](Mesh& mesh, const Axis &axis, std::vector<double>& v) -> decltype(auto) {
     return mesh.reflect(axis, makeVector({v[0], v[1], v[2]}));
   }, "reflect meshes with respect to a specified center and specific axis", "axis"_a, "origin"_a=makeVector({0.0, 0.0, 0.0}))
@@ -546,12 +545,10 @@ PYBIND11_MODULE(shapeworks, m)
   .def("boundingBox",           &Mesh::boundingBox, "computes bounding box of current mesh", "center"_a=false)
   .def("fix",                   &Mesh::fix, "quality control mesh", "smoothBefore"_a=true, "smoothAfter"_a=true, "lambda"_a=0.5, "iterations"_a=1, "decimate"_a=true, "percentage"_a=0.5)
   .def("distance",              &Mesh::distance, "computes surface to surface distance", "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
-  .def("toImage",               &Mesh::toImage, "rasterizes mesh to create binary images, automatically computing size and origin if necessary", "spacing"_a=makeVector({1.0, 1.0, 1.0}), "size"_a=Dims({0, 0, 0}), "origin"_a=Point({-1.0, -1.0, -1.0}))
-  .def("toImage", [](Mesh& mesh, std::vector<double>& v, std::vector<unsigned>& d, std::vector<double>& p) {
+  .def("toImage", [](Mesh& mesh, std::vector<double>& v, std::vector<unsigned>& d, std::vector<double>& p) -> decltype(auto) {
     return mesh.toImage(makeVector({v[0], v[1], v[2]}), Dims({d[0], d[1], d[2]}), Point({p[0], p[1], p[2]}));
   }, "rasterizes mesh to create binary images, automatically computing size and origin if necessary", "spacing"_a=makeVector({1.0, 1.0, 1.0}), "size"_a=Dims({0, 0, 0}), "origin"_a=Point({-1.0, -1.0, -1.0}))
-  .def("toDistanceTransform",   &Mesh::toDistanceTransform, "converts mesh to distance transform, automatically computing size and origin if necessary", "spacing"_a=makeVector({1.0, 1.0, 1.0}), "size"_a=Dims({0, 0, 0}), "origin"_a=Point({-1.0, -1.0, -1.0}))
-  .def("toDistanceTransform", [](Mesh& mesh, std::vector<double>& v, std::vector<unsigned>& d, std::vector<double>& p) {
+  .def("toDistanceTransform", [](Mesh& mesh, std::vector<double>& v, std::vector<unsigned>& d, std::vector<double>& p) -> decltype(auto) {
     return mesh.toDistanceTransform(makeVector({v[0], v[1], v[2]}), Dims({d[0], d[1], d[2]}), Point({p[0], p[1], p[2]}));
   }, "converts mesh to distance transform, automatically computing size and origin if necessary", "spacing"_a=makeVector({1.0, 1.0, 1.0}), "size"_a=Dims({0, 0, 0}), "origin"_a=Point({-1.0, -1.0, -1.0}))
   .def("center",                &Mesh::center, "center of mesh")
