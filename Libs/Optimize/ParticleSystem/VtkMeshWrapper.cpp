@@ -3,6 +3,7 @@
 #include <vtkCellLocator.h>
 #include <vtkPolyDataNormals.h>
 #include <vtkCellData.h>
+#include <vtkCell.h>
 #include <vtkPointData.h>
 #include <vtkTriangleFilter.h>
 
@@ -25,6 +26,15 @@ inline TO convert(FROM& value)
 }
 }
 
+template<class T>
+inline std::string PrintValue(T value)
+{
+  return "(" + std::to_string(value[0]) + ", " + std::to_string(value[1]) + ", " +
+         std::to_string(value[2]) + ")";
+}
+
+using vec3 = Eigen::Vector3d;
+
 //---------------------------------------------------------------------------
 VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
 {
@@ -41,6 +51,8 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
   normals->Update();
 
   this->poly_data_ = normals->GetOutput();
+  this->poly_data_->BuildCells();
+  this->poly_data_->BuildLinks();
 
   this->cell_locator_ = vtkSmartPointer<vtkCellLocator>::New();
   this->cell_locator_->SetCacheCellBounds(true);
@@ -54,9 +66,9 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
 // Create a triangle
   vtkSmartPointer<vtkPoints> points =
     vtkSmartPointer<vtkPoints>::New();
-  points->InsertNextPoint ( -10.0, 0.0, 0.0 );
-  points->InsertNextPoint ( 0.0, 10.0, 0.0 );
-  points->InsertNextPoint ( 10.0, 0.0, 0.0 );
+  points->InsertNextPoint(-10.0, 0.0, 0.0);
+  points->InsertNextPoint(0.0, 10.0, 0.0);
+  points->InsertNextPoint(10.0, 0.0, 0.0);
 
   vtkSmartPointer<vtkTriangle> triangle =
     vtkSmartPointer<vtkTriangle>::New();
@@ -67,7 +79,7 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
   */
   triangle->Initialize(3, points);
 
-  double pt[3] = {25,25,0.0};
+  double pt[3] = {25, 25, 0.0};
 
   double closest[3];
   int sub_id;
@@ -76,9 +88,8 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
   double weights[3];
   int ret = triangle->EvaluatePosition(pt, closest, sub_id, pcoords, dist2, weights);
 
-  std::cerr << ret << ", weights = " << weights[0] << ", " << weights[1] << ", " << weights[2] << "\n";
-
-
+  std::cerr << ret << ", weights = " << weights[0] << ", " << weights[1] << ", " << weights[2]
+            << "\n";
 
 }
 
@@ -93,12 +104,48 @@ double VtkMeshWrapper::ComputeDistance(VtkMeshWrapper::PointType pointa,
 VtkMeshWrapper::PointType VtkMeshWrapper::GeodesicWalk(VtkMeshWrapper::PointType pointa, int idx,
                                                        vnl_vector_fixed<double, 3> vector) const
 {
+  std::cerr << "------------------------------------------\n";
+  std::cerr << "GeodesicWalk\n";
 
+  PointType snapped = this->SnapToMesh(pointa, idx);
+  vec3 point(snapped[0], snapped[1], snapped[2]);
+
+  int faceIndex = GetTriangleForPoint(point.data(), idx);
+
+
+  vec3 currentBary = this->ComputeBarycentricCoordinates(point, faceIndex);
+  std::cerr << "Starting Bary: " << PrintValue<Eigen::Vector3d>(currentBary) << "\n";
+
+
+
+
+  Eigen::Vector3d vectorEigen = convert<vnl_vector_fixed<double, DIMENSION>, Eigen::Vector3d>(
+    vector);
+  Eigen::Vector3d projectedVector = this->ProjectVectorToFace(GetFaceNormal(faceIndex),
+                                                              vectorEigen);
+
+  Eigen::Vector3d snappedPoint = convert<PointType, Eigen::Vector3d>(snapped);
+  Eigen::Vector3d newPoint = GeodesicWalkOnFace(snappedPoint, projectedVector, faceIndex);
+
+
+
+
+
+  PointType newPointpt;
+  newPointpt[0] = newPoint[0];
+  newPointpt[1] = newPoint[1];
+  newPointpt[2] = newPoint[2];
+  return newPointpt;
+
+
+
+  /*
   pointa[0] += vector[0];
   pointa[1] += vector[1];
   pointa[2] += vector[2];
 
   return this->SnapToMesh(pointa, idx);
+   */
 }
 
 //---------------------------------------------------------------------------
@@ -153,7 +200,7 @@ VtkMeshWrapper::SampleNormalAtPoint(VtkMeshWrapper::PointType p, int idx) const
   double pcoords[3];
   double dist2;
   double weights[3];
-  int ret = cell->EvaluatePosition(point, closest, sub_id, pcoords, dist2, weights);
+  cell->EvaluatePosition(point, closest, sub_id, pcoords, dist2, weights);
 
   //std::cerr << ret << ", weights = " << weights[0] << ", " << weights[1] << ", " << weights[2] << "\n";
 
@@ -387,6 +434,279 @@ bool VtkMeshWrapper::IsInTriangle(const double* pt, int face_index) const
   auto cell = this->poly_data_->GetCell(face_index);
   int ret = cell->EvaluatePosition(pt, closest, sub_id, pcoords, dist2, weights);
   return ret == 1;
+}
+
+//---------------------------------------------------------------------------
+Eigen::Vector3d VtkMeshWrapper::ComputeBarycentricCoordinates(Eigen::Vector3d pt, int face) const
+{
+  auto cell = this->poly_data_->GetCell(face);
+
+  double point[3];
+  point[0] = pt[0];
+  point[1] = pt[1];
+  point[2] = pt[2];
+
+  double closest[3];
+  int sub_id;
+  double pcoords[3];
+  double dist2;
+  double weights[3];
+  cell->EvaluatePosition(point, closest, sub_id, pcoords, dist2, weights);
+
+  Eigen::Vector3d bary(weights[0], weights[1], weights[2]);
+  return bary;
+}
+
+//---------------------------------------------------------------------------
+const Eigen::Vector3d VtkMeshWrapper::GetFaceNormal(int face_index) const
+{
+  auto normals = this->poly_data_->GetCellData()->GetNormals();
+  double* normal = normals->GetTuple(face_index);
+  Eigen::Vector3d n(normal[0], normal[1], normal[2]);
+  return n;
+}
+
+//---------------------------------------------------------------------------
+Eigen::Vector3d
+VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d projected_vector,
+                                   int face_index) const
+{
+  int currentFace = face_index;
+  Eigen::Vector3d currentPoint = point_a;
+  Eigen::Vector3d remainingVector = projected_vector;
+  double minimumUpdate = 0.0000000001;
+  double barycentricEpsilon = 0.0001;
+  std::vector<int> facesTraversed;
+  while (remainingVector.norm() > minimumUpdate && currentFace != -1) {
+    facesTraversed.push_back(currentFace);
+    vec3 currentBary = ComputeBarycentricCoordinates(
+      vec3(currentPoint[0], currentPoint[1], currentPoint[2]), currentFace);
+    std::cerr << "Current Bary: " << PrintValue<Eigen::Vector3d>(currentBary) << "\n";
+
+    Eigen::Vector3d targetPoint = currentPoint + remainingVector;
+    vec3 targetBary = ComputeBarycentricCoordinates(
+      vec3(targetPoint[0], targetPoint[1], targetPoint[2]), currentFace);
+    std::cerr << "Target Bary: " << PrintValue<Eigen::Vector3d>(targetBary) << "\n";
+
+    if (facesTraversed.size() >= 3 &&
+        facesTraversed[facesTraversed.size() - 1] == facesTraversed[facesTraversed.size() - 3]) {
+      // When at the intersection of two faces while also being at the edge of the mesh, the edge-sliding will keep alternating
+      // between the two faces without actually going anywhere since it is at a corner in the mesh.
+      //std::cerr << "exiting due to face repetition\n";
+      break;
+    }
+    if (facesTraversed.size() > 100) {
+      std::cerr << "Warning, more than 100 faces traversed\n";
+      for (int i = 0; i < facesTraversed.size(); i++) {
+        std::cerr << facesTraversed[i] << ": " << facesTraversed[i] << ", ";
+        //<< PrintValue<TriMesh::Face>(mesh_->faces[facesTraversed[i]]) << ", ";
+      }
+      std::cerr << "Current point: " << PrintValue<Eigen::Vector3d>(currentPoint) << "\n";
+      std::cerr << "remaining vector: " << PrintValue<Eigen::Vector3d>(remainingVector) << "\n";
+      std::cerr << "currentBary: " << PrintValue<vec3>(currentBary) << "\n";
+      std::cerr << "targetPoint: " << PrintValue<Eigen::Vector3d>(targetPoint) << "\n";
+      std::cerr << "targetBary: " << PrintValue<vec3>(targetBary) << "\n";
+      std::cerr << std::endl;
+      break;
+    }
+
+    if (targetBary[0] + barycentricEpsilon >= 0 && targetBary[1] + barycentricEpsilon >= 0 &&
+        targetBary[2] + barycentricEpsilon >= 0 && targetBary[0] - barycentricEpsilon <= 1 &&
+        targetBary[1] - barycentricEpsilon <= 1 && targetBary[2] - barycentricEpsilon <= 1) {
+      currentPoint = targetPoint;
+      std::cerr << "on face? done\n";
+      break;
+    }
+    std::cerr << "Not on face, step\n";
+    int positiveVertex = -1;
+    std::vector<int> negativeVertices;
+    for (int i = 0; i < 3; i++) {
+      if (targetBary[i] >= 0) {
+        positiveVertex = i;
+      }
+      else {
+        negativeVertices.push_back(i);
+      }
+    }
+
+    if (negativeVertices.size() == 0 || negativeVertices.size() > 2) {
+      std::cerr << "ERROR ERROR invalid number of negative vertices. Point is not on surface.\n";
+      break;
+    }
+    int negativeEdge = negativeVertices[0];
+    Eigen::Vector3d intersect = GetBarycentricIntersection(currentBary, targetBary, currentFace,
+                                                           negativeEdge);
+
+    // When more than 1 negative barycentric coordinate, compute both intersections and take the closest one.
+    if (negativeVertices.size() == 2) {
+      int negativeEdge1 = negativeVertices[1];
+      Eigen::Vector3d intersect1 = GetBarycentricIntersection(currentBary, targetBary, currentFace,
+                                                              negativeEdge1);
+
+      double length0 = (intersect - currentPoint).norm();
+      double length1 = (intersect1 - currentPoint).norm();
+
+      if (length0 < length1) {
+        intersect = intersect;
+        negativeEdge = negativeEdge;
+      }
+      else {
+        intersect = intersect1;
+        negativeEdge = negativeEdge1;
+      }
+    }
+
+    Eigen::Vector3d remaining = targetPoint - intersect;
+    int nextFace = this->GetAcrossEdge(currentFace, negativeEdge);
+    if (nextFace == -1) {
+      nextFace = this->SlideAlongEdge(intersect, remaining, currentFace, negativeEdge);
+    }
+    remainingVector = remaining;
+    if (nextFace != -1) {
+      remainingVector = RotateVectorToFace(GetFaceNormal(currentFace), GetFaceNormal(nextFace),
+                                           remainingVector);
+    }
+    currentPoint = intersect;
+    currentFace = nextFace;
+  }
+  return currentPoint;
+}
+
+//---------------------------------------------------------------------------
+Eigen::Vector3d
+VtkMeshWrapper::GetBarycentricIntersection(Eigen::Vector3d start, Eigen::Vector3d end,
+                                           int currentFace, int edge) const
+{
+  vec3 delta = end - start;
+  if (delta[edge] == 0) {
+    // If going parallel to the edge, it is allowed to go all the way to the end where it wants to go
+    return end;
+  }
+  double ratio = -start[edge] / delta[edge];
+  vec3 intersect = start + delta * ratio;
+
+  auto cell = this->poly_data_->GetCell(currentFace);
+
+  vec3 inter(0, 0, 0);
+  for (int q = 0; q < 3; q++) {
+    auto point = cell->GetPoints()->GetPoint(q);
+    vec3 p(point[0], point[1], point[2]);
+    inter += p * intersect[q];
+  }
+  return inter;
+
+}
+
+//---------------------------------------------------------------------------
+int VtkMeshWrapper::GetAcrossEdge(int face_id, int edge_id) const
+{
+  // get the neighbors of the cell
+  auto neighbors = vtkSmartPointer<vtkIdList>::New();
+  auto cell = this->poly_data_->GetCell(face_id);
+  auto edge = cell->GetEdge(edge_id);
+//  int edge_p1 = edge->GetPointId(0);
+  //int edge_p2 = edge->GetPointId(1);
+
+/*
+  int edge_p1 = 0;
+  int edge_p2 = 1;
+  if (edge_id == 1) {
+    edge_p1 = 1;
+    edge_p2 = 2;
+  } else if (edge_id == 2) {
+    edge_p1 = 2;
+    edge_p2 = 0;
+  }
+*/
+
+
+  int edge_p1 = cell->GetPointId(1);
+  int edge_p2 = cell->GetPointId(2);
+  if (edge_id == 1) {
+    edge_p1 = cell->GetPointId(2);
+    edge_p2 = cell->GetPointId(0);
+  } else if (edge_id == 2) {
+    edge_p1 = cell->GetPointId(0);
+    edge_p2 = cell->GetPointId(1);
+  }
+
+
+  this->poly_data_->GetCellEdgeNeighbors(face_id, edge_p1, edge_p2, neighbors);
+
+  if (neighbors->GetNumberOfIds() == 0) {
+    return -1;
+  }
+
+  assert(neighbors->GetNumberOfIds() == 1);
+  return neighbors->GetId(0);
+}
+
+//---------------------------------------------------------------------------
+int VtkMeshWrapper::SlideAlongEdge(Eigen::Vector3d& point_, Eigen::Vector3d& remainingVector_,
+                                   int face_, int edge_) const
+{
+
+  int indexa = (edge_ + 1) % 3;
+  int indexb = (edge_ + 2) % 3;
+  int vertexindexa = this->GetFacePointID(face_, indexa);
+  int vertexindexb = this->GetFacePointID(face_, indexb);
+  Eigen::Vector3d pointa = this->GetVertexCoords(vertexindexa);
+  Eigen::Vector3d pointb = this->GetVertexCoords(vertexindexb);
+  Eigen::Vector3d meshEdge(pointb[0] - pointa[0], pointb[1] - pointa[1], pointb[2] - pointa[2]);
+  meshEdge.normalize();
+  double dotprod = meshEdge.dot(remainingVector_);
+  Eigen::Vector3d projectedVector = meshEdge.normalized() * dotprod;
+
+  Eigen::Vector3d maxSlide = pointb - point_;
+  double newDot = projectedVector.dot(meshEdge);
+  int towardsEdge = indexa;
+  if (newDot < 0) {
+    // going in opposite direction as mesh edge
+    meshEdge = -meshEdge;
+    maxSlide = pointa - point_;
+    towardsEdge = indexb;
+  }
+
+  if (projectedVector.norm() > maxSlide.norm()) {
+    point_ += maxSlide;
+    remainingVector_ = projectedVector - maxSlide;
+    return this->GetAcrossEdge(face_, towardsEdge);
+  }
+  else {
+    point_ += projectedVector;
+    remainingVector_ = Eigen::Vector3d(0, 0, 0);
+    return face_;
+  }
+}
+
+//---------------------------------------------------------------------------
+int VtkMeshWrapper::GetFacePointID(int face, int point_id) const
+{
+  return this->poly_data_->GetCell(face)->GetPointId(point_id);
+}
+
+//---------------------------------------------------------------------------
+Eigen::Vector3d VtkMeshWrapper::GetVertexCoords(int vertex_id) const
+{
+  double* p = this->poly_data_->GetPoint(vertex_id);
+  return Eigen::Vector3d(p[0], p[1], p[2]);
+}
+
+//---------------------------------------------------------------------------
+Eigen::Vector3d VtkMeshWrapper::RotateVectorToFace(const Eigen::Vector3d& prev_normal,
+                                                   const Eigen::Vector3d& next_normal,
+                                                   const Eigen::Vector3d& vector) const
+{
+  float dotprod = prev_normal.normalized().dot(next_normal.normalized());
+  if (dotprod >= 1) {
+    return vector;
+  }
+  float angle = acos(dotprod);
+  Eigen::Vector3d rotationAxis = prev_normal.normalized().cross(
+    next_normal.normalized()).normalized();
+  Eigen::AngleAxisd transform(angle, rotationAxis);
+  Eigen::Vector3d rotated = transform * vector;
+  return rotated;
 }
 
 }
