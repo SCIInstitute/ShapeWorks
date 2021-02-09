@@ -186,14 +186,14 @@ Mesh &Mesh::smooth(int iterations, double relaxation)
   return *this;
 }
 
-Mesh &Mesh::decimate(double reduction, double angle, bool preservetopology)
+Mesh &Mesh::decimate(double reduction, double angle, bool preserveTopology)
 {
   vtkSmartPointer<vtkDecimatePro> decimator = vtkSmartPointer<vtkDecimatePro>::New();
 
   decimator->SetInputData(this->mesh);
   decimator->SetTargetReduction(reduction);
   decimator->SetFeatureAngle(angle);
-  preservetopology == true ? decimator->PreserveTopologyOn() : decimator->PreserveTopologyOff();
+  preserveTopology == true ? decimator->PreserveTopologyOn() : decimator->PreserveTopologyOff();
   decimator->BoundaryVertexDeletionOn();
   decimator->Update();
   this->mesh = decimator->GetOutput();
@@ -274,11 +274,11 @@ Mesh &Mesh::fillHoles()
   return *this;
 }
 
-Mesh &Mesh::probeVolume(const Image &img)
+Mesh &Mesh::probeVolume(const Image &image)
 {
   vtkSmartPointer<vtkProbeFilter> probeFilter = vtkSmartPointer<vtkProbeFilter>::New();
   probeFilter->SetInputData(this->mesh);
-  probeFilter->SetSourceData(img.getVTKImage());
+  probeFilter->SetSourceData(image.getVTKImage());
   probeFilter->Update();
   this->mesh = probeFilter->GetPolyDataOutput();
 
@@ -439,7 +439,7 @@ Image Mesh::toImage(Vector3 spacing, Dims size, Point3 origin) const
     {
       size = rasterizationSize(bbox, spacing, 1, origin);
     }
-  }    
+  }
 
   vtkSmartPointer<vtkImageData> whiteImage = vtkSmartPointer<vtkImageData>::New();
   whiteImage->SetSpacing(spacing[0], spacing[1], spacing[2]);

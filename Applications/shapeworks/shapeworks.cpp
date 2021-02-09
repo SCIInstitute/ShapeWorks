@@ -14,13 +14,8 @@ int main(int argc, char *argv[])
 
   shapeworks.addCommand(ReadImage::getCommand());
   shapeworks.addCommand(WriteImage::getCommand());
-  shapeworks.addCommand(NegateImage::getCommand());
-  shapeworks.addCommand(AddImage::getCommand());
-  shapeworks.addCommand(SubtractImage::getCommand());
-  shapeworks.addCommand(MultiplyImage::getCommand());
-  shapeworks.addCommand(DivideImage::getCommand());
-  shapeworks.addCommand(ImageToMesh::getCommand());
   shapeworks.addCommand(ImageInfo::getCommand());
+  shapeworks.addCommand(ImageToMesh::getCommand());
   shapeworks.addCommand(Antialias::getCommand());
   shapeworks.addCommand(ResampleImage::getCommand());
   shapeworks.addCommand(ResizeImage::getCommand());
@@ -48,6 +43,11 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(SetOrigin::getCommand());
   shapeworks.addCommand(SetSpacing::getCommand());
   shapeworks.addCommand(WarpImage::getCommand());
+  shapeworks.addCommand(NegateImage::getCommand());
+  shapeworks.addCommand(AddImage::getCommand());
+  shapeworks.addCommand(SubtractImage::getCommand());
+  shapeworks.addCommand(MultiplyImage::getCommand());
+  shapeworks.addCommand(DivideImage::getCommand());
   shapeworks.addCommand(CompareImage::getCommand());
   shapeworks.addCommand(ReadParticleSystem::getCommand());
   shapeworks.addCommand(Compactness::getCommand());
@@ -61,17 +61,17 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(Decimate::getCommand());
   shapeworks.addCommand(InvertNormals::getCommand());
   shapeworks.addCommand(ReflectMesh::getCommand());
-  shapeworks.addCommand(Transform::getCommand());
+  shapeworks.addCommand(TransformMesh::getCommand());
   shapeworks.addCommand(FillHoles::getCommand());
   shapeworks.addCommand(ProbeVolume::getCommand());
   shapeworks.addCommand(ClipMesh::getCommand());
   shapeworks.addCommand(TranslateMesh::getCommand());
   shapeworks.addCommand(ScaleMesh::getCommand());
   shapeworks.addCommand(BoundingBoxMesh::getCommand());
-  shapeworks.addCommand(MeshDistance::getCommand());
+  shapeworks.addCommand(Distance::getCommand());
   shapeworks.addCommand(RasterizationOrigin::getCommand());
   shapeworks.addCommand(RasterizationSize::getCommand());
-  shapeworks.addCommand(MeshFix::getCommand());
+  shapeworks.addCommand(FixMesh::getCommand());
   shapeworks.addCommand(SetFieldValue::getCommand());
   shapeworks.addCommand(GetFieldValue::getCommand());
   shapeworks.addCommand(FieldRange::getCommand());

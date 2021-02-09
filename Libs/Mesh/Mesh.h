@@ -25,7 +25,7 @@ public:
   Mesh& operator=(const Mesh& mesh);           /// lvalue assignment operator
   Mesh& operator=(std::unique_ptr<Mesh> mesh); /// rvalue assignment operator
 
-  // return the current mesh
+  /// return the current mesh
   MeshType getVTKMesh() const { return this->mesh; }
 
   /// writes mesh, format specified by filename extension
@@ -39,7 +39,7 @@ public:
   Mesh& smooth(int iterations = 0, double relaxation = 0.0);
 
   /// applies filter to reduce number of triangles in mesh
-  Mesh& decimate(double reduction = 0.0, double angle = 0.0, bool preservetopology = false);
+  Mesh& decimate(double reduction = 0.0, double angle = 0.0, bool preserveTopology = true);
 
   /// handle flipping normals
   Mesh& invertNormals();
@@ -47,6 +47,7 @@ public:
   /// reflect meshes with respect to a specified center and specific axis
   Mesh& reflect(const Axis &axis, const Vector3 &origin = makeVector({ 0.0, 0.0, 0.0 }));
 
+  /// creates a transform based on transform type
   swTransform createTransform(const Mesh &target, TransformType type = IterativeClosestPoint, AlignmentType align = Similarity, unsigned iterations = 10);
 
   /// applies the given transformation to the mesh
@@ -56,7 +57,7 @@ public:
   Mesh& fillHoles();
 
   /// samples data values at specified point locations
-  Mesh& probeVolume(const Image &img);
+  Mesh& probeVolume(const Image &image);
 
   /// clips a mesh using a cutting plane
   Mesh& clip(const Plane plane);
@@ -96,7 +97,6 @@ public:
   /// number of faces
   vtkIdType numFaces() const { return mesh->GetNumberOfCells(); }
 
-
   // fields of mesh points //
 
   /// print all field names in mesh
@@ -131,10 +131,8 @@ public:
   /// returns the standard deviation of the given field
   double getFieldStd(const std::string& name) const;
 
-
   // fields of mesh faces //
   // todo: add support for fields of mesh faces (ex: their normals)
-
 
   // mesh comparison //
 
@@ -158,7 +156,6 @@ public:
   /// compare meshes
   bool operator==(const Mesh& other) const { return compare(other); }
 
-  
   // public static functions //
 
   /// getSupportedTypes
