@@ -12,6 +12,16 @@ TEST(pythonTests, imageinfo)
 {
   ASSERT_FALSE(system("python imageinfo.py"));
 }
+  
+TEST(pythonTests, imagecopy)
+{
+  ASSERT_FALSE(system("python imagecopy.py"));
+}
+
+TEST(pythonTests, meshcopy)
+{
+  ASSERT_FALSE(system("python meshcopy.py"));
+}
 
 TEST(pythonTests, compare)
 {

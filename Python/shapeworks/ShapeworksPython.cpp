@@ -342,10 +342,6 @@ PYBIND11_MODULE(shapeworks, m)
     importer->Update();
     return Image(importer->GetOutput());
   }))
-  // .def(py::init<Image &&>())
-  .def(py::init<const Image &>())
-  .def("__set__",               py::overload_cast<const Image&>(&Image::operator=))
-  // .def("__set__",               py::overload_cast<Image&&>(&Image::operator=))
   .def("__neg__", [](Image& img) { return -img; })
   .def(py::self + py::self)
   .def(py::self += py::self)
@@ -365,6 +361,7 @@ PYBIND11_MODULE(shapeworks, m)
     stream << img;
     return stream.str();
   })
+  .def("copy",                  [](Image& image) { return Image(image); })
   .def("write",                 &Image::write, "writes the current image (determines type by its extension)", "filename"_a, "compressed"_a=true)
   .def("antialias",             &Image::antialias, "antialiases binary volumes (layers is set to 3 when not specified)", "iterations"_a=50, "maxRMSErr"_a=0.01f, "layers"_a=3)
   .def("resample",              py::overload_cast<TransformPtr, Point3, Dims, Vector3, Image::ImageType::DirectionType, Image::InterpolationType>(&Image::resample), "resamples by applying transform then sampling from given origin along direction axes at spacing physical units per pixel for dims pixels using specified interpolator", "transform"_a, "origin"_a, "dims"_a, "spacing"_a, "direction"_a, "interp"_a=Image::InterpolationType::NearestNeighbor)
@@ -519,6 +516,7 @@ PYBIND11_MODULE(shapeworks, m)
     stream << mesh;
     return stream.str();
   })
+  .def("copy",                  [](Mesh& mesh) { return Mesh(mesh); })
   .def("write",                 &Mesh::write, "writes mesh, format specified by filename extension", "pathname"_a)
   .def("coverage",              &Mesh::coverage, "determines coverage between current mesh and another mesh (e.g. acetabular cup / femoral head)", "otherMesh"_a, "allowBackIntersections"_a=true, "angleThreshold"_a=0, "backSearchRadius"_a=0)
   .def("smooth",                &Mesh::smooth, "applies laplacian smoothing", "iterations"_a=0, "relaxation"_a=0.0)
@@ -533,8 +531,12 @@ PYBIND11_MODULE(shapeworks, m)
   .def("fillHoles",             &Mesh::fillHoles, "finds holes in a mesh and closes them")
   .def("probeVolume",           &Mesh::probeVolume, "samples data values at specified point locations", "image"_a)
   .def("clip",                  &Mesh::clip, "clips a mesh using a cutting plane", "plane"_a)
-  .def("translate",             &Mesh::translate, "translates mesh", "v"_a)
-  .def("scale",                 &Mesh::scale, "scales mesh", "v"_a)
+  .def("translate", [](Mesh& mesh, const std::vector<double>& v) {
+    return mesh.translate(makeVector({v[0], v[1], v[2]}));
+  }, "translates mesh", "v"_a)
+  .def("scale", [](Mesh& mesh, const std::vector<double>& v) {
+    return mesh.scale(makeVector({v[0], v[1], v[2]}));
+  }, "scale mesh", "v"_a)
   .def("boundingBox",           &Mesh::boundingBox, "computes bounding box of current mesh", "center"_a=false)
   .def("fix",                   &Mesh::fix, "quality control mesh", "smoothBefore"_a=true, "smoothAfter"_a=true, "lambda"_a=0.5, "iterations"_a=1, "decimate"_a=true, "percentage"_a=0.5)
   .def("distance",              &Mesh::distance, "computes surface to surface distance", "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
