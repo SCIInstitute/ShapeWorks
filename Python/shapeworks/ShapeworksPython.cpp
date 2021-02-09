@@ -264,6 +264,12 @@ PYBIND11_MODULE(shapeworks, m)
   })
   ;
 
+  py::class_<Plane>(m, "Plane")
+  .def(py::init([](std::vector<double>& n, std::vector<double>& o) {
+    return makePlane(makeVector({n[0], n[1], n[2]}), Point({o[0], o[1], o[2]}));
+  }))
+  ;
+
   // Shapeworks Globals
   m.def("createTransform", createTransform, "creates transform from matrix", "mat"_a, "translate"_a=makeVector({0,0,0}));
   m.def("toPoint", py::overload_cast<const Dims &>(toPoint), "converts Dims to Point", "d"_a);
@@ -309,10 +315,10 @@ PYBIND11_MODULE(shapeworks, m)
   .export_values();
   ;
 
-  // TransformType
-  py::enum_<TransformType>(m, "TransformType")
-  .value("CenterOfMass", TransformType::CenterOfMass)
-  .value("IterativeClosestPoint", TransformType::IterativeClosestPoint)
+  // TransformMethod
+  py::enum_<TransformMethod>(m, "TransformMethod")
+  .value("CenterOfMass", TransformMethod::CenterOfMass)
+  .value("IterativeClosestPoint", TransformMethod::IterativeClosestPoint)
   .export_values();
   ;
 
@@ -437,8 +443,8 @@ PYBIND11_MODULE(shapeworks, m)
   .def("physicalToLogical", [](Image& image, std::vector<double>& p) {
     return image.physicalToLogical(Point({p[0], p[1], p[2]}));
   }, "converts from a physical coordinate to a logical coordinate", "p"_a)
-  .def("createTransform",       py::overload_cast<TransformType>(&Image::createTransform), "creates a transform based on transform type", "type"_a=TransformType::CenterOfMass)
-  .def("createTransform",       py::overload_cast<const Image&, TransformType, float, unsigned>(&Image::createTransform), "creates a transform based on transform type", "target"_a, "type"_a=TransformType::IterativeClosestPoint, "isoValue"_a=0.0, "iterations"_a=20)
+  .def("createTransform",       py::overload_cast<TransformMethod>(&Image::createTransform), "creates a transform based on transform type", "type"_a=TransformMethod::CenterOfMass)
+  .def("createTransform",       py::overload_cast<const Image&, TransformMethod, float, unsigned>(&Image::createTransform), "creates a transform based on transform type", "target"_a, "type"_a=TransformMethod::IterativeClosestPoint, "isoValue"_a=0.0, "iterations"_a=20)
   .def("topologyPreservingSmooth",
        &Image::topologyPreservingSmooth,
        "creates a feature image (by applying gradient then sigmoid filters), then passes it to the TPLevelSet filter [curvature flow filter is often applied to the image before this filter]",
@@ -526,7 +532,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("reflect", [](Mesh& self, const Axis &axis, std::vector<double>& v) -> decltype(auto) {
     return self.reflect(axis, makeVector({v[0], v[1], v[2]}));
   }, "reflect meshes with respect to a specified center and specific axis", "axis"_a, "origin"_a=makeVector({0.0, 0.0, 0.0}))
-  .def("createTransform",       &Mesh::createTransform, "creates a transform based on transform type", "target"_a, "type"_a=TransformType::IterativeClosestPoint, "align"_a=Mesh::AlignmentType::Similarity, "iterations"_a=10)
+  .def("createTransform",       &Mesh::createTransform, "creates a transform based on transform type", "target"_a, "type"_a=TransformMethod::IterativeClosestPoint, "align"_a=Mesh::AlignmentType::Similarity, "iterations"_a=10)
   .def("applyTransform",        &Mesh::applyTransform, "applies the given transformation to the mesh", "transform"_a)
   .def("fillHoles",             &Mesh::fillHoles, "finds holes in a mesh and closes them")
   .def("probeVolume",           &Mesh::probeVolume, "samples data values at specified point locations", "image"_a)
@@ -583,8 +589,7 @@ PYBIND11_MODULE(shapeworks, m)
                                 &MeshUtils::distilVertexInfo, "distils vertex information from VTK poly data to Eigen matrices", "mesh"_a)
   .def_static("distilFaceInfo", &MeshUtils::distilFaceInfo, "distils face information from VTK poly data to Eigen matrices", "mesh"_a)
   // TODO: Bind later but is it required?
-  // .def_static("generateWarpMatrix",
-                                // &MeshUtils::generateWarpMatrix, "compute the warp matrix using the mesh and reference points", "TV"_a, "TF"_a, "Vref"_a)
+  // .def_static("generateWarpMatrix", &MeshUtils::generateWarpMatrix, "compute the warp matrix using the mesh and reference points", "TV"_a, "TF"_a, "Vref"_a)
   // .def_static("warpMesh",       &MeshUtils::warpMesh, "compute individual warp", "movPts"_a, "W"_a, "Fref"_a)
   // .def_static("warpMeshes",     &MeshUtils::warpMeshes, "compute transformation from set of points files using template mesh warp & face matrices", "movingPointPaths"_a, "outputMeshPaths"_a, "W"_a, "Fref"_a, "numP"_a)
   .def_static("boundingBox", [](std::vector<std::string> filenames, bool center) {
