@@ -1383,44 +1383,6 @@ bool ImageToMesh::execute(const optparse::Values &options, SharedCommandData &sh
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// DTToMesh
-///////////////////////////////////////////////////////////////////////////////
-void DTToMesh::buildParser()
-{
-  const std::string prog = "dt-to-mesh";
-  const std::string desc = "converts current distance transform to mesh";
-  parser.prog(prog).description(desc);
-
-  parser.add_option("--levelset").action("store").type("double").set_default(0.0).help("Value of levelset [default: %default].");
-  parser.add_option("--reduction").action("store").type("double").set_default(0.01).help("Percentage to decimate [default: %default].");
-  parser.add_option("--angle").action("store").type("int").set_default(30).help("Value of feature angle in degrees [default: %default].");
-  parser.add_option("--leveliterations").action("store").type("int").set_default(1).help("Number of iterations to smooth the level set [default: %default].");
-  parser.add_option("--meshiterations").action("store").type("int").set_default(1).help("Number of iterations to smooth the initial mesh [default: %default].");
-  parser.add_option("--preservetopology").action("store_true").set_default("false").help("Whether to preserve topology [default: true].");
-
-  Command::buildParser();
-}
-
-bool DTToMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validImage())
-  {
-    std::cerr << "No image to operate on\n";
-    return false;
-  }
-
-  double levelset = static_cast<double>(options.get("levelset"));
-  double reduction = static_cast<double>(options.get("reduction"));
-  double angle = static_cast<double>(options.get("angle"));
-  int leveliterations = static_cast<int>(options.get("leveliterations"));
-  int meshiterations = static_cast<int>(options.get("meshiterations"));
-  bool preservetopology = static_cast<bool>(options.get("preservetopology"));
-
-  sharedData.mesh = std::make_unique<Mesh>(sharedData.image.toMesh(levelset, reduction, angle, leveliterations, meshiterations, preservetopology));
-  return sharedData.validMesh();
-}
-
-///////////////////////////////////////////////////////////////////////////////
 // ReadParticleSystem
 ///////////////////////////////////////////////////////////////////////////////
 void ReadParticleSystem::buildParser()
@@ -1770,18 +1732,18 @@ bool Decimate::execute(const optparse::Values &options, SharedCommandData &share
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// InvertNormal
+// InvertNormals
 ///////////////////////////////////////////////////////////////////////////////
-void InvertNormal::buildParser()
+void InvertNormals::buildParser()
 {
-  const std::string prog = "invert-normal";
-  const std::string desc = "flips the normal";
+  const std::string prog = "invert-normals";
+  const std::string desc = "flips the normals";
   parser.prog(prog).description(desc);
 
   Command::buildParser();
 }
 
-bool InvertNormal::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool InvertNormals::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   if (!sharedData.validMesh())
   {
@@ -1789,7 +1751,7 @@ bool InvertNormal::execute(const optparse::Values &options, SharedCommandData &s
     return false;
   }
 
-  sharedData.mesh->invertNormal();
+  sharedData.mesh->invertNormals();
   return sharedData.validMesh();
 }
 
@@ -1890,7 +1852,7 @@ bool Transform::execute(const optparse::Values &options, SharedCommandData &shar
   else
   {
     Mesh target(targetMesh);
-    vtkTransform transform(sharedData.mesh->createTransform(target, method, align, iterations));
+    swTransform transform(sharedData.mesh->createTransform(target, method, align, iterations));
     sharedData.mesh->applyTransform(transform);
     return sharedData.validMesh();
   }
@@ -2229,7 +2191,6 @@ void MeshFix::buildParser()
   const std::string desc = "quality control meshes";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--wind").action("store").type("bool").set_default(true).help("Fix element window [default: true]");
   parser.add_option("--smoothBefore").action("store").type("bool").set_default(true).help("Perform laplacian smoothing before decimation [default: true].");
   parser.add_option("--smoothAfter").action("store").type("bool").set_default(true).help("Perform laplacian smoothing after decimation [default: true].");
   parser.add_option("--lambda").action("store").type("double").set_default(0.5).help("Laplacian smoothing lambda [default: %default].");
@@ -2248,7 +2209,6 @@ bool MeshFix::execute(const optparse::Values &options, SharedCommandData &shared
     return false;
   }
 
-  bool wind = static_cast<bool>(options.get("wind"));
   bool smoothBefore = static_cast<bool>(options.get("smoothBefore"));
   bool smoothAfter = static_cast<bool>(options.get("smoothAfter"));
   double lambda = static_cast<double>(options.get("lambda"));
@@ -2256,7 +2216,7 @@ bool MeshFix::execute(const optparse::Values &options, SharedCommandData &shared
   bool decimate = static_cast<bool>(options.get("decimate"));
   double percentage = static_cast<double>(options.get("percentage"));
 
-  sharedData.mesh->fix(wind, smoothBefore, smoothAfter, lambda, iterations, decimate, percentage);
+  sharedData.mesh->fix(smoothBefore, smoothAfter, lambda, iterations, decimate, percentage);
   return sharedData.validMesh();
 }
 

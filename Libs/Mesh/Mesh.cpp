@@ -201,7 +201,7 @@ Mesh &Mesh::decimate(double reduction, double angle, bool preservetopology)
   return *this;
 }
 
-Mesh &Mesh::invertNormal()
+Mesh &Mesh::invertNormals()
 {
   vtkSmartPointer<vtkReverseSense> reverseSense = vtkSmartPointer<vtkReverseSense>::New();
 
@@ -219,17 +219,17 @@ Mesh &Mesh::reflect(const Axis &axis, const Vector3 &origin)
   Vector scale(makeVector({1,1,1}));
   scale[axis] = -1;
 
-  vtkTransform transform(vtkTransform::New());
+  swTransform transform = swTransform::New();
   transform->Translate(-origin[0], -origin[1], -origin[2]);
   transform->Scale(scale[0], scale[1], scale[2]);
   transform->Translate(origin[0], origin[1], origin[2]);
 
-  return invertNormal().applyTransform(transform);
+  return invertNormals().applyTransform(transform);
 }
 
-vtkTransform Mesh::createTransform(const Mesh &target, Mesh::TransformType type, Mesh::AlignmentType align, unsigned iterations)
+swTransform Mesh::createTransform(const Mesh &target, Mesh::TransformType type, Mesh::AlignmentType align, unsigned iterations)
 {
-  vtkTransform transform;
+  swTransform transform;
 
   switch (type) {
     case IterativeClosestPoint:
@@ -242,7 +242,7 @@ vtkTransform Mesh::createTransform(const Mesh &target, Mesh::TransformType type,
   return transform;
 }
 
-Mesh &Mesh::applyTransform(const vtkTransform transform)
+Mesh &Mesh::applyTransform(const swTransform transform)
 {
   auto resampler = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
 
@@ -298,7 +298,7 @@ Mesh &Mesh::clip(const Plane plane)
 
 Mesh &Mesh::translate(const Vector3 &v)
 {
-  vtkTransform transform(vtkTransform::New());
+  swTransform transform = swTransform::New();
   transform->Translate(v[0], v[1], v[2]);
 
   return applyTransform(transform);
@@ -306,7 +306,7 @@ Mesh &Mesh::translate(const Vector3 &v)
 
 Mesh &Mesh::scale(const Vector3 &v)
 {
-  vtkTransform transform(vtkTransform::New());
+  swTransform transform = swTransform::New();
   transform->Scale(v[0], v[1], v[2]);
 
   return applyTransform(transform);
@@ -479,7 +479,7 @@ Image Mesh::toDistanceTransform(Vector3 spacing, Dims size, Point3 origin) const
   return image;
 }
 
-Mesh& Mesh::fix(bool wind, bool smoothBefore, bool smoothAfter, double lambda, int iterations, bool decimate, double percentage)
+Mesh& Mesh::fix(bool smoothBefore, bool smoothAfter, double lambda, int iterations, bool decimate, double percentage)
 {
 	FEVTKimport import;
   FEMesh* meshFE = import.Load(this->mesh);
@@ -488,8 +488,8 @@ Mesh& Mesh::fix(bool wind, bool smoothBefore, bool smoothAfter, double lambda, i
 
 	FEFixMesh fix;
   FEMesh* meshFix;
-  if (wind)
-    meshFix = fix.FixElementWinding(meshFE);
+
+  meshFix = fix.FixElementWinding(meshFE);
 
   if (smoothBefore)
   {
@@ -657,7 +657,7 @@ bool Mesh::compareAllPoints(const Mesh &other_mesh) const
     
   if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints())
   {
-    std::cout << "meshes differ in number of points";
+    std::cerr << "meshes differ in number of points";
     return false;
   }
 
@@ -676,6 +676,58 @@ bool Mesh::compareAllPoints(const Mesh &other_mesh) const
   return true;
 }
 
+bool Mesh::compareAllFaces(const Mesh &other_mesh) const
+{
+  if (!this->mesh || !other_mesh.mesh)
+    throw std::invalid_argument("invalid meshes");
+
+  if (this->mesh->GetNumberOfCells() != other_mesh.mesh->GetNumberOfCells())
+  {
+    std::cerr << "meshes differ in number of faces";
+    return false;
+  }
+
+  // helper function to print out the cell indices
+  auto printCells = [](vtkCell* cell1, vtkCell* cell2){
+    printf("[ ");
+    for(int i = 0; i < cell1->GetNumberOfPoints(); i++) {
+      printf("%lld ", cell1->GetPointId(i));
+    }
+    printf("], [ ");
+    for(int i = 0; i < cell2->GetNumberOfPoints(); i++) {
+      printf("%lld ", cell2->GetPointId(i));
+    }
+    printf("]");
+  };
+
+  for (int i = 0; i < this->mesh->GetNumberOfCells(); i++)
+  {
+    vtkCell* cell1 = this->mesh->GetCell(i);
+    vtkCell* cell2 = other_mesh.mesh->GetCell(i);
+
+    if(cell1->GetNumberOfPoints() != cell2->GetNumberOfPoints())
+    {
+      printf("%ith face not equal (", i);
+      printCells(cell1, cell2);
+      printf(")\n");
+      return false;
+    }
+
+    for(int pi=0; pi<cell1->GetNumberOfPoints(); pi++)
+    {
+      if(cell1->GetPointId(pi) != cell2->GetPointId(pi))
+      {
+        printf("%ith face not equal (", i);
+        printCells(cell1, cell2);
+        printf(")\n");
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
 bool Mesh::compareAllFields(const Mesh &other_mesh) const
 {
   if (!this->mesh || !other_mesh.mesh)
@@ -686,12 +738,12 @@ bool Mesh::compareAllFields(const Mesh &other_mesh) const
 
   // first make sure they even have the same fields to compare
   if (fields1.size() != fields2.size()) {
-    std::cout << "Mesh have different number of fields\n";
+    std::cerr << "Mesh have different number of fields\n";
     return false;
   }
   for (int i=0; i<fields1.size(); i++) {
     if (std::find(fields2.begin(), fields2.end(), fields1[i]) == fields2.end()) {
-      std::cout << "Both meshes don't have " << fields1[i] << " field\n";
+      std::cerr << "Both meshes don't have " << fields1[i] << " field\n";
       return false;
     }      
   }
@@ -699,7 +751,7 @@ bool Mesh::compareAllFields(const Mesh &other_mesh) const
   // now compare the actual fields
   for (auto field: fields1) {
     if (!compareField(other_mesh, field)) {
-      std::cout << field << " fields are not the same\n";
+      std::cerr << field << " fields are not the same\n";
       return false;
     }
   }
@@ -713,22 +765,26 @@ bool Mesh::compareField(const Mesh& other_mesh, const std::string& name1, const 
   auto field2 = other_mesh.getField<vtkDataArray>(name2.empty() ? name1 : name2);
 
   if (!field1 || !field2) {
-    std::cout << "at least one mesh missing a field\n";
+    std::cerr << "at least one mesh missing a field\n";
     return false;
   }
 
-  if (field1->GetNumberOfValues() != field2->GetNumberOfValues()) {
-    std::cout << "Fields are not the same size\n";
+  if (field1->GetNumberOfTuples() != field2->GetNumberOfTuples() ||
+      field1->GetNumberOfComponents() != field2->GetNumberOfComponents()) {
+    std::cerr << "Fields are not the same size\n";
     return false;
   }
 
-  for (int i = 0; i < field1->GetNumberOfValues(); i++)
+  for (int i = 0; i < field1->GetNumberOfTuples(); i++)
   {
-    auto v1(field1->GetTuple1(i));
-    auto v2(field2->GetTuple1(i));
-    if (!equalNSigDigits(v1, v2, 5)) {
-      printf("%ith values not equal (%0.8f != %0.8f)\n", i, v1, v2);
-      return false;
+    for (int c = 0; c < field1->GetNumberOfComponents(); c++)
+    {
+      auto v1(field1->GetTuple(i)[c]);
+      auto v2(field2->GetTuple(i)[c]);
+      if (!equalNSigDigits(v1, v2, 5)) {
+        printf("%ith values not equal (%0.8f != %0.8f)\n", i, v1, v2);
+        return false;
+      }
     }
   }
 
@@ -754,20 +810,21 @@ Point3 Mesh::center() const
 
 bool Mesh::compare(const Mesh& other) const
 {
-  if (!epsEqualN(center(), other.center(), 3))             { std::cout << "centers differ!\n"; return false; }
-  if (!epsEqualN(centerOfMass(), other.centerOfMass(), 3)) { std::cout << "coms differ!\n"; return false; }
-  if (numPoints() != other.numPoints())                    { std::cout << "num pts differ\n"; return false; }
-  if (numFaces() != other.numFaces())                      { std::cout << "num faces differ\n"; return false; }
-  if (!compareAllPoints(other))                            { std::cout << "points differ\n"; return false; }
-  if (!compareAllFields(other))                            { std::cout << "fields differ\n"; return false; }
+  if (!epsEqualN(center(), other.center(), 3))             { std::cerr << "centers differ!\n"; return false; }
+  if (!epsEqualN(centerOfMass(), other.centerOfMass(), 3)) { std::cerr << "coms differ!\n"; return false; }
+  if (numPoints() != other.numPoints())                    { std::cerr << "num pts differ\n"; return false; }
+  if (numFaces() != other.numFaces())                      { std::cerr << "num faces differ\n"; return false; }
+  if (!compareAllPoints(other))                            { std::cerr << "points differ\n"; return false; }
+  if (!compareAllFaces(other))                             { std::cerr << "faces differ\n"; return false; }
+  if (!compareAllFields(other))                            { std::cerr << "fields differ\n"; return false; }
 
   return true;
 }
 
-vtkTransform Mesh::createRegistrationTransform(const Mesh &target, Mesh::AlignmentType align, unsigned iterations)
+swTransform Mesh::createRegistrationTransform(const Mesh &target, Mesh::AlignmentType align, unsigned iterations)
 {
   const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createICPTransform(this->mesh, target.getVTKMesh(), align, iterations, true));
-  return createvtkTransform(mat);
+  return createswTransform(mat);
 }
 
 std::ostream& operator<<(std::ostream &os, const Mesh& mesh)

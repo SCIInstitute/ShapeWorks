@@ -49,7 +49,6 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(SetSpacing::getCommand());
   shapeworks.addCommand(WarpImage::getCommand());
   shapeworks.addCommand(CompareImage::getCommand());
-  shapeworks.addCommand(DTToMesh::getCommand());
   shapeworks.addCommand(ReadParticleSystem::getCommand());
   shapeworks.addCommand(Compactness::getCommand());
   shapeworks.addCommand(Generalization::getCommand());
@@ -60,7 +59,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(Coverage::getCommand());
   shapeworks.addCommand(Smooth::getCommand());
   shapeworks.addCommand(Decimate::getCommand());
-  shapeworks.addCommand(InvertNormal::getCommand());
+  shapeworks.addCommand(InvertNormals::getCommand());
   shapeworks.addCommand(ReflectMesh::getCommand());
   shapeworks.addCommand(Transform::getCommand());
   shapeworks.addCommand(FillHoles::getCommand());

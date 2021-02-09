@@ -157,7 +157,7 @@ void OptimizeParameters::set_use_procrustes_scaling(bool value)
 //---------------------------------------------------------------------------
 int OptimizeParameters::get_procrustes_interval()
 {
-  return this->params_.get("procrustes_interval", 0);
+  return this->params_.get("procrustes_interval", 10);
 }
 
 //---------------------------------------------------------------------------

@@ -12,7 +12,14 @@
 #include <igl/remove_unreferenced.h>
 #include <igl/slice.h>
 
+// tbb
+#include <tbb/mutex.h>
+
+
 namespace shapeworks {
+
+// locking to handle non-thread-safe code
+static tbb::mutex mesh_mutex;
 
 const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createICPTransform(const vtkSmartPointer<vtkPolyData> source,
                                                                   const vtkSmartPointer<vtkPolyData> target,
@@ -169,6 +176,19 @@ bool MeshUtils::warpMeshes(std::vector< std::string> movingPointpaths, std::vect
   return true;
 }
 
+Mesh MeshUtils::threadSafeReadMesh(std::string filename)
+{
+  tbb::mutex::scoped_lock lock(mesh_mutex);
+  Mesh mesh(filename);
+  return mesh;
+}
+
+void MeshUtils::threadSafeWriteMesh(std::string filename, Mesh mesh)
+{
+  tbb::mutex::scoped_lock lock(mesh_mutex);
+  mesh.write(filename);
+}
+
 Region MeshUtils::boundingBox(std::vector<std::string> &filenames, bool center)
 {
   if (filenames.empty())
@@ -198,5 +218,6 @@ Region MeshUtils::boundingBox(std::vector<Mesh> &meshes, bool center)
 
   return bbox;
 }
+
 
 } // shapeworks

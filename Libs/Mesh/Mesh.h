@@ -5,7 +5,6 @@
 
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
-#include <swHausdorffDistancePointSetFilter.h>
 #include <string>
 #include <vtkPointData.h>
 // #include <gtest/gtest.h>  // fixme: not getting found; needed in order to test private functions
@@ -23,8 +22,8 @@ public:
 
   Mesh(const std::string& pathname) : mesh(read(pathname)) {}
   Mesh(MeshType meshPtr) : mesh(meshPtr) { if (!mesh) throw std::invalid_argument("null meshPtr"); }
-  Mesh& operator=(const Mesh& mesh); /// lvalue assignment operator
-  Mesh& operator=(std::unique_ptr<Mesh> mesh);      /// rvalue assignment operator
+  Mesh& operator=(const Mesh& mesh);           /// lvalue assignment operator
+  Mesh& operator=(std::unique_ptr<Mesh> mesh); /// rvalue assignment operator
 
   // return the current mesh
   MeshType getVTKMesh() const { return this->mesh; }
@@ -43,15 +42,15 @@ public:
   Mesh& decimate(double reduction = 0.0, double angle = 0.0, bool preservetopology = false);
 
   /// handle flipping normals
-  Mesh& invertNormal();
+  Mesh& invertNormals();
 
   /// reflect meshes with respect to a specified center and specific axis
   Mesh& reflect(const Axis &axis, const Vector3 &origin = makeVector({ 0.0, 0.0, 0.0 }));
 
-  vtkTransform createTransform(const Mesh &target, TransformType type = IterativeClosestPoint, AlignmentType align = Similarity, unsigned iterations = 10);
+  swTransform createTransform(const Mesh &target, TransformType type = IterativeClosestPoint, AlignmentType align = Similarity, unsigned iterations = 10);
 
   /// applies the given transformation to the mesh
-  Mesh& applyTransform(const vtkTransform transform);
+  Mesh& applyTransform(const swTransform transform);
 
   /// finds holes in a mesh and closes them
   Mesh& fillHoles();
@@ -72,7 +71,7 @@ public:
   Region boundingBox(bool center=false) const;
 
   /// quality control mesh
-  Mesh& fix(bool wind = true, bool smoothBefore = true, bool smoothAfter = true, double lambda = 0.5, int iterations = 1, bool decimate = true, double percentage = 0.5);
+  Mesh& fix(bool smoothBefore = true, bool smoothAfter = true, double lambda = 0.5, int iterations = 1, bool decimate = true, double percentage = 0.5);
 
   /// computes surface to surface distance, compute method: POINT_TO_POINT (default) or POINT_TO_CELL
   Mesh& distance(const Mesh &target, const DistanceMethod method = POINT_TO_POINT);
@@ -142,6 +141,9 @@ public:
   /// compare if values of the points in two (corresponding) meshes are (eps)equal
   bool compareAllPoints(const Mesh& other_mesh) const;
 
+  /// compare if face indices in two (corresponding) meshes are equal
+  bool compareAllFaces(const Mesh& other_mesh) const;
+
   /// compare if all fields in two meshes are (eps)equal
   bool compareAllFields(const Mesh& other_mesh) const;
 
@@ -183,7 +185,7 @@ private:
   static MeshType read(const std::string& pathname);
 
   /// Creates transform from source mesh to target using ICP registration
-  vtkTransform createRegistrationTransform(const Mesh &target, AlignmentType align = Similarity, unsigned iterations = 10);
+  swTransform createRegistrationTransform(const Mesh &target, AlignmentType align = Similarity, unsigned iterations = 10);
 
   MeshType mesh;
 };

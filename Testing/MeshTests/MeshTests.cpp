@@ -56,11 +56,14 @@ TEST(MeshTests, decimateTest2)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-// https://github.com/SCIInstitute/ShapeWorks/issues/937
-// TEST(MeshTests, invertNormalTest1)
-// {
-//   // TODO
-// }
+TEST(MeshTests, invertNormalsTest)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.invertNormals();
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/invertnormals.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
 
 TEST(MeshTests, reflectTest1)
 {
@@ -173,20 +176,20 @@ TEST(MeshTests, scaleTest2)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, fixTest1)
-{
-  Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
-  femur.fix();
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fix1.vtk");
-
-  ASSERT_TRUE(femur == ground_truth);
-}
-
 // https://github.com/SCIInstitute/ShapeWorks/issues/938
+// TEST(MeshTests, fixTest1)
+// {
+//   Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
+//   femur.fix();
+//   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fix1.vtk");
+//   ASSERT_TRUE(femur == ground_truth);
+// }
+
 // TEST(MeshTests, fixTest2)
 // {
 //   Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
-//   femur.fix(true, true, true, 0.5, 1, true, 0.5);
+//   // femur.fix(true, true, 0.5, 1, true, 0.5);
+//   femur.fix();
 //   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fix1.vtk");
 //   ASSERT_TRUE(femur == ground_truth);
 // }
@@ -332,12 +335,12 @@ TEST(MeshTests, fieldTest2)
   Mesh mesh(std::string(TEST_DATA_DIR) + "/mesh1.vtk");
   double a = mesh.getFieldValue("scalars", 0);
   double b = mesh.getFieldValue("scalars", 1000);
-  double c = mesh.getFieldValue("normals", 1000);
-  double d = mesh.getFieldValue("normals", 3100);
+  double c = mesh.getFieldValue("Normals", 4231);
+  double d = mesh.getFieldValue("Normals", 5634);
 
   ASSERT_TRUE(a==1);
   ASSERT_TRUE(b==1);
-  ASSERT_TRUE(c==0);
+  ASSERT_TRUE(std::abs(c - 0.57735) < 1e-4);
   ASSERT_TRUE(d==0);
 }
 
@@ -347,7 +350,7 @@ TEST(MeshTests, icpTest)
 {
   Mesh source(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
   Mesh target(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
-  shapeworks::vtkTransform transform = source.createTransform(target);
+  shapeworks::swTransform transform = source.createTransform(target);
   source.applyTransform(transform);
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/icp.ply");
 
