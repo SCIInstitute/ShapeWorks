@@ -227,7 +227,7 @@ Mesh &Mesh::reflect(const Axis &axis, const Vector3 &origin)
   return invertNormals().applyTransform(transform);
 }
 
-MeshTransform Mesh::createTransform(const Mesh &target, TransformMethod type, Mesh::AlignmentType align, unsigned iterations)
+MeshTransform Mesh::createTransform(const Mesh &target, XFormType type, Mesh::AlignmentType align, unsigned iterations)
 {
   MeshTransform transform;
 

@@ -10,7 +10,7 @@ TEST(pythonTests, setup)
 
 TEST(pythonTests, infoTest)
 {
-  ASSERT_FALSE(system("python imageinfo.py"));
+  ASSERT_FALSE(system("python info.py"));
 }
   
 TEST(pythonTests, copyTest)
@@ -193,82 +193,82 @@ TEST(pythonTests, icpTest)
   ASSERT_FALSE(system("python icp.py"));
 }
 
-TEST(pythonTests, clip)
+TEST(pythonTests, clipTest)
 {
   ASSERT_FALSE(system("python clip.py"));
 }
 
-TEST(pythonTests, clipfail)
+TEST(pythonTests, clipFailTest)
 {
   ASSERT_TRUE(system("python clipfail.py"));
 }
 
-TEST(pythonTests, reflect)
+TEST(pythonTests, reflectTest)
 {
   ASSERT_FALSE(system("python reflect.py"));
 }
 
-TEST(pythonTests, reflectfail)
+TEST(pythonTests, reflectFailTest)
 {
   ASSERT_TRUE(system("python reflectfail.py"));
 }
 
-TEST(pythonTests, warp)
+TEST(pythonTests, warpTest)
 {
   ASSERT_FALSE(system("python warp.py"));
 }
 
-TEST(pythonTests, warpfail)
+TEST(pythonTests, warpFailTest)
 {
   ASSERT_TRUE(system("python warpfail.py"));
 }
 
-TEST(pythonTests, setorigin)
+TEST(pythonTests, setOriginTest)
 {
   ASSERT_FALSE(system("python setorigin.py"));
 }
 
-TEST(pythonTests, setspacing)
+TEST(pythonTests, setSpacingTest)
 {
   ASSERT_FALSE(system("python setspacing.py"));
 }
 
-TEST(pythonTests, setspacingfail)
+TEST(pythonTests, setSpacingFailTest)
 {
   ASSERT_TRUE(system("python setspacingfail.py"));
 }
 
-TEST(pythonTests, negate)
+TEST(pythonTests, negateTest)
 {
   ASSERT_FALSE(system("python negate.py"));
 }
 
-TEST(pythonTests, add)
+TEST(pythonTests, addTest)
 {
   ASSERT_FALSE(system("python add.py"));
 }
 
-TEST(pythonTests, addfail)
+TEST(pythonTests, addFailTest)
 {
   ASSERT_TRUE(system("python addfail.py"));
 }
 
-TEST(pythonTests, sub)
+TEST(pythonTests, subTest)
 {
   ASSERT_FALSE(system("python sub.py"));
 }
 
-TEST(pythonTests, subfail)
+TEST(pythonTests, subFailTest)
 {
   ASSERT_TRUE(system("python subfail.py"));
 }
 
-TEST(pythonTests, mul)
+TEST(pythonTests, mulTest)
 {
   ASSERT_FALSE(system("python mul.py"));
 }
 
-TEST(pythonTests, div)
+TEST(pythonTests, divTest)
 {
   ASSERT_FALSE(system("python div.py"));
 }
@@ -313,37 +313,47 @@ TEST(pythonTests, coverageTest)
   ASSERT_FALSE(system("python coverage.py"));
 }
 
-TEST(pythonTests, coord)
+TEST(pythonTests, distanceTest)
+{
+  ASSERT_FALSE(system("python distance.py"));
+}
+
+TEST(pythonTests, fieldTest)
+{
+  ASSERT_FALSE(system("python field.py"));
+}
+
+TEST(pythonTests, coordTest)
 {
   ASSERT_FALSE(system("python coord.py"));
 }
 
-TEST(pythonTests, dims)
+TEST(pythonTests, dimsTest)
 {
   ASSERT_FALSE(system("python dims.py"));
 }
 
-TEST(pythonTests, point)
+TEST(pythonTests, pointTest)
 {
   ASSERT_FALSE(system("python point.py"));
 }
 
-TEST(pythonTests, vector)
+TEST(pythonTests, vectorTest)
 {
   ASSERT_FALSE(system("python vector.py"));
 }
 
-TEST(pythonTests, ipoint3)
+TEST(pythonTests, ipoint3Test)
 {
   ASSERT_FALSE(system("python ipoint3.py"));
 }
 
-TEST(pythonTests, fpoint3)
+TEST(pythonTests, fpoint3Test)
 {
   ASSERT_FALSE(system("python fpoint3.py"));
 }
 
-TEST(pythonTests, optimize)
+TEST(pythonTests, optimizeTest)
 {
   ASSERT_FALSE(system("python optimize.py"));
 }

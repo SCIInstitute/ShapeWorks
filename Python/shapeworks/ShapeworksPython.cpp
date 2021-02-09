@@ -315,10 +315,10 @@ PYBIND11_MODULE(shapeworks, m)
   .export_values();
   ;
 
-  // TransformMethod
-  py::enum_<TransformMethod>(m, "TransformMethod")
-  .value("CenterOfMass", TransformMethod::CenterOfMass)
-  .value("IterativeClosestPoint", TransformMethod::IterativeClosestPoint)
+  // TransformType
+  py::enum_<XFormType>(m, "TransformType")
+  .value("CenterOfMass", XFormType::CenterOfMass)
+  .value("IterativeClosestPoint", XFormType::IterativeClosestPoint)
   .export_values();
   ;
 
@@ -420,10 +420,10 @@ PYBIND11_MODULE(shapeworks, m)
   .def("clip", [](Image& image, const std::vector<double>& n, std::vector<double>& q, const Image::PixelType val) {
     return image.clip(makeVector({n[0], n[1], n[2]}), Point({q[0], q[1], q[2]}), val);
   }, "sets values on the back side of cutting plane (normal n containing point p) to val (default 0.0)", "n"_a, "q"_a, "val"_a=0.0)
-  .def("setOrigin",             &Image::setOrigin, "sets the image origin in physical space to the given value", "origin"_a=Point3({0,0,0}))
+  .def("setOrigin",             &Image::setOrigin, "sets the image origin in physical space to the given value", "origin"_a=Point({0,0,0}))
   .def("setOrigin", [](Image& image, std::vector<double>& p) {
     return image.setOrigin(Point({p[0], p[1], p[2]}));
-  }, "sets the image origin in physical space to the given value", "origin"_a=Point3({0,0,0}))
+  }, "sets the image origin in physical space to the given value", "origin"_a=Point({0,0,0}))
   .def("setSpacing",            &Image::setSpacing, "sets the image spacing to the given value", "spacing"_a=makeVector({1.0, 1.0, 1.0}))
   .def("setSpacing", [](Image& image, std::vector<double>& v) {
     return image.setSpacing(makeVector({v[0], v[1], v[2]}));
@@ -443,8 +443,8 @@ PYBIND11_MODULE(shapeworks, m)
   .def("physicalToLogical", [](Image& image, std::vector<double>& p) {
     return image.physicalToLogical(Point({p[0], p[1], p[2]}));
   }, "converts from a physical coordinate to a logical coordinate", "p"_a)
-  .def("createTransform",       py::overload_cast<TransformMethod>(&Image::createTransform), "creates a transform based on transform type", "type"_a=TransformMethod::CenterOfMass)
-  .def("createTransform",       py::overload_cast<const Image&, TransformMethod, float, unsigned>(&Image::createTransform), "creates a transform based on transform type", "target"_a, "type"_a=TransformMethod::IterativeClosestPoint, "isoValue"_a=0.0, "iterations"_a=20)
+  .def("createTransform",       py::overload_cast<XFormType>(&Image::createTransform), "creates a transform based on transform type", "type"_a=XFormType::CenterOfMass)
+  .def("createTransform",       py::overload_cast<const Image&, XFormType, float, unsigned>(&Image::createTransform), "creates a transform based on transform type", "target"_a, "type"_a=XFormType::IterativeClosestPoint, "isoValue"_a=0.0, "iterations"_a=20)
   .def("topologyPreservingSmooth",
        &Image::topologyPreservingSmooth,
        "creates a feature image (by applying gradient then sigmoid filters), then passes it to the TPLevelSet filter [curvature flow filter is often applied to the image before this filter]",
@@ -529,31 +529,31 @@ PYBIND11_MODULE(shapeworks, m)
   .def("decimate",              &Mesh::decimate, "applies filter to reduce number of triangles in mesh", "reduction"_a=0.0, "angle"_a=0.0, "preserveTopology"_a=true)
   .def("invertNormals",         &Mesh::invertNormals, "handle flipping normals")
   .def("reflect",               &Mesh::reflect, "reflect meshes with respect to a specified center and specific axis", "axis"_a, "origin"_a=makeVector({0.0, 0.0, 0.0}))
-  .def("reflect", [](Mesh& self, const Axis &axis, std::vector<double>& v) -> decltype(auto) {
-    return self.reflect(axis, makeVector({v[0], v[1], v[2]}));
+  .def("reflect", [](Mesh& mesh, const Axis &axis, std::vector<double>& v) -> decltype(auto) {
+    return mesh.reflect(axis, makeVector({v[0], v[1], v[2]}));
   }, "reflect meshes with respect to a specified center and specific axis", "axis"_a, "origin"_a=makeVector({0.0, 0.0, 0.0}))
-  .def("createTransform",       &Mesh::createTransform, "creates a transform based on transform type", "target"_a, "type"_a=TransformMethod::IterativeClosestPoint, "align"_a=Mesh::AlignmentType::Similarity, "iterations"_a=10)
+  .def("createTransform",       &Mesh::createTransform, "creates a transform based on transform type", "target"_a, "type"_a=XFormType::IterativeClosestPoint, "align"_a=Mesh::AlignmentType::Similarity, "iterations"_a=10)
   .def("applyTransform",        &Mesh::applyTransform, "applies the given transformation to the mesh", "transform"_a)
   .def("fillHoles",             &Mesh::fillHoles, "finds holes in a mesh and closes them")
   .def("probeVolume",           &Mesh::probeVolume, "samples data values at specified point locations", "image"_a)
   .def("clip",                  &Mesh::clip, "clips a mesh using a cutting plane", "plane"_a)
-  .def("translate", [](Mesh& mesh, const std::vector<double>& v) {
+  .def("translate", [](Mesh& mesh, const std::vector<double>& v) -> decltype(auto) {
     return mesh.translate(makeVector({v[0], v[1], v[2]}));
   }, "translates mesh", "v"_a)
-  .def("scale", [](Mesh& mesh, const std::vector<double>& v) {
+  .def("scale", [](Mesh& mesh, const std::vector<double>& v) -> decltype(auto) {
     return mesh.scale(makeVector({v[0], v[1], v[2]}));
   }, "scale mesh", "v"_a)
   .def("boundingBox",           &Mesh::boundingBox, "computes bounding box of current mesh", "center"_a=false)
   .def("fix",                   &Mesh::fix, "quality control mesh", "smoothBefore"_a=true, "smoothAfter"_a=true, "lambda"_a=0.5, "iterations"_a=1, "decimate"_a=true, "percentage"_a=0.5)
   .def("distance",              &Mesh::distance, "computes surface to surface distance", "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
-  .def("toImage",               &Mesh::toImage, "rasterizes mesh to create binary images, automatically computing size and origin if necessary", "spacing"_a=makeVector({1.0, 1.0, 1.0}), "size"_a=Dims({0, 0, 0}), "origin"_a=Point3({-1.0, -1.0, -1.0}))
-  .def("toImage", [](Mesh& self, std::vector<double>& v, std::vector<unsigned>& d, std::vector<double>& p) {
-    self.toImage(makeVector({v[0], v[1], v[2]}), Dims({d[0], d[1], d[2]}), Point3({p[0], p[1], p[2]}));
-  }, "rasterizes mesh to create binary images, automatically computing size and origin if necessary", "spacing"_a=makeVector({1.0, 1.0, 1.0}), "size"_a=Dims({0, 0, 0}), "origin"_a=Point3({-1.0, -1.0, -1.0}))
-  .def("toDistanceTransform",   &Mesh::toDistanceTransform, "converts mesh to distance transform, automatically computing size and origin if necessary", "spacing"_a=makeVector({1.0, 1.0, 1.0}), "size"_a=Dims({0, 0, 0}), "origin"_a=Point3({-1.0, -1.0, -1.0}))
-  .def("toDistanceTransform", [](Mesh& self, std::vector<double>& v, std::vector<unsigned>& d, std::vector<double>& p) {
-    self.toDistanceTransform(makeVector({v[0], v[1], v[2]}), Dims({d[0], d[1], d[2]}), Point3({p[0], p[1], p[2]}));
-  }, "converts mesh to distance transform, automatically computing size and origin if necessary", "spacing"_a=makeVector({1.0, 1.0, 1.0}), "size"_a=Dims({0, 0, 0}), "origin"_a=Point3({-1.0, -1.0, -1.0}))
+  .def("toImage",               &Mesh::toImage, "rasterizes mesh to create binary images, automatically computing size and origin if necessary", "spacing"_a=makeVector({1.0, 1.0, 1.0}), "size"_a=Dims({0, 0, 0}), "origin"_a=Point({-1.0, -1.0, -1.0}))
+  .def("toImage", [](Mesh& mesh, std::vector<double>& v, std::vector<unsigned>& d, std::vector<double>& p) {
+    return mesh.toImage(makeVector({v[0], v[1], v[2]}), Dims({d[0], d[1], d[2]}), Point({p[0], p[1], p[2]}));
+  }, "rasterizes mesh to create binary images, automatically computing size and origin if necessary", "spacing"_a=makeVector({1.0, 1.0, 1.0}), "size"_a=Dims({0, 0, 0}), "origin"_a=Point({-1.0, -1.0, -1.0}))
+  .def("toDistanceTransform",   &Mesh::toDistanceTransform, "converts mesh to distance transform, automatically computing size and origin if necessary", "spacing"_a=makeVector({1.0, 1.0, 1.0}), "size"_a=Dims({0, 0, 0}), "origin"_a=Point({-1.0, -1.0, -1.0}))
+  .def("toDistanceTransform", [](Mesh& mesh, std::vector<double>& v, std::vector<unsigned>& d, std::vector<double>& p) {
+    return mesh.toDistanceTransform(makeVector({v[0], v[1], v[2]}), Dims({d[0], d[1], d[2]}), Point({p[0], p[1], p[2]}));
+  }, "converts mesh to distance transform, automatically computing size and origin if necessary", "spacing"_a=makeVector({1.0, 1.0, 1.0}), "size"_a=Dims({0, 0, 0}), "origin"_a=Point({-1.0, -1.0, -1.0}))
   .def("center",                &Mesh::center, "center of mesh")
   .def("centerOfMass",          &Mesh::centerOfMass, "center of mass of mesh")
   .def("numPoints",             &Mesh::numPoints, "number of points")

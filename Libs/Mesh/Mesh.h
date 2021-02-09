@@ -49,7 +49,7 @@ public:
   Mesh& reflect(const Axis &axis, const Vector3 &origin = makeVector({ 0.0, 0.0, 0.0 }));
 
   /// creates a transform based on transform type
-  MeshTransform createTransform(const Mesh &target, TransformMethod type = IterativeClosestPoint, AlignmentType align = Similarity, unsigned iterations = 10);
+  MeshTransform createTransform(const Mesh &target, XFormType type = IterativeClosestPoint, AlignmentType align = Similarity, unsigned iterations = 10);
 
   /// applies the given transformation to the mesh
   Mesh& applyTransform(const MeshTransform transform);
