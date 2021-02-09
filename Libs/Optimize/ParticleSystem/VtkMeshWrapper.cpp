@@ -6,6 +6,8 @@
 #include <vtkPointData.h>
 #include <vtkTriangleFilter.h>
 
+#include <vtkTriangle.h>
+
 #include <igl/grad.h>
 #include <igl/per_vertex_normals.h>
 
@@ -47,6 +49,36 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
 
   ComputeMeshBounds();
   ComputeGradN();
+
+
+// Create a triangle
+  vtkSmartPointer<vtkPoints> points =
+    vtkSmartPointer<vtkPoints>::New();
+  points->InsertNextPoint ( -10.0, 0.0, 0.0 );
+  points->InsertNextPoint ( 0.0, 10.0, 0.0 );
+  points->InsertNextPoint ( 10.0, 0.0, 0.0 );
+
+  vtkSmartPointer<vtkTriangle> triangle =
+    vtkSmartPointer<vtkTriangle>::New();
+  /*
+  triangle->GetPointIds()->SetId ( 0, 0 );
+  triangle->GetPointIds()->SetId ( 1, 1 );
+  triangle->GetPointIds()->SetId ( 2, 2 );
+  */
+  triangle->Initialize(3, points);
+
+  double pt[3] = {25,25,0.0};
+
+  double closest[3];
+  int sub_id;
+  double pcoords[3];
+  double dist2;
+  double weights[3];
+  int ret = triangle->EvaluatePosition(pt, closest, sub_id, pcoords, dist2, weights);
+
+  std::cerr << ret << ", weights = " << weights[0] << ", " << weights[1] << ", " << weights[2] << "\n";
+
+
 
 }
 
@@ -121,7 +153,9 @@ VtkMeshWrapper::SampleNormalAtPoint(VtkMeshWrapper::PointType p, int idx) const
   double pcoords[3];
   double dist2;
   double weights[3];
-  cell->EvaluatePosition(point, closest, sub_id, pcoords, dist2, weights);
+  int ret = cell->EvaluatePosition(point, closest, sub_id, pcoords, dist2, weights);
+
+  //std::cerr << ret << ", weights = " << weights[0] << ", " << weights[1] << ", " << weights[2] << "\n";
 
   for (int i = 0; i < cell->GetNumberOfPoints(); i++) {
 
@@ -196,6 +230,10 @@ VtkMeshWrapper::SnapToMesh(VtkMeshWrapper::PointType pointa, int idx) const
 
   // update cache
   if (idx > 0) {
+    if (idx >= particle2tri_.size()) {
+      particle2tri_.resize(idx + 1, 0);
+    }
+
     particle2tri_[idx] = cell_id;
   }
 
