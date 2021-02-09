@@ -340,7 +340,7 @@ bool TransformMesh::execute(const optparse::Values &options, SharedCommandData &
   }
 
   std::string methodopt(options.get("method"));
-  Mesh::TransformType method{Mesh::IterativeClosestPoint};
+  TransformType method{IterativeClosestPoint};
   if (methodopt != "icp") {
     std::cerr << "no such transform type: " << methodopt << std::endl;
     return false;
@@ -354,7 +354,7 @@ bool TransformMesh::execute(const optparse::Values &options, SharedCommandData &
   else
   {
     Mesh target(targetMesh);
-    swTransform transform(sharedData.mesh->createTransform(target, method, align, iterations));
+    MeshTransform transform(sharedData.mesh->createTransform(target, method, align, iterations));
     sharedData.mesh->applyTransform(transform);
     return sharedData.validMesh();
   }

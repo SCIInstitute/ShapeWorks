@@ -219,7 +219,7 @@ Mesh &Mesh::reflect(const Axis &axis, const Vector3 &origin)
   Vector scale(makeVector({1,1,1}));
   scale[axis] = -1;
 
-  swTransform transform = swTransform::New();
+  MeshTransform transform = MeshTransform::New();
   transform->Translate(-origin[0], -origin[1], -origin[2]);
   transform->Scale(scale[0], scale[1], scale[2]);
   transform->Translate(origin[0], origin[1], origin[2]);
@@ -227,9 +227,9 @@ Mesh &Mesh::reflect(const Axis &axis, const Vector3 &origin)
   return invertNormals().applyTransform(transform);
 }
 
-swTransform Mesh::createTransform(const Mesh &target, Mesh::TransformType type, Mesh::AlignmentType align, unsigned iterations)
+MeshTransform Mesh::createTransform(const Mesh &target, TransformType type, Mesh::AlignmentType align, unsigned iterations)
 {
-  swTransform transform;
+  MeshTransform transform;
 
   switch (type) {
     case IterativeClosestPoint:
@@ -242,7 +242,7 @@ swTransform Mesh::createTransform(const Mesh &target, Mesh::TransformType type, 
   return transform;
 }
 
-Mesh &Mesh::applyTransform(const swTransform transform)
+Mesh &Mesh::applyTransform(const MeshTransform transform)
 {
   auto resampler = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
 
@@ -298,7 +298,7 @@ Mesh &Mesh::clip(const Plane plane)
 
 Mesh &Mesh::translate(const Vector3 &v)
 {
-  swTransform transform = swTransform::New();
+  MeshTransform transform = MeshTransform::New();
   transform->Translate(v[0], v[1], v[2]);
 
   return applyTransform(transform);
@@ -306,7 +306,7 @@ Mesh &Mesh::translate(const Vector3 &v)
 
 Mesh &Mesh::scale(const Vector3 &v)
 {
-  swTransform transform = swTransform::New();
+  MeshTransform transform = MeshTransform::New();
   transform->Scale(v[0], v[1], v[2]);
 
   return applyTransform(transform);
@@ -821,10 +821,10 @@ bool Mesh::compare(const Mesh& other) const
   return true;
 }
 
-swTransform Mesh::createRegistrationTransform(const Mesh &target, Mesh::AlignmentType align, unsigned iterations)
+MeshTransform Mesh::createRegistrationTransform(const Mesh &target, Mesh::AlignmentType align, unsigned iterations)
 {
   const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createICPTransform(this->mesh, target.getVTKMesh(), align, iterations, true));
-  return createswTransform(mat);
+  return createMeshTransform(mat);
 }
 
 std::ostream& operator<<(std::ostream &os, const Mesh& mesh)

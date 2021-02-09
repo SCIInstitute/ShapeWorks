@@ -18,7 +18,6 @@ class Image
 {
 public:
   enum InterpolationType { Linear, NearestNeighbor };
-  enum TransformType { CenterOfMass, IterativeClosestPoint };
 
   using PixelType = float;
   using ImageType = itk::Image<PixelType, 3>;

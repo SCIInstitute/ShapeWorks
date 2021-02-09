@@ -14,7 +14,6 @@ namespace shapeworks {
 class Mesh
 {
 public:
-  enum TransformType { IterativeClosestPoint };
   enum AlignmentType { Rigid, Similarity, Affine };
   enum DistanceMethod { POINT_TO_POINT, POINT_TO_CELL };
 
@@ -48,10 +47,10 @@ public:
   Mesh& reflect(const Axis &axis, const Vector3 &origin = makeVector({ 0.0, 0.0, 0.0 }));
 
   /// creates a transform based on transform type
-  swTransform createTransform(const Mesh &target, TransformType type = IterativeClosestPoint, AlignmentType align = Similarity, unsigned iterations = 10);
+  MeshTransform createTransform(const Mesh &target, TransformType type = IterativeClosestPoint, AlignmentType align = Similarity, unsigned iterations = 10);
 
   /// applies the given transformation to the mesh
-  Mesh& applyTransform(const swTransform transform);
+  Mesh& applyTransform(const MeshTransform transform);
 
   /// finds holes in a mesh and closes them
   Mesh& fillHoles();
@@ -182,7 +181,7 @@ private:
   static MeshType read(const std::string& pathname);
 
   /// Creates transform from source mesh to target using ICP registration
-  swTransform createRegistrationTransform(const Mesh &target, AlignmentType align = Similarity, unsigned iterations = 10);
+  MeshTransform createRegistrationTransform(const Mesh &target, AlignmentType align = Similarity, unsigned iterations = 10);
 
   MeshType mesh;
 };

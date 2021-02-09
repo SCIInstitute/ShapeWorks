@@ -363,7 +363,7 @@ bool TranslateImage::execute(const optparse::Values &options, SharedCommandData 
 
   if (centerofmass)
   {
-    sharedData.image.applyTransform(sharedData.image.createTransform(Image::TransformType::CenterOfMass));
+    sharedData.image.applyTransform(sharedData.image.createTransform(TransformType::CenterOfMass));
     return true;
   }
   else
@@ -840,7 +840,7 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
   else
   {
     Image target(targetDT);
-    TransformPtr transform(sharedData.image.createTransform(target, Image::TransformType::IterativeClosestPoint, isovalue, iterations));
+    TransformPtr transform(sharedData.image.createTransform(target, TransformType::IterativeClosestPoint, isovalue, iterations));
     sharedData.image.applyTransform(transform, target.origin(), target.dims(), target.spacing(), target.coordsys());
     return true;
   }

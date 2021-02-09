@@ -169,7 +169,7 @@ TEST(ImageTests, translateTest3)
 TEST(ImageTests, comTest1)
 {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
-  TransformPtr xform = image.createTransform(Image::CenterOfMass);
+  TransformPtr xform = image.createTransform(CenterOfMass);
   image.applyTransform(xform);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/centerofmass1.nrrd");
 
@@ -188,7 +188,7 @@ TEST(ImageTests, comTest2)
 TEST(ImageTests, comTest3)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
-  TransformPtr xform = image.createTransform(Image::CenterOfMass);
+  TransformPtr xform = image.createTransform(CenterOfMass);
   image.applyTransform(xform, Image::NearestNeighbor);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/centerofmass3.nrrd");
 
