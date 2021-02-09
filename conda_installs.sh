@@ -30,7 +30,7 @@ function install_pytorch() {
         pip install torch==1.7.1+cu101 torchvision==0.8.2+cu101 torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
     elif [[ "$CUDA" == "10.2" ]]; then
         pip install torch===1.7.1 torchvision===0.8.2 torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
-    elif [[ "$CUDA" == "11.0" ]]; then
+    elif [[ "$CUDA" == "11.0" || "$CUDA" == "11.1" || "$CUDA" == "11.2" ]]; then
         pip install torch===1.7.1+cu110 torchvision===0.8.2+cu110 torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
     else
         echo "CUDA version not compatible, using cpu-only"
