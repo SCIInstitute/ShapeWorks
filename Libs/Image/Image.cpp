@@ -516,7 +516,7 @@ Image& Image::rotate(const double angle, const Vector3 &axis)
   return *this;
 }
 
-TransformPtr Image::createTransform(TransformType type)
+TransformPtr Image::createTransform(XFormType type)
 {
   TransformPtr transform;
 
@@ -534,7 +534,7 @@ TransformPtr Image::createTransform(TransformType type)
   return transform;
 }
 
-TransformPtr Image::createTransform(const Image &target, TransformType type, float isoValue, unsigned iterations)
+TransformPtr Image::createTransform(const Image &target, XFormType type, float isoValue, unsigned iterations)
 {
   TransformPtr transform;
 

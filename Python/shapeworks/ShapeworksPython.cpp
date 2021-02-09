@@ -310,9 +310,9 @@ PYBIND11_MODULE(shapeworks, m)
   ;
 
   // TransformType
-  py::enum_<TransformType>(m, "TransformType")
-  .value("CenterOfMass", TransformType::CenterOfMass)
-  .value("IterativeClosestPoint", TransformType::IterativeClosestPoint)
+  py::enum_<XFormType>(m, "TransformType")
+  .value("CenterOfMass", XFormType::CenterOfMass)
+  .value("IterativeClosestPoint", XFormType::IterativeClosestPoint)
   .export_values();
   ;
 
@@ -437,8 +437,8 @@ PYBIND11_MODULE(shapeworks, m)
   .def("physicalToLogical", [](Image& image, std::vector<double>& p) {
     return image.physicalToLogical(Point({p[0], p[1], p[2]}));
   }, "converts from a physical coordinate to a logical coordinate", "p"_a)
-  .def("createTransform",       py::overload_cast<TransformType>(&Image::createTransform), "creates a transform based on transform type", "type"_a=TransformType::CenterOfMass)
-  .def("createTransform",       py::overload_cast<const Image&, TransformType, float, unsigned>(&Image::createTransform), "creates a transform based on transform type", "target"_a, "type"_a=TransformType::IterativeClosestPoint, "isoValue"_a=0.0, "iterations"_a=20)
+  .def("createTransform",       py::overload_cast<XFormType>(&Image::createTransform), "creates a transform based on transform type", "type"_a=XFormType::CenterOfMass)
+  .def("createTransform",       py::overload_cast<const Image&, XFormType, float, unsigned>(&Image::createTransform), "creates a transform based on transform type", "target"_a, "type"_a=XFormType::IterativeClosestPoint, "isoValue"_a=0.0, "iterations"_a=20)
   .def("topologyPreservingSmooth",
        &Image::topologyPreservingSmooth,
        "creates a feature image (by applying gradient then sigmoid filters), then passes it to the TPLevelSet filter [curvature flow filter is often applied to the image before this filter]",
@@ -526,7 +526,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("reflect", [](Mesh& self, const Axis &axis, std::vector<double>& v) -> decltype(auto) {
     return self.reflect(axis, makeVector({v[0], v[1], v[2]}));
   }, "reflect meshes with respect to a specified center and specific axis", "axis"_a, "origin"_a=makeVector({0.0, 0.0, 0.0}))
-  .def("createTransform",       &Mesh::createTransform, "creates a transform based on transform type", "target"_a, "type"_a=TransformType::IterativeClosestPoint, "align"_a=Mesh::AlignmentType::Similarity, "iterations"_a=10)
+  .def("createTransform",       &Mesh::createTransform, "creates a transform based on transform type", "target"_a, "type"_a=XFormType::IterativeClosestPoint, "align"_a=Mesh::AlignmentType::Similarity, "iterations"_a=10)
   .def("applyTransform",        &Mesh::applyTransform, "applies the given transformation to the mesh", "transform"_a)
   .def("fillHoles",             &Mesh::fillHoles, "finds holes in a mesh and closes them")
   .def("probeVolume",           &Mesh::probeVolume, "samples data values at specified point locations", "image"_a)

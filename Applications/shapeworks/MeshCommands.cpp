@@ -340,7 +340,7 @@ bool TransformMesh::execute(const optparse::Values &options, SharedCommandData &
   }
 
   std::string methodopt(options.get("method"));
-  TransformType method{IterativeClosestPoint};
+  XFormType method{IterativeClosestPoint};
   if (methodopt != "icp") {
     std::cerr << "no such transform type: " << methodopt << std::endl;
     return false;

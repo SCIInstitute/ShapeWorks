@@ -101,10 +101,10 @@ public:
   Image& rotate(const double angle, const Vector3 &axis);
 
   /// creates a transform based on transform type
-  TransformPtr createTransform(TransformType type = CenterOfMass);
+  TransformPtr createTransform(XFormType type = CenterOfMass);
 
   /// creates a transform based on transform type
-  TransformPtr createTransform(const Image &target, TransformType type = IterativeClosestPoint, float isoValue = 0.0, unsigned iterations = 20);
+  TransformPtr createTransform(const Image &target, XFormType type = IterativeClosestPoint, float isoValue = 0.0, unsigned iterations = 20);
 
   /// applies the given transformation to the image by using resampling filter
   Image& applyTransform(const TransformPtr transform, InterpolationType interp = Linear);
