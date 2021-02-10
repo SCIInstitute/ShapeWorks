@@ -426,7 +426,10 @@ def MeshesToVolumesUsingImages(outDir, meshList, imgList):
 
         img = Image(image_)
         mesh = Mesh(mesh_)
-        image = mesh.toImage(img.spacing(), img.size(), img.origin())
+        arr = img.spacing(); spacing = [arr[0], arr[1], arr[2]]
+        arr = img.dims();    dims = [arr[0], arr[1], arr[2]]
+        arr = img.origin();  origin = [arr[0], arr[1], arr[2]]
+        image = mesh.toImage(spacing, dims, origin)
         image.write(segFile)
     return segList
 
