@@ -1,11 +1,11 @@
 import os
 import sys
-from shapeworks import *
+import shapeworks as sw
 
 def comparefailTest():
-  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
 
-  compareImg = Image(os.environ["DATA"] + "/la-bin.nrrd")
+  compareImg = sw.Image(os.environ["DATA"] + "/la-bin.nrrd")
 
   return img.compare(compareImg)
 

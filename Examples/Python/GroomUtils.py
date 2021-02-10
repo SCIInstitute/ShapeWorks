@@ -193,7 +193,7 @@ def applyRigidAlignment(outDir, refFile, inDataListSeg, inDataListImg=[], icp_it
         # resize images to reference images
         img = Image(inDataListSeg[i])
         img.antialias(antialias_iterations)
-        rigidTransform = img.createTransform(refImg, ImageTransformType.IterativeClosestPoint, isoValue, icp_iterations)
+        rigidTransform = img.createTransform(refImg, TransformType.IterativeClosestPoint, isoValue, icp_iterations)
         img.applyTransform(rigidTransform, refImg.origin(), refImg.dims(), refImg.spacing(), refImg.coordsys(), InterpolationType.Linear).binarize().write(segoutname)
 
         if inDataListImg:
@@ -412,7 +412,7 @@ def MeshesToVolumesUsingImages(outDir, meshList, imgList):
 
     PLYmeshList = getPLYmeshes(meshList)
     for mesh_ in PLYmeshList:
-        mesh_name = os.path.basename(mesh)
+        mesh_name = os.path.basename(mesh_)
         prefix = mesh_name.split("_")[0] + "_" + mesh_name.split("_")[1]
 
         # get image
@@ -421,7 +421,7 @@ def MeshesToVolumesUsingImages(outDir, meshList, imgList):
                 image_ = image_file
 
         print("########### Turning Mesh To Volume ##############")
-        segFile = rename(mesh, outDir, "", ".nrrd")
+        segFile = rename(mesh_, outDir, "", ".nrrd")
         segList.append(segFile)
 
         img = Image(image_)
@@ -443,7 +443,7 @@ def MeshesToVolumes(outDir, meshList, spacing):
         segList.append(segFile)
 
         mesh = Mesh(mesh_)
-        image = mesh.toImage(Vector(spacing[0],spacing[1],spacing[2]))
+        image = mesh.toImage(spacing)
         image.write(segFile)
     return segList
 
