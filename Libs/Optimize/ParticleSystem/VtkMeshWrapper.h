@@ -66,7 +66,7 @@ private:
 
   Eigen::Vector3d
   GeodesicWalkOnFace(Eigen::Vector3d point_a,
-                     Eigen::Vector3d projected_vector, int face_index) const;
+                     Eigen::Vector3d projected_vector, int face_index, int& ending_face) const;
 
   Eigen::Vector3d GetBarycentricIntersection(Eigen::Vector3d start, Eigen::Vector3d end,
                                              int currentFace, int edge) const;

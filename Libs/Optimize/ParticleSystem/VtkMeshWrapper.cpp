@@ -15,6 +15,10 @@
 namespace shapeworks {
 
 namespace {
+static float epsilon = 1e-6;
+}
+
+namespace {
 template<class FROM, class TO>
 inline TO convert(FROM& value)
 {
@@ -62,35 +66,6 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
   ComputeMeshBounds();
   ComputeGradN();
 
-
-// Create a triangle
-  vtkSmartPointer<vtkPoints> points =
-    vtkSmartPointer<vtkPoints>::New();
-  points->InsertNextPoint(-10.0, 0.0, 0.0);
-  points->InsertNextPoint(0.0, 10.0, 0.0);
-  points->InsertNextPoint(10.0, 0.0, 0.0);
-
-  vtkSmartPointer<vtkTriangle> triangle =
-    vtkSmartPointer<vtkTriangle>::New();
-  /*
-  triangle->GetPointIds()->SetId ( 0, 0 );
-  triangle->GetPointIds()->SetId ( 1, 1 );
-  triangle->GetPointIds()->SetId ( 2, 2 );
-  */
-  triangle->Initialize(3, points);
-
-  double pt[3] = {25, 25, 0.0};
-
-  double closest[3];
-  int sub_id;
-  double pcoords[3];
-  double dist2;
-  double weights[3];
-  int ret = triangle->EvaluatePosition(pt, closest, sub_id, pcoords, dist2, weights);
-
-  std::cerr << ret << ", weights = " << weights[0] << ", " << weights[1] << ", " << weights[2]
-            << "\n";
-
 }
 
 //---------------------------------------------------------------------------
@@ -121,12 +96,25 @@ VtkMeshWrapper::PointType VtkMeshWrapper::GeodesicWalk(VtkMeshWrapper::PointType
                                                               vectorEigen);
 
   Eigen::Vector3d snappedPoint = convert<PointType, Eigen::Vector3d>(snapped);
-  Eigen::Vector3d newPoint = GeodesicWalkOnFace(snappedPoint, projectedVector, faceIndex);
+  int ending_face = -1;
+  Eigen::Vector3d newPoint = GeodesicWalkOnFace(snappedPoint, projectedVector, faceIndex, ending_face);
 
   PointType newPointpt;
   newPointpt[0] = newPoint[0];
   newPointpt[1] = newPoint[1];
   newPointpt[2] = newPoint[2];
+
+
+  // update cache
+  if (idx > 0 && ending_face > 0) {
+    if (idx >= particle2tri_.size()) {
+      particle2tri_.resize(idx + 1, 0);
+    }
+
+    particle2tri_[idx] = ending_face;
+  }
+
+
   return newPointpt;
 
   /*
@@ -213,7 +201,6 @@ VtkMeshWrapper::SampleNormalAtPoint(VtkMeshWrapper::PointType p, int idx) const
 VtkMeshWrapper::GradNType
 VtkMeshWrapper::SampleGradNAtPoint(VtkMeshWrapper::PointType p, int idx) const
 {
-
   double point[3];
   point[0] = p[0];
   point[1] = p[1];
@@ -233,15 +220,10 @@ VtkMeshWrapper::SampleGradNAtPoint(VtkMeshWrapper::PointType p, int idx) const
   GradNType weighted_grad_normal = GradNType(0.0);
 
   for (int i = 0; i < cell->GetNumberOfPoints(); i++) {
-
     auto id = cell->GetPointId(i);
-
     GradNType grad_normal = grad_normals_[id];
-
     grad_normal *= weights[i];
-
     weighted_grad_normal += grad_normal;
-
   }
   return weighted_grad_normal;
 }
@@ -306,6 +288,25 @@ int VtkMeshWrapper::GetTriangleForPoint(const double pt[3], int idx) const
 
     const int guess = particle2tri_[idx];
     if (this->IsInTriangle(pt, guess)) {
+/*
+      double closest_point[3];//the coordinates of the closest point will be returned here
+      double closest_point_dist2; //the squared distance to the closest point will be returned here
+      vtkIdType cell_id; //the cell id of the cell containing the closest point will be returned here
+      int sub_id; //this is rarely used (in triangle strips only, I believe)
+
+      this->cell_locator_->FindClosestPoint(pt, closest_point, cell_id, sub_id, closest_point_dist2);
+
+      if (cell_id != guess) {
+        std::cerr << "is in " << cell_id << " = " << this->IsInTriangle(pt, cell_id) << "\n";
+        std::cerr << "is in " << guess << " = " << this->IsInTriangle(pt, guess) << "\n";
+        std::cerr << "is in " << cell_id << " = " << this->IsInTriangle(pt, cell_id) << "\n";
+        std::cerr << "is in " << guess << " = " << this->IsInTriangle(pt, guess) << "\n";
+        std::cerr << "is in " << cell_id << " = " << this->IsInTriangle(pt, cell_id) << "\n";
+        std::cerr << "is in " << guess << " = " << this->IsInTriangle(pt, guess) << "\n";
+      }
+
+      //assert (cell_id == guess);
+*/
       return guess;
     }
   }
@@ -422,10 +423,17 @@ bool VtkMeshWrapper::IsInTriangle(const double* pt, int face_index) const
   int sub_id;
   double pcoords[3];
   double dist2;
-  double weights[3];
+  double bary[3];
   auto cell = this->poly_data_->GetCell(face_index);
-  int ret = cell->EvaluatePosition(pt, closest, sub_id, pcoords, dist2, weights);
-  return ret == 1;
+  int ret = cell->EvaluatePosition(pt, closest, sub_id, pcoords, dist2, bary);
+  if (ret) {
+    bool bary_check =((bary[0] >= -epsilon) && (bary[0] <= 1 + epsilon)) &&
+           ((bary[1] >= -epsilon) && (bary[1] <= 1 + epsilon)) &&
+           ((bary[2] >= -epsilon) && (bary[2] <= 1 + epsilon));
+    return bary_check;
+
+  }
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -461,7 +469,7 @@ const Eigen::Vector3d VtkMeshWrapper::GetFaceNormal(int face_index) const
 //---------------------------------------------------------------------------
 Eigen::Vector3d
 VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d projected_vector,
-                                   int face_index) const
+                                   int face_index, int &ending_face) const
 {
   int currentFace = face_index;
   Eigen::Vector3d currentPoint = point_a;
@@ -561,6 +569,8 @@ VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d proj
     currentPoint = intersect;
     currentFace = nextFace;
   }
+
+  ending_face = currentFace;
   return currentPoint;
 }
 
