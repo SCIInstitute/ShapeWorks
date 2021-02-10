@@ -76,7 +76,5 @@ private:
 
   bool abort_ = false;
 
-  // locking to handle non-thread-safe code
-  tbb::mutex mutex_;
 };
 }

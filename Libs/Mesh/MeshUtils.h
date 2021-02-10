@@ -4,7 +4,6 @@
 #include "Mesh.h"
 #include "Eigen/Core"
 #include "Eigen/Dense"
-#include <vtkPolyData.h>
 
 namespace shapeworks {
 
@@ -14,11 +13,15 @@ class MeshUtils
 public:
 
   /// Computes a rigid transformation from source to target using vtkIterativeClosestPointTransform
-  static const vtkSmartPointer<vtkMatrix4x4> createIcpTransform(const vtkSmartPointer<vtkPolyData> source, const vtkSmartPointer<vtkPolyData> target, const unsigned iterations = 20);
+  static const vtkSmartPointer<vtkMatrix4x4> createICPTransform(const vtkSmartPointer<vtkPolyData> source,
+                                                                const vtkSmartPointer<vtkPolyData> target,
+                                                                Mesh::AlignmentType align,
+                                                                const unsigned iterations = 20,
+                                                                bool meshTransform = false);
 
   /// Distils the vertex and face information from VTK poly data to Eigen matrices
-  static Eigen::MatrixXd distilVertexInfo(vtkSmartPointer<vtkPolyData> mesh);
-  static Eigen::MatrixXi distilFaceInfo(vtkSmartPointer<vtkPolyData> mesh);
+  static Eigen::MatrixXd distilVertexInfo(Mesh mesh);
+  static Eigen::MatrixXi distilFaceInfo(Mesh mesh);
 
   /// Compute the warp matrix using the mesh and reference points
   static Eigen::MatrixXd generateWarpMatrix(Eigen::MatrixXd TV , Eigen::MatrixXi TF, Eigen::MatrixXd Vref);
@@ -29,8 +32,17 @@ public:
   /// Compute transformation from set of points files using template mesh warp&face matrices
   static bool warpMeshes(std::vector< std::string> movingPointpaths, std::vector< std::string> outputMeshPaths, Eigen::MatrixXd W, Eigen::MatrixXi Fref, const int numP);
 
-  static Mesh thread_safe_read_mesh(std::string filename);
+  /// Thread safe reading of a mesh, uses a lock
+  static Mesh threadSafeReadMesh(std::string filename);
 
+  /// Thread safe writing of a mesh, uses a lock
+  static void threadSafeWriteMesh(std::string filename, Mesh mesh);
+
+  /// calculate bounding box incrementally for meshes
+  static Region boundingBox(std::vector<std::string> &filenames, bool center = false);
+
+  /// calculate bounding box incrementally for shapework meshes
+  static Region boundingBox(std::vector<Mesh> &meshes, bool center = false);
 };
 
 } // shapeworks

@@ -1,15 +1,9 @@
 #include "MeshUtils.h"
+#include "ParticleSystem.h"
 
 #include <vtkIterativeClosestPointTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkLandmarkTransform.h>
-#include <vtkTransform.h>
-#include <vtkPLYWriter.h>
-#include "Eigen/Core"
-#include "Eigen/Dense"
-#include "ParticleSystem.h"
-
-// IGL dependencies
 #include <igl/biharmonic_coordinates.h>
 #include <igl/cat.h>
 #include <igl/cotmatrix.h>
@@ -27,15 +21,26 @@ namespace shapeworks {
 // locking to handle non-thread-safe code
 static tbb::mutex mesh_mutex;
 
-const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createIcpTransform(const vtkSmartPointer<vtkPolyData> source,
+const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createICPTransform(const vtkSmartPointer<vtkPolyData> source,
                                                                   const vtkSmartPointer<vtkPolyData> target,
-                                                                  const unsigned iterations)
+                                                                  Mesh::AlignmentType align,
+                                                                  const unsigned iterations,
+                                                                  bool meshTransform)
 {
   vtkSmartPointer<vtkIterativeClosestPointTransform> icp = vtkSmartPointer<vtkIterativeClosestPointTransform>::New();
   icp->SetSource(source);
   icp->SetTarget(target);
-  icp->GetLandmarkTransform()->SetModeToRigidBody();
+
+  if (align == Mesh::Rigid)
+    icp->GetLandmarkTransform()->SetModeToRigidBody();
+  else if (align == Mesh::Similarity)
+    icp->GetLandmarkTransform()->SetModeToSimilarity();
+  else
+    icp->GetLandmarkTransform()->SetModeToAffine();
+
   icp->SetMaximumNumberOfIterations(iterations);
+  if (meshTransform)
+    icp->StartByMatchingCentroidsOn();
   icp->Modified();
   icp->Update();
 
@@ -45,12 +50,17 @@ const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createIcpTransform(const vtkSmart
   icpTransformFilter->Update();
 
   vtkSmartPointer<vtkMatrix4x4> m = vtkMatrix4x4::New();
-  vtkMatrix4x4::Invert(icp->GetMatrix(), m);
+  if (meshTransform)
+    m = icp->GetMatrix();
+  else
+    vtkMatrix4x4::Invert(icp->GetMatrix(), m);
+
   return m;
 }
 
-Eigen::MatrixXd MeshUtils::distilVertexInfo(vtkSmartPointer<vtkPolyData> mesh){
-  vtkSmartPointer<vtkPoints> points = mesh->GetPoints();
+Eigen::MatrixXd MeshUtils::distilVertexInfo(Mesh mesh) {
+  vtkSmartPointer<vtkPolyData> poly_data = mesh.getVTKMesh();
+  vtkSmartPointer<vtkPoints> points = poly_data->GetPoints();
 	vtkSmartPointer<vtkDataArray> dataArray = points->GetData();
 	
   int numVertices = points->GetNumberOfPoints();
@@ -65,16 +75,16 @@ Eigen::MatrixXd MeshUtils::distilVertexInfo(vtkSmartPointer<vtkPolyData> mesh){
   return Vref_new;
 }
 
-Eigen::MatrixXi MeshUtils::distilFaceInfo(vtkSmartPointer<vtkPolyData> mesh){
-  
-  int numFaces = mesh->GetNumberOfCells();
+Eigen::MatrixXi MeshUtils::distilFaceInfo(Mesh mesh){
+  vtkSmartPointer<vtkPolyData> poly_data = mesh.getVTKMesh();
+  int numFaces = poly_data->GetNumberOfCells();
   Eigen::MatrixXi Fref_new(numFaces, 3);
 	
 	vtkSmartPointer<vtkIdList> cellIdList =
       vtkSmartPointer<vtkIdList>::New();
 	
 	for(int j = 0; j < numFaces; j++){
-		mesh->GetCellPoints(j, cellIdList);
+		poly_data->GetCellPoints(j, cellIdList);
 		Fref_new(j, 0) = cellIdList->GetId(0);
 		Fref_new(j, 1) = cellIdList->GetId(1);
 		Fref_new(j, 2) = cellIdList->GetId(2);
@@ -166,11 +176,48 @@ bool MeshUtils::warpMeshes(std::vector< std::string> movingPointpaths, std::vect
   return true;
 }
 
-Mesh MeshUtils::thread_safe_read_mesh(std::string filename)
+Mesh MeshUtils::threadSafeReadMesh(std::string filename)
 {
   tbb::mutex::scoped_lock lock(mesh_mutex);
   Mesh mesh(filename);
   return mesh;
 }
+
+void MeshUtils::threadSafeWriteMesh(std::string filename, Mesh mesh)
+{
+  tbb::mutex::scoped_lock lock(mesh_mutex);
+  mesh.write(filename);
+}
+
+Region MeshUtils::boundingBox(std::vector<std::string> &filenames, bool center)
+{
+  if (filenames.empty())
+    throw std::invalid_argument("No filenames provided to compute a bounding box");
+  
+  Mesh mesh(filenames[0]);
+  Region bbox(mesh.boundingBox());
+
+  for (auto filename : filenames)
+  {
+    Mesh mesh(filename);
+    bbox.grow(mesh.boundingBox());
+  }
+
+  return bbox;
+}
+
+Region MeshUtils::boundingBox(std::vector<Mesh> &meshes, bool center)
+{
+  if (meshes.empty())
+    throw std::invalid_argument("No meshes provided to compute a bounding box");
+
+  Region bbox(meshes[0].boundingBox());
+
+  for (auto mesh : meshes)
+    bbox.grow(mesh.boundingBox());
+
+  return bbox;
+}
+
 
 } // shapeworks

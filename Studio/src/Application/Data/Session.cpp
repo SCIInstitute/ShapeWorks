@@ -11,7 +11,7 @@
 #include <QXmlStreamReader>
 #include <QProgressDialog>
 
-#include <Libs/Mesh/Mesh.h>
+#include <Libs/Mesh/MeshUtils.h>
 #include <Libs/Utils/StringUtils.h>
 
 #ifdef _WIN32
@@ -866,8 +866,8 @@ std::string Session::get_default_feature_map()
     auto subject = this->get_project()->get_subjects()[0];
     if (!subject->get_segmentation_filenames().empty()) {
       if (subject->get_domain_types()[0] == DomainType::Mesh) {
-        Mesh m(subject->get_segmentation_filenames()[0]);
-        auto poly_data = m.get_poly_data();
+        Mesh m = MeshUtils::threadSafeReadMesh(subject->get_segmentation_filenames()[0]);
+        auto poly_data = m.getVTKMesh();
         if (poly_data) {
           auto scalars = poly_data->GetPointData()->GetScalars();
           if (scalars) {
@@ -883,7 +883,7 @@ std::string Session::get_default_feature_map()
 //---------------------------------------------------------------------------
 bool Session::is_supported_file_format(std::string filename)
 {
-  for (auto type : Mesh::get_supported_types()) {
+  for (auto type : Mesh::getSupportedTypes()) {
     if (StringUtils::hasSuffix(filename, type)) {
       return true;
     }

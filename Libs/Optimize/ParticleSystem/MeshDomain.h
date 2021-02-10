@@ -85,7 +85,7 @@ public:
   inline vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType & point, int idx) const override {
     return meshWrapper->SampleNormalAtPoint(point, idx);
   }
-  inline HessianType SampleHessianAtPoint(const PointType &p, int idx) const override {
+  inline GradNType SampleGradNAtPoint(const PointType &p, int idx) const override {
     return meshWrapper->SampleGradNAtPoint(p, idx);
   }
 

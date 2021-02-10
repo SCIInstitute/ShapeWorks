@@ -27,8 +27,7 @@ public:
 
   /** Point type used to store particle locations. */
   typedef Point<double, DIMENSION> PointType;
-  //TODO Hessian != Gradient of normals! Consistent naming after implementing gradient of normals for image domain
-  typedef vnl_matrix_fixed<float, DIMENSION, DIMENSION> HessianType;
+  typedef vnl_matrix_fixed<float, DIMENSION, DIMENSION> GradNType;
 
   /** Apply any constraints to the given point location.
       This should force the point to a position on the surface that satisfies all constraints. */
@@ -42,7 +41,7 @@ public:
 
   virtual vnl_vector_fixed<float, DIMENSION> SampleGradientAtPoint(const PointType &point, int idx) const = 0;
   virtual vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType & point, int idx) const = 0;
-  virtual HessianType SampleHessianAtPoint(const PointType &p, int idx) const = 0;
+  virtual GradNType SampleGradNAtPoint(const PointType &p, int idx) const = 0;
 
   /** Distance between locations is used for computing energy and neighborhoods. Optionally
       return the gradient of the distance */
@@ -55,7 +54,6 @@ public:
         (*out_grad)[i] = a[i] - b[i];
       }
     }
-
     return a.EuclideanDistanceTo(b);
   }
   /** Squared Distance between locations is used for computing sigma. */

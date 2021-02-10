@@ -50,11 +50,12 @@ def GetMeshFromDT(DT_list, mesh_dir):
 	if not os.path.exists(mesh_dir):
 		os.makedirs(mesh_dir)
 	mesh_files = []
-	xml_filename = mesh_dir + "temp.xml"
 	for input_file in DT_list:
 		output_vtk = mesh_dir + "original_" + getPrefix(input_file) + ".vtk"
-		GroomUtils.create_meshfromDT_xml(xml_filename, input_file, output_vtk)
-		execCommand = ["MeshFromDistanceTransforms", xml_filename]
+		execCommand = ["shapeworks",
+                "read-image", "--name", input_file,
+                "dt-to-mesh", "--reduction", str(0.0001),
+                "write-mesh", "--name", output_vtk]
 		subprocess.check_call(execCommand)
 		mesh_files.append(output_vtk)
 	return mesh_files
