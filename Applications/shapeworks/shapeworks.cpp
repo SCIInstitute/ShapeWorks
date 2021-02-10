@@ -72,6 +72,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(RasterizationOrigin::getCommand());
   shapeworks.addCommand(RasterizationSize::getCommand());
   shapeworks.addCommand(FixMesh::getCommand());
+  shapeworks.addCommand(ClipClosedSurface::getCommand());
   shapeworks.addCommand(SetFieldValue::getCommand());
   shapeworks.addCommand(GetFieldValue::getCommand());
   shapeworks.addCommand(FieldRange::getCommand());
