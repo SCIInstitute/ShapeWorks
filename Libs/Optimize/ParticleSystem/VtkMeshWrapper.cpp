@@ -104,20 +104,16 @@ double VtkMeshWrapper::ComputeDistance(VtkMeshWrapper::PointType pointa,
 VtkMeshWrapper::PointType VtkMeshWrapper::GeodesicWalk(VtkMeshWrapper::PointType pointa, int idx,
                                                        vnl_vector_fixed<double, 3> vector) const
 {
-  std::cerr << "------------------------------------------\n";
-  std::cerr << "GeodesicWalk\n";
+  //std::cerr << "------------------------------------------\n";
+  //std::cerr << "GeodesicWalk\n";
 
   PointType snapped = this->SnapToMesh(pointa, idx);
   vec3 point(snapped[0], snapped[1], snapped[2]);
 
   int faceIndex = GetTriangleForPoint(point.data(), idx);
 
-
   vec3 currentBary = this->ComputeBarycentricCoordinates(point, faceIndex);
-  std::cerr << "Starting Bary: " << PrintValue<Eigen::Vector3d>(currentBary) << "\n";
-
-
-
+  //std::cerr << "Starting Bary: " << PrintValue<Eigen::Vector3d>(currentBary) << "\n";
 
   Eigen::Vector3d vectorEigen = convert<vnl_vector_fixed<double, DIMENSION>, Eigen::Vector3d>(
     vector);
@@ -127,19 +123,15 @@ VtkMeshWrapper::PointType VtkMeshWrapper::GeodesicWalk(VtkMeshWrapper::PointType
   Eigen::Vector3d snappedPoint = convert<PointType, Eigen::Vector3d>(snapped);
   Eigen::Vector3d newPoint = GeodesicWalkOnFace(snappedPoint, projectedVector, faceIndex);
 
-
-
-
-
   PointType newPointpt;
   newPointpt[0] = newPoint[0];
   newPointpt[1] = newPoint[1];
   newPointpt[2] = newPoint[2];
   return newPointpt;
 
-
-
   /*
+   * Alternate, just snap to mesh
+   *
   pointa[0] += vector[0];
   pointa[1] += vector[1];
   pointa[2] += vector[2];
@@ -481,12 +473,12 @@ VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d proj
     facesTraversed.push_back(currentFace);
     vec3 currentBary = ComputeBarycentricCoordinates(
       vec3(currentPoint[0], currentPoint[1], currentPoint[2]), currentFace);
-    std::cerr << "Current Bary: " << PrintValue<Eigen::Vector3d>(currentBary) << "\n";
+    //std::cerr << "Current Bary: " << PrintValue<Eigen::Vector3d>(currentBary) << "\n";
 
     Eigen::Vector3d targetPoint = currentPoint + remainingVector;
     vec3 targetBary = ComputeBarycentricCoordinates(
       vec3(targetPoint[0], targetPoint[1], targetPoint[2]), currentFace);
-    std::cerr << "Target Bary: " << PrintValue<Eigen::Vector3d>(targetBary) << "\n";
+    //std::cerr << "Target Bary: " << PrintValue<Eigen::Vector3d>(targetBary) << "\n";
 
     if (facesTraversed.size() >= 3 &&
         facesTraversed[facesTraversed.size() - 1] == facesTraversed[facesTraversed.size() - 3]) {
@@ -514,10 +506,10 @@ VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d proj
         targetBary[2] + barycentricEpsilon >= 0 && targetBary[0] - barycentricEpsilon <= 1 &&
         targetBary[1] - barycentricEpsilon <= 1 && targetBary[2] - barycentricEpsilon <= 1) {
       currentPoint = targetPoint;
-      std::cerr << "on face? done\n";
+//      std::cerr << "on face? done\n";
       break;
     }
-    std::cerr << "Not on face, step\n";
+//    std::cerr << "Not on face, step\n";
     int positiveVertex = -1;
     std::vector<int> negativeVertices;
     for (int i = 0; i < 3; i++) {
@@ -530,7 +522,7 @@ VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d proj
     }
 
     if (negativeVertices.size() == 0 || negativeVertices.size() > 2) {
-      std::cerr << "ERROR ERROR invalid number of negative vertices. Point is not on surface.\n";
+      std::cerr << "ERROR: invalid number of negative vertices. Point is not on surface.\n";
       break;
     }
     int negativeEdge = negativeVertices[0];
@@ -604,32 +596,17 @@ int VtkMeshWrapper::GetAcrossEdge(int face_id, int edge_id) const
   auto neighbors = vtkSmartPointer<vtkIdList>::New();
   auto cell = this->poly_data_->GetCell(face_id);
   auto edge = cell->GetEdge(edge_id);
-//  int edge_p1 = edge->GetPointId(0);
-  //int edge_p2 = edge->GetPointId(1);
-
-/*
-  int edge_p1 = 0;
-  int edge_p2 = 1;
-  if (edge_id == 1) {
-    edge_p1 = 1;
-    edge_p2 = 2;
-  } else if (edge_id == 2) {
-    edge_p1 = 2;
-    edge_p2 = 0;
-  }
-*/
-
 
   int edge_p1 = cell->GetPointId(1);
   int edge_p2 = cell->GetPointId(2);
   if (edge_id == 1) {
     edge_p1 = cell->GetPointId(2);
     edge_p2 = cell->GetPointId(0);
-  } else if (edge_id == 2) {
+  }
+  else if (edge_id == 2) {
     edge_p1 = cell->GetPointId(0);
     edge_p2 = cell->GetPointId(1);
   }
-
 
   this->poly_data_->GetCellEdgeNeighbors(face_id, edge_p1, edge_p2, neighbors);
 
