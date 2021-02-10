@@ -315,12 +315,11 @@ PYBIND11_MODULE(shapeworks, m)
   .export_values();
   ;
 
-
   // Image
   py::class_<Image> image(m, "Image");
 
-  // Image::InterpolationType
-  py::enum_<Image::InterpolationType>(/*image,*/ "InterpolationType") // even though this is part of Image, it feels cleaner to keep it global in Python
+  // Image::InterpolationType (even though this is part of Image, it feels cleaner to keep it global in the module)
+  py::enum_<Image::InterpolationType>(m, "InterpolationType")
   .value("Linear", Image::InterpolationType::Linear)
   .value("NearestNeighbor", Image::InterpolationType::NearestNeighbor)
   .export_values();
