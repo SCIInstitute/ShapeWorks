@@ -53,7 +53,7 @@ private:
   void ComputeGradN(); // Gradient of normals
 
 
-  int GetTriangleForPoint(const double pt[3], int idx) const;
+  int GetTriangleForPoint(const double pt[3], int idx, double closest_point[3]) const;
 
   Eigen::Vector3d ProjectVectorToFace(const Eigen::Vector3d& normal,
                                       const Eigen::Vector3d& vector) const;

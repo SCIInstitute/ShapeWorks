@@ -85,7 +85,9 @@ VtkMeshWrapper::PointType VtkMeshWrapper::GeodesicWalk(VtkMeshWrapper::PointType
   PointType snapped = this->SnapToMesh(pointa, idx);
   vec3 point(snapped[0], snapped[1], snapped[2]);
 
-  int faceIndex = GetTriangleForPoint(point.data(), idx);
+  double closest_point[3];
+
+  int faceIndex = GetTriangleForPoint(point.data(), idx, closest_point);
 
   vec3 currentBary = this->ComputeBarycentricCoordinates(point, faceIndex);
   //std::cerr << "Starting Bary: " << PrintValue<Eigen::Vector3d>(currentBary) << "\n";
@@ -139,7 +141,9 @@ VtkMeshWrapper::ProjectVectorToSurfaceTangent(const VtkMeshWrapper::PointType& p
   point[1] = pointa[1];
   point[2] = pointa[2];
 
-  int faceIndex = this->GetTriangleForPoint(point, idx);
+  double closest_point[3];
+
+  int faceIndex = this->GetTriangleForPoint(point, idx, closest_point);
 
   double* normal = this->poly_data_->GetCellData()->GetNormals()->GetTuple(faceIndex);
 
@@ -169,7 +173,9 @@ VtkMeshWrapper::SampleNormalAtPoint(VtkMeshWrapper::PointType p, int idx) const
   point[1] = p[1];
   point[2] = p[2];
 
-  int face_index = this->GetTriangleForPoint(point, idx);
+  double closest_point[3];
+
+  int face_index = this->GetTriangleForPoint(point, idx, closest_point);
 
   auto cell = this->poly_data_->GetCell(face_index);
 
@@ -206,7 +212,8 @@ VtkMeshWrapper::SampleGradNAtPoint(VtkMeshWrapper::PointType p, int idx) const
   point[1] = p[1];
   point[2] = p[2];
 
-  int face_index = this->GetTriangleForPoint(point, idx);
+  double closest_point[3];
+  int face_index = this->GetTriangleForPoint(point, idx, closest_point);
 
   auto cell = this->poly_data_->GetCell(face_index);
 
@@ -236,6 +243,21 @@ VtkMeshWrapper::SnapToMesh(VtkMeshWrapper::PointType pointa, int idx) const
   point[0] = pointa[0];
   point[1] = pointa[1];
   point[2] = pointa[2];
+  double closest_point[3];
+  this->GetTriangleForPoint(point,idx,closest_point);
+
+  VtkMeshWrapper::PointType out;
+  out[0] = closest_point[0];
+  out[1] = closest_point[1];
+  out[2] = closest_point[2];
+  return out;
+
+/*
+
+  double point[3];
+  point[0] = pointa[0];
+  point[1] = pointa[1];
+  point[2] = pointa[2];
 
   double closest_point[3]; //the coordinates of the closest point will be returned here
   double closest_point_dist2; //the squared distance to the closest point will be returned here
@@ -259,6 +281,7 @@ VtkMeshWrapper::SnapToMesh(VtkMeshWrapper::PointType pointa, int idx) const
   }
 
   return out;
+  */
 }
 
 //---------------------------------------------------------------------------
@@ -277,7 +300,7 @@ VtkMeshWrapper::PointType VtkMeshWrapper::GetPointOnMesh() const
 }
 
 //---------------------------------------------------------------------------
-int VtkMeshWrapper::GetTriangleForPoint(const double pt[3], int idx) const
+int VtkMeshWrapper::GetTriangleForPoint(const double pt[3], int idx, double closest_point[3]) const
 {
   // given a guess, just check whether it is still valid.
   if (idx > 0) {
@@ -288,30 +311,14 @@ int VtkMeshWrapper::GetTriangleForPoint(const double pt[3], int idx) const
 
     const int guess = particle2tri_[idx];
     if (this->IsInTriangle(pt, guess)) {
-/*
-      double closest_point[3];//the coordinates of the closest point will be returned here
-      double closest_point_dist2; //the squared distance to the closest point will be returned here
-      vtkIdType cell_id; //the cell id of the cell containing the closest point will be returned here
-      int sub_id; //this is rarely used (in triangle strips only, I believe)
-
-      this->cell_locator_->FindClosestPoint(pt, closest_point, cell_id, sub_id, closest_point_dist2);
-
-      if (cell_id != guess) {
-        std::cerr << "is in " << cell_id << " = " << this->IsInTriangle(pt, cell_id) << "\n";
-        std::cerr << "is in " << guess << " = " << this->IsInTriangle(pt, guess) << "\n";
-        std::cerr << "is in " << cell_id << " = " << this->IsInTriangle(pt, cell_id) << "\n";
-        std::cerr << "is in " << guess << " = " << this->IsInTriangle(pt, guess) << "\n";
-        std::cerr << "is in " << cell_id << " = " << this->IsInTriangle(pt, cell_id) << "\n";
-        std::cerr << "is in " << guess << " = " << this->IsInTriangle(pt, guess) << "\n";
-      }
-
-      //assert (cell_id == guess);
-*/
+      closest_point[0] = pt[0];
+      closest_point[1] = pt[1];
+      closest_point[2] = pt[2];
       return guess;
     }
   }
 
-  double closest_point[3];//the coordinates of the closest point will be returned here
+  //double closest_point[3];//the coordinates of the closest point will be returned here
   double closest_point_dist2; //the squared distance to the closest point will be returned here
   vtkIdType cell_id; //the cell id of the cell containing the closest point will be returned here
   int sub_id; //this is rarely used (in triangle strips only, I believe)
@@ -426,7 +433,7 @@ bool VtkMeshWrapper::IsInTriangle(const double* pt, int face_index) const
   double bary[3];
   auto cell = this->poly_data_->GetCell(face_index);
   int ret = cell->EvaluatePosition(pt, closest, sub_id, pcoords, dist2, bary);
-  if (ret) {
+  if (ret && dist2 < epsilon) {
     bool bary_check =((bary[0] >= -epsilon) && (bary[0] <= 1 + epsilon)) &&
            ((bary[1] >= -epsilon) && (bary[1] <= 1 + epsilon)) &&
            ((bary[2] >= -epsilon) && (bary[2] <= 1 + epsilon));
