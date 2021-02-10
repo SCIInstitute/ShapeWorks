@@ -601,10 +601,19 @@ PYBIND11_MODULE(shapeworks, m)
 
   // MeshUtils
   py::class_<MeshUtils>(m, "MeshUtils")
-  .def_static("distilVertexInfo",
-                                &MeshUtils::distilVertexInfo, "distils vertex information from VTK poly data to Eigen matrices", "mesh"_a)
-  .def_static("distilFaceInfo", &MeshUtils::distilFaceInfo, "distils face information from VTK poly data to Eigen matrices", "mesh"_a)
-  // TODO: Bind later but is it required?
+
+  // TODO: fails to compile on Windows due to missing Eigen symbols
+  // https://github.com/SCIInstitute/ShapeWorks/issues/954
+  // .def_static("distilVertexInfo",
+  //             &MeshUtils::distilVertexInfo,
+  //             "distils vertex information from VTK poly data to Eigen matrices",
+  //             "mesh"_a)
+  // .def_static("distilFaceInfo",
+  //             &MeshUtils::distilFaceInfo,
+  //             "distils face information from VTK poly data to Eigen matrices",
+  //             "mesh"_a)
+
+  // TODO: Bind generateWarpMatrix, warpMesh, warpMeshes later if required
   // .def_static("generateWarpMatrix", &MeshUtils::generateWarpMatrix, "compute the warp matrix using the mesh and reference points", "TV"_a, "TF"_a, "Vref"_a)
   // .def_static("warpMesh",       &MeshUtils::warpMesh, "compute individual warp", "movPts"_a, "W"_a, "Fref"_a)
   // .def_static("warpMeshes",     &MeshUtils::warpMeshes, "compute transformation from set of points files using template mesh warp & face matrices", "movingPointPaths"_a, "outputMeshPaths"_a, "W"_a, "Fref"_a, "numP"_a)
