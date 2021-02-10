@@ -423,12 +423,14 @@ PYBIND11_MODULE(shapeworks, m)
   .def("clip", [](Image& image, const std::vector<double>& n, std::vector<double>& q, const Image::PixelType val) {
     return image.clip(makeVector({n[0], n[1], n[2]}), Point({q[0], q[1], q[2]}), val);
   }, "sets values on the back side of cutting plane (normal n containing point p) to val (default 0.0)", "n"_a, "q"_a, "val"_a=0.0)
-  .def("setOrigin",
+  .def("setOrigin",             &Image::setOrigin, "sets the image origin in physical space to the given value", "origin"_a=Point({0,0,0}))
+  .def("setOrigin", 
        [](Image& image, std::vector<double>& p) {
          return image.setOrigin(Point({p[0], p[1], p[2]}));
        },
        "sets the image origin in physical space to the given value",
        "origin"_a=std::vector<double>({0,0,0}))
+  .def("setSpacing",            &Image::setSpacing, "sets the image spacing to the given value", "spacing"_a=makeVector({1.0, 1.0, 1.0}))
   .def("setSpacing",
        [](Image& image, std::vector<double>& v) {
          return image.setSpacing(makeVector({v[0], v[1], v[2]}));
