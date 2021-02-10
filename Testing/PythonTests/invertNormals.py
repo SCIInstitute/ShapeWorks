@@ -6,7 +6,7 @@ def invertNormalsTest():
   mesh = sw.Mesh(os.environ["DATA"] + "/femur.vtk")
   mesh.invertNormals()
 
-  compareMesh = sw.Mesh(os.environ["DATA"] + "/invertNormals.vtk")
+  compareMesh = sw.Mesh(os.environ["DATA"] + "/invertnormals.vtk")
 
   return mesh == compareMesh
 
