@@ -8,7 +8,7 @@ def toImageTest():
 
   compareImg = sw.Image(os.environ["DATA"] + "/femurImage.nrrd")
 
-  return img.compare(compareImg)
+  return img == compareImg
 
 val = toImageTest()
 

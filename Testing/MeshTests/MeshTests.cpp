@@ -257,8 +257,7 @@ TEST(MeshTests, centerofmassTest)
 TEST(MeshTests, toImageTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
-  Region region = femur.boundingBox();
-  Image image = femur.toImage(makeVector({1.0,1.0,1.0}), femur.rasterizationSize(region), femur.rasterizationOrigin(region));
+  Image image = femur.toImage(makeVector({1.0,1.0,1.0}));
   Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImage.nrrd");
 
   ASSERT_TRUE(image == ground_truth);

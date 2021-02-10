@@ -21,7 +21,7 @@ if val is False:
 def distanceTest2():
   femur1 = sw.Mesh(os.environ["DATA"] + "/m03_L_femur.ply")
   femur2 = sw.Mesh(os.environ["DATA"] + "/m04_L_femur.ply")
-  femur1.distance(femur2, sw.DistanceMethod.POINT_TO_CELL)
+  femur1.distance(femur2, sw.Mesh.DistanceMethod.POINT_TO_CELL)
   femur2.distance(femur1)
 
   fwd = sw.Mesh(os.environ["DATA"] + "/meshdistance1p2c.vtk")
