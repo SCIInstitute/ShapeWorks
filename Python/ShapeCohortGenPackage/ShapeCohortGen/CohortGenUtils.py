@@ -98,7 +98,6 @@ def generate_segmentations(meshList, out_dir, randomize_size, spacing, allow_on_
 		meshIndex += 1
 	return segList
 
-
 '''
 Generates image by blurring and adding noise to segmentation
 '''
