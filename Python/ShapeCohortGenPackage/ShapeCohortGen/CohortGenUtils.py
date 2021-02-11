@@ -71,7 +71,8 @@ def generate_segmentations(meshList, out_dir, randomize_size, spacing, allow_on_
 	# loop through meshes and turn to images
 	segList = []
 	meshIndex = 0
-	for mesh_ in meshList:
+	for mesh_ in PLYmeshList:
+		print("Generating seg " + str(meshIndex + 1) + " out of " + str(len(PLYmeshList)))
 		segFile = rename(mesh_, segDir, "", ".nrrd")
 		segList.append(segFile)
 		mesh = Mesh(mesh_)
@@ -106,6 +107,7 @@ def generate_images(segs, outDir, blur_factor, foreground_mean, foreground_var, 
 	make_dir(imgDir)
 	index = 1
 	for seg in segs:
+		print("Generating image " + str(index) + " out of " + str(len(segs)))
 		name = seg.replace('segmentations/','images/').replace('_seg.nrrd', '_blur' + str(blur_factor) + '.nrrd')
 		itk_bin = itk.imread(seg, itk.F)
 		img_array = itk.array_from_image(itk_bin)
