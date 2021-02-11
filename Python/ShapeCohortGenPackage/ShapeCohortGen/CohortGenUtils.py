@@ -55,7 +55,6 @@ Generate segmentations form mesh liost
 '''
 def generate_segmentations(meshList, out_dir, randomize_size, spacing, allow_on_boundary):
 	segDir = out_dir + "segmentations/"
-	meshDir = out_dir + "meshes/"
 	make_dir(segDir)
 	PLYmeshList = get_file_with_ext(meshList,'ply')
 	# get dims tht fit all meshes
@@ -79,7 +78,7 @@ def generate_segmentations(meshList, out_dir, randomize_size, spacing, allow_on_
 		# If the meshIndex is in the randomly selected samples, get the origin and size 
 		# of that mesh so that the segmentation image touch the boundary
 		if allow_on_boundary and (meshIndex in randomBoundarySamples):
-			bb = MeshUtils.boundingBox([mesh_])
+			bb = mesh.boundingBox()
 			origin = [bb.min[0], bb.min[1], bb.min[2]]
 			dims = [bb.max[0]*2, bb.max[1]*2, bb.max[2]*2]
 			pad = np.zeros(3)
@@ -92,7 +91,7 @@ def generate_segmentations(meshList, out_dir, randomize_size, spacing, allow_on_
 			else:
 				pad = np.full(3, 5)
 		origin = list(np.array(origin) - pad)
-		dims = list(np.array(dims) + (2*pad))
+		dims = list((np.array(dims) + (2*pad)).astype(int))
 		image = mesh.toImage(spacing, dims, origin)
 		image.write(segFile, 0)
 		meshIndex += 1
