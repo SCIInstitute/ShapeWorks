@@ -99,7 +99,8 @@ VtkMeshWrapper::PointType VtkMeshWrapper::GeodesicWalk(VtkMeshWrapper::PointType
 
   Eigen::Vector3d snappedPoint = convert<PointType, Eigen::Vector3d>(snapped);
   int ending_face = -1;
-  Eigen::Vector3d newPoint = GeodesicWalkOnFace(snappedPoint, projectedVector, faceIndex, ending_face);
+  Eigen::Vector3d newPoint = GeodesicWalkOnFace(snappedPoint, projectedVector, faceIndex,
+                                                ending_face);
 
   PointType newPointpt;
   newPointpt[0] = newPoint[0];
@@ -115,7 +116,6 @@ VtkMeshWrapper::PointType VtkMeshWrapper::GeodesicWalk(VtkMeshWrapper::PointType
 
     particle2tri_[idx] = ending_face;
   }
-
 
   return newPointpt;
 
@@ -244,7 +244,7 @@ VtkMeshWrapper::SnapToMesh(VtkMeshWrapper::PointType pointa, int idx) const
   point[1] = pointa[1];
   point[2] = pointa[2];
   double closest_point[3];
-  this->GetTriangleForPoint(point,idx,closest_point);
+  this->GetTriangleForPoint(point, idx, closest_point);
 
   VtkMeshWrapper::PointType out;
   out[0] = closest_point[0];
@@ -336,7 +336,17 @@ Eigen::Vector3d
 VtkMeshWrapper::ProjectVectorToFace(const Eigen::Vector3d& normal,
                                     const Eigen::Vector3d& vector) const
 {
-  return vector - normal * normal.dot(vector);
+//  auto old_mag = vector.norm();
+
+  Eigen::Vector3d new_vector = vector - normal * normal.dot(vector);
+
+//  auto new_mag = new_vector.norm();
+
+//  double ratio = old_mag / new_mag;
+
+//  new_vector *= ratio;
+
+  return new_vector;
 }
 
 //---------------------------------------------------------------------------
@@ -434,9 +444,9 @@ bool VtkMeshWrapper::IsInTriangle(const double* pt, int face_index) const
   auto cell = this->poly_data_->GetCell(face_index);
   int ret = cell->EvaluatePosition(pt, closest, sub_id, pcoords, dist2, bary);
   if (ret && dist2 < epsilon) {
-    bool bary_check =((bary[0] >= -epsilon) && (bary[0] <= 1 + epsilon)) &&
-           ((bary[1] >= -epsilon) && (bary[1] <= 1 + epsilon)) &&
-           ((bary[2] >= -epsilon) && (bary[2] <= 1 + epsilon));
+    bool bary_check = ((bary[0] >= -epsilon) && (bary[0] <= 1 + epsilon)) &&
+                      ((bary[1] >= -epsilon) && (bary[1] <= 1 + epsilon)) &&
+                      ((bary[2] >= -epsilon) && (bary[2] <= 1 + epsilon));
     return bary_check;
 
   }
@@ -476,7 +486,7 @@ const Eigen::Vector3d VtkMeshWrapper::GetFaceNormal(int face_index) const
 //---------------------------------------------------------------------------
 Eigen::Vector3d
 VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d projected_vector,
-                                   int face_index, int &ending_face) const
+                                   int face_index, int& ending_face) const
 {
   int currentFace = face_index;
   Eigen::Vector3d currentPoint = point_a;
