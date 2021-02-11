@@ -1,10 +1,10 @@
 import os
 import sys
-import shapeworks as sw
+from shapeworks import *
 
 def vectorTest():
-  v1 = sw.Vector(1, 1, 1)
-  v2 = sw.Vector(2, 2, 1)
+  v1 = Vector(1, 1, 1)
+  v2 = Vector(2, 2, 1)
   
   v2[2] = 2
 

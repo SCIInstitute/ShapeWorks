@@ -1,13 +1,13 @@
 import os
 import sys
-import shapeworks as sw
+from shapeworks import *
 
 def probeVolumeTest():
-  mesh = sw.Mesh(os.environ["DATA"] + "/femur.vtk")
-  img = sw.Image(os.environ["DATA"] + "/femurVtkDT.nrrd")
+  mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
+  img = Image(os.environ["DATA"] + "/femurVtkDT.nrrd")
   mesh.probeVolume(img)
 
-  compareMesh = sw.Mesh(os.environ["DATA"] + "/probe.vtk")
+  compareMesh = Mesh(os.environ["DATA"] + "/probe.vtk")
 
   return mesh == compareMesh
 

@@ -1,10 +1,10 @@
 import os
 import sys
-import shapeworks as sw
+from shapeworks import *
 
 def fpoint3Test():
-  p1 = sw.FPoint3(1, 1, 1)
-  p2 = sw.FPoint3(2, 2, 1)
+  p1 = FPoint3(1, 1, 1)
+  p2 = FPoint3(2, 2, 1)
   
   p2[2] = 2
 

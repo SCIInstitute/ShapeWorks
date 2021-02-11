@@ -1,12 +1,12 @@
 import os
 import sys
-import shapeworks as sw
+from shapeworks import *
 
 def tplevelsetfailTest():
-  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.applyTPLevelSetFilter()
 
-  compareImg = sw.Image(os.environ["DATA"] + "/tplevelsetfail.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/tplevelsetfail.nrrd")
 
   return img.compare(compareImg)
 

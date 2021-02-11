@@ -1,12 +1,12 @@
 import os
 import sys
-import shapeworks as sw
+from shapeworks import *
 
 def curvaturefailTest():
-  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.applyCurvatureFilter(-5)
 
-  compareImg = sw.Image(os.environ["DATA"] + "/curvaturefail.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/curvaturefail.nrrd")
 
   return img.compare(compareImg)
 
