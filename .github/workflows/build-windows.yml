@@ -45,6 +45,7 @@ jobs:
       uses: jurplel/install-qt-action@v2.11.1
       with:
         version: "5.9.9"
+        setup-python: 'false'
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
     - name: Setup Conda
