@@ -4,7 +4,6 @@ from shapeworks import *
 
 def tplevelsetfailTest():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
-
   img.applyTPLevelSetFilter()
 
   compareImg = Image(os.environ["DATA"] + "/tplevelsetfail.nrrd")

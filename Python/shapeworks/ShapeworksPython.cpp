@@ -154,13 +154,13 @@ PYBIND11_MODULE(shapeworks, m)
   // Shapeworks Globals
   py::class_<Matrix>(m, "Matrix")
   .def(py::init([] {
-    Matrix m;
-    m.SetIdentity();
-    return m; 
+    Matrix mat;
+    mat.SetIdentity();
+    return mat; 
   }))
-  .def("__repr__", [](const Matrix& m) {
+  .def("__repr__", [](const Matrix& mat) {
     std::ostringstream ss;
-    ss << m;
+    ss << mat;
     return ss.str();
   })
   .def("__getitem__", [](const Matrix& m, size_t r, size_t c) { return m[r][c]; })
@@ -179,13 +179,13 @@ PYBIND11_MODULE(shapeworks, m)
   // Shapeworks Globals
   py::class_<Matrix44>(m, "Matrix44")
   .def(py::init([] {
-    Matrix44 m;
-    m.SetIdentity();
-    return m; 
+    Matrix44 mat;
+    mat.SetIdentity();
+    return mat; 
   }))
-  .def("__repr__", [](const Matrix44& m) {
+  .def("__repr__", [](const Matrix44& mat) {
     std::ostringstream ss;
-    ss << m;
+    ss << mat;
     return ss.str();
   })
   .def("__getitem__", [](const Matrix44& m, size_t r, size_t c) { return m[r][c]; })
@@ -264,6 +264,12 @@ PYBIND11_MODULE(shapeworks, m)
   })
   ;
 
+  py::class_<Plane>(m, "Plane")
+  .def(py::init([](std::vector<double>& n, std::vector<double>& o) {
+    return makePlane(makeVector({n[0], n[1], n[2]}), Point({o[0], o[1], o[2]}));
+  }))
+  ;
+
   // Shapeworks Globals
   m.def("createTransform", createTransform, "creates transform from matrix", "mat"_a, "translate"_a=makeVector({0,0,0}));
   m.def("toPoint", py::overload_cast<const Dims &>(toPoint), "converts Dims to Point", "d"_a);
@@ -302,13 +308,6 @@ PYBIND11_MODULE(shapeworks, m)
   .def_static("getOffset",      &ShapeworksUtils::getOffset, "converts a vtkMatrix4x4 to a corresponding translationVector", "mat"_a)
   ;
 
-  // Image::InterpolationType
-  py::enum_<Image::InterpolationType>(m, "InterpolationType")
-  .value("Linear", Image::InterpolationType::Linear)
-  .value("NearestNeighbor", Image::InterpolationType::NearestNeighbor)
-  .export_values();
-  ;
-
   // TransformType
   py::enum_<XFormType>(m, "TransformType")
   .value("CenterOfMass", XFormType::CenterOfMass)
@@ -317,8 +316,17 @@ PYBIND11_MODULE(shapeworks, m)
   ;
 
   // Image
-  py::class_<Image>(m, "Image")
-  .def(py::init<const std::string &>()) // can the argument for init be named (it's filename in this case)
+  py::class_<Image> image(m, "Image");
+
+  // Image::InterpolationType (even though this is part of Image, it feels cleaner to keep it global in the module)
+  py::enum_<Image::InterpolationType>(m, "InterpolationType")
+  .value("Linear", Image::InterpolationType::Linear)
+  .value("NearestNeighbor", Image::InterpolationType::NearestNeighbor)
+  .export_values();
+  ;
+
+  // Image bindings
+  image.def(py::init<const std::string &>()) // can the argument for init be named (it's filename in this case)
   .def(py::init<Image::ImageType::Pointer>())
   .def(py::init([](py::array_t<long> np_array) {  // FIXME: this is broken (or not even called)
     using ImportType = itk::ImportImageFilter<Image::PixelType, 3>;
@@ -414,14 +422,20 @@ PYBIND11_MODULE(shapeworks, m)
   .def("clip", [](Image& image, const std::vector<double>& n, std::vector<double>& q, const Image::PixelType val) {
     return image.clip(makeVector({n[0], n[1], n[2]}), Point({q[0], q[1], q[2]}), val);
   }, "sets values on the back side of cutting plane (normal n containing point p) to val (default 0.0)", "n"_a, "q"_a, "val"_a=0.0)
-  .def("setOrigin",             &Image::setOrigin, "sets the image origin in physical space to the given value", "origin"_a=Point3({0,0,0}))
-  .def("setOrigin", [](Image& image, std::vector<double>& p) {
-    return image.setOrigin(Point({p[0], p[1], p[2]}));
-  }, "sets the image origin in physical space to the given value", "origin"_a=Point3({0,0,0}))
+  .def("setOrigin",             &Image::setOrigin, "sets the image origin in physical space to the given value", "origin"_a=Point({0,0,0}))
+  .def("setOrigin", 
+       [](Image& image, std::vector<double>& p) {
+         return image.setOrigin(Point({p[0], p[1], p[2]}));
+       },
+       "sets the image origin in physical space to the given value",
+       "origin"_a=std::vector<double>({0,0,0}))
   .def("setSpacing",            &Image::setSpacing, "sets the image spacing to the given value", "spacing"_a=makeVector({1.0, 1.0, 1.0}))
-  .def("setSpacing", [](Image& image, std::vector<double>& v) {
-    return image.setSpacing(makeVector({v[0], v[1], v[2]}));
-  }, "sets the image spacing to the given value", "spacing"_a=makeVector({1.0, 1.0, 1.0}))
+  .def("setSpacing",
+       [](Image& image, std::vector<double>& v) {
+         return image.setSpacing(makeVector({v[0], v[1], v[2]}));
+       },
+       "sets the image spacing to the given value",
+       "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}))
   .def("reflect",               &Image::reflect, "reflect image with respect to logical image center and the specified axis", "axis"_a)
   .def("dims",                  &Image::dims, "logical dimensions of the image")
   .def("size",                  &Image::size, "physical dimensions of the image (dims * spacing)")
@@ -491,8 +505,11 @@ PYBIND11_MODULE(shapeworks, m)
   }, "computes a warp transform from the source to the target landmarks", "source_landmarks"_a, "target_landmarks"_a, "stride"_a=1)
   ;
 
+  // Mesh
+  py::class_<Mesh> mesh(m, "Mesh");
+
   // Mesh::AlignmentType
-  py::enum_<Mesh::AlignmentType>(m, "AlignmentType")
+  py::enum_<Mesh::AlignmentType>(mesh, "AlignmentType")
   .value("Rigid", Mesh::AlignmentType::Rigid)
   .value("Similarity", Mesh::AlignmentType::Similarity)
   .value("Affine", Mesh::AlignmentType::Affine)
@@ -500,15 +517,14 @@ PYBIND11_MODULE(shapeworks, m)
   ;
 
   // Mesh::DistanceMethod
-  py::enum_<Mesh::DistanceMethod>(m, "DistanceMethod")
+  py::enum_<Mesh::DistanceMethod>(mesh, "DistanceMethod")
   .value("POINT_TO_POINT", Mesh::DistanceMethod::POINT_TO_POINT)
   .value("POINT_TO_CELL", Mesh::DistanceMethod::POINT_TO_CELL)
   .export_values();
   ;
 
-  // Mesh
-  py::class_<Mesh>(m, "Mesh")
-  .def(py::init<const std::string &>())
+  // Mesh bindings
+  mesh.def(py::init<const std::string &>())
   .def(py::init<vtkSmartPointer<vtkPolyData>>())
   .def(py::self == py::self)
   .def("__repr__", [](const Mesh &mesh) {
@@ -522,32 +538,38 @@ PYBIND11_MODULE(shapeworks, m)
   .def("smooth",                &Mesh::smooth, "applies laplacian smoothing", "iterations"_a=0, "relaxation"_a=0.0)
   .def("decimate",              &Mesh::decimate, "applies filter to reduce number of triangles in mesh", "reduction"_a=0.0, "angle"_a=0.0, "preserveTopology"_a=true)
   .def("invertNormals",         &Mesh::invertNormals, "handle flipping normals")
-  .def("reflect",               &Mesh::reflect, "reflect meshes with respect to a specified center and specific axis", "axis"_a, "origin"_a=makeVector({0.0, 0.0, 0.0}))
-  .def("reflect", [](Mesh& self, const Axis &axis, std::vector<double>& v) -> decltype(auto) {
-    return self.reflect(axis, makeVector({v[0], v[1], v[2]}));
-  }, "reflect meshes with respect to a specified center and specific axis", "axis"_a, "origin"_a=makeVector({0.0, 0.0, 0.0}))
+  .def("reflect",
+       [](Mesh& mesh, const Axis &axis, std::vector<double>& v) -> decltype(auto) {
+         return mesh.reflect(axis, makeVector({v[0], v[1], v[2]}));
+       },
+       "reflect meshes with respect to a specified center and specific axis"
+       , "axis"_a, "origin"_a=std::vector<double>({0.0, 0.0, 0.0}))
   .def("createTransform",       &Mesh::createTransform, "creates a transform based on transform type", "target"_a, "type"_a=XFormType::IterativeClosestPoint, "align"_a=Mesh::AlignmentType::Similarity, "iterations"_a=10)
   .def("applyTransform",        &Mesh::applyTransform, "applies the given transformation to the mesh", "transform"_a)
   .def("fillHoles",             &Mesh::fillHoles, "finds holes in a mesh and closes them")
   .def("probeVolume",           &Mesh::probeVolume, "samples data values at specified point locations", "image"_a)
   .def("clip",                  &Mesh::clip, "clips a mesh using a cutting plane", "plane"_a)
-  .def("translate", [](Mesh& mesh, const std::vector<double>& v) {
+  .def("translate", [](Mesh& mesh, const std::vector<double>& v) -> decltype(auto) {
     return mesh.translate(makeVector({v[0], v[1], v[2]}));
   }, "translates mesh", "v"_a)
-  .def("scale", [](Mesh& mesh, const std::vector<double>& v) {
+  .def("scale", [](Mesh& mesh, const std::vector<double>& v) -> decltype(auto) {
     return mesh.scale(makeVector({v[0], v[1], v[2]}));
   }, "scale mesh", "v"_a)
   .def("boundingBox",           &Mesh::boundingBox, "computes bounding box of current mesh", "center"_a=false)
   .def("fix",                   &Mesh::fix, "quality control mesh", "smoothBefore"_a=true, "smoothAfter"_a=true, "lambda"_a=0.5, "iterations"_a=1, "decimate"_a=true, "percentage"_a=0.5)
+  .def("toImage",
+       [](Mesh& mesh, std::vector<double>& v, std::vector<unsigned>& d, std::vector<double>& p) -> decltype(auto) {
+         return mesh.toImage(makeVector({v[0], v[1], v[2]}), Dims({d[0], d[1], d[2]}), Point({p[0], p[1], p[2]}));
+       },
+       "rasterizes mesh to create binary images, automatically computing size and origin if necessary",
+       "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}), "size"_a=std::vector<unsigned>({0, 0, 0}), "origin"_a=std::vector<double>({-1.0, -1.0, -1.0}))  
   .def("distance",              &Mesh::distance, "computes surface to surface distance", "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
-  .def("toImage",               &Mesh::toImage, "rasterizes mesh to create binary images, automatically computing size and origin if necessary", "spacing"_a=makeVector({1.0, 1.0, 1.0}), "size"_a=Dims({0, 0, 0}), "origin"_a=Point3({-1.0, -1.0, -1.0}))
-  .def("toImage", [](Mesh& self, std::vector<double>& v, std::vector<unsigned>& d, std::vector<double>& p) {
-    self.toImage(makeVector({v[0], v[1], v[2]}), Dims({d[0], d[1], d[2]}), Point3({p[0], p[1], p[2]}));
-  }, "rasterizes mesh to create binary images, automatically computing size and origin if necessary", "spacing"_a=makeVector({1.0, 1.0, 1.0}), "size"_a=Dims({0, 0, 0}), "origin"_a=Point3({-1.0, -1.0, -1.0}))
-  .def("toDistanceTransform",   &Mesh::toDistanceTransform, "converts mesh to distance transform, automatically computing size and origin if necessary", "spacing"_a=makeVector({1.0, 1.0, 1.0}), "size"_a=Dims({0, 0, 0}), "origin"_a=Point3({-1.0, -1.0, -1.0}))
-  .def("toDistanceTransform", [](Mesh& self, std::vector<double>& v, std::vector<unsigned>& d, std::vector<double>& p) {
-    self.toDistanceTransform(makeVector({v[0], v[1], v[2]}), Dims({d[0], d[1], d[2]}), Point3({p[0], p[1], p[2]}));
-  }, "converts mesh to distance transform, automatically computing size and origin if necessary", "spacing"_a=makeVector({1.0, 1.0, 1.0}), "size"_a=Dims({0, 0, 0}), "origin"_a=Point3({-1.0, -1.0, -1.0}))
+  .def("toDistanceTransform",
+       [](Mesh& mesh, std::vector<double>& v, std::vector<unsigned>& d, std::vector<double>& p) -> decltype(auto) {
+         return mesh.toDistanceTransform(makeVector({v[0], v[1], v[2]}), Dims({d[0], d[1], d[2]}), Point({p[0], p[1], p[2]}));
+       },
+       "converts mesh to distance transform, automatically computing size and origin if necessary",
+       "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}), "size"_a=std::vector<unsigned>({0, 0, 0}), "origin"_a=std::vector<double>({-1.0, -1.0, -1.0}))
   .def("center",                &Mesh::center, "center of mesh")
   .def("centerOfMass",          &Mesh::centerOfMass, "center of mass of mesh")
   .def("numPoints",             &Mesh::numPoints, "number of points")
@@ -579,12 +601,20 @@ PYBIND11_MODULE(shapeworks, m)
 
   // MeshUtils
   py::class_<MeshUtils>(m, "MeshUtils")
-  .def_static("distilVertexInfo",
-                                &MeshUtils::distilVertexInfo, "distils vertex information from VTK poly data to Eigen matrices", "mesh"_a)
-  .def_static("distilFaceInfo", &MeshUtils::distilFaceInfo, "distils face information from VTK poly data to Eigen matrices", "mesh"_a)
-  // TODO: Bind later but is it required?
-  // .def_static("generateWarpMatrix",
-                                // &MeshUtils::generateWarpMatrix, "compute the warp matrix using the mesh and reference points", "TV"_a, "TF"_a, "Vref"_a)
+
+  // TODO: fails to compile on Windows due to missing Eigen symbols
+  // https://github.com/SCIInstitute/ShapeWorks/issues/954
+  // .def_static("distilVertexInfo",
+  //             &MeshUtils::distilVertexInfo,
+  //             "distils vertex information from VTK poly data to Eigen matrices",
+  //             "mesh"_a)
+  // .def_static("distilFaceInfo",
+  //             &MeshUtils::distilFaceInfo,
+  //             "distils face information from VTK poly data to Eigen matrices",
+  //             "mesh"_a)
+
+  // TODO: Bind generateWarpMatrix, warpMesh, warpMeshes later if required
+  // .def_static("generateWarpMatrix", &MeshUtils::generateWarpMatrix, "compute the warp matrix using the mesh and reference points", "TV"_a, "TF"_a, "Vref"_a)
   // .def_static("warpMesh",       &MeshUtils::warpMesh, "compute individual warp", "movPts"_a, "W"_a, "Fref"_a)
   // .def_static("warpMeshes",     &MeshUtils::warpMeshes, "compute transformation from set of points files using template mesh warp & face matrices", "movingPointPaths"_a, "outputMeshPaths"_a, "W"_a, "Fref"_a, "numP"_a)
   .def_static("boundingBox", [](std::vector<std::string> filenames, bool center) {

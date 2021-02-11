@@ -92,7 +92,7 @@ TEST(MeshTests, fillHolesTest)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, probeTest)
+TEST(MeshTests, probeVolumeTest)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   femur.probeVolume(std::string(TEST_DATA_DIR) + "/femurVtkDT.nrrd");
@@ -104,7 +104,7 @@ TEST(MeshTests, probeTest)
 TEST(MeshTests, clipTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.clip(makePlane(makeVector({0.0,0.0,1.0}),
+  femur.clip(makePlane(makeVector({0.0, 0.0, 1.0}),
                        Point3({-91.0, 0.0, 1230.0}))); // clip upper half of mesh from center
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/clip1.vtk");
 
@@ -114,7 +114,7 @@ TEST(MeshTests, clipTest1)
 TEST(MeshTests, clipTest2)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.clip(makePlane(makeVector({0.0,0.0,-1.0}),
+  femur.clip(makePlane(makeVector({0.0, 0.0, -1.0}),
                        Point3({-91.0, 0.0, 1230.0}))); // clip lower half of mesh from center
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/clip2.vtk");
 
@@ -124,7 +124,7 @@ TEST(MeshTests, clipTest2)
 TEST(MeshTests, clipTest3)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.clip(makePlane(makeVector({-5.0,3.14159,1.0}),
+  femur.clip(makePlane(makeVector({-5.0, 3.14159, 1.0}),
                        Point3({-60.0, 10.0, 1235.0}))); // clip arbitrary mesh from an edge
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/clip3.vtk");
 
@@ -257,8 +257,7 @@ TEST(MeshTests, centerofmassTest)
 TEST(MeshTests, toImageTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
-  Region region = femur.boundingBox();
-  Image image = femur.toImage(makeVector({1.0,1.0,1.0}), femur.rasterizationSize(region), femur.rasterizationOrigin(region));
+  Image image = femur.toImage(makeVector({1.0,1.0,1.0}));
   Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImage.nrrd");
 
   ASSERT_TRUE(image == ground_truth);

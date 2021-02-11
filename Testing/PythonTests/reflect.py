@@ -27,3 +27,29 @@ val = reflectTest2()
 
 if val is False:
   sys.exit(1)
+
+def reflectTest3():
+  mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
+  mesh.reflect(Axis.X)
+
+  compareMesh = Mesh(os.environ["DATA"] + "/reflect1.vtk")
+
+  return mesh == compareMesh
+
+val = reflectTest3()
+
+if val is False:
+  sys.exit(1)
+
+def reflectTest4():
+  mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
+  mesh.reflect(Axis.Y)
+
+  compareMesh = Mesh(os.environ["DATA"] + "/reflect2.vtk")
+
+  return mesh == compareMesh
+
+val = reflectTest4()
+
+if val is False:
+  sys.exit(1)
