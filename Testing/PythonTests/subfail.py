@@ -1,13 +1,13 @@
 import os
 import sys
-from shapeworks import *
+import shapeworks as sw
 
 def subfailTest():
-  img1 = Image(os.environ["DATA"] + "/la-bin.nrrd")
-  img2 = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img1 = sw.Image(os.environ["DATA"] + "/la-bin.nrrd")
+  img2 = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img = img1 - img2
 
-  compareImg = Image(os.environ["DATA"] + "/subfail.nrrd")
+  compareImg = sw.Image(os.environ["DATA"] + "/subfail.nrrd")
 
   return img.compare(compareImg)
 

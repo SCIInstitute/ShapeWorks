@@ -1,11 +1,11 @@
 import os
 import sys
 import glob
-from shapeworks import *
+import shapeworks as sw
 
 def boundingboxfailTest1():
   filenames = os.environ["DATA"] + "/empty/"
-  region = ImageUtils.boundingBox(glob.glob(filenames + "/*.nrrd"))
+  region = sw.ImageUtils.boundingBox(glob.glob(filenames + "/*.nrrd"))
 
   return region.valid()
 
@@ -16,7 +16,7 @@ if val is False:
 
 def boundingboxfailTest2():
   filenames = os.environ["DATA"] + "/single/"
-  region = ImageUtils.boundingBox(glob.glob(filenames + "/*.nrrd"))
+  region = sw.ImageUtils.boundingBox(glob.glob(filenames + "/*.nrrd"))
 
   return region.valid()
 

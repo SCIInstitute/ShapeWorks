@@ -1,12 +1,12 @@
 import os
 import sys
-from shapeworks import *
+import shapeworks as sw
 
 def setspacingTest1():
-  img = Image(os.environ["DATA"] + "/la1-small.nrrd")
+  img = sw.Image(os.environ["DATA"] + "/la1-small.nrrd")
   img.setSpacing([2,2,2])
 
-  compareImg = Image(os.environ["DATA"] + "/spacing2.nrrd")
+  compareImg = sw.Image(os.environ["DATA"] + "/spacing2.nrrd")
 
   return img.compare(compareImg)
 
@@ -16,10 +16,10 @@ if val is False:
   sys.exit(1)
 
 def setspacingTest2():
-  img = Image(os.environ["DATA"] + "/la1-small.nrrd")
+  img = sw.Image(os.environ["DATA"] + "/la1-small.nrrd")
   img.setSpacing()
 
-  compareImg = Image(os.environ["DATA"] + "/spacing1.nrrd")
+  compareImg = sw.Image(os.environ["DATA"] + "/spacing1.nrrd")
 
   return img.compare(compareImg)
 

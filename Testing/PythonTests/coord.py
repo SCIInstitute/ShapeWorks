@@ -1,10 +1,10 @@
 import os
 import sys
-from shapeworks import *
+import shapeworks as sw
 
 def coordTest():
-  c1 = Coord(1, 1, 1)
-  c2 = Coord(2, 2, 1)
+  c1 = sw.Coord(1, 1, 1)
+  c2 = sw.Coord(2, 2, 1)
   
   c2[2] = 2
 

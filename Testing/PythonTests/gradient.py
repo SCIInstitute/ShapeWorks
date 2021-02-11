@@ -1,12 +1,12 @@
 import os
 import sys
-from shapeworks import *
+import shapeworks as sw
 
 def gradientTest1():
-  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.applyGradientFilter()
 
-  compareImg = Image(os.environ["DATA"] + "/gradient.nrrd")
+  compareImg = sw.Image(os.environ["DATA"] + "/gradient.nrrd")
 
   return img.compare(compareImg)
 
