@@ -1,8 +1,8 @@
-
 #include "Testing.h"
 
 #include "Image.h"
 #include "ImageUtils.h"
+#include "Mesh.h"
 
 using namespace shapeworks;
 
@@ -14,7 +14,7 @@ TEST(ImageTests, dicomReadTest)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, readTestNoImage)
+TEST(ImageTests, readTest)
 {
   try {
     Image image(std::string(TEST_DATA_DIR) + "foo.nrrd");
@@ -61,9 +61,7 @@ TEST(ImageTests, antialiasTest)
 TEST(ImageTests, isoresampleBinaryIsotropicTest) 
 {
   Image image(std::string(TEST_DATA_DIR) + "/binary-isotropic-input.nrrd");
-  image.antialias();
-  ImageUtils::isoresample(image);
-  image.binarize().recenter();
+  image.antialias().resample().binarize().recenter();
   Image ground_truth(std::string(TEST_DATA_DIR) + "/binary-isotropic-isoresampled.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -72,9 +70,7 @@ TEST(ImageTests, isoresampleBinaryIsotropicTest)
 TEST(ImageTests, isoresampleBinaryAnisotropicTest) 
 {
   Image image(std::string(TEST_DATA_DIR) + "/binary-anisotropic-input.nrrd");
-  image.antialias();
-  ImageUtils::isoresample(image);
-  image.binarize().recenter();
+  image.antialias().resample().binarize().recenter();
   Image ground_truth(std::string(TEST_DATA_DIR) + "/binary-anisotropic-isoresampled.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -83,8 +79,7 @@ TEST(ImageTests, isoresampleBinaryAnisotropicTest)
 TEST(ImageTests, isoresampleSmoothIsotropicTest) 
 {
   Image image(std::string(TEST_DATA_DIR) + "/smooth-isotropic-input.nrrd");
-  ImageUtils::isoresample(image);
-  image.recenter();
+  image.resample().recenter();
   Image ground_truth(std::string(TEST_DATA_DIR) + "/smooth-isotropic-isoresampled.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -93,8 +88,7 @@ TEST(ImageTests, isoresampleSmoothIsotropicTest)
 TEST(ImageTests, isoresampleSmoothAnisotropicTest) 
 {
   Image image(std::string(TEST_DATA_DIR) + "/smooth-anisotropic-input.nrrd");
-  ImageUtils::isoresample(image);
-  image.recenter();
+  image.resample().recenter();
   Image ground_truth(std::string(TEST_DATA_DIR) + "/smooth-anisotropic-isoresampled.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -103,8 +97,7 @@ TEST(ImageTests, isoresampleSmoothAnisotropicTest)
 TEST(ImageTests, isoresampleImageAnisotropicTest) 
 {
   Image image(std::string(TEST_DATA_DIR) + "/image-anisotropic-input.nrrd");
-  ImageUtils::isoresample(image, 10.0);
-  image.recenter();
+  image.resample(10.0).recenter();
   Image ground_truth(std::string(TEST_DATA_DIR) + "/image-anisotropic-isoresampled.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -176,7 +169,7 @@ TEST(ImageTests, translateTest3)
 TEST(ImageTests, comTest1)
 {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
-  TransformPtr xform = ImageUtils::createCenterOfMassTransform(image);
+  TransformPtr xform = image.createTransform(Image::CenterOfMass);
   image.applyTransform(xform);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/centerofmass1.nrrd");
 
@@ -195,7 +188,7 @@ TEST(ImageTests, comTest2)
 TEST(ImageTests, comTest3)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
-  TransformPtr xform = ImageUtils::createCenterOfMassTransform(image);
+  TransformPtr xform = image.createTransform(Image::CenterOfMass);
   image.applyTransform(xform, Image::NearestNeighbor);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/centerofmass3.nrrd");
 
@@ -352,6 +345,15 @@ TEST(ImageTests, sigmoidTest)
   ASSERT_TRUE(image == ground_truth);
 }
 
+TEST(ImageTests, intensityTest)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/nonBinary.nrrd");
+  image.applyIntensityFilter(0, 100);
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/intensity.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
 TEST(ImageTests, setlevelTest)
 {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
@@ -364,7 +366,7 @@ TEST(ImageTests, setlevelTest)
 TEST(ImageTests, topopreservingsmoothTest)
 {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
-  ImageUtils::topologyPreservingSmooth(image, 10, 10.5, 10);
+  image.topologyPreservingSmooth(10, 10.5, 10);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/topo-preserving-smooth_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -379,7 +381,7 @@ TEST(ImageTests, blurTest)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, cropTest)
+TEST(ImageTests, cropTest1)
 {
   std::string images_location = std::string(TEST_DATA_DIR) + std::string("/images/");
   std::vector<std::string> images = {
@@ -395,7 +397,30 @@ TEST(ImageTests, cropTest)
   };
 
   Image image(std::string(TEST_DATA_DIR) + "/seg.ellipsoid_1.nrrd");
-  Image::Region region;
+  Region region;
+  region = ImageUtils::boundingBox(images);
+  image.crop(region);
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/crop_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, cropTest2)
+{
+  std::string images_location = std::string(TEST_DATA_DIR) + std::string("/images/");
+  std::vector<Image> images;
+  Image img1(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_1.nrrd")); images.push_back(img1);
+  Image img2(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_2.nrrd")); images.push_back(img2);
+  Image img3(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_3.nrrd")); images.push_back(img3);
+  Image img4(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_4.nrrd")); images.push_back(img4);
+  Image img5(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_5.nrrd")); images.push_back(img5);
+  Image img6(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_6.nrrd")); images.push_back(img6);
+  Image img7(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_7.nrrd")); images.push_back(img7);
+  Image img8(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_8.nrrd")); images.push_back(img8);
+  Image img9(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_9.nrrd")); images.push_back(img9);
+
+  Image image(std::string(TEST_DATA_DIR) + "/seg.ellipsoid_1.nrrd");
+  Region region;
   region = ImageUtils::boundingBox(images);
   image.crop(region);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/crop_baseline.nrrd");
@@ -408,7 +433,7 @@ TEST(ImageTests, icpTest)
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
   Image target(std::string(TEST_DATA_DIR) + "/target.nrrd");
   Image source(std::string(TEST_DATA_DIR) + "/source.nrrd");
-  TransformPtr transform(ImageUtils::createRigidRegistrationTransform(target, source));
+  TransformPtr transform(target.createTransform(source));
   image.applyTransform(transform, target.origin(), target.dims(), target.spacing(), target.coordsys());
   Image ground_truth(std::string(TEST_DATA_DIR) + "/icp_baseline.nrrd");
 
@@ -901,7 +926,7 @@ TEST(ImageTests, divideTest2)
   ASSERT_TRUE(image == baseline);
 }
 
-TEST(ImageTests, resample1)
+TEST(ImageTests, resampleTest1)
 {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
   image.resample(makeVector({1, 1, 1}));
@@ -910,7 +935,7 @@ TEST(ImageTests, resample1)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, resample2)
+TEST(ImageTests, resampleTest2)
 {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
   image.resample(makeVector({1.5, 1.5, 1.5}));
@@ -919,7 +944,7 @@ TEST(ImageTests, resample2)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, resample3)
+TEST(ImageTests, resampleTest3)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
   image.resample(makeVector({0.98, 1.02, 3.14159}), Image::NearestNeighbor);
@@ -928,7 +953,7 @@ TEST(ImageTests, resample3)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, resample4)
+TEST(ImageTests, resampleTest4)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
 
@@ -943,7 +968,7 @@ TEST(ImageTests, resample4)
 }
 
 /* fails to compile on linux due to weird template conflicts with itkeigen
-TEST(ImageTests, resample5)
+TEST(ImageTests, resampleTest5)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
 
@@ -959,7 +984,7 @@ TEST(ImageTests, resample5)
 }
 */
 
-TEST(ImageTests, resample6)
+TEST(ImageTests, resampleTest6)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
 
@@ -973,7 +998,7 @@ TEST(ImageTests, resample6)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, resize1)
+TEST(ImageTests, resizeTest1)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
   image.resize(Dims({2, 0, 0}));
@@ -982,7 +1007,7 @@ TEST(ImageTests, resize1)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, resize2)
+TEST(ImageTests, resizeTest2)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
   image.resize(Dims({96, 96, 12}));
@@ -991,11 +1016,56 @@ TEST(ImageTests, resize2)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, resize3)
+TEST(ImageTests, resizeTest3)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
   image.resize(Dims({12, 14, 80}), Image::NearestNeighbor);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/resize5.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, setSpacingTest1)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
+  image.setSpacing(makeVector({2.0,2.0,2.0}));
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/spacing2.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, setSpacingTest2)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
+  image.setSpacing();
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/spacing1.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, toMeshTest1)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
+  Mesh mesh = image.toMesh(1.0);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/mesh1.vtk");
+
+  ASSERT_TRUE(mesh == ground_truth);
+}
+
+TEST(ImageTests, getItk)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
+  auto itkImage(image.getITKImage());
+  Image image2(itkImage);
+
+  ASSERT_TRUE(image == image2);
+}
+
+TEST(ImageTests, getVtk)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/la-bin.nrrd");
+  auto vtkImage(image.getVTKImage());
+  Image image2(vtkImage);
+
+  ASSERT_TRUE(image == image2);
 }

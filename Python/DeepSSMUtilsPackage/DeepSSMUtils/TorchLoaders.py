@@ -219,7 +219,7 @@ def downSample(image_path):
 	temp_path = path + "/temp.nrrd"
 	cmd = ["shapeworks",
 		   "read-image", "--name", image_path,
-		   "info", "--size", str(True)]
+		   "image-info", "--size", str(True)]
 	output = subprocess.run(cmd, capture_output=True, text=True).stdout.splitlines()
 	size = makeVector(output[0].split(":")[1])
 	sizex = int(3*size[0]/4)

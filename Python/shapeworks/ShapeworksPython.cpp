@@ -15,12 +15,12 @@ Eigen::MatrixXd optimize_get_particle_system(shapeworks::Optimize *opt)
 #include <pybind11/eigen.h>
 #include <pybind11/functional.h>
 
-
 namespace py = pybind11;
 using namespace pybind11::literals;
 
 #include <sstream>
 #include <itkImportImageFilter.h>
+#include <vtkDoubleArray.h>
 
 #include "Shapeworks.h"
 #include "ShapeworksUtils.h"
@@ -309,11 +309,18 @@ PYBIND11_MODULE(shapeworks, m)
   .export_values();
   ;
 
+  // Image::TransformType
+  py::enum_<Image::TransformType>(m, "TransformType")
+  .value("CenterOfMass", Image::TransformType::CenterOfMass)
+  .value("IterativeClosestPoint", Image::TransformType::IterativeClosestPoint)
+  .export_values();
+  ;
+
   // Image
   py::class_<Image>(m, "Image")
   .def(py::init<const std::string &>()) // can the argument for init be named (it's filename in this case)
   .def(py::init<Image::ImageType::Pointer>())
-  .def(py::init([](py::array_t<long> np_array) {
+  .def(py::init([](py::array_t<long> np_array) {  // FIXME: this is broken (or not even called)
     using ImportType = itk::ImportImageFilter<Image::PixelType, 3>;
     auto importer = ImportType::New();
     auto info = np_array.request();
@@ -359,7 +366,7 @@ PYBIND11_MODULE(shapeworks, m)
     return stream.str();
   })
   .def("write",                 &Image::write, "writes the current image (determines type by its extension)", "filename"_a, "compressed"_a=true)
-  .def("antialias",             &Image::antialias, "antialiases binary volumes", "iterations"_a=50, "maxRMSErr"_a=0.01f, "layers"_a=0)
+  .def("antialias",             &Image::antialias, "antialiases binary volumes (layers is set to 3 when not specified)", "iterations"_a=50, "maxRMSErr"_a=0.01f, "layers"_a=3)
   .def("resample",              py::overload_cast<TransformPtr, Point3, Dims, Vector3, Image::ImageType::DirectionType, Image::InterpolationType>(&Image::resample), "resamples by applying transform then sampling from given origin along direction axes at spacing physical units per pixel for dims pixels using specified interpolator", "transform"_a, "origin"_a, "dims"_a, "spacing"_a, "direction"_a, "interp"_a=Image::InterpolationType::NearestNeighbor)
   .def("resample",              py::overload_cast<const Vector&, Image::InterpolationType>(&Image::resample), "resamples image using new physical spacing, updating logical dims to keep all image data for this spacing", "physicalSpacing"_a, "interp"_a=Image::InterpolationType::Linear)
   .def("resample", [](Image& image, const TransformPtr transform, const std::vector<double>& p, const std::vector<unsigned>& d, const std::vector<double>& v, const Image::ImageType::DirectionType direction, Image::InterpolationType interp) {
@@ -368,10 +375,11 @@ PYBIND11_MODULE(shapeworks, m)
   .def("resample", [](Image& image, const std::vector<double>& v, Image::InterpolationType interp) {
     return image.resample(makeVector({v[0], v[1], v[2]}), interp);
   }, "resamples image using new physical spacing, updating logical dims to keep all image data for this spacing", "physicalSpacing"_a, "interp"_a=Image::InterpolationType::Linear)
-  .def("resize",                &Image::resize, "resizes an image (computes new physical spacing)", "logicalDims"_a, "interp"_a=Image::InterpolationType::Linear)
+  .def("resample",              py::overload_cast<double, Image::InterpolationType>(&Image::resample), "isotropically resamples image using giving isospacing", "isoSpacing"_a=1.0, "interp"_a=Image::InterpolationType::Linear)
+  .def("resize",                &Image::resize, "change logical dims (computes new physical spacing)", "logicalDims"_a, "interp"_a=Image::InterpolationType::Linear)
   .def("resize", [](Image& image, std::vector<unsigned>& d, Image::InterpolationType interp) {
     return image.resize(Dims({d[0], d[1], d[2]}), interp);
-  }, "resizes an image (computes new physical spacing)", "logicalDims"_a, "interp"_a=Image::InterpolationType::Linear)
+  }, "change logical dims (computes new physical spacing)", "logicalDims"_a, "interp"_a=Image::InterpolationType::Linear)
   .def("recenter",              &Image::recenter, "recenters an image by changing its origin in the image header to the physical coordinates of the center of the image")
   .def("pad",                   py::overload_cast<int, Image::PixelType>(&Image::pad), "pads an image in all directions with constant value", "pad"_a, "value"_a=0.0)
   .def("pad",                   py::overload_cast<int, int, int, Image::PixelType>(&Image::pad), "pads an image by desired number of voxels in each direction with constant value", "padx"_a, "pady"_a, "padz"_a, "value"_a=0.0)
@@ -400,6 +408,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("applyGradientFilter",   &Image::applyGradientFilter, "computes gradient magnitude of an image region at each pixel using gradient magnitude filter")
   .def("applySigmoidFilter",    &Image::applySigmoidFilter, "computes sigmoid function pixel-wise using sigmoid image filter", "alpha"_a=10.0, "beta"_a=10.0)
   .def("applyTPLevelSetFilter", &Image::applyTPLevelSetFilter, "segments structures in image using topology preserving geodesic active contour level set filter", "featureImage"_a, "scaling"_a=20.0)
+  .def("applyIntensityFilter",  &Image::applyIntensityFilter, "applies intensity windowing image filter", "min"_a=0.0, "max"_a=0.0)
   .def("gaussianBlur",          &Image::gaussianBlur, "applies gaussian blur", "sigma"_a=0.0)
   .def("crop",                  &Image::crop, "crop image down to the current region (e.g., from bounding-box), or the specified min/max in each direction", "region"_a)
   .def("clip", [](Image& image, const std::vector<double>& o, std::vector<double>& p1, std::vector<double>& p2, const Image::PixelType val) {
@@ -431,9 +440,16 @@ PYBIND11_MODULE(shapeworks, m)
   .def("physicalToLogical", [](Image& image, std::vector<double>& p) {
     return image.physicalToLogical(Point({p[0], p[1], p[2]}));
   }, "converts from a physical coordinate to a logical coordinate", "p"_a)
+  .def("createTransform",       py::overload_cast<Image::TransformType>(&Image::createTransform), "creates a transform based on transform type", "type"_a=Image::TransformType::CenterOfMass)
+  .def("createTransform",       py::overload_cast<const Image&, Image::TransformType, float, unsigned>(&Image::createTransform), "creates a transform based on transform type", "target"_a, "type"_a=Image::TransformType::IterativeClosestPoint, "isoValue"_a=0.0, "iterations"_a=20)
+  .def("topologyPreservingSmooth",
+       &Image::topologyPreservingSmooth,
+       "creates a feature image (by applying gradient then sigmoid filters), then passes it to the TPLevelSet filter [curvature flow filter is often applied to the image before this filter]",
+       "scaling"_a=20.0, "sigmoidAlpha"_a=10.5, "sigmoidBeta"_a=10.0)
   .def("compare",               &Image::compare, "compares two images", "other"_a, "verifyall"_a=true, "tolerance"_a=0.0, "precision"_a=1e-12)
-  .def_static("getPolyData",    &Image::getPolyData, "creates a vtkPolyData for the given image", "image"_a, "isoValue"_a=0.0)
-  .def("toMesh",                &Image::toMesh, "converts to Mesh", "isovalue"_a=1.0)
+  .def("toMesh", [](Image &image, Image::PixelType isovalue) {
+    return image.toMesh(isovalue);
+  }, "converts image to mesh", "isovalue"_a)
   .def("toArray", [](const Image &image) {
     Image::ImageType::Pointer img = image.getITKImage();
     const auto size = img->GetLargestPossibleRegion().GetSize();
@@ -442,27 +458,26 @@ PYBIND11_MODULE(shapeworks, m)
   })
   ;
 
-  // Image::Region
-  py::class_<Image::Region>(m, "Region")
+  // Region
+  py::class_<Region>(m, "Region")
   .def(py::init<Dims>())
   .def(py::init<Coord, Coord>())
   .def(py::init<>())
   .def(py::self == py::self)
-  .def("__repr__", [](const Image::Region &region) {
+  .def("__repr__", [](const Region &region) {
     std::stringstream stream;
     stream << region;
     return stream.str();
   })
-  .def_readwrite("min",         &Image::Region::min)
-  .def_readwrite("max",         &Image::Region::max)
-  .def("valid",                 &Image::Region::valid, "ensure if region is valid")
-  .def("origin",                &Image::Region::origin, "return origin of region")
-  .def("size",                  &Image::Region::size, "return size of region")
-  .def("clip",                  &Image::Region::clip, "clip region to fit inside image", "image"_a)
-  .def("pad",                   &Image::Region::pad, "grows or shrinks the region by the specified amount", "padding"_a)
-  .def("shrink",                &Image::Region::shrink, "shrink this region down to the smallest portions of both", "other"_a)
-  .def("grow",                  &Image::Region::grow, "grow this region up to the largest portions of both", "other"_a)
-  .def("expand",                &Image::Region::expand, "expand this region to include this point", "other"_a)
+  .def_readwrite("min",         &Region::min)
+  .def_readwrite("max",         &Region::max)
+  .def("valid",                 &Region::valid, "ensure if region is valid")
+  .def("origin",                &Region::origin, "return origin of region")
+  .def("size",                  &Region::size, "return size of region")
+  .def("pad",                   &Region::pad, "grows or shrinks the region by the specified amount", "padding"_a)
+  .def("shrink",                &Region::shrink, "shrink this region down to the smallest portions of both", "other"_a)
+  .def("grow",                  &Region::grow, "grow this region up to the largest portions of both", "other"_a)
+  .def("expand",                &Region::expand, "expand this region to include this point", "other"_a)
   ;
 
   // ImageUtils
@@ -473,28 +488,17 @@ PYBIND11_MODULE(shapeworks, m)
   .def_static("boundingBox", [](std::vector<Image> images, Image::PixelType val) {
     return shapeworks::ImageUtils::boundingBox(images, val);
   }, "compute largest bounding box surrounding the specified isovalue of the specified set of images", "images"_a, "isoValue"_a=1.0)
-  .def_static("createCenterOfMassTransform", [](const Image& img) {
-    auto xform_ptr = shapeworks::ImageUtils::createCenterOfMassTransform(img);
-    return xform_ptr;
-  }, "generates the Transform necessary to move the contents of this binary image to the center", "image"_a)
-  .def_static("createRigidRegistrationTransform", [](const Image& source_dt, const Image& target_dt, float isoValue, unsigned iterations) {
-    auto xform_ptr = shapeworks::ImageUtils::createRigidRegistrationTransform(source_dt, target_dt, isoValue, iterations);
-    return xform_ptr;
-  }, "creates transform from source distance map to target using ICP registration (isovalue is used to create meshes from dts passed to ICP)", "source_dt"_a, "target_dt"_a, "isoValue"_a=0.0, "iterations"_a=20)
   .def_static("createWarpTransform", [](const std::string &source_landmarks, const std::string &target_landmarks, const int stride) {
     auto xform_ptr = shapeworks::ImageUtils::createWarpTransform(source_landmarks, target_landmarks, stride);
     return xform_ptr;
   }, "computes a warp transform from the source to the target landmarks", "source_landmarks"_a, "target_landmarks"_a, "stride"_a=1)
-  .def_static("topologyPreservingSmooth", 
-                                &ImageUtils::topologyPreservingSmooth, "creates a feature image (by applying gradient then sigmoid filters), then passes it to the TPLevelSet filter [curvature flow filter is often applied to the image before this filter]",
-                                "image"_a, "scaling"_a=20.0, "sigmoidAlpha"_a=10.5, "sigmoidBeta"_a=10.0)
-  .def_static("isoresample",    &ImageUtils::isoresample, "create an isotropic resampling of the given image volume", "image"_a, "isoSpacing"_a=1.0, "interp"_a=Image::InterpolationType::Linear)
   ;
 
   // Mesh
   py::class_<Mesh>(m, "Mesh")
   .def(py::init<const std::string &>())
   .def(py::init<vtkSmartPointer<vtkPolyData>>())
+  .def(py::self == py::self)
   .def("__repr__", [](const Mesh &mesh) {
     std::stringstream stream;
     stream << mesh;
@@ -502,17 +506,37 @@ PYBIND11_MODULE(shapeworks, m)
   })
   .def("write",                 &Mesh::write, "pathname"_a)
   .def("coverage",              &Mesh::coverage, "other_mesh"_a, "ignore_back_intersections"_a, "angle_threshold"_a, "back_search_radius"_a)
-  .def("numVertices",           &Mesh::numVertices)
+  .def("numPoints",             &Mesh::numPoints)
   .def("numFaces",              &Mesh::numFaces)
-  .def("bounds",                &Mesh::bounds)
-  .def("compare_points_equal",  &Mesh::compare_points_equal, "other_mesh"_a)
-  .def("compare_scalars_equal", &Mesh::compare_scalars_equal, "other_mesh"_a)
+  .def("compareAllPoints",      &Mesh::compareAllPoints, "other_mesh"_a)
+  .def("compareAllFields",      &Mesh::compareAllFields, "other_mesh"_a)
+  .def("getFieldNames",         &Mesh::getFieldNames)
+  .def("setField", [](Mesh &mesh, std::vector<double>& v, std::string name) {
+    vtkSmartPointer<vtkDoubleArray> arr = vtkSmartPointer<vtkDoubleArray>::New();
+    arr->SetNumberOfValues(v.size());
+    for (int i=0; i<v.size(); i++) {
+      arr->SetTuple1(i, v[i]);
+    }
+    return mesh.setField(name, arr);
+  })
+  .def("getField", [](const Mesh &mesh, std::string name) {
+    auto array = mesh.getField<vtkDataArray>(name);
+    const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()), static_cast<unsigned long>(array->GetNumberOfComponents()), 1};
+    auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
+    vtkarr->SetNumberOfValues(array->GetNumberOfValues());
+    // LOTS of copying going on here, see github #903
+    array->GetData(0, array->GetNumberOfTuples()-1, 0, array->GetNumberOfComponents()-1, vtkarr); // copy1
+    return py::array(py::dtype::of<double>(), shape, vtkarr->GetVoidPointer(0)); // copy2 (not positive if py::array ctor copies or references)
+  })
+  .def("setFieldValue",         &Mesh::setFieldValue, "idx"_a, "value"_a, "name"_a="")
+  .def("getFieldValue",         &Mesh::getFieldValue, "idx"_a, "name"_a)
+  .def("getFieldRange",         &Mesh::getFieldRange, "name"_a)
+  .def("getFieldMean",          &Mesh::getFieldMean, "name"_a)
+  .def("getFieldStd",           &Mesh::getFieldStd, "name"_a)
   ;
 
   // MeshUtils
   py::class_<MeshUtils>(m, "MeshUtils")
-  .def_static("createIcpTransform",  
-                                &MeshUtils::createIcpTransform, "source"_a, "target"_a, "iterations"_a=20)
   ;
 
   // ParticleSystem

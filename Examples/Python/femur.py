@@ -235,7 +235,7 @@ def Run_Pipeline(args):
                     if answer2 == 'y':
                         done = True
 
-            fileList_seg = MeshesToVolumes(groomDir + "volumes", reflectedFiles_mesh, spacing)
+            fileList_seg = MeshesToVolumes(groomDir + "volumes", groomDir + "reflected/segmentations/*", reflectedFiles_mesh, spacing)
 
             """
             Apply isotropic resampling
@@ -247,7 +247,7 @@ def Run_Pipeline(args):
             Apply padding
             Both the segmentation and raw images are padded in case the seg lies on the image boundary.
             """
-            paddedFiles_segmentations = applyPadding(groomDir + "padded/segementations", resampledFiles_segmentations, 10)
+            paddedFiles_segmentations = applyPadding(groomDir + "padded/segmentations", resampledFiles_segmentations, 10)
 
             """
             Apply center of mass alignment
