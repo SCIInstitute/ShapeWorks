@@ -1060,4 +1060,20 @@ void AnalysisTool::reconstruction_method_changed()
   }
 }
 
+//---------------------------------------------------------------------------
+void AnalysisTool::set_active(bool active)
+{
+  if (!active) {
+    this->ui_->pcaAnimateCheckBox->setChecked(false);
+    this->pca_animate_timer_.stop();
+  }
+  this->active_ = active;
+}
+
+//---------------------------------------------------------------------------
+bool AnalysisTool::get_active()
+{
+  return this->active_;
+}
+
 }
