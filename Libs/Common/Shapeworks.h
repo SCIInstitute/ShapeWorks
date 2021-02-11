@@ -34,6 +34,9 @@ using Array         = vtkSmartPointer<vtkDataArray>;
 /// Enables `makeVector({1,2,3});`, construction using an initializer list (likely an accidental omission in current ITK version)
 Vector3 makeVector(std::array<double, 3>&& arr);
 
+/// Type of transform used for Images or Meshes
+typedef enum XFormType { CenterOfMass, IterativeClosestPoint } XFormType;
+
 /// All transforms can be accessed using a generic transform pointer
 using GenericTransform   = itk::Transform<double, 3>;
 using IdentityTransform  = itk::IdentityTransform<double, 3>;
@@ -48,8 +51,8 @@ using AffineTransform    = itk::AffineTransform<double, 3>;
 using AffineTransformPtr = AffineTransform::Pointer;
 
 /// Mesh transforms
-using swTransform = vtkSmartPointer<vtkTransform>;
-swTransform createswTransform(const vtkSmartPointer<vtkMatrix4x4> &mat);
+using MeshTransform = vtkSmartPointer<vtkTransform>;
+MeshTransform createMeshTransform(const vtkSmartPointer<vtkMatrix4x4> &mat);
 
 /// For deliberate conversions between types
 Point toPoint(const Dims &d);

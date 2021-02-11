@@ -1,12 +1,12 @@
 import os
 import sys
-from shapeworks import *
+import shapeworks as sw
 
 def warpfailTest():
-  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
-  transform = ImageUtils.createWarpTransform(os.environ["DATA"] + "/source.particles")
+  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  transform = sw.ImageUtils.createWarpTransform(os.environ["DATA"] + "/source.particles")
 
-  compareImg = Image(os.environ["DATA"] + "/warpfail.nrrd")
+  compareImg = sw.Image(os.environ["DATA"] + "/warpfail.nrrd")
 
   return img.compare(compareImg)
 

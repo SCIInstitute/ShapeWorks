@@ -1,10 +1,10 @@
 import os
 import sys
-from shapeworks import *
+import shapeworks as sw
 
 def pointTest():
-  p1 = Point(1, 1, 1)
-  p2 = Point(2, 2, 1)
+  p1 = sw.Point(1, 1, 1)
+  p2 = sw.Point(2, 2, 1)
   
   p2[2] = 2
 
