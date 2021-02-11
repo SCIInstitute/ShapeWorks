@@ -1,12 +1,12 @@
 import os
 import sys
-from shapeworks import *
+import shapeworks as sw
 
 def reflectfailTest():
-  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.reflect()
 
-  compareImg = Image(os.environ["DATA"] + "/reflectfail.nrrd")
+  compareImg = sw.Image(os.environ["DATA"] + "/reflectfail.nrrd")
 
   return img.compare(compareImg)
 

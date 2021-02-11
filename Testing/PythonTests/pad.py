@@ -1,12 +1,12 @@
 import os
 import sys
-from shapeworks import *
+import shapeworks as sw
 
 def padTest1():
-  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.pad(0, 0.0)
 
-  compareImg = Image(os.environ["DATA"] + "/pad1.nrrd")
+  compareImg = sw.Image(os.environ["DATA"] + "/pad1.nrrd")
 
   return img.compare(compareImg)
 
@@ -16,10 +16,10 @@ if val is False:
   sys.exit(1)
 
 def padTest2():
-  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.pad(-1, 0.0)
 
-  compareImg = Image(os.environ["DATA"] + "/pad2.nrrd")
+  compareImg = sw.Image(os.environ["DATA"] + "/pad2.nrrd")
 
   return img.compare(compareImg)
 
@@ -29,10 +29,10 @@ if val is False:
   sys.exit(1)
 
 def padTest3():
-  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.pad(0, 1.0)
 
-  compareImg = Image(os.environ["DATA"] + "/pad3.nrrd")
+  compareImg = sw.Image(os.environ["DATA"] + "/pad3.nrrd")
 
   return img.compare(compareImg)
 
@@ -42,10 +42,10 @@ if val is False:
   sys.exit(1)
 
 def padTest4():
-  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.pad(100, 25, 1, 10)
 
-  compareImg = Image(os.environ["DATA"] + "/pad4.nrrd")
+  compareImg = sw.Image(os.environ["DATA"] + "/pad4.nrrd")
 
   return img.compare(compareImg)
 

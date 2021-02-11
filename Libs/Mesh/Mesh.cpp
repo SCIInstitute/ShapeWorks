@@ -144,8 +144,8 @@ Mesh& Mesh::write(const std::string &pathname)
 Mesh& Mesh::coverage(const Mesh &otherMesh, bool allowBackIntersections, double angleThreshold, double backSearchRadius)
 {
   FEVTKimport import;
-  FEMesh* surf1 = import.Load(this->mesh);
-  FEMesh* surf2 = import.Load(otherMesh.mesh);
+  std::shared_ptr<FEMesh> surf1{import.Load(this->mesh)};
+  std::shared_ptr<FEMesh> surf2{import.Load(otherMesh.mesh)};
   if (surf1 == nullptr || surf2 == nullptr) { throw std::invalid_argument("Mesh invalid"); }
 
   FEAreaCoverage areaCoverage;
@@ -153,7 +153,7 @@ Mesh& Mesh::coverage(const Mesh &otherMesh, bool allowBackIntersections, double 
   areaCoverage.SetAngleThreshold(angleThreshold);
   areaCoverage.SetBackSearchRadius(backSearchRadius);
 
-  vector<double> map1 = areaCoverage.Apply(*surf1, *surf2);
+  vector<double> map1 = areaCoverage.Apply(surf1, surf2);
 
   for (int i = 0; i < surf1->Nodes(); ++i) {
     surf1->Node(i).m_ndata = map1[i];
@@ -186,14 +186,14 @@ Mesh &Mesh::smooth(int iterations, double relaxation)
   return *this;
 }
 
-Mesh &Mesh::decimate(double reduction, double angle, bool preservetopology)
+Mesh &Mesh::decimate(double reduction, double angle, bool preserveTopology)
 {
   vtkSmartPointer<vtkDecimatePro> decimator = vtkSmartPointer<vtkDecimatePro>::New();
 
   decimator->SetInputData(this->mesh);
   decimator->SetTargetReduction(reduction);
   decimator->SetFeatureAngle(angle);
-  preservetopology == true ? decimator->PreserveTopologyOn() : decimator->PreserveTopologyOff();
+  preserveTopology == true ? decimator->PreserveTopologyOn() : decimator->PreserveTopologyOff();
   decimator->BoundaryVertexDeletionOn();
   decimator->Update();
   this->mesh = decimator->GetOutput();
@@ -219,7 +219,7 @@ Mesh &Mesh::reflect(const Axis &axis, const Vector3 &origin)
   Vector scale(makeVector({1,1,1}));
   scale[axis] = -1;
 
-  swTransform transform = swTransform::New();
+  MeshTransform transform = MeshTransform::New();
   transform->Translate(-origin[0], -origin[1], -origin[2]);
   transform->Scale(scale[0], scale[1], scale[2]);
   transform->Translate(origin[0], origin[1], origin[2]);
@@ -227,9 +227,9 @@ Mesh &Mesh::reflect(const Axis &axis, const Vector3 &origin)
   return invertNormals().applyTransform(transform);
 }
 
-swTransform Mesh::createTransform(const Mesh &target, Mesh::TransformType type, Mesh::AlignmentType align, unsigned iterations)
+MeshTransform Mesh::createTransform(const Mesh &target, XFormType type, Mesh::AlignmentType align, unsigned iterations)
 {
-  swTransform transform;
+  MeshTransform transform;
 
   switch (type) {
     case IterativeClosestPoint:
@@ -242,7 +242,7 @@ swTransform Mesh::createTransform(const Mesh &target, Mesh::TransformType type, 
   return transform;
 }
 
-Mesh &Mesh::applyTransform(const swTransform transform)
+Mesh &Mesh::applyTransform(const MeshTransform transform)
 {
   auto resampler = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
 
@@ -274,11 +274,11 @@ Mesh &Mesh::fillHoles()
   return *this;
 }
 
-Mesh &Mesh::probeVolume(const Image &img)
+Mesh &Mesh::probeVolume(const Image &image)
 {
   vtkSmartPointer<vtkProbeFilter> probeFilter = vtkSmartPointer<vtkProbeFilter>::New();
   probeFilter->SetInputData(this->mesh);
-  probeFilter->SetSourceData(img.getVTKImage());
+  probeFilter->SetSourceData(image.getVTKImage());
   probeFilter->Update();
   this->mesh = probeFilter->GetPolyDataOutput();
 
@@ -298,7 +298,7 @@ Mesh &Mesh::clip(const Plane plane)
 
 Mesh &Mesh::translate(const Vector3 &v)
 {
-  swTransform transform = swTransform::New();
+  MeshTransform transform = MeshTransform::New();
   transform->Translate(v[0], v[1], v[2]);
 
   return applyTransform(transform);
@@ -306,7 +306,7 @@ Mesh &Mesh::translate(const Vector3 &v)
 
 Mesh &Mesh::scale(const Vector3 &v)
 {
-  swTransform transform = swTransform::New();
+  MeshTransform transform = MeshTransform::New();
   transform->Scale(v[0], v[1], v[2]);
 
   return applyTransform(transform);
@@ -439,7 +439,7 @@ Image Mesh::toImage(Vector3 spacing, Dims size, Point3 origin) const
     {
       size = rasterizationSize(bbox, spacing, 1, origin);
     }
-  }    
+  }
 
   vtkSmartPointer<vtkImageData> whiteImage = vtkSmartPointer<vtkImageData>::New();
   whiteImage->SetSpacing(spacing[0], spacing[1], spacing[2]);
@@ -821,10 +821,10 @@ bool Mesh::compare(const Mesh& other) const
   return true;
 }
 
-swTransform Mesh::createRegistrationTransform(const Mesh &target, Mesh::AlignmentType align, unsigned iterations)
+MeshTransform Mesh::createRegistrationTransform(const Mesh &target, Mesh::AlignmentType align, unsigned iterations)
 {
   const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createICPTransform(this->mesh, target.getVTKMesh(), align, iterations, true));
-  return createswTransform(mat);
+  return createMeshTransform(mat);
 }
 
 std::ostream& operator<<(std::ostream &os, const Mesh& mesh)

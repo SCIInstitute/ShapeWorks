@@ -222,7 +222,7 @@ def Run_Pipeline(args):
             mesh segementaions to binary segmentations.
             """
             # set spacing
-            spacing = [1, 1, 1]
+            spacing = [1.0, 1.0, 1.0]
             answer = input("Use ispotropic spacing for mesh rasterization? y/n \n")
             if answer == 'n':
                 done = False
@@ -235,7 +235,7 @@ def Run_Pipeline(args):
                     if answer2 == 'y':
                         done = True
 
-            fileList_seg = MeshesToVolumes(groomDir + "volumes", groomDir + "reflected/segmentations/*", reflectedFiles_mesh, spacing)
+            fileList_seg = MeshesToVolumes(groomDir + "volumes", reflectedFiles_mesh, spacing)
 
             """
             Apply isotropic resampling
