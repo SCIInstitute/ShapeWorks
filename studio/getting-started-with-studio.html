@@ -328,7 +328,10 @@ your data all within a single interface.</p>
 <p>The Metrics panel shows the Explained Variance chart.  This chart shows how much of the population's variance is explained, cumulatively by each mode.  You can hover over each bar to see the individual values.</p>
 <p><img alt="ShapeWorks Studio Analysis Metrics Panel" src="../img/studio/studio_analyze_metrics.png" /></p>
 <h3 id="surface-reconstruction-panel">Surface Reconstruction Panel</h3>
-<p>The surface reconstruction panel provides options for the surface reconstruction method.  Using this option will provide smoother reconstructions.</p>
+<p>The surface reconstruction panel provides options for the surface reconstruction method.  There are three surface reconstruction methods available depending on the data you supply.</p>
+<p><code>Legacy</code> - If an older XML file with only particle files is supplied, then only this option is available.  This is the fallback option since it requires only the particles.</p>
+<p><code>Mesh Warping Based</code> - Mesh warping based method that utilizes the mean mesh.  You must have either meshes supplied or image based (distance transforms).</p>
+<p><code>Distance Transform Based</code> - Surface reconstruction based on distance transforms.  Project must have distance transforms.</p>
 <p><img alt="ShapeWorks Studio Analysis Surface Reconstruction Panel" src="../img/studio/studio_analyze_surface_reconstruction.png" /></p>
 <p>Below is an example of the difference in using this option.</p>
 <p><img alt="ShapeWorks Studio Surface Reconstruction Result" src="../img/studio/studio_analyze_surface_reconstruction_result.png" /></p>
