@@ -1,5 +1,6 @@
-#include <Data/Mesh.h>
+#include <Data/StudioMesh.h>
 #include <Visualization/DisplayObject.h>
+namespace shapeworks {
 
 //-----------------------------------------------------------------------------
 DisplayObject::DisplayObject()
@@ -10,13 +11,13 @@ DisplayObject::~DisplayObject()
 {}
 
 //-----------------------------------------------------------------------------
-void DisplayObject::set_mesh(QSharedPointer<Mesh> mesh)
+void DisplayObject::set_mesh(QSharedPointer<StudioMesh> mesh)
 {
   this->mesh_ = mesh;
 }
 
 //-----------------------------------------------------------------------------
-QSharedPointer<Mesh> DisplayObject::get_mesh()
+QSharedPointer<StudioMesh> DisplayObject::get_mesh()
 {
   return this->mesh_;
 }
@@ -58,13 +59,13 @@ vnl_vector<double> DisplayObject::get_transform()
 }
 
 //---------------------------------------------------------------------------
-QList<Point> DisplayObject::get_exclusion_sphere_centers()
+QList<Shape::Point> DisplayObject::get_exclusion_sphere_centers()
 {
   return this->exclusion_sphere_centers_;
 }
 
 //---------------------------------------------------------------------------
-void DisplayObject::set_exclusion_sphere_centers(QList<Point> centers)
+void DisplayObject::set_exclusion_sphere_centers(QList<Shape::Point> centers)
 {
   this->exclusion_sphere_centers_ = centers;
 }
@@ -82,13 +83,14 @@ void DisplayObject::set_exclusion_sphere_radii(QList<double> radii)
 }
 
 //---------------------------------------------------------------------------
-std::vector<Point> DisplayObject::get_vectors()
+std::vector<Shape::Point> DisplayObject::get_vectors()
 {
   return this->vectors_;
 }
 
 //---------------------------------------------------------------------------
-void DisplayObject::set_vectors(std::vector<Point> vectors)
+void DisplayObject::set_vectors(std::vector<Shape::Point> vectors)
 {
   this->vectors_ = vectors;
+}
 }

@@ -11,6 +11,7 @@
 - How to preprocess or [groom](../workflow/groom.md) your dataset.
 - How to [optimize](../workflow/optimize.md) your shape model.
 - How to [visualize and analyze](../workflow/analyze.md) your optimized shape model.
+- How to get started with [ShapeWorks in Python](../new/shapeworks-python.md).
 - How to [contact ShapeWorks team](../about/contact.md) to help you customize a use case to your own dataset.
 - How to [build](../dev/build.md) ShapeWorks from source (for developers).
 - How to [auto-generate documentation](../dev/docs.md#auto-generating-shapeworks-commands-documentation) for ShapeWorks interfaces and code (for developers).

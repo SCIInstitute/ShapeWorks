@@ -1,13 +1,7 @@
-#ifdef _WIN32
-  #include <direct.h>
-  #define chdir _chdir
-#else
 
-  #include <unistd.h>
-#endif
+#include <vector>
 
 // qt
-#include <QThread>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -17,6 +11,17 @@
 #include <QXmlStreamReader>
 #include <QProgressDialog>
 
+#include <Libs/Mesh/MeshUtils.h>
+#include <Libs/Utils/StringUtils.h>
+
+#ifdef _WIN32
+#include <direct.h>
+  #define chdir _chdir
+#else
+
+  #include <unistd.h>
+#endif
+
 #include <tinyxml.h>
 
 #include <Libs/Project/Project.h>
@@ -24,10 +29,12 @@
 #include <Data/Session.h>
 #include <Data/StudioLog.h>
 #include <Data/Shape.h>
-#include <Data/Mesh.h>
+#include <Data/StudioMesh.h>
 #include <Data/MeshManager.h>
 #include <Visualization/ShapeWorksWorker.h>
 #include <Visualization/Visualizer.h>
+
+namespace shapeworks {
 
 const std::string Session::DATA_C("data");
 const std::string Session::GROOM_C("groom");
@@ -139,7 +146,7 @@ bool Session::save_project(std::string fname)
     for (int i = 0; i < this->shapes_.size(); i++) {
       original_list.push_back(this->shapes_[i]->get_original_filename_with_path().toStdString());
     }
-    //this->project_->set_original_files(original_list);
+    //this->session_->set_original_files(original_list);
   }
 
   // distance transforms
@@ -152,14 +159,22 @@ bool Session::save_project(std::string fname)
 
       groomed_list.push_back(location);
 
-      //try writing the groomed to file
-      WriterType::Pointer writer = WriterType::New();
-      writer->SetFileName(location);
-      writer->SetInput(this->shapes_[i]->get_groomed_image());
-      writer->SetUseCompression(true);
-      std::cerr << "Writing distance transform: " << location << "\n";
-      writer->Update();
-      std::vector<std::string> groomed_filenames{location};   // only single domain supported so far
+      if (loc.toLower().endsWith(".vtk")) {
+        vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+        writer->SetInputData(this->shapes_[i]->get_groomed_mesh()->get_poly_data());
+        writer->SetFileName(location.c_str());
+        writer->Update();
+      }
+      else {
+        //try writing the groomed to file
+        auto writer = itk::ImageFileWriter<ImageType>::New();
+        writer->SetFileName(location);
+        writer->SetInput(this->shapes_[i]->get_groomed_image());
+        writer->SetUseCompression(true);
+        std::cerr << "Writing distance transform: " << location << "\n";
+        writer->Update();
+      }
+      std::vector<std::string> groomed_filenames{location}; // only single domain supported so far
       this->shapes_[i]->get_subject()->set_groomed_filenames(groomed_filenames);
 
       QApplication::processEvents();
@@ -272,13 +287,29 @@ bool Session::load_light_project(QString filename)
   std::vector<std::string> import_files, groom_files, local_point_files, global_point_files;
   std::string sparseFile, denseFile, goodPtsFile;
 
-  TiXmlElement* elem = docHandle.FirstChild("distance_transform_files").Element();
+  TiXmlElement* elem = docHandle.FirstChild("mesh_files").Element();
   if (elem && elem->GetText()) {
+    std::string mesh_filename;
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> mesh_filename) {
+      if (!QFile::exists(QString::fromStdString(mesh_filename))) {
+        QString message = "File does not exist: " + QString::fromStdString(mesh_filename);
+        STUDIO_LOG_ERROR(message);
+        QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+        return false;
+      }
+      groom_files.push_back(mesh_filename);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+
+  elem = docHandle.FirstChild("distance_transform_files").Element();
+  if (elem && elem->GetText()) {
+    groom_files.clear(); // if someone specifies both, prefer the distance transforms
     std::string distance_transform_filename;
     inputsBuffer.str(elem->GetText());
     while (inputsBuffer >> distance_transform_filename) {
-      //std::cerr << "Found distance transform: " << distance_transform_filename << "\n";
-
       if (!QFile::exists(QString::fromStdString(distance_transform_filename))) {
         QString message = "File does not exist: " +
                           QString::fromStdString(distance_transform_filename);
@@ -329,9 +360,21 @@ bool Session::load_light_project(QString filename)
     inputsBuffer.str("");
   }
 
-  this->load_groomed_files(groom_files, 0.5);
+  if (groom_files.size() > 0) {
+    if (groom_files.size() != local_point_files.size()) {
+      QString message = "Error, mismatch in number of distance_transforms and particle files";
+      STUDIO_LOG_ERROR(message);
+      QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+      return false;
+    }
+  }
 
-  //this->project_->
+  if (local_point_files.size() != global_point_files.size()) {
+    QString message = "Error, mismatch in number of local and world particle files";
+    STUDIO_LOG_ERROR(message);
+    QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+    return false;
+  }
 
   if (!this->load_point_files(local_point_files, true)) {
     return false;
@@ -340,6 +383,8 @@ bool Session::load_light_project(QString filename)
   if (!this->load_point_files(global_point_files, false)) {
     return false;
   }
+
+  this->load_groomed_files(groom_files, 0.5);
 
   // read group ids
   std::vector<int> group_ids;
@@ -382,7 +427,6 @@ bool Session::load_xl_project(QString filename)
   this->project_->load(QFileInfo(filename).fileName().toStdString());
 
   int num_subjects = this->project_->get_number_of_subjects();
-  std::cerr << "num_subjects = " << num_subjects << "\n";
 
   auto subjects = this->project_->get_subjects();
 
@@ -460,6 +504,15 @@ void Session::set_project_path(QString relative_path)
       auto full_path = old_path.absoluteFilePath(QString::fromStdString(path));
       subject->set_global_particle_filename(new_path.relativeFilePath(full_path).toStdString());
     }
+
+    // features
+    auto features = subject->get_feature_filenames();
+    std::map<std::string, std::string> new_features;
+    for (auto const& x : features) {
+      auto full_path = old_path.absoluteFilePath(QString::fromStdString(x.second));
+      new_features[x.first] = new_path.relativeFilePath(full_path).toStdString();
+    }
+    subject->set_feature_filenames(new_features);
   }
 
   this->project_path_ = relative_path;
@@ -480,7 +533,6 @@ void Session::load_original_files(std::vector<std::string> filenames)
   for (int i = 0; i < filenames.size(); i++) {
     QDir dir(".");
     QString new_filename = dir.relativeFilePath(QString::fromStdString(filenames[i]));
-    std::cerr << filenames[i] << " -> " << new_filename.toStdString() << "\n";
     new_filenames.push_back(new_filename.toStdString());
   }
   filenames = new_filenames;
@@ -515,48 +567,8 @@ void Session::load_original_files(std::vector<std::string> filenames)
 }
 
 //---------------------------------------------------------------------------
-void Session::load_groomed_images(std::vector<ImageType::Pointer> images,
-                                  double iso, std::vector<TransformType> transforms)
-{
-  QProgressDialog progress("Loading groomed images...", "Abort",
-                           0, images.size(), this->parent_);
-  progress.setWindowModality(Qt::WindowModal);
-  progress.setMinimumDuration(2000);
-
-  for (int i = 0; i < images.size(); i++) {
-    progress.setValue(i);
-    QApplication::processEvents();
-    if (progress.wasCanceled()) {
-      break;
-    }
-    if (this->shapes_.size() <= i) {
-      QSharedPointer<Shape> new_shape = QSharedPointer<Shape>(new Shape);
-      new_shape->set_mesh_manager(this->mesh_manager_);
-      this->shapes_.push_back(new_shape);
-    }
-    TransformType transform;
-    if (i < transforms.size()) {
-      transform = transforms[i];
-    }
-    this->shapes_[i]->import_groomed_image(images[i], iso, transform);
-  }
-  progress.setValue(images.size());
-  QApplication::processEvents();
-
-  this->project_->store_subjects();
-  if (images.size() > 0) {
-    this->unsaved_groomed_files_ = true;
-    emit data_changed();
-  }
-}
-
-//---------------------------------------------------------------------------
 void Session::load_groomed_files(std::vector<std::string> file_names, double iso)
 {
-  //QProgressDialog progress("Loading groomed images...", "Abort", 0,
-  //                         file_names.size(), this->parent_);
-  //progress.setWindowModality(Qt::WindowModal);
-
   for (int i = 0; i < file_names.size(); i++) {
     if (this->shapes_.size() <= i) {
       auto shape = QSharedPointer<Shape>(new Shape);
@@ -567,9 +579,16 @@ void Session::load_groomed_files(std::vector<std::string> file_names, double iso
       this->shapes_.push_back(shape);
     }
 
-    std::vector<std::string> groomed_filenames{
-      file_names[i]};   // only single domain supported so far
+    // only single domain supported so far
+    std::vector<std::string> groomed_filenames{file_names[i]};
     this->shapes_[i]->get_subject()->set_groomed_filenames(groomed_filenames);
+
+    QStringList list;
+    list << QFileInfo(QString::fromStdString(file_names[i])).fileName();
+    list << "";
+    list << "";
+    list << "";
+    this->shapes_[i]->set_annotations(list);
   }
 
   this->project_->store_subjects();
@@ -621,11 +640,57 @@ bool Session::update_points(std::vector<std::vector<itk::Point<double>>> points,
   // update the project now that we have particles
   this->project_->store_subjects();
 
-  if (points.size() > 0) {
+  if (points.size() > 0 && !local) {
     this->unsaved_particle_files_ = true;
     emit points_changed();
   }
   return true;
+}
+
+//---------------------------------------------------------------------------
+double Session::update_auto_glyph_size()
+{
+  this->auto_glyph_size_ = 1;
+  if (this->shapes_.empty()) {
+    return this->auto_glyph_size_;
+  }
+
+  double max_range = std::numeric_limits<double>::min();
+  int num_particles = 0;
+  for (auto& shape : this->shapes_) {
+    vnl_vector<double> points = shape->get_global_correspondence_points();
+    if (points.empty()) {
+      return this->auto_glyph_size_;
+    }
+    num_particles = points.size() / 3;
+    double max_x = std::numeric_limits<double>::min();
+    double min_x = std::numeric_limits<double>::max();
+    double max_y = max_x;
+    double min_y = min_x;
+    double max_z = max_x;
+    double min_z = min_x;
+    for (int i = 0; i < points.size() / 3; i++) {
+      Point3 p1 = Session::get_point(points, i);
+      max_x = std::max<double>(max_x, p1[0]);
+      min_x = std::min<double>(min_x, p1[0]);
+      max_y = std::max<double>(max_y, p1[1]);
+      min_y = std::min<double>(min_y, p1[1]);
+      max_z = std::max<double>(max_z, p1[2]);
+      min_z = std::min<double>(min_z, p1[2]);
+    }
+
+    double range_x = max_x - min_x;
+    double range_y = max_y - min_y;
+    double range_z = max_z - min_z;
+
+    max_range = std::max<double>({max_range, range_x, range_y, range_z});
+  }
+
+  this->auto_glyph_size_ = max_range / std::sqrt(static_cast<double>(num_particles)) / 2;
+  this->auto_glyph_size_ = std::max<double>(0.1, this->auto_glyph_size_);
+  this->auto_glyph_size_ = std::min<double>(10.0, this->auto_glyph_size_);
+
+  return this->auto_glyph_size_;
 }
 
 //---------------------------------------------------------------------------
@@ -645,8 +710,7 @@ bool Session::load_point_files(std::vector<std::string> list, bool local)
 {
   QProgressDialog progress("Loading point files...", "Abort", 0, list.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
-  //progress.show();
-  //progress.setMinimumDuration(2000);
+  progress.setMinimumDuration(2000);
   for (int i = 0; i < list.size(); i++) {
     progress.setValue(i);
     QApplication::processEvents();
@@ -672,6 +736,14 @@ bool Session::load_point_files(std::vector<std::string> list, bool local)
     QFileInfo fi(fname);
     QString basename = fi.completeBaseName();
     QString ext = fi.suffix();
+
+
+    QStringList list;
+    list << fi.fileName();
+    list << "";
+    list << "";
+    list << "";
+    shape->set_annotations(list);
 
     if (QFile::exists(fname)) {
       if (!local) {
@@ -711,10 +783,12 @@ void Session::remove_shapes(QList<int> list)
 {
   std::sort(list.begin(), list.end(), std::greater<>());
     foreach(int i, list) {
-      auto subjects = this->project_->get_subjects();
+      std::vector<std::shared_ptr<Subject>>& subjects = this->project_->get_subjects();
       subjects.erase(subjects.begin() + i);
       this->shapes_.erase(this->shapes_.begin() + i);
     }
+
+  this->project_->get_subjects();
   this->renumber_shapes();
   this->project_->store_subjects();
   emit data_changed();
@@ -777,4 +851,81 @@ QString Session::get_display_name()
     return "New Project";
   }
   return QFileInfo(this->filename_).baseName();
+}
+
+//---------------------------------------------------------------------------
+void Session::set_groom_unsaved(bool value)
+{
+  this->unsaved_groomed_files_ = true;
+}
+
+//---------------------------------------------------------------------------
+std::string Session::get_default_feature_map()
+{
+  if (!this->get_project()->get_subjects().empty()) {
+    auto subject = this->get_project()->get_subjects()[0];
+    if (!subject->get_segmentation_filenames().empty()) {
+      if (subject->get_domain_types()[0] == DomainType::Mesh) {
+        Mesh m = MeshUtils::threadSafeReadMesh(subject->get_segmentation_filenames()[0]);
+        auto poly_data = m.getVTKMesh();
+        if (poly_data) {
+          auto scalars = poly_data->GetPointData()->GetScalars();
+          if (scalars) {
+            return scalars->GetName();
+          }
+        }
+      }
+    }
+  }
+  return "";
+}
+
+//---------------------------------------------------------------------------
+bool Session::is_supported_file_format(std::string filename)
+{
+  for (auto type : Mesh::getSupportedTypes()) {
+    if (StringUtils::hasSuffix(filename, type)) {
+      return true;
+    }
+  }
+
+  if (StringUtils::hasSuffix(filename, ".nrrd")
+      || StringUtils::hasSuffix(filename, ".mha")
+      || StringUtils::hasSuffix(filename, ".nii")
+      || StringUtils::hasSuffix(filename, ".nii.gz")) {
+    return true;
+  }
+  return false;
+}
+
+//---------------------------------------------------------------------------
+std::vector<DomainType> Session::get_domain_types()
+{
+  auto subjects = this->get_project()->get_subjects();
+  if (subjects.size() > 0 && subjects[0]->get_domain_types().size() > 0) {
+    return subjects[0]->get_domain_types();
+  }
+  return std::vector<DomainType>();
+}
+
+//---------------------------------------------------------------------------
+Point3 Session::get_point(const vnl_vector<double>& points, int i)
+{
+  if ((i * 3) + 2 > points.size() - 1) {
+    return Point3();
+  }
+  int pos = i * 3;
+  Point3 point;
+  point[0] = points[pos];
+  point[1] = points[pos + 1];
+  point[2] = points[pos + 2];
+  return point;
+}
+
+//---------------------------------------------------------------------------
+double Session::get_auto_glyph_size()
+{
+  return this->auto_glyph_size_;
+}
+
 }

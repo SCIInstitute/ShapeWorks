@@ -1,8 +1,12 @@
 #include <Project.h>
 
-#include <xlnt/xlnt.hpp>
-
 #include <memory>
+#include <xlnt/xlnt.hpp>
+#include <Libs/Mesh/Mesh.h>
+#include <Libs/Mesh/MeshUtils.h>
+#include <vtkPolyData.h>
+#include <vtkPointData.h>
+
 #include <cstring>
 
 using namespace shapeworks;
@@ -22,15 +26,14 @@ static std::string replace_string(std::string subject, const std::string& search
 //---------------------------------------------------------------------------
 Project::Project()
 {
-  this->wb_ = std::unique_ptr<xlnt::workbook>(new xlnt::workbook());
+  this->wb_ = std::make_unique<xlnt::workbook>();
 }
 
 //---------------------------------------------------------------------------
-Project::~Project()
-{}
+Project::~Project() = default;
 
 //---------------------------------------------------------------------------
-bool Project::load(std::string filename)
+bool Project::load(const std::string& filename)
 {
   try {
     this->wb_->load(filename);
@@ -53,7 +56,7 @@ bool Project::load(std::string filename)
 }
 
 //---------------------------------------------------------------------------
-bool Project::save(std::string filename)
+bool Project::save(const std::string& filename)
 {
 
   try {
@@ -87,43 +90,35 @@ std::vector<std::string> Project::get_headers()
 int Project::get_number_of_subjects()
 {
   auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
-  auto mesh_columns = this->get_matching_columns(MESH_PREFIX);
   auto dt_columns = this->get_matching_columns(GROOMED_PREFIX);
   auto local_particle_files = this->get_matching_columns(LOCAL_PARTICLES);
-  if (seg_columns.size() > 0) {
+  if (!seg_columns.empty()) {
     return this->get_string_column(seg_columns[0]).size();
   }
-  if (mesh_columns.size() > 0) {
-    return this->get_string_column(mesh_columns[0]).size();
-  }
-  if (dt_columns.size() > 0) {
+  if (!dt_columns.empty()) {
     return this->get_string_column(dt_columns[0]).size();
   }
-  if (local_particle_files.size() > 0) {
+  if (!local_particle_files.empty()) {
     return this->get_string_column(local_particle_files[0]).size();
   }
   return 0;
 }
 
 //---------------------------------------------------------------------------
-int Project::get_number_of_domains()
+int Project::get_number_of_domains_per_subject()
 {
   auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
-  if (seg_columns.size() > 0) {
+  if (!seg_columns.empty()) {
     return seg_columns.size();
   }
 
-  auto mesh_columns = this->get_matching_columns(MESH_PREFIX);
-  if (mesh_columns.size() > 0) {
-    return mesh_columns.size();
-  }
-
   auto groom_columns = this->get_matching_columns(GROOMED_PREFIX);
-  if (groom_columns.size() > 0) {
+  if (!groom_columns.empty()) {
     return groom_columns.size();
   }
 
-  /// TODO: when only point files are specified, the user has to specify somewhere how many domains there are (if more than one)
+  /// TODO: when only point files are specified,
+  /// the user has to specify somewhere how many domains there are (if more than one)
 
   // default 1
   return 1;
@@ -136,13 +131,12 @@ std::vector<std::shared_ptr<Subject>>& Project::get_subjects()
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> Project::get_matching_columns(std::string prefix) const
+std::vector<std::string> Project::get_matching_columns(const std::string& prefix)
 {
+  this->matching_columns_.insert(prefix);
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);
   auto headers = ws.rows(false)[0];
   std::vector<std::string> list;
-
-  //std::cerr << "headers.length() = " << headers.length() << "\n";
 
   for (int i = 0; i < headers.length(); i++) {
     if (headers[i].to_string().substr(0, prefix.size()) == prefix) {
@@ -160,7 +154,7 @@ std::string Project::get_value(int column, int subject_id)
 }
 
 //---------------------------------------------------------------------------
-void Project::set_value(int column, int subject_id, std::string value)
+void Project::set_value(int column, int subject_id, const std::string& value)
 {
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);
 
@@ -171,7 +165,7 @@ void Project::set_value(int column, int subject_id, std::string value)
 }
 
 //---------------------------------------------------------------------------
-void Project::set_value(std::string column_name, int subject_id, std::string value)
+void Project::set_value(const std::string& column_name, int subject_id, const std::string& value)
 {
   int column_index = get_index_for_column(column_name, true);
   this->set_value(column_index, subject_id + 2, value); // +1 for header, +1 for 1-indexed
@@ -190,38 +184,39 @@ void Project::load_subjects()
 
   this->subjects_.clear();
 
-  this->num_domains_ = this->get_number_of_domains();
+  this->num_domains_per_subject_ = this->get_number_of_domains_per_subject();
 
   auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
   auto groomed_columns = this->get_matching_columns(GROOMED_PREFIX);
   auto groomed_transform_columns = this->get_matching_columns(GROOMED_TRANSFORMS_PREFIX);
   auto feature_columns = this->get_feature_names();
   auto group_names = this->get_matching_columns(GROUP_PREFIX);
-
   int local_particle_column = this->get_index_for_column(LOCAL_PARTICLES);
   int global_particle_column = this->get_index_for_column(WORLD_PARTICLES);
+
+  auto extra_columns = this->get_extra_columns();
 
   for (int i = 0; i < num_subjects; i++) {
     std::shared_ptr<Subject> subject = std::make_shared<Subject>();
 
-    subject->set_number_of_domains(this->num_domains_);
+    subject->set_number_of_domains(this->num_domains_per_subject_);
     subject->set_segmentation_filenames(this->get_list(seg_columns, i));
     subject->set_groomed_filenames(this->get_list(groomed_columns, i));
     subject->set_groomed_transforms(this->get_transform_list(groomed_transform_columns, i));
 
     auto feature_list = this->get_list(feature_columns, i);
     std::map<std::string, std::string> map;
-    for (int i = 0; i < feature_columns.size(); i++) {
-      std::string feature = feature_columns[i].substr(std::strlen(FEATURE_PREFIX));
-      map[feature] = feature_list[i];
+    for (int j = 0; j < feature_columns.size(); j++) {
+      std::string feature = feature_columns[j].substr(std::strlen(FEATURE_PREFIX));
+      map[feature] = feature_list[j];
     }
     subject->set_feature_filenames(map);
 
     auto group_values = this->get_list(group_names, i);
     std::map<std::string, std::string> group_map;
-    for (int i = 0; i < group_names.size(); i++) {
-      std::string name = group_names[i].substr(std::strlen(GROUP_PREFIX));
-      group_map[name] = group_values[i];
+    for (int j = 0; j < group_names.size(); j++) {
+      std::string name = group_names[j].substr(std::strlen(GROUP_PREFIX));
+      group_map[name] = group_values[j];
     }
     subject->set_group_values(group_map);
 
@@ -235,8 +230,16 @@ void Project::load_subjects()
       subject->set_global_particle_filename(this->get_subject_value(global_particle_column, i));
     }
 
-    this->segmentations_present_ = seg_columns.size() >= 1;
-    this->groomed_present_ = groomed_columns.size() >= 1;
+    std::map<std::string, std::string> extra_values;
+    for (auto elem : this->get_extra_columns()) {
+      auto value = this->get_value(this->get_index_for_column(elem),
+                                   i + 2); //+1 for header, +1 for 1-based index
+      extra_values[elem] = value;
+    }
+    subject->set_extra_values(extra_values);
+
+    this->segmentations_present_ = !seg_columns.empty();
+    this->groomed_present_ = !groomed_columns.empty();
     this->subjects_.push_back(subject);
   }
 }
@@ -246,25 +249,31 @@ void Project::store_subjects()
 {
   int num_subjects = this->subjects_.size();
 
+  // segmentation columns
   auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
 
-  //auto groomed_columns = this->get_matching_columns(GROOMED_PREFIX);
+  // groomed columns
   std::vector<std::string> groomed_columns;
-
   for (int i = 0; i < seg_columns.size(); i++) {
     std::string groom_column_name = replace_string(seg_columns[i],
                                                    SEGMENTATION_PREFIX, GROOMED_PREFIX);
     groomed_columns.push_back(groom_column_name);
   }
 
+  // groomed transform columns (e.g. centering, etc)
   std::vector<std::string> groomed_transform_columns;
-
   for (int i = 0; i < groomed_columns.size(); i++) {
     std::string groomed_transform_column_name = replace_string(groomed_columns[i],
                                                                GROOMED_PREFIX,
                                                                GROOMED_TRANSFORMS_PREFIX);
     groomed_transform_columns.push_back(groomed_transform_column_name);
   }
+
+  bool groomed_present = false;
+
+  // clear
+  xlnt::worksheet ws = this->wb_->sheet_by_index(0);
+  ws.delete_rows(ws.highest_row(), ws.highest_row() - 1);
 
   for (int i = 0; i < num_subjects; i++) {
     std::shared_ptr<Subject> subject = this->subjects_[i];
@@ -276,49 +285,66 @@ void Project::store_subjects()
     }
     this->set_list(seg_columns, i, seg_files);
 
+    auto groups = subject->get_group_values();
+    this->set_map(i, GROUP_PREFIX, groups);
+
     // groomed files
     auto groomed_files = subject->get_groomed_filenames();
-    if (groomed_files.size() >= groomed_columns.size()) {
+    if (groomed_files.size() >= groomed_columns.size() && groomed_files.size() > 0) {
+      groomed_present = true;
       while (groomed_files.size() > groomed_columns.size()) {
         groomed_columns.push_back(std::string(GROOMED_PREFIX) + "file");
       }
       this->set_list(groomed_columns, i, groomed_files);
 
       this->set_transform_list(groomed_transform_columns, i, subject->get_groomed_transforms());
+    }
 
+    // features
+    auto features = subject->get_feature_filenames();
+    for (auto const& x : features) {
+      int idx = this->get_index_for_column("feature_" + x.first, true);
+      this->set_value(idx, i + 2, x.second); // +1 for header, +1 for 1-based index
+    }
+
+    // extra values
+    auto extra_values = subject->get_extra_values();
+    for (auto const& x : extra_values) {
+      int idx = this->get_index_for_column(x.first, true);
+      this->set_value(idx, i + 2, x.second);  // +1 for header, +1 for 1-based index
     }
 
     // local files
     std::string local_filename = subject->get_local_particle_filename();
-    if (local_filename != "") {
+    if (!local_filename.empty()) {
       this->set_value("local_particles", i, local_filename);
       this->particles_present_ = true;
     }
     std::string global_filename = subject->get_global_particle_filename();
-    if (global_filename != "") {
+    if (!global_filename.empty()) {
       this->set_value("world_particles", i, global_filename);
       this->particles_present_ = true;
     }
   }
 
-  this->segmentations_present_ = seg_columns.size() >= 1;
-  this->groomed_present_ = groomed_columns.size() >= 1;
+  this->segmentations_present_ = !seg_columns.empty();
+  this->groomed_present_ = groomed_present;
 }
 
 //---------------------------------------------------------------------------
-int Project::get_supported_version()
+int Project::get_supported_version() const
 {
   return this->supported_version_;
 }
 
 //---------------------------------------------------------------------------
-int Project::get_version()
+int Project::get_version() const
 {
   return this->version_;
 }
 
 //---------------------------------------------------------------------------
-int Project::get_index_for_column(std::string name, bool create_if_not_found) const
+int Project::get_index_for_column(const std::string& name, bool create_if_not_found) const
 {
 
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);
@@ -337,7 +363,7 @@ int Project::get_index_for_column(std::string name, bool create_if_not_found) co
 //    std::cerr << "couldn't find: " << name << "\n";
     auto column = ws.highest_column();
     //  std::cerr << "highest column is " << column.index << "\n";
-    if (ws.cell(xlnt::cell_reference(column.index, 1)).value<std::string>() == "") {
+    if (ws.cell(xlnt::cell_reference(column.index, 1)).value<std::string>().empty()) {
       ws.cell(xlnt::cell_reference(column.index, 1)).value(name);
       return column.index;
     }
@@ -351,7 +377,7 @@ int Project::get_index_for_column(std::string name, bool create_if_not_found) co
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> Project::get_string_column(std::string name) const
+std::vector<std::string> Project::get_string_column(const std::string& name) const
 {
   int index = this->get_index_for_column(name);
 
@@ -379,25 +405,25 @@ std::vector<std::string> Project::get_string_column(std::string name) const
 }
 
 //---------------------------------------------------------------------------
-bool Project::get_segmentations_present()
+bool Project::get_segmentations_present() const
 {
   return this->segmentations_present_;
 }
 
 //---------------------------------------------------------------------------
-bool Project::get_groomed_present()
+bool Project::get_groomed_present() const
 {
   return this->groomed_present_;
 }
 
 //---------------------------------------------------------------------------
-bool Project::get_particles_present()
+bool Project::get_particles_present() const
 {
   return this->particles_present_;
 }
 
 //---------------------------------------------------------------------------
-Parameters Project::get_parameters(std::string name)
+Parameters Project::get_parameters(const std::string& name)
 {
   Parameters params;
   std::map<std::string, std::string> map;
@@ -423,7 +449,7 @@ Parameters Project::get_parameters(std::string name)
 }
 
 //---------------------------------------------------------------------------
-void Project::set_parameters(std::string name, Parameters params)
+void Project::set_parameters(const std::string& name, Parameters params)
 {
   try {
     // remove the old sheet
@@ -441,7 +467,6 @@ void Project::set_parameters(std::string name, Parameters params)
     ws.cell(xlnt::cell_reference(2, 1)).value("value");
     int row = 2; // skip header
     for (const auto& kv : params.get_map()) {
-      std::cout << "Storing " << kv.first << " with value " << kv.second << std::endl;
       ws.cell(xlnt::cell_reference(1, row)).value(kv.first);
       ws.cell(xlnt::cell_reference(2, row)).value(kv.second);
       row++;
@@ -480,7 +505,17 @@ void Project::set_list(std::vector<std::string> columns, int subject,
 }
 
 //---------------------------------------------------------------------------
-void Project::save_string_column(std::string name, std::vector<std::string> items)
+void Project::set_map(int subject, const std::string& prefix,
+                      const std::map<std::string, std::string>& map)
+{
+  for (const auto& pair : map) {
+    int column_index = get_index_for_column(prefix + pair.first, true);
+    this->set_value(column_index, subject + 2, pair.second); // +1 for header, +1 for 1-indexed
+  }
+}
+
+//---------------------------------------------------------------------------
+void Project::save_string_column(const std::string& name, std::vector<std::string> items)
 {
   int index = this->get_index_for_column(name, true);
 
@@ -494,14 +529,32 @@ void Project::save_string_column(std::string name, std::vector<std::string> item
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> Project::get_feature_names() const
+std::vector<std::string> Project::get_feature_names()
 {
   auto feature_names = this->get_matching_columns(FEATURE_PREFIX);
+  if (!this->subjects_.empty() && this->mesh_scalars_.empty()) {
+    auto subject = this->subjects_[0];
+    if (subject->get_domain_types().size() > 0 &&
+        subject->get_domain_types()[0] == DomainType::Mesh) {
+      if (!subject->get_segmentation_filenames().empty()) {
+        auto poly_data = MeshUtils::threadSafeReadMesh(
+          subject->get_segmentation_filenames()[0]).getVTKMesh();
+        if (poly_data) {
+          vtkIdType numberOfPointArrays = poly_data->GetPointData()->GetNumberOfArrays();
+          for (vtkIdType i = 0; i < numberOfPointArrays; i++) {
+            this->mesh_scalars_.push_back(std::string("FEATURE_")
+                                          + poly_data->GetPointData()->GetArrayName(i));
+          }
+        }
+      }
+    }
+  }
+  feature_names.insert(feature_names.end(), this->mesh_scalars_.begin(), this->mesh_scalars_.end());
   return feature_names;
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> Project::get_group_names() const
+std::vector<std::string> Project::get_group_names()
 {
   auto raw_names = this->get_matching_columns(GROUP_PREFIX);
 
@@ -539,7 +592,7 @@ Project::get_transform_list(std::vector<std::string> columns, int subject)
 }
 
 //---------------------------------------------------------------------------
-void Project::set_transform_list(std::vector<std::string> columns, int subject,
+void Project::set_transform_list(const std::vector<std::string>& columns, int subject,
                                  std::vector<std::vector<double>> transforms)
 {
   std::vector<std::string> transform_strings;
@@ -560,9 +613,8 @@ void Project::set_transform_list(std::vector<std::string> columns, int subject,
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> Project::get_group_values(std::string group_name) const
+std::vector<std::string> Project::get_group_values(const std::string& group_name) const
 {
-
   auto values = this->get_string_column(group_name);
 
   // remove duplicates
@@ -570,6 +622,27 @@ std::vector<std::string> Project::get_group_values(std::string group_name) const
   values.erase(std::unique(values.begin(), values.end()), values.end());
 
   return values;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Project::get_extra_columns() const
+{
+  xlnt::worksheet ws = this->wb_->sheet_by_index(0);
+  auto headers = ws.rows(false)[0];
+  std::vector<std::string> list;
+
+  for (int i = 0; i < headers.length(); i++) {
+    bool match = false;
+    for (auto prefix : this->matching_columns_) {
+      if (headers[i].to_string().substr(0, prefix.size()) == prefix) {
+        match = true;
+      }
+    }
+    if (!match) {
+      list.push_back(headers[i].to_string());
+    }
+  }
+  return list;
 }
 
 

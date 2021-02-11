@@ -2,24 +2,23 @@
 #include <iostream>
 
 // qt
-#include <QXmlStreamWriter>
 #include <QThread>
-#include <QTemporaryFile>
 #include <QFileDialog>
-#include <QProcess>
 #include <QMessageBox>
 
 // shapeworks
 #include <Visualization/ShapeWorksStudioApp.h>
 #include <Visualization/ShapeWorksWorker.h>
 #include <Data/Session.h>
-#include <Data/Mesh.h>
+#include <Data/StudioMesh.h>
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
 #include <Analysis/AnalysisTool.h>
 #include <Visualization/Lightbox.h>
 
 #include <ui_AnalysisTool.h>
+
+namespace shapeworks {
 
 const std::string AnalysisTool::MODE_ALL_SAMPLES_C("all samples");
 const std::string AnalysisTool::MODE_MEAN_C("mean");
@@ -84,7 +83,18 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   /// TODO nothing there yet (regression tab)
   this->ui_->tabWidget->removeTab(3);
 
-  this->ui_->evaluation_widget->hide();
+  this->ui_->graph_->set_y_label("Explained Variance");
+  this->ui_->compactness_graph->set_y_label("Compactness");
+//  this->ui_->evaluation_widget->hide();
+
+  for (auto button : {this->ui_->distance_transfom_radio_button,
+                      this->ui_->mesh_warping_radio_button, this->ui_->legacy_radio_button}) {
+    connect(button, &QRadioButton::clicked,
+            this, &AnalysisTool::reconstruction_method_changed);
+  }
+
+  this->ui_->reconstruction_options->hide();
+
 }
 
 //---------------------------------------------------------------------------
@@ -114,13 +124,13 @@ bool AnalysisTool::get_group_difference_mode()
 }
 
 //---------------------------------------------------------------------------
-std::vector<Point> AnalysisTool::get_group_difference_vectors()
+std::vector<Shape::Point> AnalysisTool::get_group_difference_vectors()
 {
-  std::vector<Point> vecs;
+  std::vector<Shape::Point> vecs;
 
   auto num_points = this->stats_.Mean().size() / 3;
   for (unsigned int i = 0; i < num_points; i++) {
-    Point tmp;
+    Shape::Point tmp;
     tmp.x = this->stats_.Group2Mean()[i * 3] - this->stats_.Group1Mean()[i * 3];
     tmp.y = this->stats_.Group2Mean()[i * 3 + 1] - this->stats_.Group1Mean()[i * 3 + 1];
     tmp.z = this->stats_.Group2Mean()[i * 3 + 2] - this->stats_.Group1Mean()[i * 3 + 2];
@@ -163,11 +173,9 @@ void AnalysisTool::on_reconstructionButton_clicked()
   this->store_settings();
   emit message("Please wait: running reconstruction step...");
   emit progress(5);
-  //this->ui_->run_optimize_button->setEnabled(false);
-  this->ui_->reconstructionButton->setEnabled(false);
   QThread* thread = new QThread;
   std::vector<std::vector<itk::Point<double>>> local, global;
-  std::vector<ImageType::Pointer> images;
+  std::vector<std::string> images;
   auto shapes = this->session_->get_shapes();
   local.resize(shapes.size());
   global.resize(shapes.size());
@@ -187,11 +195,12 @@ void AnalysisTool::on_reconstructionButton_clicked()
       local[ii].push_back(pt);
       global[ii].push_back(pt2);
     }
-    images[ii] = s->get_groomed_image();
+    std::string image = s->get_groomed_filename_with_path().toStdString();
+    images[ii] = image;
     ii++;
   }
   ShapeworksWorker* worker = new ShapeworksWorker(
-    ShapeworksWorker::ReconstructType, NULL, NULL, this->session_,
+    ShapeworksWorker::ReconstructType, nullptr, nullptr, nullptr, this->session_,
     local, global, images,
     this->ui_->maxAngle->value(),
     this->ui_->meshDecimation->value(),
@@ -212,7 +221,7 @@ void AnalysisTool::on_reconstructionButton_clicked()
 //---------------------------------------------------------------------------
 int AnalysisTool::getPCAMode()
 {
-  return this->ui_->pcaModeSpinBox->value();
+  return this->ui_->pcaModeSpinBox->value() - 1;
 }
 
 //---------------------------------------------------------------------------
@@ -257,6 +266,8 @@ AnalysisTool::~AnalysisTool()
 void AnalysisTool::set_session(QSharedPointer<Session> session)
 {
   this->session_ = session;
+  // reset to original
+  this->ui_->mesh_warping_radio_button->setChecked(true);
 }
 
 //---------------------------------------------------------------------------
@@ -268,10 +279,7 @@ void AnalysisTool::set_app(ShapeWorksStudioApp* app)
 //---------------------------------------------------------------------------
 void AnalysisTool::update_analysis_mode()
 {
-  // update UI
-
   this->handle_analysis_options();
-  // groups available
 }
 
 //---------------------------------------------------------------------------
@@ -398,6 +406,9 @@ bool AnalysisTool::compute_stats()
     return false;
   }
 
+  this->ui_->pcaModeSpinBox->setMaximum(
+    std::max<double>(1, this->session_->get_shapes().size() - 1));
+
   std::vector<vnl_vector<double>> points;
   std::vector<int> group_ids;
 
@@ -440,7 +451,6 @@ bool AnalysisTool::compute_stats()
 
   this->stats_.ImportPoints(points, group_ids);
   this->stats_.ComputeModes();
-  this->stats_.PrincipalComponentProjections();
 
   this->stats_ready_ = true;
   std::vector<double> vals;
@@ -448,8 +458,19 @@ bool AnalysisTool::compute_stats()
     vals.push_back(this->stats_.Eigenvalues()[i]);
   }
   this->ui_->graph_->set_data(vals);
-
   this->ui_->graph_->repaint();
+
+  this->ui_->chart_scroll_area_compactness->hide();
+/*
+  vals.clear();
+  for (int i = this->stats_.Eigenvalues().size() - 1; i > 0; i--) {
+    vals.push_back(this->stats_.get_compactness(0));
+    //vals.push_back(this->stats_.get_compactness(i));
+  }
+  this->ui_->compactness_graph->set_data(vals);
+  this->ui_->compactness_graph->repaint();
+*/
+
 
   return true;
 }
@@ -481,7 +502,7 @@ const vnl_vector<double>& AnalysisTool::get_mean_shape_points()
 }
 
 //-----------------------------------------------------------------------------
-const vnl_vector<double>& AnalysisTool::get_shape_points(int mode, double value, double group_value)
+const vnl_vector<double>& AnalysisTool::get_shape_points(int mode, double value)
 {
   if (!this->compute_stats() || this->stats_.Eigenvectors().size() <= 1) {
     return this->empty_shape_;
@@ -499,16 +520,6 @@ const vnl_vector<double>& AnalysisTool::get_shape_points(int mode, double value,
   this->pca_labels_changed(QString::number(value, 'g', 2),
                            QString::number(this->stats_.Eigenvalues()[m]),
                            QString::number(value * lambda));
-
-  ///TODO: fix for multi-group
-  /*
-  if (this->ui_->group_radio_button->isChecked()) {
-    this->temp_shape_ = this->stats_.Group1Mean() + (this->stats_.GroupDifference() * group_value);
-  }
-  else {
-    this->temp_shape_ = this->stats_.Mean() + (e * (value * lambda));
-  }
-*/
 
   this->temp_shape_ = this->stats_.Mean() + (e * (value * lambda));
 
@@ -704,10 +715,28 @@ void AnalysisTool::reset_stats()
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::enable_actions()
+void AnalysisTool::enable_actions(bool newly_enabled)
 {
-  this->ui_->reconstructionButton->setEnabled(
+  if (this->session_->get_num_shapes() < 1) {
+    return;
+  }
+
+  if (newly_enabled) {
+    this->ui_->mesh_warping_radio_button->setChecked(true);
+  }
+
+  auto domain_types = this->session_->get_domain_types();
+  bool image_domain = domain_types.size() > 0 && domain_types[0] == DomainType::Image;
+  this->ui_->distance_transfom_radio_button->setEnabled(
+    this->session_->particles_present() && this->session_->get_groomed_present() && image_domain);
+
+  this->ui_->mesh_warping_radio_button->setEnabled(
     this->session_->particles_present() && this->session_->get_groomed_present());
+
+  if (!this->ui_->mesh_warping_radio_button->isEnabled()) {
+    this->ui_->legacy_radio_button->setChecked(true);
+  }
+  this->reconstruction_method_changed();
 
   this->update_group_boxes();
 }
@@ -729,12 +758,6 @@ void AnalysisTool::set_analysis_mode(std::string mode)
   else if (mode == "regression") {
     this->ui_->tabWidget->setCurrentWidget(this->ui_->regression_tab);
   }
-}
-
-//---------------------------------------------------------------------------
-ShapeHandle AnalysisTool::get_shape(int mode, double value, double group_value)
-{
-  return this->create_shape_from_points(this->get_shape_points(mode, value, group_value));
 }
 
 //---------------------------------------------------------------------------
@@ -768,7 +791,7 @@ ShapeHandle AnalysisTool::get_mean_shape()
           sum = sum + value;
         }
       }
-      auto mean = sum / values.size();
+      Eigen::VectorXf mean = sum / values.size();
 
       if (ready) {
         shape->set_point_features(this->feature_map_, mean);
@@ -790,7 +813,7 @@ ShapeHandle AnalysisTool::get_mean_shape()
           sum_left = sum_left + value;
         }
       }
-      auto left_mean = sum_left / this->group1_list_.size();
+      Eigen::VectorXf left_mean = sum_left / static_cast<double>(this->group1_list_.size());
 
       for (auto shape : this->group2_list_) {
         shape->load_feature(Visualizer::MODE_RECONSTRUCTION_C, this->feature_map_);
@@ -802,7 +825,7 @@ ShapeHandle AnalysisTool::get_mean_shape()
           sum_right = sum_right + value;
         }
       }
-      auto right_mean = sum_right / this->group2_list_.size();
+      Eigen::VectorXf right_mean = sum_right / static_cast<double>(this->group2_list_.size());
 
       if (ready) {
         double ratio = this->get_group_value();
@@ -868,9 +891,8 @@ void AnalysisTool::update_group_boxes()
       this->ui_->group_box->addItem(QString::fromStdString(group));
     }
     this->current_group_names_ = group_names;
+    this->group_changed();
   }
-
-  this->group_changed();
 }
 
 //---------------------------------------------------------------------------
@@ -947,6 +969,9 @@ void AnalysisTool::on_metrics_open_button_toggled()
   bool show = this->ui_->metrics_open_button->isChecked();
   this->ui_->metrics_content->setVisible(show);
 
+  if (show) {
+    this->compute_stats();
+  }
   /// Disabled for now
   /*
   if (show) {
@@ -995,4 +1020,46 @@ bool AnalysisTool::is_group_active(int shape_index)
   }
 
   return true;
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::initialize_mesh_warper()
+{
+  if (this->session_->particles_present() && this->session_->get_groomed_present()) {
+
+    this->compute_stats();
+    int median = this->stats_.ComputeMedianShape(-32); //-32 = both groups
+
+    if (median >= this->session_->get_num_shapes()) {
+      return;
+    }
+    QSharedPointer<Shape> median_shape = this->session_->get_shapes()[median];
+    vtkSmartPointer<vtkPolyData> poly_data = median_shape->get_groomed_mesh(true)->get_poly_data();
+
+    this->session_->get_mesh_manager()->get_mesh_warper()->set_reference_mesh(poly_data,
+                                                                              median_shape->get_local_correspondence_points());
+  }
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::reconstruction_method_changed()
+{
+  this->ui_->reconstruction_options->setVisible(
+    this->ui_->distance_transfom_radio_button->isChecked());
+  std::string method = MeshGenerator::RECONSTRUCTION_LEGACY_C;
+  if (this->ui_->distance_transfom_radio_button->isChecked()) {
+    method = MeshGenerator::RECONSTRUCTION_DISTANCE_TRANSFORM_C;
+  }
+  else if (this->ui_->mesh_warping_radio_button->isChecked()) {
+    method = MeshGenerator::RECONSTRUCTION_MESH_WARPER_C;
+  }
+
+  auto previous_method = this->session_->get_mesh_manager()->get_mesh_generator()->get_reconstruction_method();
+  if (previous_method != method) {
+    this->session_->get_mesh_manager()->get_mesh_generator()->set_reconstruction_method(method);
+    this->session_->handle_clear_cache();
+    emit reconstruction_complete();
+  }
+}
+
 }

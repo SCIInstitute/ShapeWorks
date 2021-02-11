@@ -9,9 +9,6 @@
 #ifndef __itkParticleGradientDescentPositionOptimizer_txx
 #define __itkParticleGradientDescentPositionOptimizer_txx
 
-#ifdef SW_USE_OPENMP
-#include <omp.h>
-#endif /* SW_USE_OPENMP */
 const int global_iteration = 1;
 
 #include <algorithm>
@@ -24,6 +21,10 @@ const int global_iteration = 1;
 #include <sstream>
 #include "MemoryUsage.h"
 #include <chrono>
+
+#include <tbb/parallel_for.h>
+#include <tbb/task_scheduler_init.h>
+
 
 namespace itk
 {
@@ -67,6 +68,9 @@ namespace itk
   void ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
     ::StartAdaptiveGaussSeidelOptimization()
   {
+    /// uncomment this to run single threaded
+    //tbb::task_scheduler_init init(1);
+
     if (this->m_AbortProcessing) {
       return;
     }
@@ -109,51 +113,48 @@ namespace itk
             m_GradientFunction->BeforeIteration();
         counter++;
 
-#pragma omp parallel
-      {
         // Iterate over each domain
-#pragma omp for
-        for (int dom = 0; dom < numdomains; dom++)
-        {
+      tbb::parallel_for(
+        tbb::blocked_range<size_t>{0, numdomains},
+        [&](const tbb::blocked_range<size_t>& r) {
+          for (size_t dom = r.begin(); dom < r.end(); ++dom) {
+
           // skip any flagged domains
           if (m_ParticleSystem->GetDomainFlag(dom) == true)
           {
-            continue;
+            // note that this is really a 'continue' statement for the loop, but using TBB,
+            // we are in an anonymous function, not a loop, so return is equivalent to continue here
+            return;
           }
 
           const ParticleDomain *domain = m_ParticleSystem->GetDomain(dom);
 
           typename GradientFunctionType::Pointer localGradientFunction = m_GradientFunction;
-#ifdef SW_USE_OPENMP
+
+          // must clone this as we are in a thread and the gradient function is not thread-safe
           localGradientFunction = m_GradientFunction->Clone();
-#endif
 
           // Tell function which domain we are working on.
           localGradientFunction->SetDomainNumber(dom);
 
           // Iterate over each particle position
-          unsigned int k = 0;
-          typename ParticleSystemType::PointContainerType::ConstIterator endit =
-            m_ParticleSystem->GetPositions(dom)->GetEnd();
-          for (typename ParticleSystemType::PointContainerType::ConstIterator it
-            = m_ParticleSystem->GetPositions(dom)->GetBegin(); it != endit; it++, k++)
+          for (auto k=0; k<m_ParticleSystem->GetPositions(dom)->GetSize(); k++)
           {
             if (m_TimeSteps[dom][k] < minimumTimeStep) {
               m_TimeSteps[dom][k] = minimumTimeStep;
             }
             // Compute gradient update.
             double energy = 0.0;
-            localGradientFunction->BeforeEvaluate(it.GetIndex(), dom, m_ParticleSystem);
+            localGradientFunction->BeforeEvaluate(k, dom, m_ParticleSystem);
             // maximumUpdateAllowed is set based on some fraction of the distance between particles
             // This is to avoid particles shooting past their neighbors
             double maximumUpdateAllowed;
-            VectorType original_gradient = localGradientFunction->Evaluate(it.GetIndex(), dom, m_ParticleSystem, maximumUpdateAllowed, energy);
+            VectorType original_gradient = localGradientFunction->Evaluate(k, dom, m_ParticleSystem, maximumUpdateAllowed, energy);
 
-            unsigned int idx = it.GetIndex();
-            PointType pt = *it;
+            PointType pt = m_ParticleSystem->GetPositions(dom)->Get(k);
 
             // Step 1 Project the gradient vector onto the tangent plane
-            VectorType original_gradient_projectedOntoTangentSpace = domain->ProjectVectorToSurfaceTangent(original_gradient, pt);
+            VectorType original_gradient_projectedOntoTangentSpace = domain->ProjectVectorToSurfaceTangent(original_gradient, pt, k);
 
             double newenergy, gradmag;
             while (true) {
@@ -161,7 +162,7 @@ namespace itk
               VectorType gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
 
               // Step B Constrain the gradient so that the resulting position will not violate any domain constraints
-              m_ParticleSystem->GetDomain(dom)->GetConstraints()->applyBoundaryConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
+              m_ParticleSystem->GetDomain(dom)->GetConstraints()->applyBoundaryConstraints(gradient, m_ParticleSystem->GetPosition(k, dom));
 
               gradmag = gradient.magnitude();
 
@@ -172,13 +173,13 @@ namespace itk
               }
 
               // Step D compute the new point position
-              PointType newpoint = domain->UpdateParticlePosition(pt, gradient);
+              PointType newpoint = domain->UpdateParticlePosition(pt, k, gradient);
 
               // Step F update the point position in the particle system
-              m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);
+              m_ParticleSystem->SetPosition(newpoint, k, dom);
 
               // Step G compute the new energy of the particle system
-              newenergy = localGradientFunction->Energy(it.GetIndex(), dom, m_ParticleSystem);
+              newenergy = localGradientFunction->Energy(k, dom, m_ParticleSystem);
 
               if (newenergy < energy) // good move, increase timestep for next time
               {
@@ -190,8 +191,8 @@ namespace itk
               {// bad move, reset point position and back off on timestep
                 if (m_TimeSteps[dom][k] > minimumTimeStep)
                 {
-                  domain->ApplyConstraints(pt);
-                  m_ParticleSystem->SetPosition(pt, it.GetIndex(), dom);
+                  domain->ApplyConstraints(pt, k);
+                  m_ParticleSystem->SetPosition(pt, k, dom);
 
                   m_TimeSteps[dom][k] /= factor;
                 }
@@ -204,7 +205,7 @@ namespace itk
             } // end while(true)
           } // for each particle
         }// for each domain
-      }
+      });
 
       m_NumberOfIterations++;
       m_GradientFunction->AfterIteration();

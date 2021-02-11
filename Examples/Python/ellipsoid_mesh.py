@@ -28,17 +28,20 @@ def Run_Pipeline(args):
     outputDirectory = "Output/ellipsoid_mesh/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
-    CommonUtils.get_data(datasetName, outputDirectory)
-
-    meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))
-    imageFiles = sorted(glob.glob(outputDirectory + datasetName + "/images/*.nrrd"))
-
-    meshFiles = meshFiles[:15]
-    imageFiles = imageFiles[:15]
+    #If tiny_test then download subset of the data
     if args.tiny_test:
         args.use_single_scale = 1
-        meshFiles = meshFiles[:2]
-        imageFiles = imageFiles[:2]
+        CommonUtils.download_subset(args.use_case,datasetName, outputDirectory)
+        meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))[:3]
+    #else download the entire dataset
+    else:
+        CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
+        meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))
+    
+    # Select data if using subsample
+    if args.use_subsample:
+        sample_idx = samplemesh(meshFiles, int(args.num_subsample))
+        meshFiles = [meshFiles[i] for i in sample_idx]
 
     pointDir = outputDirectory + 'shape_models/'
     if not os.path.exists(pointDir):
@@ -86,5 +89,4 @@ def Run_Pipeline(args):
     if args.interactive != 0:
         input("Press Enter to continue")
 
-    # Image files are passed because Studio does not support viewing meshes yet.
-    launchShapeWorksStudio(pointDir, imageFiles, localPointFiles, worldPointFiles)
+    launchShapeWorksStudio(pointDir, meshFiles, localPointFiles, worldPointFiles)

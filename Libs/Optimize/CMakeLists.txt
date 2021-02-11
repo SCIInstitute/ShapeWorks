@@ -4,6 +4,7 @@ add_library(Optimize STATIC
   ${ParticleSystem_sources}
   Optimize.cpp
   OptimizeParameterFile.cpp
+  OptimizeParameters.cpp
   ./ParticleSystem/MeshDomain.cpp
   ./ParticleSystem/Constraints.cpp
   ./ParticleSystem/TriMeshWrapper.cpp
@@ -20,12 +21,23 @@ target_link_libraries(Optimize
   Particles
   ${ITK_LIBRARIES}
   ${VTK_LIBRARIES}
-  vgl
-  vgl_algo
+  igl::core
+  )
+
+# Create an interface library that will bring pybind11::embed along
+# This can't be used to create the shared libary for the Python API
+# Otherwise, you have two pythons and the init clashes an gives a
+# GIL mutex error
+add_library(OptimizeLibraries INTERFACE)
+
+target_link_libraries(OptimizeLibraries INTERFACE
+  Optimize
+  pybind11::embed
   )
 
 target_include_directories(Optimize PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/ParticleSystem>
+  $<BUILD_INTERFACE:${PYTHON_INCLUDE_DIRS}>
   $<INSTALL_INTERFACE:include>
   )

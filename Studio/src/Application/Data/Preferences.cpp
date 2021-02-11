@@ -123,13 +123,25 @@ void Preferences::set_glyph_size(float value)
 //-----------------------------------------------------------------------------
 float Preferences::get_glyph_quality()
 {
-  return this->settings_.value("Project/glyph_quality", 5.0).toFloat();
+  return this->settings_.value("Project/glyph_quality", 10.0).toFloat();
 }
 
 //-----------------------------------------------------------------------------
 void Preferences::set_glyph_quality(float value)
 {
   this->settings_.setValue("Project/glyph_quality", value);
+}
+
+//-----------------------------------------------------------------------------
+bool Preferences::get_glyph_auto_size()
+{
+  return this->settings_.value("Project/glyph_auto_size", true).toBool();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_glyph_auto_size(bool value)
+{
+  this->settings_.setValue("Project/glyph_auto_size", value);
 }
 
 //-----------------------------------------------------------------------------
@@ -214,6 +226,35 @@ void Preferences::add_recent_file(QString file)
 //-----------------------------------------------------------------------------
 void Preferences::restore_defaults()
 {
+  // Don't reset recent files
+  auto recent = this->get_recent_files();
   this->settings_.clear();
-  return;
+  this->settings_.setValue("Main/recentFileListNew", recent);
+}
+
+//-----------------------------------------------------------------------------
+Preferences::OrientationMarkerType Preferences::get_orientation_marker_type()
+{
+  return static_cast<OrientationMarkerType>(
+    this->settings_.value("Viewer/orientation_marker_type",
+                          OrientationMarkerType::medical).toInt());
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_orientation_marker_type(Preferences::OrientationMarkerType type)
+{
+  this->settings_.setValue("Viewer/orientation_marker_type", type);
+}
+
+//-----------------------------------------------------------------------------
+Preferences::OrientationMarkerCorner Preferences::get_orientation_marker_corner()
+{
+  return static_cast<OrientationMarkerCorner>(this->settings_.value(
+    "Viewer/orientation_marker_corner", OrientationMarkerCorner::upper_right).toInt());
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_orientation_marker_corner(Preferences::OrientationMarkerCorner corner)
+{
+  this->settings_.setValue("Viewer/orientation_marker_corner", corner);
 }

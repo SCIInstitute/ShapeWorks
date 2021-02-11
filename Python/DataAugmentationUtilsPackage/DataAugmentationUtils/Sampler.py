@@ -6,6 +6,7 @@ import os
 import numpy as np
 from abc import ABC, abstractmethod
 from sklearn.mixture import GaussianMixture
+import random
 
 
 ###################### Sampler Class ###################################
@@ -55,7 +56,8 @@ class Mixture_Sampler(Sampler):
 		print("Using " + str(mixture_num) + " components.")
 		return mixture_num
 	def sample(self):
-		sample = self.GMM.sample(1)[0][0]
+		rand_int = random.randint(1, 1000)
+		sample = self.GMM.sample(rand_int)[0][-1]
 		closest_index = getClosest(sample, self.embedded_matrix)
 		return sample, closest_index
 
@@ -74,7 +76,7 @@ class KDE_Sampler(Sampler):
 				if dist < smallest and dist != 0:
 					smallest = dist
 			nearest_neighbor_dists.append(smallest)
-		self.sigma_squared = np.mean(np.array(nearest_neighbor_dists))
+		self.sigma_squared = np.mean(np.array(nearest_neighbor_dists))/embedded_matrix.shape[1]
 	def sample(self):
 		base_index = np.random.randint(self.embedded_matrix.shape[0])
 		base_PCA_score = self.embedded_matrix[base_index]

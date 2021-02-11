@@ -2,7 +2,7 @@
 
 #include <QMutexLocker>
 
-using namespace shapeworks;
+namespace shapeworks {
 
 QOptimize::QOptimize(QObject* parent) :
   QObject(parent),
@@ -71,11 +71,8 @@ void QOptimize::IterateCallback(itk::Object* caller, const itk::EventObject& e)
     }
   }
 
-//  if (this->iterCount_ % this->reportInterval_ == 0) {
   if (update) {
-
     this->time_since_last_update_.start();
-
     {
       QMutexLocker locker(&qmutex_);
 
@@ -103,5 +100,5 @@ void QOptimize::IterateCallback(itk::Object* caller, const itk::EventObject& e)
 
     emit progress(this->m_iteration_count * 100 / this->m_total_iterations);
   }
-  this->m_iteration_count++;
+}
 }

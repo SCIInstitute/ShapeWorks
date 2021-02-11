@@ -23,6 +23,7 @@
 #include <vtkPolyDataNormals.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkScalarBarActor.h>
+#include <vtkColorSeries.h>
 
 #include <Application/Data/CustomSurfaceReconstructionFilter.h>
 #include <Data/Preferences.h>
@@ -30,6 +31,8 @@
 #include <Visualization/Lightbox.h>
 #include <Visualization/Viewer.h>
 #include <Visualization/Visualizer.h>
+
+namespace shapeworks {
 
 //-----------------------------------------------------------------------------
 Viewer::Viewer()
@@ -45,10 +48,10 @@ Viewer::Viewer()
   //this->surface_lut_->SetColorSpaceToHSV();
 
   this->surface_lut_ = vtkSmartPointer<vtkLookupTable>::New();
-  this->surface_lut_->SetTableRange (0, 1);
-  this->surface_lut_->SetHueRange (0.667, 0.0);
-  this->surface_lut_->SetSaturationRange (1, 1);
-  this->surface_lut_->SetValueRange (1, 1);
+  this->surface_lut_->SetTableRange(0, 1);
+  this->surface_lut_->SetHueRange(0.667, 0.0);
+  this->surface_lut_->SetSaturationRange(1, 1);
+  this->surface_lut_->SetValueRange(1, 1);
   this->surface_lut_->SetIndexedLookup(false);
   this->surface_lut_->Build();
 
@@ -180,7 +183,8 @@ Viewer::Viewer()
   this->corner_annotation_ = vtkSmartPointer<vtkCornerAnnotation>::New();
   this->corner_annotation_->SetLinearFontScaleFactor(2);
   this->corner_annotation_->SetNonlinearFontScaleFactor(1);
-  this->corner_annotation_->SetMaximumFontSize(16);
+  this->corner_annotation_->SetMaximumFontSize(32);
+  this->corner_annotation_->SetMaximumLineHeight(0.03);
 
 }
 
@@ -194,6 +198,17 @@ void Viewer::set_color_scheme(int scheme)
   this->renderer_->SetBackground(color_schemes_[scheme].background.r,
                                  color_schemes_[scheme].background.g,
                                  color_schemes_[scheme].background.b);
+
+  double average = (color_schemes_[scheme].background.r + color_schemes_[scheme].background.g +
+                    color_schemes_[scheme].background.b) / 3.0;
+
+  double color = 1;
+  if (average > 0.5) {
+    color = 0;
+  }
+
+  this->scalar_bar_actor_->GetLabelTextProperty()->SetColor(color, color, color);
+
 }
 
 //-----------------------------------------------------------------------------
@@ -220,7 +235,7 @@ void Viewer::set_visualizer(Visualizer* visualizer)
 //-----------------------------------------------------------------------------
 void Viewer::display_vector_field()
 {
-  std::vector<Point> vecs = this->shape_->get_vectors();
+  std::vector<Shape::Point> vecs = this->shape_->get_vectors();
   if (vecs.empty()) {
     // restore things to normal
     this->glyphs_->SetSourceConnection(sphere_source_->GetOutputPort());
@@ -300,7 +315,7 @@ void Viewer::display_vector_field()
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::compute_point_differences(const std::vector<Point>& points,
+void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
                                        vtkSmartPointer<vtkFloatArray> magnitudes,
                                        vtkSmartPointer<vtkFloatArray> vectors)
 {
@@ -495,7 +510,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
 
     auto feature_map = this->visualizer_->get_feature_map();
 
-    std::vector<Point> vecs = this->shape_->get_vectors();
+    std::vector<Shape::Point> vecs = this->shape_->get_vectors();
     if (!vecs.empty()) {
       feature_map = "";
     }
@@ -551,44 +566,23 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
     actor->GetProperty()->SetSpecularPower(15);
 
     if (feature_map != "" && poly_data) {
-
       poly_data->GetPointData()->SetActiveScalars(feature_map.c_str());
-
       mapper->ScalarVisibilityOn();
-
       mapper->SetScalarModeToUsePointData();
-/*
-      auto rainbow = vtkColorTransferFunction::New();
-      rainbow->SetColorSpaceToHSV();
-      rainbow->HSVWrapOff();
-      rainbow->AddHSVPoint(0.0, 0.0, 1.0, 1.0);
-      rainbow->AddHSVPoint(1.0, 0.66667, 1.0, 1.0);
-
-      mapper->SetLookupTable(rainbow);
-      //mapper->SetScalarRange(-500,500);
-*/
-
-      //mapper->SetScalarRange(24, 80);
-      //mapper->SetScalarRange(-773, 1806);
 
       auto scalars = poly_data->GetPointData()->GetScalars(feature_map.c_str());
       if (scalars) {
         double range[2];
         scalars->GetRange(range);
-        //std::cerr << "range = " << range[0] << ":" << range[1] << "\n";
         this->visualizer_->update_feature_range(range);
         this->update_difference_lut(range[0], range[1]);
         mapper->SetScalarRange(range[0], range[1]);
       }
-
     }
     else {
       mapper->ScalarVisibilityOff();
-
     }
-
     this->display_vector_field();
-
   }
 
   this->update_actors();
@@ -601,6 +595,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
 void Viewer::clear_viewer()
 {
   this->renderer_->RemoveAllViewProps();
+  this->shape_ = nullptr;
   this->visible_ = false;
   this->viewer_ready_ = false;
   this->mesh_ready_ = false;
@@ -815,7 +810,7 @@ void Viewer::set_loading_screen(vtkSmartPointer<vtkImageData> loading_screen)
 //-----------------------------------------------------------------------------
 void Viewer::draw_exclusion_spheres(QSharedPointer<Shape> object)
 {
-  QList<Point> centers = object->get_exclusion_sphere_centers();
+  QList<Shape::Point> centers = object->get_exclusion_sphere_centers();
   QList<double> radii = object->get_exclusion_sphere_radii();
 
   int num_points = centers.size();
@@ -837,7 +832,7 @@ void Viewer::draw_exclusion_spheres(QSharedPointer<Shape> object)
     this->exclusion_sphere_points_->SetNumberOfPoints(num_points);
 
     for (int i = 0; i < num_points; i++) {
-      Point p = centers[i];
+      Shape::Point p = centers[i];
       scalars->InsertValue(i, radii[i]);
       this->exclusion_sphere_points_->InsertPoint(i, p.x, p.y, p.z);
     }
@@ -877,31 +872,15 @@ void Viewer::update_difference_lut(float r0, float r1)
   if (fabs(r0) > fabs(r1)) { maxrange = fabs(r0); }
   else { maxrange = fabs(r1); }
 
-  //std::cerr << "r0 = " << r0 << "\n";
-  //std::cerr << "r1 = " << r1 << "\n";
-  //std::cerr << "maxrange = " << maxrange << "\n";
-  //this->differenceLUT->SetScalarRange(-maxrange, maxrange);
-
-  //this->differenceLUT->SetColorSpaceToHSV();
-  //this->differenceLUT->AddHSVPoint(-maxrange, 0.33, 1.0, 1.0);
-  //this->differenceLUT->AddHSVPoint(maxrange, 0.66, 1.0, 1.0);
-
   double rd = r1 - r0;
 
-  /*
-  this->surface_lut_->SetColorSpaceToHSV();
-  this->surface_lut_->AddRGBPoint(r0, blue[0], blue[1], blue[2]);
-  this->surface_lut_->AddRGBPoint(r0 + rd * 0.5, green[0], green[1], green[2]);
-  this->surface_lut_->AddRGBPoint(r1, red[0], red[1], red[2]);
-*/
-  //this->surface_lut_->SetTableRange()
   double range[2];
   range[0] = r0;
   range[1] = r1;
-  //range[0] = -50;
-  //range[1] = 50;
+
   this->surface_lut_->SetTableRange(range);
   this->surface_lut_->Build();
+  this->surface_mapper_->SetLookupTable(this->surface_lut_);
 
   this->surface_mapper_->SetScalarRange(range[0], range[1]);
   this->arrow_glyph_mapper_->SetScalarRange(range);
@@ -927,4 +906,5 @@ void Viewer::update_feature_range(double* range)
 QSharedPointer<Shape> Viewer::get_shape()
 {
   return this->shape_;
+}
 }

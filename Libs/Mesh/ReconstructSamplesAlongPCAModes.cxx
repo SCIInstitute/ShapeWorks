@@ -27,6 +27,7 @@
 #include "ParticleBasedSurfaceReconstruction_InputParams.h"
 #include "Vis.h"
 #include "Reconstruction.h"
+#include <Libs/Utils/StringUtils.h>
 
 #include "itkNrrdImageIOFactory.h"
 #include "itkMetaImageIOFactory.h"
@@ -153,7 +154,7 @@ int DoIt(InputParams params)
         std::cout << eigenValues[sid] << ", " ;
     std::cout << std::endl;
 
-    std::string prefix = Utils::getFilename(params.out_prefix);
+    std::string prefix = shapeworks::StringUtils::getFilename(params.out_prefix);
     if(!prefix.empty())
         prefix = prefix + "_";
 

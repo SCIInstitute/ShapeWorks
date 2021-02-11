@@ -11,8 +11,11 @@
 
 namespace itk
 {
-  bool MeshDomain::ApplyConstraints(PointType &p, bool dbg) const {
-    p = meshWrapper->SnapToMesh(p);
+  bool MeshDomain::ApplyConstraints(PointType &p, int idx, bool dbg) const {
+    if (!meshWrapper) {
+      return true;
+    }
+    p = meshWrapper->SnapToMesh(p, idx);
     return true;
   }
 
@@ -22,14 +25,14 @@ namespace itk
     return true;
   }
 
-  vnl_vector_fixed<double, DIMENSION> MeshDomain::ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos) const {
-    return meshWrapper->ProjectVectorToSurfaceTangent(pos, gradE);
+  vnl_vector_fixed<double, DIMENSION> MeshDomain::ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION> &gradE, const PointType &pos, int idx) const {
+    return meshWrapper->ProjectVectorToSurfaceTangent(pos, idx, gradE);
   }
 
-  MeshDomain::PointType MeshDomain::UpdateParticlePosition(const PointType &point, vnl_vector_fixed<double, DIMENSION> &update) const {
+  MeshDomain::PointType MeshDomain::UpdateParticlePosition(const PointType &point, int idx, vnl_vector_fixed<double, DIMENSION> &update) const {
     vnl_vector_fixed<double, DIMENSION> negativeUpdate;
     for (unsigned int i = 0; i < DIMENSION; i++) { negativeUpdate[i] = -update[i]; }
-    PointType newPoint = meshWrapper->GeodesicWalk(point, negativeUpdate);
+    PointType newPoint = meshWrapper->GeodesicWalk(point, idx, negativeUpdate);
     return newPoint;
   }
 

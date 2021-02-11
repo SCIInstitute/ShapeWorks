@@ -1,0 +1,2 @@
+Maximum distance to target mesh: 488.466
+compare success

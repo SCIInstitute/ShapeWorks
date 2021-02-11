@@ -11,34 +11,45 @@
 
 #include "vnl/vnl_vector.h"
 
-#include <Data/Mesh.h>
+#include <Data/StudioMesh.h>
 #include <Data/Preferences.h>
 #include <Data/SurfaceReconstructor.h>
-#include <Data/LegacyMeshGenerator.h>
+#include <Data/MeshWarper.h>
 #include <Data/MeshWorkQueue.h>
 
-#include <Groom/ShapeWorksGroom.h>
+namespace shapeworks {
 
-class MeshGenerator
-{
+class MeshGenerator {
 public:
 
-  MeshGenerator(Preferences& prefs);
+  MeshGenerator();
 
   ~MeshGenerator();
 
-  MeshHandle build_mesh(const MeshWorkItem &item);
+  MeshHandle build_mesh(const MeshWorkItem& item);
 
   MeshHandle build_mesh_from_points(const vnl_vector<double>& shape, int domain);
 
   MeshHandle build_mesh_from_image(ImageType::Pointer image, float iso_value = 0.0001);
 
-  MeshHandle build_mesh_from_file(string filename, float iso_value = 0.0001);
+  MeshHandle build_mesh_from_file(std::string filename, float iso_value = 0.0001);
 
   void set_surface_reconstructor(QSharedPointer<SurfaceReconstructor> reconstructor);
 
+  void set_mesh_warper(QSharedPointer<MeshWarper> mesh_warper);
+
+  void set_reconstruction_method(std::string method);
+  std::string get_reconstruction_method();
+
+  static const std::string RECONSTRUCTION_LEGACY_C;
+  static const std::string RECONSTRUCTION_DISTANCE_TRANSFORM_C;
+  static const std::string RECONSTRUCTION_MESH_WARPER_C;
+
 private:
-  Preferences& prefs_;
+
   QSharedPointer<SurfaceReconstructor> surface_reconstructor_;
-  QSharedPointer<LegacyMeshGenerator> legacy_reconstructor_;
+  QSharedPointer<MeshWarper> mesh_warper_;
+  std::string reconstruction_method_ = RECONSTRUCTION_MESH_WARPER_C;
+
 };
+}

@@ -4,13 +4,14 @@ on:
   push:
     branches:
       - master
-      - release_v5.4
     tags:
     - '*'
   pull_request:
 
 env:
   CCACHE_VERSION: 3.7.7
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: RelWithDebInfo
   
 jobs:
   build:
@@ -49,7 +50,7 @@ jobs:
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
     - name: Setup Conda
-      uses: goanpeca/setup-miniconda@v1
+      uses: conda-incubator/setup-miniconda@v2.0.1
       with:
           miniconda-version: 'latest'
           
@@ -72,7 +73,7 @@ jobs:
         key: QtCache-mac
 
     - name: Install Qt
-      uses: akenmorris/install-qt-action@v5
+      uses: jurplel/install-qt-action@v2.11.1
       with:
         version: "5.9.9"
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
@@ -87,11 +88,11 @@ jobs:
     - name: Build dependencies
       shell: bash -l {0}
       if: steps.cache-dependencies.outputs.cache-hit != 'true'
-      run: conda activate shapeworks && SDKROOT=$HOME/MacOSX10.13.sdk INSTALL_DIR=$HOME/install BUILD_DIR=$HOME/build ./build_dependencies.sh
+      run: conda activate shapeworks && SDKROOT=$HOME/MacOSX10.13.sdk INSTALL_DIR=$HOME/install BUILD_DIR=$HOME/build ./build_dependencies.sh --build-type=$BUILD_TYPE
 
     - name: cmake
       shell: bash -l {0}
-      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_PREFIX_PATH=$HOME/install -DCMAKE_BUILD_TYPE=Release -DUSE_OPENMP=OFF -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DCMAKE_OSX_SYSROOT="$HOME/MacOSX10.13.sdk" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.13" ..
+      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_PREFIX_PATH=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DPython3_ROOT_DIR:FILEPATH=${CONDA_PREFIX} -DUSE_OPENMP=OFF -DBuild_PythonAPI=ON -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DCMAKE_OSX_SYSROOT="$HOME/MacOSX10.13.sdk" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.13" ..
 
     - name: make
       shell: bash -l {0}
@@ -103,6 +104,8 @@ jobs:
 
     - name: Build Binary Package
       shell: bash -l {0}
+      env:
+        PR_NUMBER: ${{ github.event.number }}
       run: conda activate shapeworks && ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
 
     - name: make test

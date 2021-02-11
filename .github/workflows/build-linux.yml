@@ -4,13 +4,14 @@ on:
   push:
     branches:
       - master
-      - release_v5.4
     tags:
     - '*'
   pull_request:
 
 env:
   CCACHE_VERSION: 3.7.7
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: RelWithDebInfo
 
 jobs:
   build:
@@ -38,7 +39,7 @@ jobs:
           ${{ runner.os }}-ccache-
     
     - name: Setup Conda
-      uses: goanpeca/setup-miniconda@v1
+      uses: conda-incubator/setup-miniconda@v2.0.0
       with:
           miniconda-version: 'latest'
 
@@ -72,7 +73,7 @@ jobs:
         key: QtCache-linux
 
     - name: Install Qt
-      uses: jurplel/install-qt-action@v2
+      uses: jurplel/install-qt-action@v2.11.1
       with:
         version: "5.9.9"
         mirror: 'http://mirrors.ocf.berkeley.edu/qt/'
@@ -88,11 +89,11 @@ jobs:
     - name: Build dependencies
       shell: bash -l {0}
       if: steps.cache-dependencies.outputs.cache-hit != 'true'
-      run: conda activate shapeworks && INSTALL_DIR=$HOME/install BUILD_DIR=$HOME/build ./build_dependencies.sh
+      run: conda activate shapeworks && INSTALL_DIR=$HOME/install BUILD_DIR=$HOME/build ./build_dependencies.sh --build-type=$BUILD_TYPE
 
     - name: cmake
       shell: bash -l {0}
-      run: conda activate shapeworks && mkdir build && cd build && cmake -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DEigen3_DIR=$HOME/install/share/eigen3/cmake -DXLNT_DIR=$HOME/install -DOpenVDB_DIR=$HOME/install/lib/cmake/OpenVDB -DCMAKE_BUILD_TYPE=Release -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install ..
+      run: conda activate shapeworks && mkdir build && cd build && cmake -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DEigen3_DIR=$HOME/install/share/eigen3/cmake -DXLNT_DIR=$HOME/install -DLIBIGL_DIR=$HOME/install -DOpenVDB_DIR=$HOME/install/lib/cmake/OpenVDB -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install ..
 
     - name: make
       shell: bash -l {0}
@@ -107,6 +108,8 @@ jobs:
 
     - name: Build Binary Package
       shell: bash -l {0}
+      env:
+        PR_NUMBER: ${{ github.event.number }}
       run: conda activate shapeworks && PATH=$HOME:$PATH ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
 
     - name: make test
@@ -136,3 +139,11 @@ jobs:
         title: "Development Build for Linux"
         files: |
              ${{runner.workspace}}/ShapeWorks/artifacts/*.zip
+
+    - name: Deploy Docs
+      shell: bash -l {0}
+      run: conda activate shapeworks && pwd && ls && ./Support/deploy_docs.sh ${GITHUB_WORKSPACE}/build
+      env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+             

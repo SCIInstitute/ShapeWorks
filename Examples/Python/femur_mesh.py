@@ -22,19 +22,23 @@ def Run_Pipeline(args):
     outputDirectory = "Output/femur_mesh/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
-    CommonUtils.get_data(datasetName, outputDirectory)
-   
-    groomDir = outputDirectory + 'groomed/'
-    if not os.path.exists(groomDir):
-        os.makedirs(groomDir)
-    meshDir = outputDirectory + datasetName + '/groomed/meshes/'
-    meshFiles = []
-    for f in sorted(os.listdir(meshDir)):
-        meshFiles.append(meshDir + f)
+    
 
-    if len(meshFiles) == 0:
-        print('Zero mesh files found in', meshDir)
-        return
+    #If tiny_test then download subset of the data
+    if args.tiny_test:
+        args.use_single_scale = 1
+        CommonUtils.download_subset(args.use_case,datasetName, outputDirectory)
+        meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/groomed/meshes/*.ply"))[:3]
+    #else download the entire dataset
+    else:
+        CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
+        meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/groomed/meshes/*.ply"))
+
+
+    # Select data if using subsample
+    if args.use_subsample:
+        sample_idx = samplemesh(meshFiles, int(args.num_subsample))
+        meshFiles = [meshFiles[i] for i in sample_idx]
 
     pointDir = outputDirectory + 'shape_models/'
 

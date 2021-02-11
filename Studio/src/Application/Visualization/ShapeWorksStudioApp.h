@@ -7,31 +7,23 @@
 #include <QDoubleSpinBox>
 #include <QLabel>
 #include <QTimer>
+#include <QCheckBox>
 #include <QProgressBar>
+#include <QElapsedTimer>
 
 #include <Data/PreferencesWindow.h>
-
-class Lightbox;
-
-class GroomTool;
-
-class OptimizeTool;
-
-class AnalysisTool;
-
-class Session;
-
-class Visualizer;
-
-namespace shapeworks {
-class SplashScreen;
-}
 
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
 
-class LightboxLayout;
-
+namespace shapeworks {
+class Lightbox;
+class GroomTool;
+class OptimizeTool;
+class AnalysisTool;
+class Session;
+class Visualizer;
+class SplashScreen;
 class WheelEventForwarder;
 
 //! Main ShapeWorksStudio window
@@ -85,7 +77,6 @@ public Q_SLOTS:
   void on_view_mode_combobox_currentIndexChanged(QString disp_mode);
   void on_auto_view_button_clicked();
 
-
   void handle_pca_changed();
   void handle_slider_update();
 
@@ -106,20 +97,26 @@ public Q_SLOTS:
   void handle_message(std::string str);
   void handle_error(std::string str);
   void handle_warning(std::string str);
-  void handle_progress(size_t amt);
+  void handle_progress(int amt);
   void handle_new_mesh();
   void handle_clear_cache();
 
-  void update_feature_map_selection(const QString& feature_map);
+  void update_feature_map_selection(const QString &feature_map);
   void show_splash_screen();
   void about();
+  void keyboard_shortcuts();
 
+protected:
+  void dragEnterEvent(QDragEnterEvent* event) override;
+  void dragLeaveEvent(QDragLeaveEvent* event) override;
+  void dropEvent(QDropEvent* event) override;
 
 private:
 
   void new_session();
   void update_tool_mode();
   void update_view_mode();
+  void reset_num_viewers();
 
   enum VIEW_MODE {
     ORIGINAL = 0,
@@ -144,7 +141,7 @@ private:
 
   void set_view_combo_item_enabled(int item, bool value);
 
-  void disableAllActions();
+  void disable_all_actions();
 
   void enable_possible_actions();
 
@@ -194,6 +191,7 @@ private:
   QSlider* glyph_quality_slider_;
   QLabel* glyph_size_label_;
   QLabel* glyph_quality_label_;
+  QCheckBox* glyph_auto_size_;
   QList<QAction*> recent_file_actions_;
 
   QProgressBar* progress_bar_;
@@ -206,4 +204,8 @@ private:
   bool block_update_{false};
   bool is_loading_{false};
 
+  QElapsedTimer time_since_last_update_;
+
+
 };
+}

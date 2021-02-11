@@ -40,7 +40,7 @@ def Run_Pipeline(args):
     outputDirectory = "Output/ellipsoid_fd/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
-    CommonUtils.get_data(datasetName, outputDirectory)
+    CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
 
     fileListDT = sorted(glob.glob(outputDirectory + datasetName + "/distance_transforms/*.nrrd"))
     fileListNew = sorted(glob.glob(outputDirectory + datasetName + "/new_distance_transforms/*.nrrd"))
@@ -99,7 +99,7 @@ def Run_Pipeline(args):
     parameterDictionary = {
         "number_of_particles" : 128,
         "use_normals": 0,
-        "normal_weight": 10.0,
+        "normal_weight": 15.0,
         "checkpointing_interval" : 200,
         "keep_checkpoints" : 0,
         "iterations_per_split" : 100,
@@ -109,8 +109,8 @@ def Run_Pipeline(args):
         "recompute_regularization_interval" : 2,
         "domains_per_shape" : 1,
         "domain_type" : 'image',
-        "relative_weighting" : 10,
-        "initial_relative_weighting" : 0.01,
+        "relative_weighting" : 15,
+        "initial_relative_weighting" : 0.05,
         "procrustes_interval" : 0,
         "procrustes_scaling" : 0,
         "save_init_splits" : 0,

@@ -45,7 +45,7 @@ def generalization(particles_glob, working_dir):
     """
     generalization takes a glob expression for a list of particles and computes the generalization
     of the SSM. The reconstructions are saved, and the 0th and 100th percentile are opened in
-    ShapeWorksView2 for visualization
+    ShapeWorksStudio for visualization
     """
 
     print('Generalization\n'\
@@ -58,11 +58,15 @@ def generalization(particles_glob, working_dir):
     print(cmd)
     subprocess.check_call(cmd, shell=True)
 
-    print("Best reconstruction")
-    subprocess.check_call(['ShapeWorksView2', f'{working_dir}/0perc.xml'])
+    print("*************************")
+    print("* Best reconstruction")
+    print("*************************")
+    subprocess.check_call(['ShapeWorksStudio', f'{working_dir}/0perc.xml'])
 
-    print("Worst reconstruction")
-    subprocess.check_call(['ShapeWorksView2', f'{working_dir}/100perc.xml'])
+    print("*************************")
+    print("* Worst reconstruction")
+    print("*************************")
+    subprocess.check_call(['ShapeWorksStudio', f'{working_dir}/100perc.xml'])
 
     print()
 
@@ -70,7 +74,7 @@ def specificity(particles_glob, working_dir):
     """
     specificity takes a glob expression for a list of particles and computes the specficity
     of the SSM. The sampled reconstructions are saved, and the 0th and 100th percentile are opened in
-    ShapeWorksView2 for visualization
+    ShapeWorksStudio for visualization
     """
 
     print('Specificity\n'\
@@ -83,10 +87,14 @@ def specificity(particles_glob, working_dir):
     print(cmd)
     subprocess.check_call(cmd, shell=True)
 
-    print("Best reconstruction")
-    subprocess.check_call(['ShapeWorksView2', f'{working_dir}/0perc.xml'])
+    print("*************************")
+    print("* Best reconstruction")
+    print("*************************")
+    subprocess.check_call(['ShapeWorksStudio', f'{working_dir}/0perc.xml'])
 
-    print("Worst reconstruction")
-    subprocess.check_call(['ShapeWorksView2', f'{working_dir}/100perc.xml'])
+    print("*************************")
+    print("* Worst reconstruction")
+    print("*************************")
+    subprocess.check_call(['ShapeWorksStudio', f'{working_dir}/100perc.xml'])
 
     print()

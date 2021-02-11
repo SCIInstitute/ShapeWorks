@@ -39,9 +39,6 @@ private:
 
   bool set_debug_parameters(TiXmlHandle* docHandle, Optimize* optimize);
 
-  std::string getFileNameWithoutExtension(std::string path);
-  void ParseFileNamesFromPaths(std::vector<std::string>& filePaths, Optimize* optimize);
-
   bool read_image_inputs(TiXmlHandle* docHandle, Optimize* optimize);
 
   bool read_mesh_inputs(TiXmlHandle* docHandle, Optimize* optimize);

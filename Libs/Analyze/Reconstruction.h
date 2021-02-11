@@ -84,8 +84,8 @@ public:
             std::vector< PointArrayType >(),
             std::vector< PointArrayType > global_pts =
             std::vector< PointArrayType >(),
-            std::vector<typename ImageType::Pointer> distance_transform =
-            std::vector<typename ImageType::Pointer>() );
+            std::vector<std::string> distance_transform =
+            std::vector<std::string>() );
     void reset();
 
     void setDecimation(float dec);
@@ -97,6 +97,11 @@ public:
     void setSmoothingLambda(float smoothingLambda);
     void setSmoothingIterations(int smoothingIterations);
     void setOutputEnabled(bool enabled);
+
+    //! Set if the mean DT before warp is enabled or not
+    //! Disabling this allows Reconstruction to use DTs that are of
+    //! different sizes and with different origins
+    void setMeanBeforeWarpEnabled(bool enabled);
 
     vtkSmartPointer<vtkPolyData> getMesh(PointArrayType local_pts);
     void readMeanInfo(std::string dense,
@@ -136,7 +141,7 @@ private:
     void computeDenseMean(
             std::vector< PointArrayType > local_pts,
             std::vector< PointArrayType > global_pts,
-            std::vector<typename ImageType::Pointer> distance_transform);
+            std::vector<std::string> distance_transform);
     vnl_matrix<double> computeParticlesNormals(
             vtkSmartPointer< vtkPoints > particles,
             typename ImageType::Pointer distance_transform);
@@ -167,6 +172,8 @@ private:
             bool preserveTopology      = true);
     vtkSmartPointer<vtkPolyData> MeshQC(
             vtkSmartPointer<vtkPolyData> meshIn);
+
+    typename ImageType::Pointer loadImage(std::string filename);
 
     void performKMeansClustering(
             std::vector< PointArrayType > global_pts,
@@ -199,6 +206,8 @@ private:
     std::string out_prefix_; // to save intermediate files in case needed
     bool output_enabled_ = true;
     bool usePairwiseNormalsDifferencesForGoodBad_ = false;
+
+    bool mean_before_warp_enabled_ = true;
 };
 
 #include "Reconstruction.cpp"  //need to include template definition in order for it to be instantiated

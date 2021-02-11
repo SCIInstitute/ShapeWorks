@@ -7,14 +7,16 @@
 
 #include <Data/MeshManager.h>
 
+namespace shapeworks {
+
 //---------------------------------------------------------------------------
 MeshManager::MeshManager(Preferences& prefs) :
   prefs_(prefs),
   mesh_cache_(prefs),
-  mesh_generator_(prefs),
   surface_reconstructor_(new SurfaceReconstructor())
 {
-  this->mesh_generator_.set_surface_reconstructor(this->surface_reconstructor_);
+  this->mesh_generator_->set_mesh_warper(this->mesh_warper_);
+  this->mesh_generator_->set_surface_reconstructor(this->surface_reconstructor_);
 
   qRegisterMetaType<MeshWorkItem>("MeshWorkItem");
   qRegisterMetaType<MeshHandle>("MeshHandle");
@@ -23,7 +25,8 @@ MeshManager::MeshManager(Preferences& prefs) :
 }
 
 //---------------------------------------------------------------------------
-MeshManager::~MeshManager() {}
+MeshManager::~MeshManager()
+{}
 
 //---------------------------------------------------------------------------
 void MeshManager::clear_cache()
@@ -41,7 +44,7 @@ void MeshManager::generate_mesh(const MeshWorkItem item)
 
     MeshWorker* worker = new MeshWorker(this->prefs_, item,
                                         &this->work_queue_, &this->mesh_cache_);
-    worker->get_mesh_generator()->set_surface_reconstructor(this->surface_reconstructor_);
+    worker->set_mesh_generator(this->mesh_generator_);
 
     connect(worker, &MeshWorker::result_ready, this, &MeshManager::handle_thread_complete);
 
@@ -50,7 +53,7 @@ void MeshManager::generate_mesh(const MeshWorkItem item)
 }
 
 //---------------------------------------------------------------------------
-MeshHandle MeshManager::get_mesh(const MeshWorkItem &item)
+MeshHandle MeshManager::get_mesh(const MeshWorkItem& item, bool wait)
 {
   MeshHandle mesh;
 
@@ -58,24 +61,23 @@ MeshHandle MeshManager::get_mesh(const MeshWorkItem &item)
   if (this->prefs_.get_cache_enabled()) {
     mesh = this->mesh_cache_.get_mesh(item);
     if (!mesh) {
-      if (prefs_.get_parallel_enabled() &&
-          (this->prefs_.get_num_threads() > 0)) {
+      if (!wait && this->prefs_.get_parallel_enabled() && this->prefs_.get_num_threads() > 0) {
         this->generate_mesh(item);
       }
       else {
-        mesh = this->mesh_generator_.build_mesh(item);
+        mesh = this->mesh_generator_->build_mesh(item);
         this->mesh_cache_.insert_mesh(item, mesh);
       }
     }
   }
   else {
-    mesh = this->mesh_generator_.build_mesh(item);
+    mesh = this->mesh_generator_->build_mesh(item);
   }
   return mesh;
 }
 
 //---------------------------------------------------------------------------
-MeshHandle MeshManager::get_mesh(const vnl_vector<double> &points)
+MeshHandle MeshManager::get_mesh(const vnl_vector<double>& points)
 {
   MeshWorkItem item;
   item.points = points;
@@ -83,7 +85,7 @@ MeshHandle MeshManager::get_mesh(const vnl_vector<double> &points)
 }
 
 //---------------------------------------------------------------------------
-void MeshManager::handle_thread_complete(const MeshWorkItem &item, MeshHandle mesh)
+void MeshManager::handle_thread_complete(const MeshWorkItem& item, MeshHandle mesh)
 {
   this->mesh_cache_.insert_mesh(item, mesh);
   this->work_queue_.remove(item);
@@ -102,4 +104,11 @@ void MeshManager::handle_thread_complete(const MeshWorkItem &item, MeshHandle me
 QSharedPointer<SurfaceReconstructor> MeshManager::get_surface_reconstructor()
 {
   return this->surface_reconstructor_;
+}
+
+//---------------------------------------------------------------------------
+QSharedPointer<MeshWarper> MeshManager::get_mesh_warper()
+{
+  return this->mesh_warper_;
+}
 }

@@ -13,7 +13,9 @@
 #include <Data/StudioLog.h>
 #include <Visualization/Visualizer.h>
 
-using namespace shapeworks;
+using ReaderType = itk::ImageFileReader<ImageType>;
+
+namespace shapeworks {
 
 //---------------------------------------------------------------------------
 Shape::Shape()
@@ -31,7 +33,7 @@ Shape::~Shape()
 {}
 
 //---------------------------------------------------------------------------
-QSharedPointer<Mesh> Shape::get_mesh(std::string display_mode)
+QSharedPointer<StudioMesh> Shape::get_mesh(std::string display_mode)
 {
   if (display_mode == Visualizer::MODE_ORIGINAL_C) {
     return this->get_original_mesh();
@@ -43,8 +45,12 @@ QSharedPointer<Mesh> Shape::get_mesh(std::string display_mode)
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_annotations(QStringList annotations)
+void Shape::set_annotations(QStringList annotations, bool only_overwrite_blank)
 {
+  if (only_overwrite_blank && this->corner_annotations_.size() > 0 &&
+      this->corner_annotations_[0] != "") {
+    return; // don't override
+  }
   this->corner_annotations_ = annotations;
 }
 
@@ -85,7 +91,7 @@ void Shape::import_original_image(std::string filename, float iso_value)
 }
 
 //---------------------------------------------------------------------------
-QSharedPointer<Mesh> Shape::get_original_mesh()
+QSharedPointer<StudioMesh> Shape::get_original_mesh(bool wait)
 {
   if (!this->original_mesh_) {
     if (!this->subject_) {
@@ -94,7 +100,7 @@ QSharedPointer<Mesh> Shape::get_original_mesh()
     }
     else {
       this->generate_meshes(this->subject_->get_segmentation_filenames(), this->original_mesh_,
-                            true);
+                            true, wait);
     }
   }
   return this->original_mesh_;
@@ -134,6 +140,11 @@ ImageType::Pointer Shape::get_original_image()
 ImageType::Pointer Shape::get_groomed_image()
 {
   if (!this->groomed_image_) {
+    if (this->subject_->get_groomed_filenames().size() < 1) {
+      STUDIO_LOG_ERROR("No groomed file for subject");
+      ImageType::Pointer image;
+      return image;
+    }
     std::string filename = this->subject_->get_groomed_filenames()[0]; // single domain supported
     if (filename != "") {
       ImageType::Pointer image;
@@ -159,7 +170,7 @@ ImageType::Pointer Shape::get_groomed_image()
 //---------------------------------------------------------------------------
 void Shape::import_groomed_image(ImageType::Pointer img, double iso, TransformType transform)
 {
-  this->groomed_mesh_ = QSharedPointer<Mesh>(new Mesh());
+  this->groomed_mesh_ = QSharedPointer<StudioMesh>(new StudioMesh());
   this->groomed_image_ = img;
   this->groomed_mesh_->create_from_image(img, iso);
   this->groomed_transform_ = transform;
@@ -181,18 +192,25 @@ void Shape::import_groomed_image(ImageType::Pointer img, double iso, TransformTy
 }
 
 //---------------------------------------------------------------------------
-QSharedPointer<Mesh> Shape::get_groomed_mesh()
+QSharedPointer<StudioMesh> Shape::get_groomed_mesh(bool wait)
 {
   if (!this->groomed_mesh_) {
     if (!this->subject_) {
       std::cerr << "Error: asked for groomed mesh when none is present!\n";
     }
     else {
-      this->generate_meshes(this->subject_->get_groomed_filenames(), this->groomed_mesh_, false);
+      this->generate_meshes(this->subject_->get_groomed_filenames(), this->groomed_mesh_, false,
+                            wait);
     }
   }
 
   return this->groomed_mesh_;
+}
+
+//---------------------------------------------------------------------------
+void Shape::reset_groomed_mesh()
+{
+  this->groomed_mesh_.reset();
 }
 
 //---------------------------------------------------------------------------
@@ -272,7 +290,7 @@ bool Shape::import_local_point_file(QString filename)
 }
 
 //---------------------------------------------------------------------------
-QSharedPointer<Mesh> Shape::get_reconstructed_mesh()
+QSharedPointer<StudioMesh> Shape::get_reconstructed_mesh()
 {
   if (!this->reconstructed_mesh_) {
     this->reconstructed_mesh_ = this->mesh_manager_->get_mesh(this->global_correspondence_points_);
@@ -328,14 +346,21 @@ QString Shape::get_original_filename_with_path()
 //---------------------------------------------------------------------------
 QString Shape::get_groomed_filename()
 {
-  QFileInfo qfi(this->groomed_filename_);
-  return qfi.fileName();
+  if (this->subject_->get_groomed_filenames().size() < 1) {
+    return "";
+  }
+  auto string = QString::fromStdString(this->subject_->get_groomed_filenames()[0]);
+  QFileInfo info(string);
+  return info.fileName();
 }
 
 //---------------------------------------------------------------------------
 QString Shape::get_groomed_filename_with_path()
 {
-  return this->groomed_filename_;
+  if (this->subject_->get_groomed_filenames().size() < 1) {
+    return "";
+  }
+  return QString::fromStdString(this->subject_->get_groomed_filenames()[0]);
 }
 
 //---------------------------------------------------------------------------
@@ -363,13 +388,13 @@ QString Shape::get_local_point_filename_with_path()
 }
 
 //---------------------------------------------------------------------------
-QList<Point> Shape::get_exclusion_sphere_centers()
+QList<Shape::Point> Shape::get_exclusion_sphere_centers()
 {
   return this->exclusion_sphere_centers_;
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_exclusion_sphere_centers(QList<Point> centers)
+void Shape::set_exclusion_sphere_centers(QList<Shape::Point> centers)
 {
   this->exclusion_sphere_centers_ = centers;
 }
@@ -395,17 +420,20 @@ int Shape::get_group_id()
 //---------------------------------------------------------------------------
 void Shape::set_group_id(int id)
 {
+  if (this->subject_) {
+    this->subject_->set_group_values({{"group", std::to_string(id)}});
+  }
   this->group_id_ = id;
 }
 
 //---------------------------------------------------------------------------
-std::vector<Point> Shape::get_vectors()
+std::vector<Shape::Point> Shape::get_vectors()
 {
   return this->vectors_;
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_vectors(std::vector<Point> vectors)
+void Shape::set_vectors(std::vector<Shape::Point> vectors)
 {
   this->vectors_ = vectors;
 }
@@ -419,45 +447,22 @@ void Shape::set_transform(const vnl_vector<double>& transform)
 //---------------------------------------------------------------------------
 vnl_vector<double> Shape::get_transform()
 {
+  auto groom_transform = this->get_groomed_transform();
+  if (groom_transform.size() != 12) {
+    return this->transform_;
+  }
+
+  this->transform_.set_size(12);
+  for (unsigned int i = 0; i < 12; i++) {
+    this->transform_[i] = groom_transform[i];
+  }
+
   return this->transform_;
 }
-/*
-//---------------------------------------------------------------------------
-void Shape::generate_original_meshes()
-{
-  if (this->subject_->get_segmentation_filenames().size() > 0) {
-    std::string filename = this->subject_->get_segmentation_filenames()[0];
-
-    MeshWorkItem item;
-    item.filename = filename;
-    MeshHandle mesh = this->mesh_manager_->get_mesh(item);
-    if (mesh) {
-      //std::cerr << "mesh was ready from manager!\n";
-      this->original_mesh_ = mesh;
-
-      /// Temporarily calculate it here
-      auto com = vtkSmartPointer<vtkCenterOfMass>::New();
-      com->SetInputData(mesh->get_poly_data());
-      com->Update();
-      double center[3];
-      com->GetCenter(center);
-
-      this->transform_.set_size(12);
-      for (unsigned int i = 0; i < 3; i++) {
-        this->transform_[9 + i] = center[i];
-      }
-
-      this->set_transform(this->original_mesh_->get_center_transform());
-    }
-    else {
-      //std::cerr << "no mesh yet from manager!\n";
-    }
-  }
-}*/
 
 //---------------------------------------------------------------------------
-void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<Mesh>& mesh,
-                            bool save_transform)
+void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<StudioMesh>& mesh,
+                            bool save_transform, bool wait)
 {
   if (filenames.size() < 1) {
     return;
@@ -468,12 +473,11 @@ void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<Mesh>&
 
   MeshWorkItem item;
   item.filename = filename;
-  MeshHandle new_mesh = this->mesh_manager_->get_mesh(item);
+  MeshHandle new_mesh = this->mesh_manager_->get_mesh(item, wait);
   if (new_mesh) {
-    //std::cerr << "mesh was ready from manager!\n";
     mesh = new_mesh;
 
-    /// Temporarily calculate it here
+    /// Temporarily calculate the COM here
     auto com = vtkSmartPointer<vtkCenterOfMass>::New();
     com->SetInputData(mesh->get_poly_data());
     com->Update();
@@ -531,10 +535,8 @@ void Shape::load_feature(std::string display_mode, std::string feature)
   }
   vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
 
-  //std::cerr << "checking if mesh has scalar array for " << feature << "\n";
   auto scalar_array = poly_data->GetPointData()->GetArray(feature.c_str());
   if (!scalar_array) {
-    //std::cerr << "shape: array NOT present! Loading...\n";
 
     if (!this->subject_) {
       return;
@@ -547,18 +549,29 @@ void Shape::load_feature(std::string display_mode, std::string feature)
       transform = this->get_groomed_transform();
     }
 
-//    std::cerr << "Apply feature map for feature '" << feature << "' using filename "
-//              << filenames[feature] << "\n";
+    if (this->subject_->get_domain_types().size() > 0 &&
+        this->subject_->get_domain_types()[0] == DomainType::Image) {
 
-    // read the feature
-    ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileName(filenames[feature]);
-    reader->Update();
-    ImageType::Pointer image = reader->GetOutput();
+      // read the feature
+      ReaderType::Pointer reader = ReaderType::New();
+      reader->SetFileName(filenames[feature]);
+      reader->Update();
+      ImageType::Pointer image = reader->GetOutput();
 
-    mesh->apply_feature_map(feature, image, transform);
+      mesh->apply_feature_map(feature, image, transform);
+      this->apply_feature_to_points(feature, image);
 
-    this->apply_feature_to_points(feature, image);
+    }
+    else if (this->subject_->get_domain_types().size() > 0 &&
+             this->subject_->get_domain_types()[0] == DomainType::Mesh) {
+
+      auto original_mesh = this->get_original_mesh(true);
+
+      mesh->apply_scalars(original_mesh, transform);
+      this->apply_feature_to_points(feature, original_mesh);
+
+    }
+
   }
 }
 
@@ -607,6 +620,48 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
 }
 
 //---------------------------------------------------------------------------
+void Shape::apply_feature_to_points(std::string feature, QSharedPointer<StudioMesh> mesh)
+{
+  vtkSmartPointer<vtkPolyData> from_mesh = mesh->get_poly_data();
+
+  // Create the tree
+  vtkSmartPointer<vtkKdTreePointLocator> kDTree = vtkSmartPointer<vtkKdTreePointLocator>::New();
+  kDTree->SetDataSet(from_mesh);
+  kDTree->BuildLocator();
+
+  vnl_vector<double> transform = this->get_groomed_transform();
+
+  int num_points = this->local_correspondence_points_.size() / 3;
+
+  Eigen::VectorXf values(num_points);
+
+  vtkDataArray* from_array = from_mesh->GetPointData()->GetArray(feature.c_str());
+
+  int idx = 0;
+  for (int i = 0; i < num_points; ++i) {
+
+    double pt[3];
+    pt[0] = this->local_correspondence_points_[idx++];
+    pt[1] = this->local_correspondence_points_[idx++];
+    pt[2] = this->local_correspondence_points_[idx++];
+
+    if (transform.size() == 12) {
+      pt[0] = pt[0] + transform[9];
+      pt[1] = pt[1] + transform[10];
+      pt[2] = pt[2] + transform[11];
+    }
+
+    vtkIdType id = kDTree->FindClosestPoint(pt);
+    vtkVariant var = from_array->GetVariantValue(id);
+
+    values[i] = var.ToDouble();
+  }
+  this->point_features_[feature] = values;
+
+}
+
+
+//---------------------------------------------------------------------------
 Eigen::VectorXf Shape::get_point_features(std::string feature)
 {
   auto it = this->point_features_.find(feature);
@@ -615,6 +670,22 @@ Eigen::VectorXf Shape::get_point_features(std::string feature)
   }
 
   return it->second;
+}
+
+//---------------------------------------------------------------------------
+TransformType Shape::get_groomed_transform()
+{
+  if (this->groomed_transform_.size() == 0) {
+    // single domain support
+    auto transforms = this->subject_->get_groomed_transforms();
+    if (transforms.size() > 0) {
+      this->groomed_transform_.set_size(transforms[0].size());
+      for (int i = 0; i < transforms[0].size(); i++) {
+        this->groomed_transform_[i] = transforms[0][i];
+      }
+    }
+  }
+  return this->groomed_transform_;
 }
 
 //---------------------------------------------------------------------------
@@ -629,21 +700,4 @@ void Shape::set_point_features(std::string feature, Eigen::VectorXf values)
   }
 }
 
-//---------------------------------------------------------------------------
-TransformType Shape::get_groomed_transform()
-{
-  if (this->groomed_transform_.size() == 0) {
-    // single domain support
-    auto transforms = this->subject_->get_groomed_transforms();
-    if (transforms.size() > 0) {
-      this->groomed_transform_.set_size(transforms[0].size());
-      //std::cerr << "loaded groomed transform from project: \n";
-      for (int i = 0; i < transforms[0].size(); i++) {
-        //std::cerr << transforms[0][i] << " ";
-        this->groomed_transform_[i] = transforms[0][i];
-      }
-      //std::cerr << "\n";
-    }
-  }
-  return this->groomed_transform_;
 }
