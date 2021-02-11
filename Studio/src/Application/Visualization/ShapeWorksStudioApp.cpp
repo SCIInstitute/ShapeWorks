@@ -672,7 +672,9 @@ void ShapeWorksStudioApp::handle_slider_update()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_pca_update()
 {
-  this->compute_mode_shape();
+  if (this->analysis_tool_->get_analysis_mode() == AnalysisTool::MODE_PCA_C) {
+    this->compute_mode_shape();
+  }
 }
 
 //---------------------------------------------------------------------------

@@ -291,23 +291,20 @@ void AnalysisTool::handle_analysis_options()
 {
 
   if (this->ui_->tabWidget->currentWidget() == this->ui_->samples_tab) {
+    this->ui_->pcaAnimateCheckBox->setChecked(false);
+    this->ui_->pcaAnimateCheckBox->setEnabled(false);
+    this->ui_->pcaModeSpinBox->setEnabled(false);
+    this->pca_animate_timer_.stop();
+    this->ui_->pcaSlider->setEnabled(false);
     if (this->ui_->singleSamplesRadio->isChecked()) {
       //one sample mode
       this->ui_->sampleSpinBox->setEnabled(true);
       this->ui_->medianButton->setEnabled(true);
-      this->ui_->pcaSlider->setEnabled(false);
-      this->ui_->pcaAnimateCheckBox->setEnabled(false);
-      this->ui_->pcaModeSpinBox->setEnabled(false);
-      this->ui_->pcaAnimateCheckBox->setChecked(false);
     }
     else {
       //all samples mode
       this->ui_->sampleSpinBox->setEnabled(false);
       this->ui_->medianButton->setEnabled(false);
-      this->ui_->pcaSlider->setEnabled(false);
-      this->ui_->pcaAnimateCheckBox->setEnabled(false);
-      this->ui_->pcaModeSpinBox->setEnabled(false);
-      this->ui_->pcaAnimateCheckBox->setChecked(false);
     }
   }
   else if (this->ui_->tabWidget->currentWidget() == this->ui_->mean_tab) {
@@ -318,6 +315,7 @@ void AnalysisTool::handle_analysis_options()
     this->ui_->pcaAnimateCheckBox->setEnabled(false);
     this->ui_->pcaModeSpinBox->setEnabled(false);
     this->ui_->pcaAnimateCheckBox->setChecked(false);
+    this->pca_animate_timer_.stop();
   }
   else if (this->ui_->tabWidget->currentWidget() == this->ui_->pca_tab) {
     //pca mode
@@ -334,6 +332,7 @@ void AnalysisTool::handle_analysis_options()
     this->ui_->pcaSlider->setEnabled(false);
     this->ui_->pcaAnimateCheckBox->setEnabled(false);
     this->ui_->pcaModeSpinBox->setEnabled(false);
+    this->pca_animate_timer_.stop();
   }
 
   emit update_view();
@@ -609,7 +608,6 @@ void AnalysisTool::on_pcaModeSpinBox_valueChanged(int i)
 void AnalysisTool::handle_pca_animate_state_changed()
 {
   if (this->pcaAnimate()) {
-    //this->setPregenSteps();
     this->pca_animate_timer_.setInterval(10);
     this->pca_animate_timer_.start();
   }
@@ -621,6 +619,10 @@ void AnalysisTool::handle_pca_animate_state_changed()
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_pca_timer()
 {
+  if (!this->pcaAnimate()) {
+    return;
+  }
+
   int value = this->ui_->pcaSlider->value();
   if (this->pca_animate_direction_) {
     value += this->ui_->pcaSlider->singleStep();
@@ -631,7 +633,6 @@ void AnalysisTool::handle_pca_timer()
 
   if (value >= this->ui_->pcaSlider->maximum() || value <= this->ui_->pcaSlider->minimum()) {
     this->pca_animate_direction_ = !this->pca_animate_direction_;
-    //this->setPregenSteps();
   }
 
   this->ui_->pcaSlider->setValue(value);
@@ -641,13 +642,10 @@ void AnalysisTool::handle_pca_timer()
 void AnalysisTool::handle_group_animate_state_changed()
 {
   if (this->ui_->group_animate_checkbox->isChecked()) {
-    //this->setPregenSteps();
-    std::cerr << "group animating\n";
     this->group_animate_timer_.setInterval(10);
     this->group_animate_timer_.start();
   }
   else {
-    std::cerr << "group NOT animating\n";
     this->group_animate_timer_.stop();
   }
 }
