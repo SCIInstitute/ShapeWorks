@@ -1,10 +1,10 @@
 import os
 import sys
-import shapeworks as sw
+from shapeworks import *
 
 def dimsTest():
-  d1 = sw.Dims(1, 1, 1)
-  d2 = sw.Dims(2, 2, 1)
+  d1 = Dims(1, 1, 1)
+  d2 = Dims(2, 2, 1)
   
   d2[2] = 2
 

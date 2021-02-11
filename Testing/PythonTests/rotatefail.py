@@ -1,12 +1,12 @@
 import os
 import sys
-import shapeworks as sw
+from shapeworks import *
 
 def rotatefailTest1():
-  img = sw.Image(os.environ["DATA"] + "/la-bin-centered.nrrd")
+  img = Image(os.environ["DATA"] + "/la-bin-centered.nrrd")
   img.rotate(0)
 
-  compareImg = sw.Image(os.environ["DATA"] + "/rotatefail.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/rotatefail.nrrd")
 
   return img.compare(compareImg)
 
@@ -16,10 +16,10 @@ if val is False:
   sys.exit(1)
 
 def rotatefailTest2():
-  img = sw.Image(os.environ["DATA"] + "/la-bin-centered.nrrd")
+  img = Image(os.environ["DATA"] + "/la-bin-centered.nrrd")
   img.rotate(0.785, [0.0, 0.0, 1.0])
 
-  compareImg = sw.Image(os.environ["DATA"] + "/rotate1.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/rotate1.nrrd")
 
   return img.compare(compareImg)
 
@@ -29,10 +29,10 @@ if val is False:
   sys.exit(1)
 
 def rotatefailTest3():
-  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.rotate(0, [0.0, 0.0, 1.0])
 
-  compareImg = sw.Image(os.environ["DATA"] + "/rotatefail.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/rotatefail.nrrd")
 
   return img.compare(compareImg)
 

@@ -1,12 +1,12 @@
 import os
 import sys
-import shapeworks as sw
+from shapeworks import *
 
 def antialiasfailTest():
-  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.antialias(iterations=1)
 
-  compareImg = sw.Image(os.environ["DATA"] + "/antialias3.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/antialias3.nrrd")
 
   return img.compare(compareImg)
 

@@ -1,12 +1,12 @@
 import os
 import sys
-import shapeworks as sw
+from shapeworks import *
 
 def fillholesTest():
-  mesh = sw.Mesh(os.environ["DATA"] + "/femur.vtk")
+  mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
   mesh.fillHoles()
 
-  compareMesh = sw.Mesh(os.environ["DATA"] + "/fillholes.vtk")
+  compareMesh = Mesh(os.environ["DATA"] + "/fillholes.vtk")
 
   return mesh == compareMesh
 

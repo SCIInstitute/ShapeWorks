@@ -1,12 +1,12 @@
 import os
 import sys
-import shapeworks as sw
+from shapeworks import *
 
 def padfailTest1():
-  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.pad()
 
-  compareImg = sw.Imageage(os.environ["DATA"] + "/padfail.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/padfail.nrrd")
 
   return img.compare(compareImg)
 
@@ -16,10 +16,10 @@ if val is False:
   sys.exit(1)
 
 def padfailTest2():
-  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.pad(0)
 
-  compareImg = sw.Imageage(os.environ["DATA"] + "/padfail.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/padfail.nrrd")
 
   return img.compare(compareImg)
 
