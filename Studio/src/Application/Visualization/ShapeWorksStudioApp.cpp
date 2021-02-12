@@ -175,8 +175,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           this, SLOT(handle_groom_complete()));
   connect(this->groom_tool_.data(), SIGNAL(error_message(std::string)),
           this, SLOT(handle_error(std::string)));
-  connect(this->groom_tool_.data(), SIGNAL(message(std::string)),
-          this, SLOT(handle_message(std::string)));
+  connect(this->groom_tool_.data(), &GroomTool::message,
+          this, &ShapeWorksStudioApp::handle_message);
   connect(this->groom_tool_.data(), &GroomTool::progress,
           this, &ShapeWorksStudioApp::handle_progress);
 
@@ -193,8 +193,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           this, SLOT(handle_error(std::string)));
   connect(this->optimize_tool_.data(), SIGNAL(warning_message(std::string)),
           this, SLOT(handle_warning(std::string)));
-  connect(this->optimize_tool_.data(), SIGNAL(message(std::string)),
-          this, SLOT(handle_message(std::string)));
+  connect(this->optimize_tool_.data(), &OptimizeTool::message,
+          this, &ShapeWorksStudioApp::handle_message);
+  connect(this->optimize_tool_.data(), &OptimizeTool::status,
+          this, &ShapeWorksStudioApp::handle_status);
   connect(this->optimize_tool_.data(), &OptimizeTool::progress,
           this, &ShapeWorksStudioApp::handle_progress);
 
@@ -684,6 +686,13 @@ void ShapeWorksStudioApp::handle_message(std::string str)
   if (str != this->current_message_) {
     STUDIO_LOG_MESSAGE(QString::fromStdString(str));
   }
+  this->ui_->statusbar->showMessage(QString::fromStdString(str));
+  this->current_message_ = str;
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_status(std::string str)
+{
   this->ui_->statusbar->showMessage(QString::fromStdString(str));
   this->current_message_ = str;
 }
@@ -1777,7 +1786,7 @@ void ShapeWorksStudioApp::dropEvent(QDropEvent* event)
   }
 }
 
-//---------------------------------------------------------------------------
+
 //---------------------------------------------------------------------------
 
 }
