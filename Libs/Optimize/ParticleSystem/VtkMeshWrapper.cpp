@@ -7,6 +7,7 @@
 #include <vtkPointData.h>
 #include <vtkTriangleFilter.h>
 #include <vtkGenericCell.h>
+#include <vtkCleanPolyData.h>
 
 #include <vtkTriangle.h>
 
@@ -43,14 +44,17 @@ using vec3 = Eigen::Vector3d;
 //---------------------------------------------------------------------------
 VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
 {
-
-  vtkSmartPointer<vtkTriangleFilter> triangleFilter =
+  vtkSmartPointer<vtkTriangleFilter> triangle_filter =
     vtkSmartPointer<vtkTriangleFilter>::New();
-  triangleFilter->SetInputData(poly_data);
-  triangleFilter->Update();
+  triangle_filter->SetInputData(poly_data);
+  triangle_filter->Update();
+
+  vtkSmartPointer<vtkCleanPolyData> clean = vtkSmartPointer<vtkCleanPolyData>::New();
+  clean->SetInputConnection(triangle_filter->GetOutputPort());
 
   vtkSmartPointer<vtkPolyDataNormals> normals = vtkSmartPointer<vtkPolyDataNormals>::New();
-  normals->SetInputData(triangleFilter->GetOutput());
+  normals->SetInputConnection(clean->GetOutputPort());
+  normals->SplittingOff(); // very important or connectivity is lost
   normals->ComputeCellNormalsOn();
   normals->ComputePointNormalsOn();
   normals->Update();
@@ -64,7 +68,7 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
     this->poly_data_->GetCell(i, cell);
 
     vtkSmartPointer<vtkTriangle> triangle = vtkSmartPointer<vtkTriangle>::New();
-    //triangle->GetPointIds()->SetNumberOfIds(3);
+    triangle->GetPointIds()->SetNumberOfIds(3);
     triangle->GetPointIds()->SetId(0, cell->GetPointId(0));
     triangle->GetPointIds()->SetId(1, cell->GetPointId(1));
     triangle->GetPointIds()->SetId(2, cell->GetPointId(2));
@@ -80,9 +84,8 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
   this->cell_locator_->SetDataSet(poly_data);
   this->cell_locator_->BuildLocator();
 
-  ComputeMeshBounds();
-  ComputeGradN();
-
+  this->ComputeMeshBounds();
+  this->ComputeGradN();
 }
 
 //---------------------------------------------------------------------------
@@ -140,11 +143,10 @@ VtkMeshWrapper::PointType VtkMeshWrapper::GeodesicWalk(VtkMeshWrapper::PointType
     particle2tri_[idx] = ending_face;
 
     if (idx >= this->particle_normals_.size()) {
-      this->particle_normals_.resize(idx+1);
+      this->particle_normals_.resize(idx + 1);
     }
     this->particle_normals_[idx] = this->CalculateNormalAtPoint(newPointpt, idx);
   }
-
 
   return newPointpt;
 
@@ -354,6 +356,8 @@ VtkMeshWrapper::ProjectVectorToFace(const Eigen::Vector3d& normal,
 
   Eigen::Vector3d new_vector = vector - normal * normal.dot(vector);
 
+  //return new_vector;
+
   auto new_mag = new_vector.norm();
   double ratio = old_mag / new_mag;
 
@@ -509,6 +513,7 @@ VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d proj
   double minimumUpdate = 0.0000000001;
   double barycentricEpsilon = 0.0001;
   std::vector<int> facesTraversed;
+  //std::vector<vec3> positions;
   while (remainingVector.norm() > minimumUpdate && currentFace != -1) {
     facesTraversed.push_back(currentFace);
     vec3 currentBary = ComputeBarycentricCoordinates(
@@ -516,6 +521,7 @@ VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d proj
     //std::cerr << "Current Bary: " << PrintValue<Eigen::Vector3d>(currentBary) << "\n";
 
     Eigen::Vector3d targetPoint = currentPoint + remainingVector;
+    //positions.push_back(currentPoint);
     vec3 targetBary = ComputeBarycentricCoordinates(
       vec3(targetPoint[0], targetPoint[1], targetPoint[2]), currentFace);
     //std::cerr << "Target Bary: " << PrintValue<Eigen::Vector3d>(targetBary) << "\n";
@@ -527,36 +533,43 @@ VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d proj
       //std::cerr << "exiting due to face repetition\n";
       break;
     }
-    if (facesTraversed.size() > 100) {
-      std::cerr << "Warning, more than 100 faces traversed\n";
+
+    if (facesTraversed.size() > 1000) {
+      std::cerr << "Warning, more than 1000 faces traversed\n";
       for (int i = 0; i < facesTraversed.size(); i++) {
         std::cerr << facesTraversed[i] << ", ";
-        //<< PrintValue<TriMesh::Face>(mesh_->faces[facesTraversed[i]]) << ", ";
       }
-      std::cerr << "Current point: " << PrintValue<Eigen::Vector3d>(currentPoint) << "\n";
-      std::cerr << "remaining vector: " << PrintValue<Eigen::Vector3d>(remainingVector) << "\n";
-      std::cerr << "currentBary: " << PrintValue<vec3>(currentBary) << "\n";
-      std::cerr << "targetPoint: " << PrintValue<Eigen::Vector3d>(targetPoint) << "\n";
-      std::cerr << "targetBary: " << PrintValue<vec3>(targetBary) << "\n";
-      std::cerr << std::endl;
+      //std::cerr << "\nPositions: ";
+      //for (int i = 0; i < positions.size(); i++) {
+      //    std::cerr << "(" << positions[i][0] << "," << positions[i][1] << "," << positions[i][2]
+      //                << ") ";
+      //  }
+      /*
+        std::cerr << "\n\n";
+        std::cerr << "ID: " << idx << "\n";
+        std::cerr << "Original point: " << PrintValue<Eigen::Vector3d>(point_a) << "\n";
+        std::cerr << "Original vector: " << PrintValue<Eigen::Vector3d>(projected_vector) << "\n";
+        std::cerr << "Current point: " << PrintValue<Eigen::Vector3d>(currentPoint) << "\n";
+        std::cerr << "remaining vector: " << PrintValue<Eigen::Vector3d>(remainingVector) << "\n";
+        std::cerr << "currentBary: " << PrintValue<vec3>(currentBary) << "\n";
+        std::cerr << "targetPoint: " << PrintValue<Eigen::Vector3d>(targetPoint) << "\n";
+        std::cerr << "targetBary: " << PrintValue<vec3>(targetBary) << "\n";
+        std::cerr << std::endl;
+        */
       break;
+
     }
 
     if (targetBary[0] + barycentricEpsilon >= 0 && targetBary[1] + barycentricEpsilon >= 0 &&
         targetBary[2] + barycentricEpsilon >= 0 && targetBary[0] - barycentricEpsilon <= 1 &&
         targetBary[1] - barycentricEpsilon <= 1 && targetBary[2] - barycentricEpsilon <= 1) {
       currentPoint = targetPoint;
-//      std::cerr << "on face? done\n";
       break;
     }
-//    std::cerr << "Not on face, step\n";
-    int positiveVertex = -1;
+
     std::vector<int> negativeVertices;
     for (int i = 0; i < 3; i++) {
-      if (targetBary[i] >= 0) {
-        positiveVertex = i;
-      }
-      else {
+      if (targetBary[i] < 0) {
         negativeVertices.push_back(i);
       }
     }
@@ -595,8 +608,8 @@ VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d proj
     }
     remainingVector = remaining;
     if (nextFace != -1) {
-      remainingVector = RotateVectorToFace(GetFaceNormal(currentFace), GetFaceNormal(nextFace),
-                                           remainingVector);
+      remainingVector = RotateVectorToFace(GetFaceNormal(currentFace),
+                                           GetFaceNormal(nextFace), remainingVector);
     }
     currentPoint = intersect;
     currentFace = nextFace;
@@ -636,23 +649,31 @@ int VtkMeshWrapper::GetAcrossEdge(int face_id, int edge_id) const
 {
   // get the neighbors of the cell
   auto neighbors = vtkSmartPointer<vtkIdList>::New();
-  auto cell = this->poly_data_->GetCell(face_id);
-  auto edge = cell->GetEdge(edge_id);
 
-  int edge_p1 = cell->GetPointId(1);
-  int edge_p2 = cell->GetPointId(2);
+
+  //auto cell = this->poly_data_->GetCell(face_id);
+  //auto edge = cell->GetEdge(edge_id);
+
+  int a = this->triangles_[face_id]->GetPointId(0);
+  int b = this->triangles_[face_id]->GetPointId(1);
+  int c = this->triangles_[face_id]->GetPointId(2);
+
+  int edge_p1 = this->triangles_[face_id]->GetPointId(1);
+  int edge_p2 = this->triangles_[face_id]->GetPointId(2);
   if (edge_id == 1) {
-    edge_p1 = cell->GetPointId(2);
-    edge_p2 = cell->GetPointId(0);
+    edge_p1 = this->triangles_[face_id]->GetPointId(2);
+    edge_p2 = this->triangles_[face_id]->GetPointId(0);
   }
   else if (edge_id == 2) {
-    edge_p1 = cell->GetPointId(0);
-    edge_p2 = cell->GetPointId(1);
+    edge_p1 = this->triangles_[face_id]->GetPointId(0);
+    edge_p2 = this->triangles_[face_id]->GetPointId(1);
   }
 
   this->poly_data_->GetCellEdgeNeighbors(face_id, edge_p1, edge_p2, neighbors);
 
   if (neighbors->GetNumberOfIds() == 0) {
+    // This could be the end of an open mesh
+    auto cell = this->triangles_[face_id];
     return -1;
   }
 

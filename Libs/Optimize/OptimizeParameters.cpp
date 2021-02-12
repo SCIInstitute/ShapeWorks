@@ -271,11 +271,13 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
     filenames.push_back(filename);
 
     if (domain_type == DomainType::Mesh) {
-      //auto trimesh = std::shared_ptr<TriMesh>(TriMesh::read(filename.c_str()));
-      //if (trimesh) {
-     //   optimize->AddMesh(std::make_shared<shapeworks::TriMeshWrapper>(trimesh));
-      //}
 
+/*
+      auto trimesh = std::shared_ptr<TriMesh>(TriMesh::read(filename.c_str()));
+      if (trimesh) {
+        optimize->AddMesh(std::make_shared<shapeworks::TriMeshWrapper>(trimesh));
+      }
+*/
       auto poly_data = MeshUtils::threadSafeReadMesh(filename.c_str()).getVTKMesh();
 
       if (poly_data) {
