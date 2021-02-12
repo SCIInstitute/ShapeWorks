@@ -247,7 +247,7 @@ def Run_Pipeline(args):
             Apply padding
             Both the segmentation and raw images are padded in case the seg lies on the image boundary.
             """
-            paddedFiles_segmentations = applyPadding(groomDir + "padded/segmentations", resampledFiles_segmentations, 10)
+            paddedFiles_segmentations = applyPadding(groomDir + "padded/segmentations", resampledFiles_segmentations, 20)
 
             """
             Apply center of mass alignment

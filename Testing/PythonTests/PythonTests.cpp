@@ -163,11 +163,6 @@ TEST(pythonTests, topoTest)
   ASSERT_FALSE(system("python topo.py"));
 }
 
-TEST(pythonTests, topoFailTest)
-{
-  ASSERT_TRUE(system("python topofail.py"));
-}
-
 TEST(pythonTests, blurTest)
 {
   ASSERT_FALSE(system("python blur.py"));

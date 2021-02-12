@@ -1,12 +1,12 @@
 import os
 import sys
-import shapeworks as sw
+from shapeworks import *
 
 def closeholesTest1():
-  img = sw.Image(os.environ["DATA"] + "/image_with_holes.nrrd")
+  img = Image(os.environ["DATA"] + "/image_with_holes.nrrd")
   img.closeHoles()
 
-  compareImg = sw.Image(os.environ["DATA"] + "/closedholes.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/closedholes.nrrd")
 
   return img.compare(compareImg)
 

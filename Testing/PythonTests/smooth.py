@@ -1,12 +1,12 @@
 import os
 import sys
-import shapeworks as sw
+from shapeworks import *
 
 def smoothTest1():
-  mesh = sw.Mesh(os.environ["DATA"] + "/femur.vtk")
+  mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
   mesh.smooth(10, 0.01)
 
-  compareMesh = sw.Mesh(os.environ["DATA"] + "/smooth1.vtk")
+  compareMesh = Mesh(os.environ["DATA"] + "/smooth1.vtk")
 
   return mesh == compareMesh
 
@@ -16,10 +16,10 @@ if val is False:
   sys.exit(1)
 
 def smoothTest2():
-  mesh = sw.Mesh(os.environ["DATA"] + "/femur.vtk")
+  mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
   mesh.smooth()
 
-  compareMesh = sw.Mesh(os.environ["DATA"] + "/smooth2.vtk")
+  compareMesh = Mesh(os.environ["DATA"] + "/smooth2.vtk")
 
   return mesh == compareMesh
 
