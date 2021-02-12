@@ -89,7 +89,13 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
 double VtkMeshWrapper::ComputeDistance(VtkMeshWrapper::PointType pointa,
                                        VtkMeshWrapper::PointType pointb) const
 {
-  return pointa.EuclideanDistanceTo(pointb);
+  double x = pointa[0] - pointb[0];
+  double y = pointa[1] - pointb[1];
+  double z = pointa[2] - pointb[2];
+  double distance = std::sqrt((x * x) + (y * y) + (z * z));
+  return distance;
+
+  //return pointa.EuclideanDistanceTo(pointb);
 }
 
 //---------------------------------------------------------------------------
@@ -132,7 +138,13 @@ VtkMeshWrapper::PointType VtkMeshWrapper::GeodesicWalk(VtkMeshWrapper::PointType
     }
 
     particle2tri_[idx] = ending_face;
+
+    if (idx >= this->particle_normals_.size()) {
+      this->particle_normals_.resize(idx+1);
+    }
+    this->particle_normals_[idx] = this->CalculateNormalAtPoint(newPointpt, idx);
   }
+
 
   return newPointpt;
 
@@ -185,53 +197,11 @@ vnl_vector_fixed<float, DIMENSION>
 VtkMeshWrapper::SampleNormalAtPoint(VtkMeshWrapper::PointType p, int idx) const
 {
 
-  double point[3];
-  point[0] = p[0];
-  point[1] = p[1];
-  point[2] = p[2];
-
-  double closest_point[3];
-
-  /*
-  int guess = -1;
-  if (idx >= 0 && idx < particle2tri_.size()) {
-    guess = particle2tri_[idx];
+  if (idx < 0 || idx >= this->particle_normals_.size()) {
+    return this->CalculateNormalAtPoint(p, idx);
   }
-   */
-  int face_index = this->GetTriangleForPoint(point, idx, closest_point);
 
-  /*
-  if (idx >= 0 && idx < particle2tri_.size()) {
-    if (guess != face_index) {
-      std::cerr << "how can they be different? " << guess << " vs " << face_index << "\n";
-    }
-  }*/
-
-  //auto cell = this->poly_data_->GetCell(face_index);
-  //auto cell = this->triangles_[face_index];
-
-  vnl_vector_fixed<float, DIMENSION> weightedNormal(0, 0, 0);
-
-  double closest[3];
-  int sub_id;
-  double pcoords[3];
-  double dist2;
-  double weights[3];
-  this->triangles_[face_index]->EvaluatePosition(point, closest, sub_id, pcoords, dist2, weights);
-
-  //std::cerr << ret << ", weights = " << weights[0] << ", " << weights[1] << ", " << weights[2] << "\n";
-
-  for (int i = 0; i < 3; i++) {
-
-    auto id = this->triangles_[face_index]->GetPointId(i);
-
-    double* normal = this->poly_data_->GetPointData()->GetNormals()->GetTuple(id);
-
-    weightedNormal[0] = weightedNormal[0] + normal[0] * weights[i];
-    weightedNormal[1] = weightedNormal[1] + normal[1] * weights[i];
-    weightedNormal[2] = weightedNormal[2] + normal[2] * weights[i];
-  }
-  return weightedNormal;
+  return this->particle_normals_[idx];
 }
 
 //---------------------------------------------------------------------------
@@ -365,7 +335,6 @@ int VtkMeshWrapper::GetTriangleForPoint(const double pt[3], int idx, double clos
   int sub_id; //this is rarely used (in triangle strips only, I believe)
 
   this->cell_locator_->FindClosestPoint(pt, closest_point, cell_id, sub_id, closest_point_dist2);
-
 
   if (idx >= 0) {
 //    std::cerr << "pt: " << idx << ", pt = " << pt[0] << "," << pt[1] << "," << pt[2] << " -> "
@@ -757,6 +726,61 @@ Eigen::Vector3d VtkMeshWrapper::RotateVectorToFace(const Eigen::Vector3d& prev_n
   Eigen::AngleAxisd transform(angle, rotationAxis);
   Eigen::Vector3d rotated = transform * vector;
   return rotated;
+}
+
+//---------------------------------------------------------------------------
+vnl_vector_fixed<float, DIMENSION>
+VtkMeshWrapper::CalculateNormalAtPoint(VtkMeshWrapper::PointType p, int idx) const
+{
+
+  double point[3];
+  point[0] = p[0];
+  point[1] = p[1];
+  point[2] = p[2];
+
+  double closest_point[3];
+
+  /*
+  int guess = -1;
+  if (idx >= 0 && idx < particle2tri_.size()) {
+    guess = particle2tri_[idx];
+  }
+   */
+  int face_index = this->GetTriangleForPoint(point, idx, closest_point);
+
+  /*
+  if (idx >= 0 && idx < particle2tri_.size()) {
+    if (guess != face_index) {
+      std::cerr << "how can they be different? " << guess << " vs " << face_index << "\n";
+    }
+  }*/
+
+  //auto cell = this->poly_data_->GetCell(face_index);
+  //auto cell = this->triangles_[face_index];
+
+  vnl_vector_fixed<float, DIMENSION> weightedNormal(0, 0, 0);
+
+  double closest[3];
+  int sub_id;
+  double pcoords[3];
+  double dist2;
+  double weights[3];
+  this->triangles_[face_index]->EvaluatePosition(point, closest, sub_id, pcoords, dist2, weights);
+
+  //std::cerr << ret << ", weights = " << weights[0] << ", " << weights[1] << ", " << weights[2] << "\n";
+
+  for (int i = 0; i < 3; i++) {
+
+    auto id = this->triangles_[face_index]->GetPointId(i);
+
+    double* normal = this->poly_data_->GetPointData()->GetNormals()->GetTuple(id);
+
+    weightedNormal[0] = weightedNormal[0] + normal[0] * weights[i];
+    weightedNormal[1] = weightedNormal[1] + normal[1] * weights[i];
+    weightedNormal[2] = weightedNormal[2] + normal[2] * weights[i];
+  }
+  return weightedNormal;
+
 }
 
 }

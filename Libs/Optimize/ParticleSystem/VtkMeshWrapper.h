@@ -86,35 +86,19 @@ private:
 
   vtkSmartPointer<vtkPolyData> poly_data_;
 
-  /*
-  Eigen::Vector3d
-  GeodesicWalkOnFace(Eigen::Vector3d point_a,
-                     Eigen::Vector3d projected_vector, int face_index) const;
+  vnl_vector_fixed<float, DIMENSION>
+  CalculateNormalAtPoint(VtkMeshWrapper::PointType p, int idx) const;
 
-  Eigen::Vector3d
-  ProjectVectorToFace(const Eigen::Vector3d& normal, const Eigen::Vector3d& vector) const;
-
-  Eigen::Vector3d
-  RotateVectorToFace(const Eigen::Vector3d& prev_normal, const Eigen::Vector3d& next_normal,
-                     const Eigen::Vector3d& vector) const;
-
-  const Eigen::Vector3d GetFaceNormal(int face_index) const;
-
-  void ComputeMeshBounds();
-  void ComputeGradN(); // Gradient of normals
-
-
-  // IGL Helper functions
-  void GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F);
-*/
 
   // Maintains a map of particle index -> triangle index
   // Has to be mutable because all of the accessor APIs are const
   mutable std::vector<int> particle2tri_;
+  mutable std::vector<vnl_vector_fixed<float, DIMENSION>> particle_normals_;
 
   std::vector<GradNType> grad_normals_;
 
   std::vector<vtkSmartPointer<vtkTriangle>> triangles_;
+
 
   PointType mesh_lower_bound_;
   PointType mesh_upper_bound_;
