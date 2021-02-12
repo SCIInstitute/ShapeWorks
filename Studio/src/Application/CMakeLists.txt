@@ -178,6 +178,15 @@ endif(WIN32)
 
 
 IF(APPLE)
+
+  # Create a script that runs ShapeWorksStudio.  Note that a symlink won't work as it won't be able to find the property list
+  SET(SCRIPT "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/script_tmp/ShapeWorksStudio")
+  file( WRITE  ${SCRIPT} "#!/bin/bash\n")
+  file( APPEND ${SCRIPT} "LOC=\"`dirname \"$0\"`\"\n" )
+  file( APPEND ${SCRIPT} "\${LOC}/ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio\n" )
+  file( COPY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/script_tmp/ShapeWorksStudio" DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}" FILE_PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ)
+  file( REMOVE_RECURSE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/script_tmp")
+  
   SET_TARGET_PROPERTIES(ShapeWorksStudio PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Resources/Info.plist.in)
   set_property(
     TARGET ShapeWorksStudio
