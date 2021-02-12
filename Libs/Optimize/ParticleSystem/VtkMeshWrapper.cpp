@@ -365,7 +365,7 @@ VtkMeshWrapper::ProjectVectorToFace(const Eigen::Vector3d& normal,
 //---------------------------------------------------------------------------
 void VtkMeshWrapper::ComputeMeshBounds()
 {
-  double buffer = 1.0;
+  double buffer = 5.0;
   double bounds[6];
   this->poly_data_->GetBounds(bounds);
   this->mesh_lower_bound_[0] = bounds[0] - buffer;
