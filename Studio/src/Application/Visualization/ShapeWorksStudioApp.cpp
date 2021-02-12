@@ -913,14 +913,13 @@ void ShapeWorksStudioApp::handle_project_changed()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_points_changed()
 {
-
   bool update = false;
   if (!this->time_since_last_update_.isValid()) {
     update = true;
   }
   else {
     auto time_since = this->time_since_last_update_.elapsed();
-    if (time_since > 100) {
+    if (time_since > 25 + (this->last_render_ * 2)) {
       update = true;
     }
   }
@@ -931,10 +930,12 @@ void ShapeWorksStudioApp::handle_points_changed()
       this->handle_glyph_changed();
     }
 
+    QElapsedTimer render_time;
+    render_time.start();
     this->visualizer_->update_samples();
-
+    this->last_render_ = render_time.elapsed();
+    this->time_since_last_update_.start();
   }
-  this->time_since_last_update_.start();
 
 }
 

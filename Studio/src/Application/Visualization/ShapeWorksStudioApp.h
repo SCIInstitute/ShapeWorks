@@ -205,6 +205,7 @@ private:
   bool is_loading_{false};
 
   QElapsedTimer time_since_last_update_;
+  qint64 last_render_ = -1;
 
 
 };
