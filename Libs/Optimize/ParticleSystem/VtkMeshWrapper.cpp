@@ -68,9 +68,9 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
     triangle->GetPointIds()->SetId(0, cell->GetPointId(0));
     triangle->GetPointIds()->SetId(1, cell->GetPointId(1));
     triangle->GetPointIds()->SetId(2, cell->GetPointId(2));
-    triangle->GetPoints()->SetPoint(0,cell->GetPoints()->GetPoint(0));
-    triangle->GetPoints()->SetPoint(1,cell->GetPoints()->GetPoint(1));
-    triangle->GetPoints()->SetPoint(2,cell->GetPoints()->GetPoint(2));
+    triangle->GetPoints()->SetPoint(0, cell->GetPoints()->GetPoint(0));
+    triangle->GetPoints()->SetPoint(1, cell->GetPoints()->GetPoint(1));
+    triangle->GetPoints()->SetPoint(2, cell->GetPoints()->GetPoint(2));
 
     this->triangles_.push_back(triangle);
   }
@@ -126,7 +126,7 @@ VtkMeshWrapper::PointType VtkMeshWrapper::GeodesicWalk(VtkMeshWrapper::PointType
 
 
   // update cache
-  if (idx > 0 && ending_face > 0) {
+  if (idx >= 0 && ending_face >= 0) {
     if (idx >= particle2tri_.size()) {
       particle2tri_.resize(idx + 1, 0);
     }
@@ -192,7 +192,20 @@ VtkMeshWrapper::SampleNormalAtPoint(VtkMeshWrapper::PointType p, int idx) const
 
   double closest_point[3];
 
+  /*
+  int guess = -1;
+  if (idx >= 0 && idx < particle2tri_.size()) {
+    guess = particle2tri_[idx];
+  }
+   */
   int face_index = this->GetTriangleForPoint(point, idx, closest_point);
+
+  /*
+  if (idx >= 0 && idx < particle2tri_.size()) {
+    if (guess != face_index) {
+      std::cerr << "how can they be different? " << guess << " vs " << face_index << "\n";
+    }
+  }*/
 
   //auto cell = this->poly_data_->GetCell(face_index);
   //auto cell = this->triangles_[face_index];
@@ -321,19 +334,29 @@ VtkMeshWrapper::PointType VtkMeshWrapper::GetPointOnMesh() const
 int VtkMeshWrapper::GetTriangleForPoint(const double pt[3], int idx, double closest_point[3]) const
 {
   // given a guess, just check whether it is still valid.
-  if (idx > 0) {
+  if (idx >= 0) {
     // ensure that the cache has enough elements. this will never be resized to more than the number of particles,
     if (idx >= particle2tri_.size()) {
-      particle2tri_.resize(idx + 1, 0);
+      particle2tri_.resize(idx + 1, -1);
     }
 
     const int guess = particle2tri_[idx];
+
+    if (guess > 0) {
+      closest_point[0] = pt[0];
+      closest_point[1] = pt[1];
+      closest_point[2] = pt[2];
+      return guess;
+    }
+
+/*
     if (this->IsInTriangle(pt, guess)) {
       closest_point[0] = pt[0];
       closest_point[1] = pt[1];
       closest_point[2] = pt[2];
       return guess;
     }
+    */
   }
 
   //double closest_point[3];//the coordinates of the closest point will be returned here
@@ -343,9 +366,13 @@ int VtkMeshWrapper::GetTriangleForPoint(const double pt[3], int idx, double clos
 
   this->cell_locator_->FindClosestPoint(pt, closest_point, cell_id, sub_id, closest_point_dist2);
 
-  if (idx > 0) {
+
+  if (idx >= 0) {
+//    std::cerr << "pt: " << idx << ", pt = " << pt[0] << "," << pt[1] << "," << pt[2] << " -> "
+//              << closest_point[0] << "," << closest_point[1] << "," << closest_point[2] << "\n";
     particle2tri_[idx] = cell_id;
   }
+
   return cell_id;
 }
 
@@ -369,14 +396,15 @@ VtkMeshWrapper::ProjectVectorToFace(const Eigen::Vector3d& normal,
 //---------------------------------------------------------------------------
 void VtkMeshWrapper::ComputeMeshBounds()
 {
+  double buffer = 1.0;
   double bounds[6];
   this->poly_data_->GetBounds(bounds);
-  this->mesh_lower_bound_[0] = bounds[0];
-  this->mesh_lower_bound_[1] = bounds[2];
-  this->mesh_lower_bound_[2] = bounds[4];
-  this->mesh_upper_bound_[0] = bounds[1];
-  this->mesh_upper_bound_[1] = bounds[3];
-  this->mesh_upper_bound_[2] = bounds[5];
+  this->mesh_lower_bound_[0] = bounds[0] - buffer;
+  this->mesh_lower_bound_[1] = bounds[2] - buffer;
+  this->mesh_lower_bound_[2] = bounds[4] - buffer;
+  this->mesh_upper_bound_[0] = bounds[1] + buffer;
+  this->mesh_upper_bound_[1] = bounds[3] + buffer;
+  this->mesh_upper_bound_[2] = bounds[5] + buffer;
 }
 
 //---------------------------------------------------------------------------
@@ -459,7 +487,8 @@ bool VtkMeshWrapper::IsInTriangle(const double* pt, int face_index) const
   double dist2;
   double bary[3];
 
-  int ret = this->triangles_[face_index]->EvaluatePosition(pt, closest, sub_id, pcoords, dist2, bary);
+  int ret = this->triangles_[face_index]->EvaluatePosition(pt, closest, sub_id, pcoords, dist2,
+                                                           bary);
   if (ret && dist2 < epsilon) {
     bool bary_check = ((bary[0] >= -epsilon) && (bary[0] <= 1 + epsilon)) &&
                       ((bary[1] >= -epsilon) && (bary[1] <= 1 + epsilon)) &&
@@ -532,7 +561,7 @@ VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d proj
     if (facesTraversed.size() > 100) {
       std::cerr << "Warning, more than 100 faces traversed\n";
       for (int i = 0; i < facesTraversed.size(); i++) {
-        std::cerr << facesTraversed[i] << ": " << facesTraversed[i] << ", ";
+        std::cerr << facesTraversed[i] << ", ";
         //<< PrintValue<TriMesh::Face>(mesh_->faces[facesTraversed[i]]) << ", ";
       }
       std::cerr << "Current point: " << PrintValue<Eigen::Vector3d>(currentPoint) << "\n";
