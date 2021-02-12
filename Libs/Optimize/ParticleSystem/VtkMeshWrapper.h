@@ -114,6 +114,8 @@ private:
 
   std::vector<GradNType> grad_normals_;
 
+  std::vector<vtkSmartPointer<vtkTriangle>> triangles_;
+
   PointType mesh_lower_bound_;
   PointType mesh_upper_bound_;
 

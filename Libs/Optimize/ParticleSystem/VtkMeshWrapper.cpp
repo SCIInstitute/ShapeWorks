@@ -6,6 +6,7 @@
 #include <vtkCell.h>
 #include <vtkPointData.h>
 #include <vtkTriangleFilter.h>
+#include <vtkGenericCell.h>
 
 #include <vtkTriangle.h>
 
@@ -57,6 +58,22 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
   this->poly_data_ = normals->GetOutput();
   this->poly_data_->BuildCells();
   this->poly_data_->BuildLinks();
+
+  vtkSmartPointer<vtkGenericCell> cell = vtkSmartPointer<vtkGenericCell>::New();
+  for (int i = 0; i < this->poly_data_->GetNumberOfCells(); i++) {
+    this->poly_data_->GetCell(i, cell);
+
+    vtkSmartPointer<vtkTriangle> triangle = vtkSmartPointer<vtkTriangle>::New();
+    //triangle->GetPointIds()->SetNumberOfIds(3);
+    triangle->GetPointIds()->SetId(0, cell->GetPointId(0));
+    triangle->GetPointIds()->SetId(1, cell->GetPointId(1));
+    triangle->GetPointIds()->SetId(2, cell->GetPointId(2));
+    triangle->GetPoints()->SetPoint(0,cell->GetPoints()->GetPoint(0));
+    triangle->GetPoints()->SetPoint(1,cell->GetPoints()->GetPoint(1));
+    triangle->GetPoints()->SetPoint(2,cell->GetPoints()->GetPoint(2));
+
+    this->triangles_.push_back(triangle);
+  }
 
   this->cell_locator_ = vtkSmartPointer<vtkCellLocator>::New();
   this->cell_locator_->SetCacheCellBounds(true);
@@ -177,7 +194,8 @@ VtkMeshWrapper::SampleNormalAtPoint(VtkMeshWrapper::PointType p, int idx) const
 
   int face_index = this->GetTriangleForPoint(point, idx, closest_point);
 
-  auto cell = this->poly_data_->GetCell(face_index);
+  //auto cell = this->poly_data_->GetCell(face_index);
+  //auto cell = this->triangles_[face_index];
 
   vnl_vector_fixed<float, DIMENSION> weightedNormal(0, 0, 0);
 
@@ -186,13 +204,13 @@ VtkMeshWrapper::SampleNormalAtPoint(VtkMeshWrapper::PointType p, int idx) const
   double pcoords[3];
   double dist2;
   double weights[3];
-  cell->EvaluatePosition(point, closest, sub_id, pcoords, dist2, weights);
+  this->triangles_[face_index]->EvaluatePosition(point, closest, sub_id, pcoords, dist2, weights);
 
   //std::cerr << ret << ", weights = " << weights[0] << ", " << weights[1] << ", " << weights[2] << "\n";
 
-  for (int i = 0; i < cell->GetNumberOfPoints(); i++) {
+  for (int i = 0; i < 3; i++) {
 
-    auto id = cell->GetPointId(i);
+    auto id = this->triangles_[face_index]->GetPointId(i);
 
     double* normal = this->poly_data_->GetPointData()->GetNormals()->GetTuple(id);
 
@@ -336,15 +354,14 @@ Eigen::Vector3d
 VtkMeshWrapper::ProjectVectorToFace(const Eigen::Vector3d& normal,
                                     const Eigen::Vector3d& vector) const
 {
-//  auto old_mag = vector.norm();
+  auto old_mag = vector.norm();
 
   Eigen::Vector3d new_vector = vector - normal * normal.dot(vector);
 
-//  auto new_mag = new_vector.norm();
+  auto new_mag = new_vector.norm();
+  double ratio = old_mag / new_mag;
 
-//  double ratio = old_mag / new_mag;
-
-//  new_vector *= ratio;
+  new_vector *= ratio;
 
   return new_vector;
 }
@@ -441,8 +458,8 @@ bool VtkMeshWrapper::IsInTriangle(const double* pt, int face_index) const
   double pcoords[3];
   double dist2;
   double bary[3];
-  auto cell = this->poly_data_->GetCell(face_index);
-  int ret = cell->EvaluatePosition(pt, closest, sub_id, pcoords, dist2, bary);
+
+  int ret = this->triangles_[face_index]->EvaluatePosition(pt, closest, sub_id, pcoords, dist2, bary);
   if (ret && dist2 < epsilon) {
     bool bary_check = ((bary[0] >= -epsilon) && (bary[0] <= 1 + epsilon)) &&
                       ((bary[1] >= -epsilon) && (bary[1] <= 1 + epsilon)) &&
