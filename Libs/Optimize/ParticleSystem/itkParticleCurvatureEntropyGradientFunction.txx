@@ -278,9 +278,37 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 
   maxmove = (m_CurrentSigma / m_avgKappa) * m_MaxMoveFactor;
 
-  energy = (A * sigma2inv ) / m_avgKappa;
+  if(system->GetDomainsPerShape() != 0) {
+    int twin_dom = (d % 2 == 0) ? d+1 : d-1;
+    const double radius = this->GetNeighborhoodToSigmaRatio() * m_CurrentSigma;
+    std::vector<double> weights; //todo what weights
+    const auto twin_neighbors = system->FindNeighborhoodPoints(pos, -1, weights,
+                                                               radius, twin_dom);
 
+    for (unsigned int i = 0; i < twin_neighbors.size(); i++) {
+      double mc = m_MeanCurvatureCache->operator[](twin_dom)->operator[](twin_neighbors[i].Index);
+      double Dij = (mymc + mc) * 0.5; // average my curvature with my neighbors
+      double kappa = this->ComputeKappa(Dij, twin_dom);
+
+      VectorType r;
+      for (unsigned int n = 0; n < VDimension; n++) {
+        r[n] = (pos[n] - twin_neighbors[i].Point[n]) * kappa;
+      }
+
+      double q = kappa * exp( -dot_product(r, r) * sigma2inv);
+      A -= q;
+
+      for (unsigned int n = 0; n < VDimension; n++)
+      {
+        gradE[n] -= 1.0 * r[n] * q; //todo weight
+      }
+    }
+  }
+
+  energy = (A * sigma2inv ) / m_avgKappa;
   gradE = gradE / m_avgKappa;
+
+
   return gradE;
 }
 

@@ -417,7 +417,7 @@ public:
        m_DomainsPerShape = num;
        m_FixedParticleFlags.resize(m_DomainsPerShape);
   }
-  unsigned int GetDomainsPerShape()
+  unsigned int GetDomainsPerShape() const
   { return m_DomainsPerShape; }
   
 protected:
