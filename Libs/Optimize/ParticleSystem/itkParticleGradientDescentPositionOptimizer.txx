@@ -68,6 +68,7 @@ namespace itk
   void ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
     ::StartAdaptiveGaussSeidelOptimization()
   {
+
     /// uncomment this to run single threaded
     tbb::task_scheduler_init init(1);
 
@@ -164,8 +165,6 @@ namespace itk
             double newenergy, gradmag;
             while (true) {
 
-              std::cout << "SAGSO steps" << std::endl;
-
               // Step A scale the projected gradient by the current time step
               VectorType gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
 
@@ -198,35 +197,23 @@ namespace itk
               if (gradmag > maximumUpdateAllowed) {
                 gradient = gradient * maximumUpdateAllowed / gradmag;
                 gradmag = gradient.magnitude();
-
-                // debuggg
-                stream << "Rescaled because of magnitude. New gradient: " << gradient <<  std::endl;
-                /*
-                stream << std::endl;
-                std::cout << stream.str();
-                */
+                cout << "Trouble" << std::endl;
               }
-
-              // debuggg
-              stream << "Out_old gradient: " << gradient_old <<  std::endl;
-              stream << "Out_new gradient: " << gradient <<  std::endl;
-              stream << "pt: " << pt << std::endl;
-              stream << "m_ParticleSystem->GetPosition(it.GetIndex(), dom): " << m_ParticleSystem->GetPosition(it.GetIndex(), dom) << std::endl;
 
               // Step D compute the new point position
               PointType newpoint = domain->UpdateParticlePosition(pt, gradient);
 
-              // debuggg
-              stream << "Step D new point: " << newpoint <<  std::endl;
-
               // Step F update the point position in the particle system
               m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);
 
-              stream << "New Point " << newpoint << std::endl;
-              stream << "Position set new point " << m_ParticleSystem->GetPosition(it.GetIndex(), dom) << std::endl;
-
               // Step G compute the new energy of the particle system
               newenergy = localGradientFunction->Energy(it.GetIndex(), dom, m_ParticleSystem);
+
+              // Debuggg
+              double hx = m_ParticleSystem->GetDomain(dom)->Sample(pt);
+              std::stringstream stream2;
+              stream2 << "-=-" << dom << " " << it.GetIndex() << " " << hx << " " << maximumUpdateAllowed << " " << m_TimeSteps[dom][k] << " " << gradient_old.magnitude() << std::endl;
+              std::cout << stream2.str();
 
               if (newenergy < energy) // good move, increase timestep for next time
               {
@@ -234,28 +221,28 @@ namespace itk
                 if (gradmag > maxchange) maxchange = gradmag;
 
                 // Debuggg
-                if(!m_ParticleSystem->GetDomain(dom)->GetConstraints()->IsAnyViolated(oldpoint) && m_ParticleSystem->GetDomain(dom)->GetConstraints()->IsAnyViolated(newpoint) ) std::cerr << stream.str();
-                stream << "Good energy " << std::endl;
-                stream << std::endl;
+                //if(!m_ParticleSystem->GetDomain(dom)->GetConstraints()->IsAnyViolated(oldpoint) && m_ParticleSystem->GetDomain(dom)->GetConstraints()->IsAnyViolated(newpoint) ) std::cerr << stream.str();
+                //stream << "Good energy " << std::endl;
+                //stream << std::endl;
                 //std::cout << stream.str();
 
                 break;
               }
               else
               {// bad move, reset point position and back off on timestep
+
                 if (m_TimeSteps[dom][k] > minimumTimeStep)
                 {
                   //domain->ApplyConstraints(pt);
                   m_ParticleSystem->SetPosition(pt, it.GetIndex(), dom);
 
-                  // Debuggg
-                  stream << "Not good energy " << pt << std::endl;
-                  stream << std::endl;
-
                   m_TimeSteps[dom][k] /= factor;
                 }
                 else // keep the move with timestep 1.0 anyway
                 {
+                    //domain->ApplyConstraints(pt);
+                    m_ParticleSystem->SetPosition(pt, it.GetIndex(), dom);
+
                   if (gradmag > maxchange) maxchange = gradmag;
                   break;
                 }

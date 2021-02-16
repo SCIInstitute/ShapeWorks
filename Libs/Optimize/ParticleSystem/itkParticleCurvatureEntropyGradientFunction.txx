@@ -299,16 +299,24 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
     {
       posgrad[n] = pos[n] - gradE[n];
     }
-  system->GetDomain(d)->ApplyConstraints(posgrad);
+  //system->GetDomain(d)->ApplyConstraints(posgrad);
 
   vnl_vector_fixed<float, 3> h_grad = system->GetDomain(d)->SampleGradientAtPoint(pos);
   float hx = system->GetDomain(d)->Sample(pos);
+
   lambda = lambda + c_eq * hx; // lambda update before iteration
   VectorType eq_constraint_energy;
   for (unsigned int n = 0; n < VDimension; n++)
     {
-        eq_constraint_energy[n] = lambda * h_grad[n] + c_eq * h_grad[n] * hx;
+        eq_constraint_energy[n] = lambda * h_grad[n] + c_eq * h_grad[n] * ((hx > 0) - (hx < 0));
     }
+
+  // Debuggg
+  double eq_en_norm = sqrt(eq_constraint_energy[0]*eq_constraint_energy[0] + eq_constraint_energy[1]*eq_constraint_energy[1] + eq_constraint_energy[2]*eq_constraint_energy[2]);
+  double sampling_norm = sqrt(gradE[0]*gradE[0]+gradE[1]*gradE[1]+gradE[2]*gradE[2]);
+  std::stringstream stream2;
+  stream2 << "---" << d << " " << idx << " " << hx << " " << lambda << " " << lambda - c_eq * hx << " " << eq_en_norm << " " << sampling_norm << std::endl;
+  std::cout << stream2.str();
 
   // std::cout << "pos " << pos << " Inequality " << ineq_constraint_energy << std::endl;
   std::stringstream stream;
@@ -317,8 +325,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   stream << "gradE before adding eq" << gradE << std::endl;
   stream << "m_lambda " << lambda << " pos " << pos << " Equality " << eq_constraint_energy << std::endl;
   double pos_norm = sqrt(pos[0]*pos[0] + pos[1]*pos[1] + pos[2]*pos[2]);
-  double eq_en_norm = sqrt(eq_constraint_energy[0]*eq_constraint_energy[0] + eq_constraint_energy[1]*eq_constraint_energy[1] + eq_constraint_energy[2]*eq_constraint_energy[2]);
-  stream << "Coeff " << lambda + c_eq * hx << " c_eq " << c_eq << " lambda " << lambda << " h_grad " << h_grad << " hx " << hx << std::endl;
+  stream << "Coeff " << lambda - c_eq * hx << " c_eq " << c_eq << " lambda " << lambda << " h_grad " << h_grad << " hx " << hx << std::endl;
   stream << "pos_norm " << pos_norm << " pos_unit [" << pos[0]/pos_norm << " " << pos[1]/pos_norm << " " << pos[2]/pos_norm << "]" << std::endl <<
           "eq_en norm " << eq_en_norm << " eq_en unit [" << eq_constraint_energy[0]/eq_en_norm << " " << eq_constraint_energy[1]/eq_en_norm << " "<< eq_constraint_energy[2]/eq_en_norm << "] " << std::endl;
   for (unsigned int n = 0; n < VDimension; n++)
@@ -353,15 +360,16 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 
 
   // debuggg
+  //stream << "---" << d << " " << idx << " " << hx << " " << lambda << " " << lambda - c_eq * hx << std::endl;
   //stream << "posUpd " << posUpd << " new gradE " << gradE << std::endl << std::endl;
   double dfrom0 = sqrt(posUpd[0]*posUpd[0] + posUpd[1]*posUpd[1] + posUpd[2]*posUpd[2]);
   if((std::fmod(dfrom0, 10) > 2 && std::fmod(dfrom0, 10) < 8) || dfrom0 > 50){
     stream << dfrom0 << std::endl << std::endl;
-    std::cerr << stream.str();
+    //std::cerr << stream.str();
    }
   else{
   stream << dfrom0 << std::endl << std::endl;
-    std::cout << stream.str();
+    //std::cout << stream.str();
   }
 
 

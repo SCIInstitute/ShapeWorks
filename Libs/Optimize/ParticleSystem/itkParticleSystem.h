@@ -8,8 +8,8 @@
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
 #ifndef __itkParticleSystem_h
@@ -72,19 +72,19 @@ public:
 
   /** Define the base domain type. */
   typedef ParticleDomain DomainType;
-  
+
   /** Point type used to store particle locations. */
   typedef Point<double, VDimension> PointType;
 
   /** Class used to compute neighborhoods of points. One is associated with
       each domain.*/
   typedef ParticleNeighborhood<VDimension> NeighborhoodType;
-  
+
   /** Point container type.  One is associated with each domain.*/
   typedef ParticleContainer<PointType> PointContainerType;
 
   typedef typename NeighborhoodType::PointVectorType PointVectorType;
-  
+
   /** Defines a transform class type.  One is associated with each
       domain. Transforms are affine for simplicity.  This could be extended by
       using the itk::Transform base type so that a variety of transform types
@@ -118,13 +118,13 @@ public:
         {
         this->SetPosition(this->GetPosition(p,d), p, d);
         }
-      } 
+      }
   }
 
   /** Returns the number of particles in domain k. */
   unsigned long int GetNumberOfParticles(unsigned int d = 0) const
   { return m_Positions[d]->GetSize(); }
-  
+
   /**  Add/Set/Remove a single particle position.  The actual position added or
       set will be returned.  If, for example, the domain imposes any
       constraints on this location (e.g. out-of-bounds, projection onto a
@@ -145,7 +145,7 @@ public:
   //  }
 
   void RemovePosition(unsigned long int k, unsigned int d=0,  int threadId=0);
-  
+
   /** Return a position with index k from domain d.  Note the order in which the 2
       integers must be specified!   The domain number is specified second and
       the position index within the domain is specified first.  Note that the
@@ -172,7 +172,7 @@ public:
   // Debug function
   void PrintParticleSystem();
   void SplitAllParticlesInDomain(const vnl_vector_fixed<double, VDimension> &, unsigned int d=0, int threadId=0);
-  
+
   /** Set/Get the neighborhood object associated with domain k. */
   void SetNeighborhood(unsigned int,  NeighborhoodType *, int threadId=0);
   void SetNeighborhood(NeighborhoodType *n, int threadId=0)
@@ -202,7 +202,7 @@ public:
 
   //  inline int FindNeighborhoodPoints(const PointType &p,  double r, PointVectorType &vec, unsigned int d = 0) const
   //  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(p, r, vec); }
-  
+
   //   PointVectorType FindTransformedNeighborhoodPoints(const PointType &p, double r, unsigned int d = 0) const
   //   {
   //     PointVectorType ans = m_Neighborhoods[d]
@@ -219,7 +219,7 @@ public:
       default neighborhood calculator.  The final, optional argument indicates
       the calling thread id.*/
   void AddDomain( DomainType *, int threadId =0);
-  
+
   /** Return an iterator that points to the first element of the list of the
       domains. */
   typename std::vector< typename DomainType::Pointer >::const_iterator GetDomainsBegin() const
@@ -233,15 +233,15 @@ public:
   /** Return the i'th domain object. */
   DomainType * GetDomain(unsigned int i)
   { return m_Domains[i].GetPointer(); }
-  
+
   /** API for the single domain case. */
   DomainType * GetDomain()
   {return m_Domains[0].GetPointer(); }
-  
+
   /** Return the i'th domain object. */
   const DomainType *GetDomain(unsigned int i) const
   { return m_Domains[i].GetPointer(); }
-  
+
   /** API for the single domain case. */
   const DomainType *GetDomain() const
   {return m_Domains[0].GetPointer(); }
@@ -249,7 +249,7 @@ public:
   /** Returns the number of domains contained in the particle system. */
   unsigned int GetNumberOfDomains() const
   { return m_Domains.size(); }
-  
+
   /** Set the transform associated with domain i. This method will also compute
       and set the corresponding inverse transform if possible.  If the inverse
       transform cannot be computed, the exception is quietly handled by this
@@ -272,11 +272,11 @@ public:
       transforms. */
   typename std::vector< TransformType >::const_iterator
   GetTransformsEnd() const  { return m_Transforms.end(); }
-  
+
   /** Return the i'th transform object. */
   const TransformType &GetTransform(unsigned int i) const
   { return m_Transforms[i]; }
-  
+
   /** API for the single transform case. */
   const TransformType &GetTransform() const
   {return m_Transforms[0]; }
@@ -284,7 +284,7 @@ public:
   /** Return the i'th transform object. */
   TransformType GetTransform(unsigned int i)
   { return m_Transforms[i]; }
-  
+
   /** API for the single transform case. */
   TransformType GetTransform()
   {return m_Transforms[0]; }
@@ -292,7 +292,7 @@ public:
   /** Return the i'th transform object. */
   const TransformType &GetPrefixTransform(unsigned int i) const
   { return m_PrefixTransforms[i]; }
-  
+
   /** API for the single transform case. */
   const TransformType &GetPrefixTransform() const
   {return m_PrefixTransforms[0]; }
@@ -300,11 +300,11 @@ public:
   /** Return the i'th transform object. */
   TransformType GetPrefixTransform(unsigned int i)
   { return m_PrefixTransforms[i]; }
-  
+
   /** API for the single transform case. */
   TransformType GetPrefixTransform()
   {return m_PrefixTransforms[0]; }
-  
+
   /** Return an iterator that points to the first element of the list of the
       inverse transforms. */
   typename std::vector< TransformType >::const_iterator
@@ -316,11 +316,11 @@ public:
   typename std::vector< TransformType >::const_iterator
   GetInverseTransformsEnd() const
   { return m_InverseTransforms.end(); }
-  
+
   /** Return the i'th transform object. */
   const TransformType &GetInverseTransform(unsigned int i) const
   { return m_InverseTransforms[i]; }
-  
+
   /** API for the single transform case. */
   const TransformType &GetInverseTransform() const
   {return m_InverseTransforms[0]; }
@@ -328,7 +328,7 @@ public:
     /** Return the i'th transform object. */
   const TransformType &GetInversePrefixTransform(unsigned int i) const
   { return m_InversePrefixTransforms[i]; }
-  
+
   /** API for the single transform case. */
   const TransformType &GetInversePrefixTransform() const
   {return m_InversePrefixTransforms[0]; }
@@ -394,7 +394,7 @@ public:
 
   /** The following methods provide functionality for specifying particle
       indices that are fixed landmarks.  SetPosition() calls to these particle
-      indices will silently fail. For simplicity, only one list of indices is      
+      indices will silently fail. For simplicity, only one list of indices is
       maintained for all dimensions.  If particle index n is flagged, for
       example, then particle index n in all domains is fixed.*/
   void SetFixedParticleFlag(unsigned int d, unsigned int i)
@@ -420,10 +420,6 @@ public:
   unsigned int GetDomainsPerShape()
   { return m_DomainsPerShape; }
 
-  void SetLambdaI(double lambda, int domain){m_lambdas[domain] = lambda;}
-  double GetLambdaI(int domain){return m_lambdas[domain];}
-  void SetLambdaVec(std::vector<double> lambdas){m_lambdas = lambdas;}
-  
 protected:
   ParticleSystem();
   void PrintSelf(std::ostream& os, Indent indent) const;
@@ -442,7 +438,7 @@ protected:
       domains. */
   typename std::vector< typename DomainType::Pointer >::iterator GetDomainsEnd()
   { return m_Domains.end(); }
-  
+
   /** Return an iterator that points to the first element of the list of the
       transforms. */
   typename std::vector< TransformType >::iterator GetTransformsBegin()
@@ -452,7 +448,7 @@ protected:
       transforms. */
   typename std::vector< TransformType >::iterator GetTransformsEnd()
   { return m_Transforms.end(); }
-  
+
   /** Return an iterator that points to the first element of the list of the
       inverse transforms. */
   typename std::vector< TransformType >::iterator
@@ -464,11 +460,11 @@ protected:
   typename std::vector< TransformType >::iterator
   GetInverseTransformsEnd()
   { return m_InverseTransforms.end(); }
-  
+
   /** Return the i'th transform object. */
   TransformType &GetInverseTransform(unsigned int i)
   { return m_InverseTransforms[i]; }
-  
+
   /** API for the single transform case. */
   TransformType &GetInverseTransform()
   {return m_InverseTransforms[0]; }
@@ -476,7 +472,7 @@ protected:
   /** Return the i'th transform object. */
   TransformType &GetInversePrefixTransform(unsigned int i)
   { return m_InversePrefixTransforms[i]; }
-  
+
   /** API for the single transform case. */
   TransformType &GetInversePrefixTransform()
   {return m_InversePrefixTransforms[0]; }
@@ -484,7 +480,7 @@ protected:
 private:
   ParticleSystem(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
-  
+
   /** The 2D array of particle positions.  1st array axis is the domain number.
       These values may only be modified by the ParticleSystem class itself. */
   std::vector<typename  PointContainerType::Pointer>  m_Positions;
@@ -497,7 +493,7 @@ private:
 
   /** The set of domain neighborhood objects. */
   std::vector< typename NeighborhoodType::Pointer > m_Neighborhoods;
-               
+
   /** The set of domain transform objects */
   std::vector< TransformType > m_Transforms;
 
@@ -524,8 +520,6 @@ private:
   std::vector< std::vector<bool> > m_FixedParticleFlags;
 
   std::mt19937 m_rand{42};
-
-  std::vector<double> m_lambdas;
 };
 
 } // end namespace itk

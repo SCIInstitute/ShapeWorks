@@ -656,7 +656,7 @@ void Optimize::Initialize()
   double c_eq0 = 1e0;
   double c_in0 = 1e5;
 
-  double c_eq_factor = 1.01;
+  double c_eq_factor = 1.0;
   double c_in_factor = 1.0;
 
   double lambda0 = 1e0;
@@ -720,6 +720,10 @@ void Optimize::Initialize()
     m_sampler->GetCurvatureGradientFunction()->SetCIn(c_in0);
 
     m_sampler->GetParticleSystem()->AdvancedAllParticleSplitting(epsilon);
+
+    std::stringstream stream2;
+    stream2 << "+++" << std::endl;
+    std::cout << stream2.str();
 
     m_sampler->GetParticleSystem()->SynchronizePositions();
 

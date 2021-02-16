@@ -6,13 +6,16 @@ import numpy as np
 import csv
 
 logfname = "log.txt"
-atts_of_interest = [0, 1]
+atts_of_interest = [0, 1, 2, 3]
 alpha = 0.2
 linewidth = 0.3
 normalize_x_axis = True
 normalize_y_axis = True
+#pattern = "---"
+pattern = "-=-"
 
-atts = ['h(x)', "lambda"]
+#atts = ['h(x)', "updated_lambda", "original_lambda", "lagrangian_magnitude", "Grad_E_magnitude"]
+atts = ['h(x)', "maximumUpdateAllowed", "m_TimeSteps[dom][k]", "original_gradient_magnitude"]
 
 maindir = datetime.now().strftime('%Y-%m-%d-%H-%M-%S') + '/'
 
@@ -47,8 +50,8 @@ for att_of_interest in atts_of_interest:
 		if not line: 
 		    break
 		    
-		if(line.startswith('---')):
-			line = line.lstrip('---').split()
+		if(line.startswith(pattern)):
+			line = line.lstrip(pattern).split()
 			line = list(map(float, line))
 			att_count = len(line) - 2
 			entries.append(line)
