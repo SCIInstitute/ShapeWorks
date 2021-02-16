@@ -295,7 +295,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
         r[n] = (pos[n] - twin_neighbors[i].Point[n]) * kappa;
       }
 
-      double q = kappa * exp( -dot_product(r, r) * sigma2inv);
+      double q = 2.0*kappa * exp( -dot_product(r, r) * sigma2inv);
       A -= q;
 
       for (unsigned int n = 0; n < VDimension; n++)

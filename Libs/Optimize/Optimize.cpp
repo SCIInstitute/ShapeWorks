@@ -1392,12 +1392,15 @@ void Optimize::WritePointFiles(std::string iter_prefix)
   typedef Sampler::PointType PointType;
   const int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
 
+  std::string mega_file = iter_prefix + "wipmega_local.particles";
+  std::ofstream mega_out(mega_file.c_str());
+
   int counter;
   for (int i = 0; i < n; i++) {
     counter = 0;
 
-    std::string local_file = iter_prefix + "/" + m_filenames[i] + "_local.particles";
-    std::string world_file = iter_prefix + "/" + m_filenames[i] + "_world.particles";
+    std::string local_file = iter_prefix + m_filenames[i] + "_local.particles";
+    std::string world_file = iter_prefix + m_filenames[i] + "_world.particles";
 
     std::ofstream out(local_file.c_str());
     std::ofstream outw(world_file.c_str());
@@ -1419,8 +1422,10 @@ void Optimize::WritePointFiles(std::string iter_prefix)
 
       for (unsigned int k = 0; k < 3; k++) {
         out << pos[k] << " ";
+        mega_out << pos[k] << " ";
       }
       out << std::endl;
+      mega_out << std::endl;
 
       for (unsigned int k = 0; k < 3; k++) {
         outw << wpos[k] << " ";
@@ -1438,7 +1443,12 @@ void Optimize::WritePointFiles(std::string iter_prefix)
     str = "with " + st.str() + "points...";
     this->PrintStartMessage(str, 1);
     this->PrintDoneMessage(1);
+
+
   }   // end for files
+  mega_out.close();
+  std::string final_mega_file = iter_prefix + "mega_local.particles";
+  rename(mega_file.c_str(), final_mega_file.c_str());
   this->PrintDoneMessage();
 }
 

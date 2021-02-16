@@ -113,11 +113,14 @@ namespace itk
             m_GradientFunction->BeforeIteration();
         counter++;
 
-        // Iterate over each domain
+        const int num_domains_per_shape = m_ParticleSystem->GetDomainsPerShape();
+      // Iterate over each domain
       tbb::parallel_for(
-        tbb::blocked_range<size_t>{0, numdomains},
+        tbb::blocked_range<size_t>{0, numdomains / num_domains_per_shape},
         [&](const tbb::blocked_range<size_t>& r) {
-          for (size_t dom = r.begin(); dom < r.end(); ++dom) {
+          for (size_t shape_idx = r.begin(); shape_idx < r.end(); ++shape_idx) {
+          for (int domain_index=0; domain_index<num_domains_per_shape; domain_index++) {
+            size_t dom = shape_idx*num_domains_per_shape+domain_index;
 
           // skip any flagged domains
           if (m_ParticleSystem->GetDomainFlag(dom) == true)
@@ -205,6 +208,7 @@ namespace itk
             } // end while(true)
           } // for each particle
         }// for each domain
+        }// for each shape
       });
 
       m_NumberOfIterations++;
