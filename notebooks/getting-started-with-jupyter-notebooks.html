@@ -274,9 +274,9 @@
 <div class="notebook-content">
 <style type="text/css">
     pre { line-height: 125%; }
-td.linenos pre { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
-span.linenos { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
-td.linenos pre.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
 span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
 .highlight .hll { background-color: var(--jp-cell-editor-active-background) }
 .highlight { background: var(--jp-cell-editor-background); color: var(--jp-mirror-editor-variable-color) }
@@ -14747,9 +14747,8 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="styling-and-navigation">Styling and navigation<a class="anchor-link" href="#Styling-and-navigation">&#182;</a></h2><p>Jupyter notebook supports Markdown, a simple markup language that enables simple formatting for section headers, code samples, weblinks, and images, yet is still readable as plain text.</p>
 <p>To create a text cell, create a new cell and set its type to <code>Markdown</code> using the drop-down menu in the top icon bar. Start writing your text with markdown styling, for example:</p>
-
-<pre><code>markdown
-User _underscore_ for italics and **double asterisks** for bold.</code></pre>
+<div class="highlight"><pre><span></span>User <span class="ge">_underscore_</span> for italics and <span class="gs">**double asterisks**</span> for bold.
+</pre></div>
 <p>Then run the cell (e.g. press <code>Shift + Enter</code>).</p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/jupyter-markdown.mp4" autoplay muted loop controls style="width:100%"></p>
 </div>
