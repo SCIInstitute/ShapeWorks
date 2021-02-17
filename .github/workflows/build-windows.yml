@@ -46,7 +46,7 @@ jobs:
       with:
         version: "5.9.9"
         setup-python: 'false'
-        dir: "C:\Qt"
+        dir: 'C:\Qt'
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
     - name: Setup Conda
