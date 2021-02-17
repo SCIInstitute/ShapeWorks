@@ -46,6 +46,7 @@ jobs:
       with:
         version: "5.9.9"
         setup-python: 'false'
+        dir: "C:\Qt"
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
     - name: Setup Conda
@@ -65,7 +66,7 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ${{runner.workspace}}\deps
-        key: ${{ runner.os }}b-${{ hashFiles('**/build_dependencies.sh') }}
+        key: ${{ runner.os }}c-${{ hashFiles('**/build_dependencies.sh') }}
 
     - name: Build dependencies
       shell: bash -l {0}
@@ -136,7 +137,12 @@ jobs:
       shell: bash -l {0}
       run: df -h
 
-    - name: Clean miniconda
+    - name: Clean Up
       working-directory: ${{runner.workspace}}/build
       shell: bash -l {0}
-      run: rm -rf c:/Miniconda3
+      run: rm -rf bin
+
+    - name: df2
+      working-directory: ${{runner.workspace}}/build
+      shell: bash -l {0}
+      run: df -h
