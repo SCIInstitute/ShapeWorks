@@ -192,6 +192,7 @@ namespace itk
                 if (m_TimeSteps[dom][k] > minimumTimeStep)
                 {
                   domain->ApplyConstraints(pt, k);
+                  domain->InvalidateParticlePosition(k);
                   m_ParticleSystem->SetPosition(pt, k, dom);
 
                   m_TimeSteps[dom][k] /= factor;

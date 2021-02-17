@@ -47,6 +47,8 @@ public:
     return mesh_upper_bound_;
   }
 
+  virtual void InvalidateParticle(int idx) override;
+
 private:
 
   void ComputeMeshBounds();

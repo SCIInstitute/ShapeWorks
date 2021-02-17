@@ -8,7 +8,6 @@
 #include <vtkTriangleFilter.h>
 #include <vtkGenericCell.h>
 #include <vtkCleanPolyData.h>
-
 #include <vtkTriangle.h>
 
 #include <igl/grad.h>
@@ -50,6 +49,10 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
   triangle_filter->Update();
 
   vtkSmartPointer<vtkCleanPolyData> clean = vtkSmartPointer<vtkCleanPolyData>::New();
+  clean->ConvertPolysToLinesOff();
+  clean->ConvertLinesToPointsOff();
+  clean->ConvertStripsToPolysOff();
+  clean->PointMergingOn();
   clean->SetInputConnection(triangle_filter->GetOutputPort());
 
   vtkSmartPointer<vtkPolyDataNormals> normals = vtkSmartPointer<vtkPolyDataNormals>::New();
@@ -81,7 +84,7 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
 
   this->cell_locator_ = vtkSmartPointer<vtkCellLocator>::New();
   this->cell_locator_->SetCacheCellBounds(true);
-  this->cell_locator_->SetDataSet(poly_data);
+  this->cell_locator_->SetDataSet(this->poly_data_);
   this->cell_locator_->BuildLocator();
 
   this->ComputeMeshBounds();
@@ -97,8 +100,6 @@ double VtkMeshWrapper::ComputeDistance(VtkMeshWrapper::PointType pointa,
   double z = pointa[2] - pointb[2];
   double distance = std::sqrt((x * x) + (y * y) + (z * z));
   return distance;
-
-  //return pointa.EuclideanDistanceTo(pointb);
 }
 
 //---------------------------------------------------------------------------
@@ -125,6 +126,7 @@ VtkMeshWrapper::PointType VtkMeshWrapper::GeodesicWalk(VtkMeshWrapper::PointType
 
   Eigen::Vector3d snappedPoint = convert<PointType, Eigen::Vector3d>(snapped);
   int ending_face = -1;
+
   Eigen::Vector3d newPoint = GeodesicWalkOnFace(snappedPoint, projectedVector, faceIndex,
                                                 ending_face);
 
@@ -132,7 +134,6 @@ VtkMeshWrapper::PointType VtkMeshWrapper::GeodesicWalk(VtkMeshWrapper::PointType
   newPointpt[0] = newPoint[0];
   newPointpt[1] = newPoint[1];
   newPointpt[2] = newPoint[2];
-
 
   // update cache
   if (idx >= 0 && ending_face >= 0) {
@@ -314,6 +315,16 @@ int VtkMeshWrapper::GetTriangleForPoint(const double pt[3], int idx, double clos
 
     const int guess = particle2tri_[idx];
 
+    /*
+    if (guess != -1 && this->IsInTriangle(pt, guess)) {
+      closest_point[0] = pt[0];
+      closest_point[1] = pt[1];
+      closest_point[2] = pt[2];
+      return guess;
+    }
+    */
+
+
     if (guess > 0) {
       closest_point[0] = pt[0];
       closest_point[1] = pt[1];
@@ -321,14 +332,6 @@ int VtkMeshWrapper::GetTriangleForPoint(const double pt[3], int idx, double clos
       return guess;
     }
 
-/*
-    if (this->IsInTriangle(pt, guess)) {
-      closest_point[0] = pt[0];
-      closest_point[1] = pt[1];
-      closest_point[2] = pt[2];
-      return guess;
-    }
-    */
   }
 
   //double closest_point[3];//the coordinates of the closest point will be returned here
@@ -339,11 +342,10 @@ int VtkMeshWrapper::GetTriangleForPoint(const double pt[3], int idx, double clos
   this->cell_locator_->FindClosestPoint(pt, closest_point, cell_id, sub_id, closest_point_dist2);
 
   if (idx >= 0) {
-//    std::cerr << "pt: " << idx << ", pt = " << pt[0] << "," << pt[1] << "," << pt[2] << " -> "
-//              << closest_point[0] << "," << closest_point[1] << "," << closest_point[2] << "\n";
     particle2tri_[idx] = cell_id;
   }
 
+  assert(cell_id >= 0);
   return cell_id;
 }
 
@@ -403,6 +405,7 @@ void VtkMeshWrapper::ComputeGradN()
   }
   for (int i = 0; i < n_faces; i++) {
     auto cell = this->poly_data_->GetCell(i);
+    assert (cell->GetNumberOfPoints() == 3);
     F(i, 0) = cell->GetPointId(0);
     F(i, 1) = cell->GetPointId(1);
     F(i, 2) = cell->GetPointId(2);
@@ -475,7 +478,6 @@ bool VtkMeshWrapper::IsInTriangle(const double* pt, int face_index) const
 //---------------------------------------------------------------------------
 Eigen::Vector3d VtkMeshWrapper::ComputeBarycentricCoordinates(Eigen::Vector3d pt, int face) const
 {
-  auto cell = this->poly_data_->GetCell(face);
 
   double point[3];
   point[0] = pt[0];
@@ -487,7 +489,8 @@ Eigen::Vector3d VtkMeshWrapper::ComputeBarycentricCoordinates(Eigen::Vector3d pt
   double pcoords[3];
   double dist2;
   double weights[3];
-  cell->EvaluatePosition(point, closest, sub_id, pcoords, dist2, weights);
+  this->triangles_[face]->EvaluatePosition(point, closest, sub_id, pcoords, dist2,
+                                           weights);
 
   Eigen::Vector3d bary(weights[0], weights[1], weights[2]);
   return bary;
@@ -514,11 +517,15 @@ VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d proj
   double barycentricEpsilon = 0.0001;
   std::vector<int> facesTraversed;
   //std::vector<vec3> positions;
+  int prevFace = currentFace;
   while (remainingVector.norm() > minimumUpdate && currentFace != -1) {
     facesTraversed.push_back(currentFace);
     vec3 currentBary = ComputeBarycentricCoordinates(
       vec3(currentPoint[0], currentPoint[1], currentPoint[2]), currentFace);
     //std::cerr << "Current Bary: " << PrintValue<Eigen::Vector3d>(currentBary) << "\n";
+    assert(abs(currentBary[0]) < 1.01);
+    assert(abs(currentBary[1]) < 1.01);
+    assert(abs(currentBary[2]) < 1.01);
 
     Eigen::Vector3d targetPoint = currentPoint + remainingVector;
     //positions.push_back(currentPoint);
@@ -613,9 +620,28 @@ VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d proj
     }
     currentPoint = intersect;
     currentFace = nextFace;
+    if (currentFace != -1) {
+      prevFace = currentFace;
+    }
   }
 
-  ending_face = currentFace;
+  if (currentFace != -1) {
+    prevFace = currentFace;
+  }
+
+  vec3 bary = ComputeBarycentricCoordinates(
+    vec3(currentPoint[0], currentPoint[1], currentPoint[2]), prevFace);
+
+  assert(abs(bary[0]) < 1.01);
+  assert(abs(bary[1]) < 1.01);
+  assert(abs(bary[2]) < 1.01);
+
+
+
+
+  //ending_face = currentFace;
+  ending_face = prevFace;
+  assert(ending_face != -1);
   return currentPoint;
 }
 
@@ -650,14 +676,6 @@ int VtkMeshWrapper::GetAcrossEdge(int face_id, int edge_id) const
   // get the neighbors of the cell
   auto neighbors = vtkSmartPointer<vtkIdList>::New();
 
-
-  //auto cell = this->poly_data_->GetCell(face_id);
-  //auto edge = cell->GetEdge(edge_id);
-
-  int a = this->triangles_[face_id]->GetPointId(0);
-  int b = this->triangles_[face_id]->GetPointId(1);
-  int c = this->triangles_[face_id]->GetPointId(2);
-
   int edge_p1 = this->triangles_[face_id]->GetPointId(1);
   int edge_p2 = this->triangles_[face_id]->GetPointId(2);
   if (edge_id == 1) {
@@ -672,8 +690,7 @@ int VtkMeshWrapper::GetAcrossEdge(int face_id, int edge_id) const
   this->poly_data_->GetCellEdgeNeighbors(face_id, edge_p1, edge_p2, neighbors);
 
   if (neighbors->GetNumberOfIds() == 0) {
-    // This could be the end of an open mesh
-    auto cell = this->triangles_[face_id];
+    // This is the boundary edge of an open mesh
     return -1;
   }
 
@@ -702,7 +719,6 @@ int VtkMeshWrapper::SlideAlongEdge(Eigen::Vector3d& point_, Eigen::Vector3d& rem
   int towardsEdge = indexa;
   if (newDot < 0) {
     // going in opposite direction as mesh edge
-    meshEdge = -meshEdge;
     maxSlide = pointa - point_;
     towardsEdge = indexb;
   }
@@ -802,6 +818,14 @@ VtkMeshWrapper::CalculateNormalAtPoint(VtkMeshWrapper::PointType p, int idx) con
   }
   return weightedNormal;
 
+}
+
+void VtkMeshWrapper::InvalidateParticle(int idx)
+{
+  if (idx >= particle2tri_.size()) {
+    particle2tri_.resize(idx + 1, -1);
+  }
+  this->particle2tri_[idx] = -1;
 }
 
 }
