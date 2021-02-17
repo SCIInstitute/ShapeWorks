@@ -141,3 +141,7 @@ jobs:
       shell: bash -l {0}
       run: rm -rf c:/Miniconda3
              
+    - name: df2
+      working-directory: ${{runner.workspace}}/build
+      shell: bash -l {0}
+      run: df -h
