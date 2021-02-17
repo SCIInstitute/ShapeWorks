@@ -278,6 +278,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 
   maxmove = (m_CurrentSigma / m_avgKappa) * m_MaxMoveFactor;
 
+  double twin_energy = 0.0;
   if(system->GetDomainsPerShape() != 0) {
     int twin_dom = (d % 2 == 0) ? d+1 : d-1;
     const double radius = this->GetNeighborhoodToSigmaRatio() * m_CurrentSigma;
@@ -295,6 +296,14 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
         r[n] = (pos[n] - twin_neighbors[i].Point[n]) * kappa;
       }
 
+      const double twin_d = dot_product(r, r);
+      twin_energy += twin_d*0.5;
+      for (unsigned int n = 0; n < VDimension; n++)
+      {
+        gradE[n] -= r[n]; //todo weight
+      }
+
+      /*
       double q = 2.0*kappa * exp( -dot_product(r, r) * sigma2inv);
       A -= q;
 
@@ -302,10 +311,11 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
       {
         gradE[n] -= 1.0 * r[n] * q; //todo weight
       }
+      */
     }
   }
 
-  energy = (A * sigma2inv ) / m_avgKappa;
+  energy = twin_energy + (A * sigma2inv ) / m_avgKappa;
   gradE = gradE / m_avgKappa;
 
 
