@@ -46,8 +46,6 @@ target_link_libraries(
   TBB::tbb
   )
 
-
-
 # Install
 set_target_properties(Mesh PROPERTIES PUBLIC_HEADER
  "${Mesh_headers};${PreviewMeshQC_headers}"

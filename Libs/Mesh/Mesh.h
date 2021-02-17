@@ -78,6 +78,8 @@ public:
   /// computes surface to surface distance, compute method: POINT_TO_POINT (default) or POINT_TO_CELL
   Mesh& distance(const Mesh &target, const DistanceMethod method = POINT_TO_POINT);
 
+  Mesh& clipClosedSurface(const Plane plane);
+
   /// rasterizes mesh to create binary images, automatically computing size and origin if necessary
   Image toImage(Vector3 spacing = makeVector({1.0, 1.0, 1.0}), Dims size = {0, 0, 0}, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;
 

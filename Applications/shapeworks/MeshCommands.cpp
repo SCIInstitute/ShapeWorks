@@ -723,6 +723,45 @@ bool FixMesh::execute(const optparse::Values &options, SharedCommandData &shared
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// ClipClosedSurface
+///////////////////////////////////////////////////////////////////////////////
+void ClipClosedSurface::buildParser()
+{
+  const std::string prog = "clip-closed-surface";
+  const std::string desc = "clips mesh resulting in a closed surface";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--nx").action("store").type("double").set_default(0.0).help("Value of normal.x for cutting plane [default: %default].");
+  parser.add_option("--ny").action("store").type("double").set_default(0.0).help("Value of normal.y for cutting plane [default: %default].");
+  parser.add_option("--nz").action("store").type("double").set_default(0.0).help("Value of normal.z for cutting plane [default: %default].");
+  parser.add_option("--ox").action("store").type("double").set_default(0.0).help("Value of origin.x for cutting plane [default: %default].");
+  parser.add_option("--oy").action("store").type("double").set_default(0.0).help("Value of origin.y for cutting plane [default: %default].");
+  parser.add_option("--oz").action("store").type("double").set_default(0.0).help("Value of origin.z for cutting plane [default: %default].");
+
+  Command::buildParser();
+}
+
+bool ClipClosedSurface::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  Vector normal{makeVector({static_cast<double>(options.get("nx")),
+                            static_cast<double>(options.get("ny")),
+                            static_cast<double>(options.get("nz"))})};
+
+  Point origin({static_cast<double>(options.get("ox")),
+                static_cast<double>(options.get("oy")),
+                static_cast<double>(options.get("oz"))});
+  
+  sharedData.mesh->clipClosedSurface(makePlane(normal, origin));
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // SetFieldValue
 ///////////////////////////////////////////////////////////////////////////////
 void SetFieldValue::buildParser()
