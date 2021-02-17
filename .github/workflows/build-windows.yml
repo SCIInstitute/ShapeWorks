@@ -130,3 +130,14 @@ jobs:
         title: "Development Build for Windows"
         files: |
              d:/a/ShapeWorks/ShapeWorks/artifacts/*.exe
+
+    - name: df
+      working-directory: ${{runner.workspace}}/build
+      shell: bash -l {0}
+      run: df -h
+
+    - name: Clean miniconda
+      working-directory: ${{runner.workspace}}/build
+      shell: bash -l {0}
+      run: rm -rf c:/Miniconda3
+             
