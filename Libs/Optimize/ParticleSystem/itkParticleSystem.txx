@@ -400,6 +400,8 @@ ParticleSystem<VDimension>
     auto neg_projected = -projected;
     newpos = this->GetDomain(domain)->UpdateParticlePosition(startingPos, neg_projected);
     this->SetPosition(newpos, k, domain, threadId);
+    const ParticleDomain *domain = this->GetDomain(domain);
+    domain->InvalidateParticlePosition(k);
 
   }
 }

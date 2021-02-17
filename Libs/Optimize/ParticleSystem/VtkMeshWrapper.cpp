@@ -119,6 +119,12 @@ VtkMeshWrapper::PointType VtkMeshWrapper::GeodesicWalk(VtkMeshWrapper::PointType
   vec3 currentBary = this->ComputeBarycentricCoordinates(point, faceIndex);
   //std::cerr << "Starting Bary: " << PrintValue<Eigen::Vector3d>(currentBary) << "\n";
 
+  // confirm we are still on the same triangle
+  assert(abs(currentBary[0]) < 1.01);
+  assert(abs(currentBary[1]) < 1.01);
+  assert(abs(currentBary[2]) < 1.01);
+
+
   Eigen::Vector3d vectorEigen = convert<vnl_vector_fixed<double, DIMENSION>, Eigen::Vector3d>(
     vector);
   Eigen::Vector3d projectedVector = this->ProjectVectorToFace(GetFaceNormal(faceIndex),
