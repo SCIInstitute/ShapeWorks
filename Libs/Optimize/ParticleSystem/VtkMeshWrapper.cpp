@@ -21,7 +21,7 @@ static float epsilon = 1e-6;
 
 namespace {
 template<class FROM, class TO>
-inline TO convert(FROM& value)
+inline TO convert(FROM &value)
 {
   TO converted;
   converted[0] = value[0];
@@ -131,10 +131,7 @@ VtkMeshWrapper::PointType VtkMeshWrapper::GeodesicWalk(VtkMeshWrapper::PointType
   Eigen::Vector3d newPoint = GeodesicWalkOnFace(snappedPoint, projectedVector, faceIndex,
                                                 ending_face);
 
-  PointType newPointpt;
-  newPointpt[0] = newPoint[0];
-  newPointpt[1] = newPoint[1];
-  newPointpt[2] = newPoint[2];
+  PointType newPointpt = convert<Eigen::Vector3d, PointType>(newPoint);
 
   // update cache
   if (idx >= 0 && ending_face >= 0) {
@@ -165,35 +162,25 @@ VtkMeshWrapper::PointType VtkMeshWrapper::GeodesicWalk(VtkMeshWrapper::PointType
 
 //---------------------------------------------------------------------------
 vnl_vector_fixed<double, DIMENSION>
-VtkMeshWrapper::ProjectVectorToSurfaceTangent(const VtkMeshWrapper::PointType& pointa, int idx,
-                                              vnl_vector_fixed<double, 3>& vector) const
+VtkMeshWrapper::ProjectVectorToSurfaceTangent(const VtkMeshWrapper::PointType &pointa, int idx,
+                                              vnl_vector_fixed<double, 3> &vector) const
 {
-
   double point[3];
   point[0] = pointa[0];
   point[1] = pointa[1];
   point[2] = pointa[2];
-
   double closest_point[3];
 
   int faceIndex = this->GetTriangleForPoint(point, idx, closest_point);
 
   double* normal = this->poly_data_->GetCellData()->GetNormals()->GetTuple(faceIndex);
 
-  Eigen::Vector3d vec_normal;
-  vec_normal[0] = normal[0];
-  vec_normal[1] = normal[1];
-  vec_normal[2] = normal[2];
-
-  Eigen::Vector3d vec_vector;
-  vec_vector[0] = vector[0];
-  vec_vector[1] = vector[1];
-  vec_vector[2] = vector[2];
+  Eigen::Vector3d vec_normal = convert<double*, vec3>(normal);
+  Eigen::Vector3d vec_vector = convert<vnl_vector_fixed<double, 3> &, vec3>(vector);
 
   Eigen::Vector3d result = this->ProjectVectorToFace(vec_normal, vec_vector);
   vnl_vector_fixed<double, DIMENSION> resultvnl(result[0], result[1], result[2]);
   return resultvnl;
-
 }
 
 //---------------------------------------------------------------------------
@@ -244,17 +231,10 @@ VtkMeshWrapper::SampleGradNAtPoint(VtkMeshWrapper::PointType p, int idx) const
 VtkMeshWrapper::PointType
 VtkMeshWrapper::SnapToMesh(VtkMeshWrapper::PointType pointa, int idx) const
 {
-  double point[3];
-  point[0] = pointa[0];
-  point[1] = pointa[1];
-  point[2] = pointa[2];
+  double point[3] = {pointa[0], pointa[1], pointa[2]};
   double closest_point[3];
   this->GetTriangleForPoint(point, idx, closest_point);
-
-  VtkMeshWrapper::PointType out;
-  out[0] = closest_point[0];
-  out[1] = closest_point[1];
-  out[2] = closest_point[2];
+  VtkMeshWrapper::PointType out = convert<double[3], VtkMeshWrapper::PointType>(closest_point);
   return out;
 
 /*
@@ -293,14 +273,9 @@ VtkMeshWrapper::SnapToMesh(VtkMeshWrapper::PointType pointa, int idx) const
 VtkMeshWrapper::PointType VtkMeshWrapper::GetPointOnMesh() const
 {
   int face_index = 0;
-
   double* point = this->poly_data_->GetPoint(face_index);
 
-  PointType p;
-  p[0] = point[0];
-  p[1] = point[1];
-  p[2] = point[2];
-
+  PointType p = convert<double*, PointType>(point);
   return p;
 }
 
@@ -315,7 +290,6 @@ int VtkMeshWrapper::GetTriangleForPoint(const double pt[3], int idx, double clos
     }
 
     const int guess = particle2tri_[idx];
-
 
     if (guess != -1 && this->IsInTriangle(pt, guess)) {
       closest_point[0] = pt[0];
@@ -352,8 +326,8 @@ int VtkMeshWrapper::GetTriangleForPoint(const double pt[3], int idx, double clos
 
 //---------------------------------------------------------------------------
 Eigen::Vector3d
-VtkMeshWrapper::ProjectVectorToFace(const Eigen::Vector3d& normal,
-                                    const Eigen::Vector3d& vector) const
+VtkMeshWrapper::ProjectVectorToFace(const Eigen::Vector3d &normal,
+                                    const Eigen::Vector3d &vector) const
 {
   auto old_mag = vector.norm();
 
@@ -480,10 +454,7 @@ bool VtkMeshWrapper::IsInTriangle(const double* pt, int face_index) const
 Eigen::Vector3d VtkMeshWrapper::ComputeBarycentricCoordinates(Eigen::Vector3d pt, int face) const
 {
 
-  double point[3];
-  point[0] = pt[0];
-  point[1] = pt[1];
-  point[2] = pt[2];
+  double point[3] = {pt[0], pt[1], pt[2]};
 
   double closest[3];
   int sub_id;
@@ -509,7 +480,7 @@ const Eigen::Vector3d VtkMeshWrapper::GetFaceNormal(int face_index) const
 //---------------------------------------------------------------------------
 Eigen::Vector3d
 VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d projected_vector,
-                                   int face_index, int& ending_face) const
+                                   int face_index, int &ending_face) const
 {
   int currentFace = face_index;
   Eigen::Vector3d currentPoint = point_a;
@@ -630,7 +601,6 @@ VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d proj
   vec3 bary = ComputeBarycentricCoordinates(
     vec3(currentPoint[0], currentPoint[1], currentPoint[2]), prevFace);
 
-
   ending_face = prevFace;
   assert(ending_face != -1);
   return currentPoint;
@@ -690,7 +660,7 @@ int VtkMeshWrapper::GetAcrossEdge(int face_id, int edge_id) const
 }
 
 //---------------------------------------------------------------------------
-int VtkMeshWrapper::SlideAlongEdge(Eigen::Vector3d& point_, Eigen::Vector3d& remainingVector_,
+int VtkMeshWrapper::SlideAlongEdge(Eigen::Vector3d &point_, Eigen::Vector3d &remainingVector_,
                                    int face_, int edge_) const
 {
 
@@ -740,9 +710,9 @@ Eigen::Vector3d VtkMeshWrapper::GetVertexCoords(int vertex_id) const
 }
 
 //---------------------------------------------------------------------------
-Eigen::Vector3d VtkMeshWrapper::RotateVectorToFace(const Eigen::Vector3d& prev_normal,
-                                                   const Eigen::Vector3d& next_normal,
-                                                   const Eigen::Vector3d& vector) const
+Eigen::Vector3d VtkMeshWrapper::RotateVectorToFace(const Eigen::Vector3d &prev_normal,
+                                                   const Eigen::Vector3d &next_normal,
+                                                   const Eigen::Vector3d &vector) const
 {
   float dotprod = prev_normal.normalized().dot(next_normal.normalized());
   if (dotprod >= 1) {
@@ -761,30 +731,11 @@ vnl_vector_fixed<float, DIMENSION>
 VtkMeshWrapper::CalculateNormalAtPoint(VtkMeshWrapper::PointType p, int idx) const
 {
 
-  double point[3];
-  point[0] = p[0];
-  point[1] = p[1];
-  point[2] = p[2];
+  double point[3] = {p[0], p[1], p[2]};
 
   double closest_point[3];
 
-  /*
-  int guess = -1;
-  if (idx >= 0 && idx < particle2tri_.size()) {
-    guess = particle2tri_[idx];
-  }
-   */
   int face_index = this->GetTriangleForPoint(point, idx, closest_point);
-
-  /*
-  if (idx >= 0 && idx < particle2tri_.size()) {
-    if (guess != face_index) {
-      std::cerr << "how can they be different? " << guess << " vs " << face_index << "\n";
-    }
-  }*/
-
-  //auto cell = this->poly_data_->GetCell(face_index);
-  //auto cell = this->triangles_[face_index];
 
   vnl_vector_fixed<float, DIMENSION> weightedNormal(0, 0, 0);
 
@@ -795,20 +746,14 @@ VtkMeshWrapper::CalculateNormalAtPoint(VtkMeshWrapper::PointType p, int idx) con
   double weights[3];
   this->triangles_[face_index]->EvaluatePosition(point, closest, sub_id, pcoords, dist2, weights);
 
-  //std::cerr << ret << ", weights = " << weights[0] << ", " << weights[1] << ", " << weights[2] << "\n";
-
   for (int i = 0; i < 3; i++) {
-
     auto id = this->triangles_[face_index]->GetPointId(i);
-
     double* normal = this->poly_data_->GetPointData()->GetNormals()->GetTuple(id);
-
     weightedNormal[0] = weightedNormal[0] + normal[0] * weights[i];
     weightedNormal[1] = weightedNormal[1] + normal[1] * weights[i];
     weightedNormal[2] = weightedNormal[2] + normal[2] * weights[i];
   }
   return weightedNormal;
-
 }
 
 void VtkMeshWrapper::InvalidateParticle(int idx)
