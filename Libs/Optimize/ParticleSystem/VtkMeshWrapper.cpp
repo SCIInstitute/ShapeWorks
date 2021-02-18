@@ -39,6 +39,7 @@ inline std::string PrintValue(T value)
 }
 
 using vec3 = Eigen::Vector3d;
+using NormalType = VtkMeshWrapper::NormalType;
 
 //---------------------------------------------------------------------------
 VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
@@ -181,8 +182,7 @@ VtkMeshWrapper::ProjectVectorToSurfaceTangent(const VtkMeshWrapper::PointType &p
 }
 
 //---------------------------------------------------------------------------
-vnl_vector_fixed<float, DIMENSION>
-VtkMeshWrapper::SampleNormalAtPoint(VtkMeshWrapper::PointType p, int idx) const
+NormalType VtkMeshWrapper::SampleNormalAtPoint(VtkMeshWrapper::PointType p, int idx) const
 {
   // if the particle is not in the cache or it has changed position, we must recompute
   if (idx < 0 || idx >= this->particle_normals_.size() || p != this->particle_positions_[idx]) {
@@ -714,15 +714,14 @@ Eigen::Vector3d VtkMeshWrapper::RotateVectorToFace(const Eigen::Vector3d &prev_n
 }
 
 //---------------------------------------------------------------------------
-vnl_vector_fixed<float, DIMENSION>
-VtkMeshWrapper::CalculateNormalAtPoint(VtkMeshWrapper::PointType p, int idx) const
+NormalType VtkMeshWrapper::CalculateNormalAtPoint(VtkMeshWrapper::PointType p, int idx) const
 {
   double point[3] = {p[0], p[1], p[2]};
   double closest_point[3];
 
   int face_index = this->GetTriangleForPoint(point, idx, closest_point);
 
-  vnl_vector_fixed<float, DIMENSION> weighted_normal(0, 0, 0);
+  NormalType weighted_normal(0, 0, 0);
 
   double closest[3];
   int sub_id;

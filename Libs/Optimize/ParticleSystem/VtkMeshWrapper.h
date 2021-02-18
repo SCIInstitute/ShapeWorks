@@ -15,6 +15,7 @@ public:
 
   using PointType = MeshWrapper::PointType;
   using GradNType = MeshWrapper::GradNType;
+  using NormalType = vnl_vector_fixed<float, DIMENSION>;
 
   explicit VtkMeshWrapper(vtkSmartPointer<vtkPolyData> mesh);
 
@@ -30,7 +31,7 @@ public:
   ProjectVectorToSurfaceTangent(const PointType &pointa, int idx,
                                 vnl_vector_fixed<double, DIMENSION> &vector) const override;
 
-  vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(PointType p, int idx) const override;
+  NormalType SampleNormalAtPoint(PointType p, int idx) const override;
   GradNType SampleGradNAtPoint(PointType p, int idx) const override;
 
   PointType SnapToMesh(PointType pointa, int idx) const override;
@@ -94,7 +95,7 @@ private:
   // Caches of triangle, normal and position
   // Has to be mutable because all of the accessor APIs are const
   mutable std::vector<int> particle_triangles_;
-  mutable std::vector<vnl_vector_fixed<float, DIMENSION>> particle_normals_;
+  mutable std::vector<NormalType> particle_normals_;
   mutable std::vector<PointType> particle_positions_;
 
   std::vector<GradNType> grad_normals_;
