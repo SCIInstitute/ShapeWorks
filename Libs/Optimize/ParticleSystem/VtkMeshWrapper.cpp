@@ -529,9 +529,6 @@ VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d proj
     vec3 currentBary = ComputeBarycentricCoordinates(
       vec3(currentPoint[0], currentPoint[1], currentPoint[2]), currentFace);
     //std::cerr << "Current Bary: " << PrintValue<Eigen::Vector3d>(currentBary) << "\n";
-    assert(abs(currentBary[0]) < 1.01);
-    assert(abs(currentBary[1]) < 1.01);
-    assert(abs(currentBary[2]) < 1.01);
 
     Eigen::Vector3d targetPoint = currentPoint + remainingVector;
     //positions.push_back(currentPoint);
