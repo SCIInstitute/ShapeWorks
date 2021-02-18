@@ -41,6 +41,8 @@ inline std::string PrintValue(T value)
 using vec3 = Eigen::Vector3d;
 using NormalType = VtkMeshWrapper::NormalType;
 using VectorType = VtkMeshWrapper::VectorType;
+using PointType = VtkMeshWrapper::PointType;
+using GradNType = VtkMeshWrapper::GradNType;
 
 //---------------------------------------------------------------------------
 VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
@@ -94,8 +96,8 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
 }
 
 //---------------------------------------------------------------------------
-double VtkMeshWrapper::ComputeDistance(VtkMeshWrapper::PointType pointa,
-                                       VtkMeshWrapper::PointType pointb) const
+double VtkMeshWrapper::ComputeDistance(PointType pointa,
+                                       PointType pointb) const
 {
   double x = pointa[0] - pointb[0];
   double y = pointa[1] - pointb[1];
@@ -105,8 +107,8 @@ double VtkMeshWrapper::ComputeDistance(VtkMeshWrapper::PointType pointa,
 }
 
 //---------------------------------------------------------------------------
-VtkMeshWrapper::PointType VtkMeshWrapper::GeodesicWalk(VtkMeshWrapper::PointType pointa, int idx,
-                                                       VectorType vector) const
+PointType VtkMeshWrapper::GeodesicWalk(PointType pointa, int idx,
+                                       VectorType vector) const
 {
   //std::cerr << "------------------------------------------\n";
   //std::cerr << "GeodesicWalk\n";
@@ -161,7 +163,7 @@ VtkMeshWrapper::PointType VtkMeshWrapper::GeodesicWalk(VtkMeshWrapper::PointType
 
 //---------------------------------------------------------------------------
 VectorType
-VtkMeshWrapper::ProjectVectorToSurfaceTangent(const VtkMeshWrapper::PointType &pointa, int idx,
+VtkMeshWrapper::ProjectVectorToSurfaceTangent(const PointType &pointa, int idx,
                                               VectorType &vector) const
 {
   double point[3];
@@ -183,7 +185,7 @@ VtkMeshWrapper::ProjectVectorToSurfaceTangent(const VtkMeshWrapper::PointType &p
 }
 
 //---------------------------------------------------------------------------
-NormalType VtkMeshWrapper::SampleNormalAtPoint(VtkMeshWrapper::PointType p, int idx) const
+NormalType VtkMeshWrapper::SampleNormalAtPoint(PointType p, int idx) const
 {
   // if the particle is not in the cache or it has changed position, we must recompute
   if (idx < 0 || idx >= this->particle_normals_.size() || p != this->particle_positions_[idx]) {
@@ -193,8 +195,7 @@ NormalType VtkMeshWrapper::SampleNormalAtPoint(VtkMeshWrapper::PointType p, int 
 }
 
 //---------------------------------------------------------------------------
-VtkMeshWrapper::GradNType
-VtkMeshWrapper::SampleGradNAtPoint(VtkMeshWrapper::PointType p, int idx) const
+GradNType VtkMeshWrapper::SampleGradNAtPoint(PointType p, int idx) const
 {
   double point[3];
   point[0] = p[0];
@@ -225,8 +226,7 @@ VtkMeshWrapper::SampleGradNAtPoint(VtkMeshWrapper::PointType p, int idx) const
 }
 
 //---------------------------------------------------------------------------
-VtkMeshWrapper::PointType
-VtkMeshWrapper::SnapToMesh(VtkMeshWrapper::PointType pointa, int idx) const
+PointType VtkMeshWrapper::SnapToMesh(PointType pointa, int idx) const
 {
   double point[3] = {pointa[0], pointa[1], pointa[2]};
   double closest_point[3];
@@ -267,7 +267,7 @@ VtkMeshWrapper::SnapToMesh(VtkMeshWrapper::PointType pointa, int idx) const
 }
 
 //---------------------------------------------------------------------------
-VtkMeshWrapper::PointType VtkMeshWrapper::GetPointOnMesh() const
+PointType VtkMeshWrapper::GetPointOnMesh() const
 {
   int face_index = 0;
   double* point = this->poly_data_->GetPoint(face_index);
