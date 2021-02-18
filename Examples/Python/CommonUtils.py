@@ -91,8 +91,8 @@ def download_subset(use_case,datasetName,outputDirectory):
 
 	
 def download_and_unzip_dataset(datasetName, outputDirectory):
-	# Check if the unzipped data is present
-	if generate_download_flag(outputDirectory,datasetName):#not os.path.exists(outputDirectory + datasetName + '/'):
+	# Check if the unzipped data is present and number of files are more than 3 for full use case
+	if generate_download_flag(outputDirectory,datasetName):
 		# check if the zipped data is present
 		zipfile = 'Data/' + datasetName + ".zip"
 		if not os.path.exists(zipfile):
