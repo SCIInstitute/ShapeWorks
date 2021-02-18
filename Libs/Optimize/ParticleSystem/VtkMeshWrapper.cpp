@@ -197,27 +197,17 @@ NormalType VtkMeshWrapper::SampleNormalAtPoint(PointType p, int idx) const
 //---------------------------------------------------------------------------
 GradNType VtkMeshWrapper::SampleGradNAtPoint(PointType p, int idx) const
 {
-  double point[3];
-  point[0] = p[0];
-  point[1] = p[1];
-  point[2] = p[2];
-
+  double point[3] = {p[0], p[1], p[2]};
   double closest_point[3];
   int face_index = this->GetTriangleForPoint(point, idx, closest_point);
-
-  auto cell = this->poly_data_->GetCell(face_index);
-
-  double closest[3];
-  int sub_id;
-  double pcoords[3];
-  double dist2;
-  double weights[3];
-  cell->EvaluatePosition(point, closest, sub_id, pcoords, dist2, weights);
+  // TODO: GetTriangleForPoint is already computing the weights
+  vec3 weights = this->ComputeBarycentricCoordinates(convert<double[3], vec3>(closest_point),
+                                                     face_index);
 
   GradNType weighted_grad_normal = GradNType(0.0);
 
-  for (int i = 0; i < cell->GetNumberOfPoints(); i++) {
-    auto id = cell->GetPointId(i);
+  for (int i = 0; i < 3; i++) {
+    auto id = this->triangles_[face_index]->GetPointId(i);
     GradNType grad_normal = grad_normals_[id];
     grad_normal *= weights[i];
     weighted_grad_normal += grad_normal;
@@ -441,9 +431,7 @@ bool VtkMeshWrapper::IsInTriangle(const double* pt, int face_index) const
 //---------------------------------------------------------------------------
 Eigen::Vector3d VtkMeshWrapper::ComputeBarycentricCoordinates(Eigen::Vector3d pt, int face) const
 {
-
   double point[3] = {pt[0], pt[1], pt[2]};
-
   double closest[3];
   int sub_id;
   double pcoords[3];
@@ -451,7 +439,6 @@ Eigen::Vector3d VtkMeshWrapper::ComputeBarycentricCoordinates(Eigen::Vector3d pt
   double weights[3];
   this->triangles_[face]->EvaluatePosition(point, closest, sub_id, pcoords, dist2,
                                            weights);
-
   Eigen::Vector3d bary(weights[0], weights[1], weights[2]);
   return bary;
 }
@@ -715,21 +702,17 @@ Eigen::Vector3d VtkMeshWrapper::RotateVectorToFace(const Eigen::Vector3d &prev_n
 }
 
 //---------------------------------------------------------------------------
-NormalType VtkMeshWrapper::CalculateNormalAtPoint(VtkMeshWrapper::PointType p, int idx) const
+NormalType VtkMeshWrapper::CalculateNormalAtPoint(PointType p, int idx) const
 {
   double point[3] = {p[0], p[1], p[2]};
   double closest_point[3];
 
   int face_index = this->GetTriangleForPoint(point, idx, closest_point);
+  // TODO: GetTriangleForPoint is already computing the weights
+  vec3 weights = this->ComputeBarycentricCoordinates(convert<double[3], vec3>(closest_point),
+                                                     face_index);
 
   NormalType weighted_normal(0, 0, 0);
-
-  double closest[3];
-  int sub_id;
-  double pcoords[3];
-  double dist2;
-  double weights[3];
-  this->triangles_[face_index]->EvaluatePosition(point, closest, sub_id, pcoords, dist2, weights);
 
   for (int i = 0; i < 3; i++) {
     auto id = this->triangles_[face_index]->GetPointId(i);
