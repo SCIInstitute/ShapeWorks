@@ -135,16 +135,13 @@ VtkMeshWrapper::PointType VtkMeshWrapper::GeodesicWalk(VtkMeshWrapper::PointType
 
   // update cache
   if (idx >= 0 && ending_face >= 0) {
-    if (idx >= particle2tri_.size()) {
-      particle2tri_.resize(idx + 1, 0);
+    if (idx >= particle_triangles_.size()) {
+      particle_triangles_.resize(idx + 1, -1);
     }
 
-    particle2tri_[idx] = ending_face;
+    particle_triangles_[idx] = ending_face;
 
-    if (idx >= this->particle_normals_.size()) {
-      this->particle_normals_.resize(idx + 1);
-    }
-    this->particle_normals_[idx] = this->CalculateNormalAtPoint(newPointpt, idx);
+    this->CalculateNormalAtPoint(newPointpt, idx);
   }
 
   return newPointpt;
@@ -187,11 +184,10 @@ VtkMeshWrapper::ProjectVectorToSurfaceTangent(const VtkMeshWrapper::PointType &p
 vnl_vector_fixed<float, DIMENSION>
 VtkMeshWrapper::SampleNormalAtPoint(VtkMeshWrapper::PointType p, int idx) const
 {
-
-  if (idx < 0 || idx >= this->particle_normals_.size()) {
+  // if the particle is not in the cache or it has changed position, we must recompute
+  if (idx < 0 || idx >= this->particle_normals_.size() || p != this->particle_positions_[idx]) {
     return this->CalculateNormalAtPoint(p, idx);
   }
-
   return this->particle_normals_[idx];
 }
 
@@ -258,11 +254,11 @@ VtkMeshWrapper::SnapToMesh(VtkMeshWrapper::PointType pointa, int idx) const
 
   // update cache
   if (idx > 0) {
-    if (idx >= particle2tri_.size()) {
-      particle2tri_.resize(idx + 1, 0);
+    if (idx >= particle_triangles_.size()) {
+      particle_triangles_.resize(idx + 1, 0);
     }
 
-    particle2tri_[idx] = cell_id;
+    particle_triangles_[idx] = cell_id;
   }
 
   return out;
@@ -285,11 +281,11 @@ int VtkMeshWrapper::GetTriangleForPoint(const double pt[3], int idx, double clos
   // given a guess, just check whether it is still valid.
   if (idx >= 0) {
     // ensure that the cache has enough elements. this will never be resized to more than the number of particles,
-    if (idx >= particle2tri_.size()) {
-      particle2tri_.resize(idx + 1, -1);
+    if (idx >= particle_triangles_.size()) {
+      particle_triangles_.resize(idx + 1, -1);
     }
 
-    const int guess = particle2tri_[idx];
+    const int guess = particle_triangles_[idx];
 
     if (guess != -1 && this->IsInTriangle(pt, guess)) {
       closest_point[0] = pt[0];
@@ -297,16 +293,6 @@ int VtkMeshWrapper::GetTriangleForPoint(const double pt[3], int idx, double clos
       closest_point[2] = pt[2];
       return guess;
     }
-
-
-/*
-    if (guess > 0) {
-      closest_point[0] = pt[0];
-      closest_point[1] = pt[1];
-      closest_point[2] = pt[2];
-      return guess;
-    }
-*/
   }
 
   //double closest_point[3];//the coordinates of the closest point will be returned here
@@ -317,7 +303,8 @@ int VtkMeshWrapper::GetTriangleForPoint(const double pt[3], int idx, double clos
   this->cell_locator_->FindClosestPoint(pt, closest_point, cell_id, sub_id, closest_point_dist2);
 
   if (idx >= 0) {
-    particle2tri_[idx] = cell_id;
+    // update cache, no need to check size as it was already checked above
+    particle_triangles_[idx] = cell_id;
   }
 
   assert(cell_id >= 0);
@@ -730,14 +717,12 @@ Eigen::Vector3d VtkMeshWrapper::RotateVectorToFace(const Eigen::Vector3d &prev_n
 vnl_vector_fixed<float, DIMENSION>
 VtkMeshWrapper::CalculateNormalAtPoint(VtkMeshWrapper::PointType p, int idx) const
 {
-
   double point[3] = {p[0], p[1], p[2]};
-
   double closest_point[3];
 
   int face_index = this->GetTriangleForPoint(point, idx, closest_point);
 
-  vnl_vector_fixed<float, DIMENSION> weightedNormal(0, 0, 0);
+  vnl_vector_fixed<float, DIMENSION> weighted_normal(0, 0, 0);
 
   double closest[3];
   int sub_id;
@@ -749,19 +734,31 @@ VtkMeshWrapper::CalculateNormalAtPoint(VtkMeshWrapper::PointType p, int idx) con
   for (int i = 0; i < 3; i++) {
     auto id = this->triangles_[face_index]->GetPointId(i);
     double* normal = this->poly_data_->GetPointData()->GetNormals()->GetTuple(id);
-    weightedNormal[0] = weightedNormal[0] + normal[0] * weights[i];
-    weightedNormal[1] = weightedNormal[1] + normal[1] * weights[i];
-    weightedNormal[2] = weightedNormal[2] + normal[2] * weights[i];
+    weighted_normal[0] = weighted_normal[0] + normal[0] * weights[i];
+    weighted_normal[1] = weighted_normal[1] + normal[1] * weights[i];
+    weighted_normal[2] = weighted_normal[2] + normal[2] * weights[i];
   }
-  return weightedNormal;
+
+  if (idx >= 0) { // cache
+    if (idx >= this->particle_normals_.size()) {
+      this->particle_normals_.resize(idx + 1);
+      this->particle_positions_.resize(idx + 1);
+    }
+    this->particle_positions_[idx] = p;
+    this->particle_normals_[idx] = weighted_normal;
+  }
+
+  return weighted_normal;
 }
 
+//---------------------------------------------------------------------------
 void VtkMeshWrapper::InvalidateParticle(int idx)
 {
-  if (idx >= particle2tri_.size()) {
-    particle2tri_.resize(idx + 1, -1);
+  assert(idx >= 0); // should always be passed a valid particle
+  if (idx >= particle_triangles_.size()) {
+    particle_triangles_.resize(idx + 1, -1);
   }
-  this->particle2tri_[idx] = -1;
+  this->particle_triangles_[idx] = -1;
 }
 
 }
