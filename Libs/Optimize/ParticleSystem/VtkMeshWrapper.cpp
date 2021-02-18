@@ -119,11 +119,6 @@ VtkMeshWrapper::PointType VtkMeshWrapper::GeodesicWalk(VtkMeshWrapper::PointType
   vec3 currentBary = this->ComputeBarycentricCoordinates(point, faceIndex);
   //std::cerr << "Starting Bary: " << PrintValue<Eigen::Vector3d>(currentBary) << "\n";
 
-  // confirm we are still on the same triangle
-  assert(abs(currentBary[0]) < 1.01);
-  assert(abs(currentBary[1]) < 1.01);
-  assert(abs(currentBary[2]) < 1.01);
-
 
   Eigen::Vector3d vectorEigen = convert<vnl_vector_fixed<double, DIMENSION>, Eigen::Vector3d>(
     vector);
@@ -321,23 +316,23 @@ int VtkMeshWrapper::GetTriangleForPoint(const double pt[3], int idx, double clos
 
     const int guess = particle2tri_[idx];
 
-    /*
+
     if (guess != -1 && this->IsInTriangle(pt, guess)) {
       closest_point[0] = pt[0];
       closest_point[1] = pt[1];
       closest_point[2] = pt[2];
       return guess;
     }
-    */
 
 
+/*
     if (guess > 0) {
       closest_point[0] = pt[0];
       closest_point[1] = pt[1];
       closest_point[2] = pt[2];
       return guess;
     }
-
+*/
   }
 
   //double closest_point[3];//the coordinates of the closest point will be returned here
@@ -635,14 +630,7 @@ VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d proj
   vec3 bary = ComputeBarycentricCoordinates(
     vec3(currentPoint[0], currentPoint[1], currentPoint[2]), prevFace);
 
-  assert(abs(bary[0]) < 1.01);
-  assert(abs(bary[1]) < 1.01);
-  assert(abs(bary[2]) < 1.01);
 
-
-
-
-  //ending_face = currentFace;
   ending_face = prevFace;
   assert(ending_face != -1);
   return currentPoint;
