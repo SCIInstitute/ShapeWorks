@@ -16,6 +16,7 @@ public:
   using PointType = MeshWrapper::PointType;
   using GradNType = MeshWrapper::GradNType;
   using NormalType = vnl_vector_fixed<float, DIMENSION>;
+  using VectorType = vnl_vector_fixed<double, DIMENSION>;
 
   explicit VtkMeshWrapper(vtkSmartPointer<vtkPolyData> mesh);
 
@@ -23,13 +24,10 @@ public:
 
   double ComputeDistance(PointType pointa, PointType pointb) const override;
 
-  PointType
-  GeodesicWalk(PointType pointa, int idx,
-               vnl_vector_fixed<double, DIMENSION> vector) const override;
+  PointType GeodesicWalk(PointType pointa, int idx, VectorType vector) const override;
 
-  vnl_vector_fixed<double, DIMENSION>
-  ProjectVectorToSurfaceTangent(const PointType &pointa, int idx,
-                                vnl_vector_fixed<double, DIMENSION> &vector) const override;
+  VectorType ProjectVectorToSurfaceTangent(const PointType &pointa, int idx,
+                                           VectorType &vector) const override;
 
   NormalType SampleNormalAtPoint(PointType p, int idx) const override;
   GradNType SampleGradNAtPoint(PointType p, int idx) const override;
@@ -78,7 +76,7 @@ private:
 
   int GetFacePointID(int face, int point_id) const;
 
-  int SlideAlongEdge(Eigen::Vector3d &point_, Eigen::Vector3d &remainingVector_, int face_,
+  int SlideAlongEdge(Eigen::Vector3d &point, Eigen::Vector3d &remainingVector_, int face_,
                      int edge_) const;
 
   Eigen::Vector3d GetVertexCoords(int vertex_id) const;
@@ -89,8 +87,7 @@ private:
 
   vtkSmartPointer<vtkPolyData> poly_data_;
 
-  vnl_vector_fixed<float, DIMENSION>
-  CalculateNormalAtPoint(VtkMeshWrapper::PointType p, int idx) const;
+  NormalType CalculateNormalAtPoint(VtkMeshWrapper::PointType p, int idx) const;
 
   // Caches of triangle, normal and position
   // Has to be mutable because all of the accessor APIs are const

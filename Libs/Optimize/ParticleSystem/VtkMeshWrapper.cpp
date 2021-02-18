@@ -40,6 +40,7 @@ inline std::string PrintValue(T value)
 
 using vec3 = Eigen::Vector3d;
 using NormalType = VtkMeshWrapper::NormalType;
+using VectorType = VtkMeshWrapper::VectorType;
 
 //---------------------------------------------------------------------------
 VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
@@ -105,7 +106,7 @@ double VtkMeshWrapper::ComputeDistance(VtkMeshWrapper::PointType pointa,
 
 //---------------------------------------------------------------------------
 VtkMeshWrapper::PointType VtkMeshWrapper::GeodesicWalk(VtkMeshWrapper::PointType pointa, int idx,
-                                                       vnl_vector_fixed<double, 3> vector) const
+                                                       VectorType vector) const
 {
   //std::cerr << "------------------------------------------\n";
   //std::cerr << "GeodesicWalk\n";
@@ -121,7 +122,7 @@ VtkMeshWrapper::PointType VtkMeshWrapper::GeodesicWalk(VtkMeshWrapper::PointType
   //std::cerr << "Starting Bary: " << PrintValue<Eigen::Vector3d>(currentBary) << "\n";
 
 
-  Eigen::Vector3d vectorEigen = convert<vnl_vector_fixed<double, DIMENSION>, Eigen::Vector3d>(
+  Eigen::Vector3d vectorEigen = convert<VectorType, Eigen::Vector3d>(
     vector);
   Eigen::Vector3d projectedVector = this->ProjectVectorToFace(GetFaceNormal(faceIndex),
                                                               vectorEigen);
@@ -159,9 +160,9 @@ VtkMeshWrapper::PointType VtkMeshWrapper::GeodesicWalk(VtkMeshWrapper::PointType
 }
 
 //---------------------------------------------------------------------------
-vnl_vector_fixed<double, DIMENSION>
+VectorType
 VtkMeshWrapper::ProjectVectorToSurfaceTangent(const VtkMeshWrapper::PointType &pointa, int idx,
-                                              vnl_vector_fixed<double, 3> &vector) const
+                                              VectorType &vector) const
 {
   double point[3];
   point[0] = pointa[0];
@@ -174,10 +175,10 @@ VtkMeshWrapper::ProjectVectorToSurfaceTangent(const VtkMeshWrapper::PointType &p
   double* normal = this->poly_data_->GetCellData()->GetNormals()->GetTuple(faceIndex);
 
   Eigen::Vector3d vec_normal = convert<double*, vec3>(normal);
-  Eigen::Vector3d vec_vector = convert<vnl_vector_fixed<double, 3> &, vec3>(vector);
+  Eigen::Vector3d vec_vector = convert<VectorType &, vec3>(vector);
 
   Eigen::Vector3d result = this->ProjectVectorToFace(vec_normal, vec_vector);
-  vnl_vector_fixed<double, DIMENSION> resultvnl(result[0], result[1], result[2]);
+  VectorType resultvnl(result[0], result[1], result[2]);
   return resultvnl;
 }
 
@@ -647,39 +648,39 @@ int VtkMeshWrapper::GetAcrossEdge(int face_id, int edge_id) const
 }
 
 //---------------------------------------------------------------------------
-int VtkMeshWrapper::SlideAlongEdge(Eigen::Vector3d &point_, Eigen::Vector3d &remainingVector_,
-                                   int face_, int edge_) const
+int VtkMeshWrapper::SlideAlongEdge(Eigen::Vector3d &point, Eigen::Vector3d &remaining_vector,
+                                   int face, int edge) const
 {
 
-  int indexa = (edge_ + 1) % 3;
-  int indexb = (edge_ + 2) % 3;
-  int vertexindexa = this->GetFacePointID(face_, indexa);
-  int vertexindexb = this->GetFacePointID(face_, indexb);
+  int indexa = (edge + 1) % 3;
+  int indexb = (edge + 2) % 3;
+  int vertexindexa = this->GetFacePointID(face, indexa);
+  int vertexindexb = this->GetFacePointID(face, indexb);
   Eigen::Vector3d pointa = this->GetVertexCoords(vertexindexa);
   Eigen::Vector3d pointb = this->GetVertexCoords(vertexindexb);
-  Eigen::Vector3d meshEdge(pointb[0] - pointa[0], pointb[1] - pointa[1], pointb[2] - pointa[2]);
-  meshEdge.normalize();
-  double dotprod = meshEdge.dot(remainingVector_);
-  Eigen::Vector3d projectedVector = meshEdge.normalized() * dotprod;
+  Eigen::Vector3d mesh_edge(pointb[0] - pointa[0], pointb[1] - pointa[1], pointb[2] - pointa[2]);
+  mesh_edge.normalize();
+  double dotprod = mesh_edge.dot(remaining_vector);
+  Eigen::Vector3d projected_vector = mesh_edge.normalized() * dotprod;
 
-  Eigen::Vector3d maxSlide = pointb - point_;
-  double newDot = projectedVector.dot(meshEdge);
-  int towardsEdge = indexa;
-  if (newDot < 0) {
+  Eigen::Vector3d max_slide = pointb - point;
+  double new_dot = projected_vector.dot(mesh_edge);
+  int towards_edge = indexa;
+  if (new_dot < 0) {
     // going in opposite direction as mesh edge
-    maxSlide = pointa - point_;
-    towardsEdge = indexb;
+    max_slide = pointa - point;
+    towards_edge = indexb;
   }
 
-  if (projectedVector.norm() > maxSlide.norm()) {
-    point_ += maxSlide;
-    remainingVector_ = projectedVector - maxSlide;
-    return this->GetAcrossEdge(face_, towardsEdge);
+  if (projected_vector.norm() > max_slide.norm()) {
+    point += max_slide;
+    remaining_vector = projected_vector - max_slide;
+    return this->GetAcrossEdge(face, towards_edge);
   }
   else {
-    point_ += projectedVector;
-    remainingVector_ = Eigen::Vector3d(0, 0, 0);
-    return face_;
+    point += projected_vector;
+    remaining_vector = Eigen::Vector3d(0, 0, 0);
+    return face;
   }
 }
 
