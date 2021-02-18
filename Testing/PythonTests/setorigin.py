@@ -1,12 +1,12 @@
 import os
 import sys
-import shapeworks as sw
+from shapeworks import *
 
 def setoriginTest1():
-  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.setOrigin()
 
-  compareImg = sw.Image(os.environ["DATA"] + "/setorigin1.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/setorigin1.nrrd")
 
   return img.compare(compareImg)
 
@@ -16,10 +16,10 @@ if val is False:
   sys.exit(1)
 
 def setoriginTest2():
-  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.setOrigin([1, 0, 0])
 
-  compareImg = sw.Image(os.environ["DATA"] + "/setorigin2.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/setorigin2.nrrd")
 
   return img.compare(compareImg)
 
@@ -29,10 +29,10 @@ if val is False:
   sys.exit(1)
 
 def setoriginTest3():
-  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.setOrigin([-1, 0, 0])
 
-  compareImg = sw.Image(os.environ["DATA"] + "/setorigin3.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/setorigin3.nrrd")
 
   return img.compare(compareImg)
 
@@ -42,10 +42,10 @@ if val is False:
   sys.exit(1)
 
 def setoriginTest4():
-  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.setOrigin([1, 1, 1])
 
-  compareImg = sw.Image(os.environ["DATA"] + "/setorigin4.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/setorigin4.nrrd")
 
   return img.compare(compareImg)
 

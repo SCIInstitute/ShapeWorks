@@ -1,12 +1,12 @@
 import os
 import sys
-import shapeworks as sw
+from shapeworks import *
 
 def topoTest1():
-  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   topoImg = img.topologyPreservingSmooth(20.0, 10.0, 10.0)
 
-  compareImg = sw.Image(os.environ["DATA"] + "/topo1.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/topo1.nrrd")
 
   return topoImg.compare(compareImg)
 
@@ -16,10 +16,10 @@ if val is False:
   sys.exit(1)
 
 def topoTest2():
-  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   topoImg = img.topologyPreservingSmooth(10.0, 10.5, 10.5)
 
-  compareImg = sw.Image(os.environ["DATA"] + "/topo2.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/topo2.nrrd")
 
   return topoImg.compare(compareImg)
 

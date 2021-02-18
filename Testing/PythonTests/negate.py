@@ -1,12 +1,12 @@
 import os
 import sys
-import shapeworks as sw
+from shapeworks import *
 
 def negateTest():
-  img = sw.Image(os.environ["DATA"] + "/la-bin.nrrd")
+  img = Image(os.environ["DATA"] + "/la-bin.nrrd")
   img = -img
 
-  compareImg = sw.Image(os.environ["DATA"] + "/la-bin-negative.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/la-bin-negative.nrrd")
 
   return img.compare(compareImg)
 

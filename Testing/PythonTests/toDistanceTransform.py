@@ -1,12 +1,12 @@
 import os
 import sys
-import shapeworks as sw
+from shapeworks import *
 
 def toDistanceTransformTest():
-  mesh = sw.Mesh(os.environ["DATA"] + "/femur.ply")
+  mesh = Mesh(os.environ["DATA"] + "/femur.ply")
   img = mesh.toDistanceTransform()
 
-  compareImg = sw.Image(os.environ["DATA"] + "/femurDT.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/femurDT.nrrd")
 
   return img.compare(compareImg)
 

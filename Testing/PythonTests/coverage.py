@@ -1,13 +1,13 @@
 import os
 import sys
-import shapeworks as sw
+from shapeworks import *
 
 def coverageTest():
-  femur = sw.Mesh(os.environ["DATA"] + "/femur.vtk")
-  pelvis = sw.Mesh(os.environ["DATA"] + "/pelvis.vtk")
+  femur = Mesh(os.environ["DATA"] + "/femur.vtk")
+  pelvis = Mesh(os.environ["DATA"] + "/pelvis.vtk")
   pelvis.coverage(femur)
 
-  compareMesh = sw.Mesh(os.environ["DATA"] + "/fm_coverage.vtk")
+  compareMesh = Mesh(os.environ["DATA"] + "/fm_coverage.vtk")
 
   return pelvis == compareMesh
 

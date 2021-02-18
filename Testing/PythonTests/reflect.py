@@ -1,12 +1,12 @@
 import os
 import sys
-import shapeworks as sw
+from shapeworks import *
 
 def reflectTest1():
-  img = sw.Image(os.environ["DATA"] + "/la-bin.nrrd")
-  img.reflect(sw.Axis.Z)
+  img = Image(os.environ["DATA"] + "/la-bin.nrrd")
+  img.reflect(Axis.Z)
 
-  compareImg = sw.Image(os.environ["DATA"] + "/reflect1.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/reflect1.nrrd")
 
   return img.compare(compareImg)
 
@@ -16,10 +16,10 @@ if val is False:
   sys.exit(1)
 
 def reflectTest2():
-  img = sw.Image(os.environ["DATA"] + "/la-bin.nrrd")
-  img.reflect(sw.Axis.X)
+  img = Image(os.environ["DATA"] + "/la-bin.nrrd")
+  img.reflect(Axis.X)
 
-  compareImg = sw.Image(os.environ["DATA"] + "/reflect2.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/reflect2.nrrd")
 
   return img.compare(compareImg)
 
@@ -29,10 +29,10 @@ if val is False:
   sys.exit(1)
 
 def reflectTest3():
-  mesh = sw.Mesh(os.environ["DATA"] + "/femur.vtk")
-  mesh.reflect(sw.Axis.X)
+  mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
+  mesh.reflect(Axis.X)
 
-  compareMesh = sw.Mesh(os.environ["DATA"] + "/reflect1.vtk")
+  compareMesh = Mesh(os.environ["DATA"] + "/reflect1.vtk")
 
   return mesh == compareMesh
 
@@ -42,10 +42,10 @@ if val is False:
   sys.exit(1)
 
 def reflectTest4():
-  mesh = sw.Mesh(os.environ["DATA"] + "/femur.vtk")
-  mesh.reflect(sw.Axis.Y)
+  mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
+  mesh.reflect(Axis.Y)
 
-  compareMesh = sw.Mesh(os.environ["DATA"] + "/reflect2.vtk")
+  compareMesh = Mesh(os.environ["DATA"] + "/reflect2.vtk")
 
   return mesh == compareMesh
 
