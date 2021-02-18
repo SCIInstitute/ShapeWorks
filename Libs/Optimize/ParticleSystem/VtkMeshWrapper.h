@@ -24,7 +24,7 @@ public:
 
   double ComputeDistance(PointType pointa, PointType pointb) const override;
 
-  PointType GeodesicWalk(PointType pointa, int idx, VectorType vector) const override;
+  PointType GeodesicWalk(PointType p, int idx, VectorType vector) const override;
 
   VectorType ProjectVectorToSurfaceTangent(const PointType &pointa, int idx,
                                            VectorType &vector) const override;
@@ -64,6 +64,8 @@ private:
   bool IsInTriangle(const double pt[3], int face_index) const;
 
   Eigen::Vector3d ComputeBarycentricCoordinates(Eigen::Vector3d pt, int face) const;
+
+  int ComputeFaceAndWeights(PointType p, int idx, Eigen::Vector3d &weights) const;
 
   Eigen::Vector3d
   GeodesicWalkOnFace(Eigen::Vector3d point_a,

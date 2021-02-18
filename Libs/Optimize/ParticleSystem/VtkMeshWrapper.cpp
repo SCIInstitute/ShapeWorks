@@ -107,35 +107,25 @@ double VtkMeshWrapper::ComputeDistance(PointType pointa,
 }
 
 //---------------------------------------------------------------------------
-PointType VtkMeshWrapper::GeodesicWalk(PointType pointa, int idx,
+PointType VtkMeshWrapper::GeodesicWalk(PointType p, int idx,
                                        VectorType vector) const
 {
-  //std::cerr << "------------------------------------------\n";
-  //std::cerr << "GeodesicWalk\n";
-
-  PointType snapped = this->SnapToMesh(pointa, idx);
-  vec3 point(snapped[0], snapped[1], snapped[2]);
-
+  vec3 point(p[0], p[1], p[2]);
   double closest_point[3];
+  int face_index = GetTriangleForPoint(point.data(), idx, closest_point);
+  point = convert<double[3], vec3>(closest_point);
 
-  int faceIndex = GetTriangleForPoint(point.data(), idx, closest_point);
+  Eigen::Vector3d vector_eigen =
+    convert<VectorType, Eigen::Vector3d>(vector);
+  Eigen::Vector3d projected_vector =
+    this->ProjectVectorToFace(GetFaceNormal(face_index), vector_eigen);
 
-  vec3 currentBary = this->ComputeBarycentricCoordinates(point, faceIndex);
-  //std::cerr << "Starting Bary: " << PrintValue<Eigen::Vector3d>(currentBary) << "\n";
-
-
-  Eigen::Vector3d vectorEigen = convert<VectorType, Eigen::Vector3d>(
-    vector);
-  Eigen::Vector3d projectedVector = this->ProjectVectorToFace(GetFaceNormal(faceIndex),
-                                                              vectorEigen);
-
-  Eigen::Vector3d snappedPoint = convert<PointType, Eigen::Vector3d>(snapped);
   int ending_face = -1;
 
-  Eigen::Vector3d newPoint = GeodesicWalkOnFace(snappedPoint, projectedVector, faceIndex,
-                                                ending_face);
+  Eigen::Vector3d new_point = GeodesicWalkOnFace(point, projected_vector, face_index,
+                                                 ending_face);
 
-  PointType newPointpt = convert<Eigen::Vector3d, PointType>(newPoint);
+  PointType new_point_pt = convert<Eigen::Vector3d, PointType>(new_point);
 
   // update cache
   if (idx >= 0 && ending_face >= 0) {
@@ -145,10 +135,10 @@ PointType VtkMeshWrapper::GeodesicWalk(PointType pointa, int idx,
 
     particle_triangles_[idx] = ending_face;
 
-    this->CalculateNormalAtPoint(newPointpt, idx);
+    this->CalculateNormalAtPoint(new_point_pt, idx);
   }
 
-  return newPointpt;
+  return new_point_pt;
 
   /*
    * Alternate, just snap to mesh
@@ -197,12 +187,8 @@ NormalType VtkMeshWrapper::SampleNormalAtPoint(PointType p, int idx) const
 //---------------------------------------------------------------------------
 GradNType VtkMeshWrapper::SampleGradNAtPoint(PointType p, int idx) const
 {
-  double point[3] = {p[0], p[1], p[2]};
-  double closest_point[3];
-  int face_index = this->GetTriangleForPoint(point, idx, closest_point);
-  // TODO: GetTriangleForPoint is already computing the weights
-  vec3 weights = this->ComputeBarycentricCoordinates(convert<double[3], vec3>(closest_point),
-                                                     face_index);
+  vec3 weights;
+  int face_index = this->ComputeFaceAndWeights(p, idx, weights);
 
   GradNType weighted_grad_normal = GradNType(0.0);
 
@@ -223,37 +209,6 @@ PointType VtkMeshWrapper::SnapToMesh(PointType pointa, int idx) const
   this->GetTriangleForPoint(point, idx, closest_point);
   VtkMeshWrapper::PointType out = convert<double[3], VtkMeshWrapper::PointType>(closest_point);
   return out;
-
-/*
-
-  double point[3];
-  point[0] = pointa[0];
-  point[1] = pointa[1];
-  point[2] = pointa[2];
-
-  double closest_point[3]; //the coordinates of the closest point will be returned here
-  double closest_point_dist2; //the squared distance to the closest point will be returned here
-  vtkIdType cell_id; //the cell id of the cell containing the closest point will be returned here
-  int sub_id; //this is rarely used (in triangle strips only, I believe)
-
-  this->cell_locator_->FindClosestPoint(point, closest_point, cell_id, sub_id, closest_point_dist2);
-
-  VtkMeshWrapper::PointType out;
-  out[0] = closest_point[0];
-  out[1] = closest_point[1];
-  out[2] = closest_point[2];
-
-  // update cache
-  if (idx > 0) {
-    if (idx >= particle_triangles_.size()) {
-      particle_triangles_.resize(idx + 1, 0);
-    }
-
-    particle_triangles_[idx] = cell_id;
-  }
-
-  return out;
-  */
 }
 
 //---------------------------------------------------------------------------
@@ -311,6 +266,7 @@ VtkMeshWrapper::ProjectVectorToFace(const Eigen::Vector3d &normal,
 
   Eigen::Vector3d new_vector = vector - normal * normal.dot(vector);
 
+  /// Old behavior is to not rescale it, uncomment for the old behavior
   //return new_vector;
 
   auto new_mag = new_vector.norm();
@@ -539,8 +495,8 @@ VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d proj
       Eigen::Vector3d intersect1 = GetBarycentricIntersection(currentBary, targetBary, currentFace,
                                                               negativeEdge1);
 
-      double length0 = (intersect - currentPoint).norm();
-      double length1 = (intersect1 - currentPoint).norm();
+      double length0 = (intersect - currentPoint).squaredNorm();
+      double length1 = (intersect1 - currentPoint).squaredNorm();
 
       if (length0 < length1) {
         intersect = intersect;
@@ -704,13 +660,8 @@ Eigen::Vector3d VtkMeshWrapper::RotateVectorToFace(const Eigen::Vector3d &prev_n
 //---------------------------------------------------------------------------
 NormalType VtkMeshWrapper::CalculateNormalAtPoint(PointType p, int idx) const
 {
-  double point[3] = {p[0], p[1], p[2]};
-  double closest_point[3];
-
-  int face_index = this->GetTriangleForPoint(point, idx, closest_point);
-  // TODO: GetTriangleForPoint is already computing the weights
-  vec3 weights = this->ComputeBarycentricCoordinates(convert<double[3], vec3>(closest_point),
-                                                     face_index);
+  vec3 weights;
+  int face_index = this->ComputeFaceAndWeights(p, idx, weights);
 
   NormalType weighted_normal(0, 0, 0);
 
@@ -742,6 +693,20 @@ void VtkMeshWrapper::InvalidateParticle(int idx)
     particle_triangles_.resize(idx + 1, -1);
   }
   this->particle_triangles_[idx] = -1;
+}
+
+//---------------------------------------------------------------------------
+int
+VtkMeshWrapper::ComputeFaceAndWeights(PointType p, int idx, Eigen::Vector3d &weights) const
+{
+  double point[3] = {p[0], p[1], p[2]};
+  double closest_point[3];
+
+  int face_index = this->GetTriangleForPoint(point, idx, closest_point);
+  // TODO: GetTriangleForPoint is usually already computing the weights
+  weights = this->ComputeBarycentricCoordinates(convert<double[3], vec3>(closest_point),
+                                                face_index);
+  return face_index;
 }
 
 }
