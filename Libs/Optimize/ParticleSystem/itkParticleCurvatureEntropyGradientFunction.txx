@@ -287,20 +287,19 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
                                                                radius, twin_dom);
 
     for (unsigned int i = 0; i < twin_neighbors.size(); i++) {
-      double mc = m_MeanCurvatureCache->operator[](twin_dom)->operator[](twin_neighbors[i].Index);
-      double Dij = (mymc + mc) * 0.5; // average my curvature with my neighbors
-      double kappa = this->ComputeKappa(Dij, twin_dom);
-
       VectorType r;
       for (unsigned int n = 0; n < VDimension; n++) {
-        r[n] = (pos[n] - twin_neighbors[i].Point[n]) * kappa;
+        r[n] = pos[n] - twin_neighbors[i].Point[n];
       }
 
-      const double twin_d = dot_product(r, r);
-      twin_energy += twin_d*0.5;
+      const double twin_inv_d2 = 1.0 / dot_product(r, r);
+      if(twin_inv_d2 >= 0.2*A*sigma2inv/m_avgKappa) {
+        continue;
+      }
+      twin_energy += twin_inv_d2;
       for (unsigned int n = 0; n < VDimension; n++)
       {
-        gradE[n] -= r[n]; //todo weight
+        gradE[n] += 2.0 * r[n] * twin_inv_d2;
       }
 
       /*
