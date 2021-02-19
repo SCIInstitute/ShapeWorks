@@ -95,6 +95,7 @@ public Q_SLOTS:
   void handle_color_scheme();
   void handle_pca_update();
   void handle_message(std::string str);
+  void handle_status(std::string str);
   void handle_error(std::string str);
   void handle_warning(std::string str);
   void handle_progress(int amt);
@@ -205,6 +206,7 @@ private:
   bool is_loading_{false};
 
   QElapsedTimer time_since_last_update_;
+  qint64 last_render_ = -1;
 
 
 };

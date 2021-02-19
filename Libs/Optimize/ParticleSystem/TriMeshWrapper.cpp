@@ -541,7 +541,6 @@ void TriMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F)
 {
   const int n_verts = mesh_->vertices.size();
   const int n_faces = mesh_->faces.size();
-
   V.resize(n_verts, 3);
   F.resize(n_faces, 3);
   for(int i=0; i<n_verts; i++) {
@@ -554,6 +553,7 @@ void TriMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F)
     F(i, 1) = mesh_->faces[i][1];
     F(i, 2) = mesh_->faces[i][2];
   }
+
 }
 
 }

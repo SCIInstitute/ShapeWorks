@@ -39,7 +39,7 @@ def generate_download_flag(outputDirectory,folder):
 			if(len(os.listdir(outputDirectory+folder))==0 or len(os.listdir(outputDirectory+folder))<3):
 				download_flag = True
 			else:
-				print("Data available in " + folder + "  is sufficient for tiny test, no new data will be downloaded")
+				print("Data available in " + folder + "  is sufficient, no new data will be downloaded")
 
 	#if the subfolder folder does not exists then download
 	else:
@@ -84,8 +84,8 @@ def download_subset(use_case,datasetName,outputDirectory):
 			DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meanFilesList)
 	
 def download_and_unzip_dataset(datasetName, outputDirectory):
-	# Check if the unzipped data is present
-	if True:#not os.path.exists(outputDirectory + datasetName + '/'):
+	# Check if the unzipped data is present and number of files are more than 3 for full use case
+	if generate_download_flag(outputDirectory,datasetName):
 		# check if the zipped data is present
 		zipfile = 'Data/' + datasetName + ".zip"
 		if not os.path.exists(zipfile):
