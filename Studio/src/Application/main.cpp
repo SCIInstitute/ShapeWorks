@@ -14,6 +14,8 @@
 #include <QSurfaceFormat>
 #include <QVTKOpenGLNativeWidget.h>
 
+#include <tbb/tbb.h>
+
 #ifdef _WIN32
 #include <windows.h>
 #include <Utils/WindowsCrashHandler.h>
@@ -21,6 +23,8 @@
 
 int main(int argc, char** argv)
 {
+  //tbb::task_scheduler_init init(1);
+
   try {
     STUDIO_LOG_MESSAGE("ShapeWorksStudio initializing...");
 

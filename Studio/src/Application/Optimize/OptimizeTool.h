@@ -48,7 +48,7 @@ public Q_SLOTS:
   void on_run_optimize_button_clicked();
   void on_restoreDefaults_clicked();
   void handle_optimize_complete();
-  void handle_progress(int val);
+  void handle_progress(int val, QString message);
   void handle_error(std::string);
   void handle_warning(std::string);
   void handle_message(std::string);
@@ -63,6 +63,7 @@ signals:
   void warning_message(std::string);
   void progress(int);
   void message(std::string);
+  void status(std::string);
 
 private:
 

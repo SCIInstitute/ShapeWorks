@@ -71,6 +71,20 @@ void QOptimize::IterateCallback(itk::Object* caller, const itk::EventObject& e)
     }
   }
 
+  int stage_num_iterations = m_sampler->GetOptimizer()->GetNumberOfIterations();
+  int stage_total_iterations = m_sampler->GetOptimizer()->GetMaximumNumberOfIterations();
+  int num_particles = m_sampler->GetParticleSystem()->GetNumberOfParticles(0);
+  QString message;
+  if (this->m_optimizing) {
+    message = "Optimizing: ";
+  }
+  else {
+    message = "Initializing: ";
+  }
+
+  message = message + "Particles: " + QString::number(num_particles) + ", Iteration: " +
+  QString::number(stage_num_iterations) + " / " + QString::number(stage_total_iterations);
+
   if (update) {
     this->time_since_last_update_.start();
     {
@@ -97,8 +111,7 @@ void QOptimize::IterateCallback(itk::Object* caller, const itk::EventObject& e)
         }
       }
     }
-
-    emit progress(this->m_iteration_count * 100 / this->m_total_iterations);
+    emit progress(this->m_iteration_count * 100 / this->m_total_iterations, message);
   }
 }
 }
