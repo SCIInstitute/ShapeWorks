@@ -138,6 +138,8 @@
                 </ul>
                 <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
                 <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../deep-learning/pytorch-gpu.html">PyTorch GPU Support for ShapeWorks</a>
+                    </li>
                     <li class="toctree-l1"><a class="reference internal" href="../deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../deep-learning/deep-ssm.html">SSMs Directly from Images</a>
@@ -195,6 +197,8 @@
                     <li class="toctree-l1"><a class="reference internal" href="../dev/new-use-case.html">How to Add New Use Cases?</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../dev/datasets.html">How to Add New Datasets?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/new-notebook.html">How to Add New Notebooks?</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../dev/modify-datasets.html">When Modifying Existing Datasets</a>
                     </li>
@@ -264,8 +268,8 @@
               
                 <h1 id="ellipsoid-cutting-planes">Ellipsoid: Cutting Planes</h1>
 <h2 id="what-and-where-is-the-use-case">What and Where is the Use Case?</h2>
-<p>The ellipsoid dataset comprises of axis-aligned ellipsoids with varying radii along a single axis. This example demonstrates using multiple cutting planes to constrain the distribution of particles. This can be used in modeling scenarios where statistical modeling/analysis is needed for a region-of-interest on the anatomy/object-class at hand without having to affect the input data.</p>
-<p><em>Ellipsoids (major radius as one mode of variation) with 2 cutting planes</em></p>
+<p>This example demonstrates using multiple cutting planes to constrain the distribution of particles on ellipsoids which are already aligned. This can be used in modeling scenarios where statistical modeling/analysis is needed for a region-of-interest on the anatomy/object-class at hand without having to affect the input data. </p>
+<p><em>Ellipsoids with 2 cutting planes</em></p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ellipsoid_cut_trim.mp4" autoplay muted loop controls style="width:100%"></p>
 
 <p>The <code>ellipsoid_cut.py</code> (in <code>Examples/Python/</code>) use case represents the standard use version of a shape modeling workflow that entails one or more cutting planes using ShapeWorks. It includes the full pipeline for processed (i.e., groomed) as well as unprocessed data. </p>
@@ -273,7 +277,6 @@
 <h2 id="running-the-use-case">Running the Use Case</h2>
 <p>To run the use case, run <code>RunUseCase.py</code> (in <code>Examples/Python/</code>) with proper tags. The tags control the type of input data and the optimization method. See <a href="use-cases.html#running-use-case">Getting Started with Use Cases</a> for the full list of tags.</p>
 <ul>
-<li><code>--skip_grooming</code>: to run the optimization on previously processed/groomed data</li>
 <li><code>--use_single_scale</code>: to use the single-scale optimization. Default is multi-scale optimization</li>
 </ul>
 <p>To run the full pipeline with multi-scale:</p>
@@ -283,7 +286,7 @@
 <p>This calls <code>ellipsoid_cut.py</code> (in <code>Examples/Python/</code>) to perform the following.</p>
 <ul>
 <li>Loads the ellipsoid dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the <a href="http://cibc1.sci.utah.edu:8080/">ShapeWorks Data Portal</a>.</li>
-<li>Grooms the segmentations by calling data preprocessing functions in <code>GroomUtils.py</code> (in <code>Examples/Python/</code>). See <a href="#grooming-data">Grooming Data</a> for details about these preprocessing steps.</li>
+<li>Creates distance transforms from the aleardy aligned segmentations by calling the function in <code>GroomUtils.py</code> (in <code>Examples/Python/</code>).</li>
 <li>Defines two cutting planes to be used to constrain the particle optimization on all ellipsoid. Note that this dataset contains a set of roughly aligned ellispoids; hence a common set of cutting planes can be used for all samples. 
 <div class="highlight"><pre><span></span><code>    cutting_plane_points1 = [[10, 10, 0], [-10, -10, 0], [10, -10, 0]]
     cutting_plane_points2 = [[10, -3, 10], [-10, -3 ,10], [10, -3, -10]]
@@ -296,16 +299,7 @@
 <div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case ellipsoid_cut --start_with_prepped_data
 </code></pre></div>
 <h2 id="grooming-data">Grooming Data</h2>
-<p>The following preprocessing steps are only performed when you start with <em>unprepped</em> data, i.e., the tag <code>--start_with_prepped_data</code> is not used. For a description of the grooming tools and parameters, see: <a href="../workflow/groom.html">How to Groom Your Dataset?</a>.</p>
-<ol>
-<li><strong>Isotropic Resampling</strong>: Binary segmentations in <code>ellipsoid/segmentations/</code> are resampled to have an isotropic voxel spacing using a user-defined spacing. This step could also be used to produce segmentations with smaller voxel spacing, and thereby reduce aliasing artifacts (i.e., staircase/jagged surface) due to binarization.</li>
-<li><strong>Apply Padding</strong>: Segmentations that touch the image boundary will have an artificial hole at that intersection. Segmentations are padded by adding a user-defined number of voxels along each image direction (rows, cols, and slices) to avoid introducing artificial holes.</li>
-<li><strong>Center-of-Mass Alignment</strong>: This translational alignment step is performed before rigidly aligning the samples to a shape reference. This factors out translations to reduce the risk of misalignment and allow for a medoid sample to be automatically selected as the reference for rigid alignment.</li>
-<li><strong>Reference Selection</strong>: The reference is selected by first computing the mean (average) distance transform of the segmentations, then selecting the sample closest to that mean (i.e., medoid).</li>
-<li><strong>Rigid Alignment</strong>: All of the segmentations are then aligned to the selected reference using rigid alignment, which factors out the rotation and remaining translation.</li>
-<li><strong>Cropping</strong>: The segmentations are cropped so that all of the samples are within the same bounding box.</li>
-<li><strong>Distance Transform</strong>: Finally, the signed distance transform is computed, and the dataset is now ready for the optimize phase.</li>
-</ol>
+<p>The segmentations used in this use case are already aligned so the only grooming step neccesary is converting them to distance transforms. For a description of the grooming tools and parameters, see: <a href="../workflow/groom.html">How to Groom Your Dataset?</a>.</p>
 <h2 id="optimizing-shape-model">Optimizing Shape Model</h2>
 <p>Below are the default optimization parameters for this use case. For a description of the optimize tool and its algorithmic parameters, see: <a href="../workflow/optimize.html">How to Optimize Your Shape Model</a>. Note that <code>use_shape_statistics_after</code> parameter is not used when <code>--use_single_scale</code> tag is given to the <code>RunUseCase.py</code> (in <code>Examples/Python/</code>). Also note the use of <code>adaptivity_mode</code>, <code>cutting_plane_counts</code>, and <code>cutting_planes</code> optimization parameters to trigger the constrained particles optimization.</p>
 <div class="highlight"><pre><span></span><code>        &quot;number_of_particles&quot;: 128,

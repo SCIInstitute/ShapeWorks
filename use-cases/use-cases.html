@@ -138,6 +138,8 @@
                 </ul>
                 <p class="caption"><span class="caption-text">Deep Learning & SSMs</span></p>
                 <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../deep-learning/pytorch-gpu.html">PyTorch GPU Support for ShapeWorks</a>
+                    </li>
                     <li class="toctree-l1"><a class="reference internal" href="../deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../deep-learning/deep-ssm.html">SSMs Directly from Images</a>
@@ -197,6 +199,8 @@
                     <li class="toctree-l1"><a class="reference internal" href="../dev/new-use-case.html">How to Add New Use Cases?</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../dev/datasets.html">How to Add New Datasets?</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dev/new-notebook.html">How to Add New Notebooks?</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../dev/modify-datasets.html">When Modifying Existing Datasets</a>
                     </li>
@@ -320,7 +324,7 @@ $ python RunUseCase.py --use_case [insert name of use case here]
 </ul>
 <div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case [insert name of use case here] --use_subsample --num_subsample 10
 </code></pre></div>
-<p>This will select a representative subset of the specified sample size to run through the pipeline so that the use case runs faster and uses less memory. The subset is selected by running clustering, then picking one sample from each cluster so that the resulting subset is representative of all the data. If <code>--use_subsample</code> is used without <code>--num_subsample</code> it will use the default number of subsamples which is 3.</p>
+<p>This will select a representative subset of the specified sample size to run through the pipeline so that the use case runs faster and uses less memory. The subset is selected by running clustering, then picking one sample from each cluster so that the resulting subset is representative of all the data. If <code>--use_subsample</code> is used without <code>--num_subsample</code> it will use the default number of subsamples which is 3.In order to run the clustering, the entire dataset will be downloaded.</p>
 <ul>
 <li><code>--interactive</code>: When the interactive tag is used, the user must press enter after each step. This allows the user to inspect the intermediate output between steps of the pipeline.</li>
 </ul>
@@ -342,7 +346,7 @@ $ python RunUseCase.py --use_case [insert name of use case here]
 <div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case [insert name of use case here] --use_single_scale
 </code></pre></div>
 <ul>
-<li><code>--tiny_test</code>: Users can run a fast version of the use case by using the <code>--tiny_test tag</code>. This runs on a subset of the data for fewer optimization iterations to verify ShapeWorks has been properly installed. It is meant to test that use cases can run, not to create a good correspondence model.</li>
+<li><code>--tiny_test</code>: Users can run a fast version of the use case by using the <code>--tiny_test tag</code>. This runs on a subset of the data for fewer optimization iterations to verify ShapeWorks has been properly installed. It is meant to test that use cases can run, not to create a good correspondence model.For tiny test,only a subset of the data will be downloaded directly in the <code>Output</code> folder and no zip file will be donwloaded in the <code>Data</code> folder.If the data has already been unzipped in <code>Output</code> folder, no new data will be downloaded.</li>
 </ul>
 <div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case [insert name of use case here] --tiny_test
 </code></pre></div>
