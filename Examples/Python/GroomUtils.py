@@ -342,7 +342,7 @@ def reflectMeshes(outDir, seg_list, reference_side):
             seg_out = rename(seg, outSegDir, 'reflect')
 
             mesh = Mesh(seg)
-            center = [mesh.center()[0], mesh.center()[1], mesh.center()[3]]
+            arr = mesh.center(); center = [arr[0], arr[1], arr[2]]
             mesh.reflect(X, center).write(seg_out)
         meshList.append(seg_out)
     return meshList
