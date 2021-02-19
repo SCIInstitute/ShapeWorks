@@ -25,7 +25,7 @@ protected:
   virtual void IterateCallback(itk::Object* caller, const itk::EventObject&) override;
 
 signals:
-  void progress(int);
+  void progress(int, QString);
 
 private:
 
