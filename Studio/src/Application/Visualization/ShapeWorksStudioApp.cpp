@@ -175,8 +175,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           this, SLOT(handle_groom_complete()));
   connect(this->groom_tool_.data(), SIGNAL(error_message(std::string)),
           this, SLOT(handle_error(std::string)));
-  connect(this->groom_tool_.data(), SIGNAL(message(std::string)),
-          this, SLOT(handle_message(std::string)));
+  connect(this->groom_tool_.data(), &GroomTool::message,
+          this, &ShapeWorksStudioApp::handle_message);
   connect(this->groom_tool_.data(), &GroomTool::progress,
           this, &ShapeWorksStudioApp::handle_progress);
 
@@ -193,8 +193,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           this, SLOT(handle_error(std::string)));
   connect(this->optimize_tool_.data(), SIGNAL(warning_message(std::string)),
           this, SLOT(handle_warning(std::string)));
-  connect(this->optimize_tool_.data(), SIGNAL(message(std::string)),
-          this, SLOT(handle_message(std::string)));
+  connect(this->optimize_tool_.data(), &OptimizeTool::message,
+          this, &ShapeWorksStudioApp::handle_message);
+  connect(this->optimize_tool_.data(), &OptimizeTool::status,
+          this, &ShapeWorksStudioApp::handle_status);
   connect(this->optimize_tool_.data(), &OptimizeTool::progress,
           this, &ShapeWorksStudioApp::handle_progress);
 
@@ -689,6 +691,13 @@ void ShapeWorksStudioApp::handle_message(std::string str)
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_status(std::string str)
+{
+  this->ui_->statusbar->showMessage(QString::fromStdString(str));
+  this->current_message_ = str;
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_error(std::string str)
 {
   STUDIO_LOG_ERROR(QString::fromStdString(str));
@@ -913,14 +922,13 @@ void ShapeWorksStudioApp::handle_project_changed()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_points_changed()
 {
-
   bool update = false;
   if (!this->time_since_last_update_.isValid()) {
     update = true;
   }
   else {
     auto time_since = this->time_since_last_update_.elapsed();
-    if (time_since > 100) {
+    if (time_since > 25 + (this->last_render_ * 2)) {
       update = true;
     }
   }
@@ -931,10 +939,12 @@ void ShapeWorksStudioApp::handle_points_changed()
       this->handle_glyph_changed();
     }
 
+    QElapsedTimer render_time;
+    render_time.start();
     this->visualizer_->update_samples();
-
+    this->last_render_ = render_time.elapsed();
+    this->time_since_last_update_.start();
   }
-  this->time_since_last_update_.start();
 
 }
 
@@ -1776,7 +1786,7 @@ void ShapeWorksStudioApp::dropEvent(QDropEvent* event)
   }
 }
 
-//---------------------------------------------------------------------------
+
 //---------------------------------------------------------------------------
 
 }

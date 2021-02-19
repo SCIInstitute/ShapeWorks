@@ -32,6 +32,8 @@ public:
 
   // Returns closest point on mesh to pointa.
   virtual PointType SnapToMesh(PointType pointa, int idx) const = 0;
+
+  virtual void InvalidateParticle(int idx) {};
 };
 
 }

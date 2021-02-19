@@ -71,9 +71,10 @@ void OptimizeTool::handle_warning(std::string msg)
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::handle_progress(int val)
+void OptimizeTool::handle_progress(int val, QString progress_message)
 {
   emit progress(val);
+  emit status(progress_message.toStdString());
 
   auto local = this->optimize_->GetLocalPoints();
   auto global = this->optimize_->GetGlobalPoints();
@@ -127,7 +128,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
 
   this->clear_particles();
 
-  this->handle_progress(1);
+  this->handle_progress(1, "");
   this->optimize_parameters_ = QSharedPointer<OptimizeParameters>::create(
     this->session_->get_project());
 

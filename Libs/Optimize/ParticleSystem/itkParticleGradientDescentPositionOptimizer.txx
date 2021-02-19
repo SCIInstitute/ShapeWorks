@@ -193,6 +193,7 @@ namespace itk
                 {
                   domain->ApplyConstraints(pt, k);
                   m_ParticleSystem->SetPosition(pt, k, dom);
+                  domain->InvalidateParticlePosition(k);
 
                   m_TimeSteps[dom][k] /= factor;
                 }
