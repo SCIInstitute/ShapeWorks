@@ -163,6 +163,7 @@ bool Optimize::Run()
       for (int i = 0; i < this->m_number_of_particles.size(); i++) {
         if (this->m_number_of_particles[i] < final_number_of_particles[i]) {
           this->m_number_of_particles[i] *= 2;
+          std::cerr << "set " << i << " to: " << this->m_number_of_particles[i] << "\n";
           finished = false;
         }
       }
@@ -2169,7 +2170,7 @@ bool Optimize::LoadParameterFile(std::string filename)
 //---------------------------------------------------------------------------
 MatrixContainer Optimize::GetParticleSystem()
 {
-  
+
   auto shape_matrix = m_sampler->GetGeneralShapeMatrix();
 
   MatrixType matrix;

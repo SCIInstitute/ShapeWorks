@@ -29,11 +29,10 @@ Shape::Shape()
 }
 
 //---------------------------------------------------------------------------
-Shape::~Shape()
-{}
+Shape::~Shape() = default;
 
 //---------------------------------------------------------------------------
-QSharedPointer<StudioMesh> Shape::get_mesh(std::string display_mode)
+MeshHandle Shape::get_mesh(std::string display_mode)
 {
   if (display_mode == Visualizer::MODE_ORIGINAL_C) {
     return this->get_original_mesh();
@@ -47,7 +46,7 @@ QSharedPointer<StudioMesh> Shape::get_mesh(std::string display_mode)
 //---------------------------------------------------------------------------
 void Shape::set_annotations(QStringList annotations, bool only_overwrite_blank)
 {
-  if (only_overwrite_blank && this->corner_annotations_.size() > 0 &&
+  if (only_overwrite_blank && !this->corner_annotations_.empty() &&
       this->corner_annotations_[0] != "") {
     return; // don't override
   }
@@ -71,7 +70,7 @@ void Shape::set_subject(std::shared_ptr<Subject> subject)
 {
   this->subject_ = subject;
 
-  if (this->subject_->get_segmentation_filenames().size() > 0) {
+  if (!this->subject_->get_segmentation_filenames().empty()) {
     std::string filename = this->subject_->get_segmentation_filenames()[0];
     this->corner_annotations_[0] = QFileInfo(QString::fromStdString(filename)).fileName();
   }
@@ -84,14 +83,14 @@ std::shared_ptr<Subject> Shape::get_subject()
 }
 
 //---------------------------------------------------------------------------
-void Shape::import_original_image(std::string filename, float iso_value)
+void Shape::import_original_image(std::string filename)
 {
   this->subject_->set_segmentation_filenames(std::vector<std::string>{filename});
   this->corner_annotations_[0] = QFileInfo(QString::fromStdString(filename)).fileName();
 }
 
 //---------------------------------------------------------------------------
-QSharedPointer<StudioMesh> Shape::get_original_mesh(bool wait)
+MeshHandle Shape::get_original_mesh(bool wait)
 {
   if (!this->original_mesh_) {
     if (!this->subject_) {
@@ -107,92 +106,7 @@ QSharedPointer<StudioMesh> Shape::get_original_mesh(bool wait)
 }
 
 //---------------------------------------------------------------------------
-ImageType::Pointer Shape::get_original_image()
-{
-  ImageType::Pointer image;
-  std::string filename = this->subject_->get_segmentation_filenames()[0];
-  if (filename != "") {
-    try {
-      // read file using ITK
-      ReaderType::Pointer reader = ReaderType::New();
-      reader->SetFileName(filename);
-      reader->Update();
-      image = reader->GetOutput();
-
-      // set orientation to RAI
-      itk::OrientImageFilter<ImageType, ImageType>::Pointer orienter =
-        itk::OrientImageFilter<ImageType, ImageType>::New();
-      orienter->UseImageDirectionOn();
-      orienter->SetDesiredCoordinateOrientation(
-        itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
-      orienter->SetInput(image);
-      orienter->Update();
-      image = orienter->GetOutput();
-    } catch (itk::ExceptionObject& excep) {
-      std::cerr << "Exception caught!" << std::endl;
-      std::cerr << excep << std::endl;
-    }
-  }
-  return image;
-}
-
-//---------------------------------------------------------------------------
-ImageType::Pointer Shape::get_groomed_image()
-{
-  if (!this->groomed_image_) {
-    if (this->subject_->get_groomed_filenames().size() < 1) {
-      STUDIO_LOG_ERROR("No groomed file for subject");
-      ImageType::Pointer image;
-      return image;
-    }
-    std::string filename = this->subject_->get_groomed_filenames()[0]; // single domain supported
-    if (filename != "") {
-      ImageType::Pointer image;
-      try {
-        // read file using ITK
-        ReaderType::Pointer reader = ReaderType::New();
-        STUDIO_LOG_MESSAGE(QString::fromStdString("Loading groomed file: " + filename));
-        reader->SetFileName(filename);
-        reader->Update();
-        image = reader->GetOutput();
-        // don't store to this->groomed_image_ so that we don't hold a pointer to it
-      } catch (itk::ExceptionObject& excep) {
-        STUDIO_LOG_ERROR(QString::fromStdString("Failed to loading groomed file: " + filename));
-        std::cerr << "Exception caught!" << std::endl;
-        std::cerr << excep << std::endl;
-      }
-      return image;
-    }
-  }
-  return this->groomed_image_;
-}
-
-//---------------------------------------------------------------------------
-void Shape::import_groomed_image(ImageType::Pointer img, double iso, TransformType transform)
-{
-  this->groomed_mesh_ = QSharedPointer<StudioMesh>(new StudioMesh());
-  this->groomed_image_ = img;
-  this->groomed_mesh_->create_from_image(img, iso);
-  this->groomed_transform_ = transform;
-  auto name = this->get_original_filename_with_path().toStdString();
-  name = name.substr(0, name.find_last_of(".")) + "_DT.nrrd";
-  this->groomed_filename_ = QString::fromStdString(name);
-  std::vector<std::string> groomed_filenames{name};   // only single domain supported so far
-  this->subject_->set_groomed_filenames(groomed_filenames);
-
-  // single domain so far
-  std::vector<std::vector<double>> groomed_transforms;
-  std::vector<double> groomed_transform;
-  for (int i = 0; i < transform.size(); i++) {
-    groomed_transform.push_back(transform[i]);
-  }
-  groomed_transforms.push_back(groomed_transform);
-  this->subject_->set_groomed_transforms(groomed_transforms);
-
-}
-
-//---------------------------------------------------------------------------
-QSharedPointer<StudioMesh> Shape::get_groomed_mesh(bool wait)
+MeshHandle Shape::get_groomed_mesh(bool wait)
 {
   if (!this->groomed_mesh_) {
     if (!this->subject_) {
@@ -290,7 +204,7 @@ bool Shape::import_local_point_file(QString filename)
 }
 
 //---------------------------------------------------------------------------
-QSharedPointer<StudioMesh> Shape::get_reconstructed_mesh()
+MeshHandle Shape::get_reconstructed_mesh()
 {
   if (!this->reconstructed_mesh_) {
     this->reconstructed_mesh_ = this->mesh_manager_->get_mesh(this->global_correspondence_points_);
@@ -461,10 +375,10 @@ vnl_vector<double> Shape::get_transform()
 }
 
 //---------------------------------------------------------------------------
-void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<StudioMesh>& mesh,
+void Shape::generate_meshes(std::vector<string> filenames, MeshHandle& mesh,
                             bool save_transform, bool wait)
 {
-  if (filenames.size() < 1) {
+  if (filenames.empty()) {
     return;
   }
 
@@ -620,7 +534,7 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
 }
 
 //---------------------------------------------------------------------------
-void Shape::apply_feature_to_points(std::string feature, QSharedPointer<StudioMesh> mesh)
+void Shape::apply_feature_to_points(std::string feature, MeshHandle mesh)
 {
   vtkSmartPointer<vtkPolyData> from_mesh = mesh->get_poly_data();
 
@@ -675,10 +589,10 @@ Eigen::VectorXf Shape::get_point_features(std::string feature)
 //---------------------------------------------------------------------------
 TransformType Shape::get_groomed_transform()
 {
-  if (this->groomed_transform_.size() == 0) {
+  if (this->groomed_transform_.empty()) {
     // single domain support
     auto transforms = this->subject_->get_groomed_transforms();
-    if (transforms.size() > 0) {
+    if (!transforms.empty()) {
       this->groomed_transform_.set_size(transforms[0].size());
       for (int i = 0; i < transforms[0].size(); i++) {
         this->groomed_transform_[i] = transforms[0][i];

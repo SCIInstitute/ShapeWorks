@@ -94,8 +94,6 @@ public:
   bool groups_available();
   int get_num_shapes();
 
-  void set_groom_unsaved(bool value);
-
   std::string get_default_feature_map();
 
   static bool is_supported_file_format(std::string filename);
@@ -157,7 +155,6 @@ private:
   bool groups_available_{false};
   bool is_light_project_{false};
 
-  bool unsaved_groomed_files_{false};
   bool unsaved_particle_files_{false};
 
   Parameters params_;

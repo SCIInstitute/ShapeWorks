@@ -150,7 +150,7 @@ private:
   bool viewer_ready_ = false;
   bool loading_displayed_ = false;
 
-  QSharedPointer<StudioMesh> mesh_;
+  MeshHandle mesh_;
 
   Visualizer* visualizer_{nullptr};
 };

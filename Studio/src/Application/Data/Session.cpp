@@ -8,7 +8,6 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QXmlStreamWriter>
-#include <QXmlStreamReader>
 #include <QProgressDialog>
 
 #include <Libs/Mesh/MeshUtils.h>
@@ -29,9 +28,7 @@
 #include <Data/Session.h>
 #include <Data/StudioLog.h>
 #include <Data/Shape.h>
-#include <Data/StudioMesh.h>
 #include <Data/MeshManager.h>
-#include <Visualization/ShapeWorksWorker.h>
 #include <Visualization/Visualizer.h>
 
 namespace shapeworks {
@@ -47,13 +44,12 @@ Session::Session(QWidget* parent, Preferences& prefs) : parent_(parent),
                                                         mesh_manager_(QSharedPointer<MeshManager>(
                                                           new MeshManager(preferences_)))
 {
-  this->parent_ = NULL;
+  this->parent_ = nullptr;
   connect(this->mesh_manager_.data(), &MeshManager::new_mesh, this, &Session::handle_new_mesh);
 }
 
 //---------------------------------------------------------------------------
-Session::~Session()
-{}
+Session::~Session() = default;
 
 //---------------------------------------------------------------------------
 void Session::handle_new_mesh()
@@ -94,10 +90,9 @@ void Session::calculate_reconstructed_samples()
     return;
   }
   //this->preferences_.set_preference("Studio/cache_enabled", false);
-  for (int i = 0; i < this->shapes_.size(); i++) {
-    auto shape = this->shapes_.at(i);
+  for (auto shape : this->shapes_) {
     auto pts = shape->get_local_correspondence_points();
-    if (pts.size() > 0) {
+    if (!pts.empty()) {
       /// TODO: fix
       //shape->set_reconstructed_mesh(this->mesh_manager_->get_mesh(pts));
     }
@@ -124,7 +119,7 @@ bool Session::save_project(std::string fname)
   QFile file(filename);
 
   if (!file.open(QIODevice::WriteOnly)) {
-    QMessageBox::warning(0, "Read only", "The file is in read only mode");
+    QMessageBox::warning(nullptr, "Read only", "The file is in read only mode");
     return false;
   }
 
@@ -149,42 +144,6 @@ bool Session::save_project(std::string fname)
     //this->session_->set_original_files(original_list);
   }
 
-  // distance transforms
-  if (this->unsaved_groomed_files_) {
-    std::cerr << "unsaved groomed files detected, saving...\n";
-    std::vector<std::string> groomed_list;
-    for (int i = 0; i < this->shapes_.size(); i++) {
-      QString loc = this->shapes_[i]->get_groomed_filename_with_path();
-      std::string location = loc.toStdString();
-
-      groomed_list.push_back(location);
-
-      if (loc.toLower().endsWith(".vtk")) {
-        vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-        writer->SetInputData(this->shapes_[i]->get_groomed_mesh()->get_poly_data());
-        writer->SetFileName(location.c_str());
-        writer->Update();
-      }
-      else {
-        //try writing the groomed to file
-        auto writer = itk::ImageFileWriter<ImageType>::New();
-        writer->SetFileName(location);
-        writer->SetInput(this->shapes_[i]->get_groomed_image());
-        writer->SetUseCompression(true);
-        std::cerr << "Writing distance transform: " << location << "\n";
-        writer->Update();
-      }
-      std::vector<std::string> groomed_filenames{location}; // only single domain supported so far
-      this->shapes_[i]->get_subject()->set_groomed_filenames(groomed_filenames);
-
-      QApplication::processEvents();
-      if (progress.wasCanceled()) {
-        break;
-      }
-    }
-
-    this->unsaved_groomed_files_ = false;
-  }
 
   // correspondence points
   if (this->unsaved_particle_files_) {
@@ -220,7 +179,7 @@ void Session::save_particles_file(std::string filename, const vnl_vector<double>
 bool Session::load_project(QString filename)
 {
   if (!QFile::exists(filename)) {
-    QMessageBox::critical(NULL, "ShapeWorksStudio", "File does not exist: " + filename,
+    QMessageBox::critical(nullptr, "ShapeWorksStudio", "File does not exist: " + filename,
                           QMessageBox::Ok);
     return false;
   }
@@ -237,7 +196,7 @@ bool Session::load_project(QString filename)
   bool loadOkay = doc.LoadFile();
   if (!loadOkay) {
     QString message = "Error: Invalid parameter file: " + filename;
-    QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+    QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
     return false;
   }
 
@@ -253,7 +212,7 @@ bool Session::load_project(QString filename)
 
   QString message =
     "Error: This version of ShapeWorksStudio only reads XLSX and legacy XML files: " + filename;
-  QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+  QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
   return false;
 }
 
@@ -268,7 +227,7 @@ bool Session::load_light_project(QString filename)
   bool loadOkay = doc.LoadFile();
   if (!loadOkay) {
     QString message = "Error: Invalid parameter file" + filename;
-    QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+    QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
     return false;
   }
 
@@ -295,7 +254,7 @@ bool Session::load_light_project(QString filename)
       if (!QFile::exists(QString::fromStdString(mesh_filename))) {
         QString message = "File does not exist: " + QString::fromStdString(mesh_filename);
         STUDIO_LOG_ERROR(message);
-        QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+        QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
         return false;
       }
       groom_files.push_back(mesh_filename);
@@ -314,7 +273,7 @@ bool Session::load_light_project(QString filename)
         QString message = "File does not exist: " +
                           QString::fromStdString(distance_transform_filename);
         STUDIO_LOG_ERROR(message);
-        QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+        QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
         return false;
       }
 
@@ -360,11 +319,11 @@ bool Session::load_light_project(QString filename)
     inputsBuffer.str("");
   }
 
-  if (groom_files.size() > 0) {
+  if (!groom_files.empty()) {
     if (groom_files.size() != local_point_files.size()) {
       QString message = "Error, mismatch in number of distance_transforms and particle files";
       STUDIO_LOG_ERROR(message);
-      QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+      QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
       return false;
     }
   }
@@ -372,7 +331,7 @@ bool Session::load_light_project(QString filename)
   if (local_point_files.size() != global_point_files.size()) {
     QString message = "Error, mismatch in number of local and world particle files";
     STUDIO_LOG_ERROR(message);
-    QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+    QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
     return false;
   }
 
@@ -554,7 +513,7 @@ void Session::load_original_files(std::vector<std::string> filenames)
     shape->set_mesh_manager(this->mesh_manager_);
     shape->set_subject(subject);
     this->project_->get_subjects().push_back(subject);
-    shape->import_original_image(filenames[i], 0.5);
+    shape->import_original_image(filenames[i]);
 
     this->shapes_.push_back(shape);
   }
@@ -737,7 +696,6 @@ bool Session::load_point_files(std::vector<std::string> list, bool local)
     QString basename = fi.completeBaseName();
     QString ext = fi.suffix();
 
-
     QStringList list;
     list << fi.fileName();
     list << "";
@@ -851,12 +809,6 @@ QString Session::get_display_name()
     return "New Project";
   }
   return QFileInfo(this->filename_).baseName();
-}
-
-//---------------------------------------------------------------------------
-void Session::set_groom_unsaved(bool value)
-{
-  this->unsaved_groomed_files_ = true;
 }
 
 //---------------------------------------------------------------------------
