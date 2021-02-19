@@ -392,12 +392,18 @@ background: rgb(255, 255, 127)
         <property name="text">
          <string>128</string>
         </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
        </widget>
       </item>
       <item row="1" column="2">
        <widget class="QLineEdit" name="initial_relative_weighting">
         <property name="text">
          <string>0.05</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -406,12 +412,18 @@ background: rgb(255, 255, 127)
         <property name="text">
          <string>1.0</string>
         </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
        </widget>
       </item>
       <item row="3" column="2">
        <widget class="QLineEdit" name="starting_regularization">
         <property name="text">
          <string>10</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -420,12 +432,18 @@ background: rgb(255, 255, 127)
         <property name="text">
          <string>1.0</string>
         </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
        </widget>
       </item>
       <item row="5" column="2">
        <widget class="QLineEdit" name="iterations_per_split">
         <property name="text">
          <string>1000</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -434,12 +452,18 @@ background: rgb(255, 255, 127)
         <property name="text">
          <string>1000</string>
         </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
        </widget>
       </item>
       <item row="8" column="2">
        <widget class="QLineEdit" name="normals_strength">
         <property name="text">
          <string>10</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -448,12 +472,18 @@ background: rgb(255, 255, 127)
         <property name="text">
          <string>32</string>
         </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
        </widget>
       </item>
       <item row="11" column="2">
        <widget class="QLineEdit" name="procrustes_interval">
         <property name="text">
          <string>10</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
