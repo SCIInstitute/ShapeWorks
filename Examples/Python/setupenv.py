@@ -30,7 +30,7 @@ def setup_shapeworks_env(shapeworks_bin_dir = None,   # path to the binary direc
         elif platform.system() == "Darwin": # MacOS
             shapeworks_bin_dir = "/Applications/ShapeWorks/bin"
         else: # Linux
-            shapeworks_bin_dir   = "../../../../bin"
+            shapeworks_bin_dir = "../../../../bin"
         
     # add shapeworks (and studio on mac) directory to python path 
     sys.path.append(shapeworks_bin_dir)
@@ -38,7 +38,7 @@ def setup_shapeworks_env(shapeworks_bin_dir = None,   # path to the binary direc
         sys.path.append(shapeworks_bin_dir + "/ShapeWorksStudio.app/Contents/MacOS")
     
     # add shapeworks and studio to the system path
-    os.environ["PATH"] = shapeworks_bin_dir   + os.pathsep + os.environ["PATH"]
+    os.environ["PATH"] = shapeworks_bin_dir + os.pathsep + os.environ["PATH"]
     if dependencies_bin_dir is not None:
         os.environ["PATH"] = dependencies_bin_dir + os.pathsep + os.environ["PATH"]
     if platform.system() == "Darwin": # MacOS

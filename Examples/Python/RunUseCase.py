@@ -14,7 +14,9 @@ import platform
 import argparse
 import subprocess
 import sys
-from CommonUtils import robustifyShapeworksPaths,dataset_exists_check
+import setupenv
+
+from CommonUtils import robustifyShapeworksPaths, dataset_exists_check
 
 # check that required modules are found
 try:
@@ -46,6 +48,8 @@ parser.add_argument("--tiny_test", help="Run as a short test", action="store_tru
 parser.add_argument("--shapeworks_path", help="Path to ShapeWorks executables (default: "+default_binpath+")", nargs='?', type=str, default=os.pathsep)
 args = parser.parse_args()
 explicit_binpath = args.shapeworks_path
+
+setupenv.setup_shapeworks_env(shapeworks_bin_dir=args.shapeworks_path)
 
 if args.use_subsample:
     dataExists = dataset_exists_check(args.use_case)
