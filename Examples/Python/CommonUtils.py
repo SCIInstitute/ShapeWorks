@@ -20,13 +20,11 @@ import xml.etree.ElementTree as ET
 from termcolor import colored, cprint
 from zipfile import ZipFile
 import subprocess
-import GroomUtils
 
 
 
 
 def dataset_exists_check(use_case):
-	
 	existsFlag = False
 	OutputDirectory = "Output/"
 	for filename in os.listdir(OutputDirectory):
