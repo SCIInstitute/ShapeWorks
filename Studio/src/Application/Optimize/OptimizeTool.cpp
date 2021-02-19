@@ -10,13 +10,9 @@
 
 #include <Visualization/ShapeWorksWorker.h>
 #include <Data/Session.h>
-#include <Data/StudioMesh.h>
 #include <Data/Shape.h>
-#include <Data/StudioLog.h>
 
 #include <Optimize/QOptimize.h>
-
-#include <vtkPLYWriter.h>
 
 #include <ui_OptimizeTool.h>
 
