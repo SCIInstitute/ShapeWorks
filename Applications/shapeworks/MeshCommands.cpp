@@ -137,9 +137,9 @@ void Coverage::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Path to other mesh with which to create coverage.");
-  parser.add_option("--allowBackIntersections").action("store_true").set_default(false).help("Allow back-intersections in coverage calculation [default: true].");
-  parser.add_option("--angleThreshold").action("store").type("double").set_default(0.0).help("This checks the cosine between the ray’s direction vector (e1) and the normal at the intersection point (e2) [default: %default].");
-  parser.add_option("--backSearchRadius").action("store").type("double").set_default(0.0).help("Max distance of a back-intersection [default: %default].");
+  parser.add_option("--allowbackintersections").action("store_true").set_default(false).help("Allow back-intersections in coverage calculation [default: true].");
+  parser.add_option("--anglethreshold").action("store").type("double").set_default(0.0).help("This checks the cosine between the ray’s direction vector (e1) and the normal at the intersection point (e2) [default: %default].");
+  parser.add_option("--backsearchradius").action("store").type("double").set_default(0.0).help("Max distance of a back-intersection [default: %default].");
 
   Command::buildParser();
 }
@@ -153,9 +153,9 @@ bool Coverage::execute(const optparse::Values &options, SharedCommandData &share
   }
 
   const std::string otherMesh(static_cast<std::string>(options.get("name")));
-  bool allowBackIntersections = static_cast<bool>(options.get("allowBackIntersections"));
-  double angleThreshold = static_cast<double>(options.get("angleThreshold"));
-  double backSearchRadius = static_cast<double>(options.get("backSearchRadius"));
+  bool allowbackintersections = static_cast<bool>(options.get("allowbackintersections"));
+  double anglethreshold = static_cast<double>(options.get("anglethreshold"));
+  double backsearchradius = static_cast<double>(options.get("backsearchradius"));
 
   if (otherMesh.length() == 0)
   {
@@ -163,7 +163,7 @@ bool Coverage::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
-  sharedData.mesh->coverage(Mesh(otherMesh), allowBackIntersections, angleThreshold, backSearchRadius);
+  sharedData.mesh->coverage(Mesh(otherMesh), allowbackintersections, anglethreshold, backsearchradius);
   return sharedData.validMesh();
 }
 
@@ -613,78 +613,6 @@ bool Distance::execute(const optparse::Values &options, SharedCommandData &share
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// RasterizationOrigin
-///////////////////////////////////////////////////////////////////////////////
-void RasterizationOrigin::buildParser()
-{
-  const std::string prog = "rasterization-origin";
-  const std::string desc = "compute origin of volume that would contain the rasterization of each mesh";
-  parser.prog(prog).description(desc);
-
-  parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to meshes (must be followed by `--`), ex: \"bounding-box-mesh --names *.vtk -- --center 1\")");
-  parser.add_option("--center").action("store").type("bool").set_default(false).help("Flag for centering [default: false].");
-  parser.add_option("--padding").action("store").type("int").set_default(0.0).help("Padding value [default: %default].");
-  parser.add_option("--x").action("store").type("double").set_default(1.0).help("X value of spacing [default: %default].");
-  parser.add_option("--y").action("store").type("double").set_default(1.0).help("Y value of spacing [default: %default].");
-  parser.add_option("--z").action("store").type("double").set_default(1.0).help("Z value of spacing [default: %default].");
-
-  Command::buildParser();
-}
-
-bool RasterizationOrigin::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  std::vector<std::string> filenames = options.get("names");
-  bool center = static_cast<bool>(options.get("center"));
-  int padding = static_cast<int>(options.get("padding"));
-  double x = static_cast<double>(options.get("x"));
-  double y = static_cast<double>(options.get("y"));
-  double z = static_cast<double>(options.get("z"));
-
-  if (filenames.size() <= 1)
-    sharedData.region = sharedData.mesh->boundingBox();
-  else
-    sharedData.region = MeshUtils::boundingBox(filenames, center);
-  std::cout << "Rasterization Origin:      " << sharedData.mesh->rasterizationOrigin(sharedData.region, makeVector({x, y, z}), padding) << std::endl;
-  return true;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// RasterizationSize
-///////////////////////////////////////////////////////////////////////////////
-void RasterizationSize::buildParser()
-{
-  const std::string prog = "rasterization-size";
-  const std::string desc = "compute size of volume that would contain the rasterization of each mesh";
-  parser.prog(prog).description(desc);
-
-  parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to meshes (must be followed by `--`), ex: \"bounding-box-mesh --names *.vtk -- --center 1\")");
-  parser.add_option("--center").action("store").type("bool").set_default(false).help("Flag for centering [default: false].");
-  parser.add_option("--padding").action("store").type("int").set_default(0.0).help("Padding value [default: %default].");
-  parser.add_option("--x").action("store").type("double").set_default(1.0).help("X value of spacing [default: %default].");
-  parser.add_option("--y").action("store").type("double").set_default(1.0).help("Y value of spacing [default: %default].");
-  parser.add_option("--z").action("store").type("double").set_default(1.0).help("Z value of spacing [default: %default].");
-
-  Command::buildParser();
-}
-
-bool RasterizationSize::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  std::vector<std::string> filenames = options.get("names");
-  bool center = static_cast<bool>(options.get("center"));
-  double x = static_cast<double>(options.get("x"));
-  double y = static_cast<double>(options.get("y"));
-  double z = static_cast<double>(options.get("z"));
-  int padding = static_cast<int>(options.get("padding"));
-
-  if (filenames.size() <= 1)
-    sharedData.region = sharedData.mesh->boundingBox();
-  else
-    sharedData.region = MeshUtils::boundingBox(filenames, center);
-  std::cout << "Rasterization Size:      " << sharedData.mesh->rasterizationSize(sharedData.region, makeVector({x, y, z}), padding) << std::endl;
-  return sharedData.validMesh();
-}
-
-///////////////////////////////////////////////////////////////////////////////
 // FixMesh
 ///////////////////////////////////////////////////////////////////////////////
 void FixMesh::buildParser()
@@ -693,8 +621,8 @@ void FixMesh::buildParser()
   const std::string desc = "quality control meshes";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--smoothBefore").action("store").type("bool").set_default(true).help("Perform laplacian smoothing before decimation [default: true].");
-  parser.add_option("--smoothAfter").action("store").type("bool").set_default(true).help("Perform laplacian smoothing after decimation [default: true].");
+  parser.add_option("--smoothbefore").action("store").type("bool").set_default(true).help("Perform laplacian smoothing before decimation [default: true].");
+  parser.add_option("--smoothafter").action("store").type("bool").set_default(true).help("Perform laplacian smoothing after decimation [default: true].");
   parser.add_option("--lambda").action("store").type("double").set_default(0.5).help("Laplacian smoothing lambda [default: %default].");
   parser.add_option("--iterations").action("store").type("int").set_default(1).help("Number of laplacian smoothing iterations [default: %default].");
   parser.add_option("--decimate").action("store").type("bool").set_default(true).help("Perform mesh decimation [default: true].");
@@ -711,8 +639,8 @@ bool FixMesh::execute(const optparse::Values &options, SharedCommandData &shared
     return false;
   }
 
-  bool smoothBefore = static_cast<bool>(options.get("smoothBefore"));
-  bool smoothAfter = static_cast<bool>(options.get("smoothAfter"));
+  bool smoothbefore = static_cast<bool>(options.get("smoothbefore"));
+  bool smoothafter = static_cast<bool>(options.get("smoothafter"));
   double lambda = static_cast<double>(options.get("lambda"));
   int iterations = static_cast<int>(options.get("iterations"));
   bool decimate = static_cast<bool>(options.get("decimate"));

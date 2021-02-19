@@ -12,10 +12,10 @@ int main(int argc, char *argv[])
 {
   Executable shapeworks;
 
+  // Image Commands
   shapeworks.addCommand(ReadImage::getCommand());
   shapeworks.addCommand(WriteImage::getCommand());
   shapeworks.addCommand(ImageInfo::getCommand());
-  shapeworks.addCommand(ImageToMesh::getCommand());
   shapeworks.addCommand(Antialias::getCommand());
   shapeworks.addCommand(ResampleImage::getCommand());
   shapeworks.addCommand(ResizeImage::getCommand());
@@ -43,16 +43,21 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(SetOrigin::getCommand());
   shapeworks.addCommand(SetSpacing::getCommand());
   shapeworks.addCommand(WarpImage::getCommand());
+  shapeworks.addCommand(ImageToMesh::getCommand());
   shapeworks.addCommand(NegateImage::getCommand());
   shapeworks.addCommand(AddImage::getCommand());
   shapeworks.addCommand(SubtractImage::getCommand());
   shapeworks.addCommand(MultiplyImage::getCommand());
   shapeworks.addCommand(DivideImage::getCommand());
   shapeworks.addCommand(CompareImage::getCommand());
+
+  // Particle System Commands
   shapeworks.addCommand(ReadParticleSystem::getCommand());
   shapeworks.addCommand(Compactness::getCommand());
   shapeworks.addCommand(Generalization::getCommand());
   shapeworks.addCommand(Specificity::getCommand());
+
+  // Mesh Commands
   shapeworks.addCommand(ReadMesh::getCommand());
   shapeworks.addCommand(WriteMesh::getCommand());
   shapeworks.addCommand(MeshInfo::getCommand());
@@ -69,8 +74,6 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(ScaleMesh::getCommand());
   shapeworks.addCommand(BoundingBoxMesh::getCommand());
   shapeworks.addCommand(Distance::getCommand());
-  shapeworks.addCommand(RasterizationOrigin::getCommand());
-  shapeworks.addCommand(RasterizationSize::getCommand());
   shapeworks.addCommand(FixMesh::getCommand());
   shapeworks.addCommand(ClipClosedSurface::getCommand());
   shapeworks.addCommand(SetFieldValue::getCommand());
@@ -82,6 +85,8 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(MeshToImage::getCommand());
   shapeworks.addCommand(MeshToDT::getCommand());
   shapeworks.addCommand(CompareMesh::getCommand());
+
+  // Misc Commands
   shapeworks.addCommand(OptimizeCommand::getCommand());
   shapeworks.addCommand(GroomCommand::getCommand());
 
