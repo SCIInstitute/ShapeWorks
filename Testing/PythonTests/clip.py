@@ -40,3 +40,45 @@ val = clipTest3()
 
 if val is False:
   sys.exit(1)
+
+def clipTest4():
+  mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
+  plane = Plane([0.0, 0.0, 1.0], [-91.0, 0.0, 1230.0])
+  mesh.clip(plane)
+
+  compareMesh = Mesh(os.environ["DATA"] + "/clip1.vtk")
+
+  return mesh == compareMesh
+
+val = clipTest4()
+
+if val is False:
+  sys.exit(1)
+
+def clipTest5():
+  mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
+  plane = Plane([0.0, 0.0, -1.0], [-91.0, 0.0, 1230.0])
+  mesh.clip(plane)
+
+  compareMesh = Mesh(os.environ["DATA"] + "/clip2.vtk")
+
+  return mesh == compareMesh
+
+val = clipTest5()
+
+if val is False:
+  sys.exit(1)
+
+def clipTest6():
+  mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
+  plane = Plane([-5.0, 3.14159, 1.0], [-60.0, 10.0, 1235.0])
+  mesh.clip(plane)
+
+  compareMesh = Mesh(os.environ["DATA"] + "/clip3.vtk")
+
+  return mesh == compareMesh
+
+val = clipTest6()
+
+if val is False:
+  sys.exit(1)

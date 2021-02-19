@@ -9,7 +9,9 @@
 
 #include "ParticleSystem/MeshWrapper.h"
 #include "ParticleSystem/TriMeshWrapper.h"
+#include "ParticleSystem/VtkMeshWrapper.h"
 #include <Libs/Utils/StringUtils.h>
+#include <Libs/Mesh/MeshUtils.h>
 
 namespace shapeworks {
 
@@ -472,21 +474,31 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
       if (this->verbosity_level_ <= 1) {
         TriMesh::set_verbose(0);
       }
+
+      /*
       auto themesh = std::shared_ptr<TriMesh>(TriMesh::read(meshFiles[index].c_str()));
       if (themesh) {
         optimize->AddMesh(std::make_shared<shapeworks::TriMeshWrapper>(themesh));
       }
-      else {
+      */
+
+      auto poly_data = MeshUtils::threadSafeReadMesh(meshFiles[index].c_str()).getVTKMesh();
+
+      if (poly_data) {
+        optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data));
+      } else {
         std::cerr << "Failed to read " << meshFiles[index] << "\n";
         return false;
       }
 
+      /*
       if (optimize->GetShowVisualizer()) {
         vtkSmartPointer<vtkPLYReader> reader = vtkSmartPointer<vtkPLYReader>::New();
         reader->SetFileName(meshFiles[index].c_str());
         reader->Update();
         optimize->GetVisualizer().AddMesh(reader->GetOutput(), themesh);
       }
+       */
     }
     else {
       optimize->AddMesh(nullptr);

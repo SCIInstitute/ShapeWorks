@@ -1,6 +1,7 @@
 #include "Image.h"
 #include "ShapeworksUtils.h"
 #include "itkTPGACLevelSetImageFilter.h"  // actually a shapeworks class, not itk
+#include "MeshUtils.h"
 
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
@@ -25,15 +26,47 @@
 #include <itkExtractImageFilter.h>
 #include <itkImageDuplicator.h>
 #include <itkVTKImageExport.h>
+#include <itkIntensityWindowingImageFilter.h>
+#include <itkImageToVTKImageFilter.h>
+#include <itkVTKImageToImageFilter.h>
+
 #include <vtkImageImport.h>
 #include <vtkContourFilter.h>
 #include <vtkImageData.h>
+#include <vtkImageCast.h>
 
 #include <exception>
 #include <cmath>
 
 namespace shapeworks {
 
+Image::Image(const vtkSmartPointer<vtkImageData> vtkImage)
+{
+  // ensure input image data is PixelType (note: it'll either be float or double)
+  vtkSmartPointer<vtkImageCast> cast = vtkSmartPointer<vtkImageCast>::New();
+  cast->SetInputData(vtkImage);
+  if (typeid(PixelType) == typeid(float))
+    cast->SetOutputScalarTypeToFloat();
+  cast->Update();
+
+  using FilterType = itk::VTKImageToImageFilter<Image::ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+  filter->SetInput(cast->GetOutput());
+  filter->Update();
+
+  this->image = cloneData(filter->GetOutput());
+}
+
+vtkSmartPointer<vtkImageData> Image::getVTKImage() const
+{
+  using connectorType = itk::ImageToVTKImageFilter<Image::ImageType>;
+  connectorType::Pointer connector = connectorType::New();
+  connector->SetInput(this->image);
+  connector->Update();
+
+  return connector->GetOutput();
+}
+  
 Image::ImageType::Pointer Image::cloneData(const Image::ImageType::Pointer image)
 {
   using DuplicatorType = itk::ImageDuplicator<ImageType>;
@@ -45,7 +78,7 @@ Image::ImageType::Pointer Image::cloneData(const Image::ImageType::Pointer image
 
 Image& Image::operator=(const Image& img)
 {
-  this->image = Image::cloneData(image);
+  this->image = Image::cloneData(img.image);
   return *this;
 }
 
@@ -327,7 +360,14 @@ Image& Image::resample(const Vector3& spacing, Image::InterpolationType interp)
               static_cast<unsigned>(std::floor(inputDims[1] * inputSpacing[1] / spacing[1])),
               static_cast<unsigned>(std::floor(inputDims[2] * inputSpacing[2] / spacing[2])) });
   
-  return resample(IdentityTransform::New(), origin(), dims, spacing, coordsys(), interp);
+  Point3 new_origin = origin() + toPoint(0.5 * (spacing - inputSpacing));  // O' += 0.5 * (p' - p)
+
+  return resample(IdentityTransform::New(), new_origin, dims, spacing, coordsys(), interp);
+}
+
+Image& Image::resample(double isoSpacing, Image::InterpolationType interp)
+{
+  return resample(makeVector({isoSpacing, isoSpacing, isoSpacing}), interp);
 }
 
 Image& Image::resize(Dims dims, Image::InterpolationType interp)
@@ -476,6 +516,42 @@ Image& Image::rotate(const double angle, const Vector3 &axis)
   return *this;
 }
 
+TransformPtr Image::createTransform(XFormType type)
+{
+  TransformPtr transform;
+
+  switch (type) {
+    case CenterOfMass:
+      transform = createCenterOfMassTransform();
+      break;
+    case IterativeClosestPoint:
+      transform = createRigidRegistrationTransform(*this, 0.0, 20);
+      break;
+    default:
+      throw std::invalid_argument("Unknown Image::TranformType");
+  }
+
+  return transform;
+}
+
+TransformPtr Image::createTransform(const Image &target, XFormType type, float isoValue, unsigned iterations)
+{
+  TransformPtr transform;
+
+  switch (type) {
+    case CenterOfMass:
+      transform = createCenterOfMassTransform();
+      break;
+    case IterativeClosestPoint:
+      transform = createRigidRegistrationTransform(target, isoValue, iterations);
+      break;
+    default:
+      throw std::invalid_argument("Unknown Image::TranformType");
+  }
+
+  return transform;
+}
+
 Image& Image::applyTransform(const TransformPtr transform, Image::InterpolationType interp)
 {
   return applyTransform(transform, origin(), dims(), spacing(), coordsys(), interp);
@@ -599,6 +675,30 @@ Image& Image::applyTPLevelSetFilter(const Image& featureImage, double scaling)
   return *this;
 }
 
+Image& Image::topologyPreservingSmooth(float scaling, float sigmoidAlpha, float sigmoidBeta)
+{
+  Image featureImage(*this);
+  featureImage.applyGradientFilter().applySigmoidFilter(sigmoidAlpha, sigmoidBeta);
+
+  return applyTPLevelSetFilter(featureImage, scaling);
+}
+
+Image& Image::applyIntensityFilter(double minVal, double maxVal)
+{
+  using FilterType = itk::IntensityWindowingImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+
+  filter->SetWindowMinimum(minVal);
+  filter->SetWindowMaximum(maxVal);
+  filter->SetOutputMinimum(0.0);
+  filter->SetOutputMaximum(255.0);
+  filter->SetInput(this->image);
+  filter->Update();
+  this->image = filter->GetOutput();
+
+  return *this;
+}
+
 Image& Image::gaussianBlur(double sigma)
 {
   using BlurType = itk::DiscreteGaussianImageFilter<ImageType, ImageType>;
@@ -612,24 +712,6 @@ Image& Image::gaussianBlur(double sigma)
   return *this;
 }
 
-Image::Region Image::boundingBox(PixelType isovalue) const
-{
-  Image::Region bbox;
-
-  itk::ImageRegionIteratorWithIndex<ImageType> imageIterator(image, image->GetLargestPossibleRegion());
-  while (!imageIterator.IsAtEnd())
-  {
-    PixelType val = imageIterator.Get();
-
-    if (val >= isovalue)
-      bbox.expand(imageIterator.GetIndex());
-
-    ++imageIterator;
-  }
-
-  return bbox;
-}
-
 Image& Image::crop(const Region &region)
 {
   if (!region.valid())
@@ -638,7 +720,8 @@ Image& Image::crop(const Region &region)
   using FilterType = itk::ExtractImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
-  filter->SetExtractionRegion(Region(region).clip(*this));
+  Region(region).shrink(Region(dims())); // clip region to fit inside image
+  filter->SetExtractionRegion(ImageType::RegionType(region.origin(), region.size()));
   filter->SetInput(this->image);
   filter->SetDirectionCollapseToIdentity();
   filter->Update();
@@ -647,25 +730,7 @@ Image& Image::crop(const Region &region)
   return *this;
 }
 
-vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image& image, PixelType isoValue)
-{
-  using FilterType = itk::VTKImageExport<ImageType>;
-  FilterType::Pointer itkTargetExporter = FilterType::New();
-  itkTargetExporter->SetInput(image.image);
-
-  vtkImageImport *vtkTargetImporter = vtkImageImport::New();
-  ShapeworksUtils::connectPipelines(itkTargetExporter, vtkTargetImporter);
-  vtkTargetImporter->Update();
-
-  vtkContourFilter *targetContour = vtkContourFilter::New();
-  targetContour->SetInputData(vtkTargetImporter->GetOutput());
-  targetContour->SetValue(0, isoValue);
-  targetContour->Update();
-
-  return targetContour->GetOutput();
-}
-
-Image& Image::clip(const Point &o, const Point &p1, const Point &p2, const PixelType val)
+Image &Image::clip(const Point &o, const Point &p1, const Point &p2, const PixelType val)
 {
   // clipping plane normal n = (p1-o) x (p2-o)
   Vector v1(makeVector({p1[0] - o[0], p1[1] - o[1], p1[2] - o[2]}));
@@ -701,7 +766,6 @@ Image& Image::reflect(const Axis &axis)
   Vector scale(makeVector({1,1,1}));
   scale[axis] = -1;
 
-  
   using ScalableTransform = itk::ScalableAffineTransform<double, 3>;
   ScalableTransform::Pointer xform(ScalableTransform::New());
   xform->SetScale(scale);
@@ -727,6 +791,9 @@ Image& Image::setOrigin(Point3 origin)
 
 Image& Image::setSpacing(Vector3 spacing)
 {
+  if (spacing[0] <= 0 || spacing[1] <= 0 || spacing[2] <= 0)
+    { throw std::invalid_argument("Spacing cannot b <= 0"); }
+
   using FilterType = itk::ChangeInformationImageFilter<ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
@@ -764,11 +831,28 @@ Point3 Image::centerOfMass(PixelType minVal, PixelType maxVal) const
   return com;
 }
 
-Point3 Image::logicalToPhysical(const Coord &c) const
+Region Image::boundingBox(PixelType isoValue) const
 {
-  // return image->TransformIndexToPhysicalPoint(v); // not sure why this call won't work directly
+  Region bbox;
+
+  itk::ImageRegionIteratorWithIndex<ImageType> imageIterator(image, image->GetLargestPossibleRegion());
+  while (!imageIterator.IsAtEnd())
+  {
+    PixelType val = imageIterator.Get();
+
+    if (val >= isoValue)
+      bbox.expand(imageIterator.GetIndex());
+
+    ++imageIterator;
+  }
+
+  return bbox;
+}
+
+Point3 Image::logicalToPhysical(const Coord &v) const
+{
   Point3 value;
-  image->TransformIndexToPhysicalPoint(c, value);
+  image->TransformIndexToPhysicalPoint(v, value);
   return value;
 }
 
@@ -777,10 +861,31 @@ Coord Image::physicalToLogical(const Point3 &p) const
   return image->TransformPhysicalPointToIndex(p);
 }
 
-std::ostream& operator<<(std::ostream &os, const Image::Region &r)
+vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image& image, PixelType isoValue)
 {
-  return os << "{\n\tmin: [" << r.min[0] << ", " << r.min[1] << ", " << r.min[2] << "]"
-            << ",\n\tmax: [" << r.max[0] << ", " << r.max[1] << ", " << r.max[2] << "]\n}";
+  auto vtkImage = image.getVTKImage();
+
+  vtkContourFilter *targetContour = vtkContourFilter::New();
+  targetContour->SetInputData(vtkImage);
+  targetContour->SetValue(0, isoValue);
+  targetContour->Update();
+
+  return targetContour->GetOutput();
+}
+
+TransformPtr Image::createCenterOfMassTransform()
+{
+  AffineTransformPtr xform(AffineTransform::New());
+  xform->Translate(-(center() - centerOfMass())); // ITK translations go in a counterintuitive direction
+  return xform;
+}
+
+TransformPtr Image::createRigidRegistrationTransform(const Image &target_dt, float isoValue, unsigned iterations)
+{
+  vtkSmartPointer<vtkPolyData> sourceContour = Image::getPolyData(*this, isoValue);
+  vtkSmartPointer<vtkPolyData> targetContour = Image::getPolyData(target_dt, isoValue);
+  const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createICPTransform(sourceContour, targetContour, Mesh::Rigid, iterations));
+  return shapeworks::createTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
 }
 
 std::ostream& operator<<(std::ostream &os, const Image& img)

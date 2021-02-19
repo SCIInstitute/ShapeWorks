@@ -24,7 +24,13 @@ def Run_Pipeline(args):
 	outputDirectory = "Output/deep_ssm/"
 	if not os.path.exists(outputDirectory):
 		os.makedirs(outputDirectory)
-	CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
+
+	if args.tiny_test:
+		CommonUtils.download_subset(args.use_case,datasetName, outputDirectory)
+		partition = 4
+	else:
+		CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
+		partition = 40
 
 	input_dir = outputDirectory + datasetName + '/'
 	# Get image path list
@@ -45,16 +51,10 @@ def Run_Pipeline(args):
 	local_particle_list = sorted(local_particle_list)
 	world_particle_list = sorted(world_particle_list)
 	# split into train and test
-	train_img_list = img_list[:40]
-	train_local_particle_list = local_particle_list[:40]
-	train_world_particle_list = world_particle_list[:40]
-	test_img_list = img_list[40:]
-	# shorten lists for tiny test 
-	if args.tiny_test:
-		test_img_list = train_img_list[4:7]
-		train_img_list = train_img_list[:4]
-		train_local_particle_list = train_local_particle_list[:4]
-		train_world_particle_list = train_world_particle_list[:4]
+	train_img_list = img_list[:partition]
+	train_local_particle_list = local_particle_list[:partition]
+	train_world_particle_list = world_particle_list[:partition]
+	test_img_list = img_list[partition:]
 
 	print("\n\n\nStep 2. Augment data\n") ###################################################################################
 	'''

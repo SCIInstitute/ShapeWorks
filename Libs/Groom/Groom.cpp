@@ -5,6 +5,7 @@
 
 #include <Libs/Image/Image.h>
 #include <Libs/Mesh/Mesh.h>
+#include <Libs/Mesh/MeshUtils.h>
 
 #include <Groom.h>
 #include <GroomParameters.h>
@@ -201,7 +202,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject)
   groom_name = groom_name.substr(0, groom_name.find_last_of('.')) + "_groomed.ply";
 
   try {
-    // load the image
+    // load the mesh
     std::shared_ptr<Mesh> mesh = this->load_mesh(path);
     if (!mesh) {
       return false;
@@ -221,7 +222,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject)
         vector[0] = -com[0];
         vector[1] = -com[1];
         vector[2] = -com[2];
-        mesh->translate_mesh(vector);
+        mesh->translate(vector);
 
         itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
         tform[0] = com[0];
@@ -296,20 +297,20 @@ void Groom::isolate(Image &image)
 //---------------------------------------------------------------------------
 Vector3 Groom::center(Image &image)
 {
-  image.recenter();
+  // capture full translation
   auto com = image.centerOfMass();
-  auto diff = image.center() - com;
+  // set center to origin
+  image.recenter();
+  // calculate translation for center of mass to new center
+  auto diff = image.centerOfMass();
   Vector3 translation;
   translation[0] = -diff[0];
   translation[1] = -diff[1];
   translation[2] = -diff[2];
 
-  //image.translate(translation, Image::InterpolationType::NearestNeighbor);
-
   AffineTransformPtr xform(AffineTransform::New());
   xform->Translate(-translation);
   image.applyTransform(xform,Image::NearestNeighbor);
-
 
   translation[0] = com[0];
   translation[1] = com[1];
@@ -353,9 +354,8 @@ void Groom::set_skip_grooming(bool skip)
 //---------------------------------------------------------------------------
 std::shared_ptr<Mesh> Groom::load_mesh(std::string filename)
 {
-  tbb::mutex::scoped_lock lock(this->mutex_);
   try {
-    auto mesh = std::make_shared<Mesh>(filename);
+    auto mesh = std::make_shared<Mesh>(MeshUtils::threadSafeReadMesh(filename));
     return mesh;
   } catch (std::exception e) {
     std::cerr << "Exception: " << e.what() << "\n";
@@ -366,9 +366,8 @@ std::shared_ptr<Mesh> Groom::load_mesh(std::string filename)
 //---------------------------------------------------------------------------
 bool Groom::save_mesh(std::shared_ptr<Mesh> mesh, std::string filename)
 {
-  tbb::mutex::scoped_lock lock(this->mutex_);
   try {
-    mesh->write(filename);
+    MeshUtils::threadSafeWriteMesh(filename, *mesh);
     return true;
   } catch (std::exception e) {
     std::cerr << "Exception: " << e.what() << "\n";

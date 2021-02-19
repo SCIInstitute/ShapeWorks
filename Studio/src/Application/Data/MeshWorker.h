@@ -29,7 +29,8 @@ public:
              MeshWorkQueue* queue,
              MeshCache* cache);
   ~MeshWorker();
-  MeshGenerator* get_mesh_generator();
+
+  void set_mesh_generator(QSharedPointer<MeshGenerator> generator);
 
   void run();
 
@@ -39,7 +40,7 @@ Q_SIGNALS:
 
 private:
   Preferences& prefs_;
-  MeshGenerator mesh_generator_;
+  QSharedPointer<MeshGenerator> mesh_generator_;
   MeshWorkItem item_;
   MeshWorkQueue* queue_;
   MeshCache* cache_;

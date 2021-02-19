@@ -16,21 +16,27 @@ fi
 # PyTorch installation
 function install_pytorch() {
   echo "installing pytorch"
-  PYTORCH="cpuonly"
-  if ! [ -x "$(command -v nvidia-smi)" ]; then
+  if [[ "$(uname)" == "Darwin" ]]; then
+    pip install torch torchvision torchaudio
+  elif ! [ -x "$(command -v nvidia-smi)" ]; then
     echo 'Could not find nvidia-smi, using cpu-only PyTorch'
+    pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
   else
     CUDA=`nvidia-smi | grep CUDA | sed -e "s/.*CUDA Version: //" -e "s/ .*//"`
     echo "Found CUDA Version: ${CUDA}"
-
-    if [[ "$CUDA" == "9.2" || "$CUDA" == "10.1" || "$CUDA" == "10.2" ]]; then
-        PYTORCH="cudatoolkit=${CUDA}"
+    if [[ "$CUDA" == "9.2" ]]; then
+        pip install torch==1.7.1+cu92 torchvision==0.8.2+cu92 torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+    elif [[ "$CUDA" == "10.1" ]]; then
+        pip install torch==1.7.1+cu101 torchvision==0.8.2+cu101 torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+    elif [[ "$CUDA" == "10.2" ]]; then
+        pip install torch===1.7.1 torchvision===0.8.2 torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+    elif [[ "$CUDA" == "11.0" || "$CUDA" == "11.1" || "$CUDA" == "11.2" ]]; then
+        pip install torch===1.7.1+cu110 torchvision===0.8.2+cu110 torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
     else
         echo "CUDA version not compatible, using cpu-only"
+        pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
     fi
   fi
-
-  conda install --yes pytorch torchvision $PYTORCH -c pytorch
 }
 
 function install_conda() {
@@ -67,7 +73,7 @@ function install_conda() {
   if ! conda create --yes --name $CONDAENV python=3.7.8; then return 1; fi
   eval "$(conda shell.bash hook)"
   if ! conda activate $CONDAENV; then return 1; fi
-
+  
   # pip is needed in sub-environments or the base env's pip will silently install to base
   if ! conda install --yes pip=20.2.3; then return 1; fi
   if ! python -m pip install --upgrade pip; then return 1; fi
@@ -91,7 +97,8 @@ function install_conda() {
     boost=1.72.0 \
     openexr=2.5.3 \
     pybind11=2.5.0 \
-    notebook=6.1.5
+    notebook=6.1.5 \
+    nbformat=4.4.0
   then return 1; fi
 
   # linux and mac (only) deps
@@ -109,21 +116,26 @@ function install_conda() {
     then return 1; fi
   fi
 
+  if ! pip install trimesh;                             then return 1; fi
   if ! pip install termcolor==1.1.0;                    then return 1; fi
   if ! pip install grip==4.5.2;                         then return 1; fi
   if ! pip install matplotlib==3.3.2;                   then return 1; fi
   if ! pip install itk==5.0.1;                          then return 1; fi
   if ! pip install itkwidgets==0.32.0;                  then return 1; fi
   if ! pip install bokeh==2.2;                          then return 1; fi
+  if ! pip install seaborn; then return 1; fi
   if ! pip install mdutils==1.3.0;                      then return 1; fi # lib for writing markdown files (auto-documentation)
   if ! pip install mkdocs==1.1.2;                       then return 1; fi # lib for generating documentation from markdown
   if ! pip install python-markdown-math==0.8;           then return 1; fi # lib for rendering equations in docs
   if ! pip install fontawesome-markdown==0.2.6;         then return 1; fi # lib for icons in documentation
   if ! pip install pymdown-extensions==8.0.1;           then return 1; fi # lib to support checkbox lists in documentation
+  if ! pip install pyyaml==5.3.1;                       then return 1; fi # for mkdocs
   if ! pip install Python/DatasetUtilsPackage;          then return 1; fi # install the local GirderConnector code as a package
   if ! pip install Python/DocumentationUtilsPackage;    then return 1; fi # install shapeworks auto-documentation as a package
   if ! pip install Python/DataAugmentationUtilsPackage; then return 1; fi # install data augmentation code as a package
   if ! pip install Python/DeepSSMUtilsPackage;          then return 1; fi # install DeepSSM code as a package
+  if ! pip install Python/ShapeCohortGenPackage;        then return 1; fi # install shape cohort generation code as a package
+
 
   if [[ "$GITHUB_ACTION" != "" ]]; then
       echo "Running under GitHub Action"
@@ -134,6 +146,7 @@ function install_conda() {
       fi
       popd
   fi
+
   
   # installs for jupyter notebooks
 
@@ -160,10 +173,15 @@ function install_conda() {
   fi
 
   conda info
+
+  echo "Installed packages:"
+  conda list
+  
   return 0
 }
 
 if install_conda; then
+  install_pytorch
   echo "$CONDAENV environment successfully created/updated!"
   conda activate $CONDAENV
 else

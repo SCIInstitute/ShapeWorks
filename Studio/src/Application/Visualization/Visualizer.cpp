@@ -200,6 +200,9 @@ void Visualizer::update_viewer_properties()
 {
   double size = this->preferences_.get_glyph_size();
   double quality = this->preferences_.get_glyph_quality();
+  if (this->preferences_.get_glyph_auto_size()) {
+    size = this->session_->get_auto_glyph_size();
+  }
 
   if (this->lightbox_) {
       foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {

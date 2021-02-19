@@ -2,6 +2,10 @@
 
 #include <memory>
 #include <xlnt/xlnt.hpp>
+#include <Libs/Mesh/Mesh.h>
+#include <Libs/Mesh/MeshUtils.h>
+#include <vtkPolyData.h>
+#include <vtkPointData.h>
 
 #include <cstring>
 
@@ -286,7 +290,7 @@ void Project::store_subjects()
 
     // groomed files
     auto groomed_files = subject->get_groomed_filenames();
-    if (groomed_files.size() >= groomed_columns.size()) {
+    if (groomed_files.size() >= groomed_columns.size() && groomed_files.size() > 0) {
       groomed_present = true;
       while (groomed_files.size() > groomed_columns.size()) {
         groomed_columns.push_back(std::string(GROOMED_PREFIX) + "file");
@@ -528,6 +532,24 @@ void Project::save_string_column(const std::string& name, std::vector<std::strin
 std::vector<std::string> Project::get_feature_names()
 {
   auto feature_names = this->get_matching_columns(FEATURE_PREFIX);
+  if (!this->subjects_.empty() && this->mesh_scalars_.empty()) {
+    auto subject = this->subjects_[0];
+    if (subject->get_domain_types().size() > 0 &&
+        subject->get_domain_types()[0] == DomainType::Mesh) {
+      if (!subject->get_segmentation_filenames().empty()) {
+        auto poly_data = MeshUtils::threadSafeReadMesh(
+          subject->get_segmentation_filenames()[0]).getVTKMesh();
+        if (poly_data) {
+          vtkIdType numberOfPointArrays = poly_data->GetPointData()->GetNumberOfArrays();
+          for (vtkIdType i = 0; i < numberOfPointArrays; i++) {
+            this->mesh_scalars_.push_back(std::string("FEATURE_")
+                                          + poly_data->GetPointData()->GetArrayName(i));
+          }
+        }
+      }
+    }
+  }
+  feature_names.insert(feature_names.end(), this->mesh_scalars_.begin(), this->mesh_scalars_.end());
   return feature_names;
 }
 
@@ -622,8 +644,6 @@ std::vector<std::string> Project::get_extra_columns() const
   }
   return list;
 }
-
-
 
 
 //---------------------------------------------------------------------------

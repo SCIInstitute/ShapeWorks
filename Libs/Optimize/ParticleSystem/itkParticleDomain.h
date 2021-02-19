@@ -27,8 +27,7 @@ public:
 
   /** Point type used to store particle locations. */
   typedef Point<double, DIMENSION> PointType;
-  //TODO Hessian != Gradient of normals! Consistent naming after implementing gradient of normals for image domain
-  typedef vnl_matrix_fixed<float, DIMENSION, DIMENSION> HessianType;
+  typedef vnl_matrix_fixed<float, DIMENSION, DIMENSION> GradNType;
 
   /** Apply any constraints to the given point location.
       This should force the point to a position on the surface that satisfies all constraints. */
@@ -37,12 +36,15 @@ public:
   /** Applies the update to the point and returns the new point position. */
   virtual PointType UpdateParticlePosition(const PointType &point, int idx, vnl_vector_fixed<double, DIMENSION> &update) const = 0;
 
+  virtual void InvalidateParticlePosition(int idx) const {
+  }
+
   /** Projects the vector to the surface tangent at the point. */
   virtual vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION>& gradE, const PointType& pos, int idx) const = 0;
 
   virtual vnl_vector_fixed<float, DIMENSION> SampleGradientAtPoint(const PointType &point, int idx) const = 0;
   virtual vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType & point, int idx) const = 0;
-  virtual HessianType SampleHessianAtPoint(const PointType &p, int idx) const = 0;
+  virtual GradNType SampleGradNAtPoint(const PointType &p, int idx) const = 0;
   /** Distance between locations is used for computing energy and neighborhoods. */
   virtual double Distance(const PointType &a, const PointType &b) const {
     return a.EuclideanDistanceTo(b);

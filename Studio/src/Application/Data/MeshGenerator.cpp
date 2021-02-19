@@ -15,19 +15,20 @@
 #include <itkOrientImageFilter.h>
 
 #include <Libs/Mesh/Mesh.h>
+#include <Libs/Mesh/MeshUtils.h>
+
 #include <Libs/Utils/StringUtils.h>
 
-#include <tbb/mutex.h>
+#include <Data/LegacyMeshGenerator.h>
 
 namespace shapeworks {
 
-// locking to handle non-thread-safe code
-static tbb::mutex mesh_mutex;
+const std::string MeshGenerator::RECONSTRUCTION_LEGACY_C("legacy");
+const std::string MeshGenerator::RECONSTRUCTION_DISTANCE_TRANSFORM_C("distance_transform");
+const std::string MeshGenerator::RECONSTRUCTION_MESH_WARPER_C("mesh_warper");
 
 //---------------------------------------------------------------------------
-MeshGenerator::MeshGenerator(Preferences& prefs)
-  : prefs_(prefs),
-    legacy_reconstructor_(new LegacyMeshGenerator())
+MeshGenerator::MeshGenerator()
 {}
 
 //---------------------------------------------------------------------------
@@ -51,8 +52,11 @@ MeshHandle MeshGenerator::build_mesh_from_points(const vnl_vector<double>& shape
 {
   MeshHandle mesh(new StudioMesh);
 
-  if (this->surface_reconstructor_ &&
-      this->surface_reconstructor_->get_surface_reconstruction_available()) {
+  bool distance_transform_available = this->surface_reconstructor_ &&
+                                      this->surface_reconstructor_->get_surface_reconstruction_available();
+
+  if (this->reconstruction_method_ == RECONSTRUCTION_DISTANCE_TRANSFORM_C &&
+      distance_transform_available) {
     vtkSmartPointer<vtkPolyData> poly_data = this->surface_reconstructor_->build_mesh(shape);
 
     vtkSmartPointer<vtkPolyDataNormals> polydata_normals =
@@ -63,8 +67,21 @@ MeshHandle MeshGenerator::build_mesh_from_points(const vnl_vector<double>& shape
 
     mesh->set_poly_data(poly_data);
   }
+  else if (this->reconstruction_method_ == RECONSTRUCTION_MESH_WARPER_C && this->mesh_warper_ &&
+           this->mesh_warper_->get_warp_available()) {
+    vtkSmartPointer<vtkPolyData> poly_data = this->mesh_warper_->build_mesh(shape);
+
+    vtkSmartPointer<vtkPolyDataNormals> polydata_normals =
+      vtkSmartPointer<vtkPolyDataNormals>::New();
+    polydata_normals->SetInputData(poly_data);
+    polydata_normals->Update();
+    poly_data = polydata_normals->GetOutput();
+
+    mesh->set_poly_data(poly_data);
+  }
   else {
-    mesh->set_poly_data(this->legacy_reconstructor_->buildMesh(shape));
+    LegacyMeshGenerator legacy;
+    mesh->set_poly_data(legacy.buildMesh(shape));
   }
   return mesh;
 }
@@ -110,7 +127,7 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
   }
 
   bool is_mesh = false;
-  for (auto type : shapeworks::Mesh::get_supported_types()) {
+  for (auto type : shapeworks::Mesh::getSupportedTypes()) {
     if (StringUtils::hasSuffix(filename, type)) {
       is_mesh = true;
     }
@@ -118,9 +135,7 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
 
   if (is_mesh) {
     try {
-      tbb::mutex::scoped_lock lock(mesh_mutex);
-      shapeworks::Mesh reader(filename);
-      mesh->set_poly_data(reader.get_poly_data());
+      mesh->set_poly_data(MeshUtils::threadSafeReadMesh(filename).getVTKMesh());
     } catch (std::exception e) {
       std::string message = std::string("Error reading: ") + filename;
       STUDIO_LOG_ERROR(QString::fromStdString(message));
@@ -162,4 +177,23 @@ void MeshGenerator::set_surface_reconstructor(QSharedPointer<SurfaceReconstructo
 {
   this->surface_reconstructor_ = reconstructor;
 }
+
+//---------------------------------------------------------------------------
+void MeshGenerator::set_mesh_warper(QSharedPointer<MeshWarper> mesh_warper)
+{
+  this->mesh_warper_ = mesh_warper;
+}
+
+//---------------------------------------------------------------------------
+void MeshGenerator::set_reconstruction_method(std::string method)
+{
+  this->reconstruction_method_ = method;
+}
+
+//---------------------------------------------------------------------------
+std::string MeshGenerator::get_reconstruction_method()
+{
+  return this->reconstruction_method_;
+}
+
 }
