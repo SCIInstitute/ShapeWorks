@@ -14,9 +14,9 @@ TEST(shapeworksTests, fieldnameTest)
   ASSERT_FALSE(system("bash meshfieldnames.sh"));
 }
 
-TEST(shapeworksTests, meshDistanceTest)
+TEST(shapeworksTests, distanceTest)
 {
-  ASSERT_FALSE(system("bash meshdistance.sh"));
+  ASSERT_FALSE(system("bash distance.sh"));
 }
 
 TEST(shapeworksTests, getfieldvalueTest)

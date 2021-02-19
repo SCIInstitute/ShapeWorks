@@ -73,7 +73,7 @@ void Shape::set_subject(std::shared_ptr<Subject> subject)
 
   if (this->subject_->get_segmentation_filenames().size() > 0) {
     std::string filename = this->subject_->get_segmentation_filenames()[0];
-    this->corner_annotations_[0] = QString::fromStdString(filename);
+    this->corner_annotations_[0] = QFileInfo(QString::fromStdString(filename)).fileName();
   }
 }
 
@@ -87,7 +87,7 @@ std::shared_ptr<Subject> Shape::get_subject()
 void Shape::import_original_image(std::string filename, float iso_value)
 {
   this->subject_->set_segmentation_filenames(std::vector<std::string>{filename});
-  this->corner_annotations_[0] = QString::fromStdString(filename);
+  this->corner_annotations_[0] = QFileInfo(QString::fromStdString(filename)).fileName();
 }
 
 //---------------------------------------------------------------------------

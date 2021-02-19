@@ -672,7 +672,10 @@ void ShapeWorksStudioApp::handle_slider_update()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_pca_update()
 {
-  this->compute_mode_shape();
+  if (this->analysis_tool_->get_active() &&
+      this->analysis_tool_->get_analysis_mode() == AnalysisTool::MODE_PCA_C) {
+    this->compute_mode_shape();
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -789,6 +792,8 @@ void ShapeWorksStudioApp::update_tool_mode()
 {
   std::string tool_state =
     this->session_->parameters().get("tool_state", Session::DATA_C);
+
+  this->analysis_tool_->set_active(tool_state == Session::ANALYSIS_C);
 
   if (tool_state == Session::ANALYSIS_C) {
     this->ui_->stacked_widget->setCurrentWidget(this->analysis_tool_.data());
