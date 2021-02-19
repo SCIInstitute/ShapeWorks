@@ -1,12 +1,12 @@
 import os
 import sys
-import shapeworks as sw
+from shapeworks import *
 
 def resizefailTest():
-  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.resize()
 
-  compareImg = sw.Image(os.environ["DATA"] + "/resizefail.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/resizefail.nrrd")
 
   return img.compare(compareImg)
 

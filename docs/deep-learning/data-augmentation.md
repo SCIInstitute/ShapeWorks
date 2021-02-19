@@ -25,9 +25,10 @@ To run the complete data augmentation process as detailed in [Data Augmentation 
 
 ```python
 DataAugmentationUtils.runDataAugmentation(out_dir, img_list, 
-                                          point_list, num_samples, 
+                                          local_point_list, num_samples, 
                                           num_dim, percent_variability, 
-                                          sampler_type, mixture_num)
+                                          sampler_type, mixture_num,
+                                          world_point_list)
 ```
 
 
@@ -35,11 +36,12 @@ DataAugmentationUtils.runDataAugmentation(out_dir, img_list,
 
 * `out_dir`: Path to the directory where augmented data will be stored
 * `img_list`: List of paths to images of the original dataset.
-* `point_list`: List of paths to `.particles` files of the original dataset. Note, this list should be ordered in correspondence with the `img_list`.
+* `local_point_list`: List of paths to local `.particles` files of the original dataset. Note, this list should be ordered in correspondence with the `img_list`.
 * `num_dim`: The number of dimensions to reduce to in PCA embedding. If zero or not specified, the percent_variability option is used to select the numnber of dimensions.
 * `percent_variability`: The proportion of variability in the data to be preserved in embedding. Used if `num_dim` is zero or not specified. Default value is 0.95 which preserves 95% of the varibaility in the data.
 * `sampler_type`: The type of parametric distribution to fit and sample from. Options: `gaussian`, `mixture`, or `kde`. Default: `kde`.
 * `mixture_num`: Only necessary if `sampler_type` is `mixture`. The number of clusters (i.e., mixture components) to be used in fitting a mixture model. If zero or not specified, the optimal number of clusters will be automatically determined using the [elbow method](https://en.wikipedia.org/wiki/Elbow_method_(clustering)).
+* `world_point_list`: List of paths to world `.particles` files of the original dataset. This is optional and should be provided in cases where procrustes was used for the original optimization, resulting in a difference between world and local particle files. Note, this list should be ordered in correspondence with the `img_list` and `local_point_list`.
 
 ### Visualizing Data Augmentation
 
@@ -47,12 +49,13 @@ This function creates a visualization for augmented data. It creates a matrix of
 
 
 ```python
-DataAugmentationUtils.visualizeAugmentation(data_csv)
+DataAugmentationUtils.visualizeAugmentation(data_csv, viz_type)
 ```
 
 **Input arguments:**
 
 * `data_csv`: The path to the CSV file created by running the data augmentation process.
+* `viz_type`: The type of visulazation to display. Options `splom` or `violin` (default: `splom`). If set to `splom`, a scatterplot matrix of pairwise PCA comparisions will open in the default browser. If set to `violin` a violin plot or rotated kernel density plot will be displayed. 
 
 
 ## Data Augmentation Steps

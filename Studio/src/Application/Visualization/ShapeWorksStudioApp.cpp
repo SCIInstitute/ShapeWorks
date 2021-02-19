@@ -175,8 +175,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           this, SLOT(handle_groom_complete()));
   connect(this->groom_tool_.data(), SIGNAL(error_message(std::string)),
           this, SLOT(handle_error(std::string)));
-  connect(this->groom_tool_.data(), SIGNAL(message(std::string)),
-          this, SLOT(handle_message(std::string)));
+  connect(this->groom_tool_.data(), &GroomTool::message,
+          this, &ShapeWorksStudioApp::handle_message);
   connect(this->groom_tool_.data(), &GroomTool::progress,
           this, &ShapeWorksStudioApp::handle_progress);
 
@@ -193,8 +193,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           this, SLOT(handle_error(std::string)));
   connect(this->optimize_tool_.data(), SIGNAL(warning_message(std::string)),
           this, SLOT(handle_warning(std::string)));
-  connect(this->optimize_tool_.data(), SIGNAL(message(std::string)),
-          this, SLOT(handle_message(std::string)));
+  connect(this->optimize_tool_.data(), &OptimizeTool::message,
+          this, &ShapeWorksStudioApp::handle_message);
+  connect(this->optimize_tool_.data(), &OptimizeTool::status,
+          this, &ShapeWorksStudioApp::handle_status);
   connect(this->optimize_tool_.data(), &OptimizeTool::progress,
           this, &ShapeWorksStudioApp::handle_progress);
 
@@ -672,7 +674,10 @@ void ShapeWorksStudioApp::handle_slider_update()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_pca_update()
 {
-  this->compute_mode_shape();
+  if (this->analysis_tool_->get_active() &&
+      this->analysis_tool_->get_analysis_mode() == AnalysisTool::MODE_PCA_C) {
+    this->compute_mode_shape();
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -681,6 +686,13 @@ void ShapeWorksStudioApp::handle_message(std::string str)
   if (str != this->current_message_) {
     STUDIO_LOG_MESSAGE(QString::fromStdString(str));
   }
+  this->ui_->statusbar->showMessage(QString::fromStdString(str));
+  this->current_message_ = str;
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_status(std::string str)
+{
   this->ui_->statusbar->showMessage(QString::fromStdString(str));
   this->current_message_ = str;
 }
@@ -789,6 +801,8 @@ void ShapeWorksStudioApp::update_tool_mode()
 {
   std::string tool_state =
     this->session_->parameters().get("tool_state", Session::DATA_C);
+
+  this->analysis_tool_->set_active(tool_state == Session::ANALYSIS_C);
 
   if (tool_state == Session::ANALYSIS_C) {
     this->ui_->stacked_widget->setCurrentWidget(this->analysis_tool_.data());
@@ -908,14 +922,13 @@ void ShapeWorksStudioApp::handle_project_changed()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_points_changed()
 {
-
   bool update = false;
   if (!this->time_since_last_update_.isValid()) {
     update = true;
   }
   else {
     auto time_since = this->time_since_last_update_.elapsed();
-    if (time_since > 100) {
+    if (time_since > 25 + (this->last_render_ * 2)) {
       update = true;
     }
   }
@@ -926,10 +939,12 @@ void ShapeWorksStudioApp::handle_points_changed()
       this->handle_glyph_changed();
     }
 
+    QElapsedTimer render_time;
+    render_time.start();
     this->visualizer_->update_samples();
-
+    this->last_render_ = render_time.elapsed();
+    this->time_since_last_update_.start();
   }
-  this->time_since_last_update_.start();
 
 }
 
@@ -1771,7 +1786,7 @@ void ShapeWorksStudioApp::dropEvent(QDropEvent* event)
   }
 }
 
-//---------------------------------------------------------------------------
+
 //---------------------------------------------------------------------------
 
 }

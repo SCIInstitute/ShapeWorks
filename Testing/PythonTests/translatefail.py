@@ -1,12 +1,12 @@
 import os
 import sys
-import shapeworks as sw
+from shapeworks import *
 
 def translatefailTest():
-  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.translate()
 
-  compareImg = sw.Image(os.environ["DATA"] + "/translatefail.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/translatefail.nrrd")
 
   return img.compare(compareImg)
 

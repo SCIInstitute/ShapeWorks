@@ -1,9 +1,9 @@
 import os
 import sys
-import shapeworks as sw
+from shapeworks import *
 
 def fieldTest1():
-  dist = sw.Mesh(os.environ["DATA"] + "/meshdistance2.vtk")
+  dist = Mesh(os.environ["DATA"] + "/meshdistance2.vtk")
   a = dist.getFieldValue("distance", 0)
   b = dist.getFieldValue("distance", 1000)
   c = dist.getFieldValue("distance", dist.numPoints()-1)
@@ -16,7 +16,7 @@ if val is False:
   sys.exit(1)
 
 def fieldTest2():
-  mesh = sw.Mesh(os.environ["DATA"] + "/mesh1.vtk")
+  mesh = Mesh(os.environ["DATA"] + "/mesh1.vtk")
   a = mesh.getFieldValue("scalars", 0)
   b = mesh.getFieldValue("scalars", 1000)
   c = mesh.getFieldValue("Normals", 4231)

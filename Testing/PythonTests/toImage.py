@@ -1,12 +1,12 @@
 import os
 import sys
-import shapeworks as sw
+from shapeworks import *
 
 def toImageTest():
-  mesh = sw.Mesh(os.environ["DATA"] + "/femur.ply")
+  mesh = Mesh(os.environ["DATA"] + "/femur.ply")
   img = mesh.toImage([1.0, 1.0, 1.0])
 
-  compareImg = sw.Image(os.environ["DATA"] + "/femurImage.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/femurImage.nrrd")
 
   return img == compareImg
 

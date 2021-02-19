@@ -37,6 +37,12 @@ public:
   /// set the pointer to the application
   void set_app(ShapeWorksStudioApp* app);
 
+  //! Set if this tool is active
+  void set_active(bool active);
+
+  //! Return if this tool is active
+  bool get_active();
+
   bool get_group_difference_mode();
 
   std::vector<Shape::Point> get_group_difference_vectors();
@@ -145,6 +151,8 @@ signals:
   void reconstruction_complete();
 
 private:
+
+  bool active_ = false;
 
   void pca_labels_changed(QString value, QString eigen, QString lambda);
   void compute_mode_shape();

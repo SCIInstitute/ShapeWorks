@@ -1,12 +1,12 @@
 import os
 import sys
-import shapeworks as sw
+from shapeworks import *
 
 def divTest1():
-  img = sw.Image(os.environ["DATA"] + "/la-bin.nrrd")
+  img = Image(os.environ["DATA"] + "/la-bin.nrrd")
   img /= 3.14
 
-  compareImg = sw.Image(os.environ["DATA"] + "/baseline_divide.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/baseline_divide.nrrd")
 
   return img.compare(compareImg)
 

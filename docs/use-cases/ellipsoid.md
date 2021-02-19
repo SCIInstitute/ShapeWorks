@@ -2,7 +2,7 @@
 
 ## What and Where is the Use Case? 
 
-The ellipsoid dataset comprises of axis-aligned ellipsoids with varying radii along a single axis. This example is a stepping stone for the user to get familiar with the workflow of ShapeWorks. 
+The ellipsoid dataset comprises of axis-aligned ellipsoids with varying radii along all three axes. This example is a stepping stone for the user to get familiar with the workflow of ShapeWorks. 
 
 The `ellipsoid.py` (in `Examples/Python/`) use case represents the standard use version of a shape modeling workflow using ShapeWorks. It includes the full pipeline for processed (i.e., groomed) as well as unprocessed data. 
 

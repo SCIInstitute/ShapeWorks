@@ -1,12 +1,12 @@
 import os
 import sys
-import shapeworks as sw
+from shapeworks import *
 
 def sigmoidTest1():
-  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.applySigmoidFilter()
 
-  compareImg = sw.Image(os.environ["DATA"] + "/sigmoid1.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/sigmoid1.nrrd")
 
   return img.compare(compareImg)
 
@@ -16,10 +16,10 @@ if val is False:
   sys.exit(1)
 
 def sigmoidTest2():
-  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.applySigmoidFilter(10.5, 10.5)
 
-  compareImg = sw.Image(os.environ["DATA"] + "/sigmoid2.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/sigmoid2.nrrd")
 
   return img.compare(compareImg)
 
@@ -29,10 +29,10 @@ if val is False:
   sys.exit(1)
 
 def sigmoidTest3():
-  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.applySigmoidFilter(-10.5)
 
-  compareImg = sw.Image(os.environ["DATA"] + "/sigmoid3.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/sigmoid3.nrrd")
 
   return img.compare(compareImg)
 
@@ -42,10 +42,10 @@ if val is False:
   sys.exit(1)
 
 def sigmoidTest4():
-  img = sw.Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.applySigmoidFilter(beta=-10.5)
 
-  compareImg = sw.Image(os.environ["DATA"] + "/sigmoid4.nrrd")
+  compareImg = Image(os.environ["DATA"] + "/sigmoid4.nrrd")
 
   return img.compare(compareImg)
 

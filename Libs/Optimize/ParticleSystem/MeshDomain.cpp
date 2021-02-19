@@ -45,4 +45,9 @@ namespace itk
     return max;
   }
 
+void MeshDomain::InvalidateParticlePosition(int idx) const
+{
+    this->meshWrapper->InvalidateParticle(idx);
+}
+
 }

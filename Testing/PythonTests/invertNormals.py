@@ -1,12 +1,12 @@
 import os
 import sys
-import shapeworks as sw
+from shapeworks import *
 
 def invertNormalsTest():
-  mesh = sw.Mesh(os.environ["DATA"] + "/femur.vtk")
+  mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
   mesh.invertNormals()
 
-  compareMesh = sw.Mesh(os.environ["DATA"] + "/invertnormals.vtk")
+  compareMesh = Mesh(os.environ["DATA"] + "/invertnormals.vtk")
 
   return mesh == compareMesh
 
