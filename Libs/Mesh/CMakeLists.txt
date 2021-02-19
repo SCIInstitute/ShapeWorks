@@ -91,22 +91,22 @@ INSTALL(TARGETS ClipClosedSurface RUNTIME DESTINATION bin)
 #TARGET_LINK_LIBRARIES(ProjectPointsOntoMesh ${ITK_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS ProjectPointsOntoMesh RUNTIME DESTINATION bin)
 
-#add_executable(GenerateFeatureGradientFiles GenerateFeatureGradientFiles.cxx)
+#ADD_EXECUTABLE(GenerateFeatureGradientFiles GenerateFeatureGradientFiles.cxx)
 #TARGET_LINK_LIBRARIES(GenerateFeatureGradientFiles ${ITK_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS GenerateFeatureGradientFiles RUNTIME DESTINATION bin)
 
-#add_executable(WriteFeatureGradientAsText WriteFeatureGradientAsText.cxx)
+#ADD_EXECUTABLE(WriteFeatureGradientAsText WriteFeatureGradientAsText.cxx)
 #INSTALL(TARGETS WriteFeatureGradientAsText RUNTIME DESTINATION bin)
 
-add_executable(ProbeNormals ProbeNormals.cxx)
+ADD_EXECUTABLE(ProbeNormals ProbeNormals.cxx)
 TARGET_LINK_LIBRARIES(ProbeNormals ${ITK_LIBRARIES} Utils)
 INSTALL(TARGETS ProbeNormals RUNTIME DESTINATION bin)
 
-add_executable(ComputeMeanNormals ComputeMeanNormals.cxx)
+ADD_EXECUTABLE(ComputeMeanNormals ComputeMeanNormals.cxx)
 TARGET_LINK_LIBRARIES(ComputeMeanNormals ${ITK_LIBRARIES} tinyxml Utils)
 INSTALL(TARGETS ComputeMeanNormals RUNTIME DESTINATION bin)
 
-#add_executable(GenerateNormalFeaFiles GenerateNormalFeaFiles.cxx)
+#ADD_EXECUTABLE(GenerateNormalFeaFiles GenerateNormalFeaFiles.cxx)
 #TARGET_LINK_LIBRARIES(GenerateNormalFeaFiles ${ITK_LIBRARIES} tinyxml Mesh)
 #INSTALL(TARGETS GenerateNormalFeaFiles RUNTIME DESTINATION bin)
 
@@ -141,7 +141,3 @@ INSTALL(TARGETS FixCuttingPlanes RUNTIME DESTINATION bin)
 ADD_EXECUTABLE(RemoveFidsDTLeakage RemoveFidsDTLeakage.cxx)
 TARGET_LINK_LIBRARIES(RemoveFidsDTLeakage ${ITK_LIBRARIES} Mesh tinyxml)
 INSTALL(TARGETS RemoveFidsDTLeakage RUNTIME DESTINATION bin)
-
-#ADD_EXECUTABLE(fea2vtk fea2vtk.cxx)
-#TARGET_LINK_LIBRARIES(fea2vtk ${ITK_LIBRARIES} Mesh tinyxml)
-#INSTALL(TARGETS fea2vtk RUNTIME DESTINATION bin)
