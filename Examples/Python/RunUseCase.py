@@ -16,7 +16,7 @@ import subprocess
 import sys
 import setupenv
 
-from CommonUtils import robustifyShapeworksPaths, dataset_exists_check
+from CommonUtils import check_shapeworks_path, dataset_exists_check
 
 # check that required modules are found
 try:
@@ -70,7 +70,7 @@ os.environ["PATH"] = explicit_binpath + os.pathsep + os.environ["PATH"] + os.pat
 # sys.path.insert(0, binpath)
 
 # make sure the shapeworks executables can be found
-robustifyShapeworksPaths()
+check_shapeworks_path()
 
 image_use_cases = ['femur', 'femur_cut', 'left_atrium']
 if args.groom_images and args.use_case.lower() not in image_use_cases:
