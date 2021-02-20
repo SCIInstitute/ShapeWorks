@@ -4,6 +4,7 @@
 #include <QThread>
 #include <QMessageBox>
 #include <QTemporaryDir>
+#include <QIntValidator>
 
 #include <Optimize/OptimizeTool.h>
 #include <Libs/Optimize/OptimizeParameters.h>
