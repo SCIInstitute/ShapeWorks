@@ -646,7 +646,7 @@ bool FixMesh::execute(const optparse::Values &options, SharedCommandData &shared
   bool decimate = static_cast<bool>(options.get("decimate"));
   double percentage = static_cast<double>(options.get("percentage"));
 
-  sharedData.mesh->fix(smoothBefore, smoothAfter, lambda, iterations, decimate, percentage);
+  sharedData.mesh->fix(smoothbefore, smoothafter, lambda, iterations, decimate, percentage);
   return sharedData.validMesh();
 }
 
