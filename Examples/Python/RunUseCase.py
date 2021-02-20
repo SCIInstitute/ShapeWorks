@@ -33,7 +33,7 @@ default_binpath = "../../bin"
 if platform.system() == "Windows":
     default_binpath = "C:\\Program Files\\ShapeWorks\\bin"
 if platform.system() == "Darwin":
-    default_binpath = "/Applications/ShapeWorks/bin:/Applications/ShapeWorks/bin/ShapeWorksStudio.app/Contents/MacOS"
+    default_binpath = "/Applications/ShapeWorks/bin"
 default_subsample = 3
 
 parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
