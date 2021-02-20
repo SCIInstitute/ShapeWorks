@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Sep 10 14:32:27 2019
-
-@author: shireen
+Common utility functions
 """
 
 import numpy as np
@@ -191,3 +189,11 @@ def check_shapeworks_path():
 	if (not swpath):
 		print("Error: cannot find ShapeWorks executables. Please pass their location using the --shapeworks_path argument")
 		sys.exit(1)
+
+
+def get_shapeworks_bin_path():
+	swpath = shutil.which("shapeworks")
+	if (not swpath):
+		return None
+	return os.path.dirname(swpath)
+        

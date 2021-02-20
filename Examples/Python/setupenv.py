@@ -29,7 +29,7 @@ def setup_shapeworks_env(shapeworks_bin_dir = None,   # path to the binary direc
             shapeworks_bin_dir = "C:\\Program Files\\ShapeWorks\\bin"
         elif platform.system() == "Darwin": # MacOS
             shapeworks_bin_dir = "/Applications/ShapeWorks/bin"
-        else: # Linux
+        else: # Linux (for notebooks by default)
             shapeworks_bin_dir = "../../../../bin"
         
     # add shapeworks directory to python path 
