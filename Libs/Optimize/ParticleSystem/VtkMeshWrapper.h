@@ -1,13 +1,21 @@
 #pragma once
 
+#include <unordered_map>
 #include "MeshWrapper.h"
 
+#include <igl/heat_geodesics.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
 class vtkCellLocator;
 
 namespace shapeworks {
+
+template<class T>
+struct GeoCache {
+  std::unordered_map<int, int> tri2entry;
+  std::vector<T> entries;
+};
 
 class VtkMeshWrapper : public MeshWrapper {
 
@@ -51,7 +59,7 @@ public:
 private:
 
   void ComputeMeshBounds();
-  void ComputeGradN(); // Gradient of normals
+  void ComputeGradN(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
 
 
   int GetTriangleForPoint(const double pt[3], int idx, double closest_point[3]) const;
@@ -109,5 +117,33 @@ private:
   // cell locator to find closest point on mesh
   vtkSmartPointer<vtkCellLocator> cell_locator_;
 
+  /////////////////////////
+  // Geodesic distances
+
+  // IGL Helper functions
+  void GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const;
+
+  // Precompute libigl heat data structures for faster geodesic lookups
+  void PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
+
+  // Returns 3 x (V, ) geodesic distances from a given source triangle's vertices to every other vertex
+  const std::array<Eigen::VectorXd, 3>& GeodesicsFromTriangle(int f) const;
+
+  // Returns 3 x (F, 3) gradient of geodesic distances from a given source triangle's vertices to every other face
+  const std::array<Eigen::MatrixXd, 3>& GradGeodesicsFromTriangle(int f) const;
+
+  // Returns true if face f_a is adjacent to face f_b
+  bool AreFacesAdjacent(int f_a, int f_b) const;
+
+  size_t max_cache_entries_ {256};
+
+  // Cache to store information for geodesics
+  igl::HeatGeodesicsData<double> heat_data;
+  // cache for geodesic distances from a triangle
+  mutable GeoCache<std::array<Eigen::VectorXd, 3>> geo;
+  // cache for gradient of geodesic distances from a triangle
+  mutable GeoCache<std::array<Eigen::MatrixXd, 3>> grad_geo;
+  // Gradient operator
+  Eigen::SparseMatrix<double> grad_operator_;
 };
 }
