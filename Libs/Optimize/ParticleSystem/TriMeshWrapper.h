@@ -3,13 +3,11 @@
 #include "vnl/vnl_vector_fixed.h"
 #include "TriMesh.h"
 #include "KDtree.h"
-#include <unordered_map>
 #include "MeshWrapper.h"
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #include <vector>
-#include "igl/heat_geodesics.h"
 
 namespace shapeworks {
 
@@ -22,9 +20,7 @@ public:
   typedef typename MeshWrapper::PointType PointType;
   typedef typename MeshWrapper::GradNType GradNType;
 
-  double ComputeDistance(PointType pointa, int idx_a,
-                         PointType pointb, int idx_b,
-                         vnl_vector_fixed<double, DIMENSION> *out_grad=nullptr) const override;
+  double ComputeDistance(PointType pointa, PointType pointb) const override;
 
   PointType
   GeodesicWalk(PointType pointa, int idx, vnl_vector_fixed<double, DIMENSION> vector) const override;
@@ -67,7 +63,7 @@ private:
   const Eigen::Vector3d GetFaceNormal(int face_index) const;
 
   void ComputeMeshBounds();
-  void ComputeGradN(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F); // Gradient of normals
+  void ComputeGradN(); // Gradient of normals
 
   trimesh::point GetBarycentricIntersection(trimesh::vec3 start, trimesh::vec3 end,
                                             int currentFace, int edge) const;
@@ -80,7 +76,7 @@ private:
   static inline bool IsBarycentricCoordinateValid(const trimesh::vec3& b);
 
   // IGL Helper functions
-  void GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const;
+  void GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F);
 
   std::shared_ptr<trimesh::TriMesh> mesh_;
   std::shared_ptr<trimesh::KDtree> kd_tree_;
@@ -93,33 +89,6 @@ private:
 
   PointType mesh_lower_bound_;
   PointType mesh_upper_bound_;
-
-  /////////////////////////
-  // Geodesic distances
-
-  // Precompute libigl heat data structures for faster geodesic lookups
-  void PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
-
-  // Returns (V, ) geodesic distances from a given source vertex to every other vertex
-  const Eigen::VectorXd& GeodesicsFromVertex(int v) const;
-
-  // Returns (V, 3) gradient of geodesic distances from a given source vertex to every other vertex
-  const Eigen::MatrixXd& GradGeodesicsFromVertex(int v) const;
-
-  // Returns true if face f_a is adjacent to face f_b
-  bool AreFacesAdjacent(int f_a, int f_b) const;
-
-  // Cache to store information for geodesics
-  mutable struct {
-    igl::HeatGeodesicsData<double> heat_data;
-
-    //TODO lru_cache https://github.com/lamerman/cpp-lru-cache/blob/master/include/lrucache.hpp
-    std::unordered_map<int, Eigen::VectorXd> cache;
-    //TODO Might be worth switching to RowMajor here because of the access patterns
-    std::unordered_map<int, Eigen::MatrixXd> grad_cache;
-
-    Eigen::SparseMatrix<double> G; // Gradient operator
-  } geodesic_cache_;
 };
 
 }

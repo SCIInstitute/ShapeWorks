@@ -4,7 +4,6 @@
 #include <igl/grad.h>
 #include <igl/per_vertex_normals.h>
 #include <igl/doublearea.h>
-#include <igl/triangle_triangle_adjacency.h>
 
 #include <set>
 
@@ -50,121 +49,14 @@ TriMeshWrapper::TriMeshWrapper(std::shared_ptr<trimesh::TriMesh> mesh)
   mesh_->need_normals();
   mesh_->need_curvatures();
   ComputeMeshBounds();
-
-  Eigen::MatrixXd V;
-  Eigen::MatrixXi F;
-  GetIGLMesh(V, F);
-  ComputeGradN(V, F);
-  PrecomputeGeodesics(V, F);
+  ComputeGradN();
 
   kd_tree_ = std::make_shared<KDtree>(mesh_->vertices);
 }
 
-double TriMeshWrapper::ComputeDistance(PointType pt_a, int idx_a,
-                                       PointType pt_b, int idx_b,
-                                       vnl_vector_fixed<double, DIMENSION> *out_grad) const
+double TriMeshWrapper::ComputeDistance(PointType pointa, PointType pointb) const
 {
-#if 0
-  if(out_grad != nullptr) {
-    for(int i=0; i<DIMENSION; i++) {
-      (*out_grad)[i] = pt_a[i] - pt_b[i];
-    }
-  }
-  return pt_a.EuclideanDistanceTo(pt_b);
-#endif
-
-  // Find the triangle for the points
-  vec3 bary_a, bary_b;
-  const int face_a = GetTriangleForPoint(convert<PointType, point>(pt_a), idx_a, bary_a);
-  const int face_b = GetTriangleForPoint(convert<PointType, point>(pt_b), idx_b, bary_b);
-
-  // Both points lie on the same triangle, so we just return euclidean distance
-  if(face_a == face_b) {
-    if(out_grad != nullptr) {
-      for(int i=0; i<DIMENSION; i++) {
-        (*out_grad)[i] = pt_a[i] - pt_b[i];
-      }
-    }
-    return pt_a.EuclideanDistanceTo(pt_b);
-  }
-
-  // Define for convenience
-  const auto& faces = mesh_->faces;
-
-  // Compute geodesic distance via barycentric approximation
-  // Geometric Correspondence for Ensembles of Nonregular Shapes, Datar et al
-  // https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3346950/
-  double geo_dist = 0.0;
-  for(int i=0; i<3; i++) {
-    const Eigen::VectorXd& geo_from_ai = GeodesicsFromVertex(faces[face_a][i]);
-    const double g_i0 = geo_from_ai[faces[face_b][0]];
-    const double g_i1 = geo_from_ai[faces[face_b][1]];
-    const double g_i2 = geo_from_ai[faces[face_b][2]];
-    const double g_ib = bary_b[0]*g_i0 + bary_b[1]*g_i1 + bary_b[2]*g_i2;
-    geo_dist += bary_a[i] * g_ib;
-  }
-
-  // Check if gradient is needed
-  if(out_grad == nullptr) {
-    return geo_dist;
-  }
-
-  // Check if the particles are too close. Gradient of geodesics is very inaccurate for
-  // 1-ring of the face, so we just fall back to euclidean gradient
-  if(AreFacesAdjacent(face_a, face_b)) {
-    for (int i = 0; i < DIMENSION; i++) {
-      (*out_grad)[i] = pt_a[i] - pt_b[i];
-    }
-    return geo_dist;
-  }
-
-  Eigen::Vector3d grad_geo = {0.0, 0.0, 0.0};
-  grad_geo += bary_b[0] * GradGeodesicsFromVertex(faces[face_b][0]).row(face_a);
-  grad_geo += bary_b[1] * GradGeodesicsFromVertex(faces[face_b][1]).row(face_a);
-  grad_geo += bary_b[2] * GradGeodesicsFromVertex(faces[face_b][2]).row(face_a);
-  //todo get the scaling by distance stuff correctly
-  grad_geo *= geo_dist;
-
-  // Copy gradient from Eigen to VNL data structures
-  for(int i=0; i<DIMENSION; i++) {
-    (*out_grad)[i] = grad_geo(i);
-  }
-
-  return geo_dist;
-}
-
-bool TriMeshWrapper::AreFacesAdjacent(int f_a, int f_b) const {
-  const auto& adj_b = mesh_->across_edge[f_b];
-  return adj_b[0] == f_a || adj_b[1] == f_a || adj_b[2] == f_a;
-}
-
-const Eigen::VectorXd& TriMeshWrapper::GeodesicsFromVertex(int v) const {
-  const auto entry = geodesic_cache_.cache.find(v);
-  if(entry != geodesic_cache_.cache.end()) {
-    return entry->second;
-  }
-
-  Eigen::VectorXi gamma;
-  Eigen::VectorXd D;
-  gamma.resize(1); gamma << v;
-  igl::heat_geodesics_solve(geodesic_cache_.heat_data, gamma, D);
-  // insert into map, and return reference
-  return geodesic_cache_.cache[v] = std::move(D);
-}
-
-const Eigen::MatrixXd& TriMeshWrapper::GradGeodesicsFromVertex(int v) const
-{
-  const auto entry = geodesic_cache_.grad_cache.find(v);
-  if(entry != geodesic_cache_.grad_cache.end()) {
-    return entry->second;
-  }
-
-  const auto& D = GeodesicsFromVertex(v);
-  const auto& G = geodesic_cache_.G;
-  const Eigen::MatrixXd GD = Eigen::Map<const Eigen::MatrixXd>((G*D).eval().data(),
-                                                               mesh_->faces.size(), 3);
-  // insert into map, and return reference
-  return geodesic_cache_.grad_cache[v] = std::move(GD);
+  return pointa.EuclideanDistanceTo(pointb);
 }
 
 /** start in barycentric coords of currentFace
@@ -328,8 +220,6 @@ TriMeshWrapper::PointType
 TriMeshWrapper::GeodesicWalk(PointType pointa, int idx, vnl_vector_fixed<double, DIMENSION> vector) const
 {
 
-  // TODO SnapToMesh internally calls GetTriangleForPoint: it can/should return the face index and barycentric
-  // coordinates avoiding another GetTriangleForPoint call
   PointType snapped = this->SnapToMesh(pointa, idx);
   vec3 bary;
   int faceIndex = GetTriangleForPoint(convert<PointType, point>(snapped), idx, bary);
@@ -597,10 +487,15 @@ void TriMeshWrapper::ComputeMeshBounds()
   }
 }
 
-void TriMeshWrapper::ComputeGradN(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F)
+void TriMeshWrapper::ComputeGradN()
 {
   const int n_verts = mesh_->vertices.size();
   const int n_faces = mesh_->faces.size();
+
+  // Copy from trimesh to libigl data structures
+  Eigen::MatrixXd V;
+  Eigen::MatrixXi F;
+  GetIGLMesh(V, F);
 
   // Compute normals
   Eigen::MatrixXd N;
@@ -642,16 +537,7 @@ void TriMeshWrapper::ComputeGradN(const Eigen::MatrixXd& V, const Eigen::MatrixX
 
 }
 
-void TriMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F)
-{
-  // Precompute heat data structure for geodesics
-  igl::heat_geodesics_precompute(V, F, geodesic_cache_.heat_data);
-
-  // Precompute gradient operator to find gradient of geodesics
-  igl::grad(V, F, geodesic_cache_.G);
-}
-
-void TriMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const
+void TriMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F)
 {
   const int n_verts = mesh_->vertices.size();
   const int n_faces = mesh_->faces.size();
