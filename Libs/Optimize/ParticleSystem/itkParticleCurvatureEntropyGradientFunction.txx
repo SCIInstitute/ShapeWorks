@@ -286,7 +286,26 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
     const auto twin_neighbors = system->FindNeighborhoodPoints(pos, -1, weights,
                                                                radius, twin_dom);
 
-    for (unsigned int i = 0; i < twin_neighbors.size(); i++) {
+    if(twin_neighbors.size() != 0) {
+      double best = (pos - twin_neighbors[0].Point).GetSquaredNorm();
+      int best_idx = 0;
+      for(int i=1; i<twin_neighbors.size(); i++) {
+        const double dis_one = (pos - twin_neighbors[i].Point).GetSquaredNorm();
+        if(dis_one > best) {
+          best = dis_one;
+          best_idx = i;
+        }
+      }
+
+      const auto r = pos - twin_neighbors[best_idx].Point;
+      const double twin_inv_d2 = 1.0 / r.GetSquaredNorm();
+      twin_energy += twin_inv_d2;
+      for (unsigned int n = 0; n < VDimension; n++)
+      {
+        gradE[n] += 2.0 * r[n] * twin_inv_d2;
+      }
+    }
+    for (unsigned int i = 0; false && i < twin_neighbors.size(); i++) {
       VectorType r;
       for (unsigned int n = 0; n < VDimension; n++) {
         r[n] = pos[n] - twin_neighbors[i].Point[n];
