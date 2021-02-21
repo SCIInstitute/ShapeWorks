@@ -4,7 +4,6 @@
 #include "TriMesh.h"
 #include "KDtree.h"
 #include <unordered_map>
-
 #include "MeshWrapper.h"
 
 #include <Eigen/Core>
@@ -21,7 +20,7 @@ public:
   ~TriMeshWrapper() = default;
 
   typedef typename MeshWrapper::PointType PointType;
-  typedef typename MeshWrapper::HessianType HessianType;
+  typedef typename MeshWrapper::GradNType GradNType;
 
   double ComputeDistance(PointType pointa, int idx_a,
                          PointType pointb, int idx_b,
@@ -35,7 +34,7 @@ public:
                                 vnl_vector_fixed<double, DIMENSION>& vector) const override;
 
   vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(PointType p, int idx) const override;
-  HessianType SampleGradNAtPoint(PointType p, int idx) const override;
+  GradNType SampleGradNAtPoint(PointType p, int idx) const override;
 
   PointType SnapToMesh(PointType pointa, int idx) const override;
 
@@ -90,7 +89,7 @@ private:
   // Has to be mutable because all of the accessor APIs are const
   mutable std::vector<int> particle2tri_;
 
-  std::vector<HessianType> grad_normals_;
+  std::vector<GradNType> grad_normals_;
 
   PointType mesh_lower_bound_;
   PointType mesh_upper_bound_;

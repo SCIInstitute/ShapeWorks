@@ -96,10 +96,22 @@ public:
 
   void set_groom_unsaved(bool value);
 
+  std::string get_default_feature_map();
+
+  static bool is_supported_file_format(std::string filename);
+
   QSharedPointer<MeshManager> get_mesh_manager()
   { return this->mesh_manager_; }
 
   shapeworks::Parameters& parameters();
+
+  std::vector<DomainType> get_domain_types();
+
+  double update_auto_glyph_size();
+
+  double get_auto_glyph_size();
+
+  static Point3 get_point(const vnl_vector<double>& points, int i);
 
 public Q_SLOTS:
   void handle_clear_cache();
@@ -151,6 +163,8 @@ private:
   Parameters params_;
 
   std::shared_ptr<Project> project_{new Project()};
+
+  double auto_glyph_size_ = -1;
 };
 
 }

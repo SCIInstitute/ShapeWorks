@@ -32,24 +32,21 @@ def Run_Pipeline(args):
     outputDirectory = "Output/femur_cut/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
-    CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
-    inputDir = outputDirectory + datasetName + '/'
-    # Get image ane mesh segmentation file lists
-    inputDir = outputDirectory + datasetName + '/'
-    files_img = []
-    img_dir = inputDir + 'images/'
-    for file in sorted(os.listdir(img_dir)):
-        files_img.append(img_dir + file)
-    files_mesh = []
-    mesh_dir = inputDir + 'meshes/'
-    for file in sorted(os.listdir(mesh_dir)):
-        files_mesh.append(mesh_dir + file)
-    # Select data for tiny test
+
+
+    #If tiny_test then download subset of the data
     if args.tiny_test:
-        files_img = files_img[:3]
-        files_mesh = files_mesh[:3]
         args.use_single_scale = True
         args.interactive = False
+        CommonUtils.download_subset(args.use_case,datasetName, outputDirectory)
+        files_mesh = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))[:3]
+        files_img = sorted(glob.glob(outputDirectory + datasetName + "/images/*.nrrd"))[:3]
+    #else download the entire dataset
+    else:
+        CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
+        files_mesh = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))
+        files_img = sorted(glob.glob(outputDirectory + datasetName + "/images/*.nrrd"))
+
     # Select data if using subsample
     if args.use_subsample:
         sample_idx = sampledata(files_img, int(args.num_subsample))
@@ -83,7 +80,7 @@ def Run_Pipeline(args):
         elif args.use_subsample:
             indices = sample_idx
         dtFiles = CommonUtils.get_file_list(dtDirecory, ending=".nrrd", indices=indices)
-        [cutting_plane_points] = pickle.load( open( inputDir + "groomed/groomed_pickle.p", "rb" ) )
+        [cutting_plane_points] = pickle.load( open( outputDirectory + "groomed/groomed_pickle.p", "rb" ) )
     else:
         print("\nStep 2. Groom - Data Pre-processing\n")
         if args.interactive:
@@ -153,15 +150,15 @@ def Run_Pipeline(args):
             Apply isotropic resampling
             The segmentation and images are resampled independently to have uniform spacing.
             """
-            resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, isBinary=True)
-            resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", reflectedFile_img, isBinary=False)
+            isoresampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, isBinary=True)
+            isoresampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", reflectedFile_img, isBinary=False)
 
             """
             Apply padding
             Both the segmentation and raw images are padded in case the seg lies on the image boundary.
             """
-            paddedFiles_segmentations = applyPadding(parentDir + "padded/segementations", resampledFiles_segmentations, 10)
-            paddedFiles_images = applyPadding(parentDir + "padded/images", resampledFiles_images, 10)
+            paddedFiles_segmentations = applyPadding(parentDir + "padded/segementations", isoresampledFiles_segmentations, 10)
+            paddedFiles_images = applyPadding(parentDir + "padded/images", isoresampledFiles_images, 10)
 
             """
             Apply center of mass alignment
@@ -185,7 +182,7 @@ def Run_Pipeline(args):
             This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
             This function uses the same transfrmation matrix for alignment of raw and segmentation files.
             """
-            [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir + "aligned", centerFiles_segmentations, centerFiles_images, medianFile, processRaw = True)
+            [alignedFiles_segmentations, alignedFiles_images] = applyRigidAlignment(parentDir + "aligned", medianFile,centerFiles_segmentations, centerFiles_images)
 
             # If user chose option 2, define cutting plane on median sample
             if choice == 2:
@@ -207,11 +204,11 @@ def Run_Pipeline(args):
             print("Cutting plane points: ")
             print(cutting_plane_points)
 
-            pickle.dump( [cutting_plane_points], open( inputDir + "groomed/groomed_pickle.p", "wb" ) )
+            pickle.dump( [cutting_plane_points], open( outputDirectory + "groomed/groomed_pickle.p", "wb" ) )
 
             # Compute largest bounding box and apply cropping
-            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", rigidFiles_segmentations, parentDir + "aligned/*.aligned.nrrd")
-            croppedFiles_images = applyCropping(parentDir + "cropped/images", rigidFiles_images, parentDir + "aligned/*.aligned.nrrd")
+            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", alignedFiles_segmentations, parentDir + "aligned/*.aligned.nrrd")
+            croppedFiles_images = applyCropping(parentDir + "cropped/images", alignedFiles_images, parentDir + "aligned/*.aligned.nrrd")
 
 
         # BEGIN GROOMING WITHOUT IMAGES
@@ -245,13 +242,13 @@ def Run_Pipeline(args):
             Apply isotropic resampling
             The segmentation and images are resampled independently to have uniform spacing.
             """
-            resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, isBinary=True)
+            isoresampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, isBinary=True)
 
             """
             Apply padding
             Both the segmentation and raw images are padded in case the seg lies on the image boundary.
             """
-            paddedFiles_segmentations = applyPadding(parentDir + "padded/segementations", resampledFiles_segmentations, 10)
+            paddedFiles_segmentations = applyPadding(parentDir + "padded/segementations", isoresampledFiles_segmentations, 10)
 
             """
             Apply center of mass alignment
@@ -274,7 +271,7 @@ def Run_Pipeline(args):
             This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
             This function uses the same transfrmation matrix for alignment of raw and segmentation files.
             """
-            rigidFiles_segmentations = applyRigidAlignment(parentDir + "aligned", centerFiles_segmentations, None, medianFile, processRaw = False)
+            alignedFiles_segmentations = applyRigidAlignment(parentDir + "aligned", medianFile,centerFiles_segmentations, None)
 
             # If user chose option 2, define cutting plane on median sample
             if choice == 2:
@@ -296,10 +293,10 @@ def Run_Pipeline(args):
             print("Cutting plane points: ")
             print(cutting_plane_points)
 
-            pickle.dump( [cutting_plane_points], open( inputDir + "groomed/groomed_pickle.p", "wb" ) )
+            pickle.dump( [cutting_plane_points], open( outputDirectory + "groomed/groomed_pickle.p", "wb" ) )
 
             # Compute largest bounding box and apply cropping
-            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", rigidFiles_segmentations, parentDir + "aligned/*.aligned.nrrd")
+            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", alignedFiles_segmentations, parentDir + "aligned/*.aligned.nrrd")
 
 
         print("\nStep 3. Groom - Convert to distance transforms\n")

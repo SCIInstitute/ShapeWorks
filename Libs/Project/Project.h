@@ -99,7 +99,8 @@ private:
   std::vector<std::string> get_list(std::vector<std::string> columns, int subject);
   void set_list(std::vector<std::string> columns, int subject, std::vector<std::string> values);
 
-  void set_map(int subject, const std::string& prefix, const std::map<std::string, std::string>& map);
+  void
+  set_map(int subject, const std::string& prefix, const std::map<std::string, std::string>& map);
 
   std::vector<std::vector<double>>
   get_transform_list(std::vector<std::string> columns, int subject);
@@ -136,7 +137,7 @@ private:
   bool particles_present_{false};
 
   std::set<std::string> matching_columns_;
-
+  std::vector<std::string> mesh_scalars_;
 
   const int supported_version_{1};
   int version_{1};

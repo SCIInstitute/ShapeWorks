@@ -14,7 +14,7 @@
 #include <ctime>
 #include <time.h>
 #include "itkParticleImageDomainWithGradients.h"
-#include "itkParticleImageDomainWithHessians.h"
+#include "itkParticleImageDomainWithGradN.h"
 #include "Libs/Utils/Utils.h"
 
 namespace itk

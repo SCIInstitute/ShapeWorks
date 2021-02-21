@@ -86,6 +86,15 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   this->ui_->graph_->set_y_label("Explained Variance");
   this->ui_->compactness_graph->set_y_label("Compactness");
 //  this->ui_->evaluation_widget->hide();
+
+  for (auto button : {this->ui_->distance_transfom_radio_button,
+                      this->ui_->mesh_warping_radio_button, this->ui_->legacy_radio_button}) {
+    connect(button, &QRadioButton::clicked,
+            this, &AnalysisTool::reconstruction_method_changed);
+  }
+
+  this->ui_->reconstruction_options->hide();
+
 }
 
 //---------------------------------------------------------------------------
@@ -164,8 +173,6 @@ void AnalysisTool::on_reconstructionButton_clicked()
   this->store_settings();
   emit message("Please wait: running reconstruction step...");
   emit progress(5);
-  //this->ui_->run_optimize_button->setEnabled(false);
-  this->ui_->reconstructionButton->setEnabled(false);
   QThread* thread = new QThread;
   std::vector<std::vector<itk::Point<double>>> local, global;
   std::vector<std::string> images;
@@ -193,7 +200,7 @@ void AnalysisTool::on_reconstructionButton_clicked()
     ii++;
   }
   ShapeworksWorker* worker = new ShapeworksWorker(
-    ShapeworksWorker::ReconstructType, NULL, NULL, this->session_,
+    ShapeworksWorker::ReconstructType, nullptr, nullptr, nullptr, this->session_,
     local, global, images,
     this->ui_->maxAngle->value(),
     this->ui_->meshDecimation->value(),
@@ -214,7 +221,7 @@ void AnalysisTool::on_reconstructionButton_clicked()
 //---------------------------------------------------------------------------
 int AnalysisTool::getPCAMode()
 {
-  return this->ui_->pcaModeSpinBox->value();
+  return this->ui_->pcaModeSpinBox->value() - 1;
 }
 
 //---------------------------------------------------------------------------
@@ -259,6 +266,8 @@ AnalysisTool::~AnalysisTool()
 void AnalysisTool::set_session(QSharedPointer<Session> session)
 {
   this->session_ = session;
+  // reset to original
+  this->ui_->mesh_warping_radio_button->setChecked(true);
 }
 
 //---------------------------------------------------------------------------
@@ -270,10 +279,7 @@ void AnalysisTool::set_app(ShapeWorksStudioApp* app)
 //---------------------------------------------------------------------------
 void AnalysisTool::update_analysis_mode()
 {
-  // update UI
-
   this->handle_analysis_options();
-  // groups available
 }
 
 //---------------------------------------------------------------------------
@@ -285,23 +291,20 @@ void AnalysisTool::handle_analysis_options()
 {
 
   if (this->ui_->tabWidget->currentWidget() == this->ui_->samples_tab) {
+    this->ui_->pcaAnimateCheckBox->setChecked(false);
+    this->ui_->pcaAnimateCheckBox->setEnabled(false);
+    this->ui_->pcaModeSpinBox->setEnabled(false);
+    this->pca_animate_timer_.stop();
+    this->ui_->pcaSlider->setEnabled(false);
     if (this->ui_->singleSamplesRadio->isChecked()) {
       //one sample mode
       this->ui_->sampleSpinBox->setEnabled(true);
       this->ui_->medianButton->setEnabled(true);
-      this->ui_->pcaSlider->setEnabled(false);
-      this->ui_->pcaAnimateCheckBox->setEnabled(false);
-      this->ui_->pcaModeSpinBox->setEnabled(false);
-      this->ui_->pcaAnimateCheckBox->setChecked(false);
     }
     else {
       //all samples mode
       this->ui_->sampleSpinBox->setEnabled(false);
       this->ui_->medianButton->setEnabled(false);
-      this->ui_->pcaSlider->setEnabled(false);
-      this->ui_->pcaAnimateCheckBox->setEnabled(false);
-      this->ui_->pcaModeSpinBox->setEnabled(false);
-      this->ui_->pcaAnimateCheckBox->setChecked(false);
     }
   }
   else if (this->ui_->tabWidget->currentWidget() == this->ui_->mean_tab) {
@@ -312,6 +315,7 @@ void AnalysisTool::handle_analysis_options()
     this->ui_->pcaAnimateCheckBox->setEnabled(false);
     this->ui_->pcaModeSpinBox->setEnabled(false);
     this->ui_->pcaAnimateCheckBox->setChecked(false);
+    this->pca_animate_timer_.stop();
   }
   else if (this->ui_->tabWidget->currentWidget() == this->ui_->pca_tab) {
     //pca mode
@@ -328,6 +332,7 @@ void AnalysisTool::handle_analysis_options()
     this->ui_->pcaSlider->setEnabled(false);
     this->ui_->pcaAnimateCheckBox->setEnabled(false);
     this->ui_->pcaModeSpinBox->setEnabled(false);
+    this->pca_animate_timer_.stop();
   }
 
   emit update_view();
@@ -400,8 +405,8 @@ bool AnalysisTool::compute_stats()
     return false;
   }
 
-
-  this->ui_->pcaModeSpinBox->setMaximum(this->session_->get_shapes().size() - 2);
+  this->ui_->pcaModeSpinBox->setMaximum(
+    std::max<double>(1, this->session_->get_shapes().size() - 1));
 
   std::vector<vnl_vector<double>> points;
   std::vector<int> group_ids;
@@ -496,7 +501,7 @@ const vnl_vector<double>& AnalysisTool::get_mean_shape_points()
 }
 
 //-----------------------------------------------------------------------------
-const vnl_vector<double>& AnalysisTool::get_shape_points(int mode, double value, double group_value)
+const vnl_vector<double>& AnalysisTool::get_shape_points(int mode, double value)
 {
   if (!this->compute_stats() || this->stats_.Eigenvectors().size() <= 1) {
     return this->empty_shape_;
@@ -514,16 +519,6 @@ const vnl_vector<double>& AnalysisTool::get_shape_points(int mode, double value,
   this->pca_labels_changed(QString::number(value, 'g', 2),
                            QString::number(this->stats_.Eigenvalues()[m]),
                            QString::number(value * lambda));
-
-  ///TODO: fix for multi-group
-  /*
-  if (this->ui_->group_radio_button->isChecked()) {
-    this->temp_shape_ = this->stats_.Group1Mean() + (this->stats_.GroupDifference() * group_value);
-  }
-  else {
-    this->temp_shape_ = this->stats_.Mean() + (e * (value * lambda));
-  }
-*/
 
   this->temp_shape_ = this->stats_.Mean() + (e * (value * lambda));
 
@@ -613,7 +608,6 @@ void AnalysisTool::on_pcaModeSpinBox_valueChanged(int i)
 void AnalysisTool::handle_pca_animate_state_changed()
 {
   if (this->pcaAnimate()) {
-    //this->setPregenSteps();
     this->pca_animate_timer_.setInterval(10);
     this->pca_animate_timer_.start();
   }
@@ -625,6 +619,10 @@ void AnalysisTool::handle_pca_animate_state_changed()
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_pca_timer()
 {
+  if (!this->pcaAnimate()) {
+    return;
+  }
+
   int value = this->ui_->pcaSlider->value();
   if (this->pca_animate_direction_) {
     value += this->ui_->pcaSlider->singleStep();
@@ -635,7 +633,6 @@ void AnalysisTool::handle_pca_timer()
 
   if (value >= this->ui_->pcaSlider->maximum() || value <= this->ui_->pcaSlider->minimum()) {
     this->pca_animate_direction_ = !this->pca_animate_direction_;
-    //this->setPregenSteps();
   }
 
   this->ui_->pcaSlider->setValue(value);
@@ -645,13 +642,10 @@ void AnalysisTool::handle_pca_timer()
 void AnalysisTool::handle_group_animate_state_changed()
 {
   if (this->ui_->group_animate_checkbox->isChecked()) {
-    //this->setPregenSteps();
-    std::cerr << "group animating\n";
     this->group_animate_timer_.setInterval(10);
     this->group_animate_timer_.start();
   }
   else {
-    std::cerr << "group NOT animating\n";
     this->group_animate_timer_.stop();
   }
 }
@@ -719,10 +713,28 @@ void AnalysisTool::reset_stats()
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::enable_actions()
+void AnalysisTool::enable_actions(bool newly_enabled)
 {
-  this->ui_->reconstructionButton->setEnabled(
+  if (this->session_->get_num_shapes() < 1) {
+    return;
+  }
+
+  if (newly_enabled) {
+    this->ui_->mesh_warping_radio_button->setChecked(true);
+  }
+
+  auto domain_types = this->session_->get_domain_types();
+  bool image_domain = domain_types.size() > 0 && domain_types[0] == DomainType::Image;
+  this->ui_->distance_transfom_radio_button->setEnabled(
+    this->session_->particles_present() && this->session_->get_groomed_present() && image_domain);
+
+  this->ui_->mesh_warping_radio_button->setEnabled(
     this->session_->particles_present() && this->session_->get_groomed_present());
+
+  if (!this->ui_->mesh_warping_radio_button->isEnabled()) {
+    this->ui_->legacy_radio_button->setChecked(true);
+  }
+  this->reconstruction_method_changed();
 
   this->update_group_boxes();
 }
@@ -744,12 +756,6 @@ void AnalysisTool::set_analysis_mode(std::string mode)
   else if (mode == "regression") {
     this->ui_->tabWidget->setCurrentWidget(this->ui_->regression_tab);
   }
-}
-
-//---------------------------------------------------------------------------
-ShapeHandle AnalysisTool::get_shape(int mode, double value, double group_value)
-{
-  return this->create_shape_from_points(this->get_shape_points(mode, value, group_value));
 }
 
 //---------------------------------------------------------------------------
@@ -1012,6 +1018,62 @@ bool AnalysisTool::is_group_active(int shape_index)
   }
 
   return true;
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::initialize_mesh_warper()
+{
+  if (this->session_->particles_present() && this->session_->get_groomed_present()) {
+
+    this->compute_stats();
+    int median = this->stats_.ComputeMedianShape(-32); //-32 = both groups
+
+    if (median >= this->session_->get_num_shapes()) {
+      return;
+    }
+    QSharedPointer<Shape> median_shape = this->session_->get_shapes()[median];
+    vtkSmartPointer<vtkPolyData> poly_data = median_shape->get_groomed_mesh(true)->get_poly_data();
+
+    this->session_->get_mesh_manager()->get_mesh_warper()->set_reference_mesh(poly_data,
+                                                                              median_shape->get_local_correspondence_points());
+  }
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::reconstruction_method_changed()
+{
+  this->ui_->reconstruction_options->setVisible(
+    this->ui_->distance_transfom_radio_button->isChecked());
+  std::string method = MeshGenerator::RECONSTRUCTION_LEGACY_C;
+  if (this->ui_->distance_transfom_radio_button->isChecked()) {
+    method = MeshGenerator::RECONSTRUCTION_DISTANCE_TRANSFORM_C;
+  }
+  else if (this->ui_->mesh_warping_radio_button->isChecked()) {
+    method = MeshGenerator::RECONSTRUCTION_MESH_WARPER_C;
+  }
+
+  auto previous_method = this->session_->get_mesh_manager()->get_mesh_generator()->get_reconstruction_method();
+  if (previous_method != method) {
+    this->session_->get_mesh_manager()->get_mesh_generator()->set_reconstruction_method(method);
+    this->session_->handle_clear_cache();
+    emit reconstruction_complete();
+  }
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::set_active(bool active)
+{
+  if (!active) {
+    this->ui_->pcaAnimateCheckBox->setChecked(false);
+    this->pca_animate_timer_.stop();
+  }
+  this->active_ = active;
+}
+
+//---------------------------------------------------------------------------
+bool AnalysisTool::get_active()
+{
+  return this->active_;
 }
 
 }

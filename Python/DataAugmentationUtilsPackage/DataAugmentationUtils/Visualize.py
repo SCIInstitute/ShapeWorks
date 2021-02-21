@@ -1,6 +1,10 @@
 import csv
 import re
 import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from PIL import Image
+import pandas as pd  
 from bokeh.document import Document
 from bokeh.embed import file_html
 from bokeh.layouts import gridplot
@@ -11,7 +15,7 @@ from bokeh.util.browser import view
 
 def splom(data_csv):
     # read csv
-    colors = [] # 0 for original, 1 for aug
+    colors = []
     scores = []
     with open(data_csv, newline='') as csvfile:
         datareader = csv.reader(csvfile)
@@ -86,3 +90,30 @@ def make_plot(source, xindex, yindex, xax=False, yax=False):
 
     plot.add_tools(PanTool(), WheelZoomTool())
     return plot
+
+def violin(data_csv):
+    # Get data frame
+    types = []
+    dims = []
+    scores = []
+    with open(data_csv, newline='') as csvfile:
+        datareader = csv.reader(csvfile)
+        index = 0
+        for row in datareader:
+            current_type = "Original"
+            if "Generated" in row[0]:
+                current_type = "Generated"
+            for index in range(2, len(row)):
+                types.append(current_type)
+                dims.append(str(index-1))
+                scores.append(float(row[index]))
+    data = {'Data_Type':types, 'PCA_Mode':dims, "PCA_Score":scores}
+    df = pd.DataFrame(data) 
+    # Plot
+    sns.set_style("whitegrid")
+    ax = sns.violinplot(x=df.PCA_Mode, y=df.PCA_Score, hue=df.Data_Type,
+                        data=df, palette="Set2", split=True, scale="count")
+    # Save and show
+    plt.savefig("violin.png")                                                                          
+    # img = Image.open('violin.png')
+    # img.show() 

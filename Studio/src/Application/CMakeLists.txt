@@ -73,8 +73,14 @@ FILE(GLOB STUDIO_GROOM_HDRS Groom/*.h)
 FILE(GLOB STUDIO_UTILS_SRCS Utils/*.cpp)
 FILE(GLOB STUDIO_UTILS_HDRS Utils/*.h)
 
-FILE(GLOB STUDIO_INTERFACE_SRCS Interface/*.cpp)
-FILE(GLOB STUDIO_INTERFACE_HDRS Interface/*.h)
+SET(STUDIO_INTERFACE_SRCS
+  Interface/SplashScreen.cpp
+  Interface/KeyboardShortcuts.cpp
+  )
+SET(STUDIO_INTERFACE_HDRS
+  Interface/SplashScreen.h
+  Interface/KeyboardShortcuts.h
+  )
 
 FILE(GLOB STUDIO_OPTIMIZE_SRCS Optimize/*.cpp)
 FILE(GLOB STUDIO_OPTIMIZE_HDRS Optimize/*.h)
@@ -172,6 +178,18 @@ endif(WIN32)
 
 
 IF(APPLE)
+
+  # Create a script that runs ShapeWorksStudio.  Note that a symlink won't work as it won't be able to find the property list
+  SET(SCRIPT "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/script_tmp/ShapeWorksStudio")
+  file( WRITE  ${SCRIPT} "#!/bin/bash\n")
+  file( APPEND ${SCRIPT} "LOC=\"`dirname \"$0\"`\"\n" )
+  file( APPEND ${SCRIPT} "\${LOC}/ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio\n" )
+  MESSAGE(STATUS "Creating ShapeWorksStudio script in ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}" )
+  file( COPY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/script_tmp/ShapeWorksStudio" DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}" FILE_PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ)
+  file( REMOVE_RECURSE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/script_tmp")
+
+  INSTALL(PROGRAMS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/ShapeWorksStudio" DESTINATION bin)
+  
   SET_TARGET_PROPERTIES(ShapeWorksStudio PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Resources/Info.plist.in)
   set_property(
     TARGET ShapeWorksStudio

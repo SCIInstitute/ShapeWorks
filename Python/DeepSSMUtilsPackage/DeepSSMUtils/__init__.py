@@ -13,8 +13,7 @@ def getTestLoader(loader_dir, test_img_list, down_sample=False):
 
 def trainDeepSSM(loader_dir, parameters, parent_dir):
 	testPytorch()
-	model_path = DeepSSM.train(loader_dir, parameters, parent_dir)
-	return model_path
+	return DeepSSM.train(loader_dir, parameters, parent_dir)
 
 def testDeepSSM(out_dir, model_path, loader_dir, PCA_scores_path, num_PCA):
 	testPytorch()

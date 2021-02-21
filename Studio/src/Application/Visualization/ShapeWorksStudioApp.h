@@ -7,7 +7,9 @@
 #include <QDoubleSpinBox>
 #include <QLabel>
 #include <QTimer>
+#include <QCheckBox>
 #include <QProgressBar>
+#include <QElapsedTimer>
 
 #include <Data/PreferencesWindow.h>
 
@@ -16,21 +18,12 @@ class Ui_ShapeWorksStudioApp;
 
 namespace shapeworks {
 class Lightbox;
-
 class GroomTool;
-
 class OptimizeTool;
-
 class AnalysisTool;
-
 class Session;
-
 class Visualizer;
-
 class SplashScreen;
-
-class LightboxLayout;
-
 class WheelEventForwarder;
 
 //! Main ShapeWorksStudio window
@@ -102,15 +95,22 @@ public Q_SLOTS:
   void handle_color_scheme();
   void handle_pca_update();
   void handle_message(std::string str);
+  void handle_status(std::string str);
   void handle_error(std::string str);
   void handle_warning(std::string str);
-  void handle_progress(size_t amt);
+  void handle_progress(int amt);
   void handle_new_mesh();
   void handle_clear_cache();
 
-  void update_feature_map_selection(const QString& feature_map);
+  void update_feature_map_selection(const QString &feature_map);
   void show_splash_screen();
   void about();
+  void keyboard_shortcuts();
+
+protected:
+  void dragEnterEvent(QDragEnterEvent* event) override;
+  void dragLeaveEvent(QDragLeaveEvent* event) override;
+  void dropEvent(QDropEvent* event) override;
 
 private:
 
@@ -192,6 +192,7 @@ private:
   QSlider* glyph_quality_slider_;
   QLabel* glyph_size_label_;
   QLabel* glyph_quality_label_;
+  QCheckBox* glyph_auto_size_;
   QList<QAction*> recent_file_actions_;
 
   QProgressBar* progress_bar_;
@@ -203,6 +204,10 @@ private:
 
   bool block_update_{false};
   bool is_loading_{false};
+
+  QElapsedTimer time_since_last_update_;
+  qint64 last_render_ = -1;
+
 
 };
 }

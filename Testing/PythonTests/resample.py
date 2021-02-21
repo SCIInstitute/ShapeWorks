@@ -17,7 +17,7 @@ if val is False:
 
 def resampleTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
-  img = ImageUtils.isoresample(img, 1.5)
+  img.resample(1.5)
 
   compareImg = Image(os.environ["DATA"] + "/resample2.nrrd")
 

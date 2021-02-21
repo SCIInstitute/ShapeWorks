@@ -1,8 +1,12 @@
+#include <functional>
 
 #include "OptimizeParameters.h"
 #include "Optimize.h"
 #include <Libs/Image/Image.h>
 #include <Libs/Utils/StringUtils.h>
+#include <Libs/Mesh/MeshUtils.h>
+#include "ParticleSystem/VtkMeshWrapper.h"
+
 
 using namespace shapeworks;
 
@@ -156,7 +160,7 @@ void OptimizeParameters::set_use_procrustes_scaling(bool value)
 //---------------------------------------------------------------------------
 int OptimizeParameters::get_procrustes_interval()
 {
-  return this->params_.get("procrustes_interval", 0);
+  return this->params_.get("procrustes_interval", 10);
 }
 
 //---------------------------------------------------------------------------
@@ -253,7 +257,11 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
   }
 
   std::vector<std::string> filenames;
+  int count = 0;
   for (auto s : subjects) {
+    if (this->abort_load_) {
+      return false;
+    }
     auto files = s->get_groomed_filenames();
     if (files.empty()) {
       throw std::invalid_argument("No groomed inputs for optimization");
@@ -263,10 +271,19 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
     filenames.push_back(filename);
 
     if (domain_type == DomainType::Mesh) {
+
+/*
       auto trimesh = std::shared_ptr<TriMesh>(TriMesh::read(filename.c_str()));
       if (trimesh) {
         optimize->AddMesh(std::make_shared<shapeworks::TriMeshWrapper>(trimesh));
       }
+*/
+      auto poly_data = MeshUtils::threadSafeReadMesh(filename.c_str()).getVTKMesh();
+
+      if (poly_data) {
+        optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data));
+      }
+
       else {
         throw std::invalid_argument("Error loading mesh: " + filename);
       }
@@ -279,6 +296,10 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
     auto name = StringUtils::getFileNameWithoutExtension(filename);
     s->set_global_particle_filename(name + "_world.particles");
     s->set_local_particle_filename(name + "_local.particles");
+    count++;
+    if (this->load_callback_) {
+      this->load_callback_(count);
+    }
   }
 
   optimize->SetOutputDir(".");
@@ -287,3 +308,16 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
 
   return true;
 }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_abort_load(bool value)
+{
+  this->abort_load_ = value;
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_load_callback(const std::function<void(int)> &f)
+{
+  this->load_callback_ = f;
+}
+

@@ -12,6 +12,9 @@
 namespace itk
 {
   bool MeshDomain::ApplyConstraints(PointType &p, int idx, bool dbg) const {
+    if (!meshWrapper) {
+      return true;
+    }
     p = meshWrapper->SnapToMesh(p, idx);
     return true;
   }
@@ -41,5 +44,10 @@ namespace itk
     }
     return max;
   }
+
+void MeshDomain::InvalidateParticlePosition(int idx) const
+{
+    this->meshWrapper->InvalidateParticle(idx);
+}
 
 }

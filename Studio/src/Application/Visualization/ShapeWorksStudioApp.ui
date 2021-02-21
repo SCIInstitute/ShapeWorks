@@ -93,7 +93,7 @@
           <item>
            <widget class="QToolButton" name="auto_view_button">
             <property name="toolTip">
-             <string>Autoview</string>
+             <string>Reset View</string>
             </property>
             <property name="text">
              <string/>
@@ -114,7 +114,7 @@
           <item>
            <widget class="QToolButton" name="glyphs_visible_button">
             <property name="toolTip">
-             <string>Show Glyphs</string>
+             <string>Show glyphs</string>
             </property>
             <property name="icon">
              <iconset resource="../Resources/ShapeWorksStudio.qrc">
@@ -138,7 +138,7 @@
           <item>
            <widget class="QToolButton" name="surface_visible_button">
             <property name="toolTip">
-             <string>show isosurface</string>
+             <string>Show/hide isosurface</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -160,10 +160,17 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="view_mode_combobox"/>
+           <widget class="QComboBox" name="view_mode_combobox">
+            <property name="toolTip">
+             <string>View mode</string>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QCheckBox" name="center_checkbox">
+            <property name="toolTip">
+             <string>Centering</string>
+            </property>
             <property name="text">
              <string>Center</string>
             </property>
@@ -199,6 +206,9 @@
               <width>100</width>
               <height>16777215</height>
              </size>
+            </property>
+            <property name="toolTip">
+             <string>Number of viewers</string>
             </property>
             <property name="layoutDirection">
              <enum>Qt::RightToLeft</enum>
@@ -262,6 +272,9 @@
        </property>
        <item row="0" column="1">
         <widget class="QComboBox" name="features">
+         <property name="toolTip">
+          <string>Select feature map</string>
+         </property>
          <property name="sizeAdjustPolicy">
           <enum>QComboBox::AdjustToContents</enum>
          </property>
@@ -289,6 +302,9 @@
        </item>
        <item row="0" column="2">
         <widget class="QCheckBox" name="feature_uniform_scale">
+         <property name="toolTip">
+          <string>Uniform scale for feature map</string>
+         </property>
          <property name="text">
           <string>Uniform Scale</string>
          </property>
@@ -349,8 +365,16 @@
     <addaction name="action_preferences"/>
     <addaction name="actionShow_Tool_Window"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+    <addaction name="actionKeyboard_Shortcuts"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuOptions"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="controlsDock">
@@ -418,7 +442,7 @@
           <x>0</x>
           <y>0</y>
           <width>398</width>
-          <height>632</height>
+          <height>640</height>
          </rect>
         </property>
         <property name="minimumSize">
@@ -513,10 +537,10 @@
                          </size>
                         </property>
                         <property name="toolTip">
-                         <string>Remove</string>
+                         <string>Remove shapes</string>
                         </property>
                         <property name="statusTip">
-                         <string>Remove images</string>
+                         <string>Remove shapes</string>
                         </property>
                         <property name="text">
                          <string/>
@@ -542,10 +566,10 @@
                          </size>
                         </property>
                         <property name="toolTip">
-                         <string>Add</string>
+                         <string>Import Shapes</string>
                         </property>
                         <property name="statusTip">
-                         <string>Add images</string>
+                         <string>Import Shapes</string>
                         </property>
                         <property name="text">
                          <string/>
@@ -679,7 +703,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="action_import">
    <property name="text">
-    <string>Import Images...</string>
+    <string>Import Shapes...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+I</string>
@@ -864,6 +888,16 @@ p, li { white-space: pre-wrap; }
   <action name="action_export_pca_scores">
    <property name="text">
     <string>Export PCA Component Scores...</string>
+   </property>
+  </action>
+  <action name="actionKeyboard_Shortcuts">
+   <property name="text">
+    <string>Keyboard Shortcuts</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>&amp;About</string>
    </property>
   </action>
  </widget>

@@ -14,7 +14,6 @@
 
 using namespace shapeworks;
 
-//---------------------------------------------------------------------------
 // until we have a "groom" library we can call
 static void prep_distance_transform(std::string input, std::string output)
 {
@@ -40,9 +39,8 @@ static void prep_distance_transform(std::string input, std::string output)
   writer->Update();
 }
 
-//---------------------------------------------------------------------------
-TEST(OptimizeTests, sample_test) {
-
+TEST(OptimizeTests, sample) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sphere");
   chdir(test_location.c_str());
 
@@ -118,9 +116,8 @@ TEST(OptimizeTests, open_mesh_test) {
   ASSERT_LT(value, 100);
 }
 
-//---------------------------------------------------------------------------
-TEST(OptimizeTests, fixed_domain_test) {
-
+TEST(OptimizeTests, fixedDomain) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/fixed_domain");
   chdir(test_location.c_str());
 
@@ -157,6 +154,39 @@ TEST(OptimizeTests, fixed_domain_test) {
   // If the new non-fixed domain doesn't optimize, the value will be about 2800
   double value = values[values.size() - 1];
   ASSERT_GT(value, 5000);
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, fixed_mesh_domain_test) {
+
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/fixed_mesh_domain");
+  chdir(test_location.c_str());
+
+  // make sure we clean out the output file of interest
+  std::remove("shape_models/id0000_ss3_world.particles");
+
+  // run with parameter file
+  std::string paramfile = std::string("fixed_mesh_domain.xml");
+  Optimize app;
+  OptimizeParameterFile param;
+  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
+  app.Run();
+
+  // compute stats
+  ParticleShapeStatistics stats;
+  stats.ReadPointFiles("analyze.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+
+  // check the first mode of variation.
+  double value = values[values.size() - 1];
+  ASSERT_GT(value, 250);
 }
 
 //---------------------------------------------------------------------------
@@ -287,9 +317,8 @@ TEST(OptimizeTests, cutting_plane_test) {
   }
 }
 
-//---------------------------------------------------------------------------
-TEST(OptimizeTests, sphere_constraint_test) {
-
+TEST(OptimizeTests, sphereConstraint)
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sphere_constraint");
   chdir(test_location.c_str());
 

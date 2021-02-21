@@ -400,15 +400,15 @@ vnl_vector_fixed<float, DIMENSION> TriMeshWrapper::SampleNormalAtPoint(PointType
   return weightedNormal;
 }
 
-TriMeshWrapper::HessianType TriMeshWrapper::SampleGradNAtPoint(PointType p, int idx) const
+TriMeshWrapper::GradNType TriMeshWrapper::SampleGradNAtPoint(PointType p, int idx) const
 {
   point pointa = convert<PointType, point>(p);
   vec3 bary;
   const int face = GetTriangleForPoint(pointa, idx, bary);
 
-  HessianType weighted_grad_normal = HessianType(0.0);
+  GradNType weighted_grad_normal = GradNType(0.0);
   for (int i = 0; i < 3; i++) {
-    HessianType grad_normal = grad_normals_[mesh_->faces[face][i]];
+    GradNType grad_normal = grad_normals_[mesh_->faces[face][i]];
     weighted_grad_normal += grad_normal * bary[i];
   }
   return weighted_grad_normal;
@@ -655,7 +655,6 @@ void TriMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const
 {
   const int n_verts = mesh_->vertices.size();
   const int n_faces = mesh_->faces.size();
-
   V.resize(n_verts, 3);
   F.resize(n_faces, 3);
   for(int i=0; i<n_verts; i++) {
@@ -668,6 +667,7 @@ void TriMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const
     F(i, 1) = mesh_->faces[i][1];
     F(i, 2) = mesh_->faces[i][2];
   }
+
 }
 
 }
