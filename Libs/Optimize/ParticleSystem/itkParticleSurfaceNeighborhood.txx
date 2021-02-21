@@ -66,7 +66,7 @@ ParticleSurfaceNeighborhood<TImage>
       // double dist   = 
 
       
-      if ( cosine >= m_FlatCutoff)
+      if ( true || cosine >= m_FlatCutoff)
         {
         // Determine distance to tangent plane by projecting the point onto the
         // normal.

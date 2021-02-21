@@ -9,6 +9,8 @@
 #include <vtkGenericCell.h>
 #include <vtkCleanPolyData.h>
 #include <vtkTriangle.h>
+#include <vtkQuadricDecimation.h>
+#include <vtkPLYWriter.h>
 
 #include <igl/grad.h>
 #include <igl/per_vertex_normals.h>
@@ -45,8 +47,9 @@ using PointType = VtkMeshWrapper::PointType;
 using GradNType = VtkMeshWrapper::GradNType;
 
 //---------------------------------------------------------------------------
-VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
+VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data, bool is_parent)
 {
+  this->is_parent = is_parent;
   vtkSmartPointer<vtkTriangleFilter> triangle_filter =
     vtkSmartPointer<vtkTriangleFilter>::New();
   triangle_filter->SetInputData(poly_data);
@@ -96,8 +99,16 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
   Eigen::MatrixXd V;
   Eigen::MatrixXi F;
   this->GetIGLMesh(V, F);
-  this->ComputeGradN(V, F);
-  this->PrecomputeGeodesics(V, F);
+
+  if(is_parent) {
+    auto decimated = this->Decimated(5000);
+    this->child = std::make_shared<VtkMeshWrapper>(decimated, false);
+    this->ComputeGradN(V, F);
+  } else { // is child
+    this->PrecomputeGeodesics(V, F);
+  }
+
+
 }
 
 //---------------------------------------------------------------------------
@@ -111,6 +122,9 @@ double VtkMeshWrapper::ComputeDistance(PointType pt_a, int idx_a, PointType pt_b
   }
   return pt_a.EuclideanDistanceTo(pt_b);
 #endif
+  if(is_parent) {
+    return child->ComputeDistance(pt_a, idx_a, pt_b, idx_b, out_grad);
+  }
 
   // Find the triangle for the points
   vec3 closest_a, closest_b;
@@ -138,7 +152,6 @@ double VtkMeshWrapper::ComputeDistance(PointType pt_a, int idx_a, PointType pt_b
   // https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3346950/
   double geo_dist = 0.0;
   const auto& geo_from_a = GeodesicsFromTriangle(face_a);
-  //todo try tbb::parallel over 9
   for(int i=0; i<3; i++) {
     const Eigen::VectorXd& geo_from_ai = geo_from_a[i];
     const double g_i0 = geo_from_ai[faces[face_b]->GetPointId(0)];
@@ -777,6 +790,34 @@ void VtkMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const
   }
 }
 
+vtkSmartPointer<vtkPolyData> VtkMeshWrapper::Decimated(unsigned long target_tris) const
+{
+  const auto total_tris = this->triangles_.size();
+  const double target_reduction = std::min(1.0, static_cast<double>(total_tris - target_tris) / total_tris);
+  if(target_reduction <= 0.0) {
+    auto decimated = vtkSmartPointer<vtkPolyData>::New();
+    decimated->DeepCopy(this->poly_data_);
+    return decimated;
+  }
+
+  auto decimate = vtkSmartPointer<vtkQuadricDecimation>::New();
+  decimate->SetInputData(this->poly_data_);
+  decimate->AttributeErrorMetricOn();
+  decimate->SetTargetReduction(target_reduction);
+  decimate->VolumePreservationOn();
+  decimate->Update();
+
+  vtkSmartPointer<vtkPolyData> decimated = decimate->GetOutput();
+
+  const std::string filename = "/tmp/vtk/" + std::to_string(rand()) + ".ply";
+  auto plyWriter = vtkSmartPointer<vtkPLYWriter>::New();
+  plyWriter->SetFileName(filename.c_str());
+  plyWriter->SetInputData(decimated);
+  plyWriter->Write();
+
+  return decimated;
+}
+
 void VtkMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F)
 {
   // Precompute heat data structure for geodesics
@@ -816,9 +857,9 @@ const std::array<Eigen::VectorXd, 3>& VtkMeshWrapper::GeodesicsFromTriangle(int 
     return cache.entries[map_entry->second];
   }
 
-  // if we hit the cache size limit, wipe everything
+  // if we hit the cache size limit, clear everything except the triangles known to be active
   if(cache.tri2entry.size() >= max_cache_entries_) {
-    cache.tri2entry.clear();
+    cache.clear_except_active(particle_triangles_);
   }
 
   const int cache_idx = cache.tri2entry.size();
@@ -840,9 +881,9 @@ const std::array<Eigen::MatrixXd, 3>& VtkMeshWrapper::GradGeodesicsFromTriangle(
     return cache.entries[map_entry->second];
   }
 
-  // if we hit the cache size limit, wipe everything
+  // if we hit the cache size limit, clear everything except the triangles known to be active
   if(cache.tri2entry.size() >= max_cache_entries_) {
-    cache.tri2entry.clear();
+    cache.clear_except_active(particle_triangles_);
   }
 
   const int cache_idx = cache.tri2entry.size();
