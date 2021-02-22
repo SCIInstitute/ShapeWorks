@@ -161,7 +161,7 @@ public:
   Image& setOrigin(Point3 origin = Point3({0, 0, 0}));
 
   /// sets the image spacing to the given value
-  Image& setSpacing(Vector3 spacing = makeVector({1.0, 1.0, 1.0}));
+  Image& setSpacing(Vector3 spacing);
 
   // query functions //
 
