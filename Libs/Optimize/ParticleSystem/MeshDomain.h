@@ -11,6 +11,7 @@
 #include "itkParticleDomain.h"
 #include "MeshWrapper.h"
 #include "TriMeshWrapper.h"
+#include <itkObjectFactory.h>
 
 namespace itk
 {
@@ -19,6 +20,7 @@ class MeshDomain : public ParticleDomain
 public:
   /** Standard class typedefs */
   typedef SmartPointer<MeshDomain> Pointer;
+  itkSimpleNewMacro(MeshDomain);
 
   /** Point type used to store particle locations. */
   typedef typename ParticleDomain::PointType PointType;
@@ -116,10 +118,10 @@ public:
   void UpdateZeroCrossingPoint() override {
   }
 
+protected:
   MeshDomain() { }
   virtual ~MeshDomain() {}
 
-protected:
   void PrintSelf(std::ostream& os, Indent indent) const
   {
     DataObject::Superclass::PrintSelf(os, indent);
