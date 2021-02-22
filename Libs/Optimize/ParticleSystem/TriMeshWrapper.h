@@ -47,6 +47,11 @@ public:
     return mesh_upper_bound_;
   }
 
+  bool IsGeodesicsEnabled() const override
+  {
+    return false;
+  }
+
 private:
 
   Eigen::Vector3d

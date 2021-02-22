@@ -116,6 +116,11 @@ private:
   // Gradient operator, used to compute gradient of functions defined per-mesh-vertex
   Eigen::SparseMatrix<double> grad_operator_;
 
+  bool IsGeodesicsEnabled() const override
+  {
+    return this->is_geodesics_enabled_;
+  }
+
   /////////////////////////
   // Geodesic distances
 

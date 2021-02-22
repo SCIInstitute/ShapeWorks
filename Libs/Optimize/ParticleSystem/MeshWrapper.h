@@ -37,6 +37,8 @@ public:
   virtual PointType SnapToMesh(PointType pointa, int idx) const = 0;
 
   virtual void InvalidateParticle(int idx) {};
+
+  virtual bool IsGeodesicsEnabled() const = 0;
 };
 
 }
