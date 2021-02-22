@@ -1979,6 +1979,7 @@ void Optimize::AddImage(ImageType::Pointer image)
 //---------------------------------------------------------------------------
 void Optimize::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh)
 {
+  //todo add geodesic options
   this->m_sampler->AddMesh(mesh);
   this->m_num_shapes++;
   this->m_spacing = 0.5;
@@ -2223,4 +2224,23 @@ void Optimize::SetPythonFile(std::string filename)
 {
   this->m_python_filename = filename;
 }
+
+//---------------------------------------------------------------------------
+void Optimize::SetGeodesicsEnabled(bool is_enabled)
+{
+  this->m_geodesics_enabled = is_enabled;
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetGeodesicsDecimationNumTris(unsigned long n)
+{
+  this->m_geodesic_decimation_n_tris = n;
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetGeodesicsCacheSize(unsigned long n)
+{
+  this->m_geodesic_cache_size = n;
+}
+
 }
