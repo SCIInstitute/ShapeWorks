@@ -207,8 +207,8 @@ def Run_Pipeline(args):
             pickle.dump( [cutting_plane_points], open( outputDirectory + "groomed/groomed_pickle.p", "wb" ) )
 
             # Compute largest bounding box and apply cropping
-            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", alignedFiles_segmentations, parentDir + "aligned/*.aligned.nrrd")
-            croppedFiles_images = applyCropping(parentDir + "cropped/images", alignedFiles_images, parentDir + "aligned/*.aligned.nrrd")
+            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", alignedFiles_segmentations, alignedFiles_segmentations)
+            croppedFiles_images = applyCropping(parentDir + "cropped/images", alignedFiles_images, alignedFiles_segmentations)
 
 
         # BEGIN GROOMING WITHOUT IMAGES
@@ -296,7 +296,7 @@ def Run_Pipeline(args):
             pickle.dump( [cutting_plane_points], open( outputDirectory + "groomed/groomed_pickle.p", "wb" ) )
 
             # Compute largest bounding box and apply cropping
-            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", alignedFiles_segmentations, parentDir + "aligned/*.aligned.nrrd")
+            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", alignedFiles_segmentations, alignedFiles_segmentations)
 
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
