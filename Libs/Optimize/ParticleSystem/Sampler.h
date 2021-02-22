@@ -440,7 +440,7 @@ protected:
 
   itk::ParticleSystem<Dimension>::Pointer m_ParticleSystem;
 
-  std::vector<std::shared_ptr<itk::ParticleDomain>> m_DomainList;
+  std::vector<itk::ParticleDomain::Pointer> m_DomainList;
 
   std::vector<itk::ParticleSurfaceNeighborhood<ImageType>::Pointer> m_NeighborhoodList;
 

@@ -102,7 +102,7 @@ void Sampler::AllocateDomainsAndNeighborhoods()
     }
 
     if (domain->GetDomainType() == shapeworks::DomainType::Image) {
-      auto imageDomain = static_cast<itk::ParticleImplicitSurfaceDomain<ImageType::PixelType>*>(domain.get());
+      auto imageDomain = static_cast<itk::ParticleImplicitSurfaceDomain<ImageType::PixelType>*>(domain.GetPointer());
 
       if (m_AttributesPerDomain.size() > 0 && m_AttributesPerDomain[i % m_DomainsPerShape] > 0) {
         TriMesh* themesh = TriMesh::read(m_MeshFiles[i].c_str());
@@ -146,7 +146,7 @@ void Sampler::AllocateDomainsAndNeighborhoods()
     }
 
     // END TEST CUTTING PLANE
-    m_ParticleSystem->AddDomain(domain.get());
+    m_ParticleSystem->AddDomain(domain);
     m_ParticleSystem->SetNeighborhood(i, m_NeighborhoodList[i]);
   }
 }
@@ -284,7 +284,7 @@ void Sampler::ReInitialize()
 
 void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh)
 {
-  const auto domain = std::make_shared<itk::MeshDomain>();
+  itk::MeshDomain* domain = new itk::MeshDomain();
   m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
   if (mesh) {
     this->m_Spacing = 1;
@@ -348,7 +348,7 @@ void Sampler::AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, 
 
 void Sampler::AddImage(ImageType::Pointer image, double narrow_band)
 {
-  const auto domain = std::make_shared<itk::ParticleImplicitSurfaceDomain<ImageType::PixelType>>();
+  const auto domain = itk::ParticleImplicitSurfaceDomain<ImageType::PixelType>::New();
   m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
 
   if (image) {

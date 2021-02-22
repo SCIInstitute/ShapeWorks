@@ -31,12 +31,6 @@ template <class T>
 class ParticleImplicitSurfaceDomain : public ParticleImageDomainWithCurvature<T>
 {
 public:
-  ParticleImplicitSurfaceDomain() : m_Tolerance(1.0e-4)
-  {
-    m_mesh = NULL;
-  }
-  virtual ~ParticleImplicitSurfaceDomain() {};
-
   /** Standard class typedefs */
   typedef ParticleImageDomainWithCurvature<T> Superclass;
   typedef SmartPointer<ParticleImplicitSurfaceDomain>  Pointer;
@@ -133,11 +127,16 @@ public:
     }
 
 protected:
+  ParticleImplicitSurfaceDomain() : m_Tolerance(1.0e-4)
+  {
+    m_mesh = NULL;
+  }
   void PrintSelf(std::ostream& os, Indent indent) const
   {
     Superclass::PrintSelf(os, indent);
     os << indent << "m_Tolerance = " << m_Tolerance << std::endl;
   }
+  virtual ~ParticleImplicitSurfaceDomain() {};
 
 private:
   T m_Tolerance;
