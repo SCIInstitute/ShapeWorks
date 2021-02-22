@@ -188,9 +188,18 @@ Viewer::Viewer()
 void Viewer::set_color_scheme(int scheme)
 {
   this->scheme_ = scheme;
-  this->surface_actor_->GetProperty()->SetDiffuseColor(color_schemes_[scheme].foreground.r,
-                                                       color_schemes_[scheme].foreground.g,
-                                                       color_schemes_[scheme].foreground.b);
+
+  for (int i=0;i<this->surface_actors_.size();i++ ) {
+    int scheme = (this->scheme_ + i) % this->color_schemes_.size();
+
+    this->surface_actors_[i]->GetProperty()->SetDiffuseColor(color_schemes_[scheme].foreground.r,
+                                                             color_schemes_[scheme].foreground.g,
+                                                             color_schemes_[scheme].foreground.b);
+
+  }
+
+
+
   this->renderer_->SetBackground(color_schemes_[scheme].background.r,
                                  color_schemes_[scheme].background.g,
                                  color_schemes_[scheme].background.b);
@@ -489,7 +498,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
     this->number_of_domains_ = this->meshes_.meshes().size();
     this->initialize_surfaces();
 
-    for (int i = 0; i< this->meshes_.meshes().size(); i++) {
+    for (int i = 0; i < this->meshes_.meshes().size(); i++) {
 
       //vtkSmartPointer<vtkPolyData> poly_data = this->mesh_->get_poly_data();
 
@@ -542,10 +551,12 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
 
       mapper->SetInputData(poly_data);
 
+      int domain_scheme = (this->scheme_ + i) % this->color_schemes_.size();
+
       actor->SetMapper(mapper);
-      actor->GetProperty()->SetDiffuseColor(color_schemes_[this->scheme_].foreground.r,
-                                            color_schemes_[this->scheme_].foreground.g,
-                                            color_schemes_[this->scheme_].foreground.b);
+      actor->GetProperty()->SetDiffuseColor(color_schemes_[domain_scheme].foreground.r,
+                                            color_schemes_[domain_scheme].foreground.g,
+                                            color_schemes_[domain_scheme].foreground.b);
       actor->GetProperty()->SetSpecular(0.2);
       actor->GetProperty()->SetSpecularPower(15);
 
@@ -705,15 +716,11 @@ void Viewer::update_actors()
 
   this->renderer_->RemoveActor(this->glyph_actor_);
   this->renderer_->RemoveActor(this->arrow_glyph_actor_);
-  this->renderer_->RemoveActor(this->surface_actor_);
   this->renderer_->RemoveActor(this->scalar_bar_actor_);
 
-  /*
-     for ( int i = 0; i < this->numDomains; i++ )
-     {
-     this->renderer->RemoveActor( this->surfaceActors[i] );
-     }
-   */
+  for (int i = 0; i < this->surface_actors_.size(); i++) {
+    this->renderer_->RemoveActor(this->surface_actors_[i]);
+  }
 
   if (this->show_glyphs_) {
     this->renderer_->AddActor(this->glyph_actor_);
@@ -732,12 +739,7 @@ void Viewer::update_actors()
     for (int i = 0; i < this->number_of_domains_; i++) {
       this->renderer_->AddActor(this->surface_actors_[i]);
     }
-    //this->renderer_->AddActor(this->surface_actor_);
   }
-
-  //this->displayShape( this->currentShape );
-
-  //this->renderer_->Render();
 }
 
 //-----------------------------------------------------------------------------
