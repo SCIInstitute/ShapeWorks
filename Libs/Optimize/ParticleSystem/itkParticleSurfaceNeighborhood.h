@@ -66,10 +66,16 @@ public:
   virtual PointVectorType FindNeighborhoodPoints(const PointType &, int idx, std::vector<double> &, double) const;
   //  virtual unsigned int  FindNeighborhoodPoints(const PointType &, double, PointVectorType &) const;
 
+  void SetWeightingEnabled(bool is_enabled)
+  {
+    m_WeightingEnabled = is_enabled;
+  }
+
   void PrintSelf(std::ostream& os, Indent indent) const
   {
     Superclass::PrintSelf(os, indent);
   }
+
 
 protected:
   ParticleSurfaceNeighborhood() : m_FlatCutoff(0.30)  {  }
@@ -79,6 +85,7 @@ private:
   ParticleSurfaceNeighborhood(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
   double m_FlatCutoff;
+  bool m_WeightingEnabled{true};
 
 };
 

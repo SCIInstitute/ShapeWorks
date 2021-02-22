@@ -292,6 +292,8 @@ void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh)
   domain->SetMesh(mesh);
 
   m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
+  // disable weighting for geodesic distance
+  m_NeighborhoodList.back()->SetWeightingEnabled(!mesh->IsGeodesicsEnabled());
 
   this->m_Spacing = 1;
   m_DomainList.push_back(domain);
