@@ -115,6 +115,7 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data, bool is_p
 
 //---------------------------------------------------------------------------
 //todo change these APIs to take const PointType&
+//todo just make a separate API for ComputeGradDistance, this one seems excessive
 double VtkMeshWrapper::ComputeDistance(PointType pt_a, int idx_a, PointType pt_b, int idx_b, VectorType* out_grad) const
 {
   // return euclidean if geodesics are not enabled
@@ -146,6 +147,7 @@ double VtkMeshWrapper::ComputeDistance(PointType pt_a, int idx_a, PointType pt_b
     geo_lq_bary_ = bary_a;
   }
   // Find the triangle for the point b
+  //todo caching the bary for point a results in nearly 2X speedup. Its prudent to implement it for b as well.
   face_b = ComputeFaceAndWeights(pt_b, idx_b, bary_b);
 
   // The geodesics(and more importantly, its gradient) are very inaccurate if both the points are on the
