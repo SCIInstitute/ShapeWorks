@@ -37,15 +37,11 @@ namespace shapeworks {
 //-----------------------------------------------------------------------------
 Viewer::Viewer()
 {
-  //this->image_actor_ = vtkSmartPointer<vtkImageActor>::New();
 
   this->surface_actor_ = vtkSmartPointer<vtkActor>::New();
   this->surface_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
 
   this->sphere_source_ = vtkSmartPointer<vtkSphereSource>::New();
-
-  //this->surface_lut_ = vtkSmartPointer<vtkColorTransferFunction>::New();
-  //this->surface_lut_->SetColorSpaceToHSV();
 
   this->surface_lut_ = vtkSmartPointer<vtkLookupTable>::New();
   this->surface_lut_->SetTableRange(0, 1);
@@ -480,108 +476,96 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
 
   ren->RemoveAllViewProps();
 
-  if (!this->mesh_) {
+  if (!this->meshes_.valid()) {
     this->mesh_ready_ = false;
     this->viewer_ready_ = false;
-    // display loading message
-    //corner_annotation->SetText(0, "Loading...");
-    ///this->corner_annotation_->SetText(2, "Loading...");
-    //corner_annotation->SetText(2, "Loading...");
-
-    //ren->AddViewProp(this->image_actor_);
-
-    //ren->ResetCamera();
-    //this->renderer_->ResetCameraClippingRange();
     this->loading_displayed_ = true;
-
     this->update_points();
-
   }
   else {
-    //this->corner_annotation_->SetText(3, "Ready...");
-    //corner_annotation->SetText(0, "Ready...");
-    //corner_annotation->SetText(2, "Ready...");
-    //corner_annotation->SetText(2, "Ready...");
-    //corner_annotation->SetText(3, "Ready...");
     this->loading_displayed_ = false;
     this->viewer_ready_ = true;
-    //std::cerr << "mesh is ready!\n";
 
-    vtkSmartPointer<vtkPolyData> poly_data = this->mesh_->get_poly_data();
+    this->number_of_domains_ = this->meshes_.meshes().size();
+    this->initialize_surfaces();
 
-    auto feature_map = this->visualizer_->get_feature_map();
+    for (int i = 0; i< this->meshes_.meshes().size(); i++) {
 
-    std::vector<Shape::Point> vecs = this->shape_->get_vectors();
-    if (!vecs.empty()) {
-      feature_map = "";
-    }
+      //vtkSmartPointer<vtkPolyData> poly_data = this->mesh_->get_poly_data();
 
-    if (feature_map != "" && poly_data) {
-      //std::cerr << "checking if mesh has scalar array for " << feature_map << "\n";
-      auto scalar_array = poly_data->GetPointData()->GetArray(feature_map.c_str());
-      if (scalar_array) {
-        //std::cerr << "array present!\n";
+      MeshHandle mesh = this->meshes_.meshes()[i];
+
+      vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
+
+      auto feature_map = this->visualizer_->get_feature_map();
+
+      std::vector<Shape::Point> vecs = this->shape_->get_vectors();
+      if (!vecs.empty()) {
+        feature_map = "";
+      }
+
+      if (feature_map != "" && poly_data) {
+        auto scalar_array = poly_data->GetPointData()->GetArray(feature_map.c_str());
+        if (!scalar_array) {
+          this->shape_->load_feature(this->visualizer_->get_display_mode(), feature_map);
+        }
+      }
+
+      vtkSmartPointer<vtkPolyDataMapper> mapper = this->surface_mappers_[i];
+      vtkSmartPointer<vtkActor> actor = this->surface_actors_[i];
+
+      this->update_points();
+
+      this->draw_exclusion_spheres(shape);
+
+      vnl_vector<double> transform;
+      if (this->visualizer_->get_display_mode() == Visualizer::MODE_ORIGINAL_C &&
+          this->visualizer_->get_center()) {
+        transform = shape->get_transform();
+      }
+
+      if (transform.size() == 12) {
+        double tx = -transform[9];
+        double ty = -transform[10];
+        double tz = -transform[11];
+
+        vtkSmartPointer<vtkTransform> translation = vtkSmartPointer<vtkTransform>::New();
+        translation->Translate(tx, ty, tz);
+
+        vtkSmartPointer<vtkTransformPolyDataFilter> transform_filter =
+          vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+        transform_filter->SetInputData(poly_data);
+        transform_filter->SetTransform(translation);
+        transform_filter->Update();
+        poly_data = transform_filter->GetOutput();
+      }
+
+      mapper->SetInputData(poly_data);
+
+      actor->SetMapper(mapper);
+      actor->GetProperty()->SetDiffuseColor(color_schemes_[this->scheme_].foreground.r,
+                                            color_schemes_[this->scheme_].foreground.g,
+                                            color_schemes_[this->scheme_].foreground.b);
+      actor->GetProperty()->SetSpecular(0.2);
+      actor->GetProperty()->SetSpecularPower(15);
+
+      if (feature_map != "" && poly_data) {
+        poly_data->GetPointData()->SetActiveScalars(feature_map.c_str());
+        mapper->ScalarVisibilityOn();
+        mapper->SetScalarModeToUsePointData();
+
+        auto scalars = poly_data->GetPointData()->GetScalars(feature_map.c_str());
+        if (scalars) {
+          double range[2];
+          scalars->GetRange(range);
+          this->visualizer_->update_feature_range(range);
+          this->update_difference_lut(range[0], range[1]);
+          mapper->SetScalarRange(range[0], range[1]);
+        }
       }
       else {
-        //std::cerr << "array NOT present! Loading...\n";
-        this->shape_->load_feature(this->visualizer_->get_display_mode(), feature_map);
+        mapper->ScalarVisibilityOff();
       }
-    }
-
-    vtkSmartPointer<vtkPolyDataMapper> mapper = this->surface_mapper_;
-    vtkSmartPointer<vtkActor> actor = this->surface_actor_;
-
-    this->update_points();
-
-    this->draw_exclusion_spheres(shape);
-
-    vnl_vector<double> transform;
-    if (this->visualizer_->get_display_mode() == Visualizer::MODE_ORIGINAL_C &&
-        this->visualizer_->get_center()) {
-      transform = shape->get_transform();
-    }
-
-    if (transform.size() == 12) {
-      double tx = -transform[9];
-      double ty = -transform[10];
-      double tz = -transform[11];
-
-      vtkSmartPointer<vtkTransform> translation = vtkSmartPointer<vtkTransform>::New();
-      translation->Translate(tx, ty, tz);
-
-      vtkSmartPointer<vtkTransformPolyDataFilter> transform_filter =
-        vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-      transform_filter->SetInputData(poly_data);
-      transform_filter->SetTransform(translation);
-      transform_filter->Update();
-      poly_data = transform_filter->GetOutput();
-    }
-
-    mapper->SetInputData(poly_data);
-
-    actor->SetMapper(mapper);
-    actor->GetProperty()->SetDiffuseColor(color_schemes_[this->scheme_].foreground.r,
-                                          color_schemes_[this->scheme_].foreground.g,
-                                          color_schemes_[this->scheme_].foreground.b);
-    actor->GetProperty()->SetSpecular(0.2);
-    actor->GetProperty()->SetSpecularPower(15);
-
-    if (feature_map != "" && poly_data) {
-      poly_data->GetPointData()->SetActiveScalars(feature_map.c_str());
-      mapper->ScalarVisibilityOn();
-      mapper->SetScalarModeToUsePointData();
-
-      auto scalars = poly_data->GetPointData()->GetScalars(feature_map.c_str());
-      if (scalars) {
-        double range[2];
-        scalars->GetRange(range);
-        this->visualizer_->update_feature_range(range);
-        this->update_difference_lut(range[0], range[1]);
-        mapper->SetScalarRange(range[0], range[1]);
-      }
-    }
-    else {
-      mapper->ScalarVisibilityOff();
     }
     this->display_vector_field();
   }
@@ -745,11 +729,10 @@ void Viewer::update_actors()
   }
 
   if (this->show_surface_ && this->mesh_) {
-    /*    for ( int i = 0; i < this->numDomains; i++ )
-        {
-        this->renderer->AddActor( this->surfaceActors[i] );
-        }*/
-    this->renderer_->AddActor(this->surface_actor_);
+    for (int i = 0; i < this->number_of_domains_; i++) {
+      this->renderer_->AddActor(this->surface_actors_[i]);
+    }
+    //this->renderer_->AddActor(this->surface_actor_);
   }
 
   //this->displayShape( this->currentShape );
@@ -912,7 +895,23 @@ QSharedPointer<Shape> Viewer::get_shape()
 //-----------------------------------------------------------------------------
 void Viewer::initialize_surfaces()
 {
+  if (this->number_of_domains_ > this->surface_mappers_.size()) {
 
+    this->surface_mappers_.resize(this->number_of_domains_);
+    this->surface_actors_.resize(this->number_of_domains_);
+
+    for (int i = 0; i < this->number_of_domains_; i++) {
+      this->surface_mappers_[i] = vtkSmartPointer<vtkPolyDataMapper>::New();
+      //this->surface_mappers_[i]->ScalarVisibilityOff();
+
+      this->surface_actors_[i] = vtkSmartPointer<vtkActor>::New();
+      this->surface_actors_[i]->SetMapper(this->surface_mappers_[i]);
+      //this->surface_actors_[i]->GetProperty()->SetSpecular(.2);
+      //this->surface_actors_[i]->GetProperty()->SetSpecularPower(15);
+
+    }
+
+  }
 }
 
 }

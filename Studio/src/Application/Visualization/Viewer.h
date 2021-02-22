@@ -160,5 +160,7 @@ private:
   MeshGroup meshes_;
 
   Visualizer* visualizer_{nullptr};
+
+  int number_of_domains_ = 0;
 };
 }
