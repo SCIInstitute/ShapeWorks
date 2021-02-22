@@ -104,7 +104,7 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data, bool is_p
     this->ComputeGradN(V, F);
 
     if(is_geodesics_enabled_) {
-      auto decimated = this->Decimated(15000);
+      auto decimated = this->Decimated(10000);
       this->geo_child_ = std::make_unique<VtkMeshWrapper>(decimated, false);
     }
   } else {
@@ -132,12 +132,21 @@ double VtkMeshWrapper::ComputeDistance(PointType pt_a, int idx_a, PointType pt_b
     return geo_child_->ComputeDistance(pt_a, idx_a, pt_b, idx_b, out_grad);
   }
 
-  // Find the triangle for the points
-  vec3 closest_a, closest_b;
-  const int face_a = GetTriangleForPoint(pt_a.GetDataPointer(), idx_a, closest_a.data());
-  const vec3 bary_a = ComputeBarycentricCoordinates(closest_a, face_a);
-  const int face_b = GetTriangleForPoint(pt_b.GetDataPointer(), idx_b, closest_b.data());
-  const vec3 bary_b = ComputeBarycentricCoordinates(closest_b, face_b);
+  // Find the triangle for the point a, potentially skipping if it was the same as the previous query
+  int face_a, face_b;
+  vec3 bary_a, bary_b;
+  if(geo_lq_pidx_ == idx_a) {
+    face_a = geo_lq_face_;
+    bary_a = geo_lq_bary_;
+  } else {
+    face_a = ComputeFaceAndWeights(pt_a, idx_a, bary_a);
+
+    geo_lq_pidx_ = idx_a;
+    geo_lq_face_ = face_a;
+    geo_lq_bary_ = bary_a;
+  }
+  // Find the triangle for the point b
+  face_b = ComputeFaceAndWeights(pt_b, idx_b, bary_b);
 
   // The geodesics(and more importantly, its gradient) are very inaccurate if both the points are on the
   // same face, or share an edge. In this case, just return the euclidean distance
@@ -287,10 +296,8 @@ GradNType VtkMeshWrapper::SampleGradNAtPoint(PointType p, int idx) const
 //---------------------------------------------------------------------------
 PointType VtkMeshWrapper::SnapToMesh(PointType pointa, int idx) const
 {
-  double point[3] = {pointa[0], pointa[1], pointa[2]};
-  double closest_point[3];
-  this->GetTriangleForPoint(point, idx, closest_point);
-  VtkMeshWrapper::PointType out = convert<double[3], VtkMeshWrapper::PointType>(closest_point);
+  VtkMeshWrapper::PointType out;
+  this->GetTriangleForPoint(pointa.GetDataPointer(), idx, out.GetDataPointer());
   return out;
 }
 
@@ -446,17 +453,14 @@ bool VtkMeshWrapper::IsInTriangle(const double* pt, int face_index) const
 }
 
 //---------------------------------------------------------------------------
-Eigen::Vector3d VtkMeshWrapper::ComputeBarycentricCoordinates(Eigen::Vector3d pt, int face) const
+Eigen::Vector3d VtkMeshWrapper::ComputeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const
 {
-  double point[3] = {pt[0], pt[1], pt[2]};
   double closest[3];
   int sub_id;
   double pcoords[3];
   double dist2;
-  double weights[3];
-  this->triangles_[face]->EvaluatePosition(point, closest, sub_id, pcoords, dist2,
-                                           weights);
-  Eigen::Vector3d bary(weights[0], weights[1], weights[2]);
+  Eigen::Vector3d bary;
+  this->triangles_[face]->EvaluatePosition(pt.data(), closest, sub_id, pcoords, dist2, bary.data());
   return bary;
 }
 
@@ -754,17 +758,16 @@ void VtkMeshWrapper::InvalidateParticle(int idx)
     particle_triangles_.resize(idx + 1, -1);
   }
   this->particle_triangles_[idx] = -1;
+  this->geo_lq_pidx_ = -1;
 }
 
 //---------------------------------------------------------------------------
-int VtkMeshWrapper::ComputeFaceAndWeights(PointType p, int idx, Eigen::Vector3d &weights) const
+int VtkMeshWrapper::ComputeFaceAndWeights(const PointType& p, int idx, Eigen::Vector3d &weights) const
 {
-  double point[3] = {p[0], p[1], p[2]};
-  double closest_point[3];
-
-  int face_index = this->GetTriangleForPoint(point, idx, closest_point);
+  Eigen::Vector3d closest_point;
+  int face_index = this->GetTriangleForPoint(p.GetDataPointer(), idx, closest_point.data());
   // TODO: GetTriangleForPoint is usually already computing the weights
-  weights = this->ComputeBarycentricCoordinates(convert<double[3], vec3>(closest_point), face_index);
+  weights = this->ComputeBarycentricCoordinates(closest_point, face_index);
   return face_index;
 }
 

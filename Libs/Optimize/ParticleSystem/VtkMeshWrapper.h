@@ -67,9 +67,9 @@ private:
 
   bool IsInTriangle(const double pt[3], int face_index) const;
 
-  Eigen::Vector3d ComputeBarycentricCoordinates(Eigen::Vector3d pt, int face) const;
+  Eigen::Vector3d ComputeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const;
 
-  int ComputeFaceAndWeights(PointType p, int idx, Eigen::Vector3d &weights) const;
+  int ComputeFaceAndWeights(const PointType& p, int idx, Eigen::Vector3d &weights) const;
 
   Eigen::Vector3d
   GeodesicWalkOnFace(Eigen::Vector3d point_a,
@@ -161,5 +161,11 @@ private:
   // Returns 3 x (F, 3) gradient of geodesic distances from a given source triangle's vertices to every other face.
   // This reference maybe invalid once this function is called again
   const std::array<Eigen::MatrixXd, 3>& GradGeodesicsFromTriangle(int f) const;
+
+  // Store some info about the last query. This accelerates the computation because the optimizer generally asks for the
+  // distances _from_ the same point as the previous query.
+  mutable int geo_lq_pidx_{-1};
+  mutable int geo_lq_face_{-1};
+  mutable Eigen::Vector3d geo_lq_bary_;
 };
 }
