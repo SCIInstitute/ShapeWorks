@@ -459,6 +459,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
 
   //std::cerr << "asking for mesh\n";
   this->mesh_ = shape->get_mesh(this->visualizer_->get_display_mode());
+  this->meshes_ = shape->get_meshes(this->visualizer_->get_display_mode());
 
   if (!this->mesh_ && this->loading_displayed_) {
     // no need to proceed
@@ -907,4 +908,11 @@ QSharedPointer<Shape> Viewer::get_shape()
 {
   return this->shape_;
 }
+
+//-----------------------------------------------------------------------------
+void Viewer::initialize_surfaces()
+{
+
+}
+
 }

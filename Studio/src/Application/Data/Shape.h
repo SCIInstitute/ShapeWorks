@@ -6,6 +6,7 @@
 #include <Data/StudioMesh.h>
 #include <Libs/Project/Subject.h>
 #include <Data/MeshManager.h>
+#include <Data/MeshGroup.h>
 
 #include <itkMatrixOffsetTransformBase.h>
 
@@ -35,6 +36,8 @@ public:
 
   MeshHandle get_mesh(const string& display_mode);
 
+  MeshGroup get_meshes(const string& display_mode);
+
   void set_annotations(QStringList annotations, bool only_overwrite_blank = true);
   QStringList get_annotations();
 
@@ -49,6 +52,9 @@ public:
 
   /// Retrieve the original mesh
   MeshHandle get_original_mesh(bool wait = false);
+
+  /// Retrieve the original meshes
+  MeshGroup get_original_meshes(bool wait = false);
 
   /// Retrieve the groomed mesh
   MeshHandle get_groomed_mesh(bool wait = false);
@@ -131,12 +137,18 @@ private:
   void generate_meshes(std::vector<std::string> filenames, MeshHandle& mesh,
                        bool save_transform, bool wait = false);
 
+  void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list,
+                       bool save_transform, bool wait = false);
+
   static bool import_point_file(QString filename, vnl_vector<double>& points);
 
   void apply_feature_to_points(std::string feature, ImageType::Pointer image);
   void apply_feature_to_points(std::string feature, MeshHandle mesh);
 
   int id_;
+
+
+  MeshGroup original_meshes_;
 
   MeshHandle original_mesh_;
   MeshHandle groomed_mesh_;

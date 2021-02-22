@@ -19,6 +19,8 @@ namespace shapeworks {
 
 class StudioMesh;
 using MeshHandle = std::shared_ptr<StudioMesh>;
+using MeshList = std::vector<MeshHandle>;
+
 
 //! Representation of a single mesh.
 /*!

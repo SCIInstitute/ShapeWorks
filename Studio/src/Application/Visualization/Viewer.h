@@ -81,6 +81,8 @@ public:
 
 private:
 
+  void initialize_surfaces();
+
   void display_vector_field();
 
   void compute_point_differences(const std::vector<Shape::Point>& points,
@@ -127,6 +129,10 @@ private:
   vtkSmartPointer<vtkPolyDataMapper> surface_mapper_;
   vtkSmartPointer<vtkActor> surface_actor_;
 
+  std::vector<vtkSmartPointer<vtkPolyDataMapper>> surface_mappers_;
+  std::vector<vtkSmartPointer<vtkActor>> surface_actors_;
+
+
   vtkSmartPointer<vtkLookupTable> lut_;
   vtkSmartPointer<vtkLookupTable> surface_lut_;
   //vtkSmartPointer<vtkColorTransferFunction> surface_lut_;
@@ -151,6 +157,7 @@ private:
   bool loading_displayed_ = false;
 
   MeshHandle mesh_;
+  MeshGroup meshes_;
 
   Visualizer* visualizer_{nullptr};
 };

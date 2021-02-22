@@ -44,6 +44,23 @@ MeshHandle Shape::get_mesh(const std::string& display_mode)
 }
 
 //---------------------------------------------------------------------------
+MeshGroup Shape::get_meshes(const string& display_mode)
+{
+  if (display_mode == Visualizer::MODE_ORIGINAL_C) {
+    return this->get_original_meshes();
+  }
+  else if (display_mode == Visualizer::MODE_GROOMED_C) {
+    //return this->get_groomed_meshes();
+  }
+  //return this->get_reconstructed_meshes();
+
+
+  //// TODO temporary
+  return this->get_original_meshes();
+
+}
+
+//---------------------------------------------------------------------------
 void Shape::set_annotations(QStringList annotations, bool only_overwrite_blank)
 {
   if (only_overwrite_blank && !this->corner_annotations_.empty() &&
@@ -69,8 +86,11 @@ void Shape::set_mesh_manager(QSharedPointer<MeshManager> mesh_manager)
 void Shape::set_subject(std::shared_ptr<Subject> subject)
 {
   this->subject_ = subject;
+  this->original_meshes_.set_number_of_meshes(subject->get_number_of_domains());
 
   if (!this->subject_->get_segmentation_filenames().empty()) {
+
+    /// TODO: Show multiple lines of filenames for multiple domains?
     std::string filename = this->subject_->get_segmentation_filenames()[0];
     this->corner_annotations_[0] = QFileInfo(QString::fromStdString(filename)).fileName();
   }
@@ -103,6 +123,20 @@ MeshHandle Shape::get_original_mesh(bool wait)
     }
   }
   return this->original_mesh_;
+}
+
+//---------------------------------------------------------------------------
+MeshGroup Shape::get_original_meshes(bool wait)
+{
+  if (!this->subject_) {
+    std::cerr << "Error: asked for original mesh when none is present!\n";
+  }
+
+  if (!this->original_meshes_.valid()) {
+    this->generate_meshes(this->subject_->get_segmentation_filenames(), this->original_meshes_,
+                          true, wait);
+  }
+  return this->original_meshes_;
 }
 
 //---------------------------------------------------------------------------
@@ -412,6 +446,7 @@ void Shape::generate_meshes(std::vector<string> filenames, MeshHandle& mesh,
     return;
   }
 
+
   // single domain supported right now
   std::string filename = filenames[0];
 
@@ -432,6 +467,41 @@ void Shape::generate_meshes(std::vector<string> filenames, MeshHandle& mesh,
       this->transform_.set_size(12);
       for (unsigned int i = 0; i < 3; i++) {
         this->transform_[9 + i] = center[i];
+      }
+    }
+  }
+}
+
+//---------------------------------------------------------------------------
+void Shape::generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_group,
+                            bool save_transform, bool wait)
+{
+  if (filenames.empty()) {
+    return;
+  }
+
+  for (int i = 0; i < filenames.size(); i++) {
+    auto filename = filenames[i];
+
+    MeshWorkItem item;
+    item.filename = filename;
+    MeshHandle new_mesh = this->mesh_manager_->get_mesh(item, wait);
+    if (new_mesh) {
+
+      mesh_group.meshes()[i] = new_mesh;
+
+      /// Temporarily calculate the COM here
+      auto com = vtkSmartPointer<vtkCenterOfMass>::New();
+      com->SetInputData(new_mesh->get_poly_data());
+      com->Update();
+      double center[3];
+      com->GetCenter(center);
+
+      if (save_transform) {
+        this->transform_.set_size(12);
+        for (unsigned int i = 0; i < 3; i++) {
+          this->transform_[9 + i] = center[i];
+        }
       }
     }
   }
