@@ -1,9 +1,9 @@
 #pragma once
 
-#include <unordered_map>
-#include <unordered_set>
 #include "MeshWrapper.h"
+#include "FixedSizeCache.h"
 
+#include <unordered_map>
 #include <igl/heat_geodesics.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
@@ -11,54 +11,6 @@
 class vtkCellLocator;
 
 namespace shapeworks {
-
-template<class T>
-struct GeoCache {
-  /*
-   * The idea behind this cache is to avoid creating/destroying "Value" objects since they are extremely expensive. Instead,
-   * we maintain a vector<T> of entries that is allocated(see PrecomputeGeodesics) at startup. Later, we store for each triangle
-   * the index into this vector, and any cache reset operation simply clears the map and not the backing storage.
-   */
-  std::unordered_map<int, int> tri2entry;
-  std::vector<T> entries;
-
-  // clear everything in the cache except what is required by the active particles' triangles
-  void clear_except_active(const std::vector<int>& tris) {
-
-    // figure out which (unique) triangles we need to keep
-    std::unordered_map<int, int> to_keep;
-    std::unordered_set<int> taken; // keep track of the corresponding entry locations
-    for(int tri : tris) {
-      const auto entry = tri2entry.find(tri);
-      if(entry != tri2entry.end()) {
-        to_keep[tri] = entry->second;
-        taken.insert(entry->second);
-      }
-    }
-
-    // clear old cache entries
-    tri2entry.clear();
-
-    int next_idx = 0;
-    for(auto& it : to_keep) {
-      // we don't need to std::swap for this entry
-      if(it.second < to_keep.size()) {
-        tri2entry[it.first] = it.second;
-        continue;
-      }
-
-      // is this spot already taken by a triangle we wish to keep?
-      while(taken.find(next_idx) != taken.end()) {
-        next_idx++;
-      }
-
-      // Move the cache entry to earlier and update tri2entry
-      std::swap(entries[next_idx], entries[it.second]);
-      tri2entry[it.first] = next_idx;
-      next_idx++;
-    }
-  }
-};
 
 class VtkMeshWrapper : public MeshWrapper {
 
@@ -101,12 +53,8 @@ public:
 
 private:
 
-  vtkSmartPointer<vtkPolyData> Decimated(unsigned long target_tris) const;
-
-  bool is_parent{true};
-  std::shared_ptr<VtkMeshWrapper> child{nullptr};
-
   void ComputeMeshBounds();
+  void ComputeGradOperator(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
   void ComputeGradN(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
 
 
@@ -165,33 +113,53 @@ private:
   // cell locator to find closest point on mesh
   vtkSmartPointer<vtkCellLocator> cell_locator_;
 
+  // Gradient operator, used to compute gradient of functions defined per-mesh-vertex
+  Eigen::SparseMatrix<double> grad_operator_;
+
   /////////////////////////
   // Geodesic distances
 
-  // IGL Helper functions
+  /*
+   * It is extremely expensive to compute geodesics on meshes with a large number of triangles. Therefore, we use a
+   * decimated version of the mesh to compute geodesics. We keep around another VtkMeshWrapper(to continue to have
+   * particle_triangles_ and other niceties) just for geodesic distance computation.
+   */
+  bool is_geodesics_enabled_{true};
+  std::unique_ptr<VtkMeshWrapper> geo_child_{nullptr};
+
+  // Each cache entry stores (3*V + 9*F) double precision numbers
+  size_t max_cache_entries_{512*8};
+
+  // Cache to store information for geodesics
+  igl::HeatGeodesicsData<double> geo_heat_data_;
+
+  // Cache for geodesic distances from a triangle
+  mutable FixedSizeCache<int, std::array<Eigen::VectorXd, 3>> geo_dist_cache_;
+
+  // Cache for gradient of geodesic distances from a triangle
+  mutable FixedSizeCache<int, std::array<Eigen::MatrixXd, 3>> geo_grad_cache_;
+
+  bool IsParent() const { return geo_child_ != nullptr; }
+
+  // Return a version of this mesh decimated to contain ~target_tris triangles
+  vtkSmartPointer<vtkPolyData> Decimated(unsigned long target_tris) const;
+
+  // Returns true if face f_a is adjacent to face f_b. This uses a non-standard definition of adjacency: return true
+  // if f_a and f_b share atleast one vertex
+  bool AreFacesAdjacent(int f_a, int f_b) const;
+
+  // Convert the mesh to libigl data structures
   void GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const;
 
   // Precompute libigl heat data structures for faster geodesic lookups
   void PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
 
-  // Returns 3 x (V, ) geodesic distances from a given source triangle's vertices to every other vertex
+  // Returns 3 x (V, ) geodesic distances from a given source triangle's vertices to every other vertex.
+  // This reference maybe invalid once this function is called again
   const std::array<Eigen::VectorXd, 3>& GeodesicsFromTriangle(int f) const;
 
-  // Returns 3 x (F, 3) gradient of geodesic distances from a given source triangle's vertices to every other face
+  // Returns 3 x (F, 3) gradient of geodesic distances from a given source triangle's vertices to every other face.
+  // This reference maybe invalid once this function is called again
   const std::array<Eigen::MatrixXd, 3>& GradGeodesicsFromTriangle(int f) const;
-
-  // Returns true if face f_a is adjacent to face f_b
-  bool AreFacesAdjacent(int f_a, int f_b) const;
-
-  size_t max_cache_entries_ {1024};
-
-  // Cache to store information for geodesics
-  igl::HeatGeodesicsData<double> heat_data;
-  // cache for geodesic distances from a triangle
-  mutable GeoCache<std::array<Eigen::VectorXd, 3>> geo;
-  // cache for gradient of geodesic distances from a triangle
-  mutable GeoCache<std::array<Eigen::MatrixXd, 3>> grad_geo;
-  // Gradient operator
-  Eigen::SparseMatrix<double> grad_operator_;
 };
 }

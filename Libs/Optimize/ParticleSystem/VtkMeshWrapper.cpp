@@ -49,7 +49,6 @@ using GradNType = VtkMeshWrapper::GradNType;
 //---------------------------------------------------------------------------
 VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data, bool is_parent)
 {
-  this->is_parent = is_parent;
   vtkSmartPointer<vtkTriangleFilter> triangle_filter =
     vtkSmartPointer<vtkTriangleFilter>::New();
   triangle_filter->SetInputData(poly_data);
@@ -99,31 +98,38 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data, bool is_p
   Eigen::MatrixXd V;
   Eigen::MatrixXi F;
   this->GetIGLMesh(V, F);
+  this->ComputeGradOperator(V, F);
 
   if(is_parent) {
-    auto decimated = this->Decimated(5000);
-    this->child = std::make_shared<VtkMeshWrapper>(decimated, false);
     this->ComputeGradN(V, F);
-  } else { // is child
+
+    if(is_geodesics_enabled_) {
+      auto decimated = this->Decimated(15000);
+      this->geo_child_ = std::make_unique<VtkMeshWrapper>(decimated, false);
+    }
+  } else {
+    // Child doesn't need gradient of normals
     this->PrecomputeGeodesics(V, F);
   }
-
-
 }
 
 //---------------------------------------------------------------------------
+//todo change these APIs to take const PointType&
 double VtkMeshWrapper::ComputeDistance(PointType pt_a, int idx_a, PointType pt_b, int idx_b, VectorType* out_grad) const
 {
-#if 0
-  if(out_grad != nullptr) {
-    for(int i=0; i<DIMENSION; i++) {
-      (*out_grad)[i] = pt_a[i] - pt_b[i];
+  // return euclidean if geodesics are not enabled
+  if(!is_geodesics_enabled_) {
+    if(out_grad != nullptr) {
+      for(int i=0; i<DIMENSION; i++) {
+        (*out_grad)[i] = pt_a[i] - pt_b[i];
+      }
     }
+    return pt_a.EuclideanDistanceTo(pt_b);
   }
-  return pt_a.EuclideanDistanceTo(pt_b);
-#endif
-  if(is_parent) {
-    return child->ComputeDistance(pt_a, idx_a, pt_b, idx_b, out_grad);
+
+  // if we are not the decimated mesh, delegate distance computation to that
+  if(IsParent()) {
+    return geo_child_->ComputeDistance(pt_a, idx_a, pt_b, idx_b, out_grad);
   }
 
   // Find the triangle for the points
@@ -371,17 +377,17 @@ void VtkMeshWrapper::ComputeMeshBounds()
 //---------------------------------------------------------------------------
 void VtkMeshWrapper::ComputeGradN(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F)
 {
-
   const int n_verts = V.rows();
   const int n_faces = F.rows();
+
+  const auto& G = grad_operator_;
+  if(G.size() == 0) {
+    throw std::runtime_error("ComputeGradN: you forgot to call ComputeGradOperator()");
+  }
 
   // Compute normals
   Eigen::MatrixXd N;
   igl::per_vertex_normals(V, F, N);
-
-  // Compute gradient operator
-  Eigen::SparseMatrix<double> G;
-  igl::grad(V, F, G);
 
   // Compute gradient of normals per face
   const Eigen::MatrixXd GN = Eigen::Map<const Eigen::MatrixXd>((G * N).eval().data(), n_faces, 9);
@@ -550,10 +556,10 @@ VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d proj
       Eigen::Vector3d intersect1 = GetBarycentricIntersection(currentBary, targetBary, currentFace,
                                                               negativeEdge1);
 
-      double length0 = (intersect - currentPoint).squaredNorm();
-      double length1 = (intersect1 - currentPoint).squaredNorm();
+      double sqrLength0 = (intersect - currentPoint).squaredNorm();
+      double sqrLength1 = (intersect1 - currentPoint).squaredNorm();
 
-      if (length0 < length1) {
+      if (sqrLength0 < sqrLength1) {
         intersect = intersect;
         negativeEdge = negativeEdge;
       }
@@ -751,8 +757,7 @@ void VtkMeshWrapper::InvalidateParticle(int idx)
 }
 
 //---------------------------------------------------------------------------
-int
-VtkMeshWrapper::ComputeFaceAndWeights(PointType p, int idx, Eigen::Vector3d &weights) const
+int VtkMeshWrapper::ComputeFaceAndWeights(PointType p, int idx, Eigen::Vector3d &weights) const
 {
   double point[3] = {p[0], p[1], p[2]};
   double closest_point[3];
@@ -763,13 +768,18 @@ VtkMeshWrapper::ComputeFaceAndWeights(PointType p, int idx, Eigen::Vector3d &wei
   return face_index;
 }
 
-// Added for geodesics todo neatify
+//---------------------------------------------------------------------------
+void VtkMeshWrapper::ComputeGradOperator(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F)
+{
+  igl::grad(V, F, grad_operator_);
+}
+
+//---------------------------------------------------------------------------
 void VtkMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const
 {
   const int n_verts = this->poly_data_->GetNumberOfPoints();
   const int n_faces = this->poly_data_->GetNumberOfCells();
 
-  // Copy from vtk to libigl data structures
   V.resize(n_verts, 3);
   F.resize(n_faces, 3);
 
@@ -790,11 +800,13 @@ void VtkMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const
   }
 }
 
+//---------------------------------------------------------------------------
 vtkSmartPointer<vtkPolyData> VtkMeshWrapper::Decimated(unsigned long target_tris) const
 {
   const auto total_tris = this->triangles_.size();
   const double target_reduction = std::min(1.0, static_cast<double>(total_tris - target_tris) / total_tris);
   if(target_reduction <= 0.0) {
+    //todo in the event the user doesn't require decimation, we unnecessarily make a copy of the mesh.
     auto decimated = vtkSmartPointer<vtkPolyData>::New();
     decimated->DeepCopy(this->poly_data_);
     return decimated;
@@ -818,75 +830,88 @@ vtkSmartPointer<vtkPolyData> VtkMeshWrapper::Decimated(unsigned long target_tris
   return decimated;
 }
 
+//---------------------------------------------------------------------------
 void VtkMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F)
 {
   // Precompute heat data structure for geodesics
-  igl::heat_geodesics_precompute(V, F, heat_data);
+  igl::heat_geodesics_precompute(V, F, geo_heat_data_);
 
-  // Precompute gradient operator to find gradient of geodesics
-  igl::grad(V, F, grad_operator_);
+  // Make sure gradient operator has been computed
+  if(grad_operator_.size() == 0) {
+    throw std::runtime_error("PrecomputeGeodesics: you forgot to call ComputeGradOperator()");
+  }
 
   // Resize cache to correct size
-  geo.entries.resize(max_cache_entries_);
-  grad_geo.entries.resize(max_cache_entries_);
+  geo_dist_cache_.entries.resize(max_cache_entries_);
+  geo_grad_cache_.entries.resize(max_cache_entries_);
 
-  for(auto& entry : geo.entries) {
+  for(auto& entry : geo_dist_cache_.entries) {
     entry[0].resize(V.rows());
     entry[1].resize(V.rows());
     entry[2].resize(V.rows());
   }
-  for(auto& entry : grad_geo.entries) {
+  for(auto& entry : geo_grad_cache_.entries) {
     entry[0].resize(F.rows(), 3);
     entry[1].resize(F.rows(), 3);
     entry[2].resize(F.rows(), 3);
   }
 }
 
-// Returns true if face f_a is adjacent to face f_b
+//---------------------------------------------------------------------------
 bool VtkMeshWrapper::AreFacesAdjacent(int f_a, int f_b) const
 {
-  const auto& adj_b = this->triangles_[f_b];
-  return adj_b->GetPointId(0) == f_a || adj_b->GetPointId(1) == f_a || adj_b->GetPointId(2) == f_a;
+  const auto& tri_a = this->triangles_[f_a];
+  const auto& tri_b = this->triangles_[f_b];
+  for(int i=0; i<3; i++) {
+    for(int j=0; j<3; j++) {
+      if(tri_a->GetPointId(i) == tri_b->GetPointId(j)) {
+        return true;
+      }
+    }
+  }
 
+  return false;
 }
 
+//---------------------------------------------------------------------------
 const std::array<Eigen::VectorXd, 3>& VtkMeshWrapper::GeodesicsFromTriangle(int f) const {
-  auto& cache = geo;
-  const auto map_entry = cache.tri2entry.find(f);
-  if(map_entry != cache.tri2entry.end()) {
+  auto& cache = geo_dist_cache_;
+  const auto map_entry = cache.key2entry.find(f);
+  if(map_entry != cache.key2entry.end()) {
     return cache.entries[map_entry->second];
   }
 
   // if we hit the cache size limit, clear everything except the triangles known to be active
-  if(cache.tri2entry.size() >= max_cache_entries_) {
+  if(cache.key2entry.size() >= max_cache_entries_) {
     cache.clear_except_active(particle_triangles_);
   }
 
-  const int cache_idx = cache.tri2entry.size();
+  const int cache_idx = cache.key2entry.size();
   for(int i=0; i<3; i++) {
     auto& D = cache.entries[cache_idx][i];
     Eigen::VectorXi gamma;
     gamma.resize(1); gamma << this->triangles_[f]->GetPointId(i);
-    igl::heat_geodesics_solve(heat_data, gamma, D);
+    igl::heat_geodesics_solve(geo_heat_data_, gamma, D);
   }
 
-  cache.tri2entry[f] = cache_idx;
+  cache.key2entry[f] = cache_idx;
   return cache.entries[cache_idx];
 }
 
+//---------------------------------------------------------------------------
 const std::array<Eigen::MatrixXd, 3>& VtkMeshWrapper::GradGeodesicsFromTriangle(int f) const {
-  auto& cache = grad_geo;
-  const auto map_entry = cache.tri2entry.find(f);
-  if(map_entry != cache.tri2entry.end()) {
+  auto& cache = geo_grad_cache_;
+  const auto map_entry = cache.key2entry.find(f);
+  if(map_entry != cache.key2entry.end()) {
     return cache.entries[map_entry->second];
   }
 
   // if we hit the cache size limit, clear everything except the triangles known to be active
-  if(cache.tri2entry.size() >= max_cache_entries_) {
+  if(cache.key2entry.size() >= max_cache_entries_) {
     cache.clear_except_active(particle_triangles_);
   }
 
-  const int cache_idx = cache.tri2entry.size();
+  const int cache_idx = cache.key2entry.size();
 
   const std::array<Eigen::VectorXd, 3>& D = GeodesicsFromTriangle(f);
   const auto& G = grad_operator_;
@@ -898,7 +923,7 @@ const std::array<Eigen::MatrixXd, 3>& VtkMeshWrapper::GradGeodesicsFromTriangle(
     GD.resize(this->triangles_.size(), 3); // correct rows and columns
   }
 
-  cache.tri2entry[f] = cache_idx;
+  cache.key2entry[f] = cache_idx;
   return cache.entries[cache_idx];
 }
 
