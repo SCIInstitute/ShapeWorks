@@ -10,10 +10,13 @@
 
 class Ui_OptimizeTool;
 
+class QLineEdit;
+
 namespace shapeworks {
 class QOptimize;
 class OptimizeParameters;
 class Session;
+
 
 class OptimizeTool : public QWidget {
 Q_OBJECT;
@@ -55,6 +58,8 @@ public Q_SLOTS:
 
   void update_ui_elements();
 
+  bool validate_inputs();
+
 signals:
   void optimize_start();
   void optimize_complete();
@@ -67,9 +72,13 @@ signals:
 
 private:
 
+  void update_run_button();
+
   void handle_load_progress(int count);
 
   void clear_particles();
+
+  std::vector<QLineEdit*> line_edits_;
 
   QList<QThread*> threads_;
   bool optimization_is_running_ = false;

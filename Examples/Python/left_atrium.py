@@ -125,8 +125,8 @@ def Run_Pipeline(args):
             processRaw = False, applies the center of mass alignment only on segemnattion data.
             The function uses the same bounding box to crop the raw and segemnattion data.
             """
-            croppedFiles_segmentations = applyCropping(groomDir + "cropped/segmentations", aligned_segmentations, groomDir + "aligned/segmentations/*.aligned.nrrd")
-            croppedFiles_images = applyCropping(groomDir + "cropped/images", aligned_images, groomDir + "aligned/images/*.aligned.nrrd")
+            croppedFiles_segmentations = applyCropping(groomDir + "cropped/segmentations", aligned_segmentations, aligned_segmentations)
+            croppedFiles_images = applyCropping(groomDir + "cropped/images", aligned_images, aligned_segmentations)
 
             print("\nStep 3. Groom - Convert to distance transforms\n")
             if args.interactive:
@@ -168,7 +168,7 @@ def Run_Pipeline(args):
             """
             Compute largest bounding box and apply cropping
             """
-            croppedFiles = applyCropping(groomDir + "cropped", alignedFiles, groomDir + "aligned/*.aligned.nrrd")
+            croppedFiles = applyCropping(groomDir + "cropped", alignedFiles, aligned_segmentations)
 
             print("\nStep 3. Groom - Convert to distance transforms\n")
             if args.interactive:
