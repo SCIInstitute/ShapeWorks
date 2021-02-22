@@ -309,10 +309,11 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side, printCmd=T
             img2 = Image(image)
             img2.recenter()
             center = img2.origin() - img1.origin()
+            center = [center[0],center[1],center[2]]
             img1.reflect(X).write(img_out)
 
             mesh = Mesh(flip_seg)
-            mesh.reflect(X, center).write(seg_out)
+            mesh.reflect(X).write(seg_out)
 
             seg_out = rename(flip_seg, outSegDir, 'reflect')
     return meshList, imageList
