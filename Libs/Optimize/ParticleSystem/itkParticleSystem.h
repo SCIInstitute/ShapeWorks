@@ -400,7 +400,7 @@ public:
   void SetFixedParticleFlag(unsigned int d, unsigned int i)
   { m_FixedParticleFlags[d][i] = true; }
   void ResetFixedParticleFlag(unsigned int d, unsigned int i)
-  { m_FixedParticleFlags[i] = false; }
+  { m_FixedParticleFlags[d][i] = false; }
   bool GetFixedParticleFlag(unsigned int d, unsigned int i) const
   { return m_FixedParticleFlags[d][i]; }
   void ResetFixedParticleFlags()
