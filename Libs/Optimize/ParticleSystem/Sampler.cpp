@@ -303,6 +303,7 @@ void Sampler::AddContour(const std::string& filepath)
     this->m_Spacing = 1;
     domain->LoadFromFile(filepath);
   }
+  m_NeighborhoodList.back()->SetWeightingEnabled(false);
   m_DomainList.push_back(domain);
 }
 

@@ -7,7 +7,8 @@ namespace itk{
 void ContourDomain::LoadFromFile(const std::string& filepath) {
   std::ifstream in_file(filepath);
 
-  is_closed_ = true; // TODO handle this
+  this->m_FixedDomain = false;
+  this->is_closed_ = true; // TODO handle this
 
   size_t n_points; in_file >> n_points;
   points.resize(n_points, 3);
@@ -25,7 +26,7 @@ void ContourDomain::LoadFromFile(const std::string& filepath) {
 vnl_vector_fixed<double, DIMENSION>
 ContourDomain::ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, 3> &gradE,
                                              const PointType &pos, int idx) const {
-  return vnl_vector_fixed<double, 3>();
+  return gradE;
 }
 
 bool ContourDomain::ApplyConstraints(ContourDomain::PointType &p, int idx, bool dbg) const {
@@ -40,7 +41,10 @@ bool ContourDomain::ApplyConstraints(ContourDomain::PointType &p, int idx, bool 
 
 ContourDomain::PointType ContourDomain::UpdateParticlePosition(const PointType &point, int idx,
                                                                vnl_vector_fixed<double, 3> &update) const {
-  return point;
+  PointType out(point);
+  out.GetVnlVector() += update;
+  ApplyConstraints(out, idx);
+  return out;
 }
 
 double ContourDomain::Distance(const PointType &a, const PointType &b) const {

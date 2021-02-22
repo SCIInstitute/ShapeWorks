@@ -277,6 +277,9 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
     {    gradE[n] *= p;    }
 
   maxmove = (m_CurrentSigma / m_avgKappa) * m_MaxMoveFactor;
+  if(system->GetDomain(d)->GetDomainType() == shapeworks::DomainType::Contour) {
+    maxmove *= 50.0;
+  }
 
   energy = (A * sigma2inv ) / m_avgKappa;
 
