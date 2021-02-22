@@ -202,7 +202,7 @@ def applyRigidAlignment(outDir, refFile, inDataListSeg, inDataListImg=[], icp_it
 
     return [outSegDataList, outRawDataList] if inDataListImg else outSegDataList
 
-def applyCropping(outDir, inDataList, path, paddingSize=10):
+def applyCropping(outDir, inDataList, bbDataList, paddingSize=10):
     """
     This function takes in a filelist and crops them according to the largest
     bounding box which it discovers
@@ -213,7 +213,7 @@ def applyCropping(outDir, inDataList, path, paddingSize=10):
     outDataList = []
 
     # find region by computing bounding box
-    region = ImageUtils.boundingBox(glob.glob(path))
+    region = ImageUtils.boundingBox(bbDataList)
     print(region)
     region.pad(paddingSize)
 
