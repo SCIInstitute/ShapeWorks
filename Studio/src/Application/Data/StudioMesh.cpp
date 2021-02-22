@@ -7,8 +7,6 @@
 #include <itkNearestNeighborInterpolateImageFunction.h>
 #include <itkLinearInterpolateImageFunction.h>
 
-#include <vtkSurfaceReconstructionFilter.h>
-#include <vtkMarchingCubes.h>
 #include <vtkTriangleFilter.h>
 #include <vtkFloatArray.h>
 #include <vtkPointData.h>
@@ -17,7 +15,6 @@
 #include <vtkKdTreePointLocator.h>
 
 #include <Data/StudioMesh.h>
-#include <Data/ItkToVtk.h>
 
 using NearestNeighborInterpolatorType = itk::NearestNeighborInterpolateImageFunction<ImageType, double>;
 using LinearInterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
@@ -113,11 +110,9 @@ void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image,
     auto pixel = 0;
     if (region.IsInside(index)) {
       pixel = interpolator->EvaluateAtContinuousIndex(index);
-      //  std::cerr << pixel << " ";
     }
     scalars->SetValue(i, pixel);
   }
-  //std::cerr << "\n";
 
   this->poly_data_->GetPointData()->AddArray(scalars);
 
