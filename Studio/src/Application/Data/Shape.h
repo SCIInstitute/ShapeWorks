@@ -33,7 +33,7 @@ public:
 
   ~Shape();
 
-  MeshHandle get_mesh(string display_mode);
+  MeshHandle get_mesh(const string& display_mode);
 
   void set_annotations(QStringList annotations, bool only_overwrite_blank = true);
   QStringList get_annotations();
@@ -45,7 +45,7 @@ public:
   std::shared_ptr<shapeworks::Subject> get_subject();
 
   /// Import the original raw image file
-  void import_original_image(std::string filename);
+  void import_original_image(const std::string& filename);
 
   /// Retrieve the original mesh
   MeshHandle get_original_mesh(bool wait = false);
@@ -85,6 +85,9 @@ public:
 
   /// Set the id of this shape
   void set_id(int id);
+
+  std::vector<QString> get_original_filenames();
+  std::vector<QString> get_original_filenames_with_path();
 
   QString get_original_filename();
   QString get_original_filename_with_path();

@@ -32,7 +32,7 @@ Shape::Shape()
 Shape::~Shape() = default;
 
 //---------------------------------------------------------------------------
-MeshHandle Shape::get_mesh(std::string display_mode)
+MeshHandle Shape::get_mesh(const std::string& display_mode)
 {
   if (display_mode == Visualizer::MODE_ORIGINAL_C) {
     return this->get_original_mesh();
@@ -83,7 +83,7 @@ std::shared_ptr<Subject> Shape::get_subject()
 }
 
 //---------------------------------------------------------------------------
-void Shape::import_original_image(std::string filename)
+void Shape::import_original_image(const std::string& filename)
 {
   this->subject_->set_segmentation_filenames(std::vector<std::string>{filename});
   this->corner_annotations_[0] = QFileInfo(QString::fromStdString(filename)).fileName();
@@ -255,6 +255,36 @@ QString Shape::get_original_filename_with_path()
     return "";
   }
   return QString::fromStdString(this->subject_->get_segmentation_filenames()[0]);
+}
+
+//---------------------------------------------------------------------------
+std::vector<QString> Shape::get_original_filenames()
+{
+  if (this->subject_->get_segmentation_filenames().size() < 1) {
+    return std::vector<QString>();
+  }
+
+  std::vector<QString> filenames;
+  for (auto&& name : this->subject_->get_segmentation_filenames()) {
+    filenames.push_back(QFileInfo(QString::fromStdString(name)).fileName());
+  }
+
+  return filenames;
+}
+
+//---------------------------------------------------------------------------
+std::vector<QString> Shape::get_original_filenames_with_path()
+{
+  if (this->subject_->get_segmentation_filenames().size() < 1) {
+    return std::vector<QString>();
+  }
+
+  std::vector<QString> filenames;
+  for (auto&& name : this->subject_->get_segmentation_filenames()) {
+    filenames.push_back(QString::fromStdString(name));
+  }
+
+  return filenames;
 }
 
 //---------------------------------------------------------------------------
