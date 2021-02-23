@@ -38,6 +38,9 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
   this->ui_->blur_checkbox->setToolTip("Blur/smooth image segmentation");
   this->ui_->blur_sigma->setToolTip("Gaussian blur sigma");
   this->ui_->fastmarching_checkbox->setToolTip("Create distance transform");
+
+  connect(ui_->domain_box, qOverload<int>(&QComboBox::currentIndexChanged),
+          this, &GroomTool::domain_changed);
 }
 
 //---------------------------------------------------------------------------
@@ -241,7 +244,6 @@ void GroomTool::activate()
     }
   }
 
-
   if (subjects.size() > 0 && subjects[0]->get_domain_types().size() > 0) {
     if (subjects[0]->get_domain_types()[0] == DomainType::Image) {
       this->ui_->stacked_widget->setCurrentWidget(this->ui_->image_page);
@@ -275,6 +277,12 @@ void GroomTool::shutdown_threads()
       std::cerr << "done waiting...\n";
     }
   }
+
+}
+
+//---------------------------------------------------------------------------
+void GroomTool::domain_changed()
+{
 
 }
 
