@@ -125,11 +125,16 @@ private:
   /////////////////////////
   // Geodesic distances
 
-  // Use euclidean distance instead if false
+  /*
+   * It is extremely expensive to compute geodesics on meshes with a large number of triangles. Therefore, we use a
+   * decimated version of the mesh to compute geodesics. We keep around another VtkMeshWrapper(to continue to have
+   * particle_triangles_ and other niceties) just for geodesic distance computation.
+   */
   bool is_geodesics_enabled_{true};
+  std::unique_ptr<VtkMeshWrapper> geo_child_{nullptr};
 
   // Each cache entry stores (3*V + 9*F) double precision numbers
-  size_t max_cache_entries_{1024};
+  size_t max_cache_entries_{512*8};
 
   // Cache to store information for geodesics
   igl::HeatGeodesicsData<double> geo_heat_data_;
@@ -139,6 +144,8 @@ private:
 
   // Cache for gradient of geodesic distances from a triangle
   mutable FixedSizeCache<int, std::array<Eigen::MatrixXd, 3>> geo_grad_cache_;
+
+  bool IsParent() const { return geo_child_ != nullptr; }
 
   // Return a version of this mesh decimated to contain ~target_tris triangles
   vtkSmartPointer<vtkPolyData> Decimated(unsigned long target_tris) const;
@@ -161,10 +168,10 @@ private:
   // This reference maybe invalid once this function is called again
   const std::array<Eigen::MatrixXd, 3>& GradGeodesicsFromTriangle(int f) const;
 
-  // The geodesics maintain a secondary particle to triangle cache because it has a much stricter criteria for invalidation:
-  // an entry is invalid even if the barycentric coord changes
-  //todo try to reconcile this with particle_triangles_
-  mutable std::vector<int> geo_particle_triangles_;
-  mutable std::vector<Eigen::Vector3d> geo_particle_barys_;
+  // Store some info about the last query. This accelerates the computation because the optimizer generally asks for the
+  // distances _from_ the same point as the previous query.
+  mutable int geo_lq_pidx_{-1};
+  mutable int geo_lq_face_{-1};
+  mutable Eigen::Vector3d geo_lq_bary_;
 };
 }
