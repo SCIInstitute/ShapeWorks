@@ -125,13 +125,7 @@ private:
   /////////////////////////
   // Geodesic distances
 
-  /*
-   * It is extremely expensive to compute geodesics on meshes with a large number of triangles. Therefore, we use a
-   * decimated version of the mesh to compute geodesics. We keep around another VtkMeshWrapper(to continue to have
-   * particle_triangles_ and other niceties) just for geodesic distance computation.
-   */
   bool is_geodesics_enabled_{true};
-  std::unique_ptr<VtkMeshWrapper> geo_child_{nullptr};
 
   // Each cache entry stores (3*V + 9*F) double precision numbers
   size_t max_cache_entries_{512*8};
@@ -144,8 +138,6 @@ private:
 
   // Cache for gradient of geodesic distances from a triangle
   mutable FixedSizeCache<int, std::array<Eigen::MatrixXd, 3>> geo_grad_cache_;
-
-  bool IsParent() const { return geo_child_ != nullptr; }
 
   // Return a version of this mesh decimated to contain ~target_tris triangles
   vtkSmartPointer<vtkPolyData> Decimated(unsigned long target_tris) const;

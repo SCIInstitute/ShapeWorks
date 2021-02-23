@@ -99,23 +99,11 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data, bool is_p
   Eigen::MatrixXi F;
   this->GetIGLMesh(V, F);
   this->ComputeGradOperator(V, F);
-
-  if(is_parent) {
-    this->ComputeGradN(V, F);
-
-    if(is_geodesics_enabled_) {
-      auto decimated = this->Decimated(10000);
-      this->geo_child_ = std::make_unique<VtkMeshWrapper>(decimated, false);
-    }
-  } else {
-    // Child doesn't need gradient of normals
-    this->PrecomputeGeodesics(V, F);
-  }
+  this->ComputeGradN(V, F);
+  this->PrecomputeGeodesics(V, F);
 }
 
 //---------------------------------------------------------------------------
-//todo change these APIs to take const PointType&
-//todo just make a separate API for ComputeGradDistance, this one seems excessive
 double VtkMeshWrapper::ComputeDistance(const PointType& pt_a, int idx_a,
                                        const PointType& pt_b, int idx_b, VectorType* out_grad) const
 {
@@ -127,11 +115,6 @@ double VtkMeshWrapper::ComputeDistance(const PointType& pt_a, int idx_a,
       }
     }
     return pt_a.EuclideanDistanceTo(pt_b);
-  }
-
-  // if we are not the decimated mesh, delegate distance computation to that
-  if(IsParent()) {
-    return geo_child_->ComputeDistance(pt_a, idx_a, pt_b, idx_b, out_grad);
   }
 
   // Find the triangle for the point a. If this was the same as the previous query, just used that cached value
@@ -149,7 +132,7 @@ double VtkMeshWrapper::ComputeDistance(const PointType& pt_a, int idx_a,
   }
 
   // Find the triangle for the point b
-  //todo caching the bary for point a results in nearly 2X speedup. implement the same here
+  // (some initial experiments at caching these like we do for point_a proved to be unfruitful. no significant perf gain)
   face_b = ComputeFaceAndWeights(pt_b, idx_b, bary_b);
 
   // The geodesics(and more importantly, its gradient) are very inaccurate if both the points are on the
@@ -230,6 +213,7 @@ PointType VtkMeshWrapper::GeodesicWalk(PointType p, int idx,
     }
 
     particle_triangles_[idx] = ending_face;
+    geo_lq_pidx_ = -1;
 
     this->CalculateNormalAtPoint(new_point_pt, idx);
   }
