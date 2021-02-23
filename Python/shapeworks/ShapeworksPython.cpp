@@ -396,7 +396,8 @@ PYBIND11_MODULE(shapeworks, m)
   .def("scale", [](Image& image, const std::vector<double>& v) {
     return image.scale(makeVector({v[0], v[1], v[2]}));
   }, "scale image around center (not origin)", "v"_a)
-  .def("rotate",                &Image::rotate, "rotate around center (not origin) using axis (default z-axis) by angle (in radians)", "angle"_a, "axis"_a)
+  .def("rotate",                py::overload_cast<const double, const Vector3&>(&Image::rotate), "rotate around center (not origin) using axis (default z-axis) by angle (in radians)", "angle"_a, "axis"_a)
+  .def("rotate",                py::overload_cast<const double, Axis>(&Image::rotate), "rotate around center (not origin) using axis (default z-axis) by angle (in radians)", "angle"_a, "axis"_a)
   .def("rotate", [](Image& image, const double angle, const std::vector<double>& v) {
     return image.rotate(angle, makeVector({v[0], v[1], v[2]}));
   }, "rotate around center (not origin) using axis (default z-axis) by angle (in radians)", "angle"_a, "axis"_a)
