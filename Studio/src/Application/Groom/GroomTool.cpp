@@ -230,6 +230,18 @@ void GroomTool::set_session(QSharedPointer<Session> session)
 void GroomTool::activate()
 {
   auto subjects = this->session_->get_project()->get_subjects();
+
+  auto domain_names = this->session_->get_project()->get_domain_names();
+  this->ui_->domain_box->setVisible(domain_names.size() > 1);
+
+  if (domain_names.size() > this->ui_->domain_box->count()) {
+    this->ui_->domain_box->clear();
+    for (auto&& item : domain_names) {
+      ui_->domain_box->addItem(QString::fromStdString(item));
+    }
+  }
+
+
   if (subjects.size() > 0 && subjects[0]->get_domain_types().size() > 0) {
     if (subjects[0]->get_domain_types()[0] == DomainType::Image) {
       this->ui_->stacked_widget->setCurrentWidget(this->ui_->image_page);

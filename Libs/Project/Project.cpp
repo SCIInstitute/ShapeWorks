@@ -109,21 +109,7 @@ int Project::get_number_of_subjects()
 //---------------------------------------------------------------------------
 int Project::get_number_of_domains_per_subject()
 {
-  auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
-  if (!seg_columns.empty()) {
-    return seg_columns.size();
-  }
-
-  auto groom_columns = this->get_matching_columns(GROOMED_PREFIX);
-  if (!groom_columns.empty()) {
-    return groom_columns.size();
-  }
-
-  /// TODO: when only point files are specified,
-  /// the user has to specify somewhere how many domains there are (if more than one)
-
-  // default 1
-  return 1;
+  return this->get_domain_names().size();
 }
 
 //---------------------------------------------------------------------------
@@ -657,6 +643,35 @@ std::string Project::get_filename()
 void Project::set_filename(std::string filename)
 {
   this->filename_ = filename;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Project::get_domain_names()
+{
+  auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
+  if (!seg_columns.empty()) {
+    std::vector<std::string> names;
+    for (auto&& item : seg_columns) {
+      names.push_back(item.erase(0,std::strlen(SEGMENTATION_PREFIX)));
+    }
+    return names;
+  }
+
+  auto groom_columns = this->get_matching_columns(GROOMED_PREFIX);
+  if (!groom_columns.empty()) {
+    std::vector<std::string> names;
+    for (auto&& item : seg_columns) {
+      names.push_back(item.erase(0,std::strlen(GROOMED_PREFIX)));
+    }
+    return names;
+  }
+
+  /// TODO: when only point files are specified,
+  /// the user has to specify somewhere how many domains there are (if more than one)
+
+  // default 1
+  std::vector<std::string> list{"file"};
+  return list;
 }
 
 

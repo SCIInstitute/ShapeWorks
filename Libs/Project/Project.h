@@ -55,6 +55,9 @@ public:
   //! Return the number of domains
   int get_number_of_domains_per_subject();
 
+  //! Return the domain names (e.g. femur, pelvis, etc)
+  std::vector<std::string> get_domain_names();
+
   //! Return the list of Subjects
   std::vector<std::shared_ptr<Subject>>& get_subjects();
 
