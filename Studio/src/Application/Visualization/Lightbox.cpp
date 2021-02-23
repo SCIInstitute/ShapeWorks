@@ -1,8 +1,5 @@
 #include <QPixmap>
 
-#include <itkeigen/Eigen/Dense>
-#include <itkeigen/Eigen/Sparse>
-
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkQImageToImageSource.h>
