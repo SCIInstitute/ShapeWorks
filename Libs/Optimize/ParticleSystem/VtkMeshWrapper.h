@@ -25,7 +25,8 @@ public:
 
   ~VtkMeshWrapper() = default;
 
-  double ComputeDistance(PointType pointa, int idxa, PointType pointb, int idxb, VectorType* out_grad) const override;
+  double ComputeDistance(const PointType& pointa, int idxa,
+                         const PointType& pointb, int idxb, VectorType* out_grad) const override;
 
   PointType GeodesicWalk(PointType p, int idx, VectorType vector) const override;
 

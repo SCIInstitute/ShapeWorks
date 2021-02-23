@@ -54,7 +54,9 @@ TriMeshWrapper::TriMeshWrapper(std::shared_ptr<trimesh::TriMesh> mesh)
   kd_tree_ = std::make_shared<KDtree>(mesh_->vertices);
 }
 
-double TriMeshWrapper::ComputeDistance(PointType pointa, int idx_a, PointType pointb, int idx_b, vnl_vector_fixed<double, 3>* out_grad) const
+double TriMeshWrapper::ComputeDistance(const PointType& pointa, int idx_a,
+                                       const PointType& pointb, int idx_b,
+                                       vnl_vector_fixed<double, 3>* out_grad) const
 {
   if(out_grad != nullptr) {
     for(int i=0; i<DIMENSION; i++) {

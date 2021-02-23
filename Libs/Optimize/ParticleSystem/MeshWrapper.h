@@ -14,8 +14,8 @@ public:
   typedef typename itk::ParticleDomain::GradNType GradNType;
 
   // Computed distance between points. If out_grad != nullptr, returns the gradient of the distance in that vector
-  virtual double ComputeDistance(PointType pointa, int idx_a,
-                                 PointType pointb, int idx_b,
+  virtual double ComputeDistance(const PointType& pointa, int idx_a,
+                                 const PointType& pointb, int idx_b,
                                  vnl_vector_fixed<double, 3> *out_grad=nullptr) const = 0;
 
   // Returns updated point position after applying the update vector to the initial position.
