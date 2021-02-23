@@ -21,7 +21,7 @@ public:
   using NormalType = vnl_vector_fixed<float, DIMENSION>;
   using VectorType = vnl_vector_fixed<double, DIMENSION>;
 
-  explicit VtkMeshWrapper(vtkSmartPointer<vtkPolyData> mesh, bool is_parent=true);
+  explicit VtkMeshWrapper(vtkSmartPointer<vtkPolyData> mesh);
 
   ~VtkMeshWrapper() = default;
 
