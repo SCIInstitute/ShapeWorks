@@ -448,6 +448,16 @@ bool AnalysisTool::compute_stats()
     return false;
   }
 
+  // consistency check
+  int point_size = points[0].size();
+  for (auto&& p : points) {
+    if (p.size() != point_size) {
+      this->handle_error("Inconsistency in data, particle files must contain the same number of points");
+      return false;
+    }
+  }
+
+
   this->stats_.ImportPoints(points, group_ids);
   this->stats_.ComputeModes();
 
