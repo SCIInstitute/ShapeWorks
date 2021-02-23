@@ -193,7 +193,7 @@ void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image,
 
 //---------------------------------------------------------------------------
 void StudioMesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double> positions,
-                                             itkeigen::VectorXf scalar_values)
+                                             Eigen::VectorXf scalar_values)
 {
 
   int num_points = positions.size() / 3;
