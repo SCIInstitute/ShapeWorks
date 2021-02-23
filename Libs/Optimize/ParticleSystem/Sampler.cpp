@@ -284,16 +284,12 @@ void Sampler::ReInitialize()
 
 void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh)
 {
-  if(mesh == nullptr) {
-    throw std::runtime_error("Sampler::AddMesh received null mesh");
-  }
-
   auto domain = itk::MeshDomain::New();
-  domain->SetMesh(mesh);
-
   m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
-
-  this->m_Spacing = 1;
+  if (mesh) {
+    this->m_Spacing = 1;
+    domain->SetMesh(mesh);
+  }
   m_DomainList.push_back(domain);
 }
 
