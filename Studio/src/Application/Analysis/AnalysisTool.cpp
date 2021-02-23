@@ -1034,6 +1034,10 @@ void AnalysisTool::initialize_mesh_warper()
     QSharedPointer<Shape> median_shape = this->session_->get_shapes()[median];
     vtkSmartPointer<vtkPolyData> poly_data = median_shape->get_groomed_mesh(true)->get_poly_data();
 
+    if (!poly_data) {
+      STUDIO_LOG_ERROR("Unable to set reference mesh, groomed mesh is unavailable");
+      return;
+    }
     this->session_->get_mesh_manager()->get_mesh_warper()->set_reference_mesh(poly_data,
                                                                               median_shape->get_local_correspondence_points());
   }
