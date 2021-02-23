@@ -100,7 +100,10 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
   this->GetIGLMesh(V, F);
   this->ComputeGradOperator(V, F);
   this->ComputeGradN(V, F);
-  this->PrecomputeGeodesics(V, F);
+
+  if(is_geodesics_enabled_) {
+    this->PrecomputeGeodesics(V, F);
+  }
 }
 
 //---------------------------------------------------------------------------

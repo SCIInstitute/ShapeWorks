@@ -128,7 +128,7 @@ private:
   bool is_geodesics_enabled_{true};
 
   // Each cache entry stores (3*V + 9*F) double precision numbers
-  size_t max_cache_entries_{512*8};
+  size_t max_cache_entries_{512*3};
 
   // Cache to store information for geodesics
   igl::HeatGeodesicsData<double> geo_heat_data_;
