@@ -1028,7 +1028,8 @@ void AnalysisTool::initialize_mesh_warper()
     this->compute_stats();
     int median = this->stats_.ComputeMedianShape(-32); //-32 = both groups
 
-    if (median >= this->session_->get_num_shapes()) {
+    if (median < 0 || median >= this->session_->get_num_shapes()) {
+      STUDIO_LOG_ERROR("Unable to set reference mesh, stats returned invalid median index");
       return;
     }
     QSharedPointer<Shape> median_shape = this->session_->get_shapes()[median];
