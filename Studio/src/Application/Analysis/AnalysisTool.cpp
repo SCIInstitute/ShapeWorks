@@ -448,6 +448,16 @@ bool AnalysisTool::compute_stats()
     return false;
   }
 
+  // consistency check
+  int point_size = points[0].size();
+  for (auto&& p : points) {
+    if (p.size() != point_size) {
+      this->handle_error("Inconsistency in data, particle files must contain the same number of points");
+      return false;
+    }
+  }
+
+
   this->stats_.ImportPoints(points, group_ids);
   this->stats_.ComputeModes();
 
@@ -1028,7 +1038,8 @@ void AnalysisTool::initialize_mesh_warper()
     this->compute_stats();
     int median = this->stats_.ComputeMedianShape(-32); //-32 = both groups
 
-    if (median >= this->session_->get_num_shapes()) {
+    if (median < 0 || median >= this->session_->get_num_shapes()) {
+      STUDIO_LOG_ERROR("Unable to set reference mesh, stats returned invalid median index");
       return;
     }
     QSharedPointer<Shape> median_shape = this->session_->get_shapes()[median];

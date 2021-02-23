@@ -125,12 +125,13 @@ void OptimizeTool::handle_optimize_complete()
   auto global = this->optimize_->GetGlobalPoints();
   this->session_->update_points(local, true);
   this->session_->update_points(global, false);
-  //this->session_->set_reconstructed_present(
-//    local.size() == global.size() && global.size() > 1);
   this->session_->calculate_reconstructed_samples();
   this->session_->get_project()->store_subjects();
   emit progress(100);
-  emit message("Optimize Complete");
+
+  std::string duration = QString::number(this->elapsed_timer_.elapsed() / 1000.0, 'f',
+                                         1).toStdString();
+  emit message("Optimize Complete.  Duration: " + duration + " seconds");
   emit optimize_complete();
   this->update_run_button();
 }
@@ -155,6 +156,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
   this->store_params();
   emit message("Please wait: running optimize step...");
 
+  this->elapsed_timer_.start();
   this->optimize_ = QSharedPointer<QOptimize>::create();
 
   this->clear_particles();
