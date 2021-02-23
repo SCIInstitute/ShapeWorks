@@ -98,24 +98,13 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data, bool is_p
   Eigen::MatrixXd V;
   Eigen::MatrixXi F;
   this->GetIGLMesh(V, F);
+
   this->ComputeGradOperator(V, F);
-
-  if(is_parent) {
-    this->ComputeGradN(V, F);
-
-    if(is_geodesics_enabled_) {
-      auto decimated = this->Decimated(10000);
-      this->geo_child_ = std::make_unique<VtkMeshWrapper>(decimated, false);
-    }
-  } else {
-    // Child doesn't need gradient of normals
-    this->PrecomputeGeodesics(V, F);
-  }
+  this->ComputeGradN(V, F);
+  this->PrecomputeGeodesics(V, F);
 }
 
 //---------------------------------------------------------------------------
-//todo change these APIs to take const PointType&
-//todo just make a separate API for ComputeGradDistance, this one seems excessive
 double VtkMeshWrapper::ComputeDistance(const PointType& pt_a, int idx_a,
                                        const PointType& pt_b, int idx_b, VectorType* out_grad) const
 {
@@ -129,28 +118,43 @@ double VtkMeshWrapper::ComputeDistance(const PointType& pt_a, int idx_a,
     return pt_a.EuclideanDistanceTo(pt_b);
   }
 
-  // if we are not the decimated mesh, delegate distance computation to that
-  if(IsParent()) {
-    return geo_child_->ComputeDistance(pt_a, idx_a, pt_b, idx_b, out_grad);
+  // Ensure our bary cache is big enough. We trust that the user calls "InvalidateParticle" as necessary
+  const auto idx_max = std::max(idx_a, idx_b);
+  if(geo_particle_triangles_.size() <= idx_max) {
+    geo_particle_triangles_.resize(idx_max+1, -1);
+  }
+  if(geo_particle_barys_.size() <= idx_max) {
+    geo_particle_barys_.resize(idx_max+1);
   }
 
-  // Find the triangle for the point a. If this was the same as the previous query, just used that cached value
   int face_a, face_b;
   vec3 bary_a, bary_b;
-  if(geo_lq_pidx_ == idx_a) {
-    face_a = geo_lq_face_;
-    bary_a = geo_lq_bary_;
-  } else {
-    face_a = ComputeFaceAndWeights(pt_a, idx_a, bary_a);
 
-    geo_lq_pidx_ = idx_a;
-    geo_lq_face_ = face_a;
-    geo_lq_bary_ = bary_a;
+  if(idx_a == -1) {
+    face_a = ComputeFaceAndWeights(pt_a, idx_a, bary_a);
+  } else {
+    if(geo_particle_triangles_[idx_a] != -1) {
+      face_a = geo_particle_triangles_[idx_a];
+      bary_a = geo_particle_barys_[idx_a];
+    } else {
+      face_a = ComputeFaceAndWeights(pt_a, idx_a, bary_a);
+      geo_particle_triangles_[idx_a] = face_a;
+      geo_particle_barys_[idx_a] = bary_a;
+    }
   }
 
-  // Find the triangle for the point b
-  //todo caching the bary for point a results in nearly 2X speedup. implement the same here
-  face_b = ComputeFaceAndWeights(pt_b, idx_b, bary_b);
+  if(idx_b == -1) {
+    face_b = ComputeFaceAndWeights(pt_b, idx_b, bary_b);
+  } else {
+    if(geo_particle_triangles_[idx_b] != -1) {
+      face_b = geo_particle_triangles_[idx_b];
+      bary_b = geo_particle_barys_[idx_b];
+    } else {
+      face_b = ComputeFaceAndWeights(pt_b, idx_b, bary_b);
+      geo_particle_triangles_[idx_b] = face_b;
+      geo_particle_barys_[idx_b] = bary_b;
+    }
+  }
 
   // The geodesics(and more importantly, its gradient) are very inaccurate if both the points are on the
   // same face, or share an edge. In this case, just return the euclidean distance
@@ -228,8 +232,12 @@ PointType VtkMeshWrapper::GeodesicWalk(PointType p, int idx,
     if (idx >= particle_triangles_.size()) {
       particle_triangles_.resize(idx + 1, -1);
     }
-
     particle_triangles_[idx] = ending_face;
+
+    if (idx >= geo_particle_triangles_.size()) {
+      geo_particle_triangles_.resize(idx + 1, -1);
+    }
+    geo_particle_triangles_[idx] = -1;
 
     this->CalculateNormalAtPoint(new_point_pt, idx);
   }
@@ -252,13 +260,9 @@ VectorType
 VtkMeshWrapper::ProjectVectorToSurfaceTangent(const PointType &pointa, int idx,
                                               VectorType &vector) const
 {
-  double point[3];
-  point[0] = pointa[0];
-  point[1] = pointa[1];
-  point[2] = pointa[2];
   double closest_point[3];
 
-  int faceIndex = this->GetTriangleForPoint(point, idx, closest_point);
+  int faceIndex = this->GetTriangleForPoint(pointa.GetDataPointer(), idx, closest_point);
 
   double* normal = this->poly_data_->GetCellData()->GetNormals()->GetTuple(faceIndex);
 
@@ -762,7 +766,11 @@ void VtkMeshWrapper::InvalidateParticle(int idx)
     particle_triangles_.resize(idx + 1, -1);
   }
   this->particle_triangles_[idx] = -1;
-  this->geo_lq_pidx_ = -1;
+
+  if (idx >= geo_particle_triangles_.size()) {
+    geo_particle_triangles_.resize(idx + 1, -1);
+  }
+  this->geo_particle_triangles_[idx] = -1;
 }
 
 //---------------------------------------------------------------------------
