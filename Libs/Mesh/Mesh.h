@@ -166,6 +166,7 @@ public:
 
 public:
   // todo: these two function should be private, but unable to test them b/c can't find gtest.h
+  // https://github.com/SCIInstitute/ShapeWorks/issues/1042
 
   /// compute origin of volume that would contain the rasterization of each mesh
   // FRIEND_TEST(MeshTests, rasterizationOriginTest1);
