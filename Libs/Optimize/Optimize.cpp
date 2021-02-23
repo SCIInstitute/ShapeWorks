@@ -2232,12 +2232,6 @@ void Optimize::SetGeodesicsEnabled(bool is_enabled)
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetGeodesicsDecimationNumTris(unsigned long n)
-{
-  this->m_geodesic_decimation_n_tris = n;
-}
-
-//---------------------------------------------------------------------------
 void Optimize::SetGeodesicsCacheSize(unsigned long n)
 {
   this->m_geodesic_cache_size = n;

@@ -271,9 +271,6 @@ public:
   //! Set whether or not geodesics are enabled
   void SetGeodesicsEnabled(bool is_enabled);
 
-  //! Set target number of triangles for geodesic decimation
-  void SetGeodesicsDecimationNumTris(unsigned long n);
-
   //! Set cache size for geodesics
   void SetGeodesicsCacheSize(unsigned long n);
 
@@ -397,7 +394,6 @@ protected:
   int m_use_shape_statistics_after = -1;
   std::string m_python_filename;
   bool m_geodesics_enabled = false;
-  bool m_geodesic_decimation_n_tris = 7500;
   bool m_geodesic_cache_size = 1024;
 
   // Keeps track of which state the optimization is in.
