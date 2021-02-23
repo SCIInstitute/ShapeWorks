@@ -284,7 +284,7 @@ void Sampler::ReInitialize()
 
 void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh)
 {
-  itk::MeshDomain* domain = new itk::MeshDomain();
+  auto domain = itk::MeshDomain::New();
   m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
   if (mesh) {
     this->m_Spacing = 1;
