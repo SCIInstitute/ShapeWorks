@@ -32,6 +32,13 @@ struct FixedSizeCache {
       }
     }
 
+    // unsure if there's anything more meaningful we can do if the cache size is too small relative to the number of
+    // `taken` items.
+    if(to_keep.size() >= key2entry.size()) {
+      key2entry.clear();
+      return;
+    }
+
     // clear old cache entries
     key2entry.clear();
 
