@@ -99,13 +99,13 @@ bool MeshInfo::execute(const optparse::Values &options, SharedCommandData &share
   bool vertices = static_cast<bool>(options.get("vertices"));
   bool faces = static_cast<bool>(options.get("faces"));
   bool center = static_cast<bool>(options.get("center"));
-  bool centerofmass = static_cast<bool>(options.get("centerofmass"));
-  bool boundingbox = static_cast<bool>(options.get("boundingbox"));
-  bool fieldnames = static_cast<bool>(options.get("fieldnames"));
+  bool centerOfMass = static_cast<bool>(options.get("centerofmass"));
+  bool boundingBox = static_cast<bool>(options.get("boundingbox"));
+  bool fieldNames = static_cast<bool>(options.get("fieldnames"));
 
   // by default: print everything
   if (options.num_set() == 0)
-    vertices = faces = center = centerofmass = boundingbox = fieldnames = true;
+    vertices = faces = center = centerOfMass = boundingBox = fieldNames = true;
 
   if (vertices)
     std::cout << "number of points:      " << sharedData.mesh->numPoints() << std::endl;
@@ -113,11 +113,11 @@ bool MeshInfo::execute(const optparse::Values &options, SharedCommandData &share
     std::cout << "number of faces:       " << sharedData.mesh->numFaces() << std::endl;
   if (center)
     std::cout << "center:                " << sharedData.mesh->center() << std::endl;
-  if (centerofmass)
+  if (centerOfMass)
     std::cout << "center of mass (0,1]:  " << sharedData.mesh->centerOfMass() << std::endl;
-  if (boundingbox)
+  if (boundingBox)
     std::cout << "bounding box:          " << sharedData.mesh->boundingBox() << std::endl;
-  if (fieldnames) {
+  if (fieldNames) {
     auto fields = sharedData.mesh->getFieldNames();
     std::cout << "field names: ";
     for (auto field : fields) std::cout << field << " ";
@@ -153,9 +153,9 @@ bool Coverage::execute(const optparse::Values &options, SharedCommandData &share
   }
 
   const std::string otherMesh(static_cast<std::string>(options.get("name")));
-  bool allowbackintersections = static_cast<bool>(options.get("allowbackintersections"));
-  double anglethreshold = static_cast<double>(options.get("anglethreshold"));
-  double backsearchradius = static_cast<double>(options.get("backsearchradius"));
+  bool allowBackIntersections = static_cast<bool>(options.get("allowbackintersections"));
+  double angleThreshold = static_cast<double>(options.get("anglethreshold"));
+  double backSearchRadius = static_cast<double>(options.get("backsearchradius"));
 
   if (otherMesh.length() == 0)
   {
@@ -163,7 +163,7 @@ bool Coverage::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
-  sharedData.mesh->coverage(Mesh(otherMesh), allowbackintersections, anglethreshold, backsearchradius);
+  sharedData.mesh->coverage(Mesh(otherMesh), allowBackIntersections, angleThreshold, backSearchRadius);
   return sharedData.validMesh();
 }
 
@@ -223,9 +223,9 @@ bool Decimate::execute(const optparse::Values &options, SharedCommandData &share
 
   double reduction = static_cast<double>(options.get("reduction"));
   double angle = static_cast<double>(options.get("angle"));
-  bool preservetopology = static_cast<bool>(options.get("preservetopology"));
+  bool preserveTopology = static_cast<bool>(options.get("preservetopology"));
 
-  sharedData.mesh->decimate(reduction, angle, preservetopology);
+  sharedData.mesh->decimate(reduction, angle, preserveTopology);
   return sharedData.validMesh();
 }
 
@@ -278,8 +278,8 @@ bool ReflectMesh::execute(const optparse::Values &options, SharedCommandData &sh
     return false;
   }
 
-  std::string axis_str(static_cast<std::string>(options.get("axis")));
-  Axis axis(toAxis(axis_str));
+  std::string axisStr(static_cast<std::string>(options.get("axis")));
+  Axis axis(toAxis(axisStr));
 
   double originX = static_cast<double>(options.get("originx"));
   double originY = static_cast<double>(options.get("originy"));
@@ -639,14 +639,14 @@ bool FixMesh::execute(const optparse::Values &options, SharedCommandData &shared
     return false;
   }
 
-  bool smoothbefore = static_cast<bool>(options.get("smoothbefore"));
-  bool smoothafter = static_cast<bool>(options.get("smoothafter"));
+  bool smoothBefore = static_cast<bool>(options.get("smoothbefore"));
+  bool smoothAfter = static_cast<bool>(options.get("smoothafter"));
   double lambda = static_cast<double>(options.get("lambda"));
   int iterations = static_cast<int>(options.get("iterations"));
   bool decimate = static_cast<bool>(options.get("decimate"));
   double percentage = static_cast<double>(options.get("percentage"));
 
-  sharedData.mesh->fix(smoothbefore, smoothafter, lambda, iterations, decimate, percentage);
+  sharedData.mesh->fix(smoothBefore, smoothAfter, lambda, iterations, decimate, percentage);
   return sharedData.validMesh();
 }
 
