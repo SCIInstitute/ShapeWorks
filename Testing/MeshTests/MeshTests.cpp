@@ -196,8 +196,8 @@ TEST(MeshTests, scaleTest2)
 
 TEST(MeshTests, clipClosedSurfaceTest1)
 {
-  Point o({10.0, 0.0, 10.0});
   Vector v(makeVector({0, 850, 0}));
+  Point o({10.0, 0.0, 10.0});
 
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   femur.clipClosedSurface(makePlane(v, o));

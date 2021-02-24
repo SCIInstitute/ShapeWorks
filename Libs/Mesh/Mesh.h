@@ -78,6 +78,7 @@ public:
   /// computes surface to surface distance, compute method: POINT_TO_POINT (default) or POINT_TO_CELL
   Mesh& distance(const Mesh &target, const DistanceMethod method = POINT_TO_POINT);
 
+  /// clips a mesh using a cutting plane resulting in a closed surface
   Mesh& clipClosedSurface(const Plane plane);
 
   /// rasterizes mesh to create binary images, automatically computing size and origin if necessary

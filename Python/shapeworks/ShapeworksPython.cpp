@@ -558,6 +558,7 @@ PYBIND11_MODULE(shapeworks, m)
   }, "scale mesh", "v"_a)
   .def("boundingBox",           &Mesh::boundingBox, "computes bounding box of current mesh", "center"_a=false)
   .def("fix",                   &Mesh::fix, "quality control mesh", "smoothBefore"_a=true, "smoothAfter"_a=true, "lambda"_a=0.5, "iterations"_a=1, "decimate"_a=true, "percentage"_a=0.5)
+  .def("clipClosedSurface",     &Mesh::clipClosedSurface, "clips a mesh using a cutting plane resulting in a closed surface", "plane"_a)
   .def("toImage",
        [](Mesh& mesh, std::vector<double>& v, std::vector<unsigned>& d, std::vector<double>& p) -> decltype(auto) {
          return mesh.toImage(makeVector({v[0], v[1], v[2]}), Dims({d[0], d[1], d[2]}), Point({p[0], p[1], p[2]}));
