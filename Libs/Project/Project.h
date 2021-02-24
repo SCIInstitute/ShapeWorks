@@ -80,10 +80,11 @@ public:
   std::vector<std::string> get_group_values(const std::string& group_name) const;
 
   //! Retrieve parameters based on key
-  Parameters get_parameters(const std::string& name);
+  Parameters get_parameters(const std::string& name, const std::string& domain_name = "");
 
   //! Store parameters base on key
-  void set_parameters(const std::string& name, Parameters params);
+  void
+  set_parameters(const std::string& name, Parameters params, const std::string& domain_name = "");
 
   //! Store from subject list to spreadsheet
   void store_subjects();
@@ -129,7 +130,8 @@ private:
 
   void load_subjects();
 
-  int get_index_for_column(const std::string& name, bool create_if_not_found = false) const;
+  int get_index_for_column(const std::string& name, bool create_if_not_found = false,
+                           int sheet = 0) const;
 
   void save_string_column(const std::string& name, std::vector<std::string> items);
 

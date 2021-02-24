@@ -332,10 +332,11 @@ int Project::get_version() const
 }
 
 //---------------------------------------------------------------------------
-int Project::get_index_for_column(const std::string& name, bool create_if_not_found) const
+int
+Project::get_index_for_column(const std::string& name, bool create_if_not_found, int sheet) const
 {
 
-  xlnt::worksheet ws = this->wb_->sheet_by_index(0);
+  xlnt::worksheet ws = this->wb_->sheet_by_index(sheet);
 
   auto headers = ws.rows(false)[0];
 
@@ -411,7 +412,7 @@ bool Project::get_particles_present() const
 }
 
 //---------------------------------------------------------------------------
-Parameters Project::get_parameters(const std::string& name)
+Parameters Project::get_parameters(const std::string& name, const std::string& domain_name)
 {
   Parameters params;
   std::map<std::string, std::string> map;
@@ -427,6 +428,16 @@ Parameters Project::get_parameters(const std::string& name)
 
   auto rows = ws.rows(false);
 
+  int value_column = 1; // single domain
+  if (domain_name != "") {
+    for (int i = 1; i < ws.highest_column(); i++) {
+      auto item = rows[0][i];
+      if (rows[0][i].to_string() == "value_" + domain_name) {
+        value_column = i;
+      }
+    }
+  }
+
   for (int i = 1; i < rows.length(); i++) {
     std::string key = rows[i][0].to_string();
     std::string value = rows[i][1].to_string();
@@ -437,7 +448,8 @@ Parameters Project::get_parameters(const std::string& name)
 }
 
 //---------------------------------------------------------------------------
-void Project::set_parameters(const std::string& name, Parameters params)
+void
+Project::set_parameters(const std::string& name, Parameters params, const std::string& domain_name)
 {
   try {
     // remove the old sheet
@@ -451,12 +463,21 @@ void Project::set_parameters(const std::string& name, Parameters params)
     auto ws = this->wb_->create_sheet();
     ws.title(name);
 
-    ws.cell(xlnt::cell_reference(1, 1)).value("key");
-    ws.cell(xlnt::cell_reference(2, 1)).value("value");
+    int key_column = 1;
+    int value_column = 2;
+
+    if (domain_name == "") {
+      ws.cell(xlnt::cell_reference(1, 1)).value("key");
+      ws.cell(xlnt::cell_reference(2, 1)).value("value");
+    }
+    else {
+      key_column = this->get_index_for_column("key", true, ws.id());
+      value_column = this->get_index_for_column("value_" + domain_name, true, ws.id());
+    }
     int row = 2; // skip header
     for (const auto& kv : params.get_map()) {
-      ws.cell(xlnt::cell_reference(1, row)).value(kv.first);
-      ws.cell(xlnt::cell_reference(2, row)).value(kv.second);
+      ws.cell(xlnt::cell_reference(key_column, row)).value(kv.first);
+      ws.cell(xlnt::cell_reference(value_column, row)).value(kv.second);
       row++;
     }
   } catch (xlnt::exception& e) {
@@ -652,7 +673,7 @@ std::vector<std::string> Project::get_domain_names()
   if (!seg_columns.empty()) {
     std::vector<std::string> names;
     for (auto&& item : seg_columns) {
-      names.push_back(item.erase(0,std::strlen(SEGMENTATION_PREFIX)));
+      names.push_back(item.erase(0, std::strlen(SEGMENTATION_PREFIX)));
     }
     return names;
   }
@@ -661,7 +682,7 @@ std::vector<std::string> Project::get_domain_names()
   if (!groom_columns.empty()) {
     std::vector<std::string> names;
     for (auto&& item : seg_columns) {
-      names.push_back(item.erase(0,std::strlen(GROOMED_PREFIX)));
+      names.push_back(item.erase(0, std::strlen(GROOMED_PREFIX)));
     }
     return names;
   }
