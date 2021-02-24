@@ -77,10 +77,6 @@ INSTALL(TARGETS ComputeMeshGeodesics RUNTIME DESTINATION bin)
 #TARGET_LINK_LIBRARIES(GenerateFidsFiles ${ITK_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS GenerateFidsFiles RUNTIME DESTINATION bin)
 
-ADD_EXECUTABLE(ClipClosedSurface ClipClosedSurface.cxx)
-TARGET_LINK_LIBRARIES(ClipClosedSurface ${ITK_LIBRARIES} Mesh tinyxml)
-INSTALL(TARGETS ClipClosedSurface RUNTIME DESTINATION bin)
-
 #ADD_EXECUTABLE(ComputeCurvatureAndCoordFiles ComputeCurvatureAndCoordFiles.cxx)
 #TARGET_LINK_LIBRARIES(ComputeCurvatureAndCoordFiles ${ITK_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS ComputeCurvatureAndCoordFiles RUNTIME DESTINATION bin)

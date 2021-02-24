@@ -194,6 +194,18 @@ TEST(MeshTests, scaleTest2)
 //   ASSERT_TRUE(femur == ground_truth);
 // }
 
+TEST(MeshTests, clipClosedSurfaceTest1)
+{
+  Point o({10.0, 0.0, 10.0});
+  Vector v(makeVector({0, 850, 0}));
+
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.clipClosedSurface(makePlane(v, o));
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/clipClosed1.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
 TEST(MeshTests, rasterizationOriginTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
