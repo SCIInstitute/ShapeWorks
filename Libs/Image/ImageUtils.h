@@ -32,4 +32,15 @@ public:
 
 };
 
+/// wrapper for the itk gradient interpreter so it can be bound to python (can this be done better?)
+class VectorImageInterpolator
+{
+public:
+  VectorImageInterpolator(itk::SmartPointer<ImageUtils::GradientInterpolator> I) : interpolator(I) {}
+  Vector evaluate(Point p) { return toVector(interpolator->Evaluate(p)); }
+
+private:
+  itk::SmartPointer<ImageUtils::GradientInterpolator> interpolator;
+};
+
 } // shapeworks
