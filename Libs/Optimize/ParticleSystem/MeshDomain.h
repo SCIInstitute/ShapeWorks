@@ -102,6 +102,10 @@ public:
     double dist = meshWrapper->ComputeDistance(a, idx_a, b, idx_b);
     return dist * dist;
   }
+  inline bool IsWithinDistance(const PointType &a, int idx_a,
+                               const PointType &b, int idx_b, const double test_dist) const override {
+    return meshWrapper->IsWithinDistance(a, idx_a, b, idx_b, test_dist);
+  }
 
   void DeleteImages() override {
     // TODO Change this to a generic delete function
