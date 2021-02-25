@@ -20,7 +20,7 @@ void Example::buildParser()
   const std::string desc = "brief description of command";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--optionName").action("store").type("double").set_default(0.01).help("Description of optionName.");
+  parser.add_option("--optionname").action("store").type("double").set_default(0.01).help("Description of optionname.");
   //additional options... 
   
   Command::buildParser();
@@ -28,7 +28,7 @@ void Example::buildParser()
 
 bool Example::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  double optionName = static_cast<double>(options.get("optionName"));
+  double optionName = static_cast<double>(options.get("optionname"));
   //read additional options... 
 
   sharedData.image.example(optionName, ...);
@@ -52,22 +52,22 @@ void OptimizeCommand::buildParser()
 
 bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  const std::string& project_file(static_cast<std::string>(options.get("name")));
+  const std::string& projectFile(static_cast<std::string>(options.get("name")));
 
-  if (project_file.length() == 0)
+  if (projectFile.length() == 0)
   {
     std::cerr << "Must specify project name\n";
     return false;
   }
 
-  bool is_project = StringUtils::hasSuffix(project_file, "xlsx");
+  bool is_project = StringUtils::hasSuffix(projectFile, "xlsx");
 
   Optimize app;
   if (is_project) {
     try {
       // load spreadsheet project
       ProjectHandle project = std::make_shared<Project>();
-      project->load(project_file);
+      project->load(projectFile);
 
       // set up Optimize class based on project parameters
       OptimizeParameters params(project);
@@ -76,7 +76,7 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
       bool success = app.Run();
 
       if (success) {
-        project->save(project_file);
+        project->save(projectFile);
       }
 
       return success;
@@ -88,7 +88,7 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
   }
   else {
     OptimizeParameterFile param;
-    param.load_parameter_file(project_file.c_str(), &app);
+    param.load_parameter_file(projectFile.c_str(), &app);
     return app.Run();
   }
 }
@@ -109,20 +109,20 @@ void GroomCommand::buildParser()
 
 bool GroomCommand::execute(const optparse::Values& options, SharedCommandData& sharedData)
 {
-  const std::string& project_file(static_cast<std::string>(options.get("name")));
+  const std::string& projectFile(static_cast<std::string>(options.get("name")));
 
-  if (project_file.length() == 0) {
+  if (projectFile.length() == 0) {
     std::cerr << "Must specify project name\n";
     return false;
   }
 
   try {
     ProjectHandle project = std::make_shared<Project>();
-    project->load(project_file);
+    project->load(projectFile);
     Groom app(project);
     bool success = app.run();
     if (success) {
-      project->save(project_file);
+      project->save(projectFile);
     }
     return success;
   }
