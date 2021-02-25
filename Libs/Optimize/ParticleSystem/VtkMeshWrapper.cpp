@@ -23,8 +23,7 @@ static float epsilon = 1e-6;
 
 namespace {
 template<class FROM, class TO>
-inline TO convert(FROM &value)
-{
+inline TO convert(FROM &value) {
   TO converted;
   converted[0] = value[0];
   converted[1] = value[1];
@@ -34,8 +33,7 @@ inline TO convert(FROM &value)
 }
 
 template<class T>
-inline std::string PrintValue(T value)
-{
+inline std::string PrintValue(T value) {
   return "(" + std::to_string(value[0]) + ", " + std::to_string(value[1]) + ", " +
          std::to_string(value[2]) + ")";
 }
@@ -47,10 +45,9 @@ using PointType = VtkMeshWrapper::PointType;
 using GradNType = VtkMeshWrapper::GradNType;
 
 //---------------------------------------------------------------------------
-VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
-{
+VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data) {
   vtkSmartPointer<vtkTriangleFilter> triangle_filter =
-    vtkSmartPointer<vtkTriangleFilter>::New();
+          vtkSmartPointer<vtkTriangleFilter>::New();
   triangle_filter->SetInputData(poly_data);
   triangle_filter->Update();
 
@@ -101,19 +98,18 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
   this->ComputeGradOperator(V, F);
   this->ComputeGradN(V, F);
 
-  if(is_geodesics_enabled_) {
+  if (is_geodesics_enabled_) {
     this->PrecomputeGeodesics(V, F);
   }
 }
 
 //---------------------------------------------------------------------------
-double VtkMeshWrapper::ComputeDistance(const PointType& pt_a, int idx_a,
-                                       const PointType& pt_b, int idx_b, VectorType* out_grad) const
-{
+double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
+                                       const PointType &pt_b, int idx_b, VectorType *out_grad) const {
   // return euclidean if geodesics are not enabled
-  if(!is_geodesics_enabled_) {
-    if(out_grad != nullptr) {
-      for(int i=0; i<DIMENSION; i++) {
+  if (!is_geodesics_enabled_) {
+    if (out_grad != nullptr) {
+      for (int i = 0; i < DIMENSION; i++) {
         (*out_grad)[i] = pt_a[i] - pt_b[i];
       }
     }
@@ -123,7 +119,7 @@ double VtkMeshWrapper::ComputeDistance(const PointType& pt_a, int idx_a,
   // Find the triangle for the point a. If this was the same as the previous query, just used that cached value
   int face_a, face_b;
   vec3 bary_a, bary_b;
-  if(geo_lq_pidx_ == idx_a) {
+  if (geo_lq_pidx_ == idx_a) {
     face_a = geo_lq_face_;
     bary_a = geo_lq_bary_;
   } else {
@@ -140,9 +136,9 @@ double VtkMeshWrapper::ComputeDistance(const PointType& pt_a, int idx_a,
 
   // The geodesics(and more importantly, its gradient) are very inaccurate if both the points are on the
   // same face, or share an edge. In this case, just return the euclidean distance
-  if(face_a == face_b || AreFacesAdjacent(face_a, face_b)) {
-    if(out_grad != nullptr) {
-      for(int i=0; i<DIMENSION; i++) {
+  if (face_a == face_b || AreFacesAdjacent(face_a, face_b)) {
+    if (out_grad != nullptr) {
+      for (int i = 0; i < DIMENSION; i++) {
         (*out_grad)[i] = pt_a[i] - pt_b[i];
       }
     }
@@ -150,24 +146,24 @@ double VtkMeshWrapper::ComputeDistance(const PointType& pt_a, int idx_a,
   }
 
   // Define for convenience
-  const auto& faces = this->triangles_;
+  const auto &faces = this->triangles_;
 
   // Compute geodesic distance via barycentric approximation
   // Geometric Correspondence for Ensembles of Nonregular Shapes, Datar et al
   // https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3346950/
   double geo_dist = 0.0;
-  const auto& geo_from_a = GeodesicsFromTriangle(face_a);
-  for(int i=0; i<3; i++) {
-    const Eigen::VectorXd& geo_from_ai = geo_from_a[i];
+  const auto &geo_from_a = GeodesicsFromTriangle(face_a);
+  for (int i = 0; i < 3; i++) {
+    const Eigen::VectorXd &geo_from_ai = geo_from_a[i];
     const double g_i0 = geo_from_ai[faces[face_b]->GetPointId(0)];
     const double g_i1 = geo_from_ai[faces[face_b]->GetPointId(1)];
     const double g_i2 = geo_from_ai[faces[face_b]->GetPointId(2)];
-    const double g_ib = bary_b[0]*g_i0 + bary_b[1]*g_i1 + bary_b[2]*g_i2;
+    const double g_ib = bary_b[0] * g_i0 + bary_b[1] * g_i1 + bary_b[2] * g_i2;
     geo_dist += bary_a[i] * g_ib;
   }
 
   // Check if gradient is needed
-  if(out_grad == nullptr) {
+  if (out_grad == nullptr) {
     return geo_dist;
   }
 
@@ -175,16 +171,27 @@ double VtkMeshWrapper::ComputeDistance(const PointType& pt_a, int idx_a,
   Eigen::Map<Eigen::Vector3d> out_grad_eigen(out_grad->data_block());
 
   // Compute gradient of geodesics using barycentric approximation from point b over face a.
-  const auto& grad_geo_from_b = GradGeodesicsFromTriangle(face_b);
+  const auto &grad_geo_from_b = GradGeodesicsFromTriangle(face_b);
   out_grad_eigen = bary_b[0] * grad_geo_from_b[0].row(face_a)
-                 + bary_b[1] * grad_geo_from_b[1].row(face_a)
-                 + bary_b[2] * grad_geo_from_b[2].row(face_a);
+                   + bary_b[1] * grad_geo_from_b[1].row(face_a)
+                   + bary_b[2] * grad_geo_from_b[2].row(face_a);
 
   //todo double check this math
   out_grad_eigen.normalize();
   out_grad_eigen *= geo_dist;
 
   return geo_dist;
+}
+
+//---------------------------------------------------------------------------
+bool VtkMeshWrapper::IsWithinDistance(const PointType &pt_a, int idx_a,
+                                      const PointType &pt_b, int idx_b, double test_dist) const
+{
+  if(!is_geodesics_enabled_) {
+    return pt_a.SquaredEuclideanDistanceTo(pt_b) < test_dist*test_dist;
+  }
+  const double dist = ComputeDistance(pt_a, idx_a, pt_b, idx_b, nullptr);
+  return dist < test_dist;
 }
 
 //---------------------------------------------------------------------------

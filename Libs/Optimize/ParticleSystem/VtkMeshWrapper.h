@@ -28,6 +28,9 @@ public:
   double ComputeDistance(const PointType& pointa, int idxa,
                          const PointType& pointb, int idxb, VectorType* out_grad) const override;
 
+  bool IsWithinDistance(const PointType& pointa, int idxa,
+                        const PointType& pointb, int idxb, double test_dist) const override;
+
   PointType GeodesicWalk(PointType p, int idx, VectorType vector) const override;
 
   VectorType ProjectVectorToSurfaceTangent(const PointType &pointa, int idx,

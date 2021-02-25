@@ -53,9 +53,15 @@ ParticleSurfaceNeighborhood<TImage>
   // Add any point whose distance from center is less than radius to the return list
   for (auto it = pointlist.begin(); it != pointlist.end(); it++)
   {
-    double distance = this->GetDomain()->Distance(center, idx, (*it)->Point, (*it)->Index);
+    const auto& pt_b = (*it)->Point;
+    const auto& idx_b = (*it)->Index;
 
-    if (distance < radius && distance > 0.0 )
+    // we are not a neighbor of ourself.
+    if(idx_b == idx) {
+      continue;
+    }
+
+    if (domain->IsWithinDistance(center, idx, pt_b, idx_b, radius))
     {
       ret.push_back( **it );
 
