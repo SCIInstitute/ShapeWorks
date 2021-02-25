@@ -731,7 +731,19 @@ void Optimize::Initialize()
     }
     */
 
-    m_sampler->GetParticleSystem()->AdvancedAllParticleSplitting(epsilon);
+    // Splits particles
+    // Strategy: For each domain (for all samples), we make very corresponding particle
+    //      go in a random direction with magnitude epsilon/5. Then the shifted particles
+    //      in each domain are tested so that no particle will violate any inequality constraints
+    //      after its split.
+    for (int i = 0; i < m_domains_per_shape; i++) {
+        //cout << "i: " << i << std::endl;
+        if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[i]) {
+            //std::cout << "B4 Get num particles " << m_sampler->GetParticleSystem()->GetNumberOfParticles(i) << " Num particles " << m_number_of_particles[i] << std::endl;
+            m_sampler->GetParticleSystem()->AdvancedAllParticleSplitting(epsilon, m_domains_per_shape, i);
+            //std::cout << "After Get num particles " << m_sampler->GetParticleSystem()->GetNumberOfParticles(i) << " Num particles " << m_number_of_particles[i] << std::endl;
+        }
+    }
 
     m_sampler->GetParticleSystem()->SynchronizePositions();
 

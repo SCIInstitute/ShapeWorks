@@ -277,14 +277,19 @@ ParticleSystem<VDimension>
 }
 
 template<unsigned int VDimension>
-void ParticleSystem<VDimension>::AdvancedAllParticleSplitting(double epsilon)
+void ParticleSystem<VDimension>::AdvancedAllParticleSplitting(double epsilon, size_t domains_per_shape, size_t dom_to_process)
 {
   size_t num_doms = this->GetNumberOfDomains();
 
   std::vector<std::vector<PointType> > lists;
 
   for (size_t domain = 0; domain < num_doms; domain++) {
+      //std::cout << "Updating dom " << domain << " which currently has size " << GetPositions(domain)->GetSize() << " First element is " << GetPositions(domain)->Get(0) << std::endl;
+  }
+
+  for (size_t domain = dom_to_process; domain < num_doms; domain+= domains_per_shape) {
     std::vector<PointType> list;
+
     for (auto k=0; k<GetPositions(domain)->GetSize(); k++) {
       list.push_back(GetPositions(domain)->Get(k));
     }
@@ -340,21 +345,22 @@ void ParticleSystem<VDimension>::AdvancedAllParticleSplitting(double epsilon)
             newpos[k] = lists[j][i][k] + epsilon * random[k] / 5.;
           }
           // Go to surface
-          if (!this->m_DomainFlags[j] &&
-              !this->GetDomain(j)->GetConstraints()->IsAnyViolated(newpos)) {
-            this->GetDomain(j)->ApplyConstraints(newpos, -1);
+          if (!this->m_DomainFlags[dom_to_process+j*domains_per_shape] &&
+              !this->GetDomain(dom_to_process+j*domains_per_shape)->GetConstraints()->IsAnyViolated(newpos)) {
+            this->GetDomain(dom_to_process+j*domains_per_shape)->ApplyConstraints(newpos, -1);
           }
           newposs_good.push_back(newpos);
           // Check for plane constraint violations
-          if (this->GetDomain(j)->GetConstraints()->IsAnyViolated(newpos)) {
+          if (this->GetDomain(dom_to_process+j*domains_per_shape)->GetConstraints()->IsAnyViolated(newpos)) {
             good = false;
+            //std::cout << "violation " << lists[j][i] << " new point " << std::endl;
             break;
           }
         }
 
         if (good) {
           for (size_t j = 0; j < lists.size(); j++) {
-            this->AddPosition(newposs_good[j], j, 0);
+            this->AddPosition(newposs_good[j], dom_to_process+j*domains_per_shape, 0);
             // Debuggg
             //std::cout << "Domain " << j << " Curr Pos " << lists[j][i] << " random "
             // << random  << " epsilon " << epsilon << " picked " << newposs_good[j] << std::endl;

@@ -20,7 +20,6 @@ public:
     double distance_from_center = sqrt(pow(pt(0)-center(0),2)+
                                         pow(pt(1)-center(1),2)+
                                         pow(pt(2)-center(2),2));
-
     if(distance_from_center < radius) return true;
     return false;
   }

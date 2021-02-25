@@ -90,7 +90,7 @@ def Run_Pipeline(args):
     #     os.makedirs(pointDir)
 
     parameterDictionary = {
-        "number_of_particles" : [512,512],
+        "number_of_particles" : [8,32],
         "use_normals": [0,0],
         "normal_weight": [1.0,1.0],
         "checkpointing_interval" : 200,
@@ -107,7 +107,7 @@ def Run_Pipeline(args):
         "procrustes_interval" : 0,
         "procrustes_scaling" : 0,
         "save_init_splits" : 0,
-        "verbosity" : 3
+        "verbosity" : 0
 
       }
 
