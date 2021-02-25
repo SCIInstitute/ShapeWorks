@@ -64,7 +64,7 @@ OptimizeTool::OptimizeTool()
   ui_->iterations_per_split->setValidator(above_zero);
   ui_->optimization_iterations->setValidator(zero_and_up);
   ui_->normals_strength->setValidator(double_validator);
-  ui_->procrustes_interval->setValidator(above_zero);
+  ui_->procrustes_interval->setValidator(zero_and_up);
   ui_->multiscale_particles->setValidator(above_zero);
 
   line_edits_.push_back(ui_->number_of_particles);
