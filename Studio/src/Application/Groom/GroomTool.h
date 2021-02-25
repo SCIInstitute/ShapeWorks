@@ -85,5 +85,7 @@ private:
 
   bool groom_is_running_ = false;
 
+  std::string current_domain_;
+
 };
 }

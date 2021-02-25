@@ -97,6 +97,8 @@ public:
 
 private:
 
+  int get_or_create_worksheet(std::string name);
+
   // known prefixes
   static constexpr const char* SEGMENTATION_PREFIX = "segmentation_";
   static constexpr const char* GROOMED_PREFIX = "groomed_";

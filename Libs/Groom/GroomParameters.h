@@ -8,7 +8,7 @@ class GroomParameters {
 
 public:
 
-  explicit GroomParameters(ProjectHandle project);
+  explicit GroomParameters(ProjectHandle project, std::string domain_name = "");
   void save_to_project();
 
   std::string get_groom_output_prefix();
@@ -48,6 +48,7 @@ private:
 
   Parameters params_;
   ProjectHandle project_;
+  std::string domain_name_;
 
 };
 
