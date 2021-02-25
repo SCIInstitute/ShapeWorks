@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
         for (unsigned int shCount = 0; shCount < numShapes; shCount++)
         {
             std::cout << "Reading mesh file: " << meshFilename[shCount] << std::endl;
-            TriMesh *mesh = TriMesh::read( meshFilename[shCount].c_str() );
+            trimesh::TriMesh *mesh = trimesh::TriMesh::read( meshFilename[shCount].c_str() );
             orient(mesh);
             unsigned int numVert = mesh->vertices.size();
 
