@@ -14,6 +14,7 @@
 
 #include <igl/grad.h>
 #include <igl/per_vertex_normals.h>
+#include <igl/triangle_triangle_adjacency.h>
 
 namespace shapeworks {
 
@@ -156,12 +157,11 @@ double VtkMeshWrapper::ComputeDistance(const PointType& pt_a, int idx_a,
   // Geometric Correspondence for Ensembles of Nonregular Shapes, Datar et al
   // https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3346950/
   double geo_dist = 0.0;
-  const auto& geo_from_a = GeodesicsFromTriangle(face_a);
+  const auto& geo_entry_ab = GetGeodesicsBetweenTriangles(face_a, face_b, false);
   for(int i=0; i<3; i++) {
-    const Eigen::VectorXd& geo_from_ai = geo_from_a[i];
-    const double g_i0 = geo_from_ai[faces[face_b]->GetPointId(0)];
-    const double g_i1 = geo_from_ai[faces[face_b]->GetPointId(1)];
-    const double g_i2 = geo_from_ai[faces[face_b]->GetPointId(2)];
+    const double g_i0 = geo_entry_ab.distances[i][0];
+    const double g_i1 = geo_entry_ab.distances[i][1];
+    const double g_i2 = geo_entry_ab.distances[i][2];
     const double g_ib = bary_b[0]*g_i0 + bary_b[1]*g_i1 + bary_b[2]*g_i2;
     geo_dist += bary_a[i] * g_ib;
   }
@@ -175,10 +175,10 @@ double VtkMeshWrapper::ComputeDistance(const PointType& pt_a, int idx_a,
   Eigen::Map<Eigen::Vector3d> out_grad_eigen(out_grad->data_block());
 
   // Compute gradient of geodesics using barycentric approximation from point b over face a.
-  const auto& grad_geo_from_b = GradGeodesicsFromTriangle(face_b);
-  out_grad_eigen = bary_b[0] * grad_geo_from_b[0].row(face_a)
-                 + bary_b[1] * grad_geo_from_b[1].row(face_a)
-                 + bary_b[2] * grad_geo_from_b[2].row(face_a);
+  const auto& geo_entry_ba = GetGeodesicsBetweenTriangles(face_b, face_a, true);
+  out_grad_eigen = bary_b[0] * geo_entry_ba.gradients[0]
+                 + bary_b[1] * geo_entry_ba.gradients[1]
+                 + bary_b[2] * geo_entry_ba.gradients[2];
 
   //todo double check this math
   out_grad_eigen.normalize();
@@ -835,20 +835,10 @@ void VtkMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::
     throw std::runtime_error("PrecomputeGeodesics: you forgot to call ComputeGradOperator()");
   }
 
-  // Resize cache to correct size
-  geo_dist_cache_.entries.resize(max_cache_entries_);
-  geo_grad_cache_.entries.resize(max_cache_entries_);
+  // Compute adjacency between triangles
+  igl::triangle_triangle_adjacency(F, adjacency_);
 
-  for(auto& entry : geo_dist_cache_.entries) {
-    entry[0].resize(V.rows());
-    entry[1].resize(V.rows());
-    entry[2].resize(V.rows());
-  }
-  for(auto& entry : geo_grad_cache_.entries) {
-    entry[0].resize(F.rows(), 3);
-    entry[1].resize(F.rows(), 3);
-    entry[2].resize(F.rows(), 3);
-  }
+  geo_cache_.key2entry.resize(F.rows());
 }
 
 //---------------------------------------------------------------------------
@@ -868,58 +858,108 @@ bool VtkMeshWrapper::AreFacesAdjacent(int f_a, int f_b) const
 }
 
 //---------------------------------------------------------------------------
-const std::array<Eigen::VectorXd, 3>& VtkMeshWrapper::GeodesicsFromTriangle(int f) const {
-  auto& cache = geo_dist_cache_;
-  const auto map_entry = cache.key2entry.find(f);
-  if(map_entry != cache.key2entry.end()) {
-    return cache.entries[map_entry->second];
+const GeoEntry& VtkMeshWrapper::GetGeodesicsBetweenTriangles(int f_a, int f_b, bool need_grad) const
+{
+  const auto map_entry = geo_cache_.key2entry.find({f_a, f_b});
+  if(map_entry != geo_cache_.key2entry.end()) {
+    const auto& geo_entry = map_entry->second;
+    if(need_grad && geo_entry.have_grad) {
+      return geo_entry;
+    }
+  }
+  if(!need_grad) {
+    const auto sym_map_entry = geo_cache_.key2entry.find({f_b, f_a});
+    // if we don't need the gradient, and we have the geodesics from b->a, just transpose that
+    if(sym_map_entry != geo_cache_.key2entry.end()) {
+      auto& geo_entry = geo_cache_.key2entry[{f_a, f_b}];
+      for(int i=0; i<3; i++) {
+        for(int j=0; j<3; j++) {
+          geo_entry.distances[i][j] = sym_map_entry->second.distances[j][i];
+        }
+      }
+      return geo_entry;
+    }
   }
 
-  // if we hit the cache size limit, clear everything except the triangles known to be active
-  if(cache.key2entry.size() >= max_cache_entries_) {
-    cache.clear_except_active(particle_triangles_);
+  if(geo_cache_.key2entry.size() >= max_cache_entries_) {
+    std::cout << "CLEAR\n";
+    geo_cache_.key2entry.clear();
+    // just a hacky way to "restart" this function. this situation is very expensive anyway, what's a few more cycles.
+    return GetGeodesicsBetweenTriangles(f_a, f_b, need_grad);
   }
 
-  const int cache_idx = cache.key2entry.size();
-  for(int i=0; i<3; i++) {
-    auto& D = cache.entries[cache_idx][i];
-    Eigen::VectorXi gamma;
-    gamma.resize(1); gamma << this->triangles_[f]->GetPointId(i);
-    igl::heat_geodesics_solve(geo_heat_data_, gamma, D);
-  }
-
-  cache.key2entry[f] = cache_idx;
-  return cache.entries[cache_idx];
-}
-
-//---------------------------------------------------------------------------
-const std::array<Eigen::MatrixXd, 3>& VtkMeshWrapper::GradGeodesicsFromTriangle(int f) const {
-  auto& cache = geo_grad_cache_;
-  const auto map_entry = cache.key2entry.find(f);
-  if(map_entry != cache.key2entry.end()) {
-    return cache.entries[map_entry->second];
-  }
-
-  // if we hit the cache size limit, clear everything except the triangles known to be active
-  if(cache.key2entry.size() >= max_cache_entries_) {
-    cache.clear_except_active(particle_triangles_);
-  }
-
-  const int cache_idx = cache.key2entry.size();
-
-  const std::array<Eigen::VectorXd, 3>& D = GeodesicsFromTriangle(f);
+  // get gradient operator
   const auto& G = grad_operator_;
 
-  for(int i=0; i<3; i++) {
-    Eigen::MatrixXd& GD = cache.entries[cache_idx][i];
+  // most queries will be from the same "source vertex" as the previous. lets try using that
+  if(geo_lq_pidx_ != f_a || (need_grad && !geo_lq_have_grad_)) {
+    for(int i=0; i<3; i++) {
+      Eigen::VectorXi gamma;
+      Eigen::VectorXd& D = geo_lq_distances_[i];
+      gamma.resize(1); gamma << this->triangles_[f_a]->GetPointId(i);
+      igl::heat_geodesics_solve(geo_heat_data_, gamma, D);
 
-    GD.noalias() = G*D[i]; // makes GD a (3F, 1) matrix
-    GD.resize(this->triangles_.size(), 3); // correct rows and columns
+      if(need_grad) {
+        Eigen::MatrixXd& GD = geo_lq_grads_[i];
+        GD.noalias() = G*D; // makes GD a (3F, 1) matrix
+        GD.resize(this->triangles_.size(), 3); // correct rows and columns
+      }
+    }
+
+    geo_lq_pidx_ = f_a;
+    geo_lq_have_grad_ = need_grad;
   }
 
-  cache.key2entry[f] = cache_idx;
-  return cache.entries[cache_idx];
+  std::unordered_set<int> ring;
+  ring.insert(f_b);
+  GetKRing(f_b, 4, ring);
+
+  for(auto f : ring) {
+    // have we already cached this?
+    const auto map_entry = geo_cache_.key2entry.find({f_a, f});
+    if(map_entry != geo_cache_.key2entry.end()) {
+      if(!need_grad) {
+        continue;
+      }
+      if(map_entry->second.have_grad) {
+        continue;
+      }
+    }
+
+    auto& geo_entry = map_entry != geo_cache_.key2entry.end() ? map_entry->second : geo_cache_.key2entry[{f_a, f}];
+
+    // Compute geodesics from each vertex in f_a to f_b
+    for(int i=0; i<3; i++) {
+      const Eigen::VectorXd& D = geo_lq_distances_[i];
+      geo_entry.distances[i][0] = D(this->triangles_[f]->GetPointId(0));
+      geo_entry.distances[i][1] = D(this->triangles_[f]->GetPointId(1));
+      geo_entry.distances[i][2] = D(this->triangles_[f]->GetPointId(2));
+
+      if(need_grad) {
+        const Eigen::MatrixXd& GD = geo_lq_grads_[i];
+        geo_entry.gradients[i] = GD.row(f);
+      }
+    }
+    geo_entry.have_grad = need_grad;
+  }
+
+  return geo_cache_.key2entry[{f_a, f_b}];
 }
 
+void VtkMeshWrapper::GetKRing(int tri, int k, std::unordered_set<int>& out) const
+{
+  if(k == 0) {
+    return;
+  }
+
+  for(int i=0; i<3; i++) {
+    const int n = adjacency_(tri,i);
+    // todo check if this works with open meshes like femur
+    if(n != -1 && out.find(n) == out.end()) {
+      out.insert(n);
+      GetKRing(n, k-1, out);
+    }
+  }
+}
 
 }
