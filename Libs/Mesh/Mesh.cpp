@@ -457,7 +457,10 @@ Mesh& Mesh::generateNormals()
   vtkSmartPointer<vtkPolyDataNormals> normal = vtkSmartPointer<vtkPolyDataNormals>::New();
 
   normal->SetInputData(this->mesh);
-  normal->ComputeCellNormalsOn(true);
+  normal->ComputeCellNormalsOn();
+  normal->AutoOrientNormalsOn();
+  normal->Update();
+  this->mesh = normal->GetOutput();
 
   return *this;
 }

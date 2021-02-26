@@ -81,6 +81,7 @@ public:
   /// clips a mesh using a cutting plane resulting in a closed surface
   Mesh& clipClosedSurface(const Plane plane);
 
+  /// computes cell normals and orients them such that they point in the same direction
   Mesh& generateNormals();
 
   /// rasterizes mesh to create binary images, automatically computing size and origin if necessary
