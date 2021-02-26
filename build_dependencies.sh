@@ -254,12 +254,8 @@ build_openvdb()
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 
-  CONCURRENT_FLAG=""
-  if [ "$(uname)" == "Darwin" ]; then
-      # There is an incompatibility between Qt and tbbmalloc_proxy on Mac
-      CONCURRENT_FLAG="-DCONCURRENT_MALLOC=None"
-  fi
-  
+  CONCURRENT_FLAG="-DCONCURRENT_MALLOC=None"
+      
   if [[ $OSTYPE == "msys" ]]; then
       cmake -DUSE_BLOSC=OFF -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} ..
       cmake --build . --config ${BUILD_TYPE} || exit 1
