@@ -1,23 +1,24 @@
 # How to Add ShapeWorks Commands?
 
 To add ShapeWorks Commands, the following steps need to be followed:
-1. Declare command in Applications/shapeworks/Commands.h like this:
+
+1. Declare command in Applications/shapeworks/Commands.h
 
     ``
     COMMAND_DECLARE(CommandName, CommandType);
     ``
 
-    CommandName is the name of the command.
-    CommandType is the type of command. ShapeWorks supports ImageCommand, MeshCommand, ParticleSystemCommand, OptimizeCommandGroup and GroomCommandGroup
+    CommandName is the name of the command.  
+    CommandType is the type of command.  
+    ShapeWorks supports ImageCommand, MeshCommand, ParticleSystemCommand, OptimizeCommandGroup and GroomCommandGroup  
 
-2. Define command in 
-    Applications/shapeworks/ImageCommands.cpp if CommandType is ImageCommand
-    Applications/shapeworks/MeshCommands.cpp if CommandType is MeshCommand
-    Applications/shapeworks/ParticleSystemCommands.cpp if CommandType is ParticleSystemCommand
-    Applications/shapeworks/Commands.cpp for other types of commands
-   like this:
+2. Define command in  
+    + Applications/shapeworks/ImageCommands.cpp if CommandType is ImageCommand  
+    + Applications/shapeworks/MeshCommands.cpp if CommandType is MeshCommand  
+    + Applications/shapeworks/ParticleSystemCommands.cpp if CommandType is ParticleSystemCommand  
+    + Applications/shapeworks/Commands.cpp for other types of commands  
 
-    ``
+    ```
     ///////////////////////////////////////////////////////////////////////////////
     // CommandName
     ///////////////////////////////////////////////////////////////////////////////
@@ -47,9 +48,9 @@ To add ShapeWorks Commands, the following steps need to be followed:
       sharedData.image.example(optionName, ...); // call related function
       return true;
     }
-    ``
+    ```
 
-3. Add command to Applications/shapeworks/shapeworks.cpp like this:
+3. Add command to Applications/shapeworks/shapeworks.cpp
 
     ``
     shapeworks.addCommand(CommandName::getCommand());
