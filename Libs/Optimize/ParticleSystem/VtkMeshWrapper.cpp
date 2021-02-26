@@ -14,6 +14,7 @@
 
 #include <igl/grad.h>
 #include <igl/per_vertex_normals.h>
+#include <igl/vertex_triangle_adjacency.h>
 
 namespace shapeworks {
 
@@ -134,6 +135,7 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
   // (some initial experiments at caching these like we do for point_a proved to be unfruitful. no significant perf gain)
   face_b = ComputeFaceAndWeights(pt_b, idx_b, bary_b);
 
+
   // The geodesics(and more importantly, its gradient) are very inaccurate if both the points are on the
   // same face, or share an edge. In this case, just return the euclidean distance
   if (face_a == face_b || AreFacesAdjacent(face_a, face_b)) {
@@ -145,6 +147,14 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
     return pt_a.EuclideanDistanceTo(pt_b);
   }
 
+  // std::cout << "ComputeDistance: " << face_a << " " << face_b <<  " | " << idx_a << " " << idx_b <<  " | " << pt_a << " " << pt_b <<  " | " <<"\n";
+
+  auto& geo_a = GetGeoCacheEntry(face_a, 1.5*particle_neighborhood_radii_[idx_a], face_b);
+  const auto geo_ab = geo_a.data.find(face_b);
+  if(geo_ab == geo_a.data.end()) {
+    throw std::runtime_error("bad situation");
+  }
+
   // Define for convenience
   const auto &faces = this->triangles_;
 
@@ -152,12 +162,10 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
   // Geometric Correspondence for Ensembles of Nonregular Shapes, Datar et al
   // https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3346950/
   double geo_dist = 0.0;
-  const auto &geo_from_a = GeodesicsFromTriangle(face_a);
   for (int i = 0; i < 3; i++) {
-    const Eigen::VectorXd &geo_from_ai = geo_from_a[i];
-    const double g_i0 = geo_from_ai[faces[face_b]->GetPointId(0)];
-    const double g_i1 = geo_from_ai[faces[face_b]->GetPointId(1)];
-    const double g_i2 = geo_from_ai[faces[face_b]->GetPointId(2)];
+    const double g_i0 = geo_ab->second.distances[i][0];
+    const double g_i1 = geo_ab->second.distances[i][1];
+    const double g_i2 = geo_ab->second.distances[i][2];
     const double g_ib = bary_b[0] * g_i0 + bary_b[1] * g_i1 + bary_b[2] * g_i2;
     geo_dist += bary_a[i] * g_ib;
   }
@@ -171,10 +179,17 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
   Eigen::Map<Eigen::Vector3d> out_grad_eigen(out_grad->data_block());
 
   // Compute gradient of geodesics using barycentric approximation from point b over face a.
-  const auto &grad_geo_from_b = GradGeodesicsFromTriangle(face_b);
-  out_grad_eigen = bary_b[0] * grad_geo_from_b[0].row(face_a)
-                   + bary_b[1] * grad_geo_from_b[1].row(face_a)
-                   + bary_b[2] * grad_geo_from_b[2].row(face_a);
+  auto& geo_b = GetGeoCacheEntry(face_b, 1.5*particle_neighborhood_radii_[idx_a], face_a);
+  const auto geo_ba = geo_b.data.find(face_a);
+  if(geo_ba == geo_b.data.end()) {
+    auto& geo_b2 = GetGeoCacheEntry(face_b, 1000000.0);
+    const auto geo_ba = geo_b.data.find(face_a);
+    const volatile bool now_found = geo_ba != geo_b.data.end();
+    throw std::runtime_error("bad situation 2");
+  }
+  out_grad_eigen = bary_b[0] * geo_ba->second.gradients[0]
+                   + bary_b[1] * geo_ba->second.gradients[1]
+                   + bary_b[2] * geo_ba->second.gradients[2];
 
   //todo double check this math
   out_grad_eigen.normalize();
@@ -190,8 +205,59 @@ bool VtkMeshWrapper::IsWithinDistance(const PointType &pt_a, int idx_a,
   if(!is_geodesics_enabled_) {
     return pt_a.SquaredEuclideanDistanceTo(pt_b) < test_dist*test_dist;
   }
-  const double dist = ComputeDistance(pt_a, idx_a, pt_b, idx_b, nullptr);
-  return dist < test_dist;
+
+  if(triangles_.size() == 2352) {
+  }
+
+  if(idx_a != -1) {
+    if(particle_neighborhood_radii_.size() <= idx_a) {
+      particle_neighborhood_radii_.resize(idx_a + 1, 0.0);
+    }
+  }
+  particle_neighborhood_radii_[idx_a] = test_dist;
+
+  // Find the triangle for the point a. If this was the same as the previous query, just used that cached value
+  int face_a, face_b;
+  vec3 bary_a, bary_b;
+  if (geo_lq_pidx_ == idx_a) {
+    face_a = geo_lq_face_;
+    bary_a = geo_lq_bary_;
+  } else {
+    face_a = ComputeFaceAndWeights(pt_a, idx_a, bary_a);
+
+    geo_lq_pidx_ = idx_a;
+    geo_lq_face_ = face_a;
+    geo_lq_bary_ = bary_a;
+  }
+
+  // Find the triangle for the point b
+  face_b = ComputeFaceAndWeights(pt_b, idx_b, bary_b);
+
+  // std::cout << "IsWithinDistance: " << face_a << " " << face_b <<  " | " << idx_a << " " << idx_b <<  " | " << pt_a << " " << pt_b <<  " | " <<"\n";
+
+  auto& geo_a = GetGeoCacheEntry(face_a, test_dist*1.5);
+
+  if (face_a == face_b || AreFacesAdjacent(face_a, face_b)) {
+    return pt_a.SquaredEuclideanDistanceTo(pt_b) < test_dist*test_dist;
+  }
+
+  if(!geo_a.data.contains(face_b)) {
+    return false;
+  }
+
+  //todo add faster check?
+
+  double geo_dist = 0.0;
+  const auto& geo_ab = geo_a.data[face_b];
+  for (int i = 0; i < 3; i++) {
+    const double g_i0 = geo_ab.distances[i][0];
+    const double g_i1 = geo_ab.distances[i][1];
+    const double g_i2 = geo_ab.distances[i][2];
+    const double g_ib = bary_b[0] * g_i0 + bary_b[1] * g_i1 + bary_b[2] * g_i2;
+    geo_dist += bary_a[i] * g_ib;
+  }
+
+  return geo_dist < test_dist;
 }
 
 //---------------------------------------------------------------------------
@@ -843,19 +909,9 @@ void VtkMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::
   }
 
   // Resize cache to correct size
-  geo_dist_cache_.entries.resize(max_cache_entries_);
-  geo_grad_cache_.entries.resize(max_cache_entries_);
-
-  for(auto& entry : geo_dist_cache_.entries) {
-    entry[0].resize(V.rows());
-    entry[1].resize(V.rows());
-    entry[2].resize(V.rows());
-  }
-  for(auto& entry : geo_grad_cache_.entries) {
-    entry[0].resize(F.rows(), 3);
-    entry[1].resize(F.rows(), 3);
-    entry[2].resize(F.rows(), 3);
-  }
+  geo_cache_.resize(F.rows());
+  std::vector<std::vector<int>> throw_away;
+  igl::vertex_triangle_adjacency(V.rows(), F, v2f, throw_away);
 }
 
 //---------------------------------------------------------------------------
@@ -874,58 +930,61 @@ bool VtkMeshWrapper::AreFacesAdjacent(int f_a, int f_b) const
   return false;
 }
 
-//---------------------------------------------------------------------------
-const std::array<Eigen::VectorXd, 3>& VtkMeshWrapper::GeodesicsFromTriangle(int f) const {
-  auto& cache = geo_dist_cache_;
-  const auto map_entry = cache.key2entry.find(f);
-  if(map_entry != cache.key2entry.end()) {
-    return cache.entries[map_entry->second];
+//todo need grad
+GeoEntry& VtkMeshWrapper::GetGeoCacheEntry(int f, double max_dist, int ensure_contains_face) const
+{
+  auto& entry = geo_cache_[f];
+  if(ensure_contains_face != -1) {
+    if(entry.data.contains(ensure_contains_face)) {
+      return entry;
+    }
+  } else if(entry.max_dist >= max_dist) {
+    return entry;
   }
 
-  // if we hit the cache size limit, clear everything except the triangles known to be active
-  if(cache.key2entry.size() >= max_cache_entries_) {
-    cache.clear_except_active(particle_triangles_);
-  }
+  entry.data.clear();
 
-  const int cache_idx = cache.key2entry.size();
+  const auto& G = grad_operator_;
   for(int i=0; i<3; i++) {
-    auto& D = cache.entries[cache_idx][i];
+    Eigen::VectorXd& D = geo_tmp_dist_[i];
+    Eigen::MatrixXd& GD = geo_tmp_grad_[i];
+
     Eigen::VectorXi gamma;
     gamma.resize(1); gamma << this->triangles_[f]->GetPointId(i);
     igl::heat_geodesics_solve(geo_heat_data_, gamma, D);
-  }
 
-  cache.key2entry[f] = cache_idx;
-  return cache.entries[cache_idx];
-}
+    if(ensure_contains_face != -1) {
+      max_dist = std::max(max_dist, D(triangles_[ensure_contains_face]->GetPointId(0)));
+      max_dist = std::max(max_dist, D(triangles_[ensure_contains_face]->GetPointId(1)));
+      max_dist = std::max(max_dist, D(triangles_[ensure_contains_face]->GetPointId(2)));
+    }
 
-//---------------------------------------------------------------------------
-const std::array<Eigen::MatrixXd, 3>& VtkMeshWrapper::GradGeodesicsFromTriangle(int f) const {
-  auto& cache = geo_grad_cache_;
-  const auto map_entry = cache.key2entry.find(f);
-  if(map_entry != cache.key2entry.end()) {
-    return cache.entries[map_entry->second];
-  }
-
-  // if we hit the cache size limit, clear everything except the triangles known to be active
-  if(cache.key2entry.size() >= max_cache_entries_) {
-    cache.clear_except_active(particle_triangles_);
-  }
-
-  const int cache_idx = cache.key2entry.size();
-
-  const std::array<Eigen::VectorXd, 3>& D = GeodesicsFromTriangle(f);
-  const auto& G = grad_operator_;
-
-  for(int i=0; i<3; i++) {
-    Eigen::MatrixXd& GD = cache.entries[cache_idx][i];
-
-    GD.noalias() = G*D[i]; // makes GD a (3F, 1) matrix
+    GD.noalias() = G * D; // makes GD a (3F, 1) matrix
     GD.resize(this->triangles_.size(), 3); // correct rows and columns
   }
 
-  cache.key2entry[f] = cache_idx;
-  return cache.entries[cache_idx];
+  const auto n_verts = this->v2f.size();
+  robin_hood::unordered_set<int> faces_to_keep;
+  for(int v=0; v<n_verts; v++) {
+    if(geo_tmp_dist_[0][v] <= max_dist || geo_tmp_dist_[1][v] <= max_dist || geo_tmp_dist_[2][v] <= max_dist) {
+      for(auto f : v2f[v]) {
+        faces_to_keep.insert(f);
+      }
+    }
+  }
+
+  for(auto f : faces_to_keep) {
+    auto& internal_entry = entry.data[f];
+    for(int i=0; i<3; i++) {
+      internal_entry.distances[i][0] = geo_tmp_dist_[i][triangles_[f]->GetPointId(0)];
+      internal_entry.distances[i][1] = geo_tmp_dist_[i][triangles_[f]->GetPointId(1)];
+      internal_entry.distances[i][2] = geo_tmp_dist_[i][triangles_[f]->GetPointId(2)];
+      internal_entry.gradients[i] = geo_tmp_grad_[i].row(f);
+    }
+  }
+
+  entry.max_dist = max_dist;
+  return entry;
 }
 
 

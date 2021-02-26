@@ -3,6 +3,7 @@
 #include "MeshWrapper.h"
 #include "FixedSizeCache.h"
 
+#include <robin_hood.h>
 #include <unordered_map>
 #include <igl/heat_geodesics.h>
 #include <vtkPolyData.h>
@@ -11,6 +12,15 @@
 class vtkCellLocator;
 
 namespace shapeworks {
+
+struct GeoEntryInternal {
+  double distances[3][3];
+  Eigen::Vector3d gradients[3];
+};
+struct GeoEntry {
+  double max_dist{0.0};
+  robin_hood::unordered_flat_map<int, GeoEntryInternal> data;
+};
 
 class VtkMeshWrapper : public MeshWrapper {
 
@@ -135,12 +145,13 @@ private:
 
   // Cache to store information for geodesics
   igl::HeatGeodesicsData<double> geo_heat_data_;
+  mutable std::vector<GeoEntry> geo_cache_;
+  mutable Eigen::VectorXd geo_tmp_dist_[3];
+  mutable Eigen::MatrixXd geo_tmp_grad_[3];
+  GeoEntry& GetGeoCacheEntry(int f, double max_dist, int ensure_contains_face=-1) const;
+  std::vector<std::vector<int>> v2f; // list of faces incident on vertex
+  mutable std::vector<double> particle_neighborhood_radii_;
 
-  // Cache for geodesic distances from a triangle
-  mutable FixedSizeCache<int, std::array<Eigen::VectorXd, 3>> geo_dist_cache_;
-
-  // Cache for gradient of geodesic distances from a triangle
-  mutable FixedSizeCache<int, std::array<Eigen::MatrixXd, 3>> geo_grad_cache_;
 
   // Return a version of this mesh decimated to contain ~target_tris triangles
   vtkSmartPointer<vtkPolyData> Decimated(unsigned long target_tris) const;
@@ -154,14 +165,6 @@ private:
 
   // Precompute libigl heat data structures for faster geodesic lookups
   void PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
-
-  // Returns 3 x (V, ) geodesic distances from a given source triangle's vertices to every other vertex.
-  // This reference maybe invalid once this function is called again
-  const std::array<Eigen::VectorXd, 3>& GeodesicsFromTriangle(int f) const;
-
-  // Returns 3 x (F, 3) gradient of geodesic distances from a given source triangle's vertices to every other face.
-  // This reference maybe invalid once this function is called again
-  const std::array<Eigen::MatrixXd, 3>& GradGeodesicsFromTriangle(int f) const;
 
   // Store some info about the last query. This accelerates the computation because the optimizer generally asks for the
   // distances _from_ the same point as the previous query.
