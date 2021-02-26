@@ -296,7 +296,7 @@ def Run_Pipeline(args):
             clippedFiles_segmentations = ClipBinaryVolumes(groomDir + 'clipped_segmentations', aligned_segmentations, cutting_plane_points.flatten())
 
             """Compute largest bounding box and apply cropping"""
-            croppedFiles_segmentations = applyCropping(groomDir + "cropped/segmentations", clippedFiles_segmentations, groomDir + "clipped_segmentations/*.nrrd")
+            croppedFiles_segmentations = applyCropping(groomDir + "cropped/segmentations", clippedFiles_segmentations, clippedFiles_segmentations)
 
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
