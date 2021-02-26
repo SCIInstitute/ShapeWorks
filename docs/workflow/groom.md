@@ -7,20 +7,20 @@ ShapeWorks needs suitable distance transforms for establishing shape corresponde
 ### Antialias
 This tool antialiases binary volumes.
 
-Command Line Interface:
+Command Line Interface:  
 ``
 shapeworks readimage --name $1 antialias maxrmserror $2 iterations $3 layers $4 writeimage --name $5
 ``
 
-Python Interface:
-``
+Python Interface:  
+```
 image = sw.Image(<input path>)
-image.antialis().write(<output path>)
-``
+image.antialis(iterations, maxRMSErr, layers).write(<output path>)
+```
 
 Here is the list of arguments.
 
-* maxrmserror: Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default: 0.01].
+* maxrmserror/maxRMSErr: Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default: 0.01].
 * iterations: Maximum number of iterations [default: 50].
 * layers: Number of layers around a 3d pixel to use for this computation [default: 3].
 
