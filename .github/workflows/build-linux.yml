@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - release_v6.0
+      - disable_con_malloc
     tags:
     - '*'
   pull_request:
