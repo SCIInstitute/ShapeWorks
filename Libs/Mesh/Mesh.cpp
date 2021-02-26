@@ -337,6 +337,48 @@ Region Mesh::boundingBox(bool center) const
   return bbox;
 }
 
+Mesh& Mesh::fix(bool smoothBefore, bool smoothAfter, double lambda, int iterations, bool decimate, double percentage)
+{
+	FEVTKimport import;
+  FEMesh* meshFE = import.Load(this->mesh);
+
+	if (meshFE == 0) { throw std::invalid_argument("Unable to read file"); }
+
+	FEFixMesh fix;
+  FEMesh* meshFix;
+
+  meshFix = fix.FixElementWinding(meshFE);
+
+  if (smoothBefore)
+  {
+    FEMeshSmoothingModifier lap;
+    lap.m_threshold1 = lambda;
+    lap.m_iteration = iterations;
+    meshFix = lap.Apply(meshFix);
+  }
+
+  if (decimate)
+  {
+    FECVDDecimationModifier cvd;
+    cvd.m_pct = percentage;
+    cvd.m_gradient = 1;
+    meshFix = cvd.Apply(meshFix);
+
+    if (smoothAfter)
+    {
+      FEMeshSmoothingModifier lap;
+      lap.m_threshold1 = lambda;
+      lap.m_iteration = iterations;
+      meshFix = lap.Apply(meshFix);
+    }
+  }
+
+	FEVTKExport vtkOut;
+  this->mesh = vtkOut.ExportToVTK(*meshFix);
+
+  return *this;
+}
+
 Mesh& Mesh::distance(const Mesh &target, const DistanceMethod method)
 {
   if (target.numPoints() == 0 || numPoints() == 0)
@@ -388,7 +430,7 @@ Mesh& Mesh::distance(const Mesh &target, const DistanceMethod method)
       distance->SetValue(i, std::sqrt(dist));
     }
   }
-    
+
   // add distance field to this mesh
   this->setField("distance", distance);
 
@@ -406,6 +448,16 @@ Mesh& Mesh::clipClosedSurface(const Plane plane)
   clipper->SetGenerateFaces(1);
   clipper->Update();
   this->mesh = clipper->GetOutput();
+
+  return *this;
+}
+
+Mesh& Mesh::generateNormals()
+{
+  vtkSmartPointer<vtkPolyDataNormals> normal = vtkSmartPointer<vtkPolyDataNormals>::New();
+
+  normal->SetInputData(this->mesh);
+  normal->ComputeCellNormalsOn(true);
 
   return *this;
 }
@@ -494,48 +546,6 @@ Image Mesh::toDistanceTransform(Vector3 spacing, Dims size, Point3 origin) const
   Image image(toImage(spacing, size, origin));
   image.antialias(50, 0.00).computeDT(); // need maxrms = 0 and iterations = 30 to reproduce results
   return image;
-}
-
-Mesh& Mesh::fix(bool smoothBefore, bool smoothAfter, double lambda, int iterations, bool decimate, double percentage)
-{
-	FEVTKimport import;
-  FEMesh* meshFE = import.Load(this->mesh);
-
-	if (meshFE == 0) { throw std::invalid_argument("Unable to read file"); }
-
-	FEFixMesh fix;
-  FEMesh* meshFix;
-
-  meshFix = fix.FixElementWinding(meshFE);
-
-  if (smoothBefore)
-  {
-    FEMeshSmoothingModifier lap;
-    lap.m_threshold1 = lambda;
-    lap.m_iteration = iterations;
-    meshFix = lap.Apply(meshFix);
-  }
-
-  if (decimate)
-  {
-    FECVDDecimationModifier cvd;
-    cvd.m_pct = percentage;
-    cvd.m_gradient = 1;
-    meshFix = cvd.Apply(meshFix);
-
-    if (smoothAfter)
-    {
-      FEMeshSmoothingModifier lap;
-      lap.m_threshold1 = lambda;
-      lap.m_iteration = iterations;
-      meshFix = lap.Apply(meshFix);
-    }
-  }
-
-	FEVTKExport vtkOut;
-  this->mesh = vtkOut.ExportToVTK(*meshFix);
-
-  return *this;
 }
 
 Mesh& Mesh::setField(std::string name, Array array)
@@ -671,14 +681,14 @@ bool Mesh::compareAllPoints(const Mesh &other_mesh) const
 {
   if (!this->mesh || !other_mesh.mesh)
     throw std::invalid_argument("invalid meshes");
-    
+
   if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints())
   {
     std::cerr << "meshes differ in number of points";
     return false;
   }
 
-  for (int i = 0; i < this->mesh->GetNumberOfPoints(); i++) 
+  for (int i = 0; i < this->mesh->GetNumberOfPoints(); i++)
   {
     Point p1(this->mesh->GetPoint(i));
     Point p2(other_mesh.mesh->GetPoint(i));
@@ -762,7 +772,7 @@ bool Mesh::compareAllFields(const Mesh &other_mesh) const
     if (std::find(fields2.begin(), fields2.end(), fields1[i]) == fields2.end()) {
       std::cerr << "Both meshes don't have " << fields1[i] << " field\n";
       return false;
-    }      
+    }
   }
 
   // now compare the actual fields
