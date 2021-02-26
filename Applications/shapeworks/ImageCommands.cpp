@@ -145,8 +145,8 @@ void Antialias::buildParser()
   const std::string desc = "antialiases binary volumes";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--maxrmserror").action("store").type("double").set_default(0.01).help("Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default: %default].");
   parser.add_option("--iterations").action("store").type("int").set_default(50).help("Maximum number of iterations [default: %default].");
+  parser.add_option("--maxrmserror").action("store").type("double").set_default(0.01).help("Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default: %default].");
   parser.add_option("--layers").action("store").type("int").set_default(3).help("Number of layers around a 3d pixel to use for this computation [default: %default].");
 
   Command::buildParser();
@@ -160,8 +160,8 @@ bool Antialias::execute(const optparse::Values &options, SharedCommandData &shar
     return false;
   }
 
-  double maxRMSErr = static_cast<double>(options.get("maxrmserror"));
   int iterations = static_cast<int>(options.get("iterations"));
+  double maxRMSErr = static_cast<double>(options.get("maxrmserror"));
   int layers = static_cast<int>(options.get("layers"));
 
   if (layers < 0)
