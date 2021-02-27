@@ -4,7 +4,7 @@ from shapeworks import *
 
 def gradientInterpTest1():
   img = Image(os.environ["DATA"] + "/computedt2.nrrd")
-  interpolator = GradientInterpolator(img)
+  interpolator = VectorImage(img)
   vec = interpolator.evaluate([10.0,20.0,30.0])
 
   return vec == [0.7374552488327026, 0.5726523995399475, 0.39806556701660156]

@@ -1,6 +1,7 @@
 #include "Testing.h"
 
 #include "Image.h"
+#include "VectorImage.h"
 #include "ImageUtils.h"
 #include "Mesh.h"
 
@@ -1079,33 +1080,10 @@ TEST(ImageTests, getVtk)
   ASSERT_TRUE(image == image2);
 }
 
-
-TEST(ImageTests, gradientInterpolatorTest1)
+TEST(ImageTests, vectorImageTest1)
 {
   Image dt(std::string(TEST_DATA_DIR) + "/computedt2.nrrd");
-  auto interpolator = ImageUtils::getGradientInterpolator(dt);
-  Point pt1({37.0, 46.0, 50.0});  // outside close
-  Point pt2({60.0, 58.2, 62.5});  // outside other side
-  Point pt3({58.0, 44.0, 52.0});  // inside
-  Point pt4({12.0, 18.0, 20.0});  // outside far
-  Point pt5({-12.0, -18.0, 20.0});// outside original image's space!
-  Vector v1 = toVector(interpolator->Evaluate(pt1));
-  Vector v2 = toVector(interpolator->Evaluate(pt2));
-  Vector v3 = toVector(interpolator->Evaluate(pt3));
-  Vector v4 = toVector(interpolator->Evaluate(pt4));
-  Vector v5 = toVector(interpolator->Evaluate(pt5));
-
-  ASSERT_TRUE(epsEqualN(v1, makeVector({0.966473, 0.309422, 0.0527124})) &&
-              epsEqualN(v2, makeVector({-0.549147, -0.504978, -0.732781})) &&
-              epsEqualN(v3, makeVector({-0.826156, 0.605647, -0.1373})) &&
-              epsEqualN(v4, makeVector({0.654152, 0.564569, 0.532556})) &&
-              epsEqualN(v5, makeVector({0.354269, -0.294689, 0.470524})));
-}
-
-TEST(ImageTests, gradientInterpolatorTest2)
-{
-  Image dt(std::string(TEST_DATA_DIR) + "/computedt2.nrrd");
-  auto interpolator = VectorImageInterpolator(ImageUtils::getGradientInterpolator(dt));
+  auto interpolator = VectorImage(dt);
   Point pt1({37.0, 46.0, 50.0});  // outside close
   Point pt2({60.0, 58.2, 62.5});  // outside other side
   Point pt3({58.0, 44.0, 52.0});  // inside
@@ -1114,12 +1092,12 @@ TEST(ImageTests, gradientInterpolatorTest2)
   Vector v1 = interpolator.evaluate(pt1);
   Vector v2 = interpolator.evaluate(pt2);
   Vector v3 = interpolator.evaluate(pt3);
-  Vector v4 = interpolator.evaluate(pt4);
+  Vector v4 = interpolator.evaluate(pt4); v4.Normalize();
   Vector v5 = interpolator.evaluate(pt5);
 
   ASSERT_TRUE(epsEqualN(v1, makeVector({0.966473, 0.309422, 0.0527124})) &&
               epsEqualN(v2, makeVector({-0.549147, -0.504978, -0.732781})) &&
               epsEqualN(v3, makeVector({-0.826156, 0.605647, -0.1373})) &&
-              epsEqualN(v4, makeVector({0.654152, 0.564569, 0.532556})) &&
+              epsEqualN(v4, makeVector({0.644471, 0.556214, 0.524674})) &&
               epsEqualN(v5, makeVector({0.354269, -0.294689, 0.470524})));
 }

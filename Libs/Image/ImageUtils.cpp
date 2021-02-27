@@ -100,16 +100,4 @@ TransformPtr ImageUtils::createWarpTransform(const std::string &source_landmarks
   return tps;
 }
 
-itk::SmartPointer<ImageUtils::GradientInterpolator> ImageUtils::getGradientInterpolator(const Image& dt)
-{
-  GradientImageFilter::Pointer filter = GradientImageFilter::New();
-  filter->SetInput(dt.getITKImage());
-  filter->SetUseImageSpacingOn();
-  filter->Update();
-
-  GradientInterpolator::Pointer gradientInterpolator = GradientInterpolator::New();
-  gradientInterpolator->SetInputImage(filter->GetOutput());
-  return itk::SmartPointer<GradientInterpolator>(gradientInterpolator);
-}
-
 } //shapeworks

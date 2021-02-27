@@ -25,6 +25,7 @@ using namespace pybind11::literals;
 #include "Shapeworks.h"
 #include "ShapeworksUtils.h"
 #include "Image.h"
+#include "VectorImage.h"
 #include "ImageUtils.h"
 #include "Mesh.h"
 #include "MeshUtils.h"
@@ -491,32 +492,16 @@ PYBIND11_MODULE(shapeworks, m)
   .def("expand",                &Region::expand, "expand this region to include this point", "other"_a)
   ;
 
-  // // GradientInterpolator
-  // // note: https://pybind11.readthedocs.io/en/stable/advanced/classes.html#non-public-destructors
-  // py::class_<ImageUtils::GradientInterpolator, std::unique_ptr<ImageUtils::GradientInterpolator, py::nodelete>>(m, "GradientInterpolator")
-  // .def(py::init(&ImageUtils::getGradientInterpolator),
-  //      "create a vector image from an image (usually a distance transform) that can be sampled at any point in space",
-  //      "image"_a)
-  // .def("evaluate",
-  //      [](ImageUtils::GradientInterpolator &interp, std::vector<double> &pt) {
-  //        std::cout << "hello world!\n";
-  //        auto v = interp.Evaluate(Point({pt[0], pt[1], pt[2]}));
-  //        return std::vector<double>({v[0], v[1], v[2]});
-  //      },
-  //      "evaluate the vector image at any given point in space",
-  //      "pt"_a)
-  // ;
-
-  // GradientInterpolator
-  py::class_<VectorImageInterpolator>(m, "GradientInterpolator")
+  // VectorImage
+  py::class_<VectorImage>(m, "VectorImage")
   .def(py::init([](const Image &dt) {
-                  return VectorImageInterpolator(ImageUtils::getGradientInterpolator(dt));
+                  return VectorImage(dt);
                 }),
       "create a vector image from an image (usually a distance transform) that can be sampled at any point in space",
       "image"_a)
   .def("evaluate",
-       [](VectorImageInterpolator &interp, std::vector<double> &pt) {
-         auto v = interp.evaluate(Point({pt[0], pt[1], pt[2]}));
+       [](VectorImage &image, std::vector<double> &pt) {
+         auto v = image.evaluate(Point({pt[0], pt[1], pt[2]}));
          return std::vector<double>({v[0], v[1], v[2]});
        },
        "evaluate the vector image at any given point in space",
