@@ -210,6 +210,8 @@ def Run_Pipeline(args):
             croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", alignedFiles_segmentations, alignedFiles_segmentations)
             croppedFiles_images = applyCropping(parentDir + "cropped/images", alignedFiles_images, alignedFiles_segmentations)
 
+            groomed_segmentations = croppedFiles_segmentations
+
 
         # BEGIN GROOMING WITHOUT IMAGES
         else:
@@ -295,8 +297,7 @@ def Run_Pipeline(args):
 
             pickle.dump( [cutting_plane_points], open( outputDirectory + "groomed/groomed_pickle.p", "wb" ) )
 
-            # Compute largest bounding box and apply cropping
-            # croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", alignedFiles_segmentations, alignedFiles_segmentations)
+            groomed_segmentations = alignedFiles_segmentations
 
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
@@ -307,7 +308,7 @@ def Run_Pipeline(args):
         We convert the scans to distance transforms, this step is common for both the
         prepped as well as unprepped data, just provide correct filenames.
         """
-        dtFiles = applyDistanceTransforms(parentDir, alignedFiles_segmentations)
+        dtFiles = applyDistanceTransforms(parentDir, groomed_segmentations)
 
 
     """

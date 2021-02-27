@@ -211,6 +211,8 @@ def Run_Pipeline(args):
             croppedFiles_segmentations = applyCropping(groomDir + "cropped/segmentations", clippedFiles_segmentations, clippedFiles_segmentations)
             croppedFiles_images = applyCropping(groomDir + "cropped/images", aligned_images, clippedFiles_segmentations)
 
+            groomed_segmentations = croppedFiles_segmentations
+
         # BEGIN GROOMING WITHOUT IMAGES
         else:
             """
@@ -295,8 +297,7 @@ def Run_Pipeline(args):
             """
             clippedFiles_segmentations = ClipBinaryVolumes(groomDir + 'clipped_segmentations', aligned_segmentations, cutting_plane_points.flatten())
 
-            """Compute largest bounding box and apply cropping"""
-            # croppedFiles_segmentations = applyCropping(groomDir + "cropped/segmentations", clippedFiles_segmentations, clippedFiles_segmentations)
+            groomed_segmentations = clippedFiles_segmentations
 
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
@@ -307,7 +308,7 @@ def Run_Pipeline(args):
         We convert the scans to distance transforms, this step is common for both the
         prepped as well as unprepped data, just provide correct filenames.
         """
-        dtFiles = applyDistanceTransforms(groomDir, clippedFiles_segmentations)
+        dtFiles = applyDistanceTransforms(groomDir, groomed_segmentations)
 
     """
     ## OPTIMIZE : Particle Based Optimization
