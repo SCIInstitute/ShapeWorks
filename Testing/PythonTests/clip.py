@@ -82,3 +82,17 @@ val = clipTest6()
 
 if val is False:
   sys.exit(1)
+
+def clipTest7():
+  mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
+  plane = Plane([0.0, 850.0, 0.0], [10.0, 0.0, 10.0])
+  mesh.clipClosedSurface(plane)
+
+  compareMesh = Mesh(os.environ["DATA"] + "/clipClosed1.vtk")
+
+  return mesh == compareMesh
+
+val = clipTest7()
+
+if val is False:
+  sys.exit(1)

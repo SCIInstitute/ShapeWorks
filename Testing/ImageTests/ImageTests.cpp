@@ -977,7 +977,8 @@ TEST(ImageTests, resampleTest4)
   ASSERT_TRUE(image == ground_truth);
 }
 
-/* fails to compile on linux due to weird template conflicts with itkeigen
+/* fails to compile on linux due to weird template conflicts with itkeigen 
+// related to https://github.com/SCIInstitute/ShapeWorks/issues/208
 TEST(ImageTests, resampleTest5)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
@@ -1047,7 +1048,7 @@ TEST(ImageTests, setSpacingTest1)
 TEST(ImageTests, setSpacingTest2)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la1-small.nrrd");
-  image.setSpacing();
+  image.setSpacing(makeVector({1.0, 1.0, 1.0}));
   Image ground_truth(std::string(TEST_DATA_DIR) + "/spacing1.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
