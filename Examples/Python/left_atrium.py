@@ -168,7 +168,7 @@ def Run_Pipeline(args):
             """
             Compute largest bounding box and apply cropping
             """
-            croppedFiles = applyCropping(groomDir + "cropped", alignedFiles, aligned_segmentations)
+            croppedFiles = applyCropping(groomDir + "cropped", alignedFiles, alignedFiles)
 
             print("\nStep 3. Groom - Convert to distance transforms\n")
             if args.interactive:
