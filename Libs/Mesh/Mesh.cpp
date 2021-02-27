@@ -337,48 +337,6 @@ Region Mesh::boundingBox(bool center) const
   return bbox;
 }
 
-Mesh& Mesh::fix(bool smoothBefore, bool smoothAfter, double lambda, int iterations, bool decimate, double percentage)
-{
-	FEVTKimport import;
-  FEMesh* meshFE = import.Load(this->mesh);
-
-	if (meshFE == 0) { throw std::invalid_argument("Unable to read file"); }
-
-	FEFixMesh fix;
-  FEMesh* meshFix;
-
-  meshFix = fix.FixElementWinding(meshFE);
-
-  if (smoothBefore)
-  {
-    FEMeshSmoothingModifier lap;
-    lap.m_threshold1 = lambda;
-    lap.m_iteration = iterations;
-    meshFix = lap.Apply(meshFix);
-  }
-
-  if (decimate)
-  {
-    FECVDDecimationModifier cvd;
-    cvd.m_pct = percentage;
-    cvd.m_gradient = 1;
-    meshFix = cvd.Apply(meshFix);
-
-    if (smoothAfter)
-    {
-      FEMeshSmoothingModifier lap;
-      lap.m_threshold1 = lambda;
-      lap.m_iteration = iterations;
-      meshFix = lap.Apply(meshFix);
-    }
-  }
-
-	FEVTKExport vtkOut;
-  this->mesh = vtkOut.ExportToVTK(*meshFix);
-
-  return *this;
-}
-
 Mesh& Mesh::distance(const Mesh &target, const DistanceMethod method)
 {
   if (target.numPoints() == 0 || numPoints() == 0)
@@ -549,6 +507,48 @@ Image Mesh::toDistanceTransform(Vector3 spacing, Dims size, Point3 origin) const
   Image image(toImage(spacing, size, origin));
   image.antialias(50, 0.00).computeDT(); // need maxrms = 0 and iterations = 30 to reproduce results
   return image;
+}
+
+Mesh& Mesh::fix(bool smoothBefore, bool smoothAfter, double lambda, int iterations, bool decimate, double percentage)
+{
+	FEVTKimport import;
+  FEMesh* meshFE = import.Load(this->mesh);
+
+	if (meshFE == 0) { throw std::invalid_argument("Unable to read file"); }
+
+	FEFixMesh fix;
+  FEMesh* meshFix;
+
+  meshFix = fix.FixElementWinding(meshFE);
+
+  if (smoothBefore)
+  {
+    FEMeshSmoothingModifier lap;
+    lap.m_threshold1 = lambda;
+    lap.m_iteration = iterations;
+    meshFix = lap.Apply(meshFix);
+  }
+
+  if (decimate)
+  {
+    FECVDDecimationModifier cvd;
+    cvd.m_pct = percentage;
+    cvd.m_gradient = 1;
+    meshFix = cvd.Apply(meshFix);
+
+    if (smoothAfter)
+    {
+      FEMeshSmoothingModifier lap;
+      lap.m_threshold1 = lambda;
+      lap.m_iteration = iterations;
+      meshFix = lap.Apply(meshFix);
+    }
+  }
+
+	FEVTKExport vtkOut;
+  this->mesh = vtkOut.ExportToVTK(*meshFix);
+
+  return *this;
 }
 
 Mesh& Mesh::setField(std::string name, Array array)

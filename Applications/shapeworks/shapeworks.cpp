@@ -73,7 +73,6 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(TranslateMesh::getCommand());
   shapeworks.addCommand(ScaleMesh::getCommand());
   shapeworks.addCommand(BoundingBoxMesh::getCommand());
-  shapeworks.addCommand(FixMesh::getCommand());
   shapeworks.addCommand(Distance::getCommand());
   shapeworks.addCommand(FixMesh::getCommand());
   shapeworks.addCommand(ClipClosedSurface::getCommand());
