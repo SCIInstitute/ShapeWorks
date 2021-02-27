@@ -67,7 +67,7 @@ fi
 
 cd "package/${VERSION}"
 rm bin/h5cc bin/h5c++ bin/itkTestDriver
-rm -rf include share v3p plugins
+rm -rf include share v3p plugins libigl
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
     # Mac OSX
