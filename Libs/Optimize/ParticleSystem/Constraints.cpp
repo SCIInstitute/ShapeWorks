@@ -80,7 +80,8 @@ bool Constraints::transformPlanes(const vnl_matrix_fixed<double, 4, 4> &Trans){
 }
 
 std::stringstream Constraints::applyBoundaryConstraints(vnl_vector_fixed<double, 3> &gradE, const Point<double, 3> &pos){
-    return applyPlaneConstraints(gradE, pos);
+   std::stringstream stream = applyPlaneConstraints(gradE, pos);
+   return stream;
 }
 
 std::stringstream Constraints::applyBoundaryConstraints(vnl_vector_fixed<float, 3> &gradE, const Point<double, 3> &pos){
@@ -88,6 +89,14 @@ std::stringstream Constraints::applyBoundaryConstraints(vnl_vector_fixed<float, 
     gradD[0] = double(gradE[0]); gradD[1] = double(gradE[1]); gradD[2] = double(gradE[2]);
     std::stringstream  out = applyPlaneConstraints(gradD, pos);
     gradE[0] = float(gradD[0]); gradE[1] = float(gradD[1]); gradE[2] = float(gradD[2]);
+
+    Point<double, 3> newpos = pos;
+    newpos[0] -= gradE[0]; newpos[1] -= gradE[1]; newpos[2] -= gradE[2];
+    bool first = this->IsAnyViolated(pos);
+    bool second = this->IsAnyViolated(newpos);
+    if(!first && second){
+        std::cerr << "*****************************************\nViolation has occured for point " << pos << " when the point became " << newpos << std::endl;
+    }
     return out;
 }
 

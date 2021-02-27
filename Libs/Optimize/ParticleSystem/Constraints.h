@@ -69,6 +69,12 @@ public:
       return false;
   }
 
+  bool IsAnyViolated(const vnl_vector_fixed<double, 3> & pos){
+      Point<double, 3> posvnl;
+      posvnl[0] = pos[0]; posvnl[1] = pos[1]; posvnl[2] = pos[2];
+      return IsAnyViolated(posvnl);
+  }
+
   // Constraint violations
   std::vector<int> planesViolated(Eigen::Vector3d pt){
       std::vector<int> planesViolated;

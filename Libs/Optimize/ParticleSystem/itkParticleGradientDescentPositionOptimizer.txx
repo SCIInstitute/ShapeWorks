@@ -164,6 +164,9 @@ namespace itk
               // Step B Constrain the gradient so that the resulting position will not violate any domain constraints
               m_ParticleSystem->GetDomain(dom)->GetConstraints()->applyBoundaryConstraints(gradient, m_ParticleSystem->GetPosition(k, dom));
 
+              // debuggg
+              PointType oldpoint = m_ParticleSystem->GetPositions(dom)->Get(k);
+
               gradmag = gradient.magnitude();
 
               // Step C if the magnitude is larger than the Sampler allows, scale the gradient down to an acceptable magnitude
@@ -185,6 +188,12 @@ namespace itk
               {
                 m_TimeSteps[dom][k] *= factor;
                 if (gradmag > maxchange) maxchange = gradmag;
+
+                // debugg
+                std::stringstream stream;
+                stream << "###########################################################################\n" << dom << " " << " " << k << " " << oldpoint << " " << newpoint << std::endl;
+                if(!m_ParticleSystem->GetDomain(dom)->GetConstraints()->IsAnyViolated(oldpoint) && m_ParticleSystem->GetDomain(dom)->GetConstraints()->IsAnyViolated(newpoint) ) std::cerr << stream.str();
+
                 break;
               }
               else

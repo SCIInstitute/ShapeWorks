@@ -19,7 +19,10 @@ public:
 
   bool isViolated(const Eigen::Vector3d &pt) const{
     double dist = planeNormal.dot(pt-planePoint);
-    if(dist < 0)return true;
+    if(dist < 0){
+        //std::cout << "normal " << planeNormal.transpose() << " point " << pt.transpose() << " dist " << dist <<  std::endl;
+        return true;
+    }
     return false;
   }
 
