@@ -19,6 +19,7 @@ struct GeoEntryInternal {
 };
 struct GeoEntry {
   double max_dist{0.0};
+  bool has_grads{false};
   robin_hood::unordered_flat_map<int, GeoEntryInternal> data;
 };
 
@@ -129,6 +130,7 @@ private:
 
   // Gradient operator, used to compute gradient of functions defined per-mesh-vertex
   Eigen::SparseMatrix<double> grad_operator_;
+  std::vector<std::array<double, 9>> fast_grad_operator_;
 
   bool IsGeodesicsEnabled() const override
   {
@@ -140,8 +142,8 @@ private:
 
   bool is_geodesics_enabled_{true};
 
-  // Each cache entry stores (3*V + 9*F) double precision numbers
-  size_t max_cache_entries_{512*3};
+  size_t max_cache_entries_{1000000};
+  mutable size_t current_cache_size_{0};
 
   // Cache to store information for geodesics
   igl::HeatGeodesicsData<double> geo_heat_data_;

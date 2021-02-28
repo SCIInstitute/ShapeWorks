@@ -179,12 +179,9 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
   Eigen::Map<Eigen::Vector3d> out_grad_eigen(out_grad->data_block());
 
   // Compute gradient of geodesics using barycentric approximation from point b over face a.
-  auto& geo_b = GetGeoCacheEntry(face_b, 1.5*particle_neighborhood_radii_[idx_a], face_a);
+  auto& geo_b = GetGeoCacheEntry(face_b, geo_dist, face_a);
   const auto geo_ba = geo_b.data.find(face_a);
   if(geo_ba == geo_b.data.end()) {
-    auto& geo_b2 = GetGeoCacheEntry(face_b, 1000000.0);
-    const auto geo_ba = geo_b.data.find(face_a);
-    const volatile bool now_found = geo_ba != geo_b.data.end();
     throw std::runtime_error("bad situation 2");
   }
   out_grad_eigen = bary_b[0] * geo_ba->second.gradients[0]
@@ -206,15 +203,29 @@ bool VtkMeshWrapper::IsWithinDistance(const PointType &pt_a, int idx_a,
     return pt_a.SquaredEuclideanDistanceTo(pt_b) < test_dist*test_dist;
   }
 
-  if(triangles_.size() == 2352) {
-  }
-
   if(idx_a != -1) {
     if(particle_neighborhood_radii_.size() <= idx_a) {
       particle_neighborhood_radii_.resize(idx_a + 1, 0.0);
     }
   }
   particle_neighborhood_radii_[idx_a] = test_dist;
+
+  // This maybe slightly incorrect
+  if(particle_triangles_.size() >= std::max(idx_a, idx_b)) {
+    const int face_a = particle_triangles_[idx_a];
+    const int face_b = particle_triangles_[idx_b];
+    if (face_a == face_b || AreFacesAdjacent(face_a, face_b)) {
+      return pt_a.SquaredEuclideanDistanceTo(pt_b) < test_dist*test_dist;
+    }
+    if(face_a != -1 && face_b != -1) {
+      const auto& entry = geo_cache_[face_a];
+      if(entry.max_dist >= test_dist) {
+        if(!entry.data.contains(face_b)) {
+          return false;
+        }
+      }
+    }
+  }
 
   // Find the triangle for the point a. If this was the same as the previous query, just used that cached value
   int face_a, face_b;
@@ -235,7 +246,7 @@ bool VtkMeshWrapper::IsWithinDistance(const PointType &pt_a, int idx_a,
 
   // std::cout << "IsWithinDistance: " << face_a << " " << face_b <<  " | " << idx_a << " " << idx_b <<  " | " << pt_a << " " << pt_b <<  " | " <<"\n";
 
-  auto& geo_a = GetGeoCacheEntry(face_a, test_dist*1.5);
+  auto& geo_a = GetGeoCacheEntry(face_a, test_dist*3.0);
 
   if (face_a == face_b || AreFacesAdjacent(face_a, face_b)) {
     return pt_a.SquaredEuclideanDistanceTo(pt_b) < test_dist*test_dist;
@@ -910,8 +921,12 @@ void VtkMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::
 
   // Resize cache to correct size
   geo_cache_.resize(F.rows());
+  for(auto& f : geo_cache_) {
+    f.max_dist = 0.0;
+  }
   std::vector<std::vector<int>> throw_away;
   igl::vertex_triangle_adjacency(V.rows(), F, v2f, throw_away);
+
 }
 
 //---------------------------------------------------------------------------
@@ -933,6 +948,14 @@ bool VtkMeshWrapper::AreFacesAdjacent(int f_a, int f_b) const
 //todo need grad
 GeoEntry& VtkMeshWrapper::GetGeoCacheEntry(int f, double max_dist, int ensure_contains_face) const
 {
+  if(current_cache_size_ >= max_cache_entries_) {
+    for(auto& e : geo_cache_) {
+      e.max_dist = 0.0;
+      e.data.clear();
+    }
+    current_cache_size_ = 0;
+  }
+
   auto& entry = geo_cache_[f];
   if(ensure_contains_face != -1) {
     if(entry.data.contains(ensure_contains_face)) {
@@ -942,6 +965,7 @@ GeoEntry& VtkMeshWrapper::GetGeoCacheEntry(int f, double max_dist, int ensure_co
     return entry;
   }
 
+  current_cache_size_ -= entry.data.size();
   entry.data.clear();
 
   const auto& G = grad_operator_;
@@ -967,22 +991,22 @@ GeoEntry& VtkMeshWrapper::GetGeoCacheEntry(int f, double max_dist, int ensure_co
   robin_hood::unordered_set<int> faces_to_keep;
   for(int v=0; v<n_verts; v++) {
     if(geo_tmp_dist_[0][v] <= max_dist || geo_tmp_dist_[1][v] <= max_dist || geo_tmp_dist_[2][v] <= max_dist) {
-      for(auto f : v2f[v]) {
-        faces_to_keep.insert(f);
+      for(auto req_face : v2f[v]) {
+        const auto f_entry = entry.data.find(req_face);
+        if(f_entry != entry.data.end()) {
+          continue;
+        }
+        for(int i=0; i<3; i++) {
+          entry.data[req_face].distances[i][0] = geo_tmp_dist_[i][triangles_[req_face]->GetPointId(0)];
+          entry.data[req_face].distances[i][1] = geo_tmp_dist_[i][triangles_[req_face]->GetPointId(1)];
+          entry.data[req_face].distances[i][2] = geo_tmp_dist_[i][triangles_[req_face]->GetPointId(2)];
+          entry.data[req_face].gradients[i] = geo_tmp_grad_[i].row(req_face);
+        }
       }
     }
   }
 
-  for(auto f : faces_to_keep) {
-    auto& internal_entry = entry.data[f];
-    for(int i=0; i<3; i++) {
-      internal_entry.distances[i][0] = geo_tmp_dist_[i][triangles_[f]->GetPointId(0)];
-      internal_entry.distances[i][1] = geo_tmp_dist_[i][triangles_[f]->GetPointId(1)];
-      internal_entry.distances[i][2] = geo_tmp_dist_[i][triangles_[f]->GetPointId(2)];
-      internal_entry.gradients[i] = geo_tmp_grad_[i].row(f);
-    }
-  }
-
+  current_cache_size_ += entry.data.size();
   entry.max_dist = max_dist;
   return entry;
 }
