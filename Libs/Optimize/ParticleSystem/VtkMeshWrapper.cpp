@@ -13,6 +13,7 @@
 
 #include <igl/grad.h>
 #include <igl/per_vertex_normals.h>
+#include <geometrycentral/surface/surface_mesh_factories.h>
 
 namespace shapeworks {
 
@@ -104,7 +105,7 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data) {
 //---------------------------------------------------------------------------
 double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
                                        const PointType &pt_b, int idx_b, VectorType *out_grad) const {
-  // return euclidean if geodesics are not enabled
+  // return euclidean if geodesics are disabled
   if (!is_geodesics_enabled_) {
     if (out_grad != nullptr) {
       for (int i = 0; i < DIMENSION; i++) {
@@ -144,7 +145,13 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
   }
 
   // Define for convenience
-  const auto &faces = this->triangles_;
+  const auto& faces = this->triangles_;
+  const auto va0 = faces[face_a]->GetPointId(0);
+  const auto va1 = faces[face_a]->GetPointId(1);
+  const auto va2 = faces[face_a]->GetPointId(2);
+  const auto vb0 = faces[face_b]->GetPointId(0);
+  const auto vb1 = faces[face_b]->GetPointId(1);
+  const auto vb2 = faces[face_b]->GetPointId(2);
 
   // Compute geodesic distance via barycentric approximation
   // Geometric Correspondence for Ensembles of Nonregular Shapes, Datar et al
@@ -152,10 +159,10 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
   double geo_dist = 0.0;
   const auto &geo_from_a = GeodesicsFromTriangle(face_a);
   for (int i = 0; i < 3; i++) {
-    const Eigen::VectorXd &geo_from_ai = geo_from_a[i];
-    const double g_i0 = geo_from_ai[faces[face_b]->GetPointId(0)];
-    const double g_i1 = geo_from_ai[faces[face_b]->GetPointId(1)];
-    const double g_i2 = geo_from_ai[faces[face_b]->GetPointId(2)];
+    const Eigen::VectorXd &geo_from_ai = geo_from_a[i].raw();
+    const double g_i0 = geo_from_ai[vb0];
+    const double g_i1 = geo_from_ai[vb1];
+    const double g_i2 = geo_from_ai[vb2];
     const double g_ib = bary_b[0] * g_i0 + bary_b[1] * g_i1 + bary_b[2] * g_i2;
     geo_dist += bary_a[i] * g_ib;
   }
@@ -172,11 +179,8 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
   // Compute gradient of geodesics using barycentric approximation from point b over face a.
   const auto& geo_from_b = GeodesicsFromTriangle(face_b);
   const auto& G = face_grad_[face_a];
-  const auto va0 = this->triangles_[face_a]->GetPointId(0);
-  const auto va1 = this->triangles_[face_a]->GetPointId(1);
-  const auto va2 = this->triangles_[face_a]->GetPointId(2);
   for(int i=0; i<3; i++) {
-    const Eigen::VectorXd& D = geo_from_b[i];
+    const Eigen::VectorXd& D = geo_from_b[i].raw();
     const Eigen::Vector3d GD {
           G[0]*D(va0) + G[1]*D(va1) + G[2]*D(va2),
           G[3]*D(va0) + G[4]*D(va1) + G[5]*D(va2),
@@ -212,7 +216,6 @@ PointType VtkMeshWrapper::GeodesicWalk(PointType p, int idx,
 {
   vec3 point(p[0], p[1], p[2]);
   double closest_point[3];
-  double bary[3];
   int face_index = GetTriangleForPoint(point.data(), idx, closest_point);
   point = convert<double[3], vec3>(closest_point);
 
@@ -808,33 +811,21 @@ void VtkMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const
 //---------------------------------------------------------------------------
 void VtkMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F)
 {
-  // Precompute heat data structure for geodesics
-  if(!igl::heat_geodesics_precompute(V, F, geo_heat_data_)) {
-    throw std::runtime_error("Unable to compute geodesics on mesh");
-  }
-
   // Resize cache to correct size
   geo_dist_cache_.entries.resize(max_cache_entries_);
 
-  for(auto& entry : geo_dist_cache_.entries) {
-    entry[0].resize(V.rows());
-    entry[1].resize(V.rows());
-    entry[2].resize(V.rows());
-  }
+  // Compute gradient operator
+  Eigen::SparseMatrix<double> G;
+  igl::grad(V, F, G);
 
+  // Flatten the gradient operator so we can quickly compute the gradient at a given point
   face_grad_.resize(F.rows());
-  for(auto& g : face_grad_) {
-    g.fill(0.0);
-  }
-
   size_t n_insertions = 0;
-  const auto& G = geo_heat_data_.Grad;
   for(int k=0; k<G.outerSize(); k++) {
     for(Eigen::SparseMatrix<double>::InnerIterator it(G, k); it; ++it) {
       const double val = it.value();
       const auto r = it.row();
       const auto c = it.col();
-
 
       const auto f = r % F.rows();
       const auto axis = r / F.rows();
@@ -848,6 +839,14 @@ void VtkMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::
     }
   }
   assert(n_insertions == 9*F.rows());
+
+
+  // geometry central stuff
+  {
+    using namespace geometrycentral::surface;
+    std::tie(gc_mesh_, gc_geometry_) = makeSurfaceMeshAndGeometry(V, F);
+    gc_heatsolver_ = std::make_unique<HeatMethodDistanceSolver>(*gc_geometry_);
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -867,7 +866,8 @@ bool VtkMeshWrapper::AreFacesAdjacent(int f_a, int f_b) const
 }
 
 //---------------------------------------------------------------------------
-const std::array<Eigen::VectorXd, 3>& VtkMeshWrapper::GeodesicsFromTriangle(int f) const {
+const std::array<VtkMeshWrapper::GeodesicsType, 3>& VtkMeshWrapper::GeodesicsFromTriangle(int f) const
+{
   auto& cache = geo_dist_cache_;
   const auto map_entry = cache.key2entry.find(f);
   if(map_entry != cache.key2entry.end()) {
@@ -879,12 +879,14 @@ const std::array<Eigen::VectorXd, 3>& VtkMeshWrapper::GeodesicsFromTriangle(int 
     cache.clear_except_active(particle_triangles_);
   }
 
+  geometrycentral::surface::VertexData<double> v;
   const int cache_idx = cache.key2entry.size();
   for(int i=0; i<3; i++) {
+    using namespace geometrycentral::surface;
     auto& D = cache.entries[cache_idx][i];
-    Eigen::VectorXi gamma;
-    gamma.resize(1); gamma << this->triangles_[f]->GetPointId(i);
-    igl::heat_geodesics_solve(geo_heat_data_, gamma, D);
+    const auto v = gc_mesh_->vertex(this->triangles_[f]->GetPointId(i));
+    VertexData<double> dist = gc_heatsolver_->computeDistance(v);
+    cache.entries[cache_idx][i] = std::move(dist);
   }
 
   cache.key2entry[f] = cache_idx;

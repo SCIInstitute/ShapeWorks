@@ -4,9 +4,11 @@
 #include "FixedSizeCache.h"
 
 #include <unordered_map>
-#include <igl/heat_geodesics.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
+#include <geometrycentral/surface/surface_mesh.h>
+#include <geometrycentral/surface/meshio.h>
+#include <geometrycentral/surface/heat_method_distance.h>
 
 class vtkCellLocator;
 
@@ -126,17 +128,19 @@ private:
 
   bool is_geodesics_enabled_{true};
 
+  std::unique_ptr<geometrycentral::surface::SurfaceMesh> gc_mesh_;
+  std::unique_ptr<geometrycentral::surface::VertexPositionGeometry> gc_geometry_;
+  std::unique_ptr<geometrycentral::surface::HeatMethodDistanceSolver> gc_heatsolver_;
+
   // Each cache entry stores 3*V double precision numbers
   size_t max_cache_entries_{512*8};
 
   // Flattened version of libigl's gradient operator
   std::vector<std::array<double, 9>> face_grad_;
 
-  // Cache to store information for geodesics
-  igl::HeatGeodesicsData<double> geo_heat_data_;
-
   // Cache for geodesic distances from a triangle
-  mutable FixedSizeCache<int, std::array<Eigen::VectorXd, 3>> geo_dist_cache_;
+  using GeodesicsType = geometrycentral::surface::VertexData<double>;
+  mutable FixedSizeCache<int, std::array<GeodesicsType, 3>> geo_dist_cache_;
 
   // Returns true if face f_a is adjacent to face f_b. This uses a non-standard definition of adjacency: return true
   // if f_a and f_b share atleast one vertex
@@ -145,12 +149,12 @@ private:
   // Convert the mesh to libigl data structures
   void GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const;
 
-  // Precompute libigl heat data structures for faster geodesic lookups
+  // Precompute heat data structures for faster geodesic lookups
   void PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
 
   // Returns 3 x (V, ) geodesic distances from a given source triangle's vertices to every other vertex.
-  // This reference maybe invalid once this function is called again
-  const std::array<Eigen::VectorXd, 3>& GeodesicsFromTriangle(int f) const;
+  // This reference is invalid once this function is called again
+  const std::array<GeodesicsType, 3>& GeodesicsFromTriangle(int f) const;
 
   // Store some info about the last query. This accelerates the computation because the optimizer generally asks for the
   // distances _from_ the same point as the previous query.
