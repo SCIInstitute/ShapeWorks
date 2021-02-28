@@ -180,12 +180,9 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
   const auto& geo_from_b = GeodesicsFromTriangle(face_b);
   const auto& G = face_grad_[face_a];
   for(int i=0; i<3; i++) {
-    const Eigen::VectorXd& D = geo_from_b[i].raw();
-    const Eigen::Vector3d GD {
-          G[0]*D(va0) + G[1]*D(va1) + G[2]*D(va2),
-          G[3]*D(va0) + G[4]*D(va1) + G[5]*D(va2),
-          G[6]*D(va0) + G[7]*D(va1) + G[8]*D(va2)
-    };
+    const Eigen::VectorXd& geo_from_bi = geo_from_b[i].raw();
+    const Eigen::Vector3d D { geo_from_bi(va0), geo_from_bi(va1), geo_from_bi(va2) };
+    const auto GD = (G*D).rowwise().sum();
     out_grad_eigen += bary_b[i] * GD;
   }
 
@@ -831,7 +828,7 @@ void VtkMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::
       const auto axis = r / F.rows();
       for(int i=0; i<3; i++) {
         if(F(f, i) == c) {
-          face_grad_[f][axis*3+i] = val;
+          face_grad_[f](axis, i) = val;
           n_insertions++;
           break;
         }

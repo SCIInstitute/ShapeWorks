@@ -136,7 +136,7 @@ private:
   size_t max_cache_entries_{512*8};
 
   // Flattened version of libigl's gradient operator
-  std::vector<std::array<double, 9>> face_grad_;
+  std::vector<Eigen::Matrix3d> face_grad_;
 
   // Cache for geodesic distances from a triangle
   using GeodesicsType = geometrycentral::surface::VertexData<double>;
