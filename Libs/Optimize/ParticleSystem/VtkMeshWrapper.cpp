@@ -9,7 +9,6 @@
 #include <vtkGenericCell.h>
 #include <vtkCleanPolyData.h>
 #include <vtkTriangle.h>
-#include <vtkQuadricDecimation.h>
 #include <vtkPLYWriter.h>
 
 #include <igl/grad.h>
@@ -804,36 +803,6 @@ void VtkMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const
     F(i, 1) = cell->GetPointId(1);
     F(i, 2) = cell->GetPointId(2);
   }
-}
-
-//---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> VtkMeshWrapper::Decimated(unsigned long target_tris) const
-{
-  const auto total_tris = this->triangles_.size();
-  const double target_reduction = std::min(1.0, ((double)total_tris - (double)target_tris) / (double)total_tris);
-  if(target_reduction <= 0.0) {
-    //todo in the event the user doesn't require decimation, we unnecessarily make a copy of the mesh.
-    auto decimated = vtkSmartPointer<vtkPolyData>::New();
-    decimated->DeepCopy(this->poly_data_);
-    return decimated;
-  }
-
-  auto decimate = vtkSmartPointer<vtkQuadricDecimation>::New();
-  decimate->SetInputData(this->poly_data_);
-  decimate->AttributeErrorMetricOn();
-  decimate->SetTargetReduction(target_reduction);
-  decimate->VolumePreservationOn();
-  decimate->Update();
-
-  vtkSmartPointer<vtkPolyData> decimated = decimate->GetOutput();
-
-  const std::string filename = "/tmp/vtk/" + std::to_string(rand()) + ".ply";
-  auto plyWriter = vtkSmartPointer<vtkPLYWriter>::New();
-  plyWriter->SetFileName(filename.c_str());
-  plyWriter->SetInputData(decimated);
-  plyWriter->Write();
-
-  return decimated;
 }
 
 //---------------------------------------------------------------------------

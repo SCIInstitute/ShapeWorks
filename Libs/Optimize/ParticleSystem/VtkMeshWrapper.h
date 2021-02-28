@@ -138,9 +138,6 @@ private:
   // Cache for geodesic distances from a triangle
   mutable FixedSizeCache<int, std::array<Eigen::VectorXd, 3>> geo_dist_cache_;
 
-  // Return a version of this mesh decimated to contain ~target_tris triangles
-  vtkSmartPointer<vtkPolyData> Decimated(unsigned long target_tris) const; //todo remove
-
   // Returns true if face f_a is adjacent to face f_b. This uses a non-standard definition of adjacency: return true
   // if f_a and f_b share atleast one vertex
   bool AreFacesAdjacent(int f_a, int f_b) const;
