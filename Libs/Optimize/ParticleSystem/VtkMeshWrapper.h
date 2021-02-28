@@ -58,7 +58,6 @@ public:
 private:
 
   void ComputeMeshBounds();
-  void ComputeGradOperator(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
   void ComputeGradN(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
 
 
@@ -117,9 +116,6 @@ private:
   // cell locator to find closest point on mesh
   vtkSmartPointer<vtkCellLocator> cell_locator_;
 
-  // Gradient operator, used to compute gradient of functions defined per-mesh-vertex
-  Eigen::SparseMatrix<double> grad_operator_;
-
   bool IsGeodesicsEnabled() const override
   {
     return this->is_geodesics_enabled_;
@@ -130,8 +126,11 @@ private:
 
   bool is_geodesics_enabled_{true};
 
-  // Each cache entry stores (3*V + 9*F) double precision numbers
-  size_t max_cache_entries_{512*3};
+  // Each cache entry stores 3*V double precision numbers
+  size_t max_cache_entries_{512*8};
+
+  // Flattened version of libigl's gradient operator
+  std::vector<std::array<double, 9>> face_grad_;
 
   // Cache to store information for geodesics
   igl::HeatGeodesicsData<double> geo_heat_data_;
@@ -139,11 +138,8 @@ private:
   // Cache for geodesic distances from a triangle
   mutable FixedSizeCache<int, std::array<Eigen::VectorXd, 3>> geo_dist_cache_;
 
-  // Cache for gradient of geodesic distances from a triangle
-  mutable FixedSizeCache<int, std::array<Eigen::MatrixXd, 3>> geo_grad_cache_;
-
   // Return a version of this mesh decimated to contain ~target_tris triangles
-  vtkSmartPointer<vtkPolyData> Decimated(unsigned long target_tris) const;
+  vtkSmartPointer<vtkPolyData> Decimated(unsigned long target_tris) const; //todo remove
 
   // Returns true if face f_a is adjacent to face f_b. This uses a non-standard definition of adjacency: return true
   // if f_a and f_b share atleast one vertex
@@ -158,10 +154,6 @@ private:
   // Returns 3 x (V, ) geodesic distances from a given source triangle's vertices to every other vertex.
   // This reference maybe invalid once this function is called again
   const std::array<Eigen::VectorXd, 3>& GeodesicsFromTriangle(int f) const;
-
-  // Returns 3 x (F, 3) gradient of geodesic distances from a given source triangle's vertices to every other face.
-  // This reference maybe invalid once this function is called again
-  const std::array<Eigen::MatrixXd, 3>& GradGeodesicsFromTriangle(int f) const;
 
   // Store some info about the last query. This accelerates the computation because the optimizer generally asks for the
   // distances _from_ the same point as the previous query.
