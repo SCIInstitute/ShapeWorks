@@ -809,7 +809,9 @@ void VtkMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const
 void VtkMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F)
 {
   // Precompute heat data structure for geodesics
-  igl::heat_geodesics_precompute(V, F, geo_heat_data_);
+  if(!igl::heat_geodesics_precompute(V, F, geo_heat_data_)) {
+    throw std::runtime_error("Unable to compute geodesics on mesh");
+  }
 
   // Resize cache to correct size
   geo_dist_cache_.entries.resize(max_cache_entries_);
