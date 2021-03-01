@@ -175,6 +175,7 @@ MeshGroup Shape::get_groomed_meshes(bool wait)
 void Shape::reset_groomed_mesh()
 {
   this->groomed_mesh_.reset();
+  this->groomed_meshes_ = MeshGroup(this->subject_->get_number_of_domains());
 }
 
 //---------------------------------------------------------------------------

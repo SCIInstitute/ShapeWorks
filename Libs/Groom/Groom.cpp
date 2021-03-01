@@ -126,13 +126,16 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, int domain)
   if (this->abort_) { return false; }
 
   // store transform
-  std::vector<std::vector<double>> groomed_transforms;
+  std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
   std::vector<double> groomed_transform;
   auto transform_params = transform->GetParameters();
   for (int i = 0; i < transform_params.size(); i++) {
     groomed_transform.push_back(transform_params[i]);
   }
-  groomed_transforms.push_back(groomed_transform);
+  if (domain >= groomed_transforms.size()) {
+    groomed_transforms.resize(domain + 1);
+  }
+  groomed_transforms[domain] = groomed_transform;
   subject->set_groomed_transforms(groomed_transforms);
 
   // isolate
@@ -362,8 +365,6 @@ int Groom::get_total_ops()
 
   return num_subjects * num_tools;
 }
-
-
 
 //---------------------------------------------------------------------------
 void Groom::increment_progress(int amount)
