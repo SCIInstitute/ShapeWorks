@@ -318,6 +318,11 @@ TEST(pythonTests, distanceTest)
   ASSERT_FALSE(system("python distance.py"));
 }
 
+TEST(pythonTests, generateNormalsTest)
+{
+  ASSERT_FALSE(system("python generateNormals.py"));
+}
+
 TEST(pythonTests, fieldTest)
 {
   ASSERT_FALSE(system("python field.py"));
