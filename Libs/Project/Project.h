@@ -137,7 +137,7 @@ private:
 
   void save_string_column(const std::string& name, std::vector<std::string> items);
 
-  int num_domains_per_subject_ = 0;
+  int num_domains_per_subject_ = 1;
 
   std::unique_ptr<xlnt::workbook> wb_;
 

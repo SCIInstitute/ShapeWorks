@@ -345,31 +345,30 @@ int Project::get_version() const
 int
 Project::get_index_for_column(const std::string& name, bool create_if_not_found, int sheet) const
 {
-  std::cerr << "sheet = " << sheet << "\n";
   xlnt::worksheet ws = this->wb_->sheet_by_index(sheet);
 
   auto headers = ws.rows(false)[0];
-  std::cerr << "Get index for column: " << name << "\n";
-  std::cerr << "number of headers = " << headers.length() << "\n";
+  //std::cerr << "Get index for column: " << name << "\n";
+  //std::cerr << "number of headers = " << headers.length() << "\n";
   for (int i = 0; i < headers.length(); i++) {
-    std::cerr << "header: " << headers[i].to_string() << "\n";
+    //std::cerr << "header: " << headers[i].to_string() << "\n";
     if (headers[i].to_string() == name) {
       return i + 1;
     }
   }
 
   if (create_if_not_found) {
-    std::cerr << "couldn't find: " << name << "\n";
+    //std::cerr << "couldn't find: " << name << "\n";
     auto column = ws.highest_column();
-    std::cerr << "highest column is " << column.index << "\n";
+    //std::cerr << "highest column is " << column.index << "\n";
     if (ws.cell(xlnt::cell_reference(column.index, 1)).value<std::string>().empty()) {
       ws.cell(xlnt::cell_reference(column.index, 1)).value(name);
-      std::cerr << "returning " << column.index << "\n";
+      //std::cerr << "returning " << column.index << "\n";
       return column.index;
     }
     else {
       ws.cell(xlnt::cell_reference(column.index + 1, 1)).value(name);
-      std::cerr << "returning " << column.index + 1 << "\n";
+      //std::cerr << "returning " << column.index + 1 << "\n";
       return column.index + 1;
     }
   }
