@@ -96,6 +96,7 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data) {
   Eigen::MatrixXi F;
   this->GetIGLMesh(V, F);
   this->ComputeGradN(V, F);
+  this->ComputeGradP(V, F);
 
   if (is_geodesics_enabled_) {
     this->PrecomputeGeodesics(V, F);
@@ -351,6 +352,22 @@ GradNType VtkMeshWrapper::SampleGradNAtPoint(PointType p, int idx) const
   }
   return weighted_grad_normal;
 }
+//---------------------------------------------------------------------------
+GradNType VtkMeshWrapper::SampleGradPAtPoint(PointType p, int idx) const
+{
+  vec3 weights;
+  int face_index = this->ComputeFaceAndWeights(p, idx, weights);
+
+  GradNType weighted_grad_normal = GradNType(0.0);
+
+  for (int i = 0; i < 3; i++) {
+    auto id = this->triangles_[face_index]->GetPointId(i);
+    GradNType grad_normal = grad_positions_[id];
+    grad_normal *= weights[i];
+    weighted_grad_normal += grad_normal;
+  }
+  return weighted_grad_normal;
+}
 
 //---------------------------------------------------------------------------
 PointType VtkMeshWrapper::SnapToMesh(PointType pointa, int idx) const
@@ -481,6 +498,49 @@ void VtkMeshWrapper::ComputeGradN(const Eigen::MatrixXd& V, const Eigen::MatrixX
       grad_normals_[j].set(i, 0, GN_pervertex(j, i * 3 + 0));
       grad_normals_[j].set(i, 1, GN_pervertex(j, i * 3 + 1));
       grad_normals_[j].set(i, 2, GN_pervertex(j, i * 3 + 2));
+    }
+  }
+
+}
+//---------------------------------------------------------------------------
+void VtkMeshWrapper::ComputeGradP(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F)
+{
+  const int n_verts = V.rows();
+  const int n_faces = F.rows();
+
+  Eigen::SparseMatrix<double> G;
+  igl::grad(V, F, G);
+
+  // Compute gradient of positions per face
+  const Eigen::MatrixXd GP = Eigen::Map<const Eigen::MatrixXd>((G * V).eval().data(), n_faces, 9);
+
+  // Convert per-face values to per-vertex using face area as weight
+  Eigen::MatrixXd GP_pervertex(n_verts, 9);
+  GP_pervertex.setZero();
+  Eigen::MatrixXd A_perface;
+  igl::doublearea(V, F, A_perface);
+  Eigen::VectorXd A_pervertex(n_verts);
+  A_pervertex.setZero();
+  // scatter the per-face values
+  for (int i = 0; i < n_faces; i++) {
+    for (int j = 0; j < 3; j++) {
+      GP_pervertex.row(F(i, j)) += A_perface(i, 0) * GP.row(i);
+      A_pervertex(F(i, j)) += A_perface(i, 0);
+    }
+  }
+  for (int i = 0; i < n_verts; i++) {
+    if (A_pervertex(i) != 0.0) {
+      GP_pervertex.row(i) /= A_pervertex(i);
+    }
+  }
+
+  // Copy back to VNL data structure
+  grad_positions_.resize(n_verts);
+  for (int j = 0; j < n_verts; j++) {
+    for (int i = 0; i < 3; i++) {
+      grad_positions_[j].set(i, 0, GP_pervertex(j, i * 3 + 0));
+      grad_positions_[j].set(i, 1, GP_pervertex(j, i * 3 + 1));
+      grad_positions_[j].set(i, 2, GP_pervertex(j, i * 3 + 2));
     }
   }
 

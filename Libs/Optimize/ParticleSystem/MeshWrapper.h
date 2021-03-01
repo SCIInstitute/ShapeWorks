@@ -37,6 +37,7 @@ public:
   virtual vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(const PointType & pointa, int idx, vnl_vector_fixed<double, DIMENSION> & vector) const = 0;
   virtual vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(PointType p, int idx) const = 0;
   virtual GradNType SampleGradNAtPoint(PointType p, int idx) const = 0;
+  virtual GradNType SampleGradPAtPoint(PointType p, int idx) const = 0;
 
   // Returns closest point on mesh to pointa.
   virtual PointType SnapToMesh(PointType pointa, int idx) const = 0;
