@@ -4,7 +4,6 @@
 #include "FixedSizeCache.h"
 
 #include <unordered_map>
-#include <robin_hood.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 #include <geometrycentral/surface/surface_mesh.h>
@@ -14,15 +13,6 @@
 class vtkCellLocator;
 
 namespace shapeworks {
-
-struct GeoEntry {
-  double max_dist{0.0};
-  robin_hood::unordered_flat_map<int, Eigen::Vector3d> data;
-  void clear() {
-    max_dist = 0.0;
-    data.clear();
-  }
-};
 
 class VtkMeshWrapper : public MeshWrapper {
 
@@ -142,14 +132,15 @@ private:
   std::unique_ptr<geometrycentral::surface::VertexPositionGeometry> gc_geometry_;
   std::unique_ptr<geometrycentral::surface::HeatMethodDistanceSolver> gc_heatsolver_;
 
-  size_t max_cache_entries_{2000000};
-  mutable size_t cache_size_{0};
+  // Each cache entry stores 3*V double precision numbers
+  size_t max_cache_entries_{512*8};
 
   // Flattened version of libigl's gradient operator
   std::vector<Eigen::Matrix3d> face_grad_;
 
   // Cache for geodesic distances from a triangle
-  mutable std::vector<GeoEntry> geo_dist_cache_;
+  using GeodesicsType = geometrycentral::surface::VertexData<double>;
+  mutable FixedSizeCache<int, std::array<GeodesicsType, 3>> geo_dist_cache_;
 
   // Returns true if face f_a is adjacent to face f_b. This uses a non-standard definition of adjacency: return true
   // if f_a and f_b share atleast one vertex
@@ -161,8 +152,9 @@ private:
   // Precompute heat data structures for faster geodesic lookups
   void PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
 
-  const GeoEntry& GeodesicsFromTriangle(int f, double max_dist) const;
-  const Eigen::Matrix3d GeodesicsFromTriangleToPoints(int f, int v0, int v1, int v2) const;
+  // Returns 3 x (V, ) geodesic distances from a given source triangle's vertices to every other vertex.
+  // This reference is invalid once this function is called again
+  const std::array<GeodesicsType, 3>& GeodesicsFromTriangle(int f) const;
 
   // Store some info about the last query. This accelerates the computation because the optimizer generally asks for the
   // distances _from_ the same point as the previous query.

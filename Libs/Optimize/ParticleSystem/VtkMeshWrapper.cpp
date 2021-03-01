@@ -157,10 +157,13 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
   // Geometric Correspondence for Ensembles of Nonregular Shapes, Datar et al
   // https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3346950/
   double geo_dist = 0.0;
-  const auto& geo_from_a = GeodesicsFromTriangleToPoints(face_a, vb0, vb1, vb2);
+  const auto &geo_from_a = GeodesicsFromTriangle(face_a);
   for (int i = 0; i < 3; i++) {
-    const auto& geo_from_ai = geo_from_a.row(i);
-    const double g_ib = bary_b.dot(geo_from_ai);
+    const Eigen::VectorXd &geo_from_ai = geo_from_a[i].raw();
+    const double g_i0 = geo_from_ai[vb0];
+    const double g_i1 = geo_from_ai[vb1];
+    const double g_i2 = geo_from_ai[vb2];
+    const double g_ib = bary_b[0] * g_i0 + bary_b[1] * g_i1 + bary_b[2] * g_i2;
     geo_dist += bary_a[i] * g_ib;
   }
 
@@ -174,10 +177,11 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
   out_grad_eigen.setZero();
 
   // Compute gradient of geodesics using barycentric approximation from point b over face a.
-  const auto& geo_from_b = GeodesicsFromTriangleToPoints(face_b, va0, va1, va2);
+  const auto& geo_from_b = GeodesicsFromTriangle(face_b);
   const auto& G = face_grad_[face_a];
   for(int i=0; i<3; i++) {
-    const auto& D = geo_from_b.row(i).transpose();
+    const Eigen::VectorXd& geo_from_bi = geo_from_b[i].raw();
+    const Eigen::Vector3d D { geo_from_bi(va0), geo_from_bi(va1), geo_from_bi(va2) };
     const auto GD = (G*D).rowwise().sum();
     out_grad_eigen += bary_b[i] * GD;
   }
@@ -197,34 +201,7 @@ bool VtkMeshWrapper::IsWithinDistance(const PointType &pt_a, int idx_a,
     return pt_a.SquaredEuclideanDistanceTo(pt_b) < test_dist*test_dist;
   }
 
-  // Find the triangle for the point a. If this was the same as the previous query, just used that cached value
-  int face_a, face_b;
-  vec3 bary_a, bary_b;
-  if (geo_lq_pidx_ == idx_a) {
-    face_a = geo_lq_face_;
-    bary_a = geo_lq_bary_;
-  } else {
-    face_a = ComputeFaceAndWeights(pt_a, idx_a, bary_a);
-
-    geo_lq_pidx_ = idx_a;
-    geo_lq_face_ = face_a;
-    geo_lq_bary_ = bary_a;
-  }
-
-  // Find the triangle for the point b
-  face_b = ComputeFaceAndWeights(pt_b, idx_b, bary_b);
-  if (face_a == face_b || AreFacesAdjacent(face_a, face_b)) {
-    return pt_a.SquaredEuclideanDistanceTo(pt_b) < test_dist * test_dist;
-  }
-
-  const auto vb0 = this->triangles_[face_b]->GetPointId(0);
-  const auto vb1 = this->triangles_[face_b]->GetPointId(1);
-  const auto vb2 = this->triangles_[face_b]->GetPointId(2);
-
-  auto& geo_from_a = GeodesicsFromTriangle(face_a, test_dist*2.0);
-  if( geo_from_a.data.find(vb0) == geo_from_a.data.end() && geo_from_a.data.find(vb1) == geo_from_a.data.end() && geo_from_a.data.find(vb2) == geo_from_a.data.end()) {
-    return false;
-  }
+  //todo there should be some fast way to tell whether the two points are within the given distance
 
   const double dist = ComputeDistance(pt_a, idx_a, pt_b, idx_b, nullptr);
   return dist < test_dist;
@@ -832,7 +809,7 @@ void VtkMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const
 void VtkMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F)
 {
   // Resize cache to correct size
-  geo_dist_cache_.resize(F.rows());
+  geo_dist_cache_.entries.resize(max_cache_entries_);
 
   // Compute gradient operator
   Eigen::SparseMatrix<double> G;
@@ -867,8 +844,6 @@ void VtkMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::
     std::tie(gc_mesh_, gc_geometry_) = makeSurfaceMeshAndGeometry(V, F);
     gc_heatsolver_ = std::make_unique<HeatMethodDistanceSolver>(*gc_geometry_);
   }
-
-
 }
 
 //---------------------------------------------------------------------------
@@ -888,110 +863,31 @@ bool VtkMeshWrapper::AreFacesAdjacent(int f_a, int f_b) const
 }
 
 //---------------------------------------------------------------------------
-const GeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist) const
+const std::array<VtkMeshWrapper::GeodesicsType, 3>& VtkMeshWrapper::GeodesicsFromTriangle(int f) const
 {
-  if(cache_size_ >= max_cache_entries_) {
-    for(auto& entry : geo_dist_cache_) {
-      entry.clear();
-    }
-    cache_size_ = 0;
+  auto& cache = geo_dist_cache_;
+  const auto map_entry = cache.key2entry.find(f);
+  if(map_entry != cache.key2entry.end()) {
+    return cache.entries[map_entry->second];
   }
 
-  auto& entry = geo_dist_cache_[f];
-  if(entry.max_dist >= max_dist) {
-    return entry;
+  // if we hit the cache size limit, clear everything except the triangles known to be active
+  if(cache.key2entry.size() >= max_cache_entries_) {
+    cache.clear_except_active(particle_triangles_);
   }
 
-  cache_size_ -= entry.data.size();
-  entry.data.clear();
-
-  double new_max_dist = max_dist;
-  {
+  geometrycentral::surface::VertexData<double> v;
+  const int cache_idx = cache.key2entry.size();
+  for(int i=0; i<3; i++) {
     using namespace geometrycentral::surface;
-    VertexData<double> dists[3];
-    for(int i=0; i<3; i++) {
-      const auto v = gc_mesh_->vertex(this->triangles_[f]->GetPointId(i));
-      dists[i] = gc_heatsolver_->computeDistance(v);
-    }
-
-    for(int i=0; i<dists[0].size(); i++) {
-      const auto& d0 = dists[0][i];
-      const auto& d1 = dists[1][i];
-      const auto& d2 = dists[2][i];
-      if(d0 <= max_dist || d1 <= max_dist || d2 <= max_dist) {
-        new_max_dist = std::max(new_max_dist, d0);
-        new_max_dist = std::max(new_max_dist, d1);
-        new_max_dist = std::max(new_max_dist, d2);
-        entry.data[i] = {d0, d1, d2};
-      }
-    }
+    auto& D = cache.entries[cache_idx][i];
+    const auto v = gc_mesh_->vertex(this->triangles_[f]->GetPointId(i));
+    VertexData<double> dist = gc_heatsolver_->computeDistance(v);
+    cache.entries[cache_idx][i] = std::move(dist);
   }
 
-  cache_size_ += entry.data.size();
-  entry.max_dist = new_max_dist;
-  return entry;
-}
-
-//---------------------------------------------------------------------------
-const Eigen::Matrix3d VtkMeshWrapper::GeodesicsFromTriangleToPoints(int f, int v0, int v1, int v2) const
-{
-  auto& entry = geo_dist_cache_[f];
-  const auto find_v0 = entry.data.find(v0);
-  if(find_v0 != entry.data.end()) {
-    const auto find_v1 = entry.data.find(v1);
-    if(find_v1 != entry.data.end()) {
-      const auto find_v2 = entry.data.find(v2);
-      if(find_v2 != entry.data.end()) {
-        Eigen::Matrix3d result;
-        result.col(0) = find_v0->second;
-        result.col(1) = find_v1->second;
-        result.col(2) = find_v2->second;
-        return result;
-      }
-    }
-  }
-
-  cache_size_ -= entry.data.size();
-  entry.data.clear();
-
-  double max_dist = 0.0;
-  double new_max_dist = max_dist;
-  {
-    using namespace geometrycentral::surface;
-    VertexData<double> dists[3];
-    for(int i=0; i<3; i++) {
-      const auto v = gc_mesh_->vertex(this->triangles_[f]->GetPointId(i));
-      dists[i] = gc_heatsolver_->computeDistance(v);
-
-      max_dist = std::max(max_dist, dists[i][v0]);
-      max_dist = std::max(max_dist, dists[i][v1]);
-      max_dist = std::max(max_dist, dists[i][v2]);
-    }
-
-    max_dist *= 2.0;
-
-    for(int i=0; i<dists[0].size(); i++) {
-      const auto& d0 = dists[0][i];
-      const auto& d1 = dists[1][i];
-      const auto& d2 = dists[2][i];
-      if(d0 <= max_dist || d1 <= max_dist || d2 <= max_dist) {
-        new_max_dist = std::max(new_max_dist, d0);
-        new_max_dist = std::max(new_max_dist, d1);
-        new_max_dist = std::max(new_max_dist, d2);
-        entry.data[i] = {d0, d1, d2};
-      }
-    }
-  }
-
-  cache_size_ += entry.data.size();
-  entry.max_dist = new_max_dist;
-
-  Eigen::Matrix3d result;
-  result.col(0) = entry.data[v0];
-  result.col(1) = entry.data[v1];
-  result.col(2) = entry.data[v2];
-
-  return result;
+  cache.key2entry[f] = cache_idx;
+  return cache.entries[cache_idx];
 }
 
 }
