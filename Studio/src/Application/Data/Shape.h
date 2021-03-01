@@ -59,6 +59,9 @@ public:
   /// Retrieve the groomed mesh
   MeshHandle get_groomed_mesh(bool wait = false);
 
+  /// Retrieve the groomed meshes
+  MeshGroup get_groomed_meshes(bool wait = false);
+
   /// Reset the groomed mesh so that it will be re-created
   void reset_groomed_mesh();
 
@@ -149,6 +152,7 @@ private:
 
 
   MeshGroup original_meshes_;
+  MeshGroup groomed_meshes_;
 
   MeshHandle original_mesh_;
   MeshHandle groomed_mesh_;

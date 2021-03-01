@@ -509,7 +509,7 @@ void Session::load_original_files(std::vector<std::string> filenames)
     QSharedPointer<Shape> shape = QSharedPointer<Shape>(new Shape());
 
     std::shared_ptr<Subject> subject = std::make_shared<Subject>();
-
+    subject->set_number_of_domains(1);
     shape->set_mesh_manager(this->mesh_manager_);
     shape->set_subject(subject);
     this->project_->get_subjects().push_back(subject);

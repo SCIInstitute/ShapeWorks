@@ -50,12 +50,13 @@ MeshGroup Shape::get_meshes(const string& display_mode)
     return this->get_original_meshes();
   }
   else if (display_mode == Visualizer::MODE_GROOMED_C) {
-    //return this->get_groomed_meshes();
+    return this->get_groomed_meshes();
   }
   //return this->get_reconstructed_meshes();
 
 
   //// TODO temporary
+  assert(0);
   return this->get_original_meshes();
 
 }
@@ -87,6 +88,7 @@ void Shape::set_subject(std::shared_ptr<Subject> subject)
 {
   this->subject_ = subject;
   this->original_meshes_.set_number_of_meshes(subject->get_number_of_domains());
+  this->groomed_meshes_.set_number_of_meshes(subject->get_number_of_domains());
 
   if (!this->subject_->get_segmentation_filenames().empty()) {
 
@@ -153,6 +155,20 @@ MeshHandle Shape::get_groomed_mesh(bool wait)
   }
 
   return this->groomed_mesh_;
+}
+
+//---------------------------------------------------------------------------
+MeshGroup Shape::get_groomed_meshes(bool wait)
+{
+  if (!this->subject_) {
+    std::cerr << "Error: asked for groomed meshes when none are present!\n";
+  }
+
+  if (!this->groomed_meshes_.valid()) {
+    this->generate_meshes(this->subject_->get_groomed_filenames(), this->groomed_meshes_,
+                          true, wait);
+  }
+  return this->groomed_meshes_;
 }
 
 //---------------------------------------------------------------------------
@@ -446,7 +462,6 @@ void Shape::generate_meshes(std::vector<string> filenames, MeshHandle& mesh,
     return;
   }
 
-
   // single domain supported right now
   std::string filename = filenames[0];
 
@@ -482,13 +497,11 @@ void Shape::generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_
 
   for (int i = 0; i < filenames.size(); i++) {
     auto filename = filenames[i];
-
     MeshWorkItem item;
     item.filename = filename;
     MeshHandle new_mesh = this->mesh_manager_->get_mesh(item, wait);
     if (new_mesh) {
-
-      mesh_group.meshes()[i] = new_mesh;
+      mesh_group.set_mesh(i, new_mesh);
 
       /// Temporarily calculate the COM here
       auto com = vtkSmartPointer<vtkCenterOfMass>::New();

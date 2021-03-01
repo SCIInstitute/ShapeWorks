@@ -75,7 +75,7 @@ MeshWorkItem* MeshWorkQueue::get_next_work_item()
   QMutexLocker locker(&this->mutex_);
 
   if (this->work_list_.empty()) {
-    return NULL;
+    return nullptr;
   }
 
   MeshWorkItem item = this->work_list_.back();
@@ -117,6 +117,7 @@ bool MeshWorkQueue::is_empty()
 //---------------------------------------------------------------------------
 int MeshWorkQueue::size()
 {
+  QMutexLocker locker(&this->mutex_);
   return this->work_list_.size();
 }
 

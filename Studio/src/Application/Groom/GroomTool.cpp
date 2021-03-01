@@ -93,7 +93,6 @@ void GroomTool::on_restore_defaults_clicked()
 //---------------------------------------------------------------------------
 void GroomTool::load_params()
 {
-  std::cerr << "GroomTool::load_params\n";
   auto params = GroomParameters(session_->get_project(), current_domain_);
 
   ui_->center_checkbox->setChecked(params.get_center_tool());
@@ -288,8 +287,6 @@ void GroomTool::domain_changed()
     store_params();
   }
   current_domain_ = ui_->domain_box->currentText().toStdString();
-
-  std::cerr << "GroomTool::domain_changed, now: " << current_domain_ << "\n";
 
   load_params();
 }

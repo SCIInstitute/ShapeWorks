@@ -42,12 +42,9 @@ void MeshManager::generate_mesh(const MeshWorkItem item)
 
     this->work_queue_.push(item);
 
-    MeshWorker* worker = new MeshWorker(this->prefs_, item,
-                                        &this->work_queue_, &this->mesh_cache_);
-    worker->set_mesh_generator(this->mesh_generator_);
+    MeshWorker* worker = new MeshWorker(&this->work_queue_, this->mesh_generator_);
 
     connect(worker, &MeshWorker::result_ready, this, &MeshManager::handle_thread_complete);
-
     this->thread_pool_.start(worker);
   }
 }
