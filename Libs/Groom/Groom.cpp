@@ -81,7 +81,7 @@ bool Groom::run()
 bool Groom::image_pipeline(std::shared_ptr<Subject> subject, int domain)
 {
   // grab parameters
-  auto params = GroomParameters(this->project_);
+  auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
 
   // single domain support right now
   auto path = subject->get_segmentation_filenames()[domain];
@@ -214,14 +214,12 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, int domain)
 bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, int domain)
 {
   // grab parameters
-  auto params = GroomParameters(this->project_);
+  auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
 
   auto path = subject->get_segmentation_filenames()[domain];
 
   // groomed mesh name
   std::string groom_name = this->get_output_filename(path, DomainType::Mesh);
-
-  std::cerr << "groom_name = " << groom_name << "\n";
 
   Mesh mesh = MeshUtils::threadSafeReadMesh(path);
 
@@ -423,7 +421,6 @@ std::string Groom::get_output_filename(std::string input, DomainType domain_type
 
   auto output = path + "/" + StringUtils::getFileNameWithoutExtension(input) + suffix;
 
-  std::cerr << "output: " << output << "\n";
   return output;
 }
 
