@@ -24,13 +24,8 @@ class MeshWorker : public QObject, public QRunnable {
 Q_OBJECT
 
 public:
-  MeshWorker(Preferences& prefs,
-             const MeshWorkItem& item,
-             MeshWorkQueue* queue,
-             MeshCache* cache);
+  MeshWorker(MeshWorkQueue* queue, QSharedPointer<MeshGenerator> generator);
   ~MeshWorker();
-
-  void set_mesh_generator(QSharedPointer<MeshGenerator> generator);
 
   void run();
 
@@ -39,10 +34,7 @@ Q_SIGNALS:
   void finished();
 
 private:
-  Preferences& prefs_;
   QSharedPointer<MeshGenerator> mesh_generator_;
-  MeshWorkItem item_;
   MeshWorkQueue* queue_;
-  MeshCache* cache_;
 };
 }

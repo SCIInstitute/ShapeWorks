@@ -1,23 +1,18 @@
-// vtk
-#include <vtkPolyData.h>
 
 #include <Data/MeshWorker.h>
-#include <QThread>
 
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-MeshWorker::MeshWorker(Preferences& prefs,
-                       const MeshWorkItem& item,
-                       MeshWorkQueue* queue,
-                       MeshCache* cache)
-  : prefs_(prefs),
-    item_(item), queue_(queue), cache_(cache)
-{}
+MeshWorker::MeshWorker(MeshWorkQueue* queue, QSharedPointer<MeshGenerator> generator)
+  : queue_(queue), mesh_generator_(generator)
+{
+}
 
 //---------------------------------------------------------------------------
 MeshWorker::~MeshWorker()
-{}
+{
+}
 
 //---------------------------------------------------------------------------
 void MeshWorker::run()
@@ -38,9 +33,4 @@ void MeshWorker::run()
   emit finished();
 }
 
-//---------------------------------------------------------------------------
-void MeshWorker::set_mesh_generator(QSharedPointer<MeshGenerator> generator)
-{
-  this->mesh_generator_ = generator;
-}
 }
