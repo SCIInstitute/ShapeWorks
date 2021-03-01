@@ -189,7 +189,7 @@ void Viewer::set_color_scheme(int scheme)
 {
   this->scheme_ = scheme;
 
-  for (int i=0;i<this->surface_actors_.size();i++ ) {
+  for (int i = 0; i < this->surface_actors_.size(); i++) {
     int scheme = (this->scheme_ + i) % this->color_schemes_.size();
 
     this->surface_actors_[i]->GetProperty()->SetDiffuseColor(color_schemes_[scheme].foreground.r,
@@ -197,8 +197,6 @@ void Viewer::set_color_scheme(int scheme)
                                                              color_schemes_[scheme].foreground.b);
 
   }
-
-
 
   this->renderer_->SetBackground(color_schemes_[scheme].background.r,
                                  color_schemes_[scheme].background.g,
@@ -526,6 +524,17 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
       if (this->visualizer_->get_display_mode() == Visualizer::MODE_ORIGINAL_C &&
           this->visualizer_->get_center()) {
         transform = shape->get_transform();
+      }
+
+      if (this->visualizer_->get_display_mode() == Visualizer::MODE_GROOMED_C) {
+        transform = shape->get_transform(i);
+        auto base_transform = shape->get_transform(0);
+
+        if (transform.size() == 12) {
+          transform[9] = base_transform[9] - transform[9];
+          transform[10] = base_transform[10] - transform[10];
+          transform[11] = base_transform[11] - transform[11];
+        }
       }
 
       if (transform.size() == 12) {

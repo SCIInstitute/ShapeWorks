@@ -123,9 +123,9 @@ public:
   void set_vectors(std::vector<Point> vectors);
 
   void set_transform(const vnl_vector<double>& transform);
-  vnl_vector<double> get_transform();
+  vnl_vector<double> get_transform(int domain = 0);
 
-  TransformType get_groomed_transform();
+  TransformType get_groomed_transform(int domain = 0);
 
   void load_feature(std::string display_mode, std::string feature);
 

@@ -440,9 +440,9 @@ void Shape::set_transform(const vnl_vector<double>& transform)
 }
 
 //---------------------------------------------------------------------------
-vnl_vector<double> Shape::get_transform()
+vnl_vector<double> Shape::get_transform(int domain)
 {
-  auto groom_transform = this->get_groomed_transform();
+  auto groom_transform = this->get_groomed_transform(domain);
   if (groom_transform.size() != 12) {
     return this->transform_;
   }
@@ -701,18 +701,18 @@ Eigen::VectorXf Shape::get_point_features(std::string feature)
 }
 
 //---------------------------------------------------------------------------
-TransformType Shape::get_groomed_transform()
+TransformType Shape::get_groomed_transform(int domain)
 {
-  if (this->groomed_transform_.empty()) {
+  //if (this->groomed_transform_.empty()) {
     // single domain support
     auto transforms = this->subject_->get_groomed_transforms();
-    if (!transforms.empty()) {
-      this->groomed_transform_.set_size(transforms[0].size());
-      for (int i = 0; i < transforms[0].size(); i++) {
-        this->groomed_transform_[i] = transforms[0][i];
+    if (domain < transforms.size()) {
+      this->groomed_transform_.set_size(transforms[domain].size());
+      for (int i = 0; i < transforms[domain].size(); i++) {
+        this->groomed_transform_[i] = transforms[domain][i];
       }
     }
-  }
+  //}
   return this->groomed_transform_;
 }
 
