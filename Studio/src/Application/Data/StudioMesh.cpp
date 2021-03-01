@@ -14,6 +14,7 @@
 #include <vtkPointData.h>
 #include <vtkPolyDataWriter.h>
 #include <vtkPointLocator.h>
+#include <vtkKdTreePointLocator.h>
 
 #include <Data/StudioMesh.h>
 #include <Data/ItkToVtk.h>
@@ -267,5 +268,46 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double
 
   this->poly_data_->GetPointData()->AddArray(scalars);
 
+}
+
+//---------------------------------------------------------------------------
+void StudioMesh::apply_scalars(QSharedPointer<StudioMesh> mesh, vnl_vector<double> transform)
+{
+  vtkSmartPointer<vtkPolyData> from_mesh = mesh->get_poly_data();
+  vtkSmartPointer<vtkPolyData> to_mesh = this->get_poly_data();
+
+  // Create the tree
+  vtkSmartPointer<vtkKdTreePointLocator> kDTree = vtkSmartPointer<vtkKdTreePointLocator>::New();
+  kDTree->SetDataSet(from_mesh);
+  kDTree->BuildLocator();
+
+  int num_arrays = from_mesh->GetPointData()->GetNumberOfArrays();
+
+  for (int i = 0; i < num_arrays; i++) {
+    std::string name = from_mesh->GetPointData()->GetArrayName(i);
+
+    vtkDataArray* from_array = from_mesh->GetPointData()->GetArray(i);
+    vtkFloatArray* to_array = vtkFloatArray::New();
+    to_array->SetName(name.c_str());
+    to_array->SetNumberOfValues(to_mesh->GetNumberOfPoints());
+
+    for (int j = 0; j < to_mesh->GetNumberOfPoints(); j++) {
+      double pt[3];
+      to_mesh->GetPoint(j, pt);
+
+      if (transform.size() == 12) {
+        pt[0] = pt[0] + transform[9];
+        pt[1] = pt[1] + transform[10];
+        pt[2] = pt[2] + transform[11];
+      }
+
+      vtkIdType id = kDTree->FindClosestPoint(pt);
+      vtkVariant var = from_array->GetVariantValue(id);
+
+      to_array->SetVariantValue(j, var);
+    }
+
+    to_mesh->GetPointData()->AddArray(to_array);
+  }
 }
 }

@@ -44,7 +44,7 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, isBinary=True):
         img = Image(inname)
         if isBinary:
             img.antialias()
-        ImageUtils.isoresample(img, isoSpacing)
+        img.resample(isoSpacing)
         if isBinary:
             img.binarize()
         img.write(outname)
@@ -193,7 +193,7 @@ def applyRigidAlignment(outDir, refFile, inDataListSeg, inDataListImg=[], icp_it
         # resize images to reference images
         img = Image(inDataListSeg[i])
         img.antialias(antialias_iterations)
-        rigidTransform = ImageUtils.createRigidRegistrationTransform(img, refImg, isoValue, icp_iterations)
+        rigidTransform = img.createTransform(refImg, TransformType.IterativeClosestPoint, isoValue, icp_iterations)
         img.applyTransform(rigidTransform, refImg.origin(), refImg.dims(), refImg.spacing(), refImg.coordsys(), InterpolationType.Linear).binarize().write(segoutname)
 
         if inDataListImg:
@@ -219,22 +219,11 @@ def applyCropping(outDir, inDataList, path, paddingSize=10):
 
     for i in range(len(inDataList)):
         inname = inDataList[i]
-        initPath = os.path.dirname(inname)
         outname = rename(inname, outDir, 'cropped')
         outDataList.append(outname)
         img = Image(inname)
         img.crop(region).write(outname)
     return outDataList
-
-def create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename):
-    file = open(xmlfilename, "w+")
-    file.write("<lsSmootherIterations>\n1.0\n</lsSmootherIterations>")
-    file.write("<targetReduction>\n0.0001\n</targetReduction>")
-    file.write("<featureAngle>\n30.0\n</featureAngle>")
-    file.write("<preserveTopology>\n1\n</preserveTopology>")
-    file.write("<inputs>\n" + str(tpdtnrrdfilename) +"\n</inputs>")
-    file.write("<outputs>\n"+str(vtkfilename) + "\n</outputs>")
-    file.close()
 
 def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoothingIterations=1, alpha=10.5, beta=10.0, scaling=20.0, isoValue=0):
     outDir = os.path.join(parentDir, 'groom_and_meshes')
@@ -259,15 +248,14 @@ def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoot
         img.extractLabel(1.0).closeHoles().write(inname)
         img.antialias(antialiasIterations).computeDT().write(dtnrrdfilename)
         img.applyCurvatureFilter(smoothingIterations).write(tpdtnrrdfilename)
-        isoimg = ImageUtils.topologyPreservingSmooth(img, scaling, alpha, beta)
-        isoimg.write(isonrrdfilename)
+        img.topologyPreservingSmooth(scaling, alpha, beta).write(isonrrdfilename)
         shutil.copy(tpdtnrrdfilename, finalDTDir)
     return outDataList
 
 ### Mesh Grooming
 
 # Reflects images and meshes to reference side
-def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side, printCmd=True):
+def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side):
     if reference_side == 'right':
         ref = 'R'
         flip = 'L'
@@ -315,25 +303,26 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side, printCmd=T
         if flip_seg != 'None':
             img_out = rename(image, outImgDir, 'reflect').replace(prefix, flip_prefix)
             imageList.append(img_out)
-            centerFilename = os.path.join(outDir, prefix + "_origin.txt")
-            img = Image(image)
-            img.reflect(X).write(img_out)
-            seg_out = rename(flip_seg, outSegDir, 'reflect')
             meshList.append(seg_out)
-            execCommand = ["ReflectMesh", "--inFilename", flip_seg, "--outFilename", seg_out, "--reflectCenterFilename", centerFilename, "--inputDirection", "0", "--meshFormat", flip_seg.split(".")[-1]]
-            if printCmd:
-                print("CMD: " + " ".join(execCommand))
-            subprocess.check_call(execCommand)
+
+            img1 = Image(image)
+            img2 = Image(image)
+            img2.recenter()
+            center = img2.origin() - img1.origin()
+            img1.reflect(X).write(img_out)
+
+            mesh = Mesh(seg)
+            mesh.reflect(X, center).write(seg_out)
+
+            seg_out = rename(flip_seg, outSegDir, 'reflect')
     return meshList, imageList
 
 # Reflects meshes to reference side
-def reflectMeshes(outDir, seg_list, reference_side, printCmd=True):
+def reflectMeshes(outDir, seg_list, reference_side):
     if reference_side == 'right':
         ref = 'R'
-        flip = 'L'
     elif reference_side == 'left':
         ref = 'L'
-        flip = 'R'
     else:
         raise Exception("reference_side must be 'left' or 'right'")
     outSegDir = os.path.join(outDir, "segmentations")
@@ -348,221 +337,55 @@ def reflectMeshes(outDir, seg_list, reference_side, printCmd=True):
         # if we have a seg for the non-ref side, reflect it
         else:
             seg_out = rename(seg, outSegDir, 'reflect')
-            mesh_format = seg.split(".")[-1]
-            centerFilename = seg_out.replace("." + mesh_format,"_origin.txt")
-            execCommand = ["ReflectMesh", "--inFilename", seg, "--outFilename", seg_out, "--reflectCenterFilename", centerFilename, "--inputDirection", "0", "--meshFormat", mesh_format]
-            if printCmd:
-                print("CMD: " + " ".join(execCommand))
-            subprocess.check_call(execCommand)
+            mesh = Mesh(seg)
+            mesh.reflect(X, mesh.center()).write(seg_out)
         meshList.append(seg_out)
     return meshList
 
-# turns meshes in list into PLY format
-def getVTKmeshes(meshList, printCmd=True):
-    VTKmeshList = []
-    for mesh in meshList:
-        mesh_name = os.path.basename(mesh)
-        extension = mesh_name.split(".")[-1]
-        prefix = mesh_name.split("_")[0] + "_" + mesh_name.split("_")[1]
-        if extension == "ply":
-            mesh_old = mesh
-            mesh = mesh[:-4] + ".vtk"
-            execCommand = ["ply2vtk", mesh_old, mesh]
-            if printCmd:
-                print("CMD: " + " ".join(execCommand))
-            subprocess.check_call(execCommand)
-        elif extension == "stl":
-            mesh_old = mesh
-            mesh = mesh[:-4] + ".vtk"
-            execCommand = ["stl2vtk", mesh_old, mesh]
-            if printCmd:
-                print("CMD: " + " ".join(execCommand))
-            subprocess.check_call(execCommand)
-        elif  extension == "vtk":
-            pass
-        else:
-            print("Error: Mesh format unrecognized.")
-            break
-        VTKmeshList.append(mesh)
-    return VTKmeshList
-
-# turns meshes in list into PLY format
-def getPLYmeshes(meshList, printCmd=True):
-    PLYmeshList = []
-    for mesh in meshList:
-        mesh_name = os.path.basename(mesh)
-        extension = mesh_name.split(".")[-1]
-        prefix = mesh_name.split("_")[0] + "_" + mesh_name.split("_")[1]
-        # change to ply if needed
-        if extension == "vtk":
-            mesh_vtk = mesh
-            mesh = mesh[:-4] + ".ply"
-            execCommand = ["vtk2ply", mesh_vtk, mesh]
-            if printCmd:
-                print("CMD: " + " ".join(execCommand))
-            subprocess.check_call(execCommand)
-        elif extension == "stl":
-            mesh_stl = mesh
-            mesh = mesh[:-4] + ".ply"
-            execCommand = ["stl2ply", mesh_stl, mesh]
-            if printCmd:
-                print("CMD: " + " ".join(execCommand))
-            subprocess.check_call(execCommand)
-        elif  extension == "ply":
-            pass
-        else:
-            print("error: Mesh format unrecognized.")
-            break
-        PLYmeshList.append(mesh)
-    return PLYmeshList
-
-# rasterization for meshes to DT
-def MeshesToVolumesUsingImages(outDir, meshList, imgList, printCmd=True):
-    segList= []
+# rasterization for meshes to images using images
+def MeshesToVolumesUsingImages(outDir, meshList, imgList):
+    print("########### Turning Mesh To Volume ##############")
     if not os.path.exists(outDir):
         os.mkdir(outDir)
-
-    PLYmeshList = getPLYmeshes(meshList)
-    for mesh in PLYmeshList:
-        mesh_name = os.path.basename(mesh)
+    segList = []
+    for mesh_ in meshList:
+        mesh_name = os.path.basename(mesh_)
         prefix = mesh_name.split("_")[0] + "_" + mesh_name.split("_")[1]
 
         # get image
         for image_file in imgList:
             if prefix in image_file:
-                img = Image(image_file)
+                image_ = image_file
 
-        # get origin, size, and spacing data
-        data = {}
-        data["origin"] = img.origin()
-        data["size"] = img.dims()
-        data["spacing"] = img.spacing()
-
-        # write xml file
-        infoPrefix = os.path.join(outDir, prefix)
-        xmlfilename = infoPrefix + "_GenerateBinaryAndDT.xml"
-        if os.path.exists(xmlfilename):
-            os.remove(xmlfilename)
-        xml = open(xmlfilename, "a")
-        xml.write("<?xml version=\"1.0\" ?>\n")
-        xml.write("<mesh>\n")
-        xml.write(mesh+"\n")
-        xml.write("</mesh>\n")
-
-        # write origin, size, and spacing data
-        for key,value in data.items():
-            index = 0
-            for dim in ["x","y","z"]:
-                xml.write("<" + key + "_" + dim + ">" + str(value[index]) + "</" + key + "_" + dim + ">\n")
-                index += 1
-        xml.close()
-        print("########### Turning Mesh To Volume ##############")
-        segFile = rename(mesh, outDir, "", ".nrrd")
-
-        # call generate binary and DT
-        execCommand = ["GenerateBinaryAndDTImagesFromMeshes", xmlfilename]
-        if printCmd:
-            print("CMD: " + " ".join(execCommand))
-        subprocess.check_call(execCommand)
-
-        spacing = round(img.spacing()[0], 5)
-        spacing_string = str(spacing).replace(".0","")
-        # save output volume
-        output_volume = mesh.replace(".ply", ".rasterized_sp" + spacing_string + ".nrrd")
-        shutil.move(output_volume, segFile)
+        segFile = rename(mesh_, outDir, "", ".nrrd")
         segList.append(segFile)
 
-        # save output DT
-        output_DT =  mesh.replace(".ply", ".DT_sp" + spacing_string+ ".nrrd")
-        dtFile = segFile.replace(".nrrd", "_DT.nrrd")
-        shutil.move(output_DT, dtFile)
-
+        img = Image(image_)
+        mesh = Mesh(mesh_)
+        arr = img.spacing(); spacing = [arr[0], arr[1], arr[2]]
+        arr = img.dims();    dims = [arr[0], arr[1], arr[2]]
+        arr = img.origin();  origin = [arr[0], arr[1], arr[2]]
+        image = mesh.toImage(spacing, dims, origin)
+        image.write(segFile)
     return segList
 
-# rasterization for meshes to DT
-def MeshesToVolumes(outDir, meshList, spacing, printCmd=True):
+# rasterization for meshes to images
+def MeshesToVolumes(outDir, meshList, spacing):
+    print("########### Turning Mesh To Volume ##############")
     if not os.path.exists(outDir):
         os.mkdir(outDir)
-    # get origin, size, and spacing data
-    origin, size = getMeshInfo(outDir, meshList, spacing, printCmd)
-    data = {}
-    data["origin"] = origin
-    data["size"] = size
-    data["spacing"] = spacing
+    segList = []
 
-    segList= []
-    PLYmeshList = getPLYmeshes(meshList)
-    for mesh in PLYmeshList:
-        mesh_name = os.path.basename(mesh)
-        prefix = mesh_name.split("_")[0] + "_" + mesh_name.split("_")[1]
-        # write xml file
-        infoPrefix = os.path.join(outDir, prefix)
-        xmlfilename = infoPrefix + "_GenerateBinaryAndDT.xml"
-        if os.path.exists(xmlfilename):
-            os.remove(xmlfilename)
-        xml = open(xmlfilename, "a")
-        xml.write("<?xml version=\"1.0\" ?>\n")
-        xml.write("<mesh>\n")
-        xml.write(mesh+"\n")
-        xml.write("</mesh>\n")
-        # write origin, size, and spacing data
-        for key,value in data.items():
-            index = 0
-            for dim in ["x","y","z"]:
-                xml.write("<" + key + "_" + dim + ">" + str(value[index]) + "</" + key + "_" + dim + ">\n")
-                index += 1
-        xml.close()
-        print("########### Turning Mesh To Volume ##############")
-        segFile = rename(mesh, outDir, "", ".nrrd")
-        # call generate binary and DT
-        execCommand = ["GenerateBinaryAndDTImagesFromMeshes", xmlfilename]
-        if printCmd:
-            print("CMD: " + " ".join(execCommand))
-        subprocess.check_call(execCommand)
-        # save output volume
-        spacing_string = str(spacing[0]).replace(".0","")
-        output_volume = mesh.replace(".ply", ".rasterized_sp" + spacing_string+ ".nrrd")
-        shutil.move(output_volume, segFile)
+    for mesh_ in meshList:
+        segFile = rename(mesh_, outDir, "", ".nrrd")
         segList.append(segFile)
-        # save output DT
-        output_DT =  mesh.replace(".ply", ".DT_sp" + spacing_string + ".nrrd")
-        dtFile = segFile.replace(".nrrd", "_DT.nrrd")
-        shutil.move(output_DT, dtFile)
+
+        mesh = Mesh(mesh_)
+        image = mesh.toImage(spacing)
+        image.write(segFile)
     return segList
 
-def getMeshInfo(outDir, meshList, spacing, printCmd=True):
-    # get meshes in vtk format
-    meshList = getVTKmeshes(meshList)
-    meshListStr = ''
-    for mesh in meshList:
-        meshListStr += mesh + '\n'
-    # Write XML
-    xmlfilename = outDir + "MeshInfo.xml"
-    out_origin = outDir + "origin.txt"
-    out_size = outDir + "size.txt"
-    xml = open(xmlfilename, "a")
-    xml.write("<?xml version=\"1.0\" ?>\n")
-    xml.write("<mesh>\n")
-    xml.write(meshListStr+"\n")
-    xml.write("</mesh>\n")
-    xml.write("<spacing_x>\n" + str(spacing[0]) + "\n</spacing_x>\n")
-    xml.write("<spacing_y>\n" + str(spacing[1]) + "\n</spacing_y>\n")
-    xml.write("<spacing_z>\n" + str(spacing[2]) + "\n</spacing_z>\n")
-    xml.write("<out_origin_filename>\n" + out_origin + "\n</out_origin_filename>\n")
-    xml.write("<out_size_filename>\n" + out_size + "\n</out_size_filename>\n")
-    xml.close()
-    execCommand = ["ComputeRasterizationVolumeOriginAndSize", xmlfilename]
-    if printCmd:
-        print("CMD: " + " ".join(execCommand))
-    subprocess.check_call(execCommand)
-    # os.remove(xmlfilename)
-    origin_file = open(out_origin, 'r')
-    origin = np.array(origin_file.read().split()).astype(int)
-    size_file = open(out_size, 'r')
-    size = np.array(size_file.read().split()).astype(int)
-    return origin, size
-
-def ClipBinaryVolumes(outDir, segList, cutting_plane_points, printCmd=True):
+def ClipBinaryVolumes(outDir, segList, cutting_plane_points):
     print("\n############## Clipping ##############")
     if not os.path.exists(outDir):
         os.makedirs(outDir)
@@ -577,31 +400,19 @@ def ClipBinaryVolumes(outDir, segList, cutting_plane_points, printCmd=True):
                  [cutting_plane_points[6], cutting_plane_points[7], cutting_plane_points[8]],0.0).write(outname)
     return outListSeg
 
-def ShowCuttingPlanesOnImage(input_file, cutting_planes, printCmd=True):
+def ShowCuttingPlanesOnImage(input_file, cutting_planes):
     ## Get vtk format
     file_format = input_file.split(".")[-1]
     input_vtk = input_file.replace(file_format, "vtk")
     if file_format == "nrrd":
+        image = Image(input_file)
+        mesh = image.toMesh()
+        mesh.write(input_vtk)
         print("\nCreating mesh from: " + input_file)
         print("\nSaving as: " + input_vtk)
-        xml_filename = os.path.join(os.path.dirname(input_file), "cutting_plane_nrrd2vtk.xml")
-        create_meshfromDT_xml(xml_filename, input_file, input_vtk)
-        execCommand = ["MeshFromDistanceTransforms", xml_filename]
-        if printCmd:
-            print("CMD: " + " ".join(execCommand))
-        subprocess.check_call(execCommand)
-    elif file_format == "ply":
-        execCommand = ["ply2vtk", input_file, input_vtk]
-        if printCmd:
-            print("CMD: " + " ".join(execCommand))
-        subprocess.check_call(execCommand)
-    elif file_format == "stl":
-        execCommand = ["stl2vtk", input_file, input_vtk]
-        if printCmd:
-            print("CMD: " + " ".join(execCommand))
-        subprocess.check_call(execCommand)
-    elif file_format == "vtk":
-        pass
+    elif file_format == "ply" or file_format == "stl":
+        mesh = Mesh(file_format)
+        mesh.write(input_vtk)
     else:
         print("Error, file format unrecognized: " + input_file)
 
@@ -683,31 +494,19 @@ def ShowCuttingPlanesOnImage(input_file, cutting_planes, printCmd=True):
     return np.array([[o1, o2, o3], [1, -1, pt1_z], [-1, 1, pt2_z]])
     '''
 
-def SelectCuttingPlane(input_file, printCmd=True):
+def SelectCuttingPlane(input_file):
     ## Get vtk format
     file_format = input_file.split(".")[-1]
     input_vtk = input_file.replace(file_format, "vtk")
     if file_format == "nrrd":
+        image = Image(input_file)
+        mesh = image.toMesh(image)
+        mesh.write(input_vtk)
         print("\nCreating mesh from: " + input_file)
         print("\nSaving as: " + input_vtk)
-        xml_filename = os.path.join(os.path.dirname(input_file), "cutting_plane_nrrd2vtk.xml")
-        create_meshfromDT_xml(xml_filename, input_file, input_vtk)
-        execCommand = ["MeshFromDistanceTransforms", xml_filename]
-        if printCmd:
-            print("CMD: " + " ".join(execCommand))
-        subprocess.check_call(execCommand)
-    elif file_format == "ply":
-        execCommand = ["ply2vtk", input_file, input_vtk]
-        if printCmd:
-            print("CMD: " + " ".join(execCommand))
-        subprocess.check_call(execCommand)
-    elif file_format == "stl":
-        execCommand = ["stl2vtk", input_file, input_vtk]
-        if printCmd:
-            print("CMD: " + " ".join(execCommand))
-        subprocess.check_call(execCommand)
-    elif file_format == "vtk":
-        pass
+    elif file_format == "ply" or file_format == "stl":
+        mesh = Mesh(file_format)
+        mesh.write(input_vtk)
     else:
         print("Error, file format unrecognized: " + input_file)
 

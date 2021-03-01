@@ -3,7 +3,6 @@
 #include "vnl/vnl_vector_fixed.h"
 #include "TriMesh.h"
 #include "KDtree.h"
-
 #include "MeshWrapper.h"
 
 #include <Eigen/Core>

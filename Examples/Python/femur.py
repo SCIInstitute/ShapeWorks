@@ -222,7 +222,7 @@ def Run_Pipeline(args):
             mesh segementaions to binary segmentations.
             """
             # set spacing
-            spacing = [1, 1, 1]
+            spacing = [1.0, 1.0, 1.0]
             answer = input("Use ispotropic spacing for mesh rasterization? y/n \n")
             if answer == 'n':
                 done = False
@@ -247,7 +247,7 @@ def Run_Pipeline(args):
             Apply padding
             Both the segmentation and raw images are padded in case the seg lies on the image boundary.
             """
-            paddedFiles_segmentations = applyPadding(groomDir + "padded/segementations", resampledFiles_segmentations, 10)
+            paddedFiles_segmentations = applyPadding(groomDir + "padded/segmentations", resampledFiles_segmentations, 20)
 
             """
             Apply center of mass alignment

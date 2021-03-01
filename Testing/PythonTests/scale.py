@@ -27,3 +27,29 @@ val = scaleTest2()
 
 if val is False:
   sys.exit(1)
+
+def scaleTest3():
+  mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
+  mesh.scale([1.0, 1.0, 1.0])
+
+  compareMesh = Mesh(os.environ["DATA"] + "/scale1.vtk")
+
+  return mesh == compareMesh
+
+val = scaleTest3()
+
+if val is False:
+  sys.exit(1)
+
+def scaleTest4():
+  mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
+  mesh.scale([-1.0, 1.5, 1.0])
+
+  compareMesh = Mesh(os.environ["DATA"] + "/scale2.vtk")
+
+  return mesh == compareMesh
+
+val = scaleTest4()
+
+if val is False:
+  sys.exit(1)

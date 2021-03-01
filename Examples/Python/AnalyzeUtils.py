@@ -9,7 +9,6 @@ from termcolor import colored, cprint
 
 from CommonUtils import *
 
-
 def create_analyze_xml(xmlfilename, dtFiles, localPointFiles, worldPointFiles):
     root = ET.Element('sample')
     input_points = ET.SubElement(root, 'point_files')
@@ -39,12 +38,10 @@ def create_analyze_xml(xmlfilename, dtFiles, localPointFiles, worldPointFiles):
         t1 = local_point.text
         t1 = t1 + localPointFiles[i] + '\n'
         local_point.text = t1
-
-                
+          
     data = ET.tostring(root, encoding='unicode')
     file = open(xmlfilename, "w+")
     file.write(data)
-
 
 def launchShapeWorksStudio(parentDir, dtFiles, localPointFiles, worldPointFiles):
     xmlfilename = parentDir + '/analyze.xml'
@@ -55,5 +52,3 @@ def launchShapeWorksStudio(parentDir, dtFiles, localPointFiles, worldPointFiles)
     print("\n\nTo re-run ShapeWorksStudio, run:\n")
     print(f" cd {os.getcwd()}")
     print(f" {' '.join(execCommand)}\n\n")
-    
-    

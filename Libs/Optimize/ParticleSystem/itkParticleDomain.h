@@ -36,6 +36,9 @@ public:
   /** Applies the update to the point and returns the new point position. */
   virtual PointType UpdateParticlePosition(const PointType &point, int idx, vnl_vector_fixed<double, DIMENSION> &update) const = 0;
 
+  virtual void InvalidateParticlePosition(int idx) const {
+  }
+
   /** Projects the vector to the surface tangent at the point. */
   virtual vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION>& gradE, const PointType& pos, int idx) const = 0;
 
