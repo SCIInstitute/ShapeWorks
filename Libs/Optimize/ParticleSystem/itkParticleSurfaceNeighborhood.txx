@@ -61,6 +61,7 @@ ParticleSurfaceNeighborhood<TImage>
       continue;
     }
 
+    // todo change the API to return a vector of distances so that it doesn't have to be recomputed later.
     if (domain->IsWithinDistance(center, idx, pt_b, idx_b, radius))
     {
       ret.push_back( **it );
