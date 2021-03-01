@@ -143,7 +143,11 @@ find_package (XLNT REQUIRED)
 ### Libigl set include path
 find_package(LIBIGL REQUIRED QUIET)
 
-add_subdirectory("/scratch/karthik/projects/ShapeWorks/dependencies/geometry-central")
+### Geometry central include
+if (NOT DEFINED GEOMETRY_CENTRAL_DIR)
+  set(GEOMETRY_CENTRAL_DIR ${CMAKE_PREFIX_PATH}/geometry-central/)
+endif()
+add_subdirectory(${GEOMETRY_CENTRAL_DIR})
 
 if(USE_OPENMP)
   find_package(OpenMP REQUIRED)
