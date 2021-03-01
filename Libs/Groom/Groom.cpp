@@ -49,23 +49,26 @@ bool Groom::run()
     [&](const tbb::blocked_range<size_t>& r) {
       for (size_t i = r.begin(); i < r.end(); ++i) {
 
-        if (this->abort_) {
-          success = false;
-          continue;
-        }
+        for (int j = 0; j < subjects[i]->get_number_of_domains(); j++) {
 
-        if (subjects[i]->get_domain_types()[0] == DomainType::Image) {
-          if (!this->image_pipeline(subjects[i])) {
+          if (this->abort_) {
             success = false;
+            continue;
           }
-        }
 
-        if (subjects[i]->get_domain_types()[0] == DomainType::Mesh) {
-          if (!this->mesh_pipeline(subjects[i])) {
-            success = false;
+          if (subjects[i]->get_domain_types()[j] == DomainType::Image) {
+            if (!this->image_pipeline(subjects[i], j)) {
+              success = false;
+            }
           }
-        }
 
+          if (subjects[i]->get_domain_types()[j] == DomainType::Mesh) {
+            if (!this->mesh_pipeline(subjects[i], j)) {
+              success = false;
+            }
+          }
+
+        }
       }
     });
 
@@ -75,13 +78,13 @@ bool Groom::run()
 }
 
 //---------------------------------------------------------------------------
-bool Groom::image_pipeline(std::shared_ptr<Subject> subject)
+bool Groom::image_pipeline(std::shared_ptr<Subject> subject, int domain)
 {
   // grab parameters
   auto params = GroomParameters(this->project_);
 
   // single domain support right now
-  auto path = subject->get_segmentation_filenames()[0];
+  auto path = subject->get_segmentation_filenames()[domain];
 
   // load the image
   Image image(path);
@@ -186,24 +189,36 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject)
   // save image
   image.write(dt_name);
 
-  // only single domain supported so far
-  std::vector<std::string> groomed_filenames{dt_name};
-  // store filename back to subject
-  subject->set_groomed_filenames(groomed_filenames);
+  {
+    // lock for project data structure
+    tbb::mutex::scoped_lock lock(mutex_);
+
+    // update groomed filenames
+    std::vector<std::string> groomed_filenames = subject->get_groomed_filenames();
+    if (domain >= groomed_filenames.size()) {
+      groomed_filenames.resize(domain + 1);
+    }
+    groomed_filenames[domain] = dt_name;
+
+    // store filenames back to subject
+    subject->set_groomed_filenames(groomed_filenames);
+  }
 
   return true;
 }
 
 //---------------------------------------------------------------------------
-bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject)
+bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, int domain)
 {
   // grab parameters
   auto params = GroomParameters(this->project_);
 
-  auto path = subject->get_segmentation_filenames()[0];
+  auto path = subject->get_segmentation_filenames()[domain];
 
   // groomed mesh name
   std::string groom_name = this->get_output_filename(path, DomainType::Mesh);
+
+  std::cerr << "groom_name = " << groom_name << "\n";
 
   Mesh mesh = MeshUtils::threadSafeReadMesh(path);
 
@@ -245,10 +260,20 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject)
   // save the groomed mesh
   MeshUtils::threadSafeWriteMesh(groom_name, mesh);
 
-  // only single domain supported so far
-  std::vector<std::string> groomed_filenames{groom_name};
-  // store filename back to subject
-  subject->set_groomed_filenames(groomed_filenames);
+  {
+    // lock for project data structure
+    tbb::mutex::scoped_lock lock(mutex_);
+
+    // update groomed filenames
+    std::vector<std::string> groomed_filenames = subject->get_groomed_filenames();
+    if (domain >= groomed_filenames.size()) {
+      groomed_filenames.resize(domain + 1);
+    }
+    groomed_filenames[domain] = groom_name;
+
+    // store filename back to subject
+    subject->set_groomed_filenames(groomed_filenames);
+  }
 
   return true;
 }
@@ -317,19 +342,28 @@ Vector3 Groom::center(Image& image)
 int Groom::get_total_ops()
 {
   int num_subjects = this->project_->get_subjects().size();
-  auto params = GroomParameters(this->project_);
 
   int num_tools = 0;
-  num_tools += params.get_center_tool() ? 1 : 0;
-  num_tools += params.get_isolate_tool() ? 1 : 0;
-  num_tools += params.get_fill_holes_tool() ? 1 : 0;
-  num_tools += params.get_auto_pad_tool() ? 1 : 0;
-  num_tools += params.get_antialias_tool() ? 1 : 0;
-  num_tools += params.get_fast_marching() ? 10 : 0;
-  num_tools += params.get_blur_tool() ? 1 : 0;
+
+  auto domains = this->project_->get_domain_names();
+
+  for (int i = 0; i < domains.size(); i++) {
+
+    auto params = GroomParameters(this->project_, domains[i]);
+
+    num_tools += params.get_center_tool() ? 1 : 0;
+    num_tools += params.get_isolate_tool() ? 1 : 0;
+    num_tools += params.get_fill_holes_tool() ? 1 : 0;
+    num_tools += params.get_auto_pad_tool() ? 1 : 0;
+    num_tools += params.get_antialias_tool() ? 1 : 0;
+    num_tools += params.get_fast_marching() ? 10 : 0;
+    num_tools += params.get_blur_tool() ? 1 : 0;
+  }
 
   return num_subjects * num_tools;
 }
+
+
 
 //---------------------------------------------------------------------------
 void Groom::increment_progress(int amount)
