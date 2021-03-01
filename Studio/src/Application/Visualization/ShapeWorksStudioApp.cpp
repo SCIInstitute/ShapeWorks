@@ -8,6 +8,7 @@
 #include <QCloseEvent>
 #include <QTextStream>
 #include <QMimeData>
+#include <QProcess>
 
 // vtk
 #include <vtkRenderWindow.h>
@@ -67,6 +68,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
             this, SLOT(handle_open_recent()));
   }
   this->update_recent_files();
+
+#if defined( Q_OS_LINUX )
+  this->ui_->action_show_project_folder->setVisible(false);
+#endif
 
   this->splash_screen_ = QSharedPointer<SplashScreen>(new SplashScreen(this, this->preferences_));
   connect(this->splash_screen_.data(), &SplashScreen::open_project, this,
@@ -325,6 +330,33 @@ void ShapeWorksStudioApp::on_action_open_project_triggered()
   this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
   this->open_project(filename);
   this->enable_possible_actions();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_action_show_project_folder_triggered()
+{
+  auto filename = this->session_->get_filename();
+  if (filename == "") {
+    this->handle_message("No project");
+  }
+
+  auto qstring_path = QFileInfo(filename).absoluteDir().absolutePath();
+
+  QProcess process;
+  process.setReadChannelMode(QProcess::MergedChannels);
+
+#ifdef _WIN32
+  qstring_path = qstring_path.replace( QString( "/" ), QString( "\\" ) );
+    process.start( "explorer.exe", QStringList() << qstring_path );
+#else
+  process.start("open", QStringList() << qstring_path);
+#endif
+
+  if (!process.waitForFinished()) {
+    QString error = QString("Could not open project: ") +
+                    process.errorString() + ".";
+    STUDIO_LOG_ERROR(error);
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -1785,7 +1817,6 @@ void ShapeWorksStudioApp::dropEvent(QDropEvent* event)
     event->ignore();
   }
 }
-
 
 //---------------------------------------------------------------------------
 

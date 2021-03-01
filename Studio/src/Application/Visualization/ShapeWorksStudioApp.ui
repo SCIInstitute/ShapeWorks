@@ -345,6 +345,7 @@
     </widget>
     <addaction name="action_new_project"/>
     <addaction name="action_open_project"/>
+    <addaction name="action_show_project_folder"/>
     <addaction name="action_save_project"/>
     <addaction name="action_save_project_as"/>
     <addaction name="separator"/>
@@ -898,6 +899,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionAbout">
    <property name="text">
     <string>&amp;About</string>
+   </property>
+  </action>
+  <action name="action_show_project_folder">
+   <property name="text">
+    <string>Show Project Folder</string>
    </property>
   </action>
  </widget>

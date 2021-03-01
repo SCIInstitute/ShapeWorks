@@ -48,6 +48,7 @@ public Q_SLOTS:
 
   void on_action_new_project_triggered();
   void on_action_open_project_triggered();
+  void on_action_show_project_folder_triggered();
   bool on_action_save_project_triggered();
   bool on_action_save_project_as_triggered();
   void on_action_quit_triggered();
