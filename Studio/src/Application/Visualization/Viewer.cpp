@@ -462,17 +462,14 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
 
   this->shape_ = shape;
 
-  //std::cerr << "asking for mesh\n";
   this->mesh_ = shape->get_mesh(this->visualizer_->get_display_mode());
   this->meshes_ = shape->get_meshes(this->visualizer_->get_display_mode());
 
-  if (!this->mesh_ && this->loading_displayed_) {
+  if (!this->meshes_.valid() && this->loading_displayed_) {
     // no need to proceed
     this->mesh_ready_ = false;
-    //return;
+    return;
   }
-
-  //QSharedPointer<Mesh> mesh;
 
   QStringList annotations = shape->get_annotations();
   this->corner_annotation_->SetText(0, (annotations[0]).toStdString().c_str());
@@ -499,8 +496,6 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
     this->initialize_surfaces();
 
     for (int i = 0; i < this->meshes_.meshes().size(); i++) {
-
-      //vtkSmartPointer<vtkPolyData> poly_data = this->mesh_->get_poly_data();
 
       MeshHandle mesh = this->meshes_.meshes()[i];
 
