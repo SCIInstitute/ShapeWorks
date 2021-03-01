@@ -62,8 +62,12 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->recent_file_actions_.append(this->ui_->action_recent2);
   this->recent_file_actions_.append(this->ui_->action_recent3);
   this->recent_file_actions_.append(this->ui_->action_recent4);
+  this->recent_file_actions_.append(this->ui_->action_recent5);
+  this->recent_file_actions_.append(this->ui_->action_recent6);
+  this->recent_file_actions_.append(this->ui_->action_recent7);
+  this->recent_file_actions_.append(this->ui_->action_recent8);
 
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 8; i++) {
     connect(this->recent_file_actions_[i], SIGNAL(triggered()),
             this, SLOT(handle_open_recent()));
   }
@@ -1448,7 +1452,7 @@ void ShapeWorksStudioApp::update_recent_files()
   }
   recent_files = no_dupes;
 
-  int num_recent_files = qMin(recent_files.size(), 4); // only 4 max in the file menu
+  int num_recent_files = qMin(recent_files.size(), 8); // only 4 max in the file menu
 
   for (int i = 0; i < num_recent_files; i++) {
     QString text = tr("&%1 %2").arg(i + 1).arg(QFileInfo(recent_files[i]).fileName());

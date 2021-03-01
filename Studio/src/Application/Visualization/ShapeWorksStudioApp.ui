@@ -356,6 +356,10 @@
     <addaction name="action_recent2"/>
     <addaction name="action_recent3"/>
     <addaction name="action_recent4"/>
+    <addaction name="action_recent5"/>
+    <addaction name="action_recent6"/>
+    <addaction name="action_recent7"/>
+    <addaction name="action_recent8"/>
     <addaction name="separator"/>
     <addaction name="action_quit"/>
    </widget>
@@ -904,6 +908,26 @@ p, li { white-space: pre-wrap; }
   <action name="action_show_project_folder">
    <property name="text">
     <string>Show Project Folder</string>
+   </property>
+  </action>
+  <action name="action_recent5">
+   <property name="text">
+    <string>Recent5</string>
+   </property>
+  </action>
+  <action name="action_recent6">
+   <property name="text">
+    <string>Recent6</string>
+   </property>
+  </action>
+  <action name="action_recent7">
+   <property name="text">
+    <string>Recent7</string>
+   </property>
+  </action>
+  <action name="action_recent8">
+   <property name="text">
+    <string>Recent8</string>
    </property>
   </action>
  </widget>
