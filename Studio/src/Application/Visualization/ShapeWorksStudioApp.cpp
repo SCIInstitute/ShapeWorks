@@ -349,7 +349,7 @@ void ShapeWorksStudioApp::on_action_show_project_folder_triggered()
   qstring_path = qstring_path.replace( QString( "/" ), QString( "\\" ) );
     process.start( "explorer.exe", QStringList() << qstring_path );
 #else
-  process.start("open", QStringList() << qstring_path);
+  process.start("open", QStringList() << "-R" << filename);
 #endif
 
   if (!process.waitForFinished()) {
