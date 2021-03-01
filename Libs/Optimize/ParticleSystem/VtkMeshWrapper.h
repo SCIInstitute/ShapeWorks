@@ -40,6 +40,7 @@ public:
 
   NormalType SampleNormalAtPoint(PointType p, int idx) const override;
   GradNType SampleGradNAtPoint(PointType p, int idx) const override;
+  GradNType SampleGradPAtPoint(PointType p, int idx) const override;
 
   PointType SnapToMesh(PointType pointa, int idx) const override;
 
@@ -61,6 +62,7 @@ private:
 
   void ComputeMeshBounds();
   void ComputeGradN(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
+  void ComputeGradP(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
 
 
   int GetTriangleForPoint(const double pt[3], int idx, double closest_point[3]) const;
@@ -107,6 +109,7 @@ private:
   mutable std::vector<PointType> particle_positions_;
 
   std::vector<GradNType> grad_normals_;
+  std::vector<GradNType> grad_positions_;
 
   // cache of specialized cells for direct access
   std::vector<vtkSmartPointer<vtkTriangle>> triangles_;

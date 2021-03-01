@@ -92,6 +92,9 @@ public:
   inline GradNType SampleGradNAtPoint(const PointType &p, int idx) const override {
     return meshWrapper->SampleGradNAtPoint(p, idx);
   }
+  inline GradNType SampleGradPAtPoint(const PointType &p, int idx) const {
+    return meshWrapper->SampleGradPAtPoint(p, idx);
+  }
 
   inline double Distance(const PointType &a, int idx_a,
                          const PointType &b, int idx_b,
