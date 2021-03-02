@@ -83,18 +83,17 @@ void GroomTool::handle_progress(int val)
 //---------------------------------------------------------------------------
 void GroomTool::on_restore_defaults_clicked()
 {
-  // store a set of blank settings
-  Parameters params;
-  session_->get_project()->set_parameters(Parameters::GROOM_PARAMS, params);
+  // create a set of blank parameters
+  GroomParameters params(session_->get_project(), current_domain_);
+  params.restore_defaults();
   // now load those settings
-  load_params();
+  set_ui_from_params(params);
+  store_params();
 }
 
 //---------------------------------------------------------------------------
-void GroomTool::load_params()
+void GroomTool::set_ui_from_params(GroomParameters params)
 {
-  auto params = GroomParameters(session_->get_project(), current_domain_);
-
   ui_->center_checkbox->setChecked(params.get_center_tool());
   ui_->mesh_center->setChecked(params.get_center_tool());
   ui_->antialias_checkbox->setChecked(params.get_antialias_tool());
@@ -106,6 +105,13 @@ void GroomTool::load_params()
   ui_->antialias_iterations->setValue(params.get_antialias_iterations());
   ui_->blur_sigma->setValue(params.get_blur_amount());
   ui_->padding_amount->setValue(params.get_padding_amount());
+}
+
+//---------------------------------------------------------------------------
+void GroomTool::load_params()
+{
+  auto params = GroomParameters(session_->get_project(), current_domain_);
+  set_ui_from_params(params);
 }
 
 //---------------------------------------------------------------------------
@@ -290,5 +296,6 @@ void GroomTool::domain_changed()
 
   load_params();
 }
+
 
 }

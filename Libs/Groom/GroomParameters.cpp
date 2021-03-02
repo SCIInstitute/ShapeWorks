@@ -11,6 +11,12 @@ GroomParameters::GroomParameters(ProjectHandle project, std::string domain_name)
 }
 
 //---------------------------------------------------------------------------
+void GroomParameters::restore_defaults()
+{
+  this->params_.reset_parameters();
+}
+
+//---------------------------------------------------------------------------
 bool GroomParameters::get_center_tool()
 {
   return this->params_.get("center", true);

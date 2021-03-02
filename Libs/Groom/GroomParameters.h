@@ -43,6 +43,8 @@ public:
 
   bool get_fast_marching();
   void set_fast_marching(bool value);
+
+  void restore_defaults();
   
 private:
 

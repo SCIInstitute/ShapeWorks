@@ -10,6 +10,7 @@
 
 #include <Data/Preferences.h>
 #include <Groom/QGroom.h>
+#include <Libs/Groom/GroomParameters.h>
 
 class Ui_GroomTool;
 
@@ -72,6 +73,9 @@ public Q_SLOTS:
   void handle_error(std::string msg);
 
 private:
+
+  void set_ui_from_params(GroomParameters params);
+
   Preferences& preferences_;
 
   QList<QThread*> threads_;

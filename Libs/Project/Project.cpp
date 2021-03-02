@@ -461,7 +461,6 @@ Parameters Project::get_parameters(const std::string& name, const std::string& d
 void
 Project::set_parameters(const std::string& name, Parameters params, const std::string& domain_name)
 {
-  //return;
   try {
     int id = this->get_or_create_worksheet(name);
     auto ws = this->wb_->sheet_by_index(id);
