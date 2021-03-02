@@ -4,6 +4,7 @@
 #include "object_reader.h"
 #include "itkParticleImageDomain.h"
 #include "Sampler.h"
+#include "ContourDomain.h"
 
 namespace shapeworks {
 
@@ -289,6 +290,18 @@ void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh)
   if (mesh) {
     this->m_Spacing = 1;
     domain->SetMesh(mesh);
+  }
+  m_DomainList.push_back(domain);
+}
+
+void Sampler::AddContour(const std::string& filepath)
+{
+  //todo merge in memory leak fixes from release-6.0 branch
+  itk::ContourDomain* domain = new itk::ContourDomain();
+  m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
+  if (!filepath.empty()) { //todo fix hack for fixed domains
+    this->m_Spacing = 1;
+    domain->LoadFromFile(filepath);
   }
   m_DomainList.push_back(domain);
 }

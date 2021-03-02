@@ -1985,6 +1985,14 @@ void Optimize::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh)
 }
 
 //---------------------------------------------------------------------------
+void Optimize::AddContour(const std::string& filepath)
+{
+  this->m_sampler->AddContour(filepath);
+  this->m_num_shapes++;
+  this->m_spacing = 0.5;
+}
+
+//---------------------------------------------------------------------------
 void Optimize::SetFilenames(const std::vector<std::string>& filenames)
 { this->m_filenames = filenames; }
 

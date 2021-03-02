@@ -9,6 +9,7 @@
 #pragma once
 
 #include "itkParticleDomain.h"
+#include <Eigen/Dense>
 
 namespace itk
 {
@@ -21,126 +22,110 @@ public:
   /** Point type used to store particle locations. */
   typedef typename ParticleDomain::PointType PointType;
 
+  explicit ContourDomain() {}
+  virtual ~ContourDomain() {}
+
+  void LoadFromFile(const std::string& filepath);
+
   shapeworks::DomainType GetDomainType() const override {
     return shapeworks::DomainType::Contour;
   }
 
-  /** Apply any constraints to the given point location.
-      This should force the point to a position on the surface that satisfies all constraints. */
-  inline bool ApplyConstraints(PointType& p, bool dbg = false) const override {
-    // TODO snap the point to the closest position on the contour.
-    return true;
+  virtual bool ApplyConstraints(PointType& p, int idx, bool dbg = false) const override;
+
+  virtual PointType UpdateParticlePosition(const PointType &point,
+                                           int idx, vnl_vector_fixed<double, DIMENSION> &update) const override;
+
+  inline vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION>& gradE,
+                                                                           const PointType &pos, int idx) const override;
+
+  inline vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType &point, int idx) const override {
+    throw std::runtime_error("Contours do not have normals");
   }
 
-  /** Reduce magnitude of the vector so that applying point = point + gradE does not violate any constraints.
-      This should have no effect if there are no constraints. ImageDomain may restrict vector magnitude based on the narrow band. */
-  inline bool ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> & gradE, const PointType &pos) const {
-    return true;
+  virtual vnl_vector_fixed<float, DIMENSION> SampleGradientAtPoint(const PointType &point, int idx) const override {
+    throw std::runtime_error("Contours do not have gradients");
   }
 
-  /** Applies the update to the point and returns the new point position. */
-  inline PointType UpdateParticlePosition(PointType &point, vnl_vector_fixed<double, DIMENSION> &update) const override {
-    PointType newpoint;
-    // TODO implement geodesic walk for contours
-    for (unsigned int i = 0; i < DIMENSION; i++) { newpoint[i] = point[i]; }
-    return newpoint;
+  virtual GradNType SampleGradNAtPoint(const PointType &p, int idx) const override {
+    throw std::runtime_error("Contours do not have gradient of normals");
   }
 
-  /** Projects the vector to the surface tangent at the point. */
-  inline vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION> & gradE, const PointType &pos) const override {
-    // TODO project vector to surface tangent at pos
-    return gradE;
+  virtual PointType GetValidLocationNear(PointType p) const override {
+    this->ApplyConstraints(p, -1);
+    return p;
   }
 
-  /** Get the surface normal at a point. */
-  inline vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType &point) const override {
-    vnl_vector_fixed<float, DIMENSION> normal(1, 0, 0);
-    // TODO return normal at point
-    return normal;
+  virtual double GetMaxDiameter() const override {
+    //todo copied from MeshDomain: should this not be the length of the bounding box diagonal?
+    const PointType bb = upper_bound_ - lower_bound_;
+    return std::max({bb[0], bb[1], bb[2]});
   }
 
-  /** Used in ParticleMeanCurvatureAttribute */
-  double GetCurvature(const PointType &p) const override {
+  virtual void UpdateZeroCrossingPoint() override { }
+
+  double GetCurvature(const PointType &p, int idx) const override {
     return GetSurfaceMeanCurvature();
   }
 
-  /** Used in ParticleMeanCurvatureAttribute */
   inline double GetSurfaceMeanCurvature() const override {
     // This function is used by MeanCurvatureAttribute which is used for good/bad assessment
     // These arbitrary values should eventually be replaced with actual computation
     return 0.15;
   }
 
-  /** Used in ParticleMeanCurvatureAttribute */
   inline double GetSurfaceStdDevCurvature() const override {
     // This function is used by MeanCurvatureAttribute which is used for good/bad assessment
     // These arbitrary values should eventually be replaced with actual computation
     return 0.02;
   }
 
-  /** Each domain can compute the distance between two points */
-  inline double Distance(const PointType &a, const PointType &b) const override {
-    // TODO compute geodesic distance on the contour
-    return 1.0;
-  }
+  inline double Distance(const PointType &a, const PointType &b) const override;
 
-  /** Gets the minimum x, y, z values of the bounding box for the domain. This is used for setting up the PowerOfTwoPointTree. */
   const PointType& GetLowerBound() const override {
-    PointType p;
-    // TODO get the lower bounds of the domain.
-    return p;
+    return lower_bound_;
   }
 
-  /** Gets the maximum x, y, z values of the bounding box for the domain. This is used for setting up the PowerOfTwoPointTree. */
   const PointType& GetUpperBound() const override {
-    PointType p;
-    // TODO get the upper bounds of the domain.
-    return p;
+    return upper_bound_;
   }
 
-  /** Get any valid point on the domain. This is used to place the first particle. */
   PointType GetZeroCrossingPoint() const override {
-    PointType p;
-    // TODO return any point on the contour.
-    return p;
+    const Eigen::Vector3d pt = points.row(0);
+    return PointType(pt.data());
   }
 
-  /** Use for neighborhood radius. */
   double GetSurfaceArea() const override {
-    // TODO return contour equivalent of surface area
-    return 0;
-  }
-
-  /** Used to compute sigma for sampling and neighborhood radius. */
-  double GetMaxDimRadius() const override {
-    // TODO return average edge length
-    return 1;
-  }
-
-  void PrintCuttingPlaneConstraints(std::ofstream& out) const override {
-    // TODO for Hong: figure out constraint thing
+    throw std::runtime_error("Contours do not have area");
   }
 
   void DeleteImages() override {
-    // TODO delete the contours
+    // TODO what?
   }
   void DeletePartialDerivativeImages() override {
-    // TODO delete gradients computed from contours (if they exist)
+    // TODO what?
   }
 
 
-  ContourDomain() { }
-  virtual ~ContourDomain() {}
-
 protected:
-  void PrintSelf(std::ostream& os, Indent indent) const
+  void PrintSelf(std::ostream& os, Indent indent) const override
   {
     DataObject::Superclass::PrintSelf(os, indent);
     os << indent << "ContourDomain\n";
   }
 
 private:
+  PointType lower_bound_, upper_bound_;
+  Eigen::MatrixX3d points;
+  bool is_closed_;
 
+  void ComputeBounds();
+
+  double DistanceToLine(const Eigen::Vector3d& pt, int line_idx, Eigen::Vector3d& closest_pt) const;
+
+  int ClosestLine(const Eigen::Vector3d& pt, double& closest_distance, Eigen::Vector3d& closest_pt) const;
+
+  int NumberOfLines() const;
 };
 
 } // end namespace itk
