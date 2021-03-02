@@ -10,6 +10,7 @@
 
 #include "itkParticleDomain.h"
 #include <Eigen/Dense>
+#include <vtkPolyData.h>
 
 namespace itk
 {
@@ -25,7 +26,7 @@ public:
   explicit ContourDomain() {}
   virtual ~ContourDomain() {}
 
-  void LoadFromFile(const std::string& filepath);
+  void SetPolyLine(vtkSmartPointer<vtkPolyData> poly_data);
 
   shapeworks::DomainType GetDomainType() const override {
     return shapeworks::DomainType::Contour;
@@ -116,6 +117,7 @@ protected:
 
 private:
   PointType lower_bound_, upper_bound_;
+  //todo maybe just vtkPolyData
   Eigen::MatrixX3d points;
   bool is_closed_;
 

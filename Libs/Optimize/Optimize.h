@@ -208,7 +208,7 @@ public:
   //! Set the shape input images
   void AddImage(ImageType::Pointer image);
   void AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh);
-  void AddContour(const std::string& filepath);
+  void AddContour(vtkSmartPointer<vtkPolyData> poly_data);
 
   //! Set the shape filenames (TODO: details)
   void SetFilenames(const std::vector<std::string>& filenames);

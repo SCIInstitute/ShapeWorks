@@ -556,10 +556,16 @@ bool OptimizeParameterFile::read_contour_inputs(TiXmlHandle* docHandle, Optimize
         std::cout << "Reading inputfile: " << contourFiles[index] << "...\n" << std::flush;
       }
 
-      optimize->AddContour(contourFiles[index]);
+      auto poly_data = MeshUtils::threadSafeReadMesh(contourFiles[index].c_str()).getVTKMesh();
+      if (poly_data) {
+        optimize->AddContour(poly_data);
+      } else {
+        std::cerr << "Failed to read " << contourFiles[index] << "\n";
+        return false;
+      }
     }
     else {
-      optimize->AddContour(""); //todo fix hack to handle fixed domains
+      optimize->AddContour(nullptr);
     }
   }
 

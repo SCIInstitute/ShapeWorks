@@ -294,14 +294,14 @@ void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh)
   m_DomainList.push_back(domain);
 }
 
-void Sampler::AddContour(const std::string& filepath)
+void Sampler::AddContour(vtkSmartPointer<vtkPolyData> poly_data)
 {
   //todo merge in memory leak fixes from release-6.0 branch
   itk::ContourDomain* domain = new itk::ContourDomain();
   m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
-  if (!filepath.empty()) { //todo fix hack for fixed domains
+  if (poly_data != nullptr) {
     this->m_Spacing = 1;
-    domain->LoadFromFile(filepath);
+    domain->SetPolyLine(poly_data);
   }
   m_NeighborhoodList.back()->SetWeightingEnabled(false);
   m_DomainList.push_back(domain);

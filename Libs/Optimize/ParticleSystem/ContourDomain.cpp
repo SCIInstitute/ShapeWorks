@@ -4,20 +4,17 @@
 
 namespace itk{
 
-void ContourDomain::LoadFromFile(const std::string& filepath) {
-  std::ifstream in_file(filepath);
-
+void ContourDomain::SetPolyLine(vtkSmartPointer<vtkPolyData> poly_data) {
   this->m_FixedDomain = false;
-  this->is_closed_ = true; // TODO handle this
+  this->is_closed_ = true; // TODO handle this?
 
-  size_t n_points; in_file >> n_points;
+  const auto n_points = poly_data->GetNumberOfPoints();
   points.resize(n_points, 3);
 
-  // todo figure out a better file format don't roll own
   for(int i=0; i<n_points; i++) {
-    in_file >> points(i,0);
-    in_file >> points(i,1);
-    in_file >> points(i,2);
+    points(i,0) = poly_data->GetPoint(i)[0];
+    points(i,1) = poly_data->GetPoint(i)[1];
+    points(i,2) = poly_data->GetPoint(i)[2];
   }
 
   this->ComputeBounds();
