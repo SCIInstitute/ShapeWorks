@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-      - replace_trimesh
+      - release_v6.0
     tags:
     - '*'
   pull_request:

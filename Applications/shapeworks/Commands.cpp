@@ -69,10 +69,10 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
       ProjectHandle project = std::make_shared<Project>();
       project->load(projectFile);
 
-      auto base = StringUtils::getPath(project_file);
-      if (base != project_file) {
+      auto base = StringUtils::getPath(projectFile);
+      if (base != projectFile) {
         chdir(base.c_str());
-        project->set_filename(StringUtils::getFilename(project_file));
+        project->set_filename(StringUtils::getFilename(projectFile));
       }
 
       // set up Optimize class based on project parameters
@@ -127,7 +127,7 @@ bool GroomCommand::execute(const optparse::Values& options, SharedCommandData& s
     project->load(projectFile);
 
     auto base = StringUtils::getPath(projectFile);
-    if (base != project_file) {
+    if (base != projectFile) {
       chdir(base.c_str());
       project->set_filename(StringUtils::getFilename(projectFile));
     }

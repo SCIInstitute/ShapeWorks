@@ -21,7 +21,7 @@ ITK_VER_STR="5.0"
 QT_MIN_VER="5.9.8"  # NOTE: 5.x is required, but this restriction is a clever way to ensure the anaconda version of Qt (5.9.6 or 5.9.7) isn't used since it won't work on most systems.
 XLNT_VER="v1.4.0"
 OpenVDB_VER="v7.0.0"
-libigl_VER="v2.2.0"
+libigl_VER="v2.2.0-fix"
 
 usage()
 {
@@ -277,7 +277,7 @@ build_igl()
   echo " "
   echo "## Building Libigl..."
   cd ${INSTALL_DIR}
-  git clone https://github.com/libigl/libigl.git
+  git clone https://github.com/akenmorris/libigl.git
   cd libigl
   git checkout -f tags/${libigl_VER}
 

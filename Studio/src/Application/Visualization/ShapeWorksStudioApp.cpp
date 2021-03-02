@@ -1192,10 +1192,14 @@ void ShapeWorksStudioApp::open_project(QString filename)
   try {
     if (!this->session_->load_project(filename)) {
       this->enable_possible_actions();
+      this->handle_message("Project failed to load");
+      this->handle_progress(100);
       return;
     }
   } catch (std::runtime_error e) {
     this->handle_error(e.what());
+    this->handle_message("Project failed to load");
+    this->handle_progress(100);
   }
 
   auto project = this->session_->get_project();
