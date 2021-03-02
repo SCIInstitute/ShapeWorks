@@ -216,9 +216,24 @@ void OptimizeTool::set_session(QSharedPointer<Session> session)
 //---------------------------------------------------------------------------
 void OptimizeTool::load_params()
 {
+  this->setup_domain_boxes();
   auto params = OptimizeParameters(this->session_->get_project());
 
   this->ui_->number_of_particles->setText(QString::number(params.get_number_of_particles()[0]));
+
+  auto domain_names = this->session_->get_project()->get_domain_names();
+  for (int i = 0; i < domain_names.size(); i++) {
+    if (i < this->particle_boxes_.size()) {
+
+      int particles = 128;
+      if (i < params.get_number_of_particles().size()) {
+        particles = params.get_number_of_particles()[i];
+      }
+
+      this->particle_boxes_[i]->setText(QString::number(particles));
+    }
+  }
+
   this->ui_->initial_relative_weighting->setText(
     QString::number(params.get_initial_relative_weighting()));
   this->ui_->relative_weighting->setText(QString::number(params.get_relative_weighting()));
@@ -248,7 +263,20 @@ void OptimizeTool::store_params()
 {
   auto params = OptimizeParameters(this->session_->get_project());
 
-  params.set_number_of_particles({this->ui_->number_of_particles->text().toInt()});
+  std::vector<int> num_particles;
+  num_particles.push_back(this->ui_->number_of_particles->text().toInt());
+
+  auto domain_names = this->session_->get_project()->get_domain_names();
+  if (domain_names.size() > 1) {
+    num_particles.clear();
+    for (int i = 0; i < domain_names.size(); i++) {
+      if (i < this->particle_boxes_.size()) {
+        num_particles.push_back(this->particle_boxes_[i]->text().toInt());
+      }
+    }
+  }
+
+  params.set_number_of_particles(num_particles);
   params.set_initial_relative_weighting(this->ui_->initial_relative_weighting->text().toDouble());
   params.set_relative_weighting(this->ui_->relative_weighting->text().toDouble());
   params.set_starting_regularization(this->ui_->starting_regularization->text().toDouble());
@@ -308,6 +336,7 @@ void OptimizeTool::update_ui_elements()
 void OptimizeTool::activate()
 {
   this->enable_actions();
+
 }
 
 //---------------------------------------------------------------------------
@@ -336,7 +365,12 @@ void OptimizeTool::clear_particles()
 bool OptimizeTool::validate_inputs()
 {
   bool all_valid = true;
-  for (QLineEdit* line_edit : this->line_edits_) {
+
+  std::vector<QLineEdit*> combined = this->line_edits_;
+
+  combined.insert(combined.end(), this->particle_boxes_.begin(), this->particle_boxes_.end());
+
+  for (QLineEdit* line_edit : combined) {
     QString text = line_edit->text();
     int pos;
     QString ss;
@@ -361,6 +395,40 @@ void OptimizeTool::update_run_button()
   }
   else {
     this->ui_->run_optimize_button->setText("Run Optimize");
+  }
+
+}
+
+//---------------------------------------------------------------------------
+void OptimizeTool::setup_domain_boxes()
+{
+  qDeleteAll(
+    this->ui_->domain_widget->findChildren<QWidget*>(QString(), Qt::FindDirectChildrenOnly));
+  this->particle_boxes_.clear();
+
+  if (this->session_->get_project()->get_number_of_domains_per_subject() < 2) {
+    this->ui_->particle_stack->setCurrentIndex(0);
+    this->ui_->domain_widget->setMaximumSize(1,1);
+  }
+  else {
+    this->ui_->domain_widget->setMaximumSize(9999,9999);
+    auto domain_names = this->session_->get_project()->get_domain_names();
+    QGridLayout* layout = new QGridLayout;
+    QIntValidator* above_zero = new QIntValidator(1, std::numeric_limits<int>::max(), this);
+    for (int i = 0; i < domain_names.size(); i++) {
+      layout->addWidget(new QLabel(QString::fromStdString(domain_names[i])), i, 0);
+      QLineEdit* box = new QLineEdit;
+      box->setAlignment(Qt::AlignHCenter);
+      box->setValidator(above_zero);
+      connect(box, &QLineEdit::textChanged,
+              this, &OptimizeTool::update_run_button);
+
+      this->particle_boxes_.push_back(box);
+      layout->addWidget(box, i, 1);
+    }
+    delete this->ui_->domain_widget->layout();
+    this->ui_->domain_widget->setLayout(layout);
+    this->ui_->particle_stack->setCurrentIndex(1);
   }
 
 }
