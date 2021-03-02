@@ -15,7 +15,7 @@ shapeworks readimage --name $1 antialias maxrmserror $2 iterations $3 layers $4 
 Python Interface:  
 ```
 image = sw.Image(<input path>)
-image.antialis(iterations, maxRMSErr, layers).write(<output path>)
+image.antialias(iterations, maxRMSErr, layers).write(<output path>)
 ```
 
 Here is the list of arguments.

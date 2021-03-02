@@ -1,17 +1,19 @@
 # How to Add Python APIs?
 
-Python APIs in ShapeWorks are pybind wrappers of C++ functions. 
+Python APIs in ShapeWorks are pybind wrappers of C++ functions and additions/modifications can be made in Python/shapeworks/ShapeworksPython.cpp
 
-1. Header file must be included.
+* Header file must be included.
 
-2. New class can be added like this:
+* To add a new class,
 
 ```
 py:class_<c++ClassName> objectName(m, "pythonClassName);
 ```
 
-3. New function can be added like this:
+* To add a new function,
 
 ```
 objectName.def("pythonFunctionName", &c++ClassName::c++FunctionName, "description/help", "argument1"_a, "argument2"_a=defaultValue)
 ```
+
+For more information on how to add pybind bindings, check out [pybind](https://pybind11.readthedocs.io/en/stable/) documentation.
