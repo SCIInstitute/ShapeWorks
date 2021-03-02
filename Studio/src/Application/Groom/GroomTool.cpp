@@ -202,16 +202,16 @@ void GroomTool::handle_thread_complete()
 {
   emit progress(95);
 
-  // trigger reload of project
-  auto duration = timer_.elapsed();
-  STUDIO_LOG_MESSAGE("Groom duration: " + QString::number(duration) + "ms");
+  std::string duration = QString::number(this->timer_.elapsed() / 1000.0, 'f',
+                                         1).toStdString();
+  emit message("Groom Complete.  Duration: " + duration + " seconds");
 
+  // trigger reload of meshes
   for (auto shape : session_->get_shapes()) {
     shape->reset_groomed_mesh();
   }
 
   emit progress(100);
-  emit message("Groom Complete");
   emit groom_complete();
 
   groom_is_running_ = false;
@@ -296,6 +296,5 @@ void GroomTool::domain_changed()
 
   load_params();
 }
-
 
 }
