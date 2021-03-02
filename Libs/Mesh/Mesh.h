@@ -104,6 +104,9 @@ public:
   /// number of faces
   vtkIdType numFaces() const { return mesh->GetNumberOfCells(); }
 
+  /// value at given point
+  Point3 getPoint(int p) const;
+
   // fields of mesh points //
 
   /// print all field names in mesh

@@ -838,6 +838,13 @@ Point3 Mesh::center() const
   return Point3({c[0], c[1], c[2]});
 }
 
+Point3 Mesh::getPoint(int p) const
+{
+  double val[3];
+  mesh->GetPoint(p, val);
+  return Point3({val[0], val[1], val[2]});
+}
+
 bool Mesh::compare(const Mesh& other) const
 {
   if (!epsEqualN(center(), other.center(), 3))             { std::cerr << "centers differ!\n"; return false; }
