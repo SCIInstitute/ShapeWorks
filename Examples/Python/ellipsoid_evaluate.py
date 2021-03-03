@@ -3,7 +3,6 @@ import os
 import sys
 import platform
 from pathlib import Path
-import glob 
 
 from EvaluationUtils import scree_plot, generalization, specificity
 
@@ -17,14 +16,12 @@ def Run_Pipeline(args):
     eval_dir = f'{ellipsoids_dir}/evaluation'
     for subdir in ('compactness', 'generalization', 'specificity'):
         Path(eval_dir).joinpath(Path(subdir)).mkdir(parents=True, exist_ok=True)
-
-
-    particleFilesString = ' '.join(glob.glob(shape_models_dir+"/*world.particles"))
+    
     # Compute compactness
-    scree_plot(particleFilesString, f'{eval_dir}/compactness')
+    scree_plot(f'{shape_models_dir}/*world.particles', f'{eval_dir}/compactness')
     
     # Compute generalization
-    generalization(particleFilesString, f'{eval_dir}/generalization')
+    generalization(f'{shape_models_dir}/*world.particles', f'{eval_dir}/generalization')
     
     # Compute specificity
-    specificity(particleFilesString, f'{eval_dir}/specificity')
+    specificity(f'{shape_models_dir}/*world.particles', f'{eval_dir}/specificity')

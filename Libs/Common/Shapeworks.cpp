@@ -6,7 +6,6 @@ Point toPoint(const Dims &d) { return Point({static_cast<double>(d[0]), static_c
 Point toPoint(const Coord &c) { return Point({static_cast<double>(c[0]), static_cast<double>(c[1]), static_cast<double>(c[2])}); }
 Vector toVector(const Dims &d) { return makeVector({static_cast<double>(d[0]), static_cast<double>(d[1]), static_cast<double>(d[2])}); }
 Vector toVector(const Point &p) { return makeVector({p[0], p[1], p[2]}); } 
-Vector toVector(const itk::CovariantVector<double, 3> &v) { return makeVector({v[0], v[1], v[2]}); } 
 Point toPoint(const Vector &v) { return Point({v[0], v[1], v[2]}); }
 Coord toCoord(const Dims &d) {
   return Coord({static_cast<itk::IndexValueType>(d[0]),

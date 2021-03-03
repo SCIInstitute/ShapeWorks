@@ -8,11 +8,6 @@ TEST(pythonTests, setup)
   ASSERT_TRUE(true);
 }
 
-TEST(pythonTests, gradientInterpolatorTest)
-{
-  ASSERT_FALSE(system("python gradientinterp.py"));
-}
-  
 TEST(pythonTests, infoTest)
 {
   ASSERT_FALSE(system("python info.py"));

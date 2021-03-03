@@ -108,12 +108,12 @@ bool ImageInfo::execute(const optparse::Values &options, SharedCommandData &shar
   bool origin = static_cast<bool>(options.get("origin"));
   bool direction = static_cast<bool>(options.get("direction"));
   bool center = static_cast<bool>(options.get("center"));
-  bool centerOfMass = static_cast<bool>(options.get("centerofmass"));
-  bool boundingBox = static_cast<bool>(options.get("boundingbox"));
+  bool centerofmass = static_cast<bool>(options.get("centerofmass"));
+  bool boundingbox = static_cast<bool>(options.get("boundingbox"));
 
   // by default: print everything
   if (options.num_set() == 0)
-    dims = spacing = size = origin = direction = center = centerOfMass = boundingBox = true;
+    dims = spacing = size = origin = direction = center = centerofmass = boundingbox = true;
 
   if (dims)
     std::cout << "image dimensions:      " << sharedData.image.dims() << std::endl;
@@ -125,9 +125,9 @@ bool ImageInfo::execute(const optparse::Values &options, SharedCommandData &shar
     std::cout << "physical origin:       " << sharedData.image.origin() << std::endl;
   if (center)
     std::cout << "center:                " << sharedData.image.center() << std::endl;
-  if (centerOfMass)
+  if (centerofmass)
     std::cout << "center of mass (0,1]:  " << sharedData.image.centerOfMass() << std::endl;
-  if (boundingBox)
+  if (boundingbox)
     std::cout << "bounding box:          " << sharedData.image.boundingBox() << std::endl;
   if (direction)
     std::cout << "direction (coordsys):  " << std::endl
@@ -359,9 +359,9 @@ bool TranslateImage::execute(const optparse::Values &options, SharedCommandData 
     return false;
   }
 
-  bool centerOfMass = static_cast<bool>(options.get("centerofmass"));
+  bool centerofmass = static_cast<bool>(options.get("centerofmass"));
 
-  if (centerOfMass)
+  if (centerofmass)
   {
     sharedData.image.applyTransform(sharedData.image.createTransform(XFormType::CenterOfMass));
     return true;
@@ -578,9 +578,9 @@ bool ComputeDT::execute(const optparse::Values &options, SharedCommandData &shar
     return false;
   }
 
-  double isoValue = static_cast<double>(options.get("isovalue"));
+  double isovalue = static_cast<double>(options.get("isovalue"));
 
-  sharedData.image.computeDT(isoValue);
+  sharedData.image.computeDT(isovalue);
   return true;
 }
 
@@ -697,16 +697,16 @@ bool TPLevelSetFilter::execute(const optparse::Values &options, SharedCommandDat
     return false;
   }
 
-  std::string featureImagePath = static_cast<std::string>(options.get("featureimage"));
+  std::string featureimage = static_cast<std::string>(options.get("featureimage"));
 
-  if (featureImagePath == "")
+  if (featureimage == "")
   {
     std::cerr << "Must specify a feature image\n";
     return false;
   }
   else
   {
-    Image featureImage(featureImagePath);
+    Image featureImage(featureimage);
     double scaling = static_cast<double>(options.get("scaling"));
 
     sharedData.image.applyTPLevelSetFilter(featureImage, scaling);
@@ -829,7 +829,7 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
   }
 
   std::string targetDT = static_cast<std::string>(options.get("target"));
-  double isoValue = static_cast<double>(options.get("isovalue"));
+  double isovalue = static_cast<double>(options.get("isovalue"));
   unsigned iterations = static_cast<unsigned>(options.get("iterations"));
 
   if (targetDT == "")
@@ -840,7 +840,7 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
   else
   {
     Image target(targetDT);
-    TransformPtr transform(sharedData.image.createTransform(target, XFormType::IterativeClosestPoint, isoValue, iterations));
+    TransformPtr transform(sharedData.image.createTransform(target, XFormType::IterativeClosestPoint, isovalue, iterations));
     sharedData.image.applyTransform(transform, target.origin(), target.dims(), target.spacing(), target.coordsys());
     return true;
   }
@@ -866,9 +866,9 @@ bool BoundingBoxImage::execute(const optparse::Values &options, SharedCommandDat
 {
   std::vector<std::string> filenames = options.get("names");
   int padding = static_cast<int>(options.get("padding"));
-  double isoValue = static_cast<double>(options.get("isovalue"));
+  double isovalue = static_cast<double>(options.get("isovalue"));
 
-  sharedData.region = ImageUtils::boundingBox(filenames, isoValue);
+  sharedData.region = ImageUtils::boundingBox(filenames, isovalue);
   sharedData.region.pad(padding);
   std::cout << "Bounding box:\n" << sharedData.region;
   return true;
@@ -1132,7 +1132,7 @@ bool CompareImage::execute(const optparse::Values &options, SharedCommandData &s
     return false;
   }
 
-  bool verifyAll = static_cast<bool>(options.get("verifyall"));
+  bool verifyall = static_cast<bool>(options.get("verifyall"));
   double tolerance = static_cast<double>(options.get("tolerance"));
   double precision = static_cast<double>(options.get("precision"));
 
@@ -1142,7 +1142,7 @@ bool CompareImage::execute(const optparse::Values &options, SharedCommandData &s
     return false;
   }
 
-  if (sharedData.image.compare(Image(filename), verifyAll, tolerance/100, precision))
+  if (sharedData.image.compare(Image(filename), verifyall, tolerance/100, precision))
   {
     std::cout << "compare success\n";
     return true;
@@ -1336,9 +1336,9 @@ bool ImageToMesh::execute(const optparse::Values &options, SharedCommandData &sh
     return false;
   }
 
-  double isoValue = static_cast<double>(options.get("isovalue"));
+  double isovalue = static_cast<double>(options.get("isovalue"));
 
-  sharedData.mesh = std::make_unique<Mesh>(sharedData.image.toMesh(isoValue));
+  sharedData.mesh = std::make_unique<Mesh>(sharedData.image.toMesh(isovalue));
   return sharedData.validMesh();
 }
 

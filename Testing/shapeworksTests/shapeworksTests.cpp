@@ -330,11 +330,6 @@ TEST(shapeworksTests, scalemeshTest)
 //   ASSERT_FALSE(system("bash meshfix.sh"));
 // }
 
-TEST(shapeworksTests, clipclosedsurfaceTest)
-{
-  ASSERT_FALSE(system("bash clipclosedsurface.sh"));
-}
-
 TEST(shapeworksTests, meshtoimageTest)
 {
   ASSERT_FALSE(system("bash meshtoimage.sh"));

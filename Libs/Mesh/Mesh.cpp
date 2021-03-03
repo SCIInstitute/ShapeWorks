@@ -36,8 +36,6 @@
 #include <vtkKdTreePointLocator.h>
 #include <vtkCellLocator.h>
 #include <vtkGenericCell.h>
-#include <vtkPlaneCollection.h>
-#include <vtkClipClosedSurface.h>
 
 namespace shapeworks {
 
@@ -391,21 +389,6 @@ Mesh& Mesh::distance(const Mesh &target, const DistanceMethod method)
     
   // add distance field to this mesh
   this->setField("distance", distance);
-
-  return *this;
-}
-
-Mesh& Mesh::clipClosedSurface(const Plane plane)
-{
-  vtkSmartPointer<vtkPlaneCollection> planeCollection = vtkSmartPointer<vtkPlaneCollection>::New();
-  planeCollection->AddItem(plane);
-
-  vtkSmartPointer<vtkClipClosedSurface> clipper = vtkSmartPointer<vtkClipClosedSurface>::New();
-  clipper->SetClippingPlanes(planeCollection);
-  clipper->SetInputData(this->mesh);
-  clipper->SetGenerateFaces(1);
-  clipper->Update();
-  this->mesh = clipper->GetOutput();
 
   return *this;
 }
