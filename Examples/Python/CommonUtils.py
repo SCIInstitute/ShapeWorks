@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Sep 10 14:32:27 2019
-
-@author: shireen
+Common utility functions
 """
 
 import numpy as np
@@ -20,10 +18,8 @@ import xml.etree.ElementTree as ET
 from termcolor import colored, cprint
 from zipfile import ZipFile
 import subprocess
-import GroomUtils
 
 def dataset_exists_check(use_case):
-	
 	existsFlag = False
 	OutputDirectory = "Output/"
 	for filename in os.listdir(OutputDirectory):
@@ -45,7 +41,7 @@ def generate_download_flag(outputDirectory,folder):
 	else:
 		download_flag = True		
 	return download_flag
-		
+
 def download_subset(use_case,datasetName,outputDirectory):
 	import DatasetUtils
 	import re
@@ -53,36 +49,36 @@ def download_subset(use_case,datasetName,outputDirectory):
 	outputDirectory = outputDirectory + datasetName+"/"
 	if(use_case in ["ellipsoid","ellipsoid_cut","left_atrium"]):
 		if(generate_download_flag(outputDirectory,"segmentations")):
-			segFilesList = sorted([files for files in fileList if re.search("^segmentations/.*nrrd$",files)])[:3]
+			segFilesList = sorted([files for files in fileList if re.search("^segmentations(?:/|\\\).*nrrd$",files)])[:3]
 			DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = segFilesList)
 	elif(use_case in ["ellipsoid_mesh","femur","femur_cut","lumps"]):
 		if(generate_download_flag(outputDirectory,"meshes")):
-			meshFilesList = sorted([files for files in fileList if re.search("^meshes/.*ply$",files)])[:3]
+			meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*ply$",files)])[:3]
 			DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
 	if(use_case in ["femur","femur_cut","left_atrium"]):
 		if(generate_download_flag(outputDirectory,"images")):
-			imageFilelist = sorted([files for files in fileList if re.search("^images/.*nrrd$",files)])[:3]
+			imageFilelist = sorted([files for files in fileList if re.search("^images(?:/|\\\).*nrrd$",files)])[:3]
 			DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = imageFilelist)
 	elif(use_case=="femur_mesh"):
 		if(generate_download_flag(outputDirectory,"groomed/meshes/")):
-			meshFilesList = sorted([files for files in fileList if re.search("^groomed/meshes/.*ply$",files)])[:3]
+			meshFilesList = sorted([files for files in fileList if re.search("^groomed(?:/|\\\)meshes(?:/|\\\).*ply$",files)])[:3]
 			DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
 	elif(use_case=="deep_ssm"):
 		if(generate_download_flag(outputDirectory,"groomed/images/")):
-			imageFilesList = sorted([files for files in fileList if re.search("^groomed/images/.*nrrd$",files)])[:7]
+			imageFilesList = sorted([files for files in fileList if re.search("^groomed(?:/|\\\)images(?:/|\\\).*nrrd$",files)])[:7]
 			DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = imageFilesList)
 		if(generate_download_flag(outputDirectory,"groomed/distance_transforms/")):
-			dtFilesList = sorted([files for files in fileList if re.search("^groomed/distance_transforms/.*nrrd$",files)])[:7]
+			dtFilesList = sorted([files for files in fileList if re.search("^groomed(?:/|\\\)distance_transforms(?:/|\\\).*nrrd$",files)])[:7]
 			DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = dtFilesList)
 		if(generate_download_flag(outputDirectory,"shape_models/femur/1024/")):
-			wolrdFilesList = sorted([files for files in fileList if re.search("^shape_models/femur/1024/.*world.particles$",files)])[:7]
+			wolrdFilesList = sorted([files for files in fileList if re.search("^shape_models(?:/|\\\)femur(?:/|\\\)1024(?:/|\\\).*world.particles$",files)])[:7]
 			DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = wolrdFilesList)
-			localFilesList = sorted([files for files in fileList if re.search("^shape_models/femur/1024/.*local.particles$",files)])[:7]
+			localFilesList = sorted([files for files in fileList if re.search("^shape_models(?:/|\\\)femur(?:/|\\\)1024(?:/|\\\).*local.particles$",files)])[:7]
 			DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = localFilesList)
 		if(generate_download_flag(outputDirectory,"shape_models/femur/mean/")):
-			meanFilesList = sorted([files for files in fileList if re.search("^shape_models/femur/mean/.*",files)])
+			meanFilesList = sorted([files for files in fileList if re.search("^shape_models(?:/|\\\)femur(?:/|\\\)mean(?:/|\\\).*",files)])
 			DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meanFilesList)
-	
+
 def download_and_unzip_dataset(datasetName, outputDirectory):
 	# Check if the unzipped data is present and number of files are more than 3 for full use case
 	if generate_download_flag(outputDirectory,datasetName):
@@ -185,15 +181,17 @@ def samplemesh(inMeshList, num_sample, printCmd=False):
 	print("###########################################\n")
 	return samples_idx
 
-# make sure the shapeworks executables can be found, adding path to osx studio app bundle if necessary
-def robustifyShapeworksPaths():
+# make sure the shapeworks executables can be found
+def check_shapeworks_path():
 	swpath = shutil.which("shapeworks")
 	if (not swpath):
 		print("Error: cannot find ShapeWorks executables. Please pass their location using the --shapeworks_path argument")
 		sys.exit(1)
 
-	# OSX: ensure ShapeWorksStudio is also in the path (if it exists)
-	if platform.system() == "Darwin":
-		if (not shutil.which("ShapeWorksStudio")):
-			studiodir = os.path.dirname(swpath) + "/ShapeWorksStudio.app/Contents/MacOS"
-			os.environ["PATH"] = studiodir + os.pathsep + os.environ["PATH"]
+
+def get_shapeworks_bin_path():
+	swpath = shutil.which("shapeworks")
+	if (not swpath):
+		return None
+	return os.path.dirname(swpath)
+        

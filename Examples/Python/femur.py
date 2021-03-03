@@ -208,8 +208,10 @@ def Run_Pipeline(args):
             clippedFiles_segmentations = ClipBinaryVolumes(groomDir + 'clipped_segmentations', aligned_segmentations, cutting_plane_points.flatten())
 
             """Compute largest bounding box and apply cropping"""
-            croppedFiles_segmentations = applyCropping(groomDir + "cropped/segmentations", clippedFiles_segmentations, groomDir + "clipped_segmentations/*.nrrd")
-            croppedFiles_images = applyCropping(groomDir + "cropped/images", aligned_images, groomDir + "clipped_segmentations/*.nrrd")
+            croppedFiles_segmentations = applyCropping(groomDir + "cropped/segmentations", clippedFiles_segmentations, clippedFiles_segmentations)
+            croppedFiles_images = applyCropping(groomDir + "cropped/images", aligned_images, clippedFiles_segmentations)
+
+            groomed_segmentations = croppedFiles_segmentations
 
         # BEGIN GROOMING WITHOUT IMAGES
         else:
@@ -247,7 +249,7 @@ def Run_Pipeline(args):
             Apply padding
             Both the segmentation and raw images are padded in case the seg lies on the image boundary.
             """
-            paddedFiles_segmentations = applyPadding(groomDir + "padded/segmentations", resampledFiles_segmentations, 20)
+            paddedFiles_segmentations = applyPadding(groomDir + "padded/segmentations", resampledFiles_segmentations, 30)
 
             """
             Apply center of mass alignment
@@ -295,8 +297,7 @@ def Run_Pipeline(args):
             """
             clippedFiles_segmentations = ClipBinaryVolumes(groomDir + 'clipped_segmentations', aligned_segmentations, cutting_plane_points.flatten())
 
-            """Compute largest bounding box and apply cropping"""
-            croppedFiles_segmentations = applyCropping(groomDir + "cropped/segmentations", clippedFiles_segmentations, groomDir + "clipped_segmentations/*.nrrd")
+            groomed_segmentations = clippedFiles_segmentations
 
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
@@ -307,7 +308,7 @@ def Run_Pipeline(args):
         We convert the scans to distance transforms, this step is common for both the
         prepped as well as unprepped data, just provide correct filenames.
         """
-        dtFiles = applyDistanceTransforms(groomDir, croppedFiles_segmentations)
+        dtFiles = applyDistanceTransforms(groomDir, groomed_segmentations)
 
     """
     ## OPTIMIZE : Particle Based Optimization

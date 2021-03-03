@@ -448,6 +448,16 @@ bool AnalysisTool::compute_stats()
     return false;
   }
 
+  // consistency check
+  int point_size = points[0].size();
+  for (auto&& p : points) {
+    if (p.size() != point_size) {
+      this->handle_error("Inconsistency in data, particle files must contain the same number of points");
+      return false;
+    }
+  }
+
+
   this->stats_.ImportPoints(points, group_ids);
   this->stats_.ComputeModes();
 
@@ -1028,12 +1038,17 @@ void AnalysisTool::initialize_mesh_warper()
     this->compute_stats();
     int median = this->stats_.ComputeMedianShape(-32); //-32 = both groups
 
-    if (median >= this->session_->get_num_shapes()) {
+    if (median < 0 || median >= this->session_->get_num_shapes()) {
+      STUDIO_LOG_ERROR("Unable to set reference mesh, stats returned invalid median index");
       return;
     }
     QSharedPointer<Shape> median_shape = this->session_->get_shapes()[median];
     vtkSmartPointer<vtkPolyData> poly_data = median_shape->get_groomed_mesh(true)->get_poly_data();
 
+    if (!poly_data) {
+      STUDIO_LOG_ERROR("Unable to set reference mesh, groomed mesh is unavailable");
+      return;
+    }
     this->session_->get_mesh_manager()->get_mesh_warper()->set_reference_mesh(poly_data,
                                                                               median_shape->get_local_correspondence_points());
   }
