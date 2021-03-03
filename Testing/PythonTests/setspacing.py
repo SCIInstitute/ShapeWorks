@@ -17,7 +17,7 @@ if val is False:
 
 def setspacingTest2():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
-  img.setSpacing([1.0, 1.0, 1.0])
+  img.setSpacing()
 
   compareImg = Image(os.environ["DATA"] + "/spacing1.nrrd")
 

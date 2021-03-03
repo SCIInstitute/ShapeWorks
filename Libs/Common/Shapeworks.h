@@ -2,7 +2,6 @@
 
 #include <itkPoint.h>
 #include <itkVector.h>
-#include <itkCovariantVector.h>
 #include <itkMatrix.h>
 #include <itkSize.h>
 #include <itkIndex.h>
@@ -60,7 +59,6 @@ Point toPoint(const Dims &d);
 Point toPoint(const Coord &c);
 Vector toVector(const Dims &d);
 Vector toVector(const Point &p);
-Vector toVector(const itk::CovariantVector<double, 3> &v);
 Point toPoint(const Vector &v);
 Coord toCoord(const Dims &d);
 Dims toDims(const Coord &c);

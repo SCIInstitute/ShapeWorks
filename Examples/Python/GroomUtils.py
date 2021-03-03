@@ -255,7 +255,7 @@ def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoot
 ### Mesh Grooming
 
 # Reflects images and meshes to reference side
-def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side):
+def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side, printCmd=True):
     if reference_side == 'right':
         ref = 'R'
         flip = 'L'
@@ -322,8 +322,10 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side):
 def reflectMeshes(outDir, seg_list, reference_side):
     if reference_side == 'right':
         ref = 'R'
+        flip = 'L'
     elif reference_side == 'left':
         ref = 'L'
+        flip = 'R'
     else:
         raise Exception("reference_side must be 'left' or 'right'")
     outSegDir = os.path.join(outDir, "segmentations")
@@ -338,19 +340,80 @@ def reflectMeshes(outDir, seg_list, reference_side):
         # if we have a seg for the non-ref side, reflect it
         else:
             seg_out = rename(seg, outSegDir, 'reflect')
+
             mesh = Mesh(seg)
             arr = mesh.center(); center = [arr[0], arr[1], arr[2]]
             mesh.reflect(X, center).write(seg_out)
         meshList.append(seg_out)
     return meshList
 
+# turns meshes in list into PLY format
+def getVTKmeshes(meshList, printCmd=True):
+    VTKmeshList = []
+    for mesh in meshList:
+        mesh_name = os.path.basename(mesh)
+        extension = mesh_name.split(".")[-1]
+        prefix = mesh_name.split("_")[0] + "_" + mesh_name.split("_")[1]
+        if extension == "ply":
+            mesh_old = mesh
+            mesh = mesh[:-4] + ".vtk"
+            execCommand = ["ply2vtk", mesh_old, mesh]
+            if printCmd:
+                print("CMD: " + " ".join(execCommand))
+            subprocess.check_call(execCommand)
+        elif extension == "stl":
+            mesh_old = mesh
+            mesh = mesh[:-4] + ".vtk"
+            execCommand = ["stl2vtk", mesh_old, mesh]
+            if printCmd:
+                print("CMD: " + " ".join(execCommand))
+            subprocess.check_call(execCommand)
+        elif  extension == "vtk":
+            pass
+        else:
+            print("Error: Mesh format unrecognized.")
+            break
+        VTKmeshList.append(mesh)
+    return VTKmeshList
+
+# turns meshes in list into PLY format
+def getPLYmeshes(meshList, printCmd=True):
+    PLYmeshList = []
+    for mesh in meshList:
+        mesh_name = os.path.basename(mesh)
+        extension = mesh_name.split(".")[-1]
+        prefix = mesh_name.split("_")[0] + "_" + mesh_name.split("_")[1]
+        # change to ply if needed
+        if extension == "vtk":
+            mesh_vtk = mesh
+            mesh = mesh[:-4] + ".ply"
+            execCommand = ["vtk2ply", mesh_vtk, mesh]
+            if printCmd:
+                print("CMD: " + " ".join(execCommand))
+            subprocess.check_call(execCommand)
+        elif extension == "stl":
+            mesh_stl = mesh
+            mesh = mesh[:-4] + ".ply"
+            execCommand = ["stl2ply", mesh_stl, mesh]
+            if printCmd:
+                print("CMD: " + " ".join(execCommand))
+            subprocess.check_call(execCommand)
+        elif  extension == "ply":
+            pass
+        else:
+            print("error: Mesh format unrecognized.")
+            break
+        PLYmeshList.append(mesh)
+    return PLYmeshList
+
 # rasterization for meshes to images using images
 def MeshesToVolumesUsingImages(outDir, meshList, imgList):
-    print("########### Turning Mesh To Volume ##############")
+    segList= []
     if not os.path.exists(outDir):
         os.mkdir(outDir)
-    segList = []
-    for mesh_ in meshList:
+
+    PLYmeshList = getPLYmeshes(meshList)
+    for mesh_ in PLYmeshList:
         mesh_name = os.path.basename(mesh_)
         prefix = mesh_name.split("_")[0] + "_" + mesh_name.split("_")[1]
 
@@ -359,6 +422,7 @@ def MeshesToVolumesUsingImages(outDir, meshList, imgList):
             if prefix in image_file:
                 image_ = image_file
 
+        print("########### Turning Mesh To Volume ##############")
         segFile = rename(mesh_, outDir, "", ".nrrd")
         segList.append(segFile)
 
@@ -373,12 +437,13 @@ def MeshesToVolumesUsingImages(outDir, meshList, imgList):
 
 # rasterization for meshes to images
 def MeshesToVolumes(outDir, meshList, spacing):
-    print("########### Turning Mesh To Volume ##############")
     if not os.path.exists(outDir):
         os.mkdir(outDir)
-    segList = []
 
-    for mesh_ in meshList:
+    segList = []
+    PLYmeshList = getPLYmeshes(meshList)
+    for mesh_ in PLYmeshList:
+        print("########### Turning Mesh To Volume ##############")
         segFile = rename(mesh_, outDir, "", ".nrrd")
         segList.append(segFile)
 
@@ -402,7 +467,7 @@ def ClipBinaryVolumes(outDir, segList, cutting_plane_points):
                  [cutting_plane_points[6], cutting_plane_points[7], cutting_plane_points[8]],0.0).write(outname)
     return outListSeg
 
-def ShowCuttingPlanesOnImage(input_file, cutting_planes):
+def ShowCuttingPlanesOnImage(input_file, cutting_planes, printCmd=True):
     ## Get vtk format
     file_format = input_file.split(".")[-1]
     input_vtk = input_file.replace(file_format, "vtk")
@@ -412,9 +477,18 @@ def ShowCuttingPlanesOnImage(input_file, cutting_planes):
         mesh.write(input_vtk)
         print("\nCreating mesh from: " + input_file)
         print("\nSaving as: " + input_vtk)
-    elif file_format == "ply" or file_format == "stl":
-        mesh = Mesh(file_format)
-        mesh.write(input_vtk)
+    elif file_format == "ply":
+        execCommand = ["ply2vtk", input_file, input_vtk]
+        if printCmd:
+            print("CMD: " + " ".join(execCommand))
+        subprocess.check_call(execCommand)
+    elif file_format == "stl":
+        execCommand = ["stl2vtk", input_file, input_vtk]
+        if printCmd:
+            print("CMD: " + " ".join(execCommand))
+        subprocess.check_call(execCommand)
+    elif file_format == "vtk":
+        pass
     else:
         print("Error, file format unrecognized: " + input_file)
 
@@ -496,19 +570,29 @@ def ShowCuttingPlanesOnImage(input_file, cutting_planes):
     return np.array([[o1, o2, o3], [1, -1, pt1_z], [-1, 1, pt2_z]])
     '''
 
-def SelectCuttingPlane(input_file):
+def SelectCuttingPlane(input_file, printCmd=True):
     ## Get vtk format
     file_format = input_file.split(".")[-1]
     input_vtk = input_file.replace(file_format, "vtk")
     if file_format == "nrrd":
-        image = Image(input_file)
-        mesh = image.toMesh(image)
-        mesh.write(input_vtk)
         print("\nCreating mesh from: " + input_file)
         print("\nSaving as: " + input_vtk)
-    elif file_format == "ply" or file_format == "stl":
-        mesh = Mesh(file_format)
-        mesh.write(input_vtk)
+        cmd = ["shapeworks",
+               "read-image", "--name", input_file,
+               "dt-to-mesh", "--reduction", str(0.0001),
+               "write-mesh", "--name", input_vtk]
+    elif file_format == "ply":
+        execCommand = ["ply2vtk", input_file, input_vtk]
+        if printCmd:
+            print("CMD: " + " ".join(execCommand))
+        subprocess.check_call(execCommand)
+    elif file_format == "stl":
+        execCommand = ["stl2vtk", input_file, input_vtk]
+        if printCmd:
+            print("CMD: " + " ".join(execCommand))
+        subprocess.check_call(execCommand)
+    elif file_format == "vtk":
+        pass
     else:
         print("Error, file format unrecognized: " + input_file)
 

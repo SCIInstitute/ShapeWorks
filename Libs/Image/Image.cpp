@@ -501,20 +501,6 @@ Image& Image::scale(const Vector3 &s)
   return *this;
 }
 
-Image& Image::rotate(const double angle, Axis axis)
-{
-  switch (axis) {
-    case X:
-      return rotate(angle, makeVector({1.0, 0.0, 0.0}));
-    case Y:
-      return rotate(angle, makeVector({0.0, 1.0, 0.0}));
-    case Z:
-      return rotate(angle, makeVector({0.0, 0.0, 1.0}));
-    default:
-      throw std::invalid_argument("Unknown axis.");
-  }
-}
-
 Image& Image::rotate(const double angle, const Vector3 &axis)
 {
   if (!axis_is_valid(axis)) { throw std::invalid_argument("Invalid axis"); }

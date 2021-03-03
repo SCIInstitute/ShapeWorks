@@ -76,13 +76,14 @@ public:
     std::vector<Color> colors;
 
 
-    void ComputeDistanceToLandmarksGivenTriangleInfo(TriMesh *mesh, const char *infilename, const char *outfilename);
+
     void computeFIM(TriMesh *mesh, const char *vertT_filename);
     void GetFeatureValues(point x, std::vector<float> &vals);
     void ReadFaceIndexMap(const char *infilename);
     void ReadFeatureFromFile(const char *infilename);
     void ReadFeatureGradientFromFile(const char *infilename);
     point GetFeatureDerivative(point p, int fIndex);
+
 
     void need_abs_curvatures();
     void need_edge_lengths();
@@ -175,6 +176,7 @@ private:
   float ComputeCanonicalForm(point s, vnl_vector<float> &x, vnl_matrix<float> &X);
   float GetGeodesicDistance(int v1, int v2);
   float GetBronsteinGeodesicDistance(TriMesh::Face Sa, TriMesh::Face Sb, vnl_vector <float> baryCoord_a, vnl_vector <float> baryCoord_b, char *method);
+  void ComputeDistanceToLandmarksGivenTriangleInfo(TriMesh *mesh, const char *infilename, const char *outfilename);
 
   // SHIREEN - compute distance to landmarks based on geodesic approximation
   float GetBronsteinGeodesicDistance(point a, point b, char *method);
