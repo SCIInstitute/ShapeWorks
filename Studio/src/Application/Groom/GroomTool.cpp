@@ -65,6 +65,7 @@ void GroomTool::on_autopad_checkbox_stateChanged(int state)
 //---------------------------------------------------------------------------
 void GroomTool::handle_error(std::string msg)
 {
+  this->groom_is_running_ = false;
   emit error_message(msg);
   this->enable_actions();
 }
