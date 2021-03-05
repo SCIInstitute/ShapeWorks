@@ -133,9 +133,12 @@ private:
   void ComputeGeodesics(vtkSmartPointer<vtkPolyData> poly_data);
 
   int GetLineForPoint(const double pt[3], double& closest_distance, double closest_pt[3]) const;
+  double ComputeLineCoordinate(const Eigen::Vector3d& pt, int line) const; // todo is "Barycentric" correct?
 
   int NumberOfLines() const;
   int NumberOfPoints() const;
+
+  Eigen::Vector3d GetPoint(int id) const;
 };
 
 } // end namespace itk

@@ -56,8 +56,38 @@ ContourDomain::PointType ContourDomain::UpdateParticlePosition(const PointType &
   return out;
 }
 
+// todo change APIs for point index, gradients
 double ContourDomain::Distance(const PointType &a, const PointType &b) const {
-  return a.EuclideanDistanceTo(b);
+  Eigen::Vector3d pt_a, pt_b;
+  double dist_a, dist_b;
+  const int line_a = this->GetLineForPoint(a.GetDataPointer(), dist_a, pt_a.data());
+  const int line_b = this->GetLineForPoint(b.GetDataPointer(), dist_b, pt_b.data());
+
+  // consider 4(+1) paths and choose the shortest
+  double shortest_dist = std::numeric_limits<double>::infinity();
+
+  if(line_a == line_b) {
+    // we could probably just return at this point. The rest of the function handles the unlikely situation
+    // that taking a round trip around the contour is shorter than walking along this line.
+    shortest_dist = (pt_a - pt_b).norm();
+  }
+
+  for(int i=0; i<2; i++) {
+    const auto ai_idx = this->lines_[line_a]->GetPointId(i);
+    const auto ai = this->GetPoint(ai_idx);
+    const double dist_to_ai = (pt_a - ai).norm();
+
+    for(int j=0; j<2; j++) {
+      const auto bi_idx = this->lines_[line_b]->GetPointId(j);
+      const auto bj = this->GetPoint(bi_idx);
+      const double dist_to_bj = (pt_b - bj).norm();
+
+      const double dist = dist_to_ai + geodesics_(ai_idx, bi_idx) + dist_to_bj;
+      shortest_dist = std::min(shortest_dist, dist);
+    }
+  }
+
+  return shortest_dist;
 }
 
 void ContourDomain::ComputeBounds() {
@@ -89,7 +119,6 @@ void ContourDomain::ComputeGeodesics(vtkSmartPointer<vtkPolyData> poly_data) {
 
     for(int j=0; j<N; j++) {
       geodesics_(i, j) = out->GetValue(j);
-      std::cout << geodesics_(i, j) << "\n";
     }
   }
 }
@@ -110,6 +139,27 @@ int ContourDomain::GetLineForPoint(const double pt[3], double& closest_distance,
 
   this->cell_locator_->FindClosestPoint(pt, closest_pt, cell_id, sub_id, closest_distance);
   return cell_id;
+}
+
+double ContourDomain::ComputeLineCoordinate(const Eigen::Vector3d& pt, int line) const {
+  //todo can the vtkCellLocator compute this for us?
+
+  double closest[3];
+  int sub_id;
+  double pcoords[3];
+  double dist2;
+  double weights[2];
+  if(this->lines_[line]->EvaluatePosition(pt.data(), closest, sub_id, pcoords, dist2, weights) == -1) {
+    // todo vtk says this is a rare occasion where a numerical error has occurred. return 0? or crash?
+    // see https://vtk.org/doc/nightly/html/classvtkLine.html#a42025caa9c76a44ef740ae1ac3bf6b95
+    return 0.0;
+  }
+  return weights[1];
+}
+
+Eigen::Vector3d ContourDomain::GetPoint(int id) const {
+  const auto pt = this->poly_data_->GetPoint(id);
+  return {pt[0], pt[1], pt[2]};
 }
 
 }
