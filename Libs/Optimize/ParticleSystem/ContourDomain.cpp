@@ -4,14 +4,20 @@
 #include <vtkDijkstraGraphGeodesicPath.h>
 #include <vtkDoubleArray.h>
 
+
 namespace itk{
 
 void ContourDomain::SetPolyLine(vtkSmartPointer<vtkPolyData> poly_data) {
   this->m_FixedDomain = false;
-  this->poly_data_ = poly_data;
+
+  // to avoid mutating the input mesh
+  this->poly_data_ = vtkSmartPointer<vtkPolyData>::New();
+  this->poly_data_->DeepCopy(poly_data);
+  this->poly_data_->BuildCells();
+  this->poly_data_->BuildLinks();
 
   auto cell = vtkSmartPointer<vtkGenericCell>::New();
-  for(int i=0; i<poly_data->GetNumberOfCells(); i++) {
+  for(int i=0; i<this->poly_data_->GetNumberOfCells(); i++) {
     poly_data_->GetCell(i, cell);
     assert(cell->GetNumberOfPoints() == 2);
 
@@ -31,7 +37,7 @@ void ContourDomain::SetPolyLine(vtkSmartPointer<vtkPolyData> poly_data) {
   this->cell_locator_->BuildLocator();
 
   this->ComputeBounds();
-  this->ComputeGeodesics(poly_data);
+  this->ComputeGeodesics(this->poly_data_);
 }
 
 vnl_vector_fixed<double, DIMENSION>
