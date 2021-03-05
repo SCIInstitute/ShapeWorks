@@ -21,7 +21,7 @@ def Run_Pipeline(args):
     It gets extracted to Output/deep_ssm
 	'''
 	datasetName = "femur-v0"
-	outputDirectory = "Output/deep_ssm/"
+	outputDirectory = "Output/data_augmentation/"
 	if not os.path.exists(outputDirectory):
 		os.makedirs(outputDirectory)
 	CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
@@ -53,7 +53,7 @@ def Run_Pipeline(args):
 	num_dim = 6
 	percent_variability=0
 	sampler_type = "kde"
-	embedded_dim = DataAugmentationUtils.runDataAugmentation(outputDirectory + "Augmentation/", train_img_list, train_local_particle_list, num_samples, num_dim, percent_variability, sampler_type, mixture_num=0, processes=4, world_point_list=train_world_particle_list)
+	embedded_dim = DataAugmentationUtils.runDataAugmentation(outputDirectory + "Augmentation/", train_img_list, train_local_particle_list, num_samples, num_dim, percent_variability, sampler_type, mixture_num=0, processes=1, world_point_list=train_world_particle_list)
 	aug_data_csv = outputDirectory + "Augmentation/TotalData.csv"
 	viz_type = "violin"
 	DataAugmentationUtils.visualizeAugmentation(aug_data_csv, viz_type)
