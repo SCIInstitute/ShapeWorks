@@ -1,23 +1,37 @@
 #include "ContourDomain.h"
 #include <iostream>
 #include <fstream>
+#include <vtkDijkstraGraphGeodesicPath.h>
+#include <vtkDoubleArray.h>
 
 namespace itk{
 
 void ContourDomain::SetPolyLine(vtkSmartPointer<vtkPolyData> poly_data) {
   this->m_FixedDomain = false;
-  this->is_closed_ = true; // TODO handle this?
+  this->poly_data_ = poly_data;
 
-  const auto n_points = poly_data->GetNumberOfPoints();
-  points.resize(n_points, 3);
+  auto cell = vtkSmartPointer<vtkGenericCell>::New();
+  for(int i=0; i<poly_data->GetNumberOfCells(); i++) {
+    poly_data_->GetCell(i, cell);
+    assert(cell->GetNumberOfPoints() == 2);
 
-  for(int i=0; i<n_points; i++) {
-    points(i,0) = poly_data->GetPoint(i)[0];
-    points(i,1) = poly_data->GetPoint(i)[1];
-    points(i,2) = poly_data->GetPoint(i)[2];
+    auto line = vtkSmartPointer<vtkLine>::New();
+    line->GetPointIds()->SetNumberOfIds(2); // is this necessary?
+    line->GetPointIds()->SetId(0, cell->GetPointId(0));
+    line->GetPointIds()->SetId(1, cell->GetPointId(1));
+    line->GetPoints()->SetPoint(0, cell->GetPoints()->GetPoint(0));
+    line->GetPoints()->SetPoint(1, cell->GetPoints()->GetPoint(1));
+
+    this->lines_.push_back(line);
   }
 
+  this->cell_locator_ = vtkSmartPointer<vtkCellLocator>::New();
+  this->cell_locator_->SetCacheCellBounds(true);
+  this->cell_locator_->SetDataSet(this->poly_data_);
+  this->cell_locator_->BuildLocator();
+
   this->ComputeBounds();
+  this->ComputeGeodesics(poly_data);
 }
 
 vnl_vector_fixed<double, DIMENSION>
@@ -26,13 +40,11 @@ ContourDomain::ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, 3> &gradE,
   return gradE;
 }
 
-bool ContourDomain::ApplyConstraints(ContourDomain::PointType &p, int idx, bool dbg) const {
-  Eigen::Vector3d closest_pt;
-  Eigen::Vector3d pt_eigen(p[0], p[1], p[2]);
+bool ContourDomain::ApplyConstraints(PointType &p, int idx, bool dbg) const {
+  PointType closest_pt;
   double dist;
-  const int closest_line = ClosestLine(pt_eigen, dist, closest_pt);
-
-  p.GetVnlVector().set(closest_pt.data());
+  const int closest_line = GetLineForPoint(p.GetDataPointer(), dist, closest_pt.GetDataPointer());
+  p = closest_pt;
   return true;
 }
 
@@ -49,63 +61,55 @@ double ContourDomain::Distance(const PointType &a, const PointType &b) const {
 }
 
 void ContourDomain::ComputeBounds() {
-  const Eigen::Vector3d lb = points.colwise().minCoeff();
-  this->lower_bound_.GetVnlVector().set(lb.data());
+  double buffer = 5.0; // copied from MeshDomain
+  double bounds[6];
+  this->poly_data_->GetBounds(bounds);
+  this->lower_bound_[0] = bounds[0] - buffer;
+  this->lower_bound_[1] = bounds[2] - buffer;
+  this->lower_bound_[2] = bounds[4] - buffer;
+  this->upper_bound_[0] = bounds[1] + buffer;
+  this->upper_bound_[1] = bounds[3] + buffer;
+  this->upper_bound_[2] = bounds[5] + buffer;
+}
 
-  const Eigen::Vector3d ub = points.colwise().maxCoeff();
-  this->upper_bound_.GetVnlVector().set(ub.data());
+void ContourDomain::ComputeGeodesics(vtkSmartPointer<vtkPolyData> poly_data) {
+  const auto N = this->NumberOfPoints();
+
+  geodesics_.resize(N, N);
+  geodesics_.fill(std::numeric_limits<double>::infinity());
+
+  for(int i=0; i<N; i++) {
+    auto dijkstra = vtkSmartPointer<vtkDijkstraGraphGeodesicPath>::New();
+    dijkstra->SetInputData(poly_data);
+    dijkstra->SetStartVertex(i);
+    dijkstra->Update();
+
+    auto out = vtkSmartPointer<vtkDoubleArray>::New();
+    dijkstra->GetCumulativeWeights(out);
+
+    for(int j=0; j<N; j++) {
+      geodesics_(i, j) = out->GetValue(j);
+      std::cout << geodesics_(i, j) << "\n";
+    }
+  }
 }
 
 int ContourDomain::NumberOfLines() const {
-  if(is_closed_) {
-    return points.rows() - 1;
-  }
-  return points.rows();
+  return poly_data_->GetNumberOfCells();
 }
 
-double ContourDomain::DistanceToLine(const Eigen::Vector3d &pt, int line_idx, Eigen::Vector3d& closest_pt) const {
-  // Reference: http://geomalgorithms.com/a02-_lines.html
-  const Eigen::Vector3d p0 = points.row(line_idx);
-  const Eigen::Vector3d p1 = points.row((line_idx+1) % points.rows());
-  const Eigen::Vector3d v = p1 - p0;
-  const Eigen::Vector3d w = pt - p0;
-
-  const double c1 = w.dot(v);
-  if(c1 <= 0.0) {
-    closest_pt = p0;
-    return (pt - p0).norm();
-  }
-
-  const double c2 = v.dot(v);
-  if(c2 <= c1) {
-    closest_pt = p1;
-    return (pt - p1).norm();
-  }
-
-  const double b = c1 / c2;
-  const Eigen::Vector3d pb = p0 + b * v;
-  closest_pt = pb;
-  return (pt - pb).norm();
+int ContourDomain::NumberOfPoints() const {
+  return poly_data_->GetNumberOfPoints();
 }
 
-int ContourDomain::ClosestLine(const Eigen::Vector3d &pt, double& closest_distance, Eigen::Vector3d& closest_pt) const {
-  const auto n_lines = NumberOfLines();
+int ContourDomain::GetLineForPoint(const double pt[3], double& closest_distance, double closest_pt[3]) const {
+  //todo particle_line_ cache
 
-  closest_distance = DistanceToLine(pt, 0, closest_pt);
-  int closest_idx = 0;
+  vtkIdType cell_id; //the cell id of the cell containing the closest point will be returned here
+  int sub_id;
 
-  //todo faster search
-  for(int i=1; i<n_lines; i++) {
-    Eigen::Vector3d i_closest_pt;
-    double dist = DistanceToLine(pt, i, i_closest_pt);
-    if(dist < closest_distance) {
-      closest_distance = dist;
-      closest_pt = i_closest_pt;
-      closest_idx = i;
-    }
-  }
-
-  return closest_idx;
+  this->cell_locator_->FindClosestPoint(pt, closest_pt, cell_id, sub_id, closest_distance);
+  return cell_id;
 }
 
 }

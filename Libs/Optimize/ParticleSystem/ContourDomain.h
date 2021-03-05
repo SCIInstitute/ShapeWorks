@@ -11,6 +11,9 @@
 #include "itkParticleDomain.h"
 #include <Eigen/Dense>
 #include <vtkPolyData.h>
+#include <vtkLine.h>
+#include <vtkGenericCell.h>
+#include <vtkCellLocator.h>
 
 namespace itk
 {
@@ -92,8 +95,8 @@ public:
   }
 
   PointType GetZeroCrossingPoint() const override {
-    const Eigen::Vector3d pt = points.row(0);
-    return PointType(pt.data());
+    const double* d = this->poly_data_->GetPoint(0);
+    return PointType(d);
   }
 
   double GetSurfaceArea() const override {
@@ -117,17 +120,22 @@ protected:
 
 private:
   PointType lower_bound_, upper_bound_;
-  //todo maybe just vtkPolyData
-  Eigen::MatrixX3d points;
-  bool is_closed_;
+
+  vtkSmartPointer<vtkPolyData> poly_data_;
+  vtkSmartPointer<vtkCellLocator> cell_locator_;
+  std::vector<vtkSmartPointer<vtkLine>> lines_;
+
+  // Geodesics between all point pairs. Assumes the number of points is very small
+  // todo keep only half(triangular matrix)?
+  Eigen::MatrixXd geodesics_;
 
   void ComputeBounds();
+  void ComputeGeodesics(vtkSmartPointer<vtkPolyData> poly_data);
 
-  double DistanceToLine(const Eigen::Vector3d& pt, int line_idx, Eigen::Vector3d& closest_pt) const;
-
-  int ClosestLine(const Eigen::Vector3d& pt, double& closest_distance, Eigen::Vector3d& closest_pt) const;
+  int GetLineForPoint(const double pt[3], double& closest_distance, double closest_pt[3]) const;
 
   int NumberOfLines() const;
+  int NumberOfPoints() const;
 };
 
 } // end namespace itk
