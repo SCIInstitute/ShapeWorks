@@ -3,8 +3,10 @@
 #include <Libs/Particles/ShapeEvaluation.h>
 #include "tinyxml.h"
 
-int ParticleShapeStatistics
-::SimpleLinearRegression(const std::vector<double>& y,
+
+namespace shapeworks{
+
+int ParticleShapeStatistics::SimpleLinearRegression(const std::vector<double>& y,
                          const std::vector<double>& x,
                          double& a, double& b) const
 {
@@ -708,3 +710,4 @@ void ParticleShapeStatistics::compute_evaluation(int num_modes)
 
 }
 
+} // shapeworks

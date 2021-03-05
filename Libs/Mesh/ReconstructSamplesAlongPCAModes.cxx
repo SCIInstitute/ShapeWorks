@@ -48,7 +48,7 @@ int DoIt(InputParams params)
     typedef typename ReconstructionType::PointType                                               PointType;
 
     ReconstructionType reconstructor;
-    ParticleShapeStatistics shapeStats;
+    shapeworks::ParticleShapeStatistics shapeStats;
 
     std::string denseFilename      ;
     std::string sparseFilename     ;

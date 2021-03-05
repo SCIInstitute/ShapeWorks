@@ -32,6 +32,7 @@ using namespace pybind11::literals;
 #include "Optimize.h"
 #include "ParticleSystem.h"
 #include "ShapeEvaluation.h"
+#include "ParticleShapeStatistics.h"
 
 using namespace shapeworks;
 
@@ -662,6 +663,13 @@ PYBIND11_MODULE(shapeworks, m)
   .def_static("ComputeSpecificity",
                                 &ShapeEvaluation::ComputeSpecificity, "particleSystem"_a, "nModes"_a, "saveTo"_a="")
 
+  ;
+
+  py::class_<ParticleShapeStatistics>(m, "ParticleShapeStatistics")
+  .def(py::init<>())
+  .def("DoPCA",                 &ParticleShapeStatistics::DoPCA, "help", "global_pts"_a, "domainsPerShape"_a=1)
+  .def("ReadPointFiles",        &ParticleShapeStatistics::ReadPointFiles, "fname"_a)
+  .def("ComputeModes",          &ParticleShapeStatistics::ComputeModes)
   ;
 
   // Optimize (TODO)

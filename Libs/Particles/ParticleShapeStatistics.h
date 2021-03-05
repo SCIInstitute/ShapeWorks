@@ -21,6 +21,8 @@
  * This class computes various statistics for a set of correspondence positions
  * and group ids.
  */
+
+namespace shapeworks {
 class ParticleShapeStatistics
 {
 public:
@@ -191,3 +193,4 @@ private:
 
 };
 
+} // shapeworks
