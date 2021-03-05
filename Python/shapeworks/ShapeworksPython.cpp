@@ -668,9 +668,31 @@ PYBIND11_MODULE(shapeworks, m)
   py::class_<ParticleShapeStatistics>(m, "ParticleShapeStatistics")
   .def(py::init<>())
   .def("DoPCA",                 &ParticleShapeStatistics::DoPCA, "help", "global_pts"_a, "domainsPerShape"_a=1)
+  .def("ImportPoints",          &ParticleShapeStatistics::ImportPoints,"points"_a,"group_ids"_a)
   .def("ReadPointFiles",        &ParticleShapeStatistics::ReadPointFiles, "fname"_a)
+  .def("ReloadPointFiles",      &ParticleShapeStatistics::ReloadPointFiles)
+  // .def("WriteCSVFile",          &ParticleShapeStatistics::WriteCSVFile)
+  // .def("WriteCSVFile2",         &ParticleShapeStatistics::WriteCSVFile2)
   .def("ComputeModes",          &ParticleShapeStatistics::ComputeModes)
+  .def("PrincipalComponentProjections",
+                                &ParticleShapeStatistics::PrincipalComponentProjections)
+  .def("FisherLinearDiscriminant",
+                                &ParticleShapeStatistics::FisherLinearDiscriminant)
+  .def("SampleSize",            &ParticleShapeStatistics::SampleSize)
+  .def("Group1SampleSize",      &ParticleShapeStatistics::Group1SampleSize)
+  .def("Group2SampleSize",      &ParticleShapeStatistics::Group2SampleSize)
+  // .def("GroupID",               &ParticleShapeStatistics::GroupID)
+  .def("ComputeMedianShape",    &ParticleShapeStatistics::ComputeMedianShape)
+  .def("SimpleLinearRegression",
+                                &ParticleShapeStatistics::SimpleLinearRegression,"x"_a,"y"_a,"a"_a,"b"_a)
+  .def("get_compactness",       &ParticleShapeStatistics::get_compactness,"num_modes"_a)
+  .def("get_specificity",       &ParticleShapeStatistics::get_specificity,"num_modes"_a)
+  .def("get_generalization",    &ParticleShapeStatistics::get_generalization,"num_modes"_a)
   ;
+  // .def("compute_evaluation",    &ParticleShapeStatistics::compute_evaluation,"num_modes"_a)
+
+
+
 
   // Optimize (TODO)
   py::class_<Optimize>(m, "Optimize")
