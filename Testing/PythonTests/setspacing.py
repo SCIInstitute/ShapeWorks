@@ -20,6 +20,10 @@ def setSpacingTest2():
   img.setSpacing([1.0, 1.0, 2.0]).setSpacing([0.5, 1.0, 1.0]) # chain calls
   return img.spacing() == [0.5, 1.0, 1.0];
 
+  compareImg = Image(os.environ["DATA"] + "/spacing1.nrrd")
+
+  return img.compare(compareImg)
+
 val = setspacingTest2()
 
 if val is False:

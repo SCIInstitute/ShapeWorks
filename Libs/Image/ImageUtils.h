@@ -17,6 +17,7 @@ public:
 
   /// computes a warp transform from the source to the target landmarks
   static TransformPtr createWarpTransform(const std::string &source_landmarks, const std::string &target_landmarks, const int stride = 1);
+
 };
 
 } // shapeworks
