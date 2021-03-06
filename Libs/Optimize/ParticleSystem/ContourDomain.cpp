@@ -56,6 +56,8 @@ ContourDomain::ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, 3> &gradE,
   const double grad_dot_line_dir = gradE_eigen.dot(line_dir);
   const double grad_mag = gradE_eigen.norm();
 
+  // Since the particle is on a line, there are only two meaningful directions to take. We choose the one which is
+  // has a closer direction to the gradient. The result is scaled by the gradient magnitude.
   if(grad_dot_line_dir > 0.0) {
     return {
       line_dir[0]*grad_mag,
@@ -70,6 +72,7 @@ ContourDomain::ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, 3> &gradE,
     };
   }
 
+  // Particle wants to move perpendicular to the line, this is disallowed.
   return { 0.0, 0.0, 0.0 };
 }
 
