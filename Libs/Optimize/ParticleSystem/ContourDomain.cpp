@@ -79,17 +79,87 @@ ContourDomain::ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, 3> &gradE,
 bool ContourDomain::ApplyConstraints(PointType &p, int idx, bool dbg) const {
   PointType closest_pt;
   double dist;
-  const int closest_line = GetLineForPoint(p.GetDataPointer(), idx, dist, closest_pt.GetDataPointer());
+  GetLineForPoint(p.GetDataPointer(), idx, dist, closest_pt.GetDataPointer());
   p = closest_pt;
   return true;
 }
 
 ContourDomain::PointType ContourDomain::UpdateParticlePosition(const PointType &point, int idx,
                                                                vnl_vector_fixed<double, 3> &update) const {
-  PointType out(point);
-  out.GetVnlVector() -= update;
-  ApplyConstraints(out, idx);
-  return out;
+  const Eigen::Vector3d update_vec { -update[0], -update[1], -update[2] };
+  return GeodesicWalk(point, idx, update_vec);
+}
+
+ContourDomain::PointType ContourDomain::GeodesicWalk(const PointType& start_pt, int idx, const Eigen::Vector3d& update_vec) const {
+  double dist;
+  Eigen::Vector3d current_pt;
+  int current_line = GetLineForPoint(start_pt.GetDataPointer(), idx, dist, current_pt.data());
+
+
+  auto neighbors = vtkSmartPointer<vtkIdList>::New();
+  Eigen::Vector3d current_update = update_vec;
+  while(true) {
+    const auto p0_idx = this->lines_[current_line]->GetPointId(0);
+    const auto p1_idx = this->lines_[current_line]->GetPointId(1);
+    const auto p0 = this->GetPoint(p0_idx);
+    const auto p1 = this->GetPoint(p1_idx);
+    const Eigen::Vector3d line_dir = (p1 - p0).normalized();
+    const double update_dot_line_dir = current_update.dot(line_dir);
+    const double update_mag = current_update.norm();
+
+    // if the particle wants to travel perpendicular to the line, disallow it.
+    if(update_dot_line_dir == 0.0) {
+      break;
+    }
+
+    // figure out which direction to go
+    if(update_dot_line_dir > 0.0) {
+      const double dist_to_target = (p1 - current_pt).norm();
+      if(dist_to_target > update_mag) {
+        current_pt += line_dir * update_mag;
+        break;
+      } else {
+        current_pt = p1;
+        current_update *= dist_to_target / update_mag;
+      }
+
+      this->poly_data_->GetPointCells(p1_idx, neighbors);
+    } else {
+      const double dist_to_target = (p0 - current_pt).norm();
+      if(dist_to_target > update_mag) {
+        current_pt -= line_dir * update_mag;
+        break;
+      } else {
+        current_pt = p0;
+        current_update *= dist_to_target / update_mag;
+      }
+
+      this->poly_data_->GetPointCells(p0_idx, neighbors);
+    }
+
+    assert(neighbors->GetNumberOfIds() <= 2); // todo remove this when ready to handle branches
+
+    // hit a dead end. Stop
+    if(neighbors->GetNumberOfIds() == 1) {
+      break;
+    }
+
+    if(neighbors->GetId(0) == current_line) {
+      current_line = neighbors->GetId(1);
+    } else {
+      current_line = neighbors->GetId(0);
+    }
+  }
+
+  if(idx >= 0) {
+    this->particle_lines_[idx] = current_line;
+  }
+
+  PointType res;
+  res[0] = current_pt[0];
+  res[1] = current_pt[1];
+  res[2] = current_pt[2];
+  return res;
 }
 
 // todo change APIs for point index, gradients
@@ -98,8 +168,20 @@ double ContourDomain::Distance(const PointType &a, int idx_a,
                                vnl_vector_fixed<double, 3>* out_grad) const {
   Eigen::Vector3d pt_a, pt_b;
   double dist_a, dist_b;
-  const int line_a = this->GetLineForPoint(a.GetDataPointer(), idx_a, dist_a, pt_a.data());
-  const int line_b = this->GetLineForPoint(b.GetDataPointer(), idx_b, dist_b, pt_b.data());
+  int line_a, line_b;
+
+  if(idx_a == geo_lq_idx_) {
+    pt_a = {a[0], a[1], a[2]};
+    line_a = geo_lq_line_;
+    dist_a = geo_lq_dist_;
+  } else {
+    line_a = this->GetLineForPoint(a.GetDataPointer(), idx_a, dist_a, pt_a.data());
+    geo_lq_idx_ = idx_a;
+    geo_lq_line_ = line_a;
+    geo_lq_dist_ = dist_a;
+  }
+
+  line_b = this->GetLineForPoint(b.GetDataPointer(), idx_b, dist_b, pt_b.data());
 
   if(line_a == line_b) {
     if(out_grad != nullptr) {
@@ -243,6 +325,7 @@ void ContourDomain::InvalidateParticlePosition(int idx) const {
     particle_lines_.resize(idx + 1, -1);
   }
   this->particle_lines_[idx] = -1;
+  this->geo_lq_idx_ = -1;
 }
 
 }

@@ -135,12 +135,18 @@ private:
 
   // cache which line a particle is on
   mutable std::vector<int> particle_lines_;
+  // store some information about the last geodesic query. The next one will most likely reuse this
+  mutable int geo_lq_idx_ = -1;
+  mutable int geo_lq_line_ = -1;
+  mutable double geo_lq_dist_ = -1; //todo probably unused
 
   void ComputeBounds();
   void ComputeGeodesics(vtkSmartPointer<vtkPolyData> poly_data);
 
   int GetLineForPoint(const double pt[3], int idx, double& closest_distance, double closest_pt[3]) const;
   double ComputeLineCoordinate(const double pt[3], int line) const; // todo is "Barycentric" correct?
+
+  PointType GeodesicWalk(const PointType& start_pt, int idx, const Eigen::Vector3d& update_vec) const;
 
   int NumberOfLines() const;
   int NumberOfPoints() const;
