@@ -60,9 +60,9 @@ ContourDomain::ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, 3> &gradE,
   // has a closer direction to the gradient. The result is scaled by the gradient magnitude.
   if(grad_dot_line_dir > 0.0) {
     return {
-      line_dir[0]*grad_mag,
-      line_dir[1]*grad_mag,
-      line_dir[2]*grad_mag
+            line_dir[0]*grad_mag,
+            line_dir[1]*grad_mag,
+            line_dir[2]*grad_mag
     };
   } else if(grad_dot_line_dir < 0.0) {
     return {
