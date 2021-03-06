@@ -322,4 +322,14 @@ void ContourDomain::InvalidateParticlePosition(int idx) const {
   this->geo_lq_idx_ = -1;
 }
 
+vnl_vector_fixed<double, 3> ContourDomain::GetSplitDirection(const PointType& pt, int idx) const {
+  double dist;
+  PointType closest_pt;
+  const auto closest_line = GetLineForPoint(pt.GetDataPointer(), idx, dist, closest_pt.GetDataPointer());
+  const auto p0_idx = this->lines_[closest_line]->GetPointId(0);
+  const auto p1_idx = this->lines_[closest_line]->GetPointId(1);
+  const Eigen::Vector3d line_dir = (this->GetPoint(p1_idx) - this->GetPoint(p0_idx)).normalized();
+  return {line_dir[0], line_dir[1], line_dir[2]};
+}
+
 }

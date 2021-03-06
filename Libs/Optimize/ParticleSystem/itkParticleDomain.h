@@ -34,6 +34,7 @@ public:
   virtual bool ApplyConstraints(PointType& p, int idx, bool dbg = false) const = 0;
 
   /** Applies the update to the point and returns the new point position. */
+  //todo update should be const?
   virtual PointType UpdateParticlePosition(const PointType &point, int idx, vnl_vector_fixed<double, DIMENSION> &update) const = 0;
 
   virtual void InvalidateParticlePosition(int idx) const {
@@ -96,6 +97,10 @@ public:
   virtual shapeworks::DomainType GetDomainType() const = 0;
 
   std::shared_ptr<Constraints> GetConstraints() const {return constraints;}
+
+  virtual vnl_vector_fixed<double, 3> GetSplitDirection(const PointType& pt, int idx) const {
+    throw std::runtime_error("unimplemented");
+  }
 
 protected:
 

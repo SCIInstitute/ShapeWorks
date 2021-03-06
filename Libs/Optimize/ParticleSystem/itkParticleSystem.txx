@@ -319,6 +319,7 @@ void ParticleSystem<VDimension>::AdvancedAllParticleSplitting(double epsilon)
 
       while (true) {
         // Generate random unit vector
+        /*
         std::uniform_real_distribution<double> distribution(-1000., 1000.);
 
         vnl_vector_fixed<double, 3> random;
@@ -328,17 +329,17 @@ void ParticleSystem<VDimension>::AdvancedAllParticleSplitting(double epsilon)
         }
         double norm = random.magnitude();
         random /= norm;
+         */
 
         // Check where the update will take us after applying it to the point and th constraints.
         newposs_good.clear();
         bool good = true; // flag to check if the new update violates in any domain
         for (size_t j = 0; j < lists.size(); j++) {
+          auto random = -1.0 * this->GetDomain(j)->GetSplitDirection(lists[j][i], i) * epsilon / 500000.0;
+
           // Add epsilon times random direction to existing point and apply domain
           // constraints to generate a new particle position.
-          PointType newpos;
-          for (unsigned int k = 0; k < 3; k++) {
-            newpos[k] = lists[j][i][k] + epsilon * random[k] / 5.;
-          }
+          PointType newpos = this->GetDomain(j)->UpdateParticlePosition(lists[j][i], i, random);
           // Go to surface
           if (!this->m_DomainFlags[j] &&
               !this->GetDomain(j)->GetConstraints()->IsAnyViolated(newpos)) {
