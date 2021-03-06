@@ -91,13 +91,18 @@ public:
     return meshWrapper->SampleGradNAtPoint(p, idx);
   }
 
-  inline double Distance(const PointType &a, const PointType &b) const override {
+  // todo resolve before merging mesh_geodesic
+  /*
+  inline double Distance(const PointType &a, int idx_a,
+                         const PointType &b, int idx_b,
+                         vnl_vector_fixed<double, 3>* out_grad) const override {
       return meshWrapper->ComputeDistance(a, b);
   }
   inline double SquaredDistance(const PointType &a, const PointType &b) const override {
     double dist = meshWrapper->ComputeDistance(a, b);
     return dist * dist;
   }
+  */
 
   void DeleteImages() override {
     // TODO Change this to a generic delete function

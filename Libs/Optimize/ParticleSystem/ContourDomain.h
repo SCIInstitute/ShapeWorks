@@ -84,7 +84,10 @@ public:
     return 0.02;
   }
 
-  inline double Distance(const PointType &a, const PointType &b) const override;
+  double Distance(const PointType &a, int idx_a, const PointType &b, int idx_b,
+                         vnl_vector_fixed<double, 3>* out_grad=nullptr) const override;
+
+  double SquaredDistance(const PointType &a, int idx_a, const PointType &b, int idx_b) const override;
 
   const PointType& GetLowerBound() const override {
     return lower_bound_;
@@ -110,6 +113,7 @@ public:
     // TODO what?
   }
 
+  virtual void InvalidateParticlePosition(int idx) const override;
 
 protected:
   void PrintSelf(std::ostream& os, Indent indent) const override
@@ -129,11 +133,14 @@ private:
   // todo keep only half(triangular matrix)?
   Eigen::MatrixXd geodesics_;
 
+  // cache which line a particle is on
+  mutable std::vector<int> particle_lines_;
+
   void ComputeBounds();
   void ComputeGeodesics(vtkSmartPointer<vtkPolyData> poly_data);
 
-  int GetLineForPoint(const double pt[3], double& closest_distance, double closest_pt[3]) const;
-  double ComputeLineCoordinate(const Eigen::Vector3d& pt, int line) const; // todo is "Barycentric" correct?
+  int GetLineForPoint(const double pt[3], int idx, double& closest_distance, double closest_pt[3]) const;
+  double ComputeLineCoordinate(const double pt[3], int line) const; // todo is "Barycentric" correct?
 
   int NumberOfLines() const;
   int NumberOfPoints() const;

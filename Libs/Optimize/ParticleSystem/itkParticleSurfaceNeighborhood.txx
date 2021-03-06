@@ -56,7 +56,7 @@ ParticleSurfaceNeighborhood<TImage>
     if(idx == (*it)->Index) {
       continue;
     }
-    double distance = this->GetDomain()->Distance(center, (*it)->Point);
+    double distance = this->GetDomain()->Distance(center, idx, (*it)->Point, (*it)->Index);
 
     if (distance < radius)
     {

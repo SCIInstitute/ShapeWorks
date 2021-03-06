@@ -7,6 +7,8 @@
 
 namespace itk{
 
+const double epsilon = 1e-6;
+
 void ContourDomain::SetPolyLine(vtkSmartPointer<vtkPolyData> poly_data) {
   this->m_FixedDomain = false;
 
@@ -42,14 +44,39 @@ void ContourDomain::SetPolyLine(vtkSmartPointer<vtkPolyData> poly_data) {
 
 vnl_vector_fixed<double, DIMENSION>
 ContourDomain::ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, 3> &gradE,
-                                             const PointType &pos, int idx) const {
-  return gradE;
+                                             const PointType &p, int idx) const {
+  PointType closest_pt;
+  double dist;
+  const int closest_line = GetLineForPoint(p.GetDataPointer(), idx, dist, closest_pt.GetDataPointer());
+  const auto p0_idx = this->lines_[closest_line]->GetPointId(0);
+  const auto p1_idx = this->lines_[closest_line]->GetPointId(1);
+
+  const Eigen::Vector3d gradE_eigen{gradE[0], gradE[1], gradE[2]};
+  const Eigen::Vector3d line_dir = (this->GetPoint(p1_idx) - this->GetPoint(p0_idx)).normalized();
+  const double grad_dot_line_dir = gradE_eigen.dot(line_dir);
+  const double grad_mag = gradE_eigen.norm();
+
+  if(grad_dot_line_dir > 0.0) {
+    return {
+      line_dir[0]*grad_mag,
+      line_dir[1]*grad_mag,
+      line_dir[2]*grad_mag
+    };
+  } else if(grad_dot_line_dir < 0.0) {
+    return {
+            -line_dir[0]*grad_mag,
+            -line_dir[1]*grad_mag,
+            -line_dir[2]*grad_mag
+    };
+  }
+
+  return { 0.0, 0.0, 0.0 };
 }
 
 bool ContourDomain::ApplyConstraints(PointType &p, int idx, bool dbg) const {
   PointType closest_pt;
   double dist;
-  const int closest_line = GetLineForPoint(p.GetDataPointer(), dist, closest_pt.GetDataPointer());
+  const int closest_line = GetLineForPoint(p.GetDataPointer(), idx, dist, closest_pt.GetDataPointer());
   p = closest_pt;
   return true;
 }
@@ -57,26 +84,32 @@ bool ContourDomain::ApplyConstraints(PointType &p, int idx, bool dbg) const {
 ContourDomain::PointType ContourDomain::UpdateParticlePosition(const PointType &point, int idx,
                                                                vnl_vector_fixed<double, 3> &update) const {
   PointType out(point);
-  out.GetVnlVector() += update;
+  out.GetVnlVector() -= update;
   ApplyConstraints(out, idx);
   return out;
 }
 
 // todo change APIs for point index, gradients
-double ContourDomain::Distance(const PointType &a, const PointType &b) const {
+double ContourDomain::Distance(const PointType &a, int idx_a,
+                               const PointType &b, int idx_b,
+                               vnl_vector_fixed<double, 3>* out_grad) const {
   Eigen::Vector3d pt_a, pt_b;
   double dist_a, dist_b;
-  const int line_a = this->GetLineForPoint(a.GetDataPointer(), dist_a, pt_a.data());
-  const int line_b = this->GetLineForPoint(b.GetDataPointer(), dist_b, pt_b.data());
-
-  // consider 4(+1) paths and choose the shortest
-  double shortest_dist = std::numeric_limits<double>::infinity();
+  const int line_a = this->GetLineForPoint(a.GetDataPointer(), idx_a, dist_a, pt_a.data());
+  const int line_b = this->GetLineForPoint(b.GetDataPointer(), idx_b, dist_b, pt_b.data());
 
   if(line_a == line_b) {
-    // we could probably just return at this point. The rest of the function handles the unlikely situation
-    // that taking a round trip around the contour is shorter than walking along this line.
-    shortest_dist = (pt_a - pt_b).norm();
+    if(out_grad != nullptr) {
+      for(int i=0; i<DIMENSION; i++) {
+        (*out_grad)[i] = a[i] - b[i];
+      }
+    }
+    return a.EuclideanDistanceTo(b);
   }
+
+  // consider 4 paths and choose the shortest
+  double shortest_dist = std::numeric_limits<double>::infinity();
+  int chosen_dir = 0;
 
   for(int i=0; i<2; i++) {
     const auto ai_idx = this->lines_[line_a]->GetPointId(i);
@@ -89,11 +122,27 @@ double ContourDomain::Distance(const PointType &a, const PointType &b) const {
       const double dist_to_bj = (pt_b - bj).norm();
 
       const double dist = dist_to_ai + geodesics_(ai_idx, bi_idx) + dist_to_bj;
-      shortest_dist = std::min(shortest_dist, dist);
+      if(dist < shortest_dist) {
+        shortest_dist = dist;
+        chosen_dir = i;
+      }
     }
   }
 
+  if(out_grad != nullptr) {
+    Eigen::Map<Eigen::Vector3d> out_grad_eigen(out_grad->data_block());
+    const auto ai_idx = this->lines_[line_a]->GetPointId(chosen_dir);
+    // todo is this math correct
+    out_grad_eigen = (pt_a - this->GetPoint(ai_idx)).normalized();
+    out_grad_eigen *= shortest_dist;
+  }
   return shortest_dist;
+}
+
+double ContourDomain::SquaredDistance(const PointType &a, int idx_a,
+                                      const PointType &b, int idx_b) const {
+  const double dist = this->Distance(a, idx_a, b, idx_b);
+  return dist*dist;
 }
 
 void ContourDomain::ComputeBounds() {
@@ -137,35 +186,60 @@ int ContourDomain::NumberOfPoints() const {
   return poly_data_->GetNumberOfPoints();
 }
 
-int ContourDomain::GetLineForPoint(const double pt[3], double& closest_distance, double closest_pt[3]) const {
-  //todo particle_line_ cache
+int ContourDomain::GetLineForPoint(const double pt[3], int idx, double& closest_distance, double closest_pt[3]) const {
+  if(idx >= 0) {
+    if(particle_lines_.size() <= idx) {
+      particle_lines_.resize(idx + 1, -1);
+    }
+    const auto guess = particle_lines_[idx];
+    if(guess != -1) {
+      const auto weight = ComputeLineCoordinate(pt, guess);
+      if(weight >= -epsilon && weight <= epsilon) {
+        closest_pt[0] = pt[0];
+        closest_pt[1] = pt[1];
+        closest_pt[2] = pt[2];
+        return guess;
+      }
+    }
+  }
 
   vtkIdType cell_id; //the cell id of the cell containing the closest point will be returned here
   int sub_id;
-
   this->cell_locator_->FindClosestPoint(pt, closest_pt, cell_id, sub_id, closest_distance);
+  if(idx >= 0) {
+    particle_lines_[idx] = cell_id;
+  }
   return cell_id;
 }
 
-double ContourDomain::ComputeLineCoordinate(const Eigen::Vector3d& pt, int line) const {
-  //todo can the vtkCellLocator compute this for us?
+double ContourDomain::ComputeLineCoordinate(const double pt[3], int line) const {
+  //todo GetLineForPoint is computing this almost always. just return it there
 
   double closest[3];
   int sub_id;
   double pcoords[3];
   double dist2;
   double weights[2];
-  if(this->lines_[line]->EvaluatePosition(pt.data(), closest, sub_id, pcoords, dist2, weights) == -1) {
-    // todo vtk says this is a rare occasion where a numerical error has occurred. return 0? or crash?
+  if(this->lines_[line]->EvaluatePosition(pt, closest, sub_id, pcoords, dist2, weights) == -1) {
+    // todo vtk says this is a rare occasion where a numerical error has occurred. return _something_? or crash?
     // see https://vtk.org/doc/nightly/html/classvtkLine.html#a42025caa9c76a44ef740ae1ac3bf6b95
-    return 0.0;
+    throw std::runtime_error("numerical error in ContourDomain::ComputeLineCoordinate");
   }
+  assert(std::abs(weights[0] + weights[1] - 1.0) < 1e-8);
   return weights[1];
 }
 
 Eigen::Vector3d ContourDomain::GetPoint(int id) const {
   const auto pt = this->poly_data_->GetPoint(id);
   return {pt[0], pt[1], pt[2]};
+}
+
+void ContourDomain::InvalidateParticlePosition(int idx) const {
+  assert(idx >= 0); // should always be passed a valid particle
+  if (idx >= particle_lines_.size()) {
+    particle_lines_.resize(idx + 1, -1);
+  }
+  this->particle_lines_[idx] = -1;
 }
 
 }
