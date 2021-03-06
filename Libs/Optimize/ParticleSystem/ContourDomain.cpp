@@ -94,48 +94,36 @@ ContourDomain::PointType ContourDomain::GeodesicWalk(const PointType& start_pt, 
   double dist;
   Eigen::Vector3d current_pt;
   int current_line = GetLineForPoint(start_pt.GetDataPointer(), idx, dist, current_pt.data());
+  double remaining_update_mag = update_vec.norm();
 
+  const auto p0_idx = this->lines_[current_line]->GetPointId(0);
+  const auto p1_idx = this->lines_[current_line]->GetPointId(1);
+  const auto p0 = this->GetPoint(p0_idx);
+  const auto p1 = this->GetPoint(p1_idx);
+  const Eigen::Vector3d line_dir = (p1 - p0).normalized();
+  const double update_dot_line_dir = update_vec.dot(line_dir);
 
+  // if the particle wants to travel perpendicular to the line, disallow it.
+  if(update_dot_line_dir == 0.0) {
+    return start_pt;
+  }
+  int current_target_idx = update_dot_line_dir > 0.0 ? p1_idx : p0_idx;
   auto neighbors = vtkSmartPointer<vtkIdList>::New();
-  Eigen::Vector3d current_update = update_vec;
-  while(true) {
-    const auto p0_idx = this->lines_[current_line]->GetPointId(0);
-    const auto p1_idx = this->lines_[current_line]->GetPointId(1);
-    const auto p0 = this->GetPoint(p0_idx);
-    const auto p1 = this->GetPoint(p1_idx);
-    const Eigen::Vector3d line_dir = (p1 - p0).normalized();
-    const double update_dot_line_dir = current_update.dot(line_dir);
-    const double update_mag = current_update.norm();
 
-    // if the particle wants to travel perpendicular to the line, disallow it.
-    if(update_dot_line_dir == 0.0) {
+  while(remaining_update_mag >= 0.0) {
+
+    const auto target_pt = this->GetPoint(current_target_idx);
+    const double dist_to_target = (target_pt - current_pt).norm();
+
+    if(dist_to_target > remaining_update_mag) {
+      current_pt += (target_pt - current_pt) * remaining_update_mag / dist_to_target;
       break;
-    }
-
-    // figure out which direction to go
-    if(update_dot_line_dir > 0.0) {
-      const double dist_to_target = (p1 - current_pt).norm();
-      if(dist_to_target > update_mag) {
-        current_pt += line_dir * update_mag;
-        break;
-      } else {
-        current_pt = p1;
-        current_update *= dist_to_target / update_mag;
-      }
-
-      this->poly_data_->GetPointCells(p1_idx, neighbors);
     } else {
-      const double dist_to_target = (p0 - current_pt).norm();
-      if(dist_to_target > update_mag) {
-        current_pt -= line_dir * update_mag;
-        break;
-      } else {
-        current_pt = p0;
-        current_update *= dist_to_target / update_mag;
-      }
-
-      this->poly_data_->GetPointCells(p0_idx, neighbors);
+      current_pt = target_pt;
+      remaining_update_mag -= dist_to_target;
     }
+
+    this->poly_data_->GetPointCells(current_target_idx, neighbors);
 
     assert(neighbors->GetNumberOfIds() <= 2); // todo remove this when ready to handle branches
 
@@ -148,6 +136,12 @@ ContourDomain::PointType ContourDomain::GeodesicWalk(const PointType& start_pt, 
       current_line = neighbors->GetId(1);
     } else {
       current_line = neighbors->GetId(0);
+    }
+
+    if(current_target_idx == this->lines_[current_line]->GetPointId(0)) {
+      current_target_idx = this->lines_[current_line]->GetPointId(1);
+    } else {
+      current_target_idx = this->lines_[current_line]->GetPointId(0);
     }
   }
 
