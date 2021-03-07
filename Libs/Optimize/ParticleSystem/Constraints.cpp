@@ -84,6 +84,13 @@ std::stringstream Constraints::applyBoundaryConstraints(vnl_vector_fixed<double,
    return stream;
 }
 
+std::stringstream Constraints::applyBoundaryConstraints(vnl_vector_fixed<double, 3> &gradE, const Eigen::Vector3d &pos){
+   Point<double, 3> pt;
+   pt[0] = pos(0); pt[1] = pos(1); pt[2] = pos(2);
+   std::stringstream stream = applyPlaneConstraints(gradE, pt);
+   return stream;
+}
+
 std::stringstream Constraints::applyBoundaryConstraints(vnl_vector_fixed<float, 3> &gradE, const Point<double, 3> &pos){
     vnl_vector_fixed<double, 3> gradD;
     gradD[0] = double(gradE[0]); gradD[1] = double(gradE[1]); gradD[2] = double(gradE[2]);

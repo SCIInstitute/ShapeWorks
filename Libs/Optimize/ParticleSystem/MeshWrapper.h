@@ -5,6 +5,8 @@
 #include "itkParticleDomain.h"
 #include "DomainType.h"
 
+#include "Constraints.h"
+
 namespace shapeworks
 {
 class MeshWrapper
@@ -16,7 +18,7 @@ public:
   // Computed distance between points. (Currently euclidean)
   virtual double ComputeDistance(PointType pointa, PointType pointb) const = 0;
   // Returns updated point position after applying the update vector to the initial position.
-  virtual PointType GeodesicWalk(PointType pointa, int idx, vnl_vector_fixed<double, DIMENSION> vector) const = 0;
+  virtual PointType GeodesicWalk(PointType pointa, int idx, vnl_vector_fixed<double, DIMENSION> vector, const std::shared_ptr<itk::Constraints> &constraint) const = 0;
 
   // Returns a point on the mesh.
   virtual PointType GetPointOnMesh() const = 0;

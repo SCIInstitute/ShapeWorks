@@ -5,8 +5,8 @@ add_library(Optimize STATIC
   Optimize.cpp
   OptimizeParameterFile.cpp
   OptimizeParameters.cpp
-  ./ParticleSystem/MeshDomain.cpp
   ./ParticleSystem/Constraints.cpp
+  ./ParticleSystem/MeshDomain.cpp
   ./ParticleSystem/TriMeshWrapper.cpp
   ./ParticleSystem/VtkMeshWrapper.cpp
   ./ParticleSystem/OptimizationVisualizer.cpp

@@ -313,8 +313,6 @@ void ParticleSystem<VDimension>::AdvancedAllParticleSplitting(double epsilon)
 
   if (lists.size() > 0) {
     for (size_t i = 0; i < lists[0].size(); i++) {
-      std::cout << "Working on particle " << i << std::endl;
-
       // While the random vector updated violates plane constraints
       // Breaks when it doesn't violate for any domain
       std::vector<PointType> newposs_good;

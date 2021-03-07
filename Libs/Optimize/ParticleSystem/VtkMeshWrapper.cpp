@@ -108,8 +108,9 @@ double VtkMeshWrapper::ComputeDistance(PointType pointa,
 
 //---------------------------------------------------------------------------
 PointType VtkMeshWrapper::GeodesicWalk(PointType p, int idx,
-                                       VectorType vector) const
+                                       VectorType vector, const std::shared_ptr<itk::Constraints> &constraint) const
 {
+    //std::cout << "Geodesic walk on mesh vtk" << std::endl;
   vec3 point(p[0], p[1], p[2]);
   double closest_point[3];
   int face_index = GetTriangleForPoint(point.data(), idx, closest_point);
@@ -123,7 +124,7 @@ PointType VtkMeshWrapper::GeodesicWalk(PointType p, int idx,
   int ending_face = -1;
 
   Eigen::Vector3d new_point = GeodesicWalkOnFace(point, projected_vector, face_index,
-                                                 ending_face);
+                                                 ending_face, constraint);
 
   PointType new_point_pt = convert<Eigen::Vector3d, PointType>(new_point);
 
@@ -411,7 +412,7 @@ const Eigen::Vector3d VtkMeshWrapper::GetFaceNormal(int face_index) const
 //---------------------------------------------------------------------------
 Eigen::Vector3d
 VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d projected_vector,
-                                   int face_index, int &ending_face) const
+                                   int face_index, int &ending_face, const std::shared_ptr<itk::Constraints> &constraint) const
 {
   int currentFace = face_index;
   Eigen::Vector3d currentPoint = point_a;
@@ -517,6 +518,18 @@ VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d proj
     if (nextFace != -1) {
       remainingVector = RotateVectorToFace(GetFaceNormal(currentFace),
                                            GetFaceNormal(nextFace), remainingVector);
+    }
+    // Constraints handling
+    if(constraint->IsAnyViolated(intersect)){
+        vnl_vector_fixed<double, 3> gradE;
+        for(size_t i; i < 3; i ++){
+            gradE[i] = intersect[i]-currentPoint[i];
+        }
+        constraint->applyBoundaryConstraints(gradE, currentPoint);
+        for(size_t i; i < 3; i ++){
+            currentPoint[i] = currentPoint[i]+gradE[i];
+        }
+        break;
     }
     currentPoint = intersect;
     currentFace = nextFace;

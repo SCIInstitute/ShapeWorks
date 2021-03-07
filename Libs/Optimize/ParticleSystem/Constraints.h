@@ -37,6 +37,7 @@ public:
   bool transformPlanes(const vnl_matrix_fixed<double, 4, 4> &Trans);
 
   // Apply functions
+  std::stringstream applyBoundaryConstraints(vnl_vector_fixed<double, 3> &gradE, const Eigen::Vector3d &pos);
   std::stringstream applyBoundaryConstraints(vnl_vector_fixed<double, 3> &gradE, const Point<double, 3> &pos);
   std::stringstream applyBoundaryConstraints(vnl_vector_fixed<float, 3> &gradE, const Point<double, 3> &pos);
   std::stringstream applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, const Point<double, 3> &pos);
@@ -55,16 +56,16 @@ public:
   std::vector<SphereConstraint> *GetSphereConstraints(){return sphereConsts;}
 
   // Is any constraint violated by point pos?
-  bool IsAnyViolated(const Point<double, 3> &pos){
-      Eigen::Vector3d pt; pt(0) = pos[0]; pt(1) = pos[1]; pt(2) = pos[2];
+  bool IsAnyViolated(const Eigen::Vector3d& pos){
+
       for(size_t i = 0; i < planeConsts->size(); i++){
-          if((*planeConsts)[i].isViolated(pt)){return true;}
+          if((*planeConsts)[i].isViolated(pos)){return true;}
       }
       for(size_t i = 0; i < sphereConsts->size(); i++){
-          if((*sphereConsts)[i].isViolated(pt)){return true;}
+          if((*sphereConsts)[i].isViolated(pos)){return true;}
       }
       for(size_t i = 0; i < freeFormConsts->size(); i++){
-          if((*freeFormConsts)[i].isViolated(pt)){return true;}
+          if((*freeFormConsts)[i].isViolated(pos)){return true;}
       }
       return false;
   }
@@ -73,6 +74,11 @@ public:
       Point<double, 3> posvnl;
       posvnl[0] = pos[0]; posvnl[1] = pos[1]; posvnl[2] = pos[2];
       return IsAnyViolated(posvnl);
+  }
+
+  bool IsAnyViolated(const Point<double, 3> &pos){
+      Eigen::Vector3d pt; pt(0) = pos[0]; pt(1) = pos[1]; pt(2) = pos[2];
+      return IsAnyViolated(pt);
   }
 
   // Constraint violations
