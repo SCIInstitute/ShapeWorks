@@ -522,11 +522,11 @@ VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d proj
     // Constraints handling
     if(constraint->IsAnyViolated(intersect)){
         vnl_vector_fixed<double, 3> gradE;
-        for(size_t i; i < 3; i ++){
+        for(size_t i=0; i < 3; i ++){
             gradE[i] = intersect[i]-currentPoint[i];
         }
         constraint->applyBoundaryConstraints(gradE, currentPoint);
-        for(size_t i; i < 3; i ++){
+        for(size_t i=0; i < 3; i ++){
             currentPoint[i] = currentPoint[i]+gradE[i];
         }
         break;

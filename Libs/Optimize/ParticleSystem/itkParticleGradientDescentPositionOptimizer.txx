@@ -192,7 +192,7 @@ namespace itk
                 // debugg
                 std::stringstream stream;
                 stream << "###########################################################################\n" << dom << " " << " " << k << " " << oldpoint << " " << newpoint << std::endl;
-                if(!m_ParticleSystem->GetDomain(dom)->GetConstraints()->IsAnyViolated(oldpoint) && m_ParticleSystem->GetDomain(dom)->GetConstraints()->IsAnyViolated(newpoint) ) std::cerr << stream.str();
+                //if(!m_ParticleSystem->GetDomain(dom)->GetConstraints()->IsAnyViolated(oldpoint) && m_ParticleSystem->GetDomain(dom)->GetConstraints()->IsAnyViolated(newpoint) ) std::cerr << stream.str();
 
                 break;
               }
