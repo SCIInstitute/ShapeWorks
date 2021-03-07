@@ -146,9 +146,6 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
 
   // Define for convenience
   const auto& faces = this->triangles_;
-  const auto va0 = faces[face_a]->GetPointId(0);
-  const auto va1 = faces[face_a]->GetPointId(1);
-  const auto va2 = faces[face_a]->GetPointId(2);
   const auto vb0 = faces[face_b]->GetPointId(0);
   const auto vb1 = faces[face_b]->GetPointId(1);
   const auto vb2 = faces[face_b]->GetPointId(2);
@@ -156,16 +153,16 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
   // Compute geodesic distance via barycentric approximation
   // Geometric Correspondence for Ensembles of Nonregular Shapes, Datar et al
   // https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3346950/
-  double geo_dist = 0.0;
   const auto &geo_from_a = GeodesicsFromTriangle(face_a);
+  Eigen::Vector3d geo_to_b;
   for (int i = 0; i < 3; i++) {
     const Eigen::VectorXd &geo_from_ai = geo_from_a[i].raw();
     const double g_i0 = geo_from_ai[vb0];
     const double g_i1 = geo_from_ai[vb1];
     const double g_i2 = geo_from_ai[vb2];
-    const double g_ib = bary_b[0] * g_i0 + bary_b[1] * g_i1 + bary_b[2] * g_i2;
-    geo_dist += bary_a[i] * g_ib;
+    geo_to_b[i] = bary_b[0] * g_i0 + bary_b[1] * g_i1 + bary_b[2] * g_i2;
   }
+  const double geo_dist = bary_a.dot(geo_to_b);
 
   // Check if gradient is needed
   if (out_grad == nullptr) {
@@ -176,15 +173,9 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
   Eigen::Map<Eigen::Vector3d> out_grad_eigen(out_grad->data_block());
   out_grad_eigen.setZero();
 
-  // Compute gradient of geodesics using barycentric approximation from point b over face a.
-  const auto& geo_from_b = GeodesicsFromTriangle(face_b);
+  // Compute gradient of geodesics
   const auto& G = face_grad_[face_a];
-  for(int i=0; i<3; i++) {
-    const Eigen::VectorXd& geo_from_bi = geo_from_b[i].raw();
-    const Eigen::Vector3d D { geo_from_bi(va0), geo_from_bi(va1), geo_from_bi(va2) };
-    const auto GD = (G*D).rowwise().sum();
-    out_grad_eigen += bary_b[i] * GD;
-  }
+  out_grad_eigen = (G*geo_to_b).rowwise().sum();
 
   //todo double check this math
   out_grad_eigen.normalize();
