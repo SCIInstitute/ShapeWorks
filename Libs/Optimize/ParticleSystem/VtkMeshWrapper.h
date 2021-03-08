@@ -165,9 +165,8 @@ private:
   // Precompute heat data structures for faster geodesic lookups
   void PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
 
-  const GeoEntry& GeodesicsFromTriangle(int f, double max_dist=std::numeric_limits<double>::max(),
-                                        int req_target_f=-1) const;
-  const Eigen::Matrix3d GeodesicsFromTriangleToTriangle(int f_a, int f_b) const;
+  const GeoEntry& GeodesicsFromTriangle(int f, double max_dist, int req_target_f=-1) const;
+  const Eigen::Matrix3d GeodesicsFromTriangleToPoints(int f, int v0, int v1, int v2) const;
   void ClearGeodesicCache() const;
 
   // Store some info about the last query. This accelerates the computation because the optimizer generally asks for the
