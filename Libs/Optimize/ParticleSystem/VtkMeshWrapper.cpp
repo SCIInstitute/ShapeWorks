@@ -186,10 +186,12 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
 
 //---------------------------------------------------------------------------
 bool VtkMeshWrapper::IsWithinDistance(const PointType &pt_a, int idx_a,
-                                      const PointType &pt_b, int idx_b, double test_dist) const
+                                      const PointType &pt_b, int idx_b,
+                                      double test_dist, double& dist) const
 {
   if(!is_geodesics_enabled_) {
-    return pt_a.SquaredEuclideanDistanceTo(pt_b) < test_dist*test_dist;
+    dist = pt_a.EuclideanDistanceTo(pt_b);
+    return dist < test_dist;
   }
 
   if(idx_a != -1) {
@@ -216,7 +218,8 @@ bool VtkMeshWrapper::IsWithinDistance(const PointType &pt_a, int idx_a,
   // Find the triangle for the point b
   face_b = ComputeFaceAndWeights(pt_b, idx_b, bary_b);
   if (face_a == face_b || AreFacesAdjacent(face_a, face_b)) {
-    return pt_a.SquaredEuclideanDistanceTo(pt_b) < test_dist * test_dist;
+    dist = pt_a.EuclideanDistanceTo(pt_b);
+    return dist < test_dist;
   }
 
   const auto vb0 = this->triangles_[face_b]->GetPointId(0);
@@ -249,8 +252,8 @@ bool VtkMeshWrapper::IsWithinDistance(const PointType &pt_a, int idx_a,
 
   const Eigen::Matrix3d& geo_from_a = GeodesicsFromTriangleToTriangle(face_a, face_b);
   const Eigen::Vector3d geo_to_b = geo_from_a * bary_b;
-  const double geo_dist = bary_a.dot(geo_to_b);
-  return geo_dist < test_dist;
+  dist = bary_a.dot(geo_to_b);
+  return dist < test_dist;
 }
 
 //---------------------------------------------------------------------------

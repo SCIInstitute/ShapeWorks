@@ -103,8 +103,8 @@ public:
     return dist * dist;
   }
   inline bool IsWithinDistance(const PointType &a, int idx_a,
-                               const PointType &b, int idx_b, const double test_dist) const override {
-    return meshWrapper->IsWithinDistance(a, idx_a, b, idx_b, test_dist);
+                               const PointType &b, int idx_b, double test_dist, double& dist) const override {
+    return meshWrapper->IsWithinDistance(a, idx_a, b, idx_b, test_dist, dist);
   }
 
   void DeleteImages() override {

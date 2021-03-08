@@ -190,6 +190,11 @@ public:
   {  return m_Neighborhoods[d]->FindNeighborhoodPoints(p, idx, r); }
   inline PointVectorType FindNeighborhoodPoints(const PointType &p, int idx,
                                                 std::vector<double> &w,
+                                                std::vector<double> &distances,
+                                                double r, unsigned int d = 0) const
+  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(p,idx,w,distances,r); }
+  inline PointVectorType FindNeighborhoodPoints(const PointType &p, int idx,
+                                                std::vector<double> &w,
                                                 double r, unsigned int d = 0) const
   {  return m_Neighborhoods[d]->FindNeighborhoodPoints(p,idx,w,r); }
   inline PointVectorType FindNeighborhoodPoints(unsigned int idx,
@@ -197,8 +202,13 @@ public:
   {  return m_Neighborhoods[d]->FindNeighborhoodPoints(this->GetPosition(idx,d),idx, r); }
   inline PointVectorType FindNeighborhoodPoints(unsigned int idx,
                                                 std::vector<double> &w,
+                                                std::vector<double> &distances,
                                                 double r, unsigned int d = 0) const
-  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(this->GetPosition(idx,d),idx,w, r); }
+  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(this->GetPosition(idx,d),idx,w,distances, r); }
+  inline PointVectorType FindNeighborhoodPoints(unsigned int idx,
+                                                std::vector<double> &w,
+                                                double r, unsigned int d = 0) const
+  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(this->GetPosition(idx,d),idx,w,r); }
 
   //  inline int FindNeighborhoodPoints(const PointType &p,  double r, PointVectorType &vec, unsigned int d = 0) const
   //  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(p, r, vec); }
