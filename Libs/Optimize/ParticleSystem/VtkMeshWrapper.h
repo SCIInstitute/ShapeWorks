@@ -164,7 +164,7 @@ private:
   std::unique_ptr<geometrycentral::surface::VertexPositionGeometry> gc_geometry_;
   std::unique_ptr<geometrycentral::surface::HeatMethodDistanceSolver> gc_heatsolver_;
 
-  size_t geo_max_cache_entries_{2000000};
+  size_t geo_max_cache_entries_{4000000};
   mutable size_t geo_cache_size_{0};
 
   // Flattened version of libigl's gradient operator
@@ -183,8 +183,9 @@ private:
   // Precompute heat data structures for faster geodesic lookups
   void PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
 
-  const GeoEntry& GeodesicsFromTriangle(int f, double max_dist, bool force_full_mode=false) const;
-  const Eigen::Matrix3d GeodesicsFromTriangleToPoints(int f, int v0, int v1, int v2) const;
+  const GeoEntry& GeodesicsFromTriangle(int f, double max_dist=std::numeric_limits<double>::max(),
+                                        int req_target_f=-1) const;
+  const Eigen::Matrix3d GeodesicsFromTriangleToTriangle(int f_a, int f_b) const;
   void ClearGeodesicCache() const;
 
   // Store some info about the last query. This accelerates the computation because the optimizer generally asks for the
