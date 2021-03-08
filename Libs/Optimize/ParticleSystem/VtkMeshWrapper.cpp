@@ -116,6 +116,7 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
   }
 
   // Find the triangle for the point a. If this was the same as the previous query, just used that cached value
+  volatile int cached = particle_triangles_[idx_a];
   int face_a, face_b;
   vec3 bary_a, bary_b;
   if (geo_lq_pidx_ == idx_a) {
@@ -130,6 +131,7 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
   }
 
   // Find the triangle for the point b
+  // (some initial experiments at caching these like we do for point_a proved to be unfruitful. no significant perf gain)
   face_b = ComputeFaceAndWeights(pt_b, idx_b, bary_b);
 
   // The geodesics(and more importantly, its gradient) are very inaccurate if both the points are on the
@@ -151,14 +153,13 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
 
   // Ensure we have geodesics available
   assert(idx_a != -1);
-  GeodesicsFromTriangle(face_a, this->particle_neighboorhood_[idx_a]*1.5, face_b);
+  GeodesicsFromTriangle(face_a, this->particle_neighboorhood_[idx_a]*1.5);
 
   // Compute geodesic distance via barycentric approximation
   // Geometric Correspondence for Ensembles of Nonregular Shapes, Datar et al
   // https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3346950/
   const auto &geo_from_a = GeodesicsFromTriangleToPoints(face_a, vb0, vb1, vb2);
   Eigen::Vector3d geo_to_b;
-  //todo figure out how to write this as a matrix multiplication
   for (int i = 0; i < 3; i++) {
     geo_to_b[i] = bary_b.dot(geo_from_a.row(i));
   }
@@ -224,21 +225,14 @@ bool VtkMeshWrapper::IsWithinDistance(const PointType &pt_a, int idx_a,
   const auto vb2 = this->triangles_[face_b]->GetPointId(2);
 
   const auto& geo_entry = GeodesicsFromTriangle(face_a, test_dist*1.5);
-  const auto& data = geo_entry.data;
-  const auto find_v0 = data.find(vb0);
-  const auto find_v1 = data.find(vb1);
-  const auto find_v2 = data.find(vb2);
-  if(find_v0 == data.end() && find_v1 == data.end() && find_v2 == data.end()) {
-    return false;
-  }
 
-  // quick test to see if we _really_ need the geodesic.
-  {
-    double min_found = std::numeric_limits<double>::infinity();
-    if(find_v0 != data.end()) { min_found = std::min(min_found, find_v0->second.minCoeff()); }
-    if(find_v1 != data.end()) { min_found = std::min(min_found, find_v1->second.minCoeff()); }
-    if(find_v2 != data.end()) { min_found = std::min(min_found, find_v2->second.minCoeff()); }
-    if(min_found > test_dist) {
+  if(geo_entry.is_full_mode()) {
+    if(geo_entry.max_dist < test_dist) {
+      return false;
+    }
+  } else {
+    const auto& data = geo_entry.data_partial;
+    if(data.find(vb0) == data.end() || data.find(vb1) == data.end() || data.find(vb2) == data.end()) {
       return false;
     }
   }
@@ -910,56 +904,50 @@ bool VtkMeshWrapper::AreFacesAdjacent(int f_a, int f_b) const
 }
 
 //---------------------------------------------------------------------------
-const GeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist, int req_target_f) const
+const GeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist, bool force_full_mode) const
 {
   if(geo_cache_size_ >= geo_max_cache_entries_) {
     this->ClearGeodesicCache();
   }
 
   auto& entry = geo_dist_cache_[f];
+  if(entry.is_full_mode()) {
+    return entry;
+  }
+
   if(entry.max_dist >= max_dist) {
     return entry;
   }
 
-  geo_cache_size_ -= entry.data.size();
-  entry.clear();
+  geo_cache_size_ -= entry.data_partial.size();
+  entry.data_partial.clear();
 
   const auto n_verts = this->poly_data_->GetNumberOfPoints();
 
+  double new_max_dist = max_dist;
+  auto incident_cells = vtkSmartPointer<vtkIdList>::New();
+
   geometrycentral::surface::VertexData<double> dists[3];
+
   // Compute geodesics using heat method
   for(int i=0; i<3; i++) {
     const auto v = gc_mesh_->vertex(this->triangles_[f]->GetPointId(i));
     dists[i] = gc_heatsolver_->computeDistance(v);
   }
 
-  if(max_dist == std::numeric_limits<double>::infinity()) {
+  if(force_full_mode) {
+    entry.mode = GeoEntry::Full;
+    entry.data_full[0] = std::move(dists[0].raw());
+    entry.data_full[1] = std::move(dists[1].raw());
+    entry.data_full[2] = std::move(dists[2].raw());
     geo_cache_size_ += n_verts;
-    max_dist = 0.0;
-    for(int i=0; i<n_verts; i++) {
-      const double d0 = dists[0][i];
-      const double d1 = dists[1][i];
-      const double d2 = dists[2][i];
-      max_dist = std::max(max_dist, d0);
-      max_dist = std::max(max_dist, d1);
-      max_dist = std::max(max_dist, d2);
-      entry.data[i] = {dists[0][i], dists[1][i], dists[2][i]};
-    }
+    entry.max_dist = std::max(entry.data_full[0].maxCoeff(),
+                              std::max(entry.data_full[1].maxCoeff(), entry.data_full[2].maxCoeff()));
     return entry;
   }
 
-  if(req_target_f >= 0) {
-    for(int i=0; i<3; i++) {
-      const int req_v = this->triangles_[req_target_f]->GetPointId(i);
-      max_dist = std::max(max_dist, dists[0][req_v]);
-      max_dist = std::max(max_dist, dists[1][req_v]);
-      max_dist = std::max(max_dist, dists[2][req_v]);
-    }
-  }
-
-
-  auto incident_cells = vtkSmartPointer<vtkIdList>::New();
   robin_hood::unordered_set<int> needed_points;
+
   // Figure out which of these we actually need. If a vertex is included, we also pull in all 1-ring neighbors of
   // that vertex since they may be needed to compute geodesics on triangles incident on that vertex
   for(int i=0; i<n_verts; i++) {
@@ -977,7 +965,17 @@ const GeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist, in
     }
   }
 
-  double new_max_dist = max_dist;
+  if(needed_points.size() > n_verts / 2) {
+    entry.mode = GeoEntry::Full;
+    entry.data_full[0] = std::move(dists[0].raw());
+    entry.data_full[1] = std::move(dists[1].raw());
+    entry.data_full[2] = std::move(dists[2].raw());
+    geo_cache_size_ += n_verts;
+    entry.max_dist = std::max(entry.data_full[0].maxCoeff(),
+                              std::max(entry.data_full[1].maxCoeff(), entry.data_full[2].maxCoeff()));
+    return entry;
+  }
+
   for(auto v : needed_points) {
     const auto& d0 = dists[0][v];
     const auto& d1 = dists[1][v];
@@ -985,10 +983,10 @@ const GeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist, in
     new_max_dist = std::max(new_max_dist, d0);
     new_max_dist = std::max(new_max_dist, d1);
     new_max_dist = std::max(new_max_dist, d2);
-    entry.data[v] = {d0, d1, d2};
+    entry.data_partial[v] = {d0, d1, d2};
   }
 
-  geo_cache_size_ += entry.data.size();
+  geo_cache_size_ += entry.data_partial.size();
   entry.max_dist = new_max_dist;
   return entry;
 }
@@ -996,18 +994,28 @@ const GeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist, in
 //---------------------------------------------------------------------------
 const Eigen::Matrix3d VtkMeshWrapper::GeodesicsFromTriangleToPoints(int f, int v0, int v1, int v2) const
 {
-  const auto& entry = geo_dist_cache_[f];
+  auto& entry = geo_dist_cache_[f];
 
-  const auto& data = entry.data;
-  auto find_v0 = data.find(v0);
-  auto find_v1 = data.find(v1);
-  auto find_v2 = data.find(v2);
+  if(entry.is_full_mode()) {
+    Eigen::Matrix3d result;
+    const auto& data = entry.data_full;
+    for(int i=0; i<3; i++) {
+      result(i, 0) = data[i][v0];
+      result(i, 1) = data[i][v1];
+      result(i, 2) = data[i][v2];
+    }
+    return result;
+  }
+
+  // Partial mode
+  const auto& data = entry.data_partial;
+  const auto find_v0 = data.find(v0);
+  const auto find_v1 = data.find(v1);
+  const auto find_v2 = data.find(v2);
   if(find_v0 == data.end() || find_v1 == data.end() || find_v2 == data.end()) {
     std::cerr << "GeodesicsFromTriangleToPoints: did not find target points in cache! Forcing full mode\n";
-    const auto& new_entry = GeodesicsFromTriangle(f, std::numeric_limits<double>::infinity());
-    find_v0 = new_entry.data.find(v0);
-    find_v1 = new_entry.data.find(v1);
-    find_v2 = new_entry.data.find(v2);
+    GeodesicsFromTriangle(f, std::numeric_limits<double>::infinity(), true);
+    return GeodesicsFromTriangleToPoints(f, v0, v1, v2);
   }
   Eigen::Matrix3d result;
   result.col(0) = find_v0->second;
@@ -1020,6 +1028,7 @@ const Eigen::Matrix3d VtkMeshWrapper::GeodesicsFromTriangleToPoints(int f, int v
 void VtkMeshWrapper::ClearGeodesicCache() const {
   std::cout << "Clearing cache\n";
 
+  const auto n_verts = this->poly_data_->GetNumberOfPoints();
   robin_hood::unordered_set<int> active_triangles(particle_triangles_.begin(), particle_triangles_.end());
   size_t new_cache_size = 0;
 
@@ -1028,7 +1037,7 @@ void VtkMeshWrapper::ClearGeodesicCache() const {
     if(active_triangles.find(i) == active_triangles.end()) {
       entry.clear();
     } else {
-      new_cache_size += entry.data.size();
+      new_cache_size += entry.is_full_mode() ? n_verts : entry.data_partial.size();
     }
   }
 
