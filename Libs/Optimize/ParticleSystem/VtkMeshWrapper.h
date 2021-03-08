@@ -1,6 +1,7 @@
 #pragma once
 
 #include "MeshWrapper.h"
+#include "FixedSizeCache.h"
 
 #include <unordered_map>
 #include <robin_hood.h>
