@@ -33,6 +33,7 @@ using namespace pybind11::literals;
 #include "ParticleSystem.h"
 #include "ShapeEvaluation.h"
 #include "ParticleShapeStatistics.h"
+#include "vnl/vnl_vector.h"
 
 using namespace shapeworks;
 
@@ -671,8 +672,10 @@ PYBIND11_MODULE(shapeworks, m)
   .def("ImportPoints",          &ParticleShapeStatistics::ImportPoints,"points"_a,"group_ids"_a)
   .def("ReadPointFiles",        &ParticleShapeStatistics::ReadPointFiles, "fname"_a)
   .def("ReloadPointFiles",      &ParticleShapeStatistics::ReloadPointFiles)
-  // .def("WriteCSVFile",          &ParticleShapeStatistics::WriteCSVFile)
-  // .def("WriteCSVFile2",         &ParticleShapeStatistics::WriteCSVFile2)
+  .def("WriteCSVFile",          py::overload_cast<const char*>(&ParticleShapeStatistics::WriteCSVFile))
+  .def("WriteCSVFile",          py::overload_cast<const std::string &>(&ParticleShapeStatistics::WriteCSVFile))
+  .def("WriteCSVFile2",         py::overload_cast<const char*>(&ParticleShapeStatistics::WriteCSVFile2))
+  .def("WriteCSVFile2",         py::overload_cast<const std::string &>(&ParticleShapeStatistics::WriteCSVFile2))
   .def("ComputeModes",          &ParticleShapeStatistics::ComputeModes)
   .def("PrincipalComponentProjections",
                                 &ParticleShapeStatistics::PrincipalComponentProjections)
@@ -681,13 +684,30 @@ PYBIND11_MODULE(shapeworks, m)
   .def("SampleSize",            &ParticleShapeStatistics::SampleSize)
   .def("Group1SampleSize",      &ParticleShapeStatistics::Group1SampleSize)
   .def("Group2SampleSize",      &ParticleShapeStatistics::Group2SampleSize)
-  // .def("GroupID",               &ParticleShapeStatistics::GroupID)
+  .def("NumberOfDimensions",    &ParticleShapeStatistics::NumberOfDimensions)
+  // .def("GroupID",               py::overload_cast<>(&ParticleShapeStatistics::GroupID))
+  .def("Eigenvectors",          &ParticleShapeStatistics::Eigenvectors)
+  .def("Eigenvalues",           &ParticleShapeStatistics::Eigenvalues)
+  .def("Mean",                  &ParticleShapeStatistics::Mean)
+  .def("Group1Mean",            &ParticleShapeStatistics::Group1Mean)
+  .def("Group2Mean",            &ParticleShapeStatistics::Group2Mean)
+  .def("NormalizedGroupDifference",            
+                                &ParticleShapeStatistics::NormalizedGroupDifference)
+  .def("GroupDifference",            
+                                &ParticleShapeStatistics::GroupDifference)
   .def("ComputeMedianShape",    &ParticleShapeStatistics::ComputeMedianShape)
+  .def("L1Norm",                &ParticleShapeStatistics::L1Norm,"a"_a,"b"_a)
+  .def("PCALoadings",           &ParticleShapeStatistics::PCALoadings)
+  .def("FishersLDA",            &ParticleShapeStatistics::FishersLDA)
+  .def("ShapeMatrix",           &ParticleShapeStatistics::ShapeMatrix)
+  .def("RecenteredShape",       &ParticleShapeStatistics::RecenteredShape)
+  .def("PercentVarByMode",      &ParticleShapeStatistics::PercentVarByMode)
   .def("SimpleLinearRegression",
                                 &ParticleShapeStatistics::SimpleLinearRegression,"x"_a,"y"_a,"a"_a,"b"_a)
   .def("get_compactness",       &ParticleShapeStatistics::get_compactness,"num_modes"_a)
   .def("get_specificity",       &ParticleShapeStatistics::get_specificity,"num_modes"_a)
   .def("get_generalization",    &ParticleShapeStatistics::get_generalization,"num_modes"_a)
+  
   ;
   // .def("compute_evaluation",    &ParticleShapeStatistics::compute_evaluation,"num_modes"_a)
 
