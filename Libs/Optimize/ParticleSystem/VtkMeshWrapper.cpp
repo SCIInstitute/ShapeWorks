@@ -922,6 +922,8 @@ const GeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist, in
   // Compute geodesics using heat method
   for(int i=0; i<3; i++) {
     const auto v = gc_mesh_->vertex(this->triangles_[f]->GetPointId(i));
+    // todo replace with a zero-copy API once available
+    // see https://github.com/nmwsharp/geometry-central/issues/77
     dists[i] = gc_heatsolver_->computeDistance(v);
   }
 
@@ -998,7 +1000,7 @@ const Eigen::Matrix3d VtkMeshWrapper::GeodesicsFromTriangleToTriangle(int f_a, i
   auto find_v1 = data.find(v1);
   auto find_v2 = data.find(v2);
   if(find_v0 == data.end() || find_v1 == data.end() || find_v2 == data.end()) {
-    std::cerr << "GeodesicsFromTriangleToPoints: did not find target points in cache! Forcing full mode\n";
+    // std::cerr << "GeodesicsFromTriangleToPoints: did not find target points in cache! Forcing full mode\n";
     const auto& new_entry = GeodesicsFromTriangle(f_a, std::numeric_limits<double>::infinity());
     find_v0 = new_entry.data.find(v0);
     find_v1 = new_entry.data.find(v1);
@@ -1013,7 +1015,7 @@ const Eigen::Matrix3d VtkMeshWrapper::GeodesicsFromTriangleToTriangle(int f_a, i
 
 //---------------------------------------------------------------------------
 void VtkMeshWrapper::ClearGeodesicCache() const {
-  std::cout << "Clearing cache\n";
+  // std::cout << "Clearing cache\n";
 
   robin_hood::unordered_set<int> active_triangles(particle_triangles_.begin(), particle_triangles_.end());
   size_t new_cache_size = 0;
@@ -1028,7 +1030,7 @@ void VtkMeshWrapper::ClearGeodesicCache() const {
   }
 
   if(new_cache_size > geo_max_cache_entries_) {
-    std::cerr << "Warning: Cache entries too small, doing full clear\n";
+    // std::cerr << "Warning: Cache entries too small, doing full clear\n";
     for(auto i : active_triangles) {
       if(i >= 0) {
         geo_dist_cache_[i].clear();
