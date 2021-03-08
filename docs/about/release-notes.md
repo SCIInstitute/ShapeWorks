@@ -9,6 +9,8 @@
 
 #### User's Support
 
+* **New discussion forum:** We started an online discussion forum ([shapeworks.discourse.group](shapeworks.discourse.group)). This forum is a place for ShapeWorks users to discuss how to customize shape modeling workflows for their own use cases, troubleshoot issues end-users facing when using ShapeWorks, keep track of suggestions to improve the software and documentation, and ensure awareness of the latest ShapeWorks tools within the research community. 
+
 * **Demonstrating data augmentation:** A [Jupyter notebook](http://sciinstitute.github.io/ShapeWorks/notebooks/tutorials/getting-started-with-data-augmentation.ipynb) that demonstrates the data augmentation process has been added. In this notebook, parallel violin plots are used to compare the distribution of real and augmented data visually.
 * **Tiny tests for use cases:** All use cases now have a tiny test that can be run using the `--tiny_test` option. When the tiny test is run, only the data necessary for the test is downloaded rather than all of the data.
 * **Running use cases on subsets:** All of the use cases (mesh or segmentation based) can now be run on a subset of the data using the `--use_subsample` option. Note that the entire dataset is downloaded in this case so that a subset that is representative of the entire dataset can be selected.
