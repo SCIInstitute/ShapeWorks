@@ -336,9 +336,18 @@ void ParticleSystem<VDimension>::AdvancedAllParticleSplitting(double epsilon)
           // Add epsilon times random direction to existing point and apply domain
           // constraints to generate a new particle position.
           PointType newpos;
+          /*
           for (unsigned int k = 0; k < 3; k++) {
-            newpos[k] = lists[j][i][k] + epsilon * random[k] / 5.;
+            // newpos[k] = lists[j][i][k] + epsilon * random[k] / 5.;
           }
+           */
+
+          vnl_vector_fixed<float, 3> normal_f = this->GetDomain(j)->SampleNormalAtPoint(lists[j][i], i);
+          vnl_vector_fixed<double, 3> normal; normal[0] = normal_f[0]; normal[1] = normal_f[1]; normal[2] = normal_f[2];
+          auto split_dir = vnl_cross_3d(normal, random);
+          auto v = -epsilon * split_dir / 5.0;
+          newpos = this->GetDomain(j)->UpdateParticlePosition(lists[j][i], i, v);
+
           // Go to surface
           if (!this->m_DomainFlags[j] &&
               !this->GetDomain(j)->GetConstraints()->IsAnyViolated(newpos)) {
