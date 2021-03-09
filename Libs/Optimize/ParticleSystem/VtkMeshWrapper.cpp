@@ -939,6 +939,7 @@ const GeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist, in
 
   // Compute geodesics using heat method
   for(int i=0; i<3; i++) {
+    // todo switch to zero-copy API when that is available: https://github.com/nmwsharp/geometry-central/issues/77
     const auto v = gc_mesh_->vertex(this->triangles_[f]->GetPointId(i));
     dists[i] = gc_heatsolver_->computeDistance(v);
   }

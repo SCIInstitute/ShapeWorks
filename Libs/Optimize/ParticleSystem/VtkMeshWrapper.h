@@ -15,6 +15,8 @@ class vtkCellLocator;
 namespace shapeworks {
 
 struct GeoEntry {
+  // in "Full" mode, the entry contains geodesics to every vertex. Access via `data_full`
+  // in "Partial" mode, the entry only contains geodesics upto max_dist. Access via `data_partial`
   enum GeoEntryMode {
     Full,
     Partial,
@@ -165,7 +167,7 @@ private:
   std::unique_ptr<geometrycentral::surface::VertexPositionGeometry> gc_geometry_;
   std::unique_ptr<geometrycentral::surface::HeatMethodDistanceSolver> gc_heatsolver_;
 
-  size_t geo_max_cache_entries_{4000000};
+  size_t geo_max_cache_entries_{8000000};
   mutable size_t geo_cache_size_{0};
 
   // Flattened version of libigl's gradient operator
