@@ -3,6 +3,7 @@
 #include "MeshWrapper.h"
 
 #include <unordered_map>
+#include <unordered_set>
 #include <robin_hood.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
@@ -173,18 +174,22 @@ private:
   // Flattened version of libigl's gradient operator
   std::vector<Eigen::Matrix3d> face_grad_;
 
+  std::vector<std::unordered_set<int>> face_kring_;
+
   // Cache for geodesic distances from a triangle
   mutable std::vector<GeoEntry> geo_dist_cache_;
 
   // Returns true if face f_a is adjacent to face f_b. This uses a non-standard definition of adjacency: return true
   // if f_a and f_b share atleast one vertex
-  bool AreFacesAdjacent(int f_a, int f_b) const;
+  bool AreFacesInKRing(int f_a, int f_b) const;
 
   // Convert the mesh to libigl data structures
   void GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const;
 
   // Precompute heat data structures for faster geodesic lookups
   void PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
+
+  void ComputeKRing(int f, int k, std::unordered_set<int>& ring) const;
 
   const GeoEntry& GeodesicsFromTriangle(int f, double max_dist=std::numeric_limits<double>::max(),
                                         int req_target_f=-1) const;

@@ -136,7 +136,7 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
 
   // The geodesics(and more importantly, its gradient) are very inaccurate if both the points are on the
   // same face, or share an edge. In this case, just return the euclidean distance
-  if (face_a == face_b || AreFacesAdjacent(face_a, face_b)) {
+  if (face_a == face_b || AreFacesInKRing(face_a, face_b)) {
     if (out_grad != nullptr) {
       for (int i = 0; i < DIMENSION; i++) {
         (*out_grad)[i] = pt_a[i] - pt_b[i];
@@ -217,7 +217,7 @@ bool VtkMeshWrapper::IsWithinDistance(const PointType &pt_a, int idx_a,
 
   // Find the triangle for the point b
   face_b = ComputeFaceAndWeights(pt_b, idx_b, bary_b);
-  if (face_a == face_b || AreFacesAdjacent(face_a, face_b)) {
+  if (face_a == face_b || AreFacesInKRing(face_a, face_b)) {
     dist = pt_a.EuclideanDistanceTo(pt_b);
     return dist < test_dist;
   }
@@ -892,23 +892,18 @@ void VtkMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::
     gc_heatsolver_ = std::make_unique<HeatMethodDistanceSolver>(*gc_geometry_);
   }
 
-
+  // compute k-ring
+  const int k = 2;
+  face_kring_.resize(this->triangles_.size());
+  for(int f=0; f<this->triangles_.size(); f++) {
+    ComputeKRing(f, k, face_kring_[f]);
+  }
 }
 
 //---------------------------------------------------------------------------
-bool VtkMeshWrapper::AreFacesAdjacent(int f_a, int f_b) const
+bool VtkMeshWrapper::AreFacesInKRing(int f_a, int f_b) const
 {
-  const auto& tri_a = this->triangles_[f_a];
-  const auto& tri_b = this->triangles_[f_b];
-  for(int i=0; i<3; i++) {
-    for(int j=0; j<3; j++) {
-      if(tri_a->GetPointId(i) == tri_b->GetPointId(j)) {
-        return true;
-      }
-    }
-  }
-
-  return false;
+  return face_kring_[f_a].find(f_b) != face_kring_[f_a].end();
 }
 
 //---------------------------------------------------------------------------
@@ -1076,6 +1071,26 @@ void VtkMeshWrapper::ClearGeodesicCache() const {
   }
 
   geo_cache_size_ = new_cache_size;
+}
+
+//---------------------------------------------------------------------------
+void VtkMeshWrapper::ComputeKRing(int f, int k, std::unordered_set<int>& ring) const {
+  if(k == 0) {
+    return;
+  }
+
+  auto neighbors = vtkSmartPointer<vtkIdList>::New();
+  for(int i=0; i<3; i++) {
+    const int v = this->triangles_[f]->GetPointId(i);
+    this->poly_data_->GetPointCells(v, neighbors);
+    for(int j=0; j<neighbors->GetNumberOfIds(); j++) {
+      const int f_j = neighbors->GetId(j);
+      if(ring.find(f_j) != ring.end()) {
+        ring.insert(f_j);
+        ComputeKRing(f_j, k-1, ring);
+      }
+    }
+  }
 }
 
 }
