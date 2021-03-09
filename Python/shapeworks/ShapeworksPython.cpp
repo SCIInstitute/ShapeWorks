@@ -37,7 +37,6 @@ using namespace pybind11::literals;
 
 using namespace shapeworks;
 
-
 PYBIND11_MODULE(shapeworks, m)
 {
   m.doc() = "ShapeWorks Python API";
@@ -667,15 +666,13 @@ PYBIND11_MODULE(shapeworks, m)
   ;
 
   py::class_<ParticleShapeStatistics>(m, "ParticleShapeStatistics")
-  .def(py::init<>())
-  .def("DoPCA",                 &ParticleShapeStatistics::DoPCA, "help", "global_pts"_a, "domainsPerShape"_a=1)
+  .def(py::init<const std::string &>())
+  .def("DoPCA",                 &ParticleShapeStatistics::DoPCA, "global_pts"_a, "domainsPerShape"_a=1)
   .def("ImportPoints",          &ParticleShapeStatistics::ImportPoints,"points"_a,"group_ids"_a)
   .def("ReadPointFiles",        &ParticleShapeStatistics::ReadPointFiles, "fname"_a)
   .def("ReloadPointFiles",      &ParticleShapeStatistics::ReloadPointFiles)
-  .def("WriteCSVFile",          py::overload_cast<const char*>(&ParticleShapeStatistics::WriteCSVFile))
-  .def("WriteCSVFile",          py::overload_cast<const std::string &>(&ParticleShapeStatistics::WriteCSVFile))
-  .def("WriteCSVFile2",         py::overload_cast<const char*>(&ParticleShapeStatistics::WriteCSVFile2))
-  .def("WriteCSVFile2",         py::overload_cast<const std::string &>(&ParticleShapeStatistics::WriteCSVFile2))
+  .def("WriteCSVFile",          &ParticleShapeStatistics::WriteCSVFile, "s"_a)
+  .def("WriteCSVFile2",         &ParticleShapeStatistics::WriteCSVFile2, "s"_a)
   .def("ComputeModes",          &ParticleShapeStatistics::ComputeModes)
   .def("PrincipalComponentProjections",
                                 &ParticleShapeStatistics::PrincipalComponentProjections)
@@ -709,10 +706,6 @@ PYBIND11_MODULE(shapeworks, m)
   .def("get_generalization",    &ParticleShapeStatistics::get_generalization,"num_modes"_a)
   
   ;
-  // .def("compute_evaluation",    &ParticleShapeStatistics::compute_evaluation,"num_modes"_a)
-
-
-
 
   // Optimize (TODO)
   py::class_<Optimize>(m, "Optimize")

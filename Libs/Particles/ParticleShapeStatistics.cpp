@@ -3,7 +3,6 @@
 #include <Libs/Particles/ShapeEvaluation.h>
 #include "tinyxml.h"
 
-
 namespace shapeworks{
 
 int ParticleShapeStatistics::SimpleLinearRegression(const std::vector<double>& y,
@@ -96,8 +95,7 @@ double ParticleShapeStatistics::L1Norm(unsigned int a, unsigned int b)
   return norm;
 }
 
-int ParticleShapeStatistics::ImportPoints(
-  std::vector<vnl_vector<double >> points, std::vector<int> group_ids)
+int ParticleShapeStatistics::ImportPoints(std::vector<vnl_vector<double>> points, std::vector<int> group_ids)
 {
   this->m_groupIDs = group_ids;
   this->m_domainsPerShape = 1;
@@ -199,9 +197,9 @@ int ParticleShapeStatistics::ImportPoints(
   return 0;
 }
 
-int ParticleShapeStatistics::ReadPointFiles(const char* fname)
+int ParticleShapeStatistics::ReadPointFiles(const std::string &s)
 {
-  TiXmlDocument doc(fname);
+  TiXmlDocument doc(s.c_str());
   bool loadOkay = doc.LoadFile();
   if (!loadOkay) std::cerr << "invalid parameter file..." << std::endl;
   TiXmlHandle docHandle(&doc);
@@ -336,10 +334,7 @@ int ParticleShapeStatistics::ReadPointFiles(const char* fname)
   return 0;
 } // end ReadPointFiles
 
-
-
-int ParticleShapeStatistics::DoPCA(std::vector<std::vector<PointType> > global_pts,
-                                   int domainsPerShape)
+int ParticleShapeStatistics::DoPCA(std::vector<std::vector<PointType>> global_pts, int domainsPerShape)
 {
   this->m_domainsPerShape = domainsPerShape;
 
@@ -508,7 +503,6 @@ int ParticleShapeStatistics::ComputeModes()
   return 0;
 }  // end ComputeModes();
 
-
 int ParticleShapeStatistics::PrincipalComponentProjections()
 {
   // Now print the projection of each shape
@@ -629,11 +623,11 @@ int ParticleShapeStatistics::FisherLinearDiscriminant(unsigned int numModes)
   return 0;
 }
 
-int ParticleShapeStatistics::WriteCSVFile2(const char* fn)
+int ParticleShapeStatistics::WriteCSVFile2(const std::string &s)
 {
   // Write csv file
   std::ofstream outfile;
-  outfile.open(fn);
+  outfile.open(s.c_str());
 
   outfile << "Group";
   for (unsigned int i = 0; i < m_numSamples; i++) {
@@ -653,11 +647,11 @@ int ParticleShapeStatistics::WriteCSVFile2(const char* fn)
   return 0;
 }
 
-int ParticleShapeStatistics::WriteCSVFile(const char* fn)
+int ParticleShapeStatistics::WriteCSVFile(const std::string &s)
 {
   // Write csv file
   std::ofstream outfile;
-  outfile.open(fn);
+  outfile.open(s.c_str());
 
   outfile << "Group,LDA,PV";
   for (unsigned int i = 0; i < m_numSamples; i++) {
@@ -707,7 +701,6 @@ void ParticleShapeStatistics::compute_evaluation(int num_modes)
     this->evaluation_ready_ = true;
     this->evaluation_modes_ = num_modes;
   }
-
 }
 
 } // shapeworks
