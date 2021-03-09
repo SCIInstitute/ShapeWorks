@@ -162,7 +162,6 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/ExternalLibs/optparse")
 
 SET(PYBIND11_PYTHON_VERSION 3.7)
 find_package(pybind11 2.5.0 REQUIRED)
-add_subdirectory(Python/shapeworks)
 
 add_subdirectory(ExternalLibs)
 add_subdirectory(Libs)
