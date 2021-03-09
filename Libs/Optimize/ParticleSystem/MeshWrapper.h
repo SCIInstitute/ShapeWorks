@@ -15,10 +15,15 @@ public:
   typedef typename itk::ParticleDomain::PointType PointType;
   typedef typename itk::ParticleDomain::GradNType GradNType;
 
+  void SetConstraints(std::shared_ptr<itk::Constraints> constraints)
+  {
+    this->constraints_ = constraints;
+  }
+
   // Computed distance between points. (Currently euclidean)
   virtual double ComputeDistance(PointType pointa, PointType pointb) const = 0;
   // Returns updated point position after applying the update vector to the initial position.
-  virtual PointType GeodesicWalk(PointType pointa, int idx, vnl_vector_fixed<double, DIMENSION> vector, const std::shared_ptr<itk::Constraints> &constraint) const = 0;
+  virtual PointType GeodesicWalk(PointType pointa, int idx, vnl_vector_fixed<double, DIMENSION> vector) const = 0;
 
   // Returns a point on the mesh.
   virtual PointType GetPointOnMesh() const = 0;
@@ -36,6 +41,10 @@ public:
   virtual PointType SnapToMesh(PointType pointa, int idx) const = 0;
 
   virtual void InvalidateParticle(int idx) {};
+
+protected:
+
+  std::shared_ptr<itk::Constraints> constraints_;
 };
 
 }

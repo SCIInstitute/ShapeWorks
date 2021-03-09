@@ -23,7 +23,7 @@ public:
   double ComputeDistance(PointType pointa, PointType pointb) const override;
 
   PointType
-  GeodesicWalk(PointType pointa, int idx, vnl_vector_fixed<double, DIMENSION> vector, const std::shared_ptr<itk::Constraints> &constraint) const override;
+  GeodesicWalk(PointType pointa, int idx, vnl_vector_fixed<double, DIMENSION> vector) const override;
 
   vnl_vector_fixed<double, DIMENSION>
   ProjectVectorToSurfaceTangent(const PointType& pointa, int idx,
@@ -51,7 +51,7 @@ private:
 
   Eigen::Vector3d
   GeodesicWalkOnFace(Eigen::Vector3d point_a,
-                     Eigen::Vector3d projected_vector, int face_index, const std::shared_ptr<itk::Constraints> &constraint) const;
+                     Eigen::Vector3d projected_vector, int face_index) const;
 
   Eigen::Vector3d
   ProjectVectorToFace(const Eigen::Vector3d& normal, const Eigen::Vector3d& vector) const;

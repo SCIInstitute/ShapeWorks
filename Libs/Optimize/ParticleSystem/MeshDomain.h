@@ -106,9 +106,10 @@ public:
     // TODO Change this to a generic delete function
   }
 
-  void SetMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh_)  {
+  void SetMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh)  {
     this->m_FixedDomain = false;
-    meshWrapper = mesh_;
+    this->meshWrapper = mesh;
+    this->meshWrapper->SetConstraints(this->constraints);
   }
 
   void UpdateZeroCrossingPoint() override {

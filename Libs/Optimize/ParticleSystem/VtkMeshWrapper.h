@@ -24,7 +24,7 @@ public:
 
   double ComputeDistance(PointType pointa, PointType pointb) const override;
 
-  PointType GeodesicWalk(PointType p, int idx, VectorType vector, const std::shared_ptr<itk::Constraints> &constraint) const override;
+  PointType GeodesicWalk(PointType p, int idx, VectorType vector) const override;
 
   VectorType ProjectVectorToSurfaceTangent(const PointType &pointa, int idx,
                                            VectorType &vector) const override;
@@ -69,8 +69,7 @@ private:
 
   Eigen::Vector3d
   GeodesicWalkOnFace(Eigen::Vector3d point_a,
-                     Eigen::Vector3d projected_vector, int face_index, int &ending_face,
-                     const std::shared_ptr<itk::Constraints> &constraint) const;
+                     Eigen::Vector3d projected_vector, int face_index, int &ending_face) const;
 
   Eigen::Vector3d GetBarycentricIntersection(Eigen::Vector3d start, Eigen::Vector3d end,
                                              int currentFace, int edge) const;

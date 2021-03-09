@@ -92,15 +92,14 @@ protected:
   // is this a fixed domain or not?  We start as fixed and if an image or mesh is set, we set this to false
   bool m_FixedDomain{true};
 
-  ParticleDomain() {
-      this->constraints = std::make_shared<Constraints>();
-  }
+  ParticleDomain() {}
   virtual ~ParticleDomain() {}
   void PrintSelf(std::ostream& os, Indent indent) const
   {
     Superclass::PrintSelf(os, indent);
   }
-  std::shared_ptr<Constraints> constraints;
+
+  std::shared_ptr<Constraints> constraints = std::make_shared<Constraints>();
 
 private:
   ParticleDomain(const ParticleDomain&); //purposely not implemented

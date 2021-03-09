@@ -32,7 +32,7 @@ namespace itk
   MeshDomain::PointType MeshDomain::UpdateParticlePosition(const PointType &point, int idx, vnl_vector_fixed<double, DIMENSION> &update) const {
     vnl_vector_fixed<double, DIMENSION> negativeUpdate;
     for (unsigned int i = 0; i < DIMENSION; i++) { negativeUpdate[i] = -update[i]; }
-    PointType newPoint = meshWrapper->GeodesicWalk(point, idx, negativeUpdate, this->GetConstraints());
+    PointType newPoint = meshWrapper->GeodesicWalk(point, idx, negativeUpdate);
     return newPoint;
   }
 

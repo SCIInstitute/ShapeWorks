@@ -118,8 +118,7 @@ int SlideAlongEdge(Eigen::Vector3d& point_, Eigen::Vector3d& remainingVector_, i
 
 Eigen::Vector3d TriMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a,
                                                    Eigen::Vector3d projected_vector,
-                                                   int face_index,
-                                                   const std::shared_ptr<itk::Constraints> &constraint) const
+                                                   int face_index) const
 {
 
   int currentFace = face_index;
@@ -218,7 +217,7 @@ Eigen::Vector3d TriMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a,
 }
 
 TriMeshWrapper::PointType
-TriMeshWrapper::GeodesicWalk(PointType pointa, int idx, vnl_vector_fixed<double, DIMENSION> vector, const std::shared_ptr<itk::Constraints> &constraint) const
+TriMeshWrapper::GeodesicWalk(PointType pointa, int idx, vnl_vector_fixed<double, DIMENSION> vector) const
 {
   //std::cout << "Geodesic walk on mesh tri" << std::endl;
   PointType snapped = this->SnapToMesh(pointa, idx);
@@ -231,7 +230,7 @@ TriMeshWrapper::GeodesicWalk(PointType pointa, int idx, vnl_vector_fixed<double,
                                                               vectorEigen);
 
   Eigen::Vector3d snappedPoint = convert<PointType, Eigen::Vector3d>(snapped);
-  Eigen::Vector3d newPoint = GeodesicWalkOnFace(snappedPoint, projectedVector, faceIndex, constraint);
+  Eigen::Vector3d newPoint = GeodesicWalkOnFace(snappedPoint, projectedVector, faceIndex);
 
   PointType newPointpt;
   newPointpt[0] = newPoint[0];
