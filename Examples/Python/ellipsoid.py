@@ -28,7 +28,7 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
     # Get data
-    datasetName = "ellipsoid-v1"
+    datasetName = "ellipsoid_1mode"
     outputDirectory = "Output/ellipsoid/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
