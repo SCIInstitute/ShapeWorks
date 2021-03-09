@@ -1,5 +1,6 @@
 import csv
 import re
+import os
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -112,8 +113,9 @@ def violin(data_csv):
     # Plot
     sns.set_style("whitegrid")
     ax = sns.violinplot(x=df.PCA_Mode, y=df.PCA_Score, hue=df.Data_Type,
-                        data=df, palette="Set2", split=True, scale="count")
+                        data=df, palette="Set2", split=True, scale="area")
     # Save and show
-    plt.savefig("violin.png")                                                                          
-    # img = Image.open('violin.png')
-    # img.show() 
+    out_png = os.path.join(os.path.dirname(data_csv), "violin.png")
+    plt.savefig(out_png)                                                                     
+    img = Image.open(out_png)
+    img.show() 
