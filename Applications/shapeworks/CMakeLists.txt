@@ -4,6 +4,9 @@ set(shapeworks_sources
   Executable.cpp
   Command.cpp
   Commands.cpp
+  ImageCommands.cpp
+  ParticleSystemCommands.cpp
+  MeshCommands.cpp
   )
 set(shapeworks_headers
   Executable.h

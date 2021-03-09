@@ -6,17 +6,17 @@ class CohortGenerator():
 		self.meshes = []
 		self.segs = []
 		self.images = []
-	def generate_segmentations(self, randomize_size=True, spacing=[1,1,1], allow_on_boundary=True):
+	def generate_segmentations(self, randomize_size=True, spacing=[1.0,1.0,1.0], allow_on_boundary=True):
 		if not self.meshes:
 			print("Error: No meshes have been generated to get segmentations from.\n Call 'generate' first.")
 			return
 		self.segs = CohortGenUtils.generate_segmentations(self.meshes, self.out_dir, randomize_size, spacing, allow_on_boundary)
 		return self.segs
-	def generate_images(self):
+	def generate_images(self, blur_factor=1, foreground_mean=180, foreground_var=30, background_mean=80, background_var=30):
 		if not self.segs:
 			print("Error: No segmentations have been generated to get images from.\n Call 'generate_segmentations' first.")
 			return
-		self.images = CohortGenUtils.generate_images(self.segs, self.out_dir, blur_factor=1, foreground_mean=180, foreground_var=30, background_mean=80, background_var=30)
+		self.images = CohortGenUtils.generate_images(self.segs, self.out_dir, blur_factor, foreground_mean, foreground_var, background_mean, background_var)
 		return self.images
 
 class EllipsoidCohortGenerator(CohortGenerator):

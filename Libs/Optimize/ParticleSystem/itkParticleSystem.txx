@@ -190,7 +190,7 @@ ParticleSystem<VDimension>
 
       // Debuggg
       //std::cout << "SynchronizePositions Apply constraints " << m_Positions[d]->operator[](k);
-      m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](k), -1);
+      m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](k), k);
       // Debuggg
       //std::cout << " updated " << m_Positions[d]->operator[](k) << std::endl;
 
@@ -400,6 +400,8 @@ ParticleSystem<VDimension>
     auto neg_projected = -projected;
     newpos = this->GetDomain(domain)->UpdateParticlePosition(startingPos, neg_projected);
     this->SetPosition(newpos, k, domain, threadId);
+    const ParticleDomain *particle_domain = this->GetDomain(domain);
+    particle_domain->InvalidateParticlePosition(k);
 
   }
 }

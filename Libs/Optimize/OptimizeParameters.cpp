@@ -4,6 +4,9 @@
 #include "Optimize.h"
 #include <Libs/Image/Image.h>
 #include <Libs/Utils/StringUtils.h>
+#include <Libs/Mesh/MeshUtils.h>
+#include "ParticleSystem/VtkMeshWrapper.h"
+
 
 using namespace shapeworks;
 
@@ -157,7 +160,7 @@ void OptimizeParameters::set_use_procrustes_scaling(bool value)
 //---------------------------------------------------------------------------
 int OptimizeParameters::get_procrustes_interval()
 {
-  return this->params_.get("procrustes_interval", 0);
+  return this->params_.get("procrustes_interval", 10);
 }
 
 //---------------------------------------------------------------------------
@@ -268,10 +271,19 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
     filenames.push_back(filename);
 
     if (domain_type == DomainType::Mesh) {
+
+/*
       auto trimesh = std::shared_ptr<TriMesh>(TriMesh::read(filename.c_str()));
       if (trimesh) {
         optimize->AddMesh(std::make_shared<shapeworks::TriMeshWrapper>(trimesh));
       }
+*/
+      auto poly_data = MeshUtils::threadSafeReadMesh(filename.c_str()).getVTKMesh();
+
+      if (poly_data) {
+        optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data));
+      }
+
       else {
         throw std::invalid_argument("Error loading mesh: " + filename);
       }

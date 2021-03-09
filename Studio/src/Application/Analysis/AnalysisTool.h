@@ -37,6 +37,12 @@ public:
   /// set the pointer to the application
   void set_app(ShapeWorksStudioApp* app);
 
+  //! Set if this tool is active
+  void set_active(bool active);
+
+  //! Return if this tool is active
+  bool get_active();
+
   bool get_group_difference_mode();
 
   std::vector<Shape::Point> get_group_difference_vectors();
@@ -61,7 +67,7 @@ public:
   void updateSlider();
 
   void reset_stats();
-  void enable_actions();
+  void enable_actions(bool newly_enabled = false);
 
   const vnl_vector<double>& get_mean_shape_points();
   ShapeHandle get_mean_shape();
@@ -131,6 +137,10 @@ public Q_SLOTS:
 
   bool is_group_active(int shape_index);
 
+  void reconstruction_method_changed();
+
+  void initialize_mesh_warper();
+
 signals:
 
   void update_view();
@@ -142,9 +152,12 @@ signals:
 
 private:
 
+  bool active_ = false;
+
   void pca_labels_changed(QString value, QString eigen, QString lambda);
   void compute_mode_shape();
   void update_analysis_mode();
+
 
   void update_group_boxes();
   void update_group_values();
