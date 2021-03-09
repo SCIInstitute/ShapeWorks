@@ -363,10 +363,8 @@ PointType VtkMeshWrapper::SnapToMesh(PointType pointa, int idx) const
 //---------------------------------------------------------------------------
 PointType VtkMeshWrapper::GetPointOnMesh() const
 {
-  int face_index = 0;
-  double* point = this->poly_data_->GetPoint(face_index);
-
-  PointType p = convert<double*, PointType>(point);
+  PointType p = GetMeshUpperBound();
+  p = SnapToMesh(p, -1);
   return p;
 }
 

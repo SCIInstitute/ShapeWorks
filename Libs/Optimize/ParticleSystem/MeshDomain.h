@@ -66,6 +66,12 @@ public:
   PointType GetZeroCrossingPoint() const override {
     // TODO Hong
     // Apply constraints somehow
+    if(meshWrapper == nullptr) {
+      // Fixed domain. Unsure if this is the correct thing to do, but it preserves existing behaviour.
+      PointType p;
+      p[0] = p[1] = p[2] = 0;
+      return p;
+    }
     return meshWrapper->GetPointOnMesh();
   }
 
