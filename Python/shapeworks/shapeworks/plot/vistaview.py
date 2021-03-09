@@ -1,4 +1,5 @@
 import pyvista as pv
+import utils
 
 # enable use_ipyvtk by default for interactive plots
 pv.rcParams['use_ipyvtk'] = True 
@@ -103,7 +104,7 @@ def plot_volumes(volumeList,           # list of shapeworks images to be visuali
         grid_rows, grid_cols = 1, 1
     else:
         # define grid size for the given number of samples
-        grid_rows, grid_cols  = num_subplots(num_samples)
+        grid_rows, grid_cols  = utils.num_subplots(num_samples)
 
     # define the plotter
     plotter = pv.Plotter(shape    = (grid_rows, grid_cols),
@@ -130,7 +131,7 @@ def plot_volumes(volumeList,           # list of shapeworks images to be visuali
 
         # convert sw image to vtk image
         if type(volumeList[volumeIdx]) == sw.Image:
-            volume_vtk = sw2vtkImage(volumeList[volumeIdx], 
+            volume_vtk = utils.sw2vtkImage(volumeList[volumeIdx],
                                        verbose = False)
         else:
             volume_vtk = volumeList[volumeIdx]
@@ -193,7 +194,7 @@ def plot_meshes(meshList,           # list of shapeworks meshes to be visualized
         grid_rows, grid_cols = 1, 1
     else:
         # define grid size for the given number of samples
-        grid_rows, grid_cols  = num_subplots(num_samples)
+        grid_rows, grid_cols  = utils.num_subplots(num_samples)
 
     # define the plotter
     plotter = pv.Plotter(shape    = (grid_rows, grid_cols),
@@ -220,7 +221,7 @@ def plot_meshes(meshList,           # list of shapeworks meshes to be visualized
 
         # convert sw mesh to vtk mesh
         if type(meshList[meshIdx]) == sw.Mesh:
-            mesh_vtk = sw2vtkMesh(meshList[meshIdx], 
+            mesh_vtk = utils.sw2vtkMesh(meshList[meshIdx],
                                   verbose = False)
         else:
             mesh_vtk = meshList[meshIdx]
@@ -285,7 +286,7 @@ def plot_meshes_volumes_mix(objectList,    # list of shapeworks meshes to be vis
         grid_rows, grid_cols = 1, 1
     else:
         # define grid size for the given number of samples
-        grid_rows, grid_cols  = num_subplots(num_samples)
+        grid_rows, grid_cols  = utils.num_subplots(num_samples)
 
     # define the plotter
     plotter = pv.Plotter(shape    = (grid_rows, grid_cols),
@@ -314,7 +315,7 @@ def plot_meshes_volumes_mix(objectList,    # list of shapeworks meshes to be vis
             
             # convert sw image to vtk image
             if type(objectList[objectIdx]) == sw.Image:
-                object_vtk = sw2vtkImage(objectList[objectIdx], 
+                object_vtk = utils.sw2vtkImage(objectList[objectIdx],
                                          verbose = False)
             else:
                 object_vtk = objectList[objectIdx]
@@ -333,7 +334,7 @@ def plot_meshes_volumes_mix(objectList,    # list of shapeworks meshes to be vis
         else: # 'mesh'
             # convert sw mesh to vtk image
             if type(objectList[objectIdx]) == sw.Mesh:
-                object_vtk = sw2vtkMesh(objectList[objectIdx], 
+                object_vtk = utils.sw2vtkMesh(objectList[objectIdx],
                                         verbose = False)
             else:
                 object_vtk = objectList[objectIdx]
