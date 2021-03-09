@@ -6,7 +6,5 @@ import itkwidgets as itkw
 # to be able to call itkwidgets within a function and if statements
 from IPython.display import display
 
-
 def itkfoo():
     print("itkfoo")
-    

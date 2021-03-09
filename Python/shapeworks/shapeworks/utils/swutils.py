@@ -16,7 +16,6 @@ def num_subplots(num_samples):
 
     return rows, cols
 
-
 # a helper function that saves a list of shapeworks images in a directory
 # this could be used to save final and intermediate results (if needed)
 def save_images(outDir,        # path to the directory where we want to save the images

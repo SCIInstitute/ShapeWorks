@@ -47,7 +47,6 @@ def setup_shapeworks_env(shapeworks_bin_dir = None,   # path to the binary direc
     if verbose:
         print_python_path()
         print_env_path()
-        
 
 setup_shapeworks_env()
 

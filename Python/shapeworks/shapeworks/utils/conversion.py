@@ -23,7 +23,6 @@ def sw2vtkImage(swImg, verbose = False):
     
     return vtkImg
 
-
 # converts shapeworks Mesh object to vtk mesh (currently saves then loads the
 # mesh since getting the vtkPolyData from the C binding isn't working, see
 # GitHub issue #825)
@@ -43,5 +42,3 @@ def sw2vtkMesh(swMesh, verbose = False):
     os.remove('temp.vtk')
     
     return vtkMesh
-
-

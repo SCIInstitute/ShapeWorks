@@ -152,7 +152,6 @@ def plot_volumes(volumeList,           # list of shapeworks images to be visuali
     # now, time to render our volumes
     plotter.show(use_ipyvtk = is_interactive)
 
-
 # add and plot a list of meshes
 def plot_meshes(meshList,           # list of shapeworks meshes to be visualized
                 meshNames       = None,  # list of strings of same size as shape list used to add text for each plot window, use None to not show text per window 
@@ -245,7 +244,6 @@ def plot_meshes(meshList,           # list of shapeworks meshes to be visualized
 
     # now, time to render our meshes
     plotter.show(use_ipyvtk = is_interactive)
-
 
 # helper function to add and plot a list of meshes/volumes mix
 def plot_meshes_volumes_mix(objectList,    # list of shapeworks meshes to be visualized
