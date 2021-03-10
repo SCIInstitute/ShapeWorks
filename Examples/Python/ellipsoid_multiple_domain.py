@@ -130,5 +130,5 @@ def Run_Pipeline(args):
     particleFolder = pointDir+"512_512/"
     file_type = "local"
     concatenate_particle_files(file_type,2,particleFolder, pointDir)
-    command = "MESA_GL_VERSION_OVERRIDE=3.2 ShapeWorksStudio "+ pointDir+ "multi_domain_"+file_type+".xml"
+    command = "ShapeWorksStudio "+ pointDir+ "multi_domain_"+file_type+".xml"
     os.system(command)
