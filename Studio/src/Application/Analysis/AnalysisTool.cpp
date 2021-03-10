@@ -530,6 +530,20 @@ const vnl_vector<double>& AnalysisTool::get_shape_points(int mode, double value)
                            QString::number(this->stats_.Eigenvalues()[m]),
                            QString::number(value * lambda));
 
+
+  std::vector<double> vals;
+  for (int i = this->stats_.Eigenvalues().size() - 1; i > 0; i--) {
+    vals.push_back(this->stats_.Eigenvalues()[i]);
+  }
+  double sum = std::accumulate(vals.begin(), vals.end(), 0.0);
+  double cumulation = 0;
+  for (size_t i = 0; i < mode+1; ++i) {
+    cumulation += vals[i];
+  }
+  this->ui_->explained_variance->setText(QString::number(vals[mode] / sum * 100, 'f', 1) + "%");
+  this->ui_->cumulative_explained_variance->setText(
+    QString::number(cumulation / sum * 100, 'f', 1) + "%");
+
   this->temp_shape_ = this->stats_.Mean() + (e * (value * lambda));
 
   return this->temp_shape_;
