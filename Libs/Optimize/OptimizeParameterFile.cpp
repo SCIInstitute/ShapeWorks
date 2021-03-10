@@ -109,6 +109,11 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
     return false;
   }
 
+  // Reads constraints
+  if (!this->read_constraints(&doc_handle, optimize)) {
+    return false;
+  }
+
   if (!this->read_flag_domains(&doc_handle, optimize)) {
     return false;
   }
@@ -132,14 +137,6 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
   if (!this->read_point_files(&doc_handle, optimize)) {
     return false;
   }
-
-
-  // must be read after the inputs since it checks that the counts match
-  if (!this->read_constraints(&doc_handle, optimize)) {
-    return false;
-  }
-
-  //optimize->GetSampler()->ApplyConstraintsToZeroCrossing();
 
   return true;
 }
@@ -482,10 +479,25 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
       }
       */
 
+      // passing cutting plane constraints
+      // planes dimensions [number_of_inputs, planes_per_input, normal/point]
+      std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > > planes;
+      for(size_t i = 0; i < meshFiles.size(); i++){
+          std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > domain_i_cps;
+          std::vector<itk::PlaneConstraint> *cs = optimize->GetSampler()->GetParticleSystem()->GetDomain(i)->GetConstraints()->getPlaneConstraints();
+          for(size_t j = 0; j < cs->size(); j++){
+             std::pair<Eigen::Vector3d, Eigen::Vector3d> cut_plane;
+             cut_plane.first = (*cs)[j].GetPlaneNormal();
+             cut_plane.second = (*cs)[j].GetPlanePoint();
+             domain_i_cps.push_back(cut_plane);
+          }
+          planes.push_back(domain_i_cps);
+      }
+
       auto poly_data = MeshUtils::threadSafeReadMesh(meshFiles[index].c_str()).getVTKMesh();
 
       if (poly_data) {
-        optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data));
+        optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data, planes));
       } else {
         std::cerr << "Failed to read " << meshFiles[index] << "\n";
         return false;
@@ -799,12 +811,41 @@ bool OptimizeParameterFile::read_distribution_cutting_plane(TiXmlHandle* doc_han
   return true;
 }
 
+size_t OptimizeParameterFile::acquire_input_size(TiXmlHandle* docHandle){
+    // Works for any type of domain
+    // list inputs to figure out number
+    TiXmlElement* elem = nullptr;
+
+      elem = docHandle->FirstChild("inputs").Element();
+      if (!elem) {
+        std::cerr << "No input meshes have been specified\n";
+        return 0;
+      }
+
+      std::istringstream inputsBuffer;
+
+      inputsBuffer.str(elem->GetText());
+      // load input images
+      std::vector<std::string> meshFiles;
+      std::string meshfilename;
+      while (inputsBuffer >> meshfilename) {
+        meshFiles.push_back(meshfilename);
+      }
+
+      int dps = 1;
+      elem = docHandle->FirstChild("domains_per_shape").Element();
+      if (elem) dps = atoi(elem->GetText());
+
+      return size_t(meshFiles.size()/dps);
+}
+
 //---------------------------------------------------------------------------
 bool OptimizeParameterFile::read_cutting_planes(TiXmlHandle* docHandle, Optimize* optimize)
 {
   TiXmlElement* elem;
   std::istringstream inputsBuffer;
-  int numShapes = optimize->GetNumShapes();
+  //int numShapes = optimize->GetNumShapes();
+  int numShapes = this->acquire_input_size(docHandle);
 
   std::vector<int> cutting_planes_per_input;
 
@@ -921,7 +962,7 @@ bool OptimizeParameterFile::read_cutting_spheres(TiXmlHandle* doc_handle, Optimi
 {
   TiXmlElement* elem = nullptr;
   std::istringstream inputsBuffer;
-  int numShapes = optimize->GetNumShapes();
+  int numShapes = this->acquire_input_size(doc_handle);
   // sphere radii and centers
   std::vector<int> spheres_per_input;
 

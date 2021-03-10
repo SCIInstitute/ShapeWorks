@@ -61,6 +61,8 @@ private:
 
   bool read_flag_domains(TiXmlHandle* doc_handle, Optimize* optimize);
 
+  size_t acquire_input_size(TiXmlHandle* docHandle);
+
 private:
 
   std::vector<int> read_int_list(TiXmlHandle* doc_handle, std::string name);
