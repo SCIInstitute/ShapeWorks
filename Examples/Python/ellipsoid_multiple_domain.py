@@ -64,8 +64,8 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    datasetName = "ellipsoid_md_dist"
-    outputDirectory = "Output/ellipsoid_md_dist/"
+    datasetName = "ellipsoid_md"
+    outputDirectory = "Output/ellipsoid_md/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
     CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
@@ -130,5 +130,5 @@ def Run_Pipeline(args):
     particleFolder = pointDir+"512_512/"
     file_type = "local"
     concatenate_particle_files(file_type,2,particleFolder, pointDir)
-    command = "ShapeWorksStudio "+ pointDir+ "multi_domain_"+file_type+".xml"
+    command = "MESA_GL_VERSION_OVERRIDE=3.2 ShapeWorksStudio "+ pointDir+ "multi_domain_"+file_type+".xml"
     os.system(command)
