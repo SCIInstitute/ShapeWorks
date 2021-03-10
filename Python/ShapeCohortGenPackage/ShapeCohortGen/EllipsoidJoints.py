@@ -16,10 +16,10 @@ def generate_ellipsoid_joint(num_samples, meshDir, randomize_center,separation):
 		center_loc = [0,0,0]
 
 	# Randomize the radiis for the ellipsoids
-	x_radius = np.random.randint(low =15,high=25,size =1)
-	y_radius = np.random.randint(low =5,high=15,size =1)
-	z_radius = np.random.randint(low =5,high=15,size =1)
-	radii = [x_radius[0],y_radius[0],z_radius[0]]
+	x_radius = 20#np.random.randint(low =15,high=25,size =1)
+	y_radius = 10#np.random.randint(low =5,high=15,size =1)
+	z_radius = 12#np.random.randint(low =5,high=15,size =1)
+	radii = [x_radius,y_radius,z_radius]
 	location_offset = [0,y_radius*2 + separation,0]
 	#Rotation increments
 	increments = int(180/num_samples)
@@ -32,7 +32,7 @@ def generate_ellipsoid_joint(num_samples, meshDir, randomize_center,separation):
 		plyFileName1 = meshDir+"ellipsoid_joint_"+filename+"_d1.ply"
 		plyFileName2 = meshDir+"ellipsoid_joint_"+filename+"_d2.ply"
 		
-		ellipsoid_joint1 = addEllipsoid(center_loc,radii,0,joint=True)
+		ellipsoid_joint1 = addEllipsoid(center_loc,radii,0,rotation_axis='Y')
 
 		ply_writer = vtk.vtkPLYWriter()
 		ply_writer.SetInputData(ellipsoid_joint1.GetOutput())
@@ -46,7 +46,7 @@ def generate_ellipsoid_joint(num_samples, meshDir, randomize_center,separation):
 
 		rotation = i*increments
 		center_loc_new = list( map(add, center_loc, location_offset) )
-		ellipsoid_joint2 = addEllipsoid(center_loc_new,radii,rotation,joint=True)
+		ellipsoid_joint2 = addEllipsoid(center_loc_new,radii,rotation,rotation_axis='Y')
 
 		ply_writer = vtk.vtkPLYWriter()
 		ply_writer.SetInputData(ellipsoid_joint2.GetOutput())
