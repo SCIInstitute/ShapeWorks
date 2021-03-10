@@ -120,12 +120,16 @@ std::string Subject::get_group_value(std::string group_name)
 std::vector<DomainType> Subject::get_domain_types()
 {
   std::vector<DomainType> domain_types;
-  for (auto name: this->segmentation_filenames_) {
+  auto list = this->segmentation_filenames_;
+  if (this->segmentation_filenames_.empty()) {
+    list = this->groomed_filenames_;
+  }
+  for (auto name: list) {
     std::transform(name.begin(), name.end(), name.begin(), ::tolower);
 
     bool mesh = false;
 
-    for (auto type : Mesh::get_supported_types()) {
+    for (auto type : Mesh::getSupportedTypes()) {
       if (StringUtils::hasSuffix(name, type)) {
         mesh = true;
       }

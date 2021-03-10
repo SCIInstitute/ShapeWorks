@@ -105,6 +105,14 @@ public:
 
   shapeworks::Parameters& parameters();
 
+  std::vector<DomainType> get_domain_types();
+
+  double update_auto_glyph_size();
+
+  double get_auto_glyph_size();
+
+  static Point3 get_point(const vnl_vector<double>& points, int i);
+
 public Q_SLOTS:
   void handle_clear_cache();
   void handle_new_mesh();
@@ -155,6 +163,8 @@ private:
   Parameters params_;
 
   std::shared_ptr<Project> project_{new Project()};
+
+  double auto_glyph_size_ = -1;
 };
 
 }

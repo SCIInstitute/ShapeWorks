@@ -1,10 +1,12 @@
 #pragma once
 
 #include "Shapeworks.h"
+#include "Region.h"
 
 #include <itkImage.h>
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
+#include <vtkImageData.h>
 
 #include <limits>
 
@@ -20,85 +22,21 @@ public:
   using PixelType = float;
   using ImageType = itk::Image<PixelType, 3>;
 
-  /// logical region of an image (may be negative for relative regions to a given location in an image).
-  struct Region
-  {
-    Coord min = Coord({ 1000000000, 1000000000, 1000000000 });
-    Coord max = Coord({ -1000000000, -1000000000, -1000000000 });
-    Region(const Dims &dims) : min({0, 0, 0}) {
-      if (0 != (dims[0] + dims[1] + dims[2])) 
-        max = Coord({static_cast<long>(dims[0])-1,
-                     static_cast<long>(dims[1])-1,
-                     static_cast<long>(dims[2])-1});
-    }
-    Region(const Coord &_min, const Coord &_max) : min(_min), max(_max) {}
-    Region() = default;
-    bool operator==(const Region &other) const { return min == other.min && max == other.max; }
-
-    /// verified min/max do not create an inverted or an empty region
-    bool valid() const { return max[0] > min[0] && max[1] > min[1] && max[2] > min[2]; }
-
-    Coord origin() const { return min; }
-    Dims size() const {
-      return Dims({static_cast<unsigned long>(max[0]-min[0]),
-                   static_cast<unsigned long>(max[1]-min[1]),
-                   static_cast<unsigned long>(max[2]-min[2])});
-    }
-
-    /// clip region to fit inside image
-    Region& clip(const Image& image)
-    {
-      shrink(Region(image.dims()));
-      return *this;
-    }
-    
-    /// grows or shrinks the region by the specified amount
-    void pad(int padding) {
-      for (auto i=0; i<3; i++) {
-        min[i] -= padding;
-        max[i] += padding;
-      }
-    }
-
-    /// shrink this region down to the smallest portions of both
-    void shrink(const Region &other) {
-      for (auto i=0; i<3; i++) {
-        min[i] = std::max(min[i], other.min[i]);
-        max[i] = std::min(max[i], other.max[i]);
-      }
-    }
-
-    /// grow this region up to the largest portions of both
-    void grow(const Region &other) {
-      for (auto i=0; i<3; i++) {
-        min[i] = std::min(min[i], other.min[i]);
-        max[i] = std::max(max[i], other.max[i]);
-      }
-    }
-
-    /// expand this region to include this point
-    void expand(const Coord &pt) {
-      for (auto i=0; i<3; i++) {
-        min[i] = std::min(min[i], pt[i]);
-        max[i] = std::max(max[i], pt[i]);
-      }
-    }
-
-    /// implicit conversion to an itk region
-    operator ImageType::RegionType() const { return ImageType::RegionType(origin(), size()); }
-  };
-
   // constructors and assignment operators //
   Image(const std::string &pathname) : image(read(pathname)) {}
   Image(ImageType::Pointer imagePtr) : image(imagePtr) { if (!image) throw std::invalid_argument("null imagePtr"); }
+  Image(const vtkSmartPointer<vtkImageData> vtkImage);
   Image(Image&& img) : image(nullptr) { this->image.Swap(img.image); }
   Image(const Image& img) : image(cloneData(img.image)) {}
   Image& operator=(const Image& img); /// lvalue assignment operator
   Image& operator=(Image&& img);      /// rvalue assignment operator
 
-  // return this as an ITK image
+  /// return this as an ITK image
   operator ImageType::Pointer() { return image; }
   ImageType::Pointer getITKImage() const { return image; }
+
+  /// creates a VTK filter for the given image
+  vtkSmartPointer<vtkImageData> getVTKImage() const;
   
   // modification functions //
 
@@ -130,7 +68,7 @@ public:
   Image& operator-=(const PixelType x);
 
   /// antialiases image
-  Image& antialias(unsigned iterations = 50, double maxRMSErr = 0.01f, int layers = 0);
+  Image& antialias(unsigned iterations = 50, double maxRMSErr = 0.01f, int layers = 3);
   
   /// helper identical to setOrigin(image.center()) changing origin (in the image header) to physcial center of the image
   Image& recenter();
@@ -141,6 +79,9 @@ public:
   /// resamples image using new physical spacing, updating logical dims to keep all image data for this spacing
   Image& resample(const Vector& physicalSpacing, InterpolationType interp = Linear);
   
+  /// resamples image using isotropic physical spacing
+  Image& resample(double isoSpacing = 1.0, InterpolationType interp = Linear);
+
   /// changes logical image size, computing new physical spacing based on this size (i.e., physical image size remains the same)
   Image& resize(Dims logicalDims, InterpolationType interp = Linear);
 
@@ -156,8 +97,17 @@ public:
   /// helper to simply scale image around center (not origin)
   Image& scale(const Vector3 &v);
 
-  /// helper to simply rotate around center (not origin) using axis (default z-axis) by angle (in radians) 
+  /// helper to simply rotate around axis through center (not origin) by given angle (in radians)
   Image& rotate(const double angle, const Vector3 &axis);
+
+  /// helper to simply rotate around axis through center (not origin) by given angle (in radians)
+  Image& rotate(const double angle, Axis axis);
+
+  /// creates a transform based on transform type
+  TransformPtr createTransform(XFormType type = CenterOfMass);
+
+  /// creates a transform based on transform type
+  TransformPtr createTransform(const Image &target, XFormType type = IterativeClosestPoint, float isoValue = 0.0, unsigned iterations = 20);
 
   /// applies the given transformation to the image by using resampling filter
   Image& applyTransform(const TransformPtr transform, InterpolationType interp = Linear);
@@ -186,8 +136,14 @@ public:
   /// computes sigmoid function pixel-wise using sigmoid image filter
   Image& applySigmoidFilter(double alpha = 10.0, double beta = 10.0);
 
-  /// segments structures in images using topology preserving geodesic active contour level set filter
+  /// segements structures in images using topology preserving geodesic active contour level set filter
   Image& applyTPLevelSetFilter(const Image& featureImage, double scaling = 20.0);
+
+  /// creates a feature image (by applying gradient then sigmoid filters), then passes it to the TPLevelSet filter [curvature flow filter is often applied to the image before this filter]
+  Image& topologyPreservingSmooth(float scaling = 20.0, float sigmoidAlpha = 10.5, float sigmoidBeta = 10.0);
+
+  /// applies intensity windowing image filter
+  Image& applyIntensityFilter(double minVal, double maxVal);
 
   /// applies gaussian blur with given sigma
   Image& gaussianBlur(double sigma = 0.0);
@@ -208,7 +164,7 @@ public:
   Image& setOrigin(Point3 origin = Point3({0, 0, 0}));
 
   /// sets the image spacing to the given value
-  Image& setSpacing(Vector3 spacing = makeVector({1.0, 1.0, 1.0}));
+  Image& setSpacing(Vector3 spacing);
 
   // query functions //
 
@@ -228,13 +184,13 @@ public:
   Point3 center() const { return origin() + size() / 2.0; }
 
   /// return coordinate system in which this image lives in physical space
-  const ImageType::DirectionType coordsys() const { return image->GetDirection(); };
+  ImageType::DirectionType coordsys() const { return image->GetDirection(); };
 
   /// returns average physical coordinate of pixels in range (minval, maxval]
   Point3 centerOfMass(PixelType minVal = 0.0, PixelType maxVal = 1.0) const;
 
   /// computes the logical coordinates of the largest region of data <= the given isoValue
-  Image::Region boundingBox(PixelType isovalue = 1.0) const;
+  Region boundingBox(PixelType isovalue = 1.0) const;
 
   /// converts from pixel coordinates to physical space
   Point3 logicalToPhysical(const Coord &c) const;
@@ -253,11 +209,8 @@ public:
   /// writes image, format specified by filename extension
   Image& write(const std::string &filename, bool compressed = true);
 
-  /// creates a vtkPolyData for the given image
-  static vtkSmartPointer<vtkPolyData> getPolyData(const Image& image, PixelType isoValue = 0.0);
-
-  /// converts to Mesh
-  std::unique_ptr<Mesh> toMesh(PixelType isovalue = 1.0) const;
+  /// converts image to mesh (note: definition in Conversion.cpp)
+  Mesh toMesh(PixelType isovalue) const;
 
 private:
   friend struct SharedCommandData;
@@ -270,12 +223,20 @@ private:
   /// clones the underlying ImageType (ITK) data
   static ImageType::Pointer cloneData(const ImageType::Pointer img);
 
+  /// generates the Transform necessary to move the contents of this binary image to the center
+  TransformPtr createCenterOfMassTransform();
+
+  /// creates transform to target using ICP registration (isovalue is used to create meshes from dt, which are then passed to ICP)
+  TransformPtr createRigidRegistrationTransform(const Image &target, float isoValue = 0.0, unsigned iterations = 20);
+
+  /// creates a vtkPolyData for the given image
+  static vtkSmartPointer<vtkPolyData> getPolyData(const Image& image, PixelType isoValue = 0.0);
+
   ImageType::Pointer image;
 };
 
-/// stream insertion operators for Image and Image::Region
+/// stream insertion operators for Image
 std::ostream& operator<<(std::ostream &os, const Image& img);
-std::ostream& operator<<(std::ostream &os, const Image::Region &region);
 
 /// override templates defined in Shapeworks.h
 template<>

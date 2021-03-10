@@ -1,4 +1,3 @@
-
 # GTest setup
 find_package(GTest REQUIRED)
 # NOTE: must call enable_testing() before this in the top-level CMakeLists.txt

@@ -1,10 +1,13 @@
+# still can't find gtest/gtest.h, not sure why
+# needed to test private functions
+#find_package(GTest REQUIRED)
+
 # Mesh library
 
 set(Mesh_sources
  Mesh.cpp
  meshFIM.cpp
  MeshUtils.cpp
- swHausdorffDistancePointSetFilter.cxx
  )
 
 set(Mesh_headers
@@ -26,9 +29,22 @@ add_library(Mesh STATIC
 target_include_directories(Mesh PUBLIC
  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/PreviewMeshQC>
- $<INSTALL_INTERFACE:include>)
+ $<INSTALL_INTERFACE:include>
+ )
 
-target_link_libraries(Mesh trimesh2 vgl vgl_algo ${VTK_LIBRARIES})
+target_link_libraries(
+  Mesh 
+  Common
+  Utils
+  trimesh2 
+  vgl 
+  vgl_algo 
+  ${VTK_LIBRARIES}
+  Eigen3::Eigen
+  igl::core
+  Particles
+  TBB::tbb
+  )
 
 # Install
 set_target_properties(Mesh PROPERTIES PUBLIC_HEADER
@@ -42,17 +58,10 @@ install(TARGETS Mesh
  PUBLIC_HEADER DESTINATION include
  )
 
-ADD_EXECUTABLE(GenerateBinaryAndDTImagesFromMeshes GenerateBinaryAndDTImagesFromMeshes.cxx )
-TARGET_LINK_LIBRARIES(GenerateBinaryAndDTImagesFromMeshes ${ITK_LIBRARIES} Mesh tinyxml)
-INSTALL(TARGETS GenerateBinaryAndDTImagesFromMeshes RUNTIME DESTINATION bin)
-
-ADD_EXECUTABLE(ComputeMeshGeodesics ComputeMeshGeodesics.cxx )
+# Added to backlog
+ADD_EXECUTABLE(ComputeMeshGeodesics ComputeMeshGeodesics.cxx)
 TARGET_LINK_LIBRARIES(ComputeMeshGeodesics ${ITK_LIBRARIES} Mesh tinyxml)
 INSTALL(TARGETS ComputeMeshGeodesics RUNTIME DESTINATION bin)
-
-ADD_EXECUTABLE(ExtractVertexFeatureFromMesh ExtractVertexFeatureFromMesh.cxx )
-TARGET_LINK_LIBRARIES(ExtractVertexFeatureFromMesh Mesh tinyxml)
-INSTALL(TARGETS ExtractVertexFeatureFromMesh RUNTIME DESTINATION bin)
 
 # Uses custom TriMesh functions without making an instance of meshFIM
 #ADD_EXECUTABLE(GetFeatureVolume GetFeatureVolume.cxx)
@@ -63,13 +72,10 @@ INSTALL(TARGETS ExtractVertexFeatureFromMesh RUNTIME DESTINATION bin)
 #TARGET_LINK_LIBRARIES(ComputeGeodesicDistanceToCurve ${ITK_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS ComputeGeodesicDistanceToCurve RUNTIME DESTINATION bin)
 
-#ADD_EXECUTABLE(GenerateFidsFiles GenerateFidsFiles.cxx )
+# Added to backlog
+#ADD_EXECUTABLE(GenerateFidsFiles GenerateFidsFiles.cxx)
 #TARGET_LINK_LIBRARIES(GenerateFidsFiles ${ITK_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS GenerateFidsFiles RUNTIME DESTINATION bin)
-
-ADD_EXECUTABLE(ClipClosedSurface ClipClosedSurface.cxx)
-TARGET_LINK_LIBRARIES(ClipClosedSurface ${ITK_LIBRARIES} Mesh tinyxml)
-INSTALL(TARGETS ClipClosedSurface RUNTIME DESTINATION bin)
 
 #ADD_EXECUTABLE(ComputeCurvatureAndCoordFiles ComputeCurvatureAndCoordFiles.cxx)
 #TARGET_LINK_LIBRARIES(ComputeCurvatureAndCoordFiles ${ITK_LIBRARIES} Mesh tinyxml)
@@ -79,32 +85,21 @@ INSTALL(TARGETS ClipClosedSurface RUNTIME DESTINATION bin)
 #TARGET_LINK_LIBRARIES(ProjectPointsOntoMesh ${ITK_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS ProjectPointsOntoMesh RUNTIME DESTINATION bin)
 
-#add_executable(GenerateFeatureGradientFiles GenerateFeatureGradientFiles.cxx)
+#ADD_EXECUTABLE(GenerateFeatureGradientFiles GenerateFeatureGradientFiles.cxx)
 #TARGET_LINK_LIBRARIES(GenerateFeatureGradientFiles ${ITK_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS GenerateFeatureGradientFiles RUNTIME DESTINATION bin)
 
-#add_executable(WriteFeatureGradientAsText WriteFeatureGradientAsText.cxx)
-#INSTALL(TARGETS WriteFeatureGradientAsText RUNTIME DESTINATION bin)
-
-add_executable(ProbeNormals ProbeNormals.cxx)
-TARGET_LINK_LIBRARIES(ProbeNormals ${ITK_LIBRARIES} Utils)
-INSTALL(TARGETS ProbeNormals RUNTIME DESTINATION bin)
-
-add_executable(ComputeMeanNormals ComputeMeanNormals.cxx)
+ADD_EXECUTABLE(ComputeMeanNormals ComputeMeanNormals.cxx)
 TARGET_LINK_LIBRARIES(ComputeMeanNormals ${ITK_LIBRARIES} tinyxml Utils)
 INSTALL(TARGETS ComputeMeanNormals RUNTIME DESTINATION bin)
 
-#add_executable(GenerateNormalFeaFiles GenerateNormalFeaFiles.cxx)
+#ADD_EXECUTABLE(GenerateNormalFeaFiles GenerateNormalFeaFiles.cxx)
 #TARGET_LINK_LIBRARIES(GenerateNormalFeaFiles ${ITK_LIBRARIES} tinyxml Mesh)
 #INSTALL(TARGETS GenerateNormalFeaFiles RUNTIME DESTINATION bin)
 
-#ADD_EXECUTABLE(ComputeGeodesicDistanceToLandmark ComputeGeodesicDistanceToLandmark.cxx )
+#ADD_EXECUTABLE(ComputeGeodesicDistanceToLandmark ComputeGeodesicDistanceToLandmark.cxx)
 #TARGET_LINK_LIBRARIES(ComputeGeodesicDistanceToLandmark ${ITK_LIBRARIES} ${VXL_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS ComputeGeodesicDistanceToLandmark RUNTIME DESTINATION bin)
-
-ADD_EXECUTABLE(PreviewCmd PreviewCmd.cxx )
-TARGET_LINK_LIBRARIES(PreviewCmd Utils Mesh )
-INSTALL(TARGETS PreviewCmd RUNTIME DESTINATION bin)
 
 ADD_EXECUTABLE(ReconstructMeanSurface ReconstructMeanSurface.cxx)
 TARGET_LINK_LIBRARIES(ReconstructMeanSurface ${ITK_LIBRARIES} tinyxml Utils Analyze)
@@ -118,46 +113,20 @@ ADD_EXECUTABLE(ReconstructSamplesAlongPCAModes ReconstructSamplesAlongPCAModes.c
 TARGET_LINK_LIBRARIES(ReconstructSamplesAlongPCAModes ${ITK_LIBRARIES} tinyxml Utils Analyze Optimize Particles)
 INSTALL(TARGETS ReconstructSamplesAlongPCAModes RUNTIME DESTINATION bin)
 
-#ADD_EXECUTABLE(GenerateFidsFilesFromMeshes GenerateFidsFilesFromMeshes.cxx )
+# Added to backlog
+#ADD_EXECUTABLE(GenerateFidsFilesFromMeshes GenerateFidsFilesFromMeshes.cxx)
 #TARGET_LINK_LIBRARIES(GenerateFidsFilesFromMeshes ${ITK_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS GenerateFidsFilesFromMeshes RUNTIME DESTINATION bin)
 
-ADD_EXECUTABLE(FixCuttingPlanes FixCuttingPlanes.cxx )
+ADD_EXECUTABLE(FixCuttingPlanes FixCuttingPlanes.cxx)
 TARGET_LINK_LIBRARIES(FixCuttingPlanes ${ITK_LIBRARIES} Mesh tinyxml)
 INSTALL(TARGETS FixCuttingPlanes RUNTIME DESTINATION bin)
 
-#ADD_EXECUTABLE(ComputeGeodesicDistanceFromVerticesToPoints ComputeGeodesicDistanceFromVerticesToPoints.cxx )
-#TARGET_LINK_LIBRARIES(ComputeGeodesicDistanceFromVerticesToPoints ${ITK_LIBRARIES} ${VXL_LIBRARIES} Mesh tinyxml)
-#INSTALL(TARGETS ComputeGeodesicDistanceFromVerticesToPoints RUNTIME DESTINATION bin)
+ADD_EXECUTABLE(ComputeGeodesicDistanceFromVerticesToPoints ComputeGeodesicDistanceFromVerticesToPoints.cxx)
+TARGET_LINK_LIBRARIES(ComputeGeodesicDistanceFromVerticesToPoints ${ITK_LIBRARIES} ${VXL_LIBRARIES} Mesh tinyxml)
+INSTALL(TARGETS ComputeGeodesicDistanceFromVerticesToPoints RUNTIME DESTINATION bin)
 
-ADD_EXECUTABLE(FillMeshHoles FillMeshHoles.cxx )
-TARGET_LINK_LIBRARIES(FillMeshHoles Mesh tinyxml)
-INSTALL(TARGETS FillMeshHoles RUNTIME DESTINATION bin)
-
-ADD_EXECUTABLE(RemoveFidsDTLeakage RemoveFidsDTLeakage.cxx )
+# Added to backlog
+ADD_EXECUTABLE(RemoveFidsDTLeakage RemoveFidsDTLeakage.cxx)
 TARGET_LINK_LIBRARIES(RemoveFidsDTLeakage ${ITK_LIBRARIES} Mesh tinyxml)
 INSTALL(TARGETS RemoveFidsDTLeakage RUNTIME DESTINATION bin)
-
-ADD_EXECUTABLE(ProbeFeatureVolumesAtMeshVertices ProbeFeatureVolumesAtMeshVertices.cxx)
-TARGET_LINK_LIBRARIES(ProbeFeatureVolumesAtMeshVertices ${ITK_LIBRARIES} Mesh tinyxml)
-INSTALL(TARGETS ProbeFeatureVolumesAtMeshVertices RUNTIME DESTINATION bin)
-
-ADD_EXECUTABLE(SmoothMesh SmoothMesh.cxx )
-TARGET_LINK_LIBRARIES(SmoothMesh Mesh tinyxml)
-INSTALL(TARGETS SmoothMesh RUNTIME DESTINATION bin)
-
-ADD_EXECUTABLE(ComputeRasterizationVolumeOriginAndSize ComputeRasterizationVolumeOriginAndSize.cxx )
-TARGET_LINK_LIBRARIES(ComputeRasterizationVolumeOriginAndSize Mesh tinyxml)
-INSTALL(TARGETS ComputeRasterizationVolumeOriginAndSize RUNTIME DESTINATION bin)
-
-add_executable(ReflectMesh ReflectMesh.cxx )
-target_link_libraries(ReflectMesh Mesh Utils)
-INSTALL(TARGETS ReflectMesh RUNTIME DESTINATION bin)
-
-add_executable(SurfaceToSurfaceDistance SurfaceToSurfaceDistance.cxx )
-target_link_libraries(SurfaceToSurfaceDistance Mesh Utils)
-INSTALL(TARGETS SurfaceToSurfaceDistance RUNTIME DESTINATION bin)
-
-#ADD_EXECUTABLE(fea2vtk fea2vtk.cxx)
-#TARGET_LINK_LIBRARIES(fea2vtk ${ITK_LIBRARIES} Mesh tinyxml)
-#INSTALL(TARGETS fea2vtk RUNTIME DESTINATION bin)

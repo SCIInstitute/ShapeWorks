@@ -22,9 +22,6 @@ from zipfile import ZipFile
 import subprocess
 import GroomUtils
 
-
-
-
 def dataset_exists_check(use_case):
 	
 	existsFlag = False
@@ -34,7 +31,6 @@ def dataset_exists_check(use_case):
 			existsFlag = True
 	return existsFlag
 
-
 def generate_download_flag(outputDirectory,folder):
 	download_flag = False
 	#if output/dataset + subfolders exits 
@@ -43,15 +39,13 @@ def generate_download_flag(outputDirectory,folder):
 			if(len(os.listdir(outputDirectory+folder))==0 or len(os.listdir(outputDirectory+folder))<3):
 				download_flag = True
 			else:
-				print("Data available in " + folder + "  is sufficient for tiny test, no new data will be downloaded")
+				print("Data available in " + folder + "  is sufficient, no new data will be downloaded")
 
 	#if the subfolder folder does not exists then download
 	else:
 		download_flag = True		
 	return download_flag
-
-
-			
+		
 def download_subset(use_case,datasetName,outputDirectory):
 	import DatasetUtils
 	import re
@@ -88,11 +82,10 @@ def download_subset(use_case,datasetName,outputDirectory):
 		if(generate_download_flag(outputDirectory,"shape_models/femur/mean/")):
 			meanFilesList = sorted([files for files in fileList if re.search("^shape_models/femur/mean/.*",files)])
 			DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meanFilesList)
-
 	
 def download_and_unzip_dataset(datasetName, outputDirectory):
-	# Check if the unzipped data is present
-	if True:#not os.path.exists(outputDirectory + datasetName + '/'):
+	# Check if the unzipped data is present and number of files are more than 3 for full use case
+	if generate_download_flag(outputDirectory,datasetName):
 		# check if the zipped data is present
 		zipfile = 'Data/' + datasetName + ".zip"
 		if not os.path.exists(zipfile):
@@ -167,7 +160,6 @@ def sampledata(inDataList, num_sample):
 
 def samplemesh(inMeshList, num_sample, printCmd=False):
 	D = np.zeros((len(inMeshList), len(inMeshList)))
-	inMeshList = GroomUtils.getVTKmeshes(inMeshList, printCmd)
 	for i in range(len(inMeshList)):
 		for j in range(i, len(inMeshList)):
 			execCommand = ["SurfaceToSurfaceDistance", "-a", inMeshList[i],

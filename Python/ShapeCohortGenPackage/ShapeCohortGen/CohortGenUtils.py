@@ -2,10 +2,13 @@ import os
 import itk
 import numpy as np
 import scipy
-import subprocess
 import shutil
+<<<<<<< HEAD
 import sys
 from termcolor import colored, cprint
+=======
+from shapeworks import *
+>>>>>>> master
 
 '''
 Make folder
@@ -59,7 +62,6 @@ def get_files(folder):
 Get files with specific extensions
 '''
 def get_file_with_ext(file_list,extension):
-
 	extList =[]
 	for file in file_list:
 		ext = file.split(".")[-1]
@@ -69,13 +71,64 @@ def get_file_with_ext(file_list,extension):
 	return extList
 
 '''
-Delete files with specific extensions
+Takes inname path and replaces dir with outdir and adds extension before file type
 '''
-def clean_dir(folder,extension):
-	for filename in os.listdir(folder):
-		
-		if(extension in filename):
-			os.remove(folder+"/"+filename)
+def rename(inname, outDir, extension_addition, extension_change=''):
+	initPath = os.path.dirname(inname)
+	outname = inname.replace(initPath, outDir)
+	current_extension = "." + inname.split(".")[-1]
+	if extension_addition != '':
+		outname = outname.replace(current_extension, '.' + extension_addition + current_extension)
+	if extension_change != '':
+		outname = outname.replace(current_extension, extension_change)
+	return outname
+
+'''
+Generate segmentations form mesh liost
+'''
+def generate_segmentations(meshList, out_dir, randomize_size, spacing, allow_on_boundary):
+	segDir = out_dir + "segmentations/"
+	make_dir(segDir)
+	PLYmeshList = get_file_with_ext(meshList,'ply')
+	# get dims tht fit all meshes
+	bb = MeshUtils.boundingBox(PLYmeshList)
+	fit_all_origin = [bb.min[0], bb.min[1], bb.min[2]]
+	bb_dims = bb.max-bb.min
+	fit_all_dims = [bb_dims[0], bb_dims[1], bb_dims[2]]
+	# randomly select 20% meshes for boundary touching samples
+	numMeshes = len(PLYmeshList)
+	meshIndexArray = np.array(list(range(numMeshes)))
+	subSampleSize = int(0.2*numMeshes)
+	randomBoundarySamples = np.random.choice(meshIndexArray,subSampleSize,replace=False)
+	# loop through meshes and turn to images
+	segList = []
+	meshIndex = 0
+	for mesh_ in PLYmeshList:
+		print("Generating seg " + str(meshIndex + 1) + " out of " + str(len(PLYmeshList)))
+		segFile = rename(mesh_, segDir, "", ".nrrd")
+		segList.append(segFile)
+		mesh = Mesh(mesh_)
+		# If the meshIndex is in the randomly selected samples, get the origin and size 
+		# of that mesh so that the segmentation image touch the boundary
+		if allow_on_boundary and (meshIndex in randomBoundarySamples):
+			bb = mesh.boundingBox()
+			origin = [bb.min[0], bb.min[1], bb.min[2]]
+			dims = [bb.max[0]*2, bb.max[1]*2, bb.max[2]*2]
+			pad = np.zeros(3)
+		else:
+			origin = fit_all_origin
+			dims = fit_all_dims
+			# If randomize size, add random padding to x, y, and z dims
+			if randomize_size:
+				pad = np.random.randint(5, high=15, size=3)
+			else:
+				pad = np.full(3, 5)
+		origin = list(np.array(origin) - pad)
+		dims = list((np.array(dims) + (2*pad)).astype(int))
+		image = mesh.toImage(spacing, dims, origin)
+		image.write(segFile, 0)
+		meshIndex += 1
+	return segList
 
 '''
 Generates image by blurring and adding noise to segmentation
@@ -85,7 +138,7 @@ def generate_images(segs, outDir, blur_factor, foreground_mean, foreground_var, 
 	make_dir(imgDir)
 	index = 1
 	for seg in segs:
-		print("Generating image " + str(index))
+		print("Generating image " + str(index) + " out of " + str(len(segs)))
 		name = seg.replace('segmentations/','images/').replace('_seg.nrrd', '_blur' + str(blur_factor) + '.nrrd')
 		itk_bin = itk.imread(seg, itk.F)
 		img_array = itk.array_from_image(itk_bin)
