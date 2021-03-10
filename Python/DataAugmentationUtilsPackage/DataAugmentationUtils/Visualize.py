@@ -108,11 +108,11 @@ def violin(data_csv):
                 types.append(current_type)
                 dims.append(str(index-1))
                 scores.append(float(row[index]))
-    data = {'Data_Type':types, 'PCA_Mode':dims, "PCA_Score":scores}
+    data = {'Data Type':types, 'PCA Mode':dims, "PCA Score":scores}
     df = pd.DataFrame(data) 
     # Plot
     sns.set_style("whitegrid")
-    ax = sns.violinplot(x=df.PCA_Mode, y=df.PCA_Score, hue=df.Data_Type,
+    ax = sns.violinplot(x=df['PCA Mode'], y=df['PCA Score'], hue=df['Data Type'],
                         data=df, palette="Set2", split=True, scale="area")
     # Save and show
     out_png = os.path.join(os.path.dirname(data_csv), "violin.png")
