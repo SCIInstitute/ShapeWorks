@@ -481,18 +481,7 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
 
       // passing cutting plane constraints
       // planes dimensions [number_of_inputs, planes_per_input, normal/point]
-      std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > > planes;
-      for(size_t i = 0; i < meshFiles.size(); i++){
-          std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > domain_i_cps;
-          std::vector<itk::PlaneConstraint> *cs = optimize->GetSampler()->GetParticleSystem()->GetDomain(i)->GetConstraints()->getPlaneConstraints();
-          for(size_t j = 0; j < cs->size(); j++){
-             std::pair<Eigen::Vector3d, Eigen::Vector3d> cut_plane;
-             cut_plane.first = (*cs)[j].GetPlaneNormal();
-             cut_plane.second = (*cs)[j].GetPlanePoint();
-             domain_i_cps.push_back(cut_plane);
-          }
-          planes.push_back(domain_i_cps);
-      }
+      std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > > planes = optimize->GetSampler()->ComputeCuttingPlanes();
 
       auto poly_data = MeshUtils::threadSafeReadMesh(meshFiles[index].c_str()).getVTKMesh();
 
