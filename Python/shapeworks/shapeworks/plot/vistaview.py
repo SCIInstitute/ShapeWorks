@@ -1,28 +1,46 @@
 import pyvista as pv
-import utils
-
+import numpy as np
+# import shapeworks
 # enable use_ipyvtk by default for interactive plots
 pv.rcParams['use_ipyvtk'] = True 
-    
+
+# Helper function to determine the best grid size (rows and columns) given the
+# number of samples in a dataset.
+def postive_factors(num_samples):
+    factors = []
+
+    for whole_number in range(1, num_samples + 1):
+        if num_samples % whole_number == 0:
+            factors.append(whole_number)
+
+    return factors
+
+def num_subplots(num_samples):
+    factors = postive_factors(num_samples)
+    cols    = min(int(np.ceil(np.sqrt(num_samples))),max(factors))
+    rows    = int(np.ceil(num_samples/cols))
+
+    return rows, cols
+
 # a helper function that addes a vtk image to a pyvista plotter
-def add_volume_to_plotter( pvPlotter,      # pyvista plotter
-                           vtkImg,         # vtk image to be added
-                           rowIdx, colIdx, # subplot row and column index
-                           title = None,   # text to be added to the subplot, use None to not show text 
-                           shade_volumes  = True,  # use shading when performing volume rendering
-                           color_map      = "coolwarm", # color map for volume rendering, e.g., 'bone', 'coolwarm', 'cool', 'viridis', 'magma'
-                           show_axes      = True,  # show a vtk axes widget for each rendering window
-                           show_bounds    = False, # show volume bounding box
-                           show_all_edges = True,  # add an unlabeled and unticked box at the boundaries of plot. 
-                           font_size      = 10     # text font size for windows
-                         ):
+def add_volume_to_plotter(pvPlotter,      # pyvista plotter
+                          vtkImg,         # vtk image to be added
+                          rowIdx, colIdx, # subplot row and column index
+                          title          = None,   # text to be added to the subplot, use None to not show text 
+                          shade_volumes  = True,  # use shading when performing volume rendering
+                          color_map      = "coolwarm", # color map for volume rendering, e.g., 'bone', 'coolwarm', 'cool', 'viridis', 'magma'
+                          show_axes      = True,  # show a vtk axes widget for each rendering window
+                          show_bounds    = False, # show volume bounding box
+                          show_all_edges = True,  # add an unlabeled and unticked box at the boundaries of plot. 
+                          font_size      = 10     # text font size for windows
+                          ):
     
     # which subplot to add the volume to
     pvPlotter.subplot(rowIdx, colIdx)
     
     # add the volume
     pvPlotter.add_volume(vtkImg, 
-                         shade   = shade_volumes, 
+                         shade   = shade_volumes,
                          cmap    = color_map)
 
     if show_axes:
@@ -36,19 +54,19 @@ def add_volume_to_plotter( pvPlotter,      # pyvista plotter
         pvPlotter.add_text(title, font_size = font_size)
         
 # a helper function that adds a mesh to a `pyvista` plotter.
-def add_mesh_to_plotter( pvPlotter,      # pyvista plotter
-                         vtkMesh,         # vtk mesh to be added
-                         rowIdx, colIdx, # subplot row and column index
-                         title = None,    # text to be added to the subplot, use None to not show text 
-                         mesh_color      = "tan",  # string or 3 item list
-                         mesh_style      = "surface", # visualization style of the mesh. style='surface', style='wireframe', style='points'. 
-                         show_mesh_edges = False, # show mesh edges
-                         opacity         = 1,
-                         show_axes       = True,  # show a vtk axes widget for each rendering window
-                         show_bounds     = False, # show volume bounding box
-                         show_all_edges  = True,  # add an unlabeled and unticked box at the boundaries of plot. 
-                         font_size       = 10     # text font size for windows
-                         ):
+def add_mesh_to_plotter(pvPlotter,      # pyvista plotter
+                        vtkMesh,         # vtk mesh to be added
+                        rowIdx, colIdx, # subplot row and column index
+                        title           = None,    # text to be added to the subplot, use None to not show text 
+                        mesh_color      = "tan",  # string or 3 item list
+                        mesh_style      = "surface", # visualization style of the mesh. style='surface', style='wireframe', style='points'. 
+                        show_mesh_edges = False, # show mesh edges
+                        opacity         = 1,
+                        show_axes       = True,  # show a vtk axes widget for each rendering window
+                        show_bounds     = False, # show volume bounding box
+                        show_all_edges  = True,  # add an unlabeled and unticked box at the boundaries of plot. 
+                        font_size       = 10     # text font size for windows
+                        ):
     
     # which subplot to add the mesh to
     pvPlotter.subplot(rowIdx, colIdx)
@@ -104,7 +122,7 @@ def plot_volumes(volumeList,           # list of shapeworks images to be visuali
         grid_rows, grid_cols = 1, 1
     else:
         # define grid size for the given number of samples
-        grid_rows, grid_cols  = utils.num_subplots(num_samples)
+        grid_rows, grid_cols  = num_subplots(num_samples)
 
     # define the plotter
     plotter = pv.Plotter(shape    = (grid_rows, grid_cols),
@@ -131,7 +149,7 @@ def plot_volumes(volumeList,           # list of shapeworks images to be visuali
 
         # convert sw image to vtk image
         if type(volumeList[volumeIdx]) == sw.Image:
-            volume_vtk = utils.sw2vtkImage(volumeList[volumeIdx],
+            volume_vtk = utils.conversion.sw2vtkImage(volumeList[volumeIdx],
                                        verbose = False)
         else:
             volume_vtk = volumeList[volumeIdx]
