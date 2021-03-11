@@ -51,6 +51,7 @@ def setup_shapeworks_env(shapeworks_bin_dir = None,   # path to the binary direc
 setup_shapeworks_env()
 
 # how do we get it to import the compiled module that isn't in this folder?
-from .shapeworks import *
+from shapeworks import *
 
-from shapeworks import utils, plot
+from .utils import *
+from .plot import *
