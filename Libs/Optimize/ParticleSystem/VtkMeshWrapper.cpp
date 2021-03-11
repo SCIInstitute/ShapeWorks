@@ -47,9 +47,31 @@ using GradNType = VtkMeshWrapper::GradNType;
 //---------------------------------------------------------------------------
 VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data, std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > planes)
 {
+    WritePolyData(poly_data, "before_cutting.vtp");
+    vtkSmartPointer<vtkPolyData> poly_data2;
+    // Clipping infrastructure
+    for(size_t i = 0; i < planes.size(); i++){
+        // Create vtk plane
+        vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
+        plane->SetOrigin(planes[i].first[0],planes[i].first[1],planes[i].first[2]);
+        plane->SetNormal(planes[i].second[0],planes[i].second[1],planes[i].second[2]);
+        std::cout << planes[i].first.transpose() << " " << planes[i].second.transpose() << std::endl;
+
+        // Clipper cutter
+        vtkSmartPointer<vtkClipPolyData> clipper =
+            vtkSmartPointer<vtkClipPolyData>::New();
+        clipper->SetInputData(poly_data);
+        clipper->SetClipFunction(plane);
+        clipper->Update();
+
+        poly_data2 = clipper->GetOutput();
+        WritePolyData(poly_data2, "after_cutting.vtp");
+    }
+
+
   vtkSmartPointer<vtkTriangleFilter> triangle_filter =
     vtkSmartPointer<vtkTriangleFilter>::New();
-  triangle_filter->SetInputData(poly_data);
+  triangle_filter->SetInputData(poly_data2);
   triangle_filter->Update();
 
   vtkSmartPointer<vtkCleanPolyData> clean = vtkSmartPointer<vtkCleanPolyData>::New();
@@ -93,20 +115,6 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data, std::vect
 
   this->ComputeMeshBounds();
   this->ComputeGradN();
-
-  // Cutting infrastructure
-  for(size_t i = 0; i < planes.size(); i++){
-      // Create vtk plane
-      vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
-      plane->SetOrigin(planes[i].first[0],planes[i].first[1],planes[i].first[2]);
-      plane->SetNormal(planes[i].second[0],planes[i].second[1],planes[i].second[2]);
-
-      // Create cutter
-      vtkSmartPointer<vtkCutter> cutter = vtkSmartPointer<vtkCutter>::New();
-      cutter->SetCutFunction(plane);
-      //cutter->SetInputConnection(cube->GetOutputPort());
-      cutter->Update();
-  }
 }
 
 //---------------------------------------------------------------------------
