@@ -1,5 +1,97 @@
 # Release Notes
 
+## ShapeWorks 6.0 - 2020-03-10
+
+![](../img/about/release6.0.png)
+
+### What's New
+
+#### User's Support
+
+* **New discussion forum:** We started an online discussion forum ([shapeworks.discourse.group](shapeworks.discourse.group)). This forum is a place for ShapeWorks users to discuss how to customize shape modeling workflows for their own use cases, troubleshoot issues end-users facing when using ShapeWorks, keep track of suggestions to improve the software and documentation, and ensure awareness of the latest ShapeWorks tools within the research community. 
+* **Interactive Jupyter notebooks:** We developed a set of Jupyter notebooks to interactively demonstrate the usage of ShapeWorks Python APIs. These notebooks enable users to explore their data before just throwing it all in a huge batch job. We also added notebooks that reflect the thought process to learn about shapeworks classes/functions. See [ShapeWorks in Python](http://sciinstitute.github.io/ShapeWorks/new/shapeworks-python) for more details.
+* **Tiny tests for use cases:** All use cases now have a tiny test that can be run using the `--tiny_test` option. When the tiny test is run, only the data necessary for the test is downloaded rather than all of the data.
+* **Running use cases on subsets:** All of the use cases (mesh or segmentation based) can now be run on a subset of the data using the `--use_subsample` option. Note that the entire dataset is downloaded in this case so that a subset that is representative of the entire dataset can be selected.
+* **Generating shape cohorts:** Example shape cohorts with analytic correspondences can now be generated using the ShapeWorks package `GenerateShapeCohort`. Currently, cohorts of parameterized ellipsoids or supershapes can be generated. Options are available to specify the degree to which the cohort is groomed (i.e., a cohort can be generated to be in alignment or misaligned in various ways). These cohorts can help with troubleshooting the shape modeling workflow.
+* **Notebook demonstrating cohort generation:** A [Jupyter notebook](http://sciinstitute.github.io/ShapeWorks/notebooks/tutorials/getting-started-with-shape-cohort-generation.ipynb) was added that demonstrates how to use GenerateShapeCohort.
+
+
+#### ShapeWorks Back-end
+
+* **Support for use_normals with meshes:**: Added support for surface normals when optimizing directly on meshes. This results in improved shape models on thin domains. See [ShapeWorks Directly on Meshes](http://sciinstitute.github.io/ShapeWorks/new/sw-meshes) for more details.
+
+* **Consolidation of mesh-based grooming tools:** Updated the `shapeworks` API to include mesh-based grooming tools (smooth, decimate, invert normals, reflect, alignment, fill holes, probe volume at mesh vertices, clip, translate, scale, bounding box, quality control, surface to surface distance, to image and to distance transform). Added mesh-based query tools (center, center of mass, number of points, number of faces, get field names, set field, get field, set field value, get field value, get field range, get field mean, get field std and comparison). This includes a full complement of unit tests.
+
+* **New Python ShapeWorks API:** In addition to the command line and C++ interface, there is a Python interface for existing image-based, segmentation-based, and mesh-based grooming tools and query tools. This includes a full complement of unit tests.
+
+
+#### All-in-one Studio Front-end
+
+* **Mesh support in Studio:** Added support for mesh inputs with minimal grooming. See [New in ShapeWorksStudio](http://sciinstitute.github.io/ShapeWorks/new/new-studio#mesh-support) for more details.
+* **New and faster surface reconstruction:** Added a new surface reconstruction method with support for both mesh or image inputs. This method is much faster and is the new default. See [New in ShapeWorksStudio](http://sciinstitute.github.io/ShapeWorks/new/new-studio#mesh-support) for more details.
+* **Feature maps support for meshes:** Added support for loading and displaying scalar values from mesh inputs. See [New in ShapeWorksStudio](http://sciinstitute.github.io/ShapeWorks/new/new-studio#mesh-support) for more details.
+* **User help in Studio:** Added user interface tooltips and Help->Keyboard shortcuts.
+* **Detailed optimization progress:** Added particle count, initialization/optimization phase, and iteration count on the status bar in addition to the progress bar. (user feature request)
+* **Enabled aborting grooming:** Added ability to abort grooming step.
+
+
+#### Deep Learning & Shape Modeling
+
+* **DeepSSM now saves both the "best" and "final" model:** The final model is saved after all training epochs have run. The best model is saved after the epoch that had the lowest prediction error on the validation set. The best model makes use of early stopping to prevent overfitting.
+* **Visualization of DeepSSM errors:** The error meshes that are output from running the DeepSSM use case can now be visualized in Studio. These meshes have a distance scalar field that captures the distance between the true and predicted mesh. To view in Studio simply run: `ShapeWorksStudio path/to/error/mesh.vtk`.
+* **Data augmentation handles modeling scenarios that need Procrustes alignment:** Data augmentation can now be run on a dataset for which Procrustes was used in optimization. When both the local and world .particle files are passed as arguments for data augmentation, the translation is accounted for in the augmented data.
+* **Visualizing data augmentation:** Parallel violin plots are used to compare the distribution of real and augmented data visually.
+* **Demonstrating data augmentation:** A [Jupyter notebook](http://sciinstitute.github.io/ShapeWorks/notebooks/tutorials/getting-started-with-data-augmentation.ipynb) that demonstrates the data augmentation process has been added. In this notebook, parallel violin plots are used to compare the distribution of real and augmented data visually.
+
+
+
+### Improvements
+
+#### User's Support
+* **Improved Python grooming utils:** GroomUtils.py now uses Python binding rather than calling command-line tools.
+
+#### ShapeWorks Back-end
+
+* **Enable multi-threading on Mac platforms:** Switched from OpenMP to TBB (thread building blocks), allowing multithreading on Mac. Performance improvements include a ~4x speedup on Mac laptop and same speed or better on Linux/Windows.
+* **Performance improvements in `shapeworks optimize`:** ~20% faster optimization in mesh and image domains by replacing specific data structures (that were initially in place to allow interactive removal of particles during the optimization). ~50% faster optimization in mesh domain by caching nearest-triangle lookups.
+
+
+#### All-in-one Studio Front-end
+
+* **Improved Studio viewer:** Added ability to use 2 viewers (in between 1 and 4). Added ability to choose orientation marker (medical, triad) and location (corner).
+* **Improved Studio interface:** Added new checkbox for automatic glyph sizing. Added support for drag and drop of images and meshes. Scalar bar color is now opposite of background color (e.g., when the background is white, the text should be dark) (user request).
+* **Improved responsiveness:** Improved particle shape statistics computation speed. Improved user interface responsiveness during optimization. Improved distance transform loading for surface reconstruction.
+* **Improved error handling:** Enhanced error handling and graceful reporting of errors such as attempts to write/save to read-only directories and filesystems.
+
+
+#### Deep Learning & Shape Modeling
+
+* **More control on data augmentation:** In data augmentation, the user can now either specify how many PCA components to retain in embedding OR what percentage of population variability to retain. For example, suppose the user specifies that 95% of population variability should be kept. In that case, the number of components will be automatically selected such that less than 5% of shape variation is lost in embedding.
+
+
+### Fixes
+
+<!--#### User's Support
+-->
+
+#### ShapeWorks Back-end
+
+* **Replaced mesh library:** Replaced backend mesh library to fix bugs that caused optimizer crashing when optimizing particles directly on meshes.
+* **Gradient of normals for image domain:** Corrected a long-standing bug where we used the hessian in place of the gradient of the normal. If you have an existing use case with use_normals enabled, the normal weighting may have to be adjusted.
+* **Cutting planes constraints for mesh domains:** Fixed a bug in the integration of mesh domains with cutting planes constraints, where the optimization gets stuck due to the fact that constraints get violated when not being considered by geodesic walks.
+
+
+#### All-in-one Studio Front-end
+
+* **Fixed bugs in Data:** Fixed a bug when adding and removing shapes. Studio now appends `.xlsx` when saving a project file.
+* **Fixed bugs in Optimize:** Studio optimize default for initial relative weighting is smaller than relative weighting to enable a better surface sampling during initialization. Enable file menu when the optimization is aborted.
+* **Fixed bugs in Analyze:** Limit PCA modes to the number of samples - 1. Surface reconstruction for spheres is fixed. Fixed a bug that produced blank screens and error messages on the consoles when switching out of analysis while PCA animation is running. Fixed a sample display bug that occurred when loading XML project for analysis and exploring individual samples after switching to PCA animation.
+
+
+<!--#### Deep Learning & Shape Modeling-->
+
+
+-------------------------------------------------------------------------------------------------------------------------
 ## ShapeWorks 5.5.0 - 2020-10-15
 
 ![](../img/about/release5.5.png)
@@ -65,12 +157,13 @@
 
 * **Constraint-aware particle projection:** Projecting particles on the surface while manipulating/optimizing particle position now respects the user-defined constraints.
 
-
+-------------------------------------------------------------------------------------------------------------------------
 ## ShapeWorks 5.4.1 - 2020-06-15
 
 ### Fixes
 * **ShapeWorksStudio:** Fixed crash when importing data on a new/blank project.	
 
+-------------------------------------------------------------------------------------------------------------------------
 ## ShapeWorks 5.4.0 - 2020-06-10
 
 ### What's New
@@ -93,6 +186,7 @@
 ### Fixes
 * **Mesh export in Studio:** Changed exported meshes to be compatible with CloudCompare
 
+-------------------------------------------------------------------------------------------------------------------------
 ## ShapeWorks 5.3.0 - 2020-02-20
 
 
@@ -109,6 +203,7 @@
 * Studio: Replaced bar chart with explained variance chart
 
 
+-------------------------------------------------------------------------------------------------------------------------
 ## ShapeWorks 5.2.2 - 2020-01-09
 
 ### Fixes
@@ -119,12 +214,14 @@
 * Studio: Fixed import and processing of non-RAI image volumes
 * Studio: Fix centering of groomed and reconstructed volumes
 
+-------------------------------------------------------------------------------------------------------------------------
 ## ShapeWorks 5.2.1 - 2019-11-09
 
 ### Fixes
 
 * Fix examples, binaries
 
+-------------------------------------------------------------------------------------------------------------------------
 ## ShapeWorks 5.2.0 - 2019-11-07
 
 ### What's New
