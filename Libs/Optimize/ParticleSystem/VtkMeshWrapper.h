@@ -6,6 +6,9 @@
 #include <vtkSmartPointer.h>
 #include "Constraints.h"
 
+#include <vtkPlane.h>
+#include <vtkCutter.h>
+
 class vtkCellLocator;
 
 namespace shapeworks {

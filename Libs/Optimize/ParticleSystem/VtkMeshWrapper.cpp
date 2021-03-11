@@ -93,6 +93,20 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data, std::vect
 
   this->ComputeMeshBounds();
   this->ComputeGradN();
+
+  // Cutting infrastructure
+  for(size_t i = 0; i < planes.size(); i++){
+      // Create vtk plane
+      vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
+      plane->SetOrigin(planes[i].first[0],planes[i].first[1],planes[i].first[2]);
+      plane->SetNormal(planes[i].second[0],planes[i].second[1],planes[i].second[2]);
+
+      // Create cutter
+      vtkSmartPointer<vtkCutter> cutter = vtkSmartPointer<vtkCutter>::New();
+      cutter->SetCutFunction(plane);
+      //cutter->SetInputConnection(cube->GetOutputPort());
+      cutter->Update();
+  }
 }
 
 //---------------------------------------------------------------------------
