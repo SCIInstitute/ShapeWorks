@@ -403,7 +403,6 @@ public:
         cut_plane.first = ComputePlaneNormal(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b, m_CuttingPlanes[i][j].c);
         cut_plane.second = Eigen::Vector3d(m_CuttingPlanes[i][j].a[0], m_CuttingPlanes[i][j].a[1],m_CuttingPlanes[i][j].a[2]);
         domain_i_cps.push_back(cut_plane);
-        std::cout << "Mesh cut" << cut_plane.first.transpose() << " " << cut_plane.second.transpose() << std::endl;
       }
       planes.push_back(domain_i_cps);
     }
