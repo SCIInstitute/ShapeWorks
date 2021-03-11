@@ -332,7 +332,7 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string &s)
   m_groupdiff = m_mean2 - m_mean1;
 
   return 0;
-} // end ReadPointFiles
+}
 
 int ParticleShapeStatistics::DoPCA(std::vector<std::vector<PointType>> global_pts, int domainsPerShape)
 {
@@ -391,10 +391,7 @@ int ParticleShapeStatistics::DoPCA(std::vector<std::vector<PointType>> global_pt
 
   ComputeModes();
   return 0;
-} // end DoPCA
-
-
-/** Reloads a set of point files and recomputes some statistics. */
+}
 
 int ParticleShapeStatistics::ReloadPointFiles()
 {
@@ -461,7 +458,6 @@ int ParticleShapeStatistics::ReloadPointFiles()
 
 int ParticleShapeStatistics::ComputeModes()
 {
-  // COMPUTE MODES
   vnl_matrix<double> A = m_pointsMinusMean.transpose()
                          * m_pointsMinusMean * (1.0 / ((double) (m_numSamples - 1)));
   vnl_symmetric_eigensystem<double> symEigen(A);
@@ -501,7 +497,7 @@ int ParticleShapeStatistics::ComputeModes()
   }
 
   return 0;
-}  // end ComputeModes();
+}
 
 int ParticleShapeStatistics::PrincipalComponentProjections()
 {
