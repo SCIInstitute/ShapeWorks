@@ -19,7 +19,7 @@ public:
   using NormalType = vnl_vector_fixed<float, DIMENSION>;
   using VectorType = vnl_vector_fixed<double, DIMENSION>;
 
-  explicit VtkMeshWrapper(vtkSmartPointer<vtkPolyData> mesh, std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > > planes);
+  explicit VtkMeshWrapper(vtkSmartPointer<vtkPolyData> mesh, std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > planes);
 
   ~VtkMeshWrapper() = default;
 

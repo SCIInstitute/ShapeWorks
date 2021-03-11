@@ -45,7 +45,7 @@ using PointType = VtkMeshWrapper::PointType;
 using GradNType = VtkMeshWrapper::GradNType;
 
 //---------------------------------------------------------------------------
-VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data, std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > > planes)
+VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data, std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > planes)
 {
   vtkSmartPointer<vtkTriangleFilter> triangle_filter =
     vtkSmartPointer<vtkTriangleFilter>::New();
