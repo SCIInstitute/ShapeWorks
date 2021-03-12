@@ -593,6 +593,8 @@ void Optimize::AddSinglePoint()
   firstPointPosition[1] = 0;
   firstPointPosition[2] = 0;
   firstPointPosition = m_sampler->GetParticleSystem()->GetDomain(0)->GetValidLocationNear(firstPointPosition);
+  // todo all domains should use ZeroCrossingPoint to get the first point, not closest to [0,0,0]
+  // firstPointPosition = m_sampler->GetParticleSystem()->GetDomain(0)->GetZeroCrossingPoint();
 
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
     if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) > 0) {

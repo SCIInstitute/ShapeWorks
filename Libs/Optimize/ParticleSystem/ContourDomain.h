@@ -98,8 +98,10 @@ public:
   }
 
   PointType GetZeroCrossingPoint() const override {
-    const double* d = this->poly_data_->GetPoint(0);
-    return PointType(d);
+    PointType out;
+    double dist;
+    int closest_line = GetLineForPoint(upper_bound_.GetDataPointer(), -1, dist, out.GetDataPointer());
+    return out;
   }
 
   double GetSurfaceArea() const override {
