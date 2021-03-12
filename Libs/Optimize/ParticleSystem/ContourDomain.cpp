@@ -56,24 +56,20 @@ ContourDomain::ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, 3> &gradE,
   const double grad_dot_line_dir = gradE_eigen.dot(line_dir);
   const double grad_mag = gradE_eigen.norm();
 
-  // Since the particle is on a line, there are only two meaningful directions to take. We choose the one which is
-  // has a closer direction to the gradient. The result is scaled by the gradient magnitude.
-  if(grad_dot_line_dir > 0.0) {
-    return {
-            line_dir[0]*grad_mag,
-            line_dir[1]*grad_mag,
-            line_dir[2]*grad_mag
-    };
-  } else if(grad_dot_line_dir < 0.0) {
-    return {
-            -line_dir[0]*grad_mag,
-            -line_dir[1]*grad_mag,
-            -line_dir[2]*grad_mag
-    };
+  // Particle wants to move perpendicular to the line, this is disallowed.
+  if(grad_dot_line_dir == 0.0) {
+    return { 0.0, 0.0, 0.0 };
   }
 
-  // Particle wants to move perpendicular to the line, this is disallowed.
-  return { 0.0, 0.0, 0.0 };
+  // Since the particle is on a line, there are only two meaningful directions to take. We choose the one which
+  // has a closer direction to the gradient. The result is scaled by the gradient magnitude.
+  const double dir = grad_dot_line_dir > 0.0 ? 1.0 : -1.0;
+
+  return {
+          line_dir[0]*grad_mag*dir,
+          line_dir[1]*grad_mag*dir,
+          line_dir[2]*grad_mag*dir
+  };
 }
 
 bool ContourDomain::ApplyConstraints(PointType &p, int idx, bool dbg) const {
@@ -149,10 +145,7 @@ ContourDomain::PointType ContourDomain::GeodesicWalk(const PointType& start_pt, 
     this->particle_lines_[idx] = current_line;
   }
 
-  PointType res;
-  res[0] = current_pt[0];
-  res[1] = current_pt[1];
-  res[2] = current_pt[2];
+  PointType res(current_pt.data());
   return res;
 }
 
@@ -337,18 +330,18 @@ ContourDomain::PointType ContourDomain::GetPositionAfterSplit(const PointType& p
   const auto p1 = this->GetPoint(p1_idx);
 
   // pick one of two directions depending on the `random` passed in
-  Eigen::Vector3d line_dir = (p1 - p0).normalized();
+  Eigen::Vector3d split_dir = (p1 - p0).normalized();
   if(random[0] < 0.0) {
-    line_dir *= -1;
+    split_dir *= -1;
   }
 
-  vnl_vector_fixed<double, 3> split_dir;
   // why divide by 5? preserve existing behaviour in particle splitting code. not sure why its required, but it seems
   // to keep the split a bit more stable
-  split_dir[0] = line_dir[0] * epsilon / 5.0;
-  split_dir[1] = line_dir[1] * epsilon / 5.0;
-  split_dir[2] = line_dir[2] * epsilon / 5.0;
-  return UpdateParticlePosition(pt, -1, split_dir); // pass -1 because this really corresponds to an unborn particle
+  split_dir[0] *= epsilon / 5.0;
+  split_dir[1] *= epsilon / 5.0;
+  split_dir[2] *= epsilon / 5.0;
+  vnl_vector_fixed<double, 3> vnl_split_dir(split_dir.data());
+  return UpdateParticlePosition(pt, -1, vnl_split_dir); // pass -1 because this really corresponds to an unborn particle
 }
 
 int ContourDomain::NumberOfLinesIncidentOnPoint(int i) const {
