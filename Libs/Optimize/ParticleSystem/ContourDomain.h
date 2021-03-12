@@ -116,7 +116,7 @@ public:
   virtual void InvalidateParticlePosition(int idx) const override;
 
   virtual PointType GetPositionAfterSplit(const PointType& pt,
-                                          const vnl_vector_fixed<double, 3>& random, double epsilon) const;
+                                          const vnl_vector_fixed<double, 3>& random, double epsilon) const override;
 
 protected:
   void PrintSelf(std::ostream& os, Indent indent) const override
