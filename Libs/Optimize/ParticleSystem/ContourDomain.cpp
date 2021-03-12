@@ -335,14 +335,17 @@ ContourDomain::PointType ContourDomain::GetPositionAfterSplit(const PointType& p
   const auto p0_idx = this->lines_[closest_line]->GetPointId(0);
   const auto p1_idx = this->lines_[closest_line]->GetPointId(1);
   Eigen::Vector3d line_dir = (this->GetPoint(p1_idx) - this->GetPoint(p0_idx)).normalized();
+
   if(random[0] < 0.0) {
     line_dir *= -1;
   }
 
   vnl_vector_fixed<double, 3> split_dir;
-  split_dir[0] = line_dir[0] * epsilon;
-  split_dir[1] = line_dir[1] * epsilon;
-  split_dir[2] = line_dir[2] * epsilon;
+  // why divide by 5? preserve existing behaviour in particle splitting code. not sure why its required, but it seems
+  // to keep the split a bit more stable
+  split_dir[0] = line_dir[0] * epsilon / 5.0;
+  split_dir[1] = line_dir[1] * epsilon / 5.0;
+  split_dir[2] = line_dir[2] * epsilon / 5.0;
   return UpdateParticlePosition(pt, -1, split_dir); // pass -1 because this really corresponds to an unborn particle
 }
 
