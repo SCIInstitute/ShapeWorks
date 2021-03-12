@@ -89,10 +89,6 @@ ADD_EXECUTABLE(GenerateFeatureGradientFiles GenerateFeatureGradientFiles.cxx)
 TARGET_LINK_LIBRARIES(GenerateFeatureGradientFiles ${ITK_LIBRARIES} Mesh tinyxml)
 INSTALL(TARGETS GenerateFeatureGradientFiles RUNTIME DESTINATION bin)
 
-ADD_EXECUTABLE(ProbeNormals ProbeNormals.cxx)
-TARGET_LINK_LIBRARIES(ProbeNormals ${ITK_LIBRARIES} Utils)
-INSTALL(TARGETS ProbeNormals RUNTIME DESTINATION bin)
-
 ADD_EXECUTABLE(ComputeMeanNormals ComputeMeanNormals.cxx)
 TARGET_LINK_LIBRARIES(ComputeMeanNormals ${ITK_LIBRARIES} tinyxml Utils)
 INSTALL(TARGETS ComputeMeanNormals RUNTIME DESTINATION bin)
