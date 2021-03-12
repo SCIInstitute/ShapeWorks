@@ -391,7 +391,7 @@ SRC=`pwd`
 parse_command_line $*
 
 echo "##-------------------------------"
-echo "## ShapeWorks Build Dependencies"
+echo "## ShapeWorks Build Dependencies "
 echo "##-------------------------------"
 echo "##"
 echo "## called using these arguments:"
