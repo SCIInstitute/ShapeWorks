@@ -320,7 +320,7 @@ TEST(pythonTests, distanceTest)
 
 TEST(pythonTests, generateNormalsTest)
 {
-  ASSERT_FALSE(system("python generateNormals.py"));
+  ASSERT_FALSE(system("python generatenormals.py"));
 }
 
 TEST(pythonTests, fieldTest)
