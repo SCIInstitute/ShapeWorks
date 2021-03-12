@@ -156,7 +156,6 @@ ContourDomain::PointType ContourDomain::GeodesicWalk(const PointType& start_pt, 
   return res;
 }
 
-// todo change APIs for point index, gradients
 double ContourDomain::Distance(const PointType &a, int idx_a,
                                const PointType &b, int idx_b,
                                vnl_vector_fixed<double, 3>* out_grad) const {
@@ -322,14 +321,29 @@ void ContourDomain::InvalidateParticlePosition(int idx) const {
   this->geo_lq_idx_ = -1;
 }
 
-vnl_vector_fixed<double, 3> ContourDomain::GetSplitDirection(const PointType& pt, int idx) const {
-  double dist;
+ContourDomain::PointType ContourDomain::GetPositionAfterSplit(const PointType& pt,
+                                                              const vnl_vector_fixed<double, 3>& random,
+                                                              double epsilon) const {
+  // This relies on all the lines being in a consistent order(either clockwise or anticlockwise). With that, it ensures
+  // that given a seed(`random`) all the domains end up returning a consistent split direction
+  // The algorithm just looks at the sign of random[0] to decide whether to go clockwise or anticlockwise
+
+  // todo handle open loop: there will be only one splitting direction if the particle is at a dead end
   PointType closest_pt;
-  const auto closest_line = GetLineForPoint(pt.GetDataPointer(), idx, dist, closest_pt.GetDataPointer());
+  double dist;
+  const int closest_line = GetLineForPoint(pt.GetDataPointer(), -1, dist, closest_pt.GetDataPointer());
   const auto p0_idx = this->lines_[closest_line]->GetPointId(0);
   const auto p1_idx = this->lines_[closest_line]->GetPointId(1);
-  const Eigen::Vector3d line_dir = (this->GetPoint(p1_idx) - this->GetPoint(p0_idx)).normalized();
-  return {line_dir[0], line_dir[1], line_dir[2]};
+  Eigen::Vector3d line_dir = (this->GetPoint(p1_idx) - this->GetPoint(p0_idx)).normalized();
+  if(random[0] < 0.0) {
+    line_dir *= -1;
+  }
+
+  vnl_vector_fixed<double, 3> split_dir;
+  split_dir[0] = line_dir[0] * epsilon;
+  split_dir[1] = line_dir[1] * epsilon;
+  split_dir[2] = line_dir[2] * epsilon;
+  return UpdateParticlePosition(pt, -1, split_dir); // pass -1 because this really corresponds to an unborn particle
 }
 
 }

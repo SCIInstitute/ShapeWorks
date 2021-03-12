@@ -98,8 +98,18 @@ public:
 
   std::shared_ptr<Constraints> GetConstraints() const {return constraints;}
 
-  virtual vnl_vector_fixed<double, 3> GetSplitDirection(const PointType& pt, int idx) const {
-    throw std::runtime_error("unimplemented");
+  // Use `random` to advance a particle and return a new position
+  virtual PointType GetPositionAfterSplit(const PointType& pt,
+                                          const vnl_vector_fixed<double, 3>& random, double epsilon) const {
+    // todo this has been copied from itkParticleSystem::AdvancedAllParticleSplitting.
+    //  Ideally, we should compute a direction that is "consistent" depending on the domain type and use the
+    //  `UpdateParticlePosition` API to advance the particle. See ContourDomain for an example. Leaving this be for
+    //  now because we'd have to retest all MeshDomain and ImageDomain use cases if this behaviour changes.
+    PointType new_pt;
+    for (unsigned int k = 0; k < 3; k++) {
+      new_pt[k] = pt[k] + epsilon * random[k] / 5.;
+    }
+    return new_pt;
   }
 
 protected:
