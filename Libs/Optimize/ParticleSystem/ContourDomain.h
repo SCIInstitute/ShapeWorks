@@ -151,6 +151,9 @@ private:
   int GetLineForPoint(const double pt[3], int idx, double& closest_distance, double closest_pt[3]) const;
   double ComputeLineCoordinate(const double pt[3], int line) const; // todo is "Barycentric" correct?
 
+  // Return the number of lines that consist of i-th point
+  int NumberOfLinesIncidentOnPoint(int i) const;
+
   PointType GeodesicWalk(const PointType& start_pt, int idx, const Eigen::Vector3d& update_vec) const;
 
   int NumberOfLines() const;

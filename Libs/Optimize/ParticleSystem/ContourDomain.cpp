@@ -328,14 +328,16 @@ ContourDomain::PointType ContourDomain::GetPositionAfterSplit(const PointType& p
   // that given a seed(`random`) all the domains end up returning a consistent split direction
   // The algorithm just looks at the sign of random[0] to decide whether to go clockwise or anticlockwise
 
-  // todo handle open loop: there will be only one splitting direction if the particle is at a dead end
   PointType closest_pt;
   double dist;
   const int closest_line = GetLineForPoint(pt.GetDataPointer(), -1, dist, closest_pt.GetDataPointer());
   const auto p0_idx = this->lines_[closest_line]->GetPointId(0);
   const auto p1_idx = this->lines_[closest_line]->GetPointId(1);
-  Eigen::Vector3d line_dir = (this->GetPoint(p1_idx) - this->GetPoint(p0_idx)).normalized();
+  const auto p0 = this->GetPoint(p0_idx);
+  const auto p1 = this->GetPoint(p1_idx);
 
+  // pick one of two directions depending on the `random` passed in
+  Eigen::Vector3d line_dir = (p1 - p0).normalized();
   if(random[0] < 0.0) {
     line_dir *= -1;
   }
@@ -347,6 +349,12 @@ ContourDomain::PointType ContourDomain::GetPositionAfterSplit(const PointType& p
   split_dir[1] = line_dir[1] * epsilon / 5.0;
   split_dir[2] = line_dir[2] * epsilon / 5.0;
   return UpdateParticlePosition(pt, -1, split_dir); // pass -1 because this really corresponds to an unborn particle
+}
+
+int ContourDomain::NumberOfLinesIncidentOnPoint(int i) const {
+  auto neighbors = vtkSmartPointer<vtkIdList>::New();
+  this->poly_data_->GetPointCells(i, neighbors);
+  return neighbors->GetNumberOfIds();
 }
 
 }
