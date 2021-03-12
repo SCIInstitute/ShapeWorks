@@ -81,10 +81,10 @@ parse_command_line()
       -h | --help )           usage
                               exit
                               ;;
-      * )                     echo "---------------------"
+      * )                     echo "----------------------"
                               echo "ERROR: Unknown parameter \"$1\""
                               echo "(remember to use '=' between a parameter name and its value)"
-                              echo "---------------------"
+                              echo "----------------------"
                               echo "use '--help' to show usage"
                               exit 1
     esac

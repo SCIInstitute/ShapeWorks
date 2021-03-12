@@ -2,7 +2,7 @@
 # Installs conda environment for building ShapeWorks
 #
 echo ""
-echo "Note: this script only supports bash and zsh shells"
+echo "Note: this script only supports bash and zsh shells "
 echo "      It must be called using \"source ./conda_installs.sh\""
 echo ""
 
