@@ -98,7 +98,8 @@ function install_conda() {
     openexr=2.5.3 \
     pybind11=2.5.0 \
     notebook=6.1.5 \
-    nbformat=4.4.0
+    nbformat=4.4.0 \
+    pkg-config=0.29.2
   then return 1; fi
 
   # linux and mac (only) deps
