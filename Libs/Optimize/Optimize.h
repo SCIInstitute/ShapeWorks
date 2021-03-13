@@ -184,7 +184,7 @@ public:
   void SetEndingRegularization(double ending_regularization);
   //! Set the interval for recomputing regularization (TODO: details)
   void SetRecomputeRegularizationInterval(int recompute_regularization_interval);
-  //! Set if initilzation splits should be saved or not
+  //! Set if initialization splits should be saved or not
   void SetSaveInitSplits(bool save_init_splits);
   //! Set the checkpointing interval
   void SetCheckpointingInterval(int checkpointing_interval);
