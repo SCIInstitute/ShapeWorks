@@ -210,12 +210,12 @@ build_eigen()
       cmake -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" ..
       cmake --build . --config ${BUILD_TYPE} || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
+      EIGEN_DIR=${INSTALL_DIR}\\share\\eigen3\\cmake\\
   else
       cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
       make -j${NUM_PROCS} install || exit 1
+      EIGEN_DIR=${INSTALL_DIR}/share/eigen3/cmake/
   fi
-
-  EIGEN_DIR=${INSTALL_DIR}/share/eigen3/cmake/
 }
 
 build_xlnt()
@@ -411,5 +411,5 @@ echo "BUILD_CLEAN: ${BUILD_CLEAN}"
 echo "BUILD_TYPE: ${BUILD_TYPE}"
 
 #build dependencies
-(time build_all 2>&1) 2>&1 | tee ${BUILD_LOG}
+# (time build_all 2>&1) 2>&1 | tee ${BUILD_LOG}
 
