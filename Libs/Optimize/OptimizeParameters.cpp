@@ -285,7 +285,11 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
       auto poly_data = MeshUtils::threadSafeReadMesh(filename.c_str()).getVTKMesh();
 
       if (poly_data) {
-        optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data, planes[count]));
+        if(count<planes.size()) optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data, planes[count]));
+        else{
+            std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > empty_plane;
+            optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data, empty_plane));
+        }
       }
 
       else {

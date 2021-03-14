@@ -486,7 +486,11 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
       auto poly_data = MeshUtils::threadSafeReadMesh(meshFiles[index].c_str()).getVTKMesh();
 
       if (poly_data) {
-        optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data, planes[index]));
+          if(index<planes.size()) optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data, planes[index]));
+          else{
+              std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > empty_plane;
+              optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data, empty_plane));
+          }
       } else {
         std::cerr << "Failed to read " << meshFiles[index] << "\n";
         return false;

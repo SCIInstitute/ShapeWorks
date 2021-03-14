@@ -71,7 +71,8 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data, const std
 
   vtkSmartPointer<vtkTriangleFilter> triangle_filter =
     vtkSmartPointer<vtkTriangleFilter>::New();
-  triangle_filter->SetInputData(poly_data_clipped);
+  if(planes.size()>0)triangle_filter->SetInputData(poly_data_clipped);
+  else triangle_filter->SetInputData(poly_data);
   triangle_filter->Update();
 
   vtkSmartPointer<vtkCleanPolyData> clean = vtkSmartPointer<vtkCleanPolyData>::New();
