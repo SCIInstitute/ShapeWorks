@@ -411,5 +411,5 @@ echo "BUILD_CLEAN: ${BUILD_CLEAN}"
 echo "BUILD_TYPE: ${BUILD_TYPE}"
 
 #build dependencies
-# (time build_all 2>&1) 2>&1 | tee ${BUILD_LOG}
+(time build_all 2>&1) 2>&1 | tee ${BUILD_LOG}
 
