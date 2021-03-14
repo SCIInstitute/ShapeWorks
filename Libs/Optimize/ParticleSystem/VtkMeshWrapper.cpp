@@ -53,9 +53,8 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data, std::vect
     for(size_t i = 0; i < planes.size(); i++){
         // Create vtk plane
         vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
-        plane->SetOrigin(planes[i].first[0],planes[i].first[1],planes[i].first[2]);
-        plane->SetNormal(planes[i].second[0],planes[i].second[1],planes[i].second[2]);
-        std::cout << planes[i].first.transpose() << " " << planes[i].second.transpose() << std::endl;
+        plane->SetNormal(planes[i].first[0],planes[i].first[1],planes[i].first[2]);
+        plane->SetOrigin(planes[i].second[0],planes[i].second[1],planes[i].second[2]);
 
         // Clipper cutter
         vtkSmartPointer<vtkClipPolyData> clipper =
