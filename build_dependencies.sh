@@ -210,7 +210,7 @@ build_eigen()
       cmake -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" ..
       cmake --build . --config ${BUILD_TYPE} || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
-      EIGEN_DIR=${INSTALL_DIR}\\share\\eigen3\\cmake
+      EIGEN_DIR=$(echo ${INSTALL_DIR}\\share\\eigen3\\cmake | sed -e 's/\\/\\\\/g')
   else
       cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
       make -j${NUM_PROCS} install || exit 1
