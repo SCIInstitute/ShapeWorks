@@ -23,7 +23,7 @@ public:
   using NormalType = vnl_vector_fixed<float, DIMENSION>;
   using VectorType = vnl_vector_fixed<double, DIMENSION>;
 
-  explicit VtkMeshWrapper(vtkSmartPointer<vtkPolyData> mesh, std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > planes);
+  explicit VtkMeshWrapper(vtkSmartPointer<vtkPolyData> mesh, const std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > &planes);
 
   ~VtkMeshWrapper() = default;
 
@@ -114,7 +114,7 @@ private:
   // cell locator to find closest point on mesh
   vtkSmartPointer<vtkCellLocator> cell_locator_;
 
-  void WritePolyData(vtkPolyData* const polyData, const std::string& filename)
+  void WritePolyData(vtkSmartPointer<vtkPolyData> polyData, const std::string& filename)
   {
       vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
   #if VTK_MAJOR_VERSION <= 5

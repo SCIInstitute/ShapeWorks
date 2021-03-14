@@ -807,25 +807,25 @@ size_t OptimizeParameterFile::acquire_input_size(TiXmlHandle* docHandle){
 
       elem = docHandle->FirstChild("inputs").Element();
       if (!elem) {
-        std::cerr << "No input meshes have been specified\n";
+        std::cerr << "No input domains have been specified\n";
         return 0;
       }
 
       std::istringstream inputsBuffer;
 
       inputsBuffer.str(elem->GetText());
-      // load input images
-      std::vector<std::string> meshFiles;
-      std::string meshfilename;
-      while (inputsBuffer >> meshfilename) {
-        meshFiles.push_back(meshfilename);
+      // load input domains
+      std::vector<std::string> domainsFiles;
+      std::string domainsfilename;
+      while (inputsBuffer >> domainsfilename) {
+        domainsFiles.push_back(domainsfilename);
       }
 
       int dps = 1;
       elem = docHandle->FirstChild("domains_per_shape").Element();
       if (elem) dps = atoi(elem->GetText());
 
-      return size_t(meshFiles.size()/dps);
+      return size_t(domainsFiles.size()/dps);
 }
 
 //---------------------------------------------------------------------------
