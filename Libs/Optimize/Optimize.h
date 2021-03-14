@@ -274,7 +274,7 @@ public:
 
 protected:
 
-  //! Set the iteration callback.  Derived classes should override to set their own callback
+  //! Set the iteration callback. Derived classes should override to set their own callback
   virtual void SetIterationCallback();
 
   //! Run an iteration of procrustes
