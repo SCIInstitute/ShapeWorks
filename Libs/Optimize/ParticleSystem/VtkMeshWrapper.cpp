@@ -47,7 +47,7 @@ using GradNType = VtkMeshWrapper::GradNType;
 //---------------------------------------------------------------------------
 VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data, std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > planes)
 {
-    WritePolyData(poly_data, "before_cutting.vtp");
+    //WritePolyData(poly_data, "before_cutting.vtp");
     vtkSmartPointer<vtkPolyData> poly_data2;
     // Clipping infrastructure
     for(size_t i = 0; i < planes.size(); i++){
@@ -64,7 +64,7 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data, std::vect
         clipper->Update();
 
         poly_data2 = clipper->GetOutput();
-        WritePolyData(poly_data2, "after_cutting.vtp");
+        //WritePolyData(poly_data2, "after_cutting.vtp");
     }
 
 
