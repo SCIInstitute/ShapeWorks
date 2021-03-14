@@ -127,19 +127,14 @@ public:
         int s = 0;
         if (m_use_xyz[dom])
         {
-          typename ParticleDomain::GradNType grad_n = ((MeshDomain*)ps->GetDomain(d))->SampleGradPAtPoint(posLocal, idx);
-          for (unsigned int i = 0; i < VDimension; i++)
+            for (unsigned int i = 0; i < VDimension; i++)
             {
                 for (unsigned int j = 0; j < VDimension; j++)
                 {
-
-                  this->operator()(i+k, j + 3* (d / m_DomainsPerShape)) = grad_n(i,j)*m_AttributeScales[num+i];
-                  /*
                     if (i == j)
                         this->operator()(i+k, j + 3* (d / m_DomainsPerShape)) = 1.0*m_AttributeScales[num+i];
                     else
                         this->operator()(i+k, j + 3* (d / m_DomainsPerShape)) = 0.0;
-                        */
                 }
 
             }
