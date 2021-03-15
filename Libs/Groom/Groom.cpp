@@ -329,6 +329,14 @@ void Groom::isolate(Image& image)
 //---------------------------------------------------------------------------
 Vector3 Groom::center(Image& image)
 {
+  auto diff = image.centerOfMass();
+  Vector3 translation;
+  translation[0] = -diff[0];
+  translation[1] = -diff[1];
+  translation[2] = -diff[2];
+  return translation;
+
+/*
   // capture full translation
   auto com = image.centerOfMass();
   // set center to origin
@@ -348,6 +356,7 @@ Vector3 Groom::center(Image& image)
   translation[1] = com[1];
   translation[2] = com[2];
   return translation;
+  */
 }
 
 //---------------------------------------------------------------------------

@@ -419,15 +419,16 @@ public:
   }
   unsigned int GetDomainsPerShape()
   { return m_DomainsPerShape; }
-  
+
+  /** Set the number of domains.  This method modifies the size of the
+    m_Domains, m_Positions, and m_Transform lists. */
+  void SetNumberOfDomains( unsigned int );
+
 protected:
   ParticleSystem();
   void PrintSelf(std::ostream& os, Indent indent) const;
   virtual ~ParticleSystem() {};
 
-  /** Set the number of domains.  This method modifies the size of the
-      m_Domains, m_Positions, and m_Transform lists. */
-  void SetNumberOfDomains( unsigned int );
 
   /** Return an iterator that points to the first element of the list of the
       domains. */

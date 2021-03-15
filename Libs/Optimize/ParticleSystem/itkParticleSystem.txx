@@ -39,8 +39,12 @@ ParticleSystem<VDimension>
   m_Domains.resize(num);
   m_Transforms.resize(num);
   m_InverseTransforms.resize(num);
-  m_PrefixTransforms.resize(num);
-  m_InversePrefixTransforms.resize(num);
+  while (num >= m_PrefixTransforms.size()) {
+    TransformType transform;
+    transform.set_identity();
+    m_PrefixTransforms.push_back(transform);
+    m_InversePrefixTransforms.push_back(transform);
+  }
   m_Positions.resize(num);
   m_IndexCounters.resize(num);
   m_Neighborhoods.resize(num);
@@ -74,8 +78,6 @@ void ParticleSystem<VDimension>
   m_Neighborhoods[static_cast<int>( m_Domains.size() -1)] = NeighborhoodType::New();
   m_Transforms[static_cast<int>( m_Domains.size() -1)].set_identity();
   m_InverseTransforms[static_cast<int>( m_Domains.size() -1)].set_identity();
-  m_PrefixTransforms[static_cast<int>( m_Domains.size() -1)].set_identity();
-  m_InversePrefixTransforms[static_cast<int>( m_Domains.size() -1)].set_identity();
 
   // Notify any observers.
   ParticleDomainAddEvent e;
@@ -100,6 +102,19 @@ template <unsigned int VDimension>
 void ParticleSystem<VDimension>
 ::SetTransform(unsigned int i, const TransformType& T, int threadId)
 {
+  std::cerr << "check for resize\n";
+  std::cerr << "i = " << i << "\n";
+  std::cerr << "size = " << m_Transforms.size() << "\n";
+  if (i > static_cast<int>(m_Transforms.size())-1 || m_Transforms.empty()) {
+    std::cerr << "!resize\n";
+    m_Transforms.resize(i+1);
+    m_InverseTransforms.resize(i+1);
+    std::cerr << "size now " << m_Transforms.size() << "\n";
+  } else {
+std::cerr << "no need to resize\n";
+
+
+  }
   m_Transforms[i] = T;
   m_InverseTransforms[i] = this->InvertTransform(T);
 
@@ -114,6 +129,11 @@ template <unsigned int VDimension>
 void ParticleSystem<VDimension>
 ::SetPrefixTransform(unsigned int i, const TransformType& T, int threadId)
 {
+  if (i > static_cast<int>(m_PrefixTransforms.size())-1 || m_PrefixTransforms.empty()) {
+    m_PrefixTransforms.resize(i+1);
+    m_InversePrefixTransforms.resize(i+1);
+  }
+
   m_PrefixTransforms[i] = T;
   m_InversePrefixTransforms[i] = this->InvertTransform(T);
 

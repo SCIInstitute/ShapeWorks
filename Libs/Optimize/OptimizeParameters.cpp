@@ -256,6 +256,8 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
     throw std::invalid_argument("No subjects to optimize");
   }
 
+  //optimize->GetSampler()->GetParticleSystem()->SetNumberOfDomains(subjects.size());
+
   std::vector<std::string> filenames;
   int count = 0;
   for (auto s : subjects) {
@@ -292,6 +294,31 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
       Image image(filename);
       optimize->AddImage(image);
     }
+
+
+
+    using TransformType = vnl_matrix_fixed<double, 4,4>;
+    TransformType prefix_transform;
+    prefix_transform.set_identity();
+
+
+    auto transforms = s->get_groomed_transforms();
+    /*
+    if (transforms.size() > 0) {
+      int idx = 0;
+      for (int r = 0; r < 4; r++) {
+        for (int c = 0; c < 3; c++) {
+          prefix_transform[r][c] = transforms[0][idx++];
+        }
+      }
+    }*/
+
+    prefix_transform[0][3] = transforms[0][9];
+    prefix_transform[1][3] = transforms[0][10];
+    prefix_transform[2][3] = transforms[0][11];
+
+    optimize->GetSampler()->GetParticleSystem()->SetPrefixTransform(count, prefix_transform);
+
 
     auto name = StringUtils::getFileNameWithoutExtension(filename);
     s->set_global_particle_filename(name + "_world.particles");

@@ -521,11 +521,17 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
       this->draw_exclusion_spheres(shape);
 
       vnl_vector<double> transform;
-      if (this->visualizer_->get_display_mode() == Visualizer::MODE_ORIGINAL_C &&
-          this->visualizer_->get_center()) {
+
+      if (this->visualizer_->get_display_mode() == Visualizer::MODE_ORIGINAL_C) {
+        if (this->visualizer_->get_center()) {
+          transform = shape->get_transform();
+        }
+      }
+      else {
         transform = shape->get_transform();
       }
 
+      /*
       if (this->visualizer_->get_display_mode() == Visualizer::MODE_GROOMED_C) {
         transform = shape->get_transform(i);
         auto base_transform = shape->get_transform(0);
@@ -536,11 +542,12 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
           transform[11] = base_transform[11] - transform[11];
         }
       }
+       */
 
       if (transform.size() == 12) {
-        double tx = -transform[9];
-        double ty = -transform[10];
-        double tz = -transform[11];
+        double tx = transform[9];
+        double ty = transform[10];
+        double tz = transform[11];
 
         vtkSmartPointer<vtkTransform> translation = vtkSmartPointer<vtkTransform>::New();
         translation->Translate(tx, ty, tz);
