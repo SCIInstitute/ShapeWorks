@@ -50,7 +50,7 @@ def concatenate_particle_files(file_type,domains_per_shape,outputDirectory,shape
                     shutil.copyfileobj(inp,out)
 
     #""" Save the output file list in the xml file which will be passed to the Studio
-    xmlfilename = shapeFolder + "multi_domain_"+file_type+".xml"
+    xmlfilename = shapeFolder + "multiple_domain_"+file_type+".xml"
     xml = open(xmlfilename,"a")
     xml.write("<?xml version=\"1.0\" ?>\n")
     xml.write("<domains_per_shape>\n" + str(domains_per_shape) + "\n</domains_per_shape>\n")
@@ -64,8 +64,8 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    datasetName = "ellipsoid_md_dist"
-    outputDirectory = "Output/ellipsoid_md_dist/"
+    datasetName = "ellipsoid_multiple_domain"
+    outputDirectory = "Output/ellipsoid_multiple_domain/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
     CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
