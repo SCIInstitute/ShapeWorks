@@ -103,10 +103,21 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, int domain)
     groomed_transforms.push_back(groomed_transform);
     subject->set_groomed_transforms(groomed_transforms);
 
-    // only single domain supported so far
-    std::vector<std::string> groomed_filenames{path};
-    // store filename back to subject
-    subject->set_groomed_filenames(groomed_filenames);
+    {
+      // lock for project data structure
+      tbb::mutex::scoped_lock lock(mutex_);
+
+      // update groomed filenames
+      std::vector<std::string> groomed_filenames = subject->get_groomed_filenames();
+      if (domain >= groomed_filenames.size()) {
+        groomed_filenames.resize(domain + 1);
+      }
+      groomed_filenames[domain] = path;
+
+      // store filenames back to subject
+      subject->set_groomed_filenames(groomed_filenames);
+    }
+
     return true;
   }
 
