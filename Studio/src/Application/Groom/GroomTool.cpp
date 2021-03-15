@@ -68,6 +68,7 @@ void GroomTool::on_autopad_checkbox_stateChanged(int state)
 //---------------------------------------------------------------------------
 void GroomTool::handle_error(std::string msg)
 {
+  this->groom_is_running_ = false;
   emit error_message(msg);
   this->enable_actions();
 }
@@ -187,7 +188,7 @@ void GroomTool::on_run_groom_button_clicked()
   QThread* thread = new QThread;
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
-  connect(worker, &ShapeworksWorker::result_ready, this, &GroomTool::handle_thread_complete);
+  connect(worker, &ShapeworksWorker::finished, this, &GroomTool::handle_thread_complete);
   connect(this->groom_.data(), &QGroom::progress, this, &GroomTool::handle_progress);
   connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
   connect(worker, &ShapeworksWorker::message, this, &GroomTool::message);

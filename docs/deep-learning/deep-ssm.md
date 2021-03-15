@@ -107,7 +107,7 @@ DeepSSMUtils.getTestLoader(out_dir, test_img_list, down_sample)
 
 ### Train DeepSSM
 
-This function defines a DeepSSM model and trains it on the data provided.
+This function defines a DeepSSM model and trains it on the data provided. After training the "final" and "best" model are saved. The final model is saved after all training epochs have run. The best model is saved after the epoch which had the lowest prediction error on the validation set. The best model makes use of early stopping to prevent overfitting.
 
 
 ```python
@@ -153,4 +153,15 @@ DeepSSMUtils.analyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix)
 * `DT_dir`: Path to the directory containing distance transforms based on the true segmentations of the test images.
 * `prediction_dir`: Path to the directory containing predicted particle files from testing DeepSSM.
 * `mean_prefix`: Path to the mean particle and mesh files for the dataset.
+
+### Visualizing Error
+
+The error meshes that are output from the analiyze step can be visualized in Studio. These meshes have a distance scalar field on them which captures the distance between the true and predicted mesh. To view in Studio, run the following from the command line:
+
+```
+ShapeWorksStudio path/to/error/mesh.vtk
+```
+
+![DeepSSM Error](../img/deep-learning/error_viz.png)
+
 

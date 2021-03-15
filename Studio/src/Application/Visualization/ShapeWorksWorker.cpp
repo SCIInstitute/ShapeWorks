@@ -43,6 +43,10 @@ void ShapeworksWorker::process()
     case ShapeworksWorker::GroomType:
       try {
         this->groom_->run();
+      } catch (itk::ExceptionObject& ex) {
+        std::cerr << "ITK Exception: " << ex << std::endl;
+        emit error_message(std::string("ITK Exception: ") + ex.GetDescription());
+        return;
       } catch (std::runtime_error e) {
         emit error_message(std::string("Error: ") + e.what());
         return;

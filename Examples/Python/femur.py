@@ -32,8 +32,22 @@ def Run_Pipeline(args):
     outputDirectory = "Output/femur/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
-    
 
+    if not args.groom_images:
+        # set spacing
+        spacing = [1.0, 1.0, 1.0]
+        answer = input("Use ispotropic spacing for mesh rasterization? y/n \n")
+        if answer == 'n':
+            done = False
+            while not done:
+                spacing = []
+                spacing.append(float(input("Enter x spacing:\n")))
+                spacing.append(float(input("Enter y spacing:\n")))
+                spacing.append(float(input("Enter z spacing:\n")))
+                answer2 = input('Is spacing = ' + str(spacing) + ' okay? y/n\n')
+                if answer2 == 'y':
+                    done = True
+    
     if args.tiny_test:
         args.use_single_scale = True
         args.interactive = False
@@ -211,6 +225,8 @@ def Run_Pipeline(args):
             croppedFiles_segmentations = applyCropping(groomDir + "cropped/segmentations", clippedFiles_segmentations, clippedFiles_segmentations)
             croppedFiles_images = applyCropping(groomDir + "cropped/images", aligned_images, clippedFiles_segmentations)
 
+            groomed_segmentations = croppedFiles_segmentations
+
         # BEGIN GROOMING WITHOUT IMAGES
         else:
             """
@@ -221,19 +237,6 @@ def Run_Pipeline(args):
             MeshesToVolumes - Shapeworks requires volumes so we need to convert 
             mesh segementaions to binary segmentations.
             """
-            # set spacing
-            spacing = [1.0, 1.0, 1.0]
-            answer = input("Use ispotropic spacing for mesh rasterization? y/n \n")
-            if answer == 'n':
-                done = False
-                while not done:
-                    spacing = []
-                    spacing.append(float(input("Enter x spacing:\n")))
-                    spacing.append(float(input("Enter y spacing:\n")))
-                    spacing.append(float(input("Enter z spacing:\n")))
-                    answer2 = input('Is spacing = ' + str(spacing) + ' okay? y/n\n')
-                    if answer2 == 'y':
-                        done = True
 
             fileList_seg = MeshesToVolumes(groomDir + "volumes", reflectedFiles_mesh, spacing)
 
@@ -247,7 +250,7 @@ def Run_Pipeline(args):
             Apply padding
             Both the segmentation and raw images are padded in case the seg lies on the image boundary.
             """
-            paddedFiles_segmentations = applyPadding(groomDir + "padded/segmentations", resampledFiles_segmentations, 10)
+            paddedFiles_segmentations = applyPadding(groomDir + "padded/segmentations", resampledFiles_segmentations, 30)
 
             """
             Apply center of mass alignment
@@ -295,8 +298,7 @@ def Run_Pipeline(args):
             """
             clippedFiles_segmentations = ClipBinaryVolumes(groomDir + 'clipped_segmentations', aligned_segmentations, cutting_plane_points.flatten())
 
-            """Compute largest bounding box and apply cropping"""
-            croppedFiles_segmentations = applyCropping(groomDir + "cropped/segmentations", clippedFiles_segmentations, groomDir + "clipped_segmentations/*.nrrd")
+            groomed_segmentations = clippedFiles_segmentations
 
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
@@ -307,7 +309,7 @@ def Run_Pipeline(args):
         We convert the scans to distance transforms, this step is common for both the
         prepped as well as unprepped data, just provide correct filenames.
         """
-        dtFiles = applyDistanceTransforms(groomDir, croppedFiles_segmentations)
+        dtFiles = applyDistanceTransforms(groomDir, groomed_segmentations)
 
     """
     ## OPTIMIZE : Particle Based Optimization
