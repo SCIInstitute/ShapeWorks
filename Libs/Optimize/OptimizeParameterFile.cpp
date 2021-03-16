@@ -455,6 +455,10 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
     meshFiles.push_back(meshfilename);
   }
 
+  // passing cutting plane constraints
+  // planes dimensions [number_of_inputs, planes_per_input, normal/point]
+  std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > > planes = optimize->GetSampler()->ComputeCuttingPlanes();
+
   for (int index = 0; index < meshFiles.size(); index++) {
     bool fixed_domain = false;
     for (int i = 0; i < flags.size(); i++) {
@@ -479,18 +483,22 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
       }
       */
 
-      // passing cutting plane constraints
-      // planes dimensions [number_of_inputs, planes_per_input, normal/point]
-      std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > > planes = optimize->GetSampler()->ComputeCuttingPlanes();
+      Mesh mesh = MeshUtils::threadSafeReadMesh(meshFiles[index].c_str());
 
-      auto poly_data = MeshUtils::threadSafeReadMesh(meshFiles[index].c_str()).getVTKMesh();
+      if(index<planes.size()) {
+          for(size_t i = 0; i < planes[index].size(); i++){
+              // Create vtk plane
+              vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
+              plane->SetNormal(planes[index][i].first[0],planes[index][i].first[1],planes[index][i].first[2]);
+              plane->SetOrigin(planes[index][i].second[0],planes[index][i].second[1],planes[index][i].second[2]);
+
+              mesh.clip(plane);
+          }
+      }
+      auto poly_data = mesh.getVTKMesh();
 
       if (poly_data) {
-          if(index<planes.size()) optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data, planes[index]));
-          else{
-              std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > empty_plane;
-              optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data, empty_plane));
-          }
+           optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data));
       } else {
         std::cerr << "Failed to read " << meshFiles[index] << "\n";
         return false;

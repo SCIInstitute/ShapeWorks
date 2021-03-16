@@ -45,34 +45,12 @@ using PointType = VtkMeshWrapper::PointType;
 using GradNType = VtkMeshWrapper::GradNType;
 
 //---------------------------------------------------------------------------
-VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data, const std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > &planes)
+VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data)
 {
-    //WritePolyData(poly_data, "before_cutting.vtp");
-    vtkSmartPointer<vtkPolyData> poly_data_clipped;
-    // Clipping infrastructure
-    for(size_t i = 0; i < planes.size(); i++){
-        // Create vtk plane
-        vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
-        plane->SetNormal(planes[i].first[0],planes[i].first[1],planes[i].first[2]);
-        plane->SetOrigin(planes[i].second[0],planes[i].second[1],planes[i].second[2]);
-
-        // Clipper cutter
-        vtkSmartPointer<vtkClipPolyData> clipper =
-            vtkSmartPointer<vtkClipPolyData>::New();
-        if(i == 0) clipper->SetInputData(poly_data);
-        else clipper->SetInputData(poly_data_clipped);
-        clipper->SetClipFunction(plane);
-        clipper->Update();
-
-        poly_data_clipped = clipper->GetOutput();
-        //WritePolyData(poly_data2, "after_cutting.vtp");
-    }
-
 
   vtkSmartPointer<vtkTriangleFilter> triangle_filter =
     vtkSmartPointer<vtkTriangleFilter>::New();
-  if(planes.size()>0)triangle_filter->SetInputData(poly_data_clipped);
-  else triangle_filter->SetInputData(poly_data);
+  triangle_filter->SetInputData(poly_data);
   triangle_filter->Update();
 
   vtkSmartPointer<vtkCleanPolyData> clean = vtkSmartPointer<vtkCleanPolyData>::New();
