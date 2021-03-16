@@ -408,4 +408,6 @@ echo "BUILD_TYPE: ${BUILD_TYPE}"
 
 #build dependencies
 (time build_all 2>&1) 2>&1 | tee ${BUILD_LOG}
+RC=( "${PIPESTATUS[@]}" )
+exit ${RC[0]}
 
