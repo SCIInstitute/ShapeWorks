@@ -125,7 +125,7 @@ build_vxl()
   
   # using fork since no version of VXL compiles with MSVC 16.9
   #git clone https://github.com/vxl/vxl.git
-  git clone https://github.com/akenmorris/libigl.git
+  git clone https://github.com/akenmorris/vxl.git
   cd vxl
   git checkout -f tags/${VXL_VER}
 
