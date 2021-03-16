@@ -54,7 +54,7 @@ def GetMeshFromDT(DT_list, mesh_dir):
 		output_vtk = mesh_dir + "original_" + getPrefix(input_file) + ".vtk"
 		execCommand = ["shapeworks",
                 "read-image", "--name", input_file,
-                "dt-to-mesh", "--reduction", str(0.0001),
+                "image-to-mesh", "--isovalue", str(0.0),
                 "write-mesh", "--name", output_vtk]
 		subprocess.check_call(execCommand)
 		mesh_files.append(output_vtk)

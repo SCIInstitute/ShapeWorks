@@ -67,6 +67,8 @@ Q_SIGNALS:
 
 private:
 
+  void check_error_status(MeshHandle mesh);
+
   Preferences& prefs_;
 
   // cache of shape meshes
