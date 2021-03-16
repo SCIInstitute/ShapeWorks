@@ -11,7 +11,7 @@ BUILD_STUDIO=0
 BUILD_SHAPEWORKS=1
 BUILD_TYPE="RelWithDebInfo"
 BUILD_LOG="build_dependencies.log"
-VXL_VER="v2.0.2"
+VXL_VER="v2.0.2-fix"
 VTK_VER="v8.2.0"
 VTK_VER_STR="8.2"
 ITK_VER="v5.0.1"
@@ -123,12 +123,11 @@ build_vxl()
       cd ${BUILD_DIR}
   fi
   
-  git clone https://github.com/vxl/vxl.git
+  # using fork since no version of VXL compiles with MSVC 16.9
+  #git clone https://github.com/vxl/vxl.git
+  git clone https://github.com/akenmorris/libigl.git
   cd vxl
-  # They fixed the VS compilation problem the day after the v2.0.2 release.
-  # There hasn't been a release since
-  # git checkout -f tags/${VXL_VER}
-  git checkout -f c3fd27959f51e0469a7a6075e975f245ac306f3d
+  git checkout -f tags/${VXL_VER}
 
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
