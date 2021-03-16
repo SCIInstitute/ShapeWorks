@@ -7,6 +7,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
 #include <vtkImageData.h>
+#include <itkStatisticsImageFilter.h>
 
 #include <limits>
 
@@ -189,6 +190,18 @@ public:
   /// returns average physical coordinate of pixels in range (minval, maxval]
   Point3 centerOfMass(PixelType minVal = 0.0, PixelType maxVal = 1.0) const;
 
+  /// minimum of image
+  PixelType min();
+
+  /// maximum of image
+  PixelType max();
+
+  /// mean of image
+  PixelType mean();
+
+  /// standard deviation of image
+  PixelType std();
+
   /// computes the logical coordinates of the largest region of data <= the given isoValue
   Region boundingBox(PixelType isovalue = 1.0) const;
 
@@ -231,6 +244,8 @@ private:
 
   /// creates a vtkPolyData for the given image
   static vtkSmartPointer<vtkPolyData> getPolyData(const Image& image, PixelType isoValue = 0.0);
+
+  itk::StatisticsImageFilter<ImageType>::Pointer statsFilter();
 
   ImageType::Pointer image;
 };

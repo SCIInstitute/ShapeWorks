@@ -446,6 +446,10 @@ PYBIND11_MODULE(shapeworks, m)
   .def("center",                &Image::center, "physical coordinates of center of this image")
   .def("coordsys",              &Image::coordsys, "return coordinate system in which this image lives in physical space")
   .def("centerOfMass",          &Image::centerOfMass, "returns average physical coordinate of pixels in range (minval, maxval]", "minVal"_a=0.0, "maxVal"_a=1.0)
+  .def("min",                   &Image::min, "minimum of image")
+  .def("max",                   &Image::max, "maximum of image")
+  .def("mean",                  &Image::mean, "mean of image")
+  .def("std",                   &Image::std, "standard deviation of image")
   .def("boundingBox",           &Image::boundingBox, "computes the logical coordinates of the largest region of data <= the given isoValue", "isovalue"_a=1.0)
   .def("logicalToPhysical", [](Image& image, std::vector<long>& c) {
     return image.logicalToPhysical(Coord({c[0], c[1], c[2]}));
