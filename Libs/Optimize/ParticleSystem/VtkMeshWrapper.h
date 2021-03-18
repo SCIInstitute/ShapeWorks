@@ -4,11 +4,6 @@
 
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
-#include "Constraints.h"
-
-#include <vtkPlane.h>
-#include <vtkClipPolyData.h>
-#include <vtkXMLPolyDataWriter.h>
 
 class vtkCellLocator;
 
@@ -113,18 +108,6 @@ private:
 
   // cell locator to find closest point on mesh
   vtkSmartPointer<vtkCellLocator> cell_locator_;
-
-  void WritePolyData(vtkSmartPointer<vtkPolyData> polyData, const std::string& filename)
-  {
-      vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
-  #if VTK_MAJOR_VERSION <= 5
-      writer->SetInput(polyData);
-  #else
-      writer->SetInputData(polyData);
-  #endif
-      writer->SetFileName(filename.c_str());
-      writer->Write();
-  }
 
 };
 }
