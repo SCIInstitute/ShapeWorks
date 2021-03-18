@@ -77,7 +77,8 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
     /// TODO: Not sure we need to check this here as it will be checked by Optimize anyway
     if (domains_per_shape != number_of_particles.size()) {
       std::cerr <<
-                "Inconsistency in parameters... domains_per_shape != number_of_particles.size()" <<
+                "Inconsistency in parameters... m_domains_per_shape != m_number_of_particles.size()"
+                <<
                 std::endl;
       return false;
     }
@@ -815,7 +816,7 @@ bool OptimizeParameterFile::read_distribution_cutting_plane(TiXmlHandle* doc_han
   return true;
 }
 
-size_t OptimizeParameterFile::acquire_input_size(TiXmlHandle* docHandle)
+int OptimizeParameterFile::get_num_inputs(TiXmlHandle* docHandle)
 {
   // Works for any type of domain
   // list inputs to figure out number
@@ -827,21 +828,28 @@ size_t OptimizeParameterFile::acquire_input_size(TiXmlHandle* docHandle)
     return 0;
   }
 
-  std::istringstream inputsBuffer;
+  std::istringstream buffer;
 
-  inputsBuffer.str(elem->GetText());
+  buffer.str(elem->GetText());
   // load input domains
-  std::vector<std::string> domainsFiles;
-  std::string domainsfilename;
-  while (inputsBuffer >> domainsfilename) {
-    domainsFiles.push_back(domainsfilename);
+  std::vector<std::string> inputs;
+  std::string filename;
+  while (buffer >> filename) {
+    inputs.push_back(filename);
   }
 
-  int dps = 1;
+  int domains_per_shape = 1;
   elem = docHandle->FirstChild("domains_per_shape").Element();
-  if (elem) dps = atoi(elem->GetText());
+  if (elem) {
+    domains_per_shape = atoi(elem->GetText());
+  }
 
-  return size_t(domainsFiles.size() / dps);
+  if (inputs.size() % domains_per_shape != 0) {
+    std::string message = "Error, number of inputs must be a multiple of domains_per_shape";
+    throw std::invalid_argument(message);
+  }
+
+  return inputs.size() / domains_per_shape;
 }
 
 //---------------------------------------------------------------------------
@@ -850,7 +858,7 @@ bool OptimizeParameterFile::read_cutting_planes(TiXmlHandle* docHandle, Optimize
   TiXmlElement* elem;
   std::istringstream inputsBuffer;
   //int numShapes = optimize->GetNumShapes();
-  int numShapes = this->acquire_input_size(docHandle);
+  int numShapes = this->get_num_inputs(docHandle);
 
   std::vector<int> cutting_planes_per_input;
 
@@ -967,7 +975,7 @@ bool OptimizeParameterFile::read_cutting_spheres(TiXmlHandle* doc_handle, Optimi
 {
   TiXmlElement* elem = nullptr;
   std::istringstream inputsBuffer;
-  int numShapes = this->acquire_input_size(doc_handle);
+  int numShapes = this->get_num_inputs(doc_handle);
   // sphere radii and centers
   std::vector<int> spheres_per_input;
 

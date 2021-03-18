@@ -61,7 +61,7 @@ private:
 
   bool read_flag_domains(TiXmlHandle* doc_handle, Optimize* optimize);
 
-  size_t acquire_input_size(TiXmlHandle* docHandle);
+  int get_num_inputs(TiXmlHandle* docHandle);
 
 private:
 
