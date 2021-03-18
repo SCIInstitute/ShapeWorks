@@ -7,7 +7,6 @@
 #include <Libs/Mesh/MeshUtils.h>
 #include "ParticleSystem/VtkMeshWrapper.h"
 
-
 using namespace shapeworks;
 
 //---------------------------------------------------------------------------
@@ -282,22 +281,24 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
         optimize->AddMesh(std::make_shared<shapeworks::TriMeshWrapper>(trimesh));
       }
 */
-        Mesh mesh = MeshUtils::threadSafeReadMesh(filename.c_str());
+      Mesh mesh = MeshUtils::threadSafeReadMesh(filename.c_str());
 
-        if(count<planes.size()) {
-            for(size_t i = 0; i < planes[count].size(); i++){
-                // Create vtk plane
-                vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
-                plane->SetNormal(planes[count][i].first[0],planes[count][i].first[1],planes[count][i].first[2]);
-                plane->SetOrigin(planes[count][i].second[0],planes[count][i].second[1],planes[count][i].second[2]);
+      if (count < planes.size()) {
+        for (size_t i = 0; i < planes[count].size(); i++) {
+          // Create vtk plane
+          vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
+          plane->SetNormal(planes[count][i].first[0], planes[count][i].first[1],
+                           planes[count][i].first[2]);
+          plane->SetOrigin(planes[count][i].second[0], planes[count][i].second[1],
+                           planes[count][i].second[2]);
 
-                mesh.clip(plane);
-            }
+          mesh.clip(plane);
         }
-        auto poly_data = mesh.getVTKMesh();
+      }
+      auto poly_data = mesh.getVTKMesh();
 
       if (poly_data) {
-         optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data));
+        optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data));
       }
 
       else {
@@ -332,7 +333,7 @@ void OptimizeParameters::set_abort_load(bool value)
 }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_load_callback(const std::function<void(int)> &f)
+void OptimizeParameters::set_load_callback(const std::function<void(int)>& f)
 {
   this->load_callback_ = f;
 }
