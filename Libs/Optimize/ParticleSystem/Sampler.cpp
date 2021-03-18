@@ -86,6 +86,7 @@ void Sampler::AllocateDomainsAndNeighborhoods()
   // Allocate all the necessary domains and neighborhoods. This must be done
   // *after* registering the attributes to the particle system since some of
   // them respond to AddDomain.
+  // Here, the Constraints actually get added to the constraints class
   int ctr = 0;
   for (unsigned int i = 0; i < this->m_DomainList.size(); i++) {
     auto domain = m_DomainList[i];
@@ -363,4 +364,3 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band)
 }
 
 } // end namespace
-
