@@ -485,21 +485,24 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
 
       Mesh mesh = MeshUtils::threadSafeReadMesh(meshFiles[index].c_str());
 
-      if(index<planes.size()) {
-          for(size_t i = 0; i < planes[index].size(); i++){
-              // Create vtk plane
-              vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
-              plane->SetNormal(planes[index][i].first[0],planes[index][i].first[1],planes[index][i].first[2]);
-              plane->SetOrigin(planes[index][i].second[0],planes[index][i].second[1],planes[index][i].second[2]);
+      if (index < planes.size()) {
+        for (size_t i = 0; i < planes[index].size(); i++) {
+          // Create vtk plane
+          vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
+          plane->SetNormal(planes[index][i].first[0], planes[index][i].first[1],
+                           planes[index][i].first[2]);
+          plane->SetOrigin(planes[index][i].second[0], planes[index][i].second[1],
+                           planes[index][i].second[2]);
 
-              mesh.clip(plane);
-          }
+          mesh.clip(plane);
+        }
       }
       auto poly_data = mesh.getVTKMesh();
 
       if (poly_data) {
-           optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data));
-      } else {
+        optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data));
+      }
+      else {
         std::cerr << "Failed to read " << meshFiles[index] << "\n";
         return false;
       }
@@ -812,32 +815,33 @@ bool OptimizeParameterFile::read_distribution_cutting_plane(TiXmlHandle* doc_han
   return true;
 }
 
-size_t OptimizeParameterFile::acquire_input_size(TiXmlHandle* docHandle){
-    // Works for any type of domain
-    // list inputs to figure out number
-    TiXmlElement* elem = nullptr;
+size_t OptimizeParameterFile::acquire_input_size(TiXmlHandle* docHandle)
+{
+  // Works for any type of domain
+  // list inputs to figure out number
+  TiXmlElement* elem = nullptr;
 
-      elem = docHandle->FirstChild("inputs").Element();
-      if (!elem) {
-        std::cerr << "No input domains have been specified\n";
-        return 0;
-      }
+  elem = docHandle->FirstChild("inputs").Element();
+  if (!elem) {
+    std::cerr << "No input domains have been specified\n";
+    return 0;
+  }
 
-      std::istringstream inputsBuffer;
+  std::istringstream inputsBuffer;
 
-      inputsBuffer.str(elem->GetText());
-      // load input domains
-      std::vector<std::string> domainsFiles;
-      std::string domainsfilename;
-      while (inputsBuffer >> domainsfilename) {
-        domainsFiles.push_back(domainsfilename);
-      }
+  inputsBuffer.str(elem->GetText());
+  // load input domains
+  std::vector<std::string> domainsFiles;
+  std::string domainsfilename;
+  while (inputsBuffer >> domainsfilename) {
+    domainsFiles.push_back(domainsfilename);
+  }
 
-      int dps = 1;
-      elem = docHandle->FirstChild("domains_per_shape").Element();
-      if (elem) dps = atoi(elem->GetText());
+  int dps = 1;
+  elem = docHandle->FirstChild("domains_per_shape").Element();
+  if (elem) dps = atoi(elem->GetText());
 
-      return size_t(domainsFiles.size()/dps);
+  return size_t(domainsFiles.size() / dps);
 }
 
 //---------------------------------------------------------------------------
