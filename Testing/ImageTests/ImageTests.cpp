@@ -1102,3 +1102,17 @@ TEST(ImageTests, vectorImageTest1)
               epsEqualN(v4, makeVector({0.644471, 0.556214, 0.524674})) &&
               epsEqualN(v5, makeVector({0.354269, -0.294689, 0.470524})));
 }
+
+TEST(ImageTests, statsTest)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
+  double min = image.min();
+  double max = image.max();
+  double mean = image.mean();
+  double std = image.std();
+
+  ASSERT_TRUE(fabs(min - 0.0) < 1E-3 &&
+              fabs(max - 1.0) < 1E-3 &&
+              fabs(mean - 0.00416) < 1E-3 &&
+              fabs(std - 0.06229) < 1E-3);
+}

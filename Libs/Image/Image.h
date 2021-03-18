@@ -22,6 +22,7 @@ public:
 
   using PixelType = float;
   using ImageType = itk::Image<PixelType, 3>;
+  using StatsPtr = itk::StatisticsImageFilter<ImageType>::Pointer;
 
   // constructors and assignment operators //
   Image(const std::string &pathname) : image(read(pathname)) {}
@@ -245,7 +246,7 @@ private:
   /// creates a vtkPolyData for the given image
   static vtkSmartPointer<vtkPolyData> getPolyData(const Image& image, PixelType isoValue = 0.0);
 
-  itk::StatisticsImageFilter<ImageType>::Pointer statsFilter();
+  StatsPtr statsFilter();
 
   ImageType::Pointer image;
 };
