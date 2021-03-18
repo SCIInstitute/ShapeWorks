@@ -157,7 +157,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def(py::init([] {
     Matrix mat;
     mat.SetIdentity();
-    return mat; 
+    return mat;
   }))
   .def("__repr__", [](const Matrix& mat) {
     std::ostringstream ss;
@@ -182,7 +182,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def(py::init([] {
     Matrix44 mat;
     mat.SetIdentity();
-    return mat; 
+    return mat;
   }))
   .def("__repr__", [](const Matrix44& mat) {
     std::ostringstream ss;
@@ -301,7 +301,7 @@ PYBIND11_MODULE(shapeworks, m)
   m.def("axis_is_valid", py::overload_cast<const Axis &>(&axis_is_valid), "ensure an axis is valid", "axis"_a);
   m.def("degToRad", degToRad, "convert degrees to radians", "deg"_a);
   m.def("toAxis", toAxis, "convert to axis", "str"_a);
-  
+
   // ShapeworksUtils
   py::class_<ShapeworksUtils>(m, "ShapeworksUtils")
   .def_static("is_directory",   &ShapeworksUtils::is_directory, "checks if pathname is a directory", "pathname"_a)
@@ -425,7 +425,7 @@ PYBIND11_MODULE(shapeworks, m)
     return image.clip(makeVector({n[0], n[1], n[2]}), Point({q[0], q[1], q[2]}), val);
   }, "sets values on the back side of cutting plane (normal n containing point p) to val (default 0.0)", "n"_a, "q"_a, "val"_a=0.0)
   .def("setOrigin",             &Image::setOrigin, "sets the image origin in physical space to the given value", "origin"_a=Point({0,0,0}))
-  .def("setOrigin", 
+  .def("setOrigin",
        [](Image& image, std::vector<double>& p) {
          return image.setOrigin(Point({p[0], p[1], p[2]}));
        },
@@ -576,12 +576,13 @@ PYBIND11_MODULE(shapeworks, m)
   .def("boundingBox",           &Mesh::boundingBox, "computes bounding box of current mesh", "center"_a=false)
   .def("fix",                   &Mesh::fix, "quality control mesh", "smoothBefore"_a=true, "smoothAfter"_a=true, "lambda"_a=0.5, "iterations"_a=1, "decimate"_a=true, "percentage"_a=0.5)
   .def("clipClosedSurface",     &Mesh::clipClosedSurface, "clips a mesh using a cutting plane resulting in a closed surface", "plane"_a)
+  .def("generateNormals",       &Mesh::generateNormals, "computes cell normals and orients them such that they point in the same direction")
   .def("toImage",
        [](Mesh& mesh, std::vector<double>& v, std::vector<unsigned>& d, std::vector<double>& p) -> decltype(auto) {
          return mesh.toImage(makeVector({v[0], v[1], v[2]}), Dims({d[0], d[1], d[2]}), Point({p[0], p[1], p[2]}));
        },
        "rasterizes mesh to create binary images, automatically computing size and origin if necessary",
-       "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}), "size"_a=std::vector<unsigned>({0, 0, 0}), "origin"_a=std::vector<double>({-1.0, -1.0, -1.0}))  
+       "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}), "size"_a=std::vector<unsigned>({0, 0, 0}), "origin"_a=std::vector<double>({-1.0, -1.0, -1.0}))
   .def("distance",              &Mesh::distance, "computes surface to surface distance", "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
   .def("toDistanceTransform",
        [](Mesh& mesh, std::vector<double>& v, std::vector<unsigned>& d, std::vector<double>& p) -> decltype(auto) {
@@ -593,6 +594,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("centerOfMass",          &Mesh::centerOfMass, "center of mass of mesh")
   .def("numPoints",             &Mesh::numPoints, "number of points")
   .def("numFaces",              &Mesh::numFaces, "number of faces")
+  .def("getPoint",              &Mesh::getPoint, "return (x,y,z) coordinates of vertex at given index", "p"_a)
   .def("getFieldNames",         &Mesh::getFieldNames, "print all field names in mesh")
   .def("setField", [](Mesh &mesh, std::vector<double>& v, std::string name) {
     vtkSmartPointer<vtkDoubleArray> arr = vtkSmartPointer<vtkDoubleArray>::New();
@@ -653,7 +655,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("D",                     &ParticleSystem::D)
   ;
 
-  // ShapeEvaluation  
+  // ShapeEvaluation
   py::class_<ShapeEvaluation>(m, "ShapeEvaluation")
   .def_static("ComputeCompactness",
                                 &ShapeEvaluation::ComputeCompactness, "particleSystem"_a, "nModes"_a, "saveTo"_a="")

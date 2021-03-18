@@ -2,10 +2,12 @@
 ![](https://github.com/SCIInstitute/ShapeWorks/workflows/Linux%20Build/badge.svg)
 ![](https://github.com/SCIInstitute/ShapeWorks/workflows/Windows%20Build/badge.svg)
 
-ShapeWorks
-=====================
+<!--ShapeWorks
+=====================-->
+![](docs/img/home/sw-logo-w-text.png)
 
-<img src="docs/img/home/shapeworks-logo.png" width="300px" align="left" hspace="20">
+
+<!--<img src="docs/img/home/shapeworks-logo.png" width="300px" align="left" hspace="20">-->
 
 ShapeWorks is an open-source software that learns population-specific shape parameterization directly from user data. It enables the automated placement of dense corresponding landmarks on a group of shapes given as either binary volumes or surface meshes. Please visit [ShapeWorks website](http://sciinstitute.github.io/ShapeWorks/) for more information. ShapeWorks has been effective in a range of applications, including psychology, biological phenotyping, cardiology, and orthopedics. [See relevant papers](http://sciinstitute.github.io/ShapeWorks/users/papers). 
 
@@ -15,7 +17,8 @@ ShapeWorks is an open-source software that learns population-specific shape para
 Latest Release
 =====================
 
-![](docs/img/about/release5.5.png)
+<!--![](docs/img/about/release5.5.png)-->
+![](docs/img/about/release6.0.png)
 
 Quick Links
 =====================

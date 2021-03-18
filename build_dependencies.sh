@@ -11,17 +11,16 @@ BUILD_STUDIO=0
 BUILD_SHAPEWORKS=1
 BUILD_TYPE="RelWithDebInfo"
 BUILD_LOG="build_dependencies.log"
-VXL_VER="v2.0.2"
+VXL_VER="v2.0.2-fix"
 VTK_VER="v8.2.0"
 VTK_VER_STR="8.2"
-ITK_VER="v5.0.1"
+ITK_VER="v5.0.1-fix"
 ITK_VER_STR="5.0"
 EIGEN_VER="3.3.7"
-ITK_VER_STR="5.0"
 QT_MIN_VER="5.9.8"  # NOTE: 5.x is required, but this restriction is a clever way to ensure the anaconda version of Qt (5.9.6 or 5.9.7) isn't used since it won't work on most systems.
 XLNT_VER="v1.4.0"
 OpenVDB_VER="v7.0.0"
-libigl_VER="v2.2.0"
+libigl_VER="v2.2.0-fix"
 
 usage()
 {
@@ -123,12 +122,11 @@ build_vxl()
       cd ${BUILD_DIR}
   fi
   
-  git clone https://github.com/vxl/vxl.git
+  # using fork since no version of VXL compiles with MSVC 16.9
+  #git clone https://github.com/vxl/vxl.git
+  git clone https://github.com/akenmorris/vxl.git
   cd vxl
-  # They fixed the VS compilation problem the day after the v2.0.2 release.
-  # There hasn't been a release since
-  # git checkout -f tags/${VXL_VER}
-  git checkout -f c3fd27959f51e0469a7a6075e975f245ac306f3d
+  git checkout -f tags/${VXL_VER}
 
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
@@ -174,7 +172,9 @@ build_itk()
   echo ""
   echo "## Building itk..."
   cd ${BUILD_DIR}
-  git clone https://github.com/InsightSoftwareConsortium/ITK.git
+  # using fork since no version of ITK compiles with MSVC 16.9
+  #git clone https://github.com/InsightSoftwareConsortium/ITK.git
+  git clone https://github.com/akenmorris/ITK.git
   cd ITK
   git checkout -f tags/${ITK_VER}
 
@@ -254,12 +254,8 @@ build_openvdb()
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 
-  CONCURRENT_FLAG=""
-  if [ "$(uname)" == "Darwin" ]; then
-      # There is an incompatibility between Qt and tbbmalloc_proxy on Mac
-      CONCURRENT_FLAG="-DCONCURRENT_MALLOC=None"
-  fi
-  
+  CONCURRENT_FLAG="-DCONCURRENT_MALLOC=None"
+      
   if [[ $OSTYPE == "msys" ]]; then
       cmake -DUSE_BLOSC=OFF -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} ..
       cmake --build . --config ${BUILD_TYPE} || exit 1
@@ -277,7 +273,7 @@ build_igl()
   echo " "
   echo "## Building Libigl..."
   cd ${INSTALL_DIR}
-  git clone https://github.com/libigl/libigl.git
+  git clone https://github.com/akenmorris/libigl.git
   cd libigl
   git checkout -f tags/${libigl_VER}
 
@@ -412,4 +408,6 @@ echo "BUILD_TYPE: ${BUILD_TYPE}"
 
 #build dependencies
 (time build_all 2>&1) 2>&1 | tee ${BUILD_LOG}
+RC=( "${PIPESTATUS[@]}" )
+exit ${RC[0]}
 

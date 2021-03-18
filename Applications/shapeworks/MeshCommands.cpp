@@ -379,7 +379,7 @@ bool FillHoles::execute(const optparse::Values &options, SharedCommandData &shar
     std::cerr << "No mesh to operate on\n";
     return false;
   }
-  
+
   sharedData.mesh->fillHoles();
   return sharedData.validMesh();
 }
@@ -415,7 +415,7 @@ bool ProbeVolume::execute(const optparse::Values &options, SharedCommandData &sh
   }
 
   Image img(filename);
-  
+
   sharedData.mesh->probeVolume(img);
   return sharedData.validMesh();
 }
@@ -454,7 +454,7 @@ bool ClipMesh::execute(const optparse::Values &options, SharedCommandData &share
   Point origin({static_cast<double>(options.get("ox")),
                 static_cast<double>(options.get("oy")),
                 static_cast<double>(options.get("oz"))});
-  
+
   sharedData.mesh->clip(makePlane(normal, origin));
   return sharedData.validMesh();
 }
@@ -486,7 +486,7 @@ bool TranslateMesh::execute(const optparse::Values &options, SharedCommandData &
   double tx = static_cast<double>(options.get("tx"));
   double ty = static_cast<double>(options.get("ty"));
   double tz = static_cast<double>(options.get("tz"));
-  
+
   sharedData.mesh->translate(makeVector({tx, ty, tz}));
   return sharedData.validMesh();
 }
@@ -613,6 +613,30 @@ bool Distance::execute(const optparse::Values &options, SharedCommandData &share
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// GenerateNormals
+///////////////////////////////////////////////////////////////////////////////
+void GenerateNormals::buildParser()
+{
+  const std::string prog = "generate-normals";
+  const std::string desc = "computes cell normals and orients them such that they point in the same direction";
+  parser.prog(prog).description(desc);
+
+  Command::buildParser();
+}
+
+bool GenerateNormals::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  sharedData.mesh->generateNormals();
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // FixMesh
 ///////////////////////////////////////////////////////////////////////////////
 void FixMesh::buildParser()
@@ -684,7 +708,7 @@ bool ClipClosedSurface::execute(const optparse::Values &options, SharedCommandDa
   Point origin({static_cast<double>(options.get("ox")),
                 static_cast<double>(options.get("oy")),
                 static_cast<double>(options.get("oz"))});
-  
+
   sharedData.mesh->clipClosedSurface(makePlane(normal, origin));
   return sharedData.validMesh();
 }
