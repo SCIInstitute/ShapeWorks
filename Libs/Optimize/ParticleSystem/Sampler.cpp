@@ -354,7 +354,10 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band)
 
   if (image) {
     this->m_Spacing = image->GetSpacing()[0];
-    domain->SetImage(image, narrow_band);
+    // convert narrow band (index space) to world space
+    // (e.g. narrow band of 4 means 4 voxels (largest side)
+    double narrow_band_world = image->GetSpacing().GetVnlVector().max_value() * narrow_band;
+    domain->SetImage(image, narrow_band_world);
   }
 
   m_DomainList.push_back(domain);

@@ -60,10 +60,6 @@ call jupyter contrib nbextension install --user
 call jupyter nbextension enable spellchecker/main
 call jupyter nbextension enable toc2/main
 
-REM installing nbstripout to strip out notebooks cell outputs before committing 
-call nbstripout --install
-call nbstripout --install --attributes .gitattributes
-
 call conda info
 
 
