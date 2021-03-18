@@ -261,17 +261,16 @@ Mesh &Mesh::fillHoles()
   vtkSmartPointer<vtkFillHolesFilter> filter = vtkSmartPointer<vtkFillHolesFilter>::New();
   filter->SetInputData(this->mesh);
   filter->SetHoleSize(1000.0);
+  filter->Update();
+  this->mesh = filter->GetOutput();
+
+  auto origNormal = mesh->GetPointData()->GetNormals();
 
   // Make the triangle window order consistent
-  vtkSmartPointer<vtkPolyDataNormals> normals = vtkSmartPointer<vtkPolyDataNormals>::New();
-  normals->SetInputConnection(filter->GetOutputPort());
-  normals->ConsistencyOn();
-  normals->SplittingOff();
-  normals->Update();
+  generateNormals();
 
   // Restore the original normals
-  normals->GetOutput()->GetPointData()->SetNormals(mesh->GetPointData()->GetNormals());
-  this->mesh = normals->GetOutput();
+  mesh->GetPointData()->SetNormals(origNormal);
 
   return *this;
 }
@@ -417,6 +416,7 @@ Mesh& Mesh::generateNormals()
   normal->SetInputData(this->mesh);
   normal->ComputeCellNormalsOn();
   normal->AutoOrientNormalsOn();
+  normal->SplittingOff();
   normal->Update();
   this->mesh = normal->GetOutput();
 
