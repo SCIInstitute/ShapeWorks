@@ -544,21 +544,26 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
       }
        */
 
+      transform_ = vtkSmartPointer<vtkTransform>::New();
       if (transform.size() == 12) {
         double tx = transform[9];
         double ty = transform[10];
         double tz = transform[11];
 
-        vtkSmartPointer<vtkTransform> translation = vtkSmartPointer<vtkTransform>::New();
-        translation->Translate(tx, ty, tz);
-
+        transform_->Translate(tx, ty, tz);
+/*
         vtkSmartPointer<vtkTransformPolyDataFilter> transform_filter =
           vtkSmartPointer<vtkTransformPolyDataFilter>::New();
         transform_filter->SetInputData(poly_data);
         transform_filter->SetTransform(translation);
         transform_filter->Update();
         poly_data = transform_filter->GetOutput();
+        */
+
       }
+
+      actor->SetUserTransform(transform_);
+      glyph_actor_->SetUserTransform(transform_);
 
       mapper->SetInputData(poly_data);
 

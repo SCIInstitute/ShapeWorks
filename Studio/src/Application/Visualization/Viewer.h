@@ -128,6 +128,7 @@ private:
 
   vtkSmartPointer<vtkPolyDataMapper> surface_mapper_;
   vtkSmartPointer<vtkActor> surface_actor_;
+  vtkSmartPointer<vtkTransform> transform_;
 
   std::vector<vtkSmartPointer<vtkPolyDataMapper>> surface_mappers_;
   std::vector<vtkSmartPointer<vtkActor>> surface_actors_;
