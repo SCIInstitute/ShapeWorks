@@ -84,7 +84,7 @@ void ShapeworksWorker::process()
         return;
       }
       if (this->optimize_->GetAborted()) {
-        emit error_message(std::string("Optimization Aborted!"));
+        emit message(std::string("Optimization Aborted!"));
         return;
       }
 
