@@ -4,6 +4,7 @@
 #include <QString>
 
 #include <Data/StudioMesh.h>
+#include <Data/StudioPoints.h>
 #include <Libs/Project/Subject.h>
 #include <Data/MeshManager.h>
 #include <Data/MeshGroup.h>
@@ -61,6 +62,9 @@ public:
 
   /// Retrieve the groomed meshes
   MeshGroup get_groomed_meshes(bool wait = false);
+
+  /// Retrieve the reconstructed meshes
+  MeshGroup get_reconstructed_meshes(bool wait = false);
 
   /// Reset the groomed mesh so that it will be re-created
   void reset_groomed_mesh();
@@ -153,6 +157,7 @@ private:
 
   MeshGroup original_meshes_;
   MeshGroup groomed_meshes_;
+  MeshGroup reconstructed_meshes_;
 
   MeshHandle original_mesh_;
   MeshHandle groomed_mesh_;
@@ -168,6 +173,7 @@ private:
   vnl_vector<double> global_correspondence_points_;
   vnl_vector<double> local_correspondence_points_;
   std::map<std::string, Eigen::VectorXf> point_features_;
+  StudioPoints points_;
 
   QList<Point> exclusion_sphere_centers_;
   QList<double> exclusion_sphere_radii_;

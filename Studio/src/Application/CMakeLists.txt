@@ -78,6 +78,7 @@ FILE(GLOB STUDIO_DATA_SRCS
   Data/Shape.cpp
   Data/StudioLog.cpp
   Data/StudioMesh.cpp
+  Data/StudioPoints.cpp
   Data/SurfaceReconstructor.cpp
   Data/vtkPolyDataToImageData.cpp
   )
@@ -100,6 +101,7 @@ FILE(GLOB STUDIO_DATA_HDRS
   Data/Shape.h
   Data/StudioLog.h
   Data/StudioMesh.h
+  Data/StudioPoints.h
   Data/SurfaceReconstructor.h
   Data/vtkPolyDataToImageData.h
   )

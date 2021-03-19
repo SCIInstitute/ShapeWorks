@@ -52,7 +52,7 @@ MeshGroup Shape::get_meshes(const string& display_mode)
   else if (display_mode == Visualizer::MODE_GROOMED_C) {
     return this->get_groomed_meshes();
   }
-  //return this->get_reconstructed_meshes();
+  return this->get_reconstructed_meshes();
 
 
   //// TODO temporary
@@ -169,6 +169,16 @@ MeshGroup Shape::get_groomed_meshes(bool wait)
                           true, wait);
   }
   return this->groomed_meshes_;
+}
+
+//---------------------------------------------------------------------------
+MeshGroup Shape::get_reconstructed_meshes(bool wait)
+{
+  if (!this->reconstructed_meshes_.valid()) {
+    this->generate_meshes(this->subject_->get_groomed_filenames(), this->reconstructed_meshes_,
+                          true, wait);
+  }
+  return this->reconstructed_meshes_;
 }
 
 //---------------------------------------------------------------------------
@@ -704,14 +714,14 @@ Eigen::VectorXf Shape::get_point_features(std::string feature)
 TransformType Shape::get_groomed_transform(int domain)
 {
   //if (this->groomed_transform_.empty()) {
-    // single domain support
-    auto transforms = this->subject_->get_groomed_transforms();
-    if (domain < transforms.size()) {
-      this->groomed_transform_.set_size(transforms[domain].size());
-      for (int i = 0; i < transforms[domain].size(); i++) {
-        this->groomed_transform_[i] = transforms[domain][i];
-      }
+  // single domain support
+  auto transforms = this->subject_->get_groomed_transforms();
+  if (domain < transforms.size()) {
+    this->groomed_transform_.set_size(transforms[domain].size());
+    for (int i = 0; i < transforms[domain].size(); i++) {
+      this->groomed_transform_[i] = transforms[domain][i];
     }
+  }
   //}
   return this->groomed_transform_;
 }
