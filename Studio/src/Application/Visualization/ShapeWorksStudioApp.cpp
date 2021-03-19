@@ -1364,10 +1364,8 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event)
   this->preferences_.set_window_geometry(this->saveGeometry());
   this->preferences_.set_window_state(this->saveState());
 
-  this->hide();
   this->optimize_tool_->shutdown_threads();
   STUDIO_CLOSE_LOG();
-  QCoreApplication::processEvents();
 }
 
 //---------------------------------------------------------------------------
