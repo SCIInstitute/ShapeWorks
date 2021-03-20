@@ -14,6 +14,7 @@
 #include <vtkLine.h>
 #include <vtkGenericCell.h>
 #include <vtkCellLocator.h>
+#include <itkObjectFactory.h>
 
 namespace itk
 {
@@ -22,6 +23,7 @@ class ContourDomain : public ParticleDomain
 public:
   /** Standard class typedefs */
   typedef SmartPointer<ContourDomain>  Pointer;
+  itkSimpleNewMacro(ContourDomain);
 
   /** Point type used to store particle locations. */
   typedef typename ParticleDomain::PointType PointType;

@@ -297,8 +297,7 @@ void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh)
 
 void Sampler::AddContour(vtkSmartPointer<vtkPolyData> poly_data)
 {
-  //todo merge in memory leak fixes from release-6.0 branch
-  itk::ContourDomain* domain = new itk::ContourDomain();
+  auto domain = itk::ContourDomain::New();
   m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
   if (poly_data != nullptr) {
     this->m_Spacing = 1;
