@@ -89,6 +89,7 @@ void Shape::set_subject(std::shared_ptr<Subject> subject)
   this->subject_ = subject;
   this->original_meshes_.set_number_of_meshes(subject->get_number_of_domains());
   this->groomed_meshes_.set_number_of_meshes(subject->get_number_of_domains());
+  this->reconstructed_meshes_.set_number_of_meshes(subject->get_number_of_domains());
 
   if (!this->subject_->get_segmentation_filenames().empty()) {
 
@@ -175,13 +176,13 @@ MeshGroup Shape::get_groomed_meshes(bool wait)
 MeshGroup Shape::get_reconstructed_meshes(bool wait)
 {
   if (!this->reconstructed_meshes_.valid()) {
-    this->generate_meshes(this->subject_->get_groomed_filenames(), this->reconstructed_meshes_,
-                          true, wait);
-
-
-    this->reconstructed_mesh_ = this->mesh_manager_->get_mesh(this->global_correspondence_points_,
-                                                              0);
-
+    auto worlds = this->particles_.get_world_particles();
+    for (int i=0;i<worlds.size();i++) {
+      MeshHandle mesh = this->mesh_manager_->get_mesh(worlds[i],i);
+      if (mesh) {
+        this->reconstructed_meshes_.set_mesh(i,mesh);
+      }
+    }
   }
   return this->reconstructed_meshes_;
 }

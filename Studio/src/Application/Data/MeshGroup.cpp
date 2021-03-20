@@ -26,7 +26,6 @@ MeshList& MeshGroup::meshes()
 //---------------------------------------------------------------------------
 bool MeshGroup::valid()
 {
-  int i = 0;
   for (auto&& item : meshes_) {
     if (!item) {
       return false;

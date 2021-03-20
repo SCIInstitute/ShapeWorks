@@ -3,23 +3,25 @@
 
 namespace shapeworks {
 
+//---------------------------------------------------------------------------
 StudioParticles::StudioParticles()
 {
 
 }
 
+//---------------------------------------------------------------------------
 void StudioParticles::set_local_particles(int domain, std::vector<itk::Point<double>> particles)
 {
   this->set_particles(domain, particles, true);
-
 }
 
+//---------------------------------------------------------------------------
 void StudioParticles::set_world_particles(int domain, std::vector<itk::Point<double>> particles)
 {
   this->set_particles(domain, particles, false);
-
 }
 
+//---------------------------------------------------------------------------
 void
 StudioParticles::set_particles(int domain, std::vector<itk::Point<double>> particles, bool local)
 {
@@ -38,6 +40,18 @@ StudioParticles::set_particles(int domain, std::vector<itk::Point<double>> parti
   }
   points[domain] = vector;
 
+}
+
+//---------------------------------------------------------------------------
+std::vector<vnl_vector<double>> StudioParticles::get_local_particles()
+{
+  return this->local_points_;
+}
+
+//---------------------------------------------------------------------------
+std::vector<vnl_vector<double>> StudioParticles::get_world_particles()
+{
+  return this->global_points_;
 }
 
 }
