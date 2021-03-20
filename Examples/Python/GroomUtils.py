@@ -574,7 +574,7 @@ def SelectCuttingPlane(input_file):
 # TODO: move this to Python/shapeworks once that is merged
 def computeLinesFromPoints(n, is_closed=True):
     """
-    Given an array of points, return indices for lines(as np.ndarray) between successive pairs of points.
+    Given a number of points, return indices for lines(as np.ndarray) between successive pairs of points.
 
     n:         number of points
     is_closed: whether or not the last vertex is to to be connected to the first vertex
