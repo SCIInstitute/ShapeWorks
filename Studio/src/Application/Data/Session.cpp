@@ -559,6 +559,7 @@ void Session::load_groomed_files(std::vector<std::string> file_names, double iso
 //---------------------------------------------------------------------------
 bool Session::update_points(std::vector<std::vector<itk::Point<double>>> points, bool local)
 {
+  int domains_per_subject = this->project_->get_number_of_domains_per_subject();
   for (int i = 0; i < points.size(); i++) {
     QSharedPointer<Shape> shape;
     if (this->shapes_.size() > i) {

@@ -16,9 +16,11 @@ class StudioPoints {
 public:
   StudioPoints();
 
+
+
 private:
-  std::vector <vnl_vector<double>> local_points_;
-  std::vector <vnl_vector<double>> global_points_;
+  std::vector<vnl_vector<double>> local_points_; // one for each domain
+  std::vector<vnl_vector<double>> global_points_; // one for each domain
 
 };
 }
