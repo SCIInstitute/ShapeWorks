@@ -247,7 +247,6 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   double mymc = m_MeanCurvatureCache->operator[](d)->operator[](idx);
   double A = 0.0;
 
-  maxmove = std::numeric_limits<double>::infinity();
   for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++) {
     double mc = m_MeanCurvatureCache->operator[](d)->operator[](m_CurrentNeighborhood[i].Index);
     double Dij = (mymc + mc) * 0.5; // average my curvature with my neighbors
