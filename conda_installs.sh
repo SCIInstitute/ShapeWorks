@@ -2,7 +2,7 @@
 # Installs conda environment for building ShapeWorks
 #
 echo ""
-echo "Note: this script only supports bash and zsh shells"
+echo "Note: this script only supports bash and zsh shells "
 echo "      It must be called using \"source ./conda_installs.sh\""
 echo ""
 
@@ -99,7 +99,7 @@ function install_conda() {
     pybind11=2.5.0 \
     notebook=6.1.5 \
     nbformat=4.4.0 \
-    pkgconfig=1.5.2
+    pkg-config=0.29.2
   then return 1; fi
 
   # linux and mac (only) deps
