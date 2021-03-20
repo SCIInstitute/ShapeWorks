@@ -201,11 +201,9 @@ double ContourDomain::Distance(const PointType &a, int idx_a,
   }
 
   if(out_grad != nullptr) {
-    Eigen::Map<Eigen::Vector3d> out_grad_eigen(out_grad->data_block());
     const auto ai_idx = this->lines_[line_a]->GetPointId(chosen_dir);
-    // todo is this math correct
-    out_grad_eigen = (pt_a - this->GetPoint(ai_idx)).normalized();
-    out_grad_eigen *= shortest_dist;
+    const Eigen::Vector3d out_grad_eigen = (pt_a - this->GetPoint(ai_idx)).normalized() * shortest_dist;
+    out_grad->set(out_grad_eigen.data());
   }
   return shortest_dist;
 }
