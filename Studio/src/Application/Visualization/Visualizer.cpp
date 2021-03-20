@@ -163,7 +163,7 @@ ShapeHandle Visualizer::create_display_object(const vnl_vector<double>& points,
                                               const std::vector<Shape::Point>& vectors)
 {
 
-  MeshHandle mesh = this->session_->get_mesh_manager()->get_mesh(points);
+  MeshHandle mesh = this->session_->get_mesh_manager()->get_mesh(points, 0);
 
   ShapeHandle shape = ShapeHandle(new Shape());
   shape->set_mesh_manager(this->session_->get_mesh_manager());

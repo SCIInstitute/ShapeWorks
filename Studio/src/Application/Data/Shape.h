@@ -78,7 +78,7 @@ public:
   /// Import local correspondence point data
   bool import_points(std::vector<itk::Point<double>> points, bool local);
 
-  bool set_particles(StudioParticles particles);
+  void set_particles(StudioParticles particles);
 
   /// Retrieve the reconstructed mesh
   MeshHandle get_reconstructed_mesh();

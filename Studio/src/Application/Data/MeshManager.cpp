@@ -75,10 +75,11 @@ MeshHandle MeshManager::get_mesh(const MeshWorkItem& item, bool wait)
 }
 
 //---------------------------------------------------------------------------
-MeshHandle MeshManager::get_mesh(const vnl_vector<double>& points)
+MeshHandle MeshManager::get_mesh(const vnl_vector<double>& points, int domain)
 {
   MeshWorkItem item;
   item.points = points;
+  item.domain = domain;
   return this->get_mesh(item);
 }
 

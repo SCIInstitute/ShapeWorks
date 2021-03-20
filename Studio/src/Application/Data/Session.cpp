@@ -623,19 +623,16 @@ bool Session::update_particles(std::vector<StudioParticles> particles)
       this->shapes_.push_back(shape);
     }
 
-    if (!shape->set_particles(particles[i])) {
-      return false;
-    }
-
+    shape->set_particles(particles[i]);
   }
 
   // update the project now that we have particles
   //this->project_->store_subjects();
 
-  if (particles.size() > 0) {
+  //if (particles.size() > 0) {
     this->unsaved_particle_files_ = true;
     emit points_changed();
-  }
+  //}
   return true;
 }
 

@@ -177,6 +177,11 @@ MeshGroup Shape::get_reconstructed_meshes(bool wait)
   if (!this->reconstructed_meshes_.valid()) {
     this->generate_meshes(this->subject_->get_groomed_filenames(), this->reconstructed_meshes_,
                           true, wait);
+
+
+    this->reconstructed_mesh_ = this->mesh_manager_->get_mesh(this->global_correspondence_points_,
+                                                              0);
+
   }
   return this->reconstructed_meshes_;
 }
@@ -268,7 +273,8 @@ bool Shape::import_local_point_file(QString filename)
 MeshHandle Shape::get_reconstructed_mesh()
 {
   if (!this->reconstructed_mesh_) {
-    this->reconstructed_mesh_ = this->mesh_manager_->get_mesh(this->global_correspondence_points_);
+    this->reconstructed_mesh_ = this->mesh_manager_->get_mesh(this->global_correspondence_points_,
+                                                              0);
   }
 
   return this->reconstructed_mesh_;
@@ -739,7 +745,7 @@ void Shape::set_point_features(std::string feature, Eigen::VectorXf values)
 }
 
 //---------------------------------------------------------------------------
-bool Shape::set_particles(StudioParticles particles)
+void Shape::set_particles(StudioParticles particles)
 {
   this->particles_ = particles;
 }

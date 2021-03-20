@@ -40,7 +40,7 @@ public:
   MeshHandle get_mesh(const MeshWorkItem& item, bool wait = false);
 
   //! get a mesh for a set of points
-  MeshHandle get_mesh(const vnl_vector<double>& points);
+  MeshHandle get_mesh(const vnl_vector<double>& points, int domain);
 
   //! return the surface reconstructor
   QSharedPointer<SurfaceReconstructor> get_surface_reconstructor();

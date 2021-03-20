@@ -868,7 +868,7 @@ ShapeHandle AnalysisTool::get_mean_shape()
 //---------------------------------------------------------------------------
 ShapeHandle AnalysisTool::create_shape_from_points(const vnl_vector<double>& points)
 {
-  MeshHandle mesh = this->session_->get_mesh_manager()->get_mesh(points);
+  MeshHandle mesh = this->session_->get_mesh_manager()->get_mesh(points, 0);
   ShapeHandle shape = ShapeHandle(new Shape());
   shape->set_mesh_manager(this->session_->get_mesh_manager());
   shape->set_reconstructed_mesh(mesh);

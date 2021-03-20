@@ -109,14 +109,6 @@ void OptimizeTool::handle_progress(int val, QString progress_message)
 
   auto particles = this->optimize_->GetParticles();
   this->session_->update_particles(particles);
-
-  auto local = this->optimize_->GetLocalPoints();
-  auto global = this->optimize_->GetGlobalPoints();
-
-  if (local.size() > 0 && global.size() > 0) {
-    this->session_->update_points(local, true);
-    this->session_->update_points(global, false);
-  }
 }
 
 //---------------------------------------------------------------------------
@@ -124,10 +116,8 @@ void OptimizeTool::handle_optimize_complete()
 {
   this->optimization_is_running_ = false;
 
-  auto local = this->optimize_->GetLocalPoints();
-  auto global = this->optimize_->GetGlobalPoints();
-  this->session_->update_points(local, true);
-  this->session_->update_points(global, false);
+  auto particles = this->optimize_->GetParticles();
+  this->session_->update_particles(particles);
   this->session_->calculate_reconstructed_samples();
   this->session_->get_project()->store_subjects();
   emit progress(100);
@@ -355,13 +345,8 @@ void OptimizeTool::handle_load_progress(int count)
 void OptimizeTool::clear_particles()
 {
   // clear out old points
-  std::vector<itk::Point<double>> empty;
-  std::vector<std::vector<itk::Point<double>>> lists;
-  for (int i = 0; i < this->session_->get_num_shapes(); i++) {
-    lists.push_back(empty);
-  }
-  this->session_->update_points(lists, true);
-  this->session_->update_points(lists, false);
+  std::vector<StudioParticles> particles;
+  this->session_->update_particles(particles);
 }
 
 //---------------------------------------------------------------------------
@@ -411,10 +396,10 @@ void OptimizeTool::setup_domain_boxes()
 
   if (this->session_->get_project()->get_number_of_domains_per_subject() < 2) {
     this->ui_->particle_stack->setCurrentIndex(0);
-    this->ui_->domain_widget->setMaximumSize(1,1);
+    this->ui_->domain_widget->setMaximumSize(1, 1);
   }
   else {
-    this->ui_->domain_widget->setMaximumSize(9999,9999);
+    this->ui_->domain_widget->setMaximumSize(9999, 9999);
     auto domain_names = this->session_->get_project()->get_domain_names();
     QGridLayout* layout = new QGridLayout;
     QIntValidator* above_zero = new QIntValidator(1, std::numeric_limits<int>::max(), this);
