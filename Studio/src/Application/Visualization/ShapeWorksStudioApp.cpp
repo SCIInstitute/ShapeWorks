@@ -987,7 +987,10 @@ void ShapeWorksStudioApp::handle_points_changed()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_optimize_complete()
 {
-  this->session_->get_mesh_manager()->get_surface_reconstructor()->resetReconstruct();
+  int num_domains = this->session_->get_domains_per_shape();
+  for (int i = 0; i < num_domains; i++) {
+    this->session_->get_mesh_manager()->get_surface_reconstructor(i)->resetReconstruct();
+  }
   this->analysis_tool_->reset_stats();
   this->analysis_tool_->initialize_mesh_warper();
   this->session_->handle_clear_cache();
@@ -1083,8 +1086,13 @@ void ShapeWorksStudioApp::update_display(bool force)
 
   this->visualizer_->set_center(this->ui_->center_checkbox->isChecked());
 
-  bool reconstruct_ready =
-    this->session_->get_mesh_manager()->get_surface_reconstructor()->hasDenseMean();
+  bool reconstruct_ready = true;
+
+  for (int i = 0; i < this->session_->get_domains_per_shape(); i++) {
+    if (!this->session_->get_mesh_manager()->get_surface_reconstructor(i)->hasDenseMean()) {
+      reconstruct_ready = false;
+    }
+  }
 
   if (!this->session_->groomed_present() && this->session_->particles_present()) {
     // legacy will be used

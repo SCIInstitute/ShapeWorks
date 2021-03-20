@@ -176,6 +176,7 @@ void AnalysisTool::on_reconstructionButton_clicked()
   QThread* thread = new QThread;
   std::vector<std::vector<itk::Point<double>>> local, global;
   std::vector<std::string> images;
+  /*
   auto shapes = this->session_->get_shapes();
   local.resize(shapes.size());
   global.resize(shapes.size());
@@ -199,8 +200,10 @@ void AnalysisTool::on_reconstructionButton_clicked()
     images[ii] = image;
     ii++;
   }
+   */
   ShapeworksWorker* worker = new ShapeworksWorker(
-    ShapeworksWorker::ReconstructType, nullptr, nullptr, nullptr, this->session_,
+    ShapeworksWorker::ReconstructType, nullptr, nullptr,
+    nullptr, this->session_,
     local, global, images,
     this->ui_->maxAngle->value(),
     this->ui_->meshDecimation->value(),
@@ -1064,12 +1067,19 @@ void AnalysisTool::initialize_mesh_warper()
     QSharedPointer<Shape> median_shape = this->session_->get_shapes()[median];
     vtkSmartPointer<vtkPolyData> poly_data = median_shape->get_groomed_mesh(true)->get_poly_data();
 
-    if (!poly_data) {
+    auto mesh_group = median_shape->get_groomed_meshes(true);
+
+    if (!mesh_group.valid()) {
       STUDIO_LOG_ERROR("Unable to set reference mesh, groomed mesh is unavailable");
       return;
     }
-    this->session_->get_mesh_manager()->get_mesh_warper()->set_reference_mesh(poly_data,
-                                                                              median_shape->get_local_correspondence_points());
+    auto meshes = mesh_group.meshes();
+    for (int i = 0; i < mesh_group.meshes().size(); i++) {
+      this->session_->get_mesh_manager()
+        ->get_mesh_warper(i)->set_reference_mesh(
+          meshes[i]->get_poly_data(),
+          median_shape->get_particles().get_local_particles()[i]);
+    }
   }
 }
 

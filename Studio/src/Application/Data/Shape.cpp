@@ -177,10 +177,10 @@ MeshGroup Shape::get_reconstructed_meshes(bool wait)
 {
   if (!this->reconstructed_meshes_.valid()) {
     auto worlds = this->particles_.get_world_particles();
-    for (int i=0;i<worlds.size();i++) {
-      MeshHandle mesh = this->mesh_manager_->get_mesh(worlds[i],i);
+    for (int i = 0; i < worlds.size(); i++) {
+      MeshHandle mesh = this->mesh_manager_->get_mesh(worlds[i], i);
       if (mesh) {
-        this->reconstructed_meshes_.set_mesh(i,mesh);
+        this->reconstructed_meshes_.set_mesh(i, mesh);
       }
     }
   }
@@ -367,12 +367,12 @@ QString Shape::get_groomed_filename()
 }
 
 //---------------------------------------------------------------------------
-QString Shape::get_groomed_filename_with_path()
+QString Shape::get_groomed_filename_with_path(int domain)
 {
-  if (this->subject_->get_groomed_filenames().size() < 1) {
+  if (domain >= this->subject_->get_groomed_filenames().size()) {
     return "";
   }
-  return QString::fromStdString(this->subject_->get_groomed_filenames()[0]);
+  return QString::fromStdString(this->subject_->get_groomed_filenames()[domain]);
 }
 
 //---------------------------------------------------------------------------
@@ -749,6 +749,12 @@ void Shape::set_point_features(std::string feature, Eigen::VectorXf values)
 void Shape::set_particles(StudioParticles particles)
 {
   this->particles_ = particles;
+}
+
+//---------------------------------------------------------------------------
+StudioParticles Shape::get_particles()
+{
+  return this->particles_;
 }
 
 }

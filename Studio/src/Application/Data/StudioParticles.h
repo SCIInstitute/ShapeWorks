@@ -23,7 +23,12 @@ public:
   std::vector<vnl_vector<double>> get_local_particles();
   std::vector<vnl_vector<double>> get_world_particles();
 
+  std::vector<itk::Point<double>> get_local_points(int domain);
+  std::vector<itk::Point<double>> get_world_points(int domain);
+
 private:
+
+  std::vector<itk::Point<double>> vnl_to_point_vector(const vnl_vector<double>& vnl);
 
   void set_particles(int domain, std::vector<itk::Point<double>> particles, bool local);
   std::vector<vnl_vector<double>> local_points_; // one for each domain

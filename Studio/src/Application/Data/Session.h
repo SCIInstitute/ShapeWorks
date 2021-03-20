@@ -96,6 +96,8 @@ public:
   bool groups_available();
   int get_num_shapes();
 
+  int get_domains_per_shape();
+
   std::string get_default_feature_map();
 
   static bool is_supported_file_format(std::string filename);

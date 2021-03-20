@@ -79,6 +79,7 @@ public:
   bool import_points(std::vector<itk::Point<double>> points, bool local);
 
   void set_particles(StudioParticles particles);
+  StudioParticles get_particles();
 
   /// Retrieve the reconstructed mesh
   MeshHandle get_reconstructed_mesh();
@@ -108,7 +109,7 @@ public:
   QString get_original_filename_with_path();
 
   QString get_groomed_filename();
-  QString get_groomed_filename_with_path();
+  QString get_groomed_filename_with_path(int domain);
 
   QString get_global_point_filename();
   QString get_global_point_filename_with_path();

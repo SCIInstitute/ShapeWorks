@@ -54,4 +54,32 @@ std::vector<vnl_vector<double>> StudioParticles::get_world_particles()
   return this->global_points_;
 }
 
+//---------------------------------------------------------------------------
+std::vector<itk::Point<double>> StudioParticles::get_local_points(int domain)
+{
+  return this->vnl_to_point_vector(this->local_points_[domain]);
+}
+
+//---------------------------------------------------------------------------
+std::vector<itk::Point<double>> StudioParticles::get_world_points(int domain)
+{
+  return this->vnl_to_point_vector(this->global_points_[domain]);
+}
+
+//---------------------------------------------------------------------------
+std::vector<itk::Point<double>>
+StudioParticles::vnl_to_point_vector(const vnl_vector<double>& vnl)
+{
+  std::vector<itk::Point<double>> points;
+
+  for (size_t i = 0; i < vnl.size(); i += 3) {
+    itk::Point<double> pt;
+    pt[0] = vnl[i];
+    pt[1] = vnl[i + 1];
+    pt[2] = vnl[i + 2];
+    points.push_back(pt);
+  }
+  return points;
+}
+
 }

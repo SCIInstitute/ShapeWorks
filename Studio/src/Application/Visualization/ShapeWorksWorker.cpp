@@ -5,6 +5,7 @@
 #include <QProcess>
 #include <QMessageBox>
 
+#include <Data/Shape.h>
 #include <Visualization/ShapeWorksWorker.h>
 #include <Libs/Optimize/Optimize.h>
 #include <Application/Groom/QGroom.h>
@@ -92,10 +93,23 @@ void ShapeworksWorker::process()
     case ShapeworksWorker::ReconstructType:
       try {
         emit message(std::string("Warping to mean space..."));
-        this->session_->get_mesh_manager()->get_surface_reconstructor()->initializeReconstruction(
-          this->local_pts_, this->global_pts_, this->distance_transform_,
-          this->max_angle_, this->decimation_percent_,
-          this->num_clusters_);
+        for (int i = 0; i < this->session_->get_domains_per_shape(); i++) {
+
+          auto shapes = this->session_->get_shapes();
+          std::vector<std::string> distance_transforms;
+          std::vector<std::vector<itk::Point<double>>> local, global;
+          for (auto& s : shapes) {
+            distance_transforms.push_back(s->get_groomed_filename_with_path(i).toStdString());
+            auto particles = s->get_particles();
+            local.push_back(particles.get_local_points(i));
+            global.push_back(particles.get_world_points(i));
+          }
+          this->session_->get_mesh_manager()
+            ->get_surface_reconstructor(i)->initializeReconstruction(
+              local, global, distance_transforms,
+              this->max_angle_, this->decimation_percent_,
+              this->num_clusters_);
+        }
       } catch (std::runtime_error e) {
         if (std::string(e.what()).find_first_of("Warning") != std::string::npos) {
           emit warning_message(e.what());

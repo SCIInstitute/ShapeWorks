@@ -52,12 +52,15 @@ MeshHandle MeshGenerator::build_mesh_from_points(const vnl_vector<double>& shape
 {
   MeshHandle mesh(new StudioMesh);
 
-  bool distance_transform_available = this->surface_reconstructor_ &&
-                                      this->surface_reconstructor_->get_surface_reconstruction_available();
+  bool distance_transform_available =
+    this->surface_reconstructors_.size() > domain &&
+    this->surface_reconstructors_[domain] &&
+    this->surface_reconstructors_[domain]->get_surface_reconstruction_available();
 
   if (this->reconstruction_method_ == RECONSTRUCTION_DISTANCE_TRANSFORM_C &&
       distance_transform_available) {
-    vtkSmartPointer<vtkPolyData> poly_data = this->surface_reconstructor_->build_mesh(shape);
+    vtkSmartPointer<vtkPolyData> poly_data = this->surface_reconstructors_[domain]->build_mesh(
+      shape);
 
     vtkSmartPointer<vtkPolyDataNormals> polydata_normals =
       vtkSmartPointer<vtkPolyDataNormals>::New();
@@ -67,9 +70,10 @@ MeshHandle MeshGenerator::build_mesh_from_points(const vnl_vector<double>& shape
 
     mesh->set_poly_data(poly_data);
   }
-  else if (this->reconstruction_method_ == RECONSTRUCTION_MESH_WARPER_C && this->mesh_warper_ &&
-           this->mesh_warper_->get_warp_available()) {
-    vtkSmartPointer<vtkPolyData> poly_data = this->mesh_warper_->build_mesh(shape);
+  else if (this->reconstruction_method_ == RECONSTRUCTION_MESH_WARPER_C &&
+           this->mesh_warpers_.size() > domain && this->mesh_warpers_[domain] &&
+           this->mesh_warpers_[domain]->get_warp_available()) {
+    vtkSmartPointer<vtkPolyData> poly_data = this->mesh_warpers_[domain]->build_mesh(shape);
 
     vtkSmartPointer<vtkPolyDataNormals> polydata_normals =
       vtkSmartPointer<vtkPolyDataNormals>::New();
@@ -173,15 +177,16 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
 }
 
 //---------------------------------------------------------------------------
-void MeshGenerator::set_surface_reconstructor(std::shared_ptr<SurfaceReconstructor> reconstructor)
+void MeshGenerator::set_surface_reconstructors(
+  std::vector<std::shared_ptr<SurfaceReconstructor>> reconstructors)
 {
-  this->surface_reconstructor_ = reconstructor;
+  this->surface_reconstructors_ = reconstructors;
 }
 
 //---------------------------------------------------------------------------
-void MeshGenerator::set_mesh_warper(std::shared_ptr<MeshWarper> mesh_warper)
+void MeshGenerator::set_mesh_warpers(std::vector<std::shared_ptr<MeshWarper>> mesh_warpers)
 {
-  this->mesh_warper_ = mesh_warper;
+  this->mesh_warpers_ = mesh_warpers;
 }
 
 //---------------------------------------------------------------------------

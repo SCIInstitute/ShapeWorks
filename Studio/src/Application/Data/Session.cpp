@@ -827,6 +827,12 @@ int Session::get_num_shapes()
 }
 
 //---------------------------------------------------------------------------
+int Session::get_domains_per_shape()
+{
+  return this->get_project()->get_number_of_domains_per_subject();
+}
+
+//---------------------------------------------------------------------------
 Parameters& Session::parameters()
 {
   return this->params_;
@@ -916,5 +922,6 @@ double Session::get_auto_glyph_size()
 {
   return this->auto_glyph_size_;
 }
+
 
 }

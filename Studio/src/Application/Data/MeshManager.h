@@ -13,7 +13,6 @@
 #include <QWaitCondition>
 #include <QThreadPool>
 
-
 #include <Data/MeshCache.h>
 #include <Data/MeshGenerator.h>
 #include <Data/MeshWorkQueue.h>
@@ -22,7 +21,6 @@
 #include <Data/Preferences.h>
 #include <Data/SurfaceReconstructor.h>
 #include <Data/MeshWarper.h>
-
 
 namespace shapeworks {
 
@@ -42,11 +40,11 @@ public:
   //! get a mesh for a set of points
   MeshHandle get_mesh(const vnl_vector<double>& points, int domain);
 
-  //! return the surface reconstructor
-  std::shared_ptr<SurfaceReconstructor> get_surface_reconstructor();
+  //! return the surface reconstructor for a given domain
+  std::shared_ptr<SurfaceReconstructor> get_surface_reconstructor(int domain);
 
-  //! return the mesh warper
-  std::shared_ptr<MeshWarper> get_mesh_warper();
+  //! return the mesh warper for a given domain
+  std::shared_ptr<MeshWarper> get_mesh_warper(int domain);
 
   //! return the mesh generator
   std::shared_ptr<MeshGenerator> get_mesh_generator()
@@ -80,9 +78,8 @@ private:
   // queue of meshes to build
   MeshWorkQueue work_queue_;
 
-  std::shared_ptr<SurfaceReconstructor> surface_reconstructor_;
-
-  std::shared_ptr<MeshWarper> mesh_warper_ = std::make_shared<MeshWarper>();
+  std::vector<std::shared_ptr<SurfaceReconstructor>> surface_reconstructors_;
+  std::vector<std::shared_ptr<MeshWarper>> mesh_warpers_;
 
   QThreadPool thread_pool_;
 

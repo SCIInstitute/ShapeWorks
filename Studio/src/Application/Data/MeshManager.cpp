@@ -12,11 +12,10 @@ namespace shapeworks {
 //---------------------------------------------------------------------------
 MeshManager::MeshManager(Preferences& prefs) :
   prefs_(prefs),
-  mesh_cache_(prefs),
-  surface_reconstructor_(new SurfaceReconstructor())
+  mesh_cache_(prefs)
 {
-  this->mesh_generator_->set_mesh_warper(this->mesh_warper_);
-  this->mesh_generator_->set_surface_reconstructor(this->surface_reconstructor_);
+  this->mesh_generator_->set_mesh_warpers(this->mesh_warpers_);
+  this->mesh_generator_->set_surface_reconstructors(this->surface_reconstructors_);
 
   qRegisterMetaType<MeshWorkItem>("MeshWorkItem");
   qRegisterMetaType<MeshHandle>("MeshHandle");
@@ -95,18 +94,6 @@ void MeshManager::handle_thread_complete(const MeshWorkItem& item, MeshHandle me
 }
 
 //---------------------------------------------------------------------------
-std::shared_ptr<SurfaceReconstructor> MeshManager::get_surface_reconstructor()
-{
-  return this->surface_reconstructor_;
-}
-
-//---------------------------------------------------------------------------
-std::shared_ptr<MeshWarper> MeshManager::get_mesh_warper()
-{
-  return this->mesh_warper_;
-}
-
-//---------------------------------------------------------------------------
 void MeshManager::check_error_status(MeshHandle mesh)
 {
   if (mesh->get_error_message() != "" && !this->error_emitted_) {
@@ -115,5 +102,23 @@ void MeshManager::check_error_status(MeshHandle mesh)
                           + "\n\nFurther messages will be suppressed\n";
     emit error_encountered(message);
   }
+}
+
+//---------------------------------------------------------------------------
+std::shared_ptr<MeshWarper> MeshManager::get_mesh_warper(int domain)
+{
+  while (domain >= this->mesh_warpers_.size()) {
+    this->mesh_warpers_.push_back(std::make_shared<MeshWarper>());
+  }
+  return this->mesh_warpers_[domain];
+}
+
+//---------------------------------------------------------------------------
+std::shared_ptr<SurfaceReconstructor> MeshManager::get_surface_reconstructor(int domain)
+{
+  while (domain >= this->surface_reconstructors_.size()) {
+    this->surface_reconstructors_.push_back(std::make_shared<SurfaceReconstructor>());
+  }
+  return this->surface_reconstructors_[domain];
 }
 }
