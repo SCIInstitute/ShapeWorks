@@ -22,7 +22,7 @@ def Run_Pipeline(args):
         input("Press Enter to continue")
 
     datasetName = "supershapes2D_1mode-v0"
-    outputDirectory = "Output/supershapes_contour/"
+    outputDirectory = "Output/supershapes_1mode_contour/"
     contourDirectory = os.path.join(outputDirectory, datasetName, 'contours')
     if not os.path.exists(contourDirectory):
         os.makedirs(contourDirectory)

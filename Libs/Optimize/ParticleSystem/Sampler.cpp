@@ -87,6 +87,7 @@ void Sampler::AllocateDomainsAndNeighborhoods()
   // Allocate all the necessary domains and neighborhoods. This must be done
   // *after* registering the attributes to the particle system since some of
   // them respond to AddDomain.
+  // Here, the Constraints actually get added to the constraints class
   int ctr = 0;
   for (unsigned int i = 0; i < this->m_DomainList.size(); i++) {
     auto domain = m_DomainList[i];
@@ -285,7 +286,7 @@ void Sampler::ReInitialize()
 
 void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh)
 {
-  itk::MeshDomain* domain = new itk::MeshDomain();
+  auto domain = itk::MeshDomain::New();
   m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
   if (mesh) {
     this->m_Spacing = 1;
@@ -367,11 +368,13 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band)
 
   if (image) {
     this->m_Spacing = image->GetSpacing()[0];
-    domain->SetImage(image, narrow_band);
+    // convert narrow band (index space) to world space
+    // (e.g. narrow band of 4 means 4 voxels (largest side)
+    double narrow_band_world = image->GetSpacing().GetVnlVector().max_value() * narrow_band;
+    domain->SetImage(image, narrow_band_world);
   }
 
   m_DomainList.push_back(domain);
 }
 
 } // end namespace
-

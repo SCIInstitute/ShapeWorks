@@ -593,8 +593,6 @@ void Optimize::AddSinglePoint()
   firstPointPosition[1] = 0;
   firstPointPosition[2] = 0;
   firstPointPosition = m_sampler->GetParticleSystem()->GetDomain(0)->GetValidLocationNear(firstPointPosition);
-  // todo all domains should use ZeroCrossingPoint to get the first point, not closest to [0,0,0]
-  // firstPointPosition = m_sampler->GetParticleSystem()->GetDomain(0)->GetZeroCrossingPoint();
 
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
     if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) > 0) {
@@ -973,6 +971,12 @@ void Optimize::RunOptimize()
   else {
     m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::EnsembleEntropy);
   }
+
+  if (m_sampler->GetParticleSystem()->GetNumberOfDomains() == 1) {
+    // where there is only one sample/domain, we must use mean force since there is no correspondence
+    m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeanEnergy);     // mean force
+  }
+
 
   if (m_optimization_iterations - m_optimization_iterations_completed > 0) {
     m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(
