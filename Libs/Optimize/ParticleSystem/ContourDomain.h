@@ -135,7 +135,6 @@ private:
   std::vector<vtkSmartPointer<vtkLine>> lines_;
 
   // Geodesics between all point pairs. Assumes the number of points is very small
-  // todo keep only half(triangular matrix)?
   Eigen::MatrixXd geodesics_;
 
   // cache which line a particle is on
@@ -143,13 +142,13 @@ private:
   // store some information about the last geodesic query. The next one will most likely reuse this
   mutable int geo_lq_idx_ = -1;
   mutable int geo_lq_line_ = -1;
-  mutable double geo_lq_dist_ = -1; //todo probably unused
+  mutable double geo_lq_dist_ = -1;
 
   void ComputeBounds();
   void ComputeGeodesics(vtkSmartPointer<vtkPolyData> poly_data);
 
   int GetLineForPoint(const double pt[3], int idx, double& closest_distance, double closest_pt[3]) const;
-  double ComputeLineCoordinate(const double pt[3], int line) const; // todo is "Barycentric" correct?
+  double ComputeLineCoordinate(const double pt[3], int line) const;
 
   // Return the number of lines that consist of i-th point
   int NumberOfLinesIncidentOnPoint(int i) const;
