@@ -96,12 +96,12 @@ public:
   inline double Distance(const PointType &a, int idx_a,
                          const PointType &b, int idx_b,
                          vnl_vector_fixed<double, 3>* out_grad) const override {
-      if(out_grad != nullptr) {
-        for(int i=0; i<DIMENSION; i++) {
-          (*out_grad)[i] = a[i] - b[i];
-        }
+    if(out_grad != nullptr) {
+      for(int i=0; i<DIMENSION; i++) {
+        (*out_grad)[i] = a[i] - b[i];
       }
-      return meshWrapper->ComputeDistance(a, b);
+    }
+    return meshWrapper->ComputeDistance(a, b);
   }
   inline double SquaredDistance(const PointType &a, int idx_a,
                                 const PointType &b, int idx_b) const override {
