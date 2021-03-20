@@ -335,11 +335,8 @@ ContourDomain::PointType ContourDomain::GetPositionAfterSplit(const PointType& p
     split_dir *= -1;
   }
 
-  // why divide by 5? preserve existing behaviour in particle splitting code. not sure why its required, but it seems
-  // to keep the split a bit more stable
-  split_dir[0] *= epsilon / 5.0;
-  split_dir[1] *= epsilon / 5.0;
-  split_dir[2] *= epsilon / 5.0;
+  // divide by 5.0 copied from existing splitting code. unsure of rationale
+  split_dir *= epsilon / 5.0;
   vnl_vector_fixed<double, 3> vnl_split_dir(split_dir.data());
   return UpdateParticlePosition(pt, -1, vnl_split_dir); // pass -1 because this really corresponds to an unborn particle
 }
