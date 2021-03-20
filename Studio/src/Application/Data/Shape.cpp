@@ -738,4 +738,10 @@ void Shape::set_point_features(std::string feature, Eigen::VectorXf values)
   }
 }
 
+//---------------------------------------------------------------------------
+bool Shape::set_particles(StudioParticles particles)
+{
+  this->particles_ = particles;
+}
+
 }

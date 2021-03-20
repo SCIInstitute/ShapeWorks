@@ -107,6 +107,9 @@ void OptimizeTool::handle_progress(int val, QString progress_message)
   emit progress(val);
   emit status(progress_message.toStdString());
 
+  auto particles = this->optimize_->GetParticles();
+  this->session_->update_particles(particles);
+
   auto local = this->optimize_->GetLocalPoints();
   auto global = this->optimize_->GetGlobalPoints();
 

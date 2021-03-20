@@ -157,3 +157,27 @@ void Subject::set_extra_values(std::map<std::string, std::string> extra_values)
 {
   this->extra_values_ = extra_values;
 }
+
+//---------------------------------------------------------------------------
+void Subject::set_local_particle_filenames(std::vector<std::string> filenames)
+{
+  this->local_particle_filenames_ = filenames;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Subject::get_local_particle_filenames()
+{
+  return this->local_particle_filenames_;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_world_particle_filenames(std::vector<std::string> filenames)
+{
+  this->world_particle_filenames_ = filenames;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Subject::get_world_particle_filenames()
+{
+  return this->world_particle_filenames_;
+}

@@ -559,7 +559,6 @@ void Session::load_groomed_files(std::vector<std::string> file_names, double iso
 //---------------------------------------------------------------------------
 bool Session::update_points(std::vector<std::vector<itk::Point<double>>> points, bool local)
 {
-  int domains_per_subject = this->project_->get_number_of_domains_per_subject();
   for (int i = 0; i < points.size(); i++) {
     QSharedPointer<Shape> shape;
     if (this->shapes_.size() > i) {
@@ -601,6 +600,39 @@ bool Session::update_points(std::vector<std::vector<itk::Point<double>>> points,
   this->project_->store_subjects();
 
   if (points.size() > 0 && !local) {
+    this->unsaved_particle_files_ = true;
+    emit points_changed();
+  }
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool Session::update_particles(std::vector<StudioParticles> particles)
+{
+  for (int i = 0; i < particles.size(); i++) {
+    QSharedPointer<Shape> shape;
+    if (this->shapes_.size() > i) {
+      shape = this->shapes_[i];
+    }
+    else {
+      shape = QSharedPointer<Shape>(new Shape);
+      std::shared_ptr<Subject> subject = std::make_shared<Subject>();
+      shape->set_mesh_manager(this->mesh_manager_);
+      shape->set_subject(subject);
+      this->project_->get_subjects().push_back(subject);
+      this->shapes_.push_back(shape);
+    }
+
+    if (!shape->set_particles(particles[i])) {
+      return false;
+    }
+
+  }
+
+  // update the project now that we have particles
+  //this->project_->store_subjects();
+
+  if (particles.size() > 0) {
     this->unsaved_particle_files_ = true;
     emit points_changed();
   }

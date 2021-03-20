@@ -4,7 +4,7 @@
 #include <QString>
 
 #include <Data/StudioMesh.h>
-#include <Data/StudioPoints.h>
+#include <Data/StudioParticles.h>
 #include <Libs/Project/Subject.h>
 #include <Data/MeshManager.h>
 #include <Data/MeshGroup.h>
@@ -77,6 +77,8 @@ public:
 
   /// Import local correspondence point data
   bool import_points(std::vector<itk::Point<double>> points, bool local);
+
+  bool set_particles(StudioParticles particles);
 
   /// Retrieve the reconstructed mesh
   MeshHandle get_reconstructed_mesh();
@@ -173,7 +175,7 @@ private:
   vnl_vector<double> global_correspondence_points_;
   vnl_vector<double> local_correspondence_points_;
   std::map<std::string, Eigen::VectorXf> point_features_;
-  StudioPoints points_;
+  StudioParticles particles_;
 
   QList<Point> exclusion_sphere_centers_;
   QList<double> exclusion_sphere_radii_;

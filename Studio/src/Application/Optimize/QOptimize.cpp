@@ -83,7 +83,7 @@ void QOptimize::IterateCallback(itk::Object* caller, const itk::EventObject& e)
   }
 
   message = message + "Particles: " + QString::number(num_particles) + ", Iteration: " +
-  QString::number(stage_num_iterations) + " / " + QString::number(stage_total_iterations);
+            QString::number(stage_num_iterations) + " / " + QString::number(stage_total_iterations);
 
   if (update) {
     this->time_since_last_update_.start();
@@ -113,5 +113,31 @@ void QOptimize::IterateCallback(itk::Object* caller, const itk::EventObject& e)
     }
     emit progress(this->m_iteration_count * 100 / this->m_total_iterations, message);
   }
+}
+
+//---------------------------------------------------------------------------
+std::vector<StudioParticles> QOptimize::GetParticles()
+{
+  QMutexLocker locker(&qmutex_);
+
+  std::vector<StudioParticles> particles;
+
+  int num_domains_per_subject = this->GetDomainsPerShape();
+  int num_subjects = this->GetNumShapes() / num_domains_per_subject;
+  particles.resize(num_subjects);
+
+  int subject = 0;
+  int domain = 0;
+  for (int i = 0; i < this->m_local_points.size(); i++) {
+    particles[subject].set_local_particles(domain, this->m_local_points[i]);
+    particles[subject].set_world_particles(domain, this->m_global_points[i]);
+    domain++;
+    if (i % num_domains_per_subject == 0) {
+      subject++;
+      domain = 0;
+    }
+  }
+
+  return particles;
 }
 }

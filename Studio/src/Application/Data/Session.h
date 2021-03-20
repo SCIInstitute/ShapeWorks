@@ -13,6 +13,7 @@
 #include <Libs/Project/Project.h>
 
 #include <Data/Preferences.h>
+#include <Data/StudioParticles.h>
 #include <Data/MeshManager.h>
 
 namespace shapeworks {
@@ -69,6 +70,7 @@ public:
   /// load point files
   bool load_point_files(std::vector<std::string> file_names, bool local);
   bool update_points(std::vector<std::vector<itk::Point<double>>> points, bool local);
+  bool update_particles(std::vector<StudioParticles> particles);
 
   bool is_light_project();
 
