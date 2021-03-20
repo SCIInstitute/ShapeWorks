@@ -73,3 +73,15 @@ def super_formula_3D(m, n1, n2, n3, a, b, numPoints=100000):
 def super_formula_2D(m, n1, n2, n3, a, b, theta):
 	r = abs((1 / a) * np.cos(m * theta / 4.0))**n2  +  abs((1 / b) * np.sin(m * theta / 4.0))**n3
 	return r**(-1 / n1)
+
+# Sample points for a 2D supershape and return as np.ndarray
+def sample_super_formula_2D(n_points, m, n1, n2, n3):
+    pts = np.ndarray((n_points, 3))
+    for i in range(n_points):
+        theta = 2.0 * np.pi * i / n_points
+        r = super_formula_2D(m, n1, n2, n3, 1.0, 1.0, theta)
+
+        x = r * np.cos(theta)
+        y = r * np.sin(theta)
+        pts[i] = [x, y, 0.0]
+    return pts
