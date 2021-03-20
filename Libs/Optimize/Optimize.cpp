@@ -1402,8 +1402,8 @@ void Optimize::WritePointFiles(std::string iter_prefix)
   for (int i = 0; i < n; i++) {
     counter = 0;
 
-    std::string local_file = iter_prefix + m_filenames[i] + "_local.particles";
-    std::string world_file = iter_prefix + m_filenames[i] + "_world.particles";
+    std::string local_file = iter_prefix + "/" + m_filenames[i] + "_local.particles";
+    std::string world_file = iter_prefix + "/" + m_filenames[i] + "_world.particles";
 
     std::ofstream out(local_file.c_str());
     std::ofstream outw(world_file.c_str());
@@ -1447,7 +1447,6 @@ void Optimize::WritePointFiles(std::string iter_prefix)
 
 
   }   // end for files
-  std::string final_mega_file = iter_prefix + "mega_local.particles";
   this->PrintDoneMessage();
 }
 
