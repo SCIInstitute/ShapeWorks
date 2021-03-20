@@ -25,7 +25,7 @@ void StudioParticles::set_world_particles(int domain, std::vector<itk::Point<dou
 void
 StudioParticles::set_particles(int domain, std::vector<itk::Point<double>> particles, bool local)
 {
-  auto& points = local ? this->local_points_ : this->global_points_;
+  auto& points = local ? this->local_particles_ : this->global_particles_;
   if (domain >= points.size()) {
     points.resize(domain + 1);
   }
@@ -45,25 +45,25 @@ StudioParticles::set_particles(int domain, std::vector<itk::Point<double>> parti
 //---------------------------------------------------------------------------
 std::vector<vnl_vector<double>> StudioParticles::get_local_particles()
 {
-  return this->local_points_;
+  return this->local_particles_;
 }
 
 //---------------------------------------------------------------------------
 std::vector<vnl_vector<double>> StudioParticles::get_world_particles()
 {
-  return this->global_points_;
+  return this->global_particles_;
 }
 
 //---------------------------------------------------------------------------
 std::vector<itk::Point<double>> StudioParticles::get_local_points(int domain)
 {
-  return this->vnl_to_point_vector(this->local_points_[domain]);
+  return this->vnl_to_point_vector(this->local_particles_[domain]);
 }
 
 //---------------------------------------------------------------------------
 std::vector<itk::Point<double>> StudioParticles::get_world_points(int domain)
 {
-  return this->vnl_to_point_vector(this->global_points_[domain]);
+  return this->vnl_to_point_vector(this->global_particles_[domain]);
 }
 
 //---------------------------------------------------------------------------
@@ -80,6 +80,20 @@ StudioParticles::vnl_to_point_vector(const vnl_vector<double>& vnl)
     points.push_back(pt);
   }
   return points;
+}
+
+//---------------------------------------------------------------------------
+vnl_vector<double> StudioParticles::get_local_particles(int domain)
+{
+  assert(domain < this->local_particles_.size());
+  return this->local_particles_[domain];
+}
+
+//---------------------------------------------------------------------------
+vnl_vector<double> StudioParticles::get_world_particles(int domain)
+{
+  assert(domain < this->global_particles_.size());
+  return this->global_particles_[domain];
 }
 
 }

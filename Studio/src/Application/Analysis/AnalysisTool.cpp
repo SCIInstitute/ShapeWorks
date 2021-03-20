@@ -1078,7 +1078,7 @@ void AnalysisTool::initialize_mesh_warper()
       this->session_->get_mesh_manager()
         ->get_mesh_warper(i)->set_reference_mesh(
           meshes[i]->get_poly_data(),
-          median_shape->get_particles().get_local_particles()[i]);
+          median_shape->get_particles().get_local_particles(i));
     }
   }
 }
