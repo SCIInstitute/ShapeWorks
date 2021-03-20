@@ -65,7 +65,7 @@ jobs:
       id: cache-dependencies
       uses: actions/cache@v1
       with:
-        path: "C:\deps"
+        path: "C:\\deps"
         key: ${{ runner.os }}c-${{ hashFiles('**/build_dependencies.sh') }}
 
     - name: Build dependencies
