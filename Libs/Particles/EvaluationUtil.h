@@ -42,7 +42,7 @@ struct Reconstruction
 };
 
 // Sorts the reconstructions in place according to `dist` and saves them to the specified folder.
-// This generates XML files which could be opened in ShapeWorksView2
+// This generates XML files which can be opened in ShapeWorksStudio
 void SaveReconstructions(std::vector<Reconstruction> &reconstructions, const std::vector<std::string> &srcPaths,
                          const std::string &saveTo)
 {
