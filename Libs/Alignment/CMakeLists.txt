@@ -20,3 +20,8 @@ target_include_directories(Alignment PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Transforms>
   $<INSTALL_INTERFACE:include>
   )
+
+target_link_libraries(Alignment PUBLIC
+  tinyxml
+  Eigen3::Eigen
+  )
