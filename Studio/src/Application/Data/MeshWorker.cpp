@@ -4,7 +4,7 @@
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-MeshWorker::MeshWorker(MeshWorkQueue* queue, QSharedPointer<MeshGenerator> generator)
+MeshWorker::MeshWorker(MeshWorkQueue* queue, std::shared_ptr<MeshGenerator> generator)
   : queue_(queue), mesh_generator_(generator)
 {
 }

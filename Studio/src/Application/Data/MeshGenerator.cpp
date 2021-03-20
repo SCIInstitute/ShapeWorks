@@ -173,13 +173,13 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
 }
 
 //---------------------------------------------------------------------------
-void MeshGenerator::set_surface_reconstructor(QSharedPointer<SurfaceReconstructor> reconstructor)
+void MeshGenerator::set_surface_reconstructor(std::shared_ptr<SurfaceReconstructor> reconstructor)
 {
   this->surface_reconstructor_ = reconstructor;
 }
 
 //---------------------------------------------------------------------------
-void MeshGenerator::set_mesh_warper(QSharedPointer<MeshWarper> mesh_warper)
+void MeshGenerator::set_mesh_warper(std::shared_ptr<MeshWarper> mesh_warper)
 {
   this->mesh_warper_ = mesh_warper;
 }

@@ -95,13 +95,13 @@ void MeshManager::handle_thread_complete(const MeshWorkItem& item, MeshHandle me
 }
 
 //---------------------------------------------------------------------------
-QSharedPointer<SurfaceReconstructor> MeshManager::get_surface_reconstructor()
+std::shared_ptr<SurfaceReconstructor> MeshManager::get_surface_reconstructor()
 {
   return this->surface_reconstructor_;
 }
 
 //---------------------------------------------------------------------------
-QSharedPointer<MeshWarper> MeshManager::get_mesh_warper()
+std::shared_ptr<MeshWarper> MeshManager::get_mesh_warper()
 {
   return this->mesh_warper_;
 }

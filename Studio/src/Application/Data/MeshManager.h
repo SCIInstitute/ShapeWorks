@@ -43,13 +43,13 @@ public:
   MeshHandle get_mesh(const vnl_vector<double>& points, int domain);
 
   //! return the surface reconstructor
-  QSharedPointer<SurfaceReconstructor> get_surface_reconstructor();
+  std::shared_ptr<SurfaceReconstructor> get_surface_reconstructor();
 
   //! return the mesh warper
-  QSharedPointer<MeshWarper> get_mesh_warper();
+  std::shared_ptr<MeshWarper> get_mesh_warper();
 
   //! return the mesh generator
-  QSharedPointer<MeshGenerator> get_mesh_generator()
+  std::shared_ptr<MeshGenerator> get_mesh_generator()
   { return this->mesh_generator_; }
 
   //! clear the cache
@@ -75,14 +75,14 @@ private:
   MeshCache mesh_cache_;
 
   // the mesh generator
-  QSharedPointer<MeshGenerator> mesh_generator_ = QSharedPointer<MeshGenerator>::create();
+  std::shared_ptr<MeshGenerator> mesh_generator_ = std::make_shared<MeshGenerator>();
 
   // queue of meshes to build
   MeshWorkQueue work_queue_;
 
-  QSharedPointer<SurfaceReconstructor> surface_reconstructor_;
+  std::shared_ptr<SurfaceReconstructor> surface_reconstructor_;
 
-  QSharedPointer<MeshWarper> mesh_warper_ = QSharedPointer<MeshWarper>::create();
+  std::shared_ptr<MeshWarper> mesh_warper_ = std::make_shared<MeshWarper>();
 
   QThreadPool thread_pool_;
 
