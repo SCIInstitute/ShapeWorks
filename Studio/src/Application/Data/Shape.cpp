@@ -285,13 +285,13 @@ MeshHandle Shape::get_reconstructed_mesh()
 //---------------------------------------------------------------------------
 vnl_vector<double> Shape::get_global_correspondence_points()
 {
-  return this->global_correspondence_points_;
+  return this->particles_.get_combined_global_particles();
 }
 
 //---------------------------------------------------------------------------
 vnl_vector<double> Shape::get_local_correspondence_points()
 {
-  return this->local_correspondence_points_;
+  return this->particles_.get_combined_local_particles();
 }
 
 //---------------------------------------------------------------------------

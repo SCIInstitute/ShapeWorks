@@ -30,7 +30,7 @@ StudioParticles::set_particles(int domain, std::vector<itk::Point<double>> parti
     points.resize(domain + 1);
   }
 
-  vnl_vector<double> vector(particles.size()*3);
+  vnl_vector<double> vector(particles.size() * 3);
   int idx = 0;
 
   for (int i = 0; i < particles.size(); i++) {
@@ -112,6 +112,37 @@ void StudioParticles::set_world_particles(int domain, vnl_vector<double> particl
   }
   global_particles_[domain] = particles;
 
+}
+
+//---------------------------------------------------------------------------
+vnl_vector<double> StudioParticles::get_combined_local_particles()
+{
+  return combine(this->local_particles_);
+}
+
+//---------------------------------------------------------------------------
+vnl_vector<double> StudioParticles::get_combined_global_particles()
+{
+  return combine(this->global_particles_);
+}
+
+//---------------------------------------------------------------------------
+vnl_vector<double> StudioParticles::combine(const std::vector<vnl_vector<double>>& vnl)
+{
+  vnl_vector<double> points;
+  int size = 0;
+  for (int i = 0; i < vnl.size(); i++) {
+    size += vnl[i].size();
+  }
+  points.set_size(size);
+  int idx = 0;
+  for (int i = 0; i < vnl.size(); i++) {
+    for (int j = 0; j < vnl[i].size(); j++) {
+      points[idx++] = vnl[i][j];
+    }
+  }
+
+  return points;
 }
 
 }
