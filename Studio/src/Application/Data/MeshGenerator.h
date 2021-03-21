@@ -19,6 +19,12 @@
 
 namespace shapeworks {
 
+class MeshReconstructors {
+public:
+  std::vector<std::shared_ptr<SurfaceReconstructor>> surface_reconstructors_;
+  std::vector<std::shared_ptr<MeshWarper>> mesh_warpers_;
+};
+
 class MeshGenerator {
 public:
 
@@ -34,10 +40,7 @@ public:
 
   MeshHandle build_mesh_from_file(std::string filename, float iso_value = 0.0001);
 
-  void
-  set_surface_reconstructors(std::vector<std::shared_ptr<SurfaceReconstructor>> reconstructors);
-
-  void set_mesh_warpers(std::vector<std::shared_ptr<MeshWarper>> mesh_warpers);
+  void set_mesh_reconstructors(std::shared_ptr<MeshReconstructors> reconstructors);
 
   void set_reconstruction_method(std::string method);
   std::string get_reconstruction_method();
@@ -48,8 +51,8 @@ public:
 
 private:
 
-  std::vector<std::shared_ptr<SurfaceReconstructor>> surface_reconstructors_;
-  std::vector<std::shared_ptr<MeshWarper>> mesh_warpers_;
+  std::shared_ptr<MeshReconstructors> reconstructors_ = std::make_shared<MeshReconstructors>();
+
   std::string reconstruction_method_ = RECONSTRUCTION_MESH_WARPER_C;
 
 };

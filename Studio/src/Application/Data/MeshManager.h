@@ -24,6 +24,7 @@
 
 namespace shapeworks {
 
+
 class MeshManager : public QObject {
 Q_OBJECT
 
@@ -65,6 +66,8 @@ Q_SIGNALS:
 
 private:
 
+  std::shared_ptr<MeshReconstructors> reconstructors_ = std::make_shared<MeshReconstructors>();
+
   void check_error_status(MeshHandle mesh);
 
   Preferences& prefs_;
@@ -77,9 +80,6 @@ private:
 
   // queue of meshes to build
   MeshWorkQueue work_queue_;
-
-  std::vector<std::shared_ptr<SurfaceReconstructor>> surface_reconstructors_;
-  std::vector<std::shared_ptr<MeshWarper>> mesh_warpers_;
 
   QThreadPool thread_pool_;
 

@@ -11,6 +11,7 @@
  * in the background.
  */
 
+#pragma once
 #ifndef MESH_MANAGER_H
 #define MESH_MANAGER_H
 

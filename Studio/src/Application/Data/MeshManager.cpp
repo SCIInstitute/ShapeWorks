@@ -14,8 +14,7 @@ MeshManager::MeshManager(Preferences& prefs) :
   prefs_(prefs),
   mesh_cache_(prefs)
 {
-  this->mesh_generator_->set_mesh_warpers(this->mesh_warpers_);
-  this->mesh_generator_->set_surface_reconstructors(this->surface_reconstructors_);
+  this->mesh_generator_->set_mesh_reconstructors(this->reconstructors_);
 
   qRegisterMetaType<MeshWorkItem>("MeshWorkItem");
   qRegisterMetaType<MeshHandle>("MeshHandle");
@@ -107,18 +106,19 @@ void MeshManager::check_error_status(MeshHandle mesh)
 //---------------------------------------------------------------------------
 std::shared_ptr<MeshWarper> MeshManager::get_mesh_warper(int domain)
 {
-  while (domain >= this->mesh_warpers_.size()) {
-    this->mesh_warpers_.push_back(std::make_shared<MeshWarper>());
+  while (domain >= this->reconstructors_->mesh_warpers_.size()) {
+    this->reconstructors_->mesh_warpers_.push_back(std::make_shared<MeshWarper>());
   }
-  return this->mesh_warpers_[domain];
+  return this->reconstructors_->mesh_warpers_[domain];
 }
 
 //---------------------------------------------------------------------------
 std::shared_ptr<SurfaceReconstructor> MeshManager::get_surface_reconstructor(int domain)
 {
-  while (domain >= this->surface_reconstructors_.size()) {
-    this->surface_reconstructors_.push_back(std::make_shared<SurfaceReconstructor>());
+  while (domain >= this->reconstructors_->surface_reconstructors_.size()) {
+    this->reconstructors_->surface_reconstructors_.push_back(
+      std::make_shared<SurfaceReconstructor>());
   }
-  return this->surface_reconstructors_[domain];
+  return this->reconstructors_->surface_reconstructors_[domain];
 }
 }
