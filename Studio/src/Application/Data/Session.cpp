@@ -148,10 +148,13 @@ bool Session::save_project(std::string fname)
   // correspondence points
   if (this->unsaved_particle_files_) {
     for (int i = 0; i < this->shapes_.size(); i++) {
-      auto global_path = this->shapes_[i]->get_subject()->get_global_particle_filename();
-      auto local_path = this->shapes_[i]->get_subject()->get_local_particle_filename();
-      this->save_particles_file(global_path, this->shapes_[i]->get_global_correspondence_points());
-      this->save_particles_file(local_path, this->shapes_[i]->get_local_correspondence_points());
+      auto local_files = this->shapes_[i]->get_subject()->get_local_particle_filenames();
+      auto world_files = this->shapes_[i]->get_subject()->get_world_particle_filenames();
+      auto particles = this->shapes_[i]->get_particles();
+      for (int i = 0; i < local_files.size(); i++) {
+        this->save_particles_file(local_files[i], particles.get_local_particles(i));
+        this->save_particles_file(world_files[i], particles.get_world_particles(i));
+      }
     }
     this->unsaved_particle_files_ = false;
   }
@@ -454,19 +457,23 @@ void Session::set_project_path(QString relative_path)
     subject->set_groomed_filenames(new_paths);
 
     // local particles
-    auto path = subject->get_local_particle_filename();
-    if (path != "") {
+    paths = subject->get_local_particle_filenames();
+    new_paths.clear();
+    for (auto path: paths) {
       auto full_path = old_path.absoluteFilePath(QString::fromStdString(path));
-      subject->set_local_particle_filename(new_path.relativeFilePath(full_path).toStdString());
+      new_paths.push_back(new_path.relativeFilePath(full_path).toStdString());
     }
+    subject->set_local_particle_filenames(new_paths);
 
-    // global particles
-    path = subject->get_global_particle_filename();
-    if (path != "") {
+    // world particles
+    paths = subject->get_world_particle_filenames();
+    new_paths.clear();
+    for (auto path: paths) {
       auto full_path = old_path.absoluteFilePath(QString::fromStdString(path));
-      subject->set_global_particle_filename(new_path.relativeFilePath(full_path).toStdString());
+      new_paths.push_back(new_path.relativeFilePath(full_path).toStdString());
     }
-
+    subject->set_world_particle_filenames(new_paths);
+    
     // features
     auto features = subject->get_feature_filenames();
     std::map<std::string, std::string> new_features;
@@ -558,7 +565,6 @@ void Session::load_groomed_files(std::vector<std::string> file_names, double iso
     emit data_changed();
   }
 }
-
 
 //---------------------------------------------------------------------------
 bool Session::update_particles(std::vector<StudioParticles> particles)

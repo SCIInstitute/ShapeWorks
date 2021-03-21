@@ -98,6 +98,7 @@ public:
 private:
 
   int get_or_create_worksheet(std::string name);
+  std::string get_new_file_column(std::string name, int idx);
 
   // known prefixes
   static constexpr const char* SEGMENTATION_PREFIX = "segmentation_";

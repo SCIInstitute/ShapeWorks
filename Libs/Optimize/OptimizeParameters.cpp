@@ -196,8 +196,7 @@ void OptimizeParameters::set_multiscale_particles(int value)
 //---------------------------------------------------------------------------
 bool OptimizeParameters::set_up_optimize(Optimize* optimize)
 {
-
-  optimize->SetDomainsPerShape(1); /// only one domain per shape right now
+  optimize->SetDomainsPerShape(this->project_->get_number_of_domains_per_subject()); /// only one domain per shape right now
   optimize->SetNumberOfParticles(this->get_number_of_particles());
   optimize->SetInitialRelativeWeighting(this->get_initial_relative_weighting());
   optimize->SetRelativeWeighting(this->get_relative_weighting());
@@ -258,6 +257,8 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
 
   //optimize->GetSampler()->GetParticleSystem()->SetNumberOfDomains(subjects.size());
 
+  std::vector<std::string> local_particle_filenames;
+  std::vector<std::string> world_particle_filenames;
   std::vector<std::string> filenames;
   int count = 0;
   for (auto s : subjects) {
@@ -268,61 +269,62 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
     if (files.empty()) {
       throw std::invalid_argument("No groomed inputs for optimization");
     }
-    auto filename = files[0];
-    auto domain_type = s->get_domain_types()[0];
-    filenames.push_back(filename);
 
-    if (domain_type == DomainType::Mesh) {
+    for (int i =0;i>files.size();i++) {
 
-/*
-      auto trimesh = std::shared_ptr<TriMesh>(TriMesh::read(filename.c_str()));
-      if (trimesh) {
-        optimize->AddMesh(std::make_shared<shapeworks::TriMeshWrapper>(trimesh));
-      }
-*/
-      auto poly_data = MeshUtils::threadSafeReadMesh(filename.c_str()).getVTKMesh();
+      auto filename = files[i];
+      auto domain_type = s->get_domain_types()[i];
+      filenames.push_back(filename);
 
-      if (poly_data) {
-        optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data));
-      }
+      if (domain_type == DomainType::Mesh) {
 
-      else {
-        throw std::invalid_argument("Error loading mesh: " + filename);
-      }
-    }
-    else {
-      Image image(filename);
-      optimize->AddImage(image);
-    }
+        auto poly_data = MeshUtils::threadSafeReadMesh(filename.c_str()).getVTKMesh();
 
+        if (poly_data) {
+          optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data));
+        }
 
-
-    using TransformType = vnl_matrix_fixed<double, 4,4>;
-    TransformType prefix_transform;
-    prefix_transform.set_identity();
-
-
-    auto transforms = s->get_groomed_transforms();
-    /*
-    if (transforms.size() > 0) {
-      int idx = 0;
-      for (int r = 0; r < 4; r++) {
-        for (int c = 0; c < 3; c++) {
-          prefix_transform[r][c] = transforms[0][idx++];
+        else {
+          throw std::invalid_argument("Error loading mesh: " + filename);
         }
       }
-    }*/
-
-    prefix_transform[0][3] = transforms[0][9];
-    prefix_transform[1][3] = transforms[0][10];
-    prefix_transform[2][3] = transforms[0][11];
-
-    optimize->GetSampler()->GetParticleSystem()->SetPrefixTransform(count, prefix_transform);
+      else {
+        Image image(filename);
+        optimize->AddImage(image);
+      }
 
 
-    auto name = StringUtils::getFileNameWithoutExtension(filename);
-    s->set_global_particle_filename(name + "_world.particles");
-    s->set_local_particle_filename(name + "_local.particles");
+
+      using TransformType = vnl_matrix_fixed<double, 4, 4>;
+      TransformType prefix_transform;
+      prefix_transform.set_identity();
+
+      auto transforms = s->get_groomed_transforms();
+      /*
+      if (transforms.size() > 0) {
+        int idx = 0;
+        for (int r = 0; r < 4; r++) {
+          for (int c = 0; c < 3; c++) {
+            prefix_transform[r][c] = transforms[0][idx++];
+          }
+        }
+      }*/
+
+      prefix_transform[0][3] = transforms[i][9];
+      prefix_transform[1][3] = transforms[i][10];
+      prefix_transform[2][3] = transforms[i][11];
+
+      optimize->GetSampler()->GetParticleSystem()->SetPrefixTransform(count, prefix_transform);
+
+      auto name = StringUtils::getFileNameWithoutExtension(filename);
+
+      /// TODO: output directory?
+      local_particle_filenames.push_back(name + "_local.particles");
+      world_particle_filenames.push_back(name + "_world.particles");
+    }
+    s->set_local_particle_filenames(local_particle_filenames);
+    s->set_world_particle_filenames(world_particle_filenames);
+
     count++;
     if (this->load_callback_) {
       this->load_callback_(count);

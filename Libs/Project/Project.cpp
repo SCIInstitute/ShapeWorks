@@ -245,6 +245,9 @@ void Project::load_subjects()
 void Project::store_subjects()
 {
   int num_subjects = this->subjects_.size();
+  if (num_subjects < 1) {
+    return;
+  }
 
   // segmentation columns
   auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
@@ -264,6 +267,18 @@ void Project::store_subjects()
                                                                GROOMED_PREFIX,
                                                                GROOMED_TRANSFORMS_PREFIX);
     groomed_transform_columns.push_back(groomed_transform_column_name);
+  }
+
+  // local and world particle columns
+  std::vector<std::string> local_columns;
+  std::vector<std::string> world_columns;
+  for (int i = 0; i < seg_columns.size(); i++) {
+    std::string column_name = replace_string(seg_columns[i],
+                                             SEGMENTATION_PREFIX, LOCAL_PARTICLES);
+    local_columns.push_back(column_name);
+    column_name = replace_string(seg_columns[i],
+                                 SEGMENTATION_PREFIX, WORLD_PARTICLES);
+    world_columns.push_back(column_name);
   }
 
   bool groomed_present = false;
@@ -289,8 +304,9 @@ void Project::store_subjects()
     auto groomed_files = subject->get_groomed_filenames();
     if (groomed_files.size() >= groomed_columns.size() && groomed_files.size() > 0) {
       groomed_present = true;
+      int count = 0;
       while (groomed_files.size() > groomed_columns.size()) {
-        groomed_columns.push_back(std::string(GROOMED_PREFIX) + "file");
+        groomed_columns.push_back(this->get_new_file_column(GROOMED_PREFIX, count));
       }
       this->set_list(groomed_columns, i, groomed_files);
 
@@ -311,17 +327,22 @@ void Project::store_subjects()
       this->set_value(idx, i + 2, x.second);  // +1 for header, +1 for 1-based index
     }
 
-    // local files
-    std::string local_filename = subject->get_local_particle_filename();
-    if (!local_filename.empty()) {
-      this->set_value("local_particles", i, local_filename);
+    // local and world particle files
+    auto local_files = subject->get_local_particle_filenames();
+    auto world_files = subject->get_world_particle_filenames();
+    if (local_files.size() > 0) {
       this->particles_present_ = true;
     }
-    std::string global_filename = subject->get_global_particle_filename();
-    if (!global_filename.empty()) {
-      this->set_value("world_particles", i, global_filename);
-      this->particles_present_ = true;
+
+    // add columns if necessary
+    int count = 0;
+    while (local_files.size() > local_columns.size()) {
+      local_columns.push_back(this->get_new_file_column(LOCAL_PARTICLES, count));
+      world_columns.push_back(this->get_new_file_column(WORLD_PARTICLES, count));
     }
+
+    this->set_list(local_columns, i, local_files);
+    this->set_list(world_columns, i, world_files);
   }
 
   this->segmentations_present_ = !seg_columns.empty();
@@ -708,6 +729,17 @@ int Project::get_or_create_worksheet(std::string name)
     auto ws = this->wb_->create_sheet();
     ws.title(name);
     return this->wb_->index(ws);
+  }
+}
+
+//---------------------------------------------------------------------------
+std::string Project::get_new_file_column(std::string name, int idx)
+{
+  if (idx == 0) {
+    return name + "_file";
+  }
+  else {
+    return name + "_file_" + std::to_string(idx);
   }
 }
 
