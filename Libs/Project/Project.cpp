@@ -332,17 +332,17 @@ void Project::store_subjects()
     auto world_files = subject->get_world_particle_filenames();
     if (local_files.size() > 0) {
       this->particles_present_ = true;
-    }
 
-    // add columns if necessary
-    int count = 0;
-    while (local_files.size() > local_columns.size()) {
-      local_columns.push_back(this->get_new_file_column(LOCAL_PARTICLES, count));
-      world_columns.push_back(this->get_new_file_column(WORLD_PARTICLES, count));
-    }
+      // add columns if necessary
+      int count = 0;
+      while (local_files.size() > local_columns.size()) {
+        local_columns.push_back(this->get_new_file_column(LOCAL_PARTICLES, count));
+        world_columns.push_back(this->get_new_file_column(WORLD_PARTICLES, count));
+      }
 
-    this->set_list(local_columns, i, local_files);
-    this->set_list(world_columns, i, world_files);
+      this->set_list(local_columns, i, local_files);
+      this->set_list(world_columns, i, world_files);
+    }
   }
 
   this->segmentations_present_ = !seg_columns.empty();

@@ -49,10 +49,8 @@ public:
   /// Import the original raw image file
   void import_original_image(const std::string& filename);
 
-
   /// Retrieve the original meshes
   MeshGroup get_original_meshes(bool wait = false);
-
 
   /// Retrieve the groomed meshes
   MeshGroup get_groomed_meshes(bool wait = false);
@@ -144,7 +142,6 @@ private:
   void apply_feature_to_points(std::string feature, MeshHandle mesh);
 
   int id_;
-
 
   MeshGroup original_meshes_;
   MeshGroup groomed_meshes_;

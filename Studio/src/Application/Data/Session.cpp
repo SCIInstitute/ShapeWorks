@@ -338,6 +338,9 @@ bool Session::load_light_project(QString filename)
     return false;
   }
 
+
+  /// TODO point files from XML
+  /*
   if (!this->load_point_files(local_point_files, true)) {
     return false;
   }
@@ -345,7 +348,8 @@ bool Session::load_light_project(QString filename)
   if (!this->load_point_files(global_point_files, false)) {
     return false;
   }
-
+*/
+  
   this->load_groomed_files(groom_files, 0.5);
 
   // read group ids
@@ -386,7 +390,9 @@ bool Session::load_xl_project(QString filename)
 
   this->set_project_path(QFileInfo(filename).absolutePath());
 
-  this->project_->load(QFileInfo(filename).fileName().toStdString());
+  if (!this->project_->load(QFileInfo(filename).fileName().toStdString())) {
+    return false;
+  }
 
   int num_subjects = this->project_->get_number_of_subjects();
 
@@ -409,21 +415,8 @@ bool Session::load_xl_project(QString filename)
     this->shapes_ << shape;
   }
 
-  //this->load_point_files(local_point_files, true);
-  //this->load_point_files(global_point_files, false);
-
-  /*
-     if (!denseFile.empty() && !sparseFile.empty() && !goodPtsFile.empty()) {
-     this->mesh_manager_->getSurfaceReconstructor()->readMeanInfo(denseFile, sparseFile,
-                                                                 goodPtsFile);
-     }
-   */
-
-
   this->groups_available_ = this->project_->get_group_names().size() > 0;
-
   this->params_ = this->project_->get_parameters(Parameters::STUDIO_PARAMS);
-
   return true;
 }
 
@@ -473,7 +466,7 @@ void Session::set_project_path(QString relative_path)
       new_paths.push_back(new_path.relativeFilePath(full_path).toStdString());
     }
     subject->set_world_particle_filenames(new_paths);
-    
+
     // features
     auto features = subject->get_feature_filenames();
     std::map<std::string, std::string> new_features;
@@ -652,74 +645,6 @@ bool Session::is_light_project()
 bool Session::get_groomed_present()
 {
   return this->project_->get_groomed_present();
-}
-
-//---------------------------------------------------------------------------
-bool Session::load_point_files(std::vector<std::string> list, bool local)
-{
-  /*
-  QProgressDialog progress("Loading point files...", "Abort", 0, list.size(), this->parent_);
-  progress.setWindowModality(Qt::WindowModal);
-  progress.setMinimumDuration(2000);
-  for (int i = 0; i < list.size(); i++) {
-    progress.setValue(i);
-    QApplication::processEvents();
-    if (progress.wasCanceled()) {
-      break;
-    }
-    QSharedPointer<Shape> shape;
-    if (this->shapes_.size() > i) {
-      shape = this->shapes_[i];
-    }
-    else {
-      shape = QSharedPointer<Shape>(new Shape);
-
-      std::shared_ptr<Subject> subject = std::make_shared<Subject>();
-
-      shape->set_mesh_manager(this->mesh_manager_);
-      shape->set_subject(subject);
-      this->project_->get_subjects().push_back(subject);
-
-      this->shapes_.push_back(shape);
-    }
-    auto fname = QString::fromStdString(list[i]);
-    QFileInfo fi(fname);
-    QString basename = fi.completeBaseName();
-    QString ext = fi.suffix();
-
-    QStringList list;
-    list << fi.fileName();
-    list << "";
-    list << "";
-    list << "";
-    shape->set_annotations(list);
-
-    if (QFile::exists(fname)) {
-      if (!local) {
-        if (!shape->import_global_point_file(fname)) {
-          return false;
-        }
-      }
-      else {
-        if (!shape->import_local_point_file(fname)) {
-          return false;
-        }
-      }
-    }
-    else {
-      QString message = "Unable to open particle file:" + fname;
-      STUDIO_LOG_ERROR(message);
-      QMessageBox::critical(0, "Error", message);
-      return false;
-    }
-  }
-  progress.setValue(list.size());
-  QApplication::processEvents();
-  if (list.size() > 0) {
-    //  emit data_changed();
-  }
-  return true;
-   */
 }
 
 //---------------------------------------------------------------------------
