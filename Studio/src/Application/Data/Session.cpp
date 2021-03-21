@@ -396,15 +396,18 @@ bool Session::load_xl_project(QString filename)
     QSharedPointer<Shape> shape = QSharedPointer<Shape>(new Shape());
     shape->set_mesh_manager(this->mesh_manager_);
     shape->set_subject(subjects[i]);
-    if (subjects[i]->get_local_particle_filename() != "") {
-      local_point_files.push_back(subjects[i]->get_local_particle_filename());
-      global_point_files.push_back(subjects[i]->get_global_particle_filename());
-    }
+
+    auto locals = subjects[i]->get_local_particle_filenames();
+    auto worlds = subjects[i]->get_world_particle_filenames();
+
+    shape->import_local_point_files(locals);
+    shape->import_global_point_files(worlds);
+
     this->shapes_ << shape;
   }
 
-  this->load_point_files(local_point_files, true);
-  this->load_point_files(global_point_files, false);
+  //this->load_point_files(local_point_files, true);
+  //this->load_point_files(global_point_files, false);
 
   /*
      if (!denseFile.empty() && !sparseFile.empty() && !goodPtsFile.empty()) {
@@ -630,8 +633,8 @@ bool Session::update_particles(std::vector<StudioParticles> particles)
   //this->project_->store_subjects();
 
   //if (particles.size() > 0) {
-    this->unsaved_particle_files_ = true;
-    emit points_changed();
+  this->unsaved_particle_files_ = true;
+  emit points_changed();
   //}
   return true;
 }
@@ -697,6 +700,7 @@ bool Session::get_groomed_present()
 //---------------------------------------------------------------------------
 bool Session::load_point_files(std::vector<std::string> list, bool local)
 {
+  /*
   QProgressDialog progress("Loading point files...", "Abort", 0, list.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
   progress.setMinimumDuration(2000);
@@ -758,6 +762,7 @@ bool Session::load_point_files(std::vector<std::string> list, bool local)
     //  emit data_changed();
   }
   return true;
+   */
 }
 
 //---------------------------------------------------------------------------
@@ -922,6 +927,5 @@ double Session::get_auto_glyph_size()
 {
   return this->auto_glyph_size_;
 }
-
 
 }

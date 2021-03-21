@@ -189,8 +189,8 @@ void Project::load_subjects()
   auto groomed_transform_columns = this->get_matching_columns(GROOMED_TRANSFORMS_PREFIX);
   auto feature_columns = this->get_feature_names();
   auto group_names = this->get_matching_columns(GROUP_PREFIX);
-  int local_particle_column = this->get_index_for_column(LOCAL_PARTICLES);
-  int global_particle_column = this->get_index_for_column(WORLD_PARTICLES);
+  auto local_particle_columns = this->get_matching_columns(LOCAL_PARTICLES);
+  auto world_particle_columns = this->get_matching_columns(WORLD_PARTICLES);
 
   auto extra_columns = this->get_extra_columns();
 
@@ -218,14 +218,13 @@ void Project::load_subjects()
     }
     subject->set_group_values(group_map);
 
-    if (local_particle_column > 0) {
-      this->particles_present_ = true;
-      subject->set_local_particle_filename(this->get_subject_value(local_particle_column, i));
-    }
+    auto locals = this->get_list(local_particle_columns, i);
+    auto worlds = this->get_list(world_particle_columns, i);
+    subject->set_local_particle_filenames(locals);
+    subject->set_world_particle_filenames(worlds);
 
-    if (global_particle_column > 0) {
+    if (locals.size() > 0) {
       this->particles_present_ = true;
-      subject->set_global_particle_filename(this->get_subject_value(global_particle_column, i));
     }
 
     std::map<std::string, std::string> extra_values;

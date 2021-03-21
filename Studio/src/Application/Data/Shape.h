@@ -70,10 +70,10 @@ public:
   void reset_groomed_mesh();
 
   /// Import global correspondence point file
-  bool import_global_point_file(QString filename);
+  bool import_global_point_files(std::vector<std::string> filenames);
 
   /// Import local correspondence point file
-  bool import_local_point_file(QString filename);
+  bool import_local_point_files(std::vector<std::string> filenames);
 
   /// Import local correspondence point data
   bool import_points(std::vector<itk::Point<double>> points, bool local);
@@ -170,8 +170,8 @@ private:
 
   QString original_mesh_filename_;
   QString groomed_filename_;
-  QString global_point_filename_;
-  QString local_point_filename_;
+  std::vector<std::string> global_point_filenames_;
+  std::vector<std::string> local_point_filenames_;
 
   vnl_vector<double> global_correspondence_points_;
   vnl_vector<double> local_correspondence_points_;

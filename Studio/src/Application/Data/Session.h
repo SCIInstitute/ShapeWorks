@@ -72,6 +72,8 @@ public:
   bool update_points(std::vector<std::vector<itk::Point<double>>> points, bool local);
   bool update_particles(std::vector<StudioParticles> particles);
 
+
+
   bool is_light_project();
 
   bool get_groomed_present();

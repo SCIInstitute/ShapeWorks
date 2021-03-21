@@ -20,6 +20,9 @@ public:
   void set_local_particles(int domain, std::vector<itk::Point<double>> particles);
   void set_world_particles(int domain, std::vector<itk::Point<double>> particles);
 
+  void set_local_particles(int domain, vnl_vector<double> particles);
+  void set_world_particles(int domain, vnl_vector<double> particles);
+
   std::vector<vnl_vector<double>> get_local_particles();
   std::vector<vnl_vector<double>> get_world_particles();
 

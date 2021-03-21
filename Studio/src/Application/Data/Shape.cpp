@@ -213,17 +213,17 @@ void Shape::set_global_particles(const vnl_vector<double>& points)
 }
 
 //---------------------------------------------------------------------------
-bool Shape::import_global_point_file(QString filename)
+bool Shape::import_global_point_files(std::vector<std::string> filenames)
 {
-
-  if (!Shape::import_point_file(filename, this->global_correspondence_points_)) {
-    return false;
+  for (int i = 0; i < filenames.size(); i++) {
+    vnl_vector<double> points;
+    if (!Shape::import_point_file(QString::fromStdString(filenames[i]), points)) {
+      return false;
+    }
+    this->global_point_filenames_.push_back(filenames[i]);
+    this->particles_.set_world_particles(i, points);
   }
-
-  this->global_point_filename_ = filename;
-
-  this->subject_->set_global_particle_filename(filename.toStdString());
-
+  this->subject_->set_world_particle_filenames(this->global_point_filenames_);
   return true;
 }
 
@@ -257,16 +257,17 @@ bool Shape::import_points(std::vector<itk::Point<double>> points, bool local)
 }
 
 //---------------------------------------------------------------------------
-bool Shape::import_local_point_file(QString filename)
+bool Shape::import_local_point_files(std::vector<std::string> filenames)
 {
-  if (!Shape::import_point_file(filename, this->local_correspondence_points_)) {
-    return false;
+  for (int i = 0; i < filenames.size(); i++) {
+    vnl_vector<double> points;
+    if (!Shape::import_point_file(QString::fromStdString(filenames[i]), points)) {
+      return false;
+    }
+    this->local_point_filenames_.push_back(filenames[i]);
+    this->particles_.set_local_particles(i, points);
   }
-
-  this->local_point_filename_ = filename;
-
-  this->subject_->set_local_particle_filename(filename.toStdString());
-
+  this->subject_->set_local_particle_filenames(this->local_point_filenames_);
   return true;
 }
 
@@ -375,6 +376,7 @@ QString Shape::get_groomed_filename_with_path(int domain)
   return QString::fromStdString(this->subject_->get_groomed_filenames()[domain]);
 }
 
+/*
 //---------------------------------------------------------------------------
 QString Shape::get_global_point_filename()
 {
@@ -398,6 +400,7 @@ QString Shape::get_local_point_filename_with_path()
 {
   return this->local_point_filename_;
 }
+*/
 
 //---------------------------------------------------------------------------
 QList<Shape::Point> Shape::get_exclusion_sphere_centers()
