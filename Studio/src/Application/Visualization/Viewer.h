@@ -157,7 +157,6 @@ private:
   bool viewer_ready_ = false;
   bool loading_displayed_ = false;
 
-  MeshHandle mesh_;
   MeshGroup meshes_;
 
   Visualizer* visualizer_{nullptr};

@@ -218,7 +218,7 @@ void Viewer::set_color_scheme(int scheme)
 void Viewer::handle_new_mesh()
 {
   if (!this->mesh_ready_ && this->shape_ &&
-      this->shape_->get_mesh(this->visualizer_->get_display_mode())) {
+      this->shape_->get_meshes(this->visualizer_->get_display_mode()).valid()) {
     this->display_shape(this->shape_);
   }
 }
@@ -325,17 +325,16 @@ void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
   double minmag = 1.0e20;
   double maxmag = 0.0;
 
-  /// TODO: multi-domain support
-//  for (int domain = 0; domain < this->numDomains; domain++) {
 
   vtkSmartPointer<vtkPolyData> pointSet = this->glyph_point_set_;
 
-  if (!this->shape_->get_mesh(this->visualizer_->get_display_mode())) {
+  if (!this->shape_->get_meshes(this->visualizer_->get_display_mode()).valid()) {
     return;
   }
 
-  vtkSmartPointer<vtkPolyData> poly_data = this->shape_->get_mesh(
-    this->visualizer_->get_display_mode())->get_poly_data();
+  /// TODO: multi-domain support
+  vtkSmartPointer<vtkPolyData> poly_data = this->shape_->get_meshes(
+    this->visualizer_->get_display_mode()).meshes()[0]->get_poly_data();
   if (!poly_data || poly_data->GetNumberOfPoints() == 0) {
     return;
   }
@@ -460,7 +459,6 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
 
   this->shape_ = shape;
 
-  this->mesh_ = shape->get_mesh(this->visualizer_->get_display_mode());
   this->meshes_ = shape->get_meshes(this->visualizer_->get_display_mode());
 
   if (!this->meshes_.valid() && this->loading_displayed_) {
@@ -744,7 +742,7 @@ void Viewer::update_actors()
     }
   }
 
-  if (this->show_surface_ && this->mesh_) {
+  if (this->show_surface_ && this->meshes_.valid()) {
     for (int i = 0; i < this->number_of_domains_; i++) {
       this->renderer_->AddActor(this->surface_actors_[i]);
     }

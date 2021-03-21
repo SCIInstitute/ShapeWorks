@@ -559,55 +559,6 @@ void Session::load_groomed_files(std::vector<std::string> file_names, double iso
   }
 }
 
-//---------------------------------------------------------------------------
-bool Session::update_points(std::vector<std::vector<itk::Point<double>>> points, bool local)
-{
-  for (int i = 0; i < points.size(); i++) {
-    QSharedPointer<Shape> shape;
-    if (this->shapes_.size() > i) {
-      shape = this->shapes_[i];
-    }
-    else {
-      shape = QSharedPointer<Shape>(new Shape);
-      std::shared_ptr<Subject> subject = std::make_shared<Subject>();
-      shape->set_mesh_manager(this->mesh_manager_);
-      shape->set_subject(subject);
-      this->project_->get_subjects().push_back(subject);
-      this->shapes_.push_back(shape);
-    }
-
-    if (!shape->import_points(points[i], local)) {
-      return false;
-    }
-
-    // now update the Subject's filename
-    // this needs to be done here so that the Project knows there are particle files
-    std::string suffix = local ? "local" : "world";
-
-    auto name = this->shapes_[i]->get_original_filename();
-
-    int lastPoint = name.lastIndexOf(".");
-    QString fileNameNoExt = name.left(lastPoint);
-
-    name = fileNameNoExt + "." + QString::fromStdString(suffix) + ".particles";
-
-    if (local) {
-      shape->get_subject()->set_local_particle_filename(name.toStdString());
-    }
-    else {
-      shape->get_subject()->set_global_particle_filename(name.toStdString());
-    }
-  }
-
-  // update the project now that we have particles
-  this->project_->store_subjects();
-
-  if (points.size() > 0 && !local) {
-    this->unsaved_particle_files_ = true;
-    emit points_changed();
-  }
-  return true;
-}
 
 //---------------------------------------------------------------------------
 bool Session::update_particles(std::vector<StudioParticles> particles)

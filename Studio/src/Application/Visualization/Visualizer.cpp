@@ -87,14 +87,14 @@ void Visualizer::update_samples()
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::display_shape(const vnl_vector<double>& points)
+void Visualizer::display_shape(const StudioParticles& points)
 {
   std::vector<Shape::Point> empty_vectors;
   this->display_shape(points, empty_vectors);
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::display_shape(const vnl_vector<double>& points,
+void Visualizer::display_shape(const StudioParticles& points,
                                const std::vector<Shape::Point>& vectors)
 {
   QVector<ShapeHandle> shapes;
@@ -115,11 +115,11 @@ void Visualizer::display_shape(ShapeHandle shape)
   this->update_viewer_properties();
   //this->reset_camera();
   this->lightbox_->redraw();
-  this->current_shape_ = shape->get_global_correspondence_points();
+  this->current_shape_ = shape->get_particles();
 }
 
 //-----------------------------------------------------------------------------
-vnl_vector<double> Visualizer::getCurrentShape()
+StudioParticles Visualizer::getCurrentShape()
 {
   return this->current_shape_;
 }
@@ -136,9 +136,11 @@ void Visualizer::handle_new_mesh()
 //-----------------------------------------------------------------------------
 vtkSmartPointer<vtkPolyData> Visualizer::get_current_mesh()
 {
+
+  /// TODO: append meshes
   auto shapes = this->lightbox_->get_shapes();
   if (shapes.size() > 0) {
-    return shapes[0]->get_mesh(this->display_mode_)->get_poly_data();
+    return shapes[0]->get_meshes(this->display_mode_).meshes()[0]->get_poly_data();
   }
   return nullptr;
 }
@@ -159,16 +161,12 @@ void Visualizer::display_sample(int i)
 }
 
 //-----------------------------------------------------------------------------
-ShapeHandle Visualizer::create_display_object(const vnl_vector<double>& points,
+ShapeHandle Visualizer::create_display_object(const StudioParticles& points,
                                               const std::vector<Shape::Point>& vectors)
 {
-
-  MeshHandle mesh = this->session_->get_mesh_manager()->get_mesh(points, 0);
-
   ShapeHandle shape = ShapeHandle(new Shape());
   shape->set_mesh_manager(this->session_->get_mesh_manager());
-  shape->set_reconstructed_mesh(mesh);
-  shape->set_global_particles(points);
+  shape->set_particles(points);
   shape->set_vectors(vectors);
 
   QStringList annotations;

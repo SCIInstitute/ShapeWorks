@@ -32,18 +32,6 @@ Shape::Shape()
 Shape::~Shape() = default;
 
 //---------------------------------------------------------------------------
-MeshHandle Shape::get_mesh(const std::string& display_mode)
-{
-  if (display_mode == Visualizer::MODE_ORIGINAL_C) {
-    return this->get_original_mesh();
-  }
-  else if (display_mode == Visualizer::MODE_GROOMED_C) {
-    return this->get_groomed_mesh();
-  }
-  return this->get_reconstructed_mesh();
-}
-
-//---------------------------------------------------------------------------
 MeshGroup Shape::get_meshes(const string& display_mode)
 {
   if (display_mode == Visualizer::MODE_ORIGINAL_C) {
@@ -53,12 +41,6 @@ MeshGroup Shape::get_meshes(const string& display_mode)
     return this->get_groomed_meshes();
   }
   return this->get_reconstructed_meshes();
-
-
-  //// TODO temporary
-  assert(0);
-  return this->get_original_meshes();
-
 }
 
 //---------------------------------------------------------------------------
@@ -113,22 +95,6 @@ void Shape::import_original_image(const std::string& filename)
 }
 
 //---------------------------------------------------------------------------
-MeshHandle Shape::get_original_mesh(bool wait)
-{
-  if (!this->original_mesh_) {
-    if (!this->subject_) {
-      // There is no original mesh for a computed shape (e.g. mean)
-      std::cerr << "Error: asked for original mesh when none is present!\n";
-    }
-    else {
-      this->generate_meshes(this->subject_->get_segmentation_filenames(), this->original_mesh_,
-                            true, wait);
-    }
-  }
-  return this->original_mesh_;
-}
-
-//---------------------------------------------------------------------------
 MeshGroup Shape::get_original_meshes(bool wait)
 {
   if (!this->subject_) {
@@ -140,22 +106,6 @@ MeshGroup Shape::get_original_meshes(bool wait)
                           true, wait);
   }
   return this->original_meshes_;
-}
-
-//---------------------------------------------------------------------------
-MeshHandle Shape::get_groomed_mesh(bool wait)
-{
-  if (!this->groomed_mesh_) {
-    if (!this->subject_) {
-      std::cerr << "Error: asked for groomed mesh when none is present!\n";
-    }
-    else {
-      this->generate_meshes(this->subject_->get_groomed_filenames(), this->groomed_mesh_, false,
-                            wait);
-    }
-  }
-
-  return this->groomed_mesh_;
 }
 
 //---------------------------------------------------------------------------
@@ -207,12 +157,6 @@ void Shape::clear_reconstructed_mesh()
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_global_particles(const vnl_vector<double>& points)
-{
-  this->global_correspondence_points_ = points;
-}
-
-//---------------------------------------------------------------------------
 bool Shape::import_global_point_files(std::vector<std::string> filenames)
 {
   for (int i = 0; i < filenames.size(); i++) {
@@ -224,35 +168,6 @@ bool Shape::import_global_point_files(std::vector<std::string> filenames)
     this->particles_.set_world_particles(i, points);
   }
   this->subject_->set_world_particle_filenames(this->global_point_filenames_);
-  return true;
-}
-
-//---------------------------------------------------------------------------
-bool Shape::import_points(std::vector<itk::Point<double>> points, bool local)
-{
-  vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
-  size_t num_points = 0;
-  for (auto& a : points) {
-    double x = static_cast<double>(a[0]);
-    double y = static_cast<double>(a[1]);
-    double z = static_cast<double>(a[2]);
-
-    vtk_points->InsertNextPoint(x, y, z);
-    num_points++;
-  }
-  auto& point_list = local ? this->local_correspondence_points_ :
-                     this->global_correspondence_points_;
-
-  point_list.clear();
-  point_list.set_size(num_points * 3);
-
-  int idx = 0;
-  for (int i = 0; i < num_points; i++) {
-    double* pos = vtk_points->GetPoint(i);
-    point_list[idx++] = pos[0];
-    point_list[idx++] = pos[1];
-    point_list[idx++] = pos[2];
-  }
   return true;
 }
 
@@ -269,17 +184,6 @@ bool Shape::import_local_point_files(std::vector<std::string> filenames)
   }
   this->subject_->set_local_particle_filenames(this->local_point_filenames_);
   return true;
-}
-
-//---------------------------------------------------------------------------
-MeshHandle Shape::get_reconstructed_mesh()
-{
-  if (!this->reconstructed_mesh_) {
-    this->reconstructed_mesh_ = this->mesh_manager_->get_mesh(this->global_correspondence_points_,
-                                                              0);
-  }
-
-  return this->reconstructed_mesh_;
 }
 
 //---------------------------------------------------------------------------
@@ -576,12 +480,14 @@ bool Shape::import_point_file(QString filename, vnl_vector<double>& points)
 //---------------------------------------------------------------------------
 void Shape::load_feature(std::string display_mode, std::string feature)
 {
-  auto mesh = this->get_mesh(display_mode);
-  if (!mesh) {
+  auto group = this->get_meshes(display_mode);
+  if (!group.valid()) {
     // not ready yet
     return;
   }
-  vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
+
+  /// TODO: multiple domain support
+  vtkSmartPointer<vtkPolyData> poly_data = group.meshes()[0]->get_poly_data();
 
   auto scalar_array = poly_data->GetPointData()->GetArray(feature.c_str());
   if (!scalar_array) {
@@ -606,17 +512,20 @@ void Shape::load_feature(std::string display_mode, std::string feature)
       reader->Update();
       ImageType::Pointer image = reader->GetOutput();
 
-      mesh->apply_feature_map(feature, image, transform);
+      group.meshes()[0]->apply_feature_map(feature, image, transform);
       this->apply_feature_to_points(feature, image);
 
     }
     else if (this->subject_->get_domain_types().size() > 0 &&
              this->subject_->get_domain_types()[0] == DomainType::Mesh) {
 
-      auto original_mesh = this->get_original_mesh(true);
+      auto original_meshes = this->get_original_meshes(true).meshes();
 
-      mesh->apply_scalars(original_mesh, transform);
-      this->apply_feature_to_points(feature, original_mesh);
+      for (int i = 0; i < original_meshes.size(); i++) {
+        auto original_mesh = original_meshes[i];
+        original_mesh->apply_scalars(original_mesh, transform);
+        this->apply_feature_to_points(feature, original_mesh);
+      }
 
     }
 
@@ -635,7 +544,9 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
 
   vnl_vector<double> transform = this->get_groomed_transform();
 
-  int num_points = this->local_correspondence_points_.size() / 3;
+  vnl_vector<double> all_locals = this->get_local_correspondence_points();
+
+  int num_points = all_locals.size() / 3;
 
   Eigen::VectorXf values(num_points);
 
@@ -643,9 +554,9 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
   for (int i = 0; i < num_points; ++i) {
 
     ImageType::PointType pitk;
-    pitk[0] = this->local_correspondence_points_[idx++];
-    pitk[1] = this->local_correspondence_points_[idx++];
-    pitk[2] = this->local_correspondence_points_[idx++];
+    pitk[0] = all_locals[idx++];
+    pitk[1] = all_locals[idx++];
+    pitk[2] = all_locals[idx++];
 
     if (transform.size() == 12) {
       pitk[0] = pitk[0] + transform[9];
@@ -679,7 +590,9 @@ void Shape::apply_feature_to_points(std::string feature, MeshHandle mesh)
 
   vnl_vector<double> transform = this->get_groomed_transform();
 
-  int num_points = this->local_correspondence_points_.size() / 3;
+  vnl_vector<double> all_locals = this->get_local_correspondence_points();
+
+  int num_points = all_locals.size() / 3;
 
   Eigen::VectorXf values(num_points);
 
@@ -689,9 +602,9 @@ void Shape::apply_feature_to_points(std::string feature, MeshHandle mesh)
   for (int i = 0; i < num_points; ++i) {
 
     double pt[3];
-    pt[0] = this->local_correspondence_points_[idx++];
-    pt[1] = this->local_correspondence_points_[idx++];
-    pt[2] = this->local_correspondence_points_[idx++];
+    pt[0] = all_locals[idx++];
+    pt[1] = all_locals[idx++];
+    pt[2] = all_locals[idx++];
 
     if (transform.size() == 12) {
       pt[0] = pt[0] + transform[9];
@@ -741,10 +654,13 @@ void Shape::set_point_features(std::string feature, Eigen::VectorXf values)
 {
   this->point_features_[feature] = values;
 
-  auto mesh = this->get_mesh(Visualizer::MODE_RECONSTRUCTION_C);
+  auto group = this->get_meshes(Visualizer::MODE_RECONSTRUCTION_C);
 
-  if (mesh) {
-    mesh->interpolate_scalars_to_mesh(feature, this->global_correspondence_points_, values);
+  if (group.valid()) {
+    for (auto mesh : group.meshes()) {
+      mesh->interpolate_scalars_to_mesh(feature,
+                                        this->get_global_correspondence_points(), values);
+    }
   }
 }
 

@@ -997,7 +997,7 @@ void ShapeWorksStudioApp::handle_optimize_complete()
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
   this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::GROOMED);
   this->visualizer_->set_display_mode(this->ui_->view_mode_combobox->currentText().toStdString());
-  this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape_points());
+  this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape_points().get_combined_global_particles());
   this->visualizer_->update_lut();
   this->update_display();
 
@@ -1011,7 +1011,7 @@ void ShapeWorksStudioApp::handle_reconstruction_complete()
 {
   this->session_->handle_clear_cache();
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
-  this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape_points());
+  this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape_points().get_combined_global_particles());
   this->visualizer_->update_lut();
   this->update_display(true);
   this->enable_possible_actions();
@@ -1142,7 +1142,7 @@ void ShapeWorksStudioApp::update_display(bool force)
       this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
 
       this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
-      this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape_points());
+      this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape_points().get_combined_global_particles());
 
       this->visualizer_->display_shape(this->analysis_tool_->get_mean_shape());
     }
@@ -1537,7 +1537,8 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered()
   if (this->analysis_tool_->get_analysis_mode() == "all samples") {
     auto shapes = this->session_->get_shapes();
     for (size_t i = 0; i < shapes.size(); i++) {
-      auto msh = shapes[i]->get_reconstructed_mesh()->get_poly_data();
+      /// TODO: multiple-domain support
+      auto msh = shapes[i]->get_reconstructed_meshes().meshes()[0]->get_poly_data();
       vtkPolyDataWriter* writer = vtkPolyDataWriter::New();
       auto name = filename.toStdString();
       name = name.substr(0, name.find_last_of(".")) + std::to_string(i) + ".vtk";
@@ -1636,7 +1637,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered()
   auto increment = range * 2.f / steps;
   size_t i = 0;
   for (float pca = -range; pca <= range; pca += increment, i++) {
-    auto pts = this->analysis_tool_->get_shape_points(mode, pca);
+    auto pts = this->analysis_tool_->get_shape_points(mode, pca).get_combined_global_particles();
     std::ofstream out(basename + std::to_string(mode) + "-" + std::to_string(i) + ".pts");
     size_t newline = 1;
     for (auto& a : pts) {

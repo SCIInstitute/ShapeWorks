@@ -54,9 +54,10 @@ public:
 
   void display_sample(int i);
 
-  void display_shape(const vnl_vector<double>& points);
+  void display_shape(const StudioParticles& points);
 
-  void display_shape(const vnl_vector<double>& points, const std::vector<Shape::Point>& vectors);
+  void display_shape(const StudioParticles& points,
+                     const std::vector<Shape::Point>& vectors);
 
   void display_shape(ShapeHandle shape);
 
@@ -73,7 +74,7 @@ public:
 
   void update_lut();
 
-  vnl_vector<double> getCurrentShape();
+  StudioParticles getCurrentShape();
 
   void handle_new_mesh();
   vtkSmartPointer<vtkPolyData> get_current_mesh();
@@ -108,7 +109,7 @@ public Q_SLOTS:
   void update_viewer_properties();
 
 private:
-  ShapeHandle create_display_object(const vnl_vector<double>& points,
+  ShapeHandle create_display_object(const StudioParticles& points,
                                     const std::vector<Shape::Point>& vectors);
   Preferences& preferences_;
 
@@ -133,7 +134,7 @@ private:
   int selected_point_two_;
 
   vnl_vector<double> cached_mean_;
-  vnl_vector<double> current_shape_;
+  StudioParticles current_shape_;
 
   double feature_range_[2] = {0, 0};
   bool feature_range_valid_ = false;

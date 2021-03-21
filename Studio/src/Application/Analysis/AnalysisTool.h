@@ -69,10 +69,10 @@ public:
   void reset_stats();
   void enable_actions(bool newly_enabled = false);
 
-  const vnl_vector<double>& get_mean_shape_points();
+  StudioParticles get_mean_shape_points();
   ShapeHandle get_mean_shape();
 
-  const vnl_vector<double>& get_shape_points(int mode, double value);
+  StudioParticles get_shape_points(int mode, double value);
 
   ParticleShapeStatistics get_stats();
   void load_settings();
@@ -158,11 +158,13 @@ private:
   void compute_mode_shape();
   void update_analysis_mode();
 
+  //! Break apart combined points into per-domain
+  StudioParticles convert_from_combined(const vnl_vector<double>& points);
 
   void update_group_boxes();
   void update_group_values();
 
-  ShapeHandle create_shape_from_points(const vnl_vector<double>& points);
+  ShapeHandle create_shape_from_points(StudioParticles points);
 
   Preferences& preferences_;
 

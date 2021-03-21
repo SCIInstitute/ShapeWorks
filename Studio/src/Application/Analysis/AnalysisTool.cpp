@@ -488,36 +488,36 @@ bool AnalysisTool::compute_stats()
 }
 
 //-----------------------------------------------------------------------------
-const vnl_vector<double>& AnalysisTool::get_mean_shape_points()
+StudioParticles AnalysisTool::get_mean_shape_points()
 {
   if (!this->compute_stats()) {
-    return this->empty_shape_;
+    return StudioParticles();
   }
 
   if (this->ui_->group1_button->isChecked() || this->ui_->difference_button->isChecked()) {
-    return this->stats_.Group1Mean();
+    return this->convert_from_combined(this->stats_.Group1Mean());
   }
   else if (this->ui_->group2_button->isChecked()) {
-    return this->stats_.Group2Mean();
+    return this->convert_from_combined(this->stats_.Group2Mean());
   }
   else if (this->ui_->mean_button->isChecked()) {
-    return this->stats_.Mean();
+    return this->convert_from_combined(this->stats_.Mean());
   }
 
   if (this->groups_active()) {
     auto group_value = this->get_group_value();
     this->temp_shape_ = this->stats_.Group1Mean() + (this->stats_.GroupDifference() * group_value);
-    return this->temp_shape_;
+    return this->convert_from_combined(this->temp_shape_);
   }
 
-  return this->stats_.Mean();
+  return this->convert_from_combined(this->stats_.Mean());
 }
 
 //-----------------------------------------------------------------------------
-const vnl_vector<double>& AnalysisTool::get_shape_points(int mode, double value)
+StudioParticles AnalysisTool::get_shape_points(int mode, double value)
 {
   if (!this->compute_stats() || this->stats_.Eigenvectors().size() <= 1) {
-    return this->empty_shape_;
+    return StudioParticles();
   }
   if (mode + 2 > this->stats_.Eigenvalues().size()) {
     mode = this->stats_.Eigenvalues().size() - 2;
@@ -554,7 +554,7 @@ const vnl_vector<double>& AnalysisTool::get_shape_points(int mode, double value)
 
   this->temp_shape_ = this->stats_.Mean() + (e * (value * lambda));
 
-  return this->temp_shape_;
+  return this->convert_from_combined(this->temp_shape_);
 }
 
 //---------------------------------------------------------------------------
@@ -799,7 +799,7 @@ ShapeHandle AnalysisTool::get_mean_shape()
     shape->set_vectors(this->get_group_difference_vectors());
   }
 
-  int num_points = shape_points.size() / 3;
+  int num_points = shape_points.get_combined_global_particles().size() / 3;
   std::vector<Eigen::VectorXf> values;
 
   if (this->feature_map_ != "") {
@@ -869,13 +869,11 @@ ShapeHandle AnalysisTool::get_mean_shape()
 }
 
 //---------------------------------------------------------------------------
-ShapeHandle AnalysisTool::create_shape_from_points(const vnl_vector<double>& points)
+ShapeHandle AnalysisTool::create_shape_from_points(StudioParticles points)
 {
-  MeshHandle mesh = this->session_->get_mesh_manager()->get_mesh(points, 0);
   ShapeHandle shape = ShapeHandle(new Shape());
   shape->set_mesh_manager(this->session_->get_mesh_manager());
-  shape->set_reconstructed_mesh(mesh);
-  shape->set_global_particles(points);
+  shape->set_particles(points);
   return shape;
 }
 
@@ -1065,7 +1063,6 @@ void AnalysisTool::initialize_mesh_warper()
       return;
     }
     QSharedPointer<Shape> median_shape = this->session_->get_shapes()[median];
-    vtkSmartPointer<vtkPolyData> poly_data = median_shape->get_groomed_mesh(true)->get_poly_data();
 
     auto mesh_group = median_shape->get_groomed_meshes(true);
 
@@ -1118,6 +1115,26 @@ void AnalysisTool::set_active(bool active)
 bool AnalysisTool::get_active()
 {
   return this->active_;
+}
+
+//---------------------------------------------------------------------------
+StudioParticles AnalysisTool::convert_from_combined(const vnl_vector<double>& points)
+{
+  auto base = this->session_->get_shapes()[0]->get_particles();
+
+  StudioParticles particles;
+  auto worlds = base.get_world_particles();
+  int idx = 0;
+  for (int d = 0; d < worlds.size(); d++) {
+    vnl_vector<double> new_world(worlds[d].size());
+    for (int i = 0; i < worlds[d].size(); i++) {
+      new_world[i] = points[idx++];
+    }
+    particles.set_world_particles(d, new_world);
+
+  }
+
+  return particles;
 }
 
 }

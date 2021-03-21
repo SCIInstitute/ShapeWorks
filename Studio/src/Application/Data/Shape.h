@@ -35,8 +35,6 @@ public:
 
   ~Shape();
 
-  MeshHandle get_mesh(const string& display_mode);
-
   MeshGroup get_meshes(const string& display_mode);
 
   void set_annotations(QStringList annotations, bool only_overwrite_blank = true);
@@ -51,14 +49,10 @@ public:
   /// Import the original raw image file
   void import_original_image(const std::string& filename);
 
-  /// Retrieve the original mesh
-  MeshHandle get_original_mesh(bool wait = false);
 
   /// Retrieve the original meshes
   MeshGroup get_original_meshes(bool wait = false);
 
-  /// Retrieve the groomed mesh
-  MeshHandle get_groomed_mesh(bool wait = false);
 
   /// Retrieve the groomed meshes
   MeshGroup get_groomed_meshes(bool wait = false);
@@ -75,14 +69,8 @@ public:
   /// Import local correspondence point file
   bool import_local_point_files(std::vector<std::string> filenames);
 
-  /// Import local correspondence point data
-  bool import_points(std::vector<itk::Point<double>> points, bool local);
-
   void set_particles(StudioParticles particles);
   StudioParticles get_particles();
-
-  /// Retrieve the reconstructed mesh
-  MeshHandle get_reconstructed_mesh();
 
   /// Get the global correspondence points
   vnl_vector<double> get_global_correspondence_points();
@@ -173,8 +161,8 @@ private:
   std::vector<std::string> global_point_filenames_;
   std::vector<std::string> local_point_filenames_;
 
-  vnl_vector<double> global_correspondence_points_;
-  vnl_vector<double> local_correspondence_points_;
+  //vnl_vector<double> global_correspondence_points_;
+  //vnl_vector<double> local_correspondence_points_;
   std::map<std::string, Eigen::VectorXf> point_features_;
   StudioParticles particles_;
 
