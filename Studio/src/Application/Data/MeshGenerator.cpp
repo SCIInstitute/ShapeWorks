@@ -50,6 +50,7 @@ MeshHandle MeshGenerator::build_mesh(const MeshWorkItem& item)
 MeshHandle MeshGenerator::build_mesh_from_points(const vnl_vector<double>& shape,
                                                  int domain)
 {
+  std::cerr << "build mesh from points!\n";
   MeshHandle mesh(new StudioMesh);
 
   bool distance_transform_available =

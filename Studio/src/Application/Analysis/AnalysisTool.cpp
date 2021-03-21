@@ -874,6 +874,8 @@ ShapeHandle AnalysisTool::create_shape_from_points(StudioParticles points)
   ShapeHandle shape = ShapeHandle(new Shape());
   shape->set_mesh_manager(this->session_->get_mesh_manager());
   shape->set_particles(points);
+  shape->get_reconstructed_meshes();
+
   return shape;
 }
 

@@ -26,12 +26,12 @@ MeshList& MeshGroup::meshes()
 //---------------------------------------------------------------------------
 bool MeshGroup::valid()
 {
-  for (auto&& item : meshes_) {
+  for (auto&& item : this->meshes_) {
     if (!item) {
       return false;
     }
   }
-  return true;
+  return !this->meshes_.empty();
 }
 
 //---------------------------------------------------------------------------

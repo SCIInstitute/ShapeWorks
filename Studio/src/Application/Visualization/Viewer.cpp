@@ -525,7 +525,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
           transform = shape->get_transform();
         }
       }
-      else {
+      else if (this->visualizer_->get_display_mode() == Visualizer::MODE_GROOMED_C) {
         transform = shape->get_transform();
       }
 
