@@ -115,10 +115,8 @@ bool Session::save_project(std::string fname)
   }
   this->filename_ = filename;
 
-  // open file
-  QFile file(filename);
-
-  if (!file.open(QIODevice::WriteOnly)) {
+  QFileInfo fi(filename);
+  if (!fi.isWritable()) {
     QMessageBox::warning(nullptr, "Read only", "The file is in read only mode");
     return false;
   }
@@ -349,7 +347,7 @@ bool Session::load_light_project(QString filename)
     return false;
   }
 */
-  
+
   this->load_groomed_files(groom_files, 0.5);
 
   // read group ids
