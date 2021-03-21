@@ -132,7 +132,7 @@ std::vector<StudioParticles> QOptimize::GetParticles()
     particles[subject].set_local_particles(domain, this->m_local_points[i]);
     particles[subject].set_world_particles(domain, this->m_global_points[i]);
     domain++;
-    if (i % num_domains_per_subject == 0) {
+    if (domain == num_domains_per_subject) {
       subject++;
       domain = 0;
     }

@@ -428,17 +428,17 @@ void Shape::generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_
     if (new_mesh) {
       mesh_group.set_mesh(i, new_mesh);
 
-      /// Temporarily calculate the COM here
+      // generate a basic centering transform
       auto com = vtkSmartPointer<vtkCenterOfMass>::New();
       com->SetInputData(new_mesh->get_poly_data());
       com->Update();
       double center[3];
       com->GetCenter(center);
 
-      if (save_transform) {
+      if (save_transform && i == 0) { // only store for first domain
         this->transform_.set_size(12);
         for (unsigned int i = 0; i < 3; i++) {
-          this->transform_[9 + i] = center[i];
+          this->transform_[9 + i] = -center[i];
         }
       }
     }
@@ -636,8 +636,6 @@ Eigen::VectorXf Shape::get_point_features(std::string feature)
 //---------------------------------------------------------------------------
 TransformType Shape::get_groomed_transform(int domain)
 {
-  //if (this->groomed_transform_.empty()) {
-  // single domain support
   auto transforms = this->subject_->get_groomed_transforms();
   if (domain < transforms.size()) {
     this->groomed_transform_.set_size(transforms[domain].size());
@@ -645,7 +643,6 @@ TransformType Shape::get_groomed_transform(int domain)
       this->groomed_transform_[i] = transforms[domain][i];
     }
   }
-  //}
   return this->groomed_transform_;
 }
 

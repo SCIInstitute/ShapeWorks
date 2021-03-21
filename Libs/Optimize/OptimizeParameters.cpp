@@ -7,7 +7,6 @@
 #include <Libs/Mesh/MeshUtils.h>
 #include "ParticleSystem/VtkMeshWrapper.h"
 
-
 using namespace shapeworks;
 
 //---------------------------------------------------------------------------
@@ -196,7 +195,8 @@ void OptimizeParameters::set_multiscale_particles(int value)
 //---------------------------------------------------------------------------
 bool OptimizeParameters::set_up_optimize(Optimize* optimize)
 {
-  optimize->SetDomainsPerShape(this->project_->get_number_of_domains_per_subject()); /// only one domain per shape right now
+  optimize->SetDomainsPerShape(
+    this->project_->get_number_of_domains_per_subject()); /// only one domain per shape right now
   optimize->SetNumberOfParticles(this->get_number_of_particles());
   optimize->SetInitialRelativeWeighting(this->get_initial_relative_weighting());
   optimize->SetRelativeWeighting(this->get_relative_weighting());
@@ -270,7 +270,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
       throw std::invalid_argument("No groomed inputs for optimization");
     }
 
-    for (int i =0;i>files.size();i++) {
+    for (int i = 0; i < files.size(); i++) {
 
       auto filename = files[i];
       auto domain_type = s->get_domain_types()[i];
