@@ -257,8 +257,6 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
 
   //optimize->GetSampler()->GetParticleSystem()->SetNumberOfDomains(subjects.size());
 
-  std::vector<std::string> local_particle_filenames;
-  std::vector<std::string> world_particle_filenames;
   std::vector<std::string> filenames;
   int count = 0;
   int domain_count = 0;
@@ -271,6 +269,8 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
       throw std::invalid_argument("No groomed inputs for optimization");
     }
     auto transforms = s->get_groomed_transforms();
+    std::vector<std::string> local_particle_filenames;
+    std::vector<std::string> world_particle_filenames;
 
     for (int i = 0; i < files.size(); i++) {
 

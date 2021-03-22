@@ -418,7 +418,7 @@ bool AnalysisTool::compute_stats()
   std::string left_group = this->ui_->group_left->currentText().toStdString();
   std::string right_group = this->ui_->group_right->currentText().toStdString();
 
-  bool groups_enabled = group_set != "-None-";
+  bool groups_enabled = this->groups_active();
 
   this->group1_list_.clear();
   this->group2_list_.clear();
@@ -1018,7 +1018,7 @@ bool AnalysisTool::is_group_active(int shape_index)
   std::string left_group = this->ui_->group_left->currentText().toStdString();
   std::string right_group = this->ui_->group_right->currentText().toStdString();
 
-  bool groups_enabled = group_set != "-None-";
+  bool groups_enabled = this->groups_active();
 
   auto shapes = this->session_->get_shapes();
   auto shape = shapes[shape_index];

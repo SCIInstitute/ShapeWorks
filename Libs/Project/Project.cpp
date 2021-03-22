@@ -274,10 +274,11 @@ void Project::store_subjects()
   std::vector<std::string> world_columns;
   for (int i = 0; i < seg_columns.size(); i++) {
     std::string column_name = replace_string(seg_columns[i],
-                                             SEGMENTATION_PREFIX, LOCAL_PARTICLES);
+                                             SEGMENTATION_PREFIX,
+                                             std::string(LOCAL_PARTICLES) + "_");
     local_columns.push_back(column_name);
     column_name = replace_string(seg_columns[i],
-                                 SEGMENTATION_PREFIX, WORLD_PARTICLES);
+                                 SEGMENTATION_PREFIX, std::string(WORLD_PARTICLES) + "_");
     world_columns.push_back(column_name);
   }
 
@@ -336,8 +337,10 @@ void Project::store_subjects()
       // add columns if necessary
       int count = 0;
       while (local_files.size() > local_columns.size()) {
-        local_columns.push_back(this->get_new_file_column(LOCAL_PARTICLES, count));
-        world_columns.push_back(this->get_new_file_column(WORLD_PARTICLES, count));
+        local_columns.push_back(
+          this->get_new_file_column(std::string(LOCAL_PARTICLES) + "_", count));
+        world_columns.push_back(
+          this->get_new_file_column(std::string(WORLD_PARTICLES) + "_", count));
       }
 
       this->set_list(local_columns, i, local_files);
@@ -411,14 +414,9 @@ std::vector<std::string> Project::get_string_column(const std::string& name) con
 
   auto rows = ws.rows(false);
 
-  //std::cerr << "rows.length = " << rows.length() << "\n";
-
   for (int i = 1; i < rows.length(); i++) {
     std::string value = rows[i][index - 1].to_string();
-    //std::cerr << "value = " << value << "\n";
-    //if (value != "") {
     list.push_back(value);
-    //}
   }
 
   return list;
