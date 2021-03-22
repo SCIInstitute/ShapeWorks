@@ -6,7 +6,6 @@ Full Example Pipeline for Statistical Shape Modeling with ShapeWorks
 This example is set to serve as a test case for new ShapeWorks users, and each
 step is explained in the shapeworks including the pre-processing, the 
 optimization and, the post ShapeWorks visualization.
-
 First import the necessary modules
 """
 import os
@@ -18,7 +17,6 @@ import CommonUtils
 def Run_Pipeline(args):
     """
     Unzip the data for this tutorial.
-
     The data is inside the Ellipsoids.zip, run the following function to unzip the 
     data and create necessary supporting files into the Data/ directory. 
     The files will be Extracted in a newly created directory: Output/Ellipsoids.
@@ -109,7 +107,6 @@ def Run_Pipeline(args):
 
     """
     ## OPTIMIZE : Particle Based Optimization
-
     Now that we have the distance transform representation of data we create 
     the parameter files for the shapeworks particle optimization routine.
     For more details on the plethora of parameters for shapeworks please refer 
@@ -165,7 +162,6 @@ def Run_Pipeline(args):
           
     """
     ## ANALYZE : Shape Analysis and Visualization
-
     Shapeworks yields relatively sparse correspondence models that may be inadequate to reconstruct 
     thin structures and high curvature regions of the underlying anatomical surfaces. 
     However, for many applications, we require a denser correspondence model, for example, 
@@ -173,7 +169,6 @@ def Run_Pipeline(args):
     or other simulations on mesh surfaces. One option for denser modeling is 
     to increase the number of particles per shape sample. However, this approach necessarily 
     increases the computational overhead, especially when modeling large clinical cohorts.
-
     Here we adopt a template-deformation approach to establish an inter-sample dense surface correspondence, 
     given a sparse set of optimized particles. To avoid introducing bias due to the template choice, we developed
     an unbiased framework for template mesh construction. The dense template mesh is then constructed 
