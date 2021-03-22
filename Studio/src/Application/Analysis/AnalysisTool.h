@@ -73,6 +73,7 @@ public:
   ShapeHandle get_mean_shape();
 
   StudioParticles get_shape_points(int mode, double value);
+  ShapeHandle get_mode_shape(int mode, double value);
 
   ParticleShapeStatistics get_stats();
   void load_settings();
@@ -141,6 +142,8 @@ public Q_SLOTS:
 
   void initialize_mesh_warper();
 
+  vnl_vector<double> get_reconstructed_domain_transform(int domain);
+
 signals:
 
   void update_view();
@@ -194,6 +197,8 @@ private:
 
   std::vector<std::string> current_group_names_;
   std::vector<std::string> current_group_values_;
+
+  std::vector<vnl_vector<double>> domain_transforms_;
 
 };
 

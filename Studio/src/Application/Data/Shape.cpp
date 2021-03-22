@@ -673,4 +673,20 @@ StudioParticles Shape::get_particles()
   return this->particles_;
 }
 
+//---------------------------------------------------------------------------
+vnl_vector<double> Shape::get_reconstruction_transform(int domain)
+{
+  assert(domain < this->reconstruction_transforms_.size());
+  return this->reconstruction_transforms_[domain];
+}
+
+//---------------------------------------------------------------------------
+void Shape::set_reconstruction_transform(int domain, const vnl_vector<double>& transform)
+{
+  if (domain >= this->reconstruction_transforms_.size()) {
+    this->reconstruction_transforms_.resize(domain + 1);
+  }
+  this->reconstruction_transforms_[domain] = transform;
+}
+
 }

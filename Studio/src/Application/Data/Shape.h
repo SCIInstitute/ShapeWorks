@@ -118,6 +118,9 @@ public:
   void set_transform(const vnl_vector<double>& transform);
   vnl_vector<double> get_transform(int domain = 0);
 
+  void set_reconstruction_transform(int domain, const vnl_vector<double>& transform);
+  vnl_vector<double> get_reconstruction_transform(int domain);
+
   TransformType get_groomed_transform(int domain = 0);
 
   void load_feature(std::string display_mode, std::string feature);
@@ -170,6 +173,8 @@ private:
 
   std::vector<Point> vectors_;
   vnl_vector<double> transform_;
+
+  std::vector<vnl_vector<double>> reconstruction_transforms_;
 
   TransformType groomed_transform_;
 

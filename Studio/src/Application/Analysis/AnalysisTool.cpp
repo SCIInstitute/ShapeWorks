@@ -558,6 +558,12 @@ StudioParticles AnalysisTool::get_shape_points(int mode, double value)
 }
 
 //---------------------------------------------------------------------------
+ShapeHandle AnalysisTool::get_mode_shape(int mode, double value)
+{
+  return this->create_shape_from_points(this->get_shape_points(mode, value));
+}
+
+//---------------------------------------------------------------------------
 ParticleShapeStatistics AnalysisTool::get_stats()
 {
   this->compute_stats();
@@ -875,6 +881,9 @@ ShapeHandle AnalysisTool::create_shape_from_points(StudioParticles points)
   shape->set_mesh_manager(this->session_->get_mesh_manager());
   shape->set_particles(points);
   shape->get_reconstructed_meshes();
+  for (int i=0;i<this->session_->get_domains_per_shape();i++) {
+    shape->set_reconstruction_transform(i,this->get_reconstructed_domain_transform(i));
+  }
 
   return shape;
 }
@@ -1138,5 +1147,25 @@ StudioParticles AnalysisTool::convert_from_combined(const vnl_vector<double>& po
 
   return particles;
 }
+
+//---------------------------------------------------------------------------
+vnl_vector<double> AnalysisTool::get_reconstructed_domain_transform(int domain)
+{
+  vnl_vector<double> transform;
+  transform.set_size(12);
+
+  auto shapes = this->session_->get_shapes();
+  int num_shapes = shapes.size();
+  for (int i = 0; i < shapes.size(); i++) {
+    auto base = shapes[i]->get_groomed_transform(0);
+    auto offset = shapes[i]->get_groomed_transform(domain);
+    transform[9] += (base[9] - offset[9]) / num_shapes;
+    transform[10] += (base[10] - offset[10]) / num_shapes;
+    transform[11] += (base[11] - offset[11]) / num_shapes;
+  }
+
+  return transform;
+}
+
 
 }
