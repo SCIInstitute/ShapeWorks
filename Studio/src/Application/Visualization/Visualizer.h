@@ -54,11 +54,6 @@ public:
 
   void display_sample(int i);
 
-  void display_shape(const StudioParticles& points);
-
-  void display_shape(const StudioParticles& points,
-                     const std::vector<Shape::Point>& vectors);
-
   void display_shape(ShapeHandle shape);
 
   void set_selected_point_one(int id);
