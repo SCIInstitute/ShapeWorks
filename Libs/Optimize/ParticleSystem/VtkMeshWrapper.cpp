@@ -893,7 +893,7 @@ void VtkMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::
   }
 
   // compute k-ring
-  const int k = 2;
+  const int k = 1;
   face_kring_.resize(this->triangles_.size());
   for(int f=0; f<this->triangles_.size(); f++) {
     ComputeKRing(f, k, face_kring_[f]);
