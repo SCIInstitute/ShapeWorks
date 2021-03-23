@@ -1,6 +1,7 @@
 import pyvista as pv
 import numpy as np
 import os
+import itk
 
 # converts shapeworks Image object to vtk image
 def sw2vtkImage(swImg, verbose = False):
@@ -42,3 +43,9 @@ def sw2vtkMesh(swMesh, verbose = False):
     os.remove('temp.vtk')
     
     return vtkMesh
+
+def sw2itkImage(swImg):
+    print(swImg)
+    array = swImg.toArray()
+    itkImg = itk.GetImageFromArray(array)
+    return itkImg

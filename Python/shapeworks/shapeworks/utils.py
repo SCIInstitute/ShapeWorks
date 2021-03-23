@@ -1,3 +1,23 @@
+import numpy as np
+import os
+
+# helper function to determine the best grid size (rows and columns) given the number of samples in a dataset.
+def postive_factors(num_samples):
+    factors = []
+
+    for whole_number in range(1, num_samples + 1):
+        if num_samples % whole_number == 0:
+            factors.append(whole_number)
+
+    return factors
+
+def num_subplots(num_samples):
+    factors = postive_factors(num_samples)
+    cols    = min(int(np.ceil(np.sqrt(num_samples))),max(factors))
+    rows    = int(np.ceil(num_samples/cols))
+
+    return rows, cols
+
 # a helper function that saves a list of shapeworks images in a directory
 # this could be used to save final and intermediate results (if needed)
 def save_images(outDir,        # path to the directory where we want to save the images
@@ -20,3 +40,14 @@ def save_images(outDir,        # path to the directory where we want to save the
         if verbose:
             print('Writing: ' + filename)
         curImg.write(filename, compressed=compressed)
+
+# a helper function to get list of files with specific extensions from a given file list
+def get_file_with_ext(file_list,extension):
+
+    extList =[]
+    for file in file_list:
+        ext = file.split(".")[-1]
+        if(ext==extension):
+            extList.append(file)
+    extList = sorted(extList)
+    return extList
