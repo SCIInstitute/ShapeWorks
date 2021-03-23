@@ -142,7 +142,6 @@ public Q_SLOTS:
 
   void initialize_mesh_warper();
 
-  vnl_vector<double> get_reconstructed_domain_transform(int domain);
 
 signals:
 

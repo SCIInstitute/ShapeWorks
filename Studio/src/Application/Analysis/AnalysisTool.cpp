@@ -777,6 +777,7 @@ void AnalysisTool::enable_actions(bool newly_enabled)
   this->reconstruction_method_changed();
 
   this->update_group_boxes();
+  this->ui_->sampleSpinBox->setMaximum(this->session_->get_num_shapes() - 1);
 }
 
 //---------------------------------------------------------------------------
@@ -1145,27 +1146,6 @@ StudioParticles AnalysisTool::convert_from_combined(const vnl_vector<double>& po
   }
 
   return particles;
-}
-
-//---------------------------------------------------------------------------
-vnl_vector<double> AnalysisTool::get_reconstructed_domain_transform(int domain)
-{
-
-  vnl_vector<double> transform;
-  transform.set_size(12);
-
-  auto shapes = this->session_->get_shapes();
-  int num_shapes = shapes.size();
-  for (int i = 0; i < shapes.size(); i++) {
-    auto base = shapes[i]->get_groomed_transform(0);
-    auto offset = shapes[i]->get_groomed_transform(domain);
-    transform[9] += (base[9] - offset[9]) / num_shapes;
-    transform[10] += (base[10] - offset[10]) / num_shapes;
-    transform[11] += (base[11] - offset[11]) / num_shapes;
-  }
-
-
-  return transform;
 }
 
 //---------------------------------------------------------------------------
