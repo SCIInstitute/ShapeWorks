@@ -38,7 +38,6 @@ namespace shapeworks {
 Viewer::Viewer()
 {
 
-
   this->surface_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
 
   this->sphere_source_ = vtkSmartPointer<vtkSphereSource>::New();
@@ -398,26 +397,26 @@ void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitud
   //for (int domain = 0; domain < this->numDomains; domain++) {
   //vtkPolyData* polyData = this->surface_mapper_->GetInput();
 
-  vtkFloatArray* surfaceMagnitudes = vtkFloatArray::New();
-  surfaceMagnitudes->SetNumberOfComponents(1);
-  surfaceMagnitudes->SetNumberOfTuples(polyData->GetPoints()->GetNumberOfPoints());
+  vtkFloatArray* surface_magnitudes = vtkFloatArray::New();
+  surface_magnitudes->SetNumberOfComponents(1);
+  surface_magnitudes->SetNumberOfTuples(polyData->GetPoints()->GetNumberOfPoints());
 
-  vtkFloatArray* surfaceVectors = vtkFloatArray::New();
-  surfaceVectors->SetNumberOfComponents(3);
-  surfaceVectors->SetNumberOfTuples(polyData->GetPoints()->GetNumberOfPoints());
+  vtkFloatArray* surface_vectors = vtkFloatArray::New();
+  surface_vectors->SetNumberOfComponents(3);
+  surface_vectors->SetNumberOfTuples(polyData->GetPoints()->GetNumberOfPoints());
 
-  for (unsigned int i = 0; i < surfaceMagnitudes->GetNumberOfTuples(); i++) {
+  for (unsigned int i = 0; i < surface_magnitudes->GetNumberOfTuples(); i++) {
     // find the 8 closest correspondence points the to current point
-    vtkSmartPointer<vtkIdList> closestPoints = vtkSmartPointer<vtkIdList>::New();
-    point_locator->FindClosestNPoints(8, polyData->GetPoint(i), closestPoints);
+    vtkSmartPointer<vtkIdList> closest_points = vtkSmartPointer<vtkIdList>::New();
+    point_locator->FindClosestNPoints(8, polyData->GetPoint(i), closest_points);
 
     // assign scalar value based on a weighted scheme
-    float weightedScalar = 0.0f;
-    float distanceSum = 0.0f;
+    float weighted_scalar = 0.0f;
+    float distance_sum = 0.0f;
     float distance[8];
-    for (unsigned int p = 0; p < closestPoints->GetNumberOfIds(); p++) {
+    for (unsigned int p = 0; p < closest_points->GetNumberOfIds(); p++) {
       // get a particle position
-      vtkIdType id = closestPoints->GetId(p);
+      vtkIdType id = closest_points->GetId(p);
 
       // compute distance to current particle
       double x = polyData->GetPoint(i)[0] - point_data->GetPoint(id)[0];
@@ -426,32 +425,32 @@ void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitud
       distance[p] = 1.0f / (x * x + y * y + z * z);
 
       // multiply scalar value by weight and add to running sum
-      distanceSum += distance[p];
+      distance_sum += distance[p];
     }
 
     float vecX = 0.0f;
     float vecY = 0.0f;
     float vecZ = 0.0f;
 
-    for (unsigned int p = 0; p < closestPoints->GetNumberOfIds(); p++) {
-      vtkIdType currID = closestPoints->GetId(p);
-      weightedScalar += distance[p] / distanceSum * magnitudes->GetValue(currID);
-      vecX += distance[p] / distanceSum * vectors->GetComponent(currID, 0);
-      vecY += distance[p] / distanceSum * vectors->GetComponent(currID, 1);
-      vecZ += distance[p] / distanceSum * vectors->GetComponent(currID, 2);
+    for (unsigned int p = 0; p < closest_points->GetNumberOfIds(); p++) {
+      vtkIdType currID = closest_points->GetId(p);
+      weighted_scalar += distance[p] / distance_sum * magnitudes->GetValue(currID);
+      vecX += distance[p] / distance_sum * vectors->GetComponent(currID, 0);
+      vecY += distance[p] / distance_sum * vectors->GetComponent(currID, 1);
+      vecZ += distance[p] / distance_sum * vectors->GetComponent(currID, 2);
     }
 
-    surfaceMagnitudes->SetValue(i, weightedScalar);
+    surface_magnitudes->SetValue(i, weighted_scalar);
 
-    //std::cerr << "scalar = " << weightedScalar << "\n";
-    surfaceVectors->SetComponent(i, 0, vecX);
-    surfaceVectors->SetComponent(i, 1, vecY);
-    surfaceVectors->SetComponent(i, 2, vecZ);
+    //std::cerr << "scalar = " << weighted_scalar << "\n";
+    surface_vectors->SetComponent(i, 0, vecX);
+    surface_vectors->SetComponent(i, 1, vecY);
+    surface_vectors->SetComponent(i, 2, vecZ);
   }
 
   // surface coloring
-  polyData->GetPointData()->SetScalars(surfaceMagnitudes);
-  polyData->GetPointData()->SetVectors(surfaceVectors);
+  polyData->GetPointData()->SetScalars(surface_magnitudes);
+  polyData->GetPointData()->SetVectors(surface_vectors);
   //}
 }
 
