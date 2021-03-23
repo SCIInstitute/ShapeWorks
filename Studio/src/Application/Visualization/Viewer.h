@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <QSharedPointer>
 #include <Visualization/ColorSchemes.h>
 
@@ -128,15 +127,11 @@ private:
   vtkSmartPointer<vtkPolyDataMapper> exclusion_sphere_mapper_;
   vtkSmartPointer<vtkActor> exclusion_sphere_actor_;
 
-  vtkSmartPointer<vtkPolyDataMapper> surface_mapper_;
-
   std::vector<vtkSmartPointer<vtkPolyDataMapper>> surface_mappers_;
   std::vector<vtkSmartPointer<vtkActor>> surface_actors_;
 
-
   vtkSmartPointer<vtkLookupTable> lut_;
   vtkSmartPointer<vtkLookupTable> surface_lut_;
-  //vtkSmartPointer<vtkColorTransferFunction> surface_lut_;
 
   vtkSmartPointer<vtkArrowSource> arrow_source_;
   vtkSmartPointer<vtkTransformPolyDataFilter> arrow_flip_filter_;

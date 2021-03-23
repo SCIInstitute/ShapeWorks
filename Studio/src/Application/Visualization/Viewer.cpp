@@ -38,8 +38,6 @@ namespace shapeworks {
 Viewer::Viewer()
 {
 
-  this->surface_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
-
   this->sphere_source_ = vtkSmartPointer<vtkSphereSource>::New();
 
   this->surface_lut_ = vtkSmartPointer<vtkLookupTable>::New();
@@ -297,13 +295,12 @@ void Viewer::display_vector_field()
   this->arrow_glyph_mapper_->SetLookupTable(this->surface_lut_);
 
   // update surface rendering
-  /// TODO : multi-domain support
-  //for (int i = 0; i < this->numDomains; i++) {
-  this->surface_mapper_->SetLookupTable(this->surface_lut_);
-  this->surface_mapper_->InterpolateScalarsBeforeMappingOn();
-  this->surface_mapper_->SetColorModeToMapScalars();
-  this->surface_mapper_->ScalarVisibilityOn();
-  //}
+  for (int i = 0; i < this->surface_mappers_.size(); i++) {
+    this->surface_mappers_[i]->SetLookupTable(this->surface_lut_);
+    this->surface_mappers_[i]->InterpolateScalarsBeforeMappingOn();
+    this->surface_mappers_[i]->SetColorModeToMapScalars();
+    this->surface_mappers_[i]->ScalarVisibilityOn();
+  }
 
   // Set the color modes
   this->arrow_glyphs_->SetColorModeToColorByScalar();
@@ -349,7 +346,7 @@ void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
     locator->BuildLocator();
     locators.push_back(locator);
   }
-  
+
   // Compute difference vector dot product with normal.  Length of vector is
   // stored in the "scalars" so that the vtk color mapping and glyph scaling
   // happens properly.
@@ -379,78 +376,76 @@ void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
 void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitudes,
                                          vtkSmartPointer<vtkFloatArray> vectors)
 {
-  vtkPolyData* polyData = this->surface_mapper_->GetInput();
-  if (!polyData) {
-    return;
-  }
+  for (int i = 0; i < this->surface_mappers_.size(); i++) {
 
-  vtkSmartPointer<vtkPolyData> point_data = vtkSmartPointer<vtkPolyData>::New();
-  point_data->SetPoints(this->glyph_points_);
-
-  vtkPointLocator* point_locator = vtkPointLocator::New();
-  point_locator->SetDataSet(point_data);
-  point_locator->SetDivisions(100, 100, 100);
-  point_locator->BuildLocator();
-
-  /// TODO: multi-domain support
-  //for (int domain = 0; domain < this->numDomains; domain++) {
-  //vtkPolyData* polyData = this->surface_mapper_->GetInput();
-
-  vtkFloatArray* surface_magnitudes = vtkFloatArray::New();
-  surface_magnitudes->SetNumberOfComponents(1);
-  surface_magnitudes->SetNumberOfTuples(polyData->GetPoints()->GetNumberOfPoints());
-
-  vtkFloatArray* surface_vectors = vtkFloatArray::New();
-  surface_vectors->SetNumberOfComponents(3);
-  surface_vectors->SetNumberOfTuples(polyData->GetPoints()->GetNumberOfPoints());
-
-  for (unsigned int i = 0; i < surface_magnitudes->GetNumberOfTuples(); i++) {
-    // find the 8 closest correspondence points the to current point
-    vtkSmartPointer<vtkIdList> closest_points = vtkSmartPointer<vtkIdList>::New();
-    point_locator->FindClosestNPoints(8, polyData->GetPoint(i), closest_points);
-
-    // assign scalar value based on a weighted scheme
-    float weighted_scalar = 0.0f;
-    float distance_sum = 0.0f;
-    float distance[8];
-    for (unsigned int p = 0; p < closest_points->GetNumberOfIds(); p++) {
-      // get a particle position
-      vtkIdType id = closest_points->GetId(p);
-
-      // compute distance to current particle
-      double x = polyData->GetPoint(i)[0] - point_data->GetPoint(id)[0];
-      double y = polyData->GetPoint(i)[1] - point_data->GetPoint(id)[1];
-      double z = polyData->GetPoint(i)[2] - point_data->GetPoint(id)[2];
-      distance[p] = 1.0f / (x * x + y * y + z * z);
-
-      // multiply scalar value by weight and add to running sum
-      distance_sum += distance[p];
+    vtkPolyData* poly_data = this->surface_mappers_[i]->GetInput();
+    if (!poly_data) {
+      return;
     }
 
-    float vecX = 0.0f;
-    float vecY = 0.0f;
-    float vecZ = 0.0f;
+    vtkSmartPointer<vtkPolyData> point_data = vtkSmartPointer<vtkPolyData>::New();
+    point_data->SetPoints(this->glyph_points_);
 
-    for (unsigned int p = 0; p < closest_points->GetNumberOfIds(); p++) {
-      vtkIdType currID = closest_points->GetId(p);
-      weighted_scalar += distance[p] / distance_sum * magnitudes->GetValue(currID);
-      vecX += distance[p] / distance_sum * vectors->GetComponent(currID, 0);
-      vecY += distance[p] / distance_sum * vectors->GetComponent(currID, 1);
-      vecZ += distance[p] / distance_sum * vectors->GetComponent(currID, 2);
+    vtkPointLocator* point_locator = vtkPointLocator::New();
+    point_locator->SetDataSet(point_data);
+    point_locator->SetDivisions(100, 100, 100);
+    point_locator->BuildLocator();
+
+    vtkFloatArray* surface_magnitudes = vtkFloatArray::New();
+    surface_magnitudes->SetNumberOfComponents(1);
+    surface_magnitudes->SetNumberOfTuples(poly_data->GetPoints()->GetNumberOfPoints());
+
+    vtkFloatArray* surface_vectors = vtkFloatArray::New();
+    surface_vectors->SetNumberOfComponents(3);
+    surface_vectors->SetNumberOfTuples(poly_data->GetPoints()->GetNumberOfPoints());
+
+    for (unsigned int i = 0; i < surface_magnitudes->GetNumberOfTuples(); i++) {
+      // find the 8 closest correspondence points the to current point
+      vtkSmartPointer<vtkIdList> closest_points = vtkSmartPointer<vtkIdList>::New();
+      point_locator->FindClosestNPoints(8, poly_data->GetPoint(i), closest_points);
+
+      // assign scalar value based on a weighted scheme
+      float weighted_scalar = 0.0f;
+      float distance_sum = 0.0f;
+      float distance[8];
+      for (unsigned int p = 0; p < closest_points->GetNumberOfIds(); p++) {
+        // get a particle position
+        vtkIdType id = closest_points->GetId(p);
+
+        // compute distance to current particle
+        double x = poly_data->GetPoint(i)[0] - point_data->GetPoint(id)[0];
+        double y = poly_data->GetPoint(i)[1] - point_data->GetPoint(id)[1];
+        double z = poly_data->GetPoint(i)[2] - point_data->GetPoint(id)[2];
+        distance[p] = 1.0f / (x * x + y * y + z * z);
+
+        // multiply scalar value by weight and add to running sum
+        distance_sum += distance[p];
+      }
+
+      float vecX = 0.0f;
+      float vecY = 0.0f;
+      float vecZ = 0.0f;
+
+      for (unsigned int p = 0; p < closest_points->GetNumberOfIds(); p++) {
+        vtkIdType currID = closest_points->GetId(p);
+        weighted_scalar += distance[p] / distance_sum * magnitudes->GetValue(currID);
+        vecX += distance[p] / distance_sum * vectors->GetComponent(currID, 0);
+        vecY += distance[p] / distance_sum * vectors->GetComponent(currID, 1);
+        vecZ += distance[p] / distance_sum * vectors->GetComponent(currID, 2);
+      }
+
+      surface_magnitudes->SetValue(i, weighted_scalar);
+
+      //std::cerr << "scalar = " << weighted_scalar << "\n";
+      surface_vectors->SetComponent(i, 0, vecX);
+      surface_vectors->SetComponent(i, 1, vecY);
+      surface_vectors->SetComponent(i, 2, vecZ);
     }
 
-    surface_magnitudes->SetValue(i, weighted_scalar);
-
-    //std::cerr << "scalar = " << weighted_scalar << "\n";
-    surface_vectors->SetComponent(i, 0, vecX);
-    surface_vectors->SetComponent(i, 1, vecY);
-    surface_vectors->SetComponent(i, 2, vecZ);
+    // surface coloring
+    poly_data->GetPointData()->SetScalars(surface_magnitudes);
+    poly_data->GetPointData()->SetVectors(surface_vectors);
   }
-
-  // surface coloring
-  polyData->GetPointData()->SetScalars(surface_magnitudes);
-  polyData->GetPointData()->SetVectors(surface_vectors);
-  //}
 }
 
 //-----------------------------------------------------------------------------
@@ -841,9 +836,9 @@ void Viewer::update_difference_lut(float r0, float r1)
 
   this->surface_lut_->SetTableRange(range);
   this->surface_lut_->Build();
-  this->surface_mapper_->SetLookupTable(this->surface_lut_);
+  //this->surface_mapper_->SetLookupTable(this->surface_lut_);
 
-  this->surface_mapper_->SetScalarRange(range[0], range[1]);
+  //this->surface_mapper_->SetScalarRange(range[0], range[1]);
   this->arrow_glyph_mapper_->SetScalarRange(range);
   this->glyph_mapper_->SetScalarRange(range);
   this->scalar_bar_actor_->SetLookupTable(this->surface_lut_);
