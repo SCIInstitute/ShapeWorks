@@ -99,6 +99,7 @@ MeshGroup Shape::get_original_meshes(bool wait)
 {
   if (!this->subject_) {
     std::cerr << "Error: asked for original mesh when none is present!\n";
+    assert(0);
   }
 
   if (!this->original_meshes_.valid()) {
@@ -113,6 +114,7 @@ MeshGroup Shape::get_groomed_meshes(bool wait)
 {
   if (!this->subject_) {
     std::cerr << "Error: asked for groomed meshes when none are present!\n";
+    assert(0);
   }
 
   if (!this->groomed_meshes_.valid()) {

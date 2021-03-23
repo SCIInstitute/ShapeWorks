@@ -653,7 +653,7 @@ p, li { white-space: pre-wrap; }
     </layout>
    </widget>
   </widget>
-  <widget class="QToolBar" name="toolBar">
+  <widget class="QToolBar" name="ToolBar">
    <property name="font">
     <font>
      <pointsize>8</pointsize>

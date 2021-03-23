@@ -1078,7 +1078,7 @@ void ShapeWorksStudioApp::update_display(bool force)
     return;
   }
 
-  if (this->block_update_) {
+  if (this->block_update_ || this->is_loading_) {
     return;
   }
 

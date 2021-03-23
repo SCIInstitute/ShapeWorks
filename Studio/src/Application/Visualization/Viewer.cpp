@@ -331,6 +331,11 @@ void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
     return;
   }
 
+  auto meshes = this->shape_->get_meshes(this->visualizer_->get_display_mode());
+  if (!meshes.valid()) {
+    return;
+  }
+
   /// TODO: multi-domain support
   vtkSmartPointer<vtkPolyData> poly_data = this->shape_->get_meshes(
     this->visualizer_->get_display_mode()).meshes()[0]->get_poly_data();
