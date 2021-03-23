@@ -16,6 +16,7 @@
 #include "itkParticleImageDomainWithGradients.h"
 #include "itkParticleImageDomainWithGradN.h"
 #include "Libs/Utils/Utils.h"
+#include <Eigen/SVD>
 
 namespace itk
 {
@@ -50,65 +51,40 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
         points_minus_mean.set_row(i, m_ShapeData->get_row(i) - m_points_mean->get(i,0) );
     }
 
-//    if (this->CheckForNans(points_minus_mean))
-//        std::cout << "MGEG: 1. Nans exist!!!" << std::endl;
-//    else
-//        std::cout << "MGEG: 1. No Nans!!!" << std::endl;
-
-    vnl_diag_matrix<double> W;
-
-    vnl_matrix_type gramMat(num_samples, num_samples, 0.0);
+    Eigen::JacobiSVD<Eigen::MatrixXd>::SingularValuesType W;
     vnl_matrix_type pinvMat(num_samples, num_samples, 0.0); //gramMat inverse
 
     if (this->m_UseMeanEnergy)
     {
-        pinvMat.set_identity();
-        m_InverseCovMatrix->clear();
+      pinvMat.set_identity();
+      m_InverseCovMatrix->clear();
     }
     else
     {
-//        vnl_svd <double> svd(points_minus_mean);
+      using RowMajorMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+      Eigen::Map<RowMajorMatrix> e_points_minus_mean(points_minus_mean.data_block(),
+                                                     points_minus_mean.rows(), points_minus_mean.cols());
+      Eigen::Map<RowMajorMatrix> e_pinvMat(pinvMat.data_block(),
+                                           pinvMat.rows(), pinvMat.cols());
+      m_InverseCovMatrix->set_size(num_dims, num_dims);
+      Eigen::Map<RowMajorMatrix> e_invCov(m_InverseCovMatrix->data_block(),
+                                          m_InverseCovMatrix->rows(), m_InverseCovMatrix->cols());
 
-//        vnl_matrix_type U = svd.U();
-//        vnl_matrix_type V = svd.V();
+      const auto gram_mat = e_points_minus_mean.transpose() * e_points_minus_mean;
+      const Eigen::JacobiSVD<RowMajorMatrix> svd(gram_mat, Eigen::ComputeFullU);
+      const auto& U = svd.matrixU();
+      W = svd.singularValues();
 
-//        W = svd.W();
+      const auto inv_lambda = (W.array() / (double)(num_samples - 1) + m_MinimumVariance).inverse().matrix();
+      e_pinvMat.noalias() = U * inv_lambda * U.transpose();
 
-//        vnl_diag_matrix<double> invLambda = svd.W()*svd.W();
-
-//        invLambda.set_diagonal(invLambda.get_diagonal()/(double)(num_samples-1) + m_MinimumVariance);
-//        invLambda.invert_in_place();
-
-//        pinvMat = (V * invLambda) * V.transpose();
-//        m_InverseCovMatrix = (U * invLambda) * U.transpose();
-
-        gramMat = points_minus_mean.transpose()* points_minus_mean;
-
-        vnl_svd <double> svd(gramMat);
-
-        vnl_matrix_type UG = svd.U();
-        W = svd.W();
-
-        vnl_diag_matrix<double> invLambda = svd.W();
-        invLambda.set_diagonal(invLambda.get_diagonal()/(double)(num_samples-1) + m_MinimumVariance);
-        invLambda.invert_in_place();
-
-        pinvMat = (UG * invLambda) * UG.transpose();
-
-        vnl_matrix_type projMat = points_minus_mean * UG;
-        const auto lhs = projMat * invLambda;
-        const auto rhs = invLambda * projMat.transpose(); // invLambda doesn't need to be transposed since its a diagonal matrix
-        m_InverseCovMatrix->set_size(num_dims, num_dims);
-        Utils::multiply_into(*m_InverseCovMatrix, lhs, rhs);
+      const auto proj_mat = e_points_minus_mean * U;
+      const auto lhs = proj_mat * inv_lambda;
+      const auto rhs = inv_lambda * proj_mat.transpose(); // invLambda doesn't need to be transposed since its a diagonal matrix
+      e_invCov.noalias() = lhs * rhs;
     }
 
     vnl_matrix_type Q = points_minus_mean * pinvMat;
-
-//    if (this->CheckForNans(Q))
-//        std::cout << "MGEG: 2. Nans exist!!!" << std::endl;
-//    else
-//        std::cout << "MGEG: 2. No Nans!!!" << std::endl;
-
 
     // Compute the update matrix in coordinate space by multiplication with the
     // Jacobian.  Each shape gradient must be transformed by a different Jacobian
@@ -164,11 +140,6 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
     }
     }
 
-//    if (this->CheckForNans(m_PointsUpdate))
-//        std::cout << "MGEG: 3. Nans exist!!!" << std::endl;
-//    else
-//        std::cout << "MGEG: 3. No Nans!!!" << std::endl;
-
     m_CurrentEnergy = 0.0;
 
     if (m_UseMeanEnergy)
@@ -189,19 +160,6 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 
     if (m_UseMeanEnergy)
         m_MinimumEigenValue = m_CurrentEnergy / 2.0;
-
-//    if (!m_UseMeanEnergy)
-//    {
-//        for (unsigned int i =0; i < num_samples; i++)
-//            std::cout << i << ": "<< W(i)*W(i) << std::endl;
-
-//        std::cout << "FeaMesh_ENERGY = " << m_CurrentEnergy << "\t MinimumVariance = " << m_MinimumVariance << std::endl;
-//    }
-//    else
-//    {
-//        std::cout << "FeaMesh_ENERGY = " << m_CurrentEnergy << std::endl;
-//    }
-
 }
 
 template <unsigned int VDimension>
