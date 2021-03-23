@@ -1,11 +1,15 @@
 #include <functional>
 
-#include "OptimizeParameters.h"
-#include "Optimize.h"
+#include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
+
 #include <Libs/Image/Image.h>
 #include <Libs/Utils/StringUtils.h>
 #include <Libs/Mesh/MeshUtils.h>
-#include "ParticleSystem/VtkMeshWrapper.h"
+#include <ParticleSystem/VtkMeshWrapper.h>
+
+#include "OptimizeParameters.h"
+#include "Optimize.h"
 
 using namespace shapeworks;
 
@@ -313,13 +317,14 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
       prefix_transform[1][3] = transforms[i][10];
       prefix_transform[2][3] = transforms[i][11];
 
-      optimize->GetSampler()->GetParticleSystem()->SetPrefixTransform(domain_count++, prefix_transform);
+      optimize->GetSampler()->GetParticleSystem()->SetPrefixTransform(domain_count++,
+                                                                      prefix_transform);
 
       auto name = StringUtils::getFileNameWithoutExtension(filename);
 
-      /// TODO: output directory?
-      local_particle_filenames.push_back(name + "_local.particles");
-      world_particle_filenames.push_back(name + "_world.particles");
+      auto prefix = this->get_output_prefix(name);
+      local_particle_filenames.push_back(prefix + "_local.particles");
+      world_particle_filenames.push_back(prefix + "_world.particles");
     }
     s->set_local_particle_filenames(local_particle_filenames);
     s->set_world_particle_filenames(world_particle_filenames);
@@ -359,5 +364,33 @@ std::string OptimizeParameters::get_optimize_output_prefix()
 void OptimizeParameters::set_optimize_output_prefix(std::string prefix)
 {
   this->params_.set("optimize_output_prefix", prefix);
+}
+
+//---------------------------------------------------------------------------
+std::string OptimizeParameters::get_output_prefix(std::string input)
+{
+  // if the project is not saved, use the path of the input filename
+  auto filename = this->project_->get_filename();
+  if (filename == "") {
+    filename = input;
+  }
+
+  auto base = StringUtils::getPath(filename);
+  if (base == filename) {
+    base = ".";
+  }
+
+  auto project_name = StringUtils::getFileNameWithoutExtension(this->project_->get_filename());
+
+  auto prefix = this->get_optimize_output_prefix();
+  boost::replace_all(prefix, "<project>", project_name);
+
+  auto path = base + "/" + prefix;
+  boost::filesystem::create_directories(path);
+
+  auto output = path + "/" + input;
+
+  return output;
+
 }
 
