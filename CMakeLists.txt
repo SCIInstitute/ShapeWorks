@@ -10,7 +10,7 @@ find_package(Python3 3.7 EXACT REQUIRED)
 SET(SHAPEWORKS_MAJOR_VERSION 6 CACHE INTERNAL "Major version number" FORCE)
 SET(SHAPEWORKS_MINOR_VERSION 0 CACHE INTERNAL "Minor version number" FORCE)
 SET(SHAPEWORKS_PATCH_VERSION 0 CACHE INTERNAL "Patch version number" FORCE)
-SET(SHAPEWORKS_VERSION_STRING "6.0.0-RC9")
+SET(SHAPEWORKS_VERSION_STRING "6.0.0-RC10")
 
 
 #
@@ -222,7 +222,7 @@ if(BUILD_DOCUMENTATION)
       "Doxygen is needed to build the documentation. Please install it correctly")
   endif(NOT DOXYGEN_FOUND)
 
-  add_subdirectory(Documentation/Doxygen)
+  add_subdirectory(docs/Doxygen)
 endif(BUILD_DOCUMENTATION)
 
 MESSAGE(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
