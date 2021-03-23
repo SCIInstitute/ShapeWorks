@@ -408,6 +408,8 @@ bool AnalysisTool::compute_stats()
     return false;
   }
 
+  this->compute_reconstructed_domain_transforms();
+
   this->ui_->pcaModeSpinBox->setMaximum(
     std::max<double>(1, this->session_->get_shapes().size() - 1));
 
@@ -881,10 +883,7 @@ ShapeHandle AnalysisTool::create_shape_from_points(StudioParticles points)
   shape->set_mesh_manager(this->session_->get_mesh_manager());
   shape->set_particles(points);
   shape->get_reconstructed_meshes();
-  for (int i=0;i<this->session_->get_domains_per_shape();i++) {
-    shape->set_reconstruction_transform(i,this->get_reconstructed_domain_transform(i));
-  }
-
+  shape->set_reconstruction_transforms(this->reconstruction_transforms_);
   return shape;
 }
 
@@ -1151,6 +1150,7 @@ StudioParticles AnalysisTool::convert_from_combined(const vnl_vector<double>& po
 //---------------------------------------------------------------------------
 vnl_vector<double> AnalysisTool::get_reconstructed_domain_transform(int domain)
 {
+
   vnl_vector<double> transform;
   transform.set_size(12);
 
@@ -1164,8 +1164,33 @@ vnl_vector<double> AnalysisTool::get_reconstructed_domain_transform(int domain)
     transform[11] += (base[11] - offset[11]) / num_shapes;
   }
 
+
   return transform;
 }
 
+//---------------------------------------------------------------------------
+void AnalysisTool::compute_reconstructed_domain_transforms()
+{
+  this->reconstruction_transforms_.resize(this->session_->get_domains_per_shape());
+  auto shapes = this->session_->get_shapes();
+  for (int domain = 0; domain < this->session_->get_domains_per_shape(); domain++) {
+    vnl_vector<double> transform;
+    transform.set_size(12);
+    int num_shapes = shapes.size();
+    for (int i = 0; i < shapes.size(); i++) {
+      auto base = shapes[i]->get_groomed_transform(0);
+      auto offset = shapes[i]->get_groomed_transform(domain);
+      transform[9] += (base[9] - offset[9]) / num_shapes;
+      transform[10] += (base[10] - offset[10]) / num_shapes;
+      transform[11] += (base[11] - offset[11]) / num_shapes;
+    }
+    this->reconstruction_transforms_[domain] = transform;
+  }
+
+  for (int s = 0; s < shapes.size(); s++) {
+    shapes[s]->set_reconstruction_transforms(this->reconstruction_transforms_);
+  }
+
+}
 
 }

@@ -73,6 +73,9 @@ public:
   /// Get the global correspondence points
   vnl_vector<double> get_global_correspondence_points();
 
+  /// Get the global correspondence points for display
+  vnl_vector<double> get_global_correspondence_points_for_display();
+
   /// Get the local correspondence points
   vnl_vector<double> get_local_correspondence_points();
 
@@ -118,7 +121,7 @@ public:
   void set_transform(const vnl_vector<double>& transform);
   vnl_vector<double> get_transform(int domain = 0);
 
-  void set_reconstruction_transform(int domain, const vnl_vector<double>& transform);
+  void set_reconstruction_transforms(std::vector<vnl_vector<double>> transforms);
   vnl_vector<double> get_reconstruction_transform(int domain);
 
   TransformType get_groomed_transform(int domain = 0);

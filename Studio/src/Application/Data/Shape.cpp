@@ -680,13 +680,34 @@ vnl_vector<double> Shape::get_reconstruction_transform(int domain)
   return this->reconstruction_transforms_[domain];
 }
 
+
 //---------------------------------------------------------------------------
-void Shape::set_reconstruction_transform(int domain, const vnl_vector<double>& transform)
+vnl_vector<double> Shape::get_global_correspondence_points_for_display()
 {
-  if (domain >= this->reconstruction_transforms_.size()) {
-    this->reconstruction_transforms_.resize(domain + 1);
+  auto worlds = this->particles_.get_world_particles();
+  int size = 0;
+  for (int i = 0; i < worlds.size(); i++) {
+    size += worlds[i].size();
   }
-  this->reconstruction_transforms_[domain] = transform;
+  vnl_vector<double> points;
+  points.set_size(size);
+
+  int idx = 0;
+  for (int i = 0; i < worlds.size(); i++) {
+    for (int j = 0; j < worlds[i].size(); j+=3) {
+      points[idx++] = worlds[i][j+0] + this->reconstruction_transforms_[i][9];
+      points[idx++] = worlds[i][j+1] + this->reconstruction_transforms_[i][10];
+      points[idx++] = worlds[i][j+2] + this->reconstruction_transforms_[i][11];
+    }
+  }
+
+  return points;
+}
+
+//---------------------------------------------------------------------------
+void Shape::set_reconstruction_transforms(std::vector<vnl_vector<double>> transforms)
+{
+  this->reconstruction_transforms_ = transforms;
 }
 
 }

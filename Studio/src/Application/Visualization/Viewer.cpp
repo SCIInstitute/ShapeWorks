@@ -38,7 +38,7 @@ namespace shapeworks {
 Viewer::Viewer()
 {
 
-  this->surface_actor_ = vtkSmartPointer<vtkActor>::New();
+
   this->surface_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
 
   this->sphere_source_ = vtkSmartPointer<vtkSphereSource>::New();
@@ -325,7 +325,6 @@ void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
   double minmag = 1.0e20;
   double maxmag = 0.0;
 
-
   vtkSmartPointer<vtkPolyData> pointSet = this->glyph_point_set_;
 
   if (!this->shape_->get_meshes(this->visualizer_->get_display_mode()).valid()) {
@@ -518,46 +517,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
 
       this->draw_exclusion_spheres(shape);
 
-      vnl_vector<double> transform;
-
-      if (this->visualizer_->get_display_mode() == Visualizer::MODE_ORIGINAL_C) {
-        if (this->visualizer_->get_center()) {
-          transform = shape->get_transform();
-        }
-      }
-      else if (this->visualizer_->get_display_mode() == Visualizer::MODE_GROOMED_C) {
-        transform = shape->get_transform();
-      }
-      else {
-        transform = shape->get_reconstruction_transform(i);
-      }
-
-      /*
-      if (this->visualizer_->get_display_mode() == Visualizer::MODE_GROOMED_C) {
-        transform = shape->get_transform(i);
-        auto base_transform = shape->get_transform(0);
-
-        if (transform.size() == 12) {
-          transform[9] = base_transform[9] - transform[9];
-          transform[10] = base_transform[10] - transform[10];
-          transform[11] = base_transform[11] - transform[11];
-        }
-      }
-       */
-
-      transform_ = vtkSmartPointer<vtkTransform>::New();
-      if (transform.size() == 12) {
-        double tx = transform[9];
-        double ty = transform[10];
-        double tz = transform[11];
-
-        transform_->Translate(tx, ty, tz);
-
-
-      }
-
-      actor->SetUserTransform(transform_);
-      glyph_actor_->SetUserTransform(transform_);
+      actor->SetUserTransform(this->get_transform(i));
 
       mapper->SetInputData(poly_data);
 
@@ -678,7 +638,7 @@ void Viewer::update_points()
 
   vnl_vector<double> correspondence_points;
   if (this->visualizer_->get_display_mode() == Visualizer::MODE_RECONSTRUCTION_C) {
-    correspondence_points = this->shape_->get_global_correspondence_points();
+    correspondence_points = this->shape_->get_global_correspondence_points_for_display();
   }
   else {
     correspondence_points = this->shape_->get_local_correspondence_points();
@@ -714,6 +674,8 @@ void Viewer::update_points()
     this->glyph_points_->Reset();
     scalars->Reset();
   }
+
+  this->glyph_actor_->SetUserTransform(this->get_transform(0));
   this->glyph_points_->Modified();
 }
 
@@ -924,6 +886,36 @@ void Viewer::initialize_surfaces()
     }
 
   }
+}
+
+//-----------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> Viewer::get_transform(int domain)
+{
+
+  vnl_vector<double> transform;
+
+  if (this->visualizer_->get_display_mode() == Visualizer::MODE_ORIGINAL_C) {
+    if (this->visualizer_->get_center()) {
+      transform = this->shape_->get_transform();
+    }
+  }
+  else if (this->visualizer_->get_display_mode() == Visualizer::MODE_GROOMED_C) {
+    transform = this->shape_->get_transform();
+  }
+  else {
+    transform = this->shape_->get_reconstruction_transform(domain);
+  }
+
+  auto vtk_transform = vtkSmartPointer<vtkTransform>::New();
+  vtk_transform->Identity();
+  if (transform.size() == 12) {
+    double tx = transform[9];
+    double ty = transform[10];
+    double tz = transform[11];
+
+    vtk_transform->Translate(tx, ty, tz);
+  }
+  return vtk_transform;
 }
 
 }

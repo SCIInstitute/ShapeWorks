@@ -81,6 +81,8 @@ public:
 
 private:
 
+  vtkSmartPointer<vtkTransform> get_transform(int domain);
+
   void initialize_surfaces();
 
   void display_vector_field();
@@ -127,8 +129,6 @@ private:
   vtkSmartPointer<vtkActor> exclusion_sphere_actor_;
 
   vtkSmartPointer<vtkPolyDataMapper> surface_mapper_;
-  vtkSmartPointer<vtkActor> surface_actor_;
-  vtkSmartPointer<vtkTransform> transform_;
 
   std::vector<vtkSmartPointer<vtkPolyDataMapper>> surface_mappers_;
   std::vector<vtkSmartPointer<vtkActor>> surface_actors_;

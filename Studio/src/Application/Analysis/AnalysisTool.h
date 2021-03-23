@@ -155,6 +155,8 @@ signals:
 
 private:
 
+  void compute_reconstructed_domain_transforms();
+
   bool active_ = false;
 
   void pca_labels_changed(QString value, QString eigen, QString lambda);
@@ -198,7 +200,7 @@ private:
   std::vector<std::string> current_group_names_;
   std::vector<std::string> current_group_values_;
 
-  std::vector<vnl_vector<double>> domain_transforms_;
+  std::vector<vnl_vector<double>> reconstruction_transforms_;
 
 };
 
