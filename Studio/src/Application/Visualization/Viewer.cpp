@@ -324,42 +324,41 @@ void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
   double minmag = 1.0e20;
   double maxmag = 0.0;
 
-  vtkSmartPointer<vtkPolyData> pointSet = this->glyph_point_set_;
+  vtkSmartPointer<vtkPolyData> point_set = this->glyph_point_set_;
 
-  if (!this->shape_->get_meshes(this->visualizer_->get_display_mode()).valid()) {
+  auto mesh_group = this->shape_->get_meshes(this->visualizer_->get_display_mode());
+  if (!mesh_group.valid()) {
     return;
   }
 
-  auto meshes = this->shape_->get_meshes(this->visualizer_->get_display_mode());
-  if (!meshes.valid()) {
-    return;
+  std::vector<vtkSmartPointer<vtkPolyData>> polys;
+  std::vector<vtkSmartPointer<vtkKdTreePointLocator>> locators;
+
+  for (int i = 0; i < mesh_group.meshes().size(); i++) {
+    vtkSmartPointer<vtkPolyData> poly_data = mesh_group.meshes()[i]->get_poly_data();
+
+    auto normals = vtkSmartPointer<vtkPolyDataNormals>::New();
+    normals->SetInputData(poly_data);
+    normals->Update();
+    normals->SetSplitting(false); // must be sure not to split normals
+    poly_data = normals->GetOutput();
+    polys.push_back(poly_data);
+
+    auto locator = vtkSmartPointer<vtkKdTreePointLocator>::New();
+    locator->SetDataSet(poly_data);
+    locator->BuildLocator();
+    locators.push_back(locator);
   }
-
-  /// TODO: multi-domain support
-  vtkSmartPointer<vtkPolyData> poly_data = this->shape_->get_meshes(
-    this->visualizer_->get_display_mode()).meshes()[0]->get_poly_data();
-  if (!poly_data || poly_data->GetNumberOfPoints() == 0) {
-    return;
-  }
-
-  vtkSmartPointer<vtkPolyDataNormals> polydata_normals =
-    vtkSmartPointer<vtkPolyDataNormals>::New();
-  polydata_normals->SetInputData(poly_data);
-  polydata_normals->Update();
-  polydata_normals->SetSplitting(false); // must be sure not to split normals
-  poly_data = polydata_normals->GetOutput();
-
-  vtkSmartPointer<vtkKdTreePointLocator> locator = vtkSmartPointer<vtkKdTreePointLocator>::New();
-  locator->SetDataSet(poly_data);
-  locator->BuildLocator();
-
+  
   // Compute difference vector dot product with normal.  Length of vector is
   // stored in the "scalars" so that the vtk color mapping and glyph scaling
   // happens properly.
-  for (unsigned int i = 0; i < pointSet->GetNumberOfPoints(); i++) {
+  for (unsigned int i = 0; i < point_set->GetNumberOfPoints(); i++) {
 
-    auto id = locator->FindClosestPoint(pointSet->GetPoint(i));
-    double* normal = poly_data->GetPointData()->GetNormals()->GetTuple(id);
+    int domain = this->shape_->get_particles().get_domain_for_combined_id(i);
+
+    auto id = locators[domain]->FindClosestPoint(point_set->GetPoint(i));
+    double* normal = polys[domain]->GetPointData()->GetNormals()->GetTuple(id);
 
     float xd = points[i].x;
     float yd = points[i].y;

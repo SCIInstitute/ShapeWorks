@@ -145,4 +145,17 @@ vnl_vector<double> StudioParticles::combine(const std::vector<vnl_vector<double>
   return points;
 }
 
+//---------------------------------------------------------------------------
+int StudioParticles::get_domain_for_combined_id(int id)
+{
+  int sum = 0;
+  for (int i = 0; i < this->global_particles_.size(); i++) {
+    sum += this->global_particles_[i].size();
+    if (id < sum) {
+      return i;
+    }
+  }
+  return 0;
+}
+
 }

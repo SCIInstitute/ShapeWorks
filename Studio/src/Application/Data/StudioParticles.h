@@ -35,6 +35,9 @@ public:
   std::vector<itk::Point<double>> get_local_points(int domain);
   std::vector<itk::Point<double>> get_world_points(int domain);
 
+  //! Return which domain a particle belongs to when they are concatenated together
+  int get_domain_for_combined_id(int id);
+
 private:
 
   std::vector<itk::Point<double>> vnl_to_point_vector(const vnl_vector<double>& vnl);
