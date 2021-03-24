@@ -448,6 +448,7 @@ def MeshesToVolumes(outDir, meshList, spacing):
         segList.append(segFile)
 
         mesh = Mesh(mesh_)
+        print("converting mesh to image using spacing of: " + str(spacing))
         image = mesh.toImage(spacing)
         image.write(segFile)
     return segList
