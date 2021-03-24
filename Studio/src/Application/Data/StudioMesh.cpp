@@ -1,3 +1,5 @@
+#include <Data/StudioMesh.h>
+
 #include <QMessageBox>
 #include <QTextStream>
 
@@ -7,16 +9,13 @@
 #include <itkNearestNeighborInterpolateImageFunction.h>
 #include <itkLinearInterpolateImageFunction.h>
 
-#include <vtkSurfaceReconstructionFilter.h>
 #include <vtkMarchingCubes.h>
 #include <vtkTriangleFilter.h>
 #include <vtkFloatArray.h>
 #include <vtkPointData.h>
-#include <vtkPolyDataWriter.h>
 #include <vtkPointLocator.h>
 #include <vtkKdTreePointLocator.h>
 
-#include <Data/StudioMesh.h>
 #include <Data/ItkToVtk.h>
 
 using NearestNeighborInterpolatorType = itk::NearestNeighborInterpolateImageFunction<ImageType, double>;
