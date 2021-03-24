@@ -33,7 +33,6 @@ using namespace pybind11::literals;
 #include "ParticleSystem.h"
 #include "ShapeEvaluation.h"
 #include "ParticleShapeStatistics.h"
-#include "vnl/vnl_vector.h"
 
 using namespace shapeworks;
 
@@ -666,9 +665,12 @@ PYBIND11_MODULE(shapeworks, m)
   ;
 
   py::class_<ParticleShapeStatistics>(m, "ParticleShapeStatistics")
-  .def(py::init<const std::string &>())
+  .def(py::init<>())
+  .def("PCA", [](ParticleShapeStatistics stats, ParticleSystem p, int domainsPerShape) {
+    std::vector<std::vector<Point>> points = p.toVector();
+    return stats.DoPCA(points, domainsPerShape);
+  }, "particleSystem"_a, "domainsPerShape"_a=1)
   .def("PCA",                   &ParticleShapeStatistics::DoPCA, "points"_a, "domainsPerShape"_a=1)
-  .def("importPoints",          &ParticleShapeStatistics::ImportPoints,"points"_a,"groupID"_a)
   .def("reloadPoints",          &ParticleShapeStatistics::ReloadPointFiles)
   .def("WriteCSVFile",          &ParticleShapeStatistics::WriteCSVFile, "name"_a)
   .def("WriteCSVFile2",         &ParticleShapeStatistics::WriteCSVFile2, "name"_a)
@@ -698,9 +700,6 @@ PYBIND11_MODULE(shapeworks, m)
   .def("recenteredShape",       &ParticleShapeStatistics::RecenteredShape)
   .def("percentVarByMode",      &ParticleShapeStatistics::PercentVarByMode)
   .def("simpleLinearRegression",&ParticleShapeStatistics::SimpleLinearRegression,"x"_a,"y"_a,"a"_a,"b"_a)
-  .def("compactness",           &ParticleShapeStatistics::get_compactness,"numModes"_a)
-  .def("cpecificity",           &ParticleShapeStatistics::get_specificity,"numModes"_a)
-  .def("generalization",        &ParticleShapeStatistics::get_generalization,"numModes"_a)
   ;
 
   // Optimize (TODO)

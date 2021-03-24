@@ -334,7 +334,7 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string &s)
   return 0;
 }
 
-int ParticleShapeStatistics::DoPCA(std::vector<std::vector<PointType>> global_pts, int domainsPerShape)
+int ParticleShapeStatistics::DoPCA(std::vector<std::vector<Point>> global_pts, int domainsPerShape)
 {
   this->m_domainsPerShape = domainsPerShape;
 
@@ -356,7 +356,7 @@ int ParticleShapeStatistics::DoPCA(std::vector<std::vector<PointType>> global_pt
   for (unsigned int i = 0; i < m_numSamples; i++) {
     for (unsigned int k = 0; k < m_domainsPerShape; k++) {
       //std::cout << "i*m_domainsPerShape + k = " << i*m_domainsPerShape + k << "-------------\n";
-      std::vector<PointType> curDomain = global_pts[i * m_domainsPerShape + k];
+      std::vector<Point> curDomain = global_pts[i * m_domainsPerShape + k];
       unsigned int q = curDomain.size();
 
       //std::cout << "q = " << q << "-------------\n";

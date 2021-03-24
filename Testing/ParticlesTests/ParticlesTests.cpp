@@ -5,6 +5,7 @@
 
 #include "ParticleSystem.h"
 #include "ShapeEvaluation.h"
+#include "ParticleShapeStatistics.h"
 
 using namespace shapeworks;
 
@@ -26,6 +27,18 @@ const std::vector<std::string> filenames = {
   test_dir + "seg.ellipsoid_20.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
   test_dir + "seg.ellipsoid_21.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles"
 };
+
+TEST(ParticlesTests, vnlVector)
+{
+  ParticleSystem particleSystem(filenames);
+  std::vector<std::vector<Point>> points = particleSystem.toVector();
+  ParticleShapeStatistics stats;
+  stats.DoPCA(points);
+  stats.PrincipalComponentProjections();
+  vnl_matrix<double> pcaVec = stats.PCALoadings();
+  std::cout << "Rows: " << pcaVec.rows() << "\n";
+  std::cout << "Cols: " << pcaVec.cols() << "\n";
+}
 
 TEST(ParticlesTests, compactness)
 {

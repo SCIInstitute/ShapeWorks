@@ -15,6 +15,7 @@
 
 #include "itkParticlePositionReader.h"
 #include "itkParticlePositionWriter.h"
+#include "Shapeworks.h"
 
 /**
  * \class ParticleShapeStatistics
@@ -33,9 +34,7 @@ public:
   ParticleShapeStatistics(const std::string &s) { ReadPointFiles(s); }
   ~ParticleShapeStatistics() {}
 
-  typedef typename itk::ParticlePositionReader<3>::PointType PointType;
-
-  int DoPCA(std::vector<std::vector<PointType>> global_pts, int domainsPerShape = 1);
+  int DoPCA(std::vector<std::vector<Point>> global_pts, int domainsPerShape = 1);
 
   /** Dimensionality of the domain of the particle system. */
   itkStaticConstMacro(Dimension, unsigned int, VDimension);

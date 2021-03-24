@@ -2,7 +2,9 @@
 
 #include <vector>
 #include <Eigen/Core>
+
 #include "itkParticlePositionReader.h"
+#include "Shapeworks.h"
 
 namespace shapeworks {
 
@@ -32,6 +34,8 @@ public:
   {
     return P.rows();
   }
+
+  std::vector<std::vector<Point>> toVector();
 
 private:
   friend struct SharedCommandData;
