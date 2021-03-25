@@ -7,7 +7,6 @@
 #include <vtkPolyData.h>
 #include <string>
 #include <vtkPointData.h>
-// #include <gtest/gtest.h>  // fixme: not getting found; needed in order to test private functions
 
 namespace shapeworks {
 
@@ -161,19 +160,6 @@ public:
 
   /// getSupportedTypes
   static std::vector<std::string> getSupportedTypes() { return {"vtk", "vtp", "ply", "stl", "obj"}; }
-
-public:
-  // todo: these two function should be private, but unable to test them b/c can't find gtest.h
-
-  /// compute origin of volume that would contain the rasterization of each mesh
-  // FRIEND_TEST(MeshTests, rasterizationOriginTest1);
-  // FRIEND_TEST(MeshTests, rasterizationOriginTest1);
-  Point3 rasterizationOrigin(Region region, Vector3 spacing = makeVector({1.0, 1.0, 1.0}), int padding = 0) const;
-
-  /// compute size of volume that would contain the rasterization of each mesh
-  // FRIEND_TEST(MeshTests, rasterizationSizeTest1);
-  // FRIEND_TEST(MeshTests, rasterizationSizeTest2);
-  Dims rasterizationSize(Region region, Vector3 spacing = makeVector({1.0, 1.0, 1.0}), int padding = 0, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;
 
 private:
   friend struct SharedCommandData;

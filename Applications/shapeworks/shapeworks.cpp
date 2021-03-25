@@ -69,8 +69,6 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(ScaleMesh::getCommand());
   shapeworks.addCommand(BoundingBoxMesh::getCommand());
   shapeworks.addCommand(Distance::getCommand());
-  shapeworks.addCommand(RasterizationOrigin::getCommand());
-  shapeworks.addCommand(RasterizationSize::getCommand());
   shapeworks.addCommand(FixMesh::getCommand());
   shapeworks.addCommand(SetFieldValue::getCommand());
   shapeworks.addCommand(GetFieldValue::getCommand());

@@ -36,7 +36,7 @@ def Run_Pipeline(args):
     if not args.groom_images:
         # set spacing
         spacing = [1, 1, 1]
-        answer = input("Use ispotropic spacing for mesh rasterization? y/n \n")
+        answer = input("Use isotropic spacing for mesh rasterization? y/n \n")
         if answer == 'n':
             done = False
             while not done:
