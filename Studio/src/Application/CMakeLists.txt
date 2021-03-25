@@ -216,6 +216,7 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   Utils
   Project
   xlnt::xlnt
+  Eigen3::Eigen
   )
 
 INSTALL(TARGETS ShapeWorksStudio

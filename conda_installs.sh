@@ -2,7 +2,7 @@
 # Installs conda environment for building ShapeWorks
 #
 echo ""
-echo "Note: this script only supports bash and zsh shells"
+echo "Note: this script only supports bash and zsh shells "
 echo "      It must be called using \"source ./conda_installs.sh\""
 echo ""
 
@@ -44,11 +44,11 @@ function install_conda() {
     echo "installing anaconda..."
     if [[ "$(uname)" == "Darwin" ]]; then
       curl -o /tmp/Miniconda3-latest-MacOSX-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
-      bash /tmp/Miniconda3-latest-MacOSX-x86_64.sh
+      bash /tmp/Miniconda3-latest-MacOSX-x86_64.sh -b
       rm /tmp/Miniconda3-latest-MacOSX-x86_64.sh
     elif [[ "$(uname)" == "Linux" ]]; then
       curl -o ./Miniconda3-latest-Linux-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-      bash ./Miniconda3-latest-Linux-x86_64.sh
+      bash ./Miniconda3-latest-Linux-x86_64.sh -b
       rm ./Miniconda3-latest-Linux-x86_64.sh
     else
       echo "ERROR: unknown OS $(uname)"
@@ -98,7 +98,8 @@ function install_conda() {
     openexr=2.5.3 \
     pybind11=2.5.0 \
     notebook=6.1.5 \
-    nbformat=4.4.0
+    nbformat=4.4.0 \
+    pkg-config=0.29.2
   then return 1; fi
 
   # linux and mac (only) deps
