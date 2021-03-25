@@ -214,7 +214,6 @@ TEST(MeshTests, toImageTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
   Image image = femur.toImage();
-  image.write("/tmp/femurImage.nrrd");
   Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImage.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -224,7 +223,6 @@ TEST(MeshTests, toImageTest2)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
   Image image = femur.toImage(makeVector({2.0, 2.0, 1.0}));
-  image.write("/tmp/femurImage2.nrrd");
   Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImage2.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -234,7 +232,6 @@ TEST(MeshTests, toImageTest3)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
   Image image = femur.toImage(makeVector({1.0, 1.0, 1.0}), {40, 145, 131});
-  image.write("/tmp/femurImage3.nrrd");
   Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImage3.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -253,7 +250,6 @@ TEST(MeshTests, toDistanceTransformTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
   Image image = femur.toDistanceTransform();
-  image.write("/tmp/femurDT.nrrd");
   Image ground_truth(std::string(TEST_DATA_DIR) + "/femurDT.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
