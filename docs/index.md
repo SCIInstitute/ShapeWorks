@@ -1,7 +1,10 @@
 # Welcome to ShapeWorks!
 
-<img src="img/home/shapeworks-logo.png" width="60px" align="left" hspace="20">    
-*An Integrated Suite for Shape Representation and Analysis & more...*
+<!--- <img src="img/home/shapeworks-logo.png" width="60px" align="left" hspace="20">    
+*An Integrated Suite for Shape Representation and Analysis & more...* -->
+
+![](img/home/sw-logo-w-text.png)
+
 
 ## What is ShapeWorks?
 
