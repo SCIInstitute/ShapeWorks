@@ -1111,8 +1111,8 @@ TEST(ImageTests, statsTest)
   double mean = image.mean();
   double std = image.std();
 
-  ASSERT_TRUE(fabs(min - 0.0) < 1E-3 &&
-              fabs(max - 1.0) < 1E-3 &&
-              fabs(mean - 0.00416) < 1E-3 &&
-              fabs(std - 0.06229) < 1E-3);
+  ASSERT_TRUE(equalNSigDigits(min, 0.0) &&
+              equalNSigDigits(max, 1.0) &&
+              equalNSigDigits(mean, 0.004166) &&
+              equalNSigDigits(std, 0.062299));
 }
