@@ -36,9 +36,11 @@ def save_images(outDir,        # path to the directory where we want to save the
         os.makedirs(outDir)
 
     for curImg, curName in zip(swImageList, swImageNames):
-        filename = outDir + curName + '.' + extension
+        filename = Path(outDir + curName + '.' + extension)
         if verbose:
             print('Writing: ' + filename)
+        if not os.path.exists(os.path.dirname(filename)):
+            os.makedirs(os.path.dirname(filename))
         curImg.write(filename, compressed=compressed)
 
 # a helper function to get list of files with specific extensions from a given file list
