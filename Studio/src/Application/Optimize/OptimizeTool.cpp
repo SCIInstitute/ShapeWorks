@@ -345,7 +345,7 @@ void OptimizeTool::handle_load_progress(int count)
 void OptimizeTool::clear_particles()
 {
   // clear out old points
-  std::vector<StudioParticles> particles;
+  std::vector<StudioParticles> particles(this->session_->get_num_shapes());
   this->session_->update_particles(particles);
 }
 
