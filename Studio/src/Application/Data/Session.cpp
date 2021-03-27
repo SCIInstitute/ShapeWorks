@@ -116,9 +116,19 @@ bool Session::save_project(std::string fname)
   this->filename_ = filename;
 
   QFileInfo fi(filename);
-  if (!fi.isWritable()) {
-    QMessageBox::warning(nullptr, "Read only", "The file is in read only mode");
-    return false;
+  if (fi.exists()) {
+    if (!fi.isWritable()) {
+      QMessageBox::warning(nullptr, "Read only", "The file is in read only mode");
+      return false;
+    }
+  }
+  else {
+    // open file
+    QFile file(filename);
+    if (!file.open(QIODevice::WriteOnly)) {
+      QMessageBox::warning(0, "Read only", "The file is in read only mode");
+      return false;
+    }
   }
 
   this->set_project_path(QFileInfo(filename).absolutePath());
