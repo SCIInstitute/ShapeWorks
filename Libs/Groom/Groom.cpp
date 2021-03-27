@@ -244,15 +244,11 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, int domain)
     if (params.get_center_tool()) {
 
       auto diff = mesh.centerOfMass();
-      Vector3 translation;
-      translation[0] = -diff[0];
-      translation[1] = -diff[1];
-      translation[2] = -diff[2];
 
       itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
-      tform[0] = diff[0];
-      tform[1] = diff[1];
-      tform[2] = diff[2];
+      tform[0] = -diff[0];
+      tform[1] = -diff[1];
+      tform[2] = -diff[2];
       transform->SetTranslation(tform);
       this->increment_progress();
     }
