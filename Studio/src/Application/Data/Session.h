@@ -24,7 +24,7 @@ class Session;
 typedef QSharedPointer<Session> SessionHandle;
 
 //! TODO: replace this
-using TransformType = itk::MatrixOffsetTransformBase<double, 3, 3>::ParametersType;
+using TransformType = vtkSmartPointer<vtkTransform>;
 
 //! Representation of a session.
 /*!

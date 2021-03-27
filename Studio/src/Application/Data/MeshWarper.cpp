@@ -25,7 +25,22 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const vnl_vector<double>& pa
   points.resize(3, particles.size() / 3);
 
   Mesh output = MeshUtils::warpMesh(points.transpose(), this->warp_, this->faces_);
-  return output.getVTKMesh();
+
+  vtkSmartPointer<vtkPolyData> poly_data = output.getVTKMesh();
+
+  double bounds[6];
+  poly_data->GetBounds(bounds);
+
+  for (int i = 0; i < poly_data->GetNumberOfPoints(); i++) {
+    double* p = poly_data->GetPoint(i);
+    if (std::isnan(p[0]) || std::isnan(p[1]) || std::isnan(p[2])) {
+      this->warp_available_ = false; // failed
+      std::cerr << "Reconstruction Failed\n";
+      return nullptr;
+    }
+  }
+
+  return poly_data;
 }
 
 //---------------------------------------------------------------------------

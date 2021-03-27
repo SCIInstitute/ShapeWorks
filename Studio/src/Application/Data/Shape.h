@@ -18,7 +18,7 @@ using ShapeHandle = QSharedPointer<Shape>;
 using ShapeList = QVector<ShapeHandle>;
 
 //! TODO: replace this
-using TransformType = itk::MatrixOffsetTransformBase<double, 3, 3>::ParametersType;
+using TransformType = vtkSmartPointer<vtkTransform>;
 
 //! Representation of a single shape/patient/subject.
 class Shape {
@@ -118,11 +118,11 @@ public:
   std::vector<Point> get_vectors();
   void set_vectors(std::vector<Point> vectors);
 
-  void set_transform(const vnl_vector<double>& transform);
-  vnl_vector<double> get_transform(int domain = 0);
+  void set_transform(vtkSmartPointer<vtkTransform> transform);
+  vtkSmartPointer<vtkTransform> get_transform(int domain = 0);
 
-  void set_reconstruction_transforms(std::vector<vnl_vector<double>> transforms);
-  vnl_vector<double> get_reconstruction_transform(int domain);
+  void set_reconstruction_transforms(std::vector<vtkSmartPointer<vtkTransform>> transforms);
+  vtkSmartPointer<vtkTransform> get_reconstruction_transform(int domain);
 
   TransformType get_groomed_transform(int domain = 0);
 
@@ -175,11 +175,9 @@ private:
   std::shared_ptr<shapeworks::Subject> subject_;
 
   std::vector<Point> vectors_;
-  vnl_vector<double> transform_;
+  vtkSmartPointer<vtkTransform> transform_ = vtkSmartPointer<vtkTransform>::New();
 
-  std::vector<vnl_vector<double>> reconstruction_transforms_;
-
-  TransformType groomed_transform_;
+  std::vector<vtkSmartPointer<vtkTransform>> reconstruction_transforms_;
 
   QStringList corner_annotations_;
 

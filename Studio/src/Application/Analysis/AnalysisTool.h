@@ -199,7 +199,7 @@ private:
   std::vector<std::string> current_group_names_;
   std::vector<std::string> current_group_values_;
 
-  std::vector<vnl_vector<double>> reconstruction_transforms_;
+  std::vector<vtkSmartPointer<vtkTransform>> reconstruction_transforms_;
 
 };
 

@@ -129,6 +129,7 @@ MeshGroup Shape::get_reconstructed_meshes(bool wait)
 {
   if (!this->reconstructed_meshes_.valid()) {
     auto worlds = this->particles_.get_world_particles();
+    this->reconstructed_meshes_.set_number_of_meshes(worlds.size());
     for (int i = 0; i < worlds.size(); i++) {
       MeshHandle mesh = this->mesh_manager_->get_mesh(worlds[i], i);
       if (mesh) {
@@ -360,25 +361,19 @@ void Shape::set_vectors(std::vector<Shape::Point> vectors)
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_transform(const vnl_vector<double>& transform)
+void Shape::set_transform(vtkSmartPointer<vtkTransform> transform)
 {
   this->transform_ = transform;
 }
 
 //---------------------------------------------------------------------------
-vnl_vector<double> Shape::get_transform(int domain)
+vtkSmartPointer<vtkTransform> Shape::get_transform(int domain)
 {
   auto groom_transform = this->get_groomed_transform(domain);
-  if (groom_transform.size() != 12) {
+  if (!groom_transform) {
     return this->transform_;
   }
-
-  this->transform_.set_size(12);
-  for (unsigned int i = 0; i < 12; i++) {
-    this->transform_[i] = groom_transform[i];
-  }
-
-  return this->transform_;
+  return groom_transform;
 }
 
 //---------------------------------------------------------------------------
@@ -406,10 +401,8 @@ void Shape::generate_meshes(std::vector<string> filenames, MeshHandle& mesh,
     com->GetCenter(center);
 
     if (save_transform) {
-      this->transform_.set_size(12);
-      for (unsigned int i = 0; i < 3; i++) {
-        this->transform_[9 + i] = center[i];
-      }
+      this->transform_->Identity();
+      this->transform_->Translate(center);
     }
   }
 }
@@ -438,10 +431,8 @@ void Shape::generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_
       com->GetCenter(center);
 
       if (save_transform && i == 0) { // only store for first domain
-        this->transform_.set_size(12);
-        for (unsigned int i = 0; i < 3; i++) {
-          this->transform_[9 + i] = -center[i];
-        }
+        this->transform_->Identity();
+        this->transform_->Translate(-center[0], -center[1], -center[2]);
       }
     }
   }
@@ -500,7 +491,8 @@ void Shape::load_feature(std::string display_mode, std::string feature)
 
     auto filenames = this->subject_->get_feature_filenames();
 
-    vnl_vector<double> transform;
+    auto transform = vtkSmartPointer<vtkTransform>::New();
+
     if (display_mode != Visualizer::MODE_ORIGINAL_C) {
       transform = this->get_groomed_transform();
     }
@@ -544,7 +536,7 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
 
   auto region = image->GetLargestPossibleRegion();
 
-  vnl_vector<double> transform = this->get_groomed_transform();
+  vtkSmartPointer<vtkTransform> transform = this->get_groomed_transform();
 
   vnl_vector<double> all_locals = this->get_local_correspondence_points();
 
@@ -555,16 +547,17 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
   int idx = 0;
   for (int i = 0; i < num_points; ++i) {
 
-    ImageType::PointType pitk;
-    pitk[0] = all_locals[idx++];
-    pitk[1] = all_locals[idx++];
-    pitk[2] = all_locals[idx++];
+    double p[3];
+    p[0] = all_locals[idx++];
+    p[1] = all_locals[idx++];
+    p[2] = all_locals[idx++];
 
-    if (transform.size() == 12) {
-      pitk[0] = pitk[0] + transform[9];
-      pitk[1] = pitk[1] + transform[10];
-      pitk[2] = pitk[2] + transform[11];
-    }
+    double* pt = transform->TransformPoint(p);
+
+    ImageType::PointType pitk;
+    pitk[0] = pt[0];
+    pitk[1] = pt[1];
+    pitk[2] = pt[2];
 
     LinearInterpolatorType::ContinuousIndexType index;
     image->TransformPhysicalPointToContinuousIndex(pitk, index);
@@ -590,7 +583,7 @@ void Shape::apply_feature_to_points(std::string feature, MeshHandle mesh)
   kDTree->SetDataSet(from_mesh);
   kDTree->BuildLocator();
 
-  vnl_vector<double> transform = this->get_groomed_transform();
+  vtkSmartPointer<vtkTransform> transform = this->get_groomed_transform();
 
   vnl_vector<double> all_locals = this->get_local_correspondence_points();
 
@@ -603,16 +596,12 @@ void Shape::apply_feature_to_points(std::string feature, MeshHandle mesh)
   int idx = 0;
   for (int i = 0; i < num_points; ++i) {
 
-    double pt[3];
-    pt[0] = all_locals[idx++];
-    pt[1] = all_locals[idx++];
-    pt[2] = all_locals[idx++];
+    double p[3];
+    p[0] = all_locals[idx++];
+    p[1] = all_locals[idx++];
+    p[2] = all_locals[idx++];
 
-    if (transform.size() == 12) {
-      pt[0] = pt[0] + transform[9];
-      pt[1] = pt[1] + transform[10];
-      pt[2] = pt[2] + transform[11];
-    }
+    double* pt = transform->TransformPoint(p);
 
     vtkIdType id = kDTree->FindClosestPoint(pt);
     vtkVariant var = from_array->GetVariantValue(id);
@@ -636,16 +625,18 @@ Eigen::VectorXf Shape::get_point_features(std::string feature)
 }
 
 //---------------------------------------------------------------------------
-TransformType Shape::get_groomed_transform(int domain)
+vtkSmartPointer<vtkTransform> Shape::get_groomed_transform(int domain)
 {
+  vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+
   auto transforms = this->subject_->get_groomed_transforms();
   if (domain < transforms.size()) {
-    this->groomed_transform_.set_size(transforms[domain].size());
-    for (int i = 0; i < transforms[domain].size(); i++) {
-      this->groomed_transform_[i] = transforms[domain][i];
-    }
+    double tx = transforms[domain][9];
+    double ty = transforms[domain][10];
+    double tz = transforms[domain][11];
+    transform->Translate(tx, ty, tz);
   }
-  return this->groomed_transform_;
+  return transform;
 }
 
 //---------------------------------------------------------------------------
@@ -676,12 +667,11 @@ StudioParticles Shape::get_particles()
 }
 
 //---------------------------------------------------------------------------
-vnl_vector<double> Shape::get_reconstruction_transform(int domain)
+vtkSmartPointer<vtkTransform> Shape::get_reconstruction_transform(int domain)
 {
   assert(domain < this->reconstruction_transforms_.size());
   return this->reconstruction_transforms_[domain];
 }
-
 
 //---------------------------------------------------------------------------
 vnl_vector<double> Shape::get_global_correspondence_points_for_display()
@@ -696,10 +686,15 @@ vnl_vector<double> Shape::get_global_correspondence_points_for_display()
 
   int idx = 0;
   for (int i = 0; i < worlds.size(); i++) {
-    for (int j = 0; j < worlds[i].size(); j+=3) {
-      points[idx++] = worlds[i][j+0] + this->reconstruction_transforms_[i][9];
-      points[idx++] = worlds[i][j+1] + this->reconstruction_transforms_[i][10];
-      points[idx++] = worlds[i][j+2] + this->reconstruction_transforms_[i][11];
+    for (int j = 0; j < worlds[i].size(); j += 3) {
+      double p[3];
+      p[0] = worlds[i][j + 0];
+      p[1] = worlds[i][j + 1];
+      p[2] = worlds[i][j + 2];
+      double* pt = this->reconstruction_transforms_[i]->TransformPoint(p);
+      points[idx++] = pt[0];
+      points[idx++] = pt[1];
+      points[idx++] = pt[2];
     }
   }
 
@@ -707,7 +702,7 @@ vnl_vector<double> Shape::get_global_correspondence_points_for_display()
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_reconstruction_transforms(std::vector<vnl_vector<double>> transforms)
+void Shape::set_reconstruction_transforms(std::vector<vtkSmartPointer<vtkTransform>> transforms)
 {
   this->reconstruction_transforms_ = transforms;
 }

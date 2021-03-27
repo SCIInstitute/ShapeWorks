@@ -673,6 +673,8 @@ void Viewer::update_points()
     scalars->Reset();
   }
 
+  auto t = this->get_transform(0);
+
   this->glyph_actor_->SetUserTransform(this->get_transform(0));
   this->glyph_points_->Modified();
 }
@@ -889,8 +891,7 @@ void Viewer::initialize_surfaces()
 //-----------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Viewer::get_transform(int domain)
 {
-
-  vnl_vector<double> transform;
+  vtkSmartPointer<vtkTransform> transform;
 
   if (this->visualizer_->get_display_mode() == Visualizer::MODE_ORIGINAL_C) {
     if (this->visualizer_->get_center()) {
@@ -904,16 +905,7 @@ vtkSmartPointer<vtkTransform> Viewer::get_transform(int domain)
     transform = this->shape_->get_reconstruction_transform(domain);
   }
 
-  auto vtk_transform = vtkSmartPointer<vtkTransform>::New();
-  vtk_transform->Identity();
-  if (transform.size() == 12) {
-    double tx = transform[9];
-    double ty = transform[10];
-    double tz = transform[11];
-
-    vtk_transform->Translate(tx, ty, tz);
-  }
-  return vtk_transform;
+  return transform;
 }
 
 }

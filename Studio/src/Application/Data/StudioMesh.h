@@ -8,6 +8,7 @@
 
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
+#include <vtkTransform.h>
 #include <itkImage.h>
 
 #include <vnl/vnl_vector.h>
@@ -57,10 +58,10 @@ public:
 
   //! Apply a feature map
   void apply_feature_map(std::string name, ImageType::Pointer image,
-                         vnl_vector<double> transform);
+                         vtkSmartPointer<vtkTransform> transform);
 
   //! Apply scalars from another mesh, with a transform
-  void apply_scalars(MeshHandle mesh, vnl_vector<double> transform);
+  void apply_scalars(MeshHandle mesh, vtkSmartPointer<vtkTransform> transform);
 
   //! Interpolation scalars at positions to this mesh
   void interpolate_scalars_to_mesh(std::string name,
