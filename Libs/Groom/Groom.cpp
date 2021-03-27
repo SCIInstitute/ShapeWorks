@@ -242,31 +242,34 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, int domain)
 
     // centering
     if (params.get_center_tool()) {
-      auto com = mesh.centerOfMass();
 
-      Vector3 vector;
-      vector[0] = -com[0];
-      vector[1] = -com[1];
-      vector[2] = -com[2];
-      mesh.translate(vector);
+      auto diff = mesh.centerOfMass();
+      Vector3 translation;
+      translation[0] = -diff[0];
+      translation[1] = -diff[1];
+      translation[2] = -diff[2];
 
       itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
-      tform[0] = com[0];
-      tform[1] = com[1];
-      tform[2] = com[2];
+      tform[0] = diff[0];
+      tform[1] = diff[1];
+      tform[2] = diff[2];
       transform->SetTranslation(tform);
       this->increment_progress();
     }
   }
 
+
   // store transform
-  std::vector<std::vector<double>> groomed_transforms;
+  std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
   std::vector<double> groomed_transform;
   auto transform_params = transform->GetParameters();
   for (int i = 0; i < transform_params.size(); i++) {
     groomed_transform.push_back(transform_params[i]);
   }
-  groomed_transforms.push_back(groomed_transform);
+  if (domain >= groomed_transforms.size()) {
+    groomed_transforms.resize(domain + 1);
+  }
+  groomed_transforms[domain] = groomed_transform;
   subject->set_groomed_transforms(groomed_transforms);
 
   // save the groomed mesh
