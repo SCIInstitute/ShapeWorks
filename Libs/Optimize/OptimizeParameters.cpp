@@ -384,6 +384,10 @@ std::string OptimizeParameters::get_output_prefix(std::string input)
 
   auto project_name = StringUtils::getFileNameWithoutExtension(this->project_->get_filename());
 
+  if (project_name == "") {
+    project_name = "new_project";
+  }
+
   auto prefix = this->get_optimize_output_prefix();
   boost::replace_all(prefix, "<project>", project_name);
 
