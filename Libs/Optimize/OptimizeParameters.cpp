@@ -313,9 +313,11 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
         }
       }*/
 
-      prefix_transform[0][3] = transforms[i][9];
-      prefix_transform[1][3] = transforms[i][10];
-      prefix_transform[2][3] = transforms[i][11];
+      if (i < transforms.size()) {
+        prefix_transform[0][3] = transforms[i][9];
+        prefix_transform[1][3] = transforms[i][10];
+        prefix_transform[2][3] = transforms[i][11];
+      }
 
       optimize->GetSampler()->GetParticleSystem()->SetPrefixTransform(domain_count++,
                                                                       prefix_transform);
