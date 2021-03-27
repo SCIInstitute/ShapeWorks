@@ -7,6 +7,7 @@ import subprocess
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
+import shapeworks as sw
 
 ######################## Data loading functions ####################################
 
@@ -217,29 +218,16 @@ Decreases the size of the image to 3/4 it's original size
 def downSample(image_path):
 	path = os.path.dirname(image_path)
 	temp_path = path + "/temp.nrrd"
-	cmd = ["shapeworks",
-		   "read-image", "--name", image_path,
-		   "image-info", "--size", str(True)]
-	output = subprocess.run(cmd, capture_output=True, text=True).stdout.splitlines()
-	size = makeVector(output[0].split(":")[1])
+	image = sw.Image(image_path)
+	size = image.size()
 	sizex = int(3*size[0]/4)
 	sizey = int(3*size[1]/4)
 	sizez = int(3*size[2]/4)
-	cmd = ["shapeworks", 
-		"read-image", "--name", image_path,
-		"resize", "--sizex", str(sizex),
-		"--sizey", str(sizey),
-		"--sizez", str(sizez),
-		"write-image", "--name", temp_path]
-	subprocess.check_call(cmd)
+	image.resize([sizex,sizey,sizez]).write(temp_path)
 	image = itk.imread(temp_path, itk.F)
 	img = itk.GetArrayFromImage(image)
 	os.remove(temp_path)
 	return img
- 
-def makeVector(str):
-   arr = np.array(str.replace("[", "").replace("]", "").split(","))
-   return np.asarray(arr, np.float64)
 
 '''
 getTorchDataLoaderHelper

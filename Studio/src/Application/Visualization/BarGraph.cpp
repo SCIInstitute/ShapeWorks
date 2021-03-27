@@ -42,7 +42,7 @@ void BarGraph::hover_timer_event()
     double explained_variance = this->values_[bar];
     double accumulated_variance = this->accumulation_[bar];
 
-    QString message("Mode: " + QString::number(bar)
+    QString message("Mode: " + QString::number(bar+1)
                     + "\nExplained Variance: " + QString::number(explained_variance, 'f', 1)
                     + "\nCumulative Variance: " + QString::number(accumulated_variance, 'f', 1));
 
@@ -117,7 +117,7 @@ void BarGraph::paint_bar_graph(QPainter& painter)
       if (i < 99 || i % 4 == 0) {
         // after '9', there's not enough room to write each number, only write every other
         painter.drawText(45 + this->bar_width_ * (i + 0.5) + this->margin_ * (i + 1) - 3,
-                         this->height() - 20, QString::number(i));
+                         this->height() - 20, QString::number(i+1));
       }
     }
 

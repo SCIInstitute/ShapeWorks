@@ -23,8 +23,9 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    datasetName = "ellipsoid_multiple_domain"
-    outputDirectory = "Output/ellipsoid_multiple_domain/"
+    datasetName = "ellipsoid_1mode_aligned"
+    outputDirectory = "Output/ellipsoid_mesh/"
+    
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
 

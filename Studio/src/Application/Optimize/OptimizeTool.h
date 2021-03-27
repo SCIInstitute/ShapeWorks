@@ -3,6 +3,7 @@
 #include <QSharedPointer>
 #include <QWidget>
 #include <QProgressDialog>
+#include <QElapsedTimer>
 
 #include <itkPoint.h>
 
@@ -85,6 +86,7 @@ private:
   QSharedPointer<QOptimize> optimize_;
   QSharedPointer<OptimizeParameters> optimize_parameters_;
   QSharedPointer<Session> session_;
+  QElapsedTimer elapsed_timer_;
 
   Ui_OptimizeTool* ui_;
 };

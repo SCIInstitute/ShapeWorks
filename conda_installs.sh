@@ -99,7 +99,7 @@ function install_conda() {
     pybind11=2.5.0 \
     notebook=6.1.5 \
     nbformat=4.4.0 \
-    pkg-config=0.29.2
+    pkgconfig=1.5.2
   then return 1; fi
 
   # linux and mac (only) deps

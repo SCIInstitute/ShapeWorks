@@ -202,7 +202,7 @@ def applyRigidAlignment(outDir, refFile, inDataListSeg, inDataListImg=[], icp_it
 
     return [outSegDataList, outRawDataList] if inDataListImg else outSegDataList
 
-def applyCropping(outDir, inDataList, path, paddingSize=10):
+def applyCropping(outDir, inDataList, bbDataList, paddingSize=10):
     """
     This function takes in a filelist and crops them according to the largest
     bounding box which it discovers
@@ -213,7 +213,7 @@ def applyCropping(outDir, inDataList, path, paddingSize=10):
     outDataList = []
 
     # find region by computing bounding box
-    region = ImageUtils.boundingBox(glob.glob(path))
+    region = ImageUtils.boundingBox(bbDataList)
     print(region)
     region.pad(paddingSize)
 
@@ -309,12 +309,13 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side):
             img2 = Image(image)
             img2.recenter()
             center = img2.origin() - img1.origin()
+            center = [center[0],center[1],center[2]]
             img1.reflect(X).write(img_out)
-
-            mesh = Mesh(seg)
-            mesh.reflect(X, center).write(seg_out)
-
+            
             seg_out = rename(flip_seg, outSegDir, 'reflect')
+            mesh = Mesh(flip_seg)
+            mesh.reflect(X,center).write(seg_out)
+
     return meshList, imageList
 
 # Reflects meshes to reference side
@@ -338,7 +339,8 @@ def reflectMeshes(outDir, seg_list, reference_side):
         else:
             seg_out = rename(seg, outSegDir, 'reflect')
             mesh = Mesh(seg)
-            mesh.reflect(X, mesh.center()).write(seg_out)
+            arr = mesh.center(); center = [arr[0], arr[1], arr[2]]
+            mesh.reflect(X, center).write(seg_out)
         meshList.append(seg_out)
     return meshList
 
@@ -381,6 +383,7 @@ def MeshesToVolumes(outDir, meshList, spacing):
         segList.append(segFile)
 
         mesh = Mesh(mesh_)
+        print("converting mesh to image using spacing of: " + str(spacing))
         image = mesh.toImage(spacing)
         image.write(segFile)
     return segList
