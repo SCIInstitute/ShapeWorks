@@ -84,12 +84,8 @@ void GroomTool::handle_progress(int val)
 //---------------------------------------------------------------------------
 void GroomTool::on_restore_defaults_clicked()
 {
-  // create a set of blank parameters
-  GroomParameters params(session_->get_project(), current_domain_);
-  params.restore_defaults();
-  // now load those settings
-  set_ui_from_params(params);
-  store_params();
+  this->session_->get_project()->clear_parameters(Parameters::GROOM_PARAMS);
+  this->load_params();
 }
 
 //---------------------------------------------------------------------------

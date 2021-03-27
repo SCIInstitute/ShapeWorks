@@ -509,6 +509,14 @@ Project::set_parameters(const std::string& name, Parameters params, const std::s
 }
 
 //---------------------------------------------------------------------------
+void Project::clear_parameters(const std::string& name)
+{
+  if (this->wb_->contains(name)) {
+    this->wb_->remove_sheet(this->wb_->sheet_by_title(name));
+  }
+}
+
+//---------------------------------------------------------------------------
 std::vector<std::string> Project::get_list(std::vector<std::string> columns, int subject)
 {
   std::vector<std::string> list;
@@ -740,6 +748,7 @@ std::string Project::get_new_file_column(std::string name, int idx)
     return name + "_file_" + std::to_string(idx);
   }
 }
+
 
 
 //---------------------------------------------------------------------------

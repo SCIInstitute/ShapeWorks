@@ -82,9 +82,12 @@ public:
   //! Retrieve parameters based on key
   Parameters get_parameters(const std::string& name, const std::string& domain_name = "");
 
-  //! Store parameters base on key
+  //! Store parameters based on key
   void
   set_parameters(const std::string& name, Parameters params, const std::string& domain_name = "");
+
+  //! Clear parameters based on key
+  void clear_parameters(const std::string& name);
 
   //! Store from subject list to spreadsheet
   void store_subjects();

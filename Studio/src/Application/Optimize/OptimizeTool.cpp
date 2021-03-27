@@ -193,10 +193,7 @@ void OptimizeTool::handle_message(std::string s)
 //---------------------------------------------------------------------------
 void OptimizeTool::on_restoreDefaults_clicked()
 {
-  // store a set of blank settings
-  Parameters settings;
-  this->session_->get_project()->set_parameters(Parameters::OPTIMIZE_PARAMS, settings);
-  // now load those settings
+  this->session_->get_project()->clear_parameters(Parameters::OPTIMIZE_PARAMS);
   this->load_params();
 }
 
