@@ -907,7 +907,7 @@ bool VtkMeshWrapper::AreFacesInKRing(int f_a, int f_b) const
 }
 
 //---------------------------------------------------------------------------
-const GeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist, int req_target_f) const
+const MeshGeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist, int req_target_f) const
 {
   if(geo_cache_size_ >= geo_max_cache_entries_) {
     this->ClearGeodesicCache();
@@ -940,7 +940,7 @@ const GeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist, in
   }
 
   if(max_dist == std::numeric_limits<double>::infinity()) {
-    entry.mode = GeoEntry::Full;
+    entry.mode = MeshGeoEntry::Full;
     entry.data_full[0] = std::move(dists[0].raw());
     entry.data_full[1] = std::move(dists[1].raw());
     entry.data_full[2] = std::move(dists[2].raw());
@@ -989,7 +989,7 @@ const GeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist, in
   }
 
   if(needed_points.size() >= switch_to_full_at) {
-    entry.mode = GeoEntry::Full;
+    entry.mode = MeshGeoEntry::Full;
     entry.data_full[0] = std::move(dists[0].raw());
     entry.data_full[1] = std::move(dists[1].raw());
     entry.data_full[2] = std::move(dists[2].raw());

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "MeshWrapper.h"
+#include "MeshGeoEntry.h"
 
 #include <unordered_map>
 #include <unordered_set>
@@ -14,39 +15,6 @@
 class vtkCellLocator;
 
 namespace shapeworks {
-
-struct GeoEntry {
-  // in "Full" mode, the entry contains geodesics to every vertex. Access via `data_full`
-  // in "Partial" mode, the entry only contains geodesics upto max_dist. Access via `data_partial`
-  enum GeoEntryMode {
-    Full,
-    Partial,
-  };
-
-  GeoEntryMode mode{GeoEntryMode::Partial};
-
-  double max_dist{0.0};
-  robin_hood::unordered_flat_map<int, Eigen::Vector3d> data_partial;
-  std::array<Eigen::VectorXd, 3> data_full;
-
-  void clear() {
-    mode = GeoEntryMode::Partial;
-
-    max_dist = 0.0;
-
-    // calling `data_partial.clear()` doesn't free the backing memory, so we have to swap to an empty hashmap
-    robin_hood::unordered_flat_map<int, Eigen::Vector3d> new_data_partial;
-    std::swap(new_data_partial, data_partial);
-
-    data_full[0].resize(0);
-    data_full[1].resize(0);
-    data_full[2].resize(0);
-  }
-
-  bool is_full_mode() const {
-    return mode == GeoEntryMode::Full;
-  }
-};
 
 class VtkMeshWrapper : public MeshWrapper {
 
@@ -177,7 +145,7 @@ private:
   std::vector<std::unordered_set<int>> face_kring_;
 
   // Cache for geodesic distances from a triangle
-  mutable std::vector<GeoEntry> geo_dist_cache_;
+  mutable std::vector<MeshGeoEntry> geo_dist_cache_;
 
   // Returns true if face f_a is adjacent to face f_b. This uses a non-standard definition of adjacency: return true
   // if f_a and f_b share atleast one vertex
@@ -191,8 +159,8 @@ private:
 
   void ComputeKRing(int f, int k, std::unordered_set<int>& ring) const;
 
-  const GeoEntry& GeodesicsFromTriangle(int f, double max_dist=std::numeric_limits<double>::max(),
-                                        int req_target_f=-1) const;
+  const MeshGeoEntry& GeodesicsFromTriangle(int f, double max_dist=std::numeric_limits<double>::max(),
+                                            int req_target_f=-1) const;
   const Eigen::Matrix3d GeodesicsFromTriangleToTriangle(int f_a, int f_b) const;
   void ClearGeodesicCache() const;
 
