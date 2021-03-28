@@ -959,6 +959,9 @@ const GeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist, in
     }
   }
 
+  // this is a heuristic chosen: at a certain size, its simpler to just switch to full mode
+  const auto switch_to_full_at = n_verts / 4;
+
   robin_hood::unordered_set<int> needed_points;
 
   // Figure out which of these we actually need. If a vertex is included, we also pull in all 1-ring neighbors of
@@ -974,11 +977,18 @@ const GeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist, in
         needed_points.insert(tri->GetPointId(0));
         needed_points.insert(tri->GetPointId(1));
         needed_points.insert(tri->GetPointId(2));
+
+        if(needed_points.size() >= switch_to_full_at) {
+          break;
+        }
       }
+    }
+    if(needed_points.size() >= switch_to_full_at) {
+      break;
     }
   }
 
-  if(needed_points.size() > n_verts / 4) {
+  if(needed_points.size() >= switch_to_full_at) {
     entry.mode = GeoEntry::Full;
     entry.data_full[0] = std::move(dists[0].raw());
     entry.data_full[1] = std::move(dists[1].raw());
@@ -1045,7 +1055,7 @@ const Eigen::Matrix3d VtkMeshWrapper::GeodesicsFromTriangleToTriangle(int f_a, i
 
 //---------------------------------------------------------------------------
 void VtkMeshWrapper::ClearGeodesicCache() const {
-  std::cout << "Clearing cache\n";
+  // std::cout << "Clearing cache\n";
 
   const auto n_verts = this->poly_data_->GetNumberOfPoints();
   robin_hood::unordered_set<int> active_triangles(particle_triangles_.begin(), particle_triangles_.end());
