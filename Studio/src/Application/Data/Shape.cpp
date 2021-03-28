@@ -1,3 +1,7 @@
+#include <Eigen/Dense>
+#include <Eigen/Sparse>
+
+
 #include <Data/Shape.h>
 
 #include <QFile>
