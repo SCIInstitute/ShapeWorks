@@ -153,7 +153,7 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
 
   // Ensure we have geodesics available in the cache. This will resize the cache to fit face_b or max_dist, whichever
   // is greater. We do this pre-emptively since GeodesicsFromTriangleToTriangle would pull geodesics to every point
-  // into the cache if face_b is not found.
+  // into the cache if face_b is not found. 1.5 is an heuristic to pull in a little more than we need
   const double max_dist = idx_a >= 0 ? this->particle_neighboorhood_[idx_a]*1.5 : std::numeric_limits<double>::infinity();
   GeodesicsFromTriangle(face_a, max_dist, face_b);
 
@@ -226,6 +226,7 @@ bool VtkMeshWrapper::IsWithinDistance(const PointType &pt_a, int idx_a,
   const auto vb1 = this->triangles_[face_b]->GetPointId(1);
   const auto vb2 = this->triangles_[face_b]->GetPointId(2);
 
+  // 1.5 is an heuristic to pull in a little more than we need
   const auto& geo_entry = GeodesicsFromTriangle(face_a, test_dist*1.5);
 
   if(geo_entry.is_full_mode()) {
