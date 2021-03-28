@@ -225,7 +225,6 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
   if (normals_enabled) { // not yet differentiating per domain
     for (int i = 0; i < domains_per_shape; i++) {
       use_normals.push_back(1);
-      use_xyz.push_back(1);
     }
     double normals_strength = this->get_normals_strength();
     attr_scales.push_back(normals_strength);
