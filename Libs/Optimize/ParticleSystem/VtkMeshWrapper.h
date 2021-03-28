@@ -25,7 +25,8 @@ public:
   using NormalType = vnl_vector_fixed<float, DIMENSION>;
   using VectorType = vnl_vector_fixed<double, DIMENSION>;
 
-  explicit VtkMeshWrapper(vtkSmartPointer<vtkPolyData> mesh);
+  explicit VtkMeshWrapper(vtkSmartPointer<vtkPolyData> mesh,
+                          bool geodesics_enabled=false, size_t geodesics_cache_size=4000000);
 
   ~VtkMeshWrapper() = default;
 
@@ -130,7 +131,7 @@ private:
   /////////////////////////
   // Geodesic distances
 
-  bool is_geodesics_enabled_{true};
+  bool is_geodesics_enabled_{false};
 
   std::unique_ptr<geometrycentral::surface::SurfaceMesh> gc_mesh_;
   std::unique_ptr<geometrycentral::surface::VertexPositionGeometry> gc_geometry_;
