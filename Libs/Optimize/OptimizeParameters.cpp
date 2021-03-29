@@ -215,34 +215,34 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
   std::vector<double> attr_scales;
 
   // xyz forced
-  attr_scales.push_back(1);
-  attr_scales.push_back(1);
-  attr_scales.push_back(1);
   for (int i = 0; i < domains_per_shape; i++) {
     use_xyz.push_back(1);
-  }
+    attr_scales.push_back(1);
+    attr_scales.push_back(1);
+    attr_scales.push_back(1);
 
-  if (normals_enabled) { // not yet differentiating per domain
-    for (int i = 0; i < domains_per_shape; i++) {
+    if (normals_enabled) { // not yet differentiating per domain
       use_normals.push_back(1);
+      double normals_strength = this->get_normals_strength();
+      attr_scales.push_back(normals_strength);
+      attr_scales.push_back(normals_strength);
+      attr_scales.push_back(normals_strength);
     }
-    double normals_strength = this->get_normals_strength();
-    attr_scales.push_back(normals_strength);
-    attr_scales.push_back(normals_strength);
-    attr_scales.push_back(normals_strength);
-  }
-  else {
-    for (int i = 0; i < domains_per_shape; i++) {
+    else {
       use_normals.push_back(0);
     }
   }
+
   optimize->SetUseNormals(use_normals);
   optimize->SetUseXYZ(use_xyz);
-  optimize->SetUseMeshBasedAttributes(normals_enabled);
-  //optimize->SetUseMeshBasedAttributes(true);
+  //optimize->SetUseMeshBasedAttributes(normals_enabled);
+  optimize->SetUseMeshBasedAttributes(true);
   optimize->SetAttributeScales(attr_scales);
 
   std::vector<int> attributes_per_domain;
+  for (int i = 0; i < domains_per_shape; i++) {
+    attributes_per_domain.push_back(0);
+  }
   optimize->SetAttributesPerDomain(attributes_per_domain);
 
   int procrustes_interval = 0;
