@@ -350,10 +350,10 @@ void ParticleSystem<VDimension>::AdvancedAllParticleSplitting(double epsilon)
           }
           newposs_good.push_back(newpos);
           // Check for plane constraint violations
-          if (this->GetDomain(j)->GetConstraints()->IsAnyViolated(newpos)) {
+          /*if (this->GetDomain(j)->GetConstraints()->IsAnyViolated(newpos)) {
             good = false;
             break;
-          }
+          }*/
         }
 
         if (good) {

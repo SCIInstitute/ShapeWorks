@@ -158,8 +158,6 @@ public:
       const auto coord = this->ToVDBCoord(p);
       return openvdb::tools::BoxSampler::sample(m_VDBImage->tree(), coord);
     } else {
-      double i = 100;
-      std::cout << i << std::endl;
       itkExceptionMacro("Distance transform queried for a Point, " << p << ", outside the given image domain. Consider increasing the narrow band" );
     }
   }
