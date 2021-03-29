@@ -394,7 +394,7 @@ protected:
   int m_use_shape_statistics_after = -1;
   std::string m_python_filename;
   bool m_geodesics_enabled = true; // todo default to false
-  size_t m_geodesic_cache_size = 4000000;
+  size_t m_geodesic_cache_size = 0; // 0 => VtkMeshWrapper will use a heuristic to determine cache size
 
   // Keeps track of which state the optimization is in.
   unsigned int m_mode = 0;

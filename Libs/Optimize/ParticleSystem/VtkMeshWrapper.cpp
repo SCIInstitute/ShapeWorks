@@ -99,8 +99,12 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data,
   this->ComputeGradN(V, F);
 
   this->is_geodesics_enabled_ = is_geodesics_enabled;
-  this->geo_max_cache_entries_ = geodesics_cache_size;
   if (is_geodesics_enabled_) {
+    if(geodesics_cache_size == 0) {
+      // heuristic for cache size based on some experiments
+      geodesics_cache_size = 115 * this->triangles_.size();
+    }
+    this->geo_max_cache_entries_ = geodesics_cache_size;
     this->PrecomputeGeodesics(V, F);
   }
 }

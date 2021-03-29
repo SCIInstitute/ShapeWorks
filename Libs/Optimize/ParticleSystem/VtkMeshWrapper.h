@@ -26,7 +26,8 @@ public:
   using VectorType = vnl_vector_fixed<double, DIMENSION>;
 
   explicit VtkMeshWrapper(vtkSmartPointer<vtkPolyData> mesh,
-                          bool geodesics_enabled=false, size_t geodesics_cache_size=4000000);
+                          bool geodesics_enabled=false,
+                          size_t geodesics_cache_size=0);
 
   ~VtkMeshWrapper() = default;
 
