@@ -1,5 +1,6 @@
 
 #include <Data/StudioParticles.h>
+#include <assert.h>
 
 namespace shapeworks {
 
