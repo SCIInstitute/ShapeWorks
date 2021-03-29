@@ -123,10 +123,9 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
   }
 
   // Find the triangle for the point a. If this was the same as the previous query, just used that cached value
-  volatile int cached = particle_triangles_[idx_a];
   int face_a, face_b;
   vec3 bary_a, bary_b;
-  if (geo_lq_pidx_ == idx_a) {
+  if (idx_a >=0 && geo_lq_pidx_ == idx_a) {
     face_a = geo_lq_face_;
     bary_a = geo_lq_bary_;
   } else {

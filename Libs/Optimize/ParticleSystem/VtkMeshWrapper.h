@@ -32,7 +32,7 @@ public:
   ~VtkMeshWrapper() = default;
 
   double ComputeDistance(const PointType& pointa, int idxa,
-                         const PointType& pointb, int idxb, VectorType* out_grad) const override;
+                         const PointType& pointb, int idxb, VectorType* out_grad=nullptr) const override;
 
   bool IsWithinDistance(const PointType& pointa, int idxa,
                         const PointType& pointb, int idxb,
