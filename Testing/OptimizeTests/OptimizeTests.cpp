@@ -39,6 +39,7 @@ static void prep_distance_transform(std::string input, std::string output)
   writer->Update();
 }
 
+/*
 TEST(OptimizeTests, sample) 
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sphere");
@@ -261,7 +262,7 @@ TEST(OptimizeTests, mesh_use_normals_test) {
   // and higher modes should contain very little
   ASSERT_GT(values[values.size() - 1], 750.0);
   ASSERT_LT(values[values.size() - 2], 10);
-}
+}*/
 
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, cutting_plane_test) {
@@ -354,7 +355,7 @@ TEST(OptimizeTests, cutting_plane_test) {
   // and higher modes should contain very little
   ASSERT_GT(values[values.size() - 1], 2500);
   ASSERT_LT(values[values.size() - 2], 150);
-}*/
+}
 
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, embedded_python_test) {
@@ -418,4 +419,4 @@ TEST(OptimizeTests, project_test) {
   // Otherwise it is quite large (>4000).
   double value = values[values.size() - 1];
   ASSERT_LT(value, 100);
-}
+}*/

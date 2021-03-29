@@ -166,7 +166,14 @@ namespace itk
 
               gradmag = gradient.magnitude();
 
+              // Step C 1 if the magnitude is larger than the Sampler allows, scale the gradient down to an acceptable magnitude
+              if (gradmag > maximumUpdateAllowed) {
+                gradient = gradient * maximumUpdateAllowed / gradmag;
+                gradmag = gradient.magnitude();
+              }
+
               // Augmented lagrangian constraint method
+              /*
               PointType upd_pt = m_ParticleSystem->GetPositions(dom)->Get(k);
               for(size_t n = 0; n < VDimension; n++){
                   //std::cout << n << " " << gradient[n] << std::endl;
@@ -175,14 +182,17 @@ namespace itk
               double c = 1e1;
               m_ParticleSystem->GetDomain(dom)->GetConstraints()->UpdateZs(upd_pt, c);
               VectorType constraint_energy = m_ParticleSystem->GetDomain(dom)->GetConstraints()->ConstraintsLagrangianGradient(upd_pt, c);
+              if(constraint_energy[0] != 0. && constraint_energy[1] != 0. && constraint_energy[2] != 0. && constraint_energy.magnitude() > gradmag){
+                  constraint_energy *= gradmag/constraint_energy.magnitude();
+              }
               //std::cout << constraint_energy << std::endl;
               for (size_t n = 0; n < VDimension; n++){
                   gradient[n] += 0.;//constraint_energy[n];
               }
               m_ParticleSystem->GetDomain(dom)->GetConstraints()->UpdateMus(upd_pt, c);
-              gradmag = gradient.magnitude();
+              gradmag = gradient.magnitude();*/
 
-              // Step C if the magnitude is larger than the Sampler allows, scale the gradient down to an acceptable magnitude
+              // Step C 2 if the magnitude is larger than the Sampler allows, scale the gradient down to an acceptable magnitude
               if (gradmag > maximumUpdateAllowed) {
                 gradient = gradient * maximumUpdateAllowed / gradmag;
                 gradmag = gradient.magnitude();

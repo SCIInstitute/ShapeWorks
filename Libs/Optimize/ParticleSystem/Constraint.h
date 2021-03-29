@@ -30,7 +30,7 @@ public:
     virtual double ConstraintEval(const Eigen::Vector3d &pt) const = 0;
 
     void UpdateZ(const Eigen::Vector3d &pt, double C){
-      double a = 2*C;
+      /*double a = 2*C;
       double c = 2*mu + 2*C*ConstraintEval(pt);
       if(c >= 0){
           z = 0;
@@ -52,7 +52,32 @@ public:
           else{
               z = z2;
           }
-      }
+      }*/
+
+    // Augmented lagrangian inequality equation: f(x) = mu*(g(x)+z^2) + C/2|g(x)+z^2|^2
+    // f'(x) = mu*g'(x) + C*y' where by substitution
+    // y = √(u^2) where by substitution
+    // u = g(x) + z^2
+    // u' = 2*z
+    //
+    // Then we compute y'
+    // y' = (dy / du) (du / dx)
+    //    = (1/2)*(2 * u) / √(u^2) (du / dx)
+    //    = u * u' / | u |
+    //    = sgn(u) * u'
+    //
+    // So we substitute
+    // f'(x) = 2*mu*z + 2*C*sgn(g(x)+z^2)*z
+
+      // z iterative update as explained above
+      /*double update = 1000;
+      size_t count = 1000;
+      while(update < 0.1|| count > 0){
+          std::cout << "pt: " << pt.transpose() << " count: " << count << " z: " << z << std::endl;
+          update = 2*mu*z + 2*C*sgn(ConstraintEval(pt)+z*z)*z;
+          z = z + update;
+          count--;
+      }*/
       //std::cout << "z: " << z << std::endl;
     }
 
@@ -71,7 +96,7 @@ public:
         // Augmented lagrangian inequality equation: f(x) = mu*(g(x)+z^2) + C/2|g(x)+z^2|^2
         // f'(x) = mu*g'(x) + C*y' where by substitution
         // y = √(u^2) where by substitution
-        // u = g(x) + x^2
+        // u = g(x) + z^2
         //
         // Then we compute y'
         // y' = (dy / du) (du / dx)
@@ -81,11 +106,22 @@ public:
         //
         // So we substitute
         // f'(x) = mu*g'(x) + C*sgn(g(x)+z^2)*g'(x)
+        /*
         Eigen::Vector3d constraint_grad = ConstraintGradient(pt);
         Eigen::Vector3d first_term = mu*constraint_grad;
         double eval = ConstraintEval(pt);
         Eigen::Vector3d second_term = C*constraint_grad*sgn(eval + z*z);
         return first_term+second_term;
+        */
+        Eigen::Vector3d constraint_grad = ConstraintGradient(pt);
+        double eval = ConstraintEval(pt);
+        double maxterm = mu + C*eval;
+        if(maxterm < 0){
+            return Eigen::Vector3d(0,0,0);
+        }
+        else{
+            return maxterm*constraint_grad;
+        }
     }
 
 
