@@ -166,7 +166,7 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
   // Compute geodesic distance via barycentric approximation
   // Geometric Correspondence for Ensembles of Nonregular Shapes, Datar et al
   // https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3346950/
-  const Eigen::Matrix3d& geo_from_a = GeodesicsFromTriangleToTriangle(face_a, face_b);
+  const Eigen::Matrix3d geo_from_a = GeodesicsFromTriangleToTriangle(face_a, face_b);
   const Eigen::Vector3d geo_to_b = geo_from_a * bary_b;
   const double geo_dist = bary_a.dot(geo_to_b);
 
@@ -257,7 +257,7 @@ bool VtkMeshWrapper::IsWithinDistance(const PointType &pt_a, int idx_a,
     }
   }
 
-  const Eigen::Matrix3d& geo_from_a = GeodesicsFromTriangleToTriangle(face_a, face_b);
+  const Eigen::Matrix3d geo_from_a = GeodesicsFromTriangleToTriangle(face_a, face_b);
   const Eigen::Vector3d geo_to_b = geo_from_a * bary_b;
   dist = bary_a.dot(geo_to_b);
   return dist < test_dist;
