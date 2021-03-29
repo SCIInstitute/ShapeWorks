@@ -175,17 +175,15 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
     return geo_dist;
   }
 
-  // Map out_grad to an Eigen data structure
-  Eigen::Map<Eigen::Vector3d> out_grad_eigen(out_grad->data_block());
-  out_grad_eigen.setZero();
-
   // Compute gradient of geodesics
   const auto& G = face_grad_[face_a];
-  out_grad_eigen = (G*geo_to_b).rowwise().sum();
+  Eigen::Vector3d out_grad_eigen = (G*geo_to_b).rowwise().sum();
+  out_grad_eigen *= geo_dist / out_grad_eigen.norm();
 
-  //todo double check this math
-  out_grad_eigen.normalize();
-  out_grad_eigen *= geo_dist;
+  // Copy to VNL data structure
+  (*out_grad)[0] = out_grad_eigen[0];
+  (*out_grad)[1] = out_grad_eigen[1];
+  (*out_grad)[2] = out_grad_eigen[2];
 
   return geo_dist;
 }
