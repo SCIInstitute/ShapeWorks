@@ -513,6 +513,23 @@ Mesh& Mesh::fix(bool smoothBefore, bool smoothAfter, double lambda, int iteratio
   return *this;
 }
 
+const std::vector<std::vector<double>> Mesh::getPoints()
+{
+  std::vector<std::vector<double>> points;
+
+  for(int i=0; i<numPoints(); i++)
+  {
+    double p[3];
+    mesh->GetPoint(i, p);
+    std::vector<double> curr;
+    for(int j=0; j<3; j++)
+      curr.push_back(p[j]);
+    points.push_back(curr);
+  }
+
+  return points;
+}
+
 Mesh& Mesh::setField(std::string name, Array array)
 {
   if (!array)
