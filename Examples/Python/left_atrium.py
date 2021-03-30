@@ -125,6 +125,11 @@ def Run_Pipeline(args):
             processRaw = False, applies the center of mass alignment only on segemnattion data.
             The function uses the same bounding box to crop the raw and segemnattion data.
             """
+            
+            print("+++++++some info++++++++++++")
+            print(type(aligned_segmentations))
+            print(aligned_segmentations)
+            
             croppedFiles_segmentations = applyCropping(groomDir + "cropped/segmentations", aligned_segmentations, aligned_segmentations)
             croppedFiles_images = applyCropping(groomDir + "cropped/images", aligned_images, aligned_segmentations)
 

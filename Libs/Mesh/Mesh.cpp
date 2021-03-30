@@ -412,6 +412,40 @@ Mesh& Mesh::clipClosedSurface(const Plane plane)
 
 Point3 Mesh::rasterizationOrigin(Region region, Vector3 spacing, int padding) const
 {
+  Point3 origin;
+
+  for (int i = 0; i < 3; i++)
+  {
+    region.min[i] -= padding * spacing[i];
+    origin[i] = region.min[i] - 1;
+  }
+
+  return origin;
+}
+
+Dims Mesh::rasterizationSize(Region region, Vector3 spacing, int padding, Point3 origin) const
+{
+  // automatically compute origin if not already set
+  if (origin == Point3({-1.0, -1.0, -1.0}))
+  {
+    origin = rasterizationOrigin(region, spacing, padding);
+  }
+
+  Coord offset = toCoord(origin / toPoint(spacing));
+
+  Dims size;
+  for (int i = 0; i < 3; i++)
+  {
+    region.max[i] += padding * spacing[i];
+    size[i] = ceil(region.max[i] - offset[i]) + 1;
+  }
+
+  return size;
+}
+
+
+Image Mesh::toImage(Vector3 spacing, Dims size, Point3 origin) const
+{
   if (std::abs(spacing[0]) < 1E-4 || std::abs(spacing[1]) < 1E-4 || std::abs(spacing[2]) < 1E-4)
   {
     throw std::invalid_argument("error: rasterization spacing must be non-zero");
@@ -483,6 +517,8 @@ Point3 Mesh::rasterizationOrigin(Region region, Vector3 spacing, int padding) co
 
   return Image(imgstenc->GetOutput());
 }
+
+
 
 Image Mesh::toDistanceTransform(Vector3 spacing, Dims size, Point3 origin) const
 {

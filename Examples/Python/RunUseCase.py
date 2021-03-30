@@ -81,8 +81,6 @@ if len(sys.argv)==1:
     parser.print_help(sys.stderr)
     sys.exit(1)
     
-#setupenv.setup_shapeworks_env(explicit_binpath,verbose = False)
-setupenv.setup_shapeworks_env(None,verbose = False)
 
 module = __import__(args.use_case.lower())
 
