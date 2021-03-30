@@ -7,13 +7,13 @@
 #include <QMessageBox>
 
 // shapeworks
+#include <Analysis/AnalysisTool.h>
 #include <Visualization/ShapeWorksStudioApp.h>
 #include <Visualization/ShapeWorksWorker.h>
 #include <Data/Session.h>
 #include <Data/StudioMesh.h>
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
-#include <Analysis/AnalysisTool.h>
 #include <Visualization/Lightbox.h>
 
 #include <ui_AnalysisTool.h>

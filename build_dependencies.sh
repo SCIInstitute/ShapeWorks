@@ -11,17 +11,16 @@ BUILD_STUDIO=0
 BUILD_SHAPEWORKS=1
 BUILD_TYPE="RelWithDebInfo"
 BUILD_LOG="build_dependencies.log"
-VXL_VER="v2.0.2"
+VXL_VER="v2.0.2-fix"
 VTK_VER="v8.2.0"
 VTK_VER_STR="8.2"
-ITK_VER="v5.0.1"
+ITK_VER="v5.0.1-fix"
 ITK_VER_STR="5.0"
 EIGEN_VER="3.3.7"
-ITK_VER_STR="5.0"
 QT_MIN_VER="5.9.8"  # NOTE: 5.x is required, but this restriction is a clever way to ensure the anaconda version of Qt (5.9.6 or 5.9.7) isn't used since it won't work on most systems.
 XLNT_VER="v1.4.0"
 OpenVDB_VER="v7.0.0"
-libigl_VER="v2.2.0"
+libigl_VER="v2.2.0-fix"
 
 usage()
 {
@@ -81,10 +80,10 @@ parse_command_line()
       -h | --help )           usage
                               exit
                               ;;
-      * )                     echo "---------------------"
+      * )                     echo "----------------------"
                               echo "ERROR: Unknown parameter \"$1\""
                               echo "(remember to use '=' between a parameter name and its value)"
-                              echo "---------------------"
+                              echo "----------------------"
                               echo "use '--help' to show usage"
                               exit 1
     esac
@@ -123,12 +122,11 @@ build_vxl()
       cd ${BUILD_DIR}
   fi
   
-  git clone https://github.com/vxl/vxl.git
+  # using fork since no version of VXL compiles with MSVC 16.9
+  #git clone https://github.com/vxl/vxl.git
+  git clone https://github.com/akenmorris/vxl.git
   cd vxl
-  # They fixed the VS compilation problem the day after the v2.0.2 release.
-  # There hasn't been a release since
-  # git checkout -f tags/${VXL_VER}
-  git checkout -f c3fd27959f51e0469a7a6075e975f245ac306f3d
+  git checkout -f tags/${VXL_VER}
 
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
@@ -174,7 +172,9 @@ build_itk()
   echo ""
   echo "## Building itk..."
   cd ${BUILD_DIR}
-  git clone https://github.com/InsightSoftwareConsortium/ITK.git
+  # using fork since no version of ITK compiles with MSVC 16.9
+  #git clone https://github.com/InsightSoftwareConsortium/ITK.git
+  git clone https://github.com/akenmorris/ITK.git
   cd ITK
   git checkout -f tags/${ITK_VER}
 
@@ -182,12 +182,12 @@ build_itk()
   mkdir -p build && cd build
 
   if [[ $OSTYPE == "msys" ]]; then
-      cmake -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="${VTK_DIR}" -DModule_ITKVtkGlue:BOOL=ON -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -Wno-dev ..
+      cmake -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="${VTK_DIR}" -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DModule_ITKVtkGlue:BOOL=ON -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -Wno-dev ..
       
       cmake --build . --config ${BUILD_TYPE} || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
   else
-      cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DModule_ITKVtkGlue:BOOL=ON -DITK_USE_SYSTEM_VXL=on -DVXL_DIR=${INSTALL_DIR} -DVTK_DIR=${VTK_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -Wno-dev ..
+      cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DModule_ITKVtkGlue:BOOL=ON -DITK_USE_SYSTEM_VXL=on -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DVXL_DIR=${INSTALL_DIR} -DVTK_DIR=${VTK_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -Wno-dev ..
       make -j${NUM_PROCS} install || exit 1
   fi
 
@@ -210,12 +210,12 @@ build_eigen()
       cmake -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" ..
       cmake --build . --config ${BUILD_TYPE} || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
+      EIGEN_DIR=$(echo ${INSTALL_DIR}\\share\\eigen3\\cmake | sed -e 's/\\/\\\\/g')
   else
       cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
       make -j${NUM_PROCS} install || exit 1
+      EIGEN_DIR=${INSTALL_DIR}/share/eigen3/cmake
   fi
-
-  EIGEN_DIR=${INSTALL_DIR}/share/eigen3/cmake/
 }
 
 build_xlnt()
@@ -254,12 +254,8 @@ build_openvdb()
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 
-  CONCURRENT_FLAG=""
-  if [ "$(uname)" == "Darwin" ]; then
-      # There is an incompatibility between Qt and tbbmalloc_proxy on Mac
-      CONCURRENT_FLAG="-DCONCURRENT_MALLOC=None"
-  fi
-  
+  CONCURRENT_FLAG="-DCONCURRENT_MALLOC=None"
+      
   if [[ $OSTYPE == "msys" ]]; then
       cmake -DUSE_BLOSC=OFF -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} ..
       cmake --build . --config ${BUILD_TYPE} || exit 1
@@ -277,7 +273,7 @@ build_igl()
   echo " "
   echo "## Building Libigl..."
   cd ${INSTALL_DIR}
-  git clone https://github.com/libigl/libigl.git
+  git clone https://github.com/akenmorris/libigl.git
   cd libigl
   git checkout -f tags/${libigl_VER}
 
@@ -353,12 +349,12 @@ build_all()
     build_vtk
   fi
 
-  if [[ -z $ITK_DIR ]]; then
-    build_itk
-  fi
-
   if [[ -z $EIGEN_DIR ]]; then
     build_eigen
+  fi
+
+  if [[ -z $ITK_DIR ]]; then
+    build_itk
   fi
 
   if [[ -z $XLNT_DIR ]]; then
@@ -391,10 +387,10 @@ SRC=`pwd`
 parse_command_line $*
 
 echo "##-------------------------------"
-echo "## ShapeWorks Build Dependencies"
+echo "## ShapeWorks Build Dependencies "
 echo "##-------------------------------"
 echo "##"
-echo "## called using these arguments:"
+echo "## called using these arguments: "
 echo "##  $*"
 echo "##"
 echo ""
@@ -412,4 +408,6 @@ echo "BUILD_TYPE: ${BUILD_TYPE}"
 
 #build dependencies
 (time build_all 2>&1) 2>&1 | tee ${BUILD_LOG}
+RC=( "${PIPESTATUS[@]}" )
+exit ${RC[0]}
 
