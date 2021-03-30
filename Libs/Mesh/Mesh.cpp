@@ -8,7 +8,6 @@
 #include "FEFixMesh.h"
 #include "FEMeshSmoothingModifier.h"
 #include "FECVDDecimationModifier.h"
-#include "meshFIM.h"
 
 #include <vtkPolyDataReader.h>
 #include <vtkPolyDataWriter.h>
@@ -552,46 +551,10 @@ Mesh& Mesh::fix(bool smoothBefore, bool smoothAfter, double lambda, int iteratio
   return *this;
 }
 
+// TODO: Using libigl
 Mesh& Mesh::curvature()
 {
-  std::vector<float> abs_curv;
-  for (int i=0; i<numPoints(); i++)
-  {
-    float crv1 = m_meshPtr->curv1[i];
-    float crv2 = m_meshPtr->curv2[i];
-    float abs_c = (fabs(crv1) + fabs(crv2)) / 2.0 + 1.0;
-    abs_curv.push_back(abs_c);
-  }
 
-  std::vector<float> abs_curv_mean;
-  float max_abs = -9e99;
-  float min_abs = 9e99;
-
-  for (int i = 0; i < abs_curv.size(); i++)
-  {
-    float abs_c = abs_curv[i];
-    if (abs_c > max_abs)
-      max_abs = abs_c;
-
-    if (abs_c < min_abs)
-      min_abs = abs_c;
-  }
-
-  // allocate Array to store rms curvature
-  vtkSmartPointer<vtkDoubleArray> curvature = vtkSmartPointer<vtkDoubleArray>::New();
-  curvature->SetNumberOfComponents(1);
-  curvature->SetNumberOfTuples(numPoints());
-
-  for (int i = 0; i < abs_curv.size(); i++)
-  {
-    abs_curv[i] /= max_abs;
-    abs_curv[i] = sqrt(abs_curv[i]);
-  }
-
-  // add curvature field to this mesh
-  this->setField("curvature", curvature);
-
-  return *this;
 }
 
 Mesh& Mesh::setField(std::string name, Array array)

@@ -58,16 +58,6 @@ install(TARGETS Mesh
  PUBLIC_HEADER DESTINATION include
  )
 
-# Added to backlog
-ADD_EXECUTABLE(ComputeMeshGeodesics ComputeMeshGeodesics.cxx)
-TARGET_LINK_LIBRARIES(ComputeMeshGeodesics ${ITK_LIBRARIES} Mesh tinyxml)
-INSTALL(TARGETS ComputeMeshGeodesics RUNTIME DESTINATION bin)
-
-# Uses custom TriMesh functions without making an instance of meshFIM
-#ADD_EXECUTABLE(GetFeatureVolume GetFeatureVolume.cxx)
-#TARGET_LINK_LIBRARIES(GetFeatureVolume ${ITK_LIBRARIES} ${VXL_LIBRARIES} Mesh tinyxml)
-#INSTALL(TARGETS GetFeatureVolume RUNTIME DESTINATION bin)
-
 #ADD_EXECUTABLE(ComputeGeodesicDistanceToCurve ComputeGeodesicDistanceToCurve.cxx)
 #TARGET_LINK_LIBRARIES(ComputeGeodesicDistanceToCurve ${ITK_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS ComputeGeodesicDistanceToCurve RUNTIME DESTINATION bin)
