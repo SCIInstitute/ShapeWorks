@@ -172,7 +172,6 @@ namespace itk
                 gradmag = gradient.magnitude();
               }
 
-              /*
               // Augmented lagrangian constraint method
               PointType upd_pt = m_ParticleSystem->GetPositions(dom)->Get(k);
               for(size_t n = 0; n < VDimension; n++){
@@ -197,7 +196,6 @@ namespace itk
                 gradient = gradient * maximumUpdateAllowed / gradmag;
                 gradmag = gradient.magnitude();
               }
-              */
 
               // Step D compute the new point position
               PointType newpoint = domain->UpdateParticlePosition(pt, k, gradient);

@@ -101,13 +101,6 @@ ParticleImplicitSurfaceDomain<T>::ApplyConstraints(PointType &p, int idx, bool d
     //vnl_vector_fixed<T, DIMENSION> vec = grad * (f / (gradmag + epsilon));
     vnl_vector_fixed<double, DIMENSION> vec = grad * (double(f) / (gradmag + double(epsilon)));
 
-    vnl_vector_fixed<double, DIMENSION> vec_old = vec;
-    std::stringstream msg = this->GetConstraints()->applyBoundaryConstraints(vec, p);
-    if(dbg){
-        msg << std::endl;
-        std::cout << msg.str();
-    }
-
     for (unsigned int i = 0; i < DIMENSION; i++)
       {
       p[i] -= vec[i];
@@ -115,16 +108,6 @@ ParticleImplicitSurfaceDomain<T>::ApplyConstraints(PointType &p, int idx, bool d
 
     f = this->Sample(p);
 
-    if(!this->GetConstraints()->IsAnyViolated(p_old) && this->GetConstraints()->IsAnyViolated(p)){
-        msg << std::endl << "####### Violation within apply constraints #######" << p_old << p  << std::endl;
-        msg << "f " << f << " epsilon " << epsilon << std::endl;
-        msg << "vec_old " << vec_old << " vec " << vec << std::endl;
-        msg << std::endl << std::endl;
-        std::cerr << msg.str();
-    }
-    if(vec[0] == 0 && vec[1] == 0 && vec[2] == 0){
-        std::cerr << "Stuck ";
-    }
 
     // Raise the tolerance if we have done too many iterations.
     k++;
