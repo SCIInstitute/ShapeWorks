@@ -342,16 +342,11 @@ Mesh& Mesh::distance(const Mesh &target, const DistanceMethod method)
     throw std::invalid_argument("meshes must have points");
 
   vtkSmartPointer<vtkKdTreePointLocator> targetPointLocator = vtkSmartPointer<vtkKdTreePointLocator>::New();
-  vtkSmartPointer<vtkCellLocator> targetCellLocator = vtkSmartPointer<vtkCellLocator>::New();
+
   if (method == POINT_TO_POINT)
   {
     targetPointLocator->SetDataSet(target.mesh);
     targetPointLocator->BuildLocator();
-  }
-  else
-  {
-    targetCellLocator->SetDataSet(target.mesh);
-    targetCellLocator->BuildLocator();
   }
 
   // allocate Array to store distances from each point to target
@@ -377,13 +372,10 @@ Mesh& Mesh::distance(const Mesh &target, const DistanceMethod method)
   }
   else
   {
-    vtkIdType cellId;
-    vtkSmartPointer<vtkGenericCell> cell = vtkSmartPointer<vtkGenericCell>::New();
-    int subId;
     for (int i = 0; i < numPoints(); i++)
     {
       mesh->GetPoint(i, currentPoint);
-      targetCellLocator->FindClosestPoint(currentPoint, closestPoint, cell, cellId, subId, dist);
+      dist = projectPoint(target, currentPoint);
       distance->SetValue(i, std::sqrt(dist));
     }
   }
@@ -392,6 +384,21 @@ Mesh& Mesh::distance(const Mesh &target, const DistanceMethod method)
   this->setField("distance", distance);
 
   return *this;
+}
+
+double Mesh::projectPoint(const Mesh &target, double point[3])
+{
+  vtkSmartPointer<vtkCellLocator> targetCellLocator = vtkSmartPointer<vtkCellLocator>::New();
+  targetCellLocator->SetDataSet(target.mesh);
+  targetCellLocator->BuildLocator();
+
+  double dist, closestPoint[3];
+  vtkIdType cellId;
+  vtkSmartPointer<vtkGenericCell> cell = vtkSmartPointer<vtkGenericCell>::New();
+  int subId;
+
+  targetCellLocator->FindClosestPoint(point, closestPoint, cell, cellId, subId, dist);
+  return dist;
 }
 
 Mesh& Mesh::clipClosedSurface(const Plane plane)

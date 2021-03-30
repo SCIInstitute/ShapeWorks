@@ -84,6 +84,8 @@ public:
   /// computes cell normals and orients them such that they point in the same direction
   Mesh& generateNormals();
 
+  double projectPoint(const Mesh &target, double point[3]);
+
   Mesh& curvature();
 
   /// rasterizes mesh to create binary images, automatically computing size and origin if necessary
