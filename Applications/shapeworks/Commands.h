@@ -73,6 +73,7 @@ COMMAND_DECLARE(FieldMean, MeshCommand);
 COMMAND_DECLARE(FieldStd, MeshCommand);
 COMMAND_DECLARE(FieldNames, MeshCommand);
 COMMAND_DECLARE(FixMesh, MeshCommand);
+COMMAND_DECLARE(ClipClosedSurface, MeshCommand);
 COMMAND_DECLARE(MeshToImage, MeshCommand);
 COMMAND_DECLARE(MeshToDT, MeshCommand);
 COMMAND_DECLARE(CompareMesh, MeshCommand);

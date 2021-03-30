@@ -194,6 +194,62 @@ TEST(MeshTests, scaleTest2)
 //   ASSERT_TRUE(femur == ground_truth);
 // }
 
+TEST(MeshTests, clipClosedSurfaceTest1)
+{
+  Vector v(makeVector({0, 850, 0}));
+  Point o({10.0, 0.0, 10.0});
+
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.clipClosedSurface(makePlane(v, o));
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/clipClosed1.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
+TEST(MeshTests, rasterizationOriginTest1)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  Region region = femur.boundingBox();
+  Point3 origin({-114, -22, 1209});
+
+  ASSERT_TRUE(femur.rasterizationOrigin(region) == origin);
+}
+
+TEST(MeshTests, rasterizationOriginTest2)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
+  std::vector <Mesh> meshes;
+  meshes.push_back(femur);
+  meshes.push_back(pelvis);
+  Region region = MeshUtils::boundingBox(meshes);
+  Point3 origin({-114, -22, 1202});
+
+  ASSERT_TRUE(femur.rasterizationOrigin(region) == origin);
+}
+
+TEST(MeshTests, rasterizationSizeTest1)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  Region region = femur.boundingBox();
+  Dims size({45, 45, 41});
+
+  ASSERT_TRUE(femur.rasterizationSize(region) == size);
+}
+
+TEST(MeshTests, rasterizationSizeTest2)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
+  std::vector <Mesh> meshes;
+  meshes.push_back(femur);
+  meshes.push_back(pelvis);
+  Region region = MeshUtils::boundingBox(meshes);
+  Dims size({48, 51, 54});
+
+  ASSERT_TRUE(femur.rasterizationSize(region) == size);
+}
+
 TEST(MeshTests, centerTest)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");

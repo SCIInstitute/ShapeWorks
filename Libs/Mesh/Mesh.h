@@ -77,6 +77,9 @@ public:
   /// computes surface to surface distance, compute method: POINT_TO_POINT (default) or POINT_TO_CELL
   Mesh& distance(const Mesh &target, const DistanceMethod method = POINT_TO_POINT);
 
+  /// clips a mesh using a cutting plane resulting in a closed surface
+  Mesh& clipClosedSurface(const Plane plane);
+
   /// rasterizes mesh to create binary images, automatically computing size and origin if necessary
   Image toImage(Vector3 spacing = makeVector({1.0, 1.0, 1.0}), Dims size = {0, 0, 0}, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;
 
@@ -160,6 +163,20 @@ public:
 
   /// getSupportedTypes
   static std::vector<std::string> getSupportedTypes() { return {"vtk", "vtp", "ply", "stl", "obj"}; }
+
+public:
+  // todo: these two function should be private, but unable to test them b/c can't find gtest.h
+  // https://github.com/SCIInstitute/ShapeWorks/issues/1042
+
+  /// compute origin of volume that would contain the rasterization of each mesh
+  // FRIEND_TEST(MeshTests, rasterizationOriginTest1);
+  // FRIEND_TEST(MeshTests, rasterizationOriginTest1);
+  Point3 rasterizationOrigin(Region region, Vector3 spacing = makeVector({1.0, 1.0, 1.0}), int padding = 0) const;
+
+  /// compute size of volume that would contain the rasterization of each mesh
+  // FRIEND_TEST(MeshTests, rasterizationSizeTest1);
+  // FRIEND_TEST(MeshTests, rasterizationSizeTest2);
+  Dims rasterizationSize(Region region, Vector3 spacing = makeVector({1.0, 1.0, 1.0}), int padding = 0, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;
 
 private:
   friend struct SharedCommandData;

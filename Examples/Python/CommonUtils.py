@@ -27,7 +27,6 @@ def dataset_exists_check(use_case):
 			existsFlag = True
 	return existsFlag
 
-
 def generate_download_flag(outputDirectory,folder):
 	download_flag = False
 	#if output/dataset + subfolders exits 
@@ -79,7 +78,7 @@ def download_subset(use_case,datasetName,outputDirectory):
 		if(generate_download_flag(outputDirectory,"shape_models/femur/mean/")):
 			meanFilesList = sorted([files for files in fileList if re.search("^shape_models(?:/|\\\)femur(?:/|\\\)mean(?:/|\\\).*",files)])
 			DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meanFilesList)
-
+	
 def download_and_unzip_dataset(datasetName, outputDirectory):
 	# Check if the unzipped data is present and number of files are more than 3 for full use case
 	if generate_download_flag(outputDirectory,datasetName):
@@ -157,7 +156,6 @@ def sampledata(inDataList, num_sample):
 
 def samplemesh(inMeshList, num_sample, printCmd=False):
 	D = np.zeros((len(inMeshList), len(inMeshList)))
-	inMeshList = GroomUtils.getVTKmeshes(inMeshList, printCmd)
 	for i in range(len(inMeshList)):
 		for j in range(i, len(inMeshList)):
 			execCommand = ["SurfaceToSurfaceDistance", "-a", inMeshList[i],
