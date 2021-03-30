@@ -410,39 +410,6 @@ Mesh& Mesh::clipClosedSurface(const Plane plane)
   return *this;
 }
 
-Point3 Mesh::rasterizationOrigin(Region region, Vector3 spacing, int padding) const
-{
-  Point3 origin;
-
-  for (int i = 0; i < 3; i++)
-  {
-    region.min[i] -= padding * spacing[i];
-    origin[i] = region.min[i] - 1;
-  }
-
-  return origin;
-}
-
-Dims Mesh::rasterizationSize(Region region, Vector3 spacing, int padding, Point3 origin) const
-{
-  // automatically compute origin if not already set
-  if (origin == Point3({-1.0, -1.0, -1.0}))
-  {
-    origin = rasterizationOrigin(region, spacing, padding);
-  }
-
-  Coord offset = toCoord(origin / toPoint(spacing));
-
-  Dims size;
-  for (int i = 0; i < 3; i++)
-  {
-    region.max[i] += padding * spacing[i];
-    size[i] = ceil(region.max[i] - offset[i]) + 1;
-  }
-
-  return size;
-}
-
 Image Mesh::toImage(Vector3 spacing, Dims size, Point3 origin) const
 {
   if (std::abs(spacing[0]) < 1E-4 || std::abs(spacing[1]) < 1E-4 || std::abs(spacing[2]) < 1E-4)
@@ -454,18 +421,37 @@ Image Mesh::toImage(Vector3 spacing, Dims size, Point3 origin) const
   {
     throw std::invalid_argument("error: cannot specify both size and spacing. Instead, scale the Mesh by spacing first.");
   }
+      
+  // identify the logical region containing the mesh
+  Region bbox(boundingBox());
+  bbox.pad(1); // give it some padding
 
-  if (size == Dims({0, 0, 0}) || origin == Point3({-1.0, -1.0, -1.0}))
+  // compute dims based on specified spacing...
+  if (size == Dims({0, 0, 0}))
   {
-    Region bbox(boundingBox());
-    if (origin == Point3({-1.0, -1.0, -1.0}))
-    {
-      origin = rasterizationOrigin(bbox, spacing, 1);
-    }
-    if (size == Dims({0, 0, 0}))
-    {
-      size = rasterizationSize(bbox, spacing, 1, origin);
-    }
+    bbox.pad(1); // give it some more padding, why not
+    Vector3 sz = toVector(bbox.size());
+    sz[0] /= spacing[0];
+    sz[1] /= spacing[1];
+    sz[2] /= spacing[2];
+    size[0] = ceil(sz[0]);
+    size[1] = ceil(sz[1]);
+    size[2] = ceil(sz[2]);
+  }
+  // ...or spacing based on specified dims
+  else
+  {
+    Vector3 sz_user = toVector(size);
+    Vector3 sz_mesh = toVector(bbox.size());
+    spacing[0] = sz_mesh[0] / sz_user[0];
+    spacing[1] = sz_mesh[1] / sz_user[1];
+    spacing[2] = sz_mesh[2] / sz_user[2];
+  }
+
+  // determine origin from bounding box if user didn't explicitly specify
+  if (origin == Point3({-1.0, -1.0, -1.0}))
+  {
+    origin = toPoint(bbox.min);
   }
 
   vtkSmartPointer<vtkImageData> whiteImage = vtkSmartPointer<vtkImageData>::New();
