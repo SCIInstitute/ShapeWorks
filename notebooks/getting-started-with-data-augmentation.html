@@ -307,54 +307,56 @@
                 
 <div class="notebook-content">
 <style type="text/css">
+    
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
 span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
 td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
 span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-.highlight .hll { background-color: var(--jp-cell-editor-active-background) }
-.highlight { background: var(--jp-cell-editor-background); color: var(--jp-mirror-editor-variable-color) }
-.highlight .c { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment */
-.highlight .err { color: var(--jp-mirror-editor-error-color) } /* Error */
-.highlight .k { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword */
-.highlight .o { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator */
-.highlight .p { color: var(--jp-mirror-editor-punctuation-color) } /* Punctuation */
-.highlight .ch { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Hashbang */
-.highlight .cm { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Multiline */
-.highlight .cp { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Preproc */
-.highlight .cpf { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.PreprocFile */
-.highlight .c1 { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Single */
-.highlight .cs { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Special */
-.highlight .kc { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Constant */
-.highlight .kd { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Declaration */
-.highlight .kn { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Namespace */
-.highlight .kp { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Pseudo */
-.highlight .kr { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Reserved */
-.highlight .kt { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Type */
-.highlight .m { color: var(--jp-mirror-editor-number-color) } /* Literal.Number */
-.highlight .s { color: var(--jp-mirror-editor-string-color) } /* Literal.String */
-.highlight .ow { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator.Word */
-.highlight .w { color: var(--jp-mirror-editor-variable-color) } /* Text.Whitespace */
-.highlight .mb { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Bin */
-.highlight .mf { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Float */
-.highlight .mh { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Hex */
-.highlight .mi { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer */
-.highlight .mo { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Oct */
-.highlight .sa { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Affix */
-.highlight .sb { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Backtick */
-.highlight .sc { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Char */
-.highlight .dl { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Delimiter */
-.highlight .sd { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Doc */
-.highlight .s2 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Double */
-.highlight .se { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Escape */
-.highlight .sh { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Heredoc */
-.highlight .si { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Interpol */
-.highlight .sx { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Other */
-.highlight .sr { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Regex */
-.highlight .s1 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Single */
-.highlight .ss { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Symbol */
-.highlight .il { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer.Long */
+.highlight-ipynb .hll { background-color: var(--jp-cell-editor-active-background) }
+.highlight-ipynb { background: var(--jp-cell-editor-background); color: var(--jp-mirror-editor-variable-color) }
+.highlight-ipynb .c { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment */
+.highlight-ipynb .err { color: var(--jp-mirror-editor-error-color) } /* Error */
+.highlight-ipynb .k { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword */
+.highlight-ipynb .o { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator */
+.highlight-ipynb .p { color: var(--jp-mirror-editor-punctuation-color) } /* Punctuation */
+.highlight-ipynb .ch { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Hashbang */
+.highlight-ipynb .cm { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Multiline */
+.highlight-ipynb .cp { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Preproc */
+.highlight-ipynb .cpf { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.PreprocFile */
+.highlight-ipynb .c1 { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Single */
+.highlight-ipynb .cs { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Special */
+.highlight-ipynb .kc { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Constant */
+.highlight-ipynb .kd { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Declaration */
+.highlight-ipynb .kn { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Namespace */
+.highlight-ipynb .kp { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Pseudo */
+.highlight-ipynb .kr { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Reserved */
+.highlight-ipynb .kt { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Type */
+.highlight-ipynb .m { color: var(--jp-mirror-editor-number-color) } /* Literal.Number */
+.highlight-ipynb .s { color: var(--jp-mirror-editor-string-color) } /* Literal.String */
+.highlight-ipynb .ow { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator.Word */
+.highlight-ipynb .w { color: var(--jp-mirror-editor-variable-color) } /* Text.Whitespace */
+.highlight-ipynb .mb { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Bin */
+.highlight-ipynb .mf { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Float */
+.highlight-ipynb .mh { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Hex */
+.highlight-ipynb .mi { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer */
+.highlight-ipynb .mo { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Oct */
+.highlight-ipynb .sa { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Affix */
+.highlight-ipynb .sb { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Backtick */
+.highlight-ipynb .sc { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Char */
+.highlight-ipynb .dl { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Delimiter */
+.highlight-ipynb .sd { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Doc */
+.highlight-ipynb .s2 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Double */
+.highlight-ipynb .se { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Escape */
+.highlight-ipynb .sh { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Heredoc */
+.highlight-ipynb .si { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Interpol */
+.highlight-ipynb .sx { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Other */
+.highlight-ipynb .sr { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Regex */
+.highlight-ipynb .s1 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Single */
+.highlight-ipynb .ss { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Symbol */
+.highlight-ipynb .il { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer.Long */
   </style>
+
 
 
 <style type="text/css">
@@ -14095,7 +14097,8 @@ body.lm-mod-override-cursor .jp-OutputArea-output.jp-mod-isolated:before {
 |----------------------------------------------------------------------------*/
 
 </style>
-<style type="text/css">
+
+    <style type="text/css">
 /*-----------------------------------------------------------------------------
 | Copyright (c) Jupyter Development Team.
 | Distributed under the terms of the Modified BSD License.
@@ -14485,7 +14488,10 @@ all of MD as it is not optimized for dense, information rich UIs.
   --jp-icon-contrast-color3: var(--md-blue-600);
 }
 </style>
-<style type="text/css">
+
+
+
+<style>
 /* Reset */
 *, *::before, *::after {
     -webkit-box-sizing: border-box;
@@ -14506,54 +14512,60 @@ all of MD as it is not optimized for dense, information rich UIs.
 }
 
 /* Anchor links */
-.anchor-link {
+.jupyter-notebook .anchor-link {
     display: none;
 }
 h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
     display: inline-block;
 }
 
-/* Markdown cells: Remove prompt */
+/* Markdown cells: Remove Input prompt */
 .jp-Cell-inputWrapper .jp-InputPrompt {
     display: none;
 }
 
-/* Code cells: Show prompt */
+/* Code cells: Show Input prompt */
 .jp-CodeCell .jp-Cell-inputWrapper .jp-InputPrompt {
     display: block;
 }
 
-/* Prompt fixes */
+/* Code pre block scroll horizontaly */
 .jp-InputPrompt, .jp-OutputPrompt{
     overflow: visible;
 }
 
-/* Lab uses move for the input prompts */
+/* Lab uses move cursor for the input prompts */
 .jp-Notebook .jp-Cell .jp-InputPrompt {
     cursor: default;
 }
 
-/* Editor max-width */
+/* Code cell max-width */
 .jp-InputArea-editor {
     width: 1px;
 }
 
-/* Editor colors */
-.jp-Editor .highlight {
-    margin: 0.4em;
-    background: var(--jp-cell-editor-background);
-    color: var(--jp-mirror-editor-variable-color);
+/* Code cell Fix pre margin */
+.jp-InputArea-editor .highlight-ipynb pre {
+    margin: 0;
+    padding: 5px 10px;
 }
 
 /* Editor colors */
-.jp-Editor .highlight pre {
+/* .jp-Editor .highlight {
+    margin: 0.4em;
+    background: var(--jp-cell-editor-background);
+    color: var(--jp-mirror-editor-variable-color);
+} */
+
+/* Editor colors */
+/* .jp-Editor .highlight pre {
     background: none;
     border: none;
     margin: 0;
     overflow-x: auto;
-}
+} */
 
-/* Material mkdocs */
+/* MKDocs Material theme defaults */
 .jp-RenderedHTMLCommon p {
     font-size: .8rem;
     line-height: 1.6;
@@ -14593,9 +14605,12 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
     border: none;
 }
 
+.jp-RenderedHTMLCommon .admonition p:not(:first-child) {
+    margin: 1em 0;
+}
 
 /* Tags on cells */
-/* Mostly copying this from straight Jupyter */
+/* Mostly copying this from straight from Jupyter */
 .celltoolbar {
     border: none;
     background: #EEE;
@@ -14641,7 +14656,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
     display: inline-block;
 }
 
-/* Bokeh plots table no hover */
+/* Fix: Bokeh plots table no hover */
 .bk-plot-wrapper tbody tr {
     background: none !important;
 }
@@ -14688,9 +14703,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
     }
     init_mathjax();
     </script>
-    <!-- End of mathjax configuration -->
-<body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
-
+    <!-- End of mathjax configuration --><div class="jupyter-notebook">
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h1 id="getting-started-with-data-augmentation">Getting Started with Data Augmentation<a class="anchor-link" href="#Getting-Started-with-Data-Augmentation">&#182;</a></h1>
@@ -14764,7 +14777,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># import relevant libraries </span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># import relevant libraries </span>
 <span class="kn">import</span> <span class="nn">sys</span> 
 <span class="kn">import</span> <span class="nn">os</span>
 
@@ -14804,7 +14817,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s import shapeworks library to test whether shapeworks is now set</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s import shapeworks library to test whether shapeworks is now set</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">DataAugmentationUtils</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
@@ -14835,7 +14848,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># dataset name is the folder name for your dataset</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># dataset name is the folder name for your dataset</span>
 <span class="n">datasetName</span>  <span class="o">=</span> <span class="s1">&#39;femur-v0&#39;</span>
 
 <span class="c1"># path to the dataset where we can find shape data </span>
@@ -14866,7 +14879,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># Get image path list</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Get image path list</span>
 <span class="n">img_dir</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="o">+</span> <span class="s2">&quot;groomed/images/&quot;</span>
 <span class="n">img_list</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">img_dir</span><span class="p">):</span>
@@ -14923,7 +14936,7 @@ First, we will try a Gaussian distribution. For further explanation about each d
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># Augmentation variables to keep constant</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Augmentation variables to keep constant</span>
 <span class="n">num_samples</span> <span class="o">=</span> <span class="mi">50</span>
 <span class="n">num_dim</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="n">percent_variability</span> <span class="o">=</span> <span class="mf">0.95</span>
@@ -14943,7 +14956,7 @@ First, we will try a Gaussian distribution. For further explanation about each d
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">output_directory</span> <span class="o">=</span> <span class="s1">&#39;../Output/GaussianAugmentation/&#39;</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">output_directory</span> <span class="o">=</span> <span class="s1">&#39;../Output/GaussianAugmentation/&#39;</span>
 <span class="n">sampler_type</span> <span class="o">=</span> <span class="s2">&quot;gaussian&quot;</span>
 <span class="n">embedded_dim</span> <span class="o">=</span> <span class="n">DataAugmentationUtils</span><span class="o">.</span><span class="n">runDataAugmentation</span><span class="p">(</span><span class="n">output_directory</span><span class="p">,</span> <span class="n">img_list</span><span class="p">,</span> <span class="n">local_particle_list</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">,</span> <span class="n">num_dim</span><span class="p">,</span> <span class="n">percent_variability</span><span class="p">,</span> <span class="n">sampler_type</span><span class="p">)</span>
 <span class="n">aug_data_csv</span> <span class="o">=</span> <span class="n">output_directory</span> <span class="o">+</span> <span class="s2">&quot;/TotalData.csv&quot;</span>
@@ -14977,7 +14990,7 @@ First, we will try a Gaussian distribution. For further explanation about each d
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">DataAugmentationUtils</span><span class="o">.</span><span class="n">visualizeAugmentation</span><span class="p">(</span><span class="n">aug_data_csv</span><span class="p">,</span> <span class="s1">&#39;violin&#39;</span><span class="p">)</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">DataAugmentationUtils</span><span class="o">.</span><span class="n">visualizeAugmentation</span><span class="p">(</span><span class="n">aug_data_csv</span><span class="p">,</span> <span class="s1">&#39;violin&#39;</span><span class="p">)</span>
 </pre></div>
 
         </div>
@@ -15005,7 +15018,7 @@ First, we will try a Gaussian distribution. For further explanation about each d
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">output_directory</span> <span class="o">=</span> <span class="s1">&#39;../Output/MixtureAugmentation/&#39;</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">output_directory</span> <span class="o">=</span> <span class="s1">&#39;../Output/MixtureAugmentation/&#39;</span>
 <span class="n">sampler_type</span> <span class="o">=</span> <span class="s2">&quot;mixture&quot;</span>
 <span class="n">embedded_dim</span> <span class="o">=</span> <span class="n">DataAugmentationUtils</span><span class="o">.</span><span class="n">runDataAugmentation</span><span class="p">(</span><span class="n">output_directory</span><span class="p">,</span> <span class="n">img_list</span><span class="p">,</span> <span class="n">local_particle_list</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">,</span> <span class="n">num_dim</span><span class="p">,</span> <span class="n">percent_variability</span><span class="p">,</span> <span class="n">sampler_type</span><span class="p">)</span>
 <span class="n">aug_data_csv</span> <span class="o">=</span> <span class="n">output_directory</span> <span class="o">+</span> <span class="s2">&quot;/TotalData.csv&quot;</span>
@@ -15030,7 +15043,7 @@ First, we will try a Gaussian distribution. For further explanation about each d
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">DataAugmentationUtils</span><span class="o">.</span><span class="n">visualizeAugmentation</span><span class="p">(</span><span class="n">aug_data_csv</span><span class="p">,</span> <span class="s1">&#39;violin&#39;</span><span class="p">)</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">DataAugmentationUtils</span><span class="o">.</span><span class="n">visualizeAugmentation</span><span class="p">(</span><span class="n">aug_data_csv</span><span class="p">,</span> <span class="s1">&#39;violin&#39;</span><span class="p">)</span>
 </pre></div>
 
         </div>
@@ -15058,7 +15071,7 @@ First, we will try a Gaussian distribution. For further explanation about each d
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">output_directory</span> <span class="o">=</span> <span class="s1">&#39;../Output/KDEAugmentation/&#39;</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">output_directory</span> <span class="o">=</span> <span class="s1">&#39;../Output/KDEAugmentation/&#39;</span>
 <span class="n">sampler_type</span> <span class="o">=</span> <span class="s2">&quot;kde&quot;</span>
 <span class="n">embedded_dim</span> <span class="o">=</span> <span class="n">DataAugmentationUtils</span><span class="o">.</span><span class="n">runDataAugmentation</span><span class="p">(</span><span class="n">output_directory</span><span class="p">,</span> <span class="n">img_list</span><span class="p">,</span> <span class="n">local_particle_list</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">,</span> <span class="n">num_dim</span><span class="p">,</span> <span class="n">percent_variability</span><span class="p">,</span> <span class="n">sampler_type</span><span class="p">)</span>
 <span class="n">aug_data_csv</span> <span class="o">=</span> <span class="n">output_directory</span> <span class="o">+</span> <span class="s2">&quot;/TotalData.csv&quot;</span>
@@ -15083,7 +15096,7 @@ First, we will try a Gaussian distribution. For further explanation about each d
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">DataAugmentationUtils</span><span class="o">.</span><span class="n">visualizeAugmentation</span><span class="p">(</span><span class="n">aug_data_csv</span><span class="p">,</span> <span class="s1">&#39;violin&#39;</span><span class="p">)</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">DataAugmentationUtils</span><span class="o">.</span><span class="n">visualizeAugmentation</span><span class="p">(</span><span class="n">aug_data_csv</span><span class="p">,</span> <span class="s1">&#39;violin&#39;</span><span class="p">)</span>
 </pre></div>
 
         </div>
@@ -15099,7 +15112,7 @@ First, we will try a Gaussian distribution. For further explanation about each d
 <p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/data_aug_kde.png"></p>
 </div>
 </div>
-</body>
+</div>
 
 
 </div>
