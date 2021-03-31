@@ -41,117 +41,8 @@ PYBIND11_MODULE(shapeworks, m)
 
   m.attr("Pi") = std::atan(1.0) * 4.0;
 
-  // Shapeworks Globals
-  py::class_<Coord>(m, "Coord")
-  .def(py::init<>())
-  .def(py::init<long, long, long>())
-  .def("__repr__", [](const Coord& c) {
-    std::ostringstream ss;
-    ss << c;
-    return ss.str();
-  })
-  .def("__getitem__", [](const Coord& c, size_t idx) { return c[idx]; })
-  .def("__setitem__", [](Coord& c, size_t idx, unsigned val) { c[idx] = val; })
-  .def("__add__", [](const Coord& c1, const Coord& c2) { return c1 + c2; })
-  .def("__sub__", [](const Coord& c1, const Coord& c2) {
-    Coord c;
-    c[0] = c1[0] - c2[0];
-    c[1] = c1[1] - c2[1];
-    c[2] = c1[2] - c2[2];
-    return c;
-  })
-  .def("__mul__", [](const Coord& c1, const Coord& c2) { return c1 * c2; })
-  .def("__iadd__", [](Coord& c1, const Coord& c2) { return c1 += c2; })
-  .def("__isub__", [](Coord& c1, const Coord& c2) { return c1 -= c2; })
-  .def("__mul__", [](const Coord& c, const double x) { return c * x; })
-  .def("__truediv__", [](const Coord& c, const double x) { return c / x; })
-  .def("__imul__", [](Coord& c, const double x) { return c *= x; })
-  .def("__itruediv__", [](Coord& c, const double x) { return c /= x; })
-  ;
-
-  // Shapeworks Globals
-  py::class_<Dims>(m, "Dims")
-  .def(py::init<>())
-  .def(py::init<unsigned, unsigned, unsigned>())
-  .def("__repr__", [](const Dims &d) {
-    std::ostringstream ss;
-    ss << d;
-    return ss.str();
-  })
-  .def("__getitem__", [](const Dims& d, size_t idx) { return d[idx]; })
-  .def("__setitem__", [](Dims& d, size_t idx, unsigned val) { d[idx] = val; })
-  .def("__add__", [](const Dims& d1, const Dims& d2) { return d1 + d2; })
-  .def("__sub__", [](const Dims& d1, const Dims& d2) { return d1 - d2; })
-  .def("__mul__", [](const Dims& d1, const Dims& d2) { return d1 * d2; })
-  .def("__iadd__", [](Dims& d1, const Dims& d2) { return d1 += d2; })
-  .def("__isub__", [](Dims& d1, const Dims& d2) { return d1 -= d2; })
-  .def("__mul__", [](const Dims& d, const double x) { return d * x; })
-  .def("__truediv__", [](const Dims& d, const double x) { return d / x; })
-  .def("__imul__", [](Dims &d, const double x) { return d *= x; })
-  .def("__itruediv__", [](Dims &d, const double x) { return d /= x; })
-  ;
-
-  // Shapeworks Globals
-  py::class_<Point>(m, "Point")
-  .def(py::init<>())
-  .def(py::init([](double x, double y, double z) { return Point({x,y,z}); }))  // directly call initializer list ctor  (***the winner!***)
-  .def("__repr__", [](const Point& p) {
-    std::ostringstream ss;
-    ss << p;
-    return ss.str();
-  })
-  .def("__getitem__", [](const Point& p, size_t idx) { return p[idx]; })
-  .def("__setitem__", [](Point& p, size_t idx, double val) { p[idx] = val; })
-  .def("__add__", [](const Point& p1, const Point& p2) { return p1 + p2; })
-  .def("__sub__", [](const Point& p1, const Point& p2) { return p1 - p2; })
-  .def("__mul__", [](const Point& p1, const Point& p2) { return p1 * p2; })
-  .def("__iadd__", [](Point& p1, const Point& p2) { return p1 += p2; })
-  .def("__isub__", [](Point& p1, const Point& p2) { return p1 -= p2; })
-  .def("__mul__", [](const Point& p, const double x) { return p * x; })
-  .def("__truediv__", [](const Point& p, const double x) { return p / x; })
-  .def("__imul__", [](Point& p, const double x) { return p *= x; })
-  .def("__itruediv__", [](Point& p, const double x) { return p /= x; })
-  ;
-
-  // Shapeworks Globals
-  py::class_<Vector>(m, "Vector")
-  .def(py::init<>())
-  .def(py::init([](double x, double y, double z) { return makeVector({x,y,z}); }))
-  .def("__repr__", [](const Vector& v) {
-    std::ostringstream ss;
-    ss << v;
-    return ss.str();
-  })
-  .def("__getitem__", [](const Vector& v, size_t idx) { return v[idx]; })
-  .def("__setitem__", [](Vector& v, size_t idx, double val) { v[idx] = val; })
-  .def("__add__", [](const Vector& v1, const Vector& v2) { return v1 + v2; })
-  .def("__sub__", [](const Vector& v1, const Vector& v2) { return v1 - v2; })
-  .def("__mul__", [](const Vector& v1, const Vector& v2) { return v1 * v2; })
-  .def("__iadd__", [](Vector& v1, const Vector& v2) { return v1 += v2; })
-  .def("__isub__", [](Vector& v1, const Vector& v2) { return v1 -= v2; })
-  .def("__mul__", [](const Vector& v, const double x) { return v * x; })
-  .def("__truediv__", [](const Vector& v, const double x) {
-    Vector v_;
-    v_[0] = v[0]/x;
-    v_[1] = v[1]/x;
-    v_[2] = v[2]/x;
-    return v_;
-  })
-  .def("__imul__", [](Vector& v, const double x) {
-    v[0] = v[0]*x;
-    v[1] = v[1]*x;
-    v[2] = v[2]*x;
-    return v;
-   })
-  .def("__itruediv__", [](Vector& v, const double x) {
-    v[0] = v[0]/x;
-    v[1] = v[1]/x;
-    v[2] = v[2]/x;
-    return v;
-   })
-  ;
-
-  // Shapeworks Globals
+  // Matix classes (TODO: use Eigen::Matrix instead)
+  // -> see https://github.com/SCIInstitute/ShapeWorks/issues/1184
   py::class_<Matrix>(m, "Matrix")
   .def(py::init([] {
     Matrix mat;
@@ -176,7 +67,8 @@ PYBIND11_MODULE(shapeworks, m)
   .def("__itruediv__", [](Matrix& m, const double x) { return m /= x; })
   ;
 
-  // Shapeworks Globals
+  // Matix classes (TODO: use Eigen::Matrix instead)
+  // -> see https://github.com/SCIInstitute/ShapeWorks/issues/1184
   py::class_<Matrix44>(m, "Matrix44")
   .def(py::init([] {
     Matrix44 mat;
@@ -201,51 +93,8 @@ PYBIND11_MODULE(shapeworks, m)
   .def("__itruediv__", [](Matrix44& m, const double x) { return m /= x; })
   ;
 
-  // Shapeworks Globals
-  py::class_<IPoint3>(m, "IPoint3")
-  .def(py::init<>())
-  .def(py::init([](int x, int y, int z) { return IPoint3({x,y,z}); }))
-  .def("__repr__", [](const IPoint3& p) {
-    std::ostringstream ss;
-    ss << p;
-    return ss.str();
-  })
-  .def("__getitem__", [](const IPoint3& p, size_t idx) { return p[idx]; })
-  .def("__setitem__", [](IPoint3& p, size_t idx, int val) { p[idx] = val; })
-  .def("__add__", [](const IPoint3& p1, const IPoint3& p2) { return p1 + p2; })
-  .def("__sub__", [](const IPoint3& p1, const IPoint3& p2) { return IPoint3(p1 - p2); })
-  .def("__mul__", [](const IPoint3& p1, const IPoint3& p2) { return p1 * p2; })
-  .def("__iadd__", [](IPoint3& p1, const IPoint3& p2) { return p1 += p2; })
-  .def("__isub__", [](IPoint3& p1, const IPoint3& p2) { return p1 -= p2; })
-  .def("__mul__", [](const IPoint3& p, const double x) { return p * x; })
-  .def("__truediv__", [](const IPoint3& p, const double x) { return p / x; })
-  .def("__imul__", [](IPoint3& p, const double x) { return p *= x; })
-  .def("__itruediv__", [](IPoint3& p, const double x) { return p /= x; })
-  ;
-
-  // Shapeworks Globals
-  py::class_<FPoint3>(m, "FPoint3")
-  .def(py::init<>())
-  .def(py::init([](float x, float y, float z) { return Point({x,y,z}); }))
-  .def("__repr__", [](const FPoint3& p) {
-    std::ostringstream ss;
-    ss << p;
-    return ss.str();
-  })
-  .def("__getitem__", [](const FPoint3& p, size_t idx) { return p[idx]; })
-  .def("__setitem__", [](FPoint3& p, size_t idx, float val) { p[idx] = val; })
-  .def("__add__", [](const FPoint3& p1, const FPoint3& p2) { return p1 + p2; })
-  .def("__sub__", [](const FPoint3& p1, const FPoint3& p2) { return FPoint3(p1 - p2); })
-  .def("__mul__", [](const FPoint3& p1, const FPoint3& p2) { return p1 * p2; })
-  .def("__iadd__", [](FPoint3& p1, const FPoint3& p2) { return p1 += p2; })
-  .def("__isub__", [](FPoint3& p1, const FPoint3& p2) { return p1 -= p2; })
-  .def("__mul__", [](const FPoint3& p, const double x) { return p * x; })
-  .def("__truediv__", [](const FPoint3& p, const double x) { return p / x; })
-  .def("__imul__", [](FPoint3& p, const double x) { return p *= x; })
-  .def("__itruediv__", [](FPoint3& p, const double x) { return p /= x; })
-  ;
-
-  // Shapeworks Globals
+  // Transform (TODO: Use Eigen::Matrix instead)
+  // -> see https://github.com/SCIInstitute/ShapeWorks/issues/1184
   py::class_<itk::SmartPointer<itk::Transform<double, 3u, 3u> >>(m, "TransformPtr")
   .def("__repr__", [](const TransformPtr &transform) {
     std::stringstream stream;
@@ -264,30 +113,20 @@ PYBIND11_MODULE(shapeworks, m)
   })
   ;
 
+  // Plane
   py::class_<Plane>(m, "Plane")
   .def(py::init([](std::vector<double>& n, std::vector<double>& o) {
     return makePlane(makeVector({n[0], n[1], n[2]}), Point({o[0], o[1], o[2]}));
   }))
   ;
 
-  // Shapeworks Globals
+  // todo: a matrix is a transform, and adding a vector either adds to the right hand column or
+  // bottom row depending on if it's applied to geometry as right-handed or left-handed This
+  // function might be appropriate to add to the shapeworks module so translation is applied in
+  // a manner consistent with what is expected when applied.
   m.def("createTransform", createTransform, "creates transform from matrix", "mat"_a, "translate"_a=makeVector({0,0,0}));
-  m.def("toPoint", py::overload_cast<const Dims &>(toPoint), "converts Dims to Point", "d"_a);
-  m.def("toPoint", py::overload_cast<const Coord &>(toPoint), "converts Coord to Point", "c"_a);
-  m.def("toPoint", py::overload_cast<const Vector &>(toPoint), "converts Vector to Point", "d"_a);
-  m.def("toVector", py::overload_cast<const Dims &>(toVector), "converts Dims to Vector", "p"_a);
-  m.def("toVector", py::overload_cast<const Point &>(toVector), "converts Point to Vector", "v"_a);
-  m.def("negate", negate<Coord>, "negate function for Coord");
-  m.def("negate", negate<Dims>, "negate function for Dims");
-  m.def("negate", negate<Point>, "negate function for Point");
-  m.def("negate", negate<Vector>, "negate function for Vector");
-  m.def("negate", negate<IPoint3>, "negate function for IPoint3");
-  m.def("negate", negate<FPoint3>, "negate function for FPoint3");
-  m.def("invertValue", invertValue<Point>, "inversion function for Point");
-  m.def("invertValue", invertValue<Vector>, "inversion function for Vector");
-  m.def("dotProduct", dotProduct, "vector dot product", "a"_a, "b"_a);
-  m.def("crossProduct", crossProduct, "vector cross product", "a"_a, "b"_a);
 
+  // Axis
   py::enum_<Axis>(m, "Axis")
   .value("invalid", Axis::invalid)
   .value("X", Axis::X)
@@ -461,7 +300,6 @@ PYBIND11_MODULE(shapeworks, m)
        "converts from a physical coordinate to a logical coordinate",
        "p"_a)
   .def("compare",               &Image::compare, "compares two images", "other"_a, "verifyall"_a=true, "tolerance"_a=0.0, "precision"_a=1e-12)
-  .def_static("getPolyData",    &Image::getPolyData, "creates a vtkPolyData for the given image", "image"_a, "isoValue"_a=0.0)
   .def("toArray",
        [](const Image &image) {
          Image::ImageType::Pointer img = image.getITKImage();
