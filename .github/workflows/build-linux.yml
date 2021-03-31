@@ -142,6 +142,7 @@ jobs:
              ${{runner.workspace}}/ShapeWorks/artifacts/*.zip
 
     - name: Deploy Docs
+      if: github.ref == 'refs/heads/master'
       shell: bash -l {0}
       run: conda activate shapeworks && pwd && ls && ./Support/deploy_docs.sh ${GITHUB_WORKSPACE}/build
       env:

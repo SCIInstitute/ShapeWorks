@@ -1,8 +1,10 @@
 #pragma once
 
+#include <Eigen/Dense>
+#include <Eigen/Sparse>
+
 #include <QSharedPointer>
 #include <QString>
-
 
 #include <Data/StudioMesh.h>
 #include <Libs/Project/Subject.h>
