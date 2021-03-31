@@ -59,62 +59,6 @@ background: rgb(255, 255, 127)
       <property name="bottomMargin">
        <number>1</number>
       </property>
-      <item row="3" column="2">
-       <widget class="QDoubleSpinBox" name="starting_regularization">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>100</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>100</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="decimals">
-         <number>2</number>
-        </property>
-        <property name="minimum">
-         <double>0.000000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>99999.000000000000000</double>
-        </property>
-        <property name="value">
-         <double>10.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="11" column="2">
-       <widget class="QSpinBox" name="procrustes_interval">
-        <property name="minimumSize">
-         <size>
-          <width>100</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>100</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="maximum">
-         <number>999999</number>
-        </property>
-        <property name="value">
-         <number>10</number>
-        </property>
-       </widget>
-      </item>
       <item row="8" column="0">
        <widget class="QLabel" name="label_21">
         <property name="text">
@@ -126,37 +70,6 @@ background: rgb(255, 255, 127)
        <widget class="QLabel" name="label_5">
         <property name="text">
          <string>Initial Relative Weighting</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <widget class="QSpinBox" name="number_of_particles">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>100</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>100</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>999999</number>
-        </property>
-        <property name="value">
-         <number>128</number>
         </property>
        </widget>
       </item>
@@ -195,37 +108,6 @@ background: rgb(255, 255, 127)
         </property>
        </widget>
       </item>
-      <item row="6" column="2">
-       <widget class="QSpinBox" name="optimization_iterations">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>100</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>100</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>999999</number>
-        </property>
-        <property name="value">
-         <number>1000</number>
-        </property>
-       </widget>
-      </item>
       <item row="3" column="0">
        <widget class="QLabel" name="label_10">
         <property name="text">
@@ -237,37 +119,6 @@ background: rgb(255, 255, 127)
        <widget class="QLabel" name="label_13">
         <property name="text">
          <string>Multiscale Mode</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2">
-       <widget class="QDoubleSpinBox" name="initial_relative_weighting">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>100</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>100</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="maximum">
-         <double>99999.000000000000000</double>
-        </property>
-        <property name="singleStep">
-         <double>0.100000000000000</double>
-        </property>
-        <property name="value">
-         <double>0.050000000000000</double>
         </property>
        </widget>
       </item>
@@ -346,37 +197,6 @@ background: rgb(255, 255, 127)
        <widget class="QLabel" name="label_20">
         <property name="text">
          <string>Normals</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="2">
-       <widget class="QDoubleSpinBox" name="relative_weighting">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>100</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>100</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="maximum">
-         <double>99999.000000000000000</double>
-        </property>
-        <property name="singleStep">
-         <double>0.100000000000000</double>
-        </property>
-        <property name="value">
-         <double>1.000000000000000</double>
         </property>
        </widget>
       </item>
@@ -489,71 +309,6 @@ background: rgb(255, 255, 127)
         </property>
        </widget>
       </item>
-      <item row="5" column="2">
-       <widget class="QSpinBox" name="iterations_per_split">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>100</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>100</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>999999</number>
-        </property>
-        <property name="value">
-         <number>1000</number>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="2">
-       <widget class="QDoubleSpinBox" name="ending_regularization">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>100</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>100</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="decimals">
-         <number>2</number>
-        </property>
-        <property name="minimum">
-         <double>0.000000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>99999.000000000000000</double>
-        </property>
-        <property name="value">
-         <double>1.000000000000000</double>
-        </property>
-       </widget>
-      </item>
       <item row="4" column="0">
        <widget class="QLabel" name="label_9">
         <property name="text">
@@ -619,28 +374,6 @@ background: rgb(255, 255, 127)
         </layout>
        </widget>
       </item>
-      <item row="13" column="2">
-       <widget class="QSpinBox" name="multiscale_particles">
-        <property name="minimumSize">
-         <size>
-          <width>100</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>100</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="maximum">
-         <number>999999</number>
-        </property>
-        <property name="value">
-         <number>32</number>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="1">
        <spacer name="horizontalSpacer_10">
         <property name="orientation">
@@ -654,31 +387,103 @@ background: rgb(255, 255, 127)
         </property>
        </spacer>
       </item>
+      <item row="0" column="2">
+       <widget class="QLineEdit" name="number_of_particles">
+        <property name="text">
+         <string>128</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QLineEdit" name="initial_relative_weighting">
+        <property name="text">
+         <string>0.05</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QLineEdit" name="relative_weighting">
+        <property name="text">
+         <string>1.0</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QLineEdit" name="starting_regularization">
+        <property name="text">
+         <string>10</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2">
+       <widget class="QLineEdit" name="ending_regularization">
+        <property name="text">
+         <string>1.0</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="2">
+       <widget class="QLineEdit" name="iterations_per_split">
+        <property name="text">
+         <string>1000</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="2">
+       <widget class="QLineEdit" name="optimization_iterations">
+        <property name="text">
+         <string>1000</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
       <item row="8" column="2">
-       <widget class="QDoubleSpinBox" name="normals_strength">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+       <widget class="QLineEdit" name="normals_strength">
+        <property name="text">
+         <string>10</string>
         </property>
-        <property name="minimumSize">
-         <size>
-          <width>100</width>
-          <height>0</height>
-         </size>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
-        <property name="maximumSize">
-         <size>
-          <width>100</width>
-          <height>16777215</height>
-         </size>
+       </widget>
+      </item>
+      <item row="13" column="2">
+       <widget class="QLineEdit" name="multiscale_particles">
+        <property name="text">
+         <string>32</string>
         </property>
-        <property name="maximum">
-         <double>999999999.000000000000000</double>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
-        <property name="value">
-         <double>10.000000000000000</double>
+       </widget>
+      </item>
+      <item row="11" column="2">
+       <widget class="QLineEdit" name="procrustes_interval">
+        <property name="text">
+         <string>10</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -722,20 +527,10 @@ background: rgb(255, 255, 127)
   </layout>
  </widget>
  <tabstops>
-  <tabstop>number_of_particles</tabstop>
-  <tabstop>initial_relative_weighting</tabstop>
-  <tabstop>relative_weighting</tabstop>
-  <tabstop>starting_regularization</tabstop>
-  <tabstop>ending_regularization</tabstop>
-  <tabstop>iterations_per_split</tabstop>
-  <tabstop>optimization_iterations</tabstop>
   <tabstop>use_normals</tabstop>
-  <tabstop>normals_strength</tabstop>
   <tabstop>procrustes</tabstop>
   <tabstop>procrustes_scaling</tabstop>
-  <tabstop>procrustes_interval</tabstop>
   <tabstop>multiscale</tabstop>
-  <tabstop>multiscale_particles</tabstop>
   <tabstop>run_optimize_button</tabstop>
   <tabstop>restoreDefaults</tabstop>
  </tabstops>
