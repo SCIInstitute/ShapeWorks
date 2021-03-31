@@ -36,14 +36,14 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    datasetName = "ellipsoid_fd-v0"
+    datasetName = "ellipsoid_1mode"
     outputDirectory = "Output/ellipsoid_fd/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
     CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
 
-    fileListDT = sorted(glob.glob(outputDirectory + datasetName + "/distance_transforms/*.nrrd"))
-    fileListNew = sorted(glob.glob(outputDirectory + datasetName + "/new_distance_transforms/*.nrrd"))
+    fileListDT = sorted(glob.glob(outputDirectory + datasetName + "/groomed/distance_transforms/*.nrrd"))
+    fileListNew = sorted(glob.glob(outputDirectory + datasetName + "/fd_segmentations/*.nrrd"))
 
     """
     ## GROOM : Data Pre-processing 
@@ -86,7 +86,7 @@ def Run_Pipeline(args):
     Evaluate the meanshape of the existing shape model and use that to initialize the 
     particles on the new shapes
     """
-    shapemodelDir =  outputDirectory + datasetName + "/shape_models/pretrained/128/"
+    shapemodelDir =  outputDirectory + datasetName + "/shape_models/ellipsoid/128/"
     print(os.listdir(shapemodelDir))
     findMeanShape(shapemodelDir)
     meanShapePath = shapemodelDir + '/meanshape_local.particles'

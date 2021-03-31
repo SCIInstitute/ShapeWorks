@@ -13,7 +13,7 @@
 #include <igl/remove_unreferenced.h>
 #include <igl/slice.h>
 #include <igl/viewer/Viewer.h>
-#include <itkeigen/Eigen/Sparse>
+#include <Eigen/Sparse>
 #include <fstream>
 
 using namespace std;
