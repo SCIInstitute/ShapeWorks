@@ -7,7 +7,7 @@
 #include <vtkPolyData.h>
 #include <string>
 #include <vtkPointData.h>
-// #include <gtest/gtest.h>  // fixme: not getting found; needed in order to test private functions
+// #include <gtest/gtest.h>  // fixme: not getting found; needed in order to test private functions (github issue #1042)
 
 namespace shapeworks {
 
@@ -84,7 +84,7 @@ public:
   /// computes cell normals and orients them such that they point in the same direction
   Mesh& generateNormals();
 
-  double projectPoint(const Mesh &target, double point[3]);
+  double projectPoint(Point point);
 
   Mesh& curvature();
 
@@ -175,19 +175,21 @@ public:
   /// getSupportedTypes
   static std::vector<std::string> getSupportedTypes() { return {"vtk", "vtp", "ply", "stl", "obj"}; }
 
-public:
+// private:
   // todo: these two function should be private, but unable to test them b/c can't find gtest.h
   // https://github.com/SCIInstitute/ShapeWorks/issues/1042
 
   /// compute origin of volume that would contain the rasterization of each mesh
   // FRIEND_TEST(MeshTests, rasterizationOriginTest1);
   // FRIEND_TEST(MeshTests, rasterizationOriginTest1);
-  Point3 rasterizationOrigin(Region region, Vector3 spacing = makeVector({1.0, 1.0, 1.0}), int padding = 0) const;
+  static Point3 rasterizationOrigin(Region region, Vector3 spacing = makeVector({1.0, 1.0, 1.0}), int padding = 0);
 
   /// compute size of volume that would contain the rasterization of each mesh
   // FRIEND_TEST(MeshTests, rasterizationSizeTest1);
   // FRIEND_TEST(MeshTests, rasterizationSizeTest2);
-  Dims rasterizationSize(Region region, Vector3 spacing = makeVector({1.0, 1.0, 1.0}), int padding = 0, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;
+  static Dims rasterizationSize(Region region, Vector3 spacing = makeVector({1.0, 1.0, 1.0}), int padding = 0, Point3 origin = Point3({-1.0, -1.0, -1.0}));
+
+  static double projectPoint(const Mesh &target, Point point);
 
 private:
   friend struct SharedCommandData;

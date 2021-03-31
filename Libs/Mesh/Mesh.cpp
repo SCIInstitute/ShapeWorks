@@ -386,19 +386,24 @@ Mesh& Mesh::distance(const Mesh &target, const DistanceMethod method)
   return *this;
 }
 
-double Mesh::projectPoint(const Mesh &target, double point[3])
+double Mesh::projectPoint(const Mesh &target, Point point)
 {
   vtkSmartPointer<vtkCellLocator> targetCellLocator = vtkSmartPointer<vtkCellLocator>::New();
   targetCellLocator->SetDataSet(target.mesh);
   targetCellLocator->BuildLocator();
 
   double dist, closestPoint[3];
-  vtkIdType cellId;
   vtkSmartPointer<vtkGenericCell> cell = vtkSmartPointer<vtkGenericCell>::New();
+  vtkIdType cellId;
   int subId;
 
-  targetCellLocator->FindClosestPoint(point, closestPoint, cell, cellId, subId, dist);
+  targetCellLocator->FindClosestPoint(point.GetDataPointer(), closestPoint, cell, cellId, subId, dist);
   return dist;
+}
+
+double Mesh::projectPoint(Point point)
+{
+  return projectPoint(*this, point);
 }
 
 Mesh& Mesh::clipClosedSurface(const Plane plane)
@@ -430,7 +435,7 @@ Mesh& Mesh::generateNormals()
   return *this;
 }
 
-Point3 Mesh::rasterizationOrigin(Region region, Vector3 spacing, int padding) const
+Point3 Mesh::rasterizationOrigin(Region region, Vector3 spacing, int padding)
 {
   Point3 origin;
 
@@ -443,7 +448,7 @@ Point3 Mesh::rasterizationOrigin(Region region, Vector3 spacing, int padding) co
   return origin;
 }
 
-Dims Mesh::rasterizationSize(Region region, Vector3 spacing, int padding, Point3 origin) const
+Dims Mesh::rasterizationSize(Region region, Vector3 spacing, int padding, Point3 origin)
 {
   // automatically compute origin if not already set
   if (origin == Point3({-1.0, -1.0, -1.0}))
