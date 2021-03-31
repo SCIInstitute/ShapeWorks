@@ -43,6 +43,10 @@ void ShapeworksWorker::process()
     case ShapeworksWorker::GroomType:
       try {
         this->groom_->run();
+      } catch (itk::ExceptionObject& ex) {
+        std::cerr << "ITK Exception: " << ex << std::endl;
+        emit error_message(std::string("ITK Exception: ") + ex.GetDescription());
+        return;
       } catch (std::runtime_error e) {
         emit error_message(std::string("Error: ") + e.what());
         return;
@@ -50,7 +54,7 @@ void ShapeworksWorker::process()
         emit error_message(std::string("Error: ") + e.what());
         return;
       } catch (...) {
-        emit error_message(std::string("Error during optimization!"));
+        emit error_message(std::string("Error during grooming!"));
         return;
       }
       if (this->groom_->get_aborted()) {

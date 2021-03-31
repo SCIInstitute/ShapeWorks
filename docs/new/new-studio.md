@@ -1,5 +1,32 @@
 # New in ShapeWorksStudio
 
+
+## Mesh Support 
+
+As of ShapeWorks 6.0, we added mesh support to ShapeWorksStudio including loading meshes, optimizing shape models directly on meshes, and visualizing meshes with scalar feature values. Meshes can store values at vertices such as "cortical thickness", or "fibrosis” and ShapeWorksStudio uses them in a similar manner as feature maps/volumes.
+
+*Open meshes in Studio*
+![Screenshot showing open meshes in Studio](../img/new/open-mesh-studio.png)
+
+ 
+*Visualizing features on surface mesh*
+![Visualizing features on surface mesh](../img/new/studio-feature-mesh.png)
+
+We also added a new surface reconstruction method with support for both mesh or image inputs. This method is much faster and is the new default.
+
+*New and faster surface reconstruction*
+![New and faster surface reconstruction](../img/new/studio-mesh-recon.png)
+
+
+## Improved Studio Interface
+
+As of ShapeWorks 6.0, we added support for automatic glyph sizing, draging/dropping of images and meshes. Scalar bar color is now opposite of background color (e.g., when background is white, text should be dark) (user request).
+
+*Samples names color is opposite of the background color for a better contrast*
+![Studio background](../img/new/studio-background.png)
+
+
+
 ## Surface Reconstruction 
 
 ShapeWorksStudio provides a particle-based surface reconstruction that can reconstruct high quality surface meshes with fewer number of particles. See [How to Analyze Your Shape Model?](../workflow/analyze.md#surface-reconstruction) for details about the method.
