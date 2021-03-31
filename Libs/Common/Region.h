@@ -5,6 +5,7 @@
 namespace shapeworks
 {
 
+// A logical region of an Image or a Mesh
 class Region
 {
 public:

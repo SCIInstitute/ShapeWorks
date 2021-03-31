@@ -2,7 +2,7 @@ import os
 import sys
 from shapeworks import *
 
-def toImageTest():
+def toImageTest1():
   mesh = Mesh(os.environ["DATA"] + "/femur.ply")
   img = mesh.toImage([1.0, 1.0, 1.0])
 
@@ -10,7 +10,33 @@ def toImageTest():
 
   return img == compareImg
 
-val = toImageTest()
+val = toImageTest1()
+
+if val is False:
+  sys.exit(1)
+
+def toImageTest2():
+  mesh = Mesh(os.environ["DATA"] + "/femur.ply")
+  img = mesh.toImage(spacing=[2.0, 2.0, 1.0])
+
+  compareImg = Image(os.environ["DATA"] + "/femurImage2.nrrd")
+
+  return img == compareImg
+
+val = toImageTest2()
+
+if val is False:
+  sys.exit(1)
+
+def toImageTest3():
+  mesh = Mesh(os.environ["DATA"] + "/femur.ply")
+  img = mesh.toImage(size=[40, 145, 131])
+
+  compareImg = Image(os.environ["DATA"] + "/femurImage3.nrrd")
+
+  return img == compareImg
+
+val = toImageTest3()
 
 if val is False:
   sys.exit(1)
