@@ -121,7 +121,9 @@ def FindReferenceImage(inDataList):
     """
     x = y = z = 0
     for i in range(len(inDataList)):
-        dim = itk.GetArrayFromImage(itk.imread(inDataList[i])).shape
+        img = Image(inDataList[i])
+        tmp = img.toArray()
+        dim = tmp.shape
         if dim[0] > x:
             x = dim[0]
         if dim[1] > y:
@@ -131,7 +133,8 @@ def FindReferenceImage(inDataList):
 
     COM = np.zeros((x, y, z))
     for i in range(len(inDataList)):
-        tmp = itk.GetArrayFromImage(itk.imread(inDataList[i]))
+        img = Image(inDataList[i])
+        tmp = img.toArray()
         COM += np.pad(tmp, (((x - tmp.shape[0]) // 2, (x - tmp.shape[0]) - (x - tmp.shape[0]) // 2),
                             ((y - tmp.shape[1]) // 2, (y - tmp.shape[1]) - (y - tmp.shape[1]) // 2),
                             ((z - tmp.shape[2]) // 2, (z - tmp.shape[2]) - (z - tmp.shape[2]) // 2)))
@@ -139,7 +142,8 @@ def FindReferenceImage(inDataList):
     dist = np.inf
     idx = 0
     for i in range(len(inDataList)):
-        tmp = itk.GetArrayFromImage(itk.imread(inDataList[i]))
+        img = Image(inDataList[i])
+        tmp = img.toArray()
         tmp_dist = np.linalg.norm(
             COM - np.pad(tmp, (((x - tmp.shape[0]) // 2, (x - tmp.shape[0]) - (x - tmp.shape[0]) // 2),
                                ((y - tmp.shape[1]) // 2, (y - tmp.shape[1]) - (y - tmp.shape[1]) // 2),
@@ -383,6 +387,7 @@ def MeshesToVolumes(outDir, meshList, spacing):
         segList.append(segFile)
 
         mesh = Mesh(mesh_)
+        print("converting mesh to image using spacing of: " + str(spacing))
         image = mesh.toImage(spacing)
         image.write(segFile)
     return segList

@@ -1,10 +1,10 @@
 #pragma once
 
-#include <QString>
-#include <QSharedPointer>
-
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
+
+#include <QString>
+#include <QSharedPointer>
 
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
