@@ -328,6 +328,11 @@ TEST(pythonTests, fieldTest)
   ASSERT_FALSE(system("python field.py"));
 }
 
+TEST(pythonTests, statsTest)
+{
+  ASSERT_FALSE(system("python stats.py"));
+}
+
 TEST(pythonTests, coordTest)
 {
   ASSERT_FALSE(system("python coord.py"));
