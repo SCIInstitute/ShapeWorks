@@ -1,3 +1,5 @@
+#include <Data/StudioMesh.h>
+
 #include <QMessageBox>
 #include <QTextStream>
 
@@ -7,16 +9,13 @@
 #include <itkNearestNeighborInterpolateImageFunction.h>
 #include <itkLinearInterpolateImageFunction.h>
 
-#include <vtkSurfaceReconstructionFilter.h>
 #include <vtkMarchingCubes.h>
 #include <vtkTriangleFilter.h>
 #include <vtkFloatArray.h>
 #include <vtkPointData.h>
-#include <vtkPolyDataWriter.h>
 #include <vtkPointLocator.h>
 #include <vtkKdTreePointLocator.h>
 
-#include <Data/StudioMesh.h>
 #include <Data/ItkToVtk.h>
 
 using NearestNeighborInterpolatorType = itk::NearestNeighborInterpolateImageFunction<ImageType, double>;
@@ -193,7 +192,7 @@ void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image,
 
 //---------------------------------------------------------------------------
 void StudioMesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double> positions,
-                                             itkeigen::VectorXf scalar_values)
+                                             Eigen::VectorXf scalar_values)
 {
 
   int num_points = positions.size() / 3;

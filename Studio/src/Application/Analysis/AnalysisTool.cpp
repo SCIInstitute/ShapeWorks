@@ -7,13 +7,13 @@
 #include <QMessageBox>
 
 // shapeworks
+#include <Analysis/AnalysisTool.h>
 #include <Visualization/ShapeWorksStudioApp.h>
 #include <Visualization/ShapeWorksWorker.h>
 #include <Data/Session.h>
 #include <Data/StudioMesh.h>
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
-#include <Analysis/AnalysisTool.h>
 #include <Visualization/Lightbox.h>
 
 #include <ui_AnalysisTool.h>
@@ -448,6 +448,16 @@ bool AnalysisTool::compute_stats()
     return false;
   }
 
+  // consistency check
+  int point_size = points[0].size();
+  for (auto&& p : points) {
+    if (p.size() != point_size) {
+      this->handle_error("Inconsistency in data, particle files must contain the same number of points");
+      return false;
+    }
+  }
+
+
   this->stats_.ImportPoints(points, group_ids);
   this->stats_.ComputeModes();
 
@@ -519,6 +529,25 @@ const vnl_vector<double>& AnalysisTool::get_shape_points(int mode, double value)
   this->pca_labels_changed(QString::number(value, 'g', 2),
                            QString::number(this->stats_.Eigenvalues()[m]),
                            QString::number(value * lambda));
+
+  std::vector<double> vals;
+  for (int i = this->stats_.Eigenvalues().size() - 1; i > 0; i--) {
+    vals.push_back(this->stats_.Eigenvalues()[i]);
+  }
+  double sum = std::accumulate(vals.begin(), vals.end(), 0.0);
+  double cumulation = 0;
+  for (size_t i = 0; i < mode + 1; ++i) {
+    cumulation += vals[i];
+  }
+  if (sum > 0) {
+    this->ui_->explained_variance->setText(QString::number(vals[mode] / sum * 100, 'f', 1) + "%");
+    this->ui_->cumulative_explained_variance->setText(
+      QString::number(cumulation / sum * 100, 'f', 1) + "%");
+  }
+  else {
+    this->ui_->explained_variance->setText("");
+    this->ui_->cumulative_explained_variance->setText("");
+  }
 
   this->temp_shape_ = this->stats_.Mean() + (e * (value * lambda));
 
@@ -1028,12 +1057,17 @@ void AnalysisTool::initialize_mesh_warper()
     this->compute_stats();
     int median = this->stats_.ComputeMedianShape(-32); //-32 = both groups
 
-    if (median >= this->session_->get_num_shapes()) {
+    if (median < 0 || median >= this->session_->get_num_shapes()) {
+      STUDIO_LOG_ERROR("Unable to set reference mesh, stats returned invalid median index");
       return;
     }
     QSharedPointer<Shape> median_shape = this->session_->get_shapes()[median];
     vtkSmartPointer<vtkPolyData> poly_data = median_shape->get_groomed_mesh(true)->get_poly_data();
 
+    if (!poly_data) {
+      STUDIO_LOG_ERROR("Unable to set reference mesh, groomed mesh is unavailable");
+      return;
+    }
     this->session_->get_mesh_manager()->get_mesh_warper()->set_reference_mesh(poly_data,
                                                                               median_shape->get_local_correspondence_points());
   }

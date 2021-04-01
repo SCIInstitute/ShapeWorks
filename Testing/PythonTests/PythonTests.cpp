@@ -318,9 +318,19 @@ TEST(pythonTests, distanceTest)
   ASSERT_FALSE(system("python distance.py"));
 }
 
+TEST(pythonTests, generateNormalsTest)
+{
+  ASSERT_FALSE(system("python generatenormals.py"));
+}
+
 TEST(pythonTests, fieldTest)
 {
   ASSERT_FALSE(system("python field.py"));
+}
+
+TEST(pythonTests, statsTest)
+{
+  ASSERT_FALSE(system("python stats.py"));
 }
 
 TEST(pythonTests, coordTest)
