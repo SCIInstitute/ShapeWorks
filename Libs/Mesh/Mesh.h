@@ -178,17 +178,6 @@ public:
 // private:
   // todo: these two function should be private, but unable to test them b/c can't find gtest.h
   // https://github.com/SCIInstitute/ShapeWorks/issues/1042
-
-  /// compute origin of volume that would contain the rasterization of each mesh
-  // FRIEND_TEST(MeshTests, rasterizationOriginTest1);
-  // FRIEND_TEST(MeshTests, rasterizationOriginTest1);
-  static Point3 rasterizationOrigin(Region region, Vector3 spacing = makeVector({1.0, 1.0, 1.0}), int padding = 0);
-
-  /// compute size of volume that would contain the rasterization of each mesh
-  // FRIEND_TEST(MeshTests, rasterizationSizeTest1);
-  // FRIEND_TEST(MeshTests, rasterizationSizeTest2);
-  static Dims rasterizationSize(Region region, Vector3 spacing = makeVector({1.0, 1.0, 1.0}), int padding = 0, Point3 origin = Point3({-1.0, -1.0, -1.0}));
-
   static double projectPoint(const Mesh &target, Point point);
 
 private:
