@@ -16,8 +16,8 @@ ShapeWorks is a free, open-source suite of software tools that uses a flexible m
 
 ## Latest & Greatest
     
- <!--![](docs/img/about/release5.5.png)-->
-![](docs/img/about/release6.0.png)
+ <!--![](img/about/release5.5.png)-->
+![](img/about/release6.0.png)
 
 !!! note "Release Notes"    
     Please visit [Release Notes](about/release-notes.md) to know about the ShapeWorks' cutting-edge features and improvements.
