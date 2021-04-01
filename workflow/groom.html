@@ -333,14 +333,19 @@
             <div class="section">
               
                 <h1 id="how-to-groom-your-dataset">How to Groom Your Dataset?</h1>
-<p>ShapeWorks needs suitable distance transforms for establishing shape correspondence. The groom stage has the pipeline to generate the distance transforms from input images (binary segmentation or mesh).  It consists of image/mesh pre-processing and alignment tools.</p>
+<p>ShapeWorks needs suitable distance transforms for establishing shape correspondence. The groom stage has the pipeline to generate the distance transforms from input images (binary segmentation or mesh).  It consists of image and mesh pre-processing tools.</p>
 <h2 id="image-pre-processing">Image Pre-Processing</h2>
 <h3 id="antialias">Antialias</h3>
 <p>This tool antialiases binary volumes.</p>
-<p><code>shapeworks readimage --name $1 antialias maxrmserror $2 iterations $3 layers $4 writeimage --name $5</code></p>
+<p>Command Line Interface:<br />
+<code>shapeworks readimage --name $1 antialias maxrmserror $2 iterations $3 layers $4 writeimage --name $5</code></p>
+<p>Python Interface:<br />
+<div class="highlight"><pre><span></span><code>image = sw.Image(&lt;input path&gt;)
+image.antialias(iterations, maxRMSErr, layers).write(&lt;output path&gt;)
+</code></pre></div></p>
 <p>Here is the list of arguments.</p>
 <ul>
-<li>maxrmserror: Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default: 0.01].</li>
+<li>maxrmserror/maxRMSErr: Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default: 0.01].</li>
 <li>iterations: Maximum number of iterations [default: 50].</li>
 <li>layers: Number of layers around a 3d pixel to use for this computation [default: 3].</li>
 </ul>

@@ -268,7 +268,37 @@
 <p>$ make test</p>
 <p>If using Unix Makefile, for example</p>
 <h2 id="adding-new-shapeworks-automated-tests">Adding New ShapeWorks Automated Tests</h2>
-<p><img alt="Under construction, coming soon!" src="../img/misc/under-construction.png" /></p>
+<p>Depending on the type of operation to be tested, they should be defined in the associated Tests.cpp</p>
+<p>Testing from C++ interface:</p>
+<ul>
+<li>For project related functions, use Testing/GroomTests/GroomTests.cpp  </li>
+<li>For image related functions, use Testing/ImageTests/ImageTests.cpp  </li>
+<li>For mesh related functions, use Testing/MeshTests/MeshTests.cpp  </li>
+<li>For optimize related functions, use Testing/OptimizeTests/OptimizeTests.cpp  </li>
+<li>For particles related functions, use Testing/ParticlesTests/ParticlesTests.cpp  </li>
+</ul>
+<div class="highlight"><pre><span></span><code>TEST(typeofoperationTests, nameoftestTest)
+{
+  // define test
+
+  ASSERT_TRUE(); // compare result
+}
+</code></pre></div>
+<p>For testing from Python interface, use Testing/PythonTests/PythonTests.cpp<br />
+Python scripts should be added to Testing/PythonTests</p>
+<div class="highlight"><pre><span></span><code>TEST(pythonTests, nameoftestTest)
+{
+  ASSERT_FALSE(system(&quot;python script.py&quot;));
+}
+</code></pre></div>
+<p>For testing from Command Line interface, use Testing/shapeworksTests/shapeworksTests.cpp<br />
+Shell scripts should be added to Testing/shapeworksTests</p>
+<div class="highlight"><pre><span></span><code>TEST(shapeworksTests, nameoftestTest)
+{
+  ASSERT_FALSE(system(&quot;bash script.sh&quot;));
+}
+</code></pre></div>
+<p>Testing data should be placed in Testing/data.</p>
               
             </div>
           </div>

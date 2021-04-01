@@ -15247,7 +15247,21 @@ $$ r(\theta) = \left[ \left| \frac{1}{a} \cos \left( \frac{m\theta}{4} \right) \
   Datatype : <code>bool</code> <br> 
   Defaut value : <code>True</code> <br>
   <br>   </li>
-<li><code>randomize_rotation</code>: randomizes the orientation of the ellispoids if set to <code>True</code> <br>
+<li><p><code>randomize_rotation</code>: randomizes the orientation of the ellipsoid if set to <code>True</code> <br>
+  Datatype : <code>bool</code> <br> 
+  Defaut value : <code>True</code>
+  <br></p>
+</li>
+<li><p><code>randomize_x_radius</code>: randomizes the radius of the ellipsoid along x-axis if set to <code>True</code> or else the value is fixed as 20 for all ellipsoids<br>
+  Datatype : <code>bool</code> <br> 
+  Defaut value : <code>True</code>
+  <br></p>
+</li>
+<li><code>randomize_y_radius</code>: randomizes the radius of the ellipsoid along y-axis if set to <code>True</code> or else the value is fixed as 10 for all ellipsoids<br>
+  Datatype : <code>bool</code> <br> 
+  Defaut value : <code>True</code>
+  <br></li>
+<li><code>randomize_z_radius</code>: randomizes the radius of the ellipsoid along z-axis if set to <code>True</code> or else the value is fixed as 10 for all ellipsoids<br>
   Datatype : <code>bool</code> <br> 
   Defaut value : <code>True</code>
   <br></li>
@@ -15332,14 +15346,16 @@ $$ r(\theta) = \left[ \left| \frac{1}{a} \cos \left( \frac{m\theta}{4} \right) \
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h3 id="step-3-generate-segmentations">Step 3: Generate Segmentations<a class="anchor-link" href="#Step-3:-Generate-Segmentations">&#182;</a></h3><p>For segmentation generation, you can specify the following arguments:</p>
 <ul>
-<li><code>randomize_size</code>: randomize the size of the images to include more background if set to <code>True</code><br>
+<li><p><code>randomize_size</code>: randomize the size of the images to include more background if set to <code>True</code><br>
   Datatype : <code>bool</code> <br> 
   Defaut value : <code>True</code>
-  <br></li>
-<li><code>spacing</code>: set the spacing of the segmentation image <br>
+  <br></p>
+</li>
+<li><p><code>spacing</code>: set the spacing of the segmentation image <br>
   Datatype: <code>list</code> <br>
   Default value: <code>[1,1,1]</code> <br>
-  <br></li>
+  <br></p>
+</li>
 <li><code>allow_on_boundary</code>: If set to <code>True</code>,randomly selects 20% samples and ensure that the shapes are touching two random selected axes out of <code>[x,y,z]</code><br>
   Datatype : <code>bool</code> <br> 
   Defaut value : <code>True</code>

@@ -257,7 +257,59 @@
             <div class="section">
               
                 <h1 id="how-to-add-shapeworks-commands">How to Add ShapeWorks Commands?</h1>
-<p><img alt="Under construction, coming soon!" src="../img/misc/under-construction.png" /></p>
+<p>To add ShapeWorks Commands, the following steps need to be followed:</p>
+<ol>
+<li>
+<p>Declare command in Applications/shapeworks/Commands.h</p>
+<p><code>COMMAND_DECLARE(CommandName, CommandType);</code></p>
+<p>CommandName is the name of the command.<br />
+CommandType is the type of command.<br />
+ShapeWorks supports ImageCommand, MeshCommand, ParticleSystemCommand, OptimizeCommandGroup and GroomCommandGroup  </p>
+</li>
+<li>
+<p>Define command in  </p>
+<ul>
+<li>Applications/shapeworks/ImageCommands.cpp if CommandType is ImageCommand  </li>
+<li>Applications/shapeworks/MeshCommands.cpp if CommandType is MeshCommand  </li>
+<li>Applications/shapeworks/ParticleSystemCommands.cpp if CommandType is ParticleSystemCommand  </li>
+<li>Applications/shapeworks/Commands.cpp for other types of commands  </li>
+</ul>
+<div class="highlight"><pre><span></span><code>///////////////////////////////////////////////////////////////////////////////
+// CommandName
+///////////////////////////////////////////////////////////////////////////////
+void CommandName::buildParser()
+{
+  const std::string prog = &quot;commandname&quot;; // supports command-name as well
+  const std::string desc = &quot;brief description of command&quot;;
+  parser.prog(prog).description(desc);
+
+  parser.add_option(&quot;--optionname&quot;).action(&quot;store&quot;).type(&quot;double&quot;).set_default(0.01).help(&quot;Description of optionname.&quot;);
+  // additional options/arguments... 
+
+  Command::buildParser();
+}
+
+bool CommandName::execute(const optparse::Values &amp;options, SharedCommandData &amp;sharedData)
+{
+  if (!sharedData.validImage())
+  {
+    std::cerr &lt;&lt; &quot;No image to operate on\n&quot;;
+    return false;
+  }
+
+  double optionName = static_cast&lt;double&gt;(options.get(&quot;optionname&quot;));
+  // read additional options/arguments... 
+
+  sharedData.image.example(optionName, ...); // call related function
+  return true;
+}
+</code></pre></div>
+</li>
+<li>
+<p>Add command to Applications/shapeworks/shapeworks.cpp</p>
+<p><code>shapeworks.addCommand(CommandName::getCommand());</code></p>
+</li>
+</ol>
               
             </div>
           </div>
