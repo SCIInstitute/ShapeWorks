@@ -124,7 +124,11 @@ PYBIND11_MODULE(shapeworks, m)
   // bottom row depending on if it's applied to geometry as right-handed or left-handed This
   // function might be appropriate to add to the shapeworks module so translation is applied in
   // a manner consistent with what is expected when applied.
-  m.def("createTransform", createTransform, "creates transform from matrix", "mat"_a, "translate"_a=makeVector({0,0,0}));
+  m.def("createTransform",
+        [](Matrix& mat33, std::vector<double> v) -> decltype(auto) {
+          return createTransform(mat33, makeVector({v[0], v[1], v[2]}));
+        },
+        "creates transform from matrix", "mat"_a, "translate"_a=std::vector<double>({0,0,0}));
 
   // Axis
   py::enum_<Axis>(m, "Axis")
@@ -275,27 +279,38 @@ PYBIND11_MODULE(shapeworks, m)
        "sets the image origin in physical space to the given value",
        "origin"_a=std::vector<double>({0,0,0}))
   .def("reflect",               &Image::reflect, "reflect image with respect to logical image center and the specified axis", "axis"_a)
-  .def("dims",                  &Image::dims, "logical dimensions of the image")
-  .def("size",                  &Image::size, "physical dimensions of the image (dims * spacing)")
+  .def("dims",
+       [](Image& self) -> decltype(auto) { return py::array(3, self.dims().data()); },
+         "logical dimensions of the image")
+  .def("size",
+       [](Image& self) -> decltype(auto) { return py::array(3, self.size().GetDataPointer()); },
+       "physical dimensions of the image (dims * spacing)")
   .def("spacing",
        [](Image& self) -> decltype(auto) { return py::array(3, self.spacing().GetDataPointer()); },
        "physical spacing of the image")
   .def("origin",
        [](Image& self) -> decltype(auto) { return py::array(3, self.origin().GetDataPointer()); },
        "physical coordinates of image origin")
-  .def("center",                &Image::center, "physical coordinates of center of this image")
+  .def("center",
+       [](Image& self) -> decltype(auto) { return py::array(3, self.center().GetDataPointer()); },
+       "physical coordinates of center of this image")
+  // todo: coordsys is a matrix and so should return a numpy array (#1184)
   .def("coordsys",              &Image::coordsys, "return coordinate system in which this image lives in physical space")
-  .def("centerOfMass",          &Image::centerOfMass, "returns average physical coordinate of pixels in range (minval, maxval]", "minVal"_a=0.0, "maxVal"_a=1.0)
+  .def("centerOfMass",
+       [](Image& self, double minVal, double maxVal) -> decltype(auto) {
+         return py::array(3, self.centerOfMass().GetDataPointer());
+       },
+       "returns average physical coordinate of pixels in range (minval, maxval]", "minVal"_a=0.0, "maxVal"_a=1.0)
   .def("boundingBox",           &Image::boundingBox, "computes the logical coordinates of the largest region of data <= the given isoValue", "isovalue"_a=1.0)
   .def("logicalToPhysical",
-       [](Image& image, std::vector<long>& c) -> decltype(auto) {
-         return image.logicalToPhysical(Coord({c[0], c[1], c[2]}));
+       [](Image& self, std::vector<long>& c) -> decltype(auto) {
+         return py::array(3, self.logicalToPhysical(Coord({c[0], c[1], c[2]})).GetDataPointer());
        },
        "converts from pixel coordinates to physical space",
        "c"_a)
   .def("physicalToLogical",
-       [](Image& image, std::vector<double>& p) -> decltype(auto) {
-         return image.physicalToLogical(Point({p[0], p[1], p[2]}));
+       [](Image& self, std::vector<double>& p) -> decltype(auto) {
+         return py::array(3, self.physicalToLogical(Point({p[0], p[1], p[2]})).data());
        },
        "converts from a physical coordinate to a logical coordinate",
        "p"_a)
