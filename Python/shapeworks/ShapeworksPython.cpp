@@ -588,6 +588,7 @@ PYBIND11_MODULE(shapeworks, m)
        "rasterizes mesh to create binary images, automatically computing size and origin if necessary",
        "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}), "size"_a=std::vector<unsigned>({0, 0, 0}), "origin"_a=std::vector<double>({-1.0, -1.0, -1.0}))
   .def("distance",              &Mesh::distance, "computes surface to surface distance", "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
+  .def("projectPoint",          &Mesh::projectPoint, "point"_a)
   .def("toDistanceTransform",
        [](Mesh& mesh, std::vector<double>& v, std::vector<unsigned>& d, std::vector<double>& p) -> decltype(auto) {
          return mesh.toDistanceTransform(makeVector({v[0], v[1], v[2]}), Dims({d[0], d[1], d[2]}), Point({p[0], p[1], p[2]}));
