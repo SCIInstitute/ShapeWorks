@@ -403,56 +403,54 @@
                 
 <div class="notebook-content">
 <style type="text/css">
-    
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
 span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
 td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
 span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-.highlight-ipynb .hll { background-color: var(--jp-cell-editor-active-background) }
-.highlight-ipynb { background: var(--jp-cell-editor-background); color: var(--jp-mirror-editor-variable-color) }
-.highlight-ipynb .c { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment */
-.highlight-ipynb .err { color: var(--jp-mirror-editor-error-color) } /* Error */
-.highlight-ipynb .k { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword */
-.highlight-ipynb .o { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator */
-.highlight-ipynb .p { color: var(--jp-mirror-editor-punctuation-color) } /* Punctuation */
-.highlight-ipynb .ch { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Hashbang */
-.highlight-ipynb .cm { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Multiline */
-.highlight-ipynb .cp { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Preproc */
-.highlight-ipynb .cpf { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.PreprocFile */
-.highlight-ipynb .c1 { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Single */
-.highlight-ipynb .cs { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Special */
-.highlight-ipynb .kc { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Constant */
-.highlight-ipynb .kd { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Declaration */
-.highlight-ipynb .kn { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Namespace */
-.highlight-ipynb .kp { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Pseudo */
-.highlight-ipynb .kr { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Reserved */
-.highlight-ipynb .kt { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Type */
-.highlight-ipynb .m { color: var(--jp-mirror-editor-number-color) } /* Literal.Number */
-.highlight-ipynb .s { color: var(--jp-mirror-editor-string-color) } /* Literal.String */
-.highlight-ipynb .ow { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator.Word */
-.highlight-ipynb .w { color: var(--jp-mirror-editor-variable-color) } /* Text.Whitespace */
-.highlight-ipynb .mb { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Bin */
-.highlight-ipynb .mf { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Float */
-.highlight-ipynb .mh { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Hex */
-.highlight-ipynb .mi { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer */
-.highlight-ipynb .mo { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Oct */
-.highlight-ipynb .sa { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Affix */
-.highlight-ipynb .sb { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Backtick */
-.highlight-ipynb .sc { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Char */
-.highlight-ipynb .dl { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Delimiter */
-.highlight-ipynb .sd { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Doc */
-.highlight-ipynb .s2 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Double */
-.highlight-ipynb .se { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Escape */
-.highlight-ipynb .sh { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Heredoc */
-.highlight-ipynb .si { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Interpol */
-.highlight-ipynb .sx { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Other */
-.highlight-ipynb .sr { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Regex */
-.highlight-ipynb .s1 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Single */
-.highlight-ipynb .ss { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Symbol */
-.highlight-ipynb .il { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer.Long */
+.highlight .hll { background-color: var(--jp-cell-editor-active-background) }
+.highlight { background: var(--jp-cell-editor-background); color: var(--jp-mirror-editor-variable-color) }
+.highlight .c { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment */
+.highlight .err { color: var(--jp-mirror-editor-error-color) } /* Error */
+.highlight .k { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword */
+.highlight .o { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator */
+.highlight .p { color: var(--jp-mirror-editor-punctuation-color) } /* Punctuation */
+.highlight .ch { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Preproc */
+.highlight .cpf { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Single */
+.highlight .cs { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Special */
+.highlight .kc { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Pseudo */
+.highlight .kr { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Type */
+.highlight .m { color: var(--jp-mirror-editor-number-color) } /* Literal.Number */
+.highlight .s { color: var(--jp-mirror-editor-string-color) } /* Literal.String */
+.highlight .ow { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator.Word */
+.highlight .w { color: var(--jp-mirror-editor-variable-color) } /* Text.Whitespace */
+.highlight .mb { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Bin */
+.highlight .mf { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Float */
+.highlight .mh { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Hex */
+.highlight .mi { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer */
+.highlight .mo { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Oct */
+.highlight .sa { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Affix */
+.highlight .sb { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Backtick */
+.highlight .sc { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Char */
+.highlight .dl { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Delimiter */
+.highlight .sd { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Doc */
+.highlight .s2 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Double */
+.highlight .se { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Escape */
+.highlight .sh { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Heredoc */
+.highlight .si { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Interpol */
+.highlight .sx { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Other */
+.highlight .sr { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Regex */
+.highlight .s1 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Single */
+.highlight .ss { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Symbol */
+.highlight .il { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer.Long */
   </style>
-
 
 
 <style type="text/css">
@@ -14193,8 +14191,7 @@ body.lm-mod-override-cursor .jp-OutputArea-output.jp-mod-isolated:before {
 |----------------------------------------------------------------------------*/
 
 </style>
-
-    <style type="text/css">
+<style type="text/css">
 /*-----------------------------------------------------------------------------
 | Copyright (c) Jupyter Development Team.
 | Distributed under the terms of the Modified BSD License.
@@ -14584,10 +14581,7 @@ all of MD as it is not optimized for dense, information rich UIs.
   --jp-icon-contrast-color3: var(--md-blue-600);
 }
 </style>
-
-
-
-<style>
+<style type="text/css">
 /* Reset */
 *, *::before, *::after {
     -webkit-box-sizing: border-box;
@@ -14608,60 +14602,54 @@ all of MD as it is not optimized for dense, information rich UIs.
 }
 
 /* Anchor links */
-.jupyter-notebook .anchor-link {
+.anchor-link {
     display: none;
 }
 h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
     display: inline-block;
 }
 
-/* Markdown cells: Remove Input prompt */
+/* Markdown cells: Remove prompt */
 .jp-Cell-inputWrapper .jp-InputPrompt {
     display: none;
 }
 
-/* Code cells: Show Input prompt */
+/* Code cells: Show prompt */
 .jp-CodeCell .jp-Cell-inputWrapper .jp-InputPrompt {
     display: block;
 }
 
-/* Code pre block scroll horizontaly */
+/* Prompt fixes */
 .jp-InputPrompt, .jp-OutputPrompt{
     overflow: visible;
 }
 
-/* Lab uses move cursor for the input prompts */
+/* Lab uses move for the input prompts */
 .jp-Notebook .jp-Cell .jp-InputPrompt {
     cursor: default;
 }
 
-/* Code cell max-width */
+/* Editor max-width */
 .jp-InputArea-editor {
     width: 1px;
 }
 
-/* Code cell Fix pre margin */
-.jp-InputArea-editor .highlight-ipynb pre {
-    margin: 0;
-    padding: 5px 10px;
-}
-
 /* Editor colors */
-/* .jp-Editor .highlight {
+.jp-Editor .highlight {
     margin: 0.4em;
     background: var(--jp-cell-editor-background);
     color: var(--jp-mirror-editor-variable-color);
-} */
+}
 
 /* Editor colors */
-/* .jp-Editor .highlight pre {
+.jp-Editor .highlight pre {
     background: none;
     border: none;
     margin: 0;
     overflow-x: auto;
-} */
+}
 
-/* MKDocs Material theme defaults */
+/* Material mkdocs */
 .jp-RenderedHTMLCommon p {
     font-size: .8rem;
     line-height: 1.6;
@@ -14701,12 +14689,9 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
     border: none;
 }
 
-.jp-RenderedHTMLCommon .admonition p:not(:first-child) {
-    margin: 1em 0;
-}
 
 /* Tags on cells */
-/* Mostly copying this from straight from Jupyter */
+/* Mostly copying this from straight Jupyter */
 .celltoolbar {
     border: none;
     background: #EEE;
@@ -14752,7 +14737,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
     display: inline-block;
 }
 
-/* Fix: Bokeh plots table no hover */
+/* Bokeh plots table no hover */
 .bk-plot-wrapper tbody tr {
     background: none !important;
 }
@@ -14799,7 +14784,9 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
     }
     init_mathjax();
     </script>
-    <!-- End of mathjax configuration --><div class="jupyter-notebook">
+    <!-- End of mathjax configuration -->
+<body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
+
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h1 id="getting-started-with-grooming-segmentations">Getting Started with Grooming Segmentations<a class="anchor-link" href="#Getting-Started-with-Grooming-Segmentations">&#182;</a></h1>
@@ -14868,7 +14855,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># import relevant libraries </span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># import relevant libraries </span>
 <span class="kn">import</span> <span class="nn">sys</span> 
 
 <span class="c1"># add parent-parent directory (where setupenv.py is) to python path</span>
@@ -14906,7 +14893,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s import shapeworks library to test whether shapeworks is now set</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s import shapeworks library to test whether shapeworks is now set</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">shapeworks</span> <span class="k">as</span> <span class="nn">sw</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
@@ -14934,7 +14921,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># a helper function that saves a list of shapeworks images in a directory</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># a helper function that saves a list of shapeworks images in a directory</span>
 <span class="c1"># this could be used to save final and intermediate results (if needed)</span>
 <span class="k">def</span> <span class="nf">save_images</span><span class="p">(</span><span class="n">outDir</span><span class="p">,</span>        <span class="c1"># path to the directory where we want to save the images</span>
                 <span class="n">swImageList</span><span class="p">,</span>   <span class="c1"># list of shapeworks images to be saved</span>
@@ -14977,7 +14964,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># importing relevant libraries</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># importing relevant libraries</span>
 <span class="kn">import</span> <span class="nn">pyvista</span> <span class="k">as</span> <span class="nn">pv</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
@@ -15022,7 +15009,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># importing relevant libraries</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># importing relevant libraries</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
 <span class="c1"># a helper function that converts shapeworks Mesh object to vtk mesh </span>
@@ -15064,7 +15051,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># importing itkwidgets to visualize single segmentations</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># importing itkwidgets to visualize single segmentations</span>
 <span class="kn">import</span> <span class="nn">itkwidgets</span> <span class="k">as</span> <span class="nn">itkw</span>
 
 <span class="c1"># itkwidgets.view returns a Viewer object. And, the IPython Jupyter kernel </span>
@@ -15459,7 +15446,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">glob</span> <span class="c1"># for paths and file-directory search</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">glob</span> <span class="c1"># for paths and file-directory search</span>
 
 <span class="c1"># dataset name is the folder name for your dataset</span>
 <span class="n">datasetName</span>  <span class="o">=</span> <span class="s1">&#39;ellipsoid-v2&#39;</span>
@@ -15514,7 +15501,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># list of shape segmentations</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># list of shape segmentations</span>
 <span class="n">shapeSegList</span> <span class="o">=</span> <span class="p">[]</span>
 
 <span class="c1"># list of shape names (shape files prefixes) to be used </span>
@@ -15560,7 +15547,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># define parameters that controls the plotter</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># define parameters that controls the plotter</span>
 
 <span class="c1"># common for volumes and meshes visualization</span>
 <span class="n">is_interactive</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># to enable interactive plots</span>
@@ -15628,7 +15615,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s see if there&#39;s a function that antialias a shapeworks image</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s see if there&#39;s a function that antialias a shapeworks image</span>
 <span class="c1"># use dot-tap to get a list of functions/apis available for shapeSeg</span>
 
 <span class="n">shapeIdx</span> <span class="o">=</span> <span class="mi">6</span>
@@ -15658,7 +15645,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># parameters for antialiasing</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># parameters for antialiasing</span>
 <span class="n">antialiasIterations</span>  <span class="o">=</span> <span class="mi">50</span> <span class="c1"># number of iterations to perform antialiasing</span>
 
 <span class="c1"># note that shapeworks APIs use inplace computations, so if we do shapeSeg.antialias, </span>
@@ -15717,7 +15704,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># extract the segmentation isosurface</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># extract the segmentation isosurface</span>
 <span class="n">shapeSegIso</span>     <span class="o">=</span> <span class="n">shapeSeg</span><span class="o">.</span><span class="n">toMesh</span><span class="p">(</span><span class="n">isovalue</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span>
 
 <span class="c1"># extract the antialiased isosurface</span>
@@ -15764,7 +15751,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s see if there&#39;s a function that resamples a shapeworks image</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s see if there&#39;s a function that resamples a shapeworks image</span>
 <span class="c1"># use dot-tap to get a list of functions/apis available for shapeSeg</span>
 
 <span class="c1"># found it - resample, let&#39;s see its help</span>
@@ -15797,7 +15784,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># define the voxel spacing for resampling</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># define the voxel spacing for resampling</span>
 
 <span class="c1"># let&#39;s checkout the spacing of the original segmentation</span>
 <span class="n">spacing</span> <span class="o">=</span> <span class="n">shapeSegAntialiased</span><span class="o">.</span><span class="n">spacing</span><span class="p">()</span>
@@ -15819,7 +15806,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s define the isospacing to be the minimum  of the spacing of all dimensions</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s define the isospacing to be the minimum  of the spacing of all dimensions</span>
 <span class="c1"># this will improve the segmentation resolution along </span>
 <span class="c1"># the z-dimension (i.e., reduce slice thickness)</span>
 <span class="c1"># #830 - add toArray to swVectors</span>
@@ -15843,7 +15830,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># to visualize the effect of resampling, let&#39;s keep the antialiased segmentation unchanged</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># to visualize the effect of resampling, let&#39;s keep the antialiased segmentation unchanged</span>
 <span class="n">shapeSegResampled</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">shapeSegAntialiased</span><span class="p">)</span>
 
 <span class="c1"># define the interpolation type</span>
@@ -15895,7 +15882,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># visualizing isosurfaces rather respects the physical coordinates</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># visualizing isosurfaces rather respects the physical coordinates</span>
 
 <span class="c1"># extract the resampled isosurface </span>
 <span class="n">shapeSegResampledIso</span> <span class="o">=</span> <span class="n">shapeSegResampled</span><span class="o">.</span><span class="n">toMesh</span><span class="p">(</span><span class="n">isovalue</span> <span class="o">=</span> <span class="mf">1e-20</span><span class="p">)</span> <span class="c1"># Issue #833</span>
@@ -15940,7 +15927,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s see if there&#39;s a function that resamples a shapeworks image</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s see if there&#39;s a function that resamples a shapeworks image</span>
 <span class="c1"># use dot-tap to get a list of functions/apis available for shapeSeg</span>
 
 <span class="c1"># found it - resample, let&#39;s see its help</span>
@@ -15966,7 +15953,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># parameters for binarization</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># parameters for binarization</span>
 <span class="c1"># all voxels between minVal and maxVal are set to innerVal</span>
 <span class="n">minVal</span>   <span class="o">=</span> <span class="mi">0</span>
 <span class="n">maxVal</span>   <span class="o">=</span> <span class="mi">5</span>
@@ -16014,7 +16001,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">plot_meshes</span><span class="p">([</span><span class="n">shapeSegIso</span><span class="p">,</span> <span class="n">shapeSegResampledBin</span><span class="o">.</span><span class="n">toMesh</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)],</span> 
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">plot_meshes</span><span class="p">([</span><span class="n">shapeSegIso</span><span class="p">,</span> <span class="n">shapeSegResampledBin</span><span class="o">.</span><span class="n">toMesh</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)],</span> 
              <span class="p">[</span><span class="s1">&#39;segmentation (red) and resampled (tan)&#39;</span><span class="p">],</span>
              <span class="n">use_same_window</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
              <span class="n">is_interactive</span>  <span class="o">=</span> <span class="n">is_interactive</span><span class="p">,</span> 
@@ -16054,7 +16041,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s now resample all segmentations, here we will use inplace update for shapeworks image</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s now resample all segmentations, here we will use inplace update for shapeworks image</span>
 <span class="c1"># this step will bring all segmentation to the same voxel spacing</span>
 
 <span class="c1"># parameters for resampling</span>
@@ -16098,7 +16085,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">shapeSeg</span> <span class="o">=</span> <span class="n">shapeSegList</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">shapeSeg</span> <span class="o">=</span> <span class="n">shapeSegList</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
 <span class="n">itkw</span><span class="o">.</span><span class="n">view</span><span class="p">(</span> <span class="n">image</span>          <span class="o">=</span> <span class="n">sw2vtkImage</span><span class="p">(</span><span class="n">shapeSeg</span><span class="p">),</span>  
            <span class="n">slicing_planes</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
            <span class="n">axes</span>           <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -16130,7 +16117,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># plot all segmentations in the shape list as surfaces</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># plot all segmentations in the shape list as surfaces</span>
 <span class="n">shapeSegIsoList</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">shapeSeg</span><span class="p">,</span> <span class="n">shapeName</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">shapeSegList</span><span class="p">,</span> <span class="n">shapeNames</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Isosurfacing segmentation: &#39;</span> <span class="o">+</span> <span class="n">shapeName</span><span class="p">)</span>
@@ -16151,7 +16138,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">plot_meshes</span><span class="p">(</span><span class="n">shapeSegIsoList</span><span class="p">,</span> 
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">plot_meshes</span><span class="p">(</span><span class="n">shapeSegIsoList</span><span class="p">,</span> 
             <span class="n">shapeNames</span><span class="p">,</span>
             <span class="n">use_same_window</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
             <span class="n">is_interactive</span>  <span class="o">=</span> <span class="n">is_interactive</span><span class="p">,</span> 
@@ -16190,7 +16177,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">save_images</span><span class="p">(</span><span class="n">outDir</span> <span class="o">+</span> <span class="s1">&#39;resampled/&#39;</span><span class="p">,</span>     
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">save_images</span><span class="p">(</span><span class="n">outDir</span> <span class="o">+</span> <span class="s1">&#39;resampled/&#39;</span><span class="p">,</span>     
             <span class="n">shapeSegList</span><span class="p">,</span>  
             <span class="n">shapeNames</span><span class="p">,</span>  
             <span class="n">extension</span>        <span class="o">=</span> <span class="s1">&#39;nrrd&#39;</span><span class="p">,</span>
@@ -16236,7 +16223,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">shapeIdx</span> <span class="o">=</span> <span class="mi">3</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">shapeIdx</span> <span class="o">=</span> <span class="mi">3</span>
 <span class="n">shapeSeg</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">shapeSegList</span><span class="p">[</span><span class="n">shapeIdx</span><span class="p">])</span>
 
 <span class="c1"># computing the translation vector for this registration step, we need to</span>
@@ -16271,7 +16258,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># compute the center of mass of this segmentation</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># compute the center of mass of this segmentation</span>
 <span class="n">shapeCenter</span> <span class="o">=</span> <span class="n">shapeSeg</span><span class="o">.</span><span class="n">centerOfMass</span><span class="p">()</span> <span class="c1"># retruns shapeworks point</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;shapeCenter: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">shapeCenter</span><span class="p">))</span>
 
@@ -16302,7 +16289,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39; visualize those centers in relation to the image domain and shape/segmentation</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39; visualize those centers in relation to the image domain and shape/segmentation</span>
 <span class="c1"># to better understand this relation, we need to visualize meshes and volumes in one view</span>
 <span class="n">shapeCenter_vtk</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Sphere</span><span class="p">(</span><span class="n">radius</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> 
                             <span class="n">center</span> <span class="o">=</span> <span class="p">(</span><span class="n">shapeCenter</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shapeCenter</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">shapeCenter</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
@@ -16351,7 +16338,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># now define the translation to move the shape center to the image center</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># now define the translation to move the shape center to the image center</span>
 <span class="n">translationVector</span> <span class="o">=</span>  <span class="n">imageCenter</span> <span class="o">-</span> <span class="n">shapeCenter</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;translationVector: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">translationVector</span><span class="p">))</span>
 </pre></div>
@@ -16377,7 +16364,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s first inspect the api for image translation</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s first inspect the api for image translation</span>
 <span class="n">help</span><span class="p">(</span><span class="n">shapeSeg</span><span class="o">.</span><span class="n">translate</span><span class="p">)</span>
 </pre></div>
 
@@ -16395,7 +16382,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s keep shapeSeg unchanged</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s keep shapeSeg unchanged</span>
 <span class="n">shapeSegCentered</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">shapeSeg</span><span class="p">)</span>
 
 <span class="n">translationVector</span>
@@ -16425,7 +16412,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s visualize the segmentation before and after center of mass alignment</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s visualize the segmentation before and after center of mass alignment</span>
 <span class="c1"># notice how the shape is moved (i.e., translated) to the center of the image</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;shape segmentation before center of mass alignment&#39;</span><span class="p">)</span>
@@ -16471,7 +16458,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s apply center of mass alignment to all shapes</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s apply center of mass alignment to all shapes</span>
 
 <span class="k">for</span> <span class="n">shapeSeg</span><span class="p">,</span> <span class="n">shapeName</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">shapeSegList</span><span class="p">,</span> <span class="n">shapeNames</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Center of mass alignment: &#39;</span> <span class="o">+</span> <span class="n">shapeName</span><span class="p">)</span>    
@@ -16511,7 +16498,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># .. and visualize center of mass aligned dataset</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># .. and visualize center of mass aligned dataset</span>
 <span class="n">plot_volumes</span><span class="p">(</span><span class="n">shapeSegList</span><span class="p">,</span>    
              <span class="n">volumeNames</span>     <span class="o">=</span> <span class="n">shapeNames</span><span class="p">,</span> 
              <span class="n">is_interactive</span> <span class="o">=</span> <span class="n">is_interactive</span><span class="p">,</span> 
@@ -16548,7 +16535,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">save_images</span><span class="p">(</span><span class="n">outDir</span> <span class="o">+</span> <span class="s1">&#39;com/&#39;</span><span class="p">,</span>     
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">save_images</span><span class="p">(</span><span class="n">outDir</span> <span class="o">+</span> <span class="s1">&#39;com/&#39;</span><span class="p">,</span>     
             <span class="n">shapeSegList</span><span class="p">,</span>  
             <span class="n">shapeNames</span><span class="p">,</span>  
             <span class="n">extension</span>        <span class="o">=</span> <span class="s1">&#39;nrrd&#39;</span><span class="p">,</span>
@@ -16588,7 +16575,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># compute maximum image size in each dimension</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># compute maximum image size in each dimension</span>
 <span class="n">x_dims</span><span class="p">,</span> <span class="n">y_dims</span><span class="p">,</span> <span class="n">z_dims</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">shapeSeg</span> <span class="ow">in</span> <span class="n">shapeSegList</span><span class="p">:</span>
     <span class="n">dims</span> <span class="o">=</span> <span class="n">shapeSeg</span><span class="o">.</span><span class="n">dims</span><span class="p">()</span>
@@ -16631,7 +16618,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># now let&#39;s compute the mean shape</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># now let&#39;s compute the mean shape</span>
 <span class="n">meanShape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">x_max_dim</span><span class="p">,</span> <span class="n">y_max_dim</span><span class="p">,</span> <span class="n">z_max_dim</span><span class="p">))</span>
 <span class="n">padValue</span>  <span class="o">=</span> <span class="mi">0</span>
 
@@ -16683,7 +16670,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># ... and visualize the mean shape</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># ... and visualize the mean shape</span>
 <span class="n">meanShape_vtk</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">meanShape</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;mean shape&#39;</span><span class="p">)</span>
@@ -16720,7 +16707,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_samples</span><span class="p">,))</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_samples</span><span class="p">,))</span>
 <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">segPadded</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">paddedList</span><span class="p">):</span>
     <span class="n">distances</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">meanShape</span> <span class="o">-</span> <span class="n">segPadded</span><span class="p">)</span>
 </pre></div>
@@ -16744,7 +16731,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_samples</span><span class="p">),</span> <span class="n">distances</span><span class="p">)</span>
@@ -16790,7 +16777,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># this API takes in </span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># this API takes in </span>
 <span class="c1">#      (1) source image  </span>
 <span class="c1">#      (2) target/reference image </span>
 <span class="c1">#      (3) isovalue that defines the shape&#39;s surface in the given images</span>
@@ -16812,7 +16799,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># first step is to compute rigid transformation parameters</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># first step is to compute rigid transformation parameters</span>
 
 <span class="n">shapeIdx</span> <span class="o">=</span> <span class="mi">5</span> <span class="c1">#0 #referenceIdx #13</span>
 <span class="n">shapeSeg</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">shapeSegList</span><span class="p">[</span><span class="n">shapeIdx</span><span class="p">])</span>     <span class="c1"># need copy to avoid inplace antialiasing</span>
@@ -16840,7 +16827,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># here we will antialias segmentations to convert to continuous-valued images</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># here we will antialias segmentations to convert to continuous-valued images</span>
 <span class="n">isoValue</span>       <span class="o">=</span> <span class="mf">1e-20</span>
 <span class="n">icp_iterations</span> <span class="o">=</span> <span class="mi">200</span>
 
@@ -16868,7 +16855,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># second we apply the computed transformation</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># second we apply the computed transformation</span>
 <span class="c1"># to avoid segmentations going out of image bounds when applying the transformation</span>
 <span class="c1"># we need the aligned shape to have the same image information </span>
 <span class="c1"># of the reference shape for subsequent steps</span>
@@ -16905,7 +16892,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">plot_meshes</span><span class="p">([</span><span class="n">shapeSeg</span><span class="o">.</span><span class="n">toMesh</span><span class="p">(</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">shapeSegAligned</span><span class="o">.</span><span class="n">toMesh</span><span class="p">(</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">refSeg</span><span class="o">.</span><span class="n">toMesh</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)],</span> 
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">plot_meshes</span><span class="p">([</span><span class="n">shapeSeg</span><span class="o">.</span><span class="n">toMesh</span><span class="p">(</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">shapeSegAligned</span><span class="o">.</span><span class="n">toMesh</span><span class="p">(</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">refSeg</span><span class="o">.</span><span class="n">toMesh</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)],</span> 
              <span class="p">[</span><span class="s1">&#39;seg (tan), aligned (red), reference (green)&#39;</span><span class="p">],</span>
              <span class="n">use_same_window</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
              <span class="n">is_interactive</span>  <span class="o">=</span> <span class="n">is_interactive</span><span class="p">,</span> 
@@ -16945,7 +16932,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># get a copy for the reference segmentation to avoid inplace antialiasing </span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># get a copy for the reference segmentation to avoid inplace antialiasing </span>
 <span class="n">refSeg</span>   <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">shapeSegList</span><span class="p">[</span><span class="n">referenceIdx</span><span class="p">])</span>
 
 <span class="c1"># antialias reference segmentation onnce</span>
@@ -16995,7 +16982,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># .. and visualize  aligned dataset</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># .. and visualize  aligned dataset</span>
 <span class="n">plot_volumes</span><span class="p">(</span><span class="n">shapeSegList</span><span class="p">,</span>    
              <span class="n">volumeNames</span>     <span class="o">=</span> <span class="n">shapeNames</span><span class="p">,</span> 
              <span class="n">is_interactive</span> <span class="o">=</span> <span class="n">is_interactive</span><span class="p">,</span> 
@@ -17032,7 +17019,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s compute the mean shape - note that all images have the same reference</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s compute the mean shape - note that all images have the same reference</span>
 <span class="c1"># dimensions so no need to worry about different size images and no need for padding</span>
 
 <span class="n">dims</span>      <span class="o">=</span> <span class="n">refSeg</span><span class="o">.</span><span class="n">dims</span><span class="p">()</span>
@@ -17058,7 +17045,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s visualize the mean shape (segmentation) before and after alignment</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s visualize the mean shape (segmentation) before and after alignment</span>
 <span class="c1"># notice how the mean shape after alignment reflects a better ellipsoidal shape</span>
 <span class="n">meanShapeAfterAlignment_vtk</span> <span class="o">=</span> <span class="n">sw2vtkImage</span><span class="p">(</span><span class="n">meanShapeAfterAlignment</span><span class="p">)</span>
 
@@ -17109,7 +17096,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">save_images</span><span class="p">(</span><span class="n">outDir</span> <span class="o">+</span> <span class="s1">&#39;aligned/&#39;</span><span class="p">,</span>     
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">save_images</span><span class="p">(</span><span class="n">outDir</span> <span class="o">+</span> <span class="s1">&#39;aligned/&#39;</span><span class="p">,</span>     
             <span class="n">shapeSegList</span><span class="p">,</span>  
             <span class="n">shapeNames</span><span class="p">,</span>  
             <span class="n">extension</span>        <span class="o">=</span> <span class="s1">&#39;nrrd&#39;</span><span class="p">,</span>
@@ -17143,7 +17130,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">itkw</span><span class="o">.</span><span class="n">view</span><span class="p">(</span> <span class="n">image</span>          <span class="o">=</span> <span class="n">meanShapeAfterAlignment_vtk</span><span class="p">,</span> <span class="c1"># for orthoginal image plane</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">itkw</span><span class="o">.</span><span class="n">view</span><span class="p">(</span> <span class="n">image</span>          <span class="o">=</span> <span class="n">meanShapeAfterAlignment_vtk</span><span class="p">,</span> <span class="c1"># for orthoginal image plane</span>
            <span class="c1">#label_image    = meanShapeAfterAlignment_vtk,  # for volume rendering segmentation</span>
            <span class="n">slicing_planes</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
            <span class="n">axes</span>           <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -17172,7 +17159,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># finding the bounding box takes in a list of images and the isovalue that </span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># finding the bounding box takes in a list of images and the isovalue that </span>
 <span class="c1"># defines the level set of shapes implicitly defined in these images </span>
 <span class="n">help</span><span class="p">(</span><span class="n">sw</span><span class="o">.</span><span class="n">ImageUtils</span><span class="o">.</span><span class="n">boundingBox</span><span class="p">)</span>
 </pre></div>
@@ -17191,7 +17178,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># note that the aligned segmentations are still binary images, so an good isovalue </span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># note that the aligned segmentations are still binary images, so an good isovalue </span>
 <span class="c1"># that reflect the foreground-background interface would be 0.5</span>
 <span class="n">isoValue</span> <span class="o">=</span> <span class="mf">0.5</span>
 <span class="n">segsBoundingBox</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">ImageUtils</span><span class="o">.</span><span class="n">boundingBox</span><span class="p">(</span><span class="n">shapeSegList</span><span class="p">,</span> <span class="n">isoValue</span><span class="p">)</span>
@@ -17226,7 +17213,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s try this out first on a single segmentation</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s try this out first on a single segmentation</span>
 <span class="n">shapeIdx</span> <span class="o">=</span> <span class="mi">0</span>
 
 <span class="c1"># keep a copy to avoid inplace update for now</span>
@@ -17250,7 +17237,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># to see the impact of cropping, let&#39;s keep a copy</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># to see the impact of cropping, let&#39;s keep a copy</span>
 <span class="n">shapeSegCropped</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">shapeSeg</span><span class="p">)</span>
 
 <span class="n">shapeSegCropped</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="n">segsBoundingBox</span><span class="p">)</span>
@@ -17276,7 +17263,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s visualize them</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s visualize them</span>
 <span class="n">plot_volumes</span><span class="p">([</span><span class="n">shapeSeg</span><span class="p">,</span> <span class="n">shapeSegCropped</span><span class="p">],</span> 
              <span class="p">[</span><span class="s1">&#39;before cropping&#39;</span><span class="p">,</span><span class="s1">&#39;after cropping&#39;</span><span class="p">],</span>
              <span class="n">is_interactive</span> <span class="o">=</span> <span class="n">is_interactive</span><span class="p">,</span> 
@@ -17314,7 +17301,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># compute the volume (number of voxels = 1) of each segmentation</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># compute the volume (number of voxels = 1) of each segmentation</span>
 <span class="n">volumes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_samples</span><span class="p">,))</span>
 <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">shapeSeg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">shapeSegList</span><span class="p">):</span>
     <span class="n">volumes</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">shapeSeg</span><span class="o">.</span><span class="n">toArray</span><span class="p">())</span>
@@ -17347,7 +17334,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s inspect the cropping of the segmentation with the largest volume</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s inspect the cropping of the segmentation with the largest volume</span>
 <span class="c1"># keep a copy to avoid inplace update for now</span>
 <span class="n">shapeSeg</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">shapeSegList</span><span class="p">[</span><span class="n">largestIdx</span><span class="p">])</span> 
 
@@ -17424,7 +17411,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s see if there&#39;s a function that pads a shapeworks image</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s see if there&#39;s a function that pads a shapeworks image</span>
 <span class="c1"># use dot-tap to get a list of functions/apis available for shapeSeg</span>
 
 <span class="c1"># found it - pad, let&#39;s see its help</span>
@@ -17450,7 +17437,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># parameters for padding </span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># parameters for padding </span>
 <span class="c1"># The padding size and padding value are the two parameters for this step.</span>
 <span class="n">paddingSize</span>  <span class="o">=</span> <span class="mi">10</span> <span class="c1"># number of voxels to pad for each dimension</span>
 <span class="n">paddingValue</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># the constant value used to pad the segmentations</span>
@@ -17503,7 +17490,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s now crop-pad all segmentations, here we will use inplace update for shapeworks image</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s now crop-pad all segmentations, here we will use inplace update for shapeworks image</span>
 
 <span class="c1"># parameters for padding </span>
 <span class="n">paddingSize</span>  <span class="o">=</span> <span class="mi">10</span> <span class="c1"># number of voxels to pad for each dimension</span>
@@ -17535,7 +17522,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># .. and visualize  cropped dataset</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># .. and visualize  cropped dataset</span>
 <span class="n">plot_volumes</span><span class="p">(</span><span class="n">shapeSegList</span><span class="p">,</span>    
              <span class="n">volumeNames</span>     <span class="o">=</span> <span class="n">shapeNames</span><span class="p">,</span> 
              <span class="n">is_interactive</span> <span class="o">=</span> <span class="n">is_interactive</span><span class="p">,</span> 
@@ -17572,7 +17559,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">save_images</span><span class="p">(</span><span class="n">outDir</span> <span class="o">+</span> <span class="s1">&#39;cropped/&#39;</span><span class="p">,</span>     
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">save_images</span><span class="p">(</span><span class="n">outDir</span> <span class="o">+</span> <span class="s1">&#39;cropped/&#39;</span><span class="p">,</span>     
             <span class="n">shapeSegList</span><span class="p">,</span>  
             <span class="n">shapeNames</span><span class="p">,</span>  
             <span class="n">extension</span>        <span class="o">=</span> <span class="s1">&#39;nrrd&#39;</span><span class="p">,</span>
@@ -17619,7 +17606,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">shapeIdx</span> <span class="o">=</span> <span class="mi">0</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">shapeIdx</span> <span class="o">=</span> <span class="mi">0</span>
 
 <span class="c1"># let&#39;s keep a copy to avoid inplace update</span>
 <span class="n">shapeSeg</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">shapeSegList</span><span class="p">[</span><span class="n">shapeIdx</span><span class="p">])</span>
@@ -17648,7 +17635,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">isoValue</span> <span class="o">=</span> <span class="mi">0</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">isoValue</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="n">shapeDT</span>  <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">shapeSeg</span><span class="p">)</span>
 <span class="n">shapeDT</span><span class="o">.</span><span class="n">antialias</span><span class="p">(</span><span class="n">antialias_iterations</span><span class="p">)</span><span class="o">.</span><span class="n">computeDT</span><span class="p">(</span><span class="n">isoValue</span><span class="p">)</span>
 </pre></div>
@@ -17667,7 +17654,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s visualize them</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s visualize them</span>
 <span class="n">plot_volumes</span><span class="p">([</span><span class="n">shapeSeg</span><span class="p">,</span> <span class="n">shapeDT</span><span class="p">],</span> 
              <span class="p">[</span><span class="s1">&#39;segmentation&#39;</span><span class="p">,</span><span class="s1">&#39;signed distance transform&#39;</span><span class="p">],</span>
              <span class="n">is_interactive</span> <span class="o">=</span> <span class="n">is_interactive</span><span class="p">,</span> 
@@ -17699,7 +17686,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s compare isosurfaces</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s compare isosurfaces</span>
 <span class="n">plot_meshes</span><span class="p">([</span><span class="n">shapeSeg</span><span class="o">.</span><span class="n">toMesh</span><span class="p">(</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">shapeDT</span><span class="o">.</span><span class="n">toMesh</span><span class="p">(</span><span class="mi">0</span><span class="p">)],</span> 
              <span class="p">[</span><span class="s1">&#39;seg (tan), dt (red)&#39;</span><span class="p">],</span>
              <span class="n">use_same_window</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -17735,7 +17722,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s have a closer look, is it smooth?</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s have a closer look, is it smooth?</span>
 <span class="n">plot_meshes</span><span class="p">([</span><span class="n">shapeDT</span><span class="o">.</span><span class="n">toMesh</span><span class="p">(</span><span class="mi">0</span><span class="p">)],</span> 
              <span class="p">[</span><span class="s1">&#39;isosurface of dt&#39;</span><span class="p">],</span>
              <span class="n">use_same_window</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -17779,7 +17766,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s try gaussian blur first</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s try gaussian blur first</span>
 <span class="n">shapeDTgauss</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">shapeDT</span><span class="p">)</span>
 <span class="n">help</span><span class="p">(</span><span class="n">shapeDTgauss</span><span class="o">.</span><span class="n">gaussianBlur</span><span class="p">)</span>
 </pre></div>
@@ -17798,7 +17785,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># gaussian blur needs the convolution fiter size (i.e., sigma)</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># gaussian blur needs the convolution fiter size (i.e., sigma)</span>
 <span class="n">blur_sigma</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1"># physcial coordinates </span>
 <span class="n">shapeDTgauss</span><span class="o">.</span><span class="n">gaussianBlur</span><span class="p">(</span><span class="n">blur_sigma</span><span class="p">)</span>
 </pre></div>
@@ -17817,7 +17804,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s have a look</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s have a look</span>
 <span class="n">plot_meshes</span><span class="p">([</span><span class="n">shapeDT</span><span class="o">.</span><span class="n">toMesh</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">shapeDTgauss</span><span class="o">.</span><span class="n">toMesh</span><span class="p">(</span><span class="mi">0</span><span class="p">)],</span> 
              <span class="p">[</span><span class="s1">&#39;distance tranform&#39;</span><span class="p">,</span> <span class="s1">&#39;gaussian blur&#39;</span><span class="p">],</span>
              <span class="n">use_same_window</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -17853,7 +17840,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># this seems to be a nicely smooth shape, let&#39;s compare isosurfaces</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># this seems to be a nicely smooth shape, let&#39;s compare isosurfaces</span>
 <span class="n">plot_meshes</span><span class="p">([</span><span class="n">shapeDT</span><span class="o">.</span><span class="n">toMesh</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">shapeDTgauss</span><span class="o">.</span><span class="n">toMesh</span><span class="p">(</span><span class="mi">0</span><span class="p">)],</span> 
              <span class="p">[</span><span class="s1">&#39;dt (tan), gaussian-blur (red)&#39;</span><span class="p">],</span>
              <span class="n">use_same_window</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -17889,7 +17876,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># this smoothing seems to impact more the major radius of the ellispoid</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># this smoothing seems to impact more the major radius of the ellispoid</span>
 <span class="c1"># a shape feature that we would like to model</span>
 <span class="c1"># let&#39;s try to reduce the gaussian&#39;s sigma</span>
 
@@ -17932,7 +17919,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># not that bad</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># not that bad</span>
 <span class="c1"># let&#39;s have a look on how smooth it is</span>
 <span class="n">plot_meshes</span><span class="p">([</span><span class="n">shapeDT</span><span class="o">.</span><span class="n">toMesh</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">shapeDTgauss</span><span class="o">.</span><span class="n">toMesh</span><span class="p">(</span><span class="mi">0</span><span class="p">)],</span> 
              <span class="p">[</span><span class="s1">&#39;distance tranform&#39;</span><span class="p">,</span> <span class="s1">&#39;gaussian blur&#39;</span><span class="p">],</span>
@@ -17974,7 +17961,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">isoValue</span> <span class="o">=</span> <span class="mi">0</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">isoValue</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="n">sigma</span>    <span class="o">=</span> <span class="mf">1.3</span>
 <span class="k">for</span> <span class="n">shapeSeg</span><span class="p">,</span> <span class="n">shapeName</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">shapeSegList</span><span class="p">,</span> <span class="n">shapeNames</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Compute DT for segmentation: &#39;</span> <span class="o">+</span> <span class="n">shapeName</span><span class="p">)</span>    
@@ -18002,7 +17989,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">save_images</span><span class="p">(</span><span class="n">outDir</span> <span class="o">+</span> <span class="s1">&#39;dts/&#39;</span><span class="p">,</span>     
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">save_images</span><span class="p">(</span><span class="n">outDir</span> <span class="o">+</span> <span class="s1">&#39;dts/&#39;</span><span class="p">,</span>     
             <span class="n">shapeSegList</span><span class="p">,</span>  
             <span class="n">shapeNames</span><span class="p">,</span>  
             <span class="n">extension</span>        <span class="o">=</span> <span class="s1">&#39;nrrd&#39;</span><span class="p">,</span>
@@ -18029,7 +18016,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># here is the list of groomed segmentations</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># here is the list of groomed segmentations</span>
 <span class="err">!</span><span class="n">echo</span> <span class="p">{</span><span class="n">outDir</span><span class="p">}</span><span class="n">dts</span><span class="o">/*.</span><span class="n">nrrd</span>
 </pre></div>
 
@@ -18047,7 +18034,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s launch studio to optimize our shape model </span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s launch studio to optimize our shape model </span>
 <span class="c1"># see the video in the next cell to an illustration</span>
 
 <span class="err">!</span><span class="n">ShapeWorksStudio</span> <span class="p">{</span><span class="n">outDir</span><span class="p">}</span><span class="n">dts</span><span class="o">/*.</span><span class="n">nrrd</span>
@@ -18070,7 +18057,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
 <h2 id="congrats-you-have-been-able-to-groom-your-dataset-">Congrats! You have been able to groom your dataset ...<a class="anchor-link" href="#Congrats!-You-have-been-able-to-groom-your-dataset-...">&#182;</a></h2>
 </div>
 </div>
-</div>
+</body>
 
 
 </div>

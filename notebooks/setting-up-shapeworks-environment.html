@@ -277,56 +277,54 @@
                 
 <div class="notebook-content">
 <style type="text/css">
-    
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
 span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
 td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
 span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-.highlight-ipynb .hll { background-color: var(--jp-cell-editor-active-background) }
-.highlight-ipynb { background: var(--jp-cell-editor-background); color: var(--jp-mirror-editor-variable-color) }
-.highlight-ipynb .c { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment */
-.highlight-ipynb .err { color: var(--jp-mirror-editor-error-color) } /* Error */
-.highlight-ipynb .k { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword */
-.highlight-ipynb .o { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator */
-.highlight-ipynb .p { color: var(--jp-mirror-editor-punctuation-color) } /* Punctuation */
-.highlight-ipynb .ch { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Hashbang */
-.highlight-ipynb .cm { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Multiline */
-.highlight-ipynb .cp { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Preproc */
-.highlight-ipynb .cpf { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.PreprocFile */
-.highlight-ipynb .c1 { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Single */
-.highlight-ipynb .cs { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Special */
-.highlight-ipynb .kc { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Constant */
-.highlight-ipynb .kd { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Declaration */
-.highlight-ipynb .kn { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Namespace */
-.highlight-ipynb .kp { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Pseudo */
-.highlight-ipynb .kr { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Reserved */
-.highlight-ipynb .kt { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Type */
-.highlight-ipynb .m { color: var(--jp-mirror-editor-number-color) } /* Literal.Number */
-.highlight-ipynb .s { color: var(--jp-mirror-editor-string-color) } /* Literal.String */
-.highlight-ipynb .ow { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator.Word */
-.highlight-ipynb .w { color: var(--jp-mirror-editor-variable-color) } /* Text.Whitespace */
-.highlight-ipynb .mb { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Bin */
-.highlight-ipynb .mf { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Float */
-.highlight-ipynb .mh { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Hex */
-.highlight-ipynb .mi { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer */
-.highlight-ipynb .mo { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Oct */
-.highlight-ipynb .sa { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Affix */
-.highlight-ipynb .sb { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Backtick */
-.highlight-ipynb .sc { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Char */
-.highlight-ipynb .dl { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Delimiter */
-.highlight-ipynb .sd { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Doc */
-.highlight-ipynb .s2 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Double */
-.highlight-ipynb .se { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Escape */
-.highlight-ipynb .sh { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Heredoc */
-.highlight-ipynb .si { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Interpol */
-.highlight-ipynb .sx { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Other */
-.highlight-ipynb .sr { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Regex */
-.highlight-ipynb .s1 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Single */
-.highlight-ipynb .ss { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Symbol */
-.highlight-ipynb .il { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer.Long */
+.highlight .hll { background-color: var(--jp-cell-editor-active-background) }
+.highlight { background: var(--jp-cell-editor-background); color: var(--jp-mirror-editor-variable-color) }
+.highlight .c { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment */
+.highlight .err { color: var(--jp-mirror-editor-error-color) } /* Error */
+.highlight .k { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword */
+.highlight .o { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator */
+.highlight .p { color: var(--jp-mirror-editor-punctuation-color) } /* Punctuation */
+.highlight .ch { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Preproc */
+.highlight .cpf { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Single */
+.highlight .cs { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Special */
+.highlight .kc { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Pseudo */
+.highlight .kr { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Type */
+.highlight .m { color: var(--jp-mirror-editor-number-color) } /* Literal.Number */
+.highlight .s { color: var(--jp-mirror-editor-string-color) } /* Literal.String */
+.highlight .ow { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator.Word */
+.highlight .w { color: var(--jp-mirror-editor-variable-color) } /* Text.Whitespace */
+.highlight .mb { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Bin */
+.highlight .mf { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Float */
+.highlight .mh { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Hex */
+.highlight .mi { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer */
+.highlight .mo { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Oct */
+.highlight .sa { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Affix */
+.highlight .sb { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Backtick */
+.highlight .sc { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Char */
+.highlight .dl { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Delimiter */
+.highlight .sd { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Doc */
+.highlight .s2 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Double */
+.highlight .se { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Escape */
+.highlight .sh { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Heredoc */
+.highlight .si { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Interpol */
+.highlight .sx { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Other */
+.highlight .sr { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Regex */
+.highlight .s1 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Single */
+.highlight .ss { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Symbol */
+.highlight .il { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer.Long */
   </style>
-
 
 
 <style type="text/css">
@@ -14067,8 +14065,7 @@ body.lm-mod-override-cursor .jp-OutputArea-output.jp-mod-isolated:before {
 |----------------------------------------------------------------------------*/
 
 </style>
-
-    <style type="text/css">
+<style type="text/css">
 /*-----------------------------------------------------------------------------
 | Copyright (c) Jupyter Development Team.
 | Distributed under the terms of the Modified BSD License.
@@ -14458,10 +14455,7 @@ all of MD as it is not optimized for dense, information rich UIs.
   --jp-icon-contrast-color3: var(--md-blue-600);
 }
 </style>
-
-
-
-<style>
+<style type="text/css">
 /* Reset */
 *, *::before, *::after {
     -webkit-box-sizing: border-box;
@@ -14482,60 +14476,54 @@ all of MD as it is not optimized for dense, information rich UIs.
 }
 
 /* Anchor links */
-.jupyter-notebook .anchor-link {
+.anchor-link {
     display: none;
 }
 h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
     display: inline-block;
 }
 
-/* Markdown cells: Remove Input prompt */
+/* Markdown cells: Remove prompt */
 .jp-Cell-inputWrapper .jp-InputPrompt {
     display: none;
 }
 
-/* Code cells: Show Input prompt */
+/* Code cells: Show prompt */
 .jp-CodeCell .jp-Cell-inputWrapper .jp-InputPrompt {
     display: block;
 }
 
-/* Code pre block scroll horizontaly */
+/* Prompt fixes */
 .jp-InputPrompt, .jp-OutputPrompt{
     overflow: visible;
 }
 
-/* Lab uses move cursor for the input prompts */
+/* Lab uses move for the input prompts */
 .jp-Notebook .jp-Cell .jp-InputPrompt {
     cursor: default;
 }
 
-/* Code cell max-width */
+/* Editor max-width */
 .jp-InputArea-editor {
     width: 1px;
 }
 
-/* Code cell Fix pre margin */
-.jp-InputArea-editor .highlight-ipynb pre {
-    margin: 0;
-    padding: 5px 10px;
-}
-
 /* Editor colors */
-/* .jp-Editor .highlight {
+.jp-Editor .highlight {
     margin: 0.4em;
     background: var(--jp-cell-editor-background);
     color: var(--jp-mirror-editor-variable-color);
-} */
+}
 
 /* Editor colors */
-/* .jp-Editor .highlight pre {
+.jp-Editor .highlight pre {
     background: none;
     border: none;
     margin: 0;
     overflow-x: auto;
-} */
+}
 
-/* MKDocs Material theme defaults */
+/* Material mkdocs */
 .jp-RenderedHTMLCommon p {
     font-size: .8rem;
     line-height: 1.6;
@@ -14575,12 +14563,9 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
     border: none;
 }
 
-.jp-RenderedHTMLCommon .admonition p:not(:first-child) {
-    margin: 1em 0;
-}
 
 /* Tags on cells */
-/* Mostly copying this from straight from Jupyter */
+/* Mostly copying this from straight Jupyter */
 .celltoolbar {
     border: none;
     background: #EEE;
@@ -14626,7 +14611,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
     display: inline-block;
 }
 
-/* Fix: Bokeh plots table no hover */
+/* Bokeh plots table no hover */
 .bk-plot-wrapper tbody tr {
     background: none !important;
 }
@@ -14673,7 +14658,9 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
     }
     init_mathjax();
     </script>
-    <!-- End of mathjax configuration --><div class="jupyter-notebook">
+    <!-- End of mathjax configuration -->
+<body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
+
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h1 id="setting-up-shapeworks-environment">Setting Up ShapeWorks Environment<a class="anchor-link" href="#Setting-Up-ShapeWorks-Environment">&#182;</a></h1>
@@ -14738,7 +14725,7 @@ export PATH=/path/to/build/bin:$PATH</code></pre>
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># import relevant libraries </span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># import relevant libraries </span>
 <span class="c1"># and indicate the bin directories for shapeworks and its dependencies</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
@@ -14775,7 +14762,7 @@ export PATH=/path/to/build/bin:$PATH</code></pre>
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># helper function to print out python path</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># helper function to print out python path</span>
 <span class="k">def</span> <span class="nf">print_python_path</span><span class="p">():</span>
     <span class="n">syspath</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Python path:&quot;</span><span class="p">)</span>
@@ -14832,7 +14819,7 @@ export PATH=/path/to/build/bin:$PATH</code></pre>
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># set up shapeworks environment</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># set up shapeworks environment</span>
 <span class="n">setup_shapeworks_env</span><span class="p">(</span><span class="n">shapeworks_bin_dir</span><span class="p">,</span>  
                      <span class="n">dependencies_bin_dir</span><span class="p">,</span> 
                      <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
@@ -14857,7 +14844,7 @@ export PATH=/path/to/build/bin:$PATH</code></pre>
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s import shapeworks library to test whether shapeworks is now set</span>
+    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s import shapeworks library to test whether shapeworks is now set</span>
 <span class="c1"># if the error is not printed, we are done with the setup</span>
 
 <span class="k">try</span><span class="p">:</span>
@@ -14875,7 +14862,7 @@ export PATH=/path/to/build/bin:$PATH</code></pre>
 </div>
 
 </div>
-</div>
+</body>
 
 
 </div>

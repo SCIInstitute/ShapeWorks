@@ -18,11 +18,5 @@ Surface meshes are capable of representing complex surfaces with thin structures
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/hemisphere_live.mp4" autoplay muted loop controls style="width:100%"></p>
 
 
-As of ShapeWorks 6, we enabled using surface normals as correspondence features.
+
  
-
-*Surface normals enable better modeling of thin structures*
-![Surface normals](../img/new/surface-normals-meshes.gif)
-
-*Better surface sampling and correspondences with surface normals*
-![Samples](../img/new/surface-normals-mesh-samples.gif)

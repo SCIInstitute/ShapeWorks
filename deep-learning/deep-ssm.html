@@ -174,8 +174,6 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#analyze-results">Analyze Results</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#visualizing-error">Visualizing Error</a>
-    </li>
         </ul>
     </li>
     </ul>
@@ -359,7 +357,7 @@
 <li><code>down_sample</code>: If true, the images will be downsampled. If false, the full image will be used. This should match what is done for the training and validation loaders. The default is false.</li>
 </ul>
 <h3 id="train-deepssm">Train DeepSSM</h3>
-<p>This function defines a DeepSSM model and trains it on the data provided. After training the "final" and "best" model are saved. The final model is saved after all training epochs have run. The best model is saved after the epoch which had the lowest prediction error on the validation set. The best model makes use of early stopping to prevent overfitting.</p>
+<p>This function defines a DeepSSM model and trains it on the data provided.</p>
 <div class="highlight"><pre><span></span><code><span class="n">DeepSSMUtils</span><span class="o">.</span><span class="n">trainDeepSSM</span><span class="p">(</span><span class="n">loader_dir</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">)</span>
 </code></pre></div>
 <p><strong>Input arguments:</strong></p>
@@ -396,11 +394,6 @@
 <li><code>prediction_dir</code>: Path to the directory containing predicted particle files from testing DeepSSM.</li>
 <li><code>mean_prefix</code>: Path to the mean particle and mesh files for the dataset.</li>
 </ul>
-<h3 id="visualizing-error">Visualizing Error</h3>
-<p>The error meshes that are output from the analiyze step can be visualized in Studio. These meshes have a distance scalar field on them which captures the distance between the true and predicted mesh. To view in Studio, run the following from the command line:</p>
-<div class="highlight"><pre><span></span><code>ShapeWorksStudio path/to/error/mesh.vtk
-</code></pre></div>
-<p><img alt="DeepSSM Error" src="../img/deep-learning/error_viz.png" /></p>
               
             </div>
           </div>
