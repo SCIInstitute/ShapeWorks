@@ -271,7 +271,7 @@ PYBIND11_MODULE(shapeworks, m)
          return self.setSpacing(makeVector({v[0], v[1], v[2]}));
        },
        "set image spacing, the size of each pixel",
-       "spacing"_a=makeVector({1.0, 1.0, 1.0}))
+       "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}))
   .def("setOrigin", 
        [](Image& image, std::vector<double>& p) {
          return image.setOrigin(Point({p[0], p[1], p[2]}));

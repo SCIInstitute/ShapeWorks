@@ -13,9 +13,14 @@ TEST(pythonTests, gradientInterpolatorTest)
   ASSERT_FALSE(system("python gradientinterp.py"));
 }
   
-TEST(pythonTests, infoTest)
+TEST(pythonTests, imageInfoTest)
 {
-  ASSERT_FALSE(system("python info.py"));
+  ASSERT_FALSE(system("python imageinfo.py"));
+}
+  
+TEST(pythonTests, meshInfoTest)
+{
+  ASSERT_FALSE(system("python meshinfo.py"));
 }
   
 TEST(pythonTests, copyTest)
