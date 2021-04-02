@@ -315,54 +315,56 @@
                 
 <div class="notebook-content">
 <style type="text/css">
+    
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
 span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
 td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
 span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-.highlight .hll { background-color: var(--jp-cell-editor-active-background) }
-.highlight { background: var(--jp-cell-editor-background); color: var(--jp-mirror-editor-variable-color) }
-.highlight .c { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment */
-.highlight .err { color: var(--jp-mirror-editor-error-color) } /* Error */
-.highlight .k { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword */
-.highlight .o { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator */
-.highlight .p { color: var(--jp-mirror-editor-punctuation-color) } /* Punctuation */
-.highlight .ch { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Hashbang */
-.highlight .cm { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Multiline */
-.highlight .cp { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Preproc */
-.highlight .cpf { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.PreprocFile */
-.highlight .c1 { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Single */
-.highlight .cs { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Special */
-.highlight .kc { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Constant */
-.highlight .kd { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Declaration */
-.highlight .kn { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Namespace */
-.highlight .kp { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Pseudo */
-.highlight .kr { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Reserved */
-.highlight .kt { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Type */
-.highlight .m { color: var(--jp-mirror-editor-number-color) } /* Literal.Number */
-.highlight .s { color: var(--jp-mirror-editor-string-color) } /* Literal.String */
-.highlight .ow { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator.Word */
-.highlight .w { color: var(--jp-mirror-editor-variable-color) } /* Text.Whitespace */
-.highlight .mb { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Bin */
-.highlight .mf { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Float */
-.highlight .mh { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Hex */
-.highlight .mi { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer */
-.highlight .mo { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Oct */
-.highlight .sa { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Affix */
-.highlight .sb { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Backtick */
-.highlight .sc { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Char */
-.highlight .dl { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Delimiter */
-.highlight .sd { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Doc */
-.highlight .s2 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Double */
-.highlight .se { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Escape */
-.highlight .sh { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Heredoc */
-.highlight .si { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Interpol */
-.highlight .sx { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Other */
-.highlight .sr { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Regex */
-.highlight .s1 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Single */
-.highlight .ss { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Symbol */
-.highlight .il { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer.Long */
+.highlight-ipynb .hll { background-color: var(--jp-cell-editor-active-background) }
+.highlight-ipynb { background: var(--jp-cell-editor-background); color: var(--jp-mirror-editor-variable-color) }
+.highlight-ipynb .c { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment */
+.highlight-ipynb .err { color: var(--jp-mirror-editor-error-color) } /* Error */
+.highlight-ipynb .k { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword */
+.highlight-ipynb .o { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator */
+.highlight-ipynb .p { color: var(--jp-mirror-editor-punctuation-color) } /* Punctuation */
+.highlight-ipynb .ch { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Hashbang */
+.highlight-ipynb .cm { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Multiline */
+.highlight-ipynb .cp { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Preproc */
+.highlight-ipynb .cpf { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.PreprocFile */
+.highlight-ipynb .c1 { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Single */
+.highlight-ipynb .cs { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Special */
+.highlight-ipynb .kc { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Constant */
+.highlight-ipynb .kd { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Declaration */
+.highlight-ipynb .kn { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Namespace */
+.highlight-ipynb .kp { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Pseudo */
+.highlight-ipynb .kr { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Reserved */
+.highlight-ipynb .kt { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Type */
+.highlight-ipynb .m { color: var(--jp-mirror-editor-number-color) } /* Literal.Number */
+.highlight-ipynb .s { color: var(--jp-mirror-editor-string-color) } /* Literal.String */
+.highlight-ipynb .ow { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator.Word */
+.highlight-ipynb .w { color: var(--jp-mirror-editor-variable-color) } /* Text.Whitespace */
+.highlight-ipynb .mb { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Bin */
+.highlight-ipynb .mf { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Float */
+.highlight-ipynb .mh { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Hex */
+.highlight-ipynb .mi { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer */
+.highlight-ipynb .mo { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Oct */
+.highlight-ipynb .sa { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Affix */
+.highlight-ipynb .sb { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Backtick */
+.highlight-ipynb .sc { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Char */
+.highlight-ipynb .dl { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Delimiter */
+.highlight-ipynb .sd { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Doc */
+.highlight-ipynb .s2 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Double */
+.highlight-ipynb .se { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Escape */
+.highlight-ipynb .sh { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Heredoc */
+.highlight-ipynb .si { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Interpol */
+.highlight-ipynb .sx { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Other */
+.highlight-ipynb .sr { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Regex */
+.highlight-ipynb .s1 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Single */
+.highlight-ipynb .ss { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Symbol */
+.highlight-ipynb .il { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer.Long */
   </style>
+
 
 
 <style type="text/css">
@@ -14103,7 +14105,8 @@ body.lm-mod-override-cursor .jp-OutputArea-output.jp-mod-isolated:before {
 |----------------------------------------------------------------------------*/
 
 </style>
-<style type="text/css">
+
+    <style type="text/css">
 /*-----------------------------------------------------------------------------
 | Copyright (c) Jupyter Development Team.
 | Distributed under the terms of the Modified BSD License.
@@ -14493,7 +14496,10 @@ all of MD as it is not optimized for dense, information rich UIs.
   --jp-icon-contrast-color3: var(--md-blue-600);
 }
 </style>
-<style type="text/css">
+
+
+
+<style>
 /* Reset */
 *, *::before, *::after {
     -webkit-box-sizing: border-box;
@@ -14514,54 +14520,60 @@ all of MD as it is not optimized for dense, information rich UIs.
 }
 
 /* Anchor links */
-.anchor-link {
+.jupyter-notebook .anchor-link {
     display: none;
 }
 h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
     display: inline-block;
 }
 
-/* Markdown cells: Remove prompt */
+/* Markdown cells: Remove Input prompt */
 .jp-Cell-inputWrapper .jp-InputPrompt {
     display: none;
 }
 
-/* Code cells: Show prompt */
+/* Code cells: Show Input prompt */
 .jp-CodeCell .jp-Cell-inputWrapper .jp-InputPrompt {
     display: block;
 }
 
-/* Prompt fixes */
+/* Code pre block scroll horizontaly */
 .jp-InputPrompt, .jp-OutputPrompt{
     overflow: visible;
 }
 
-/* Lab uses move for the input prompts */
+/* Lab uses move cursor for the input prompts */
 .jp-Notebook .jp-Cell .jp-InputPrompt {
     cursor: default;
 }
 
-/* Editor max-width */
+/* Code cell max-width */
 .jp-InputArea-editor {
     width: 1px;
 }
 
-/* Editor colors */
-.jp-Editor .highlight {
-    margin: 0.4em;
-    background: var(--jp-cell-editor-background);
-    color: var(--jp-mirror-editor-variable-color);
+/* Code cell Fix pre margin */
+.jp-InputArea-editor .highlight-ipynb pre {
+    margin: 0;
+    padding: 5px 10px;
 }
 
 /* Editor colors */
-.jp-Editor .highlight pre {
+/* .jp-Editor .highlight {
+    margin: 0.4em;
+    background: var(--jp-cell-editor-background);
+    color: var(--jp-mirror-editor-variable-color);
+} */
+
+/* Editor colors */
+/* .jp-Editor .highlight pre {
     background: none;
     border: none;
     margin: 0;
     overflow-x: auto;
-}
+} */
 
-/* Material mkdocs */
+/* MKDocs Material theme defaults */
 .jp-RenderedHTMLCommon p {
     font-size: .8rem;
     line-height: 1.6;
@@ -14601,9 +14613,12 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
     border: none;
 }
 
+.jp-RenderedHTMLCommon .admonition p:not(:first-child) {
+    margin: 1em 0;
+}
 
 /* Tags on cells */
-/* Mostly copying this from straight Jupyter */
+/* Mostly copying this from straight from Jupyter */
 .celltoolbar {
     border: none;
     background: #EEE;
@@ -14649,7 +14664,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
     display: inline-block;
 }
 
-/* Bokeh plots table no hover */
+/* Fix: Bokeh plots table no hover */
 .bk-plot-wrapper tbody tr {
     background: none !important;
 }
@@ -14696,9 +14711,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
     }
     init_mathjax();
     </script>
-    <!-- End of mathjax configuration -->
-<body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
-
+    <!-- End of mathjax configuration --><div class="jupyter-notebook">
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h1 id="getting-started-with-exploring-segmentations">Getting Started with Exploring Segmentations<a class="anchor-link" href="#Getting-Started-with-Exploring-Segmentations">&#182;</a></h1>
@@ -14760,7 +14773,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># import relevant libraries </span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># import relevant libraries </span>
 <span class="kn">import</span> <span class="nn">sys</span> 
 
 <span class="c1"># add parent-parent directory (where setupenv.py is) to python path</span>
@@ -14798,7 +14811,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s import shapeworks library to test whether shapeworks is now set</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s import shapeworks library to test whether shapeworks is now set</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">shapeworks</span> <span class="k">as</span> <span class="nn">sw</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
@@ -14826,7 +14839,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># importing relevant libraries</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># importing relevant libraries</span>
 <span class="kn">import</span> <span class="nn">pyvista</span> <span class="k">as</span> <span class="nn">pv</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
@@ -14871,7 +14884,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># importing relevant libraries</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># importing relevant libraries</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
 <span class="c1"># a helper function that converts shapeworks Mesh object to vtk mesh </span>
@@ -14913,7 +14926,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># importing itkwidgets to visualize single segmentations</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># importing itkwidgets to visualize single segmentations</span>
 <span class="kn">import</span> <span class="nn">itkwidgets</span> <span class="k">as</span> <span class="nn">itkw</span>
 
 <span class="c1"># itkwidgets.view returns a Viewer object. And, the IPython Jupyter kernel </span>
@@ -15013,7 +15026,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># dataset name is the folder name for your dataset</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># dataset name is the folder name for your dataset</span>
 <span class="n">datasetName</span>  <span class="o">=</span> <span class="s1">&#39;ellipsoid-v2&#39;</span>
 
 <span class="c1"># path to the dataset where we can find shape data </span>
@@ -15045,7 +15058,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">glob</span> <span class="c1"># for paths and file-directory search</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">glob</span> <span class="c1"># for paths and file-directory search</span>
 
 <span class="c1"># file extension for the shape data</span>
 <span class="n">shapeExtention</span> <span class="o">=</span> <span class="s1">&#39;.nrrd&#39;</span>
@@ -15088,7 +15101,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s load the dataset - </span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s load the dataset - </span>
 
 <span class="c1"># list of shape segmentations</span>
 <span class="n">shapeSegList</span> <span class="o">=</span> <span class="p">[]</span>
@@ -15138,7 +15151,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># helper functions to define the best grid size for subplots</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># helper functions to define the best grid size for subplots</span>
 <span class="k">def</span> <span class="nf">postive_factors</span><span class="p">(</span><span class="n">num_samples</span><span class="p">):</span>
     <span class="n">factors</span> <span class="o">=</span> <span class="p">[]</span>
     
@@ -15176,7 +15189,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># helper function to add and plot a list of volumes</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># helper function to add and plot a list of volumes</span>
 <span class="k">def</span> <span class="nf">plot_volumes</span><span class="p">(</span><span class="n">volumeList</span><span class="p">,</span>           <span class="c1"># list of shapeworks images to be visualized</span>
                  <span class="n">volumeNames</span>     <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># list of strings of same size as shape list used to add text for each plot window, use None to not show text per window </span>
                  <span class="n">use_same_window</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="c1"># plot using multiple rendering windows if false</span>
@@ -15275,7 +15288,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># define parameters that controls the plotter</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># define parameters that controls the plotter</span>
 <span class="n">use_same_window</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># plot using multiple rendering windows if false</span>
 <span class="n">is_interactive</span>  <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># to enable interactive plots</span>
 <span class="n">show_borders</span>    <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># show borders for each rendering window</span>
@@ -15342,7 +15355,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># to better appreciate the pixelated nature of these segmentations, we need to only visualize </span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># to better appreciate the pixelated nature of these segmentations, we need to only visualize </span>
 <span class="c1"># the binary segmentation, notice the thick slices</span>
 
 <span class="n">shapeIdx</span> <span class="o">=</span> <span class="mi">10</span>
@@ -15385,7 +15398,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s inspect a segmentation that touches the image boundaries</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s inspect a segmentation that touches the image boundaries</span>
 <span class="n">shapeIdx</span> <span class="o">=</span> <span class="mi">3</span>
 <span class="n">shapeSeg</span> <span class="o">=</span> <span class="n">shapeSegList</span><span class="p">[</span><span class="n">shapeIdx</span><span class="p">]</span>
 
@@ -15425,7 +15438,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s see if there&#39;s a function that extracts an isosurface from an image</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s see if there&#39;s a function that extracts an isosurface from an image</span>
 <span class="c1"># use dot-tap to get a list of functions/apis available for shapeSeg</span>
 
 <span class="c1"># found it - toMesh, let&#39;s see its help</span>
@@ -15452,7 +15465,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s make sure that our assumptions about the voxel values are correct</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s make sure that our assumptions about the voxel values are correct</span>
 <span class="c1"># is the given volume a binary segmentation?</span>
 
 <span class="c1"># first convert to numpy array</span>
@@ -15483,7 +15496,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># now define the isovalue, in case a binary segmentation has a foreground label that is not 1</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># now define the isovalue, in case a binary segmentation has a foreground label that is not 1</span>
 <span class="c1"># we need to obtain a value inbetween</span>
 
 <span class="c1"># get min and max values</span>
@@ -15511,7 +15524,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s extract the segmentation isosurface and visualize it</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s extract the segmentation isosurface and visualize it</span>
 
 <span class="c1"># extract isosurface</span>
 <span class="n">shapeMesh</span> <span class="o">=</span> <span class="n">shapeSeg</span><span class="o">.</span><span class="n">toMesh</span><span class="p">(</span><span class="n">isovalue</span> <span class="o">=</span> <span class="n">isoValue</span><span class="p">)</span>
@@ -15557,7 +15570,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s inspect some segmentations where we can observe misalignment</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s inspect some segmentations where we can observe misalignment</span>
 <span class="n">shapeIdxs</span> <span class="o">=</span> <span class="p">[</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">]</span>
 
 <span class="n">shapeSegSubset</span>   <span class="o">=</span> <span class="p">[</span><span class="n">shapeSegList</span><span class="p">[</span><span class="n">shapeIdx</span><span class="p">]</span> <span class="k">for</span> <span class="n">shapeIdx</span> <span class="ow">in</span> <span class="n">shapeIdxs</span> <span class="p">]</span>
@@ -15584,7 +15597,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">shapeSegIsosurfaces</span>     <span class="o">=</span> <span class="p">[]</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">shapeSegIsosurfaces</span>     <span class="o">=</span> <span class="p">[]</span>
 <span class="n">shapeSegIsosurfaces_vtk</span> <span class="o">=</span> <span class="p">[]</span>
 
 <span class="k">for</span> <span class="n">shapeSeg</span> <span class="ow">in</span> <span class="n">shapeSegSubset</span><span class="p">:</span>
@@ -15612,7 +15625,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># now visualize them on the same rendering window using itkwidgets</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># now visualize them on the same rendering window using itkwidgets</span>
 <span class="c1"># note that they are not roughly alignemd  </span>
 
 <span class="c1"># visualize with axes and auto rotation</span>
@@ -15640,7 +15653,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s use pyvista and assign different colors for each mesh</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s use pyvista and assign different colors for each mesh</span>
 <span class="c1"># note this is very similar to the plot_volumes but with meshes rather than volumes</span>
 
 <span class="c1"># helper function to add and plot a list of meshes</span>
@@ -15747,7 +15760,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">plot_meshes</span><span class="p">(</span><span class="n">shapeSegIsosurfaces</span><span class="p">,</span>       
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">plot_meshes</span><span class="p">(</span><span class="n">shapeSegIsosurfaces</span><span class="p">,</span>       
             <span class="n">use_same_window</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
             <span class="n">is_interactive</span>  <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  
             <span class="n">show_borders</span>    <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  
@@ -15788,7 +15801,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">shapeIdx</span> <span class="o">=</span> <span class="mi">12</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">shapeIdx</span> <span class="o">=</span> <span class="mi">12</span>
 <span class="n">shapeSeg</span> <span class="o">=</span> <span class="n">shapeSegList</span><span class="p">[</span><span class="n">shapeIdx</span><span class="p">]</span>
  
 <span class="n">shapeSeg_vtk</span> <span class="o">=</span> <span class="n">sw2vtkImage</span><span class="p">(</span><span class="n">shapeSeg</span><span class="p">)</span>
@@ -15835,7 +15848,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
 
 </div>
 </div>
-</body>
+</div>
 
 
 </div>
