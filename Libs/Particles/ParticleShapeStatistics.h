@@ -31,7 +31,6 @@ public:
   constexpr static int VDimension = 3;
 
   ParticleShapeStatistics() {}
-  ParticleShapeStatistics(const std::string &s) { ReadPointFiles(s); }
   ~ParticleShapeStatistics() {}
 
   int DoPCA(std::vector<std::vector<Point>> global_pts, int domainsPerShape = 1);
@@ -103,7 +102,7 @@ public:
   double L1Norm(unsigned int a, unsigned int b);
 
   /** Returns the component loadings */
-  const vnl_matrix<double> &PCALoadings() { return m_principals; }
+  Eigen::MatrixXd &PCALoadings() { return m_principals; }
 
   /** Returns the Fisher linear discriminant */
   const vnl_vector<double> &FishersLDA() { return m_fishersLD; }
@@ -152,7 +151,7 @@ private:
   std::vector<double> m_fishersProjection;
   std::vector<double> m_percentVarByMode;
   vnl_vector<double> m_fishersLD;
-  vnl_matrix<double> m_principals;
+  Eigen::MatrixXd m_principals;
 
   vnl_vector<double> m_groupdiff;
   vnl_vector<double> m_groupdiffnorm;

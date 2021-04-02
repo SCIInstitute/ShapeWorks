@@ -502,7 +502,7 @@ int ParticleShapeStatistics::ComputeModes()
 int ParticleShapeStatistics::PrincipalComponentProjections()
 {
   // Now print the projection of each shape
-  m_principals.set_size(m_numSamples, m_numSamples);
+  m_principals.resize(m_numSamples, m_numSamples);
 
   for (unsigned int n = 0; n < m_numSamples; n++) {
     for (unsigned int s = 0; s < m_numSamples; s++) {

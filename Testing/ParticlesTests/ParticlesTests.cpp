@@ -35,9 +35,15 @@ TEST(ParticlesTests, vnlVector)
   ParticleShapeStatistics stats;
   stats.DoPCA(points);
   stats.PrincipalComponentProjections();
-  vnl_matrix<double> pcaVec = stats.PCALoadings();
-  std::cout << "Rows: " << pcaVec.rows() << "\n";
-  std::cout << "Cols: " << pcaVec.cols() << "\n";
+  Eigen::MatrixXd pcaVec = stats.PCALoadings();
+  for(int i=0; i<pcaVec.rows(); i++)
+  {
+    std::cout << "\n";
+    for(int j=0; j<pcaVec.cols(); j++)
+    {
+      std::cout << pcaVec(i,j) << " ";
+    }
+  }
 }
 
 TEST(ParticlesTests, compactness)
