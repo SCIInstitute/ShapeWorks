@@ -28,7 +28,7 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
     # Get data
-    datasetName = "ellipsoid-v1"
+    datasetName = "ellipsoid_1mode"
     outputDirectory = "Output/ellipsoid/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
@@ -93,7 +93,7 @@ def Run_Pipeline(args):
         alignedFiles = applyRigidAlignment(groomDir + "aligned/segmentations", ref, comFiles)
 
         """Compute largest bounding box and apply cropping"""
-        croppedFiles = applyCropping(groomDir + "cropped/segmentations", alignedFiles, groomDir + "aligned/segmentations/*.aligned.nrrd")
+        croppedFiles = applyCropping(groomDir + "cropped/segmentations", alignedFiles, alignedFiles)
 
         """
         We convert the scans to distance transforms, this step is common for both the 
@@ -128,23 +128,23 @@ def Run_Pipeline(args):
 
     parameterDictionary = {
         "number_of_particles": 128,
-        "use_normals": 1,
-        "normal_weight": 15.0,
-        "checkpointing_interval": 200,
+        "use_normals": 0,
+        "normal_weight": 10.0,
+        "checkpointing_interval": 1000,
         "keep_checkpoints": 0,
-        "iterations_per_split": 2000,
+        "iterations_per_split": 1000,
         "optimization_iterations": 1000,
-        "starting_regularization": 100,
-        "ending_regularization": 10,
-        "recompute_regularization_interval": 2,
+        "starting_regularization": 10,
+        "ending_regularization": 1,
+        "recompute_regularization_interval": 1,
         "domains_per_shape": 1,
         "domain_type": 'image',
-        "relative_weighting": 15,
+        "relative_weighting": 1,
         "initial_relative_weighting": 0.05,
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,
-        "verbosity": 2
+        "verbosity": 1
     }
 
     if args.tiny_test:
