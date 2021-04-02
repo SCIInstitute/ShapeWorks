@@ -82,8 +82,8 @@ public:
     }
 
     void UpdateMu(const Eigen::Vector3d &pt, double C){
-        double eval = mu + C*ConstraintEval(pt);
-        if(eval > 0){
+        double eval = mu - C*ConstraintEval(pt);
+        if(eval < 0){
             mu = eval;
         }
         else{
@@ -115,8 +115,8 @@ public:
         */
         Eigen::Vector3d constraint_grad = ConstraintGradient(pt);
         double eval = ConstraintEval(pt);
-        double maxterm = mu + C*eval;
-        if(maxterm < 0){
+        double maxterm = mu - C*eval;
+        if(maxterm > 0){
             return Eigen::Vector3d(0,0,0);
         }
         else{
@@ -133,8 +133,8 @@ private:
   }
 
   // For augmented lagrangian
-    double z;
     double mu;
+    double z;
     double lambda;
 };
 

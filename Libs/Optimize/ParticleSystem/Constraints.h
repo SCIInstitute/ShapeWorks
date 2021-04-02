@@ -93,6 +93,24 @@ public:
       }
   }
 
+  void ViolationReport(const Point<double, 3> &pos){
+      Eigen::Vector3d pt; pt(0) = pos[0]; pt(1) = pos[1]; pt(2) = pos[2];
+      std::stringstream stream;
+      stream << "Cutting planes " << planeConsts->size() << std::endl;
+      for(size_t i = 0; i < planeConsts->size(); i++){
+          stream << "CuttingPlane " << i << ": " << (*planeConsts)[i].ConstraintEval(pt) << std::endl;
+      }
+      stream  << "Cutting spheres " << sphereConsts->size() << std::endl;
+      for(size_t i = 0; i < sphereConsts->size(); i++){
+          stream << "Sphere " << i << ": " << (*sphereConsts)[i].ConstraintEval(pt) << std::endl;
+      }
+      stream << "Cutting Free form constraints " << freeFormConsts->size() << std::endl;
+      for(size_t i = 0; i < freeFormConsts->size(); i++){
+          stream << "FreeForm " << i << ": " << (*freeFormConsts)[i].ConstraintEval(pt) << std::endl;
+      }
+      std::cout << stream.str();
+  }
+
   // ============================
    // Augmented Lagragian Fuctions
    // ============================
@@ -121,6 +139,9 @@ public:
        Eigen::Vector3d pt; pt(0) = pos[0]; pt(1) = pos[1]; pt(2) = pos[2];
        Eigen::Vector3d grad = Eigen::Vector3d(0,0,0);
        for(size_t i = 0; i < planeConsts->size(); i++){
+           std::stringstream stream;
+           stream << "auglag " << i << " : " << (*planeConsts)[i].LagragianGradient(pt, C).transpose() << std::endl;
+           std::cout << stream.str();
            grad += (*planeConsts)[i].LagragianGradient(pt, C);
        }
        for(size_t i = 0; i < sphereConsts->size(); i++){
@@ -133,6 +154,7 @@ public:
        for(size_t i = 0; i < 3; i++){
            gradE[i] = grad(i);
        }
+       //std::cout << "gradE " << gradE << std::endl;
        return gradE;
    }
 

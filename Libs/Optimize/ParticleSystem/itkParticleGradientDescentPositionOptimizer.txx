@@ -179,12 +179,16 @@ namespace itk
                   upd_pt[n] = pt[n] - gradient[n];
               }
               double c = 1e1;
+              double multiplier = 1;
               m_ParticleSystem->GetDomain(dom)->GetConstraints()->UpdateZs(upd_pt, c);
               VectorType constraint_energy = m_ParticleSystem->GetDomain(dom)->GetConstraints()->ConstraintsLagrangianGradient(upd_pt, c);
-              if(constraint_energy.magnitude() > gradmag){
-                  constraint_energy *= gradmag/constraint_energy.magnitude();
+              if(constraint_energy.magnitude() > multiplier*gradmag){
+                  constraint_energy *= multiplier*gradmag/constraint_energy.magnitude();
               }
-              //std::cout << constraint_energy << std::endl;
+              m_ParticleSystem->GetDomain(dom)->GetConstraints()->ViolationReport(pt);
+              //std::stringstream stream;
+              //stream << constraint_energy << std::endl;
+              //std::cout << stream.str();
               for (size_t n = 0; n < VDimension; n++){
                   gradient[n] += constraint_energy[n];
               }
