@@ -66,6 +66,7 @@ MeshHandle MeshManager::get_mesh(const MeshWorkItem& item, bool wait)
       }
       else {
         mesh = this->mesh_generator_->build_mesh(item);
+        this->check_error_status(mesh);
         this->mesh_cache_.insert_mesh(item, mesh);
       }
     }
@@ -90,12 +91,7 @@ void MeshManager::handle_thread_complete(const MeshWorkItem& item, MeshHandle me
   this->mesh_cache_.insert_mesh(item, mesh);
   this->work_queue_.remove(item);
 
-  if (mesh->get_error_message() != "" && !this->error_emitted_) {
-    this->error_emitted_ = true;
-    std::string message = "Error during mesh construction:\n\n" + mesh->get_error_message()
-                          + "\n\nFurther messages will be suppressed\n";
-    emit error_encountered(message);
-  }
+  this->check_error_status(mesh);
 
   emit new_mesh();
 }
@@ -110,5 +106,16 @@ QSharedPointer<SurfaceReconstructor> MeshManager::get_surface_reconstructor()
 QSharedPointer<MeshWarper> MeshManager::get_mesh_warper()
 {
   return this->mesh_warper_;
+}
+
+//---------------------------------------------------------------------------
+void MeshManager::check_error_status(MeshHandle mesh)
+{
+  if (mesh->get_error_message() != "" && !this->error_emitted_) {
+    this->error_emitted_ = true;
+    std::string message = "Error during mesh construction:\n\n" + mesh->get_error_message()
+                          + "\n\nFurther messages will be suppressed\n";
+    emit error_encountered(message);
+  }
 }
 }

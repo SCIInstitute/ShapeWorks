@@ -33,6 +33,20 @@ def Run_Pipeline(args):
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
 
+    if not args.groom_images:
+        # set spacing
+        spacing = [1, 1, 1]
+        answer = input("Use isotropic spacing for mesh rasterization? y/n \n")
+        if answer == 'n':
+            done = False
+            while not done:
+                spacing = []
+                spacing.append(float(input("Enter x spacing:\n")))
+                spacing.append(float(input("Enter y spacing:\n")))
+                spacing.append(float(input("Enter z spacing:\n")))
+                answer2 = input('Is spacing = ' + str(spacing) + ' okay? y/n\n')
+                if answer2 == 'y':
+                    done = True
 
     #If tiny_test then download subset of the data
     if args.tiny_test:
@@ -207,8 +221,10 @@ def Run_Pipeline(args):
             pickle.dump( [cutting_plane_points], open( outputDirectory + "groomed/groomed_pickle.p", "wb" ) )
 
             # Compute largest bounding box and apply cropping
-            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", alignedFiles_segmentations, parentDir + "aligned/*.aligned.nrrd")
-            croppedFiles_images = applyCropping(parentDir + "cropped/images", alignedFiles_images, parentDir + "aligned/*.aligned.nrrd")
+            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", alignedFiles_segmentations, alignedFiles_segmentations)
+            croppedFiles_images = applyCropping(parentDir + "cropped/images", alignedFiles_images, alignedFiles_segmentations)
+
+            groomed_segmentations = croppedFiles_segmentations
 
 
         # BEGIN GROOMING WITHOUT IMAGES
@@ -222,19 +238,6 @@ def Run_Pipeline(args):
             MeshesToVolumes - Shapeworks requires volumes so we need to convert
             mesh segementaions to binary segmentations.
             """
-            # set spacing
-            spacing = [1, 1, 1]
-            answer = input("Use ispotropic spacing for mesh rasterization? y/n \n")
-            if answer == 'n':
-                done = False
-                while not done:
-                    spacing = []
-                    spacing.append(float(input("Enter x spacing:\n")))
-                    spacing.append(float(input("Enter y spacing:\n")))
-                    spacing.append(float(input("Enter z spacing:\n")))
-                    answer2 = input('Is spacing = ' + str(spacing) + ' okay? y/n\n')
-                    if answer2 == 'y':
-                        done = True
 
             fileList_seg = MeshesToVolumes(parentDir + "volumes", reflectedFiles_mesh, spacing)
 
@@ -248,7 +251,7 @@ def Run_Pipeline(args):
             Apply padding
             Both the segmentation and raw images are padded in case the seg lies on the image boundary.
             """
-            paddedFiles_segmentations = applyPadding(parentDir + "padded/segementations", isoresampledFiles_segmentations, 10)
+            paddedFiles_segmentations = applyPadding(parentDir + "padded/segementations", isoresampledFiles_segmentations, 30)
 
             """
             Apply center of mass alignment
@@ -295,8 +298,7 @@ def Run_Pipeline(args):
 
             pickle.dump( [cutting_plane_points], open( outputDirectory + "groomed/groomed_pickle.p", "wb" ) )
 
-            # Compute largest bounding box and apply cropping
-            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", alignedFiles_segmentations, parentDir + "aligned/*.aligned.nrrd")
+            groomed_segmentations = alignedFiles_segmentations
 
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
@@ -307,7 +309,7 @@ def Run_Pipeline(args):
         We convert the scans to distance transforms, this step is common for both the
         prepped as well as unprepped data, just provide correct filenames.
         """
-        dtFiles = applyDistanceTransforms(parentDir, croppedFiles_segmentations)
+        dtFiles = applyDistanceTransforms(parentDir, groomed_segmentations)
 
 
     """
