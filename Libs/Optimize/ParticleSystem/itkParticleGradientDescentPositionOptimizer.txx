@@ -118,7 +118,7 @@ namespace itk
       tbb::parallel_for(
         tbb::blocked_range<size_t>{0, numdomains},
         [&](const tbb::blocked_range<size_t>& r) {
-           for (size_t dom = r.begin(); dom < r.end(); ++dom) {
+          for (size_t dom = r.begin(); dom < r.end(); ++dom) {
 
           // skip any flagged domains
           if (m_ParticleSystem->GetDomainFlag(dom) == true)
@@ -137,10 +137,6 @@ namespace itk
 
           // Tell function which domain we are working on.
           localGradientFunction->SetDomainNumber(dom);
-
-          if(m_ParticleSystem->GetPositions(dom)->GetSize() == 2) {
-            volatile int x = 0;
-          }
 
           // Iterate over each particle position
           for (auto k=0; k<m_ParticleSystem->GetPositions(dom)->GetSize(); k++)
