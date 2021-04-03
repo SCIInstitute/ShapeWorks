@@ -42,10 +42,10 @@ public:
   virtual PointType UpdateParticlePosition(const PointType &point,
                                            int idx, vnl_vector_fixed<double, DIMENSION> &update) const override;
 
-  inline vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION>& gradE,
-                                                                           const PointType &pos, int idx) const override;
+  virtual vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION>& gradE,
+                                                                            const PointType &pos, int idx) const override;
 
-  inline vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType &point, int idx) const override {
+  virtual vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType &point, int idx) const override {
     throw std::runtime_error("Contours do not have normals");
   }
 
@@ -74,13 +74,13 @@ public:
     return GetSurfaceMeanCurvature();
   }
 
-  inline double GetSurfaceMeanCurvature() const override {
+  virtual double GetSurfaceMeanCurvature() const override {
     // This function is used by MeanCurvatureAttribute which is used for good/bad assessment
     // These arbitrary values should eventually be replaced with actual computation
     return 0.15;
   }
 
-  inline double GetSurfaceStdDevCurvature() const override {
+  virtual double GetSurfaceStdDevCurvature() const override {
     // This function is used by MeanCurvatureAttribute which is used for good/bad assessment
     // These arbitrary values should eventually be replaced with actual computation
     return 0.02;
