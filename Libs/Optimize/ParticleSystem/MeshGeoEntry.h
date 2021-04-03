@@ -23,7 +23,7 @@ struct MeshGeoEntry {
 
     max_dist = 0.0;
 
-    // calling `data_partial.clear()` doesn't free the backing memory, so we have to swap to an empty hashmap
+    // calling `data_partial.clear()` doesn't free the backing memory, so we have to swap to an empty
     robin_hood::unordered_flat_map<int, Eigen::Vector3d> new_data_partial;
     std::swap(new_data_partial, data_partial);
 
@@ -34,6 +34,14 @@ struct MeshGeoEntry {
 
   bool is_full_mode() const {
     return mode == Mode::Full;
+  }
+
+  void update_max_dist() {
+    assert(is_full_mode()); // the caller most likely has a more efficient way to compute this if partial mode
+    const auto max0 = data_full[0].maxCoeff();
+    const auto max1 = data_full[1].maxCoeff();
+    const auto max2 = data_full[2].maxCoeff();
+    max_dist = std::max({max0, max1, max2});
   }
 };
 

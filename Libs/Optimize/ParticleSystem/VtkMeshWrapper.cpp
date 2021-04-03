@@ -949,18 +949,20 @@ const MeshGeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist
     entry.data_full[0] = std::move(dists[0].raw());
     entry.data_full[1] = std::move(dists[1].raw());
     entry.data_full[2] = std::move(dists[2].raw());
+    entry.update_max_dist();
     geo_cache_size_ += n_verts;
-    entry.max_dist = std::max(entry.data_full[0].maxCoeff(),
-                              std::max(entry.data_full[1].maxCoeff(), entry.data_full[2].maxCoeff()));
     return entry;
   }
 
   if(req_target_f >= 0) {
     for(int i=0; i<3; i++) {
       const int req_v = this->triangles_[req_target_f]->GetPointId(i);
-      max_dist = std::max(max_dist, dists[0][req_v]);
-      max_dist = std::max(max_dist, dists[1][req_v]);
-      max_dist = std::max(max_dist, dists[2][req_v]);
+      max_dist = std::max({
+        max_dist,
+        dists[0][req_v],
+        dists[1][req_v],
+        dists[2][req_v]
+      });
     }
   }
 
@@ -998,12 +1000,8 @@ const MeshGeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist
     entry.data_full[0] = std::move(dists[0].raw());
     entry.data_full[1] = std::move(dists[1].raw());
     entry.data_full[2] = std::move(dists[2].raw());
+    entry.update_max_dist();
     geo_cache_size_ += n_verts;
-
-    const auto max0 = entry.data_full[0].maxCoeff();
-    const auto max1 = entry.data_full[1].maxCoeff();
-    const auto max2 = entry.data_full[2].maxCoeff();
-    entry.max_dist = std::max({max0, max1, max2});
     return entry;
   }
 
