@@ -10,7 +10,7 @@ from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
 import CommonUtils
-from ShapeCohortGen.Supershapes import sample_super_formula_2D
+import ShapeCohortGen.Supershapes as Supershapes
 
 def Run_Pipeline(args):
     """
@@ -74,15 +74,11 @@ def Run_Pipeline(args):
     launchShapeWorksStudio(pointDir, contourFiles, localPointFiles, worldPointFiles)
 
 def generate_supershapes(out_dir):
-    # Supershape constants
     m = 6
-    n1 = 1.7
     n_points = 250
     n_samples = 25
 
-    for i in range(n_samples):
-        n2 = 3.0 + i*6.0/n_samples
-        n3 = n2
-        pts = sample_super_formula_2D(n_points, m, n1, n2, n3)
-        lines = computeLinesFromPoints(n_points, is_closed=True)
-        writeContourToVTPFile(pts, lines, os.path.join(out_dir, f'{i:02d}.vtp'))
+    filenames = Supershapes.generate_2D(n_samples, n_points, out_dir, m,
+                                        n1_degree=5, n2_degree=None, n3_degree=None,
+                                        default_n=5.0, seed=41)
+    return filenames
