@@ -1059,12 +1059,11 @@ const Eigen::Matrix3d VtkMeshWrapper::GeodesicsFromTriangleToTriangle(int f_a, i
 
 //---------------------------------------------------------------------------
 void VtkMeshWrapper::ClearGeodesicCache() const {
-  // std::cout << "Clearing cache\n";
-
   const auto n_verts = this->poly_data_->GetNumberOfPoints();
   robin_hood::unordered_set<int> active_triangles(particle_triangles_.begin(), particle_triangles_.end());
   size_t new_cache_size = 0;
 
+  // figure out which triangles each particle is on, and clear only the other entries
   for(int i=0; i<geo_dist_cache_.size(); i++) {
     auto& entry = geo_dist_cache_[i];
     if(active_triangles.find(i) == active_triangles.end()) {
@@ -1074,8 +1073,9 @@ void VtkMeshWrapper::ClearGeodesicCache() const {
     }
   }
 
+  // the cache is not large enough to store the subset that we know is required. we are forced to clear everything
   if(new_cache_size > geo_max_cache_entries_) {
-    std::cerr << "Warning: Cache entries too small, doing full clear\n";
+    std::cerr << "Warning: Cache entries too small, clearing everything. Consider increasing cache size if this happens repeatedly\n";
     for(auto i : active_triangles) {
       if(i >= 0) {
         geo_dist_cache_[i].clear();
