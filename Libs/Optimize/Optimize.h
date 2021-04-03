@@ -393,7 +393,7 @@ protected:
   bool m_fixed_domains_present = false;
   int m_use_shape_statistics_after = -1;
   std::string m_python_filename;
-  bool m_geodesics_enabled = true; // todo default to false
+  bool m_geodesics_enabled = false; // geodesics disabled by default
   size_t m_geodesic_cache_size = 0; // 0 => VtkMeshWrapper will use a heuristic to determine cache size
 
   // Keeps track of which state the optimization is in.
