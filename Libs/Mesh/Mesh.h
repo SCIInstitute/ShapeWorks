@@ -80,6 +80,9 @@ public:
   /// clips a mesh using a cutting plane resulting in a closed surface
   Mesh& clipClosedSurface(const Plane plane);
 
+  /// computes cell normals and orients them such that they point in the same direction
+  Mesh& generateNormals();
+
   /// rasterizes mesh to create binary images, automatically computing size and origin if necessary
   Image toImage(Vector3 spacing = makeVector({1.0, 1.0, 1.0}), Dims size = {0, 0, 0}, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;
 
@@ -99,6 +102,9 @@ public:
 
   /// number of faces
   vtkIdType numFaces() const { return mesh->GetNumberOfCells(); }
+
+  /// return (x,y,z) coordinates of vertex at given index
+  Point3 getPoint(int p) const;
 
   // fields of mesh points //
 

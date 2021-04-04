@@ -44,11 +44,11 @@ function install_conda() {
     echo "installing anaconda..."
     if [[ "$(uname)" == "Darwin" ]]; then
       curl -o /tmp/Miniconda3-latest-MacOSX-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
-      bash /tmp/Miniconda3-latest-MacOSX-x86_64.sh
+      bash /tmp/Miniconda3-latest-MacOSX-x86_64.sh -b
       rm /tmp/Miniconda3-latest-MacOSX-x86_64.sh
     elif [[ "$(uname)" == "Linux" ]]; then
       curl -o ./Miniconda3-latest-Linux-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-      bash ./Miniconda3-latest-Linux-x86_64.sh
+      bash ./Miniconda3-latest-Linux-x86_64.sh -b
       rm ./Miniconda3-latest-Linux-x86_64.sh
     else
       echo "ERROR: unknown OS $(uname)"
@@ -100,6 +100,7 @@ function install_conda() {
     notebook=6.1.5 \
     nbformat=4.4.0 \
     pkgconfig=1.5.2
+    pkg-config=0.29.2
   then return 1; fi
 
   # linux and mac (only) deps

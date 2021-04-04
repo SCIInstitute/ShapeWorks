@@ -204,6 +204,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
   optimize->SetEndingRegularization(this->get_ending_regularization());
   optimize->SetIterationsPerSplit(this->get_iterations_per_split());
   optimize->SetOptimizationIterations(this->get_optimization_iterations());
+  optimize->SetGeodesicsEnabled(true); // TODO TODO TODO REMOVE BEFORE MERGE TO MASTER!!! TODO TODO TODO
 
   std::vector<bool> use_normals;
   std::vector<bool> use_xyz;
@@ -298,7 +299,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
       auto poly_data = mesh.getVTKMesh();
 
       if (poly_data) {
-        optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data));
+        optimize->AddMesh(poly_data);
       }
 
       else {

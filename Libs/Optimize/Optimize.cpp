@@ -27,6 +27,7 @@
 #include "ParticleSystem/object_reader.h"
 #include "ParticleSystem/object_writer.h"
 #include "OptimizeParameterFile.h"
+#include "VtkMeshWrapper.h"
 
 #include "Optimize.h"
 
@@ -1980,10 +1981,15 @@ void Optimize::AddImage(ImageType::Pointer image)
 }
 
 //---------------------------------------------------------------------------
-void Optimize::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh)
+void Optimize::AddMesh(vtkSmartPointer<vtkPolyData> poly_data)
 {
-  //todo add geodesic options
-  this->m_sampler->AddMesh(mesh);
+  if(poly_data == nullptr) {
+    // fixed domain
+    this->m_sampler->AddMesh(nullptr);
+  } else {
+    const auto mesh = std::make_shared<shapeworks::VtkMeshWrapper>(poly_data, m_geodesics_enabled, m_geodesic_cache_size);
+    this->m_sampler->AddMesh(mesh);
+  }
   this->m_num_shapes++;
   this->m_spacing = 0.5;
 }
@@ -2235,7 +2241,7 @@ void Optimize::SetGeodesicsEnabled(bool is_enabled)
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetGeodesicsCacheSize(unsigned long n)
+void Optimize::SetGeodesicsCacheSize(size_t n)
 {
   this->m_geodesic_cache_size = n;
 }
