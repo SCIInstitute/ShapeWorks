@@ -1987,7 +1987,8 @@ void Optimize::AddMesh(vtkSmartPointer<vtkPolyData> poly_data)
     // fixed domain
     this->m_sampler->AddMesh(nullptr);
   } else {
-    const auto mesh = std::make_shared<shapeworks::VtkMeshWrapper>(poly_data, m_geodesics_enabled, m_geodesic_cache_size);
+    const auto mesh = std::make_shared<shapeworks::VtkMeshWrapper>(poly_data, m_geodesics_enabled,
+                                                                   m_geodesic_cache_size_multiplier);
     this->m_sampler->AddMesh(mesh);
   }
   this->m_num_shapes++;
@@ -2241,9 +2242,9 @@ void Optimize::SetGeodesicsEnabled(bool is_enabled)
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetGeodesicsCacheSize(size_t n)
+void Optimize::SetGeodesicsCacheSizeMultiplier(size_t n)
 {
-  this->m_geodesic_cache_size = n;
+  this->m_geodesic_cache_size_multiplier = n;
 }
 
 }

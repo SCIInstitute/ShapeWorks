@@ -46,7 +46,7 @@ using GradNType = VtkMeshWrapper::GradNType;
 
 //---------------------------------------------------------------------------
 VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data,
-                               bool is_geodesics_enabled, size_t geodesics_cache_size) {
+                               bool is_geodesics_enabled, size_t geodesics_cache_size_multiplier) {
   vtkSmartPointer<vtkTriangleFilter> triangle_filter =
           vtkSmartPointer<vtkTriangleFilter>::New();
   triangle_filter->SetInputData(poly_data);
@@ -100,11 +100,13 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data,
 
   this->is_geodesics_enabled_ = is_geodesics_enabled;
   if (is_geodesics_enabled_) {
-    if(geodesics_cache_size == 0) {
-      // heuristic for cache size based on some experiments
-      geodesics_cache_size = 115 * this->triangles_.size();
+    if(geodesics_cache_size_multiplier == 0) {
+      // this is heuristic that gives a good trade off between memory usage and performance
+      geodesics_cache_size_multiplier = 120;
     }
-    this->geo_max_cache_entries_ = geodesics_cache_size;
+
+    // the caller provides how many times the number of triangles entries should be stored in cache
+    this->geo_max_cache_entries_ = geodesics_cache_size_multiplier * this->triangles_.size();
     this->PrecomputeGeodesics(V, F);
   }
 }
@@ -1088,10 +1090,12 @@ const Eigen::Matrix3d VtkMeshWrapper::GeodesicsFromTriangleToTriangle(int f_a, i
 //---------------------------------------------------------------------------
 void VtkMeshWrapper::ClearGeodesicCache() const {
   const auto n_verts = this->poly_data_->GetNumberOfPoints();
+
+  // figure out which triangle each particle is on
   robin_hood::unordered_set<int> active_triangles(particle_triangles_.begin(), particle_triangles_.end());
   size_t new_cache_size = 0;
 
-  // figure out which triangles each particle is on, and clear only the other entries
+  // clear entries only if no particle is on that triangle. (this is significantly more performant than clearing everything)
   for(int i=0; i<geo_dist_cache_.size(); i++) {
     auto& entry = geo_dist_cache_[i];
     if(active_triangles.find(i) == active_triangles.end()) {
