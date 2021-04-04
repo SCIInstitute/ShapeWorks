@@ -149,9 +149,9 @@ private:
   // Cache for geodesic distances from a triangle
   mutable std::vector<MeshGeoEntry> geo_dist_cache_;
 
-  // Returns true if face f_a is adjacent to face f_b. This uses a non-standard definition of adjacency: return true
-  // if f_a and f_b share atleast one vertex
+  // Returns true if face f_a is in the K-ring of face f_b
   bool AreFacesInKRing(int f_a, int f_b) const;
+  const size_t kring_{1};
 
   // Convert the mesh to libigl data structures
   void GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const;

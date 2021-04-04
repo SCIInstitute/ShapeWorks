@@ -18,7 +18,7 @@
 namespace shapeworks {
 
 namespace {
-static float epsilon = 1e-6;
+const static float epsilon = 1e-6;
 }
 
 namespace {
@@ -160,8 +160,10 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
   // Ensure we have geodesics available in the cache. This will resize the cache to fit face_b or max_dist, whichever
   // is greater. We do this pre-emptively since GeodesicsFromTriangleToTriangle would pull geodesics to every point
   // into the cache if face_b is not found. 1.5 is an heuristic to pull in a little more than we need
-  const double max_dist = idx_a >= 0 ? this->particle_neighboorhood_[idx_a]*1.5 : std::numeric_limits<double>::infinity();
-  GeodesicsFromTriangle(face_a, max_dist, face_b);
+  if(!geo_dist_cache_[face_a].has_entry(face_b)) {
+    const double max_dist = idx_a >= 0 ? this->particle_neighboorhood_[idx_a]*1.5 : std::numeric_limits<double>::infinity();
+    GeodesicsFromTriangle(face_a, max_dist, face_b);
+  }
 
   // Compute geodesic distance via barycentric approximation
   // Geometric Correspondence for Ensembles of Nonregular Shapes, Datar et al
@@ -233,11 +235,7 @@ bool VtkMeshWrapper::IsWithinDistance(const PointType &pt_a, int idx_a,
   // 1.5 is an heuristic to pull in a little more than we need
   const auto& geo_entry = GeodesicsFromTriangle(face_a, test_dist*1.5);
 
-  if(geo_entry.is_full_mode()) {
-    if(geo_entry.max_dist < test_dist) {
-      return false;
-    }
-  } else {
+  if(!geo_entry.is_full_mode()) {
     const auto& data = geo_entry.data_partial;
     const auto find_v0 = data.find(vb0);
     const auto find_v1 = data.find(vb1);
@@ -898,10 +896,9 @@ void VtkMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::
   }
 
   // compute k-ring
-  const int k = 1;
   face_kring_.resize(this->triangles_.size());
   for(int f=0; f<this->triangles_.size(); f++) {
-    ComputeKRing(f, k, face_kring_[f]);
+    ComputeKRing(f, kring_, face_kring_[f]);
   }
 }
 
@@ -932,23 +929,56 @@ const MeshGeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist
 
   const auto n_verts = this->poly_data_->GetNumberOfPoints();
 
-  double new_max_dist = max_dist;
-  auto incident_cells = vtkSmartPointer<vtkIdList>::New();
+  const auto which_vert_of_tri = [&](int tri, int v) {
+    if(triangles_[tri]->GetPointId(0) == v) {
+      return 0;
+    }
+    if(triangles_[tri]->GetPointId(1) == v) {
+      return 1;
+    }
+    return 2;
+  };
 
-  geometrycentral::surface::VertexData<double> dists[3];
+  double new_max_dist = max_dist;
+  Eigen::VectorXd dists[3];
+
+  // if any of this triangle's 1-ring is cached in full mode, we can copy that. This allows us to skip
+  // some geodesic computations. its a lot trickier to handle all the edge cases to reuse a neighbors's
+  // partial mode values, so we don't do that.
+  auto incident_cells = vtkSmartPointer<vtkIdList>::New();
+  for(int i=0; i<3; i++) {
+    const int v = this->triangles_[f]->GetPointId(i);
+    this->poly_data_->GetPointCells(v, incident_cells);
+    for(int j=0; j<incident_cells->GetNumberOfIds(); j++) {
+      const int f_j = incident_cells->GetId(j);
+      if(f_j == f) {
+        continue;
+      }
+      if(geo_dist_cache_[f_j].is_full_mode()) {
+        const auto which = which_vert_of_tri(f_j, v);
+        dists[i] = geo_dist_cache_[f_j].data_full[which];
+        break;
+      }
+    }
+  }
 
   // Compute geodesics using heat method
   for(int i=0; i<3; i++) {
+    if(dists[i].size() != 0) {
+      // we have already figured out these geodesics using a neighbor's
+      continue;
+    }
     // todo switch to zero-copy API when that is available: https://github.com/nmwsharp/geometry-central/issues/77
     const auto v = gc_mesh_->vertex(this->triangles_[f]->GetPointId(i));
-    dists[i] = gc_heatsolver_->computeDistance(v);
+    const auto gc_dists = gc_heatsolver_->computeDistance(v);
+    dists[i] = std::move(gc_dists.raw());
   }
 
   if(max_dist == std::numeric_limits<double>::infinity()) {
     entry.mode = MeshGeoEntry::Full;
-    entry.data_full[0] = std::move(dists[0].raw());
-    entry.data_full[1] = std::move(dists[1].raw());
-    entry.data_full[2] = std::move(dists[2].raw());
+    entry.data_full[0] = std::move(dists[0]);
+    entry.data_full[1] = std::move(dists[1]);
+    entry.data_full[2] = std::move(dists[2]);
     entry.update_max_dist();
     geo_cache_size_ += n_verts;
     return entry;
@@ -971,7 +1001,7 @@ const MeshGeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist
 
   robin_hood::unordered_set<int> needed_points;
 
-  // Figure out which of these we actually need. If a vertex is included, we also pull in all 1-ring neighbors of
+  // Figure out which of these we actually need. If a vertex is included, we also pull in all 1-ring incident_cells of
   // that vertex since they may be needed to compute geodesics on triangles incident on that vertex
   for(int i=0; i<n_verts; i++) {
     const auto& d0 = dists[0][i];
@@ -997,9 +1027,9 @@ const MeshGeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist
 
   if(needed_points.size() >= switch_to_full_at) {
     entry.mode = MeshGeoEntry::Full;
-    entry.data_full[0] = std::move(dists[0].raw());
-    entry.data_full[1] = std::move(dists[1].raw());
-    entry.data_full[2] = std::move(dists[2].raw());
+    entry.data_full[0] = std::move(dists[0]);
+    entry.data_full[1] = std::move(dists[1]);
+    entry.data_full[2] = std::move(dists[2]);
     entry.update_max_dist();
     geo_cache_size_ += n_verts;
     return entry;
@@ -1043,12 +1073,10 @@ const Eigen::Matrix3d VtkMeshWrapper::GeodesicsFromTriangleToTriangle(int f_a, i
   auto find_v1 = data.find(v1);
   auto find_v2 = data.find(v2);
   if(find_v0 == data.end() || find_v1 == data.end() || find_v2 == data.end()) {
-    // std::cerr << "GeodesicsFromTriangleToPoints: did not find target points in cache! Forcing full mode\n";
-    GeodesicsFromTriangle(f_a, std::numeric_limits<double>::infinity(), f_b);
-    auto& new_entry = geo_dist_cache_[f_a];
-    find_v0 = new_entry.data_partial.find(v0);
-    find_v1 = new_entry.data_partial.find(v1);
-    find_v2 = new_entry.data_partial.find(v2);
+    // couldn't find geodesics. force the cache to add this item and rerun
+    // *1.0001 is a hacky way to ensure that we don't end up infinitely recursing...
+    GeodesicsFromTriangle(f_a, entry.max_dist*1.0001, f_b);
+    return GeodesicsFromTriangleToTriangle(f_a, f_b);
   }
   Eigen::Matrix3d result;
   result.col(0) = find_v0->second;
@@ -1099,7 +1127,7 @@ void VtkMeshWrapper::ComputeKRing(int f, int k, std::unordered_set<int>& ring) c
     this->poly_data_->GetPointCells(v, neighbors);
     for(int j=0; j<neighbors->GetNumberOfIds(); j++) {
       const int f_j = neighbors->GetId(j);
-      if(ring.find(f_j) != ring.end()) {
+      if(ring.find(f_j) == ring.end()) {
         ring.insert(f_j);
         ComputeKRing(f_j, k-1, ring);
       }
