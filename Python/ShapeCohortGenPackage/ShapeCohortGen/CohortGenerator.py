@@ -22,8 +22,8 @@ class CohortGenerator():
 class EllipsoidCohortGenerator(CohortGenerator):
 	def __init__(self,out_dir):
 		super().__init__(out_dir)
-	def generate(self, num_samples=3, randomize_center=True, randomize_rotation=True):
-		self.meshes = Ellipsoids.generate(num_samples, self.out_dir, randomize_center, randomize_rotation)
+	def generate(self, num_samples=3, randomize_center=True, randomize_rotation=True, randomize_x_radius=True, randomize_y_radius=True, randomize_z_radius=True):
+		self.meshes = Ellipsoids.generate(num_samples, self.out_dir, randomize_center, randomize_rotation, randomize_x_radius, randomize_y_radius, randomize_z_radius)
 		return self.meshes
 
 class SupershapesCohortGenerator(CohortGenerator):

@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-      - replace_trimesh
+      - release_v*
     tags:
     - '*'
   pull_request:
@@ -21,8 +21,8 @@ jobs:
     
     steps:
 
-    - name: Choose gcc 7
-      run: sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7
+    - name: Choose gcc 9
+      run: sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-9
 
     - name: Prepare ccache timestamp
       id: ccache_cache_timestamp

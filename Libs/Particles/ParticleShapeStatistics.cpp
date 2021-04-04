@@ -140,6 +140,7 @@ int ParticleShapeStatistics::ImportPoints(
   //std::cerr << "m_numSamples2 = " << m_numSamples2 << "\n";
 
   m_pointsMinusMean.set_size(m_numDimensions, m_numSamples);
+  m_pointsMinusMean.fill(0);
   m_shapes.set_size(m_numDimensions, m_numSamples);
   m_mean.set_size(m_numDimensions);
   m_mean.fill(0);
