@@ -11,6 +11,8 @@
 #include <Libs/Project/Project.h>
 #include <Libs/Optimize/OptimizeParameters.h>
 #include "ParticleShapeStatistics.h"
+#include "VtkMeshWrapper.h"
+#include <vtkPLYReader.h>
 
 using namespace shapeworks;
 
@@ -418,4 +420,42 @@ TEST(OptimizeTests, project_test) {
   // Otherwise it is quite large (>4000).
   double value = values[values.size() - 1];
   ASSERT_LT(value, 100);
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, mesh_geodesics_test) {
+  const std::string sphere_mesh_path = std::string(TEST_DATA_DIR) + "/sphere_highres.ply";
+  auto reader = vtkSmartPointer<vtkPLYReader>::New();
+  reader->SetFileName(sphere_mesh_path.c_str());
+  reader->Update();
+
+  vtkSmartPointer<vtkPolyData> poly_data = reader->GetOutput();
+  VtkMeshWrapper mesh(poly_data, true, 1000000);
+
+  auto polar2cart = [](double theta, double phi) {
+    const double x = sin(theta) * cos(phi);
+    const double y = sin(theta) * sin(phi);
+    const double z = cos(theta);
+    const itk::Point<double, 3> pt({x, y, z});
+    return pt;
+  };
+
+  // sample a bunch of points (deterministically) on the sphere and check whether the returned
+  // geodesic distance is close to the analytically computed value
+  for(int i=0; i<9; i++) {
+    for(int j=0; j<9; j++) {
+      const double theta0 = M_2PI * (i % 3) / 10.0;
+      const double phi0   = M_2PI * (i / 3) / 10.0;
+      const double theta1 = M_2PI * (j % 3) / 10.0;
+      const double phi1   = M_2PI * (j / 3) / 10.0;
+
+      auto pt_a = polar2cart(theta0, phi0);
+      auto pt_b = polar2cart(theta1, phi1);
+      const double computed = mesh.ComputeDistance(pt_a, -1, pt_b, -1);
+      const double truth = acos(dot_product(pt_a.GetVnlVector(), pt_b.GetVnlVector()));
+
+      // std::cerr << "Geodesics test: " << computed << " " << truth << "\n";
+      ASSERT_NEAR(computed, truth, 0.2);
+    }
+  }
 }

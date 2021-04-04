@@ -45,7 +45,8 @@ using PointType = VtkMeshWrapper::PointType;
 using GradNType = VtkMeshWrapper::GradNType;
 
 //---------------------------------------------------------------------------
-VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data) {
+VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data,
+                               bool is_geodesics_enabled, size_t geodesics_cache_size) {
   vtkSmartPointer<vtkTriangleFilter> triangle_filter =
           vtkSmartPointer<vtkTriangleFilter>::New();
   triangle_filter->SetInputData(poly_data);
@@ -97,7 +98,13 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data) {
   this->GetIGLMesh(V, F);
   this->ComputeGradN(V, F);
 
+  this->is_geodesics_enabled_ = is_geodesics_enabled;
   if (is_geodesics_enabled_) {
+    if(geodesics_cache_size == 0) {
+      // heuristic for cache size based on some experiments
+      geodesics_cache_size = 115 * this->triangles_.size();
+    }
+    this->geo_max_cache_entries_ = geodesics_cache_size;
     this->PrecomputeGeodesics(V, F);
   }
 }
@@ -116,10 +123,9 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
   }
 
   // Find the triangle for the point a. If this was the same as the previous query, just used that cached value
-  volatile int cached = particle_triangles_[idx_a];
   int face_a, face_b;
   vec3 bary_a, bary_b;
-  if (geo_lq_pidx_ == idx_a) {
+  if (idx_a >=0 && geo_lq_pidx_ == idx_a) {
     face_a = geo_lq_face_;
     bary_a = geo_lq_bary_;
   } else {
@@ -153,14 +159,14 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
 
   // Ensure we have geodesics available in the cache. This will resize the cache to fit face_b or max_dist, whichever
   // is greater. We do this pre-emptively since GeodesicsFromTriangleToTriangle would pull geodesics to every point
-  // into the cache if face_b is not found.
+  // into the cache if face_b is not found. 1.5 is an heuristic to pull in a little more than we need
   const double max_dist = idx_a >= 0 ? this->particle_neighboorhood_[idx_a]*1.5 : std::numeric_limits<double>::infinity();
   GeodesicsFromTriangle(face_a, max_dist, face_b);
 
   // Compute geodesic distance via barycentric approximation
   // Geometric Correspondence for Ensembles of Nonregular Shapes, Datar et al
   // https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3346950/
-  const Eigen::Matrix3d& geo_from_a = GeodesicsFromTriangleToTriangle(face_a, face_b);
+  const Eigen::Matrix3d geo_from_a = GeodesicsFromTriangleToTriangle(face_a, face_b);
   const Eigen::Vector3d geo_to_b = geo_from_a * bary_b;
   const double geo_dist = bary_a.dot(geo_to_b);
 
@@ -169,17 +175,15 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
     return geo_dist;
   }
 
-  // Map out_grad to an Eigen data structure
-  Eigen::Map<Eigen::Vector3d> out_grad_eigen(out_grad->data_block());
-  out_grad_eigen.setZero();
-
   // Compute gradient of geodesics
   const auto& G = face_grad_[face_a];
-  out_grad_eigen = (G*geo_to_b).rowwise().sum();
+  Eigen::Vector3d out_grad_eigen = (G*geo_to_b).rowwise().sum();
+  out_grad_eigen *= geo_dist / out_grad_eigen.norm();
 
-  //todo double check this math
-  out_grad_eigen.normalize();
-  out_grad_eigen *= geo_dist;
+  // Copy to VNL data structure
+  (*out_grad)[0] = out_grad_eigen[0];
+  (*out_grad)[1] = out_grad_eigen[1];
+  (*out_grad)[2] = out_grad_eigen[2];
 
   return geo_dist;
 }
@@ -226,6 +230,7 @@ bool VtkMeshWrapper::IsWithinDistance(const PointType &pt_a, int idx_a,
   const auto vb1 = this->triangles_[face_b]->GetPointId(1);
   const auto vb2 = this->triangles_[face_b]->GetPointId(2);
 
+  // 1.5 is an heuristic to pull in a little more than we need
   const auto& geo_entry = GeodesicsFromTriangle(face_a, test_dist*1.5);
 
   if(geo_entry.is_full_mode()) {
@@ -250,7 +255,7 @@ bool VtkMeshWrapper::IsWithinDistance(const PointType &pt_a, int idx_a,
     }
   }
 
-  const Eigen::Matrix3d& geo_from_a = GeodesicsFromTriangleToTriangle(face_a, face_b);
+  const Eigen::Matrix3d geo_from_a = GeodesicsFromTriangleToTriangle(face_a, face_b);
   const Eigen::Vector3d geo_to_b = geo_from_a * bary_b;
   dist = bary_a.dot(geo_to_b);
   return dist < test_dist;
@@ -907,7 +912,7 @@ bool VtkMeshWrapper::AreFacesInKRing(int f_a, int f_b) const
 }
 
 //---------------------------------------------------------------------------
-const GeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist, int req_target_f) const
+const MeshGeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist, int req_target_f) const
 {
   if(geo_cache_size_ >= geo_max_cache_entries_) {
     this->ClearGeodesicCache();
@@ -940,24 +945,29 @@ const GeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist, in
   }
 
   if(max_dist == std::numeric_limits<double>::infinity()) {
-    entry.mode = GeoEntry::Full;
+    entry.mode = MeshGeoEntry::Full;
     entry.data_full[0] = std::move(dists[0].raw());
     entry.data_full[1] = std::move(dists[1].raw());
     entry.data_full[2] = std::move(dists[2].raw());
+    entry.update_max_dist();
     geo_cache_size_ += n_verts;
-    entry.max_dist = std::max(entry.data_full[0].maxCoeff(),
-                              std::max(entry.data_full[1].maxCoeff(), entry.data_full[2].maxCoeff()));
     return entry;
   }
 
   if(req_target_f >= 0) {
     for(int i=0; i<3; i++) {
       const int req_v = this->triangles_[req_target_f]->GetPointId(i);
-      max_dist = std::max(max_dist, dists[0][req_v]);
-      max_dist = std::max(max_dist, dists[1][req_v]);
-      max_dist = std::max(max_dist, dists[2][req_v]);
+      max_dist = std::max({
+        max_dist,
+        dists[0][req_v],
+        dists[1][req_v],
+        dists[2][req_v]
+      });
     }
   }
+
+  // this is a heuristic chosen: at a certain size, its simpler to just switch to full mode
+  const auto switch_to_full_at = n_verts / 4;
 
   robin_hood::unordered_set<int> needed_points;
 
@@ -974,18 +984,24 @@ const GeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist, in
         needed_points.insert(tri->GetPointId(0));
         needed_points.insert(tri->GetPointId(1));
         needed_points.insert(tri->GetPointId(2));
+
+        if(needed_points.size() >= switch_to_full_at) {
+          break;
+        }
       }
+    }
+    if(needed_points.size() >= switch_to_full_at) {
+      break;
     }
   }
 
-  if(needed_points.size() > n_verts / 4) {
-    entry.mode = GeoEntry::Full;
+  if(needed_points.size() >= switch_to_full_at) {
+    entry.mode = MeshGeoEntry::Full;
     entry.data_full[0] = std::move(dists[0].raw());
     entry.data_full[1] = std::move(dists[1].raw());
     entry.data_full[2] = std::move(dists[2].raw());
+    entry.update_max_dist();
     geo_cache_size_ += n_verts;
-    entry.max_dist = std::max(entry.data_full[0].maxCoeff(),
-                              std::max(entry.data_full[1].maxCoeff(), entry.data_full[2].maxCoeff()));
     return entry;
   }
 
@@ -993,9 +1009,7 @@ const GeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist, in
     const auto& d0 = dists[0][v];
     const auto& d1 = dists[1][v];
     const auto& d2 = dists[2][v];
-    new_max_dist = std::max(new_max_dist, d0);
-    new_max_dist = std::max(new_max_dist, d1);
-    new_max_dist = std::max(new_max_dist, d2);
+    new_max_dist = std::max({new_max_dist, d0, d1, d2});
     entry.data_partial[v] = {d0, d1, d2};
   }
 
@@ -1045,12 +1059,11 @@ const Eigen::Matrix3d VtkMeshWrapper::GeodesicsFromTriangleToTriangle(int f_a, i
 
 //---------------------------------------------------------------------------
 void VtkMeshWrapper::ClearGeodesicCache() const {
-  std::cout << "Clearing cache\n";
-
   const auto n_verts = this->poly_data_->GetNumberOfPoints();
   robin_hood::unordered_set<int> active_triangles(particle_triangles_.begin(), particle_triangles_.end());
   size_t new_cache_size = 0;
 
+  // figure out which triangles each particle is on, and clear only the other entries
   for(int i=0; i<geo_dist_cache_.size(); i++) {
     auto& entry = geo_dist_cache_[i];
     if(active_triangles.find(i) == active_triangles.end()) {
@@ -1060,8 +1073,9 @@ void VtkMeshWrapper::ClearGeodesicCache() const {
     }
   }
 
+  // the cache is not large enough to store the subset that we know is required. we are forced to clear everything
   if(new_cache_size > geo_max_cache_entries_) {
-    std::cerr << "Warning: Cache entries too small, doing full clear\n";
+    std::cerr << "Warning: Cache entries too small, clearing everything. Consider increasing cache size if this happens repeatedly\n";
     for(auto i : active_triangles) {
       if(i >= 0) {
         geo_dist_cache_[i].clear();
