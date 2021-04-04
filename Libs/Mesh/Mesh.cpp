@@ -457,7 +457,6 @@ Mesh& Mesh::generateNormals()
   return *this;
 }
 
-
 Image Mesh::toImage(Vector3 spacing, Dims size, Point3 origin) const
 {
   if (std::abs(spacing[0]) < 1E-4 || std::abs(spacing[1]) < 1E-4 || std::abs(spacing[2]) < 1E-4)
@@ -531,6 +530,8 @@ Image Mesh::toImage(Vector3 spacing, Dims size, Point3 origin) const
 
   return Image(imgstenc->GetOutput());
 }
+
+
 
 Image Mesh::toDistanceTransform(Vector3 spacing, Dims size, Point3 origin) const
 {

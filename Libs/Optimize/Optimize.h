@@ -207,7 +207,7 @@ public:
 
   //! Set the shape input images
   void AddImage(ImageType::Pointer image);
-  void AddMesh(vtkSmartPointer<vtkPolyData> poly_data);
+  void AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh);
 
   //! Set the shape filenames (TODO: details)
   void SetFilenames(const std::vector<std::string>& filenames);
@@ -272,7 +272,7 @@ public:
   void SetGeodesicsEnabled(bool is_enabled);
 
   //! Set cache size for geodesics
-  void SetGeodesicsCacheSize(size_t n);
+  void SetGeodesicsCacheSize(unsigned long n);
 
   shapeworks::OptimizationVisualizer &GetVisualizer();
   void SetShowVisualizer(bool show);
@@ -393,8 +393,8 @@ protected:
   bool m_fixed_domains_present = false;
   int m_use_shape_statistics_after = -1;
   std::string m_python_filename;
-  bool m_geodesics_enabled = false; // geodesics disabled by default
-  size_t m_geodesic_cache_size = 0; // 0 => VtkMeshWrapper will use a heuristic to determine cache size
+  bool m_geodesics_enabled = false;
+  bool m_geodesic_cache_size = 1024;
 
   // Keeps track of which state the optimization is in.
   unsigned int m_mode = 0;

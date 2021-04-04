@@ -250,7 +250,6 @@ TEST(MeshTests, rasterizationSizeTest2)
   ASSERT_TRUE(femur.rasterizationSize(region) == size);
 }
 
-
 TEST(MeshTests, centerTest)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
