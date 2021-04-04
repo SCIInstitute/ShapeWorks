@@ -442,8 +442,8 @@ TEST(OptimizeTests, mesh_geodesics_test) {
 
   // sample a bunch of points (deterministically) on the sphere and check whether the returned
   // geodesic distance is close to the analytically computed value
-  for(int i=0; i<9; i++) {
-    for(int j=0; j<9; j++) {
+  for(int i=0; i<10; i++) {
+    for(int j=0; j<10; j++) {
       const double theta0 = M_2PI * (i % 3) / 10.0;
       const double phi0   = M_2PI * (i / 3) / 10.0;
       const double theta1 = M_2PI * (j % 3) / 10.0;
