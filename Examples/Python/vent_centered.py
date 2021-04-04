@@ -55,8 +55,6 @@ def Run_Pipeline(args):
     # Check if the data is in the right place
     if not os.path.exists(filename):
         print("Can't find " + filename + " in the current directory.")
-        import DatasetUtils
-        DatasetUtils.downloadDataset(datasetName)
 
     parentDir = "Test_vent_centered_sub/"
     if not os.path.exists(parentDir):
@@ -185,22 +183,23 @@ def Run_Pipeline(args):
         input("Press Enter to continue")
 
     pointDir = parentDir+'PointFiles/'
+    print(pointDir)
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
     parameterDictionary = {
-        "number_of_particles": 1024,
+        "number_of_particles": 512,
         "use_normals": [1],
         "normal_weight": [100.0],
         "checkpointing_interval": 200,
         "keep_checkpoints": 0,
         "iterations_per_split": 5000,
         "optimization_iterations": 5000,
-        "starting_regularization": 500000,
+        "starting_regularization": 5000,
         "ending_regularization": 10,
         "recompute_regularization_interval": 2,
         "domains_per_shape": 1,
-        "relative_weighting": 20,
+        "relative_weighting": 10,
         "domain_type" : 'image',
         "initial_relative_weighting": 0.1,
         "procrustes_interval": 0,
@@ -252,6 +251,7 @@ def Run_Pipeline(args):
     if args.interactive :
         input("Press Enter to continue")
 
-    command = "ShapeWorksStudio "+ pointDir+ "analyze.xml"
-    print(command)
-    os.system(command)
+#    command = "ShapeWorksStudio "+ pointDir+ "analyze.xml"
+#    print(command)
+#    os.system(command)
+    launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)
