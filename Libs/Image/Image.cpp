@@ -845,6 +845,40 @@ Point3 Image::centerOfMass(PixelType minVal, PixelType maxVal) const
   return com;
 }
 
+Image::StatsPtr Image::statsFilter()
+{
+  using FilterType = itk::StatisticsImageFilter<ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+
+  filter->SetInput(this->image);
+  filter->UpdateLargestPossibleRegion();
+  return filter;
+}
+
+Image::PixelType Image::min()
+{
+  StatsPtr filter = statsFilter();
+  return filter->GetMinimum();
+}
+
+Image::PixelType Image::max()
+{
+  StatsPtr filter = statsFilter();
+  return filter->GetMaximum();
+}
+
+Image::PixelType Image::mean()
+{
+  StatsPtr filter = statsFilter();
+  return filter->GetMean();
+}
+
+Image::PixelType Image::std()
+{
+  StatsPtr filter = statsFilter();
+  return sqrt(filter->GetVariance());
+}
+
 Region Image::boundingBox(PixelType isoValue) const
 {
   Region bbox;

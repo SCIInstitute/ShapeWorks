@@ -22,10 +22,8 @@ def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
-
     datasetName = "ellipsoid_1mode_aligned"
     outputDirectory = "Output/ellipsoid_mesh/"
-    
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
 

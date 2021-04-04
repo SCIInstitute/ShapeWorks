@@ -386,9 +386,18 @@ TEST(MeshTests, icpTest)
   ASSERT_TRUE(source == ground_truth);
 }
 
+TEST(MeshTests, generateNormalsTest)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.generateNormals();
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/normals.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
 TEST(MeshTests, warpTest1)
 {
-  Mesh ellipsoid( std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
+  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
   Eigen::MatrixXd Vref = MeshUtils::distilVertexInfo(ellipsoid);
   Eigen::MatrixXi Fref = MeshUtils::distilFaceInfo(ellipsoid);
   std::string particlePath = std::string(TEST_DATA_DIR) + "/ellipsoid_0.particles";
@@ -412,8 +421,8 @@ TEST(MeshTests, warpTest1)
 
 TEST(MeshTests, warpTest2)
 {
-  Mesh ellipsoid( std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
-  Mesh ellipsoid_warped( std::string(TEST_DATA_DIR) + "/ellipsoid_warped.ply");
+  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
+  Mesh ellipsoid_warped(std::string(TEST_DATA_DIR) + "/ellipsoid_warped.ply");
   Eigen::MatrixXd Vref = MeshUtils::distilVertexInfo(ellipsoid);
   Eigen::MatrixXi Fref = MeshUtils::distilFaceInfo(ellipsoid);
   std::string staticPath = std::string(TEST_DATA_DIR) + "/ellipsoid_0.particles";
