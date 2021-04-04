@@ -110,7 +110,7 @@ private:
   mutable std::vector<int> particle_triangles_;
   mutable std::vector<NormalType> particle_normals_;
   mutable std::vector<PointType> particle_positions_;
-  mutable std::vector<double> particle_neighboorhood_;
+  mutable std::vector<double> particle_neighboorhood_; // todo probably remove
 
   std::vector<GradNType> grad_normals_;
 
@@ -161,8 +161,8 @@ private:
 
   void ComputeKRing(int f, int k, std::unordered_set<int>& ring) const;
 
-  const MeshGeoEntry& GeodesicsFromTriangle(int f, double max_dist=std::numeric_limits<double>::max(),
-                                            int req_target_f=-1) const;
+  const MeshGeoEntry& GeodesicsFromVertex(int v, double max_dist=std::numeric_limits<double>::max(),
+                                          int req_target_f=-1) const;
   const Eigen::Matrix3d GeodesicsFromTriangleToTriangle(int f_a, int f_b) const;
   void ClearGeodesicCache() const;
 
