@@ -123,7 +123,8 @@ ParticleImplicitSurfaceDomain<T>::ApplyConstraints(PointType &p, int idx, bool d
         std::cerr << msg.str();
     }
     if(vec[0] == 0 && vec[1] == 0 && vec[2] == 0){
-        std::cerr << "Stuck ";
+        std::cerr << "Update becomes [0,0,0] ";
+        break;
     }
 
     // Raise the tolerance if we have done too many iterations.
