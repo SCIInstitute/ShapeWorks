@@ -34,11 +34,11 @@ def Run_Pipeline(args):
     if args.tiny_test:
         args.use_single_scale = 1
         CommonUtils.download_subset(args.use_case,datasetName, outputDirectory)
-        meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))[:3]
+        meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.vtk"))[:3]
     #else download the entire dataset
     else:
         CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
-        meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))
+        meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.vtk"))
     
     # Select data if using subsample
     if args.use_subsample:
