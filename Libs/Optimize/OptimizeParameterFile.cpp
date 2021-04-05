@@ -362,8 +362,8 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
   elem = docHandle->FirstChild("geodesics_enabled").Element();
   if (elem) { optimize->SetGeodesicsEnabled((bool) atoi(elem->GetText())); }
 
-  elem = docHandle->FirstChild("geodesics_cache_size").Element();
-  if (elem) { optimize->SetGeodesicsCacheSize((size_t) atol(elem->GetText())); }
+  elem = docHandle->FirstChild("geodesics_cache_size_multiplier").Element();
+  if (elem) { optimize->SetGeodesicsCacheSizeMultiplier((size_t) atol(elem->GetText())); }
 
   return true;
 }

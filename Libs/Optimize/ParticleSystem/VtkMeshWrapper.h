@@ -27,7 +27,7 @@ public:
 
   explicit VtkMeshWrapper(vtkSmartPointer<vtkPolyData> mesh,
                           bool geodesics_enabled=false,
-                          size_t geodesics_cache_size=0);
+                          size_t geodesics_cache_multiplier_size=0); // 0 => VtkMeshWrapper will choose a heuristic
 
   ~VtkMeshWrapper() = default;
 
@@ -124,21 +124,22 @@ private:
   // cell locator to find closest point on mesh
   vtkSmartPointer<vtkCellLocator> cell_locator_;
 
-  bool IsGeodesicsEnabled() const override
-  {
-    return this->is_geodesics_enabled_;
-  }
-
   /////////////////////////
   // Geodesic distances
 
   bool is_geodesics_enabled_{false};
 
+  bool IsGeodesicsEnabled() const override
+  {
+    return this->is_geodesics_enabled_;
+  }
+
+  // Geometry Central data structures
   std::unique_ptr<geometrycentral::surface::SurfaceMesh> gc_mesh_;
   std::unique_ptr<geometrycentral::surface::VertexPositionGeometry> gc_geometry_;
   std::unique_ptr<geometrycentral::surface::HeatMethodDistanceSolver> gc_heatsolver_;
 
-  size_t geo_max_cache_entries_{16000000};
+  size_t geo_max_cache_entries_{0};
   mutable size_t geo_cache_size_{0};
 
   // Flattened version of libigl's gradient operator
@@ -149,9 +150,9 @@ private:
   // Cache for geodesic distances from a triangle
   mutable std::vector<MeshGeoEntry> geo_dist_cache_;
 
-  // Returns true if face f_a is adjacent to face f_b. This uses a non-standard definition of adjacency: return true
-  // if f_a and f_b share atleast one vertex
+  // Returns true if face f_a is in the K-ring of face f_b
   bool AreFacesInKRing(int f_a, int f_b) const;
+  const size_t kring_{1};
 
   // Convert the mesh to libigl data structures
   void GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const;

@@ -43,6 +43,10 @@ struct MeshGeoEntry {
     const auto max2 = data_full[2].maxCoeff();
     max_dist = std::max({max0, max1, max2});
   }
+
+  bool has_entry(int target) {
+    return is_full_mode() || data_partial.find(target) != data_partial.end();
+  }
 };
 
 };

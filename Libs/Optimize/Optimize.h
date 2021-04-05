@@ -271,8 +271,9 @@ public:
   //! Set whether or not geodesics are enabled
   void SetGeodesicsEnabled(bool is_enabled);
 
-  //! Set cache size for geodesics
-  void SetGeodesicsCacheSize(size_t n);
+  //! Set cache size multiplier for geodesics. The total number of cache entries will be
+  //! n * number_of_triangles
+  void SetGeodesicsCacheSizeMultiplier(size_t n);
 
   shapeworks::OptimizationVisualizer &GetVisualizer();
   void SetShowVisualizer(bool show);
@@ -394,7 +395,7 @@ protected:
   int m_use_shape_statistics_after = -1;
   std::string m_python_filename;
   bool m_geodesics_enabled = false; // geodesics disabled by default
-  size_t m_geodesic_cache_size = 0; // 0 => VtkMeshWrapper will use a heuristic to determine cache size
+  size_t m_geodesic_cache_size_multiplier = 0; // 0 => VtkMeshWrapper will use a heuristic to determine cache size
 
   // Keeps track of which state the optimization is in.
   unsigned int m_mode = 0;
