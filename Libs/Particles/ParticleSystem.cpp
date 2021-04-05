@@ -42,23 +42,4 @@ ParticleSystem::ParticleSystem(const Eigen::MatrixXd& matrix)
   this->P = matrix;
 }
 
-std::vector<std::vector<Point>> ParticleSystem::toVector()
-{
-  std::vector<std::vector<Point>> particlePoints;
-
-  for (int i=0; i<P.cols(); i++) {
-    std::vector<Point> particle;
-    for (int j=0; j<P.rows()/3; j++) {
-      Point point;
-      for (int k=0; k<3; k++) {
-        point[k] = P.coeff(j*3+k, i);
-      }
-      particle.push_back(point);
-    }
-    particlePoints.push_back(particle);
-  }
-
-  return particlePoints;
-}
-
 }

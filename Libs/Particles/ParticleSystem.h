@@ -35,8 +35,6 @@ public:
     return P.rows();
   }
 
-  std::vector<std::vector<Point>> toVector();
-
 private:
   friend struct SharedCommandData;
 

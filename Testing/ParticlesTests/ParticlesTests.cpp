@@ -31,9 +31,8 @@ const std::vector<std::string> filenames = {
 TEST(ParticlesTests, vnlVector)
 {
   ParticleSystem particleSystem(filenames);
-  std::vector<std::vector<Point>> points = particleSystem.toVector();
   ParticleShapeStatistics stats;
-  stats.DoPCA(points);
+  stats.DoPCA(particleSystem);
   stats.PrincipalComponentProjections();
   Eigen::MatrixXd pcaVec = stats.PCALoadings();
   for(int i=0; i<pcaVec.rows(); i++)

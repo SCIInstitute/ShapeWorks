@@ -394,6 +394,27 @@ int ParticleShapeStatistics::DoPCA(std::vector<std::vector<Point>> global_pts, i
   return 0;
 }
 
+int ParticleShapeStatistics::DoPCA(ParticleSystem particleSystem, int domainsPerShape)
+{
+  Eigen::MatrixXd p = particleSystem.Particles();
+
+  std::vector<std::vector<Point>> particlePoints;
+
+  for (int i=0; i<p.cols(); i++) {
+    std::vector<Point> particle;
+    for (int j=0; j<p.rows()/3; j++) {
+      Point point;
+      for (int k=0; k<3; k++) {
+        point[k] = p.coeff(j*3+k, i);
+      }
+      particle.push_back(point);
+    }
+    particlePoints.push_back(particle);
+  }
+
+  return DoPCA(particlePoints, domainsPerShape);
+}
+
 int ParticleShapeStatistics::ReloadPointFiles()
 {
 

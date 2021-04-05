@@ -672,11 +672,7 @@ PYBIND11_MODULE(shapeworks, m)
 
   py::class_<ParticleShapeStatistics>(m, "ParticleShapeStatistics")
   .def(py::init<>())
-  .def("PCA", [](ParticleShapeStatistics stats, ParticleSystem p, int domainsPerShape) {
-    std::vector<std::vector<Point>> points = p.toVector(); // TODO: Don't use sw.Point
-    return stats.DoPCA(points, domainsPerShape);
-  }, "particleSystem"_a, "domainsPerShape"_a=1)
-  .def("PCA",                   &ParticleShapeStatistics::DoPCA, "points"_a, "domainsPerShape"_a=1)
+  .def("PCA",                   py::overload_cast<ParticleSystem, int>(&ParticleShapeStatistics::DoPCA), "particleSystem"_a, "domainsPerShape"_a=1)
   .def("reloadPoints",          &ParticleShapeStatistics::ReloadPointFiles)
   .def("WriteCSVFile",          &ParticleShapeStatistics::WriteCSVFile, "name"_a)
   .def("WriteCSVFile2",         &ParticleShapeStatistics::WriteCSVFile2, "name"_a)
@@ -700,10 +696,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("groupDifference",       &ParticleShapeStatistics::GroupDifference)
   .def("computeMedianShape",    &ParticleShapeStatistics::ComputeMedianShape)
   .def("L1Norm",                &ParticleShapeStatistics::L1Norm,"a"_a,"b"_a)
-  .def("pcaLoadings",           &ParticleShapeStatistics::PCALoadings, py::return_value_policy::reference_internal)
-  // .def("pcaLoadings", [](ParticleShapeStatistics stats) {
-  //   return Eigen::Ref<const Eigen::MatrixXd>(stats.PCALoadings());
-  // }, py::return_value_policy::reference_internal)
+  .def("pcaLoadings",           &ParticleShapeStatistics::PCALoadings)
   .def("fishersLDA",            &ParticleShapeStatistics::FishersLDA)
   .def("shapeMatrix",           &ParticleShapeStatistics::ShapeMatrix)
   .def("recenteredShape",       &ParticleShapeStatistics::RecenteredShape)
