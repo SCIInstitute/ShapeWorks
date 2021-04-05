@@ -60,7 +60,9 @@ int main(int argc, char** argv)
     if (argc > 1) {
       QString filename = QString(argv[1]);
       if (filename.toLower().endsWith(".xlsx") || filename.toLower().endsWith(".xml")) {
-        studio_app->open_project(filename);
+        QTimer::singleShot(0, [=]() {
+          studio_app->open_project(filename);
+        });
       }
       else {
         QStringList files;

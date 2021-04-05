@@ -710,7 +710,7 @@ std::vector<std::string> Project::get_domain_names()
   auto groom_columns = this->get_matching_columns(GROOMED_PREFIX);
   if (!groom_columns.empty()) {
     std::vector<std::string> names;
-    for (auto&& item : seg_columns) {
+    for (auto&& item : groom_columns) {
       names.push_back(item.erase(0, std::strlen(GROOMED_PREFIX)));
     }
     return names;
