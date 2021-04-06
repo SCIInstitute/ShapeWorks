@@ -86,8 +86,8 @@ def sample_super_formula_2D(n_points, m, n1, n2, n3):
         pts[i] = [x, y, 0.0]
     return pts
 
-def generate_2D(n_samples, n_points, out_dir, m,
-                n1_degree=None, n2_degree=None, n3_degree=None,
+def generate_2D(n_samples, n_points, out_dir,
+                m=6, n1_degree=None, n2_degree=None, n3_degree=None,
                 default_n=5.0, seed=None):
     """
     Generate a set of 2D supershapes sampled with chi-square distribution
@@ -106,6 +106,10 @@ def generate_2D(n_samples, n_points, out_dir, m,
     if seed is not None:
         np.random.seed(seed)
 
+    contour_dir = os.path.join(out_dir, 'contours')
+    if not os.path.exists(contour_dir):
+        os.makedirs(contour_dir)
+
     filenames = []
     for i in range(n_samples):
         n1 = default_n if n1_degree is None else np.random.chisquare(n1_degree)
@@ -113,7 +117,7 @@ def generate_2D(n_samples, n_points, out_dir, m,
         n3 = default_n if n3_degree is None else np.random.chisquare(n3_degree)
         pts = sample_super_formula_2D(n_points, m, n1, n2, n3)
         lines = compute_line_indices(n_points, is_closed=True)
-        out_fname = os.path.join(out_dir, f'{i:02d}.vtp')
+        out_fname = os.path.join(contour_dir, f'{i:02d}.vtp')
         save_contour_as_vtp(pts, lines, out_fname)
         filenames.append(out_fname)
     return filenames

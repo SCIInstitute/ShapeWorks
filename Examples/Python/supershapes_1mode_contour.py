@@ -10,7 +10,7 @@ from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
 import CommonUtils
-import ShapeCohortGen.Supershapes as Supershapes
+from ShapeCohortGen.CohortGenerator import Supershapes2DCohortGenerator
 
 def Run_Pipeline(args):
     """
@@ -23,12 +23,9 @@ def Run_Pipeline(args):
 
     datasetName = "supershapes2D_1mode-v0"
     outputDirectory = "Output/supershapes_1mode_contour/"
-    contourDirectory = os.path.join(outputDirectory, datasetName, 'contours')
-    if not os.path.exists(contourDirectory):
-        os.makedirs(contourDirectory)
 
     # TODO upload to data portal and download from there
-    generate_supershapes(contourDirectory)
+    generate_supershapes(outputDirectory + datasetName)
     # CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
     contourFiles = sorted(glob.glob(outputDirectory + datasetName + "/contours/*.vtp"))
 
@@ -75,10 +72,10 @@ def Run_Pipeline(args):
 
 def generate_supershapes(out_dir):
     m = 6
-    n_points = 250
     n_samples = 25
 
-    filenames = Supershapes.generate_2D(n_samples, n_points, out_dir, m,
-                                        n1_degree=5, n2_degree=None, n3_degree=None,
-                                        default_n=5.0, seed=41)
+    g = Supershapes2DCohortGenerator(out_dir)
+    filenames = g.generate(n_samples,
+                           m=m, n1_degree=5, n2_degree=None, n3_degree=None,
+                           default_n=5.0, seed=41)
     return filenames
