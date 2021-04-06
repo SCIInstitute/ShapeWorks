@@ -13,6 +13,7 @@
 #include "ParticleShapeStatistics.h"
 #include "VtkMeshWrapper.h"
 #include <vtkPLYReader.h>
+#include <Libs/Mesh/MeshUtils.h>
 
 using namespace shapeworks;
 
@@ -425,12 +426,8 @@ TEST(OptimizeTests, project_test) {
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, mesh_geodesics_test) {
   const std::string sphere_mesh_path = std::string(TEST_DATA_DIR) + "/sphere_highres.ply";
-  auto reader = vtkSmartPointer<vtkPLYReader>::New();
-  reader->SetFileName(sphere_mesh_path.c_str());
-  reader->Update();
-
-  vtkSmartPointer<vtkPolyData> poly_data = reader->GetOutput();
-  VtkMeshWrapper mesh(poly_data, true, 1000000);
+  const auto sw_mesh = MeshUtils::threadSafeReadMesh(sphere_mesh_path);
+  VtkMeshWrapper mesh(sw_mesh.getVTKMesh(), true, 1000000);
 
   auto polar2cart = [](double theta, double phi) {
     const double x = sin(theta) * cos(phi);
@@ -442,17 +439,19 @@ TEST(OptimizeTests, mesh_geodesics_test) {
 
   // sample a bunch of points (deterministically) on the sphere and check whether the returned
   // geodesic distance is close to the analytically computed value
-  for(int i=0; i<10; i++) {
-    for(int j=0; j<10; j++) {
-      const double theta0 = M_2PI * (i % 3) / 10.0;
-      const double phi0   = M_2PI * (i / 3) / 10.0;
-      const double theta1 = M_2PI * (j % 3) / 10.0;
-      const double phi1   = M_2PI * (j / 3) / 10.0;
+  for(int i=0; i<100; i++) {
+    for(int j=0; j<100; j++) {
+      const double theta0 = M_2PI * (i % 10) / 10.0;
+      const double phi0   = M_2PI * (i / 10) / 10.0;
+      const double theta1 = M_2PI * (j % 10) / 10.0;
+      const double phi1   = M_2PI * (j / 10) / 10.0;
 
-      auto pt_a = polar2cart(theta0, phi0);
-      auto pt_b = polar2cart(theta1, phi1);
+      const auto pt_a = polar2cart(theta0, phi0);
+      const auto pt_b = polar2cart(theta1, phi1);
+      const double a_dot_b = std::max(std::min(dot_product(pt_a.GetVnlVector(), pt_b.GetVnlVector()), 1.0), -1.0);
+
       const double computed = mesh.ComputeDistance(pt_a, -1, pt_b, -1);
-      const double truth = acos(dot_product(pt_a.GetVnlVector(), pt_b.GetVnlVector()));
+      const double truth = acos(a_dot_b);
 
       // std::cerr << "Geodesics test: " << computed << " " << truth << "\n";
       ASSERT_NEAR(computed, truth, 0.2);
