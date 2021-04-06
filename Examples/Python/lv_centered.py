@@ -77,159 +77,93 @@ def Run_Pipeline(args):
         fileList_seg= [fileList_seg[i] for i in sample_idx]
         fileList_img = [fileList_img[i] for i in sample_idx]
         
-    if args.start_with_prepped_data:
-        dtFiles = sorted(glob.glob(parentDir + "groomed/distance_transforms/*.nrrd"))
+    prepDir = './Test_lv_centered/PrepOutput/'
+        
+    if args.groom_images:
+        
+        
+        """
+        ## GROOM : Data Pre-processing
+        For the unprepped data the first few steps are
+        -- Isotropic resampling
+        -- Padding
+        -- Center of Mass Alignment
+        -- Rigid Alignment
+        -- Largest Bounding Box and Cropping
+
+        For detailed explainations of parameters for each tool, go to
+        'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ImagePrepTools.pdf'
+        'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/AlgnmentTools.pdf'
+        """
+
+        print("\nStep 2. Groom - Data Pre-processing\n")
+        if args.interactive:
+            input("Press Enter to continue")
+
+        # create the output directory
+        prepDir = './Test_lv_centered/PrepOutput/'
+        if not os.path.exists(prepDir):
+            os.makedirs(prepDir)
+
+        """
+        Apply isotropic resampling
+
+        For detailed explainations of parameters for resampling volumes, go to
+        '/Documentation/PDFs/ImagePrepTools.pdf'
+        """
+        print(fileList_seg)
+        
+        resampledFiles = applyIsotropicResampling(prepDir + "resampled", fileList_seg, isBinary=True)
+        
+        print(resampledFiles)
+
+        """Apply Centering"""
+        centeredFiles = center(prepDir + "centered", resampledFiles)
+
+        """
+        Apply padding
+        For detailed explainations of parameters for padding volumes, go to
+        '/Documentation/PDFs/ImagePrepTools.pdf'
+        """
+        paddedFiles = applyPadding(prepDir + "padded", centeredFiles, 10)
+
+        
+
+        """
+        Apply rigid alignment
+
+        For detailed explainations of parameters for rigid alignment of volumes, go to
+        '/Documentation/PDFs/AlgnmentTools.pdf'
+
+        Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
+        """
+#            medianFile = FindReferenceImage(comFiles)
+#            rigidFiles = applyRigidAlignment(prepDir + "aligned", comFiles, None, medianFile)
+
+        """
+        Compute largest bounding box and apply cropping
+
+        For detailed explainations of parameters for finding the largest bounding box and cropping, go to
+        '/Documentation/PDFs/ImagePrepTools.pdf'
+        """
+        croppedFiles = applyCropping(prepDir + "cropped", paddedFiles, paddedFiles)
+
+        print("\nStep 3. Groom - Convert to distance transforms\n")
+        if args.interactive:
+            input("Press Enter to continue")
+
+        """
+        We convert the scans to distance transforms, this step is common for both the
+        prepped as well as unprepped data, just provide correct filenames.
+        """
+        dtFiles = applyDistanceTransforms(prepDir, croppedFiles)
+    else:
+        dtFiles = sorted(glob.glob(prepDir + "distance_transforms/*.nrrd"))
         
         if args.use_subsample:
             dtFiles = [dtFiles[i] for i in sample_idx]
         if args.tiny_test:
             dtFiles  = dtFiles[:2]
-        
-    else:            
-        
-        if args.start_with_image_and_segmentation_data and fileList_img:
-            """
-            ## GROOM : Data Pre-processing
-            For the unprepped data the first few steps are
-            -- Isotropic resampling
-            -- Center
-            -- Padding
-            -- Center of Mass Alignment
-            -- Rigid Alignment
-            -- Largest Bounding Box and Cropping
-            """
-
-            parentDir = './Test_lv_centered/PrepOutput/'
-
-            print("\nStep 2. Groom - Data Pre-processing\n")
-            if args.interactive:
-                input("Press Enter to continue")
-
-            """
-            Apply isotropic resampling
-            the segmentation and images are resampled independently and the result files are saved in two different directories.
-            """
-            resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, isBinary=True)
-            resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", fileList_img, isBinary=False)
-
-            """
-            Centering
-            """
-            centeredFiles_segmentations = center(parentDir + "centered/segmentations", resampledFiles_segmentations)
-            centeredFiles_images = center(parentDir + "centered/images", resampledFiles_images)
-
-            """
-            Apply padding
-
-            For detailed explainations of parameters for padding volumes, go to
-            '/Documentation/PDFs/ImagePrepTools.pdf'
-
-            Both the segmentation and raw images are padded.
-            """
-            paddedFiles_segmentations = applyPadding(parentDir + 'padded/segmentations', centeredFiles_segmentations, 10)
-            paddedFiles_images = applyPadding(parentDir+ 'padded/images', centeredFiles_images, 10)
-
-            
-            """
-            For detailed explainations of parameters for finding the largest bounding box and cropping, go to
-            '/Documentation/PDFs/ImagePrepTools.pdf'
-
-            Compute largest bounding box and apply cropping
-            processRaw = True, processes raw and binary images with shared parameters.
-            processRaw = False, applies the center of mass alignment only on segemnattion data.
-            The function uses the same bounding box to crop the raw and segemnattion data.
-
-            """
-            croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", paddedFiles_segmentations, parentDir + "aligned/segmentations/*.aligned.nrrd")
-            croppedFiles_images = applyCropping(parentDir + "cropped/images", paddedFiles_images, parentDir + "aligned/segmentations/*.aligned.nrrd")
-
-            print("\nStep 3. Groom - Convert to distance transforms\n")
-            if args.interactive:
-                input("Press Enter to continue")
-
-            """
-            We convert the scans to distance transforms, this step is common for both the
-            prepped as well as unprepped data, just provide correct filenames.
-            """
-            
-            dtFiles = applyDistanceTransforms(parentDir, croppedFiles_segmentations)
-
-        else:
-            """
-            ## GROOM : Data Pre-processing
-            For the unprepped data the first few steps are
-            -- Isotropic resampling
-            -- Padding
-            -- Center of Mass Alignment
-            -- Rigid Alignment
-            -- Largest Bounding Box and Cropping
-
-            For detailed explainations of parameters for each tool, go to
-            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ImagePrepTools.pdf'
-            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/AlgnmentTools.pdf'
-            """
-
-            print("\nStep 2. Groom - Data Pre-processing\n")
-            if args.interactive:
-                input("Press Enter to continue")
-
-            # create the output directory
-            parentDir = './Test_lv_centered/PrepOutput/'
-            if not os.path.exists(parentDir):
-                os.makedirs(parentDir)
-
-            """
-            Apply isotropic resampling
-
-            For detailed explainations of parameters for resampling volumes, go to
-            '/Documentation/PDFs/ImagePrepTools.pdf'
-            """
-            print(fileList_seg)
-            
-            resampledFiles = applyIsotropicResampling(parentDir + "resampled", fileList_seg, isBinary=True)
-            
-            print(resampledFiles)
-
-            """Apply Centering"""
-            centeredFiles = center(parentDir + "centered", resampledFiles)
-
-            """
-            Apply padding
-            For detailed explainations of parameters for padding volumes, go to
-            '/Documentation/PDFs/ImagePrepTools.pdf'
-            """
-            paddedFiles = applyPadding(parentDir + "padded", centeredFiles, 10)
-
-            
-
-            """
-            Apply rigid alignment
-
-            For detailed explainations of parameters for rigid alignment of volumes, go to
-            '/Documentation/PDFs/AlgnmentTools.pdf'
-
-            Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
-            """
-#            medianFile = FindReferenceImage(comFiles)
-#            rigidFiles = applyRigidAlignment(parentDir + "aligned", comFiles, None, medianFile)
-
-            """
-            Compute largest bounding box and apply cropping
-
-            For detailed explainations of parameters for finding the largest bounding box and cropping, go to 
-            '/Documentation/PDFs/ImagePrepTools.pdf'
-            """
-            croppedFiles = applyCropping(parentDir + "cropped", paddedFiles, parentDir + "padded/*.pad.nrrd")
-
-            print("\nStep 3. Groom - Convert to distance transforms\n")
-            if args.interactive:
-                input("Press Enter to continue")
-
-            """
-            We convert the scans to distance transforms, this step is common for both the
-            prepped as well as unprepped data, just provide correct filenames.
-            """
-            dtFiles = applyDistanceTransforms(parentDir, croppedFiles)
 
     """
     ## OPTIMIZE : Particle Based Optimization
@@ -256,23 +190,23 @@ def Run_Pipeline(args):
     if args.interactive:
         input("Press Enter to continue")
 
-    pointDir = './Test_lv_centered/PointFiles/'
+    pointDir = parentDir+'PointFiles/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
     parameterDictionary = {
         "number_of_particles": 256,
-        "use_normals": 1,
-        "normal_weight": 10.0,
+        "use_normals": [1],
+        "normal_weight": [10.0],
         "checkpointing_interval": 200,
         "keep_checkpoints": 0,
         "iterations_per_split": 4000,
         "optimization_iterations": 4000,
-        "starting_regularization": 50000,
+        "starting_regularization": 500000,
         "ending_regularization": 0.1,
         "recompute_regularization_interval": 2,
         "domains_per_shape": 1,
-        "relative_weighting": 50,
+        "relative_weighting": 500,
         "domain_type" : 'image',
         "initial_relative_weighting": 0.1,
         "procrustes_interval": 0,
