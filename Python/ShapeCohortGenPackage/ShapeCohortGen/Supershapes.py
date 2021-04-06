@@ -16,8 +16,8 @@ def generate(num_samples, out_dir, randomize_center, randomize_rotation, m, star
         print("Generating shape " + str(i+1) + " out of " + str(num_samples))
         name = "id" + get_id_str(i+start_id) + "_ss" + str(m)
         # Define shape params
-        n1 = np.random.uniform(0.5,1.5)
-        n2 = np.random.uniform(0.5,1.5)
+        n1 = np.random.chisquare(4)
+        n2 = np.random.chisquare(4)
         n3 = n2
         a = 1
         b = 1
