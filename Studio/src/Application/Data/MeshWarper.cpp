@@ -1,7 +1,8 @@
 #include <Data/MeshWarper.h>
 
 #include <vtkCellLocator.h>
-#include <vtkTriangle.h>
+#include <vtkTriangleFilter.h>
+#include <vtkCleanPolyData.h>
 
 #include <Libs/Mesh/MeshUtils.h>
 #include <Data/StudioLog.h>
@@ -30,14 +31,25 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const vnl_vector<double>& pa
   points = this->remove_bad_particles(points);
 
   Mesh output = MeshUtils::warpMesh(points, this->warp_, this->faces_);
-  return output.getVTKMesh();
+
+  vtkSmartPointer<vtkPolyData> poly_data = output.getVTKMesh();
+
+  for (int i = 0; i < poly_data->GetNumberOfPoints(); i++) {
+    double* p = poly_data->GetPoint(i);
+    if (std::isnan(p[0]) || std::isnan(p[1]) || std::isnan(p[2])) {
+      this->warp_available_ = false; // failed
+      std::cerr << "Reconstruction Failed\n";
+      return nullptr;
+    }
+  }
+  return poly_data;
 }
 
 //---------------------------------------------------------------------------
 void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
                                     const vnl_vector<double>& reference_particles)
 {
-  if (this->reference_mesh_ == reference_mesh) {
+  if (this->incoming_reference_mesh_ == reference_mesh) {
     if (this->reference_particles_.size() == reference_particles.size()) {
       bool same = true;
       for (int i = 0; i < reference_particles.size(); i++) {
@@ -52,9 +64,24 @@ void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
     }
   }
 
+  this->incoming_reference_mesh_ = reference_mesh;
+
+  vtkSmartPointer<vtkTriangleFilter> triangle_filter =
+    vtkSmartPointer<vtkTriangleFilter>::New();
+  triangle_filter->SetInputData(reference_mesh);
+  triangle_filter->Update();
+
+  vtkSmartPointer<vtkCleanPolyData> clean = vtkSmartPointer<vtkCleanPolyData>::New();
+  clean->ConvertPolysToLinesOff();
+  clean->ConvertLinesToPointsOff();
+  clean->ConvertStripsToPolysOff();
+  clean->PointMergingOn();
+  clean->SetInputConnection(triangle_filter->GetOutputPort());
+  clean->Update();
+  
   // mark that the warp needs to be generated
   this->needs_warp_ = true;
-  this->reference_mesh_ = reference_mesh;
+  this->reference_mesh_ = clean->GetOutput();
   this->reference_particles_ = reference_particles;
 
   this->warp_available_ = true;
@@ -121,7 +148,7 @@ void MeshWarper::add_particle_vertices()
     bool same = false;
     // check that the point is not already on an existing vertex
     for (int i = 0; i < 3; i++) {
-      double* p = cell->GetPoints()->GetPoint(0);
+      double* p = cell->GetPoints()->GetPoint(i);
       if (p[0] == pt[0] && p[1] == pt[1] && p[2] == pt[2]) {
         same = true;
       }

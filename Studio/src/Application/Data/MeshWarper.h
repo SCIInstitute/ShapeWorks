@@ -52,6 +52,7 @@ private:
 
   bool warp_available_ = false;
 
+  vtkSmartPointer<vtkPolyData> incoming_reference_mesh_;
   vtkSmartPointer<vtkPolyData> reference_mesh_;
   vnl_vector<double> reference_particles_;
 
