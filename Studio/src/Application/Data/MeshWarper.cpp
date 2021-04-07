@@ -78,7 +78,7 @@ void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
   clean->PointMergingOn();
   clean->SetInputConnection(triangle_filter->GetOutputPort());
   clean->Update();
-  
+
   // mark that the warp needs to be generated
   this->needs_warp_ = true;
   this->reference_mesh_ = clean->GetOutput();
@@ -204,7 +204,7 @@ void MeshWarper::find_good_particles()
 }
 
 //---------------------------------------------------------------------------
-Eigen::MatrixXd MeshWarper::remove_bad_particles(const itkeigen::MatrixXd& particles)
+Eigen::MatrixXd MeshWarper::remove_bad_particles(const Eigen::MatrixXd& particles)
 {
   Eigen::MatrixXd new_particles(this->good_particles_.size(), 3);
   for (int i = 0; i < this->good_particles_.size(); i++) {
