@@ -82,15 +82,6 @@ void MeshWarper::check_warp_ready()
   this->points_.resize(3, this->reference_particles_.size() / 3);
   this->points_.transposeInPlace();
 
-  // make bad/dupe
-  this->points_(0, 0) = this->points_(1, 0);
-  this->points_(0, 1) = this->points_(1, 1);
-  this->points_(0, 2) = this->points_(1, 2);
-
-  //this->points_(254, 0) = this->points_(255, 0);
-  //this->points_(254, 1) = this->points_(255, 1);
-  //this->points_(254, 2) = this->points_(255, 2);
-
   this->find_bad_vertices();
   this->points_ = this->remove_bad_particles(this->points_);
 
@@ -167,7 +158,7 @@ void MeshWarper::find_bad_vertices()
 {
   std::set<int> set;  // initially store in set to avoid duplicates
   for (int i = 0; i < this->points_.rows(); i++) {
-    for (int j = i+1; j < this->points_.rows(); j++) {
+    for (int j = i + 1; j < this->points_.rows(); j++) {
       double p1[3]{this->points_(i, 0), this->points_(i, 1), this->points_(i, 2)};
       double p2[3]{this->points_(j, 0), this->points_(j, 1), this->points_(j, 2)};
 //      std::cerr << "compare " << p1[0] << "," << p1[1] << "," << p1[2] << " to " << p2[0] << "," << p2[1] << "," << p2[2] << "\n";
