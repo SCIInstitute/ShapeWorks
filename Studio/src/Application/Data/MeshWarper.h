@@ -35,7 +35,7 @@ private:
   //! Add particles as vertices to reference mesh
   void add_particle_vertices();
 
-  void find_bad_vertices();
+  void find_good_particles();
 
   void check_warp_ready();
 
