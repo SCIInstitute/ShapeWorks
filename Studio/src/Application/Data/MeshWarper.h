@@ -32,6 +32,9 @@ public:
 
 private:
 
+  //! Add particles as vertices to reference mesh
+  void add_particle_vertices();
+
   void check_warp_ready();
 
   Eigen::MatrixXd vertices_;
