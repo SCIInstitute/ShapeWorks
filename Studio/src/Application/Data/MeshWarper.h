@@ -4,7 +4,7 @@
  * @file MeshWarper.h
  * @brief Mesh warping capability
  *
- * The MeshWarper provides an object to warp meshs for surface reconstruction
+ * The MeshWarper provides an object to warp meshes for surface reconstruction
  */
 
 #include <vector>
