@@ -39,12 +39,14 @@ private:
 
   void check_warp_ready();
 
+  Eigen::MatrixXd remove_bad_particles(const Eigen::MatrixXd& particles);
+
   Eigen::MatrixXd vertices_;
   Eigen::MatrixXi faces_;
   Eigen::MatrixXd points_;
   Eigen::MatrixXd warp_;
 
-  std::vector<int> bad_particles_;
+  std::vector<int> good_particles_;
 
   bool needs_warp_ = true;
 

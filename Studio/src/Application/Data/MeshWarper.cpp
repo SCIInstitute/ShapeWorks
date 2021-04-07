@@ -26,8 +26,10 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const vnl_vector<double>& pa
                                                              particles.size());
 
   points.resize(3, particles.size() / 3);
+  points.transposeInPlace();
+  points = this->remove_bad_particles(points);
 
-  Mesh output = MeshUtils::warpMesh(points.transpose(), this->warp_, this->faces_);
+  Mesh output = MeshUtils::warpMesh(points, this->warp_, this->faces_);
   return output.getVTKMesh();
 }
 
@@ -78,17 +80,26 @@ void MeshWarper::check_warp_ready()
     (double*) this->reference_particles_.data_block(),
     this->reference_particles_.size());
   this->points_.resize(3, this->reference_particles_.size() / 3);
+  this->points_.transposeInPlace();
 
-  this->points_(0, 0) = this->points_(0, 1);
-  this->points_(1, 0) = this->points_(1, 1);
-  this->points_(2, 0) = this->points_(2, 1);
-  this->add_particle_vertices();
+  // make bad/dupe
+  this->points_(0, 0) = this->points_(1, 0);
+  this->points_(0, 1) = this->points_(1, 1);
+  this->points_(0, 2) = this->points_(1, 2);
+
+  //this->points_(254, 0) = this->points_(255, 0);
+  //this->points_(254, 1) = this->points_(255, 1);
+  //this->points_(254, 2) = this->points_(255, 2);
+
   this->find_bad_vertices();
+  this->points_ = this->remove_bad_particles(this->points_);
+
+  this->add_particle_vertices();
 
   this->vertices_ = MeshUtils::distilVertexInfo(this->reference_mesh_);
   this->faces_ = MeshUtils::distilFaceInfo(this->reference_mesh_);
   this->warp_ = MeshUtils::generateWarpMatrix(this->vertices_, this->faces_,
-                                              this->points_.transpose());
+                                              this->points_);
   this->needs_warp_ = false;
 }
 
@@ -96,7 +107,7 @@ void MeshWarper::check_warp_ready()
 void MeshWarper::add_particle_vertices()
 {
 
-  for (int i = 0; i < this->points_.cols(); i++) {
+  for (int i = 0; i < this->points_.rows(); i++) {
     this->reference_mesh_->BuildLinks();
     this->reference_mesh_->BuildCells();
 
@@ -105,7 +116,7 @@ void MeshWarper::add_particle_vertices()
     locator->SetDataSet(this->reference_mesh_);
     locator->BuildLocator();
 
-    double pt[3]{this->points_(0, i), this->points_(1, i), this->points_(2, i)};
+    double pt[3]{this->points_(i, 0), this->points_(i, 1), this->points_(i, 2)};
     double closest_point[3];//the coordinates of the closest point will be returned here
     double closest_point_dist2; //the squared distance to the closest point will be returned here
     vtkIdType cell_id; //the cell id of the cell containing the closest point will be returned here
@@ -154,22 +165,41 @@ void MeshWarper::add_particle_vertices()
 //---------------------------------------------------------------------------
 void MeshWarper::find_bad_vertices()
 {
-  this->bad_particles_.clear();
-
+  std::set<int> set;  // initially store in set to avoid duplicates
   for (int i = 0; i < this->points_.rows(); i++) {
-
-    for (int j = i; j < this->points_.rows(); j++) {
-      double p1[3]{this->points_(0, i), this->points_(1, i), this->points_(2, i)};
-      double p2[3]{this->points_(0, j), this->points_(1, j), this->points_(2, j)};
-
-      if (p1[0] == p2[0] && p1[1] == p2[1] && p1[2] == p2[2] &&) {
-        this->bad_particles_.push_back(i);
-        this->bad_particles_.push_back(j);
+    for (int j = i+1; j < this->points_.rows(); j++) {
+      double p1[3]{this->points_(i, 0), this->points_(i, 1), this->points_(i, 2)};
+      double p2[3]{this->points_(j, 0), this->points_(j, 1), this->points_(j, 2)};
+//      std::cerr << "compare " << p1[0] << "," << p1[1] << "," << p1[2] << " to " << p2[0] << "," << p2[1] << "," << p2[2] << "\n";
+      if (p1[0] == p2[0] && p1[1] == p2[1] && p1[2] == p2[2]) {
+        set.insert(i);
+        set.insert(j);
       }
     }
-
   }
 
+  this->good_particles_.clear();
+  for (int i = 0; i < this->points_.rows(); i++) {
+    if (set.find(i) == set.end()) {
+      this->good_particles_.push_back(i);
+    }
+  }
+  std::cerr << "There are " << this->good_particles_.size() << " good particles" << "\n";
+
+}
+
+//---------------------------------------------------------------------------
+Eigen::MatrixXd MeshWarper::remove_bad_particles(const itkeigen::MatrixXd& particles)
+{
+  Eigen::MatrixXd new_particles(this->good_particles_.size(), 3);
+  for (int i = 0; i < this->good_particles_.size(); i++) {
+    int id = this->good_particles_[i];
+    new_particles(i, 0) = particles(id, 0);
+    new_particles(i, 1) = particles(id, 1);
+    new_particles(i, 2) = particles(id, 2);
+  }
+
+  return new_particles;
 }
 
 //---------------------------------------------------------------------------
