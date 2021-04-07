@@ -79,10 +79,11 @@ void MeshWarper::check_warp_ready()
     this->reference_particles_.size());
   this->points_.resize(3, this->reference_particles_.size() / 3);
 
-  this->points_(0,0) = this->points_(0,1);
-  this->points_(1,0) = this->points_(1,1);
-  this->points_(2,0) = this->points_(2,1);
+  this->points_(0, 0) = this->points_(0, 1);
+  this->points_(1, 0) = this->points_(1, 1);
+  this->points_(2, 0) = this->points_(2, 1);
   this->add_particle_vertices();
+  this->find_bad_vertices();
 
   this->vertices_ = MeshUtils::distilVertexInfo(this->reference_mesh_);
   this->faces_ = MeshUtils::distilFaceInfo(this->reference_mesh_);
@@ -111,29 +112,62 @@ void MeshWarper::add_particle_vertices()
     int sub_id; //this is rarely used (in triangle strips only, I believe)
     locator->FindClosestPoint(pt, closest_point, cell_id, sub_id, closest_point_dist2);
 
-    int vertex_id = this->reference_mesh_->GetPoints()->InsertNextPoint(pt);
-
+    // grab the closest cell
     vtkCell* cell = this->reference_mesh_->GetCell(cell_id);
     vtkSmartPointer<vtkIdList> list = vtkSmartPointer<vtkIdList>::New();
 
-    list->SetNumberOfIds(3);
-    list->SetId(0, cell->GetPointId(0));
-    list->SetId(1, vertex_id);
-    list->SetId(2, cell->GetPointId(1));
-    this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
+    bool same = false;
+    // check that the point is not already on an existing vertex
+    for (int i = 0; i < 3; i++) {
+      double* p = cell->GetPoints()->GetPoint(0);
+      if (p[0] == pt[0] && p[1] == pt[1] && p[2] == pt[2]) {
+        same = true;
+      }
+    }
 
-    list->SetId(0, cell->GetPointId(1));
-    list->SetId(1, vertex_id);
-    list->SetId(2, cell->GetPointId(2));
-    this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
+    if (!same) {
+      int vertex_id = this->reference_mesh_->GetPoints()->InsertNextPoint(pt);
 
-    list->SetId(0, cell->GetPointId(0));
-    list->SetId(1, vertex_id);
-    list->SetId(2, cell->GetPointId(2));
-    this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
+      list->SetNumberOfIds(3);
+      list->SetId(0, cell->GetPointId(0));
+      list->SetId(1, vertex_id);
+      list->SetId(2, cell->GetPointId(1));
+      this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
 
-    this->reference_mesh_->DeleteCell(cell_id);
-    this->reference_mesh_->RemoveDeletedCells();
+      list->SetId(0, cell->GetPointId(1));
+      list->SetId(1, vertex_id);
+      list->SetId(2, cell->GetPointId(2));
+      this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
+
+      list->SetId(0, cell->GetPointId(0));
+      list->SetId(1, vertex_id);
+      list->SetId(2, cell->GetPointId(2));
+      this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
+
+      this->reference_mesh_->DeleteCell(cell_id);
+      this->reference_mesh_->RemoveDeletedCells();
+    }
+  }
+
+}
+
+//---------------------------------------------------------------------------
+void MeshWarper::find_bad_vertices()
+{
+  this->bad_particles_.clear();
+
+  for (int i = 0; i < this->points_.rows(); i++) {
+
+    for (int j = i; j < this->points_.rows(); j++) {
+      double p1[3]{this->points_(0, i), this->points_(1, i), this->points_(2, i)};
+      double p2[3]{this->points_(0, j), this->points_(1, j), this->points_(2, j)};
+
+      if (p1[0] == p2[0] && p1[1] == p2[1] && p1[2] == p2[2] &&) {
+        this->bad_particles_.push_back(i);
+        this->bad_particles_.push_back(j);
+      }
+    }
+
   }
 
 }

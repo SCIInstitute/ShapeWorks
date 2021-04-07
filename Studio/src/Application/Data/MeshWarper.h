@@ -35,12 +35,16 @@ private:
   //! Add particles as vertices to reference mesh
   void add_particle_vertices();
 
+  void find_bad_vertices();
+
   void check_warp_ready();
 
   Eigen::MatrixXd vertices_;
   Eigen::MatrixXi faces_;
   Eigen::MatrixXd points_;
   Eigen::MatrixXd warp_;
+
+  std::vector<int> bad_particles_;
 
   bool needs_warp_ = true;
 
