@@ -32,6 +32,7 @@ using namespace pybind11::literals;
 #include "Optimize.h"
 #include "ParticleSystem.h"
 #include "ShapeEvaluation.h"
+#include "EigenUtils.h"
 
 using namespace shapeworks;
 
@@ -125,10 +126,11 @@ PYBIND11_MODULE(shapeworks, m)
   // function might be appropriate to add to the shapeworks module so translation is applied in
   // a manner consistent with what is expected when applied.
   m.def("createTransform",
-        [](Matrix& mat33, std::vector<double> v) -> decltype(auto) {
+        [](Eigen::MatrixXd &mat, std::vector<double> v) -> decltype(auto) {
+          Matrix33 mat33 = createMatrix(mat);
           return createTransform(mat33, makeVector({v[0], v[1], v[2]}));
         },
-        "creates transform from matrix", "mat"_a, "translate"_a=std::vector<double>({0,0,0}));
+        "creates transform from matrix and translation", "mat"_a, "translate"_a=std::vector<double>({0,0,0}));
 
   // Axis
   py::enum_<Axis>(m, "Axis")
