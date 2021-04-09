@@ -85,21 +85,9 @@ INSTALL(TARGETS ComputeMeshGeodesics RUNTIME DESTINATION bin)
 #TARGET_LINK_LIBRARIES(ProjectPointsOntoMesh ${ITK_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS ProjectPointsOntoMesh RUNTIME DESTINATION bin)
 
-#ADD_EXECUTABLE(GenerateFeatureGradientFiles GenerateFeatureGradientFiles.cxx)
-#TARGET_LINK_LIBRARIES(GenerateFeatureGradientFiles ${ITK_LIBRARIES} Mesh tinyxml)
-#INSTALL(TARGETS GenerateFeatureGradientFiles RUNTIME DESTINATION bin)
-
-ADD_EXECUTABLE(ProbeNormals ProbeNormals.cxx)
-TARGET_LINK_LIBRARIES(ProbeNormals ${ITK_LIBRARIES} Utils)
-INSTALL(TARGETS ProbeNormals RUNTIME DESTINATION bin)
-
 ADD_EXECUTABLE(ComputeMeanNormals ComputeMeanNormals.cxx)
 TARGET_LINK_LIBRARIES(ComputeMeanNormals ${ITK_LIBRARIES} tinyxml Utils)
 INSTALL(TARGETS ComputeMeanNormals RUNTIME DESTINATION bin)
-
-#ADD_EXECUTABLE(GenerateNormalFeaFiles GenerateNormalFeaFiles.cxx)
-#TARGET_LINK_LIBRARIES(GenerateNormalFeaFiles ${ITK_LIBRARIES} tinyxml Mesh)
-#INSTALL(TARGETS GenerateNormalFeaFiles RUNTIME DESTINATION bin)
 
 #ADD_EXECUTABLE(ComputeGeodesicDistanceToLandmark ComputeGeodesicDistanceToLandmark.cxx)
 #TARGET_LINK_LIBRARIES(ComputeGeodesicDistanceToLandmark ${ITK_LIBRARIES} ${VXL_LIBRARIES} Mesh tinyxml)
@@ -122,13 +110,9 @@ INSTALL(TARGETS ReconstructSamplesAlongPCAModes RUNTIME DESTINATION bin)
 #TARGET_LINK_LIBRARIES(GenerateFidsFilesFromMeshes ${ITK_LIBRARIES} Mesh tinyxml)
 #INSTALL(TARGETS GenerateFidsFilesFromMeshes RUNTIME DESTINATION bin)
 
-ADD_EXECUTABLE(FixCuttingPlanes FixCuttingPlanes.cxx)
-TARGET_LINK_LIBRARIES(FixCuttingPlanes ${ITK_LIBRARIES} Mesh tinyxml)
-INSTALL(TARGETS FixCuttingPlanes RUNTIME DESTINATION bin)
-
-ADD_EXECUTABLE(ComputeGeodesicDistanceFromVerticesToPoints ComputeGeodesicDistanceFromVerticesToPoints.cxx)
-TARGET_LINK_LIBRARIES(ComputeGeodesicDistanceFromVerticesToPoints ${ITK_LIBRARIES} ${VXL_LIBRARIES} Mesh tinyxml)
-INSTALL(TARGETS ComputeGeodesicDistanceFromVerticesToPoints RUNTIME DESTINATION bin)
+#ADD_EXECUTABLE(ComputeGeodesicDistanceFromVerticesToPoints ComputeGeodesicDistanceFromVerticesToPoints.cxx)
+#TARGET_LINK_LIBRARIES(ComputeGeodesicDistanceFromVerticesToPoints ${ITK_LIBRARIES} ${VXL_LIBRARIES} Mesh tinyxml)
+#INSTALL(TARGETS ComputeGeodesicDistanceFromVerticesToPoints RUNTIME DESTINATION bin)
 
 # Added to backlog
 ADD_EXECUTABLE(RemoveFidsDTLeakage RemoveFidsDTLeakage.cxx)

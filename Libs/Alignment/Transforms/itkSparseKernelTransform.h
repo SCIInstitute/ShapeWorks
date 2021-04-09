@@ -32,8 +32,8 @@
 #include <vnl/vnl_sample.h>
 
 //#define EIGEN_USE_MKL_ALL
-#include <itkeigen/Eigen/Dense>
-#include <itkeigen/Eigen/Sparse>
+#include <Eigen/Dense>
+#include <Eigen/Sparse>
 #include <stdint.h>
 #include <iostream>
 

@@ -4,13 +4,13 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake")
 find_package(Python3 3.7 EXACT REQUIRED)
 
 
-###########################################
+##########################################
 # SHAPEWORKS VERSION
 ###########################################
 SET(SHAPEWORKS_MAJOR_VERSION 6 CACHE INTERNAL "Major version number" FORCE)
 SET(SHAPEWORKS_MINOR_VERSION 0 CACHE INTERNAL "Minor version number" FORCE)
 SET(SHAPEWORKS_PATCH_VERSION 0 CACHE INTERNAL "Patch version number" FORCE)
-SET(SHAPEWORKS_VERSION_STRING "6.0.0-RC9")
+SET(SHAPEWORKS_VERSION_STRING "6.1.0-dev")
 
 
 #
@@ -19,12 +19,10 @@ SET(SHAPEWORKS_VERSION_STRING "6.0.0-RC9")
 if (NOT APPLE)
   option(USE_OPENMP      "Build using OpenMP" ON)
 endif()
-option(Build_Post      "Build post"         OFF)
-option(Build_View2     "Build view2"        OFF)
 option(Build_Studio    "Build studio"       OFF)
 option(BUILD_TESTS     "Build tests"        ON)
 
-if ("${Build_Post}" OR "${Build_View2}" OR "${Build_Studio}")
+if ("${Build_Studio}")
   set(SHAPEWORKS_GUI ON)
   set(SHAPEWORKS_QT_REQUIRED REQUIRED)
 else()
@@ -126,6 +124,9 @@ ELSE(VXL_FOUND)
   MESSAGE(SEND_ERROR "VXL is required, but could not be found! Make sure path to VXLConfig.cmake is included in CMAKE_PREFIX_PATH")
 ENDIF(VXL_FOUND)
 
+### Eigen
+find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+
 ### ITK
 FIND_PACKAGE(ITK ${SHAPEWORKS_ITK_VERSION_MIN} REQUIRED)
 IF (ITK_FOUND)
@@ -133,9 +134,6 @@ IF (ITK_FOUND)
 ELSE()
   MESSAGE(SEND_ERROR "ITK (The Insight Toolkit) is required, but could not be found! Make sure path to ITKConfig.cmake is included in CMAKE_PREFIX_PATH")
 ENDIF()
-
-### Eigen
-find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 ### XLNT
 find_package (XLNT REQUIRED)
@@ -171,13 +169,6 @@ add_subdirectory(ExternalLibs)
 add_subdirectory(Libs)
 add_subdirectory(Applications)
 
-if(Build_Post)
-  add_subdirectory(Post/source/ShapeWorksPost-V1)
-endif(Build_Post)
-if(Build_View2)
-  MESSAGE(STATUS "Building View2")
-  add_subdirectory(Post/source/ShapeWorksView2)
-endif(Build_View2)
 if(Build_Studio)
   add_subdirectory(Studio/src)
 endif(Build_Studio)
@@ -225,7 +216,7 @@ if(BUILD_DOCUMENTATION)
       "Doxygen is needed to build the documentation. Please install it correctly")
   endif(NOT DOXYGEN_FOUND)
 
-  add_subdirectory(Documentation/Doxygen)
+  add_subdirectory(docs/Doxygen)
 endif(BUILD_DOCUMENTATION)
 
 MESSAGE(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")

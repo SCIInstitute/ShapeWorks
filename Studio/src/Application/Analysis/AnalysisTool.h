@@ -1,5 +1,8 @@
 #pragma once
 
+#include <Eigen/Dense>
+#include <Eigen/Sparse>
+
 // Qt
 #include <QSharedPointer>
 #include <QWidget>
@@ -8,7 +11,6 @@
 #include <ParticleShapeStatistics.h>
 
 // Studio
-
 #include <Data/Shape.h>
 #include <Data/Preferences.h>
 #include <Visualization/Visualizer.h>

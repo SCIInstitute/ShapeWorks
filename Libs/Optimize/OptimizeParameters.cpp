@@ -267,7 +267,9 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
     throw std::invalid_argument("No subjects to optimize");
   }
 
-  //optimize->GetSampler()->GetParticleSystem()->SetNumberOfDomains(subjects.size());
+  // passing cutting plane constraints
+  // planes dimensions [number_of_inputs, planes_per_input, normal/point]
+  std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > > planes = optimize->GetSampler()->ComputeCuttingPlanes();
 
   std::vector<std::string> filenames;
   int count = 0;
@@ -291,8 +293,22 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
       filenames.push_back(filename);
 
       if (domain_type == DomainType::Mesh) {
+					    
+      Mesh mesh = MeshUtils::threadSafeReadMesh(filename.c_str());
+					    
+      if (count < planes.size()) {
+        for (size_t i = 0; i < planes[count].size(); i++) {
+          // Create vtk plane
+          vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
+          plane->SetNormal(planes[count][i].first[0], planes[count][i].first[1],
+                           planes[count][i].first[2]);
+          plane->SetOrigin(planes[count][i].second[0], planes[count][i].second[1],
+                           planes[count][i].second[2]);
 
-        auto poly_data = MeshUtils::threadSafeReadMesh(filename.c_str()).getVTKMesh();
+          mesh.clip(plane);
+        }
+      }
+      auto poly_data = mesh.getVTKMesh();
 
         if (poly_data) {
           optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data));

@@ -1408,10 +1408,8 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event)
   this->preferences_.set_window_geometry(this->saveGeometry());
   this->preferences_.set_window_state(this->saveState());
 
-  this->hide();
   this->optimize_tool_->shutdown_threads();
   STUDIO_CLOSE_LOG();
-  QCoreApplication::processEvents();
 }
 
 //---------------------------------------------------------------------------
@@ -1464,7 +1462,7 @@ void ShapeWorksStudioApp::update_recent_files()
   }
   recent_files = no_dupes;
 
-  int num_recent_files = qMin(recent_files.size(), 8); // only 4 max in the file menu
+  int num_recent_files = qMin(recent_files.size(), 8); // only 8 max in the file menu
 
   for (int i = 0; i < num_recent_files; i++) {
     QString text = tr("&%1 %2").arg(i + 1).arg(QFileInfo(recent_files[i]).fileName());
@@ -1473,7 +1471,7 @@ void ShapeWorksStudioApp::update_recent_files()
     this->recent_file_actions_[i]->setVisible(true);
   }
 
-  for (int j = num_recent_files; j < 4; ++j) {
+  for (int j = num_recent_files; j < 8; ++j) {
     this->recent_file_actions_[j]->setVisible(false);
   }
 }
