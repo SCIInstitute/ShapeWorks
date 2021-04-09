@@ -173,6 +173,8 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double
     float weighted_scalar = 0.0f;
     float distanceSum = 0.0f;
     float distance[8];
+    bool exactly_on_point = false;
+    float exact_scalar = 0.0f;
     for (unsigned int p = 0; p < closest_points->GetNumberOfIds(); p++) {
       // get a particle position
       vtkIdType id = closest_points->GetId(p);
@@ -181,7 +183,15 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double
       double x = pt[0] - point_data->GetPoint(id)[0];
       double y = pt[1] - point_data->GetPoint(id)[1];
       double z = pt[2] - point_data->GetPoint(id)[2];
-      distance[p] = 1.0f / (x * x + y * y + z * z);
+
+      if (x == 0 && y == 0 && z == 0) {
+        distance[p] = 0;
+        exactly_on_point = true;
+        exact_scalar = scalar_values[id];
+      }
+      else {
+        distance[p] = 1.0f / (x * x + y * y + z * z);
+      }
 
       // multiply scalar value by weight and add to running sum
       distanceSum += distance[p];
@@ -190,6 +200,10 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double
     for (unsigned int p = 0; p < closest_points->GetNumberOfIds(); p++) {
       vtkIdType current_id = closest_points->GetId(p);
       weighted_scalar += distance[p] / distanceSum * scalar_values[current_id];
+    }
+
+    if (exactly_on_point) {
+      weighted_scalar = exact_scalar;
     }
 
     scalars->SetValue(i, weighted_scalar);
