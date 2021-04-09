@@ -159,14 +159,14 @@ void MeshWarper::add_particle_vertices()
       int vertex_id = this->reference_mesh_->GetPoints()->InsertNextPoint(pt);
 
       list->SetNumberOfIds(3);
-      list->SetId(0, cell->GetPointId(0));
-      list->SetId(1, vertex_id);
-      list->SetId(2, cell->GetPointId(1));
-      this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
-
       list->SetId(0, cell->GetPointId(1));
       list->SetId(1, vertex_id);
-      list->SetId(2, cell->GetPointId(2));
+      list->SetId(2, cell->GetPointId(0));
+      this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
+
+      list->SetId(0, cell->GetPointId(2));
+      list->SetId(1, vertex_id);
+      list->SetId(2, cell->GetPointId(1));
       this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
 
       list->SetId(0, cell->GetPointId(0));
