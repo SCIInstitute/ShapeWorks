@@ -79,6 +79,7 @@ void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
   clean->SetInputConnection(triangle_filter->GetOutputPort());
   clean->Update();
 
+
   // mark that the warp needs to be generated
   this->needs_warp_ = true;
   this->reference_mesh_ = clean->GetOutput();
@@ -186,9 +187,7 @@ void MeshWarper::find_good_particles()
   std::set<int> set;  // initially store in set to avoid duplicates
   for (int i = 0; i < this->points_.rows(); i++) {
     for (int j = i + 1; j < this->points_.rows(); j++) {
-      double p1[3]{this->points_(i, 0), this->points_(i, 1), this->points_(i, 2)};
-      double p2[3]{this->points_(j, 0), this->points_(j, 1), this->points_(j, 2)};
-      if (p1[0] == p2[0] && p1[1] == p2[1] && p1[2] == p2[2]) {
+      if (this->points_.row(i) == this->points_.row(j)) {
         set.insert(i);
         set.insert(j);
       }
