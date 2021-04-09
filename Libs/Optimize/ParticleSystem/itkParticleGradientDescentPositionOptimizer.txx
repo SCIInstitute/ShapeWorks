@@ -173,22 +173,19 @@ namespace itk
               }
 
               // Augmented lagrangian constraint method
-              PointType upd_pt = m_ParticleSystem->GetPositions(dom)->Get(k);
+              PointType upd_pt;
               for(size_t n = 0; n < VDimension; n++){
                   //std::cout << n << " " << gradient[n] << std::endl;
                   upd_pt[n] = pt[n] - gradient[n];
               }
-              double c = 1e1;
-              double multiplier = 1;
+              double c = 1e0;
+              double multiplier = 2;
               m_ParticleSystem->GetDomain(dom)->GetConstraints()->UpdateZs(upd_pt, c);
               VectorType constraint_energy = m_ParticleSystem->GetDomain(dom)->GetConstraints()->ConstraintsLagrangianGradient(upd_pt, c);
               if(constraint_energy.magnitude() > multiplier*gradmag){
                   constraint_energy *= multiplier*gradmag/constraint_energy.magnitude();
               }
-              m_ParticleSystem->GetDomain(dom)->GetConstraints()->ViolationReport(pt);
-              //std::stringstream stream;
-              //stream << constraint_energy << std::endl;
-              //std::cout << stream.str();
+              //m_ParticleSystem->GetDomain(dom)->GetConstraints()->ViolationReport(pt);
               for (size_t n = 0; n < VDimension; n++){
                   gradient[n] += constraint_energy[n];
               }
@@ -200,6 +197,11 @@ namespace itk
                 gradient = gradient * maximumUpdateAllowed / gradmag;
                 gradmag = gradient.magnitude();
               }
+
+              //DEBUGGG
+              std::stringstream stream;
+              stream << "constraint_energy " << constraint_energy << " gradient " << gradient << " pt: " << upd_pt << std::endl << m_ParticleSystem->GetDomain(dom)->GetConstraints()->ViolationReport(upd_pt);
+              //if(m_ParticleSystem->GetDomain(dom)->GetConstraints()->IsAnyViolated(upd_pt))std::cout << stream.str();
 
               // Step D compute the new point position
               PointType newpoint = domain->UpdateParticlePosition(pt, k, gradient);

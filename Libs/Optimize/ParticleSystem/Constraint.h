@@ -82,12 +82,12 @@ public:
     }
 
     void UpdateMu(const Eigen::Vector3d &pt, double C){
-        double eval = mu - C*ConstraintEval(pt);
+        double eval = mu + C*ConstraintEval(pt);
         if(eval < 0){
-            mu = eval;
+            mu = 0;
         }
         else{
-            mu = 0;
+            mu = eval;
         }
         //std::cout << "mu: " << mu << std::endl;
     }
@@ -115,8 +115,8 @@ public:
         */
         Eigen::Vector3d constraint_grad = ConstraintGradient(pt);
         double eval = ConstraintEval(pt);
-        double maxterm = mu - C*eval;
-        if(maxterm > 0){
+        double maxterm = mu + C*eval;
+        if(maxterm < 0){
             return Eigen::Vector3d(0,0,0);
         }
         else{

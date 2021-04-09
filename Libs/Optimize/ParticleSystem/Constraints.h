@@ -93,22 +93,19 @@ public:
       }
   }
 
-  void ViolationReport(const Point<double, 3> &pos){
+  std::string ViolationReport(const Point<double, 3> &pos){
       Eigen::Vector3d pt; pt(0) = pos[0]; pt(1) = pos[1]; pt(2) = pos[2];
       std::stringstream stream;
-      stream << "Cutting planes " << planeConsts->size() << std::endl;
       for(size_t i = 0; i < planeConsts->size(); i++){
-          stream << "CuttingPlane " << i << ": " << (*planeConsts)[i].ConstraintEval(pt) << std::endl;
+          if((*planeConsts)[i].ConstraintEval(pt)>0) stream << "CuttingPlane " << i << "/" << planeConsts->size() << ": " << (*planeConsts)[i].ConstraintEval(pt) << " gradient(c=1) " << (*planeConsts)[i].LagragianGradient(pt, 1).transpose() << std::endl;
       }
-      stream  << "Cutting spheres " << sphereConsts->size() << std::endl;
       for(size_t i = 0; i < sphereConsts->size(); i++){
-          stream << "Sphere " << i << ": " << (*sphereConsts)[i].ConstraintEval(pt) << std::endl;
+          if((*sphereConsts)[i].ConstraintEval(pt)>0) stream << "Sphere " << i << "/" << planeConsts->size() << ": " << (*sphereConsts)[i].ConstraintEval(pt)<< " gradient(c=1) " << (*sphereConsts)[i].LagragianGradient(pt, 1).transpose() << std::endl;
       }
-      stream << "Cutting Free form constraints " << freeFormConsts->size() << std::endl;
       for(size_t i = 0; i < freeFormConsts->size(); i++){
-          stream << "FreeForm " << i << ": " << (*freeFormConsts)[i].ConstraintEval(pt) << std::endl;
+          if((*freeFormConsts)[i].ConstraintEval(pt)>0) stream << "FreeForm " << i << "/" << planeConsts->size() << ": " << (*freeFormConsts)[i].ConstraintEval(pt) <<" gradient(c=1) " << (*freeFormConsts)[i].LagragianGradient(pt, 1).transpose() << std::endl;
       }
-      std::cout << stream.str();
+      return stream.str();
   }
 
   // ============================
@@ -138,10 +135,9 @@ public:
    vnl_vector_fixed<double, 3> ConstraintsLagrangianGradient(const Point<double, 3> &pos, double C) const{
        Eigen::Vector3d pt; pt(0) = pos[0]; pt(1) = pos[1]; pt(2) = pos[2];
        Eigen::Vector3d grad = Eigen::Vector3d(0,0,0);
+       std::stringstream stream;
        for(size_t i = 0; i < planeConsts->size(); i++){
-           std::stringstream stream;
-           stream << "auglag " << i << " : " << (*planeConsts)[i].LagragianGradient(pt, C).transpose() << std::endl;
-           std::cout << stream.str();
+           if((*planeConsts)[i].ConstraintEval(pt)>0) stream << "CuttingPlane " << i << "/" << planeConsts->size() << ": " << (*planeConsts)[i].LagragianGradient(pt, C).transpose() << " ::: " << (*planeConsts)[i].ConstraintEval(pt) << std::endl;
            grad += (*planeConsts)[i].LagragianGradient(pt, C);
        }
        for(size_t i = 0; i < sphereConsts->size(); i++){
@@ -154,7 +150,8 @@ public:
        for(size_t i = 0; i < 3; i++){
            gradE[i] = grad(i);
        }
-       //std::cout << "gradE " << gradE << std::endl;
+       stream << "gradE " << gradE << std::endl;
+       //std::cout << stream.str();
        return gradE;
    }
 
