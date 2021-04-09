@@ -1,7 +1,6 @@
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 
-
 #include <Data/Shape.h>
 
 #include <QFile>
@@ -483,50 +482,51 @@ void Shape::load_feature(std::string display_mode, std::string feature)
     return;
   }
 
-  /// TODO: multiple domain support
-  vtkSmartPointer<vtkPolyData> poly_data = group.meshes()[0]->get_poly_data();
+  int num_domains = this->subject_->get_number_of_domains();
 
-  auto scalar_array = poly_data->GetPointData()->GetArray(feature.c_str());
-  if (!scalar_array) {
+  for (int d = 0; d < num_domains; d++) {
 
-    if (!this->subject_) {
-      return;
-    }
+    vtkSmartPointer<vtkPolyData> poly_data = group.meshes()[d]->get_poly_data();
 
-    auto filenames = this->subject_->get_feature_filenames();
+    auto scalar_array = poly_data->GetPointData()->GetArray(feature.c_str());
+    if (!scalar_array) {
 
-    auto transform = vtkSmartPointer<vtkTransform>::New();
-
-    if (display_mode != Visualizer::MODE_ORIGINAL_C) {
-      transform = this->get_groomed_transform();
-    }
-
-    if (this->subject_->get_domain_types().size() > 0 &&
-        this->subject_->get_domain_types()[0] == DomainType::Image) {
-
-      // read the feature
-      ReaderType::Pointer reader = ReaderType::New();
-      reader->SetFileName(filenames[feature]);
-      reader->Update();
-      ImageType::Pointer image = reader->GetOutput();
-
-      group.meshes()[0]->apply_feature_map(feature, image, transform);
-      this->apply_feature_to_points(feature, image);
-
-    }
-    else if (this->subject_->get_domain_types().size() > 0 &&
-             this->subject_->get_domain_types()[0] == DomainType::Mesh) {
-
-      auto original_meshes = this->get_original_meshes(true).meshes();
-
-      for (int i = 0; i < original_meshes.size(); i++) {
-        auto original_mesh = original_meshes[i];
-        original_mesh->apply_scalars(original_mesh, transform);
-        this->apply_feature_to_points(feature, original_mesh);
+      if (!this->subject_) {
+        return;
       }
 
-    }
+      auto filenames = this->subject_->get_feature_filenames();
 
+      auto transform = vtkSmartPointer<vtkTransform>::New();
+
+      if (display_mode != Visualizer::MODE_ORIGINAL_C) {
+        transform = this->get_groomed_transform(d);
+      }
+
+      if (this->subject_->get_domain_types()[d] == DomainType::Image) {
+
+        // read the feature
+        ReaderType::Pointer reader = ReaderType::New();
+        reader->SetFileName(filenames[feature]);
+        reader->Update();
+        ImageType::Pointer image = reader->GetOutput();
+
+        group.meshes()[0]->apply_feature_map(feature, image, transform);
+        this->apply_feature_to_points(feature, image);
+
+      }
+      else if (this->subject_->get_domain_types()[d] == DomainType::Mesh) {
+
+        auto original_meshes = this->get_original_meshes(true).meshes();
+
+        for (int i = 0; i < original_meshes.size(); i++) {
+          auto original_mesh = original_meshes[i];
+          original_mesh->apply_scalars(original_mesh, transform);
+          this->apply_feature_to_points(feature, original_mesh);
+        }
+
+      }
+    }
   }
 }
 
@@ -615,7 +615,6 @@ void Shape::apply_feature_to_points(std::string feature, MeshHandle mesh)
   this->point_features_[feature] = values;
 
 }
-
 
 //---------------------------------------------------------------------------
 Eigen::VectorXf Shape::get_point_features(std::string feature)
