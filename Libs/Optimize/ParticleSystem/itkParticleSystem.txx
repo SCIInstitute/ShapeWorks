@@ -305,38 +305,14 @@ void ParticleSystem<VDimension>::AdvancedAllParticleSplitting(double epsilon,
 
   std::vector<std::vector<PointType> > lists;
 
-  for (size_t domain = 0; domain < num_doms; domain++) {
-    //std::cout << "Updating dom " << domain << " which currently has size " << GetPositions(domain)->GetSize() << " First element is " << GetPositions(domain)->Get(0) << std::endl;
-  }
-
-  for (size_t domain = dom_to_process; domain < num_doms; domain+= domains_per_shape) {
+  for (size_t domain = dom_to_process; domain < num_doms; domain += domains_per_shape) {
     std::vector<PointType> list;
 
-    for (auto k=0; k<GetPositions(domain)->GetSize(); k++) {
+    for (auto k = 0; k < GetPositions(domain)->GetSize(); k++) {
       list.push_back(GetPositions(domain)->Get(k));
     }
     lists.push_back(list);
-    // Debuggg
-    /*
-    std::cout << "Domain " << domain << " Curr Pos ";
-    for(size_t i = 0; i < list.size(); i++)
-        std::cout << list[i] << " ";
-    std::cout << " List size " << list.size() << std::endl;
-    */
   }
-
-  /*
-  std::vector< std::vector<vnl_vector<double> > > lists;
-
-  for (int i = 0; i < n; i++) {
-    int d = i % m_domains_per_shape;
-    if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d]) {
-      std::vector<vnl_vector<double> > list = *(m_sampler->GetParticleSystem()->GetPositions(i));
-      std::cout << "list_size " << list.size() << std::endl;
-      //m_sampler->GetParticleSystem()->SplitAllParticlesInDomain(random, epsilon, i, 0);
-    }
-  }
-  */
 
   if (lists.size() > 0) {
     for (size_t i = 0; i < lists[0].size(); i++) {
