@@ -2,7 +2,6 @@
 set(Utils_sources
   Utils.cpp
   StringUtils.cpp
-  EigenUtils.cpp
   )
 
 set(Utils_headers

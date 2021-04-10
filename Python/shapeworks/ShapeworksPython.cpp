@@ -126,8 +126,8 @@ PYBIND11_MODULE(shapeworks, m)
   // function might be appropriate to add to the shapeworks module so translation is applied in
   // a manner consistent with what is expected when applied.
   m.def("createTransform",
-        [](Eigen::MatrixXd &mat, std::vector<double> v) -> decltype(auto) {
-          Matrix33 mat33 = createMatrix(mat);
+        [](Eigen::Matrix<double, 3, 3> &mat, std::vector<double> v) -> decltype(auto) {
+          Matrix33 mat33 = eigenToItk<double, 3, 3>(mat);
           return createTransform(mat33, makeVector({v[0], v[1], v[2]}));
         },
         "creates transform from 3x3 matrix and translation vector",
