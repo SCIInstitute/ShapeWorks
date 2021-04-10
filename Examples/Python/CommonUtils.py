@@ -18,7 +18,10 @@ import xml.etree.ElementTree as ET
 from termcolor import colored, cprint
 from zipfile import ZipFile
 import subprocess
+<<<<<<< HEAD
 import GroomUtils
+=======
+>>>>>>> origin/master
 
 def dataset_exists_check(use_case):
 	existsFlag = False
@@ -42,7 +45,11 @@ def generate_download_flag(outputDirectory,folder):
 	else:
 		download_flag = True
 	return download_flag
+<<<<<<< HEAD
 
+=======
+			
+>>>>>>> origin/master
 def download_subset(use_case,datasetName,outputDirectory):
 	import DatasetUtils
 	import re

@@ -33,6 +33,20 @@ def Run_Pipeline(args):
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
 
+    if not args.groom_images:
+        # set spacing
+        spacing = [1, 1, 1]
+        answer = input("Use isotropic spacing for mesh rasterization? y/n \n")
+        if answer == 'n':
+            done = False
+            while not done:
+                spacing = []
+                spacing.append(float(input("Enter x spacing:\n")))
+                spacing.append(float(input("Enter y spacing:\n")))
+                spacing.append(float(input("Enter z spacing:\n")))
+                answer2 = input('Is spacing = ' + str(spacing) + ' okay? y/n\n')
+                if answer2 == 'y':
+                    done = True
 
     #If tiny_test then download subset of the data
     if args.tiny_test:
@@ -224,19 +238,6 @@ def Run_Pipeline(args):
             MeshesToVolumes - Shapeworks requires volumes so we need to convert
             mesh segementaions to binary segmentations.
             """
-            # set spacing
-            spacing = [1, 1, 1]
-            answer = input("Use ispotropic spacing for mesh rasterization? y/n \n")
-            if answer == 'n':
-                done = False
-                while not done:
-                    spacing = []
-                    spacing.append(float(input("Enter x spacing:\n")))
-                    spacing.append(float(input("Enter y spacing:\n")))
-                    spacing.append(float(input("Enter z spacing:\n")))
-                    answer2 = input('Is spacing = ' + str(spacing) + ' okay? y/n\n')
-                    if answer2 == 'y':
-                        done = True
 
             fileList_seg = MeshesToVolumes(parentDir + "volumes", reflectedFiles_mesh, spacing)
 

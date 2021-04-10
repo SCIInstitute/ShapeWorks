@@ -7,7 +7,6 @@
 #include <Libs/Mesh/MeshUtils.h>
 #include "ParticleSystem/VtkMeshWrapper.h"
 
-
 using namespace shapeworks;
 
 //---------------------------------------------------------------------------
@@ -256,6 +255,10 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
     throw std::invalid_argument("No subjects to optimize");
   }
 
+  // passing cutting plane constraints
+  // planes dimensions [number_of_inputs, planes_per_input, normal/point]
+  std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > > planes = optimize->GetSampler()->ComputeCuttingPlanes();
+
   std::vector<std::string> filenames;
   int count = 0;
   for (auto s : subjects) {
@@ -278,7 +281,21 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
         optimize->AddMesh(std::make_shared<shapeworks::TriMeshWrapper>(trimesh));
       }
 */
-      auto poly_data = MeshUtils::threadSafeReadMesh(filename.c_str()).getVTKMesh();
+      Mesh mesh = MeshUtils::threadSafeReadMesh(filename.c_str());
+
+      if (count < planes.size()) {
+        for (size_t i = 0; i < planes[count].size(); i++) {
+          // Create vtk plane
+          vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
+          plane->SetNormal(planes[count][i].first[0], planes[count][i].first[1],
+                           planes[count][i].first[2]);
+          plane->SetOrigin(planes[count][i].second[0], planes[count][i].second[1],
+                           planes[count][i].second[2]);
+
+          mesh.clip(plane);
+        }
+      }
+      auto poly_data = mesh.getVTKMesh();
 
       if (poly_data) {
         optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data));
@@ -316,7 +333,7 @@ void OptimizeParameters::set_abort_load(bool value)
 }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_load_callback(const std::function<void(int)> &f)
+void OptimizeParameters::set_load_callback(const std::function<void(int)>& f)
 {
   this->load_callback_ = f;
 }

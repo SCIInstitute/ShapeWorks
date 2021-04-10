@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-      - release_v6.0
+      - release_v*
     tags:
     - '*'
   pull_request:
@@ -21,8 +21,8 @@ jobs:
     
     steps:
 
-    - name: Choose gcc 7
-      run: sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7
+    - name: Choose gcc 9
+      run: sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-9
 
     - name: Prepare ccache timestamp
       id: ccache_cache_timestamp
@@ -74,7 +74,7 @@ jobs:
         key: QtCache-linux
 
     - name: Install Qt
-      uses: jurplel/install-qt-action@v2.11.1
+      uses: jurplel/install-qt-action@v2.13.0
       with:
         version: "5.9.9"
         mirror: 'http://mirrors.ocf.berkeley.edu/qt/'
@@ -142,6 +142,7 @@ jobs:
              ${{runner.workspace}}/ShapeWorks/artifacts/*.zip
 
     - name: Deploy Docs
+      if: github.ref == 'refs/heads/master'
       shell: bash -l {0}
       run: conda activate shapeworks && pwd && ls && ./Support/deploy_docs.sh ${GITHUB_WORKSPACE}/build
       env:

@@ -92,34 +92,31 @@ Eigen::MatrixXi MeshUtils::distilFaceInfo(Mesh mesh){
   return Fref_new;
 }
 
-
-Eigen::MatrixXd MeshUtils::generateWarpMatrix(Eigen::MatrixXd TV , Eigen::MatrixXi TF, Eigen::MatrixXd Vref){
-  
+Eigen::MatrixXd MeshUtils::generateWarpMatrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF,
+                                              const Eigen::MatrixXd& Vref)
+{
   Eigen::MatrixXd W;
   Eigen::VectorXi b;
 	{
 		Eigen::VectorXi J = Eigen::VectorXi::LinSpaced(TV.rows(),0,TV.rows()-1);
 		Eigen::VectorXd sqrD;
 		Eigen::MatrixXd _2;
-    //std::cout<<"Finding closest points..."<<std::endl;
+    // using J which is N by 1 instead of a matrix that represents faces of N by 3
+    // so that we will find the closest vertices instead of closest point on the face
+    // so far the two meshes are not separated. So what we are really doing here
+    // is computing handles from low resolution and use that for the high resolution one
 		igl::point_mesh_squared_distance(Vref,TV,J,sqrD,b,_2);
-    //std::cout << "sqrd " <<sqrD.minCoeff() <<std::endl;
+    assert(sqrD.maxCoeff() < 1e-7 && "Particles must exist on vertices");
 	}
-  // force perfect positioning, rather have popping in low-res than high-res.
-  // The correct/elaborate thing to do is express original low.V in terms of
-  // linear interpolation (or extrapolation) via elements in (high.V,high.F)
-  igl::slice(TV,b,1,Vref);
+
   // list of points --> list of singleton lists
   std::vector<std::vector<int> > S;
   igl::matrix_to_list(b,S);
-  //std::cout<<"Computing weights for "<<b.size()<<
-    //" handles at "<<TV.rows()<<" vertices..."<<std::endl;
+
   // Technically k should equal 3 for smooth interpolation in 3d, but 2 is
   // faster and looks OK
   const int k = 2;
   igl::biharmonic_coordinates(TV,TF,S,k,W);
-  //std::cout<<"Reindexing..."<< std::endl;
-  //std::cout << W.rows() << " " << W.cols() << std::endl;
   // Throw away interior tet-vertices, keep weights and indices of boundary
   Eigen::VectorXi I,J;
   igl::remove_unreferenced(TV.rows(),TF,I,J);
@@ -127,11 +124,12 @@ Eigen::MatrixXd MeshUtils::generateWarpMatrix(Eigen::MatrixXd TV , Eigen::Matrix
   std::for_each(b.data(),b.data()+b.size(),[&I](int & a){a=I(a);});
   igl::slice(Eigen::MatrixXd(TV),J,1,TV);
   igl::slice(Eigen::MatrixXd(W),J,1,W);
-  //std::cout << "It's done!!" << std::endl;
   return W;
 }
 
-Mesh MeshUtils::warpMesh(Eigen::MatrixXd movPts, Eigen::MatrixXd W, Eigen::MatrixXi Fref){
+Mesh MeshUtils::warpMesh(const Eigen::MatrixXd& movPts,
+                         const Eigen::MatrixXd& W, const Eigen::MatrixXi& Fref)
+{
   
   int numVertices = W.rows();
   int numFaces = Fref.rows();
@@ -159,8 +157,10 @@ Mesh MeshUtils::warpMesh(Eigen::MatrixXd movPts, Eigen::MatrixXd W, Eigen::Matri
   return Mesh(outmesh);
 }
 
-bool MeshUtils::warpMeshes(std::vector< std::string> movingPointpaths, std::vector< std::string> outputMeshPaths, Eigen::MatrixXd W, Eigen::MatrixXi Fref, const int numP){
-  
+bool MeshUtils::warpMeshes(std::vector<std::string> movingPointpaths,
+                           std::vector<std::string> outputMeshPaths, const Eigen::MatrixXd& W,
+                           const Eigen::MatrixXi& Fref, const int numP)
+{
   // assert for pointsPath.size() == outMeshPaths.size()
   // now tranform the meshes
   ParticleSystem particlesystem(movingPointpaths);

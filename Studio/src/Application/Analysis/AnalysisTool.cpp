@@ -7,13 +7,13 @@
 #include <QMessageBox>
 
 // shapeworks
+#include <Analysis/AnalysisTool.h>
 #include <Visualization/ShapeWorksStudioApp.h>
 #include <Visualization/ShapeWorksWorker.h>
 #include <Data/Session.h>
 #include <Data/StudioMesh.h>
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
-#include <Analysis/AnalysisTool.h>
 #include <Visualization/Lightbox.h>
 
 #include <ui_AnalysisTool.h>
@@ -529,6 +529,25 @@ const vnl_vector<double>& AnalysisTool::get_shape_points(int mode, double value)
   this->pca_labels_changed(QString::number(value, 'g', 2),
                            QString::number(this->stats_.Eigenvalues()[m]),
                            QString::number(value * lambda));
+
+  std::vector<double> vals;
+  for (int i = this->stats_.Eigenvalues().size() - 1; i > 0; i--) {
+    vals.push_back(this->stats_.Eigenvalues()[i]);
+  }
+  double sum = std::accumulate(vals.begin(), vals.end(), 0.0);
+  double cumulation = 0;
+  for (size_t i = 0; i < mode + 1; ++i) {
+    cumulation += vals[i];
+  }
+  if (sum > 0) {
+    this->ui_->explained_variance->setText(QString::number(vals[mode] / sum * 100, 'f', 1) + "%");
+    this->ui_->cumulative_explained_variance->setText(
+      QString::number(cumulation / sum * 100, 'f', 1) + "%");
+  }
+  else {
+    this->ui_->explained_variance->setText("");
+    this->ui_->cumulative_explained_variance->setText("");
+  }
 
   this->temp_shape_ = this->stats_.Mean() + (e * (value * lambda));
 
