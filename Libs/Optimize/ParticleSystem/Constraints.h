@@ -108,6 +108,28 @@ public:
       return stream.str();
   }
 
+  std::vector<std::vector<double> > ViolationReportData(const Point<double, 3> &pos){
+      std::vector<std::vector<double> > alls;
+      Eigen::Vector3d pt; pt(0) = pos[0]; pt(1) = pos[1]; pt(2) = pos[2];
+      std::stringstream stream;
+      std::vector<double> pl;
+      for(size_t i = 0; i < planeConsts->size(); i++){
+          pl.push_back((*planeConsts)[i].ConstraintEval(pt));
+      }
+      alls.push_back(pl);
+      std::vector<double> sp;
+      for(size_t i = 0; i < sphereConsts->size(); i++){
+          sp.push_back((*sphereConsts)[i].ConstraintEval(pt));
+      }
+      alls.push_back(sp);
+      std::vector<double> ff;
+      for(size_t i = 0; i < freeFormConsts->size(); i++){
+          ff.push_back((*freeFormConsts)[i].ConstraintEval(pt));
+      }
+      alls.push_back(ff);
+      return alls;
+  }
+
   // ============================
    // Augmented Lagragian Fuctions
    // ============================

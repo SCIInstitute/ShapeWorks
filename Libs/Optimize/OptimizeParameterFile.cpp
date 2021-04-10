@@ -907,7 +907,6 @@ bool OptimizeParameterFile::read_cutting_planes(TiXmlHandle* docHandle, Optimize
           c[2] = pc[2];
         }
 
-        std::cout << "Adding plane" << std::endl;
         optimize->GetSampler()->SetCuttingPlane(shapeCount, a, b, c);
       }
     }

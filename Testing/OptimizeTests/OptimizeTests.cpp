@@ -39,7 +39,6 @@ static void prep_distance_transform(std::string input, std::string output)
   writer->Update();
 }
 
-/*
 TEST(OptimizeTests, sample) 
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sphere");
@@ -262,7 +261,7 @@ TEST(OptimizeTests, mesh_use_normals_test) {
   // and higher modes should contain very little
   ASSERT_GT(values[values.size() - 1], 750.0);
   ASSERT_LT(values[values.size() - 2], 10);
-}*/
+}
 
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, cutting_plane_test) {
@@ -307,18 +306,29 @@ TEST(OptimizeTests, cutting_plane_test) {
 
   // next check that the cutting plane works.  Takes the means of the points and tests whether they violate the cutting plane on the first domain.
   auto points = stats.Mean();
-  app.GetSampler()->GetParticleSystem()->GetDomain(0)->GetConstraints()->PrintAll();
+  //app.GetSampler()->GetParticleSystem()->GetDomain(0)->GetConstraints()->PrintAll();
+  std::vector<std::string> types;
+  types.push_back("plane");
+  types.push_back("sphere");
+  types.push_back("free form");
   for (int i = 0; i < points.size(); i += 3) {
     itk::FixedArray<double, 3> p;
     p[0] = points[i]; p[1] = points[i+1]; p[2] = points[i+2];
-    std::cout << p ;
-    bool violated = app.GetSampler()->GetParticleSystem()->GetDomain(0)->GetConstraints()->IsAnyViolated(p);
-    if(violated) std::cout << "viol"<< std::endl; else std::cout << "good"<< std::endl;
-    ASSERT_TRUE(!violated);
+
+    std::vector<std::vector<double> > ViolationReport = app.GetSampler()->GetParticleSystem()->GetDomain(0)->GetConstraints()->ViolationReportData(p);
+
+    double slack = 2e-1;
+
+    for (int j = 0; j < 3; j++) {
+        for (int k = 0; k < ViolationReport[j].size(); k++) {
+            if(ViolationReport[j][k] > slack) std::cout << types[j] << " " << k << " " << ViolationReport[j][k] << " violation by point " << p<< std::endl; //else std::cout << types[j] << " " << k << " " << ViolationReport[j][k] << " good"<< std::endl;
+            ASSERT_TRUE(!(ViolationReport[j][k] > slack));
+        }
+    }
   }
 }
 
-/*TEST(OptimizeTests, sphereConstraint)
+TEST(OptimizeTests, sphereConstraint)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sphere_constraint");
   chdir(test_location.c_str());
@@ -419,4 +429,4 @@ TEST(OptimizeTests, project_test) {
   // Otherwise it is quite large (>4000).
   double value = values[values.size() - 1];
   ASSERT_LT(value, 100);
-}*/
+}
