@@ -18,6 +18,7 @@ import xml.etree.ElementTree as ET
 from termcolor import colored, cprint
 from zipfile import ZipFile
 import subprocess
+import GroomUtils
 
 def dataset_exists_check(use_case):
 	existsFlag = False
@@ -27,10 +28,9 @@ def dataset_exists_check(use_case):
 			existsFlag = True
 	return existsFlag
 
-
 def generate_download_flag(outputDirectory,folder):
 	download_flag = False
-	#if output/dataset + subfolders exits 
+	#if output/dataset + subfolders exits
 	if(os.path.exists(outputDirectory+folder)):
 			# if the folder is empty or has less than 3 files then download
 			if(len(os.listdir(outputDirectory+folder))==0 or len(os.listdir(outputDirectory+folder))<3):
@@ -40,9 +40,9 @@ def generate_download_flag(outputDirectory,folder):
 
 	#if the subfolder folder does not exists then download
 	else:
-		download_flag = True		
+		download_flag = True
 	return download_flag
-			
+
 def download_subset(use_case,datasetName,outputDirectory):
 	import DatasetUtils
 	import re
@@ -157,7 +157,6 @@ def sampledata(inDataList, num_sample):
 
 def samplemesh(inMeshList, num_sample, printCmd=False):
 	D = np.zeros((len(inMeshList), len(inMeshList)))
-	inMeshList = GroomUtils.getVTKmeshes(inMeshList, printCmd)
 	for i in range(len(inMeshList)):
 		for j in range(i, len(inMeshList)):
 			execCommand = ["SurfaceToSurfaceDistance", "-a", inMeshList[i],
@@ -196,4 +195,3 @@ def get_shapeworks_bin_path():
 	if (not swpath):
 		return None
 	return os.path.dirname(swpath)
-        

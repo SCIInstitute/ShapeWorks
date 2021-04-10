@@ -25,6 +25,7 @@ using namespace pybind11::literals;
 #include "Shapeworks.h"
 #include "ShapeworksUtils.h"
 #include "Image.h"
+#include "VectorImage.h"
 #include "ImageUtils.h"
 #include "Mesh.h"
 #include "MeshUtils.h"
@@ -396,7 +397,8 @@ PYBIND11_MODULE(shapeworks, m)
   .def("scale", [](Image& image, const std::vector<double>& v) {
     return image.scale(makeVector({v[0], v[1], v[2]}));
   }, "scale image around center (not origin)", "v"_a)
-  .def("rotate",                &Image::rotate, "rotate around center (not origin) using axis (default z-axis) by angle (in radians)", "angle"_a, "axis"_a)
+  .def("rotate",                py::overload_cast<const double, const Vector3&>(&Image::rotate), "rotate around center (not origin) using axis (default z-axis) by angle (in radians)", "angle"_a, "axis"_a)
+  .def("rotate",                py::overload_cast<const double, Axis>(&Image::rotate), "rotate around center (not origin) using axis (default z-axis) by angle (in radians)", "angle"_a, "axis"_a)
   .def("rotate", [](Image& image, const double angle, const std::vector<double>& v) {
     return image.rotate(angle, makeVector({v[0], v[1], v[2]}));
   }, "rotate around center (not origin) using axis (default z-axis) by angle (in radians)", "angle"_a, "axis"_a)
@@ -491,6 +493,22 @@ PYBIND11_MODULE(shapeworks, m)
   .def("expand",                &Region::expand, "expand this region to include this point", "other"_a)
   ;
 
+  // VectorImage
+  py::class_<VectorImage>(m, "VectorImage")
+  .def(py::init([](const Image &dt) {
+                  return VectorImage(dt);
+                }),
+      "create a vector image from an image (usually a distance transform) that can be sampled at any point in space",
+      "image"_a)
+  .def("evaluate",
+       [](VectorImage &image, std::vector<double> &pt) {
+         auto v = image.evaluate(Point({pt[0], pt[1], pt[2]}));
+         return std::vector<double>({v[0], v[1], v[2]});
+       },
+       "evaluate the vector image at any given point in space",
+       "pt"_a)
+  ;
+
   // ImageUtils
   py::class_<ImageUtils>(m, "ImageUtils")
   .def_static("boundingBox", [](std::vector<std::string> filenames, Image::PixelType val) {
@@ -557,6 +575,7 @@ PYBIND11_MODULE(shapeworks, m)
   }, "scale mesh", "v"_a)
   .def("boundingBox",           &Mesh::boundingBox, "computes bounding box of current mesh", "center"_a=false)
   .def("fix",                   &Mesh::fix, "quality control mesh", "smoothBefore"_a=true, "smoothAfter"_a=true, "lambda"_a=0.5, "iterations"_a=1, "decimate"_a=true, "percentage"_a=0.5)
+  .def("clipClosedSurface",     &Mesh::clipClosedSurface, "clips a mesh using a cutting plane resulting in a closed surface", "plane"_a)
   .def("toImage",
        [](Mesh& mesh, std::vector<double>& v, std::vector<unsigned>& d, std::vector<double>& p) -> decltype(auto) {
          return mesh.toImage(makeVector({v[0], v[1], v[2]}), Dims({d[0], d[1], d[2]}), Point({p[0], p[1], p[2]}));
