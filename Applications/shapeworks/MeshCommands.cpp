@@ -541,7 +541,6 @@ void BoundingBoxMesh::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to meshes (must be followed by `--`), ex: \"bounding-box-mesh --names *.vtk -- --center 1\")");
-  parser.add_option("--center").action("store").type("bool").set_default(false).help("Flag for centering [default: false].");
 
   Command::buildParser();
 }
@@ -549,9 +548,8 @@ void BoundingBoxMesh::buildParser()
 bool BoundingBoxMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::vector<std::string> filenames = options.get("names");
-  bool center = static_cast<bool>(options.get("center"));
 
-  sharedData.region = MeshUtils::boundingBox(filenames, center);
+  sharedData.region = MeshUtils::boundingBox(filenames);
   std::cout << "Bounding box:\n" << sharedData.region;
   return true;
 }

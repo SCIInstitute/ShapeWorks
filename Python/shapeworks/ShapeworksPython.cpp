@@ -10,7 +10,7 @@ Eigen::MatrixXd optimize_get_particle_system(shapeworks::Optimize *opt)
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
-//#include <pybind11/stl_bind.h>  // look at Binding STL containers portion of manual; not sure we even use any in ShapeWorks
+
 #include <pybind11/operators.h>
 #include <pybind11/eigen.h>
 #include <pybind11/functional.h>
@@ -130,7 +130,8 @@ PYBIND11_MODULE(shapeworks, m)
           Matrix33 mat33 = createMatrix(mat);
           return createTransform(mat33, makeVector({v[0], v[1], v[2]}));
         },
-        "creates transform from matrix and translation", "mat"_a, "translate"_a=std::vector<double>({0,0,0}));
+        "creates transform from 3x3 matrix and translation vector",
+        "mat"_a, "translate"_a=std::vector<double>({0,0,0}));
 
   // Axis
   py::enum_<Axis>(m, "Axis")
@@ -141,7 +142,10 @@ PYBIND11_MODULE(shapeworks, m)
   .export_values();
   ;
 
-  m.def("axis_is_valid", py::overload_cast<const Vector &>(&axis_is_valid), "ensure an axis is valid", "axis"_a);
+  m.def("axis_is_valid",
+        [](const std::vector<double> &axis) -> decltype(auto) { return axis_is_valid(makeVector({axis[0], axis[1], axis[2]})); },
+        "ensure an axis is valid",
+        "axis"_a);
   m.def("axis_is_valid", py::overload_cast<const Axis &>(&axis_is_valid), "ensure an axis is valid", "axis"_a);
   m.def("degToRad", degToRad, "convert degrees to radians", "deg"_a);
   m.def("toAxis", toAxis, "convert to axis", "str"_a);
@@ -195,7 +199,7 @@ PYBIND11_MODULE(shapeworks, m)
     importer->Update();
     return Image(importer->GetOutput());
   }))
-  .def("__neg__", [](Image& img) { return -img; })
+  .def("__neg__", [](Image& img) -> decltype(auto) { return -img; })
   .def(py::self + py::self)
   .def(py::self += py::self)
   .def(py::self - py::self)
@@ -209,45 +213,39 @@ PYBIND11_MODULE(shapeworks, m)
   .def(py::self - Image::PixelType())
   .def(py::self -= Image::PixelType())
   .def(py::self == py::self)
-  .def("__repr__", [](const Image &img) {
+  .def("__repr__", [](const Image &img) -> decltype(auto) {
     std::stringstream stream;
     stream << img;
     return stream.str();
   })
-  .def("copy",                  [](Image& image) { return Image(image); })
+  .def("copy",                  [](Image& image) -> decltype(auto) { return Image(image); })
   .def("write",                 &Image::write, "writes the current image (determines type by its extension)", "filename"_a, "compressed"_a=true)
   .def("antialias",             &Image::antialias, "antialiases binary volumes (layers is set to 3 when not specified)", "iterations"_a=50, "maxRMSErr"_a=0.01f, "layers"_a=3)
-  .def("resample",              py::overload_cast<TransformPtr, Point3, Dims, Vector3, Image::ImageType::DirectionType, Image::InterpolationType>(&Image::resample), "resamples by applying transform then sampling from given origin along direction axes at spacing physical units per pixel for dims pixels using specified interpolator", "transform"_a, "origin"_a, "dims"_a, "spacing"_a, "direction"_a, "interp"_a=Image::InterpolationType::NearestNeighbor)
-  .def("resample",              py::overload_cast<const Vector&, Image::InterpolationType>(&Image::resample), "resamples image using new physical spacing, updating logical dims to keep all image data for this spacing", "physicalSpacing"_a, "interp"_a=Image::InterpolationType::Linear)
-  .def("resample", [](Image& image, const TransformPtr transform, const std::vector<double>& p, const std::vector<unsigned>& d, const std::vector<double>& v, const Image::ImageType::DirectionType direction, Image::InterpolationType interp) {
+  .def("resample", [](Image& image, const TransformPtr transform, const std::vector<double>& p, const std::vector<unsigned>& d, const std::vector<double>& v, const Image::ImageType::DirectionType direction, Image::InterpolationType interp) -> decltype(auto) {
     return image.resample(transform, Point({p[0], p[1], p[2]}), Dims({d[0], d[1], d[2]}), makeVector({v[0], v[1], v[2]}), direction, interp);
   }, "resamples by applying transform then sampling from given origin along direction axes at spacing physical units per pixel for dims pixels using specified interpolator", "transform"_a, "origin"_a, "dims"_a, "spacing"_a, "direction"_a, "interp"_a=Image::InterpolationType::NearestNeighbor)
-  .def("resample", [](Image& image, const std::vector<double>& v, Image::InterpolationType interp) {
+  .def("resample", [](Image& image, const std::vector<double>& v, Image::InterpolationType interp) -> decltype(auto) {
     return image.resample(makeVector({v[0], v[1], v[2]}), interp);
   }, "resamples image using new physical spacing, updating logical dims to keep all image data for this spacing", "physicalSpacing"_a, "interp"_a=Image::InterpolationType::Linear)
   .def("resample",              py::overload_cast<double, Image::InterpolationType>(&Image::resample), "isotropically resamples image using giving isospacing", "isoSpacing"_a=1.0, "interp"_a=Image::InterpolationType::Linear)
-  .def("resize",                &Image::resize, "change logical dims (computes new physical spacing)", "logicalDims"_a, "interp"_a=Image::InterpolationType::Linear)
-  .def("resize", [](Image& image, std::vector<unsigned>& d, Image::InterpolationType interp) {
+  .def("resize", [](Image& image, std::vector<unsigned>& d, Image::InterpolationType interp) -> decltype(auto) {
     return image.resize(Dims({d[0], d[1], d[2]}), interp);
   }, "change logical dims (computes new physical spacing)", "logicalDims"_a, "interp"_a=Image::InterpolationType::Linear)
   .def("recenter",              &Image::recenter, "recenters an image by changing its origin in the image header to the physical coordinates of the center of the image")
   .def("pad",                   py::overload_cast<int, Image::PixelType>(&Image::pad), "pads an image by same number of pixels in all directions with constant value", "pad"_a, "value"_a=0.0)
   .def("pad",                   py::overload_cast<int, int, int, Image::PixelType>(&Image::pad), "pads an image by desired number of pixels in each direction with constant value", "padx"_a, "pady"_a, "padz"_a, "value"_a=0.0)
-  .def("translate",             &Image::translate, "translates image", "v"_a)
-  .def("translate", [](Image& image, const std::vector<double>& v) {
+  .def("translate", [](Image& image, const std::vector<double>& v) -> decltype(auto) {
     return image.translate(makeVector({v[0], v[1], v[2]}));
   }, "translates image", "v"_a)
-  .def("scale",                 &Image::scale, "scale image around center (not origin)", "v"_a)
-  .def("scale", [](Image& image, const std::vector<double>& v) {
+  .def("scale", [](Image& image, const std::vector<double>& v) -> decltype(auto) {
     return image.scale(makeVector({v[0], v[1], v[2]}));
   }, "scale image around center (not origin)", "v"_a)
   .def("rotate",                py::overload_cast<const double, const Vector3&>(&Image::rotate), "rotate around center (not origin) using axis (default z-axis) by angle (in radians)", "angle"_a, "axis"_a)
   .def("rotate",                py::overload_cast<const double, Axis>(&Image::rotate), "rotate around center (not origin) using axis (default z-axis) by angle (in radians)", "angle"_a, "axis"_a)
-  .def("rotate", [](Image& image, const double angle, const std::vector<double>& v) {
+  .def("rotate", [](Image& image, const double angle, const std::vector<double>& v) -> decltype(auto) {
     return image.rotate(angle, makeVector({v[0], v[1], v[2]}));
   }, "rotate around center (not origin) using axis (default z-axis) by angle (in radians)", "angle"_a, "axis"_a)
   .def("applyTransform",        py::overload_cast<TransformPtr, Image::InterpolationType>(&Image::applyTransform), "applies the given transformation to the image by using resampling filter", "transform"_a, "interp"_a=Image::InterpolationType::Linear)
-  .def("applyTransform",        py::overload_cast<TransformPtr, Point3, Dims, Vector3, Image::ImageType::DirectionType, Image::InterpolationType>(&Image::applyTransform), "applies the given transformation to the image by using resampling filter with new origin, dims, spacing and direction values", "transform"_a, "origin"_a, "dims"_a, "spacing"_a, "direction"_a, "interp"_a=Image::InterpolationType::NearestNeighbor)
   .def("applyTransform", [](Image& image, const TransformPtr transform, const std::vector<double>& p, const std::vector<unsigned>& d, const std::vector<double>& v, const Image::ImageType::DirectionType direction, Image::InterpolationType interp) {
     return image.applyTransform(transform, Point({p[0], p[1], p[2]}), Dims({d[0], d[1], d[2]}), makeVector({v[0], v[1], v[2]}), direction, interp);
   }, "applies the given transformation to the image by using resampling filter with new origin, dims, spacing and direction values", "transform"_a, "origin"_a, "dims"_a, "spacing"_a, "direction"_a, "interp"_a=Image::InterpolationType::NearestNeighbor)
@@ -318,7 +316,7 @@ PYBIND11_MODULE(shapeworks, m)
        "p"_a)
   .def("compare",               &Image::compare, "compares two images", "other"_a, "verifyall"_a=true, "tolerance"_a=0.0, "precision"_a=1e-12)
   .def("toArray",
-       [](const Image &image) {
+       [](const Image &image) -> decltype(auto) {
          Image::ImageType::Pointer img = image.getITKImage();
          const auto size = img->GetLargestPossibleRegion().GetSize();
          const auto shape = std::vector<size_t>{size[2], size[1], size[0]};
@@ -339,8 +337,10 @@ PYBIND11_MODULE(shapeworks, m)
 
   // Region
   py::class_<Region>(m, "Region")
-  .def(py::init<Dims>())
-  .def(py::init<Coord, Coord>())
+  .def(py::init([](std::vector<unsigned> dims) -> decltype(auto) { return Region(Dims({dims[0], dims[1], dims[2]})); }))
+  .def(py::init([](std::vector<unsigned> min, std::vector<unsigned> max) {
+                  return Region(Coord({min[0], min[1], min[2]}),
+                                Coord({max[0], max[1], max[2]})); }))
   .def(py::init<>())
   .def(py::self == py::self)
   .def("__repr__", [](const Region &region) {
@@ -348,8 +348,8 @@ PYBIND11_MODULE(shapeworks, m)
     stream << region;
     return stream.str();
   })
-  .def_readwrite("min",         &Region::min)
-  .def_readwrite("max",         &Region::max)
+  .def_readwrite("min", &Region::min)
+  .def_readwrite("max", &Region::max)
   .def("valid",                 &Region::valid, "ensure if region is valid")
   .def("origin",                &Region::origin, "return origin of region")
   .def("size",                  &Region::size, "return size of region")
@@ -367,7 +367,7 @@ PYBIND11_MODULE(shapeworks, m)
       "create a vector image from an image (usually a distance transform) that can be sampled at any point in space",
       "image"_a)
   .def("evaluate",
-       [](VectorImage &image, std::vector<double> &pt) {
+       [](VectorImage &image, std::vector<double> &pt) -> decltype(auto) {
          auto v = image.evaluate(Point({pt[0], pt[1], pt[2]}));
          return std::vector<double>({v[0], v[1], v[2]});
        },
@@ -377,13 +377,13 @@ PYBIND11_MODULE(shapeworks, m)
 
   // ImageUtils
   py::class_<ImageUtils>(m, "ImageUtils")
-  .def_static("boundingBox", [](std::vector<std::string> filenames, Image::PixelType val) {
+  .def_static("boundingBox", [](std::vector<std::string> filenames, Image::PixelType val) -> decltype(auto) {
     return shapeworks::ImageUtils::boundingBox(filenames, val);
   }, "compute largest bounding box surrounding the specified isovalue of the specified set of filenames", "filenames"_a, "isoValue"_a=1.0)
-  .def_static("boundingBox", [](std::vector<Image> images, Image::PixelType val) {
+  .def_static("boundingBox", [](std::vector<Image> images, Image::PixelType val) -> decltype(auto) {
     return shapeworks::ImageUtils::boundingBox(images, val);
   }, "compute largest bounding box surrounding the specified isovalue of the specified set of images", "images"_a, "isoValue"_a=1.0)
-  .def_static("createWarpTransform", [](const std::string &source_landmarks, const std::string &target_landmarks, const int stride) {
+  .def_static("createWarpTransform", [](const std::string &source_landmarks, const std::string &target_landmarks, const int stride) -> decltype(auto) {
     auto xform_ptr = shapeworks::ImageUtils::createWarpTransform(source_landmarks, target_landmarks, stride);
     return xform_ptr;
   }, "computes a warp transform from the source to the target landmarks", "source_landmarks"_a, "target_landmarks"_a, "stride"_a=1)
@@ -411,12 +411,12 @@ PYBIND11_MODULE(shapeworks, m)
   mesh.def(py::init<const std::string &>())
   .def(py::init<vtkSmartPointer<vtkPolyData>>())
   .def(py::self == py::self)
-  .def("__repr__", [](const Mesh &mesh) {
+  .def("__repr__", [](const Mesh &mesh) -> decltype(auto) {
     std::stringstream stream;
     stream << mesh;
     return stream.str();
   })
-  .def("copy",                  [](Mesh& mesh) { return Mesh(mesh); })
+  .def("copy",                  [](Mesh& mesh) -> decltype(auto) { return Mesh(mesh); })
   .def("write",                 &Mesh::write, "writes mesh, format specified by filename extension", "pathname"_a)
   .def("coverage",              &Mesh::coverage, "determines coverage between current mesh and another mesh (e.g. acetabular cup / femoral head)", "otherMesh"_a, "allowBackIntersections"_a=true, "angleThreshold"_a=0, "backSearchRadius"_a=0)
   .def("smooth",                &Mesh::smooth, "applies laplacian smoothing", "iterations"_a=0, "relaxation"_a=0.0)
@@ -439,7 +439,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("scale", [](Mesh& mesh, const std::vector<double>& v) -> decltype(auto) {
     return mesh.scale(makeVector({v[0], v[1], v[2]}));
   }, "scale mesh", "v"_a)
-  .def("boundingBox",           &Mesh::boundingBox, "computes bounding box of current mesh", "center"_a=false)
+  .def("boundingBox",           &Mesh::boundingBox, "computes bounding box of current mesh")
   .def("fix",                   &Mesh::fix, "quality control mesh", "smoothBefore"_a=true, "smoothAfter"_a=true, "lambda"_a=0.5, "iterations"_a=1, "decimate"_a=true, "percentage"_a=0.5)
   .def("clipClosedSurface",     &Mesh::clipClosedSurface, "clips a mesh using a cutting plane resulting in a closed surface", "plane"_a)
   .def("toImage",
@@ -455,12 +455,20 @@ PYBIND11_MODULE(shapeworks, m)
        },
        "converts mesh to distance transform, automatically computing size and origin if necessary",
        "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}), "size"_a=std::vector<unsigned>({0, 0, 0}), "origin"_a=std::vector<double>({-1.0, -1.0, -1.0}))
-  .def("center",                &Mesh::center, "center of mesh")
-  .def("centerOfMass",          &Mesh::centerOfMass, "center of mass of mesh")
+  .def("center",
+       [](Mesh &mesh) -> decltype(auto) {
+         return py::array(3, mesh.center().GetDataPointer());
+       },
+       "center of mesh")
+  .def("centerOfMass",
+       [](Mesh &mesh) -> decltype(auto) {
+         return py::array(3, mesh.centerOfMass().GetDataPointer());
+       },
+       "center of mass of mesh")
   .def("numPoints",             &Mesh::numPoints, "number of points")
   .def("numFaces",              &Mesh::numFaces, "number of faces")
   .def("getFieldNames",         &Mesh::getFieldNames, "print all field names in mesh")
-  .def("setField", [](Mesh &mesh, std::vector<double>& v, std::string name) {
+  .def("setField", [](Mesh &mesh, std::vector<double>& v, std::string name) -> decltype(auto) {
     vtkSmartPointer<vtkDoubleArray> arr = vtkSmartPointer<vtkDoubleArray>::New();
     arr->SetNumberOfValues(v.size());
     for (int i=0; i<v.size(); i++) {
@@ -468,7 +476,7 @@ PYBIND11_MODULE(shapeworks, m)
     }
     return mesh.setField(name, arr);
   }, "sets the given field for points with array", "array"_a, "name"_a)
-  .def("getField", [](const Mesh &mesh, std::string name) {
+  .def("getField", [](const Mesh &mesh, std::string name) -> decltype(auto) {
     auto array = mesh.getField<vtkDataArray>(name);
     const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()), static_cast<unsigned long>(array->GetNumberOfComponents()), 1};
     auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());

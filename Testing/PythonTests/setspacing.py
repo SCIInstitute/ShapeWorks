@@ -1,5 +1,6 @@
 import os
 import sys
+import numpy as np
 from shapeworks import *
 
 def setspacingTest1():
@@ -8,7 +9,7 @@ def setspacingTest1():
 
   compareImg = Image(os.environ["DATA"] + "/spacing2.nrrd")
 
-  return img.spacing() == [2.0, 2.0, 2.0] and img.compare(compareImg)
+  return np.array_equal(img.spacing(), [2.0, 2.0, 2.0]) and img.compare(compareImg)
 
 val = setspacingTest1()
 
@@ -18,13 +19,14 @@ if val is False:
 def setSpacingTest2():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
   img.setSpacing([1.0, 1.0, 2.0]).setSpacing([0.5, 1.0, 1.0]) # chain calls
-  return img.spacing() == [0.5, 1.0, 1.0];
+  equal = np.array_equal(img.spacing(), [0.5, 1.0, 1.0]) 
+  img.setSpacing([1.0, 1.0, 1.0])   # change spacing back
 
   compareImg = Image(os.environ["DATA"] + "/spacing1.nrrd")
 
-  return img.compare(compareImg)
+  return np.array_equal(img.spacing(), [1.0, 1.0, 1.0]) and img.compare(compareImg)
 
-val = setspacingTest2()
+val = setSpacingTest2()
 
 if val is False:
   sys.exit(1)

@@ -328,34 +328,10 @@ TEST(pythonTests, fieldTest)
   ASSERT_FALSE(system("python field.py"));
 }
 
+// note: we just use numpy arrays for coordinates/indices, points, dimensions, vectors, and matrices
 TEST(pythonTests, coordTest)
 {
   ASSERT_FALSE(system("python coord.py"));
-}
-
-TEST(pythonTests, dimsTest)
-{
-  ASSERT_FALSE(system("python dims.py"));
-}
-
-TEST(pythonTests, pointTest)
-{
-  ASSERT_FALSE(system("python point.py"));
-}
-
-TEST(pythonTests, vectorTest)
-{
-  ASSERT_FALSE(system("python vector.py"));
-}
-
-TEST(pythonTests, ipoint3Test)
-{
-  ASSERT_FALSE(system("python ipoint3.py"));
-}
-
-TEST(pythonTests, fpoint3Test)
-{
-  ASSERT_FALSE(system("python fpoint3.py"));
 }
 
 TEST(pythonTests, optimizeTest)

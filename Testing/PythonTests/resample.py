@@ -1,5 +1,6 @@
 import os
 import sys
+import numpy as np
 from shapeworks import *
 
 def resampleTest1():
@@ -56,7 +57,7 @@ if val is False:
 
 def resampleTest5():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
-  transform = createTransform(Matrix())
+  transform = createTransform(np.identity(3))
   img.resample(transform, [-100, -63.2, -42.9], [32, 32, 4], [6.25, 6.25, 13.75], img.coordsys())
 
   compareImg = Image(os.environ["DATA"] + "/resample5.nrrd")

@@ -314,7 +314,7 @@ Mesh &Mesh::scale(const Vector3 &v)
   return applyTransform(transform);
 }
 
-Region Mesh::boundingBox(bool center) const
+Region Mesh::boundingBox() const
 {
   Region bbox;
   double bb[6];
@@ -324,14 +324,6 @@ Region Mesh::boundingBox(bool center) const
   {
     bbox.min[i] = floor(bb[2*i]);
     bbox.max[i] = ceil(bb[2*i+1]);
-  }
-
-  if (center)
-  {
-    Dims size = bbox.size();
-    Dims offset = size * -0.5 - toDims(bbox.min);
-    bbox.min = toCoord(size * -0.5);
-    bbox.max = toCoord(size * 0.5);
   }
 
   return bbox;
@@ -451,7 +443,7 @@ Image Mesh::toImage(Vector3 spacing, Dims size, Point3 origin) const
   // determine origin from bounding box if user didn't explicitly specify
   if (origin == Point3({-1.0, -1.0, -1.0}))
   {
-    origin = toPoint(bbox.min);
+    origin = toPoint(bbox.origin());
   }
 
   vtkSmartPointer<vtkImageData> whiteImage = vtkSmartPointer<vtkImageData>::New();
