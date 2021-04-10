@@ -108,21 +108,6 @@ ParticleImplicitSurfaceDomain<T>::ApplyConstraints(PointType &p, int idx, bool d
 
     f = this->Sample(p);
 
-<<<<<<< HEAD
-=======
-    if(!this->GetConstraints()->IsAnyViolated(p_old) && this->GetConstraints()->IsAnyViolated(p)){
-        msg << std::endl << "####### Violation within apply constraints #######" << p_old << p  << std::endl;
-        msg << "f " << f << " epsilon " << epsilon << std::endl;
-        msg << "vec_old " << vec_old << " vec " << vec << std::endl;
-        msg << std::endl << std::endl;
-        std::cerr << msg.str();
-    }
-    if(vec[0] == 0 && vec[1] == 0 && vec[2] == 0){
-        std::cerr << "Update becomes [0,0,0] ";
-        break;
-    }
->>>>>>> origin/master
-
     // Raise the tolerance if we have done too many iterations.
     k++;
     if (k > 10000)
