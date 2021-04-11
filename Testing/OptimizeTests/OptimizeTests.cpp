@@ -454,7 +454,7 @@ TEST(OptimizeTests, mesh_geodesics_test) {
       const double truth = acos(a_dot_b);
 
       // std::cerr << "Geodesics test: " << computed << " " << truth << "\n";
-      ASSERT_NEAR(computed, truth, 0.2);
+      ASSERT_NEAR(computed, truth, 0.06);
     }
   }
 }
