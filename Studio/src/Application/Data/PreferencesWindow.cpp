@@ -29,6 +29,8 @@ PreferencesWindow::PreferencesWindow(QWidget* parent, Preferences& prefs) : pref
                 this, &PreferencesWindow::save_to_preferences);
   this->connect(this->ui_->orientation_marker_corner, qOverload<int>(&QComboBox::currentIndexChanged),
                 this, &PreferencesWindow::save_to_preferences);
+  this->connect(this->ui_->geodesic_cache_multiplier, &QSlider::valueChanged, this,
+                &PreferencesWindow::save_to_preferences);
 }
 
 //-----------------------------------------------------------------------------
@@ -91,6 +93,7 @@ void PreferencesWindow::set_values_from_preferences()
   this->ui_->orientation_marker_type->setCurrentIndex(preferences_.get_orientation_marker_type());
   this->ui_->orientation_marker_corner->setCurrentIndex(
     preferences_.get_orientation_marker_corner());
+  this->ui_->geodesic_cache_multiplier->setValue(preferences_.get_geodesic_cache_multiplier());
 }
 
 //-----------------------------------------------------------------------------
@@ -120,5 +123,6 @@ void PreferencesWindow::save_to_preferences()
     static_cast<Preferences::OrientationMarkerType>(this->ui_->orientation_marker_type->currentIndex()));
   this->preferences_.set_orientation_marker_corner(
     static_cast<Preferences::OrientationMarkerCorner>(this->ui_->orientation_marker_corner->currentIndex()));
+  this->preferences_.set_geodesic_cache_multiplier(this->ui_->geodesic_cache_multiplier->value());
   emit update_view();
 }

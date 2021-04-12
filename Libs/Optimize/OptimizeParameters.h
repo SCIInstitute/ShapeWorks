@@ -39,6 +39,9 @@ public:
   bool get_use_geodesic_distance();
   void set_use_geodesic_distance(bool value);
 
+  int get_geodesic_cache_multiplier();
+  void set_geodesic_cache_multiplier(int value);
+
   std::vector<bool> get_use_normals();
   void set_use_normals(std::vector<bool> use_normals);
 

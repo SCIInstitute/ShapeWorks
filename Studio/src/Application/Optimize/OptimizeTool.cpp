@@ -9,6 +9,7 @@
 #include <Optimize/OptimizeTool.h>
 #include <Libs/Optimize/OptimizeParameters.h>
 
+#include <Data/Preferences.h>
 #include <Visualization/ShapeWorksWorker.h>
 #include <Data/Session.h>
 #include <Data/Shape.h>
@@ -20,7 +21,7 @@
 using namespace shapeworks;
 
 //---------------------------------------------------------------------------
-OptimizeTool::OptimizeTool()
+OptimizeTool::OptimizeTool(Preferences& prefs) : preferences_(prefs)
 {
   this->ui_ = new Ui_OptimizeTool;
   this->ui_->setupUi(this);
@@ -270,6 +271,9 @@ void OptimizeTool::store_params()
 
   params.set_use_multiscale(this->ui_->multiscale->isChecked());
   params.set_multiscale_particles(this->ui_->multiscale_particles->text().toDouble());
+
+  // always use preference value
+  params.set_geodesic_cache_multiplier(this->preferences_.get_geodesic_cache_multiplier());
 
   params.save_to_project();
 }

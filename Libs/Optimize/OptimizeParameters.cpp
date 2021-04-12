@@ -207,7 +207,6 @@ void OptimizeParameters::set_multiscale_particles(int value)
 //---------------------------------------------------------------------------
 bool OptimizeParameters::set_up_optimize(Optimize* optimize)
 {
-
   optimize->SetDomainsPerShape(1); /// only one domain per shape right now
   optimize->SetNumberOfParticles(this->get_number_of_particles());
   optimize->SetInitialRelativeWeighting(this->get_initial_relative_weighting());
@@ -217,6 +216,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
   optimize->SetIterationsPerSplit(this->get_iterations_per_split());
   optimize->SetOptimizationIterations(this->get_optimization_iterations());
   optimize->SetGeodesicsEnabled(this->get_use_geodesic_distance());
+  optimize->SetGeodesicsCacheSizeMultiplier(this->get_geodesic_cache_multiplier());
 
   std::vector<bool> use_normals;
   std::vector<bool> use_xyz;
@@ -349,6 +349,19 @@ void OptimizeParameters::set_abort_load(bool value)
 void OptimizeParameters::set_load_callback(const std::function<void(int)>& f)
 {
   this->load_callback_ = f;
+}
+
+//---------------------------------------------------------------------------
+int OptimizeParameters::get_geodesic_cache_multiplier()
+{
+  return this->params_.get("geodesic_cache_multiplier", 0);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_geodesic_cache_multiplier(int value)
+{
+  this->params_.set("geodesic_cache_multiplier", value);
+
 }
 
 

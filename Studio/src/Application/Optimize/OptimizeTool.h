@@ -24,7 +24,7 @@ Q_OBJECT;
 
 public:
 
-  OptimizeTool();
+  OptimizeTool(Preferences& prefs);
   ~OptimizeTool();
 
   /// set the pointer to the project
@@ -78,6 +78,9 @@ private:
   void handle_load_progress(int count);
 
   void clear_particles();
+
+  Preferences& preferences_;
+
 
   std::vector<QLineEdit*> line_edits_;
 
