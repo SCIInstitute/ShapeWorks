@@ -42,9 +42,8 @@ PYBIND11_MODULE(shapeworks, m)
 
   m.attr("Pi") = std::atan(1.0) * 4.0;
 
-  // Transform (TODO: Use Eigen::Matrix instead)
-  // -> see https://github.com/SCIInstitute/ShapeWorks/issues/1184
-  py::class_<itk::SmartPointer<itk::Transform<double, 3u, 3u> >>(m, "TransformPtr")
+  // Transform
+  py::class_<itk::SmartPointer<itk::Transform<double, 3u, 3u> >>(m, "Transform")
   .def("__repr__", [](const TransformPtr &transform) {
     std::stringstream stream;
     itk::Transform<double, 3, 3>::ParametersType p = transform->GetParameters();
@@ -59,20 +58,15 @@ PYBIND11_MODULE(shapeworks, m)
       }
     }
     return stream.str();
-  })
-  ;
+  });
 
   // Plane
   py::class_<Plane>(m, "Plane")
   .def(py::init([](std::vector<double>& n, std::vector<double>& o) {
     return makePlane(makeVector({n[0], n[1], n[2]}), Point({o[0], o[1], o[2]}));
-  }))
-  ;
+  }));
 
-  // todo: a matrix is a transform, and adding a vector either adds to the right hand column or
-  // bottom row depending on if it's applied to geometry as right-handed or left-handed This
-  // function might be appropriate to add to the shapeworks module so translation is applied in
-  // a manner consistent with what is expected when applied.
+  // Constructs an itk::AffineTransform from the 3x3 scale-rotate-warp and 3x1 translation.
   m.def("createTransform",
         [](Eigen::Matrix<double, 3, 3> &mat, std::vector<double> v) -> decltype(auto) {
           Matrix33 mat33 = eigenToItk<double, 3, 3>(mat);
@@ -88,13 +82,13 @@ PYBIND11_MODULE(shapeworks, m)
   .value("Y", Axis::Y)
   .value("Z", Axis::Z)
   .export_values();
-  ;
 
   m.def("axis_is_valid",
-        [](const std::vector<double> &axis) -> decltype(auto) { return axis_is_valid(makeVector({axis[0], axis[1], axis[2]})); },
+        [](const std::vector<double> &axis) -> decltype(auto) {
+          return axis_is_valid(makeVector({axis[0], axis[1], axis[2]}));
+        },
         "ensure an axis is valid",
         "axis"_a);
-  m.def("axis_is_valid", py::overload_cast<const Axis &>(&axis_is_valid), "ensure an axis is valid", "axis"_a);
   m.def("degToRad", degToRad, "convert degrees to radians", "deg"_a);
   m.def("toAxis", toAxis, "convert to axis", "str"_a);
   
@@ -103,21 +97,18 @@ PYBIND11_MODULE(shapeworks, m)
   .value("CenterOfMass", XFormType::CenterOfMass)
   .value("IterativeClosestPoint", XFormType::IterativeClosestPoint)
   .export_values();
-  ;
-
-  // Image
-  py::class_<Image> image(m, "Image");
 
   // Image::InterpolationType (even though this is part of Image, it feels cleaner to keep it global in the module)
   py::enum_<Image::InterpolationType>(m, "InterpolationType")
   .value("Linear", Image::InterpolationType::Linear)
   .value("NearestNeighbor", Image::InterpolationType::NearestNeighbor)
   .export_values();
-  ;
 
-  // Image bindings
-  image.def(py::init<const std::string &>()) // can the argument for init be named (it's filename in this case)
+  // Image
+  py::class_<Image>(m, "Image")
+  .def(py::init<const std::string &>())
   .def(py::init<Image::ImageType::Pointer>())
+
   .def(py::init([](py::array_t<long> np_array) {  // FIXME: this is broken (or not even called)
     using ImportType = itk::ImportImageFilter<Image::PixelType, 3>;
     auto importer = ImportType::New();
@@ -140,6 +131,7 @@ PYBIND11_MODULE(shapeworks, m)
     importer->Update();
     return Image(importer->GetOutput());
   }))
+
   .def("__neg__", [](Image& img) -> decltype(auto) { return -img; })
   .def(py::self + py::self)
   .def(py::self += py::self)
@@ -154,14 +146,25 @@ PYBIND11_MODULE(shapeworks, m)
   .def(py::self - Image::PixelType())
   .def(py::self -= Image::PixelType())
   .def(py::self == py::self)
+
   .def("__repr__", [](const Image &img) -> decltype(auto) {
     std::stringstream stream;
     stream << img;
     return stream.str();
   })
-  .def("copy",                  [](Image& image) -> decltype(auto) { return Image(image); })
-  .def("write",                 &Image::write, "writes the current image (determines type by its extension)", "filename"_a, "compressed"_a=true)
-  .def("antialias",             &Image::antialias, "antialiases binary volumes (layers is set to 3 when not specified)", "iterations"_a=50, "maxRMSErr"_a=0.01f, "layers"_a=3)
+
+  .def("copy",
+       [](Image& image) -> decltype(auto) { return Image(image); })
+  
+  .def("write",
+       &Image::write,
+       "writes the current image (determines type by its extension)",
+       "filename"_a, "compressed"_a=true)
+
+  .def("antialias",
+       &Image::antialias,
+       "antialiases binary volumes (layers is set to 3 when not specified)",
+       "iterations"_a=50, "maxRMSErr"_a=0.01f, "layers"_a=3)
 
   .def("resample",
        [](Image& image,
@@ -181,28 +184,73 @@ PYBIND11_MODULE(shapeworks, m)
        "resamples by applying transform then sampling from given origin along direction axes at spacing physical units per pixel for dims pixels using specified interpolator",
        "transform"_a, "origin"_a, "dims"_a, "spacing"_a, "direction"_a, "interp"_a = Image::InterpolationType::NearestNeighbor)
 
-  .def("resample", [](Image& image, const std::vector<double>& v, Image::InterpolationType interp) -> decltype(auto) {
-    return image.resample(makeVector({v[0], v[1], v[2]}), interp);
-  }, "resamples image using new physical spacing, updating logical dims to keep all image data for this spacing", "physicalSpacing"_a, "interp"_a=Image::InterpolationType::Linear)
-  .def("resample",              py::overload_cast<double, Image::InterpolationType>(&Image::resample), "isotropically resamples image using giving isospacing", "isoSpacing"_a=1.0, "interp"_a=Image::InterpolationType::Linear)
-  .def("resize", [](Image& image, std::vector<unsigned>& d, Image::InterpolationType interp) -> decltype(auto) {
-    return image.resize(Dims({d[0], d[1], d[2]}), interp);
-  }, "change logical dims (computes new physical spacing)", "logicalDims"_a, "interp"_a=Image::InterpolationType::Linear)
-  .def("recenter",              &Image::recenter, "recenters an image by changing its origin in the image header to the physical coordinates of the center of the image")
-  .def("pad",                   py::overload_cast<int, Image::PixelType>(&Image::pad), "pads an image by same number of pixels in all directions with constant value", "pad"_a, "value"_a=0.0)
-  .def("pad",                   py::overload_cast<int, int, int, Image::PixelType>(&Image::pad), "pads an image by desired number of pixels in each direction with constant value", "padx"_a, "pady"_a, "padz"_a, "value"_a=0.0)
-  .def("translate", [](Image& image, const std::vector<double>& v) -> decltype(auto) {
-    return image.translate(makeVector({v[0], v[1], v[2]}));
-  }, "translates image", "v"_a)
-  .def("scale", [](Image& image, const std::vector<double>& v) -> decltype(auto) {
-    return image.scale(makeVector({v[0], v[1], v[2]}));
-  }, "scale image around center (not origin)", "v"_a)
-  .def("rotate",                py::overload_cast<const double, const Vector3&>(&Image::rotate), "rotate around center (not origin) using axis (default z-axis) by angle (in radians)", "angle"_a, "axis"_a)
-  .def("rotate",                py::overload_cast<const double, Axis>(&Image::rotate), "rotate around center (not origin) using axis (default z-axis) by angle (in radians)", "angle"_a, "axis"_a)
-  .def("rotate", [](Image& image, const double angle, const std::vector<double>& v) -> decltype(auto) {
-    return image.rotate(angle, makeVector({v[0], v[1], v[2]}));
-  }, "rotate around center (not origin) using axis (default z-axis) by angle (in radians)", "angle"_a, "axis"_a)
-  .def("applyTransform",        py::overload_cast<TransformPtr, Image::InterpolationType>(&Image::applyTransform), "applies the given transformation to the image by using resampling filter", "transform"_a, "interp"_a=Image::InterpolationType::Linear)
+  .def("resample",
+       [](Image& image, const std::vector<double>& v, Image::InterpolationType interp) -> decltype(auto) {
+         return image.resample(makeVector({v[0], v[1], v[2]}), interp);
+       },
+       "resamples image using new physical spacing, updating logical dims to keep all image data for this spacing",
+       "physicalSpacing"_a, "interp"_a=Image::InterpolationType::Linear)
+
+  .def("resample",
+       py::overload_cast<double, Image::InterpolationType>(&Image::resample),
+       "isotropically resamples image using giving isospacing",
+       "isoSpacing"_a=1.0, "interp"_a=Image::InterpolationType::Linear)
+
+  .def("resize",
+       [](Image& image, std::vector<unsigned>& d, Image::InterpolationType interp) -> decltype(auto) {
+         return image.resize(Dims({d[0], d[1], d[2]}), interp);
+       },
+       "change logical dims (computes new physical spacing)",
+       "logicalDims"_a, "interp"_a=Image::InterpolationType::Linear)
+
+  .def("recenter",
+       &Image::recenter,
+       "recenters an image by changing its origin in the image header to the physical coordinates of the center of the image")
+
+  .def("pad",
+       py::overload_cast<int, Image::PixelType>(&Image::pad),
+       "pads an image by same number of pixels in all directions with constant value",
+       "pad"_a, "value"_a=0.0)
+
+  .def("pad",
+       py::overload_cast<int, int, int, Image::PixelType>(&Image::pad),
+       "pads an image by desired number of pixels in each direction with constant value",
+       "padx"_a, "pady"_a, "padz"_a, "value"_a=0.0)
+
+  .def("translate",
+       [](Image& image, const std::vector<double>& v) -> decltype(auto) {
+         return image.translate(makeVector({v[0], v[1], v[2]}));
+       },
+       "translates image", "v"_a)
+  
+  .def("scale",
+       [](Image& image, const std::vector<double>& v) -> decltype(auto) {
+         return image.scale(makeVector({v[0], v[1], v[2]}));
+       },
+       "scale image around center (not origin)",
+       "v"_a)
+
+  .def("rotate",
+       py::overload_cast<const double, const Vector3&>(&Image::rotate),
+       "rotate around center (not origin) using axis (default z-axis) by angle (in radians)",
+       "angle"_a, "axis"_a)
+
+  .def("rotate",
+       py::overload_cast<const double, Axis>(&Image::rotate),
+       "rotate around center (not origin) using axis (default z-axis) by angle (in radians)",
+       "angle"_a, "axis"_a)
+
+  .def("rotate",
+       [](Image& image, const double angle, const std::vector<double>& v) -> decltype(auto) {
+         return image.rotate(angle, makeVector({v[0], v[1], v[2]}));
+       },
+       "rotate around center (not origin) using axis (default z-axis) by angle (in radians)",
+       "angle"_a, "axis"_a)
+
+  .def("applyTransform",
+       py::overload_cast<TransformPtr, Image::InterpolationType>(&Image::applyTransform),
+       "applies the given transformation to the image by using resampling filter",
+       "transform"_a, "interp"_a=Image::InterpolationType::Linear)
 
   .def("applyTransform",
        [](Image& image, const TransformPtr transform,
@@ -221,7 +269,11 @@ PYBIND11_MODULE(shapeworks, m)
        "applies the given transformation to the image by using resampling filter with new origin, dims, spacing and direction values",
        "transform"_a, "origin"_a, "dims"_a, "spacing"_a, "direction"_a, "interp"_a=Image::InterpolationType::NearestNeighbor)
   
-  .def("extractLabel",          &Image::extractLabel, "extracts/isolates a specific pixel label from a given multi-label volume and outputs the corresponding binary image", "label"_a=1.0)
+  .def("extractLabel",
+       &Image::extractLabel,
+       "extracts/isolates a specific pixel label from a given multi-label volume and outputs the corresponding binary image",
+       "label"_a=1.0)
+
   .def("closeHoles",            &Image::closeHoles, "closes holes in a volume defined by values larger than specified value", "foreground"_a=0.0)
   .def("binarize",              &Image::binarize, "sets portion of image greater than min and less than or equal to max to the specified value", "minVal"_a=0.0, "maxVal"_a=std::numeric_limits<Image::PixelType>::max(), "innerVal"_a=1.0, "outerVal"_a=0.0)
   .def("computeDT",             &Image::computeDT, "computes signed distance transform volume from an image at the specified isovalue", "isovalue"_a=0.0)
