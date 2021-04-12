@@ -57,11 +57,10 @@ public:
   std::string get_error_message();
 
   //! Apply a feature map
-  void apply_feature_map(std::string name, ImageType::Pointer image,
-                         vtkSmartPointer<vtkTransform> transform);
+  void apply_feature_map(std::string name, ImageType::Pointer image);
 
   //! Apply scalars from another mesh, with a transform
-  void apply_scalars(MeshHandle mesh, vtkSmartPointer<vtkTransform> transform);
+  void apply_scalars(MeshHandle mesh);
 
   //! Interpolation scalars at positions to this mesh
   void interpolate_scalars_to_mesh(std::string name,

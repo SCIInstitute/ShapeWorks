@@ -70,8 +70,7 @@ vnl_vector<double> StudioMesh::get_center_transform()
 }
 
 //---------------------------------------------------------------------------
-void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image,
-                                   TransformType transform)
+void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image)
 {
   if (!this->poly_data_ || name == "") {
     return;
@@ -91,7 +90,9 @@ void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image,
   scalars->SetName(name.c_str());
 
   for (int i = 0; i < points->GetNumberOfPoints(); i++) {
-    double* pt = transform->TransformPoint(points->GetPoint(i));
+    //double* pt = transform->TransformPoint(points->GetPoint(i));
+
+    double *pt = points->GetPoint(i);
 
     ImageType::PointType pitk;
     pitk[0] = pt[0];
@@ -214,7 +215,7 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double
 }
 
 //---------------------------------------------------------------------------
-void StudioMesh::apply_scalars(MeshHandle mesh, vtkSmartPointer<vtkTransform> transform)
+void StudioMesh::apply_scalars(MeshHandle mesh)
 {
   vtkSmartPointer<vtkPolyData> from_mesh = mesh->get_poly_data();
   vtkSmartPointer<vtkPolyData> to_mesh = this->get_poly_data();
@@ -235,7 +236,8 @@ void StudioMesh::apply_scalars(MeshHandle mesh, vtkSmartPointer<vtkTransform> tr
     to_array->SetNumberOfValues(to_mesh->GetNumberOfPoints());
 
     for (int j = 0; j < to_mesh->GetNumberOfPoints(); j++) {
-      double* p = transform->TransformPoint(to_mesh->GetPoint(j));
+      //double* p = transform->TransformPoint(to_mesh->GetPoint(j));
+      double* p = to_mesh->GetPoint(j);
       vtkIdType id = kDTree->FindClosestPoint(p);
       vtkVariant var = from_array->GetVariantValue(id);
 

@@ -482,7 +482,7 @@ void Shape::load_feature(std::string display_mode, std::string feature)
     return;
   }
 
-  int num_domains = this->subject_->get_number_of_domains();
+  int num_domains = group.meshes().size();
 
   for (int d = 0; d < num_domains; d++) {
 
@@ -499,10 +499,6 @@ void Shape::load_feature(std::string display_mode, std::string feature)
 
       auto transform = vtkSmartPointer<vtkTransform>::New();
 
-      if (display_mode != Visualizer::MODE_ORIGINAL_C) {
-        transform = this->get_groomed_transform(d);
-      }
-
       if (this->subject_->get_domain_types()[d] == DomainType::Image) {
 
         // read the feature
@@ -511,7 +507,7 @@ void Shape::load_feature(std::string display_mode, std::string feature)
         reader->Update();
         ImageType::Pointer image = reader->GetOutput();
 
-        group.meshes()[0]->apply_feature_map(feature, image, transform);
+        group.meshes()[0]->apply_feature_map(feature, image);
         this->apply_feature_to_points(feature, image);
 
       }
@@ -521,7 +517,7 @@ void Shape::load_feature(std::string display_mode, std::string feature)
 
         for (int i = 0; i < original_meshes.size(); i++) {
           auto original_mesh = original_meshes[i];
-          original_mesh->apply_scalars(original_mesh, transform);
+          original_mesh->apply_scalars(original_mesh);
           this->apply_feature_to_points(feature, original_mesh);
         }
 
@@ -540,8 +536,6 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
 
   auto region = image->GetLargestPossibleRegion();
 
-  vtkSmartPointer<vtkTransform> transform = this->get_groomed_transform();
-
   vnl_vector<double> all_locals = this->get_local_correspondence_points();
 
   int num_points = all_locals.size() / 3;
@@ -556,7 +550,7 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
     p[1] = all_locals[idx++];
     p[2] = all_locals[idx++];
 
-    double* pt = transform->TransformPoint(p);
+    double* pt = p;
 
     ImageType::PointType pitk;
     pitk[0] = pt[0];
