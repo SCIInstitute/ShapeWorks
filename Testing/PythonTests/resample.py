@@ -14,6 +14,7 @@ def resampleTest1():
 val = resampleTest1()
 
 if val is False:
+  print("resampleTest1 failed")
   sys.exit(1)
 
 def resampleTest2():
@@ -27,6 +28,7 @@ def resampleTest2():
 val = resampleTest2()
 
 if val is False:
+  print("resampleTest2 failed")
   sys.exit(1)
 
 def resampleTest3():
@@ -40,6 +42,7 @@ def resampleTest3():
 val = resampleTest3()
 
 if val is False:
+  print("resampleTest3 failed")
   sys.exit(1)
 
 def resampleTest4():
@@ -53,6 +56,7 @@ def resampleTest4():
 val = resampleTest4()
 
 if val is False:
+  print("resampleTest4 failed")
   sys.exit(1)
 
 def resampleTest5():
@@ -67,4 +71,5 @@ def resampleTest5():
 val = resampleTest5()
 
 if val is False:
+  print("resampleTest5 failed")
   sys.exit(1)

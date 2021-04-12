@@ -42,58 +42,6 @@ PYBIND11_MODULE(shapeworks, m)
 
   m.attr("Pi") = std::atan(1.0) * 4.0;
 
-  // Matix classes (TODO: use Eigen::Matrix instead)
-  // -> see https://github.com/SCIInstitute/ShapeWorks/issues/1184
-  py::class_<Matrix>(m, "Matrix")
-  .def(py::init([] {
-    Matrix mat;
-    mat.SetIdentity();
-    return mat; 
-  }))
-  .def("__repr__", [](const Matrix& mat) {
-    std::ostringstream ss;
-    ss << mat;
-    return ss.str();
-  })
-  .def("__getitem__", [](const Matrix& m, size_t r, size_t c) { return m[r][c]; })
-  .def("__setitem__", [](Matrix& m, size_t r, size_t c, int val) { m[r][c] = val; })
-  .def("__add__", [](const Matrix& m1, const Matrix& m2) { return m1 + m2; })
-  .def("__sub__", [](const Matrix& m1, const Matrix& m2) { return m1 - m2; })
-  .def("__mul__", [](const Matrix& m1, const Matrix& m2) { return m1 * m2; })
-  .def("__iadd__", [](Matrix& m1, const Matrix& m2) { return m1 += m2; })
-  .def("__isub__", [](Matrix& m1, const Matrix& m2) { return m1 -= m2; })
-  .def("__mul__", [](const Matrix& m, const double x) { return m * x; })
-  .def("__truediv__", [](const Matrix& m, const double x) { return m / x; })
-  .def("__imul__", [](Matrix& m, const double x) { return m *= x; })
-  .def("__itruediv__", [](Matrix& m, const double x) { return m /= x; })
-  ;
-
-  // Matix classes (TODO: use Eigen::Matrix instead)
-  // -> see https://github.com/SCIInstitute/ShapeWorks/issues/1184
-  py::class_<Matrix44>(m, "Matrix44")
-  .def(py::init([] {
-    Matrix44 mat;
-    mat.SetIdentity();
-    return mat; 
-  }))
-  .def("__repr__", [](const Matrix44& mat) {
-    std::ostringstream ss;
-    ss << mat;
-    return ss.str();
-  })
-  .def("__getitem__", [](const Matrix44& m, size_t r, size_t c) { return m[r][c]; })
-  .def("__setitem__", [](Matrix44& m, size_t r, size_t c, int val) { m[r][c] = val; })
-  .def("__add__", [](const Matrix44& m1, const Matrix44& m2) { return m1 + m2; })
-  .def("__sub__", [](const Matrix44& m1, const Matrix44& m2) { return m1 - m2; })
-  .def("__mul__", [](const Matrix44& m1, const Matrix44& m2) { return m1 * m2; })
-  .def("__iadd__", [](Matrix44& m1, const Matrix44& m2) { return m1 += m2; })
-  .def("__isub__", [](Matrix44& m1, const Matrix44& m2) { return m1 -= m2; })
-  .def("__mul__", [](const Matrix44& m, const double x) { return m * x; })
-  .def("__truediv__", [](const Matrix44& m, const double x) { return m / x; })
-  .def("__imul__", [](Matrix44& m, const double x) { return m *= x; })
-  .def("__itruediv__", [](Matrix44& m, const double x) { return m /= x; })
-  ;
-
   // Transform (TODO: Use Eigen::Matrix instead)
   // -> see https://github.com/SCIInstitute/ShapeWorks/issues/1184
   py::class_<itk::SmartPointer<itk::Transform<double, 3u, 3u> >>(m, "TransformPtr")
@@ -150,13 +98,6 @@ PYBIND11_MODULE(shapeworks, m)
   m.def("degToRad", degToRad, "convert degrees to radians", "deg"_a);
   m.def("toAxis", toAxis, "convert to axis", "str"_a);
   
-  // ShapeworksUtils
-  py::class_<ShapeworksUtils>(m, "ShapeworksUtils")
-  .def_static("is_directory",   &ShapeworksUtils::is_directory, "checks if pathname is a directory", "pathname"_a)
-  .def_static("getMatrix",      &ShapeworksUtils::getMatrix, "converts a vtkMatrix4x4 to a Matrix33", "mat"_a)
-  .def_static("getOffset",      &ShapeworksUtils::getOffset, "converts a vtkMatrix4x4 to a corresponding translationVector", "mat"_a)
-  ;
-
   // TransformType
   py::enum_<XFormType>(m, "TransformType")
   .value("CenterOfMass", XFormType::CenterOfMass)
@@ -221,9 +162,25 @@ PYBIND11_MODULE(shapeworks, m)
   .def("copy",                  [](Image& image) -> decltype(auto) { return Image(image); })
   .def("write",                 &Image::write, "writes the current image (determines type by its extension)", "filename"_a, "compressed"_a=true)
   .def("antialias",             &Image::antialias, "antialiases binary volumes (layers is set to 3 when not specified)", "iterations"_a=50, "maxRMSErr"_a=0.01f, "layers"_a=3)
-  .def("resample", [](Image& image, const TransformPtr transform, const std::vector<double>& p, const std::vector<unsigned>& d, const std::vector<double>& v, const Image::ImageType::DirectionType direction, Image::InterpolationType interp) -> decltype(auto) {
-    return image.resample(transform, Point({p[0], p[1], p[2]}), Dims({d[0], d[1], d[2]}), makeVector({v[0], v[1], v[2]}), direction, interp);
-  }, "resamples by applying transform then sampling from given origin along direction axes at spacing physical units per pixel for dims pixels using specified interpolator", "transform"_a, "origin"_a, "dims"_a, "spacing"_a, "direction"_a, "interp"_a=Image::InterpolationType::NearestNeighbor)
+
+  .def("resample",
+       [](Image& image,
+          const TransformPtr transform,
+          const std::vector<double>& p,
+          const std::vector<unsigned>& d,
+          const std::vector<double>& v,
+          const Eigen::Matrix<double, 3, 3, Eigen::RowMajor> &direction,
+          Image::InterpolationType interp) -> decltype(auto) {
+         return image.resample(transform,
+                               Point({p[0], p[1], p[2]}),
+                               Dims({d[0], d[1], d[2]}),
+                               makeVector({v[0], v[1], v[2]}),
+                               eigenToItk(direction),
+                               interp);
+       },
+       "resamples by applying transform then sampling from given origin along direction axes at spacing physical units per pixel for dims pixels using specified interpolator",
+       "transform"_a, "origin"_a, "dims"_a, "spacing"_a, "direction"_a, "interp"_a = Image::InterpolationType::NearestNeighbor)
+
   .def("resample", [](Image& image, const std::vector<double>& v, Image::InterpolationType interp) -> decltype(auto) {
     return image.resample(makeVector({v[0], v[1], v[2]}), interp);
   }, "resamples image using new physical spacing, updating logical dims to keep all image data for this spacing", "physicalSpacing"_a, "interp"_a=Image::InterpolationType::Linear)
@@ -246,9 +203,24 @@ PYBIND11_MODULE(shapeworks, m)
     return image.rotate(angle, makeVector({v[0], v[1], v[2]}));
   }, "rotate around center (not origin) using axis (default z-axis) by angle (in radians)", "angle"_a, "axis"_a)
   .def("applyTransform",        py::overload_cast<TransformPtr, Image::InterpolationType>(&Image::applyTransform), "applies the given transformation to the image by using resampling filter", "transform"_a, "interp"_a=Image::InterpolationType::Linear)
-  .def("applyTransform", [](Image& image, const TransformPtr transform, const std::vector<double>& p, const std::vector<unsigned>& d, const std::vector<double>& v, const Image::ImageType::DirectionType direction, Image::InterpolationType interp) {
-    return image.applyTransform(transform, Point({p[0], p[1], p[2]}), Dims({d[0], d[1], d[2]}), makeVector({v[0], v[1], v[2]}), direction, interp);
-  }, "applies the given transformation to the image by using resampling filter with new origin, dims, spacing and direction values", "transform"_a, "origin"_a, "dims"_a, "spacing"_a, "direction"_a, "interp"_a=Image::InterpolationType::NearestNeighbor)
+
+  .def("applyTransform",
+       [](Image& image, const TransformPtr transform,
+          const std::vector<double>& p,
+          const std::vector<unsigned>& d,
+          const std::vector<double>& v,
+          const Eigen::Matrix<double, 3, 3, Eigen::RowMajor> &direction,
+          Image::InterpolationType interp) {
+         return image.applyTransform(transform,
+                                     Point({p[0], p[1], p[2]}),
+                                     Dims({d[0], d[1], d[2]}),
+                                     makeVector({v[0], v[1], v[2]}),
+                                     eigenToItk(direction),
+                                     interp);
+       },
+       "applies the given transformation to the image by using resampling filter with new origin, dims, spacing and direction values",
+       "transform"_a, "origin"_a, "dims"_a, "spacing"_a, "direction"_a, "interp"_a=Image::InterpolationType::NearestNeighbor)
+  
   .def("extractLabel",          &Image::extractLabel, "extracts/isolates a specific pixel label from a given multi-label volume and outputs the corresponding binary image", "label"_a=1.0)
   .def("closeHoles",            &Image::closeHoles, "closes holes in a volume defined by values larger than specified value", "foreground"_a=0.0)
   .def("binarize",              &Image::binarize, "sets portion of image greater than min and less than or equal to max to the specified value", "minVal"_a=0.0, "maxVal"_a=std::numeric_limits<Image::PixelType>::max(), "innerVal"_a=1.0, "outerVal"_a=0.0)
@@ -294,8 +266,9 @@ PYBIND11_MODULE(shapeworks, m)
   .def("center",
        [](Image& self) -> decltype(auto) { return py::array(3, self.center().GetDataPointer()); },
        "physical coordinates of center of this image")
-  // todo: coordsys is a matrix and so should return a numpy array (#1184)
-  .def("coordsys",              &Image::coordsys, "return coordinate system in which this image lives in physical space")
+  .def("coordsys",
+       [](Image &self) -> decltype(auto) { return itkToEigen(self.coordsys()); },
+       "return coordinate system in which this image lives in physical space")
   .def("centerOfMass",
        [](Image& self, double minVal, double maxVal) -> decltype(auto) {
          return py::array(3, self.centerOfMass().GetDataPointer());
