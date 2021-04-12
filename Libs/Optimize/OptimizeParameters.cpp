@@ -107,6 +107,18 @@ void OptimizeParameters::set_optimization_iterations(int value)
 }
 
 //---------------------------------------------------------------------------
+bool OptimizeParameters::get_use_geodesic_distance()
+{
+  return this->params_.get("use_geodesic_distance", false);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_use_geodesic_distance(bool value)
+{
+  this->params_.set("use_geodesic_distance", value);
+}
+
+//---------------------------------------------------------------------------
 std::vector<bool> OptimizeParameters::get_use_normals()
 {
   std::vector<bool> use_normals = this->params_.get("use_normals", {false});
@@ -204,7 +216,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
   optimize->SetEndingRegularization(this->get_ending_regularization());
   optimize->SetIterationsPerSplit(this->get_iterations_per_split());
   optimize->SetOptimizationIterations(this->get_optimization_iterations());
-  optimize->SetGeodesicsEnabled(true); // TODO TODO TODO REMOVE BEFORE MERGE TO MASTER!!! TODO TODO TODO
+  optimize->SetGeodesicsEnabled(this->get_use_geodesic_distance());
 
   std::vector<bool> use_normals;
   std::vector<bool> use_xyz;
@@ -338,4 +350,5 @@ void OptimizeParameters::set_load_callback(const std::function<void(int)>& f)
 {
   this->load_callback_ = f;
 }
+
 

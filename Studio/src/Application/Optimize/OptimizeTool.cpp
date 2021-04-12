@@ -40,6 +40,9 @@ OptimizeTool::OptimizeTool()
     "Ending regularization of correspondence covariance matrix");
   this->ui_->iterations_per_split->setToolTip("Number of iterations for each particle split");
   this->ui_->optimization_iterations->setToolTip("Number of optimizations to run");
+  this->ui_->use_geodesic_distance->setToolTip(
+    "Use geodesic distances for sampling term: may be more effective for capturing thin features. "
+    "Requires ~10x more time, and larger memory footprint. Only supported for mesh inputs");
   this->ui_->use_normals->setToolTip("Use surface normals as part of optimization");
   this->ui_->normals_strength->setToolTip("Strength of surface normals relative to position");
   this->ui_->procrustes->setToolTip("Use procrustes registration during optimization");
@@ -229,6 +232,7 @@ void OptimizeTool::load_params()
   this->ui_->optimization_iterations->setText(
     QString::number(params.get_optimization_iterations()));
 
+  this->ui_->use_geodesic_distance->setChecked(params.get_use_geodesic_distance());
   this->ui_->use_normals->setChecked(params.get_use_normals()[0]);
   this->ui_->normals_strength->setText(QString::number(params.get_normals_strength()));
 
@@ -256,6 +260,7 @@ void OptimizeTool::store_params()
   params.set_iterations_per_split(this->ui_->iterations_per_split->text().toDouble());
   params.set_optimization_iterations(this->ui_->optimization_iterations->text().toDouble());
 
+  params.set_use_geodesic_distance(this->ui_->use_geodesic_distance->isChecked());
   params.set_use_normals({this->ui_->use_normals->isChecked()});
   params.set_normals_strength(this->ui_->normals_strength->text().toDouble());
 

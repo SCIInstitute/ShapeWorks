@@ -36,6 +36,9 @@ public:
   int get_optimization_iterations();
   void set_optimization_iterations(int value);
 
+  bool get_use_geodesic_distance();
+  void set_use_geodesic_distance(bool value);
+
   std::vector<bool> get_use_normals();
   void set_use_normals(std::vector<bool> use_normals);
 
