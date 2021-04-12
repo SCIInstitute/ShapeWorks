@@ -305,7 +305,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("reflect",               &Image::reflect, "reflect image with respect to logical image center and the specified axis", "axis"_a)
   .def("dims",
        [](Image& self) -> decltype(auto) { return py::array(3, self.dims().data()); },
-         "logical dimensions of the image")
+       "logical dimensions of the image")
   .def("size",
        [](Image& self) -> decltype(auto) { return py::array(3, self.size().GetDataPointer()); },
        "physical dimensions of the image (dims * spacing)")
@@ -326,6 +326,10 @@ PYBIND11_MODULE(shapeworks, m)
          return py::array(3, self.centerOfMass().GetDataPointer());
        },
        "returns average physical coordinate of pixels in range (minval, maxval]", "minVal"_a=0.0, "maxVal"_a=1.0)
+  .def("min",                   &Image::min, "minimum of image")
+  .def("max",                   &Image::max, "maximum of image")
+  .def("mean",                  &Image::mean, "mean of image")
+  .def("std",                   &Image::std, "standard deviation of image")
   .def("boundingBox",           &Image::boundingBox, "computes the logical coordinates of the largest region of data <= the given isoValue", "isovalue"_a=1.0)
   .def("logicalToPhysical",
        [](Image& self, std::vector<long>& c) -> decltype(auto) {
@@ -467,12 +471,13 @@ PYBIND11_MODULE(shapeworks, m)
   .def("boundingBox",           &Mesh::boundingBox, "computes bounding box of current mesh")
   .def("fix",                   &Mesh::fix, "quality control mesh", "smoothBefore"_a=true, "smoothAfter"_a=true, "lambda"_a=0.5, "iterations"_a=1, "decimate"_a=true, "percentage"_a=0.5)
   .def("clipClosedSurface",     &Mesh::clipClosedSurface, "clips a mesh using a cutting plane resulting in a closed surface", "plane"_a)
+  .def("generateNormals",       &Mesh::generateNormals, "computes cell normals and orients them such that they point in the same direction")
   .def("toImage",
        [](Mesh& mesh, std::vector<double>& v, std::vector<unsigned>& d, std::vector<double>& p) -> decltype(auto) {
          return mesh.toImage(makeVector({v[0], v[1], v[2]}), Dims({d[0], d[1], d[2]}), Point({p[0], p[1], p[2]}));
        },
        "rasterizes mesh to create binary images, automatically computing size and origin if necessary",
-       "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}), "size"_a=std::vector<unsigned>({0, 0, 0}), "origin"_a=std::vector<double>({-1.0, -1.0, -1.0}))  
+       "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}), "size"_a=std::vector<unsigned>({0, 0, 0}), "origin"_a=std::vector<double>({-1.0, -1.0, -1.0}))
   .def("distance",              &Mesh::distance, "computes surface to surface distance", "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
   .def("toDistanceTransform",
        [](Mesh& mesh, std::vector<double>& v, std::vector<unsigned>& d, std::vector<double>& p) -> decltype(auto) {
@@ -492,6 +497,7 @@ PYBIND11_MODULE(shapeworks, m)
        "center of mass of mesh")
   .def("numPoints",             &Mesh::numPoints, "number of points")
   .def("numFaces",              &Mesh::numFaces, "number of faces")
+  .def("getPoint",              &Mesh::getPoint, "return (x,y,z) coordinates of vertex at given index", "p"_a)
   .def("getFieldNames",         &Mesh::getFieldNames, "print all field names in mesh")
   .def("setField", [](Mesh &mesh, std::vector<double>& v, std::string name) -> decltype(auto) {
     vtkSmartPointer<vtkDoubleArray> arr = vtkSmartPointer<vtkDoubleArray>::New();
@@ -552,7 +558,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("D",                     &ParticleSystem::D)
   ;
 
-  // ShapeEvaluation  
+  // ShapeEvaluation
   py::class_<ShapeEvaluation>(m, "ShapeEvaluation")
   .def_static("ComputeCompactness",
                                 &ShapeEvaluation::ComputeCompactness, "particleSystem"_a, "nModes"_a, "saveTo"_a="")
