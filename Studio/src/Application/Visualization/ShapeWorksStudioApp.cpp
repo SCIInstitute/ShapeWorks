@@ -682,7 +682,7 @@ void ShapeWorksStudioApp::update_table()
   auto feature_maps = project->get_feature_names();
   for (const std::string& feature : feature_maps) {
     QString item = QString::fromStdString(feature);
-    item = item.remove(0, 8);
+    item = item.replace("feature_","");
     this->ui_->features->addItem(item);
   }
   this->ui_->features->setCurrentText(current_feature);

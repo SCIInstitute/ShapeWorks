@@ -584,7 +584,7 @@ std::vector<std::string> Project::get_feature_names()
         if (poly_data) {
           vtkIdType num_arrays = poly_data->GetPointData()->GetNumberOfArrays();
           for (vtkIdType i = 0; i < num_arrays; i++) {
-            this->mesh_scalars_.push_back(std::string("FEATURE_MESH_SCALAR")
+            this->mesh_scalars_.push_back(std::string("Scalar:")
                                           + poly_data->GetPointData()->GetArrayName(i));
           }
         }
