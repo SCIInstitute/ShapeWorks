@@ -198,11 +198,6 @@ namespace itk
                 gradmag = gradient.magnitude();
               }
 
-              //DEBUGGG
-              std::stringstream stream;
-              stream << "constraint_energy " << constraint_energy << " gradient " << gradient << " pt: " << upd_pt << std::endl << m_ParticleSystem->GetDomain(dom)->GetConstraints()->ViolationReport(upd_pt);
-              //if(m_ParticleSystem->GetDomain(dom)->GetConstraints()->IsAnyViolated(upd_pt))std::cout << stream.str();
-
               // Step D compute the new point position
               PointType newpoint = domain->UpdateParticlePosition(pt, k, gradient);
 
