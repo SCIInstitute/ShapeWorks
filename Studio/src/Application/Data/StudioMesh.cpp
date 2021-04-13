@@ -92,7 +92,7 @@ void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image)
   for (int i = 0; i < points->GetNumberOfPoints(); i++) {
     //double* pt = transform->TransformPoint(points->GetPoint(i));
 
-    double *pt = points->GetPoint(i);
+    double* pt = points->GetPoint(i);
 
     ImageType::PointType pitk;
     pitk[0] = pt[0];
@@ -226,24 +226,28 @@ void StudioMesh::apply_scalars(MeshHandle mesh)
   kd_tree->BuildLocator();
 
   int num_arrays = from_mesh->GetPointData()->GetNumberOfArrays();
+  
+  // cache pointers to new arrays
+  vtkFloatArray* arrays[num_arrays];
 
   for (int i = 0; i < num_arrays; i++) {
     std::string name = from_mesh->GetPointData()->GetArrayName(i);
-
-    vtkDataArray* from_array = from_mesh->GetPointData()->GetArray(i);
     vtkFloatArray* to_array = vtkFloatArray::New();
     to_array->SetName(name.c_str());
     to_array->SetNumberOfValues(to_mesh->GetNumberOfPoints());
-
-    for (int j = 0; j < to_mesh->GetNumberOfPoints(); j++) {
-      double* p = to_mesh->GetPoint(j);
-      vtkIdType id = kd_tree->FindClosestPoint(p);
-      vtkVariant var = from_array->GetVariantValue(id);
-
-      to_array->SetVariantValue(j, var);
-    }
-
     to_mesh->GetPointData()->AddArray(to_array);
+    arrays[i] = to_array;
+  }
+
+  for (int j = 0; j < to_mesh->GetNumberOfPoints(); j++) {
+    double* p = to_mesh->GetPoint(j);
+    vtkIdType id = kd_tree->FindClosestPoint(p);
+
+    for (int i = 0; i < num_arrays; i++) {
+      auto from_array = from_mesh->GetPointData()->GetAbstractArray(i);
+      vtkVariant var = from_array->GetVariantValue(id);
+      arrays[i]->SetVariantValue(j, var);
+    }
   }
 }
 }
