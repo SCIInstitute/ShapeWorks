@@ -226,10 +226,11 @@ void StudioMesh::apply_scalars(MeshHandle mesh)
   kd_tree->BuildLocator();
 
   int num_arrays = from_mesh->GetPointData()->GetNumberOfArrays();
-  
+
   // cache pointers to new arrays
   vtkFloatArray* arrays[num_arrays];
 
+  // set up new arrays
   for (int i = 0; i < num_arrays; i++) {
     std::string name = from_mesh->GetPointData()->GetArrayName(i);
     vtkFloatArray* to_array = vtkFloatArray::New();
@@ -239,6 +240,7 @@ void StudioMesh::apply_scalars(MeshHandle mesh)
     arrays[i] = to_array;
   }
 
+  // apply scalars from one mesh to the other
   for (int j = 0; j < to_mesh->GetNumberOfPoints(); j++) {
     double* p = to_mesh->GetPoint(j);
     vtkIdType id = kd_tree->FindClosestPoint(p);
