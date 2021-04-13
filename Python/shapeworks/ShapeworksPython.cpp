@@ -44,27 +44,28 @@ PYBIND11_MODULE(shapeworks, m)
 
   // Transform
   py::class_<itk::SmartPointer<itk::Transform<double, 3u, 3u> >>(m, "Transform")
-  .def("__repr__", [](const TransformPtr &transform) {
-    std::stringstream stream;
-    itk::Transform<double, 3, 3>::ParametersType p = transform->GetParameters();
-    int r = 0;
-    for (int i=0; i<4; i++)
-    {
-      stream << "\n";
-      for (int j=0; j<3; j++)
-      {
-        stream << p[r] << " ";
-        r++;
-      }
-    }
-    return stream.str();
-  });
+  .def("__repr__",
+       [](const TransformPtr &transform) {
+         std::stringstream stream;
+         itk::Transform<double, 3, 3>::ParametersType p = transform->GetParameters();
+         int r = 0;
+         for (int i=0; i<4; i++)
+         {
+           for (int j=0; j<3; j++)
+           {
+             stream << p[r] << " ";
+             r++;
+           }
+         }
+         return stream.str();
+       });
 
   // Plane
   py::class_<Plane>(m, "Plane")
-  .def(py::init([](std::vector<double>& n, std::vector<double>& o) {
-    return makePlane(makeVector({n[0], n[1], n[2]}), Point({o[0], o[1], o[2]}));
-  }));
+  .def(py::init
+       ([](std::vector<double>& n, std::vector<double>& o) {
+          return makePlane(makeVector({n[0], n[1], n[2]}), Point({o[0], o[1], o[2]}));
+        }));
 
   // Constructs an itk::AffineTransform from the 3x3 scale-rotate-warp and 3x1 translation.
   m.def("createTransform",
@@ -89,8 +90,16 @@ PYBIND11_MODULE(shapeworks, m)
         },
         "ensure an axis is valid",
         "axis"_a);
-  m.def("degToRad", degToRad, "convert degrees to radians", "deg"_a);
-  m.def("toAxis", toAxis, "convert to axis", "str"_a);
+
+  m.def("degToRad",
+        degToRad,
+        "convert degrees to radians",
+        "deg"_a);
+
+  m.def("toAxis",
+        toAxis,
+        "convert to axis",
+        "str"_a);
   
   // TransformType
   py::enum_<XFormType>(m, "TransformType")
@@ -109,28 +118,29 @@ PYBIND11_MODULE(shapeworks, m)
   .def(py::init<const std::string &>())
   .def(py::init<Image::ImageType::Pointer>())
 
-  .def(py::init([](py::array_t<long> np_array) {  // FIXME: this is broken (or not even called)
-    using ImportType = itk::ImportImageFilter<Image::PixelType, 3>;
-    auto importer = ImportType::New();
-    auto info = np_array.request();
-    importer->SetImportPointer(static_cast<float *>(info.ptr), np_array.size(), false);
+  .def(py::init
+       ([](py::array_t<long> np_array) {  // FIXME: this is broken (or not even called)
+          using ImportType = itk::ImportImageFilter<Image::PixelType, 3>;
+          auto importer = ImportType::New();
+          auto info = np_array.request();
+          importer->SetImportPointer(static_cast<float *>(info.ptr), np_array.size(), false);
 
-    ImportType::SizeType size;
-    size[0] = np_array.shape()[2];
-    size[1] = np_array.shape()[1];
-    size[2] = np_array.shape()[0];
+          ImportType::SizeType size;
+          size[0] = np_array.shape()[2];
+          size[1] = np_array.shape()[1];
+          size[2] = np_array.shape()[0];
 
-    ImportType::IndexType start;
-    start.assign(*np_array.data());
+          ImportType::IndexType start;
+          start.assign(*np_array.data());
 
-    ImportType::RegionType region;
-    region.SetIndex(start);
-    region.SetSize(size);
+          ImportType::RegionType region;
+          region.SetIndex(start);
+          region.SetSize(size);
 
-    importer->SetRegion(region);
-    importer->Update();
-    return Image(importer->GetOutput());
-  }))
+          importer->SetRegion(region);
+          importer->Update();
+          return Image(importer->GetOutput());
+        }))
 
   .def("__neg__", [](Image& img) -> decltype(auto) { return -img; })
   .def(py::self + py::self)
@@ -147,11 +157,12 @@ PYBIND11_MODULE(shapeworks, m)
   .def(py::self -= Image::PixelType())
   .def(py::self == py::self)
 
-  .def("__repr__", [](const Image &img) -> decltype(auto) {
-    std::stringstream stream;
-    stream << img;
-    return stream.str();
-  })
+  .def("__repr__",
+       [](const Image &img) -> decltype(auto) {
+         std::stringstream stream;
+         stream << img;
+         return stream.str();
+       })
 
   .def("copy",
        [](Image& image) -> decltype(auto) { return Image(image); })
@@ -182,10 +193,13 @@ PYBIND11_MODULE(shapeworks, m)
                                interp);
        },
        "resamples by applying transform then sampling from given origin along direction axes at spacing physical units per pixel for dims pixels using specified interpolator",
-       "transform"_a, "origin"_a, "dims"_a, "spacing"_a, "direction"_a, "interp"_a = Image::InterpolationType::NearestNeighbor)
+       "transform"_a, "origin"_a, "dims"_a, "spacing"_a, "direction"_a,
+       "interp"_a = Image::InterpolationType::NearestNeighbor)
 
   .def("resample",
-       [](Image& image, const std::vector<double>& v, Image::InterpolationType interp) -> decltype(auto) {
+       [](Image& image,
+          const std::vector<double>& v,
+          Image::InterpolationType interp) -> decltype(auto) {
          return image.resample(makeVector({v[0], v[1], v[2]}), interp);
        },
        "resamples image using new physical spacing, updating logical dims to keep all image data for this spacing",
@@ -267,134 +281,287 @@ PYBIND11_MODULE(shapeworks, m)
                                      interp);
        },
        "applies the given transformation to the image by using resampling filter with new origin, dims, spacing and direction values",
-       "transform"_a, "origin"_a, "dims"_a, "spacing"_a, "direction"_a, "interp"_a=Image::InterpolationType::NearestNeighbor)
+       "transform"_a, "origin"_a, "dims"_a, "spacing"_a, "direction"_a,
+       "interp"_a=Image::InterpolationType::NearestNeighbor)
   
   .def("extractLabel",
        &Image::extractLabel,
        "extracts/isolates a specific pixel label from a given multi-label volume and outputs the corresponding binary image",
        "label"_a=1.0)
 
-  .def("closeHoles",            &Image::closeHoles, "closes holes in a volume defined by values larger than specified value", "foreground"_a=0.0)
-  .def("binarize",              &Image::binarize, "sets portion of image greater than min and less than or equal to max to the specified value", "minVal"_a=0.0, "maxVal"_a=std::numeric_limits<Image::PixelType>::max(), "innerVal"_a=1.0, "outerVal"_a=0.0)
-  .def("computeDT",             &Image::computeDT, "computes signed distance transform volume from an image at the specified isovalue", "isovalue"_a=0.0)
-  .def("applyCurvatureFilter",  &Image::applyCurvatureFilter, "denoises an image using curvature driven flow using curvature flow image filter", "iterations"_a=10)
-  .def("applyGradientFilter",   &Image::applyGradientFilter, "computes gradient magnitude of an image region at each pixel using gradient magnitude filter")
-  .def("applySigmoidFilter",    &Image::applySigmoidFilter, "computes sigmoid function pixel-wise using sigmoid image filter", "alpha"_a=10.0, "beta"_a=10.0)
-  .def("applyTPLevelSetFilter", &Image::applyTPLevelSetFilter, "segments structures in image using topology preserving geodesic active contour level set filter", "featureImage"_a, "scaling"_a=20.0)
-  .def("applyIntensityFilter",  &Image::applyIntensityFilter, "applies intensity windowing image filter", "min"_a=0.0, "max"_a=0.0)
-  .def("gaussianBlur",          &Image::gaussianBlur, "applies gaussian blur", "sigma"_a=0.0)
-  .def("crop",                  &Image::crop, "crop image down to the current region (e.g., from bounding-box), or the specified min/max in each direction", "region"_a)
-  .def("clip", [](Image& image, const std::vector<double>& o, std::vector<double>& p1, std::vector<double>& p2, const Image::PixelType val) {
-    return image.clip(Point({o[0], o[1], o[2]}), Point({p1[0], p1[1], p1[2]}), Point({p2[0], p2[1], p2[2]}), val);
-  }, "sets values on the back side of cutting plane (containing three non-colinear points) to val (default 0.0)", "o"_a, "p1"_a, "p2"_a, "val"_a=0.0)
-  .def("clip", [](Image& image, const std::vector<double>& n, std::vector<double>& q, const Image::PixelType val) {
-    return image.clip(makeVector({n[0], n[1], n[2]}), Point({q[0], q[1], q[2]}), val);
-  }, "sets values on the back side of cutting plane (normal n containing point p) to val (default 0.0)", "n"_a, "q"_a, "val"_a=0.0)
+  .def("closeHoles",
+       &Image::closeHoles,
+       "closes holes in a volume defined by values larger than specified value",
+       "foreground"_a=0.0)
+
+  .def("binarize",
+       &Image::binarize,
+       "sets portion of image greater than min and less than or equal to max to the specified value",
+       "minVal"_a=0.0, "maxVal"_a=std::numeric_limits<Image::PixelType>::max(),
+       "innerVal"_a=1.0, "outerVal"_a=0.0)
+
+  .def("computeDT",
+       &Image::computeDT,
+       "computes signed distance transform volume from an image at the specified isovalue",
+       "isovalue"_a=0.0)
+
+  .def("applyCurvatureFilter",
+       &Image::applyCurvatureFilter,
+       "denoises an image using curvature driven flow using curvature flow image filter",
+       "iterations"_a=10)
+
+  .def("applyGradientFilter",
+       &Image::applyGradientFilter,
+       "computes gradient magnitude of an image region at each pixel using gradient magnitude filter")
+
+  .def("applySigmoidFilter",
+       &Image::applySigmoidFilter,
+       "computes sigmoid function pixel-wise using sigmoid image filter",
+       "alpha"_a=10.0, "beta"_a=10.0)
+
+  .def("applyTPLevelSetFilter",
+       &Image::applyTPLevelSetFilter,
+       "segments structures in image using topology preserving geodesic active contour level set filter",
+       "featureImage"_a, "scaling"_a=20.0)
+
+  .def("applyIntensityFilter",
+       &Image::applyIntensityFilter,
+       "applies intensity windowing image filter",
+       "min"_a=0.0, "max"_a=0.0)
+
+  .def("gaussianBlur",
+       &Image::gaussianBlur,
+       "applies gaussian blur",
+       "sigma"_a=0.0)
+
+  .def("crop",
+       &Image::crop,
+       "crop image down to the current region (e.g., from bounding-box), or the specified min/max in each direction",
+       "region"_a)
+
+  .def("clip",
+       [](Image& image,
+          const std::vector<double>& o,
+          std::vector<double>& p1,
+          std::vector<double>& p2,
+          const Image::PixelType val) {
+         return image.clip(Point({o[0], o[1], o[2]}),
+                           Point({p1[0], p1[1], p1[2]}),
+                           Point({p2[0], p2[1], p2[2]}),
+                           val);
+       },
+       "sets values on the back side of cutting plane (containing three non-colinear points) to val (default 0.0)",
+       "o"_a, "p1"_a, "p2"_a, "val"_a=0.0)
+
+  .def("clip",
+       [](Image& image,
+          const std::vector<double>& n,
+          std::vector<double>& q,
+          const Image::PixelType val) {
+         return image.clip(makeVector({n[0], n[1], n[2]}), Point({q[0], q[1], q[2]}), val);
+       },
+       "sets values on the back side of cutting plane (normal n containing point p) to val (default 0.0)",
+       "n"_a, "q"_a, "val"_a=0.0)
+
   .def("setSpacing",
        [](Image& self, std::vector<double>& v) -> decltype(auto) {
          return self.setSpacing(makeVector({v[0], v[1], v[2]}));
        },
        "set image spacing, the size of each pixel",
        "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}))
-  .def("setOrigin", 
+
+  .def("setOrigin",
        [](Image& image, std::vector<double>& p) {
          return image.setOrigin(Point({p[0], p[1], p[2]}));
        },
        "sets the image origin in physical space to the given value",
        "origin"_a=std::vector<double>({0,0,0}))
-  .def("reflect",               &Image::reflect, "reflect image with respect to logical image center and the specified axis", "axis"_a)
+
+  .def("reflect",
+       &Image::reflect,
+       "reflect image with respect to logical image center and the specified axis",
+       "axis"_a)
+
   .def("dims",
        [](Image& self) -> decltype(auto) { return py::array(3, self.dims().data()); },
        "logical dimensions of the image")
+
   .def("size",
        [](Image& self) -> decltype(auto) { return py::array(3, self.size().GetDataPointer()); },
        "physical dimensions of the image (dims * spacing)")
+
   .def("spacing",
        [](Image& self) -> decltype(auto) { return py::array(3, self.spacing().GetDataPointer()); },
        "physical spacing of the image")
+
   .def("origin",
        [](Image& self) -> decltype(auto) { return py::array(3, self.origin().GetDataPointer()); },
        "physical coordinates of image origin")
+
   .def("center",
        [](Image& self) -> decltype(auto) { return py::array(3, self.center().GetDataPointer()); },
        "physical coordinates of center of this image")
+
   .def("coordsys",
        [](Image &self) -> decltype(auto) { return itkToEigen(self.coordsys()); },
        "return coordinate system in which this image lives in physical space")
+
   .def("centerOfMass",
        [](Image& self, double minVal, double maxVal) -> decltype(auto) {
          return py::array(3, self.centerOfMass().GetDataPointer());
        },
-       "returns average physical coordinate of pixels in range (minval, maxval]", "minVal"_a=0.0, "maxVal"_a=1.0)
-  .def("min",                   &Image::min, "minimum of image")
-  .def("max",                   &Image::max, "maximum of image")
-  .def("mean",                  &Image::mean, "mean of image")
-  .def("std",                   &Image::std, "standard deviation of image")
-  .def("boundingBox",           &Image::boundingBox, "computes the logical coordinates of the largest region of data <= the given isoValue", "isovalue"_a=1.0)
+       "returns average physical coordinate of pixels in range (minval, maxval]",
+       "minVal"_a=0.0, "maxVal"_a=1.0)
+
+  .def("min",
+       &Image::min,
+       "minimum of image")
+
+  .def("max",
+       &Image::max,
+       "maximum of image")
+
+  .def("mean",
+       &Image::mean,
+       "mean of image")
+
+  .def("std",
+       &Image::std,
+       "standard deviation of image")
+
+  .def("boundingBox",
+       &Image::boundingBox,
+       "computes the logical coordinates of the largest region of data <= the given isoValue",
+       "isovalue"_a=1.0)
+
   .def("logicalToPhysical",
        [](Image& self, std::vector<long>& c) -> decltype(auto) {
          return py::array(3, self.logicalToPhysical(Coord({c[0], c[1], c[2]})).GetDataPointer());
        },
        "converts from pixel coordinates to physical space",
        "c"_a)
+
   .def("physicalToLogical",
        [](Image& self, std::vector<double>& p) -> decltype(auto) {
          return py::array(3, self.physicalToLogical(Point({p[0], p[1], p[2]})).data());
        },
        "converts from a physical coordinate to a logical coordinate",
        "p"_a)
-  .def("compare",               &Image::compare, "compares two images", "other"_a, "verifyall"_a=true, "tolerance"_a=0.0, "precision"_a=1e-12)
+
+  .def("compare",
+       &Image::compare,
+       "compares two images",
+       "other"_a, "verifyall"_a=true, "tolerance"_a=0.0, "precision"_a=1e-12)
+
   .def("toArray",
        [](const Image &image) -> decltype(auto) {
          Image::ImageType::Pointer img = image.getITKImage();
          const auto size = img->GetLargestPossibleRegion().GetSize();
          const auto shape = std::vector<size_t>{size[2], size[1], size[0]};
-         return py::array(py::dtype::of<typename Image::ImageType::Pointer::ObjectType::PixelType>(), shape, img->GetBufferPointer());
+         return py::array(py::dtype::of<typename Image::ImageType::Pointer::ObjectType::PixelType>(),
+                          shape, img->GetBufferPointer());
        },
        "returns raw array of image data (note: spacing, origin, coordsys are not preserved)")
-  .def("createTransform",       py::overload_cast<XFormType>(&Image::createTransform), "creates a transform based on transform type", "type"_a=XFormType::CenterOfMass)
-  .def("createTransform",       py::overload_cast<const Image&, XFormType, float, unsigned>(&Image::createTransform), "creates a transform based on transform type", "target"_a, "type"_a=XFormType::IterativeClosestPoint, "isoValue"_a=0.0, "iterations"_a=20)
+
+  .def("createTransform",
+       py::overload_cast<XFormType>(&Image::createTransform),
+       "creates a transform based on transform type",
+       "type"_a=XFormType::CenterOfMass)
+
+  .def("createTransform",
+       py::overload_cast<const Image&, XFormType, float, unsigned>(&Image::createTransform),
+       "creates a transform based on transform type",
+       "target"_a, "type"_a=XFormType::IterativeClosestPoint, "isoValue"_a=0.0, "iterations"_a=20)
+
   .def("topologyPreservingSmooth",
        &Image::topologyPreservingSmooth,
        "creates a feature image (by applying gradient then sigmoid filters), then passes it to the TPLevelSet filter [curvature flow filter is often applied to the image before this filter]",
        "scaling"_a=20.0, "sigmoidAlpha"_a=10.5, "sigmoidBeta"_a=10.0)
-  .def("compare",               &Image::compare, "compares two images", "other"_a, "verifyall"_a=true, "tolerance"_a=0.0, "precision"_a=1e-12)
-  .def("toMesh", [](Image &image, Image::PixelType isovalue) {
-    return image.toMesh(isovalue);
-  }, "converts image to mesh at specified isovalue", "isovalue"_a)
+
+  .def("compare",
+       &Image::compare,
+       "compares two images",
+       "other"_a, "verifyall"_a=true, "tolerance"_a=0.0, "precision"_a=1e-12)
+
+  .def("toMesh",
+       [](Image &image, Image::PixelType isovalue) {
+         return image.toMesh(isovalue);
+       },
+       "converts image to mesh at specified isovalue",
+       "isovalue"_a)
   ;
 
   // Region
   py::class_<Region>(m, "Region")
-  .def(py::init([](std::vector<unsigned> dims) -> decltype(auto) { return Region(Dims({dims[0], dims[1], dims[2]})); }))
-  .def(py::init([](std::vector<unsigned> min, std::vector<unsigned> max) {
-                  return Region(Coord({min[0], min[1], min[2]}),
-                                Coord({max[0], max[1], max[2]})); }))
+
   .def(py::init<>())
+
+  .def(py::init
+       ([](std::vector<unsigned> dims) -> decltype(auto) {
+          return Region(Dims({dims[0], dims[1], dims[2]}));
+        }))
+
+  .def(py::init
+       ([](std::vector<unsigned> min, std::vector<unsigned> max) {
+          return Region(Coord({min[0], min[1], min[2]}),
+                        Coord({max[0], max[1], max[2]}));
+        }))
+
   .def(py::self == py::self)
-  .def("__repr__", [](const Region &region) {
-    std::stringstream stream;
-    stream << region;
-    return stream.str();
-  })
+
+  .def("__repr__",
+       [](const Region &region) {
+         std::stringstream stream;
+         stream << region;
+         return stream.str();
+       })
+
   .def_readwrite("min", &Region::min)
   .def_readwrite("max", &Region::max)
-  .def("valid",                 &Region::valid, "ensure if region is valid")
-  .def("origin",                &Region::origin, "return origin of region")
-  .def("size",                  &Region::size, "return size of region")
-  .def("pad",                   &Region::pad, "grows or shrinks the region by the specified amount", "padding"_a)
-  .def("shrink",                &Region::shrink, "shrink this region down to the smallest portions of both", "other"_a)
-  .def("grow",                  &Region::grow, "grow this region up to the largest portions of both", "other"_a)
-  .def("expand",                &Region::expand, "expand this region to include this point", "other"_a)
+
+  .def("valid",
+       &Region::valid,
+       "ensure if region is valid")
+
+  .def("origin",
+       &Region::origin,
+       "return origin of region")
+
+  .def("size",
+       &Region::size,
+       "return size of region")
+
+  .def("pad",
+       &Region::pad,
+       "grows or shrinks the region by the specified amount",
+       "padding"_a)
+
+  .def("shrink",
+       &Region::shrink,
+       "shrink this region down to the smallest portions of both",
+       "other"_a)
+
+  .def("grow",
+       &Region::grow,
+       "grow this region up to the largest portions of both",
+       "other"_a)
+
+  .def("expand",
+       &Region::expand,
+       "expand this region to include this point",
+       "other"_a)
   ;
 
   // VectorImage
   py::class_<VectorImage>(m, "VectorImage")
-  .def(py::init([](const Image &dt) {
-                  return VectorImage(dt);
-                }),
-      "create a vector image from an image (usually a distance transform) that can be sampled at any point in space",
-      "image"_a)
+
+  .def(py::init
+       ([](const Image &dt) {
+          return VectorImage(dt);
+        }),
+       "create a vector image from an image (usually a distance transform) that can be sampled at any point in space",
+       "image"_a)
+
   .def("evaluate",
        [](VectorImage &image, std::vector<double> &pt) -> decltype(auto) {
          auto v = image.evaluate(Point({pt[0], pt[1], pt[2]}));
@@ -406,16 +573,32 @@ PYBIND11_MODULE(shapeworks, m)
 
   // ImageUtils
   py::class_<ImageUtils>(m, "ImageUtils")
-  .def_static("boundingBox", [](std::vector<std::string> filenames, Image::PixelType val) -> decltype(auto) {
-    return shapeworks::ImageUtils::boundingBox(filenames, val);
-  }, "compute largest bounding box surrounding the specified isovalue of the specified set of filenames", "filenames"_a, "isoValue"_a=1.0)
-  .def_static("boundingBox", [](std::vector<Image> images, Image::PixelType val) -> decltype(auto) {
-    return shapeworks::ImageUtils::boundingBox(images, val);
-  }, "compute largest bounding box surrounding the specified isovalue of the specified set of images", "images"_a, "isoValue"_a=1.0)
-  .def_static("createWarpTransform", [](const std::string &source_landmarks, const std::string &target_landmarks, const int stride) -> decltype(auto) {
-    auto xform_ptr = shapeworks::ImageUtils::createWarpTransform(source_landmarks, target_landmarks, stride);
-    return xform_ptr;
-  }, "computes a warp transform from the source to the target landmarks", "source_landmarks"_a, "target_landmarks"_a, "stride"_a=1)
+
+  .def_static("boundingBox",
+              [](std::vector<std::string> filenames, Image::PixelType val) -> decltype(auto) {
+                return shapeworks::ImageUtils::boundingBox(filenames, val);
+              },
+              "compute largest bounding box surrounding the specified isovalue of the specified set of filenames",
+              "filenames"_a, "isoValue"_a=1.0)
+
+  .def_static("boundingBox",
+              [](std::vector<Image> images, Image::PixelType val) -> decltype(auto) {
+                return shapeworks::ImageUtils::boundingBox(images, val);
+              },
+              "compute largest bounding box surrounding the specified isovalue of the specified set of images",
+              "images"_a, "isoValue"_a=1.0)
+
+  .def_static("createWarpTransform",
+              [](const std::string &source_landmarks,
+                 const std::string &target_landmarks,
+                 const int stride) -> decltype(auto) {
+                auto xform_ptr = shapeworks::ImageUtils::createWarpTransform(source_landmarks,
+                                                                             target_landmarks,
+                                                                             stride);
+                return xform_ptr;
+              },
+              "computes a warp transform from the source to the target landmarks",
+              "source_landmarks"_a, "target_landmarks"_a, "stride"_a=1)
   ;
 
   // Mesh
@@ -438,89 +621,224 @@ PYBIND11_MODULE(shapeworks, m)
 
   // Mesh bindings
   mesh.def(py::init<const std::string &>())
+
   .def(py::init<vtkSmartPointer<vtkPolyData>>())
   .def(py::self == py::self)
-  .def("__repr__", [](const Mesh &mesh) -> decltype(auto) {
-    std::stringstream stream;
-    stream << mesh;
-    return stream.str();
-  })
-  .def("copy",                  [](Mesh& mesh) -> decltype(auto) { return Mesh(mesh); })
-  .def("write",                 &Mesh::write, "writes mesh, format specified by filename extension", "pathname"_a)
-  .def("coverage",              &Mesh::coverage, "determines coverage between current mesh and another mesh (e.g. acetabular cup / femoral head)", "otherMesh"_a, "allowBackIntersections"_a=true, "angleThreshold"_a=0, "backSearchRadius"_a=0)
-  .def("smooth",                &Mesh::smooth, "applies laplacian smoothing", "iterations"_a=0, "relaxation"_a=0.0)
-  .def("decimate",              &Mesh::decimate, "applies filter to reduce number of triangles in mesh", "reduction"_a=0.0, "angle"_a=0.0, "preserveTopology"_a=true)
-  .def("invertNormals",         &Mesh::invertNormals, "handle flipping normals")
+
+  .def("__repr__",
+       [](const Mesh &mesh) -> decltype(auto) {
+         std::stringstream stream;
+         stream << mesh;
+         return stream.str();
+       })
+
+  .def("copy",
+       [](Mesh& mesh) -> decltype(auto) { return Mesh(mesh); })
+
+  .def("write",
+       &Mesh::write,
+       "writes mesh, format specified by filename extension",
+       "pathname"_a)
+
+  .def("coverage",
+       &Mesh::coverage,
+       "determines coverage between current mesh and another mesh (e.g. acetabular cup / femoral head)",
+       "otherMesh"_a, "allowBackIntersections"_a=true, "angleThreshold"_a=0, "backSearchRadius"_a=0)
+
+  .def("smooth",
+       &Mesh::smooth,
+       "applies laplacian smoothing",
+       "iterations"_a=0, "relaxation"_a=0.0)
+
+  .def("decimate",
+       &Mesh::decimate,
+       "applies filter to reduce number of triangles in mesh",
+       "reduction"_a=0.0, "angle"_a=0.0, "preserveTopology"_a=true)
+
+  .def("invertNormals",
+       &Mesh::invertNormals,
+       "handle flipping normals")
+
   .def("reflect",
        [](Mesh& mesh, const Axis &axis, std::vector<double>& v) -> decltype(auto) {
          return mesh.reflect(axis, makeVector({v[0], v[1], v[2]}));
        },
-       "reflect meshes with respect to a specified center and specific axis"
-       , "axis"_a, "origin"_a=std::vector<double>({0.0, 0.0, 0.0}))
-  .def("createTransform",       &Mesh::createTransform, "creates a transform based on transform type", "target"_a, "type"_a=XFormType::IterativeClosestPoint, "align"_a=Mesh::AlignmentType::Similarity, "iterations"_a=10)
-  .def("applyTransform",        &Mesh::applyTransform, "applies the given transformation to the mesh", "transform"_a)
-  .def("fillHoles",             &Mesh::fillHoles, "finds holes in a mesh and closes them")
-  .def("probeVolume",           &Mesh::probeVolume, "samples data values at specified point locations", "image"_a)
-  .def("clip",                  &Mesh::clip, "clips a mesh using a cutting plane", "plane"_a)
-  .def("translate", [](Mesh& mesh, const std::vector<double>& v) -> decltype(auto) {
-    return mesh.translate(makeVector({v[0], v[1], v[2]}));
-  }, "translates mesh", "v"_a)
-  .def("scale", [](Mesh& mesh, const std::vector<double>& v) -> decltype(auto) {
-    return mesh.scale(makeVector({v[0], v[1], v[2]}));
-  }, "scale mesh", "v"_a)
-  .def("boundingBox",           &Mesh::boundingBox, "computes bounding box of current mesh")
-  .def("fix",                   &Mesh::fix, "quality control mesh", "smoothBefore"_a=true, "smoothAfter"_a=true, "lambda"_a=0.5, "iterations"_a=1, "decimate"_a=true, "percentage"_a=0.5)
-  .def("clipClosedSurface",     &Mesh::clipClosedSurface, "clips a mesh using a cutting plane resulting in a closed surface", "plane"_a)
-  .def("generateNormals",       &Mesh::generateNormals, "computes cell normals and orients them such that they point in the same direction")
+       "reflect meshes with respect to a specified center and specific axis",
+       "axis"_a, "origin"_a=std::vector<double>({0.0, 0.0, 0.0}))
+
+  .def("createTransform",
+       &Mesh::createTransform,
+       "creates a transform based on transform type",
+       "target"_a, "type"_a=XFormType::IterativeClosestPoint,
+       "align"_a=Mesh::AlignmentType::Similarity, "iterations"_a=10)
+
+  .def("applyTransform",
+       &Mesh::applyTransform,
+       "applies the given transformation to the mesh",
+       "transform"_a)
+
+  .def("fillHoles",
+       &Mesh::fillHoles,
+       "finds holes in a mesh and closes them")
+
+  .def("probeVolume",
+       &Mesh::probeVolume,
+       "samples data values at specified point locations",
+       "image"_a)
+
+  .def("clip",
+       &Mesh::clip,
+       "clips a mesh using a cutting plane",
+       "plane"_a)
+
+  .def("translate",
+       [](Mesh& mesh, const std::vector<double>& v) -> decltype(auto) {
+         return mesh.translate(makeVector({v[0], v[1], v[2]}));
+       },
+       "translates mesh",
+       "v"_a)
+
+  .def("scale",
+       [](Mesh& mesh, const std::vector<double>& v) -> decltype(auto) {
+         return mesh.scale(makeVector({v[0], v[1], v[2]}));
+       },
+       "scale mesh",
+       "v"_a)
+
+  .def("boundingBox",
+       &Mesh::boundingBox,
+       "computes bounding box of current mesh")
+
+  .def("fix",
+       &Mesh::fix,
+       "quality control mesh",
+       "smoothBefore"_a=true, "smoothAfter"_a=true, "lambda"_a=0.5,
+       "iterations"_a=1, "decimate"_a=true, "percentage"_a=0.5)
+
+  .def("clipClosedSurface",
+       &Mesh::clipClosedSurface,
+       "clips a mesh using a cutting plane resulting in a closed surface",
+       "plane"_a)
+
+  .def("generateNormals",
+       &Mesh::generateNormals,
+       "computes cell normals and orients them such that they point in the same direction")
+
   .def("toImage",
-       [](Mesh& mesh, std::vector<double>& v, std::vector<unsigned>& d, std::vector<double>& p) -> decltype(auto) {
-         return mesh.toImage(makeVector({v[0], v[1], v[2]}), Dims({d[0], d[1], d[2]}), Point({p[0], p[1], p[2]}));
+       [](Mesh& mesh, std::vector<double>& v,
+          std::vector<unsigned>& d,
+          std::vector<double>& p) -> decltype(auto) {
+         return mesh.toImage(makeVector({v[0], v[1], v[2]}),
+                             Dims({d[0], d[1], d[2]}),
+                             Point({p[0], p[1], p[2]}));
        },
        "rasterizes mesh to create binary images, automatically computing size and origin if necessary",
-       "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}), "size"_a=std::vector<unsigned>({0, 0, 0}), "origin"_a=std::vector<double>({-1.0, -1.0, -1.0}))
-  .def("distance",              &Mesh::distance, "computes surface to surface distance", "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
+       "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}),
+       "size"_a=std::vector<unsigned>({0, 0, 0}),
+       "origin"_a=std::vector<double>({-1.0, -1.0, -1.0}))
+
+  .def("distance",
+       &Mesh::distance, "computes surface to surface distance",
+       "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
+
   .def("toDistanceTransform",
-       [](Mesh& mesh, std::vector<double>& v, std::vector<unsigned>& d, std::vector<double>& p) -> decltype(auto) {
-         return mesh.toDistanceTransform(makeVector({v[0], v[1], v[2]}), Dims({d[0], d[1], d[2]}), Point({p[0], p[1], p[2]}));
+       [](Mesh& mesh, std::vector<double>& v,
+          std::vector<unsigned>& d,
+          std::vector<double>& p) -> decltype(auto) {
+         return mesh.toDistanceTransform(makeVector({v[0], v[1], v[2]}),
+                                         Dims({d[0], d[1], d[2]}),
+                                         Point({p[0], p[1], p[2]}));
        },
        "converts mesh to distance transform, automatically computing size and origin if necessary",
-       "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}), "size"_a=std::vector<unsigned>({0, 0, 0}), "origin"_a=std::vector<double>({-1.0, -1.0, -1.0}))
+       "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}),
+       "size"_a=std::vector<unsigned>({0, 0, 0}),
+       "origin"_a=std::vector<double>({-1.0, -1.0, -1.0}))
+
   .def("center",
        [](Mesh &mesh) -> decltype(auto) {
          return py::array(3, mesh.center().GetDataPointer());
        },
        "center of mesh")
+
   .def("centerOfMass",
        [](Mesh &mesh) -> decltype(auto) {
          return py::array(3, mesh.centerOfMass().GetDataPointer());
        },
        "center of mass of mesh")
-  .def("numPoints",             &Mesh::numPoints, "number of points")
-  .def("numFaces",              &Mesh::numFaces, "number of faces")
-  .def("getPoint",              &Mesh::getPoint, "return (x,y,z) coordinates of vertex at given index", "p"_a)
-  .def("getFieldNames",         &Mesh::getFieldNames, "print all field names in mesh")
-  .def("setField", [](Mesh &mesh, std::vector<double>& v, std::string name) -> decltype(auto) {
-    vtkSmartPointer<vtkDoubleArray> arr = vtkSmartPointer<vtkDoubleArray>::New();
-    arr->SetNumberOfValues(v.size());
-    for (int i=0; i<v.size(); i++) {
-      arr->SetTuple1(i, v[i]);
-    }
-    return mesh.setField(name, arr);
-  }, "sets the given field for points with array", "array"_a, "name"_a)
-  .def("getField", [](const Mesh &mesh, std::string name) -> decltype(auto) {
-    auto array = mesh.getField<vtkDataArray>(name);
-    const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()), static_cast<unsigned long>(array->GetNumberOfComponents()), 1};
-    auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
-    vtkarr->SetNumberOfValues(array->GetNumberOfValues());
-    // LOTS of copying going on here, see github #903
-    array->GetData(0, array->GetNumberOfTuples()-1, 0, array->GetNumberOfComponents()-1, vtkarr); // copy1
-    return py::array(py::dtype::of<double>(), shape, vtkarr->GetVoidPointer(0)); // copy2 (not positive if py::array ctor copies or references)
-  }, "gets the field", "name"_a)
-  .def("setFieldValue",         &Mesh::setFieldValue, "sets the given index of field to value", "idx"_a, "value"_a, "name"_a="")
-  .def("getFieldValue",         &Mesh::getFieldValue, "gets the value at the given index of field", "idx"_a, "name"_a)
-  .def("getFieldRange",         &Mesh::getFieldRange, "returns the range of the given field", "name"_a)
-  .def("getFieldMean",          &Mesh::getFieldMean, "returns the mean the given field", "name"_a)
-  .def("getFieldStd",           &Mesh::getFieldStd, "returns the standard deviation of the given field", "name"_a)
+
+  .def("numPoints",
+       &Mesh::numPoints,
+       "number of points")
+
+  .def("numFaces",
+       &Mesh::numFaces,
+       "number of faces")
+
+  .def("getPoint",
+       &Mesh::getPoint,
+       "return (x,y,z) coordinates of vertex at given index",
+       "p"_a)
+
+  .def("getFieldNames",
+       &Mesh::getFieldNames,
+       "print all field names in mesh")
+
+  .def("setField",
+       [](Mesh &mesh, std::vector<double>& v, std::string name) -> decltype(auto) {
+         vtkSmartPointer<vtkDoubleArray> arr = vtkSmartPointer<vtkDoubleArray>::New();
+         arr->SetNumberOfValues(v.size());
+         for (int i=0; i<v.size(); i++) {
+           arr->SetTuple1(i, v[i]);
+         }
+         return mesh.setField(name, arr);
+       },
+       "sets the given field for points with array",
+       "array"_a, "name"_a)
+
+  .def("getField",
+       [](const Mesh &mesh, std::string name) -> decltype(auto) {
+         auto array = mesh.getField<vtkDataArray>(name);
+         const auto shape = std::vector<size_t>{static_cast<unsigned long>(array->GetNumberOfTuples()),
+                                                static_cast<unsigned long>(array->GetNumberOfComponents()),
+                                                1};
+         auto vtkarr = vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::New());
+         vtkarr->SetNumberOfValues(array->GetNumberOfValues());
+
+         // LOTS of copying going on here, see github #903
+         array->GetData(0, array->GetNumberOfTuples()-1,
+                        0, array->GetNumberOfComponents()-1,
+                        vtkarr);                               // copy1
+         return py::array(py::dtype::of<double>(),
+                          shape,
+                          vtkarr->GetVoidPointer(0));          // copy2
+       },
+       "gets the field",
+       "name"_a)
+
+  .def("setFieldValue",
+       &Mesh::setFieldValue,
+       "sets the given index of field to value",
+       "idx"_a, "value"_a, "name"_a="")
+
+  .def("getFieldValue",
+       &Mesh::getFieldValue,
+       "gets the value at the given index of field",
+       "idx"_a, "name"_a)
+
+  .def("getFieldRange",
+       &Mesh::getFieldRange,
+       "returns the range of the given field",
+       "name"_a)
+
+  .def("getFieldMean",
+       &Mesh::getFieldMean,
+       "returns the mean the given field",
+       "name"_a)
+
+  .def("getFieldStd",
+       &Mesh::getFieldStd,
+       "returns the standard deviation of the given field",
+       "name"_a)
   ;
 
   // MeshUtils
@@ -532,50 +850,93 @@ PYBIND11_MODULE(shapeworks, m)
   //             &MeshUtils::distilVertexInfo,
   //             "distils vertex information from VTK poly data to Eigen matrices",
   //             "mesh"_a)
+  //
   // .def_static("distilFaceInfo",
   //             &MeshUtils::distilFaceInfo,
   //             "distils face information from VTK poly data to Eigen matrices",
   //             "mesh"_a)
 
-  // TODO: Bind generateWarpMatrix, warpMesh, warpMeshes later if required
-  // .def_static("generateWarpMatrix", &MeshUtils::generateWarpMatrix, "compute the warp matrix using the mesh and reference points", "TV"_a, "TF"_a, "Vref"_a)
-  // .def_static("warpMesh",       &MeshUtils::warpMesh, "compute individual warp", "movPts"_a, "W"_a, "Fref"_a)
-  // .def_static("warpMeshes",     &MeshUtils::warpMeshes, "compute transformation from set of points files using template mesh warp & face matrices", "movingPointPaths"_a, "outputMeshPaths"_a, "W"_a, "Fref"_a, "numP"_a)
-  .def_static("boundingBox", [](std::vector<std::string> filenames, bool center) {
-    return shapeworks::MeshUtils::boundingBox(filenames, center);
-  }, "calculate bounding box incrementally for meshes", "filenames"_a, "center"_a=false)
-  .def_static("boundingBox", [](std::vector<Mesh> meshes, bool center) {
-    return shapeworks::MeshUtils::boundingBox(meshes, center);
-  }, "calculate bounding box incrementally for shapework meshes", "meshes"_a, "center"_a=false)
+  // TODO: Bind these three functions (generateWarpMatrix, warpMesh, warpMeshes) later if required
+  // .def_static("generateWarpMatrix",
+  //             &MeshUtils::generateWarpMatrix,
+  //             "compute the warp matrix using the mesh and reference points",
+  //             "TV"_a, "TF"_a, "Vref"_a)
+  //
+  // .def_static("warpMesh",
+  //             &MeshUtils::warpMesh,
+  //             "compute individual warp",
+  //             "movPts"_a, "W"_a, "Fref"_a)
+  //
+  // .def_static("warpMeshes",
+  //             &MeshUtils::warpMeshes,
+  //             "compute transformation from set of points files using template mesh warp & face matrices",
+  //             "movingPointPaths"_a, "outputMeshPaths"_a, "W"_a, "Fref"_a, "numP"_a)
+
+  .def_static("boundingBox",
+              [](std::vector<std::string> filenames, bool center) {
+                return shapeworks::MeshUtils::boundingBox(filenames, center);
+              },
+              "calculate bounding box incrementally for meshes",
+              "filenames"_a, "center"_a=false)
+
+  .def_static("boundingBox",
+              [](std::vector<Mesh> meshes, bool center) {
+                return shapeworks::MeshUtils::boundingBox(meshes, center);
+              },
+              "calculate bounding box incrementally for shapework meshes",
+              "meshes"_a, "center"_a=false)
   ;
 
   // ParticleSystem
   py::class_<ParticleSystem>(m, "ParticleSystem")
+
   .def(py::init<const std::vector<std::string> &>())
-  .def("Particles",             &ParticleSystem::Particles) // note: must import Eigenpy (github stack-of-tasks/eigenpy)
-  .def("Paths",                 &ParticleSystem::Paths)
-  .def("N",                     &ParticleSystem::N)
-  .def("D",                     &ParticleSystem::D)
+
+  .def("Particles",
+       &ParticleSystem::Particles) // note: must import Eigenpy (github stack-of-tasks/eigenpy)
+
+  .def("Paths",
+       &ParticleSystem::Paths)
+
+  .def("N",
+       &ParticleSystem::N)
+
+  .def("D",
+       &ParticleSystem::D)
   ;
 
   // ShapeEvaluation
   py::class_<ShapeEvaluation>(m, "ShapeEvaluation")
-  .def_static("ComputeCompactness",
-                                &ShapeEvaluation::ComputeCompactness, "particleSystem"_a, "nModes"_a, "saveTo"_a="")
-  .def_static("ComputeGeneralization",
-                                &ShapeEvaluation::ComputeGeneralization, "particleSystem"_a, "nModes"_a, "saveTo"_a="")
-  .def_static("ComputeSpecificity",
-                                &ShapeEvaluation::ComputeSpecificity, "particleSystem"_a, "nModes"_a, "saveTo"_a="")
 
+  .def_static("ComputeCompactness",
+              &ShapeEvaluation::ComputeCompactness,
+              "particleSystem"_a, "nModes"_a, "saveTo"_a="")
+
+  .def_static("ComputeGeneralization",
+              &ShapeEvaluation::ComputeGeneralization,
+              "particleSystem"_a, "nModes"_a, "saveTo"_a="")
+
+  .def_static("ComputeSpecificity",
+              &ShapeEvaluation::ComputeSpecificity,
+              "particleSystem"_a, "nModes"_a, "saveTo"_a="")
   ;
 
   // Optimize (TODO)
   py::class_<Optimize>(m, "Optimize")
+
   .def(py::init<>())
-  .def("LoadParameterFile",     &Optimize::LoadParameterFile)
-  .def("Run",                   &Optimize::Run)
+
+  .def("LoadParameterFile",
+       &Optimize::LoadParameterFile)
+
+  .def("Run",
+       &Optimize::Run)
+
   .def("SetIterationCallbackFunction",
-                                &Optimize::SetIterationCallbackFunction)
-  .def("GetParticleSystem",     &optimize_get_particle_system)
+       &Optimize::SetIterationCallbackFunction)
+
+  .def("GetParticleSystem",
+       &optimize_get_particle_system)
   ;
-}
+
+} // PYBIND11_MODULE(shapeworks)
