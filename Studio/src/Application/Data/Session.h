@@ -67,6 +67,8 @@ public:
   /// load groomed files
   void load_groomed_files(std::vector<std::string> file_names, double iso);
 
+  bool load_point_files(std::vector<std::string> local, std::vector<std::string> world);
+
   bool update_particles(std::vector<StudioParticles> particles);
 
   bool is_light_project();

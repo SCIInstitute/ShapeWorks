@@ -206,50 +206,6 @@ TEST(MeshTests, clipClosedSurfaceTest1)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, rasterizationOriginTest1)
-{
-  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  Region region = femur.boundingBox();
-  Point3 origin({-114, -22, 1209});
-
-  ASSERT_TRUE(femur.rasterizationOrigin(region) == origin);
-}
-
-TEST(MeshTests, rasterizationOriginTest2)
-{
-  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
-  std::vector <Mesh> meshes;
-  meshes.push_back(femur);
-  meshes.push_back(pelvis);
-  Region region = MeshUtils::boundingBox(meshes);
-  Point3 origin({-114, -22, 1202});
-
-  ASSERT_TRUE(femur.rasterizationOrigin(region) == origin);
-}
-
-TEST(MeshTests, rasterizationSizeTest1)
-{
-  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  Region region = femur.boundingBox();
-  Dims size({45, 45, 41});
-
-  ASSERT_TRUE(femur.rasterizationSize(region) == size);
-}
-
-TEST(MeshTests, rasterizationSizeTest2)
-{
-  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
-  std::vector <Mesh> meshes;
-  meshes.push_back(femur);
-  meshes.push_back(pelvis);
-  Region region = MeshUtils::boundingBox(meshes);
-  Dims size({48, 51, 54});
-
-  ASSERT_TRUE(femur.rasterizationSize(region) == size);
-}
-
 TEST(MeshTests, centerTest)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
@@ -269,8 +225,26 @@ TEST(MeshTests, centerofmassTest)
 TEST(MeshTests, toImageTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
-  Image image = femur.toImage(makeVector({1.0,1.0,1.0}));
+  Image image = femur.toImage();
   Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImage.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(MeshTests, toImageTest2)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
+  Image image = femur.toImage(makeVector({2.0, 2.0, 1.0}));
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImage2.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(MeshTests, toImageTest3)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
+  Image image = femur.toImage(makeVector({1.0, 1.0, 1.0}), {40, 145, 131});
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImage3.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -368,9 +342,18 @@ TEST(MeshTests, icpTest)
   ASSERT_TRUE(source == ground_truth);
 }
 
+TEST(MeshTests, generateNormalsTest)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.generateNormals();
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/normals.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
 TEST(MeshTests, warpTest1)
 {
-  Mesh ellipsoid( std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
+  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
   Eigen::MatrixXd Vref = MeshUtils::distilVertexInfo(ellipsoid);
   Eigen::MatrixXi Fref = MeshUtils::distilFaceInfo(ellipsoid);
   std::string particlePath = std::string(TEST_DATA_DIR) + "/ellipsoid_0.particles";
@@ -394,8 +377,8 @@ TEST(MeshTests, warpTest1)
 
 TEST(MeshTests, warpTest2)
 {
-  Mesh ellipsoid( std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
-  Mesh ellipsoid_warped( std::string(TEST_DATA_DIR) + "/ellipsoid_warped.ply");
+  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
+  Mesh ellipsoid_warped(std::string(TEST_DATA_DIR) + "/ellipsoid_warped.ply");
   Eigen::MatrixXd Vref = MeshUtils::distilVertexInfo(ellipsoid);
   Eigen::MatrixXi Fref = MeshUtils::distilFaceInfo(ellipsoid);
   std::string staticPath = std::string(TEST_DATA_DIR) + "/ellipsoid_0.particles";

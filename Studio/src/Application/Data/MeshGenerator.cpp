@@ -79,7 +79,6 @@ MeshHandle MeshGenerator::build_mesh_from_points(const vnl_vector<double>& shape
     vtkSmartPointer<vtkPolyData> poly_data = mesh_warpers[domain]->build_mesh(shape);
 
     if (!poly_data) {
-
       return mesh;
     }
     vtkSmartPointer<vtkPolyDataNormals> polydata_normals =

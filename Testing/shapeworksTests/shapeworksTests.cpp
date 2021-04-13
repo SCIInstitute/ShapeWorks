@@ -350,6 +350,11 @@ TEST(shapeworksTests, meshtransformTest)
   ASSERT_FALSE(system("bash meshtransform.sh"));
 }
 
+TEST(shapeworksTests, generatenormalsTest)
+{
+  ASSERT_FALSE(system("bash generatenormals.sh"));
+}
+
 TEST(shapeworksTests, shapeevaluationTest)
 {
   ASSERT_FALSE(system("bash shapeevaluation.sh"));

@@ -9,15 +9,12 @@
 #include <itkNearestNeighborInterpolateImageFunction.h>
 #include <itkLinearInterpolateImageFunction.h>
 
-#include <vtkMarchingCubes.h>
 #include <vtkTriangleFilter.h>
 #include <vtkFloatArray.h>
 #include <vtkPointData.h>
 #include <vtkPointLocator.h>
 #include <vtkKdTreePointLocator.h>
-
 #include <Data/StudioMesh.h>
-#include <Data/ItkToVtk.h>
 
 using NearestNeighborInterpolatorType = itk::NearestNeighborInterpolateImageFunction<ImageType, double>;
 using LinearInterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
@@ -73,8 +70,7 @@ vnl_vector<double> StudioMesh::get_center_transform()
 }
 
 //---------------------------------------------------------------------------
-void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image,
-                                   TransformType transform)
+void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image)
 {
   if (!this->poly_data_ || name == "") {
     return;
@@ -94,7 +90,9 @@ void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image,
   scalars->SetName(name.c_str());
 
   for (int i = 0; i < points->GetNumberOfPoints(); i++) {
-    double* pt = transform->TransformPoint(points->GetPoint(i));
+    //double* pt = transform->TransformPoint(points->GetPoint(i));
+
+    double *pt = points->GetPoint(i);
 
     ImageType::PointType pitk;
     pitk[0] = pt[0];
@@ -176,6 +174,8 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double
     float weighted_scalar = 0.0f;
     float distanceSum = 0.0f;
     float distance[8];
+    bool exactly_on_point = false;
+    float exact_scalar = 0.0f;
     for (unsigned int p = 0; p < closest_points->GetNumberOfIds(); p++) {
       // get a particle position
       vtkIdType id = closest_points->GetId(p);
@@ -184,7 +184,15 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double
       double x = pt[0] - point_data->GetPoint(id)[0];
       double y = pt[1] - point_data->GetPoint(id)[1];
       double z = pt[2] - point_data->GetPoint(id)[2];
-      distance[p] = 1.0f / (x * x + y * y + z * z);
+
+      if (x == 0 && y == 0 && z == 0) {
+        distance[p] = 0;
+        exactly_on_point = true;
+        exact_scalar = scalar_values[id];
+      }
+      else {
+        distance[p] = 1.0f / (x * x + y * y + z * z);
+      }
 
       // multiply scalar value by weight and add to running sum
       distanceSum += distance[p];
@@ -195,6 +203,10 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double
       weighted_scalar += distance[p] / distanceSum * scalar_values[current_id];
     }
 
+    if (exactly_on_point) {
+      weighted_scalar = exact_scalar;
+    }
+
     scalars->SetValue(i, weighted_scalar);
   }
 
@@ -203,7 +215,7 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double
 }
 
 //---------------------------------------------------------------------------
-void StudioMesh::apply_scalars(MeshHandle mesh, vtkSmartPointer<vtkTransform> transform)
+void StudioMesh::apply_scalars(MeshHandle mesh)
 {
   vtkSmartPointer<vtkPolyData> from_mesh = mesh->get_poly_data();
   vtkSmartPointer<vtkPolyData> to_mesh = this->get_poly_data();
@@ -224,7 +236,8 @@ void StudioMesh::apply_scalars(MeshHandle mesh, vtkSmartPointer<vtkTransform> tr
     to_array->SetNumberOfValues(to_mesh->GetNumberOfPoints());
 
     for (int j = 0; j < to_mesh->GetNumberOfPoints(); j++) {
-      double* p = transform->TransformPoint(to_mesh->GetPoint(j));
+      //double* p = transform->TransformPoint(to_mesh->GetPoint(j));
+      double* p = to_mesh->GetPoint(j);
       vtkIdType id = kDTree->FindClosestPoint(p);
       vtkVariant var = from_array->GetVariantValue(id);
 

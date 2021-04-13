@@ -348,15 +348,10 @@ bool Session::load_light_project(QString filename)
 
 
   /// TODO point files from XML
-  /*
-  if (!this->load_point_files(local_point_files, true)) {
-    return false;
-  }
 
-  if (!this->load_point_files(global_point_files, false)) {
+  if (!this->load_point_files(local_point_files, global_point_files)) {
     return false;
   }
-*/
 
   this->load_groomed_files(groom_files, 0.5);
 
@@ -565,6 +560,41 @@ void Session::load_groomed_files(std::vector<std::string> file_names, double iso
   if (file_names.size() > 0) {
     emit data_changed();
   }
+}
+
+//---------------------------------------------------------------------------
+bool Session::load_point_files(std::vector<std::string> local, std::vector<std::string> world)
+{
+  for (int i = 0; i < local.size(); i++) {
+    if (this->shapes_.size() <= i) {
+      auto shape = QSharedPointer<Shape>(new Shape);
+      std::shared_ptr<Subject> subject = std::make_shared<Subject>();
+      shape->set_mesh_manager(this->mesh_manager_);
+      shape->set_subject(subject);
+      this->project_->get_subjects().push_back(subject);
+      this->shapes_.push_back(shape);
+    }
+
+    // only single domain supported so far
+    std::vector<std::string> local_filenames{local[i]};
+    std::vector<std::string> world_filenames{world[i]};
+    this->shapes_[i]->import_local_point_files(local_filenames);
+    this->shapes_[i]->import_global_point_files(world_filenames);
+
+    QStringList list;
+    list << QFileInfo(QString::fromStdString(world[i])).fileName();
+    list << "";
+    list << "";
+    list << "";
+    this->shapes_[i]->set_annotations(list);
+  }
+
+  this->project_->store_subjects();
+  if (local.size() > 0) {
+    emit data_changed();
+  }
+
+  return true;
 }
 
 //---------------------------------------------------------------------------

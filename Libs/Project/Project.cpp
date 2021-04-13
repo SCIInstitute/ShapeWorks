@@ -569,24 +569,30 @@ void Project::save_string_column(const std::string& name, std::vector<std::strin
 //---------------------------------------------------------------------------
 std::vector<std::string> Project::get_feature_names()
 {
+  // grab feature volumes
   auto feature_names = this->get_matching_columns(FEATURE_PREFIX);
+
+  // now check for meshes that have scalars
   if (!this->subjects_.empty() && this->mesh_scalars_.empty()) {
-    auto subject = this->subjects_[0];
-    if (subject->get_domain_types().size() > 0 &&
-        subject->get_domain_types()[0] == DomainType::Mesh) {
-      if (!subject->get_segmentation_filenames().empty()) {
+    auto subject = this->subjects_[0]; // we have to assume that all subjects have the same features
+
+    int domains_per_subject = this->get_number_of_domains_per_subject();
+    for (int d = 0; d < domains_per_subject; d++) {
+      if (subject->get_domain_types()[d] == DomainType::Mesh) {
         auto poly_data = MeshUtils::threadSafeReadMesh(
-          subject->get_segmentation_filenames()[0]).getVTKMesh();
+          subject->get_segmentation_filenames()[d]).getVTKMesh();
         if (poly_data) {
-          vtkIdType numberOfPointArrays = poly_data->GetPointData()->GetNumberOfArrays();
-          for (vtkIdType i = 0; i < numberOfPointArrays; i++) {
-            this->mesh_scalars_.push_back(std::string("FEATURE_")
+          vtkIdType num_arrays = poly_data->GetPointData()->GetNumberOfArrays();
+          for (vtkIdType i = 0; i < num_arrays; i++) {
+            this->mesh_scalars_.push_back(std::string("Scalar:")
                                           + poly_data->GetPointData()->GetArrayName(i));
           }
         }
       }
     }
   }
+
+  // combine
   feature_names.insert(feature_names.end(), this->mesh_scalars_.begin(), this->mesh_scalars_.end());
   return feature_names;
 }
@@ -710,7 +716,7 @@ std::vector<std::string> Project::get_domain_names()
   auto groom_columns = this->get_matching_columns(GROOMED_PREFIX);
   if (!groom_columns.empty()) {
     std::vector<std::string> names;
-    for (auto&& item : seg_columns) {
+    for (auto&& item : groom_columns) {
       names.push_back(item.erase(0, std::strlen(GROOMED_PREFIX)));
     }
     return names;
