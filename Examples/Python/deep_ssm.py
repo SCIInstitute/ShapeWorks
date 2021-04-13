@@ -9,6 +9,7 @@ import os
 import DataAugmentationUtils
 import DeepSSMUtils
 import CommonUtils
+import json
 
 def Run_Pipeline(args):
 	if args.tiny_test:
@@ -21,18 +22,18 @@ def Run_Pipeline(args):
     It gets extracted to Output/deep_ssm
 	'''
 	datasetName = "femur-v0"
-	outputDirectory = "Output/deep_ssm/"
-	if not os.path.exists(outputDirectory):
-		os.makedirs(outputDirectory)
+	out_dir = "Output/deep_ssm/"
+	if not os.path.exists(out_dir):
+		os.makedirs(out_dir)
 
 	if args.tiny_test:
-		CommonUtils.download_subset(args.use_case,datasetName, outputDirectory)
+		CommonUtils.download_subset(args.use_case,datasetName, out_dir)
 		partition = 4
 	else:
-		CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
+		CommonUtils.download_and_unzip_dataset(datasetName, out_dir)
 		partition = 40
 
-	input_dir = outputDirectory + datasetName + '/'
+	input_dir = out_dir + datasetName + '/'
 	# Get image path list
 	img_dir = input_dir + "groomed/images/"
 	img_list = []
@@ -69,11 +70,12 @@ def Run_Pipeline(args):
 	percent_variability = 0.95
 	sampler_type = "kde"
 	if args.tiny_test:
-		num_samples = 4
+		num_samples = 2
 		num_dim = 0
 		percent_variability = 0.99
-	embedded_dim = DataAugmentationUtils.runDataAugmentation(outputDirectory + "Augmentation/", train_img_list, train_local_particle_list, num_samples, num_dim, percent_variability, sampler_type, mixture_num=0, processes=1, world_point_list=train_world_particle_list)
-	aug_data_csv = outputDirectory + "Augmentation/TotalData.csv"
+	aug_dir = out_dir + "Augmentation/"
+	embedded_dim = DataAugmentationUtils.runDataAugmentation(aug_dir, train_img_list, train_local_particle_list, num_samples, num_dim, percent_variability, sampler_type, mixture_num=0, processes=1, world_point_list=train_world_particle_list)
+	aug_data_csv = out_dir + "Augmentation/TotalData.csv"
 	DataAugmentationUtils.visualizeAugmentation(aug_data_csv, "violin")
 
 	print("\n\n\nStep 3. Reformat Data for Pytorch\n") #######################################################################
@@ -86,29 +88,65 @@ def Run_Pipeline(args):
 	
 	down_sample = True
 	batch_size = 8
-	loader_dir = outputDirectory + 'TorchDataLoaders/'
+	loader_dir = out_dir + 'TorchDataLoaders/'
 	DeepSSMUtils.getTrainValLoaders(loader_dir, aug_data_csv, batch_size, down_sample)
 	DeepSSMUtils.getTestLoader(loader_dir, test_img_list, down_sample)
 
 
 	print("\n\n\nStep 4. Train model.\n") #####################################################################################
-	'''
-	Set training parameters dictionary
-	val_freq sets how often to test on validation set and log
-	for example val_freq=1 is every epoch and val_freq=2 is every other
-	'''
-	parameters = {"epochs":50, "learning_rate":0.001, "val_freq":1}
+	# Define model parameters
+	model_name = "femur_deepssm"
+	model_parameters = {
+		"model_name":model_name,
+		"num_latent_dim":int(embedded_dim),
+		"paths":{
+			"out_dir":out_dir,
+			"loader_dir":loader_dir,
+			"aug_dir":aug_dir
+			},
+		"encoder":{
+			"deterministic":True
+			},
+		"decoder":{
+			"deterministic":True,
+			"linear":True
+			},
+		"loss":{
+			"function":"MSE",
+			"supervised_latent":True,
+			},
+		"trainer":{
+			"epochs":100, 
+			"learning_rate":0.001,
+			"decay_lr":True,
+			"val_freq":1
+			},
+		"fine_tune":{
+			"enabled":True,
+			"loss":"MSE",
+			"epochs":2,
+			"learning_rate":0.001,
+			"decay_lr":True,
+			"val_freq":1
+			},
+		"use_best_model":True
+	}
 	if args.tiny_test:
-		parameters["epochs"] = 5
-	final_model_path, best_model_path = DeepSSMUtils.trainDeepSSM(loader_dir, parameters, outputDirectory)
+		model_parameters["trainer"]["epochs"] = 5
+	# Save conflict file	
+	config_file = out_dir + model_name + ".json"
+	with open(config_file, "w") as outfile:
+		json.dump(model_parameters, outfile, indent=2) 
+	# Train
+	DeepSSMUtils.trainDeepSSM(config_file)
 
 
 	print("\n\n\nStep 5. Predict with DeepSSM\n") #####################################################################################
 	'''
 	Test DeepSSM
 	'''
-	PCA_scores_path = outputDirectory + "Augmentation/PCA_Particle_Info/"
-	prediction_dir = outputDirectory + 'Results/PredictedParticles/'
+	PCA_scores_path = out_dir + "Augmentation/PCA_Particle_Info/"
+	prediction_dir = out_dir + 'Results/PredictedParticles/'
 	DeepSSMUtils.testDeepSSM(prediction_dir, best_model_path, loader_dir, PCA_scores_path, embedded_dim)
 	print('Predicted particles saved at: ' + prediction_dir)
 
@@ -117,7 +155,7 @@ def Run_Pipeline(args):
 	Analyze DeepSSM
 	'''
 	DT_dir = input_dir + "groomed/distance_transforms/"
-	out_dir = outputDirectory + "Results/"
+	out_dir = out_dir + "Results/"
 	mean_prefix = input_dir + "shape_models/femur/mean/femur"
 	avg_distance = DeepSSMUtils.analyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix)
 	print("Average surface-to-surface distance from the original to predicted shape = " + str(avg_distance))

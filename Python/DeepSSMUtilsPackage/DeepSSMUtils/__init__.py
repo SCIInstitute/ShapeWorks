@@ -1,6 +1,7 @@
 from DeepSSMUtils import TorchLoaders
-from DeepSSMUtils import DeepSSM
+# from DeepSSMUtils import DeepSSM
 from DeepSSMUtils import Analyze
+from DeepSSMUtils import trainer 
 import torch
 
 def getTrainValLoaders(loader_dir, aug_data_csv, batch_size=1, down_sample=False):
@@ -11,9 +12,10 @@ def getTestLoader(loader_dir, test_img_list, down_sample=False):
 	testPytorch()
 	TorchLoaders.getTestLoader(loader_dir, test_img_list, down_sample)
 
-def trainDeepSSM(loader_dir, parameters, parent_dir):
+def trainDeepSSM(config_file):
 	testPytorch()
-	return DeepSSM.train(loader_dir, parameters, parent_dir)
+	trainer.train(config_file)
+	return
 
 def testDeepSSM(out_dir, model_path, loader_dir, PCA_scores_path, num_PCA):
 	testPytorch()
