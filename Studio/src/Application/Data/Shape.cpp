@@ -488,6 +488,7 @@ void Shape::load_feature(std::string display_mode, std::string feature)
 
     vtkSmartPointer<vtkPolyData> poly_data = group.meshes()[d]->get_poly_data();
 
+    // first check if we already have this array
     auto scalar_array = poly_data->GetPointData()->GetArray(feature.c_str());
     if (!scalar_array) {
 
@@ -497,13 +498,11 @@ void Shape::load_feature(std::string display_mode, std::string feature)
 
       auto filenames = this->subject_->get_feature_filenames();
 
-      QString feature_string = QString::fromStdString(feature);
-
-      if (feature_string.contains("Scalar:")) {
-        feature_string = feature_string.replace("Scalar:", "");
+      if (filenames.find(feature) == filenames.end()) {
         auto original_meshes = this->get_original_meshes(true).meshes();
 
-        this->apply_feature_to_mesh(feature_string.toStdString(), original_meshes[d]);
+        // assign scalars at points
+        this->load_feature_from_mesh(feature, original_meshes[d]);
         group.meshes()[d]->apply_scalars(original_meshes[d]);
 
       }
@@ -574,7 +573,7 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
 }
 
 //---------------------------------------------------------------------------
-void Shape::apply_feature_to_mesh(std::string feature, MeshHandle mesh)
+void Shape::load_feature_from_mesh(std::string feature, MeshHandle mesh)
 {
   vtkSmartPointer<vtkPolyData> from_mesh = mesh->get_poly_data();
 
@@ -582,8 +581,6 @@ void Shape::apply_feature_to_mesh(std::string feature, MeshHandle mesh)
   vtkSmartPointer<vtkKdTreePointLocator> kd_tree = vtkSmartPointer<vtkKdTreePointLocator>::New();
   kd_tree->SetDataSet(from_mesh);
   kd_tree->BuildLocator();
-
-  vtkSmartPointer<vtkTransform> transform = this->get_groomed_transform();
 
   vnl_vector<double> all_locals = this->get_local_correspondence_points();
 
@@ -601,10 +598,7 @@ void Shape::apply_feature_to_mesh(std::string feature, MeshHandle mesh)
     p[1] = all_locals[idx++];
     p[2] = all_locals[idx++];
 
-    //double* pt = transform->TransformPoint(p);
-    double* pt = p;
-
-    vtkIdType id = kd_tree->FindClosestPoint(pt);
+    vtkIdType id = kd_tree->FindClosestPoint(p);
     vtkVariant var = from_array->GetVariantValue(id);
 
     values[i] = var.ToDouble();

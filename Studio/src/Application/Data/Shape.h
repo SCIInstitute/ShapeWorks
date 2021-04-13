@@ -148,7 +148,7 @@ private:
   static bool import_point_file(QString filename, vnl_vector<double>& points);
 
   void apply_feature_to_points(std::string feature, ImageType::Pointer image);
-  void apply_feature_to_mesh(std::string feature, MeshHandle mesh);
+  void load_feature_from_mesh(std::string feature, MeshHandle mesh);
 
   int id_;
 

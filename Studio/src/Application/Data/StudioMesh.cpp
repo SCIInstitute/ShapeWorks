@@ -221,9 +221,9 @@ void StudioMesh::apply_scalars(MeshHandle mesh)
   vtkSmartPointer<vtkPolyData> to_mesh = this->get_poly_data();
 
   // Create the tree
-  vtkSmartPointer<vtkKdTreePointLocator> kDTree = vtkSmartPointer<vtkKdTreePointLocator>::New();
-  kDTree->SetDataSet(from_mesh);
-  kDTree->BuildLocator();
+  vtkSmartPointer<vtkKdTreePointLocator> kd_tree = vtkSmartPointer<vtkKdTreePointLocator>::New();
+  kd_tree->SetDataSet(from_mesh);
+  kd_tree->BuildLocator();
 
   int num_arrays = from_mesh->GetPointData()->GetNumberOfArrays();
 
@@ -236,9 +236,8 @@ void StudioMesh::apply_scalars(MeshHandle mesh)
     to_array->SetNumberOfValues(to_mesh->GetNumberOfPoints());
 
     for (int j = 0; j < to_mesh->GetNumberOfPoints(); j++) {
-      //double* p = transform->TransformPoint(to_mesh->GetPoint(j));
       double* p = to_mesh->GetPoint(j);
-      vtkIdType id = kDTree->FindClosestPoint(p);
+      vtkIdType id = kd_tree->FindClosestPoint(p);
       vtkVariant var = from_array->GetVariantValue(id);
 
       to_array->SetVariantValue(j, var);
