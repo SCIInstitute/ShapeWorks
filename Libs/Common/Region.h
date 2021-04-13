@@ -9,13 +9,13 @@ namespace shapeworks
 class Region
 {
 public:
-  std::vector<long> min{1000000000, 1000000000, 1000000000};
-  std::vector<long> max{-1000000000, -1000000000, -1000000000};
+  std::vector<Coord::value_type> min{1000000000, 1000000000, 1000000000};
+  std::vector<Coord::value_type> max{-1000000000, -1000000000, -1000000000};
   Region(const Dims &dims) : min{0, 0, 0} {
     if (0 != (dims[0] + dims[1] + dims[2])) {
-      max = {static_cast<long>(dims[0]) - 1,
-             static_cast<long>(dims[1]) - 1,
-             static_cast<long>(dims[2]) - 1};
+      max = {static_cast<Coord::value_type>(dims[0]) - 1,
+             static_cast<Coord::value_type>(dims[1]) - 1,
+             static_cast<Coord::value_type>(dims[2]) - 1};
     }
   }
   Region(const Coord &_min, const Coord &_max) :
@@ -28,9 +28,9 @@ public:
 
   Coord origin() const { return Coord({min[0], min[1], min[2]}); }
   Dims size() const {
-    return Dims({static_cast<unsigned long>(max[0] - min[0]),
-                 static_cast<unsigned long>(max[1] - min[1]),
-                 static_cast<unsigned long>(max[2] - min[2])});
+    return Dims({static_cast<Dims::value_type>(max[0] - min[0]),
+                 static_cast<Dims::value_type>(max[1] - min[1]),
+                 static_cast<Dims::value_type>(max[2] - min[2])});
   }
 
   /// grows or shrinks the region by the specified amount
