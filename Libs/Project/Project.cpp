@@ -148,17 +148,15 @@ std::vector<std::string> Project::get_matching_columns(const std::string& prefix
 std::string Project::get_value(int column, int subject_id)
 {
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);
-  return ws.cell(xlnt::cell_reference(column, subject_id)).value<std::string>();
+  std::string value = ws.cell(xlnt::cell_reference(column, subject_id)).to_string();
+  return value;
+
 }
 
 //---------------------------------------------------------------------------
 void Project::set_value(int column, int subject_id, const std::string& value)
 {
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);
-
-  //std::cerr << "setting value for column = " << column << ", subject = " << subject_id << " to " <<
-  //value << "\n";
-
   ws.cell(xlnt::cell_reference(column, subject_id)).value(value);
 }
 
@@ -286,7 +284,9 @@ void Project::store_subjects()
 
   // clear
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);
-  ws.delete_rows(ws.highest_row(), ws.highest_row() - 1);
+  for (int i = 2; i <= ws.highest_row(); i++) {
+    ws.clear_row(i);
+  }
 
   for (int i = 0; i < num_subjects; i++) {
     std::shared_ptr<Subject> subject = this->subjects_[i];
@@ -404,7 +404,6 @@ std::vector<std::string> Project::get_string_column(const std::string& name) con
 {
   int index = this->get_index_for_column(name);
 
-  //std::cerr << "index for '" << name << "' = " << index << "\n";
   std::vector<std::string> list;
   if (index < 0) {
     return list;
@@ -576,15 +575,17 @@ std::vector<std::string> Project::get_feature_names()
   if (!this->subjects_.empty() && this->mesh_scalars_.empty()) {
     auto subject = this->subjects_[0]; // we have to assume that all subjects have the same features
 
-    int domains_per_subject = this->get_number_of_domains_per_subject();
-    for (int d = 0; d < domains_per_subject; d++) {
+    //int domains_per_subject = this->get_number_of_domains_per_subject();
+    for (int d = 0; d < subject->get_domain_types().size(); d++) {
       if (subject->get_domain_types()[d] == DomainType::Mesh) {
-        auto poly_data = MeshUtils::threadSafeReadMesh(
-          subject->get_segmentation_filenames()[d]).getVTKMesh();
-        if (poly_data) {
-          vtkIdType num_arrays = poly_data->GetPointData()->GetNumberOfArrays();
-          for (vtkIdType i = 0; i < num_arrays; i++) {
-            this->mesh_scalars_.push_back(poly_data->GetPointData()->GetArrayName(i));
+        if (subject->get_segmentation_filenames().size() > d) {
+          auto poly_data = MeshUtils::threadSafeReadMesh(
+            subject->get_segmentation_filenames()[d]).getVTKMesh();
+          if (poly_data) {
+            vtkIdType num_arrays = poly_data->GetPointData()->GetNumberOfArrays();
+            for (vtkIdType i = 0; i < num_arrays; i++) {
+              this->mesh_scalars_.push_back(poly_data->GetPointData()->GetArrayName(i));
+            }
           }
         }
       }
