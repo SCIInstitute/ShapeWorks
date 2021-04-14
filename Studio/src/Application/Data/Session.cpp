@@ -248,16 +248,16 @@ bool Session::load_light_project(QString filename)
   // determine if groups are available
   this->groups_available_ = (docHandle.FirstChild("group_ids").Element() != nullptr);
 
-  /// TODO
-  //this->numDomains = 1;
-  //TiXmlElement* elem = docHandle.FirstChild("domains_per_shape").Element();
-  //if (elem) {this->numDomains = atoi(elem->GetText()); }
+  int domains_per_shape = 1;
+  TiXmlElement* elem = docHandle.FirstChild("domains_per_shape").Element();
+  if (elem) { domains_per_shape = atoi(elem->GetText()); }
+  //this->project_->get_number_of_domains_per_subject()
 
   // setup XML
   std::vector<std::string> import_files, groom_files, local_point_files, global_point_files;
   std::string sparseFile, denseFile, goodPtsFile;
 
-  TiXmlElement* elem = docHandle.FirstChild("mesh_files").Element();
+  elem = docHandle.FirstChild("mesh_files").Element();
   if (elem && elem->GetText()) {
     std::string mesh_filename;
     inputsBuffer.str(elem->GetText());
@@ -346,14 +346,11 @@ bool Session::load_light_project(QString filename)
     return false;
   }
 
-
-  /// TODO point files from XML
-
-  if (!this->load_point_files(local_point_files, global_point_files)) {
+  if (!this->load_point_files(local_point_files, global_point_files, domains_per_shape)) {
     return false;
   }
 
-  this->load_groomed_files(groom_files, 0.5);
+  this->load_groomed_files(groom_files, 0.5, domains_per_shape);
 
   // read group ids
   std::vector<int> group_ids;
@@ -532,9 +529,13 @@ void Session::load_original_files(std::vector<std::string> filenames)
 }
 
 //---------------------------------------------------------------------------
-void Session::load_groomed_files(std::vector<std::string> file_names, double iso)
+void
+Session::load_groomed_files(std::vector<std::string> file_names, double iso, int domains_per_shape)
 {
-  for (int i = 0; i < file_names.size(); i++) {
+  assert (file_names.size() % domains_per_shape == 0);
+  int num_subjects = file_names.size() / domains_per_shape;
+  int counter = 0;
+  for (int i = 0; i < num_subjects; i++) {
     if (this->shapes_.size() <= i) {
       auto shape = QSharedPointer<Shape>(new Shape);
       std::shared_ptr<Subject> subject = std::make_shared<Subject>();
@@ -544,16 +545,20 @@ void Session::load_groomed_files(std::vector<std::string> file_names, double iso
       this->shapes_.push_back(shape);
     }
 
-    // only single domain supported so far
-    std::vector<std::string> groomed_filenames{file_names[i]};
-    this->shapes_[i]->get_subject()->set_groomed_filenames(groomed_filenames);
-
     QStringList list;
-    list << QFileInfo(QString::fromStdString(file_names[i])).fileName();
+    list << QFileInfo(QString::fromStdString(file_names[counter])).fileName();
     list << "";
     list << "";
     list << "";
     this->shapes_[i]->set_annotations(list);
+
+    std::vector<std::string> groomed_filenames;
+    for (int j = 0; j < domains_per_shape; j++) {
+      groomed_filenames.push_back(file_names[counter + j]);
+    }
+    counter += domains_per_shape;
+
+    this->shapes_[i]->get_subject()->set_groomed_filenames(groomed_filenames);
   }
 
   this->project_->store_subjects();
@@ -563,9 +568,13 @@ void Session::load_groomed_files(std::vector<std::string> file_names, double iso
 }
 
 //---------------------------------------------------------------------------
-bool Session::load_point_files(std::vector<std::string> local, std::vector<std::string> world)
+bool Session::load_point_files(std::vector<std::string> local, std::vector<std::string> world,
+                               int domains_per_shape)
 {
-  for (int i = 0; i < local.size(); i++) {
+  assert (local.size() % domains_per_shape == 0);
+  int num_subjects = local.size() / domains_per_shape;
+  int counter = 0;
+  for (int i = 0; i < num_subjects; i++) {
     if (this->shapes_.size() <= i) {
       auto shape = QSharedPointer<Shape>(new Shape);
       std::shared_ptr<Subject> subject = std::make_shared<Subject>();
@@ -575,17 +584,22 @@ bool Session::load_point_files(std::vector<std::string> local, std::vector<std::
       this->shapes_.push_back(shape);
     }
 
+    QStringList list;
+    list << QFileInfo(QString::fromStdString(world[counter])).fileName();
+    list << "";
+    list << "";
+    list << "";
+
+    std::vector<std::string> local_filenames;
+    std::vector<std::string> world_filenames;
     // only single domain supported so far
-    std::vector<std::string> local_filenames{local[i]};
-    std::vector<std::string> world_filenames{world[i]};
+    for (int j = 0; j < domains_per_shape; j++) {
+      local_filenames.push_back(local[counter + j]);
+      world_filenames.push_back(world[counter + j]);
+    }
+    counter += domains_per_shape;
     this->shapes_[i]->import_local_point_files(local_filenames);
     this->shapes_[i]->import_global_point_files(world_filenames);
-
-    QStringList list;
-    list << QFileInfo(QString::fromStdString(world[i])).fileName();
-    list << "";
-    list << "";
-    list << "";
     this->shapes_[i]->set_annotations(list);
   }
 

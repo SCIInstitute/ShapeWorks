@@ -663,8 +663,13 @@ StudioParticles Shape::get_particles()
 //---------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Shape::get_reconstruction_transform(int domain)
 {
-  assert(domain < this->reconstruction_transforms_.size());
-  return this->reconstruction_transforms_[domain];
+  if (domain < this->reconstruction_transforms_.size()) {
+    return this->reconstruction_transforms_[domain];
+  }
+
+  // no transforms, just return identity
+  vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+  return transform;
 }
 
 //---------------------------------------------------------------------------
@@ -685,10 +690,17 @@ vnl_vector<double> Shape::get_global_correspondence_points_for_display()
       p[0] = worlds[i][j + 0];
       p[1] = worlds[i][j + 1];
       p[2] = worlds[i][j + 2];
-      double* pt = this->reconstruction_transforms_[i]->TransformPoint(p);
-      points[idx++] = pt[0];
-      points[idx++] = pt[1];
-      points[idx++] = pt[2];
+      if (this->reconstruction_transforms_.size() > i) {
+        double* pt = this->reconstruction_transforms_[i]->TransformPoint(p);
+        points[idx++] = pt[0];
+        points[idx++] = pt[1];
+        points[idx++] = pt[2];
+      }
+      else {
+        points[idx++] = p[0];
+        points[idx++] = p[1];
+        points[idx++] = p[2];
+      }
     }
   }
 
