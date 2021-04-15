@@ -24,9 +24,8 @@ def Run_Pipeline(args):
     datasetName = "supershapes2D_1mode-v0"
     outputDirectory = "Output/supershapes_1mode_contour/"
 
-    # TODO upload to data portal and download from there
-    generate_supershapes(outputDirectory + datasetName)
-    # CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
+    # See the generate_supershapes() function in this file for how the data is generated
+    CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
     contourFiles = sorted(glob.glob(outputDirectory + datasetName + "/contours/*.vtp"))
 
     pointDir = outputDirectory + 'shape_models/'
