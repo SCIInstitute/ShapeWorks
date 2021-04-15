@@ -100,7 +100,7 @@ public:
           if((*planeConsts)[i].ConstraintEval(pt)>0) stream << "CuttingPlane " << i << "/" << planeConsts->size() << ": " << (*planeConsts)[i].ConstraintEval(pt) << " gradient(c=1) " << (*planeConsts)[i].LagragianGradient(pt, 1).transpose() << std::endl;
       }
       for(size_t i = 0; i < sphereConsts->size(); i++){
-          if((*sphereConsts)[i].ConstraintEval(pt)>0) stream << "Sphere " << i << "/" << planeConsts->size() << ": " << (*sphereConsts)[i].ConstraintEval(pt)<< " gradient(c=1) " << (*sphereConsts)[i].LagragianGradient(pt, 1).transpose() << std::endl;
+          if((*sphereConsts)[i].ConstraintEval(pt)>0) stream << "Sphere " << i << "/" << planeConsts->size() << ": " << (*sphereConsts)[i].ConstraintEval(pt)<< " gradient(c=1) " << (*sphereConsts)[i].LagragianGradient(pt, pt, 1).transpose() << std::endl;
       }
       for(size_t i = 0; i < freeFormConsts->size(); i++){
           if((*freeFormConsts)[i].ConstraintEval(pt)>0) stream << "FreeForm " << i << "/" << planeConsts->size() << ": " << (*freeFormConsts)[i].ConstraintEval(pt) <<" gradient(c=1) " << (*freeFormConsts)[i].LagragianGradient(pt, 1).transpose() << std::endl;
@@ -154,16 +154,17 @@ public:
    }
 
    // Lagragian gradient computation
-   vnl_vector_fixed<double, 3> ConstraintsLagrangianGradient(const Point<double, 3> &pos, double C) const{
+   vnl_vector_fixed<double, 3> ConstraintsLagrangianGradient(const Point<double, 3> &pos, const Point<double, 3> &prepos, double C) const{
        Eigen::Vector3d pt; pt(0) = pos[0]; pt(1) = pos[1]; pt(2) = pos[2];
+       Eigen::Vector3d prept; prept(0) = prepos[0]; prept(1) = prepos[1]; prept(2) = prepos[2];
        Eigen::Vector3d grad = Eigen::Vector3d(0,0,0);
        std::stringstream stream;
        for(size_t i = 0; i < planeConsts->size(); i++){
-           if((*planeConsts)[i].ConstraintEval(pt)>0) stream << "CuttingPlane " << i << "/" << planeConsts->size() << ": " << (*planeConsts)[i].LagragianGradient(pt, C).transpose() << " ::: " << (*planeConsts)[i].ConstraintEval(pt) << std::endl;
+           //if((*planeConsts)[i].ConstraintEval(pt)>0) stream << "CuttingPlane " << i << "/" << planeConsts->size() << ": " << (*planeConsts)[i].LagragianGradient(pt, C).transpose() << " ::: " << (*planeConsts)[i].ConstraintEval(pt) << std::endl;
            grad += (*planeConsts)[i].LagragianGradient(pt, C);
        }
        for(size_t i = 0; i < sphereConsts->size(); i++){
-           grad += (*sphereConsts)[i].LagragianGradient(pt, C);
+           grad += (*sphereConsts)[i].LagragianGradient(prept, pt, C);
        }
        for(size_t i = 0; i < freeFormConsts->size(); i++){
            grad += (*freeFormConsts)[i].LagragianGradient(pt, C);

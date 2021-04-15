@@ -125,7 +125,7 @@ public:
     }
 
 
-private:
+protected:
   shapeworks::ConstraintType type;
 
   int sgn(double val) {
