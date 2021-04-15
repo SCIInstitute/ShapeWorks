@@ -48,7 +48,7 @@ public:
       Eigen::Vector3d ptcenter = center-pt;
       // If update is none, then return distance from center without considering the update
       if(update.dot(update) == 0){
-          return -ConstraintGradient(pt);
+          return ConstraintGradient(updpt);
       }
       Eigen::Vector3d proj = pt + ptcenter.dot(update) / update.dot(update) * update;
 
@@ -78,7 +78,7 @@ public:
       }
 
       // If intersections don't exist, then just return regular gradient.
-      return -ConstraintGradient(pt);
+      return ConstraintGradient(updpt);
   }
 
   double ConstraintEval(const Eigen::Vector3d &pt) const{
@@ -95,7 +95,7 @@ public:
       Eigen::Vector3d ptcenter = center-pt;
       // If update is none, then return distance from center without considering the update
       if(update.dot(update) == 0){
-          return -ConstraintEval(pt);
+          return ConstraintEval(updpt);
       }
       Eigen::Vector3d proj = pt + ptcenter.dot(update) / update.dot(update) * update;
 
@@ -125,7 +125,7 @@ public:
       }
 
       // If intersections don't exist, then just return regular gradient.
-      return -ConstraintEval(pt);
+      return ConstraintEval(updpt);
   }
 
   Eigen::Vector3d LagragianGradient(const Eigen::Vector3d &pt, const Eigen::Vector3d &updpt, double C){
