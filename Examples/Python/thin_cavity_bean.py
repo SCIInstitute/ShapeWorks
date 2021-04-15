@@ -25,8 +25,7 @@ def Run_Pipeline(args):
         os.makedirs(outputDirectory)
 
     # Download the dataset
-    # TODO Uncomment after fixing data portal upload
-    # CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
+    CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
     meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))
     
     # Select data if using subsample
