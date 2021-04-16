@@ -1,0 +1,100 @@
+<output_dir>
+    output/
+</output_dir>
+
+<pairwise_potential_type>
+   0
+</pairwise_potential_type>
+
+
+<number_of_particles>
+32
+</number_of_particles>
+
+<use_normals>
+0
+</use_normals>
+
+<attribute_scales>
+ 1.0 
+ 1.0 
+ 1.0
+</attribute_scales>
+
+<checkpointing_interval>
+5000
+</checkpointing_interval>
+
+<keep_checkpoints>
+0
+</keep_checkpoints>
+
+<iterations_per_split>
+10
+</iterations_per_split>
+
+<optimization_iterations>
+600
+</optimization_iterations>
+
+<use_shape_statistics_after>
+    4
+</use_shape_statistics_after>
+
+<starting_regularization>
+100
+</starting_regularization>
+
+<ending_regularization>
+0.1
+</ending_regularization>
+
+<domains_per_shape>
+1
+</domains_per_shape>
+
+<domain_type>
+contour
+</domain_type>
+
+<relative_weighting>
+1
+</relative_weighting>
+
+<initial_relative_weighting>
+0.01
+</initial_relative_weighting>
+
+<procrustes_interval>
+0
+</procrustes_interval>
+
+<procrustes_scaling>
+0
+</procrustes_scaling>
+
+<save_init_splits>
+0
+</save_init_splits>
+
+<mesh_based_attributes>
+1
+</mesh_based_attributes>
+
+
+<verbosity>
+3
+</verbosity>
+
+<use_xyz>
+1
+</use_xyz>
+
+<inputs>
+    ss_0.vtp
+    ss_1.vtp
+    ss_2.vtp
+    ss_3.vtp
+    ss_4.vtp
+</inputs>
+
