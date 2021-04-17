@@ -179,7 +179,7 @@ namespace itk
                   upd_pt[n] = pt[n] - gradient[n];
               }
               double c = 1e0;
-              double multiplier = 2;
+              double multiplier = 4;
               m_ParticleSystem->GetDomain(dom)->GetConstraints()->UpdateZs(upd_pt, c);
               VectorType constraint_energy = m_ParticleSystem->GetDomain(dom)->GetConstraints()->ConstraintsLagrangianGradient(upd_pt,pt, c);
               if(constraint_energy.magnitude() > multiplier*gradmag){

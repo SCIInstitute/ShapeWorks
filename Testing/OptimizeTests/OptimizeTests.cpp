@@ -38,7 +38,7 @@ static void prep_distance_transform(std::string input, std::string output)
   writer->SetUseCompression(true);
   writer->Update();
 }
-/*
+
 TEST(OptimizeTests, sample) 
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sphere");
@@ -384,7 +384,7 @@ TEST(OptimizeTests, sphereConstraint)
     }
   }
 }
-*/
+
 TEST(OptimizeTests, sphereCuttingPlaneConstraint)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sphere_cutting_plane_constraint");
@@ -441,7 +441,7 @@ TEST(OptimizeTests, sphereCuttingPlaneConstraint)
     }
   }
 }
-/*
+
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, embedded_python_test) {
   pythonEnvSetup();
@@ -505,4 +505,3 @@ TEST(OptimizeTests, project_test) {
   double value = values[values.size() - 1];
   ASSERT_LT(value, 100);
 }
-*/
