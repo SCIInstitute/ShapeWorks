@@ -299,33 +299,43 @@ TEST(OptimizeTests, cutting_plane_test) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
 
-  // Check the modes of variation.  The first mode should contain almost all the variation and the 2nd
-  // and higher modes should contain very little
-  // ASSERT_GT(values[values.size() - 1], 2500);
-  // ASSERT_LT(values[values.size() - 2], 150);
+  // Check that points don't violate the constraints
+  size_t domains_per_shape = app.GetSampler()->GetParticleSystem()->GetDomainsPerShape();
+  size_t num_doms = app.GetSampler()->GetParticleSystem()->GetNumberOfDomains();
 
-  // next check that the cutting plane works.  Takes the means of the points and tests whether they violate the cutting plane on the first domain.
-  auto points = stats.Mean();
-  //app.GetSampler()->GetParticleSystem()->GetDomain(0)->GetConstraints()->PrintAll();
+  std::vector<std::vector<itk::FixedArray<double, 3> > > lists;
+
+  for (size_t domain = 0; domain < num_doms; domain++) {
+    std::vector<itk::FixedArray<double, 3> > list;
+    for (auto k=0; k<app.GetSampler()->GetParticleSystem()->GetPositions(domain)->GetSize(); k++) {
+      list.push_back(app.GetSampler()->GetParticleSystem()->GetPositions(domain)->Get(k));
+    }
+    lists.push_back(list);
+  }
+
   std::vector<std::string> types;
   types.push_back("plane");
   types.push_back("sphere");
   types.push_back("free form");
-  for (int i = 0; i < points.size(); i += 3) {
-    itk::FixedArray<double, 3> p;
-    p[0] = points[i]; p[1] = points[i+1]; p[2] = points[i+2];
+  for (size_t domain = 0; domain < num_doms; domain++){
+    for(size_t i = 0; i < lists[domain].size(); i++){
+        itk::FixedArray<double, 3> p = lists[domain][i];
 
-    std::vector<std::vector<double> > ViolationReport = app.GetSampler()->GetParticleSystem()->GetDomain(0)->GetConstraints()->ViolationReportData(p);
+        std::vector<std::vector<double> > ViolationReport = app.GetSampler()->GetParticleSystem()->GetDomain(domain)->GetConstraints()->ViolationReportData(p);
 
-    double slack = 2e-1;
+        double slack = 1.5e-1;
 
-    for (int j = 0; j < 3; j++) {
-        for (int k = 0; k < ViolationReport[j].size(); k++) {
-            if(ViolationReport[j][k] > slack) std::cout << types[j] << " " << k << " " << ViolationReport[j][k] << " violation by point " << p<< std::endl; //else std::cout << types[j] << " " << k << " " << ViolationReport[j][k] << " good"<< std::endl;
-            ASSERT_TRUE(!(ViolationReport[j][k] > slack));
+        for (int j = 0; j < 3; j++) {
+            for (int k = 0; k < ViolationReport[j].size(); k++) {
+                if(ViolationReport[j][k] > slack)
+                    std::cout << "VIOLATION: Shape# " << int(domain/domains_per_shape) << " domain# " << domain%domains_per_shape << " point# " << i << " " << types[j] << " constraint " << k << " of magnitude " << ViolationReport[j][k] << " by point " << p << std::endl;
+                //else std::cout << "Good point: Shape# " << int(domain/domains_per_shape) << " domain# " << domain%domains_per_shape  << " point# " << i << " " << types[j] << " constraint " << k << " with evaluation " << ViolationReport[j][k] << " by point " << p << std::endl;
+                ASSERT_TRUE(!(ViolationReport[j][k] > slack));
+            }
         }
     }
   }
+
 }
 
 TEST(OptimizeTests, sphereConstraint)
@@ -361,28 +371,43 @@ TEST(OptimizeTests, sphereConstraint)
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
 
-  // next check that the cutting plane works.  Takes the means of the points and tests whether they violate the cutting plane on the first domain.
-  auto points = stats.Mean();
-  //app.GetSampler()->GetParticleSystem()->GetDomain(0)->GetConstraints()->PrintAll();
+  // Check that points don't violate the constraints
+  size_t domains_per_shape = app.GetSampler()->GetParticleSystem()->GetDomainsPerShape();
+  size_t num_doms = app.GetSampler()->GetParticleSystem()->GetNumberOfDomains();
+
+  std::vector<std::vector<itk::FixedArray<double, 3> > > lists;
+
+  for (size_t domain = 0; domain < num_doms; domain++) {
+    std::vector<itk::FixedArray<double, 3> > list;
+    for (auto k=0; k<app.GetSampler()->GetParticleSystem()->GetPositions(domain)->GetSize(); k++) {
+      list.push_back(app.GetSampler()->GetParticleSystem()->GetPositions(domain)->Get(k));
+    }
+    lists.push_back(list);
+  }
+
   std::vector<std::string> types;
   types.push_back("plane");
   types.push_back("sphere");
   types.push_back("free form");
-  for (int i = 0; i < points.size(); i += 3) {
-    itk::FixedArray<double, 3> p;
-    p[0] = points[i]; p[1] = points[i+1]; p[2] = points[i+2];
+  for (size_t domain = 0; domain < num_doms; domain++){
+    for(size_t i = 0; i < lists[domain].size(); i++){
+        itk::FixedArray<double, 3> p = lists[domain][i];
 
-    std::vector<std::vector<double> > ViolationReport = app.GetSampler()->GetParticleSystem()->GetDomain(0)->GetConstraints()->ViolationReportData(p);
+        std::vector<std::vector<double> > ViolationReport = app.GetSampler()->GetParticleSystem()->GetDomain(domain)->GetConstraints()->ViolationReportData(p);
 
-    double slack = 0e-1;
+        double slack = 1.5e-1;
 
-    for (int j = 0; j < 3; j++) {
-        for (int k = 0; k < ViolationReport[j].size(); k++) {
-            if(ViolationReport[j][k] > slack) std::cout << types[j] << " " << k << " " << ViolationReport[j][k] << " violation by point " << p<< std::endl; //else std::cout << types[j] << " " << k << " " << ViolationReport[j][k] << " good"<< std::endl;
-            ASSERT_TRUE(!(ViolationReport[j][k] > slack));
+        for (int j = 0; j < 3; j++) {
+            for (int k = 0; k < ViolationReport[j].size(); k++) {
+                if(ViolationReport[j][k] > slack)
+                    std::cout << "VIOLATION: Shape# " << int(domain/domains_per_shape) << " domain# " << domain%domains_per_shape << " point# " << i << " " << types[j] << " constraint " << k << " of magnitude " << ViolationReport[j][k] << " by point " << p << std::endl;
+                //else std::cout << "Good point: Shape# " << int(domain/domains_per_shape) << " domain# " << domain%domains_per_shape  << " point# " << i << " " << types[j] << " constraint " << k << " with evaluation " << ViolationReport[j][k] << " by point " << p << std::endl;
+                ASSERT_TRUE(!(ViolationReport[j][k] > slack));
+            }
         }
     }
   }
+
 }
 
 TEST(OptimizeTests, sphereCuttingPlaneConstraint)
@@ -418,28 +443,43 @@ TEST(OptimizeTests, sphereCuttingPlaneConstraint)
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
 
-  // next check that the cutting plane works.  Takes the means of the points and tests whether they violate the cutting plane on the first domain.
-  auto points = stats.Mean();
-  //app.GetSampler()->GetParticleSystem()->GetDomain(0)->GetConstraints()->PrintAll();
+  // Check that points don't violate the constraints
+  size_t domains_per_shape = app.GetSampler()->GetParticleSystem()->GetDomainsPerShape();
+  size_t num_doms = app.GetSampler()->GetParticleSystem()->GetNumberOfDomains();
+
+  std::vector<std::vector<itk::FixedArray<double, 3> > > lists;
+
+  for (size_t domain = 0; domain < num_doms; domain++) {
+    std::vector<itk::FixedArray<double, 3> > list;
+    for (auto k=0; k<app.GetSampler()->GetParticleSystem()->GetPositions(domain)->GetSize(); k++) {
+      list.push_back(app.GetSampler()->GetParticleSystem()->GetPositions(domain)->Get(k));
+    }
+    lists.push_back(list);
+  }
+
   std::vector<std::string> types;
   types.push_back("plane");
   types.push_back("sphere");
   types.push_back("free form");
-  for (int i = 0; i < points.size(); i += 3) {
-    itk::FixedArray<double, 3> p;
-    p[0] = points[i]; p[1] = points[i+1]; p[2] = points[i+2];
+  for (size_t domain = 0; domain < num_doms; domain++){
+    for(size_t i = 0; i < lists[domain].size(); i++){
+        itk::FixedArray<double, 3> p = lists[domain][i];
 
-    std::vector<std::vector<double> > ViolationReport = app.GetSampler()->GetParticleSystem()->GetDomain(0)->GetConstraints()->ViolationReportData(p);
+        std::vector<std::vector<double> > ViolationReport = app.GetSampler()->GetParticleSystem()->GetDomain(domain)->GetConstraints()->ViolationReportData(p);
 
-    double slack = 2e-0;
+        double slack = 1.5e-1;
 
-    for (int j = 0; j < 3; j++) {
-        for (int k = 0; k < ViolationReport[j].size(); k++) {
-            if(ViolationReport[j][k] > slack) std::cout << types[j] << " " << k << " " << ViolationReport[j][k] << " violation by point " << p<< std::endl; //else std::cout << types[j] << " " << k << " " << ViolationReport[j][k] << " good"<< std::endl;
-            ASSERT_TRUE(!(ViolationReport[j][k] > slack));
+        for (int j = 0; j < 3; j++) {
+            for (int k = 0; k < ViolationReport[j].size(); k++) {
+                if(ViolationReport[j][k] > slack)
+                    std::cout << "VIOLATION: Shape# " << int(domain/domains_per_shape) << " domain# " << domain%domains_per_shape << " point# " << i << " " << types[j] << " constraint " << k << " of magnitude " << ViolationReport[j][k] << " by point " << p << std::endl;
+                //else std::cout << "Good point: Shape# " << int(domain/domains_per_shape) << " domain# " << domain%domains_per_shape  << " point# " << i << " " << types[j] << " constraint " << k << " with evaluation " << ViolationReport[j][k] << " by point " << p << std::endl;
+                ASSERT_TRUE(!(ViolationReport[j][k] > slack));
+            }
         }
     }
   }
+
 }
 
 //---------------------------------------------------------------------------

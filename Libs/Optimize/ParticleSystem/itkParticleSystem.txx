@@ -293,13 +293,6 @@ void ParticleSystem<VDimension>::AdvancedAllParticleSplitting(double epsilon)
       list.push_back(GetPositions(domain)->Get(k));
     }
     lists.push_back(list);
-    // Debuggg
-    /*
-    std::cout << "Domain " << domain << " Curr Pos ";
-    for(size_t i = 0; i < list.size(); i++)
-        std::cout << list[i] << " ";
-    std::cout << " List size " << list.size() << std::endl;
-    */
   }
 
   /*
