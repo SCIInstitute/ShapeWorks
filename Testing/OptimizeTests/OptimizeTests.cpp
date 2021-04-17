@@ -395,7 +395,7 @@ TEST(OptimizeTests, sphereConstraint)
 
         std::vector<std::vector<double> > ViolationReport = app.GetSampler()->GetParticleSystem()->GetDomain(domain)->GetConstraints()->ViolationReportData(p);
 
-        double slack = 4e-1;
+        double slack = 3.5e-1;
 
         for (int j = 0; j < 3; j++) {
             for (int k = 0; k < ViolationReport[j].size(); k++) {
