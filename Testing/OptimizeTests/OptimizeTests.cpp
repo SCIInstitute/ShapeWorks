@@ -327,7 +327,7 @@ TEST(OptimizeTests, cutting_plane_test) {
     }
   }
 }
-*/
+
 TEST(OptimizeTests, sphereConstraint)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sphere_constraint");
@@ -375,6 +375,63 @@ TEST(OptimizeTests, sphereConstraint)
     std::vector<std::vector<double> > ViolationReport = app.GetSampler()->GetParticleSystem()->GetDomain(0)->GetConstraints()->ViolationReportData(p);
 
     double slack = 0e-1;
+
+    for (int j = 0; j < 3; j++) {
+        for (int k = 0; k < ViolationReport[j].size(); k++) {
+            if(ViolationReport[j][k] > slack) std::cout << types[j] << " " << k << " " << ViolationReport[j][k] << " violation by point " << p<< std::endl; //else std::cout << types[j] << " " << k << " " << ViolationReport[j][k] << " good"<< std::endl;
+            ASSERT_TRUE(!(ViolationReport[j][k] > slack));
+        }
+    }
+  }
+}
+*/
+TEST(OptimizeTests, sphereCuttingPlaneConstraint)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sphere_cutting_plane_constraint");
+  chdir(test_location.c_str());
+
+  // prep/groom
+  prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
+  prep_distance_transform("sphere20.nrrd", "sphere20_DT.nrrd");
+  prep_distance_transform("sphere30.nrrd", "sphere30_DT.nrrd");
+  prep_distance_transform("sphere40.nrrd", "sphere40_DT.nrrd");
+
+  // make sure we clean out at least one output file
+  std::remove("output/sphere10_DT_world.particles");
+
+  // run with parameter file
+  std::string paramfile = std::string("sphere_cutting_plane_constraint.xml");
+  Optimize app;
+  OptimizeParameterFile param;
+  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
+  app.Run();
+
+  // compute stats
+  ParticleShapeStatistics stats;
+  stats.ReadPointFiles("analyze.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+
+  // next check that the cutting plane works.  Takes the means of the points and tests whether they violate the cutting plane on the first domain.
+  auto points = stats.Mean();
+  //app.GetSampler()->GetParticleSystem()->GetDomain(0)->GetConstraints()->PrintAll();
+  std::vector<std::string> types;
+  types.push_back("plane");
+  types.push_back("sphere");
+  types.push_back("free form");
+  for (int i = 0; i < points.size(); i += 3) {
+    itk::FixedArray<double, 3> p;
+    p[0] = points[i]; p[1] = points[i+1]; p[2] = points[i+2];
+
+    std::vector<std::vector<double> > ViolationReport = app.GetSampler()->GetParticleSystem()->GetDomain(0)->GetConstraints()->ViolationReportData(p);
+
+    double slack = 2e-1;
 
     for (int j = 0; j < 3; j++) {
         for (int k = 0; k < ViolationReport[j].size(); k++) {
