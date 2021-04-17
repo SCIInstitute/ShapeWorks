@@ -65,9 +65,10 @@ public:
   void load_original_files(std::vector<std::string> filenames);
 
   /// load groomed files
-  void load_groomed_files(std::vector<std::string> file_names, double iso);
+  void load_groomed_files(std::vector<std::string> file_names, double iso, int domains_per_shape);
 
-  bool load_point_files(std::vector<std::string> local, std::vector<std::string> world);
+  bool load_point_files(std::vector<std::string> local, std::vector<std::string> world,
+                        int domains_per_shape);
 
   bool update_particles(std::vector<StudioParticles> particles);
 

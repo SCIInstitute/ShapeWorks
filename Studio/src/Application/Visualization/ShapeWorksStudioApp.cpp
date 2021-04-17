@@ -939,6 +939,9 @@ void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_project_changed()
 {
+  if (this->is_loading_) {
+    return;
+  }
   this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->session_->original_present());
   this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->session_->groomed_present());
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
@@ -1196,6 +1199,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->new_session();
   this->handle_message("Loading Project: " + filename.toStdString());
   this->handle_progress(-1);
+  this->is_loading_ = true;
 
   try {
     if (!this->session_->load_project(filename)) {
@@ -1217,7 +1221,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
       "Some features may not work and some settings may be incorrect or missing");
   }
 
-  this->is_loading_ = true;
   this->analysis_tool_->reset_stats();
   this->analysis_tool_->initialize_mesh_warper();
 
@@ -1264,6 +1267,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->on_zoom_slider_valueChanged();
 
   this->is_loading_ = false;
+  this->handle_project_changed();
 
   if (this->session_->is_light_project()) {
     this->reset_num_viewers();

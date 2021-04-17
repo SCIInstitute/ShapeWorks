@@ -76,7 +76,6 @@ private:
   int number_of_domains_ = 0;
 
   std::vector<std::string> segmentation_filenames_;
-  std::vector<std::string> mesh_filenames_;
   std::vector<std::string> groomed_filenames_;
   std::vector<std::string> local_particle_filenames_;
   std::vector<std::string> world_particle_filenames_;
