@@ -37,6 +37,7 @@ namespace itk
   }
 
   double MeshDomain::GetMaxDiameter() const {
+    //todo should this not be the length of the bounding box diagonal?
     PointType boundingBoxSize = meshWrapper->GetMeshUpperBound() - meshWrapper->GetMeshLowerBound();
     double max = 0;
     for (int d = 0; d < 3; d++) {

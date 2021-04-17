@@ -34,6 +34,7 @@ public:
   virtual bool ApplyConstraints(PointType& p, int idx, bool dbg = false) const = 0;
 
   /** Applies the update to the point and returns the new point position. */
+  //todo update should be const?
   virtual PointType UpdateParticlePosition(const PointType &point, int idx, vnl_vector_fixed<double, DIMENSION> &update) const = 0;
 
   virtual void InvalidateParticlePosition(int idx) const {
@@ -51,7 +52,6 @@ public:
   virtual double Distance(const PointType &a, int idx_a,
                           const PointType &b, int idx_b,
                           vnl_vector_fixed<double, DIMENSION> *out_grad=nullptr) const {
-    //TODO make sure image domain is working as before after this change
     if(out_grad != nullptr) {
       for(int i=0; i<DIMENSION; i++) {
         (*out_grad)[i] = a[i] - b[i];
@@ -104,6 +104,20 @@ public:
   virtual shapeworks::DomainType GetDomainType() const = 0;
 
   std::shared_ptr<Constraints> GetConstraints() const {return constraints;}
+
+  // Use `random` to advance a particle and return a new position
+  virtual PointType GetPositionAfterSplit(const PointType& pt,
+                                          const vnl_vector_fixed<double, 3>& random, double epsilon) const {
+    // todo this has been copied from itkParticleSystem::AdvancedAllParticleSplitting.
+    //  Ideally, we should compute a direction that is "consistent" depending on the domain type and use the
+    //  `UpdateParticlePosition` API to advance the particle. See ContourDomain for an example. Leaving this be for
+    //  now because we'd have to retest all MeshDomain and ImageDomain use cases if this behaviour changes.
+    PointType new_pt;
+    for (unsigned int k = 0; k < 3; k++) {
+      new_pt[k] = pt[k] + epsilon * random[k] / 5.;
+    }
+    return new_pt;
+  }
 
 protected:
 

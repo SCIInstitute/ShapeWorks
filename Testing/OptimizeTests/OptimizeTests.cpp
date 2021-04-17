@@ -439,12 +439,12 @@ TEST(OptimizeTests, mesh_geodesics_test) {
 
   // sample a bunch of points (deterministically) on the sphere and check whether the returned
   // geodesic distance is close to the analytically computed value
-  for(int i=0; i<100; i++) {
-    for(int j=0; j<100; j++) {
+  for (int i = 0; i < 100; i++) {
+    for (int j = 0; j < 100; j++) {
       const double theta0 = M_2PI * (i % 10) / 10.0;
-      const double phi0   = M_2PI * (i / 10) / 10.0;
+      const double phi0 = M_2PI * (i / 10) / 10.0;
       const double theta1 = M_2PI * (j % 10) / 10.0;
-      const double phi1   = M_2PI * (j / 10) / 10.0;
+      const double phi1 = M_2PI * (j / 10) / 10.0;
 
       const auto pt_a = polar2cart(theta0, phi0);
       const auto pt_b = polar2cart(theta1, phi1);
@@ -457,4 +457,36 @@ TEST(OptimizeTests, mesh_geodesics_test) {
       ASSERT_NEAR(computed, truth, 0.06);
     }
   }
+}
+TEST(OptimizeTests, contour_domain_test) {
+
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/supershapes_2d");
+  chdir(test_location.c_str());
+
+  // make sure we clean out at least one output file
+  std::remove("output/ss_0_world.particles");
+
+  // run with parameter file
+  std::string paramfile = std::string("contour_domain_test.xml");
+  Optimize app;
+  OptimizeParameterFile param;
+  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
+  app.Run();
+
+  // compute stats
+  ParticleShapeStatistics stats;
+  stats.ReadPointFiles("analyze.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+
+  // Check the modes of variation.  The first mode should contain almost all the variation and the 2nd
+  // and higher modes should contain very little
+  ASSERT_GT(values[values.size() - 1], 2000.0);
+  ASSERT_LT(values[values.size() - 2], 1.0);
 }

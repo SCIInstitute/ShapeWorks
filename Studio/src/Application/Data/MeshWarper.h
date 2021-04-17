@@ -4,7 +4,7 @@
  * @file MeshWarper.h
  * @brief Mesh warping capability
  *
- * The MeshWarper provides an object to warp meshs for surface reconstruction
+ * The MeshWarper provides an object to warp meshes for surface reconstruction
  */
 
 #include <vector>
@@ -32,17 +32,27 @@ public:
 
 private:
 
+  //! Add particles as vertices to reference mesh
+  void add_particle_vertices();
+
+  void find_good_particles();
+
   void check_warp_ready();
+
+  Eigen::MatrixXd remove_bad_particles(const Eigen::MatrixXd& particles);
 
   Eigen::MatrixXd vertices_;
   Eigen::MatrixXi faces_;
   Eigen::MatrixXd points_;
   Eigen::MatrixXd warp_;
 
+  std::vector<int> good_particles_;
+
   bool needs_warp_ = true;
 
   bool warp_available_ = false;
 
+  vtkSmartPointer<vtkPolyData> incoming_reference_mesh_;
   vtkSmartPointer<vtkPolyData> reference_mesh_;
   vnl_vector<double> reference_particles_;
 

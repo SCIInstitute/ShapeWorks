@@ -1442,6 +1442,8 @@ void Optimize::WritePointFiles(std::string iter_prefix)
     str = "with " + st.str() + "points...";
     this->PrintStartMessage(str, 1);
     this->PrintDoneMessage(1);
+
+
   }   // end for files
   this->PrintDoneMessage();
 }
@@ -1991,6 +1993,14 @@ void Optimize::AddMesh(vtkSmartPointer<vtkPolyData> poly_data)
                                                                    m_geodesic_cache_size_multiplier);
     this->m_sampler->AddMesh(mesh);
   }
+  this->m_num_shapes++;
+  this->m_spacing = 0.5;
+}
+
+//---------------------------------------------------------------------------
+void Optimize::AddContour(vtkSmartPointer<vtkPolyData> poly_data)
+{
+  this->m_sampler->AddContour(poly_data);
   this->m_num_shapes++;
   this->m_spacing = 0.5;
 }

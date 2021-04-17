@@ -248,7 +248,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
     double kappa = this->ComputeKappa(Dij, d);
 
     VectorType r;
-    system->GetDomain(d)->Distance(
+    const double distance = system->GetDomain(d)->Distance(
             pos, idx,
             m_CurrentNeighborhood[i].Point, m_CurrentNeighborhood[i].Index,
             &r
