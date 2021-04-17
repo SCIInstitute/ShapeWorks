@@ -361,11 +361,28 @@ TEST(OptimizeTests, sphereConstraint)
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
 
-  // Check the modes of variation.  The first mode should contain almost all the variation and the 2nd
-  // and higher modes should contain very little
-  //ASSERT_GT(values[values.size() - 1], 2500);
-  //ASSERT_LT(values[values.size() - 2], 150);
-  ASSERT_TRUE(true);
+  // next check that the cutting plane works.  Takes the means of the points and tests whether they violate the cutting plane on the first domain.
+  auto points = stats.Mean();
+  //app.GetSampler()->GetParticleSystem()->GetDomain(0)->GetConstraints()->PrintAll();
+  std::vector<std::string> types;
+  types.push_back("plane");
+  types.push_back("sphere");
+  types.push_back("free form");
+  for (int i = 0; i < points.size(); i += 3) {
+    itk::FixedArray<double, 3> p;
+    p[0] = points[i]; p[1] = points[i+1]; p[2] = points[i+2];
+
+    std::vector<std::vector<double> > ViolationReport = app.GetSampler()->GetParticleSystem()->GetDomain(0)->GetConstraints()->ViolationReportData(p);
+
+    double slack = 0e-1;
+
+    for (int j = 0; j < 3; j++) {
+        for (int k = 0; k < ViolationReport[j].size(); k++) {
+            if(ViolationReport[j][k] > slack) std::cout << types[j] << " " << k << " " << ViolationReport[j][k] << " violation by point " << p<< std::endl; //else std::cout << types[j] << " " << k << " " << ViolationReport[j][k] << " good"<< std::endl;
+            ASSERT_TRUE(!(ViolationReport[j][k] > slack));
+        }
+    }
+  }
 }
 /*
 //---------------------------------------------------------------------------
