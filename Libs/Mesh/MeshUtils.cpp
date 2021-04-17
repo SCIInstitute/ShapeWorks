@@ -112,7 +112,6 @@ Eigen::MatrixXd MeshUtils::generateWarpMatrix(Eigen::MatrixXd TV, Eigen::MatrixX
   // list of points --> list of singleton lists
   std::vector<std::vector<int> > S;
   igl::matrix_to_list(b,S);
-
   // Technically k should equal 3 for smooth interpolation in 3d, but 2 is
   // faster and looks OK
   const int k = 2;
