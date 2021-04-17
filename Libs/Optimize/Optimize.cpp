@@ -1437,6 +1437,7 @@ void Optimize::WritePointFiles(std::string iter_prefix)
     out.close();
     outw.close();
 
+
     std::stringstream st;
     st << counter;
     str = "with " + st.str() + "points...";
