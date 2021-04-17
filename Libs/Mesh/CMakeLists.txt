@@ -118,3 +118,7 @@ INSTALL(TARGETS ReconstructSamplesAlongPCAModes RUNTIME DESTINATION bin)
 ADD_EXECUTABLE(RemoveFidsDTLeakage RemoveFidsDTLeakage.cxx)
 TARGET_LINK_LIBRARIES(RemoveFidsDTLeakage ${ITK_LIBRARIES} Mesh tinyxml)
 INSTALL(TARGETS RemoveFidsDTLeakage RUNTIME DESTINATION bin)
+
+ADD_EXECUTABLE(WarpLandmarks WarpLandmarks.cxx)
+TARGET_LINK_LIBRARIES(WarpLandmarks ${ITK_LIBRARIES} Mesh tinyxml)
+INSTALL(TARGETS WarpLandmarks RUNTIME DESTINATION bin)
