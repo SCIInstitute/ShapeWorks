@@ -268,6 +268,42 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
       }
   }
 
+  const auto domains_per_shape = system->GetDomainsPerShape();
+  const auto domain_base = d / domains_per_shape;
+  const auto domain_sub = d % domains_per_shape;
+  for(int offset=0; offset<domains_per_shape; offset++) {
+    if(offset == domain_sub) {
+      continue;
+    }
+
+    const auto other_d = domains_per_shape*domain_base + offset;
+    const double neighborhood_radius = m_CurrentSigma * this->GetNeighborhoodToSigmaRatio();
+    std::vector<double> weights;
+    typename ParticleSystemType::PointVectorType other_neighborhood =
+            system->FindNeighborhoodPoints(pos, idx, weights, neighborhood_radius, other_d);
+
+    for(int j=0; j<other_neighborhood.size(); j++) {
+      double mc = m_MeanCurvatureCache->operator[](other_d)->operator[](other_neighborhood[j].Index);
+      double Dij = (mymc + mc) * 0.5; // average my curvature with my neighbors
+      double kappa = this->ComputeKappa(Dij, other_d);
+
+      VectorType r;
+      for (unsigned int n = 0; n < VDimension; n++) {
+        // Note that the Neighborhood object has already filtered the
+        // neighborhood for points whose normals differ by > 90 degrees.
+        r[n] = (pos[n] - other_neighborhood[j].Point[n]) * kappa;
+      }
+
+      double q = kappa * exp( -dot_product(r, r) * sigma2inv);
+      A += q;
+
+      for (unsigned int n = 0; n < VDimension; n++)
+      {
+        gradE[n] += weights[j] * r[n] * q;
+      }
+    }
+  }
+
   double p = 0.0;
   if (A > epsilon) {    
     p = -1.0 / (A * m_CurrentSigma * m_CurrentSigma);
