@@ -28,6 +28,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
                 const typename ParticleSystemType::PointVectorType &neighborhood, 
                 const ParticleDomain *domain,
                 const std::vector<double> &weights,
+                const std::vector<double> &distances,
                 const PointType &pos,
                 double initial_sigma,
                 double precision,
@@ -65,7 +66,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 
       avgKappa += kappa;
       
-      double sqrdistance = domain->SquaredDistance(pos, idx, neighborhood[i].Point, neighborhood[i].Index);
+      double sqrdistance = distances[i] * distances[i];
       sqrdistance = sqrdistance * kappa * kappa;
 
       double alpha = exp(-sqrdistance / sigma22) * weights[i];
@@ -161,11 +162,9 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   
   
   // Get the neighborhood surrounding the point "pos".
-   m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, idx, m_CurrentWeights, neighborhood_radius, d);
+   std::vector<double> distances;
+   m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, idx, m_CurrentWeights, distances, neighborhood_radius, d);
 
-   //    m_CurrentNeighborhood
-   //   = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
-  
   // Compute the weights based on angle between the neighbors and the center.
    //    this->ComputeAngularWeights(pos,m_CurrentNeighborhood,domain, m_CurrentWeights);
   
@@ -174,7 +173,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   // In these cases, an error != 0 is returned, and we try the estimation again
   // with an increased neighborhood radius.
   int err;
-  m_CurrentSigma = EstimateSigma(idx, d, m_CurrentNeighborhood, system->GetDomain(d), m_CurrentWeights, pos,
+  m_CurrentSigma = EstimateSigma(idx, d, m_CurrentNeighborhood, system->GetDomain(d), m_CurrentWeights, distances, pos,
                                   m_CurrentSigma, epsilon, err, m_avgKappa);
 
   while (err != 0)
@@ -194,12 +193,10 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
       m_CurrentSigma = neighborhood_radius / this->GetNeighborhoodToSigmaRatio();
       }
     
-    m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, idx, m_CurrentWeights,
+    m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, idx, m_CurrentWeights, distances,
                                                                neighborhood_radius, d);
-    //  m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
-    //    this->ComputeAngularWeights(pos,m_CurrentNeighborhood,domain,m_CurrentWeights);
-    
-    m_CurrentSigma = EstimateSigma(idx, d, m_CurrentNeighborhood, system->GetDomain(d), m_CurrentWeights, pos,
+
+    m_CurrentSigma = EstimateSigma(idx, d, m_CurrentNeighborhood, system->GetDomain(d), m_CurrentWeights, distances, pos,
                                    m_CurrentSigma, epsilon, err, m_avgKappa);
     } // done while err
 
@@ -209,10 +206,8 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
     {
     m_CurrentSigma = this->GetMaximumNeighborhoodRadius() / this->GetNeighborhoodToSigmaRatio();
     neighborhood_radius = this->GetMaximumNeighborhoodRadius();
-        m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, idx,m_CurrentWeights,
+        m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, idx,m_CurrentWeights, distances,
                                                                neighborhood_radius, d);
-        //  m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
-        //      this->ComputeAngularWeights(pos,m_CurrentNeighborhood,domain,m_CurrentWeights);
     }
 
   // Make sure sigma doesn't change too quickly!
@@ -270,7 +265,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   }
 
   double p = 0.0;
-  if (A > epsilon) {    
+  if (A > epsilon) {
     p = -1.0 / (A * m_CurrentSigma * m_CurrentSigma);
   }
   

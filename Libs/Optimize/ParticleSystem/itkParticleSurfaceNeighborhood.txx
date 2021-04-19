@@ -22,7 +22,9 @@ template <class TImage>
 typename ParticleSurfaceNeighborhood<TImage>::PointVectorType
 ParticleSurfaceNeighborhood<TImage>
 ::FindNeighborhoodPoints(const PointType &center, int idx,
-                         std::vector<double> &weights, double radius) const
+                         std::vector<double> &weights,
+                         std::vector<double> &distances,
+                         double radius) const
 {
   const auto *domain = this->GetDomain();
 
@@ -32,6 +34,7 @@ ParticleSurfaceNeighborhood<TImage>
   }
 
   weights.clear();
+  distances.clear();
 
   // Compute bounding box of the given hypersphere.
   PointType l, u;
@@ -53,14 +56,19 @@ ParticleSurfaceNeighborhood<TImage>
   // Add any point whose distance from center is less than radius to the return list
   for (auto it = pointlist.begin(); it != pointlist.end(); it++)
   {
-    if(idx == (*it)->Index) {
+    const auto& pt_b = (*it)->Point;
+    const auto& idx_b = (*it)->Index;
+
+    // we are not a neighbor of ourself.
+    if(idx_b == idx) {
       continue;
     }
-    double distance = this->GetDomain()->Distance(center, idx, (*it)->Point, (*it)->Index);
 
-    if (distance < radius)
+    double distance;
+    if (domain->IsWithinDistance(center, idx, pt_b, idx_b, radius, distance))
     {
       ret.push_back( **it );
+      distances.push_back(distance);
 
       //todo change the APIs so don't have to pass a std::vector<double> of 1s whenever weighting is disabled
       if(!m_WeightingEnabled) {
@@ -85,6 +93,17 @@ ParticleSurfaceNeighborhood<TImage>
     }
   }
   return ret;
+}
+
+template <class TImage>
+typename ParticleSurfaceNeighborhood<TImage>::PointVectorType
+ParticleSurfaceNeighborhood<TImage>
+::FindNeighborhoodPoints(const PointType &center, int idx,
+                         std::vector<double> &weights,
+                         double radius) const
+{
+  std::vector<double> distances;
+  return this->FindNeighborhoodPoints(center, idx, weights, distances, radius);
 }
 
 }

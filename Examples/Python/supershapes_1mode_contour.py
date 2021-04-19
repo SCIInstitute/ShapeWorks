@@ -67,7 +67,7 @@ def Run_Pipeline(args):
     if args.interactive != 0:
         input("Press Enter to continue")
 
-    launchShapeWorksStudio(pointDir, contourFiles, localPointFiles, worldPointFiles)
+    launchShapeWorksStudio(pointDir, [], localPointFiles, worldPointFiles)
 
 def generate_supershapes(out_dir):
     m = 6

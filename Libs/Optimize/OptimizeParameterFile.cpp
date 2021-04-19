@@ -370,6 +370,12 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
   elem = docHandle->FirstChild("use_shape_statistics_after").Element();
   if (elem) { optimize->SetUseShapeStatisticsAfter(atof(elem->GetText())); }
 
+  elem = docHandle->FirstChild("geodesics_enabled").Element();
+  if (elem) { optimize->SetGeodesicsEnabled((bool) atoi(elem->GetText())); }
+
+  elem = docHandle->FirstChild("geodesics_cache_size_multiplier").Element();
+  if (elem) { optimize->SetGeodesicsCacheSizeMultiplier((size_t) atol(elem->GetText())); }
+
   return true;
 }
 
@@ -512,9 +518,8 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
       auto poly_data = mesh.getVTKMesh();
 
       if (poly_data) {
-        optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data));
-      }
-      else {
+        optimize->AddMesh(poly_data);
+      } else {
         std::cerr << "Failed to read " << meshFiles[index] << "\n";
         return false;
       }

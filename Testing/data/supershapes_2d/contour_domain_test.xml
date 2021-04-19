@@ -30,11 +30,11 @@
 </keep_checkpoints>
 
 <iterations_per_split>
-10
+1000
 </iterations_per_split>
 
 <optimization_iterations>
-600
+1000
 </optimization_iterations>
 
 <use_shape_statistics_after>

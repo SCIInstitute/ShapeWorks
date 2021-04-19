@@ -64,6 +64,13 @@ public:
                                  const PointType &b, int idx_b) const {
     return a.SquaredEuclideanDistanceTo(b);
   }
+  /** Returns whether or not the two points are separated by the given distance */
+  virtual bool IsWithinDistance(const PointType &a, int idx_a,
+                                const PointType &b, int idx_b,
+                                double test_dist, double& distance) const {
+    distance = this->Distance(a, idx_a, b, idx_b);
+    return distance < test_dist;
+  }
 
   /** Used in ParticleMeanCurvatureAttribute */
   virtual double GetCurvature(const PointType &p, int idx) const = 0;
