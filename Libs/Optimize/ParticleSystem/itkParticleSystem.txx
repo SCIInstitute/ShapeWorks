@@ -102,18 +102,9 @@ template <unsigned int VDimension>
 void ParticleSystem<VDimension>
 ::SetTransform(unsigned int i, const TransformType& T, int threadId)
 {
-  std::cerr << "check for resize\n";
-  std::cerr << "i = " << i << "\n";
-  std::cerr << "size = " << m_Transforms.size() << "\n";
   if (i > static_cast<int>(m_Transforms.size())-1 || m_Transforms.empty()) {
-    std::cerr << "!resize\n";
     m_Transforms.resize(i+1);
     m_InverseTransforms.resize(i+1);
-    std::cerr << "size now " << m_Transforms.size() << "\n";
-  } else {
-std::cerr << "no need to resize\n";
-
-
   }
   m_Transforms[i] = T;
   m_InverseTransforms[i] = this->InvertTransform(T);
