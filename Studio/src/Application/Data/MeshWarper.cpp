@@ -119,7 +119,7 @@ bool MeshWarper::check_warp_ready()
 
   this->vertices_ = MeshUtils::distilVertexInfo(this->reference_mesh_);
   this->faces_ = MeshUtils::distilFaceInfo(this->reference_mesh_);
-  if (MeshUtils::generateWarpMatrix(this->vertices_, this->faces_,
+  if (!MeshUtils::generateWarpMatrix(this->vertices_, this->faces_,
                                     this->points_, this->warp_)) {
     this->warp_available_ = false;
     return false;
