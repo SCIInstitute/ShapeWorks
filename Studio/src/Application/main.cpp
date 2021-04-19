@@ -47,15 +47,13 @@ int main(int argc, char** argv)
       QSharedPointer<shapeworks::ShapeWorksStudioApp>(new shapeworks::ShapeWorksStudioApp());
     QResource::registerResource(RSCS_FILE);
     studio_app->setWindowIcon(QIcon(ICON_FILE));
+    studio_app->initialize_vtk();
     studio_app->show();
 
     if (!shapeworks::StudioLog::Instance().check_log_open()) {
       QMessageBox::warning(NULL, "ShapeWorksStudio", "Unable to open log file: " +
                                                      shapeworks::StudioLog::Instance().get_log_filename());
     }
-
-    // do this after "show" for mac initialization
-    studio_app->initialize_vtk();
 
     if (argc > 1) {
       QString filename = QString(argv[1]);
