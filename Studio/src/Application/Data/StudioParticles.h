@@ -3,6 +3,7 @@
 #include <vector>
 #include <vnl_vector.h>
 #include <itkPoint.h>
+#include <cassert>
 
 namespace shapeworks {
 
