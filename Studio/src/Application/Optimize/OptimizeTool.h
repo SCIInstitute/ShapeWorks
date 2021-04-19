@@ -24,7 +24,7 @@ Q_OBJECT;
 
 public:
 
-  OptimizeTool();
+  OptimizeTool(Preferences& prefs);
   ~OptimizeTool();
 
   /// set the pointer to the project
@@ -82,6 +82,8 @@ private:
   void clear_particles();
 
   std::vector<QLineEdit*> particle_boxes_;
+
+  Preferences& preferences_;
 
   std::vector<QLineEdit*> line_edits_;
 

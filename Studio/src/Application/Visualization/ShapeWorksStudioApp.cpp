@@ -190,7 +190,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           this, &ShapeWorksStudioApp::handle_progress);
 
   // optimize tool initializations
-  this->optimize_tool_ = QSharedPointer<OptimizeTool>::create();
+  this->optimize_tool_ = QSharedPointer<OptimizeTool>::create(this->preferences_);
+
   this->ui_->stacked_widget->addWidget(this->optimize_tool_.data());
   connect(this->optimize_tool_.data(), SIGNAL(optimize_complete()),
           this, SLOT(handle_optimize_complete()));

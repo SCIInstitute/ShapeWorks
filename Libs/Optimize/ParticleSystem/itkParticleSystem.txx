@@ -338,10 +338,7 @@ void ParticleSystem<VDimension>::AdvancedAllParticleSplitting(double epsilon,
         for (size_t j = 0; j < lists.size(); j++) {
           // Add epsilon times random direction to existing point and apply domain
           // constraints to generate a new particle position.
-          PointType newpos;
-          for (unsigned int k = 0; k < 3; k++) {
-            newpos[k] = lists[j][i][k] + epsilon * random[k] / 5.;
-          }
+          PointType newpos = this->GetDomain(j)->GetPositionAfterSplit(lists[j][i], random, epsilon);
           // Go to surface
           if (!this->m_DomainFlags[dom_to_process+j*domains_per_shape] &&
               !this->GetDomain(dom_to_process+j*domains_per_shape)->GetConstraints()->IsAnyViolated(newpos)) {

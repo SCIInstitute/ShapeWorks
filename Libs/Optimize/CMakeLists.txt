@@ -24,6 +24,7 @@ target_link_libraries(Optimize
   ${VTK_LIBRARIES}
   igl::core
   ${Boost_LIBRARIES}
+  geometry-central
   )
 
 # Create an interface library that will bring pybind11::embed along

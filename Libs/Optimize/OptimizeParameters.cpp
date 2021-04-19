@@ -111,6 +111,18 @@ void OptimizeParameters::set_optimization_iterations(int value)
 }
 
 //---------------------------------------------------------------------------
+bool OptimizeParameters::get_use_geodesic_distance()
+{
+  return this->params_.get("use_geodesic_distance", false);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_use_geodesic_distance(bool value)
+{
+  this->params_.set("use_geodesic_distance", value);
+}
+
+//---------------------------------------------------------------------------
 std::vector<bool> OptimizeParameters::get_use_normals()
 {
   std::vector<bool> use_normals = this->params_.get("use_normals", {false});
@@ -202,6 +214,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
   int domains_per_shape = this->project_->get_number_of_domains_per_subject();
   bool normals_enabled = this->get_use_normals()[0];
   optimize->SetDomainsPerShape(domains_per_shape);
+  optimize->SetDomainsPerShape(1); /// only one domain per shape right now
   optimize->SetNumberOfParticles(this->get_number_of_particles());
   optimize->SetInitialRelativeWeighting(this->get_initial_relative_weighting());
   optimize->SetRelativeWeighting(this->get_relative_weighting());
@@ -209,6 +222,8 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
   optimize->SetEndingRegularization(this->get_ending_regularization());
   optimize->SetIterationsPerSplit(this->get_iterations_per_split());
   optimize->SetOptimizationIterations(this->get_optimization_iterations());
+  optimize->SetGeodesicsEnabled(this->get_use_geodesic_distance());
+  optimize->SetGeodesicsCacheSizeMultiplier(this->get_geodesic_cache_multiplier());
 
   std::vector<bool> use_normals;
   std::vector<bool> use_xyz;
@@ -294,26 +309,25 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
 
       if (domain_type == DomainType::Mesh) {
 					    
-      Mesh mesh = MeshUtils::threadSafeReadMesh(filename.c_str());
+	Mesh mesh = MeshUtils::threadSafeReadMesh(filename.c_str());
 					    
-      if (count < planes.size()) {
-        for (size_t i = 0; i < planes[count].size(); i++) {
-          // Create vtk plane
-          vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
-          plane->SetNormal(planes[count][i].first[0], planes[count][i].first[1],
-                           planes[count][i].first[2]);
-          plane->SetOrigin(planes[count][i].second[0], planes[count][i].second[1],
-                           planes[count][i].second[2]);
-
-          mesh.clip(plane);
-        }
-      }
-      auto poly_data = mesh.getVTKMesh();
-
-        if (poly_data) {
-          optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data));
-        }
-
+	if (count < planes.size()) {
+	  for (size_t i = 0; i < planes[count].size(); i++) {
+	    // Create vtk plane
+	    vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
+	    plane->SetNormal(planes[count][i].first[0], planes[count][i].first[1],
+			     planes[count][i].first[2]);
+	    plane->SetOrigin(planes[count][i].second[0], planes[count][i].second[1],
+			     planes[count][i].second[2]);
+	    
+	    mesh.clip(plane);
+	  }
+	}
+	auto poly_data = mesh.getVTKMesh();
+	
+	if (poly_data) {
+	  optimize->AddMesh(poly_data);
+	}
         else {
           throw std::invalid_argument("Error loading mesh: " + filename);
         }
@@ -424,3 +438,15 @@ std::string OptimizeParameters::get_output_prefix(std::string input)
 
 }
 
+//---------------------------------------------------------------------------
+int OptimizeParameters::get_geodesic_cache_multiplier()
+{
+  return this->params_.get("geodesic_cache_multiplier", 0);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_geodesic_cache_multiplier(int value)
+{
+  this->params_.set("geodesic_cache_multiplier", value);
+
+}
