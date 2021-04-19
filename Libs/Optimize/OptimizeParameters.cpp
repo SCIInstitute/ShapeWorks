@@ -250,8 +250,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
 
   optimize->SetUseNormals(use_normals);
   optimize->SetUseXYZ(use_xyz);
-  //optimize->SetUseMeshBasedAttributes(normals_enabled);
-  optimize->SetUseMeshBasedAttributes(true);
+  optimize->SetUseMeshBasedAttributes(normals_enabled);
   optimize->SetAttributeScales(attr_scales);
 
   std::vector<int> attributes_per_domain;
