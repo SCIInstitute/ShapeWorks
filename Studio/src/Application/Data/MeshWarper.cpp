@@ -21,7 +21,9 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const vnl_vector<double>& pa
     return nullptr;
   }
 
-  this->check_warp_ready();
+  if (!this->check_warp_ready()) {
+    return nullptr;
+  }
 
   Eigen::MatrixXd points = Eigen::Map<const Eigen::VectorXd>((double*) particles.data_block(),
                                                              particles.size());
@@ -95,12 +97,12 @@ bool MeshWarper::get_warp_available()
 }
 
 //---------------------------------------------------------------------------
-void MeshWarper::check_warp_ready()
+bool MeshWarper::check_warp_ready()
 {
   QMutexLocker locker(&this->mutex_);
   if (!this->needs_warp_) {
     // warp already done
-    return;
+    return true;
   }
 
   // perform warp
@@ -117,9 +119,13 @@ void MeshWarper::check_warp_ready()
 
   this->vertices_ = MeshUtils::distilVertexInfo(this->reference_mesh_);
   this->faces_ = MeshUtils::distilFaceInfo(this->reference_mesh_);
-  this->warp_ = MeshUtils::generateWarpMatrix(this->vertices_, this->faces_,
-                                              this->points_);
+  if (MeshUtils::generateWarpMatrix(this->vertices_, this->faces_,
+                                    this->points_, this->warp_)) {
+    this->warp_available_ = false;
+    return false;
+  }
   this->needs_warp_ = false;
+  return true;
 }
 
 //---------------------------------------------------------------------------

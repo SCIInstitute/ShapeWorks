@@ -341,7 +341,8 @@ TEST(MeshTests, warpTest1)
   ParticleSystem particlesystem(paths);
   Eigen::MatrixXd staticPts = particlesystem.Particles();
   staticPts.resize(3, 128);
-  Eigen::MatrixXd W1 = MeshUtils::generateWarpMatrix(Vref, Fref, staticPts.transpose());
+  Eigen::MatrixXd W1;
+  ASSERT_TRUE(MeshUtils::generateWarpMatrix(Vref, Fref, staticPts.transpose(),W1));
   Mesh output = MeshUtils::warpMesh(staticPts.transpose(), W1, Fref);
   Eigen::MatrixXd Vref2 = MeshUtils::distilVertexInfo(output);
   Eigen::MatrixXi Fref2 = MeshUtils::distilFaceInfo(output);
@@ -371,7 +372,8 @@ TEST(MeshTests, warpTest2)
   Eigen::MatrixXd movingPoints = allPts.col(1);
   staticPoints.resize(3, 128);
   movingPoints.resize(3, 128);
-  Eigen::MatrixXd W = MeshUtils::generateWarpMatrix(Vref, Fref, staticPoints.transpose());
+  Eigen::MatrixXd W;
+  ASSERT_TRUE(MeshUtils::generateWarpMatrix(Vref, Fref, staticPoints.transpose(),W));
   Mesh output = MeshUtils::warpMesh(movingPoints.transpose(), W, Fref);
   ASSERT_TRUE(output == ellipsoid_warped);
 }
