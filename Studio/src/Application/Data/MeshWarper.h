@@ -37,7 +37,7 @@ private:
 
   void find_good_particles();
 
-  void check_warp_ready();
+  bool check_warp_ready();
 
   Eigen::MatrixXd remove_bad_particles(const Eigen::MatrixXd& particles);
 

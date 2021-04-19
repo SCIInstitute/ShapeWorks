@@ -92,10 +92,9 @@ Eigen::MatrixXi MeshUtils::distilFaceInfo(Mesh mesh){
   return Fref_new;
 }
 
-Eigen::MatrixXd MeshUtils::generateWarpMatrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF,
-                                              const Eigen::MatrixXd& Vref)
+bool MeshUtils::generateWarpMatrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF,
+                                              const Eigen::MatrixXd& Vref, Eigen::MatrixXd& W)
 {
-  Eigen::MatrixXd W;
   Eigen::VectorXi b;
 	{
 		Eigen::VectorXi J = Eigen::VectorXi::LinSpaced(TV.rows(),0,TV.rows()-1);
@@ -116,7 +115,10 @@ Eigen::MatrixXd MeshUtils::generateWarpMatrix(Eigen::MatrixXd TV, Eigen::MatrixX
   // Technically k should equal 3 for smooth interpolation in 3d, but 2 is
   // faster and looks OK
   const int k = 2;
-  igl::biharmonic_coordinates(TV,TF,S,k,W);
+  if (!igl::biharmonic_coordinates(TV,TF,S,k,W))
+  {
+    return false;
+  }
   // Throw away interior tet-vertices, keep weights and indices of boundary
   Eigen::VectorXi I,J;
   igl::remove_unreferenced(TV.rows(),TF,I,J);
@@ -124,7 +126,7 @@ Eigen::MatrixXd MeshUtils::generateWarpMatrix(Eigen::MatrixXd TV, Eigen::MatrixX
   std::for_each(b.data(),b.data()+b.size(),[&I](int & a){a=I(a);});
   igl::slice(Eigen::MatrixXd(TV),J,1,TV);
   igl::slice(Eigen::MatrixXd(W),J,1,W);
-  return W;
+  return true;
 }
 
 Mesh MeshUtils::warpMesh(const Eigen::MatrixXd& movPts,

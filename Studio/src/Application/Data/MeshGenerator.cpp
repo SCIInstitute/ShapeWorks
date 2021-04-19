@@ -79,6 +79,9 @@ MeshHandle MeshGenerator::build_mesh_from_points(const vnl_vector<double>& shape
     vtkSmartPointer<vtkPolyData> poly_data = mesh_warpers[domain]->build_mesh(shape);
 
     if (!poly_data) {
+      std::string message = std::string("Unable to warp mesh");
+      STUDIO_LOG_ERROR(QString::fromStdString(message));
+      mesh->set_error_message(message);
       return mesh;
     }
     vtkSmartPointer<vtkPolyDataNormals> polydata_normals =
