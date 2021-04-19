@@ -1,4 +1,4 @@
-
+#include <cassert>
 #include <Data/StudioParticles.h>
 
 namespace shapeworks {
