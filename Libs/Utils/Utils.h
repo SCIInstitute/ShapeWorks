@@ -15,7 +15,9 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-//#define _USE_MATH_DEFINES
+#ifdef _WIN32
+#define _USE_MATH_DEFINES
+#endif
 
 #include <math.h>
 #include <iostream>
