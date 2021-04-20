@@ -102,18 +102,9 @@ template <unsigned int VDimension>
 void ParticleSystem<VDimension>
 ::SetTransform(unsigned int i, const TransformType& T, int threadId)
 {
-  std::cerr << "check for resize\n";
-  std::cerr << "i = " << i << "\n";
-  std::cerr << "size = " << m_Transforms.size() << "\n";
   if (i > static_cast<int>(m_Transforms.size())-1 || m_Transforms.empty()) {
-    std::cerr << "!resize\n";
     m_Transforms.resize(i+1);
     m_InverseTransforms.resize(i+1);
-    std::cerr << "size now " << m_Transforms.size() << "\n";
-  } else {
-std::cerr << "no need to resize\n";
-
-
   }
   m_Transforms[i] = T;
   m_InverseTransforms[i] = this->InvertTransform(T);
@@ -338,10 +329,7 @@ void ParticleSystem<VDimension>::AdvancedAllParticleSplitting(double epsilon,
         for (size_t j = 0; j < lists.size(); j++) {
           // Add epsilon times random direction to existing point and apply domain
           // constraints to generate a new particle position.
-          PointType newpos;
-          for (unsigned int k = 0; k < 3; k++) {
-            newpos[k] = lists[j][i][k] + epsilon * random[k] / 5.;
-          }
+          PointType newpos = this->GetDomain(j)->GetPositionAfterSplit(lists[j][i], random, epsilon);
           // Go to surface
           if (!this->m_DomainFlags[dom_to_process+j*domains_per_shape] &&
               !this->GetDomain(dom_to_process+j*domains_per_shape)->GetConstraints()->IsAnyViolated(newpos)) {

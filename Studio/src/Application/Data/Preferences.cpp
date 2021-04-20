@@ -282,3 +282,15 @@ void Preferences::set_optimize_file_template(QString optimize_file_template)
 {
   this->settings_.setValue("Studio/optimize_file_template", optimize_file_template);
 }
+
+//-----------------------------------------------------------------------------
+int Preferences::get_geodesic_cache_multiplier()
+{
+  return this->settings_.value("Mesh/geodesic_cache_multiplier").toInt();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_geodesic_cache_multiplier(int value)
+{
+  this->settings_.setValue("Mesh/geodesic_cache_multiplier", value);
+}

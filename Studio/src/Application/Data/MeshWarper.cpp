@@ -3,6 +3,7 @@
 #include <vtkCellLocator.h>
 #include <vtkTriangleFilter.h>
 #include <vtkCleanPolyData.h>
+#include <vtkPolyDataConnectivityFilter.h>
 
 #include <Libs/Mesh/MeshUtils.h>
 #include <Data/StudioLog.h>
@@ -21,7 +22,9 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const vnl_vector<double>& pa
     return nullptr;
   }
 
-  this->check_warp_ready();
+  if (!this->check_warp_ready()) {
+    return nullptr;
+  }
 
   Eigen::MatrixXd points = Eigen::Map<const Eigen::VectorXd>((double*) particles.data_block(),
                                                              particles.size());
@@ -72,14 +75,19 @@ void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
   triangle_filter->SetInputData(reference_mesh);
   triangle_filter->Update();
 
+  vtkSmartPointer<vtkPolyDataConnectivityFilter>
+    connectivity = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
+  connectivity->SetInputConnection(triangle_filter->GetOutputPort());
+  connectivity->SetExtractionModeToLargestRegion();
+  connectivity->Update();
+
   vtkSmartPointer<vtkCleanPolyData> clean = vtkSmartPointer<vtkCleanPolyData>::New();
   clean->ConvertPolysToLinesOff();
   clean->ConvertLinesToPointsOff();
   clean->ConvertStripsToPolysOff();
   clean->PointMergingOn();
-  clean->SetInputConnection(triangle_filter->GetOutputPort());
+  clean->SetInputConnection(connectivity->GetOutputPort());
   clean->Update();
-
 
   // mark that the warp needs to be generated
   this->needs_warp_ = true;
@@ -96,12 +104,12 @@ bool MeshWarper::get_warp_available()
 }
 
 //---------------------------------------------------------------------------
-void MeshWarper::check_warp_ready()
+bool MeshWarper::check_warp_ready()
 {
   QMutexLocker locker(&this->mutex_);
   if (!this->needs_warp_) {
     // warp already done
-    return;
+    return true;
   }
 
   // perform warp
@@ -118,9 +126,13 @@ void MeshWarper::check_warp_ready()
 
   this->vertices_ = MeshUtils::distilVertexInfo(this->reference_mesh_);
   this->faces_ = MeshUtils::distilFaceInfo(this->reference_mesh_);
-  this->warp_ = MeshUtils::generateWarpMatrix(this->vertices_, this->faces_,
-                                              this->points_);
+  if (!MeshUtils::generateWarpMatrix(this->vertices_, this->faces_,
+                                     this->points_, this->warp_)) {
+    this->warp_available_ = false;
+    return false;
+  }
   this->needs_warp_ = false;
+  return true;
 }
 
 //---------------------------------------------------------------------------

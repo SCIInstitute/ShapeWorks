@@ -27,6 +27,7 @@
 #include "ParticleSystem/object_reader.h"
 #include "ParticleSystem/object_writer.h"
 #include "OptimizeParameterFile.h"
+#include "VtkMeshWrapper.h"
 
 #include "Optimize.h"
 
@@ -163,7 +164,6 @@ bool Optimize::Run()
       for (int i = 0; i < this->m_number_of_particles.size(); i++) {
         if (this->m_number_of_particles[i] < final_number_of_particles[i]) {
           this->m_number_of_particles[i] *= 2;
-          std::cerr << "set " << i << " to: " << this->m_number_of_particles[i] << "\n";
           finished = false;
         }
       }
@@ -589,19 +589,16 @@ void Optimize::AddSinglePoint()
   typedef itk::ParticleSystem<3> ParticleSystemType;
   typedef ParticleSystemType::PointType PointType;
 
-  PointType firstPointPosition;
-  firstPointPosition[0] = 0;
-  firstPointPosition[1] = 0;
-  firstPointPosition[2] = 0;
-  firstPointPosition = m_sampler->GetParticleSystem()->GetDomain(0)->GetValidLocationNear(firstPointPosition);
+  PointType firstPointPosition = m_sampler->GetParticleSystem()->GetDomain(0)->GetZeroCrossingPoint();
 
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
     if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) > 0) {
       continue;
     }
+    // todo this is misleading. ParticleImageDomain::GetValidLocationNear doesn't care about the argument,
+    // it always returns the zero-crossing point. this behaviour is fine for now because it works, but its worth
+    // noting that MeshDomain does the "right thing" and actual finds the closest valid location.
     PointType pos = m_sampler->GetParticleSystem()->GetDomain(i)->GetValidLocationNear(firstPointPosition);
-    // debugg
-    //std::cout << "d" << i << " firstPointPosition " << firstPointPosition << " pos " << pos << std::endl;
     m_sampler->GetParticleSystem()->AddPosition(pos, i);
   }
 }
@@ -1448,11 +1445,14 @@ void Optimize::WritePointFiles(std::string iter_prefix)
     out.close();
     outw.close();
 
+
     std::stringstream st;
     st << counter;
     str = "with " + st.str() + "points...";
     this->PrintStartMessage(str, 1);
     this->PrintDoneMessage(1);
+
+
   }   // end for files
   this->PrintDoneMessage();
 }
@@ -1992,9 +1992,24 @@ void Optimize::AddImage(ImageType::Pointer image)
 }
 
 //---------------------------------------------------------------------------
-void Optimize::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh)
+void Optimize::AddMesh(vtkSmartPointer<vtkPolyData> poly_data)
 {
-  this->m_sampler->AddMesh(mesh);
+  if(poly_data == nullptr) {
+    // fixed domain
+    this->m_sampler->AddMesh(nullptr);
+  } else {
+    const auto mesh = std::make_shared<shapeworks::VtkMeshWrapper>(poly_data, m_geodesics_enabled,
+                                                                   m_geodesic_cache_size_multiplier);
+    this->m_sampler->AddMesh(mesh);
+  }
+  this->m_num_shapes++;
+  this->m_spacing = 0.5;
+}
+
+//---------------------------------------------------------------------------
+void Optimize::AddContour(vtkSmartPointer<vtkPolyData> poly_data)
+{
+  this->m_sampler->AddContour(poly_data);
   this->m_num_shapes++;
   this->m_spacing = 0.5;
 }
@@ -2238,4 +2253,17 @@ void Optimize::SetPythonFile(std::string filename)
 {
   this->m_python_filename = filename;
 }
+
+//---------------------------------------------------------------------------
+void Optimize::SetGeodesicsEnabled(bool is_enabled)
+{
+  this->m_geodesics_enabled = is_enabled;
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetGeodesicsCacheSizeMultiplier(size_t n)
+{
+  this->m_geodesic_cache_size_multiplier = n;
+}
+
 }

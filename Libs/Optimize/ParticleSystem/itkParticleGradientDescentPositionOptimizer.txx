@@ -107,6 +107,7 @@ namespace itk
       minimumTimeStep = dampening;
 
       maxchange = 0.0;
+
       const auto accTimerBegin = std::chrono::steady_clock::now();
       m_GradientFunction->SetParticleSystem(m_ParticleSystem);
         if (counter % global_iteration == 0)

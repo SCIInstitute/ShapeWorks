@@ -24,9 +24,10 @@ public:
   static Eigen::MatrixXi distilFaceInfo(Mesh mesh);
 
   /// compute the warp matrix using the mesh and reference points
-  static Eigen::MatrixXd generateWarpMatrix(Eigen::MatrixXd TV,
-                                            Eigen::MatrixXi TF,
-                                            const Eigen::MatrixXd& Vref);
+  static bool generateWarpMatrix(Eigen::MatrixXd TV,
+                                 Eigen::MatrixXi TF,
+                                 const Eigen::MatrixXd& Vref,
+                                 Eigen::MatrixXd& W);
 
   /// compute individual warp
   static Mesh warpMesh(const Eigen::MatrixXd& movPts, const Eigen::MatrixXd& W,

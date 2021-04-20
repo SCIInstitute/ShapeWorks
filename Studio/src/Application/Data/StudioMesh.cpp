@@ -228,16 +228,16 @@ void StudioMesh::apply_scalars(MeshHandle mesh)
   int num_arrays = from_mesh->GetPointData()->GetNumberOfArrays();
 
   // cache pointers to new arrays
-  vtkFloatArray* arrays[num_arrays];
+  std::vector<vtkSmartPointer<vtkFloatArray>> arrays;
 
   // set up new arrays
   for (int i = 0; i < num_arrays; i++) {
     std::string name = from_mesh->GetPointData()->GetArrayName(i);
-    vtkFloatArray* to_array = vtkFloatArray::New();
+    vtkSmartPointer<vtkFloatArray> to_array = vtkSmartPointer<vtkFloatArray>::New();
     to_array->SetName(name.c_str());
     to_array->SetNumberOfValues(to_mesh->GetNumberOfPoints());
     to_mesh->GetPointData()->AddArray(to_array);
-    arrays[i] = to_array;
+    arrays.push_back(to_array);
   }
 
   // apply scalars from one mesh to the other
