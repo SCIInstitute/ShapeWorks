@@ -6,6 +6,13 @@
 #include <Libs/Utils/StringUtils.h>
 #include <limits>
 
+#ifdef _WIN32
+#include <direct.h>
+  #define chdir _chdir
+#else
+  #include <unistd.h>
+#endif
+
 namespace shapeworks {
 
 // boilerplate for a command. Copy this to start a new command

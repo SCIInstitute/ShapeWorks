@@ -446,7 +446,8 @@ bool Shape::import_point_file(QString filename, vnl_vector<double>& points)
 {
   std::ifstream in(filename.toStdString().c_str());
   if (!in.good()) {
-    QMessageBox::warning(0, "Unable to open file", "Error opening file: " + filename);
+    QMessageBox::warning(0, "Unable to open particle file",
+                         "Error opening particle file: \"" + filename + "\"");
     return false;
   }
   vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
@@ -518,7 +519,8 @@ void Shape::load_feature(std::string display_mode, std::string feature)
           this->apply_feature_to_points(feature, image);
 
         } catch (itk::ExceptionObject& excep) {
-          QMessageBox::warning(0, "Unable to open file", "Error opening file: " + filename);
+          QMessageBox::warning(0, "Unable to open file",
+                               "Error opening file: \"" + filename + "\"");
         }
 
       }

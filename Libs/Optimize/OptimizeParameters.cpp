@@ -214,7 +214,6 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
   int domains_per_shape = this->project_->get_number_of_domains_per_subject();
   bool normals_enabled = this->get_use_normals()[0];
   optimize->SetDomainsPerShape(domains_per_shape);
-  optimize->SetDomainsPerShape(1); /// only one domain per shape right now
   optimize->SetNumberOfParticles(this->get_number_of_particles());
   optimize->SetInitialRelativeWeighting(this->get_initial_relative_weighting());
   optimize->SetRelativeWeighting(this->get_relative_weighting());

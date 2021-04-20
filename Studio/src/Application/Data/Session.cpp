@@ -14,10 +14,9 @@
 #include <Libs/Utils/StringUtils.h>
 
 #ifdef _WIN32
-#include <direct.h>
+  #include <direct.h>
   #define chdir _chdir
 #else
-
   #include <unistd.h>
 #endif
 
@@ -409,8 +408,12 @@ bool Session::load_xl_project(QString filename)
     auto locals = subjects[i]->get_local_particle_filenames();
     auto worlds = subjects[i]->get_world_particle_filenames();
 
-    shape->import_local_point_files(locals);
-    shape->import_global_point_files(worlds);
+    if (!shape->import_local_point_files(locals)) {
+      return false;
+    }
+    if (!shape->import_global_point_files(worlds)) {
+      return false;
+    }
 
     this->shapes_ << shape;
   }
