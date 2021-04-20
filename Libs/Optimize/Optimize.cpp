@@ -2205,6 +2205,19 @@ MatrixContainer Optimize::GetShapeGradientMatrix()
 }
 
 //---------------------------------------------------------------------------
+MatrixContainer Optimize::GetShapeGradientMatrix(MatrixContainer positions)
+{
+  itk::ParticleSystem<3>::Pointer ps = itk::ParticleSystem<3>::New();
+  ps->Add
+
+  itk::ParticleGeneralShapeGradientMatrix<double, 3>::Pointer gradient_matrix = itk::ParticleGeneralShapeGradientMatrix<double, 3>::New();
+
+  gradient_matrix->SetValues()
+
+  return MatrixContainer();
+}
+
+//---------------------------------------------------------------------------
 std::string Optimize::GetCheckpointDir()
 {
   int num_digits = std::to_string(abs(m_total_iterations)).length();

@@ -266,8 +266,11 @@ public:
   //! Return the particle system as a matrix
   MatrixContainer GetParticleSystem();
 
-  //! Return the shape gradient system as a matrix
+  //! Return the shape gradient matrix
   MatrixContainer GetShapeGradientMatrix();
+
+  //! Return the shape gradient matrix given a particle system
+  MatrixContainer GetShapeGradientMatrix(MatrixContainer positions);
 
   //! Set the python file to run at startup
   void SetPythonFile(std::string filename);
