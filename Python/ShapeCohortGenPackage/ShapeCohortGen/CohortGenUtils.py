@@ -3,6 +3,7 @@ import itk
 import numpy as np
 import scipy
 import shutil
+import vtk
 from shapeworks import *
 
 '''
@@ -139,3 +140,47 @@ def apply_noise(img, foreground_mean, foreground_var, background_mean, backgroun
 	background_noise[foreground_indices] = 0
 	noisy_img = img + foreground_noise + background_noise
 	return noisy_img
+
+def compute_line_indices(n, is_closed=True):
+    """
+    Given a number of points, return indices for lines(as np.ndarray) between successive pairs of points.
+
+    n:         number of points
+    is_closed: whether or not the last vertex is to to be connected to the first vertex
+    """
+    lines = np.zeros((n if is_closed else n-1, 2), dtype=int)
+    for i in range(lines.shape[0]):
+        lines[i] = [i, (i+1)%n]
+
+    return lines
+
+def save_contour_as_vtp(points, lines, filename):
+    """
+    Generates a .vtp file for the given contour to use in ShapeWorks optimizer
+
+    points:   Nx3 np.ndarray of points in the contour
+    lines:    Mx2 np.ndarray of lines in the contour
+    filename: output .vtp filename
+    """
+    vtk_pts = vtk.vtkPoints()
+    n = points.shape[0]
+    for j in range(n):
+        x, y, z = points[j]
+        vtk_pts.InsertNextPoint((x,y,z))
+
+    vtk_lines = vtk.vtkCellArray()
+    m = lines.shape[0]
+    for j in range(m):
+        vtk_line = vtk.vtkLine()
+        vtk_line.GetPointIds().SetId(0, lines[j][0])
+        vtk_line.GetPointIds().SetId(1, lines[j][1])
+        vtk_lines.InsertNextCell(vtk_line)
+
+    polydata = vtk.vtkPolyData()
+    polydata.SetPoints(vtk_pts)
+    polydata.SetLines(vtk_lines)
+
+    writer = vtk.vtkXMLPolyDataWriter()
+    writer.SetFileName(filename)
+    writer.SetInputData(polydata)
+    writer.Write()

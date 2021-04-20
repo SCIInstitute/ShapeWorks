@@ -86,6 +86,13 @@ public:
   {
     itkExceptionMacro("No algorithm for finding neighbors has been specified.");
   }
+  /** This method finds neighborhood points as in the previous method, but also
+      computes a vector of distances associated with each of those points. */
+  virtual PointVectorType FindNeighborhoodPoints(const PointType &, int idx, std::vector<double> &, std::vector<double> &,
+                                                 double) const
+  {
+    itkExceptionMacro("No algorithm for finding neighbors has been specified.");
+  }
   virtual unsigned int  FindNeighborhoodPoints(const PointType &, int idx, double, PointVectorType &) const
   {
     itkExceptionMacro("No algorithm for finding neighbors has been specified.");
