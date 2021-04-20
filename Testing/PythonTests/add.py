@@ -13,6 +13,7 @@ def addTest1():
 val = addTest1()
 
 if val is False:
+  print("addTest1 failed")
   sys.exit(1)
 
 def addTest2():
@@ -26,6 +27,7 @@ def addTest2():
 val = addTest2()
 
 if val is False:
+  print("addTest2 failed")
   sys.exit(1)
 
 def addTest3():
@@ -40,4 +42,5 @@ def addTest3():
 val = addTest3()
 
 if val is False:
+  print("addTest3 failed")
   sys.exit(1)

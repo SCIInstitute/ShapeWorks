@@ -13,6 +13,7 @@ def rotatefailTest1():
 val = rotatefailTest1()
 
 if val is False:
+  print("rotatefailTest1 failed")
   sys.exit(1)
 
 def rotatefailTest2():
@@ -26,6 +27,7 @@ def rotatefailTest2():
 val = rotatefailTest2()
 
 if val is False:
+  print("rotatefailTest2 failed")
   sys.exit(1)
 
 def rotatefailTest3():
@@ -39,4 +41,5 @@ def rotatefailTest3():
 val = rotatefailTest3()
 
 if val is False:
+  print("rotatefailTest3 failed")
   sys.exit(1)

@@ -13,6 +13,7 @@ def clipTest1():
 val = clipTest1()
 
 if val is False:
+  print("clipTest1 failed")
   sys.exit(1)
 
 def clipTest2():
@@ -26,6 +27,7 @@ def clipTest2():
 val = clipTest2()
 
 if val is False:
+  print("clipTest2 failed")
   sys.exit(1)
 
 def clipTest3():
@@ -39,6 +41,7 @@ def clipTest3():
 val = clipTest3()
 
 if val is False:
+  print("clipTest3 failed")
   sys.exit(1)
 
 def clipTest4():
@@ -53,6 +56,7 @@ def clipTest4():
 val = clipTest4()
 
 if val is False:
+  print("clipTest4 failed")
   sys.exit(1)
 
 def clipTest5():
@@ -67,6 +71,7 @@ def clipTest5():
 val = clipTest5()
 
 if val is False:
+  print("clipTest5 failed")
   sys.exit(1)
 
 def clipTest6():
@@ -81,6 +86,7 @@ def clipTest6():
 val = clipTest6()
 
 if val is False:
+  print("clipTest6 failed")
   sys.exit(1)
 
 def clipTest7():
@@ -95,4 +101,5 @@ def clipTest7():
 val = clipTest7()
 
 if val is False:
+  print("clipTest7 failed")
   sys.exit(1)

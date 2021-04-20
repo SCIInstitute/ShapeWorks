@@ -13,6 +13,7 @@ def blurTest1():
 val = blurTest1()
 
 if val is False:
+  print("blurTest1 failed")
   sys.exit(1)
 
 def blurTest2():
@@ -26,6 +27,7 @@ def blurTest2():
 val = blurTest2()
 
 if val is False:
+  print("blueTest2 failed")
   sys.exit(1)
 
 def blurTest3():
@@ -39,4 +41,5 @@ def blurTest3():
 val = blurTest3()
 
 if val is False:
+  print("blurTest3 failed")
   sys.exit(1)

@@ -14,6 +14,7 @@ def infoTest1():
 val = infoTest1()
 
 if val is False:
+  print("infoTest1 failed")
   sys.exit(1)
 
 def infoTest2():
@@ -28,5 +29,6 @@ def infoTest2():
 val = infoTest2()
 
 if val is False:
+  print("infoTest2 failed")
   sys.exit(1)
 

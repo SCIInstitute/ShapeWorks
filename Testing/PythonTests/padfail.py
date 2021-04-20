@@ -13,6 +13,7 @@ def padfailTest1():
 val = padfailTest1()
 
 if val is False:
+  print("padfailTest1 failed")
   sys.exit(1)
 
 def padfailTest2():
@@ -26,4 +27,5 @@ def padfailTest2():
 val = padfailTest2()
 
 if val is False:
+  print("padfailTest2 failed")
   sys.exit(1)

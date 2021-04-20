@@ -15,6 +15,7 @@ def tplevelsetTest1():
 val = tplevelsetTest1()
 
 if val is False:
+  print("tplevelsetTest1 failed")
   sys.exit(1)
 
 def tplevelsetTest2():
@@ -30,4 +31,5 @@ def tplevelsetTest2():
 val = tplevelsetTest2()
 
 if val is False:
+  print("tplevelsetTest2 failed")
   sys.exit(1)

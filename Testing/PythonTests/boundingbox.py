@@ -12,6 +12,7 @@ def boundingboxTest1():
 val = boundingboxTest1()
 
 if val is False:
+  print("boundingboxTest1 failed")
   sys.exit(1)
 
 def boundingboxTest2():
@@ -31,4 +32,5 @@ def boundingboxTest2():
 val = boundingboxTest2()
 
 if val is False:
+  print("boundingboxTest2 failed")
   sys.exit(1)

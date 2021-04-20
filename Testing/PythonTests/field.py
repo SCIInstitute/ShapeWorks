@@ -13,6 +13,7 @@ def fieldTest1():
 val = fieldTest1()
 
 if val is False:
+  print("fieldTest1 failed")
   sys.exit(1)
 
 def fieldTest2():
@@ -27,4 +28,5 @@ def fieldTest2():
 val = fieldTest2()
 
 if val is False:
+  print("fieldTest2 failed")
   sys.exit(1)

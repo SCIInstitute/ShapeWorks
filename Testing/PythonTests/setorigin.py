@@ -13,6 +13,7 @@ def setoriginTest1():
 val = setoriginTest1()
 
 if val is False:
+  print("setoriginTest1 failed")
   sys.exit(1)
 
 def setoriginTest2():
@@ -26,6 +27,7 @@ def setoriginTest2():
 val = setoriginTest2()
 
 if val is False:
+  print("setoriginTest2 failed")
   sys.exit(1)
 
 def setoriginTest3():
@@ -39,6 +41,7 @@ def setoriginTest3():
 val = setoriginTest3()
 
 if val is False:
+  print("setoriginTest3 failed")
   sys.exit(1)
 
 def setoriginTest4():
@@ -52,4 +55,5 @@ def setoriginTest4():
 val = setoriginTest4()
 
 if val is False:
+  print("setoriginTest4 failed")
   sys.exit(1)

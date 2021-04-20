@@ -11,6 +11,7 @@ def compareTest1():
 val = compareTest1()
 
 if val is False:
+  print("compareTest1 failed")
   sys.exit(1)
 
 def compareTest2():
@@ -22,4 +23,5 @@ def compareTest2():
 val = compareTest2()
 
 if val is False:
+  print("compareTest2 failed")
   sys.exit(1)

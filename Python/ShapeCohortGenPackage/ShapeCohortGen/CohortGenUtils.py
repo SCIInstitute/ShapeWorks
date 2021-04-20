@@ -60,7 +60,10 @@ def generate_segmentations(meshList, out_dir, randomize_size, spacing, allow_on_
 	# get dims tht fit all meshes
 	bb = MeshUtils.boundingBox(PLYmeshList)
 	fit_all_origin = [bb.min[0], bb.min[1], bb.min[2]]
-	bb_dims = bb.max-bb.min
+	bb_dims = []
+	bb_dims.append(bb.max[0] - bb.min[0])
+	bb_dims.append(bb.max[1] - bb.min[1])
+	bb_dims.append(bb.max[2] - bb.min[2])
 	fit_all_dims = [bb_dims[0], bb_dims[1], bb_dims[2]]
 	# randomly select 20% meshes for boundary touching samples
 	numMeshes = len(PLYmeshList)

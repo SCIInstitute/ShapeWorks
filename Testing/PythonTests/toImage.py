@@ -13,6 +13,7 @@ def toImageTest1():
 val = toImageTest1()
 
 if val is False:
+  print("toImageTest1 failed")
   sys.exit(1)
 
 def toImageTest2():
@@ -26,6 +27,7 @@ def toImageTest2():
 val = toImageTest2()
 
 if val is False:
+  print("toImageTest2 failed")
   sys.exit(1)
 
 def toImageTest3():
@@ -39,4 +41,5 @@ def toImageTest3():
 val = toImageTest3()
 
 if val is False:
+  print("toImageTest3 failed")
   sys.exit(1)

@@ -2,7 +2,7 @@ import os
 import sys
 from shapeworks import *
 
-def infoTest3():
+def infoTest1():
   mesh = Mesh(os.environ["DATA"] + "/femur.ply")
   center = mesh.center()
 
@@ -11,12 +11,13 @@ def infoTest3():
 
   return center[0] == compareCenter[0] and center[1] == compareCenter[1] and center[2] == compareCenter[2]
 
-val = infoTest3()
+val = infoTest1()
 
 if val is False:
+  print("infoTest1 failed")
   sys.exit(1)
 
-def infoTest4():
+def infoTest2():
   mesh = Mesh(os.environ["DATA"] + "/femur.ply")
   com = mesh.centerOfMass()
 
@@ -25,7 +26,8 @@ def infoTest4():
 
   return com[0] == compareCom[0] and com[1] == compareCom[1] and com[2] == compareCom[2]
 
-val = infoTest4()
+val = infoTest2()
 
 if val is False:
+  print("infoTest2 failed")
   sys.exit(1)

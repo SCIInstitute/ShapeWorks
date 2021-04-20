@@ -14,6 +14,7 @@ def setspacingTest1():
 val = setspacingTest1()
 
 if val is False:
+  print("setspacingTest1 failed")
   sys.exit(1)
 
 def setSpacingTest2():
@@ -29,4 +30,5 @@ def setSpacingTest2():
 val = setSpacingTest2()
 
 if val is False:
+  print("setspacingTest2 failed")
   sys.exit(1)
