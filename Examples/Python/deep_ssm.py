@@ -86,11 +86,12 @@ def Run_Pipeline(args):
 		Higher batch size will help speed up training but uses more cuda memory, if you get a memory error try reducing the batch size
 	'''
 	
-	down_sample = True
+	down_factor = 0.75
+	down_dir = out_dir + 'DownsampledImages/'
 	batch_size = 8
 	loader_dir = out_dir + 'TorchDataLoaders/'
-	DeepSSMUtils.getTrainValLoaders(loader_dir, aug_data_csv, batch_size, down_sample)
-	DeepSSMUtils.getTestLoader(loader_dir, test_img_list, down_sample)
+	DeepSSMUtils.getTrainValLoaders(loader_dir, aug_data_csv, batch_size, down_factor, down_dir)
+	DeepSSMUtils.getTestLoader(loader_dir, test_img_list, down_factor, down_dir)
 
 
 	print("\n\n\nStep 4. Train model.\n") #####################################################################################
@@ -133,7 +134,7 @@ def Run_Pipeline(args):
 	}
 	if args.tiny_test:
 		model_parameters["trainer"]["epochs"] = 5
-	# Save conflict file	
+	# Save config file	
 	config_file = out_dir + model_name + ".json"
 	with open(config_file, "w") as outfile:
 		json.dump(model_parameters, outfile, indent=2) 
@@ -147,7 +148,8 @@ def Run_Pipeline(args):
 	'''
 	PCA_scores_path = out_dir + "Augmentation/PCA_Particle_Info/"
 	prediction_dir = out_dir + 'Results/PredictedParticles/'
-	DeepSSMUtils.testDeepSSM(prediction_dir, best_model_path, loader_dir, PCA_scores_path, embedded_dim)
+	# DeepSSMUtils.testDeepSSM(prediction_dir, best_model_path, loader_dir, PCA_scores_path, embedded_dim)
+	DeepSSMUtils.testDeepSSM(config_file)
 	print('Predicted particles saved at: ' + prediction_dir)
 
 	print("\n\n\nStep 6. Analyze results.\n") #####################################################################################

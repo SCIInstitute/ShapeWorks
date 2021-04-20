@@ -154,13 +154,13 @@ def supervised_train(config_file):
 			if val_rel_err < best_val_rel_error:
 				best_val_rel_error = val_rel_err
 				best_epoch = e
-				torch.save(net.state_dict(), os.path.join(model_dir, 'best_net.torch'))
+				torch.save(net.state_dict(), os.path.join(model_dir, 'best_model.torch'))
 			t0 = time.time()
 		if decay_lr:
 			scheduler.step()
 	logger.close()
 
-	torch.save(net.state_dict(), os.path.join(model_dir, 'final_net.torch'))
+	torch.save(net.state_dict(), os.path.join(model_dir, 'final_model.torch'))
 	parameters['best_model_epochs'] = best_epoch
 	with open(config_file, "w") as json_file:
 		json.dump(parameters, json_file, indent=2) 
@@ -171,9 +171,9 @@ def supervised_train(config_file):
 		print("Beginning fine tuning training step on device = ", device)
 		net = model.DeepSSMNet(config_file)
 		if parameters["use_best_model"]:
-			model_path = os.path.join(model_dir, 'best_net.torch')
+			model_path = os.path.join(model_dir, 'best_model.torch')
 		else:
-			model_path = os.path.join(model_dir, 'final_net.torch')
+			model_path = os.path.join(model_dir, 'final_model.torch')
 		net.load_state_dict(torch.load(model_path))
 		net.to(device)
 		logger = open(model_dir + "train_log_ft.csv", "w+")
