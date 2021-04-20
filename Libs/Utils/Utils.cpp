@@ -560,6 +560,20 @@ double Utils::averageThetaArc(std::vector<double> thetas)
     return mod2pi(bestTheta);
 }
 
+Eigen::MatrixXd Utils::vnlToEigen(const vnl_matrix<double>& vnl)
+{
+  Eigen::MatrixXd matrix;
+  matrix.resize(vnl.rows(), vnl.cols());
+
+  for (int i = 0; i < vnl.rows(); i++) {
+    for (int j = 0; j < vnl.cols(); j++) {
+      matrix(i, j) = vnl.get(i, j);
+    }
+  }
+
+  return Eigen::MatrixXd();
+}
+
 
 
 
