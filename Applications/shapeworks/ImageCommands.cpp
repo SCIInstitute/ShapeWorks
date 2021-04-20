@@ -164,16 +164,8 @@ bool Antialias::execute(const optparse::Values &options, SharedCommandData &shar
   double maxRMSErr = static_cast<double>(options.get("maxrmserror"));
   int layers = static_cast<int>(options.get("layers"));
 
-  if (layers < 0)
-  {
-    std::cerr << "layers must be >= 0\n";
-    return false;
-  }
-  else
-  {
-    sharedData.image.antialias(iterations, maxRMSErr, layers);
-    return true;
-  }
+  sharedData.image.antialias(iterations, maxRMSErr, layers);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -405,16 +397,8 @@ bool ScaleImage::execute(const optparse::Values &options, SharedCommandData &sha
   double sy = static_cast<double>(options.get("sy"));
   double sz = static_cast<double>(options.get("sz"));
 
-  if (sx == 0 || sy == 0 || sz == 0)
-  {
-    std::cerr << "Error: cannot scale by 0 in any dimension\n";
-    return false;
-  }
-  else
-  {
-    sharedData.image.scale(makeVector({sx, sy, sz}));
-    return true;
-  }
+  sharedData.image.scale(makeVector({sx, sy, sz}));
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -450,12 +434,8 @@ bool Rotate::execute(const optparse::Values &options, SharedCommandData &sharedD
   double degrees = static_cast<double>(options.get("degrees"));
 
   Vector3 axis(makeVector({rx, ry, rz}));
-  if (!axis_is_valid(axis))
-  {
-    std::cerr << "Must specify a valid axis\n";
-    return false;
-  }
-  else if (radians == 0.0 && degrees == 0.0)
+
+  if (radians == 0.0 && degrees == 0.0)
   {
     std::cerr << "Must specify a rotation angle\n";
     return false;
@@ -986,16 +966,8 @@ bool ReflectImage::execute(const optparse::Values &options, SharedCommandData &s
   std::string axis_str(static_cast<std::string>(options.get("axis")));
   Axis axis(toAxis(axis_str));
 
-  if (!axis_is_valid(axis))
-  {
-    std::cerr << "Must specify a valid axis (X, Y, or Z)\n";
-    return false;
-  }
-  else
-  {
-    sharedData.image.reflect(axis);
-    return true;
-  }
+  sharedData.image.reflect(axis);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -298,6 +298,8 @@ Image& Image::write(const std::string &filename, bool compressed)
 
 Image& Image::antialias(unsigned iterations, double maxRMSErr, int layers)
 {
+  if (layers < 0) { throw std::invalid_argument("layers must be >= 0"); }
+
   using FilterType = itk::AntiAliasBinaryImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
@@ -487,8 +489,7 @@ Image& Image::translate(const Vector3 &v)
 
 Image& Image::scale(const Vector3 &s)
 {
-  if (s[0] == 0 || s[1] == 0 || s[2] == 0)
-    throw std::invalid_argument("Invalid scale point");
+  if (s[0] == 0 || s[1] == 0 || s[2] == 0) { throw std::invalid_argument("Invalid scale point"); }
 
   auto origOrigin(origin());       // scale centered at origin, so temporarily set origin to be the center
   recenter();
@@ -557,6 +558,7 @@ TransformPtr Image::createTransform(const Image &target, XFormType type, float i
       transform = createCenterOfMassTransform();
       break;
     case IterativeClosestPoint:
+      if (!target.image) { throw std::invalid_argument("Invalid target image"); }
       transform = createRigidRegistrationTransform(target, isoValue, iterations);
       break;
     default:
@@ -629,6 +631,8 @@ Image& Image::computeDT(PixelType isoValue)
 
 Image& Image::applyCurvatureFilter(unsigned iterations)
 {
+  if (iterations < 0) { throw std::invalid_argument("iterations must be >= 0"); }
+
   using FilterType = itk::CurvatureFlowImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
@@ -774,8 +778,7 @@ Image& Image::clip(const Vector &n, const Point &q, const PixelType val)
 
 Image& Image::reflect(const Axis &axis)
 {
-  if (!axis_is_valid(axis))
-    throw std::invalid_argument("Invalid axis");
+  if (!axis_is_valid(axis)) { throw std::invalid_argument("Invalid axis"); }
 
   Vector scale(makeVector({1,1,1}));
   scale[axis] = -1;
@@ -805,8 +808,7 @@ Image& Image::setOrigin(Point3 origin)
 
 Image& Image::setSpacing(Vector3 spacing)
 {
-  if (spacing[0] <= 0 || spacing[1] <= 0 || spacing[2] <= 0)
-    { throw std::invalid_argument("Spacing cannot b <= 0"); }
+  if (spacing[0]<= 0 || spacing[1] <= 0 || spacing[2] <= 0) { throw std::invalid_argument("Spacing cannot b <= 0"); }
 
   using FilterType = itk::ChangeInformationImageFilter<ImageType>;
   FilterType::Pointer filter = FilterType::New();
