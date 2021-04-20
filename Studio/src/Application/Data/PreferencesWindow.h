@@ -39,6 +39,7 @@ Q_SIGNALS:
   void slider_update();
 
 private:
+  void update_labels();
   Preferences& preferences_;
   Ui_PreferencesWindow* ui_;
 };
