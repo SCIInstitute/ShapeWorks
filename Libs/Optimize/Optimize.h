@@ -30,7 +30,7 @@
 namespace shapeworks {
 
 class MatrixContainer {
-  public:
+public:
   Eigen::MatrixXd matrix_;
 };
 
@@ -265,6 +265,9 @@ public:
 
   //! Return the particle system as a matrix
   MatrixContainer GetParticleSystem();
+
+  //! Return the shape gradient system as a matrix
+  MatrixContainer GetShapeGradientMatrix();
 
   //! Set the python file to run at startup
   void SetPythonFile(std::string filename);

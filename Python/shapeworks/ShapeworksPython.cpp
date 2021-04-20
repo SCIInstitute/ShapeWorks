@@ -8,6 +8,12 @@ Eigen::MatrixXd optimize_get_particle_system(shapeworks::Optimize *opt)
   return container.matrix_;
 }
 
+Eigen::MatrixXd optimize_get_shape_gradient_matrix(shapeworks::Optimize *opt)
+{
+  shapeworks::MatrixContainer container = opt->GetShapeGradientMatrix();
+  return container.matrix_;
+}
+
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 //#include <pybind11/stl_bind.h>  // look at Binding STL containers portion of manual; not sure we even use any in ShapeWorks
@@ -678,5 +684,6 @@ PYBIND11_MODULE(shapeworks, m)
   .def("SetIterationCallbackFunction",
                                 &Optimize::SetIterationCallbackFunction)
   .def("GetParticleSystem",     &optimize_get_particle_system)
+  .def("GetShapeGradientMatrix",     &optimize_get_shape_gradient_matrix)
   ;
 }

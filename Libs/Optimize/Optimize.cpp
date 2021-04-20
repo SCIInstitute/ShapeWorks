@@ -2191,20 +2191,16 @@ bool Optimize::LoadParameterFile(std::string filename)
 //---------------------------------------------------------------------------
 MatrixContainer Optimize::GetParticleSystem()
 {
-  
-  auto shape_matrix = m_sampler->GetGeneralShapeMatrix();
-
-  MatrixType matrix;
-  matrix.resize(shape_matrix->rows(), shape_matrix->cols());
-
-  for (int i = 0; i < shape_matrix->rows(); i++) {
-    for (int j = 0; j < shape_matrix->cols(); j++) {
-      matrix(i, j) = shape_matrix->get(i, j);
-    }
-  }
-
   MatrixContainer container;
-  container.matrix_ = matrix;
+  container.matrix_ = Utils::vnlToEigen(*(m_sampler->GetGeneralShapeMatrix()));
+  return container;
+}
+
+//---------------------------------------------------------------------------
+MatrixContainer Optimize::GetShapeGradientMatrix()
+{
+  MatrixContainer container;
+  container.matrix_ = Utils::vnlToEigen(*(m_sampler->GetGeneralShapeGradientMatrix()));
   return container;
 }
 
@@ -2257,5 +2253,6 @@ void Optimize::SetGeodesicsCacheSizeMultiplier(size_t n)
 {
   this->m_geodesic_cache_size_multiplier = n;
 }
+
 
 }
