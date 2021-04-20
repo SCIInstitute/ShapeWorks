@@ -14,8 +14,6 @@ add_library(Optimize STATIC
 
 target_link_libraries(Optimize
   OpenVDB::openvdb
-  ${Boost_FILESYSTEM_LIBRARY}
-  ${Boost_SYSTEM_LIBRARY}
   Alignment
   trimesh2
   Mesh

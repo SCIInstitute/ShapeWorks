@@ -108,7 +108,6 @@ if (SHAPEWORKS_GUI)
   endif()
 endif()
 
-find_package(Boost COMPONENTS system filesystem REQUIRED)
 
 ### vtk
 find_package(VTK ${SHAPEWORKS_VTK_VERSION_MIN})

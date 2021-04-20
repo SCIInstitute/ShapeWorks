@@ -6,9 +6,8 @@
 #include <Libs/Utils/StringUtils.h>
 #include <Libs/Mesh/MeshUtils.h>
 #include "ParticleSystem/VtkMeshWrapper.h"
-#define BOOST_NO_CXX11_SCOPED_ENUMS
-#include <boost/filesystem.hpp>
-#undef BOOST_NO_CXX11_SCOPED_ENUMS
+#include <sys/types.h>
+#include <sys/stat.h>
 
 using namespace shapeworks;
 
@@ -339,15 +338,19 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
   optimize->SetFilenames(StringUtils::getFileNamesFromPaths(filenames));
   optimize->SetOutputTransformFile("transform");
 
-  namespace fs = boost::filesystem;
-  if(fs::is_directory("landmarks")) {
+  struct stat info;
+  if(stat("landmarks", &info) != 0) {
+    return true;
+  }
+  if(info.st_mode & S_IFDIR) {
+
     std::vector<std::string> landmark_filenames;
     for(const auto& dom_fname : filenames) {
       std::string landmark_fname = StringUtils::getFileNameWithoutExtension(dom_fname) + ".particles";
-      fs::path landmark_path = fs::path("landmarks") / fs::path(landmark_fname);
+      std::string landmark_path = "landmarks/" + landmark_fname;
 
-      std::cout << "STUDIO LANDMARK: " << dom_fname << " -> " << landmark_path.c_str() << "\n";
-      landmark_filenames.push_back(landmark_path.generic_string());
+      std::cout << "STUDIO LANDMARK: " << dom_fname << " -> " << landmark_path << "\n";
+      landmark_filenames.push_back(landmark_path);
     }
     optimize->SetPointFiles(landmark_filenames);
   }
