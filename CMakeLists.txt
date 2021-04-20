@@ -137,6 +137,7 @@ ENDIF()
 
 ### XLNT
 find_package (XLNT REQUIRED)
+add_definitions(-DXLNT_STATIC=1)
 
 ### Libigl set include path
 find_package(LIBIGL REQUIRED QUIET)
