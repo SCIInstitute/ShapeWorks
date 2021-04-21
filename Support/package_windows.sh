@@ -34,9 +34,9 @@ fi
 export SW_VERSION=$VERSION
 ROOT=`pwd`
 
-CONDA_LOC="/c/Miniconda3/envs/shapeworks/"
+CONDA_LOC="/c/Miniconda3/envs/shapeworks"
 
-cp ${CONDA_LOC}/python*.dll ${CONDA_LOC}/bin/zlib.dll ${CONDA_LOC}/bin/tbb.dll ${CONDA_LOC}/bin/half.dll ${CONDA_LOC}/bin/boost_filesystm.dll bin/RelWithDebInfo
+cp ${CONDA_LOC}/python*.dll ${CONDA_LOC}/bin/zlib.dll ${CONDA_LOC}/bin/tbb.dll ${CONDA_LOC}/bin/half.dll ${CONDA_LOC}/bin/boost_filesystem.dll bin/RelWithDebInfo
 
 
 cp -r ../build/bin/RelWithDebInfo bin
