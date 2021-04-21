@@ -5,6 +5,7 @@
 #include <vtkCleanPolyData.h>
 #include <vtkLine.h>
 #include <vtkPolyDataConnectivityFilter.h>
+#include <vtkKdTreePointLocator.h>
 
 #include <Libs/Mesh/MeshUtils.h>
 #include <Data/StudioLog.h>
@@ -121,10 +122,10 @@ bool MeshWarper::check_warp_ready()
   this->points_.resize(3, this->reference_particles_.size() / 3);
   this->points_.transposeInPlace();
 
+  this->add_particle_vertices();
+
   this->find_good_particles();
   this->points_ = this->remove_bad_particles(this->points_);
-
-  this->add_particle_vertices();
 
   this->vertices_ = MeshUtils::distilVertexInfo(this->reference_mesh_);
   this->faces_ = MeshUtils::distilFaceInfo(this->reference_mesh_);
@@ -185,28 +186,11 @@ void MeshWarper::add_particle_vertices()
     std::cerr << "bary: " << weights[0] << ", " << weights[1] << ", " << weights[2] << "\n";
 
     bool same_as_vertex = false;
-    // check that the point is not already on an existing vertex
-    for (int j = 0; j < 3; j++) {
-      double* p = cell->GetPoints()->GetPoint(j);
-
-
-/*      if (fabs(p[0] - pt[0]) < epsilon && fabs(p[1] - pt[1]) < epsilon &&
-          fabs(p[2] - pt[2]) < epsilon) {
-*/
-
-      if (p[0] == pt[0] && p[1] == pt[1] && p[2] == pt[2]) {
-        // close enough to a vertex already
-        std::cerr << "already close enough\n";
-        same_as_vertex = true;
-      }
-    }
-
 
     if (weights[0] > 0.99 || weights[1] > 0.99 || weights[2] > 0.99) {
       std::cerr << "bary close enough\n";
       same_as_vertex = true;
     }
-
 
     if (!same_as_vertex) {
 
@@ -224,17 +208,17 @@ void MeshWarper::add_particle_vertices()
       std::cerr << "dist0: " << vtkLine::DistanceToLine(pt, p0, p1) << "\n";
       std::cerr << "dist1: " << vtkLine::DistanceToLine(pt, p1, p2) << "\n";
       std::cerr << "dist2: " << vtkLine::DistanceToLine(pt, p0, p2) << "\n";
-      if (vtkLine::DistanceToLine(pt, p0, p1) < edge_epsilon) {
+      if (weights[2] < 0.01) {
         on_edge = true;
         v0_index = cell->GetPointId(0);
         v1_index = cell->GetPointId(1);
       }
-      else if (vtkLine::DistanceToLine(pt, p1, p2) < edge_epsilon) {
+      else if (weights[0] < 0.01) {
         on_edge = true;
         v0_index = cell->GetPointId(1);
         v1_index = cell->GetPointId(2);
       }
-      else if (vtkLine::DistanceToLine(pt, p0, p2) < edge_epsilon) {
+      else if (weights[1] < 0.01) {
         on_edge = true;
         v0_index = cell->GetPointId(0);
         v1_index = cell->GetPointId(2);
@@ -287,16 +271,12 @@ void MeshWarper::add_particle_vertices()
       }
     }
   }
-
-  Mesh mesh(this->reference_mesh_);
-  mesh.write("/tmp/edge.ply");
-  mesh.write("/tmp/edge.vtk");
-
 }
 
 //---------------------------------------------------------------------------
 void MeshWarper::find_good_particles()
 {
+  /*
   std::set<int> set;  // initially store in set to avoid duplicates
   for (int i = 0; i < this->points_.rows(); i++) {
     for (int j = i + 1; j < this->points_.rows(); j++) {
@@ -313,6 +293,41 @@ void MeshWarper::find_good_particles()
       this->good_particles_.push_back(i);
     }
   }
+   */
+
+  // Create the tree
+  auto tree = vtkSmartPointer<vtkKdTreePointLocator>::New();
+  tree->SetDataSet(this->reference_mesh_);
+  tree->BuildLocator();
+
+  std::vector<int> ids;
+  for (int i = 0; i < this->points_.rows(); i++) {
+    double p[3]{this->points_(i, 0), this->points_(i, 1), this->points_(i, 2)};
+    std::cerr << p[0] << "," << p[1] << "," << p[2] << "\n";
+    int id = tree->FindClosestPoint(p);
+    std::cerr << id << "\n";
+    ids.push_back(id);
+  }
+
+  std::set<int> set;  // initially store in set to avoid duplicates
+  for (int i = 0; i < this->points_.rows(); i++) {
+    for (int j = i + 1; j < this->points_.rows(); j++) {
+      if (ids[i] == ids[j]) {
+        set.insert(i);
+        set.insert(j);
+        std::cerr << "clash!\n";
+      }
+    }
+  }
+
+  this->good_particles_.clear();
+  for (int i = 0; i < this->points_.rows(); i++) {
+    if (set.find(i) == set.end()) {
+      this->good_particles_.push_back(i);
+    }
+  }
+  std::cerr << this->good_particles_.size() << " good ones\n";
+
 }
 
 //---------------------------------------------------------------------------
