@@ -88,9 +88,7 @@ void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
   clean->ConvertStripsToPolysOff();
   clean->PointMergingOn();
   clean->SetInputConnection(connectivity->GetOutputPort());
-  //clean->SetInputConnection(triangle_filter->GetOutputPort());
   clean->Update();
-
 
   // mark that the warp needs to be generated
   this->needs_warp_ = true;
@@ -145,9 +143,6 @@ void MeshWarper::add_particle_vertices()
   const double edge_epsilon = 1e-5;
 
   for (int i = 0; i < this->points_.rows(); i++) {
-    std::cerr << "\n";
-    //std::cerr << "build links\n";
-    //this->reference_mesh_->BuildCells();
     this->reference_mesh_->BuildLinks();
 
     auto locator = vtkSmartPointer<vtkCellLocator>::New();
@@ -169,10 +164,6 @@ void MeshWarper::add_particle_vertices()
     // grab the closest cell
     vtkCell* cell = this->reference_mesh_->GetCell(cell_id);
 
-    std::cerr << "orig = " << pt[0] << "," << pt[1] << "," << pt[2] << "\n";
-    std::cerr << "clos = " << closest_point[0] << "," << closest_point[1] << "," << closest_point[2]
-              << "\n";
-
     double point[3] = {pt[0], pt[1], pt[2]};
     double closest[3];
     //int sub_id;
@@ -183,12 +174,12 @@ void MeshWarper::add_particle_vertices()
                                                               dist2,
                                                               weights);
 
-    std::cerr << "bary: " << weights[0] << ", " << weights[1] << ", " << weights[2] << "\n";
+    //std::cerr << "bary: " << weights[0] << ", " << weights[1] << ", " << weights[2] << "\n";
 
     bool same_as_vertex = false;
 
     if (weights[0] > 0.99 || weights[1] > 0.99 || weights[2] > 0.99) {
-      std::cerr << "bary close enough\n";
+//      std::cerr << "bary close enough\n";
       same_as_vertex = true;
     }
 
@@ -202,12 +193,6 @@ void MeshWarper::add_particle_vertices()
       cell->GetPoints()->GetPoint(0, p0);
       cell->GetPoints()->GetPoint(1, p1);
       cell->GetPoints()->GetPoint(2, p2);
-      std::cerr << "t0: " << p0[0] << "," << p0[1] << "," << p0[2] << "\n";
-      std::cerr << "t1: " << p1[0] << "," << p1[1] << "," << p1[2] << "\n";
-      std::cerr << "t2: " << p2[0] << "," << p2[1] << "," << p2[2] << "\n";
-      std::cerr << "dist0: " << vtkLine::DistanceToLine(pt, p0, p1) << "\n";
-      std::cerr << "dist1: " << vtkLine::DistanceToLine(pt, p1, p2) << "\n";
-      std::cerr << "dist2: " << vtkLine::DistanceToLine(pt, p0, p2) << "\n";
       if (weights[2] < 0.01) {
         on_edge = true;
         v0_index = cell->GetPointId(0);
@@ -244,8 +229,6 @@ void MeshWarper::add_particle_vertices()
 
       }
       else {
-
-        std::cerr << "split in the middle of a triangle\n";
         vtkSmartPointer<vtkIdList> list = vtkSmartPointer<vtkIdList>::New();
 
         int new_vertex = this->reference_mesh_->GetPoints()->InsertNextPoint(pt);
@@ -276,25 +259,6 @@ void MeshWarper::add_particle_vertices()
 //---------------------------------------------------------------------------
 void MeshWarper::find_good_particles()
 {
-  /*
-  std::set<int> set;  // initially store in set to avoid duplicates
-  for (int i = 0; i < this->points_.rows(); i++) {
-    for (int j = i + 1; j < this->points_.rows(); j++) {
-      if (this->points_.row(i) == this->points_.row(j)) {
-        set.insert(i);
-        set.insert(j);
-      }
-    }
-  }
-
-  this->good_particles_.clear();
-  for (int i = 0; i < this->points_.rows(); i++) {
-    if (set.find(i) == set.end()) {
-      this->good_particles_.push_back(i);
-    }
-  }
-   */
-
   // Create the tree
   auto tree = vtkSmartPointer<vtkKdTreePointLocator>::New();
   tree->SetDataSet(this->reference_mesh_);
@@ -303,9 +267,7 @@ void MeshWarper::find_good_particles()
   std::vector<int> ids;
   for (int i = 0; i < this->points_.rows(); i++) {
     double p[3]{this->points_(i, 0), this->points_(i, 1), this->points_(i, 2)};
-    std::cerr << p[0] << "," << p[1] << "," << p[2] << "\n";
     int id = tree->FindClosestPoint(p);
-    std::cerr << id << "\n";
     ids.push_back(id);
   }
 
@@ -315,7 +277,6 @@ void MeshWarper::find_good_particles()
       if (ids[i] == ids[j]) {
         set.insert(i);
         set.insert(j);
-        std::cerr << "clash!\n";
       }
     }
   }
@@ -326,8 +287,6 @@ void MeshWarper::find_good_particles()
       this->good_particles_.push_back(i);
     }
   }
-  std::cerr << this->good_particles_.size() << " good ones\n";
-
 }
 
 //---------------------------------------------------------------------------
@@ -347,7 +306,6 @@ Eigen::MatrixXd MeshWarper::remove_bad_particles(const Eigen::MatrixXd& particle
 //---------------------------------------------------------------------------
 void MeshWarper::split_cell_on_edge(int cell_id, int new_vertex, int v0, int v1)
 {
-  std::cerr << "splitting a cell on an edge: " << cell_id << "\n";
   vtkCell* cell = this->reference_mesh_->GetCell(cell_id);
   int p0 = cell->GetPointId(0);
   int p1 = cell->GetPointId(1);
@@ -386,7 +344,6 @@ void MeshWarper::split_cell_on_edge(int cell_id, int new_vertex, int v0, int v1)
     list->SetId(1, cell->GetPointId(2));
     list->SetId(2, cell->GetPointId(0));
     this->reference_mesh_->InsertNextCell(VTK_TRIANGLE, list);
-
   }
   else if (edge == 2) {
     list->SetId(0, new_vertex);
