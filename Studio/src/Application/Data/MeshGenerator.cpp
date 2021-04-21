@@ -60,6 +60,12 @@ MeshHandle MeshGenerator::build_mesh_from_points(const vnl_vector<double>& shape
     surface_reconstructors[domain] &&
     surface_reconstructors[domain]->get_surface_reconstruction_available();
 
+  if(domain%4 == 3) {
+    auto poly_data = vtkSmartPointer<vtkPolyData>::New();
+    mesh->set_poly_data(poly_data);
+    return mesh;
+  }
+
   if (this->reconstruction_method_ == RECONSTRUCTION_DISTANCE_TRANSFORM_C &&
       distance_transform_available) {
     vtkSmartPointer<vtkPolyData> poly_data = surface_reconstructors[domain]->build_mesh(

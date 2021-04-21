@@ -324,7 +324,11 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
 	auto poly_data = mesh.getVTKMesh();
 	
 	if (poly_data) {
-	  optimize->AddMesh(poly_data);
+	  if(StringUtils::hasSuffix(filename, ".vtp")) {
+      optimize->AddContour(poly_data);
+	  } else {
+      optimize->AddMesh(poly_data);
+    }
 	}
         else {
           throw std::invalid_argument("Error loading mesh: " + filename);

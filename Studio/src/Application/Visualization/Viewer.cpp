@@ -527,6 +527,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
                                             color_schemes_[domain_scheme].foreground.b);
       actor->GetProperty()->SetSpecular(0.2);
       actor->GetProperty()->SetSpecularPower(15);
+      actor->GetProperty()->SetOpacity(0.5);
 
       if (feature_map != "" && poly_data) {
         poly_data->GetPointData()->SetActiveScalars(feature_map.c_str());

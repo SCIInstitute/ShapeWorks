@@ -17,6 +17,7 @@
 #include "vnl/vnl_matrix_fixed.h"
 #include "vnl/vnl_vector_fixed.h"
 #include "vnl/vnl_matrix.h"
+#include "ContourDomain.h"
 
 namespace itk {
 
@@ -295,7 +296,8 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 
       for (unsigned int n = 0; n < VDimension; n++)
       {
-        gradE[n] += weights[j] * r[n] * q;
+        // note no cosine weighting
+        gradE[n] += r[n] * q;
       }
     }
   }
