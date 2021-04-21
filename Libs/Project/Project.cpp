@@ -26,6 +26,10 @@ static std::string replace_string(std::string subject, const std::string& search
 Project::Project()
 {
   this->wb_ = std::make_unique<xlnt::workbook>();
+
+  this->input_prefixes_.push_back(SEGMENTATION_PREFIX);
+  this->input_prefixes_.push_back(SHAPE_PREFIX);
+
 }
 
 //---------------------------------------------------------------------------
@@ -101,7 +105,7 @@ std::vector<std::string> Project::get_headers()
 //---------------------------------------------------------------------------
 int Project::get_number_of_subjects()
 {
-  auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
+  auto seg_columns = this->get_matching_columns(this->input_prefixes_);
   auto dt_columns = this->get_matching_columns(GROOMED_PREFIX);
   auto local_particle_files = this->get_matching_columns(LOCAL_PARTICLES);
   if (!seg_columns.empty()) {
@@ -131,14 +135,27 @@ std::vector<std::shared_ptr<Subject>>& Project::get_subjects()
 //---------------------------------------------------------------------------
 std::vector<std::string> Project::get_matching_columns(const std::string& prefix)
 {
-  this->matching_columns_.insert(prefix);
+  std::vector<std::string> prefixes;
+  prefixes.push_back(prefix);
+  return this->get_matching_columns(prefixes);
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Project::get_matching_columns(const std::vector<std::string> prefixes)
+{
+  for (auto prefix : prefixes) {
+    this->matching_columns_.insert(prefix);
+  }
+
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);
   auto headers = ws.rows(false)[0];
   std::vector<std::string> list;
 
   for (int i = 0; i < headers.length(); i++) {
-    if (headers[i].to_string().substr(0, prefix.size()) == prefix) {
-      list.push_back(headers[i].to_string());
+    for (auto prefix : prefixes) {
+      if (headers[i].to_string().substr(0, prefix.size()) == prefix) {
+        list.push_back(headers[i].to_string());
+      }
     }
   }
   return list;
@@ -182,7 +199,7 @@ void Project::load_subjects()
 
   this->num_domains_per_subject_ = this->get_number_of_domains_per_subject();
 
-  auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
+  auto seg_columns = this->get_matching_columns(this->input_prefixes_);
   auto groomed_columns = this->get_matching_columns(GROOMED_PREFIX);
   auto groomed_transform_columns = this->get_matching_columns(GROOMED_TRANSFORMS_PREFIX);
   auto feature_columns = this->get_feature_names();
@@ -248,13 +265,12 @@ void Project::store_subjects()
   }
 
   // segmentation columns
-  auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
+  auto seg_columns = this->get_matching_columns(this->input_prefixes_);
 
   // groomed columns
   std::vector<std::string> groomed_columns;
   for (int i = 0; i < seg_columns.size(); i++) {
-    std::string groom_column_name = replace_string(seg_columns[i],
-                                                   SEGMENTATION_PREFIX, GROOMED_PREFIX);
+    std::string groom_column_name = GROOMED_PREFIX + this->get_column_identifier(seg_columns[i]);
     groomed_columns.push_back(groom_column_name);
   }
 
@@ -271,12 +287,10 @@ void Project::store_subjects()
   std::vector<std::string> local_columns;
   std::vector<std::string> world_columns;
   for (int i = 0; i < seg_columns.size(); i++) {
-    std::string column_name = replace_string(seg_columns[i],
-                                             SEGMENTATION_PREFIX,
-                                             std::string(LOCAL_PARTICLES) + "_");
+    std::string column_name =
+      std::string(LOCAL_PARTICLES) + "_" + this->get_column_identifier(seg_columns[i]);
     local_columns.push_back(column_name);
-    column_name = replace_string(seg_columns[i],
-                                 SEGMENTATION_PREFIX, std::string(WORLD_PARTICLES) + "_");
+    column_name = std::string(WORLD_PARTICLES) + "_" + this->get_column_identifier(seg_columns[i]);
     world_columns.push_back(column_name);
   }
 
@@ -294,7 +308,7 @@ void Project::store_subjects()
     // segmentations
     auto seg_files = subject->get_segmentation_filenames();
     if (seg_files.size() > seg_columns.size()) {
-      seg_columns.push_back(std::string(SEGMENTATION_PREFIX) + "file");
+      seg_columns.push_back(std::string(SHAPE_PREFIX) + "file");
     }
     this->set_list(seg_columns, i, seg_files);
 
@@ -704,11 +718,11 @@ void Project::set_filename(std::string filename)
 //---------------------------------------------------------------------------
 std::vector<std::string> Project::get_domain_names()
 {
-  auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
+  auto seg_columns = this->get_matching_columns(this->input_prefixes_);
   if (!seg_columns.empty()) {
     std::vector<std::string> names;
     for (auto&& item : seg_columns) {
-      names.push_back(item.erase(0, std::strlen(SEGMENTATION_PREFIX)));
+      names.push_back(this->get_column_identifier(item));
     }
     return names;
   }
@@ -754,6 +768,18 @@ std::string Project::get_new_file_column(std::string name, int idx)
     return name + "_file_" + std::to_string(idx);
   }
 }
+
+//---------------------------------------------------------------------------
+std::string Project::get_column_identifier(std::string name)
+{
+  for (auto prefix : this->input_prefixes_) {
+    if (name.substr(0, prefix.size()) == prefix) {
+      return name.substr(prefix.size(), name.size());
+    }
+  }
+  return name;
+}
+
 
 
 

@@ -109,6 +109,21 @@ void GroomTool::load_params()
 {
   auto params = GroomParameters(session_->get_project(), current_domain_);
   set_ui_from_params(params);
+
+  auto subjects = session_->get_project()->get_subjects();
+
+  int domain_id = ui_->domain_box->currentIndex();
+
+  if (subjects.size() > 0 && subjects[0]->get_domain_types().size() > domain_id) {
+
+    if (subjects[0]->get_domain_types()[domain_id] == DomainType::Image) {
+      ui_->stacked_widget->setCurrentWidget(ui_->image_page);
+    }
+    if (subjects[0]->get_domain_types()[domain_id] == DomainType::Mesh) {
+      ui_->stacked_widget->setCurrentWidget(ui_->mesh_page);
+    }
+  }
+
 }
 
 //---------------------------------------------------------------------------
