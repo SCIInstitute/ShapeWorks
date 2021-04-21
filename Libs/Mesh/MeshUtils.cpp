@@ -117,6 +117,7 @@ bool MeshUtils::generateWarpMatrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF,
   const int k = 2;
   if (!igl::biharmonic_coordinates(TV,TF,S,k,W))
   {
+    std::cerr << "biharmonic failed\n";
     return false;
   }
   // Throw away interior tet-vertices, keep weights and indices of boundary

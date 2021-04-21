@@ -35,6 +35,9 @@ private:
   //! Add particles as vertices to reference mesh
   void add_particle_vertices();
 
+  void split_cell_on_edge(int cell_id, int new_vertex, int v0, int v1);
+
+
   void find_good_particles();
 
   bool check_warp_ready();
