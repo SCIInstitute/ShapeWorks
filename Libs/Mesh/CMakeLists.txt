@@ -67,6 +67,14 @@ ADD_EXECUTABLE(create_isosurface create_isosurface.cc)
 TARGET_LINK_LIBRARIES(create_isosurface ${VTK_LIBRARIES} ${ITK_LIBRARIES})
 INSTALL(TARGETS create_isosurface RUNTIME DESTINATION bin)
 
+ADD_EXECUTABLE(shared_boundary_extractor shared_boundary_extractor.cpp)
+TARGET_LINK_LIBRARIES(shared_boundary_extractor ${VTK_LIBRARIES} ${ITK_LIBRARIES} igl::core Eigen3::Eigen)
+INSTALL(TARGETS shared_boundary_extractor RUNTIME DESTINATION bin)
+
+ADD_EXECUTABLE(boundary_loop_extractor boundary_loop_extractor.cpp)
+TARGET_LINK_LIBRARIES(boundary_loop_extractor ${VTK_LIBRARIES} ${ITK_LIBRARIES} igl::core Eigen3::Eigen)
+INSTALL(TARGETS boundary_loop_extractor RUNTIME DESTINATION bin)
+
 # Uses custom TriMesh functions without making an instance of meshFIM
 #ADD_EXECUTABLE(GetFeatureVolume GetFeatureVolume.cxx)
 #TARGET_LINK_LIBRARIES(GetFeatureVolume ${ITK_LIBRARIES} ${VXL_LIBRARIES} Mesh tinyxml)
