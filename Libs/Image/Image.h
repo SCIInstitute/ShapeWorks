@@ -7,6 +7,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
 #include <vtkImageData.h>
+#include <itkStatisticsImageFilter.h>
 
 #include <limits>
 
@@ -21,6 +22,7 @@ public:
 
   using PixelType = float;
   using ImageType = itk::Image<PixelType, 3>;
+  using StatsPtr = itk::StatisticsImageFilter<ImageType>::Pointer;
 
   // constructors and assignment operators //
   Image(const std::string &pathname) : image(read(pathname)) {}
@@ -97,8 +99,11 @@ public:
   /// helper to simply scale image around center (not origin)
   Image& scale(const Vector3 &v);
 
-  /// helper to simply rotate around center (not origin) using axis (default z-axis) by angle (in radians) 
+  /// helper to simply rotate around axis through center (not origin) by given angle (in radians)
   Image& rotate(const double angle, const Vector3 &axis);
+
+  /// helper to simply rotate around axis through center (not origin) by given angle (in radians)
+  Image& rotate(const double angle, Axis axis);
 
   /// creates a transform based on transform type
   TransformPtr createTransform(XFormType type = CenterOfMass);
@@ -161,7 +166,7 @@ public:
   Image& setOrigin(Point3 origin = Point3({0, 0, 0}));
 
   /// sets the image spacing to the given value
-  Image& setSpacing(Vector3 spacing = makeVector({1.0, 1.0, 1.0}));
+  Image& setSpacing(Vector3 spacing);
 
   // query functions //
 
@@ -185,6 +190,18 @@ public:
 
   /// returns average physical coordinate of pixels in range (minval, maxval]
   Point3 centerOfMass(PixelType minVal = 0.0, PixelType maxVal = 1.0) const;
+
+  /// minimum of image
+  PixelType min();
+
+  /// maximum of image
+  PixelType max();
+
+  /// mean of image
+  PixelType mean();
+
+  /// standard deviation of image
+  PixelType std();
 
   /// computes the logical coordinates of the largest region of data <= the given isoValue
   Region boundingBox(PixelType isovalue = 1.0) const;
@@ -228,6 +245,8 @@ private:
 
   /// creates a vtkPolyData for the given image
   static vtkSmartPointer<vtkPolyData> getPolyData(const Image& image, PixelType isoValue = 0.0);
+
+  StatsPtr statsFilter();
 
   ImageType::Pointer image;
 };

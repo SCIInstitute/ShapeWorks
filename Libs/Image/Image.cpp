@@ -501,6 +501,20 @@ Image& Image::scale(const Vector3 &s)
   return *this;
 }
 
+Image& Image::rotate(const double angle, Axis axis)
+{
+  switch (axis) {
+    case X:
+      return rotate(angle, makeVector({1.0, 0.0, 0.0}));
+    case Y:
+      return rotate(angle, makeVector({0.0, 1.0, 0.0}));
+    case Z:
+      return rotate(angle, makeVector({0.0, 0.0, 1.0}));
+    default:
+      throw std::invalid_argument("Unknown axis.");
+  }
+}
+
 Image& Image::rotate(const double angle, const Vector3 &axis)
 {
   if (!axis_is_valid(axis)) { throw std::invalid_argument("Invalid axis"); }
@@ -829,6 +843,40 @@ Point3 Image::centerOfMass(PixelType minVal, PixelType maxVal) const
     com = center();  // an image with no mass still has a center
 
   return com;
+}
+
+Image::StatsPtr Image::statsFilter()
+{
+  using FilterType = itk::StatisticsImageFilter<ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+
+  filter->SetInput(this->image);
+  filter->UpdateLargestPossibleRegion();
+  return filter;
+}
+
+Image::PixelType Image::min()
+{
+  StatsPtr filter = statsFilter();
+  return filter->GetMinimum();
+}
+
+Image::PixelType Image::max()
+{
+  StatsPtr filter = statsFilter();
+  return filter->GetMaximum();
+}
+
+Image::PixelType Image::mean()
+{
+  StatsPtr filter = statsFilter();
+  return filter->GetMean();
+}
+
+Image::PixelType Image::std()
+{
+  StatsPtr filter = statsFilter();
+  return sqrt(filter->GetVariance());
 }
 
 Region Image::boundingBox(PixelType isoValue) const

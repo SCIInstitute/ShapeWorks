@@ -36,6 +36,8 @@
 #include <vtkKdTreePointLocator.h>
 #include <vtkCellLocator.h>
 #include <vtkGenericCell.h>
+#include <vtkPlaneCollection.h>
+#include <vtkClipClosedSurface.h>
 
 namespace shapeworks {
 
@@ -259,17 +261,16 @@ Mesh &Mesh::fillHoles()
   vtkSmartPointer<vtkFillHolesFilter> filter = vtkSmartPointer<vtkFillHolesFilter>::New();
   filter->SetInputData(this->mesh);
   filter->SetHoleSize(1000.0);
+  filter->Update();
+  this->mesh = filter->GetOutput();
+
+  auto origNormal = mesh->GetPointData()->GetNormals();
 
   // Make the triangle window order consistent
-  vtkSmartPointer<vtkPolyDataNormals> normals = vtkSmartPointer<vtkPolyDataNormals>::New();
-  normals->SetInputConnection(filter->GetOutputPort());
-  normals->ConsistencyOn();
-  normals->SplittingOff();
-  normals->Update();
+  generateNormals();
 
   // Restore the original normals
-  normals->GetOutput()->GetPointData()->SetNormals(mesh->GetPointData()->GetNormals());
-  this->mesh = normals->GetOutput();
+  mesh->GetPointData()->SetNormals(origNormal);
 
   return *this;
 }
@@ -386,9 +387,38 @@ Mesh& Mesh::distance(const Mesh &target, const DistanceMethod method)
       distance->SetValue(i, std::sqrt(dist));
     }
   }
-    
+
   // add distance field to this mesh
   this->setField("distance", distance);
+
+  return *this;
+}
+
+Mesh& Mesh::clipClosedSurface(const Plane plane)
+{
+  vtkSmartPointer<vtkPlaneCollection> planeCollection = vtkSmartPointer<vtkPlaneCollection>::New();
+  planeCollection->AddItem(plane);
+
+  vtkSmartPointer<vtkClipClosedSurface> clipper = vtkSmartPointer<vtkClipClosedSurface>::New();
+  clipper->SetClippingPlanes(planeCollection);
+  clipper->SetInputData(this->mesh);
+  clipper->SetGenerateFaces(1);
+  clipper->Update();
+  this->mesh = clipper->GetOutput();
+
+  return *this;
+}
+
+Mesh& Mesh::generateNormals()
+{
+  vtkSmartPointer<vtkPolyDataNormals> normal = vtkSmartPointer<vtkPolyDataNormals>::New();
+
+  normal->SetInputData(this->mesh);
+  normal->ComputeCellNormalsOn();
+  normal->AutoOrientNormalsOn();
+  normal->SplittingOff();
+  normal->Update();
+  this->mesh = normal->GetOutput();
 
   return *this;
 }
@@ -650,14 +680,14 @@ bool Mesh::compareAllPoints(const Mesh &other_mesh) const
 {
   if (!this->mesh || !other_mesh.mesh)
     throw std::invalid_argument("invalid meshes");
-    
+
   if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints())
   {
     std::cerr << "meshes differ in number of points";
     return false;
   }
 
-  for (int i = 0; i < this->mesh->GetNumberOfPoints(); i++) 
+  for (int i = 0; i < this->mesh->GetNumberOfPoints(); i++)
   {
     Point p1(this->mesh->GetPoint(i));
     Point p2(other_mesh.mesh->GetPoint(i));
@@ -741,7 +771,7 @@ bool Mesh::compareAllFields(const Mesh &other_mesh) const
     if (std::find(fields2.begin(), fields2.end(), fields1[i]) == fields2.end()) {
       std::cerr << "Both meshes don't have " << fields1[i] << " field\n";
       return false;
-    }      
+    }
   }
 
   // now compare the actual fields
@@ -802,6 +832,13 @@ Point3 Mesh::center() const
   double c[3];
   mesh->GetCenter(c);
   return Point3({c[0], c[1], c[2]});
+}
+
+Point3 Mesh::getPoint(int p) const
+{
+  double val[3];
+  mesh->GetPoint(p, val);
+  return Point3({val[0], val[1], val[2]});
 }
 
 bool Mesh::compare(const Mesh& other) const

@@ -99,13 +99,13 @@ bool MeshInfo::execute(const optparse::Values &options, SharedCommandData &share
   bool vertices = static_cast<bool>(options.get("vertices"));
   bool faces = static_cast<bool>(options.get("faces"));
   bool center = static_cast<bool>(options.get("center"));
-  bool centerofmass = static_cast<bool>(options.get("centerofmass"));
-  bool boundingbox = static_cast<bool>(options.get("boundingbox"));
-  bool fieldnames = static_cast<bool>(options.get("fieldnames"));
+  bool centerOfMass = static_cast<bool>(options.get("centerofmass"));
+  bool boundingBox = static_cast<bool>(options.get("boundingbox"));
+  bool fieldNames = static_cast<bool>(options.get("fieldnames"));
 
   // by default: print everything
   if (options.num_set() == 0)
-    vertices = faces = center = centerofmass = boundingbox = fieldnames = true;
+    vertices = faces = center = centerOfMass = boundingBox = fieldNames = true;
 
   if (vertices)
     std::cout << "number of points:      " << sharedData.mesh->numPoints() << std::endl;
@@ -113,11 +113,11 @@ bool MeshInfo::execute(const optparse::Values &options, SharedCommandData &share
     std::cout << "number of faces:       " << sharedData.mesh->numFaces() << std::endl;
   if (center)
     std::cout << "center:                " << sharedData.mesh->center() << std::endl;
-  if (centerofmass)
+  if (centerOfMass)
     std::cout << "center of mass (0,1]:  " << sharedData.mesh->centerOfMass() << std::endl;
-  if (boundingbox)
+  if (boundingBox)
     std::cout << "bounding box:          " << sharedData.mesh->boundingBox() << std::endl;
-  if (fieldnames) {
+  if (fieldNames) {
     auto fields = sharedData.mesh->getFieldNames();
     std::cout << "field names: ";
     for (auto field : fields) std::cout << field << " ";
@@ -137,9 +137,9 @@ void Coverage::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Path to other mesh with which to create coverage.");
-  parser.add_option("--allowBackIntersections").action("store_true").set_default(false).help("Allow back-intersections in coverage calculation [default: true].");
-  parser.add_option("--angleThreshold").action("store").type("double").set_default(0.0).help("This checks the cosine between the ray’s direction vector (e1) and the normal at the intersection point (e2) [default: %default].");
-  parser.add_option("--backSearchRadius").action("store").type("double").set_default(0.0).help("Max distance of a back-intersection [default: %default].");
+  parser.add_option("--allowbackintersections").action("store_true").set_default(false).help("Allow back-intersections in coverage calculation [default: true].");
+  parser.add_option("--anglethreshold").action("store").type("double").set_default(0.0).help("This checks the cosine between the ray’s direction vector (e1) and the normal at the intersection point (e2) [default: %default].");
+  parser.add_option("--backsearchradius").action("store").type("double").set_default(0.0).help("Max distance of a back-intersection [default: %default].");
 
   Command::buildParser();
 }
@@ -153,9 +153,9 @@ bool Coverage::execute(const optparse::Values &options, SharedCommandData &share
   }
 
   const std::string otherMesh(static_cast<std::string>(options.get("name")));
-  bool allowBackIntersections = static_cast<bool>(options.get("allowBackIntersections"));
-  double angleThreshold = static_cast<double>(options.get("angleThreshold"));
-  double backSearchRadius = static_cast<double>(options.get("backSearchRadius"));
+  bool allowBackIntersections = static_cast<bool>(options.get("allowbackintersections"));
+  double angleThreshold = static_cast<double>(options.get("anglethreshold"));
+  double backSearchRadius = static_cast<double>(options.get("backsearchradius"));
 
   if (otherMesh.length() == 0)
   {
@@ -223,9 +223,9 @@ bool Decimate::execute(const optparse::Values &options, SharedCommandData &share
 
   double reduction = static_cast<double>(options.get("reduction"));
   double angle = static_cast<double>(options.get("angle"));
-  bool preservetopology = static_cast<bool>(options.get("preservetopology"));
+  bool preserveTopology = static_cast<bool>(options.get("preservetopology"));
 
-  sharedData.mesh->decimate(reduction, angle, preservetopology);
+  sharedData.mesh->decimate(reduction, angle, preserveTopology);
   return sharedData.validMesh();
 }
 
@@ -278,8 +278,8 @@ bool ReflectMesh::execute(const optparse::Values &options, SharedCommandData &sh
     return false;
   }
 
-  std::string axis_str(static_cast<std::string>(options.get("axis")));
-  Axis axis(toAxis(axis_str));
+  std::string axisStr(static_cast<std::string>(options.get("axis")));
+  Axis axis(toAxis(axisStr));
 
   double originX = static_cast<double>(options.get("originx"));
   double originY = static_cast<double>(options.get("originy"));
@@ -379,7 +379,7 @@ bool FillHoles::execute(const optparse::Values &options, SharedCommandData &shar
     std::cerr << "No mesh to operate on\n";
     return false;
   }
-  
+
   sharedData.mesh->fillHoles();
   return sharedData.validMesh();
 }
@@ -415,7 +415,7 @@ bool ProbeVolume::execute(const optparse::Values &options, SharedCommandData &sh
   }
 
   Image img(filename);
-  
+
   sharedData.mesh->probeVolume(img);
   return sharedData.validMesh();
 }
@@ -454,7 +454,7 @@ bool ClipMesh::execute(const optparse::Values &options, SharedCommandData &share
   Point origin({static_cast<double>(options.get("ox")),
                 static_cast<double>(options.get("oy")),
                 static_cast<double>(options.get("oz"))});
-  
+
   sharedData.mesh->clip(makePlane(normal, origin));
   return sharedData.validMesh();
 }
@@ -486,7 +486,7 @@ bool TranslateMesh::execute(const optparse::Values &options, SharedCommandData &
   double tx = static_cast<double>(options.get("tx"));
   double ty = static_cast<double>(options.get("ty"));
   double tz = static_cast<double>(options.get("tz"));
-  
+
   sharedData.mesh->translate(makeVector({tx, ty, tz}));
   return sharedData.validMesh();
 }
@@ -613,6 +613,30 @@ bool Distance::execute(const optparse::Values &options, SharedCommandData &share
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// GenerateNormals
+///////////////////////////////////////////////////////////////////////////////
+void GenerateNormals::buildParser()
+{
+  const std::string prog = "generate-normals";
+  const std::string desc = "computes cell normals and orients them such that they point in the same direction";
+  parser.prog(prog).description(desc);
+
+  Command::buildParser();
+}
+
+bool GenerateNormals::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  sharedData.mesh->generateNormals();
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // FixMesh
 ///////////////////////////////////////////////////////////////////////////////
 void FixMesh::buildParser()
@@ -621,8 +645,8 @@ void FixMesh::buildParser()
   const std::string desc = "quality control meshes";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--smoothBefore").action("store").type("bool").set_default(true).help("Perform laplacian smoothing before decimation [default: true].");
-  parser.add_option("--smoothAfter").action("store").type("bool").set_default(true).help("Perform laplacian smoothing after decimation [default: true].");
+  parser.add_option("--smoothbefore").action("store").type("bool").set_default(true).help("Perform laplacian smoothing before decimation [default: true].");
+  parser.add_option("--smoothafter").action("store").type("bool").set_default(true).help("Perform laplacian smoothing after decimation [default: true].");
   parser.add_option("--lambda").action("store").type("double").set_default(0.5).help("Laplacian smoothing lambda [default: %default].");
   parser.add_option("--iterations").action("store").type("int").set_default(1).help("Number of laplacian smoothing iterations [default: %default].");
   parser.add_option("--decimate").action("store").type("bool").set_default(true).help("Perform mesh decimation [default: true].");
@@ -639,14 +663,53 @@ bool FixMesh::execute(const optparse::Values &options, SharedCommandData &shared
     return false;
   }
 
-  bool smoothBefore = static_cast<bool>(options.get("smoothBefore"));
-  bool smoothAfter = static_cast<bool>(options.get("smoothAfter"));
+  bool smoothBefore = static_cast<bool>(options.get("smoothbefore"));
+  bool smoothAfter = static_cast<bool>(options.get("smoothafter"));
   double lambda = static_cast<double>(options.get("lambda"));
   int iterations = static_cast<int>(options.get("iterations"));
   bool decimate = static_cast<bool>(options.get("decimate"));
   double percentage = static_cast<double>(options.get("percentage"));
 
   sharedData.mesh->fix(smoothBefore, smoothAfter, lambda, iterations, decimate, percentage);
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ClipClosedSurface
+///////////////////////////////////////////////////////////////////////////////
+void ClipClosedSurface::buildParser()
+{
+  const std::string prog = "clip-closed-surface";
+  const std::string desc = "clips mesh resulting in a closed surface";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--nx").action("store").type("double").set_default(0.0).help("Value of normal.x for cutting plane [default: %default].");
+  parser.add_option("--ny").action("store").type("double").set_default(0.0).help("Value of normal.y for cutting plane [default: %default].");
+  parser.add_option("--nz").action("store").type("double").set_default(0.0).help("Value of normal.z for cutting plane [default: %default].");
+  parser.add_option("--ox").action("store").type("double").set_default(0.0).help("Value of origin.x for cutting plane [default: %default].");
+  parser.add_option("--oy").action("store").type("double").set_default(0.0).help("Value of origin.y for cutting plane [default: %default].");
+  parser.add_option("--oz").action("store").type("double").set_default(0.0).help("Value of origin.z for cutting plane [default: %default].");
+
+  Command::buildParser();
+}
+
+bool ClipClosedSurface::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  Vector normal{makeVector({static_cast<double>(options.get("nx")),
+                            static_cast<double>(options.get("ny")),
+                            static_cast<double>(options.get("nz"))})};
+
+  Point origin({static_cast<double>(options.get("ox")),
+                static_cast<double>(options.get("oy")),
+                static_cast<double>(options.get("oz"))});
+
+  sharedData.mesh->clipClosedSurface(makePlane(normal, origin));
   return sharedData.validMesh();
 }
 

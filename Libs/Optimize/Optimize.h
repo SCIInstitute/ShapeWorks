@@ -184,7 +184,7 @@ public:
   void SetEndingRegularization(double ending_regularization);
   //! Set the interval for recomputing regularization (TODO: details)
   void SetRecomputeRegularizationInterval(int recompute_regularization_interval);
-  //! Set if initilzation splits should be saved or not
+  //! Set if initialization splits should be saved or not
   void SetSaveInitSplits(bool save_init_splits);
   //! Set the checkpointing interval
   void SetCheckpointingInterval(int checkpointing_interval);
@@ -207,7 +207,8 @@ public:
 
   //! Set the shape input images
   void AddImage(ImageType::Pointer image);
-  void AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh);
+  void AddMesh(vtkSmartPointer<vtkPolyData> poly_data);
+  void AddContour(vtkSmartPointer<vtkPolyData> poly_data);
 
   //! Set the shape filenames (TODO: details)
   void SetFilenames(const std::vector<std::string>& filenames);
@@ -268,13 +269,20 @@ public:
   //! Set the python file to run at startup
   void SetPythonFile(std::string filename);
 
+  //! Set whether or not geodesics are enabled
+  void SetGeodesicsEnabled(bool is_enabled);
+
+  //! Set cache size multiplier for geodesics. The total number of cache entries will be
+  //! n * number_of_triangles
+  void SetGeodesicsCacheSizeMultiplier(size_t n);
+
   shapeworks::OptimizationVisualizer &GetVisualizer();
   void SetShowVisualizer(bool show);
   bool GetShowVisualizer();
 
 protected:
 
-  //! Set the iteration callback.  Derived classes should override to set their own callback
+  //! Set the iteration callback. Derived classes should override to set their own callback
   virtual void SetIterationCallback();
 
   //! Run an iteration of procrustes
@@ -387,6 +395,8 @@ protected:
   bool m_fixed_domains_present = false;
   int m_use_shape_statistics_after = -1;
   std::string m_python_filename;
+  bool m_geodesics_enabled = false; // geodesics disabled by default
+  size_t m_geodesic_cache_size_multiplier = 0; // 0 => VtkMeshWrapper will use a heuristic to determine cache size
 
   // Keeps track of which state the optimization is in.
   unsigned int m_mode = 0;

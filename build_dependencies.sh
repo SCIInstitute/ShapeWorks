@@ -21,6 +21,7 @@ QT_MIN_VER="5.9.8"  # NOTE: 5.x is required, but this restriction is a clever wa
 XLNT_VER="v1.4.0"
 OpenVDB_VER="v7.0.0"
 libigl_VER="v2.2.0-fix"
+geometry_central_VER="8b20898f6c7be1eab827a9f720c8fd45e58ae63c" # This library isn't using tagged versions
 
 usage()
 {
@@ -80,10 +81,10 @@ parse_command_line()
       -h | --help )           usage
                               exit
                               ;;
-      * )                     echo "---------------------"
+      * )                     echo "----------------------"
                               echo "ERROR: Unknown parameter \"$1\""
                               echo "(remember to use '=' between a parameter name and its value)"
-                              echo "---------------------"
+                              echo "----------------------"
                               echo "use '--help' to show usage"
                               exit 1
     esac
@@ -182,12 +183,12 @@ build_itk()
   mkdir -p build && cd build
 
   if [[ $OSTYPE == "msys" ]]; then
-      cmake -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="${VTK_DIR}" -DModule_ITKVtkGlue:BOOL=ON -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -Wno-dev ..
+      cmake -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="${VTK_DIR}" -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DModule_ITKVtkGlue:BOOL=ON -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -Wno-dev ..
       
       cmake --build . --config ${BUILD_TYPE} || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
   else
-      cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DModule_ITKVtkGlue:BOOL=ON -DITK_USE_SYSTEM_VXL=on -DVXL_DIR=${INSTALL_DIR} -DVTK_DIR=${VTK_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -Wno-dev ..
+      cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DModule_ITKVtkGlue:BOOL=ON -DITK_USE_SYSTEM_VXL=on -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DVXL_DIR=${INSTALL_DIR} -DVTK_DIR=${VTK_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -Wno-dev ..
       make -j${NUM_PROCS} install || exit 1
   fi
 
@@ -210,12 +211,12 @@ build_eigen()
       cmake -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" ..
       cmake --build . --config ${BUILD_TYPE} || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
+      EIGEN_DIR=$(echo ${INSTALL_DIR}\\share\\eigen3\\cmake | sed -e 's/\\/\\\\/g')
   else
       cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
       make -j${NUM_PROCS} install || exit 1
+      EIGEN_DIR=${INSTALL_DIR}/share/eigen3/cmake
   fi
-
-  EIGEN_DIR=${INSTALL_DIR}/share/eigen3/cmake/
 }
 
 build_xlnt()
@@ -278,6 +279,18 @@ build_igl()
   git checkout -f tags/${libigl_VER}
 
   LIBIGL_DIR=${INSTALL_DIR}/libigl/cmake
+}
+
+build_geometry_central()
+{
+  echo " "
+  echo "## Building Geometry central..."
+  cd ${INSTALL_DIR}
+  git clone --recursive https://github.com/nmwsharp/geometry-central.git
+  cd geometry-central
+  git checkout -f ${geometry_central_VER}
+
+  GEOMETRY_CENTRAL_DIR=${INSTALL_DIR}/geometry-central
 }
 
 show_shapeworks_build()
@@ -349,12 +362,12 @@ build_all()
     build_vtk
   fi
 
-  if [[ -z $ITK_DIR ]]; then
-    build_itk
-  fi
-
   if [[ -z $EIGEN_DIR ]]; then
     build_eigen
+  fi
+
+  if [[ -z $ITK_DIR ]]; then
+    build_itk
   fi
 
   if [[ -z $XLNT_DIR ]]; then
@@ -363,6 +376,10 @@ build_all()
 
   if [[ -z $LIBIGL_DIR ]]; then
     build_igl
+  fi
+
+  if [[ -z $GEOMETRY_CENTRAL_DIR ]]; then
+    build_geometry_central
   fi
 
   # echo dependency directories for easy reference in case the user is independently building ShapeWorks
@@ -374,6 +391,7 @@ build_all()
   echo "  EIGEN_DIR: ${EIGEN_DIR}"
   echo "  OpenVDB_DIR: ${OpenVDB_DIR}"
   echo "  LIBIGL_DIR: ${LIBIGL_DIR}"
+  echo "  GEOMETRY_CENTRAL_DIR: ${GEOMETRY_CENTRAL_DIR}"
   echo ""
   
   show_shapeworks_build
@@ -387,10 +405,10 @@ SRC=`pwd`
 parse_command_line $*
 
 echo "##-------------------------------"
-echo "## ShapeWorks Build Dependencies"
+echo "## ShapeWorks Build Dependencies "
 echo "##-------------------------------"
 echo "##"
-echo "## called using these arguments:"
+echo "## called using these arguments: "
 echo "##  $*"
 echo "##"
 echo ""

@@ -1,10 +1,12 @@
 # Build
 set(Image_sources
   Image.cpp
+  VectorImage.cpp
   ImageUtils.cpp
   )
 set(Image_headers
   Image.h
+  VectorImage.h
   ImageUtils.h
   )
 add_library(Image STATIC

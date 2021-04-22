@@ -4,13 +4,13 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake")
 find_package(Python3 3.7 EXACT REQUIRED)
 
 
-###########################################
+##########################################
 # SHAPEWORKS VERSION
 ###########################################
 SET(SHAPEWORKS_MAJOR_VERSION 6 CACHE INTERNAL "Major version number" FORCE)
 SET(SHAPEWORKS_MINOR_VERSION 0 CACHE INTERNAL "Minor version number" FORCE)
 SET(SHAPEWORKS_PATCH_VERSION 0 CACHE INTERNAL "Patch version number" FORCE)
-SET(SHAPEWORKS_VERSION_STRING "6.0.0")
+SET(SHAPEWORKS_VERSION_STRING "6.1.0-dev")
 
 
 #
@@ -19,12 +19,10 @@ SET(SHAPEWORKS_VERSION_STRING "6.0.0")
 if (NOT APPLE)
   option(USE_OPENMP      "Build using OpenMP" ON)
 endif()
-option(Build_Post      "Build post"         OFF)
-option(Build_View2     "Build view2"        OFF)
 option(Build_Studio    "Build studio"       OFF)
 option(BUILD_TESTS     "Build tests"        ON)
 
-if ("${Build_Post}" OR "${Build_View2}" OR "${Build_Studio}")
+if ("${Build_Studio}")
   set(SHAPEWORKS_GUI ON)
   set(SHAPEWORKS_QT_REQUIRED REQUIRED)
 else()
@@ -126,6 +124,9 @@ ELSE(VXL_FOUND)
   MESSAGE(SEND_ERROR "VXL is required, but could not be found! Make sure path to VXLConfig.cmake is included in CMAKE_PREFIX_PATH")
 ENDIF(VXL_FOUND)
 
+### Eigen
+find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+
 ### ITK
 FIND_PACKAGE(ITK ${SHAPEWORKS_ITK_VERSION_MIN} REQUIRED)
 IF (ITK_FOUND)
@@ -134,14 +135,18 @@ ELSE()
   MESSAGE(SEND_ERROR "ITK (The Insight Toolkit) is required, but could not be found! Make sure path to ITKConfig.cmake is included in CMAKE_PREFIX_PATH")
 ENDIF()
 
-### Eigen
-find_package (Eigen3 3.3 REQUIRED NO_MODULE)
-
 ### XLNT
 find_package (XLNT REQUIRED)
 
 ### Libigl set include path
 find_package(LIBIGL REQUIRED QUIET)
+
+### Geometry central include
+if (NOT DEFINED GEOMETRY_CENTRAL_DIR)
+  set(GEOMETRY_CENTRAL_DIR ${CMAKE_PREFIX_PATH}/geometry-central/)
+endif()
+# we need to explicitly specify the output folder if adding a subdirectory outside the current working dir.
+add_subdirectory(${GEOMETRY_CENTRAL_DIR} ./geometry-central-build/)
 
 if(USE_OPENMP)
   find_package(OpenMP REQUIRED)
@@ -159,6 +164,7 @@ endif()
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/Libs/Common")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/ExternalLibs/optparse")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/ExternalLibs/robin_hood")
 
 SET(PYBIND11_PYTHON_VERSION 3.7)
 find_package(pybind11 2.5.0 REQUIRED)
@@ -168,13 +174,6 @@ add_subdirectory(ExternalLibs)
 add_subdirectory(Libs)
 add_subdirectory(Applications)
 
-if(Build_Post)
-  add_subdirectory(Post/source/ShapeWorksPost-V1)
-endif(Build_Post)
-if(Build_View2)
-  MESSAGE(STATUS "Building View2")
-  add_subdirectory(Post/source/ShapeWorksView2)
-endif(Build_View2)
 if(Build_Studio)
   add_subdirectory(Studio/src)
 endif(Build_Studio)
