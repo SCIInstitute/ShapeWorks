@@ -431,6 +431,8 @@ public:
 
   }
 
+  std::shared_ptr<vnl_matrix<double>> GetCorrespondencePointsUpdate();
+
 protected:
 
   void GenerateData();

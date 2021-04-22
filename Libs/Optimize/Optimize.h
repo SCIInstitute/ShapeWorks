@@ -272,6 +272,12 @@ public:
   //! Return the shape gradient matrix given a particle system
   MatrixContainer GetShapeGradientMatrix(MatrixContainer positions);
 
+  //! Return the correspondence update matrix
+  MatrixContainer GetCorrespondenceUpdateMatrix();
+
+  //! Set the correspondence update matrix
+  void SetCorrespondenceUpdateMatrix(MatrixContainer matrix);
+
   //! Set the python file to run at startup
   void SetPythonFile(std::string filename);
 

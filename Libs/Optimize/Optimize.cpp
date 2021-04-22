@@ -2216,6 +2216,31 @@ MatrixContainer Optimize::GetShapeGradientMatrix(MatrixContainer positions)
 }
 
 //---------------------------------------------------------------------------
+MatrixContainer Optimize::GetCorrespondenceUpdateMatrix()
+{
+  auto matrix = this->m_sampler->GetCorrespondencePointsUpdate();
+
+  MatrixContainer container;
+  container.matrix_ = Utils::vnlToEigen(*matrix);
+  return container;
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetCorrespondenceUpdateMatrix(MatrixContainer matrix)
+{
+  auto vnl = this->m_sampler->GetCorrespondencePointsUpdate();
+
+  auto eigen = matrix.matrix_;
+  vnl->set_size(eigen.rows(), eigen.cols());
+  for (int r = 0; r < eigen.rows(); r++) {
+    for (int c = 0; c < eigen.cols(); c++) {
+      vnl->put(r, c, eigen(r, c));
+    }
+  }
+}
+
+
+//---------------------------------------------------------------------------
 std::string Optimize::GetCheckpointDir()
 {
   int num_digits = std::to_string(abs(m_total_iterations)).length();

@@ -381,4 +381,9 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band)
   m_DomainList.push_back(domain);
 }
 
+std::shared_ptr<vnl_matrix<double>> Sampler::GetCorrespondencePointsUpdate()
+{
+  return this->m_PointsUpdate;
+}
+
 } // end namespace
