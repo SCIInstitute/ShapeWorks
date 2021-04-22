@@ -17,17 +17,28 @@ bool is_clockwise(const Eigen::MatrixXd& V,
   }
   centroid /= loop.size();
 
-  // todo this is arbitrary
-  // use face 0 as a guide to make sure we get orientation correct
-  const Eigen::RowVector3d f0_l0 = V.row(F(0, 2)) - V.row(F(0, 0));
-  const Eigen::RowVector3d f0_l1 = V.row(F(0, 1)) - V.row(F(0, 0));
-  const Eigen::RowVector3d f0_cross = f0_l0.cross(f0_l1);
+  // todo this is arbitrary and works for the peanut data
+  const auto v0 = V.row(loop[0]) - centroid;
+  const auto v1 = V.row(loop[1]) - centroid;
+  const double angle0 = atan2(v0.z(), v0.y());
+  const double angle1 = atan2(v1.z(), v1.y());
+  return angle0 > angle1;
+}
 
-  const Eigen::RowVector3d l0 = V.row(loop[0]) - centroid;
-  const Eigen::RowVector3d l1 = V.row(loop[1]) - centroid;
-  const Eigen::RowVector3d cross = l0.cross(l1);
+double get_angle(const Eigen::MatrixXd& V,
+                 const Eigen::MatrixXi& F,
+                 const std::vector<int>& loop,
+                 int i) {
+  Eigen::RowVector3d centroid{0.0, 0.0, 0.0};
+  for(const auto& i : loop) {
+    centroid += V.row(i);
+  }
+  centroid /= loop.size();
 
-  return f0_cross.dot(cross) > 0.0;
+  // todo this is arbitrary and works for the peanut data
+  const auto v0 = V.row(i) - centroid;
+  const double angle0 = atan2(v0.z(), v0.y());
+  return angle0;
 }
 
 int main(int argc, char *argv[]) {
@@ -59,6 +70,12 @@ int main(int argc, char *argv[]) {
   auto lines = vtkSmartPointer<vtkCellArray>::New();
   for(size_t i=0; i<loop.size(); i++) {
     auto line = vtkSmartPointer<vtkLine>::New();
+
+    /*
+    double angle0 = get_angle(V, F, loop, loop[i]);
+    double angle1 = get_angle(V, F, loop, loop[(i+1)%loop.size()]);
+    std::cout << angle0 << " " << angle1<< "\n";
+     */
 
     if(is_cw) {
       line->GetPointIds()->SetId(0, i);

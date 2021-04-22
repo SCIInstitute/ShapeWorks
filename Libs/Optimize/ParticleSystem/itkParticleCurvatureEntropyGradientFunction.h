@@ -224,6 +224,12 @@ protected:
       auto neighborhood__ = dynamic_cast<const ParticleSurfaceNeighborhood<ImageType>*>(neighborhood_);
       auto neighborhood = const_cast<ParticleSurfaceNeighborhood<ImageType>*>(neighborhood__);
 
+
+      const bool is_contour = system->GetDomain(d)->GetDomainType() == shapeworks::DomainType::Contour;
+      if(is_contour && domain_t != d) {
+        continue;
+      }
+
       // yup, no weighting for now
       neighborhood->SetWeightingEnabled(false);
 

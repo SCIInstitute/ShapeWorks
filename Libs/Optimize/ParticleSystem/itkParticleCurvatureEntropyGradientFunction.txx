@@ -61,6 +61,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
       {
       if (m_CurrentNeighborhood[i].weight < epsilon) continue;
       // if(m_CurrentNeighborhood[i].dom != dom) continue;
+
       valid_count++;
 
       double mc = m_MeanCurvatureCache->operator[](this->GetDomainNumber())->operator[](
@@ -283,7 +284,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
       for (unsigned int n = 0; n < VDimension; n++)
       {
         // note no cosine weighting
-        gradE[n] += r[n] * q;
+        gradE[n] += 0.25*r[n] * q;
       }
     }
   }
