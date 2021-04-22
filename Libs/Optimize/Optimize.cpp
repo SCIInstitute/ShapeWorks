@@ -2208,13 +2208,11 @@ MatrixContainer Optimize::GetShapeGradientMatrix()
 MatrixContainer Optimize::GetShapeGradientMatrix(MatrixContainer positions)
 {
   itk::ParticleSystem<3>::Pointer ps = itk::ParticleSystem<3>::New();
-  ps->Add
+  // need to add domains, set positions, etc
 
-  itk::ParticleGeneralShapeGradientMatrix<double, 3>::Pointer gradient_matrix = itk::ParticleGeneralShapeGradientMatrix<double, 3>::New();
-
-  gradient_matrix->SetValues()
-
-  return MatrixContainer();
+  MatrixContainer container;
+  container.matrix_ = Utils::vnlToEigen(*(m_sampler->GetGeneralShapeGradientMatrix()));
+  return container;
 }
 
 //---------------------------------------------------------------------------
