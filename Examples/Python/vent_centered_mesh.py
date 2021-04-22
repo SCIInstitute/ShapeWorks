@@ -102,21 +102,22 @@ def Run_Pipeline(args):
         os.makedirs(pointDir)
 
     parameterDictionary = {
-        "number_of_particles": 1024,
+        "number_of_particles": 256,
         "use_normals": [1],
         "geodesics_enabled": 1,
-        "normal_weight": [10.0],
+        "geodesics_cache_size_multiplier": 1000,
+        "normal_weight": [20.0],
         "checkpointing_interval": 200,
         "keep_checkpoints": 0,
-        "iterations_per_split": 5000,
-        "optimization_iterations": 7000,
-        "starting_regularization": 10000,
-        "ending_regularization": 1,
+        "iterations_per_split": 2000,
+        "optimization_iterations": 2000,
+        "starting_regularization": 40000,
+        "ending_regularization": 4000,
         "recompute_regularization_interval": 2,
         "domains_per_shape": 1,
-        "relative_weighting": 100,
+        "relative_weighting": 400,
         "domain_type" : 'mesh',
-        "initial_relative_weighting": 0.1,
+        "initial_relative_weighting": 0.05,
         "procrustes_interval": 0,
         "procrustes_scaling": 1,
         "save_init_splits": 0,
@@ -124,8 +125,12 @@ def Run_Pipeline(args):
         "verbosity": 3
     }
 
-    if not args.use_single_scale:
-        parameterDictionary["use_shape_statistics_after"] = 128
+    print(args.use_single_scale)
+    
+    
+    
+#    if not args.use_single_scale:
+#        parameterDictionary["use_shape_statistics_after"] = 256
         
     if args.tiny_test:
         parameterDictionary["number_of_particles"] = 32

@@ -29,7 +29,7 @@ from OptimizeUtils import *
 from AnalyzeUtils import *
 import CommonUtils
 
-def concatenate_particle_files(file_type, domains_per_shape, outputDirectory, dtDirectory, shapeFolder):
+def concatenate_particle_files(file_type, domains_per_shape, outputDirectory, dtDirectory, groomed_domain, shapeFolder):
     print("running concatenate")
     # """ Get all files of either the world co-ordinates or local """
     fileList= []
@@ -55,7 +55,6 @@ def concatenate_particle_files(file_type, domains_per_shape, outputDirectory, dt
         sp_ind = fpath[1].rfind("_")
         output_filename = combinedDirectory + "joint_" + fpath[1]
         outfile_list.append(output_filename)
-        outfile_list.append(output_filename)
         with open(output_filename,'w',encoding='ascii') as out:
             for j in range(domains_per_shape):
                 in_file = fileList[j][i]
@@ -64,7 +63,7 @@ def concatenate_particle_files(file_type, domains_per_shape, outputDirectory, dt
                     shutil.copyfileobj(inp,out)
     #""" Save the output file list in the xml file which will be passed to the Studio
     outfile_list_string = "\n".join(outfile_list)
-    outfile_dt_list_string = "\n".join(outfile_dt_list)
+    outfile_dt_list_string = "\n".join(fileListDT[groomed_domain-1])
     xmlfilename = shapeFolder + "multiple_domain_"+file_type+".xml"
     xml = open(xmlfilename,"a")
     xml.truncate(0)
@@ -95,8 +94,8 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    datasetName = "vent_multidomain_sub"
-    outputDirectory = "Output/vent_multidomain_sub/"
+    datasetName = "vent_multidomain"
+    outputDirectory = "Output/vent_multidomain/"
     filename = datasetName
     # Check if the data is in the right place
     if not os.path.exists(filename):
@@ -108,7 +107,7 @@ def Run_Pipeline(args):
 
     pointDir = outputDirectory + 'shape_models/'
     
-    parentDir = "Test_vent_multidomain_sub/"
+    parentDir = "Test_vent_multidomain/"
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)
     # extract the zipfile
@@ -238,14 +237,14 @@ def Run_Pipeline(args):
 
     parameterDictionary = {
         "number_of_particles": [256,256,512],
-        "use_normals": [1,1,1],
-        "normal_weight": [10.0,10.0,10.0],
+        "use_normals": [0,0,0],
+        "normal_weight": [5.0,5.0,5.0],
         "checkpointing_interval": 200,
         "keep_checkpoints": 0,
-        "iterations_per_split": 5000,
-        "optimization_iterations": 5000,
-        "starting_regularization": 50000,
-        "ending_regularization": 0.1,
+        "iterations_per_split": 4000,
+        "optimization_iterations": 4000,
+        "starting_regularization": 1400,
+        "ending_regularization": 140,
         "recompute_regularization_interval": 2,
         "domains_per_shape": 3,
         "relative_weighting": 50,
@@ -302,8 +301,11 @@ def Run_Pipeline(args):
 
 #    launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)
     
-    particleFolder = pointDir+"512_512_1024/"
+    point_num = [str(np) for np in parameterDictionary["number_of_particles"]]
+    dir_string = "_".join(point_num)
+    
+    particleFolder = pointDir+dir_string+"/"
     file_type = "world"
-    concatenate_particle_files(file_type, 3, particleFolder, prepDir + "distance_transforms", pointDir)
+    concatenate_particle_files(file_type, 3, particleFolder, prepDir + "distance_transforms", 1, pointDir)
     command = "ShapeWorksStudio "+ pointDir+ "multiple_domain_"+file_type+".xml"
     os.system(command)
