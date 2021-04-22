@@ -79,7 +79,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     QT_LOADER_LIB_LOCATION="@loader_path/ShapeWorksStudio.app/Contents/Frameworks"
 
 
-    # copy platform plugins for View2
+    # copy platform plugins for Studio
     cp -a ShapeWorksStudio.app/Contents/PlugIns .
 
     for i in *.so ; do
@@ -112,7 +112,6 @@ else
     done
 
     cd bin
-    linuxdeployqt ShapeWorksView2 -verbose=2
     linuxdeployqt ShapeWorksStudio -verbose=2
 fi
 
