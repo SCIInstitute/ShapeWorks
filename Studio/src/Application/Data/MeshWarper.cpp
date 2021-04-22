@@ -26,6 +26,7 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const vnl_vector<double>& pa
     return nullptr;
   }
 
+
   Eigen::MatrixXd points = Eigen::Map<const Eigen::VectorXd>((double*) particles.data_block(),
                                                              particles.size());
 
@@ -95,6 +96,10 @@ void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
   this->reference_particles_ = reference_particles;
 
   this->warp_available_ = true;
+
+  if(reference_mesh->GetCell(0)->GetNumberOfPoints() == 2) {
+    this->is_contour_ = true;
+  }
 }
 
 //---------------------------------------------------------------------------

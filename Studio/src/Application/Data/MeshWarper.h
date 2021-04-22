@@ -27,6 +27,8 @@ public:
   //! Return if the warp is available
   bool get_warp_available();
 
+  bool is_contour() const { return is_contour_; }
+
   //! Build a mesh for a given set of particles
   vtkSmartPointer<vtkPolyData> build_mesh(const vnl_vector<double>& particles);
 
@@ -51,6 +53,8 @@ private:
   bool needs_warp_ = true;
 
   bool warp_available_ = false;
+
+  bool is_contour_ = false;
 
   vtkSmartPointer<vtkPolyData> incoming_reference_mesh_;
   vtkSmartPointer<vtkPolyData> reference_mesh_;
