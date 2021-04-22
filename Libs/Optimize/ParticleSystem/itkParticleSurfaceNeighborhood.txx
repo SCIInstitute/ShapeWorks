@@ -65,7 +65,16 @@ ParticleSurfaceNeighborhood<TImage>
     }
 
     double distance;
-    if (domain->IsWithinDistance(center, idx, pt_b, idx_b, radius, distance))
+    bool is_within_distance;
+
+    if(m_ForceEuclidean) {
+      distance = center.EuclideanDistanceTo(pt_b);
+      is_within_distance = distance < radius;
+    } else {
+      is_within_distance = domain->IsWithinDistance(center, idx, pt_b, idx_b, radius, distance);
+    }
+
+    if (is_within_distance)
     {
       ret.push_back( **it );
       distances.push_back(distance);

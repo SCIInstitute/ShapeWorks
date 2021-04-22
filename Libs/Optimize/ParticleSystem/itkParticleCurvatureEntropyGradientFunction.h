@@ -20,6 +20,7 @@
 #include "itkParticleImageDomainWithCurvature.h"
 #include "itkParticleMeanCurvatureAttribute.h"
 #include "itkCommand.h"
+#include "itkParticleSurfaceNeighborhood.h"
 
 namespace itk
 {
@@ -117,8 +118,7 @@ public:
 
   /** Estimate the best sigma for Parzen windowing in a given neighborhood.
       The best sigma is the sigma that maximizes probability at the given point  */
-  virtual double EstimateSigma( unsigned int idx, unsigned int dom, const typename ParticleSystemType::PointVectorType &neighborhood, const ParticleDomain *domain,
-                                const std::vector<double> &weights, const std::vector<double> &distances,
+  virtual double EstimateSigma( unsigned int idx, unsigned int dom, const ParticleDomain *domain,
                                 const PointType &pos, double initial_sigma,  double precision,  int &err, double &avgKappa) const;
 
   /** */
@@ -164,7 +164,6 @@ public:
     copy->m_Rho = this->m_Rho;
     copy->m_avgKappa = this->m_avgKappa;
     copy->m_CurrentSigma = this->m_CurrentSigma;
-    copy->m_CurrentWeights = this->m_CurrentWeights;
     copy->m_CurrentNeighborhood = this->m_CurrentNeighborhood;
 
     copy->m_MinimumNeighborhoodRadius = this->m_MinimumNeighborhoodRadius;
@@ -198,9 +197,59 @@ protected:
   double m_avgKappa;
   
   double m_CurrentSigma;
-  typename ParticleSystemType::PointVectorType m_CurrentNeighborhood;
+  struct CrossDomainNeighborhood {
+    ParticlePointIndexPair<3> pi_pair;
+    double weight;
+    double distance;
+    int dom;
 
-  std::vector<double> m_CurrentWeights;
+    CrossDomainNeighborhood(const ParticlePointIndexPair<3>& pi_pair_,
+                            double weight_,
+                            double distance_,
+                            int dom_) : pi_pair(pi_pair_), weight(weight_), distance(distance_), dom(dom_) {
+
+    }
+  };
+  std::vector<CrossDomainNeighborhood> m_CurrentNeighborhood;
+  void UpdateNeighborhood(const PointType& pos, int idx, int d, double radius, const ParticleSystemType* system) {
+    const auto domains_per_shape = system->GetDomainsPerShape();
+    const auto domain_base = d / domains_per_shape;
+    const auto domain_sub = d % domains_per_shape;
+
+    m_CurrentNeighborhood.clear();
+    for(int offset=0; offset<domains_per_shape; offset++) {
+      const auto domain_t = domain_base*domains_per_shape + offset;
+      const auto neighborhood_ = system->GetNeighborhood(domain_t).GetPointer();
+      using ImageType = itk::Image<float, Dimension>;
+      auto neighborhood__ = dynamic_cast<const ParticleSurfaceNeighborhood<ImageType>*>(neighborhood_);
+      auto neighborhood = const_cast<ParticleSurfaceNeighborhood<ImageType>*>(neighborhood__);
+
+      // yup, no weighting for now
+      neighborhood->SetWeightingEnabled(false);
+
+      std::vector<double> weights;
+      std::vector<double> distances;
+      std::vector<ParticlePointIndexPair<3>> res;
+      if(domain_t == d) {
+        res = neighborhood->FindNeighborhoodPoints(pos, idx, weights, distances, radius);
+      } else {
+        neighborhood->SetForceEuclidean(true);
+        res = neighborhood->FindNeighborhoodPoints(pos, -1, weights, distances, radius);
+        neighborhood->SetForceEuclidean(false);
+      }
+
+      assert(weights.size() == distances.size() && res.size() == weights.size());
+
+      for(int i=0; i<res.size(); i++) {
+        m_CurrentNeighborhood.emplace_back(
+          res[i],
+          weights[i],
+          distances[i],
+          domain_t
+        );
+      }
+    }
+  }
 
   float m_MaxMoveFactor;
   

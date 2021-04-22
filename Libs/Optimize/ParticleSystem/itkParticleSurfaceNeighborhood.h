@@ -73,6 +73,14 @@ public:
     m_WeightingEnabled = is_enabled;
   }
 
+  void SetForceEuclidean(bool is_enabled) {
+    m_ForceEuclidean = is_enabled;
+  }
+
+  bool IsForceEuclidean() const {
+    return m_ForceEuclidean;
+  }
+
   void PrintSelf(std::ostream& os, Indent indent) const
   {
     Superclass::PrintSelf(os, indent);
@@ -88,6 +96,7 @@ private:
   void operator=(const Self&); //purposely not implemented
   double m_FlatCutoff;
   bool m_WeightingEnabled{true};
+  bool m_ForceEuclidean{false};
 
 };
 

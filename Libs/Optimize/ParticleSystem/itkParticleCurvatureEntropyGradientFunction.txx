@@ -18,6 +18,7 @@
 #include "vnl/vnl_vector_fixed.h"
 #include "vnl/vnl_matrix.h"
 #include "ContourDomain.h"
+#include "DomainType.h"
 
 namespace itk {
 
@@ -26,10 +27,7 @@ double
 ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 ::EstimateSigma(unsigned int idx,
                 unsigned int dom,
-                const typename ParticleSystemType::PointVectorType &neighborhood, 
                 const ParticleDomain *domain,
-                const std::vector<double> &weights,
-                const std::vector<double> &distances,
                 const PointType &pos,
                 double initial_sigma,
                 double precision,
@@ -58,25 +56,30 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
     
     double mymc = m_MeanCurvatureCache->operator[](this->GetDomainNumber())->operator[](idx);
 
-    for (unsigned int i = 0; i < neighborhood.size(); i++)
+    size_t valid_count = 0;
+    for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++)
       {
-      if (weights[i] < epsilon) continue;      
-      double mc = m_MeanCurvatureCache->operator[](this->GetDomainNumber())->operator[](neighborhood[i].Index);
+      if (m_CurrentNeighborhood[i].weight < epsilon) continue;
+      // if(m_CurrentNeighborhood[i].dom != dom) continue;
+      valid_count++;
+
+      double mc = m_MeanCurvatureCache->operator[](this->GetDomainNumber())->operator[](
+              m_CurrentNeighborhood[i].pi_pair.Index);
       double Dij = (mymc + mc) * 0.5;
       double kappa = this->ComputeKappa(Dij, dom);
 
       avgKappa += kappa;
       
-      double sqrdistance = distances[i] * distances[i];
+      double sqrdistance = m_CurrentNeighborhood[i].distance * m_CurrentNeighborhood[i].distance;
       sqrdistance = sqrdistance * kappa * kappa;
 
-      double alpha = exp(-sqrdistance / sigma22) * weights[i];
+      double alpha = exp(-sqrdistance / sigma22) * m_CurrentNeighborhood[i].weight;
       A += alpha;
       B += sqrdistance * alpha;
       C += sqrdistance * sqrdistance * alpha;
       } // end for i
 
-    avgKappa /= static_cast<double>(neighborhood.size());
+    avgKappa /= static_cast<double>(valid_count);
 
     prev_sigma = sigma;
 
@@ -163,8 +166,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   
   
   // Get the neighborhood surrounding the point "pos".
-   std::vector<double> distances;
-   m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, idx, m_CurrentWeights, distances, neighborhood_radius, d);
+  UpdateNeighborhood(pos, idx, d, neighborhood_radius, system);
 
   // Compute the weights based on angle between the neighbors and the center.
    //    this->ComputeAngularWeights(pos,m_CurrentNeighborhood,domain, m_CurrentWeights);
@@ -174,7 +176,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   // In these cases, an error != 0 is returned, and we try the estimation again
   // with an increased neighborhood radius.
   int err;
-  m_CurrentSigma = EstimateSigma(idx, d, m_CurrentNeighborhood, system->GetDomain(d), m_CurrentWeights, distances, pos,
+  m_CurrentSigma = EstimateSigma(idx, d,system->GetDomain(d), pos,
                                   m_CurrentSigma, epsilon, err, m_avgKappa);
 
   while (err != 0)
@@ -193,11 +195,10 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
       {
       m_CurrentSigma = neighborhood_radius / this->GetNeighborhoodToSigmaRatio();
       }
-    
-    m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, idx, m_CurrentWeights, distances,
-                                                               neighborhood_radius, d);
 
-    m_CurrentSigma = EstimateSigma(idx, d, m_CurrentNeighborhood, system->GetDomain(d), m_CurrentWeights, distances, pos,
+    UpdateNeighborhood(pos, idx, d, neighborhood_radius, system);
+
+    m_CurrentSigma = EstimateSigma(idx, d, system->GetDomain(d), pos,
                                    m_CurrentSigma, epsilon, err, m_avgKappa);
     } // done while err
 
@@ -207,8 +208,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
     {
     m_CurrentSigma = this->GetMaximumNeighborhoodRadius() / this->GetNeighborhoodToSigmaRatio();
     neighborhood_radius = this->GetMaximumNeighborhoodRadius();
-        m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, idx,m_CurrentWeights, distances,
-                                                               neighborhood_radius, d);
+      UpdateNeighborhood(pos, idx, d, neighborhood_radius, system);
     }
 
   // Make sure sigma doesn't change too quickly!
@@ -244,51 +244,37 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   double A = 0.0;
 
   for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++) {
-    double mc = m_MeanCurvatureCache->operator[](d)->operator[](m_CurrentNeighborhood[i].Index);
-    double Dij = (mymc + mc) * 0.5; // average my curvature with my neighbors
-    double kappa = this->ComputeKappa(Dij, d);
-
-    VectorType r;
-    const double distance = system->GetDomain(d)->Distance(
-            pos, idx,
-            m_CurrentNeighborhood[i].Point, m_CurrentNeighborhood[i].Index,
-            &r
-    );
-    r *= kappa;
-
-    double q = kappa * exp( -dot_product(r, r) * sigma2inv);
-    A += q;
-    
-    for (unsigned int n = 0; n < VDimension; n++)
-      {
-      gradE[n] += m_CurrentWeights[i] * r[n] * q;
-      }
-  }
-
-  const auto domains_per_shape = system->GetDomainsPerShape();
-  const auto domain_base = d / domains_per_shape;
-  const auto domain_sub = d % domains_per_shape;
-  for(int offset=0; offset<domains_per_shape; offset++) {
-    if(offset == domain_sub) {
-      continue;
-    }
-
-    const auto other_d = domains_per_shape*domain_base + offset;
-    const double neighborhood_radius = m_CurrentSigma * this->GetNeighborhoodToSigmaRatio();
-    std::vector<double> weights;
-    typename ParticleSystemType::PointVectorType other_neighborhood =
-            system->FindNeighborhoodPoints(pos, idx, weights, neighborhood_radius, other_d);
-
-    for(int j=0; j<other_neighborhood.size(); j++) {
-      double mc = m_MeanCurvatureCache->operator[](other_d)->operator[](other_neighborhood[j].Index);
+    if(m_CurrentNeighborhood[i].dom == d) {
+      double mc = m_MeanCurvatureCache->operator[](d)->operator[](m_CurrentNeighborhood[i].pi_pair.Index);
       double Dij = (mymc + mc) * 0.5; // average my curvature with my neighbors
-      double kappa = this->ComputeKappa(Dij, other_d);
+      double kappa = this->ComputeKappa(Dij, d);
+
+      VectorType r;
+      const double distance = system->GetDomain(d)->Distance(
+              pos, idx,
+              m_CurrentNeighborhood[i].pi_pair.Point, m_CurrentNeighborhood[i].pi_pair.Index,
+              &r
+      );
+      r *= kappa;
+
+      double q = kappa * exp( -dot_product(r, r) * sigma2inv);
+      A += q;
+
+      for (unsigned int n = 0; n < VDimension; n++)
+      {
+        gradE[n] += m_CurrentNeighborhood[i].weight * r[n] * q;
+      }
+    } else {
+      double mc = m_MeanCurvatureCache->operator[](m_CurrentNeighborhood[i].dom)->operator[](
+              m_CurrentNeighborhood[i].pi_pair.Index);
+      double Dij = (mymc + mc) * 0.5; // average my curvature with my neighbors
+      double kappa = this->ComputeKappa(Dij, m_CurrentNeighborhood[i].dom);
 
       VectorType r;
       for (unsigned int n = 0; n < VDimension; n++) {
         // Note that the Neighborhood object has already filtered the
         // neighborhood for points whose normals differ by > 90 degrees.
-        r[n] = (pos[n] - other_neighborhood[j].Point[n]) * kappa;
+        r[n] = (pos[n] - m_CurrentNeighborhood[i].pi_pair.Point[n]) * kappa;
       }
 
       double q = kappa * exp( -dot_product(r, r) * sigma2inv);
