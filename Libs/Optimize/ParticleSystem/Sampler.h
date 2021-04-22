@@ -502,6 +502,8 @@ protected:
 
   itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::Pointer m_MeshBasedGeneralEntropyGradientFunction;
 
+  std::shared_ptr<vnl_matrix<double>> m_PointsUpdate = std::make_shared<vnl_matrix<double>>(10, 10);
+
 private:
   Sampler(const Sampler&); //purposely not implemented
   void operator=(const Sampler&); //purposely not implemented

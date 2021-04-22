@@ -90,6 +90,11 @@ public:
   const ShapeMatrixType *GetShapeMatrix() const
   {   return  m_ShapeMatrix.GetPointer();  }
 
+  void SetPointsUpdate(std::shared_ptr<vnl_matrix<double>> points_update)
+  {
+    this->m_PointsUpdate = points_update;
+  }
+
   /** Called before each iteration of a solver. */
   virtual void BeforeIteration()
   {
@@ -191,7 +196,6 @@ protected:
     m_RecomputeCovarianceInterval = 1;
     m_Counter = 0;
     m_UseMeanEnergy = true;
-    m_PointsUpdate = std::make_shared<vnl_matrix_type>(10, 10);
     m_InverseCovMatrix = std::make_shared<vnl_matrix_type>(10, 10);
     m_points_mean = std::make_shared<vnl_matrix_type>(10, 10);
   }

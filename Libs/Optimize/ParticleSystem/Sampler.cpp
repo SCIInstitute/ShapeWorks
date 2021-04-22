@@ -45,12 +45,16 @@ Sampler::Sampler()
   m_MixedEffectsShapeMatrix = itk::ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::New();
 
   m_EnsembleEntropyFunction->SetShapeMatrix(m_ShapeMatrix);
+  m_EnsembleEntropyFunction->SetPointsUpdate( m_PointsUpdate);
 
   m_EnsembleRegressionEntropyFunction->SetShapeMatrix(m_LinearRegressionShapeMatrix);
+  m_EnsembleRegressionEntropyFunction->SetPointsUpdate(m_PointsUpdate);
   m_EnsembleMixedEffectsEntropyFunction->SetShapeMatrix(m_MixedEffectsShapeMatrix);
+  m_EnsembleMixedEffectsEntropyFunction->SetPointsUpdate( m_PointsUpdate);
 
   m_MeshBasedGeneralEntropyGradientFunction->SetShapeData(m_GeneralShapeMatrix);
   m_MeshBasedGeneralEntropyGradientFunction->SetShapeGradient(m_GeneralShapeGradMatrix);
+  m_MeshBasedGeneralEntropyGradientFunction->SetPointsUpdate( m_PointsUpdate);
 
   m_ParticleSystem->RegisterAttribute(m_ShapeMatrix);
   m_ParticleSystem->RegisterAttribute(m_LinearRegressionShapeMatrix);

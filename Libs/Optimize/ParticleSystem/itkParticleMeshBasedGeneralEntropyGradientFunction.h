@@ -62,8 +62,12 @@ public:
     const ShapeGradientType *GetShapeGradient() const
     {   return  m_ShapeGradient.GetPointer();  }
 
+    void SetPointsUpdate(std::shared_ptr<vnl_matrix<double>> points_update)
+    {
+      this->m_PointsUpdate = points_update;
+    }
 
-    /** The first argument is a pointer to the particle system.  The second
+  /** The first argument is a pointer to the particle system.  The second
          argument is the index of the domain within that particle system.  The
          third argument is the index of the particle location within the given
          domain. */
@@ -226,7 +230,6 @@ protected:
         m_UseXYZ.clear();
         num_dims = 0;
         num_samples = 0;
-        m_PointsUpdate = std::make_shared<vnl_matrix_type>(10, 10);
         m_InverseCovMatrix = std::make_shared<vnl_matrix_type>(10, 10);
         m_points_mean = std::make_shared<vnl_matrix_type>(10, 10);
     }
