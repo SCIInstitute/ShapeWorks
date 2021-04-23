@@ -14,6 +14,8 @@
 #include <igl/grad.h>
 #include <igl/per_vertex_normals.h>
 #include <geometrycentral/surface/surface_mesh_factories.h>
+#include <igl/remove_unreferenced.h>
+#include <igl/avg_edge_length.h>
 
 namespace shapeworks {
 
@@ -93,10 +95,9 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data,
 
   this->ComputeMeshBounds();
 
-  Eigen::MatrixXd V;
   Eigen::MatrixXi F;
-  this->GetIGLMesh(V, F);
-  this->ComputeGradN(V, F);
+  this->GetIGLMesh(igl_V_, F);
+  this->ComputeGradN(igl_V_, F);
 
   this->is_geodesics_enabled_ = is_geodesics_enabled;
   if (is_geodesics_enabled_) {
@@ -107,7 +108,7 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data,
 
     // the caller provides how many times the number of triangles entries should be stored in cache
     this->geo_max_cache_entries_ = geodesics_cache_size_multiplier * this->triangles_.size();
-    this->PrecomputeGeodesics(V, F);
+    this->PrecomputeGeodesics(igl_V_, F);
   }
 }
 
@@ -902,6 +903,9 @@ void VtkMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::
   for(int f=0; f<this->triangles_.size(); f++) {
     ComputeKRing(f, kring_, face_kring_[f]);
   }
+
+  // Compute average edge length for heuristic to switch to subset geodesics
+  avg_edge_length_ = igl::avg_edge_length(V, F);
 }
 
 //---------------------------------------------------------------------------
@@ -928,6 +932,12 @@ const MeshGeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist
 
   geo_cache_size_ -= entry.data_partial.size();
   entry.data_partial.clear();
+
+  if(max_dist < avg_edge_length_*10) {
+    if(ComputeSubsetGeodesicsFromTriangle(f, max_dist, req_target_f)) {
+      return geo_dist_cache_[f];
+    }
+  }
 
   const auto n_verts = this->poly_data_->GetNumberOfPoints();
 
@@ -1086,6 +1096,58 @@ const Eigen::Matrix3d VtkMeshWrapper::GeodesicsFromTriangleToTriangle(int f_a, i
   result.col(2) = find_v2->second;
   return result;
 }
+//---------------------------------------------------------------------------
+bool VtkMeshWrapper::ComputeSubsetGeodesicsFromTriangle(int f, double max_dist, int req_target_f) const {
+  std::unordered_set<int> subset_faces;
+  subset_faces.insert(f);
+  ComputeGeodesicRing(f, max_dist, subset_faces);
+
+  if(req_target_f != -1 && subset_faces.find(req_target_f) == subset_faces.end()) {
+    return false;
+  }
+
+  // std::cout << subset_faces.size() << " vs " << this->triangles_.size() << "\n";
+
+  Eigen::MatrixXi F;
+
+  F.resize(subset_faces.size(), 3);
+  int next_idx = 0;
+  for(auto subset_face : subset_faces) {
+    F(next_idx, 0) = this->triangles_[subset_face]->GetPointId(0);
+    F(next_idx, 1) = this->triangles_[subset_face]->GetPointId(1);
+    F(next_idx, 2) = this->triangles_[subset_face]->GetPointId(2);
+    next_idx++;
+  }
+
+  Eigen::MatrixXd NV;
+  Eigen::MatrixXi NF;
+  Eigen::VectorXi I, J;
+  igl::remove_unreferenced(igl_V_, F, NV, NF, I, J);
+
+  using namespace geometrycentral::surface;
+  std::unique_ptr<SurfaceMesh> gc_subsetmesh_;
+  std::unique_ptr<VertexPositionGeometry> gc_subsetgeometry_;
+  std::tie(gc_subsetmesh_, gc_subsetgeometry_) = makeSurfaceMeshAndGeometry(NV, NF);
+
+  auto gc_subsetheatsolver_ = std::make_unique<HeatMethodDistanceSolver>(*gc_subsetgeometry_);
+
+  VertexData<double> gc_dists[3];
+  for(int i=0; i<3; i++) {
+    const auto v = gc_subsetmesh_->vertex(I(this->triangles_[f]->GetPointId(i)));
+    gc_dists[i] = gc_subsetheatsolver_->computeDistance(v);
+  }
+
+  auto& entry = geo_dist_cache_[f];
+  entry.mode = MeshGeoEntry::Partial;
+  double new_max_dist = 0.0;
+  for(int i=0; i<gc_dists[0].size(); i++) {
+    entry.data_partial[J(i)] = { gc_dists[0][i], gc_dists[1][i], gc_dists[2][i] };
+    new_max_dist = std::max({ new_max_dist, gc_dists[0][i], gc_dists[1][i], gc_dists[2][i] });
+  }
+
+  entry.max_dist = new_max_dist;
+  return true;
+}
 
 //---------------------------------------------------------------------------
 void VtkMeshWrapper::ClearGeodesicCache() const {
@@ -1134,6 +1196,33 @@ void VtkMeshWrapper::ComputeKRing(int f, int k, std::unordered_set<int>& ring) c
       if(ring.find(f_j) == ring.end()) {
         ring.insert(f_j);
         ComputeKRing(f_j, k-1, ring);
+      }
+    }
+  }
+}
+
+//---------------------------------------------------------------------------
+void VtkMeshWrapper::ComputeGeodesicRing(int f, double max_dist, std::unordered_set<int>& ring) const {
+  if(max_dist <= 0.0) {
+    return;
+  }
+
+  auto v0 = GetVertexCoords(this->triangles_[f]->GetPointId(0));
+  auto v1 = GetVertexCoords(this->triangles_[f]->GetPointId(1));
+  auto v2 = GetVertexCoords(this->triangles_[f]->GetPointId(2));
+  const double max_edge_length = std::max({
+    (v0 - v1).norm(), (v1 - v2).norm(), (v2 - v0).norm()
+  });
+
+  auto neighbors = vtkSmartPointer<vtkIdList>::New();
+  for(int i=0; i<3; i++) {
+    const int v = this->triangles_[f]->GetPointId(i);
+    this->poly_data_->GetPointCells(v, neighbors);
+    for(int j=0; j<neighbors->GetNumberOfIds(); j++) {
+      const int f_j = neighbors->GetId(j);
+      if(ring.find(f_j) == ring.end()) {
+        ring.insert(f_j);
+        ComputeGeodesicRing(f_j, max_dist - max_edge_length, ring);
       }
     }
   }

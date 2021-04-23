@@ -161,9 +161,11 @@ private:
   void PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
 
   void ComputeKRing(int f, int k, std::unordered_set<int>& ring) const;
+  void ComputeGeodesicRing(int f, double max_dist, std::unordered_set<int>& ring) const;
 
   const MeshGeoEntry& GeodesicsFromTriangle(int f, double max_dist=std::numeric_limits<double>::max(),
                                             int req_target_f=-1) const;
+  bool ComputeSubsetGeodesicsFromTriangle(int f, double max_dist, int req_target_f) const;
   const Eigen::Matrix3d GeodesicsFromTriangleToTriangle(int f_a, int f_b) const;
   void ClearGeodesicCache() const;
 
@@ -172,5 +174,9 @@ private:
   mutable int geo_lq_pidx_{-1};
   mutable int geo_lq_face_{-1};
   mutable Eigen::Vector3d geo_lq_bary_;
+
+  // Keep the vertices around in Eigen form to run geodesics on subset. Should avoid this redundancy down the line.
+  Eigen::MatrixXd igl_V_;
+  double avg_edge_length_;
 };
 }
