@@ -110,11 +110,16 @@ namespace itk
 
       const auto accTimerBegin = std::chrono::steady_clock::now();
       m_GradientFunction->SetParticleSystem(m_ParticleSystem);
-        if (counter % global_iteration == 0)
-            m_GradientFunction->BeforeIteration();
-        counter++;
+      if (counter % global_iteration == 0) {
+        m_GradientFunction->BeforeIteration();
+      }
+      counter++;
 
-        // Iterate over each domain
+      if (this->m_BeforeEvaluateCallback) {
+        this->m_BeforeEvaluateCallback();
+      }
+
+      // Iterate over each domain
       tbb::parallel_for(
         tbb::blocked_range<size_t>{0, numdomains},
         [&](const tbb::blocked_range<size_t>& r) {

@@ -67,6 +67,8 @@ public:
   void SetIterationCallbackFunction(const std::function<void(void)> &f)
   { this->m_iter_callback = f; }
 
+  void SetBeforeEvaluateCallbackFunction(const std::function<void(void)> &f);
+
   //! Abort optimization
   void AbortOptimization();
 
@@ -445,6 +447,7 @@ protected:
   std::mt19937 m_rand{42};
 
   std::function<void(void)> m_iter_callback;
+
   bool show_visualizer = false;
   shapeworks::OptimizationVisualizer visualizer;
 };
