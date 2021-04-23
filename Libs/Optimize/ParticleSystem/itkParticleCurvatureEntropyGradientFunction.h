@@ -225,8 +225,12 @@ protected:
       auto neighborhood = const_cast<ParticleSurfaceNeighborhood<ImageType>*>(neighborhood__);
 
 
-      const bool is_contour = system->GetDomain(d)->GetDomainType() == shapeworks::DomainType::Contour;
-      if(is_contour && domain_t != d) {
+      const bool this_is_contour = system->GetDomain(d)->GetDomainType() == shapeworks::DomainType::Contour;
+      if(this_is_contour && domain_t != d) {
+        continue;
+      }
+      const bool other_is_contour = system->GetDomain(domain_t)->GetDomainType() == shapeworks::DomainType::Contour;
+      if(!other_is_contour && domain_t != d) {
         continue;
       }
 
