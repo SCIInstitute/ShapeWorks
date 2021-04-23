@@ -20,8 +20,8 @@
 </attribute_scales>
 
 <inputs>
-  sphere_DT.nrrd
-  sphere_DT.nrrd
+  sphere10_DT.nrrd
+  sphere20_DT.nrrd
 </inputs>
 
 <python_filename>python_embedded.py</python_filename>

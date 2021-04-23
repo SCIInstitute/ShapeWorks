@@ -14,10 +14,23 @@ Eigen::MatrixXd optimize_get_shape_gradient_matrix(shapeworks::Optimize *opt)
   return container.matrix_;
 }
 
-Eigen::MatrixXd optimize_get_shape_gradient_matrix(shapeworks::Optimize *opt, Eigen::MatrixXd positions)
+Eigen::MatrixXd optimize_get_shape_gradient_matrix_given_particles(shapeworks::Optimize *opt, Eigen::MatrixXd positions)
 {
   shapeworks::MatrixContainer container = opt->GetShapeGradientMatrix();
   return container.matrix_;
+}
+
+Eigen::MatrixXd optimize_get_correspondence_update_matrix(shapeworks::Optimize *opt)
+{
+  shapeworks::MatrixContainer container = opt->GetCorrespondenceUpdateMatrix();
+  return container.matrix_;
+}
+
+void optimize_set_correspondence_update_matrix(shapeworks::Optimize *opt, Eigen::MatrixXd updates)
+{
+  shapeworks::MatrixContainer container;
+  container.matrix_ = updates;
+  opt->SetCorrespondenceUpdateMatrix(container);
 }
 
 
@@ -686,11 +699,15 @@ PYBIND11_MODULE(shapeworks, m)
   // Optimize (TODO)
   py::class_<Optimize>(m, "Optimize")
   .def(py::init<>())
-  .def("LoadParameterFile",     &Optimize::LoadParameterFile)
-  .def("Run",                   &Optimize::Run)
+  .def("LoadParameterFile", &Optimize::LoadParameterFile)
+  .def("Run", &Optimize::Run)
   .def("SetIterationCallbackFunction",
-                                &Optimize::SetIterationCallbackFunction)
-  .def("GetParticleSystem",     &optimize_get_particle_system)
-  .def("GetShapeGradientMatrix",     &optimize_get_shape_gradient_matrix)
+       &Optimize::SetIterationCallbackFunction)
+  .def("SetBeforeEvaluateCallbackFunction",
+       &Optimize::SetBeforeEvaluateCallbackFunction)
+  .def("GetParticleSystem", &optimize_get_particle_system)
+  .def("GetShapeGradientMatrix", &optimize_get_shape_gradient_matrix)
+  .def("GetCorrespondenceUpdateMatrix", &optimize_get_correspondence_update_matrix)
+  .def("SetCorrespondenceUpdateMatrix", &optimize_set_correspondence_update_matrix)
   ;
 }

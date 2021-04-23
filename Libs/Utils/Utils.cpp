@@ -571,7 +571,7 @@ Eigen::MatrixXd Utils::vnlToEigen(const vnl_matrix<double>& vnl)
     }
   }
 
-  return Eigen::MatrixXd();
+  return matrix;
 }
 
 

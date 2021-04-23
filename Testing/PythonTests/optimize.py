@@ -11,7 +11,27 @@ def callback():
     print("python callback")
     particles = opt.GetParticleSystem()
     print(type(particles))
+    print(f"shape: {particles.shape}")
     print(particles)
 
+def before_evaluate():
+    print("python: before_evaluate")
+    print("particles:")
+    particles = opt.GetParticleSystem()
+    print(type(particles))
+    print(f"shape: {particles.shape}")
+    print(particles)
+    print("gradients:")
+    gradients = opt.GetShapeGradientMatrix()
+    print(type(gradients))
+    print(gradients)
+    print("correspondence updates:")
+    updates = opt.GetCorrespondenceUpdateMatrix()
+    print(type(updates))
+    print(updates)
+    opt.SetCorrespondenceUpdateMatrix(updates)
+
+    
 opt.SetIterationCallbackFunction(callback)
+opt.SetBeforeEvaluateCallbackFunction(before_evaluate)
 opt.Run()

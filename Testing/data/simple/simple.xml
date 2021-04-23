@@ -14,13 +14,16 @@
 <use_normals>0</use_normals>
 <output_dir>output/</output_dir>
 <attribute_scales>
-100.0
-100.0
-100.0
+  1
+  1
+  1
+  10.0
+  10.0
+  10.0
 </attribute_scales>
 
 <inputs>
-  sphere_DT.nrrd
-  sphere_DT.nrrd
+  sphere10_DT.nrrd
+  sphere20_DT.nrrd
 </inputs>
 
