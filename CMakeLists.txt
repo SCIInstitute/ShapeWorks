@@ -141,6 +141,13 @@ find_package (XLNT REQUIRED)
 ### Libigl set include path
 find_package(LIBIGL REQUIRED QUIET)
 
+### Geometry central include
+if (NOT DEFINED GEOMETRY_CENTRAL_DIR)
+  set(GEOMETRY_CENTRAL_DIR ${CMAKE_PREFIX_PATH}/geometry-central/)
+endif()
+# we need to explicitly specify the output folder if adding a subdirectory outside the current working dir.
+add_subdirectory(${GEOMETRY_CENTRAL_DIR} ./geometry-central-build/)
+
 if(USE_OPENMP)
   find_package(OpenMP REQUIRED)
   add_definitions(-DSW_USE_OPENMP) # used in ExternalLibs/trimesh2/include/TriMesh.h
@@ -157,6 +164,7 @@ endif()
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/Libs/Common")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/ExternalLibs/optparse")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/ExternalLibs/robin_hood")
 
 SET(PYBIND11_PYTHON_VERSION 3.7)
 find_package(pybind11 2.5.0 REQUIRED)

@@ -84,6 +84,9 @@ public:
   bool get_center_checked();
   void set_center_checked(bool value);
 
+  int get_geodesic_cache_multiplier();
+  void set_geodesic_cache_multiplier(int value);
+
   OrientationMarkerType get_orientation_marker_type();
   void set_orientation_marker_type(OrientationMarkerType type);
 

@@ -9,6 +9,12 @@
 #pragma once
 
 #include "itkParticleDomain.h"
+#include <Eigen/Dense>
+#include <vtkPolyData.h>
+#include <vtkLine.h>
+#include <vtkGenericCell.h>
+#include <vtkCellLocator.h>
+#include <itkObjectFactory.h>
 
 namespace itk
 {
@@ -17,130 +23,144 @@ class ContourDomain : public ParticleDomain
 public:
   /** Standard class typedefs */
   typedef SmartPointer<ContourDomain>  Pointer;
+  itkSimpleNewMacro(ContourDomain);
 
   /** Point type used to store particle locations. */
   typedef typename ParticleDomain::PointType PointType;
+
+  explicit ContourDomain() {}
+  virtual ~ContourDomain() {}
+
+  void SetPolyLine(vtkSmartPointer<vtkPolyData> poly_data);
 
   shapeworks::DomainType GetDomainType() const override {
     return shapeworks::DomainType::Contour;
   }
 
-  /** Apply any constraints to the given point location.
-      This should force the point to a position on the surface that satisfies all constraints. */
-  inline bool ApplyConstraints(PointType& p, bool dbg = false) const override {
-    // TODO snap the point to the closest position on the contour.
-    return true;
+  virtual bool ApplyConstraints(PointType& p, int idx, bool dbg = false) const override;
+
+  virtual PointType UpdateParticlePosition(const PointType &point,
+                                           int idx, vnl_vector_fixed<double, DIMENSION> &update) const override;
+
+  virtual vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION>& gradE,
+                                                                            const PointType &pos, int idx) const override;
+
+  virtual vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType &point, int idx) const override {
+    throw std::runtime_error("Contours do not have normals");
   }
 
-  /** Reduce magnitude of the vector so that applying point = point + gradE does not violate any constraints.
-      This should have no effect if there are no constraints. ImageDomain may restrict vector magnitude based on the narrow band. */
-  inline bool ApplyVectorConstraints(vnl_vector_fixed<double, DIMENSION> & gradE, const PointType &pos) const {
-    return true;
+  virtual vnl_vector_fixed<float, DIMENSION> SampleGradientAtPoint(const PointType &point, int idx) const override {
+    throw std::runtime_error("Contours do not have gradients");
   }
 
-  /** Applies the update to the point and returns the new point position. */
-  inline PointType UpdateParticlePosition(PointType &point, vnl_vector_fixed<double, DIMENSION> &update) const override {
-    PointType newpoint;
-    // TODO implement geodesic walk for contours
-    for (unsigned int i = 0; i < DIMENSION; i++) { newpoint[i] = point[i]; }
-    return newpoint;
+  virtual GradNType SampleGradNAtPoint(const PointType &p, int idx) const override {
+    throw std::runtime_error("Contours do not have gradient of normals");
   }
 
-  /** Projects the vector to the surface tangent at the point. */
-  inline vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION> & gradE, const PointType &pos) const override {
-    // TODO project vector to surface tangent at pos
-    return gradE;
+  virtual PointType GetValidLocationNear(PointType p) const override {
+    this->ApplyConstraints(p, -1);
+    return p;
   }
 
-  /** Get the surface normal at a point. */
-  inline vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType &point) const override {
-    vnl_vector_fixed<float, DIMENSION> normal(1, 0, 0);
-    // TODO return normal at point
-    return normal;
+  virtual double GetMaxDiameter() const override {
+    //todo copied from MeshDomain: should this not be the length of the bounding box diagonal?
+    const PointType bb = upper_bound_ - lower_bound_;
+    return std::max({bb[0], bb[1], bb[2]});
   }
 
-  /** Used in ParticleMeanCurvatureAttribute */
-  double GetCurvature(const PointType &p) const override {
+  virtual void UpdateZeroCrossingPoint() override { }
+
+  double GetCurvature(const PointType &p, int idx) const override {
     return GetSurfaceMeanCurvature();
   }
 
-  /** Used in ParticleMeanCurvatureAttribute */
-  inline double GetSurfaceMeanCurvature() const override {
+  virtual double GetSurfaceMeanCurvature() const override {
     // This function is used by MeanCurvatureAttribute which is used for good/bad assessment
     // These arbitrary values should eventually be replaced with actual computation
     return 0.15;
   }
 
-  /** Used in ParticleMeanCurvatureAttribute */
-  inline double GetSurfaceStdDevCurvature() const override {
+  virtual double GetSurfaceStdDevCurvature() const override {
     // This function is used by MeanCurvatureAttribute which is used for good/bad assessment
     // These arbitrary values should eventually be replaced with actual computation
     return 0.02;
   }
 
-  /** Each domain can compute the distance between two points */
-  inline double Distance(const PointType &a, const PointType &b) const override {
-    // TODO compute geodesic distance on the contour
-    return 1.0;
-  }
+  double Distance(const PointType &a, int idx_a, const PointType &b, int idx_b,
+                         vnl_vector_fixed<double, 3>* out_grad=nullptr) const override;
 
-  /** Gets the minimum x, y, z values of the bounding box for the domain. This is used for setting up the PowerOfTwoPointTree. */
+  double SquaredDistance(const PointType &a, int idx_a, const PointType &b, int idx_b) const override;
+
   const PointType& GetLowerBound() const override {
-    PointType p;
-    // TODO get the lower bounds of the domain.
-    return p;
+    return lower_bound_;
   }
 
-  /** Gets the maximum x, y, z values of the bounding box for the domain. This is used for setting up the PowerOfTwoPointTree. */
   const PointType& GetUpperBound() const override {
-    PointType p;
-    // TODO get the upper bounds of the domain.
-    return p;
+    return upper_bound_;
   }
 
-  /** Get any valid point on the domain. This is used to place the first particle. */
   PointType GetZeroCrossingPoint() const override {
-    PointType p;
-    // TODO return any point on the contour.
-    return p;
+    PointType out;
+    double dist;
+    int closest_line = GetLineForPoint(upper_bound_.GetDataPointer(), -1, dist, out.GetDataPointer());
+    return out;
   }
 
-  /** Use for neighborhood radius. */
   double GetSurfaceArea() const override {
-    // TODO return contour equivalent of surface area
-    return 0;
-  }
-
-  /** Used to compute sigma for sampling and neighborhood radius. */
-  double GetMaxDimRadius() const override {
-    // TODO return average edge length
-    return 1;
-  }
-
-  void PrintCuttingPlaneConstraints(std::ofstream& out) const override {
-    // TODO for Hong: figure out constraint thing
+    throw std::runtime_error("Contours do not have area");
   }
 
   void DeleteImages() override {
-    // TODO delete the contours
+    // TODO what?
   }
   void DeletePartialDerivativeImages() override {
-    // TODO delete gradients computed from contours (if they exist)
+    // TODO what?
   }
 
+  virtual void InvalidateParticlePosition(int idx) const override;
 
-  ContourDomain() { }
-  virtual ~ContourDomain() {}
+  virtual PointType GetPositionAfterSplit(const PointType& pt,
+                                          const vnl_vector_fixed<double, 3>& random, double epsilon) const override;
 
 protected:
-  void PrintSelf(std::ostream& os, Indent indent) const
+  void PrintSelf(std::ostream& os, Indent indent) const override
   {
     DataObject::Superclass::PrintSelf(os, indent);
     os << indent << "ContourDomain\n";
   }
 
 private:
+  PointType lower_bound_, upper_bound_;
 
+  vtkSmartPointer<vtkPolyData> poly_data_;
+  vtkSmartPointer<vtkCellLocator> cell_locator_;
+  std::vector<vtkSmartPointer<vtkLine>> lines_;
+
+  // Geodesics between all point pairs. Assumes the number of points is very small
+  Eigen::MatrixXd geodesics_;
+
+  // cache which line a particle is on
+  mutable std::vector<int> particle_lines_;
+  // store some information about the last geodesic query. The next one will most likely reuse this
+  mutable int geo_lq_idx_ = -1;
+  mutable int geo_lq_line_ = -1;
+  mutable double geo_lq_dist_ = -1;
+
+  void ComputeBounds();
+  void ComputeGeodesics(vtkSmartPointer<vtkPolyData> poly_data);
+
+  int GetLineForPoint(const double pt[3], int idx, double& closest_distance, double closest_pt[3]) const;
+  double ComputeLineCoordinate(const double pt[3], int line) const;
+
+  // Return the number of lines that consist of i-th point
+  int NumberOfLinesIncidentOnPoint(int i) const;
+
+  PointType GeodesicWalk(const PointType& start_pt, int idx, const Eigen::Vector3d& update_vec) const;
+
+  int NumberOfLines() const;
+  int NumberOfPoints() const;
+
+  Eigen::Vector3d GetPoint(int id) const;
 };
 
 } // end namespace itk

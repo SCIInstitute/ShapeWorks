@@ -1,9 +1,16 @@
 #pragma once
 
 #include "MeshWrapper.h"
+#include "MeshGeoEntry.h"
 
+#include <unordered_map>
+#include <unordered_set>
+#include <robin_hood.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
+#include <geometrycentral/surface/surface_mesh.h>
+#include <geometrycentral/surface/meshio.h>
+#include <geometrycentral/surface/heat_method_distance.h>
 
 class vtkCellLocator;
 
@@ -18,11 +25,18 @@ public:
   using NormalType = vnl_vector_fixed<float, DIMENSION>;
   using VectorType = vnl_vector_fixed<double, DIMENSION>;
 
-  explicit VtkMeshWrapper(vtkSmartPointer<vtkPolyData> mesh);
+  explicit VtkMeshWrapper(vtkSmartPointer<vtkPolyData> mesh,
+                          bool geodesics_enabled=false,
+                          size_t geodesics_cache_multiplier_size=0); // 0 => VtkMeshWrapper will choose a heuristic
 
   ~VtkMeshWrapper() = default;
 
-  double ComputeDistance(PointType pointa, PointType pointb) const override;
+  double ComputeDistance(const PointType& pointa, int idxa,
+                         const PointType& pointb, int idxb, VectorType* out_grad=nullptr) const override;
+
+  bool IsWithinDistance(const PointType& pointa, int idxa,
+                        const PointType& pointb, int idxb,
+                        double test_dist, double& dist) const override;
 
   PointType GeodesicWalk(PointType p, int idx, VectorType vector) const override;
 
@@ -51,7 +65,7 @@ public:
 private:
 
   void ComputeMeshBounds();
-  void ComputeGradN(); // Gradient of normals
+  void ComputeGradN(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
 
 
   int GetTriangleForPoint(const double pt[3], int idx, double closest_point[3]) const;
@@ -63,9 +77,9 @@ private:
 
   bool IsInTriangle(const double pt[3], int face_index) const;
 
-  Eigen::Vector3d ComputeBarycentricCoordinates(Eigen::Vector3d pt, int face) const;
+  Eigen::Vector3d ComputeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const;
 
-  int ComputeFaceAndWeights(PointType p, int idx, Eigen::Vector3d &weights) const;
+  int ComputeFaceAndWeights(const PointType& p, int idx, Eigen::Vector3d &weights) const;
 
   Eigen::Vector3d
   GeodesicWalkOnFace(Eigen::Vector3d point_a,
@@ -96,6 +110,7 @@ private:
   mutable std::vector<int> particle_triangles_;
   mutable std::vector<NormalType> particle_normals_;
   mutable std::vector<PointType> particle_positions_;
+  mutable std::vector<double> particle_neighboorhood_;
 
   std::vector<GradNType> grad_normals_;
 
@@ -109,5 +124,53 @@ private:
   // cell locator to find closest point on mesh
   vtkSmartPointer<vtkCellLocator> cell_locator_;
 
+  /////////////////////////
+  // Geodesic distances
+
+  bool is_geodesics_enabled_{false};
+
+  bool IsGeodesicsEnabled() const override
+  {
+    return this->is_geodesics_enabled_;
+  }
+
+  // Geometry Central data structures
+  std::unique_ptr<geometrycentral::surface::SurfaceMesh> gc_mesh_;
+  std::unique_ptr<geometrycentral::surface::VertexPositionGeometry> gc_geometry_;
+  std::unique_ptr<geometrycentral::surface::HeatMethodDistanceSolver> gc_heatsolver_;
+
+  size_t geo_max_cache_entries_{0};
+  mutable size_t geo_cache_size_{0};
+
+  // Flattened version of libigl's gradient operator
+  std::vector<Eigen::Matrix3d> face_grad_;
+
+  std::vector<std::unordered_set<int>> face_kring_;
+
+  // Cache for geodesic distances from a triangle
+  mutable std::vector<MeshGeoEntry> geo_dist_cache_;
+
+  // Returns true if face f_a is in the K-ring of face f_b
+  bool AreFacesInKRing(int f_a, int f_b) const;
+  const size_t kring_{1};
+
+  // Convert the mesh to libigl data structures
+  void GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const;
+
+  // Precompute heat data structures for faster geodesic lookups
+  void PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
+
+  void ComputeKRing(int f, int k, std::unordered_set<int>& ring) const;
+
+  const MeshGeoEntry& GeodesicsFromTriangle(int f, double max_dist=std::numeric_limits<double>::max(),
+                                            int req_target_f=-1) const;
+  const Eigen::Matrix3d GeodesicsFromTriangleToTriangle(int f_a, int f_b) const;
+  void ClearGeodesicCache() const;
+
+  // Store some info about the last query. This accelerates the computation because the optimizer generally asks for the
+  // distances _from_ the same point as the previous query.
+  mutable int geo_lq_pidx_{-1};
+  mutable int geo_lq_face_{-1};
+  mutable Eigen::Vector3d geo_lq_bary_;
 };
 }
