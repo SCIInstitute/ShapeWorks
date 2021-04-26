@@ -168,15 +168,15 @@ Viewer::Viewer()
   this->scalar_bar_actor_->SetOrientationToVertical();
   this->scalar_bar_actor_->SetMaximumNumberOfColors(1000);
   this->scalar_bar_actor_->GetPositionCoordinate()->SetCoordinateSystemToNormalizedViewport();
-  this->scalar_bar_actor_->GetPositionCoordinate()->SetValue(.2, .05);
-  this->scalar_bar_actor_->SetWidth(0.05);
+  this->scalar_bar_actor_->GetPositionCoordinate()->SetValue(.3, .2);
+  this->scalar_bar_actor_->SetWidth(0.10);
   this->scalar_bar_actor_->SetHeight(0.7);
-  this->scalar_bar_actor_->SetPosition(0.9, 0.05);
-  this->scalar_bar_actor_->SetLabelFormat("%.0f");
+  this->scalar_bar_actor_->SetPosition(0.9, 0.1);
+  this->scalar_bar_actor_->SetLabelFormat("%.1f");
   this->scalar_bar_actor_->GetTitleTextProperty()->SetFontFamilyToArial();
-  this->scalar_bar_actor_->GetTitleTextProperty()->SetFontSize(4);
+  this->scalar_bar_actor_->GetTitleTextProperty()->SetFontSize(48);
   this->scalar_bar_actor_->GetLabelTextProperty()->SetFontFamilyToArial();
-  this->scalar_bar_actor_->GetLabelTextProperty()->SetFontSize(4);
+  this->scalar_bar_actor_->GetLabelTextProperty()->SetFontSize(48);
   this->scalar_bar_actor_->GetLabelTextProperty()->SetJustificationToCentered();
   this->scalar_bar_actor_->GetLabelTextProperty()->SetColor(1, 1, 1);
 
@@ -886,6 +886,18 @@ void Viewer::update_difference_lut(float r0, float r1)
   this->arrow_glyph_mapper_->SetScalarRange(range);
   this->glyph_mapper_->SetScalarRange(range);
   this->scalar_bar_actor_->SetLookupTable(this->surface_lut_);
+  if (rd > 100) {
+    this->scalar_bar_actor_->SetLabelFormat("%.0f");
+  }
+  else if (rd > 1) {
+    this->scalar_bar_actor_->SetLabelFormat("%.1f");
+  }
+  else if (rd > 0.1) {
+    this->scalar_bar_actor_->SetLabelFormat("%.2f");
+  }
+  else {
+    this->scalar_bar_actor_->SetLabelFormat("%-#6.3g");
+  }
   this->scalar_bar_actor_->Modified();
 }
 
