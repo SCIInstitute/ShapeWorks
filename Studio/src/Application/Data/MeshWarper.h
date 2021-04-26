@@ -48,7 +48,6 @@ private:
 
   static vtkSmartPointer<vtkPolyData> clean_mesh(vtkSmartPointer<vtkPolyData> mesh);
 
-  Eigen::MatrixXd vertices_;
   Eigen::MatrixXi faces_;
   Eigen::MatrixXd points_;
   Eigen::MatrixXd warp_;

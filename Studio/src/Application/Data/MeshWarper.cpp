@@ -68,7 +68,7 @@ void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
         }
       }
       if (same) {
-        // we can skip the processing below, nothing has changed
+        // we can skip, nothing has changed
         return;
       }
     }
@@ -76,8 +76,6 @@ void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
 
   this->incoming_reference_mesh_ = reference_mesh;
   this->reference_particles_ = reference_particles;
-
-
 
   // mark that the warp needs to be generated
   this->needs_warp_ = true;
@@ -116,11 +114,11 @@ bool MeshWarper::check_warp_ready()
   this->find_good_particles();
   this->points_ = this->remove_bad_particles(this->points_);
 
-  this->vertices_ = MeshUtils::distilVertexInfo(this->reference_mesh_);
+  Eigen::MatrixXd vertices = MeshUtils::distilVertexInfo(this->reference_mesh_);
   this->faces_ = MeshUtils::distilFaceInfo(this->reference_mesh_);
 
   // perform warp
-  if (!MeshUtils::generateWarpMatrix(this->vertices_, this->faces_,
+  if (!MeshUtils::generateWarpMatrix(vertices, this->faces_,
                                      this->points_, this->warp_)) {
     this->warp_available_ = false;
     return false;
