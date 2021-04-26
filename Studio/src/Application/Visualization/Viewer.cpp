@@ -174,9 +174,9 @@ Viewer::Viewer()
   this->scalar_bar_actor_->SetPosition(0.9, 0.1);
   this->scalar_bar_actor_->SetLabelFormat("%.1f");
   this->scalar_bar_actor_->GetTitleTextProperty()->SetFontFamilyToArial();
-  this->scalar_bar_actor_->GetTitleTextProperty()->SetFontSize(48);
+  this->scalar_bar_actor_->GetTitleTextProperty()->SetFontSize(4);
   this->scalar_bar_actor_->GetLabelTextProperty()->SetFontFamilyToArial();
-  this->scalar_bar_actor_->GetLabelTextProperty()->SetFontSize(48);
+  this->scalar_bar_actor_->GetLabelTextProperty()->SetFontSize(4);
   this->scalar_bar_actor_->GetLabelTextProperty()->SetJustificationToCentered();
   this->scalar_bar_actor_->GetLabelTextProperty()->SetColor(1, 1, 1);
 
