@@ -104,7 +104,6 @@ bool MeshWarper::check_warp_ready()
   // clean mesh
   this->reference_mesh_ = MeshWarper::clean_mesh(this->incoming_reference_mesh_);
 
-
   // prep points
   this->points_ = Eigen::Map<const Eigen::VectorXd>(
     (double*) this->reference_particles_.data_block(),
@@ -133,8 +132,6 @@ bool MeshWarper::check_warp_ready()
 //---------------------------------------------------------------------------
 void MeshWarper::add_particle_vertices()
 {
-  const double epsilon = 1e-4;
-  const double edge_epsilon = 1e-5;
 
   for (int i = 0; i < this->points_.rows(); i++) {
     this->reference_mesh_->BuildLinks();
@@ -160,7 +157,6 @@ void MeshWarper::add_particle_vertices()
 
     double point[3] = {pt[0], pt[1], pt[2]};
     double closest[3];
-    //int sub_id;
     double pcoords[3];
     double dist2;
     double weights[3];
