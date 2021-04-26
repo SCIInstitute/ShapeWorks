@@ -75,30 +75,12 @@ void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
   }
 
   this->incoming_reference_mesh_ = reference_mesh;
+  this->reference_particles_ = reference_particles;
 
-  vtkSmartPointer<vtkTriangleFilter> triangle_filter =
-    vtkSmartPointer<vtkTriangleFilter>::New();
-  triangle_filter->SetInputData(reference_mesh);
-  triangle_filter->Update();
 
-  vtkSmartPointer<vtkPolyDataConnectivityFilter>
-    connectivity = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
-  connectivity->SetInputConnection(triangle_filter->GetOutputPort());
-  connectivity->SetExtractionModeToLargestRegion();
-  connectivity->Update();
-
-  vtkSmartPointer<vtkCleanPolyData> clean = vtkSmartPointer<vtkCleanPolyData>::New();
-  clean->ConvertPolysToLinesOff();
-  clean->ConvertLinesToPointsOff();
-  clean->ConvertStripsToPolysOff();
-  clean->PointMergingOn();
-  clean->SetInputConnection(connectivity->GetOutputPort());
-  clean->Update();
 
   // mark that the warp needs to be generated
   this->needs_warp_ = true;
-  this->reference_mesh_ = clean->GetOutput();
-  this->reference_particles_ = reference_particles;
 
   this->warp_available_ = true;
 }
@@ -119,7 +101,11 @@ bool MeshWarper::check_warp_ready()
     return true;
   }
 
-  // perform warp
+  // clean mesh
+  this->reference_mesh_ = MeshWarper::clean_mesh(this->incoming_reference_mesh_);
+
+
+  // prep points
   this->points_ = Eigen::Map<const Eigen::VectorXd>(
     (double*) this->reference_particles_.data_block(),
     this->reference_particles_.size());
@@ -133,6 +119,8 @@ bool MeshWarper::check_warp_ready()
 
   this->vertices_ = MeshUtils::distilVertexInfo(this->reference_mesh_);
   this->faces_ = MeshUtils::distilFaceInfo(this->reference_mesh_);
+
+  // perform warp
   if (!MeshUtils::generateWarpMatrix(this->vertices_, this->faces_,
                                      this->points_, this->warp_)) {
     this->warp_available_ = false;
@@ -358,6 +346,31 @@ void MeshWarper::split_cell_on_edge(int cell_id, int new_vertex, int v0, int v1)
 
   this->reference_mesh_->DeleteCell(cell_id);
 
+}
+
+//---------------------------------------------------------------------------
+vtkSmartPointer<vtkPolyData> MeshWarper::clean_mesh(vtkSmartPointer<vtkPolyData> mesh)
+{
+  vtkSmartPointer<vtkTriangleFilter> triangle_filter = vtkSmartPointer<vtkTriangleFilter>::New();
+  triangle_filter->SetInputData(mesh);
+  triangle_filter->Update();
+
+  vtkSmartPointer<vtkPolyDataConnectivityFilter>
+    connectivity = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
+  connectivity->SetInputConnection(triangle_filter->GetOutputPort());
+  connectivity->SetExtractionModeToLargestRegion();
+  connectivity->Update();
+
+  vtkSmartPointer<vtkCleanPolyData> clean = vtkSmartPointer<vtkCleanPolyData>::New();
+  clean->ConvertPolysToLinesOff();
+  clean->ConvertLinesToPointsOff();
+  clean->ConvertStripsToPolysOff();
+  clean->PointMergingOn();
+  clean->SetInputConnection(connectivity->GetOutputPort());
+  clean->Update();
+
+  mesh = clean->GetOutput();
+  return mesh;
 }
 
 //---------------------------------------------------------------------------

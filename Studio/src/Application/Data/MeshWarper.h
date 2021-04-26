@@ -46,6 +46,8 @@ private:
   //! Check if the warp is ready, return true if warp is valid
   bool check_warp_ready();
 
+  static vtkSmartPointer<vtkPolyData> clean_mesh(vtkSmartPointer<vtkPolyData> mesh);
+
   Eigen::MatrixXd vertices_;
   Eigen::MatrixXi faces_;
   Eigen::MatrixXd points_;

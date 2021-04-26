@@ -105,7 +105,7 @@ bool MeshUtils::generateWarpMatrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF,
     // so far the two meshes are not separated. So what we are really doing here
     // is computing handles from low resolution and use that for the high resolution one
 		igl::point_mesh_squared_distance(Vref,TV,J,sqrD,b,_2);
-    assert(sqrD.maxCoeff() < 1e-7 && "Particles must exist on vertices");
+    //assert(sqrD.maxCoeff() < 1e-7 && "Particles must exist on vertices");
 	}
 
   // list of points --> list of singleton lists
@@ -117,7 +117,7 @@ bool MeshUtils::generateWarpMatrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF,
   const int k = 2;
   if (!igl::biharmonic_coordinates(TV,TF,S,k,W))
   {
-    std::cerr << "biharmonic failed\n";
+    std::cerr << "igl:biharmonic_coordinates failed\n";
     return false;
   }
   // Throw away interior tet-vertices, keep weights and indices of boundary
