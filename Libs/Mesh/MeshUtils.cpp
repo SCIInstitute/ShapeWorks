@@ -79,16 +79,16 @@ Eigen::MatrixXi MeshUtils::distilFaceInfo(Mesh mesh){
   vtkSmartPointer<vtkPolyData> poly_data = mesh.getVTKMesh();
   int numFaces = poly_data->GetNumberOfCells();
   Eigen::MatrixXi Fref_new(numFaces, 3);
-	
-	vtkSmartPointer<vtkIdList> cellIdList =
-      vtkSmartPointer<vtkIdList>::New();
-	
-	for(int j = 0; j < numFaces; j++){
-		poly_data->GetCellPoints(j, cellIdList);
-		Fref_new(j, 0) = cellIdList->GetId(0);
-		Fref_new(j, 1) = cellIdList->GetId(1);
-		Fref_new(j, 2) = cellIdList->GetId(2);
-	}
+
+  vtkSmartPointer<vtkIdList> cellIdList =
+    vtkSmartPointer<vtkIdList>::New();
+
+  for(int j = 0; j < numFaces; j++){
+    poly_data->GetCellPoints(j, cellIdList);
+    Fref_new(j, 0) = cellIdList->GetId(0);
+    Fref_new(j, 1) = cellIdList->GetId(1);
+    Fref_new(j, 2) = cellIdList->GetId(2);
+  }
   return Fref_new;
 }
 
@@ -137,26 +137,26 @@ Mesh MeshUtils::warpMesh(const Eigen::MatrixXd& movPts,
   int numVertices = W.rows();
   int numFaces = Fref.rows();
   // std::cout<< (Vcontrol_moving.rowwise() + Eigen::RowVector3d(0,0,0)) <<std::endl;
-	Eigen::MatrixXd Voutput = W * (movPts.rowwise() + Eigen::RowVector3d(0,0,0));
-	vtkSmartPointer<vtkPolyData> outmesh = vtkSmartPointer<vtkPolyData>::New();
-	vtkSmartPointer<vtkPoints> outpoints = vtkSmartPointer<vtkPoints>::New();
-	outpoints->SetNumberOfPoints(numVertices);
+  Eigen::MatrixXd Voutput = W * (movPts.rowwise() + Eigen::RowVector3d(0,0,0));
+  vtkSmartPointer<vtkPolyData> outmesh = vtkSmartPointer<vtkPolyData>::New();
+  vtkSmartPointer<vtkPoints> outpoints = vtkSmartPointer<vtkPoints>::New();
+  outpoints->SetNumberOfPoints(numVertices);
   for (vtkIdType i = 0; i < numVertices; i++)
-	{
-		outpoints->SetPoint(i, Voutput(i, 0), Voutput(i, 1), Voutput(i, 2));
+  {
+    outpoints->SetPoint(i, Voutput(i, 0), Voutput(i, 1), Voutput(i, 2));
   }
-	vtkSmartPointer<vtkCellArray> polys = vtkSmartPointer<vtkCellArray>::New();
-	for (vtkIdType i = 0; i < numFaces; i++)
-	{
-		vtkIdType a, b, c;
-		polys->InsertNextCell(3);
-		polys->InsertCellPoint(Fref(i, 0));
-		polys->InsertCellPoint(Fref(i, 1));
-		polys->InsertCellPoint(Fref(i, 2));
-	}
-	outmesh->SetPoints(outpoints);
-	outmesh->SetPolys(polys);
-	
+  vtkSmartPointer<vtkCellArray> polys = vtkSmartPointer<vtkCellArray>::New();
+  for (vtkIdType i = 0; i < numFaces; i++)
+  {
+    vtkIdType a, b, c;
+    polys->InsertNextCell(3);
+    polys->InsertCellPoint(Fref(i, 0));
+    polys->InsertCellPoint(Fref(i, 1));
+    polys->InsertCellPoint(Fref(i, 2));
+  }
+  outmesh->SetPoints(outpoints);
+  outmesh->SetPolys(polys);
+
   return Mesh(outmesh);
 }
 

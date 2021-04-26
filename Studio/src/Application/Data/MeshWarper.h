@@ -29,6 +29,11 @@ public:
   //! Build a mesh for a given set of particles
   vtkSmartPointer<vtkPolyData> build_mesh(const vnl_vector<double>& particles);
 
+protected:
+
+  //! Generate warp, return true on success
+  virtual bool generate_warp();
+
 private:
 
   //! Add particles as vertices to reference mesh
@@ -46,7 +51,15 @@ private:
   //! Check if the warp is ready, return true if warp is valid
   bool check_warp_ready();
 
+  //! Clean incoming mesh
   static vtkSmartPointer<vtkPolyData> clean_mesh(vtkSmartPointer<vtkPolyData> mesh);
+
+  Eigen::MatrixXd distill_vertex_info(vtkSmartPointer<vtkPolyData> poly_data);
+  Eigen::MatrixXi distill_face_info(vtkSmartPointer<vtkPolyData> poly_data);
+  bool generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF,
+                          const Eigen::MatrixXd& Vref, Eigen::MatrixXd& W);
+
+  vtkSmartPointer<vtkPolyData> warp_mesh(const Eigen::MatrixXd& points);
 
   Eigen::MatrixXi faces_;
   Eigen::MatrixXd points_;
