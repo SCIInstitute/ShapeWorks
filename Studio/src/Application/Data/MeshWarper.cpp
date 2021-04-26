@@ -1,4 +1,6 @@
 #include <Data/MeshWarper.h>
+#include <Libs/Mesh/MeshUtils.h>
+#include <Data/StudioLog.h>
 
 #include <vtkCellLocator.h>
 #include <vtkTriangleFilter.h>
@@ -7,10 +9,13 @@
 #include <vtkPolyDataConnectivityFilter.h>
 #include <vtkKdTreePointLocator.h>
 
-#include <Libs/Mesh/MeshUtils.h>
-#include <Data/StudioLog.h>
+// tbb
+#include <tbb/mutex.h>
 
 using namespace shapeworks;
+
+// for concurrent access
+static tbb::mutex mutex;
 
 //---------------------------------------------------------------------------
 MeshWarper::MeshWarper()
@@ -107,7 +112,8 @@ bool MeshWarper::get_warp_available()
 //---------------------------------------------------------------------------
 bool MeshWarper::check_warp_ready()
 {
-  QMutexLocker locker(&this->mutex_);
+  tbb::mutex::scoped_lock lock(mutex);
+
   if (!this->needs_warp_) {
     // warp already done
     return true;
@@ -171,22 +177,15 @@ void MeshWarper::add_particle_vertices()
     double dist2;
     double weights[3];
     this->reference_mesh_->GetCell(cell_id)->EvaluatePosition(point, closest, sub_id, pcoords,
-                                                              dist2,
-                                                              weights);
-
-    //std::cerr << "bary: " << weights[0] << ", " << weights[1] << ", " << weights[2] << "\n";
-
+                                                              dist2, weights);
     bool same_as_vertex = false;
 
     if (weights[0] > 0.99 || weights[1] > 0.99 || weights[2] > 0.99) {
-//      std::cerr << "bary close enough\n";
       same_as_vertex = true;
     }
 
     if (!same_as_vertex) {
-
       // now we need to check if we are along an edge already.
-
       bool on_edge = false;
       int v0_index = 0, v1_index = 0;
       double p0[3], p1[3], p2[3];

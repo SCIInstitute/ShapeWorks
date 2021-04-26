@@ -10,7 +10,6 @@
 #include <vector>
 #include <string>
 #include <Libs/Mesh/Mesh.h>
-#include <QMutex>
 
 namespace shapeworks {
 
@@ -35,14 +34,17 @@ private:
   //! Add particles as vertices to reference mesh
   void add_particle_vertices();
 
+  //! Remove the bad particles from a set of particles
+  Eigen::MatrixXd remove_bad_particles(const Eigen::MatrixXd& particles);
+
+  //! Split a cell on the edge
   void split_cell_on_edge(int cell_id, int new_vertex, int v0, int v1);
 
-
+  //! Identify the good particles
   void find_good_particles();
 
+  //! Check if the warp is ready, return true if warp is valid
   bool check_warp_ready();
-
-  Eigen::MatrixXd remove_bad_particles(const Eigen::MatrixXd& particles);
 
   Eigen::MatrixXd vertices_;
   Eigen::MatrixXi faces_;
@@ -55,12 +57,12 @@ private:
 
   bool warp_available_ = false;
 
+  //! Reference mesh as it was given to us
   vtkSmartPointer<vtkPolyData> incoming_reference_mesh_;
+  //! Processed reference mesh
   vtkSmartPointer<vtkPolyData> reference_mesh_;
+  //! Reference particles
   vnl_vector<double> reference_particles_;
-
-  // for concurrent access
-  QMutex mutex_;
 };
 
 }
