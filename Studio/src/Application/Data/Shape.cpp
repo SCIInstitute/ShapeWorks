@@ -623,16 +623,16 @@ Eigen::VectorXf Shape::get_point_features(std::string feature)
 //---------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Shape::get_groomed_transform(int domain)
 {
-  vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
-
   auto transforms = this->subject_->get_groomed_transforms();
   if (domain < transforms.size()) {
+    vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
     double tx = transforms[domain][9];
     double ty = transforms[domain][10];
     double tz = transforms[domain][11];
     transform->Translate(tx, ty, tz);
+    return transform;
   }
-  return transform;
+  return nullptr;
 }
 
 //---------------------------------------------------------------------------
