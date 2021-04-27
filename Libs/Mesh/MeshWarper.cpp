@@ -1,4 +1,4 @@
-#include <Data/MeshWarper.h>
+#include <Libs/Mesh/MeshWarper.h>
 
 #include <vtkCellLocator.h>
 #include <vtkTriangleFilter.h>
@@ -7,18 +7,20 @@
 #include <vtkPolyDataConnectivityFilter.h>
 #include <vtkKdTreePointLocator.h>
 
-#include <Libs/Mesh/MeshUtils.h>
-#include <Data/StudioLog.h>
+#include <igl/biharmonic_coordinates.h>
+#include <igl/point_mesh_squared_distance.h>
+#include <igl/remove_unreferenced.h>
+
+// tbb
+#include <tbb/mutex.h>
 
 using namespace shapeworks;
 
-//---------------------------------------------------------------------------
-MeshWarper::MeshWarper()
-{
-}
+// for concurrent access
+static tbb::mutex mutex;
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const vnl_vector<double>& particles)
+vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const Eigen::MatrixXd& particles)
 {
   if (!this->warp_available_) {
     return nullptr;
@@ -28,14 +30,9 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const vnl_vector<double>& pa
     return nullptr;
   }
 
-  Eigen::MatrixXd points = Eigen::Map<const Eigen::VectorXd>((double*) particles.data_block(),
-                                                             particles.size());
+  auto points = this->remove_bad_particles(particles);
 
-  points.resize(3, particles.size() / 3);
-  points.transposeInPlace();
-  points = this->remove_bad_particles(points);
-
-  Mesh output = MeshUtils::warpMesh(points, this->warp_, this->faces_);
+  Mesh output = MeshWarper::warp_mesh(points);
 
   vtkSmartPointer<vtkPolyData> poly_data = output.getVTKMesh();
 
@@ -52,48 +49,22 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const vnl_vector<double>& pa
 
 //---------------------------------------------------------------------------
 void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
-                                    const vnl_vector<double>& reference_particles)
+                                    const Eigen::MatrixXd& reference_particles)
 {
   if (this->incoming_reference_mesh_ == reference_mesh) {
     if (this->reference_particles_.size() == reference_particles.size()) {
-      bool same = true;
-      for (int i = 0; i < reference_particles.size(); i++) {
-        if (this->reference_particles_[i] != reference_particles[i]) {
-          same = false;
-        }
-      }
-      if (same) {
-        // we can skip the processing below, nothing has changed
+      if (this->reference_particles_ == reference_particles) {
+        // we can skip, nothing has changed
         return;
       }
     }
   }
 
   this->incoming_reference_mesh_ = reference_mesh;
-
-  vtkSmartPointer<vtkTriangleFilter> triangle_filter =
-    vtkSmartPointer<vtkTriangleFilter>::New();
-  triangle_filter->SetInputData(reference_mesh);
-  triangle_filter->Update();
-
-  vtkSmartPointer<vtkPolyDataConnectivityFilter>
-    connectivity = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
-  connectivity->SetInputConnection(triangle_filter->GetOutputPort());
-  connectivity->SetExtractionModeToLargestRegion();
-  connectivity->Update();
-
-  vtkSmartPointer<vtkCleanPolyData> clean = vtkSmartPointer<vtkCleanPolyData>::New();
-  clean->ConvertPolysToLinesOff();
-  clean->ConvertLinesToPointsOff();
-  clean->ConvertStripsToPolysOff();
-  clean->PointMergingOn();
-  clean->SetInputConnection(connectivity->GetOutputPort());
-  clean->Update();
+  this->reference_particles_ = reference_particles;
 
   // mark that the warp needs to be generated
   this->needs_warp_ = true;
-  this->reference_mesh_ = clean->GetOutput();
-  this->reference_particles_ = reference_particles;
 
   this->warp_available_ = true;
 }
@@ -107,42 +78,21 @@ bool MeshWarper::get_warp_available()
 //---------------------------------------------------------------------------
 bool MeshWarper::check_warp_ready()
 {
-  QMutexLocker locker(&this->mutex_);
+  tbb::mutex::scoped_lock lock(mutex);
+
   if (!this->needs_warp_) {
     // warp already done
     return true;
   }
 
-  // perform warp
-  this->points_ = Eigen::Map<const Eigen::VectorXd>(
-    (double*) this->reference_particles_.data_block(),
-    this->reference_particles_.size());
-  this->points_.resize(3, this->reference_particles_.size() / 3);
-  this->points_.transposeInPlace();
-
-  this->add_particle_vertices();
-
-  this->find_good_particles();
-  this->points_ = this->remove_bad_particles(this->points_);
-
-  this->vertices_ = MeshUtils::distilVertexInfo(this->reference_mesh_);
-  this->faces_ = MeshUtils::distilFaceInfo(this->reference_mesh_);
-  if (!MeshUtils::generateWarpMatrix(this->vertices_, this->faces_,
-                                     this->points_, this->warp_)) {
-    this->warp_available_ = false;
-    return false;
-  }
-  this->needs_warp_ = false;
-  return true;
+  return this->generate_warp();
 }
 
 //---------------------------------------------------------------------------
 void MeshWarper::add_particle_vertices()
 {
-  const double epsilon = 1e-4;
-  const double edge_epsilon = 1e-5;
 
-  for (int i = 0; i < this->points_.rows(); i++) {
+  for (int i = 0; i < this->vertices_.rows(); i++) {
     this->reference_mesh_->BuildLinks();
 
     auto locator = vtkSmartPointer<vtkCellLocator>::New();
@@ -150,7 +100,7 @@ void MeshWarper::add_particle_vertices()
     locator->SetDataSet(this->reference_mesh_);
     locator->BuildLocator();
 
-    double pt[3]{this->points_(i, 0), this->points_(i, 1), this->points_(i, 2)};
+    double pt[3]{this->vertices_(i, 0), this->vertices_(i, 1), this->vertices_(i, 2)};
     double closest_point[3];//the coordinates of the closest point will be returned here
     double closest_point_dist2; //the squared distance to the closest point will be returned here
     vtkIdType cell_id; //the cell id of the cell containing the closest point will be returned here
@@ -166,27 +116,19 @@ void MeshWarper::add_particle_vertices()
 
     double point[3] = {pt[0], pt[1], pt[2]};
     double closest[3];
-    //int sub_id;
     double pcoords[3];
     double dist2;
     double weights[3];
     this->reference_mesh_->GetCell(cell_id)->EvaluatePosition(point, closest, sub_id, pcoords,
-                                                              dist2,
-                                                              weights);
-
-    //std::cerr << "bary: " << weights[0] << ", " << weights[1] << ", " << weights[2] << "\n";
-
+                                                              dist2, weights);
     bool same_as_vertex = false;
 
     if (weights[0] > 0.99 || weights[1] > 0.99 || weights[2] > 0.99) {
-//      std::cerr << "bary close enough\n";
       same_as_vertex = true;
     }
 
     if (!same_as_vertex) {
-
       // now we need to check if we are along an edge already.
-
       bool on_edge = false;
       int v0_index = 0, v1_index = 0;
       double p0[3], p1[3], p2[3];
@@ -265,15 +207,15 @@ void MeshWarper::find_good_particles()
   tree->BuildLocator();
 
   std::vector<int> ids;
-  for (int i = 0; i < this->points_.rows(); i++) {
-    double p[3]{this->points_(i, 0), this->points_(i, 1), this->points_(i, 2)};
+  for (int i = 0; i < this->vertices_.rows(); i++) {
+    double p[3]{this->vertices_(i, 0), this->vertices_(i, 1), this->vertices_(i, 2)};
     int id = tree->FindClosestPoint(p);
     ids.push_back(id);
   }
 
   std::set<int> set;  // initially store in set to avoid duplicates
-  for (int i = 0; i < this->points_.rows(); i++) {
-    for (int j = i + 1; j < this->points_.rows(); j++) {
+  for (int i = 0; i < this->vertices_.rows(); i++) {
+    for (int j = i + 1; j < this->vertices_.rows(); j++) {
       if (ids[i] == ids[j]) {
         set.insert(i);
         set.insert(j);
@@ -282,7 +224,7 @@ void MeshWarper::find_good_particles()
   }
 
   this->good_particles_.clear();
-  for (int i = 0; i < this->points_.rows(); i++) {
+  for (int i = 0; i < this->vertices_.rows(); i++) {
     if (set.find(i) == set.end()) {
       this->good_particles_.push_back(i);
     }
@@ -359,6 +301,156 @@ void MeshWarper::split_cell_on_edge(int cell_id, int new_vertex, int v0, int v1)
 
   this->reference_mesh_->DeleteCell(cell_id);
 
+}
+
+//---------------------------------------------------------------------------
+vtkSmartPointer<vtkPolyData> MeshWarper::clean_mesh(vtkSmartPointer<vtkPolyData> mesh)
+{
+  vtkSmartPointer<vtkTriangleFilter> triangle_filter = vtkSmartPointer<vtkTriangleFilter>::New();
+  triangle_filter->SetInputData(mesh);
+  triangle_filter->Update();
+
+  vtkSmartPointer<vtkPolyDataConnectivityFilter>
+    connectivity = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
+  connectivity->SetInputConnection(triangle_filter->GetOutputPort());
+  connectivity->SetExtractionModeToLargestRegion();
+  connectivity->Update();
+
+  vtkSmartPointer<vtkCleanPolyData> clean = vtkSmartPointer<vtkCleanPolyData>::New();
+  clean->ConvertPolysToLinesOff();
+  clean->ConvertLinesToPointsOff();
+  clean->ConvertStripsToPolysOff();
+  clean->PointMergingOn();
+  clean->SetInputConnection(connectivity->GetOutputPort());
+  clean->Update();
+
+  mesh = clean->GetOutput();
+  return mesh;
+}
+
+//---------------------------------------------------------------------------
+bool MeshWarper::generate_warp()
+{
+  // clean mesh
+  this->reference_mesh_ = MeshWarper::clean_mesh(this->incoming_reference_mesh_);
+
+  // prep points
+  this->vertices_ = this->reference_particles_;
+
+  this->add_particle_vertices();
+
+  this->find_good_particles();
+  this->vertices_ = this->remove_bad_particles(this->vertices_);
+
+  Eigen::MatrixXd vertices = MeshWarper::distill_vertex_info(this->reference_mesh_);
+  this->faces_ = MeshWarper::distill_face_info(this->reference_mesh_);
+
+  // perform warp
+  if (!MeshWarper::generate_warp_matrix(vertices, this->faces_,
+                                        this->vertices_, this->warp_)) {
+    this->warp_available_ = false;
+    return false;
+  }
+  this->needs_warp_ = false;
+  return true;
+}
+
+//---------------------------------------------------------------------------
+Eigen::MatrixXd MeshWarper::distill_vertex_info(vtkSmartPointer<vtkPolyData> poly_data)
+{
+  vtkSmartPointer<vtkPoints> points = poly_data->GetPoints();
+  vtkSmartPointer<vtkDataArray> data_array = points->GetData();
+
+  int num_vertices = points->GetNumberOfPoints();
+
+  Eigen::MatrixXd vertices(num_vertices, 3);
+
+  for (int i = 0; i < num_vertices; i++) {
+    vertices(i, 0) = data_array->GetComponent(i, 0);
+    vertices(i, 1) = data_array->GetComponent(i, 1);
+    vertices(i, 2) = data_array->GetComponent(i, 2);
+  }
+  return vertices;
+}
+
+//---------------------------------------------------------------------------
+Eigen::MatrixXi MeshWarper::distill_face_info(vtkSmartPointer<vtkPolyData> poly_data)
+{
+  int num_faces = poly_data->GetNumberOfCells();
+  Eigen::MatrixXi faces(num_faces, 3);
+
+  vtkSmartPointer<vtkIdList> cells = vtkSmartPointer<vtkIdList>::New();
+
+  for (int j = 0; j < num_faces; j++) {
+    poly_data->GetCellPoints(j, cells);
+    faces(j, 0) = cells->GetId(0);
+    faces(j, 1) = cells->GetId(1);
+    faces(j, 2) = cells->GetId(2);
+  }
+  return faces;
+}
+
+//---------------------------------------------------------------------------
+bool MeshWarper::generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF,
+                                      const Eigen::MatrixXd& Vref, Eigen::MatrixXd& W)
+{
+  Eigen::VectorXi b;
+  {
+    Eigen::VectorXi J = Eigen::VectorXi::LinSpaced(TV.rows(), 0, TV.rows() - 1);
+    Eigen::VectorXd sqrD;
+    Eigen::MatrixXd _2;
+    // using J which is N by 1 instead of a matrix that represents faces of N by 3
+    // so that we will find the closest vertices instead of closest point on the face
+    // so far the two meshes are not separated. So what we are really doing here
+    // is computing handles from low resolution and use that for the high resolution one
+    igl::point_mesh_squared_distance(Vref, TV, J, sqrD, b, _2);
+    //assert(sqrD.maxCoeff() < 1e-7 && "Particles must exist on vertices");
+  }
+
+  // list of points --> list of singleton lists
+  std::vector<std::vector<int> > S;
+  igl::matrix_to_list(b, S);
+
+  // Technically k should equal 3 for smooth interpolation in 3d, but 2 is
+  // faster and looks OK
+  const int k = 2;
+  if (!igl::biharmonic_coordinates(TV, TF, S, k, W)) {
+    std::cerr << "igl:biharmonic_coordinates failed\n";
+    return false;
+  }
+  // Throw away interior tet-vertices, keep weights and indices of boundary
+  Eigen::VectorXi I, J;
+  igl::remove_unreferenced(TV.rows(), TF, I, J);
+  std::for_each(TF.data(), TF.data() + TF.size(), [&I](int& a) { a = I(a); });
+  std::for_each(b.data(), b.data() + b.size(), [&I](int& a) { a = I(a); });
+  igl::slice(Eigen::MatrixXd(TV), J, 1, TV);
+  igl::slice(Eigen::MatrixXd(W), J, 1, W);
+  return true;
+}
+
+//---------------------------------------------------------------------------
+vtkSmartPointer<vtkPolyData> MeshWarper::warp_mesh(const Eigen::MatrixXd& points)
+{
+  int num_vertices = this->warp_.rows();
+  int num_faces = this->faces_.rows();
+  Eigen::MatrixXd v_out = this->warp_ * (points.rowwise() + Eigen::RowVector3d(0, 0, 0));
+  vtkSmartPointer<vtkPolyData> poly_data = vtkSmartPointer<vtkPolyData>::New();
+  vtkSmartPointer<vtkPoints> out_points = vtkSmartPointer<vtkPoints>::New();
+  out_points->SetNumberOfPoints(num_vertices);
+  for (vtkIdType i = 0; i < num_vertices; i++) {
+    out_points->SetPoint(i, v_out(i, 0), v_out(i, 1), v_out(i, 2));
+  }
+  vtkSmartPointer<vtkCellArray> polys = vtkSmartPointer<vtkCellArray>::New();
+  for (vtkIdType i = 0; i < num_faces; i++) {
+    polys->InsertNextCell(3);
+    polys->InsertCellPoint(this->faces_(i, 0));
+    polys->InsertCellPoint(this->faces_(i, 1));
+    polys->InsertCellPoint(this->faces_(i, 2));
+  }
+  poly_data->SetPoints(out_points);
+  poly_data->SetPolys(polys);
+
+  return poly_data;
 }
 
 //---------------------------------------------------------------------------
