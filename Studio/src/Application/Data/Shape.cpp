@@ -380,34 +380,9 @@ vtkSmartPointer<vtkTransform> Shape::get_transform(int domain)
 }
 
 //---------------------------------------------------------------------------
-void Shape::generate_meshes(std::vector<string> filenames, MeshHandle& mesh,
-                            bool save_transform, bool wait)
+vtkSmartPointer<vtkTransform> Shape::get_original_transform(int domain)
 {
-  if (filenames.empty()) {
-    return;
-  }
-
-  // single domain supported right now
-  std::string filename = filenames[0];
-
-  MeshWorkItem item;
-  item.filename = filename;
-  MeshHandle new_mesh = this->mesh_manager_->get_mesh(item, wait);
-  if (new_mesh) {
-    mesh = new_mesh;
-
-    /// Temporarily calculate the COM here
-    auto com = vtkSmartPointer<vtkCenterOfMass>::New();
-    com->SetInputData(mesh->get_poly_data());
-    com->Update();
-    double center[3];
-    com->GetCenter(center);
-
-    if (save_transform) {
-      this->transform_->Identity();
-      this->transform_->Translate(center);
-    }
-  }
+  return this->transform_;
 }
 
 //---------------------------------------------------------------------------
@@ -713,6 +688,29 @@ vnl_vector<double> Shape::get_global_correspondence_points_for_display()
 void Shape::set_reconstruction_transforms(std::vector<vtkSmartPointer<vtkTransform>> transforms)
 {
   this->reconstruction_transforms_ = transforms;
+}
+
+//---------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> Shape::get_alignment()
+{
+  auto groom_transform = this->get_groomed_transform(0);
+  if (!groom_transform) {
+    vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+    transform->Identity();
+    return transform;
+  }
+  return groom_transform;
+}
+
+//---------------------------------------------------------------------------
+bool Shape::has_alignment()
+{
+  auto groom_transform = this->get_groomed_transform(0);
+  if (groom_transform) {
+    return true;
+  }
+
+  return false;
 }
 
 }

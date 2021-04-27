@@ -676,6 +676,21 @@ void Viewer::update_points()
   auto t = this->get_transform(0);
 
   this->glyph_actor_->SetUserTransform(this->get_transform(0));
+
+  if (this->visualizer_->get_display_mode() == Visualizer::MODE_ORIGINAL_C) {
+    if (this->visualizer_->get_center()) {
+      this->glyph_actor_->SetUserTransform(this->shape_->get_alignment());
+    }
+    else {
+      if (!this->shape_->has_alignment()) {
+        vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+        transform->DeepCopy(this->shape_->get_original_transform());
+        transform->Inverse();
+        this->glyph_actor_->SetUserTransform(transform);
+      }
+    }
+  }
+
   this->glyph_points_->Modified();
 }
 
@@ -899,7 +914,7 @@ vtkSmartPointer<vtkTransform> Viewer::get_transform(int domain)
     }
   }
   else if (this->visualizer_->get_display_mode() == Visualizer::MODE_GROOMED_C) {
-    transform = this->shape_->get_transform();
+    transform = this->shape_->get_alignment();
   }
   else {
     transform = this->shape_->get_reconstruction_transform(domain);

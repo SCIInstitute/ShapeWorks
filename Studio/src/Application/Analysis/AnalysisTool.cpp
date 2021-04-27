@@ -1157,8 +1157,8 @@ void AnalysisTool::compute_reconstructed_domain_transforms()
     int num_shapes = shapes.size();
     double tx = 0, ty = 0, tz = 0;
     for (int i = 0; i < shapes.size(); i++) {
-      vtkSmartPointer<vtkTransform> base_transform = shapes[i]->get_groomed_transform(0);
-      vtkSmartPointer<vtkTransform> offset_transform = shapes[i]->get_groomed_transform(domain);
+      vtkSmartPointer<vtkTransform> base_transform = shapes[i]->get_alignment();
+      vtkSmartPointer<vtkTransform> offset_transform = shapes[i]->get_alignment();
       auto base = base_transform->GetPosition();
       auto offset = offset_transform->GetPosition();
       tx += (base[0] - offset[0]) / num_shapes;

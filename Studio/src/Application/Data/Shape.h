@@ -20,9 +20,6 @@ class Shape;
 using ShapeHandle = QSharedPointer<Shape>;
 using ShapeList = QVector<ShapeHandle>;
 
-//! TODO: replace this
-using TransformType = vtkSmartPointer<vtkTransform>;
-
 //! Representation of a single shape/patient/subject.
 class Shape {
 
@@ -123,11 +120,16 @@ public:
 
   void set_transform(vtkSmartPointer<vtkTransform> transform);
   vtkSmartPointer<vtkTransform> get_transform(int domain = 0);
+  bool has_alignment();
+
+  vtkSmartPointer<vtkTransform> get_original_transform(int domain = 0);
 
   void set_reconstruction_transforms(std::vector<vtkSmartPointer<vtkTransform>> transforms);
   vtkSmartPointer<vtkTransform> get_reconstruction_transform(int domain);
 
-  TransformType get_groomed_transform(int domain = 0);
+  vtkSmartPointer<vtkTransform> get_groomed_transform(int domain = 0);
+
+  vtkSmartPointer<vtkTransform> get_alignment();
 
   void load_feature(std::string display_mode, std::string feature);
 
@@ -136,11 +138,6 @@ public:
   void set_point_features(std::string feature, Eigen::VectorXf values);
 
 private:
-
-  //void generate_original_meshes();
-
-  void generate_meshes(std::vector<std::string> filenames, MeshHandle& mesh,
-                       bool save_transform, bool wait = false);
 
   void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list,
                        bool save_transform, bool wait = false);
