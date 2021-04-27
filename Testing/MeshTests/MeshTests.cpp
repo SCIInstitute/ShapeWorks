@@ -4,6 +4,8 @@
 #include "Image.h"
 #include "ParticleSystem.h"
 
+#include <Libs/Mesh/MeshWarper.h>
+
 #include <igl/point_mesh_squared_distance.h>
 
 using namespace shapeworks;
@@ -359,8 +361,7 @@ TEST(MeshTests, warpTest2)
 {
   Mesh ellipsoid( std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
   Mesh ellipsoid_warped( std::string(TEST_DATA_DIR) + "/ellipsoid_warped.ply");
-  Eigen::MatrixXd Vref = MeshUtils::distilVertexInfo(ellipsoid);
-  Eigen::MatrixXi Fref = MeshUtils::distilFaceInfo(ellipsoid);
+
   std::string staticPath = std::string(TEST_DATA_DIR) + "/ellipsoid_0.particles";
   std::string movingPath = std::string(TEST_DATA_DIR) + "/ellipsoid_1.particles";
   std::vector<std::string> paths;
@@ -371,9 +372,16 @@ TEST(MeshTests, warpTest2)
   Eigen::MatrixXd staticPoints = allPts.col(0);
   Eigen::MatrixXd movingPoints = allPts.col(1);
   staticPoints.resize(3, 128);
+  staticPoints.transposeInPlace();
   movingPoints.resize(3, 128);
+  movingPoints.transposeInPlace();
   Eigen::MatrixXd W;
-  ASSERT_TRUE(MeshUtils::generateWarpMatrix(Vref, Fref, staticPoints.transpose(),W));
-  Mesh output = MeshUtils::warpMesh(movingPoints.transpose(), W, Fref);
+
+  MeshWarper warper;
+  warper.set_reference_mesh(ellipsoid.getVTKMesh(), staticPoints);
+  ASSERT_TRUE(warper.get_warp_available());
+
+  Mesh output = warper.build_mesh(movingPoints);
+
   ASSERT_TRUE(output == ellipsoid_warped);
 }
