@@ -76,6 +76,7 @@ COMMAND_DECLARE(FixMesh, MeshCommand);
 COMMAND_DECLARE(MeshToImage, MeshCommand);
 COMMAND_DECLARE(MeshToDT, MeshCommand);
 COMMAND_DECLARE(CompareMesh, MeshCommand);
+COMMAND_DECLARE(WarpMesh, MeshCommand);
 
 // Optimize Commands
 COMMAND_DECLARE(OptimizeCommand, OptimizeCommandGroup);
