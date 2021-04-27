@@ -21,12 +21,7 @@ using namespace shapeworks;
 static tbb::mutex mutex;
 
 //---------------------------------------------------------------------------
-MeshWarper::MeshWarper()
-{
-}
-
-//---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const vnl_vector<double>& particles)
+vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const Eigen::MatrixXd& particles)
 {
   if (!this->warp_available_) {
     return nullptr;
@@ -36,12 +31,7 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const vnl_vector<double>& pa
     return nullptr;
   }
 
-  Eigen::MatrixXd points = Eigen::Map<const Eigen::VectorXd>((double*) particles.data_block(),
-                                                             particles.size());
-
-  points.resize(3, particles.size() / 3);
-  points.transposeInPlace();
-  points = this->remove_bad_particles(points);
+  auto points = this->remove_bad_particles(particles);
 
   Mesh output = MeshWarper::warp_mesh(points);
 
@@ -60,17 +50,11 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const vnl_vector<double>& pa
 
 //---------------------------------------------------------------------------
 void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
-                                    const vnl_vector<double>& reference_particles)
+                                    const Eigen::MatrixXd& reference_particles)
 {
   if (this->incoming_reference_mesh_ == reference_mesh) {
     if (this->reference_particles_.size() == reference_particles.size()) {
-      bool same = true;
-      for (int i = 0; i < reference_particles.size(); i++) {
-        if (this->reference_particles_[i] != reference_particles[i]) {
-          same = false;
-        }
-      }
-      if (same) {
+      if (this->reference_particles_ == reference_particles) {
         // we can skip, nothing has changed
         return;
       }
@@ -109,7 +93,7 @@ bool MeshWarper::check_warp_ready()
 void MeshWarper::add_particle_vertices()
 {
 
-  for (int i = 0; i < this->points_.rows(); i++) {
+  for (int i = 0; i < this->vertices_.rows(); i++) {
     this->reference_mesh_->BuildLinks();
 
     auto locator = vtkSmartPointer<vtkCellLocator>::New();
@@ -117,7 +101,7 @@ void MeshWarper::add_particle_vertices()
     locator->SetDataSet(this->reference_mesh_);
     locator->BuildLocator();
 
-    double pt[3]{this->points_(i, 0), this->points_(i, 1), this->points_(i, 2)};
+    double pt[3]{this->vertices_(i, 0), this->vertices_(i, 1), this->vertices_(i, 2)};
     double closest_point[3];//the coordinates of the closest point will be returned here
     double closest_point_dist2; //the squared distance to the closest point will be returned here
     vtkIdType cell_id; //the cell id of the cell containing the closest point will be returned here
@@ -224,15 +208,15 @@ void MeshWarper::find_good_particles()
   tree->BuildLocator();
 
   std::vector<int> ids;
-  for (int i = 0; i < this->points_.rows(); i++) {
-    double p[3]{this->points_(i, 0), this->points_(i, 1), this->points_(i, 2)};
+  for (int i = 0; i < this->vertices_.rows(); i++) {
+    double p[3]{this->vertices_(i, 0), this->vertices_(i, 1), this->vertices_(i, 2)};
     int id = tree->FindClosestPoint(p);
     ids.push_back(id);
   }
 
   std::set<int> set;  // initially store in set to avoid duplicates
-  for (int i = 0; i < this->points_.rows(); i++) {
-    for (int j = i + 1; j < this->points_.rows(); j++) {
+  for (int i = 0; i < this->vertices_.rows(); i++) {
+    for (int j = i + 1; j < this->vertices_.rows(); j++) {
       if (ids[i] == ids[j]) {
         set.insert(i);
         set.insert(j);
@@ -241,7 +225,7 @@ void MeshWarper::find_good_particles()
   }
 
   this->good_particles_.clear();
-  for (int i = 0; i < this->points_.rows(); i++) {
+  for (int i = 0; i < this->vertices_.rows(); i++) {
     if (set.find(i) == set.end()) {
       this->good_particles_.push_back(i);
     }
@@ -352,23 +336,19 @@ bool MeshWarper::generate_warp()
   this->reference_mesh_ = MeshWarper::clean_mesh(this->incoming_reference_mesh_);
 
   // prep points
-  this->points_ = Eigen::Map<const Eigen::VectorXd>(
-    (double*) this->reference_particles_.data_block(),
-    this->reference_particles_.size());
-  this->points_.resize(3, this->reference_particles_.size() / 3);
-  this->points_.transposeInPlace();
+  this->vertices_ = this->reference_particles_;
 
   this->add_particle_vertices();
 
   this->find_good_particles();
-  this->points_ = this->remove_bad_particles(this->points_);
+  this->vertices_ = this->remove_bad_particles(this->vertices_);
 
   Eigen::MatrixXd vertices = MeshWarper::distill_vertex_info(this->reference_mesh_);
   this->faces_ = MeshWarper::distill_face_info(this->reference_mesh_);
 
   // perform warp
   if (!MeshWarper::generate_warp_matrix(vertices, this->faces_,
-                                        this->points_, this->warp_)) {
+                                        this->vertices_, this->warp_)) {
     this->warp_available_ = false;
     return false;
   }

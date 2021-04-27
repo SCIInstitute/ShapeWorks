@@ -17,17 +17,15 @@ class MeshWarper {
 
 public:
 
-  MeshWarper();
-
   //! Set the reference mesh and particles
   void set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
-                          const vnl_vector<double>& reference_particles);
+                          const Eigen::MatrixXd& reference_particles);
 
   //! Return if the warp is available
   bool get_warp_available();
 
   //! Build a mesh for a given set of particles
-  vtkSmartPointer<vtkPolyData> build_mesh(const vnl_vector<double>& particles);
+  vtkSmartPointer<vtkPolyData> build_mesh(const Eigen::MatrixXd& particles);
 
 protected:
 
@@ -57,12 +55,12 @@ private:
   Eigen::MatrixXd distill_vertex_info(vtkSmartPointer<vtkPolyData> poly_data);
   Eigen::MatrixXi distill_face_info(vtkSmartPointer<vtkPolyData> poly_data);
   bool generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF,
-                          const Eigen::MatrixXd& Vref, Eigen::MatrixXd& W);
+                            const Eigen::MatrixXd& Vref, Eigen::MatrixXd& W);
 
   vtkSmartPointer<vtkPolyData> warp_mesh(const Eigen::MatrixXd& points);
 
   Eigen::MatrixXi faces_;
-  Eigen::MatrixXd points_;
+  Eigen::MatrixXd vertices_;
   Eigen::MatrixXd warp_;
 
   std::vector<int> good_particles_;
@@ -76,7 +74,7 @@ private:
   //! Processed reference mesh
   vtkSmartPointer<vtkPolyData> reference_mesh_;
   //! Reference particles
-  vnl_vector<double> reference_particles_;
+  Eigen::MatrixXd reference_particles_;
 };
 
 }
