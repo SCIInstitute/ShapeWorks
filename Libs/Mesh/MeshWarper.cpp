@@ -15,7 +15,7 @@
 // tbb
 #include <tbb/mutex.h>
 
-using namespace shapeworks;
+namespace shapeworks {
 
 // for concurrent access
 static tbb::mutex mutex;
@@ -453,6 +453,8 @@ vtkSmartPointer<vtkPolyData> MeshWarper::warp_mesh(const Eigen::MatrixXd& points
 
   return poly_data;
 }
+
+} // shapeworks namespace
 
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
