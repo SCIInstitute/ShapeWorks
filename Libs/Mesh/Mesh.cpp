@@ -460,10 +460,12 @@ Image Mesh::toImage(Vector3 spacing, Dims size, Point3 origin) const
   }
 
   vtkSmartPointer<vtkImageData> whiteImage = vtkSmartPointer<vtkImageData>::New();
+  whiteImage->SetOrigin(origin[0], origin[1], origin[2]);
   whiteImage->SetSpacing(spacing[0], spacing[1], spacing[2]);
   whiteImage->SetDimensions(size[0], size[1], size[2]);
-  whiteImage->SetExtent(0, size[0] - 1, 0, size[1] - 1, 0, size[2] - 1);
-  whiteImage->SetOrigin(origin[0], origin[1], origin[2]);
+  whiteImage->SetExtent(origin[0], origin[0] + size[0] - 1,
+                        origin[1], origin[1] + size[1] - 1,
+                        origin[2], origin[2] + size[2] - 1);
   whiteImage->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
 
   vtkIdType count = whiteImage->GetNumberOfPoints();
@@ -473,17 +475,15 @@ Image Mesh::toImage(Vector3 spacing, Dims size, Point3 origin) const
   // polygonal data --> image stencil:
   vtkSmartPointer<vtkPolyDataToImageStencil> pol2stenc = vtkSmartPointer<vtkPolyDataToImageStencil>::New();
   pol2stenc->SetInputData(this->mesh);
-  pol2stenc->SetOutputOrigin(origin[0], origin[1], origin[2]);
-  pol2stenc->SetOutputSpacing(spacing[0], spacing[1], spacing[2]);
   pol2stenc->SetOutputWholeExtent(whiteImage->GetExtent());
   pol2stenc->Update();
 
   // cut the corresponding white image and set the background:
   vtkSmartPointer<vtkImageStencil> imgstenc = vtkSmartPointer<vtkImageStencil>::New();
   imgstenc->SetInputData(whiteImage);
-  imgstenc->SetStencilConnection(pol2stenc->GetOutputPort());
+  imgstenc->SetStencilData(pol2stenc->GetOutput());
   imgstenc->ReverseStencilOff();
-  imgstenc->SetBackgroundValue(0);
+  imgstenc->SetBackgroundValue(0.0);
   imgstenc->Update();
 
   return Image(imgstenc->GetOutput());

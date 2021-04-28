@@ -383,31 +383,31 @@ PYBIND11_MODULE(shapeworks, m)
        "axis"_a)
 
   .def("dims",
-       [](Image& self) -> decltype(auto) { return py::array(3, self.dims().data()); },
+       [](const Image& self) -> decltype(auto) { return py::array(3, self.dims().data()); },
        "logical dimensions of the image")
 
   .def("size",
-       [](Image& self) -> decltype(auto) { return py::array(3, self.size().GetDataPointer()); },
+       [](const Image& self) -> decltype(auto) { return py::array(3, self.size().GetDataPointer()); },
        "physical dimensions of the image (dims * spacing)")
 
   .def("spacing",
-       [](Image& self) -> decltype(auto) { return py::array(3, self.spacing().GetDataPointer()); },
+       [](const Image& self) -> decltype(auto) { return py::array(3, self.spacing().GetDataPointer()); },
        "physical spacing of the image")
 
   .def("origin",
-       [](Image& self) -> decltype(auto) { return py::array(3, self.origin().GetDataPointer()); },
+       [](const Image& self) -> decltype(auto) { return py::array(3, self.origin().GetDataPointer()); },
        "physical coordinates of image origin")
 
   .def("center",
-       [](Image& self) -> decltype(auto) { return py::array(3, self.center().GetDataPointer()); },
+       [](const Image& self) -> decltype(auto) { return py::array(3, self.center().GetDataPointer()); },
        "physical coordinates of center of this image")
 
   .def("coordsys",
-       [](Image &self) -> decltype(auto) { return itkToEigen(self.coordsys()); },
+       [](const Image &self) -> decltype(auto) { return itkToEigen(self.coordsys()); },
        "return coordinate system in which this image lives in physical space")
 
   .def("centerOfMass",
-       [](Image& self, double minVal, double maxVal) -> decltype(auto) {
+       [](const Image& self, double minVal, double maxVal) -> decltype(auto) {
          return py::array(3, self.centerOfMass().GetDataPointer());
        },
        "returns average physical coordinate of pixels in range (minval, maxval]",
@@ -524,11 +524,15 @@ PYBIND11_MODULE(shapeworks, m)
        "ensure if region is valid")
 
   .def("origin",
-       &Region::origin,
+       [](const Region &region) -> decltype(auto) {
+         return py::array(3, region.origin().data());
+       },
        "return origin of region")
 
-  .def("size",
-       &Region::size,
+  .def("size", 
+       [](const Region &region) -> decltype(auto) {
+         return py::array(3, region.size().data());
+       },
        "return size of region")
 
   .def("pad",

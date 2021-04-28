@@ -54,18 +54,14 @@ def rename(inname, outDir, extension_addition, extension_change=''):
 '''
 Generate segmentations form mesh liost
 '''
-def generate_segmentations(meshList, out_dir, randomize_size, spacing, allow_on_boundary):
+def generate_segmentations(meshList, out_dir, randomize_size=True, spacing=[1.0,1.0,1.0], allow_on_boundary=True):
 	segDir = out_dir + "segmentations/"
 	make_dir(segDir)
 	PLYmeshList = get_file_with_ext(meshList,'ply')
 	# get dims tht fit all meshes
 	bb = MeshUtils.boundingBox(PLYmeshList)
-	fit_all_origin = [bb.min[0], bb.min[1], bb.min[2]]
-	bb_dims = []
-	bb_dims.append(bb.max[0] - bb.min[0])
-	bb_dims.append(bb.max[1] - bb.min[1])
-	bb_dims.append(bb.max[2] - bb.min[2])
-	fit_all_dims = [bb_dims[0], bb_dims[1], bb_dims[2]]
+    fit_all_origin = bb.origin()
+	fit_all_dims = bb.size()
 	# randomly select 20% meshes for boundary touching samples
 	numMeshes = len(PLYmeshList)
 	meshIndexArray = np.array(list(range(numMeshes)))
