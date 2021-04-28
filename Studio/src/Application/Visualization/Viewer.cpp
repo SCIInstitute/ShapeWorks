@@ -853,7 +853,9 @@ void Viewer::update_difference_lut(float r0, float r1)
 
   this->surface_lut_->SetTableRange(range);
   this->surface_lut_->Build();
-  //this->surface_mapper_->SetLookupTable(this->surface_lut_);
+  for (int i = 0; i < this->surface_mappers_.size(); i++) {
+    this->surface_mappers_[i]->SetLookupTable(this->surface_lut_);
+  }
 
   //this->surface_mapper_->SetScalarRange(range[0], range[1]);
   this->arrow_glyph_mapper_->SetScalarRange(range);
