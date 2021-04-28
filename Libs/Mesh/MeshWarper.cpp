@@ -1,3 +1,7 @@
+#include <igl/biharmonic_coordinates.h>
+#include <igl/point_mesh_squared_distance.h>
+#include <igl/remove_unreferenced.h>
+
 #include <Libs/Mesh/MeshWarper.h>
 
 #include <vtkCellLocator.h>
@@ -7,9 +11,6 @@
 #include <vtkPolyDataConnectivityFilter.h>
 #include <vtkKdTreePointLocator.h>
 
-#include <igl/biharmonic_coordinates.h>
-#include <igl/point_mesh_squared_distance.h>
-#include <igl/remove_unreferenced.h>
 
 // tbb
 #include <tbb/mutex.h>
