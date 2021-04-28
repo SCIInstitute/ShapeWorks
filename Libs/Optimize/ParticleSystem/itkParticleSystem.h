@@ -159,6 +159,8 @@ public:
   PointType GetTransformedPosition(unsigned long int k, unsigned int d=0) const
   {    return this->TransformPoint(m_Positions[d]->operator[](k),
                                   m_Transforms[d] * m_PrefixTransforms[d]);  }
+  PointType GetPrefixTransformedPosition(unsigned long int k, unsigned int d=0) const
+  {    return this->TransformPoint(m_Positions[d]->operator[](k), m_PrefixTransforms[d]); }
 
   /** Doubles the number of particles of the system by
       splitting each particle into 2 particles.  Each new particle position is
