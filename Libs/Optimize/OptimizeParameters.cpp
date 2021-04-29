@@ -41,7 +41,7 @@ void OptimizeParameters::set_number_of_particles(std::vector<int> number_of_part
 //---------------------------------------------------------------------------
 double OptimizeParameters::get_initial_relative_weighting()
 {
-  return this->params_.get("initial_relative_weighting", 0.1);
+  return this->params_.get("initial_relative_weighting", 0.05);
 }
 
 //---------------------------------------------------------------------------
@@ -65,7 +65,7 @@ void OptimizeParameters::set_relative_weighting(double value)
 //---------------------------------------------------------------------------
 double OptimizeParameters::get_starting_regularization()
 {
-  return this->params_.get("starting_regularization", 10.0);
+  return this->params_.get("starting_regularization", 1000.0);
 }
 
 //---------------------------------------------------------------------------
@@ -77,7 +77,7 @@ void OptimizeParameters::set_starting_regularization(double value)
 //---------------------------------------------------------------------------
 double OptimizeParameters::get_ending_regularization()
 {
-  return this->params_.get("ending_regularization", 1.0);
+  return this->params_.get("ending_regularization", 10.0);
 }
 
 //---------------------------------------------------------------------------

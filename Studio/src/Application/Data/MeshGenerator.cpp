@@ -82,7 +82,7 @@ MeshHandle MeshGenerator::build_mesh_from_points(const vnl_vector<double>& shape
     points.resize(3, shape.size() / 3);
     points.transposeInPlace();
 
-    vtkSmartPointer<vtkPolyData> poly_data = this->mesh_warper_->build_mesh(points);
+    vtkSmartPointer<vtkPolyData> poly_data = mesh_warpers[domain]->build_mesh(points);
 
     if (!poly_data) {
       std::string message = std::string("Unable to warp mesh");
@@ -128,9 +128,6 @@ MeshHandle MeshGenerator::build_mesh_from_image(ImageType::Pointer image, float 
     auto normals = vtkSmartPointer<vtkPolyDataNormals>::New();
     normals->SetInputConnection(marching->GetOutputPort());
     normals->Update();
-
-
-
 
     mesh->set_poly_data(normals->GetOutput());
   } catch (itk::ExceptionObject& excep) {
