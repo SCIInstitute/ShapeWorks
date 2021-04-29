@@ -142,6 +142,7 @@ private:
   std::string get_view_mode();
 
   void set_view_combo_item_enabled(int item, bool value);
+  bool is_view_combo_item_enabled(int item);
 
   void disable_all_actions();
 

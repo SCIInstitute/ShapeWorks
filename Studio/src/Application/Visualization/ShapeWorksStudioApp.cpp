@@ -908,6 +908,12 @@ void ShapeWorksStudioApp::set_view_combo_item_enabled(int item, bool value)
 }
 
 //---------------------------------------------------------------------------
+bool ShapeWorksStudioApp::is_view_combo_item_enabled(int item)
+{
+  return this->ui_->view_mode_combobox->itemData(item, ITEM_ROLE) == ITEM_ENABLE;
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_import_mode_triggered()
 {
   this->session_->parameters().set("tool_state", Session::DATA_C);
@@ -1271,6 +1277,13 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->on_zoom_slider_valueChanged();
 
   this->is_loading_ = false;
+
+  // final check after loading that the view mode isn't set to something invalid
+  if (!this->is_view_combo_item_enabled(this->ui_->view_mode_combobox->currentIndex())) {
+    this->set_view_mode(Visualizer::MODE_ORIGINAL_C);
+    this->update_view_mode();
+  }
+
   this->handle_project_changed();
 
   if (this->session_->is_light_project()) {
@@ -1449,7 +1462,6 @@ void ShapeWorksStudioApp::update_recent_files()
 
   QStringList existing_files;
   for (int i = 0; i < recent_files.size(); i++) {
-    std::cerr << "* " << recent_files[i].toStdString() << "\n";
     if (QFile::exists(recent_files[i])) {
       existing_files << recent_files[i];
     }
