@@ -32,7 +32,7 @@ if val is False:
 
 def toImageTest3():
   mesh = Mesh(os.environ["DATA"] + "/femur.ply")
-  img = mesh.toImage(size=[40, 145, 131])
+  img = mesh.toImage(dims=[40, 145, 131])
 
   compareImg = Image(os.environ["DATA"] + "/femurImage3.nrrd")
 

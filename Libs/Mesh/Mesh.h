@@ -83,11 +83,11 @@ public:
   /// computes cell normals and orients them such that they point in the same direction
   Mesh& generateNormals();
 
-  /// rasterizes mesh to create binary images, automatically computing size and origin if necessary
-  Image toImage(Vector3 spacing = makeVector({1.0, 1.0, 1.0}), Dims size = {0, 0, 0}, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;
+  /// rasterizes mesh to create binary images, computing dims/spacing if necessary (specifying dims overrides specified spacing)
+  Image toImage(Vector3 spacing = makeVector({1.0, 1.0, 1.0}), Dims dims = {0, 0, 0}) const;
 
-  /// converts mesh to distance transform, automatically computing size and origin if necessary
-  Image toDistanceTransform(Vector3 spacing = makeVector({1.0, 1.0, 1.0}), Dims size = {0, 0, 0}, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;
+  /// converts mesh to distance transform, computing dims/spacing if necessary (specifying dims overrides specified spacing)
+  Image toDistanceTransform(Vector3 spacing = makeVector({1.0, 1.0, 1.0}), Dims dims = {0, 0, 0}) const;
 
   // query functions //
 

@@ -415,16 +415,16 @@ Mesh& Mesh::generateNormals()
   return *this;
 }
 
-Image Mesh::toImage(Vector3 spacing, Dims size, Point3 origin) const
+Image Mesh::toImage(Vector3 spacing, Dims dims) const
 {
   if (std::abs(spacing[0]) < 1E-4 || std::abs(spacing[1]) < 1E-4 || std::abs(spacing[2]) < 1E-4)
   {
     throw std::invalid_argument("error: rasterization spacing must be non-zero");
   }
 
-  if (size != Dims({0, 0, 0}) && spacing != makeVector({1.0, 1.0, 1.0}))
+  if (dims != Dims({0, 0, 0}) && spacing != makeVector({1.0, 1.0, 1.0}))
   {
-    throw std::invalid_argument("error: cannot specify both size and spacing. Instead, scale the Mesh by spacing first.");
+    throw std::invalid_argument("error: cannot specify both dims and spacing. Instead, scale the Mesh by spacing first.");
   }
       
   // identify the logical region containing the mesh
@@ -432,40 +432,34 @@ Image Mesh::toImage(Vector3 spacing, Dims size, Point3 origin) const
   bbox.pad(1); // give it some padding
 
   // compute dims based on specified spacing...
-  if (size == Dims({0, 0, 0}))
+  if (dims == Dims({0, 0, 0}))
   {
     bbox.pad(1); // give it some more padding, why not
     Vector3 sz = toVector(bbox.size());
     sz[0] /= spacing[0];
     sz[1] /= spacing[1];
     sz[2] /= spacing[2];
-    size[0] = ceil(sz[0]);
-    size[1] = ceil(sz[1]);
-    size[2] = ceil(sz[2]);
+    dims[0] = ceil(sz[0]);
+    dims[1] = ceil(sz[1]);
+    dims[2] = ceil(sz[2]);
   }
-  // ...or spacing based on specified dims
+  // ...or spacing based on specified dims (specifying dims always overrides spacing)
   else
   {
-    Vector3 sz_user = toVector(size);
+    Vector3 sz_user = toVector(dims);
     Vector3 sz_mesh = toVector(bbox.size());
     spacing[0] = sz_mesh[0] / sz_user[0];
     spacing[1] = sz_mesh[1] / sz_user[1];
     spacing[2] = sz_mesh[2] / sz_user[2];
   }
 
-  // determine origin from bounding box if user didn't explicitly specify
-  if (origin == Point3({-1.0, -1.0, -1.0}))
-  {
-    origin = toPoint(bbox.origin());
-  }
+  // determine origin from bounding box
+  Point3 origin = toPoint(bbox.origin());
 
   vtkSmartPointer<vtkImageData> whiteImage = vtkSmartPointer<vtkImageData>::New();
-  whiteImage->SetOrigin(origin[0], origin[1], origin[2]);
+  whiteImage->SetOrigin(bbox.origin()[0], bbox.origin()[1], bbox.origin()[2]);
   whiteImage->SetSpacing(spacing[0], spacing[1], spacing[2]);
-  whiteImage->SetDimensions(size[0], size[1], size[2]);
-  whiteImage->SetExtent(origin[0], origin[0] + size[0] - 1,
-                        origin[1], origin[1] + size[1] - 1,
-                        origin[2], origin[2] + size[2] - 1);
+  whiteImage->SetDimensions(dims[0], dims[1], dims[2]);
   whiteImage->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
 
   vtkIdType count = whiteImage->GetNumberOfPoints();
@@ -475,7 +469,7 @@ Image Mesh::toImage(Vector3 spacing, Dims size, Point3 origin) const
   // polygonal data --> image stencil:
   vtkSmartPointer<vtkPolyDataToImageStencil> pol2stenc = vtkSmartPointer<vtkPolyDataToImageStencil>::New();
   pol2stenc->SetInputData(this->mesh);
-  pol2stenc->SetOutputWholeExtent(whiteImage->GetExtent());
+  pol2stenc->SetInformationInput(whiteImage);
   pol2stenc->Update();
 
   // cut the corresponding white image and set the background:
@@ -486,13 +480,15 @@ Image Mesh::toImage(Vector3 spacing, Dims size, Point3 origin) const
   imgstenc->SetBackgroundValue(0.0);
   imgstenc->Update();
 
-  return Image(imgstenc->GetOutput());
+  Image ret(imgstenc->GetOutput());
+  ret.setOrigin(origin); // set origin to the location of this mesh in space
+  return ret;
 }
 
-Image Mesh::toDistanceTransform(Vector3 spacing, Dims size, Point3 origin) const
+Image Mesh::toDistanceTransform(Vector3 spacing, Dims dims) const
 {
   // TODO: convert directly to DT (github #810)
-  Image image(toImage(spacing, size, origin));
+  Image image(toImage(spacing, dims));
   image.antialias(50, 0.00).computeDT(); // need maxrms = 0 and iterations = 30 to reproduce results
   return image;
 }

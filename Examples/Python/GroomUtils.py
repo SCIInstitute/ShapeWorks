@@ -217,7 +217,7 @@ def applyCropping(outDir, inDataList, bbDataList, paddingSize=10):
     outDataList = []
 
     # find region by computing bounding box
-    region = ImageUtils.boundingBox(bbDataList)
+    region = ImageUtils.boundingBox(bbDataList)  # identify regions with isoValue < 1.0
     print(region)
     region.pad(paddingSize)
 
@@ -370,8 +370,7 @@ def MeshesToVolumesUsingImages(outDir, meshList, imgList):
         mesh = Mesh(mesh_)
         arr = img.spacing(); spacing = [arr[0], arr[1], arr[2]]
         arr = img.dims();    dims = [arr[0], arr[1], arr[2]]
-        arr = img.origin();  origin = [arr[0], arr[1], arr[2]]
-        image = mesh.toImage(spacing, dims, origin)
+        image = mesh.toImage(spacing, dims)
         image.write(segFile)
     return segList
 

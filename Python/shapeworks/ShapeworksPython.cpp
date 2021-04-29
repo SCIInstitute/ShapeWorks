@@ -730,16 +730,13 @@ PYBIND11_MODULE(shapeworks, m)
 
   .def("toImage",
        [](Mesh& mesh, std::vector<double>& v,
-          std::vector<unsigned>& d,
-          std::vector<double>& p) -> decltype(auto) {
+          std::vector<unsigned>& d) -> decltype(auto) {
          return mesh.toImage(makeVector({v[0], v[1], v[2]}),
-                             Dims({d[0], d[1], d[2]}),
-                             Point({p[0], p[1], p[2]}));
+                             Dims({d[0], d[1], d[2]}));
        },
-       "rasterizes mesh to create binary images, automatically computing size and origin if necessary",
+       "rasterizes mesh to a binary image, computing dims/spacing if necessary (specifying dims overrides specified spacing)",
        "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}),
-       "size"_a=std::vector<unsigned>({0, 0, 0}),
-       "origin"_a=std::vector<double>({-1.0, -1.0, -1.0}))
+       "dims"_a=std::vector<unsigned>({0, 0, 0}))
 
   .def("distance",
        &Mesh::distance, "computes surface to surface distance",
@@ -747,16 +744,13 @@ PYBIND11_MODULE(shapeworks, m)
 
   .def("toDistanceTransform",
        [](Mesh& mesh, std::vector<double>& v,
-          std::vector<unsigned>& d,
-          std::vector<double>& p) -> decltype(auto) {
+          std::vector<unsigned>& d) -> decltype(auto) {
          return mesh.toDistanceTransform(makeVector({v[0], v[1], v[2]}),
-                                         Dims({d[0], d[1], d[2]}),
-                                         Point({p[0], p[1], p[2]}));
+                                         Dims({d[0], d[1], d[2]}));
        },
-       "converts mesh to distance transform, automatically computing size and origin if necessary",
+       "converts mesh to distance transform, computing dims/spacing if necessary (specifying dims overrides specified spacing)",
        "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}),
-       "size"_a=std::vector<unsigned>({0, 0, 0}),
-       "origin"_a=std::vector<double>({-1.0, -1.0, -1.0}))
+       "dims"_a=std::vector<unsigned>({0, 0, 0}))
 
   .def("center",
        [](Mesh &mesh) -> decltype(auto) {
