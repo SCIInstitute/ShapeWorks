@@ -683,7 +683,7 @@ void ShapeWorksStudioApp::update_table()
   auto feature_maps = project->get_feature_names();
   for (const std::string& feature : feature_maps) {
     QString item = QString::fromStdString(feature);
-    item = item.replace("feature_","");
+    item = item.replace("feature_", "");
     this->ui_->features->addItem(item);
   }
   this->ui_->features->setCurrentText(current_feature);
@@ -1001,7 +1001,8 @@ void ShapeWorksStudioApp::handle_optimize_complete()
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
   this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::GROOMED);
   this->visualizer_->set_display_mode(this->ui_->view_mode_combobox->currentText().toStdString());
-  this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape_points().get_combined_global_particles());
+  this->visualizer_->set_mean(
+    this->analysis_tool_->get_mean_shape_points().get_combined_global_particles());
   this->visualizer_->update_lut();
   this->update_display();
 
@@ -1015,7 +1016,8 @@ void ShapeWorksStudioApp::handle_reconstruction_complete()
 {
   this->session_->handle_clear_cache();
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
-  this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape_points().get_combined_global_particles());
+  this->visualizer_->set_mean(
+    this->analysis_tool_->get_mean_shape_points().get_combined_global_particles());
   this->visualizer_->update_lut();
   this->update_display(true);
   this->enable_possible_actions();
@@ -1146,7 +1148,8 @@ void ShapeWorksStudioApp::update_display(bool force)
       this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
 
       this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
-      this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape_points().get_combined_global_particles());
+      this->visualizer_->set_mean(
+        this->analysis_tool_->get_mean_shape_points().get_combined_global_particles());
 
       this->visualizer_->display_shape(this->analysis_tool_->get_mean_shape());
     }
@@ -1446,6 +1449,7 @@ void ShapeWorksStudioApp::update_recent_files()
 
   QStringList existing_files;
   for (int i = 0; i < recent_files.size(); i++) {
+    std::cerr << "* " << recent_files[i].toStdString() << "\n";
     if (QFile::exists(recent_files[i])) {
       existing_files << recent_files[i];
     }
@@ -1455,7 +1459,7 @@ void ShapeWorksStudioApp::update_recent_files()
   QStringList no_dupes;
   for (int i = 0; i < recent_files.size(); i++) {
     bool found_dupe = false;
-    for (int j = i + 1; j < recent_files.size(); j++) {
+    for (int j = 0; j < i; j++) {
       if (QFileInfo(recent_files[i]).canonicalFilePath() ==
           QFileInfo(recent_files[j]).canonicalFilePath()) {
         found_dupe = true;
