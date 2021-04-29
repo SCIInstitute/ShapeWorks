@@ -4,6 +4,8 @@
 #include "Image.h"
 #include "ParticleSystem.h"
 
+#include <Libs/Mesh/MeshWarper.h>
+
 #include <igl/point_mesh_squared_distance.h>
 
 using namespace shapeworks;
@@ -353,35 +355,9 @@ TEST(MeshTests, generateNormalsTest)
 
 TEST(MeshTests, warpTest1)
 {
-  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
-  Eigen::MatrixXd Vref = MeshUtils::distilVertexInfo(ellipsoid);
-  Eigen::MatrixXi Fref = MeshUtils::distilFaceInfo(ellipsoid);
-  std::string particlePath = std::string(TEST_DATA_DIR) + "/ellipsoid_0.particles";
-  std::vector<std::string> paths;
-  paths.push_back(particlePath);
-  ParticleSystem particlesystem(paths);
-  Eigen::MatrixXd staticPts = particlesystem.Particles();
-  staticPts.resize(3, 128);
-  Eigen::MatrixXd W1;
-  ASSERT_TRUE(MeshUtils::generateWarpMatrix(Vref, Fref, staticPts.transpose(),W1));
-  Mesh output = MeshUtils::warpMesh(staticPts.transpose(), W1, Fref);
-  Eigen::MatrixXd Vref2 = MeshUtils::distilVertexInfo(output);
-  Eigen::MatrixXi Fref2 = MeshUtils::distilFaceInfo(output);
-  Eigen::VectorXi J = Eigen::VectorXi::LinSpaced(Vref2.rows(),0,Vref2.rows()-1);
-	Eigen::VectorXd sqrD;
-	Eigen::MatrixXd _2;
-  Eigen::VectorXi b;
-	igl::point_mesh_squared_distance(staticPts.transpose(),Vref2,J,sqrD,b,_2);
-  bool chkdst = (!(sqrD.sum() > 1.0e-10)) && (!(sqrD.maxCoeff() > 1.0e-10));
-  ASSERT_TRUE(chkdst);
-}
+  Mesh ellipsoid( std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
+  Mesh ellipsoid_warped( std::string(TEST_DATA_DIR) + "/ellipsoid_warped.ply");
 
-TEST(MeshTests, warpTest2)
-{
-  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
-  Mesh ellipsoid_warped(std::string(TEST_DATA_DIR) + "/ellipsoid_warped.ply");
-  Eigen::MatrixXd Vref = MeshUtils::distilVertexInfo(ellipsoid);
-  Eigen::MatrixXi Fref = MeshUtils::distilFaceInfo(ellipsoid);
   std::string staticPath = std::string(TEST_DATA_DIR) + "/ellipsoid_0.particles";
   std::string movingPath = std::string(TEST_DATA_DIR) + "/ellipsoid_1.particles";
   std::vector<std::string> paths;
@@ -391,10 +367,18 @@ TEST(MeshTests, warpTest2)
   Eigen::MatrixXd allPts = particlesystem.Particles();
   Eigen::MatrixXd staticPoints = allPts.col(0);
   Eigen::MatrixXd movingPoints = allPts.col(1);
-  staticPoints.resize(3, 128);
-  movingPoints.resize(3, 128);
-  Eigen::MatrixXd W;
-  ASSERT_TRUE(MeshUtils::generateWarpMatrix(Vref, Fref, staticPoints.transpose(),W));
-  Mesh output = MeshUtils::warpMesh(movingPoints.transpose(), W, Fref);
+
+  int numParticles = staticPoints.rows() / 3;
+  staticPoints.resize(3, numParticles);
+  staticPoints.transposeInPlace();
+  movingPoints.resize(3, numParticles);
+  movingPoints.transposeInPlace();
+
+  MeshWarper warper;
+  warper.set_reference_mesh(ellipsoid.getVTKMesh(), staticPoints);
+  ASSERT_TRUE(warper.get_warp_available());
+
+  Mesh output = warper.build_mesh(movingPoints);
+
   ASSERT_TRUE(output == ellipsoid_warped);
 }

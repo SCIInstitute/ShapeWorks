@@ -20,7 +20,8 @@
 
 #include <Data/Preferences.h>
 #include <Data/SurfaceReconstructor.h>
-#include <Data/MeshWarper.h>
+
+#include <Libs/Mesh/MeshWarper.h>
 
 namespace shapeworks {
 
