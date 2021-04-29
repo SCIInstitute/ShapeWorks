@@ -1277,13 +1277,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->on_zoom_slider_valueChanged();
 
   this->is_loading_ = false;
-
-  // final check after loading that the view mode isn't set to something invalid
-  if (!this->is_view_combo_item_enabled(this->ui_->view_mode_combobox->currentIndex())) {
-    this->set_view_mode(Visualizer::MODE_ORIGINAL_C);
-    this->update_view_mode();
-  }
-
+  
   this->handle_project_changed();
 
   if (this->session_->is_light_project()) {
@@ -1294,6 +1288,12 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->handle_glyph_changed();
 
   this->setWindowTitle(this->session_->get_display_name());
+
+  // final check after loading that the view mode isn't set to something invalid
+  if (!this->is_view_combo_item_enabled(this->ui_->view_mode_combobox->currentIndex())) {
+    this->set_view_mode(Visualizer::MODE_ORIGINAL_C);
+    this->update_view_mode();
+  }
 
   this->handle_message("Project loaded");
   this->handle_progress(100);
