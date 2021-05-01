@@ -601,10 +601,13 @@ vtkSmartPointer<vtkTransform> Shape::get_groomed_transform(int domain)
   auto transforms = this->subject_->get_groomed_transforms();
   if (domain < transforms.size()) {
     vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
-    double tx = transforms[domain][9];
-    double ty = transforms[domain][10];
-    double tz = transforms[domain][11];
-    transform->Translate(tx, ty, tz);
+    transform->Identity();
+    if (transforms[domain].size() >=12 ) {
+      double tx = transforms[domain][9];
+      double ty = transforms[domain][10];
+      double tz = transforms[domain][11];
+      transform->Translate(tx, ty, tz);
+    }
     return transform;
   }
   return nullptr;
