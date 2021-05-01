@@ -72,6 +72,7 @@ public Q_SLOTS:
   void on_actionExport_Variance_Graph_triggered();
   void on_action_preferences_triggered();
   void on_action_export_current_mesh_triggered();
+  void on_action_export_current_particles_triggered();
   void on_action_export_mesh_scalars_triggered();
   void on_action_export_pca_scores_triggered();
 
@@ -122,7 +123,7 @@ private:
   void update_view_mode();
   void reset_num_viewers();
 
-  static bool write_particle_file(std::string filename, vnl_vector<double> points);
+  static bool write_particle_file(std::string filename, vnl_vector<double> particles);
 
   enum VIEW_MODE {
     ORIGINAL = 0,

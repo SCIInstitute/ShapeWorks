@@ -336,6 +336,7 @@
       <string>Export...</string>
      </property>
      <addaction name="action_export_current_mesh"/>
+     <addaction name="action_export_current_particles"/>
      <addaction name="action_export_mesh_scalars"/>
      <addaction name="actionExport_Eigenvectors"/>
      <addaction name="actionExport_Eigenvalues"/>
@@ -928,6 +929,11 @@ p, li { white-space: pre-wrap; }
   <action name="action_recent8">
    <property name="text">
     <string>Recent8</string>
+   </property>
+  </action>
+  <action name="action_export_current_particles">
+   <property name="text">
+    <string>Export Current Particles...</string>
    </property>
   </action>
  </widget>

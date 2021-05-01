@@ -69,7 +69,7 @@ public:
 
   void update_lut();
 
-  StudioParticles getCurrentShape();
+  StudioParticles get_current_shape();
 
   void handle_new_mesh();
   vtkSmartPointer<vtkPolyData> get_current_mesh();

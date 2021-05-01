@@ -99,7 +99,7 @@ void Visualizer::display_shape(ShapeHandle shape)
 }
 
 //-----------------------------------------------------------------------------
-StudioParticles Visualizer::getCurrentShape()
+StudioParticles Visualizer::get_current_shape()
 {
   return this->current_shape_;
 }

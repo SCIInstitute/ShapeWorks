@@ -1327,6 +1327,26 @@ void ShapeWorksStudioApp::on_action_export_current_mesh_triggered()
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_action_export_current_particles_triggered()
+{
+  auto dir = preferences_.get_last_directory() + "/";
+  QString filename = QFileDialog::getSaveFileName(this, tr("Export Current Particles"),
+                                                  dir + "shape",
+                                                  tr("Particle files (*.particles)"));
+  if (filename.isEmpty()) {
+    return;
+  }
+  this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
+
+  auto particles = this->visualizer_->get_current_shape().get_combined_global_particles();
+
+  if (!ShapeWorksStudioApp::write_particle_file(filename.toStdString(), particles)) {
+    this->handle_error("Error writing particle file: " + filename.toStdString());
+  }
+  this->handle_message("Successfully exported particle file");
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered()
 {
   auto dir = preferences_.get_last_directory().toStdString() + "/";
@@ -1569,7 +1589,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered()
     this->handle_message("Successfully exported PCA Mesh files: " + filename.toStdString());
     return;
   }
-  auto shape = this->visualizer_->getCurrentShape();
+  auto shape = this->visualizer_->get_current_shape();
   /// TODO: fix
   //auto msh = this->session_->get_mesh_manager()->get_mesh(shape);
 
@@ -1688,15 +1708,15 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered()
 }
 
 //---------------------------------------------------------------------------
-bool ShapeWorksStudioApp::write_particle_file(std::string filename, vnl_vector<double> points)
+bool ShapeWorksStudioApp::write_particle_file(std::string filename, vnl_vector<double> particles)
 {
   std::ofstream out(filename);
   if (!out) {
     return false;
   }
   size_t newline = 1;
-  for (auto& a : points) {
-    out << a << (newline % 3 == 0 ? "\n" : "    ");
+  for (auto& p : particles) {
+    out << p << (newline % 3 == 0 ? "\n" : "    ");
     newline++;
   }
   out.close();
