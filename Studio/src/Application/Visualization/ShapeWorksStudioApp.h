@@ -13,6 +13,8 @@
 
 #include <Data/PreferencesWindow.h>
 
+#include <vnl_vector.h>
+
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
 
@@ -119,6 +121,8 @@ private:
   void update_tool_mode();
   void update_view_mode();
   void reset_num_viewers();
+
+  static bool write_particle_file(std::string filename, vnl_vector<double> points);
 
   enum VIEW_MODE {
     ORIGINAL = 0,

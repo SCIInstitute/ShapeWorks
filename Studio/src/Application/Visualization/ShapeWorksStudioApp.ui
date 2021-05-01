@@ -869,7 +869,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionExport_PCA_Mode_Points">
    <property name="text">
-    <string>Export PCA Mode Points...</string>
+    <string>Export PCA Mode Particles...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+P</string>

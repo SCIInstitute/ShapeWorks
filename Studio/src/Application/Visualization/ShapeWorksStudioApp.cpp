@@ -1277,7 +1277,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->on_zoom_slider_valueChanged();
 
   this->is_loading_ = false;
-  
+
   this->handle_project_changed();
 
   if (this->session_->is_light_project()) {
@@ -1637,35 +1637,74 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered()
 {
-  QString fname("Untitled.pts");
+  QString fname("Untitled.particles");
   auto dir = this->preferences_.get_last_directory().toStdString() + "/";
-  QString filename = QFileDialog::getSaveFileName(this, tr("Save PCA Mode PCA files..."),
+  QString filename = QFileDialog::getSaveFileName(this, tr("Save PCA Mode Particle files..."),
                                                   QString::fromStdString(dir) + fname,
-                                                  tr("PTS files (*.pts)"));
-  auto basename = filename.toStdString().substr(0,
-                                                filename.toStdString().find_last_of(".pts") - 3);
+                                                  tr("Particle files (*.particles)"));
+  auto basename = filename.toStdString().
+    substr(0, filename.toStdString().find_last_of(".particles") - 9);
   if (filename.isEmpty()) {
     return;
   }
   this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
 
-  float range = this->preferences_.get_pca_range();
-  float steps = static_cast<float>(this->preferences_.get_pca_steps());
-
+  double range = this->preferences_.get_pca_range();
+  double steps = static_cast<double>(this->preferences_.get_pca_steps());
   int mode = this->analysis_tool_->getPCAMode();
-  auto increment = range * 2.f / steps;
-  size_t i = 0;
-  for (float pca = -range; pca <= range; pca += increment, i++) {
-    auto pts = this->analysis_tool_->get_shape_points(mode, pca).get_combined_global_particles();
-    std::ofstream out(basename + std::to_string(mode) + "-" + std::to_string(i) + ".pts");
-    size_t newline = 1;
-    for (auto& a : pts) {
-      out << a << (newline % 3 == 0 ? "\n" : "    ");
-      newline++;
-    }
-    out.close();
+  int half_steps = (steps / 2.0);
+  double increment = range / half_steps;
+
+  auto mean_pts = this->analysis_tool_->get_shape_points(mode, 0).get_combined_global_particles();
+  std::string mean_name = basename + "_" + std::to_string(mode) + "_mean.particles";
+  if (!ShapeWorksStudioApp::write_particle_file(mean_name, mean_pts)) {
+    this->handle_error("Error writing particle file: " + mean_name);
+    return;
   }
-  this->handle_message("Successfully exported PCA Mode PTS files: " + filename.toStdString());
+
+  for (int i = 1; i <= half_steps; i++) {
+    double pca_value = increment * i;
+    std::string pca_string = QString::number(pca_value, 'g', 2).toStdString();
+
+    std::string minus_name =
+      basename + "_mode_" + std::to_string(mode) + "_minus_" + pca_string + ".pts";
+    auto pts = this->analysis_tool_->get_shape_points(mode,
+                                                      -pca_value).get_combined_global_particles();
+    if (!ShapeWorksStudioApp::write_particle_file(minus_name, pts)) {
+      this->handle_error("Error writing particle file: " + minus_name);
+      return;
+    }
+
+    std::string plus_name =
+      basename + "_mode_" + std::to_string(mode) + "_plus_" + pca_string + ".pts";
+    pts = this->analysis_tool_->get_shape_points(mode, pca_value).get_combined_global_particles();
+    if (!ShapeWorksStudioApp::write_particle_file(plus_name, pts)) {
+      this->handle_error("Error writing particle file: " + plus_name);
+      return;
+    }
+  }
+
+  this->handle_message("Successfully exported PCA Mode particle files");
+}
+
+//---------------------------------------------------------------------------
+bool ShapeWorksStudioApp::write_particle_file(std::string filename, vnl_vector<double> points)
+{
+  std::ofstream out(filename);
+  if (!out) {
+    return false;
+  }
+  size_t newline = 1;
+  for (auto& a : points) {
+    out << a << (newline % 3 == 0 ? "\n" : "    ");
+    newline++;
+  }
+  out.close();
+  if (out.bad()) {
+    return false;
+  }
+
+  return true;
 }
 
 //---------------------------------------------------------------------------
@@ -1853,6 +1892,7 @@ void ShapeWorksStudioApp::dropEvent(QDropEvent* event)
     event->ignore();
   }
 }
+
 
 //---------------------------------------------------------------------------
 
