@@ -1656,7 +1656,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered()
   double increment = range / half_steps;
 
   auto mean_pts = this->analysis_tool_->get_shape_points(mode, 0).get_combined_global_particles();
-  std::string mean_name = basename + "_" + std::to_string(mode) + "_mean.particles";
+  std::string mean_name = basename + "_mean.particles";
   if (!ShapeWorksStudioApp::write_particle_file(mean_name, mean_pts)) {
     this->handle_error("Error writing particle file: " + mean_name);
     return;
