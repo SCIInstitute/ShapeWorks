@@ -1068,8 +1068,15 @@ void AnalysisTool::initialize_mesh_warper()
       STUDIO_LOG_ERROR("Unable to set reference mesh, groomed mesh is unavailable");
       return;
     }
-    this->session_->get_mesh_manager()->get_mesh_warper()->set_reference_mesh(poly_data,
-                                                                              median_shape->get_local_correspondence_points());
+
+    vnl_vector<double> particles = median_shape->get_local_correspondence_points();
+    Eigen::MatrixXd points = Eigen::Map<const Eigen::VectorXd>(
+      (double*) particles.data_block(),      particles.size());
+    points.resize(3, points.size() / 3);
+    points.transposeInPlace();
+
+
+    this->session_->get_mesh_manager()->get_mesh_warper()->set_reference_mesh(poly_data, points);
   }
 }
 
