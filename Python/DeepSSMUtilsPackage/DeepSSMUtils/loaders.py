@@ -1,6 +1,6 @@
+# Jadie Adams
 import os
 import numpy as np
-import itk
 import csv
 import random
 import subprocess
@@ -14,20 +14,21 @@ import shapeworks as sw
 '''
 Reads csv and makes train and validation data loaders
 '''
-def getTrainValLoaders(loader_dir, data_csv, batch_size=1, down_sample=False):
+def get_train_val_loaders(loader_dir, data_csv, batch_size=1, down_factor=1, down_dir=None):
+	print("Creating training and validation torch loaders:")
 	if not os.path.exists(loader_dir):
 		os.makedirs(loader_dir)
-	images, scores, models, prefixes = getAllTrainData(loader_dir, data_csv, down_sample)
-	images, scores, models, prefixes = shuffleData(images, scores, models, prefixes)
+	images, scores, models, prefixes = get_all_train_data(loader_dir, data_csv, down_factor, down_dir)
+	images, scores, models, prefixes = shuffle_data(images, scores, models, prefixes)
 	# split into train (80%) validation(20%)
 	cut = int(len(images)*.80) 
-	print("\nTurning to tensors...")
+	print("Turning to tensors...")
 	train_data = DeepSSMdataset(images[:cut], scores[:cut], models[:cut])
 	print(str(len(train_data)) + ' in training set')
 	val_data = DeepSSMdataset(images[cut:], scores[cut:], models[cut:])
 	print(str(len(val_data)) + ' in validation set')
 
-	print("\nCreating and saving dataloaders...")
+	print("Saving data loaders...")
 	trainloader = DataLoader(
 			train_data,
 			batch_size=batch_size,
@@ -37,7 +38,6 @@ def getTrainValLoaders(loader_dir, data_csv, batch_size=1, down_sample=False):
 		)
 	train_path = loader_dir + 'train'
 	torch.save(trainloader, train_path)
-	print("Train loader done.")
 
 	validationloader = DataLoader(
 			val_data,
@@ -48,13 +48,14 @@ def getTrainValLoaders(loader_dir, data_csv, batch_size=1, down_sample=False):
 		)
 	val_path = loader_dir + 'validation'
 	torch.save(validationloader, val_path)
-	print("Val loader done.")
+	print("Training and validation loaders complete.\n")
 	return train_path, val_path
 
 '''
 Makes test data loader
 '''
-def getTestLoader(loader_dir, test_img_list, down_sample):
+def get_test_loader(loader_dir, test_img_list, down_factor=1, down_dir=None):
+	print("Creating test torch loader:")
 	# get data
 	image_paths = []
 	scores = []
@@ -63,14 +64,13 @@ def getTestLoader(loader_dir, test_img_list, down_sample):
 	for index in range(len(test_img_list)):
 		image_path = test_img_list[index]
 		# add name
-		prefix = getPrefix(image_path)
+		prefix = get_prefix(image_path)
 		test_names.append(prefix)
 		image_paths.append(image_path)
 		# add label placeholders
-		scores.append([])
-		models.append([])
-	images = getImages(loader_dir, image_paths, down_sample)
-
+		scores.append([1])
+		models.append([1])
+	images = get_images(loader_dir, image_paths, down_factor, down_dir)
 	test_data = DeepSSMdataset(images, scores, models)
 	# Write test names to file so they are saved somewhere
 	name_file = open(loader_dir + 'test_names.txt', 'w+')
@@ -88,13 +88,15 @@ def getTestLoader(loader_dir, test_img_list, down_sample):
 		)
 	test_path = loader_dir + 'test'
 	torch.save(testloader, test_path)
-	print("Done.")
+	print("Test loader complete.\n")
 	return test_path, test_names
+
+################################ Helper functions ######################################
 
 '''
 returns images, scores, models, prefixes from CSV
 '''
-def getAllTrainData(loader_dir, data_csv, down_sample):
+def get_all_train_data(loader_dir, data_csv, down_factor, down_dir):
 	# get all data and targets
 	print("Reading all data...")
 	image_paths = []
@@ -109,13 +111,13 @@ def getAllTrainData(loader_dir, data_csv, down_sample):
 			model_path = row[1]
 			pca_scores = row[2:]
 			# add name
-			prefix = getPrefix(image_path)
+			prefix = get_prefix(image_path)
 			# data error check
-			if prefix not in getPrefix(model_path):
+			if prefix not in get_prefix(model_path):
 				print("Error: Images and models mismatched in csv.")
 				print(index)
 				print(prefix)
-				print(getPrefix(model_path))
+				print(get_prefix(model_path))
 				exit()
 			prefixes.append(prefix)
 			# add image path
@@ -124,17 +126,17 @@ def getAllTrainData(loader_dir, data_csv, down_sample):
 			pca_scores = [float(i) for i in pca_scores]
 			scores.append(pca_scores)
 			# add model
-			mdl = getParticles(model_path)
+			mdl = get_particles(model_path)
 			models.append(mdl)
 			index += 1
-	images = getImages(loader_dir, image_paths, down_sample)
-	scores = whitenPCAscores(scores, loader_dir)
+	images = get_images(loader_dir, image_paths, down_factor, down_dir)
+	scores = whiten_PCA_scores(scores, loader_dir)
 	return images, scores, models, prefixes 
 
 '''
 Shuffle all data
 '''
-def shuffleData(images, scores, models, prefixes):
+def shuffle_data(images, scores, models, prefixes):
 	print("Shuffling.")
 	c = list(zip(images, scores, models, prefixes))
 	random.shuffle(c)
@@ -149,6 +151,7 @@ class DeepSSMdataset():
 		self.img = torch.FloatTensor(img)
 		self.pca_target = torch.FloatTensor(pca_target)
 		self.mdl_target = torch.FloatTensor(mdl_target)
+		
 	def __getitem__(self, index):
 		x = self.img[index]
 		y1 = self.pca_target[index]
@@ -158,20 +161,18 @@ class DeepSSMdataset():
 		return len(self.img)
 
 '''
-getTorchDataLoaderHelper
 returns sample prefix from path string
 '''
-def getPrefix(path):
+def get_prefix(path):
 	file_name = os.path.basename(path)
 	prefix = "_".join(file_name.split("_")[:2])
 	prefix = prefix.split(".")[0]
 	return prefix
 
 '''
-getTorchDataLoaderHelper
 get list from .particles format
 '''
-def getParticles(model_path):
+def get_particles(model_path):
 	f = open(model_path, "r")
 	data = []
 	for line in f.readlines():
@@ -181,18 +182,22 @@ def getParticles(model_path):
 	return(data)
 
 '''
-getTorchDataLoaderHelper
 reads .nrrd files and returns whitened data
 '''
-def getImages(loader_dir, image_list, down_sample):
+def get_images(loader_dir, image_list, down_factor, down_dir):
 	# get all images
 	all_images = []
 	for image_path in image_list:
-		if down_sample:
-			img = downSample(image_path)
+		if down_dir is not None:
+			if not os.path.exists(down_dir):
+				os.makedirs(down_dir)
+			img_name = os.path.basename(image_path)
+			res_img = os.path.join(down_dir, img_name)
+			if not os.path.exists(res_img):
+				apply_down_sample(image_path, res_img, down_factor)
+			img = np.transpose(sw.Image(res_img).toArray())
 		else:
-			image = itk.imread(image_path, itk.F)
-			img = itk.GetArrayFromImage(image)
+			img = np.transpose(sw.Image(image_path).toArray())
 		all_images.append(img)
 	all_images = np.array(all_images)
 	# get mean and std
@@ -213,30 +218,31 @@ def getImages(loader_dir, image_list, down_sample):
 	return norm_images
 
 '''
-Decreases the size of the image to 3/4 it's original size
+decreases the size of the image 
 '''
-def downSample(image_path):
-	path = os.path.dirname(image_path)
-	temp_path = path + "/temp.nrrd"
+def apply_down_sample(image_path, output_path, factor=0.75):
+	img = sw.Image()
 	image = sw.Image(image_path)
 	size = image.size()
-	sizex = int(3*size[0]/4)
-	sizey = int(3*size[1]/4)
-	sizez = int(3*size[2]/4)
-	image.resize([sizex,sizey,sizez]).write(temp_path)
-	image = itk.imread(temp_path, itk.F)
-	img = itk.GetArrayFromImage(image)
-	os.remove(temp_path)
-	return img
+	sizex = int(size[0]*factor)
+	sizey = int(size[1]*factor)
+	sizez = int(size[2]*factor)
+	image.resize([sizex,sizey,sizez]).write(output_path)
 
 '''
-getTorchDataLoaderHelper
+turns a string list into a vector
+'''
+def make_vector(str):
+   arr = np.array(str.replace("[", "").replace("]", "").split(","))
+   return np.asarray(arr, np.float64)
+
+'''
 normalizes PCA scores, returns mean and std for reconstruction
 '''
-def whitenPCAscores(scores, loader_dir):
+def whiten_PCA_scores(scores, loader_dir):
 	scores = np.array(scores)
-	mean_score = np.mean(scores, axis=0)
-	std_score = np.std(scores, axis=0)
+	mean_score = np.mean(scores, 0)
+	std_score = np.std(scores, 0)
 	np.save(loader_dir + 'mean_PCA.npy', mean_score)
 	np.save(loader_dir + 'std_PCA.npy', std_score)
 	norm_scores = []

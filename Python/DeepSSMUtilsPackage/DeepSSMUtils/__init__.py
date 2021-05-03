@@ -1,27 +1,29 @@
-from DeepSSMUtils import TorchLoaders
-from DeepSSMUtils import DeepSSM
-from DeepSSMUtils import Analyze
+from DeepSSMUtils import trainer 
+from DeepSSMUtils import loaders
+from DeepSSMUtils import eval
+from DeepSSMUtils import eval_utils
 import torch
 
-def getTrainValLoaders(loader_dir, aug_data_csv, batch_size=1, down_sample=False):
+def getTrainValLoaders(loader_dir, aug_data_csv, batch_size=1, down_factor=1, down_dir=None):
 	testPytorch()
-	TorchLoaders.getTrainValLoaders(loader_dir, aug_data_csv, batch_size, down_sample)
+	loaders.get_train_val_loaders(loader_dir, aug_data_csv, batch_size, down_factor, down_dir)
 
-def getTestLoader(loader_dir, test_img_list, down_sample=False):
+def getTestLoader(loader_dir, test_img_list, down_factor=1, down_dir=None):
 	testPytorch()
-	TorchLoaders.getTestLoader(loader_dir, test_img_list, down_sample)
+	loaders.get_test_loader(loader_dir, test_img_list, down_factor, down_dir)
 
-def trainDeepSSM(loader_dir, parameters, parent_dir):
+def trainDeepSSM(config_file):
 	testPytorch()
-	return DeepSSM.train(loader_dir, parameters, parent_dir)
+	trainer.train(config_file)
+	return
 
-def testDeepSSM(out_dir, model_path, loader_dir, PCA_scores_path, num_PCA):
+def testDeepSSM(config_file):
 	testPytorch()
-	DeepSSM.test(out_dir, model_path, loader_dir, PCA_scores_path, num_PCA)
+	eval.test(config_file)
 	return
 
 def analyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix):
-	avg_distance = Analyze.getDistance(out_dir, DT_dir, prediction_dir, mean_prefix)
+	avg_distance = eval_utils.get_distance_meshes(out_dir, DT_dir, prediction_dir, mean_prefix)
 	return avg_distance
 
 def testPytorch():
