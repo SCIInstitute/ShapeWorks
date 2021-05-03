@@ -1,0 +1,3 @@
+input: /home/hxu/Documents/ShapeWorks/Testing/PointCloudTests/input/sample_flat_surface.ptnrms
+output: /home/hxu/Documents/ShapeWorks/Testing/PointCloudTests/output/sample_flat_surface.rbfshape
+dipole_distance: 10.0

@@ -1,0 +1,3 @@
+input: /home/hxu/Documents/ShapeWorks/Testing/PointCloudTests/input/sphere_evals.txt
+output: /home/hxu/Documents/ShapeWorks/Testing/PointCloudTests/output/sample_sphere_gradients.txt
+input_rbfshape: /home/hxu/Documents/ShapeWorks/Testing/PointCloudTests/output/sample_sphere.rbfshape

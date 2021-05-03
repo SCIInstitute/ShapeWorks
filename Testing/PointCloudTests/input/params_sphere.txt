@@ -1,0 +1,3 @@
+input: /home/hxu/Documents/ShapeWorks/Testing/PointCloudTests/input/sample_sphere.ptnrms
+output: /home/hxu/Documents/ShapeWorks/Testing/PointCloudTests/output/sample_sphere.rbfshape
+dipole_distance: 10.0
