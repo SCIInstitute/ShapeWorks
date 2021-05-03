@@ -69,8 +69,21 @@ MeshHandle MeshGenerator::build_mesh_from_points(const vnl_vector<double>& shape
   }
   else if (this->reconstruction_method_ == RECONSTRUCTION_MESH_WARPER_C && this->mesh_warper_ &&
            this->mesh_warper_->get_warp_available()) {
-    vtkSmartPointer<vtkPolyData> poly_data = this->mesh_warper_->build_mesh(shape);
 
+
+    Eigen::MatrixXd points = Eigen::Map<const Eigen::VectorXd>((double*) shape.data_block(),
+                                                               shape.size());
+    points.resize(3, shape.size() / 3);
+    points.transposeInPlace();
+
+    vtkSmartPointer<vtkPolyData> poly_data = this->mesh_warper_->build_mesh(points);
+
+    if (!poly_data) {
+      std::string message = std::string("Unable to warp mesh");
+      STUDIO_LOG_ERROR(QString::fromStdString(message));
+      mesh->set_error_message(message);
+      return mesh;
+    }
     vtkSmartPointer<vtkPolyDataNormals> polydata_normals =
       vtkSmartPointer<vtkPolyDataNormals>::New();
     polydata_normals->SetInputData(poly_data);

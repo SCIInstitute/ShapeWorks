@@ -79,7 +79,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     QT_LOADER_LIB_LOCATION="@loader_path/ShapeWorksStudio.app/Contents/Frameworks"
 
 
-    # copy platform plugins for View2
+    # copy platform plugins for Studio
     cp -a ShapeWorksStudio.app/Contents/PlugIns .
 
     for i in *.so ; do
@@ -106,13 +106,12 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     cd ..
 else
     # Copy libraries from anaconda
-    conda_libs="libboost_iostreams libbz2 liblzma liblz4 libtbb libHalf libpython"
+    conda_libs="libboost_iostreams libbz2 liblzma liblz4 libtbb libHalf libpython libzstd"
     for clib in $conda_libs; do
         cp ${CONDA_PREFIX}/lib/${clib}* lib
     done
 
     cd bin
-    linuxdeployqt ShapeWorksView2 -verbose=2
     linuxdeployqt ShapeWorksStudio -verbose=2
 fi
 

@@ -159,6 +159,8 @@ public:
   PointType GetTransformedPosition(unsigned long int k, unsigned int d=0) const
   {    return this->TransformPoint(m_Positions[d]->operator[](k),
                                   m_Transforms[d] * m_PrefixTransforms[d]);  }
+  PointType GetPrefixTransformedPosition(unsigned long int k, unsigned int d=0) const
+  {    return this->TransformPoint(m_Positions[d]->operator[](k), m_PrefixTransforms[d]); }
 
   /** Doubles the number of particles of the system by
       splitting each particle into 2 particles.  Each new particle position is
@@ -190,6 +192,11 @@ public:
   {  return m_Neighborhoods[d]->FindNeighborhoodPoints(p, idx, r); }
   inline PointVectorType FindNeighborhoodPoints(const PointType &p, int idx,
                                                 std::vector<double> &w,
+                                                std::vector<double> &distances,
+                                                double r, unsigned int d = 0) const
+  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(p,idx,w,distances,r); }
+  inline PointVectorType FindNeighborhoodPoints(const PointType &p, int idx,
+                                                std::vector<double> &w,
                                                 double r, unsigned int d = 0) const
   {  return m_Neighborhoods[d]->FindNeighborhoodPoints(p,idx,w,r); }
   inline PointVectorType FindNeighborhoodPoints(unsigned int idx,
@@ -197,8 +204,13 @@ public:
   {  return m_Neighborhoods[d]->FindNeighborhoodPoints(this->GetPosition(idx,d),idx, r); }
   inline PointVectorType FindNeighborhoodPoints(unsigned int idx,
                                                 std::vector<double> &w,
+                                                std::vector<double> &distances,
                                                 double r, unsigned int d = 0) const
-  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(this->GetPosition(idx,d),idx,w, r); }
+  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(this->GetPosition(idx,d),idx,w,distances, r); }
+  inline PointVectorType FindNeighborhoodPoints(unsigned int idx,
+                                                std::vector<double> &w,
+                                                double r, unsigned int d = 0) const
+  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(this->GetPosition(idx,d),idx,w,r); }
 
   //  inline int FindNeighborhoodPoints(const PointType &p,  double r, PointVectorType &vec, unsigned int d = 0) const
   //  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(p, r, vec); }
@@ -400,7 +412,7 @@ public:
   void SetFixedParticleFlag(unsigned int d, unsigned int i)
   { m_FixedParticleFlags[d][i] = true; }
   void ResetFixedParticleFlag(unsigned int d, unsigned int i)
-  { m_FixedParticleFlags[i] = false; }
+  { m_FixedParticleFlags[d][i] = false; }
   bool GetFixedParticleFlag(unsigned int d, unsigned int i) const
   { return m_FixedParticleFlags[d][i]; }
   void ResetFixedParticleFlags()

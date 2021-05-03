@@ -258,3 +258,15 @@ void Preferences::set_orientation_marker_corner(Preferences::OrientationMarkerCo
 {
   this->settings_.setValue("Viewer/orientation_marker_corner", corner);
 }
+
+//-----------------------------------------------------------------------------
+int Preferences::get_geodesic_cache_multiplier()
+{
+  return this->settings_.value("Mesh/geodesic_cache_multiplier").toInt();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_geodesic_cache_multiplier(int value)
+{
+  this->settings_.setValue("Mesh/geodesic_cache_multiplier", value);
+}

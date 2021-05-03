@@ -107,6 +107,18 @@ void OptimizeParameters::set_optimization_iterations(int value)
 }
 
 //---------------------------------------------------------------------------
+bool OptimizeParameters::get_use_geodesic_distance()
+{
+  return this->params_.get("use_geodesic_distance", false);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_use_geodesic_distance(bool value)
+{
+  this->params_.set("use_geodesic_distance", value);
+}
+
+//---------------------------------------------------------------------------
 std::vector<bool> OptimizeParameters::get_use_normals()
 {
   std::vector<bool> use_normals = this->params_.get("use_normals", {false});
@@ -195,7 +207,6 @@ void OptimizeParameters::set_multiscale_particles(int value)
 //---------------------------------------------------------------------------
 bool OptimizeParameters::set_up_optimize(Optimize* optimize)
 {
-
   optimize->SetDomainsPerShape(1); /// only one domain per shape right now
   optimize->SetNumberOfParticles(this->get_number_of_particles());
   optimize->SetInitialRelativeWeighting(this->get_initial_relative_weighting());
@@ -204,6 +215,8 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
   optimize->SetEndingRegularization(this->get_ending_regularization());
   optimize->SetIterationsPerSplit(this->get_iterations_per_split());
   optimize->SetOptimizationIterations(this->get_optimization_iterations());
+  optimize->SetGeodesicsEnabled(this->get_use_geodesic_distance());
+  optimize->SetGeodesicsCacheSizeMultiplier(this->get_geodesic_cache_multiplier());
 
   std::vector<bool> use_normals;
   std::vector<bool> use_xyz;
@@ -298,7 +311,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
       auto poly_data = mesh.getVTKMesh();
 
       if (poly_data) {
-        optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data));
+        optimize->AddMesh(poly_data);
       }
 
       else {
@@ -337,4 +350,18 @@ void OptimizeParameters::set_load_callback(const std::function<void(int)>& f)
 {
   this->load_callback_ = f;
 }
+
+//---------------------------------------------------------------------------
+int OptimizeParameters::get_geodesic_cache_multiplier()
+{
+  return this->params_.get("geodesic_cache_multiplier", 0);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_geodesic_cache_multiplier(int value)
+{
+  this->params_.set("geodesic_cache_multiplier", value);
+
+}
+
 
