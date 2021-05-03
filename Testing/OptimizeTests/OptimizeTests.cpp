@@ -38,7 +38,7 @@ static void prep_distance_transform(std::string input, std::string output)
   writer->SetUseCompression(true);
   writer->Update();
 }
-
+/*
 TEST(OptimizeTests, sample) 
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sphere");
@@ -336,7 +336,7 @@ TEST(OptimizeTests, cutting_plane_test) {
     }
   }
 
-}
+}*/
 
 TEST(OptimizeTests, sphereConstraint)
 {
@@ -410,7 +410,7 @@ TEST(OptimizeTests, sphereConstraint)
 
 }
 
-TEST(OptimizeTests, sphereCuttingPlaneConstraint)
+/*TEST(OptimizeTests, sphereCuttingPlaneConstraint)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sphere_cutting_plane_constraint");
   chdir(test_location.c_str());
@@ -544,4 +544,4 @@ TEST(OptimizeTests, project_test) {
   // Otherwise it is quite large (>4000).
   double value = values[values.size() - 1];
   ASSERT_LT(value, 100);
-}
+}*/

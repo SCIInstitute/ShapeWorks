@@ -3,6 +3,7 @@
 #include "Constraint.h"
 #include "Eigen/Core"
 #include "vnl/vnl_math.h"
+#include <random>
 
 namespace itk
 {
@@ -156,7 +157,29 @@ public:
           return Eigen::Vector3d(0,0,0);
       }
       else{
-          return maxterm*constraint_grad;
+          Eigen::Vector3d grad = maxterm*constraint_grad;
+          // Adding noise
+          bool viol = true;
+          double noise_factor = 0.1;
+          while(viol){
+              // Generate random unit vector
+              std::uniform_real_distribution<double> distribution(-1000., 1000.);
+
+              Eigen::Vector3d random;
+              std::random_device rd;
+              std::mt19937 gen(rd());
+
+              for (int i = 0; i < 3; i++) {
+                random(i) = distribution(gen);
+              }
+              random = (random*1/random.norm())*noise_factor/1*radius;
+              //std::cout << (pt+grad+random).transpose() << std::endl;
+              if((pt-grad-random-center).norm() > radius*(1-noise_factor)){
+                  viol = false;
+                  grad = grad-random;
+              }
+          }
+          return grad;
       }
   }
 
