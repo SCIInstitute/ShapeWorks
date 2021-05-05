@@ -715,6 +715,68 @@ bool ClipClosedSurface::execute(const optparse::Values &options, SharedCommandDa
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// ProjectPoint
+///////////////////////////////////////////////////////////////////////////////
+void ProjectPoint::buildParser()
+{
+  const std::string prog = "project-point";
+  const std::string desc = "";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--x").action("store").type("double").set_default(0.0).help("Value of x for point.");
+  parser.add_option("--y").action("store").type("double").set_default(0.0).help("Value of y for point.");
+  parser.add_option("--z").action("store").type("double").set_default(0.0).help("Value of z for point.");
+
+  Command::buildParser();
+}
+
+bool ProjectPoint::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  Point point({static_cast<double>(options.get("x")),
+               static_cast<double>(options.get("y")),
+               static_cast<double>(options.get("z"))});
+
+  sharedData.mesh->projectPoint(point);
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// GeodesicDistance
+///////////////////////////////////////////////////////////////////////////////
+void GeodesicDistance::buildParser()
+{
+  const std::string prog = "geodesic-distance";
+  const std::string desc = "computes geodesic distance between two vertices (specified by their indices) on mesh";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--source").action("store").type("unsigned").set_default(0.0).help("Source index of point on mesh.");
+  parser.add_option("--target").action("store").type("unsigned").set_default(0.0).help("Target index of point on mesh.");
+
+  Command::buildParser();
+}
+
+bool GeodesicDistance::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  unsigned source = static_cast<unsigned>(options.get("source"));
+  unsigned target = static_cast<unsigned>(options.get("target"));
+
+  sharedData.mesh->geodesicDistance(source, target);
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // SetFieldValue
 ///////////////////////////////////////////////////////////////////////////////
 void SetFieldValue::buildParser()

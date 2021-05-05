@@ -86,7 +86,7 @@ public:
 
   double projectPoint(Point3 point);
 
-  /// computes geodesic distance between two indices on mesh
+  /// computes geodesic distance between two vertices (specified by their indices) on mesh
   double geodesicDistance(int source, int target);
 
   /// rasterizes mesh to create binary images, automatically computing size and origin if necessary

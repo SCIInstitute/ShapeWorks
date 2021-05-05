@@ -591,8 +591,8 @@ PYBIND11_MODULE(shapeworks, m)
   .def("projectPoint",
         [](Mesh &mesh, std::vector<double> p) -> decltype(auto) {
          return mesh.projectPoint(Point({p[0], p[1], p[2]}));
-  },"point"_a)
-  .def("geodesicDistance",      &Mesh::geodesicDistance, "source"_a, "target"_a)
+        },"point"_a)
+  .def("geodesicDistance",      &Mesh::geodesicDistance, "computes geodesic distance between two vertices (specified by their indices) on mesh", "source"_a, "target"_a)
   .def("toDistanceTransform",
        [](Mesh& mesh, std::vector<double>& v, std::vector<unsigned>& d, std::vector<double>& p) -> decltype(auto) {
          return mesh.toDistanceTransform(makeVector({v[0], v[1], v[2]}), Dims({d[0], d[1], d[2]}), Point({p[0], p[1], p[2]}));
