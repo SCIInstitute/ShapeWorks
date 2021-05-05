@@ -10,6 +10,14 @@
 
 using namespace shapeworks;
 
+TEST(MeshTests, geodesicTest)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
+  double dist = femur.geodesicDistance(10, 20);
+
+  ASSERT_TRUE(std::abs(dist - 1.0083) < 1e-4);
+}
+
 TEST(MeshTests, readFailTest)
 {
   try {

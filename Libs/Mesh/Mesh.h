@@ -84,9 +84,10 @@ public:
   /// computes cell normals and orients them such that they point in the same direction
   Mesh& generateNormals();
 
-  double projectPoint(Point point);
+  double projectPoint(Point3 point);
 
-  Mesh& curvature();
+  /// computes geodesic distance between two indices on mesh
+  double geodesicDistance(int source, int target);
 
   /// rasterizes mesh to create binary images, automatically computing size and origin if necessary
   Image toImage(Vector3 spacing = makeVector({1.0, 1.0, 1.0}), Dims size = {0, 0, 0}, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;

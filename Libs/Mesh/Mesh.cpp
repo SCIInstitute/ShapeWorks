@@ -2,6 +2,7 @@
 #include "MeshUtils.h"
 #include "Image.h"
 #include "StringUtils.h"
+#include "MeshWarper.h"
 #include "PreviewMeshQC/FEAreaCoverage.h"
 #include "PreviewMeshQC/FEVTKImport.h"
 #include "PreviewMeshQC/FEVTKExport.h"
@@ -38,6 +39,7 @@
 #include <vtkGenericCell.h>
 #include <vtkPlaneCollection.h>
 #include <vtkClipClosedSurface.h>
+#include <igl/exact_geodesic.h>
 
 namespace shapeworks {
 
@@ -559,10 +561,18 @@ Mesh& Mesh::fix(bool smoothBefore, bool smoothAfter, double lambda, int iteratio
   return *this;
 }
 
-// TODO: Using libigl
-Mesh& Mesh::curvature()
+double Mesh::geodesicDistance(int source, int target)
 {
+  Eigen::MatrixXd V = MeshWarper::distill_vertex_info(this->mesh);
+	Eigen::MatrixXi F = MeshWarper::distill_face_info(this->mesh);
+  Eigen::VectorXd VS(1), VT(1);
+  VS[0] = source;
+  VT[0] = target;
+  Eigen::VectorXd FS, FT;
+  Eigen::VectorXd d;
 
+  igl::exact_geodesic(V,F,VS,FS,VT,FT,d);
+  return d[0];
 }
 
 Mesh& Mesh::setField(std::string name, Array array)
