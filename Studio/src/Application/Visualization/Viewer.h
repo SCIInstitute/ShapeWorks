@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <QSharedPointer>
 #include <Visualization/ColorSchemes.h>
 
@@ -81,6 +80,10 @@ public:
 
 private:
 
+  vtkSmartPointer<vtkTransform> get_transform(int domain);
+
+  void initialize_surfaces();
+
   void display_vector_field();
 
   void compute_point_differences(const std::vector<Shape::Point>& points,
@@ -124,12 +127,11 @@ private:
   vtkSmartPointer<vtkPolyDataMapper> exclusion_sphere_mapper_;
   vtkSmartPointer<vtkActor> exclusion_sphere_actor_;
 
-  vtkSmartPointer<vtkPolyDataMapper> surface_mapper_;
-  vtkSmartPointer<vtkActor> surface_actor_;
+  std::vector<vtkSmartPointer<vtkPolyDataMapper>> surface_mappers_;
+  std::vector<vtkSmartPointer<vtkActor>> surface_actors_;
 
   vtkSmartPointer<vtkLookupTable> lut_;
   vtkSmartPointer<vtkLookupTable> surface_lut_;
-  //vtkSmartPointer<vtkColorTransferFunction> surface_lut_;
 
   vtkSmartPointer<vtkArrowSource> arrow_source_;
   vtkSmartPointer<vtkTransformPolyDataFilter> arrow_flip_filter_;
@@ -150,8 +152,10 @@ private:
   bool viewer_ready_ = false;
   bool loading_displayed_ = false;
 
-  QSharedPointer<StudioMesh> mesh_;
+  MeshGroup meshes_;
 
   Visualizer* visualizer_{nullptr};
+
+  int number_of_domains_ = 0;
 };
 }
