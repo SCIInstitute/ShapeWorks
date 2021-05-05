@@ -22,7 +22,7 @@
 #include <pcl/surface/mls.h>
 #include <pcl/features/normal_3d.h>
 
-namespace shapeworks {
+namespace shapeworks{
 
 class pc_aux
 {

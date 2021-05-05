@@ -24,14 +24,14 @@
 #include <pcl/surface/mls.h>
 #include <pcl/features/normal_3d.h>
 
-#include <itkTranslationTransform.h>
 #include "evaluators/CPURBFEvaluator.h"
 #include "solvers/EigenRBFSolver.h"
 
 #include "kernels/ThinPlateKernel.h"
 #include "kernels/GaussianKernel.h"
 
-namespace shapeworks {
+namespace shapeworks
+{
 
 class RBFShape
 {
@@ -219,4 +219,4 @@ public:
       std::vector<double> CSRBFWeights;
 };
 
-} // shapeworks
+}

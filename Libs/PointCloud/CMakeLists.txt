@@ -40,13 +40,13 @@ install(TARGETS PointCloud
   )
 
 ADD_EXECUTABLE(RBFShapeBuild RBFShapeBuild.cxx)
-TARGET_LINK_LIBRARIES(RBFShapeBuild PointCloud Eigen3::Eigen ${VTK_LIBRARIES}  ${ITK_LIBRARIES} tinyxml)
+TARGET_LINK_LIBRARIES(RBFShapeBuild PointCloud Eigen3::Eigen tinyxml)
 INSTALL(TARGETS RBFShapeBuild RUNTIME DESTINATION bin)
 
 ADD_EXECUTABLE(RBFShapeEvaluate RBFShapeEvaluate.cxx)
-TARGET_LINK_LIBRARIES(RBFShapeEvaluate PointCloud Eigen3::Eigen ${VTK_LIBRARIES}  ${ITK_LIBRARIES} tinyxml)
+TARGET_LINK_LIBRARIES(RBFShapeEvaluate PointCloud Eigen3::Eigen tinyxml)
 INSTALL(TARGETS RBFShapeEvaluate RUNTIME DESTINATION bin)
 
 ADD_EXECUTABLE(RBFShapeGradient RBFShapeGradient.cxx)
-TARGET_LINK_LIBRARIES(RBFShapeGradient PointCloud Eigen3::Eigen ${VTK_LIBRARIES}  ${ITK_LIBRARIES} tinyxml)
+TARGET_LINK_LIBRARIES(RBFShapeGradient PointCloud Eigen3::Eigen tinyxml)
 INSTALL(TARGETS RBFShapeGradient RUNTIME DESTINATION bin)

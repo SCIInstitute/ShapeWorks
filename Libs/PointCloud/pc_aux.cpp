@@ -1,6 +1,6 @@
 #include <pc_aux.h>
 
-namespace shapeworks {
+namespace shapeworks{
 
 Eigen::MatrixXd pc_aux::compute_normals(const Eigen::MatrixXd & pts, double r){
 

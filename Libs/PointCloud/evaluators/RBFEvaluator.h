@@ -19,7 +19,7 @@ class RBFEvaluator {
   RBFEvaluator(){}
   virtual ~RBFEvaluator(){}
     
-  virtual double evaluate(const RBFKernel *kernel, 
+  virtual double evaluate(const RBFKernel *kernel,
     const Eigen::Vector3d &evalPoint, const Eigen::MatrixXd &rbfPoints,
     const std::vector<double> &coefficients,
     const Eigen::Vector3d &linearCoefficients,

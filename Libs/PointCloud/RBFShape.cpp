@@ -1,7 +1,6 @@
 #include <RBFShape.h>
-
-namespace shapeworks {
-
+namespace shapeworks
+{
 RBFShape::RBFShape(Eigen::Vector4d coeff,
                    Eigen::Vector3d pows,
                    Eigen::MatrixXd points)
@@ -295,4 +294,4 @@ bool RBFShape::loadFromEqFile(const std::string& filename){
     return true;
 }
 
-} // shapeworks
+}
