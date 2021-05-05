@@ -306,26 +306,26 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
       filenames.push_back(filename);
 
       if (domain_type == DomainType::Mesh) {
-					    
-	Mesh mesh = MeshUtils::threadSafeReadMesh(filename.c_str());
-					    
-	if (count < planes.size()) {
-	  for (size_t i = 0; i < planes[count].size(); i++) {
-	    // Create vtk plane
-	    vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
-	    plane->SetNormal(planes[count][i].first[0], planes[count][i].first[1],
-			     planes[count][i].first[2]);
-	    plane->SetOrigin(planes[count][i].second[0], planes[count][i].second[1],
-			     planes[count][i].second[2]);
-	    
-	    mesh.clip(plane);
-	  }
-	}
-	auto poly_data = mesh.getVTKMesh();
-	
-	if (poly_data) {
-	  optimize->AddMesh(poly_data);
-	}
+
+        Mesh mesh = MeshUtils::threadSafeReadMesh(filename.c_str());
+
+        if (count < planes.size()) {
+          for (size_t i = 0; i < planes[count].size(); i++) {
+            // Create vtk plane
+            vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
+            plane->SetNormal(planes[count][i].first[0], planes[count][i].first[1],
+                             planes[count][i].first[2]);
+            plane->SetOrigin(planes[count][i].second[0], planes[count][i].second[1],
+                             planes[count][i].second[2]);
+
+            mesh.clip(plane);
+          }
+        }
+        auto poly_data = mesh.getVTKMesh();
+
+        if (poly_data) {
+          optimize->AddMesh(poly_data);
+        }
         else {
           throw std::invalid_argument("Error loading mesh: " + filename);
         }
@@ -349,7 +349,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
         }
       }*/
 
-      if (i < transforms.size()) {
+      if (i < transforms.size() && transforms[i].size() >= 12) {
         prefix_transform[0][3] = transforms[i][9];
         prefix_transform[1][3] = transforms[i][10];
         prefix_transform[2][3] = transforms[i][11];
