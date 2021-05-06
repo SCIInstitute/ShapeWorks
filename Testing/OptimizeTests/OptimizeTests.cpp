@@ -313,6 +313,7 @@ TEST(OptimizeTests, cutting_plane_test) {
     lists.push_back(list);
   }
 
+  bool good = true;
   std::vector<std::string> types;
   types.push_back("plane");
   types.push_back("sphere");
@@ -330,12 +331,12 @@ TEST(OptimizeTests, cutting_plane_test) {
                 if(ViolationReport[j][k] > slack)
                     std::cout << "VIOLATION: Shape# " << int(domain/domains_per_shape) << " domain# " << domain%domains_per_shape << " point# " << i << " " << types[j] << " constraint " << k << " of magnitude " << ViolationReport[j][k] << " by point " << p << std::endl;
                 //else std::cout << "Good point: Shape# " << int(domain/domains_per_shape) << " domain# " << domain%domains_per_shape  << " point# " << i << " " << types[j] << " constraint " << k << " with evaluation " << ViolationReport[j][k] << " by point " << p << std::endl;
-                ASSERT_TRUE(!(ViolationReport[j][k] > slack));
-            }
+                if(ViolationReport[j][k] > slack) good = false;
         }
     }
   }
-
+  }
+  ASSERT_TRUE(good);
 }
 
 TEST(OptimizeTests, sphereConstraint)
@@ -385,6 +386,7 @@ TEST(OptimizeTests, sphereConstraint)
     lists.push_back(list);
   }
 
+  bool good = true;
   std::vector<std::string> types;
   types.push_back("plane");
   types.push_back("sphere");
@@ -402,12 +404,12 @@ TEST(OptimizeTests, sphereConstraint)
                 if(ViolationReport[j][k] > slack)
                     std::cout << "VIOLATION: Shape# " << int(domain/domains_per_shape) << " domain# " << domain%domains_per_shape << " point# " << i << " " << types[j] << " constraint " << k << " of magnitude " << ViolationReport[j][k] << " by point " << p << std::endl;
                 //else std::cout << "Good point: Shape# " << int(domain/domains_per_shape) << " domain# " << domain%domains_per_shape  << " point# " << i << " " << types[j] << " constraint " << k << " with evaluation " << ViolationReport[j][k] << " by point " << p << std::endl;
-                ASSERT_TRUE(!(ViolationReport[j][k] > slack));
+                if(ViolationReport[j][k] > slack) good = false;
             }
         }
     }
   }
-
+  ASSERT_TRUE(good);
 }
 
 TEST(OptimizeTests, sphereCuttingPlaneConstraint)
@@ -457,6 +459,7 @@ TEST(OptimizeTests, sphereCuttingPlaneConstraint)
     lists.push_back(list);
   }
 
+  bool good = true;
   std::vector<std::string> types;
   types.push_back("plane");
   types.push_back("sphere");
@@ -474,12 +477,12 @@ TEST(OptimizeTests, sphereCuttingPlaneConstraint)
                 if(ViolationReport[j][k] > slack)
                     std::cout << "VIOLATION: Shape# " << int(domain/domains_per_shape) << " domain# " << domain%domains_per_shape << " point# " << i << " " << types[j] << " constraint " << k << " of magnitude " << ViolationReport[j][k] << " by point " << p << std::endl;
                 //else std::cout << "Good point: Shape# " << int(domain/domains_per_shape) << " domain# " << domain%domains_per_shape  << " point# " << i << " " << types[j] << " constraint " << k << " with evaluation " << ViolationReport[j][k] << " by point " << p << std::endl;
-                ASSERT_TRUE(!(ViolationReport[j][k] > slack));
+                if(ViolationReport[j][k] > slack) good = false;
             }
         }
     }
   }
-
+  ASSERT_TRUE(good);
 }
 
 //---------------------------------------------------------------------------
