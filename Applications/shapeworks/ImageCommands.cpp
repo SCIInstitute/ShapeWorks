@@ -128,7 +128,9 @@ bool ImageInfo::execute(const optparse::Values &options, SharedCommandData &shar
   if (centerOfMass)
     std::cout << "center of mass (0,1]:  " << sharedData.image.centerOfMass() << std::endl;
   if (boundingBox)
-    std::cout << "bounding box:          " << sharedData.image.boundingBox() << std::endl;
+    std::cout << "physical bounding box: " << sharedData.image.physicalBoundingBox() << std::endl;
+  if (boundingBox)
+    std::cout << "logical bounding box:  " << sharedData.image.logicalBoundingBox() << std::endl;
   if (direction)
     std::cout << "direction (coordsys):  " << std::endl
               << sharedData.image.coordsys();
@@ -836,7 +838,6 @@ void BoundingBoxImage::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to images (must be followed by `--`), ex: \"bounding-box-image --names *.nrrd -- --isovalue 1.5\")");
-  parser.add_option("--padding").action("store").type("int").set_default(0).help("Number of extra voxels in each direction to pad the largest bounding box [default: %default].");
   parser.add_option("--isovalue").action("store").type("double").set_default(1.0).help("Threshold value [default: %default].");
 
   Command::buildParser();
@@ -845,12 +846,76 @@ void BoundingBoxImage::buildParser()
 bool BoundingBoxImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::vector<std::string> filenames = options.get("names");
-  int padding = static_cast<int>(options.get("padding"));
   double isoValue = static_cast<double>(options.get("isovalue"));
 
   sharedData.region = ImageUtils::boundingBox(filenames, isoValue);
-  sharedData.region.pad(padding);
-  std::cout << "Bounding box:\n" << sharedData.region;
+  std::cout << "Bounding box:\n" << sharedData.region << std::endl;
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ImageBounds
+///////////////////////////////////////////////////////////////////////////////
+void ImageBounds::buildParser()
+{
+  const std::string prog = "image-bounds";
+  const std::string desc = "return bounds of image, optionally with an isovalue to restrict region";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--isovalue").action("store").type("double").help("Isovalue [default: entire image].");
+
+  Command::buildParser();
+}
+
+bool ImageBounds::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  auto isovalue = options.get("isovalue");
+
+  if (isovalue.isValid())
+  {
+    sharedData.region = sharedData.image.physicalBoundingBox(static_cast<double>(isovalue));
+  }
+  else
+  {
+    sharedData.region = sharedData.image.physicalBoundingBox();
+  }
+
+  std::cout << "Bounding box:\n" << sharedData.region << std::endl;
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// SetRegion
+///////////////////////////////////////////////////////////////////////////////
+void SetRegion::buildParser()
+{
+  const std::string prog = "set-region";
+  const std::string desc = "set the current (physical) region to the specified min/max in each direction, for use with downstreams commands such as crop (note: could instead use the image-bounds command with an isovalue)";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--xmin").action("store").type("double").help("Minimum X.");
+  parser.add_option("--xmax").action("store").type("double").help("Maximum X.");
+  parser.add_option("--ymin").action("store").type("double").help("Minimum Y.");
+  parser.add_option("--ymax").action("store").type("double").help("Maximum Y.");
+  parser.add_option("--zmin").action("store").type("double").help("Minimum Z.");
+  parser.add_option("--zmax").action("store").type("double").help("Maximum Z.");
+
+  Command::buildParser();
+}
+
+bool SetRegion::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  double xmin = static_cast<double>(options.get("xmin"));
+  double ymin = static_cast<double>(options.get("ymin"));
+  double zmin = static_cast<double>(options.get("zmin"));
+  double xmax = static_cast<double>(options.get("xmax"));
+  double ymax = static_cast<double>(options.get("ymax"));
+  double zmax = static_cast<double>(options.get("zmax"));
+
+  sharedData.region = PhysicalRegion(Point({xmin, ymin, zmin}),
+                                     Point({xmax, ymax, zmax}));
+  std::cout << "region: " << sharedData.region << std::endl;
+
   return true;
 }
 
@@ -863,13 +928,6 @@ void CropImage::buildParser()
   const std::string desc = "crop image down to the current region (e.g., from bounding-box command), or the specified min/max in each direction [default: image dimensions]";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--xmin").action("store").type("unsigned").set_default(0).help("Minimum X.");
-  parser.add_option("--xmax").action("store").type("unsigned").set_default(0).help("Maximum X.");
-  parser.add_option("--ymin").action("store").type("unsigned").set_default(0).help("Minimum Y.");
-  parser.add_option("--ymax").action("store").type("unsigned").set_default(0).help("Maximum Y.");
-  parser.add_option("--zmin").action("store").type("unsigned").set_default(0).help("Minimum Z.");
-  parser.add_option("--zmax").action("store").type("unsigned").set_default(0).help("Maximum Z.");
-
   Command::buildParser();
 }
 
@@ -881,24 +939,8 @@ bool CropImage::execute(const optparse::Values &options, SharedCommandData &shar
     return false;
   }
 
-  unsigned xmin = static_cast<unsigned>(options.get("xmin"));
-  unsigned ymin = static_cast<unsigned>(options.get("ymin"));
-  unsigned zmin = static_cast<unsigned>(options.get("zmin"));
-  unsigned xmax = static_cast<unsigned>(options.get("xmax"));
-  unsigned ymax = static_cast<unsigned>(options.get("ymax"));
-  unsigned zmax = static_cast<unsigned>(options.get("zmax"));
-
-  if (xmin == 0 && ymin == 0 && zmin == 0 &&
-      xmax == 0 && ymax == 0 && zmax == 0)
-    sharedData.image.crop(sharedData.region); // use the previous region (maybe set by boundingbox cmd)
-  else
-  {
-    Region region(sharedData.image.dims());
-    if (xmin < xmax) { region.min[0] = xmin; region.max[0] = xmax; }
-    if (ymin < ymax) { region.min[1] = ymin; region.max[1] = ymax; }
-    if (zmin < zmax) { region.min[2] = zmin; region.max[2] = zmax; }
-    sharedData.image.crop(region);
-  }
+  std::cout << "region: " << sharedData.region << std::endl;
+  sharedData.image.crop(sharedData.region);
   return true;
 }
 

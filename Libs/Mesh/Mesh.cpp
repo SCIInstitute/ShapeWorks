@@ -313,16 +313,16 @@ Mesh &Mesh::scale(const Vector3 &v)
   return applyTransform(transform);
 }
 
-Region Mesh::boundingBox() const
+PhysicalRegion Mesh::boundingBox() const
 {
-  Region bbox;
+  PhysicalRegion bbox;
   double bb[6];
   mesh->GetBounds(bb);
 
   for(int i = 0; i < 3; i++)
   {
-    bbox.min[i] = floor(bb[2*i]);
-    bbox.max[i] = ceil(bb[2*i+1]);
+    bbox.min[i] = bb[2*i];
+    bbox.max[i] = bb[2*i+1];
   }
 
   return bbox;
@@ -415,64 +415,44 @@ Mesh& Mesh::generateNormals()
   return *this;
 }
 
-Image Mesh::toImage(Vector3 spacing, Dims dims) const
+Image Mesh::toImage(PhysicalRegion region, double padding, Point spacing) const
 {
-  if (std::abs(spacing[0]) < 1E-4 || std::abs(spacing[1]) < 1E-4 || std::abs(spacing[2]) < 1E-4)
-  {
-    throw std::invalid_argument("error: rasterization spacing must be non-zero");
+  // if no region, use mesh bounding box
+  if (region == PhysicalRegion()) {
+    region = boundingBox();
   }
 
-  if (dims != Dims({0, 0, 0}) && spacing != makeVector({1.0, 1.0, 1.0}))
-  {
-    throw std::invalid_argument("error: cannot specify both dims and spacing. Instead, scale the Mesh by spacing first.");
-  }
-      
-  // identify the logical region containing the mesh
-  Region bbox(boundingBox());
-  bbox.pad(1); // give it some padding
+  // add specified padding to physical region
+  region.min -= Point({padding, padding, padding});
+  region.max += Point({padding, padding, padding});
+  
+  // compute output dimensions: size of the region / by the requested spacing
+  auto dims = toDims(region.size() / spacing);
 
-  // compute dims based on specified spacing...
-  if (dims == Dims({0, 0, 0}))
-  {
-    bbox.pad(1); // give it some more padding, why not
-    Vector3 sz = toVector(bbox.size());
-    sz[0] /= spacing[0];
-    sz[1] /= spacing[1];
-    sz[2] /= spacing[2];
-    dims[0] = ceil(sz[0]);
-    dims[1] = ceil(sz[1]);
-    dims[2] = ceil(sz[2]);
-  }
-  // ...or spacing based on specified dims (specifying dims always overrides spacing)
-  else
-  {
-    Vector3 sz_user = toVector(dims);
-    Vector3 sz_mesh = toVector(bbox.size());
-    spacing[0] = sz_mesh[0] / sz_user[0];
-    spacing[1] = sz_mesh[1] / sz_user[1];
-    spacing[2] = sz_mesh[2] / sz_user[2];
-  }
+  // std::cout << "mesh extents are " << region << std::endl;
+  // std::cout << "size is " << region.size() << std::endl;
+  // std::cout << "spacing is " << spacing << std::endl;
+  // std::cout << "dims are " << dims << std::endl;
 
-  // determine origin from bounding box
-  Point3 origin = toPoint(bbox.origin());
-
+  // allocate output image
   vtkSmartPointer<vtkImageData> whiteImage = vtkSmartPointer<vtkImageData>::New();
-  whiteImage->SetOrigin(bbox.origin()[0], bbox.origin()[1], bbox.origin()[2]);
+  whiteImage->SetOrigin(region.origin()[0], region.origin()[1], region.origin()[2]);
   whiteImage->SetSpacing(spacing[0], spacing[1], spacing[2]);
-  whiteImage->SetDimensions(dims[0], dims[1], dims[2]);
+  whiteImage->SetExtent(0, dims[0]-1, 0, dims[1]-1, 0, dims[2]-1);
   whiteImage->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
 
+  // paint it white
   vtkIdType count = whiteImage->GetNumberOfPoints();
   for (vtkIdType i = 0; i < count; ++i)
     whiteImage->GetPointData()->GetScalars()->SetTuple1(i, 1);
 
-  // polygonal data --> image stencil:
+  // cut stencil from mesh silhouette (same size as output image)
   vtkSmartPointer<vtkPolyDataToImageStencil> pol2stenc = vtkSmartPointer<vtkPolyDataToImageStencil>::New();
   pol2stenc->SetInputData(this->mesh);
   pol2stenc->SetInformationInput(whiteImage);
   pol2stenc->Update();
 
-  // cut the corresponding white image and set the background:
+  // spray output using stencil (use dark paint)
   vtkSmartPointer<vtkImageStencil> imgstenc = vtkSmartPointer<vtkImageStencil>::New();
   imgstenc->SetInputData(whiteImage);
   imgstenc->SetStencilData(pol2stenc->GetOutput());
@@ -480,16 +460,14 @@ Image Mesh::toImage(Vector3 spacing, Dims dims) const
   imgstenc->SetBackgroundValue(0.0);
   imgstenc->Update();
 
-  Image ret(imgstenc->GetOutput());
-  ret.setOrigin(origin); // set origin to the location of this mesh in space
-  return ret;
+  return Image(imgstenc->GetOutput());
 }
 
-Image Mesh::toDistanceTransform(Vector3 spacing, Dims dims) const
+Image Mesh::toDistanceTransform(PhysicalRegion region, double padding, Point spacing) const
 {
   // TODO: convert directly to DT (github #810)
-  Image image(toImage(spacing, dims));
-  image.antialias(50, 0.00).computeDT(); // need maxrms = 0 and iterations = 30 to reproduce results
+  Image image(toImage(region, padding, spacing));
+  image.antialias(50, 0.00).computeDT();
   return image;
 }
 

@@ -3,14 +3,19 @@ import sys
 from shapeworks import *
 
 def cropTest1():
-  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/seg.ellipsoid_1.nrrd")
 
-  region = Region(img.dims())
-  region.min = [25, 1, 12]
-  region.max = [50, 40, 23]
-  img.crop(region)
+  region = img.logicalBoundingBox().pad(-16)
 
-  compareImg = Image(os.environ["DATA"] + "/cropped1.nrrd")
+  # [] fixme!
+  # region.min[0] = 7
+  # region.max[0] = 42
+  region.min = [7, region.min[1], region.min[2]]
+  region.max = [42, region.max[1], region.max[2]]
+
+  img.crop(img.logicalToPhysical(region))
+
+  compareImg = Image(os.environ["DATA"] + "/crop_baseline.nrrd")
 
   return img.compare(compareImg)
 

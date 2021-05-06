@@ -8,6 +8,31 @@ TEST(pythonTests, setup)
   ASSERT_TRUE(true);
 }
 
+TEST(pythonTests, padTest)
+{
+  ASSERT_FALSE(system("python pad.py"));
+}
+
+TEST(pythonTests, padFailTest)
+{
+  ASSERT_FALSE(system("python padfail.py"));
+}
+
+TEST(pythonTests, cropTest)
+{
+  ASSERT_FALSE(system("python crop.py"));
+}
+
+TEST(pythonTests, toImageTest)
+{
+  ASSERT_FALSE(system("python toImage.py"));
+}
+
+TEST(pythonTests, toDistanceTransformTest)
+{
+  ASSERT_FALSE(system("python toDistanceTransform.py"));
+}
+
 TEST(pythonTests, gradientInterpolatorTest)
 {
   ASSERT_FALSE(system("python gradientinterp.py"));
@@ -66,16 +91,6 @@ TEST(pythonTests, resizeFailTest)
 TEST(pythonTests, recenterTest)
 {
   ASSERT_FALSE(system("python recenter.py"));
-}
-
-TEST(pythonTests, padTest)
-{
-  ASSERT_FALSE(system("python pad.py"));
-}
-
-TEST(pythonTests, padFailTest)
-{
-  ASSERT_TRUE(system("python padfail.py"));
 }
 
 TEST(pythonTests, translateTest)
@@ -188,11 +203,6 @@ TEST(pythonTests, boundingBoxFailTest)
   ASSERT_TRUE(system("python boundingboxfail.py"));
 }
 
-TEST(pythonTests, cropTest)
-{
-  ASSERT_FALSE(system("python crop.py"));
-}
-
 TEST(pythonTests, icpTest)
 {
   ASSERT_FALSE(system("python icp.py"));
@@ -301,16 +311,6 @@ TEST(pythonTests, fillHolesTest)
 TEST(pythonTests, probeVolumeTest)
 {
   ASSERT_FALSE(system("python probeVolume.py"));
-}
-
-TEST(pythonTests, toImageTest)
-{
-  ASSERT_FALSE(system("python toImage.py"));
-}
-
-TEST(pythonTests, toDistanceTransformTest)
-{
-  ASSERT_FALSE(system("python toDistanceTransform.py"));
 }
 
 TEST(pythonTests, coverageTest)

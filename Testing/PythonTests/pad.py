@@ -57,3 +57,17 @@ val = padTest4()
 if val is False:
   print("padTest4 failed")
   sys.exit(1)
+
+def padTest6():
+  img = Image(os.environ["DATA"] + "/femurImage.nrrd")
+  img.pad(img.logicalBoundingBox(), 10)
+
+  compareImg = Image(os.environ["DATA"] + "/femurImage.nrrd")
+
+  return img.compare(compareImg)
+
+val = padTest6()
+
+if val is False:
+  print("padTest6 failed")
+  sys.exit(1)
