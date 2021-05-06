@@ -415,47 +415,41 @@ Mesh& Mesh::generateNormals()
   return *this;
 }
 
-Image Mesh::toImage(Vector3 spacing, Dims dims) const
+Image Mesh::toImage(Region region, Dims dims) const
 {
-  if (std::abs(spacing[0]) < 1E-4 || std::abs(spacing[1]) < 1E-4 || std::abs(spacing[2]) < 1E-4)
-  {
-    throw std::invalid_argument("error: rasterization spacing must be non-zero");
-  }
-
-  if (dims != Dims({0, 0, 0}) && spacing != makeVector({1.0, 1.0, 1.0}))
-  {
-    throw std::invalid_argument("error: cannot specify both dims and spacing. Instead, scale the Mesh by spacing first.");
-  }
-      
   // identify the logical region containing the mesh
-  Region bbox(boundingBox());
-  bbox.pad(1); // give it some padding
+  Region bbox(region);
+  if (region == Region())
+  {
+    bbox = boundingBox();
+    bbox.pad(1); // give it some default padding
+  }
 
-  // compute dims based on specified spacing...
+  // set origin from specified region
+  Point3 origin = toPoint(bbox.origin());
+  
+  // default spacing is [1, 1, 1]
+  Vector3 spacing = makeVector({1.0, 1.0, 1.0});
+
+  // compute dims based on region
   if (dims == Dims({0, 0, 0}))
   {
-    bbox.pad(1); // give it some more padding, why not
     Vector3 sz = toVector(bbox.size());
-    sz[0] /= spacing[0];
-    sz[1] /= spacing[1];
-    sz[2] /= spacing[2];
     dims[0] = ceil(sz[0]);
     dims[1] = ceil(sz[1]);
     dims[2] = ceil(sz[2]);
   }
-  // ...or spacing based on specified dims (specifying dims always overrides spacing)
   else
   {
+    // adjust spacing based on user-specified dims
     Vector3 sz_user = toVector(dims);
     Vector3 sz_mesh = toVector(bbox.size());
     spacing[0] = sz_mesh[0] / sz_user[0];
     spacing[1] = sz_mesh[1] / sz_user[1];
     spacing[2] = sz_mesh[2] / sz_user[2];
-  }
+  }  
 
-  // determine origin from bounding box
-  Point3 origin = toPoint(bbox.origin());
-
+  // allocate output image
   vtkSmartPointer<vtkImageData> whiteImage = vtkSmartPointer<vtkImageData>::New();
   whiteImage->SetOrigin(bbox.origin()[0], bbox.origin()[1], bbox.origin()[2]);
   whiteImage->SetSpacing(spacing[0], spacing[1], spacing[2]);
