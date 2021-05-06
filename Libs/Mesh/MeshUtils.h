@@ -19,24 +19,6 @@ public:
                                                                 const unsigned iterations = 20,
                                                                 bool meshTransform = false);
 
-  /// distils the vertex and face information from VTK poly data to Eigen matrices
-  static Eigen::MatrixXd distilVertexInfo(Mesh mesh);
-  static Eigen::MatrixXi distilFaceInfo(Mesh mesh);
-
-  /// compute the warp matrix using the mesh and reference points
-  static Eigen::MatrixXd generateWarpMatrix(Eigen::MatrixXd TV,
-                                            Eigen::MatrixXi TF,
-                                            const Eigen::MatrixXd& Vref);
-
-  /// compute individual warp
-  static Mesh warpMesh(const Eigen::MatrixXd& movPts, const Eigen::MatrixXd& W,
-                       const Eigen::MatrixXi& Fref);
-
-  /// compute transformation from set of points files using template mesh warp&face matrices
-  static bool warpMeshes(std::vector<std::string> movingPointPsaths,
-                         std::vector<std::string> outputMeshPaths,
-                         const Eigen::MatrixXd& W, const Eigen::MatrixXi& Fref, const int numP);
-
   /// Thread safe reading of a mesh, uses a lock
   static Mesh threadSafeReadMesh(std::string filename);
 

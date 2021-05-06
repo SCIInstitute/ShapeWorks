@@ -19,6 +19,8 @@ public:
 
   void set_values_from_preferences();
 
+  void closeEvent(QCloseEvent *event) override;
+
 public Q_SLOTS:
   void on_mesh_cache_enabled_stateChanged(int state);
   void on_mesh_cache_memory_valueChanged(int value);
@@ -39,6 +41,7 @@ Q_SIGNALS:
   void slider_update();
 
 private:
+  void update_labels();
   Preferences& preferences_;
   Ui_PreferencesWindow* ui_;
 };

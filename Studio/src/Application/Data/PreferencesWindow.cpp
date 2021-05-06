@@ -25,10 +25,13 @@ PreferencesWindow::PreferencesWindow(QWidget* parent, Preferences& prefs) : pref
 
   this->ui_->log_location->setText(shapeworks::StudioLog::Instance().get_log_filename());
 
-  this->connect(this->ui_->orientation_marker_type, qOverload<int>(&QComboBox::currentIndexChanged),
-                this, &PreferencesWindow::save_to_preferences);
-  this->connect(this->ui_->orientation_marker_corner, qOverload<int>(&QComboBox::currentIndexChanged),
-                this, &PreferencesWindow::save_to_preferences);
+  connect(this->ui_->orientation_marker_type, qOverload<int>(&QComboBox::currentIndexChanged),
+          this, &PreferencesWindow::save_to_preferences);
+  connect(this->ui_->orientation_marker_corner,
+          qOverload<int>(&QComboBox::currentIndexChanged),
+          this, &PreferencesWindow::save_to_preferences);
+  connect(this->ui_->geodesic_cache_multiplier, &QSlider::valueChanged, this,
+          &PreferencesWindow::save_to_preferences);
 }
 
 //-----------------------------------------------------------------------------
@@ -47,6 +50,7 @@ void PreferencesWindow::on_mesh_cache_enabled_stateChanged(int state)
 void PreferencesWindow::on_mesh_cache_memory_valueChanged(int value)
 {
   preferences_.set_memory_cache_percent(value);
+  this->update_labels();
 }
 
 //-----------------------------------------------------------------------------
@@ -91,6 +95,11 @@ void PreferencesWindow::set_values_from_preferences()
   this->ui_->orientation_marker_type->setCurrentIndex(preferences_.get_orientation_marker_type());
   this->ui_->orientation_marker_corner->setCurrentIndex(
     preferences_.get_orientation_marker_corner());
+  this->ui_->groom_file_template->setText(preferences_.get_groom_file_template());
+  this->ui_->optimize_file_template->setText(preferences_.get_optimize_file_template());
+  this->ui_->geodesic_cache_multiplier->setValue(preferences_.get_geodesic_cache_multiplier());
+
+  this->update_labels();
 }
 
 //-----------------------------------------------------------------------------
@@ -104,6 +113,7 @@ void PreferencesWindow::on_parallel_enabled_toggled(bool b)
 void PreferencesWindow::on_num_threads_valueChanged(int i)
 {
   this->preferences_.set_num_threads(i);
+  this->update_labels();
 }
 
 //-----------------------------------------------------------------------------
@@ -120,5 +130,28 @@ void PreferencesWindow::save_to_preferences()
     static_cast<Preferences::OrientationMarkerType>(this->ui_->orientation_marker_type->currentIndex()));
   this->preferences_.set_orientation_marker_corner(
     static_cast<Preferences::OrientationMarkerCorner>(this->ui_->orientation_marker_corner->currentIndex()));
+
+  this->preferences_.set_groom_file_template(this->ui_->groom_file_template->text());
+  this->preferences_.set_optimize_file_template(this->ui_->optimize_file_template->text());
+  this->preferences_.set_geodesic_cache_multiplier(this->ui_->geodesic_cache_multiplier->value());
+  this->update_labels();
   emit update_view();
+}
+
+//-----------------------------------------------------------------------------
+void PreferencesWindow::closeEvent(QCloseEvent* event)
+{
+  this->save_to_preferences();
+  QDialog::closeEvent(event);
+}
+
+//-----------------------------------------------------------------------------
+void PreferencesWindow::update_labels()
+{
+  this->ui_->threads_current_value->setText(QString::number(this->ui_->num_threads->value()));
+  this->ui_->memory_current_value->setText(
+    QString::number(this->ui_->mesh_cache_memory->value()) + "%");
+  this->ui_->geodesic_cache_multiplier_current_value->setText(
+    QString::number(this->ui_->geodesic_cache_multiplier->value()));
+
 }
