@@ -4,6 +4,7 @@
 #include "object_reader.h"
 #include "itkParticleImageDomain.h"
 #include "Sampler.h"
+#include "ContourDomain.h"
 
 namespace shapeworks {
 
@@ -201,7 +202,8 @@ void Sampler::InitializeOptimizationFunctions()
   m_ModifiedCotangentGradientFunction->SetParticleSystem(this->GetParticleSystem());
   m_ModifiedCotangentGradientFunction->SetDomainNumber(0);
 
-  m_ConstrainedModifiedCotangentGradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
+  m_ConstrainedModifiedCotangentGradientFunction->SetMinimumNeighborhoodRadius(
+    minimumNeighborhoodRadius);
   m_ConstrainedModifiedCotangentGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
   m_ConstrainedModifiedCotangentGradientFunction->SetParticleSystem(this->GetParticleSystem());
   m_ConstrainedModifiedCotangentGradientFunction->SetDomainNumber(0);
@@ -290,10 +292,23 @@ void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh)
 {
   auto domain = itk::MeshDomain::New();
   m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
-  if (mesh) {
+  if(mesh) {
     this->m_Spacing = 1;
     domain->SetMesh(mesh);
+    m_NeighborhoodList.back()->SetWeightingEnabled(!mesh->IsGeodesicsEnabled()); // disable weighting for geodesics
   }
+  m_DomainList.push_back(domain);
+}
+
+void Sampler::AddContour(vtkSmartPointer<vtkPolyData> poly_data)
+{
+  auto domain = itk::ContourDomain::New();
+  m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
+  if (poly_data != nullptr) {
+    this->m_Spacing = 1;
+    domain->SetPolyLine(poly_data);
+  }
+  m_NeighborhoodList.back()->SetWeightingEnabled(false);
   m_DomainList.push_back(domain);
 }
 
@@ -329,8 +344,8 @@ void Sampler::SetCuttingPlane(unsigned int i, const vnl_vector_fixed<double, Dim
   m_CuttingPlanes[i][m_CuttingPlanes[i].size() - 1].c = vc;
 
   if (m_Initialized == true) {
-      std::cout << "Initialized plane" << std::endl;
-      m_ParticleSystem->GetDomain(i)->GetConstraints()->addPlane(va,vb,vc);
+    std::cout << "Initialized plane" << std::endl;
+    m_ParticleSystem->GetDomain(i)->GetConstraints()->addPlane(va, vb, vc);
   }
 }
 

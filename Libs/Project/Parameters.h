@@ -37,6 +37,9 @@ public:
   //! get underlying map
   std::map<std::string, std::string> get_map();
 
+  //! reset parameters to blank
+  void reset_parameters();
+
 private:
 
   std::map<std::string, std::string> map_;

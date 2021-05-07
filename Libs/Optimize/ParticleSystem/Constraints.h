@@ -19,6 +19,7 @@ public:
         planeConsts = new std::vector<PlaneConstraint>();
         sphereConsts = new std::vector<SphereConstraint>();
         freeFormConsts = new std::vector<FreeFormConstraint>();
+        active = false;
     }
 
     ~Constraints(){
@@ -30,7 +31,7 @@ public:
   // Set constraints
   void addPlane(const vnl_vector<double> &a, const vnl_vector<double> &b,const vnl_vector<double> &c);
   void addSphere(const vnl_vector_fixed<double, DIMENSION> &v, double r);
-  void setFreeFormConstraint(std::string filename);
+  void addFreeFormConstraint(std::string filename);
 
   // Transforms
   bool transformConstraints(const vnl_matrix_fixed<double, 4, 4> &Trans);
@@ -223,6 +224,9 @@ public:
        }
    }
 
+   bool GetActive(){return active;}
+   void SetActive(bool ac){active = ac;}
+
 protected:
   std::vector<PlaneConstraint> *planeConsts;
   std::vector<SphereConstraint> *sphereConsts;
@@ -230,6 +234,7 @@ protected:
 
 private:
   // Projections and intersects
+  bool active;
   Eigen::Vector3d projectOntoLine(Eigen::Vector3d a, Eigen::Vector3d b, Eigen::Vector3d p);
   Eigen::Vector3d linePlaneIntersect(Eigen::Vector3d n, Eigen::Vector3d p0, Eigen::Vector3d l0, Eigen::Vector3d l);
   bool PlanePlaneIntersect(Eigen::Vector3d n1, Eigen::Vector3d p1, Eigen::Vector3d n2, Eigen::Vector3d p2, Eigen::Vector3d & l0_result, Eigen::Vector3d & l1_result);

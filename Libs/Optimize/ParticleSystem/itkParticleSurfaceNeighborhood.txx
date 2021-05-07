@@ -22,76 +22,88 @@ template <class TImage>
 typename ParticleSurfaceNeighborhood<TImage>::PointVectorType
 ParticleSurfaceNeighborhood<TImage>
 ::FindNeighborhoodPoints(const PointType &center, int idx,
-                         std::vector<double> &weights, double radius) const
+                         std::vector<double> &weights,
+                         std::vector<double> &distances,
+                         double radius) const
 {
   const auto *domain = this->GetDomain();
-  GradientVectorType posnormal = domain->SampleNormalAtPoint(center, idx);
-  //  double posnormalmag = posnormal.magnitude();
+
+  GradientVectorType posnormal;
+  if(m_WeightingEnabled) { // uninitialized otherwise, but we're trying to avoid looking up the normal if we can
+    posnormal = domain->SampleNormalAtPoint(center, idx);
+  }
+
   weights.clear();
+  distances.clear();
 
   // Compute bounding box of the given hypersphere.
   PointType l, u;
   for (unsigned int i = 0; i < Dimension; i++)
-    {
+  {
     l[i] = center[i] - radius;
     u[i] = center[i] + radius;
-    }
+  }
 
   // Grab the list of points in this bounding box.
   typename PointTreeType::PointIteratorListType pointlist
-    = Superclass::m_Tree->FindPointsInRegion(l, u);
+          = Superclass::m_Tree->FindPointsInRegion(l, u);
 
   // Allocate return vector.  Reserve ensures no extra copies occur.
   PointVectorType ret;
-  ret.reserve(pointlist.size());
+  ret.reserve(pointlist.size()); // todo investigate performance here: does it actually help?
   weights.reserve(pointlist.size());
 
-  std::vector<double> vec_dist;
-  std::vector<double> vec_cos;
-  
-  // Add any point whose distance from center is less than radius to the return
-  // list.
-  //  double vmax = radius;
-  for (typename PointTreeType::PointIteratorListType::const_iterator it = pointlist.begin();
-       it != pointlist.end(); it++)
+  // Add any point whose distance from center is less than radius to the return list
+  for (auto it = pointlist.begin(); it != pointlist.end(); it++)
+  {
+    const auto& pt_b = (*it)->Point;
+    const auto& idx_b = (*it)->Index;
+
+    // we are not a neighbor of ourself.
+    if(idx_b == idx) {
+      continue;
+    }
+
+    double distance;
+    if (domain->IsWithinDistance(center, idx, pt_b, idx_b, radius, distance))
     {
-      double distance = this->GetDomain()->Distance(center, (*it)->Point);
-    
-    if (distance < radius && distance > 0.0 )
-      {
-      GradientVectorType pn = domain->SampleNormalAtPoint((*it)->Point, (*it)->Index);
-      double cosine   = dot_product(posnormal,pn); // normals already normalized
-      // double cosine = proj / (posnormalmag * pn.magnitude() + 1.0e-6);
+      ret.push_back( **it );
+      distances.push_back(distance);
 
-      // double dist   = 
-
-      
-      if ( cosine >= m_FlatCutoff)
-        {
-        // Determine distance to tangent plane by projecting the point onto the
-        // normal.
+      //todo change the APIs so don't have to pass a std::vector<double> of 1s whenever weighting is disabled
+      if(!m_WeightingEnabled) {
         weights.push_back(1.0);
+        continue;
+      }
 
-        }
+      const GradientVectorType pn = domain->SampleNormalAtPoint((*it)->Point, (*it)->Index);
+      const double cosine  = dot_product(posnormal,pn); // normals already normalized
+      if (cosine >= m_FlatCutoff)
+      {
+        weights.push_back(1.0);
+      }
       else
-        {
+      {
         // Drop to zero influence over 90 degrees.
         weights.push_back(cos((m_FlatCutoff - cosine) / (1.0+m_FlatCutoff) * 1.5708));
 
         // More quickly drop to zero influence
         // weights.push_back( exp((cosine - m_FlatCutoff) / (1.0 + m_FlatCutoff) * 4.0) );
-
-        //        vmax = dist;
-        }
-
-      ret.push_back( **it );
       }
-
     }
-
-
-  
+  }
   return ret;
+}
+
+template <class TImage>
+typename ParticleSurfaceNeighborhood<TImage>::PointVectorType
+ParticleSurfaceNeighborhood<TImage>
+::FindNeighborhoodPoints(const PointType &center, int idx,
+                         std::vector<double> &weights,
+                         double radius) const
+{
+  std::vector<double> distances;
+  return this->FindNeighborhoodPoints(center, idx, weights, distances, radius);
 }
 
 }
