@@ -226,7 +226,10 @@ TEST(MeshTests, toImageTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
   Image image = femur.toImage();
+  std::cout << "wtf\n";
   Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImage.nrrd");
+  ground_truth.write("/tmp/groundTruth1.nrrd");
+  std::cout << "srsly?!\n";
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -234,7 +237,11 @@ TEST(MeshTests, toImageTest1)
 TEST(MeshTests, toImageTest2)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
-  Image image = femur.toImage(makeVector({2.0, 2.0, 1.0}));
+  auto bbox = femur.boundingBox();
+  bbox.pad(1);
+  bbox.max[0] /= 2;
+  bbox.max[1] /= 2;
+  Image image = femur.toImage(bbox);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImage2.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -243,7 +250,7 @@ TEST(MeshTests, toImageTest2)
 TEST(MeshTests, toImageTest3)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
-  Image image = femur.toImage(makeVector({1.0, 1.0, 1.0}), {40, 145, 131});
+  Image image = femur.toImage(Dims{40, 145, 131});
   Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImage3.nrrd");
 
   ASSERT_TRUE(image == ground_truth);

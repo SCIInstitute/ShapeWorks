@@ -4,7 +4,7 @@ from shapeworks import *
 
 def toImageTest1():
   mesh = Mesh(os.environ["DATA"] + "/femur.ply")
-  img = mesh.toImage([1.0, 1.0, 1.0])
+  img = mesh.toImage()
 
   compareImg = Image(os.environ["DATA"] + "/femurImage.nrrd")
 
@@ -18,6 +18,9 @@ if val is False:
 
 def toImageTest2():
   mesh = Mesh(os.environ["DATA"] + "/femur.ply")
+  bbox = mesh.boundingBox()
+  bbox.pad(1)
+  bbox.max = [bbox.max[0] / 2, bbox.max[1] / 2, bbox.max[2]]
   img = mesh.toImage(spacing=[2.0, 2.0, 1.0])
 
   compareImg = Image(os.environ["DATA"] + "/femurImage2.nrrd")

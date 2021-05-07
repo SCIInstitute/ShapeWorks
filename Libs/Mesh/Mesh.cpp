@@ -415,7 +415,7 @@ Mesh& Mesh::generateNormals()
   return *this;
 }
 
-Image Mesh::toImage(Region region, Dims dims) const
+Image Mesh::toImage(const Region region, const Dims dims) const
 {
   // identify the logical region containing the mesh
   Region bbox(region);
@@ -423,39 +423,36 @@ Image Mesh::toImage(Region region, Dims dims) const
   {
     bbox = boundingBox();
     bbox.pad(1); // give it some default padding
+    std::cout << "adding a pixel of padding\n";
   }
 
-  // set origin from specified region
-  Point3 origin = toPoint(bbox.origin());
-  
-  // default spacing is [1, 1, 1]
+  // unit spacing by default
   Vector3 spacing = makeVector({1.0, 1.0, 1.0});
 
-  // compute dims based on region
-  if (dims == Dims({0, 0, 0}))
+  // adjust spacing if user specified dims
+  if (dims != Dims({0, 0, 0}))
   {
-    Vector3 sz = toVector(bbox.size());
-    dims[0] = ceil(sz[0]);
-    dims[1] = ceil(sz[1]);
-    dims[2] = ceil(sz[2]);
-  }
-  else
-  {
-    // adjust spacing based on user-specified dims
+    bbox.max = toCoord(dims);
     Vector3 sz_user = toVector(dims);
     Vector3 sz_mesh = toVector(bbox.size());
     spacing[0] = sz_mesh[0] / sz_user[0];
     spacing[1] = sz_mesh[1] / sz_user[1];
     spacing[2] = sz_mesh[2] / sz_user[2];
+    std::cout << "updated spacing to " << spacing << std::endl;
   }  
+
+  std::cout << "extents are " << bbox.min << " to " << bbox.max << std::endl;
+  std::cout << "spacing is " << spacing << std::endl;
 
   // allocate output image
   vtkSmartPointer<vtkImageData> whiteImage = vtkSmartPointer<vtkImageData>::New();
-  whiteImage->SetOrigin(bbox.origin()[0], bbox.origin()[1], bbox.origin()[2]);
+  whiteImage->SetOrigin(bbox.min[0], bbox.min[1], bbox.min[2]);
   whiteImage->SetSpacing(spacing[0], spacing[1], spacing[2]);
-  whiteImage->SetDimensions(dims[0], dims[1], dims[2]);
+  //whiteImage->SetDimensions(bbox.max[0], bbox.max[1], bbox.max[2]);
+  whiteImage->SetExtent(bbox.min[0], bbox.max[0], bbox.min[1], bbox.max[1], bbox.min[2], bbox.max[2]);
   whiteImage->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
 
+  std::cout << "you okay?\n";
   vtkIdType count = whiteImage->GetNumberOfPoints();
   for (vtkIdType i = 0; i < count; ++i)
     whiteImage->GetPointData()->GetScalars()->SetTuple1(i, 1);
@@ -466,6 +463,7 @@ Image Mesh::toImage(Region region, Dims dims) const
   pol2stenc->SetInformationInput(whiteImage);
   pol2stenc->Update();
 
+  std::cout << "what gives??\n";
   // cut the corresponding white image and set the background:
   vtkSmartPointer<vtkImageStencil> imgstenc = vtkSmartPointer<vtkImageStencil>::New();
   imgstenc->SetInputData(whiteImage);
@@ -474,15 +472,16 @@ Image Mesh::toImage(Region region, Dims dims) const
   imgstenc->SetBackgroundValue(0.0);
   imgstenc->Update();
 
+  std::cout << "phew!\n";
   Image ret(imgstenc->GetOutput());
-  ret.setOrigin(origin); // set origin to the location of this mesh in space
+  ret.setOrigin(toPoint(bbox.origin())); // set origin to the location of this mesh in space
   return ret;
 }
 
-Image Mesh::toDistanceTransform(Vector3 spacing, Dims dims) const
+Image Mesh::toDistanceTransform(const Region region, const Dims dims) const
 {
   // TODO: convert directly to DT (github #810)
-  Image image(toImage(spacing, dims));
+  Image image(toImage(region, dims));
   image.antialias(50, 0.00).computeDT(); // need maxrms = 0 and iterations = 30 to reproduce results
   return image;
 }

@@ -890,12 +890,9 @@ bool FieldNames::execute(const optparse::Values &options, SharedCommandData &sha
 void MeshToImage::buildParser()
 {
   const std::string prog = "mesh-to-image";
-  const std::string desc = "converts mesh to a binary segmentation image, computing dims/spacing if necessary (specifying dims overrides specified spacing)";
+  const std::string desc = "converts mesh to a binary segmentation image, computing dims/spacing if necessary";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--spacex").action("store").type("double").set_default(1.0).help("Spacing of output image in x-direction [default: %default].");
-  parser.add_option("--spacey").action("store").type("double").set_default(1.0).help("Spacing of output image in y-direction [default: %default].");
-  parser.add_option("--spacez").action("store").type("double").set_default(1.0).help("Spacing of output image in z-direction [default: %default].");
   parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Size of output image in x-direction [default: one pixel per unit of distance in mesh].");
   parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Size of output image in y-direction [default: one pixel per unit of distance in mesh].");
   parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Size of output image in z-direction [default: one pixel per unit of distance in mesh].");
@@ -911,17 +908,13 @@ bool MeshToImage::execute(const optparse::Values &options, SharedCommandData &sh
     return false;
   }
 
-  double spaceX = static_cast<double>(options.get("spacex"));
-  double spaceY = static_cast<double>(options.get("spacey"));
-  double spaceZ = static_cast<double>(options.get("spacez"));
   unsigned sizeX = static_cast<unsigned>(options.get("sizex"));
   unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
   unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
 
-  Vector3 spacing(makeVector({spaceX,spaceY,spaceZ}));
   Dims size({sizeX,sizeY, sizeZ});
 
-  sharedData.image = sharedData.mesh->toImage(spacing, size);
+  sharedData.image = sharedData.mesh->toImage(Region(), size);
   return true;
 }
 
@@ -931,12 +924,9 @@ bool MeshToImage::execute(const optparse::Values &options, SharedCommandData &sh
 void MeshToDT::buildParser()
 {
   const std::string prog = "mesh-to-dt";
-  const std::string desc = "converts mesh to a distance transform, computing dims/spacing if necessary (specifying dims overrides specified spacing)";
+  const std::string desc = "converts mesh to a distance transform, computing dims/spacing if necessary";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--spacex").action("store").type("double").set_default(1.0).help("Spacing of output image in x-direction [default: %default].");
-  parser.add_option("--spacey").action("store").type("double").set_default(1.0).help("Spacing of output image in y-direction [default: %default].");
-  parser.add_option("--spacez").action("store").type("double").set_default(1.0).help("Spacing of output image in z-direction [default: %default].");
   parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Size of output image in x-direction [default: one pixel per unit of distance in mesh].");
   parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Size of output image in y-direction [default: one pixel per unit of distance in mesh].");
   parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Size of output image in z-direction [default: one pixel per unit of distance in mesh].");
@@ -952,17 +942,13 @@ bool MeshToDT::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
-  double spaceX = static_cast<double>(options.get("spacex"));
-  double spaceY = static_cast<double>(options.get("spacey"));
-  double spaceZ = static_cast<double>(options.get("spacez"));
   unsigned sizeX = static_cast<unsigned>(options.get("sizex"));
   unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
   unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
 
-  Vector3 spacing(makeVector({spaceX,spaceY,spaceZ}));
   Dims size({sizeX,sizeY, sizeZ});
 
-  sharedData.image = sharedData.mesh->toDistanceTransform(spacing, size);
+  sharedData.image = sharedData.mesh->toDistanceTransform(Region(), size);
   return true;
 }
 

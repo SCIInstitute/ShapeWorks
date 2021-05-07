@@ -516,8 +516,28 @@ PYBIND11_MODULE(shapeworks, m)
          return stream.str();
        })
 
-  .def_readwrite("min", &Region::min)
-  .def_readwrite("max", &Region::max)
+  .def_property("min",
+                [](const Region &region) -> decltype(auto) {
+                  return py::array(3, region.min.data());
+                },
+                [](Region &region, std::vector<double> min) -> decltype(auto) {
+                  region.min = Coord{static_cast<long>(std::floor(min[0])),
+                                     static_cast<long>(std::floor(min[1])),
+                                     static_cast<long>(std::floor(min[2]))};
+                  return min;
+                },
+                "min point of region")
+  .def_property("max",
+                [](const Region &region) -> decltype(auto) {
+                  return py::array(3, region.max.data());
+                },
+                [](Region &region, std::vector<double> max) -> decltype(auto) {
+                  region.max = Coord{static_cast<long>(std::ceil(max[0])),
+                                     static_cast<long>(std::ceil(max[1])),
+                                     static_cast<long>(std::ceil(max[2]))};
+                  return max;
+                },
+                "max point of region")
 
   .def("valid",
        &Region::valid,
@@ -729,28 +749,34 @@ PYBIND11_MODULE(shapeworks, m)
        "computes cell normals and orients them such that they point in the same direction")
 
   .def("toImage",
-       [](Mesh& mesh, std::vector<double>& v,
-          std::vector<unsigned>& d) -> decltype(auto) {
-         return mesh.toImage(makeVector({v[0], v[1], v[2]}),
-                             Dims({d[0], d[1], d[2]}));
+       [](Mesh& mesh, const Region &region, const std::vector<double>& dims) -> decltype(auto) {
+         if (dims[0] * dims[1] * dims[2] <= 0.0) {
+           throw std::range_error("specified dims must be >= 0");
+         }
+         return mesh.toImage(region, Dims{static_cast<Dims::value_type>(std::ceil(dims[0])),
+                                          static_cast<Dims::value_type>(std::ceil(dims[1])),
+                                          static_cast<Dims::value_type>(std::ceil(dims[2]))});
        },
        "rasterizes mesh to a binary image, computing dims/spacing if necessary (specifying dims overrides specified spacing)",
-       "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}),
-       "dims"_a=std::vector<unsigned>({0, 0, 0}))
+       "region"_a=Region(),
+       "dims"_a=std::vector<double>({0, 0, 0}))
 
   .def("distance",
        &Mesh::distance, "computes surface to surface distance",
        "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
 
   .def("toDistanceTransform",
-       [](Mesh& mesh, std::vector<double>& v,
-          std::vector<unsigned>& d) -> decltype(auto) {
-         return mesh.toDistanceTransform(makeVector({v[0], v[1], v[2]}),
-                                         Dims({d[0], d[1], d[2]}));
+       [](Mesh& mesh, const Region &region, const std::vector<unsigned>& dims) -> decltype(auto) {
+         if (dims[0] * dims[1] * dims[2] <= 0.0) {
+           throw std::range_error("specified dims must be >= 0");
+         }
+         return mesh.toDistanceTransform(region, Dims{static_cast<Dims::value_type>(std::ceil(dims[0])),
+                                                      static_cast<Dims::value_type>(std::ceil(dims[1])),
+                                                      static_cast<Dims::value_type>(std::ceil(dims[2]))});
        },
        "converts mesh to distance transform, computing dims/spacing if necessary (specifying dims overrides specified spacing)",
-       "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}),
-       "dims"_a=std::vector<unsigned>({0, 0, 0}))
+       "region"_a=Region(),
+       "dims"_a=std::vector<double>({0, 0, 0}))
 
   .def("center",
        [](Mesh &mesh) -> decltype(auto) {
@@ -773,7 +799,9 @@ PYBIND11_MODULE(shapeworks, m)
        "number of faces")
 
   .def("getPoint",
-       &Mesh::getPoint,
+       [](Mesh &mesh, int i) -> decltype(auto) {
+         return py::array(3, mesh.getPoint(i).GetDataPointer());
+       },
        "return (x,y,z) coordinates of vertex at given index",
        "p"_a)
 

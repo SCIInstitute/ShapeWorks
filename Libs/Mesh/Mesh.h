@@ -83,11 +83,13 @@ public:
   /// computes cell normals and orients them such that they point in the same direction
   Mesh& generateNormals();
 
-  /// rasterizes specified mesh region to create binary image of desired dims, setting image spacing to match mesh if necessary
-  Image toImage(Region region = Region(), Dims dims = {0, 0, 0}) const;
+  /// rasterizes specified region to create binary image of desired dims
+  /// by default uses unit spacing and pads bounding box by one 
+  Image toImage(const Region region = Region(), const Dims dims = {0, 0, 0}) const;
 
-  /// converts mesh to distance transform, computing dims/spacing if necessary (specifying dims overrides specified spacing)
-  Image toDistanceTransform(Vector3 spacing = makeVector({1.0, 1.0, 1.0}), Dims dims = {0, 0, 0}) const;
+  /// converts specified region to distance transform image
+  /// by default uses unit spacing and pads bounding box by one 
+  Image toDistanceTransform(const Region region = Region(), const Dims dims = {0, 0, 0}) const;
 
   // query functions //
 
