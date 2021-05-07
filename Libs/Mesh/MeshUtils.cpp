@@ -14,6 +14,7 @@
 
 // tbb
 #include <tbb/mutex.h>
+#include <tbb/parallel_for.h>
 
 
 namespace shapeworks {
@@ -75,7 +76,7 @@ Region MeshUtils::boundingBox(std::vector<std::string> &filenames, bool center)
 {
   if (filenames.empty())
     throw std::invalid_argument("No filenames provided to compute a bounding box");
-  
+
   Mesh mesh(filenames[0]);
   Region bbox(mesh.boundingBox());
 
@@ -101,5 +102,21 @@ Region MeshUtils::boundingBox(std::vector<Mesh> &meshes, bool center)
   return bbox;
 }
 
+int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes)
+{
+  tbb::parallel_for(
+    tbb::blocked_range<size_t>{0, meshes.size()},
+    [&](const tbb::blocked_range<size_t>& r) {
+      for (size_t i = r.begin(); i < r.end(); ++i) {
+        for (int j = 0; j < meshes.size(); j++) {
+          if (i != j) {
+            std::cerr << i << " to " << j << "\n";
+          }
+        }
+      }
+    });
+
+  return 0;
+}
 
 } // shapeworks
