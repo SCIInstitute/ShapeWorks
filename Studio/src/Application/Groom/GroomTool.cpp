@@ -39,8 +39,23 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
   ui_->blur_sigma->setToolTip("Gaussian blur sigma");
   ui_->fastmarching_checkbox->setToolTip("Create distance transform");
 
+  ui_->mesh_center->setToolTip("Center meshes based on center of mass");
+  ui_->mesh_qc->setToolTip("Perform mesh quality control steps");
+  ui_->mesh_smooth->setToolTip("Perform mesh smoothing");
+  ui_->mesh_smooth_method->setToolTip("Mesh smoothing type");
+  ui_->laplacian_iterations->setToolTip("Number of iterations");
+  ui_->laplacian_relaxation->setToolTip("Laplacian relaxation factor");
+  ui_->sinc_passband->setToolTip("Windowed sinc pass band");
+  ui_->sinc_iterations->setToolTip("Windowed sinc iterations");
+
   connect(ui_->domain_box, qOverload<int>(&QComboBox::currentIndexChanged),
           this, &GroomTool::domain_changed);
+
+  connect(ui_->mesh_smooth, &QCheckBox::stateChanged, this, &GroomTool::update_ui);
+  connect(ui_->mesh_smooth_method, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
+          &GroomTool::update_ui);
+
+  update_ui();
 }
 
 //---------------------------------------------------------------------------
@@ -307,6 +322,14 @@ void GroomTool::domain_changed()
   current_domain_ = ui_->domain_box->currentText().toStdString();
 
   load_params();
+}
+
+//---------------------------------------------------------------------------
+void GroomTool::update_ui()
+{
+  ui_->mesh_smooth_stack->setCurrentIndex(ui_->mesh_smooth_method->currentIndex());
+  ui_->mesh_smooth_box->setEnabled(ui_->mesh_smooth->isChecked());
+
 }
 
 }

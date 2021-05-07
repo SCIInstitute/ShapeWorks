@@ -61,6 +61,8 @@ public Q_SLOTS:
   void on_skip_button_clicked();
   void on_restore_defaults_clicked();
 
+  void update_ui();
+
   void domain_changed();
 
   void centering_changed(int state);
