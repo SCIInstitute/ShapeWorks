@@ -132,7 +132,7 @@ void find_shared_surface(const Eigen::MatrixXd& src_V, const Eigen::MatrixXi& sr
 int main(int argc, char *argv[])
 {
   if(argc < 6) {
-    std::cerr << "Usage: " << argv[0] << " <input_l.ply> <input_r.ply> <out_l.ply> <out_r.ply> <out_m.ply>\n";
+    std::cerr << "Usage: " << argv[0] << " <input_l.ply> <input_r.ply> <out_l.ply> <out_r.ply> <out_m.ply> <tol>\n";
     exit(1);
   }
 
