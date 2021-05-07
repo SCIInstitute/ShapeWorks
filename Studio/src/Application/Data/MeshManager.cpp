@@ -107,7 +107,9 @@ void MeshManager::check_error_status(MeshHandle mesh)
 std::shared_ptr<MeshWarper> MeshManager::get_mesh_warper(int domain)
 {
   while (domain >= this->reconstructors_->mesh_warpers_.size()) {
-    this->reconstructors_->mesh_warpers_.push_back(std::make_shared<MeshWarper>());
+    auto warper = std::make_shared<QMeshWarper>(this);
+    connect(warper.get(), &QMeshWarper::progress, this, &MeshManager::handle_warper_progress);
+    this->reconstructors_->mesh_warpers_.push_back(warper);
   }
   return this->reconstructors_->mesh_warpers_[domain];
 }
@@ -120,5 +122,24 @@ std::shared_ptr<SurfaceReconstructor> MeshManager::get_surface_reconstructor(int
       std::make_shared<SurfaceReconstructor>());
   }
   return this->reconstructors_->surface_reconstructors_[domain];
+}
+
+//---------------------------------------------------------------------------
+void MeshManager::handle_warper_progress()
+{
+  float sum = 0;
+  int num_domains = this->reconstructors_->mesh_warpers_.size();
+  for (int i = 0; i < num_domains; i++) {
+    sum += this->reconstructors_->mesh_warpers_[i]->get_progress();
+  }
+  float p = sum / num_domains * 100.0;
+
+  if (p < 1.0) {
+    emit status("Generating Mesh Warp");
+  }
+  else {
+    emit status("");
+  }
+  emit progress(p);
 }
 }
