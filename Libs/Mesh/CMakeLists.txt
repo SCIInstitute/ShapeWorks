@@ -65,10 +65,6 @@ ADD_EXECUTABLE(ComputeMeshGeodesics ComputeMeshGeodesics.cxx)
 TARGET_LINK_LIBRARIES(ComputeMeshGeodesics ${ITK_LIBRARIES} Mesh tinyxml)
 INSTALL(TARGETS ComputeMeshGeodesics RUNTIME DESTINATION bin)
 
-ADD_EXECUTABLE(create_isosurface create_isosurface.cc)
-TARGET_LINK_LIBRARIES(create_isosurface ${VTK_LIBRARIES} ${ITK_LIBRARIES})
-INSTALL(TARGETS create_isosurface RUNTIME DESTINATION bin)
-
 ADD_EXECUTABLE(shared_boundary_extractor shared_boundary_extractor.cpp)
 TARGET_LINK_LIBRARIES(shared_boundary_extractor ${VTK_LIBRARIES} igl::core)
 INSTALL(TARGETS shared_boundary_extractor RUNTIME DESTINATION bin)
