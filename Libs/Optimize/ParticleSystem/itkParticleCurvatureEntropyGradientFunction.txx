@@ -56,13 +56,9 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
     
     double mymc = m_MeanCurvatureCache->operator[](this->GetDomainNumber())->operator[](idx);
 
-    size_t valid_count = 0;
     for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++)
       {
       if (m_CurrentNeighborhood[i].weight < epsilon) continue;
-      // if(m_CurrentNeighborhood[i].dom != dom) continue;
-
-      valid_count++;
 
       double mc = m_MeanCurvatureCache->operator[](this->GetDomainNumber())->operator[](
               m_CurrentNeighborhood[i].pi_pair.Index);
@@ -80,7 +76,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
       C += sqrdistance * sqrdistance * alpha;
       } // end for i
 
-    avgKappa /= static_cast<double>(valid_count);
+    avgKappa /= static_cast<double>(m_CurrentNeighborhood.size());
 
     prev_sigma = sigma;
 

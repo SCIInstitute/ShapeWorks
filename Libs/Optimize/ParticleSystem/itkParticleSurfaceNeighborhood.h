@@ -73,6 +73,11 @@ public:
     m_WeightingEnabled = is_enabled;
   }
 
+  bool IsWeightingEnabled() const
+  {
+    return m_WeightingEnabled;
+  }
+
   void SetForceEuclidean(bool is_enabled) {
     m_ForceEuclidean = is_enabled;
   }

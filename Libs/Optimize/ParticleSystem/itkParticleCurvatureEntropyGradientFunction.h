@@ -158,6 +158,8 @@ public:
 
   virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
   {
+    // todo Do we really need to clone all of this?
+
     typename ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>::Pointer copy = ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>::New();
     copy->SetParticleSystem(this->GetParticleSystem());
     copy->m_Counter = this->m_Counter;
@@ -222,6 +224,8 @@ protected:
       const auto neighborhood_ = system->GetNeighborhood(domain_t).GetPointer();
       using ImageType = itk::Image<float, Dimension>;
       auto neighborhood__ = dynamic_cast<const ParticleSurfaceNeighborhood<ImageType>*>(neighborhood_);
+
+      // unfortunately required because we need to mutate the cosine weighting state
       auto neighborhood = const_cast<ParticleSurfaceNeighborhood<ImageType>*>(neighborhood__);
 
 
@@ -234,22 +238,33 @@ protected:
         continue;
       }
 
-      // yup, no weighting for now
-      neighborhood->SetWeightingEnabled(false);
+      // Sampling term is only computed if:
+      // * Both domains are the same
+      // * This is not a contour, but the other domain is a contour
 
       std::vector<double> weights;
       std::vector<double> distances;
       std::vector<ParticlePointIndexPair<3>> res;
       if(domain_t == d) {
+        // same domain
         res = neighborhood->FindNeighborhoodPoints(pos, idx, weights, distances, radius);
       } else {
+        // cross domain
+
+        bool weighting_state = neighborhood->IsWeightingEnabled();
+        // Disable cosine-falloff weighting for cross-domain sampling term. Contours don't have normals.
+        neighborhood->SetWeightingEnabled(false);
         neighborhood->SetForceEuclidean(true);
+
         res = neighborhood->FindNeighborhoodPoints(pos, -1, weights, distances, radius);
+
         neighborhood->SetForceEuclidean(false);
+        neighborhood->SetWeightingEnabled(weighting_state);
       }
 
       assert(weights.size() == distances.size() && res.size() == weights.size());
 
+      // todo should avoid this copy. requires changing way too many APIs
       for(int i=0; i<res.size(); i++) {
         m_CurrentNeighborhood.emplace_back(
           res[i],
