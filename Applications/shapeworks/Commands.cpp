@@ -90,7 +90,7 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
 
       bool success = app.Run();
 
-      chdir(old_base_path.c_str());
+      chdir(reinterpret_cast<const char*>(old_base_path.c_str()));
       if (success) {
         project->save(projectFile);
       }
