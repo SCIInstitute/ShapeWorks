@@ -9,6 +9,15 @@
 #include <igl/remove_unreferenced.h>
 #include <igl/boundary_loop.h>
 
+/*
+ * shared_boundary_extractor
+ * shared_boundary_extractor <input_l.ply> <input_r.ply> <out_l.ply> <out_r.ply> <out_m.ply> <tol>
+ *
+ * Extract the shared boundary triangles between input_l and input_r. The meshes with the boundary removed are
+ * saved in out_l and out_r. The boundary triangles are stored in out_m.ply. tol is a data specific value that
+ * defines the threshold for two surfaces to be "close"
+ */
+
 void rem_into_eigen_mesh(const std::vector<int>& faces,
                          const Eigen::MatrixXd& src_V,
                          const Eigen::MatrixXi& src_F,

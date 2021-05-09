@@ -8,6 +8,13 @@
 #include <vtkLine.h>
 #include <vtkPolyData.h>
 
+/*
+ * boundary_loop_extractor
+ * boundary_loop_extractor <in_file.ply> <out_file.vtp>
+ *
+ * Given a .ply mesh, extract the boundary loop and export the boundary loop as a VTK .vtp file
+ */
+
 bool is_clockwise(const Eigen::MatrixXd& V,
                   const Eigen::MatrixXi& F,
                   const std::vector<int>& loop) {
@@ -17,28 +24,13 @@ bool is_clockwise(const Eigen::MatrixXd& V,
   }
   centroid /= loop.size();
 
-  // todo this is arbitrary and works for the peanut data
+  // todo this is arbitrary and works for the peanut data and initial tests on LA+Septum data
+  // it enforces a consistent ordering in the boundary loop
   const auto v0 = V.row(loop[0]) - centroid;
   const auto v1 = V.row(loop[1]) - centroid;
   const double angle0 = atan2(v0.z(), v0.y());
   const double angle1 = atan2(v1.z(), v1.y());
   return angle0 > angle1;
-}
-
-double get_angle(const Eigen::MatrixXd& V,
-                 const Eigen::MatrixXi& F,
-                 const std::vector<int>& loop,
-                 int i) {
-  Eigen::RowVector3d centroid{0.0, 0.0, 0.0};
-  for(const auto& i : loop) {
-    centroid += V.row(i);
-  }
-  centroid /= loop.size();
-
-  // todo this is arbitrary and works for the peanut data
-  const auto v0 = V.row(i) - centroid;
-  const double angle0 = atan2(v0.z(), v0.y());
-  return angle0;
 }
 
 int main(int argc, char *argv[]) {
@@ -70,13 +62,6 @@ int main(int argc, char *argv[]) {
   auto lines = vtkSmartPointer<vtkCellArray>::New();
   for(size_t i=0; i<loop.size(); i++) {
     auto line = vtkSmartPointer<vtkLine>::New();
-
-    /*
-    double angle0 = get_angle(V, F, loop, loop[i]);
-    double angle1 = get_angle(V, F, loop, loop[(i+1)%loop.size()]);
-    std::cout << angle0 << " " << angle1<< "\n";
-     */
-
     if(is_cw) {
       line->GetPointIds()->SetId(0, i);
       line->GetPointIds()->SetId(1, (i+1)%loop.size());
