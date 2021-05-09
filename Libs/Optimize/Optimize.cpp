@@ -2266,4 +2266,16 @@ void Optimize::SetGeodesicsCacheSizeMultiplier(size_t n)
   this->m_geodesic_cache_size_multiplier = n;
 }
 
+//---------------------------------------------------------------------------
+void Optimize::SetSharedBoundaryEnabled(bool enabled)
+{
+  m_sampler->SetSharedBoundaryEnabled(enabled);
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetSharedBoundaryWeight(double weight)
+{
+  m_sampler->SetSharedBoundaryWeight(weight);
+}
+
 }

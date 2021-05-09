@@ -193,6 +193,10 @@ void Sampler::InitializeOptimizationFunctions()
   m_CurvatureGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
   m_CurvatureGradientFunction->SetParticleSystem(this->GetParticleSystem());
   m_CurvatureGradientFunction->SetDomainNumber(0);
+  if(m_IsSharedBoundaryEnabled) {
+    m_CurvatureGradientFunction->SetSharedBoundaryEnabled(true);
+    m_CurvatureGradientFunction->SetSharedBoundaryWeight(this->m_SharedBoundaryWeight);
+  }
 
   m_ModifiedCotangentGradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
   m_ModifiedCotangentGradientFunction->SetMaximumNeighborhoodRadius(maxradius);

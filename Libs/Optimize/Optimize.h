@@ -233,6 +233,10 @@ public:
   //! Set Domain Flags (TODO: details)
   void SetDomainFlags(std::vector<int> flags);
 
+  //! Shared boundary settings
+  void SetSharedBoundaryEnabled(bool enabled);
+  void SetSharedBoundaryWeight(double weight);
+
   const std::vector<int>& GetDomainFlags();
 
   //! Set if file output is enabled

@@ -241,47 +241,34 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   double A = 0.0;
 
   for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++) {
-    if(m_CurrentNeighborhood[i].dom == d) {
-      double mc = m_MeanCurvatureCache->operator[](d)->operator[](m_CurrentNeighborhood[i].pi_pair.Index);
-      double Dij = (mymc + mc) * 0.5; // average my curvature with my neighbors
-      double kappa = this->ComputeKappa(Dij, d);
+    double mc = m_MeanCurvatureCache->operator[](d)->operator[](m_CurrentNeighborhood[i].pi_pair.Index);
+    double Dij = (mymc + mc) * 0.5; // average my curvature with my neighbors
+    double kappa = this->ComputeKappa(Dij, d);
 
-      VectorType r;
-      const double distance = system->GetDomain(d)->Distance(
+    VectorType r;
+
+    // Use the domain distance metric only if the two domains are the same
+    // See https://github.com/SCIInstitute/ShapeWorks/issues/1215
+    if (m_CurrentNeighborhood[i].dom == d) {
+      system->GetDomain(d)->Distance(
               pos, idx,
               m_CurrentNeighborhood[i].pi_pair.Point, m_CurrentNeighborhood[i].pi_pair.Index,
               &r
       );
-      r *= kappa;
-
-      double q = kappa * exp( -dot_product(r, r) * sigma2inv);
-      A += q;
-
-      for (unsigned int n = 0; n < VDimension; n++)
-      {
-        gradE[n] += m_CurrentNeighborhood[i].weight * r[n] * q;
-      }
     } else {
-      double mc = m_MeanCurvatureCache->operator[](m_CurrentNeighborhood[i].dom)->operator[](
-              m_CurrentNeighborhood[i].pi_pair.Index);
-      double Dij = (mymc + mc) * 0.5; // average my curvature with my neighbors
-      double kappa = this->ComputeKappa(Dij, m_CurrentNeighborhood[i].dom);
-
-      VectorType r;
       for (unsigned int n = 0; n < VDimension; n++) {
         // Note that the Neighborhood object has already filtered the
         // neighborhood for points whose normals differ by > 90 degrees.
         r[n] = (pos[n] - m_CurrentNeighborhood[i].pi_pair.Point[n]) * kappa;
       }
+    }
+    r *= kappa;
 
-      double q = kappa * exp( -dot_product(r, r) * sigma2inv);
-      A += q;
+    double q = kappa * exp(-dot_product(r, r) * sigma2inv);
+    A += q;
 
-      for (unsigned int n = 0; n < VDimension; n++)
-      {
-        // note no cosine weighting
-        gradE[n] += 0.25*r[n] * q;
-      }
+    for (unsigned int n = 0; n < VDimension; n++) {
+      gradE[n] += m_CurrentNeighborhood[i].weight * r[n] * q;
     }
   }
 

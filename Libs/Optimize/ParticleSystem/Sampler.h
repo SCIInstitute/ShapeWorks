@@ -377,6 +377,11 @@ public:
   MeanCurvatureCacheType* GetMeanCurvatureCache()
   { return m_MeanCurvatureCache.GetPointer(); }
 
+  void SetSharedBoundaryEnabled(bool enabled)
+  { m_IsSharedBoundaryEnabled = enabled; }
+  void SetSharedBoundaryWeight(double weight)
+  { m_SharedBoundaryWeight = weight; }
+
   void ReadTransforms();
   void ReadPointsFiles();
   virtual void AllocateDataCaches();
@@ -514,6 +519,8 @@ private:
   std::vector<int> m_AttributesPerDomain;
   int m_DomainsPerShape;
   double m_Spacing{0};
+  bool m_IsSharedBoundaryEnabled;
+  double m_SharedBoundaryWeight{0.5};
 
   std::string m_TransformFile;
   std::string m_PrefixTransformFile;

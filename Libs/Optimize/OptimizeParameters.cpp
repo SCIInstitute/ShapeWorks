@@ -224,6 +224,10 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
   optimize->SetGeodesicsEnabled(this->get_use_geodesic_distance());
   optimize->SetGeodesicsCacheSizeMultiplier(this->get_geodesic_cache_multiplier());
 
+  // TODO Remove this once Studio has controls for shared boundary
+  optimize->SetSharedBoundaryEnabled(true);
+  optimize->SetSharedBoundaryWeight(0.5);
+
   std::vector<bool> use_normals;
   std::vector<bool> use_xyz;
   std::vector<double> attr_scales;

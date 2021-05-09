@@ -156,6 +156,22 @@ public:
   double GetRho() const
   { return m_Rho; }
 
+  void SetSharedBoundaryWeight(double w) {
+    m_SharedBoundaryWeight = w;
+  }
+
+  double GetSharedBoundaryWeight() const {
+    return m_SharedBoundaryWeight;
+  }
+
+  void SetSharedBoundaryEnabled(bool enabled) {
+    m_IsSharedBoundaryEnabled = enabled;
+  }
+
+  bool GetSharedBoundaryEnabled() const {
+    return m_IsSharedBoundaryEnabled;
+  }
+
   virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
   {
     // todo Do we really need to clone all of this?
@@ -165,6 +181,8 @@ public:
     copy->m_Counter = this->m_Counter;
     copy->m_Rho = this->m_Rho;
     copy->m_avgKappa = this->m_avgKappa;
+    copy->m_IsSharedBoundaryEnabled = this->m_IsSharedBoundaryEnabled;
+    copy->m_SharedBoundaryWeight = this->m_SharedBoundaryWeight;
     copy->m_CurrentSigma = this->m_CurrentSigma;
     copy->m_CurrentNeighborhood = this->m_CurrentNeighborhood;
 
@@ -197,6 +215,8 @@ protected:
   double m_Rho;
   
   double m_avgKappa;
+  bool m_IsSharedBoundaryEnabled{false};
+  double m_SharedBoundaryWeight{1.0};
   
   double m_CurrentSigma;
   struct CrossDomainNeighborhood {
@@ -228,7 +248,9 @@ protected:
       // unfortunately required because we need to mutate the cosine weighting state
       auto neighborhood = const_cast<ParticleSurfaceNeighborhood<ImageType>*>(neighborhood__);
 
-
+      if(!m_IsSharedBoundaryEnabled && domain_t != d) {
+        continue;
+      }
       const bool this_is_contour = system->GetDomain(d)->GetDomainType() == shapeworks::DomainType::Contour;
       if(this_is_contour && domain_t != d) {
         continue;
@@ -266,9 +288,10 @@ protected:
 
       // todo should avoid this copy. requires changing way too many APIs
       for(int i=0; i<res.size(); i++) {
+        const double weight = domain_t == d ? weights[i] : m_SharedBoundaryWeight;
         m_CurrentNeighborhood.emplace_back(
           res[i],
-          weights[i],
+          weight,
           distances[i],
           domain_t
         );
