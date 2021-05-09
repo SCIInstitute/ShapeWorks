@@ -4,6 +4,7 @@
 #include <Libs/Optimize/OptimizeParameterFile.h>
 #include <Libs/Groom/Groom.h>
 #include <Libs/Utils/StringUtils.h>
+#include <boost/filesystem.hpp>
 #include <limits>
 
 #ifdef _WIN32
@@ -76,6 +77,7 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
       ProjectHandle project = std::make_shared<Project>();
       project->load(projectFile);
 
+      const auto old_base_path = boost::filesystem::current_path();
       auto base = StringUtils::getPath(projectFile);
       if (base != projectFile) {
         chdir(base.c_str());
@@ -88,6 +90,7 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
 
       bool success = app.Run();
 
+      chdir(old_base_path.c_str());
       if (success) {
         project->save(projectFile);
       }
