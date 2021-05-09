@@ -123,14 +123,14 @@ def Run_Pipeline(args):
     optimizeCmd = 'shapeworks optimize --name Output/peanut_shared_boundary/shape_model/shared_with_contours.xlsx'.split()
     subprocess.check_call(optimizeCmd)
 
-    # Copy everything to shape model directory
+    # Move everything to particle directory
     # TODO Should not be required after this is fixed: https://github.com/SCIInstitute/ShapeWorks/pull/1233#issuecomment-835654956
     particleDir = shapeModelDir + "shared_with_contours_particles/"
     if not os.path.exists(particleDir):
         os.makedirs(particleDir)
     for fname in glob.glob(f'{shapeModelDir}/*.particles'):
         new_name = particleDir + fname.split('/')[-1]
-        shutil.copy(fname, new_name)
+        shutil.move(fname, new_name)
 
     # TODO Use AnalyzeUtils.py once Multidomain PR is merged https://github.com/SCIInstitute/ShapeWorks/pull/1143
     analyzeCmd = 'ShapeWorksStudio Output/peanut_shared_boundary/shape_model/shared_with_contours.xlsx'.split()
