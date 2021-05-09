@@ -326,9 +326,9 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
         }
         auto poly_data = mesh.getVTKMesh();
 
-        // TODO This is a HACK for detecting contours
         if (poly_data) {
-          if(StringUtils::hasSuffix(filename, ".vtp")) {
+          // TODO This is a HACK for detecting contours
+          if(poly_data->GetCell(0)->GetNumberOfPoints() == 2) {
             optimize->AddContour(poly_data);
           } else {
             optimize->AddMesh(poly_data);
