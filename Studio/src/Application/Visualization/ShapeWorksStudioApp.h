@@ -13,6 +13,8 @@
 
 #include <Data/PreferencesWindow.h>
 
+#include <vnl_vector.h>
+
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
 
@@ -70,6 +72,7 @@ public Q_SLOTS:
   void on_actionExport_Variance_Graph_triggered();
   void on_action_preferences_triggered();
   void on_action_export_current_mesh_triggered();
+  void on_action_export_current_particles_triggered();
   void on_action_export_mesh_scalars_triggered();
   void on_action_export_pca_scores_triggered();
 
@@ -120,6 +123,8 @@ private:
   void update_view_mode();
   void reset_num_viewers();
 
+  static bool write_particle_file(std::string filename, vnl_vector<double> particles);
+
   enum VIEW_MODE {
     ORIGINAL = 0,
     GROOMED = 1,
@@ -142,6 +147,7 @@ private:
   std::string get_view_mode();
 
   void set_view_combo_item_enabled(int item, bool value);
+  bool is_view_combo_item_enabled(int item);
 
   void disable_all_actions();
 

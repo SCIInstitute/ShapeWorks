@@ -41,9 +41,9 @@ ParticleProcrustesRegistration<3>::RunRegistration(int d)
         shapevector.clear();
         for(int j = 0; j < numPoints; j++)
         {
-            point(0) = m_ParticleSystem->GetPosition(j,i)[0];
-            point(1) = m_ParticleSystem->GetPosition(j,i)[1];
-            point(2) = m_ParticleSystem->GetPosition(j,i)[2];
+            point(0) = m_ParticleSystem->GetPrefixTransformedPosition(j,i)[0];
+            point(1) = m_ParticleSystem->GetPrefixTransformedPosition(j,i)[1];
+            point(2) = m_ParticleSystem->GetPrefixTransformedPosition(j,i)[2];
 
             shapevector.push_back(point);
         }

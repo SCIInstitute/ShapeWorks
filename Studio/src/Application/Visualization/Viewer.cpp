@@ -161,11 +161,11 @@ Viewer::Viewer()
   this->scalar_bar_actor_->SetOrientationToVertical();
   this->scalar_bar_actor_->SetMaximumNumberOfColors(1000);
   this->scalar_bar_actor_->GetPositionCoordinate()->SetCoordinateSystemToNormalizedViewport();
-  this->scalar_bar_actor_->GetPositionCoordinate()->SetValue(.2, .05);
-  this->scalar_bar_actor_->SetWidth(0.05);
+  this->scalar_bar_actor_->GetPositionCoordinate()->SetValue(.3, .2);
+  this->scalar_bar_actor_->SetWidth(0.10);
   this->scalar_bar_actor_->SetHeight(0.7);
-  this->scalar_bar_actor_->SetPosition(0.9, 0.05);
-  this->scalar_bar_actor_->SetLabelFormat("%.0f");
+  this->scalar_bar_actor_->SetPosition(0.9, 0.1);
+  this->scalar_bar_actor_->SetLabelFormat("%.1f");
   this->scalar_bar_actor_->GetTitleTextProperty()->SetFontFamilyToArial();
   this->scalar_bar_actor_->GetTitleTextProperty()->SetFontSize(4);
   this->scalar_bar_actor_->GetLabelTextProperty()->SetFontFamilyToArial();
@@ -677,6 +677,21 @@ void Viewer::update_points()
   auto t = this->get_transform(0);
 
   this->glyph_actor_->SetUserTransform(this->get_transform(0));
+
+  if (this->visualizer_->get_display_mode() == Visualizer::MODE_ORIGINAL_C) {
+    if (this->visualizer_->get_center()) {
+      this->glyph_actor_->SetUserTransform(this->shape_->get_alignment());
+    }
+    else {
+      if (!this->shape_->has_alignment()) {
+        vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+        transform->DeepCopy(this->shape_->get_original_transform());
+        transform->Inverse();
+        this->glyph_actor_->SetUserTransform(transform);
+      }
+    }
+  }
+
   this->glyph_points_->Modified();
 }
 
@@ -839,12 +854,26 @@ void Viewer::update_difference_lut(float r0, float r1)
 
   this->surface_lut_->SetTableRange(range);
   this->surface_lut_->Build();
-  //this->surface_mapper_->SetLookupTable(this->surface_lut_);
+  for (int i = 0; i < this->surface_mappers_.size(); i++) {
+    this->surface_mappers_[i]->SetLookupTable(this->surface_lut_);
+  }
 
   //this->surface_mapper_->SetScalarRange(range[0], range[1]);
   this->arrow_glyph_mapper_->SetScalarRange(range);
   //this->glyph_mapper_->SetScalarRange(range);
   this->scalar_bar_actor_->SetLookupTable(this->surface_lut_);
+  if (rd > 100) {
+    this->scalar_bar_actor_->SetLabelFormat("%.0f");
+  }
+  else if (rd > 1) {
+    this->scalar_bar_actor_->SetLabelFormat("%.1f");
+  }
+  else if (rd > 0.1) {
+    this->scalar_bar_actor_->SetLabelFormat("%.2f");
+  }
+  else {
+    this->scalar_bar_actor_->SetLabelFormat("%-#6.3g");
+  }
   this->scalar_bar_actor_->Modified();
 }
 
@@ -900,7 +929,7 @@ vtkSmartPointer<vtkTransform> Viewer::get_transform(int domain)
     }
   }
   else if (this->visualizer_->get_display_mode() == Visualizer::MODE_GROOMED_C) {
-    transform = this->shape_->get_transform();
+    transform = this->shape_->get_alignment();
   }
   else {
     transform = this->shape_->get_reconstruction_transform(domain);

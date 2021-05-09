@@ -1083,10 +1083,15 @@ void AnalysisTool::initialize_mesh_warper()
     }
     auto meshes = mesh_group.meshes();
     for (int i = 0; i < mesh_group.meshes().size(); i++) {
-      this->session_->get_mesh_manager()
-        ->get_mesh_warper(i)->set_reference_mesh(
-          meshes[i]->get_poly_data(),
-          median_shape->get_particles().get_local_particles(i));
+
+      vnl_vector<double> particles = median_shape->get_particles().get_local_particles(i);
+      Eigen::MatrixXd points = Eigen::Map<const Eigen::VectorXd>(
+        (double*) particles.data_block(), particles.size());
+      points.resize(3, points.size() / 3);
+      points.transposeInPlace();
+
+      this->session_->get_mesh_manager()->get_mesh_warper(i)->set_reference_mesh(
+        meshes[i]->get_poly_data(), points);
     }
   }
 }
@@ -1157,8 +1162,8 @@ void AnalysisTool::compute_reconstructed_domain_transforms()
     int num_shapes = shapes.size();
     double tx = 0, ty = 0, tz = 0;
     for (int i = 0; i < shapes.size(); i++) {
-      vtkSmartPointer<vtkTransform> base_transform = shapes[i]->get_groomed_transform(0);
-      vtkSmartPointer<vtkTransform> offset_transform = shapes[i]->get_groomed_transform(domain);
+      vtkSmartPointer<vtkTransform> base_transform = shapes[i]->get_alignment();
+      vtkSmartPointer<vtkTransform> offset_transform = shapes[i]->get_alignment();
       auto base = base_transform->GetPosition();
       auto offset = offset_transform->GetPosition();
       tx += (base[0] - offset[0]) / num_shapes;

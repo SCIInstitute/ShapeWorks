@@ -103,10 +103,14 @@ private:
   int get_or_create_worksheet(std::string name);
   std::string get_new_file_column(std::string name, int idx);
 
+  // e.g. "la" for "groomed_la"
+  std::string get_column_identifier(std::string name);
+
   // known prefixes
   static constexpr const char* SEGMENTATION_PREFIX = "segmentation_";
+  static constexpr const char* SHAPE_PREFIX = "shape_";
   static constexpr const char* GROOMED_PREFIX = "groomed_";
-  static constexpr const char* GROOMED_TRANSFORMS_PREFIX = "transform_";
+  static constexpr const char* GROOMED_TRANSFORMS_PREFIX = "alignment_";
   static constexpr const char* FEATURE_PREFIX = "feature_";
   static constexpr const char* LOCAL_PARTICLES = "local_particles";
   static constexpr const char* WORLD_PARTICLES = "world_particles";
@@ -125,6 +129,8 @@ private:
                           std::vector<std::vector<double>> transforms);
 
   std::vector<std::string> get_matching_columns(const std::string& prefix);
+
+  std::vector<std::string> get_matching_columns(const std::vector<std::string> prefixes);
 
   std::vector<std::string> get_extra_columns() const;
 
@@ -158,7 +164,9 @@ private:
   std::set<std::string> matching_columns_;
   std::vector<std::string> mesh_scalars_;
 
-  const int supported_version_{1};
-  int version_{1};
+  std::vector<std::string> input_prefixes_;
+
+  const int supported_version_{2};
+  int version_{2};
 };
 }
