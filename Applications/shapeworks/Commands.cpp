@@ -68,16 +68,16 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
     return false;
   }
 
-  bool is_project = StringUtils::hasSuffix(projectFile, "xlsx");
+  bool isProject = StringUtils::hasSuffix(projectFile, "xlsx");
 
   Optimize app;
-  if (is_project) {
+  if (isProject) {
     try {
       // load spreadsheet project
       ProjectHandle project = std::make_shared<Project>();
       project->load(projectFile);
 
-      const auto old_base_path = boost::filesystem::current_path();
+      const auto oldBasePath = boost::filesystem::current_path();
       auto base = StringUtils::getPath(projectFile);
       if (base != projectFile) {
         chdir(base.c_str());
@@ -90,7 +90,7 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
 
       bool success = app.Run();
 
-      chdir(old_base_path.c_str());
+      chdir(reinterpret_cast<const char*>(oldBasePath.c_str()));
       if (success) {
         project->save(projectFile);
       }
