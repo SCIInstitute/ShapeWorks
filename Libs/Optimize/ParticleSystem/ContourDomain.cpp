@@ -334,7 +334,8 @@ ContourDomain::PointType ContourDomain::GetPositionAfterSplit(const PointType& p
   }
 
   // ContourDomain requires very small epsilon because it is impossible to recover from crossing particles
-  split_dir *= epsilon / 5.0;
+  // TODO This should be a function of scale https://github.com/SCIInstitute/ShapeWorks/issues/1227#issuecomment-835704332
+  split_dir *= epsilon / 1.0;
   vnl_vector_fixed<double, 3> vnl_split_dir(split_dir.data());
   return UpdateParticlePosition(pt, -1, vnl_split_dir); // pass -1 because this really corresponds to an unborn particle
 }

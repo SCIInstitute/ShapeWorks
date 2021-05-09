@@ -153,9 +153,6 @@ namespace itk
               double maximumUpdateAllowed;
               VectorType original_gradient = localGradientFunction->Evaluate(k, dom, m_ParticleSystem,
                                                                              maximumUpdateAllowed, energy);
-              if(domain->GetDomainType() == shapeworks::DomainType::Contour) {
-                original_gradient *= 0.1;
-              }
 
               PointType pt = m_ParticleSystem->GetPositions(dom)->Get(k);
 
