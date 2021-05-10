@@ -228,4 +228,28 @@ void GroomParameters::set_mesh_vtk_windowed_sinc_passband(double passband)
 {
   this->params_.set("mesh_smoothing_vtk_windowed_sinc_passband", passband);
 }
+
+//---------------------------------------------------------------------------
+bool GroomParameters::get_mesh_qc()
+{
+  return this->params_.get("mesh_qc", false);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_mesh_qc(bool value)
+{
+  this->params_.set("mesh_qc", value);
+}
+
+//---------------------------------------------------------------------------
+bool GroomParameters::get_icp()
+{
+  return this->params_.get("icp", false);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_icp(bool value)
+{
+  this->params_.set("icp", value);
+}
 };
