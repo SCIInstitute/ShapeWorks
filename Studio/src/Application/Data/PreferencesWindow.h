@@ -31,6 +31,8 @@ public Q_SLOTS:
   void on_num_threads_valueChanged(int i);
   void on_caching_epsilon_valueChanged(int i);
 
+  void accept() override;
+
   void restore_defaults();
 
   void save_to_preferences();
