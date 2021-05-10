@@ -1,7 +1,10 @@
 
 #include "GroomParameters.h"
 
-using namespace shapeworks;
+namespace shapeworks {
+
+const std::string GroomParameters::GROOM_SMOOTH_VTK_LAPLACIAN_C("vtk_laplacian");
+const std::string GroomParameters::GROOM_SMOOTH_VTK_WINDOWED_SINC_C("vtk_windowed_sinc");
 
 //---------------------------------------------------------------------------
 GroomParameters::GroomParameters(ProjectHandle project, std::string domain_name) :
@@ -165,3 +168,64 @@ void GroomParameters::set_mesh_smooth(bool value)
 {
   this->params_.set("mesh_smooth", value);
 }
+
+//---------------------------------------------------------------------------
+std::string GroomParameters::get_mesh_smoothing_method()
+{
+  return this->params_.get("mesh_smoothing_method", GROOM_SMOOTH_VTK_LAPLACIAN_C);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_mesh_smoothing_method(std::string method)
+{
+  this->params_.set("mesh_smoothing_method", method);
+}
+
+//---------------------------------------------------------------------------
+int GroomParameters::get_mesh_vtk_laplacian_iterations()
+{
+  return this->params_.get("mesh_smoothing_vtk_laplacian_iterations", 10);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_mesh_vtk_laplacian_iterations(int iterations)
+{
+  this->params_.set("mesh_smoothing_vtk_laplacian_iterations", iterations);
+}
+
+//---------------------------------------------------------------------------
+double GroomParameters::get_mesh_vtk_laplacian_relaxation()
+{
+  return this->params_.get("mesh_smoothing_vtk_laplacian_relaxation", 1);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_mesh_vtk_laplacian_relaxation(double relaxation)
+{
+  this->params_.set("mesh_smoothing_vtk_laplacian_relaxation", relaxation);
+}
+
+//---------------------------------------------------------------------------
+int GroomParameters::get_mesh_vtk_windowed_sinc_iterations()
+{
+  return this->params_.get("mesh_smoothing_vtk_windowed_sinc_iterations", 10);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_mesh_vtk_windowed_sinc_iterations(int iterations)
+{
+  this->params_.set("mesh_smoothing_vtk_windowed_sinc_iterations", iterations);
+}
+
+//---------------------------------------------------------------------------
+double GroomParameters::get_mesh_vtk_windowed_sinc_passband()
+{
+  return this->params_.get("mesh_smoothing_vtk_windowed_sinc_passband", 0.05);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_mesh_vtk_windowed_sinc_passband(double passband)
+{
+  this->params_.set("mesh_smoothing_vtk_windowed_sinc_passband", passband);
+}
+};
