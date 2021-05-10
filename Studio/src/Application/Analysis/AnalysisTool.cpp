@@ -176,31 +176,7 @@ void AnalysisTool::on_reconstructionButton_clicked()
   QThread* thread = new QThread;
   std::vector<std::vector<itk::Point<double>>> local, global;
   std::vector<std::string> images;
-  /*
-  auto shapes = this->session_->get_shapes();
-  local.resize(shapes.size());
-  global.resize(shapes.size());
-  images.resize(shapes.size());
-  size_t ii = 0;
-  for (auto& s : shapes) {
-    auto l = s->get_local_correspondence_points();
-    auto g = s->get_global_correspondence_points();
-    for (size_t i = 0; i < l.size(); i += 3) {
-      itk::Point<double> pt, pt2;
-      pt[0] = l[i];
-      pt[1] = l[i + 1];
-      pt[2] = l[i + 2];
-      pt2[0] = g[i];
-      pt2[1] = g[i + 1];
-      pt2[2] = g[i + 2];
-      local[ii].push_back(pt);
-      global[ii].push_back(pt2);
-    }
-    std::string image = s->get_groomed_filename_with_path().toStdString();
-    images[ii] = image;
-    ii++;
-  }
-   */
+
   ShapeworksWorker* worker = new ShapeworksWorker(
     ShapeworksWorker::ReconstructType, nullptr, nullptr,
     nullptr, this->session_,

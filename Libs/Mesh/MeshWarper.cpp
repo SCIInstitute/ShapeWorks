@@ -92,8 +92,9 @@ bool MeshWarper::check_warp_ready()
 //---------------------------------------------------------------------------
 void MeshWarper::add_particle_vertices()
 {
-
   for (int i = 0; i < this->vertices_.rows(); i++) {
+    this->update_progress(static_cast<float>(i) / this->vertices_.rows());
+
     this->reference_mesh_->BuildLinks();
 
     auto locator = vtkSmartPointer<vtkCellLocator>::New();
@@ -349,9 +350,11 @@ bool MeshWarper::generate_warp()
   // perform warp
   if (!MeshWarper::generate_warp_matrix(vertices, this->faces_,
                                         this->vertices_, this->warp_)) {
+    this->update_progress(1.0);
     this->warp_available_ = false;
     return false;
   }
+  this->update_progress(1.0);
   this->needs_warp_ = false;
   return true;
 }
