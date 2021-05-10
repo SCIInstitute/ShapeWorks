@@ -28,6 +28,11 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
   connect(ui_->center_checkbox, &QCheckBox::stateChanged,
           this, &GroomTool::centering_changed);
 
+  connect(ui_->fill_holes_checkbox, &QCheckBox::stateChanged,
+          this, &GroomTool::fill_holes_changed);
+  connect(ui_->mesh_fill_holes, &QCheckBox::stateChanged,
+          this, &GroomTool::fill_holes_changed);
+
   ui_->center_checkbox->setToolTip("Center image segmentations");
   ui_->isolate_checkbox->setToolTip("Isolate the largest object in the image segmentation");
   ui_->fill_holes_checkbox->setToolTip("Fill small holes in the image segmentation");
@@ -55,6 +60,16 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
   connect(ui_->mesh_smooth_method, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
           &GroomTool::update_ui);
 
+  QIntValidator* above_zero = new QIntValidator(1, std::numeric_limits<int>::max(), this);
+  QIntValidator* zero_and_up = new QIntValidator(0, std::numeric_limits<int>::max(), this);
+
+  QDoubleValidator* double_validator = new QDoubleValidator(0, std::numeric_limits<double>::max(),
+                                                            1000, this);
+
+  ui_->laplacian_iterations->setValidator(zero_and_up);
+  ui_->laplacian_relaxation->setValidator(double_validator);
+  ui_->sinc_iterations->setValidator(zero_and_up);
+  ui_->sinc_passband->setValidator(double_validator);
 
   update_ui();
 }
@@ -115,11 +130,23 @@ void GroomTool::set_ui_from_params(GroomParameters params)
   ui_->blur_checkbox->setChecked(params.get_blur_tool());
   ui_->isolate_checkbox->setChecked(params.get_isolate_tool());
   ui_->fill_holes_checkbox->setChecked(params.get_fill_holes_tool());
+  ui_->mesh_fill_holes->setChecked(params.get_fill_holes_tool());
   ui_->antialias_iterations->setValue(params.get_antialias_iterations());
   ui_->blur_sigma->setValue(params.get_blur_amount());
   ui_->padding_amount->setValue(params.get_padding_amount());
 
+  ui_->mesh_smooth_method->setCurrentText(
+    QString::fromStdString(params.get_mesh_smoothing_method()));
   ui_->mesh_smooth->setChecked(params.get_mesh_smooth());
+  ui_->mesh_qc->setChecked(params.get_mesh_qc());
+  ui_->mesh_icp->setChecked(params.get_icp());
+
+  ui_->laplacian_iterations->setText(QString::number(params.get_mesh_vtk_laplacian_iterations()));
+  ui_->laplacian_relaxation->setText(QString::number(params.get_mesh_vtk_laplacian_relaxation()));
+
+  ui_->sinc_iterations->setText(QString::number(params.get_mesh_vtk_windowed_sinc_iterations()));
+  ui_->sinc_passband->setText(QString::number(params.get_mesh_vtk_windowed_sinc_passband()));
+
 }
 
 //---------------------------------------------------------------------------
@@ -185,6 +212,14 @@ void GroomTool::store_params()
   params.set_antialias_iterations(ui_->antialias_iterations->value());
   params.set_groom_output_prefix(preferences_.get_groom_file_template().toStdString());
 
+  params.set_mesh_qc(ui_->mesh_qc->isChecked());
+  params.set_mesh_smooth(ui_->mesh_smooth->isChecked());
+  params.set_mesh_smoothing_method(ui_->mesh_smooth_method->currentText().toStdString());
+  params.set_mesh_vtk_laplacian_iterations(ui_->laplacian_iterations->text().toInt());
+  params.set_mesh_vtk_laplacian_relaxation(ui_->laplacian_relaxation->text().toDouble());
+  params.set_mesh_vtk_windowed_sinc_iterations(ui_->sinc_iterations->text().toInt());
+  params.set_mesh_vtk_windowed_sinc_passband(ui_->sinc_passband->text().toDouble());
+  params.set_icp(ui_->mesh_icp->isChecked());
   params.save_to_project();
 }
 
@@ -296,6 +331,13 @@ void GroomTool::centering_changed(int state)
 {
   ui_->mesh_center->setChecked(state);
   ui_->center_checkbox->setChecked(state);
+}
+
+//---------------------------------------------------------------------------
+void GroomTool::fill_holes_changed(int state)
+{
+  ui_->fill_holes_checkbox->setChecked(state);
+  ui_->mesh_fill_holes->setChecked(state);
 }
 
 //---------------------------------------------------------------------------
