@@ -728,8 +728,16 @@ void Optimize::Initialize()
     }
     */
 
-    m_sampler->GetParticleSystem()->AdvancedAllParticleSplitting(epsilon);
-
+    // Splits particles
+    // Strategy: For each domain (for all samples), we make very corresponding particle
+    //      go in a random direction with magnitude epsilon/5. Then the shifted particles
+    //      in each domain are tested so that no particle will violate any inequality constraints
+    //      after its split.
+    for (int i = 0; i < m_domains_per_shape; i++) {
+      if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[i]) {
+        m_sampler->GetParticleSystem()->AdvancedAllParticleSplitting(epsilon, m_domains_per_shape, i);
+      }
+    }
     m_sampler->GetParticleSystem()->SynchronizePositions();
 
     this->m_split_number++;
@@ -2191,7 +2199,7 @@ bool Optimize::LoadParameterFile(std::string filename)
 //---------------------------------------------------------------------------
 MatrixContainer Optimize::GetParticleSystem()
 {
-  
+
   auto shape_matrix = m_sampler->GetGeneralShapeMatrix();
 
   MatrixType matrix;

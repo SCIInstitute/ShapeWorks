@@ -13,6 +13,7 @@
 #include <Libs/Project/Project.h>
 
 #include <Data/Preferences.h>
+#include <Data/StudioParticles.h>
 #include <Data/MeshManager.h>
 
 namespace shapeworks {
@@ -23,7 +24,7 @@ class Session;
 typedef QSharedPointer<Session> SessionHandle;
 
 //! TODO: replace this
-using TransformType = itk::MatrixOffsetTransformBase<double, 3, 3>::ParametersType;
+using TransformType = vtkSmartPointer<vtkTransform>;
 
 //! Representation of a session.
 /*!
@@ -64,11 +65,12 @@ public:
   void load_original_files(std::vector<std::string> filenames);
 
   /// load groomed files
-  void load_groomed_files(std::vector<std::string> file_names, double iso);
+  void load_groomed_files(std::vector<std::string> file_names, double iso, int domains_per_shape);
 
-  /// load point files
-  bool load_point_files(std::vector<std::string> file_names, bool local);
-  bool update_points(std::vector<std::vector<itk::Point<double>>> points, bool local);
+  bool load_point_files(std::vector<std::string> local, std::vector<std::string> world,
+                        int domains_per_shape);
+
+  bool update_particles(std::vector<StudioParticles> particles);
 
   bool is_light_project();
 
@@ -94,7 +96,7 @@ public:
   bool groups_available();
   int get_num_shapes();
 
-  void set_groom_unsaved(bool value);
+  int get_domains_per_shape();
 
   std::string get_default_feature_map();
 
@@ -157,7 +159,6 @@ private:
   bool groups_available_{false};
   bool is_light_project_{false};
 
-  bool unsaved_groomed_files_{false};
   bool unsaved_particle_files_{false};
 
   Parameters params_;

@@ -1,5 +1,6 @@
 #include "Commands.h"
 #include "MeshUtils.h"
+#include "MeshWarper.h"
 
 namespace shapeworks {
 
@@ -1018,6 +1019,82 @@ bool CompareMesh::execute(const optparse::Values &options, SharedCommandData &sh
   else
   {
     std::cout << "compare failure\n";
+    return false;
+  }
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// WarpMesh
+///////////////////////////////////////////////////////////////////////////////
+void WarpMesh::buildParser()
+{
+  const std::string prog = "warp-mesh";
+  const std::string desc = "warps a mesh given reference and target particles";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--reference_mesh").action("store").type("string").set_default("").help("Name of reference mesh.");
+  parser.add_option("--reference_points").action("store").type("string").set_default("").help("Name of reference points.");
+  parser.add_option("--target_points").action("store").type("string").set_default("").help("Name of target points.");
+  parser.add_option("--target_mesh").action("store").type("string").set_default("").help("Name of output target mesh.");
+
+  Command::buildParser();
+}
+
+bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::string inputMeshFilename = options["reference_mesh"];
+  if (inputMeshFilename.length() == 0) {
+    std::cerr << "warpmesh error: no reference mesh specified, must pass `--reference_mesh <filename>`\n";
+    return false;
+  }
+
+  std::string inputPointsFilename = options["reference_points"];
+  if (inputPointsFilename.length() == 0) {
+    std::cerr << "warpmesh error: no reference points specified, must pass `--reference_points <filename>`\n";
+    return false;
+  }
+
+  std::string targetMeshFilename = options["target_mesh"];
+  if (targetMeshFilename.length() == 0) {
+    std::cerr << "warpmesh error: no target mesh specified, must pass `--target_mesh <filename>`\n";
+    return false;
+  }
+
+  std::string targetPointsFilename = options["target_points"];
+  if (targetPointsFilename.length() == 0) {
+    std::cerr << "warpmesh error: no target points specified, must pass `--target_points <filename>`\n";
+    return false;
+  }
+
+  try {
+    Mesh inputMesh(inputMeshFilename);
+
+    std::vector<std::string> paths;
+    paths.push_back(inputPointsFilename);
+    paths.push_back(targetPointsFilename);
+    ParticleSystem particlesystem(paths);
+    Eigen::MatrixXd allPts = particlesystem.Particles();
+    Eigen::MatrixXd staticPoints = allPts.col(0);
+    Eigen::MatrixXd movingPoints = allPts.col(1);
+    int numParticles = staticPoints.rows() / 3;
+    staticPoints.resize(3, numParticles);
+    staticPoints.transposeInPlace();
+    movingPoints.resize(3, numParticles);
+    movingPoints.transposeInPlace();
+
+    MeshWarper warper;
+    warper.set_reference_mesh(inputMesh.getVTKMesh(), staticPoints);
+    Mesh output = warper.build_mesh(movingPoints);
+    output.write(targetMeshFilename);
+
+    return true;
+  } catch (std::exception &e) {
+    std::cerr << "exception during mesh warp: " << e.what() << std::endl;
+    return false;
+  } catch (...) {
+    std::cerr << "unknown exception while mesh warping" << std::endl;
     return false;
   }
 }
