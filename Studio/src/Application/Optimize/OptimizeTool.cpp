@@ -292,6 +292,7 @@ void OptimizeTool::store_params()
 
   // always use preference value
   params.set_geodesic_cache_multiplier(this->preferences_.get_geodesic_cache_multiplier());
+  params.set_optimize_output_prefix(this->preferences_.get_optimize_file_template().toStdString());
 
   params.save_to_project();
 }
