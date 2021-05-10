@@ -58,7 +58,7 @@ endif()
 if(LINUX)
   # We need RPATH rather than RUNPATH since RUNPATH
   # though recommended, is not used for transitive dependencies
-  SET(CMAKE_EXE_LINKER_FLAGS "-Wl --disable-new-dtags -fsanitize=address -fsanitize=leak")
+  SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--disable-new-dtags")
 endif(LINUX)
 
 # put executables in bin directory (under build dir) so they are easy to find
