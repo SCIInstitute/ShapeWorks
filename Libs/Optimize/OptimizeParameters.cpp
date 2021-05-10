@@ -223,6 +223,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
   optimize->SetOptimizationIterations(this->get_optimization_iterations());
   optimize->SetGeodesicsEnabled(this->get_use_geodesic_distance());
   optimize->SetGeodesicsCacheSizeMultiplier(this->get_geodesic_cache_multiplier());
+  optimize->SetOutputDir(this->get_output_prefix());
 
   // TODO Remove this once Studio has controls for shared boundary
   optimize->SetSharedBoundaryEnabled(true);
@@ -368,9 +369,9 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
 
       auto name = StringUtils::getFileNameWithoutExtension(filename);
 
-      auto prefix = this->get_output_prefix(name);
-      local_particle_filenames.push_back(prefix + "_local.particles");
-      world_particle_filenames.push_back(prefix + "_world.particles");
+      auto prefix = this->get_output_prefix();
+      local_particle_filenames.push_back(prefix + name + "_local.particles");
+      world_particle_filenames.push_back(prefix + name + "_world.particles");
     }
     s->set_local_particle_filenames(local_particle_filenames);
     s->set_world_particle_filenames(world_particle_filenames);
@@ -381,7 +382,6 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
     }
   }
 
-  optimize->SetOutputDir(".");
   optimize->SetFilenames(StringUtils::getFileNamesFromPaths(filenames));
   optimize->SetOutputTransformFile("transform");
 
@@ -413,12 +413,12 @@ void OptimizeParameters::set_optimize_output_prefix(std::string prefix)
 }
 
 //---------------------------------------------------------------------------
-std::string OptimizeParameters::get_output_prefix(std::string input)
+std::string OptimizeParameters::get_output_prefix()
 {
   // if the project is not saved, use the path of the input filename
   auto filename = this->project_->get_filename();
   if (filename == "") {
-    filename = input;
+    filename = ".";
   }
 
   auto base = StringUtils::getPath(filename);
@@ -438,10 +438,8 @@ std::string OptimizeParameters::get_output_prefix(std::string input)
   auto path = base + "/" + prefix;
   boost::filesystem::create_directories(path);
 
-  auto output = path + "/" + input;
-
+  auto output = path + "/";
   return output;
-
 }
 
 //---------------------------------------------------------------------------
@@ -456,3 +454,4 @@ void OptimizeParameters::set_geodesic_cache_multiplier(int value)
   this->params_.set("geodesic_cache_multiplier", value);
 
 }
+
