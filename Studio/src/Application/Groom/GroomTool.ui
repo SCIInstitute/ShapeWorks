@@ -401,10 +401,18 @@ background: rgb(255, 255, 127)
                </widget>
               </item>
               <item row="0" column="1">
-               <widget class="QLineEdit" name="sinc_iterations"/>
+               <widget class="QLineEdit" name="sinc_iterations">
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
               </item>
               <item row="1" column="1">
-               <widget class="QLineEdit" name="sinc_passband"/>
+               <widget class="QLineEdit" name="sinc_passband">
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -499,6 +507,7 @@ background: rgb(255, 255, 127)
   </layout>
  </widget>
  <tabstops>
+  <tabstop>domain_box</tabstop>
   <tabstop>center_checkbox</tabstop>
   <tabstop>isolate_checkbox</tabstop>
   <tabstop>fill_holes_checkbox</tabstop>
@@ -509,6 +518,16 @@ background: rgb(255, 255, 127)
   <tabstop>blur_checkbox</tabstop>
   <tabstop>blur_sigma</tabstop>
   <tabstop>fastmarching_checkbox</tabstop>
+  <tabstop>mesh_fill_holes</tabstop>
+  <tabstop>mesh_qc</tabstop>
+  <tabstop>mesh_smooth</tabstop>
+  <tabstop>mesh_smooth_method</tabstop>
+  <tabstop>laplacian_iterations</tabstop>
+  <tabstop>laplacian_relaxation</tabstop>
+  <tabstop>sinc_iterations</tabstop>
+  <tabstop>sinc_passband</tabstop>
+  <tabstop>mesh_center</tabstop>
+  <tabstop>mesh_icp</tabstop>
   <tabstop>skip_button</tabstop>
   <tabstop>run_groom_button</tabstop>
   <tabstop>restore_defaults</tabstop>
