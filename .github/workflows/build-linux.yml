@@ -113,10 +113,6 @@ jobs:
         PR_NUMBER: ${{ github.event.number }}
       run: conda activate shapeworks && PATH=$HOME:$PATH ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
 
-    - name: make test
-      shell: bash -l {0}
-      run: conda activate shapeworks && cd build && ctest -VV
-  
     - name: Replace Qt SQL Stuff
       run: mv /tmp/lib*.so /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/
 
