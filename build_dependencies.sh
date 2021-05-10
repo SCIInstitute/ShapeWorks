@@ -20,7 +20,7 @@ EIGEN_VER="3.3.7"
 QT_MIN_VER="5.9.8"  # NOTE: 5.x is required, but this restriction is a clever way to ensure the anaconda version of Qt (5.9.6 or 5.9.7) isn't used since it won't work on most systems.
 XLNT_VER="v1.4.0"
 OpenVDB_VER="v7.0.0"
-libigl_VER="v2.2.0-fix"
+libigl_VER="v2.3.0"
 geometry_central_VER="8b20898f6c7be1eab827a9f720c8fd45e58ae63c" # This library isn't using tagged versions
 
 usage()
@@ -274,7 +274,7 @@ build_igl()
   echo " "
   echo "## Building Libigl..."
   cd ${INSTALL_DIR}
-  git clone https://github.com/akenmorris/libigl.git
+  git clone https://github.com/libigl/libigl.git
   cd libigl
   git checkout -f tags/${libigl_VER}
 
