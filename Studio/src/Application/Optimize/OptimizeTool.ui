@@ -337,7 +337,7 @@ background: rgb(255, 255, 127)
       <item row="0" column="2">
        <widget class="QStackedWidget" name="particle_stack">
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="page">
          <layout class="QGridLayout" name="gridLayout_6">
@@ -627,12 +627,14 @@ background: rgb(255, 255, 127)
   </layout>
  </widget>
  <tabstops>
+  <tabstop>number_of_particles</tabstop>
   <tabstop>initial_relative_weighting</tabstop>
   <tabstop>relative_weighting</tabstop>
   <tabstop>starting_regularization</tabstop>
   <tabstop>ending_regularization</tabstop>
   <tabstop>iterations_per_split</tabstop>
   <tabstop>optimization_iterations</tabstop>
+  <tabstop>use_geodesic_distance</tabstop>
   <tabstop>use_normals</tabstop>
   <tabstop>normals_strength</tabstop>
   <tabstop>procrustes</tabstop>
