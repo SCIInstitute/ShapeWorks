@@ -55,6 +55,7 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
   connect(ui_->mesh_smooth_method, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
           &GroomTool::update_ui);
 
+
   update_ui();
 }
 
@@ -117,6 +118,8 @@ void GroomTool::set_ui_from_params(GroomParameters params)
   ui_->antialias_iterations->setValue(params.get_antialias_iterations());
   ui_->blur_sigma->setValue(params.get_blur_amount());
   ui_->padding_amount->setValue(params.get_padding_amount());
+
+  ui_->mesh_smooth->setChecked(params.get_mesh_smooth());
 }
 
 //---------------------------------------------------------------------------

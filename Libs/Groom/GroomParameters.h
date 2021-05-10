@@ -44,6 +44,9 @@ public:
   bool get_fast_marching();
   void set_fast_marching(bool value);
 
+  bool get_mesh_smooth();
+  void set_mesh_smooth(bool value);
+
   void restore_defaults();
   
 private:

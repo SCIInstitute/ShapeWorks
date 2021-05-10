@@ -153,3 +153,15 @@ void GroomParameters::set_groom_output_prefix(std::string prefix)
 {
   this->params_.set("groom_output_prefix", prefix);
 }
+
+//---------------------------------------------------------------------------
+bool GroomParameters::get_mesh_smooth()
+{
+  return this->params_.get("mesh_smooth", false);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_mesh_smooth(bool value)
+{
+  this->params_.set("mesh_smooth", value);
+}

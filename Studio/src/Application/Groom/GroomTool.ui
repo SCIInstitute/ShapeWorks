@@ -345,8 +345,17 @@ background: rgb(255, 255, 127)
        </item>
        <item row="3" column="0">
         <widget class="QGroupBox" name="mesh_smooth_box">
+         <property name="font">
+          <font>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
          <property name="title">
           <string/>
+         </property>
+         <property name="checkable">
+          <bool>false</bool>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="0" column="1">
