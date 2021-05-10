@@ -3,8 +3,8 @@
 
 namespace shapeworks {
 
-const std::string GroomParameters::GROOM_SMOOTH_VTK_LAPLACIAN_C("vtk_laplacian");
-const std::string GroomParameters::GROOM_SMOOTH_VTK_WINDOWED_SINC_C("vtk_windowed_sinc");
+const std::string GroomParameters::GROOM_SMOOTH_VTK_LAPLACIAN_C("Laplacian");
+const std::string GroomParameters::GROOM_SMOOTH_VTK_WINDOWED_SINC_C("WindowedSinc");
 
 //---------------------------------------------------------------------------
 GroomParameters::GroomParameters(ProjectHandle project, std::string domain_name) :
