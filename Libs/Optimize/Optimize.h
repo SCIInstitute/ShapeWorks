@@ -294,6 +294,10 @@ public:
   void SetShowVisualizer(bool show);
   bool GetShowVisualizer();
 
+  bool GetOptimizing() {
+    return this->m_optimizing;
+  }
+
 protected:
 
   //! Set the iteration callback. Derived classes should override to set their own callback

@@ -9,6 +9,10 @@ opt.LoadParameterFile("simple.xml")
 
 def callback():
     print("python callback")
+    if opt.GetOptimizing():
+        print("optimizing!")
+    else:
+        print("initializing!")
     particles = opt.GetParticleSystem()
     print(type(particles))
     print(f"shape: {particles.shape}")

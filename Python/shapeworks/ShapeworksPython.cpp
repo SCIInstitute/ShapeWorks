@@ -709,5 +709,6 @@ PYBIND11_MODULE(shapeworks, m)
   .def("GetShapeGradientMatrix", &optimize_get_shape_gradient_matrix)
   .def("GetCorrespondenceUpdateMatrix", &optimize_get_correspondence_update_matrix)
   .def("SetCorrespondenceUpdateMatrix", &optimize_set_correspondence_update_matrix)
+  .def("GetOptimizing", &Optimize::GetOptimizing)
   ;
 }
