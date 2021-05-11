@@ -430,44 +430,24 @@ Mesh& Mesh::generateNormals()
   return *this;
 }
 
-Image Mesh::toImage(Dims dims, PhysicalRegion region) const
+Image Mesh::toImage(PhysicalRegion region, Point spacing) const
 {
-  // working theory:
-  // size = ceil(max - min) + 1   // the +1 is... justifiable? cuz' it's prettier?
-  // dims = size / spacing
-
   // if no region, use mesh bounding box
   if (region == PhysicalRegion()) {
     region = boundingBoxPower();
   }
-  Point size(region.size());
-  Point spacing({1,1,1});
-  Point pdims(size / spacing);
-
-  // if dims unspecified, maintain unit spacing
-  if (dims == Dims()) {
-    dims = Dims({static_cast<Dims::value_type>(std::floor(pdims[0])),
-                 static_cast<Dims::value_type>(std::floor(pdims[1])),
-                 static_cast<Dims::value_type>(std::floor(pdims[2]))});
-  }
-  pdims = Point({static_cast<double>(dims[0]),
-                 static_cast<double>(dims[1]),
-                 static_cast<double>(dims[2])});
-  spacing = size / pdims;
+  auto dims = toDims(region.size() / spacing);
 
   std::cout << "mesh extents are " << region << std::endl;
-  std::cout << "size is " << size << std::endl;
+  std::cout << "size is " << region.size() << std::endl;
   std::cout << "spacing is " << spacing << std::endl;
-  std::cout << "dims are " << dims + Dims({1,1,1}) << std::endl;
+  std::cout << "dims are " << dims << std::endl;
 
   // allocate output image
   vtkSmartPointer<vtkImageData> whiteImage = vtkSmartPointer<vtkImageData>::New();
   whiteImage->SetOrigin(region.origin()[0], region.origin()[1], region.origin()[2]);
   whiteImage->SetSpacing(spacing[0], spacing[1], spacing[2]);
-  whiteImage->SetSpacing(1,1,1);
-  //whiteImage->SetSpacing(0.5, 0.5, 0.5);
-
-  whiteImage->SetExtent(0, dims[0], 0, dims[1], 0, dims[2]);
+  whiteImage->SetExtent(0, dims[0]-1, 0, dims[1]-1, 0, dims[2]-1);
   whiteImage->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
 
   // paint it white
@@ -493,10 +473,10 @@ Image Mesh::toImage(Dims dims, PhysicalRegion region) const
   return Image(imgstenc->GetOutput());
 }
 
-Image Mesh::toDistanceTransform(const Dims dims, const Region region) const
+Image Mesh::toDistanceTransform(PhysicalRegion region, Point spacing) const
 {
   // TODO: convert directly to DT (github #810)
-  Image image(toImage(dims, PhysicalRegion()));//region));
+  Image image(toImage(region, spacing));
   image.antialias(50, 0.00).computeDT();
   return image;
 }

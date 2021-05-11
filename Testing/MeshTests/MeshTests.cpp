@@ -227,21 +227,17 @@ TEST(MeshTests, toImageTest1)
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
   Image image = femur.toImage();
   Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImage.nrrd");
-  image.write("/tmp/meshAir.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
 
-#if 0
 TEST(MeshTests, toImageTest2)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
-  auto bbox = femur.boundingBox();
-  bbox.pad(1);
-  bbox.max[0] /= 2;
-  bbox.max[1] /= 2;
-  Image image = femur.toImage(bbox.size(), bbox);
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImage2.nrrd");
+
+  // pass the region (should be identical)
+  Image image = femur.toImage(femur.boundingBoxPower());
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImage.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -249,8 +245,21 @@ TEST(MeshTests, toImageTest2)
 TEST(MeshTests, toImageTest3)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
-  Image image = femur.toImage(Dims{40, 145, 131});
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImage3.nrrd");
+
+  // pad the region
+  auto bbox = femur.boundingBoxPower().pad(1.5);
+  Image image = femur.toImage(bbox);
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImagePad.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(MeshTests, toImageTest4)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
+  auto bbox = femur.boundingBoxPower();
+  Image image = femur.toImage(bbox.pad(1.5), Point({0.5, 1.5, 12.5}));
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImagePadSpace.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -272,7 +281,6 @@ TEST(MeshTests, toDistanceTransformTest1)
 
   ASSERT_TRUE(image == ground_truth);
 }
-#endif
 
 TEST(MeshTests, coverageTest)
 {

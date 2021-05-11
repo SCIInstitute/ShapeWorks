@@ -46,40 +46,48 @@ std::ostream &operator<<(std::ostream &os, const Region &r)
 
 
 
-void PhysicalRegion::pad(double padding)
+PhysicalRegion& PhysicalRegion::pad(double padding)
 {
 	for (auto i = 0; i < 3; i++)
 	{
 		min[i] -= padding;
 		max[i] += padding;
 	}
+
+  return *this;
 }
 
-void PhysicalRegion::shrink(const PhysicalRegion &other)
+PhysicalRegion& PhysicalRegion::shrink(const PhysicalRegion &other)
 {
 	for (auto i = 0; i < 3; i++)
 	{
 		min[i] = std::max(min[i], other.min[i]);
 		max[i] = std::min(max[i], other.max[i]);
 	}
+
+  return *this;
 }
 
-void PhysicalRegion::grow(const PhysicalRegion &other)
+PhysicalRegion& PhysicalRegion::grow(const PhysicalRegion &other)
 {
 	for (auto i = 0; i < 3; i++)
 	{
 		min[i] = std::min(min[i], other.min[i]);
 		max[i] = std::max(max[i], other.max[i]);
 	}
+
+  return *this;
 }
 
-void PhysicalRegion::expand(const Point &pt)
+PhysicalRegion& PhysicalRegion::expand(const Point &pt)
 {
 	for (auto i=0; i<3; i++)
 	{
 		min[i] = std::min(min[i], pt[i]);
 		max[i] = std::max(max[i], pt[i]);
 	}
+
+  return *this;
 }
 
 std::ostream &operator<<(std::ostream &os, const PhysicalRegion &r)

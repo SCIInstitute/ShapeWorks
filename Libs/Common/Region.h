@@ -90,16 +90,16 @@ public:
   Point size() const { return max - min; }
 
   /// grows or shrinks the region by the specified amount
-  void pad(double padding);
+  PhysicalRegion& pad(double padding);
 
   /// shrink this region down to the smallest portions of both
-  void shrink(const PhysicalRegion &other);
+  PhysicalRegion& shrink(const PhysicalRegion &other);
 
   /// grow this region up to the largest portions of both
-  void grow(const PhysicalRegion &other);
+  PhysicalRegion& grow(const PhysicalRegion &other);
 
   /// expand this region to include this point
-  void expand(const Point &pt);
+  PhysicalRegion& expand(const Point &pt);
 
 };
 

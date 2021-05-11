@@ -64,6 +64,7 @@ Vector toVector(const itk::CovariantVector<double, 3> &v);
 Point toPoint(const Vector &v);
 Coord toCoord(const Dims &d);
 Dims toDims(const Coord &c);
+Dims toDims(const Point &p);
 Coord toCoord(const Point &p);
 
 /// Negation operator (ITK only has it for Vectors, but sometimes useful for Points)

@@ -86,11 +86,11 @@ public:
 
   /// rasterizes specified region to create binary image of desired dims
   /// by default uses unit spacing and pads bounding box by one 
-  Image toImage(Dims dims = {0, 0, 0}, PhysicalRegion region = PhysicalRegion()) const;
+  Image toImage(PhysicalRegion region = PhysicalRegion(), Point spacing = Point({1., 1., 1.})) const;
 
   /// converts specified region to distance transform image
   /// by default uses unit spacing and pads bounding box by one 
-  Image toDistanceTransform(Dims dims = {0, 0, 0}, Region region = Region()) const;
+  Image toDistanceTransform(PhysicalRegion region = PhysicalRegion(), Point spacing = Point({1., 1., 1.})) const;
 
   // query functions //
 
