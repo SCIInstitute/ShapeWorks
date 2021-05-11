@@ -893,7 +893,7 @@ bool CropImage::execute(const optparse::Values &options, SharedCommandData &shar
     sharedData.image.crop(sharedData.region); // use the previous region (maybe set by boundingbox cmd)
   else
   {
-    Region region(sharedData.image.dims());
+    LogicalRegion region(sharedData.image.dims());
     if (xmin < xmax) { region.min[0] = xmin; region.max[0] = xmax; }
     if (ymin < ymax) { region.min[1] = ymin; region.max[1] = ymax; }
     if (zmin < zmax) { region.min[2] = zmin; region.max[2] = zmax; }

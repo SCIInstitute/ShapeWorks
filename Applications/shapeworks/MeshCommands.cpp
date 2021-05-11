@@ -893,9 +893,9 @@ void MeshToImage::buildParser()
   const std::string desc = "converts mesh to a binary segmentation image, computing dims/spacing if necessary";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Size of output image in x-direction [default: one pixel per unit of distance in mesh].");
-  parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Size of output image in y-direction [default: one pixel per unit of distance in mesh].");
-  parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Size of output image in z-direction [default: one pixel per unit of distance in mesh].");
+  parser.add_option("--dimsx").action("store").type("unsigned").set_default(0).help("Dims of output image in x-direction [default: one pixel per unit of distance in mesh].");
+  parser.add_option("--dimsy").action("store").type("unsigned").set_default(0).help("Dims of output image in y-direction [default: one pixel per unit of distance in mesh].");
+  parser.add_option("--dimsz").action("store").type("unsigned").set_default(0).help("Dims of output image in z-direction [default: one pixel per unit of distance in mesh].");
 
   Command::buildParser();
 }
@@ -908,13 +908,13 @@ bool MeshToImage::execute(const optparse::Values &options, SharedCommandData &sh
     return false;
   }
 
-  unsigned sizeX = static_cast<unsigned>(options.get("sizex"));
-  unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
-  unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
+  unsigned dimsX = static_cast<unsigned>(options.get("dimsx"));
+  unsigned dimsY = static_cast<unsigned>(options.get("dimsy"));
+  unsigned dimsZ = static_cast<unsigned>(options.get("dimsz"));
 
-  Dims size({sizeX,sizeY, sizeZ});
+  Dims dims({dimsX,dimsY, dimsZ});
 
-  sharedData.image = sharedData.mesh->toImage(Region(), size);
+  sharedData.image = sharedData.mesh->toImage(dims, PhysicalRegion());
   return true;
 }
 
@@ -927,9 +927,9 @@ void MeshToDT::buildParser()
   const std::string desc = "converts mesh to a distance transform, computing dims/spacing if necessary";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Size of output image in x-direction [default: one pixel per unit of distance in mesh].");
-  parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Size of output image in y-direction [default: one pixel per unit of distance in mesh].");
-  parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Size of output image in z-direction [default: one pixel per unit of distance in mesh].");
+  parser.add_option("--dimsx").action("store").type("unsigned").set_default(0).help("Dims of output image in x-direction [default: one pixel per unit of distance in mesh].");
+  parser.add_option("--dimsy").action("store").type("unsigned").set_default(0).help("Dims of output image in y-direction [default: one pixel per unit of distance in mesh].");
+  parser.add_option("--dimsz").action("store").type("unsigned").set_default(0).help("Dims of output image in z-direction [default: one pixel per unit of distance in mesh].");
 
   Command::buildParser();
 }
@@ -942,13 +942,13 @@ bool MeshToDT::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
-  unsigned sizeX = static_cast<unsigned>(options.get("sizex"));
-  unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
-  unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
+  unsigned dimsX = static_cast<unsigned>(options.get("dimsx"));
+  unsigned dimsY = static_cast<unsigned>(options.get("dimsy"));
+  unsigned dimsZ = static_cast<unsigned>(options.get("dimsz"));
 
-  Dims size({sizeX,sizeY, sizeZ});
+  Dims dims({dimsX,dimsY, dimsZ});
 
-  sharedData.image = sharedData.mesh->toDistanceTransform(Region(), size);
+  sharedData.image = sharedData.mesh->toDistanceTransform(dims, PhysicalRegion());
   return true;
 }
 

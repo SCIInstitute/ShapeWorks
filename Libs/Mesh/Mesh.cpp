@@ -313,22 +313,7 @@ Mesh &Mesh::scale(const Vector3 &v)
   return applyTransform(transform);
 }
 
-Region Mesh::boundingBox() const
-{
-  Region bbox;
-  double bb[6];
-  mesh->GetBounds(bb);
-
-  for(int i = 0; i < 3; i++)
-  {
-    bbox.min[i] = floor(bb[2*i]);
-    bbox.max[i] = ceil(bb[2*i+1]);
-  }
-
-  return bbox;
-}
-
-PhysicalRegion Mesh::boundingBoxPower() const
+PhysicalRegion Mesh::boundingBox() const
 {
   PhysicalRegion bbox;
   double bb[6];
@@ -434,7 +419,7 @@ Image Mesh::toImage(PhysicalRegion region, Point spacing) const
 {
   // if no region, use mesh bounding box
   if (region == PhysicalRegion()) {
-    region = boundingBoxPower();
+    region = boundingBox();
   }
   auto dims = toDims(region.size() / spacing);
 

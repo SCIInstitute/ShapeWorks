@@ -730,7 +730,7 @@ Image& Image::gaussianBlur(double sigma)
   return *this;
 }
 
-Image& Image::crop(const Region &region)
+Image& Image::crop(const LogicalRegion &region)
 {
   if (!region.valid())
     std::cerr << "Invalid region specified." << std::endl;
@@ -738,7 +738,7 @@ Image& Image::crop(const Region &region)
   using FilterType = itk::ExtractImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
-  Region(region).shrink(Region(dims())); // clip region to fit inside image
+  LogicalRegion(region).shrink(LogicalRegion(dims())); // clip region to fit inside image
   filter->SetExtractionRegion(ImageType::RegionType(region.origin(), region.size()));
   filter->SetInput(this->image);
   filter->SetDirectionCollapseToIdentity();
@@ -881,9 +881,9 @@ Image::PixelType Image::std()
   return sqrt(filter->GetVariance());
 }
 
-Region Image::boundingBox(PixelType isoValue) const
+LogicalRegion Image::boundingBox(PixelType isoValue) const
 {
-  Region bbox;
+  LogicalRegion bbox;
 
   itk::ImageRegionIteratorWithIndex<ImageType> imageIterator(image, image->GetLargestPossibleRegion());
   while (!imageIterator.IsAtEnd())

@@ -69,8 +69,7 @@ public:
   Mesh& scale(const Vector3 &v);
 
   /// computes bounding box of current mesh
-  Region boundingBox() const;
-  PhysicalRegion boundingBoxPower() const;
+  PhysicalRegion boundingBox() const;
 
   /// quality control mesh
   Mesh& fix(bool smoothBefore = true, bool smoothAfter = true, double lambda = 0.5, int iterations = 1, bool decimate = true, double percentage = 0.5);

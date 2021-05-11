@@ -491,87 +491,84 @@ PYBIND11_MODULE(shapeworks, m)
        "isovalue"_a)
   ;
 
-  // Region
-  py::class_<Region>(m, "Region")
+  // Region (physical, all that's really needed for python)
+  py::class_<PhysicalRegion>(m, "Region")
 
   .def(py::init<>())
 
   .def(py::init
-       ([](std::vector<unsigned> dims) -> decltype(auto) {
-          return Region(Dims({dims[0], dims[1], dims[2]}));
+       ([](std::vector<double> dims) -> decltype(auto) {
+          return PhysicalRegion(Point({dims[0], dims[1], dims[2]}));
         }))
 
   .def(py::init
-       ([](std::vector<unsigned> min, std::vector<unsigned> max) {
-          return Region(Coord({min[0], min[1], min[2]}),
-                        Coord({max[0], max[1], max[2]}));
+       ([](std::vector<double> min, std::vector<double> max) {
+          return PhysicalRegion(Point({min[0], min[1], min[2]}),
+                                Point({max[0], max[1], max[2]}));
         }))
 
   .def(py::self == py::self)
 
   .def("__repr__",
-       [](const Region &region) {
+       [](const PhysicalRegion &region) {
          std::stringstream stream;
          stream << region;
          return stream.str();
        })
 
   .def_property("min",
-                [](const Region &region) -> decltype(auto) {
-                  return py::array(3, region.min.data());
+                [](const PhysicalRegion &region) -> decltype(auto) {
+                  return py::array(3, region.min.GetDataPointer());
                 },
-                [](Region &region, std::vector<double> min) -> decltype(auto) {
-                  region.min = Coord{static_cast<long>(std::floor(min[0])),
-                                     static_cast<long>(std::floor(min[1])),
-                                     static_cast<long>(std::floor(min[2]))};
+                [](PhysicalRegion &region, std::vector<double> min) -> decltype(auto) {
+                  region.min = Point({min[0], min[1], min[2]});
                   return min;
                 },
                 "min point of region")
+
   .def_property("max",
-                [](const Region &region) -> decltype(auto) {
-                  return py::array(3, region.max.data());
+                [](const PhysicalRegion &region) -> decltype(auto) {
+                  return py::array(3, region.max.GetDataPointer());
                 },
-                [](Region &region, std::vector<double> max) -> decltype(auto) {
-                  region.max = Coord{static_cast<long>(std::ceil(max[0])),
-                                     static_cast<long>(std::ceil(max[1])),
-                                     static_cast<long>(std::ceil(max[2]))};
+                [](PhysicalRegion &region, std::vector<double> max) -> decltype(auto) {
+                  region.max = Point({max[0], max[1], max[2]});
                   return max;
                 },
                 "max point of region")
 
   .def("valid",
-       &Region::valid,
+       &PhysicalRegion::valid,
        "ensure if region is valid")
 
   .def("origin",
-       [](const Region &region) -> decltype(auto) {
-         return py::array(3, region.origin().data());
+       [](const PhysicalRegion &region) -> decltype(auto) {
+         return py::array(3, region.origin().GetDataPointer());
        },
        "return origin of region")
 
   .def("size", 
-       [](const Region &region) -> decltype(auto) {
-         return py::array(3, region.size().data());
+       [](const PhysicalRegion &region) -> decltype(auto) {
+         return py::array(3, region.size().GetDataPointer());
        },
        "return size of region")
 
   .def("pad",
-       &Region::pad,
+       &PhysicalRegion::pad,
        "grows or shrinks the region by the specified amount",
        "padding"_a)
 
   .def("shrink",
-       &Region::shrink,
+       &PhysicalRegion::shrink,
        "shrink this region down to the smallest portions of both",
        "other"_a)
 
   .def("grow",
-       &Region::grow,
+       &PhysicalRegion::grow,
        "grow this region up to the largest portions of both",
        "other"_a)
 
   .def("expand",
-       &Region::expand,
+       &PhysicalRegion::expand,
        "expand this region to include this point",
        "other"_a)
   ;
@@ -749,34 +746,24 @@ PYBIND11_MODULE(shapeworks, m)
        "computes cell normals and orients them such that they point in the same direction")
 
   .def("toImage",
-       [](Mesh& mesh, const Region &region, const std::vector<double>& dims) -> decltype(auto) {
-         if (dims[0] * dims[1] * dims[2] <= 0.0) {
-           throw std::range_error("specified dims must be >= 0");
-         }
-         return mesh.toImage(region, Dims{static_cast<Dims::value_type>(std::ceil(dims[0])),
-                                          static_cast<Dims::value_type>(std::ceil(dims[1])),
-                                          static_cast<Dims::value_type>(std::ceil(dims[2]))});
+       [](Mesh& mesh, PhysicalRegion &region, std::vector<double>& spacing) -> decltype(auto) {
+         return mesh.toImage(region, Point({spacing[0], spacing[1], spacing[2]}));
        },
        "rasterizes mesh to a binary image, computing dims/spacing if necessary (specifying dims overrides specified spacing)",
-       "region"_a=Region(),
-       "dims"_a=std::vector<double>({0, 0, 0}))
+       "region"_a=PhysicalRegion(),
+       "spacing"_a=std::vector<double>({0, 0, 0}))
 
   .def("distance",
        &Mesh::distance, "computes surface to surface distance",
        "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
 
   .def("toDistanceTransform",
-       [](Mesh& mesh, const Region &region, const std::vector<unsigned>& dims) -> decltype(auto) {
-         if (dims[0] * dims[1] * dims[2] <= 0.0) {
-           throw std::range_error("specified dims must be >= 0");
-         }
-         return mesh.toDistanceTransform(region, Dims{static_cast<Dims::value_type>(std::ceil(dims[0])),
-                                                      static_cast<Dims::value_type>(std::ceil(dims[1])),
-                                                      static_cast<Dims::value_type>(std::ceil(dims[2]))});
+       [](Mesh& mesh, PhysicalRegion &region, std::vector<double>& spacing) -> decltype(auto) {
+         return mesh.toDistanceTransform(region, Point({spacing[0], spacing[1], spacing[2]}));
        },
        "converts mesh to distance transform, computing dims/spacing if necessary (specifying dims overrides specified spacing)",
-       "region"_a=Region(),
-       "dims"_a=std::vector<double>({0, 0, 0}))
+       "region"_a=PhysicalRegion(),
+       "spacing"_a=std::vector<double>({0, 0, 0}))
 
   .def("center",
        [](Mesh &mesh) -> decltype(auto) {

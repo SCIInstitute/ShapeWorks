@@ -6,23 +6,31 @@ namespace shapeworks
 {
 
 // A logical region of an Image or a Mesh
-class Region
+class LogicalRegion;
+
+// A physical region of an Image or a Mesh
+class PhysicalRegion;
+
+
+class LogicalRegion
 {
 public:
   Coord min{1000000000, 1000000000, 1000000000};
   Coord max{-1000000000, -1000000000, -1000000000};
 
-  Region(const Dims &dims) : min{0, 0, 0} {
+  LogicalRegion(const Dims &dims) : min{0, 0, 0} {
     if (0 != (dims[0] + dims[1] + dims[2])) {
       max = {static_cast<Coord::value_type>(dims[0]) - 1,
              static_cast<Coord::value_type>(dims[1]) - 1,
              static_cast<Coord::value_type>(dims[2]) - 1};
     }
   }
-  Region(const Coord &_min, const Coord &_max) :
+  LogicalRegion(const Coord &_min, const Coord &_max) :
     min{_min[0], _min[1], _min[2]}, max{_max[0], _max[1], _max[2]} {}
-  Region() = default;
-  bool operator==(const Region &other) const { return min == other.min && max == other.max; }
+  LogicalRegion() = default;
+  LogicalRegion(const PhysicalRegion &region);
+
+  bool operator==(const LogicalRegion &other) const { return min == other.min && max == other.max; }
 
   /// verified min/max do not create an inverted or an empty region
   bool valid() const { return max[0] > min[0] && max[1] > min[1] && max[2] > min[2]; }
@@ -35,23 +43,22 @@ public:
   }
 
   /// grows or shrinks the region by the specified amount
-  void pad(int padding);
+  LogicalRegion& pad(int padding);
 
   /// shrink this region down to the smallest portions of both
-  void shrink(const Region &other);
+  LogicalRegion& shrink(const LogicalRegion &other);
 
   /// grow this region up to the largest portions of both
-  void grow(const Region &other);
+  LogicalRegion& grow(const LogicalRegion &other);
 
   /// expand this region to include this point
-  void expand(const Coord &pt);
+  LogicalRegion& expand(const Coord &pt);
 
 };
 
-std::ostream &operator<<(std::ostream &os, const Region &region);
+std::ostream &operator<<(std::ostream &os, const LogicalRegion &region);
 
 
-// A physical region of an Image or a Mesh
 class PhysicalRegion
 {
 public:
@@ -77,6 +84,11 @@ public:
   PhysicalRegion() {
     min = Point({1000000000, 1000000000, 1000000000});
     max = Point({-1000000000, -1000000000, -1000000000});
+  }
+
+  PhysicalRegion(const LogicalRegion &region) {
+    min = toPoint(region.min);
+    max = toPoint(region.max);
   }
 
   bool operator==(const PhysicalRegion &other) const {
