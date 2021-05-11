@@ -115,10 +115,7 @@ namespace itk
         counter++;
 
         // Iterate over each domain
-      tbb::parallel_for(
-        tbb::blocked_range<size_t>{0, numdomains},
-        [&](const tbb::blocked_range<size_t>& r) {
-          for (size_t dom = r.begin(); dom < r.end(); ++dom) {
+          for (size_t dom = 0; dom < numdomains; ++dom) {
 
           // skip any flagged domains
           if (m_ParticleSystem->GetDomainFlag(dom) == true)
@@ -207,7 +204,6 @@ namespace itk
             } // end while(true)
           } // for each particle
         }// for each domain
-      });
 
       m_NumberOfIterations++;
       m_GradientFunction->AfterIteration();
