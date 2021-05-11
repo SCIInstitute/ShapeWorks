@@ -21,7 +21,7 @@ QT_MIN_VER="5.9.8"  # NOTE: 5.x is required, but this restriction is a clever wa
 XLNT_VER="v1.5.0"
 OpenVDB_VER="v7.0.0"
 libigl_VER="v2.2.0-fix"
-geometry_central_VER="8b20898f6c7be1eab827a9f720c8fd45e58ae63c" # This library isn't using tagged versions
+geometry_central_VER="different_solver" # This library isn't using tagged versions
 
 usage()
 {
@@ -292,7 +292,7 @@ build_geometry_central()
   echo " "
   echo "## Building Geometry central..."
   cd ${INSTALL_DIR}
-  git clone --recursive https://github.com/nmwsharp/geometry-central.git
+  git clone --recursive https://github.com/medakk/geometry-central.git
   cd geometry-central
   git checkout -f ${geometry_central_VER}
 
