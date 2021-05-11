@@ -70,6 +70,7 @@ public:
 
   /// computes bounding box of current mesh
   Region boundingBox() const;
+  PhysicalRegion boundingBoxPower() const;
 
   /// quality control mesh
   Mesh& fix(bool smoothBefore = true, bool smoothAfter = true, double lambda = 0.5, int iterations = 1, bool decimate = true, double percentage = 0.5);
@@ -85,11 +86,11 @@ public:
 
   /// rasterizes specified region to create binary image of desired dims
   /// by default uses unit spacing and pads bounding box by one 
-  Image toImage(const Region region = Region(), const Dims dims = {0, 0, 0}) const;
+  Image toImage(Dims dims = {0, 0, 0}, PhysicalRegion region = PhysicalRegion()) const;
 
   /// converts specified region to distance transform image
   /// by default uses unit spacing and pads bounding box by one 
-  Image toDistanceTransform(const Region region = Region(), const Dims dims = {0, 0, 0}) const;
+  Image toDistanceTransform(Dims dims = {0, 0, 0}, Region region = Region()) const;
 
   // query functions //
 

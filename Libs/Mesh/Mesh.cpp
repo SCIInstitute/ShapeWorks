@@ -328,6 +328,21 @@ Region Mesh::boundingBox() const
   return bbox;
 }
 
+PhysicalRegion Mesh::boundingBoxPower() const
+{
+  PhysicalRegion bbox;
+  double bb[6];
+  mesh->GetBounds(bb);
+
+  for(int i = 0; i < 3; i++)
+  {
+    bbox.min[i] = bb[2*i];
+    bbox.max[i] = bb[2*i+1];
+  }
+
+  return bbox;
+}
+
 Mesh& Mesh::distance(const Mesh &target, const DistanceMethod method)
 {
   if (target.numPoints() == 0 || numPoints() == 0)
@@ -415,56 +430,59 @@ Mesh& Mesh::generateNormals()
   return *this;
 }
 
-Image Mesh::toImage(const Region region, const Dims dims) const
+Image Mesh::toImage(Dims dims, PhysicalRegion region) const
 {
-  // identify the logical region containing the mesh
-  Region bbox(region);
-  if (region == Region())
-  {
-    bbox = boundingBox();
-    bbox.pad(1); // give it some default padding
-    std::cout << "adding a pixel of padding\n";
+  // working theory:
+  // size = ceil(max - min) + 1   // the +1 is... justifiable? cuz' it's prettier?
+  // dims = size / spacing
+
+  // if no region, use mesh bounding box
+  if (region == PhysicalRegion()) {
+    region = boundingBoxPower();
   }
+  Point size(region.size());
+  Point spacing({1,1,1});
+  Point pdims(size / spacing);
 
-  // unit spacing by default
-  Vector3 spacing = makeVector({1.0, 1.0, 1.0});
+  // if dims unspecified, maintain unit spacing
+  if (dims == Dims()) {
+    dims = Dims({static_cast<Dims::value_type>(std::floor(pdims[0])),
+                 static_cast<Dims::value_type>(std::floor(pdims[1])),
+                 static_cast<Dims::value_type>(std::floor(pdims[2]))});
+  }
+  pdims = Point({static_cast<double>(dims[0]),
+                 static_cast<double>(dims[1]),
+                 static_cast<double>(dims[2])});
+  spacing = size / pdims;
 
-  // adjust spacing if user specified dims
-  if (dims != Dims({0, 0, 0}))
-  {
-    bbox.max = toCoord(dims);
-    Vector3 sz_user = toVector(dims);
-    Vector3 sz_mesh = toVector(bbox.size());
-    spacing[0] = sz_mesh[0] / sz_user[0];
-    spacing[1] = sz_mesh[1] / sz_user[1];
-    spacing[2] = sz_mesh[2] / sz_user[2];
-    std::cout << "updated spacing to " << spacing << std::endl;
-  }  
-
-  std::cout << "extents are " << bbox.min << " to " << bbox.max << std::endl;
+  std::cout << "mesh extents are " << region << std::endl;
+  std::cout << "size is " << size << std::endl;
   std::cout << "spacing is " << spacing << std::endl;
+  std::cout << "dims are " << dims + Dims({1,1,1}) << std::endl;
 
   // allocate output image
   vtkSmartPointer<vtkImageData> whiteImage = vtkSmartPointer<vtkImageData>::New();
-  whiteImage->SetOrigin(bbox.min[0], bbox.min[1], bbox.min[2]);
+  whiteImage->SetOrigin(region.origin()[0], region.origin()[1], region.origin()[2]);
   whiteImage->SetSpacing(spacing[0], spacing[1], spacing[2]);
-  //whiteImage->SetDimensions(bbox.max[0], bbox.max[1], bbox.max[2]);
-  whiteImage->SetExtent(bbox.min[0], bbox.max[0], bbox.min[1], bbox.max[1], bbox.min[2], bbox.max[2]);
+  whiteImage->SetSpacing(1,1,1);
+  //whiteImage->SetSpacing(0.5, 0.5, 0.5);
+
+  whiteImage->SetExtent(0, dims[0], 0, dims[1], 0, dims[2]);
   whiteImage->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
 
-  std::cout << "you okay?\n";
+  // paint it white
   vtkIdType count = whiteImage->GetNumberOfPoints();
   for (vtkIdType i = 0; i < count; ++i)
     whiteImage->GetPointData()->GetScalars()->SetTuple1(i, 1);
 
-  // polygonal data --> image stencil:
+  // cut stencil from mesh silhouette (same size as output image)
   vtkSmartPointer<vtkPolyDataToImageStencil> pol2stenc = vtkSmartPointer<vtkPolyDataToImageStencil>::New();
   pol2stenc->SetInputData(this->mesh);
   pol2stenc->SetInformationInput(whiteImage);
+  std::cout << "polydata stencil tolerance: " << pol2stenc->GetTolerance() << std::endl;
   pol2stenc->Update();
 
-  std::cout << "what gives??\n";
-  // cut the corresponding white image and set the background:
+  // spray output using stencil (use dark paint)
   vtkSmartPointer<vtkImageStencil> imgstenc = vtkSmartPointer<vtkImageStencil>::New();
   imgstenc->SetInputData(whiteImage);
   imgstenc->SetStencilData(pol2stenc->GetOutput());
@@ -472,17 +490,14 @@ Image Mesh::toImage(const Region region, const Dims dims) const
   imgstenc->SetBackgroundValue(0.0);
   imgstenc->Update();
 
-  std::cout << "phew!\n";
-  Image ret(imgstenc->GetOutput());
-  ret.setOrigin(toPoint(bbox.origin())); // set origin to the location of this mesh in space
-  return ret;
+  return Image(imgstenc->GetOutput());
 }
 
-Image Mesh::toDistanceTransform(const Region region, const Dims dims) const
+Image Mesh::toDistanceTransform(const Dims dims, const Region region) const
 {
   // TODO: convert directly to DT (github #810)
-  Image image(toImage(region, dims));
-  image.antialias(50, 0.00).computeDT(); // need maxrms = 0 and iterations = 30 to reproduce results
+  Image image(toImage(dims, PhysicalRegion()));//region));
+  image.antialias(50, 0.00).computeDT();
   return image;
 }
 
