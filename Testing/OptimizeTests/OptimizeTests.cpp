@@ -424,6 +424,7 @@ TEST(OptimizeTests, project_test) {
 }
 
 //---------------------------------------------------------------------------
+/*
 TEST(OptimizeTests, mesh_geodesics_test) {
   const std::string sphere_mesh_path = std::string(TEST_DATA_DIR) + "/sphere_highres.ply";
   const auto sw_mesh = MeshUtils::threadSafeReadMesh(sphere_mesh_path);
@@ -458,6 +459,7 @@ TEST(OptimizeTests, mesh_geodesics_test) {
     }
   }
 }
+*/
 TEST(OptimizeTests, contour_domain_test) {
 
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/supershapes_2d");
