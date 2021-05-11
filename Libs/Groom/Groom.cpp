@@ -251,11 +251,29 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, int domain)
 
   if (!this->skip_grooming_) {
 
+    if (params.get_fill_holes_tool()) {
+      mesh.fillHoles();
+    }
+
+    if (params.get_mesh_qc()) {
+      mesh.fix();
+    }
+
+    if (params.get_mesh_smooth()) {
+      if (params.get_mesh_smoothing_method() == GroomParameters::GROOM_SMOOTH_VTK_LAPLACIAN_C) {
+        mesh.smooth(params.get_mesh_vtk_laplacian_iterations(),
+                    params.get_mesh_vtk_laplacian_relaxation());
+      }
+      else if (params.get_mesh_smoothing_method() ==
+               GroomParameters::GROOM_SMOOTH_VTK_WINDOWED_SINC_C) {
+        mesh.smoothSinc(params.get_mesh_vtk_windowed_sinc_iterations(),
+                        params.get_mesh_vtk_windowed_sinc_passband());
+      }
+    }
+
     // centering
     if (params.get_center_tool()) {
-
       auto diff = mesh.centerOfMass();
-
       itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
       tform[0] = -diff[0];
       tform[1] = -diff[1];
@@ -263,6 +281,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, int domain)
       transform->SetTranslation(tform);
       this->increment_progress();
     }
+
   }
 
 

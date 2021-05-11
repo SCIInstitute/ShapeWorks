@@ -21,6 +21,7 @@
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkMarchingCubes.h>
 #include <vtkSmoothPolyDataFilter.h>
+#include <vtkWindowedSincPolyDataFilter.h>
 #include <vtkDecimatePro.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkReverseSense.h>
@@ -182,6 +183,18 @@ Mesh &Mesh::smooth(int iterations, double relaxation)
     smoother->FeatureEdgeSmoothingOff();
     smoother->BoundarySmoothingOn();
   }
+  smoother->Update();
+  this->mesh = smoother->GetOutput();
+
+  return *this;
+}
+
+Mesh& Mesh::smoothSinc(int iterations, double passband)
+{
+  vtkSmartPointer<vtkWindowedSincPolyDataFilter> smoother = vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
+  smoother->SetInputData(this->mesh);
+  smoother->SetNumberOfIterations(iterations);
+  smoother->SetPassBand(passband);
   smoother->Update();
   this->mesh = smoother->GetOutput();
 
