@@ -407,7 +407,7 @@ TEST(ImageTests, cropTest1)
   };
 
   Image image(std::string(TEST_DATA_DIR) + "/seg.ellipsoid_1.nrrd");
-  Region region;
+  PhysicalRegion region;
   region = ImageUtils::boundingBox(images);
   image.crop(region);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/crop_baseline.nrrd");
@@ -430,7 +430,7 @@ TEST(ImageTests, cropTest2)
   Image img9(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_9.nrrd")); images.push_back(img9);
 
   Image image(std::string(TEST_DATA_DIR) + "/seg.ellipsoid_1.nrrd");
-  Region region;
+  PhysicalRegion region;
   region = ImageUtils::boundingBox(images);
   image.crop(region);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/crop_baseline.nrrd");

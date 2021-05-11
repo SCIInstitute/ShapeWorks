@@ -890,12 +890,12 @@ bool FieldNames::execute(const optparse::Values &options, SharedCommandData &sha
 void MeshToImage::buildParser()
 {
   const std::string prog = "mesh-to-image";
-  const std::string desc = "converts mesh to a binary segmentation image, computing dims/spacing if necessary";
+  const std::string desc = "converts mesh to a binary segmentation image, computing unit spacing by default";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--dimsx").action("store").type("unsigned").set_default(0).help("Dims of output image in x-direction [default: one pixel per unit of distance in mesh].");
-  parser.add_option("--dimsy").action("store").type("unsigned").set_default(0).help("Dims of output image in y-direction [default: one pixel per unit of distance in mesh].");
-  parser.add_option("--dimsz").action("store").type("unsigned").set_default(0).help("Dims of output image in z-direction [default: one pixel per unit of distance in mesh].");
+  parser.add_option("--x").action("store").type("double").set_default(1.0).help("Spacing of output image in x-direction [default: unit spacing].");
+  parser.add_option("--y").action("store").type("double").set_default(1.0).help("Spacing of output image in y-direction [default: unit spacing].");
+  parser.add_option("--z").action("store").type("double").set_default(1.0).help("Spacing of output image in z-direction [default: unit spacing].");
 
   Command::buildParser();
 }
@@ -908,13 +908,13 @@ bool MeshToImage::execute(const optparse::Values &options, SharedCommandData &sh
     return false;
   }
 
-  unsigned dimsX = static_cast<unsigned>(options.get("dimsx"));
-  unsigned dimsY = static_cast<unsigned>(options.get("dimsy"));
-  unsigned dimsZ = static_cast<unsigned>(options.get("dimsz"));
+  double x = static_cast<double>(options.get("x"));
+  double y = static_cast<double>(options.get("y"));
+  double z = static_cast<double>(options.get("z"));
 
-  Dims dims({dimsX,dimsY, dimsZ});
+  Point3 spacing({x,y,z});
 
-  sharedData.image = sharedData.mesh->toImage(dims, PhysicalRegion());
+  sharedData.image = sharedData.mesh->toImage(PhysicalRegion(), spacing);
   return true;
 }
 
@@ -924,12 +924,12 @@ bool MeshToImage::execute(const optparse::Values &options, SharedCommandData &sh
 void MeshToDT::buildParser()
 {
   const std::string prog = "mesh-to-dt";
-  const std::string desc = "converts mesh to a distance transform, computing dims/spacing if necessary";
+  const std::string desc = "converts mesh to a distance transform, computing spacing if necessary";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--dimsx").action("store").type("unsigned").set_default(0).help("Dims of output image in x-direction [default: one pixel per unit of distance in mesh].");
-  parser.add_option("--dimsy").action("store").type("unsigned").set_default(0).help("Dims of output image in y-direction [default: one pixel per unit of distance in mesh].");
-  parser.add_option("--dimsz").action("store").type("unsigned").set_default(0).help("Dims of output image in z-direction [default: one pixel per unit of distance in mesh].");
+  parser.add_option("--x").action("store").type("double").set_default(0).help("Dims of output image in x-direction [default: unit spacing].");
+  parser.add_option("--y").action("store").type("double").set_default(0).help("Dims of output image in y-direction [default: unit spacing].");
+  parser.add_option("--z").action("store").type("double").set_default(0).help("Dims of output image in z-direction [default: unit spacing].");
 
   Command::buildParser();
 }
@@ -942,13 +942,13 @@ bool MeshToDT::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
-  unsigned dimsX = static_cast<unsigned>(options.get("dimsx"));
-  unsigned dimsY = static_cast<unsigned>(options.get("dimsy"));
-  unsigned dimsZ = static_cast<unsigned>(options.get("dimsz"));
+  double x = static_cast<double>(options.get("x"));
+  double y = static_cast<double>(options.get("y"));
+  double z = static_cast<double>(options.get("z"));
 
-  Dims dims({dimsX,dimsY, dimsZ});
+  Point3 spacing({x,y,z});
 
-  sharedData.image = sharedData.mesh->toDistanceTransform(dims, PhysicalRegion());
+  sharedData.image = sharedData.mesh->toDistanceTransform(PhysicalRegion(), spacing);
   return true;
 }
 
