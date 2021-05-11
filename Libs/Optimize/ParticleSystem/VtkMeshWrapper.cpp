@@ -890,12 +890,7 @@ void VtkMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::
   assert(n_insertions == 9*F.rows());
 
 
-  // geometry central stuff
-  {
-    using namespace geometrycentral::surface;
-    std::tie(gc_mesh_, gc_geometry_) = makeSurfaceMeshAndGeometry(V, F);
-    gc_heatsolver_ = std::make_unique<HeatMethodDistanceSolver>(*gc_geometry_);
-  }
+  igl::heat_geodesics_precompute(V, F, igl_heatsolver_);
 
   // compute k-ring
   face_kring_.resize(this->triangles_.size());
@@ -971,9 +966,11 @@ const MeshGeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist
       continue;
     }
     // todo switch to zero-copy API when that is available: https://github.com/nmwsharp/geometry-central/issues/77
-    const auto v = gc_mesh_->vertex(this->triangles_[f]->GetPointId(i));
-    const auto gc_dists = gc_heatsolver_->computeDistance(v);
-    dists[i] = std::move(gc_dists.raw());
+
+    Eigen::VectorXi gamma;
+    gamma.resize(1);
+    gamma << this->triangles_[f]->GetPointId(i);
+    igl::heat_geodesics_solve(igl_heatsolver_, gamma, dists[i]);
   }
 
   if(max_dist == std::numeric_limits<double>::infinity()) {

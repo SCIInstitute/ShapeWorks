@@ -11,6 +11,7 @@
 #include <geometrycentral/surface/surface_mesh.h>
 #include <geometrycentral/surface/meshio.h>
 #include <geometrycentral/surface/heat_method_distance.h>
+#include <igl/heat_geodesics.h>
 
 class vtkCellLocator;
 
@@ -134,10 +135,7 @@ private:
     return this->is_geodesics_enabled_;
   }
 
-  // Geometry Central data structures
-  std::unique_ptr<geometrycentral::surface::SurfaceMesh> gc_mesh_;
-  std::unique_ptr<geometrycentral::surface::VertexPositionGeometry> gc_geometry_;
-  std::unique_ptr<geometrycentral::surface::HeatMethodDistanceSolver> gc_heatsolver_;
+  igl::HeatGeodesicsData<double> igl_heatsolver_;
 
   size_t geo_max_cache_entries_{0};
   mutable size_t geo_cache_size_{0};
