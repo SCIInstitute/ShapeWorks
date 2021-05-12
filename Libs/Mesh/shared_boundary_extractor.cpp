@@ -54,6 +54,11 @@ void shared_into_eigen_mesh(const std::vector<int>& faces,
   igl::remove_unreferenced(src_V, F2, V, F, mapping);
 }
 
+bool is_empty(const Eigen::MatrixXd& V,
+              const Eigen::MatrixXi& F) {
+  return V.size() == 0 || F.size() == 0;
+}
+
 void move_to_boundary(const Eigen::MatrixXd& src_V,
                       const Eigen::MatrixXi& src_F,
                       const Eigen::MatrixXd& shared_V,
@@ -166,6 +171,13 @@ int main(int argc, char *argv[])
   Eigen::MatrixXi shared_F_l, shared_F_r, rem_F_l, rem_F_r;
   find_shared_surface(V_l, F_l, V_r, F_r, shared_V_l, shared_F_l, rem_V_l, rem_F_l, tol);
   find_shared_surface(V_r, F_r, V_l, F_l, shared_V_r, shared_F_r, rem_V_r, rem_F_r, tol);
+
+  if (is_empty(shared_V_l, shared_F_l) || is_empty(shared_V_r, shared_F_r)
+      || is_empty(rem_V_l, rem_F_l) || is_empty(rem_V_r, rem_F_r)) {
+    //todo this should return a status code to the caller so that it can be displayed or handled based on the
+    // downstream task
+    throw std::runtime_error("No shared surface detected. Please check the input meshes and/or increase the tolerance");
+  }
 
   Eigen::MatrixXd bridge_V;
   Eigen::MatrixXi bridge_F;
