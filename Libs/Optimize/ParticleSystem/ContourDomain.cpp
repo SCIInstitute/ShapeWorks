@@ -337,7 +337,7 @@ ContourDomain::PointType ContourDomain::GetPositionAfterSplit(const PointType& p
 
   // ContourDomain requires very small epsilon because it is impossible to recover from crossing particles
   // TODO This should be a function of scale https://github.com/SCIInstitute/ShapeWorks/issues/1227#issuecomment-835704332
-  split_dir *= avg_edge_length / 50000.0;
+  split_dir *= avg_edge_length_ / 50000.0;
   vnl_vector_fixed<double, 3> vnl_split_dir(split_dir.data());
   return UpdateParticlePosition(pt, -1, vnl_split_dir); // pass -1 because this really corresponds to an unborn particle
 }
@@ -355,7 +355,7 @@ void ContourDomain::ComputeAvgEdgeLength() {
             const auto pt_b = GetPoint(line->GetPointId(1));
             return s + (pt_a - pt_b).norm();
           });
-  avg_edge_length = total_length / lines_.size();
+  avg_edge_length_ = total_length / lines_.size();
 }
 
 }

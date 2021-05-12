@@ -146,7 +146,7 @@ private:
   mutable int geo_lq_line_ = -1;
   mutable double geo_lq_dist_ = -1;
 
-  double avg_edge_length{0.0};
+  double avg_edge_length_{0.0};
 
   void ComputeBounds();
   void ComputeGeodesics(vtkSmartPointer<vtkPolyData> poly_data);
