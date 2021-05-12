@@ -284,12 +284,12 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 
   // Contour domain cannot recover from swapped particles. This works around that by constraining moves to be no more
   // than 0.5 times the distance to closest neighbor.
-  if(m_CurrentNeighborhood.size() > 0 && system->GetDomain(d)->GetDomainType() == shapeworks::DomainType::Contour) {
+  if (system->GetDomain(d)->GetDomainType() == shapeworks::DomainType::Contour && m_CurrentNeighborhood.size() > 0) {
     auto min_it = std::min_element(m_CurrentNeighborhood.begin(), m_CurrentNeighborhood.end(),
-                                   [](const CrossDomainNeighborhood& n1, const CrossDomainNeighborhood& n2) {
-      return n1.distance < n2.distance;
-    });
-    maxmove = std::min(maxmove, 0.5*min_it->distance);
+                                   [](const CrossDomainNeighborhood &n1, const CrossDomainNeighborhood &n2) {
+                                     return n1.distance < n2.distance;
+                                   });
+    maxmove = std::min(maxmove, 0.5 * min_it->distance);
   }
 
   energy = (A * sigma2inv ) / m_avgKappa;
