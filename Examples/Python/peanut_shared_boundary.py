@@ -24,6 +24,7 @@ def Run_Pipeline(args):
     if not os.path.exists(groomDir):
         os.makedirs(groomDir)
 
+    CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
     meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.stl"))
 
     # 01. Remesh
@@ -120,6 +121,8 @@ def Run_Pipeline(args):
         shutil.copy(fname, new_name)
 
     # TODO Use OptimizeUtils.py once Multidomain PR is merged https://github.com/SCIInstitute/ShapeWorks/pull/1143
+    shutil.copy(f'{outputDirectory}/{datasetName}/shape_models/peanut_shared_boundary/shared_with_contours.xlsx',
+                f'{outputDirectory}/shape_model/')
     optimizeCmd = 'shapeworks optimize --name Output/peanut_shared_boundary/shape_model/shared_with_contours.xlsx'.split()
     subprocess.check_call(optimizeCmd)
 
