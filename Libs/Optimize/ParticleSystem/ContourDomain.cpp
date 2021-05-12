@@ -3,6 +3,7 @@
 #include <fstream>
 #include <vtkDijkstraGraphGeodesicPath.h>
 #include <vtkDoubleArray.h>
+#include <numeric>
 
 
 namespace itk{
@@ -40,6 +41,7 @@ void ContourDomain::SetPolyLine(vtkSmartPointer<vtkPolyData> poly_data) {
 
   this->ComputeBounds();
   this->ComputeGeodesics(this->poly_data_);
+  this->ComputeAvgEdgeLength();
 }
 
 vnl_vector_fixed<double, DIMENSION>
@@ -106,7 +108,7 @@ ContourDomain::PointType ContourDomain::GeodesicWalk(const PointType& start_pt, 
   int current_target_idx = update_dot_line_dir > 0.0 ? p1_idx : p0_idx;
   auto neighbors = vtkSmartPointer<vtkIdList>::New();
 
-  while(remaining_update_mag >= 0.0) {
+  while(remaining_update_mag > 0.0) {
 
     const auto target_pt = this->GetPoint(current_target_idx);
     const double dist_to_target = (target_pt - current_pt).norm();
@@ -335,7 +337,7 @@ ContourDomain::PointType ContourDomain::GetPositionAfterSplit(const PointType& p
 
   // ContourDomain requires very small epsilon because it is impossible to recover from crossing particles
   // TODO This should be a function of scale https://github.com/SCIInstitute/ShapeWorks/issues/1227#issuecomment-835704332
-  split_dir *= epsilon / 1.0;
+  split_dir *= avg_edge_length / 50000.0;
   vnl_vector_fixed<double, 3> vnl_split_dir(split_dir.data());
   return UpdateParticlePosition(pt, -1, vnl_split_dir); // pass -1 because this really corresponds to an unborn particle
 }
@@ -344,6 +346,16 @@ int ContourDomain::NumberOfLinesIncidentOnPoint(int i) const {
   auto neighbors = vtkSmartPointer<vtkIdList>::New();
   this->poly_data_->GetPointCells(i, neighbors);
   return neighbors->GetNumberOfIds();
+}
+
+void ContourDomain::ComputeAvgEdgeLength() {
+  const double total_length = std::accumulate(lines_.begin(), lines_.end(),
+                                              0.0, [&](double s, const vtkSmartPointer<vtkLine> &line) {
+            const auto pt_a = GetPoint(line->GetPointId(0));
+            const auto pt_b = GetPoint(line->GetPointId(1));
+            return s + (pt_a - pt_b).norm();
+          });
+  avg_edge_length = total_length / lines_.size();
 }
 
 }
