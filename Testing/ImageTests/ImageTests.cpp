@@ -393,6 +393,28 @@ TEST(ImageTests, blurTest)
 
 TEST(ImageTests, cropTest1)
 {
+  Image image(std::string(TEST_DATA_DIR) + "/seg.ellipsoid_1.nrrd");
+  auto region = image.physicalBoundingBox().pad(-16);
+  region.min[0] = 7;
+  region.max[0] = 42;
+  image.crop(region);
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/crop_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, cropTest2)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/seg.ellipsoid_1.nrrd");
+  auto region = image.physicalBoundingBox();
+  image.crop(region);
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/seg.ellipsoid_1.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, boundingBoxTest1)
+{
   std::string images_location = std::string(TEST_DATA_DIR) + std::string("/images/");
   std::vector<std::string> images = {
     images_location + "seg.ellipsoid_1.nrrd",
@@ -406,16 +428,18 @@ TEST(ImageTests, cropTest1)
     images_location + "seg.ellipsoid_9.nrrd",
   };
 
-  Image image(std::string(TEST_DATA_DIR) + "/seg.ellipsoid_1.nrrd");
-  PhysicalRegion region;
-  region = ImageUtils::boundingBox(images);
-  image.crop(region);
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/crop_baseline.nrrd");
+  auto region = ImageUtils::boundingBox(images);
+  std::cout << "pregion: " << region << std::endl;
+  PhysicalRegion ground_truth_p(Point({7, 16, 16}), Point({43, 34, 34}));
 
-  ASSERT_TRUE(image == ground_truth);
+  auto physicalToLogical(region);
+  std::cout << "p2l: " << physicalToLogical << std::endl;
+  LogicalRegion ground_truth_l(Coord({7, 16, 16}), Coord({43, 34, 34}));
+
+  ASSERT_TRUE(region == ground_truth_p && physicalToLogical == ground_truth_l);
 }
 
-TEST(ImageTests, cropTest2)
+TEST(ImageTests, boundingBoxTest2)
 {
   std::string images_location = std::string(TEST_DATA_DIR) + std::string("/images/");
   std::vector<Image> images;
@@ -429,13 +453,15 @@ TEST(ImageTests, cropTest2)
   Image img8(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_8.nrrd")); images.push_back(img8);
   Image img9(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_9.nrrd")); images.push_back(img9);
 
-  Image image(std::string(TEST_DATA_DIR) + "/seg.ellipsoid_1.nrrd");
-  PhysicalRegion region;
-  region = ImageUtils::boundingBox(images);
-  image.crop(region);
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/crop_baseline.nrrd");
+  auto region = ImageUtils::boundingBox(images);
+  std::cout << "pregion: " << region << std::endl;
+  PhysicalRegion ground_truth_p(Point({7, 16, 16}), Point({43, 34, 34}));
 
-  ASSERT_TRUE(image == ground_truth);
+  auto physicalToLogical(region);
+  std::cout << "p2l: " << physicalToLogical << std::endl;
+  LogicalRegion ground_truth_l(Coord({7, 16, 16}), Coord({43, 34, 34}));
+
+  ASSERT_TRUE(region == ground_truth_p && physicalToLogical == ground_truth_l);
 }
 
 TEST(ImageTests, icpTest)

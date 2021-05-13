@@ -550,7 +550,33 @@ bool BoundingBoxMesh::execute(const optparse::Values &options, SharedCommandData
   std::vector<std::string> filenames = options.get("names");
 
   sharedData.region = MeshUtils::boundingBox(filenames);
-  std::cout << "Bounding box:\n" << sharedData.region;
+  std::cout << "Bounding box:\n" << sharedData.region << std::endl;
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// MeshBounds
+///////////////////////////////////////////////////////////////////////////////
+void MeshBounds::buildParser()
+{
+  const std::string prog = "mesh-bounds";
+  const std::string desc = "return physical bounds of mesh";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--padding").action("store").type("double").set_default(0.0).help("Padding in each direction to pad bounds [default: %default].");
+
+  Command::buildParser();
+}
+
+bool MeshBounds::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  double padding = static_cast<double>(options.get("padding"));
+
+  sharedData.region = sharedData.mesh->boundingBox();
+  sharedData.region.pad(padding);
+
+  std::cout << "Bounding box:\n" << sharedData.region << std::endl;
+
   return true;
 }
 
@@ -890,12 +916,13 @@ bool FieldNames::execute(const optparse::Values &options, SharedCommandData &sha
 void MeshToImage::buildParser()
 {
   const std::string prog = "mesh-to-image";
-  const std::string desc = "converts mesh to a binary segmentation image, computing unit spacing by default";
+  const std::string desc = "converts mesh to a binary segmentation image, using unit spacing by default";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--x").action("store").type("double").set_default(1.0).help("Spacing of output image in x-direction [default: unit spacing].");
-  parser.add_option("--y").action("store").type("double").set_default(1.0).help("Spacing of output image in y-direction [default: unit spacing].");
-  parser.add_option("--z").action("store").type("double").set_default(1.0).help("Spacing of output image in z-direction [default: unit spacing].");
+  parser.add_option("--sx").action("store").type("double").set_default(1.0).help("Spacing of output image in x-direction [default: unit spacing].");
+  parser.add_option("--sy").action("store").type("double").set_default(1.0).help("Spacing of output image in y-direction [default: unit spacing].");
+  parser.add_option("--sz").action("store").type("double").set_default(1.0).help("Spacing of output image in z-direction [default: unit spacing].");
+  parser.add_option("--pad").action("store").type("double").set_default(0.0).help("Pad the region to extract [default: 0.0].");
 
   Command::buildParser();
 }
@@ -908,13 +935,15 @@ bool MeshToImage::execute(const optparse::Values &options, SharedCommandData &sh
     return false;
   }
 
-  double x = static_cast<double>(options.get("x"));
-  double y = static_cast<double>(options.get("y"));
-  double z = static_cast<double>(options.get("z"));
+  double x = static_cast<double>(options.get("sx"));
+  double y = static_cast<double>(options.get("sy"));
+  double z = static_cast<double>(options.get("sz"));
+  double pad = static_cast<double>(options.get("pad"));
 
   Point3 spacing({x,y,z});
-
-  sharedData.image = sharedData.mesh->toImage(PhysicalRegion(), spacing);
+  auto region = sharedData.mesh->boundingBox().pad(pad);
+  
+  sharedData.image = sharedData.mesh->toImage(region, spacing);
   return true;
 }
 
@@ -924,12 +953,13 @@ bool MeshToImage::execute(const optparse::Values &options, SharedCommandData &sh
 void MeshToDT::buildParser()
 {
   const std::string prog = "mesh-to-dt";
-  const std::string desc = "converts mesh to a distance transform, computing spacing if necessary";
+  const std::string desc = "converts mesh to a distance transform, using unit spacing by default";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--x").action("store").type("double").set_default(0).help("Dims of output image in x-direction [default: unit spacing].");
-  parser.add_option("--y").action("store").type("double").set_default(0).help("Dims of output image in y-direction [default: unit spacing].");
-  parser.add_option("--z").action("store").type("double").set_default(0).help("Dims of output image in z-direction [default: unit spacing].");
+  parser.add_option("--sx").action("store").type("double").set_default(1.0).help("Spacing of output image in x-direction [default: unit spacing].");
+  parser.add_option("--sy").action("store").type("double").set_default(1.0).help("Spacing of output image in y-direction [default: unit spacing].");
+  parser.add_option("--sz").action("store").type("double").set_default(1.0).help("Spacing of output image in z-direction [default: unit spacing].");
+  parser.add_option("--pad").action("store").type("double").set_default(0.0).help("Pad the region to extract [default: 0.0].");
 
   Command::buildParser();
 }
@@ -942,13 +972,15 @@ bool MeshToDT::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
-  double x = static_cast<double>(options.get("x"));
-  double y = static_cast<double>(options.get("y"));
-  double z = static_cast<double>(options.get("z"));
+  double x = static_cast<double>(options.get("sx"));
+  double y = static_cast<double>(options.get("sy"));
+  double z = static_cast<double>(options.get("sz"));
+  double pad = static_cast<double>(options.get("pad"));
 
   Point3 spacing({x,y,z});
-
-  sharedData.image = sharedData.mesh->toDistanceTransform(PhysicalRegion(), spacing);
+  auto region = sharedData.mesh->boundingBox().pad(pad);
+  
+  sharedData.image = sharedData.mesh->toDistanceTransform(region, spacing);
   return true;
 }
 

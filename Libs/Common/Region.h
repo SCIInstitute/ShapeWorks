@@ -65,13 +65,6 @@ public:
   Point min;
   Point max;
 
-  PhysicalRegion(const Point &size) {
-    min = Point({0, 0, 0});
-    if (0 != (size[0] + size[1] + size[2])) {
-      max = Point({size[0], size[1], size[2]});
-    }
-  }
-
   PhysicalRegion(const Point &_min, const Point &_max) {
     min[0] = _min[0];
     min[1] = _min[1];

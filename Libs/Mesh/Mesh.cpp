@@ -423,10 +423,10 @@ Image Mesh::toImage(PhysicalRegion region, Point spacing) const
   }
   auto dims = toDims(region.size() / spacing);
 
-  std::cout << "mesh extents are " << region << std::endl;
-  std::cout << "size is " << region.size() << std::endl;
-  std::cout << "spacing is " << spacing << std::endl;
-  std::cout << "dims are " << dims << std::endl;
+  // std::cout << "mesh extents are " << region << std::endl;
+  // std::cout << "size is " << region.size() << std::endl;
+  // std::cout << "spacing is " << spacing << std::endl;
+  // std::cout << "dims are " << dims << std::endl;
 
   // allocate output image
   vtkSmartPointer<vtkImageData> whiteImage = vtkSmartPointer<vtkImageData>::New();
@@ -444,7 +444,6 @@ Image Mesh::toImage(PhysicalRegion region, Point spacing) const
   vtkSmartPointer<vtkPolyDataToImageStencil> pol2stenc = vtkSmartPointer<vtkPolyDataToImageStencil>::New();
   pol2stenc->SetInputData(this->mesh);
   pol2stenc->SetInformationInput(whiteImage);
-  std::cout << "polydata stencil tolerance: " << pol2stenc->GetTolerance() << std::endl;
   pol2stenc->Update();
 
   // spray output using stencil (use dark paint)

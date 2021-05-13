@@ -128,7 +128,9 @@ bool ImageInfo::execute(const optparse::Values &options, SharedCommandData &shar
   if (centerOfMass)
     std::cout << "center of mass (0,1]:  " << sharedData.image.centerOfMass() << std::endl;
   if (boundingBox)
-    std::cout << "bounding box:          " << sharedData.image.boundingBox() << std::endl;
+    std::cout << "physical bounding box: " << sharedData.image.physicalBoundingBox() << std::endl;
+  if (boundingBox)
+    std::cout << "logical bounding box:  " << sharedData.image.logicalBoundingBox() << std::endl;
   if (direction)
     std::cout << "direction (coordsys):  " << std::endl
               << sharedData.image.coordsys();
@@ -850,7 +852,41 @@ bool BoundingBoxImage::execute(const optparse::Values &options, SharedCommandDat
 
   sharedData.region = ImageUtils::boundingBox(filenames, isoValue);
   sharedData.region.pad(padding);
-  std::cout << "Bounding box:\n" << sharedData.region;
+  std::cout << "Bounding box:\n" << sharedData.region << std::endl;
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ImageBounds
+///////////////////////////////////////////////////////////////////////////////
+void ImageBounds::buildParser()
+{
+  const std::string prog = "image-bounds";
+  const std::string desc = "return bounds of image, optionally with an isovalue to restrict region";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--padding").action("store").type("int").set_default(0).help("Number of extra voxels in each direction to pad the largest bounding box [default: %default].");
+  parser.add_option("--isovalue").action("store").type("double").help("Isovalue [default: entire image].");
+
+  Command::buildParser();
+}
+
+bool ImageBounds::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  int padding = static_cast<int>(options.get("padding"));
+  auto isovalue = options.get("isovalue");
+
+  if (isovalue.isValid())
+  {
+    sharedData.region = sharedData.image.physicalBoundingBox(static_cast<double>(isovalue));
+  }
+  else
+  {
+    sharedData.region = sharedData.image.physicalBoundingBox();
+  }
+
+  sharedData.region.pad(padding);
+  std::cout << "Bounding box:\n" << sharedData.region << std::endl;
   return true;
 }
 

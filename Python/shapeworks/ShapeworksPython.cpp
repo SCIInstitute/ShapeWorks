@@ -430,7 +430,11 @@ PYBIND11_MODULE(shapeworks, m)
        "standard deviation of image")
 
   .def("boundingBox",
-       &Image::boundingBox,
+       static_cast<PhysicalRegion (Image::*)() const>(&Image::physicalBoundingBox),
+       "computes the logical coordinates of the largest region of data <= the given isoValue")
+
+  .def("boundingBox",
+       static_cast<PhysicalRegion (Image::*)(Image::PixelType) const>(&Image::physicalBoundingBox),
        "computes the logical coordinates of the largest region of data <= the given isoValue",
        "isovalue"_a=1.0)
 
@@ -495,11 +499,6 @@ PYBIND11_MODULE(shapeworks, m)
   py::class_<PhysicalRegion>(m, "Region")
 
   .def(py::init<>())
-
-  .def(py::init
-       ([](std::vector<double> dims) -> decltype(auto) {
-          return PhysicalRegion(Point({dims[0], dims[1], dims[2]}));
-        }))
 
   .def(py::init
        ([](std::vector<double> min, std::vector<double> max) {

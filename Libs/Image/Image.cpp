@@ -356,7 +356,7 @@ Image& Image::resample(const TransformPtr transform, const Point3 origin, Dims d
 Image& Image::resample(const Vector3& spacing, Image::InterpolationType interp)
 {
   // compute logical dimensions that keep all image data for this spacing
-  Dims inputDims(this->dims());
+  Dims inputDims(this->dims());  //***
   Vector3 inputSpacing(this->spacing());
   Dims dims({ static_cast<unsigned>(std::floor(inputDims[0] * inputSpacing[0] / spacing[0])),
               static_cast<unsigned>(std::floor(inputDims[1] * inputSpacing[1] / spacing[1])),
@@ -364,7 +364,7 @@ Image& Image::resample(const Vector3& spacing, Image::InterpolationType interp)
   
   Point3 new_origin = origin() + toPoint(0.5 * (spacing - inputSpacing));  // O' += 0.5 * (p' - p)
 
-  return resample(IdentityTransform::New(), new_origin, dims, spacing, coordsys(), interp);
+  return resample(IdentityTransform::New(), new_origin, dims, spacing, coordsys(), interp);  //***
 }
 
 Image& Image::resample(double isoSpacing, Image::InterpolationType interp)
@@ -375,7 +375,7 @@ Image& Image::resample(double isoSpacing, Image::InterpolationType interp)
 Image& Image::resize(Dims dims, Image::InterpolationType interp)
 {
   // use existing dims for any that are unspecified
-  Dims inputDims(this->dims());
+  Dims inputDims(this->dims());  //***
   if (dims[0] == 0) dims[0] = inputDims[0];
   if (dims[1] == 0) dims[1] = inputDims[1];
   if (dims[2] == 0) dims[2] = inputDims[2];
@@ -386,7 +386,7 @@ Image& Image::resize(Dims dims, Image::InterpolationType interp)
                                inputSpacing[1] * inputDims[1] / dims[1],
                                inputSpacing[2] * inputDims[2] / dims[2] }));
 
-  return resample(IdentityTransform::New(), origin(), dims, spacing, coordsys(), interp);
+  return resample(IdentityTransform::New(), origin(), dims, spacing, coordsys(), interp); //***
 }
 
 bool Image::compare(const Image& other, bool verifyall, double tolerance, double precision) const
@@ -576,7 +576,7 @@ Image& Image::applyTransform(const TransformPtr transform, Image::InterpolationT
 Image& Image::applyTransform(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing,
                              const ImageType::DirectionType coordsys, Image::InterpolationType interp)
 {
-  return resample(transform, origin, dims, spacing, coordsys, interp);
+  return resample(transform, origin, dims, spacing, coordsys, interp); //***
 }
 
 Image& Image::extractLabel(const PixelType label)
@@ -730,16 +730,17 @@ Image& Image::gaussianBlur(double sigma)
   return *this;
 }
 
-Image& Image::crop(const LogicalRegion &region)
+Image& Image::crop(PhysicalRegion region)
 {
   if (!region.valid())
     std::cerr << "Invalid region specified." << std::endl;
 
   using FilterType = itk::ExtractImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
-
-  LogicalRegion(region).shrink(LogicalRegion(dims())); // clip region to fit inside image
-  filter->SetExtractionRegion(ImageType::RegionType(region.origin(), region.size()));
+  
+  region.shrink(physicalBoundingBox()); // clip region to fit inside image
+  LogicalRegion indexRegion(region);
+  filter->SetExtractionRegion(ImageType::RegionType(indexRegion.min, indexRegion.size()));
   filter->SetInput(this->image);
   filter->SetDirectionCollapseToIdentity();
   filter->Update();
@@ -881,9 +882,21 @@ Image::PixelType Image::std()
   return sqrt(filter->GetVariance());
 }
 
-LogicalRegion Image::boundingBox(PixelType isoValue) const
+LogicalRegion Image::logicalBoundingBox() const
 {
-  LogicalRegion bbox;
+  LogicalRegion region(Coord({0, 0, 0}), toCoord(dims() - Dims({1,1,1})));
+  return region;
+}
+
+PhysicalRegion Image::physicalBoundingBox() const
+{
+  PhysicalRegion region (origin(), origin() + toVector(dims() - Dims({1,1,1})));
+  return region;
+}
+
+PhysicalRegion Image::physicalBoundingBox(PixelType isoValue) const
+{
+  PhysicalRegion bbox;
 
   itk::ImageRegionIteratorWithIndex<ImageType> imageIterator(image, image->GetLargestPossibleRegion());
   while (!imageIterator.IsAtEnd())
@@ -891,12 +904,22 @@ LogicalRegion Image::boundingBox(PixelType isoValue) const
     PixelType val = imageIterator.Get();
 
     if (val >= isoValue)
-      bbox.expand(imageIterator.GetIndex());
+      bbox.expand(logicalToPhysical(imageIterator.GetIndex()));
 
     ++imageIterator;
   }
-
+  
   return bbox;
+}
+
+PhysicalRegion Image::logicalToPhysical(const LogicalRegion region) const
+{
+  return PhysicalRegion(logicalToPhysical(region.min), logicalToPhysical(region.max));
+}
+
+LogicalRegion Image::physicalToLogical(const PhysicalRegion region) const
+{
+  return LogicalRegion(physicalToLogical(region.min), physicalToLogical(region.max));
 }
 
 Point3 Image::logicalToPhysical(const Coord &v) const

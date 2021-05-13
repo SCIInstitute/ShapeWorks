@@ -36,6 +36,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(TopologyPreservingFilter::getCommand());
   shapeworks.addCommand(Blur::getCommand());
   shapeworks.addCommand(BoundingBoxImage::getCommand());
+  shapeworks.addCommand(ImageBounds::getCommand());
   shapeworks.addCommand(CropImage::getCommand());
   shapeworks.addCommand(ICPRigid::getCommand());
   shapeworks.addCommand(ClipImage::getCommand());
@@ -73,6 +74,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(TranslateMesh::getCommand());
   shapeworks.addCommand(ScaleMesh::getCommand());
   shapeworks.addCommand(BoundingBoxMesh::getCommand());
+  shapeworks.addCommand(MeshBounds::getCommand());
   shapeworks.addCommand(Distance::getCommand());
   shapeworks.addCommand(FixMesh::getCommand());
   shapeworks.addCommand(ClipClosedSurface::getCommand());

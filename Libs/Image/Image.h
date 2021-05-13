@@ -151,7 +151,7 @@ public:
   Image& gaussianBlur(double sigma = 0.0);
 
   /// crops the image down to the given region
-  Image& crop(const LogicalRegion &region);
+  Image& crop(PhysicalRegion region);
 
   /// sets values on the back side of cutting plane (containing three non-colinear points) to val (default 0.0)
   Image& clip(const Point &o, const Point &p1, const Point &p2, const PixelType val = 0.0);
@@ -203,8 +203,20 @@ public:
   /// standard deviation of image
   PixelType std();
 
-  /// computes the logical coordinates of the largest region of data <= the given isoValue
-  LogicalRegion boundingBox(PixelType isovalue = 1.0) const;
+  /// bounding box of complete image in logical (index) space
+  LogicalRegion logicalBoundingBox() const;
+
+  /// bounding box of complete image in physical space
+  PhysicalRegion physicalBoundingBox() const;
+
+  /// bounding box of largest region of data >= the given isoValue in physical space
+  PhysicalRegion physicalBoundingBox(PixelType isovalue) const;
+
+  /// converts a bounding box in logical (index) space to this image's index coordinates
+  PhysicalRegion logicalToPhysical(LogicalRegion region) const;
+
+  /// converts a bounding box in physical space to this image's logical (index) coordinates
+  LogicalRegion physicalToLogical(PhysicalRegion region) const;
 
   /// converts from pixel coordinates to physical space
   Point3 logicalToPhysical(const Coord &c) const;
