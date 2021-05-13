@@ -558,6 +558,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("write",                 &Mesh::write, "writes mesh, format specified by filename extension", "pathname"_a)
   .def("coverage",              &Mesh::coverage, "determines coverage between current mesh and another mesh (e.g. acetabular cup / femoral head)", "otherMesh"_a, "allowBackIntersections"_a=true, "angleThreshold"_a=0, "backSearchRadius"_a=0)
   .def("smooth",                &Mesh::smooth, "applies laplacian smoothing", "iterations"_a=0, "relaxation"_a=0.0)
+  .def("smoothSinc",            &Mesh::smoothSinc, "applies windowed sinc smoothing", "iterations"_a=0, "passband"_a=0.0)
   .def("decimate",              &Mesh::decimate, "applies filter to reduce number of triangles in mesh", "reduction"_a=0.0, "angle"_a=0.0, "preserveTopology"_a=true)
   .def("invertNormals",         &Mesh::invertNormals, "handle flipping normals")
   .def("reflect",

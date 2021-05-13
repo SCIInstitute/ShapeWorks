@@ -55,6 +55,7 @@ COMMAND_DECLARE(WriteMesh, MeshCommand);
 COMMAND_DECLARE(MeshInfo, MeshCommand);
 COMMAND_DECLARE(Coverage, MeshCommand);
 COMMAND_DECLARE(Smooth, MeshCommand);
+COMMAND_DECLARE(SmoothSinc, MeshCommand);
 COMMAND_DECLARE(Decimate, MeshCommand);
 COMMAND_DECLARE(InvertNormals, MeshCommand);
 COMMAND_DECLARE(ReflectMesh, MeshCommand);

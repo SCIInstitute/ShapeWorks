@@ -196,6 +196,7 @@ Mesh& Mesh::smoothSinc(int iterations, double passband)
   smoother->SetNumberOfIterations(iterations);
   smoother->SetPassBand(passband);
   smoother->Update();
+  std::cerr << "ran!\n";
   this->mesh = smoother->GetOutput();
 
   return *this;

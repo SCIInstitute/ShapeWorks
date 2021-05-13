@@ -40,6 +40,15 @@ TEST(MeshTests, smoothTest2)
   ASSERT_TRUE(femur == ground_truth);
 }
 
+TEST(MeshTests, smoothSincTest)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.smoothSinc(10,0.05);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/smoothsinc.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
 TEST(MeshTests, decimateTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
