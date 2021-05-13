@@ -42,7 +42,7 @@ TEST(MeshTests, smoothTest2)
 
 TEST(MeshTests, smoothSincTest)
 {
-  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  Mesh femur(std::string(TEST_DATA_DIR) + "/mesh1.vtk");
   femur.smoothSinc(10,0.05);
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/smoothsinc.vtk");
 
