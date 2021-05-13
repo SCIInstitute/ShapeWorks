@@ -18,10 +18,8 @@ if val is False:
 
 def toImageTest2():
   mesh = Mesh(os.environ["DATA"] + "/femur.ply")
-  bbox = mesh.boundingBox()
-  bbox.pad(1)
-  bbox.max = [bbox.max[0] / 2, bbox.max[1] / 2, bbox.max[2]]
-  img = mesh.toImage(spacing=[2.0, 2.0, 1.0])
+  bbox = mesh.boundingBox().pad(2) # changing spacing means we need to pad more to compensate
+  img = mesh.toImage(bbox, spacing=[2.0, 2.0, 1.0])
 
   compareImg = Image(os.environ["DATA"] + "/femurImage2.nrrd")
 
@@ -35,7 +33,7 @@ if val is False:
 
 def toImageTest3():
   mesh = Mesh(os.environ["DATA"] + "/femur.ply")
-  img = mesh.toImage(dims=[40, 145, 131])
+  img = mesh.toImage(region=mesh.boundingBox(), spacing=[2.29, 0.462, 1])
 
   compareImg = Image(os.environ["DATA"] + "/femurImage3.nrrd")
 

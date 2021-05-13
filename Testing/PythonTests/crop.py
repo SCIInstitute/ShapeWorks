@@ -6,11 +6,13 @@ def cropTest1():
   img = Image(os.environ["DATA"] + "/seg.ellipsoid_1.nrrd")
 
   region = img.boundingBox().pad(-16)
-  #region.pad(-16)
+  
+  # [] fixme!
   # region.min[0] = 7
   # region.max[0] = 42
-  region.min = [7, region.min[1], region.min[2]];
-  region.max = [42, region.min[1], region.min[2]];
+  region.min = [7, region.min[1], region.min[2]]
+  region.max = [42, region.max[1], region.max[2]]
+
   img.crop(region)
 
   compareImg = Image(os.environ["DATA"] + "/crop_baseline.nrrd")

@@ -750,7 +750,7 @@ PYBIND11_MODULE(shapeworks, m)
        },
        "rasterizes mesh to a binary image, computing dims/spacing if necessary (specifying dims overrides specified spacing)",
        "region"_a=PhysicalRegion(),
-       "spacing"_a=std::vector<double>({0, 0, 0}))
+       "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}))
 
   .def("distance",
        &Mesh::distance, "computes surface to surface distance",
@@ -762,7 +762,7 @@ PYBIND11_MODULE(shapeworks, m)
        },
        "converts mesh to distance transform, computing dims/spacing if necessary (specifying dims overrides specified spacing)",
        "region"_a=PhysicalRegion(),
-       "spacing"_a=std::vector<double>({0, 0, 0}))
+       "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}))
 
   .def("center",
        [](Mesh &mesh) -> decltype(auto) {
