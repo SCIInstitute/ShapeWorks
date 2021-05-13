@@ -281,9 +281,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, int domain)
       transform->SetTranslation(tform);
       this->increment_progress();
     }
-
   }
-
 
   // store transform
   std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();

@@ -185,7 +185,8 @@ Mesh &Mesh::smooth(int iterations, double relaxation)
   }
   smoother->Update();
   this->mesh = smoother->GetOutput();
-
+  // must regenerate normals after smoothing
+  generateNormals();
   return *this;
 }
 
@@ -196,9 +197,9 @@ Mesh& Mesh::smoothSinc(int iterations, double passband)
   smoother->SetNumberOfIterations(iterations);
   smoother->SetPassBand(passband);
   smoother->Update();
-  std::cerr << "ran!\n";
   this->mesh = smoother->GetOutput();
-
+  // must regenerate normals after smoothing
+  generateNormals();
   return *this;
 }
 
