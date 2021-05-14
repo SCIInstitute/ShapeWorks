@@ -5,27 +5,11 @@ from shapeworks import *
 def padfailTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.pad()
+  return True
 
-  compareImg = Image(os.environ["DATA"] + "/padfail.nrrd")
-
-  return img.compare(compareImg)
-
-val = padfailTest1()
-
-if val is False:
-  print("padfailTest1 failed")
-  sys.exit(1)
-
-def padfailTest2():
-  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
-  img.pad(0)
-
-  compareImg = Image(os.environ["DATA"] + "/padfail.nrrd")
-
-  return img.compare(compareImg)
-
-val = padfailTest2()
-
-if val is False:
-  print("padfailTest2 failed")
-  sys.exit(1)
+try:
+	val = padfailTest1()
+	print("padfailTest1 failed")
+	sys.exit(1)
+except:
+	pass

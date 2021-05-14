@@ -356,7 +356,7 @@ Image& Image::resample(const TransformPtr transform, const Point3 origin, Dims d
 Image& Image::resample(const Vector3& spacing, Image::InterpolationType interp)
 {
   // compute logical dimensions that keep all image data for this spacing
-  Dims inputDims(this->dims());  //***
+  Dims inputDims(this->dims());
   Vector3 inputSpacing(this->spacing());
   Dims dims({ static_cast<unsigned>(std::floor(inputDims[0] * inputSpacing[0] / spacing[0])),
               static_cast<unsigned>(std::floor(inputDims[1] * inputSpacing[1] / spacing[1])),
@@ -375,7 +375,7 @@ Image& Image::resample(double isoSpacing, Image::InterpolationType interp)
 Image& Image::resize(Dims dims, Image::InterpolationType interp)
 {
   // use existing dims for any that are unspecified
-  Dims inputDims(this->dims());  //***
+  Dims inputDims(this->dims());
   if (dims[0] == 0) dims[0] = inputDims[0];
   if (dims[1] == 0) dims[1] = inputDims[1];
   if (dims[2] == 0) dims[2] = inputDims[2];
@@ -386,7 +386,7 @@ Image& Image::resize(Dims dims, Image::InterpolationType interp)
                                inputSpacing[1] * inputDims[1] / dims[1],
                                inputSpacing[2] * inputDims[2] / dims[2] }));
 
-  return resample(IdentityTransform::New(), origin(), dims, spacing, coordsys(), interp); //***
+  return resample(IdentityTransform::New(), origin(), dims, spacing, coordsys(), interp);
 }
 
 bool Image::compare(const Image& other, bool verifyall, double tolerance, double precision) const
@@ -466,6 +466,29 @@ Image& Image::pad(int padx, int pady, int padz, PixelType value)
   upperExtendRegion[1] = pady;
   upperExtendRegion[2] = padz;
 
+  return pad(lowerExtendRegion, upperExtendRegion, value);
+}
+
+Image& Image::pad(PhysicalRegion &_region, PixelType value)
+{
+  auto region = physicalToLogical(_region);
+  auto bbox = logicalBoundingBox();
+  
+  ImageType::SizeType lowerExtendRegion;
+  lowerExtendRegion[0] = std::max(0L, bbox.min[0] - region.min[0]); // positive number to pad in each direction
+  lowerExtendRegion[1] = std::max(0L, bbox.min[1] - region.min[1]);
+  lowerExtendRegion[2] = std::max(0L, bbox.min[2] - region.min[2]);
+
+  ImageType::SizeType upperExtendRegion;
+  upperExtendRegion[0] = std::max(0L, region.max[0] - bbox.max[0]); // positive number to pad in each direction
+  upperExtendRegion[1] = std::max(0L, region.max[1] - bbox.max[1]);
+  upperExtendRegion[2] = std::max(0L, region.max[2] - bbox.max[2]);
+
+  return pad(lowerExtendRegion, upperExtendRegion, value);
+}
+
+Image& Image::pad(Dims lowerExtendRegion, Dims upperExtendRegion, PixelType value)
+{
   using FilterType = itk::ConstantPadImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
@@ -576,7 +599,7 @@ Image& Image::applyTransform(const TransformPtr transform, Image::InterpolationT
 Image& Image::applyTransform(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing,
                              const ImageType::DirectionType coordsys, Image::InterpolationType interp)
 {
-  return resample(transform, origin, dims, spacing, coordsys, interp); //***
+  return resample(transform, origin, dims, spacing, coordsys, interp);
 }
 
 Image& Image::extractLabel(const PixelType label)
@@ -739,7 +762,7 @@ Image& Image::crop(PhysicalRegion region)
   FilterType::Pointer filter = FilterType::New();
   
   region.shrink(physicalBoundingBox()); // clip region to fit inside image
-  LogicalRegion indexRegion(region);
+  LogicalRegion indexRegion(physicalToLogical(region));
   filter->SetExtractionRegion(ImageType::RegionType(indexRegion.min, indexRegion.size()));
   filter->SetInput(this->image);
   filter->SetDirectionCollapseToIdentity();
@@ -890,7 +913,7 @@ LogicalRegion Image::logicalBoundingBox() const
 
 PhysicalRegion Image::physicalBoundingBox() const
 {
-  PhysicalRegion region (origin(), origin() + toVector(dims() - Dims({1,1,1})));
+  PhysicalRegion region(origin(), origin() + toVector(dims() - Dims({1,1,1})));
   return region;
 }
 

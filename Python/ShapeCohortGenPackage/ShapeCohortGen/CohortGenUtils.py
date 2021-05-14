@@ -58,7 +58,7 @@ Generate segmentations from mesh list:
  - if randomize_size, meshes not in allow_on_boundary subset will be ALL mesh region with different padding
  - this is an example of using Mesh.toImage, not a useful tool
 '''
-def generate_segmentations(meshList, out_dir, randomize_size=True, allow_on_boundary=True):
+def generate_segmentations(meshList, out_dir, randomize_size=True, spacing=[1.0,1.0,1.0], allow_on_boundary=True):
 
 	# get list of meshs to be converted
 	segDir = out_dir + "segmentations/"
@@ -91,14 +91,14 @@ def generate_segmentations(meshList, out_dir, randomize_size=True, allow_on_boun
 			bb = bball
 
 			if randomize_size:			
-				pad = randint(5, high=15, size=3)
+				pad = np.random.randint(5, high=15, size=3)
 				bb.min -= pad
 				bb.max += pad
 			else:
 				bb.pad(5)
 
 		# sample the given region of Mesh to an image
-		image = mesh.toImage(bb)
+		image = mesh.toImage(bb, spacing)
 
 		# write the result to disk and move to the next mesh
 		image.write(segFile, 0)

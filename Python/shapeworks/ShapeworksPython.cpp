@@ -119,7 +119,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def(py::init<Image::ImageType::Pointer>())
 
   .def(py::init
-       ([](py::array_t<long> np_array) {  // FIXME: this is broken (or not even called)
+       ([](py::array_t<double> np_array) {  // FIXME github issue #965
           using ImportType = itk::ImportImageFilter<Image::PixelType, 3>;
           auto importer = ImportType::New();
           auto info = np_array.request();
@@ -140,7 +140,8 @@ PYBIND11_MODULE(shapeworks, m)
           importer->SetRegion(region);
           importer->Update();
           return Image(importer->GetOutput());
-        }))
+        }),
+       "initialize an image from an array")
 
   .def("__neg__", [](Image& img) -> decltype(auto) { return -img; })
   .def(py::self + py::self)
@@ -230,6 +231,11 @@ PYBIND11_MODULE(shapeworks, m)
        py::overload_cast<int, int, int, Image::PixelType>(&Image::pad),
        "pads an image by desired number of pixels in each direction with constant value",
        "padx"_a, "pady"_a, "padz"_a, "value"_a=0.0)
+
+  .def("pad",
+       py::overload_cast<PhysicalRegion&, Image::PixelType>(&Image::pad),
+       "pads an image to include the given region with constant value",
+       "region"_a, "value"_a=0.0)
 
   .def("translate",
        [](Image& image, const std::vector<double>& v) -> decltype(auto) {
@@ -459,11 +465,10 @@ PYBIND11_MODULE(shapeworks, m)
 
   .def("toArray",
        [](const Image &image) -> decltype(auto) {
-         Image::ImageType::Pointer img = image.getITKImage();
-         const auto size = img->GetLargestPossibleRegion().GetSize();
-         const auto shape = std::vector<size_t>{size[2], size[1], size[0]};
+         const auto dims = image.dims();
+         const auto shape = std::vector<size_t>{dims[2], dims[1], dims[0]};
          return py::array(py::dtype::of<typename Image::ImageType::Pointer::ObjectType::PixelType>(),
-                          shape, img->GetBufferPointer());
+                          shape, image.getITKImage()->GetBufferPointer());
        },
        "returns raw array of image data (note: spacing, origin, coordsys are not preserved)")
 

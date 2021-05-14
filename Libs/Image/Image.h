@@ -93,6 +93,9 @@ public:
   /// pads an image by desired number of voxels in each direction with constant value
   Image& pad(int padx, int pady, int padz, PixelType value = 0.0);
 
+  /// pads an image to include the given region with constant value
+  Image& pad(PhysicalRegion &region, PixelType value = 0.0);
+
   /// helper to simply translate image
   Image& translate(const Vector3 &v);
 
@@ -257,6 +260,9 @@ private:
 
   /// creates a vtkPolyData for the given image
   static vtkSmartPointer<vtkPolyData> getPolyData(const Image& image, PixelType isoValue = 0.0);
+
+  /// pad image by the given dims (always positive) in each direction
+  Image& pad(Dims lowerExtendRegion, Dims upperExtendRegion, PixelType value = 0.0);
 
   StatsPtr statsFilter();
 
