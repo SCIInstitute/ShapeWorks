@@ -104,17 +104,45 @@ Region MeshUtils::boundingBox(std::vector<Mesh> &meshes, bool center)
 
 int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes)
 {
+  std::vector<std::pair<int,int>> pairs;
+  std::map<int,double> results;
+
+  for (int i = 0; i < meshes.size(); i++) {
+    for (int j = i + 1; j < meshes.size(); j++) {
+      pairs.push_back(std::make_pair(i, j));
+    }
+  }
+
+  tbb::mutex mutex;
+
   tbb::parallel_for(
-    tbb::blocked_range<size_t>{0, meshes.size()},
+    tbb::blocked_range<size_t>{0, pairs.size()},
     [&](const tbb::blocked_range<size_t>& r) {
+      std::vector<std::pair<int, double>> results_private;
       for (size_t i = r.begin(); i < r.end(); ++i) {
-        for (int j = 0; j < meshes.size(); j++) {
-          if (i != j) {
-            std::cerr << i << " to " << j << "\n";
-          }
+
+        auto pair = pairs[i];
+
+        std::cerr << "running something on " << pair.first << " and " << pair.second << "\n";
+
+        static double foo = 1.0;
+        results_private.push_back(std::make_pair(i, foo));
+        foo++;
+
+        {
+          tbb::mutex::scoped_lock lock(mutex);
+          results[i] = foo;
         }
+
       }
     });
+
+  std::cerr << "Results:\n";
+  for (int i = 0; i < pairs.size(); i++) {
+    auto pair = pairs[i];
+    std::cerr << "pair " << pair.first << " -> " << pair.second << " = " << results[i] << "\n";
+  }
+
 
   return 0;
 }

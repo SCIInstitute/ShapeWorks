@@ -45,6 +45,7 @@ bool Groom::run()
   }
   tbb::atomic<bool> success = true;
 
+  int num_domains = this->project_->get_number_of_domains_per_subject();
   tbb::parallel_for(
     tbb::blocked_range<size_t>{0, subjects.size()},
     [&](const tbb::blocked_range<size_t>& r) {
@@ -72,6 +73,33 @@ bool Groom::run()
         }
       }
     });
+
+  // alignment
+  for (int domain = 0; domain < num_domains; domain++) {
+    if (this->abort_) {
+      success = false;
+      continue;
+    }
+
+    auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
+
+    if (params.get_icp()) {
+      std::vector<Mesh> meshes;
+      for (int i = 0; i < subjects.size(); i++) {
+        auto path = subjects[i]->get_segmentation_filenames()[domain];
+        // groomed mesh name
+        std::string groom_name = this->get_output_filename(path, DomainType::Mesh);
+        Mesh mesh = MeshUtils::threadSafeReadMesh(path);
+        meshes.push_back(mesh);
+      }
+
+      std::cerr << "The reference mesh is " << MeshUtils::findReferenceMesh(meshes) << "\n";
+
+    }
+
+  }
+
+
 
   // store back to project
   this->project_->store_subjects();
@@ -281,6 +309,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, int domain)
       transform->SetTranslation(tform);
       this->increment_progress();
     }
+
   }
 
   // store transform
