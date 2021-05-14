@@ -90,7 +90,7 @@ TEST(pythonTests, padTest)
 
 TEST(pythonTests, padFailTest)
 {
-  ASSERT_TRUE(system("python padfail.py"));
+  ASSERT_FALSE(system("python padfail.py"));
 }
 
 TEST(pythonTests, translateTest)

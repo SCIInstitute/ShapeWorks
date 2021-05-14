@@ -398,6 +398,7 @@ TEST(ImageTests, cropTest1)
   region.min[0] = 7;
   region.max[0] = 42;
   image.crop(region);
+  image.write("/tmp/crop_baseline.nrrd");
   Image ground_truth(std::string(TEST_DATA_DIR) + "/crop_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -411,6 +412,25 @@ TEST(ImageTests, cropTest2)
   Image ground_truth(std::string(TEST_DATA_DIR) + "/seg.ellipsoid_1.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, boundingBoxSingleTest1)
+{
+  auto img = Image(std::string(TEST_DATA_DIR) + "/femurImage.nrrd");
+  auto pbox = img.physicalBoundingBox();
+  auto ground_truth = PhysicalRegion(Point({46.4821, -192.471, -737.593}),
+                                     Point({135.482, -128.471, -608.593}));
+  ASSERT_TRUE(epsEqualN(pbox.min, ground_truth.min) &&
+              epsEqualN(pbox.max, ground_truth.max));
+}
+
+TEST(ImageTests, boundingBoxSingleTest2)
+{
+  auto img = Image(std::string(TEST_DATA_DIR) + "/femurImage.nrrd");
+  auto lbox = img.logicalBoundingBox();
+  auto ground_truth = LogicalRegion(Coord({0, 0, 0}),
+                                    Coord({88, 63, 128}));
+  ASSERT_TRUE(lbox == ground_truth);
 }
 
 TEST(ImageTests, boundingBoxTest1)

@@ -435,14 +435,21 @@ PYBIND11_MODULE(shapeworks, m)
        &Image::std,
        "standard deviation of image")
 
+  // py::overload_cast doesn't work with const functions, so we directly static_cast for these functions
   .def("boundingBox",
        static_cast<PhysicalRegion (Image::*)() const>(&Image::physicalBoundingBox),
        "computes the logical coordinates of the largest region of data <= the given isoValue")
-
   .def("boundingBox",
        static_cast<PhysicalRegion (Image::*)(Image::PixelType) const>(&Image::physicalBoundingBox),
        "computes the logical coordinates of the largest region of data <= the given isoValue",
        "isovalue"_a=1.0)
+
+  .def("logicalToPhysical",
+       [](Image& self, PhysicalRegion region) -> decltype(auto) {
+         return self.logicalToPhysical(region);
+       },
+       "converts from a logical region (index coordinates) to a physical region",
+       "region"_a)
 
   .def("logicalToPhysical",
        [](Image& self, std::vector<long>& c) -> decltype(auto) {
@@ -450,6 +457,13 @@ PYBIND11_MODULE(shapeworks, m)
        },
        "converts from pixel coordinates to physical space",
        "c"_a)
+
+  .def("physicalToLogical",
+       [](Image& self, PhysicalRegion region) -> PhysicalRegion {
+         return self.physicalToLogical(region);
+       },
+       "converts from a physical region to a logical region (index coordinates)",
+       "region"_a)
 
   .def("physicalToLogical",
        [](Image& self, std::vector<double>& p) -> decltype(auto) {

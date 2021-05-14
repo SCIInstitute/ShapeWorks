@@ -891,6 +891,41 @@ bool ImageBounds::execute(const optparse::Values &options, SharedCommandData &sh
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// SetRegion
+///////////////////////////////////////////////////////////////////////////////
+void SetRegion::buildParser()
+{
+  const std::string prog = "set-region";
+  const std::string desc = "set the current (physical) region to the specified min/max in each direction, for use with downstreams commands such as crop (note: could instead use the image-bounds command with an isovalue)";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--xmin").action("store").type("double").help("Minimum X.");
+  parser.add_option("--xmax").action("store").type("double").help("Maximum X.");
+  parser.add_option("--ymin").action("store").type("double").help("Minimum Y.");
+  parser.add_option("--ymax").action("store").type("double").help("Maximum Y.");
+  parser.add_option("--zmin").action("store").type("double").help("Minimum Z.");
+  parser.add_option("--zmax").action("store").type("double").help("Maximum Z.");
+
+  Command::buildParser();
+}
+
+bool SetRegion::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  double xmin = static_cast<double>(options.get("xmin"));
+  double ymin = static_cast<double>(options.get("ymin"));
+  double zmin = static_cast<double>(options.get("zmin"));
+  double xmax = static_cast<double>(options.get("xmax"));
+  double ymax = static_cast<double>(options.get("ymax"));
+  double zmax = static_cast<double>(options.get("zmax"));
+
+  sharedData.region = PhysicalRegion(Point({xmin, ymin, zmin}),
+                                     Point({xmax, ymax, zmax}));
+  std::cout << "region: " << sharedData.region << std::endl;
+
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // CropImage
 ///////////////////////////////////////////////////////////////////////////////
 void CropImage::buildParser()
@@ -898,13 +933,6 @@ void CropImage::buildParser()
   const std::string prog = "crop";
   const std::string desc = "crop image down to the current region (e.g., from bounding-box command), or the specified min/max in each direction [default: image dimensions]";
   parser.prog(prog).description(desc);
-
-  parser.add_option("--xmin").action("store").type("unsigned").set_default(0).help("Minimum X.");
-  parser.add_option("--xmax").action("store").type("unsigned").set_default(0).help("Maximum X.");
-  parser.add_option("--ymin").action("store").type("unsigned").set_default(0).help("Minimum Y.");
-  parser.add_option("--ymax").action("store").type("unsigned").set_default(0).help("Maximum Y.");
-  parser.add_option("--zmin").action("store").type("unsigned").set_default(0).help("Minimum Z.");
-  parser.add_option("--zmax").action("store").type("unsigned").set_default(0).help("Maximum Z.");
 
   Command::buildParser();
 }
@@ -917,24 +945,8 @@ bool CropImage::execute(const optparse::Values &options, SharedCommandData &shar
     return false;
   }
 
-  unsigned xmin = static_cast<unsigned>(options.get("xmin"));
-  unsigned ymin = static_cast<unsigned>(options.get("ymin"));
-  unsigned zmin = static_cast<unsigned>(options.get("zmin"));
-  unsigned xmax = static_cast<unsigned>(options.get("xmax"));
-  unsigned ymax = static_cast<unsigned>(options.get("ymax"));
-  unsigned zmax = static_cast<unsigned>(options.get("zmax"));
-
-  if (xmin == 0 && ymin == 0 && zmin == 0 &&
-      xmax == 0 && ymax == 0 && zmax == 0)
-    sharedData.image.crop(sharedData.region); // use the previous region (maybe set by boundingbox cmd)
-  else
-  {
-    LogicalRegion region(sharedData.image.dims());
-    if (xmin < xmax) { region.min[0] = xmin; region.max[0] = xmax; }
-    if (ymin < ymax) { region.min[1] = ymin; region.max[1] = ymax; }
-    if (zmin < zmax) { region.min[2] = zmin; region.max[2] = zmax; }
-    sharedData.image.crop(region);
-  }
+  std::cout << "region: " << sharedData.region << std::endl;
+  sharedData.image.crop(sharedData.region);
   return true;
 }
 

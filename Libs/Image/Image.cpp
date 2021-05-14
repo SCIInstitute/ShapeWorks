@@ -761,8 +761,12 @@ Image& Image::crop(PhysicalRegion region)
   using FilterType = itk::ExtractImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
   
+  std::cout << "region passed in: " << region << std::endl;
   region.shrink(physicalBoundingBox()); // clip region to fit inside image
+  std::cout << "image physical region: " << physicalBoundingBox() << std::endl;
+  std::cout << "shrunk by image physical region: " << region << std::endl;
   LogicalRegion indexRegion(physicalToLogical(region));
+  std::cout << "logical (index) region: " << indexRegion << std::endl;
   filter->SetExtractionRegion(ImageType::RegionType(indexRegion.min, indexRegion.size()));
   filter->SetInput(this->image);
   filter->SetDirectionCollapseToIdentity();
@@ -913,7 +917,7 @@ LogicalRegion Image::logicalBoundingBox() const
 
 PhysicalRegion Image::physicalBoundingBox() const
 {
-  PhysicalRegion region(origin(), origin() + toVector(dims() - Dims({1,1,1})));
+  PhysicalRegion region(origin(), origin() + dotProduct(toVector(dims()), spacing()));
   return region;
 }
 
@@ -954,7 +958,9 @@ Point3 Image::logicalToPhysical(const Coord &v) const
 
 Coord Image::physicalToLogical(const Point3 &p) const
 {
-  return image->TransformPhysicalPointToIndex(p);
+  const double eps = 1E-1;
+  Point epsp({eps, eps, eps});
+  return image->TransformPhysicalPointToIndex(toPoint(p - epsp));
 }
 
 vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image& image, PixelType isoValue)
