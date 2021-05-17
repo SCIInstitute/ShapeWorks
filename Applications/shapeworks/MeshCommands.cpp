@@ -203,7 +203,8 @@ bool Smooth::execute(const optparse::Values &options, SharedCommandData &sharedD
 void Decimate::buildParser()
 {
   const std::string prog = "decimate";
-  const std::string desc = "brief description of command"; // TODO: add description
+  const std::string desc = "applies filter to reduce number of triangles in mesh";
+
   parser.prog(prog).description(desc);
 
   parser.add_option("--reduction").action("store").type("double").set_default(0.0).help("Description of optionName [default: %default]."); // TODO: add description
@@ -563,17 +564,12 @@ void MeshBounds::buildParser()
   const std::string desc = "return physical bounds of mesh";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--padding").action("store").type("double").set_default(0.0).help("Padding in each direction to pad bounds [default: %default].");
-
   Command::buildParser();
 }
 
 bool MeshBounds::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  double padding = static_cast<double>(options.get("padding"));
-
   sharedData.region = sharedData.mesh->boundingBox();
-  sharedData.region.pad(padding);
 
   std::cout << "Bounding box:\n" << sharedData.region << std::endl;
 
@@ -941,9 +937,9 @@ bool MeshToImage::execute(const optparse::Values &options, SharedCommandData &sh
   double pad = static_cast<double>(options.get("pad"));
 
   Point3 spacing({x,y,z});
-  auto region = sharedData.mesh->boundingBox().pad(pad);
+  auto region = sharedData.mesh->boundingBox();
   
-  sharedData.image = sharedData.mesh->toImage(region, spacing);
+  sharedData.image = sharedData.mesh->toImage(region, pad, spacing);
   return true;
 }
 
@@ -978,9 +974,9 @@ bool MeshToDT::execute(const optparse::Values &options, SharedCommandData &share
   double pad = static_cast<double>(options.get("pad"));
 
   Point3 spacing({x,y,z});
-  auto region = sharedData.mesh->boundingBox().pad(pad);
+  auto region = sharedData.mesh->boundingBox();
   
-  sharedData.image = sharedData.mesh->toDistanceTransform(region, spacing);
+  sharedData.image = sharedData.mesh->toDistanceTransform(region, pad, spacing);
   return true;
 }
 

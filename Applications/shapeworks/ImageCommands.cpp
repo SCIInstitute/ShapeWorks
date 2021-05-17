@@ -838,7 +838,6 @@ void BoundingBoxImage::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to images (must be followed by `--`), ex: \"bounding-box-image --names *.nrrd -- --isovalue 1.5\")");
-  parser.add_option("--padding").action("store").type("int").set_default(0).help("Number of extra voxels in each direction to pad the largest bounding box [default: %default].");
   parser.add_option("--isovalue").action("store").type("double").set_default(1.0).help("Threshold value [default: %default].");
 
   Command::buildParser();
@@ -847,11 +846,9 @@ void BoundingBoxImage::buildParser()
 bool BoundingBoxImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::vector<std::string> filenames = options.get("names");
-  int padding = static_cast<int>(options.get("padding"));
   double isoValue = static_cast<double>(options.get("isovalue"));
 
   sharedData.region = ImageUtils::boundingBox(filenames, isoValue);
-  sharedData.region.pad(padding);
   std::cout << "Bounding box:\n" << sharedData.region << std::endl;
   return true;
 }
@@ -865,7 +862,6 @@ void ImageBounds::buildParser()
   const std::string desc = "return bounds of image, optionally with an isovalue to restrict region";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--padding").action("store").type("int").set_default(0).help("Number of extra voxels in each direction to pad the largest bounding box [default: %default].");
   parser.add_option("--isovalue").action("store").type("double").help("Isovalue [default: entire image].");
 
   Command::buildParser();
@@ -873,7 +869,6 @@ void ImageBounds::buildParser()
 
 bool ImageBounds::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  int padding = static_cast<int>(options.get("padding"));
   auto isovalue = options.get("isovalue");
 
   if (isovalue.isValid())
@@ -885,7 +880,6 @@ bool ImageBounds::execute(const optparse::Values &options, SharedCommandData &sh
     sharedData.region = sharedData.image.physicalBoundingBox();
   }
 
-  sharedData.region.pad(padding);
   std::cout << "Bounding box:\n" << sharedData.region << std::endl;
   return true;
 }

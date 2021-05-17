@@ -466,25 +466,24 @@ Image& Image::pad(int padx, int pady, int padz, PixelType value)
   upperExtendRegion[1] = pady;
   upperExtendRegion[2] = padz;
 
-  return pad(lowerExtendRegion, upperExtendRegion, value);
+  return this->pad(lowerExtendRegion, upperExtendRegion, value);
 }
 
-Image& Image::pad(PhysicalRegion &_region, PixelType value)
+Image& Image::pad(IndexRegion &region, PixelType value)
 {
-  auto region = physicalToLogical(_region);
   auto bbox = logicalBoundingBox();
   
   ImageType::SizeType lowerExtendRegion;
-  lowerExtendRegion[0] = std::max(0L, bbox.min[0] - region.min[0]); // positive number to pad in each direction
-  lowerExtendRegion[1] = std::max(0L, bbox.min[1] - region.min[1]);
-  lowerExtendRegion[2] = std::max(0L, bbox.min[2] - region.min[2]);
+  lowerExtendRegion[0] = std::max(0L, -region.min[0]); // positive number to pad in each direction
+  lowerExtendRegion[1] = std::max(0L, -region.min[1]);
+  lowerExtendRegion[2] = std::max(0L, -region.min[2]);
 
   ImageType::SizeType upperExtendRegion;
   upperExtendRegion[0] = std::max(0L, region.max[0] - bbox.max[0]); // positive number to pad in each direction
   upperExtendRegion[1] = std::max(0L, region.max[1] - bbox.max[1]);
   upperExtendRegion[2] = std::max(0L, region.max[2] - bbox.max[2]);
 
-  return pad(lowerExtendRegion, upperExtendRegion, value);
+  return this->pad(lowerExtendRegion, upperExtendRegion, value);
 }
 
 Image& Image::pad(Dims lowerExtendRegion, Dims upperExtendRegion, PixelType value)
@@ -753,19 +752,20 @@ Image& Image::gaussianBlur(double sigma)
   return *this;
 }
 
-Image& Image::crop(PhysicalRegion region)
+Image& Image::crop(PhysicalRegion region, const int padding)
 {
+  std::cout << "region passed in: " << region << std::endl;
+  region.shrink(physicalBoundingBox()); // clip region to fit inside image
   if (!region.valid())
-    std::cerr << "Invalid region specified." << std::endl;
+    std::cerr << "Invalid region specified (it may lie outside physical bounds of image)." << std::endl;
 
   using FilterType = itk::ExtractImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
   
-  std::cout << "region passed in: " << region << std::endl;
-  region.shrink(physicalBoundingBox()); // clip region to fit inside image
   std::cout << "image physical region: " << physicalBoundingBox() << std::endl;
   std::cout << "shrunk by image physical region: " << region << std::endl;
-  LogicalRegion indexRegion(physicalToLogical(region));
+  IndexRegion indexRegion(physicalToLogical(region));
+  indexRegion.pad(padding);
   std::cout << "logical (index) region: " << indexRegion << std::endl;
   filter->SetExtractionRegion(ImageType::RegionType(indexRegion.min, indexRegion.size()));
   filter->SetInput(this->image);
@@ -909,15 +909,16 @@ Image::PixelType Image::std()
   return sqrt(filter->GetVariance());
 }
 
-LogicalRegion Image::logicalBoundingBox() const
+IndexRegion Image::logicalBoundingBox() const
 {
-  LogicalRegion region(Coord({0, 0, 0}), toCoord(dims() - Dims({1,1,1})));
+  IndexRegion region(Coord({0, 0, 0}), toCoord(dims() - Dims({1,1,1})));
   return region;
 }
 
 PhysicalRegion Image::physicalBoundingBox() const
 {
-  PhysicalRegion region(origin(), origin() + dotProduct(toVector(dims()), spacing()));
+  
+  PhysicalRegion region(origin(), origin() + dotProduct(toVector(dims() - Dims({1,1,1})), spacing()));
   return region;
 }
 
@@ -939,14 +940,14 @@ PhysicalRegion Image::physicalBoundingBox(PixelType isoValue) const
   return bbox;
 }
 
-PhysicalRegion Image::logicalToPhysical(const LogicalRegion region) const
+PhysicalRegion Image::logicalToPhysical(const IndexRegion region) const
 {
   return PhysicalRegion(logicalToPhysical(region.min), logicalToPhysical(region.max));
 }
 
-LogicalRegion Image::physicalToLogical(const PhysicalRegion region) const
+IndexRegion Image::physicalToLogical(const PhysicalRegion region) const
 {
-  return LogicalRegion(physicalToLogical(region.min), physicalToLogical(region.max));
+  return IndexRegion(physicalToLogical(region.min), physicalToLogical(region.max));
 }
 
 Point3 Image::logicalToPhysical(const Coord &v) const
@@ -958,9 +959,7 @@ Point3 Image::logicalToPhysical(const Coord &v) const
 
 Coord Image::physicalToLogical(const Point3 &p) const
 {
-  const double eps = 1E-1;
-  Point epsp({eps, eps, eps});
-  return image->TransformPhysicalPointToIndex(toPoint(p - epsp));
+  return image->TransformPhysicalPointToIndex(p);
 }
 
 vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image& image, PixelType isoValue)

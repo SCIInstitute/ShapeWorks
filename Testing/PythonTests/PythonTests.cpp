@@ -8,6 +8,16 @@ TEST(pythonTests, setup)
   ASSERT_TRUE(true);
 }
 
+TEST(pythonTests, padTest)
+{
+  ASSERT_FALSE(system("python pad.py"));
+}
+
+TEST(pythonTests, padFailTest)
+{
+  ASSERT_FALSE(system("python padfail.py"));
+}
+
 TEST(pythonTests, cropTest)
 {
   ASSERT_FALSE(system("python crop.py"));
@@ -81,16 +91,6 @@ TEST(pythonTests, resizeFailTest)
 TEST(pythonTests, recenterTest)
 {
   ASSERT_FALSE(system("python recenter.py"));
-}
-
-TEST(pythonTests, padTest)
-{
-  ASSERT_FALSE(system("python pad.py"));
-}
-
-TEST(pythonTests, padFailTest)
-{
-  ASSERT_FALSE(system("python padfail.py"));
 }
 
 TEST(pythonTests, translateTest)

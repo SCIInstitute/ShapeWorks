@@ -61,12 +61,17 @@ if val is False:
   
 def padTest5():
   img = Image(os.environ["DATA"] + "/femurImage.nrrd")
+  print(img)
   region = img.boundingBox().pad(10)
+  print(region)
   region.min -= [5,6,7]
+  print(region)
   img.pad(region)
-
+  print(img)
+  
   compareImg = Image(os.environ["DATA"] + "/pad5.nrrd")
-
+  print(compareImg)
+  
   return img.compare(compareImg)
 
 val = padTest5()

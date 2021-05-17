@@ -22,7 +22,7 @@ PhysicalRegion ImageUtils::boundingBox(std::vector<std::string> &filenames, Imag
       throw std::invalid_argument("Image sizes do not match (" + filename + ")");
     }
 
-    bbox.grow(img.physicalBoundingBox(isoValue));
+    bbox.expand(img.physicalBoundingBox(isoValue));
   }
 
   return bbox;
@@ -41,7 +41,7 @@ PhysicalRegion ImageUtils::boundingBox(std::vector<Image> &images, Image::PixelT
     if (img.dims() != dims)
       throw std::invalid_argument("Image sizes do not match");
 
-    bbox.grow(img.physicalBoundingBox(isoValue));
+    bbox.expand(img.physicalBoundingBox(isoValue));
   }
 
   return bbox;

@@ -94,7 +94,7 @@ public:
   Image& pad(int padx, int pady, int padz, PixelType value = 0.0);
 
   /// pads an image to include the given region with constant value
-  Image& pad(PhysicalRegion &region, PixelType value = 0.0);
+  Image& pad(IndexRegion &region, PixelType value = 0.0);
 
   /// helper to simply translate image
   Image& translate(const Vector3 &v);
@@ -135,7 +135,7 @@ public:
   /// denoises an image using curvature driven flow using curvature flow image filter
   Image& applyCurvatureFilter(unsigned iterations = 10);
 
-  /// computes gradient magnitude of an image region at each pixel using gradient magnitude filter
+  /// computes gradient magnitude at each pixel using gradient magnitude filter
   Image& applyGradientFilter();
 
   /// computes sigmoid function pixel-wise using sigmoid image filter
@@ -153,8 +153,8 @@ public:
   /// applies gaussian blur with given sigma
   Image& gaussianBlur(double sigma = 0.0);
 
-  /// crops the image down to the given region
-  Image& crop(PhysicalRegion region);
+  /// crops the image down to the given region, with optional padding added
+  Image& crop(PhysicalRegion region, const int padding = 0);
 
   /// sets values on the back side of cutting plane (containing three non-colinear points) to val (default 0.0)
   Image& clip(const Point &o, const Point &p1, const Point &p2, const PixelType val = 0.0);
@@ -207,7 +207,7 @@ public:
   PixelType std();
 
   /// bounding box of complete image in logical (index) space
-  LogicalRegion logicalBoundingBox() const;
+  IndexRegion logicalBoundingBox() const;
 
   /// bounding box of complete image in physical space
   PhysicalRegion physicalBoundingBox() const;
@@ -216,10 +216,10 @@ public:
   PhysicalRegion physicalBoundingBox(PixelType isovalue) const;
 
   /// converts a bounding box in logical (index) space to this image's index coordinates
-  PhysicalRegion logicalToPhysical(LogicalRegion region) const;
+  PhysicalRegion logicalToPhysical(IndexRegion region) const;
 
   /// converts a bounding box in physical space to this image's logical (index) coordinates
-  LogicalRegion physicalToLogical(PhysicalRegion region) const;
+  IndexRegion physicalToLogical(PhysicalRegion region) const;
 
   /// converts from pixel coordinates to physical space
   Point3 logicalToPhysical(const Coord &c) const;

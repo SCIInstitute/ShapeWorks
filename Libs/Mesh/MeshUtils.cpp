@@ -200,7 +200,7 @@ PhysicalRegion MeshUtils::boundingBox(std::vector<std::string> &filenames, bool 
   for (auto filename : filenames)
   {
     Mesh mesh(filename);
-    bbox.grow(mesh.boundingBox());
+    bbox.expand(mesh.boundingBox());
   }
 
   return bbox;
@@ -214,7 +214,7 @@ PhysicalRegion MeshUtils::boundingBox(std::vector<Mesh> &meshes, bool center)
   PhysicalRegion bbox(meshes[0].boundingBox());
 
   for (auto mesh : meshes)
-    bbox.grow(mesh.boundingBox());
+    bbox.expand(mesh.boundingBox());
 
   return bbox;
 }

@@ -394,11 +394,11 @@ TEST(ImageTests, blurTest)
 TEST(ImageTests, cropTest1)
 {
   Image image(std::string(TEST_DATA_DIR) + "/seg.ellipsoid_1.nrrd");
-  auto region = image.physicalBoundingBox().pad(-16);
+  IndexRegion region = image.logicalBoundingBox().pad(-16);
   region.min[0] = 7;
   region.max[0] = 42;
-  image.crop(region);
-  image.write("/tmp/crop_baseline.nrrd");
+  image.crop(image.logicalToPhysical(region));
+  image.write("/tmp/crop_baseline.nrrd");  // fixme
   Image ground_truth(std::string(TEST_DATA_DIR) + "/crop_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -428,7 +428,7 @@ TEST(ImageTests, boundingBoxSingleTest2)
 {
   auto img = Image(std::string(TEST_DATA_DIR) + "/femurImage.nrrd");
   auto lbox = img.logicalBoundingBox();
-  auto ground_truth = LogicalRegion(Coord({0, 0, 0}),
+  auto ground_truth = IndexRegion(Coord({0, 0, 0}),
                                     Coord({88, 63, 128}));
   ASSERT_TRUE(lbox == ground_truth);
 }
@@ -448,15 +448,11 @@ TEST(ImageTests, boundingBoxTest1)
     images_location + "seg.ellipsoid_9.nrrd",
   };
 
-  auto region = ImageUtils::boundingBox(images);
-  std::cout << "pregion: " << region << std::endl;
+  PhysicalRegion physicalregion = ImageUtils::boundingBox(images);
+  std::cout << "pregion: " << physicalregion << std::endl;
   PhysicalRegion ground_truth_p(Point({7, 16, 16}), Point({43, 34, 34}));
 
-  auto physicalToLogical(region);
-  std::cout << "p2l: " << physicalToLogical << std::endl;
-  LogicalRegion ground_truth_l(Coord({7, 16, 16}), Coord({43, 34, 34}));
-
-  ASSERT_TRUE(region == ground_truth_p && physicalToLogical == ground_truth_l);
+  ASSERT_TRUE(physicalregion == ground_truth_p);
 }
 
 TEST(ImageTests, boundingBoxTest2)
@@ -473,15 +469,11 @@ TEST(ImageTests, boundingBoxTest2)
   Image img8(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_8.nrrd")); images.push_back(img8);
   Image img9(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_9.nrrd")); images.push_back(img9);
 
-  auto region = ImageUtils::boundingBox(images);
-  std::cout << "pregion: " << region << std::endl;
+  PhysicalRegion physicalregion = ImageUtils::boundingBox(images);
+  std::cout << "pregion: " << physicalregion << std::endl;
   PhysicalRegion ground_truth_p(Point({7, 16, 16}), Point({43, 34, 34}));
 
-  auto physicalToLogical(region);
-  std::cout << "p2l: " << physicalToLogical << std::endl;
-  LogicalRegion ground_truth_l(Coord({7, 16, 16}), Coord({43, 34, 34}));
-
-  ASSERT_TRUE(region == ground_truth_p && physicalToLogical == ground_truth_l);
+  ASSERT_TRUE(physicalregion == ground_truth_p);
 }
 
 TEST(ImageTests, icpTest)
