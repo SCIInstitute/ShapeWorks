@@ -93,7 +93,39 @@ bool Groom::run()
         meshes.push_back(mesh);
       }
 
-      std::cerr << "The reference mesh is " << MeshUtils::findReferenceMesh(meshes) << "\n";
+      int reference_mesh = MeshUtils::findReferenceMesh(meshes);
+
+      std::cerr << "The reference mesh is " << reference_mesh << "\n";
+
+      tbb::parallel_for(
+        tbb::blocked_range<size_t>{0, subjects.size()},
+        [&](const tbb::blocked_range<size_t>& r) {
+          for (size_t i = r.begin(); i < r.end(); ++i) {
+
+            vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
+            matrix->Identity();
+
+            if (i != reference_mesh) {
+              matrix = MeshUtils::createICPTransform(meshes[reference_mesh].getVTKMesh(),
+                                                     meshes[i].getVTKMesh(), Mesh::Rigid, 10, true);
+            }
+
+            auto subject = subjects[i];
+            // store transform
+            std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
+            std::vector<double> groomed_transform;
+
+            for (int i = 0; i < 16; i++) {
+              groomed_transform.push_back(matrix->GetData()[i]);
+            }
+            if (domain >= groomed_transforms.size()) {
+              groomed_transforms.resize(domain + 1);
+            }
+            groomed_transforms[domain] = groomed_transform;
+            subject->set_groomed_transforms(groomed_transforms);
+
+          }
+        });
 
     }
 

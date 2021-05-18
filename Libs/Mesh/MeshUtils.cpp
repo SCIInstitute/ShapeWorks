@@ -16,17 +16,17 @@
 #include <tbb/mutex.h>
 #include <tbb/parallel_for.h>
 
-
 namespace shapeworks {
 
 // locking to handle non-thread-safe code
 static tbb::mutex mesh_mutex;
 
-const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createICPTransform(const vtkSmartPointer<vtkPolyData> source,
-                                                                  const vtkSmartPointer<vtkPolyData> target,
-                                                                  Mesh::AlignmentType align,
-                                                                  const unsigned iterations,
-                                                                  bool meshTransform)
+const vtkSmartPointer<vtkMatrix4x4>
+MeshUtils::createICPTransform(const vtkSmartPointer<vtkPolyData> source,
+                              const vtkSmartPointer<vtkPolyData> target,
+                              Mesh::AlignmentType align,
+                              const unsigned iterations,
+                              bool meshTransform)
 {
   vtkSmartPointer<vtkIterativeClosestPointTransform> icp = vtkSmartPointer<vtkIterativeClosestPointTransform>::New();
   icp->SetSource(source);
@@ -72,7 +72,7 @@ void MeshUtils::threadSafeWriteMesh(std::string filename, Mesh mesh)
   mesh.write(filename);
 }
 
-Region MeshUtils::boundingBox(std::vector<std::string> &filenames, bool center)
+Region MeshUtils::boundingBox(std::vector<std::string>& filenames, bool center)
 {
   if (filenames.empty())
     throw std::invalid_argument("No filenames provided to compute a bounding box");
@@ -80,8 +80,7 @@ Region MeshUtils::boundingBox(std::vector<std::string> &filenames, bool center)
   Mesh mesh(filenames[0]);
   Region bbox(mesh.boundingBox());
 
-  for (auto filename : filenames)
-  {
+  for (auto filename : filenames) {
     Mesh mesh(filename);
     bbox.grow(mesh.boundingBox());
   }
@@ -89,7 +88,7 @@ Region MeshUtils::boundingBox(std::vector<std::string> &filenames, bool center)
   return bbox;
 }
 
-Region MeshUtils::boundingBox(std::vector<Mesh> &meshes, bool center)
+Region MeshUtils::boundingBox(std::vector<Mesh>& meshes, bool center)
 {
   if (meshes.empty())
     throw std::invalid_argument("No meshes provided to compute a bounding box");
@@ -104,8 +103,8 @@ Region MeshUtils::boundingBox(std::vector<Mesh> &meshes, bool center)
 
 int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes)
 {
-  std::vector<std::pair<int,int>> pairs;
-  std::map<int,double> results;
+  std::vector<std::pair<int, int>> pairs;
+  std::map<int, double> results;
 
   for (int i = 0; i < meshes.size(); i++) {
     for (int j = i + 1; j < meshes.size(); j++) {
@@ -115,36 +114,72 @@ int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes)
 
   tbb::mutex mutex;
 
+
   tbb::parallel_for(
     tbb::blocked_range<size_t>{0, pairs.size()},
     [&](const tbb::blocked_range<size_t>& r) {
-      std::vector<std::pair<int, double>> results_private;
       for (size_t i = r.begin(); i < r.end(); ++i) {
+
+
+  //for (int i=0;i<pairs.size();i++) {
+
+
 
         auto pair = pairs[i];
 
         std::cerr << "running something on " << pair.first << " and " << pair.second << "\n";
 
-        static double foo = 1.0;
-        results_private.push_back(std::make_pair(i, foo));
-        foo++;
+
+        vtkSmartPointer<vtkPolyData> poly_data1 = vtkSmartPointer<vtkPolyData>::New();
+        poly_data1->DeepCopy(meshes[pair.first].getVTKMesh());
+        vtkSmartPointer<vtkPolyData> poly_data2 = vtkSmartPointer<vtkPolyData>::New();
+        poly_data2->DeepCopy(meshes[pair.second].getVTKMesh());
+
+        auto matrix = MeshUtils::createICPTransform(poly_data1,
+                                                    poly_data2, Mesh::Rigid,
+                                                    10, true);
+
+        auto transform = createMeshTransform(matrix);
+
+        Mesh transformed = meshes[pair.first];
+        transformed.applyTransform(transform);
+
+        double distance = transformed.distance(meshes[pair.second]).getFieldMean("distance");
 
         {
           tbb::mutex::scoped_lock lock(mutex);
-          results[i] = foo;
+          results[i] = distance;
         }
 
       }
     });
 
+  std::vector<double> sums(meshes.size(),0);
+  std::vector<int> counts(meshes.size(), 0);
+
+  std::vector<double> means(meshes.size(),0);
+
   std::cerr << "Results:\n";
+  double count = meshes.size() -1;
   for (int i = 0; i < pairs.size(); i++) {
     auto pair = pairs[i];
+
+    double result = results[i];
+    sums[pair.first] += result;
+    sums[pair.second] += result;
+    counts[pair.first]++;
+    counts[pair.second]++;
+    means[pair.first] += result/count;
+    means[pair.second] += result/count;
     std::cerr << "pair " << pair.first << " -> " << pair.second << " = " << results[i] << "\n";
   }
+  for (int i=0;i<means.size();i++) {
+    std::cerr << "means[" << i << "] = " << means[i] << "\n";
+  }
 
+  auto smallest = std::min_element( means.begin(), means.end() );
 
-  return 0;
+  return std::distance(means.begin(), smallest);
 }
 
 } // shapeworks
