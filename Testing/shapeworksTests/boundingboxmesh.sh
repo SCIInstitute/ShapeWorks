@@ -12,8 +12,3 @@ diff -u <(shapeworks readmesh --name $DATA/femur.ply mesh-bounds) <(echo "Boundi
 	max: [135.026, -128.644, -609.55]
 }")
 if [[ $? != 0 ]]; then exit -1; fi
-diff -u <(shapeworks readmesh --name $DATA/femur.ply mesh-bounds --padding 2.25) <(echo "Bounding box:
-{
-	min: [44.2321, -194.721, -739.843],
-	max: [137.276, -126.394, -607.3]
-}")

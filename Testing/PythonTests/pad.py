@@ -58,31 +58,9 @@ if val is False:
   print("padTest4 failed")
   sys.exit(1)
 
-  
-def padTest5():
-  img = Image(os.environ["DATA"] + "/femurImage.nrrd")
-  print(img)
-  region = img.boundingBox().pad(10)
-  print(region)
-  region.min -= [5,6,7]
-  print(region)
-  img.pad(region)
-  print(img)
-  
-  compareImg = Image(os.environ["DATA"] + "/pad5.nrrd")
-  print(compareImg)
-  
-  return img.compare(compareImg)
-
-val = padTest5()
-
-if val is False:
-  print("padTest5 failed")
-  sys.exit(1)
-
 def padTest6():
   img = Image(os.environ["DATA"] + "/femurImage.nrrd")
-  img.pad(img.boundingBox(), 10)
+  img.pad(img.logicalBoundingBox(), 10)
 
   compareImg = Image(os.environ["DATA"] + "/femurImage.nrrd")
 
@@ -93,4 +71,3 @@ val = padTest6()
 if val is False:
   print("padTest6 failed")
   sys.exit(1)
-

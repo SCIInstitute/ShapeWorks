@@ -419,7 +419,7 @@ TEST(ImageTests, boundingBoxSingleTest1)
   auto img = Image(std::string(TEST_DATA_DIR) + "/femurImage.nrrd");
   auto pbox = img.physicalBoundingBox();
   auto ground_truth = PhysicalRegion(Point({46.4821, -192.471, -737.593}),
-                                     Point({135.482, -128.471, -608.593}));
+                                     Point({134.482, -129.471, -609.593}));
   ASSERT_TRUE(epsEqualN(pbox.min, ground_truth.min) &&
               epsEqualN(pbox.max, ground_truth.max));
 }
