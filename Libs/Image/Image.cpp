@@ -473,15 +473,16 @@ Image& Image::pad(IndexRegion &region, PixelType value)
 {
   auto bbox = logicalBoundingBox();
   
+  // compute positive numbers to pad in each direction
   ImageType::SizeType lowerExtendRegion;
-  lowerExtendRegion[0] = std::max(0L, -region.min[0]); // positive number to pad in each direction
-  lowerExtendRegion[1] = std::max(0L, -region.min[1]);
-  lowerExtendRegion[2] = std::max(0L, -region.min[2]);
+  lowerExtendRegion[0] = std::max(Coord::IndexValueType(0), -region.min[0]);
+  lowerExtendRegion[1] = std::max(Coord::IndexValueType(0), -region.min[1]);
+  lowerExtendRegion[2] = std::max(Coord::IndexValueType(0), -region.min[2]);
 
   ImageType::SizeType upperExtendRegion;
-  upperExtendRegion[0] = std::max(0L, region.max[0] - bbox.max[0]); // positive number to pad in each direction
-  upperExtendRegion[1] = std::max(0L, region.max[1] - bbox.max[1]);
-  upperExtendRegion[2] = std::max(0L, region.max[2] - bbox.max[2]);
+  upperExtendRegion[0] = std::max(Coord::IndexValueType(0), region.max[0] - bbox.max[0]);
+  upperExtendRegion[1] = std::max(Coord::IndexValueType(0), region.max[1] - bbox.max[1]);
+  upperExtendRegion[2] = std::max(Coord::IndexValueType(0), region.max[2] - bbox.max[2]);
 
   return this->pad(lowerExtendRegion, upperExtendRegion, value);
 }
