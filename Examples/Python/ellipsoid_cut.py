@@ -23,8 +23,6 @@ def Run_Pipeline(args):
     """
 
     print("\nStep 1. Extract Data\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
     # Get data
     datasetName = "ellipsoid_1mode_aligned"
     outputDirectory = "Output/ellipsoid_cut/"
@@ -67,9 +65,6 @@ def Run_Pipeline(args):
     """
 
     print("\nStep 4. Optimize - Particle Based Optimization\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
-
     pointDir = outputDirectory + 'shape_models/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
@@ -148,7 +143,4 @@ def Run_Pipeline(args):
     """
 
     print("\nStep 5. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
-    if args.interactive != 0:
-        input("Press Enter to continue")
-
     launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)

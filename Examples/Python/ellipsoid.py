@@ -21,7 +21,7 @@ import numpy as np
 def findReferenceImageIndex(inDataList):
     x = y = z = 0
     for i in range(len(inDataList)):
-        img = sw.Image(inDataList[i])
+        img = inDataList[i]
         tmp = img.toArray()
         dim = tmp.shape
         if dim[0] > x:
@@ -33,7 +33,7 @@ def findReferenceImageIndex(inDataList):
 
     COM = np.zeros((x, y, z))
     for i in range(len(inDataList)):
-        img = sw.Image(inDataList[i])
+        img = inDataList[i]
         tmp = img.toArray()
         COM += np.pad(tmp, (((x - tmp.shape[0]) // 2, (x - tmp.shape[0]) - (x - tmp.shape[0]) // 2),
                             ((y - tmp.shape[1]) // 2, (y - tmp.shape[1]) - (y - tmp.shape[1]) // 2),
@@ -42,7 +42,7 @@ def findReferenceImageIndex(inDataList):
     dist = np.inf
     idx = 0
     for i in range(len(inDataList)):
-        img = sw.Image(inDataList[i])
+        img = inDataList[i]
         tmp = img.toArray()
         tmp_dist = np.linalg.norm(
             COM - np.pad(tmp, (((x - tmp.shape[0]) // 2, (x - tmp.shape[0]) - (x - tmp.shape[0]) // 2),
@@ -63,8 +63,6 @@ def Run_Pipeline(args):
     """
 
     print("\nStep 1. Extract Data\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
     # Get data
     datasetName = "ellipsoid_1mode"
     outputDirectory = "Output/ellipsoid/"
@@ -178,7 +176,7 @@ def Run_Pipeline(args):
         """
         refIndex = findReferenceImageIndex(shapeSegList)
         # Make a copy of the reference segmentation
-        refSeg = sw.Image(shapeSegList[refIndex].write(groomDir + 'reference.nrrd'))
+        refSeg = shapeSegList[refIndex].write(groomDir + 'reference.nrrd')
         refName = shapeNames[refIndex]
         print("Reference found: " + refName)
 
@@ -272,8 +270,6 @@ def Run_Pipeline(args):
     """
 
     print("\nStep 4. Optimize - Particle Based Optimization\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
 
     pointDir = outputDirectory + 'shape_models/'
     if not os.path.exists(pointDir):
@@ -338,7 +334,4 @@ def Run_Pipeline(args):
     """
     
     print("\nStep 5. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
-    if args.interactive != 0:
-        input("Press Enter to continue")
-
     launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)
