@@ -549,17 +549,41 @@ PYBIND11_MODULE(shapeworks, m)
   mesh.def(py::init<const std::string &>())
   .def(py::init<vtkSmartPointer<vtkPolyData>>())
   .def(py::self == py::self)
-  .def("__repr__", [](const Mesh &mesh) {
-    std::stringstream stream;
-    stream << mesh;
-    return stream.str();
-  })
-  .def("copy",                  [](Mesh& mesh) { return Mesh(mesh); })
-  .def("write",                 &Mesh::write, "writes mesh, format specified by filename extension", "pathname"_a)
-  .def("coverage",              &Mesh::coverage, "determines coverage between current mesh and another mesh (e.g. acetabular cup / femoral head)", "otherMesh"_a, "allowBackIntersections"_a=true, "angleThreshold"_a=0, "backSearchRadius"_a=0)
-  .def("smooth",                &Mesh::smooth, "applies laplacian smoothing", "iterations"_a=0, "relaxation"_a=0.0)
-  .def("decimate",              &Mesh::decimate, "applies filter to reduce number of triangles in mesh", "reduction"_a=0.0, "angle"_a=0.0, "preserveTopology"_a=true)
-  .def("invertNormals",         &Mesh::invertNormals, "handle flipping normals")
+
+  .def("__repr__",
+       [](const Mesh &mesh) -> decltype(auto) {
+         std::stringstream stream;
+         stream << mesh;
+         return stream.str();
+       })
+
+  .def("copy",
+       [](Mesh& mesh) -> decltype(auto) { return Mesh(mesh); })
+
+  .def("write",
+       &Mesh::write,
+       "writes mesh, format specified by filename extension",
+       "pathname"_a)
+
+  .def("coverage",
+       &Mesh::coverage,
+       "determines coverage between current mesh and another mesh (e.g. acetabular cup / femoral head)",
+       "otherMesh"_a, "allowBackIntersections"_a=true, "angleThreshold"_a=0, "backSearchRadius"_a=0)
+
+  .def("smooth",
+       &Mesh::smooth,
+       "applies laplacian smoothing",
+       "iterations"_a=0, "relaxation"_a=0.0)
+
+  .def("decimate",
+       &Mesh::decimate,
+       "applies filter to reduce number of triangles in mesh",
+       "reduction"_a=0.5, "angle"_a=15.0, "preserveTopology"_a=true)
+
+  .def("invertNormals",
+       &Mesh::invertNormals,
+       "handle flipping normals")
+
   .def("reflect",
        [](Mesh& mesh, const Axis &axis, std::vector<double>& v) -> decltype(auto) {
          return mesh.reflect(axis, makeVector({v[0], v[1], v[2]}));

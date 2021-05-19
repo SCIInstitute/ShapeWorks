@@ -43,7 +43,7 @@ TEST(MeshTests, smoothTest2)
 TEST(MeshTests, decimateTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.decimate();
+  femur.decimate(0.0, 0.0, false);
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/decimate1.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
@@ -52,8 +52,35 @@ TEST(MeshTests, decimateTest1)
 TEST(MeshTests, decimateTest2)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.decimate(0.0, 0.0, true);
+  femur.decimate(0.0, 0.0);
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/decimate2.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
+TEST(MeshTests, decimateTest3)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.decimate();
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/decimate3.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
+TEST(MeshTests, decimateTest4)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.decimate(0.9, 25.5, true);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/decimate4.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
+TEST(MeshTests, decimateTest5)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.decimate(0.9, 25.5, false);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/decimate5.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
 }
