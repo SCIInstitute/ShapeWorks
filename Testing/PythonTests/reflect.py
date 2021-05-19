@@ -13,6 +13,7 @@ def reflectTest1():
 val = reflectTest1()
 
 if val is False:
+  print("reflectTest1 failed")
   sys.exit(1)
 
 def reflectTest2():
@@ -26,6 +27,7 @@ def reflectTest2():
 val = reflectTest2()
 
 if val is False:
+  print("reflectTest2 failed")
   sys.exit(1)
 
 def reflectTest3():
@@ -39,6 +41,7 @@ def reflectTest3():
 val = reflectTest3()
 
 if val is False:
+  print("reflectTest3 failed")
   sys.exit(1)
 
 def reflectTest4():
@@ -52,4 +55,5 @@ def reflectTest4():
 val = reflectTest4()
 
 if val is False:
+  print("reflectTest4 failed")
   sys.exit(1)

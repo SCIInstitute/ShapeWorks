@@ -12,7 +12,7 @@ struct SharedCommandData
 {
   Image image;
   std::unique_ptr<Mesh> mesh;
-  Region region;
+  PhysicalRegion region;
   ParticleSystem particleSystem;
 
   bool validImage() const { return image.image != nullptr; }

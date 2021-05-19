@@ -13,6 +13,7 @@ def clipfailTest1():
 val = clipfailTest1()
 
 if val is False:
+  print("clipfailTest1 failed")
   sys.exit(1)
 
 def clipfailTest2():
@@ -26,4 +27,5 @@ def clipfailTest2():
 val = clipfailTest2()
 
 if val is False:
+  print("clipfailTest2 failed")
   sys.exit(1)

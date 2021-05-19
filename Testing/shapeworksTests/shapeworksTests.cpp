@@ -9,6 +9,26 @@ TEST(shapeworksTests, setup)
   ASSERT_TRUE(true);
 }
 
+TEST(shapeworksTests, meshtoimageTest)
+{
+  ASSERT_FALSE(system("bash meshtoimage.sh"));
+}
+
+TEST(shapeworksTests, meshtodtTest)
+{
+  ASSERT_FALSE(system("bash meshtodt.sh"));
+}
+
+TEST(shapeworksTests, boundingboximageTest)
+{
+  ASSERT_FALSE(system("bash boundingboximage.sh"));
+}
+
+TEST(shapeworksTests, boundingboxmeshTest)
+{
+  ASSERT_FALSE(system("bash boundingboxmesh.sh"));
+}
+
 TEST(shapeworksTests, fieldnameTest)
 {
   ASSERT_FALSE(system("bash meshfieldnames.sh"));
@@ -77,6 +97,11 @@ TEST(shapeworksTests, compareFailTest)
 TEST(shapeworksTests, antialiasTest)
 {
   ASSERT_FALSE(system("bash antialias.sh"));
+}
+
+TEST(shapeworksTests, antialiasMeshTest)
+{
+  ASSERT_FALSE(system("bash antialias_mesh.sh"));
 }
 
 TEST(shapeworksTests, antialiasFailTest)
@@ -209,16 +234,6 @@ TEST(shapeworksTests, icpimageFailTest)
   ASSERT_TRUE(system("bash icpimagefail.sh"));
 }
 
-TEST(shapeworksTests, boundingboximageTest)
-{
-  ASSERT_FALSE(system("bash boundingboximage.sh"));
-}
-
-TEST(shapeworksTests, boundingboximageFailTest)
-{
-  ASSERT_TRUE(system("bash boundingboximagefail.sh"));
-}
-
 TEST(shapeworksTests, cropTest)
 {
   ASSERT_FALSE(system("bash crop.sh"));
@@ -333,16 +348,6 @@ TEST(shapeworksTests, scalemeshTest)
 TEST(shapeworksTests, clipclosedsurfaceTest)
 {
   ASSERT_FALSE(system("bash clipclosedsurface.sh"));
-}
-
-TEST(shapeworksTests, meshtoimageTest)
-{
-  ASSERT_FALSE(system("bash meshtoimage.sh"));
-}
-
-TEST(shapeworksTests, meshtodtTest)
-{
-  ASSERT_FALSE(system("bash meshtodt.sh"));
 }
 
 TEST(shapeworksTests, meshtransformTest)

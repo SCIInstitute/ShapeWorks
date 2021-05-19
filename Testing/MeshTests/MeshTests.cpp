@@ -234,8 +234,10 @@ TEST(MeshTests, toImageTest1)
 TEST(MeshTests, toImageTest2)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
-  Image image = femur.toImage(makeVector({2.0, 2.0, 1.0}));
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImage2.nrrd");
+
+  // pass the region (should be identical)
+  Image image = femur.toImage(femur.boundingBox());
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImage.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -243,17 +245,65 @@ TEST(MeshTests, toImageTest2)
 TEST(MeshTests, toImageTest3)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
-  Image image = femur.toImage(makeVector({1.0, 1.0, 1.0}), {40, 145, 131});
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImage3.nrrd");
+
+  // pad the region
+  auto bbox = femur.boundingBox();
+  Image image = femur.toImage(bbox, 1.5);
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImagePad.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
 
+TEST(MeshTests, toImageTest4)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
+  auto bbox = femur.boundingBox();
+  Image image = femur.toImage(bbox, 1.5, Point({0.5, 1.5, 12.5}));
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImagePadSpace.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(MeshTests, boundingBoxTest1)
+{
+  std::string meshes_location = std::string(TEST_DATA_DIR) + std::string("/");
+  std::vector<std::string> meshes = {
+    meshes_location + "m03_L_femur.ply",
+    meshes_location + "m04_L_femur.ply",
+    meshes_location + "femur.ply",
+    meshes_location + "ellipsoid_0.ply",
+    meshes_location + "femur.vtk"
+  };
+
+  auto region = MeshUtils::boundingBox(meshes);
+  Point min({-112.139, -192.471, -1217.76});
+  Point max({135.026, 21.495, 1248.45});
+
+  ASSERT_TRUE(epsEqualN(region.min, min, 5) && epsEqualN(region.max, max, 5) );
+}
+
+TEST(MeshTests, boundingBoxTest2)
+{
+  std::vector<Mesh> meshes;
+  Mesh mesh1(std::string(TEST_DATA_DIR) + std::string("/m03_L_femur.ply")); meshes.push_back(mesh1);
+  Mesh mesh2(std::string(TEST_DATA_DIR) + std::string("/m04_L_femur.ply")); meshes.push_back(mesh2);
+  Mesh mesh3(std::string(TEST_DATA_DIR) + std::string("/femur.ply"      )); meshes.push_back(mesh3);
+  Mesh mesh4(std::string(TEST_DATA_DIR) + std::string("/ellipsoid_0.ply")); meshes.push_back(mesh4);
+  Mesh mesh5(std::string(TEST_DATA_DIR) + std::string("/femur.vtk"      )); meshes.push_back(mesh5);
+
+  auto region = MeshUtils::boundingBox(meshes);
+  Point min({-112.139, -192.471, -1217.76});
+  Point max({135.026, 21.495, 1248.45});
+
+  ASSERT_TRUE(epsEqualN(region.min, min, 5) && epsEqualN(region.max, max, 5) );
+}
+
 TEST(MeshTests, antialiasTest3)
 {
-  Image aa1(Mesh(std::string(TEST_DATA_DIR) + "/femur.ply").toImage());
+  Mesh mesh(std::string(TEST_DATA_DIR) + "/femur.ply");
+  Image aa1(mesh.toImage(mesh.boundingBox(), 3.0));
   aa1.antialias(50, 0.0);
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/antialias3.nrrd");
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/antialiasMesh.nrrd");
 
   ASSERT_TRUE(aa1 == ground_truth);
 }

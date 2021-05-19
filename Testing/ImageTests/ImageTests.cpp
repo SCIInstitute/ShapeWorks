@@ -393,6 +393,48 @@ TEST(ImageTests, blurTest)
 
 TEST(ImageTests, cropTest1)
 {
+  Image image(std::string(TEST_DATA_DIR) + "/seg.ellipsoid_1.nrrd");
+  IndexRegion region = image.logicalBoundingBox().pad(-16);
+  region.min[0] = 7;
+  region.max[0] = 42;
+  image.crop(image.logicalToPhysical(region));
+  image.write("/tmp/crop_baseline.nrrd");  // fixme
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/crop_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, cropTest2)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/seg.ellipsoid_1.nrrd");
+  auto region = image.physicalBoundingBox();
+  image.crop(region);
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/seg.ellipsoid_1.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, boundingBoxSingleTest1)
+{
+  auto img = Image(std::string(TEST_DATA_DIR) + "/femurImage.nrrd");
+  auto pbox = img.physicalBoundingBox();
+  auto ground_truth = PhysicalRegion(Point({46.4821, -192.471, -737.593}),
+                                     Point({134.482, -129.471, -609.593}));
+  ASSERT_TRUE(epsEqualN(pbox.min, ground_truth.min) &&
+              epsEqualN(pbox.max, ground_truth.max));
+}
+
+TEST(ImageTests, boundingBoxSingleTest2)
+{
+  auto img = Image(std::string(TEST_DATA_DIR) + "/femurImage.nrrd");
+  auto lbox = img.logicalBoundingBox();
+  auto ground_truth = IndexRegion(Coord({0, 0, 0}),
+                                    Coord({88, 63, 128}));
+  ASSERT_TRUE(lbox == ground_truth);
+}
+
+TEST(ImageTests, boundingBoxTest1)
+{
   std::string images_location = std::string(TEST_DATA_DIR) + std::string("/images/");
   std::vector<std::string> images = {
     images_location + "seg.ellipsoid_1.nrrd",
@@ -406,16 +448,14 @@ TEST(ImageTests, cropTest1)
     images_location + "seg.ellipsoid_9.nrrd",
   };
 
-  Image image(std::string(TEST_DATA_DIR) + "/seg.ellipsoid_1.nrrd");
-  Region region;
-  region = ImageUtils::boundingBox(images);
-  image.crop(region);
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/crop_baseline.nrrd");
+  PhysicalRegion physicalregion = ImageUtils::boundingBox(images);
+  std::cout << "pregion: " << physicalregion << std::endl;
+  PhysicalRegion ground_truth_p(Point({7, 16, 16}), Point({43, 34, 34}));
 
-  ASSERT_TRUE(image == ground_truth);
+  ASSERT_TRUE(physicalregion == ground_truth_p);
 }
 
-TEST(ImageTests, cropTest2)
+TEST(ImageTests, boundingBoxTest2)
 {
   std::string images_location = std::string(TEST_DATA_DIR) + std::string("/images/");
   std::vector<Image> images;
@@ -429,13 +469,11 @@ TEST(ImageTests, cropTest2)
   Image img8(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_8.nrrd")); images.push_back(img8);
   Image img9(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_9.nrrd")); images.push_back(img9);
 
-  Image image(std::string(TEST_DATA_DIR) + "/seg.ellipsoid_1.nrrd");
-  Region region;
-  region = ImageUtils::boundingBox(images);
-  image.crop(region);
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/crop_baseline.nrrd");
+  PhysicalRegion physicalregion = ImageUtils::boundingBox(images);
+  std::cout << "pregion: " << physicalregion << std::endl;
+  PhysicalRegion ground_truth_p(Point({7, 16, 16}), Point({43, 34, 34}));
 
-  ASSERT_TRUE(image == ground_truth);
+  ASSERT_TRUE(physicalregion == ground_truth_p);
 }
 
 TEST(ImageTests, icpTest)
@@ -739,6 +777,25 @@ TEST(ImageTests, spacingTest)
   Vector spacing(makeVector({1,2,2}));
   
   ASSERT_TRUE(image.spacing() == spacing);
+}
+
+TEST(ImageTests, setSpacingTest)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
+  Vector spacing(makeVector({1,2,2}));
+  image.setSpacing(spacing);
+
+  ASSERT_TRUE(image.spacing() == spacing);
+}
+
+TEST(ImageTests, chainedSpacingTest)
+{
+  Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
+  Vector spacing1(makeVector({1,2,2}));
+  Vector spacing2(makeVector({0.2,0.2,1}));
+  image.setSpacing(spacing1).setSpacing(spacing2);
+
+  ASSERT_TRUE(image.spacing() == spacing2);
 }
 
 TEST(ImageTests, originTest)

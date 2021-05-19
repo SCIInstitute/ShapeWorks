@@ -13,6 +13,7 @@ def resizeTest1():
 val = resizeTest1()
 
 if val is False:
+  print("resizeTest1 failed")
   sys.exit(1)
 
 def resizeTest2():
@@ -26,6 +27,7 @@ def resizeTest2():
 val = resizeTest2()
 
 if val is False:
+  print("resizeTest2 failed")
   sys.exit(1)
 
 def resizeTest3():
@@ -36,9 +38,10 @@ def resizeTest3():
 
   return img.compare(compareImg)
 
-val = resizeTest2()
+val = resizeTest3()
 
 if val is False:
+  print("resizeTest3 failed")
   sys.exit(1)
 
 def resizeTest4():
@@ -52,4 +55,5 @@ def resizeTest4():
 val = resizeTest4()
 
 if val is False:
+  print("resizeTest4 failed")
   sys.exit(1)

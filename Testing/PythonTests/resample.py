@@ -1,5 +1,6 @@
 import os
 import sys
+import numpy as np
 from shapeworks import *
 
 def resampleTest1():
@@ -13,6 +14,7 @@ def resampleTest1():
 val = resampleTest1()
 
 if val is False:
+  print("resampleTest1 failed")
   sys.exit(1)
 
 def resampleTest2():
@@ -26,6 +28,7 @@ def resampleTest2():
 val = resampleTest2()
 
 if val is False:
+  print("resampleTest2 failed")
   sys.exit(1)
 
 def resampleTest3():
@@ -39,6 +42,7 @@ def resampleTest3():
 val = resampleTest3()
 
 if val is False:
+  print("resampleTest3 failed")
   sys.exit(1)
 
 def resampleTest4():
@@ -52,11 +56,12 @@ def resampleTest4():
 val = resampleTest4()
 
 if val is False:
+  print("resampleTest4 failed")
   sys.exit(1)
 
 def resampleTest5():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
-  transform = createTransform(Matrix())
+  transform = createTransform(np.identity(3))
   img.resample(transform, [-100, -63.2, -42.9], [32, 32, 4], [6.25, 6.25, 13.75], img.coordsys())
 
   compareImg = Image(os.environ["DATA"] + "/resample5.nrrd")
@@ -66,4 +71,5 @@ def resampleTest5():
 val = resampleTest5()
 
 if val is False:
+  print("resampleTest5 failed")
   sys.exit(1)

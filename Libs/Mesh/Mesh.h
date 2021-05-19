@@ -69,7 +69,7 @@ public:
   Mesh& scale(const Vector3 &v);
 
   /// computes bounding box of current mesh
-  Region boundingBox(bool center=false) const;
+  PhysicalRegion boundingBox() const;
 
   /// quality control mesh
   Mesh& fix(bool smoothBefore = true, bool smoothAfter = true, double lambda = 0.5, int iterations = 1, bool decimate = true, double percentage = 0.5);
@@ -83,11 +83,11 @@ public:
   /// computes cell normals and orients them such that they point in the same direction
   Mesh& generateNormals();
 
-  /// rasterizes mesh to create binary images, automatically computing size and origin if necessary
-  Image toImage(Vector3 spacing = makeVector({1.0, 1.0, 1.0}), Dims size = {0, 0, 0}, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;
+  /// rasterizes specified region to create binary image of desired dims (default: unit spacing, no padding)
+  Image toImage(PhysicalRegion region = PhysicalRegion(), double padding = 0.0, Point spacing = Point({1., 1., 1.})) const;
 
-  /// converts mesh to distance transform, automatically computing size and origin if necessary
-  Image toDistanceTransform(Vector3 spacing = makeVector({1.0, 1.0, 1.0}), Dims size = {0, 0, 0}, Point3 origin = Point3({-1.0, -1.0, -1.0})) const;
+  /// converts specified region to distance transform image (default: unit spacing, no padding)
+  Image toDistanceTransform(PhysicalRegion region = PhysicalRegion(), double padding = 0.0, Point spacing = Point({1., 1., 1.})) const;
 
   // query functions //
 

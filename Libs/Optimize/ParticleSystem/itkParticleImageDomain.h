@@ -148,6 +148,7 @@ public:
   }
 
   inline PointType GetValidLocationNear(PointType p) const override {
+    // todo why is this function ignoring the argument? Also see Optimize::AddSinglePoint
     return m_ZeroCrossingPoint;
   }
 

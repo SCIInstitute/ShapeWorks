@@ -13,6 +13,7 @@ def sigmoidTest1():
 val = sigmoidTest1()
 
 if val is False:
+  print("sigmoidTest1 failed")
   sys.exit(1)
 
 def sigmoidTest2():
@@ -26,6 +27,7 @@ def sigmoidTest2():
 val = sigmoidTest2()
 
 if val is False:
+  print("sigmoidTest2 failed")
   sys.exit(1)
 
 def sigmoidTest3():
@@ -39,6 +41,7 @@ def sigmoidTest3():
 val = sigmoidTest3()
 
 if val is False:
+  print("sigmoidTest3 failed")
   sys.exit(1)
 
 def sigmoidTest4():
@@ -52,4 +55,5 @@ def sigmoidTest4():
 val = sigmoidTest4()
 
 if val is False:
+  print("sigmoidTest4 failed")
   sys.exit(1)

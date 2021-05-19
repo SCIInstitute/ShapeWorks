@@ -13,6 +13,7 @@ def curvatureTest1():
 val = curvatureTest1()
 
 if val is False:
+  print("curvatureTest1 failed")
   sys.exit(1)
 
 def curvatureTest2():
@@ -26,4 +27,5 @@ def curvatureTest2():
 val = curvatureTest2()
 
 if val is False:
+  print("curvatureTest2 failed")
   sys.exit(1)

@@ -8,14 +8,44 @@ TEST(pythonTests, setup)
   ASSERT_TRUE(true);
 }
 
+TEST(pythonTests, padTest)
+{
+  ASSERT_FALSE(system("python pad.py"));
+}
+
+TEST(pythonTests, padFailTest)
+{
+  ASSERT_FALSE(system("python padfail.py"));
+}
+
+TEST(pythonTests, cropTest)
+{
+  ASSERT_FALSE(system("python crop.py"));
+}
+
+TEST(pythonTests, toImageTest)
+{
+  ASSERT_FALSE(system("python toImage.py"));
+}
+
+TEST(pythonTests, toDistanceTransformTest)
+{
+  ASSERT_FALSE(system("python toDistanceTransform.py"));
+}
+
 TEST(pythonTests, gradientInterpolatorTest)
 {
   ASSERT_FALSE(system("python gradientinterp.py"));
 }
   
-TEST(pythonTests, infoTest)
+TEST(pythonTests, imageInfoTest)
 {
-  ASSERT_FALSE(system("python info.py"));
+  ASSERT_FALSE(system("python imageinfo.py"));
+}
+  
+TEST(pythonTests, meshInfoTest)
+{
+  ASSERT_FALSE(system("python meshinfo.py"));
 }
   
 TEST(pythonTests, copyTest)
@@ -61,16 +91,6 @@ TEST(pythonTests, resizeFailTest)
 TEST(pythonTests, recenterTest)
 {
   ASSERT_FALSE(system("python recenter.py"));
-}
-
-TEST(pythonTests, padTest)
-{
-  ASSERT_FALSE(system("python pad.py"));
-}
-
-TEST(pythonTests, padFailTest)
-{
-  ASSERT_TRUE(system("python padfail.py"));
 }
 
 TEST(pythonTests, translateTest)
@@ -183,11 +203,6 @@ TEST(pythonTests, boundingBoxFailTest)
   ASSERT_TRUE(system("python boundingboxfail.py"));
 }
 
-TEST(pythonTests, cropTest)
-{
-  ASSERT_FALSE(system("python crop.py"));
-}
-
 TEST(pythonTests, icpTest)
 {
   ASSERT_FALSE(system("python icp.py"));
@@ -298,16 +313,6 @@ TEST(pythonTests, probeVolumeTest)
   ASSERT_FALSE(system("python probeVolume.py"));
 }
 
-TEST(pythonTests, toImageTest)
-{
-  ASSERT_FALSE(system("python toImage.py"));
-}
-
-TEST(pythonTests, toDistanceTransformTest)
-{
-  ASSERT_FALSE(system("python toDistanceTransform.py"));
-}
-
 TEST(pythonTests, coverageTest)
 {
   ASSERT_FALSE(system("python coverage.py"));
@@ -328,39 +333,15 @@ TEST(pythonTests, fieldTest)
   ASSERT_FALSE(system("python field.py"));
 }
 
-TEST(pythonTests, statsTest)
-{
-  ASSERT_FALSE(system("python stats.py"));
-}
-
+// note: we just use numpy arrays for coordinates/indices, points, dimensions, vectors, and matrices
 TEST(pythonTests, coordTest)
 {
   ASSERT_FALSE(system("python coord.py"));
 }
 
-TEST(pythonTests, dimsTest)
+TEST(pythonTests, statsTest)
 {
-  ASSERT_FALSE(system("python dims.py"));
-}
-
-TEST(pythonTests, pointTest)
-{
-  ASSERT_FALSE(system("python point.py"));
-}
-
-TEST(pythonTests, vectorTest)
-{
-  ASSERT_FALSE(system("python vector.py"));
-}
-
-TEST(pythonTests, ipoint3Test)
-{
-  ASSERT_FALSE(system("python ipoint3.py"));
-}
-
-TEST(pythonTests, fpoint3Test)
-{
-  ASSERT_FALSE(system("python fpoint3.py"));
+  ASSERT_FALSE(system("python stats.py"));
 }
 
 TEST(pythonTests, optimizeTest)

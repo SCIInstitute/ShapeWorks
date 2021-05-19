@@ -173,7 +173,7 @@ def Run_Pipeline(args):
                                     sw.InterpolationType.Linear)
             # then turn antialized-tranformed segmentation to a binary segmentation
             shapeSeg.binarize()
-
+            
         """
         Step 5: Finding the largest bounding box
         We want to crop all of the segmentations to be the same size, so we need to find the largest bounding box
@@ -182,6 +182,7 @@ def Run_Pipeline(args):
         # Compute bounding box - aligned segmentations are binary images, so an good isovalue is 0.5
         isoValue = 0.5
         segsBoundingBox = sw.ImageUtils.boundingBox(shapeSegList, isoValue)
+
 
         """
         Step 6: Apply cropping and padding

@@ -14,6 +14,7 @@ def subTest1():
 val = subTest1()
 
 if val is False:
+  print("subTest1 failed")
   sys.exit(1)
 
 def subTest2():
@@ -27,6 +28,7 @@ def subTest2():
 val = subTest2()
 
 if val is False:
+  print("subTest2 failed")
   sys.exit(1)
 
 def subTest3():
@@ -41,4 +43,5 @@ def subTest3():
 val = subTest3()
 
 if val is False:
+  print("subTest3 failed")
   sys.exit(1)

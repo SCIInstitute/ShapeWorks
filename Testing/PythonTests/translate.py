@@ -13,6 +13,7 @@ def translateTest1():
 val = translateTest1()
 
 if val is False:
+  print("translateTest1 failed")
   sys.exit(1)
 
 def translateTest2():
@@ -26,6 +27,7 @@ def translateTest2():
 val = translateTest2()
 
 if val is False:
+  print("translateTest2 failed")
   sys.exit(1)
 
 def translateTest3():
@@ -39,6 +41,7 @@ def translateTest3():
 val = translateTest3()
 
 if val is False:
+  print("translateTest3 failed")
   sys.exit(1)
 
 def translateTest4():
@@ -52,6 +55,7 @@ def translateTest4():
 val = translateTest4()
 
 if val is False:
+  print("translateTest4 failed")
   sys.exit(1)
 
 def translateTest5():
@@ -65,4 +69,5 @@ def translateTest5():
 val = translateTest5()
 
 if val is False:
+  print("translateTest5 failed")
   sys.exit(1)

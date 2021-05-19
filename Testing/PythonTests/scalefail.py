@@ -13,6 +13,7 @@ def scalefailTest1():
 val = scalefailTest1()
 
 if val is False:
+  print("scalefailTest1 failed")
   sys.exit(1)
 
 def scalefailTest2():
@@ -26,4 +27,5 @@ def scalefailTest2():
 val = scalefailTest2()
 
 if val is False:
+  print("scalefailTest2 failed")
   sys.exit(1)

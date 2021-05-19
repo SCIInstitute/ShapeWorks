@@ -7,6 +7,7 @@ target_link_libraries(shapeworks_py PUBLIC
   Optimize
   Particles
   ${ITK_LIBRARIES}
+  Eigen3::Eigen
   )
 
 set_target_properties(shapeworks_py PROPERTIES

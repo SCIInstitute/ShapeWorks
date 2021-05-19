@@ -11,6 +11,9 @@
 #include <Libs/Project/Project.h>
 #include <Libs/Optimize/OptimizeParameters.h>
 #include "ParticleShapeStatistics.h"
+#include "VtkMeshWrapper.h"
+#include <vtkPLYReader.h>
+#include <Libs/Mesh/MeshUtils.h>
 
 using namespace shapeworks;
 
@@ -418,4 +421,72 @@ TEST(OptimizeTests, project_test) {
   // Otherwise it is quite large (>4000).
   double value = values[values.size() - 1];
   ASSERT_LT(value, 100);
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, mesh_geodesics_test) {
+  const std::string sphere_mesh_path = std::string(TEST_DATA_DIR) + "/sphere_highres.ply";
+  const auto sw_mesh = MeshUtils::threadSafeReadMesh(sphere_mesh_path);
+  VtkMeshWrapper mesh(sw_mesh.getVTKMesh(), true, 1000000);
+
+  auto polar2cart = [](double theta, double phi) {
+    const double x = sin(theta) * cos(phi);
+    const double y = sin(theta) * sin(phi);
+    const double z = cos(theta);
+    const itk::Point<double, 3> pt({x, y, z});
+    return pt;
+  };
+
+  // sample a bunch of points (deterministically) on the sphere and check whether the returned
+  // geodesic distance is close to the analytically computed value
+  for (int i = 0; i < 100; i++) {
+    for (int j = 0; j < 100; j++) {
+      const double theta0 = M_2PI * (i % 10) / 10.0;
+      const double phi0 = M_2PI * (i / 10) / 10.0;
+      const double theta1 = M_2PI * (j % 10) / 10.0;
+      const double phi1 = M_2PI * (j / 10) / 10.0;
+
+      const auto pt_a = polar2cart(theta0, phi0);
+      const auto pt_b = polar2cart(theta1, phi1);
+      const double a_dot_b = std::max(std::min(dot_product(pt_a.GetVnlVector(), pt_b.GetVnlVector()), 1.0), -1.0);
+
+      const double computed = mesh.ComputeDistance(pt_a, -1, pt_b, -1);
+      const double truth = acos(a_dot_b);
+
+      // std::cerr << "Geodesics test: " << computed << " " << truth << "\n";
+      ASSERT_NEAR(computed, truth, 0.06);
+    }
+  }
+}
+TEST(OptimizeTests, contour_domain_test) {
+
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/supershapes_2d");
+  chdir(test_location.c_str());
+
+  // make sure we clean out at least one output file
+  std::remove("output/ss_0_world.particles");
+
+  // run with parameter file
+  std::string paramfile = std::string("contour_domain_test.xml");
+  Optimize app;
+  OptimizeParameterFile param;
+  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
+  app.Run();
+
+  // compute stats
+  ParticleShapeStatistics stats;
+  stats.ReadPointFiles("analyze.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+
+  // Check the modes of variation.  The first mode should contain almost all the variation and the 2nd
+  // and higher modes should contain very little
+  ASSERT_GT(values[values.size() - 1], 2000.0);
+  ASSERT_LT(values[values.size() - 2], 1.0);
 }

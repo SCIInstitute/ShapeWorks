@@ -13,6 +13,7 @@ def computedtTest1():
 val = computedtTest1()
 
 if val is False:
+  print("computedtTest1 failed")
   sys.exit(1)
 
 def computedtTest2():
@@ -26,6 +27,7 @@ def computedtTest2():
 val = computedtTest2()
 
 if val is False:
+  print("computedtTest2 failed")
   sys.exit(1)
 
 def computedtTest3():
@@ -39,4 +41,5 @@ def computedtTest3():
 val = computedtTest3()
 
 if val is False:
+  print("computedtTest3 failed")
   sys.exit(1)
