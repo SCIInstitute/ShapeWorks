@@ -73,14 +73,17 @@ signals:
 
 private:
 
+  void setup_domain_boxes();
+
   void update_run_button();
 
   void handle_load_progress(int count);
 
   void clear_particles();
 
-  Preferences& preferences_;
+  std::vector<QLineEdit*> particle_boxes_;
 
+  Preferences& preferences_;
 
   std::vector<QLineEdit*> line_edits_;
 

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>562</width>
-    <height>692</height>
+    <height>784</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -79,6 +79,46 @@
           <string>Green on Black</string>
          </property>
         </item>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_6">
+     <property name="title">
+      <string>Data</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <property name="horizontalSpacing">
+       <number>36</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_11">
+        <property name="text">
+         <string>Groom Output</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Optimize Output</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="groom_file_template">
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="optimize_file_template">
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
        </widget>
       </item>
      </layout>
@@ -167,6 +207,9 @@
         </item>
         <item row="0" column="1">
          <widget class="QDoubleSpinBox" name="pca_range">
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
           <property name="decimals">
            <number>2</number>
           </property>
@@ -190,6 +233,9 @@
         </item>
         <item row="1" column="1">
          <widget class="QSpinBox" name="pca_steps">
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
           <property name="minimum">
            <number>3</number>
           </property>
@@ -257,51 +303,6 @@
       </item>
       <item>
        <layout class="QGridLayout" name="gridLayout">
-        <item row="1" column="0">
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Memory to Use :</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="2">
-         <widget class="QLabel" name="memory_current_value">
-          <property name="text">
-           <string>...</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="3">
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>100%</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="label_10">
-          <property name="text">
-           <string>Threads</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QCheckBox" name="parallel_enabled">
-          <property name="text">
-           <string>Parallel Reconstruction</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="3">
-         <widget class="QLabel" name="num_threads_max_label">
-          <property name="text">
-           <string>max</string>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="1">
          <widget class="QLabel" name="label_2">
           <property name="text">
@@ -328,6 +329,27 @@
           </property>
          </widget>
         </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_10">
+          <property name="text">
+           <string>Threads</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>100%</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="3">
+         <widget class="QLabel" name="num_threads_max_label">
+          <property name="text">
+           <string>max</string>
+          </property>
+         </widget>
+        </item>
         <item row="4" column="2">
          <widget class="QSlider" name="num_threads">
           <property name="minimum">
@@ -350,6 +372,37 @@
           </property>
          </widget>
         </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Memory to Use :</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLabel" name="label_9">
+          <property name="text">
+           <string>1</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QCheckBox" name="parallel_enabled">
+          <property name="text">
+           <string>Parallel Reconstruction</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QLabel" name="memory_current_value">
+          <property name="text">
+           <string>...</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
         <item row="5" column="2">
          <widget class="QLabel" name="threads_current_value">
           <property name="text">
@@ -360,24 +413,17 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="1">
-         <widget class="QLabel" name="label_15">
-          <property name="text">
-           <string>1</string>
-          </property>
-         </widget>
-        </item>
        </layout>
       </item>
      </layout>
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_6">
+    <widget class="QGroupBox" name="groupBox_7">
      <property name="title">
       <string>Mesh Optimization</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_4">
+     <layout class="QGridLayout" name="gridLayout_5">
       <item row="0" column="2">
        <widget class="QSlider" name="geodesic_cache_multiplier">
         <property name="minimum">
@@ -404,21 +450,21 @@
        </widget>
       </item>
       <item row="0" column="3">
-       <widget class="QLabel" name="label_11">
+       <widget class="QLabel" name="label_15">
         <property name="text">
          <string>1000</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLabel" name="label_9">
+       <widget class="QLabel" name="label_16">
         <property name="text">
          <string>0</string>
         </property>
        </widget>
       </item>
       <item row="0" column="0">
-       <widget class="QLabel" name="label_5">
+       <widget class="QLabel" name="label_17">
         <property name="text">
          <string>Geodesics Cache Size Multiplier:</string>
         </property>

@@ -6,6 +6,13 @@
 #include <Libs/Utils/StringUtils.h>
 #include <limits>
 
+#ifdef _WIN32
+#include <direct.h>
+  #define chdir _chdir
+#else
+  #include <unistd.h>
+#endif
+
 namespace shapeworks {
 
 // boilerplate for a command. Copy this to start a new command
@@ -69,6 +76,12 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
       ProjectHandle project = std::make_shared<Project>();
       project->load(projectFile);
 
+      auto base = StringUtils::getPath(projectFile);
+      if (base != projectFile) {
+        chdir(base.c_str());
+        project->set_filename(StringUtils::getFilename(projectFile));
+      }
+
       // set up Optimize class based on project parameters
       OptimizeParameters params(project);
       params.set_up_optimize(&app);
@@ -119,6 +132,13 @@ bool GroomCommand::execute(const optparse::Values& options, SharedCommandData& s
   try {
     ProjectHandle project = std::make_shared<Project>();
     project->load(projectFile);
+
+    auto base = StringUtils::getPath(projectFile);
+    if (base != projectFile) {
+      chdir(base.c_str());
+      project->set_filename(StringUtils::getFilename(projectFile));
+    }
+
     Groom app(project);
     bool success = app.run();
     if (success) {

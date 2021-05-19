@@ -52,12 +52,18 @@ MeshHandle MeshGenerator::build_mesh_from_points(const vnl_vector<double>& shape
 {
   MeshHandle mesh(new StudioMesh);
 
-  bool distance_transform_available = this->surface_reconstructor_ &&
-                                      this->surface_reconstructor_->get_surface_reconstruction_available();
+  auto& surface_reconstructors = this->reconstructors_->surface_reconstructors_;
+  auto& mesh_warpers = this->reconstructors_->mesh_warpers_;
+
+  bool distance_transform_available =
+    surface_reconstructors.size() > domain &&
+    surface_reconstructors[domain] &&
+    surface_reconstructors[domain]->get_surface_reconstruction_available();
 
   if (this->reconstruction_method_ == RECONSTRUCTION_DISTANCE_TRANSFORM_C &&
       distance_transform_available) {
-    vtkSmartPointer<vtkPolyData> poly_data = this->surface_reconstructor_->build_mesh(shape);
+    vtkSmartPointer<vtkPolyData> poly_data = surface_reconstructors[domain]->build_mesh(
+      shape);
 
     vtkSmartPointer<vtkPolyDataNormals> polydata_normals =
       vtkSmartPointer<vtkPolyDataNormals>::New();
@@ -67,16 +73,16 @@ MeshHandle MeshGenerator::build_mesh_from_points(const vnl_vector<double>& shape
 
     mesh->set_poly_data(poly_data);
   }
-  else if (this->reconstruction_method_ == RECONSTRUCTION_MESH_WARPER_C && this->mesh_warper_ &&
-           this->mesh_warper_->get_warp_available()) {
-
+  else if (this->reconstruction_method_ == RECONSTRUCTION_MESH_WARPER_C &&
+           mesh_warpers.size() > domain && mesh_warpers[domain] &&
+           mesh_warpers[domain]->get_warp_available()) {
 
     Eigen::MatrixXd points = Eigen::Map<const Eigen::VectorXd>((double*) shape.data_block(),
                                                                shape.size());
     points.resize(3, shape.size() / 3);
     points.transposeInPlace();
 
-    vtkSmartPointer<vtkPolyData> poly_data = this->mesh_warper_->build_mesh(points);
+    vtkSmartPointer<vtkPolyData> poly_data = mesh_warpers[domain]->build_mesh(points);
 
     if (!poly_data) {
       std::string message = std::string("Unable to warp mesh");
@@ -119,7 +125,11 @@ MeshHandle MeshGenerator::build_mesh_from_image(ImageType::Pointer image, float 
     marching->SetValue(0, iso_value);
     marching->Update();
 
-    mesh->set_poly_data(marching->GetOutput());
+    auto normals = vtkSmartPointer<vtkPolyDataNormals>::New();
+    normals->SetInputConnection(marching->GetOutputPort());
+    normals->Update();
+
+    mesh->set_poly_data(normals->GetOutput());
   } catch (itk::ExceptionObject& excep) {
     std::cerr << "Exception caught!" << std::endl;
     std::cerr << excep << std::endl;
@@ -186,18 +196,6 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
 }
 
 //---------------------------------------------------------------------------
-void MeshGenerator::set_surface_reconstructor(QSharedPointer<SurfaceReconstructor> reconstructor)
-{
-  this->surface_reconstructor_ = reconstructor;
-}
-
-//---------------------------------------------------------------------------
-void MeshGenerator::set_mesh_warper(QSharedPointer<MeshWarper> mesh_warper)
-{
-  this->mesh_warper_ = mesh_warper;
-}
-
-//---------------------------------------------------------------------------
 void MeshGenerator::set_reconstruction_method(std::string method)
 {
   this->reconstruction_method_ = method;
@@ -207,6 +205,12 @@ void MeshGenerator::set_reconstruction_method(std::string method)
 std::string MeshGenerator::get_reconstruction_method()
 {
   return this->reconstruction_method_;
+}
+
+//---------------------------------------------------------------------------
+void MeshGenerator::set_mesh_reconstructors(std::shared_ptr<MeshReconstructors> reconstructors)
+{
+  this->reconstructors_ = reconstructors;
 }
 
 }

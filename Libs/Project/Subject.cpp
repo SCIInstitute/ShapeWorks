@@ -33,30 +33,6 @@ std::vector<std::string> Subject::get_groomed_filenames()
 }
 
 //---------------------------------------------------------------------------
-void Subject::set_local_particle_filename(std::string filename)
-{
-  this->local_particle_filename_ = filename;
-}
-
-//---------------------------------------------------------------------------
-std::string Subject::get_local_particle_filename()
-{
-  return this->local_particle_filename_;
-}
-
-//---------------------------------------------------------------------------
-void Subject::set_global_particle_filename(std::string filename)
-{
-  this->global_particle_filename_ = filename;
-}
-
-//---------------------------------------------------------------------------
-std::string Subject::get_global_particle_filename()
-{
-  return this->global_particle_filename_;
-}
-
-//---------------------------------------------------------------------------
 std::vector<std::string> Subject::get_segmentation_filenames()
 {
   return this->segmentation_filenames_;
@@ -156,4 +132,28 @@ std::map<std::string, std::string> Subject::get_extra_values() const
 void Subject::set_extra_values(std::map<std::string, std::string> extra_values)
 {
   this->extra_values_ = extra_values;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_local_particle_filenames(std::vector<std::string> filenames)
+{
+  this->local_particle_filenames_ = filenames;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Subject::get_local_particle_filenames()
+{
+  return this->local_particle_filenames_;
+}
+
+//---------------------------------------------------------------------------
+void Subject::set_world_particle_filenames(std::vector<std::string> filenames)
+{
+  this->world_particle_filenames_ = filenames;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Subject::get_world_particle_filenames()
+{
+  return this->world_particle_filenames_;
 }

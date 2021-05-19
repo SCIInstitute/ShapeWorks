@@ -32,6 +32,8 @@ protected:
   //! Generate warp, return true on success
   virtual bool generate_warp();
 
+  virtual void update_progress(float p) {};
+
 private:
 
   //! Add particles as vertices to reference mesh
@@ -75,6 +77,8 @@ private:
   vtkSmartPointer<vtkPolyData> reference_mesh_;
   //! Reference particles
   Eigen::MatrixXd reference_particles_;
+
+
 };
 
 }
