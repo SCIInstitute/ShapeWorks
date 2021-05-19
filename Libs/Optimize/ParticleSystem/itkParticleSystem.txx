@@ -39,8 +39,12 @@ ParticleSystem<VDimension>
   m_Domains.resize(num);
   m_Transforms.resize(num);
   m_InverseTransforms.resize(num);
-  m_PrefixTransforms.resize(num);
-  m_InversePrefixTransforms.resize(num);
+  while (num >= m_PrefixTransforms.size()) {
+    TransformType transform;
+    transform.set_identity();
+    m_PrefixTransforms.push_back(transform);
+    m_InversePrefixTransforms.push_back(transform);
+  }
   m_Positions.resize(num);
   m_IndexCounters.resize(num);
   m_Neighborhoods.resize(num);
@@ -74,8 +78,6 @@ void ParticleSystem<VDimension>
   m_Neighborhoods[static_cast<int>( m_Domains.size() -1)] = NeighborhoodType::New();
   m_Transforms[static_cast<int>( m_Domains.size() -1)].set_identity();
   m_InverseTransforms[static_cast<int>( m_Domains.size() -1)].set_identity();
-  m_PrefixTransforms[static_cast<int>( m_Domains.size() -1)].set_identity();
-  m_InversePrefixTransforms[static_cast<int>( m_Domains.size() -1)].set_identity();
 
   // Notify any observers.
   ParticleDomainAddEvent e;
@@ -100,6 +102,10 @@ template <unsigned int VDimension>
 void ParticleSystem<VDimension>
 ::SetTransform(unsigned int i, const TransformType& T, int threadId)
 {
+  if (i > static_cast<int>(m_Transforms.size())-1 || m_Transforms.empty()) {
+    m_Transforms.resize(i+1);
+    m_InverseTransforms.resize(i+1);
+  }
   m_Transforms[i] = T;
   m_InverseTransforms[i] = this->InvertTransform(T);
 
@@ -114,6 +120,11 @@ template <unsigned int VDimension>
 void ParticleSystem<VDimension>
 ::SetPrefixTransform(unsigned int i, const TransformType& T, int threadId)
 {
+  if (i > static_cast<int>(m_PrefixTransforms.size())-1 || m_PrefixTransforms.empty()) {
+    m_PrefixTransforms.resize(i+1);
+    m_InversePrefixTransforms.resize(i+1);
+  }
+
   m_PrefixTransforms[i] = T;
   m_InversePrefixTransforms[i] = this->InvertTransform(T);
 
@@ -277,39 +288,22 @@ ParticleSystem<VDimension>
 }
 
 template<unsigned int VDimension>
-void ParticleSystem<VDimension>::AdvancedAllParticleSplitting(double epsilon)
+void ParticleSystem<VDimension>::AdvancedAllParticleSplitting(double epsilon,
+                                                              unsigned int domains_per_shape,
+                                                              unsigned int dom_to_process)
 {
   size_t num_doms = this->GetNumberOfDomains();
 
   std::vector<std::vector<PointType> > lists;
 
-  for (size_t domain = 0; domain < num_doms; domain++) {
+  for (size_t domain = dom_to_process; domain < num_doms; domain += domains_per_shape) {
     std::vector<PointType> list;
-    for (auto k=0; k<GetPositions(domain)->GetSize(); k++) {
+
+    for (auto k = 0; k < GetPositions(domain)->GetSize(); k++) {
       list.push_back(GetPositions(domain)->Get(k));
     }
     lists.push_back(list);
-    // Debuggg
-    /*
-    std::cout << "Domain " << domain << " Curr Pos ";
-    for(size_t i = 0; i < list.size(); i++)
-        std::cout << list[i] << " ";
-    std::cout << " List size " << list.size() << std::endl;
-    */
   }
-
-  /*
-  std::vector< std::vector<vnl_vector<double> > > lists;
-
-  for (int i = 0; i < n; i++) {
-    int d = i % m_domains_per_shape;
-    if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d]) {
-      std::vector<vnl_vector<double> > list = *(m_sampler->GetParticleSystem()->GetPositions(i));
-      std::cout << "list_size " << list.size() << std::endl;
-      //m_sampler->GetParticleSystem()->SplitAllParticlesInDomain(random, epsilon, i, 0);
-    }
-  }
-  */
 
   if (lists.size() > 0) {
     for (size_t i = 0; i < lists[0].size(); i++) {
@@ -335,26 +329,24 @@ void ParticleSystem<VDimension>::AdvancedAllParticleSplitting(double epsilon)
         for (size_t j = 0; j < lists.size(); j++) {
           // Add epsilon times random direction to existing point and apply domain
           // constraints to generate a new particle position.
-          PointType newpos;
-          for (unsigned int k = 0; k < 3; k++) {
-            newpos[k] = lists[j][i][k] + epsilon * random[k] / 5.;
-          }
+          PointType newpos = this->GetDomain(dom_to_process+j*domains_per_shape)->GetPositionAfterSplit(lists[j][i], random, epsilon);
           // Go to surface
-          if (!this->m_DomainFlags[j] &&
-              !this->GetDomain(j)->GetConstraints()->IsAnyViolated(newpos)) {
-            this->GetDomain(j)->ApplyConstraints(newpos, -1);
+          if (!this->m_DomainFlags[dom_to_process+j*domains_per_shape] &&
+              !this->GetDomain(dom_to_process+j*domains_per_shape)->GetConstraints()->IsAnyViolated(newpos)) {
+            this->GetDomain(dom_to_process+j*domains_per_shape)->ApplyConstraints(newpos, -1);
           }
           newposs_good.push_back(newpos);
           // Check for plane constraint violations
-          if (this->GetDomain(j)->GetConstraints()->IsAnyViolated(newpos)) {
+          if (this->GetDomain(dom_to_process+j*domains_per_shape)->GetConstraints()->IsAnyViolated(newpos)) {
             good = false;
+            //std::cout << "violation " << lists[j][i] << " new point " << std::endl;
             break;
           }
         }
 
         if (good) {
           for (size_t j = 0; j < lists.size(); j++) {
-            this->AddPosition(newposs_good[j], j, 0);
+            this->AddPosition(newposs_good[j], dom_to_process+j*domains_per_shape, 0);
             // Debuggg
             //std::cout << "Domain " << j << " Curr Pos " << lists[j][i] << " random "
             // << random  << " epsilon " << epsilon << " picked " << newposs_good[j] << std::endl;

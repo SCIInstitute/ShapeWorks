@@ -1,5 +1,8 @@
 #pragma once
 
+#include <Eigen/Dense>
+#include <Eigen/Sparse>
+
 // Qt
 #include <QSharedPointer>
 #include <QWidget>
@@ -8,7 +11,6 @@
 #include <ParticleShapeStatistics.h>
 
 // Studio
-
 #include <Data/Shape.h>
 #include <Data/Preferences.h>
 #include <Visualization/Visualizer.h>
@@ -69,10 +71,11 @@ public:
   void reset_stats();
   void enable_actions(bool newly_enabled = false);
 
-  const vnl_vector<double>& get_mean_shape_points();
+  StudioParticles get_mean_shape_points();
   ShapeHandle get_mean_shape();
 
-  const vnl_vector<double>& get_shape_points(int mode, double value);
+  StudioParticles get_shape_points(int mode, double value);
+  ShapeHandle get_mode_shape(int mode, double value);
 
   ParticleShapeStatistics get_stats();
   void load_settings();
@@ -141,6 +144,7 @@ public Q_SLOTS:
 
   void initialize_mesh_warper();
 
+
 signals:
 
   void update_view();
@@ -152,17 +156,21 @@ signals:
 
 private:
 
+  void compute_reconstructed_domain_transforms();
+
   bool active_ = false;
 
   void pca_labels_changed(QString value, QString eigen, QString lambda);
   void compute_mode_shape();
   void update_analysis_mode();
 
+  //! Break apart combined points into per-domain
+  StudioParticles convert_from_combined(const vnl_vector<double>& points);
 
   void update_group_boxes();
   void update_group_values();
 
-  ShapeHandle create_shape_from_points(const vnl_vector<double>& points);
+  ShapeHandle create_shape_from_points(StudioParticles points);
 
   Preferences& preferences_;
 
@@ -192,6 +200,8 @@ private:
 
   std::vector<std::string> current_group_names_;
   std::vector<std::string> current_group_values_;
+
+  std::vector<vtkSmartPointer<vtkTransform>> reconstruction_transforms_;
 
 };
 

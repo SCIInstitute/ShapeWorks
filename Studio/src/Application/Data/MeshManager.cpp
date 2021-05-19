@@ -12,11 +12,9 @@ namespace shapeworks {
 //---------------------------------------------------------------------------
 MeshManager::MeshManager(Preferences& prefs) :
   prefs_(prefs),
-  mesh_cache_(prefs),
-  surface_reconstructor_(new SurfaceReconstructor())
+  mesh_cache_(prefs)
 {
-  this->mesh_generator_->set_mesh_warper(this->mesh_warper_);
-  this->mesh_generator_->set_surface_reconstructor(this->surface_reconstructor_);
+  this->mesh_generator_->set_mesh_reconstructors(this->reconstructors_);
 
   qRegisterMetaType<MeshWorkItem>("MeshWorkItem");
   qRegisterMetaType<MeshHandle>("MeshHandle");
@@ -42,12 +40,9 @@ void MeshManager::generate_mesh(const MeshWorkItem item)
 
     this->work_queue_.push(item);
 
-    MeshWorker* worker = new MeshWorker(this->prefs_, item,
-                                        &this->work_queue_, &this->mesh_cache_);
-    worker->set_mesh_generator(this->mesh_generator_);
+    MeshWorker* worker = new MeshWorker(&this->work_queue_, this->mesh_generator_);
 
     connect(worker, &MeshWorker::result_ready, this, &MeshManager::handle_thread_complete);
-
     this->thread_pool_.start(worker);
   }
 }
@@ -66,6 +61,7 @@ MeshHandle MeshManager::get_mesh(const MeshWorkItem& item, bool wait)
       }
       else {
         mesh = this->mesh_generator_->build_mesh(item);
+        this->check_error_status(mesh);
         this->mesh_cache_.insert_mesh(item, mesh);
       }
     }
@@ -77,10 +73,11 @@ MeshHandle MeshManager::get_mesh(const MeshWorkItem& item, bool wait)
 }
 
 //---------------------------------------------------------------------------
-MeshHandle MeshManager::get_mesh(const vnl_vector<double>& points)
+MeshHandle MeshManager::get_mesh(const vnl_vector<double>& points, int domain)
 {
   MeshWorkItem item;
   item.points = points;
+  item.domain = domain;
   return this->get_mesh(item);
 }
 
@@ -90,25 +87,59 @@ void MeshManager::handle_thread_complete(const MeshWorkItem& item, MeshHandle me
   this->mesh_cache_.insert_mesh(item, mesh);
   this->work_queue_.remove(item);
 
+  this->check_error_status(mesh);
+
+  emit new_mesh();
+}
+
+//---------------------------------------------------------------------------
+void MeshManager::check_error_status(MeshHandle mesh)
+{
   if (mesh->get_error_message() != "" && !this->error_emitted_) {
     this->error_emitted_ = true;
     std::string message = "Error during mesh construction:\n\n" + mesh->get_error_message()
                           + "\n\nFurther messages will be suppressed\n";
     emit error_encountered(message);
   }
-
-  emit new_mesh();
 }
 
 //---------------------------------------------------------------------------
-QSharedPointer<SurfaceReconstructor> MeshManager::get_surface_reconstructor()
+std::shared_ptr<MeshWarper> MeshManager::get_mesh_warper(int domain)
 {
-  return this->surface_reconstructor_;
+  while (domain >= this->reconstructors_->mesh_warpers_.size()) {
+    auto warper = std::make_shared<QMeshWarper>(this);
+    connect(warper.get(), &QMeshWarper::progress, this, &MeshManager::handle_warper_progress);
+    this->reconstructors_->mesh_warpers_.push_back(warper);
+  }
+  return this->reconstructors_->mesh_warpers_[domain];
 }
 
 //---------------------------------------------------------------------------
-QSharedPointer<MeshWarper> MeshManager::get_mesh_warper()
+std::shared_ptr<SurfaceReconstructor> MeshManager::get_surface_reconstructor(int domain)
 {
-  return this->mesh_warper_;
+  while (domain >= this->reconstructors_->surface_reconstructors_.size()) {
+    this->reconstructors_->surface_reconstructors_.push_back(
+      std::make_shared<SurfaceReconstructor>());
+  }
+  return this->reconstructors_->surface_reconstructors_[domain];
+}
+
+//---------------------------------------------------------------------------
+void MeshManager::handle_warper_progress()
+{
+  float sum = 0;
+  int num_domains = this->reconstructors_->mesh_warpers_.size();
+  for (int i = 0; i < num_domains; i++) {
+    sum += this->reconstructors_->mesh_warpers_[i]->get_progress();
+  }
+  float p = sum / num_domains * 100.0;
+
+  if (p < 1.0) {
+    emit status("Generating Mesh Warp");
+  }
+  else {
+    emit status("");
+  }
+  emit progress(p);
 }
 }

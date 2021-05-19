@@ -2,11 +2,9 @@ import os
 import itk
 import numpy as np
 import scipy
-import sys
 import shutil
-from termcolor import colored, cprint
+import vtk
 from shapeworks import *
-
 
 '''
 Make folder
@@ -15,34 +13,6 @@ def make_dir(dir_path):
 	if os.path.exists(dir_path):
 		shutil.rmtree(dir_path)
 	os.makedirs(dir_path)
-
-
-
-
-
-
-
-'''
-rename
-'''
-def rename(inname, outDir, extension_addition, extension_change=''):
-    """
-    Takes inname path and replaces dir with outdir and adds extension before file type
-    """
-    initPath = os.path.dirname(inname)
-    outname = inname.replace(initPath, outDir)
-    current_extension = "." + inname.split(".")[-1]
-    if extension_addition != '':
-        outname = outname.replace(current_extension, '.' + extension_addition + current_extension)
-    if extension_change != '':
-        outname = outname.replace(current_extension, extension_change)
-    cprint(("Input filename: " + inname), 'cyan')
-    cprint(("Output filename: " + outname), 'yellow')
-    return outname
-
-
-
-
 
 '''
 Get list of full paths for files in dir
@@ -171,82 +141,44 @@ def apply_noise(img, foreground_mean, foreground_var, background_mean, backgroun
 	noisy_img = img + foreground_noise + background_noise
 	return noisy_img
 
-def getMeshInfo(outDir, meshList, spacing):
-	# Get VTK meshes
-	meshListStr = ''
-	for index in range(len(meshList)):
-		VTKmesh = meshList[index]
-		# VTKmesh = mesh.replace("ply" , "vtk")
-		# subprocess.check_call(["ply2vtk", mesh, VTKmesh])
-		meshListStr += VTKmesh + '\n'
-	# Write XML
-	xmlfilename = outDir + "MeshInfo.xml"
-	out_origin = outDir + "origin.txt"
-	out_size = outDir + "size.txt"
-	xml = open(xmlfilename, "a")
-	xml.write("<?xml version=\"1.0\" ?>\n")
-	xml.write("<mesh>\n")
-	xml.write(meshListStr+"\n")
-	xml.write("</mesh>\n")
-	xml.write("<spacing_x>\n" + str(spacing[0]) + "\n</spacing_x>\n")
-	xml.write("<spacing_y>\n" + str(spacing[1]) + "\n</spacing_y>\n")
-	xml.write("<spacing_z>\n" + str(spacing[2]) + "\n</spacing_z>\n")
-	xml.write("<out_origin_filename>\n" + out_origin + "\n</out_origin_filename>\n")
-	xml.write("<out_size_filename>\n" + out_size + "\n</out_size_filename>\n")
-	xml.close()
-	# Get origin and size
-	execCommand = ["ComputeRasterizationVolumeOriginAndSize", xmlfilename]
-	subprocess.check_call(execCommand)
-	os.remove(xmlfilename)
-	origin_file = open(out_origin, 'r')
-	origin = np.array(origin_file.read().split()).astype(int)
-	size_file = open(out_size, 'r')
-	size = np.array(size_file.read().split()).astype(int)
-	os.remove(out_origin)
-	os.remove(out_size)
-	return origin, size
+def compute_line_indices(n, is_closed=True):
+    """
+    Given a number of points, return indices for lines(as np.ndarray) between successive pairs of points.
+    n:         number of points
+    is_closed: whether or not the last vertex is to to be connected to the first vertex
+    """
+    lines = np.zeros((n if is_closed else n-1, 2), dtype=int)
+    for i in range(lines.shape[0]):
+        lines[i] = [i, (i+1)%n]
 
+    return lines
 
-def generate_segmentations(meshList, out_dir, randomize_size, spacing, allow_on_boundary):
-	segDir = out_dir + "segmentations/"
-	make_dir(segDir)
-	PLYmeshList = get_file_with_ext(meshList,'ply')
-	# get dims tht fit all meshes
-	bb = MeshUtils.boundingBox(PLYmeshList)
-	fit_all_origin = [bb.min[0], bb.min[1], bb.min[2]]
-	bb_dims = bb.max-bb.min
-	fit_all_dims = [bb_dims[0], bb_dims[1], bb_dims[2]]
-	# randomly select 20% meshes for boundary touching samples
-	numMeshes = len(PLYmeshList)
-	meshIndexArray = np.array(list(range(numMeshes)))
-	subSampleSize = int(0.2*numMeshes)
-	randomBoundarySamples = np.random.choice(meshIndexArray,subSampleSize,replace=False)
-	# loop through meshes and turn to images
-	segList = []
-	meshIndex = 0
-	for mesh_ in PLYmeshList:
-		print("Generating seg " + str(meshIndex + 1) + " out of " + str(len(PLYmeshList)))
-		segFile = rename(mesh_, segDir, "", ".nrrd")
-		segList.append(segFile)
-		mesh = Mesh(mesh_)
-		# If the meshIndex is in the randomly selected samples, get the origin and size 
-		# of that mesh so that the segmentation image touch the boundary
-		if allow_on_boundary and (meshIndex in randomBoundarySamples):
-			bb = mesh.boundingBox()
-			origin = [bb.min[0], bb.min[1], bb.min[2]]
-			dims = [bb.max[0]*2, bb.max[1]*2, bb.max[2]*2]
-			pad = np.zeros(3)
-		else:
-			origin = fit_all_origin
-			dims = fit_all_dims
-			# If randomize size, add random padding to x, y, and z dims
-			if randomize_size:
-				pad = np.random.randint(5, high=15, size=3)
-			else:
-				pad = np.full(3, 5)
-		origin = list(np.array(origin) - pad)
-		dims = list((np.array(dims) + (2*pad)).astype(int))
-		image = mesh.toImage(spacing, dims, origin)
-		image.write(segFile, 0)
-		meshIndex += 1
-	return segList
+def save_contour_as_vtp(points, lines, filename):
+    """
+    Generates a .vtp file for the given contour to use in ShapeWorks optimizer
+    points:   Nx3 np.ndarray of points in the contour
+    lines:    Mx2 np.ndarray of lines in the contour
+    filename: output .vtp filename
+    """
+    vtk_pts = vtk.vtkPoints()
+    n = points.shape[0]
+    for j in range(n):
+        x, y, z = points[j]
+        vtk_pts.InsertNextPoint((x,y,z))
+
+    vtk_lines = vtk.vtkCellArray()
+    m = lines.shape[0]
+    for j in range(m):
+        vtk_line = vtk.vtkLine()
+        vtk_line.GetPointIds().SetId(0, lines[j][0])
+        vtk_line.GetPointIds().SetId(1, lines[j][1])
+        vtk_lines.InsertNextCell(vtk_line)
+
+    polydata = vtk.vtkPolyData()
+    polydata.SetPoints(vtk_pts)
+    polydata.SetLines(vtk_lines)
+
+    writer = vtk.vtkXMLPolyDataWriter()
+    writer.SetFileName(filename)
+    writer.SetInputData(polydata)
+    writer.Write()

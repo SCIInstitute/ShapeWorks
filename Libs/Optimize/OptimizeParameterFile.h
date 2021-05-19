@@ -43,6 +43,8 @@ private:
 
   bool read_mesh_inputs(TiXmlHandle* docHandle, Optimize* optimize);
 
+  bool read_contour_inputs(TiXmlHandle* docHandle, Optimize* optimize);
+
   bool read_mesh_attributes(TiXmlHandle* docHandle, Optimize* optimize);
 
   bool read_point_files(TiXmlHandle* docHandle, Optimize* optimize);
@@ -60,6 +62,8 @@ private:
   bool read_flag_particles(TiXmlHandle* doc_handle, Optimize* optimize);
 
   bool read_flag_domains(TiXmlHandle* doc_handle, Optimize* optimize);
+
+  int get_num_inputs(TiXmlHandle* docHandle);
 
 private:
 

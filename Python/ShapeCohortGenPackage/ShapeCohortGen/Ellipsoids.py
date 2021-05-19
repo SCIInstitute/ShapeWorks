@@ -41,18 +41,26 @@ def addEllipsoid(center, radii, rotation, rotation_axis='Y',resolution=24):
 
 	return translateFilter
 
-def generate_ellipsoids(filename, meshDir, randomize_center, randomize_rotation):
+def generate_ellipsoids(filename, meshDir, randomize_center, randomize_rotation, randomize_x_radius, randomize_y_radius, randomize_z_radius):
 	vtkFileName = meshDir+"ellipsoid_"+filename+".vtk"
 	plyFileName = meshDir+"ellipsoid_"+filename+".ply"
 	if randomize_center:
 		center_loc = list(np.random.randint(low = 0,high=50,size=3))
 	else:
 		center_loc = [0,0,0]
-	x_radius = np.random.randint(low =15,high=25,size =1)
-	y_radius = np.random.randint(low =5,high=15,size =1)
-	z_radius = np.random.randint(low =5,high=15,size =1)
-
-	radii = [x_radius[0],y_radius[0],z_radius[0]]
+	if randomize_x_radius:
+		x_radius = np.random.randint(low =15,high=25,size =1)[0]
+	else:
+		x_radius = 20
+	if randomize_y_radius:
+		y_radius = np.random.randint(low =5,high=15,size =1)[0]
+	else:
+		y_radius = 10
+	if randomize_z_radius:
+		z_radius = np.random.randint(low =5,high=15,size =1)[0]
+	else:
+		z_radius = 12
+	radii = [x_radius,y_radius,z_radius]
 	if randomize_rotation:
 		rotation = np.random.randint(low=0,high=180,size=1)[0]
 	else:
@@ -70,10 +78,10 @@ def generate_ellipsoids(filename, meshDir, randomize_center, randomize_rotation)
 	vtk_writer.Update()
 	
 
-def generate(num_samples,out_dir,randomize_center, randomize_rotation):
+def generate(num_samples,out_dir,randomize_center, randomize_rotation, randomize_x_radius, randomize_y_radius, randomize_z_radius):
 	meshDir = out_dir + "meshes/"
 	make_dir(meshDir)
 	for i in range(num_samples):
 		filename = str(i).zfill(2)
-		generate_ellipsoids(filename, meshDir, randomize_center, randomize_rotation)
+		generate_ellipsoids(filename, meshDir, randomize_center, randomize_rotation, randomize_x_radius, randomize_y_radius, randomize_z_radius)
 	return get_files(meshDir)

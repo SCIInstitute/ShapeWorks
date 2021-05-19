@@ -55,6 +55,9 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
     else if (text == "mesh") {
       domain_type = shapeworks::DomainType::Mesh;
     }
+    else if (text == "contour") {
+      domain_type = shapeworks::DomainType::Contour;
+    }
   }
   optimize->SetDomainType(domain_type);
 
@@ -77,7 +80,8 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
     /// TODO: Not sure we need to check this here as it will be checked by Optimize anyway
     if (domains_per_shape != number_of_particles.size()) {
       std::cerr <<
-                "Inconsistency in parameters... domains_per_shape != number_of_particles.size()" <<
+                "Inconsistency in parameters... m_domains_per_shape != m_number_of_particles.size()"
+                <<
                 std::endl;
       return false;
     }
@@ -109,6 +113,11 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
     return false;
   }
 
+  // Reads constraints
+  if (!this->read_constraints(&doc_handle, optimize)) {
+    return false;
+  }
+
   if (!this->read_flag_domains(&doc_handle, optimize)) {
     return false;
   }
@@ -129,17 +138,17 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
       return false;
     }
   }
+  else if (optimize->GetDomainType() == shapeworks::DomainType::Contour) {
+    if (!this->read_contour_inputs(&doc_handle, optimize)) {
+      return false;
+    }
+    if (!this->read_mesh_attributes(&doc_handle, optimize)) {
+      return false;
+    }
+  }
   if (!this->read_point_files(&doc_handle, optimize)) {
     return false;
   }
-
-
-  // must be read after the inputs since it checks that the counts match
-  if (!this->read_constraints(&doc_handle, optimize)) {
-    return false;
-  }
-
-  //optimize->GetSampler()->ApplyConstraintsToZeroCrossing();
 
   return true;
 }
@@ -361,6 +370,12 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
   elem = docHandle->FirstChild("use_shape_statistics_after").Element();
   if (elem) { optimize->SetUseShapeStatisticsAfter(atof(elem->GetText())); }
 
+  elem = docHandle->FirstChild("geodesics_enabled").Element();
+  if (elem) { optimize->SetGeodesicsEnabled((bool) atoi(elem->GetText())); }
+
+  elem = docHandle->FirstChild("geodesics_cache_size_multiplier").Element();
+  if (elem) { optimize->SetGeodesicsCacheSizeMultiplier((size_t) atol(elem->GetText())); }
+
   return true;
 }
 
@@ -458,6 +473,10 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
     meshFiles.push_back(meshfilename);
   }
 
+  // passing cutting plane constraints
+  // planes dimensions [number_of_inputs, planes_per_input, normal/point]
+  std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > > planes = optimize->GetSampler()->ComputeCuttingPlanes();
+
   for (int index = 0; index < meshFiles.size(); index++) {
     bool fixed_domain = false;
     for (int i = 0; i < flags.size(); i++) {
@@ -482,10 +501,24 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
       }
       */
 
-      auto poly_data = MeshUtils::threadSafeReadMesh(meshFiles[index].c_str()).getVTKMesh();
+      Mesh mesh = MeshUtils::threadSafeReadMesh(meshFiles[index].c_str());
+
+      if (index < planes.size()) {
+        for (size_t i = 0; i < planes[index].size(); i++) {
+          // Create vtk plane
+          vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
+          plane->SetNormal(planes[index][i].first[0], planes[index][i].first[1],
+                           planes[index][i].first[2]);
+          plane->SetOrigin(planes[index][i].second[0], planes[index][i].second[1],
+                           planes[index][i].second[2]);
+
+          mesh.clip(plane);
+        }
+      }
+      auto poly_data = mesh.getVTKMesh();
 
       if (poly_data) {
-        optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data));
+        optimize->AddMesh(poly_data);
       } else {
         std::cerr << "Failed to read " << meshFiles[index] << "\n";
         return false;
@@ -506,6 +539,59 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
   }
 
   optimize->SetFilenames(StringUtils::getFileNamesFromPaths(meshFiles));
+
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool OptimizeParameterFile::read_contour_inputs(TiXmlHandle* docHandle, Optimize* optimize)
+{
+  TiXmlElement* elem = nullptr;
+
+  elem = docHandle->FirstChild("inputs").Element();
+  if (!elem) {
+    std::cerr << "No input contours have been specified\n";
+    return false;
+  }
+
+  std::istringstream inputsBuffer;
+
+  inputsBuffer.str(elem->GetText());
+  auto flags = optimize->GetDomainFlags();
+
+  std::vector<std::string> contourFiles;
+  std::string contourfilename;
+  while (inputsBuffer >> contourfilename) {
+    contourFiles.push_back(contourfilename);
+  }
+
+  for (int index = 0; index < contourFiles.size(); index++) {
+    bool fixed_domain = false;
+    for (int i = 0; i < flags.size(); i++) {
+      if (flags[i] == index) {
+        fixed_domain = true;
+      }
+    }
+
+    if (!fixed_domain) {
+      if (this->verbosity_level_ > 1) {
+        std::cout << "Reading inputfile: " << contourFiles[index] << "...\n" << std::flush;
+      }
+
+      auto poly_data = MeshUtils::threadSafeReadMesh(contourFiles[index].c_str()).getVTKMesh();
+      if (poly_data) {
+        optimize->AddContour(poly_data);
+      } else {
+        std::cerr << "Failed to read " << contourFiles[index] << "\n";
+        return false;
+      }
+    }
+    else {
+      optimize->AddContour(nullptr);
+    }
+  }
+
+  optimize->SetFilenames(StringUtils::getFileNamesFromPaths(contourFiles));
 
   return true;
 }
@@ -799,12 +885,49 @@ bool OptimizeParameterFile::read_distribution_cutting_plane(TiXmlHandle* doc_han
   return true;
 }
 
+int OptimizeParameterFile::get_num_inputs(TiXmlHandle* docHandle)
+{
+  // Works for any type of domain
+  // list inputs to figure out number
+  TiXmlElement* elem = nullptr;
+
+  elem = docHandle->FirstChild("inputs").Element();
+  if (!elem) {
+    std::cerr << "No input domains have been specified\n";
+    return 0;
+  }
+
+  std::istringstream buffer;
+
+  buffer.str(elem->GetText());
+  // load input domains
+  std::vector<std::string> inputs;
+  std::string filename;
+  while (buffer >> filename) {
+    inputs.push_back(filename);
+  }
+
+  int domains_per_shape = 1;
+  elem = docHandle->FirstChild("domains_per_shape").Element();
+  if (elem) {
+    domains_per_shape = atoi(elem->GetText());
+  }
+
+  if (inputs.size() % domains_per_shape != 0) {
+    std::string message = "Error, number of inputs must be a multiple of domains_per_shape";
+    throw std::invalid_argument(message);
+  }
+
+  return inputs.size() / domains_per_shape;
+}
+
 //---------------------------------------------------------------------------
 bool OptimizeParameterFile::read_cutting_planes(TiXmlHandle* docHandle, Optimize* optimize)
 {
   TiXmlElement* elem;
   std::istringstream inputsBuffer;
-  int numShapes = optimize->GetNumShapes();
+  //int numShapes = optimize->GetNumShapes();
+  int numShapes = this->get_num_inputs(docHandle);
 
   std::vector<int> cutting_planes_per_input;
 
@@ -921,7 +1044,7 @@ bool OptimizeParameterFile::read_cutting_spheres(TiXmlHandle* doc_handle, Optimi
 {
   TiXmlElement* elem = nullptr;
   std::istringstream inputsBuffer;
-  int numShapes = optimize->GetNumShapes();
+  int numShapes = this->get_num_inputs(doc_handle);
   // sphere radii and centers
   std::vector<int> spheres_per_input;
 

@@ -34,15 +34,15 @@ public:
   //! Get groomed filenames
   std::vector<std::string> get_groomed_filenames();
 
-  //! Set local particle filename (only one per subject)
-  void set_local_particle_filename(std::string filename);
-  //! Get local particle filename
-  std::string get_local_particle_filename();
+  //! Set local particle filenames (one per domain)
+  void set_local_particle_filenames(std::vector<std::string> filenames);
+  //! Get local particle filenames
+  std::vector<std::string> get_local_particle_filenames();
 
-  //! Set the world particle filename
-  void set_global_particle_filename(std::string filename);
-  //! Get the world particle filename
-  std::string get_global_particle_filename();
+  //! Set the world particle filenames
+  void set_world_particle_filenames(std::vector<std::string> filenames);
+  //! Get the world particle filenames
+  std::vector<std::string> get_world_particle_filenames();
 
   //! Set the number of domains
   void set_number_of_domains(int number_of_domains);
@@ -71,16 +71,14 @@ public:
   std::map<std::string, std::string> get_extra_values() const;
   void set_extra_values(std::map<std::string, std::string> extra_values);
 
-
 private:
 
   int number_of_domains_ = 0;
 
   std::vector<std::string> segmentation_filenames_;
-  std::vector<std::string> mesh_filenames_;
   std::vector<std::string> groomed_filenames_;
-  std::string local_particle_filename_;
-  std::string global_particle_filename_;
+  std::vector<std::string> local_particle_filenames_;
+  std::vector<std::string> world_particle_filenames_;
   std::vector<std::vector<double>> groomed_transforms_;
 
   std::map<std::string, std::string> feature_filenames_;

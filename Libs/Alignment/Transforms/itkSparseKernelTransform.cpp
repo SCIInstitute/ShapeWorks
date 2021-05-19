@@ -22,8 +22,8 @@
 #include <itkTimeProbe.h>
 #include <itkTimeProbesCollectorBase.h>
 
-#include <itkeigen/Eigen/Sparse>
-#include <itkeigen/Eigen/SparseLU>
+#include <Eigen/Sparse>
+#include <Eigen/SparseLU>
 
 #include <vector>
 

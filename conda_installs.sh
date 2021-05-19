@@ -2,7 +2,7 @@
 # Installs conda environment for building ShapeWorks
 #
 echo ""
-echo "Note: this script only supports bash and zsh shells"
+echo "Note: this script only supports bash and zsh shells "
 echo "      It must be called using \"source ./conda_installs.sh\""
 echo ""
 
@@ -44,11 +44,11 @@ function install_conda() {
     echo "installing anaconda..."
     if [[ "$(uname)" == "Darwin" ]]; then
       curl -o /tmp/Miniconda3-latest-MacOSX-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
-      bash /tmp/Miniconda3-latest-MacOSX-x86_64.sh
+      bash /tmp/Miniconda3-latest-MacOSX-x86_64.sh -b
       rm /tmp/Miniconda3-latest-MacOSX-x86_64.sh
     elif [[ "$(uname)" == "Linux" ]]; then
       curl -o ./Miniconda3-latest-Linux-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-      bash ./Miniconda3-latest-Linux-x86_64.sh
+      bash ./Miniconda3-latest-Linux-x86_64.sh -b
       rm ./Miniconda3-latest-Linux-x86_64.sh
     else
       echo "ERROR: unknown OS $(uname)"
@@ -98,7 +98,8 @@ function install_conda() {
     openexr=2.5.3 \
     pybind11=2.5.0 \
     notebook=6.1.5 \
-    nbformat=4.4.0
+    nbformat=4.4.0 \
+    pkg-config=0.29.2
   then return 1; fi
 
   # linux and mac (only) deps
@@ -130,6 +131,7 @@ function install_conda() {
   if ! pip install fontawesome-markdown==0.2.6;         then return 1; fi # lib for icons in documentation
   if ! pip install pymdown-extensions==8.0.1;           then return 1; fi # lib to support checkbox lists in documentation
   if ! pip install pyyaml==5.3.1;                       then return 1; fi # for mkdocs
+  if ! pip install markdown-it-py==1.1.0;               then return 1; fi # for mkdocs
   if ! pip install Python/DatasetUtilsPackage;          then return 1; fi # install the local GirderConnector code as a package
   if ! pip install Python/DocumentationUtilsPackage;    then return 1; fi # install shapeworks auto-documentation as a package
   if ! pip install Python/DataAugmentationUtilsPackage; then return 1; fi # install data augmentation code as a package

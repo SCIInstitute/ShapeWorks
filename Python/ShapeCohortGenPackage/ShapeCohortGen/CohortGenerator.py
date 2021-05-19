@@ -4,6 +4,7 @@ class CohortGenerator():
 	def __init__(self,out_dir):
 		self.out_dir = out_dir
 		self.meshes = []
+		self.contours = []
 		self.segs = []
 		self.images = []
 	def generate_segmentations(self, randomize_size=True, spacing=[1.0,1.0,1.0], allow_on_boundary=True):
@@ -22,8 +23,8 @@ class CohortGenerator():
 class EllipsoidCohortGenerator(CohortGenerator):
 	def __init__(self,out_dir):
 		super().__init__(out_dir)
-	def generate(self, num_samples=3, randomize_center=True, randomize_rotation=True):
-		self.meshes = Ellipsoids.generate(num_samples, self.out_dir, randomize_center, randomize_rotation)
+	def generate(self, num_samples=3, randomize_center=True, randomize_rotation=True, randomize_x_radius=True, randomize_y_radius=True, randomize_z_radius=True):
+		self.meshes = Ellipsoids.generate(num_samples, self.out_dir, randomize_center, randomize_rotation, randomize_x_radius, randomize_y_radius, randomize_z_radius)
 		return self.meshes
 
 class SupershapesCohortGenerator(CohortGenerator):
@@ -33,9 +34,25 @@ class SupershapesCohortGenerator(CohortGenerator):
 		self.meshes = Supershapes.generate(num_samples, self.out_dir, randomize_center, randomize_rotation, m, start_id, size)
 		return self.meshes
 
+
 class EllipsoidJointsCohortGenerator(CohortGenerator):
 	def __init__(self,out_dir):
 		super().__init__(out_dir)
 	def generate(self, num_samples=3, randomize_center=True, separation=2):
 		self.meshes = EllipsoidJoints.generate(num_samples, self.out_dir, randomize_center,separation)
 		return self.meshes
+
+class Supershapes2DCohortGenerator(CohortGenerator):
+	def __init__(self, out_dir):
+		super().__init__(out_dir)
+
+	def generate(self, num_samples=3, m=3, n1_degree=4.0, n2_degree=None, n3_degree=None, default_n=5.0, seed=41):
+		self.contours = Supershapes.generate_2D(num_samples, 250, self.out_dir, m, n1_degree, n2_degree, n3_degree, default_n, seed)
+		return self.contours
+
+	def generate_segmentations(self, randomize_size=True, spacing=[1.0,1.0,1.0], allow_on_boundary=True):
+		raise RuntimeError("Unsupported")
+
+	def generate_images(self, blur_factor=1, foreground_mean=180, foreground_var=30, background_mean=80, background_var=30):
+		raise RuntimeError("Unsupported")
+

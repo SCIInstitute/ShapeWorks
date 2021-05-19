@@ -5,7 +5,6 @@
 #include <cstdlib>
 #include <cstring>
 
-
 namespace {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 struct MatchPathSeparator
@@ -78,6 +77,9 @@ bool StringUtils::hasSuffix(const std::string& filename, const std::string& suff
 //---------------------------------------------------------------------------
 std::string StringUtils::getFileNameWithoutExtension(std::string path)
 {
+  if (path == "") {
+    return path;
+  }
   char* str = new char[path.length() + 1];
   strcpy(str, path.c_str());
 
@@ -85,14 +87,16 @@ std::string StringUtils::getFileNameWithoutExtension(std::string path)
   char* fname;
   char* pch;
   pch = strtok(str, "/");
-  while (pch != NULL) {
+  while (pch != nullptr) {
     fname = pch;
-    pch = strtok(NULL, "/");
+    pch = strtok(nullptr, "/");
   }
 
   // separate filename from the extension
-  char* pch2;
-  pch2 = strrchr(fname, '.');
+  char* pch2 = strrchr(fname, '.');
+  if (pch2 == nullptr) {
+    return path;
+  }
   int num = pch2 - fname + 1;
   int num2 = strlen(fname);
   strncpy(pch2, "", num2 - num);
