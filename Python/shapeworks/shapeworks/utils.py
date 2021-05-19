@@ -36,7 +36,7 @@ def save_images(outDir,        # path to the directory where we want to save the
         os.makedirs(outDir)
 
     for curImg, curName in zip(swImageList, swImageNames):
-        filename = Path(outDir + curName + '.' + extension)
+        filename = outDir + curName + '.' + extension
         if verbose:
             print('Writing: ' + filename)
         if not os.path.exists(os.path.dirname(filename)):
