@@ -53,3 +53,38 @@ def get_file_with_ext(file_list,extension):
             extList.append(file)
     extList = sorted(extList)
     return extList
+
+def find_reference_image_index(inDataList):
+    x = y = z = 0
+    for i in range(len(inDataList)):
+        img = inDataList[i]
+        tmp = img.toArray()
+        dim = tmp.shape
+        if dim[0] > x:
+            x = dim[0]
+        if dim[1] > y:
+            y = dim[1]
+        if dim[2] > z:
+            z = dim[2]
+
+    COM = np.zeros((x, y, z))
+    for i in range(len(inDataList)):
+        img = inDataList[i]
+        tmp = img.toArray()
+        COM += np.pad(tmp, (((x - tmp.shape[0]) // 2, (x - tmp.shape[0]) - (x - tmp.shape[0]) // 2),
+                            ((y - tmp.shape[1]) // 2, (y - tmp.shape[1]) - (y - tmp.shape[1]) // 2),
+                            ((z - tmp.shape[2]) // 2, (z - tmp.shape[2]) - (z - tmp.shape[2]) // 2)))
+    COM /= len(inDataList)
+    dist = np.inf
+    idx = 0
+    for i in range(len(inDataList)):
+        img = inDataList[i]
+        tmp = img.toArray()
+        tmp_dist = np.linalg.norm(
+            COM - np.pad(tmp, (((x - tmp.shape[0]) // 2, (x - tmp.shape[0]) - (x - tmp.shape[0]) // 2),
+                               ((y - tmp.shape[1]) // 2, (y - tmp.shape[1]) - (y - tmp.shape[1]) // 2),
+                               ((z - tmp.shape[2]) // 2, (z - tmp.shape[2]) - (z - tmp.shape[2]) // 2))))
+        if tmp_dist < dist:
+            idx = i
+            dist = tmp_dist
+    return idx

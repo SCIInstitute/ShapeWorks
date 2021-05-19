@@ -137,7 +137,7 @@ def Run_Pipeline(args):
         This step requires breaking the loop to load all of the segmentations at once so the shape
         closest to the mean can be found and selected as the reference. 
         """
-        refIndex = findReferenceImageIndex(shapeSegList)
+        refIndex = sw.find_reference_image_index(shapeSegList)
         # Make a copy of the reference segmentation
         refSeg = shapeSegList[refIndex].write(groomDir + 'reference.nrrd')
         refName = shapeNames[refIndex]
