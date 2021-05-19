@@ -10,9 +10,6 @@ def Run_Pipeline(args):
     It gets extracted to Output/lumps
     """
     print("\nStep 1. Extract Data\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
-
     datasetName = "lumps-v0"
     outputDirectory = "Output/lumps/"
     if not os.path.exists(outputDirectory):

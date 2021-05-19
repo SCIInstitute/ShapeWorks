@@ -21,9 +21,6 @@ def Run_Pipeline(args):
     in a newly created directory Output/ellipsoid_mesh.
     """
     print("\nStep 1. Extract Data\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
-
     datasetName = "ellipsoid_1mode_aligned"
     outputDirectory = "Output/ellipsoid_mesh/"
     if not os.path.exists(outputDirectory):
@@ -86,7 +83,4 @@ def Run_Pipeline(args):
         exit()
 
     print("\nStep 5. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
-    if args.interactive != 0:
-        input("Press Enter to continue")
-
     launchShapeWorksStudio(pointDir, meshFiles, localPointFiles, worldPointFiles)

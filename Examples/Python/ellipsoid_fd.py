@@ -33,9 +33,6 @@ def Run_Pipeline(args):
     """
 
     print("\nStep 1. Extract Data\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
-
     datasetName = "ellipsoid_1mode"
     outputDirectory = "Output/ellipsoid_fd/"
     if not os.path.exists(outputDirectory):
@@ -56,9 +53,6 @@ def Run_Pipeline(args):
         os.makedirs(groomDir)
 
     print("\nStep 2. Groom - Convert to distance transforms\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
-
     dtFilesNew = applyDistanceTransforms(groomDir, fileListNew)
     dtFiles = fileListDT + dtFilesNew
 
@@ -75,9 +69,6 @@ def Run_Pipeline(args):
     """
 
     print("\nStep 4. Optimize - Particle Based Optimization\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
-
     pointDir = outputDirectory + 'shape_models/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
@@ -144,7 +135,4 @@ def Run_Pipeline(args):
     """
 
     print("\nStep 5. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
-    if args.interactive != 0:
-        input("Press Enter to continue")
-
     launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)

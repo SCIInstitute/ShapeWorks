@@ -28,8 +28,6 @@ def Run_Pipeline(args):
     It gets extracted to Output/left_atrium
     """
     print("\nStep 1. Extract Data\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
     # Get data
     datasetName = "left_atrium-v0"
     outputDirectory = "Output/left_atrium/"
@@ -77,9 +75,6 @@ def Run_Pipeline(args):
         dtFiles = CommonUtils.get_file_list(dtDirecory, ending=".nrrd", indices=indices)
     else:
         print("\nStep 2. Groom - Data Pre-processing\n")
-        if args.interactive:
-            input("Press Enter to continue")
-
         groomDir = outputDirectory + 'groomed/'
         if not os.path.exists(groomDir):
             os.makedirs(groomDir)
@@ -129,9 +124,6 @@ def Run_Pipeline(args):
             croppedFiles_images = applyCropping(groomDir + "cropped/images", aligned_images, aligned_segmentations)
 
             print("\nStep 3. Groom - Convert to distance transforms\n")
-            if args.interactive:
-                input("Press Enter to continue")
-
             """
             We convert the scans to distance transforms, this step is common for both the
             prepped as well as unprepped data, just provide correct filenames.
@@ -171,9 +163,6 @@ def Run_Pipeline(args):
             croppedFiles = applyCropping(groomDir + "cropped", alignedFiles, alignedFiles)
 
             print("\nStep 3. Groom - Convert to distance transforms\n")
-            if args.interactive:
-                input("Press Enter to continue")
-
             """
             We convert the scans to distance transforms, this step is common for both the
             prepped as well as unprepped data, just provide correct filenames.
@@ -197,9 +186,6 @@ def Run_Pipeline(args):
     """
 
     print("\nStep 4. Optimize - Particle Based Optimization\n")
-    if args.interactive:
-        input("Press Enter to continue")
-
     pointDir = outputDirectory + 'shape_models/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
@@ -264,7 +250,4 @@ def Run_Pipeline(args):
     """
 
     print("\nStep 5. Analysis - Launch ShapeWorksStudio.\n")
-    if args.interactive :
-        input("Press Enter to continue")
-
     launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)

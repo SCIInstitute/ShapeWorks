@@ -25,8 +25,6 @@ def Run_Pipeline(args):
     This data is femur segmentation and the unsegmented hip CT scan.
     """
     print("\nStep 1. Get Data\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
     # Get data
     datasetName = "femur-v0"
     outputDirectory = "Output/femur/"
@@ -50,7 +48,6 @@ def Run_Pipeline(args):
     
     if args.tiny_test:
         args.use_single_scale = True
-        args.interactive = False
         CommonUtils.download_subset(args.use_case,datasetName, outputDirectory)
         files_mesh = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))[:3]
         files_img = sorted(glob.glob(outputDirectory + datasetName + "/images/*.nrrd"))[:3]
@@ -59,7 +56,6 @@ def Run_Pipeline(args):
         CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
         files_mesh = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))
         files_img = sorted(glob.glob(outputDirectory + datasetName + "/images/*.nrrd"))
-
 
     
     # Select data if using subsample
@@ -71,14 +67,10 @@ def Run_Pipeline(args):
         sample_idx = []
 
     print("\nStep 2. Groom - Data Pre-processing\n")
-    if args.interactive:
-        input("Press Enter to continue")
-
     """
     ## GROOM : Data Pre-processing
     For the unprepped data the first few steps are
-    -- if no interactive tag - use pre-defined cutting plane
-    -- if interacitve tag and option 1 is chosen - define cutting plane on sample of users choice
+    -- Use pre-defined cutting plane
     -- Reflect images and meshes
     -- Turn meshes to volumes
     -- Isotropic resampling
@@ -86,7 +78,6 @@ def Run_Pipeline(args):
     -- Center of Mass Alignment
     -- Centering
     -- Rigid Alignment
-    -- if interactive tag and option 2 was chosen - define cutting plane on mean sample
     -- clip segementations with cutting plane
     -- find largest bounding box and crop
     """
@@ -109,42 +100,9 @@ def Run_Pipeline(args):
         img_suffix = "1x_hip"
         reference_side = "left" # somewhat arbitrary, could be right
 
-        # If not interactive, set cutting plane
-        if not args.interactive:
-            cutting_plane_points = np.array([[-1.0, -1.0,-40.5],[1.0,-1.0,-40.5],[-1.0,1.0, -40.5]])
-            cp_prefix = 'm03_L'
-            choice = 0
-
-        # If interactive ask whether to define on chosen sample or median
-        else:
-            choice_made = False
-            while not choice_made:
-                print("\nOption 1: Define cutting plane now on a sample of your choice.")
-                print("Option 2: Define cutting plane on median sample once it has been selected.")
-                choice = input("Please input 1 or 2 and press enter: ")
-                choice = int(choice)
-                if choice==1 or choice==2:
-                    choice_made = True
-                    
-        # If user chose option 1, define cutting plane on sample of their choice 
-        if choice == 1:
-            options = []
-            for file in files_mesh:
-                file = file.split('/')[-1]
-                prefix = "_".join(file.split("_")[:2])
-                options.append(prefix)
-            input_mesh = ''
-            while not input_mesh:
-                print("\n\nType the prefix of the sample you wish to use to select the cutting plane from listed options and press enter.\nOptions: " + ", ".join(options) + '\n')
-                cp_prefix = input()
-                if cp_prefix:
-                    for file in files_mesh:
-                        if cp_prefix in file:
-                            input_mesh = file
-                if not input_mesh:
-                    print("Invalid prefix.")
-            if cp_prefix[-1] == 'R':
-                reference_side = "right"
+        # Set cutting plane
+        cutting_plane_points = np.array([[-1.0, -1.0,-40.5],[1.0,-1.0,-40.5],[-1.0,1.0, -40.5]])
+        cp_prefix = 'm03_L'
 
         # BEGIN GROOMING WITH IMAGES
         if args.groom_images and files_img:
@@ -195,26 +153,6 @@ def Run_Pipeline(args):
             Rigid alignment
             """
             aligned_segmentations, aligned_images = applyRigidAlignment(groomDir + "aligned", medianFile, centerFiles_segmentations, centerFiles_images)
-
-            # If user chose option 2, define cutting plane on median sample
-            if choice == 2:
-                input_file = medianFile.replace("centered", "aligned").replace(".nrrd", ".aligned.nrrd")
-                cutting_plane_points = SelectCuttingPlane(input_file)
-
-            elif choice == 1:
-                postfix = "_femur.isores.pad.com.center.aligned.nrrd"
-                path = "aligned/segmentations/"
-                input_file = groomDir + path + cp_prefix + postfix
-                cutting_plane_points = SelectCuttingPlane(input_file)
-
-                # catch for flipped norm
-                if cutting_plane_points[0][1] < 0 and cutting_plane_points[1][1] < 0 and cutting_plane_points[2][1] < 0 :
-                    cutting_plane_points[0][1] = cutting_plane_points[0][1] *-1
-                    cutting_plane_points[1][1] = cutting_plane_points[1][1] *-1
-                    cutting_plane_points[2][1] = cutting_plane_points[2][1] *-1
-
-            print("Cutting plane points: ")
-            print(cutting_plane_points)
 
             """
             Clip Binary Volumes - We have femurs of different shaft length so we will clip them all using the defined cutting plane.
@@ -273,26 +211,6 @@ def Run_Pipeline(args):
             """
             aligned_segmentations = applyRigidAlignment(groomDir + "aligned", medianFile, centerFiles_segmentations)
 
-            # If user chose option 2, define cutting plane on median sample
-            if choice == 2:
-                input_file = medianFile.replace("centered/segmentations", "aligned").replace(".nrrd", ".aligned.nrrd")
-                cutting_plane_points = SelectCuttingPlane(input_file)
-
-            elif choice == 1:
-                postfix = "_femur.isores.pad.com.center.aligned.nrrd"
-                path = "aligned/"
-                input_file = groomDir + path + cp_prefix + postfix
-                cutting_plane_points = SelectCuttingPlane(input_file)
-
-                # catch for flipped norm
-                if cutting_plane_points[0][1] < 0 and cutting_plane_points[1][1] < 0 and cutting_plane_points[2][1] < 0 :
-                    cutting_plane_points[0][1] = cutting_plane_points[0][1] *-1
-                    cutting_plane_points[1][1] = cutting_plane_points[1][1] *-1
-                    cutting_plane_points[2][1] = cutting_plane_points[2][1] *-1
-
-            print("Cutting plane points: ")
-            print(cutting_plane_points)
-
             """
             Clip Binary Volumes - We have femurs of different shaft length so we will clip them all using the defined cutting plane.
             """
@@ -302,9 +220,6 @@ def Run_Pipeline(args):
 
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
-        if args.interactive:
-            input("Press Enter to continue")
-
         """
         We convert the scans to distance transforms, this step is common for both the
         prepped as well as unprepped data, just provide correct filenames.
@@ -330,10 +245,6 @@ def Run_Pipeline(args):
     optimization routines
     """
     print("\nStep 4. Optimize - Particle Based Optimization\n")
-
-    if args.interactive:
-        input("Press Enter to continue")
-
     pointDir = outputDirectory + 'shape_models/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
@@ -399,7 +310,4 @@ def Run_Pipeline(args):
     Reconstruct the dense mean surface given the sparse correspondence model.
     """
     print("\nStep 5. Analysis - Reconstruct the dense mean surface given the sparse correspodence model.\n")
-    if args.interactive:
-        input("Press Enter to continue")
-
     launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)
