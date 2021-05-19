@@ -16,43 +16,6 @@ from OptimizeUtils import *
 from AnalyzeUtils import *
 import CommonUtils
 
-# TODO make this a Pymodule function
-import numpy as np
-def findReferenceImageIndex(inDataList):
-    x = y = z = 0
-    for i in range(len(inDataList)):
-        img = inDataList[i]
-        tmp = img.toArray()
-        dim = tmp.shape
-        if dim[0] > x:
-            x = dim[0]
-        if dim[1] > y:
-            y = dim[1]
-        if dim[2] > z:
-            z = dim[2]
-
-    COM = np.zeros((x, y, z))
-    for i in range(len(inDataList)):
-        img = inDataList[i]
-        tmp = img.toArray()
-        COM += np.pad(tmp, (((x - tmp.shape[0]) // 2, (x - tmp.shape[0]) - (x - tmp.shape[0]) // 2),
-                            ((y - tmp.shape[1]) // 2, (y - tmp.shape[1]) - (y - tmp.shape[1]) // 2),
-                            ((z - tmp.shape[2]) // 2, (z - tmp.shape[2]) - (z - tmp.shape[2]) // 2)))
-    COM /= len(inDataList)
-    dist = np.inf
-    idx = 0
-    for i in range(len(inDataList)):
-        img = inDataList[i]
-        tmp = img.toArray()
-        tmp_dist = np.linalg.norm(
-            COM - np.pad(tmp, (((x - tmp.shape[0]) // 2, (x - tmp.shape[0]) - (x - tmp.shape[0]) // 2),
-                               ((y - tmp.shape[1]) // 2, (y - tmp.shape[1]) - (y - tmp.shape[1]) // 2),
-                               ((z - tmp.shape[2]) // 2, (z - tmp.shape[2]) - (z - tmp.shape[2]) // 2))))
-        if tmp_dist < dist:
-            idx = i
-            dist = tmp_dist
-    return idx
-
 def Run_Pipeline(args):
     """
     Unzip the data for this tutorial.
@@ -200,8 +163,8 @@ def Run_Pipeline(args):
         for shapeSeg, shapeName in zip(shapeSegList, shapeNames):
             print('Aligning ' + shapeName + ' to ' + refName) 
             # compute rigid transformation
-            rigidTransform = sw.ImageUtils.createRigidRegistrationTransform(shapeSeg.antialias(antialias_iterations), 
-                                                                                refSeg, isoValue, icp_iterations)
+            shapeSeg.antialias(antialias_iterations)
+            rigidTransform = shapeSeg.createTransform(refSeg, sw.TransformType.IterativeClosestPoint, isoValue, icp_iterations)
             # second we apply the computed transformation, note that shapeSeg has 
             # already been antialiased, so we can directly apply the transformation 
             shapeSeg.applyTransform(rigidTransform, 
@@ -256,7 +219,7 @@ def Run_Pipeline(args):
             print('Compute DT for segmentation: ' + shapeName)    
             shapeSeg.antialias(antialias_iterations).computeDT(isoValue).gaussianBlur(sigma)
         # Save distance transforms
-        dtFiles = NewUtils.saveImages(groomDir + 'distance_transforms/', shapeSegList, shapeNames, extension='nrrd', compressed=False, verbose=True)
+        dtFiles = sw.utils.save_images(groomDir + 'distance_transforms/', shapeSegList, shapeNames, extension='nrrd', compressed=False, verbose=True)
 
     """
     ## OPTIMIZE : Particle Based Optimization
