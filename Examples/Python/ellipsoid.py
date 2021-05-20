@@ -14,7 +14,6 @@ import glob
 import shapeworks as sw
 from OptimizeUtils import *
 from AnalyzeUtils import *
-import CommonUtils
 
 def Run_Pipeline(args):
     """
@@ -31,20 +30,23 @@ def Run_Pipeline(args):
     outputDirectory = "Output/ellipsoid/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
-    #If tiny_test then download subset of the data
+    # If tiny_test then download subset of the data
     if args.tiny_test:
         args.use_single_scale = 1
-        CommonUtils.download_subset(args.use_case,datasetName, outputDirectory)
-        fileList = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))[:3]
-    #else download the entire dataset
+        sw.data.download_subset(
+            args.use_case, datasetName, outputDirectory)
+        fileList = sorted(glob.glob(outputDirectory +
+                          datasetName + "/segmentations/*.nrrd"))[:3]
+    # else download the entire dataset
     else:
-        CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
+        sw.data.download_and_unzip_dataset(datasetName, outputDirectory)
 
-        fileList = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))
-    
+        fileList = sorted(glob.glob(outputDirectory +
+                          datasetName + "/segmentations/*.nrrd"))
+
     # Select data if using subsample
     if args.use_subsample:
-        sample_idx = sampledata(fileList, int(args.num_subsample))
+        sample_idx = sw.data.sample_images(fileList, int(args.num_subsample))
         fileList = [fileList[i] for i in sample_idx]
     else:
         sample_idx = []
@@ -54,10 +56,11 @@ def Run_Pipeline(args):
         dtDirecory = outputDirectory + datasetName + '/groomed/distance_transforms/'
         indices = []
         if args.tiny_test:
-            indices = [0,1,2]
+            indices = [0, 1, 2]
         elif args.use_subsample:
             indices = sample_idx
-        dtFiles = CommonUtils.get_file_list(dtDirecory, ending=".nrrd", indices=indices)
+        dtFiles = sw.data.get_file_list(
+            dtDirecory, ending=".nrrd", indices=indices)
     else:
         print("\nStep 2. Groom - Data Pre-processing\n")
         """
@@ -81,11 +84,12 @@ def Run_Pipeline(args):
         # list of shape segmentations
         shapeSegList = []
         # list of shape names (shape files prefixes) to be used for saving outputs
-        shapeNames   = []
+        shapeNames = []
         for shapeFilename in fileList:
             print('Loading: ' + shapeFilename)
             # get current shape name
-            shapeNames.append(shapeFilename.split('/')[-1].replace('.nrrd', ''))
+            shapeNames.append(shapeFilename.split('/')
+                              [-1].replace('.nrrd', ''))
             # load segmentation
             shapeSeg = sw.Image(shapeFilename)
             # append to the shape list
@@ -95,7 +99,7 @@ def Run_Pipeline(args):
         Now we can loop over the segmentations and apply the initial grooming steps to themm
         """
         for shapeSeg, shapeName in zip(shapeSegList, shapeNames):
-            
+
             """
             Step 1: Resample segmentations to have isotropic (uniform) spacing
                 - Antialiase the binary segmentation to convert it to a smooth continuous-valued image for interpolation
@@ -104,10 +108,10 @@ def Run_Pipeline(args):
             """
             print('Resampling segmentation: ' + shapeName)
             # antialias for 30 iterations
-            antialias_iterations = 30   
+            antialias_iterations = 30
             shapeSeg.antialias(antialias_iterations)
             # resample to isotropic spacing using linear interpolation
-            iso_spacing = [1,1,1]
+            iso_spacing = [1, 1, 1]
             shapeSeg.resample(iso_spacing, sw.InterpolationType.Linear)
             # make segmetnation binary again
             shapeSeg.binarize()
@@ -124,13 +128,14 @@ def Run_Pipeline(args):
             """
             print('Center of mass alignment: ' + shapeName)
             # compute the center of mass of this segmentation
-            shapeCenter = shapeSeg.centerOfMass() 
+            shapeCenter = shapeSeg.centerOfMass()
             # get the center of the image domain
-            imageCenter = shapeSeg.center() 
+            imageCenter = shapeSeg.center()
             # define the translation to move the shape to its center
-            translationVector =  imageCenter - shapeCenter
-            # perform antialias-translate-binarize 
-            shapeSeg.antialias(antialias_iterations).translate(translationVector).binarize()
+            translationVector = imageCenter - shapeCenter
+            # perform antialias-translate-binarize
+            shapeSeg.antialias(antialias_iterations).translate(
+                translationVector).binarize()
 
         """
         Step 3: Select a reference
@@ -156,24 +161,25 @@ def Run_Pipeline(args):
         refSeg.antialias(antialias_iterations)
 
         # Set the alignment parameters
-        isoValue       = 1e-20
+        isoValue = 1e-20
         icp_iterations = 200
 
         # Now loop through all the segmentations and apply rigid alignment
         for shapeSeg, shapeName in zip(shapeSegList, shapeNames):
-            print('Aligning ' + shapeName + ' to ' + refName) 
+            print('Aligning ' + shapeName + ' to ' + refName)
             # compute rigid transformation
             shapeSeg.antialias(antialias_iterations)
-            rigidTransform = shapeSeg.createTransform(refSeg, sw.TransformType.IterativeClosestPoint, isoValue, icp_iterations)
-            # second we apply the computed transformation, note that shapeSeg has 
-            # already been antialiased, so we can directly apply the transformation 
-            shapeSeg.applyTransform(rigidTransform, 
-                                    refSeg.origin(),  refSeg.dims(), 
-                                    refSeg.spacing(), refSeg.coordsys(), 
+            rigidTransform = shapeSeg.createTransform(
+                refSeg, sw.TransformType.IterativeClosestPoint, isoValue, icp_iterations)
+            # second we apply the computed transformation, note that shapeSeg has
+            # already been antialiased, so we can directly apply the transformation
+            shapeSeg.applyTransform(rigidTransform,
+                                    refSeg.origin(),  refSeg.dims(),
+                                    refSeg.spacing(), refSeg.coordsys(),
                                     sw.InterpolationType.Linear)
             # then turn antialized-tranformed segmentation to a binary segmentation
             shapeSeg.binarize()
-            
+
         """
         Step 5: Finding the largest bounding box
         We want to crop all of the segmentations to be the same size, so we need to find the largest bounding box
@@ -183,7 +189,6 @@ def Run_Pipeline(args):
         isoValue = 0.5
         segsBoundingBox = sw.ImageUtils.boundingBox(shapeSegList, isoValue)
 
-
         """
         Step 6: Apply cropping and padding
         Now we need to loop over the segmentations and crop them to the size of the bounding box.
@@ -192,12 +197,12 @@ def Run_Pipeline(args):
             - Pad segmentations
         """
 
-        # parameters for padding 
-        paddingSize  = 10 # number of voxels to pad for each dimension
+        # parameters for padding
+        paddingSize = 10  # number of voxels to pad for each dimension
         paddingValue = 0  # the constant value used to pad the segmentations
         # loop over segs to apply cropping and padding
         for shapeSeg, shapeName in zip(shapeSegList, shapeNames):
-            print('Cropping & padding segmentation: ' + shapeName)    
+            print('Cropping & padding segmentation: ' + shapeName)
             shapeSeg.crop(segsBoundingBox).pad(paddingSize, paddingValue)
 
         """
@@ -214,13 +219,15 @@ def Run_Pipeline(args):
 
         # Define distance transform parameters
         isoValue = 0
-        sigma    = 1.3
+        sigma = 1.3
         # Loop over segs and compute smooth DT
         for shapeSeg, shapeName in zip(shapeSegList, shapeNames):
-            print('Compute DT for segmentation: ' + shapeName)    
-            shapeSeg.antialias(antialias_iterations).computeDT(isoValue).gaussianBlur(sigma)
+            print('Compute DT for segmentation: ' + shapeName)
+            shapeSeg.antialias(antialias_iterations).computeDT(
+                isoValue).gaussianBlur(sigma)
         # Save distance transforms
-        dtFiles = sw.utils.save_images(groomDir + 'distance_transforms/', shapeSegList, shapeNames, extension='nrrd', compressed=False, verbose=True)
+        dtFiles = sw.utils.save_images(groomDir + 'distance_transforms/', shapeSegList,
+                                       shapeNames, extension='nrrd', compressed=False, verbose=True)
 
     """
     ## OPTIMIZE : Particle Based Optimization
@@ -270,12 +277,13 @@ def Run_Pipeline(args):
     """
     Now we execute a single scale particle optimization function.
     """
-    [localPointFiles, worldPointFiles] = runShapeWorksOptimize(pointDir, dtFiles, parameterDictionary)
+    [localPointFiles, worldPointFiles] = runShapeWorksOptimize(
+        pointDir, dtFiles, parameterDictionary)
 
     if args.tiny_test:
         print("Done with tiny test")
         exit()
-          
+
     """
     ## ANALYZE : Shape Analysis and Visualization
 
@@ -296,6 +304,6 @@ def Run_Pipeline(args):
     sample-level particle system and the mean/template particle system as control points. 
     This warping function is then used to deform the template dense mesh to the sample space.
     """
-    
+
     print("\nStep 5. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
     launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)

@@ -15,6 +15,8 @@ import argparse
 import subprocess
 import sys
 import setupenv
+import shutil
+import shapeworks as sw
 
 # check that required modules are found
 try:
@@ -25,8 +27,6 @@ except ImportError as error:
     print("Please make sure you have run \"source conda_installs.sh\" (once) and \"conda activate shapeworks\" (each time)")
     print("See https://github.com/SCIInstitute/ShapeWorks for more information")
     sys.exit(1)
-
-from CommonUtils import *
 
 # Default installation path for each platform. If using your own build, specify --shapeworks_path
 # Note, the path for linux differs from setupenv.py because it is set up for the notebooks
@@ -58,19 +58,23 @@ shapeworks_bin_path = args.shapeworks_path
 # 3. Platform dependent defaults
 #######################################
 if shapeworks_bin_path is None:
-    # if `shapeworks` is in the path, this will return it, otherwise None
-    shapeworks_bin_path = get_shapeworks_bin_path()
+    swpath = shutil.which("shapeworks")
+    if swpath:
+        shapeworks_bin_path = os.path.dirname(swpath)      
 if shapeworks_bin_path is None:
     shapeworks_bin_path = default_bin_path
 setupenv.setup_shapeworks_env(shapeworks_bin_dir=shapeworks_bin_path, verbose=False)
 
 # make sure the shapeworks executables can be found
-check_shapeworks_path()
+swpath = shutil.which("shapeworks")
+if (not swpath):
+    print("Error: cannot find ShapeWorks executables. Please pass their location using the --shapeworks_path argument")
+    sys.exit(1)
 
-print(f"Using shapeworks from {get_shapeworks_bin_path()}")
+print(f"Using shapeworks from {shapeworks_bin_path}")
 
 if args.use_subsample:
-    dataExists = dataset_exists_check(args.use_case)
+    dataExists = sw.data.dataset_exists_check(args.use_case)
     args.use_subsample = args.num_subsample
     if(dataExists==False):
         print("Please note : For --use_subsample argument the entire dataset will be downloaded.For a quick test use the --tiny_test argument")
