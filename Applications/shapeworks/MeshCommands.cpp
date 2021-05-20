@@ -1089,6 +1089,11 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
           outMeshes.push_back(line);
       inputFileMeshes.close();
       
+      if (paths.size() - 1 != outMeshes.size()){
+        std::cerr << "warpmesh error: number of output point files should be equal to the number of output mesh files\n";
+        return false;
+      }
+
       ParticleSystem particlesystem(paths);
       Eigen::MatrixXd allPts = particlesystem.Particles();
       Eigen::MatrixXd staticPoints = allPts.col(0);
