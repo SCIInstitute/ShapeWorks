@@ -1,20 +1,16 @@
 # -*- coding: utf-8 -*-
 """
 ====================================================================
-Full Example Pipeline for Statistical Shape Modeling with ShapeWorks
+ShapeWorks Optimization with Multiple Cutting Planes
 ====================================================================
-This example is set to serve as a test case for new ShapeWorks users, and each
-step is explained in the shapeworks including the pre-processing, the 
-optimization and, the post ShapeWorks visualization.
-
-First import the necessary modules
+This example demonstrates how to optimize with cutting planes on 
+simple ellipsoid data.
 """
 import os
 import glob
 import shapeworks as sw
 import OptimizeUtils
 import AnalyzeUtils
-
 
 def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")

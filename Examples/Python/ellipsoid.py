@@ -15,7 +15,6 @@ import shapeworks as sw
 import OptimizeUtils
 import AnalyzeUtils
 
-
 def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")
     """
