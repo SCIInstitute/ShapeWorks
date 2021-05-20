@@ -194,3 +194,4 @@ def get_shapeworks_bin_path():
 	if (not swpath):
 		return None
 	return os.path.dirname(swpath)
+
