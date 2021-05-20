@@ -163,10 +163,10 @@ PYBIND11_MODULE(shapeworks, m)
           }
 
           // verify data is densely packed by checking strides is same as shape
-          int scalar_size = 4; // is_float ? 4 : 8; // if/when we can handle both
-          std::vector<long> strides{info.shape[2]*info.shape[1]*scalar_size,
-                                    info.shape[2]*scalar_size,
-                                    scalar_size};  
+          py::ssize_t scalar_size = 4; // is_float ? 4 : 8; // if/when we can handle both
+          std::vector<py::ssize_t> strides{info.shape[2]*info.shape[1]*scalar_size,
+                                           info.shape[2]*scalar_size,
+                                           scalar_size};  
           for (int i = 0; i < info.ndim; i++) {
             std::cout << "expected: " << strides[i] << ", actual: " << info.strides[i] << std::endl;
             if (info.strides[i] != strides[i])
