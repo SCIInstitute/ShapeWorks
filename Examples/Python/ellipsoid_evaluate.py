@@ -3,7 +3,7 @@ import os
 import sys
 import platform
 from pathlib import Path
-import glob 
+import glob
 import shapeworks as sw
 import numpy as np
 import matplotlib.pyplot as plt
@@ -12,6 +12,7 @@ import subprocess
 """
 Function to generate the scree plot based on the explained variance calculated by the ComputeCompactness command
 """
+
 
 def plot_scree(save_dir):
     # Load scree plot data
@@ -39,10 +40,11 @@ def plot_scree(save_dir):
     print()
 
 
-
 """
 Call to ShapeWorksStudio to visualize the best and the worst reconstruction
 """
+
+
 def visualize_reconstruction(save_dir):
     print("*************************")
     print("* Best reconstruction")
@@ -57,25 +59,25 @@ def visualize_reconstruction(save_dir):
     print()
 
 
-
 def Run_Pipeline(args):
     ellipsoids_dir = 'Output/ellipsoid/'
     shape_models_dir = ellipsoids_dir+'shape_models/128'
     if not os.path.exists(shape_models_dir):
-        print(f'Ellipsoids output not found in {shape_models_dir}. Please run the ellipsoid use case first.', file=sys.stderr)
+        print(
+            f'Ellipsoids output not found in {shape_models_dir}. Please run the ellipsoid use case first.', file=sys.stderr)
         sys.exit(1)
-    
+
     eval_dir = ellipsoids_dir+'/evaluation/'
     for subdir in ('compactness', 'generalization', 'specificity'):
-        Path(eval_dir).joinpath(Path(subdir)).mkdir(parents=True, exist_ok=True)
-    
-    #get the list of all the world particles
-    particleFilesList = glob.glob(shape_models_dir+"/*world.particles")
-    #read all he particles files into a particleSystem object
-    particleSystem = sw.ParticleSystem(particleFilesList)
-    
+        Path(eval_dir).joinpath(Path(subdir)).mkdir(
+            parents=True, exist_ok=True)
 
-    print('\nCompactness\n'\
+    # get the list of all the world particles
+    particleFilesList = glob.glob(shape_models_dir+"/*world.particles")
+    # read all he particles files into a particleSystem object
+    particleSystem = sw.ParticleSystem(particleFilesList)
+
+    print('\nCompactness\n'
           '-----------')
     """
     ComputeCompactness takes a particleSystem which has the particle data to calculate PCA explained variance
@@ -83,20 +85,19 @@ def Run_Pipeline(args):
     of the SSM.
     """
 
-    #directory where the scree values will be saved
-    save_dir = eval_dir +'compactness/'
-    
+    # directory where the scree values will be saved
+    save_dir = eval_dir + 'compactness/'
 
-    #Calculate compactness and saved the values in scree.txt
-    sw.ShapeEvaluation.ComputeCompactness(particleSystem=particleSystem,nModes=1,saveTo=save_dir+"scree.txt")
+    # Calculate compactness and saved the values in scree.txt
+    sw.ShapeEvaluation.ComputeCompactness(
+        particleSystem=particleSystem, nModes=1, saveTo=save_dir+"scree.txt")
     plot_scree(save_dir)
-    
 
     """
     ########################################################################################################
     """
 
-    print('\nGeneralization\n'\
+    print('\nGeneralization\n'
           '--------------')
     """
     ComputeGeneralization takes a particleSystem which has the particle data and computes the generalization
@@ -104,20 +105,20 @@ def Run_Pipeline(args):
     ShapeWorksStudio for visualization
     """
 
-    #directory where the reconstructions related to generalization will be saved
-    save_dir = eval_dir +'generalization/'
+    # directory where the reconstructions related to generalization will be saved
+    save_dir = eval_dir + 'generalization/'
 
-    #Calculate generalization
-    sw.ShapeEvaluation.ComputeGeneralization(particleSystem=particleSystem,nModes=1,saveTo=save_dir)
+    # Calculate generalization
+    sw.ShapeEvaluation.ComputeGeneralization(
+        particleSystem=particleSystem, nModes=1, saveTo=save_dir)
     visualize_reconstruction(save_dir)
 
     """
     ########################################################################################################
     """
-       
-    
-    print('\nSpecificity\n'\
-      '--------------')
+
+    print('\nSpecificity\n'
+          '--------------')
 
     """
     ComputeSpecificity takes a particleSystem which has the particle data  and computes the specficity
@@ -125,9 +126,10 @@ def Run_Pipeline(args):
     ShapeWorksStudio for visualization
     """
 
-    #directory where the reconstructions related to specificity will be saved
-    save_dir = eval_dir +'specificity/'
+    # directory where the reconstructions related to specificity will be saved
+    save_dir = eval_dir + 'specificity/'
 
-    #Calculate specificity
-    sw.ShapeEvaluation.ComputeSpecificity(particleSystem=particleSystem,nModes=1,saveTo=save_dir)
+    # Calculate specificity
+    sw.ShapeEvaluation.ComputeSpecificity(
+        particleSystem=particleSystem, nModes=1, saveTo=save_dir)
     visualize_reconstruction(save_dir)
