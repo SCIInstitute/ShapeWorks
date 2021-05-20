@@ -98,7 +98,6 @@ def Run_Pipeline(args):
     dt_files = sw.utils.save_images(groom_dir + 'distance_transforms/', dt_list,
                                     shape_names, extension='nrrd', compressed=False, verbose=True)
 
-
     print("\nStep 3. Optimize - Particle Based Optimization\n")
     """
     Step 3: OPTIMIZE - Particle Based Optimization
@@ -114,10 +113,10 @@ def Run_Pipeline(args):
     pointDir = output_directory + 'shape_models/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
-   
+
     # Define the cutting planes
     cutting_plane_points1 = [[10, 10, 0], [-10, -10, 0], [10, -10, 0]]
-    cutting_plane_points2 = [[10, -3, 10], [-10, -3 ,10], [10, -3, -10]]
+    cutting_plane_points2 = [[10, -3, 10], [-10, -3, 10], [10, -3, -10]]
     cp = [cutting_plane_points1, cutting_plane_points2]
     # Cutting planes
     cutting_planes = []
