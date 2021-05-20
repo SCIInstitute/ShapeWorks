@@ -106,8 +106,10 @@ bool Groom::run()
             matrix->Identity();
 
             if (i != reference_mesh) {
-              matrix = MeshUtils::createICPTransform(meshes[reference_mesh].getVTKMesh(),
-                                                     meshes[i].getVTKMesh(), Mesh::Rigid, 10, true);
+              Mesh source = meshes[i];
+              Mesh target = meshes[reference_mesh];
+              matrix = MeshUtils::createICPTransform(source.getVTKMesh(),
+                                                     target.getVTKMesh(), Mesh::Rigid, 100, true);
             }
 
             auto subject = subjects[i];
