@@ -1036,8 +1036,9 @@ void WarpMesh::buildParser()
 
   parser.add_option("--reference_mesh").action("store").type("string").set_default("").help("Name of reference mesh.");
   parser.add_option("--reference_points").action("store").type("string").set_default("").help("Name of reference points.");
-  parser.add_option("--target_points").action("store").type("string").set_default("").help("Name of target points.");
-  parser.add_option("--target_mesh").action("store").type("string").set_default("").help("Name of output target mesh.");
+  parser.add_option("--target_points").action("store").type("string").set_default("").help("Name of target points. If multiple--> list of target points");
+  parser.add_option("--target_mesh").action("store").type("string").set_default("").help("Name of output target mesh. If multiple--> list of target meshes");
+  parser.add_option("--multiple").action("store").type("bool").set_default(false).help("Flag true is multiple meshes are to be warped.");
 
   Command::buildParser();
 }
@@ -1068,26 +1069,59 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
+  bool multiple = static_cast<bool>(options.get("multiple"));
+
   try {
     Mesh inputMesh(inputMeshFilename);
 
     std::vector<std::string> paths;
     paths.push_back(inputPointsFilename);
-    paths.push_back(targetPointsFilename);
-    ParticleSystem particlesystem(paths);
-    Eigen::MatrixXd allPts = particlesystem.Particles();
-    Eigen::MatrixXd staticPoints = allPts.col(0);
-    Eigen::MatrixXd movingPoints = allPts.col(1);
-    int numParticles = staticPoints.rows() / 3;
-    staticPoints.resize(3, numParticles);
-    staticPoints.transposeInPlace();
-    movingPoints.resize(3, numParticles);
-    movingPoints.transposeInPlace();
+    if(multiple){
+      std::vector<std::string> outMeshes;
+      std::ifstream inputFile(targetPointsFilename);
+      std::string line;
+      while(inputFile >> line)
+          paths.push_back(line);
+      inputFile.close();
 
-    MeshWarper warper;
-    warper.set_reference_mesh(inputMesh.getVTKMesh(), staticPoints);
-    Mesh output = warper.build_mesh(movingPoints);
-    output.write(targetMeshFilename);
+      std::ifstream inputFileMeshes(targetMeshFilename);
+      while(inputFileMeshes >> line)
+          outMeshes.push_back(line);
+      inputFileMeshes.close();
+      
+      ParticleSystem particlesystem(paths);
+      Eigen::MatrixXd allPts = particlesystem.Particles();
+      Eigen::MatrixXd staticPoints = allPts.col(0);
+      int numParticles = staticPoints.rows() / 3;
+      staticPoints.resize(3, numParticles);
+      staticPoints.transposeInPlace();
+      MeshWarper warper;
+      warper.set_reference_mesh(inputMesh.getVTKMesh(), staticPoints);
+      for (int i = 0; i < outMeshes.size(); i++){
+        Eigen::MatrixXd movingPoints = allPts.col(i+ 1);
+        movingPoints.resize(3, numParticles);
+        movingPoints.transposeInPlace();
+        Mesh output = warper.build_mesh(movingPoints);
+        output.write(outMeshes[i]);  
+      }
+    }
+    else{
+      paths.push_back(targetPointsFilename);
+      ParticleSystem particlesystem(paths);
+      Eigen::MatrixXd allPts = particlesystem.Particles();
+      Eigen::MatrixXd staticPoints = allPts.col(0);
+      Eigen::MatrixXd movingPoints = allPts.col(1);
+      int numParticles = staticPoints.rows() / 3;
+      staticPoints.resize(3, numParticles);
+      staticPoints.transposeInPlace();
+      movingPoints.resize(3, numParticles);
+      movingPoints.transposeInPlace();
+
+      MeshWarper warper;
+      warper.set_reference_mesh(inputMesh.getVTKMesh(), staticPoints);
+      Mesh output = warper.build_mesh(movingPoints);
+      output.write(targetMeshFilename);
+    }
 
     return true;
   } catch (std::exception &e) {
