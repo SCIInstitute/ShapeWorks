@@ -214,6 +214,47 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, int domain)
   // save image
   image.write(dt_name);
 
+  // save mesh
+  vtkContourFilter *targetContour = vtkContourFilter::New();
+  targetContour->SetInputData(image.getVTKImage());
+  targetContour->SetValue(0, 0.0);
+  targetContour->Update();
+
+  vtkSmartPointer<vtkPolyData> mesh = targetContour->GetOutput();
+
+  size_t numPt = mesh->GetNumberOfPoints();
+
+  if(numPt > 1500){
+      vtkDecimatePro *decimator = vtkDecimatePro::New();
+      decimator->SetInputData(mesh);
+      decimator->SetTargetReduction(1.-1500./numPt);
+      decimator->Update();
+
+      mesh = decimator->GetOutput();
+  }
+
+  std::cout << "Reduction " << 1.-1500./numPt << " num points " << numPt << "->" << mesh->GetNumberOfPoints() << std::endl;
+
+  for(vtkIdType i = 0; i < mesh->GetNumberOfPoints(); i++)
+  {
+     double p[3];
+     mesh->GetPoint(i, p);
+     //std::cout << p[0] << " " << p[1] << " " << p[2] << std::endl; // get the i-th point of the mesh and store it in p[3]
+
+     // do what you want with the point p[3] here
+     // p[0] -> x-component, p[1] -> y-component, p[2] -> z-component
+  }
+
+  vtkPolyDataWriter* writer = vtkPolyDataWriter::New();
+  std::string mesh_name = dt_name;
+  mesh_name.erase(mesh_name.length()-7, 7);
+  mesh_name += "mesh.vtk";
+  std::cout << mesh_name << std::endl;
+  writer->SetFileName(mesh_name.c_str());
+  writer->SetInputData(mesh);
+  writer->Write();
+
+
   {
     // lock for project data structure
     tbb::mutex::scoped_lock lock(mutex_);
