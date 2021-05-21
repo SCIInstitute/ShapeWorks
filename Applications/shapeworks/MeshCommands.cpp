@@ -1076,20 +1076,22 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
 
     std::vector<std::string> paths;
     paths.push_back(inputPointsFilename);
-    if(multiple){
+    if (multiple) {
       std::vector<std::string> outMeshes;
       std::ifstream inputFile(targetPointsFilename);
       std::string line;
-      while(inputFile >> line)
+      while (inputFile >> line) {
           paths.push_back(line);
+      }
       inputFile.close();
 
       std::ifstream inputFileMeshes(targetMeshFilename);
-      while(inputFileMeshes >> line)
+      while (inputFileMeshes >> line) {
           outMeshes.push_back(line);
+      }
       inputFileMeshes.close();
       
-      if (paths.size() - 1 != outMeshes.size()){
+      if (paths.size() - 1 != outMeshes.size()) {
         std::cerr << "warpmesh error: number of output point files should be equal to the number of output mesh files\n";
         return false;
       }
@@ -1102,7 +1104,7 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
       staticPoints.transposeInPlace();
       MeshWarper warper;
       warper.set_reference_mesh(inputMesh.getVTKMesh(), staticPoints);
-      for (int i = 0; i < outMeshes.size(); i++){
+      for (int i = 0; i < outMeshes.size(); i++) {
         Eigen::MatrixXd movingPoints = allPts.col(i+ 1);
         movingPoints.resize(3, numParticles);
         movingPoints.transposeInPlace();
@@ -1110,7 +1112,7 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
         output.write(outMeshes[i]);  
       }
     }
-    else{
+    else {
       paths.push_back(targetPointsFilename);
       ParticleSystem particlesystem(paths);
       Eigen::MatrixXd allPts = particlesystem.Particles();
