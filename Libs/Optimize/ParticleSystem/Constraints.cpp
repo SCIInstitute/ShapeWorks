@@ -18,6 +18,7 @@ void Constraints::addPlane(const vnl_vector<double> &a, const vnl_vector<double>
       plane_c.SetPlaneNormal(qp);
       plane_c.SetPlanePoint(a);
       planeConsts->push_back(plane_c);
+      active = true;
     }
   }
 
@@ -27,6 +28,7 @@ void Constraints::addSphere(const vnl_vector_fixed<double, DIMENSION> &v, double
     sphere_c.SetCenter(c);
     sphere_c.SetRadius(r);
     sphereConsts->push_back(sphere_c);
+    active = true;
 }
 
 bool Constraints::transformConstraints(const vnl_matrix_fixed<double, 4, 4> &Trans){
