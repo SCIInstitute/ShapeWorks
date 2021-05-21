@@ -14,6 +14,7 @@
 #include <Libs/Mesh/MeshWarper.h>
 
 #include <Data/StudioMesh.h>
+#include <Data/QMeshWarper.h>
 #include <Data/Preferences.h>
 #include <Data/SurfaceReconstructor.h>
 #include <Data/MeshWorkQueue.h>
@@ -23,7 +24,7 @@ namespace shapeworks {
 class MeshReconstructors {
 public:
   std::vector<std::shared_ptr<SurfaceReconstructor>> surface_reconstructors_;
-  std::vector<std::shared_ptr<MeshWarper>> mesh_warpers_;
+  std::vector<std::shared_ptr<QMeshWarper>> mesh_warpers_;
 };
 
 class MeshGenerator {

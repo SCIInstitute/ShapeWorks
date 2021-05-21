@@ -69,9 +69,9 @@ FILE(GLOB STUDIO_DATA_SRCS
   Data/MeshGroup.cpp
   Data/MeshManager.cpp
   Data/MeshSettings.cpp
-  Data/MeshWarper.cpp
   Data/MeshWorkQueue.cpp
   Data/MeshWorker.cpp
+  Data/QMeshWarper.cpp
   Data/Preferences.cpp
   Data/PreferencesWindow.cpp
   Data/Session.cpp
@@ -92,7 +92,7 @@ FILE(GLOB STUDIO_DATA_HDRS
   Data/MeshGroup.h
   Data/MeshManager.h
   Data/MeshSettings.h
-  Data/MeshWarper.h
+  Data/QMeshWarper.h
   Data/MeshWorkQueue.h
   Data/MeshWorker.h
   Data/Preferences.h

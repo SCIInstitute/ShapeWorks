@@ -25,7 +25,6 @@
 
 namespace shapeworks {
 
-
 class MeshManager : public QObject {
 Q_OBJECT
 
@@ -59,11 +58,16 @@ public Q_SLOTS:
 
   void handle_thread_complete(const MeshWorkItem& item, MeshHandle mesh);
 
+  void handle_warper_progress();
+
 Q_SIGNALS:
 
   void new_mesh();
 
   void error_encountered(std::string message);
+
+  void progress(int);
+  void status(std::string);
 
 private:
 
