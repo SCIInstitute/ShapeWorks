@@ -153,5 +153,11 @@ void PreferencesWindow::update_labels()
     QString::number(this->ui_->mesh_cache_memory->value()) + "%");
   this->ui_->geodesic_cache_multiplier_current_value->setText(
     QString::number(this->ui_->geodesic_cache_multiplier->value()));
+}
 
+//-----------------------------------------------------------------------------
+void PreferencesWindow::accept()
+{
+  this->save_to_preferences();
+  QDialog::accept();
 }
