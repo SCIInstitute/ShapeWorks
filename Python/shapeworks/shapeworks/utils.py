@@ -46,6 +46,34 @@ def save_images(outDir,        # path to the directory where we want to save the
         filenames.append(filename)
     return filenames
 
+# a helper function that saves a list of shapeworks meshes in a directory
+# this could be used to save final and intermediate results (if needed)
+def save_meshes(outDir,        # path to the directory where we want to save the images
+                swMeshList,   # list of shapeworks images to be saved
+                swMeshNames,  # list of image names to be used as filenames
+                extension        = 'ply',
+                compressed       = False, # use false to load in paraview
+                verbose          = True):
+
+    if (len(swMeshList) != len(swMeshNames)):
+        print('swMeshNames list is not consistent with number of images in swMeshList')
+        return
+
+    # create the output directory in case it does not exist
+    if not os.path.exists(outDir):
+        os.makedirs(outDir)
+
+    filenames = []
+    for curMesh, curName in zip(swMeshList, swMeshNames):
+        filename = outDir + curName + '.' + extension
+        if verbose:
+            print('Writing: ' + filename)
+        if not os.path.exists(os.path.dirname(filename)):
+            os.makedirs(os.path.dirname(filename))
+        curMesh.write(filename)
+        filenames.append(filename)
+    return filenames
+
 # a helper function to get list of files with specific extensions from a given file list
 def get_file_with_ext(file_list,extension):
 
@@ -91,3 +119,18 @@ def find_reference_image_index(inDataList):
             idx = i
             dist = tmp_dist
     return idx
+
+def find_reference_mesh_index(mesh_list):
+    num_mesh = len(mesh_list)
+    median_mesh_index = None
+    min_sum = np.inf
+    dists = np.zeros((num_mesh, num_mesh))
+    for mesh_index in range(num_mesh):
+        if (mesh_index + 1 < num_mesh):
+            for comp_index in range(mesh_index + 1, num_mesh):
+                dist = mesh_list[mesh_index].distance(mesh_list[comp_index]).getFieldMean("distance")
+                dists[mesh_index, comp_index] = dist
+                dists[comp_index, mesh_index] = dist
+    dists = np.sum(dists, axis=0)
+    median_index = np.argmax(dists)
+    return median_index
