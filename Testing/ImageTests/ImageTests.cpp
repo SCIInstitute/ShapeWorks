@@ -398,7 +398,6 @@ TEST(ImageTests, cropTest1)
   region.min[0] = 7;
   region.max[0] = 42;
   image.crop(image.logicalToPhysical(region));
-  image.write("/tmp/crop_baseline.nrrd");  // fixme
   Image ground_truth(std::string(TEST_DATA_DIR) + "/crop_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
