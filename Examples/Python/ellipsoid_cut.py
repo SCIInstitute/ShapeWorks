@@ -106,9 +106,9 @@ def Run_Pipeline(args):
     """
 
     # Make directory to save optimization output
-    pointDir = output_directory + 'shape_models/'
-    if not os.path.exists(pointDir):
-        os.makedirs(pointDir)
+    point_dir = output_directory + 'shape_models/'
+    if not os.path.exists(point_dir):
+        os.makedirs(point_dir)
 
     # Define the cutting planes
     cutting_plane_points1 = [[10, 10, 0], [-10, -10, 0], [10, -10, 0]]
@@ -123,7 +123,7 @@ def Run_Pipeline(args):
         cutting_plane_counts.append(2)
 
     # Create a dictionary for all the parameters required by optimization
-    parameterDictionary = {
+    parameter_dictionary = {
         "number_of_particles": 32,
         "use_normals": 1,
         "normal_weight": 15.0,
@@ -148,14 +148,14 @@ def Run_Pipeline(args):
     }
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
-        parameterDictionary["number_of_particles"] = 16
-        parameterDictionary["optimization_iterations"] = 25
+        parameter_dictionary["number_of_particles"] = 16
+        parameter_dictionary["optimization_iterations"] = 25
     # Run multiscale optimization unless single scale is specified
     if not args.use_single_scale:
-        parameterDictionary["use_shape_statistics_after"] = 16
+        parameter_dictionary["use_shape_statistics_after"] = 16
     # Execute the optimization function
-    [localPointFiles, worldPointFiles] = OptimizeUtils.runShapeWorksOptimize(
-        pointDir, dt_files, parameterDictionary)
+    [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
+        point_dir, dt_files, parameter_dictionary)
 
     if args.tiny_test:
         print("Done with tiny test")
@@ -170,4 +170,4 @@ def Run_Pipeline(args):
     http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
     """
     AnalyzeUtils.launchShapeWorksStudio(
-        pointDir, dt_files, localPointFiles, worldPointFiles)
+        point_dir, dt_files, local_point_files, world_point_files)

@@ -100,9 +100,9 @@ def Run_Pipeline(args):
     """
 
     # Make directory to save optimization output
-    pointDir = output_directory + 'shape_models/'
-    if not os.path.exists(pointDir):
-        os.makedirs(pointDir)
+    point_dir = output_directory + 'shape_models/'
+    if not os.path.exists(point_dir):
+        os.makedirs(point_dir)
 
     """
     Evaluate the meanshape of the existing shape model and use that to initialize the 
@@ -113,7 +113,7 @@ def Run_Pipeline(args):
     mean_shape_path = shape_model_dir + '/meanshape_local.particles'
 
     # Create a dictionary for all the parameters required by optimization
-    parameterDictionary = {
+    parameter_dictionary = {
         "number_of_particles": 128,
         "use_normals": 0,
         "normal_weight": 15.0,
@@ -138,8 +138,8 @@ def Run_Pipeline(args):
     }
 
     # Execute the optimization function
-    [localPointFiles, worldPointFiles] = OptimizeUtils.runShapeWorksOptimize_FixedDomains(
-        pointDir, dt_files, parameterDictionary)
+    [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize_FixedDomains(
+        point_dir, dt_files, parameter_dictionary)
 
     print("\nStep 4. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
     """
@@ -150,4 +150,4 @@ def Run_Pipeline(args):
     http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
     """
     AnalyzeUtils.launchShapeWorksStudio(
-        pointDir, dt_files, localPointFiles, worldPointFiles)
+        point_dir, dt_files, local_point_files, world_point_files)
