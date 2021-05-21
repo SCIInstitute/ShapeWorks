@@ -765,7 +765,7 @@ void ShapeWorksStudioApp::handle_progress(int value)
   if (value < 100) {
     this->progress_bar_->setVisible(true);
     this->progress_bar_->setValue(value);
-    this->disable_all_actions();
+    //this->disable_all_actions();
   }
   else {
     this->progress_bar_->setValue(100);
