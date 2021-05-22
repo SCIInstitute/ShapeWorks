@@ -340,22 +340,11 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
       TransformType prefix_transform;
       prefix_transform.set_identity();
 
-      /*
-      if (transforms.size() > 0) {
-        int idx = 0;
-        for (int r = 0; r < 4; r++) {
-          for (int c = 0; c < 3; c++) {
-            prefix_transform[r][c] = transforms[0][idx++];
-          }
-        }
-      }*/
-
       if (i < transforms.size() && transforms[i].size() >= 12) {
         prefix_transform[0][3] = transforms[i][9];
         prefix_transform[1][3] = transforms[i][10];
         prefix_transform[2][3] = transforms[i][11];
       }
-
 
       if (i < transforms.size() && transforms[i].size() == 16) { // 4x4
         int index = 0;
