@@ -356,6 +356,16 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize)
         prefix_transform[2][3] = transforms[i][11];
       }
 
+
+      if (i < transforms.size() && transforms[i].size() == 16) { // 4x4
+        int index = 0;
+        for (int c = 0; c < 4; c++) {
+          for (int r = 0; r < 4; r++) {
+            prefix_transform[c][r] = transforms[i][index++];
+          }
+        }
+      }
+
       optimize->GetSampler()->GetParticleSystem()->SetPrefixTransform(domain_count++,
                                                                       prefix_transform);
 
