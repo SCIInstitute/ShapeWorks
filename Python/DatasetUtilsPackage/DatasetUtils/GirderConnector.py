@@ -62,20 +62,31 @@ def _loginAndGetAccessToken():
 
 
 def _promptLogin():
-    print('New ShapeWorks Portal users: Register an account at ' + serverAddress + '#?dialog=register')
-    print('Returning ShapeWorks Portal users: Enter your username and password')
-
-    basicAuthToken = None
-    while basicAuthToken is None:
-        print('')
-        username = input("Username: ")
-        password = getpass.getpass("Password: ")
-        combined = username + ':' + password
+    username = ""
+    if 'SW_PORTAL_LOGIN' in os.environ:
+        print('Using portal login from $SW_PORTAL_LOGIN')
+        combined = os.environ['SW_PORTAL_LOGIN']
+        username = combined.split(":")[0]
         usernamePasswordHash = base64.b64encode(combined.encode()).decode("ascii")
         try:
             basicAuthToken = GirderAPI.authenticateBasicAuth(serverAddress, usernamePasswordHash)
         except ValueError as e:
-            print('Incorrect username or password.')
+            print('SW_PORTAL_LOGIN failed.')
+            quit()
+    else:
+        print('New ShapeWorks Portal users: Register an account at ' + serverAddress + '#?dialog=register')
+        print('Returning ShapeWorks Portal users: Enter your username and password')
+        basicAuthToken = None
+        while basicAuthToken is None:
+            print('')
+            username = input("Username: ")
+            password = getpass.getpass("Password: ")
+            combined = username + ':' + password
+            usernamePasswordHash = base64.b64encode(combined.encode()).decode("ascii")
+            try:
+                basicAuthToken = GirderAPI.authenticateBasicAuth(serverAddress, usernamePasswordHash)
+            except ValueError as e:
+                print('Incorrect username or password.')
     try:
         apiKey = GirderAPI.getApiKey(serverAddress, basicAuthToken, _API_KEY_NAME)
     except ValueError as e:
