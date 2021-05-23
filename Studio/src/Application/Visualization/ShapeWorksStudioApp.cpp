@@ -1048,6 +1048,8 @@ void ShapeWorksStudioApp::handle_groom_complete()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_optimize_start()
 {
+  this->visualizer_->set_selected_point_one(-1);
+  this->visualizer_->set_selected_point_two(-1);
   this->ui_->action_analysis_mode->setEnabled(false);
 }
 
