@@ -98,7 +98,8 @@ def generate_segmentations(meshList, out_dir, randomize_size=True, spacing=[1.0,
 				bb.pad(5)
 
 		# sample the given region of Mesh to an image
-		image = mesh.toImage(bb, spacing)
+		
+		image = mesh.toImage(region = bb, padding = 0 , spacing = spacing)
 
 		# write the result to disk and move to the next mesh
 		image.write(segFile, 0)

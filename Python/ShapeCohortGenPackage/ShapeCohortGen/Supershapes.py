@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.tri as mtri
 import subprocess
 from ShapeCohortGen.CohortGenUtils import *
+import shapeworks as sw 
 
 '''
 Generates super shapes and saves PLY mesh form
@@ -41,9 +42,11 @@ def generate(num_samples, out_dir, randomize_center, randomize_rotation, m, star
         shapeMesh = shapeMesh.apply_transform(transform_matrix)
         # Save mesh as ply
         shapeMesh.export(meshDir + name + ".stl")
-        execCommand = ["stl2ply", meshDir + name + ".stl", meshDir + name + ".ply"]
-        subprocess.check_call(execCommand)
-        subprocess.check_call(["stl2vtk", meshDir + name + ".stl", meshDir + name + ".vtk"])
+        #read as shapeworks mesh object
+        swShapeMesh = sw.Mesh(meshDir + name + ".stl")
+        #save as .ply
+        swShapeMesh.write(meshDir + name + ".ply")
+        swShapeMesh.write(meshDir + name + ".vtk")
         os.remove(meshDir + name + ".stl")
     return get_files(meshDir)
 
@@ -116,8 +119,8 @@ def generate_2D(n_samples, n_points, out_dir,
         n2 = default_n if n2_degree is None else np.random.chisquare(n2_degree)
         n3 = default_n if n3_degree is None else np.random.chisquare(n3_degree)
         pts = sample_super_formula_2D(n_points, m, n1, n2, n3)
-        lines = compute_line_indices(n_points, is_closed=True)
+        lines = sw.utils.compute_line_indices(n_points, is_closed=True)
         out_fname = os.path.join(contour_dir, f'{i:02d}.vtp')
-        save_contour_as_vtp(pts, lines, out_fname)
+        sw.utils.save_contour_as_vtp(pts, lines, out_fname)
         filenames.append(out_fname)
     return filenames
