@@ -34,7 +34,7 @@ void run_use_case(const std::string& name, const std::string& check_file)
   // run python
   std::string command = "python RunUseCase.py --use_case " + name + " --tiny_test";
   std::cerr << "Running command: " << command << "\n";
-  system(command.c_str());
+  ASSERT_FALSE(system(command.c_str()));
 
   ASSERT_TRUE(file_exists(file));
 }
@@ -76,6 +76,14 @@ TEST(UseCaseTests, ellipsoid_cut)
   run_use_case("ellipsoid_cut",
                "Output/ellipsoid_cut/shape_models/16/ellipsoid_00.tpSmoothDT_local.particles");
 }
+
+//---------------------------------------------------------------------------
+TEST(UseCaseTests, ellipsoid_evaluate)
+{
+  run_use_case("ellipsoid_evaluate",
+               "Output/ellipsoid/evaluation/compactness/scree.txt");
+}
+
 
 //---------------------------------------------------------------------------
 TEST(UseCaseTests, lumps)
@@ -132,7 +140,6 @@ TEST(UseCaseTests, thin_cavity_bean)
   run_use_case("thin_cavity_bean",
                "Output/thin_cavity_bean/shape_models/32/thin_cavity_bean_00_local.particles");
 }
-
 
 
 
