@@ -1,9 +1,9 @@
 <?xml version="1.0" ?>
-<number_of_particles> 128 </number_of_particles>
-<iterations_per_split> 1500 </iterations_per_split>
-<starting_regularization> 25.0 </starting_regularization>
-<ending_regularization> 0.001 </ending_regularization>
-<optimization_iterations> 3000 </optimization_iterations>
+<number_of_particles> 64 </number_of_particles>
+<iterations_per_split> 1000 </iterations_per_split>
+<starting_regularization> 500.0 </starting_regularization>
+<ending_regularization> 10.0 </ending_regularization>
+<optimization_iterations> 200 </optimization_iterations>
 <checkpointing_interval> 0 </checkpointing_interval>
 <procrustes_scaling> 0 </procrustes_scaling>
 <procrustes_interval> 0 </procrustes_interval>
@@ -237,4 +237,16 @@ sphere40_DT.nrrd
   38.63703305156273 -10.352761804100828 0
 </sphere_centers>
 
+<num_planes_per_input>
+  1
+  1
+  1
+  1
+</num_planes_per_input>
 
+<cutting_planes>
+  -10 -1 -10 -10 -1 10 10 -1 -10
+  -10 -2 -10 -10 -2 10 10 -2 -10
+  -10 -3 -10 -10 -3 10 10 -3 -10
+  -10 -4 -10 -10 -4 10 10 -4 -10
+</cutting_planes>

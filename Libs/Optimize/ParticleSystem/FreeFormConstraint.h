@@ -18,6 +18,16 @@ public:
       std::cout << "FF" << std::endl;
   }
 
+  Eigen::Vector3d ConstraintGradient(const Eigen::Vector3d &pt) const{
+      Eigen::Vector3d grad;
+      return grad;
+    }
+
+    double ConstraintEval(const Eigen::Vector3d &pt) const{
+      double val;
+      return val;
+    }
+
 private:
 
 };

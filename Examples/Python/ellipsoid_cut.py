@@ -75,7 +75,7 @@ def Run_Pipeline(args):
         os.makedirs(pointDir)
 
     cutting_plane_points1 = [[10, 10, 0], [-10, -10, 0], [10, -10, 0]]
-    cutting_plane_points2 = [[10, -3, 10], [-10, -3 ,10], [10, -3, -10]]
+    cutting_plane_points2 = [[10, 0, 10], [-10, 0 ,10], [10, 0, -10]]
     cp = [cutting_plane_points1, cutting_plane_points2]
 
     # Cutting planes
