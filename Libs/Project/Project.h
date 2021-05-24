@@ -37,6 +37,12 @@ public:
   //! Save to XLSX file
   bool save(const std::string& filename);
 
+  //! Return the filename
+  std::string get_filename();
+
+  //! Set project filename
+  void set_filename(std::string filename);
+
   //! Return the headers of the subject sheet
   std::vector<std::string> get_headers();
 
@@ -48,6 +54,9 @@ public:
 
   //! Return the number of domains
   int get_number_of_domains_per_subject();
+
+  //! Return the domain names (e.g. femur, pelvis, etc)
+  std::vector<std::string> get_domain_names();
 
   //! Return the list of Subjects
   std::vector<std::shared_ptr<Subject>>& get_subjects();
@@ -71,10 +80,14 @@ public:
   std::vector<std::string> get_group_values(const std::string& group_name) const;
 
   //! Retrieve parameters based on key
-  Parameters get_parameters(const std::string& name);
+  Parameters get_parameters(const std::string& name, const std::string& domain_name = "");
 
-  //! Store parameters base on key
-  void set_parameters(const std::string& name, Parameters params);
+  //! Store parameters based on key
+  void
+  set_parameters(const std::string& name, Parameters params, const std::string& domain_name = "");
+
+  //! Clear parameters based on key
+  void clear_parameters(const std::string& name);
 
   //! Store from subject list to spreadsheet
   void store_subjects();
@@ -87,10 +100,17 @@ public:
 
 private:
 
+  int get_or_create_worksheet(std::string name);
+  std::string get_new_file_column(std::string name, int idx);
+
+  // e.g. "la" for "groomed_la"
+  std::string get_column_identifier(std::string name);
+
   // known prefixes
   static constexpr const char* SEGMENTATION_PREFIX = "segmentation_";
+  static constexpr const char* SHAPE_PREFIX = "shape_";
   static constexpr const char* GROOMED_PREFIX = "groomed_";
-  static constexpr const char* GROOMED_TRANSFORMS_PREFIX = "transform_";
+  static constexpr const char* GROOMED_TRANSFORMS_PREFIX = "alignment_";
   static constexpr const char* FEATURE_PREFIX = "feature_";
   static constexpr const char* LOCAL_PARTICLES = "local_particles";
   static constexpr const char* WORLD_PARTICLES = "world_particles";
@@ -110,6 +130,8 @@ private:
 
   std::vector<std::string> get_matching_columns(const std::string& prefix);
 
+  std::vector<std::string> get_matching_columns(const std::vector<std::string> prefixes);
+
   std::vector<std::string> get_extra_columns() const;
 
   std::string get_value(int column, int subject_id);
@@ -120,17 +142,20 @@ private:
 
   void load_subjects();
 
-  int get_index_for_column(const std::string& name, bool create_if_not_found = false) const;
+  int get_index_for_column(const std::string& name, bool create_if_not_found = false,
+                           int sheet = 0) const;
 
   void save_string_column(const std::string& name, std::vector<std::string> items);
 
-  int num_domains_per_subject_ = 0;
+  int num_domains_per_subject_ = 1;
 
   std::unique_ptr<xlnt::workbook> wb_;
 
   std::vector<std::shared_ptr<Subject>> subjects_;
 
   bool loaded_{false};
+
+  std::string filename_;
 
   bool segmentations_present_{false};
   bool groomed_present_{false};
@@ -139,7 +164,9 @@ private:
   std::set<std::string> matching_columns_;
   std::vector<std::string> mesh_scalars_;
 
-  const int supported_version_{1};
-  int version_{1};
+  std::vector<std::string> input_prefixes_;
+
+  const int supported_version_{2};
+  int version_{2};
 };
 }

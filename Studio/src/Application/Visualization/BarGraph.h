@@ -34,6 +34,8 @@ private:
 
   double get_height_for_value(double value);
 
+  QFont get_font_for_size(QFont font, const QString &text, int width, int height);
+
   // members
   QString y_label_;
   std::vector<double> values_;
@@ -43,6 +45,7 @@ private:
   int bar_width_ = 10, margin_ = 5;
   bool use_log_ = false;
   int font_height_ = -1;
+  int font_width_ = -1;
   int y_axis_text_width_ = -1;
   QRect y_axis_text_rect_;
   QRect font_rect_;
@@ -50,4 +53,6 @@ private:
   QPoint hover_position_;
   QPointF tooltip_position_;
   QTimer hover_timer_;
+  QFont axis_font_;
+  QFont tick_font_;
 };

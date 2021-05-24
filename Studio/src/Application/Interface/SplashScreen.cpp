@@ -53,7 +53,6 @@ SplashScreen::SplashScreen(QWidget* parent, Preferences& preferences) :
 
   this->ui_->new_project_button_->setFocus();
 
-
 }
 
 //---------------------------------------------------------------------------
@@ -85,6 +84,8 @@ void SplashScreen::open_existing()
   }
   this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
 
+  this->hide();
+  QApplication::processEvents();
   emit open_project(filename);
   this->close();
 }
@@ -105,7 +106,8 @@ void SplashScreen::open_recent()
     return;
   }
 
-
+  this->hide();
+  QApplication::processEvents();
   emit open_project(full_file_path);
   this->close();
 }
@@ -166,7 +168,7 @@ void SplashScreen::resizeEvent(QResizeEvent* event)
   QFontMetrics fm(this->ui_->title_->font());
   int width = fm.width(this->ui_->title_->text());
   this->ui_->title_->setMinimumWidth(width);
-  this->resize(width*2, width*1.2);
+  this->resize(width * 2, width * 1.2);
 }
 
 }

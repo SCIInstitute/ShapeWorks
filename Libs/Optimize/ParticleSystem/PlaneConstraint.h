@@ -37,6 +37,15 @@ public:
   }
   void SetPlanePoint(const Eigen::Vector3d & p){planePoint = p;}
 
+  Eigen::Vector3d ConstraintGradient(const Eigen::Vector3d &pt) const{
+      return -planeNormal;
+    }
+
+    double ConstraintEval(const Eigen::Vector3d &pt) const{
+      double val = -planeNormal.dot(pt-planePoint);
+      return val;
+    }
+
 private:
   Eigen::Vector3d planeNormal;
   Eigen::Vector3d planePoint;

@@ -4,10 +4,16 @@
 using namespace shapeworks;
 
 //---------------------------------------------------------------------------
-GroomParameters::GroomParameters(ProjectHandle project)
+GroomParameters::GroomParameters(ProjectHandle project, std::string domain_name) :
+  project_(project), domain_name_(domain_name)
 {
-  this->project_ = project;
-  this->params_ = this->project_->get_parameters(Parameters::GROOM_PARAMS);
+  this->params_ = this->project_->get_parameters(Parameters::GROOM_PARAMS, this->domain_name_);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::restore_defaults()
+{
+  this->params_.reset_parameters();
 }
 
 //---------------------------------------------------------------------------
@@ -133,5 +139,17 @@ void GroomParameters::set_fast_marching(bool value)
 //---------------------------------------------------------------------------
 void GroomParameters::save_to_project()
 {
-  this->project_->set_parameters(Parameters::GROOM_PARAMS, this->params_);
+  this->project_->set_parameters(Parameters::GROOM_PARAMS, this->params_, this->domain_name_);
+}
+
+//---------------------------------------------------------------------------
+std::string GroomParameters::get_groom_output_prefix()
+{
+  return this->params_.get("groom_output_prefix", "groomed");
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_groom_output_prefix(std::string prefix)
+{
+  this->params_.set("groom_output_prefix", prefix);
 }
