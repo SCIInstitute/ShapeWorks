@@ -3,7 +3,7 @@ import math
 import trimesh
 import numpy as np
 import matplotlib.tri as mtri
-import subprocess
+import shapeworks as sw
 from ShapeCohortGen.CohortGenUtils import *
 
 '''
@@ -41,9 +41,8 @@ def generate(num_samples, out_dir, randomize_center, randomize_rotation, m, star
         shapeMesh = shapeMesh.apply_transform(transform_matrix)
         # Save mesh as ply
         shapeMesh.export(meshDir + name + ".stl")
-        execCommand = ["stl2ply", meshDir + name + ".stl", meshDir + name + ".ply"]
-        subprocess.check_call(execCommand)
-        subprocess.check_call(["stl2vtk", meshDir + name + ".stl", meshDir + name + ".vtk"])
+        sw.Mesh(meshDir + name + ".stl").write(meshDir + name + ".ply")
+        sw.Mesh(meshDir + name + ".stl").write(meshDir + name + ".vtk")
         os.remove(meshDir + name + ".stl")
     return get_files(meshDir)
 
