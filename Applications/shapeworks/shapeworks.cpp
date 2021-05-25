@@ -89,6 +89,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(MeshToImage::getCommand());
   shapeworks.addCommand(MeshToDT::getCommand());
   shapeworks.addCommand(CompareMesh::getCommand());
+  shapeworks.addCommand(WarpMesh::getCommand());
 
   // Misc Commands
   shapeworks.addCommand(OptimizeCommand::getCommand());

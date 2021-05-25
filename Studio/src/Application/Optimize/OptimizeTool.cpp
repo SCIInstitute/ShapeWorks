@@ -111,13 +111,8 @@ void OptimizeTool::handle_progress(int val, QString progress_message)
   emit progress(val);
   emit status(progress_message.toStdString());
 
-  auto local = this->optimize_->GetLocalPoints();
-  auto global = this->optimize_->GetGlobalPoints();
-
-  if (local.size() > 0 && global.size() > 0) {
-    this->session_->update_points(local, true);
-    this->session_->update_points(global, false);
-  }
+  auto particles = this->optimize_->GetParticles();
+  this->session_->update_particles(particles);
 }
 
 //---------------------------------------------------------------------------
@@ -125,10 +120,8 @@ void OptimizeTool::handle_optimize_complete()
 {
   this->optimization_is_running_ = false;
 
-  auto local = this->optimize_->GetLocalPoints();
-  auto global = this->optimize_->GetGlobalPoints();
-  this->session_->update_points(local, true);
-  this->session_->update_points(global, false);
+  auto particles = this->optimize_->GetParticles();
+  this->session_->update_particles(particles);
   this->session_->calculate_reconstructed_samples();
   this->session_->get_project()->store_subjects();
   emit progress(100);
@@ -204,10 +197,7 @@ void OptimizeTool::handle_message(std::string s)
 //---------------------------------------------------------------------------
 void OptimizeTool::on_restoreDefaults_clicked()
 {
-  // store a set of blank settings
-  Parameters settings;
-  this->session_->get_project()->set_parameters(Parameters::OPTIMIZE_PARAMS, settings);
-  // now load those settings
+  this->session_->get_project()->clear_parameters(Parameters::OPTIMIZE_PARAMS);
   this->load_params();
 }
 
@@ -220,9 +210,24 @@ void OptimizeTool::set_session(QSharedPointer<Session> session)
 //---------------------------------------------------------------------------
 void OptimizeTool::load_params()
 {
+  this->setup_domain_boxes();
   auto params = OptimizeParameters(this->session_->get_project());
 
   this->ui_->number_of_particles->setText(QString::number(params.get_number_of_particles()[0]));
+
+  auto domain_names = this->session_->get_project()->get_domain_names();
+  for (int i = 0; i < domain_names.size(); i++) {
+    if (i < this->particle_boxes_.size()) {
+
+      int particles = 128;
+      if (i < params.get_number_of_particles().size()) {
+        particles = params.get_number_of_particles()[i];
+      }
+
+      this->particle_boxes_[i]->setText(QString::number(particles));
+    }
+  }
+
   this->ui_->initial_relative_weighting->setText(
     QString::number(params.get_initial_relative_weighting()));
   this->ui_->relative_weighting->setText(QString::number(params.get_relative_weighting()));
@@ -253,7 +258,20 @@ void OptimizeTool::store_params()
 {
   auto params = OptimizeParameters(this->session_->get_project());
 
-  params.set_number_of_particles({this->ui_->number_of_particles->text().toInt()});
+  std::vector<int> num_particles;
+  num_particles.push_back(this->ui_->number_of_particles->text().toInt());
+
+  auto domain_names = this->session_->get_project()->get_domain_names();
+  if (domain_names.size() > 1) {
+    num_particles.clear();
+    for (int i = 0; i < domain_names.size(); i++) {
+      if (i < this->particle_boxes_.size()) {
+        num_particles.push_back(this->particle_boxes_[i]->text().toInt());
+      }
+    }
+  }
+
+  params.set_number_of_particles(num_particles);
   params.set_initial_relative_weighting(this->ui_->initial_relative_weighting->text().toDouble());
   params.set_relative_weighting(this->ui_->relative_weighting->text().toDouble());
   params.set_starting_regularization(this->ui_->starting_regularization->text().toDouble());
@@ -274,6 +292,7 @@ void OptimizeTool::store_params()
 
   // always use preference value
   params.set_geodesic_cache_multiplier(this->preferences_.get_geodesic_cache_multiplier());
+  params.set_optimize_output_prefix(this->preferences_.get_optimize_file_template().toStdString());
 
   params.save_to_project();
 }
@@ -317,6 +336,7 @@ void OptimizeTool::update_ui_elements()
 void OptimizeTool::activate()
 {
   this->enable_actions();
+
 }
 
 //---------------------------------------------------------------------------
@@ -332,20 +352,20 @@ void OptimizeTool::handle_load_progress(int count)
 void OptimizeTool::clear_particles()
 {
   // clear out old points
-  std::vector<itk::Point<double>> empty;
-  std::vector<std::vector<itk::Point<double>>> lists;
-  for (int i = 0; i < this->session_->get_num_shapes(); i++) {
-    lists.push_back(empty);
-  }
-  this->session_->update_points(lists, true);
-  this->session_->update_points(lists, false);
+  std::vector<StudioParticles> particles(this->session_->get_num_shapes());
+  this->session_->update_particles(particles);
 }
 
 //---------------------------------------------------------------------------
 bool OptimizeTool::validate_inputs()
 {
   bool all_valid = true;
-  for (QLineEdit* line_edit : this->line_edits_) {
+
+  std::vector<QLineEdit*> combined = this->line_edits_;
+
+  combined.insert(combined.end(), this->particle_boxes_.begin(), this->particle_boxes_.end());
+
+  for (QLineEdit* line_edit : combined) {
     QString text = line_edit->text();
     int pos;
     QString ss;
@@ -371,6 +391,62 @@ void OptimizeTool::update_run_button()
   else {
     this->ui_->run_optimize_button->setText("Run Optimize");
   }
+
+}
+
+//---------------------------------------------------------------------------
+void OptimizeTool::setup_domain_boxes()
+{
+  qDeleteAll(
+    this->ui_->domain_widget->findChildren<QWidget*>(QString(), Qt::FindDirectChildrenOnly));
+  this->particle_boxes_.clear();
+
+  QLineEdit* last_box = this->ui_->number_of_particles;
+
+  if (this->session_->get_project()->get_number_of_domains_per_subject() < 2) {
+    this->ui_->particle_stack->setCurrentIndex(0);
+    this->ui_->domain_widget->setMaximumSize(1, 1);
+  }
+  else {
+    this->ui_->domain_widget->setMaximumSize(9999, 9999);
+    auto domain_names = this->session_->get_project()->get_domain_names();
+    QGridLayout* layout = new QGridLayout;
+    QIntValidator* above_zero = new QIntValidator(1, std::numeric_limits<int>::max(), this);
+    for (int i = 0; i < domain_names.size(); i++) {
+      auto label = new QLabel(QString::fromStdString(domain_names[i]), this);
+      layout->addWidget(label, i, 0);
+      QLineEdit* box = new QLineEdit(this);
+      last_box = box;
+      box->setAlignment(Qt::AlignHCenter);
+      box->setValidator(above_zero);
+      connect(box, &QLineEdit::textChanged,
+              this, &OptimizeTool::update_run_button);
+
+      this->particle_boxes_.push_back(box);
+      layout->addWidget(box, i, 1);
+    }
+
+    delete this->ui_->domain_widget->layout();
+    this->ui_->domain_widget->setLayout(layout);
+    this->ui_->particle_stack->setCurrentIndex(1);
+  }
+
+  QWidget::setTabOrder(last_box, this->ui_->initial_relative_weighting);
+  QWidget::setTabOrder(this->ui_->initial_relative_weighting, this->ui_->relative_weighting);
+  QWidget::setTabOrder(this->ui_->relative_weighting, this->ui_->starting_regularization);
+  QWidget::setTabOrder(this->ui_->starting_regularization, this->ui_->ending_regularization);
+  QWidget::setTabOrder(this->ui_->ending_regularization, this->ui_->iterations_per_split);
+  QWidget::setTabOrder(this->ui_->iterations_per_split, this->ui_->optimization_iterations);
+  QWidget::setTabOrder(this->ui_->optimization_iterations, this->ui_->use_geodesic_distance);
+  QWidget::setTabOrder(this->ui_->use_geodesic_distance, this->ui_->use_normals);
+  QWidget::setTabOrder(this->ui_->use_normals, this->ui_->normals_strength);
+  QWidget::setTabOrder(this->ui_->normals_strength, this->ui_->procrustes);
+  QWidget::setTabOrder(this->ui_->procrustes, this->ui_->procrustes_scaling);
+  QWidget::setTabOrder(this->ui_->procrustes_scaling, this->ui_->procrustes_interval);
+  QWidget::setTabOrder(this->ui_->procrustes_interval, this->ui_->multiscale);
+  QWidget::setTabOrder(this->ui_->multiscale, this->ui_->multiscale_particles);
+  QWidget::setTabOrder(this->ui_->multiscale_particles, this->ui_->run_optimize_button);
+  QWidget::setTabOrder(this->ui_->run_optimize_button, this->ui_->restoreDefaults);
 
 }
 

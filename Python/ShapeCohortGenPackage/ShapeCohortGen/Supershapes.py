@@ -3,7 +3,7 @@ import math
 import trimesh
 import numpy as np
 import matplotlib.tri as mtri
-import subprocess
+import shapeworks as sw
 from ShapeCohortGen.CohortGenUtils import *
 import shapeworks as sw 
 

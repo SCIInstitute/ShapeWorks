@@ -131,6 +131,7 @@ function install_conda() {
   if ! pip install fontawesome-markdown==0.2.6;         then return 1; fi # lib for icons in documentation
   if ! pip install pymdown-extensions==8.0.1;           then return 1; fi # lib to support checkbox lists in documentation
   if ! pip install pyyaml==5.3.1;                       then return 1; fi # for mkdocs
+  if ! pip install markdown-it-py==1.1.0;               then return 1; fi # for mkdocs
   if ! pip install Python/DatasetUtilsPackage;          then return 1; fi # install the local GirderConnector code as a package
   if ! pip install Python/DocumentationUtilsPackage;    then return 1; fi # install shapeworks auto-documentation as a package
   if ! pip install Python/DataAugmentationUtilsPackage; then return 1; fi # install data augmentation code as a package
@@ -152,7 +153,8 @@ function install_conda() {
   # installs for jupyter notebooks
 
   if ! pip install nbstripout;         then return 1; fi # to stripout notebooks output before committing  
-  if ! pip install pyvista;            then return 1; fi # for visualizations on notebooks
+  if ! pip install pyvista==0.30.1;    then return 1; fi # for visualizations on notebooks
+  if ! pip install ipyvtklink;         then return 1; fi # for visualizations on notebooks
   if ! pip install ipyvtk_simple;      then return 1; fi # for visualizations on notebooks
   if ! pip install ipywidgets;         then return 1; fi # for visualizations on notebooks
   if ! pip install itkwidgets;         then return 1; fi # for visualizations on notebooks

@@ -98,11 +98,6 @@ jobs:
       working-directory: ${{runner.workspace}}/build
       run: xcopy /f C:\deps\bin\*.dll ${{runner.workspace}}\build\bin\RelWithDebInfo
 
-    - name: Copy Anaconda Libraries
-      working-directory: ${{runner.workspace}}/build
-      shell: bash -l {0}
-      run: cp /c/Miniconda3/envs/shapeworks/python*.dll /c/Miniconda3/envs/shapeworks/Library/bin/zlib.dll /c/Miniconda3/envs/shapeworks/Library/bin/tbb.dll /c/Miniconda3/envs/shapeworks/Library/bin/half.dll bin/RelWithDebInfo
-
     - name: Build Binary Package
       shell: bash -l {0}
       env:

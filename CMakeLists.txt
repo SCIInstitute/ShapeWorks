@@ -137,9 +137,13 @@ ENDIF()
 
 ### XLNT
 find_package (XLNT REQUIRED)
+add_definitions(-DXLNT_STATIC=1)
 
 ### Libigl set include path
 find_package(LIBIGL REQUIRED QUIET)
+
+find_package(Boost REQUIRED COMPONENTS
+             filesystem)
 
 ### Geometry central include
 if (NOT DEFINED GEOMETRY_CENTRAL_DIR)
