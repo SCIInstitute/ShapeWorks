@@ -48,7 +48,8 @@ call pip install Python/ShapeCohortGenPackage
   
 REM installs for jupyter notebooks
 call pip install nbstripout
-call pip install pyvista
+call pip install pyvista==0.30.1
+call pip install ipyvtklink
 call pip install ipyvtk_simple
 call pip install ipywidgets
 call pip install itkwidgets
