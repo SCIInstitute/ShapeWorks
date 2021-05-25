@@ -76,6 +76,10 @@ bool Optimize::Run()
     return false;
   }
 
+  // ensure use_shape_statistics_after is no more than the total
+  this->m_use_shape_statistics_after = std::min(this->m_use_shape_statistics_after,
+                                                this->m_number_of_particles[0]);
+
   this->SetParameters();
 
   int number_of_splits = static_cast<int>(
