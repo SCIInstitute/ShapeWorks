@@ -220,8 +220,6 @@ def applyCropping(outDir, inDataList, bbDataList, paddingSize=10):
 
     # find region by computing bounding box
     region = ImageUtils.boundingBox(bbDataList)  # identify regions with isoValue >= 1.0
-    print(region)
-    region.pad(paddingSize)
 
     for i in range(len(inDataList)):
         inname = inDataList[i]
@@ -230,7 +228,7 @@ def applyCropping(outDir, inDataList, bbDataList, paddingSize=10):
         img = Image(inname)
 
         # crop extraneous portion of image, padding so all images are at least same size
-        img.crop(region).pad(region)
+        img.crop(region).pad(paddingSize)
         img.write(outname)
         
     return outDataList
