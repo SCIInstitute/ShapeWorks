@@ -345,3 +345,12 @@ def plot_meshes_volumes_mix(objectList,              # list of shapeworks meshes
     # link views
     if link_views and (not use_same_window):
         plotter.link_views()
+
+
+def plot_mesh_contour(Image):
+	p = pv.Plotter()
+	contours=Image.contour()
+	p.add_mesh(Image, opacity=0.0)
+	p.add_mesh(contours, color="yellow", line_width=5)
+	p.show_bounds(grid=True)
+	p.show()
