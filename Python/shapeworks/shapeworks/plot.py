@@ -90,8 +90,8 @@ def plot_volumes(volumeList,              # list of shapeworks images to be visu
     plotter, and start rendering.
     """
     if type(volumeList) is not list:
-    	volumeList = list([volumeList])
-    	
+        volumeList = list([volumeList])
+
     num_samples = len(volumeList)
 
     if volumeNames is not None:
@@ -172,7 +172,9 @@ def plot_meshes(meshList,                # list of shapeworks meshes to be visua
     assigns different colors for each mesh
     note this is very similar to plot_volumes but with meshes rather than volumes
     """
-
+    if type(meshList) is not list:
+        meshList = list([meshList])
+        
     num_samples = len(meshList)
 
     if meshNames is not None:
@@ -352,9 +354,9 @@ def plot_meshes_volumes_mix(objectList,              # list of shapeworks meshes
     plotter.show()
 
 def plot_mesh_contour(Image):
-	p = pv.Plotter()
-	contours=Image.contour()
-	p.add_mesh(Image, opacity=0.0)
-	p.add_mesh(contours, color="yellow", line_width=5)
-	p.show_bounds(grid=True)
-	p.show()
+    p = pv.Plotter()
+    contours=Image.contour()
+    p.add_mesh(Image, opacity=0.0)
+    p.add_mesh(contours, color="yellow", line_width=5)
+    p.show_bounds(grid=True)
+    p.show()
