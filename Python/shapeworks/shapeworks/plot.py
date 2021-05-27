@@ -89,7 +89,9 @@ def plot_volumes(volumeList,              # list of shapeworks images to be visu
     multiple windows, each with a single segmentation, add segmentations to
     plotter, and start rendering.
     """
-
+    if type(volumeList) is not list:
+    	volumeList = list([volumeList])
+    	
     num_samples = len(volumeList)
 
     if volumeNames is not None:
@@ -148,6 +150,7 @@ def plot_volumes(volumeList,              # list of shapeworks images to be visu
     # link views
     if link_views and (not use_same_window):
         plotter.link_views()
+    plotter.show()
 
 # add and plot a list of meshes
 def plot_meshes(meshList,                # list of shapeworks meshes to be visualized
@@ -237,6 +240,7 @@ def plot_meshes(meshList,                # list of shapeworks meshes to be visua
     # link views
     if link_views and (not use_same_window):
         plotter.link_views()
+    plotter.show()
 
 # helper function to add and plot a list of meshes/volumes mix
 def plot_meshes_volumes_mix(objectList,              # list of shapeworks meshes to be visualized
@@ -345,7 +349,7 @@ def plot_meshes_volumes_mix(objectList,              # list of shapeworks meshes
     # link views
     if link_views and (not use_same_window):
         plotter.link_views()
-
+    plotter.show()
 
 def plot_mesh_contour(Image):
 	p = pv.Plotter()
