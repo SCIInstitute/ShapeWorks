@@ -24,6 +24,9 @@ background: rgb(255, 255, 127)
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
+    <widget class="QComboBox" name="domain_box"/>
+   </item>
+   <item>
     <widget class="QStackedWidget" name="stacked_widget">
      <property name="currentIndex">
       <number>0</number>

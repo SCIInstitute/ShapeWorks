@@ -116,6 +116,12 @@ def create_SWRun_xml(xmlfilename, inDataFiles, parameterDictionary, outDir):
             cutting_plane_counts_text += "  " + str(cutting_plane_counts_var[i]) + "\n"
         cutting_plane_counts.text = cutting_plane_counts_text
         cutting_planes.text = cutting_planes_text
+    if 'geodesics_enabled' in parameterDictionary:
+        geodesics_enabled = ET.SubElement(root, 'geodesics_enabled')
+        geodesics_enabled.text = "\n" + str(parameterDictionary['geodesics_enabled']) + "\n"
+    if 'geodesics_cache_size_multiplier' in parameterDictionary:
+        geodesics_cache_size_multiplier = ET.SubElement(root, 'geodesics_cache_size_multiplier')
+        geodesics_cache_size_multiplier.text = "\n" + str(parameterDictionary['geodesics_cache_size_multiplier']) + "\n"
 
     data = ET.tostring(root, encoding='unicode')
     file = open(xmlfilename, "w+")
@@ -175,6 +181,13 @@ def create_SWRun_fixed_domains(xmlfilename, inDataFiles, parameterDictionary, ou
 
     inputs = ET.SubElement(root, 'inputs')
     inputs.text = "\n"
+
+    if 'geodesics_enabled' in parameterDictionary:
+        geodesics_enabled = ET.SubElement(root, 'geodesics_enabled')
+        geodesics_enabled.text = "\n" + str(parameterDictionary['geodesics_enabled']) + "\n"
+    if 'geodesics_cache_size_multiplier' in parameterDictionary:
+        geodesics_cache_size_multiplier = ET.SubElement(root, 'geodesics_cache_size_multiplier')
+        geodesics_cache_size_multiplier.text = "\n" + str(parameterDictionary['geodesics_cache_size_multiplier']) + "\n"
 
     for filename in inDataFiles:
         inputs.text = inputs.text + filename.replace('\\','/') + "\n"

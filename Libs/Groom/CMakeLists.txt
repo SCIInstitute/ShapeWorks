@@ -8,6 +8,7 @@ target_link_libraries(Groom
   Mesh
   TBB::tbb
   Utils
+  Boost::filesystem
   )
 
 target_include_directories(Groom PUBLIC

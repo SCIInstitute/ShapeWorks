@@ -8,7 +8,9 @@
 #include <QElapsedTimer>
 #include <QObject>
 
+#include <Data/Preferences.h>
 #include <Groom/QGroom.h>
+#include <Libs/Groom/GroomParameters.h>
 
 class Ui_GroomTool;
 
@@ -23,7 +25,7 @@ class GroomTool : public QWidget {
 Q_OBJECT;
 public:
 
-  GroomTool();
+  GroomTool(Preferences& prefs);
   ~GroomTool();
 
   //! Set the pointer to the session
@@ -59,6 +61,8 @@ public Q_SLOTS:
   void on_skip_button_clicked();
   void on_restore_defaults_clicked();
 
+  void domain_changed();
+
   void centering_changed(int state);
 
   //! Run groom tool
@@ -69,6 +73,11 @@ public Q_SLOTS:
   void handle_error(std::string msg);
 
 private:
+
+  void set_ui_from_params(GroomParameters params);
+
+  Preferences& preferences_;
+
   QList<QThread*> threads_;
 
   Ui_GroomTool* ui_;
@@ -79,6 +88,8 @@ private:
   QElapsedTimer timer_;
 
   bool groom_is_running_ = false;
+
+  std::string current_domain_;
 
 };
 }

@@ -61,8 +61,50 @@ QT5_ADD_RESOURCES(STUDIO_RSCS ${UI_RESOURCES_RCC})
 #--------------------------------------------------------------------------------
 
 
-FILE(GLOB STUDIO_DATA_SRCS Data/*.cpp)
-FILE(GLOB STUDIO_DATA_HDRS Data/*.h)
+FILE(GLOB STUDIO_DATA_SRCS
+  Data/CustomSurfaceReconstructionFilter.cpp
+  Data/LegacyMeshGenerator.cpp
+  Data/MeshCache.cpp
+  Data/MeshGenerator.cpp
+  Data/MeshGroup.cpp
+  Data/MeshManager.cpp
+  Data/MeshSettings.cpp
+  Data/MeshWorkQueue.cpp
+  Data/MeshWorker.cpp
+  Data/QMeshWarper.cpp
+  Data/Preferences.cpp
+  Data/PreferencesWindow.cpp
+  Data/Session.cpp
+  Data/Shape.cpp
+  Data/StudioLog.cpp
+  Data/StudioMesh.cpp
+  Data/StudioParticles.cpp
+  Data/SurfaceReconstructor.cpp
+  Data/vtkPolyDataToImageData.cpp
+  )
+
+FILE(GLOB STUDIO_DATA_HDRS
+  Data/CustomSurfaceReconstructionFilter.h
+  Data/ItkToVtk.h
+  Data/LegacyMeshGenerator.h
+  Data/MeshCache.h
+  Data/MeshGenerator.h
+  Data/MeshGroup.h
+  Data/MeshManager.h
+  Data/MeshSettings.h
+  Data/QMeshWarper.h
+  Data/MeshWorkQueue.h
+  Data/MeshWorker.h
+  Data/Preferences.h
+  Data/PreferencesWindow.h
+  Data/Session.h
+  Data/Shape.h
+  Data/StudioLog.h
+  Data/StudioMesh.h
+  Data/StudioParticles.h
+  Data/SurfaceReconstructor.h
+  Data/vtkPolyDataToImageData.h
+  )
 
 FILE(GLOB STUDIO_ANALYSIS_SRCS Analysis/*.cpp)
 FILE(GLOB STUDIO_ANALYSIS_HDRS Analysis/*.h)

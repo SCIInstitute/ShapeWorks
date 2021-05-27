@@ -136,6 +136,8 @@ public:
 
   void AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh);
 
+  void AddContour(vtkSmartPointer<vtkPolyData> poly_data);
+
   void SetFidsFiles(const std::vector<std::string>& s)
   { m_FidsFiles = s; }
 

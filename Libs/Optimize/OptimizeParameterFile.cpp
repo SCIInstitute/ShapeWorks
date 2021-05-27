@@ -55,6 +55,9 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
     else if (text == "mesh") {
       domain_type = shapeworks::DomainType::Mesh;
     }
+    else if (text == "contour") {
+      domain_type = shapeworks::DomainType::Contour;
+    }
   }
   optimize->SetDomainType(domain_type);
 
@@ -129,6 +132,14 @@ bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* 
   }
   else if (optimize->GetDomainType() == shapeworks::DomainType::Mesh) {
     if (!this->read_mesh_inputs(&doc_handle, optimize)) {
+      return false;
+    }
+    if (!this->read_mesh_attributes(&doc_handle, optimize)) {
+      return false;
+    }
+  }
+  else if (optimize->GetDomainType() == shapeworks::DomainType::Contour) {
+    if (!this->read_contour_inputs(&doc_handle, optimize)) {
       return false;
     }
     if (!this->read_mesh_attributes(&doc_handle, optimize)) {
@@ -359,6 +370,12 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
   elem = docHandle->FirstChild("use_shape_statistics_after").Element();
   if (elem) { optimize->SetUseShapeStatisticsAfter(atof(elem->GetText())); }
 
+  elem = docHandle->FirstChild("geodesics_enabled").Element();
+  if (elem) { optimize->SetGeodesicsEnabled((bool) atoi(elem->GetText())); }
+
+  elem = docHandle->FirstChild("geodesics_cache_size_multiplier").Element();
+  if (elem) { optimize->SetGeodesicsCacheSizeMultiplier((size_t) atol(elem->GetText())); }
+
   return true;
 }
 
@@ -501,9 +518,8 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
       auto poly_data = mesh.getVTKMesh();
 
       if (poly_data) {
-        optimize->AddMesh(std::make_shared<VtkMeshWrapper>(poly_data));
-      }
-      else {
+        optimize->AddMesh(poly_data);
+      } else {
         std::cerr << "Failed to read " << meshFiles[index] << "\n";
         return false;
       }
@@ -523,6 +539,59 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
   }
 
   optimize->SetFilenames(StringUtils::getFileNamesFromPaths(meshFiles));
+
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool OptimizeParameterFile::read_contour_inputs(TiXmlHandle* docHandle, Optimize* optimize)
+{
+  TiXmlElement* elem = nullptr;
+
+  elem = docHandle->FirstChild("inputs").Element();
+  if (!elem) {
+    std::cerr << "No input contours have been specified\n";
+    return false;
+  }
+
+  std::istringstream inputsBuffer;
+
+  inputsBuffer.str(elem->GetText());
+  auto flags = optimize->GetDomainFlags();
+
+  std::vector<std::string> contourFiles;
+  std::string contourfilename;
+  while (inputsBuffer >> contourfilename) {
+    contourFiles.push_back(contourfilename);
+  }
+
+  for (int index = 0; index < contourFiles.size(); index++) {
+    bool fixed_domain = false;
+    for (int i = 0; i < flags.size(); i++) {
+      if (flags[i] == index) {
+        fixed_domain = true;
+      }
+    }
+
+    if (!fixed_domain) {
+      if (this->verbosity_level_ > 1) {
+        std::cout << "Reading inputfile: " << contourFiles[index] << "...\n" << std::flush;
+      }
+
+      auto poly_data = MeshUtils::threadSafeReadMesh(contourFiles[index].c_str()).getVTKMesh();
+      if (poly_data) {
+        optimize->AddContour(poly_data);
+      } else {
+        std::cerr << "Failed to read " << contourFiles[index] << "\n";
+        return false;
+      }
+    }
+    else {
+      optimize->AddContour(nullptr);
+    }
+  }
+
+  optimize->SetFilenames(StringUtils::getFileNamesFromPaths(contourFiles));
 
   return true;
 }
@@ -961,7 +1030,6 @@ bool OptimizeParameterFile::read_cutting_planes(TiXmlHandle* docHandle, Optimize
           c[2] = pc[2];
         }
 
-        std::cout << "Adding plane" << std::endl;
         optimize->GetSampler()->SetCuttingPlane(shapeCount, a, b, c);
       }
     }
@@ -1050,7 +1118,6 @@ bool OptimizeParameterFile::read_cutting_spheres(TiXmlHandle* doc_handle, Optimi
 
               rad = radList[r_ctr++];
 
-              std::cout << "Adding sphere" << std::endl;
               optimize->GetSampler()->AddSphere(shapeCount, center, rad);
             }
           }
