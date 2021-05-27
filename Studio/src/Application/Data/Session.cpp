@@ -256,18 +256,39 @@ bool Session::load_light_project(QString filename)
   std::vector<std::string> import_files, groom_files, local_point_files, global_point_files;
   std::string sparseFile, denseFile, goodPtsFile;
 
-  elem = docHandle.FirstChild("mesh_files").Element();
-  if (elem && elem->GetText()) {
-    std::string mesh_filename;
+  elem = docHandle.FirstChild("point_files").Element();
+  if (elem) {
+    std::string point_filename;
     inputsBuffer.str(elem->GetText());
-    while (inputsBuffer >> mesh_filename) {
-      if (!QFile::exists(QString::fromStdString(mesh_filename))) {
-        QString message = "File does not exist: " + QString::fromStdString(mesh_filename);
-        STUDIO_LOG_ERROR(message);
-        QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
-        return false;
-      }
-      groom_files.push_back(mesh_filename);
+    while (inputsBuffer >> point_filename) {
+      local_point_files.push_back(point_filename);
+      global_point_files.push_back(point_filename);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+
+  bool local_particles_found = false;
+  elem = docHandle.FirstChild("local_point_files").Element();
+  if (elem) {
+    local_particles_found = true;
+    local_point_files.clear();
+    std::string point_filename;
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> point_filename) {
+      local_point_files.push_back(point_filename);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+
+  elem = docHandle.FirstChild("world_point_files").Element();
+  if (elem) {
+    global_point_files.clear();
+    std::string point_filename;
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> point_filename) {
+      global_point_files.push_back(point_filename);
     }
     inputsBuffer.clear();
     inputsBuffer.str("");
@@ -275,6 +296,12 @@ bool Session::load_light_project(QString filename)
 
   elem = docHandle.FirstChild("distance_transform_files").Element();
   if (elem && elem->GetText()) {
+    if (!local_particles_found) {
+      QString message = "Error, distance_transform_files specified, but not local_particle_files";
+      STUDIO_LOG_ERROR(message);
+      QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
+      return false;
+    }
     groom_files.clear(); // if someone specifies both, prefer the distance transforms
     std::string distance_transform_filename;
     inputsBuffer.str(elem->GetText());
@@ -293,37 +320,24 @@ bool Session::load_light_project(QString filename)
     inputsBuffer.str("");
   }
 
-  elem = docHandle.FirstChild("point_files").Element();
-  if (elem) {
-    std::string point_filename;
-    inputsBuffer.str(elem->GetText());
-    while (inputsBuffer >> point_filename) {
-      local_point_files.push_back(point_filename);
-      global_point_files.push_back(point_filename);
+  elem = docHandle.FirstChild("mesh_files").Element();
+  if (elem && elem->GetText()) {
+    if (!local_particles_found) {
+      QString message = "Error, mesh_files specified, but not local_particle_files";
+      STUDIO_LOG_ERROR(message);
+      QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
+      return false;
     }
-    inputsBuffer.clear();
-    inputsBuffer.str("");
-  }
-
-  elem = docHandle.FirstChild("local_point_files").Element();
-  if (elem) {
-    local_point_files.clear();
-    std::string point_filename;
+    std::string mesh_filename;
     inputsBuffer.str(elem->GetText());
-    while (inputsBuffer >> point_filename) {
-      local_point_files.push_back(point_filename);
-    }
-    inputsBuffer.clear();
-    inputsBuffer.str("");
-  }
-
-  elem = docHandle.FirstChild("world_point_files").Element();
-  if (elem) {
-    global_point_files.clear();
-    std::string point_filename;
-    inputsBuffer.str(elem->GetText());
-    while (inputsBuffer >> point_filename) {
-      global_point_files.push_back(point_filename);
+    while (inputsBuffer >> mesh_filename) {
+      if (!QFile::exists(QString::fromStdString(mesh_filename))) {
+        QString message = "File does not exist: " + QString::fromStdString(mesh_filename);
+        STUDIO_LOG_ERROR(message);
+        QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
+        return false;
+      }
+      groom_files.push_back(mesh_filename);
     }
     inputsBuffer.clear();
     inputsBuffer.str("");
@@ -684,6 +698,11 @@ double Session::update_auto_glyph_size()
   }
 
   this->auto_glyph_size_ = max_range / std::sqrt(static_cast<double>(num_particles)) / 2;
+
+  std::cerr << "max_range = " << max_range << "\n";
+  std::cerr << "num_particles = " << num_particles << "\n";
+  std::cerr << "auto raw = " << this->auto_glyph_size_ << "\n";
+
   this->auto_glyph_size_ = std::max<double>(0.1, this->auto_glyph_size_);
   this->auto_glyph_size_ = std::min<double>(10.0, this->auto_glyph_size_);
 
