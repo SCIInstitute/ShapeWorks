@@ -13,11 +13,6 @@ TEST(pythonTests, padTest)
   ASSERT_FALSE(system("python pad.py"));
 }
 
-TEST(pythonTests, padFailTest)
-{
-  ASSERT_FALSE(system("python padfail.py"));
-}
-
 TEST(pythonTests, cropTest)
 {
   ASSERT_FALSE(system("python crop.py"));
@@ -66,11 +61,6 @@ TEST(pythonTests, compareFailTest)
 TEST(pythonTests, antialiasTest)
 {
   ASSERT_FALSE(system("python antialias.py"));
-}
-
-TEST(pythonTests, antialiasFailTest)
-{
-  ASSERT_TRUE(system("python antialiasfail.py"));
 }
 
 TEST(pythonTests, resampleTest)

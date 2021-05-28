@@ -7,11 +7,8 @@ def cropTest1():
 
   region = img.logicalBoundingBox().pad(-16)
 
-  # [] fixme!
-  # region.min[0] = 7
-  # region.max[0] = 42
-  region.min = [7, region.min[1], region.min[2]]
-  region.max = [42, region.max[1], region.max[2]]
+  region.min[0] = 7
+  region.max[0] = 42
 
   img.crop(img.logicalToPhysical(region))
 
