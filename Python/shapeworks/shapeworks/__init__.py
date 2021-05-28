@@ -52,7 +52,7 @@ setup_shapeworks_env()
 
 # how do we get it to import the compiled module that isn't in this folder?
 from .shapeworks import *
-from .conversion import sw2itkImage, sw2vtkImage, sw2vtkMesh
-from .plot import plot_meshes, plot_volumes, plot_meshes_volumes_mix, add_mesh_to_plotter, add_volume_to_plotter
+from .conversion import sw2vtkImage, sw2vtkMesh
+from .plot import plot_meshes, plot_volumes, plot_meshes_volumes_mix, add_mesh_to_plotter, add_volume_to_plotter, plot_mesh_contour
 from .utils import num_subplots, postive_factors, save_images, get_file_with_ext, find_reference_image_index, find_reference_mesh_index
 from .data import download_and_unzip_dataset, download_subset, get_file_list, sample_images, sample_meshes

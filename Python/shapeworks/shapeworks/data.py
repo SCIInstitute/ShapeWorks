@@ -150,13 +150,7 @@ def sample_meshes(inMeshList, num_sample, printCmd=False):
     D = np.zeros((len(inMeshList), len(inMeshList)))
     for i in range(len(inMeshList)):
         for j in range(i, len(inMeshList)):
-            execCommand = ["SurfaceToSurfaceDistance", "-a", inMeshList[i],
-                "-b", inMeshList[j], "-p"]
-            if printCmd:
-                print("CMD: " + " ".join(execCommand))
-            process = subprocess.Popen(execCommand, stdout=subprocess.PIPE)
-            stdout = process.communicate()[0]
-            dist = float(str(stdout).split()[1])
+            dist = inMeshList[i].distance(inMeshList[j]).getFieldMean("distance")
             D[i, j] = dist
     D += D.T
     A = np.exp(- D ** 2 / (2. * np.std(np.triu(D))**2))

@@ -199,7 +199,7 @@ def plot_meshes(meshList,                # list of shapeworks meshes to be visua
 
     # define plotter
     plotter = pv.Plotter(shape    = (grid_rows, grid_cols),
-                         notebook = is_interactive,
+                         # notebook = is_interactive,
                          border   = show_borders)
 
     # add given volume list (one at a time) to plotter
@@ -356,7 +356,7 @@ def plot_meshes_volumes_mix(objectList,              # list of shapeworks meshes
 def plot_mesh_contour(Image):
     p = pv.Plotter()
     contours=Image.contour()
-    p.add_mesh(Image, opacity=0.0)
+    p.add_mesh(Image, opacity=0.5)
     p.add_mesh(contours, color="yellow", line_width=5)
     p.show_bounds(grid=True)
     p.show()
