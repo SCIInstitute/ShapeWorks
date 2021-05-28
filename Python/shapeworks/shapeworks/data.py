@@ -9,7 +9,7 @@ import numpy as np
 from sklearn.cluster import SpectralClustering
 import xml.etree.ElementTree as ET
 from zipfile import ZipFile
-import subprocess
+import shapeworks as sw
 
 def dataset_exists_check(use_case):
     existsFlag = False
@@ -150,7 +150,9 @@ def sample_meshes(inMeshList, num_sample, printCmd=False):
     D = np.zeros((len(inMeshList), len(inMeshList)))
     for i in range(len(inMeshList)):
         for j in range(i, len(inMeshList)):
-            dist = inMeshList[i].distance(inMeshList[j]).getFieldMean("distance")
+            mesh1 = sw.Mesh(inMeshList[i])
+            mesh2 = sw.Mesh(inMeshList[j])
+            dist = mesh1.distance(mesh2).getFieldMean("distance")
             D[i, j] = dist
     D += D.T
     A = np.exp(- D ** 2 / (2. * np.std(np.triu(D))**2))
