@@ -755,7 +755,6 @@ Image& Image::gaussianBlur(double sigma)
 
 Image& Image::crop(PhysicalRegion region, const int padding)
 {
-  std::cout << "region passed in: " << region << std::endl;
   region.shrink(physicalBoundingBox()); // clip region to fit inside image
   if (!region.valid())
     std::cerr << "Invalid region specified (it may lie outside physical bounds of image)." << std::endl;
@@ -763,11 +762,8 @@ Image& Image::crop(PhysicalRegion region, const int padding)
   using FilterType = itk::ExtractImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
   
-  std::cout << "image physical region: " << physicalBoundingBox() << std::endl;
-  std::cout << "shrunk by image physical region: " << region << std::endl;
   IndexRegion indexRegion(physicalToLogical(region));
   indexRegion.pad(padding);
-  std::cout << "logical (index) region: " << indexRegion << std::endl;
   filter->SetExtractionRegion(ImageType::RegionType(indexRegion.min, indexRegion.size()));
   filter->SetInput(this->image);
   filter->SetDirectionCollapseToIdentity();
