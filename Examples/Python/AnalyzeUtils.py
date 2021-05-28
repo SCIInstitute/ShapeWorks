@@ -9,10 +9,19 @@ from termcolor import colored, cprint
 
 from CommonUtils import *
 
-def create_analyze_xml(xmlfilename, dtFiles, localPointFiles, worldPointFiles):
+def create_analyze_xml(xmlfilename, dtFiles, localPointFiles, worldPointFiles,domains_per_shape=1):
+    worldPointFiles = sorted(worldPointFiles)
+    dtFiles = sorted(dtFiles)
+    localPointFiles = sorted(localPointFiles)
+
+
     root = ET.Element('sample')
+
+    domains_per_shape_elem = ET.SubElement(root,'domains_per_shape')
+    domains_per_shape_elem.text = "\n" + str(domains_per_shape) + "\n"
+
     input_points = ET.SubElement(root, 'point_files')
-    input_points.text = "\n"
+    input_points.text = "\n"    
     for i in range(len(worldPointFiles)):
         t1 = input_points.text
         t1 = t1 + worldPointFiles[i] + '\n'
@@ -43,9 +52,9 @@ def create_analyze_xml(xmlfilename, dtFiles, localPointFiles, worldPointFiles):
     file = open(xmlfilename, "w+")
     file.write(data)
 
-def launchShapeWorksStudio(parentDir, dtFiles, localPointFiles, worldPointFiles):
+def launchShapeWorksStudio(parentDir, dtFiles, localPointFiles, worldPointFiles,domains_per_shape=1):
     xmlfilename = parentDir + '/analyze.xml'
-    create_analyze_xml(xmlfilename, dtFiles, localPointFiles, worldPointFiles)
+    create_analyze_xml(xmlfilename, dtFiles, localPointFiles, worldPointFiles,domains_per_shape)
     create_cpp_xml(xmlfilename, xmlfilename)
     execCommand = ["ShapeWorksStudio" , xmlfilename ]
     subprocess.check_call(execCommand )
