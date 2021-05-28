@@ -14,9 +14,7 @@ import glob
 import shapeworks as sw
 import OptimizeUtils
 import AnalyzeUtils
-from GroomUtils import *
-from OptimizeUtils import *
-from AnalyzeUtils import *
+
 def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")
     """
@@ -25,34 +23,56 @@ def Run_Pipeline(args):
     We define dataset_name which determines which dataset to download from 
     the portal and the directory to save output from the use case in. 
     """
+    print("\nDataset options for running multiple domain mesh use case: \n")
+    print("1. ellipsoid_joint_rotation \t 2. ellipsoid_joint_size \t 3. ellipsoid_joint_size_rotation \n")
+    print("You can change the dataset name and output directory name to try out this use case with other datasets")
+
+
     dataset_name = "ellipsoid_joint_rotation"
     output_directory = "Output/ellipsoid_joint_rotation/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
 
-    sw.data.download_and_unzip_dataset(dataset_name, output_directory)
-    file_list = sorted(glob.glob(output_directory +
-                                 dataset_name + "/meshes/*.vtk"))
+    # If running a tiny_test, then download subset of the data
+    if args.tiny_test:
+        raise RuntimeError("Tiny test unsupported. Please run the use case without --tiny_test")
+    # else download the entire dataset
+    else:
+        sw.data.download_and_unzip_dataset(dataset_name, output_directory)
+        mesh_files = sorted(glob.glob(output_directory +
+                            dataset_name + "/meshes/*.ply"))
 
-    # Create a directory for groomed output
-    groom_dir = output_directory + 'groomed/'
-    if not os.path.exists(groom_dir):
-        os.makedirs(groom_dir)
+    # Select data if using subsample
+    if args.use_subsample:
+        raise RuntimeError("Subsample generation unsupported. Please run the use case without --use_subsample")
 
-    # # """Apply centering"""
-    # centeredFiles = center(groom_dir + "centered/segmentations", file_list)
+    # # Select data if using subsample
+    # if args.use_subsample:
+    #     sample_idx = sw.data.sample_meshes(mesh_files, int(args.num_subsample)*2)
+    #     mesh_files = [mesh_files[i] for i in sample_idx]
+    #     print(mesh_files)
+    #     input(" ")
 
-    # # """ Apply padding"""
-    # paddedFiles = applyPadding(groom_dir + "padded/segmentations",centeredFiles,20)
 
-    # dtFiles = applyDistanceTransforms(groom_dir, paddedFiles)
+    # This dataset is prealigned and does not require any grooming steps.
 
-    pointDir = output_directory + 'shape_models/'
-    if not os.path.exists(pointDir):
-        os.makedirs(pointDir)
+    print("\nStep 2. Optimize - Particle Based Optimization\n")
+    """
+    Step 2: OPTIMIZE - Particle Based Optimization
 
-    parameterDictionary = {
+    Now we can run optimization directly on the meshes.
+    For more details on the plethora of parameters for shapeworks please refer 
+    to docs/workflow/optimze.md
+    http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
+    """
+
+    # Make directory to save optimization output
+    point_dir = output_directory + 'shape_models/'
+    if not os.path.exists(point_dir):
+        os.makedirs(point_dir)
+    # Create a dictionary for all the parameters required by optimization
+    parameter_dictionary = {
         "number_of_particles" : [512,512],
         "use_normals": [0,0],
         "normal_weight": [1.0,1.0],
@@ -74,17 +94,19 @@ def Run_Pipeline(args):
 
       }
 
-    if args.tiny_test:
-        parameterDictionary["number_of_particles"] = 32
-        parameterDictionary["optimization_iterations"] = 25
 
- 
+    # Execute the optimization function
+    [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
+        point_dir, mesh_files, parameter_dictionary)
+
+    print("\nStep 3. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
     """
-    Now we execute a single scale particle optimization function.
+    Step 3: ANALYZE - Shape Analysis and Visualization
+
+    Now we launch studio to analyze the resulting shape model.
+    For more information about the analysis step, see docs/workflow/analyze.md
+    http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
     """
-    print("CALLING OPTIMIZATION CODE")
-    [localPointFiles, worldPointFiles] = runShapeWorksOptimize(
-        pointDir, file_list, parameterDictionary)
-    # runShapeWorksOptimize(pointDir, meshFiles, parameterDictionary)
     domains_per_shape = 2
-    launchShapeWorksStudio(pointDir, file_list, localPointFiles, worldPointFiles,domains_per_shape)
+    AnalyzeUtils.launchShapeWorksStudio(
+        point_dir, mesh_files, local_point_files, world_point_files,domains_per_shape)
