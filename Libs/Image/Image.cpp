@@ -364,7 +364,7 @@ Image& Image::resample(const Vector3& spacing, Image::InterpolationType interp)
   
   Point3 new_origin = origin() + toPoint(0.5 * (spacing - inputSpacing));  // O' += 0.5 * (p' - p)
 
-  return resample(IdentityTransform::New(), new_origin, dims, spacing, coordsys(), interp);  //***
+  return resample(IdentityTransform::New(), new_origin, dims, spacing, coordsys(), interp);
 }
 
 Image& Image::resample(double isoSpacing, Image::InterpolationType interp)

@@ -430,12 +430,12 @@ void ClipMesh::buildParser()
   const std::string desc = "clips mesh";
   parser.prog(prog).description(desc);
 
+  parser.add_option("--px").action("store").type("double").set_default(0.0).help("Value of point.x for cutting plane [default: %default].");
+  parser.add_option("--py").action("store").type("double").set_default(0.0).help("Value of point.y for cutting plane [default: %default].");
+  parser.add_option("--pz").action("store").type("double").set_default(0.0).help("Value of point.z for cutting plane [default: %default].");
   parser.add_option("--nx").action("store").type("double").set_default(0.0).help("Value of normal.x for cutting plane [default: %default].");
   parser.add_option("--ny").action("store").type("double").set_default(0.0).help("Value of normal.y for cutting plane [default: %default].");
   parser.add_option("--nz").action("store").type("double").set_default(0.0).help("Value of normal.z for cutting plane [default: %default].");
-  parser.add_option("--ox").action("store").type("double").set_default(0.0).help("Value of origin.x for cutting plane [default: %default].");
-  parser.add_option("--oy").action("store").type("double").set_default(0.0).help("Value of origin.y for cutting plane [default: %default].");
-  parser.add_option("--oz").action("store").type("double").set_default(0.0).help("Value of origin.z for cutting plane [default: %default].");
 
   Command::buildParser();
 }
@@ -448,15 +448,15 @@ bool ClipMesh::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
+  Point point({static_cast<double>(options.get("px")),
+               static_cast<double>(options.get("py")),
+               static_cast<double>(options.get("pz"))});
+
   Vector normal{makeVector({static_cast<double>(options.get("nx")),
                             static_cast<double>(options.get("ny")),
                             static_cast<double>(options.get("nz"))})};
 
-  Point origin({static_cast<double>(options.get("ox")),
-                static_cast<double>(options.get("oy")),
-                static_cast<double>(options.get("oz"))});
-
-  sharedData.mesh->clip(makePlane(normal, origin));
+  sharedData.mesh->clip(makePlane(point, normal));
   return sharedData.validMesh();
 }
 
@@ -703,12 +703,12 @@ void ClipClosedSurface::buildParser()
   const std::string desc = "clips mesh resulting in a closed surface";
   parser.prog(prog).description(desc);
 
+  parser.add_option("--px").action("store").type("double").set_default(0.0).help("Value of point.x for cutting plane [default: %default].");
+  parser.add_option("--py").action("store").type("double").set_default(0.0).help("Value of point.y for cutting plane [default: %default].");
+  parser.add_option("--pz").action("store").type("double").set_default(0.0).help("Value of point.z for cutting plane [default: %default].");
   parser.add_option("--nx").action("store").type("double").set_default(0.0).help("Value of normal.x for cutting plane [default: %default].");
   parser.add_option("--ny").action("store").type("double").set_default(0.0).help("Value of normal.y for cutting plane [default: %default].");
   parser.add_option("--nz").action("store").type("double").set_default(0.0).help("Value of normal.z for cutting plane [default: %default].");
-  parser.add_option("--ox").action("store").type("double").set_default(0.0).help("Value of origin.x for cutting plane [default: %default].");
-  parser.add_option("--oy").action("store").type("double").set_default(0.0).help("Value of origin.y for cutting plane [default: %default].");
-  parser.add_option("--oz").action("store").type("double").set_default(0.0).help("Value of origin.z for cutting plane [default: %default].");
 
   Command::buildParser();
 }
@@ -721,15 +721,15 @@ bool ClipClosedSurface::execute(const optparse::Values &options, SharedCommandDa
     return false;
   }
 
+  Point point({static_cast<double>(options.get("px")),
+               static_cast<double>(options.get("py")),
+               static_cast<double>(options.get("pz"))});
+
   Vector normal{makeVector({static_cast<double>(options.get("nx")),
                             static_cast<double>(options.get("ny")),
                             static_cast<double>(options.get("nz"))})};
 
-  Point origin({static_cast<double>(options.get("ox")),
-                static_cast<double>(options.get("oy")),
-                static_cast<double>(options.get("oz"))});
-
-  sharedData.mesh->clipClosedSurface(makePlane(normal, origin));
+  sharedData.mesh->clipClosedSurface(makePlane(point, normal));
   return sharedData.validMesh();
 }
 

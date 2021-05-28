@@ -60,13 +60,6 @@ PYBIND11_MODULE(shapeworks, m)
          return stream.str();
        });
 
-  // Plane
-  py::class_<Plane>(m, "Plane")
-  .def(py::init
-       ([](std::vector<double>& n, std::vector<double>& o) {
-          return makePlane(makeVector({n[0], n[1], n[2]}), Point({o[0], o[1], o[2]}));
-        }));
-
   // Constructs an itk::AffineTransform from the 3x3 scale-rotate-warp and 3x1 translation.
   m.def("createTransform",
         [](Eigen::Matrix<double, 3, 3> &mat, std::vector<double> v) -> decltype(auto) {
@@ -897,9 +890,12 @@ PYBIND11_MODULE(shapeworks, m)
        "image"_a)
 
   .def("clip",
-       &Mesh::clip,
+       [](Mesh& mesh, const std::vector<double>& p, const std::vector<double>& n) -> decltype(auto) {
+         return mesh.clip(makePlane(Point({p[0], p[1], p[2]}), makeVector({n[0], n[1], n[2]})));
+       },
        "clips a mesh using a cutting plane",
-       "plane"_a)
+       "point"_a,
+       "normal"_a)
 
   .def("translate",
        [](Mesh& mesh, const std::vector<double>& v) -> decltype(auto) {
@@ -926,9 +922,12 @@ PYBIND11_MODULE(shapeworks, m)
        "iterations"_a=1, "decimate"_a=true, "percentage"_a=0.5)
 
   .def("clipClosedSurface",
-       &Mesh::clipClosedSurface,
+       [](Mesh& mesh, const std::vector<double>& p, const std::vector<double>& n) -> decltype(auto) {
+         return mesh.clipClosedSurface(makePlane(Point({p[0], p[1], p[2]}), makeVector({n[0], n[1], n[2]})));
+       },
        "clips a mesh using a cutting plane resulting in a closed surface",
-       "plane"_a)
+       "point"_a,
+       "normal"_a)
 
   .def("generateNormals",
        &Mesh::generateNormals,
