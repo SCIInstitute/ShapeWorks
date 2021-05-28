@@ -21,6 +21,8 @@ def get_parameter_text(parameterKey,parameterValue,domains_per_shape):
 def get_attribute_scales_text(use_normals,normal_weight,domains_per_shape):
 
     text = "\n"
+    if(type(use_normals) is not list):
+    	use_normals = list([use_normals])
     for i in range(domains_per_shape):
 
         if(use_normals[i]==0):
