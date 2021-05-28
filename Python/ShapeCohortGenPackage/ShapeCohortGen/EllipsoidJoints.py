@@ -60,7 +60,8 @@ def generate_ellipsoid_joint(num_samples, meshDir, randomize_center, randomize_x
 		else:
 			radii_2 = radii_1
 
-
+		print(radii_1,radii_2)
+		input("Wait")
 		#ellipsoid 1 
 		ellipsoid_joint1 = addEllipsoid(center_loc_1,radii_1,0,rotation_axis='Y')
 		#Write to .ply file
@@ -78,7 +79,7 @@ def generate_ellipsoid_joint(num_samples, meshDir, randomize_center, randomize_x
 		rotation = i*increments*apply_rotation_flag
 		# change the center of ellipsoid 2 such that it is above ellipsoid 1 
 		# distance between the two surfaces = separation
-		location_offset = [0,radii_1[1]*2 + separation,0]
+		location_offset = [0,radii_1[1] + radii_2[1] + separation,0]
 		center_loc_2 = list( map(add, center_loc_1, location_offset) )
 
 		#ellipsoid 2
