@@ -9,7 +9,7 @@ PhysicalRegion ImageUtils::boundingBox(std::vector<std::string> &filenames, Imag
 {
   if (filenames.empty())
     throw std::invalid_argument("No filenames provided to compute a bounding box");
-  
+
   Image img(filenames[0]);
   PhysicalRegion bbox;
   Dims dims(img.dims()); // images must all be the same size
@@ -32,7 +32,7 @@ PhysicalRegion ImageUtils::boundingBox(std::vector<Image> &images, Image::PixelT
 {
   if (images.empty())
     throw std::invalid_argument("No images provided to compute a bounding box");
-  
+
   PhysicalRegion bbox;
   Dims dims(images[0].dims()); // images must all be the same size
 

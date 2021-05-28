@@ -99,3 +99,31 @@ val = clipTest7()
 if val is False:
   print("clipTest7 failed")
   sys.exit(1)
+
+def clipfailTest1():
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img.clip([1, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], 0.0)
+
+  compareImg = Image(os.environ["DATA"] + "/clipfail.nrrd")
+
+  return img.compare(compareImg)
+
+try:
+  val = clipfailTest1()
+  sys.exit(1)
+except ValueError:
+  sys.exit(0)
+
+def clipfailTest2():
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img.clip([0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], 0.0)
+
+  compareImg = Image(os.environ["DATA"] + "/clipfail.nrrd")
+
+  return img.compare(compareImg)
+
+try:
+  val = clipfailTest2()
+  sys.exit(1)
+except ValueError:
+  sys.exit(0)

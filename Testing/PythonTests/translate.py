@@ -71,3 +71,17 @@ val = translateTest5()
 if val is False:
   print("translateTest5 failed")
   sys.exit(1)
+
+def translatefailTest():
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img.translate()
+
+  compareImg = Image(os.environ["DATA"] + "/translatefail.nrrd")
+
+  return img.compare(compareImg)
+
+try:
+  val = translatefailTest()
+  sys.exit(1)
+except TypeError:
+  sys.exit(0)
