@@ -45,7 +45,7 @@ using TransformPtr       = GenericTransform::Pointer;
 TransformPtr createTransform(const Matrix33 &mat, const Vector3 &translate = makeVector({0,0,0}));
 
 /// make a plane
-Plane makePlane(const Vector3 &n, const Point &o);
+Plane makePlane(const Point &p, const Vector3 &n);
 
 /// Affine transforms are used for many Image manipulation commands
 using AffineTransform    = itk::AffineTransform<double, 3>;

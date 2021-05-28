@@ -8,36 +8,6 @@ TEST(pythonTests, setup)
   ASSERT_TRUE(true);
 }
 
-TEST(pythonTests, padTest)
-{
-  ASSERT_FALSE(system("python pad.py"));
-}
-
-TEST(pythonTests, padFailTest)
-{
-  ASSERT_FALSE(system("python padfail.py"));
-}
-
-TEST(pythonTests, cropTest)
-{
-  ASSERT_FALSE(system("python crop.py"));
-}
-
-TEST(pythonTests, toImageTest)
-{
-  ASSERT_FALSE(system("python toImage.py"));
-}
-
-TEST(pythonTests, toDistanceTransformTest)
-{
-  ASSERT_FALSE(system("python toDistanceTransform.py"));
-}
-
-TEST(pythonTests, gradientInterpolatorTest)
-{
-  ASSERT_FALSE(system("python gradientinterp.py"));
-}
-  
 TEST(pythonTests, imageInfoTest)
 {
   ASSERT_FALSE(system("python imageinfo.py"));
@@ -58,19 +28,9 @@ TEST(pythonTests, compareTest)
   ASSERT_FALSE(system("python compare.py"));
 }
 
-TEST(pythonTests, compareFailTest)
-{
-  ASSERT_TRUE(system("python comparefail.py"));
-}
-
 TEST(pythonTests, antialiasTest)
 {
   ASSERT_FALSE(system("python antialias.py"));
-}
-
-TEST(pythonTests, antialiasFailTest)
-{
-  ASSERT_TRUE(system("python antialiasfail.py"));
 }
 
 TEST(pythonTests, resampleTest)
@@ -83,9 +43,9 @@ TEST(pythonTests, resizeTest)
   ASSERT_FALSE(system("python resize.py"));
 }
 
-TEST(pythonTests, resizeFailTest)
+TEST(pythonTests, padTest)
 {
-  ASSERT_TRUE(system("python resizefail.py"));
+  ASSERT_FALSE(system("python pad.py"));
 }
 
 TEST(pythonTests, recenterTest)
@@ -98,11 +58,6 @@ TEST(pythonTests, translateTest)
   ASSERT_FALSE(system("python translate.py"));
 }
 
-TEST(pythonTests, translatefailTest)
-{
-  ASSERT_TRUE(system("python translatefail.py"));
-}
-
 TEST(pythonTests, centerofmassTest)
 {
   ASSERT_FALSE(system("python centerofmass.py"));
@@ -113,19 +68,9 @@ TEST(pythonTests, scaleTest)
   ASSERT_FALSE(system("python scale.py"));
 }
 
-TEST(pythonTests, scaleFailTest)
-{
-  ASSERT_TRUE(system("python scalefail.py"));
-}
-
 TEST(pythonTests, rotateTest)
 {
   ASSERT_FALSE(system("python rotate.py"));
-}
-
-TEST(pythonTests, rotateFailTest)
-{
-  ASSERT_TRUE(system("python rotatefail.py"));
 }
 
 TEST(pythonTests, extractLabelTest)
@@ -153,11 +98,6 @@ TEST(pythonTests, curvatureTest)
   ASSERT_FALSE(system("python curvature.py"));
 }
 
-TEST(pythonTests, curvatureFailTest)
-{
-  ASSERT_TRUE(system("python curvaturefail.py"));
-}
-
 TEST(pythonTests, gradientTest)
 {
   ASSERT_FALSE(system("python gradient.py"));
@@ -171,11 +111,6 @@ TEST(pythonTests, sigmoidTest)
 TEST(pythonTests, tplevelsetTest)
 {
   ASSERT_FALSE(system("python tplevelset.py"));
-}
-
-TEST(pythonTests, tplevelsetFailTest)
-{
-  ASSERT_TRUE(system("python tplevelsetfail.py"));
 }
 
 TEST(pythonTests, intensityTest)
@@ -198,9 +133,9 @@ TEST(pythonTests, boundingBox)
   ASSERT_FALSE(system("python boundingbox.py"));
 }
 
-TEST(pythonTests, boundingBoxFailTest)
+TEST(pythonTests, cropTest)
 {
-  ASSERT_TRUE(system("python boundingboxfail.py"));
+  ASSERT_FALSE(system("python crop.py"));
 }
 
 TEST(pythonTests, icpTest)
@@ -213,29 +148,14 @@ TEST(pythonTests, clipTest)
   ASSERT_FALSE(system("python clip.py"));
 }
 
-TEST(pythonTests, clipFailTest)
-{
-  ASSERT_TRUE(system("python clipfail.py"));
-}
-
 TEST(pythonTests, reflectTest)
 {
   ASSERT_FALSE(system("python reflect.py"));
 }
 
-TEST(pythonTests, reflectFailTest)
-{
-  ASSERT_TRUE(system("python reflectfail.py"));
-}
-
 TEST(pythonTests, warpTest)
 {
   ASSERT_FALSE(system("python warp.py"));
-}
-
-TEST(pythonTests, warpFailTest)
-{
-  ASSERT_TRUE(system("python warpfail.py"));
 }
 
 TEST(pythonTests, setOriginTest)
@@ -248,11 +168,6 @@ TEST(pythonTests, setSpacingTest)
   ASSERT_FALSE(system("python setspacing.py"));
 }
 
-TEST(pythonTests, setSpacingFailTest)
-{
-  ASSERT_TRUE(system("python setspacingfail.py"));
-}
-
 TEST(pythonTests, negateTest)
 {
   ASSERT_FALSE(system("python negate.py"));
@@ -263,19 +178,9 @@ TEST(pythonTests, addTest)
   ASSERT_FALSE(system("python add.py"));
 }
 
-TEST(pythonTests, addFailTest)
-{
-  ASSERT_TRUE(system("python addfail.py"));
-}
-
 TEST(pythonTests, subTest)
 {
   ASSERT_FALSE(system("python sub.py"));
-}
-
-TEST(pythonTests, subFailTest)
-{
-  ASSERT_TRUE(system("python subfail.py"));
 }
 
 TEST(pythonTests, mulTest)
@@ -326,6 +231,21 @@ TEST(pythonTests, distanceTest)
 TEST(pythonTests, generateNormalsTest)
 {
   ASSERT_FALSE(system("python generatenormals.py"));
+}
+
+TEST(pythonTests, toImageTest)
+{
+  ASSERT_FALSE(system("python toImage.py"));
+}
+
+TEST(pythonTests, toDistanceTransformTest)
+{
+  ASSERT_FALSE(system("python toDistanceTransform.py"));
+}
+
+TEST(pythonTests, gradientInterpolatorTest)
+{
+  ASSERT_FALSE(system("python gradientinterp.py"));
 }
 
 TEST(pythonTests, fieldTest)

@@ -46,8 +46,7 @@ if val is False:
 
 def clipTest4():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
-  plane = Plane([0.0, 0.0, 1.0], [-91.0, 0.0, 1230.0])
-  mesh.clip(plane)
+  mesh.clip([-91.0, 0.0, 1230.0], [0.0, 0.0, 1.0])
 
   compareMesh = Mesh(os.environ["DATA"] + "/clip1.vtk")
 
@@ -61,8 +60,7 @@ if val is False:
 
 def clipTest5():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
-  plane = Plane([0.0, 0.0, -1.0], [-91.0, 0.0, 1230.0])
-  mesh.clip(plane)
+  mesh.clip([-91.0, 0.0, 1230.0], [0.0, 0.0, -1.0])
 
   compareMesh = Mesh(os.environ["DATA"] + "/clip2.vtk")
 
@@ -76,8 +74,7 @@ if val is False:
 
 def clipTest6():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
-  plane = Plane([-5.0, 3.14159, 1.0], [-60.0, 10.0, 1235.0])
-  mesh.clip(plane)
+  mesh.clip([-60.0, 10.0, 1235.0], [-5.0, 3.14159, 1.0])
 
   compareMesh = Mesh(os.environ["DATA"] + "/clip3.vtk")
 
@@ -91,8 +88,7 @@ if val is False:
 
 def clipTest7():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
-  plane = Plane([0.0, 850.0, 0.0], [10.0, 0.0, 10.0])
-  mesh.clipClosedSurface(plane)
+  mesh.clipClosedSurface([10.0, 0.0, 10.0], [0.0, 850.0, 0.0])
 
   compareMesh = Mesh(os.environ["DATA"] + "/clipClosed1.vtk")
 
@@ -103,3 +99,31 @@ val = clipTest7()
 if val is False:
   print("clipTest7 failed")
   sys.exit(1)
+
+def clipfailTest1():
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img.clip([1, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], 0.0)
+
+  compareImg = Image(os.environ["DATA"] + "/clipfail.nrrd")
+
+  return img.compare(compareImg)
+
+try:
+  val = clipfailTest1()
+  sys.exit(1)
+except ValueError:
+  sys.exit(0)
+
+def clipfailTest2():
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img.clip([0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], 0.0)
+
+  compareImg = Image(os.environ["DATA"] + "/clipfail.nrrd")
+
+  return img.compare(compareImg)
+
+try:
+  val = clipfailTest2()
+  sys.exit(1)
+except ValueError:
+  sys.exit(0)

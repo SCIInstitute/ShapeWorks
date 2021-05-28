@@ -828,15 +828,16 @@ MeshTransform Mesh::createRegistrationTransform(const Mesh &target, Mesh::Alignm
 
 std::ostream& operator<<(std::ostream &os, const Mesh& mesh)
 {
-  os << "{\n\tnumber of points: " << mesh.numPoints()
-     << ",\n\tnumber of faces: " << mesh.numFaces()
-     << ",\n\tcenter: " << mesh.center()
-     << ",\n\tcenter or mass: " << mesh.centerOfMass()
-     << ",\n\tfield names: \n";
+  os << "{\nnumber of points: " << mesh.numPoints()
+     << ",\nnumber of faces: " << mesh.numFaces()
+     << ",\ncenter: " << mesh.center()
+     << ",\ncenter or mass: " << mesh.centerOfMass()
+     << ",\nbounding box: " << mesh.boundingBox()
+     << ",\nfield names: \n";
 
   auto fields = mesh.getFieldNames();
   for (auto field: fields) {
-    os << "\t\t" << field << std::endl;
+    os << "\t" << field << std::endl;
   }
 
   return os;

@@ -32,3 +32,17 @@ val = setSpacingTest2()
 if val is False:
   print("setspacingTest2 failed")
   sys.exit(1)
+
+def setspacingfailTest():
+  img = Image(os.environ["DATA"] + "/la1-small.nrrd")
+  img.setSpacing([0,0,0])
+
+  compareImg = Image(os.environ["DATA"] + "/spacing1.nrrd")
+
+  return img.compare(compareImg)
+
+try:
+  val = setspacingfailTest()
+  sys.exit(1)
+except ValueError:
+  sys.exit(0)

@@ -364,7 +364,7 @@ Image& Image::resample(const Vector3& spacing, Image::InterpolationType interp)
   
   Point3 new_origin = origin() + toPoint(0.5 * (spacing - inputSpacing));  // O' += 0.5 * (p' - p)
 
-  return resample(IdentityTransform::New(), new_origin, dims, spacing, coordsys(), interp);  //***
+  return resample(IdentityTransform::New(), new_origin, dims, spacing, coordsys(), interp);
 }
 
 Image& Image::resample(double isoSpacing, Image::InterpolationType interp)
@@ -541,6 +541,7 @@ Image& Image::rotate(const double angle, Axis axis)
 
 Image& Image::rotate(const double angle, const Vector3 &axis)
 {
+  if (angle == 0.0) { throw std::invalid_argument("Invalid Must specify a rotation angle"); }
   if (!axis_is_valid(axis)) { throw std::invalid_argument("Invalid axis"); }
 
   auto origOrigin(origin());       // rotation is around origin, so temporarily set origin to be the center
@@ -755,7 +756,6 @@ Image& Image::gaussianBlur(double sigma)
 
 Image& Image::crop(PhysicalRegion region, const int padding)
 {
-  std::cout << "region passed in: " << region << std::endl;
   region.shrink(physicalBoundingBox()); // clip region to fit inside image
   if (!region.valid())
     std::cerr << "Invalid region specified (it may lie outside physical bounds of image)." << std::endl;
@@ -763,11 +763,8 @@ Image& Image::crop(PhysicalRegion region, const int padding)
   using FilterType = itk::ExtractImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
   
-  std::cout << "image physical region: " << physicalBoundingBox() << std::endl;
-  std::cout << "shrunk by image physical region: " << region << std::endl;
   IndexRegion indexRegion(physicalToLogical(region));
   indexRegion.pad(padding);
-  std::cout << "logical (index) region: " << indexRegion << std::endl;
   filter->SetExtractionRegion(ImageType::RegionType(indexRegion.min, indexRegion.size()));
   filter->SetInput(this->image);
   filter->SetDirectionCollapseToIdentity();

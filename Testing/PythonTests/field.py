@@ -30,3 +30,16 @@ val = fieldTest2()
 if val is False:
   print("fieldTest2 failed")
   sys.exit(1)
+
+def fieldTest3():
+  mesh = Mesh(os.environ["DATA"] + "/mesh1.vtk")
+  scalarRange = mesh.getFieldRange("scalars")
+  normalsRange = mesh.getFieldRange("Normals")
+
+  return scalarRange[0] == 1 and scalarRange[1] == 1 and normalsRange[0] == -1 and normalsRange[1] == 1
+
+val = fieldTest3()
+
+if val is False:
+  print("fieldTest3 failed")
+  sys.exit(1)

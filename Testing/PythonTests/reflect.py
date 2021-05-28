@@ -57,3 +57,17 @@ val = reflectTest4()
 if val is False:
   print("reflectTest4 failed")
   sys.exit(1)
+
+def reflectfailTest():
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img.reflect()
+
+  compareImg = Image(os.environ["DATA"] + "/reflectfail.nrrd")
+
+  return img.compare(compareImg)
+
+try:
+  val = reflectfailTest()
+  sys.exit(1)
+except TypeError:
+  sys.exit(0)

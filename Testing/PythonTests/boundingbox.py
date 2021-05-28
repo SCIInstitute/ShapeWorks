@@ -34,3 +34,15 @@ val = boundingboxTest2()
 if val is False:
   print("boundingboxTest2 failed")
   sys.exit(1)
+
+def boundingboxfailTest():
+  filenames = os.environ["DATA"] + "/empty/"
+  region = ImageUtils.boundingBox(glob.glob(filenames + "/*.nrrd"))
+
+  return region.valid()
+
+try:
+  val = boundingboxfailTest()
+  sys.exit(1)
+except ValueError:
+  sys.exit(0)
