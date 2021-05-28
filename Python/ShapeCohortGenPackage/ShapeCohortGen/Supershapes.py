@@ -39,11 +39,11 @@ def generate(num_samples, out_dir, randomize_center, randomize_rotation, m, star
         R = trimesh.transformations.random_rotation_matrix(rotation)
         transform_matrix = trimesh.transformations.concatenate_matrices(T, R, S)
         shapeMesh = shapeMesh.apply_transform(transform_matrix)
-        # Save mesh as ply
+        # Save mesh as ply (note: this could also simply be done with: sw.Mesh("inpath").write("outpath")
         shapeMesh.export(meshDir + name + ".stl")
-        execCommand = ["stl2ply", meshDir + name + ".stl", meshDir + name + ".ply"]
+        execCommand = ["shapeworks", "readmesh", "--name", meshDir + name + ".stl", "writemesh", "--name", meshDir + name + ".ply"]
         subprocess.check_call(execCommand)
-        subprocess.check_call(["stl2vtk", meshDir + name + ".stl", meshDir + name + ".vtk"])
+        subprocess.check_call(["shapeworks", "readmesh", "--name", meshDir + name + ".stl", "writemesh", "--name", meshDir + name + ".vtk"])
         os.remove(meshDir + name + ".stl")
     return get_files(meshDir)
 

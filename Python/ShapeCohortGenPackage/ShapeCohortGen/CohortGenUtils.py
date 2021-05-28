@@ -97,7 +97,7 @@ def generate_segmentations(meshList, out_dir, randomize_size=True, spacing=[1.0,
 				bb.pad(5)
 
 		# sample the given region of Mesh to an image
-		image = mesh.toImage(bb, spacing)
+		image = mesh.toImage(bb, spacing = spacing)
 
 		# write the result to disk and move to the next mesh
 		image.write(segFile, 0)
@@ -120,7 +120,7 @@ def generate_images(segs, outDir, blur_factor, foreground_mean, foreground_var, 
 		img_array = img.toArray()
 		img_array = blur(img_array, blur_factor)
 		img_array = apply_noise(img_array, foreground_mean, foreground_var, background_mean, background_var)
-		#img_array = np.float32(img_array)   # img.toArray() returns a float32 array, so unless blur or apply_noise change this, there's no need to convert
+		img_array = np.float32(img_array)
 		origin = img.origin()
 		img = Image(img_array)  # note: when we resolve #903 (shared data) we'll
 								# no longer even need to create an image since

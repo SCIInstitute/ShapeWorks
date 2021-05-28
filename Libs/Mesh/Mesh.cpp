@@ -832,6 +832,7 @@ std::ostream& operator<<(std::ostream &os, const Mesh& mesh)
      << ",\n\tnumber of faces: " << mesh.numFaces()
      << ",\n\tcenter: " << mesh.center()
      << ",\n\tcenter or mass: " << mesh.centerOfMass()
+     << ",\n\tbounding box: " << mesh.boundingBox()
      << ",\n\tfield names: \n";
 
   auto fields = mesh.getFieldNames();
