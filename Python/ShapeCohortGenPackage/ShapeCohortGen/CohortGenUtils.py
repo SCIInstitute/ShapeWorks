@@ -1,5 +1,4 @@
 import os
-import itk
 import numpy as np
 import scipy
 import shutil
@@ -117,14 +116,17 @@ def generate_images(segs, outDir, blur_factor, foreground_mean, foreground_var, 
 	for seg in segs:
 		print("Generating image " + str(index) + " out of " + str(len(segs)))
 		name = seg.replace('segmentations/','images/').replace('_seg.nrrd', '_blur' + str(blur_factor) + '.nrrd')
-		itk_bin = itk.imread(seg, itk.F)
-		img_array = itk.array_from_image(itk_bin)
+		img = Image(seg)
+		img_array = img.toArray()
 		img_array = blur(img_array, blur_factor)
 		img_array = apply_noise(img_array, foreground_mean, foreground_var, background_mean, background_var)
-		img_array = np.float32(img_array)
-		itk_img_view = itk.image_view_from_array(img_array)
-		itk_img_view.SetOrigin(itk_bin.GetOrigin())
-		itk.imwrite(itk_img_view, name)
+		#img_array = np.float32(img_array)   # img.toArray() returns a float32 array, so unless blur or apply_noise change this, there's no need to convert
+		origin = img.origin()
+		img = Image(img_array)  # note: when we resolve #903 (shared data) we'll
+								# no longer even need to create an image since
+								# the array itself will be shared (issue #903)
+		img.setOrigin(origin)
+		img.write(name)
 		index += 1
 	return get_files(imgDir)
 
