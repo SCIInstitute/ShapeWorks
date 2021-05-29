@@ -1053,6 +1053,7 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
     std::cerr << "warpmesh error: no target points specified, must pass `--target_points <filenames> --`\n";
     return false;
   }
+
   try {
     Mesh inputMesh(inputMeshFilename);
     // auto paths = inputPointsFilename + targetPointsFilenames;
