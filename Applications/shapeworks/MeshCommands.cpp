@@ -1034,6 +1034,7 @@ void WarpMesh::buildParser()
   parser.add_option("--reference_mesh").action("store").type("string").set_default("").help("Name of reference mesh.");
   parser.add_option("--reference_points").action("store").type("string").set_default("").help("Name of reference points.");
   parser.add_option("--target_points").action("store").type("multistring").set_default("").help("Names of target points (must be followed by `--`), ex: \"... --target_points *.particles -- ...");
+  parser.add_option("--save_dir").action("store").type("string").set_default("").help("Optional: Path to the directory where the mesh files will be saved");
   Command::buildParser();
 }
 bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
@@ -1054,9 +1055,9 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
+  std::string saveDir = options["save_dir"];
   try {
     Mesh inputMesh(inputMeshFilename);
-    // auto paths = inputPointsFilename + targetPointsFilenames;
     targetPointsFilenames.push_back(inputPointsFilename);
     ParticleSystem particlesystem(targetPointsFilenames);
     Eigen::MatrixXd allPts = particlesystem.Particles();
@@ -1067,10 +1068,19 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
     MeshWarper warper;
     warper.set_reference_mesh(inputMesh.getVTKMesh(), staticPoints);
     std::string infnm;
+    
+    if (saveDir.length() > 0) {
+      boost::filesystem::create_directories(saveDir);
+    }
+
     for (int i = 0; i < targetPointsFilenames.size() - 1; i++) {
       infnm = targetPointsFilenames[i];
-      // for now just replace .particles to .vtk
       infnm.replace(infnm.end()-9, infnm.end(), "vtk");
+      if (saveDir.length() > 0) {
+        int idx = static_cast<int>(infnm.rfind('/'));
+        infnm.replace(0, idx, saveDir);
+      }
+      
       Eigen::MatrixXd movingPoints = allPts.col(i);
       movingPoints.resize(3, numParticles);
       movingPoints.transposeInPlace();
