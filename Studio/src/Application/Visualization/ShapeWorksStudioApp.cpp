@@ -813,6 +813,11 @@ void ShapeWorksStudioApp::new_session()
   connect(this->session_->get_mesh_manager().data(), &MeshManager::error_encountered,
           this, &ShapeWorksStudioApp::handle_error);
 
+  connect(this->session_->get_mesh_manager().data(), &MeshManager::progress,
+          this, &ShapeWorksStudioApp::handle_progress);
+  connect(this->session_->get_mesh_manager().data(), &MeshManager::status,
+          this, &ShapeWorksStudioApp::handle_status);
+
   connect(this->session_.data(), SIGNAL(data_changed()), this, SLOT(handle_project_changed()));
   connect(this->session_.data(), SIGNAL(points_changed()), this, SLOT(handle_points_changed()));
   connect(this->session_.data(), SIGNAL(update_display()), this,

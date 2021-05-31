@@ -72,7 +72,7 @@ public:
 
 private:
 
-  std::string get_output_prefix(std::string input);
+  std::string get_output_prefix();
 
   Parameters params_;
   ProjectHandle project_;
