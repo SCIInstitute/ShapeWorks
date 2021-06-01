@@ -83,6 +83,9 @@ public:
   }
   void StartAdaptiveGaussSeidelOptimization();
 
+  void AugmentedLagrangianConstraints(VectorType& gradient, const PointType& pt, const size_t& dom,
+                                      const double& maximumUpdateAllowed);
+
   /** Stop the optimization.  This method sets a flag that aborts the
       StartOptimization method after the current iteration. */
   inline void StopOptimization()

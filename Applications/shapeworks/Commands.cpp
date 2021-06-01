@@ -4,6 +4,7 @@
 #include <Libs/Optimize/OptimizeParameterFile.h>
 #include <Libs/Groom/Groom.h>
 #include <Libs/Utils/StringUtils.h>
+#include <boost/filesystem.hpp>
 #include <limits>
 
 #ifdef _WIN32
@@ -67,15 +68,16 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
     return false;
   }
 
-  bool is_project = StringUtils::hasSuffix(projectFile, "xlsx");
+  bool isProject = StringUtils::hasSuffix(projectFile, "xlsx");
 
   Optimize app;
-  if (is_project) {
+  if (isProject) {
     try {
       // load spreadsheet project
       ProjectHandle project = std::make_shared<Project>();
       project->load(projectFile);
 
+      const auto oldBasePath = boost::filesystem::current_path();
       auto base = StringUtils::getPath(projectFile);
       if (base != projectFile) {
         chdir(base.c_str());
@@ -88,6 +90,7 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
 
       bool success = app.Run();
 
+      chdir(reinterpret_cast<const char*>(oldBasePath.c_str()));
       if (success) {
         project->save(projectFile);
       }

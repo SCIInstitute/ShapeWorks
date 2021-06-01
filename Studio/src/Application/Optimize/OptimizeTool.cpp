@@ -292,6 +292,7 @@ void OptimizeTool::store_params()
 
   // always use preference value
   params.set_geodesic_cache_multiplier(this->preferences_.get_geodesic_cache_multiplier());
+  params.set_optimize_output_prefix(this->preferences_.get_optimize_file_template().toStdString());
 
   params.save_to_project();
 }
@@ -400,6 +401,8 @@ void OptimizeTool::setup_domain_boxes()
     this->ui_->domain_widget->findChildren<QWidget*>(QString(), Qt::FindDirectChildrenOnly));
   this->particle_boxes_.clear();
 
+  QLineEdit* last_box = this->ui_->number_of_particles;
+
   if (this->session_->get_project()->get_number_of_domains_per_subject() < 2) {
     this->ui_->particle_stack->setCurrentIndex(0);
     this->ui_->domain_widget->setMaximumSize(1, 1);
@@ -410,8 +413,10 @@ void OptimizeTool::setup_domain_boxes()
     QGridLayout* layout = new QGridLayout;
     QIntValidator* above_zero = new QIntValidator(1, std::numeric_limits<int>::max(), this);
     for (int i = 0; i < domain_names.size(); i++) {
-      layout->addWidget(new QLabel(QString::fromStdString(domain_names[i])), i, 0);
-      QLineEdit* box = new QLineEdit;
+      auto label = new QLabel(QString::fromStdString(domain_names[i]), this);
+      layout->addWidget(label, i, 0);
+      QLineEdit* box = new QLineEdit(this);
+      last_box = box;
       box->setAlignment(Qt::AlignHCenter);
       box->setValidator(above_zero);
       connect(box, &QLineEdit::textChanged,
@@ -420,10 +425,28 @@ void OptimizeTool::setup_domain_boxes()
       this->particle_boxes_.push_back(box);
       layout->addWidget(box, i, 1);
     }
+
     delete this->ui_->domain_widget->layout();
     this->ui_->domain_widget->setLayout(layout);
     this->ui_->particle_stack->setCurrentIndex(1);
   }
+
+  QWidget::setTabOrder(last_box, this->ui_->initial_relative_weighting);
+  QWidget::setTabOrder(this->ui_->initial_relative_weighting, this->ui_->relative_weighting);
+  QWidget::setTabOrder(this->ui_->relative_weighting, this->ui_->starting_regularization);
+  QWidget::setTabOrder(this->ui_->starting_regularization, this->ui_->ending_regularization);
+  QWidget::setTabOrder(this->ui_->ending_regularization, this->ui_->iterations_per_split);
+  QWidget::setTabOrder(this->ui_->iterations_per_split, this->ui_->optimization_iterations);
+  QWidget::setTabOrder(this->ui_->optimization_iterations, this->ui_->use_geodesic_distance);
+  QWidget::setTabOrder(this->ui_->use_geodesic_distance, this->ui_->use_normals);
+  QWidget::setTabOrder(this->ui_->use_normals, this->ui_->normals_strength);
+  QWidget::setTabOrder(this->ui_->normals_strength, this->ui_->procrustes);
+  QWidget::setTabOrder(this->ui_->procrustes, this->ui_->procrustes_scaling);
+  QWidget::setTabOrder(this->ui_->procrustes_scaling, this->ui_->procrustes_interval);
+  QWidget::setTabOrder(this->ui_->procrustes_interval, this->ui_->multiscale);
+  QWidget::setTabOrder(this->ui_->multiscale, this->ui_->multiscale_particles);
+  QWidget::setTabOrder(this->ui_->multiscale_particles, this->ui_->run_optimize_button);
+  QWidget::setTabOrder(this->ui_->run_optimize_button, this->ui_->restoreDefaults);
 
 }
 
