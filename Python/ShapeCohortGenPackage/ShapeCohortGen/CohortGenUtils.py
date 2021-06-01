@@ -91,11 +91,11 @@ def generate_segmentations(meshList, out_dir, randomize_size=True, spacing=[1.0,
 
 			if randomize_size:			
 				pad = np.random.randint(5, high=15, size=3)
-				bb.min -= pad
-				bb.max += pad
+				
 			else:
-				bb.pad(5)
-
+				pad = np.array([5,5,5])
+			bb.min -= pad
+			bb.max += pad
 		# sample the given region of Mesh to an image
 		image = mesh.toImage(region=bb, spacing=spacing)
 
