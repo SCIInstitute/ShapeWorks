@@ -1067,25 +1067,25 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
     staticPoints.transposeInPlace();
     MeshWarper warper;
     warper.set_reference_mesh(inputMesh.getVTKMesh(), staticPoints);
-    std::string infnm;
-    
+    std::string filenm;
+
     if (saveDir.length() > 0) {
       boost::filesystem::create_directories(saveDir);
     }
 
     for (int i = 0; i < targetPointsFilenames.size() - 1; i++) {
-      infnm = targetPointsFilenames[i];
-      infnm.replace(infnm.end()-9, infnm.end(), "vtk");
+      filenm = targetPointsFilenames[i];
+      filenm.replace(static_cast<int>(filenm.rfind('.')) + 1, filenm.length(), "vtk");
       if (saveDir.length() > 0) {
-        int idx = static_cast<int>(infnm.rfind('/'));
-        infnm.replace(0, idx, saveDir);
+        int idx = static_cast<int>(filenm.rfind('/'));
+        filenm.replace(0, idx, saveDir);
       }
       
       Eigen::MatrixXd movingPoints = allPts.col(i);
       movingPoints.resize(3, numParticles);
       movingPoints.transposeInPlace();
       Mesh output = warper.build_mesh(movingPoints);
-      output.write(infnm);
+      output.write(filenm);
     }
     return true;
   } catch (std::exception &e) {
