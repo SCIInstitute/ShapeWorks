@@ -46,6 +46,7 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
 
   ui_->mesh_center->setToolTip("Center meshes based on center of mass");
   ui_->mesh_qc->setToolTip("Perform mesh quality control steps");
+  ui_->mesh_qc->hide();
   ui_->mesh_smooth->setToolTip("Perform mesh smoothing");
   ui_->mesh_smooth_method->setToolTip("Mesh smoothing type");
   ui_->laplacian_iterations->setToolTip("Number of iterations");
@@ -138,7 +139,6 @@ void GroomTool::set_ui_from_params(GroomParameters params)
   ui_->mesh_smooth_method->setCurrentText(
     QString::fromStdString(params.get_mesh_smoothing_method()));
   ui_->mesh_smooth->setChecked(params.get_mesh_smooth());
-  ui_->mesh_qc->setChecked(params.get_mesh_qc());
   ui_->mesh_icp->setChecked(params.get_icp());
 
   ui_->laplacian_iterations->setText(QString::number(params.get_mesh_vtk_laplacian_iterations()));
@@ -212,7 +212,6 @@ void GroomTool::store_params()
   params.set_antialias_iterations(ui_->antialias_iterations->value());
   params.set_groom_output_prefix(preferences_.get_groom_file_template().toStdString());
 
-  params.set_mesh_qc(ui_->mesh_qc->isChecked());
   params.set_mesh_smooth(ui_->mesh_smooth->isChecked());
   params.set_mesh_smoothing_method(ui_->mesh_smooth_method->currentText().toStdString());
   params.set_mesh_vtk_laplacian_iterations(ui_->laplacian_iterations->text().toInt());

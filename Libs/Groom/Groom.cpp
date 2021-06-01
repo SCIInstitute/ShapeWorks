@@ -317,10 +317,6 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, int domain)
       mesh.fillHoles();
     }
 
-    if (params.get_mesh_qc()) {
-      mesh.fix();
-    }
-
     if (params.get_mesh_smooth()) {
       if (params.get_mesh_smoothing_method() == GroomParameters::GROOM_SMOOTH_VTK_LAPLACIAN_C) {
         mesh.smooth(params.get_mesh_vtk_laplacian_iterations(),
