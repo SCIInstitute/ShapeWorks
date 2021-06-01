@@ -4,7 +4,7 @@ from shapeworks import *
 
 def decimateTest1():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
-  mesh.decimate()
+  mesh.decimate(0.0, 0.0, False)
 
   compareMesh = Mesh(os.environ["DATA"] + "/decimate1.vtk")
 
@@ -17,7 +17,7 @@ if val is False:
 
 def decimateTest2():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
-  mesh.decimate(0.0, 0.0, True)
+  mesh.decimate(0.0, 0.0)
 
   compareMesh = Mesh(os.environ["DATA"] + "/decimate2.vtk")
 
