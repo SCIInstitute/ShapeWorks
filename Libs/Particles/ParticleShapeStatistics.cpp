@@ -485,7 +485,7 @@ int ParticleShapeStatistics::ComputeModes()
   vnl_symmetric_eigensystem<double> symEigen(A);
 
   m_eigenvectors = m_pointsMinusMean * symEigen.V;
-  m_eigenvalues.set_size(m_numSamples);
+  m_eigenvalues.resize(m_numSamples);
 
   // normalize those eigenvectors
   for (unsigned int i = 0; i < m_numSamples; i++) {
@@ -499,7 +499,7 @@ int ParticleShapeStatistics::ComputeModes()
       m_eigenvectors(j, i) = m_eigenvectors(j, i) / (total + 1.0e-15);
     }
 
-    m_eigenvalues(i) = symEigen.D(i, i);
+    m_eigenvalues[i] = symEigen.D(i, i);
   }
 
   float sum = 0.0;

@@ -81,7 +81,7 @@ public:
 
   /** Returns the eigenvectors/values. */
   const vnl_matrix<double> &Eigenvectors() { return m_eigenvectors; }
-  const vnl_vector<double> &Eigenvalues() { return m_eigenvalues; }
+  const std::vector<double> &Eigenvalues() { return m_eigenvalues; }
 
   /** Returns the mean shape. */
   const vnl_vector<double> &Mean() { return m_mean; }
@@ -141,7 +141,7 @@ private:
 
   vnl_matrix<double> m_pooled_covariance;
   vnl_matrix<double> m_eigenvectors;
-  vnl_vector<double> m_eigenvalues;
+  std::vector<double> m_eigenvalues;
   vnl_vector<double> m_mean;
   vnl_vector<double> m_mean1;
   vnl_vector<double> m_mean2;
