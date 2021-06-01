@@ -102,39 +102,36 @@ def Run_Pipeline(args):
     pcaLoadings = shapeStatistics.pcaLoadings()
     
     #Calculate the variance explained by each mode using the eigen values
-    eigvals = shapeStatistics.eigenValues()
-    print(eigvals)
-    input('')
-    # explainedVariance = sorted((eigvals/sum(eigvals)),reverse=True)
+    eigvals = np.array(shapeStatistics.eigenValues())
+    explainedVariance = sorted((eigvals/sum(eigvals)),reverse=True)
+    explainedVariance = np.array(explainedVariance)*100
     
     # Cummulative variance
-    cumulativeVariance = np.array(shapeStatistics.percentVarByMode())
-    
+    cumulativeVariance = np.array(shapeStatistics.percentVarByMode())*100
+
     N = len(cumulativeVariance) 
     X = np.array(list(range(N))) + 1
-    # plt.bar(X, explainedVariance)
-    plt.plot(X,cumulativeVariance,linewidth=4.0)
+    plt.bar(X, explainedVariance)
+    plt.plot(X,cumulativeVariance,linewidth=4.0,c='black')
     fig = plt.gcf()
     fig.set_size_inches(10, 10)
     plt.title('Variance Plot')
     plt.xlabel('Mode')
-    plt.ylabel('Percentage Variance')
+    plt.ylabel('Explained Variance')
     plt.xticks(X)
-    # plt.ylim(bottom=0, top=1.2)
-    # plt.xlim(left=1, right=N)
     plt.grid()
     plt.savefig(pointDir+"variance_plot.png")
     plt.show(block=False)
-    plt.pause(3)
+    
     plt.close(fig)
 
     print("Figure saved in directory -" + pointDir)
     print()
 
 
-    # print("\nStep 5. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
-    # if args.interactive != 0:
-    #     input("Press Enter to continue")
+    print("\nStep 5. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
+    if args.interactive != 0:
+        input("Press Enter to continue")
 
-    # launchShapeWorksStudio(pointDir, meshFiles, localPointFiles, worldPointFiles)
+    launchShapeWorksStudio(pointDir, meshFiles, localPointFiles, worldPointFiles)
     
