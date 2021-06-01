@@ -391,3 +391,13 @@ TEST(MeshTests, warpTest1)
 
   ASSERT_TRUE(output == ellipsoid_warped);
 }
+
+TEST(MeshTests, findReferenceMeshTest)
+{
+  std::vector<Mesh> meshes;
+  meshes.push_back(Mesh(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply"));
+  meshes.push_back(Mesh(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply"));
+  meshes.push_back(Mesh(std::string(TEST_DATA_DIR) + "/m03.vtk"));
+  int ref = MeshUtils::findReferenceMesh(meshes);
+  ASSERT_EQ(ref, 2);
+}
