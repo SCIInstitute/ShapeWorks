@@ -8,7 +8,7 @@ from ShapeCohortGen.CohortGenUtils import *
 import shapeworks as sw 
 
 '''
-Generates super shapes and saves PLY mesh form
+Generates super shapes and saves mesh form
 '''
 def generate(num_samples, out_dir, randomize_center, randomize_rotation, m, start_id, size):
     meshDir= out_dir + "meshes/"
@@ -40,13 +40,11 @@ def generate(num_samples, out_dir, randomize_center, randomize_rotation, m, star
         R = trimesh.transformations.random_rotation_matrix(rotation)
         transform_matrix = trimesh.transformations.concatenate_matrices(T, R, S)
         shapeMesh = shapeMesh.apply_transform(transform_matrix)
-        # Save mesh as ply
+        # export mesh as stl
         shapeMesh.export(meshDir + name + ".stl")
-        #read as shapeworks mesh object
-        swShapeMesh = sw.Mesh(meshDir + name + ".stl")
-        #save as .ply
-        swShapeMesh.write(meshDir + name + ".ply")
-        swShapeMesh.write(meshDir + name + ".vtk")
+        # read as shapeworks mesh object and save as vtk mesh
+        swShapeMesh = sw.Mesh(meshDir + name + ".stl").write(meshDir + name + ".vtk")
+        # remove stl mesh
         os.remove(meshDir + name + ".stl")
     return get_files(meshDir)
 

@@ -63,13 +63,12 @@ def generate_segmentations(meshList, out_dir, randomize_size=True, spacing=[1.0,
 	# get list of meshs to be converted
 	segDir = out_dir + "segmentations/"
 	make_dir(segDir)
-	PLYmeshList = get_file_with_ext(meshList,'ply')
 
 	# get region that includes all of these meshes
-	bball = MeshUtils.boundingBox(PLYmeshList)
+	bball = MeshUtils.boundingBox(meshList)
 
 	# randomly select 20% meshes for boundary touching samples
-	numMeshes = len(PLYmeshList)
+	numMeshes = len(meshList)
 	meshIndexArray = np.array(list(range(numMeshes)))
 	subSampleSize = int(0.2*numMeshes)
 	randomBoundarySamples = np.random.choice(meshIndexArray,subSampleSize,replace=False)
@@ -77,8 +76,8 @@ def generate_segmentations(meshList, out_dir, randomize_size=True, spacing=[1.0,
 	# loop through meshes and turn to images
 	segList = []
 	meshIndex = 0
-	for mesh_ in PLYmeshList:
-		print("Generating seg " + str(meshIndex + 1) + " out of " + str(len(PLYmeshList)))
+	for mesh_ in meshList:
+		print("Generating seg " + str(meshIndex + 1) + " out of " + str(len(meshList)))
 		segFile = rename(mesh_, segDir, "", ".nrrd")
 		segList.append(segFile)
 
