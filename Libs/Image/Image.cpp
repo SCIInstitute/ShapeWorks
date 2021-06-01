@@ -541,7 +541,6 @@ Image& Image::rotate(const double angle, Axis axis)
 
 Image& Image::rotate(const double angle, const Vector3 &axis)
 {
-  if (angle == 0.0) { throw std::invalid_argument("Invalid Must specify a rotation angle"); }
   if (!axis_is_valid(axis)) { throw std::invalid_argument("Invalid axis"); }
 
   auto origOrigin(origin());       // rotation is around origin, so temporarily set origin to be the center
