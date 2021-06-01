@@ -45,7 +45,7 @@ using TransformPtr       = GenericTransform::Pointer;
 TransformPtr createTransform(const Matrix33 &mat, const Vector3 &translate = makeVector({0,0,0}));
 
 /// make a plane
-Plane makePlane(const Vector3 &n, const Point &o);
+Plane makePlane(const Point &p, const Vector3 &n);
 
 /// Affine transforms are used for many Image manipulation commands
 using AffineTransform    = itk::AffineTransform<double, 3>;
@@ -64,6 +64,7 @@ Vector toVector(const itk::CovariantVector<double, 3> &v);
 Point toPoint(const Vector &v);
 Coord toCoord(const Dims &d);
 Dims toDims(const Coord &c);
+Dims toDims(const Point &p);
 Coord toCoord(const Point &p);
 
 /// Negation operator (ITK only has it for Vectors, but sometimes useful for Points)
@@ -103,7 +104,6 @@ class Image;
 template<typename P, typename = std::enable_if_t<std::is_same<Image, P>::value ||
                                                  std::is_same<Coord, P>::value ||
                                                  std::is_same<Dims, P>::value ||
-                                                 std::is_same<Vector, P>::value ||
                                                  std::is_same<Point, P>::value ||
                                                  std::is_same<IPoint3, P>::value ||
                                                  std::is_same<FPoint3, P>::value> >
@@ -118,7 +118,6 @@ P operator+(const P &p, const P &q)
 template<typename P, typename = std::enable_if_t<std::is_same<Image, P>::value ||
                                                  std::is_same<Coord, P>::value ||
                                                  std::is_same<Dims, P>::value ||
-                                                 std::is_same<Vector, P>::value ||
                                                  std::is_same<Point, P>::value ||
                                                  std::is_same<IPoint3, P>::value ||
                                                  std::is_same<FPoint3, P>::value> >
@@ -133,7 +132,7 @@ P operator-(const P &p, const P &q)
 template<typename P, typename = std::enable_if_t<std::is_same<Image, P>::value ||
                                                  std::is_same<Coord, P>::value ||
                                                  std::is_same<Dims, P>::value ||
-                                                 std::is_same<Vector, P>::value ||
+                                                 std::is_same<Vector, P>::value || // use operator*(v0, v1); (or call dotProduct)
                                                  std::is_same<Point, P>::value ||
                                                  std::is_same<IPoint3, P>::value ||
                                                  std::is_same<FPoint3, P>::value> >
@@ -149,7 +148,7 @@ P operator*(const P &p, const P &q)
 template<typename P, typename = std::enable_if_t<std::is_same<Image, P>::value ||
                                                  std::is_same<Coord, P>::value ||
                                                  std::is_same<Dims, P>::value ||
-                                                 std::is_same<Vector, P>::value ||
+                                                 std::is_same<Vector, P>::value || // use operator/(v0, v1); 
                                                  std::is_same<Point, P>::value ||
                                                  std::is_same<IPoint3, P>::value ||
                                                  std::is_same<FPoint3, P>::value> >
@@ -164,7 +163,6 @@ P operator/(const P &p, const P &q)
 template<typename P, typename = std::enable_if_t<std::is_same<Image, P>::value ||
                                                  std::is_same<Coord, P>::value ||
                                                  std::is_same<Dims, P>::value ||
-                                                 std::is_same<Vector, P>::value ||
                                                  std::is_same<Point, P>::value ||
                                                  std::is_same<IPoint3, P>::value ||
                                                  std::is_same<FPoint3, P>::value> >
@@ -178,7 +176,6 @@ P& operator+=(P &p, const P &q)
 template<typename P, typename = std::enable_if_t<std::is_same<Image, P>::value ||
                                                  std::is_same<Coord, P>::value ||
                                                  std::is_same<Dims, P>::value ||
-                                                 std::is_same<Vector, P>::value ||
                                                  std::is_same<Point, P>::value ||
                                                  std::is_same<IPoint3, P>::value ||
                                                  std::is_same<FPoint3, P>::value> >
@@ -192,7 +189,6 @@ P& operator-=(P &p, const P &q)
 template<typename P, typename = std::enable_if_t<std::is_same<Image, P>::value ||
                                                  std::is_same<Coord, P>::value ||
                                                  std::is_same<Dims, P>::value ||
-                                                 std::is_same<Vector, P>::value ||
                                                  std::is_same<Point, P>::value ||
                                                  std::is_same<IPoint3, P>::value ||
                                                  std::is_same<FPoint3, P>::value> >
@@ -207,7 +203,6 @@ P operator*(const P &p, const double x)
 template<typename P, typename = std::enable_if_t<std::is_same<Image, P>::value ||
                                                  std::is_same<Coord, P>::value ||
                                                  std::is_same<Dims, P>::value ||
-                                                 std::is_same<Vector, P>::value ||
                                                  std::is_same<Point, P>::value ||
                                                  std::is_same<IPoint3, P>::value ||
                                                  std::is_same<FPoint3, P>::value> >
@@ -222,7 +217,6 @@ P operator/(const P &p, const double x)
 template<typename P, typename = std::enable_if_t<std::is_same<Image, P>::value ||
                                                  std::is_same<Coord, P>::value ||
                                                  std::is_same<Dims, P>::value ||
-                                                 std::is_same<Vector, P>::value ||
                                                  std::is_same<Point, P>::value ||
                                                  std::is_same<IPoint3, P>::value ||
                                                  std::is_same<FPoint3, P>::value> >
@@ -236,7 +230,6 @@ P& operator*=(P &p, const double x)
 template<typename P, typename = std::enable_if_t<std::is_same<Image, P>::value ||
                                                  std::is_same<Coord, P>::value ||
                                                  std::is_same<Dims, P>::value ||
-                                                 std::is_same<Vector, P>::value ||
                                                  std::is_same<Point, P>::value ||
                                                  std::is_same<IPoint3, P>::value ||
                                                  std::is_same<FPoint3, P>::value> >

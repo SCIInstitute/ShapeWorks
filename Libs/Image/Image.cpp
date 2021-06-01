@@ -298,6 +298,8 @@ Image& Image::write(const std::string &filename, bool compressed)
 
 Image& Image::antialias(unsigned iterations, double maxRMSErr, int layers)
 {
+  if (layers < 0) { throw std::invalid_argument("layers must be >= 0"); }
+
   using FilterType = itk::AntiAliasBinaryImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
@@ -464,6 +466,29 @@ Image& Image::pad(int padx, int pady, int padz, PixelType value)
   upperExtendRegion[1] = pady;
   upperExtendRegion[2] = padz;
 
+  return this->pad(lowerExtendRegion, upperExtendRegion, value);
+}
+
+Image& Image::pad(IndexRegion &region, PixelType value)
+{
+  auto bbox = logicalBoundingBox();
+  
+  // compute positive numbers to pad in each direction
+  ImageType::SizeType lowerExtendRegion;
+  lowerExtendRegion[0] = std::max(Coord::IndexValueType(0), -region.min[0]);
+  lowerExtendRegion[1] = std::max(Coord::IndexValueType(0), -region.min[1]);
+  lowerExtendRegion[2] = std::max(Coord::IndexValueType(0), -region.min[2]);
+
+  ImageType::SizeType upperExtendRegion;
+  upperExtendRegion[0] = std::max(Coord::IndexValueType(0), region.max[0] - bbox.max[0]);
+  upperExtendRegion[1] = std::max(Coord::IndexValueType(0), region.max[1] - bbox.max[1]);
+  upperExtendRegion[2] = std::max(Coord::IndexValueType(0), region.max[2] - bbox.max[2]);
+
+  return this->pad(lowerExtendRegion, upperExtendRegion, value);
+}
+
+Image& Image::pad(Dims lowerExtendRegion, Dims upperExtendRegion, PixelType value)
+{
   using FilterType = itk::ConstantPadImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
@@ -487,8 +512,7 @@ Image& Image::translate(const Vector3 &v)
 
 Image& Image::scale(const Vector3 &s)
 {
-  if (s[0] == 0 || s[1] == 0 || s[2] == 0)
-    throw std::invalid_argument("Invalid scale point");
+  if (s[0] == 0 || s[1] == 0 || s[2] == 0) { throw std::invalid_argument("Invalid scale point"); }
 
   auto origOrigin(origin());       // scale centered at origin, so temporarily set origin to be the center
   recenter();
@@ -557,6 +581,7 @@ TransformPtr Image::createTransform(const Image &target, XFormType type, float i
       transform = createCenterOfMassTransform();
       break;
     case IterativeClosestPoint:
+      if (!target.image) { throw std::invalid_argument("Invalid target image"); }
       transform = createRigidRegistrationTransform(target, isoValue, iterations);
       break;
     default:
@@ -629,6 +654,8 @@ Image& Image::computeDT(PixelType isoValue)
 
 Image& Image::applyCurvatureFilter(unsigned iterations)
 {
+  if (iterations < 0) { throw std::invalid_argument("iterations must be >= 0"); }
+
   using FilterType = itk::CurvatureFlowImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
@@ -726,16 +753,18 @@ Image& Image::gaussianBlur(double sigma)
   return *this;
 }
 
-Image& Image::crop(const Region &region)
+Image& Image::crop(PhysicalRegion region, const int padding)
 {
+  region.shrink(physicalBoundingBox()); // clip region to fit inside image
   if (!region.valid())
-    std::cerr << "Invalid region specified." << std::endl;
+    std::cerr << "Invalid region specified (it may lie outside physical bounds of image)." << std::endl;
 
   using FilterType = itk::ExtractImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
-
-  Region(region).shrink(Region(dims())); // clip region to fit inside image
-  filter->SetExtractionRegion(ImageType::RegionType(region.origin(), region.size()));
+  
+  IndexRegion indexRegion(physicalToLogical(region));
+  indexRegion.pad(padding);
+  filter->SetExtractionRegion(ImageType::RegionType(indexRegion.min, indexRegion.size()));
   filter->SetInput(this->image);
   filter->SetDirectionCollapseToIdentity();
   filter->Update();
@@ -774,8 +803,7 @@ Image& Image::clip(const Vector &n, const Point &q, const PixelType val)
 
 Image& Image::reflect(const Axis &axis)
 {
-  if (!axis_is_valid(axis))
-    throw std::invalid_argument("Invalid axis");
+  if (!axis_is_valid(axis)) { throw std::invalid_argument("Invalid axis"); }
 
   Vector scale(makeVector({1,1,1}));
   scale[axis] = -1;
@@ -805,8 +833,7 @@ Image& Image::setOrigin(Point3 origin)
 
 Image& Image::setSpacing(Vector3 spacing)
 {
-  if (spacing[0] <= 0 || spacing[1] <= 0 || spacing[2] <= 0)
-    { throw std::invalid_argument("Spacing cannot b <= 0"); }
+  if (spacing[0]<= 0 || spacing[1] <= 0 || spacing[2] <= 0) { throw std::invalid_argument("Spacing cannot b <= 0"); }
 
   using FilterType = itk::ChangeInformationImageFilter<ImageType>;
   FilterType::Pointer filter = FilterType::New();
@@ -879,9 +906,22 @@ Image::PixelType Image::std()
   return sqrt(filter->GetVariance());
 }
 
-Region Image::boundingBox(PixelType isoValue) const
+IndexRegion Image::logicalBoundingBox() const
 {
-  Region bbox;
+  IndexRegion region(Coord({0, 0, 0}), toCoord(dims() - Dims({1,1,1})));
+  return region;
+}
+
+PhysicalRegion Image::physicalBoundingBox() const
+{
+  
+  PhysicalRegion region(origin(), origin() + dotProduct(toVector(dims() - Dims({1,1,1})), spacing()));
+  return region;
+}
+
+PhysicalRegion Image::physicalBoundingBox(PixelType isoValue) const
+{
+  PhysicalRegion bbox;
 
   itk::ImageRegionIteratorWithIndex<ImageType> imageIterator(image, image->GetLargestPossibleRegion());
   while (!imageIterator.IsAtEnd())
@@ -889,12 +929,22 @@ Region Image::boundingBox(PixelType isoValue) const
     PixelType val = imageIterator.Get();
 
     if (val >= isoValue)
-      bbox.expand(imageIterator.GetIndex());
+      bbox.expand(logicalToPhysical(imageIterator.GetIndex()));
 
     ++imageIterator;
   }
-
+  
   return bbox;
+}
+
+PhysicalRegion Image::logicalToPhysical(const IndexRegion region) const
+{
+  return PhysicalRegion(logicalToPhysical(region.min), logicalToPhysical(region.max));
+}
+
+IndexRegion Image::physicalToLogical(const PhysicalRegion region) const
+{
+  return IndexRegion(physicalToLogical(region.min), physicalToLogical(region.max));
 }
 
 Point3 Image::logicalToPhysical(const Coord &v) const

@@ -3,25 +3,23 @@ import sys
 from shapeworks import *
 
 def cropTest1():
-  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = Image(os.environ["DATA"] + "/seg.ellipsoid_1.nrrd")
 
-  region = Region(img.dims())
-  region.min[0] = 25
-  region.max[0] = 50
-  region.min[1] = 1
-  region.max[1] = 40
-  region.min[2] = 12
-  region.max[2] = 23
-  
-  img.crop(region)
+  region = img.logicalBoundingBox().pad(-16)
 
-  compareImg = Image(os.environ["DATA"] + "/cropped1.nrrd")
+  region.min[0] = 7
+  region.max[0] = 42
+
+  img.crop(img.logicalToPhysical(region))
+
+  compareImg = Image(os.environ["DATA"] + "/crop_baseline.nrrd")
 
   return img.compare(compareImg)
 
 val = cropTest1()
 
 if val is False:
+  print("cropTest1 failed")
   sys.exit(1)
 
 def cropTest2():
@@ -39,4 +37,5 @@ def cropTest2():
 val = cropTest2()
 
 if val is False:
+  print("cropTest2 failed")
   sys.exit(1)

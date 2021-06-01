@@ -13,9 +13,13 @@ Coord toCoord(const Dims &d) {
                 static_cast<itk::IndexValueType>(d[1]),
                 static_cast<itk::IndexValueType>(d[2])}); }
 Dims toDims(const Coord &c) {
-  return Dims({static_cast<itk::SizeValueType>(c[0]),
-               static_cast<itk::SizeValueType>(c[1]),
-               static_cast<itk::SizeValueType>(c[2])}); }
+  return Dims({static_cast<Dims::value_type>(c[0]),
+               static_cast<Dims::value_type>(c[1]),
+               static_cast<Dims::value_type>(c[2])}); }
+Dims toDims(const Point &p) {
+  return Dims({static_cast<Dims::value_type>(std::ceil(p[0])),
+               static_cast<Dims::value_type>(std::ceil(p[1])),
+               static_cast<Dims::value_type>(std::ceil(p[2]))}); }
 Coord toCoord(const Point &p) {
   return Coord({static_cast<itk::IndexValueType>(p[0]),
                 static_cast<itk::IndexValueType>(p[1]),
@@ -25,11 +29,11 @@ Coord toCoord(const Point &p) {
 /// itkVector doesn't have this handy ctor like itkPoint; `Point p({a,b,c})` works, but `Vector3 v({1,2,3})` doesn't.
 Vector3 makeVector(std::array<double, 3>&& arr) { return Vector3(arr.data()); }
 
-Plane makePlane(const Vector3 &n, const Point &o)
+Plane makePlane(const Point &p, const Vector3 &n)
 {
   Plane plane = Plane::New();
+  plane->SetOrigin(p[0], p[1], p[2]);
   plane->SetNormal(n[0], n[1], n[2]);
-  plane->SetOrigin(o[0], o[1], o[2]);
 
   return plane;
 }

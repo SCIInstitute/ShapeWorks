@@ -92,7 +92,7 @@ def Run_Pipeline(args):
         ref = FindReferenceImage(comFiles)
         alignedFiles = applyRigidAlignment(groomDir + "aligned/segmentations", ref, comFiles)
 
-        """Compute largest bounding box and apply cropping"""
+        """Compute largest bounding box and apply cropping, padding any images to this size if necessary"""
         croppedFiles = applyCropping(groomDir + "cropped/segmentations", alignedFiles, alignedFiles)
 
         """

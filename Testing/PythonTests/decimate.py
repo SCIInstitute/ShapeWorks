@@ -13,6 +13,7 @@ def decimateTest1():
 val = decimateTest1()
 
 if val is False:
+  print("decimateTest1 failed")
   sys.exit(1)
 
 def decimateTest2():
@@ -26,4 +27,5 @@ def decimateTest2():
 val = decimateTest2()
 
 if val is False:
+  print("decimateTest2 failed")
   sys.exit(1)
