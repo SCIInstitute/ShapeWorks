@@ -68,14 +68,16 @@ def Run_Pipeline(args):
         
         The required grooming steps are: 
         1. Reflect images and meshes
-        3. Turn meshes to volumes
-        4. Isotropic resampling
-        5. Padding
-        6. Center of Mass Alignment
-        7. Centering
+        2. Turn meshes to volumes
+        3. Isotropic resampling
+        4. Padding
+        5. Center of Mass Alignment
+        6. Centering
+        7. Reference selection
         8. Rigid Alignment
-        9. clip segementations with cutting plane
-        10. find largest bounding box and crop
+        9. Clip segementations with cutting plane
+        10. Find largest bounding box and crop
+        11. Convert to distance transform
 
         For more information on grooming see docs/workflow/groom.md
         http://sciinstitute.github.io/ShapeWorks/workflow/groom.html
@@ -96,63 +98,228 @@ def Run_Pipeline(args):
         # BEGIN GROOMING WITH IMAGES
         if args.groom_images and image_files:
             """
-            Reflect - We have left and right femurs, so we reflect both image and mesh 
-            for the non-reference side so that all of the femurs can be aligned.
+            First, we need to loop over the mesh files and load the meshes
             """
-            reflectedmesh_files, reflectedFile_img = anatomyPairsToSingles(groom_dir + 'reflected', mesh_files, image_files, reference_side)
+            # list of meshes
+            mesh_list = []
+            # list of shape names (shape files prefixes) to be used for saving outputs
+            names = []
+            for mesh_filename in mesh_files:
+                print('Loading: ' + mesh_filename)
+                # get current shape name
+                names.append(mesh_filename.split('/')
+                                   [-1].replace('.ply', ''))
+                # load mesh
+                mesh = sw.Mesh(mesh_filename)
+                # append to the mesh list
+                mesh_list.append(mesh)
 
-            """
-            MeshesToVolumes - Shapeworks requires volumes so we need to convert 
-            mesh segementaions to binary segmentations.
-            """
-            fileList_seg = MeshesToVolumesUsingImages(groom_dir + "volumes", reflectedmesh_files, reflectedFile_img)
-
-            """
-            Apply isotropic resampling
-            The segmentation and images are resampled independently to have uniform spacing.
-            """
-            resampledFiles_segmentations = applyIsotropicResampling(groom_dir + "resampled/segmentations", fileList_seg, isBinary=True)
-            resampledimage_filess = applyIsotropicResampling(groom_dir + "resampled/images", reflectedFile_img, isBinary=False)
             
+            image_dir = groom_dir + 'images/'
+            if not os.path.exists(image_dir):
+                os.makedirs(image_dir)
             """
-            Apply padding
-            Both the segmentation and raw images are padded in case the seg lies on the image boundary.
+            Now we can loop over the meshes and apply the initial grooming steps to them
             """
-            paddedFiles_segmentations = applyPadding(groom_dir + "padded/segementations", resampledFiles_segmentations, 10)
-            paddedimage_filess = applyPadding(groom_dir + "padded/images", resampledimage_filess, 10)
+            image_list = []
+            for mesh, name in zip(mesh_list, names):
+                """
+                Grooming Step 1: Reflect - We have left and right femurs, so we reflect the right 
+                meshes so that all of the femurs can be aligned. 
+                """
+                prefix = name.split("_")[0]
+                for index in range(len(image_files)):
+                    if prefix in image_files[index]:
+                        corresponding_image_file = image_files[index]
+                        break
+                if "R" in name:
+                    print("Reflecting "+ name)
+                    # Reflect corresponding image and find mesh reflection point
+                    img1 = sw.Image(corresponding_image_file)
+                    img2 = sw.Image(corresponding_image_file)
+                    img2.recenter()
+                    center = img2.origin() - img1.origin()
+                    center = [center[0],center[1],center[2]]
+                    img_out = image_dir + corresponding_image_file.split('/')[-1].split('_')[0] + '_R_femur.nrrd'
+                    img1.reflect(X).write(img_out, compressed=0)
+                    image_list.append(img1)
+                    # Reflect mesh
+                    mesh.reflect(X,center)
+                else:
+                    img_out = image_dir + corresponding_image_file.split('/')[-1].split('_')[0] + '_L_femur.nrrd'
+                    img = sw.Image(corresponding_image_file)
+                    img.write(img_out, compressed=0)
+                    image_list.append(img)
+
+            seg_list = []
+            seg_dir = groom_dir + 'segmentations/'
+            if not os.path.exists(seg_dir):
+                os.makedirs(seg_dir)
+            for mesh, image, name in zip(mesh_list, image_list, names):
+                
+                """
+                Grooming Step 2: Turn meshes into segmentations
+                """
+                print('Turning ' + name + ' mesh to segmentation.')
+                seg_file = seg_dir + name + '.nrrd'
+                seg = mesh.toImage(spacing = image.spacing()).resize(image.dims()).binarize()
+                
+                """
+                Grooming Step 3: Apply isotropic resampling
+                The segmentation and images are resampled independently to have uniform spacing.
+                """
+                print('Resampling segmentation: ' + name)
+                # antialias for 30 iterations
+                antialias_iterations = 30
+                seg.antialias(antialias_iterations)
+                # resample to isotropic spacing using linear interpolation
+                iso_spacing = [1, 1, 1]
+                seg.resample(iso_spacing, sw.InterpolationType.Linear)
+                # make segmetnation binary again
+                seg.binarize()
+                print('Resampling image: ' + name)
+                image.resample(iso_spacing, sw.InterpolationType.Linear)
+                
+                """
+                Grooming Step 3: Apply padding
+                """
+                print('Padding segmentation: ' + name)
+                seg.pad(10,0)
+                print('Padding image: ' + name)
+                image.pad(10,0)
+
+                """
+                Grooming Step 4: Center of mass alignment
+                """
+                print('Center of mass alignment for segmentation: ' + name)
+                # compute the center of mass of this segmentation
+                shape_center = seg.centerOfMass()
+                # get the center of the image domain
+                image_center = seg.center()
+                # define the translation to move the shape to its center
+                translation_vector = image_center - shape_center
+                # perform antialias-translate-binarize
+                seg.antialias(antialias_iterations).translate(translation_vector).binarize()
+                print('Center of mass alignment for image: ' + name)
+                image.translate(translation_vector)
+
+                """
+                Grooming Step 5: Centering
+                """
+                print('Centering segmentation: ' + name)
+                seg.center()
+                print('Centering image: ' + name)
+                image.center()
+
+                seg_list.append(seg)
 
             """
-            Apply center of mass alignment
-            This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
+            Grooming Step 6: Select a reference
+            This step requires breaking the loop to load all of the segmentations at once so the shape
+            closest to the mean can be found and selected as the reference. 
             """
-            [comFiles_segmentations, comimage_filess] = applyCOMAlignment(groom_dir + "com_aligned", paddedFiles_segmentations, paddedimage_filess, processRaw=True)
-            
-            """
-            Apply centering
-            """
-            centerFiles_segmentations = center(groom_dir + "centered/segmentations", comFiles_segmentations)
-            centerimage_filess = center(groom_dir + "centered/images", comimage_filess)
-            
-            """
-            Rigid alignment needs a reference file to align all the input files, FindReferenceImage function defines the median file as the reference.        
-            """
-            medianFile = FindReferenceImage(centerFiles_segmentations)
-            
-            """
-            Rigid alignment
-            """
-            aligned_segmentations, aligned_images = applyRigidAlignment(groom_dir + "aligned", medianFile, centerFiles_segmentations, centerimage_filess)
+            ref_index = sw.find_reference_image_index(seg_list)
+            # Make a copy of the reference segmentation
+            ref_seg = seg_list[ref_index].write(groom_dir + 'reference.nrrd', compressed=0)
+            ref_name = names[ref_index]
+            print("Reference found: " + ref_name)
+
 
             """
-            Clip Binary Volumes - We have femurs of different shaft length so we will clip them all using the defined cutting plane.
+            Grooming Step 7: Rigid alignment
+            This step rigidly aligns each shape to the selected references. 
+            Rigid alignment involves interpolation, hence we need to convert binary segmentations 
+            to continuous-valued images again. There are two steps:
+                - computing the rigid transformation parameters that would align a segmentation 
+                to the reference shape
+                - applying the rigid transformation to the segmentation
+                - save the aligned images for the next step
             """
-            clippedFiles_segmentations = ClipBinaryVolumes(groom_dir + 'clipped_segmentations', aligned_segmentations, cutting_plane_points.flatten())
 
-            """Compute largest bounding box and apply cropping"""
-            croppedFiles_segmentations = applyCropping(groom_dir + "cropped/segmentations", clippedFiles_segmentations, clippedFiles_segmentations)
-            croppedimage_filess = applyCropping(groom_dir + "cropped/images", aligned_images, clippedFiles_segmentations)
+            # First antialias the reference segmentation
+            ref_seg.antialias(antialias_iterations)
+            # Set the alignment parameters
+            iso_value = 1e-20
+            icp_iterations = 200
+            # Now loop through all the segmentations and apply rigid alignment
+            for seg, image, name in zip(seg_list, image_list, names):
+                print('Aligning ' + name + ' to ' + ref_name)
+                # compute rigid transformation
+                seg.antialias(antialias_iterations)
+                rigidTransform = seg.createTransform(
+                    ref_seg, sw.TransformType.IterativeClosestPoint, iso_value, icp_iterations)
+                # second we apply the computed transformation, note that shape_seg has
+                # already been antialiased, so we can directly apply the transformation
+                seg.applyTransform(rigidTransform,
+                                         ref_seg.origin(),  ref_seg.dims(),
+                                         ref_seg.spacing(), ref_seg.coordsys(),
+                                         sw.InterpolationType.Linear)
+                # then turn antialized-tranformed segmentation to a binary segmentation
+                seg.binarize()
 
-            groomed_segmentations = croppedFiles_segmentations
+                image.applyTransform(rigidTransform,
+                                         ref_seg.origin(),  ref_seg.dims(),
+                                         ref_seg.spacing(), ref_seg.coordsys(),
+                                         sw.InterpolationType.Linear)
+                """
+                Grooming Step 8: Apply clipping
+                """
+                # print("Clipping segmentation " + name)
+                # cutting_plane_points = cutting_plane_points.flatten()
+                # seg.clip([cutting_plane_points[0], cutting_plane_points[1], cutting_plane_points[2]],
+                # [cutting_plane_points[3], cutting_plane_points[4], cutting_plane_points[5]],
+                # [cutting_plane_points[6], cutting_plane_points[7], cutting_plane_points[8]],0.0)
+
+            """
+            Grooming Step 9: Finding the largest bounding box
+            We want to crop all of the segmentations to be the same size, so we need to find 
+            the largest bounding box as this will contain all the segmentations. This requires 
+            loading all segmentation files at once.
+            """
+            # Compute bounding box - aligned segmentations are binary images, so an good iso_value is 0.5
+            iso_value = 0.5
+            seg_bounding_box = sw.ImageUtils.boundingBox(seg_list, iso_value)
+
+            """
+            Grooming Step 10: Apply cropping and padding
+            Now we need to loop over the segmentations and crop them to the size of the bounding box.
+            To avoid cropped segmentations to touch the image boundaries, we will crop then 
+            pad the segmentations.
+                - Crop to bounding box size
+                - Pad segmentations
+            """
+            # loop over segs to apply cropping and padding
+            for seg, image, name in zip(seg_list, image_list, names):
+                print('Cropping & padding segmentation: ' + name)
+                seg.crop(seg_bounding_box).pad(10, 0)
+
+                seg.write(seg_dir + name + '.nrrd', compressed=0)
+                image.write(image_dir + name + '.nrrd', compressed=0)
+
+            """
+            Grooming Step 11: Converting segmentations to smooth signed distance transforms.
+            The computeDT API needs an iso_value that defines the foreground-background interface, to create 
+            a smoother interface we first antialiasing the segmentation then compute the distance transform 
+            at the zero-level set. We then need to smooth the DT as it will have some remaining aliasing effect 
+            of binarization. 
+            So the steps are:
+                - Antialias 
+                - Compute distance transform
+                - Apply smoothing
+                - Save the distance transform
+            """
+
+            # Define distance transform parameters
+            iso_value = 0
+            sigma = 1.3
+            # Loop over segs and compute smooth DT
+            for seg, name in zip(seg_list, names):
+                print('Compute DT for segmentation: ' + name)
+                seg.antialias(antialias_iterations).computeDT(
+                    iso_value).gaussianBlur(sigma)
+            # Save distance transforms
+            dt_files = sw.utils.save_images(groom_dir + 'distance_transforms/', seg_list,
+                                            names, extension='nrrd', compressed=False, verbose=True)
 
         # BEGIN GROOMING WITHOUT IMAGES
         else:
@@ -162,11 +329,11 @@ def Run_Pipeline(args):
             # list of shape segmentations
             mesh_list = []
             # list of shape names (shape files prefixes) to be used for saving outputs
-            mesh_names = []
+            names = []
             for mesh_filename in mesh_files:
                 print('Loading: ' + mesh_filename)
                 # get current shape name
-                mesh_names.append(mesh_filename.split('/')
+                names.append(mesh_filename.split('/')
                                    [-1].replace('.ply', ''))
                 # load mesh
                 mesh = sw.Mesh(mesh_filename)
@@ -176,71 +343,161 @@ def Run_Pipeline(args):
             """
             Now we can loop over the segmentations and apply the initial grooming steps to them
             """
-            for mesh, mesh_name in zip(mesh_list, mesh_names):
+            for mesh, name in zip(mesh_list, names):
                 """
                 Grooming Step 1: Reflect - We have left and right femurs, so we reflect the right 
                 meshes so that all of the femurs can be aligned. 
                 """
-                if "R" in mesh_name:
-                    print("Reflecting "+ mesh_name)
+                if "R" in name:
+                    print("Reflecting "+ name)
                     arr = mesh.center(); center = [arr[0], arr[1], arr[2]]
                     mesh.reflect(sw.X)
 
+            seg_list = []
+            seg_dir = groom_dir + 'segmentations/'
+            if not os.path.exists(seg_dir):
+                os.makedirs(seg_dir)
+            for mesh, name in zip(mesh_list, names):
+                
+                """
+                Grooming Step 2: Turn meshes into segmentations
+                """
+                print('Turning ' + name + ' mesh to segmentation.')
+                seg_file = seg_dir + name + '.nrrd'
+                seg = mesh.toImage(spacing = [1,1,1]).binarize()
+                
+                """
+                Grooming Step 3: Apply padding
+                """
+                print('Padding segmentation: ' + name)
+                seg.pad(10,0)
 
                 """
-                Grooming Step 2: Center of mass alignment 
-                This step translates the center of mass of the mesh to [0,0,0]. It involves:
-                    - Finding the center of mass of the mesh
-                    - Defining the translation vector from the COM to [0,0,0]
-                    - Applying the translation
+                Grooming Step 4: Center of mass alignment
                 """
-                print('Center of mass alignment: ' + mesh_name)
-                # compute the center of mass of this mesh
-                com = mesh.centerOfMass()
-                # define the translation to move the shape to [0,0,0]
-                translationVector = [0,0,0] - com
+                print('Center of mass alignment for segmentation: ' + name)
+                antialias_iterations = 30
+                # compute the center of mass of this segmentation
+                shape_center = seg.centerOfMass()
+                # get the center of the image domain
+                image_center = seg.center()
+                # define the translation to move the shape to its center
+                translation_vector = image_center - shape_center
                 # perform antialias-translate-binarize
-                mesh.translate(translationVector)
+                seg.antialias(antialias_iterations).translate(translation_vector).binarize()
+
+                """
+                Grooming Step 5: Centering
+                """
+                print('Centering segmentation: ' + name)
+                seg.center()
+
+                seg_list.append(seg)
 
             """
-            Grooming Step 3: Select a reference
-            This step requires breaking the loop to load all of the meshes at once so the shape
+            Grooming Step 6: Select a reference
+            This step requires breaking the loop to load all of the segmentations at once so the shape
             closest to the mean can be found and selected as the reference. 
             """
-            print('Selecting reference mesh...')
-            ref_index = sw.find_reference_mesh_index(mesh_list)
+            ref_index = sw.find_reference_image_index(seg_list)
             # Make a copy of the reference segmentation
-            ref_mesh = mesh_list[ref_index].write(groom_dir + 'reference.ply')
-            ref_name = mesh_names[ref_index]
+            ref_seg = seg_list[ref_index].write(groom_dir + 'reference.nrrd', compressed=0)
+            ref_name = names[ref_index]
             print("Reference found: " + ref_name)
 
-            
-            for mesh, mesh_name in zip(mesh_list, mesh_names):
+
+            """
+            Grooming Step 7: Rigid alignment
+            This step rigidly aligns each shape to the selected references. 
+            Rigid alignment involves interpolation, hence we need to convert binary segmentations 
+            to continuous-valued images again. There are two steps:
+                - computing the rigid transformation parameters that would align a segmentation 
+                to the reference shape
+                - applying the rigid transformation to the segmentation
+                - save the aligned images for the next step
+            """
+
+            # First antialias the reference segmentation
+
+            ref_seg.antialias(antialias_iterations)
+            # Set the alignment parameters
+            iso_value = 1e-20
+            icp_iterations = 200
+            # Now loop through all the segmentations and apply rigid alignment
+            for seg, name in zip(seg_list, names):
+                print('Aligning ' + name + ' to ' + ref_name)
+                # compute rigid transformation
+                seg.antialias(antialias_iterations)
+                rigidTransform = seg.createTransform(
+                    ref_seg, sw.TransformType.IterativeClosestPoint, iso_value, icp_iterations)
+                # second we apply the computed transformation, note that shape_seg has
+                # already been antialiased, so we can directly apply the transformation
+                seg.applyTransform(rigidTransform,
+                                         ref_seg.origin(),  ref_seg.dims(),
+                                         ref_seg.spacing(), ref_seg.coordsys(),
+                                         sw.InterpolationType.Linear)
+                # then turn antialized-tranformed segmentation to a binary segmentation
+                seg.binarize()
+
                 """
-                Grooming Step 4: Rigid alignment
-                This step rigidly aligns each mesh to the selected references. 
-                There are two steps:
-                    - computing the rigid transformation parameters that would align the 
-                    mesh to the reference
-                    - applying the rigid transformation to the meshes
+                Grooming Step 8: Apply clipping
                 """
-                rigid_transform = mesh.createTransform(ref_mesh, sw.TransformType.IterativeClosestPoint, sw.Mesh.AlignmentType.Rigid, 30)
-                mesh.applyTransform(rigid_transform)
-                mesh.clip(sw.Plane(cutting_plane_points))
+                # print("Clipping segmentation " + name)
+                # cutting_plane_points = cutting_plane_points.flatten()
+                # seg.clip([cutting_plane_points[0], cutting_plane_points[1], cutting_plane_points[2]],
+                # [cutting_plane_points[3], cutting_plane_points[4], cutting_plane_points[5]],
+                # [cutting_plane_points[6], cutting_plane_points[7], cutting_plane_points[8]],0.0)
 
+            """
+            Grooming Step 9: Finding the largest bounding box
+            We want to crop all of the segmentations to be the same size, so we need to find 
+            the largest bounding box as this will contain all the segmentations. This requires 
+            loading all segmentation files at once.
+            """
+            # Compute bounding box - aligned segmentations are binary images, so an good iso_value is 0.5
+            iso_value = 0.5
+            seg_bounding_box = sw.ImageUtils.boundingBox(seg_list, iso_value)
 
-            sw.utils.save_meshes(groom_dir, mesh_list, mesh_names)
-            input()
-        
+            """
+            Grooming Step 10: Apply cropping and padding
+            Now we need to loop over the segmentations and crop them to the size of the bounding box.
+            To avoid cropped segmentations to touch the image boundaries, we will crop then 
+            pad the segmentations.
+                - Crop to bounding box size
+                - Pad segmentations
+            """
+            # loop over segs to apply cropping and padding
+            for seg, name in zip(seg_list, names):
+                print('Cropping & padding segmentation: ' + name)
+                seg.crop(seg_bounding_box).pad(10, 0)
 
+                seg.write(seg_dir + name + '.nrrd', compressed=0)
 
-        print("\nStep 3. Groom - Convert to distance transforms\n")
-        """
-        We convert the scans to distance transforms, this step is common for both the
-        prepped as well as unprepped data, just provide correct filenames.
-        """
-        dtFiles = applyDistanceTransforms(groom_dir, groomed_segmentations)
+            """
+            Grooming Step 11: Converting segmentations to smooth signed distance transforms.
+            The computeDT API needs an iso_value that defines the foreground-background interface, to create 
+            a smoother interface we first antialiasing the segmentation then compute the distance transform 
+            at the zero-level set. We then need to smooth the DT as it will have some remaining aliasing effect 
+            of binarization. 
+            So the steps are:
+                - Antialias 
+                - Compute distance transform
+                - Apply smoothing
+                - Save the distance transform
+            """
 
+            # Define distance transform parameters
+            iso_value = 0
+            sigma = 1.3
+            # Loop over segs and compute smooth DT
+            for seg, name in zip(seg_list, names):
+                print('Compute DT for segmentation: ' + name)
+                seg.antialias(antialias_iterations).computeDT(
+                    iso_value).gaussianBlur(sigma)
+            # Save distance transforms
+            dt_files = sw.utils.save_images(groom_dir + 'distance_transforms/', seg_list,
+                                            names, extension='nrrd', compressed=False, verbose=True)
+               
     """
     ## OPTIMIZE : Particle Based Optimization
 
@@ -296,7 +553,7 @@ def Run_Pipeline(args):
     """
     Now we execute the particle optimization function.
     """
-    [localPointFiles, worldPointFiles] = runShapeWorksOptimize(point_dir, dtFiles, parameterDictionary)
+    [localPointFiles, worldPointFiles] = OptimizeUtils.runShapeWorksOptimize(point_dir, dt_files, parameterDictionary)
 
     if args.tiny_test:
         print("Done with tiny test")
@@ -325,4 +582,4 @@ def Run_Pipeline(args):
     Reconstruct the dense mean surface given the sparse correspondence model.
     """
     print("\nStep 5. Analysis - Reconstruct the dense mean surface given the sparse correspodence model.\n")
-    launchShapeWorksStudio(point_dir, dtFiles, localPointFiles, worldPointFiles)
+    AnalyzeUtils.launchShapeWorksStudio(point_dir, dt_files, localPointFiles, worldPointFiles)
