@@ -23,6 +23,12 @@ def generate_ellipsoid_joint(num_samples, meshDir, randomize_center, randomize_x
 		z_radius = 12
 	radii = [x_radius,y_radius,z_radius]
 
+	# If randomize center is selected
+	# Select center for ellipsoid 1
+	if randomize_center:
+		center_loc_1 = list(np.random.randint(low = 0,high=50,size=3))
+	else:
+		center_loc_1 = [0,0,0]
 
 	# if the mode of variation is rotation, then the second ellipsoid will be rotated uniformly
 	if(mode_rotation==True):
@@ -44,12 +50,7 @@ def generate_ellipsoid_joint(num_samples, meshDir, randomize_center, randomize_x
 		plyFileName2 = meshDir+"ellipsoid_joint_"+filename+"_d2.ply"
 
 
-		# If randomize center is selected
-		# Select center for ellipsoid 1
-		if randomize_center:
-			center_loc_1 = list(np.random.randint(low = 0,high=50,size=3))
-		else:
-			center_loc_1 = [0,0,0]
+		
 
 		# if mode of variation is size, then the radii of the second ellipsoid are randomized
 		if(mode_size == True):
