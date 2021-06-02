@@ -8,6 +8,16 @@ TEST(pythonTests, setup)
   ASSERT_TRUE(true);
 }
 
+TEST(pythonTests, initImage)
+{
+  ASSERT_FALSE(system("python initImage.py"));
+}
+  
+TEST(pythonTests, toArray)
+{
+  ASSERT_FALSE(system("python toArray.py"));
+}
+  
 TEST(pythonTests, imageInfoTest)
 {
   ASSERT_FALSE(system("python imageinfo.py"));
