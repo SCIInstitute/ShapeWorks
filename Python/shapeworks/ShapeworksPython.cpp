@@ -597,10 +597,10 @@ PYBIND11_MODULE(shapeworks, m)
                 // read (return special array so members of returned point can be modified, e.g., min[0] = 1.0)
                 py::cpp_function([](PhysicalRegion &region) -> py::array_t<double> {
                     py::str dummyDataOwner; // pretend the data has an owner and it won't be copied (pybind trick)
-                    py::array arr(py::dtype::of<Point::ValueType>(),                // dtype
-                                  std::vector<ssize_t>({3}),                           // shape
-                                  std::vector<ssize_t>({sizeof(Point::ValueType)}),    // spacing
-                                  region.min.GetDataPointer(),                      // data ptr
+                    py::array arr(py::dtype::of<Point::ValueType>(),      // dtype
+                                  std::vector<ssize_t>({3}),              // shape
+                                  std::vector<ssize_t>(),                 // spacing
+                                  region.min.GetDataPointer(),            // data ptr
                                   dummyDataOwner);     // "inspire" py::array not to copy data
                     return arr;
                   }, py::return_value_policy::move),
@@ -616,10 +616,10 @@ PYBIND11_MODULE(shapeworks, m)
                 // read (return special array so members of returned point can be modified, e.g., max[0] = 1.0)
                 py::cpp_function([](PhysicalRegion &region) -> py::array_t<double> {
                     py::str dummyDataOwner; // pretend the data has an owner and it won't be copied (pybind trick)
-                    py::array arr(py::dtype::of<Point::ValueType>(),                // dtype
-                                  std::vector<ssize_t>({3}),                           // shape
-                                  std::vector<ssize_t>({sizeof(Point::ValueType)}),    // spacing
-                                  region.max.GetDataPointer(),                      // data ptr
+                    py::array arr(py::dtype::of<Point::ValueType>(),      // dtype
+                                  std::vector<ssize_t>({3}),              // shape
+                                  std::vector<ssize_t>(),                 // spacing
+                                  region.max.GetDataPointer(),            // data ptr
                                   dummyDataOwner);     // "inspire" py::array not to copy data
                     return arr;
                   }, py::return_value_policy::move),
@@ -700,10 +700,10 @@ PYBIND11_MODULE(shapeworks, m)
                 // read (return special array so members of returned point can be modified, e.g., min[0] = 1.0)
                 py::cpp_function([](IndexRegion &region) -> py::array_t<Coord::IndexValueType> {
                     py::str dummyDataOwner; // pretend the data has an owner and it won't be copied (pybind trick)
-                    py::array arr(py::dtype::of<Coord::IndexValueType>(),             // dtype
-                                  std::vector<ssize_t>({3}),                             // shape
-                                  std::vector<ssize_t>({sizeof(Coord::IndexValueType)}), // spacing
-                                  region.min.data(),                                  // data ptr
+                    py::array arr(py::dtype::of<Coord::IndexValueType>(), // dtype
+                                  std::vector<ssize_t>({3}),              // shape
+                                  std::vector<ssize_t>(),                 // spacing
+                                  region.min.data(),                      // data ptr
                                   dummyDataOwner);     // "inspire" py::array not to copy data
                     return arr;
                   }, py::return_value_policy::move),
@@ -721,10 +721,10 @@ PYBIND11_MODULE(shapeworks, m)
                 // read (return special array so members of returned point can be modified, e.g., max[0] = 1.0)
                 py::cpp_function([](IndexRegion &region) -> py::array_t<Coord::IndexValueType> {
                     py::str dummyDataOwner; // pretend the data has an owner and it won't be copied (pybind trick)
-                    py::array arr(py::dtype::of<Coord::IndexValueType>(),             // dtype
-                                  std::vector<ssize_t>({3}),                             // shape
-                                  std::vector<ssize_t>({sizeof(Coord::IndexValueType)}), // spacing
-                                  region.max.data(),                                  // data ptr
+                    py::array arr(py::dtype::of<Coord::IndexValueType>(), // dtype
+                                  std::vector<ssize_t>({3}),              // shape
+                                  std::vector<ssize_t>(),                 // spacing
+                                  region.max.data(),                      // data ptr
                                   dummyDataOwner);     // "inspire" py::array not to copy data
                     return arr;
                   }, py::return_value_policy::move),
