@@ -7,7 +7,7 @@ namespace shapeworks {
 
 Mesh Image::toMesh(Image::PixelType isovalue) const
 {
-  return getPolyData(*this, isovalue);
+  return getMesh(*this, isovalue);
 }
 
 } // shapeworks

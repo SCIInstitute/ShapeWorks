@@ -244,7 +244,7 @@ private:
   TransformPtr createRigidRegistrationTransform(const Image &target, float isoValue = 0.0, unsigned iterations = 20);
 
   /// creates a vtkPolyData for the given image
-  static vtkSmartPointer<vtkPolyData> getPolyData(const Image& image, PixelType isoValue = 0.0);
+  static Mesh getMesh(const Image& image, PixelType isoValue = 0.0);
 
   StatsPtr statsFilter();
 
