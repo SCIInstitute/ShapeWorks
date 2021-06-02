@@ -15,6 +15,34 @@ import CommonUtils
 import shapeworks as sw
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+
+
+def violinplot(pcadata):
+    dims = []
+    sample = []
+    # pcadata = pcadata[:,:numpca]
+    for i in range(len(pcadata)):
+        temp = []
+        for j in range(np.shape(pcadata)[1]):
+
+            dims.append(j)
+            
+            
+
+    pcadata = pcadata.flatten()
+    # print(dims)
+    print(len(pcadata),len(dims))
+    data = {'PCA Mode':dims, "PCA Score":pcadata}
+    df = pd.DataFrame(data) 
+    print(df)
+    plt.figure(figsize=(10,4),dpi=300)
+    sns.set_context("paper", rc={"font.size":12,"axes.titlesize":12,"axes.labelsize":12})   
+    ax = sns.violinplot(x=df['PCA Mode']+1, y=df['PCA Score'],\
+                        data=df, palette="cool_r", split=True, scale="area")
+    plt.show()
+
 def Run_Pipeline(args):
     """
     If ellipsoid.zip is not there it will be downloaded from the ShapeWorks data portal.
@@ -100,6 +128,9 @@ def Run_Pipeline(args):
     #Calculate the loadings
     shapeStatistics.principalComponentProjections()
     pcaLoadings = shapeStatistics.pcaLoadings()
+
+    
+    # violinplot(pcaLoadings)
     
     #Calculate the variance explained by each mode using the eigen values
     eigvals = np.array(shapeStatistics.eigenValues())
@@ -122,16 +153,14 @@ def Run_Pipeline(args):
     plt.grid()
     plt.savefig(pointDir+"variance_plot.png")
     plt.show(block=False)
-    
+    plt.pause(3)
     plt.close(fig)
 
     print("Figure saved in directory -" + pointDir)
     print()
 
 
-    print("\nStep 5. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
-    if args.interactive != 0:
-        input("Press Enter to continue")
+    
 
-    launchShapeWorksStudio(pointDir, meshFiles, localPointFiles, worldPointFiles)
+
     
