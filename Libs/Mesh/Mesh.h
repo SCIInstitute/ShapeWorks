@@ -39,7 +39,7 @@ public:
   Mesh& smooth(int iterations = 0, double relaxation = 0.0);
 
   /// applies filter to reduce number of triangles in mesh
-  Mesh& decimate(double reduction = 0.0, double angle = 0.0, bool preserveTopology = true);
+  Mesh& decimate(double reduction = 0.5, double angle = 15.0, bool preserveTopology = true);
 
   /// handle flipping normals
   Mesh& invertNormals();

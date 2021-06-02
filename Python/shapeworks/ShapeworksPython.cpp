@@ -860,7 +860,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("decimate",
        &Mesh::decimate,
        "applies filter to reduce number of triangles in mesh",
-       "reduction"_a=0.0, "angle"_a=0.0, "preserveTopology"_a=true)
+       "reduction"_a=0.5, "angle"_a=15.0, "preserveTopology"_a=true)
 
   .def("invertNormals",
        &Mesh::invertNormals,

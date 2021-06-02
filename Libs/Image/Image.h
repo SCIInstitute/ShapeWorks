@@ -235,7 +235,7 @@ public:
   /// writes image, format specified by filename extension
   Image& write(const std::string &filename, bool compressed = true);
 
-  /// converts image to mesh (note: definition in Conversion.cpp)
+  /// converts image to mesh
   Mesh toMesh(PixelType isovalue) const;
 
 private:

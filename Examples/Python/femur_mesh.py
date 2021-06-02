@@ -69,6 +69,17 @@ def Run_Pipeline(args):
         "visualizer_wireframe": 0,
         # "visualizer_screenshot_directory": "screenshots_" + str(use_case) + "_" + str(num_samples) + "samples_" + str(num_particles) + "particles/",
     }
+
+    if args.tiny_test:
+        parameterDictionary["number_of_particles"] = 32
+        parameterDictionary["optimization_iterations"] = 25
+        parameterDictionary["iterations_per_split"] = 25
+
     [localPointFiles, worldPointFiles] = runShapeWorksOptimize(pointDir, meshFiles, parameterDictionary)
+
+    if args.tiny_test:
+        print("Done with tiny test")
+        exit()
+
 
     launchShapeWorksStudio(pointDir, meshFiles, localPointFiles, worldPointFiles)

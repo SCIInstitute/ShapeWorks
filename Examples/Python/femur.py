@@ -36,17 +36,18 @@ def Run_Pipeline(args):
     if not args.groom_images:
         # set spacing
         spacing = [1.0, 1.0, 1.0]
-        answer = input("Use isotropic spacing for mesh rasterization? y/n \n")
-        if answer == 'n':
-            done = False
-            while not done:
-                spacing = []
-                spacing.append(float(input("Enter x spacing:\n")))
-                spacing.append(float(input("Enter y spacing:\n")))
-                spacing.append(float(input("Enter z spacing:\n")))
-                answer2 = input('Is spacing = ' + str(spacing) + ' okay? y/n\n')
-                if answer2 == 'y':
-                    done = True
+        if args.interactive:
+            answer = input("Use isotropic spacing for mesh rasterization? y/n \n")
+            if answer == 'n':
+                done = False
+                while not done:
+                    spacing = []
+                    spacing.append(float(input("Enter x spacing:\n")))
+                    spacing.append(float(input("Enter y spacing:\n")))
+                    spacing.append(float(input("Enter z spacing:\n")))
+                    answer2 = input('Is spacing = ' + str(spacing) + ' okay? y/n\n')
+                    if answer2 == 'y':
+                        done = True
     
     if args.tiny_test:
         args.use_single_scale = True
