@@ -36,6 +36,7 @@ target_include_directories(Mesh PUBLIC
 
 target_link_libraries(
   Mesh 
+  Image
   Common
   Utils
   trimesh2 
