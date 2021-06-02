@@ -573,7 +573,6 @@ PYBIND11_MODULE(shapeworks, m)
 
   // PhysicalRegion
   py::class_<PhysicalRegion>(m, "PhysicalRegion")
-  // TODO: can we add a help string here? Or in init? Or... 
 
   .def(py::init<>())
 
@@ -1060,34 +1059,6 @@ PYBIND11_MODULE(shapeworks, m)
   // MeshUtils
   py::class_<MeshUtils>(m, "MeshUtils")
 
-  // TODO: fails to compile on Windows due to missing Eigen symbols
-  // https://github.com/SCIInstitute/ShapeWorks/issues/954
-  // .def_static("distilVertexInfo",
-  //             &MeshUtils::distilVertexInfo,
-  //             "distils vertex information from VTK poly data to Eigen matrices",
-  //             "mesh"_a)
-  //
-  // .def_static("distilFaceInfo",
-  //             &MeshUtils::distilFaceInfo,
-  //             "distils face information from VTK poly data to Eigen matrices",
-  //             "mesh"_a)
-
-  // TODO: Bind these three functions (generateWarpMatrix, warpMesh, warpMeshes) later if required
-  // .def_static("generateWarpMatrix",
-  //             &MeshUtils::generateWarpMatrix,
-  //             "compute the warp matrix using the mesh and reference points",
-  //             "TV"_a, "TF"_a, "Vref"_a)
-  //
-  // .def_static("warpMesh",
-  //             &MeshUtils::warpMesh,
-  //             "compute individual warp",
-  //             "movPts"_a, "W"_a, "Fref"_a)
-  //
-  // .def_static("warpMeshes",
-  //             &MeshUtils::warpMeshes,
-  //             "compute transformation from set of points files using template mesh warp & face matrices",
-  //             "movingPointPaths"_a, "outputMeshPaths"_a, "W"_a, "Fref"_a, "numP"_a)
-
   .def_static("boundingBox",
               [](std::vector<std::string> filenames, bool center) {
                 return shapeworks::MeshUtils::boundingBox(filenames, center);
@@ -1109,7 +1080,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def(py::init<const std::vector<std::string> &>())
 
   .def("Particles",
-       &ParticleSystem::Particles) // note: must import Eigenpy (github stack-of-tasks/eigenpy)
+       &ParticleSystem::Particles)
 
   .def("Paths",
        &ParticleSystem::Paths)
@@ -1137,7 +1108,7 @@ PYBIND11_MODULE(shapeworks, m)
               "particleSystem"_a, "nModes"_a, "saveTo"_a="")
   ;
 
-  // Optimize (TODO)
+  // Optimize
   py::class_<Optimize>(m, "Optimize")
 
   .def(py::init<>())
