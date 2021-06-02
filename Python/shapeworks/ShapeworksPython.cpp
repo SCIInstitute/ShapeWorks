@@ -902,6 +902,15 @@ PYBIND11_MODULE(shapeworks, m)
        "point"_a,
        "normal"_a)
 
+  .def("clip",
+       [](Mesh& mesh, const std::vector<double>& o, const std::vector<double>& p1, const std::vector<double>& p2) -> decltype(auto) {
+         return mesh.clip(makePlane(Point({o[0], o[1], o[2]}), Point({p1[0], p1[1], p1[2]}), Point({p2[0], p2[1], p2[2]})));
+       },
+       "clips a mesh using a cutting plane",
+       "o"_a,
+       "p1"_a,
+       "p2"_a)
+
   .def("translate",
        [](Mesh& mesh, const std::vector<double>& v) -> decltype(auto) {
          return mesh.translate(makeVector({v[0], v[1], v[2]}));
