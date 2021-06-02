@@ -29,8 +29,8 @@ def Run_Pipeline(args):
     print("You can change the dataset name and output directory name to try out this use case with other datasets")
 
 
-    dataset_name = "ellipsoid_joint_rotation"
-    output_directory = "Output/ellipsoid_joint_rotation/"
+    dataset_name = "ellipsoid_joint_size_rotation"
+    output_directory = "Output/ellipsoid_joint_size_rotation/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
@@ -58,15 +58,12 @@ def Run_Pipeline(args):
         print("\nStep 2. Groom - Data Pre-processing\n")
         """
         Step 2: GROOMING 
-        
+        The segmentaions are pre-alinged during generation( EllipsoidJointsGenerator) 
+        such that they are centered w.r.t to each other. Hence we only perform the 
+        following two steps
         The required grooming steps are: 
         1. Isotropic resampling
-        2. Center of Mass Alignment
-        3. Reference selection
-        4. Rigid Alignment
-        5. Find largest bounding box
-        6. Apply cropping and padding
-        7. Create smooth signed distance transforms
+        2. Create smooth signed distance transforms
 
         For more information on grooming see docs/workflow/groom.md
         http://sciinstitute.github.io/ShapeWorks/workflow/groom.html
@@ -133,148 +130,8 @@ def Run_Pipeline(args):
             # make segmetnation binary again
             shape_seg.binarize()
 
-            """
-            Grooming Step 2: Center of mass alignment 
-            This step translates the center of mass of the shape to the center of the 3D volume space
-            as a precursor for rigid alignment. It involves:
-                - Finding the center of mass of the segmentation
-                - Finding the center of the image domain
-                - Defining the translation vector
-                - Applying the translation by antialiasing, translating, and binarizing. 
-                (Because this step involves interpolation, we must antialias before and 
-                binarize after as we did when resampling.)
-            """
-            # print('Center of mass alignment: ' + shape_name)
-            # # compute the center of mass of this segmentation
-            # shape_center = shape_seg.centerOfMass()
-            # # get the center of the image domain
-            # image_center = shape_seg.center()
-            # # define the translation to move the shape to its center
-            # translationVector = image_center - shape_center
-            # # perform antialias-translate-binarize
-            # shape_seg.antialias(antialias_iterations).translate(
-            #     translationVector).binarize()
-            
-
-
-        print("\nFinding the reference image for segmentations belonging to domain 1\n")
         """
-        Grooming Step 3: Select a reference
-        This step requires breaking the loop to load all of the segmentations at once so the shape
-        closest to the mean can be found and selected as the reference. 
-        """
-        shape_seg_list_domain1 = [shape_seg_list[i] for i in domain1_indx]
-        shape_name_domain1 = [shape_names[i] for i in domain1_indx]
-        ref_index = sw.find_reference_image_index(shape_seg_list_domain1)
-        ref_seg_domain1 = shape_seg_list_domain1[ref_index]
-        ref_name_domain1 = shape_name_domain1[ref_index]
-        print("Reference found: " + ref_name_domain1)
-
-
-        print("\nFinding the reference image for segmentations belonging to domain 2\n")
-        """
-        Grooming Step 3: Select a reference
-        This step requires breaking the loop to load all of the segmentations at once so the shape
-        closest to the mean can be found and selected as the reference. 
-        """
-        shape_seg_list_domain2 = [shape_seg_list[i] for i in domain2_indx]
-        shape_name_domain2 = [shape_names[i] for i in domain2_indx]
-        ref_index = sw.find_reference_image_index(shape_seg_list_domain2)
-        ref_seg_domain2 = shape_seg_list_domain2[ref_index]
-        ref_name_domain2 = shape_name_domain2[ref_index]
-        print("Reference found: " + ref_name_domain2)
-
-
-        """
-        Grooming Step 4: Rigid alignment
-        This step rigidly aligns each shape to the selected references. 
-        Rigid alignment involves interpolation, hence we need to convert binary segmentations 
-        to continuous-valued images again. There are two steps:
-            - computing the rigid transformation parameters that would align a segmentation 
-            to the reference shape
-            - applying the rigid transformation to the segmentation
-            - save the aligned images for the next step
-        """
-        antialias_iterations = 30
-        # # First antialias the reference segmentation
-        ref_seg_domain1.antialias(antialias_iterations).write(groom_dir+"ref1.nrrd")
-        ref_seg_domain2.antialias(antialias_iterations).write(groom_dir+"ref2.nrrd")
-        # Set the alignment parameters
-        iso_value = 1e-20
-        icp_iterations = 200
-        # Now loop through all the segmentations and apply rigid alignment
-        for shape_seg, shape_name,domain in zip(shape_seg_list, shape_names,domain_ids):
-            if(domain=='d1'):
-                ref_name = ref_name_domain1
-                ref_seg = ref_seg_domain1
-            elif(domain=='d2'):
-                ref_name = ref_name_domain2
-                ref_seg = ref_seg_domain2
-
-            print('Aligning ' + shape_name + ' to ' + ref_name)
-            # compute rigid transformation
-            shape_seg.antialias(antialias_iterations)
-            rigidTransform = shape_seg.createTransform(
-                ref_seg, sw.TransformType.IterativeClosestPoint, iso_value, icp_iterations)
-            # second we apply the computed transformation, note that shape_seg has
-            # already been antialiased, so we can directly apply the transformation
-            shape_seg.applyTransform(rigidTransform,
-                                     ref_seg.origin(),  ref_seg.dims(),
-                                     ref_seg.spacing(), ref_seg.coordsys(),
-                                     sw.InterpolationType.Linear)
-            # then turn antialized-tranformed segmentation to a binary segmentation
-            shape_seg.binarize()
-
-
-        """
-        Grooming Step 5: Finding the largest bounding box
-        We want to crop all of the segmentations to be the same size, so we need to find 
-        the largest bounding box as this will contain all the segmentations. This requires 
-        loading all segmentation files at once.
-        """
-        # Compute bounding box - aligned segmentations are binary images, so an good iso_value is 0.5
-
-        #for domain 1
-        shape_seg_list_domain1 = [shape_seg_list[i] for i in domain1_indx]
-        shape_name_domain1 = [shape_names[i] for i in domain1_indx]
-        iso_value = 0.5
-        segs_bounding_box_domain1 = sw.ImageUtils.boundingBox(
-            shape_seg_list_domain1, iso_value)
-
-       	#for domain 2
-        shape_seg_list_domain2 = [shape_seg_list[i] for i in domain2_indx]
-        shape_name_domain2 = [shape_names[i] for i in domain2_indx]
-        iso_value = 0.5
-        segs_bounding_box_domain2 = sw.ImageUtils.boundingBox(
-            shape_seg_list_domain2, iso_value)
-
-        """
-        Grooming Step 6: Apply cropping and padding
-        Now we need to loop over the segmentations and crop them to the size of the bounding box.
-        To avoid cropped segmentations to touch the image boundaries, we will crop then 
-        pad the segmentations.
-            - Crop to bounding box size
-            - Pad segmentations
-        """
-
-        # parameters for padding
-        padding_size = 10  # number of voxels to pad for each dimension
-        padding_value = 0  # the constant value used to pad the segmentations
-        # loop over segs to apply cropping and padding
-        i = 0 
-        for shape_seg, shape_name,domain in zip(shape_seg_list, shape_names,domain_ids):
-            if(domain=='d1'):
-                segs_bounding_box = segs_bounding_box_domain1
-            elif(domain=='d2'):
-                segs_bounding_box = segs_bounding_box_domain2
-            print('Cropping & padding segmentation: ' + shape_name)
-
-            shape_seg.crop(segs_bounding_box).pad(padding_size, padding_value)
-            shape_seg.write(groom_dir+"groomed_" + str(i)+".nrrd")
-            i = i+1
-
-        """
-        Grooming Step 7: Converting segmentations to smooth signed distance transforms.
+        Grooming Step 2: Converting segmentations to smooth signed distance transforms.
         The computeDT API needs an iso_value that defines the foreground-background interface, to create 
         a smoother interface we first antialiasing the segmentation then compute the distance transform 
         at the zero-level set. We then need to smooth the DT as it will have some remaining aliasing effect 
@@ -288,7 +145,7 @@ def Run_Pipeline(args):
 
         # Define distance transform parameters
         iso_value = 0
-        sigma = 1.3
+        sigma = 2
         # Loop over segs and compute smooth DT
         for shape_seg, shape_name in zip(shape_seg_list, shape_names):
             print('Compute DT for segmentation: ' + shape_name)
@@ -328,7 +185,7 @@ def Run_Pipeline(args):
         "recompute_regularization_interval" : 2,
         "domains_per_shape" : 2,
         "domain_type" : 'image',
-        "relative_weighting" : 100, #10 mesh, # 1 for segmentation images
+        "relative_weighting" : 1, #10 mesh, # 1 for segmentation images
         "initial_relative_weighting" : 0.1,
         "procrustes_interval" : 0,
         "procrustes_scaling" : 0,
