@@ -13,8 +13,6 @@ import numpy as np
 import shapeworks as sw
 import OptimizeUtils
 import AnalyzeUtils
-from GroomUtils import *
-
 
 def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")
