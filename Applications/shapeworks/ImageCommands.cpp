@@ -834,7 +834,7 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
 void BoundingBoxImage::buildParser()
 {
   const std::string prog = "bounding-box-image";
-  const std::string desc = "compute largest bounding box surrounding the specified isovalue of the specified set of images";
+  const std::string desc = "compute largest physical bounding box surrounding the specified isovalue of the specified set of images";
   parser.prog(prog).description(desc);
 
   parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to images (must be followed by `--`), ex: \"bounding-box-image --names *.nrrd -- --isovalue 1.5\")");
@@ -925,7 +925,7 @@ bool SetRegion::execute(const optparse::Values &options, SharedCommandData &shar
 void CropImage::buildParser()
 {
   const std::string prog = "crop";
-  const std::string desc = "crop image down to the current region (e.g., from bounding-box command), or the specified min/max in each direction [default: image dimensions]";
+  const std::string desc = "crop image down to the current region of physical space (from bounding-box or set-region commands)";
   parser.prog(prog).description(desc);
 
   Command::buildParser();
@@ -939,7 +939,6 @@ bool CropImage::execute(const optparse::Values &options, SharedCommandData &shar
     return false;
   }
 
-  std::cout << "region: " << sharedData.region << std::endl;
   sharedData.image.crop(sharedData.region);
   return true;
 }
