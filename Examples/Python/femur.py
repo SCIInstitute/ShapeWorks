@@ -3,9 +3,9 @@
 ====================================================================
 Full Example Pipeline for Statistical Shape Modeling with ShapeWorks
 ====================================================================
-The femur data set is comprised of segmented meshes of femurs and corresponding CT 
+The femur data set is comprised of segmented meshes of femurs and corresponding CT
 images that are not segmented.
-The full images can be carried through every step of grooming. 
+The full images can be carried through every step of grooming.
 """
 import os
 import glob
@@ -15,13 +15,14 @@ import OptimizeUtils
 import AnalyzeUtils
 from GroomUtils import *
 
+
 def Run_Pipeline(args):
     print("\nStep 1. Extract Data\n")
     """
     Step 1: EXTRACT DATA
 
-    We define dataset_name which determines which dataset to download from 
-    the portal and the directory to save output from the use case in. 
+    We define dataset_name which determines which dataset to download from
+    the portal and the directory to save output from the use case in.
     """
     dataset_name = "femur-v0"
     output_directory = "Output/femur/"
@@ -34,15 +35,15 @@ def Run_Pipeline(args):
         sw.data.download_subset(args.use_case, dataset_name, output_directory)
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))[:3]
-        image_files = sorted(glob.glob(output_directory + 
+        image_files = sorted(glob.glob(output_directory +
                             dataset_name + "/images/*.nrrd"))[:3]
     # else download the entire dataset
     else:
         sw.data.download_and_unzip_dataset(dataset_name, output_directory)
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))
-        image_files = sorted(glob.glob(output_directory + dataset_name + "/images/*.nrrd"))
-
+        image_files = sorted(
+            glob.glob(output_directory + dataset_name + "/images/*.nrrd"))
 
     # Select data if using subsample
     if args.use_subsample:
@@ -64,10 +65,10 @@ def Run_Pipeline(args):
     else:
         print("\nStep 2. Groom - Data Pre-processing\n")
         """
-        Step 2: GROOMING 
-        
-        The required grooming steps are: 
-        1. Reflect images and meshes
+        Step 2: GROOMING
+
+        The required grooming steps are:
+        1. Reflect meshes
         2. Turn meshes to volumes
         3. Isotropic resampling
         4. Padding
@@ -76,8 +77,9 @@ def Run_Pipeline(args):
         7. Reference selection
         8. Rigid Alignment
         9. Clip segementations with cutting plane
-        10. Find largest bounding box and crop
-        11. Convert to distance transform
+        10. Find largest bounding box
+        11. Crop
+        12. Convert to distance transform
 
         For more information on grooming see docs/workflow/groom.md
         http://sciinstitute.github.io/ShapeWorks/workflow/groom.html
@@ -87,12 +89,13 @@ def Run_Pipeline(args):
         groom_dir = output_directory + 'groomed/'
         if not os.path.exists(groom_dir):
             os.makedirs(groom_dir)
-        
+
         # set name specific variables
         img_suffix = "1x_hip"
-        reference_side = "left" # somewhat arbitrary, could be R for right
+        reference_side = "left"  # somewhat arbitrary, could be R for right
         # Set cutting plane
-        cutting_plane_points = np.array([[-1.0, -1.0,-40.5],[1.0,-1.0,-40.5],[-1.0,1.0, -40.5]])
+        cutting_plane_points = np.array(
+            [[-1.0, -1.0, -700], [1.0, -1.0, -700], [-1.0, 1.0, -700]])
         cp_prefix = 'm03_L'
 
         # BEGIN GROOMING WITH IMAGES
@@ -114,7 +117,6 @@ def Run_Pipeline(args):
                 # append to the mesh list
                 mesh_list.append(mesh)
 
-            
             image_dir = groom_dir + 'images/'
             if not os.path.exists(image_dir):
                 os.makedirs(image_dir)
@@ -124,8 +126,8 @@ def Run_Pipeline(args):
             image_list = []
             for mesh, name in zip(mesh_list, names):
                 """
-                Grooming Step 1: Reflect - We have left and right femurs, so we reflect the right 
-                meshes so that all of the femurs can be aligned. 
+                Grooming Step 1: Reflect - We have left and right femurs, so we reflect the right
+                meshes so that all of the femurs can be aligned.
                 """
                 prefix = name.split("_")[0]
                 for index in range(len(image_files)):
@@ -133,20 +135,24 @@ def Run_Pipeline(args):
                         corresponding_image_file = image_files[index]
                         break
                 if "R" in name:
-                    print("Reflecting "+ name)
+                    print("Reflecting " + name)
                     # Reflect corresponding image and find mesh reflection point
                     img1 = sw.Image(corresponding_image_file)
                     img2 = sw.Image(corresponding_image_file)
                     img2.recenter()
                     center = img2.origin() - img1.origin()
-                    center = [center[0],center[1],center[2]]
-                    img_out = image_dir + corresponding_image_file.split('/')[-1].split('_')[0] + '_R_femur.nrrd'
+                    center = [center[0], center[1], center[2]]
+                    img_out = image_dir + \
+                        corresponding_image_file.split(
+                            '/')[-1].split('_')[0] + '_R_femur.nrrd'
                     img1.reflect(X).write(img_out, compressed=0)
                     image_list.append(img1)
                     # Reflect mesh
-                    mesh.reflect(X,center)
+                    mesh.reflect(X, center)
                 else:
-                    img_out = image_dir + corresponding_image_file.split('/')[-1].split('_')[0] + '_L_femur.nrrd'
+                    img_out = image_dir + \
+                        corresponding_image_file.split(
+                            '/')[-1].split('_')[0] + '_L_femur.nrrd'
                     img = sw.Image(corresponding_image_file)
                     img.write(img_out, compressed=0)
                     image_list.append(img)
@@ -156,14 +162,15 @@ def Run_Pipeline(args):
             if not os.path.exists(seg_dir):
                 os.makedirs(seg_dir)
             for mesh, image, name in zip(mesh_list, image_list, names):
-                
+
                 """
                 Grooming Step 2: Turn meshes into segmentations
                 """
                 print('Turning ' + name + ' mesh to segmentation.')
                 seg_file = seg_dir + name + '.nrrd'
-                seg = mesh.toImage(spacing = image.spacing()).resize(image.dims()).binarize()
-                
+                seg = mesh.toImage(spacing=image.spacing()).resize(
+                    image.dims()).binarize()
+
                 """
                 Grooming Step 3: Apply isotropic resampling
                 The segmentation and images are resampled independently to have uniform spacing.
@@ -179,17 +186,17 @@ def Run_Pipeline(args):
                 seg.binarize()
                 print('Resampling image: ' + name)
                 image.resample(iso_spacing, sw.InterpolationType.Linear)
-                
-                """
-                Grooming Step 3: Apply padding
-                """
-                print('Padding segmentation: ' + name)
-                seg.pad(10,0)
-                print('Padding image: ' + name)
-                image.pad(10,0)
 
                 """
-                Grooming Step 4: Center of mass alignment
+                Grooming Step 4: Apply padding
+                """
+                print('Padding segmentation: ' + name)
+                seg.pad(10, 0)
+                print('Padding image: ' + name)
+                image.pad(10, 0)
+
+                """
+                Grooming Step 5: Center of mass alignment
                 """
                 print('Center of mass alignment for segmentation: ' + name)
                 # compute the center of mass of this segmentation
@@ -199,12 +206,13 @@ def Run_Pipeline(args):
                 # define the translation to move the shape to its center
                 translation_vector = image_center - shape_center
                 # perform antialias-translate-binarize
-                seg.antialias(antialias_iterations).translate(translation_vector).binarize()
+                seg.antialias(antialias_iterations).translate(
+                    translation_vector).binarize()
                 print('Center of mass alignment for image: ' + name)
                 image.translate(translation_vector)
 
                 """
-                Grooming Step 5: Centering
+                Grooming Step 6: Centering
                 """
                 print('Centering segmentation: ' + name)
                 seg.center()
@@ -214,23 +222,23 @@ def Run_Pipeline(args):
                 seg_list.append(seg)
 
             """
-            Grooming Step 6: Select a reference
+            Grooming Step 7: Select a reference
             This step requires breaking the loop to load all of the segmentations at once so the shape
-            closest to the mean can be found and selected as the reference. 
+            closest to the mean can be found and selected as the reference.
             """
             ref_index = sw.find_reference_image_index(seg_list)
             # Make a copy of the reference segmentation
-            ref_seg = seg_list[ref_index].write(groom_dir + 'reference.nrrd', compressed=0)
+            ref_seg = seg_list[ref_index].write(
+                groom_dir + 'reference.nrrd', compressed=0)
             ref_name = names[ref_index]
             print("Reference found: " + ref_name)
 
-
             """
-            Grooming Step 7: Rigid alignment
-            This step rigidly aligns each shape to the selected references. 
-            Rigid alignment involves interpolation, hence we need to convert binary segmentations 
+            Grooming Step 8: Rigid alignment
+            This step rigidly aligns each shape to the selected references.
+            Rigid alignment involves interpolation, hence we need to convert binary segmentations
             to continuous-valued images again. There are two steps:
-                - computing the rigid transformation parameters that would align a segmentation 
+                - computing the rigid transformation parameters that would align a segmentation
                 to the reference shape
                 - applying the rigid transformation to the segmentation
                 - save the aligned images for the next step
@@ -262,18 +270,19 @@ def Run_Pipeline(args):
                                          ref_seg.spacing(), ref_seg.coordsys(),
                                          sw.InterpolationType.Linear)
                 """
-                Grooming Step 8: Apply clipping
+                Grooming Step 9: Apply clipping
                 """
-                # print("Clipping segmentation " + name)
-                # cutting_plane_points = cutting_plane_points.flatten()
-                # seg.clip([cutting_plane_points[0], cutting_plane_points[1], cutting_plane_points[2]],
-                # [cutting_plane_points[3], cutting_plane_points[4], cutting_plane_points[5]],
-                # [cutting_plane_points[6], cutting_plane_points[7], cutting_plane_points[8]],0.0)
+                print("Clipping segmentation " + name)
+                cutting_plane_points = cutting_plane_points.flatten()
+                seg.clip([cutting_plane_points[0], cutting_plane_points[1], cutting_plane_points[2]],
+                [cutting_plane_points[3], cutting_plane_points[4],
+                    cutting_plane_points[5]],
+                [cutting_plane_points[6], cutting_plane_points[7], cutting_plane_points[8]], 0.0)
 
             """
-            Grooming Step 9: Finding the largest bounding box
-            We want to crop all of the segmentations to be the same size, so we need to find 
-            the largest bounding box as this will contain all the segmentations. This requires 
+            Grooming Step 10: Finding the largest bounding box
+            We want to crop all of the segmentations to be the same size, so we need to find
+            the largest bounding box as this will contain all the segmentations. This requires
             loading all segmentation files at once.
             """
             # Compute bounding box - aligned segmentations are binary images, so an good iso_value is 0.5
@@ -281,9 +290,9 @@ def Run_Pipeline(args):
             seg_bounding_box = sw.ImageUtils.boundingBox(seg_list, iso_value)
 
             """
-            Grooming Step 10: Apply cropping and padding
+            Grooming Step 11: Apply cropping and padding
             Now we need to loop over the segmentations and crop them to the size of the bounding box.
-            To avoid cropped segmentations to touch the image boundaries, we will crop then 
+            To avoid cropped segmentations to touch the image boundaries, we will crop then
             pad the segmentations.
                 - Crop to bounding box size
                 - Pad segmentations
@@ -297,13 +306,13 @@ def Run_Pipeline(args):
                 image.write(image_dir + name + '.nrrd', compressed=0)
 
             """
-            Grooming Step 11: Converting segmentations to smooth signed distance transforms.
-            The computeDT API needs an iso_value that defines the foreground-background interface, to create 
-            a smoother interface we first antialiasing the segmentation then compute the distance transform 
-            at the zero-level set. We then need to smooth the DT as it will have some remaining aliasing effect 
-            of binarization. 
+            Grooming Step 12: Converting segmentations to smooth signed distance transforms.
+            The computeDT API needs an iso_value that defines the foreground-background interface, to create
+            a smoother interface we first antialiasing the segmentation then compute the distance transform
+            at the zero-level set. We then need to smooth the DT as it will have some remaining aliasing effect
+            of binarization.
             So the steps are:
-                - Antialias 
+                - Antialias
                 - Compute distance transform
                 - Apply smoothing
                 - Save the distance transform
@@ -345,11 +354,11 @@ def Run_Pipeline(args):
             """
             for mesh, name in zip(mesh_list, names):
                 """
-                Grooming Step 1: Reflect - We have left and right femurs, so we reflect the right 
-                meshes so that all of the femurs can be aligned. 
+                Grooming Step 1: Reflect - We have left and right femurs, so we reflect the right
+                meshes so that all of the femurs can be aligned.
                 """
                 if "R" in name:
-                    print("Reflecting "+ name)
+                    print("Reflecting " + name)
                     arr = mesh.center(); center = [arr[0], arr[1], arr[2]]
                     mesh.reflect(sw.X)
 
@@ -358,19 +367,19 @@ def Run_Pipeline(args):
             if not os.path.exists(seg_dir):
                 os.makedirs(seg_dir)
             for mesh, name in zip(mesh_list, names):
-                
+
                 """
                 Grooming Step 2: Turn meshes into segmentations
                 """
                 print('Turning ' + name + ' mesh to segmentation.')
                 seg_file = seg_dir + name + '.nrrd'
-                seg = mesh.toImage(spacing = [1,1,1]).binarize()
-                
+                seg = mesh.toImage(spacing=[1, 1, 1]).binarize()
+
                 """
                 Grooming Step 3: Apply padding
                 """
                 print('Padding segmentation: ' + name)
-                seg.pad(10,0)
+                seg.pad(10, 0)
 
                 """
                 Grooming Step 4: Center of mass alignment
@@ -384,7 +393,8 @@ def Run_Pipeline(args):
                 # define the translation to move the shape to its center
                 translation_vector = image_center - shape_center
                 # perform antialias-translate-binarize
-                seg.antialias(antialias_iterations).translate(translation_vector).binarize()
+                seg.antialias(antialias_iterations).translate(
+                    translation_vector).binarize()
 
                 """
                 Grooming Step 5: Centering
@@ -397,21 +407,21 @@ def Run_Pipeline(args):
             """
             Grooming Step 6: Select a reference
             This step requires breaking the loop to load all of the segmentations at once so the shape
-            closest to the mean can be found and selected as the reference. 
+            closest to the mean can be found and selected as the reference.
             """
             ref_index = sw.find_reference_image_index(seg_list)
             # Make a copy of the reference segmentation
-            ref_seg = seg_list[ref_index].write(groom_dir + 'reference.nrrd', compressed=0)
+            ref_seg = seg_list[ref_index].write(
+                groom_dir + 'reference.nrrd', compressed=0)
             ref_name = names[ref_index]
             print("Reference found: " + ref_name)
 
-
             """
             Grooming Step 7: Rigid alignment
-            This step rigidly aligns each shape to the selected references. 
-            Rigid alignment involves interpolation, hence we need to convert binary segmentations 
+            This step rigidly aligns each shape to the selected references.
+            Rigid alignment involves interpolation, hence we need to convert binary segmentations
             to continuous-valued images again. There are two steps:
-                - computing the rigid transformation parameters that would align a segmentation 
+                - computing the rigid transformation parameters that would align a segmentation
                 to the reference shape
                 - applying the rigid transformation to the segmentation
                 - save the aligned images for the next step
@@ -442,16 +452,17 @@ def Run_Pipeline(args):
                 """
                 Grooming Step 8: Apply clipping
                 """
-                # print("Clipping segmentation " + name)
-                # cutting_plane_points = cutting_plane_points.flatten()
-                # seg.clip([cutting_plane_points[0], cutting_plane_points[1], cutting_plane_points[2]],
-                # [cutting_plane_points[3], cutting_plane_points[4], cutting_plane_points[5]],
-                # [cutting_plane_points[6], cutting_plane_points[7], cutting_plane_points[8]],0.0)
+                print("Clipping segmentation " + name)
+                cutting_plane_points = cutting_plane_points.flatten()
+                seg.clip([cutting_plane_points[0], cutting_plane_points[1], cutting_plane_points[2]],
+                [cutting_plane_points[3], cutting_plane_points[4],
+                    cutting_plane_points[5]],
+                [cutting_plane_points[6], cutting_plane_points[7], cutting_plane_points[8]], 0.0)
 
             """
             Grooming Step 9: Finding the largest bounding box
-            We want to crop all of the segmentations to be the same size, so we need to find 
-            the largest bounding box as this will contain all the segmentations. This requires 
+            We want to crop all of the segmentations to be the same size, so we need to find
+            the largest bounding box as this will contain all the segmentations. This requires
             loading all segmentation files at once.
             """
             # Compute bounding box - aligned segmentations are binary images, so an good iso_value is 0.5
@@ -461,7 +472,7 @@ def Run_Pipeline(args):
             """
             Grooming Step 10: Apply cropping and padding
             Now we need to loop over the segmentations and crop them to the size of the bounding box.
-            To avoid cropped segmentations to touch the image boundaries, we will crop then 
+            To avoid cropped segmentations to touch the image boundaries, we will crop then
             pad the segmentations.
                 - Crop to bounding box size
                 - Pad segmentations
@@ -475,12 +486,12 @@ def Run_Pipeline(args):
 
             """
             Grooming Step 11: Converting segmentations to smooth signed distance transforms.
-            The computeDT API needs an iso_value that defines the foreground-background interface, to create 
-            a smoother interface we first antialiasing the segmentation then compute the distance transform 
-            at the zero-level set. We then need to smooth the DT as it will have some remaining aliasing effect 
-            of binarization. 
+            The computeDT API needs an iso_value that defines the foreground-background interface, to create
+            a smoother interface we first antialiasing the segmentation then compute the distance transform
+            at the zero-level set. We then need to smooth the DT as it will have some remaining aliasing effect
+            of binarization.
             So the steps are:
-                - Antialias 
+                - Antialias
                 - Compute distance transform
                 - Apply smoothing
                 - Save the distance transform
@@ -497,31 +508,24 @@ def Run_Pipeline(args):
             # Save distance transforms
             dt_files = sw.utils.save_images(groom_dir + 'distance_transforms/', seg_list,
                                             names, extension='nrrd', compressed=False, verbose=True)
-               
-    """
-    ## OPTIMIZE : Particle Based Optimization
 
-    Now that we have the distance transform representation of data we create
+   print("\nStep 3. Optimize - Particle Based Optimization\n")
+    """
+    Step 3: OPTIMIZE - Particle Based Optimization
+
+    Now that we have the distance transform representation of data we create 
     the parameter files for the shapeworks particle optimization routine.
-    For more details on the plethora of parameters for shapeworks please refer to
-    '/Documentation/PDFs/ParameterDescription.pdf'
-
-    We provide two different mode of operations for the ShapeWorks particle opimization;
-    1- Single Scale model takes fixed number of particles and performs the optimization.
-    2- Multi scale model optimizes for different number of particles in hierarchical manner.
-    
-    For more detail about the optimization steps and parameters please refer to
-    '/docs/workflow/optimize.md'
-
-    First we need to create a dictionary for all the parameters required by these
-    optimization routines
+    For more details on the plethora of parameters for shapeworks please refer 
+    to docs/workflow/optimze.md
+    http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
     """
-    print("\nStep 4. Optimize - Particle Based Optimization\n")
+
+    # Make directory to save optimization output
     point_dir = output_directory + 'shape_models/'
     if not os.path.exists(point_dir):
         os.makedirs(point_dir)
-
-    parameterDictionary = {
+    # Create a dictionary for all the parameters required by optimization
+    parameter_dictionary = {
         "number_of_particles" : 1024,
         "use_normals": 0,
         "normal_weight": 10.0,
@@ -542,44 +546,29 @@ def Run_Pipeline(args):
         "verbosity" : 2,
         "use_statistics_in_init" : 0
     }
+     # If running a tiny test, reduce some parameters
     if args.tiny_test:
-        parameterDictionary["number_of_particles"] = 32
-        parameterDictionary["optimization_iterations"] = 25
-        parameterDictionary["iterations_per_split"] = 25
-
+        parameter_dictionary["number_of_particles"] = 32
+        parameter_dictionary["optimization_iterations"] = 25
+        parameter_dictionary["iterations_per_split"] = 25
+    # Run multiscale optimization unless single scale is specified
     if not args.use_single_scale:
-        parameterDictionary["use_shape_statistics_after"] = 64
-
-    """
-    Now we execute the particle optimization function.
-    """
-    [localPointFiles, worldPointFiles] = OptimizeUtils.runShapeWorksOptimize(point_dir, dt_files, parameterDictionary)
+        parameter_dictionary["use_shape_statistics_after"] = 64
+    # Execute the optimization function
+    [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
+        point_dir, dt_files, parameter_dictionary)
 
     if args.tiny_test:
         print("Done with tiny test")
         exit()
 
+    print("\nStep 4. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
     """
-    ## ANALYZE : Shape Analysis and Visualization
+    Step 4: ANALYZE - Shape Analysis and Visualization
 
-    Shapeworks yields relatively sparse correspondence models that may be inadequate to reconstruct
-    thin structures and high curvature regions of the underlying anatomical surfaces.
-    However, for many applications, we require a denser correspondence model, for example,
-    to construct better surface meshes, make more detailed measurements, or conduct biomechanical
-    or other simulations on mesh surfaces. One option for denser modeling is
-    to increase the number of particles per shape sample. However, this approach necessarily
-    increases the computational overhead, especially when modeling large clinical cohorts.
-
-    Here we adopt a template-deformation approach to establish an inter-sample dense surface correspondence,
-    given a sparse set of optimized particles. To avoid introducing bias due to the template choice, we developed
-    an unbiased framework for template mesh construction. The dense template mesh is then constructed
-    by triangulating the isosurface of the mean distance transform. This unbiased strategy will preserve
-    the topology of the desired anatomy  by taking into account the shape population of interest.
-    In order to recover a sample-specific surface mesh, a warping function is constructed using the
-    sample-level particle system and the mean/template particle system as control points.
-    This warping function is then used to deform the template dense mesh to the sample space.
-
-    Reconstruct the dense mean surface given the sparse correspondence model.
+    Now we launch studio to analyze the resulting shape model.
+    For more information about the analysis step, see docs/workflow/analyze.md
+    http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
     """
-    print("\nStep 5. Analysis - Reconstruct the dense mean surface given the sparse correspodence model.\n")
-    AnalyzeUtils.launchShapeWorksStudio(point_dir, dt_files, localPointFiles, worldPointFiles)
+    AnalyzeUtils.launchShapeWorksStudio(
+        point_dir, dt_files, local_point_files, world_point_files)
