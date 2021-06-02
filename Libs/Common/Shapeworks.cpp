@@ -44,7 +44,7 @@ Plane makePlane(const Point &p0, const Point &p1, const Point &p2)
   plane->SetOrigin(p0[0], p0[1], p0[2]);
   auto v0 = p1 - p0;
   auto v1 = p2 - p0;
-  auto n = crossProduct(v1, v0);
+  auto n = crossProduct(v0, v1);
   plane->SetNormal(n[0], n[1], n[2]);
 
   return plane;
