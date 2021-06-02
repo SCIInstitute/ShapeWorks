@@ -50,6 +50,20 @@ Plane makePlane(const Point &p0, const Point &p1, const Point &p2)
   return plane;
 }
 
+Point getOrigin(const Plane plane)
+{
+  double origin[3];
+  plane->GetOrigin(origin);
+  return Point({origin[0], origin[1], origin[2]});
+}
+
+Vector3 getNormal(const Plane plane)
+{
+  double normal[3];
+  plane->GetNormal(normal);
+  return makeVector({normal[0], normal[1], normal[2]});
+}
+
 template<>
 Vector3 negate(const Vector3 &v) { return makeVector({-v[0], -v[1], -v[2]}); }
 

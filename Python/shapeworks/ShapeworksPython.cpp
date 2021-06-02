@@ -404,10 +404,9 @@ PYBIND11_MODULE(shapeworks, m)
           std::vector<double>& p1,
           std::vector<double>& p2,
           const Image::PixelType val) {
-         return image.clip(Point({o[0], o[1], o[2]}),
-                           Point({p1[0], p1[1], p1[2]}),
-                           Point({p2[0], p2[1], p2[2]}),
-                           val);
+         return image.clip(makePlane(Point({o[0], o[1], o[2]}),
+                                     Point({p1[0], p1[1], p1[2]}),
+                                     Point({p2[0], p2[1], p2[2]})), val);
        },
        "sets values on the back side of cutting plane (containing three non-colinear points) to val (default 0.0)",
        "o"_a, "p1"_a, "p2"_a, "val"_a=0.0)
@@ -417,7 +416,7 @@ PYBIND11_MODULE(shapeworks, m)
           const std::vector<double>& n,
           std::vector<double>& q,
           const Image::PixelType val) {
-         return image.clip(makeVector({n[0], n[1], n[2]}), Point({q[0], q[1], q[2]}), val);
+         return image.clip(makePlane(Point({q[0], q[1], q[2]}), makeVector({n[0], n[1], n[2]})), val);
        },
        "sets values on the back side of cutting plane (normal n containing point p) to val (default 0.0)",
        "n"_a, "q"_a, "val"_a=0.0)

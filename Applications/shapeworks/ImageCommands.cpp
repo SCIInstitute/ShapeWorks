@@ -979,7 +979,7 @@ bool ClipImage::execute(const optparse::Values &options, SharedCommandData &shar
   Point p2({static_cast<double>(options.get("y1")), static_cast<double>(options.get("y2")), static_cast<double>(options.get("y3"))});
   Point p3({static_cast<double>(options.get("z1")), static_cast<double>(options.get("z2")), static_cast<double>(options.get("z3"))});
 
-  sharedData.image.clip(p1, p2, p3, static_cast<double>(options.get("value")));
+  sharedData.image.clip(makePlane(p1, p2, p3), static_cast<double>(options.get("value")));
   return true;
 }
 

@@ -774,28 +774,19 @@ Image& Image::crop(PhysicalRegion region, const int padding)
   return *this;
 }
 
-Image &Image::clip(const Point &o, const Point &p1, const Point &p2, const PixelType val)
+Image& Image::clip(const Plane plane, const PixelType val)
 {
-  // clipping plane normal n = (p1-o) x (p2-o)
-  Vector v1(makeVector({p1[0] - o[0], p1[1] - o[1], p1[2] - o[2]}));
-  Vector v2(makeVector({p2[0] - o[0], p2[1] - o[1], p2[2] - o[2]}));
-
-  return clip(crossProduct(v1, v2), o, val);
-}
-
-Image& Image::clip(const Vector &n, const Point &q, const PixelType val)
-{
-  if (!axis_is_valid(n)) { throw std::invalid_argument("Invalid clipping plane (zero length normal)"); }
+  if (!axis_is_valid(getNormal(plane))) { throw std::invalid_argument("Invalid clipping plane (zero length normal)"); }
 
   itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
   while (!iter.IsAtEnd())
   {
-    Vector pq(logicalToPhysical(iter.GetIndex()) - q);
+    Vector pq(logicalToPhysical(iter.GetIndex()) - getOrigin(plane));
 
     // if n dot pq is < 0, point q is on the back side of the plane.
-    if (n * pq < 0.0)
+    if (getNormal(plane) * pq < 0.0)
       iter.Set(val);
-      
+
     ++iter;
   }
 
