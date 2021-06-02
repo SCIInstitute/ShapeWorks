@@ -18,6 +18,12 @@ import setupenv
 import shutil
 import shapeworks as sw
 
+#check if current directory is writable
+current_dir = os.getcwd()
+if not os.access(current_dir,os.W_OK):
+	raise OSError("You don't have write permission in the current directory. Please copy the Examples folder to a different location to run the use cases")
+
+
 # check that required modules are found
 try:
     import termcolor
