@@ -598,8 +598,8 @@ PYBIND11_MODULE(shapeworks, m)
                 py::cpp_function([](PhysicalRegion &region) -> py::array_t<double> {
                     py::str dummyDataOwner; // pretend the data has an owner and it won't be copied (pybind trick)
                     py::array arr(py::dtype::of<Point::ValueType>(),                // dtype
-                                  std::vector<long>({3}),                           // shape
-                                  std::vector<long>({sizeof(Point::ValueType)}),    // spacing
+                                  std::vector<ssize_t>({3}),                           // shape
+                                  std::vector<ssize_t>({sizeof(Point::ValueType)}),    // spacing
                                   region.min.GetDataPointer(),                      // data ptr
                                   dummyDataOwner);     // "inspire" py::array not to copy data
                     return arr;
@@ -617,8 +617,8 @@ PYBIND11_MODULE(shapeworks, m)
                 py::cpp_function([](PhysicalRegion &region) -> py::array_t<double> {
                     py::str dummyDataOwner; // pretend the data has an owner and it won't be copied (pybind trick)
                     py::array arr(py::dtype::of<Point::ValueType>(),                // dtype
-                                  std::vector<long>({3}),                           // shape
-                                  std::vector<long>({sizeof(Point::ValueType)}),    // spacing
+                                  std::vector<ssize_t>({3}),                           // shape
+                                  std::vector<ssize_t>({sizeof(Point::ValueType)}),    // spacing
                                   region.max.GetDataPointer(),                      // data ptr
                                   dummyDataOwner);     // "inspire" py::array not to copy data
                     return arr;
@@ -701,8 +701,8 @@ PYBIND11_MODULE(shapeworks, m)
                 py::cpp_function([](IndexRegion &region) -> py::array_t<Coord::IndexValueType> {
                     py::str dummyDataOwner; // pretend the data has an owner and it won't be copied (pybind trick)
                     py::array arr(py::dtype::of<Coord::IndexValueType>(),             // dtype
-                                  std::vector<long>({3}),                             // shape
-                                  std::vector<long>({sizeof(Coord::IndexValueType)}), // spacing
+                                  std::vector<ssize_t>({3}),                             // shape
+                                  std::vector<ssize_t>({sizeof(Coord::IndexValueType)}), // spacing
                                   region.min.data(),                                  // data ptr
                                   dummyDataOwner);     // "inspire" py::array not to copy data
                     return arr;
@@ -722,8 +722,8 @@ PYBIND11_MODULE(shapeworks, m)
                 py::cpp_function([](IndexRegion &region) -> py::array_t<Coord::IndexValueType> {
                     py::str dummyDataOwner; // pretend the data has an owner and it won't be copied (pybind trick)
                     py::array arr(py::dtype::of<Coord::IndexValueType>(),             // dtype
-                                  std::vector<long>({3}),                             // shape
-                                  std::vector<long>({sizeof(Coord::IndexValueType)}), // spacing
+                                  std::vector<ssize_t>({3}),                             // shape
+                                  std::vector<ssize_t>({sizeof(Coord::IndexValueType)}), // spacing
                                   region.max.data(),                                  // data ptr
                                   dummyDataOwner);     // "inspire" py::array not to copy data
                     return arr;
