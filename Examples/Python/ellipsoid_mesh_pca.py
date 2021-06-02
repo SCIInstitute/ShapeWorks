@@ -1,12 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-====================================================================
-Full Example Pipeline for Statistical Shape Modeling with ShapeWorks
-====================================================================
-
-In this example we provide a full pipeline with an example dataset of axis 
-aligned ellipsoid meshes.
-"""
 import os
 from GroomUtils import *
 from OptimizeUtils import *
@@ -19,102 +10,74 @@ import pandas as pd
 import seaborn as sns
 
 
-def violinplot(pcadata):
+def violinplot(loadings,cumulativeVariance,shape_models_dir):
+
+    
+    print(cumulativeVariance)
+    minDims = np.where(cumulativeVariance <=99)[0]
+    #if the first mode is the most dominant, minDims will be empty
+    if(minDims.size==0):
+        minDims = 1
+    else:
+        minDims = minDims[-1]+1
+    print("Number of modes covering 99% varaince - ", minDims)
+    
+    loadings = loadings[:,:minDims]
     dims = []
-    sample = []
-    # pcadata = pcadata[:,:numpca]
-    for i in range(len(pcadata)):
-        temp = []
-        for j in range(np.shape(pcadata)[1]):
-
-            dims.append(j)
-            
+    for i in range(len(loadings)):
+        for j in range(np.shape(loadings)[1]):
+            dims.append(j+1)
             
 
-    pcadata = pcadata.flatten()
-    # print(dims)
-    print(len(pcadata),len(dims))
-    data = {'PCA Mode':dims, "PCA Score":pcadata}
+    loadings = loadings.flatten()
+    data = {'PCA Mode':dims, "PCA Score":loadings}
     df = pd.DataFrame(data) 
-    print(df)
-    plt.figure(figsize=(10,4),dpi=300)
-    sns.set_context("paper", rc={"font.size":12,"axes.titlesize":12,"axes.labelsize":12})   
-    ax = sns.violinplot(x=df['PCA Mode']+1, y=df['PCA Score'],\
+    plt.figure(figsize=(6,4),dpi=300)  
+    ax = sns.violinplot(x='PCA Mode', y='PCA Score',\
                         data=df, palette="cool_r", split=True, scale="area")
-    plt.show()
+    fig = plt.gcf()
+    plt.savefig(shape_models_dir+"pcaLoadings_violin_plot.png")
+    plt.show(block=False)
+    plt.close(fig)
+
+    print("Figure saved in directory -" + shape_models_dir)
+    print()
+
+def plot_pca_metrics(cumulativeVariance,explainedVariance,shape_models_dir):
+    N = len(cumulativeVariance) 
+    X = np.array(list(range(N))) + 1
+    plt.bar(X, explainedVariance)
+    plt.plot(X,cumulativeVariance,linewidth=4.0,c='black')
+    fig = plt.gcf()
+    fig.set_size_inches(10, 10)
+    plt.title('Variance Plot')
+    plt.xlabel('Mode')
+    plt.ylabel('Explained Variance')
+    plt.xticks(X)
+    plt.grid()
+    plt.savefig(shape_models_dir+"variance_plot.png")
+    plt.show(block=False)
+    plt.close(fig)
+
+    print("Figure saved in directory -" + shape_models_dir)
+    print()
 
 def Run_Pipeline(args):
-    """
-    If ellipsoid.zip is not there it will be downloaded from the ShapeWorks data portal.
-    femur.zip will be saved in the /Data folder and the data will be extracted 
-    in a newly created directory Output/ellipsoid_mesh.
-    """
-    print("\nStep 1. Extract Data\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
 
-    datasetName = "ellipsoid_1mode_aligned"
-    outputDirectory = "Output/ellipsoid_mesh/"
-    if not os.path.exists(outputDirectory):
-        os.makedirs(outputDirectory)
-    #If tiny_test then download subset of the data
+    ellipsoids_dir = 'Output/ellipsoid'
+    shape_models_dir = ellipsoids_dir+'/shape_models/128'
     if args.tiny_test:
-        args.use_single_scale = 1
-        CommonUtils.download_subset(args.use_case,datasetName, outputDirectory)
-        meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))[:3]
-    #else download the entire dataset
-    else:
-        CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
-        meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))
-    
-    # Select data if using subsample
-    if args.use_subsample:
-        sample_idx = samplemesh(meshFiles, int(args.num_subsample))
-        meshFiles = [meshFiles[i] for i in sample_idx]
+        shape_models_dir = ellipsoids_dir+'/shape_models/32'
+    if not os.path.exists(shape_models_dir):
+        print(f'Ellipsoids output not found in {shape_models_dir}. Please run the ellipsoid use case first.', file=sys.stderr)
+        sys.exit(1)
 
-    pointDir = outputDirectory + 'shape_models/'
-    if not os.path.exists(pointDir):
-        os.makedirs(pointDir)
-
-    parameterDictionary = {
-        "number_of_particles" : 128,
-        "use_normals": 0,
-        "normal_weight": 10.0,
-        "checkpointing_interval" : 200,
-        "keep_checkpoints" : 0,
-        "iterations_per_split" : 500,
-        "optimization_iterations" : 500,
-        "starting_regularization" : 100,
-        "ending_regularization" : 0.1,
-        "recompute_regularization_interval" : 2,
-        "domains_per_shape" : 1,
-        "domain_type" : 'mesh',
-        "relative_weighting" : 10,
-        "initial_relative_weighting" : 0.01,
-        "procrustes_interval" : 0,
-        "procrustes_scaling" : 0,
-        "save_init_splits" : 0,
-        "verbosity" : 3
-      }
-
-    if args.tiny_test:
-        parameterDictionary["number_of_particles"] = 32
-        parameterDictionary["optimization_iterations"] = 25
-
-    if not args.use_single_scale:
-        parameterDictionary["use_shape_statistics_after"] = 32
+    localPointFiles = glob.glob(shape_models_dir + "/*local.particles")
+    worldPointFiles = glob.glob(shape_models_dir + "/*world.particles")
 
 
-    """
-    Now we execute a single scale particle optimization function.
-    """
-    [localPointFiles, worldPointFiles] = runShapeWorksOptimize(pointDir, meshFiles, parameterDictionary)
 
-    # if args.tiny_test:
-    #     print("Done with tiny test")
-    #     exit()
-
-    print("\nStep 5. Analysis - ShapeWorks PCA Python API\n")
+    print("\nAnalysis - ShapeWorks PCA Python API\n")
     
     # Read the world/local particle files
 
@@ -129,8 +92,8 @@ def Run_Pipeline(args):
     shapeStatistics.principalComponentProjections()
     pcaLoadings = shapeStatistics.pcaLoadings()
 
+    np.savetxt(shape_models_dir+"pca_loadings.txt",pcaLoadings)
     
-    # violinplot(pcaLoadings)
     
     #Calculate the variance explained by each mode using the eigen values
     eigvals = np.array(shapeStatistics.eigenValues())
@@ -139,25 +102,11 @@ def Run_Pipeline(args):
     
     # Cummulative variance
     cumulativeVariance = np.array(shapeStatistics.percentVarByMode())*100
+    
+    if len(localPointFiles)>3 and not args.tiny_test:
+        violinplot(pcaLoadings,cumulativeVariance,shape_models_dir)
 
-    N = len(cumulativeVariance) 
-    X = np.array(list(range(N))) + 1
-    plt.bar(X, explainedVariance)
-    plt.plot(X,cumulativeVariance,linewidth=4.0,c='black')
-    fig = plt.gcf()
-    fig.set_size_inches(10, 10)
-    plt.title('Variance Plot')
-    plt.xlabel('Mode')
-    plt.ylabel('Explained Variance')
-    plt.xticks(X)
-    plt.grid()
-    plt.savefig(pointDir+"variance_plot.png")
-    plt.show(block=False)
-    plt.pause(3)
-    plt.close(fig)
-
-    print("Figure saved in directory -" + pointDir)
-    print()
+        plot_pca_metrics(cumulativeVariance,explainedVariance,shape_models_dir)
 
 
     
