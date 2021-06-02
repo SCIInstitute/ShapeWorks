@@ -109,16 +109,15 @@ PYBIND11_MODULE(shapeworks, m)
   // Image
   py::class_<Image>(m, "Image")
   .def(py::init<const std::string &>())
-  .def(py::init<Image::ImageType::Pointer>())
+  .def(py::init<const Image&>())
 
   // Image constructor from numpy array (copies array, ensuring )
   .def(py::init
        ([](py::array& np_array) { 
-          std::cout << "Image constructor from numpy array (copies array)\n";
-
           // get input array info
           auto info = np_array.request();
 
+#if 0
           /*
           struct buffer_info {
             void *ptr;
@@ -129,6 +128,7 @@ PYBIND11_MODULE(shapeworks, m)
             std::vector<py::ssize_t> strides;
           };
           */
+
           std::cout << "buffer info: \n"
                     << "\tinfo.itemsize: " << info.itemsize << std::endl
                     << "\tinfo.format: " << info.format << std::endl
@@ -144,36 +144,41 @@ PYBIND11_MODULE(shapeworks, m)
           std::cout << "]\n";
           std::cout << "writeable: " << np_array.writeable() << std::endl
                     << "owns data: " << np_array.owndata() << std::endl;
-
+#endif
           
-          // verify info type is same as Image::PixelType (the reason we don't simply specify
-          // py::array_t<float> as a parameter is to show this error if another type is sent)
+          // Verify info type is same as Image::PixelType (currently hard-coded as float). The
+          // reasons we don't simply specify py::array_t<float> as a parameter are:
+          // - to show an error if another type is sent, and
+          // - to ensure the array isn't silently cast, the default of pybind11.
           if (info.format != py::format_descriptor<Image::PixelType>::format()) {
             throw std::invalid_argument("array must be of dtype.float32");
           }
-          
-          // verify it's 3d
-          if (info.ndim != 3) {
-            throw std::invalid_argument("array must be 3d (ndim != 3)");
+            
+          // verify it's 2d or 3d
+          if (info.ndim < 2 || info.ndim > 3) {
+            throw std::invalid_argument(std::string("array must be 2d or 3d, but ndim = ") + std::to_string(info.ndim));
           }
 
           // verify data is densely packed by checking strides is same as shape
-          py::ssize_t scalar_size = 4; // is_float ? 4 : 8; // if/when we can handle both
+          const py::ssize_t scalar_size = sizeof(Image::PixelType);
           std::vector<py::ssize_t> strides{info.shape[2]*info.shape[1]*scalar_size,
                                            info.shape[2]*scalar_size,
                                            scalar_size};  
           for (int i = 0; i < info.ndim; i++) {
-            std::cout << "expected: " << strides[i] << ", actual: " << info.strides[i] << std::endl;
-            if (info.strides[i] != strides[i])
+            if (info.strides[i] != strides[i]) {
+              std::cerr << "expected: " << strides[i] << ", actual: " << info.strides[i] << std::endl;
               throw std::invalid_argument("array must be densely packed");
+            }
           }
 
-          // not sure how to tell if data is row- vs col- order, maybe let them specify
+          // if (dtype.float32) just steal array from python (#966):
+          // - np_array owners data = false
+          // - itk importer pass ownership = true
 
           // create itk importer to copy data into image
           using ImportType = itk::ImportImageFilter<Image::PixelType, 3>;
           auto importer = ImportType::New();
-          importer->SetImportPointer(static_cast<float *>(info.ptr), np_array.size(), false /*pass ownership*/);
+          importer->SetImportPointer(static_cast<Image::PixelType *>(info.ptr), np_array.size(), false /*pass ownership*/);
 
           ImportType::SizeType size;            // i.e., Dims
           size[0] = np_array.shape()[2];
@@ -592,10 +597,10 @@ PYBIND11_MODULE(shapeworks, m)
                 // read (return special array so members of returned point can be modified, e.g., min[0] = 1.0)
                 py::cpp_function([](PhysicalRegion &region) -> py::array_t<double> {
                     py::str dummyDataOwner; // pretend the data has an owner and it won't be copied (pybind trick)
-                    py::array arr(py::dtype::of<Point::ValueType>(),                // dtype
-                                  std::vector<ssize_t>({3}),                           // shape
-                                  std::vector<ssize_t>({sizeof(Point::ValueType)}),    // spacing
-                                  region.min.GetDataPointer(),                      // data ptr
+                    py::array arr(py::dtype::of<Point::ValueType>(),      // dtype
+                                  std::vector<ssize_t>({3}),              // shape
+                                  std::vector<ssize_t>(),                 // spacing
+                                  region.min.GetDataPointer(),            // data ptr
                                   dummyDataOwner);     // "inspire" py::array not to copy data
                     return arr;
                   }, py::return_value_policy::move),
@@ -611,10 +616,10 @@ PYBIND11_MODULE(shapeworks, m)
                 // read (return special array so members of returned point can be modified, e.g., max[0] = 1.0)
                 py::cpp_function([](PhysicalRegion &region) -> py::array_t<double> {
                     py::str dummyDataOwner; // pretend the data has an owner and it won't be copied (pybind trick)
-                    py::array arr(py::dtype::of<Point::ValueType>(),                // dtype
-                                  std::vector<ssize_t>({3}),                           // shape
-                                  std::vector<ssize_t>({sizeof(Point::ValueType)}),    // spacing
-                                  region.max.GetDataPointer(),                      // data ptr
+                    py::array arr(py::dtype::of<Point::ValueType>(),      // dtype
+                                  std::vector<ssize_t>({3}),              // shape
+                                  std::vector<ssize_t>(),                 // spacing
+                                  region.max.GetDataPointer(),            // data ptr
                                   dummyDataOwner);     // "inspire" py::array not to copy data
                     return arr;
                   }, py::return_value_policy::move),
@@ -695,10 +700,10 @@ PYBIND11_MODULE(shapeworks, m)
                 // read (return special array so members of returned point can be modified, e.g., min[0] = 1.0)
                 py::cpp_function([](IndexRegion &region) -> py::array_t<Coord::IndexValueType> {
                     py::str dummyDataOwner; // pretend the data has an owner and it won't be copied (pybind trick)
-                    py::array arr(py::dtype::of<Coord::IndexValueType>(),             // dtype
-                                  std::vector<ssize_t>({3}),                             // shape
-                                  std::vector<ssize_t>({sizeof(Coord::IndexValueType)}), // spacing
-                                  region.min.data(),                                  // data ptr
+                    py::array arr(py::dtype::of<Coord::IndexValueType>(), // dtype
+                                  std::vector<ssize_t>({3}),              // shape
+                                  std::vector<ssize_t>(),                 // spacing
+                                  region.min.data(),                      // data ptr
                                   dummyDataOwner);     // "inspire" py::array not to copy data
                     return arr;
                   }, py::return_value_policy::move),
@@ -716,10 +721,10 @@ PYBIND11_MODULE(shapeworks, m)
                 // read (return special array so members of returned point can be modified, e.g., max[0] = 1.0)
                 py::cpp_function([](IndexRegion &region) -> py::array_t<Coord::IndexValueType> {
                     py::str dummyDataOwner; // pretend the data has an owner and it won't be copied (pybind trick)
-                    py::array arr(py::dtype::of<Coord::IndexValueType>(),             // dtype
-                                  std::vector<ssize_t>({3}),                             // shape
-                                  std::vector<ssize_t>({sizeof(Coord::IndexValueType)}), // spacing
-                                  region.max.data(),                                  // data ptr
+                    py::array arr(py::dtype::of<Coord::IndexValueType>(), // dtype
+                                  std::vector<ssize_t>({3}),              // shape
+                                  std::vector<ssize_t>(),                 // spacing
+                                  region.max.data(),                      // data ptr
                                   dummyDataOwner);     // "inspire" py::array not to copy data
                     return arr;
                   }, py::return_value_policy::move),
@@ -896,6 +901,15 @@ PYBIND11_MODULE(shapeworks, m)
        "clips a mesh using a cutting plane",
        "point"_a,
        "normal"_a)
+
+  .def("clip",
+       [](Mesh& mesh, const std::vector<double>& o, const std::vector<double>& p1, const std::vector<double>& p2) -> decltype(auto) {
+         return mesh.clip(makePlane(Point({o[0], o[1], o[2]}), Point({p1[0], p1[1], p1[2]}), Point({p2[0], p2[1], p2[2]})));
+       },
+       "clips a mesh using a cutting plane",
+       "o"_a,
+       "p1"_a,
+       "p2"_a)
 
   .def("translate",
        [](Mesh& mesh, const std::vector<double>& v) -> decltype(auto) {

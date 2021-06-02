@@ -38,6 +38,18 @@ Plane makePlane(const Point &p, const Vector3 &n)
   return plane;
 }
 
+Plane makePlane(const Point &p0, const Point &p1, const Point &p2)
+{
+  Plane plane = Plane::New();
+  plane->SetOrigin(p0[0], p0[1], p0[2]);
+  auto v0 = p1 - p0;
+  auto v1 = p2 - p0;
+  auto n = crossProduct(v1, v0);
+  plane->SetNormal(n[0], n[1], n[2]);
+
+  return plane;
+}
+
 template<>
 Vector3 negate(const Vector3 &v) { return makeVector({-v[0], -v[1], -v[2]}); }
 

@@ -46,6 +46,7 @@ TransformPtr createTransform(const Matrix33 &mat, const Vector3 &translate = mak
 
 /// make a plane
 Plane makePlane(const Point &p, const Vector3 &n);
+Plane makePlane(const Point &p0, const Point &p1, const Point &p2);
 
 /// Affine transforms are used for many Image manipulation commands
 using AffineTransform    = itk::AffineTransform<double, 3>;
