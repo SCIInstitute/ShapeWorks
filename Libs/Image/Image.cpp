@@ -909,9 +909,9 @@ Coord Image::physicalToLogical(const Point3 &p) const
   return image->TransformPhysicalPointToIndex(p);
 }
 
-Mesh Image::getMesh(const Image& image, PixelType isoValue)
+Mesh Image::toMesh(PixelType isoValue) const
 {
-  auto vtkImage = image.getVTKImage();
+  auto vtkImage = getVTKImage();
 
   vtkContourFilter *targetContour = vtkContourFilter::New();
   targetContour->SetInputData(vtkImage);
@@ -930,8 +930,8 @@ TransformPtr Image::createCenterOfMassTransform()
 
 TransformPtr Image::createRigidRegistrationTransform(const Image &target_dt, float isoValue, unsigned iterations)
 {
-  Mesh sourceContour = Image::getMesh(*this, isoValue);
-  Mesh targetContour = Image::getMesh(target_dt, isoValue);
+  Mesh sourceContour = toMesh(isoValue);
+  Mesh targetContour = target_dt.toMesh(isoValue);
   const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createICPTransform(sourceContour, targetContour, Mesh::Rigid, iterations));
   return shapeworks::createTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
 }
