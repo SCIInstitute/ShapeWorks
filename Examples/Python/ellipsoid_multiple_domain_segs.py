@@ -89,6 +89,8 @@ def Run_Pipeline(args):
             print('Loading: ' + shape_filename)
             # get current shape name
             shape_names.append(shape_filename.split('/')[-1].replace('.nrrd', ''))
+
+            # get domain identifiers
             name = shape_filename.split('/')[-1].replace('.nrrd', '')
             domain_ids.append(name.split(".")[0].split("_")[-1])
             
@@ -142,16 +144,16 @@ def Run_Pipeline(args):
                 (Because this step involves interpolation, we must antialias before and 
                 binarize after as we did when resampling.)
             """
-            print('Center of mass alignment: ' + shape_name)
-            # compute the center of mass of this segmentation
-            shape_center = shape_seg.centerOfMass()
-            # get the center of the image domain
-            image_center = shape_seg.center()
-            # define the translation to move the shape to its center
-            translationVector = image_center - shape_center
-            # perform antialias-translate-binarize
-            shape_seg.antialias(antialias_iterations).translate(
-                translationVector).binarize()
+            # print('Center of mass alignment: ' + shape_name)
+            # # compute the center of mass of this segmentation
+            # shape_center = shape_seg.centerOfMass()
+            # # get the center of the image domain
+            # image_center = shape_seg.center()
+            # # define the translation to move the shape to its center
+            # translationVector = image_center - shape_center
+            # # perform antialias-translate-binarize
+            # shape_seg.antialias(antialias_iterations).translate(
+            #     translationVector).binarize()
             
 
 
@@ -224,113 +226,132 @@ def Run_Pipeline(args):
             shape_seg.binarize()
 
 
-    #     """
-    #     Grooming Step 5: Finding the largest bounding box
-    #     We want to crop all of the segmentations to be the same size, so we need to find 
-    #     the largest bounding box as this will contain all the segmentations. This requires 
-    #     loading all segmentation files at once.
-    #     """
-    #     # Compute bounding box - aligned segmentations are binary images, so an good iso_value is 0.5
-    #     iso_value = 0.5
-    #     segs_bounding_box = sw.ImageUtils.boundingBox(
-    #         shape_seg_list, iso_value)
+        """
+        Grooming Step 5: Finding the largest bounding box
+        We want to crop all of the segmentations to be the same size, so we need to find 
+        the largest bounding box as this will contain all the segmentations. This requires 
+        loading all segmentation files at once.
+        """
+        # Compute bounding box - aligned segmentations are binary images, so an good iso_value is 0.5
 
-    #     """
-    #     Grooming Step 6: Apply cropping and padding
-    #     Now we need to loop over the segmentations and crop them to the size of the bounding box.
-    #     To avoid cropped segmentations to touch the image boundaries, we will crop then 
-    #     pad the segmentations.
-    #         - Crop to bounding box size
-    #         - Pad segmentations
-    #     """
+        #for domain 1
+        shape_seg_list_domain1 = [shape_seg_list[i] for i in domain1_indx]
+        shape_name_domain1 = [shape_names[i] for i in domain1_indx]
+        iso_value = 0.5
+        segs_bounding_box_domain1 = sw.ImageUtils.boundingBox(
+            shape_seg_list_domain1, iso_value)
 
-    #     # parameters for padding
-    #     padding_size = 10  # number of voxels to pad for each dimension
-    #     padding_value = 0  # the constant value used to pad the segmentations
-    #     # loop over segs to apply cropping and padding
-    #     for shape_seg, shape_name in zip(shape_seg_list, shape_names):
-    #         print('Cropping & padding segmentation: ' + shape_name)
-    #         shape_seg.crop(segs_bounding_box).pad(padding_size, padding_value)
+       	#for domain 2
+        shape_seg_list_domain2 = [shape_seg_list[i] for i in domain2_indx]
+        shape_name_domain2 = [shape_names[i] for i in domain2_indx]
+        iso_value = 0.5
+        segs_bounding_box_domain2 = sw.ImageUtils.boundingBox(
+            shape_seg_list_domain2, iso_value)
 
-    #     """
-    #     Grooming Step 7: Converting segmentations to smooth signed distance transforms.
-    #     The computeDT API needs an iso_value that defines the foreground-background interface, to create 
-    #     a smoother interface we first antialiasing the segmentation then compute the distance transform 
-    #     at the zero-level set. We then need to smooth the DT as it will have some remaining aliasing effect 
-    #     of binarization. 
-    #     So the steps are:
-    #         - Antialias 
-    #         - Compute distance transform
-    #         - Apply smoothing
-    #         - Save the distance transform
-    #     """
+        """
+        Grooming Step 6: Apply cropping and padding
+        Now we need to loop over the segmentations and crop them to the size of the bounding box.
+        To avoid cropped segmentations to touch the image boundaries, we will crop then 
+        pad the segmentations.
+            - Crop to bounding box size
+            - Pad segmentations
+        """
 
-    #     # Define distance transform parameters
-    #     iso_value = 0
-    #     sigma = 1.3
-    #     # Loop over segs and compute smooth DT
-    #     for shape_seg, shape_name in zip(shape_seg_list, shape_names):
-    #         print('Compute DT for segmentation: ' + shape_name)
-    #         shape_seg.antialias(antialias_iterations).computeDT(
-    #             iso_value).gaussianBlur(sigma)
-    #     # Save distance transforms
-    #     dt_files = sw.utils.save_images(groom_dir + 'distance_transforms/', shape_seg_list,
-    #                                     shape_names, extension='nrrd', compressed=False, verbose=True)
+        # parameters for padding
+        padding_size = 10  # number of voxels to pad for each dimension
+        padding_value = 0  # the constant value used to pad the segmentations
+        # loop over segs to apply cropping and padding
+        i = 0 
+        for shape_seg, shape_name,domain in zip(shape_seg_list, shape_names,domain_ids):
+            if(domain=='d1'):
+                segs_bounding_box = segs_bounding_box_domain1
+            elif(domain=='d2'):
+                segs_bounding_box = segs_bounding_box_domain2
+            print('Cropping & padding segmentation: ' + shape_name)
 
-    # print("\nStep 3. Optimize - Particle Based Optimization\n")
-    # """
-    # Step 3: OPTIMIZE - Particle Based Optimization
+            shape_seg.crop(segs_bounding_box).pad(padding_size, padding_value)
+            shape_seg.write(groom_dir+"groomed_" + str(i)+".nrrd")
+            i = i+1
 
-    # Now that we have the distance transform representation of data we create 
-    # the parameter files for the shapeworks particle optimization routine.
-    # For more details on the plethora of parameters for shapeworks please refer 
-    # to docs/workflow/optimze.md
-    # http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
-    # """
+        """
+        Grooming Step 7: Converting segmentations to smooth signed distance transforms.
+        The computeDT API needs an iso_value that defines the foreground-background interface, to create 
+        a smoother interface we first antialiasing the segmentation then compute the distance transform 
+        at the zero-level set. We then need to smooth the DT as it will have some remaining aliasing effect 
+        of binarization. 
+        So the steps are:
+            - Antialias 
+            - Compute distance transform
+            - Apply smoothing
+            - Save the distance transform
+        """
 
-    # # Make directory to save optimization output
-    # point_dir = output_directory + 'shape_models/'
-    # if not os.path.exists(point_dir):
-    #     os.makedirs(point_dir)
-    # # Create a dictionary for all the parameters required by optimization
-    # # Create a dictionary for all the parameters required by optimization
-    # parameter_dictionary = {
-    #     "number_of_particles" : [512,512],
-    #     "use_normals": [0,0],
-    #     "normal_weight": [1.0,1.0],
-    #     "checkpointing_interval" : 200,
-    #     "keep_checkpoints" : 0,
-    #     "iterations_per_split" : 500,
-    #     "optimization_iterations" : 500,
-    #     "starting_regularization" :100,
-    #     "ending_regularization" : 0.5,
-    #     "recompute_regularization_interval" : 2,
-    #     "domains_per_shape" : 2,
-    #     "domain_type" : 'mesh',
-    #     "relative_weighting" : 1, #10 mesh, # 1 for segmentation images
-    #     "initial_relative_weighting" : 0.1,
-    #     "procrustes_interval" : 0,
-    #     "procrustes_scaling" : 0,
-    #     "save_init_splits" : 0,
-    #     "verbosity" : 3
+        # Define distance transform parameters
+        iso_value = 0
+        sigma = 1.3
+        # Loop over segs and compute smooth DT
+        for shape_seg, shape_name in zip(shape_seg_list, shape_names):
+            print('Compute DT for segmentation: ' + shape_name)
+            shape_seg.antialias(antialias_iterations).computeDT(
+                iso_value).gaussianBlur(sigma)
+        # Save distance transforms
+        dt_files = sw.utils.save_images(groom_dir + 'distance_transforms/', shape_seg_list,
+                                        shape_names, extension='nrrd', compressed=False, verbose=True)
 
-    #   }
+    print("\nStep 3. Optimize - Particle Based Optimization\n")
+    """
+    Step 3: OPTIMIZE - Particle Based Optimization
+
+    Now that we have the distance transform representation of data we create 
+    the parameter files for the shapeworks particle optimization routine.
+    For more details on the plethora of parameters for shapeworks please refer 
+    to docs/workflow/optimze.md
+    http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
+    """
+
+    # Make directory to save optimization output
+    point_dir = output_directory + 'shape_models/'
+    if not os.path.exists(point_dir):
+        os.makedirs(point_dir)
+    # Create a dictionary for all the parameters required by optimization
+    # Create a dictionary for all the parameters required by optimization
+    parameter_dictionary = {
+        "number_of_particles" : [512,512],
+        "use_normals": [0,0],
+        "normal_weight": [1.0,1.0],
+        "checkpointing_interval" : 200,
+        "keep_checkpoints" : 0,
+        "iterations_per_split" : 500,
+        "optimization_iterations" : 500,
+        "starting_regularization" :100,
+        "ending_regularization" : 0.5,
+        "recompute_regularization_interval" : 2,
+        "domains_per_shape" : 2,
+        "domain_type" : 'image',
+        "relative_weighting" : 1, #10 mesh, # 1 for segmentation images
+        "initial_relative_weighting" : 0.1,
+        "procrustes_interval" : 0,
+        "procrustes_scaling" : 0,
+        "save_init_splits" : 0,
+        "verbosity" : 3
+
+      }
 
 
-    # # Execute the optimization function
-    # [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
-    #     point_dir, dt_files, parameter_dictionary)
+    # Execute the optimization function
+    [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(
+        point_dir, dt_files, parameter_dictionary)
 
 
 
-    # print("\nStep 4. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
-    # """
-    # Step 4: ANALYZE - Shape Analysis and Visualization
+    print("\nStep 4. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
+    """
+    Step 4: ANALYZE - Shape Analysis and Visualization
 
-    # Now we launch studio to analyze the resulting shape model.
-    # For more information about the analysis step, see docs/workflow/analyze.md
-    # http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
-    # """
-    # domains_per_shape = 2
-    # AnalyzeUtils.launchShapeWorksStudio(
-    #     point_dir, dt_files, local_point_files, world_point_files,domains_per_shape)
+    Now we launch studio to analyze the resulting shape model.
+    For more information about the analysis step, see docs/workflow/analyze.md
+    http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
+    """
+    domains_per_shape = 2
+    AnalyzeUtils.launchShapeWorksStudio(
+        point_dir, dt_files, local_point_files, world_point_files,domains_per_shape)
