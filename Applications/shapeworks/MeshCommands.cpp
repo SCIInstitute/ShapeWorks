@@ -207,9 +207,9 @@ void Decimate::buildParser()
   const std::string desc = "brief description of command"; // TODO: add description
   parser.prog(prog).description(desc);
 
-  parser.add_option("--reduction").action("store").type("double").set_default(0.0).help("Description of optionName [default: %default]."); // TODO: add description
-  parser.add_option("--angle").action("store").type("double").set_default(0.0).help("Angle in degrees [default: %default].");
-  parser.add_option("--preservetopology").action("store").type("bool").set_default(false).help("Whether to preserve topology [default: false].");
+  parser.add_option("--reduction").action("store").type("double").set_default(0.5).help("Percent reduction of total number of polygons [default: %default].");
+  parser.add_option("--angle").action("store").type("double").set_default(15.0).help("Necessary angle (in degrees) between two trianges to warrant keeping them separate [default: %default].");
+  parser.add_option("--preservetopology").action("store").type("bool").set_default(true).help("Whether to preserve topology [default: false].");
 
   Command::buildParser();
 }
