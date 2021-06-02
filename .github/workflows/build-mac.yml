@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - release_v*
     tags:
     - '*'
   pull_request:
@@ -12,6 +13,7 @@ env:
   CCACHE_VERSION: 3.7.7
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: RelWithDebInfo
+  SW_PORTAL_LOGIN: ${{ secrets.PORTAL_LOGIN }}
   
 jobs:
   build:
@@ -73,7 +75,7 @@ jobs:
         key: QtCache-mac
 
     - name: Install Qt
-      uses: jurplel/install-qt-action@v2.11.1
+      uses: jurplel/install-qt-action@v2.13.0
       with:
         version: "5.9.9"
         cached: ${{ steps.cache-qt.outputs.cache-hit }}

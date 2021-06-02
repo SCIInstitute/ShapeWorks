@@ -159,6 +159,8 @@ public:
   PointType GetTransformedPosition(unsigned long int k, unsigned int d=0) const
   {    return this->TransformPoint(m_Positions[d]->operator[](k),
                                   m_Transforms[d] * m_PrefixTransforms[d]);  }
+  PointType GetPrefixTransformedPosition(unsigned long int k, unsigned int d=0) const
+  {    return this->TransformPoint(m_Positions[d]->operator[](k), m_PrefixTransforms[d]); }
 
   /** Doubles the number of particles of the system by
       splitting each particle into 2 particles.  Each new particle position is
@@ -168,7 +170,7 @@ public:
 
   void SplitAllParticles(double epsilon, int threadId=0);
   void SplitParticle(double epsilon, unsigned int idx,  unsigned int d=0, int threadId=0);
-  void AdvancedAllParticleSplitting(double epsilon);
+  void AdvancedAllParticleSplitting(double epsilon, unsigned int domains_per_shape, unsigned int dom_to_process);
   // Debug function
   void PrintParticleSystem();
   void SplitAllParticlesInDomain(const vnl_vector_fixed<double, VDimension> &, unsigned int d=0, int threadId=0);
@@ -190,6 +192,11 @@ public:
   {  return m_Neighborhoods[d]->FindNeighborhoodPoints(p, idx, r); }
   inline PointVectorType FindNeighborhoodPoints(const PointType &p, int idx,
                                                 std::vector<double> &w,
+                                                std::vector<double> &distances,
+                                                double r, unsigned int d = 0) const
+  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(p,idx,w,distances,r); }
+  inline PointVectorType FindNeighborhoodPoints(const PointType &p, int idx,
+                                                std::vector<double> &w,
                                                 double r, unsigned int d = 0) const
   {  return m_Neighborhoods[d]->FindNeighborhoodPoints(p,idx,w,r); }
   inline PointVectorType FindNeighborhoodPoints(unsigned int idx,
@@ -197,8 +204,13 @@ public:
   {  return m_Neighborhoods[d]->FindNeighborhoodPoints(this->GetPosition(idx,d),idx, r); }
   inline PointVectorType FindNeighborhoodPoints(unsigned int idx,
                                                 std::vector<double> &w,
+                                                std::vector<double> &distances,
                                                 double r, unsigned int d = 0) const
-  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(this->GetPosition(idx,d),idx,w, r); }
+  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(this->GetPosition(idx,d),idx,w,distances, r); }
+  inline PointVectorType FindNeighborhoodPoints(unsigned int idx,
+                                                std::vector<double> &w,
+                                                double r, unsigned int d = 0) const
+  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(this->GetPosition(idx,d),idx,w,r); }
 
   //  inline int FindNeighborhoodPoints(const PointType &p,  double r, PointVectorType &vec, unsigned int d = 0) const
   //  {  return m_Neighborhoods[d]->FindNeighborhoodPoints(p, r, vec); }
@@ -400,7 +412,7 @@ public:
   void SetFixedParticleFlag(unsigned int d, unsigned int i)
   { m_FixedParticleFlags[d][i] = true; }
   void ResetFixedParticleFlag(unsigned int d, unsigned int i)
-  { m_FixedParticleFlags[i] = false; }
+  { m_FixedParticleFlags[d][i] = false; }
   bool GetFixedParticleFlag(unsigned int d, unsigned int i) const
   { return m_FixedParticleFlags[d][i]; }
   void ResetFixedParticleFlags()
@@ -419,15 +431,16 @@ public:
   }
   unsigned int GetDomainsPerShape()
   { return m_DomainsPerShape; }
-  
+
+  /** Set the number of domains.  This method modifies the size of the
+    m_Domains, m_Positions, and m_Transform lists. */
+  void SetNumberOfDomains( unsigned int );
+
 protected:
   ParticleSystem();
   void PrintSelf(std::ostream& os, Indent indent) const;
   virtual ~ParticleSystem() {};
 
-  /** Set the number of domains.  This method modifies the size of the
-      m_Domains, m_Positions, and m_Transform lists. */
-  void SetNumberOfDomains( unsigned int );
 
   /** Return an iterator that points to the first element of the list of the
       domains. */

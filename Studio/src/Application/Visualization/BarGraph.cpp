@@ -42,7 +42,7 @@ void BarGraph::hover_timer_event()
     double explained_variance = this->values_[bar];
     double accumulated_variance = this->accumulation_[bar];
 
-    QString message("Mode: " + QString::number(bar)
+    QString message("Mode: " + QString::number(bar + 1)
                     + "\nExplained Variance: " + QString::number(explained_variance, 'f', 1)
                     + "\nCumulative Variance: " + QString::number(accumulated_variance, 'f', 1));
 
@@ -74,10 +74,25 @@ void BarGraph::paint_bar_graph(QPainter& painter)
 {
 
   if (this->font_height_ < 0) {
+
+    QFont font = this->get_font_for_size(painter.font(), this->y_label_,
+                                         this->height() * 0.75,
+                                         this->width());
+    axis_font_ = font;
+    painter.setFont(font);
+
+    tick_font_ = this->get_font_for_size(painter.font(), this->y_label_,
+                                         this->height() * 0.5,
+                                         this->width());
+
     QFontMetrics metrics(painter.font());
     QRect rect = metrics.tightBoundingRect("100");
     this->font_height_ = rect.height();
+    this->font_width_ = rect.width();
+    this->recalculate_bars();
   }
+
+  painter.setFont(axis_font_);
 
   QString y_axis_label = this->y_label_;
 
@@ -107,17 +122,35 @@ void BarGraph::paint_bar_graph(QPainter& painter)
 
   int graph_height = this->get_graph_height();
 
+
+  // X label
+  painter.drawText(this->font_height_ + this->font_width_ + this->margin_ * 20,
+                   height(), "Mode");
+
+  // Y label
+  painter.save();
+  painter.translate(this->font_height_, this->height() / 2 + this->y_axis_text_width_ / 2);
+  painter.rotate(-90);
+  painter.drawText(0, 0, this->y_label_);
+  painter.restore();
+
+  painter.setFont(tick_font_);
+
   // X Values
   QPoint last_acc_pos;
   for (size_t i = 0, s = values_.size(); i < s; ++i) {
     painter.drawRect(this->bars_[i]);
     // numbered eigen value on x axis
 
+
     if (i % 2 == 0 || this->bar_width_ > 20) {
       if (i < 99 || i % 4 == 0) {
         // after '9', there's not enough room to write each number, only write every other
-        painter.drawText(45 + this->bar_width_ * (i + 0.5) + this->margin_ * (i + 1) - 3,
-                         this->height() - 20, QString::number(i));
+
+        QRect label_rect(this->bars_[i].x()-100, this->height() - (this->font_height_ * 2) - margin_,
+                         this->bars_[i].width()+200, this->font_height_);
+        painter.drawText(label_rect, Qt::AlignHCenter | Qt::AlignVCenter, QString::number(i + 1));
+
       }
     }
 
@@ -135,23 +168,12 @@ void BarGraph::paint_bar_graph(QPainter& painter)
     last_acc_pos = end_pos;
   }
 
-  // X label
-  painter.drawText(10 * this->margin_, height() - 5, "Mode");
-
-  painter.save();
-  painter.translate(10, this->height() / 2 + this->y_axis_text_width_ / 2);
-  painter.rotate(-90);
-  painter.drawText(0, 0, this->y_label_);
-  painter.restore();
 
   // Y Labels
   int num_steps = use_log_ ? (static_cast<int>(log10(max_val_)) -
                               static_cast<int>(log10(min_val_)) + 1) : 6;
   num_steps = std::max(1, num_steps);
   int start = static_cast<int>(use_log_ ? log10(min_val_) : 0);
-  int separation = this->get_graph_height() / num_steps;
-
-  int text_start = this->y_axis_text_rect_.height() + 5;
 
   for (int i = 0; i < num_steps; i++) {
 
@@ -166,10 +188,11 @@ void BarGraph::paint_bar_graph(QPainter& painter)
 
     int ypos = 5 + graph_height - static_cast<int>(this->get_height_for_value(value));
 
-    QRect label_rect(0, ypos - 100, 40, 200);
+    QRect label_rect(this->font_height_ - margin_, ypos - 100, this->font_width_, 200);
     QString label = QString::number(value);
     painter.drawText(label_rect, Qt::AlignRight | Qt::AlignVCenter, label);
-    painter.drawLine(45, ypos, 50, ypos);
+    int xpos = this->font_height_ + this->font_width_;
+    painter.drawLine(xpos, ypos, xpos + 5, ypos);
   }
   painter.restore();
 }
@@ -184,7 +207,7 @@ void BarGraph::paintEvent(QPaintEvent* event)
 //---------------------------------------------------------------------------
 void BarGraph::resizeEvent(QResizeEvent* event)
 {
-  this->recalculate_bars();
+  this->font_height_ = -1;
 }
 
 //---------------------------------------------------------------------------
@@ -217,7 +240,7 @@ void BarGraph::recalculate_bars()
     this->bars_.resize(this->values_.size());
   }
 
-  int x = this->margin_ + 45;
+  int x = this->margin_ + this->font_height_ + this->font_width_;
 
   this->accumulation_.clear();
   double sum = 0;
@@ -267,4 +290,27 @@ double BarGraph::get_height_for_value(double value)
 void BarGraph::set_y_label(QString label)
 {
   this->y_label_ = label;
+}
+
+//---------------------------------------------------------------------------
+QFont BarGraph::get_font_for_size(QFont font, const QString& text, int width, int height)
+{
+  font.setPointSize(92);
+  QFontMetrics font_metrics(font);
+  while (font_metrics.boundingRect(text).width() > width) {
+    int new_size = font.pointSize() - 1;
+    font.setPointSize(new_size);
+    font_metrics = QFontMetrics(font);
+  }
+
+  if (height != -1) {
+    font_metrics = QFontMetrics(font);
+    while (font_metrics.height() > height) {
+      int new_size = font.pointSize() - 1;
+      font.setPointSize(new_size);
+      font_metrics = QFontMetrics(font);
+    }
+  }
+
+  return font;
 }

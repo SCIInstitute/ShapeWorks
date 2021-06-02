@@ -3,6 +3,7 @@
 #include <QSharedPointer>
 #include <QWidget>
 #include <QProgressDialog>
+#include <QElapsedTimer>
 
 #include <itkPoint.h>
 
@@ -10,17 +11,20 @@
 
 class Ui_OptimizeTool;
 
+class QLineEdit;
+
 namespace shapeworks {
 class QOptimize;
 class OptimizeParameters;
 class Session;
+
 
 class OptimizeTool : public QWidget {
 Q_OBJECT;
 
 public:
 
-  OptimizeTool();
+  OptimizeTool(Preferences& prefs);
   ~OptimizeTool();
 
   /// set the pointer to the project
@@ -55,6 +59,8 @@ public Q_SLOTS:
 
   void update_ui_elements();
 
+  bool validate_inputs();
+
 signals:
   void optimize_start();
   void optimize_complete();
@@ -67,15 +73,26 @@ signals:
 
 private:
 
+  void setup_domain_boxes();
+
+  void update_run_button();
+
   void handle_load_progress(int count);
 
   void clear_particles();
+
+  std::vector<QLineEdit*> particle_boxes_;
+
+  Preferences& preferences_;
+
+  std::vector<QLineEdit*> line_edits_;
 
   QList<QThread*> threads_;
   bool optimization_is_running_ = false;
   QSharedPointer<QOptimize> optimize_;
   QSharedPointer<OptimizeParameters> optimize_parameters_;
   QSharedPointer<Session> session_;
+  QElapsedTimer elapsed_timer_;
 
   Ui_OptimizeTool* ui_;
 };

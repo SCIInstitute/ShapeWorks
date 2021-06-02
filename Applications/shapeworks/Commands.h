@@ -66,6 +66,7 @@ COMMAND_DECLARE(TranslateMesh, MeshCommand);
 COMMAND_DECLARE(ScaleMesh, MeshCommand);
 COMMAND_DECLARE(BoundingBoxMesh, MeshCommand);
 COMMAND_DECLARE(Distance, MeshCommand);
+COMMAND_DECLARE(GenerateNormals, MeshCommand);
 COMMAND_DECLARE(SetFieldValue, MeshCommand);
 COMMAND_DECLARE(GetFieldValue, MeshCommand);
 COMMAND_DECLARE(FieldRange, MeshCommand);
@@ -77,6 +78,7 @@ COMMAND_DECLARE(ClipClosedSurface, MeshCommand);
 COMMAND_DECLARE(MeshToImage, MeshCommand);
 COMMAND_DECLARE(MeshToDT, MeshCommand);
 COMMAND_DECLARE(CompareMesh, MeshCommand);
+COMMAND_DECLARE(WarpMesh, MeshCommand);
 
 // Optimize Commands
 COMMAND_DECLARE(OptimizeCommand, OptimizeCommandGroup);

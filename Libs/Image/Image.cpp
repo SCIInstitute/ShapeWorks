@@ -845,6 +845,40 @@ Point3 Image::centerOfMass(PixelType minVal, PixelType maxVal) const
   return com;
 }
 
+Image::StatsPtr Image::statsFilter()
+{
+  using FilterType = itk::StatisticsImageFilter<ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+
+  filter->SetInput(this->image);
+  filter->UpdateLargestPossibleRegion();
+  return filter;
+}
+
+Image::PixelType Image::min()
+{
+  StatsPtr filter = statsFilter();
+  return filter->GetMinimum();
+}
+
+Image::PixelType Image::max()
+{
+  StatsPtr filter = statsFilter();
+  return filter->GetMaximum();
+}
+
+Image::PixelType Image::mean()
+{
+  StatsPtr filter = statsFilter();
+  return filter->GetMean();
+}
+
+Image::PixelType Image::std()
+{
+  StatsPtr filter = statsFilter();
+  return sqrt(filter->GetVariance());
+}
+
 Region Image::boundingBox(PixelType isoValue) const
 {
   Region bbox;
@@ -875,16 +909,16 @@ Coord Image::physicalToLogical(const Point3 &p) const
   return image->TransformPhysicalPointToIndex(p);
 }
 
-vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image& image, PixelType isoValue)
+Mesh Image::toMesh(PixelType isoValue) const
 {
-  auto vtkImage = image.getVTKImage();
+  auto vtkImage = getVTKImage();
 
   vtkContourFilter *targetContour = vtkContourFilter::New();
   targetContour->SetInputData(vtkImage);
   targetContour->SetValue(0, isoValue);
   targetContour->Update();
 
-  return targetContour->GetOutput();
+  return Mesh(targetContour->GetOutput());
 }
 
 TransformPtr Image::createCenterOfMassTransform()
@@ -896,8 +930,8 @@ TransformPtr Image::createCenterOfMassTransform()
 
 TransformPtr Image::createRigidRegistrationTransform(const Image &target_dt, float isoValue, unsigned iterations)
 {
-  vtkSmartPointer<vtkPolyData> sourceContour = Image::getPolyData(*this, isoValue);
-  vtkSmartPointer<vtkPolyData> targetContour = Image::getPolyData(target_dt, isoValue);
+  Mesh sourceContour = toMesh(isoValue);
+  Mesh targetContour = target_dt.toMesh(isoValue);
   const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createICPTransform(sourceContour, targetContour, Mesh::Rigid, iterations));
   return shapeworks::createTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
 }

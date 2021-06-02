@@ -13,7 +13,10 @@ public:
   explicit OptimizeParameters(ProjectHandle project);
   void save_to_project();
 
-  bool set_up_optimize(Optimize *optimize);
+  std::string get_optimize_output_prefix();
+  void set_optimize_output_prefix(std::string prefix);
+
+  bool set_up_optimize(Optimize* optimize);
 
   std::vector<int> get_number_of_particles();
   void set_number_of_particles(std::vector<int> number_of_particles);
@@ -35,6 +38,12 @@ public:
 
   int get_optimization_iterations();
   void set_optimization_iterations(int value);
+
+  bool get_use_geodesic_distance();
+  void set_use_geodesic_distance(bool value);
+
+  int get_geodesic_cache_multiplier();
+  void set_geodesic_cache_multiplier(int value);
 
   std::vector<bool> get_use_normals();
   void set_use_normals(std::vector<bool> use_normals);
@@ -59,9 +68,11 @@ public:
 
   void set_abort_load(bool value);
 
-  void set_load_callback(const std::function<void(int)> &f);
+  void set_load_callback(const std::function<void(int)>& f);
 
 private:
+
+  std::string get_output_prefix();
 
   Parameters params_;
   ProjectHandle project_;

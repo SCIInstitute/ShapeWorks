@@ -20,7 +20,7 @@ public:
   typedef typename MeshWrapper::PointType PointType;
   typedef typename MeshWrapper::GradNType GradNType;
 
-  double ComputeDistance(PointType pointa, PointType pointb) const override;
+  double ComputeDistance(const PointType& pointa, int idx_a, const PointType& pointb, int idx_b, vnl_vector_fixed<double, 3>* out_grad) const override;
 
   PointType
   GeodesicWalk(PointType pointa, int idx, vnl_vector_fixed<double, DIMENSION> vector) const override;
@@ -45,6 +45,11 @@ public:
   inline const PointType& GetMeshUpperBound() const override
   {
     return mesh_upper_bound_;
+  }
+
+  bool IsGeodesicsEnabled() const override
+  {
+    return false;
   }
 
 private:

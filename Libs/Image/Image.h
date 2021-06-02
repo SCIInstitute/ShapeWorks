@@ -7,6 +7,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
 #include <vtkImageData.h>
+#include <itkStatisticsImageFilter.h>
 
 #include <limits>
 
@@ -21,6 +22,7 @@ public:
 
   using PixelType = float;
   using ImageType = itk::Image<PixelType, 3>;
+  using StatsPtr = itk::StatisticsImageFilter<ImageType>::Pointer;
 
   // constructors and assignment operators //
   Image(const std::string &pathname) : image(read(pathname)) {}
@@ -189,6 +191,18 @@ public:
   /// returns average physical coordinate of pixels in range (minval, maxval]
   Point3 centerOfMass(PixelType minVal = 0.0, PixelType maxVal = 1.0) const;
 
+  /// minimum of image
+  PixelType min();
+
+  /// maximum of image
+  PixelType max();
+
+  /// mean of image
+  PixelType mean();
+
+  /// standard deviation of image
+  PixelType std();
+
   /// computes the logical coordinates of the largest region of data <= the given isoValue
   Region boundingBox(PixelType isovalue = 1.0) const;
 
@@ -209,7 +223,7 @@ public:
   /// writes image, format specified by filename extension
   Image& write(const std::string &filename, bool compressed = true);
 
-  /// converts image to mesh (note: definition in Conversion.cpp)
+  /// converts image to mesh
   Mesh toMesh(PixelType isovalue) const;
 
 private:
@@ -229,8 +243,7 @@ private:
   /// creates transform to target using ICP registration (isovalue is used to create meshes from dt, which are then passed to ICP)
   TransformPtr createRigidRegistrationTransform(const Image &target, float isoValue = 0.0, unsigned iterations = 20);
 
-  /// creates a vtkPolyData for the given image
-  static vtkSmartPointer<vtkPolyData> getPolyData(const Image& image, PixelType isoValue = 0.0);
+  StatsPtr statsFilter();
 
   ImageType::Pointer image;
 };

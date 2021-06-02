@@ -1,5 +1,6 @@
 #include "Commands.h"
 #include "MeshUtils.h"
+#include "MeshWarper.h"
 
 namespace shapeworks {
 
@@ -206,9 +207,9 @@ void Decimate::buildParser()
   const std::string desc = "brief description of command"; // TODO: add description
   parser.prog(prog).description(desc);
 
-  parser.add_option("--reduction").action("store").type("double").set_default(0.0).help("Description of optionName [default: %default]."); // TODO: add description
-  parser.add_option("--angle").action("store").type("double").set_default(0.0).help("Angle in degrees [default: %default].");
-  parser.add_option("--preservetopology").action("store").type("bool").set_default(false).help("Whether to preserve topology [default: false].");
+  parser.add_option("--reduction").action("store").type("double").set_default(0.5).help("Percent reduction of total number of polygons [default: %default].");
+  parser.add_option("--angle").action("store").type("double").set_default(15.0).help("Necessary angle (in degrees) between two trianges to warrant keeping them separate [default: %default].");
+  parser.add_option("--preservetopology").action("store").type("bool").set_default(true).help("Whether to preserve topology [default: false].");
 
   Command::buildParser();
 }
@@ -379,7 +380,7 @@ bool FillHoles::execute(const optparse::Values &options, SharedCommandData &shar
     std::cerr << "No mesh to operate on\n";
     return false;
   }
-  
+
   sharedData.mesh->fillHoles();
   return sharedData.validMesh();
 }
@@ -415,7 +416,7 @@ bool ProbeVolume::execute(const optparse::Values &options, SharedCommandData &sh
   }
 
   Image img(filename);
-  
+
   sharedData.mesh->probeVolume(img);
   return sharedData.validMesh();
 }
@@ -454,7 +455,7 @@ bool ClipMesh::execute(const optparse::Values &options, SharedCommandData &share
   Point origin({static_cast<double>(options.get("ox")),
                 static_cast<double>(options.get("oy")),
                 static_cast<double>(options.get("oz"))});
-  
+
   sharedData.mesh->clip(makePlane(normal, origin));
   return sharedData.validMesh();
 }
@@ -486,7 +487,7 @@ bool TranslateMesh::execute(const optparse::Values &options, SharedCommandData &
   double tx = static_cast<double>(options.get("tx"));
   double ty = static_cast<double>(options.get("ty"));
   double tz = static_cast<double>(options.get("tz"));
-  
+
   sharedData.mesh->translate(makeVector({tx, ty, tz}));
   return sharedData.validMesh();
 }
@@ -613,6 +614,30 @@ bool Distance::execute(const optparse::Values &options, SharedCommandData &share
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// GenerateNormals
+///////////////////////////////////////////////////////////////////////////////
+void GenerateNormals::buildParser()
+{
+  const std::string prog = "generate-normals";
+  const std::string desc = "computes cell normals and orients them such that they point in the same direction";
+  parser.prog(prog).description(desc);
+
+  Command::buildParser();
+}
+
+bool GenerateNormals::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  sharedData.mesh->generateNormals();
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // FixMesh
 ///////////////////////////////////////////////////////////////////////////////
 void FixMesh::buildParser()
@@ -684,7 +709,7 @@ bool ClipClosedSurface::execute(const optparse::Values &options, SharedCommandDa
   Point origin({static_cast<double>(options.get("ox")),
                 static_cast<double>(options.get("oy")),
                 static_cast<double>(options.get("oz"))});
-  
+
   sharedData.mesh->clipClosedSurface(makePlane(normal, origin));
   return sharedData.validMesh();
 }
@@ -994,6 +1019,80 @@ bool CompareMesh::execute(const optparse::Values &options, SharedCommandData &sh
   else
   {
     std::cout << "compare failure\n";
+    return false;
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// WarpMesh
+///////////////////////////////////////////////////////////////////////////////
+void WarpMesh::buildParser()
+{
+  const std::string prog = "warp-mesh";
+  const std::string desc = "warps a mesh given reference and target particles";
+  parser.prog(prog).description(desc);
+  parser.add_option("--reference_mesh").action("store").type("string").set_default("").help("Name of reference mesh.");
+  parser.add_option("--reference_points").action("store").type("string").set_default("").help("Name of reference points.");
+  parser.add_option("--target_points").action("store").type("multistring").set_default("").help("Names of target points (must be followed by `--`), ex: \"... --target_points *.particles -- ...");
+  parser.add_option("--save_dir").action("store").type("string").set_default("").help("Optional: Path to the directory where the mesh files will be saved");
+  Command::buildParser();
+}
+bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::string inputMeshFilename = options["reference_mesh"];
+  if (inputMeshFilename.length() == 0) {
+    std::cerr << "warpmesh error: no reference mesh specified, must pass `--reference_mesh <filename>`\n";
+    return false;
+  }
+  std::string inputPointsFilename = options["reference_points"];
+  if (inputPointsFilename.length() == 0) {
+    std::cerr << "warpmesh error: no reference points specified, must pass `--reference_points <filename>`\n";
+    return false;
+  }
+  std::vector<std::string> targetPointsFilenames = options.get("target_points");
+  if (targetPointsFilenames.size() == 0) {
+    std::cerr << "warpmesh error: no target points specified, must pass `--target_points <filenames> --`\n";
+    return false;
+  }
+
+  std::string saveDir = options["save_dir"];
+  try {
+    Mesh inputMesh(inputMeshFilename);
+    targetPointsFilenames.push_back(inputPointsFilename);
+    ParticleSystem particlesystem(targetPointsFilenames);
+    Eigen::MatrixXd allPts = particlesystem.Particles();
+    Eigen::MatrixXd staticPoints = allPts.col(targetPointsFilenames.size() - 1);
+    int numParticles = staticPoints.rows() / 3;
+    staticPoints.resize(3, numParticles);
+    staticPoints.transposeInPlace();
+    MeshWarper warper;
+    warper.set_reference_mesh(inputMesh.getVTKMesh(), staticPoints);
+    std::string filenm;
+
+    if (saveDir.length() > 0) {
+      boost::filesystem::create_directories(saveDir);
+    }
+
+    for (int i = 0; i < targetPointsFilenames.size() - 1; i++) {
+      filenm = targetPointsFilenames[i];
+      filenm.replace(static_cast<int>(filenm.rfind('.')) + 1, filenm.length(), "vtk");
+      if (saveDir.length() > 0) {
+        int idx = static_cast<int>(filenm.rfind('/'));
+        filenm.replace(0, idx, saveDir);
+      }
+      
+      Eigen::MatrixXd movingPoints = allPts.col(i);
+      movingPoints.resize(3, numParticles);
+      movingPoints.transposeInPlace();
+      Mesh output = warper.build_mesh(movingPoints);
+      output.write(filenm);
+    }
+    return true;
+  } catch (std::exception &e) {
+    std::cerr << "exception during mesh warp: " << e.what() << std::endl;
+    return false;
+  } catch (...) {
+    std::cerr << "unknown exception while mesh warping" << std::endl;
     return false;
   }
 }

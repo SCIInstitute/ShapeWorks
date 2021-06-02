@@ -22,7 +22,7 @@ TEST(GroomTests, basic_test)
   bool success = app.run();
   ASSERT_TRUE(success);
 
-  Image image("sphere10_DT.nrrd");
+  Image image("groomed/sphere10_DT.nrrd");
   Image ground_truth("sphere10_DT_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);

@@ -1,3 +1,5 @@
+#include <Data/StudioMesh.h>
+
 #include <QMessageBox>
 #include <QTextStream>
 
@@ -7,20 +9,16 @@
 #include <itkNearestNeighborInterpolateImageFunction.h>
 #include <itkLinearInterpolateImageFunction.h>
 
-#include <vtkSurfaceReconstructionFilter.h>
-#include <vtkMarchingCubes.h>
 #include <vtkTriangleFilter.h>
 #include <vtkFloatArray.h>
 #include <vtkPointData.h>
-#include <vtkPolyDataWriter.h>
 #include <vtkPointLocator.h>
 #include <vtkKdTreePointLocator.h>
-
 #include <Data/StudioMesh.h>
-#include <Data/ItkToVtk.h>
 
 using NearestNeighborInterpolatorType = itk::NearestNeighborInterpolateImageFunction<ImageType, double>;
 using LinearInterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
+using TransformType = vtkSmartPointer<vtkTransform>;
 
 namespace shapeworks {
 
@@ -66,74 +64,13 @@ vtkSmartPointer<vtkPolyData> StudioMesh::get_poly_data()
 }
 
 //---------------------------------------------------------------------------
-void StudioMesh::create_from_image(ImageType::Pointer image, double iso_value)
-{
-  try {
-    // get image dimensions
-    ImageType::RegionType region = image->GetLargestPossibleRegion();
-    ImageType::SizeType size = region.GetSize();
-    this->dimensions_[0] = size[0];
-    this->dimensions_[1] = size[1];
-    this->dimensions_[2] = size[2];
-
-    // find the center of mass
-    itk::Array<double> params(3);
-    params.Fill(0.0);
-    double count = 0.0;
-    itk::Point<double, 3> point;
-    itk::ImageRegionIteratorWithIndex<ImageType> oit(image, image->GetLargestPossibleRegion());
-    for (oit.GoToBegin(); !oit.IsAtEnd(); ++oit) {
-      if (oit.Get() > 0) {
-        // Get the physical index from the image index.
-        image->TransformIndexToPhysicalPoint(oit.GetIndex(), point);
-        for (unsigned int i = 0; i < 3; i++) {
-          params[i] += point[i];
-        }
-        count += 1.0;
-      }
-    }
-
-    // compute center of mass
-    this->center_transform_.set_size(3);
-    for (unsigned int i = 0; i < 3; i++) {
-      this->center_transform_[i] = params[i] / count;
-    }
-
-    this->center_transform_[0] = 0;
-    this->center_transform_[1] = 0;
-    this->center_transform_[2] = 0;
-
-    // connect to VTK
-    vtkSmartPointer<vtkImageImport> vtk_image = vtkSmartPointer<vtkImageImport>::New();
-    itk::VTKImageExport<ImageType>::Pointer itk_exporter = itk::VTKImageExport<ImageType>::New();
-    itk_exporter->SetInput(image);
-    ConnectPipelines(itk_exporter, vtk_image.GetPointer());
-    vtk_image->Update();
-
-    // create isosurface
-    auto marching = vtkSmartPointer<vtkMarchingCubes>::New();
-    marching->SetInputConnection(vtk_image->GetOutputPort());
-    marching->SetNumberOfContours(1);
-    marching->SetValue(0, iso_value);
-    marching->Update();
-
-    // store isosurface polydata
-    this->poly_data_ = marching->GetOutput();
-  } catch (itk::ExceptionObject& excep) {
-    std::cerr << "Exception caught!" << std::endl;
-    std::cerr << excep << std::endl;
-  }
-}
-
-//---------------------------------------------------------------------------
 vnl_vector<double> StudioMesh::get_center_transform()
 {
   return this->center_transform_;
 }
 
 //---------------------------------------------------------------------------
-void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image,
-                                   vnl_vector<double> transform)
+void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image)
 {
   if (!this->poly_data_ || name == "") {
     return;
@@ -153,19 +90,14 @@ void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image,
   scalars->SetName(name.c_str());
 
   for (int i = 0; i < points->GetNumberOfPoints(); i++) {
-    double pt[3];
-    points->GetPoint(i, pt);
+    //double* pt = transform->TransformPoint(points->GetPoint(i));
+
+    double* pt = points->GetPoint(i);
 
     ImageType::PointType pitk;
     pitk[0] = pt[0];
     pitk[1] = pt[1];
     pitk[2] = pt[2];
-
-    if (transform.size() == 12) {
-      pitk[0] = pitk[0] + transform[9];
-      pitk[1] = pitk[1] + transform[10];
-      pitk[2] = pitk[2] + transform[11];
-    }
 
     LinearInterpolatorType::ContinuousIndexType index;
     image->TransformPhysicalPointToContinuousIndex(pitk, index);
@@ -173,11 +105,9 @@ void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image,
     auto pixel = 0;
     if (region.IsInside(index)) {
       pixel = interpolator->EvaluateAtContinuousIndex(index);
-      //  std::cerr << pixel << " ";
     }
     scalars->SetValue(i, pixel);
   }
-  //std::cerr << "\n";
 
   this->poly_data_->GetPointData()->AddArray(scalars);
 
@@ -193,7 +123,7 @@ void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image,
 
 //---------------------------------------------------------------------------
 void StudioMesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double> positions,
-                                             itkeigen::VectorXf scalar_values)
+                                             Eigen::VectorXf scalar_values)
 {
 
   int num_points = positions.size() / 3;
@@ -244,6 +174,8 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double
     float weighted_scalar = 0.0f;
     float distanceSum = 0.0f;
     float distance[8];
+    bool exactly_on_point = false;
+    float exact_scalar = 0.0f;
     for (unsigned int p = 0; p < closest_points->GetNumberOfIds(); p++) {
       // get a particle position
       vtkIdType id = closest_points->GetId(p);
@@ -252,7 +184,15 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double
       double x = pt[0] - point_data->GetPoint(id)[0];
       double y = pt[1] - point_data->GetPoint(id)[1];
       double z = pt[2] - point_data->GetPoint(id)[2];
-      distance[p] = 1.0f / (x * x + y * y + z * z);
+
+      if (x == 0 && y == 0 && z == 0) {
+        distance[p] = 0;
+        exactly_on_point = true;
+        exact_scalar = scalar_values[id];
+      }
+      else {
+        distance[p] = 1.0f / (x * x + y * y + z * z);
+      }
 
       // multiply scalar value by weight and add to running sum
       distanceSum += distance[p];
@@ -263,6 +203,10 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double
       weighted_scalar += distance[p] / distanceSum * scalar_values[current_id];
     }
 
+    if (exactly_on_point) {
+      weighted_scalar = exact_scalar;
+    }
+
     scalars->SetValue(i, weighted_scalar);
   }
 
@@ -271,43 +215,41 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, vnl_vector<double
 }
 
 //---------------------------------------------------------------------------
-void StudioMesh::apply_scalars(QSharedPointer<StudioMesh> mesh, vnl_vector<double> transform)
+void StudioMesh::apply_scalars(MeshHandle mesh)
 {
   vtkSmartPointer<vtkPolyData> from_mesh = mesh->get_poly_data();
   vtkSmartPointer<vtkPolyData> to_mesh = this->get_poly_data();
 
   // Create the tree
-  vtkSmartPointer<vtkKdTreePointLocator> kDTree = vtkSmartPointer<vtkKdTreePointLocator>::New();
-  kDTree->SetDataSet(from_mesh);
-  kDTree->BuildLocator();
+  vtkSmartPointer<vtkKdTreePointLocator> kd_tree = vtkSmartPointer<vtkKdTreePointLocator>::New();
+  kd_tree->SetDataSet(from_mesh);
+  kd_tree->BuildLocator();
 
   int num_arrays = from_mesh->GetPointData()->GetNumberOfArrays();
 
+  // cache pointers to new arrays
+  std::vector<vtkSmartPointer<vtkFloatArray>> arrays;
+
+  // set up new arrays
   for (int i = 0; i < num_arrays; i++) {
     std::string name = from_mesh->GetPointData()->GetArrayName(i);
-
-    vtkDataArray* from_array = from_mesh->GetPointData()->GetArray(i);
-    vtkFloatArray* to_array = vtkFloatArray::New();
+    vtkSmartPointer<vtkFloatArray> to_array = vtkSmartPointer<vtkFloatArray>::New();
     to_array->SetName(name.c_str());
     to_array->SetNumberOfValues(to_mesh->GetNumberOfPoints());
-
-    for (int j = 0; j < to_mesh->GetNumberOfPoints(); j++) {
-      double pt[3];
-      to_mesh->GetPoint(j, pt);
-
-      if (transform.size() == 12) {
-        pt[0] = pt[0] + transform[9];
-        pt[1] = pt[1] + transform[10];
-        pt[2] = pt[2] + transform[11];
-      }
-
-      vtkIdType id = kDTree->FindClosestPoint(pt);
-      vtkVariant var = from_array->GetVariantValue(id);
-
-      to_array->SetVariantValue(j, var);
-    }
-
     to_mesh->GetPointData()->AddArray(to_array);
+    arrays.push_back(to_array);
+  }
+
+  // apply scalars from one mesh to the other
+  for (int j = 0; j < to_mesh->GetNumberOfPoints(); j++) {
+    double* p = to_mesh->GetPoint(j);
+    vtkIdType id = kd_tree->FindClosestPoint(p);
+
+    for (int i = 0; i < num_arrays; i++) {
+      auto from_array = from_mesh->GetPointData()->GetAbstractArray(i);
+      vtkVariant var = from_array->GetVariantValue(id);
+      arrays[i]->SetVariantValue(j, var);
+    }
   }
 }
 }

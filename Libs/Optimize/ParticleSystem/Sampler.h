@@ -136,6 +136,8 @@ public:
 
   void AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh);
 
+  void AddContour(vtkSmartPointer<vtkPolyData> poly_data);
+
   void SetFidsFiles(const std::vector<std::string>& s)
   { m_FidsFiles = s; }
 
@@ -393,6 +395,42 @@ public:
 
   virtual void Execute();
 
+  std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > > ComputeCuttingPlanes()
+  {
+    std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > > planes;
+    for(size_t i = 0; i < m_CuttingPlanes.size(); i++){
+      std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > domain_i_cps;
+      for(size_t j = 0; j < m_CuttingPlanes[i].size(); j++){
+        std::pair<Eigen::Vector3d, Eigen::Vector3d> cut_plane;
+        cut_plane.first = ComputePlaneNormal(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b, m_CuttingPlanes[i][j].c);
+        cut_plane.second = Eigen::Vector3d(m_CuttingPlanes[i][j].a[0], m_CuttingPlanes[i][j].a[1],m_CuttingPlanes[i][j].a[2]);
+        domain_i_cps.push_back(cut_plane);
+      }
+      planes.push_back(domain_i_cps);
+    }
+    return planes;
+  }
+
+  Eigen::Vector3d ComputePlaneNormal(const vnl_vector<double> &a, const vnl_vector<double> &b,const vnl_vector<double> &c){
+    // See http://mathworld.wolfram.com/Plane.html, for example
+    vnl_vector<double> q;
+    q = vnl_cross_3d((b-a),(c-a));
+
+    if (q.magnitude() > 0.0)
+    {
+      Eigen::Vector3d qp;
+      q = q/q.magnitude();
+      qp(0) = q[0]; qp(1) = q[1]; qp(2) = q[2];
+      return qp;
+    }
+    else{
+        std::cerr << "Error in Libs/Optimize/ParticleSystem/Sampler.h::ComputePlaneNormal" << std::endl;
+        std::cerr << "There was an issue with a cutting plane that was defined. It has yielded a 0,0,0 vector. Please check the inputs." << std::endl;
+        exit (EXIT_FAILURE);
+    }
+
+  }
+
 protected:
 
   void GenerateData();
@@ -487,8 +525,3 @@ private:
 };
 
 } // end namespace
-
-
-
-
-

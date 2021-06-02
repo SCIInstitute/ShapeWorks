@@ -34,3 +34,9 @@ void Parameters::remove_entry(std::string key)
 {
   this->map_.erase(key);
 }
+
+//---------------------------------------------------------------------------
+void Parameters::reset_parameters()
+{
+  this->map_.clear();
+}

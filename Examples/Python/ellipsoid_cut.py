@@ -26,7 +26,7 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
     # Get data
-    datasetName = "ellipsoid_aligned-v1"
+    datasetName = "ellipsoid_1mode_aligned"
     outputDirectory = "Output/ellipsoid_cut/"
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
@@ -75,7 +75,7 @@ def Run_Pipeline(args):
         os.makedirs(pointDir)
 
     cutting_plane_points1 = [[10, 10, 0], [-10, -10, 0], [10, -10, 0]]
-    cutting_plane_points2 = [[10, -3, 10], [-10, -3 ,10], [10, -3, -10]]
+    cutting_plane_points2 = [[10, 0, 10], [-10, 0 ,10], [10, 0, -10]]
     cp = [cutting_plane_points1, cutting_plane_points2]
 
     # Cutting planes
@@ -87,13 +87,13 @@ def Run_Pipeline(args):
         cutting_plane_counts.append(2)
 
     parameterDictionary = {
-        "number_of_particles": 128,
+        "number_of_particles": 32,
         "use_normals": 1,
         "normal_weight": 15.0,
         "checkpointing_interval": 200,
         "keep_checkpoints": 0,
-        "iterations_per_split": 2000,
-        "optimization_iterations": 1000,
+        "iterations_per_split": 3000,
+        "optimization_iterations": 3000,
         "starting_regularization": 100,
         "ending_regularization": 10,
         "recompute_regularization_interval": 2,
@@ -111,11 +111,11 @@ def Run_Pipeline(args):
     }
 
     if args.tiny_test:
-        parameterDictionary["number_of_particles"] = 32
+        parameterDictionary["number_of_particles"] = 16
         parameterDictionary["optimization_iterations"] = 25
 
     if not args.use_single_scale:
-        parameterDictionary["use_shape_statistics_after"] = 32
+        parameterDictionary["use_shape_statistics_after"] = 16
 
     """
     Now we execute a single scale particle optimization function.

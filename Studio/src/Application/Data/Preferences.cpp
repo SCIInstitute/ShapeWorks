@@ -258,3 +258,39 @@ void Preferences::set_orientation_marker_corner(Preferences::OrientationMarkerCo
 {
   this->settings_.setValue("Viewer/orientation_marker_corner", corner);
 }
+
+//-----------------------------------------------------------------------------
+QString Preferences::get_groom_file_template()
+{
+  return this->settings_.value("Studio/groom_file_template", "groomed").toString();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_groom_file_template(QString groom_file_template)
+{
+  this->settings_.setValue("Studio/groom_file_template", groom_file_template);
+}
+
+//-----------------------------------------------------------------------------
+QString Preferences::get_optimize_file_template()
+{
+  return this->settings_.value("Studio/optimize_file_template", "<project>_particles").toString();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_optimize_file_template(QString optimize_file_template)
+{
+  this->settings_.setValue("Studio/optimize_file_template", optimize_file_template);
+}
+
+//-----------------------------------------------------------------------------
+int Preferences::get_geodesic_cache_multiplier()
+{
+  return this->settings_.value("Mesh/geodesic_cache_multiplier").toInt();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_geodesic_cache_multiplier(int value)
+{
+  this->settings_.setValue("Mesh/geodesic_cache_multiplier", value);
+}

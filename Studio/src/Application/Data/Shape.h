@@ -1,12 +1,16 @@
 #pragma once
 
+#include <Eigen/Dense>
+#include <Eigen/Sparse>
+
 #include <QSharedPointer>
 #include <QString>
 
-
 #include <Data/StudioMesh.h>
+#include <Data/StudioParticles.h>
 #include <Libs/Project/Subject.h>
 #include <Data/MeshManager.h>
+#include <Data/MeshGroup.h>
 
 #include <itkMatrixOffsetTransformBase.h>
 
@@ -15,9 +19,6 @@ namespace shapeworks {
 class Shape;
 using ShapeHandle = QSharedPointer<Shape>;
 using ShapeList = QVector<ShapeHandle>;
-
-//! TODO: replace this
-using TransformType = itk::MatrixOffsetTransformBase<double, 3, 3>::ParametersType;
 
 //! Representation of a single shape/patient/subject.
 class Shape {
@@ -34,7 +35,7 @@ public:
 
   ~Shape();
 
-  QSharedPointer<StudioMesh> get_mesh(string display_mode);
+  MeshGroup get_meshes(const string& display_mode);
 
   void set_annotations(QStringList annotations, bool only_overwrite_blank = true);
   QStringList get_annotations();
@@ -46,37 +47,34 @@ public:
   std::shared_ptr<shapeworks::Subject> get_subject();
 
   /// Import the original raw image file
-  void import_original_image(std::string filename, float iso_value);
+  void import_original_image(const std::string& filename);
 
-  /// Retrieve the original mesh
-  QSharedPointer<StudioMesh> get_original_mesh(bool wait = false);
+  /// Retrieve the original meshes
+  MeshGroup get_original_meshes(bool wait = false);
 
-  ImageType::Pointer get_original_image();
-  ImageType::Pointer get_groomed_image();
+  /// Retrieve the groomed meshes
+  MeshGroup get_groomed_meshes(bool wait = false);
 
-  /// Import the groomed raw image file
-  void import_groomed_image(ImageType::Pointer img, double iso, TransformType transform);
-
-  /// Retrieve the groomed mesh
-  QSharedPointer<StudioMesh> get_groomed_mesh(bool wait = false);
+  /// Retrieve the reconstructed meshes
+  MeshGroup get_reconstructed_meshes(bool wait = false);
 
   /// Reset the groomed mesh so that it will be re-created
   void reset_groomed_mesh();
 
   /// Import global correspondence point file
-  bool import_global_point_file(QString filename);
+  bool import_global_point_files(std::vector<std::string> filenames);
 
   /// Import local correspondence point file
-  bool import_local_point_file(QString filename);
+  bool import_local_point_files(std::vector<std::string> filenames);
 
-  /// Import local correspondence point data
-  bool import_points(std::vector<itk::Point<double>> points, bool local);
-
-  /// Retrieve the reconstructed mesh
-  QSharedPointer<StudioMesh> get_reconstructed_mesh();
+  void set_particles(StudioParticles particles);
+  StudioParticles get_particles();
 
   /// Get the global correspondence points
   vnl_vector<double> get_global_correspondence_points();
+
+  /// Get the global correspondence points for display
+  vnl_vector<double> get_global_correspondence_points_for_display();
 
   /// Get the local correspondence points
   vnl_vector<double> get_local_correspondence_points();
@@ -93,11 +91,14 @@ public:
   /// Set the id of this shape
   void set_id(int id);
 
+  std::vector<QString> get_original_filenames();
+  std::vector<QString> get_original_filenames_with_path();
+
   QString get_original_filename();
   QString get_original_filename_with_path();
 
   QString get_groomed_filename();
-  QString get_groomed_filename_with_path();
+  QString get_groomed_filename_with_path(int domain);
 
   QString get_global_point_filename();
   QString get_global_point_filename_with_path();
@@ -117,10 +118,18 @@ public:
   std::vector<Point> get_vectors();
   void set_vectors(std::vector<Point> vectors);
 
-  void set_transform(const vnl_vector<double>& transform);
-  vnl_vector<double> get_transform();
+  void set_transform(vtkSmartPointer<vtkTransform> transform);
+  vtkSmartPointer<vtkTransform> get_transform(int domain = 0);
+  bool has_alignment();
 
-  TransformType get_groomed_transform();
+  vtkSmartPointer<vtkTransform> get_original_transform(int domain = 0);
+
+  void set_reconstruction_transforms(std::vector<vtkSmartPointer<vtkTransform>> transforms);
+  vtkSmartPointer<vtkTransform> get_reconstruction_transform(int domain);
+
+  vtkSmartPointer<vtkTransform> get_groomed_transform(int domain = 0);
+
+  vtkSmartPointer<vtkTransform> get_alignment();
 
   void load_feature(std::string display_mode, std::string feature);
 
@@ -130,32 +139,35 @@ public:
 
 private:
 
-  //void generate_original_meshes();
-
-  void generate_meshes(std::vector<std::string> filenames, QSharedPointer<StudioMesh>& mesh,
+  void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list,
                        bool save_transform, bool wait = false);
 
   static bool import_point_file(QString filename, vnl_vector<double>& points);
 
   void apply_feature_to_points(std::string feature, ImageType::Pointer image);
-  void apply_feature_to_points(std::string feature, QSharedPointer<StudioMesh> mesh);
+  void load_feature_from_mesh(std::string feature, MeshHandle mesh);
 
   int id_;
 
-  QSharedPointer<StudioMesh> original_mesh_;
-  QSharedPointer<StudioMesh> groomed_mesh_;
-  QSharedPointer<StudioMesh> reconstructed_mesh_;
+  MeshGroup original_meshes_;
+  MeshGroup groomed_meshes_;
+  MeshGroup reconstructed_meshes_;
+
+  MeshHandle original_mesh_;
+  MeshHandle groomed_mesh_;
+  MeshHandle reconstructed_mesh_;
   ImageType::Pointer original_image_, groomed_image_;
   int group_id_ = 1;
 
   QString original_mesh_filename_;
   QString groomed_filename_;
-  QString global_point_filename_;
-  QString local_point_filename_;
+  std::vector<std::string> global_point_filenames_;
+  std::vector<std::string> local_point_filenames_;
 
-  vnl_vector<double> global_correspondence_points_;
-  vnl_vector<double> local_correspondence_points_;
+  //vnl_vector<double> global_correspondence_points_;
+  //vnl_vector<double> local_correspondence_points_;
   std::map<std::string, Eigen::VectorXf> point_features_;
+  StudioParticles particles_;
 
   QList<Point> exclusion_sphere_centers_;
   QList<double> exclusion_sphere_radii_;
@@ -163,9 +175,9 @@ private:
   std::shared_ptr<shapeworks::Subject> subject_;
 
   std::vector<Point> vectors_;
-  vnl_vector<double> transform_;
+  vtkSmartPointer<vtkTransform> transform_ = vtkSmartPointer<vtkTransform>::New();
 
-  TransformType groomed_transform_;
+  std::vector<vtkSmartPointer<vtkTransform>> reconstruction_transforms_;
 
   QStringList corner_annotations_;
 
