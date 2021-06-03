@@ -518,7 +518,7 @@ std::string Groom::get_output_filename(std::string input, DomainType domain_type
 
   std::string suffix = "_DT.nrrd";
   if (domain_type == DomainType::Mesh) {
-    suffix = "_groomed.ply";
+    suffix = "_groomed.vtk";
   }
 
   auto path = base + "/" + prefix;
