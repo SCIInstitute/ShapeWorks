@@ -7,6 +7,7 @@ set(Utils_sources
 set(Utils_headers
   Utils.h
   StringUtils.h
+  EigenUtils.h
   )
 
 add_library(Utils STATIC

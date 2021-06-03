@@ -13,6 +13,7 @@ def addTest1():
 val = addTest1()
 
 if val is False:
+  print("addTest1 failed")
   sys.exit(1)
 
 def addTest2():
@@ -26,6 +27,7 @@ def addTest2():
 val = addTest2()
 
 if val is False:
+  print("addTest2 failed")
   sys.exit(1)
 
 def addTest3():
@@ -40,4 +42,20 @@ def addTest3():
 val = addTest3()
 
 if val is False:
+  print("addTest3 failed")
   sys.exit(1)
+
+def addfailTest():
+  img1 = Image(os.environ["DATA"] + "/la-bin.nrrd")
+  img2 = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img = img1 + img2
+
+  compareImg = Image(os.environ["DATA"] + "/addfail.nrrd")
+
+  return img.compare(compareImg)
+
+try:
+  val = addfailTest()
+  sys.exit(1)
+except ValueError:
+  sys.exit(0)

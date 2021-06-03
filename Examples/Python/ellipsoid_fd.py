@@ -122,6 +122,10 @@ def Run_Pipeline(args):
 
     [localPointFiles, worldPointFiles] = runShapeWorksOptimize_FixedDomains(pointDir, dtFiles, parameterDictionary)
 
+    if args.tiny_test:
+        print("Done with tiny test")
+        exit()
+
     """
     ## ANALYZE : Shape Analysis and Visualization
 

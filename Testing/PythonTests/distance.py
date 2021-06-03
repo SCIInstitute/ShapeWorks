@@ -16,6 +16,7 @@ def distanceTest1():
 val = distanceTest1()
 
 if val is False:
+  print("distanceTest1 failed")
   sys.exit(1)
 
 def distanceTest2():
@@ -32,4 +33,5 @@ def distanceTest2():
 val = distanceTest2()
 
 if val is False:
+  print("distanceTest2 failed")
   sys.exit(1)
