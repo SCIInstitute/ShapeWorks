@@ -9,11 +9,11 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-
+#violin plot for loadings
 def violinplot(loadings,cumulativeVariance,shape_models_dir):
 
     
-    print(cumulativeVariance)
+    
     minDims = np.where(cumulativeVariance <=99)[0]
     #if the first mode is the most dominant, minDims will be empty
     if(minDims.size==0):
@@ -40,9 +40,10 @@ def violinplot(loadings,cumulativeVariance,shape_models_dir):
     plt.show(block=False)
     plt.close(fig)
 
-    print("Figure saved in directory -" + shape_models_dir)
+    print("Loadings plot saved in directory -" + shape_models_dir)
     print()
 
+# plot the PCA metrics similar to Studio visualization in Analyze pane
 def plot_pca_metrics(cumulativeVariance,explainedVariance,shape_models_dir):
     N = len(cumulativeVariance) 
     X = np.array(list(range(N))) + 1
@@ -59,7 +60,7 @@ def plot_pca_metrics(cumulativeVariance,explainedVariance,shape_models_dir):
     plt.show(block=False)
     plt.close(fig)
 
-    print("Figure saved in directory -" + shape_models_dir)
+    print("PCA metrics plot saved in directory -" + shape_models_dir)
     print()
 
 def Run_Pipeline(args):
@@ -92,6 +93,11 @@ def Run_Pipeline(args):
     shapeStatistics.principalComponentProjections()
     pcaLoadings = shapeStatistics.pcaLoadings()
 
+    print("\nThe sample size of the dataset is : " , shapeStatistics.sampleSize())
+    print("\nThe dimensions of the dataset are : ", shapeStatistics.numDims())
+
+    #Save the loadings
+    print("\nSaving the PCA loadings in the directory : " + shape_models_dir)
     np.savetxt(shape_models_dir+"pca_loadings.txt",pcaLoadings)
     
     
