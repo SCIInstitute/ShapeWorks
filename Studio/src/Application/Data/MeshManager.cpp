@@ -134,7 +134,7 @@ void MeshManager::handle_warper_progress()
   }
   float p = sum / num_domains * 100.0;
 
-  if (p < 1.0) {
+  if (p < 100.0) {
     emit status("Generating Mesh Warp");
   }
   else {

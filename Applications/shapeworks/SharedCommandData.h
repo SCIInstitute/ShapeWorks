@@ -20,4 +20,5 @@ struct SharedCommandData
   bool validParticleSystem() const {return particleSystem.N() >= 1 && particleSystem.D() >= 1; }
 };
 
+
 } // shapeworks
