@@ -698,11 +698,6 @@ double Session::update_auto_glyph_size()
   }
 
   this->auto_glyph_size_ = max_range / std::sqrt(static_cast<double>(num_particles)) / 2;
-
-  std::cerr << "max_range = " << max_range << "\n";
-  std::cerr << "num_particles = " << num_particles << "\n";
-  std::cerr << "auto raw = " << this->auto_glyph_size_ << "\n";
-
   this->auto_glyph_size_ = std::max<double>(0.1, this->auto_glyph_size_);
   this->auto_glyph_size_ = std::min<double>(10.0, this->auto_glyph_size_);
 
