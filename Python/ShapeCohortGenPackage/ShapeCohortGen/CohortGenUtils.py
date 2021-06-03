@@ -89,7 +89,7 @@ def generate_segmentations(meshList, out_dir, randomize_size=True, spacing=[1.0,
 		if not (allow_on_boundary and (meshIndex in randomBoundarySamples)):
 			bb = bball
 
-            pad = 5
+			pad = 5
 			if randomize_size:			
 				pad = np.random.randint(5, high=15, size=3)
 
