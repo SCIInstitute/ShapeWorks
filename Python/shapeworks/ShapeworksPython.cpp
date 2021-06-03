@@ -659,6 +659,11 @@ PYBIND11_MODULE(shapeworks, m)
        py::overload_cast<const Point&>(&PhysicalRegion::expand),
        "expand this region to include this point",
        "point"_a)
+
+  .def("pad",
+       &PhysicalRegion::pad,
+       "grows or shrinks the region by the specified amount",
+       "padding"_a)
   ;
 
   // IndexRegion
@@ -946,12 +951,11 @@ PYBIND11_MODULE(shapeworks, m)
        "computes cell normals and orients them such that they point in the same direction")
 
   .def("toImage",
-       [](Mesh& mesh, PhysicalRegion &region, double padding, std::vector<double>& spacing) -> decltype(auto) {
-         return mesh.toImage(region, padding, Point({spacing[0], spacing[1], spacing[2]}));
+       [](Mesh& mesh, PhysicalRegion &region, std::vector<double>& spacing) -> decltype(auto) {
+         return mesh.toImage(region, Point({spacing[0], spacing[1], spacing[2]}));
        },
-       "rasterizes mesh to a binary image, computing dims/spacing if necessary (specifying dims overrides specified spacing)",
+       "rasterizes specified region to create binary image of desired dims (default: unit spacing)",
        "region"_a=PhysicalRegion(),
-       "padding"_a=0.0,
        "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}))
 
   .def("distance",
@@ -959,12 +963,11 @@ PYBIND11_MODULE(shapeworks, m)
        "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
 
   .def("toDistanceTransform",
-       [](Mesh& mesh, PhysicalRegion &region, double padding, std::vector<double>& spacing) -> decltype(auto) {
-         return mesh.toDistanceTransform(region, padding, Point({spacing[0], spacing[1], spacing[2]}));
+       [](Mesh& mesh, PhysicalRegion &region, std::vector<double>& spacing) -> decltype(auto) {
+         return mesh.toDistanceTransform(region, Point({spacing[0], spacing[1], spacing[2]}));
        },
-       "converts mesh to distance transform, computing dims/spacing if necessary (specifying dims overrides specified spacing)",
+       "converts specified region to distance transform image (default: unit spacing)",
        "region"_a=PhysicalRegion(),
-       "padding"_a=0.0,
        "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}))
 
   .def("center",

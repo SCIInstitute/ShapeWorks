@@ -89,12 +89,11 @@ def generate_segmentations(meshList, out_dir, randomize_size=True, spacing=[1.0,
 		if not (allow_on_boundary and (meshIndex in randomBoundarySamples)):
 			bb = bball
 
+            pad = 5
 			if randomize_size:			
 				pad = np.random.randint(5, high=15, size=3)
-				bb.min -= pad
-				bb.max += pad
-			else:
-				bb.pad(5)
+
+			bb.pad(pad)
 
 		# sample the given region of Mesh to an image
 		image = mesh.toImage(region=bb, spacing=spacing)

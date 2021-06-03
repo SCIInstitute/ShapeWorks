@@ -938,9 +938,9 @@ bool MeshToImage::execute(const optparse::Values &options, SharedCommandData &sh
   double pad = static_cast<double>(options.get("pad"));
 
   Point3 spacing({x,y,z});
-  auto region = sharedData.mesh->boundingBox();
+  auto region = sharedData.mesh->boundingBox().pad(pad);
   
-  sharedData.image = sharedData.mesh->toImage(region, pad, spacing);
+  sharedData.image = sharedData.mesh->toImage(region, spacing);
   return true;
 }
 
@@ -975,9 +975,9 @@ bool MeshToDT::execute(const optparse::Values &options, SharedCommandData &share
   double pad = static_cast<double>(options.get("pad"));
 
   Point3 spacing({x,y,z});
-  auto region = sharedData.mesh->boundingBox();
+  auto region = sharedData.mesh->boundingBox().pad(pad);
   
-  sharedData.image = sharedData.mesh->toDistanceTransform(region, pad, spacing);
+  sharedData.image = sharedData.mesh->toDistanceTransform(region, spacing);
   return true;
 }
 
