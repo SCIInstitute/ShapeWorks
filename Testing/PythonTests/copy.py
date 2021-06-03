@@ -14,6 +14,7 @@ def copyTest1():
 val = copyTest1()
 
 if val is False:
+  print("copyTest1 failed")
   sys.exit(1)
 
 def copyTest2():
@@ -28,4 +29,5 @@ def copyTest2():
 val = copyTest2()
 
 if val is False:
+  print("copyTest2 failed")
   sys.exit(1)

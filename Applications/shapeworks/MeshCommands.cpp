@@ -204,7 +204,8 @@ bool Smooth::execute(const optparse::Values &options, SharedCommandData &sharedD
 void Decimate::buildParser()
 {
   const std::string prog = "decimate";
-  const std::string desc = "brief description of command"; // TODO: add description
+  const std::string desc = "applies filter to reduce number of triangles in mesh";
+
   parser.prog(prog).description(desc);
 
   parser.add_option("--reduction").action("store").type("double").set_default(0.5).help("Percent reduction of total number of polygons [default: %default].");
@@ -430,12 +431,12 @@ void ClipMesh::buildParser()
   const std::string desc = "clips mesh";
   parser.prog(prog).description(desc);
 
+  parser.add_option("--px").action("store").type("double").set_default(0.0).help("Value of point.x for cutting plane [default: %default].");
+  parser.add_option("--py").action("store").type("double").set_default(0.0).help("Value of point.y for cutting plane [default: %default].");
+  parser.add_option("--pz").action("store").type("double").set_default(0.0).help("Value of point.z for cutting plane [default: %default].");
   parser.add_option("--nx").action("store").type("double").set_default(0.0).help("Value of normal.x for cutting plane [default: %default].");
   parser.add_option("--ny").action("store").type("double").set_default(0.0).help("Value of normal.y for cutting plane [default: %default].");
   parser.add_option("--nz").action("store").type("double").set_default(0.0).help("Value of normal.z for cutting plane [default: %default].");
-  parser.add_option("--ox").action("store").type("double").set_default(0.0).help("Value of origin.x for cutting plane [default: %default].");
-  parser.add_option("--oy").action("store").type("double").set_default(0.0).help("Value of origin.y for cutting plane [default: %default].");
-  parser.add_option("--oz").action("store").type("double").set_default(0.0).help("Value of origin.z for cutting plane [default: %default].");
 
   Command::buildParser();
 }
@@ -448,15 +449,15 @@ bool ClipMesh::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
+  Point point({static_cast<double>(options.get("px")),
+               static_cast<double>(options.get("py")),
+               static_cast<double>(options.get("pz"))});
+
   Vector normal{makeVector({static_cast<double>(options.get("nx")),
                             static_cast<double>(options.get("ny")),
                             static_cast<double>(options.get("nz"))})};
 
-  Point origin({static_cast<double>(options.get("ox")),
-                static_cast<double>(options.get("oy")),
-                static_cast<double>(options.get("oz"))});
-
-  sharedData.mesh->clip(makePlane(normal, origin));
+  sharedData.mesh->clip(makePlane(point, normal));
   return sharedData.validMesh();
 }
 
@@ -542,7 +543,6 @@ void BoundingBoxMesh::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to meshes (must be followed by `--`), ex: \"bounding-box-mesh --names *.vtk -- --center 1\")");
-  parser.add_option("--center").action("store").type("bool").set_default(false).help("Flag for centering [default: false].");
 
   Command::buildParser();
 }
@@ -550,10 +550,30 @@ void BoundingBoxMesh::buildParser()
 bool BoundingBoxMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::vector<std::string> filenames = options.get("names");
-  bool center = static_cast<bool>(options.get("center"));
 
-  sharedData.region = MeshUtils::boundingBox(filenames, center);
-  std::cout << "Bounding box:\n" << sharedData.region;
+  sharedData.region = MeshUtils::boundingBox(filenames);
+  std::cout << "Bounding box:\n" << sharedData.region << std::endl;
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// MeshBounds
+///////////////////////////////////////////////////////////////////////////////
+void MeshBounds::buildParser()
+{
+  const std::string prog = "mesh-bounds";
+  const std::string desc = "return physical bounds of mesh";
+  parser.prog(prog).description(desc);
+
+  Command::buildParser();
+}
+
+bool MeshBounds::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  sharedData.region = sharedData.mesh->boundingBox();
+
+  std::cout << "Bounding box:\n" << sharedData.region << std::endl;
+
   return true;
 }
 
@@ -684,12 +704,12 @@ void ClipClosedSurface::buildParser()
   const std::string desc = "clips mesh resulting in a closed surface";
   parser.prog(prog).description(desc);
 
+  parser.add_option("--px").action("store").type("double").set_default(0.0).help("Value of point.x for cutting plane [default: %default].");
+  parser.add_option("--py").action("store").type("double").set_default(0.0).help("Value of point.y for cutting plane [default: %default].");
+  parser.add_option("--pz").action("store").type("double").set_default(0.0).help("Value of point.z for cutting plane [default: %default].");
   parser.add_option("--nx").action("store").type("double").set_default(0.0).help("Value of normal.x for cutting plane [default: %default].");
   parser.add_option("--ny").action("store").type("double").set_default(0.0).help("Value of normal.y for cutting plane [default: %default].");
   parser.add_option("--nz").action("store").type("double").set_default(0.0).help("Value of normal.z for cutting plane [default: %default].");
-  parser.add_option("--ox").action("store").type("double").set_default(0.0).help("Value of origin.x for cutting plane [default: %default].");
-  parser.add_option("--oy").action("store").type("double").set_default(0.0).help("Value of origin.y for cutting plane [default: %default].");
-  parser.add_option("--oz").action("store").type("double").set_default(0.0).help("Value of origin.z for cutting plane [default: %default].");
 
   Command::buildParser();
 }
@@ -702,15 +722,15 @@ bool ClipClosedSurface::execute(const optparse::Values &options, SharedCommandDa
     return false;
   }
 
+  Point point({static_cast<double>(options.get("px")),
+               static_cast<double>(options.get("py")),
+               static_cast<double>(options.get("pz"))});
+
   Vector normal{makeVector({static_cast<double>(options.get("nx")),
                             static_cast<double>(options.get("ny")),
                             static_cast<double>(options.get("nz"))})};
 
-  Point origin({static_cast<double>(options.get("ox")),
-                static_cast<double>(options.get("oy")),
-                static_cast<double>(options.get("oz"))});
-
-  sharedData.mesh->clipClosedSurface(makePlane(normal, origin));
+  sharedData.mesh->clipClosedSurface(makePlane(point, normal));
   return sharedData.validMesh();
 }
 
@@ -893,18 +913,13 @@ bool FieldNames::execute(const optparse::Values &options, SharedCommandData &sha
 void MeshToImage::buildParser()
 {
   const std::string prog = "mesh-to-image";
-  const std::string desc = "converts current mesh to a binary segmentation image";
+  const std::string desc = "converts mesh to a binary segmentation image, using unit spacing by default";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--spacex").action("store").type("double").set_default(1.0).help("Spacing of output image in x-direction [default: %default].");
-  parser.add_option("--spacey").action("store").type("double").set_default(1.0).help("Spacing of output image in y-direction [default: %default].");
-  parser.add_option("--spacez").action("store").type("double").set_default(1.0).help("Spacing of output image in z-direction [default: %default].");
-  parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Size of output image in x-direction [default: one pixel per unit of distance in mesh].");
-  parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Size of output image in y-direction [default: one pixel per unit of distance in mesh].");
-  parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Size of output image in z-direction [default: one pixel per unit of distance in mesh].");
-  parser.add_option("--originx").action("store").type("double").set_default(-1.0).help("Origin of output image in x-direction [default: current origin].");
-  parser.add_option("--originy").action("store").type("double").set_default(-1.0).help("Origin of output image in y-direction [default: current origin].");
-  parser.add_option("--originz").action("store").type("double").set_default(-1.0).help("Origin of output image in z-direction [default: current origin].");
+  parser.add_option("--sx").action("store").type("double").set_default(1.0).help("Spacing of output image in x-direction [default: unit spacing].");
+  parser.add_option("--sy").action("store").type("double").set_default(1.0).help("Spacing of output image in y-direction [default: unit spacing].");
+  parser.add_option("--sz").action("store").type("double").set_default(1.0).help("Spacing of output image in z-direction [default: unit spacing].");
+  parser.add_option("--pad").action("store").type("double").set_default(0.0).help("Pad the region to extract [default: 0.0].");
 
   Command::buildParser();
 }
@@ -917,21 +932,15 @@ bool MeshToImage::execute(const optparse::Values &options, SharedCommandData &sh
     return false;
   }
 
-  double spaceX = static_cast<double>(options.get("spacex"));
-  double spaceY = static_cast<double>(options.get("spacey"));
-  double spaceZ = static_cast<double>(options.get("spacez"));
-  unsigned sizeX = static_cast<unsigned>(options.get("sizex"));
-  unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
-  unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
-  double originX = static_cast<double>(options.get("originx"));
-  double originY = static_cast<double>(options.get("originy"));
-  double originZ = static_cast<double>(options.get("originz"));
+  double x = static_cast<double>(options.get("sx"));
+  double y = static_cast<double>(options.get("sy"));
+  double z = static_cast<double>(options.get("sz"));
+  double pad = static_cast<double>(options.get("pad"));
 
-  Vector3 spacing(makeVector({spaceX,spaceY,spaceZ}));
-  Dims size({sizeX,sizeY, sizeZ});
-  Point3 origin({originX,originY,originZ});
-
-  sharedData.image = sharedData.mesh->toImage(spacing, size, origin);
+  Point3 spacing({x,y,z});
+  auto region = sharedData.mesh->boundingBox().pad(pad);
+  
+  sharedData.image = sharedData.mesh->toImage(region, spacing);
   return true;
 }
 
@@ -941,18 +950,13 @@ bool MeshToImage::execute(const optparse::Values &options, SharedCommandData &sh
 void MeshToDT::buildParser()
 {
   const std::string prog = "mesh-to-dt";
-  const std::string desc = "converts current mesh to distance transform";
+  const std::string desc = "converts mesh to a distance transform, using unit spacing by default";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--spacex").action("store").type("double").set_default(1.0).help("Spacing of output image in x-direction [default: %default].");
-  parser.add_option("--spacey").action("store").type("double").set_default(1.0).help("Spacing of output image in y-direction [default: %default].");
-  parser.add_option("--spacez").action("store").type("double").set_default(1.0).help("Spacing of output image in z-direction [default: %default].");
-  parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Size of output image in x-direction [default: one pixel per unit of distance in mesh].");
-  parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Size of output image in y-direction [default: one pixel per unit of distance in mesh].");
-  parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Size of output image in z-direction [default: one pixel per unit of distance in mesh].");
-  parser.add_option("--originx").action("store").type("double").set_default(-1.0).help("Origin of output image in x-direction [default: current origin].");
-  parser.add_option("--originy").action("store").type("double").set_default(-1.0).help("Origin of output image in y-direction [default: current origin].");
-  parser.add_option("--originz").action("store").type("double").set_default(-1.0).help("Origin of output image in z-direction [default: current origin].");
+  parser.add_option("--sx").action("store").type("double").set_default(1.0).help("Spacing of output image in x-direction [default: unit spacing].");
+  parser.add_option("--sy").action("store").type("double").set_default(1.0).help("Spacing of output image in y-direction [default: unit spacing].");
+  parser.add_option("--sz").action("store").type("double").set_default(1.0).help("Spacing of output image in z-direction [default: unit spacing].");
+  parser.add_option("--pad").action("store").type("double").set_default(0.0).help("Pad the region to extract [default: 0.0].");
 
   Command::buildParser();
 }
@@ -965,21 +969,15 @@ bool MeshToDT::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
-  double spaceX = static_cast<double>(options.get("spacex"));
-  double spaceY = static_cast<double>(options.get("spacey"));
-  double spaceZ = static_cast<double>(options.get("spacez"));
-  unsigned sizeX = static_cast<unsigned>(options.get("sizex"));
-  unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
-  unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
-  double originX = static_cast<double>(options.get("originx"));
-  double originY = static_cast<double>(options.get("originy"));
-  double originZ = static_cast<double>(options.get("originz"));
+  double x = static_cast<double>(options.get("sx"));
+  double y = static_cast<double>(options.get("sy"));
+  double z = static_cast<double>(options.get("sz"));
+  double pad = static_cast<double>(options.get("pad"));
 
-  Vector3 spacing(makeVector({spaceX,spaceY,spaceZ}));
-  Dims size({sizeX,sizeY, sizeZ});
-  Point3 origin({originX,originY,originZ});
-
-  sharedData.image = sharedData.mesh->toDistanceTransform(spacing, size, origin);
+  Point3 spacing({x,y,z});
+  auto region = sharedData.mesh->boundingBox().pad(pad);
+  
+  sharedData.image = sharedData.mesh->toDistanceTransform(region, spacing);
   return true;
 }
 

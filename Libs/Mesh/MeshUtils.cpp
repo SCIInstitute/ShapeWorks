@@ -71,32 +71,32 @@ void MeshUtils::threadSafeWriteMesh(std::string filename, Mesh mesh)
   mesh.write(filename);
 }
 
-Region MeshUtils::boundingBox(std::vector<std::string> &filenames, bool center)
+PhysicalRegion MeshUtils::boundingBox(std::vector<std::string> &filenames, bool center)
 {
   if (filenames.empty())
     throw std::invalid_argument("No filenames provided to compute a bounding box");
   
   Mesh mesh(filenames[0]);
-  Region bbox(mesh.boundingBox());
+  PhysicalRegion bbox(mesh.boundingBox());
 
   for (auto filename : filenames)
   {
     Mesh mesh(filename);
-    bbox.grow(mesh.boundingBox());
+    bbox.expand(mesh.boundingBox());
   }
 
   return bbox;
 }
 
-Region MeshUtils::boundingBox(std::vector<Mesh> &meshes, bool center)
+PhysicalRegion MeshUtils::boundingBox(std::vector<Mesh> &meshes, bool center)
 {
   if (meshes.empty())
     throw std::invalid_argument("No meshes provided to compute a bounding box");
 
-  Region bbox(meshes[0].boundingBox());
+  PhysicalRegion bbox(meshes[0].boundingBox());
 
   for (auto mesh : meshes)
-    bbox.grow(mesh.boundingBox());
+    bbox.expand(mesh.boundingBox());
 
   return bbox;
 }
