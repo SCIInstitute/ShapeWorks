@@ -13,9 +13,13 @@ Coord toCoord(const Dims &d) {
                 static_cast<itk::IndexValueType>(d[1]),
                 static_cast<itk::IndexValueType>(d[2])}); }
 Dims toDims(const Coord &c) {
-  return Dims({static_cast<itk::SizeValueType>(c[0]),
-               static_cast<itk::SizeValueType>(c[1]),
-               static_cast<itk::SizeValueType>(c[2])}); }
+  return Dims({static_cast<Dims::value_type>(std::max(static_cast<itk::Index<3>::value_type>(0), c[0])),
+               static_cast<Dims::value_type>(std::max(static_cast<itk::Index<3>::value_type>(0), c[1])),
+               static_cast<Dims::value_type>(std::max(static_cast<itk::Index<3>::value_type>(0), c[2]))}); }
+Dims toDims(const Point &p) {
+  return Dims({static_cast<Dims::value_type>(std::max(0.0, std::ceil(p[0]))),
+               static_cast<Dims::value_type>(std::max(0.0, std::ceil(p[1]))),
+               static_cast<Dims::value_type>(std::max(0.0, std::ceil(p[2])))}); }
 Coord toCoord(const Point &p) {
   return Coord({static_cast<itk::IndexValueType>(p[0]),
                 static_cast<itk::IndexValueType>(p[1]),
@@ -25,13 +29,39 @@ Coord toCoord(const Point &p) {
 /// itkVector doesn't have this handy ctor like itkPoint; `Point p({a,b,c})` works, but `Vector3 v({1,2,3})` doesn't.
 Vector3 makeVector(std::array<double, 3>&& arr) { return Vector3(arr.data()); }
 
-Plane makePlane(const Vector3 &n, const Point &o)
+Plane makePlane(const Point &p, const Vector3 &n)
 {
   Plane plane = Plane::New();
+  plane->SetOrigin(p[0], p[1], p[2]);
   plane->SetNormal(n[0], n[1], n[2]);
-  plane->SetOrigin(o[0], o[1], o[2]);
 
   return plane;
+}
+
+Plane makePlane(const Point &p0, const Point &p1, const Point &p2)
+{
+  Plane plane = Plane::New();
+  plane->SetOrigin(p0[0], p0[1], p0[2]);
+  auto v0 = p1 - p0;
+  auto v1 = p2 - p0;
+  auto n = crossProduct(v0, v1);
+  plane->SetNormal(n[0], n[1], n[2]);
+
+  return plane;
+}
+
+Point getOrigin(const Plane plane)
+{
+  double origin[3];
+  plane->GetOrigin(origin);
+  return Point({origin[0], origin[1], origin[2]});
+}
+
+Vector3 getNormal(const Plane plane)
+{
+  double normal[3];
+  plane->GetNormal(normal);
+  return makeVector({normal[0], normal[1], normal[2]});
 }
 
 template<>

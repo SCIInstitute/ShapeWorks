@@ -10,6 +10,7 @@
 #include <vector>
 #include <string>
 #include <Libs/Mesh/Mesh.h>
+#include <boost/filesystem.hpp>
 
 namespace shapeworks {
 

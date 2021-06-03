@@ -67,13 +67,17 @@ bool Optimize::Run()
 
   }
 
-
-
   // sanity check
   if (this->m_domains_per_shape != this->m_number_of_particles.size()) {
     std::cerr <<
               "Inconsistency in parameters... m_domains_per_shape != m_number_of_particles.size()\n";
     return false;
+  }
+
+  // ensure use_shape_statistics_after doesn't increase the particle count over what was specified
+  for (int i = 0; i < this->m_number_of_particles.size(); i++) {
+    this->m_use_shape_statistics_after = std::min(this->m_use_shape_statistics_after,
+                                                  this->m_number_of_particles[i]);
   }
 
   this->SetParameters();

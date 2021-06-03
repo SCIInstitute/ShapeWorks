@@ -29,7 +29,7 @@ def dataset_exists_check(use_case):
 
 def generate_download_flag(outputDirectory,folder):
 	download_flag = False
-	#if output/dataset + subfolders exits 
+	#if output/dataset + subfolders exits
 	if(os.path.exists(outputDirectory+folder)):
 			# if the folder is empty or has less than 3 files then download
 			if(len(os.listdir(outputDirectory+folder))==0 or len(os.listdir(outputDirectory+folder))<3):
@@ -39,9 +39,9 @@ def generate_download_flag(outputDirectory,folder):
 
 	#if the subfolder folder does not exists then download
 	else:
-		download_flag = True		
+		download_flag = True
 	return download_flag
-			
+
 def download_subset(use_case,datasetName,outputDirectory):
 	import DatasetUtils
 	import re
@@ -194,4 +194,4 @@ def get_shapeworks_bin_path():
 	if (not swpath):
 		return None
 	return os.path.dirname(swpath)
-        
+
