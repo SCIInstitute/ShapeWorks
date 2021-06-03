@@ -70,6 +70,19 @@ def download_subset(use_case,datasetName,outputDirectory):
         if(generate_download_flag(outputDirectory,"shape_models/femur/mean/")):
             meanFilesList = sorted([files for files in fileList if re.search("^shape_models(?:/|\\\)femur(?:/|\\\)mean(?:/|\\\).*",files)])
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meanFilesList)
+    elif(use_case==["ellipsoid_multiple_domain"]):
+        if(generate_download_flag(outputDirectory,"segmentations")):
+            segFilesList = sorted([files for files in fileList if re.search("^segmentations(?:/|\\\).*nrrd$",files)])[:6]
+            print(segFilesList)
+            input("wait")
+            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = segFilesList)
+    elif(use_case==["ellipsoid_multiple_domain_mesh"]):
+        if(generate_download_flag(outputDirectory,"meshes")):
+            segFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*ply$",files)])[:6]
+            print(segFilesList)
+            input("wait")
+            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = segFilesList)
+
 
 def download_and_unzip_dataset(datasetName, outputDirectory):
     # Check if the unzipped data is present and number of files are more than 3 for full use case
