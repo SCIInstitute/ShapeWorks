@@ -3,6 +3,7 @@
 #include "Constraint.h"
 #include "Eigen/Core"
 #include "vnl/vnl_math.h"
+#include <vector>
 
 namespace itk
 {
@@ -29,7 +30,8 @@ public:
     }
 
 private:
-
+    std::vector< Eigen::Vector3d > boundary;
+    Eigen::Vector3d query;
 };
 
 

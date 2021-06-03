@@ -60,6 +60,12 @@ public:
     double radius;
   };
 
+  /** Convenient typedef for storing free form constraint information */
+  struct FFCType {
+     std::vector< Eigen::Vector3d > boundary;
+     Eigen::Vector3d query;
+  };
+
   /** Returns the particle system used in the surface sampling. */
   itkGetObjectMacro(ParticleSystem, itk::ParticleSystem<Dimension>);
 
@@ -164,6 +170,9 @@ public:
                        const vnl_vector_fixed<double, Dimension>& va,
                        const vnl_vector_fixed<double, Dimension>& vb,
                        const vnl_vector_fixed<double, Dimension>& vc);
+  void AddFreeFormConstraint(unsigned int i,
+                             const std::vector< Eigen::Vector3d > boundary,
+                             const Eigen::Vector3d query);
 
   /** Transform a cutting plane based on procrustes transformation */
   void TransformCuttingPlanes(unsigned int i);
@@ -519,6 +528,7 @@ private:
   std::string m_PrefixTransformFile;
   std::vector<std::vector<CuttingPlaneType> > m_CuttingPlanes;
   std::vector<std::vector<SphereType> > m_Spheres;
+  std::vector<std::vector<FFCType> > m_FFCs;
 
   unsigned int m_verbosity;
 

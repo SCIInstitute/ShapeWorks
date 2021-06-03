@@ -365,6 +365,18 @@ void Sampler::AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, 
   }
 }
 
+void Sampler::AddFreeFormConstraint(unsigned int i,
+                           const std::vector< Eigen::Vector3d > boundary,
+                      const Eigen::Vector3d query){
+    if (m_FFCs.size() < i + 1) {
+      m_FFCs.resize(i + 1);
+    }
+
+    m_FFCs[i].push_back(FFCType());
+    m_FFCs[i][m_FFCs[i].size() - 1].boundary = boundary;
+    m_FFCs[i][m_FFCs[i].size() - 1].query = query;
+}
+
 void Sampler::AddImage(ImageType::Pointer image, double narrow_band)
 {
   const auto domain = itk::ParticleImplicitSurfaceDomain<ImageType::PixelType>::New();
