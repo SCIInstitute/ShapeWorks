@@ -1136,18 +1136,18 @@ void AnalysisTool::compute_reconstructed_domain_transforms()
   auto shapes = this->session_->get_shapes();
   for (int domain = 0; domain < this->session_->get_domains_per_shape(); domain++) {
     int num_shapes = shapes.size();
-    double tx = 0, ty = 0, tz = 0;
-    for (int i = 0; i < shapes.size(); i++) {
-      vtkSmartPointer<vtkTransform> base_transform = shapes[i]->get_alignment();
-      vtkSmartPointer<vtkTransform> offset_transform = shapes[i]->get_alignment();
-      auto base = base_transform->GetPosition();
-      auto offset = offset_transform->GetPosition();
-      tx += (base[0] - offset[0]) / num_shapes;
-      ty += (base[1] - offset[1]) / num_shapes;
-      tz += (base[2] - offset[2]) / num_shapes;
-    }
     auto transform = vtkSmartPointer<vtkTransform>::New();
-    transform->Translate(tx, ty, tz);
+    double* values = transform->GetMatrix()->GetData();
+
+    for (int i = 0; i < shapes.size(); i++) {
+      vtkSmartPointer<vtkTransform> base = shapes[i]->get_alignment(0);
+      vtkSmartPointer<vtkTransform> offset = shapes[i]->get_alignment(domain);
+
+      for (int j = 0; j < 16; j++) {
+        values[j] += (base->GetMatrix()->GetData()[j] -
+                      offset->GetMatrix()->GetData()[j]) / num_shapes;
+      }
+    }
     this->reconstruction_transforms_[domain] = transform;
   }
 

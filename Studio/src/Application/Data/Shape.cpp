@@ -701,9 +701,9 @@ void Shape::set_reconstruction_transforms(std::vector<vtkSmartPointer<vtkTransfo
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkTransform> Shape::get_alignment()
+vtkSmartPointer<vtkTransform> Shape::get_alignment(int domain)
 {
-  auto groom_transform = this->get_groomed_transform(0);
+  auto groom_transform = this->get_groomed_transform(domain);
   if (!groom_transform) {
     vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
     transform->Identity();
