@@ -908,21 +908,19 @@ $$ r(\theta) = \left[ \left| \frac{1}{a} \cos \left( \frac{m\theta}{4} \right) \
     <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># import relevant libraries </span>
 <span class="kn">import</span> <span class="nn">sys</span> 
 
-<span class="c1"># # add parent-parent directory (where setupenv.py is) to python path</span>
+<span class="c1"># add parent-parent directory (where setupenv.py is) to python path</span>
 <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;../..&#39;</span><span class="p">)</span>
 
 <span class="c1"># importing setupenv from Examples/Python</span>
-
 <span class="kn">import</span> <span class="nn">setupenv</span>
 
 <span class="c1"># indicate the bin directories for shapeworks and its dependencies</span>
-<span class="n">shapeworks_bin_dir</span>   <span class="o">=</span> <span class="s2">&quot;../../../../build/bin/&quot;</span>
-<span class="n">dependencies_bin_dir</span> <span class="o">=</span> <span class="s2">&quot;../../../../../shapeworks-dependencies/bin&quot;</span>
+<span class="n">shapeworks_bin_dir</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># default</span>
+<span class="c1">#shapeworks_bin_dir = &quot;../../../../build/bin&quot;</span>
 
 <span class="c1"># set up shapeworks environment</span>
 <span class="n">setupenv</span><span class="o">.</span><span class="n">setup_shapeworks_env</span><span class="p">(</span><span class="n">shapeworks_bin_dir</span><span class="p">,</span>  
-                              <span class="n">dependencies_bin_dir</span><span class="p">,</span> 
-                              <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+                              <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
         </div>
@@ -1140,9 +1138,6 @@ $$ r(\theta) = \left[ \left| \frac{1}{a} \cos \left( \frac{m\theta}{4} \right) \
 <span class="c1"># displays the last return value of a cell by default. So we have to use the display function</span>
 <span class="c1"># to be able to call itkwidgets within a function and if statements</span>
 <span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
-
-<span class="c1"># enable use_ipyvtk by default for interactive plots</span>
-<span class="n">pv</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;use_ipyvtk&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span> 
     
 <span class="c1"># a helper function that addes a vtk image to a pyvista plotter</span>
 <span class="k">def</span> <span class="nf">add_volume_to_plotter</span><span class="p">(</span> <span class="n">pvPlotter</span><span class="p">,</span>      <span class="c1"># pyvista plotter</span>
@@ -1268,7 +1263,7 @@ $$ r(\theta) = \left[ \left| \frac{1}{a} \cos \left( \frac{m\theta}{4} \right) \
         <span class="n">plotter</span><span class="o">.</span><span class="n">link_views</span><span class="p">()</span>  
 
     <span class="c1"># now, time to render our volumes</span>
-    <span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">use_ipyvtk</span> <span class="o">=</span> <span class="n">is_interactive</span><span class="p">)</span>
+    <span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
         </div>

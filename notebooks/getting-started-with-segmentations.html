@@ -864,9 +864,8 @@ all of MD as it is not optimized for dense, information rich UIs.
 <ul>
 <li>This notebook is located in <code>Examples/Python/notebooks/tutorials</code></li>
 <li>You have built shapeworks from source in <code>build</code> directory within the shapeworks code directory</li>
-<li>You have built shapeworks dependencies (using <code>build_dependencies.sh</code>) in the same parent directory of shapeworks code</li>
 </ul>
-<p><strong>Note:</strong> If you run from a ShapeWorks installation, you don't need to set the dependencies path and the <code>shapeworks_bin_dir</code> would be set as <code>../../../../bin</code>.</p>
+<p><strong>Note:</strong> If you run from a ShapeWorks installation, you don't need to set the <code>shapeworks_bin_dir</code></p>
 
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
@@ -887,12 +886,11 @@ all of MD as it is not optimized for dense, information rich UIs.
 <span class="kn">import</span> <span class="nn">setupenv</span>
 
 <span class="c1"># indicate the bin directories for shapeworks and its dependencies</span>
-<span class="n">shapeworks_bin_dir</span>   <span class="o">=</span> <span class="s2">&quot;../../../../build/bin&quot;</span>
-<span class="n">dependencies_bin_dir</span> <span class="o">=</span> <span class="s2">&quot;../../../../../shapeworks-dependencies/bin&quot;</span>
+<span class="n">shapeworks_bin_dir</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># default</span>
+<span class="c1">#shapeworks_bin_dir = &quot;../../../../build/bin&quot;</span>
 
 <span class="c1"># set up shapeworks environment</span>
 <span class="n">setupenv</span><span class="o">.</span><span class="n">setup_shapeworks_env</span><span class="p">(</span><span class="n">shapeworks_bin_dir</span><span class="p">,</span>  
-                              <span class="n">dependencies_bin_dir</span><span class="p">,</span> 
                               <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
@@ -934,8 +932,9 @@ all of MD as it is not optimized for dense, information rich UIs.
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="1-defining-and-exploring-your-dataset">1. Defining and exploring your dataset<a class="anchor-link" href="#1.-Defining-and-exploring-your-dataset">&#182;</a></h2><h3 id="defining-dataset-location">Defining dataset location<a class="anchor-link" href="#Defining-dataset-location">&#182;</a></h3><p>You can download exemplar datasets from <a href="http://cibc1.sci.utah.edu:8080">ShapeWorks data portal</a> after you login. For new users, you can <a href="http://cibc1.sci.utah.edu:8080/#?dialog=register">register</a> an account for free. Please do not use an important password.</p>
-<p>After you login, click <code>Collections</code> on the left panel and then <code>use-case-data-v2</code>. Select the dataset you would like to download by clicking on the checkbox on the left of the dataset name. See the video below.</p>
-<p><strong>This notebook assumes that you have downloaded <code>ellipsoid-v2</code> in <code>Examples/Python/Data</code>.</strong> Feel free to use your own dataset.</p>
+<p>After you login, click <code>Collections</code> on the left panel and then <code>use-case-data-v2</code>. Select the dataset you would like to download by clicking on the checkbox on the left of the dataset name. See the video below.
+After you download the dataset zip file, make sure you unzip/extract the contents in the appropriate location.</p>
+<p><strong>This notebook assumes that you have downloaded <code>ellipsoid_1mode</code> and you have placed the unzipped folder <code>ellipsoid_1mode</code> in <code>Examples/Python/Data</code>.</strong> Feel free to use your own dataset.</p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/portal_data_download.mp4" autoplay muted loop controls style="width:100%"></p>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
@@ -949,7 +948,7 @@ all of MD as it is not optimized for dense, information rich UIs.
     <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">os</span> <span class="c1"># for paths and mkdir</span>
 
 <span class="c1"># dataset name is the folder name for your dataset</span>
-<span class="n">datasetName</span>  <span class="o">=</span> <span class="s1">&#39;ellipsoid-v2&#39;</span>
+<span class="n">datasetName</span>  <span class="o">=</span> <span class="s1">&#39;ellipsoid_1mode&#39;</span>
 
 <span class="c1"># path to the dataset where we can find shape data </span>
 <span class="c1"># here we assume shape data are given as binary segmentations</span>
@@ -981,7 +980,7 @@ all of MD as it is not optimized for dense, information rich UIs.
         
         <div class="CodeMirror cm-s-jupyter">
     <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">glob</span> <span class="c1"># for paths and file-directory search</span>
-
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span> <span class="c1"># for generating robust paths irrespective of the platform:Win/Linux/Mac</span>
 <span class="c1"># file extension for the shape data</span>
 <span class="n">shapeExtention</span> <span class="o">=</span> <span class="s1">&#39;.nrrd&#39;</span>
 
@@ -993,7 +992,8 @@ all of MD as it is not optimized for dense, information rich UIs.
 <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Number of shapes: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">shapeFilenames</span><span class="p">)))</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Shape files found:&#39;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">shapeFilename</span> <span class="ow">in</span> <span class="n">shapeFilenames</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">shapeFilename</span><span class="p">)</span>
+    <span class="n">shapeFilename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">shapeFilename</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">shapeFilename</span><span class="p">)</span>
 </pre></div>
 
         </div>
@@ -1249,7 +1249,7 @@ all of MD as it is not optimized for dense, information rich UIs.
         <div class="CodeMirror cm-s-jupyter">
     <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># visualize - this time we will also visualize orthogonal image planes</span>
 <span class="n">itkw</span><span class="o">.</span><span class="n">view</span><span class="p">(</span>  <span class="n">image</span>          <span class="o">=</span> <span class="n">shapeSeg_vtk</span><span class="p">,</span> <span class="c1"># for orthoginal image plane</span>
-            <span class="n">slicing_planes</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+            <span class="n">slicing_planes</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
             <span class="n">rotate</span>         <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="c1"># enable auto rotation</span>
             <span class="n">axes</span>           <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
 </pre></div>
@@ -1282,7 +1282,7 @@ all of MD as it is not optimized for dense, information rich UIs.
     <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># to visualize label map - use label map blend </span>
 <span class="n">itkw</span><span class="o">.</span><span class="n">view</span><span class="p">(</span> <span class="n">image</span>          <span class="o">=</span> <span class="n">shapeSeg_vtk</span><span class="p">,</span> <span class="c1"># for orthoginal image plane</span>
            <span class="n">label_image</span>    <span class="o">=</span> <span class="n">shapeSeg_vtk</span><span class="p">,</span>  <span class="c1"># for volume rendering segmentation</span>
-           <span class="n">slicing_planes</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+           <span class="n">slicing_planes</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
            <span class="n">axes</span>           <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
            <span class="n">rotate</span>         <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="c1"># enable auto rotation</span>
            <span class="n">interpolation</span>  <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
@@ -1334,11 +1334,9 @@ all of MD as it is not optimized for dense, information rich UIs.
         
         <div class="CodeMirror cm-s-jupyter">
     <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># to have an interactive visualization, </span>
-<span class="c1"># we need enable use_ipyvtk for this plot </span>
 <span class="c1"># click r to reset the view after zooming</span>
 <span class="n">shapeSeg_vtk</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">volume</span>     <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>     <span class="c1"># volume render</span>
-                  <span class="n">shade</span>      <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>     <span class="c1"># enable shading</span>
-                  <span class="n">use_ipyvtk</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># enable interactive plots</span>
+                  <span class="n">shade</span>      <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>     <span class="c1"># enable shading</span>
 </pre></div>
 
         </div>
@@ -1360,10 +1358,7 @@ all of MD as it is not optimized for dense, information rich UIs.
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Or, we can enable use_ipyvtk by default for interactive plots</span>
-<span class="n">pv</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;use_ipyvtk&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span> 
-
-<span class="c1"># click r to reset the view after zooming</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># click r to reset the view after zooming</span>
 <span class="n">shapeSeg_vtk</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">volume</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># volume render</span>
                   <span class="n">shade</span>  <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>   <span class="c1"># enable shading</span>
 </pre></div>
@@ -1471,7 +1466,7 @@ all of MD as it is not optimized for dense, information rich UIs.
 
 <span class="c1"># define the plotter</span>
 <span class="n">plotter</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">shape</span>    <span class="o">=</span> <span class="p">(</span><span class="n">grid_rows</span><span class="p">,</span> <span class="n">grid_cols</span><span class="p">),</span>
-                     <span class="n">notebook</span> <span class="o">=</span> <span class="n">is_interactive</span><span class="p">,</span> 
+                     <span class="n">notebook</span> <span class="o">=</span> <span class="n">is_interactive</span><span class="p">,</span>
                      <span class="n">border</span>   <span class="o">=</span> <span class="n">show_borders</span><span class="p">)</span>
 </pre></div>
 
@@ -1533,7 +1528,7 @@ all of MD as it is not optimized for dense, information rich UIs.
     <span class="n">plotter</span><span class="o">.</span><span class="n">link_views</span><span class="p">()</span>  
 
 <span class="c1"># now, time to render our segmentations</span>
-<span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> <span class="c1">#use_ipyvtk=True is already enabled by default using pv.rcParams</span>
+<span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
         </div>
@@ -1577,8 +1572,8 @@ all of MD as it is not optimized for dense, information rich UIs.
     <span class="n">pvPlotter</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">rowIdx</span><span class="p">,</span> <span class="n">colIdx</span><span class="p">)</span>
     
     <span class="c1"># add the volume</span>
-    <span class="n">pvPlotter</span><span class="o">.</span><span class="n">add_volume</span><span class="p">(</span><span class="n">vtkImg</span><span class="p">,</span> 
-                         <span class="n">shade</span>   <span class="o">=</span> <span class="n">shade_volumes</span><span class="p">,</span> 
+    <span class="n">pvPlotter</span><span class="o">.</span><span class="n">add_volume</span><span class="p">(</span><span class="n">vtkImg</span><span class="p">,</span>
+                         <span class="n">shade</span>   <span class="o">=</span> <span class="n">shade_volumes</span><span class="p">,</span>
                          <span class="n">cmap</span>    <span class="o">=</span> <span class="n">color_map</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">show_axes</span><span class="p">:</span>
@@ -1614,29 +1609,29 @@ all of MD as it is not optimized for dense, information rich UIs.
         <div class="CodeMirror cm-s-jupyter">
     <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># define the plotter</span>
 <span class="n">plotter</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">shape</span>    <span class="o">=</span> <span class="p">(</span><span class="n">grid_rows</span><span class="p">,</span> <span class="n">grid_cols</span><span class="p">),</span>
-                     <span class="n">notebook</span> <span class="o">=</span> <span class="n">is_interactive</span><span class="p">,</span> 
+                     <span class="n">notebook</span> <span class="o">=</span> <span class="n">is_interactive</span><span class="p">,</span>
                      <span class="n">border</span>   <span class="o">=</span> <span class="n">show_borders</span><span class="p">)</span> 
 
 <span class="c1"># add the first segmentation</span>
-<span class="n">add_volume_to_plotter</span><span class="p">(</span> <span class="n">plotter</span><span class="p">,</span> <span class="n">shapeSeg_vtk</span><span class="p">,</span>   
-                       <span class="n">rowIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">colIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> 
+<span class="n">add_volume_to_plotter</span><span class="p">(</span> <span class="n">plotter</span><span class="p">,</span> <span class="n">shapeSeg_vtk</span><span class="p">,</span>
+                       <span class="n">rowIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">colIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
                        <span class="n">title</span>          <span class="o">=</span> <span class="n">shapeName</span><span class="p">,</span>
-                       <span class="n">shade_volumes</span>  <span class="o">=</span> <span class="n">shade_volumes</span><span class="p">,</span> 
+                       <span class="n">shade_volumes</span>  <span class="o">=</span> <span class="n">shade_volumes</span><span class="p">,</span>
                        <span class="n">color_map</span>      <span class="o">=</span> <span class="n">color_map</span><span class="p">,</span>
-                       <span class="n">show_axes</span>      <span class="o">=</span> <span class="n">show_axes</span><span class="p">,</span> 
-                       <span class="n">show_bounds</span>    <span class="o">=</span> <span class="n">show_bounds</span><span class="p">,</span> 
-                       <span class="n">show_all_edges</span> <span class="o">=</span> <span class="n">show_all_edges</span><span class="p">,</span> 
+                       <span class="n">show_axes</span>      <span class="o">=</span> <span class="n">show_axes</span><span class="p">,</span>
+                       <span class="n">show_bounds</span>    <span class="o">=</span> <span class="n">show_bounds</span><span class="p">,</span>
+                       <span class="n">show_all_edges</span> <span class="o">=</span> <span class="n">show_all_edges</span><span class="p">,</span>
                        <span class="n">font_size</span>      <span class="o">=</span> <span class="n">font_size</span><span class="p">)</span>
 
 <span class="c1"># add the second segmentation - note that we could define a loop to avoid code repetition</span>
-<span class="n">add_volume_to_plotter</span><span class="p">(</span> <span class="n">plotter</span><span class="p">,</span> <span class="n">shapeSeg2_vtk</span><span class="p">,</span>   
-                       <span class="n">rowIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">colIdx</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> 
+<span class="n">add_volume_to_plotter</span><span class="p">(</span> <span class="n">plotter</span><span class="p">,</span> <span class="n">shapeSeg2_vtk</span><span class="p">,</span>
+                       <span class="n">rowIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">colIdx</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
                        <span class="n">title</span>          <span class="o">=</span> <span class="n">shapeName2</span><span class="p">,</span>
-                       <span class="n">shade_volumes</span>  <span class="o">=</span> <span class="n">shade_volumes</span><span class="p">,</span> 
+                       <span class="n">shade_volumes</span>  <span class="o">=</span> <span class="n">shade_volumes</span><span class="p">,</span>
                        <span class="n">color_map</span>      <span class="o">=</span> <span class="n">color_map</span><span class="p">,</span>
-                       <span class="n">show_axes</span>      <span class="o">=</span> <span class="n">show_axes</span><span class="p">,</span> 
-                       <span class="n">show_bounds</span>    <span class="o">=</span> <span class="n">show_bounds</span><span class="p">,</span> 
-                       <span class="n">show_all_edges</span> <span class="o">=</span> <span class="n">show_all_edges</span><span class="p">,</span> 
+                       <span class="n">show_axes</span>      <span class="o">=</span> <span class="n">show_axes</span><span class="p">,</span>
+                       <span class="n">show_bounds</span>    <span class="o">=</span> <span class="n">show_bounds</span><span class="p">,</span>
+                       <span class="n">show_all_edges</span> <span class="o">=</span> <span class="n">show_all_edges</span><span class="p">,</span>
                        <span class="n">font_size</span>      <span class="o">=</span> <span class="n">font_size</span><span class="p">)</span>
 
 <span class="c1"># link views</span>
@@ -1644,7 +1639,7 @@ all of MD as it is not optimized for dense, information rich UIs.
     <span class="n">plotter</span><span class="o">.</span><span class="n">link_views</span><span class="p">()</span>  
 
 <span class="c1"># now, time to render our segmentations</span>
-<span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> <span class="c1">#use_ipyvtk=True is already enabled by default using pv.rcParams</span>
+<span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
         </div>
@@ -1699,33 +1694,33 @@ all of MD as it is not optimized for dense, information rich UIs.
 
 <span class="c1"># define the plotter</span>
 <span class="n">plotter</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">shape</span>    <span class="o">=</span> <span class="p">(</span><span class="n">grid_rows</span><span class="p">,</span> <span class="n">grid_cols</span><span class="p">),</span>
-                     <span class="n">notebook</span> <span class="o">=</span> <span class="n">is_interactive</span><span class="p">,</span> 
+                     <span class="n">notebook</span> <span class="o">=</span> <span class="n">is_interactive</span><span class="p">,</span>
                      <span class="n">border</span>   <span class="o">=</span> <span class="n">show_borders</span><span class="p">)</span> 
 
 <span class="c1"># add the first segmentation</span>
-<span class="n">add_volume_to_plotter</span><span class="p">(</span> <span class="n">plotter</span><span class="p">,</span> <span class="n">shapeSeg_vtk</span><span class="p">,</span>   
-                       <span class="n">rowIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">colIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> 
+<span class="n">add_volume_to_plotter</span><span class="p">(</span> <span class="n">plotter</span><span class="p">,</span> <span class="n">shapeSeg_vtk</span><span class="p">,</span>
+                       <span class="n">rowIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">colIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
                        <span class="n">title</span>          <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                       <span class="n">shade_volumes</span>  <span class="o">=</span> <span class="n">shade_volumes</span><span class="p">,</span> 
+                       <span class="n">shade_volumes</span>  <span class="o">=</span> <span class="n">shade_volumes</span><span class="p">,</span>
                        <span class="n">color_map</span>      <span class="o">=</span> <span class="n">color_map1</span><span class="p">,</span>
-                       <span class="n">show_axes</span>      <span class="o">=</span> <span class="n">show_axes</span><span class="p">,</span> 
-                       <span class="n">show_bounds</span>    <span class="o">=</span> <span class="n">show_bounds</span><span class="p">,</span> 
-                       <span class="n">show_all_edges</span> <span class="o">=</span> <span class="n">show_all_edges</span><span class="p">,</span> 
+                       <span class="n">show_axes</span>      <span class="o">=</span> <span class="n">show_axes</span><span class="p">,</span>
+                       <span class="n">show_bounds</span>    <span class="o">=</span> <span class="n">show_bounds</span><span class="p">,</span>
+                       <span class="n">show_all_edges</span> <span class="o">=</span> <span class="n">show_all_edges</span><span class="p">,</span>
                        <span class="n">font_size</span>      <span class="o">=</span> <span class="n">font_size</span><span class="p">)</span>
 
 <span class="c1"># add the second segmentation - note that we could define a loop to avoid code repetition</span>
-<span class="n">add_volume_to_plotter</span><span class="p">(</span> <span class="n">plotter</span><span class="p">,</span> <span class="n">shapeSeg2_vtk</span><span class="p">,</span>   
-                       <span class="n">rowIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">colIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> 
+<span class="n">add_volume_to_plotter</span><span class="p">(</span> <span class="n">plotter</span><span class="p">,</span> <span class="n">shapeSeg2_vtk</span><span class="p">,</span>
+                       <span class="n">rowIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">colIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
                        <span class="n">title</span>          <span class="o">=</span> <span class="n">one_title</span><span class="p">,</span>
-                       <span class="n">shade_volumes</span>  <span class="o">=</span> <span class="n">shade_volumes</span><span class="p">,</span> 
+                       <span class="n">shade_volumes</span>  <span class="o">=</span> <span class="n">shade_volumes</span><span class="p">,</span>
                        <span class="n">color_map</span>      <span class="o">=</span> <span class="n">color_map2</span><span class="p">,</span>
-                       <span class="n">show_axes</span>      <span class="o">=</span> <span class="n">show_axes</span><span class="p">,</span> 
-                       <span class="n">show_bounds</span>    <span class="o">=</span> <span class="n">show_bounds</span><span class="p">,</span> 
-                       <span class="n">show_all_edges</span> <span class="o">=</span> <span class="n">show_all_edges</span><span class="p">,</span> 
+                       <span class="n">show_axes</span>      <span class="o">=</span> <span class="n">show_axes</span><span class="p">,</span>
+                       <span class="n">show_bounds</span>    <span class="o">=</span> <span class="n">show_bounds</span><span class="p">,</span>
+                       <span class="n">show_all_edges</span> <span class="o">=</span> <span class="n">show_all_edges</span><span class="p">,</span>
                        <span class="n">font_size</span>      <span class="o">=</span> <span class="n">font_size</span><span class="p">)</span>
 
 <span class="c1"># now, time to render our segmentations</span>
-<span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> <span class="c1">#use_ipyvtk=True is already enabled by default using pv.rcParams</span>
+<span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
         </div>
