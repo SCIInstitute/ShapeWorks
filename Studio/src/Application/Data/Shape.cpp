@@ -602,11 +602,18 @@ vtkSmartPointer<vtkTransform> Shape::get_groomed_transform(int domain)
   if (domain < transforms.size()) {
     vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
     transform->Identity();
-    if (transforms[domain].size() >=12 ) {
+    if (transforms[domain].size() == 12) {
       double tx = transforms[domain][9];
       double ty = transforms[domain][10];
       double tz = transforms[domain][11];
       transform->Translate(tx, ty, tz);
+    }
+    else if (transforms[domain].size() == 16) {
+      vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
+      for (int i = 0; i < 16; i++) {
+        matrix->GetData()[i] = transforms[domain][i];
+      }
+      transform->SetMatrix(matrix);
     }
     return transform;
   }
@@ -694,9 +701,9 @@ void Shape::set_reconstruction_transforms(std::vector<vtkSmartPointer<vtkTransfo
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkTransform> Shape::get_alignment()
+vtkSmartPointer<vtkTransform> Shape::get_alignment(int domain)
 {
-  auto groom_transform = this->get_groomed_transform(0);
+  auto groom_transform = this->get_groomed_transform(domain);
   if (!groom_transform) {
     vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
     transform->Identity();

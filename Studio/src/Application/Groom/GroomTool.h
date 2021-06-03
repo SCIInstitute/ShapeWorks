@@ -61,9 +61,12 @@ public Q_SLOTS:
   void on_skip_button_clicked();
   void on_restore_defaults_clicked();
 
+  void update_ui();
+
   void domain_changed();
 
   void centering_changed(int state);
+  void fill_holes_changed(int state);
 
   //! Run groom tool
   void on_run_groom_button_clicked();

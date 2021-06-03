@@ -93,7 +93,7 @@ PYBIND11_MODULE(shapeworks, m)
         toAxis,
         "convert to axis",
         "str"_a);
-  
+
   // TransformType
   py::enum_<XFormType>(m, "TransformType")
   .value("CenterOfMass", XFormType::CenterOfMass)
@@ -113,7 +113,7 @@ PYBIND11_MODULE(shapeworks, m)
 
   // Image constructor from numpy array (copies array, ensuring )
   .def(py::init
-       ([](py::array& np_array) { 
+       ([](py::array& np_array) {
           // get input array info
           auto info = np_array.request();
 
@@ -136,16 +136,16 @@ PYBIND11_MODULE(shapeworks, m)
           std::cout << "\tinfo.shape: [ ";
           for (int i = 0; i < info.ndim; i++) {
             std::cout << info.shape[i] << " ";
-          }       
+          }
           std::cout << "]\n\tinfo.strides: [ ";
           for (int i = 0; i < info.ndim; i++) {
             std::cout << info.strides[i] << " ";
-          }       
+          }
           std::cout << "]\n";
           std::cout << "writeable: " << np_array.writeable() << std::endl
                     << "owns data: " << np_array.owndata() << std::endl;
 #endif
-          
+
           // Verify info type is same as Image::PixelType (currently hard-coded as float). The
           // reasons we don't simply specify py::array_t<float> as a parameter are:
           // - to show an error if another type is sent, and
@@ -153,7 +153,7 @@ PYBIND11_MODULE(shapeworks, m)
           if (info.format != py::format_descriptor<Image::PixelType>::format()) {
             throw std::invalid_argument("array must be of dtype.float32");
           }
-            
+
           // verify it's 2d or 3d
           if (info.ndim < 2 || info.ndim > 3) {
             throw std::invalid_argument(std::string("array must be 2d or 3d, but ndim = ") + std::to_string(info.ndim));
@@ -163,7 +163,7 @@ PYBIND11_MODULE(shapeworks, m)
           const py::ssize_t scalar_size = sizeof(Image::PixelType);
           std::vector<py::ssize_t> strides{info.shape[2]*info.shape[1]*scalar_size,
                                            info.shape[2]*scalar_size,
-                                           scalar_size};  
+                                           scalar_size};
           for (int i = 0; i < info.ndim; i++) {
             if (info.strides[i] != strides[i]) {
               std::cerr << "expected: " << strides[i] << ", actual: " << info.strides[i] << std::endl;
@@ -220,7 +220,7 @@ PYBIND11_MODULE(shapeworks, m)
 
   .def("copy",
        [](Image& image) -> decltype(auto) { return Image(image); })
-  
+
   .def("write",
        &Image::write,
        "writes the current image (determines type by its extension)",
@@ -295,7 +295,7 @@ PYBIND11_MODULE(shapeworks, m)
          return image.translate(makeVector({v[0], v[1], v[2]}));
        },
        "translates image", "v"_a)
-  
+
   .def("scale",
        [](Image& image, const std::vector<double>& scale_vec) -> decltype(auto) {
          return image.scale(makeVector({scale_vec[0], scale_vec[1], scale_vec[2]}));
@@ -342,7 +342,7 @@ PYBIND11_MODULE(shapeworks, m)
        "applies the given transformation to the image by using resampling filter with new origin, dims, spacing and direction values",
        "transform"_a, "origin"_a, "dims"_a, "spacing"_a, "direction"_a,
        "interp"_a=Image::InterpolationType::NearestNeighbor)
-  
+
   .def("extractLabel",
        &Image::extractLabel,
        "extracts/isolates a specific pixel label from a given multi-label volume and outputs the corresponding binary image",
@@ -639,7 +639,7 @@ PYBIND11_MODULE(shapeworks, m)
        },
        "return origin of region")
 
-  .def("size", 
+  .def("size",
        [](const PhysicalRegion &region) -> decltype(auto) {
          return py::array(3, region.size().GetDataPointer());
        },
@@ -751,7 +751,7 @@ PYBIND11_MODULE(shapeworks, m)
        },
        "return origin of region")
 
-  .def("size", 
+  .def("size",
        [](const IndexRegion &region) -> decltype(auto) {
          return py::array(3, region.size().data());
        },
@@ -860,6 +860,11 @@ PYBIND11_MODULE(shapeworks, m)
        &Mesh::smooth,
        "applies laplacian smoothing",
        "iterations"_a=0, "relaxation"_a=0.0)
+
+  .def("smoothSinc",
+       &Mesh::smoothSinc,
+       "applies windowed sinc smoothing",
+       "iterations"_a=0, "passband"_a=0.0)
 
   .def("decimate",
        &Mesh::decimate,

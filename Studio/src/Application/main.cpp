@@ -80,7 +80,7 @@ int main(int argc, char** argv)
     return app.exec();
   } catch (itk::ExceptionObject& excep) {
     std::cerr << excep << std::endl;
-  } catch (std::exception e) {
+  } catch (std::exception& e) {
     std::cerr << "Exception caught!" << std::endl;
     std::cerr << e.what() << "\n";
   }
