@@ -51,21 +51,21 @@ bool Groom::run()
     [&](const tbb::blocked_range<size_t>& r) {
       for (size_t i = r.begin(); i < r.end(); ++i) {
 
-        for (int j = 0; j < subjects[i]->get_number_of_domains(); j++) {
+        for (int domain = 0; domain < subjects[i]->get_number_of_domains(); domain++) {
 
           if (this->abort_) {
             success = false;
             continue;
           }
 
-          if (subjects[i]->get_domain_types()[j] == DomainType::Image) {
-            if (!this->image_pipeline(subjects[i], j)) {
+          if (subjects[i]->get_domain_types()[domain] == DomainType::Image) {
+            if (!this->image_pipeline(subjects[i], domain)) {
               success = false;
             }
           }
 
-          if (subjects[i]->get_domain_types()[j] == DomainType::Mesh) {
-            if (!this->mesh_pipeline(subjects[i], j)) {
+          if (subjects[i]->get_domain_types()[domain] == DomainType::Mesh) {
+            if (!this->mesh_pipeline(subjects[i], domain)) {
               success = false;
             }
           }
@@ -146,7 +146,6 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, int domain)
   // grab parameters
   auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
 
-  // single domain support right now
   auto path = subject->get_segmentation_filenames()[domain];
 
   // load the image
