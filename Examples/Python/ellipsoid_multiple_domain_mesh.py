@@ -46,11 +46,22 @@ def Run_Pipeline(args):
         mesh_files = sorted(glob.glob(output_directory +
                                      dataset_name + "/meshes/*.ply"))
 
-    # Select data if using subsample
-    if args.use_subsample:
-        raise RuntimeError("Subsample generation unsupported. Please run the use case without --use_subsample")
+        # Select data if using subsample
+        if args.use_subsample:
+            raise RuntimeError("Subsample generation unsupported. Please run the use case without --use_subsample")
 
-
+    # If skipping grooming, use the pregroomed distance transforms from the portal
+    if args.skip_grooming:
+        print("Skipping grooming.")
+        dt_directory = output_directory + dataset_name + '/groomed/distance_transforms/'
+        indices = []
+        if args.tiny_test:
+            indices = list(range(6))
+        elif args.use_subsample:
+            raise RuntimeError("Skip grooming option unsupported for --use_subsample.Please run the use case without --skip_grooming and --use_subsample")
+        dt_files = sw.data.get_file_list(
+            dt_directory, ending=".nrrd", indices=indices)
+                
     # This dataset is prealigned and does not require any grooming steps.
 
     print("\nStep 2. Optimize - Particle Based Optimization\n")

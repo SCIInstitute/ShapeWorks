@@ -44,10 +44,10 @@ def Run_Pipeline(args):
         image_files = sorted(
             glob.glob(output_directory + dataset_name + "/images/*.nrrd"))
 
-    # Select data if using subsample
-    if args.use_subsample:
-        sample_idx = sw.data.samplemeshes(mesh_files, int(args.num_subsample))
-        mesh_files = [mesh_files[i] for i in sample_idx]
+        # Select data if using subsample
+        if args.use_subsample:
+            sample_idx = sw.data.samplemeshes(mesh_files, int(args.num_subsample))
+            mesh_files = [mesh_files[i] for i in sample_idx]
 
     # If skipping grooming, use the pregroomed distance transforms from the portal
     if args.skip_grooming:

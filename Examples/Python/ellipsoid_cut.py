@@ -38,10 +38,10 @@ def Run_Pipeline(args):
         file_list = sorted(glob.glob(output_directory +
                                      dataset_name + "/segmentations/*.nrrd"))
 
-    # Select representative data if using subsample
-    if args.use_subsample:
-        sample_idx = sw.data.sample_images(file_list, int(args.num_subsample))
-        file_list = [file_list[i] for i in sample_idx]
+        # Select representative data if using subsample
+        if args.use_subsample:
+            sample_idx = sw.data.sample_images(file_list, int(args.num_subsample))
+            file_list = [file_list[i] for i in sample_idx]
 
     print("\nStep 2. Groom - Create distance transforms\n")
     """

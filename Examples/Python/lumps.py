@@ -39,10 +39,10 @@ def Run_Pipeline(args):
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))
 
-    # Select data if using subsample
-    if args.use_subsample:
-        sample_idx = sw.data.samplemeshes(mesh_files, int(args.num_subsample))
-        mesh_files = [mesh_files[i] for i in sample_idx]
+        # Select data if using subsample
+        if args.use_subsample:
+            sample_idx = sw.data.samplemeshes(mesh_files, int(args.num_subsample))
+            mesh_files = [mesh_files[i] for i in sample_idx]
 
     # This dataset is prealigned and does not require any grooming steps.
 

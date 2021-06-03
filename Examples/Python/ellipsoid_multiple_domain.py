@@ -47,13 +47,10 @@ def Run_Pipeline(args):
         file_list = sorted(glob.glob(output_directory +
                                      dataset_name + "/segmentations/*.nrrd"))
 
-    # Select data if using subsample
-    if args.use_subsample:
-        raise RuntimeError("Subsample generation unsupported. Please run the use case without --use_subsample")
-
-    # If skipping grooming, use the pregroomed distance transforms from the portal
-    if args.skip_grooming:
-        raise RuntimeError("Skip grooming option unsupported.Please run the use case without --skip_grooming")
+        # Select data if using subsample
+        if args.use_subsample:
+            raise RuntimeError("Subsample generation unsupported. Please run the use case without --use_subsample")
+          
 
 
     # Else groom the segmentations and get distance transforms for optimization
