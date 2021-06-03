@@ -104,7 +104,7 @@ Image::ImageType::Pointer Image::read(const std::string &pathname)
     reader->Update();
   }
   catch (itk::ExceptionObject &exp) {
-    throw std::invalid_argument(pathname + " does not exist (" + std::string(exp.what()) + ")");
+    throw std::invalid_argument(std::string(exp.what()));
   }
 
   return reader->GetOutput();
@@ -756,8 +756,9 @@ Image& Image::gaussianBlur(double sigma)
 Image& Image::crop(PhysicalRegion region, const int padding)
 {
   region.shrink(physicalBoundingBox()); // clip region to fit inside image
-  if (!region.valid())
-    std::cerr << "Invalid region specified (it may lie outside physical bounds of image)." << std::endl;
+  if (!region.valid()) {
+    throw std::invalid_argument("Invalid region specified (it may lie outside physical bounds of image).");
+  }
 
   using FilterType = itk::ExtractImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
