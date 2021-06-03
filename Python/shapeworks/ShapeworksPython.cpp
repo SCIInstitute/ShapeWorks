@@ -404,10 +404,9 @@ PYBIND11_MODULE(shapeworks, m)
           std::vector<double>& p1,
           std::vector<double>& p2,
           const Image::PixelType val) {
-         return image.clip(Point({o[0], o[1], o[2]}),
-                           Point({p1[0], p1[1], p1[2]}),
-                           Point({p2[0], p2[1], p2[2]}),
-                           val);
+         return image.clip(makePlane(Point({o[0], o[1], o[2]}),
+                                     Point({p1[0], p1[1], p1[2]}),
+                                     Point({p2[0], p2[1], p2[2]})), val);
        },
        "sets values on the back side of cutting plane (containing three non-colinear points) to val (default 0.0)",
        "o"_a, "p1"_a, "p2"_a, "val"_a=0.0)
@@ -417,7 +416,7 @@ PYBIND11_MODULE(shapeworks, m)
           const std::vector<double>& n,
           std::vector<double>& q,
           const Image::PixelType val) {
-         return image.clip(makeVector({n[0], n[1], n[2]}), Point({q[0], q[1], q[2]}), val);
+         return image.clip(makePlane(Point({q[0], q[1], q[2]}), makeVector({n[0], n[1], n[2]})), val);
        },
        "sets values on the back side of cutting plane (normal n containing point p) to val (default 0.0)",
        "n"_a, "q"_a, "val"_a=0.0)
@@ -574,7 +573,6 @@ PYBIND11_MODULE(shapeworks, m)
 
   // PhysicalRegion
   py::class_<PhysicalRegion>(m, "PhysicalRegion")
-  // TODO: can we add a help string here? Or in init? Or... 
 
   .def(py::init<>())
 
@@ -661,6 +659,11 @@ PYBIND11_MODULE(shapeworks, m)
        py::overload_cast<const Point&>(&PhysicalRegion::expand),
        "expand this region to include this point",
        "point"_a)
+
+  .def("pad",
+       &PhysicalRegion::pad,
+       "grows or shrinks the region by the specified amount",
+       "padding"_a)
   ;
 
   // IndexRegion
@@ -861,8 +864,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("decimate",
        &Mesh::decimate,
        "applies filter to reduce number of triangles in mesh",
-
-       "reduction"_a=0.0, "angle"_a=0.0, "preserveTopology"_a=true)
+       "reduction"_a=0.5, "angle"_a=15.0, "preserveTopology"_a=true)
 
 
   .def("invertNormals",
@@ -950,12 +952,11 @@ PYBIND11_MODULE(shapeworks, m)
        "computes cell normals and orients them such that they point in the same direction")
 
   .def("toImage",
-       [](Mesh& mesh, PhysicalRegion &region, double padding, std::vector<double>& spacing) -> decltype(auto) {
-         return mesh.toImage(region, padding, Point({spacing[0], spacing[1], spacing[2]}));
+       [](Mesh& mesh, PhysicalRegion &region, std::vector<double>& spacing) -> decltype(auto) {
+         return mesh.toImage(region, Point({spacing[0], spacing[1], spacing[2]}));
        },
-       "rasterizes mesh to a binary image, computing dims/spacing if necessary (specifying dims overrides specified spacing)",
+       "rasterizes specified region to create binary image of desired dims (default: unit spacing)",
        "region"_a=PhysicalRegion(),
-       "padding"_a=0.0,
        "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}))
 
   .def("distance",
@@ -963,12 +964,11 @@ PYBIND11_MODULE(shapeworks, m)
        "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
 
   .def("toDistanceTransform",
-       [](Mesh& mesh, PhysicalRegion &region, double padding, std::vector<double>& spacing) -> decltype(auto) {
-         return mesh.toDistanceTransform(region, padding, Point({spacing[0], spacing[1], spacing[2]}));
+       [](Mesh& mesh, PhysicalRegion &region, std::vector<double>& spacing) -> decltype(auto) {
+         return mesh.toDistanceTransform(region, Point({spacing[0], spacing[1], spacing[2]}));
        },
-       "converts mesh to distance transform, computing dims/spacing if necessary (specifying dims overrides specified spacing)",
+       "converts specified region to distance transform image (default: unit spacing)",
        "region"_a=PhysicalRegion(),
-       "padding"_a=0.0,
        "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}))
 
   .def("center",
@@ -1063,34 +1063,6 @@ PYBIND11_MODULE(shapeworks, m)
   // MeshUtils
   py::class_<MeshUtils>(m, "MeshUtils")
 
-  // TODO: fails to compile on Windows due to missing Eigen symbols
-  // https://github.com/SCIInstitute/ShapeWorks/issues/954
-  // .def_static("distilVertexInfo",
-  //             &MeshUtils::distilVertexInfo,
-  //             "distils vertex information from VTK poly data to Eigen matrices",
-  //             "mesh"_a)
-  //
-  // .def_static("distilFaceInfo",
-  //             &MeshUtils::distilFaceInfo,
-  //             "distils face information from VTK poly data to Eigen matrices",
-  //             "mesh"_a)
-
-  // TODO: Bind these three functions (generateWarpMatrix, warpMesh, warpMeshes) later if required
-  // .def_static("generateWarpMatrix",
-  //             &MeshUtils::generateWarpMatrix,
-  //             "compute the warp matrix using the mesh and reference points",
-  //             "TV"_a, "TF"_a, "Vref"_a)
-  //
-  // .def_static("warpMesh",
-  //             &MeshUtils::warpMesh,
-  //             "compute individual warp",
-  //             "movPts"_a, "W"_a, "Fref"_a)
-  //
-  // .def_static("warpMeshes",
-  //             &MeshUtils::warpMeshes,
-  //             "compute transformation from set of points files using template mesh warp & face matrices",
-  //             "movingPointPaths"_a, "outputMeshPaths"_a, "W"_a, "Fref"_a, "numP"_a)
-
   .def_static("boundingBox",
               [](std::vector<std::string> filenames, bool center) {
                 return shapeworks::MeshUtils::boundingBox(filenames, center);
@@ -1112,7 +1084,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def(py::init<const std::vector<std::string> &>())
 
   .def("Particles",
-       &ParticleSystem::Particles) // note: must import Eigenpy (github stack-of-tasks/eigenpy)
+       &ParticleSystem::Particles)
 
   .def("Paths",
        &ParticleSystem::Paths)
@@ -1140,7 +1112,7 @@ PYBIND11_MODULE(shapeworks, m)
               "particleSystem"_a, "nModes"_a, "saveTo"_a="")
   ;
 
-  // Optimize (TODO)
+  // Optimize
   py::class_<Optimize>(m, "Optimize")
 
   .def(py::init<>())

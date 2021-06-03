@@ -60,4 +60,12 @@ std::ostream &operator<<(std::ostream &os, const PhysicalRegion &r)
             << ",\n\tmax: [" << r.max[0] << ", " << r.max[1] << ", " << r.max[2] << "]\n}";
 }
 
+PhysicalRegion& PhysicalRegion::pad(double padding)
+{
+  min -= Point({padding, padding, padding});
+  max += Point({padding, padding, padding});
+
+  return *this;
+}
+
 }

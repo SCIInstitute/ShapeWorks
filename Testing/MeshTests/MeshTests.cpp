@@ -277,7 +277,7 @@ TEST(MeshTests, toImageTest3)
 
   // pad the region
   auto bbox = femur.boundingBox();
-  Image image = femur.toImage(bbox, 1.5);
+  Image image = femur.toImage(bbox.pad(1.5));
   Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImagePad.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -287,7 +287,7 @@ TEST(MeshTests, toImageTest4)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
   auto bbox = femur.boundingBox();
-  Image image = femur.toImage(bbox, 1.5, Point({0.5, 1.5, 12.5}));
+  Image image = femur.toImage(bbox.pad(1.5), Point({0.5, 1.5, 12.5}));
   Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImagePadSpace.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -330,7 +330,7 @@ TEST(MeshTests, boundingBoxTest2)
 TEST(MeshTests, antialiasTest3)
 {
   Mesh mesh(std::string(TEST_DATA_DIR) + "/femur.ply");
-  Image aa1(mesh.toImage(mesh.boundingBox(), 3.0));
+  Image aa1(mesh.toImage(mesh.boundingBox().pad(3.0)));
   aa1.antialias(50, 0.0);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/antialiasMesh.nrrd");
 

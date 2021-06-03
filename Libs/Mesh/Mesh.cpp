@@ -415,17 +415,13 @@ Mesh& Mesh::generateNormals()
   return *this;
 }
 
-Image Mesh::toImage(PhysicalRegion region, double padding, Point spacing) const
+Image Mesh::toImage(PhysicalRegion region, Point spacing) const
 {
   // if no region, use mesh bounding box
   if (region == PhysicalRegion()) {
     region = boundingBox();
   }
 
-  // add specified padding to physical region
-  region.min -= Point({padding, padding, padding});
-  region.max += Point({padding, padding, padding});
-  
   // compute output dimensions: size of the region / by the requested spacing
   auto dims = toDims(region.size() / spacing);
 
@@ -463,10 +459,10 @@ Image Mesh::toImage(PhysicalRegion region, double padding, Point spacing) const
   return Image(imgstenc->GetOutput());
 }
 
-Image Mesh::toDistanceTransform(PhysicalRegion region, double padding, Point spacing) const
+Image Mesh::toDistanceTransform(PhysicalRegion region, Point spacing) const
 {
   // TODO: convert directly to DT (github #810)
-  Image image(toImage(region, padding, spacing));
+  Image image(toImage(region, spacing));
   image.antialias(50, 0.00).computeDT();
   return image;
 }

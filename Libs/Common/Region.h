@@ -45,7 +45,7 @@ public:
                  static_cast<Dims::value_type>(max[2] - min[2] + 1)});
   }
 
-  /// grows or shrinks the region by the specified amount
+  /// uniformly grows or shrinks the region by the specified amount
   IndexRegion& pad(int padding);
 
 };
@@ -98,6 +98,9 @@ public:
 
   /// expand this region to include this point
   PhysicalRegion& expand(const Point &pt);
+
+  /// uniformly grows or shrinks the region by the specified amount
+  PhysicalRegion& pad(double padding);
 
 };
 

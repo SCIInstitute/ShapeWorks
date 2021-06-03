@@ -13,13 +13,13 @@ Coord toCoord(const Dims &d) {
                 static_cast<itk::IndexValueType>(d[1]),
                 static_cast<itk::IndexValueType>(d[2])}); }
 Dims toDims(const Coord &c) {
-  return Dims({static_cast<Dims::value_type>(c[0]),
-               static_cast<Dims::value_type>(c[1]),
-               static_cast<Dims::value_type>(c[2])}); }
+  return Dims({static_cast<Dims::value_type>(std::max(static_cast<itk::Index<3>::value_type>(0), c[0])),
+               static_cast<Dims::value_type>(std::max(static_cast<itk::Index<3>::value_type>(0), c[1])),
+               static_cast<Dims::value_type>(std::max(static_cast<itk::Index<3>::value_type>(0), c[2]))}); }
 Dims toDims(const Point &p) {
-  return Dims({static_cast<Dims::value_type>(std::ceil(p[0])),
-               static_cast<Dims::value_type>(std::ceil(p[1])),
-               static_cast<Dims::value_type>(std::ceil(p[2]))}); }
+  return Dims({static_cast<Dims::value_type>(std::max(0.0, std::ceil(p[0]))),
+               static_cast<Dims::value_type>(std::max(0.0, std::ceil(p[1]))),
+               static_cast<Dims::value_type>(std::max(0.0, std::ceil(p[2])))}); }
 Coord toCoord(const Point &p) {
   return Coord({static_cast<itk::IndexValueType>(p[0]),
                 static_cast<itk::IndexValueType>(p[1]),
@@ -44,10 +44,24 @@ Plane makePlane(const Point &p0, const Point &p1, const Point &p2)
   plane->SetOrigin(p0[0], p0[1], p0[2]);
   auto v0 = p1 - p0;
   auto v1 = p2 - p0;
-  auto n = crossProduct(v1, v0);
+  auto n = crossProduct(v0, v1);
   plane->SetNormal(n[0], n[1], n[2]);
 
   return plane;
+}
+
+Point getOrigin(const Plane plane)
+{
+  double origin[3];
+  plane->GetOrigin(origin);
+  return Point({origin[0], origin[1], origin[2]});
+}
+
+Vector3 getNormal(const Plane plane)
+{
+  double normal[3];
+  plane->GetNormal(normal);
+  return makeVector({normal[0], normal[1], normal[2]});
 }
 
 template<>

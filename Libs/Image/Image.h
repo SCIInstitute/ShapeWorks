@@ -156,11 +156,8 @@ public:
   /// crops the image down to the given region, with optional padding added
   Image& crop(PhysicalRegion region, const int padding = 0);
 
-  /// sets values on the back side of cutting plane (containing three non-colinear points) to val (default 0.0)
-  Image& clip(const Point &o, const Point &p1, const Point &p2, const PixelType val = 0.0);
-
-  /// sets values on the back side of cutting plane (normal n containing point p) to val (default 0.0)
-  Image& clip(const Vector &n, const Point &q, const PixelType val = 0.0);
+  /// clips an image using a cutting plane
+  Image& clip(const Plane plane, const PixelType val = 0.0);
 
   /// reflect image around the plane specified by the logical center and the given normal (ex: <1,0,0> reflects across YZ-plane).
   Image& reflect(const Axis& axis);
@@ -258,13 +255,11 @@ private:
   /// creates transform to target using ICP registration (isovalue is used to create meshes from dt, which are then passed to ICP)
   TransformPtr createRigidRegistrationTransform(const Image &target, float isoValue = 0.0, unsigned iterations = 20);
 
-
   /// creates a vtkPolyData for the given image
   static vtkSmartPointer<vtkPolyData> getPolyData(const Image& image, PixelType isoValue = 0.0);
 
   /// pad image by the given dims (always positive) in each direction
   Image& pad(Dims lowerExtendRegion, Dims upperExtendRegion, PixelType value = 0.0);
-
 
   StatsPtr statsFilter();
 

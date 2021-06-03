@@ -8,8 +8,6 @@ add_executable(UtilsTests
 
 target_link_libraries(UtilsTests
   Utils
-  # Common
-  # ${ITK_LIBRARIES}
   Testing
   )
 
