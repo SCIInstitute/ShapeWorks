@@ -238,7 +238,7 @@ public:
   /// writes image, format specified by filename extension
   Image& write(const std::string &filename, bool compressed = true);
 
-  /// converts image to mesh (note: definition in Conversion.cpp)
+  /// converts image to mesh
   Mesh toMesh(PixelType isovalue) const;
 
 private:
@@ -258,11 +258,13 @@ private:
   /// creates transform to target using ICP registration (isovalue is used to create meshes from dt, which are then passed to ICP)
   TransformPtr createRigidRegistrationTransform(const Image &target, float isoValue = 0.0, unsigned iterations = 20);
 
+
   /// creates a vtkPolyData for the given image
   static vtkSmartPointer<vtkPolyData> getPolyData(const Image& image, PixelType isoValue = 0.0);
 
   /// pad image by the given dims (always positive) in each direction
   Image& pad(Dims lowerExtendRegion, Dims upperExtendRegion, PixelType value = 0.0);
+
 
   StatsPtr statsFilter();
 

@@ -62,6 +62,7 @@ def Run_Pipeline(args):
     if args.tiny_test:
         parameterDictionary["number_of_particles"] = 32
         parameterDictionary["optimization_iterations"] = 25
+        parameterDictionary["iterations_per_split"] = 25
 
     if not args.use_single_scale:
         parameterDictionary["use_shape_statistics_after"] = 32
