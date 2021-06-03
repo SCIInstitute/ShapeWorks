@@ -491,7 +491,7 @@ TEST(ImageTests, icpTest)
 TEST(ImageTests, clip1Test)
 {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
-  image.clip(makeVector({1,1,1}), Point({20,55,75}), 3.14);
+  image.clip(makePlane(Point({20,55,75}), makeVector({1,1,1})), 3.14);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/clip1_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -501,7 +501,7 @@ TEST(ImageTests, clip1Test)
 TEST(ImageTests, clip1xTest)
 {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
-  image.clip(makeVector({1,0,0}), image.center() + Point({2.75,0,0}));
+  image.clip(makePlane(image.center() + Point({2.75,0,0}), makeVector({1,0,0})));
   Image ground_truth(std::string(TEST_DATA_DIR) + "/clip1x_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -511,7 +511,7 @@ TEST(ImageTests, clip1xTest)
 TEST(ImageTests, clip1yTest)
 {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
-  image = image.clip(makeVector({0,1,0}), image.center());
+  image = image.clip(makePlane(image.center(), makeVector({0,1,0})));
   Image ground_truth(std::string(TEST_DATA_DIR) + "/clip1y_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -521,7 +521,7 @@ TEST(ImageTests, clip1yTest)
 TEST(ImageTests, clip1zTest)
 {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
-  image.clip(makeVector({0,0,-1}), image.center() + Point({10000,100000,0}));
+  image.clip(makePlane(image.center() + Point({10000,100000,0}), makeVector({0,0,-1})));
   Image ground_truth(std::string(TEST_DATA_DIR) + "/clip1z_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -531,7 +531,7 @@ TEST(ImageTests, clip1zTest)
 TEST(ImageTests, clip2Test)
 {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
-  try { image.clip(makeVector({0,0,0}), image.center()); }
+  try { image.clip(makePlane(image.center(), makeVector({0,0,0}))); }
   catch(std::invalid_argument) { return; }
 
   // fails if an exception is not thrown
@@ -542,7 +542,7 @@ TEST(ImageTests, clip2Test)
 TEST(ImageTests, clip3Test)
 {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
-  image.clip(image.origin(), Point({75,0,0}), Point({-10,0,0}), -3.14);
+  image.clip(makePlane(image.origin(), Point({75,0,0}), Point({-10,0,0})), -3.14);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/clip3_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -552,7 +552,7 @@ TEST(ImageTests, clip3Test)
 TEST(ImageTests, clip4Test)
 {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
-  try { image.clip(Point({0,0,0}), Point({1,0,0}), Point({-10,0,0})); }
+  try { image.clip(makePlane(Point({0,0,0}), Point({1,0,0}), Point({-10,0,0}))); }
   catch(std::invalid_argument) { return; }
 
   // fails if an exception is not thrown

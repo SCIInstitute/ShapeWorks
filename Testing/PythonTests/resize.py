@@ -57,3 +57,18 @@ val = resizeTest4()
 if val is False:
   print("resizeTest4 failed")
   sys.exit(1)
+
+def resizefailTest():
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img.resize()
+
+  compareImg = Image(os.environ["DATA"] + "/resizefail.nrrd")
+
+  return img.compare(compareImg)
+
+try:
+  val = resizefailTest()
+  print("resizefailTest failed. There should be no default version of this function.")
+  sys.exit(1)
+except TypeError:
+  sys.exit(0)

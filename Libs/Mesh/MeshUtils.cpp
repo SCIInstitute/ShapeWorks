@@ -21,15 +21,15 @@ namespace shapeworks {
 // locking to handle non-thread-safe code
 static tbb::mutex mesh_mutex;
 
-const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createICPTransform(const vtkSmartPointer<vtkPolyData> source,
-                                                                  const vtkSmartPointer<vtkPolyData> target,
+const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createICPTransform(const Mesh source,
+                                                                  const Mesh target,
                                                                   Mesh::AlignmentType align,
                                                                   const unsigned iterations,
                                                                   bool meshTransform)
 {
   vtkSmartPointer<vtkIterativeClosestPointTransform> icp = vtkSmartPointer<vtkIterativeClosestPointTransform>::New();
-  icp->SetSource(source);
-  icp->SetTarget(target);
+  icp->SetSource(source.getVTKMesh());
+  icp->SetTarget(target.getVTKMesh());
 
   if (align == Mesh::Rigid)
     icp->GetLandmarkTransform()->SetModeToRigidBody();
@@ -45,7 +45,7 @@ const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createICPTransform(const vtkSmart
   icp->Update();
 
   vtkSmartPointer<vtkTransformPolyDataFilter> icpTransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-  icpTransformFilter->SetInputData(source);
+  icpTransformFilter->SetInputData(source.getVTKMesh());
   icpTransformFilter->SetTransform(icp);
   icpTransformFilter->Update();
 

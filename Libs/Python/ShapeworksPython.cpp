@@ -60,13 +60,6 @@ PYBIND11_MODULE(shapeworks, m)
          return stream.str();
        });
 
-  // Plane
-  py::class_<Plane>(m, "Plane")
-  .def(py::init
-       ([](std::vector<double>& n, std::vector<double>& o) {
-          return makePlane(makeVector({n[0], n[1], n[2]}), Point({o[0], o[1], o[2]}));
-        }));
-
   // Constructs an itk::AffineTransform from the 3x3 scale-rotate-warp and 3x1 translation.
   m.def("createTransform",
         [](Eigen::Matrix<double, 3, 3> &mat, std::vector<double> v) -> decltype(auto) {
@@ -116,16 +109,15 @@ PYBIND11_MODULE(shapeworks, m)
   // Image
   py::class_<Image>(m, "Image")
   .def(py::init<const std::string &>())
-  .def(py::init<Image::ImageType::Pointer>())
+  .def(py::init<const Image&>())
 
   // Image constructor from numpy array (copies array, ensuring )
   .def(py::init
-       ([](py::array np_array) { 
-          std::cout << "Image constructor from numpy array (copies array)\n";
-
+       ([](py::array& np_array) { 
           // get input array info
           auto info = np_array.request();
 
+#if 0
           /*
           struct buffer_info {
             void *ptr;
@@ -136,6 +128,7 @@ PYBIND11_MODULE(shapeworks, m)
             std::vector<py::ssize_t> strides;
           };
           */
+
           std::cout << "buffer info: \n"
                     << "\tinfo.itemsize: " << info.itemsize << std::endl
                     << "\tinfo.format: " << info.format << std::endl
@@ -149,36 +142,43 @@ PYBIND11_MODULE(shapeworks, m)
             std::cout << info.strides[i] << " ";
           }       
           std::cout << "]\n";
-
+          std::cout << "writeable: " << np_array.writeable() << std::endl
+                    << "owns data: " << np_array.owndata() << std::endl;
+#endif
           
-          // verify info type is same as Image::PixelType (the reason we don't simply specify
-          // py::array_t<float> as a parameter is to show this error if another type is sent)
+          // Verify info type is same as Image::PixelType (currently hard-coded as float). The
+          // reasons we don't simply specify py::array_t<float> as a parameter are:
+          // - to show an error if another type is sent, and
+          // - to ensure the array isn't silently cast, the default of pybind11.
           if (info.format != py::format_descriptor<Image::PixelType>::format()) {
             throw std::invalid_argument("array must be of dtype.float32");
           }
-          
-          // verify it's 3d
-          if (info.ndim != 3) {
-            throw std::invalid_argument("array must be 3d (ndim != 3)");
+            
+          // verify it's 2d or 3d
+          if (info.ndim < 2 || info.ndim > 3) {
+            throw std::invalid_argument(std::string("array must be 2d or 3d, but ndim = ") + std::to_string(info.ndim));
           }
 
           // verify data is densely packed by checking strides is same as shape
-          py::ssize_t scalar_size = 4; // is_float ? 4 : 8; // if/when we can handle both
+          const py::ssize_t scalar_size = sizeof(Image::PixelType);
           std::vector<py::ssize_t> strides{info.shape[2]*info.shape[1]*scalar_size,
                                            info.shape[2]*scalar_size,
                                            scalar_size};  
           for (int i = 0; i < info.ndim; i++) {
-            std::cout << "expected: " << strides[i] << ", actual: " << info.strides[i] << std::endl;
-            if (info.strides[i] != strides[i])
+            if (info.strides[i] != strides[i]) {
+              std::cerr << "expected: " << strides[i] << ", actual: " << info.strides[i] << std::endl;
               throw std::invalid_argument("array must be densely packed");
+            }
           }
 
-          // not sure how to tell if data is row- vs col- order, maybe let them specify
+          // if (dtype.float32) just steal array from python (#966):
+          // - np_array owners data = false
+          // - itk importer pass ownership = true
 
           // create itk importer to copy data into image
           using ImportType = itk::ImportImageFilter<Image::PixelType, 3>;
           auto importer = ImportType::New();
-          importer->SetImportPointer(static_cast<float *>(info.ptr), np_array.size(), false /*pass ownership*/);
+          importer->SetImportPointer(static_cast<Image::PixelType *>(info.ptr), np_array.size(), false /*pass ownership*/);
 
           ImportType::SizeType size;            // i.e., Dims
           size[0] = np_array.shape()[2];
@@ -404,10 +404,9 @@ PYBIND11_MODULE(shapeworks, m)
           std::vector<double>& p1,
           std::vector<double>& p2,
           const Image::PixelType val) {
-         return image.clip(Point({o[0], o[1], o[2]}),
-                           Point({p1[0], p1[1], p1[2]}),
-                           Point({p2[0], p2[1], p2[2]}),
-                           val);
+         return image.clip(makePlane(Point({o[0], o[1], o[2]}),
+                                     Point({p1[0], p1[1], p1[2]}),
+                                     Point({p2[0], p2[1], p2[2]})), val);
        },
        "sets values on the back side of cutting plane (containing three non-colinear points) to val (default 0.0)",
        "o"_a, "p1"_a, "p2"_a, "val"_a=0.0)
@@ -417,7 +416,7 @@ PYBIND11_MODULE(shapeworks, m)
           const std::vector<double>& n,
           std::vector<double>& q,
           const Image::PixelType val) {
-         return image.clip(makeVector({n[0], n[1], n[2]}), Point({q[0], q[1], q[2]}), val);
+         return image.clip(makePlane(Point({q[0], q[1], q[2]}), makeVector({n[0], n[1], n[2]})), val);
        },
        "sets values on the back side of cutting plane (normal n containing point p) to val (default 0.0)",
        "n"_a, "q"_a, "val"_a=0.0)
@@ -592,26 +591,42 @@ PYBIND11_MODULE(shapeworks, m)
          return stream.str();
        })
 
-  // fixme: want to be able to say `region.min[0] = k` (elementwise assignment)
-  // but currently only assigns complete value (region.min = [a,b,c])
   .def_property("min",
-                [](const PhysicalRegion &region) -> decltype(auto) {
-                  return py::array(3, region.min.GetDataPointer());
-                },
-                [](PhysicalRegion &region, std::vector<double> min) -> decltype(auto) {
-                  region.min = Point({min[0], min[1], min[2]});
-                  return min;
-                },
+                // read (return special array so members of returned point can be modified, e.g., min[0] = 1.0)
+                py::cpp_function([](PhysicalRegion &region) -> py::array_t<double> {
+                    py::str dummyDataOwner; // pretend the data has an owner and it won't be copied (pybind trick)
+                    py::array arr(py::dtype::of<Point::ValueType>(),      // dtype
+                                  std::vector<ssize_t>({3}),              // shape
+                                  std::vector<ssize_t>(),                 // spacing
+                                  region.min.GetDataPointer(),            // data ptr
+                                  dummyDataOwner);     // "inspire" py::array not to copy data
+                    return arr;
+                  }, py::return_value_policy::move),
+
+                // assign
+                py::cpp_function([](PhysicalRegion &region, std::vector<double> min) -> decltype(auto) {
+                                   region.min = Point({min[0], min[1], min[2]});
+                                   return min;
+                                 }, py::return_value_policy::reference),
                 "min point of region")
 
   .def_property("max",
-                [](const PhysicalRegion &region) -> decltype(auto) {
-                  return py::array(3, region.max.GetDataPointer());
-                },
-                [](PhysicalRegion &region, std::vector<double> max) -> decltype(auto) {
-                  region.max = Point({max[0], max[1], max[2]});
-                  return max;
-                },
+                // read (return special array so members of returned point can be modified, e.g., max[0] = 1.0)
+                py::cpp_function([](PhysicalRegion &region) -> py::array_t<double> {
+                    py::str dummyDataOwner; // pretend the data has an owner and it won't be copied (pybind trick)
+                    py::array arr(py::dtype::of<Point::ValueType>(),      // dtype
+                                  std::vector<ssize_t>({3}),              // shape
+                                  std::vector<ssize_t>(),                 // spacing
+                                  region.max.GetDataPointer(),            // data ptr
+                                  dummyDataOwner);     // "inspire" py::array not to copy data
+                    return arr;
+                  }, py::return_value_policy::move),
+
+                // assign
+                py::cpp_function([](PhysicalRegion &region, std::vector<double> max) -> decltype(auto) {
+                                   region.max = Point({max[0], max[1], max[2]});
+                                   return max;
+                                 }, py::return_value_policy::reference),
                 "max point of region")
 
   .def("valid",
@@ -644,6 +659,11 @@ PYBIND11_MODULE(shapeworks, m)
        py::overload_cast<const Point&>(&PhysicalRegion::expand),
        "expand this region to include this point",
        "point"_a)
+
+  .def("pad",
+       &PhysicalRegion::pad,
+       "grows or shrinks the region by the specified amount",
+       "padding"_a)
   ;
 
   // IndexRegion
@@ -679,30 +699,46 @@ PYBIND11_MODULE(shapeworks, m)
          return stream.str();
        })
 
-  // fixme: want to be able to say `region.min[0] = k` (elementwise assignment)
-  // but currently only assigns complete value (region.min = [a,b,c])
   .def_property("min",
-                [](const IndexRegion &region) -> decltype(auto) {
-                  return py::array(3, region.min.data());
-                },
-                [](IndexRegion &region, std::vector<double> min) -> decltype(auto) {
-                  region.min = Coord({static_cast<long>(min[0]),
-                                      static_cast<long>(min[1]),
-                                      static_cast<long>(min[2])});
-                  return min;
-                },
+                // read (return special array so members of returned point can be modified, e.g., min[0] = 1.0)
+                py::cpp_function([](IndexRegion &region) -> py::array_t<Coord::IndexValueType> {
+                    py::str dummyDataOwner; // pretend the data has an owner and it won't be copied (pybind trick)
+                    py::array arr(py::dtype::of<Coord::IndexValueType>(), // dtype
+                                  std::vector<ssize_t>({3}),              // shape
+                                  std::vector<ssize_t>(),                 // spacing
+                                  region.min.data(),                      // data ptr
+                                  dummyDataOwner);     // "inspire" py::array not to copy data
+                    return arr;
+                  }, py::return_value_policy::move),
+
+                // assign
+                py::cpp_function([](IndexRegion &region, std::vector<double> min) -> decltype(auto) {
+                                   region.min = Coord({static_cast<Coord::IndexValueType>(min[0]),
+                                                       static_cast<Coord::IndexValueType>(min[1]),
+                                                       static_cast<Coord::IndexValueType>(min[2])});
+                                   return min;
+                                 }, py::return_value_policy::reference),
                 "min point of region")
 
   .def_property("max",
-                [](const IndexRegion &region) -> decltype(auto) {
-                  return py::array(3, region.max.data());
-                },
-                [](IndexRegion &region, std::vector<double> max) -> decltype(auto) {
-                  region.max = Coord({static_cast<long>(max[0]),
-                                      static_cast<long>(max[1]),
-                                      static_cast<long>(max[2])});
-                  return max;
-                },
+                // read (return special array so members of returned point can be modified, e.g., max[0] = 1.0)
+                py::cpp_function([](IndexRegion &region) -> py::array_t<Coord::IndexValueType> {
+                    py::str dummyDataOwner; // pretend the data has an owner and it won't be copied (pybind trick)
+                    py::array arr(py::dtype::of<Coord::IndexValueType>(), // dtype
+                                  std::vector<ssize_t>({3}),              // shape
+                                  std::vector<ssize_t>(),                 // spacing
+                                  region.max.data(),                      // data ptr
+                                  dummyDataOwner);     // "inspire" py::array not to copy data
+                    return arr;
+                  }, py::return_value_policy::move),
+
+                // assign
+                py::cpp_function([](IndexRegion &region, std::vector<double> max) -> decltype(auto) {
+                                   region.max = Coord({static_cast<Coord::IndexValueType>(max[0]),
+                                                       static_cast<Coord::IndexValueType>(max[1]),
+                                                       static_cast<Coord::IndexValueType>(max[2])});
+                                   return max;
+                                 }, py::return_value_policy::reference),
                 "max point of region")
 
   .def("valid",
@@ -828,7 +864,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("decimate",
        &Mesh::decimate,
        "applies filter to reduce number of triangles in mesh",
-       "reduction"_a=0.0, "angle"_a=0.0, "preserveTopology"_a=true)
+       "reduction"_a=0.5, "angle"_a=15.0, "preserveTopology"_a=true)
 
   .def("invertNormals",
        &Mesh::invertNormals,
@@ -862,9 +898,21 @@ PYBIND11_MODULE(shapeworks, m)
        "image"_a)
 
   .def("clip",
-       &Mesh::clip,
+       [](Mesh& mesh, const std::vector<double>& p, const std::vector<double>& n) -> decltype(auto) {
+         return mesh.clip(makePlane(Point({p[0], p[1], p[2]}), makeVector({n[0], n[1], n[2]})));
+       },
        "clips a mesh using a cutting plane",
-       "plane"_a)
+       "point"_a,
+       "normal"_a)
+
+  .def("clip",
+       [](Mesh& mesh, const std::vector<double>& o, const std::vector<double>& p1, const std::vector<double>& p2) -> decltype(auto) {
+         return mesh.clip(makePlane(Point({o[0], o[1], o[2]}), Point({p1[0], p1[1], p1[2]}), Point({p2[0], p2[1], p2[2]})));
+       },
+       "clips a mesh using a cutting plane",
+       "o"_a,
+       "p1"_a,
+       "p2"_a)
 
   .def("translate",
        [](Mesh& mesh, const std::vector<double>& v) -> decltype(auto) {
@@ -891,21 +939,23 @@ PYBIND11_MODULE(shapeworks, m)
        "iterations"_a=1, "decimate"_a=true, "percentage"_a=0.5)
 
   .def("clipClosedSurface",
-       &Mesh::clipClosedSurface,
+       [](Mesh& mesh, const std::vector<double>& p, const std::vector<double>& n) -> decltype(auto) {
+         return mesh.clipClosedSurface(makePlane(Point({p[0], p[1], p[2]}), makeVector({n[0], n[1], n[2]})));
+       },
        "clips a mesh using a cutting plane resulting in a closed surface",
-       "plane"_a)
+       "point"_a,
+       "normal"_a)
 
   .def("generateNormals",
        &Mesh::generateNormals,
        "computes cell normals and orients them such that they point in the same direction")
 
   .def("toImage",
-       [](Mesh& mesh, PhysicalRegion &region, double padding, std::vector<double>& spacing) -> decltype(auto) {
-         return mesh.toImage(region, padding, Point({spacing[0], spacing[1], spacing[2]}));
+       [](Mesh& mesh, PhysicalRegion &region, std::vector<double>& spacing) -> decltype(auto) {
+         return mesh.toImage(region, Point({spacing[0], spacing[1], spacing[2]}));
        },
-       "rasterizes mesh to a binary image, computing dims/spacing if necessary (specifying dims overrides specified spacing)",
+       "rasterizes specified region to create binary image of desired dims (default: unit spacing)",
        "region"_a=PhysicalRegion(),
-       "padding"_a=0.0,
        "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}))
 
   .def("distance",
@@ -913,12 +963,11 @@ PYBIND11_MODULE(shapeworks, m)
        "target"_a, "method"_a=Mesh::DistanceMethod::POINT_TO_POINT)
 
   .def("toDistanceTransform",
-       [](Mesh& mesh, PhysicalRegion &region, double padding, std::vector<double>& spacing) -> decltype(auto) {
-         return mesh.toDistanceTransform(region, padding, Point({spacing[0], spacing[1], spacing[2]}));
+       [](Mesh& mesh, PhysicalRegion &region, std::vector<double>& spacing) -> decltype(auto) {
+         return mesh.toDistanceTransform(region, Point({spacing[0], spacing[1], spacing[2]}));
        },
-       "converts mesh to distance transform, computing dims/spacing if necessary (specifying dims overrides specified spacing)",
+       "converts specified region to distance transform image (default: unit spacing)",
        "region"_a=PhysicalRegion(),
-       "padding"_a=0.0,
        "spacing"_a=std::vector<double>({1.0, 1.0, 1.0}))
 
   .def("center",
@@ -1013,34 +1062,6 @@ PYBIND11_MODULE(shapeworks, m)
   // MeshUtils
   py::class_<MeshUtils>(m, "MeshUtils")
 
-  // TODO: fails to compile on Windows due to missing Eigen symbols
-  // https://github.com/SCIInstitute/ShapeWorks/issues/954
-  // .def_static("distilVertexInfo",
-  //             &MeshUtils::distilVertexInfo,
-  //             "distils vertex information from VTK poly data to Eigen matrices",
-  //             "mesh"_a)
-  //
-  // .def_static("distilFaceInfo",
-  //             &MeshUtils::distilFaceInfo,
-  //             "distils face information from VTK poly data to Eigen matrices",
-  //             "mesh"_a)
-
-  // TODO: Bind these three functions (generateWarpMatrix, warpMesh, warpMeshes) later if required
-  // .def_static("generateWarpMatrix",
-  //             &MeshUtils::generateWarpMatrix,
-  //             "compute the warp matrix using the mesh and reference points",
-  //             "TV"_a, "TF"_a, "Vref"_a)
-  //
-  // .def_static("warpMesh",
-  //             &MeshUtils::warpMesh,
-  //             "compute individual warp",
-  //             "movPts"_a, "W"_a, "Fref"_a)
-  //
-  // .def_static("warpMeshes",
-  //             &MeshUtils::warpMeshes,
-  //             "compute transformation from set of points files using template mesh warp & face matrices",
-  //             "movingPointPaths"_a, "outputMeshPaths"_a, "W"_a, "Fref"_a, "numP"_a)
-
   .def_static("boundingBox",
               [](std::vector<std::string> filenames, bool center) {
                 return shapeworks::MeshUtils::boundingBox(filenames, center);
@@ -1062,7 +1083,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def(py::init<const std::vector<std::string> &>())
 
   .def("Particles",
-       &ParticleSystem::Particles) // note: must import Eigenpy (github stack-of-tasks/eigenpy)
+       &ParticleSystem::Particles)
 
   .def("Paths",
        &ParticleSystem::Paths)
@@ -1090,7 +1111,7 @@ PYBIND11_MODULE(shapeworks, m)
               "particleSystem"_a, "nModes"_a, "saveTo"_a="")
   ;
 
-  // Optimize (TODO)
+  // Optimize
   py::class_<Optimize>(m, "Optimize")
 
   .def(py::init<>())

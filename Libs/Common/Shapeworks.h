@@ -44,8 +44,13 @@ using IdentityTransform  = itk::IdentityTransform<double, 3>;
 using TransformPtr       = GenericTransform::Pointer;
 TransformPtr createTransform(const Matrix33 &mat, const Vector3 &translate = makeVector({0,0,0}));
 
-/// make a plane
-Plane makePlane(const Vector3 &n, const Point &o);
+/// Make a plane
+Plane makePlane(const Point &p, const Vector3 &n);
+Plane makePlane(const Point &p0, const Point &p1, const Point &p2);
+
+/// Get origin and normal of plane
+Point getOrigin(const Plane plane);
+Vector3 getNormal(const Plane plane);
 
 /// Affine transforms are used for many Image manipulation commands
 using AffineTransform    = itk::AffineTransform<double, 3>;

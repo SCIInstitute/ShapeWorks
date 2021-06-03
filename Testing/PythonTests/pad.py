@@ -71,3 +71,14 @@ val = padTest6()
 if val is False:
   print("padTest6 failed")
   sys.exit(1)
+
+def padfailTest():
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img.pad()   # should fail because no version without parameters exists
+
+try:
+	val = padfailTest()
+	print("padfailTest failed. There should be no default version of this function.")
+	sys.exit(1)
+except TypeError:
+  sys.exit(0)

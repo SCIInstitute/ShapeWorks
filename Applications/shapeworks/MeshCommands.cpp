@@ -208,9 +208,9 @@ void Decimate::buildParser()
 
   parser.prog(prog).description(desc);
 
-  parser.add_option("--reduction").action("store").type("double").set_default(0.0).help("Description of optionName [default: %default]."); // TODO: add description
-  parser.add_option("--angle").action("store").type("double").set_default(0.0).help("Angle in degrees [default: %default].");
-  parser.add_option("--preservetopology").action("store").type("bool").set_default(false).help("Whether to preserve topology [default: false].");
+  parser.add_option("--reduction").action("store").type("double").set_default(0.5).help("Percent reduction of total number of polygons [default: %default].");
+  parser.add_option("--angle").action("store").type("double").set_default(15.0).help("Necessary angle (in degrees) between two trianges to warrant keeping them separate [default: %default].");
+  parser.add_option("--preservetopology").action("store").type("bool").set_default(true).help("Whether to preserve topology [default: false].");
 
   Command::buildParser();
 }
@@ -431,12 +431,12 @@ void ClipMesh::buildParser()
   const std::string desc = "clips mesh";
   parser.prog(prog).description(desc);
 
+  parser.add_option("--px").action("store").type("double").set_default(0.0).help("Value of point.x for cutting plane [default: %default].");
+  parser.add_option("--py").action("store").type("double").set_default(0.0).help("Value of point.y for cutting plane [default: %default].");
+  parser.add_option("--pz").action("store").type("double").set_default(0.0).help("Value of point.z for cutting plane [default: %default].");
   parser.add_option("--nx").action("store").type("double").set_default(0.0).help("Value of normal.x for cutting plane [default: %default].");
   parser.add_option("--ny").action("store").type("double").set_default(0.0).help("Value of normal.y for cutting plane [default: %default].");
   parser.add_option("--nz").action("store").type("double").set_default(0.0).help("Value of normal.z for cutting plane [default: %default].");
-  parser.add_option("--ox").action("store").type("double").set_default(0.0).help("Value of origin.x for cutting plane [default: %default].");
-  parser.add_option("--oy").action("store").type("double").set_default(0.0).help("Value of origin.y for cutting plane [default: %default].");
-  parser.add_option("--oz").action("store").type("double").set_default(0.0).help("Value of origin.z for cutting plane [default: %default].");
 
   Command::buildParser();
 }
@@ -449,15 +449,15 @@ bool ClipMesh::execute(const optparse::Values &options, SharedCommandData &share
     return false;
   }
 
+  Point point({static_cast<double>(options.get("px")),
+               static_cast<double>(options.get("py")),
+               static_cast<double>(options.get("pz"))});
+
   Vector normal{makeVector({static_cast<double>(options.get("nx")),
                             static_cast<double>(options.get("ny")),
                             static_cast<double>(options.get("nz"))})};
 
-  Point origin({static_cast<double>(options.get("ox")),
-                static_cast<double>(options.get("oy")),
-                static_cast<double>(options.get("oz"))});
-
-  sharedData.mesh->clip(makePlane(normal, origin));
+  sharedData.mesh->clip(makePlane(point, normal));
   return sharedData.validMesh();
 }
 
@@ -704,12 +704,12 @@ void ClipClosedSurface::buildParser()
   const std::string desc = "clips mesh resulting in a closed surface";
   parser.prog(prog).description(desc);
 
+  parser.add_option("--px").action("store").type("double").set_default(0.0).help("Value of point.x for cutting plane [default: %default].");
+  parser.add_option("--py").action("store").type("double").set_default(0.0).help("Value of point.y for cutting plane [default: %default].");
+  parser.add_option("--pz").action("store").type("double").set_default(0.0).help("Value of point.z for cutting plane [default: %default].");
   parser.add_option("--nx").action("store").type("double").set_default(0.0).help("Value of normal.x for cutting plane [default: %default].");
   parser.add_option("--ny").action("store").type("double").set_default(0.0).help("Value of normal.y for cutting plane [default: %default].");
   parser.add_option("--nz").action("store").type("double").set_default(0.0).help("Value of normal.z for cutting plane [default: %default].");
-  parser.add_option("--ox").action("store").type("double").set_default(0.0).help("Value of origin.x for cutting plane [default: %default].");
-  parser.add_option("--oy").action("store").type("double").set_default(0.0).help("Value of origin.y for cutting plane [default: %default].");
-  parser.add_option("--oz").action("store").type("double").set_default(0.0).help("Value of origin.z for cutting plane [default: %default].");
 
   Command::buildParser();
 }
@@ -722,15 +722,15 @@ bool ClipClosedSurface::execute(const optparse::Values &options, SharedCommandDa
     return false;
   }
 
+  Point point({static_cast<double>(options.get("px")),
+               static_cast<double>(options.get("py")),
+               static_cast<double>(options.get("pz"))});
+
   Vector normal{makeVector({static_cast<double>(options.get("nx")),
                             static_cast<double>(options.get("ny")),
                             static_cast<double>(options.get("nz"))})};
 
-  Point origin({static_cast<double>(options.get("ox")),
-                static_cast<double>(options.get("oy")),
-                static_cast<double>(options.get("oz"))});
-
-  sharedData.mesh->clipClosedSurface(makePlane(normal, origin));
+  sharedData.mesh->clipClosedSurface(makePlane(point, normal));
   return sharedData.validMesh();
 }
 
@@ -938,9 +938,9 @@ bool MeshToImage::execute(const optparse::Values &options, SharedCommandData &sh
   double pad = static_cast<double>(options.get("pad"));
 
   Point3 spacing({x,y,z});
-  auto region = sharedData.mesh->boundingBox();
+  auto region = sharedData.mesh->boundingBox().pad(pad);
   
-  sharedData.image = sharedData.mesh->toImage(region, pad, spacing);
+  sharedData.image = sharedData.mesh->toImage(region, spacing);
   return true;
 }
 
@@ -975,9 +975,9 @@ bool MeshToDT::execute(const optparse::Values &options, SharedCommandData &share
   double pad = static_cast<double>(options.get("pad"));
 
   Point3 spacing({x,y,z});
-  auto region = sharedData.mesh->boundingBox();
+  auto region = sharedData.mesh->boundingBox().pad(pad);
   
-  sharedData.image = sharedData.mesh->toDistanceTransform(region, pad, spacing);
+  sharedData.image = sharedData.mesh->toDistanceTransform(region, spacing);
   return true;
 }
 
@@ -1021,8 +1021,6 @@ bool CompareMesh::execute(const optparse::Values &options, SharedCommandData &sh
   }
 }
 
-
-
 ///////////////////////////////////////////////////////////////////////////////
 // WarpMesh
 ///////////////////////////////////////////////////////////////////////////////
@@ -1031,15 +1029,12 @@ void WarpMesh::buildParser()
   const std::string prog = "warp-mesh";
   const std::string desc = "warps a mesh given reference and target particles";
   parser.prog(prog).description(desc);
-
   parser.add_option("--reference_mesh").action("store").type("string").set_default("").help("Name of reference mesh.");
   parser.add_option("--reference_points").action("store").type("string").set_default("").help("Name of reference points.");
-  parser.add_option("--target_points").action("store").type("string").set_default("").help("Name of target points.");
-  parser.add_option("--target_mesh").action("store").type("string").set_default("").help("Name of output target mesh.");
-
+  parser.add_option("--target_points").action("store").type("multistring").set_default("").help("Names of target points (must be followed by `--`), ex: \"... --target_points *.particles -- ...");
+  parser.add_option("--save_dir").action("store").type("string").set_default("").help("Optional: Path to the directory where the mesh files will be saved");
   Command::buildParser();
 }
-
 bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string inputMeshFilename = options["reference_mesh"];
@@ -1047,46 +1042,49 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
     std::cerr << "warpmesh error: no reference mesh specified, must pass `--reference_mesh <filename>`\n";
     return false;
   }
-
   std::string inputPointsFilename = options["reference_points"];
   if (inputPointsFilename.length() == 0) {
     std::cerr << "warpmesh error: no reference points specified, must pass `--reference_points <filename>`\n";
     return false;
   }
-
-  std::string targetMeshFilename = options["target_mesh"];
-  if (targetMeshFilename.length() == 0) {
-    std::cerr << "warpmesh error: no target mesh specified, must pass `--target_mesh <filename>`\n";
+  std::vector<std::string> targetPointsFilenames = options.get("target_points");
+  if (targetPointsFilenames.size() == 0) {
+    std::cerr << "warpmesh error: no target points specified, must pass `--target_points <filenames> --`\n";
     return false;
   }
 
-  std::string targetPointsFilename = options["target_points"];
-  if (targetPointsFilename.length() == 0) {
-    std::cerr << "warpmesh error: no target points specified, must pass `--target_points <filename>`\n";
-    return false;
-  }
-
+  std::string saveDir = options["save_dir"];
   try {
     Mesh inputMesh(inputMeshFilename);
-
-    std::vector<std::string> paths;
-    paths.push_back(inputPointsFilename);
-    paths.push_back(targetPointsFilename);
-    ParticleSystem particlesystem(paths);
+    targetPointsFilenames.push_back(inputPointsFilename);
+    ParticleSystem particlesystem(targetPointsFilenames);
     Eigen::MatrixXd allPts = particlesystem.Particles();
-    Eigen::MatrixXd staticPoints = allPts.col(0);
-    Eigen::MatrixXd movingPoints = allPts.col(1);
+    Eigen::MatrixXd staticPoints = allPts.col(targetPointsFilenames.size() - 1);
     int numParticles = staticPoints.rows() / 3;
     staticPoints.resize(3, numParticles);
     staticPoints.transposeInPlace();
-    movingPoints.resize(3, numParticles);
-    movingPoints.transposeInPlace();
-
     MeshWarper warper;
     warper.set_reference_mesh(inputMesh.getVTKMesh(), staticPoints);
-    Mesh output = warper.build_mesh(movingPoints);
-    output.write(targetMeshFilename);
+    std::string filenm;
 
+    if (saveDir.length() > 0) {
+      boost::filesystem::create_directories(saveDir);
+    }
+
+    for (int i = 0; i < targetPointsFilenames.size() - 1; i++) {
+      filenm = targetPointsFilenames[i];
+      filenm.replace(static_cast<int>(filenm.rfind('.')) + 1, filenm.length(), "vtk");
+      if (saveDir.length() > 0) {
+        int idx = static_cast<int>(filenm.rfind('/'));
+        filenm.replace(0, idx, saveDir);
+      }
+      
+      Eigen::MatrixXd movingPoints = allPts.col(i);
+      movingPoints.resize(3, numParticles);
+      movingPoints.transposeInPlace();
+      Mesh output = warper.build_mesh(movingPoints);
+      output.write(filenm);
+    }
     return true;
   } catch (std::exception &e) {
     std::cerr << "exception during mesh warp: " << e.what() << std::endl;

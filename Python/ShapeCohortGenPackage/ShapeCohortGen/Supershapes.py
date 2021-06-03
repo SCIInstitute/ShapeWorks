@@ -5,7 +5,6 @@ import numpy as np
 import matplotlib.tri as mtri
 import shapeworks as sw
 from ShapeCohortGen.CohortGenUtils import *
-import shapeworks as sw 
 
 '''
 Generates super shapes and saves mesh form
@@ -40,12 +39,12 @@ def generate(num_samples, out_dir, randomize_center, randomize_rotation, m, star
         R = trimesh.transformations.random_rotation_matrix(rotation)
         transform_matrix = trimesh.transformations.concatenate_matrices(T, R, S)
         shapeMesh = shapeMesh.apply_transform(transform_matrix)
-        # export mesh as stl
+
+        # Temporarily save mesh as stl and convert it to vtk
         shapeMesh.export(meshDir + name + ".stl")
-        # read as shapeworks mesh object and save as vtk mesh
-        swShapeMesh = sw.Mesh(meshDir + name + ".stl").write(meshDir + name + ".vtk")
-        # remove stl mesh
+        sw.Mesh(meshDir + name + ".stl").write(meshDir + name + ".vtk")
         os.remove(meshDir + name + ".stl")
+
     return get_files(meshDir)
 
 # Name helper

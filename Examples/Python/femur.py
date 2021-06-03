@@ -21,6 +21,7 @@ def Run_Pipeline(args):
 
     We define dataset_name which determines which dataset to download from
     the portal and the directory to save output from the use case in.
+    This data is comprised of femur meshes and corresponding unsegmented hip CT scans.
     """
     dataset_name = "femur-v0"
     output_directory = "Output/femur/"
@@ -29,7 +30,7 @@ def Run_Pipeline(args):
 
     # If running a tiny_test, then download subset of the data
     if args.tiny_test:
-        args.use_single_scale = 1
+        args.use_single_scale = True
         sw.data.download_subset(args.use_case, dataset_name, output_directory)
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))[:3]

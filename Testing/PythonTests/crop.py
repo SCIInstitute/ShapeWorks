@@ -7,11 +7,8 @@ def cropTest1():
 
   region = img.logicalBoundingBox().pad(-16)
 
-  # [] fixme!
-  # region.min[0] = 7
-  # region.max[0] = 42
-  region.min = [7, region.min[1], region.min[2]]
-  region.max = [42, region.max[1], region.max[2]]
+  region.min[0] = 7
+  region.max[0] = 42
 
   img.crop(img.logicalToPhysical(region))
 
@@ -19,10 +16,12 @@ def cropTest1():
 
   return img.compare(compareImg)
 
-val = cropTest1()
-
-if val is False:
-  print("cropTest1 failed")
+try:
+  if not cropTest1():
+    print("cropTest1 failed")
+    sys.exit(1)
+except RuntimeError:
+  print("cropTest1 failed (exception)")
   sys.exit(1)
 
 def cropTest2():
@@ -37,8 +36,10 @@ def cropTest2():
 
   return img1.compare(compareImg)
 
-val = cropTest2()
-
-if val is False:
-  print("cropTest2 failed")
+try:
+  if not cropTest2():
+    print("cropTest2 failed")
+    sys.exit(1)
+except RuntimeError:
+  print("cropTest2 failed (exception)")
   sys.exit(1)

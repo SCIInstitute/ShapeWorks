@@ -22,6 +22,7 @@ def Run_Pipeline(args):
 
     We define dataset_name which determines which dataset to download from
     the portal and the directory to save output from the use case in.
+    This data is comprised of femur meshes and corresponding unsegmented hip CT scans.
     """
     dataset_name = "femur-v0"
     output_directory = "Output/femur_cut/"

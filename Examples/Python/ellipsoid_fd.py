@@ -141,7 +141,10 @@ def Run_Pipeline(args):
     [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize_FixedDomains(
         point_dir, dt_files, parameter_dictionary)
 
-    print("\nStep 4. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
+    if args.tiny_test:
+        print("Done with tiny test")
+        exit()
+
     """
     Step 4: ANALYZE - Shape Analysis and Visualization
 
@@ -149,5 +152,6 @@ def Run_Pipeline(args):
     For more information about the analysis step, see docs/workflow/analyze.md
     http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
     """
+    print("\nStep 4. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
     AnalyzeUtils.launchShapeWorksStudio(
         point_dir, dt_files, local_point_files, world_point_files)

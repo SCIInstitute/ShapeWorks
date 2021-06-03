@@ -13,8 +13,8 @@ class MeshUtils
 public:
 
   /// computes a rigid transformation from source to target using vtkIterativeClosestPointTransform
-  static const vtkSmartPointer<vtkMatrix4x4> createICPTransform(const vtkSmartPointer<vtkPolyData> source,
-                                                                const vtkSmartPointer<vtkPolyData> target,
+  static const vtkSmartPointer<vtkMatrix4x4> createICPTransform(const Mesh source,
+                                                                const Mesh target,
                                                                 Mesh::AlignmentType align,
                                                                 const unsigned iterations = 20,
                                                                 bool meshTransform = false);

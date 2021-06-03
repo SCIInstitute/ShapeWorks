@@ -104,7 +104,7 @@ Image::ImageType::Pointer Image::read(const std::string &pathname)
     reader->Update();
   }
   catch (itk::ExceptionObject &exp) {
-    throw std::invalid_argument(pathname + " does not exist (" + std::string(exp.what()) + ")");
+    throw std::invalid_argument(std::string(exp.what()));
   }
 
   return reader->GetOutput();
@@ -364,7 +364,7 @@ Image& Image::resample(const Vector3& spacing, Image::InterpolationType interp)
   
   Point3 new_origin = origin() + toPoint(0.5 * (spacing - inputSpacing));  // O' += 0.5 * (p' - p)
 
-  return resample(IdentityTransform::New(), new_origin, dims, spacing, coordsys(), interp);  //***
+  return resample(IdentityTransform::New(), new_origin, dims, spacing, coordsys(), interp);
 }
 
 Image& Image::resample(double isoSpacing, Image::InterpolationType interp)
@@ -755,19 +755,16 @@ Image& Image::gaussianBlur(double sigma)
 
 Image& Image::crop(PhysicalRegion region, const int padding)
 {
-  std::cout << "region passed in: " << region << std::endl;
   region.shrink(physicalBoundingBox()); // clip region to fit inside image
-  if (!region.valid())
-    std::cerr << "Invalid region specified (it may lie outside physical bounds of image)." << std::endl;
+  if (!region.valid()) {
+    throw std::invalid_argument("Invalid region specified (it may lie outside physical bounds of image).");
+  }
 
   using FilterType = itk::ExtractImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
   
-  std::cout << "image physical region: " << physicalBoundingBox() << std::endl;
-  std::cout << "shrunk by image physical region: " << region << std::endl;
   IndexRegion indexRegion(physicalToLogical(region));
   indexRegion.pad(padding);
-  std::cout << "logical (index) region: " << indexRegion << std::endl;
   filter->SetExtractionRegion(ImageType::RegionType(indexRegion.min, indexRegion.size()));
   filter->SetInput(this->image);
   filter->SetDirectionCollapseToIdentity();
@@ -777,28 +774,19 @@ Image& Image::crop(PhysicalRegion region, const int padding)
   return *this;
 }
 
-Image &Image::clip(const Point &o, const Point &p1, const Point &p2, const PixelType val)
+Image& Image::clip(const Plane plane, const PixelType val)
 {
-  // clipping plane normal n = (p1-o) x (p2-o)
-  Vector v1(makeVector({p1[0] - o[0], p1[1] - o[1], p1[2] - o[2]}));
-  Vector v2(makeVector({p2[0] - o[0], p2[1] - o[1], p2[2] - o[2]}));
-
-  return clip(crossProduct(v1, v2), o, val);
-}
-
-Image& Image::clip(const Vector &n, const Point &q, const PixelType val)
-{
-  if (!axis_is_valid(n)) { throw std::invalid_argument("Invalid clipping plane (zero length normal)"); }
+  if (!axis_is_valid(getNormal(plane))) { throw std::invalid_argument("Invalid clipping plane (zero length normal)"); }
 
   itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
   while (!iter.IsAtEnd())
   {
-    Vector pq(logicalToPhysical(iter.GetIndex()) - q);
+    Vector pq(logicalToPhysical(iter.GetIndex()) - getOrigin(plane));
 
     // if n dot pq is < 0, point q is on the back side of the plane.
-    if (n * pq < 0.0)
+    if (getNormal(plane) * pq < 0.0)
       iter.Set(val);
-      
+
     ++iter;
   }
 
@@ -963,16 +951,16 @@ Coord Image::physicalToLogical(const Point3 &p) const
   return image->TransformPhysicalPointToIndex(p);
 }
 
-vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image& image, PixelType isoValue)
+Mesh Image::toMesh(PixelType isoValue) const
 {
-  auto vtkImage = image.getVTKImage();
+  auto vtkImage = getVTKImage();
 
   vtkContourFilter *targetContour = vtkContourFilter::New();
   targetContour->SetInputData(vtkImage);
   targetContour->SetValue(0, isoValue);
   targetContour->Update();
 
-  return targetContour->GetOutput();
+  return Mesh(targetContour->GetOutput());
 }
 
 TransformPtr Image::createCenterOfMassTransform()
@@ -984,8 +972,8 @@ TransformPtr Image::createCenterOfMassTransform()
 
 TransformPtr Image::createRigidRegistrationTransform(const Image &target_dt, float isoValue, unsigned iterations)
 {
-  vtkSmartPointer<vtkPolyData> sourceContour = Image::getPolyData(*this, isoValue);
-  vtkSmartPointer<vtkPolyData> targetContour = Image::getPolyData(target_dt, isoValue);
+  Mesh sourceContour = toMesh(isoValue);
+  Mesh targetContour = target_dt.toMesh(isoValue);
   const vtkSmartPointer<vtkMatrix4x4> mat(MeshUtils::createICPTransform(sourceContour, targetContour, Mesh::Rigid, iterations));
   return shapeworks::createTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
 }

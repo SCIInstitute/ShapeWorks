@@ -1,5 +1,6 @@
 import os
 import sys
+from typing import Type
 from shapeworks import *
 
 def scaleTest1():
@@ -57,3 +58,17 @@ val = scaleTest4()
 if val is False:
   print("scaleTest4 failed")
   sys.exit(1)
+
+def scalefailTest():
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img.scale()
+
+  compareImg = Image(os.environ["DATA"] + "/scalefail.nrrd")
+
+  return img.compare(compareImg)
+
+try:
+  val = scalefailTest()
+  sys.exit(1)
+except TypeError:
+  sys.exit(0)

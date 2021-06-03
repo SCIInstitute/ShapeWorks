@@ -60,14 +60,15 @@ def visualize_reconstruction(save_dir):
 
 
 def Run_Pipeline(args):
-    ellipsoids_dir = 'Output/ellipsoid/'
-    shape_models_dir = ellipsoids_dir+'shape_models/128'
+    ellipsoids_dir = 'Output/ellipsoid'
+    shape_models_dir = f'{ellipsoids_dir}/shape_models/128'
+    if args.tiny_test:
+        shape_models_dir = f'{ellipsoids_dir}/shape_models/32'
     if not os.path.exists(shape_models_dir):
-        print(
-            f'Ellipsoids output not found in {shape_models_dir}. Please run the ellipsoid use case first.', file=sys.stderr)
+        print(f'Ellipsoids output not found in {shape_models_dir}. Please run the ellipsoid use case first.', file=sys.stderr)
         sys.exit(1)
-
-    eval_dir = ellipsoids_dir+'/evaluation/'
+    
+    eval_dir = f'{ellipsoids_dir}/evaluation'
     for subdir in ('compactness', 'generalization', 'specificity'):
         Path(eval_dir).joinpath(Path(subdir)).mkdir(
             parents=True, exist_ok=True)
@@ -91,7 +92,8 @@ def Run_Pipeline(args):
     # Calculate compactness and saved the values in scree.txt
     sw.ShapeEvaluation.ComputeCompactness(
         particleSystem=particleSystem, nModes=1, saveTo=save_dir+"scree.txt")
-    plot_scree(save_dir)
+    if not args.tiny_test:
+        plot_scree(save_dir)
 
     """
     ########################################################################################################
@@ -111,7 +113,8 @@ def Run_Pipeline(args):
     # Calculate generalization
     sw.ShapeEvaluation.ComputeGeneralization(
         particleSystem=particleSystem, nModes=1, saveTo=save_dir)
-    visualize_reconstruction(save_dir)
+    if not args.tiny_test:
+        visualize_reconstruction(save_dir)
 
     """
     ########################################################################################################
@@ -132,4 +135,5 @@ def Run_Pipeline(args):
     # Calculate specificity
     sw.ShapeEvaluation.ComputeSpecificity(
         particleSystem=particleSystem, nModes=1, saveTo=save_dir)
-    visualize_reconstruction(save_dir)
+    if not args.tiny_test:
+        visualize_reconstruction(save_dir)

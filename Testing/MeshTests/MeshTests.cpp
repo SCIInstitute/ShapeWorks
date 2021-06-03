@@ -43,7 +43,7 @@ TEST(MeshTests, smoothTest2)
 TEST(MeshTests, decimateTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.decimate();
+  femur.decimate(0.0, 0.0, false);
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/decimate1.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
@@ -52,8 +52,35 @@ TEST(MeshTests, decimateTest1)
 TEST(MeshTests, decimateTest2)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.decimate(0.0, 0.0, true);
+  femur.decimate(0.0, 0.0);
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/decimate2.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
+TEST(MeshTests, decimateTest3)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.decimate();
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/decimate3.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
+TEST(MeshTests, decimateTest4)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.decimate(0.9, 25.5, true);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/decimate4.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
+TEST(MeshTests, decimateTest5)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.decimate(0.9, 25.5, false);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/decimate5.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
 }
@@ -106,8 +133,8 @@ TEST(MeshTests, probeVolumeTest)
 TEST(MeshTests, clipTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.clip(makePlane(makeVector({0.0, 0.0, 1.0}),
-                       Point3({-91.0, 0.0, 1230.0}))); // clip upper half of mesh from center
+  femur.clip(makePlane(Point3({-91.0, 0.0, 1230.0}),
+                       makeVector({0.0, 0.0, 1.0}))); // clip upper half of mesh from center
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/clip1.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
@@ -116,8 +143,8 @@ TEST(MeshTests, clipTest1)
 TEST(MeshTests, clipTest2)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.clip(makePlane(makeVector({0.0, 0.0, -1.0}),
-                       Point3({-91.0, 0.0, 1230.0}))); // clip lower half of mesh from center
+  femur.clip(makePlane(Point3({-91.0, 0.0, 1230.0}),
+                       makeVector({0.0, 0.0, -1.0}))); // clip lower half of mesh from center
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/clip2.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
@@ -126,8 +153,8 @@ TEST(MeshTests, clipTest2)
 TEST(MeshTests, clipTest3)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.clip(makePlane(makeVector({-5.0, 3.14159, 1.0}),
-                       Point3({-60.0, 10.0, 1235.0}))); // clip arbitrary mesh from an edge
+  femur.clip(makePlane(Point3({-60.0, 10.0, 1235.0}),
+                       makeVector({-5.0, 3.14159, 1.0}))); // clip arbitrary mesh from an edge
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/clip3.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
@@ -198,11 +225,11 @@ TEST(MeshTests, scaleTest2)
 
 TEST(MeshTests, clipClosedSurfaceTest1)
 {
-  Vector v(makeVector({0, 850, 0}));
-  Point o({10.0, 0.0, 10.0});
+  Point p({10.0, 0.0, 10.0});
+  Vector n(makeVector({0, 850, 0}));
 
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.clipClosedSurface(makePlane(v, o));
+  femur.clipClosedSurface(makePlane(p, n));
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/clipClosed1.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
@@ -250,7 +277,7 @@ TEST(MeshTests, toImageTest3)
 
   // pad the region
   auto bbox = femur.boundingBox();
-  Image image = femur.toImage(bbox, 1.5);
+  Image image = femur.toImage(bbox.pad(1.5));
   Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImagePad.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -260,7 +287,7 @@ TEST(MeshTests, toImageTest4)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
   auto bbox = femur.boundingBox();
-  Image image = femur.toImage(bbox, 1.5, Point({0.5, 1.5, 12.5}));
+  Image image = femur.toImage(bbox.pad(1.5), Point({0.5, 1.5, 12.5}));
   Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImagePadSpace.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -303,7 +330,7 @@ TEST(MeshTests, boundingBoxTest2)
 TEST(MeshTests, antialiasTest3)
 {
   Mesh mesh(std::string(TEST_DATA_DIR) + "/femur.ply");
-  Image aa1(mesh.toImage(mesh.boundingBox(), 3.0));
+  Image aa1(mesh.toImage(mesh.boundingBox().pad(3.0)));
   aa1.antialias(50, 0.0);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/antialiasMesh.nrrd");
 
@@ -379,6 +406,18 @@ TEST(MeshTests, fieldTest2)
   ASSERT_TRUE(b==1);
   ASSERT_TRUE(std::abs(c - 0.57735) < 1e-4);
   ASSERT_TRUE(d==0);
+}
+
+TEST(MeshTests, fieldTest3)
+{
+  Mesh mesh(std::string(TEST_DATA_DIR) + "/mesh1.vtk");
+  std::vector<double> scalarRange = mesh.getFieldRange("scalars");
+  std::vector<double> normalsRange = mesh.getFieldRange("Normals");
+
+  ASSERT_TRUE(scalarRange[0]==1);
+  ASSERT_TRUE(scalarRange[1]==1);
+  ASSERT_TRUE(normalsRange[0]==-1);
+  ASSERT_TRUE(normalsRange[1]==1);
 }
 
 //TODO: add tests for independent fields and fields on cells once #935 complete
