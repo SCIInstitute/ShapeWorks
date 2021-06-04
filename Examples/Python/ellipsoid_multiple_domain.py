@@ -24,13 +24,13 @@ def Run_Pipeline(args):
     We define dataset_name which determines which dataset to download from 
     the portal and the directory to save output from the use case in. 
     """
-    print("\nDataset options for running multiple domain mesh use case: \n")
+    print("\nDataset options for running multiple domain use case: \n")
     print("1. ellipsoid_joint_rotation \t 2. ellipsoid_joint_size \t 3. ellipsoid_joint_size_rotation \n")
     print("You can change the dataset name and output directory name to try out this use case with other datasets")
 
 
-    dataset_name = "ellipsoid_joint_size_rotation"
-    output_directory = "Output/ellipsoid_joint_size_rotation/"
+    dataset_name = "ellipsoid_joint_rotation"
+    output_directory = "Output/ellipsoid_multiple_domain/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
@@ -49,9 +49,10 @@ def Run_Pipeline(args):
 
         # Select data if using subsample
         if args.use_subsample:
-            raise RuntimeError("Subsample generation unsupported. Please run the use case without --use_subsample")
+            raise RuntimeError("Subsample generation unsupported for this use case. Please run the use case without --use_subsample")
           
-
+    if args.skip_grooming:
+        raise RuntimeError("Skip grooming unsupported for this use case.Please run the use case without --skip_grooming")
 
     # Else groom the segmentations and get distance transforms for optimization
     else:
