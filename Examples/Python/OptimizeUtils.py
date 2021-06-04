@@ -22,7 +22,9 @@ def get_attribute_scales_text(use_normals,normal_weight,domains_per_shape):
 
     text = "\n"
     if(type(use_normals) is not list):
-    	use_normals = list([use_normals])
+        use_normals = list([use_normals])
+    if(type(normal_weight) is not list):
+        normal_weight = list([normal_weight])
     for i in range(domains_per_shape):
 
         if(use_normals[i]==0):
