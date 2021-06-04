@@ -43,7 +43,7 @@ def download_subset(use_case,datasetName,outputDirectory):
         if(generate_download_flag(outputDirectory,"segmentations")):
             segFilesList = sorted([files for files in fileList if re.search("^segmentations(?:/|\\\).*nrrd$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = segFilesList)
-    elif(use_case in ["ellipsoid_mesh","femur","femur_cut","lumps"]):
+    elif(use_case in ["ellipsoid_mesh","femur","femur_cut","lumps","thin_cavity_bean"]):
         if(generate_download_flag(outputDirectory,"meshes")):
             meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*ply$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
@@ -70,18 +70,18 @@ def download_subset(use_case,datasetName,outputDirectory):
         if(generate_download_flag(outputDirectory,"shape_models/femur/mean/")):
             meanFilesList = sorted([files for files in fileList if re.search("^shape_models(?:/|\\\)femur(?:/|\\\)mean(?:/|\\\).*",files)])
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meanFilesList)
-    elif(use_case==["ellipsoid_multiple_domain"]):
+    elif(use_case=="ellipsoid_multiple_domain"):
         if(generate_download_flag(outputDirectory,"segmentations")):
             segFilesList = sorted([files for files in fileList if re.search("^segmentations(?:/|\\\).*nrrd$",files)])[:6]
-            print(segFilesList)
-            input("wait")
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = segFilesList)
-    elif(use_case==["ellipsoid_multiple_domain_mesh"]):
+    elif(use_case=="ellipsoid_multiple_domain_mesh"):
         if(generate_download_flag(outputDirectory,"meshes")):
-            segFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*ply$",files)])[:6]
-            print(segFilesList)
-            input("wait")
-            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = segFilesList)
+            meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*ply$",files)])[:6]
+            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
+    elif(use_case=="supershapes_1mode_contour"):
+        if(generate_download_flag(outputDirectory,"contours")):
+            contourFilesList = sorted([files for files in fileList if re.search("^contours(?:/|\\\).*vtp$",files)])[:3]
+            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = contourFilesList)
 
 
 def download_and_unzip_dataset(datasetName, outputDirectory):

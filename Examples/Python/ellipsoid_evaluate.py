@@ -87,7 +87,7 @@ def Run_Pipeline(args):
     """
 
     # directory where the scree values will be saved
-    save_dir = eval_dir + 'compactness/'
+    save_dir = eval_dir + '/compactness/'
 
     # Calculate compactness and saved the values in scree.txt
     sw.ShapeEvaluation.ComputeCompactness(
@@ -108,7 +108,7 @@ def Run_Pipeline(args):
     """
 
     # directory where the reconstructions related to generalization will be saved
-    save_dir = eval_dir + 'generalization/'
+    save_dir = eval_dir + '/generalization/'
 
     # Calculate generalization
     sw.ShapeEvaluation.ComputeGeneralization(
@@ -130,7 +130,7 @@ def Run_Pipeline(args):
     """
 
     # directory where the reconstructions related to specificity will be saved
-    save_dir = eval_dir + 'specificity/'
+    save_dir = eval_dir + '/specificity/'
 
     # Calculate specificity
     sw.ShapeEvaluation.ComputeSpecificity(
