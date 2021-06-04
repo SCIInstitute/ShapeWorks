@@ -9,6 +9,7 @@ import DataAugmentationUtils
 import DeepSSMUtils
 import CommonUtils
 import json
+import platform
 
 def Run_Pipeline(args):
 	if args.tiny_test:
@@ -25,6 +26,10 @@ def Run_Pipeline(args):
 	if not os.path.exists(out_dir):
 		os.makedirs(out_dir)
 
+	if platform.system() == "Darwin":
+        	# On MacOS, CPU PyTorch is hanging with parallel
+        	os.environ['OMP_NUM_THREADS'] = "1"
+                
 	if args.tiny_test:
 		CommonUtils.download_subset(args.use_case,datasetName, out_dir)
 		partition = 4
