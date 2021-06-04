@@ -871,6 +871,7 @@ PYBIND11_MODULE(shapeworks, m)
        "applies filter to reduce number of triangles in mesh",
        "reduction"_a=0.5, "angle"_a=15.0, "preserveTopology"_a=true)
 
+
   .def("invertNormals",
        &Mesh::invertNormals,
        "handle flipping normals")
