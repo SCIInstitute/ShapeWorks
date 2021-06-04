@@ -66,7 +66,8 @@ def Run_Pipeline(args):
 	- aug_type is the augmentation method to use (1 is based on just particles wheras 2 is based on images and particles)
 	- sample type is the distribution to use for sampling. Can be gaussian, mixture, or kde
 	'''
-	num_samples = 4960
+	# num_samples = 4960
+	num_samples = 50
 	num_dim = 6
 	percent_variability = 0.95
 	sampler_type = "kde"
@@ -149,16 +150,19 @@ def Run_Pipeline(args):
 	Test DeepSSM
 	'''
 	PCA_scores_path = out_dir + "Augmentation/PCA_Particle_Info/"
-	prediction_dir = out_dir + 'Results/PredictedParticles/'
+	prediction_dir = out_dir + model_name + '/predictions/'
 	DeepSSMUtils.testDeepSSM(config_file)
 	print('Predicted particles saved at: ' + prediction_dir)
+
+	if args.tiny_test:
+		exit()
 
 	print("\n\n\nStep 6. Analyze results.\n") #####################################################################################
 	'''
 	Analyze DeepSSM
 	'''
 	DT_dir = input_dir + "groomed/distance_transforms/"
-	out_dir = out_dir + "Results/"
+	out_dir = out_dir + model_name+ "/Results/"
 	mean_prefix = input_dir + "shape_models/femur/mean/femur"
-	avg_distance = DeepSSMUtils.analyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix)
+	avg_distance = DeepSSMUtils.analyzeResults(out_dir, DT_dir, prediction_dir + 'FT_Predictions/', mean_prefix)
 	print("Average surface-to-surface distance from the original to predicted shape = " + str(avg_distance))
