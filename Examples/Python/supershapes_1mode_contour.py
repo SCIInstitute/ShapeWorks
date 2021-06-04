@@ -17,9 +17,6 @@ def Run_Pipeline(args):
     process
     """
     print("\nStep 1. Extract Data\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
-
     dataset_name = "supershapes2D_1mode-v0"
     output_directory = "Output/supershapes_1mode_contour/"
 
@@ -56,17 +53,16 @@ def Run_Pipeline(args):
     """
     Now we execute a single scale particle optimization function.
     """
-    [local_point_files, world_point_files] = runShapeWorksOptimize(point_dir, contour_files, parameter_dictionary)
+    [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(point_dir, contour_files, parameter_dictionary)
 
     if args.tiny_test:
         print("Done with tiny test")
         exit()
 
     print("\nStep 5. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
-    if args.interactive != 0:
-        input("Press Enter to continue")
 
-    launchShapeWorksStudio(point_dir, [], local_point_files, world_point_files)
+
+    AnalyzeUtils.launchShapeWorksStudio(point_dir, [], local_point_files, world_point_files)
 
 def generate_supershapes(out_dir):
     m = 6
