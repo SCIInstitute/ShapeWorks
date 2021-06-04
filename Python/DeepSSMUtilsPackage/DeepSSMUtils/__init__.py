@@ -36,4 +36,3 @@ def testPytorch():
 		print("please reinstall Pytorch to your shapeworks conda ")
 		print("environment with the correct CUDA version.")
 		print("**********************************************************")
-		exit()
