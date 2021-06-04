@@ -3,7 +3,6 @@
 ====================================================================
 Full Example Pipeline for Statistical Shape Modeling with ShapeWorks DeepSSM
 ====================================================================
-Jadie Adams
 """
 import os
 import DataAugmentationUtils
@@ -56,6 +55,8 @@ def Run_Pipeline(args):
 	train_local_particle_list = local_particle_list[:partition]
 	train_world_particle_list = world_particle_list[:partition]
 	test_img_list = img_list[partition:]
+	if args.tiny_test:
+		test_img_list = test_img_list[:3]
 
 	print("\n\n\nStep 2. Augment data\n") ###################################################################################
 	'''
@@ -133,7 +134,8 @@ def Run_Pipeline(args):
 		"use_best_model":True
 	}
 	if args.tiny_test:
-		model_parameters["trainer"]["epochs"] = 5
+		model_parameters["trainer"]["epochs"] = 1
+		model_parameters["fine_tune"]["epochs"] = 1
 	# Save config file	
 	config_file = out_dir + model_name + ".json"
 	with open(config_file, "w") as outfile:
@@ -148,7 +150,6 @@ def Run_Pipeline(args):
 	'''
 	PCA_scores_path = out_dir + "Augmentation/PCA_Particle_Info/"
 	prediction_dir = out_dir + 'Results/PredictedParticles/'
-	# DeepSSMUtils.testDeepSSM(prediction_dir, best_model_path, loader_dir, PCA_scores_path, embedded_dim)
 	DeepSSMUtils.testDeepSSM(config_file)
 	print('Predicted particles saved at: ' + prediction_dir)
 
