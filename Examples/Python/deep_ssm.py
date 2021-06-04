@@ -66,8 +66,7 @@ def Run_Pipeline(args):
 	- aug_type is the augmentation method to use (1 is based on just particles wheras 2 is based on images and particles)
 	- sample type is the distribution to use for sampling. Can be gaussian, mixture, or kde
 	'''
-	# num_samples = 4960
-	num_samples = 50
+	num_samples = 4960
 	num_dim = 6
 	percent_variability = 0.95
 	sampler_type = "kde"
