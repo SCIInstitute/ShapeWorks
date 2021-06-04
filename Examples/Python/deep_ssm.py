@@ -5,6 +5,7 @@ Full Example Pipeline for Statistical Shape Modeling with ShapeWorks DeepSSM
 ====================================================================
 """
 import os
+import platform
 import DataAugmentationUtils
 import DeepSSMUtils
 import CommonUtils
@@ -14,6 +15,10 @@ import platform
 def Run_Pipeline(args):
 	if args.tiny_test:
 		print("\nRunning a tiny test.")
+
+	# Turn off parallel computing for Mac
+	if platform.system() == "Darwin":
+		os.system("export OMP_NUM_THREADS=1")
 
 	print("\nStep 1. Get Data") #############################################################################################
 	'''
@@ -84,7 +89,7 @@ def Run_Pipeline(args):
 	aug_data_csv = out_dir + "Augmentation/TotalData.csv"
 
 	if not args.tiny_test:
-	        DataAugmentationUtils.visualizeAugmentation(aug_data_csv, "violin")
+		DataAugmentationUtils.visualizeAugmentation(aug_data_csv, "violin")
 
 	print("\n\n\nStep 3. Reformat Data for Pytorch\n") #######################################################################
 	'''
