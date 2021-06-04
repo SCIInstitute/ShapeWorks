@@ -82,7 +82,9 @@ def Run_Pipeline(args):
 	aug_dir = out_dir + "Augmentation/"
 	embedded_dim = DataAugmentationUtils.runDataAugmentation(aug_dir, train_img_list, train_local_particle_list, num_samples, num_dim, percent_variability, sampler_type, mixture_num=0, processes=1, world_point_list=train_world_particle_list)
 	aug_data_csv = out_dir + "Augmentation/TotalData.csv"
-	DataAugmentationUtils.visualizeAugmentation(aug_data_csv, "violin")
+
+	if not args.tiny_test:
+	        DataAugmentationUtils.visualizeAugmentation(aug_data_csv, "violin")
 
 	print("\n\n\nStep 3. Reformat Data for Pytorch\n") #######################################################################
 	'''
