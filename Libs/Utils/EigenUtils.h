@@ -6,7 +6,10 @@
 
 namespace shapeworks {
 
-/// Conversion (by copy) of itk (i.e., vnl) matrix to Eigen::Matrix.
+template<typename T>
+using VnlMatrix = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+
+/// Conversion (by copy) of itk matrix to Eigen::Matrix.
 template<typename T, unsigned NRows, unsigned NCols>
 Eigen::Matrix<T, NRows, NCols, Eigen::RowMajor> itkToEigen(const itk::Matrix<T, NRows, NCols> &itk_mat)
 {
@@ -19,6 +22,13 @@ template<typename T, int NRows, int NCols>
 itk::Matrix<T, NRows, NCols> eigenToItk(const Eigen::Matrix<T, NRows, NCols, Eigen::RowMajor> &eigen_mat)
 {
   return itk::Matrix<T, NRows, NCols>(vnl_matrix_fixed<T, NRows, NCols>(eigen_mat.data()));
+}
+
+/// Wrap vnl matrix data to Eigen Matrix
+template<typename T>
+Eigen::Map<VnlMatrix<T>> vnlToEigen(const vnl_matrix<T> &vnl_mat)
+{
+  return Eigen::Map<VnlMatrix<T>>(const_cast<T*>(vnl_mat.data_block()), vnl_mat.rows(), vnl_mat.cols());
 }
 
 /// Wrap data pointer with Eigen::Matrix. Handy for efficiently going back and forth between Python numpy arrays.

@@ -21,7 +21,7 @@ def sklearn_pca(particlesData):
   pcaLoadings = pca.fit_transform(particlesDataMatrix) 
 
   scree = pca.explained_variance_ratio_.cumsum()
-  return pcaLoadings, scree
+  return scree
 
 def shapeworks_pca(particlesData):
   # create ParticleShapeStatistics
@@ -31,11 +31,11 @@ def shapeworks_pca(particlesData):
   pcaLoadings = pss.pcaLoadings()
 
   scree = np.array(pss.percentVarByMode())
-  return pcaLoadings, scree
+  return scree
 
 particlesData = readData()
-sklearn_loadings, sklearn_scree = sklearn_pca(particlesData)
-sw_loadings, sw_scree = shapeworks_pca(particlesData)
+sklearn_scree = sklearn_pca(particlesData)
+sw_scree = shapeworks_pca(particlesData)
 
-if np.allclose(sklearn_scree, sw_scree) == False or np.sum(sw_loadings-sw_loadings) != 0.0:
+if np.allclose(sklearn_scree, sw_scree) == False:
   sys.exit(1)

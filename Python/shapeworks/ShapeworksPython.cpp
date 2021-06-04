@@ -1113,16 +1113,35 @@ PYBIND11_MODULE(shapeworks, m)
   ;
 
   py::class_<ParticleShapeStatistics>(m, "ParticleShapeStatistics")
+
   .def(py::init<>())
-  .def("PCA",                   py::overload_cast<ParticleSystem, int>(&ParticleShapeStatistics::DoPCA), "particleSystem"_a, "domainsPerShape"_a=1)
+
+  .def("PCA",
+       py::overload_cast<ParticleSystem, int>(&ParticleShapeStatistics::DoPCA),
+       "particleSystem"_a, "domainsPerShape"_a=1)
+
   .def("principalComponentProjections",
-                                &ParticleShapeStatistics::PrincipalComponentProjections)
-  .def("sampleSize",            &ParticleShapeStatistics::SampleSize)
-  .def("numDims",               &ParticleShapeStatistics::NumberOfDimensions)
-  .def("eigenVectors",          &ParticleShapeStatistics::Eigenvectors)
-  .def("eigenValues",           &ParticleShapeStatistics::Eigenvalues)
-  .def("pcaLoadings",           &ParticleShapeStatistics::PCALoadings)
-  .def("percentVarByMode",      &ParticleShapeStatistics::PercentVarByMode)
+       &ParticleShapeStatistics::PrincipalComponentProjections)
+
+  .def("sampleSize",
+       &ParticleShapeStatistics::SampleSize)
+
+  .def("numDims",
+       &ParticleShapeStatistics::NumberOfDimensions)
+
+  .def("eigenVectors",
+       [](ParticleShapeStatistics &stats) -> decltype(auto) {
+         return vnlToEigen(stats.Eigenvectors());
+       })
+
+  .def("eigenValues",
+       &ParticleShapeStatistics::Eigenvalues)
+
+  .def("pcaLoadings",
+       &ParticleShapeStatistics::PCALoadings)
+
+  .def("percentVarByMode",
+       &ParticleShapeStatistics::PercentVarByMode)
   ;
 
   // Optimize (TODO)
