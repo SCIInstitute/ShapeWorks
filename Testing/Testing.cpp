@@ -36,7 +36,8 @@ void shapeworksEnvSetup()
             + std::string(INSTALL_DIR) + "\\bin\\RelWithDebInfo" + ";"
             + std::string(INSTALL_DIR) + "\\bin\\Debug" + ";");
   //path += std::string(DEPS_DIR) + "\\bin" + ";";
-  path += (curr_path ? curr_path : ""); // fixme: could be /bin/Debug if we ever figure out how to build Windows Debug
+  path = std::string(curr_path) + ":" + path;
+  //path += (curr_path ? curr_path : ""); // fixme: could be /bin/Debug if we ever figure out how to build Windows Debug
   std::cout << "path: " << path << std::endl;
   _putenv_s("PATH", path.c_str());
 
@@ -46,7 +47,7 @@ void shapeworksEnvSetup()
                   + std::string(INSTALL_DIR) + "\\bin" + ";"
                   + std::string(INSTALL_DIR) + "\\lib" + ";");
   //pythonpath += std::string(DEPS_DIR) + "\\bin\\lib\\site-packages" + ";";
-  pythonpath += (curr_pythonpath ? curr_pythonpath : "");
+  pythonpath = std::string(curr_pythonpath) + ":" + pythonpath;
   std::cout << "pythonpath: " << pythonpath << std::endl;
   _putenv_s("PYTHONPATH", pythonpath.c_str());
 
@@ -61,7 +62,7 @@ void shapeworksEnvSetup()
             + std::string(BUILD_DIR) + "/lib" + ":"
             + std::string(INSTALL_DIR) + "/bin" + ":"
             + std::string(INSTALL_DIR) + "/lib" + ":");
-  path += (curr_path ? curr_path : "");
+  path = std::string(curr_path) + ":" + path;
   std::cout << "path: " << path << std::endl;
   setenv("PATH", path.c_str(), true);
 
@@ -70,7 +71,7 @@ void shapeworksEnvSetup()
                   + std::string(INSTALL_DIR) + "/bin" + ":"
                   + std::string(INSTALL_DIR) + "/lib" + ":");
   //pythonpath += std::string(DEPS_DIR) + "/lib/python3.7/site-packages" + ":";
-  pythonpath += (curr_pythonpath ? curr_pythonpath : "");
+  pythonpath = std::string(curr_pythonpath) + ":" + pythonpath;
   std::cout << "pythonpath: " << pythonpath << std::endl;
   setenv("PYTHONPATH", pythonpath.c_str(), true);
 
@@ -80,7 +81,7 @@ void shapeworksEnvSetup()
                        + std::string(INSTALL_DIR) + "/bin" + ":");
   //ld_library_path += std::string(DEPS_DIR) + "/lib" + ":";
   //ld_library_path += std::string(QT_LIBDIR) + ":";
-  ld_library_path += (curr_ld_library_path ? curr_ld_library_path : "");
+  ld_library_path = std::string(curr_ld_library_path) + ":" + ld_library_path;
   std::cout << "ld_library_path: " << ld_library_path << std::endl;
   setenv("LD_LIBRARY_PATH", ld_library_path.c_str(), true);
 #else
@@ -96,7 +97,7 @@ void shapeworksEnvSetup()
             + std::string(INSTALL_DIR) + "/lib/Debug" + ":"
             + std::string(INSTALL_DIR) + "/bin/Release" + ":"
             + std::string(INSTALL_DIR) + "/lib/Release" + ":");
-  path += (curr_path ? curr_path : "");
+  path = std::string(curr_path) + ":" + path;
   std::cout << "path: " << path << std::endl;
   setenv("PATH", path.c_str(), true);
 
@@ -113,7 +114,7 @@ void shapeworksEnvSetup()
                   + std::string(INSTALL_DIR) + "/bin/Release" + ":"
                   + std::string(INSTALL_DIR) + "/lib/Release" + ":");
   //pythonpath += std::string(DEPS_DIR) + "/lib/python3.7/site-packages" + ":";
-  pythonpath += (curr_pythonpath ? curr_pythonpath : "");
+  pythonpath = std::string(curr_pythonpath) + ":" + pythonpath;
   std::cout << "pythonpath: " << pythonpath << std::endl;
   setenv("PYTHONPATH", pythonpath.c_str(), true);
 #endif

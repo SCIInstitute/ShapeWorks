@@ -508,7 +508,7 @@ def Run_Pipeline(args):
             dt_files = sw.utils.save_images(groom_dir + 'distance_transforms/', seg_list,
                                             names, extension='nrrd', compressed=False, verbose=True)
 
-   print("\nStep 3. Optimize - Particle Based Optimization\n")
+    print("\nStep 3. Optimize - Particle Based Optimization\n")
     """
     Step 3: OPTIMIZE - Particle Based Optimization
 
