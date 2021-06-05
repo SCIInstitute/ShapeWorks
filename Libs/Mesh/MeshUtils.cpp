@@ -14,7 +14,7 @@
 
 // tbb
 #include <tbb/mutex.h>
-
+#include <tbb/parallel_for.h>
 
 namespace shapeworks {
 
@@ -75,12 +75,11 @@ PhysicalRegion MeshUtils::boundingBox(std::vector<std::string> &filenames, bool 
 {
   if (filenames.empty())
     throw std::invalid_argument("No filenames provided to compute a bounding box");
-  
+
   Mesh mesh(filenames[0]);
   PhysicalRegion bbox(mesh.boundingBox());
 
-  for (auto filename : filenames)
-  {
+  for (auto filename : filenames) {
     Mesh mesh(filename);
     bbox.expand(mesh.boundingBox());
   }
@@ -101,5 +100,72 @@ PhysicalRegion MeshUtils::boundingBox(std::vector<Mesh> &meshes, bool center)
   return bbox;
 }
 
+int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes)
+{
+  std::vector<std::pair<int, int>> pairs;
+
+  // enumerate all pairs of meshes
+  for (int i = 0; i < meshes.size(); i++) {
+    for (int j = i + 1; j < meshes.size(); j++) {
+      pairs.push_back(std::make_pair(i, j));
+    }
+  }
+
+  // map of pair to distance value
+  std::map<int, double> results;
+  // mutex for access to results
+  tbb::mutex mutex;
+
+  tbb::parallel_for(
+    tbb::blocked_range<size_t>{0, pairs.size()},
+    [&](const tbb::blocked_range<size_t>& r) {
+      for (size_t i = r.begin(); i < r.end(); ++i) {
+
+        auto pair = pairs[i];
+
+        vtkSmartPointer<vtkPolyData> poly_data1 = vtkSmartPointer<vtkPolyData>::New();
+        poly_data1->DeepCopy(meshes[pair.first].getVTKMesh());
+        vtkSmartPointer<vtkPolyData> poly_data2 = vtkSmartPointer<vtkPolyData>::New();
+        poly_data2->DeepCopy(meshes[pair.second].getVTKMesh());
+
+        // register the two meshes
+        auto matrix = MeshUtils::createICPTransform(poly_data1,
+                                                    poly_data2, Mesh::Rigid,
+                                                    10, true);
+        // transform
+        auto transform = createMeshTransform(matrix);
+        Mesh transformed = meshes[pair.first];
+        transformed.applyTransform(transform);
+
+        // compute distance
+        double distance = transformed.distance(meshes[pair.second]).getFieldMean("distance");
+        {
+          // lock and store results
+          tbb::mutex::scoped_lock lock(mutex);
+          results[i] = distance;
+        }
+      }
+    });
+
+  std::vector<double> sums(meshes.size(), 0);
+  std::vector<int> counts(meshes.size(), 0);
+  std::vector<double> means(meshes.size(), 0);
+
+  double count = meshes.size() - 1;
+  for (int i = 0; i < pairs.size(); i++) {
+    auto pair = pairs[i];
+    double result = results[i];
+    sums[pair.first] += result;
+    sums[pair.second] += result;
+    counts[pair.first]++;
+    counts[pair.second]++;
+    means[pair.first] += result / count;
+    means[pair.second] += result / count;
+  }
+
+  auto smallest = std::min_element(means.begin(), means.end());
+
+  return std::distance(means.begin(), smallest);
+}
 
 } // shapeworks

@@ -48,10 +48,10 @@ void ShapeworksWorker::process()
         std::cerr << "ITK Exception: " << ex << std::endl;
         emit error_message(std::string("ITK Exception: ") + ex.GetDescription());
         return;
-      } catch (std::runtime_error e) {
+      } catch (std::runtime_error& e) {
         emit error_message(std::string("Error: ") + e.what());
         return;
-      } catch (std::exception e) {
+      } catch (std::exception& e) {
         emit error_message(std::string("Error: ") + e.what());
         return;
       } catch (...) {
@@ -77,7 +77,7 @@ void ShapeworksWorker::process()
         std::cerr << "ITK Exception: " << ex << std::endl;
         emit error_message(std::string("ITK Exception: ") + ex.GetDescription());
         return;
-      } catch (std::exception e) {
+      } catch (std::exception& e) {
         emit error_message(std::string("Error: ") + e.what());
         return;
       } catch (...) {
@@ -118,7 +118,7 @@ void ShapeworksWorker::process()
           emit error_message(std::string("Error: ") + e.what());
           return;
         }
-      } catch (std::exception e) {
+      } catch (std::exception& e) {
         if (std::string(e.what()).find_first_of("Warning") != std::string::npos) {
           emit warning_message(e.what());
         }

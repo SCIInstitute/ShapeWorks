@@ -39,6 +39,9 @@ public:
   /// applies laplacian smoothing
   Mesh& smooth(int iterations = 0, double relaxation = 0.0);
 
+  /// applies vtk windowed sinc smoothing
+  Mesh& smoothSinc(int iterations = 0, double passband = 0.0);
+
   /// applies filter to reduce number of triangles in mesh
   Mesh& decimate(double reduction = 0.5, double angle = 15.0, bool preserveTopology = true);
 

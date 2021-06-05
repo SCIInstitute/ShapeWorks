@@ -765,12 +765,10 @@ void ShapeWorksStudioApp::handle_progress(int value)
   if (value < 100) {
     this->progress_bar_->setVisible(true);
     this->progress_bar_->setValue(value);
-    this->disable_all_actions();
   }
   else {
     this->progress_bar_->setValue(100);
     this->progress_bar_->setVisible(false);
-    //this->enable_possible_actions();
   }
   this->handle_message(this->current_message_);
 }
@@ -1048,6 +1046,8 @@ void ShapeWorksStudioApp::handle_groom_complete()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_optimize_start()
 {
+  this->visualizer_->set_selected_point_one(-1);
+  this->visualizer_->set_selected_point_two(-1);
   this->ui_->action_analysis_mode->setEnabled(false);
 }
 

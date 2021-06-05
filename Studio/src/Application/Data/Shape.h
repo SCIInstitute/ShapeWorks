@@ -129,7 +129,7 @@ public:
 
   vtkSmartPointer<vtkTransform> get_groomed_transform(int domain = 0);
 
-  vtkSmartPointer<vtkTransform> get_alignment();
+  vtkSmartPointer<vtkTransform> get_alignment(int domain = 0);
 
   void load_feature(std::string display_mode, std::string feature);
 
