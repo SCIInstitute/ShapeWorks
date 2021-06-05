@@ -1118,16 +1118,20 @@ PYBIND11_MODULE(shapeworks, m)
 
   .def("PCA",
        py::overload_cast<ParticleSystem, int>(&ParticleShapeStatistics::DoPCA),
+       "calculates the eigen values and eigen vectors of the data",
        "particleSystem"_a, "domainsPerShape"_a=1)
 
   .def("principalComponentProjections",
-       &ParticleShapeStatistics::PrincipalComponentProjections)
+       &ParticleShapeStatistics::PrincipalComponentProjections,
+       "projects the original data on the calculated principal components")
 
   .def("sampleSize",
-       &ParticleShapeStatistics::SampleSize)
+       &ParticleShapeStatistics::SampleSize,
+       "returns the sample size of the particle system")
 
   .def("numDims",
-       &ParticleShapeStatistics::NumberOfDimensions)
+       &ParticleShapeStatistics::NumberOfDimensions,
+       "returns the number of features of the particle system")
 
   .def("eigenVectors",
        [](ParticleShapeStatistics &stats) -> decltype(auto) {
@@ -1135,13 +1139,18 @@ PYBIND11_MODULE(shapeworks, m)
        })
 
   .def("eigenValues",
-       &ParticleShapeStatistics::Eigenvalues)
+       &ParticleShapeStatistics::Eigenvalues,
+       "return the eigen values")
 
   .def("pcaLoadings",
-       &ParticleShapeStatistics::PCALoadings)
+       &ParticleShapeStatistics::PCALoadings,
+       "returns the  coefficients of the linear combination of \
+       the original variables from which the principal \
+       components are constructed")
 
   .def("percentVarByMode",
-       &ParticleShapeStatistics::PercentVarByMode)
+       &ParticleShapeStatistics::PercentVarByMode,
+       "return the variance accounted for by the principal components")
   ;
 
   // Optimize (TODO)

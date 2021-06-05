@@ -87,7 +87,7 @@ def Run_Pipeline(args):
     
     # Calculate the PCA for the read particle system
     shape_statistics = sw.ParticleShapeStatistics()
-    shape_statistics.PCA(particle_data)
+    shape_statistics.PCA(particleSystem = particle_data,domainsPerShape=1)
     
     #Calculate the loadings
     shape_statistics.principalComponentProjections()
