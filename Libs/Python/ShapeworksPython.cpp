@@ -36,7 +36,7 @@ using namespace pybind11::literals;
 
 using namespace shapeworks;
 
-PYBIND11_MODULE(shapeworks, m)
+PYBIND11_MODULE(shapeworks_py, m)
 {
   m.doc() = "ShapeWorks Python API";
 
@@ -1129,4 +1129,4 @@ PYBIND11_MODULE(shapeworks, m)
        &optimize_get_particle_system)
   ;
 
-} // PYBIND11_MODULE(shapeworks)
+} // PYBIND11_MODULE(shapeworks_py)

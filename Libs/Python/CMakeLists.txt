@@ -11,7 +11,7 @@ target_link_libraries(shapeworks_py PUBLIC
   )
 
 set_target_properties(shapeworks_py PROPERTIES
-  OUTPUT_NAME shapeworks
+  OUTPUT_NAME shapeworks_py
   )
 
 install(TARGETS shapeworks_py
