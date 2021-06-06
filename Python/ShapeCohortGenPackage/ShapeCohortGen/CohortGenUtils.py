@@ -92,8 +92,10 @@ def generate_segmentations(meshList, out_dir, randomize_size=True, spacing=[1.0,
 			pad = 5
 			if randomize_size:			
 				pad = np.random.randint(5, high=15, size=3)
-
-			bb.pad(pad)
+			else:
+				pad = np.array([5,5,5])
+			bb.min -= pad
+			bb.max += pad
 
 		# sample the given region of Mesh to an image
 		image = mesh.toImage(region=bb, spacing=spacing)
@@ -154,7 +156,6 @@ def apply_noise(img, foreground_mean, foreground_var, background_mean, backgroun
 def compute_line_indices(n, is_closed=True):
     """
     Given a number of points, return indices for lines(as np.ndarray) between successive pairs of points.
-
     n:         number of points
     is_closed: whether or not the last vertex is to to be connected to the first vertex
     """
@@ -167,7 +168,6 @@ def compute_line_indices(n, is_closed=True):
 def save_contour_as_vtp(points, lines, filename):
     """
     Generates a .vtp file for the given contour to use in ShapeWorks optimizer
-
     points:   Nx3 np.ndarray of points in the contour
     lines:    Mx2 np.ndarray of lines in the contour
     filename: output .vtp filename

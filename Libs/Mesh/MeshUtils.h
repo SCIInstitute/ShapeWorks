@@ -30,6 +30,9 @@ public:
 
   /// calculate bounding box incrementally for shapework meshes
   static PhysicalRegion boundingBox(std::vector<Mesh> &meshes, bool center = false);
+
+  /// determine the reference mesh
+  static int findReferenceMesh(std::vector<Mesh> &meshes);
 };
 
 } // shapeworks

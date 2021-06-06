@@ -159,7 +159,7 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
   if (is_mesh) {
     try {
       mesh->set_poly_data(MeshUtils::threadSafeReadMesh(filename).getVTKMesh());
-    } catch (std::exception e) {
+    } catch (std::exception& e) {
       std::string message = std::string("Error reading: ") + filename;
       STUDIO_LOG_ERROR(QString::fromStdString(message));
       mesh->set_error_message(message);

@@ -74,7 +74,7 @@ endif()
 if(MSVC)
   # turn on unwind semantics
   SET(CMAKE_CXX_FLAGS "/EHsc")
-endif(msvc)
+endif(MSVC)
 
 # GUI
 if (SHAPEWORKS_GUI)

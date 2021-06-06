@@ -124,10 +124,8 @@ TEST(UseCaseTests, femur_cut)
 //---------------------------------------------------------------------------
 TEST(UseCaseTests, deep_ssm)
 {
-  /// TODO: Disabled, doesn't run on windows GH
-  return;
   run_use_case("deep_ssm",
-               "Output/deep_ssm/Augmentation/violin.png");
+               "Output/deep_ssm/femur_deepssm/predictions/PCA_Predictions/predicted_pca_m07_L.particles");
 }
 //---------------------------------------------------------------------------
 TEST(UseCaseTests, supershapes_1mode_contour)

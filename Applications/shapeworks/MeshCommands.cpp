@@ -199,6 +199,36 @@ bool Smooth::execute(const optparse::Values &options, SharedCommandData &sharedD
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// Smooth Sinc
+///////////////////////////////////////////////////////////////////////////////
+void SmoothSinc::buildParser()
+{
+  const std::string prog = "smooth-sinc";
+  const std::string desc = "applies windowed sinc smoothing";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--iterations").action("store").type("int").set_default(0).help("Number of iterations [default: %default].");
+  parser.add_option("--passband").action("store").type("double").set_default(0.0).help("Set the passband value for the windowed sinc filter [default: %default].");
+
+  Command::buildParser();
+}
+
+bool SmoothSinc::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  int iterations = static_cast<int>(options.get("iterations"));
+  double passband = static_cast<double>(options.get("passband"));
+
+  sharedData.mesh->smoothSinc(iterations, passband);
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // Decimate
 ///////////////////////////////////////////////////////////////////////////////
 void Decimate::buildParser()

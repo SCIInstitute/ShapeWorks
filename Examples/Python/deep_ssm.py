@@ -3,17 +3,22 @@
 ====================================================================
 Full Example Pipeline for Statistical Shape Modeling with ShapeWorks DeepSSM
 ====================================================================
-Jadie Adams
 """
 import os
+import platform
 import DataAugmentationUtils
 import DeepSSMUtils
 import CommonUtils
 import json
+import platform
 
 def Run_Pipeline(args):
 	if args.tiny_test:
 		print("\nRunning a tiny test.")
+
+	# Turn off parallel computing for Mac
+	if platform.system() == "Darwin":
+		os.system("export OMP_NUM_THREADS=1")
 
 	print("\nStep 1. Get Data") #############################################################################################
 	'''
@@ -26,6 +31,10 @@ def Run_Pipeline(args):
 	if not os.path.exists(out_dir):
 		os.makedirs(out_dir)
 
+	if platform.system() == "Darwin":
+        	# On MacOS, CPU PyTorch is hanging with parallel
+        	os.environ['OMP_NUM_THREADS'] = "1"
+                
 	if args.tiny_test:
 		CommonUtils.download_subset(args.use_case,datasetName, out_dir)
 		partition = 4
@@ -56,6 +65,8 @@ def Run_Pipeline(args):
 	train_local_particle_list = local_particle_list[:partition]
 	train_world_particle_list = world_particle_list[:partition]
 	test_img_list = img_list[partition:]
+	if args.tiny_test:
+		test_img_list = test_img_list[:3]
 
 	print("\n\n\nStep 2. Augment data\n") ###################################################################################
 	'''
@@ -76,7 +87,9 @@ def Run_Pipeline(args):
 	aug_dir = out_dir + "Augmentation/"
 	embedded_dim = DataAugmentationUtils.runDataAugmentation(aug_dir, train_img_list, train_local_particle_list, num_samples, num_dim, percent_variability, sampler_type, mixture_num=0, processes=1, world_point_list=train_world_particle_list)
 	aug_data_csv = out_dir + "Augmentation/TotalData.csv"
-	DataAugmentationUtils.visualizeAugmentation(aug_data_csv, "violin")
+
+	if not args.tiny_test:
+		DataAugmentationUtils.visualizeAugmentation(aug_data_csv, "violin")
 
 	print("\n\n\nStep 3. Reformat Data for Pytorch\n") #######################################################################
 	'''
@@ -133,7 +146,8 @@ def Run_Pipeline(args):
 		"use_best_model":True
 	}
 	if args.tiny_test:
-		model_parameters["trainer"]["epochs"] = 5
+		model_parameters["trainer"]["epochs"] = 1
+		model_parameters["fine_tune"]["epochs"] = 1
 	# Save config file	
 	config_file = out_dir + model_name + ".json"
 	with open(config_file, "w") as outfile:
@@ -147,17 +161,19 @@ def Run_Pipeline(args):
 	Test DeepSSM
 	'''
 	PCA_scores_path = out_dir + "Augmentation/PCA_Particle_Info/"
-	prediction_dir = out_dir + 'Results/PredictedParticles/'
-	# DeepSSMUtils.testDeepSSM(prediction_dir, best_model_path, loader_dir, PCA_scores_path, embedded_dim)
+	prediction_dir = out_dir + model_name + '/predictions/'
 	DeepSSMUtils.testDeepSSM(config_file)
 	print('Predicted particles saved at: ' + prediction_dir)
+
+	if args.tiny_test:
+		exit()
 
 	print("\n\n\nStep 6. Analyze results.\n") #####################################################################################
 	'''
 	Analyze DeepSSM
 	'''
 	DT_dir = input_dir + "groomed/distance_transforms/"
-	out_dir = out_dir + "Results/"
+	out_dir = out_dir + model_name+ "/Results/"
 	mean_prefix = input_dir + "shape_models/femur/mean/femur"
-	avg_distance = DeepSSMUtils.analyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix)
+	avg_distance = DeepSSMUtils.analyzeResults(out_dir, DT_dir, prediction_dir + 'FT_Predictions/', mean_prefix)
 	print("Average surface-to-surface distance from the original to predicted shape = " + str(avg_distance))

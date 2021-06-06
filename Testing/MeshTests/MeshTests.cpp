@@ -40,6 +40,15 @@ TEST(MeshTests, smoothTest2)
   ASSERT_TRUE(femur == ground_truth);
 }
 
+TEST(MeshTests, smoothSincTest)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/mesh1.vtk");
+  femur.smoothSinc(10,0.05);
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/smoothsinc.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
 TEST(MeshTests, decimateTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
@@ -470,4 +479,14 @@ TEST(MeshTests, warpTest1)
   Mesh output = warper.build_mesh(movingPoints);
 
   ASSERT_TRUE(output == ellipsoid_warped);
+}
+
+TEST(MeshTests, findReferenceMeshTest)
+{
+  std::vector<Mesh> meshes;
+  meshes.push_back(Mesh(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply"));
+  meshes.push_back(Mesh(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply"));
+  meshes.push_back(Mesh(std::string(TEST_DATA_DIR) + "/m03.vtk"));
+  int ref = MeshUtils::findReferenceMesh(meshes);
+  ASSERT_EQ(ref, 2);
 }
