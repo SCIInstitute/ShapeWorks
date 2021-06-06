@@ -143,7 +143,9 @@ TEST(UseCaseTests, thin_cavity_bean)
                "Output/thin_cavity_bean/shape_models/32/thin_cavity_bean_00_local.particles");
 }
 
-
-
-
 //---------------------------------------------------------------------------
+TEST(UseCaseTests, ellipsoid_pca)
+{
+  run_use_case("ellipsoid_pca",
+               "Output/ellipsoid/pca/pca_eigen_vectors.txt");
+}
