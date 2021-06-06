@@ -1,8 +1,6 @@
 import os
-from GroomUtils import *
-from OptimizeUtils import *
-from AnalyzeUtils import *
-import CommonUtils
+import glob
+from pathlib import Path
 import shapeworks as sw
 import numpy as np
 import matplotlib.pyplot as plt
@@ -40,7 +38,7 @@ def violinplot(loadings,cumulative_variance,shape_models_dir):
     plt.show(block=False)
     plt.close(fig)
 
-    print("\nLoadings plot saved in directory -" + shape_models_dir)
+    print("\nLoadings plot saved in directory - " + shape_models_dir)
     print()
 
 # plot the PCA metrics similar to Studio visualization in Analyze pane
@@ -60,7 +58,7 @@ def plot_pca_metrics(cumulative_variance,explained_variance,shape_models_dir):
     plt.show(block=False)
     plt.close(fig)
 
-    print("\nPCA metrics plot saved in directory -" + shape_models_dir)
+    print("\nPCA metrics plot saved in directory - " + shape_models_dir)
     print()
 
 def Run_Pipeline(args):
@@ -77,6 +75,9 @@ def Run_Pipeline(args):
     world_point_files = glob.glob(shape_models_dir + "/*world.particles")
 
 
+    for subdir in (['pca']):
+        Path(ellipsoids_dir).joinpath(Path(subdir)).mkdir(parents=True, exist_ok=True)
+    pca_dir = ellipsoids_dir + "/pca/"
 
     print("\nAnalysis - ShapeWorks PCA Python API\n")
     
@@ -107,13 +108,13 @@ def Run_Pipeline(args):
     #Extract the eigen vectors
     eigen_vectors = np.array(shape_statistics.eigenVectors())
     #Save the loadings
-    print("\nSaving the PCA loadings and eigen vectors in the directory : " + shape_models_dir)
-    np.savetxt(shape_models_dir+"pca_loadings.txt",pca_loadings)
-    np.savetxt(shape_models_dir+"pca_eigen_vectors.txt",eigen_vectors)
+    print("\nSaving the PCA loadings and eigen vectors in the directory : " + pca_dir)
+    np.savetxt(pca_dir+"pca_loadings.txt",pca_loadings)
+    np.savetxt(pca_dir+"pca_eigen_vectors.txt",eigen_vectors)
     
     if len(local_point_files)>3 and not args.tiny_test:
-        violinplot(pca_loadings,cumulative_variance,shape_models_dir)
-        plot_pca_metrics(cumulative_variance,explained_variance,shape_models_dir)
+        violinplot(pca_loadings,cumulative_variance,pca_dir)
+        plot_pca_metrics(cumulative_variance,explained_variance,pca_dir)
 
 
     
