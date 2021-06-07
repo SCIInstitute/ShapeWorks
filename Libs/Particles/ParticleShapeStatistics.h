@@ -15,12 +15,16 @@
 
 #include "itkParticlePositionReader.h"
 #include "itkParticlePositionWriter.h"
+#include "Shapeworks.h"
+#include "ParticleSystem.h"
 
 /**
  * \class ParticleShapeStatistics
  * This class computes various statistics for a set of correspondence positions
  * and group ids.
  */
+
+namespace shapeworks {
 class ParticleShapeStatistics
 {
 public:
@@ -30,30 +34,26 @@ public:
   ParticleShapeStatistics() {}
   ~ParticleShapeStatistics() {}
 
-  typedef typename itk::ParticlePositionReader<3>::PointType PointType;
+  int DoPCA(std::vector<std::vector<Point>> global_pts, int domainsPerShape = 1);
 
-  int DoPCA(std::vector< std::vector<PointType> > global_pts, int domainsPerShape = 1);
+  int DoPCA(ParticleSystem particleSystem, int domainsPerShape = 1);
 
- /** Dimensionality of the domain of the particle system. */
+  /** Dimensionality of the domain of the particle system. */
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
   /** Loads a set of point files and pre-computes some statistics. */
-  int ImportPoints( std::vector<vnl_vector<double> > points, std::vector<int> group_ids );
+  int ImportPoints(std::vector<vnl_vector<double>> points, std::vector<int> group_ids);
 
   /** Loads a set of point files and pre-computes some statistics. */
-  int ReadPointFiles(const char *fname);
+  int ReadPointFiles(const std::string &s);
 
   /** Reloads a set of point files and recomputes some statistics. */
-  int ReloadPointFiles( );
+  int ReloadPointFiles();
 
   /** Writes a text file in comma-separated format.  Suitable for reading into
       excel or R or Matlab for analysis. */
-  int WriteCSVFile(const char *s);
-  int WriteCSVFile(const std::string &s)
-  { return this->WriteCSVFile(s.c_str()); }
-  int WriteCSVFile2(const char *s);
-  int WriteCSVFile2(const std::string &s)
-  { return this->WriteCSVFile2(s.c_str()); }
+  int WriteCSVFile(const std::string &s);
+  int WriteCSVFile2(const std::string &s);
 
   /** Computes PCA modes from the set of correspondence mode positions.
       Requires that ReadPointFiles be called first. */
@@ -65,45 +65,32 @@ public:
   int PrincipalComponentProjections();
 
   /** Computes fishers linear discriminant line for best group separation. */
-  int FisherLinearDiscriminant(unsigned int);
+  int FisherLinearDiscriminant(unsigned int numModes);
 
   /** Returns the sample size. */
-  inline  int SampleSize() const
-  { return m_numSamples; }
-  inline int Group1SampleSize() const
-  { return m_numSamples1; }
-  inline int Group2SampleSize() const
-  { return m_numSamples2; }
+  const int SampleSize() { return m_numSamples; }
+  const int Group1SampleSize() { return m_numSamples1; }
+  const int Group2SampleSize() { return m_numSamples2; }
 
   /** Returns the number of dimensions (this is number of points times Dimension) */
-  inline int NumberOfDimensions() const
-  { return m_numDimensions; }
+  const int NumberOfDimensions() { return m_numDimensions; }
 
   /** Returns the group ids */
-  inline int GroupID(unsigned int i ) const
-  { return m_groupIDs[i]; }
-  const std::vector<int> &GroupID() const
-  { return m_groupIDs;}
+  const int GroupID(unsigned int i) { return m_groupIDs[i]; }
+  const std::vector<int> &GroupID() { return m_groupIDs;}
 
   /** Returns the eigenvectors/values. */
-  const vnl_matrix<double> &Eigenvectors() const
-  { return m_eigenvectors; }
-  const vnl_vector<double> &Eigenvalues() const
-  { return m_eigenvalues; }
+  const vnl_matrix<double> &Eigenvectors() { return m_eigenvectors; }
+  const std::vector<double> &Eigenvalues() { return m_eigenvalues; }
 
   /** Returns the mean shape. */
-  const vnl_vector<double> &Mean() const
-  { return m_mean; }
-  const vnl_vector<double> &Group1Mean() const
-  { return m_mean1; }
-  const vnl_vector<double> &Group2Mean() const
-  { return m_mean2; }
+  const vnl_vector<double> &Mean() { return m_mean; }
+  const vnl_vector<double> &Group1Mean() { return m_mean1; }
+  const vnl_vector<double> &Group2Mean() { return m_mean2; }
 
   // Returns group2 - group1 mean
-  const vnl_vector<double> &NormalizedGroupDifference() const
-  { return m_groupdiffnorm;}
-  const vnl_vector<double> &GroupDifference() const
-  { return m_groupdiff;}
+  const vnl_vector<double> &NormalizedGroupDifference() { return m_groupdiffnorm; }
+  const vnl_vector<double> &GroupDifference() { return m_groupdiff; }
 
  /** Returns the median shape for the set of shapes with Group ID equal to the
       integer argument.  For example, ComputeMedianShape(0) returns the median
@@ -112,44 +99,37 @@ public:
       other shapes in that group.  Arguments passed to this function are set to
       the index number of the median shape for Group A and Group B,
       respectively.*/
-  int ComputeMedianShape(const int);
+  int ComputeMedianShape(const int ID);
 
-    /** Returns the euclidean L1 norm between shape a and b */
+  /** Returns the euclidean L1 norm between shape a and b */
   double L1Norm(unsigned int a, unsigned int b);
 
   /** Returns the component loadings */
-  const vnl_matrix<double> &PCALoadings() const
-  { return m_principals; }
+  Eigen::MatrixXd &PCALoadings() { return m_principals; }
 
   /** Returns the Fisher linear discriminant */
-  const vnl_vector<double> &FishersLDA() const
-  { return m_fishersLD; }
+  const vnl_vector<double> &FishersLDA() { return m_fishersLD; }
 
   /** Returns the shape matrix*/
-  const vnl_matrix<double> &ShapeMatrix() const
-  {return m_shapes; }
+  const vnl_matrix<double> &ShapeMatrix() { return m_shapes; }
 
   /** Returns the shape with the mean subtracted */
-  const vnl_matrix<double> &RecenteredShape() const
-  { return m_pointsMinusMean; }
+  const vnl_matrix<double> &RecenteredShape() { return m_pointsMinusMean; }
 
-  std::vector<double> PercentVarByMode ()
-  {return m_percentVarByMode;}
+  std::vector<double> PercentVarByMode() { return m_percentVarByMode; }
 
   /** Computes a simple linear regression of the first list of values with
       respect to the second y=a + bx. Returns the estimated parameters a & b.
        Returns 0 on success and -1 on fail.*/
   int SimpleLinearRegression(const std::vector<double> &y,
-                              const std::vector<double> &x,
-                              double &a, double &b) const;
-
+                             const std::vector<double> &x,
+                             double &a, double &b) const;
 
   double get_compactness(const int num_modes);
   double get_specificity(const int num_modes);
   double get_generalization(const int num_modes);
 
 private:
-
   void compute_evaluation(int num_modes);
 
   unsigned int m_numSamples1;
@@ -161,7 +141,7 @@ private:
 
   vnl_matrix<double> m_pooled_covariance;
   vnl_matrix<double> m_eigenvectors;
-  vnl_vector<double> m_eigenvalues;
+  std::vector<double> m_eigenvalues;
   vnl_vector<double> m_mean;
   vnl_vector<double> m_mean1;
   vnl_vector<double> m_mean2;
@@ -174,13 +154,13 @@ private:
   std::vector<double> m_fishersProjection;
   std::vector<double> m_percentVarByMode;
   vnl_vector<double> m_fishersLD;
-  vnl_matrix<double> m_principals;
+  Eigen::MatrixXd m_principals;
 
   vnl_vector<double> m_groupdiff;
   vnl_vector<double> m_groupdiffnorm;
 
   // used to keep the points' files that needs to be reloaded when new updates come in.
-  std::vector< std::string > m_pointsfiles;
+  std::vector<std::string> m_pointsfiles;
 
   Eigen::MatrixXd m_Matrix;
   double compactness_ = 0;
@@ -188,6 +168,6 @@ private:
   double generalization_ = 0;
   bool evaluation_ready_ = false;
   int evaluation_modes_ = 0;
-
 };
 
+} // shapeworks

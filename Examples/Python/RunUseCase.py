@@ -42,7 +42,7 @@ if __name__ == '__main__':
     default_subsample = 3
 
     parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
-    parser.add_argument("--use_case", help="Specify which use case to run", choices=["ellipsoid", "ellipsoid_evaluate", "ellipsoid_mesh", "ellipsoid_fd", "ellipsoid_cut", "lumps", "left_atrium", "femur", "femur_mesh", "femur_cut", "deep_ssm", "supershapes_1mode_contour", "thin_cavity_bean"])
+    parser.add_argument("--use_case", help="Specify which use case to run", choices=["ellipsoid", "ellipsoid_evaluate", "ellipsoid_mesh", "ellipsoid_fd", "ellipsoid_cut", "ellipsoid_pca","lumps", "left_atrium", "femur", "femur_mesh", "femur_cut", "deep_ssm", "supershapes_1mode_contour", "thin_cavity_bean"])
     parser.add_argument("--use_subsample", help="Run the pipeline for a subset of data",action="store_true")
     parser.add_argument("--num_subsample", help="Size of subset to run on (default: "+str(default_subsample)+")", nargs='?', type=int, default=default_subsample)
     parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
@@ -101,3 +101,4 @@ if __name__ == '__main__':
         sys.exit(1)
     except subprocess.CalledProcessError as e:
         print("General exception caught.\n\tReturncode: "+str(e.returncode)+"\n\tOutput: "+str(e.output))
+

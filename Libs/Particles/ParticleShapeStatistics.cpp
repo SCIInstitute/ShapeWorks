@@ -3,8 +3,9 @@
 #include <Libs/Particles/ShapeEvaluation.h>
 #include "tinyxml.h"
 
-int ParticleShapeStatistics
-::SimpleLinearRegression(const std::vector<double>& y,
+namespace shapeworks{
+
+int ParticleShapeStatistics::SimpleLinearRegression(const std::vector<double>& y,
                          const std::vector<double>& x,
                          double& a, double& b) const
 {
@@ -94,8 +95,7 @@ double ParticleShapeStatistics::L1Norm(unsigned int a, unsigned int b)
   return norm;
 }
 
-int ParticleShapeStatistics::ImportPoints(
-  std::vector<vnl_vector<double >> points, std::vector<int> group_ids)
+int ParticleShapeStatistics::ImportPoints(std::vector<vnl_vector<double>> points, std::vector<int> group_ids)
 {
   this->m_groupIDs = group_ids;
   this->m_domainsPerShape = 1;
@@ -198,9 +198,9 @@ int ParticleShapeStatistics::ImportPoints(
   return 0;
 }
 
-int ParticleShapeStatistics::ReadPointFiles(const char* fname)
+int ParticleShapeStatistics::ReadPointFiles(const std::string &s)
 {
-  TiXmlDocument doc(fname);
+  TiXmlDocument doc(s.c_str());
   bool loadOkay = doc.LoadFile();
   if (!loadOkay) std::cerr << "invalid parameter file..." << std::endl;
   TiXmlHandle docHandle(&doc);
@@ -333,12 +333,9 @@ int ParticleShapeStatistics::ReadPointFiles(const char* fname)
   m_groupdiff = m_mean2 - m_mean1;
 
   return 0;
-} // end ReadPointFiles
+}
 
-
-
-int ParticleShapeStatistics::DoPCA(std::vector<std::vector<PointType> > global_pts,
-                                   int domainsPerShape)
+int ParticleShapeStatistics::DoPCA(std::vector<std::vector<Point>> global_pts, int domainsPerShape)
 {
   this->m_domainsPerShape = domainsPerShape;
 
@@ -360,7 +357,7 @@ int ParticleShapeStatistics::DoPCA(std::vector<std::vector<PointType> > global_p
   for (unsigned int i = 0; i < m_numSamples; i++) {
     for (unsigned int k = 0; k < m_domainsPerShape; k++) {
       //std::cout << "i*m_domainsPerShape + k = " << i*m_domainsPerShape + k << "-------------\n";
-      std::vector<PointType> curDomain = global_pts[i * m_domainsPerShape + k];
+      std::vector<Point> curDomain = global_pts[i * m_domainsPerShape + k];
       unsigned int q = curDomain.size();
 
       //std::cout << "q = " << q << "-------------\n";
@@ -395,10 +392,28 @@ int ParticleShapeStatistics::DoPCA(std::vector<std::vector<PointType> > global_p
 
   ComputeModes();
   return 0;
-} // end DoPCA
+}
 
+int ParticleShapeStatistics::DoPCA(ParticleSystem particleSystem, int domainsPerShape)
+{
+  Eigen::MatrixXd p = particleSystem.Particles();
 
-/** Reloads a set of point files and recomputes some statistics. */
+  std::vector<std::vector<Point>> particlePoints;
+
+  for (int i=0; i<p.cols(); i++) {
+    std::vector<Point> particle;
+    for (int j=0; j<p.rows()/3; j++) {
+      Point point;
+      for (int k=0; k<3; k++) {
+        point[k] = p.coeff(j*3+k, i);
+      }
+      particle.push_back(point);
+    }
+    particlePoints.push_back(particle);
+  }
+
+  return DoPCA(particlePoints, domainsPerShape);
+}
 
 int ParticleShapeStatistics::ReloadPointFiles()
 {
@@ -465,13 +480,12 @@ int ParticleShapeStatistics::ReloadPointFiles()
 
 int ParticleShapeStatistics::ComputeModes()
 {
-  // COMPUTE MODES
   vnl_matrix<double> A = m_pointsMinusMean.transpose()
                          * m_pointsMinusMean * (1.0 / ((double) (m_numSamples - 1)));
   vnl_symmetric_eigensystem<double> symEigen(A);
 
   m_eigenvectors = m_pointsMinusMean * symEigen.V;
-  m_eigenvalues.set_size(m_numSamples);
+  m_eigenvalues.resize(m_numSamples);
 
   // normalize those eigenvectors
   for (unsigned int i = 0; i < m_numSamples; i++) {
@@ -485,7 +499,7 @@ int ParticleShapeStatistics::ComputeModes()
       m_eigenvectors(j, i) = m_eigenvectors(j, i) / (total + 1.0e-15);
     }
 
-    m_eigenvalues(i) = symEigen.D(i, i);
+    m_eigenvalues[i] = symEigen.D(i, i);
   }
 
   float sum = 0.0;
@@ -505,13 +519,12 @@ int ParticleShapeStatistics::ComputeModes()
   }
 
   return 0;
-}  // end ComputeModes();
-
+}
 
 int ParticleShapeStatistics::PrincipalComponentProjections()
 {
   // Now print the projection of each shape
-  m_principals.set_size(m_numSamples, m_numSamples);
+  m_principals.resize(m_numSamples, m_numSamples);
 
   for (unsigned int n = 0; n < m_numSamples; n++) {
     for (unsigned int s = 0; s < m_numSamples; s++) {
@@ -628,11 +641,11 @@ int ParticleShapeStatistics::FisherLinearDiscriminant(unsigned int numModes)
   return 0;
 }
 
-int ParticleShapeStatistics::WriteCSVFile2(const char* fn)
+int ParticleShapeStatistics::WriteCSVFile2(const std::string &s)
 {
   // Write csv file
   std::ofstream outfile;
-  outfile.open(fn);
+  outfile.open(s.c_str());
 
   outfile << "Group";
   for (unsigned int i = 0; i < m_numSamples; i++) {
@@ -652,11 +665,11 @@ int ParticleShapeStatistics::WriteCSVFile2(const char* fn)
   return 0;
 }
 
-int ParticleShapeStatistics::WriteCSVFile(const char* fn)
+int ParticleShapeStatistics::WriteCSVFile(const std::string &s)
 {
   // Write csv file
   std::ofstream outfile;
-  outfile.open(fn);
+  outfile.open(s.c_str());
 
   outfile << "Group,LDA,PV";
   for (unsigned int i = 0; i < m_numSamples; i++) {
@@ -706,6 +719,6 @@ void ParticleShapeStatistics::compute_evaluation(int num_modes)
     this->evaluation_ready_ = true;
     this->evaluation_modes_ = num_modes;
   }
-
 }
 
+} // shapeworks
