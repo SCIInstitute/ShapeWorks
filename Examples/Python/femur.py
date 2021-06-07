@@ -109,8 +109,7 @@ def Run_Pipeline(args):
             for mesh_filename in mesh_files:
                 print('Loading: ' + mesh_filename)
                 # get current shape name
-                names.append(mesh_filename.split(os.pathsep)
-                                   [-1].replace('.ply', ''))
+                names.append(os.path.basename(mesh_filename).replace('.ply', ''))
                 # load mesh
                 mesh = sw.Mesh(mesh_filename)
                 # append to the mesh list
@@ -341,8 +340,7 @@ def Run_Pipeline(args):
             for mesh_filename in mesh_files:
                 print('Loading: ' + mesh_filename)
                 # get current shape name
-                names.append(mesh_filename.split(os.pathsep)
-                                   [-1].replace('.ply', ''))
+                names.append(os.path.basename(mesh_filename).replace('.ply', ''))
                 # load mesh
                 mesh = sw.Mesh(mesh_filename)
                 # append to the mesh list
