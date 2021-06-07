@@ -109,7 +109,7 @@ def Run_Pipeline(args):
             for mesh_filename in mesh_files:
                 print('Loading: ' + mesh_filename)
                 # get current shape name
-                names.append(mesh_filename.split('/')
+                names.append(mesh_filename.split(os.pathsep)
                                    [-1].replace('.ply', ''))
                 # load mesh
                 mesh = sw.Mesh(mesh_filename)
@@ -143,7 +143,7 @@ def Run_Pipeline(args):
                     center = [center[0], center[1], center[2]]
                     img_out = image_dir + \
                         corresponding_image_file.split(
-                            '/')[-1].split('_')[0] + '_R_femur.nrrd'
+                            os.pathsep)[-1].split('_')[0] + '_R_femur.nrrd'
                     img1.reflect(X).write(img_out, compressed=0)
                     image_list.append(img1)
                     # Reflect mesh
@@ -151,7 +151,7 @@ def Run_Pipeline(args):
                 else:
                     img_out = image_dir + \
                         corresponding_image_file.split(
-                            '/')[-1].split('_')[0] + '_L_femur.nrrd'
+                            os.pathsep)[-1].split('_')[0] + '_L_femur.nrrd'
                     img = sw.Image(corresponding_image_file)
                     img.write(img_out, compressed=0)
                     image_list.append(img)
@@ -334,7 +334,7 @@ def Run_Pipeline(args):
             for mesh_filename in mesh_files:
                 print('Loading: ' + mesh_filename)
                 # get current shape name
-                names.append(mesh_filename.split('/')
+                names.append(mesh_filename.split(os.pathsep)
                                    [-1].replace('.ply', ''))
                 # load mesh
                 mesh = sw.Mesh(mesh_filename)
