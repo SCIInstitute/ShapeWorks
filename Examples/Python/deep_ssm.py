@@ -61,7 +61,7 @@ def Run_Pipeline(args):
     train_world_particle_list = world_particle_list[:partition]
     test_img_list = img_list[partition:]
     if args.tiny_test:
-		test_img_list = test_img_list[:3]
+        test_img_list = test_img_list[:3]
 
     print("\n\n\nStep 2. Augment data\n") ###################################################################################
     '''
@@ -83,8 +83,8 @@ def Run_Pipeline(args):
     embedded_dim = DataAugmentationUtils.runDataAugmentation(aug_dir, train_img_list, train_local_particle_list, num_samples, num_dim, percent_variability, sampler_type, mixture_num=0, processes=1, world_point_list=train_world_particle_list)
     aug_data_csv = aug_dir + "TotalData.csv"
 
-	if not args.tiny_test:
-    	DataAugmentationUtils.visualizeAugmentation(aug_data_csv, "violin")
+    if not args.tiny_test:
+        DataAugmentationUtils.visualizeAugmentation(aug_data_csv, "violin")
 
     print("\n\n\nStep 3. Reformat Data for Pytorch\n") #######################################################################
     '''
@@ -139,9 +139,9 @@ def Run_Pipeline(args):
             },
         "use_best_model":True
     }
-	if args.tiny_test:
-		model_parameters["trainer"]["epochs"] = 1
-		model_parameters["fine_tune"]["epochs"] = 1
+    if args.tiny_test:
+        model_parameters["trainer"]["epochs"] = 1
+        model_parameters["fine_tune"]["epochs"] = 1
     # Save config file    
     config_file = out_dir + model_name + ".json"
     with open(config_file, "w") as outfile:
@@ -159,7 +159,7 @@ def Run_Pipeline(args):
     print('Predicted particles saved at: ' + prediction_dir)
 
     if args.tiny_test:
-		exit()
+        exit()
 
     print("\n\n\nStep 6. Analyze results.\n") #################################################################################
     '''
