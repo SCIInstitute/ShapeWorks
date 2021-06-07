@@ -688,44 +688,6 @@ bool GenerateNormals::execute(const optparse::Values &options, SharedCommandData
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// FixMesh
-///////////////////////////////////////////////////////////////////////////////
-void FixMesh::buildParser()
-{
-  const std::string prog = "fix-mesh";
-  const std::string desc = "quality control meshes";
-  parser.prog(prog).description(desc);
-
-  parser.add_option("--smoothbefore").action("store").type("bool").set_default(true).help("Perform laplacian smoothing before decimation [default: true].");
-  parser.add_option("--smoothafter").action("store").type("bool").set_default(true).help("Perform laplacian smoothing after decimation [default: true].");
-  parser.add_option("--lambda").action("store").type("double").set_default(0.5).help("Laplacian smoothing lambda [default: %default].");
-  parser.add_option("--iterations").action("store").type("int").set_default(1).help("Number of laplacian smoothing iterations [default: %default].");
-  parser.add_option("--decimate").action("store").type("bool").set_default(true).help("Perform mesh decimation [default: true].");
-  parser.add_option("--percentage").action("store").type("double").set_default(0.5).help("Percentage of target number of clusters/vertices [default: %default].");
-
-  Command::buildParser();
-}
-
-bool FixMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
-    std::cerr << "No mesh to operate on\n";
-    return false;
-  }
-
-  bool smoothBefore = static_cast<bool>(options.get("smoothbefore"));
-  bool smoothAfter = static_cast<bool>(options.get("smoothafter"));
-  double lambda = static_cast<double>(options.get("lambda"));
-  int iterations = static_cast<int>(options.get("iterations"));
-  bool decimate = static_cast<bool>(options.get("decimate"));
-  double percentage = static_cast<double>(options.get("percentage"));
-
-  sharedData.mesh->fix(smoothBefore, smoothAfter, lambda, iterations, decimate, percentage);
-  return sharedData.validMesh();
-}
-
-///////////////////////////////////////////////////////////////////////////////
 // ClipClosedSurface
 ///////////////////////////////////////////////////////////////////////////////
 void ClipClosedSurface::buildParser()

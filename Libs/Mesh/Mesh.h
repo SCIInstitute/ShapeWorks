@@ -44,6 +44,9 @@ public:
   /// applies filter to reduce number of triangles in mesh
   Mesh& decimate(double reduction = 0.5, double angle = 15.0, bool preserveTopology = true);
 
+  /// applies cvd decimation filter
+  Mesh& cvdDecimate(double percentage);
+
   /// handle flipping normals
   Mesh& invertNormals();
 
@@ -74,8 +77,8 @@ public:
   /// computes bounding box of current mesh
   PhysicalRegion boundingBox() const;
 
-  /// quality control mesh
-  Mesh& fix(bool smoothBefore = true, bool smoothAfter = true, double lambda = 0.5, int iterations = 1, bool decimate = true, double percentage = 0.5);
+  /// fix element winding of mesh
+  Mesh& fixElement();
 
   /// computes surface to surface distance, compute method: POINT_TO_POINT (default) or POINT_TO_CELL
   Mesh& distance(const Mesh &target, const DistanceMethod method = POINT_TO_POINT);

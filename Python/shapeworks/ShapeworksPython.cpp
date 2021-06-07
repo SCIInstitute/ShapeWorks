@@ -872,6 +872,10 @@ PYBIND11_MODULE(shapeworks, m)
        "applies filter to reduce number of triangles in mesh",
        "reduction"_a=0.5, "angle"_a=15.0, "preserveTopology"_a=true)
 
+   .def("cvdDecimate",
+       &Mesh::cvdDecimate,
+       "applies cvd decimation filter",
+       "percentage"_a)
 
   .def("invertNormals",
        &Mesh::invertNormals,
@@ -939,11 +943,9 @@ PYBIND11_MODULE(shapeworks, m)
        &Mesh::boundingBox,
        "computes bounding box of current mesh")
 
-  .def("fix",
-       &Mesh::fix,
-       "quality control mesh",
-       "smoothBefore"_a=true, "smoothAfter"_a=true, "lambda"_a=0.5,
-       "iterations"_a=1, "decimate"_a=true, "percentage"_a=0.5)
+  .def("fixElement",
+       &Mesh::fixElement,
+       "fix element winding of mesh")
 
   .def("clipClosedSurface",
        [](Mesh& mesh, const std::vector<double>& p, const std::vector<double>& n) -> decltype(auto) {

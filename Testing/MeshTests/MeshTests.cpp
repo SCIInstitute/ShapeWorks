@@ -22,6 +22,34 @@ TEST(MeshTests, readFailTest)
   ASSERT_TRUE(false);
 }
 
+TEST(MeshTests, fixelementTest)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.fixElement();
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fixElement.vtk");
+  ASSERT_TRUE(femur == ground_truth);
+}
+
+TEST(MeshTests, cvddecimateTest1)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
+  femur.cvdDecimate(0.5);
+  // femur.write(std::string(TEST_DATA_DIR) + "/cvdDecimate1.vtk");
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/cvdDecimate1.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
+TEST(MeshTests, cvddecimateTest2)
+{
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.cvdDecimate(10.0);
+  // femur.write(std::string(TEST_DATA_DIR) + "/cvdDecimate2.vtk");
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/cvdDecimate2.vtk");
+
+  ASSERT_TRUE(femur == ground_truth);
+}
+
 TEST(MeshTests, smoothTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
@@ -214,21 +242,11 @@ TEST(MeshTests, scaleTest2)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-// https://github.com/SCIInstitute/ShapeWorks/issues/938
-// TEST(MeshTests, fixTest1)
+// TEST(MeshTests, fixelementTest)
 // {
-//   Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
-//   femur.fix();
-//   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fix1.vtk");
-//   ASSERT_TRUE(femur == ground_truth);
-// }
-
-// TEST(MeshTests, fixTest2)
-// {
-//   Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
-//   // femur.fix(true, true, 0.5, 1, true, 0.5);
-//   femur.fix();
-//   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fix1.vtk");
+//   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+//   femur.fixElement();
+//   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fixElement.vtk");
 //   ASSERT_TRUE(femur == ground_truth);
 // }
 
