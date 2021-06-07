@@ -22,6 +22,7 @@
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkMarchingCubes.h>
 #include <vtkSmoothPolyDataFilter.h>
+#include <vtkWindowedSincPolyDataFilter.h>
 #include <vtkDecimatePro.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkReverseSense.h>
@@ -46,7 +47,7 @@ namespace shapeworks {
 Mesh::MeshType Mesh::read(const std::string &pathname)
 {
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
-  if (!ShapeworksUtils::exists(pathname)) { throw std::invalid_argument("File doesn't exist"); }
+  if (!ShapeworksUtils::exists(pathname)) { throw std::invalid_argument(pathname + " does not exist"); }
 
   try {
     if (StringUtils::hasSuffix(pathname, ".vtk")) {
@@ -186,7 +187,21 @@ Mesh &Mesh::smooth(int iterations, double relaxation)
   }
   smoother->Update();
   this->mesh = smoother->GetOutput();
+  // must regenerate normals after smoothing
+  generateNormals();
+  return *this;
+}
 
+Mesh& Mesh::smoothSinc(int iterations, double passband)
+{
+  vtkSmartPointer<vtkWindowedSincPolyDataFilter> smoother = vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
+  smoother->SetInputData(this->mesh);
+  smoother->SetNumberOfIterations(iterations);
+  smoother->SetPassBand(passband);
+  smoother->Update();
+  this->mesh = smoother->GetOutput();
+  // must regenerate normals after smoothing
+  generateNormals();
   return *this;
 }
 
@@ -315,24 +330,16 @@ Mesh &Mesh::scale(const Vector3 &v)
   return applyTransform(transform);
 }
 
-Region Mesh::boundingBox(bool center) const
+PhysicalRegion Mesh::boundingBox() const
 {
-  Region bbox;
+  PhysicalRegion bbox;
   double bb[6];
   mesh->GetBounds(bb);
 
   for(int i = 0; i < 3; i++)
   {
-    bbox.min[i] = floor(bb[2*i]);
-    bbox.max[i] = ceil(bb[2*i+1]);
-  }
-
-  if (center)
-  {
-    Dims size = bbox.size();
-    Dims offset = size * -0.5 - toDims(bbox.min);
-    bbox.min = toCoord(size * -0.5);
-    bbox.max = toCoord(size * 0.5);
+    bbox.min[i] = bb[2*i];
+    bbox.max[i] = bb[2*i+1];
   }
 
   return bbox;
@@ -437,85 +444,55 @@ Mesh& Mesh::generateNormals()
   return *this;
 }
 
-Image Mesh::toImage(Vector3 spacing, Dims size, Point3 origin) const
+Image Mesh::toImage(PhysicalRegion region, Point spacing) const
 {
-  if (std::abs(spacing[0]) < 1E-4 || std::abs(spacing[1]) < 1E-4 || std::abs(spacing[2]) < 1E-4)
-  {
-    throw std::invalid_argument("error: rasterization spacing must be non-zero");
+  // if no region, use mesh bounding box
+  if (region == PhysicalRegion()) {
+    region = boundingBox();
   }
 
-  if (size != Dims({0, 0, 0}) && spacing != makeVector({1.0, 1.0, 1.0}))
-  {
-    throw std::invalid_argument("error: cannot specify both size and spacing. Instead, scale the Mesh by spacing first.");
-  }
+  // compute output dimensions: size of the region / by the requested spacing
+  auto dims = toDims(region.size() / spacing);
 
-  // identify the logical region containing the mesh
-  Region bbox(boundingBox());
-  bbox.pad(1); // give it some padding
+  // std::cout << "mesh extents are " << region << std::endl;
+  // std::cout << "size is " << region.size() << std::endl;
+  // std::cout << "spacing is " << spacing << std::endl;
+  // std::cout << "dims are " << dims << std::endl;
 
-  // compute dims based on specified spacing...
-  if (size == Dims({0, 0, 0}))
-  {
-    bbox.pad(1); // give it some more padding, why not
-    Vector3 sz = toVector(bbox.size());
-    sz[0] /= spacing[0];
-    sz[1] /= spacing[1];
-    sz[2] /= spacing[2];
-    size[0] = ceil(sz[0]);
-    size[1] = ceil(sz[1]);
-    size[2] = ceil(sz[2]);
-  }
-  // ...or spacing based on specified dims
-  else
-  {
-    Vector3 sz_user = toVector(size);
-    Vector3 sz_mesh = toVector(bbox.size());
-    spacing[0] = sz_mesh[0] / sz_user[0];
-    spacing[1] = sz_mesh[1] / sz_user[1];
-    spacing[2] = sz_mesh[2] / sz_user[2];
-  }
-
-  // determine origin from bounding box if user didn't explicitly specify
-  if (origin == Point3({-1.0, -1.0, -1.0}))
-  {
-    origin = toPoint(bbox.min);
-  }
-
+  // allocate output image
   vtkSmartPointer<vtkImageData> whiteImage = vtkSmartPointer<vtkImageData>::New();
+  whiteImage->SetOrigin(region.origin()[0], region.origin()[1], region.origin()[2]);
   whiteImage->SetSpacing(spacing[0], spacing[1], spacing[2]);
-  whiteImage->SetDimensions(size[0], size[1], size[2]);
-  whiteImage->SetExtent(0, size[0] - 1, 0, size[1] - 1, 0, size[2] - 1);
-  whiteImage->SetOrigin(origin[0], origin[1], origin[2]);
+  whiteImage->SetExtent(0, dims[0]-1, 0, dims[1]-1, 0, dims[2]-1);
   whiteImage->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
 
+  // paint it white
   vtkIdType count = whiteImage->GetNumberOfPoints();
   for (vtkIdType i = 0; i < count; ++i)
     whiteImage->GetPointData()->GetScalars()->SetTuple1(i, 1);
 
-  // polygonal data --> image stencil:
+  // cut stencil from mesh silhouette (same size as output image)
   vtkSmartPointer<vtkPolyDataToImageStencil> pol2stenc = vtkSmartPointer<vtkPolyDataToImageStencil>::New();
   pol2stenc->SetInputData(this->mesh);
-  pol2stenc->SetOutputOrigin(origin[0], origin[1], origin[2]);
-  pol2stenc->SetOutputSpacing(spacing[0], spacing[1], spacing[2]);
-  pol2stenc->SetOutputWholeExtent(whiteImage->GetExtent());
+  pol2stenc->SetInformationInput(whiteImage);
   pol2stenc->Update();
 
-  // cut the corresponding white image and set the background:
+  // spray output using stencil (use dark paint)
   vtkSmartPointer<vtkImageStencil> imgstenc = vtkSmartPointer<vtkImageStencil>::New();
   imgstenc->SetInputData(whiteImage);
-  imgstenc->SetStencilConnection(pol2stenc->GetOutputPort());
+  imgstenc->SetStencilData(pol2stenc->GetOutput());
   imgstenc->ReverseStencilOff();
-  imgstenc->SetBackgroundValue(0);
+  imgstenc->SetBackgroundValue(0.0);
   imgstenc->Update();
 
   return Image(imgstenc->GetOutput());
 }
 
-Image Mesh::toDistanceTransform(Vector3 spacing, Dims size, Point3 origin) const
+Image Mesh::toDistanceTransform(PhysicalRegion region, Point spacing) const
 {
   // TODO: convert directly to DT (github #810)
-  Image image(toImage(spacing, size, origin));
-  image.antialias(50, 0.00).computeDT(); // need maxrms = 0 and iterations = 30 to reproduce results
+  Image image(toImage(region, spacing));
+  image.antialias(50, 0.00).computeDT();
   return image;
 }
 
@@ -890,15 +867,16 @@ MeshTransform Mesh::createRegistrationTransform(const Mesh &target, Mesh::Alignm
 
 std::ostream& operator<<(std::ostream &os, const Mesh& mesh)
 {
-  os << "{\n\tnumber of points: " << mesh.numPoints()
-     << ",\n\tnumber of faces: " << mesh.numFaces()
-     << ",\n\tcenter: " << mesh.center()
-     << ",\n\tcenter or mass: " << mesh.centerOfMass()
-     << ",\n\tfield names: \n";
+  os << "{\nnumber of points: " << mesh.numPoints()
+     << ",\nnumber of faces: " << mesh.numFaces()
+     << ",\ncenter: " << mesh.center()
+     << ",\ncenter or mass: " << mesh.centerOfMass()
+     << ",\nbounding box: " << mesh.boundingBox()
+     << ",\nfield names: \n";
 
   auto fields = mesh.getFieldNames();
   for (auto field: fields) {
-    os << "\t\t" << field << std::endl;
+    os << "\t" << field << std::endl;
   }
 
   return os;

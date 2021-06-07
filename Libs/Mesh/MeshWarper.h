@@ -10,6 +10,7 @@
 #include <vector>
 #include <string>
 #include <Libs/Mesh/Mesh.h>
+#include <boost/filesystem.hpp>
 
 namespace shapeworks {
 
@@ -31,6 +32,8 @@ protected:
 
   //! Generate warp, return true on success
   virtual bool generate_warp();
+
+  virtual void update_progress(float p) {};
 
 private:
 
@@ -75,6 +78,8 @@ private:
   vtkSmartPointer<vtkPolyData> reference_mesh_;
   //! Reference particles
   Eigen::MatrixXd reference_particles_;
+
+
 };
 
 }

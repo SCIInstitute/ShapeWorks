@@ -209,7 +209,9 @@ def applyRigidAlignment(outDir, refFile, inDataListSeg, inDataListImg=[], icp_it
 def applyCropping(outDir, inDataList, bbDataList, paddingSize=10):
     """
     This function takes in a filelist and crops them according to the largest
-    bounding box which it discovers
+    bounding box which it discovers, padding to ensure they're all the same size
+    afterwards (in case any were smaller to start out).
+
     """
     print("\n############## Cropping ##############")
     if not os.path.exists(outDir):
@@ -217,16 +219,18 @@ def applyCropping(outDir, inDataList, bbDataList, paddingSize=10):
     outDataList = []
 
     # find region by computing bounding box
-    region = ImageUtils.boundingBox(bbDataList)
-    print(region)
-    region.pad(paddingSize)
+    region = ImageUtils.boundingBox(bbDataList)  # identify regions with isoValue >= 1.0
 
     for i in range(len(inDataList)):
         inname = inDataList[i]
         outname = rename(inname, outDir, 'cropped')
         outDataList.append(outname)
         img = Image(inname)
-        img.crop(region).write(outname)
+
+        # crop extraneous portion of image, padding so all images are at least same size
+        img.crop(region).pad(paddingSize)
+        img.write(outname)
+        
     return outDataList
 
 def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoothingIterations=1, alpha=10.5, beta=10.0, scaling=20.0, isoValue=0):
@@ -348,7 +352,7 @@ def reflectMeshes(outDir, seg_list, reference_side):
         meshList.append(seg_out)
     return meshList
 
-# rasterization for meshes to images using images
+# rasterization for meshes to images of same dimension as existing associated images
 def MeshesToVolumesUsingImages(outDir, meshList, imgList):
     print("########### Turning Mesh To Volume ##############")
     if not os.path.exists(outDir):
@@ -358,7 +362,7 @@ def MeshesToVolumesUsingImages(outDir, meshList, imgList):
         mesh_name = os.path.basename(mesh_)
         prefix = mesh_name.split("_")[0] + "_" + mesh_name.split("_")[1]
 
-        # get image
+        # get image associated with this mesh
         for image_file in imgList:
             if prefix in image_file:
                 image_ = image_file
@@ -368,10 +372,8 @@ def MeshesToVolumesUsingImages(outDir, meshList, imgList):
 
         img = Image(image_)
         mesh = Mesh(mesh_)
-        arr = img.spacing(); spacing = [arr[0], arr[1], arr[2]]
-        arr = img.dims();    dims = [arr[0], arr[1], arr[2]]
-        arr = img.origin();  origin = [arr[0], arr[1], arr[2]]
-        image = mesh.toImage(spacing, dims, origin)
+        spacing = img.spacing()
+        image = mesh.toImage(spacing = spacing)
         image.write(segFile)
     return segList
 
@@ -388,7 +390,7 @@ def MeshesToVolumes(outDir, meshList, spacing):
 
         mesh = Mesh(mesh_)
         print("converting mesh to image using spacing of: " + str(spacing))
-        image = mesh.toImage(spacing)
+        image = mesh.toImage(spacing = spacing)
         image.write(segFile)
     return segList
 

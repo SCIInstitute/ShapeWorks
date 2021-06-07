@@ -8,9 +8,8 @@
  * The Preferences singleton controls all preferences for the application.
  * Values persist via the QSettings class.
  */
-class Preferences : public QObject
-{
-  Q_OBJECT;
+class Preferences : public QObject {
+Q_OBJECT;
 
 public:
 
@@ -92,6 +91,12 @@ public:
 
   OrientationMarkerCorner get_orientation_marker_corner();
   void set_orientation_marker_corner(OrientationMarkerCorner corner);
+
+  QString get_groom_file_template();
+  void set_groom_file_template(QString groom_file_template);
+
+  QString get_optimize_file_template();
+  void set_optimize_file_template(QString optimize_file_template);
 
 Q_SIGNALS:
 

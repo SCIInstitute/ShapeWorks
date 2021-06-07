@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Data/StudioParticles.h>
 #include <Libs/Optimize/Optimize.h>
 #include <QObject>
 #include <QMutex>
@@ -17,6 +18,8 @@ public:
 
   std::vector<std::vector<itk::Point<double>>> GetLocalPoints() override;
   std::vector<std::vector<itk::Point<double>>> GetGlobalPoints() override;
+
+  std::vector<StudioParticles> GetParticles();
 
   void UpdateExportablePoints() override;
 

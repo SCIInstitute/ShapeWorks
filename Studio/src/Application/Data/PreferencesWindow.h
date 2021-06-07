@@ -19,6 +19,8 @@ public:
 
   void set_values_from_preferences();
 
+  void closeEvent(QCloseEvent *event) override;
+
 public Q_SLOTS:
   void on_mesh_cache_enabled_stateChanged(int state);
   void on_mesh_cache_memory_valueChanged(int value);
@@ -28,6 +30,8 @@ public Q_SLOTS:
   void on_parallel_enabled_toggled(bool b);
   void on_num_threads_valueChanged(int i);
   void on_caching_epsilon_valueChanged(int i);
+
+  void accept() override;
 
   void restore_defaults();
 

@@ -67,13 +67,17 @@ bool Optimize::Run()
 
   }
 
-
-
   // sanity check
   if (this->m_domains_per_shape != this->m_number_of_particles.size()) {
     std::cerr <<
               "Inconsistency in parameters... m_domains_per_shape != m_number_of_particles.size()\n";
     return false;
+  }
+
+  // ensure use_shape_statistics_after doesn't increase the particle count over what was specified
+  for (int i = 0; i < this->m_number_of_particles.size(); i++) {
+    this->m_use_shape_statistics_after = std::min(this->m_use_shape_statistics_after,
+                                                  this->m_number_of_particles[i]);
   }
 
   this->SetParameters();
@@ -728,8 +732,16 @@ void Optimize::Initialize()
     }
     */
 
-    m_sampler->GetParticleSystem()->AdvancedAllParticleSplitting(epsilon);
-
+    // Splits particles
+    // Strategy: For each domain (for all samples), we make very corresponding particle
+    //      go in a random direction with magnitude epsilon/5. Then the shifted particles
+    //      in each domain are tested so that no particle will violate any inequality constraints
+    //      after its split.
+    for (int i = 0; i < m_domains_per_shape; i++) {
+      if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[i]) {
+        m_sampler->GetParticleSystem()->AdvancedAllParticleSplitting(epsilon, m_domains_per_shape, i);
+      }
+    }
     m_sampler->GetParticleSystem()->SynchronizePositions();
 
     this->m_split_number++;
@@ -2191,7 +2203,7 @@ bool Optimize::LoadParameterFile(std::string filename)
 //---------------------------------------------------------------------------
 MatrixContainer Optimize::GetParticleSystem()
 {
-  
+
   auto shape_matrix = m_sampler->GetGeneralShapeMatrix();
 
   MatrixType matrix;

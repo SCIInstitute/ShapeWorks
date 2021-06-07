@@ -1,11 +1,14 @@
 #include <tbb/parallel_for.h>
 #include <tbb/task_scheduler_init.h>
 
+#include <boost/filesystem.hpp>
+
 #include <vector>
 
 #include <Libs/Image/Image.h>
 #include <Libs/Mesh/Mesh.h>
 #include <Libs/Mesh/MeshUtils.h>
+#include <Libs/Utils/StringUtils.h>
 
 #include <Groom.h>
 #include <GroomParameters.h>
@@ -42,27 +45,95 @@ bool Groom::run()
   }
   tbb::atomic<bool> success = true;
 
+  int num_domains = this->project_->get_number_of_domains_per_subject();
   tbb::parallel_for(
     tbb::blocked_range<size_t>{0, subjects.size()},
     [&](const tbb::blocked_range<size_t>& r) {
       for (size_t i = r.begin(); i < r.end(); ++i) {
 
-        if (this->abort_) { success = false; continue; }
+        for (int domain = 0; domain < subjects[i]->get_number_of_domains(); domain++) {
 
-        if (subjects[i]->get_domain_types()[0] == DomainType::Image) {
-          if (!this->image_pipeline(subjects[i])) {
+          if (this->abort_) {
             success = false;
+            continue;
           }
-        }
 
-        if (subjects[i]->get_domain_types()[0] == DomainType::Mesh) {
-          if (!this->mesh_pipeline(subjects[i])) {
-            success = false;
+          if (subjects[i]->get_domain_types()[domain] == DomainType::Image) {
+            if (!this->image_pipeline(subjects[i], domain)) {
+              success = false;
+            }
           }
-        }
 
+          if (subjects[i]->get_domain_types()[domain] == DomainType::Mesh) {
+            if (!this->mesh_pipeline(subjects[i], domain)) {
+              success = false;
+            }
+          }
+
+        }
       }
     });
+
+  // alignment
+  for (int domain = 0; domain < num_domains; domain++) {
+    if (this->abort_) {
+      success = false;
+      continue;
+    }
+
+    auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
+
+    if (params.get_icp()) {
+      std::vector<Mesh> meshes;
+      for (int i = 0; i < subjects.size(); i++) {
+        auto path = subjects[i]->get_segmentation_filenames()[domain];
+        // groomed mesh name
+        std::string groom_name = this->get_output_filename(path, DomainType::Mesh);
+        Mesh mesh = MeshUtils::threadSafeReadMesh(path);
+        meshes.push_back(mesh);
+      }
+
+      int reference_mesh = MeshUtils::findReferenceMesh(meshes);
+
+      std::cerr << "The reference mesh is " << reference_mesh << "\n";
+
+      tbb::parallel_for(
+        tbb::blocked_range<size_t>{0, subjects.size()},
+        [&](const tbb::blocked_range<size_t>& r) {
+          for (size_t i = r.begin(); i < r.end(); ++i) {
+
+            vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
+            matrix->Identity();
+
+            if (i != reference_mesh) {
+              Mesh source = meshes[i];
+              Mesh target = meshes[reference_mesh];
+              matrix = MeshUtils::createICPTransform(source.getVTKMesh(),
+                                                     target.getVTKMesh(), Mesh::Rigid, 100, true);
+            }
+
+            auto subject = subjects[i];
+            // store transform
+            std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
+            std::vector<double> groomed_transform;
+
+            for (int i = 0; i < 16; i++) {
+              groomed_transform.push_back(matrix->GetData()[i]);
+            }
+            if (domain >= groomed_transforms.size()) {
+              groomed_transforms.resize(domain + 1);
+            }
+            groomed_transforms[domain] = groomed_transform;
+            subject->set_groomed_transforms(groomed_transforms);
+
+          }
+        });
+
+    }
+
+  }
+
+
 
   // store back to project
   this->project_->store_subjects();
@@ -70,13 +141,12 @@ bool Groom::run()
 }
 
 //---------------------------------------------------------------------------
-bool Groom::image_pipeline(std::shared_ptr<Subject> subject)
+bool Groom::image_pipeline(std::shared_ptr<Subject> subject, int domain)
 {
   // grab parameters
-  auto params = GroomParameters(this->project_);
+  auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
 
-  // single domain support right now
-  auto path = subject->get_segmentation_filenames()[0];
+  auto path = subject->get_segmentation_filenames()[domain];
 
   // load the image
   Image image(path);
@@ -105,10 +175,21 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject)
     groomed_transforms.push_back(groomed_transform);
     subject->set_groomed_transforms(groomed_transforms);
 
-    // only single domain supported so far
-    std::vector<std::string> groomed_filenames{path};
-    // store filename back to subject
-    subject->set_groomed_filenames(groomed_filenames);
+    {
+      // lock for project data structure
+      tbb::mutex::scoped_lock lock(mutex_);
+
+      // update groomed filenames
+      std::vector<std::string> groomed_filenames = subject->get_groomed_filenames();
+      if (domain >= groomed_filenames.size()) {
+        groomed_filenames.resize(domain + 1);
+      }
+      groomed_filenames[domain] = path;
+
+      // store filenames back to subject
+      subject->set_groomed_filenames(groomed_filenames);
+    }
+
     return true;
   }
 
@@ -128,13 +209,16 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject)
   if (this->abort_) { return false; }
 
   // store transform
-  std::vector<std::vector<double>> groomed_transforms;
+  std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
   std::vector<double> groomed_transform;
   auto transform_params = transform->GetParameters();
   for (int i = 0; i < transform_params.size(); i++) {
     groomed_transform.push_back(transform_params[i]);
   }
-  groomed_transforms.push_back(groomed_transform);
+  if (domain >= groomed_transforms.size()) {
+    groomed_transforms.resize(domain + 1);
+  }
+  groomed_transforms[domain] = groomed_transform;
   subject->set_groomed_transforms(groomed_transforms);
 
   // isolate
@@ -186,91 +270,113 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject)
   if (this->abort_) { return false; }
 
   // groomed filename
-  std::string dt_name = path;
-  dt_name = dt_name.substr(0, dt_name.find_last_of(".")) + "_DT.nrrd";
+  std::string dt_name = this->get_output_filename(path, DomainType::Image);
 
   // save image
   image.write(dt_name);
 
-  // only single domain supported so far
-  std::vector<std::string> groomed_filenames{dt_name};
-  // store filename back to subject
-  subject->set_groomed_filenames(groomed_filenames);
+  {
+    // lock for project data structure
+    tbb::mutex::scoped_lock lock(mutex_);
+
+    // update groomed filenames
+    std::vector<std::string> groomed_filenames = subject->get_groomed_filenames();
+    if (domain >= groomed_filenames.size()) {
+      groomed_filenames.resize(domain + 1);
+    }
+    groomed_filenames[domain] = dt_name;
+
+    // store filenames back to subject
+    subject->set_groomed_filenames(groomed_filenames);
+  }
 
   return true;
 }
 
 //---------------------------------------------------------------------------
-bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject)
+bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, int domain)
 {
   // grab parameters
-  auto params = GroomParameters(this->project_);
+  auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
 
-  auto path = subject->get_segmentation_filenames()[0];
+  auto path = subject->get_segmentation_filenames()[domain];
 
   // groomed mesh name
-  std::string groom_name = path;
-  groom_name = groom_name.substr(0, groom_name.find_last_of('.')) + "_groomed.ply";
+  std::string groom_name = this->get_output_filename(path, DomainType::Mesh);
 
-  try {
-    // load the mesh
-    std::shared_ptr<Mesh> mesh = this->load_mesh(path);
-    if (!mesh) {
-      return false;
+  Mesh mesh = MeshUtils::threadSafeReadMesh(path);
+
+  // define a groom transform
+  auto transform = itk::AffineTransform<double, 3>::New();
+  transform->SetIdentity();
+
+  if (!this->skip_grooming_) {
+
+    if (params.get_fill_holes_tool()) {
+      mesh.fillHoles();
     }
 
-    // define a groom transform
-    auto transform = itk::AffineTransform<double, 3>::New();
-    transform->SetIdentity();
-
-    if (!this->skip_grooming_) {
-
-      // centering
-      if (params.get_center_tool()) {
-        auto com = mesh->centerOfMass();
-
-        Vector3 vector;
-        vector[0] = -com[0];
-        vector[1] = -com[1];
-        vector[2] = -com[2];
-        mesh->translate(vector);
-
-        itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
-        tform[0] = com[0];
-        tform[1] = com[1];
-        tform[2] = com[2];
-        transform->SetTranslation(tform);
-        this->increment_progress();
+    if (params.get_mesh_smooth()) {
+      if (params.get_mesh_smoothing_method() == GroomParameters::GROOM_SMOOTH_VTK_LAPLACIAN_C) {
+        mesh.smooth(params.get_mesh_vtk_laplacian_iterations(),
+                    params.get_mesh_vtk_laplacian_relaxation());
+      }
+      else if (params.get_mesh_smoothing_method() ==
+               GroomParameters::GROOM_SMOOTH_VTK_WINDOWED_SINC_C) {
+        mesh.smoothSinc(params.get_mesh_vtk_windowed_sinc_iterations(),
+                        params.get_mesh_vtk_windowed_sinc_passband());
       }
     }
 
-    // store transform
-    std::vector<std::vector<double>> groomed_transforms;
-    std::vector<double> groomed_transform;
-    auto transform_params = transform->GetParameters();
-    for (int i = 0; i < transform_params.size(); i++) {
-      groomed_transform.push_back(transform_params[i]);
+    // centering
+    if (params.get_center_tool()) {
+      auto diff = mesh.centerOfMass();
+      itk::MatrixOffsetTransformBase<double, 3, 3>::OutputVectorType tform;
+      tform[0] = -diff[0];
+      tform[1] = -diff[1];
+      tform[2] = -diff[2];
+      transform->SetTranslation(tform);
+      this->increment_progress();
     }
-    groomed_transforms.push_back(groomed_transform);
-    subject->set_groomed_transforms(groomed_transforms);
 
-    // save the groomed mesh
-    this->save_mesh(mesh, groom_name);
+  }
 
-    // only single domain supported so far
-    std::vector<std::string> groomed_filenames{groom_name};
+  // store transform
+  std::vector<std::vector<double>> groomed_transforms = subject->get_groomed_transforms();
+  std::vector<double> groomed_transform;
+  auto transform_params = transform->GetParameters();
+  for (int i = 0; i < transform_params.size(); i++) {
+    groomed_transform.push_back(transform_params[i]);
+  }
+  if (domain >= groomed_transforms.size()) {
+    groomed_transforms.resize(domain + 1);
+  }
+  groomed_transforms[domain] = groomed_transform;
+  subject->set_groomed_transforms(groomed_transforms);
+
+  // save the groomed mesh
+  MeshUtils::threadSafeWriteMesh(groom_name, mesh);
+
+  {
+    // lock for project data structure
+    tbb::mutex::scoped_lock lock(mutex_);
+
+    // update groomed filenames
+    std::vector<std::string> groomed_filenames = subject->get_groomed_filenames();
+    if (domain >= groomed_filenames.size()) {
+      groomed_filenames.resize(domain + 1);
+    }
+    groomed_filenames[domain] = groom_name;
+
     // store filename back to subject
     subject->set_groomed_filenames(groomed_filenames);
-
-  } catch (std::exception e) {
-    std::cerr << "Exception: " << e.what() << "\n";
-    return false;
   }
+
   return true;
 }
 
 //---------------------------------------------------------------------------
-void Groom::isolate(Image &image)
+void Groom::isolate(Image& image)
 {
   ImageType::Pointer img = image;
 
@@ -306,8 +412,16 @@ void Groom::isolate(Image &image)
 }
 
 //---------------------------------------------------------------------------
-Vector3 Groom::center(Image &image)
+Vector3 Groom::center(Image& image)
 {
+  auto diff = image.centerOfMass();
+  Vector3 translation;
+  translation[0] = -diff[0];
+  translation[1] = -diff[1];
+  translation[2] = -diff[2];
+  return translation;
+
+/*
   // capture full translation
   auto com = image.centerOfMass();
   // set center to origin
@@ -321,28 +435,36 @@ Vector3 Groom::center(Image &image)
 
   AffineTransformPtr xform(AffineTransform::New());
   xform->Translate(-translation);
-  image.applyTransform(xform,Image::NearestNeighbor);
+  image.applyTransform(xform, Image::NearestNeighbor);
 
   translation[0] = com[0];
   translation[1] = com[1];
   translation[2] = com[2];
   return translation;
+  */
 }
 
 //---------------------------------------------------------------------------
 int Groom::get_total_ops()
 {
   int num_subjects = this->project_->get_subjects().size();
-  auto params = GroomParameters(this->project_);
 
   int num_tools = 0;
-  num_tools += params.get_center_tool() ? 1 : 0;
-  num_tools += params.get_isolate_tool() ? 1 : 0;
-  num_tools += params.get_fill_holes_tool() ? 1 : 0;
-  num_tools += params.get_auto_pad_tool() ? 1 : 0;
-  num_tools += params.get_antialias_tool() ? 1 : 0;
-  num_tools += params.get_fast_marching() ? 10 : 0;
-  num_tools += params.get_blur_tool() ? 1 : 0;
+
+  auto domains = this->project_->get_domain_names();
+
+  for (int i = 0; i < domains.size(); i++) {
+
+    auto params = GroomParameters(this->project_, domains[i]);
+
+    num_tools += params.get_center_tool() ? 1 : 0;
+    num_tools += params.get_isolate_tool() ? 1 : 0;
+    num_tools += params.get_fill_holes_tool() ? 1 : 0;
+    num_tools += params.get_auto_pad_tool() ? 1 : 0;
+    num_tools += params.get_antialias_tool() ? 1 : 0;
+    num_tools += params.get_fast_marching() ? 10 : 0;
+    num_tools += params.get_blur_tool() ? 1 : 0;
+  }
 
   return num_subjects * num_tools;
 }
@@ -363,30 +485,6 @@ void Groom::set_skip_grooming(bool skip)
 }
 
 //---------------------------------------------------------------------------
-std::shared_ptr<Mesh> Groom::load_mesh(std::string filename)
-{
-  try {
-    auto mesh = std::make_shared<Mesh>(MeshUtils::threadSafeReadMesh(filename));
-    return mesh;
-  } catch (std::exception e) {
-    std::cerr << "Exception: " << e.what() << "\n";
-  }
-  return nullptr;
-}
-
-//---------------------------------------------------------------------------
-bool Groom::save_mesh(std::shared_ptr<Mesh> mesh, std::string filename)
-{
-  try {
-    MeshUtils::threadSafeWriteMesh(filename, *mesh);
-    return true;
-  } catch (std::exception e) {
-    std::cerr << "Exception: " << e.what() << "\n";
-  }
-  return false;
-}
-
-//---------------------------------------------------------------------------
 void Groom::abort()
 {
   this->abort_ = true;
@@ -396,6 +494,39 @@ void Groom::abort()
 bool Groom::get_aborted()
 {
   return this->abort_;
+}
+
+//---------------------------------------------------------------------------
+std::string Groom::get_output_filename(std::string input, DomainType domain_type)
+{
+  // grab parameters
+  auto params = GroomParameters(this->project_);
+
+  // if the project is not saved, use the path of the input filename
+  auto filename = this->project_->get_filename();
+  if (filename == "") {
+    filename = input;
+  }
+
+  auto base = StringUtils::getPath(filename);
+  if (base == filename) {
+    base = ".";
+  }
+
+  auto prefix = params.get_groom_output_prefix();
+
+  std::string suffix = "_DT.nrrd";
+  if (domain_type == DomainType::Mesh) {
+    suffix = "_groomed.vtk";
+  }
+
+  auto path = base + "/" + prefix;
+
+  boost::filesystem::create_directories(path);
+
+  auto output = path + "/" + StringUtils::getFileNameWithoutExtension(input) + suffix;
+
+  return output;
 }
 
 

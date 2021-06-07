@@ -20,9 +20,6 @@ public:
 
   Groom(ProjectHandle project);
 
-  //! Return the progress (0-100)
-  float get_current_progress();
-
   //! Run the grooming
   virtual bool run();
 
@@ -54,16 +51,13 @@ private:
   void increment_progress(int amount = 1);
 
   //! Run image based pipeline on a single subject
-  bool image_pipeline(std::shared_ptr<Subject> subject);
+  bool image_pipeline(std::shared_ptr<Subject> subject, int domain);
 
   //! Run the mesh based pipeline on a single subject
-  bool mesh_pipeline(std::shared_ptr<Subject> subject);
+  bool mesh_pipeline(std::shared_ptr<Subject> subject, int domain);
 
-  //! Load a mesh
-  std::shared_ptr<Mesh> load_mesh(std::string filename);
-
-  //! Save a mesh
-  bool save_mesh(std::shared_ptr<Mesh> mesh, std::string filename);
+  //! Return the output filename for a given intpu tfile
+  std::string get_output_filename(std::string input, DomainType domain_type);
 
   Vector3 center(Image& image);
   void isolate(Image& image);
@@ -75,6 +69,8 @@ private:
   bool skip_grooming_ = false;
 
   bool abort_ = false;
+
+  tbb::mutex mutex_;
 
 };
 }

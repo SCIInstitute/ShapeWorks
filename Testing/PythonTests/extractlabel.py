@@ -13,6 +13,7 @@ def extractlabelTest1():
 val = extractlabelTest1()
 
 if val is False:
+  print("extractlabelTest1 failed")
   sys.exit(1)
 
 def extractlabelTest2():
@@ -26,6 +27,7 @@ def extractlabelTest2():
 val = extractlabelTest2()
 
 if val is False:
+  print("extractlabelTest2 failed")
   sys.exit(1)
 
 def extractlabelTest3():
@@ -39,6 +41,7 @@ def extractlabelTest3():
 val = extractlabelTest3()
 
 if val is False:
+  print("extractlabelTest3 failed")
   sys.exit(1)
 
 def extractlabelTest4():
@@ -52,4 +55,5 @@ def extractlabelTest4():
 val = extractlabelTest4()
 
 if val is False:
+  print("extractlabelTest4 failed")
   sys.exit(1)

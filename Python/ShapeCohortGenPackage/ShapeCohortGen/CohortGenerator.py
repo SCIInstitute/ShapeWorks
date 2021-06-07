@@ -1,4 +1,4 @@
-from ShapeCohortGen import Supershapes,Ellipsoids,CohortGenUtils
+from ShapeCohortGen import Supershapes,Ellipsoids,EllipsoidJoints,CohortGenUtils
 
 class CohortGenerator():
 	def __init__(self,out_dir):
@@ -34,6 +34,14 @@ class SupershapesCohortGenerator(CohortGenerator):
 		self.meshes = Supershapes.generate(num_samples, self.out_dir, randomize_center, randomize_rotation, m, start_id, size)
 		return self.meshes
 
+
+class EllipsoidJointsCohortGenerator(CohortGenerator):
+	def __init__(self,out_dir):
+		super().__init__(out_dir)
+	def generate(self, num_samples=3, randomize_center=True, randomize_x_radius=True, randomize_y_radius=True, randomize_z_radius=True,mode_size=False,mode_rotation=True,separation=2):
+		self.meshes = EllipsoidJoints.generate(num_samples, self.out_dir, randomize_center, randomize_x_radius, randomize_y_radius, randomize_z_radius,mode_size,mode_rotation,separation)
+		return self.meshes
+
 class Supershapes2DCohortGenerator(CohortGenerator):
 	def __init__(self, out_dir):
 		super().__init__(out_dir)
@@ -47,3 +55,4 @@ class Supershapes2DCohortGenerator(CohortGenerator):
 
 	def generate_images(self, blur_factor=1, foreground_mean=180, foreground_var=30, background_mean=80, background_var=30):
 		raise RuntimeError("Unsupported")
+

@@ -74,7 +74,7 @@ endif()
 if(MSVC)
   # turn on unwind semantics
   SET(CMAKE_CXX_FLAGS "/EHsc")
-endif(msvc)
+endif(MSVC)
 
 # GUI
 if (SHAPEWORKS_GUI)
@@ -137,9 +137,13 @@ ENDIF()
 
 ### XLNT
 find_package (XLNT REQUIRED)
+add_definitions(-DXLNT_STATIC=1)
 
 ### Libigl set include path
 find_package(LIBIGL REQUIRED QUIET)
+
+find_package(Boost REQUIRED COMPONENTS
+             filesystem)
 
 ### Geometry central include
 if (NOT DEFINED GEOMETRY_CENTRAL_DIR)

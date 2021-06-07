@@ -36,6 +36,7 @@ target_include_directories(Mesh PUBLIC
 
 target_link_libraries(
   Mesh 
+  Image
   Common
   Utils
   trimesh2 
@@ -46,6 +47,7 @@ target_link_libraries(
   igl::core
   Particles
   TBB::tbb
+  Boost::filesystem
   )
 
 # Install

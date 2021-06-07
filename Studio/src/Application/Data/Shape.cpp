@@ -1,7 +1,6 @@
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 
-
 #include <Data/Shape.h>
 
 #include <QFile>
@@ -33,25 +32,24 @@ Shape::Shape()
 }
 
 //---------------------------------------------------------------------------
-Shape::~Shape()
-{}
+Shape::~Shape() = default;
 
 //---------------------------------------------------------------------------
-QSharedPointer<StudioMesh> Shape::get_mesh(std::string display_mode)
+MeshGroup Shape::get_meshes(const string& display_mode)
 {
   if (display_mode == Visualizer::MODE_ORIGINAL_C) {
-    return this->get_original_mesh();
+    return this->get_original_meshes();
   }
   else if (display_mode == Visualizer::MODE_GROOMED_C) {
-    return this->get_groomed_mesh();
+    return this->get_groomed_meshes();
   }
-  return this->get_reconstructed_mesh();
+  return this->get_reconstructed_meshes();
 }
 
 //---------------------------------------------------------------------------
 void Shape::set_annotations(QStringList annotations, bool only_overwrite_blank)
 {
-  if (only_overwrite_blank && this->corner_annotations_.size() > 0 &&
+  if (only_overwrite_blank && !this->corner_annotations_.empty() &&
       this->corner_annotations_[0] != "") {
     return; // don't override
   }
@@ -74,8 +72,13 @@ void Shape::set_mesh_manager(QSharedPointer<MeshManager> mesh_manager)
 void Shape::set_subject(std::shared_ptr<Subject> subject)
 {
   this->subject_ = subject;
+  this->original_meshes_.set_number_of_meshes(subject->get_number_of_domains());
+  this->groomed_meshes_.set_number_of_meshes(subject->get_number_of_domains());
+  this->reconstructed_meshes_.set_number_of_meshes(subject->get_number_of_domains());
 
-  if (this->subject_->get_segmentation_filenames().size() > 0) {
+  if (!this->subject_->get_segmentation_filenames().empty()) {
+
+    /// TODO: Show multiple lines of filenames for multiple domains?
     std::string filename = this->subject_->get_segmentation_filenames()[0];
     this->corner_annotations_[0] = QFileInfo(QString::fromStdString(filename)).fileName();
   }
@@ -88,133 +91,63 @@ std::shared_ptr<Subject> Shape::get_subject()
 }
 
 //---------------------------------------------------------------------------
-void Shape::import_original_image(std::string filename, float iso_value)
+void Shape::import_original_image(const std::string& filename)
 {
   this->subject_->set_segmentation_filenames(std::vector<std::string>{filename});
   this->corner_annotations_[0] = QFileInfo(QString::fromStdString(filename)).fileName();
 }
 
 //---------------------------------------------------------------------------
-QSharedPointer<StudioMesh> Shape::get_original_mesh(bool wait)
+MeshGroup Shape::get_original_meshes(bool wait)
 {
-  if (!this->original_mesh_) {
-    if (!this->subject_) {
-      // There is no original mesh for a computed shape (e.g. mean)
-      std::cerr << "Error: asked for original mesh when none is present!\n";
-    }
-    else {
-      this->generate_meshes(this->subject_->get_segmentation_filenames(), this->original_mesh_,
-                            true, wait);
-    }
+  if (!this->subject_) {
+    std::cerr << "Error: asked for original mesh when none is present!\n";
+    assert(0);
   }
-  return this->original_mesh_;
+
+  if (!this->original_meshes_.valid()) {
+    this->generate_meshes(this->subject_->get_segmentation_filenames(), this->original_meshes_,
+                          true, wait);
+  }
+  return this->original_meshes_;
 }
 
 //---------------------------------------------------------------------------
-ImageType::Pointer Shape::get_original_image()
+MeshGroup Shape::get_groomed_meshes(bool wait)
 {
-  ImageType::Pointer image;
-  std::string filename = this->subject_->get_segmentation_filenames()[0];
-  if (filename != "") {
-    try {
-      // read file using ITK
-      ReaderType::Pointer reader = ReaderType::New();
-      reader->SetFileName(filename);
-      reader->Update();
-      image = reader->GetOutput();
-
-      // set orientation to RAI
-      itk::OrientImageFilter<ImageType, ImageType>::Pointer orienter =
-        itk::OrientImageFilter<ImageType, ImageType>::New();
-      orienter->UseImageDirectionOn();
-      orienter->SetDesiredCoordinateOrientation(
-        itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
-      orienter->SetInput(image);
-      orienter->Update();
-      image = orienter->GetOutput();
-    } catch (itk::ExceptionObject& excep) {
-      std::cerr << "Exception caught!" << std::endl;
-      std::cerr << excep << std::endl;
-    }
+  if (!this->subject_) {
+    std::cerr << "Error: asked for groomed meshes when none are present!\n";
+    assert(0);
   }
-  return image;
+
+  if (!this->groomed_meshes_.valid()) {
+    this->generate_meshes(this->subject_->get_groomed_filenames(), this->groomed_meshes_,
+                          true, wait);
+  }
+  return this->groomed_meshes_;
 }
 
 //---------------------------------------------------------------------------
-ImageType::Pointer Shape::get_groomed_image()
+MeshGroup Shape::get_reconstructed_meshes(bool wait)
 {
-  if (!this->groomed_image_) {
-    if (this->subject_->get_groomed_filenames().size() < 1) {
-      STUDIO_LOG_ERROR("No groomed file for subject");
-      ImageType::Pointer image;
-      return image;
-    }
-    std::string filename = this->subject_->get_groomed_filenames()[0]; // single domain supported
-    if (filename != "") {
-      ImageType::Pointer image;
-      try {
-        // read file using ITK
-        ReaderType::Pointer reader = ReaderType::New();
-        STUDIO_LOG_MESSAGE(QString::fromStdString("Loading groomed file: " + filename));
-        reader->SetFileName(filename);
-        reader->Update();
-        image = reader->GetOutput();
-        // don't store to this->groomed_image_ so that we don't hold a pointer to it
-      } catch (itk::ExceptionObject& excep) {
-        STUDIO_LOG_ERROR(QString::fromStdString("Failed to loading groomed file: " + filename));
-        std::cerr << "Exception caught!" << std::endl;
-        std::cerr << excep << std::endl;
+  if (!this->reconstructed_meshes_.valid()) {
+    auto worlds = this->particles_.get_world_particles();
+    this->reconstructed_meshes_.set_number_of_meshes(worlds.size());
+    for (int i = 0; i < worlds.size(); i++) {
+      MeshHandle mesh = this->mesh_manager_->get_mesh(worlds[i], i);
+      if (mesh) {
+        this->reconstructed_meshes_.set_mesh(i, mesh);
       }
-      return image;
     }
   }
-  return this->groomed_image_;
-}
-
-//---------------------------------------------------------------------------
-void Shape::import_groomed_image(ImageType::Pointer img, double iso, TransformType transform)
-{
-  this->groomed_mesh_ = QSharedPointer<StudioMesh>(new StudioMesh());
-  this->groomed_image_ = img;
-  this->groomed_mesh_->create_from_image(img, iso);
-  this->groomed_transform_ = transform;
-  auto name = this->get_original_filename_with_path().toStdString();
-  name = name.substr(0, name.find_last_of(".")) + "_DT.nrrd";
-  this->groomed_filename_ = QString::fromStdString(name);
-  std::vector<std::string> groomed_filenames{name};   // only single domain supported so far
-  this->subject_->set_groomed_filenames(groomed_filenames);
-
-  // single domain so far
-  std::vector<std::vector<double>> groomed_transforms;
-  std::vector<double> groomed_transform;
-  for (int i = 0; i < transform.size(); i++) {
-    groomed_transform.push_back(transform[i]);
-  }
-  groomed_transforms.push_back(groomed_transform);
-  this->subject_->set_groomed_transforms(groomed_transforms);
-
-}
-
-//---------------------------------------------------------------------------
-QSharedPointer<StudioMesh> Shape::get_groomed_mesh(bool wait)
-{
-  if (!this->groomed_mesh_) {
-    if (!this->subject_) {
-      std::cerr << "Error: asked for groomed mesh when none is present!\n";
-    }
-    else {
-      this->generate_meshes(this->subject_->get_groomed_filenames(), this->groomed_mesh_, false,
-                            wait);
-    }
-  }
-
-  return this->groomed_mesh_;
+  return this->reconstructed_meshes_;
 }
 
 //---------------------------------------------------------------------------
 void Shape::reset_groomed_mesh()
 {
   this->groomed_mesh_.reset();
+  this->groomed_meshes_ = MeshGroup(this->subject_->get_number_of_domains());
 }
 
 //---------------------------------------------------------------------------
@@ -230,89 +163,45 @@ void Shape::clear_reconstructed_mesh()
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_global_particles(const vnl_vector<double>& points)
+bool Shape::import_global_point_files(std::vector<std::string> filenames)
 {
-  this->global_correspondence_points_ = points;
-}
-
-//---------------------------------------------------------------------------
-bool Shape::import_global_point_file(QString filename)
-{
-
-  if (!Shape::import_point_file(filename, this->global_correspondence_points_)) {
-    return false;
+  for (int i = 0; i < filenames.size(); i++) {
+    vnl_vector<double> points;
+    if (!Shape::import_point_file(QString::fromStdString(filenames[i]), points)) {
+      return false;
+    }
+    this->global_point_filenames_.push_back(filenames[i]);
+    this->particles_.set_world_particles(i, points);
   }
-
-  this->global_point_filename_ = filename;
-
-  this->subject_->set_global_particle_filename(filename.toStdString());
-
+  this->subject_->set_world_particle_filenames(this->global_point_filenames_);
   return true;
 }
 
 //---------------------------------------------------------------------------
-bool Shape::import_points(std::vector<itk::Point<double>> points, bool local)
+bool Shape::import_local_point_files(std::vector<std::string> filenames)
 {
-  vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
-  size_t num_points = 0;
-  for (auto& a : points) {
-    double x = static_cast<double>(a[0]);
-    double y = static_cast<double>(a[1]);
-    double z = static_cast<double>(a[2]);
-
-    vtk_points->InsertNextPoint(x, y, z);
-    num_points++;
+  for (int i = 0; i < filenames.size(); i++) {
+    vnl_vector<double> points;
+    if (!Shape::import_point_file(QString::fromStdString(filenames[i]), points)) {
+      return false;
+    }
+    this->local_point_filenames_.push_back(filenames[i]);
+    this->particles_.set_local_particles(i, points);
   }
-  auto& point_list = local ? this->local_correspondence_points_ :
-                     this->global_correspondence_points_;
-
-  point_list.clear();
-  point_list.set_size(num_points * 3);
-
-  int idx = 0;
-  for (int i = 0; i < num_points; i++) {
-    double* pos = vtk_points->GetPoint(i);
-    point_list[idx++] = pos[0];
-    point_list[idx++] = pos[1];
-    point_list[idx++] = pos[2];
-  }
+  this->subject_->set_local_particle_filenames(this->local_point_filenames_);
   return true;
-}
-
-//---------------------------------------------------------------------------
-bool Shape::import_local_point_file(QString filename)
-{
-  if (!Shape::import_point_file(filename, this->local_correspondence_points_)) {
-    return false;
-  }
-
-  this->local_point_filename_ = filename;
-
-  this->subject_->set_local_particle_filename(filename.toStdString());
-
-  return true;
-}
-
-//---------------------------------------------------------------------------
-QSharedPointer<StudioMesh> Shape::get_reconstructed_mesh()
-{
-  if (!this->reconstructed_mesh_) {
-    this->reconstructed_mesh_ = this->mesh_manager_->get_mesh(this->global_correspondence_points_);
-  }
-
-  return this->reconstructed_mesh_;
 }
 
 //---------------------------------------------------------------------------
 vnl_vector<double> Shape::get_global_correspondence_points()
 {
-  return this->global_correspondence_points_;
+  return this->particles_.get_combined_global_particles();
 }
 
 //---------------------------------------------------------------------------
 vnl_vector<double> Shape::get_local_correspondence_points()
 {
-  return this->local_correspondence_points_;
+  return this->particles_.get_combined_local_particles();
 }
 
 //---------------------------------------------------------------------------
@@ -348,6 +237,36 @@ QString Shape::get_original_filename_with_path()
 }
 
 //---------------------------------------------------------------------------
+std::vector<QString> Shape::get_original_filenames()
+{
+  if (this->subject_->get_segmentation_filenames().size() < 1) {
+    return std::vector<QString>();
+  }
+
+  std::vector<QString> filenames;
+  for (auto&& name : this->subject_->get_segmentation_filenames()) {
+    filenames.push_back(QFileInfo(QString::fromStdString(name)).fileName());
+  }
+
+  return filenames;
+}
+
+//---------------------------------------------------------------------------
+std::vector<QString> Shape::get_original_filenames_with_path()
+{
+  if (this->subject_->get_segmentation_filenames().size() < 1) {
+    return std::vector<QString>();
+  }
+
+  std::vector<QString> filenames;
+  for (auto&& name : this->subject_->get_segmentation_filenames()) {
+    filenames.push_back(QString::fromStdString(name));
+  }
+
+  return filenames;
+}
+
+//---------------------------------------------------------------------------
 QString Shape::get_groomed_filename()
 {
   if (this->subject_->get_groomed_filenames().size() < 1) {
@@ -359,14 +278,15 @@ QString Shape::get_groomed_filename()
 }
 
 //---------------------------------------------------------------------------
-QString Shape::get_groomed_filename_with_path()
+QString Shape::get_groomed_filename_with_path(int domain)
 {
-  if (this->subject_->get_groomed_filenames().size() < 1) {
+  if (domain >= this->subject_->get_groomed_filenames().size()) {
     return "";
   }
-  return QString::fromStdString(this->subject_->get_groomed_filenames()[0]);
+  return QString::fromStdString(this->subject_->get_groomed_filenames()[domain]);
 }
 
+/*
 //---------------------------------------------------------------------------
 QString Shape::get_global_point_filename()
 {
@@ -390,6 +310,7 @@ QString Shape::get_local_point_filename_with_path()
 {
   return this->local_point_filename_;
 }
+*/
 
 //---------------------------------------------------------------------------
 QList<Shape::Point> Shape::get_exclusion_sphere_centers()
@@ -443,55 +364,53 @@ void Shape::set_vectors(std::vector<Shape::Point> vectors)
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_transform(const vnl_vector<double>& transform)
+void Shape::set_transform(vtkSmartPointer<vtkTransform> transform)
 {
   this->transform_ = transform;
 }
 
 //---------------------------------------------------------------------------
-vnl_vector<double> Shape::get_transform()
+vtkSmartPointer<vtkTransform> Shape::get_transform(int domain)
 {
-  auto groom_transform = this->get_groomed_transform();
-  if (groom_transform.size() != 12) {
+  auto groom_transform = this->get_groomed_transform(domain);
+  if (!groom_transform) {
     return this->transform_;
   }
+  return groom_transform;
+}
 
-  this->transform_.set_size(12);
-  for (unsigned int i = 0; i < 12; i++) {
-    this->transform_[i] = groom_transform[i];
-  }
-
+//---------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> Shape::get_original_transform(int domain)
+{
   return this->transform_;
 }
 
 //---------------------------------------------------------------------------
-void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<StudioMesh>& mesh,
+void Shape::generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_group,
                             bool save_transform, bool wait)
 {
-  if (filenames.size() < 1) {
+  if (filenames.empty()) {
     return;
   }
 
-  // single domain supported right now
-  std::string filename = filenames[0];
+  for (int i = 0; i < filenames.size(); i++) {
+    auto filename = filenames[i];
+    MeshWorkItem item;
+    item.filename = filename;
+    MeshHandle new_mesh = this->mesh_manager_->get_mesh(item, wait);
+    if (new_mesh) {
+      mesh_group.set_mesh(i, new_mesh);
 
-  MeshWorkItem item;
-  item.filename = filename;
-  MeshHandle new_mesh = this->mesh_manager_->get_mesh(item, wait);
-  if (new_mesh) {
-    mesh = new_mesh;
+      // generate a basic centering transform
+      auto com = vtkSmartPointer<vtkCenterOfMass>::New();
+      com->SetInputData(new_mesh->get_poly_data());
+      com->Update();
+      double center[3];
+      com->GetCenter(center);
 
-    /// Temporarily calculate the COM here
-    auto com = vtkSmartPointer<vtkCenterOfMass>::New();
-    com->SetInputData(mesh->get_poly_data());
-    com->Update();
-    double center[3];
-    com->GetCenter(center);
-
-    if (save_transform) {
-      this->transform_.set_size(12);
-      for (unsigned int i = 0; i < 3; i++) {
-        this->transform_[9 + i] = center[i];
+      if (save_transform && i == 0) { // only store for first domain
+        this->transform_->Identity();
+        this->transform_->Translate(-center[0], -center[1], -center[2]);
       }
     }
   }
@@ -502,7 +421,8 @@ bool Shape::import_point_file(QString filename, vnl_vector<double>& points)
 {
   std::ifstream in(filename.toStdString().c_str());
   if (!in.good()) {
-    QMessageBox::warning(0, "Unable to open file", "Error opening file: " + filename);
+    QMessageBox::warning(0, "Unable to open particle file",
+                         "Error opening particle file: \"" + filename + "\"");
     return false;
   }
   vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
@@ -532,50 +452,55 @@ bool Shape::import_point_file(QString filename, vnl_vector<double>& points)
 //---------------------------------------------------------------------------
 void Shape::load_feature(std::string display_mode, std::string feature)
 {
-  auto mesh = this->get_mesh(display_mode);
-  if (!mesh) {
+  auto group = this->get_meshes(display_mode);
+  if (!group.valid()) {
     // not ready yet
     return;
   }
-  vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
 
-  auto scalar_array = poly_data->GetPointData()->GetArray(feature.c_str());
-  if (!scalar_array) {
+  int num_domains = group.meshes().size();
 
-    if (!this->subject_) {
-      return;
+  for (int d = 0; d < num_domains; d++) {
+
+    vtkSmartPointer<vtkPolyData> poly_data = group.meshes()[d]->get_poly_data();
+
+    // first check if we already have this array
+    auto scalar_array = poly_data->GetPointData()->GetArray(feature.c_str());
+    if (!scalar_array) {
+
+      if (!this->subject_) {
+        return;
+      }
+
+      auto filenames = this->subject_->get_feature_filenames();
+
+      if (filenames.find(feature) == filenames.end()) {
+        auto original_meshes = this->get_original_meshes(true).meshes();
+
+        // assign scalars at points
+        this->load_feature_from_mesh(feature, original_meshes[d]);
+        group.meshes()[d]->apply_scalars(original_meshes[d]);
+
+      }
+      else {
+        // read the feature
+        QString filename = QString::fromStdString(filenames[feature]);
+        try {
+          ReaderType::Pointer reader = ReaderType::New();
+          reader->SetFileName(filename.toStdString());
+          reader->Update();
+          ImageType::Pointer image = reader->GetOutput();
+          group.meshes()[d]->apply_feature_map(feature, image);
+          this->apply_feature_to_points(feature, image);
+
+        } catch (itk::ExceptionObject& excep) {
+          QMessageBox::warning(0, "Unable to open file",
+                               "Error opening file: \"" + filename + "\"");
+        }
+
+      }
+
     }
-
-    auto filenames = this->subject_->get_feature_filenames();
-
-    vnl_vector<double> transform;
-    if (display_mode != Visualizer::MODE_ORIGINAL_C) {
-      transform = this->get_groomed_transform();
-    }
-
-    if (this->subject_->get_domain_types().size() > 0 &&
-        this->subject_->get_domain_types()[0] == DomainType::Image) {
-
-      // read the feature
-      ReaderType::Pointer reader = ReaderType::New();
-      reader->SetFileName(filenames[feature]);
-      reader->Update();
-      ImageType::Pointer image = reader->GetOutput();
-
-      mesh->apply_feature_map(feature, image, transform);
-      this->apply_feature_to_points(feature, image);
-
-    }
-    else if (this->subject_->get_domain_types().size() > 0 &&
-             this->subject_->get_domain_types()[0] == DomainType::Mesh) {
-
-      auto original_mesh = this->get_original_mesh(true);
-
-      mesh->apply_scalars(original_mesh, transform);
-      this->apply_feature_to_points(feature, original_mesh);
-
-    }
-
   }
 }
 
@@ -589,25 +514,26 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
 
   auto region = image->GetLargestPossibleRegion();
 
-  vnl_vector<double> transform = this->get_groomed_transform();
+  vnl_vector<double> all_locals = this->get_local_correspondence_points();
 
-  int num_points = this->local_correspondence_points_.size() / 3;
+  int num_points = all_locals.size() / 3;
 
   Eigen::VectorXf values(num_points);
 
   int idx = 0;
   for (int i = 0; i < num_points; ++i) {
 
-    ImageType::PointType pitk;
-    pitk[0] = this->local_correspondence_points_[idx++];
-    pitk[1] = this->local_correspondence_points_[idx++];
-    pitk[2] = this->local_correspondence_points_[idx++];
+    double p[3];
+    p[0] = all_locals[idx++];
+    p[1] = all_locals[idx++];
+    p[2] = all_locals[idx++];
 
-    if (transform.size() == 12) {
-      pitk[0] = pitk[0] + transform[9];
-      pitk[1] = pitk[1] + transform[10];
-      pitk[2] = pitk[2] + transform[11];
-    }
+    double* pt = p;
+
+    ImageType::PointType pitk;
+    pitk[0] = pt[0];
+    pitk[1] = pt[1];
+    pitk[2] = pt[2];
 
     LinearInterpolatorType::ContinuousIndexType index;
     image->TransformPhysicalPointToContinuousIndex(pitk, index);
@@ -624,18 +550,18 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
 }
 
 //---------------------------------------------------------------------------
-void Shape::apply_feature_to_points(std::string feature, QSharedPointer<StudioMesh> mesh)
+void Shape::load_feature_from_mesh(std::string feature, MeshHandle mesh)
 {
   vtkSmartPointer<vtkPolyData> from_mesh = mesh->get_poly_data();
 
   // Create the tree
-  vtkSmartPointer<vtkKdTreePointLocator> kDTree = vtkSmartPointer<vtkKdTreePointLocator>::New();
-  kDTree->SetDataSet(from_mesh);
-  kDTree->BuildLocator();
+  vtkSmartPointer<vtkKdTreePointLocator> kd_tree = vtkSmartPointer<vtkKdTreePointLocator>::New();
+  kd_tree->SetDataSet(from_mesh);
+  kd_tree->BuildLocator();
 
-  vnl_vector<double> transform = this->get_groomed_transform();
+  vnl_vector<double> all_locals = this->get_local_correspondence_points();
 
-  int num_points = this->local_correspondence_points_.size() / 3;
+  int num_points = all_locals.size() / 3;
 
   Eigen::VectorXf values(num_points);
 
@@ -644,18 +570,12 @@ void Shape::apply_feature_to_points(std::string feature, QSharedPointer<StudioMe
   int idx = 0;
   for (int i = 0; i < num_points; ++i) {
 
-    double pt[3];
-    pt[0] = this->local_correspondence_points_[idx++];
-    pt[1] = this->local_correspondence_points_[idx++];
-    pt[2] = this->local_correspondence_points_[idx++];
+    double p[3];
+    p[0] = all_locals[idx++];
+    p[1] = all_locals[idx++];
+    p[2] = all_locals[idx++];
 
-    if (transform.size() == 12) {
-      pt[0] = pt[0] + transform[9];
-      pt[1] = pt[1] + transform[10];
-      pt[2] = pt[2] + transform[11];
-    }
-
-    vtkIdType id = kDTree->FindClosestPoint(pt);
+    vtkIdType id = kd_tree->FindClosestPoint(p);
     vtkVariant var = from_array->GetVariantValue(id);
 
     values[i] = var.ToDouble();
@@ -663,7 +583,6 @@ void Shape::apply_feature_to_points(std::string feature, QSharedPointer<StudioMe
   this->point_features_[feature] = values;
 
 }
-
 
 //---------------------------------------------------------------------------
 Eigen::VectorXf Shape::get_point_features(std::string feature)
@@ -677,19 +596,28 @@ Eigen::VectorXf Shape::get_point_features(std::string feature)
 }
 
 //---------------------------------------------------------------------------
-TransformType Shape::get_groomed_transform()
+vtkSmartPointer<vtkTransform> Shape::get_groomed_transform(int domain)
 {
-  if (this->groomed_transform_.size() == 0) {
-    // single domain support
-    auto transforms = this->subject_->get_groomed_transforms();
-    if (transforms.size() > 0) {
-      this->groomed_transform_.set_size(transforms[0].size());
-      for (int i = 0; i < transforms[0].size(); i++) {
-        this->groomed_transform_[i] = transforms[0][i];
-      }
+  auto transforms = this->subject_->get_groomed_transforms();
+  if (domain < transforms.size()) {
+    vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+    transform->Identity();
+    if (transforms[domain].size() == 12) {
+      double tx = transforms[domain][9];
+      double ty = transforms[domain][10];
+      double tz = transforms[domain][11];
+      transform->Translate(tx, ty, tz);
     }
+    else if (transforms[domain].size() == 16) {
+      vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
+      for (int i = 0; i < 16; i++) {
+        matrix->GetData()[i] = transforms[domain][i];
+      }
+      transform->SetMatrix(matrix);
+    }
+    return transform;
   }
-  return this->groomed_transform_;
+  return nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -697,11 +625,102 @@ void Shape::set_point_features(std::string feature, Eigen::VectorXf values)
 {
   this->point_features_[feature] = values;
 
-  auto mesh = this->get_mesh(Visualizer::MODE_RECONSTRUCTION_C);
+  auto group = this->get_meshes(Visualizer::MODE_RECONSTRUCTION_C);
 
-  if (mesh) {
-    mesh->interpolate_scalars_to_mesh(feature, this->global_correspondence_points_, values);
+  if (group.valid()) {
+    for (auto mesh : group.meshes()) {
+      mesh->interpolate_scalars_to_mesh(feature,
+                                        this->get_global_correspondence_points(), values);
+    }
   }
+}
+
+//---------------------------------------------------------------------------
+void Shape::set_particles(StudioParticles particles)
+{
+  this->particles_ = particles;
+}
+
+//---------------------------------------------------------------------------
+StudioParticles Shape::get_particles()
+{
+  return this->particles_;
+}
+
+//---------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> Shape::get_reconstruction_transform(int domain)
+{
+  if (domain < this->reconstruction_transforms_.size()) {
+    return this->reconstruction_transforms_[domain];
+  }
+
+  // no transforms, just return identity
+  vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+  return transform;
+}
+
+//---------------------------------------------------------------------------
+vnl_vector<double> Shape::get_global_correspondence_points_for_display()
+{
+  auto worlds = this->particles_.get_world_particles();
+  int size = 0;
+  for (int i = 0; i < worlds.size(); i++) {
+    size += worlds[i].size();
+  }
+  vnl_vector<double> points;
+  points.set_size(size);
+
+  int idx = 0;
+  for (int i = 0; i < worlds.size(); i++) {
+    for (int j = 0; j < worlds[i].size(); j += 3) {
+      double p[3];
+      p[0] = worlds[i][j + 0];
+      p[1] = worlds[i][j + 1];
+      p[2] = worlds[i][j + 2];
+      if (this->reconstruction_transforms_.size() > i) {
+        double* pt = this->reconstruction_transforms_[i]->TransformPoint(p);
+        points[idx++] = pt[0];
+        points[idx++] = pt[1];
+        points[idx++] = pt[2];
+      }
+      else {
+        points[idx++] = p[0];
+        points[idx++] = p[1];
+        points[idx++] = p[2];
+      }
+    }
+  }
+
+  return points;
+}
+
+//---------------------------------------------------------------------------
+void Shape::set_reconstruction_transforms(std::vector<vtkSmartPointer<vtkTransform>> transforms)
+{
+  this->reconstruction_transforms_ = transforms;
+}
+
+//---------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> Shape::get_alignment(int domain)
+{
+  auto groom_transform = this->get_groomed_transform(domain);
+  if (!groom_transform) {
+    vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+    transform->Identity();
+    return transform;
+  }
+  return groom_transform;
+}
+
+//---------------------------------------------------------------------------
+bool Shape::has_alignment()
+{
+  auto groom_transform = this->get_groomed_transform(0);
+  if (groom_transform) {
+    return true;
+  }
+
+  return false;
 }
 
 }

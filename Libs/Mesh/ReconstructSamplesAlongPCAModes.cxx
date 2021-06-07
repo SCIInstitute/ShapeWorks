@@ -48,7 +48,7 @@ int DoIt(InputParams params)
     typedef typename ReconstructionType::PointType                                               PointType;
 
     ReconstructionType reconstructor;
-    ParticleShapeStatistics shapeStats;
+    shapeworks::ParticleShapeStatistics shapeStats;
 
     std::string denseFilename      ;
     std::string sparseFilename     ;
@@ -132,7 +132,7 @@ int DoIt(InputParams params)
     }
 
     // start sampling along each mode
-    vnl_vector<double> eigenValues  = shapeStats.Eigenvalues();
+    std::vector<double> eigenValues  = shapeStats.Eigenvalues();
     vnl_matrix<double> eigenVectors = shapeStats.Eigenvectors();
     vnl_vector<double> mean         = shapeStats.Mean();
 

@@ -8,6 +8,7 @@
 #include <QCloseEvent>
 #include <QTextStream>
 #include <QMimeData>
+#include <QProcess>
 
 // vtk
 #include <vtkRenderWindow.h>
@@ -61,12 +62,20 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->recent_file_actions_.append(this->ui_->action_recent2);
   this->recent_file_actions_.append(this->ui_->action_recent3);
   this->recent_file_actions_.append(this->ui_->action_recent4);
+  this->recent_file_actions_.append(this->ui_->action_recent5);
+  this->recent_file_actions_.append(this->ui_->action_recent6);
+  this->recent_file_actions_.append(this->ui_->action_recent7);
+  this->recent_file_actions_.append(this->ui_->action_recent8);
 
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 8; i++) {
     connect(this->recent_file_actions_[i], SIGNAL(triggered()),
             this, SLOT(handle_open_recent()));
   }
   this->update_recent_files();
+
+#if defined( Q_OS_LINUX )
+  this->ui_->action_show_project_folder->setVisible(false);
+#endif
 
   this->splash_screen_ = QSharedPointer<SplashScreen>(new SplashScreen(this, this->preferences_));
   connect(this->splash_screen_.data(), &SplashScreen::open_project, this,
@@ -127,7 +136,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   menu->addAction(widget_action);
 
   //analysis tool initializations
-  this->analysis_tool_ = QSharedPointer<AnalysisTool>(new AnalysisTool(preferences_));
+  this->analysis_tool_ = QSharedPointer<AnalysisTool>::create(preferences_);
   this->analysis_tool_->set_app(this);
   this->ui_->stacked_widget->addWidget(this->analysis_tool_.data());
   connect(this->analysis_tool_.data(), SIGNAL(update_view()), this,
@@ -165,11 +174,11 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->lightbox_ = LightboxHandle(new Lightbox());
 
   // visualizer initializations
-  this->visualizer_ = QSharedPointer<Visualizer>(new Visualizer(preferences_));
+  this->visualizer_ = QSharedPointer<Visualizer>::create(preferences_);
   this->visualizer_->set_lightbox(this->lightbox_);
 
   // groom tool initializations
-  this->groom_tool_ = QSharedPointer<GroomTool>(new GroomTool());
+  this->groom_tool_ = QSharedPointer<GroomTool>::create(preferences_);
   this->ui_->stacked_widget->addWidget(this->groom_tool_.data());
   connect(this->groom_tool_.data(), SIGNAL(groom_complete()),
           this, SLOT(handle_groom_complete()));
@@ -181,7 +190,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           this, &ShapeWorksStudioApp::handle_progress);
 
   // optimize tool initializations
-  this->optimize_tool_ = QSharedPointer<OptimizeTool>(new OptimizeTool(preferences_));
+  this->optimize_tool_ = QSharedPointer<OptimizeTool>::create(this->preferences_);
+
   this->ui_->stacked_widget->addWidget(this->optimize_tool_.data());
   connect(this->optimize_tool_.data(), SIGNAL(optimize_complete()),
           this, SLOT(handle_optimize_complete()));
@@ -325,6 +335,33 @@ void ShapeWorksStudioApp::on_action_open_project_triggered()
   this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
   this->open_project(filename);
   this->enable_possible_actions();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_action_show_project_folder_triggered()
+{
+  auto filename = this->session_->get_filename();
+  if (filename == "") {
+    this->handle_message("No project");
+  }
+
+  auto qstring_path = QFileInfo(filename).absoluteDir().absolutePath();
+
+  QProcess process;
+  process.setReadChannelMode(QProcess::MergedChannels);
+
+#ifdef _WIN32
+  qstring_path = qstring_path.replace( QString( "/" ), QString( "\\" ) );
+    process.start( "explorer.exe", QStringList() << qstring_path );
+#else
+  process.start("open", QStringList() << "-R" << filename);
+#endif
+
+  if (!process.waitForFinished()) {
+    QString error = QString("Could not open project: ") +
+                    process.errorString() + ".";
+    STUDIO_LOG_ERROR(error);
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -646,7 +683,7 @@ void ShapeWorksStudioApp::update_table()
   auto feature_maps = project->get_feature_names();
   for (const std::string& feature : feature_maps) {
     QString item = QString::fromStdString(feature);
-    item = item.remove(0, 8);
+    item = item.replace("feature_", "");
     this->ui_->features->addItem(item);
   }
   this->ui_->features->setCurrentText(current_feature);
@@ -728,12 +765,10 @@ void ShapeWorksStudioApp::handle_progress(int value)
   if (value < 100) {
     this->progress_bar_->setVisible(true);
     this->progress_bar_->setValue(value);
-    this->disable_all_actions();
   }
   else {
     this->progress_bar_->setValue(100);
     this->progress_bar_->setVisible(false);
-    //this->enable_possible_actions();
   }
   this->handle_message(this->current_message_);
 }
@@ -775,6 +810,11 @@ void ShapeWorksStudioApp::new_session()
 
   connect(this->session_->get_mesh_manager().data(), &MeshManager::error_encountered,
           this, &ShapeWorksStudioApp::handle_error);
+
+  connect(this->session_->get_mesh_manager().data(), &MeshManager::progress,
+          this, &ShapeWorksStudioApp::handle_progress);
+  connect(this->session_->get_mesh_manager().data(), &MeshManager::status,
+          this, &ShapeWorksStudioApp::handle_status);
 
   connect(this->session_.data(), SIGNAL(data_changed()), this, SLOT(handle_project_changed()));
   connect(this->session_.data(), SIGNAL(points_changed()), this, SLOT(handle_points_changed()));
@@ -871,6 +911,12 @@ void ShapeWorksStudioApp::set_view_combo_item_enabled(int item, bool value)
 }
 
 //---------------------------------------------------------------------------
+bool ShapeWorksStudioApp::is_view_combo_item_enabled(int item)
+{
+  return this->ui_->view_mode_combobox->itemData(item, ITEM_ROLE) == ITEM_ENABLE;
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_import_mode_triggered()
 {
   this->session_->parameters().set("tool_state", Session::DATA_C);
@@ -903,6 +949,9 @@ void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_project_changed()
 {
+  if (this->is_loading_) {
+    return;
+  }
   this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->session_->original_present());
   this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->session_->groomed_present());
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
@@ -951,14 +1000,18 @@ void ShapeWorksStudioApp::handle_points_changed()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_optimize_complete()
 {
-  this->session_->get_mesh_manager()->get_surface_reconstructor()->resetReconstruct();
+  int num_domains = this->session_->get_domains_per_shape();
+  for (int i = 0; i < num_domains; i++) {
+    this->session_->get_mesh_manager()->get_surface_reconstructor(i)->resetReconstruct();
+  }
   this->analysis_tool_->reset_stats();
   this->analysis_tool_->initialize_mesh_warper();
   this->session_->handle_clear_cache();
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
   this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::GROOMED);
   this->visualizer_->set_display_mode(this->ui_->view_mode_combobox->currentText().toStdString());
-  this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape_points());
+  this->visualizer_->set_mean(
+    this->analysis_tool_->get_mean_shape_points().get_combined_global_particles());
   this->visualizer_->update_lut();
   this->update_display();
 
@@ -972,7 +1025,8 @@ void ShapeWorksStudioApp::handle_reconstruction_complete()
 {
   this->session_->handle_clear_cache();
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
-  this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape_points());
+  this->visualizer_->set_mean(
+    this->analysis_tool_->get_mean_shape_points().get_combined_global_particles());
   this->visualizer_->update_lut();
   this->update_display(true);
   this->enable_possible_actions();
@@ -992,6 +1046,8 @@ void ShapeWorksStudioApp::handle_groom_complete()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_optimize_start()
 {
+  this->visualizer_->set_selected_point_one(-1);
+  this->visualizer_->set_selected_point_two(-1);
   this->ui_->action_analysis_mode->setEnabled(false);
 }
 
@@ -1039,7 +1095,7 @@ void ShapeWorksStudioApp::update_display(bool force)
     return;
   }
 
-  if (this->block_update_) {
+  if (this->block_update_ || this->is_loading_) {
     return;
   }
 
@@ -1047,8 +1103,13 @@ void ShapeWorksStudioApp::update_display(bool force)
 
   this->visualizer_->set_center(this->ui_->center_checkbox->isChecked());
 
-  bool reconstruct_ready =
-    this->session_->get_mesh_manager()->get_surface_reconstructor()->hasDenseMean();
+  bool reconstruct_ready = true;
+
+  for (int i = 0; i < this->session_->get_domains_per_shape(); i++) {
+    if (!this->session_->get_mesh_manager()->get_surface_reconstructor(i)->hasDenseMean()) {
+      reconstruct_ready = false;
+    }
+  }
 
   if (!this->session_->groomed_present() && this->session_->particles_present()) {
     // legacy will be used
@@ -1098,7 +1159,8 @@ void ShapeWorksStudioApp::update_display(bool force)
       this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
 
       this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
-      this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape_points());
+      this->visualizer_->set_mean(
+        this->analysis_tool_->get_mean_shape_points().get_combined_global_particles());
 
       this->visualizer_->display_shape(this->analysis_tool_->get_mean_shape());
     }
@@ -1152,17 +1214,18 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->new_session();
   this->handle_message("Loading Project: " + filename.toStdString());
   this->handle_progress(-1);
+  this->is_loading_ = true;
 
   try {
     if (!this->session_->load_project(filename)) {
       this->enable_possible_actions();
-      this->handle_message("Project failed to load");
+      this->handle_error("Project failed to load");
       this->handle_progress(100);
       return;
     }
   } catch (std::runtime_error e) {
     this->handle_error(e.what());
-    this->handle_message("Project failed to load");
+    this->handle_error("Project failed to load");
     this->handle_progress(100);
   }
 
@@ -1173,7 +1236,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
       "Some features may not work and some settings may be incorrect or missing");
   }
 
-  this->is_loading_ = true;
   this->analysis_tool_->reset_stats();
   this->analysis_tool_->initialize_mesh_warper();
 
@@ -1221,6 +1283,8 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   this->is_loading_ = false;
 
+  this->handle_project_changed();
+
   if (this->session_->is_light_project()) {
     this->reset_num_viewers();
   }
@@ -1229,6 +1293,12 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->handle_glyph_changed();
 
   this->setWindowTitle(this->session_->get_display_name());
+
+  // final check after loading that the view mode isn't set to something invalid
+  if (!this->is_view_combo_item_enabled(this->ui_->view_mode_combobox->currentIndex())) {
+    this->set_view_mode(Visualizer::MODE_ORIGINAL_C);
+    this->update_view_mode();
+  }
 
   this->handle_message("Project loaded");
   this->handle_progress(100);
@@ -1259,6 +1329,26 @@ void ShapeWorksStudioApp::on_action_export_current_mesh_triggered()
   writer->SetInputData(poly_data);
   writer->WriteArrayMetaDataOff();
   writer->Write();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_action_export_current_particles_triggered()
+{
+  auto dir = preferences_.get_last_directory() + "/";
+  QString filename = QFileDialog::getSaveFileName(this, tr("Export Current Particles"),
+                                                  dir + "shape",
+                                                  tr("Particle files (*.particles)"));
+  if (filename.isEmpty()) {
+    return;
+  }
+  this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
+
+  auto particles = this->visualizer_->get_current_shape().get_combined_global_particles();
+
+  if (!ShapeWorksStudioApp::write_particle_file(filename.toStdString(), particles)) {
+    this->handle_error("Error writing particle file: " + filename.toStdString());
+  }
+  this->handle_message("Successfully exported particle file");
 }
 
 //---------------------------------------------------------------------------
@@ -1374,7 +1464,7 @@ void ShapeWorksStudioApp::compute_mode_shape()
   int pca_mode = this->analysis_tool_->getPCAMode();
   double pca_value = this->analysis_tool_->get_pca_value();
 
-  this->visualizer_->display_shape(this->analysis_tool_->get_shape_points(pca_mode, pca_value));
+  this->visualizer_->display_shape(this->analysis_tool_->get_mode_shape(pca_mode, pca_value));
 }
 
 //---------------------------------------------------------------------------
@@ -1406,7 +1496,7 @@ void ShapeWorksStudioApp::update_recent_files()
   QStringList no_dupes;
   for (int i = 0; i < recent_files.size(); i++) {
     bool found_dupe = false;
-    for (int j = i + 1; j < recent_files.size(); j++) {
+    for (int j = 0; j < i; j++) {
       if (QFileInfo(recent_files[i]).canonicalFilePath() ==
           QFileInfo(recent_files[j]).canonicalFilePath()) {
         found_dupe = true;
@@ -1418,7 +1508,7 @@ void ShapeWorksStudioApp::update_recent_files()
   }
   recent_files = no_dupes;
 
-  int num_recent_files = qMin(recent_files.size(), 4); // only 4 max in the file menu
+  int num_recent_files = qMin(recent_files.size(), 8); // only 8 max in the file menu
 
   for (int i = 0; i < num_recent_files; i++) {
     QString text = tr("&%1 %2").arg(i + 1).arg(QFileInfo(recent_files[i]).fileName());
@@ -1427,7 +1517,7 @@ void ShapeWorksStudioApp::update_recent_files()
     this->recent_file_actions_[i]->setVisible(true);
   }
 
-  for (int j = num_recent_files; j < 4; ++j) {
+  for (int j = num_recent_files; j < 8; ++j) {
     this->recent_file_actions_[j]->setVisible(false);
   }
 }
@@ -1491,7 +1581,8 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered()
   if (this->analysis_tool_->get_analysis_mode() == "all samples") {
     auto shapes = this->session_->get_shapes();
     for (size_t i = 0; i < shapes.size(); i++) {
-      auto msh = shapes[i]->get_reconstructed_mesh()->get_poly_data();
+      /// TODO: multiple-domain support
+      auto msh = shapes[i]->get_reconstructed_meshes().meshes()[0]->get_poly_data();
       vtkPolyDataWriter* writer = vtkPolyDataWriter::New();
       auto name = filename.toStdString();
       name = name.substr(0, name.find_last_of(".")) + std::to_string(i) + ".vtk";
@@ -1503,7 +1594,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered()
     this->handle_message("Successfully exported PCA Mesh files: " + filename.toStdString());
     return;
   }
-  auto shape = this->visualizer_->getCurrentShape();
+  auto shape = this->visualizer_->get_current_shape();
   /// TODO: fix
   //auto msh = this->session_->get_mesh_manager()->get_mesh(shape);
 
@@ -1571,35 +1662,74 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered()
 {
-  QString fname("Untitled.pts");
+  QString fname("Untitled.particles");
   auto dir = this->preferences_.get_last_directory().toStdString() + "/";
-  QString filename = QFileDialog::getSaveFileName(this, tr("Save PCA Mode PCA files..."),
+  QString filename = QFileDialog::getSaveFileName(this, tr("Save PCA Mode Particle files..."),
                                                   QString::fromStdString(dir) + fname,
-                                                  tr("PTS files (*.pts)"));
-  auto basename = filename.toStdString().substr(0,
-                                                filename.toStdString().find_last_of(".pts") - 3);
+                                                  tr("Particle files (*.particles)"));
+  auto basename = filename.toStdString().
+    substr(0, filename.toStdString().find_last_of(".particles") - 9);
   if (filename.isEmpty()) {
     return;
   }
   this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
 
-  float range = this->preferences_.get_pca_range();
-  float steps = static_cast<float>(this->preferences_.get_pca_steps());
-
+  double range = this->preferences_.get_pca_range();
+  double steps = static_cast<double>(this->preferences_.get_pca_steps());
   int mode = this->analysis_tool_->getPCAMode();
-  auto increment = range * 2.f / steps;
-  size_t i = 0;
-  for (float pca = -range; pca <= range; pca += increment, i++) {
-    auto pts = this->analysis_tool_->get_shape_points(mode, pca);
-    std::ofstream out(basename + std::to_string(mode) + "-" + std::to_string(i) + ".pts");
-    size_t newline = 1;
-    for (auto& a : pts) {
-      out << a << (newline % 3 == 0 ? "\n" : "    ");
-      newline++;
-    }
-    out.close();
+  int half_steps = (steps / 2.0);
+  double increment = range / half_steps;
+
+  auto mean_pts = this->analysis_tool_->get_shape_points(mode, 0).get_combined_global_particles();
+  std::string mean_name = basename + "_mean.particles";
+  if (!ShapeWorksStudioApp::write_particle_file(mean_name, mean_pts)) {
+    this->handle_error("Error writing particle file: " + mean_name);
+    return;
   }
-  this->handle_message("Successfully exported PCA Mode PTS files: " + filename.toStdString());
+
+  for (int i = 1; i <= half_steps; i++) {
+    double pca_value = increment * i;
+    std::string pca_string = QString::number(pca_value, 'g', 2).toStdString();
+
+    std::string minus_name =
+      basename + "_mode_" + std::to_string(mode) + "_minus_" + pca_string + ".pts";
+    auto pts = this->analysis_tool_->get_shape_points(mode,
+                                                      -pca_value).get_combined_global_particles();
+    if (!ShapeWorksStudioApp::write_particle_file(minus_name, pts)) {
+      this->handle_error("Error writing particle file: " + minus_name);
+      return;
+    }
+
+    std::string plus_name =
+      basename + "_mode_" + std::to_string(mode) + "_plus_" + pca_string + ".pts";
+    pts = this->analysis_tool_->get_shape_points(mode, pca_value).get_combined_global_particles();
+    if (!ShapeWorksStudioApp::write_particle_file(plus_name, pts)) {
+      this->handle_error("Error writing particle file: " + plus_name);
+      return;
+    }
+  }
+
+  this->handle_message("Successfully exported PCA Mode particle files");
+}
+
+//---------------------------------------------------------------------------
+bool ShapeWorksStudioApp::write_particle_file(std::string filename, vnl_vector<double> particles)
+{
+  std::ofstream out(filename);
+  if (!out) {
+    return false;
+  }
+  size_t newline = 1;
+  for (auto& p : particles) {
+    out << p << (newline % 3 == 0 ? "\n" : "    ");
+    newline++;
+  }
+  out.close();
+  if (out.bad()) {
+    return false;
+  }
+
+  return true;
 }
 
 //---------------------------------------------------------------------------

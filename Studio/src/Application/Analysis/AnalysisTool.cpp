@@ -176,31 +176,10 @@ void AnalysisTool::on_reconstructionButton_clicked()
   QThread* thread = new QThread;
   std::vector<std::vector<itk::Point<double>>> local, global;
   std::vector<std::string> images;
-  auto shapes = this->session_->get_shapes();
-  local.resize(shapes.size());
-  global.resize(shapes.size());
-  images.resize(shapes.size());
-  size_t ii = 0;
-  for (auto& s : shapes) {
-    auto l = s->get_local_correspondence_points();
-    auto g = s->get_global_correspondence_points();
-    for (size_t i = 0; i < l.size(); i += 3) {
-      itk::Point<double> pt, pt2;
-      pt[0] = l[i];
-      pt[1] = l[i + 1];
-      pt[2] = l[i + 2];
-      pt2[0] = g[i];
-      pt2[1] = g[i + 1];
-      pt2[2] = g[i + 2];
-      local[ii].push_back(pt);
-      global[ii].push_back(pt2);
-    }
-    std::string image = s->get_groomed_filename_with_path().toStdString();
-    images[ii] = image;
-    ii++;
-  }
+
   ShapeworksWorker* worker = new ShapeworksWorker(
-    ShapeworksWorker::ReconstructType, nullptr, nullptr, nullptr, this->session_,
+    ShapeworksWorker::ReconstructType, nullptr, nullptr,
+    nullptr, this->session_,
     local, global, images,
     this->ui_->maxAngle->value(),
     this->ui_->meshDecimation->value(),
@@ -405,6 +384,8 @@ bool AnalysisTool::compute_stats()
     return false;
   }
 
+  this->compute_reconstructed_domain_transforms();
+
   this->ui_->pcaModeSpinBox->setMaximum(
     std::max<double>(1, this->session_->get_shapes().size() - 1));
 
@@ -415,7 +396,7 @@ bool AnalysisTool::compute_stats()
   std::string left_group = this->ui_->group_left->currentText().toStdString();
   std::string right_group = this->ui_->group_right->currentText().toStdString();
 
-  bool groups_enabled = group_set != "-None-";
+  bool groups_enabled = this->groups_active();
 
   this->group1_list_.clear();
   this->group2_list_.clear();
@@ -452,11 +433,11 @@ bool AnalysisTool::compute_stats()
   int point_size = points[0].size();
   for (auto&& p : points) {
     if (p.size() != point_size) {
-      this->handle_error("Inconsistency in data, particle files must contain the same number of points");
+      this->handle_error(
+        "Inconsistency in data, particle files must contain the same number of points");
       return false;
     }
   }
-
 
   this->stats_.ImportPoints(points, group_ids);
   this->stats_.ComputeModes();
@@ -485,36 +466,36 @@ bool AnalysisTool::compute_stats()
 }
 
 //-----------------------------------------------------------------------------
-const vnl_vector<double>& AnalysisTool::get_mean_shape_points()
+StudioParticles AnalysisTool::get_mean_shape_points()
 {
   if (!this->compute_stats()) {
-    return this->empty_shape_;
+    return StudioParticles();
   }
 
   if (this->ui_->group1_button->isChecked() || this->ui_->difference_button->isChecked()) {
-    return this->stats_.Group1Mean();
+    return this->convert_from_combined(this->stats_.Group1Mean());
   }
   else if (this->ui_->group2_button->isChecked()) {
-    return this->stats_.Group2Mean();
+    return this->convert_from_combined(this->stats_.Group2Mean());
   }
   else if (this->ui_->mean_button->isChecked()) {
-    return this->stats_.Mean();
+    return this->convert_from_combined(this->stats_.Mean());
   }
 
   if (this->groups_active()) {
     auto group_value = this->get_group_value();
     this->temp_shape_ = this->stats_.Group1Mean() + (this->stats_.GroupDifference() * group_value);
-    return this->temp_shape_;
+    return this->convert_from_combined(this->temp_shape_);
   }
 
-  return this->stats_.Mean();
+  return this->convert_from_combined(this->stats_.Mean());
 }
 
 //-----------------------------------------------------------------------------
-const vnl_vector<double>& AnalysisTool::get_shape_points(int mode, double value)
+StudioParticles AnalysisTool::get_shape_points(int mode, double value)
 {
   if (!this->compute_stats() || this->stats_.Eigenvectors().size() <= 1) {
-    return this->empty_shape_;
+    return StudioParticles();
   }
   if (mode + 2 > this->stats_.Eigenvalues().size()) {
     mode = this->stats_.Eigenvalues().size() - 2;
@@ -551,7 +532,13 @@ const vnl_vector<double>& AnalysisTool::get_shape_points(int mode, double value)
 
   this->temp_shape_ = this->stats_.Mean() + (e * (value * lambda));
 
-  return this->temp_shape_;
+  return this->convert_from_combined(this->temp_shape_);
+}
+
+//---------------------------------------------------------------------------
+ShapeHandle AnalysisTool::get_mode_shape(int mode, double value)
+{
+  return this->create_shape_from_points(this->get_shape_points(mode, value));
 }
 
 //---------------------------------------------------------------------------
@@ -766,6 +753,7 @@ void AnalysisTool::enable_actions(bool newly_enabled)
   this->reconstruction_method_changed();
 
   this->update_group_boxes();
+  this->ui_->sampleSpinBox->setMaximum(this->session_->get_num_shapes() - 1);
 }
 
 //---------------------------------------------------------------------------
@@ -796,7 +784,7 @@ ShapeHandle AnalysisTool::get_mean_shape()
     shape->set_vectors(this->get_group_difference_vectors());
   }
 
-  int num_points = shape_points.size() / 3;
+  int num_points = shape_points.get_combined_global_particles().size() / 3;
   std::vector<Eigen::VectorXf> values;
 
   if (this->feature_map_ != "") {
@@ -866,13 +854,13 @@ ShapeHandle AnalysisTool::get_mean_shape()
 }
 
 //---------------------------------------------------------------------------
-ShapeHandle AnalysisTool::create_shape_from_points(const vnl_vector<double>& points)
+ShapeHandle AnalysisTool::create_shape_from_points(StudioParticles points)
 {
-  MeshHandle mesh = this->session_->get_mesh_manager()->get_mesh(points);
   ShapeHandle shape = ShapeHandle(new Shape());
   shape->set_mesh_manager(this->session_->get_mesh_manager());
-  shape->set_reconstructed_mesh(mesh);
-  shape->set_global_particles(points);
+  shape->set_particles(points);
+  shape->get_reconstructed_meshes();
+  shape->set_reconstruction_transforms(this->reconstruction_transforms_);
   return shape;
 }
 
@@ -1015,7 +1003,7 @@ bool AnalysisTool::is_group_active(int shape_index)
   std::string left_group = this->ui_->group_left->currentText().toStdString();
   std::string right_group = this->ui_->group_right->currentText().toStdString();
 
-  bool groups_enabled = group_set != "-None-";
+  bool groups_enabled = this->groups_active();
 
   auto shapes = this->session_->get_shapes();
   auto shape = shapes[shape_index];
@@ -1062,21 +1050,25 @@ void AnalysisTool::initialize_mesh_warper()
       return;
     }
     QSharedPointer<Shape> median_shape = this->session_->get_shapes()[median];
-    vtkSmartPointer<vtkPolyData> poly_data = median_shape->get_groomed_mesh(true)->get_poly_data();
 
-    if (!poly_data) {
+    auto mesh_group = median_shape->get_groomed_meshes(true);
+
+    if (!mesh_group.valid()) {
       STUDIO_LOG_ERROR("Unable to set reference mesh, groomed mesh is unavailable");
       return;
     }
+    auto meshes = mesh_group.meshes();
+    for (int i = 0; i < mesh_group.meshes().size(); i++) {
 
-    vnl_vector<double> particles = median_shape->get_local_correspondence_points();
-    Eigen::MatrixXd points = Eigen::Map<const Eigen::VectorXd>(
-      (double*) particles.data_block(),      particles.size());
-    points.resize(3, points.size() / 3);
-    points.transposeInPlace();
+      vnl_vector<double> particles = median_shape->get_particles().get_local_particles(i);
+      Eigen::MatrixXd points = Eigen::Map<const Eigen::VectorXd>(
+        (double*) particles.data_block(), particles.size());
+      points.resize(3, points.size() / 3);
+      points.transposeInPlace();
 
-
-    this->session_->get_mesh_manager()->get_mesh_warper()->set_reference_mesh(poly_data, points);
+      this->session_->get_mesh_manager()->get_mesh_warper(i)->set_reference_mesh(
+        meshes[i]->get_poly_data(), points);
+    }
   }
 }
 
@@ -1115,6 +1107,54 @@ void AnalysisTool::set_active(bool active)
 bool AnalysisTool::get_active()
 {
   return this->active_;
+}
+
+//---------------------------------------------------------------------------
+StudioParticles AnalysisTool::convert_from_combined(const vnl_vector<double>& points)
+{
+  auto base = this->session_->get_shapes()[0]->get_particles();
+
+  StudioParticles particles;
+  auto worlds = base.get_world_particles();
+  int idx = 0;
+  for (int d = 0; d < worlds.size(); d++) {
+    vnl_vector<double> new_world(worlds[d].size());
+    for (int i = 0; i < worlds[d].size(); i++) {
+      new_world[i] = points[idx++];
+    }
+    particles.set_world_particles(d, new_world);
+
+  }
+
+  return particles;
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::compute_reconstructed_domain_transforms()
+{
+  this->reconstruction_transforms_.resize(this->session_->get_domains_per_shape());
+  auto shapes = this->session_->get_shapes();
+  for (int domain = 0; domain < this->session_->get_domains_per_shape(); domain++) {
+    int num_shapes = shapes.size();
+    auto transform = vtkSmartPointer<vtkTransform>::New();
+    double* values = transform->GetMatrix()->GetData();
+
+    for (int i = 0; i < shapes.size(); i++) {
+      vtkSmartPointer<vtkTransform> base = shapes[i]->get_alignment(0);
+      vtkSmartPointer<vtkTransform> offset = shapes[i]->get_alignment(domain);
+
+      for (int j = 0; j < 16; j++) {
+        values[j] += (base->GetMatrix()->GetData()[j] -
+                      offset->GetMatrix()->GetData()[j]) / num_shapes;
+      }
+    }
+    this->reconstruction_transforms_[domain] = transform;
+  }
+
+  for (int s = 0; s < shapes.size(); s++) {
+    shapes[s]->set_reconstruction_transforms(this->reconstruction_transforms_);
+  }
+
 }
 
 }

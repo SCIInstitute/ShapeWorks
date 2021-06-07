@@ -13,7 +13,6 @@
 #include <QWaitCondition>
 #include <QThreadPool>
 
-
 #include <Data/MeshCache.h>
 #include <Data/MeshGenerator.h>
 #include <Data/MeshWorkQueue.h>
@@ -23,7 +22,6 @@
 #include <Data/SurfaceReconstructor.h>
 
 #include <Libs/Mesh/MeshWarper.h>
-
 
 namespace shapeworks {
 
@@ -41,16 +39,16 @@ public:
   MeshHandle get_mesh(const MeshWorkItem& item, bool wait = false);
 
   //! get a mesh for a set of points
-  MeshHandle get_mesh(const vnl_vector<double>& points);
+  MeshHandle get_mesh(const vnl_vector<double>& points, int domain);
 
-  //! return the surface reconstructor
-  QSharedPointer<SurfaceReconstructor> get_surface_reconstructor();
+  //! return the surface reconstructor for a given domain
+  std::shared_ptr<SurfaceReconstructor> get_surface_reconstructor(int domain);
 
-  //! return the mesh warper
-  QSharedPointer<MeshWarper> get_mesh_warper();
+  //! return the mesh warper for a given domain
+  std::shared_ptr<MeshWarper> get_mesh_warper(int domain);
 
   //! return the mesh generator
-  QSharedPointer<MeshGenerator> get_mesh_generator()
+  std::shared_ptr<MeshGenerator> get_mesh_generator()
   { return this->mesh_generator_; }
 
   //! clear the cache
@@ -60,13 +58,20 @@ public Q_SLOTS:
 
   void handle_thread_complete(const MeshWorkItem& item, MeshHandle mesh);
 
+  void handle_warper_progress();
+
 Q_SIGNALS:
 
   void new_mesh();
 
   void error_encountered(std::string message);
 
+  void progress(int);
+  void status(std::string);
+
 private:
+
+  std::shared_ptr<MeshReconstructors> reconstructors_ = std::make_shared<MeshReconstructors>();
 
   void check_error_status(MeshHandle mesh);
 
@@ -76,14 +81,10 @@ private:
   MeshCache mesh_cache_;
 
   // the mesh generator
-  QSharedPointer<MeshGenerator> mesh_generator_ = QSharedPointer<MeshGenerator>::create();
+  std::shared_ptr<MeshGenerator> mesh_generator_ = std::make_shared<MeshGenerator>();
 
   // queue of meshes to build
   MeshWorkQueue work_queue_;
-
-  QSharedPointer<SurfaceReconstructor> surface_reconstructor_;
-
-  QSharedPointer<MeshWarper> mesh_warper_ = QSharedPointer<MeshWarper>::create();
 
   QThreadPool thread_pool_;
 

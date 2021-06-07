@@ -4,7 +4,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
-def scree_plot(particles_glob, working_dir):
+def scree_plot(particles_glob, working_dir, interactive):
     """
     scree_plot takes a glob expression for a list of particles and generates
     a scree_plot showing the explainability of each mode. This is used to compute
@@ -20,6 +20,9 @@ def scree_plot(particles_glob, working_dir):
           f'           compactness --nmodes 1 --saveto {working_dir}/scree.txt'
     print(cmd)
     subprocess.check_call(cmd, shell=True)
+
+    if not interactive:
+        return
 
     # Load scree plot data
     Y = np.loadtxt(f'{working_dir}/scree.txt')
@@ -41,7 +44,7 @@ def scree_plot(particles_glob, working_dir):
 
     print()
 
-def generalization(particles_glob, working_dir):
+def generalization(particles_glob, working_dir, interactive):
     """
     generalization takes a glob expression for a list of particles and computes the generalization
     of the SSM. The reconstructions are saved, and the 0th and 100th percentile are opened in
@@ -58,6 +61,9 @@ def generalization(particles_glob, working_dir):
     print(cmd)
     subprocess.check_call(cmd, shell=True)
 
+    if not interactive:
+        return
+
     print("*************************")
     print("* Best reconstruction")
     print("*************************")
@@ -70,7 +76,7 @@ def generalization(particles_glob, working_dir):
 
     print()
 
-def specificity(particles_glob, working_dir):
+def specificity(particles_glob, working_dir, interactive):
     """
     specificity takes a glob expression for a list of particles and computes the specficity
     of the SSM. The sampled reconstructions are saved, and the 0th and 100th percentile are opened in
@@ -86,6 +92,9 @@ def specificity(particles_glob, working_dir):
           f'           specificity --nmodes 1 --saveto {working_dir}/'
     print(cmd)
     subprocess.check_call(cmd, shell=True)
+
+    if not interactive:
+        return
 
     print("*************************")
     print("* Best reconstruction")

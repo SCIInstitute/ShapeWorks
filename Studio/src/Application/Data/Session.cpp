@@ -8,17 +8,15 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QXmlStreamWriter>
-#include <QXmlStreamReader>
 #include <QProgressDialog>
 
 #include <Libs/Mesh/MeshUtils.h>
 #include <Libs/Utils/StringUtils.h>
 
 #ifdef _WIN32
-#include <direct.h>
+  #include <direct.h>
   #define chdir _chdir
 #else
-
   #include <unistd.h>
 #endif
 
@@ -29,9 +27,7 @@
 #include <Data/Session.h>
 #include <Data/StudioLog.h>
 #include <Data/Shape.h>
-#include <Data/StudioMesh.h>
 #include <Data/MeshManager.h>
-#include <Visualization/ShapeWorksWorker.h>
 #include <Visualization/Visualizer.h>
 
 namespace shapeworks {
@@ -47,13 +43,12 @@ Session::Session(QWidget* parent, Preferences& prefs) : parent_(parent),
                                                         mesh_manager_(QSharedPointer<MeshManager>(
                                                           new MeshManager(preferences_)))
 {
-  this->parent_ = NULL;
+  this->parent_ = nullptr;
   connect(this->mesh_manager_.data(), &MeshManager::new_mesh, this, &Session::handle_new_mesh);
 }
 
 //---------------------------------------------------------------------------
-Session::~Session()
-{}
+Session::~Session() = default;
 
 //---------------------------------------------------------------------------
 void Session::handle_new_mesh()
@@ -94,10 +89,9 @@ void Session::calculate_reconstructed_samples()
     return;
   }
   //this->preferences_.set_preference("Studio/cache_enabled", false);
-  for (int i = 0; i < this->shapes_.size(); i++) {
-    auto shape = this->shapes_.at(i);
+  for (auto shape : this->shapes_) {
     auto pts = shape->get_local_correspondence_points();
-    if (pts.size() > 0) {
+    if (!pts.empty()) {
       /// TODO: fix
       //shape->set_reconstructed_mesh(this->mesh_manager_->get_mesh(pts));
     }
@@ -120,12 +114,20 @@ bool Session::save_project(std::string fname)
   }
   this->filename_ = filename;
 
-  // open file
-  QFile file(filename);
-
-  if (!file.open(QIODevice::WriteOnly)) {
-    QMessageBox::warning(0, "Read only", "The file is in read only mode");
-    return false;
+  QFileInfo fi(filename);
+  if (fi.exists()) {
+    if (!fi.isWritable()) {
+      QMessageBox::warning(nullptr, "Read only", "The file is in read only mode");
+      return false;
+    }
+  }
+  else {
+    // open file
+    QFile file(filename);
+    if (!file.open(QIODevice::WriteOnly)) {
+      QMessageBox::warning(0, "Read only", "The file is in read only mode");
+      return false;
+    }
   }
 
   this->set_project_path(QFileInfo(filename).absolutePath());
@@ -149,50 +151,17 @@ bool Session::save_project(std::string fname)
     //this->session_->set_original_files(original_list);
   }
 
-  // distance transforms
-  if (this->unsaved_groomed_files_) {
-    std::cerr << "unsaved groomed files detected, saving...\n";
-    std::vector<std::string> groomed_list;
-    for (int i = 0; i < this->shapes_.size(); i++) {
-      QString loc = this->shapes_[i]->get_groomed_filename_with_path();
-      std::string location = loc.toStdString();
-
-      groomed_list.push_back(location);
-
-      if (loc.toLower().endsWith(".vtk")) {
-        vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-        writer->SetInputData(this->shapes_[i]->get_groomed_mesh()->get_poly_data());
-        writer->SetFileName(location.c_str());
-        writer->Update();
-      }
-      else {
-        //try writing the groomed to file
-        auto writer = itk::ImageFileWriter<ImageType>::New();
-        writer->SetFileName(location);
-        writer->SetInput(this->shapes_[i]->get_groomed_image());
-        writer->SetUseCompression(true);
-        std::cerr << "Writing distance transform: " << location << "\n";
-        writer->Update();
-      }
-      std::vector<std::string> groomed_filenames{location}; // only single domain supported so far
-      this->shapes_[i]->get_subject()->set_groomed_filenames(groomed_filenames);
-
-      QApplication::processEvents();
-      if (progress.wasCanceled()) {
-        break;
-      }
-    }
-
-    this->unsaved_groomed_files_ = false;
-  }
 
   // correspondence points
   if (this->unsaved_particle_files_) {
     for (int i = 0; i < this->shapes_.size(); i++) {
-      auto global_path = this->shapes_[i]->get_subject()->get_global_particle_filename();
-      auto local_path = this->shapes_[i]->get_subject()->get_local_particle_filename();
-      this->save_particles_file(global_path, this->shapes_[i]->get_global_correspondence_points());
-      this->save_particles_file(local_path, this->shapes_[i]->get_local_correspondence_points());
+      auto local_files = this->shapes_[i]->get_subject()->get_local_particle_filenames();
+      auto world_files = this->shapes_[i]->get_subject()->get_world_particle_filenames();
+      auto particles = this->shapes_[i]->get_particles();
+      for (int i = 0; i < local_files.size(); i++) {
+        this->save_particles_file(local_files[i], particles.get_local_particles(i));
+        this->save_particles_file(world_files[i], particles.get_world_particles(i));
+      }
     }
     this->unsaved_particle_files_ = false;
   }
@@ -220,7 +189,7 @@ void Session::save_particles_file(std::string filename, const vnl_vector<double>
 bool Session::load_project(QString filename)
 {
   if (!QFile::exists(filename)) {
-    QMessageBox::critical(NULL, "ShapeWorksStudio", "File does not exist: " + filename,
+    QMessageBox::critical(nullptr, "ShapeWorksStudio", "File does not exist: " + filename,
                           QMessageBox::Ok);
     return false;
   }
@@ -237,7 +206,7 @@ bool Session::load_project(QString filename)
   bool loadOkay = doc.LoadFile();
   if (!loadOkay) {
     QString message = "Error: Invalid parameter file: " + filename;
-    QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+    QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
     return false;
   }
 
@@ -253,7 +222,7 @@ bool Session::load_project(QString filename)
 
   QString message =
     "Error: This version of ShapeWorksStudio only reads XLSX and legacy XML files: " + filename;
-  QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+  QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
   return false;
 }
 
@@ -268,7 +237,7 @@ bool Session::load_light_project(QString filename)
   bool loadOkay = doc.LoadFile();
   if (!loadOkay) {
     QString message = "Error: Invalid parameter file" + filename;
-    QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+    QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
     return false;
   }
 
@@ -278,51 +247,14 @@ bool Session::load_light_project(QString filename)
   // determine if groups are available
   this->groups_available_ = (docHandle.FirstChild("group_ids").Element() != nullptr);
 
-  /// TODO
-  //this->numDomains = 1;
-  //TiXmlElement* elem = docHandle.FirstChild("domains_per_shape").Element();
-  //if (elem) {this->numDomains = atoi(elem->GetText()); }
+  int domains_per_shape = 1;
+  TiXmlElement* elem = docHandle.FirstChild("domains_per_shape").Element();
+  if (elem) { domains_per_shape = atoi(elem->GetText()); }
+  //this->project_->get_number_of_domains_per_subject()
 
   // setup XML
   std::vector<std::string> import_files, groom_files, local_point_files, global_point_files;
   std::string sparseFile, denseFile, goodPtsFile;
-
-  TiXmlElement* elem = docHandle.FirstChild("mesh_files").Element();
-  if (elem && elem->GetText()) {
-    std::string mesh_filename;
-    inputsBuffer.str(elem->GetText());
-    while (inputsBuffer >> mesh_filename) {
-      if (!QFile::exists(QString::fromStdString(mesh_filename))) {
-        QString message = "File does not exist: " + QString::fromStdString(mesh_filename);
-        STUDIO_LOG_ERROR(message);
-        QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
-        return false;
-      }
-      groom_files.push_back(mesh_filename);
-    }
-    inputsBuffer.clear();
-    inputsBuffer.str("");
-  }
-
-  elem = docHandle.FirstChild("distance_transform_files").Element();
-  if (elem && elem->GetText()) {
-    groom_files.clear(); // if someone specifies both, prefer the distance transforms
-    std::string distance_transform_filename;
-    inputsBuffer.str(elem->GetText());
-    while (inputsBuffer >> distance_transform_filename) {
-      if (!QFile::exists(QString::fromStdString(distance_transform_filename))) {
-        QString message = "File does not exist: " +
-                          QString::fromStdString(distance_transform_filename);
-        STUDIO_LOG_ERROR(message);
-        QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
-        return false;
-      }
-
-      groom_files.push_back(distance_transform_filename);
-    }
-    inputsBuffer.clear();
-    inputsBuffer.str("");
-  }
 
   elem = docHandle.FirstChild("point_files").Element();
   if (elem) {
@@ -336,8 +268,10 @@ bool Session::load_light_project(QString filename)
     inputsBuffer.str("");
   }
 
+  bool local_particles_found = false;
   elem = docHandle.FirstChild("local_point_files").Element();
   if (elem) {
+    local_particles_found = true;
     local_point_files.clear();
     std::string point_filename;
     inputsBuffer.str(elem->GetText());
@@ -360,11 +294,60 @@ bool Session::load_light_project(QString filename)
     inputsBuffer.str("");
   }
 
-  if (groom_files.size() > 0) {
+  elem = docHandle.FirstChild("distance_transform_files").Element();
+  if (elem && elem->GetText()) {
+    if (!local_particles_found) {
+      QString message = "Error, distance_transform_files specified, but not local_particle_files";
+      STUDIO_LOG_ERROR(message);
+      QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
+      return false;
+    }
+    groom_files.clear(); // if someone specifies both, prefer the distance transforms
+    std::string distance_transform_filename;
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> distance_transform_filename) {
+      if (!QFile::exists(QString::fromStdString(distance_transform_filename))) {
+        QString message = "File does not exist: " +
+                          QString::fromStdString(distance_transform_filename);
+        STUDIO_LOG_ERROR(message);
+        QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
+        return false;
+      }
+
+      groom_files.push_back(distance_transform_filename);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+
+  elem = docHandle.FirstChild("mesh_files").Element();
+  if (elem && elem->GetText()) {
+    if (!local_particles_found) {
+      QString message = "Error, mesh_files specified, but not local_particle_files";
+      STUDIO_LOG_ERROR(message);
+      QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
+      return false;
+    }
+    std::string mesh_filename;
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> mesh_filename) {
+      if (!QFile::exists(QString::fromStdString(mesh_filename))) {
+        QString message = "File does not exist: " + QString::fromStdString(mesh_filename);
+        STUDIO_LOG_ERROR(message);
+        QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
+        return false;
+      }
+      groom_files.push_back(mesh_filename);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+
+  if (!groom_files.empty()) {
     if (groom_files.size() != local_point_files.size()) {
       QString message = "Error, mismatch in number of distance_transforms and particle files";
       STUDIO_LOG_ERROR(message);
-      QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+      QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
       return false;
     }
   }
@@ -372,19 +355,15 @@ bool Session::load_light_project(QString filename)
   if (local_point_files.size() != global_point_files.size()) {
     QString message = "Error, mismatch in number of local and world particle files";
     STUDIO_LOG_ERROR(message);
-    QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+    QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
     return false;
   }
 
-  if (!this->load_point_files(local_point_files, true)) {
+  if (!this->load_point_files(local_point_files, global_point_files, domains_per_shape)) {
     return false;
   }
 
-  if (!this->load_point_files(global_point_files, false)) {
-    return false;
-  }
-
-  this->load_groomed_files(groom_files, 0.5);
+  this->load_groomed_files(groom_files, 0.5, domains_per_shape);
 
   // read group ids
   std::vector<int> group_ids;
@@ -424,7 +403,9 @@ bool Session::load_xl_project(QString filename)
 
   this->set_project_path(QFileInfo(filename).absolutePath());
 
-  this->project_->load(QFileInfo(filename).fileName().toStdString());
+  if (!this->project_->load(QFileInfo(filename).fileName().toStdString())) {
+    return false;
+  }
 
   int num_subjects = this->project_->get_number_of_subjects();
 
@@ -437,28 +418,22 @@ bool Session::load_xl_project(QString filename)
     QSharedPointer<Shape> shape = QSharedPointer<Shape>(new Shape());
     shape->set_mesh_manager(this->mesh_manager_);
     shape->set_subject(subjects[i]);
-    if (subjects[i]->get_local_particle_filename() != "") {
-      local_point_files.push_back(subjects[i]->get_local_particle_filename());
-      global_point_files.push_back(subjects[i]->get_global_particle_filename());
+
+    auto locals = subjects[i]->get_local_particle_filenames();
+    auto worlds = subjects[i]->get_world_particle_filenames();
+
+    if (!shape->import_local_point_files(locals)) {
+      return false;
     }
+    if (!shape->import_global_point_files(worlds)) {
+      return false;
+    }
+
     this->shapes_ << shape;
   }
 
-  this->load_point_files(local_point_files, true);
-  this->load_point_files(global_point_files, false);
-
-  /*
-     if (!denseFile.empty() && !sparseFile.empty() && !goodPtsFile.empty()) {
-     this->mesh_manager_->getSurfaceReconstructor()->readMeanInfo(denseFile, sparseFile,
-                                                                 goodPtsFile);
-     }
-   */
-
-
   this->groups_available_ = this->project_->get_group_names().size() > 0;
-
   this->params_ = this->project_->get_parameters(Parameters::STUDIO_PARAMS);
-
   return true;
 }
 
@@ -492,18 +467,22 @@ void Session::set_project_path(QString relative_path)
     subject->set_groomed_filenames(new_paths);
 
     // local particles
-    auto path = subject->get_local_particle_filename();
-    if (path != "") {
+    paths = subject->get_local_particle_filenames();
+    new_paths.clear();
+    for (auto path: paths) {
       auto full_path = old_path.absoluteFilePath(QString::fromStdString(path));
-      subject->set_local_particle_filename(new_path.relativeFilePath(full_path).toStdString());
+      new_paths.push_back(new_path.relativeFilePath(full_path).toStdString());
     }
+    subject->set_local_particle_filenames(new_paths);
 
-    // global particles
-    path = subject->get_global_particle_filename();
-    if (path != "") {
+    // world particles
+    paths = subject->get_world_particle_filenames();
+    new_paths.clear();
+    for (auto path: paths) {
       auto full_path = old_path.absoluteFilePath(QString::fromStdString(path));
-      subject->set_global_particle_filename(new_path.relativeFilePath(full_path).toStdString());
+      new_paths.push_back(new_path.relativeFilePath(full_path).toStdString());
     }
+    subject->set_world_particle_filenames(new_paths);
 
     // features
     auto features = subject->get_feature_filenames();
@@ -550,11 +529,11 @@ void Session::load_original_files(std::vector<std::string> filenames)
     QSharedPointer<Shape> shape = QSharedPointer<Shape>(new Shape());
 
     std::shared_ptr<Subject> subject = std::make_shared<Subject>();
-
+    subject->set_number_of_domains(1);
     shape->set_mesh_manager(this->mesh_manager_);
     shape->set_subject(subject);
     this->project_->get_subjects().push_back(subject);
-    shape->import_original_image(filenames[i], 0.5);
+    shape->import_original_image(filenames[i]);
 
     this->shapes_.push_back(shape);
   }
@@ -567,9 +546,13 @@ void Session::load_original_files(std::vector<std::string> filenames)
 }
 
 //---------------------------------------------------------------------------
-void Session::load_groomed_files(std::vector<std::string> file_names, double iso)
+void
+Session::load_groomed_files(std::vector<std::string> file_names, double iso, int domains_per_shape)
 {
-  for (int i = 0; i < file_names.size(); i++) {
+  assert (file_names.size() % domains_per_shape == 0);
+  int num_subjects = file_names.size() / domains_per_shape;
+  int counter = 0;
+  for (int i = 0; i < num_subjects; i++) {
     if (this->shapes_.size() <= i) {
       auto shape = QSharedPointer<Shape>(new Shape);
       std::shared_ptr<Subject> subject = std::make_shared<Subject>();
@@ -579,16 +562,20 @@ void Session::load_groomed_files(std::vector<std::string> file_names, double iso
       this->shapes_.push_back(shape);
     }
 
-    // only single domain supported so far
-    std::vector<std::string> groomed_filenames{file_names[i]};
-    this->shapes_[i]->get_subject()->set_groomed_filenames(groomed_filenames);
-
     QStringList list;
-    list << QFileInfo(QString::fromStdString(file_names[i])).fileName();
+    list << QFileInfo(QString::fromStdString(file_names[counter])).fileName();
     list << "";
     list << "";
     list << "";
     this->shapes_[i]->set_annotations(list);
+
+    std::vector<std::string> groomed_filenames;
+    for (int j = 0; j < domains_per_shape; j++) {
+      groomed_filenames.push_back(file_names[counter + j]);
+    }
+    counter += domains_per_shape;
+
+    this->shapes_[i]->get_subject()->set_groomed_filenames(groomed_filenames);
   }
 
   this->project_->store_subjects();
@@ -598,9 +585,53 @@ void Session::load_groomed_files(std::vector<std::string> file_names, double iso
 }
 
 //---------------------------------------------------------------------------
-bool Session::update_points(std::vector<std::vector<itk::Point<double>>> points, bool local)
+bool Session::load_point_files(std::vector<std::string> local, std::vector<std::string> world,
+                               int domains_per_shape)
 {
-  for (int i = 0; i < points.size(); i++) {
+  assert (local.size() % domains_per_shape == 0);
+  int num_subjects = local.size() / domains_per_shape;
+  int counter = 0;
+  for (int i = 0; i < num_subjects; i++) {
+    if (this->shapes_.size() <= i) {
+      auto shape = QSharedPointer<Shape>(new Shape);
+      std::shared_ptr<Subject> subject = std::make_shared<Subject>();
+      shape->set_mesh_manager(this->mesh_manager_);
+      shape->set_subject(subject);
+      this->project_->get_subjects().push_back(subject);
+      this->shapes_.push_back(shape);
+    }
+
+    QStringList list;
+    list << QFileInfo(QString::fromStdString(world[counter])).fileName();
+    list << "";
+    list << "";
+    list << "";
+
+    std::vector<std::string> local_filenames;
+    std::vector<std::string> world_filenames;
+    // only single domain supported so far
+    for (int j = 0; j < domains_per_shape; j++) {
+      local_filenames.push_back(local[counter + j]);
+      world_filenames.push_back(world[counter + j]);
+    }
+    counter += domains_per_shape;
+    this->shapes_[i]->import_local_point_files(local_filenames);
+    this->shapes_[i]->import_global_point_files(world_filenames);
+    this->shapes_[i]->set_annotations(list);
+  }
+
+  this->project_->store_subjects();
+  if (local.size() > 0) {
+    emit data_changed();
+  }
+
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool Session::update_particles(std::vector<StudioParticles> particles)
+{
+  for (int i = 0; i < particles.size(); i++) {
     QSharedPointer<Shape> shape;
     if (this->shapes_.size() > i) {
       shape = this->shapes_[i];
@@ -614,36 +645,16 @@ bool Session::update_points(std::vector<std::vector<itk::Point<double>>> points,
       this->shapes_.push_back(shape);
     }
 
-    if (!shape->import_points(points[i], local)) {
-      return false;
-    }
-
-    // now update the Subject's filename
-    // this needs to be done here so that the Project knows there are particle files
-    std::string suffix = local ? "local" : "world";
-
-    auto name = this->shapes_[i]->get_original_filename();
-
-    int lastPoint = name.lastIndexOf(".");
-    QString fileNameNoExt = name.left(lastPoint);
-
-    name = fileNameNoExt + "." + QString::fromStdString(suffix) + ".particles";
-
-    if (local) {
-      shape->get_subject()->set_local_particle_filename(name.toStdString());
-    }
-    else {
-      shape->get_subject()->set_global_particle_filename(name.toStdString());
-    }
+    shape->set_particles(particles[i]);
   }
 
   // update the project now that we have particles
-  this->project_->store_subjects();
+  //this->project_->store_subjects();
 
-  if (points.size() > 0 && !local) {
-    this->unsaved_particle_files_ = true;
-    emit points_changed();
-  }
+  //if (particles.size() > 0) {
+  this->unsaved_particle_files_ = true;
+  emit points_changed();
+  //}
   return true;
 }
 
@@ -703,73 +714,6 @@ bool Session::is_light_project()
 bool Session::get_groomed_present()
 {
   return this->project_->get_groomed_present();
-}
-
-//---------------------------------------------------------------------------
-bool Session::load_point_files(std::vector<std::string> list, bool local)
-{
-  QProgressDialog progress("Loading point files...", "Abort", 0, list.size(), this->parent_);
-  progress.setWindowModality(Qt::WindowModal);
-  progress.setMinimumDuration(2000);
-  for (int i = 0; i < list.size(); i++) {
-    progress.setValue(i);
-    QApplication::processEvents();
-    if (progress.wasCanceled()) {
-      break;
-    }
-    QSharedPointer<Shape> shape;
-    if (this->shapes_.size() > i) {
-      shape = this->shapes_[i];
-    }
-    else {
-      shape = QSharedPointer<Shape>(new Shape);
-
-      std::shared_ptr<Subject> subject = std::make_shared<Subject>();
-
-      shape->set_mesh_manager(this->mesh_manager_);
-      shape->set_subject(subject);
-      this->project_->get_subjects().push_back(subject);
-
-      this->shapes_.push_back(shape);
-    }
-    auto fname = QString::fromStdString(list[i]);
-    QFileInfo fi(fname);
-    QString basename = fi.completeBaseName();
-    QString ext = fi.suffix();
-
-
-    QStringList list;
-    list << fi.fileName();
-    list << "";
-    list << "";
-    list << "";
-    shape->set_annotations(list);
-
-    if (QFile::exists(fname)) {
-      if (!local) {
-        if (!shape->import_global_point_file(fname)) {
-          return false;
-        }
-      }
-      else {
-        if (!shape->import_local_point_file(fname)) {
-          return false;
-        }
-      }
-    }
-    else {
-      QString message = "Unable to open particle file:" + fname;
-      STUDIO_LOG_ERROR(message);
-      QMessageBox::critical(0, "Error", message);
-      return false;
-    }
-  }
-  progress.setValue(list.size());
-  QApplication::processEvents();
-  if (list.size() > 0) {
-    //  emit data_changed();
-  }
-  return true;
 }
 
 //---------------------------------------------------------------------------
@@ -839,6 +783,12 @@ int Session::get_num_shapes()
 }
 
 //---------------------------------------------------------------------------
+int Session::get_domains_per_shape()
+{
+  return this->get_project()->get_number_of_domains_per_subject();
+}
+
+//---------------------------------------------------------------------------
 Parameters& Session::parameters()
 {
   return this->params_;
@@ -858,12 +808,6 @@ QString Session::get_display_name()
   }
 
   return name;
-}
-
-//---------------------------------------------------------------------------
-void Session::set_groom_unsaved(bool value)
-{
-  this->unsaved_groomed_files_ = true;
 }
 
 //---------------------------------------------------------------------------
