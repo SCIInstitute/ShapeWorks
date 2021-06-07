@@ -5,11 +5,8 @@ Full Example Pipeline for Statistical Shape Modeling with ShapeWorks DeepSSM
 ====================================================================
 """
 import os
-<<<<<<< HEAD
 import shapeworks as sw
-=======
 import platform
->>>>>>> origin/master
 import DataAugmentationUtils
 import DeepSSMUtils
 import json
