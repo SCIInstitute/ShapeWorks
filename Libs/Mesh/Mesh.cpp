@@ -6,7 +6,6 @@
 #include "PreviewMeshQC/FEVTKImport.h"
 #include "PreviewMeshQC/FEVTKExport.h"
 #include "FEFixMesh.h"
-#include "FEMeshSmoothingModifier.h"
 #include "FECVDDecimationModifier.h"
 
 #include <vtkPolyDataReader.h>
@@ -238,6 +237,24 @@ Mesh &Mesh::decimate(double reduction, double angle, bool preserveTopology)
   return *this;
 }
 
+Mesh &Mesh::cvdDecimate(double percentage)
+{
+  FEVTKimport import;
+  FEMesh* meshFE = import.Load(this->mesh);
+
+  if (meshFE == 0) { throw std::invalid_argument("Unable to read file"); }
+
+  FECVDDecimationModifier cvd;
+  cvd.m_pct = percentage;
+  cvd.m_gradient = 1;
+  meshFE = cvd.Apply(meshFE);
+
+  FEVTKExport vtkOut;
+  this->mesh = vtkOut.ExportToVTK(*meshFE);
+
+  return *this;
+}
+
 Mesh &Mesh::invertNormals()
 {
   vtkSmartPointer<vtkReverseSense> reverseSense = vtkSmartPointer<vtkReverseSense>::New();
@@ -363,41 +380,17 @@ PhysicalRegion Mesh::boundingBox() const
   return bbox;
 }
 
-Mesh& Mesh::fix(bool smoothBefore, bool smoothAfter, double lambda, int iterations, bool decimate, double percentage)
+Mesh& Mesh::fixElement()
 {
   FEVTKimport import;
   FEMesh* meshFE = import.Load(this->mesh);
 
-  if (meshFE == 0) { throw std::invalid_argument("Unable to read file"); }
+  if (meshFE == nullptr) { throw std::invalid_argument("Unable to read file"); }
 
   FEFixMesh fix;
   FEMesh* meshFix;
 
   meshFix = fix.FixElementWinding(meshFE);
-
-  if (smoothBefore)
-  {
-    FEMeshSmoothingModifier lap;
-    lap.m_threshold1 = lambda;
-    lap.m_iteration = iterations;
-    meshFix = lap.Apply(meshFix);
-  }
-
-  if (decimate)
-  {
-    FECVDDecimationModifier cvd;
-    cvd.m_pct = percentage;
-    cvd.m_gradient = 1;
-    meshFix = cvd.Apply(meshFix);
-
-    if (smoothAfter)
-    {
-      FEMeshSmoothingModifier lap;
-      lap.m_threshold1 = lambda;
-      lap.m_iteration = iterations;
-      meshFix = lap.Apply(meshFix);
-    }
-  }
 
   FEVTKExport vtkOut;
   this->mesh = vtkOut.ExportToVTK(*meshFix);
