@@ -3,22 +3,22 @@
 ====================================================================
 Full Example Pipeline for Statistical Shape Modeling with ShapeWorks DeepSSM
 ====================================================================
-Jadie Adams
 """
 import os
+<<<<<<< HEAD
 import shapeworks as sw
+=======
+import platform
+>>>>>>> origin/master
 import DataAugmentationUtils
 import DeepSSMUtils
 import json
-
+import platform
+​
 def Run_Pipeline(args):
     if args.tiny_test:
         print("\nRunning a tiny test.")
-
-    # Turn off parallel computing for Mac
-    if platform.system() == "Darwin":
-        os.system("export OMP_NUM_THREADS=1")
-
+​
     print("\nStep 1. Get Data") #############################################################################################
     '''
     Get femur data
@@ -30,13 +30,17 @@ def Run_Pipeline(args):
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
+​   if platform.system() == "Darwin":
+            # On MacOS, CPU PyTorch is hanging with parallel
+            os.environ['OMP_NUM_THREADS'] = "1"
+
     if args.tiny_test:
         sw.data.download_subset(args.use_case,dataset_name, output_directory)
         partition = 4
     else:
         sw.data.download_and_unzip_dataset(dataset_name, output_directory)
         partition = 40
-
+​
     input_dir = output_directory + dataset_name + '/'
     # Get image path list
     img_dir = input_dir + "groomed/images/"
@@ -62,7 +66,7 @@ def Run_Pipeline(args):
     test_img_list = img_list[partition:]
     if args.tiny_test:
         test_img_list = test_img_list[:3]
-
+​
     print("\n\n\nStep 2. Augment data\n") ###################################################################################
     '''
     - num_samples is how many samples to generate 
@@ -82,10 +86,10 @@ def Run_Pipeline(args):
     aug_dir = out_dir + "Augmentation/"
     embedded_dim = DataAugmentationUtils.runDataAugmentation(aug_dir, train_img_list, train_local_particle_list, num_samples, num_dim, percent_variability, sampler_type, mixture_num=0, processes=1, world_point_list=train_world_particle_list)
     aug_data_csv = aug_dir + "TotalData.csv"
-
+​
     if not args.tiny_test:
         DataAugmentationUtils.visualizeAugmentation(aug_data_csv, "violin")
-
+​
     print("\n\n\nStep 3. Reformat Data for Pytorch\n") #######################################################################
     '''
     If down_sample is true, model will train on images half the original size
@@ -100,7 +104,7 @@ def Run_Pipeline(args):
     loader_dir = out_dir + 'TorchDataLoaders/'
     DeepSSMUtils.getTrainValLoaders(loader_dir, aug_data_csv, batch_size, down_factor, down_dir)
     DeepSSMUtils.getTestLoader(loader_dir, test_img_list, down_factor, down_dir)
-
+​
     print("\n\n\nStep 4. Train model.\n") #####################################################################################
     # Define model parameters
     model_name = "femur_deepssm"
@@ -157,10 +161,10 @@ def Run_Pipeline(args):
     prediction_dir = out_dir + 'Results/PredictedParticles/'
     DeepSSMUtils.testDeepSSM(config_file)
     print('Predicted particles saved at: ' + prediction_dir)
-
+​
     if args.tiny_test:
         exit()
-
+​
     print("\n\n\nStep 6. Analyze results.\n") #################################################################################
     '''
     Analyze DeepSSM

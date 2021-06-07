@@ -124,10 +124,8 @@ TEST(UseCaseTests, femur_cut)
 //---------------------------------------------------------------------------
 TEST(UseCaseTests, deep_ssm)
 {
-  /// TODO: Disabled, doesn't run on windows GH
-  return;
   run_use_case("deep_ssm",
-               "Output/deep_ssm/Augmentation/violin.png");
+               "Output/deep_ssm/femur_deepssm/predictions/PCA_Predictions/predicted_pca_m07_L.particles");
 }
 //---------------------------------------------------------------------------
 TEST(UseCaseTests, supershapes_1mode_contour)
@@ -156,3 +154,8 @@ TEST(UseCaseTests, ellipsoid_multiple_domain_mesh)
                "Output/ellipsoid_multiple_domain_mesh/shape_models/32_32/ellipsoid_joint_00_d1_local.particles");
 }
 //---------------------------------------------------------------------------
+TEST(UseCaseTests, ellipsoid_pca)
+{
+  run_use_case("ellipsoid_pca",
+               "Output/ellipsoid/pca/pca_eigen_vectors.txt");
+}

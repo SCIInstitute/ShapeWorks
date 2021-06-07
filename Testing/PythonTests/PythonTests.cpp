@@ -30,7 +30,7 @@ TEST(pythonTests, meshInfoTest)
   
 TEST(pythonTests, copyTest)
 {
-  ASSERT_FALSE(system("python copy.py"));
+  ASSERT_FALSE(system("python copyImgMesh.py"));
 }
 
 TEST(pythonTests, compareTest)
@@ -277,4 +277,9 @@ TEST(pythonTests, statsTest)
 TEST(pythonTests, optimizeTest)
 {
   ASSERT_FALSE(system("python optimize.py"));
+}
+
+TEST(pythonTests, pcaTest)
+{
+  ASSERT_FALSE(system("python pca.py"));
 }
