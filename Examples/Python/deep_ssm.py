@@ -11,34 +11,35 @@ import DataAugmentationUtils
 import DeepSSMUtils
 import json
 import platform
-​
+
+
 def Run_Pipeline(args):
     if args.tiny_test:
         print("\nRunning a tiny test.")
-​
-    print("\nStep 1. Get Data") #############################################################################################
+
+    print("\nStep 1. Get Data")
     '''
     Get femur data
     Femur data is downloaded in a zip folder to Data/
     It gets extracted to Output/deep_ssm
     '''
     dataset_name = "femur-v0"
-    output_directory = "Output/deep_ssm/"
-    if not os.path.exists(output_directory):
-        os.makedirs(output_directory)
+    out_dir = "Output/deep_ssm/"
+    if not os.path.exists(out_dir):
+        os.makedirs(out_dir)
 
-​   if platform.system() == "Darwin":
-            # On MacOS, CPU PyTorch is hanging with parallel
-            os.environ['OMP_NUM_THREADS'] = "1"
+    if platform.system() == "Darwin":
+        # On MacOS, CPU PyTorch is hanging with parallel
+        os.environ['OMP_NUM_THREADS'] = "1"
 
     if args.tiny_test:
-        sw.data.download_subset(args.use_case,dataset_name, output_directory)
+        sw.data.download_subset(args.use_case, dataset_name, out_dir)
         partition = 4
     else:
-        sw.data.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.data.download_and_unzip_dataset(dataset_name, out_dir)
         partition = 40
-​
-    input_dir = output_directory + dataset_name + '/'
+
+    input_dir = out_dir + dataset_name + '/'
     # Get image path list
     img_dir = input_dir + "groomed/images/"
     img_list = []
@@ -46,7 +47,7 @@ def Run_Pipeline(args):
         img_list.append(img_dir + file)
     img_list = sorted(img_list)
     # Get particles path list
-    model_dir =  input_dir + "shape_models/femur/1024/" 
+    model_dir = input_dir + "shape_models/femur/1024/"
     world_particle_list = []
     local_particle_list = []
     for file in os.listdir(model_dir):
@@ -63,8 +64,8 @@ def Run_Pipeline(args):
     test_img_list = img_list[partition:]
     if args.tiny_test:
         test_img_list = test_img_list[:3]
-​
-    print("\n\n\nStep 2. Augment data\n") ###################################################################################
+
+    print("\n\n\nStep 2. Augment data\n")
     '''
     - num_samples is how many samples to generate 
     - num_dim is the number of PCA scores to use
@@ -81,64 +82,67 @@ def Run_Pipeline(args):
         num_dim = 0
         percent_variability = 0.99
     aug_dir = out_dir + "Augmentation/"
-    embedded_dim = DataAugmentationUtils.runDataAugmentation(aug_dir, train_img_list, train_local_particle_list, num_samples, num_dim, percent_variability, sampler_type, mixture_num=0, processes=1, world_point_list=train_world_particle_list)
+    embedded_dim = DataAugmentationUtils.runDataAugmentation(aug_dir, train_img_list, train_local_particle_list,
+                                                             num_samples, num_dim, percent_variability, sampler_type,
+                                                             mixture_num=0, processes=1,
+                                                             world_point_list=train_world_particle_list)
     aug_data_csv = aug_dir + "TotalData.csv"
-​
+
     if not args.tiny_test:
         DataAugmentationUtils.visualizeAugmentation(aug_data_csv, "violin")
-​
-    print("\n\n\nStep 3. Reformat Data for Pytorch\n") #######################################################################
+
+    print("\n\n\nStep 3. Reformat Data for Pytorch\n")
     '''
     If down_sample is true, model will train on images half the original size
     If whiten is true, images and PCA scores will be whitened 
     Hyper-parameter batch_size is for training
         Higher batch size will help speed up training but uses more cuda memory, if you get a memory error try reducing the batch size
     '''
-    
+
     down_factor = 0.75
     down_dir = out_dir + 'DownsampledImages/'
     batch_size = 8
     loader_dir = out_dir + 'TorchDataLoaders/'
     DeepSSMUtils.getTrainValLoaders(loader_dir, aug_data_csv, batch_size, down_factor, down_dir)
     DeepSSMUtils.getTestLoader(loader_dir, test_img_list, down_factor, down_dir)
-​
-    print("\n\n\nStep 4. Train model.\n") #####################################################################################
+
+    print("\n\n\nStep 4. Train model.\n")
     # Define model parameters
     model_name = "femur_deepssm"
     model_parameters = {
-        "model_name":model_name,
-        "num_latent_dim":int(embedded_dim),
-        "paths":{
-            "out_dir":out_dir,
-            "loader_dir":loader_dir,
-            "aug_dir":aug_dir
-            },
-        "encoder":{
-            "deterministic":True
-            },
-        "decoder":{
-            "deterministic":True,
-            "linear":True
-            },
-        "loss":{
-            "function":"MSE",
-            "supervised_latent":True,
-            },
-        "trainer":{
-            "epochs":100, 
-            "learning_rate":0.001,
-            "decay_lr":True,
-            "val_freq":1
-            },
-        "fine_tune":{
-            "enabled":True,
-            "loss":"MSE",
-            "epochs":2,
-            "learning_rate":0.001,
-            "decay_lr":True,
-            "val_freq":1
-            },
-        "use_best_model":True
+        "model_name": model_name,
+        "num_latent_dim": int(embedded_dim),
+        "paths": {
+            "out_dir": out_dir,
+            "loader_dir": loader_dir,
+            "aug_dir": aug_dir
+        },
+        "encoder": {
+            "deterministic": True
+        },
+        "decoder": {
+            "deterministic": True,
+            "linear": True
+        },
+        "loss": {
+            "function": "MSE",
+            "supervised_latent": True,
+        },
+        "trainer": {
+            "epochs": 100,
+            "learning_rate": 0.001,
+            "decay_lr": True,
+            "val_freq": 1
+        },
+        "fine_tune": {
+            "enabled": True,
+            "loss": "MSE",
+            "epochs": 2,
+            "learning_rate": 0.001,
+            "decay_lr": True,
+            "val_freq": 1
+        },
+        "use_best_model": True
     }
     if args.tiny_test:
         model_parameters["trainer"]["epochs"] = 1
@@ -146,11 +150,11 @@ def Run_Pipeline(args):
     # Save config file    
     config_file = out_dir + model_name + ".json"
     with open(config_file, "w") as outfile:
-        json.dump(model_parameters, outfile, indent=2) 
-    # Train
+        json.dump(model_parameters, outfile, indent=2)
+        # Train
     DeepSSMUtils.trainDeepSSM(config_file)
 
-    print("\n\n\nStep 5. Predict with DeepSSM\n") #############################################################################
+    print("\n\n\nStep 5. Predict with DeepSSM\n")
     '''
     Test DeepSSM
     '''
@@ -158,11 +162,11 @@ def Run_Pipeline(args):
     prediction_dir = out_dir + 'Results/PredictedParticles/'
     DeepSSMUtils.testDeepSSM(config_file)
     print('Predicted particles saved at: ' + prediction_dir)
-​
+
     if args.tiny_test:
         exit()
-​
-    print("\n\n\nStep 6. Analyze results.\n") #################################################################################
+
+    print("\n\n\nStep 6. Analyze results.\n")
     '''
     Analyze DeepSSM
     '''
