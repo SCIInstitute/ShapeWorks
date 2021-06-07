@@ -117,6 +117,13 @@ function install_conda() {
     then return 1; fi
   fi
 
+  # linux (only) deps
+  if [[ "$(uname)" == "Linux" ]]; then
+    if ! conda install --yes \
+      zlib
+    then return 1; fi
+  fi
+
   if ! pip install trimesh;                             then return 1; fi
   if ! pip install termcolor==1.1.0;                    then return 1; fi
   if ! pip install grip==4.5.2;                         then return 1; fi
