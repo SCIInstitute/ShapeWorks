@@ -262,6 +262,35 @@ bool Decimate::execute(const optparse::Values &options, SharedCommandData &share
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// CVDDecimate
+///////////////////////////////////////////////////////////////////////////////
+void CVDDecimate::buildParser()
+{
+  const std::string prog = "cvd-decimate";
+  const std::string desc = "applies cvd decimation filter";
+
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--percentage").action("store").type("double").set_default(0.5).help("Percentage of target number of clusters/vertices [default: %default].");
+
+  Command::buildParser();
+}
+
+bool CVDDecimate::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  double percentage = static_cast<double>(options.get("percentage"));
+
+  sharedData.mesh->cvdDecimate(percentage);
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // InvertNormals
 ///////////////////////////////////////////////////////////////////////////////
 void InvertNormals::buildParser()
@@ -684,6 +713,30 @@ bool GenerateNormals::execute(const optparse::Values &options, SharedCommandData
   }
 
   sharedData.mesh->generateNormals();
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// FixElement
+///////////////////////////////////////////////////////////////////////////////
+void FixElement::buildParser()
+{
+  const std::string prog = "fix-element";
+  const std::string desc = "fix element winding of mesh";
+  parser.prog(prog).description(desc);
+
+  Command::buildParser();
+}
+
+bool FixElement::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validMesh())
+  {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  sharedData.mesh->fixElement();
   return sharedData.validMesh();
 }
 
