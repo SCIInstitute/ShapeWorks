@@ -46,13 +46,11 @@ def Run_Pipeline(args):
         mesh_files = sorted(glob.glob(output_directory +
                                      dataset_name + "/meshes/*.ply"))
 
-        # Select data if using subsample
         if args.use_subsample:
-            raise RuntimeError("Subsample generation unsupported. Please run the use case without --use_subsample")
+            sample_idx = sw.data.sample_meshes(mesh_files, int(args.num_subsample),domains_per_shape=2)
+            mesh_files = [mesh_files[i] for i in sample_idx]
 
-    if args.skip_grooming:
-        raise RuntimeError("Skip grooming unsupported for this use case.Please run the use case without --skip_grooming")
-                
+                   
     # This dataset is prealigned and does not require any grooming steps.
 
     print("\nStep 2. Optimize - Particle Based Optimization\n")
