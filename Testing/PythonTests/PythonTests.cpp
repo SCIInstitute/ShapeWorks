@@ -283,3 +283,9 @@ TEST(pythonTests, pcaTest)
 {
   ASSERT_FALSE(system("python pca.py"));
 }
+
+TEST(pythonTests, findReferenceMeshTest)
+{
+  ASSERT_FALSE(system("python findReferenceMesh.py"));
+}
+
