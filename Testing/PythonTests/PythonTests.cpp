@@ -279,6 +279,11 @@ TEST(pythonTests, geodesicTest)
   run_use_case("geodesic.py");
 }
 
+TEST(pythonTests, fixElementTest)
+{
+  ASSERT_FALSE(system("python fixelement.py"));
+}
+
 TEST(pythonTests, computenormalsTest)
 {
   run_use_case("computenormals.py");

@@ -51,3 +51,31 @@ def decimateTest5():
   return mesh == compareMesh
 
 utils.test(decimateTest5)
+
+def decimateTest6():
+  mesh = Mesh(os.environ["DATA"] + "/ellipsoid_0.ply")
+  mesh.cvdDecimate(0.5)
+
+  compareMesh = Mesh(os.environ["DATA"] + "/cvdDecimate1.ply")
+
+  return mesh == compareMesh
+
+val = decimateTest6()
+
+if val is False:
+  print("decimateTest6 failed")
+  sys.exit(1)
+
+def decimateTest7():
+  mesh = Mesh(os.environ["DATA"] + "/ellipsoid_01.vtk")
+  mesh.cvdDecimate(1.0)
+
+  compareMesh = Mesh(os.environ["DATA"] + "/cvdDecimate2.vtk")
+
+  return mesh == compareMesh
+
+val = decimateTest7()
+
+if val is False:
+  print("decimateTest7 failed")
+  sys.exit(1)
