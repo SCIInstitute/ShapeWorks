@@ -1088,7 +1088,7 @@ PYBIND11_MODULE(shapeworks_py, m)
                 return shapeworks::MeshUtils::findReferenceMesh(meshes);
               },
               "find reference mesh from a set of shapeworks meshes",
-              "meshes")
+              "meshes"_a)
   ;
 
   // ParticleSystem
