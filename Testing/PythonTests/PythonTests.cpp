@@ -238,6 +238,11 @@ TEST(pythonTests, distanceTest)
   ASSERT_FALSE(system("python distance.py"));
 }
 
+TEST(pythonTests, fixElementTest)
+{
+  ASSERT_FALSE(system("python fixelement.py"));
+}
+
 TEST(pythonTests, generateNormalsTest)
 {
   ASSERT_FALSE(system("python generatenormals.py"));

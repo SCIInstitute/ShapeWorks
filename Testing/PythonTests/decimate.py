@@ -41,6 +41,7 @@ def decimateTest3():
 val = decimateTest3()
 
 if val is False:
+  print("decimateTest3 failed")
   sys.exit(1)
 
 def decimateTest4():
@@ -54,6 +55,7 @@ def decimateTest4():
 val = decimateTest4()
 
 if val is False:
+  print("decimateTest4 failed")
   sys.exit(1)
 
 def decimateTest5():
@@ -67,4 +69,33 @@ def decimateTest5():
 val = decimateTest5()
 
 if val is False:
+  print("decimateTest5 failed")
+  sys.exit(1)
+
+def decimateTest6():
+  mesh = Mesh(os.environ["DATA"] + "/ellipsoid_0.ply")
+  mesh.cvdDecimate(0.5)
+
+  compareMesh = Mesh(os.environ["DATA"] + "/cvdDecimate1.ply")
+
+  return mesh == compareMesh
+
+val = decimateTest6()
+
+if val is False:
+  print("decimateTest6 failed")
+  sys.exit(1)
+
+def decimateTest7():
+  mesh = Mesh(os.environ["DATA"] + "/ellipsoid_01.vtk")
+  mesh.cvdDecimate(1.0)
+
+  compareMesh = Mesh(os.environ["DATA"] + "/cvdDecimate2.vtk")
+
+  return mesh == compareMesh
+
+val = decimateTest7()
+
+if val is False:
+  print("decimateTest7 failed")
   sys.exit(1)
