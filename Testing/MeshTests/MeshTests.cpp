@@ -33,7 +33,7 @@ TEST(MeshTests, fixelementTest)
 TEST(MeshTests, cvddecimateTest1)
 {
   Mesh femur(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
-  femur.cvdDecimate(0.5);
+  femur.cvdDecimate();
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/cvdDecimate1.ply");
 
   ASSERT_TRUE(femur == ground_truth);

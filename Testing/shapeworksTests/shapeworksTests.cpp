@@ -339,11 +339,10 @@ TEST(shapeworksTests, scalemeshTest)
   ASSERT_FALSE(system("bash scalemesh.sh"));
 }
 
-// https://github.com/SCIInstitute/ShapeWorks/issues/938
-// TEST(shapeworksTests, meshfixTest)
-// {
-//   ASSERT_FALSE(system("bash meshfix.sh"));
-// }
+TEST(shapeworksTests, fixelementTest)
+{
+  ASSERT_FALSE(system("bash fixelement.sh"));
+}
 
 TEST(shapeworksTests, clipclosedsurfaceTest)
 {
