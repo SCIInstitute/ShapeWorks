@@ -36,8 +36,6 @@ if __name__ == '__main__':
         print("See https://github.com/SCIInstitute/ShapeWorks for more information")
         sys.exit(1)
 
-    from CommonUtils import *
-
     # Default installation path for each platform. If using your own build, specify --shapeworks_path
     # Note, the path for linux differs from setupenv.py because it is set up for the notebooks
     # that are two more levels deep
@@ -69,16 +67,20 @@ if __name__ == '__main__':
     # 3. Platform dependent defaults
     #######################################
     if shapeworks_bin_path is None:
-        # if `shapeworks` is in the path, this will return it, otherwise None
-        shapeworks_bin_path = get_shapeworks_bin_path()
+        swpath = shutil.which("shapeworks")
+        if swpath:
+            shapeworks_bin_path = os.path.dirname(swpath)  
     if shapeworks_bin_path is None:
         shapeworks_bin_path = default_bin_path
     setupenv.setup_shapeworks_env(shapeworks_bin_dir=shapeworks_bin_path, verbose=False)
 
     # make sure the shapeworks executables can be found
-    check_shapeworks_path()
+    swpath = shutil.which("shapeworks")
+    if (not swpath):
+        print("Error: cannot find ShapeWorks executables. Please pass their location using the --shapeworks_path argument")
+        sys.exit(1)
 
-    print(f"Using shapeworks from {get_shapeworks_bin_path()}")
+    print(f"Using shapeworks from {shapeworks_bin_path}")
 
     if args.use_subsample:
         dataExists = sw.data.dataset_exists_check(args.use_case)

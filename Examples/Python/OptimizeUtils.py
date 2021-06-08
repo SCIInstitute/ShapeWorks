@@ -7,8 +7,6 @@ import subprocess
 import shutil
 import xml.etree.ElementTree as ET
 
-from CommonUtils import *
-
 def get_parameter_text(parameterKey,parameterValue,domains_per_shape):
     if(type(parameterValue) is not list):
         parameterValue  = list([parameterValue])
@@ -288,3 +286,24 @@ def runShapeWorksOptimize_FixedDomains(parentDir, inDataFiles, parameterDictiona
     subprocess.check_call(execCommand )
     outPointsLocal, outPointsWorld = _convertFilenamesToPointFilenames(inDataFiles, outDir)
     return [outPointsLocal, outPointsWorld]
+
+def create_cpp_xml(filename, outputfilename):
+    '''
+        This creates a xml for cpp Shape warp binary
+    '''
+    opening_tag = "<"
+    ending_tag = "</"
+    closing_tag = ">"
+    newline = "\n"
+    tree = ET.parse(str(filename))
+    root = tree.getroot()
+    children = {}
+    for child in root:
+        children[child.tag] = child.text
+    tags = children.keys()
+    xml_text = ""
+    for tag in tags:
+        xml_text += opening_tag+tag+closing_tag+children[tag]+ending_tag+tag+closing_tag+newline+newline
+    file = open(outputfilename,"w")
+    file.write(xml_text)
+    file.close()

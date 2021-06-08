@@ -6,8 +6,8 @@ import subprocess
 import shutil
 import xml.etree.ElementTree as ET
 from termcolor import colored, cprint
+import OptimizeUtils
 
-from CommonUtils import *
 
 def create_analyze_xml(xmlfilename, dtFiles, localPointFiles, worldPointFiles,domains_per_shape=1):
     worldPointFiles = sorted(worldPointFiles)
@@ -55,7 +55,7 @@ def create_analyze_xml(xmlfilename, dtFiles, localPointFiles, worldPointFiles,do
 def launchShapeWorksStudio(parentDir, dtFiles, localPointFiles, worldPointFiles,domains_per_shape=1):
     xmlfilename = parentDir + '/analyze.xml'
     create_analyze_xml(xmlfilename, dtFiles, localPointFiles, worldPointFiles,domains_per_shape)
-    create_cpp_xml(xmlfilename, xmlfilename)
+    OptimizeUtils.create_cpp_xml(xmlfilename, xmlfilename)
     execCommand = ["ShapeWorksStudio" , xmlfilename ]
     subprocess.check_call(execCommand )
     print("\n\nTo re-run ShapeWorksStudio, run:\n")
