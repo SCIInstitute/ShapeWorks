@@ -47,7 +47,7 @@ public:
   Mesh& decimate(double reduction = 0.5, double angle = 15.0, bool preserveTopology = true);
 
   /// applies cvd decimation filter
-  Mesh& cvdDecimate(double percentage);
+  Mesh& cvdDecimate(double percentage = 0.5);
 
   /// handle flipping normals
   Mesh& invertNormals();
