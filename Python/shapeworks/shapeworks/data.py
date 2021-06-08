@@ -126,58 +126,82 @@ def create_cpp_xml(filename, outputfilename):
     file = open(outputfilename,"w")
     file.write(xml_text)
     file.close()
+def random_sub_sampling(inDataList,num_sample,domains_per_shape):
 
-def sample_images(inDataList, num_sample):
-    D = np.zeros((len(inDataList), len(inDataList)))
-    for i in range(len(inDataList)):
-        image_1 = itk.GetArrayFromImage(itk.imread(inDataList[i], itk.F))
-        x, y, z = image_1.shape
-        for j in range(i, len(inDataList)):
-            image_2 = itk.GetArrayFromImage(itk.imread(inDataList[j], itk.F))
-            x, y, z = max(x, image_2.shape[0]), max(y, image_2.shape[1]), max(z, image_2.shape[2])
-            image_1 = np.pad(image_1, (((x - image_1.shape[0]) // 2, (x - image_1.shape[0]) - (x - image_1.shape[0]) // 2),
-                         ((y - image_1.shape[1]) // 2, (y - image_1.shape[1]) - (y - image_1.shape[1]) // 2),
-                         ((z - image_1.shape[2]) // 2, (z - image_1.shape[2]) - (z - image_1.shape[2]) // 2)))
-            image_2 = np.pad(image_2, (((x - image_2.shape[0]) // 2, (x - image_2.shape[0]) - (x - image_2.shape[0]) // 2),
-                         ((y - image_2.shape[1]) // 2, (y - image_2.shape[1]) - (y - image_2.shape[1]) // 2),
-                         ((z - image_2.shape[2]) // 2, (z - image_2.shape[2]) - (z - image_2.shape[2]) // 2)))
-            D[i, j] = np.linalg.norm(image_1-image_2)
-
-    D += D.T
-    A = np.exp(- D ** 2 / (2. * np.std(np.triu(D))**2))
-    print("########## Sample subset of data #########")
-    print("Run Spectral Clustering for {} clusters ...".format(num_sample))
-    model = SpectralClustering(n_clusters=num_sample,
-                                    assign_labels="discretize",
-                                    random_state=0, affinity='precomputed').fit(A)
-    labels = list(model.labels_)
+    print("\nPerforming random sub-sampling")
+    print("\nClustering based subsample generation unsupported for multiple domains")
+    dataset_length = int(len(inDataList)/domains_per_shape)
+    all_indices = list(range(dataset_length))
+    idx = list(np.random.choice(all_indices,num_sample,replace=False))
     samples_idx = []
-    print("sample one data per cluster to have diverse samples!")
-    for i in range(num_sample):
-        samples_idx.append(labels.index(i))
+    for i in idx:
+        samples_idx.append(int(i*domains_per_shape))
+        samples_idx.append(int((i*domains_per_shape)+1))
+    return samples_idx
+    
 
-    print("###########################################\n")
+def sample_images(inDataList, num_sample,domains_per_shape=1):
+    print("\n########## Sample subset of data #########\n")
+    if(domains_per_shape==1):
+        D = np.zeros((len(inDataList), len(inDataList)))
+        for i in range(len(inDataList)):
+            image_1 = itk.GetArrayFromImage(itk.imread(inDataList[i], itk.F))
+            x, y, z = image_1.shape
+            for j in range(i, len(inDataList)):
+                image_2 = itk.GetArrayFromImage(itk.imread(inDataList[j], itk.F))
+                x, y, z = max(x, image_2.shape[0]), max(y, image_2.shape[1]), max(z, image_2.shape[2])
+                image_1 = np.pad(image_1, (((x - image_1.shape[0]) // 2, (x - image_1.shape[0]) - (x - image_1.shape[0]) // 2),
+                             ((y - image_1.shape[1]) // 2, (y - image_1.shape[1]) - (y - image_1.shape[1]) // 2),
+                             ((z - image_1.shape[2]) // 2, (z - image_1.shape[2]) - (z - image_1.shape[2]) // 2)))
+                image_2 = np.pad(image_2, (((x - image_2.shape[0]) // 2, (x - image_2.shape[0]) - (x - image_2.shape[0]) // 2),
+                             ((y - image_2.shape[1]) // 2, (y - image_2.shape[1]) - (y - image_2.shape[1]) // 2),
+                             ((z - image_2.shape[2]) // 2, (z - image_2.shape[2]) - (z - image_2.shape[2]) // 2)))
+                D[i, j] = np.linalg.norm(image_1-image_2)
+
+        D += D.T
+        A = np.exp(- D ** 2 / (2. * np.std(np.triu(D))**2))
+        
+        print("Run Spectral Clustering for {} clusters ...".format(num_sample))
+        model = SpectralClustering(n_clusters=num_sample,
+                                        assign_labels="discretize",
+                                        random_state=0, affinity='precomputed').fit(A)
+        labels = list(model.labels_)
+        samples_idx = []
+        print("sample one data per cluster to have diverse samples!")
+        for i in range(num_sample):
+            samples_idx.append(labels.index(i))
+      
+    else:
+        samples_idx = random_sub_sampling(inDataList,num_sample,domains_per_shape)
+    
+    print("\n###########################################\n")
     return samples_idx
 
-def sample_meshes(inMeshList, num_sample, printCmd=False):
-    D = np.zeros((len(inMeshList), len(inMeshList)))
-    for i in range(len(inMeshList)):
-        for j in range(i, len(inMeshList)):
-            mesh1 = sw.Mesh(inMeshList[i])
-            mesh2 = sw.Mesh(inMeshList[j])
-            dist = mesh1.distance(mesh2).getFieldMean("distance")
-            D[i, j] = dist
-    D += D.T
-    A = np.exp(- D ** 2 / (2. * np.std(np.triu(D))**2))
+def sample_meshes(inMeshList, num_sample, printCmd=False,domains_per_shape=1):
     print("########## Sample subset of data #########")
-    print("Run Spectral Clustering for {} clusters ...".format(num_sample))
-    model = SpectralClustering(n_clusters=num_sample,
-                                    assign_labels="discretize",
-                                    random_state=0, affinity='precomputed').fit(A)
-    labels = list(model.labels_)
-    samples_idx = []
-    print("sample one data per cluster to have diverse samples!")
-    for i in range(num_sample):
-        samples_idx.append(labels.index(i))
-    print("###########################################\n")
-    return samples_idx       
+    if(domains_per_shape==1):
+
+        D = np.zeros((len(inMeshList), len(inMeshList)))
+        for i in range(len(inMeshList)):
+            for j in range(i, len(inMeshList)):
+                mesh1 = sw.Mesh(inMeshList[i])
+                mesh2 = sw.Mesh(inMeshList[j])
+                dist = mesh1.distance(mesh2).getFieldMean("distance")
+                D[i, j] = dist
+        D += D.T
+        A = np.exp(- D ** 2 / (2. * np.std(np.triu(D))**2))
+        
+        print("Run Spectral Clustering for {} clusters ...".format(num_sample))
+        model = SpectralClustering(n_clusters=num_sample,
+                                        assign_labels="discretize",
+                                        random_state=0, affinity='precomputed').fit(A)
+        labels = list(model.labels_)
+        samples_idx = []
+        print("sample one data per cluster to have diverse samples!")
+        for i in range(num_sample):
+            samples_idx.append(labels.index(i))
+    else:
+        samples_idx = random_sub_sampling(inMeshList,num_sample,domains_per_shape)
+    
+    print("\n###########################################\n")
+    return samples_idx   
