@@ -67,6 +67,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(Smooth::getCommand());
   shapeworks.addCommand(SmoothSinc::getCommand());
   shapeworks.addCommand(Decimate::getCommand());
+  shapeworks.addCommand(CVDDecimate::getCommand());
   shapeworks.addCommand(InvertNormals::getCommand());
   shapeworks.addCommand(ReflectMesh::getCommand());
   shapeworks.addCommand(TransformMesh::getCommand());
@@ -78,6 +79,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(BoundingBoxMesh::getCommand());
   shapeworks.addCommand(MeshBounds::getCommand());
   shapeworks.addCommand(Distance::getCommand());
+  shapeworks.addCommand(FixElement::getCommand());
   shapeworks.addCommand(ClipClosedSurface::getCommand());
   shapeworks.addCommand(ComputeNormals::getCommand());
   shapeworks.addCommand(ClosestPoint::getCommand());
