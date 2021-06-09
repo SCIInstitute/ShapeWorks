@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import vtk
+import shapeworks as sw
 
 # helper function to determine the best grid size (rows and columns) given the number of samples in a dataset.
 def postive_factors(num_samples):
@@ -87,54 +88,11 @@ def get_file_with_ext(file_list,extension):
     return extList
 
 def find_reference_image_index(inDataList):
-    x = y = z = 0
-    for i in range(len(inDataList)):
-        img = inDataList[i]
-        tmp = img.toArray()
-        dim = tmp.shape
-        if dim[0] > x:
-            x = dim[0]
-        if dim[1] > y:
-            y = dim[1]
-        if dim[2] > z:
-            z = dim[2]
-
-    COM = np.zeros((x, y, z))
-    for i in range(len(inDataList)):
-        img = inDataList[i]
-        tmp = img.toArray()
-        COM += np.pad(tmp, (((x - tmp.shape[0]) // 2, (x - tmp.shape[0]) - (x - tmp.shape[0]) // 2),
-                            ((y - tmp.shape[1]) // 2, (y - tmp.shape[1]) - (y - tmp.shape[1]) // 2),
-                            ((z - tmp.shape[2]) // 2, (z - tmp.shape[2]) - (z - tmp.shape[2]) // 2)))
-    COM /= len(inDataList)
-    dist = np.inf
-    idx = 0
-    for i in range(len(inDataList)):
-        img = inDataList[i]
-        tmp = img.toArray()
-        tmp_dist = np.linalg.norm(
-            COM - np.pad(tmp, (((x - tmp.shape[0]) // 2, (x - tmp.shape[0]) - (x - tmp.shape[0]) // 2),
-                               ((y - tmp.shape[1]) // 2, (y - tmp.shape[1]) - (y - tmp.shape[1]) // 2),
-                               ((z - tmp.shape[2]) // 2, (z - tmp.shape[2]) - (z - tmp.shape[2]) // 2))))
-        if tmp_dist < dist:
-            idx = i
-            dist = tmp_dist
-    return idx
-
-def find_reference_mesh_index(mesh_list):
-    num_mesh = len(mesh_list)
-    median_mesh_index = None
-    min_sum = np.inf
-    dists = np.zeros((num_mesh, num_mesh))
-    for mesh_index in range(num_mesh):
-        if (mesh_index + 1 < num_mesh):
-            for comp_index in range(mesh_index + 1, num_mesh):
-                dist = mesh_list[mesh_index].distance(mesh_list[comp_index]).getFieldMean("distance")
-                dists[mesh_index, comp_index] = dist
-                dists[comp_index, mesh_index] = dist
-    dists = np.sum(dists, axis=0)
-    median_index = np.argmax(dists)
-    return median_index
+    mesh_list = []
+    for img in inDataList:
+        mesh = img.toMesh(0.5)
+        mesh_list.append(mesh)
+    return sw.MeshUtils.findReferenceMesh(mesh_list)
 
 def save_contour_as_vtp(points, lines, filename):
     """
