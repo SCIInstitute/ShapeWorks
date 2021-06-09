@@ -31,9 +31,13 @@ https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe
 
    Note: If you already have anaconda/miniconda installed, this step may hang.  If this step hangs, please uninstall anaconda/miniconda and re-install it and then run conda_installs.bat.
 
-7. CD to your copied Examples\Python location
+7. In Anaconda Promt with shapeworks environment activated,CD to your copied Examples\Python location
 
 8. Run "python RunUseCase.py --use_case [insert name of use case here]". For names for the use cases that are currently released, run: "python RunUseCase.py --help"
+
+9. In Anaconda Promt with shapeworks environment activated,CD to your copied Examples\Python\notebooks\tutorials location
+
+10. Run "jupyter notebook" to open the notebooks
 
 
 Running conda_installs.bat will activate the conda shapeworks environment
