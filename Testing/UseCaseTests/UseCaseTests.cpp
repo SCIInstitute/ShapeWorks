@@ -53,7 +53,7 @@ TEST(UseCaseTests, setup)
 TEST(UseCaseTests, ellipsoid)
 {
   run_use_case("ellipsoid",
-               "Output/ellipsoid/shape_models/32/ellipsoid_00.isores.center.com.aligned.cropped.tpSmoothDT_local.particles");
+               "Output/ellipsoid/shape_models/32/ellipsoid_00_local.particles");
 }
 
 //---------------------------------------------------------------------------
@@ -67,14 +67,14 @@ TEST(UseCaseTests, ellipsoid_mesh)
 TEST(UseCaseTests, ellipsoid_fd)
 {
   run_use_case("ellipsoid_fd",
-               "Output/ellipsoid_fd/shape_models/128/ellipsoid_19.isores.center.com.aligned.cropped.tpSmoothDT_local.particles");
+               "Output/ellipsoid_fd/shape_models/128/ellipsoid_00.isores.center.com.aligned.cropped.tpSmoothDT_local.particles");
 }
 
 //---------------------------------------------------------------------------
 TEST(UseCaseTests, ellipsoid_cut)
 {
   run_use_case("ellipsoid_cut",
-               "Output/ellipsoid_cut/shape_models/16/ellipsoid_00.tpSmoothDT_local.particles");
+               "Output/ellipsoid_cut/shape_models/16/ellipsoid_00_local.particles");
 }
 
 //---------------------------------------------------------------------------
@@ -96,7 +96,7 @@ TEST(UseCaseTests, lumps)
 TEST(UseCaseTests, left_atrium)
 {
   run_use_case("left_atrium",
-               "Output/left_atrium/shape_models/32/CARMA0046.laendo_no_veins.isores.center.pad.com.aligned.cropped.tpSmoothDT_local.particles");
+               "Output/left_atrium/shape_models/32/CARMA0046.laendo_no_veins_local.particles");
 }
 
 
@@ -104,7 +104,7 @@ TEST(UseCaseTests, left_atrium)
 TEST(UseCaseTests, femur)
 {
   run_use_case("femur",
-               "Output/femur/shape_models/32/m03_L_femur.isores.pad.com.center.aligned.clipped.tpSmoothDT_local.particles");
+               "Output/femur/shape_models/32/m03_L_femur_local.particles");
 }
 
 //---------------------------------------------------------------------------
@@ -118,7 +118,7 @@ TEST(UseCaseTests, femur_mesh)
 TEST(UseCaseTests, femur_cut)
 {
   run_use_case("femur_cut",
-               "Output/femur_cut/shape_models/32/m03_L_femur.isores.pad.com.center.aligned.tpSmoothDT_local.particles");
+               "Output/femur_cut/shape_models/32/m03_L_femur_local.particles");
 }
 
 //---------------------------------------------------------------------------
@@ -141,6 +141,18 @@ TEST(UseCaseTests, thin_cavity_bean)
                "Output/thin_cavity_bean/shape_models/32/thin_cavity_bean_00_local.particles");
 }
 
+//---------------------------------------------------------------------------
+TEST(UseCaseTests, ellipsoid_multiple_domain)
+{
+  run_use_case("ellipsoid_multiple_domain",
+               "Output/ellipsoid_multiple_domain/shape_models/32_32/ellipsoid_joint_00_d1_local.particles");
+}
+//---------------------------------------------------------------------------
+TEST(UseCaseTests, ellipsoid_multiple_domain_mesh)
+{
+  run_use_case("ellipsoid_multiple_domain_mesh",
+               "Output/ellipsoid_multiple_domain_mesh/shape_models/32_32/ellipsoid_joint_00_d1_local.particles");
+}
 //---------------------------------------------------------------------------
 TEST(UseCaseTests, ellipsoid_pca)
 {

@@ -59,7 +59,10 @@ if(LINUX)
   # We need RPATH rather than RUNPATH since RUNPATH
   # though recommended, is not used for transitive dependencies
   SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--disable-new-dtags")
+  SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,--disable-new-dtags")
 endif(LINUX)
+
+message(STATUS "CMAKE_SHARED_LINKER_FLAGS: ${CMAKE_SHARED_LINKER_FLAGS}")
 
 # put executables in bin directory (under build dir) so they are easy to find
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -172,7 +175,6 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/ExternalLibs/robin_hood")
 
 SET(PYBIND11_PYTHON_VERSION 3.7)
 find_package(pybind11 2.5.0 REQUIRED)
-add_subdirectory(Python/shapeworks)
 
 add_subdirectory(ExternalLibs)
 add_subdirectory(Libs)
@@ -230,4 +232,5 @@ endif(BUILD_DOCUMENTATION)
 
 MESSAGE(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 MESSAGE(STATUS "CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
+message(STATUS "CMAKE_SHARED_LINKER_FLAGS: ${CMAKE_SHARED_LINKER_FLAGS}")
 

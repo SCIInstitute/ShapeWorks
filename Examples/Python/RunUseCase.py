@@ -15,6 +15,13 @@ import argparse
 import subprocess
 import sys
 import setupenv
+import shutil
+import shapeworks as sw
+
+#check if current directory is writable
+current_dir = os.getcwd()
+if not os.access(current_dir,os.W_OK):
+	raise OSError("You don't have write permission in the current directory. Please copy the Examples folder to a different location to run the use cases")
 
 
 if __name__ == '__main__':
@@ -29,8 +36,6 @@ if __name__ == '__main__':
         print("See https://github.com/SCIInstitute/ShapeWorks for more information")
         sys.exit(1)
 
-    from CommonUtils import *
-
     # Default installation path for each platform. If using your own build, specify --shapeworks_path
     # Note, the path for linux differs from setupenv.py because it is set up for the notebooks
     # that are two more levels deep
@@ -42,7 +47,7 @@ if __name__ == '__main__':
     default_subsample = 3
 
     parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
-    parser.add_argument("--use_case", help="Specify which use case to run", choices=["ellipsoid", "ellipsoid_evaluate", "ellipsoid_mesh", "ellipsoid_fd", "ellipsoid_cut", "ellipsoid_pca","lumps", "left_atrium", "femur", "femur_mesh", "femur_cut", "deep_ssm", "supershapes_1mode_contour", "thin_cavity_bean"])
+    parser.add_argument("--use_case", help="Specify which use case to run", choices=["ellipsoid", "ellipsoid_evaluate", "ellipsoid_mesh", "ellipsoid_fd", "ellipsoid_cut", "ellipsoid_pca", "ellipsoid_multiple_domain","ellipsoid_multiple_domain_mesh", "lumps", "left_atrium", "femur", "femur_mesh", "femur_cut", "deep_ssm", "supershapes_1mode_contour", "thin_cavity_bean"])
     parser.add_argument("--use_subsample", help="Run the pipeline for a subset of data",action="store_true")
     parser.add_argument("--num_subsample", help="Size of subset to run on (default: "+str(default_subsample)+")", nargs='?', type=int, default=default_subsample)
     parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
@@ -62,19 +67,23 @@ if __name__ == '__main__':
     # 3. Platform dependent defaults
     #######################################
     if shapeworks_bin_path is None:
-        # if `shapeworks` is in the path, this will return it, otherwise None
-        shapeworks_bin_path = get_shapeworks_bin_path()
+        swpath = shutil.which("shapeworks")
+        if swpath:
+            shapeworks_bin_path = os.path.dirname(swpath)  
     if shapeworks_bin_path is None:
         shapeworks_bin_path = default_bin_path
     setupenv.setup_shapeworks_env(shapeworks_bin_dir=shapeworks_bin_path, verbose=False)
 
     # make sure the shapeworks executables can be found
-    check_shapeworks_path()
+    swpath = shutil.which("shapeworks")
+    if (not swpath):
+        print("Error: cannot find ShapeWorks executables. Please pass their location using the --shapeworks_path argument")
+        sys.exit(1)
 
-    print(f"Using shapeworks from {get_shapeworks_bin_path()}")
+    print(f"Using shapeworks from {shapeworks_bin_path}")
 
     if args.use_subsample:
-        dataExists = dataset_exists_check(args.use_case)
+        dataExists = sw.data.dataset_exists_check(args.use_case)
         args.use_subsample = args.num_subsample
         if(dataExists==False):
             print("Please note : For --use_subsample argument the entire dataset will be downloaded.For a quick test use the --tiny_test argument")
@@ -101,4 +110,3 @@ if __name__ == '__main__':
         sys.exit(1)
     except subprocess.CalledProcessError as e:
         print("General exception caught.\n\tReturncode: "+str(e.returncode)+"\n\tOutput: "+str(e.output))
-

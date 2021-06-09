@@ -3,6 +3,7 @@
 #include "Shapeworks.h"
 #include "ImageUtils.h"
 
+#include <vector>
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
 #include <string>

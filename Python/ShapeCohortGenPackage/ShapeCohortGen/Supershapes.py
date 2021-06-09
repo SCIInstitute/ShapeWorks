@@ -7,7 +7,7 @@ import shapeworks as sw
 from ShapeCohortGen.CohortGenUtils import *
 
 '''
-Generates super shapes and saves PLY mesh form
+Generates super shapes and saves mesh form
 '''
 def generate(num_samples, out_dir, randomize_center, randomize_rotation, m, start_id, size):
     meshDir= out_dir + "meshes/"
@@ -39,10 +39,11 @@ def generate(num_samples, out_dir, randomize_center, randomize_rotation, m, star
         R = trimesh.transformations.random_rotation_matrix(rotation)
         transform_matrix = trimesh.transformations.concatenate_matrices(T, R, S)
         shapeMesh = shapeMesh.apply_transform(transform_matrix)
-        shapeMesh.export(meshDir + name + ".stl")
 
-        # Save mesh as ply and vtk
-        sw.Mesh(meshDir + name + ".stl").write(meshDir + name + ".ply").write(meshDir + name + ".vtk")
+        # Temporarily save mesh as stl and convert it to vtk
+        shapeMesh.export(meshDir + name + ".stl")
+        sw.Mesh(meshDir + name + ".stl").write(meshDir + name + ".vtk")
+        os.remove(meshDir + name + ".stl")
 
     return get_files(meshDir)
 
@@ -115,8 +116,8 @@ def generate_2D(n_samples, n_points, out_dir,
         n2 = default_n if n2_degree is None else np.random.chisquare(n2_degree)
         n3 = default_n if n3_degree is None else np.random.chisquare(n3_degree)
         pts = sample_super_formula_2D(n_points, m, n1, n2, n3)
-        lines = compute_line_indices(n_points, is_closed=True)
+        lines = sw.utils.compute_line_indices(n_points, is_closed=True)
         out_fname = os.path.join(contour_dir, f'{i:02d}.vtp')
-        save_contour_as_vtp(pts, lines, out_fname)
+        sw.utils.save_contour_as_vtp(pts, lines, out_fname)
         filenames.append(out_fname)
     return filenames
