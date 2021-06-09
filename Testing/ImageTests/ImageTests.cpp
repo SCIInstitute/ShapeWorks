@@ -457,7 +457,7 @@ TEST(ImageTests, boundingBoxTest1)
 TEST(ImageTests, boundingBoxTest2)
 {
   std::string images_location = std::string(TEST_DATA_DIR) + std::string("/images/");
-  std::vector<Image> images;
+  std::vector<const Image> images;
   Image img1(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_1.nrrd")); images.push_back(img1);
   Image img2(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_2.nrrd")); images.push_back(img2);
   Image img3(std::string(TEST_DATA_DIR) + std::string("/images/seg.ellipsoid_3.nrrd")); images.push_back(img3);

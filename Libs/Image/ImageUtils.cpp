@@ -5,7 +5,7 @@
 
 namespace shapeworks {
 
-PhysicalRegion ImageUtils::boundingBox(std::vector<std::string> &filenames, Image::PixelType isoValue)
+PhysicalRegion ImageUtils::boundingBox(const std::vector<std::string>& filenames, Image::PixelType isoValue)
 {
   if (filenames.empty())
     throw std::invalid_argument("No filenames provided to compute a bounding box");
@@ -28,7 +28,7 @@ PhysicalRegion ImageUtils::boundingBox(std::vector<std::string> &filenames, Imag
   return bbox;
 }
 
-PhysicalRegion ImageUtils::boundingBox(std::vector<Image> &images, Image::PixelType isoValue)
+PhysicalRegion ImageUtils::boundingBox(const std::vector<const Image>& images, Image::PixelType isoValue)
 {
   if (images.empty())
     throw std::invalid_argument("No images provided to compute a bounding box");

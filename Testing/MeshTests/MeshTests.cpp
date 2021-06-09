@@ -322,7 +322,7 @@ TEST(MeshTests, boundingBoxTest1)
 
 TEST(MeshTests, boundingBoxTest2)
 {
-  std::vector<Mesh> meshes;
+  std::vector<const Mesh> meshes;
   Mesh mesh1(std::string(TEST_DATA_DIR) + std::string("/m03_L_femur.ply")); meshes.push_back(mesh1);
   Mesh mesh2(std::string(TEST_DATA_DIR) + std::string("/m04_L_femur.ply")); meshes.push_back(mesh2);
   Mesh mesh3(std::string(TEST_DATA_DIR) + std::string("/femur.ply"      )); meshes.push_back(mesh3);
