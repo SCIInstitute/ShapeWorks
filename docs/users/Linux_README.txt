@@ -26,6 +26,10 @@ For names for the use cases that are currently released, run:
 
 python RunUseCase.py --help
 
+To run the jupyter notebooks:
+
+cd Examples/Python/notebooks/tutorials
+jupyter notebook
 
 For subsequent usage, the shapeworks conda environment must be activated using:
 
