@@ -119,17 +119,13 @@
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
                 <ul class="current">
-                    <li class="toctree-l1"><a class="reference internal" href="getting-started-with-jupyter-notebooks.html">Getting Started with Jupyter Notebooks</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="setting-up-shapeworks-environment.html">Setting Up ShapeWorks Environment</a>
+                    <li class="toctree-l1"><a class="reference internal" href="getting-started-with-notebooks.html">Getting Started with Jupyter Notebooks</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="getting-started-with-segmentations.html">Getting Started with Segmentations</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="getting-started-with-meshes.html">Getting Started with Meshes</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="getting-started-with-exploring-segmentations.html">Getting Started with Exploring Segmentations</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="getting-started-with-grooming-segmentations.html">Getting Started with Grooming Segmentations</a>
                     </li>
                     <li class="toctree-l1 current"><a class="reference internal current" href="getting-started-with-data-augmentation.html">Getting Started with Data Augmentation</a>
     <ul class="current">
@@ -139,17 +135,7 @@
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#data-augmentation-overview">Data Augmentation Overview</a>
     </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#note-about-shapeworks-apis">Note about shapeworks APIs</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#notebook-keyboard-shortcuts">Notebook keyboard shortcuts</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#prerequisites_1">Prerequisites</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#setting-up-shapeworks-environment">Setting up shapeworks environment</a>
+    <li class="toctree-l3"><a class="reference internal" href="#import-shapeworks-and-relevant-libraries">Import shapeworks and relevant libraries</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#import-data-augmentation-package">Import Data Augmentation Package</a>
     </li>
@@ -812,9 +798,8 @@ all of MD as it is not optimized for dense, information rich UIs.
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="before-you-start">Before you start!<a class="anchor-link" href="#Before-you-start!">&#182;</a></h2><ul>
-<li>This <a href="getting-started-with-grooming-segmentations.ipynb">notebook</a> assumes that shapeworks conda environment has been activated using <code>conda activate shapeworks</code> on the terminal.</li>
-<li>See <a href="setting-up-shapeworks-environment.ipynb">Setting Up ShapeWorks Environment</a> to learn how to set up your environment to start using shapeworks library. Please note, the prerequisite steps will use the same code to setup the environment for this notebook and import <code>shapeworks</code> library.</li>
-<li>See <a href="getting-started-with-segmentations.ipynb">Getting Started with Segmentations</a> to learn how to load and visualize binary segmentations.</li>
+<li>This notebook assumes that shapeworks conda environment has been activated using <code>conda activate shapeworks</code> on the terminal.</li>
+<li>See <a href="getting-started-with-notebooks.ipynb">Getting Started with Notebooks</a> for information on setting up your environment and notebook shortcuts. </li>
 </ul>
 <h2 id="in-this-notebook-you-will-learn">In this notebook, you will learn:<a class="anchor-link" href="#In-this-notebook,-you-will-learn:">&#182;</a></h2><ol>
 <li>How to generate realistic synthetic data from an existing dataset using different parametric distributions.</li>
@@ -831,43 +816,12 @@ all of MD as it is not optimized for dense, information rich UIs.
 </ol>
 <p>This notebook shows how the distribution of the original data can be visually compared to the distribution of the synthetic data to motivate the choice of parametric distribution in step 2.</p>
 <p>For a full explanation of the data augmentation process and package please see: <a href="http://sciinstitute.github.io/ShapeWorks/deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a>.</p>
-<h2 id="prerequisites">Prerequisites<a class="anchor-link" href="#Prerequisites">&#182;</a></h2><ul>
-<li>Setting up <code>shapeworks</code> environment. See <a href="setting-up-shapeworks-environment.ipynb">Setting Up ShapeWorks Environment</a>. To avoid code clutter, the <code>setup_shapeworks_env</code> function can found in <code>Examples/Python/setupenv.py</code> module.</li>
-<li>Importing <code>shapeworks</code> library. See <a href="setting-up-shapeworks-environment.ipynb">Setting Up ShapeWorks Environment</a>.</li>
-<li>Helper functions for segmentations. See <a href="getting-started-with-segmentations.ipynb">Getting Started with Segmentations</a> and <a href="getting-started-with-exploring-segmentations.ipynb">Getting Started with Exploring Segmentations</a>.</li>
-<li>Helper functions for meshes. See <a href="getting-started-with-meshes.ipynb">Getting Started with Meshes</a>.</li>
-<li>Helper functions for visualization. See <a href="getting-started-with-segmentations.ipynb">Getting Started with Segmentations</a>, <a href="getting-started-with-meshes.ipynb">Getting Started with Meshes</a>, and <a href="getting-started-with-exploring-segmentations.ipynb">Getting Started with Exploring Segmentations</a>.</li>
-<li>Defining your dataset location. See <a href="getting-started-with-exploring-segmentations.ipynb">Getting Started with Exploring Segmentations</a>.</li>
-<li>Loading your dataset. See <a href="getting-started-with-exploring-segmentations.ipynb">Getting Started with Exploring Segmentations</a>.</li>
-<li>Defining parameters for <code>pyvista</code> plotter. See <a href="getting-started-with-exploring-segmentations.ipynb">Getting Started with Exploring Segmentations</a>.</li>
-</ul>
-<h2 id="note-about-shapeworks-apis">Note about <code>shapeworks</code> APIs<a class="anchor-link" href="#Note-about-shapeworks-APIs">&#182;</a></h2><p>shapeworks functions are inplace, i.e., <code>&lt;swObject&gt;.&lt;function&gt;()</code> applies that function to the <code>swObject</code> data. To keep the original data unchanged, you have first to copy it to another variable before applying the function.</p>
-<h2 id="notebook-keyboard-shortcuts">Notebook keyboard shortcuts<a class="anchor-link" href="#Notebook-keyboard-shortcuts">&#182;</a></h2><ul>
-<li><code>Esc + H</code>: displays a complete list of keyboard shortcuts</li>
-<li><code>Esc + A</code>: insert new cell above the current cell</li>
-<li><code>Esc + B</code>: insert new cell below the current cell</li>
-<li><code>Esc + D + D</code>: delete current cell</li>
-<li><code>Esc + Z</code>: undo</li>
-<li><code>Shift + enter</code>: run current cell and move to next</li>
-<li>To show a function's argument list (i.e., signature), use <code>(</code> then <code>shift-tab</code></li>
-<li>Use <code>shift-tab-tab</code> to show more help for a function</li>
-<li>To show the help of a function, use <code>help(function)</code> or <code>function?</code></li>
-<li>To show all functions supported by an object, use <code>dot-tab</code> after the variable name</li>
-</ul>
 
 </div>
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="prerequisites">Prerequisites<a class="anchor-link" href="#Prerequisites">&#182;</a></h2><h3 id="setting-up-shapeworks-environment">Setting up <code>shapeworks</code> environment<a class="anchor-link" href="#Setting-up-shapeworks-environment">&#182;</a></h3><p>Here, we will append both your <code>PYTHONPATH</code> and your system <code>PATH</code> to setup shapeworks environment for this notebook. See <a href="setting-up-shapeworks-environment.ipynb">Setting Up ShapeWorks Environment</a> for more details.</p>
-<p>In this notebook, we assume the following.</p>
-<ul>
-<li>This notebook is located in <code>Examples/Python/notebooks/tutorials</code></li>
-<li>You have built shapeworks from source in <code>build</code> directory within the shapeworks code directory</li>
-<li>You have built shapeworks dependencies (using <code>build_dependencies.sh</code>) in the same parent directory of shapeworks code</li>
-</ul>
-<p><strong>Note:</strong> If you run from a ShapeWorks installation, you don't need to set the dependencies path and the <code>shapeworks_bin_dir</code> would be set as <code>../../../../bin</code>.</p>
-
+<h3 id="import-shapeworks-and-relevant-libraries">Import shapeworks and relevant libraries<a class="anchor-link" href="#Import-shapeworks-and-relevant-libraries">&#182;</a></h3>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
@@ -877,25 +831,9 @@ all of MD as it is not optimized for dense, information rich UIs.
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># import relevant libraries </span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">os</span> 
 <span class="kn">import</span> <span class="nn">sys</span> 
-<span class="kn">import</span> <span class="nn">os</span>
-
-<span class="c1"># add parent-parent directory (where setupenv.py is) to python path</span>
-<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;../..&#39;</span><span class="p">)</span>
-
-<span class="c1"># importing setupenv from Examples/Python</span>
-<span class="kn">import</span> <span class="nn">setupenv</span>
-
-<span class="c1"># indicate the bin directories for shapeworks and its dependencies</span>
-<span class="n">shapeworks_bin_dir</span>   <span class="o">=</span> <span class="s2">&quot;../../../../build/bin&quot;</span>
-<span class="n">dependencies_bin_dir</span> <span class="o">=</span> <span class="s2">&quot;../../../../../shapeworks-dependencies/bin&quot;</span>
-
-<span class="c1"># set up shapeworks environment</span>
-<span class="n">setupenv</span><span class="o">.</span><span class="n">setup_shapeworks_env</span><span class="p">(</span><span class="n">shapeworks_bin_dir</span><span class="p">,</span>  
-                              <span class="n">dependencies_bin_dir</span><span class="p">,</span> 
-                              <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
-<span class="kn">import</span> <span class="nn">shapeworks</span> <span class="k">as</span> <span class="nn">sw</span>
+<span class="kn">import</span> <span class="nn">shapeworks</span>
 </pre></div>
 
         </div>
@@ -917,13 +855,7 @@ all of MD as it is not optimized for dense, information rich UIs.
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s import shapeworks library to test whether shapeworks is now set</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">DataAugmentationUtils</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR: DataAugmentationUtils failed to import&#39;</span><span class="p">)</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;SUCCESS: DataAugmentationUtils is successfully imported!!!&#39;</span><span class="p">)</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">DataAugmentationUtils</span>
 </pre></div>
 
         </div>
@@ -936,8 +868,9 @@ all of MD as it is not optimized for dense, information rich UIs.
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="1-defining-the-original-dataset">1. Defining the original dataset<a class="anchor-link" href="#1.-Defining-the-original-dataset">&#182;</a></h2><h3 id="defining-dataset-location">Defining dataset location<a class="anchor-link" href="#Defining-dataset-location">&#182;</a></h3><p>You can download exemplar datasets from <a href="http://cibc1.sci.utah.edu:8080">ShapeWorks data portal</a> after you login. For new users, you can <a href="http://cibc1.sci.utah.edu:8080/#?dialog=register">register</a> an account for free. Please do not use an important password.</p>
-<p>After you login, click <code>Collections</code> on the left panel and then <code>use-case-data-v2</code>. Select the dataset you would like to download by clicking on the checkbox on the left of the dataset name. See the video below.</p>
-<p><strong>This notebook assumes that you have downloaded <code>femur-v0</code> in <code>Examples/Python/Data</code>.</strong> Feel free to use your own dataset.</p>
+<p>After you login, click <code>Collections</code> on the left panel and then <code>use-case-data-v2</code>. Select the dataset you would like to download by clicking on the checkbox on the left of the dataset name. See the video below.
+After you download the dataset zip file, make sure you unzip/extract the contents in the appropriate location.</p>
+<p><strong>This notebook assumes that you have downloaded <code>femur-v0</code> and you have placed the unzipped folder <code>femur-v0</code> in <code>Examples/Python/Data</code>.</strong> Feel free to use your own dataset.</p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/portal_data_download.mp4" autoplay muted loop controls style="width:100%"></p>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
@@ -1224,7 +1157,7 @@ First, we will try a Gaussian distribution. For further explanation about each d
         <a href="getting-started-with-shape-cohort-generation.html" class="btn btn-neutral float-right" title="Getting Started with Shape Cohort Generator">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="getting-started-with-grooming-segmentations.html" class="btn btn-neutral" title="Getting Started with Grooming Segmentations"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="getting-started-with-exploring-segmentations.html" class="btn btn-neutral" title="Getting Started with Exploring Segmentations"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -1254,7 +1187,7 @@ First, we will try a Gaussian distribution. For further explanation about each d
           <a href="https://github.com/SCIInstitute/ShapeWorks/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
-        <span><a href="getting-started-with-grooming-segmentations.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="getting-started-with-exploring-segmentations.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
         <span style="margin-left: 15px"><a href="getting-started-with-shape-cohort-generation.html" style="color: #fcfcfc">Next &raquo;</a></span>

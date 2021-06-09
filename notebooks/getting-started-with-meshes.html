@@ -119,9 +119,7 @@
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
                 <ul class="current">
-                    <li class="toctree-l1"><a class="reference internal" href="getting-started-with-jupyter-notebooks.html">Getting Started with Jupyter Notebooks</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="setting-up-shapeworks-environment.html">Setting Up ShapeWorks Environment</a>
+                    <li class="toctree-l1"><a class="reference internal" href="getting-started-with-notebooks.html">Getting Started with Jupyter Notebooks</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="getting-started-with-segmentations.html">Getting Started with Segmentations</a>
                     </li>
@@ -130,17 +128,7 @@
     <li class="toctree-l2"><a class="reference internal" href="#before-you-start">Before you start!</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#in-this-notebook-you-will-learn">In this notebook, you will learn:</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#note-about-shapeworks-apis">Note about shapeworks APIs</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#notebook-keyboard-shortcuts">Notebook keyboard shortcuts</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#prerequisites_1">Prerequisites</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#setting-up-shapeworks-environment">Setting up shapeworks environment</a>
-    </li>
     <li class="toctree-l3"><a class="reference internal" href="#importing-shapeworks-library">Importing shapeworks library</a>
     </li>
         </ul>
@@ -155,41 +143,19 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#2-loading-a-single-mesh">2. Loading a single mesh</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#3-converting-shapeworks-mesh-to-vtk-mesh-for-visualization">3. Converting shapeworks mesh to vtk mesh for visualization</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#defining-a-helper-function">Defining a helper function</a>
+    <li class="toctree-l2"><a class="reference internal" href="#3-convert-to-a-vtk-mesh">3. Convert to a VTK mesh</a>
     </li>
-        </ul>
+    <li class="toctree-l2"><a class="reference internal" href="#4-visualizing-surface-mesh-using-pyvista">4. Visualizing surface mesh using pyvista</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#4-visualizing-surface-mesh-using-itkwidgets">4. Visualizing surface mesh using itkwidgets</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#5-visualizing-surface-mesh-using-pyvista">5. Visualizing surface mesh using pyvista</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#6-visualizing-two-meshes-side-by-side-using-pyvista">6. Visualizing two meshes side-by-side using pyvista</a>
+    <li class="toctree-l2"><a class="reference internal" href="#5-visualizing-multiple-meshes">5. Visualizing multiple meshes</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#loading-the-second-mesh-and-convert-it-to-vtk-mesh">Loading the second mesh and convert it to vtk mesh</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#defining-pyvista-plotter">Defining pyvista plotter</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#adding-meshes-to-the-plotter-and-start-rendering">Adding meshes to the plotter and start rendering</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#defining-a-helper-function_1">Defining a helper function</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#7-visualizing-two-meshes-in-the-same-rendering-window">7. Visualizing two meshes in the same rendering window</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#using-pyvista">Using pyvista</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#using-itkwidgets">Using itkwidgets</a>
     </li>
         </ul>
     </li>
     </ul>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="getting-started-with-exploring-segmentations.html">Getting Started with Exploring Segmentations</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="getting-started-with-grooming-segmentations.html">Getting Started with Grooming Segmentations</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="getting-started-with-data-augmentation.html">Getting Started with Data Augmentation</a>
                     </li>
@@ -829,75 +795,10 @@ all of MD as it is not optimized for dense, information rich UIs.
 <li>How to define your dataset location and explore what is available in it</li>
 <li>How to load a single mesh </li>
 <li>How to convert <code>shapeworks</code> mesh to <code>vtk</code> mesh for visualization</li>
-<li>How to visualize a surface mesh using <code>itkwidgets</code></li>
 <li>How to visualize a surface mesh using <code>pyvista</code></li>
-<li>How to visualize two meshes side-by-side using <code>pyvista</code></li>
-<li>How to visualize two meshes in the same rendering window using <code>pyvista</code> and <code>itkwidgets</code></li>
 </ol>
-<p>We will also define modular/generic helper functions as we walk through these items to reuse functionalities without duplicating code.</p>
-<h2 id="prerequisites">Prerequisites<a class="anchor-link" href="#Prerequisites">&#182;</a></h2><ul>
-<li>Setting up <code>shapeworks</code> environment. See <a href="setting-up-shapeworks-environment.ipynb">Setting Up ShapeWorks Environment</a>. To avoid code clutter, the <code>setup_shapeworks_env</code> function can found in <code>Examples/Python/setupenv.py</code> module. </li>
-<li>Importing <code>shapeworks</code> library. See <a href="setting-up-shapeworks-environment.ipynb">Setting Up ShapeWorks Environment</a>.</li>
-</ul>
-<h2 id="note-about-shapeworks-apis">Note about <code>shapeworks</code> APIs<a class="anchor-link" href="#Note-about-shapeworks-APIs">&#182;</a></h2><p>shapeworks functions are inplace, i.e., <code>&lt;swObject&gt;.&lt;function&gt;()</code> applies that function to the <code>swObject</code> data. To keep the original data unchanged, you have first to copy it to another variable before applying the function.</p>
-<h2 id="notebook-keyboard-shortcuts">Notebook keyboard shortcuts<a class="anchor-link" href="#Notebook-keyboard-shortcuts">&#182;</a></h2><ul>
-<li><code>Esc + H</code>: displays a complete list of keyboard shortcuts</li>
-<li><code>Esc + A</code>: insert new cell above the current cell</li>
-<li><code>Esc + B</code>: insert new cell below the current cell</li>
-<li><code>Esc + D + D</code>: delete current cell</li>
-<li><code>Esc + Z</code>: undo</li>
-<li><code>Shift + enter</code>: run current cell and move to next</li>
-<li>To show a function's argument list (i.e., signature), use <code>(</code> then <code>shift-tab</code></li>
-<li>Use <code>shift-tab-tab</code> to show more help for a function</li>
-<li>To show the help of a function, use <code>help(function)</code> or <code>function?</code></li>
-<li>To show all functions supported by an object, use <code>dot-tab</code> after the variable name</li>
-</ul>
 
 </div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="prerequisites">Prerequisites<a class="anchor-link" href="#Prerequisites">&#182;</a></h2><h3 id="setting-up-shapeworks-environment">Setting up <code>shapeworks</code> environment<a class="anchor-link" href="#Setting-up-shapeworks-environment">&#182;</a></h3><p>Here, we will append both your <code>PYTHONPATH</code> and your system <code>PATH</code> to setup shapeworks environment for this notebook. See <a href="setting-up-shapeworks-environment.ipynb">Setting Up ShapeWorks Environment</a> for more details.</p>
-<p>In this notebook, we assume the following.</p>
-<ul>
-<li>This notebook is located in <code>Examples/Python/notebooks/tutorials</code></li>
-<li>You have built shapeworks from source in <code>build</code> directory within the shapeworks code directory</li>
-</ul>
-<p><strong>Note:</strong> If you run from a ShapeWorks installation, you don't need to set the <code>shapeworks_bin_dir</code></p>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># import relevant libraries </span>
-<span class="kn">import</span> <span class="nn">sys</span> 
-
-<span class="c1"># add parent-parent directory (where setupenv.py is) to python path</span>
-<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;../..&#39;</span><span class="p">)</span>
-
-<span class="c1"># importing setupenv from Examples/Python</span>
-<span class="kn">import</span> <span class="nn">setupenv</span>
-
-<span class="c1"># indicate the bin directories for shapeworks and its dependencies</span>
-<span class="n">shapeworks_bin_dir</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># default</span>
-<span class="c1">#shapeworks_bin_dir = &quot;../../../../build/bin&quot;</span>
-
-<span class="c1"># set up shapeworks environment</span>
-<span class="n">setupenv</span><span class="o">.</span><span class="n">setup_shapeworks_env</span><span class="p">(</span><span class="n">shapeworks_bin_dir</span><span class="p">,</span>  
-                              <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
@@ -915,6 +816,7 @@ all of MD as it is not optimized for dense, information rich UIs.
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">shapeworks</span> <span class="k">as</span> <span class="nn">sw</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">shapeworks</span> <span class="k">as</span> <span class="nn">sw</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR: shapeworks library failed to import&#39;</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;SUCCESS: shapeworks library is successfully imported!!!&#39;</span><span class="p">)</span>
@@ -1037,83 +939,7 @@ all of MD as it is not optimized for dense, information rich UIs.
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="3-converting-shapeworks-mesh-to-vtk-mesh-for-visualization">3. Converting <code>shapeworks</code> mesh to <code>vtk</code> mesh for visualization<a class="anchor-link" href="#3.-Converting-shapeworks-mesh-to-vtk-mesh-for-visualization">&#182;</a></h2><p>We can use python libraries such as <a href="https://github.com/InsightSoftwareConsortium/itkwidgets"><code>itkwidgets</code></a> and <a href="https://docs.pyvista.org/index.html"><code>pyvista</code></a> for interactive 3D visualization. These libraries support, among others, <code>vtk</code> data structures for images and meshes. Hence, to visualize our <code>shapeworks</code> mesh, we need first to convert it to a <code>vtk</code> data structure.</p>
-<p>This conversion can be performed by first extracting the mesh vertices and faces arrays from the <code>shapeworks</code> mesh, then constructing a <code>vtk</code> mesh from these arrays and <code>pyvista</code>'s <code>wrap</code> function to construct a <code>vtk</code> mesh. (see issue #825)</p>
-<p>For now, we will save and re-read mesh for visualization, issue #825</p>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># importing pyvista</span>
-<span class="kn">import</span> <span class="nn">pyvista</span> <span class="k">as</span> <span class="nn">pv</span>
-
-<span class="c1"># save mesh</span>
-<span class="n">shapeMesh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;temp.vtk&#39;</span><span class="p">)</span>
-
-<span class="c1"># read mesh into an itk mesh data</span>
-<span class="n">shapeMesh_vtk</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;temp.vtk&#39;</span><span class="p">)</span>
-
-<span class="c1"># remove the temp mesh file</span>
-<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;temp.vtk&#39;</span><span class="p">)</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="defining-a-helper-function">Defining a helper function<a class="anchor-link" href="#Defining-a-helper-function">&#182;</a></h3><p>As converting between shapeworks Mesh object and vtk mesh is a step that we will need frequently, let's add a helper function for this purpose.</p>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># a helper function that converts shapeworks Mesh object to vtk mesh </span>
-<span class="c1"># TODO: to be modifed when #825 is addressed</span>
-<span class="k">def</span> <span class="nf">sw2vtkMesh</span><span class="p">(</span><span class="n">swMesh</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-    
-    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Header information: &#39;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">swMesh</span><span class="p">)</span>
-
-    <span class="c1"># save mesh</span>
-    <span class="n">swMesh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;temp.vtk&#39;</span><span class="p">)</span>
-
-    <span class="c1"># read mesh into an itk mesh data</span>
-    <span class="n">vtkMesh</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;temp.vtk&#39;</span><span class="p">)</span>
-    
-    <span class="c1"># remove the temp mesh file</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;temp.vtk&#39;</span><span class="p">)</span>
-    
-    <span class="k">return</span> <span class="n">vtkMesh</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="4-visualizing-surface-mesh-using-itkwidgets">4. Visualizing surface mesh using <code>itkwidgets</code><a class="anchor-link" href="#4.-Visualizing-surface-mesh-using-itkwidgets">&#182;</a></h2><p><a href="https://github.com/InsightSoftwareConsortium/itkwidgets"><code>itkwidgets</code></a> is a python library that supports interactive Jupyter widgets to visualize images, point sets, and meshes.</p>
-<p><code>itkwidgets</code> supports <code>itk</code>, <code>vtk</code>, and <code>pyvista</code> data structures. Hence, to visualize a <code>shapeworks</code> mesh, we need first to convert it to a <code>vtk</code> mesh.</p>
+<h2 id="3-convert-to-a-vtk-mesh">3. Convert to a VTK mesh<a class="anchor-link" href="#3.-Convert-to-a-VTK-mesh">&#182;</a></h2><p>To visualize a <code>shapeworks</code> mesh with <code>pyvista</code>, we need first to convert it to a <code>vtk</code> mesh.</p>
 
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
@@ -1125,7 +951,7 @@ all of MD as it is not optimized for dense, information rich UIs.
         
         <div class="CodeMirror cm-s-jupyter">
     <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># convert shapeworks mesh to a vtk mesh</span>
-<span class="n">shapeMesh_vtk</span> <span class="o">=</span> <span class="n">sw2vtkMesh</span><span class="p">(</span><span class="n">shapeMesh</span><span class="p">)</span>
+<span class="n">shapeMesh_vtk</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">sw2vtkMesh</span><span class="p">(</span><span class="n">shapeMesh</span><span class="p">)</span>
 </pre></div>
 
         </div>
@@ -1137,91 +963,9 @@ all of MD as it is not optimized for dense, information rich UIs.
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Now we have an <code>vtk</code> mesh, we can simply visualize and interact with it using the <code>view</code> function of <code>itkwidgets</code>.</p>
+<h2 id="4-visualizing-surface-mesh-using-pyvista">4. Visualizing surface mesh using <code>pyvista</code><a class="anchor-link" href="#4.-Visualizing-surface-mesh-using-pyvista">&#182;</a></h2><p><a href="https://docs.pyvista.org/index.html"><code>pyvista</code></a> is a python library for 3D visualization and analysis. It is built on top of <code>vtk</code> and brings a paraview-like visualizations to notebooks. It also supports multiple rendering windows that can be linked. This feature is very useful when visualizing multiple samples from your dataset side-by-side and making them share the same camera view.</p>
 
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># importing itkwidgets</span>
-<span class="kn">import</span> <span class="nn">itkwidgets</span> <span class="k">as</span> <span class="nn">itkw</span>
-
-<span class="c1"># visualize - this is a volume rendering of the shape mesh</span>
-<span class="n">itkw</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">geometries</span> <span class="o">=</span> <span class="n">shapeMesh_vtk</span><span class="p">)</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-mesh-itkw.mp4" autoplay muted loop controls style="width:100%"></p>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Let's enable axes and auto rotation.</p>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># visualize with axes and auto rotation</span>
-<span class="n">itkw</span><span class="o">.</span><span class="n">view</span><span class="p">(</span>  <span class="n">geometries</span>     <span class="o">=</span> <span class="n">shapeMesh_vtk</span><span class="p">,</span>
-            <span class="n">rotate</span>         <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="c1"># enable auto rotation</span>
-            <span class="n">axes</span>           <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-mesh-itkw-rot.mp4" autoplay muted loop controls style="width:100%"></p>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="5-visualizing-surface-mesh-using-pyvista">5. Visualizing surface mesh using <code>pyvista</code><a class="anchor-link" href="#5.-Visualizing-surface-mesh-using-pyvista">&#182;</a></h2><p><a href="https://docs.pyvista.org/index.html"><code>pyvista</code></a> is a python library for 3D visualization and analysis. It is built on top of <code>vtk</code> and brings a paraview-like visualizations to notebooks. It also supports multiple rendering windows that can be linked. This feature is very useful when visualizing multiple samples from your dataset side-by-side and making them share the same camera view.</p>
-<p><code>pyvista</code> supports <code>vtk</code> data structures. Hence, to visualize a <code>shapeworks</code> mesh, we need first to convert it to a <code>vtk</code> mesh.</p>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># use the plot function for the vtk mesh ... notice the static view!</span>
-<span class="n">shapeMesh_vtk</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
@@ -1232,6 +976,7 @@ all of MD as it is not optimized for dense, information rich UIs.
         <div class="CodeMirror cm-s-jupyter">
     <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># to have an interactive visualization, </span>
 <span class="c1"># click r to reset the view after zooming</span>
+<span class="c1"># click w to show wireframe and s to return back to sur</span>
 <span class="n">shapeMesh_vtk</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 
@@ -1244,31 +989,12 @@ all of MD as it is not optimized for dense, information rich UIs.
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-mesh-pv.mp4" autoplay muted loop controls style="width:100%"></p>
+<p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/mesh.png"></p>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># click r to reset the view after zooming</span>
-<span class="c1"># click w to show wireframe and s to return back to surface</span>
-<span class="n">shapeMesh_vtk</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="6-visualizing-two-meshes-side-by-side-using-pyvista">6. Visualizing two meshes side-by-side using <code>pyvista</code><a class="anchor-link" href="#6.-Visualizing-two-meshes-side-by-side-using-pyvista">&#182;</a></h2><p>When exploring datasets and results of different grooming (data preprocessing) steps, it is important to simultaneously visualize multiple shape samples. Here, we will learn how to visualize two meshes side-by-side and link their views using <code>pyvista</code>. This linking is useful to make all rendering windows share the same camera view.</p>
+<h2 id="5-visualizing-multiple-meshes">5. Visualizing multiple meshes<a class="anchor-link" href="#5.-Visualizing-multiple-meshes">&#182;</a></h2><p>When exploring datasets and results of different grooming (data preprocessing) steps, it is important to simultaneously visualize multiple shape samples. Here, we visualize two meshes side-by-side and link their views using <code>pyvista</code>. This linking is useful to make all rendering windows share the same camera view.</p>
 
 </div>
 </div>
@@ -1309,7 +1035,9 @@ all of MD as it is not optimized for dense, information rich UIs.
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Then, let's convert this <code>shapeworks</code> mesh to a <code>vtk</code> mesh for visualization.</p>
+<p>Now we can view the two meshes side by side using the ShapeWorks plot_meshes() function. 
+To view the meshes in a side-by-side view, we set the use_same_window parameter to False.
+To view the meshes in the same window, we set the use_same_window parameter to True.</p>
 
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
@@ -1320,8 +1048,9 @@ all of MD as it is not optimized for dense, information rich UIs.
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># sw to vtk</span>
-<span class="n">shapeMesh2_vtk</span> <span class="o">=</span> <span class="n">sw2vtkMesh</span><span class="p">(</span><span class="n">shapeMesh2</span><span class="p">)</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">meshList</span> <span class="o">=</span> <span class="p">[</span><span class="n">shapeMesh</span><span class="p">,</span> <span class="n">shapeMesh2</span><span class="p">]</span>
+<span class="c1"># View meshes side-by-side</span>
+<span class="n">sw</span><span class="o">.</span><span class="n">plot_meshes</span><span class="p">(</span><span class="n">meshList</span><span class="p">,</span> <span class="n">use_same_window</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
         </div>
@@ -1333,8 +1062,7 @@ all of MD as it is not optimized for dense, information rich UIs.
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="defining-pyvista-plotter">Defining <code>pyvista</code> plotter<a class="anchor-link" href="#Defining-pyvista-plotter">&#182;</a></h3><p>Next, we will define a <code>pyvista</code> plotter to render multiple windows, each with a single mesh. The multiple rendering windows will be visualized as a grid of plots. Since, we have only two meshes, the grid size will be one row and two columns.</p>
-
+<p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/two_window_meshes.png"></p>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
@@ -1344,26 +1072,8 @@ all of MD as it is not optimized for dense, information rich UIs.
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># define grid size for two meshes</span>
-<span class="n">grid_rows</span>  <span class="o">=</span> <span class="mi">1</span>
-<span class="n">grid_cols</span>  <span class="o">=</span> <span class="mi">2</span>
-
-<span class="c1"># define parameters that controls the plotter</span>
-<span class="n">is_interactive</span>  <span class="o">=</span> <span class="kc">True</span>   <span class="c1"># to enable interactive plots</span>
-<span class="n">show_borders</span>    <span class="o">=</span> <span class="kc">True</span>   <span class="c1"># show borders for each rendering window</span>
-<span class="n">mesh_color</span>      <span class="o">=</span> <span class="s2">&quot;tan&quot;</span>  <span class="c1"># string or 3 item list</span>
-<span class="n">mesh_style</span>      <span class="o">=</span> <span class="s2">&quot;surface&quot;</span> <span class="c1"># visualization style of the mesh. style=&#39;surface&#39;, style=&#39;wireframe&#39;, style=&#39;points&#39;. </span>
-<span class="n">show_mesh_edges</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># show mesh edges</span>
-<span class="n">show_axes</span>       <span class="o">=</span> <span class="kc">True</span>   <span class="c1"># show a vtk axes widget for each rendering window</span>
-<span class="n">show_bounds</span>     <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># show volume bounding box</span>
-<span class="n">show_all_edges</span>  <span class="o">=</span> <span class="kc">True</span>   <span class="c1"># add an unlabeled and unticked box at the boundaries of plot. </span>
-<span class="n">font_size</span>       <span class="o">=</span> <span class="mi">10</span>     <span class="c1"># text font size for windows</span>
-<span class="n">link_views</span>      <span class="o">=</span> <span class="kc">True</span>   <span class="c1"># link all rendering windows so that they share same camera and axes boundaries</span>
-
-<span class="c1"># define the plotter</span>
-<span class="n">plotter</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">shape</span>    <span class="o">=</span> <span class="p">(</span><span class="n">grid_rows</span><span class="p">,</span> <span class="n">grid_cols</span><span class="p">),</span>
-                     <span class="n">notebook</span> <span class="o">=</span> <span class="n">is_interactive</span><span class="p">,</span>
-                     <span class="n">border</span>   <span class="o">=</span> <span class="n">show_borders</span><span class="p">)</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># View meshes in the same window</span>
+<span class="n">sw</span><span class="o">.</span><span class="n">plot_meshes</span><span class="p">(</span><span class="n">meshList</span><span class="p">,</span> <span class="n">use_same_window</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 
         </div>
@@ -1375,300 +1085,7 @@ all of MD as it is not optimized for dense, information rich UIs.
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="adding-meshes-to-the-plotter-and-start-rendering">Adding meshes to the plotter and start rendering<a class="anchor-link" href="#Adding-meshes-to-the-plotter-and-start-rendering">&#182;</a></h3><p>Let's add the two meshes to the plotter and start the viz fun!</p>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># add the first mesh</span>
-<span class="n">plotter</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-<span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">shapeMesh_vtk</span><span class="p">,</span>
-                 <span class="n">color</span>      <span class="o">=</span> <span class="n">mesh_color</span><span class="p">,</span>
-                 <span class="n">style</span>      <span class="o">=</span> <span class="n">mesh_style</span><span class="p">,</span>
-                 <span class="n">show_edges</span> <span class="o">=</span> <span class="n">show_mesh_edges</span><span class="p">)</span>
-
-<span class="k">if</span> <span class="n">show_axes</span><span class="p">:</span>
-    <span class="n">plotter</span><span class="o">.</span><span class="n">show_axes</span><span class="p">()</span>
-    
-<span class="k">if</span> <span class="n">show_bounds</span><span class="p">:</span>
-    <span class="n">plotter</span><span class="o">.</span><span class="n">show_bounds</span><span class="p">(</span><span class="n">all_edges</span> <span class="o">=</span> <span class="n">show_all_edges</span><span class="p">)</span>
-
-<span class="c1"># add a text to this subplot to indicate which mesh is being visualized</span>
-<span class="n">meshFilename</span> <span class="o">=</span> <span class="n">shapeFilenames</span><span class="p">[</span><span class="n">shapeIdx</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> 
-<span class="n">shapeName</span>    <span class="o">=</span> <span class="n">meshFilename</span><span class="p">[:</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">shapeExtention</span><span class="p">)]</span>
-<span class="n">plotter</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span><span class="n">shapeName</span><span class="p">,</span> <span class="n">font_size</span> <span class="o">=</span> <span class="n">font_size</span><span class="p">)</span>
-
-<span class="c1"># now, add the second mesh, </span>
-<span class="c1"># note that we repeat the same exact code but with a different mesh </span>
-<span class="c1"># ---&gt; perfect scenario to define a helper function </span>
-<span class="c1"># to reuse this code without having to duplicate the code    </span>
-<span class="n">plotter</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">shapeMesh2_vtk</span><span class="p">,</span>
-                 <span class="n">color</span>      <span class="o">=</span> <span class="n">mesh_color</span><span class="p">,</span>
-                 <span class="n">style</span>      <span class="o">=</span> <span class="n">mesh_style</span><span class="p">,</span>
-                 <span class="n">show_edges</span> <span class="o">=</span> <span class="n">show_mesh_edges</span><span class="p">)</span>
-
-<span class="k">if</span> <span class="n">show_axes</span><span class="p">:</span>
-    <span class="n">plotter</span><span class="o">.</span><span class="n">show_axes</span><span class="p">()</span>
-    
-<span class="k">if</span> <span class="n">show_bounds</span><span class="p">:</span>
-    <span class="n">plotter</span><span class="o">.</span><span class="n">show_bounds</span><span class="p">(</span><span class="n">all_edges</span> <span class="o">=</span> <span class="n">show_all_edges</span><span class="p">)</span>
-
-<span class="c1"># add a text to this subplot to indicate which mesh is being visualized</span>
-<span class="n">meshFilename2</span> <span class="o">=</span> <span class="n">shapeFilenames</span><span class="p">[</span><span class="n">shapeIdx2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> 
-<span class="n">shapeName2</span>    <span class="o">=</span> <span class="n">meshFilename2</span><span class="p">[:</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">shapeExtention</span><span class="p">)]</span>
-<span class="n">plotter</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span><span class="n">shapeName2</span><span class="p">,</span> <span class="n">font_size</span> <span class="o">=</span> <span class="n">font_size</span><span class="p">)</span>
-
-<span class="c1"># link views</span>
-<span class="k">if</span> <span class="n">link_views</span><span class="p">:</span>
-    <span class="n">plotter</span><span class="o">.</span><span class="n">link_views</span><span class="p">()</span>  
-
-<span class="c1"># now, time to render our meshes</span>
-<span class="c1"># for any rendering window, click w to show wireframe and s to return back to surface</span>
-<span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-mesh-pv-2surfs.mp4" autoplay muted loop controls style="width:100%"></p>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="defining-a-helper-function">Defining a helper function<a class="anchor-link" href="#Defining-a-helper-function">&#182;</a></h3><p>Let's define a helper function that adds a mesh to a <code>pyvista</code> plotter.</p>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span> <span class="nf">add_mesh_to_plotter</span><span class="p">(</span> <span class="n">pvPlotter</span><span class="p">,</span>      <span class="c1"># pyvista plotter</span>
-                         <span class="n">vtkMesh</span><span class="p">,</span>         <span class="c1"># vtk mesh to be added</span>
-                         <span class="n">rowIdx</span><span class="p">,</span> <span class="n">colIdx</span><span class="p">,</span> <span class="c1"># subplot row and column index</span>
-                         <span class="n">title</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>    <span class="c1"># text to be added to the subplot, use None to not show text </span>
-                         <span class="n">mesh_color</span>      <span class="o">=</span> <span class="s2">&quot;tan&quot;</span><span class="p">,</span>  <span class="c1"># string or 3 item list</span>
-                         <span class="n">mesh_style</span>      <span class="o">=</span> <span class="s2">&quot;surface&quot;</span><span class="p">,</span> <span class="c1"># visualization style of the mesh. style=&#39;surface&#39;, style=&#39;wireframe&#39;, style=&#39;points&#39;. </span>
-                         <span class="n">show_mesh_edges</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="c1"># show mesh edges</span>
-                         <span class="n">opacity</span>         <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-                         <span class="n">show_axes</span>       <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># show a vtk axes widget for each rendering window</span>
-                         <span class="n">show_bounds</span>     <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="c1"># show volume bounding box</span>
-                         <span class="n">show_all_edges</span>  <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># add an unlabeled and unticked box at the boundaries of plot. </span>
-                         <span class="n">font_size</span>       <span class="o">=</span> <span class="mi">10</span>     <span class="c1"># text font size for windows</span>
-                         <span class="p">):</span>
-    
-    <span class="c1"># which subplot to add the mesh to</span>
-    <span class="n">pvPlotter</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">rowIdx</span><span class="p">,</span> <span class="n">colIdx</span><span class="p">)</span>
-
-    <span class="c1"># add the surface mesh</span>
-    <span class="n">pvPlotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">vtkMesh</span><span class="p">,</span>
-                       <span class="n">color</span>      <span class="o">=</span> <span class="n">mesh_color</span><span class="p">,</span>
-                       <span class="n">style</span>      <span class="o">=</span> <span class="n">mesh_style</span><span class="p">,</span>
-                       <span class="n">show_edges</span> <span class="o">=</span> <span class="n">show_mesh_edges</span><span class="p">,</span>
-                       <span class="n">opacity</span>    <span class="o">=</span> <span class="n">opacity</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">show_axes</span><span class="p">:</span>
-        <span class="n">pvPlotter</span><span class="o">.</span><span class="n">show_axes</span><span class="p">()</span>
-
-    <span class="k">if</span> <span class="n">show_bounds</span><span class="p">:</span>
-        <span class="n">pvPlotter</span><span class="o">.</span><span class="n">show_bounds</span><span class="p">(</span><span class="n">all_edges</span> <span class="o">=</span> <span class="n">show_all_edges</span><span class="p">)</span>
-
-    <span class="c1"># add a text to this subplot to indicate which volume is being visualized</span>
-    <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">pvPlotter</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">font_size</span> <span class="o">=</span> <span class="n">font_size</span><span class="p">)</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Let's test the helper functions by adding both meshes then render.</p>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># clear the plotter first</span>
-<span class="n">plotter</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>  <span class="c1"># clears all actors</span>
-
-<span class="c1"># add the first mesh</span>
-<span class="n">add_mesh_to_plotter</span><span class="p">(</span> <span class="n">plotter</span><span class="p">,</span> <span class="n">shapeMesh_vtk</span><span class="p">,</span>
-                     <span class="n">rowIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">colIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-                     <span class="n">title</span>           <span class="o">=</span> <span class="n">shapeName</span><span class="p">,</span>
-                     <span class="n">mesh_color</span>      <span class="o">=</span> <span class="n">mesh_color</span><span class="p">,</span>
-                     <span class="n">mesh_style</span>      <span class="o">=</span> <span class="n">mesh_style</span><span class="p">,</span>
-                     <span class="n">show_mesh_edges</span> <span class="o">=</span> <span class="n">show_mesh_edges</span><span class="p">,</span>
-                     <span class="n">show_axes</span>       <span class="o">=</span> <span class="n">show_axes</span><span class="p">,</span>
-                     <span class="n">show_bounds</span>     <span class="o">=</span> <span class="n">show_bounds</span><span class="p">,</span>
-                     <span class="n">show_all_edges</span>  <span class="o">=</span> <span class="n">show_all_edges</span><span class="p">,</span>
-                     <span class="n">font_size</span>       <span class="o">=</span> <span class="n">font_size</span><span class="p">)</span>
-
-<span class="c1"># add the second mesh - note that we could define a loop to avoid code repetition</span>
-<span class="n">add_mesh_to_plotter</span><span class="p">(</span> <span class="n">plotter</span><span class="p">,</span> <span class="n">shapeMesh2_vtk</span><span class="p">,</span> 
-                     <span class="n">rowIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">colIdx</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-                     <span class="n">title</span>           <span class="o">=</span> <span class="n">shapeName2</span><span class="p">,</span>
-                     <span class="n">mesh_color</span>      <span class="o">=</span> <span class="n">mesh_color</span><span class="p">,</span>
-                     <span class="n">mesh_style</span>      <span class="o">=</span> <span class="n">mesh_style</span><span class="p">,</span>
-                     <span class="n">show_mesh_edges</span> <span class="o">=</span> <span class="n">show_mesh_edges</span><span class="p">,</span>
-                     <span class="n">show_axes</span>       <span class="o">=</span> <span class="n">show_axes</span><span class="p">,</span>
-                     <span class="n">show_bounds</span>     <span class="o">=</span> <span class="n">show_bounds</span><span class="p">,</span>
-                     <span class="n">show_all_edges</span>  <span class="o">=</span> <span class="n">show_all_edges</span><span class="p">,</span>
-                     <span class="n">font_size</span>       <span class="o">=</span> <span class="n">font_size</span><span class="p">)</span>
-
-<span class="c1"># link views</span>
-<span class="k">if</span> <span class="n">link_views</span><span class="p">:</span>
-    <span class="n">plotter</span><span class="o">.</span><span class="n">link_views</span><span class="p">()</span>  
-
-<span class="c1"># now, time to render our meshes</span>
-<span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="7-visualizing-two-meshes-in-the-same-rendering-window">7. Visualizing two meshes in the same rendering window<a class="anchor-link" href="#7.-Visualizing-two-meshes-in-the-same-rendering-window">&#182;</a></h2><p>This type of visualization is useful when exploring differences between more than one mesh, e.g., when inspecting the impact of a grooming/preprocessing step or the spatial relation of multiple samples. This is also useful if your shape data contains multiple domains (or compartments) such as anatomical joints.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="using-pyvista">Using <code>pyvista</code><a class="anchor-link" href="#Using-pyvista">&#182;</a></h3><p>Note that, since we have a single rendering window (view), linking views is not necessary. But, if this multi-surface visualization is used in conjuction with multiple rendering windows, linking views should be considered.</p>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># since we want to visualize the two meshes in the same rendering window</span>
-<span class="c1"># we define grid size for two meshes as 1 x 1 grid</span>
-<span class="n">grid_rows</span>  <span class="o">=</span> <span class="mi">1</span>
-<span class="n">grid_cols</span>  <span class="o">=</span> <span class="mi">1</span>
-
-<span class="c1"># define parameters that controls the plotter</span>
-<span class="n">is_interactive</span>  <span class="o">=</span> <span class="kc">True</span>   <span class="c1"># to enable interactive plots</span>
-<span class="n">show_borders</span>    <span class="o">=</span> <span class="kc">True</span>   <span class="c1"># show borders for each rendering window</span>
-<span class="n">mesh1_color</span>     <span class="o">=</span> <span class="s2">&quot;blue&quot;</span> <span class="c1"># string or 3 item list</span>
-<span class="n">mesh2_color</span>     <span class="o">=</span> <span class="s2">&quot;tan&quot;</span>  <span class="c1"># string or 3 item list</span>
-<span class="n">mesh_style</span>      <span class="o">=</span> <span class="s2">&quot;surface&quot;</span> <span class="c1"># visualization style of the mesh. style=&#39;surface&#39;, style=&#39;wireframe&#39;, style=&#39;points&#39;. </span>
-<span class="n">show_mesh_edges</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># show mesh edges</span>
-<span class="n">show_axes</span>       <span class="o">=</span> <span class="kc">True</span>   <span class="c1"># show a vtk axes widget for each rendering window</span>
-<span class="n">show_bounds</span>     <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># show volume bounding box</span>
-<span class="n">show_all_edges</span>  <span class="o">=</span> <span class="kc">True</span>   <span class="c1"># add an unlabeled and unticked box at the boundaries of plot. </span>
-<span class="n">font_size</span>       <span class="o">=</span> <span class="mi">10</span>     <span class="c1"># text font size for windows</span>
-<span class="n">link_views</span>      <span class="o">=</span> <span class="kc">True</span>   <span class="c1"># link all rendering windows so that they share same camera and axes boundaries</span>
-
-<span class="n">one_title</span>       <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">), </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">shapeName</span><span class="p">,</span> <span class="n">mesh1_color</span><span class="p">,</span> <span class="n">shapeName2</span><span class="p">,</span> <span class="n">mesh2_color</span><span class="p">)</span>
-
-<span class="c1"># define the plotter</span>
-<span class="n">plotter</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">shape</span>    <span class="o">=</span> <span class="p">(</span><span class="n">grid_rows</span><span class="p">,</span> <span class="n">grid_cols</span><span class="p">),</span>
-                     <span class="n">notebook</span> <span class="o">=</span> <span class="n">is_interactive</span><span class="p">,</span>
-                     <span class="n">border</span>   <span class="o">=</span> <span class="n">show_borders</span><span class="p">)</span> 
-
-<span class="c1"># add the first mesh</span>
-<span class="n">add_mesh_to_plotter</span><span class="p">(</span> <span class="n">plotter</span><span class="p">,</span> <span class="n">shapeMesh_vtk</span><span class="p">,</span>
-                     <span class="n">rowIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">colIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-                     <span class="n">title</span>           <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                     <span class="n">mesh_color</span>      <span class="o">=</span> <span class="n">mesh1_color</span><span class="p">,</span>
-                     <span class="n">mesh_style</span>      <span class="o">=</span> <span class="n">mesh_style</span><span class="p">,</span>
-                     <span class="n">show_mesh_edges</span> <span class="o">=</span> <span class="n">show_mesh_edges</span><span class="p">,</span>
-                     <span class="n">show_axes</span>       <span class="o">=</span> <span class="n">show_axes</span><span class="p">,</span>
-                     <span class="n">show_bounds</span>     <span class="o">=</span> <span class="n">show_bounds</span><span class="p">,</span>
-                     <span class="n">show_all_edges</span>  <span class="o">=</span> <span class="n">show_all_edges</span><span class="p">,</span>
-                     <span class="n">font_size</span>       <span class="o">=</span> <span class="n">font_size</span><span class="p">)</span>
-
-<span class="c1"># add the second mesh - note that we could define a loop to avoid code repetition</span>
-<span class="n">add_mesh_to_plotter</span><span class="p">(</span> <span class="n">plotter</span><span class="p">,</span> <span class="n">shapeMesh2_vtk</span><span class="p">,</span> 
-                     <span class="n">rowIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">colIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-                     <span class="n">title</span>           <span class="o">=</span> <span class="n">one_title</span><span class="p">,</span>
-                     <span class="n">mesh_color</span>      <span class="o">=</span> <span class="n">mesh2_color</span><span class="p">,</span>
-                     <span class="n">mesh_style</span>      <span class="o">=</span> <span class="n">mesh_style</span><span class="p">,</span>
-                     <span class="n">show_mesh_edges</span> <span class="o">=</span> <span class="n">show_mesh_edges</span><span class="p">,</span>
-                     <span class="n">show_axes</span>       <span class="o">=</span> <span class="n">show_axes</span><span class="p">,</span>
-                     <span class="n">show_bounds</span>     <span class="o">=</span> <span class="n">show_bounds</span><span class="p">,</span>
-                     <span class="n">show_all_edges</span>  <span class="o">=</span> <span class="n">show_all_edges</span><span class="p">,</span>
-                     <span class="n">font_size</span>       <span class="o">=</span> <span class="n">font_size</span><span class="p">)</span>
-
-<span class="c1"># now, time to render our meshes</span>
-<span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-mesh-pv-2surfs-same-win.mp4" autoplay muted loop controls style="width:100%"></p>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="using-itkwidgets">Using <code>itkwidgets</code><a class="anchor-link" href="#Using-itkwidgets">&#182;</a></h3>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># visualize with axes and auto rotation</span>
-<span class="n">itkw</span><span class="o">.</span><span class="n">view</span><span class="p">(</span>  <span class="n">geometries</span>       <span class="o">=</span> <span class="p">[</span><span class="n">shapeMesh_vtk</span><span class="p">,</span> <span class="n">shapeMesh2_vtk</span><span class="p">],</span>
-            <span class="n">geometry_colors</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="s1">&#39;tan&#39;</span><span class="p">],</span> <span class="c1"># this feature is broken somehow</span>
-            <span class="n">rotate</span>           <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="c1"># enable auto rotation</span>
-            <span class="n">axes</span>             <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-mesh-itkw-2surfs-same-win.mp4" autoplay muted loop controls style="width:100%"></p>
+<p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/one_window_meshes.png"></p>
 </div>
 </div>
 </div>

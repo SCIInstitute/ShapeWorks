@@ -119,29 +119,13 @@
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
                 <ul class="current">
-                    <li class="toctree-l1"><a class="reference internal" href="getting-started-with-jupyter-notebooks.html">Getting Started with Jupyter Notebooks</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="setting-up-shapeworks-environment.html">Setting Up ShapeWorks Environment</a>
+                    <li class="toctree-l1"><a class="reference internal" href="getting-started-with-notebooks.html">Getting Started with Jupyter Notebooks</a>
                     </li>
                     <li class="toctree-l1 current"><a class="reference internal current" href="getting-started-with-segmentations.html">Getting Started with Segmentations</a>
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#before-you-start">Before you start!</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#in-this-notebook-you-will-learn">In this notebook, you will learn:</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#note-about-shapeworks-apis">Note about shapeworks APIs</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#notebook-keyboard-shortcuts">Notebook keyboard shortcuts</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#prerequisites_1">Prerequisites</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#setting-up-shapeworks-environment">Setting up shapeworks environment</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#importing-shapeworks-library">Importing shapeworks library</a>
-    </li>
-        </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#1-defining-and-exploring-your-dataset">1. Defining and exploring your dataset</a>
         <ul>
@@ -154,44 +138,24 @@
     <li class="toctree-l2"><a class="reference internal" href="#2-loading-a-single-segmentation">2. Loading a single segmentation</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#3-converting-shapeworks-image-to-vtk-image-for-visualization">3. Converting shapeworks image to vtk image for visualization</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#extracting-numpy-array-from-shapeworks-image">Extracting numpy array from shapeworks image</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#constructing-a-vtk-image-from-a-numpy-array">Constructing a vtk image from a numpy array</a>
+    <li class="toctree-l2"><a class="reference internal" href="#4-visualizing-segmentation-using-pyvista">4. Visualizing segmentation using pyvista</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#defining-a-helper-function">Defining a helper function</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#4-visualizing-segmentation-using-itkwidgets">4. Visualizing segmentation using itkwidgets</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#5-visualizing-segmentation-using-pyvista">5. Visualizing segmentation using pyvista</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#6-visualizing-two-segmentations-side-by-side-using-pyvista">6. Visualizing two segmentations side-by-side using pyvista</a>
+    <li class="toctree-l2"><a class="reference internal" href="#5-visualizing-two-segmentations-side-by-side-using-pyvista">5. Visualizing two segmentations side-by-side using pyvista</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#loading-the-second-segmentation-and-convert-it-to-vtk-image">Loading the second segmentation and convert it to vtk image</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#defining-pyvista-plotter">Defining pyvista plotter</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#adding-segmentations-to-the-plotter-and-start-rendering">Adding segmentations to the plotter and start rendering</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#defining-a-helper-function_1">Defining a helper function</a>
-    </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#7-visualizing-two-segmentations-in-the-same-rendering-window">7. Visualizing two segmentations in the same rendering window</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#using-pyvista">Using pyvista</a>
-    </li>
-        </ul>
+    <li class="toctree-l2"><a class="reference internal" href="#6-visualizing-two-segmentations-in-the-same-rendering-window">6. Visualizing two segmentations in the same rendering window</a>
     </li>
     </ul>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="getting-started-with-meshes.html">Getting Started with Meshes</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="getting-started-with-exploring-segmentations.html">Getting Started with Exploring Segmentations</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="getting-started-with-grooming-segmentations.html">Getting Started with Grooming Segmentations</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="getting-started-with-data-augmentation.html">Getting Started with Data Augmentation</a>
                     </li>
@@ -824,48 +788,15 @@ all of MD as it is not optimized for dense, information rich UIs.
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="before-you-start">Before you start!<a class="anchor-link" href="#Before-you-start!">&#182;</a></h2><ul>
-<li>This <a href="getting-started-with-segmentations.ipynb">notebook</a> assumes that shapeworks conda environment has been activated using <code>conda activate shapeworks</code> on the terminal.</li>
-<li>See <a href="setting-up-shapeworks-environment.ipynb">Setting Up ShapeWorks Environment</a> to learn how to set up your environment to start using shapeworks library. Please note, the prerequisite steps will use the same code to setup the environment for this notebook and import <code>shapeworks</code> library.</li>
+<li>This notebook assumes that shapeworks conda environment has been activated using <code>conda activate shapeworks</code> on the terminal.</li>
+<li>See <a href="getting-started-with-notebooks.ipynb">Getting Started with Notebooks</a> for information on setting up your environment and notebook shortcuts. </li>
 </ul>
 <h2 id="in-this-notebook-you-will-learn">In this notebook, you will learn:<a class="anchor-link" href="#In-this-notebook,-you-will-learn:">&#182;</a></h2><ol>
 <li>How to define your dataset location and explore what is available in it</li>
 <li>How to load a single segmentation </li>
 <li>How to convert <code>shapeworks</code> image to <code>vtk</code> image for visualization</li>
-<li>How to visualize a segmentation using <code>itkwidgets</code></li>
-<li>How to visualize a segmentation using <code>pyvista</code></li>
-<li>How to visualize two segmentations side-by-side using <code>pyvista</code></li>
-<li>How to visualize two segmentations in the same rendering window using <code>pyvista</code> </li>
+<li>How to visualize a single segmentation and multiple segmentations using <code>pyvista</code></li>
 </ol>
-<p>We will also define modular/generic helper functions as we walk through these items to reuse functionalities without duplicating code.</p>
-<h2 id="prerequisites">Prerequisites<a class="anchor-link" href="#Prerequisites">&#182;</a></h2><ul>
-<li>Setting up <code>shapeworks</code> environment. See <a href="setting-up-shapeworks-environment.ipynb">Setting Up ShapeWorks Environment</a>. To avoid code clutter, the <code>setup_shapeworks_env</code> function can found in <code>Examples/Python/setupenv.py</code> module. </li>
-<li>Importing <code>shapeworks</code> library. See <a href="setting-up-shapeworks-environment.ipynb">Setting Up ShapeWorks Environment</a>.</li>
-</ul>
-<h2 id="note-about-shapeworks-apis">Note about <code>shapeworks</code> APIs<a class="anchor-link" href="#Note-about-shapeworks-APIs">&#182;</a></h2><p>shapeworks functions are inplace, i.e., <code>&lt;swObject&gt;.&lt;function&gt;()</code> applies that function to the <code>swObject</code> data. To keep the original data unchanged, you have first to copy it to another variable before applying the function.</p>
-<h2 id="notebook-keyboard-shortcuts">Notebook keyboard shortcuts<a class="anchor-link" href="#Notebook-keyboard-shortcuts">&#182;</a></h2><ul>
-<li><code>Esc + H</code>: displays a complete list of keyboard shortcuts</li>
-<li><code>Esc + A</code>: insert new cell above the current cell</li>
-<li><code>Esc + B</code>: insert new cell below the current cell</li>
-<li><code>Esc + D + D</code>: delete current cell</li>
-<li><code>Esc + Z</code>: undo</li>
-<li><code>Shift + enter</code>: run current cell and move to next</li>
-<li>To show a function's argument list (i.e., signature), use <code>(</code> then <code>shift-tab</code></li>
-<li>Use <code>shift-tab-tab</code> to show more help for a function</li>
-<li>To show the help of a function, use <code>help(function)</code> or <code>function?</code></li>
-<li>To show all functions supported by an object, use <code>dot-tab</code> after the variable name</li>
-</ul>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="prerequisites">Prerequisites<a class="anchor-link" href="#Prerequisites">&#182;</a></h2><h3 id="setting-up-shapeworks-environment">Setting up <code>shapeworks</code> environment<a class="anchor-link" href="#Setting-up-shapeworks-environment">&#182;</a></h3><p>Here, we will append both your <code>PYTHONPATH</code> and your system <code>PATH</code> to setup shapeworks environment for this notebook. See <a href="setting-up-shapeworks-environment.ipynb">Setting Up ShapeWorks Environment</a> for more details.</p>
-<p>In this notebook, we assume the following.</p>
-<ul>
-<li>This notebook is located in <code>Examples/Python/notebooks/tutorials</code></li>
-<li>You have built shapeworks from source in <code>build</code> directory within the shapeworks code directory</li>
-</ul>
-<p><strong>Note:</strong> If you run from a ShapeWorks installation, you don't need to set the <code>shapeworks_bin_dir</code></p>
 
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
@@ -876,50 +807,7 @@ all of MD as it is not optimized for dense, information rich UIs.
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># import relevant libraries </span>
-<span class="kn">import</span> <span class="nn">sys</span> 
-
-<span class="c1"># add parent-parent directory (where setupenv.py is) to python path</span>
-<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;../..&#39;</span><span class="p">)</span>
-
-<span class="c1"># importing setupenv from Examples/Python</span>
-<span class="kn">import</span> <span class="nn">setupenv</span>
-
-<span class="c1"># indicate the bin directories for shapeworks and its dependencies</span>
-<span class="n">shapeworks_bin_dir</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># default</span>
-<span class="c1">#shapeworks_bin_dir = &quot;../../../../build/bin&quot;</span>
-
-<span class="c1"># set up shapeworks environment</span>
-<span class="n">setupenv</span><span class="o">.</span><span class="n">setup_shapeworks_env</span><span class="p">(</span><span class="n">shapeworks_bin_dir</span><span class="p">,</span>  
-                              <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="importing-shapeworks-library">Importing <code>shapeworks</code> library<a class="anchor-link" href="#Importing-shapeworks-library">&#182;</a></h3>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s import shapeworks library to test whether shapeworks is now set</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">shapeworks</span> <span class="k">as</span> <span class="nn">sw</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR: shapeworks library failed to import&#39;</span><span class="p">)</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;SUCCESS: shapeworks library is successfully imported!!!&#39;</span><span class="p">)</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">shapeworks</span> <span class="k">as</span> <span class="nn">sw</span>
 </pre></div>
 
         </div>
@@ -945,7 +833,7 @@ After you download the dataset zip file, make sure you unzip/extract the content
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">os</span> <span class="c1"># for paths and mkdir</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">os</span> 
 
 <span class="c1"># dataset name is the folder name for your dataset</span>
 <span class="n">datasetName</span>  <span class="o">=</span> <span class="s1">&#39;ellipsoid_1mode&#39;</span>
@@ -979,14 +867,16 @@ After you download the dataset zip file, make sure you unzip/extract the content
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">glob</span> <span class="c1"># for paths and file-directory search</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span> <span class="c1"># for generating robust paths irrespective of the platform:Win/Linux/Mac</span>
-<span class="c1"># file extension for the shape data</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">glob</span> 
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span> 
+
+
 <span class="n">shapeExtention</span> <span class="o">=</span> <span class="s1">&#39;.nrrd&#39;</span>
 
 <span class="c1"># let&#39;s get a list of files for available segmentations in this dataset</span>
 <span class="c1"># * here is a wild character used to retrieve all filenames </span>
 <span class="c1"># in the shape directory with the file extensnion</span>
+
 <span class="n">shapeFilenames</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">shapeDir</span> <span class="o">+</span> <span class="s1">&#39;*&#39;</span> <span class="o">+</span> <span class="n">shapeExtention</span><span class="p">))</span> 
 
 <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Number of shapes: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">shapeFilenames</span><span class="p">)))</span>
@@ -1040,14 +930,10 @@ After you download the dataset zip file, make sure you unzip/extract the content
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="3-converting-shapeworks-image-to-vtk-image-for-visualization">3. Converting <code>shapeworks</code> image to <code>vtk</code> image for visualization<a class="anchor-link" href="#3.-Converting-shapeworks-image-to-vtk-image-for-visualization">&#182;</a></h2><p>We can use python libraries such as <a href="https://github.com/InsightSoftwareConsortium/itkwidgets"><code>itkwidgets</code></a> and <a href="https://docs.pyvista.org/index.html"><code>pyvista</code></a> for interactive 3D visualization. These libraries support, among others, <code>vtk</code> data structures for images and meshes. Hence, to visualize our <code>shapeworks</code> image, we need first to convert it to a <code>vtk</code> data structure.</p>
+<h2 id="3-converting-shapeworks-image-to-vtk-image-for-visualization">3. Converting <code>shapeworks</code> image to <code>vtk</code> image for visualization<a class="anchor-link" href="#3.-Converting-shapeworks-image-to-vtk-image-for-visualization">&#182;</a></h2><p>We use python library <a href="https://docs.pyvista.org/index.html"><code>pyvista</code></a> for interactive 3D visualization. This library support, among others, <code>vtk</code> data structures for images and meshes. Hence, to visualize our <code>shapeworks</code> image, we need first to convert it to a <code>vtk</code> data structure.</p>
 <p>This conversion can be performed by first extracting a numpy array from the <code>shapeworks</code> image, then constructing a <code>vtk</code> image from this array. <code>pyvista</code>'s <code>wrap</code> function makes this easy.</p>
+<p>In the ShapeWorks python module, we have the <code>sw2vtkImage</code> function for this conversion to <code>vtk</code> image.</p>
 
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="extracting-numpy-array-from-shapeworks-image">Extracting <code>numpy</code> array from <code>shapeworks</code> image<a class="anchor-link" href="#Extracting-numpy-array-from-shapeworks-image">&#182;</a></h3>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
@@ -1057,74 +943,15 @@ After you download the dataset zip file, make sure you unzip/extract the content
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># first, let&#39;s extract the numpy array of the shapeworks Image object</span>
-<span class="n">shapeSeg_array</span> <span class="o">=</span> <span class="n">shapeSeg</span><span class="o">.</span><span class="n">toArray</span><span class="p">()</span>
-
-<span class="c1"># then compare their size</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;shapeworks image size: &#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">shapeSeg</span><span class="o">.</span><span class="n">dims</span><span class="p">())</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;numpy array size: &#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">shapeSeg_array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># notice that the numpy array needs to be permuted to match the shapeworks image dimensions</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
-<span class="n">shapeSeg_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">shapeSeg_array</span><span class="p">,(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;shapeworks image size: &#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">shapeSeg</span><span class="o">.</span><span class="n">dims</span><span class="p">())</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;numpy array size: &#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">shapeSeg_array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="constructing-a-vtk-image-from-a-numpy-array">Constructing a <code>vtk</code> image from a <code>numpy</code> array<a class="anchor-link" href="#Constructing-a-vtk-image-from-a-numpy-array">&#182;</a></h3>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># construct a vtk image from the extracted numpy array using pyvista wrap function</span>
-<span class="kn">import</span> <span class="nn">pyvista</span> <span class="k">as</span> <span class="nn">pv</span>
-
-<span class="c1"># converting a numpy array to a vtk image using pyvista&#39;s wrap function</span>
-<span class="n">shapeSeg_vtk</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">shapeSeg_array</span><span class="p">)</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1">#from the shapeworks python module use the conversion function</span>
+<span class="n">shapeSeg_vtk</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">sw2vtkImage</span><span class="p">(</span><span class="n">shapeSeg</span><span class="p">)</span>
 
 <span class="c1"># print header info of both images, please note that the wrap function</span>
 <span class="c1"># only wraps the numpy array, which is oblivous to image spacing and origin</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;shapeworks image header information: &#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;shapeworks image header information: </span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">shapeSeg</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">vtk image header information: &#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">vtk image header information: </span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">shapeSeg_vtk</span><span class="p">)</span>
 </pre></div>
 
@@ -1137,7 +964,7 @@ After you download the dataset zip file, make sure you unzip/extract the content
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="defining-a-helper-function">Defining a helper function<a class="anchor-link" href="#Defining-a-helper-function">&#182;</a></h3><p>As converting between <code>shapeworks</code> Image object and <code>vtk</code> image is a step that we will need frequently, let's add a helper function for this purpose.</p>
+<h2 id="4-visualizing-segmentation-using-pyvista">4. Visualizing segmentation using <code>pyvista</code><a class="anchor-link" href="#4.-Visualizing-segmentation-using-pyvista">&#182;</a></h2><p><a href="https://docs.pyvista.org/index.html"><code>pyvista</code></a> python library is built on top of <code>vtk</code> and brings a paraview-like visualizations to notebooks. It also supports multiple rendering windows that can be linked. This feature is very useful when visualizing multiple samples from your dataset side-by-side and making them share the same camera view.</p>
 
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
@@ -1148,192 +975,8 @@ After you download the dataset zip file, make sure you unzip/extract the content
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># a helper function that converts shapeworks Image object to vtk image</span>
-<span class="k">def</span> <span class="nf">sw2vtkImage</span><span class="p">(</span><span class="n">swImg</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-            
-    <span class="c1"># get the numpy array of the shapeworks image</span>
-    <span class="n">array</span>  <span class="o">=</span> <span class="n">swImg</span><span class="o">.</span><span class="n">toArray</span><span class="p">()</span>
-    
-    <span class="c1"># the numpy array needs to be permuted to match the shapeworks image dimensions</span>
-    <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">array</span><span class="p">,(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
-    
-    <span class="c1"># converting a numpy array to a vtk image using pyvista&#39;s wrap function</span>
-    <span class="n">vtkImg</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
-    
-    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;shapeworks image header information: &#39;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">swImg</span><span class="p">)</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">pyvista</span> <span class="k">as</span> <span class="nn">pv</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">vtk image header information: &#39;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">vtkImg</span><span class="p">)</span> 
-    
-    <span class="k">return</span> <span class="n">vtkImg</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="4-visualizing-segmentation-using-itkwidgets">4. Visualizing segmentation using <code>itkwidgets</code><a class="anchor-link" href="#4.-Visualizing-segmentation-using-itkwidgets">&#182;</a></h2><p><a href="https://github.com/InsightSoftwareConsortium/itkwidgets"><code>itkwidgets</code></a> is a python library that supports interactive Jupyter widgets to visualize images, point sets, and meshes.</p>
-<p><code>itkwidgets</code> supports <code>itk</code>, <code>vtk</code>, and <code>pyvista</code> data structures. Hence, to visualize a <code>shapeworks</code> image, we need first to convert it to a <code>vtk</code> image using the <code>sw2vtkImage</code> helper function that we just defined.</p>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># convert shapeworks images to a vtk image</span>
-<span class="n">shapeSeg_vtk</span> <span class="o">=</span> <span class="n">sw2vtkImage</span><span class="p">(</span><span class="n">shapeSeg</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Now we have a <code>vtk</code> image, we can simply visualize and interact with it using the <code>view</code> function of <code>itkwidgets</code>.</p>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># importing itkwidgets</span>
-<span class="kn">import</span> <span class="nn">itkwidgets</span> <span class="k">as</span> <span class="nn">itkw</span>
-
-<span class="c1"># visualize - this is a volume rendering of the shape segmentation</span>
-<span class="n">itkw</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">shapeSeg_vtk</span><span class="p">)</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-seg-vol.mp4" autoplay muted loop controls style="width:100%"></p>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Let's visualize the segmentation with orthogonal image planes to better understand the spatial relation of the segmentation and image boundaries.</p>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># visualize - this time we will also visualize orthogonal image planes</span>
-<span class="n">itkw</span><span class="o">.</span><span class="n">view</span><span class="p">(</span>  <span class="n">image</span>          <span class="o">=</span> <span class="n">shapeSeg_vtk</span><span class="p">,</span> <span class="c1"># for orthoginal image plane</span>
-            <span class="n">slicing_planes</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="n">rotate</span>         <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="c1"># enable auto rotation</span>
-            <span class="n">axes</span>           <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-seg-vol-slices.mp4" autoplay muted loop controls style="width:100%"></p>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>To also visualize the segmentation as a label map (binary image), we need add it as a label image and use the label map blend.</p>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># to visualize label map - use label map blend </span>
-<span class="n">itkw</span><span class="o">.</span><span class="n">view</span><span class="p">(</span> <span class="n">image</span>          <span class="o">=</span> <span class="n">shapeSeg_vtk</span><span class="p">,</span> <span class="c1"># for orthoginal image plane</span>
-           <span class="n">label_image</span>    <span class="o">=</span> <span class="n">shapeSeg_vtk</span><span class="p">,</span>  <span class="c1"># for volume rendering segmentation</span>
-           <span class="n">slicing_planes</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-           <span class="n">axes</span>           <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-           <span class="n">rotate</span>         <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="c1"># enable auto rotation</span>
-           <span class="n">interpolation</span>  <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-seg-vol-slices-label.mp4" autoplay muted loop controls style="width:100%"></p>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="5-visualizing-segmentation-using-pyvista">5. Visualizing segmentation using <code>pyvista</code><a class="anchor-link" href="#5.-Visualizing-segmentation-using-pyvista">&#182;</a></h2><p><a href="https://docs.pyvista.org/index.html"><code>pyvista</code></a> is a python library for 3D visualization and analysis. It is built on top of <code>vtk</code> and brings a paraview-like visualizations to notebooks. It also supports multiple rendering windows that can be linked. This feature is very useful when visualizing multiple samples from your dataset side-by-side and making them share the same camera view.</p>
-<p><code>pyvista</code> supports <code>vtk</code> data structures. Hence, to visualize a <code>shapeworks</code> image, we need first to convert it to a <code>vtk</code> image.</p>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># volume rendering the segmentation... notice the static view!</span>
-<span class="n">shapeSeg_vtk</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">volume</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>   <span class="c1"># volume render</span>
-                  <span class="n">shade</span>  <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>   <span class="c1"># enable shading</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># to have an interactive visualization, </span>
 <span class="c1"># click r to reset the view after zooming</span>
 <span class="n">shapeSeg_vtk</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">volume</span>     <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>     <span class="c1"># volume render</span>
                   <span class="n">shade</span>      <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>     <span class="c1"># enable shading</span>
@@ -1350,29 +993,10 @@ After you download the dataset zip file, make sure you unzip/extract the content
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-seg-pv-vol.mp4" autoplay muted loop controls style="width:100%"></p>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># click r to reset the view after zooming</span>
-<span class="n">shapeSeg_vtk</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">volume</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># volume render</span>
-                  <span class="n">shade</span>  <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>   <span class="c1"># enable shading</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="6-visualizing-two-segmentations-side-by-side-using-pyvista">6. Visualizing two segmentations side-by-side using <code>pyvista</code><a class="anchor-link" href="#6.-Visualizing-two-segmentations-side-by-side-using-pyvista">&#182;</a></h2><p>When exploring datasets and results of different grooming (data preprocessing) steps, it is important to simultaneously visualize multiple shape samples. Here, we will learn how to visualize two segmentations side-by-side and link their views using <code>pyvista</code>. This linking is useful to make all rendering windows share the same camera view.</p>
+<h2 id="5-visualizing-two-segmentations-side-by-side-using-pyvista">5. Visualizing two segmentations side-by-side using <code>pyvista</code><a class="anchor-link" href="#5.-Visualizing-two-segmentations-side-by-side-using-pyvista">&#182;</a></h2><p>When exploring datasets and results of different grooming (data preprocessing) steps, it is important to simultaneously visualize multiple shape samples. Here, we will learn how to visualize two segmentations side-by-side and link their views using <code>pyvista</code>. This linking is useful to make all rendering windows share the same camera view.</p>
 
 </div>
 </div>
@@ -1425,7 +1049,7 @@ After you download the dataset zip file, make sure you unzip/extract the content
         
         <div class="CodeMirror cm-s-jupyter">
     <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># sw to vtk</span>
-<span class="n">shapeSeg2_vtk</span> <span class="o">=</span> <span class="n">sw2vtkImage</span><span class="p">(</span><span class="n">shapeSeg2</span><span class="p">)</span>
+<span class="n">shapeSeg2_vtk</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">sw2vtkImage</span><span class="p">(</span><span class="n">shapeSeg2</span><span class="p">)</span>
 </pre></div>
 
         </div>
@@ -1449,11 +1073,7 @@ After you download the dataset zip file, make sure you unzip/extract the content
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># define grid size for two segmentations</span>
-<span class="n">grid_rows</span>  <span class="o">=</span> <span class="mi">1</span>
-<span class="n">grid_cols</span>  <span class="o">=</span> <span class="mi">2</span>
-
-<span class="c1"># define parameters that controls the plotter</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># define parameters that controls the plotter</span>
 <span class="n">is_interactive</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># to enable interactive plots</span>
 <span class="n">show_borders</span>   <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># show borders for each rendering window</span>
 <span class="n">shade_volumes</span>  <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># use shading when performing volume rendering</span>
@@ -1464,71 +1084,14 @@ After you download the dataset zip file, make sure you unzip/extract the content
 <span class="n">font_size</span>      <span class="o">=</span> <span class="mi">10</span>    <span class="c1"># text font size for windows</span>
 <span class="n">link_views</span>     <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># link all rendering windows so that they share same camera and axes boundaries</span>
 
-<span class="c1"># define the plotter</span>
-<span class="n">plotter</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">shape</span>    <span class="o">=</span> <span class="p">(</span><span class="n">grid_rows</span><span class="p">,</span> <span class="n">grid_cols</span><span class="p">),</span>
-                     <span class="n">notebook</span> <span class="o">=</span> <span class="n">is_interactive</span><span class="p">,</span>
-                     <span class="n">border</span>   <span class="o">=</span> <span class="n">show_borders</span><span class="p">)</span>
-</pre></div>
 
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="adding-segmentations-to-the-plotter-and-start-rendering">Adding segmentations to the plotter and start rendering<a class="anchor-link" href="#Adding-segmentations-to-the-plotter-and-start-rendering">&#182;</a></h3><p>Let's add the two segmentations to the plotter and start the viz fun!</p>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># add the first segmentation</span>
-<span class="n">plotter</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-<span class="n">plotter</span><span class="o">.</span><span class="n">add_volume</span><span class="p">(</span><span class="n">shapeSeg_vtk</span><span class="p">,</span> <span class="n">shade</span> <span class="o">=</span> <span class="n">shade_volumes</span><span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="n">color_map</span><span class="p">)</span>
-
-<span class="k">if</span> <span class="n">show_axes</span><span class="p">:</span>
-    <span class="n">plotter</span><span class="o">.</span><span class="n">show_axes</span><span class="p">()</span>
-    
-<span class="k">if</span> <span class="n">show_bounds</span><span class="p">:</span>
-    <span class="n">plotter</span><span class="o">.</span><span class="n">show_bounds</span><span class="p">(</span><span class="n">all_edges</span> <span class="o">=</span> <span class="n">show_all_edges</span><span class="p">)</span>
-
-<span class="c1"># add a text to this subplot to indicate which segmentation is being visualized</span>
+<span class="c1">#extract the shape name for display</span>
 <span class="n">segFilename</span> <span class="o">=</span> <span class="n">shapeFilenames</span><span class="p">[</span><span class="n">shapeIdx</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> 
 <span class="n">shapeName</span>   <span class="o">=</span> <span class="n">segFilename</span><span class="p">[:</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">shapeExtention</span><span class="p">)]</span>
-<span class="n">plotter</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span><span class="n">shapeName</span><span class="p">,</span> <span class="n">font_size</span> <span class="o">=</span> <span class="n">font_size</span><span class="p">)</span>
-
-<span class="c1"># now, add the second segmentation, </span>
-<span class="c1"># note that we repeat the same exact code but with a different segmentation </span>
-<span class="c1"># ---&gt; perfect scenario to define a helper function </span>
-<span class="c1"># to reuse this code without having to duplicate the code    </span>
-<span class="n">plotter</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">plotter</span><span class="o">.</span><span class="n">add_volume</span><span class="p">(</span><span class="n">shapeSeg2_vtk</span><span class="p">,</span> <span class="n">shade</span> <span class="o">=</span> <span class="n">shade_volumes</span><span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="n">color_map</span><span class="p">)</span>
-
-<span class="k">if</span> <span class="n">show_axes</span><span class="p">:</span>
-    <span class="n">plotter</span><span class="o">.</span><span class="n">show_axes</span><span class="p">()</span>
-    
-<span class="k">if</span> <span class="n">show_bounds</span><span class="p">:</span>
-    <span class="n">plotter</span><span class="o">.</span><span class="n">show_bounds</span><span class="p">(</span><span class="n">all_edges</span> <span class="o">=</span> <span class="n">show_all_edges</span><span class="p">)</span>
-
-<span class="c1"># add a text to this subplot to indicate which segmentation is being visualized</span>
 <span class="n">segFilename2</span> <span class="o">=</span> <span class="n">shapeFilenames</span><span class="p">[</span><span class="n">shapeIdx2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> 
 <span class="n">shapeName2</span>   <span class="o">=</span> <span class="n">segFilename2</span><span class="p">[:</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">shapeExtention</span><span class="p">)]</span>
-<span class="n">plotter</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span><span class="n">shapeName2</span><span class="p">,</span> <span class="n">font_size</span> <span class="o">=</span> <span class="n">font_size</span><span class="p">)</span>
-
-<span class="c1"># link views</span>
-<span class="k">if</span> <span class="n">link_views</span><span class="p">:</span>
-    <span class="n">plotter</span><span class="o">.</span><span class="n">link_views</span><span class="p">()</span>  
-
-<span class="c1"># now, time to render our segmentations</span>
-<span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">shapeSegList</span> <span class="o">=</span> <span class="p">[</span><span class="n">shapeSeg_vtk</span><span class="p">,</span><span class="n">shapeSeg2_vtk</span><span class="p">]</span>
+<span class="n">shapeNames</span> <span class="o">=</span> <span class="p">[</span><span class="n">shapeName</span><span class="p">,</span><span class="n">shapeName2</span><span class="p">]</span>
 </pre></div>
 
         </div>
@@ -1540,12 +1103,7 @@ After you download the dataset zip file, make sure you unzip/extract the content
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-seg-pv-2vols.mp4" autoplay muted loop controls style="width:100%"></p>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="defining-a-helper-function">Defining a helper function<a class="anchor-link" href="#Defining-a-helper-function">&#182;</a></h3><p>Let's define a helper function that adds a segmentation to a <code>pyvista</code> plotter.</p>
+<p>Let's use the <code>plot_volumes</code> function from Shapeworks python module for adding segmentations to the pyvista plotter</p>
 
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
@@ -1556,35 +1114,16 @@ After you download the dataset zip file, make sure you unzip/extract the content
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span> <span class="nf">add_volume_to_plotter</span><span class="p">(</span> <span class="n">pvPlotter</span><span class="p">,</span>      <span class="c1"># pyvista plotter</span>
-                           <span class="n">vtkImg</span><span class="p">,</span>         <span class="c1"># vtk image to be added</span>
-                           <span class="n">rowIdx</span><span class="p">,</span> <span class="n">colIdx</span><span class="p">,</span> <span class="c1"># subplot row and column index</span>
-                           <span class="n">title</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>   <span class="c1"># text to be added to the subplot, use None to not show text </span>
-                           <span class="n">shade_volumes</span>  <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># use shading when performing volume rendering</span>
-                           <span class="n">color_map</span>      <span class="o">=</span> <span class="s2">&quot;coolwarm&quot;</span><span class="p">,</span> <span class="c1"># color map for volume rendering, e.g., &#39;bone&#39;, &#39;coolwarm&#39;, &#39;cool&#39;, &#39;viridis&#39;, &#39;magma&#39;</span>
-                           <span class="n">show_axes</span>      <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># show a vtk axes widget for each rendering window</span>
-                           <span class="n">show_bounds</span>    <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="c1"># show volume bounding box</span>
-                           <span class="n">show_all_edges</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># add an unlabeled and unticked box at the boundaries of plot. </span>
-                           <span class="n">font_size</span>      <span class="o">=</span> <span class="mi">10</span>     <span class="c1"># text font size for windows</span>
-                         <span class="p">):</span>
-    
-    <span class="c1"># which subplot to add the volume to</span>
-    <span class="n">pvPlotter</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">rowIdx</span><span class="p">,</span> <span class="n">colIdx</span><span class="p">)</span>
-    
-    <span class="c1"># add the volume</span>
-    <span class="n">pvPlotter</span><span class="o">.</span><span class="n">add_volume</span><span class="p">(</span><span class="n">vtkImg</span><span class="p">,</span>
-                         <span class="n">shade</span>   <span class="o">=</span> <span class="n">shade_volumes</span><span class="p">,</span>
-                         <span class="n">cmap</span>    <span class="o">=</span> <span class="n">color_map</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">show_axes</span><span class="p">:</span>
-        <span class="n">pvPlotter</span><span class="o">.</span><span class="n">show_axes</span><span class="p">()</span>
-
-    <span class="k">if</span> <span class="n">show_bounds</span><span class="p">:</span>
-        <span class="n">pvPlotter</span><span class="o">.</span><span class="n">show_bounds</span><span class="p">(</span><span class="n">all_edges</span> <span class="o">=</span> <span class="n">show_all_edges</span><span class="p">)</span>
-
-    <span class="c1"># add a text to this subplot to indicate which volume is being visualized</span>
-    <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">pvPlotter</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">font_size</span> <span class="o">=</span> <span class="n">font_size</span><span class="p">)</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">sw</span><span class="o">.</span><span class="n">plot_volumes</span><span class="p">(</span><span class="n">shapeSegList</span><span class="p">,</span>    
+             <span class="n">volumeNames</span>     <span class="o">=</span> <span class="n">shapeNames</span><span class="p">,</span> 
+             <span class="n">is_interactive</span> <span class="o">=</span> <span class="n">is_interactive</span><span class="p">,</span> 
+             <span class="n">show_borders</span>   <span class="o">=</span> <span class="n">show_borders</span><span class="p">,</span>  
+             <span class="n">shade_volumes</span>  <span class="o">=</span> <span class="n">shade_volumes</span><span class="p">,</span>  
+             <span class="n">show_axes</span>      <span class="o">=</span> <span class="n">show_axes</span><span class="p">,</span>  
+             <span class="n">show_bounds</span>    <span class="o">=</span> <span class="n">show_bounds</span><span class="p">,</span>
+             <span class="n">show_all_edges</span> <span class="o">=</span> <span class="n">show_all_edges</span><span class="p">,</span> 
+             <span class="n">font_size</span>      <span class="o">=</span> <span class="n">font_size</span><span class="p">,</span>   
+             <span class="n">link_views</span>     <span class="o">=</span> <span class="kc">True</span> <span class="p">)</span>
 </pre></div>
 
         </div>
@@ -1596,71 +1135,15 @@ After you download the dataset zip file, make sure you unzip/extract the content
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Let's test the helper functions by adding both segmentations then render.</p>
-
+<p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/segs_two_windows.png"></p>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># define the plotter</span>
-<span class="n">plotter</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">shape</span>    <span class="o">=</span> <span class="p">(</span><span class="n">grid_rows</span><span class="p">,</span> <span class="n">grid_cols</span><span class="p">),</span>
-                     <span class="n">notebook</span> <span class="o">=</span> <span class="n">is_interactive</span><span class="p">,</span>
-                     <span class="n">border</span>   <span class="o">=</span> <span class="n">show_borders</span><span class="p">)</span> 
-
-<span class="c1"># add the first segmentation</span>
-<span class="n">add_volume_to_plotter</span><span class="p">(</span> <span class="n">plotter</span><span class="p">,</span> <span class="n">shapeSeg_vtk</span><span class="p">,</span>
-                       <span class="n">rowIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">colIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-                       <span class="n">title</span>          <span class="o">=</span> <span class="n">shapeName</span><span class="p">,</span>
-                       <span class="n">shade_volumes</span>  <span class="o">=</span> <span class="n">shade_volumes</span><span class="p">,</span>
-                       <span class="n">color_map</span>      <span class="o">=</span> <span class="n">color_map</span><span class="p">,</span>
-                       <span class="n">show_axes</span>      <span class="o">=</span> <span class="n">show_axes</span><span class="p">,</span>
-                       <span class="n">show_bounds</span>    <span class="o">=</span> <span class="n">show_bounds</span><span class="p">,</span>
-                       <span class="n">show_all_edges</span> <span class="o">=</span> <span class="n">show_all_edges</span><span class="p">,</span>
-                       <span class="n">font_size</span>      <span class="o">=</span> <span class="n">font_size</span><span class="p">)</span>
-
-<span class="c1"># add the second segmentation - note that we could define a loop to avoid code repetition</span>
-<span class="n">add_volume_to_plotter</span><span class="p">(</span> <span class="n">plotter</span><span class="p">,</span> <span class="n">shapeSeg2_vtk</span><span class="p">,</span>
-                       <span class="n">rowIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">colIdx</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-                       <span class="n">title</span>          <span class="o">=</span> <span class="n">shapeName2</span><span class="p">,</span>
-                       <span class="n">shade_volumes</span>  <span class="o">=</span> <span class="n">shade_volumes</span><span class="p">,</span>
-                       <span class="n">color_map</span>      <span class="o">=</span> <span class="n">color_map</span><span class="p">,</span>
-                       <span class="n">show_axes</span>      <span class="o">=</span> <span class="n">show_axes</span><span class="p">,</span>
-                       <span class="n">show_bounds</span>    <span class="o">=</span> <span class="n">show_bounds</span><span class="p">,</span>
-                       <span class="n">show_all_edges</span> <span class="o">=</span> <span class="n">show_all_edges</span><span class="p">,</span>
-                       <span class="n">font_size</span>      <span class="o">=</span> <span class="n">font_size</span><span class="p">)</span>
-
-<span class="c1"># link views</span>
-<span class="k">if</span> <span class="n">link_views</span><span class="p">:</span>
-    <span class="n">plotter</span><span class="o">.</span><span class="n">link_views</span><span class="p">()</span>  
-
-<span class="c1"># now, time to render our segmentations</span>
-<span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="7-visualizing-two-segmentations-in-the-same-rendering-window">7. Visualizing two segmentations in the same rendering window<a class="anchor-link" href="#7.-Visualizing-two-segmentations-in-the-same-rendering-window">&#182;</a></h2><p>This type of visualization is useful when exploring differences between more than one segmentations, e.g., when inspecting the impact of a grooming/preprocessing step or the spatial relation of multiple samples. This is also useful if your shape data contains multiple domains (or compartments) such as anatomical joints.</p>
+<h2 id="6-visualizing-two-segmentations-in-the-same-rendering-window">6. Visualizing two segmentations in the same rendering window<a class="anchor-link" href="#6.-Visualizing-two-segmentations-in-the-same-rendering-window">&#182;</a></h2><p>This type of visualization is useful when exploring differences between more than one segmentations, e.g., when inspecting the impact of a grooming/preprocessing step or the spatial relation of multiple samples. This is also useful if your shape data contains multiple domains (or compartments) such as anatomical joints.</p>
 <p>Note that, since we have a single rendering window (view), linking views is not necessary. But, if this multi-surface visualization is used in conjuction with multiple rendering windows, linking views should be considered.</p>
 
 </div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="using-pyvista">Using <code>pyvista</code><a class="anchor-link" href="#Using-pyvista">&#182;</a></h3><p>Note that, since we have a single rendering window (view), linking views is not necessary. But, if this multi-surface visualization is used in conjuction with multiple rendering windows, linking views should be considered.</p>
-
-</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
@@ -1669,58 +1152,36 @@ After you download the dataset zip file, make sure you unzip/extract the content
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># since we want to visualize the two segmentations in the same rendering window</span>
-<span class="c1"># we define grid size for two meshes as 1 x 1 grid</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># define parameters that controls the plotter</span>
 
-<span class="n">grid_rows</span>  <span class="o">=</span> <span class="mi">1</span>
-<span class="n">grid_cols</span>  <span class="o">=</span> <span class="mi">1</span>
+<span class="n">use_same_window</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
 
-<span class="c1"># define parameters that controls the plotter</span>
-<span class="n">is_interactive</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># to enable interactive plots</span>
-<span class="n">show_borders</span>   <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># show borders for each rendering window</span>
-<span class="n">shade_volumes</span>  <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># use shading when performing volume rendering</span>
-<span class="n">show_axes</span>      <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># show a vtk axes widget for each rendering window</span>
-<span class="n">show_bounds</span>    <span class="o">=</span> <span class="kc">False</span> <span class="c1"># show volume bounding box</span>
-<span class="n">show_all_edges</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># add an unlabeled and unticked box at the boundaries of plot. </span>
-<span class="n">font_size</span>      <span class="o">=</span> <span class="mi">10</span>    <span class="c1"># text font size for windows</span>
-<span class="n">link_views</span>     <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># link all rendering windows so that they share same camera and axes boundaries</span>
+        </div>
+    </div>
 
-<span class="c1"># let&#39;d define a different color map for each segmentation</span>
-<span class="c1"># color map for volume rendering, e.g., &#39;bone&#39;, &#39;coolwarm&#39;, &#39;cool&#39;, &#39;viridis&#39;, &#39;magma&#39;</span>
-<span class="n">color_map1</span>     <span class="o">=</span> <span class="s2">&quot;bone&quot;</span> 
-<span class="n">color_map2</span>     <span class="o">=</span> <span class="s2">&quot;coolwarm&quot;</span> 
+</div>
+</div>
 
-<span class="n">one_title</span>      <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">), </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">shapeName</span><span class="p">,</span> <span class="n">color_map1</span><span class="p">,</span> <span class="n">shapeName2</span><span class="p">,</span> <span class="n">color_map2</span><span class="p">)</span>
-
-<span class="c1"># define the plotter</span>
-<span class="n">plotter</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">shape</span>    <span class="o">=</span> <span class="p">(</span><span class="n">grid_rows</span><span class="p">,</span> <span class="n">grid_cols</span><span class="p">),</span>
-                     <span class="n">notebook</span> <span class="o">=</span> <span class="n">is_interactive</span><span class="p">,</span>
-                     <span class="n">border</span>   <span class="o">=</span> <span class="n">show_borders</span><span class="p">)</span> 
-
-<span class="c1"># add the first segmentation</span>
-<span class="n">add_volume_to_plotter</span><span class="p">(</span> <span class="n">plotter</span><span class="p">,</span> <span class="n">shapeSeg_vtk</span><span class="p">,</span>
-                       <span class="n">rowIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">colIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-                       <span class="n">title</span>          <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                       <span class="n">shade_volumes</span>  <span class="o">=</span> <span class="n">shade_volumes</span><span class="p">,</span>
-                       <span class="n">color_map</span>      <span class="o">=</span> <span class="n">color_map1</span><span class="p">,</span>
-                       <span class="n">show_axes</span>      <span class="o">=</span> <span class="n">show_axes</span><span class="p">,</span>
-                       <span class="n">show_bounds</span>    <span class="o">=</span> <span class="n">show_bounds</span><span class="p">,</span>
-                       <span class="n">show_all_edges</span> <span class="o">=</span> <span class="n">show_all_edges</span><span class="p">,</span>
-                       <span class="n">font_size</span>      <span class="o">=</span> <span class="n">font_size</span><span class="p">)</span>
-
-<span class="c1"># add the second segmentation - note that we could define a loop to avoid code repetition</span>
-<span class="n">add_volume_to_plotter</span><span class="p">(</span> <span class="n">plotter</span><span class="p">,</span> <span class="n">shapeSeg2_vtk</span><span class="p">,</span>
-                       <span class="n">rowIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">colIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-                       <span class="n">title</span>          <span class="o">=</span> <span class="n">one_title</span><span class="p">,</span>
-                       <span class="n">shade_volumes</span>  <span class="o">=</span> <span class="n">shade_volumes</span><span class="p">,</span>
-                       <span class="n">color_map</span>      <span class="o">=</span> <span class="n">color_map2</span><span class="p">,</span>
-                       <span class="n">show_axes</span>      <span class="o">=</span> <span class="n">show_axes</span><span class="p">,</span>
-                       <span class="n">show_bounds</span>    <span class="o">=</span> <span class="n">show_bounds</span><span class="p">,</span>
-                       <span class="n">show_all_edges</span> <span class="o">=</span> <span class="n">show_all_edges</span><span class="p">,</span>
-                       <span class="n">font_size</span>      <span class="o">=</span> <span class="n">font_size</span><span class="p">)</span>
-
-<span class="c1"># now, time to render our segmentations</span>
-<span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+        
+        
+        <div class="CodeMirror cm-s-jupyter">
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">sw</span><span class="o">.</span><span class="n">plot_volumes</span><span class="p">(</span><span class="n">shapeSegList</span><span class="p">,</span>    
+             <span class="n">color_map</span><span class="o">=</span><span class="n">color_map</span><span class="p">,</span>
+             <span class="n">is_interactive</span> <span class="o">=</span> <span class="n">is_interactive</span><span class="p">,</span> 
+             <span class="n">show_borders</span>   <span class="o">=</span> <span class="n">show_borders</span><span class="p">,</span>  
+             <span class="n">shade_volumes</span>  <span class="o">=</span> <span class="n">shade_volumes</span><span class="p">,</span>  
+             <span class="n">show_axes</span>      <span class="o">=</span> <span class="n">show_axes</span><span class="p">,</span>  
+             <span class="n">show_bounds</span>    <span class="o">=</span> <span class="n">show_bounds</span><span class="p">,</span>
+             <span class="n">show_all_edges</span> <span class="o">=</span> <span class="n">show_all_edges</span><span class="p">,</span> 
+             <span class="n">font_size</span>      <span class="o">=</span> <span class="n">font_size</span><span class="p">,</span> 
+             <span class="n">use_same_window</span> <span class="o">=</span> <span class="n">use_same_window</span><span class="p">,</span>
+             <span class="n">link_views</span>     <span class="o">=</span> <span class="kc">True</span> <span class="p">)</span>
 </pre></div>
 
         </div>
@@ -1732,7 +1193,7 @@ After you download the dataset zip file, make sure you unzip/extract the content
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-seg-pv-2vols-same-win.mp4" autoplay muted loop controls style="width:100%"></p>
+<p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/segs_one_window.png"></p>
 </div>
 </div>
 </div>
@@ -1748,7 +1209,7 @@ After you download the dataset zip file, make sure you unzip/extract the content
         <a href="getting-started-with-meshes.html" class="btn btn-neutral float-right" title="Getting Started with Meshes">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="setting-up-shapeworks-environment.html" class="btn btn-neutral" title="Setting Up ShapeWorks Environment"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="getting-started-with-notebooks.html" class="btn btn-neutral" title="Getting Started with Jupyter Notebooks"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -1778,7 +1239,7 @@ After you download the dataset zip file, make sure you unzip/extract the content
           <a href="https://github.com/SCIInstitute/ShapeWorks/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
-        <span><a href="setting-up-shapeworks-environment.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="getting-started-with-notebooks.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
         <span style="margin-left: 15px"><a href="getting-started-with-meshes.html" style="color: #fcfcfc">Next &raquo;</a></span>

@@ -7,9 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <meta name="author" content="Shireen Elhabian et al.">
-  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/notebooks/setting-up-shapeworks-environment.html">
+  <link rel="canonical" href="http://www.sci.utah.edu/software/shapeworks.html/notebooks/getting-started-with-notebooks.html">
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Setting Up ShapeWorks Environment - ShapeWorks</title>
+  <title>Getting Started with Jupyter Notebooks - ShapeWorks</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
   <link rel="stylesheet" href="../css/theme.css" />
@@ -19,9 +19,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Setting Up ShapeWorks Environment";
-    var mkdocs_page_input_path = "notebooks/setting-up-shapeworks-environment.ipynb";
-    var mkdocs_page_url = "/software/shapeworks.html/notebooks/setting-up-shapeworks-environment.html";
+    var mkdocs_page_name = "Getting Started with Jupyter Notebooks";
+    var mkdocs_page_input_path = "notebooks/getting-started-with-notebooks.ipynb";
+    var mkdocs_page_url = "/software/shapeworks.html/notebooks/getting-started-with-notebooks.html";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js" defer></script>
@@ -119,27 +119,21 @@
                 </ul>
                 <p class="caption"><span class="caption-text">ShapeWorks in Python</span></p>
                 <ul class="current">
-                    <li class="toctree-l1"><a class="reference internal" href="getting-started-with-jupyter-notebooks.html">Getting Started with Jupyter Notebooks</a>
-                    </li>
-                    <li class="toctree-l1 current"><a class="reference internal current" href="setting-up-shapeworks-environment.html">Setting Up ShapeWorks Environment</a>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="getting-started-with-notebooks.html">Getting Started with Jupyter Notebooks</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#before-you-start">Before you start!</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#in-this-notebook-you-will-learn">In this notebook, you will learn:</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#notebook-keyboard-shortcuts">Notebook keyboard shortcuts</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#1-setting-up-shapeworks-environment">1. Setting up shapeworks environment</a>
+    <li class="toctree-l2"><a class="reference internal" href="#shapeworks-jupyter-notebook-tutorials">ShapeWorks Jupyter Notebook Tutorials</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#what-paths-do-we-need">What paths do we need?</a>
+    <li class="toctree-l3"><a class="reference internal" href="#what-is-jupyter-notebook">What is Jupyter Notebook?</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#define-helper-functions-for-to-set-up-shapeworks-environment">Define helper functions for to set up shapeworks environment</a>
+    <li class="toctree-l3"><a class="reference internal" href="#running-a-jupyter-notebook-tutorial">Running a Jupyter notebook tutorial</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#set-your-shapeworks-enviroment">Set your shapeworks enviroment</a>
+    <li class="toctree-l3"><a class="reference internal" href="#importing-shapeworks">Importing ShapeWorks</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#2-importing-shapeworks-library-and-test-environment-setup">2. Importing shapeworks library and test environment setup</a>
+    <li class="toctree-l2"><a class="reference internal" href="#notebook-keyboard-shortcuts">Notebook keyboard shortcuts</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#jupyter-notebook-resources">Jupyter Notebook Resources</a>
     </li>
     </ul>
                     </li>
@@ -148,8 +142,6 @@
                     <li class="toctree-l1"><a class="reference internal" href="getting-started-with-meshes.html">Getting Started with Meshes</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="getting-started-with-exploring-segmentations.html">Getting Started with Exploring Segmentations</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="getting-started-with-grooming-segmentations.html">Getting Started with Grooming Segmentations</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="getting-started-with-data-augmentation.html">Getting Started with Data Augmentation</a>
                     </li>
@@ -260,10 +252,10 @@
         
       
     
-    <li>Setting Up ShapeWorks Environment</li>
+    <li>Getting Started with Jupyter Notebooks</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/notebooks/setting-up-shapeworks-environment.ipynb"
+        <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/notebooks/getting-started-with-notebooks.ipynb"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -776,19 +768,88 @@ all of MD as it is not optimized for dense, information rich UIs.
     <!-- End of mathjax configuration --><div class="jupyter-wrapper">
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="setting-up-shapeworks-environment">Setting Up ShapeWorks Environment<a class="anchor-link" href="#Setting-Up-ShapeWorks-Environment">&#182;</a></h1>
+<h1 id="getting-started-with-jupyter-notebooks">Getting Started with Jupyter Notebooks<a class="anchor-link" href="#Getting-Started-with-Jupyter-Notebooks">&#182;</a></h1>
 </div>
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="before-you-start">Before you start!<a class="anchor-link" href="#Before-you-start!">&#182;</a></h2><ul>
-<li>This <a href="setting-up-shapeworks-environment.ipynb">notebook</a> assumes that shapeworks conda environment has been activated using <code>conda activate shapeworks</code> on the terminal.</li>
-</ul>
-<h2 id="in-this-notebook-you-will-learn">In this notebook, you will learn:<a class="anchor-link" href="#In-this-notebook,-you-will-learn:">&#182;</a></h2><ol>
-<li>How to setup shapeworks environment</li>
-<li>How to import shapeworks and test if setting the environment is successful</li>
+<p>In this notebook, you will find:</p>
+<ol>
+<li>Information about running ShapeWorks Jupyter notebook tutorials</li>
+<li>Basics shortcuts for Jupyter notebooks</li>
+<li>Resources to help you with notebooks</li>
 </ol>
-<p>We will also define modular/generic helper functions as we walk through these items to reuse functionalities without duplicating code.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h2 id="shapeworks-jupyter-notebook-tutorials">ShapeWorks Jupyter Notebook Tutorials<a class="anchor-link" href="#ShapeWorks-Jupyter-Notebook-Tutorials">&#182;</a></h2>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="what-is-jupyter-notebook">What is Jupyter Notebook?<a class="anchor-link" href="#What-is-Jupyter-Notebook?">&#182;</a></h3><p>The Jupyter Notebook is a powerful tool to interactively prototype and present ideas and workflows. The Jupyter Notebook is an open source web application that enables you to create documents that contain runnable code, text, equations, and visualizations. Jupyter supports IPython kernel to allow you to write/prototype programs in Python. You can also use other kernels (e.g., R and Julia .. etc) with Jupyter notebooks.</p>
+<p>The Jupyter Notebook combines three components:</p>
+<ul>
+<li><strong>Notebook web app:</strong> An interactive web application to edit code in the browser, run code from the browser, see the results of running the code in the browser, create and use interactive widgets, and author narrative text and equations. </li>
+<li><strong>Kernels:</strong> Processes launched by the notebook web app that runs code in a specific language and handles interactive widgets and tab completion. The default kernel runs Python code. </li>
+<li><strong>Notebook documents:</strong> Documents that contain visible content in the notebook web app, including inputs and outputs of an interactive session, narrative text, equations, and images, and rich media representations of objects. Each notebook document has its own kernel. Notebook documents are files with a <code>.ipynb</code> extension Internally, notebook documents are <code>json</code> data with binary output encoded.</li>
+</ul>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="running-a-jupyter-notebook-tutorial">Running a Jupyter notebook tutorial<a class="anchor-link" href="#Running-a-Jupyter-notebook-tutorial">&#182;</a></h3><p>ShapeWorks installs Jupyter for you. The Jupyter Notebook is not included with Python. The <code>conda_installs</code> script the comes with ShapeWorks (<code>conda_installs.sh</code> for Mac OS and Linux and <code>conda_installs.bat</code> for Window) installs Jupyter Notebook for you.</p>
+<p>ShapeWorks also installs and enables for you</p>
+<ul>
+<li>a spell checker extension for the text cells</li>
+<li>a table of content extension to easily navigate notebooks</li>
+</ul>
+<p>To get the server started, all you need to do is</p>
+<ul>
+<li>open up your terminal  </li>
+<li>go to the folder where you would like to save your notebooks in</li>
+<li>activate <code>shapeworks</code> environment by running <code>conda activate shapeworks</code></li>
+<li>launch the notebook server by running <code>jupyter notebook</code></li>
+</ul>
+<p><strong>Note</strong>: Notebooks for demonstrating ShapeWorks tools are located in <code>Examples/Python/notebooks/tutorials</code>. We recommend that you create a folder in <code>Examples/Python/notebooks/</code> directory for your own notebooks.</p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/jupyter-command.mp4" autoplay muted loop controls style="width:100%"></p>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="importing-shapeworks">Importing ShapeWorks<a class="anchor-link" href="#Importing-ShapeWorks">&#182;</a></h3><p>The Jupyter notebook tutorials require ShapeWorks to be installed so that it can be imported at the beginning of every notebook. Try running the following code cell to make sure ShapeWorks can be imported:</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+        
+        
+        <div class="CodeMirror cm-s-jupyter">
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">shapeworks</span>
+</pre></div>
+
+        </div>
+    </div>
+
+</div>
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>If the cell above gave an error make sure you have run <code>conda_installs</code> and have the <code>shapeworks</code> conda environment activated. See <a href="http://sciinstitute.github.io/ShapeWorks/users/install.html">How to Install ShapeWorks?</a> for more information.</p>
+<p>If you believe ShapeWorks is installed correctly but you are still unable to import it please <a href="http://sciinstitute.github.io/ShapeWorks/about/contact.html">contact us.</a></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="notebook-keyboard-shortcuts">Notebook keyboard shortcuts<a class="anchor-link" href="#Notebook-keyboard-shortcuts">&#182;</a></h2><ul>
 <li><code>Esc + H</code>: displays a complete list of keyboard shortcuts</li>
 <li><code>Esc + A</code>: insert new cell above the current cell</li>
@@ -806,174 +867,15 @@ all of MD as it is not optimized for dense, information rich UIs.
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="1-setting-up-shapeworks-environment">1. Setting up <code>shapeworks</code> environment<a class="anchor-link" href="#1.-Setting-up-shapeworks-environment">&#182;</a></h2><p>To setup shapeworks environement, please make sure to add the following paths to both your <code>PYTHONPATH</code> and your system <code>PATH</code>.</p>
-<ul>
-<li>shapeworks bin directory</li>
-<li>shapeworks dependencies bin directory</li>
-</ul>
-<p>This can be done either by running the following commands on the terminal</p>
-
-<pre><code>export PYTHONPATH=/path/to/build/bin:$PYTHONPATH
-export PATH=/path/to/build/bin:$PATH</code></pre>
-<p>Or by appending these paths in python (see below).</p>
+<h2 id="jupyter-notebook-resources">Jupyter Notebook Resources<a class="anchor-link" href="#Jupyter-Notebook-Resources">&#182;</a></h2><ol>
+<li><a href="https://jupyter-notebook.readthedocs.io/en/stable/notebook.html">Documentation provided by Jupyter Notebook</a>-Here you find all a comprehensive user documentation provided by the developers</li>
+<li>Jupyter notebooks are widely used by the python community and you can find many videos and blogs for new users.If you are facing any specific errors while starting and running the notebooks, please check out the following resources :<br>
+ (a) <a href="https://stackoverflow.com/questions/tagged/jupyter-notebook">Stack Overflow</a><br>
+ (b) <a href="https://discourse.jupyter.org/">Discourse</a><br>
+ (c) <a href="https://datascience.stackexchange.com/questions/tagged/jupyter">Stack Exchange</a></li>
+</ol>
 
 </div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="what-paths-do-we-need">What paths do we need?<a class="anchor-link" href="#What-paths-do-we-need?">&#182;</a></h3><p>In this notebook, we assume the following.</p>
-<ul>
-<li>This notebook is located in <code>Examples/Python/notebooks/tutorials</code></li>
-<li>You have built shapeworks from source in <code>build</code> directory within the shapeworks code directory</li>
-<li>You have built shapeworks dependencies (using <code>build_dependencies.sh</code>) in the same parent directory of shapeworks code</li>
-</ul>
-<p><strong>Note:</strong> If you run from a ShapeWorks installation, you don't need to set the dependencies path and the <code>shapeworks_bin_dir</code> would be set as <code>../../../../bin</code>.</p>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># import relevant libraries </span>
-<span class="c1"># and indicate the bin directories for shapeworks and its dependencies</span>
-
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">platform</span>
-
-<span class="c1"># paths to be set</span>
-<span class="n">shapeworks_bin_dir</span>   <span class="o">=</span> <span class="s2">&quot;../../../../build/bin&quot;</span>
-<span class="n">dependencies_bin_dir</span> <span class="o">=</span> <span class="s2">&quot;../../../../../shapeworks-dependencies/bin&quot;</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="define-helper-functions-for-to-set-up-shapeworks-environment">Define helper functions for to set up shapeworks environment<a class="anchor-link" href="#Define-helper-functions-for-to-set-up-shapeworks-environment">&#182;</a></h3><p>Below, we will define the following helper functions:</p>
-<ul>
-<li>a helper function to print out the updated python path</li>
-<li>a helper function to print out the updated system path</li>
-<li>a helper function to add shapeworks and its dependencies bin directory to both paths</li>
-</ul>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># helper function to print out python path</span>
-<span class="k">def</span> <span class="nf">print_python_path</span><span class="p">():</span>
-    <span class="n">syspath</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Python path:&quot;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">curpath</span> <span class="ow">in</span> <span class="n">syspath</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">curpath</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">curpath</span><span class="p">)</span>
-        
-<span class="c1"># helper function to print out system path</span>
-<span class="k">def</span> <span class="nf">print_env_path</span><span class="p">():</span>
-    <span class="n">syspath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PATH&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">System path:&quot;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">curpath</span> <span class="ow">in</span> <span class="n">syspath</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">curpath</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">curpath</span><span class="p">)</span>
-        
-<span class="c1"># helper function to add shapeworks bin directory to the path</span>
-<span class="k">def</span> <span class="nf">setup_shapeworks_env</span><span class="p">(</span><span class="n">shapeworks_bin_dir</span><span class="p">,</span>   <span class="c1"># path to the binary directory of shapeworks</span>
-                         <span class="n">dependencies_bin_dir</span><span class="p">,</span> <span class="c1"># path to the binary directory of shapeworks dependencies used when running build_dependencies.sh</span>
-                         <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-    
-    <span class="c1"># add shapeworks (and studio on mac) directory to python path </span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">shapeworks_bin_dir</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Darwin&quot;</span><span class="p">:</span> <span class="c1"># MacOS</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">shapeworks_bin_dir</span> <span class="o">+</span> <span class="s2">&quot;/ShapeWorksStudio.app/Contents/MacOS&quot;</span><span class="p">)</span>
-    
-    <span class="c1"># add shapeworks and studio to the system path</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PATH&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">shapeworks_bin_dir</span>   <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">pathsep</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PATH&quot;</span><span class="p">]</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PATH&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dependencies_bin_dir</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">pathsep</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PATH&quot;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Darwin&quot;</span><span class="p">:</span> <span class="c1"># MacOS</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PATH&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">shapeworks_bin_dir</span> <span class="o">+</span> <span class="s2">&quot;/ShapeWorksStudio.app/Contents/MacOS&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">pathsep</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PATH&quot;</span><span class="p">]</span>
-    
-    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="n">print_python_path</span><span class="p">()</span>
-        <span class="n">print_env_path</span><span class="p">()</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="set-your-shapeworks-enviroment">Set your shapeworks enviroment<a class="anchor-link" href="#Set-your-shapeworks-enviroment">&#182;</a></h3><p>Now, call your <code>setup_shapeworks_env</code> helper function to set up your shapeworks environment.</p>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># set up shapeworks environment</span>
-<span class="n">setup_shapeworks_env</span><span class="p">(</span><span class="n">shapeworks_bin_dir</span><span class="p">,</span>  
-                     <span class="n">dependencies_bin_dir</span><span class="p">,</span> 
-                     <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="2-importing-shapeworks-library-and-test-environment-setup">2. Importing <code>shapeworks</code> library and test environment setup<a class="anchor-link" href="#2.-Importing-shapeworks-library-and-test-environment-setup">&#182;</a></h2>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># let&#39;s import shapeworks library to test whether shapeworks is now set</span>
-<span class="c1"># if the error is not printed, we are done with the setup</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">shapeworks</span> <span class="k">as</span> <span class="nn">sw</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR: shapeworks library failed to import&#39;</span><span class="p">)</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;SUCCESS: shapeworks library is successfully imported!!!&#39;</span><span class="p">)</span>
-</pre></div>
-
-        </div>
-    </div>
-
-</div>
-</div>
-
 </div>
 </div>
 
@@ -988,7 +890,7 @@ export PATH=/path/to/build/bin:$PATH</code></pre>
         <a href="getting-started-with-segmentations.html" class="btn btn-neutral float-right" title="Getting Started with Segmentations">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="getting-started-with-jupyter-notebooks.html" class="btn btn-neutral" title="Getting Started with Jupyter Notebooks"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../studio/getting-started-with-studio.html" class="btn btn-neutral" title="Getting Started With ShapeWorks Studio"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -1018,7 +920,7 @@ export PATH=/path/to/build/bin:$PATH</code></pre>
           <a href="https://github.com/SCIInstitute/ShapeWorks/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
-        <span><a href="getting-started-with-jupyter-notebooks.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../studio/getting-started-with-studio.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
         <span style="margin-left: 15px"><a href="getting-started-with-segmentations.html" style="color: #fcfcfc">Next &raquo;</a></span>
