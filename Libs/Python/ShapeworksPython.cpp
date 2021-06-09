@@ -1080,8 +1080,15 @@ PYBIND11_MODULE(shapeworks_py, m)
               [](std::vector<Mesh> meshes, bool center) {
                 return shapeworks::MeshUtils::boundingBox(meshes, center);
               },
-              "calculate bounding box incrementally for shapework meshes",
+              "calculate bounding box incrementally for shapeworks meshes",
               "meshes"_a, "center"_a=false)
+
+  .def_static("findReferenceMesh",
+              [](std::vector<Mesh> meshes) {
+                return shapeworks::MeshUtils::findReferenceMesh(meshes);
+              },
+              "find reference mesh from a set of shapeworks meshes",
+              "meshes"_a)
   ;
 
   // ParticleSystem
