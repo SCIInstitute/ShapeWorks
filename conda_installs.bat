@@ -45,14 +45,9 @@ call pip install Python/DocumentationUtilsPackage
 call pip install Python/DataAugmentationUtilsPackage
 call pip install Python/DeepSSMUtilsPackage
 call pip install Python/ShapeCohortGenPackage
-call pip install Python/shapeworks
 
-REM install shapeworks_py binary api bindings (don't show output since this silently fail for dev runs, which is okay; succeeds for user runs)
-call copy .\bin\shapeworks_py.cp37-win_amd64.pyd %CONDA_PREFIX%\lib\site-packages\shapeworks > nul 2>&1
-call copy .\bin\shapeworks_py.pdb %CONDA_PREFIX%\lib\site-packages\shapeworks > nul 2>&1
-
-REM copy dependencies of the .pyd to the local directory (it doesn't need quite all 182MB of these, but most all)
-call copy .\bin\*.dll %CONDA_PREFIX%\lib\site-packages\shapeworks > nul 2>&1
+REM install the shapeworks python module (silently fail for dev runs)
+call install_python_module.bat .\bin > nul 2>&1
 
 REM installs for jupyter notebooks
 call pip install nbstripout
