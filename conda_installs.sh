@@ -145,8 +145,13 @@ function install_conda() {
   if ! pip install Python/DeepSSMUtilsPackage;          then return 1; fi # install DeepSSM code as a package
   if ! pip install Python/ShapeCohortGenPackage;        then return 1; fi # install shape cohort generation code as a package
   if ! pip install Python/shapeworks;                   then return 1; fi # depends on shapeworks_py, compiled portion of package
-
-
+  
+  if [[ "$(uname)" == "Linux" ]]; then
+    mv ./bin/shapeworks_py.cpython-37m-x86_64-linux-gnu.so $CONDA_PREFIX/lib/python3.7/site-packages/shapeworks >/dev/null 2>&1 # (silently fail for dev runs, which is okay; succeeds for user runs)
+  elif [[ "$(uname)" == "Darwin" ]]; then
+    mv ./bin/shapeworks_py.cpython-37m-darwin.so $CONDA_PREFIX/lib/python3.7/site-packages/shapeworks >/dev/null 2>&1 # (silently fail for dev runs, which is okay; succeeds for user runs)
+  fi
+  
   if [[ "$GITHUB_ACTION" != "" ]]; then
       echo "Running under GitHub Action"
       pushd $HOME/miniconda3/envs/shapeworks/lib
