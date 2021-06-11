@@ -14,6 +14,7 @@ def centerofmassTest1():
 val = centerofmassTest1()
 
 if val is False:
+  print("centerofmassTest1 failed")
   sys.exit(1)
 
 def centerofmassTest2():
@@ -28,4 +29,5 @@ def centerofmassTest2():
 val = centerofmassTest2()
 
 if val is False:
+  print("centerofmassTest2 failed")
   sys.exit(1)

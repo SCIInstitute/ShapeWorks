@@ -117,6 +117,13 @@ function install_conda() {
     then return 1; fi
   fi
 
+  # linux (only) deps
+  if [[ "$(uname)" == "Linux" ]]; then
+    if ! conda install --yes \
+      zlib
+    then return 1; fi
+  fi
+
   if ! pip install trimesh;                             then return 1; fi
   if ! pip install termcolor==1.1.0;                    then return 1; fi
   if ! pip install grip==4.5.2;                         then return 1; fi
@@ -137,6 +144,7 @@ function install_conda() {
   if ! pip install Python/DataAugmentationUtilsPackage; then return 1; fi # install data augmentation code as a package
   if ! pip install Python/DeepSSMUtilsPackage;          then return 1; fi # install DeepSSM code as a package
   if ! pip install Python/ShapeCohortGenPackage;        then return 1; fi # install shape cohort generation code as a package
+  if ! pip install Python/shapeworks;                   then return 1; fi # depends on shapeworks_py, compiled portion of package
 
 
   if [[ "$GITHUB_ACTION" != "" ]]; then
@@ -153,7 +161,8 @@ function install_conda() {
   # installs for jupyter notebooks
 
   if ! pip install nbstripout;         then return 1; fi # to stripout notebooks output before committing  
-  if ! pip install pyvista;            then return 1; fi # for visualizations on notebooks
+  if ! pip install pyvista==0.30.1;    then return 1; fi # for visualizations on notebooks
+  if ! pip install ipyvtklink;         then return 1; fi # for visualizations on notebooks
   if ! pip install ipyvtk_simple;      then return 1; fi # for visualizations on notebooks
   if ! pip install ipywidgets;         then return 1; fi # for visualizations on notebooks
   if ! pip install itkwidgets;         then return 1; fi # for visualizations on notebooks

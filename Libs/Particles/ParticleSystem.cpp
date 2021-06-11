@@ -41,4 +41,5 @@ ParticleSystem::ParticleSystem(const Eigen::MatrixXd& matrix)
 {
   this->P = matrix;
 }
+
 }

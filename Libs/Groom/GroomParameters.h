@@ -44,8 +44,33 @@ public:
   bool get_fast_marching();
   void set_fast_marching(bool value);
 
+  bool get_icp();
+  void set_icp(bool value);
+
+  bool get_mesh_smooth();
+  void set_mesh_smooth(bool value);
+
+  std::string get_mesh_smoothing_method();
+  void set_mesh_smoothing_method(std::string method);
+
+  int get_mesh_vtk_laplacian_iterations();
+  void set_mesh_vtk_laplacian_iterations(int iterations);
+
+  double get_mesh_vtk_laplacian_relaxation();
+  void set_mesh_vtk_laplacian_relaxation(double relaxation);
+
+  int get_mesh_vtk_windowed_sinc_iterations();
+  void set_mesh_vtk_windowed_sinc_iterations(int iterations);
+
+  double get_mesh_vtk_windowed_sinc_passband();
+  void set_mesh_vtk_windowed_sinc_passband(double passband);
+
   void restore_defaults();
-  
+
+  // constants
+  const static std::string GROOM_SMOOTH_VTK_LAPLACIAN_C;
+  const static std::string GROOM_SMOOTH_VTK_WINDOWED_SINC_C;
+
 private:
 
   Parameters params_;

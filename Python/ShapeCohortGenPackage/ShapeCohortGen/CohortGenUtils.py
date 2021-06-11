@@ -1,5 +1,4 @@
 import os
-import itk
 import numpy as np
 import scipy
 import shutil
@@ -52,50 +51,59 @@ def rename(inname, outDir, extension_addition, extension_change=''):
 	return outname
 
 '''
-Generate segmentations form mesh liost
+Generate segmentations from mesh list:
+ - by default these will be the size of the region containing ALL meshes (with some padding)
+ - if allow_on_boundary, a random subset of these will be exactly the size of the mesh
+ - if randomize_size, meshes not in allow_on_boundary subset will be ALL mesh region with different padding
+ - this is an example of using Mesh.toImage, not a useful tool
 '''
-def generate_segmentations(meshList, out_dir, randomize_size, spacing, allow_on_boundary):
+def generate_segmentations(meshList, out_dir, randomize_size=True, spacing=[1.0,1.0,1.0], allow_on_boundary=True):
+
+	# get list of meshs to be converted
 	segDir = out_dir + "segmentations/"
 	make_dir(segDir)
-	PLYmeshList = get_file_with_ext(meshList,'ply')
-	# get dims tht fit all meshes
-	bb = MeshUtils.boundingBox(PLYmeshList)
-	fit_all_origin = [bb.min[0], bb.min[1], bb.min[2]]
-	bb_dims = bb.max-bb.min
-	fit_all_dims = [bb_dims[0], bb_dims[1], bb_dims[2]]
+
+	# get region that includes all of these meshes
+	bball = MeshUtils.boundingBox(meshList)
+
 	# randomly select 20% meshes for boundary touching samples
-	numMeshes = len(PLYmeshList)
+	numMeshes = len(meshList)
 	meshIndexArray = np.array(list(range(numMeshes)))
 	subSampleSize = int(0.2*numMeshes)
 	randomBoundarySamples = np.random.choice(meshIndexArray,subSampleSize,replace=False)
+
 	# loop through meshes and turn to images
 	segList = []
 	meshIndex = 0
-	for mesh_ in PLYmeshList:
-		print("Generating seg " + str(meshIndex + 1) + " out of " + str(len(PLYmeshList)))
+	for mesh_ in meshList:
+		print("Generating seg " + str(meshIndex + 1) + " out of " + str(len(meshList)))
 		segFile = rename(mesh_, segDir, "", ".nrrd")
 		segList.append(segFile)
+
+		# load .ply mesh and get its bounding box
 		mesh = Mesh(mesh_)
-		# If the meshIndex is in the randomly selected samples, get the origin and size 
-		# of that mesh so that the segmentation image touch the boundary
-		if allow_on_boundary and (meshIndex in randomBoundarySamples):
-			bb = mesh.boundingBox()
-			origin = [bb.min[0], bb.min[1], bb.min[2]]
-			dims = [bb.max[0]*2, bb.max[1]*2, bb.max[2]*2]
-			pad = np.zeros(3)
-		else:
-			origin = fit_all_origin
-			dims = fit_all_dims
-			# If randomize size, add random padding to x, y, and z dims
-			if randomize_size:
+		bb = mesh.boundingBox()
+
+		# if mesh isn't in the set for allow_on_boundary, add [random] padding
+		if not (allow_on_boundary and (meshIndex in randomBoundarySamples)):
+			bb = bball
+
+			pad = 5
+			if randomize_size:			
 				pad = np.random.randint(5, high=15, size=3)
 			else:
-				pad = np.full(3, 5)
-		origin = list(np.array(origin) - pad)
-		dims = list((np.array(dims) + (2*pad)).astype(int))
-		image = mesh.toImage(spacing, dims, origin)
+				pad = np.array([5,5,5])
+			bb.min -= pad
+			bb.max += pad
+
+		# sample the given region of Mesh to an image
+		image = mesh.toImage(region=bb, spacing=spacing)
+
+		# write the result to disk and move to the next mesh
 		image.write(segFile, 0)
 		meshIndex += 1
+
+	# return list of new image filenames
 	return segList
 
 '''
@@ -108,14 +116,17 @@ def generate_images(segs, outDir, blur_factor, foreground_mean, foreground_var, 
 	for seg in segs:
 		print("Generating image " + str(index) + " out of " + str(len(segs)))
 		name = seg.replace('segmentations/','images/').replace('_seg.nrrd', '_blur' + str(blur_factor) + '.nrrd')
-		itk_bin = itk.imread(seg, itk.F)
-		img_array = itk.array_from_image(itk_bin)
+		img = Image(seg)
+		img_array = img.toArray()
 		img_array = blur(img_array, blur_factor)
 		img_array = apply_noise(img_array, foreground_mean, foreground_var, background_mean, background_var)
 		img_array = np.float32(img_array)
-		itk_img_view = itk.image_view_from_array(img_array)
-		itk_img_view.SetOrigin(itk_bin.GetOrigin())
-		itk.imwrite(itk_img_view, name)
+		origin = img.origin()
+		img = Image(img_array)  # note: when we resolve #903 (shared data) we'll
+								# no longer even need to create an image since
+								# the array itself will be shared (issue #903)
+		img.setOrigin(origin)
+		img.write(name)
 		index += 1
 	return get_files(imgDir)
 
@@ -144,7 +155,6 @@ def apply_noise(img, foreground_mean, foreground_var, background_mean, backgroun
 def compute_line_indices(n, is_closed=True):
     """
     Given a number of points, return indices for lines(as np.ndarray) between successive pairs of points.
-
     n:         number of points
     is_closed: whether or not the last vertex is to to be connected to the first vertex
     """
@@ -157,7 +167,6 @@ def compute_line_indices(n, is_closed=True):
 def save_contour_as_vtp(points, lines, filename):
     """
     Generates a .vtp file for the given contour to use in ShapeWorks optimizer
-
     points:   Nx3 np.ndarray of points in the contour
     lines:    Mx2 np.ndarray of lines in the contour
     filename: output .vtp filename

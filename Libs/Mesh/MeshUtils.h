@@ -26,10 +26,13 @@ public:
   static void threadSafeWriteMesh(std::string filename, Mesh mesh);
 
   /// calculate bounding box incrementally for meshes
-  static Region boundingBox(std::vector<std::string> &filenames, bool center = false);
+  static PhysicalRegion boundingBox(std::vector<std::string> &filenames, bool center = false);
 
   /// calculate bounding box incrementally for shapework meshes
-  static Region boundingBox(std::vector<Mesh> &meshes, bool center = false);
+  static PhysicalRegion boundingBox(std::vector<Mesh> &meshes, bool center = false);
+
+  /// determine the reference mesh
+  static int findReferenceMesh(std::vector<Mesh> &meshes);
 };
 
 } // shapeworks

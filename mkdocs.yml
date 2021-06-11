@@ -36,12 +36,10 @@ nav:
 - ShapeWorks Studio:
    - 'Getting Started With ShapeWorks Studio': 'studio/getting-started-with-studio.md'
 - ShapeWorks in Python:
-   - 'Getting Started with Juypter Notebooks' :       'notebooks/getting-started-with-jupyter-notebooks.ipynb'  
-   - 'Setting up ShapeWorks Environment' :            'notebooks/setting-up-shapeworks-environment.ipynb'
+   - 'Getting Started with Notebooks' :               'notebooks/getting-started-with-notebooks.ipynb'  
    - 'Getting Started with Segmentations' :           'notebooks/getting-started-with-segmentations.ipynb'  
    - 'Getting Started with Meshes' :                  'notebooks/getting-started-with-meshes.ipynb'
    - 'Getting Started with Exploring Segmentations' : 'notebooks/getting-started-with-exploring-segmentations.ipynb'
-   - 'Getting Started with Grooming Segmentations' :  'notebooks/getting-started-with-grooming-segmentations.ipynb'
    - 'Getting Started with Data Augmentation' :       'notebooks/getting-started-with-data-augmentation.ipynb'
    - 'Getting Started with Shape Cohort Generation' :  'notebooks/getting-started-with-shape-cohort-generation.ipynb'
 - Deep Learning & SSMs:
