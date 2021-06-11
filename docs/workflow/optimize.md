@@ -118,7 +118,6 @@ You can use either ShapeWorksStudio or `shapeworks optimize <parameters.xml>` co
 
 ![Optimization Parameters](../img/workflow/params.png)
 
-
 ### XML Parameter File
         
 Here is the list of the parameters to be included in the `<parameters.xml>` file.
@@ -180,6 +179,34 @@ Below is a list of the currently exposed algorithmic parameters. All the keys of
         "verbosity" : 2,
 }
 ```
+ 
+## Parameter Tuning 
+ 
+ ### General Process
+ 
+![Tuning process](../img/workflow/tuning.png)
+ 
+ The general process for parameter tuning is to:
+ 1. Select a subsample of data to tune on.
+ 2. Start with default parameters and a small number of particles.
+ 3. Tune parameters one at a time until particles are evenly spread over the entire geometry and in good correspondence.
+ 4. Optimize on the entire cohort with the best set of hyper=parameters and desire number of particles to get the final shape model. 
+ 
+ ### Qualitative Assessment
+ 
+ To assess the quality of an optimized shape model, consider:
+ - Are the particles evenly spaced, covering the entire geometry of each sample?
+ - Are the particles in good correspondence across the samples? This can be assessed by inspecting the neighboring correspondences of particles (in Studio hover over a particle and press ‘1’ to visualize).
+ - Does the surface reconstruction result in non-anatomical/plausible shapes?
+ - Do the shape modes of variation (PCA) reflect meaningful and are they smooth variations? All particles should move at similar velocities and along similar trajectories to their neighbors.  
+ 
+ ### Tips and Tricks
+ 
+ - **Use a Subsample**: To reduce the time spent tuning algorithmic parameters for model optimization, tuning should be done on a representative subsample. If working with complex shapes or highly variable anatomies, start with a small subset (e.g., 5 samples) with shapes that are most similar. A clustering-based approach can be used to automate this selection e.g., k-means on segmentations, spectral clustering on meshes. Once parameters have been found which result in a good correspondence model on the subset, the subset size can be increased. It may be helpful to increase the subset size and re-assess before moving to the full cohort. 
+- **Start Small**: Parameter tuning time can also be decreased by starting with a smaller number of particles and iterations than desired. In general, parameters which yield a good shape model with fewer particles will also yield a good model with increased particles. For this reason, the number of particles should be the last parameter tuned. 
+- **Procrustes**: Only consider using Procrustes if the groomed cohort has left-out misalignments.
+- **Unevenly Distributed**: If particles are not evenly distributed on the surface, try increasing initialization iterations or decreasing relative weighting.
+- **Bad Correspondence**: If particles are not in good correspondence, try increasing relative weighting. If particles are flipping sides on thin structures, enabling normals can resolve this.
 
 ## Correspondences on New Samples
 
