@@ -1,5 +1,7 @@
 #!/bin/bash -x
 
+# Installs shapeworks Python module
+
 if [ "$#" -lt 1 ]; then
     echo "Installs python module binary (shapeworks_py) into conda, optionally adding necessary runpaths to the library."
     echo "Usage: $0 <shapeworks_py_library> [<lib_dir_1> ... <lib_dir_n>]"
@@ -12,7 +14,11 @@ if ! pip install Python/shapeworks; then exit -1; fi
 PYTHON_LIBRARY=$1; shift
 CONDA_INSTALL_DIR=`pip show shapeworks | grep Location | awk '{print $2}'`/shapeworks
 
-# install shapeworks_py, compiled portion of package
+# copy shapeworks_py library to conda install dir
+cp "${PYTHON_LIBRARY}" "${CONDA_INSTALL_DIR}"
+PYTHON_LIBRARY="${CONDA_INSTALL_DIR}/`basename ${PYTHON_LIBRARY}`"
+
+# update runpaths for shapeworks_py, compiled portion of package
 if [[ "$(uname)" == "Linux" ]]; then
 
     # if unspecified, use package path from github action (see package.sh)
@@ -55,6 +61,3 @@ else
     echo "Unknown operating system: ${uname}"
     exit 1
 fi
-
-# move shapeworks_py library to conda install dir
-mv "${PYTHON_LIBRARY}" "${CONDA_INSTALL_DIR}"
