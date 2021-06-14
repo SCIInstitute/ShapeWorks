@@ -124,6 +124,8 @@
     </li>
         </ul>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#parameter-tuning">Parameter Tuning</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#correspondences-on-new-samples">Correspondences on New Samples</a>
     </li>
     </ul>
@@ -397,6 +399,28 @@
         &quot;verbosity&quot; : 2,
 }
 </code></pre></div>
+<h2 id="parameter-tuning">Parameter Tuning</h2>
+<p>### General Process</p>
+<p><img alt="Tuning process" src="../img/workflow/tuning.png" /></p>
+<p>The general process for parameter tuning is to:
+ 1. Select a subsample of data to tune on.
+ 2. Start with default parameters and a small number of particles.
+ 3. Tune parameters one at a time until particles are evenly spread over the entire geometry and in good correspondence.
+ 4. Optimize on the entire cohort with the best set of hyper-parameters and desired number of particles to get the final shape model. </p>
+<p>### Qualitative Assessment</p>
+<p>To assess the quality of an optimized shape model, consider the following:
+ - Are the particles evenly spaced, covering the entire geometry of each sample?
+ - Are the particles in good correspondence across the samples? This can be assessed by inspecting the neighboring correspondences of particles (in Studio hover over a particle and press ‘1’ to visualize).
+ - Does the surface reconstruction result in non-anatomical/plausible shapes?
+ - Do the shape modes of variation (PCA) reflect meaningful and are they smooth variations? All particles should move at similar velocities and along similar trajectories to their neighbors.  </p>
+<p>### Tips and Tricks</p>
+<ul>
+<li><strong>Use a Subsample</strong>: To reduce the time spent tuning algorithmic parameters for model optimization, tuning should be done on a representative subsample. If working with complex shapes or highly variable anatomies, start with a small subset (e.g., 5 samples) with shapes that are most similar. A clustering-based approach can be used to automate this selection e.g., k-means on segmentations, spectral clustering on meshes. Once parameters have been found which result in a good correspondence model on the subset, the subset size can be increased. It may be helpful to increase the subset size and re-assess before moving to the full cohort. </li>
+<li><strong>Start Small</strong>: Parameter tuning time can also be decreased by starting with a smaller number of particles and iterations than desired. In general, parameters which yield a good shape model with fewer particles will also yield a good model with increased particles. For this reason, the number of particles should be the last parameter tuned. </li>
+<li><strong>Procrustes</strong>: Only consider using Procrustes if the groomed cohort has left-out misalignments.</li>
+<li><strong>Unevenly Distributed</strong>: If particles are not evenly distributed on the surface, try increasing initialization iterations or decreasing relative weighting.</li>
+<li><strong>Bad Correspondence</strong>: If particles are not in good correspondence, try increasing relative weighting. If particles are flipping sides on thin structures, enabling normals can resolve this.</li>
+</ul>
 <h2 id="correspondences-on-new-samples">Correspondences on New Samples</h2>
 <p>ShapeWorks supports an optimization mode, namely <em>fixed domains</em>, to place (i.e., optimize) correspondences on new shapes using a pre-existing shape model. In the fixed domains mode, particles on selected shapes that construct the pre-existing shape model are fixed, and particles on new shapes are optimized to represent them in the context of this shape model. See <a href="../use-cases/fixed-domain-ellipsoid.html">Fixed Domains for Ellipsoid: Correspondences on New Shape</a> for an example. </p>
 <p>To enable the fixed domains mode, the XML should have the below additional tags. For this mode, you can use <code>"use_shape_statistics_after": 0</code> to enable shape statistics in all the steps as the pre-existing shape model already has enough particles optimized to reflect the covariance structure in the shape space.</p>
@@ -424,7 +448,7 @@
   <div role="contentinfo">
     <!-- Copyright etc -->
     
-      <p>Copyright © 1998 - 2020 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
+      <p>Copyright © 1998 - 2021 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
     
   </div>
 

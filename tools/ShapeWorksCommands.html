@@ -369,6 +369,40 @@
 <p><strong>-h, --help:</strong> show this help message and exit</p>
 <p><strong>--version:</strong> show program's version number and exit</p>
 <p><strong>-q, --quiet:</strong> don't print status messages  </p>
+<p>Here are some examples on the command line usage of shapeworks:</p>
+<p>Let's read an image, pad it and save it:
+<div class="highlight"><pre><span></span><code>shapeworks readimage --name $DATA/1x2x2.nrrd pad --padding 10.0 writeimage --name $DATA/padded.nrrd
+</code></pre></div></p>
+<p>Let's try another image tool, crop! We need to set a region to crop the image with so let's read an image, set a region, crop and save it:
+<div class="highlight"><pre><span></span><code>shapeworks readimage --name $DATA/1x2x2.nrrd set-region --xmin 25 --xmax 49 --ymin 2.5 --ymax 78.5 --zmin 24.5 --zmax 44.5 crop writeimage --name $DATA/cropped.nrrd
+</code></pre></div></p>
+<p>We could find the bounding box of the image and use it to set the region and then crop too:
+<div class="highlight"><pre><span></span><code>shapeworks readimage --name $DATA/1x2x2.nrrd imageinfo
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>image dimensions:      [100, 50, 50]
+physical spacing:      [1, 2, 2]
+size (spacing * dims): [100, 100, 100]
+physical origin:       [0, 0.5, 0.5]
+center:                [50, 50.5, 50.5]
+center of mass (0,1]:  [49.9917, 49.8699, 49.8699]
+physical bounding box: {
+    min: [0, 0.5, 0.5],
+    max: [99, 98.5, 98.5]
+}
+logical bounding box:  {
+    min: [0, 0, 0],
+    max: [99, 49, 49]
+}
+direction (coordsys):
+1 0 0
+0 1 0
+0 0 1
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>shapeworks readimage --name $DATA/1x2x2.nrrd set-region --xmin 0 --xmax 99 --ymin 0.5 --ymax 98.5 --zmin 0.5 --zmax 98.5 crop writeimage --name $DATA/boundingBoxCrop.nrrd
+</code></pre></div></p>
+<p>What if we want to use more than one grooming tool? We can just chain it like this:
+<div class="highlight"><pre><span></span><code>shapeworks readimage --name $DATA/1x2x2.nrrd set-region --xmin 25 --xmax 49 --ymin 2.5 --ymax 78.5 --zmin 24.5 --zmax 44.5 crop pad --padding 10.0 writeimage --name $DATA/croppedAndPadded.nrrd
+</code></pre></div></p>
 <p><a href="#top">Back to Top</a></p>
 <h2 id="image-commands">Image Commands</h2>
 <h3 id="add">add</h3>
@@ -882,7 +916,7 @@
   <div role="contentinfo">
     <!-- Copyright etc -->
     
-      <p>Copyright © 1998 - 2020 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
+      <p>Copyright © 1998 - 2021 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
     
   </div>
 

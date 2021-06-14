@@ -165,6 +165,10 @@
     <li class="toctree-l3"><a class="reference internal" href="#get-test-torch-loader">Get test torch loader</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#train-deepssm">Train DeepSSM</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#config-file-parameter-descriptions">Config File Parameter Descriptions</a>
+    </li>
+        </ul>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#test-deepssm">Test DeepSSM</a>
     </li>
@@ -335,44 +339,80 @@
 </code></pre></div>
 <h3 id="get-train-and-validation-torch-loaders">Get train and validation torch loaders</h3>
 <p>This function turns the original and augmented data into training and validation torch loaders. The data provided is randomly split so that 80% is used in the training set and 20% is used in the validation set.</p>
-<div class="highlight"><pre><span></span><code><span class="n">DeepSSMUtils</span><span class="o">.</span><span class="n">getTrainValLoaders</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">data_aug_csv</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">down_sample</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">DeepSSMUtils</span><span class="o">.</span><span class="n">getTrainValLoaders</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">data_aug_csv</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">down_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">down_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 <p><strong>Input arguments:</strong></p>
 <ul>
 <li><code>out_dir</code>: Path to the directory to store the torch loaders.</li>
 <li><code>data_aug_csv</code>: The path to the csv containing original and augmented data, which is the output when running data augmentation as detailed in <a href="data-augmentation.html">Data Augmentation for Deep Learning</a>.</li>
 <li><code>batch_size</code>: The batch size for training data. The default value is 1.</li>
-<li><code>down_sample</code>: If true, the images will be downsampled to a smaller size to decrease the time needed to train the network. If false, the full image will be used. The default is false.</li>
+<li><code>down_factor</code> Determines if the images should be downsampled for faster training. For example a value of 1 indicates the images should not be downsampled, while a value of 0.5 indicates the images should be downsampled to half of their original size. The default value is 1. </li>
+<li><code>down_dir</code> The directory to which downsampled images should be written. The default value is <code>None</code>.</li>
 </ul>
 <h3 id="get-test-torch-loader">Get test torch loader</h3>
 <p>This function turns the provided data into a test torch loader.</p>
-<div class="highlight"><pre><span></span><code><span class="n">DeepSSMUtils</span><span class="o">.</span><span class="n">getTestLoader</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">test_img_list</span><span class="p">,</span> <span class="n">down_sample</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">DeepSSMUtils</span><span class="o">.</span><span class="n">getTestLoader</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">test_img_list</span><span class="p">,</span> <span class="n">down_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">down_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 <p><strong>Input arguments:</strong></p>
 <ul>
 <li><code>out_dir</code>: Path to the directory to store the torch loader.</li>
 <li><code>test_img_list</code>: A list of paths to the images that are in the test set.</li>
-<li><code>down_sample</code>: If true, the images will be downsampled. If false, the full image will be used. This should match what is done for the training and validation loaders. The default is false.</li>
+<li><code>down_factor</code> Determines if the images should be downsampled for faster training. For example a value of 1 indicates the images should not be downsampled, while a value of 0.5 indicates the images should be downsampled to half of their original size. This should match what is done for the training and validation loaders. The default value is 1. </li>
+<li><code>down_dir</code> The directory to which downsampled image should be written. The default value is <code>None</code>.</li>
 </ul>
 <h3 id="train-deepssm">Train DeepSSM</h3>
 <p>This function defines a DeepSSM model and trains it on the data provided. After training the "final" and "best" model are saved. The final model is saved after all training epochs have run. The best model is saved after the epoch which had the lowest prediction error on the validation set. The best model makes use of early stopping to prevent overfitting.</p>
-<div class="highlight"><pre><span></span><code><span class="n">DeepSSMUtils</span><span class="o">.</span><span class="n">trainDeepSSM</span><span class="p">(</span><span class="n">loader_dir</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">DeepSSMUtils</span><span class="o">.</span><span class="n">trainDeepSSM</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
 </code></pre></div>
-<p><strong>Input arguments:</strong></p>
+<p><strong>Config file:</strong></p>
+<p>Training requires a JSON config file which defines all model architecture and training parameters.</p>
+<h4 id="config-file-parameter-descriptions">Config File Parameter Descriptions</h4>
 <ul>
-<li><code>loader_dir</code>: Path to directory where train and validation torch loaders are.</li>
-<li><code>parameters</code>: A dictionary of network parameters with the following keys.    <ul>
-<li><code>epochs</code>: The number of epochs to train for.</li>
-<li><code>learning_rate</code>: The value of the learning rate.</li>
-<li><code>val_freq</code>: How often to evaluate on the validation set. 1 means test on the validation set every epoch, 2 means every other epoch, and so on.</li>
+<li><code>model_name</code>: The name of the model, typically this matches the name of the JSON conflict file. The model and predictions will be saved in the directory: <code>out_dir/model_name/</code></li>
+<li><code>num_latent_dim</code>: The size of the latent dimension.</li>
+<li><code>paths</code>: A dictionary with all the needded paths.<ul>
+<li><code>out_dir</code>: The directory to which output should be written.</li>
+<li><code>loader_dir</code>: The directory that has the training, validation, and test torch data loaders.</li>
+<li><code>aug_dir</code>: The directory that has the augmented data.</li>
 </ul>
 </li>
-<li><code>out_dir</code>: Directory to save the model and training/validation logs.</li>
+<li><code>encoder</code>: A dictionary with information about the encoder. <ul>
+<li><code>deterministic</code>: If true indicates the <em>encoder</em> should be deterministic. If false indicates the encoder should be stochastic.</li>
+</ul>
+</li>
+<li><code>decoder</code>: A dictionary with information about the decoder.<ul>
+<li><code>deterministic</code>: If true indicates the <em>decoder</em> should be deterministic. If false indicates the decoder should be stochastic.</li>
+<li><code>linear</code>: If true indicates the decoder should be linear. If false indicates the decoder should be non-linear.</li>
+</ul>
+</li>
+<li><code>loss</code>: A dictionary with info about the loss. <ul>
+<li><code>function</code>: The loss function to be used in training.</li>
+<li><code>supervised_latent</code>:  If true then the latent space is supervised during training. For example, the PCA scores in the original DeepSSM model. If false then the latent space is unsupervised. </li>
+</ul>
+</li>
+<li><code>trainer</code>: A dictionary with info about training.<ul>
+<li><code>epochs</code>: The number of training epochs.</li>
+<li><code>learning_rate</code>: The learning rate to use in training.</li>
+<li><code>decay_lr</code>: If true the learning rate should decay during training. </li>
+<li><code>val_freq</code>: How often to evaluate the error on the validation set in training (i.e., one means every epoch, two means every other, etc.)</li>
+</ul>
+</li>
+<li><code>fine_tune</code>: A dictionary with the information about fine tuning.<ul>
+<li><code>enabled</code>: If true the model should be fine tuned after general training. If false fine tuning should not be done and the following fine tuning parameters need not be set.</li>
+<li><code>loss</code>: The loss function to be used in fine tuning.</li>
+<li><code>epochs</code>: The number of fine tuning epochs.</li>
+<li><code>learning_rate</code>: The learning rate to use in fine tuning.</li>
+<li><code>decay_lr</code>: If true the learning rate should decay during fine tuning.</li>
+<li><code>val_freq</code>: How often to evaluate the error on the validation set in fine tuning (i.e., one means every epoch, two means every other, etc.)</li>
+</ul>
+</li>
+<li><code>use_best_model</code>: If true the model from the epoch which achieved the best validation accuracy is used in testing (essentially the early stopping model). If false then the final model after all training epochs is used in testing.</li>
 </ul>
 <h3 id="test-deepssm">Test DeepSSM</h3>
 <p>This function gets predicted shape models based on the images provided using a trained DeepSSM model.</p>
-<div class="highlight"><pre><span></span><code><span class="n">DeepSSMUtils</span><span class="o">.</span><span class="n">testDeepSSM</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">model_path</span><span class="p">,</span> <span class="n">loader_dir</span><span class="p">,</span> <span class="n">PCA_scores_path</span><span class="p">,</span> <span class="n">num_PCA</span><span class="p">)</span>
+<p><div class="highlight"><pre><span></span><code><span class="n">DeepSSMUtils</span><span class="o">.</span><span class="n">testDeepSSM</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
 </code></pre></div>
+The testing function takes the <a href="#Config-File-Parameter-Descriptions">same config paremeters file</a> as the training function above.</p>
 <p><strong>Input arguments:</strong></p>
 <ul>
 <li><code>out_dir</code>: Path to directory where predictions are saved.</li>
@@ -417,7 +457,7 @@
   <div role="contentinfo">
     <!-- Copyright etc -->
     
-      <p>Copyright © 1998 - 2020 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
+      <p>Copyright © 1998 - 2021 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.</p>
     
   </div>
 
