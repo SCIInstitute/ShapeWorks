@@ -28,7 +28,6 @@ if [[ "$(uname)" == "Linux" ]]; then
         else
             VERSION="ShapeWorks-$(git describe --tags)-linux"
         fi
-	      LIBDIR="`pwd`/package/${VERSION}/lib"
 
         # Special case for when we are on the master branch (dev releases)
         BRANCH=$(git rev-parse --abbrev-ref HEAD)
@@ -37,6 +36,9 @@ if [[ "$(uname)" == "Linux" ]]; then
             HASH=$(git rev-parse --short HEAD)
             VERSION="ShapeWorks-dev-${NUMBER}-${HASH}-linux"
         fi
+
+	      LIBDIR="`pwd`/package/${VERSION}/lib"
+
     elif [ "$#" -gt 1 ]; then
         echo "error: linux shared libraries only have one RUNPATH, but more than one requested"
         exit -1

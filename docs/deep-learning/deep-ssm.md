@@ -77,9 +77,8 @@ import DeepSSMUtils
 
 This function turns the original and augmented data into training and validation torch loaders. The data provided is randomly split so that 80% is used in the training set and 20% is used in the validation set.
 
-
 ```python
-DeepSSMUtils.getTrainValLoaders(out_dir, data_aug_csv, batch_size=1, down_sample=False)
+DeepSSMUtils.getTrainValLoaders(out_dir, data_aug_csv, batch_size=1, down_factor=1, down_dir=None)
 ```
 
 **Input arguments:**
@@ -87,7 +86,8 @@ DeepSSMUtils.getTrainValLoaders(out_dir, data_aug_csv, batch_size=1, down_sample
 * `out_dir`: Path to the directory to store the torch loaders.
 * `data_aug_csv`: The path to the csv containing original and augmented data, which is the output when running data augmentation as detailed in [Data Augmentation for Deep Learning](data-augmentation.md).
 * `batch_size`: The batch size for training data. The default value is 1.
-* `down_sample`: If true, the images will be downsampled to a smaller size to decrease the time needed to train the network. If false, the full image will be used. The default is false.
+* `down_factor` Determines if the images should be downsampled for faster training. For example a value of 1 indicates the images should not be downsampled, while a value of 0.5 indicates the images should be downsampled to half of their original size. The default value is 1. 
+* `down_dir` The directory to which downsampled images should be written. The default value is `None`.
 
 ### Get test torch loader
 
@@ -95,15 +95,15 @@ This function turns the provided data into a test torch loader.
 
 
 ```python
-DeepSSMUtils.getTestLoader(out_dir, test_img_list, down_sample)
+DeepSSMUtils.getTestLoader(out_dir, test_img_list, down_factor=1, down_dir=None)
 ```
 
 **Input arguments:**
 
 * `out_dir`: Path to the directory to store the torch loader.
 * `test_img_list`: A list of paths to the images that are in the test set.
-* `down_sample`: If true, the images will be downsampled. If false, the full image will be used. This should match what is done for the training and validation loaders. The default is false.
-
+* `down_factor` Determines if the images should be downsampled for faster training. For example a value of 1 indicates the images should not be downsampled, while a value of 0.5 indicates the images should be downsampled to half of their original size. This should match what is done for the training and validation loaders. The default value is 1. 
+* `down_dir` The directory to which downsampled image should be written. The default value is `None`.
 
 ### Train DeepSSM
 
@@ -111,25 +111,51 @@ This function defines a DeepSSM model and trains it on the data provided. After 
 
 
 ```python
-DeepSSMUtils.trainDeepSSM(loader_dir, parameters, out_dir)
+DeepSSMUtils.trainDeepSSM(config_file)
 ```
 
-**Input arguments:**
+**Config file:**
 
-* `loader_dir`: Path to directory where train and validation torch loaders are.
-* `parameters`: A dictionary of network parameters with the following keys.    
-      - `epochs`: The number of epochs to train for.
-      - `learning_rate`: The value of the learning rate.
-      - `val_freq`: How often to evaluate on the validation set. 1 means test on the validation set every epoch, 2 means every other epoch, and so on.
-* `out_dir`: Directory to save the model and training/validation logs.
+Training requires a JSON config file which defines all model architecture and training parameters.
+
+#### Config File Parameter Descriptions
+
+* `model_name`: The name of the model, typically this matches the name of the JSON conflict file. The model and predictions will be saved in the directory: `out_dir/model_name/`
+* `num_latent_dim`: The size of the latent dimension.
+* `paths`: A dictionary with all the needded paths.
+    * `out_dir`: The directory to which output should be written.
+    * `loader_dir`: The directory that has the training, validation, and test torch data loaders.
+    * `aug_dir`: The directory that has the augmented data.
+* `encoder`: A dictionary with information about the encoder. 
+    * `deterministic`: If true indicates the _encoder_ should be deterministic. If false indicates the encoder should be stochastic.
+* `decoder`: A dictionary with information about the decoder.
+    * `deterministic`: If true indicates the _decoder_ should be deterministic. If false indicates the decoder should be stochastic.
+    * `linear`: If true indicates the decoder should be linear. If false indicates the decoder should be non-linear.
+* `loss`: A dictionary with info about the loss. 
+    * `function`: The loss function to be used in training.
+    * `supervised_latent`:  If true then the latent space is supervised during training. For example, the PCA scores in the original DeepSSM model. If false then the latent space is unsupervised. 
+* `trainer`: A dictionary with info about training.
+    * `epochs`: The number of training epochs.
+    * `learning_rate`: The learning rate to use in training.
+    * `decay_lr`: If true the learning rate should decay during training. 
+    * `val_freq`: How often to evaluate the error on the validation set in training (i.e., one means every epoch, two means every other, etc.)
+* `fine_tune`: A dictionary with the information about fine tuning.
+    * `enabled`: If true the model should be fine tuned after general training. If false fine tuning should not be done and the following fine tuning parameters need not be set.
+    * `loss`: The loss function to be used in fine tuning.
+    * `epochs`: The number of fine tuning epochs.
+    * `learning_rate`: The learning rate to use in fine tuning.
+    * `decay_lr`: If true the learning rate should decay during fine tuning.
+    * `val_freq`: How often to evaluate the error on the validation set in fine tuning (i.e., one means every epoch, two means every other, etc.)
+* `use_best_model`: If true the model from the epoch which achieved the best validation accuracy is used in testing (essentially the early stopping model). If false then the final model after all training epochs is used in testing.
 
 ### Test DeepSSM
 
 This function gets predicted shape models based on the images provided using a trained DeepSSM model.
 
 ```python
-DeepSSMUtils.testDeepSSM(out_dir, model_path, loader_dir, PCA_scores_path, num_PCA)
+DeepSSMUtils.testDeepSSM(config_file)
 ```
+The testing function takes the [same config paremeters file](#Config-File-Parameter-Descriptions) as the training function above.
 
 **Input arguments:**
 
