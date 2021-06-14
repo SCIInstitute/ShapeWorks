@@ -18,16 +18,13 @@ env:
 jobs:
   build:
 
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-16.04
     
     steps:
 
-    - name: Free up some disk space
-      run: sudo rm -rf /usr/share/dotnet
-
     - name: Choose gcc 9
       run: sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-9
-
+    
     - name: Prepare ccache timestamp
       id: ccache_cache_timestamp
       shell: cmake -P {0}
@@ -66,7 +63,11 @@ jobs:
     - name: install ccache
       shell: bash -l {0}
       run: conda activate shapeworks && conda install -c conda-forge ccache=3.7.7
-      
+
+    - name: fix zlib
+      shell: bash -l {0}
+      run: conda activate shapeworks ; sudo cp $CONDA_PREFIX/lib/libz.so.1 /lib/x86_64-linux-gnu/libz.so.1
+    
     - name: Acquire LinuxDeployQt
       run: curl -L -o $HOME/linuxdeployqt https://github.com/probonopd/linuxdeployqt/releases/download/5/linuxdeployqt-5-x86_64.AppImage && chmod +x $HOME/linuxdeployqt
 
@@ -89,7 +90,7 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ~/install
-        key: ${{ runner.os }}-test-${{ hashFiles('**/build_dependencies.sh') }}
+        key: ${{ runner.os }}-ub16-${{ hashFiles('**/build_dependencies.sh') }}
 
     - name: Build dependencies
       shell: bash -l {0}
