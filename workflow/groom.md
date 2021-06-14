@@ -50,7 +50,7 @@ shapeworks readimage --name $1 recenter writeimage --name $2
 
 ### Pad
 
-This tool pads pads an image with specified value by specified number of voxels in the x-, y-, and/or z- directions; origin remains at the same location (note: negative padding to shrink an image is permitted).
+This tool pads an image with specified value by specified number of voxels in the x-, y-, and/or z- directions; origin remains at the same location (note: negative padding to shrink an image is permitted).
 
 ``
 shapeworks readimage --name $1 pad --padding $2 --value $3 writeimage --name $4

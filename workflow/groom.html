@@ -362,7 +362,7 @@ image.antialias(iterations, maxRMSErr, layers).write(&lt;output path&gt;)
 <p>This tool recenters an image by changing its origin in the image header to the physical coordinates of the center of the image.</p>
 <p><code>shapeworks readimage --name $1 recenter writeimage --name $2</code></p>
 <h3 id="pad">Pad</h3>
-<p>This tool pads pads an image with specified value by specified number of voxels in the x-, y-, and/or z- directions; origin remains at the same location (note: negative padding to shrink an image is permitted).</p>
+<p>This tool pads an image with specified value by specified number of voxels in the x-, y-, and/or z- directions; origin remains at the same location (note: negative padding to shrink an image is permitted).</p>
 <p><code>shapeworks readimage --name $1 pad --padding $2 --value $3 writeimage --name $4</code></p>
 <p><code>shapeworks readimage --name $1 pad --padx $2 --pady $3 --padz $4 writeimage --name $5</code></p>
 <p>Here is the list of arguments.</p>
