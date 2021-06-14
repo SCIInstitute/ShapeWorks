@@ -10,21 +10,30 @@ minimization that balances the simplicity of the model (compactness) with the ac
 
 You have downloaded a binary distribution of ShapeWorks.
 
-To use the installer version of ShapeWorks (.pkg):
-
-1. Install the ShapeWorks pkg file.
-
-2. Open a terminal, change directory to /Applications/ShapeWorks
-
-3. type "source conda_installs.sh"
-
-4. Copy "/Applications/ShapeWorks/Examples to another location (e.g. $HOME/ShapeWorks-Examples)
-
-5. CD to your copied Examples\Python location
-
-6. Run "python RunUseCase.py --use_case [insert name of use case here]". For names for the use cases that are currently released, run: "python RunUseCase.py --help"
+1. Install the ShapeWorks .pkg file by double-clicking on the file.
 
 
-Note: For subsequent usage, the shapeworks conda environment must be activated using:
+ShapeWorks comes with Python examples to get you started. To run them:
 
-conda activate shapeworks
+1. Open a terminal and change directory to the installation path: `cd /Applications/ShapeWorks`
+
+2. type `source conda_installs.sh` to install necessary Python packages into a protected environment.
+
+3. Copy the Examples folder to another location (ex: `cp -r Examples $HOME/ShapeWorks-Examples`).
+
+4. Activate the shapeworks conda environment: `conda activate shapeworks`
+
+5. With the shapeworks conda environment activated, `cd` to your copied Examples\Python location.
+
+6. Run `python RunUseCase.py --use_case <insert name of use case here>`. To list the use cases that are currently released, run: `python RunUseCase.py --help`.
+
+**Note:** For subsequent usage, the shapeworks conda environment must be activated using `conda activate shapeworks`.
+
+
+To see the interactive Jupyter notebook examples:
+
+1. Open a terminal and change directory to your copied Examples\Python\notebooks\tutorials location.
+
+2. Activate the shapeworks conda environment: `conda activate shapeworks`
+
+3. Run `jupyter notebook` to open the notebooks in your web brower. Click on a notebook to get started.
