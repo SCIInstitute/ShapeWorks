@@ -91,6 +91,7 @@ void Sampler::AllocateDomainsAndNeighborhoods()
   int ctr = 0;
   for (unsigned int i = 0; i < this->m_DomainList.size(); i++) {
     auto domain = m_DomainList[i];
+    // Adding cutting planes to constraint object
     if (m_CuttingPlanes.size() > i) {
       for (unsigned int j = 0; j < m_CuttingPlanes[i].size(); j++){
         domain->GetConstraints()->addPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b,
@@ -99,6 +100,7 @@ void Sampler::AllocateDomainsAndNeighborhoods()
       }
     }
 
+    // Adding spheres to constraint object
     if (m_Spheres.size() > i) {
       for (unsigned int j = 0; j < m_Spheres[i].size(); j++) {
         domain->GetConstraints()->addSphere(m_Spheres[i][j].center, m_Spheres[i][j].radius);
@@ -108,6 +110,14 @@ void Sampler::AllocateDomainsAndNeighborhoods()
 
     if (domain->GetDomainType() == shapeworks::DomainType::Image) {
       auto imageDomain = static_cast<itk::ParticleImplicitSurfaceDomain<ImageType::PixelType>*>(domain.GetPointer());
+
+      // Adding free-form constraints to constraint object
+      if(m_FFCs.size() > 1){
+          for (unsigned int j = 0; j < m_FFCs[i].size(); j++) {
+            initialize_ffcs(i,j);
+            std::cout << "Adding free-form constraint to domain " << i << " shape " << j << " with query point " << m_FFCs[i][j].query.transpose() << std::endl;
+          }
+      }
 
       if (m_AttributesPerDomain.size() > 0 && m_AttributesPerDomain[i % m_DomainsPerShape] > 0) {
         TriMesh* themesh = TriMesh::read(m_MeshFiles[i].c_str());
@@ -366,14 +376,14 @@ void Sampler::AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, 
 }
 
 void Sampler::AddFreeFormConstraint(unsigned int i,
-                           const std::vector< Eigen::Vector3d > boundary,
+                           const std::vector< std::vector< Eigen::Vector3d > > boundaries,
                       const Eigen::Vector3d query){
     if (m_FFCs.size() < i + 1) {
       m_FFCs.resize(i + 1);
     }
 
     m_FFCs[i].push_back(FFCType());
-    m_FFCs[i][m_FFCs[i].size() - 1].boundary = boundary;
+    m_FFCs[i][m_FFCs[i].size() - 1].boundaries = boundaries;
     m_FFCs[i][m_FFCs[i].size() - 1].query = query;
 }
 
@@ -390,7 +400,53 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band)
     domain->SetImage(image, narrow_band_world);
   }
 
+  // Adding meshes
+  using connectorType = itk::ImageToVTKImageFilter<Image::ImageType>;
+  connectorType::Pointer connector = connectorType::New();
+  connector->SetInput(image);
+  connector->Update();
+
+    vtkContourFilter *targetContour = vtkContourFilter::New();
+    targetContour->SetInputData(connector->GetOutput());
+    targetContour->SetValue(0, 0.0);
+    targetContour->Update();
+
+    vtkSmartPointer<vtkPolyData> mesh = targetContour->GetOutput();
+
+    size_t numPt = mesh->GetNumberOfPoints();
+
+    if(numPt > 1500){
+        vtkDecimatePro *decimator = vtkDecimatePro::New();
+        decimator->SetInputData(mesh);
+        decimator->SetTargetReduction(1.-1500./numPt);
+        decimator->Update();
+
+        mesh = decimator->GetOutput();
+    }
+
+    std::cout << "Reduction " << 1.-1500./numPt << " num points " << numPt << "->" << mesh->GetNumberOfPoints() << std::endl;
+
+    for(vtkIdType i = 0; i < mesh->GetNumberOfPoints(); i++)
+    {
+       double p[3];
+       mesh->GetPoint(i, p);
+       //std::cout << p[0] << " " << p[1] << " " << p[2] << std::endl; // get the i-th point of the mesh and store it in p[3]
+
+       // do what you want with the point p[3] here
+       // p[0] -> x-component, p[1] -> y-component, p[2] -> z-component
+    }
+
+    this->m_meshes.push_back(mesh);
+
   m_DomainList.push_back(domain);
+}
+
+bool Sampler::initialize_ffcs(size_t dom, size_t ffcnum){
+    FFCMesh mesh = FFCMesh(m_meshes[dom], dom, ffcnum);
+
+    mesh.AddFFC(m_FFCs[dom][ffcnum].boundaries, m_FFCs[dom][ffcnum].query);
+
+    return true;
 }
 
 } // end namespace

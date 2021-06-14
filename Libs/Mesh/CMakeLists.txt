@@ -9,6 +9,7 @@ set(Mesh_sources
  meshFIM.cpp
  MeshUtils.cpp
  MeshWarper.cpp
+ FFCMesh.cpp
  )
 
 set(Mesh_headers
@@ -16,6 +17,7 @@ set(Mesh_headers
  meshFIM.h
  MeshUtils.h
  MeshWarper.h
+ FFCMesh.cpp
  )
 
 FILE(GLOB PreviewMeshQC_sources ./PreviewMeshQC/*.cpp)

@@ -1195,7 +1195,8 @@ bool OptimizeParameterFile::read_cutting_ffcs(TiXmlHandle* docHandle, Optimize* 
             //std::cout << "Shape " << shapeCount << " ffc num " << ffcCount << " filename " <<  fn << std::endl;
             bool query_read = true;
 
-            std::vector< Eigen::Vector3d > boundary;
+            std::vector< std::vector< Eigen::Vector3d > > boundaries;
+            int boundary_count = -1;
             Eigen::Vector3d query;
 
             fstream newfile;
@@ -1210,6 +1211,9 @@ bool OptimizeParameterFile::read_cutting_ffcs(TiXmlHandle* docHandle, Optimize* 
                  }
                  else if(tp == "boundary_pts"){
                      query_read = false;
+                     std::vector< Eigen::Vector3d > boundary;
+                     boundaries.push_back(boundary);
+                     boundary_count++;
                  }
                  else {
                     try
@@ -1219,7 +1223,7 @@ bool OptimizeParameterFile::read_cutting_ffcs(TiXmlHandle* docHandle, Optimize* 
                            iss >> buffer; query(0) = std::stod(buffer);
                            iss >> buffer; query(1) = std::stod(buffer);
                            iss >> buffer; query(2) = std::stod(buffer);
-                           //cout << "Added query " << query << "\n";
+                           //cout << "Added query " << query.transpose() << "\n";
                         }
                         else{
                            Eigen::Vector3d bpt;
@@ -1227,8 +1231,8 @@ bool OptimizeParameterFile::read_cutting_ffcs(TiXmlHandle* docHandle, Optimize* 
                            iss >> buffer; bpt(0) = std::stod(buffer);
                            iss >> buffer; bpt(1) = std::stod(buffer);
                            iss >> buffer; bpt(2) = std::stod(buffer);
-                           boundary.push_back(bpt);
-                           //cout << "Added boundary " << bpt << "\n";
+                           boundaries[boundary_count].push_back(bpt);
+                           //cout << "Added boundary " << bpt.transpose() << "\n";
                         }
                      }
                      catch (std::exception& e)
@@ -1245,7 +1249,7 @@ bool OptimizeParameterFile::read_cutting_ffcs(TiXmlHandle* docHandle, Optimize* 
                 std::cerr << "ERROR: File " << fn << " could not be open. Please check that the file is available." << std::endl;
                 throw 1;
             }
-            optimize->GetSampler()->AddFreeFormConstraint(shapeCount, boundary, query);
+            optimize->GetSampler()->AddFreeFormConstraint(shapeCount, boundaries, query);
 
             count++;
         }

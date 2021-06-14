@@ -26,6 +26,11 @@
 #include "vnl/vnl_matrix_fixed.h"
 
 #include "TriMesh.h"
+#include "Libs/Mesh/FFCMesh.h"
+
+#include <vtkContourFilter.h>
+#include <vtkPolyDataWriter.h>
+#include <vtkDecimatePro.h>
 
 namespace shapeworks {
 
@@ -62,7 +67,7 @@ public:
 
   /** Convenient typedef for storing free form constraint information */
   struct FFCType {
-     std::vector< Eigen::Vector3d > boundary;
+     std::vector< std::vector< Eigen::Vector3d > > boundaries;
      Eigen::Vector3d query;
   };
 
@@ -171,7 +176,7 @@ public:
                        const vnl_vector_fixed<double, Dimension>& vb,
                        const vnl_vector_fixed<double, Dimension>& vc);
   void AddFreeFormConstraint(unsigned int i,
-                             const std::vector< Eigen::Vector3d > boundary,
+                             const std::vector< std::vector< Eigen::Vector3d > > boundaries,
                              const Eigen::Vector3d query);
 
   /** Transform a cutting plane based on procrustes transformation */
@@ -511,6 +516,8 @@ protected:
 
   itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::Pointer m_MeshBasedGeneralEntropyGradientFunction;
 
+  bool initialize_ffcs(size_t dom, size_t ffcnum);
+
 private:
   Sampler(const Sampler&); //purposely not implemented
   void operator=(const Sampler&); //purposely not implemented
@@ -528,10 +535,10 @@ private:
   std::string m_PrefixTransformFile;
   std::vector<std::vector<CuttingPlaneType> > m_CuttingPlanes;
   std::vector<std::vector<SphereType> > m_Spheres;
-  std::vector<std::vector<FFCType> > m_FFCs;
+  std::vector< std::vector<FFCType> >  m_FFCs;
+  std::vector< vtkSmartPointer<vtkPolyData> > m_meshes;
 
   unsigned int m_verbosity;
-
 };
 
 } // end namespace
