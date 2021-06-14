@@ -102,6 +102,14 @@ function install_conda() {
     pkg-config=0.29.2
   then return 1; fi
 
+  # linux (only) deps
+  if [[ "$(uname)" == "Linux" ]]; then
+    if ! conda install --yes \
+      zlib \
+      patchelf                              # required by install_python_module.sh
+    then return 1; fi
+  fi
+
   # linux and mac (only) deps
   if [[ "$(uname)" == "Linux" || "$(uname)" == "Darwin" ]]; then
     if ! conda install --yes \
@@ -114,13 +122,6 @@ function install_conda() {
       openmp=8.0.1 \
       ncurses=6.2 \
       libuuid=2.32.1
-    then return 1; fi
-  fi
-
-  # linux (only) deps
-  if [[ "$(uname)" == "Linux" ]]; then
-    if ! conda install --yes \
-      zlib
     then return 1; fi
   fi
 
@@ -144,8 +145,16 @@ function install_conda() {
   if ! pip install Python/DataAugmentationUtilsPackage; then return 1; fi # install data augmentation code as a package
   if ! pip install Python/DeepSSMUtilsPackage;          then return 1; fi # install DeepSSM code as a package
   if ! pip install Python/ShapeCohortGenPackage;        then return 1; fi # install shape cohort generation code as a package
-  if ! pip install Python/shapeworks;                   then return 1; fi # depends on shapeworks_py, compiled portion of package
+  
 
+  # install python module binary (shapeworks_py) into conda
+  # (don't show output so it silently fails for dev runs, which is okay; succeeds for user runs)
+  if [[ "$(uname)" == "Linux" ]]; then
+    ./install_python_module.sh ./bin/shapeworks_py.cpython*.so `pwd`/lib >/dev/null 2>&1
+  elif [[ "$(uname)" == "Darwin" ]]; then
+    ./install_python_module.sh ./bin/shapeworks_py.cpython*.so `pwd`/lib `pwd`/bin/ShapeWorksStudio.app/Contents/Frameworks >/dev/null 2>&1
+  fi
+    
 
   if [[ "$GITHUB_ACTION" != "" ]]; then
       echo "Running under GitHub Action"

@@ -110,6 +110,10 @@ jobs:
         PR_NUMBER: ${{ github.event.number }}
       run: conda activate shapeworks && ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
 
+    - name: Install Python Module
+      shell: bash -l {0}
+      run: conda activate shapeworks && ./install_python_module.sh ${GITHUB_WORKSPACE}/shapeworks-install/bin/shapeworks_py.cpython*.so ${HOME}/install/lib ${GITHUB_WORKSPACE}/shapeworks-install/bin ${GITHUB_WORKSPACE}/shapeworks-install/bin/ShapeWorksStudio.app/Contents/Frameworks
+
     - name: make test
       shell: bash -l {0}
       run: conda activate shapeworks && cd build && ctest -VV
