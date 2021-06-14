@@ -190,11 +190,11 @@ Below is a list of the currently exposed algorithmic parameters. All the keys of
  1. Select a subsample of data to tune on.
  2. Start with default parameters and a small number of particles.
  3. Tune parameters one at a time until particles are evenly spread over the entire geometry and in good correspondence.
- 4. Optimize on the entire cohort with the best set of hyper=parameters and desire number of particles to get the final shape model. 
+ 4. Optimize on the entire cohort with the best set of hyper-parameters and desired number of particles to get the final shape model. 
  
  ### Qualitative Assessment
  
- To assess the quality of an optimized shape model, consider:
+ To assess the quality of an optimized shape model, consider the following:
  - Are the particles evenly spaced, covering the entire geometry of each sample?
  - Are the particles in good correspondence across the samples? This can be assessed by inspecting the neighboring correspondences of particles (in Studio hover over a particle and press ‘1’ to visualize).
  - Does the surface reconstruction result in non-anatomical/plausible shapes?

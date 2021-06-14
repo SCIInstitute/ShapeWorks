@@ -10,23 +10,30 @@ minimization that balances the simplicity of the model (compactness) with the ac
 
 You have downloaded a binary distribution of ShapeWorks.
 
-To use the installer version of ShapeWorks (.pkg):
+1. Install the ShapeWorks .pkg file by double-clicking on the file.
 
-1. Install the ShapeWorks pkg file.
 
-2. Open a terminal, change directory to /Applications/ShapeWorks
+ShapeWorks comes with Python examples to get you started. To run them:
 
-3. type "source conda_installs.sh"
+1. Open a terminal and change directory to the installation path: `cd /Applications/ShapeWorks`
 
-4. Copy "/Applications/ShapeWorks/Examples to another location (e.g. $HOME/ShapeWorks-Examples)
+2. type `source conda_installs.sh` to install necessary Python packages into a protected environment.
 
-5. On the terminal with shapeworks environment activated,CD to your copied Examples\Python location
+3. Copy the Examples folder to another location (ex: `cp -r Examples $HOME/ShapeWorks-Examples`).
 
-6. Run "python RunUseCase.py --use_case [insert name of use case here]". For names for the use cases that are currently released, run: "python RunUseCase.py --help"
+4. Activate the shapeworks conda environment: `conda activate shapeworks`
 
-7. On the terminal with shapeworks environment activated,CD to your copied Examples\Python\notebooks\tutorials location
+5. With the shapeworks conda environment activated, `cd` to your copied Examples\Python location.
 
-8. Run "jupyter notebook" to open the notebooks
-Note: For subsequent usage, the shapeworks conda environment must be activated using:
+6. Run `python RunUseCase.py --use_case <insert name of use case here>`. To list the use cases that are currently released, run: `python RunUseCase.py --help`.
 
-conda activate shapeworks
+**Note:** For subsequent usage, the shapeworks conda environment must be activated using `conda activate shapeworks`.
+
+
+To see the interactive Jupyter notebook examples:
+
+1. Open a terminal and change directory to your copied Examples\Python\notebooks\tutorials location.
+
+2. Activate the shapeworks conda environment: `conda activate shapeworks`
+
+3. Run `jupyter notebook` to open the notebooks in your web brower. Click on a notebook to get started.
