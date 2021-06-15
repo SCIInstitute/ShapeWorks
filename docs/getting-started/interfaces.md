@@ -42,4 +42,4 @@ For more information about ShapeWorks Studio, see [here](../studio/getting-start
 
 *Work in progress ... Stay tuned!*
 
-![In Progress](../img/misc/in-progress.pdf)
+![In Progress](../img/misc/in-progress.png)
