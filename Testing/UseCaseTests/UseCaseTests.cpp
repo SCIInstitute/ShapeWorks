@@ -84,7 +84,6 @@ TEST(UseCaseTests, ellipsoid_evaluate)
                "Output/ellipsoid/evaluation/compactness/scree.txt");
 }
 
-
 //---------------------------------------------------------------------------
 TEST(UseCaseTests, lumps)
 {
@@ -99,11 +98,17 @@ TEST(UseCaseTests, left_atrium)
                "Output/left_atrium/shape_models/32/CARMA0046.laendo_no_veins_local.particles");
 }
 
-
 //---------------------------------------------------------------------------
 TEST(UseCaseTests, femur)
 {
   run_use_case("femur",
+               "Output/femur/shape_models/32/m03_L_femur_local.particles");
+}
+
+//---------------------------------------------------------------------------
+TEST(UseCaseTests, femur_groom_images)
+{
+  run_use_case("femur --groom_images",
                "Output/femur/shape_models/32/m03_L_femur_local.particles");
 }
 
