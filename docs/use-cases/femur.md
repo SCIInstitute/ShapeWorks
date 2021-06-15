@@ -6,9 +6,8 @@ This use case demonstrates using ShapeWorks tools to perform the following.
 
 - Build a shape model where shapes are given as triangular surface meshes
 - Groom a dataset that contains both shapes (meshes) and their corresponding imaging data (e.g., CT)
-- Interactive cutting plane selection for data grooming
 
-The femur meshes in this data set have been segmented with various shaft lengths, as can be seen below. To remove this variability so that it is not captured in the shape model, the femurs are clipped using a cutting plane. The use case has a pre-defined cutting plane, but you can choose to overwrite it and define the cutting plane interactively by running the use case with the `--interactive` tag. There are two ways to define the cutting plane interactively, as explained below.
+The femur meshes in this data set have been segmented with various shaft lengths, as can be seen below. To remove this variability so that it is not captured in the shape model, the femurs are clipped using a cutting plane. The use case has a pre-defined cutting plane.
 ![Femur Lengths](../img/use-cases/femurLengths.png)
 
 
@@ -22,10 +21,6 @@ The use case is located at: `Examples/Python/femur.py`
 
 To run the use case, run `RunUseCase.py` (in `Examples/Python/`) with proper tags. The tags control the type of input data and the optimization method. See [Getting Started with Use Cases](../use-cases/use-cases.md#running-use-case) for the full list of tags.
 
-* `--skip_grooming`: to run the optimization on previously processed/groomed data.
-* `--interactive`: This tag is used to allow you to interactively select the cutting plane to be used for clipping all meshes. If this tag is not used, the pre-defined cutting plane is used to clip the given meshes.
-
-
 To run the full pipeline with multi-scale and the pre-defined cutting plane:
             
 ```
@@ -36,7 +31,7 @@ $ python RunUseCase.py --use_case femur
 This calls `femur.py` (in `Examples/Python/`) to perform the following.
             
 * Loads the femur dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
-* Grooms the images and meshes by calling data preprocessing functions in `GroomUtils.py` (in `Examples/Python/`). See [Grooming Data](#grooming-data) for details about these preprocessing steps.
+* Grooms the images and meshes. See [Grooming Data](#grooming-data) for details about these preprocessing steps.
 * Optimizes particle distribution (i.e., the shape/correspondence model) by calling optimization functions in `OptimizeUtils.py` (in `Examples/Python/`). See [Optimizing Shape Model](#optimizing-shape-model) for details about algorithmic parameters for optimizing the shape model.
 * Launches ShapeWorksStudio to visualize the use case results (i.e., the optimized shape model and the groomed data) by calling functions in `AnalyzeUtils.py` (in `Examples/Python/`).
 
@@ -55,51 +50,10 @@ $ python RunUseCase.py --use_case femur --groom_images
 
 If this tag is not used, grooming will be done on meshes only. The origin and size will be inferred from the meshes, and isotropic spacing will be used unless the user specifies otherwise for rasterization.
 
-### Running with Interactivity
-
-To run the use case interactively, run:
-
-```            
-$ python RunUseCase.py --use_case femur --interactive
-```
-
-In interactive mode, you are presented with two options to choose between for defining the cutting plane interactively.
-
-**Option 1**: The first option is to select the cutting plane at the beginning of the grooming steps on a sample of your choice. You will be prompted with:
-
-```
-Type the prefix of the sample you wish to use to select 
-the cutting plane from listed options and press enter.
-```
-Then the options are listed. After you have typed in the chosen sample prefix, an interactive window will pop up in which you can select the cutting plane. When you are content with your selection, you simply close this window, and the grooming process will continue. This process can be seen below.
-
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/femur_option1.mp4" autoplay muted loop controls style="width:100%"></p>
-
-Note that internally, whatever transformations are applied to the sample, you have defined the cutting plane on will be done to the cutting plane as well, so that when it is time to clip the samples, the cutting plane is still well-defined. 
-
-**Option 2**: If option 2 is selected, you will be asked to select a cutting plane for the femur shaft in the middle of the grooming process. Once the reference sample for alignment has been selected, an interactive window will pop up with the reference sample to define the cutting plane. Closing the window will continue the grooming process. 
-
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/femur_option2.mp4" autoplay muted loop controls style="width:100%"></p>
-
-
 ## Grooming Data
 
-We start with full unsegmented images (CT scans) of each femur's hip and segmented meshes in this use case. ShapeWorks needs a volumetric representation of shapes in the form of signed distance transforms to optimize the shape model. Hence, given surface meshes are first converted to image-based representation (i.e., binary segmentations).
+We start with full unsegmented images (CT scans) of each femur's hip and segmented meshes in this use case. ShapeWorks needs a volumetric representation of shapes in the form of signed distance transforms to optimize the shape model. Hence, given surface meshes are first converted to image-based representation (i.e., binary segmentations). Additionally, the corresponding unsegmented images need to be carried through each grooming step with the meshes to be used for analysis. Each step's results are shown for the meshes (note every step is performed on both the meshes the images, although the resulting images are not shown here). For a description of the grooming tools and parameters, see: [How to Groom Your Dataset?](../workflow/groom.md).
 
-Additionally, the corresponding unsegmented images need to be carried through each grooming step with the meshes to be used for analysis.
-
-
-The following preprocessing steps are only performed when you start with *unprepped* data, i.e., the tag `--start_with_prepped_data` is not used. Each step's results are shown for the meshes (note every step is performed on both the meshes the images, although the resulting images are not shown here). For a description of the grooming tools and parameters, see: [How to Groom Your Dataset?](../workflow/groom.md).
-
-**Cutting Plane**: If interactive, define cutting plane either in the beginning or after rigid alignment using the interactive window. 
-
-```
-    Within this window:
-            - Zoom in and out by scrolling 
-            - Rotate viewpoint by clicking in the surrounding area
-            - Move the cutting plane by clicking on it and dragging
-            - Change normal vector (represented with arrow) by clicking on it and dragging
-```
 
 1. **Reflect Meshes**: In this use case, we often have both right and left femur surface meshes. To align all the femurs, we choose one side to reflect both the image and mesh.
 2. **Meshes to Volumes**: Meshes must be turned into binary volumes using rasterization. The corresponding image origin, size, and spacing are used to generate the volume. 

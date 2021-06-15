@@ -78,11 +78,6 @@ $ python RunUseCase.py --use_case [insert name of use case here] --use_subsample
 
 This will select a representative subset of the specified sample size to run through the pipeline so that the use case runs faster and uses less memory. The subset is selected by running clustering, then picking one sample from each cluster so that the resulting subset is representative of all the data. If `--use_subsample` is used without `--num_subsample` it will use the default number of subsamples which is 3.In order to run the clustering, the entire dataset will be downloaded.
 
-* `--interactive`: When the interactive tag is used, the user must press enter after each step. This allows the user to inspect the intermediate output between steps of the pipeline.
-
-```
-$ python RunUseCase.py --use_case [insert name of use case here] --interactive
-```
 
 * `--skip_grooming`: When this tag is used, the grooming steps are skipped. Instead of generating the distance transforms from segmentations via grooming, the distance transforms from the data .zip folder are used in optimization. If a user wishes to start with the optimization step, add `--skip_grooming` tag.
 
