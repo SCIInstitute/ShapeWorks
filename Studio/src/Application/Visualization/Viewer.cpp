@@ -920,21 +920,7 @@ void Viewer::initialize_surfaces()
 //-----------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Viewer::get_transform(int domain)
 {
-  vtkSmartPointer<vtkTransform> transform;
-
-  if (this->visualizer_->get_display_mode() == Visualizer::MODE_ORIGINAL_C) {
-    if (this->visualizer_->get_center()) {
-      transform = this->shape_->get_transform();
-    }
-  }
-  else if (this->visualizer_->get_display_mode() == Visualizer::MODE_GROOMED_C) {
-    transform = this->shape_->get_alignment();
-  }
-  else {
-    transform = this->shape_->get_reconstruction_transform(domain);
-  }
-
-  return transform;
+  return this->visualizer_->get_transform(this->shape_, domain);
 }
 
 }
