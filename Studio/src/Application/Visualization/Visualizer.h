@@ -98,6 +98,9 @@ public:
   //! Update the feature range with a given range
   void update_feature_range(double* range);
 
+  //! Request the transform for a given shape and domain
+  vtkSmartPointer<vtkTransform> get_transform(QSharedPointer<Shape> shape, int domain);
+
 public Q_SLOTS:
 
   /// update viewer properties (e.g. glyph size, quality, etc)

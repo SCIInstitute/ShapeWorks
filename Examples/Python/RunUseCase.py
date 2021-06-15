@@ -16,7 +16,6 @@ import subprocess
 import sys
 import setupenv
 import shutil
-import shapeworks as sw
 
 #check if current directory is writable
 current_dir = os.getcwd()
@@ -56,8 +55,10 @@ if __name__ == '__main__':
     parser.add_argument("--use_single_scale", help="Use single scale optimization (default: multi scale)", action="store_true")
     parser.add_argument("--tiny_test", help="Run as a short test", action="store_true")
     parser.add_argument("--shapeworks_path", help="Path to ShapeWorks executables (default: "+default_bin_path+" if `shapeworks` is not already in the $PATH)", nargs='?', type=str, default=None)
+    parser.add_argument("--shapeworks_source", help="Path to ShapeWorks source (default: None)", nargs='?', type=str, default=None)
     args = parser.parse_args()
     shapeworks_bin_path = args.shapeworks_path
+    shapeworks_source_path = args.shapeworks_source
 
     #######################################
     # Finding shapeworks, search priority:
@@ -72,12 +73,19 @@ if __name__ == '__main__':
             shapeworks_bin_path = os.path.dirname(swpath)  
     if shapeworks_bin_path is None:
         shapeworks_bin_path = default_bin_path
-    setupenv.setup_shapeworks_env(shapeworks_bin_dir=shapeworks_bin_path, verbose=False)
+    setupenv.setup_shapeworks_env(shapeworks_bin_dir=shapeworks_bin_path, shapeworks_source_dir=shapeworks_source_path, verbose=False)
 
     # make sure the shapeworks executables can be found
     swpath = shutil.which("shapeworks")
     if (not swpath):
         print("Error: cannot find ShapeWorks executables. Please pass their location using the --shapeworks_path argument")
+        sys.exit(1)
+
+    # do not load module until after its location is (possibly) addeed to sys.path (i.e., PYTHONPATH)
+    try:
+        import shapeworks as sw
+    except:
+        print("Error: cannot find shapeworks Python module. Please pass the location of the path that contains `Python/shapeworks` using the --shapeworks_source argument")
         sys.exit(1)
 
     print(f"Using shapeworks from {shapeworks_bin_path}")
