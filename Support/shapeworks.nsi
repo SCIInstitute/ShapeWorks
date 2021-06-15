@@ -73,7 +73,7 @@ Section "ShapeWorks (required)"
   
   ; Put file there
   File "conda_installs.bat"
-  File "install_python_module.bat"
+  File "install_python_module.sh"
   File "Windows_README.txt"
   File /r "bin"
   File /r "Examples"
