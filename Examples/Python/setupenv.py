@@ -34,12 +34,12 @@ def setup_shapeworks_env(shapeworks_bin_dir = None,   # path to the binary direc
             shapeworks_bin_dir = "../../../../bin"
         
     if shapeworks_source_dir is None:
-				if verbose:
-						print(f'using default conda install path for shapeworks module, and compiled API bindings in {os.path.abspath(shapeworks_bin_dir)}')
+        if verbose:
+            print(f'using default conda install path for shapeworks module, and compiled API bindings in {os.path.abspath(shapeworks_bin_dir)}')
     else:
         sys.path.insert(0, os.path.abspath(shapeworks_source_dir+"/Python/shapeworks"))
-				if verbose:
-						print(f'expecting shapeworks module in {os.path.abspath(shapeworks_source_dir+"/Python/shapeworks")}, and compiled API bindings in {os.path.abspath(shapeworks_bin_dir)}')
+        if verbose:
+            print(f'expecting shapeworks module in {os.path.abspath(shapeworks_source_dir+"/Python/shapeworks")}, and compiled API bindings in {os.path.abspath(shapeworks_bin_dir)}')
         
     # add shapeworks module directory to python path
     sys.path.insert(0, os.path.abspath(shapeworks_bin_dir))
