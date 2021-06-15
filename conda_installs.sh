@@ -145,16 +145,9 @@ function install_conda() {
   if ! pip install Python/DataAugmentationUtilsPackage; then return 1; fi # install data augmentation code as a package
   if ! pip install Python/DeepSSMUtilsPackage;          then return 1; fi # install DeepSSM code as a package
   if ! pip install Python/ShapeCohortGenPackage;        then return 1; fi # install shape cohort generation code as a package
-  
 
-  # install python module binary (shapeworks_py) into conda
-  # (don't show output so it silently fails for dev runs, which is okay; succeeds for user runs)
-  if [[ "$(uname)" == "Linux" ]]; then
-    ./install_python_module.sh ./bin/shapeworks_py.cpython*.so `pwd`/lib >/dev/null 2>&1
-  elif [[ "$(uname)" == "Darwin" ]]; then
-    ./install_python_module.sh ./bin/shapeworks_py.cpython*.so `pwd`/lib `pwd`/bin/ShapeWorksStudio.app/Contents/Frameworks >/dev/null 2>&1
-  fi
-    
+  ./install_python_module.sh   # install python module
+
 
   if [[ "$GITHUB_ACTION" != "" ]]; then
       echo "Running under GitHub Action"
