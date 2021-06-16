@@ -55,7 +55,7 @@ def get_mesh_from_particles(particle_list, mesh_dir, mean_prefix):
 	template_mesh = mean_prefix + "_dense.vtk"
 	template_points = mean_prefix + "_sparse.particles"
 	num_particles = np.loadtxt(particle_list[0]).shape[0]
-	particle_dir = particle_list[0].rsplit('/', 1)[0] + '/'
+	particle_dir = os.path.dirname(particle_list[0]) + '/'
 	execCommand = ["shapeworks", 
 			"warp-mesh", "--reference_mesh", template_mesh,
 			"--reference_points", template_points,
