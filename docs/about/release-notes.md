@@ -65,20 +65,24 @@
 #### User's Support
 
 * **Multiple domain support:** `OptimizeUtils` and `AnalyzeUtils` are updated to handle multiple domain datasets.
-* **Restructured use cases:** Depreciated `GroomUtils` and `EvaluationUtils` are depreciated. All use cases are restructured to make the grooming steps more transparent and demonstrate the usage of Python APIs.
+* **Restructured use cases:** Depreciated `GroomUtils`, `CommonUtils`, and `EvaluationUtils`. All use cases are restructured to make the grooming steps more transparent and demonstrate the usage of Python APIs with inline documentation. 
 * **Improved documentation:** More clear documentation both from Python, the command line, and online are added.
+* **Improved notebooks** Notebooks have been simplified by moving helper functions into ShapeWorks pymodule, reducing repeated information, and using only the PyVista library for visualization. 
 
 
 
-<!--### Fixes
+### Fixes
 
 #### ShapeWorks Back-end
+* **Image to Array** ShapeWorks image functionality has been fixed so that an image can be successfully converted to a numpy array and back. 
 
 #### ShapeWorks Front-end
 
-#### Deep Learning & Shape Modeling
+* **Notebook visualization** Volume renderings using ITK Widgets were causing notebooks to crash on some platforms. The notebooks have been updated to no longer use ITK Widgets for visualization. 
+* **Use case file writing** RunUseCase.py has been updated to check that the current folder is writable before proceeding so that use case output can be saved. 
 
-#### User's Support-->
+#### Deep Learning & Shape Modeling
+* **DeepSSM Evaluation** The DeepSSM evaluation step in the use case has been updated to use ShapeWorks mesh distance rather than the deprecated SurfaceToSurfaceDistance command. 
 
 
 ## ShapeWorks 6.0 - 2020-03-30
