@@ -46,6 +46,9 @@ call pip install Python/DataAugmentationUtilsPackage
 call pip install Python/DeepSSMUtilsPackage
 call pip install Python/ShapeCohortGenPackage
 
+REM install the shapeworks python module
+call install_python_module.bat
+
 REM installs for jupyter notebooks
 call pip install nbstripout
 call pip install pyvista==0.30.1
