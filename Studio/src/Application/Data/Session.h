@@ -115,6 +115,9 @@ public:
 
   static Point3 get_point(const vnl_vector<double>& points, int i);
 
+  //! clear particles from session (e.g. groom start, optimize start)
+  void clear_particles();
+
 public Q_SLOTS:
   void handle_clear_cache();
   void handle_new_mesh();

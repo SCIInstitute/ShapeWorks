@@ -105,10 +105,6 @@ jobs:
         PR_NUMBER: ${{ github.event.number }}
       run: conda activate shapeworks && pwd ; ls ; cp docs/users/Windows_README.txt . ; cp Support/shapeworks.nsi . ; conda activate shapeworks && ./Support/package_windows.sh tag
 
-    - name: Install Python Module
-      shell: cmd
-      run: conda activate shapeworks && .\install_python_module ${{runner.workspace}}\build\bin\RelWithDebInfo
-      
     - name: Test
       working-directory: ${{runner.workspace}}/build
       shell: bash -l {0}

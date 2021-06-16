@@ -20,6 +20,7 @@ def print_env_path():
         
 # helper function to add shapeworks bin directory to the path
 def setup_shapeworks_env(shapeworks_bin_dir = None,   # path to the binary directory of shapeworks
+                         shapeworks_source_dir = None,# path to the directory of shapeworks source
                          dependencies_bin_dir = None, # only needed if shapeworks is built from source: path to the binary directory of shapeworks dependencies used when running build_dependencies.sh
                          verbose = True):
 
@@ -32,10 +33,19 @@ def setup_shapeworks_env(shapeworks_bin_dir = None,   # path to the binary direc
         else: # Linux (for notebooks by default)
             shapeworks_bin_dir = "../../../../bin"
         
-    # add shapeworks directory to python path 
-    sys.path.append(shapeworks_bin_dir)
+    if shapeworks_source_dir is None:
+        if verbose:
+            print(f'using default conda install path for shapeworks module, and compiled API bindings in {os.path.abspath(shapeworks_bin_dir)}')
+    else:
+        # add shapeworks module directory to python path
+        sys.path.insert(0, os.path.abspath(shapeworks_source_dir+"/Python/shapeworks"))
+        if verbose:
+            print(f'expecting shapeworks module in {os.path.abspath(shapeworks_source_dir+"/Python/shapeworks")}, and compiled API bindings in {os.path.abspath(shapeworks_bin_dir)}')
+        
+    # add shapeworks binary directory to python path
+    sys.path.insert(0, os.path.abspath(shapeworks_bin_dir))
     
-    # add shapeworks to the system path
+    # add shapeworks binary directory to the system path
     os.environ["PATH"] = shapeworks_bin_dir + os.pathsep + os.environ["PATH"]
     if dependencies_bin_dir is not None:
         os.environ["PATH"] = dependencies_bin_dir + os.pathsep + os.environ["PATH"]

@@ -151,9 +151,8 @@ bool Session::save_project(std::string fname)
     //this->session_->set_original_files(original_list);
   }
 
-
   // correspondence points
-  if (this->unsaved_particle_files_) {
+  if (this->unsaved_particle_files_ && this->particles_present()) {
     for (int i = 0; i < this->shapes_.size(); i++) {
       auto local_files = this->shapes_[i]->get_subject()->get_local_particle_filenames();
       auto world_files = this->shapes_[i]->get_subject()->get_world_particle_filenames();
@@ -644,17 +643,11 @@ bool Session::update_particles(std::vector<StudioParticles> particles)
       this->project_->get_subjects().push_back(subject);
       this->shapes_.push_back(shape);
     }
-
     shape->set_particles(particles[i]);
   }
 
-  // update the project now that we have particles
-  //this->project_->store_subjects();
-
-  //if (particles.size() > 0) {
   this->unsaved_particle_files_ = true;
   emit points_changed();
-  //}
   return true;
 }
 
@@ -753,7 +746,16 @@ bool Session::groomed_present()
 //---------------------------------------------------------------------------
 bool Session::particles_present()
 {
-  return this->project_->get_particles_present();
+  if (!this->project_->get_particles_present()) {
+    return false;
+  }
+
+  if (this->shapes_.size() > 0) {
+    auto shape = this->shapes_[0];
+    return (shape->get_global_correspondence_points().size() > 0);
+  }
+
+  return true;
 }
 
 //---------------------------------------------------------------------------
@@ -877,6 +879,13 @@ Point3 Session::get_point(const vnl_vector<double>& points, int i)
 double Session::get_auto_glyph_size()
 {
   return this->auto_glyph_size_;
+}
+
+//---------------------------------------------------------------------------
+void Session::clear_particles()
+{
+  std::vector<StudioParticles> particles(this->get_num_shapes());
+  this->update_particles(particles);
 }
 
 }
