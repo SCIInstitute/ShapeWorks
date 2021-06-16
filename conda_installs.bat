@@ -46,8 +46,8 @@ call pip install Python/DataAugmentationUtilsPackage
 call pip install Python/DeepSSMUtilsPackage
 call pip install Python/ShapeCohortGenPackage
 
-REM install the shapeworks python module (silently fail for dev runs)
-call install_python_module.bat .\bin > nul 2>&1
+REM install the shapeworks python module
+call install_python_module.bat
 
 REM installs for jupyter notebooks
 call pip install nbstripout
