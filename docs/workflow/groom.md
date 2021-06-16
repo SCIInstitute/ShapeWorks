@@ -11,7 +11,7 @@ If a smaller voxel spacing is used, this improves the resolution of the segmenta
 
 Since image resampling entails interpolation, directly resampling binary segmentations will not result in a binary segmentation, but rather an interpolated version that does not have two distinct labels (i.e., foreground and background).
 
-To mitigate this behavior, we need first to convert the binary segmentations (with zero-one voxels) to a continuous-valued (gray-scale) image. This can be done by antialiasing the segmentations, which smoothes the foreground-background interface.
+To mitigate this behavior, we need first to convert the binary segmentations (with zero-one voxels) to a continuous-valued (gray-scale) image. This can be done by antialiasing the segmentations, which smooths the foreground-background interface.
 
 Hence, the resampling pipeline for a binary segmentation includes the following steps:
 
@@ -84,7 +84,7 @@ shape_seg.binarize().write(out_shape_filename)
 ![Rigid alignment example](../img/workflow/rigid.png)
 
 ### Clip segmentation
-In some cases binary segmetnations need to be clipped with a cutting plane so that only the desired part of the shape is reflected in the shape model. 
+In some cases binary segmentations need to be clipped with a cutting plane so that only the desired part of the shape is reflected in the shape model. 
 - `clip` the segmentation using a cutting plane defined by three points
 
 Example of clipping:
@@ -96,7 +96,7 @@ shape_seg.clip(10, 10, 0, -10, -10, 0, 10, -10 , 0, 0.0).write(out_shape_filenam
 ![RClip segmentation example](../img/workflow/clip.png)
 
 ### Cropping and padding segmentations
-In many cases, image boundaries are not tight around shapes. This leaves too much irrelevant background voxels that might increase the memory footprint when optimizing the shape model. We can remove this irrelevant background while keeping our segmentations intact and avoid cropped segmentations to touch image boundaries. This involeves:
+In many cases, image boundaries are not tight around shapes. This leaves too much irrelevant background voxels that might increase the memory footprint when optimizing the shape model. We can remove this irrelevant background while keeping our segmentations intact and avoid cropped segmentations to touch image boundaries. This involves:
 
 - `ImageUtils.boundingBox`:computes the bounding box (ShapeWorks region) that fits all segmentations using an isovalue
 - `crop` the segmentation using the computed bounding box
@@ -120,7 +120,7 @@ A representation that satisfies all the requirements is the signed distance tran
 - A signed distance transform assigns to each voxel the physical distance to the closest point on the surface (i.e., the minimum distance from that voxel to nearest voxel on the foreground-background interface).
 - The sign is used to indicate whether that voxel is inside or outside the foreground object.
 - The zero-level set (zero-distance to the surface) indicates the foreground-background interface (i.e., the shape's surface).
-- The gradient of a signed distance transform at a voxels indicats what direction to move in from that voxels to most rapidly increase the value of this distance. Hence, we can use the negative of this gradient as a signal to move a particle back to the surface.
+- The gradient of a signed distance transform at a voxels indicates what direction to move in from that voxels to most rapidly increase the value of this distance. Hence, we can use the negative of this gradient as a signal to move a particle back to the surface.
 
 The computeDT API needs an iso_value that defines the foreground-background interface, to create 
 a smoother interface we first antialiasing the segmentation then compute the distance transform 
