@@ -1,6 +1,6 @@
 # How to Groom Your Dataset?
 
-ShapeWorks needs suitable distance transforms or meshes for establishing shape correspondence. The groom stage has the pipeline to generate aligned distance transforms from binary segmentations or groomed meshes from unaligned meshes.  It consists of image and mesh pre-processing tools. We outline common grooming steps then give a description of relevant ShapeWorks functions. 
+ShapeWorks needs suitable distance transforms or meshes for establishing shape correspondence. The groom stage has the pipeline to generate aligned distance transforms from binary segmentations or groomed meshes from unaligned meshes.  Common grooming steps are outlined below. For descriptions of the ShapeWorks commands used, see: [ShapeWorks Commands](http://sciinstitute.github.io/ShapeWorks/tools/ShapeWorksCommands.html).
 
 ## Common Pre-Processing Steps
 
