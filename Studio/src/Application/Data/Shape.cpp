@@ -286,32 +286,6 @@ QString Shape::get_groomed_filename_with_path(int domain)
   return QString::fromStdString(this->subject_->get_groomed_filenames()[domain]);
 }
 
-/*
-//---------------------------------------------------------------------------
-QString Shape::get_global_point_filename()
-{
-  return QFileInfo(this->global_point_filename_).fileName();
-}
-
-//---------------------------------------------------------------------------
-QString Shape::get_global_point_filename_with_path()
-{
-  return this->global_point_filename_;
-}
-
-//---------------------------------------------------------------------------
-QString Shape::get_local_point_filename()
-{
-  return QFileInfo(this->local_point_filename_).fileName();
-}
-
-//---------------------------------------------------------------------------
-QString Shape::get_local_point_filename_with_path()
-{
-  return this->local_point_filename_;
-}
-*/
-
 //---------------------------------------------------------------------------
 QList<Shape::Point> Shape::get_exclusion_sphere_centers()
 {

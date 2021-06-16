@@ -164,8 +164,6 @@ private:
   std::vector<std::string> global_point_filenames_;
   std::vector<std::string> local_point_filenames_;
 
-  //vnl_vector<double> global_correspondence_points_;
-  //vnl_vector<double> local_correspondence_points_;
   std::map<std::string, Eigen::VectorXf> point_features_;
   StudioParticles particles_;
 
