@@ -29,13 +29,7 @@ This calls `femur_mesh.py` (in `Examples/Python/`) to perform the following.
 
 ## Grooming Data
 
-In this use case, we download pre-groomed data. The grooming process used for this data can be explored in `Libs/Mesh/GroomFemur.cpp`.
-
-1. **Clip**: Because the femur meshes vary in shaft lengths, we clip the lengths of all the femurs to that of the shortest one.
-2. **Reflect Meshes**: In this use case, we often have both right and left femur surface meshes. To align all the femurs, we choose one side to reflect both the image and mesh.
-3. **Scale**: ShapeWorks is not size invariant and requires a sufficient scale.
-4. **Centering**: This factors out translations to reduce the risk of misalignment.
-5. **Alignment + Cropping**: This process is to further ensure that all the shafts are cropped at the same cutting plane.
+In this use case, we download pre-groomed data. The use case will be updated soon to demonstrate the full mesh grooming process.
 
 ## Optimizing Shape Model
 

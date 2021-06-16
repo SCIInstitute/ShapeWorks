@@ -39,13 +39,13 @@ $ python RunUseCase.py --use_case ellipsoid --skip_grooming
 
 The following preprocessing steps are only performed when you start with *unprepped* data, i.e., the tag `--start_with_prepped_data` is not used. For a description of the grooming tools and parameters, see: [How to Groom Your Dataset?](../workflow/groom.md).
 
-1. **Isotropic Resampling**: Binary segmentations in `ellipsoid/segmentations/` are resampled to have an isotropic voxel spacing using a user-defined spacing. This step could also be used to produce segmentations with smaller voxel spacing, and thereby reduce aliasing artifacts (i.e., staircase/jagged surface) due to binarization.
-2. **Apply Padding**: Segmentations that touch the image boundary will have an artificial hole at that intersection. Segmentations are padded by adding a user-defined number of voxels along each image direction (rows, cols, and slices) to avoid introducing artificial holes.
-3. **Center-of-Mass Alignment**: This translational alignment step is performed before rigidly aligning the samples to a shape reference. This factors out translations to reduce the risk of misalignment and allow for a medoid sample to be automatically selected as the reference for rigid alignment.
-4. **Reference Selection**: The reference is selected by first computing the mean (average) distance transform of the segmentations, then selecting the sample closest to that mean (i.e., medoid).
-5. **Rigid Alignment**: All of the segmentations are then aligned to the selected reference using rigid alignment, which factors out the rotation and remaining translation.
-6. **Cropping**: The segmentations are cropped so that all of the samples are within the same bounding box.
-7. **Distance Transform**: Finally, the signed distance transform is computed, and the dataset is now ready for the optimize phase.
+1. **Isotropic Resampling**: Binary segmentations in `ellipsoid/segmentations/` are resampled to have an isotropic voxel spacing.
+2. **Center-of-Mass Alignment**: This translational alignment step is performed before rigidly aligning the samples to a shape reference. This factors out translations to reduce the risk of misalignment and allow for a medoid sample to be automatically selected as the reference for rigid alignment.
+3. **Reference Selection**: The reference is selected by first computing the mean (average) distance transform of the segmentations, then selecting the sample closest to that mean (i.e., medoid).
+4. **Rigid Alignment**: All of the segmentations are then aligned to the selected reference using rigid alignment, which factors out the rotation and remaining translation.
+5. **Bounding Box**: The smallest region which fits all of the samples is found.
+6. **Cropping**: The segmentations are cropped to the size of the bounding box.
+7. **Distance Transform**: Finally, the smooth signed distance transform is computed, and the dataset is now ready for the optimize phase.
 
 ## Optimizing Shape Model
 

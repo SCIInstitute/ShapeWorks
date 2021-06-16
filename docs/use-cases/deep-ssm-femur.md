@@ -24,7 +24,6 @@ See [Getting Started with Use Cases](../use-cases/use-cases.md#running-use-case)
 
 * `--skip_grooming`
 * `--use_single_scale`
-* `--interactive`
 * `--groom_images`
 
 This calls `deep_ssm.py` (in `Examples/Python/`) to perform the following.

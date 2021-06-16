@@ -36,7 +36,7 @@ $python RunUseCase.py --use_case left_atrium
 This calls `left_atrium.py` (in `Examples/Python/`) to perform the following.
             
 * Loads the left atrium dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
-* Grooms the images and segmentations by calling data preprocessing functions in `GroomUtils.py` (in `Examples/Python/`). See [Grooming Data](#grooming-data) for details about these preprocessing steps.
+* Grooms the images and segmentations by calling data preprocessing functions. See [Grooming Data](#grooming-data) for details about these preprocessing steps.
 * Optimizes particle distribution (i.e., the shape/correspondence model) by calling optimization functions in `OptimizeUtils.py` (in `Examples/Python/`). See [Optimizing Shape Model](#optimizing-shape-model) for details about algorithmic parameters for optimizing the shape model.
 * Launches ShapeWorksStudio to visualize the use case results (i.e., optimized shape model and the groomed data) by calling functions in `AnalyzeUtils.py` (in `Examples/Python/`).
 
@@ -54,15 +54,15 @@ The grooming stage entails rigid transformations to align samples for groupwise 
 ShapeWorks image-based grooming tools and associated python scripts are developed to carry volumetric data through each grooming step with the shapes (meshes or segmentations) to be used for subsequent analysis visualization. In each step of grooming, we use the segmentation files to find the grooming parameters such as finding the reference shape for alignment or the bounding box for cropping. We save them in a TXT file and use the same set of parameters to groom the raw images. 
 
 
-The following preprocessing steps are only performed when you start with *unprepped* data, i.e., the tag `--start_with_prepped_data` is not used. For a description of the grooming tools and parameters, see: [How to Groom Your Dataset?](../workflow/groom.md).
-
-1. **Isotropic Resampling**: Both binary segmentations in `left_atrium/segmentations/` and their corresponding images in `left_atrium/images/` are resampled to have an isotropic voxel spacing using a user-defined spacing. This step could also be used to produce images and segmentations with smaller voxel spacing, and thereby reduce aliasing artifacts (i.e., staircase/jagged surface) due to binarization for segmentations.
-2. **Apply Padding**: Segmentations that touch the image boundary will have an artificial hole at that intersection. Segmentations and images are padded by adding a user-defined number of voxels along each image direction (rows, cols, and slices) to avoid introducing artificial holes.
-3. **Center-of-Mass Alignment**: This translational alignment step is performed before rigidly aligning the samples to a shape reference. This factors out translations to reduce the risk of misalignment and allow for a medoid sample to be automatically selected as the reference for rigid alignment.
-4. **Reference Selection**: The reference is selected by first computing the mean (average) distance transform of the segmentations, then selecting the sample closest to that mean (i.e., medoid).
-5. **Rigid Alignment**: All of the segmentations and images are then aligned to the selected reference using rigid alignment, which factors out the rotation and remaining translation. The alignment parameters are computed based on aligning segmentations and then applied to their corresponding images.
-6. **Cropping**: The images and segmentations are cropped so that all of the samples are within the same bounding box. The bounding box parameters are computed based on the biggest bounding box that encapsulate all the segmentations of the given dataset.
-7. **Distance Transform**: Finally, the signed distance transform is computed, and the dataset is now ready for the optimize phase.
+1. **Isotropic Resampling**: Both binary segmentations in `left_atrium/segmentations/` and their corresponding images in `left_atrium/images/` are resampled to have an isotropic voxel spacing.
+2. **Centering**: Segmenations and images are translated to have an origin at (0,0,0).
+3. **Apply Padding**: Segmentations that touch the image boundary will have an artificial hole at that intersection. Segmentations and images are padded by adding a user-defined number of voxels along each image direction (rows, cols, and slices) to avoid introducing artificial holes.
+4. **Center-of-Mass Alignment**: This translational alignment step is performed before rigidly aligning the samples to a shape reference. This factors out translations to reduce the risk of misalignment and allow for a medoid sample to be automatically selected as the reference for rigid alignment.
+5. **Reference Selection**: The reference is selected by first computing the mean (average) distance transform of the segmentations, then selecting the sample closest to that mean (i.e., medoid).
+6. **Rigid Alignment**: All of the segmentations and images are then aligned to the selected reference using rigid alignment, which factors out the rotation and remaining translation. The alignment parameters are computed based on aligning segmentations and then applied to their corresponding images.
+7. **Bounding Box**: The smallest region which fits all of the samples is found.
+8. **Cropping**: The segmentations are cropped to the size of the bounding box.
+9. **Distance Transform**: Finally, the signed distance transform is computed, and the dataset is now ready for the optimize phase.
 
 
 ![left Atrium Groom](../img/use-cases/leftatrium_groom.png)

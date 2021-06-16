@@ -28,7 +28,7 @@ $python RunUseCase.py --use_case ellipsoid_cut
 This calls `ellipsoid_cut.py` (in `Examples/Python/`) to perform the following.
 
 * Loads the ellipsoid dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
-* Creates distance transforms from the aleardy aligned segmentations by calling the function in `GroomUtils.py` (in `Examples/Python/`).
+* Creates distance transforms from the aleardy aligned segmentations.
 * Defines two cutting planes to be used to constrain the particle optimization on all ellipsoid. Note that this dataset contains a set of roughly aligned ellispoids; hence a common set of cutting planes can be used for all samples. 
 ```
     cutting_plane_points1 = [[10, 10, 0], [-10, -10, 0], [10, -10, 0]]
