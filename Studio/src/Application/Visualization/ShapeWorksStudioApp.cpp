@@ -180,8 +180,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   // groom tool initializations
   this->groom_tool_ = QSharedPointer<GroomTool>::create(preferences_);
   this->ui_->stacked_widget->addWidget(this->groom_tool_.data());
-  connect(this->groom_tool_.data(), SIGNAL(groom_complete()),
-          this, SLOT(handle_groom_complete()));
+  connect(this->groom_tool_.data(), &GroomTool::groom_start,
+          this, &ShapeWorksStudioApp::handle_groom_start);
+  connect(this->groom_tool_.data(), &GroomTool::groom_complete,
+          this, &ShapeWorksStudioApp::handle_groom_complete);
   connect(this->groom_tool_.data(), SIGNAL(error_message(std::string)),
           this, SLOT(handle_error(std::string)));
   connect(this->groom_tool_.data(), &GroomTool::message,
@@ -1030,6 +1032,14 @@ void ShapeWorksStudioApp::handle_reconstruction_complete()
   this->visualizer_->update_lut();
   this->update_display(true);
   this->enable_possible_actions();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_groom_start()
+{
+  // clear out old points
+  this->session_->clear_particles();
+  this->ui_->action_analysis_mode->setEnabled(false);
 }
 
 //---------------------------------------------------------------------------
@@ -1917,6 +1927,7 @@ void ShapeWorksStudioApp::dropEvent(QDropEvent* event)
     event->ignore();
   }
 }
+
 
 
 //---------------------------------------------------------------------------

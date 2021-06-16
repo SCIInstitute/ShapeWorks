@@ -48,6 +48,7 @@ public:
   void shutdown_threads();
 
 Q_SIGNALS:
+  void groom_start();
   void groom_complete();
   void error_message(std::string);
   void message(std::string);

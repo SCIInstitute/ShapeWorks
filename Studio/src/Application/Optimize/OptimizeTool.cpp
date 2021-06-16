@@ -156,7 +156,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
   this->elapsed_timer_.start();
   this->optimize_ = QSharedPointer<QOptimize>::create();
 
-  this->clear_particles();
+  this->session_->clear_particles();
 
   this->handle_progress(1, "");
   this->optimize_parameters_ = QSharedPointer<OptimizeParameters>::create(
@@ -346,14 +346,6 @@ void OptimizeTool::handle_load_progress(int count)
   if (value < 100) { // cannot emit 100 or the main interface will think the job is done
     emit progress(static_cast<int>(value));
   }
-}
-
-//---------------------------------------------------------------------------
-void OptimizeTool::clear_particles()
-{
-  // clear out old points
-  std::vector<StudioParticles> particles(this->session_->get_num_shapes());
-  this->session_->update_particles(particles);
 }
 
 //---------------------------------------------------------------------------
