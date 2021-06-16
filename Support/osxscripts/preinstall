@@ -3,4 +3,4 @@
 echo "ShapeWorks preinstall"
 env
 echo "Removing previous ShapeWorks install"
-rm -rf /Application/ShapeWorks
+rm -rf /Applications/ShapeWorks
