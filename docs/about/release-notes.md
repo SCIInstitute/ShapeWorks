@@ -1,6 +1,88 @@
 # Release Notes
 
-## ShapeWorks 6.0 - 2020-03-10
+## ShapeWorks 6.1 - 2021-06-17
+
+![](../img/about/release6.1.png)
+
+
+### What is new?
+
+
+#### ShapeWorks Back-end
+
+* **Improved shape models for convoluted structures:** Geodesic distance-based repulsion is now supported for mesh domains. This improves results on structures with thin and/or convoluted features at the cost of increased memory and runtime. Refer to the `thin_cavity_bean` use case for an example.
+* **Optimizing shape models on contours:** N-dimensional contour domains are now supported in ShapeWorks. Refer to the `supershapes_1mode_contour` use case for an example.
+* **Robust and scalable primitive-based constrained surface sampling:** Constraints are now implemented by turning the problem into an unconstrained optimization using the augmented lagrangian inequality formulation. The new implementation supports both cutting planes and spheres. It also supports multiple constraints per domain/shape with different types.
+* **Consolidated library for shape statistics:** The `shapeworks` computational library is updated to include refactored code for shape statistics, including functions to read particle files and compute eigenvectors, eigenvalues, and PCA loadings. 
+
+
+#### ShapeWorks Front-end
+
+* **Grooming support for meshes in Studio:** Multiple grooming features for mesh domains are added to Studio, including two methods for mesh smoothing, hole filling, mesh centering, and iterative closest point for rigid pre-alignment with automated reference shape selection.
+* **Multiple domains support in Studio:** Multiple domains are added to Studio where shape models are optimized in the shared/joint shape spaces of the given domains to capture inter-domains correlations and interactions. The way multiple domains are implemented allows for arbitrary number of domains as along as all shape samples in a given cohort have the same domains. Furthermore, the multiple domain support enables modeling scenarios with mixed-type domains (e.g., meshes and contours).
+* **Python APIs for shape statistics:** Python APIs for principal component analysis (PCA) are added for shape statistics. These APIs include reading particle files and computing eigenvectors, eigenvalues, and PCA loadings. See `ellipsoid_pca` for a demonstrating example.
+
+
+<!--#### Deep Learning & Shape Modeling-->
+
+
+#### User's Support
+
+* **Multi-domain shape cohort generation:** Ellipsoid joint generation is added to ShapeWorks' cohort generator python module. Shape cohorts with multiple domains can be generated with options to control the distance separating the domains and modes of variations (size/rotation). These cohorts can be used for troubleshooting multiple domain shape modeling workflows.
+
+* **New use cases:** A new use case (`ellipsoid_pca`) demonstrating the usage of the new PCA tools is added. The `thin_cavity_bean` use case is added to demonstrate geodesic distance based particle-to-particle interactions to demonstrate improved shape statistics and surface sampling for thin and convoluted strucutres. The `supershapes_1mode_contour` use case is added to demonstrate shape modeling using contour doamins. Another two new use cases, `ellipsoid_multiple_domain` and `ellipsoid_multiple_domain_mesh`, are added to demonstrate a typical shape modeling workflow for multiple domains using binary segmentations and surface meshes, respectively.
+
+
+### Improvements
+
+
+#### ShapeWorks Back-end
+
+* **Particle splitting is agnostic to constraints:** Particle splitting and constraints will no longer require that no particle violates constraints. It will work even if a particle violates a constraint. Multiple unit tests are added.
+* **Mesh reconstruction for multiple meshes:** The warp-mesh command is extended to work with multiple meshes at the same time with the same reference mesh and points.
+* **Improvements to the `Image` and `Mesh` libraries:** Exact specification of crop regions and clip plane for both images and meshes are enabled.
+* Better error detection and handling.
+* More robust automated testing to ensure improvements do not break existing functionality.
+
+ 
+#### ShapeWorks Front-end
+
+* **Clean installation for ShapeWorks Python module:** ShapeWorks Python module is now seamlessly installed as part of ShapeWorks suite installation on all platforms. The Python module no longer requires any special path modifications to import. 
+* **Improved ShapeWorks Python module library coverage:** The entire ShapeWorks library framework now accessible via Python bindings. 
+* **Python types support in ShapeWorks Python module:** ShapeWorks Python module uses generic Python types (e.g., numpy, arrays, lists) rather than opaque wrappers for parameters to/from ShapeWorks objects. It is now possible to instantiate shapeworks.Image from a numpy array. One can now request raw image data as a numpy array. 
+* **Safe dot-chain operations in ShapeWorks Python module:**  The “dot chain” operations are now safely enabled (e.g., `img.translate([tx, ty, tz]).rotate(45, shapeworks::Z).scale([sx, sy, sz))`)
+
+
+
+#### Deep Learning & Shape Modeling
+
+* **Refactored DeepSSM:** Defined a config file for DeepSSM parameters that is used in training and testing. This will be helpful for parameter tuning, model comparison, and adding additional functionality and parameters to DeepSSM.
+* **DeepSSM with fine tuning:** A fine-tuning option has been added to DeepSSM. This allows the model to learn the mapping between the PCA space to the correspondence point space , improving accuracy.
+* **Improved DeepSSM evaluation:** DeepSSM evaluation has been adapted to use ShapeWorks mesh warp function and Python binding mesh distance function.
+* **DeepSSM on both GPU and CPU:** The DeepSSM use case has been adapted to run on both GPU and CPU. It is considerably faster on GPU but no longer exits when running on CPU.
+
+
+#### User's Support
+
+* **Mutliple domain support:** `OptimizeUtils` and `AnalyzeUtils` are updated to handle multiple domain datasets.
+* **Restructured use cases:** Depreciated `GroomUtils` and `EvaluationUtils` are depreciated. All use cases are restructured to make the grooming steps more transparent and demonstrate the usage of Python APIs.
+* **Improved documentation:** More clear documentation both from Python, the command line, and online are added.
+
+
+
+<!--### Fixes
+
+#### ShapeWorks Back-end
+
+#### ShapeWorks Front-end
+
+#### Deep Learning & Shape Modeling
+
+#### User's Support-->
+
+
+
+## ShapeWorks 6.0 - 2020-03-30
 
 ![](../img/about/release6.0.png)
 
