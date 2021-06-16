@@ -479,8 +479,6 @@ void Shape::load_feature(std::string display_mode, std::string feature)
 
         // assign scalars at points
         this->load_feature_from_mesh(feature, original_meshes[d]);
-        group.meshes()[d]->apply_scalars(original_meshes[d]);
-
       }
       else {
         // read the feature
@@ -497,9 +495,7 @@ void Shape::load_feature(std::string display_mode, std::string feature)
           QMessageBox::warning(0, "Unable to open file",
                                "Error opening file: \"" + filename + "\"");
         }
-
       }
-
     }
   }
 }
@@ -580,8 +576,8 @@ void Shape::load_feature_from_mesh(std::string feature, MeshHandle mesh)
 
     values[i] = var.ToDouble();
   }
-  this->point_features_[feature] = values;
 
+  this->set_point_features(feature, values);
 }
 
 //---------------------------------------------------------------------------
