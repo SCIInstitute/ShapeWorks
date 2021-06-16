@@ -360,6 +360,10 @@ void Project::store_subjects()
       this->set_list(local_columns, i, local_files);
       this->set_list(world_columns, i, world_files);
     }
+    else
+    {
+      this->particles_present_ = false;
+    }
   }
 
   this->segmentations_present_ = !seg_columns.empty();

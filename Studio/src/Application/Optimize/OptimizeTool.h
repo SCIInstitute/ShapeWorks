@@ -79,8 +79,6 @@ private:
 
   void handle_load_progress(int count);
 
-  void clear_particles();
-
   std::vector<QLineEdit*> particle_boxes_;
 
   Preferences& preferences_;

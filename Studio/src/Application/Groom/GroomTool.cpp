@@ -258,6 +258,7 @@ void GroomTool::on_run_groom_button_clicked()
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   thread->start();
 
+  emit groom_start();
   threads_ << thread;
 }
 

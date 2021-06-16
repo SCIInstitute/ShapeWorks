@@ -79,11 +79,7 @@ public:
   /// Get the local correspondence points
   vnl_vector<double> get_local_correspondence_points();
 
-  void set_reconstructed_mesh(MeshHandle mesh);
-
   void clear_reconstructed_mesh();
-
-  void set_global_particles(const vnl_vector<double>& points);
 
   /// Get the id of this shape
   int get_id();
@@ -153,19 +149,11 @@ private:
   MeshGroup groomed_meshes_;
   MeshGroup reconstructed_meshes_;
 
-  MeshHandle original_mesh_;
-  MeshHandle groomed_mesh_;
-  MeshHandle reconstructed_mesh_;
-  ImageType::Pointer original_image_, groomed_image_;
   int group_id_ = 1;
 
-  QString original_mesh_filename_;
-  QString groomed_filename_;
   std::vector<std::string> global_point_filenames_;
   std::vector<std::string> local_point_filenames_;
 
-  //vnl_vector<double> global_correspondence_points_;
-  //vnl_vector<double> local_correspondence_points_;
   std::map<std::string, Eigen::VectorXf> point_features_;
   StudioParticles particles_;
 
