@@ -146,20 +146,13 @@ MeshGroup Shape::get_reconstructed_meshes(bool wait)
 //---------------------------------------------------------------------------
 void Shape::reset_groomed_mesh()
 {
-  this->groomed_mesh_.reset();
   this->groomed_meshes_ = MeshGroup(this->subject_->get_number_of_domains());
-}
-
-//---------------------------------------------------------------------------
-void Shape::set_reconstructed_mesh(MeshHandle mesh)
-{
-  this->reconstructed_mesh_ = mesh;
 }
 
 //---------------------------------------------------------------------------
 void Shape::clear_reconstructed_mesh()
 {
-  this->reconstructed_mesh_ = nullptr;
+  this->reconstructed_meshes_ = MeshGroup(this->subject_->get_number_of_domains());
 }
 
 //---------------------------------------------------------------------------
