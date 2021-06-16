@@ -19,7 +19,7 @@
 #### ShapeWorks Front-end
 
 * **Grooming support for meshes in Studio:** Multiple grooming features for mesh domains are added to Studio, including two methods for mesh smoothing, hole filling, mesh centering, and iterative closest point for rigid pre-alignment with automated reference shape selection.
-* **Multiple domains support in Studio:** Multiple domains are added to Studio where shape models are optimized in the shared/joint shape spaces of the given domains to capture inter-domains correlations and interactions. The way multiple domains are implemented allows for arbitrary number of domains as along as all shape samples in a given cohort have the same domains. Furthermore, the multiple domain support enables modeling scenarios with mixed-type domains (e.g., meshes and contours).
+* **Multiple domains support in Studio:** Multiple domains are added to Studio where shape models are optimized in the given domains' shared/joint shape spaces to capture inter-domains correlations and interactions. The way multiple domains are implemented allows for an arbitrary number of domains as long as all shape samples in a given cohort have the same domains. Furthermore, the multiple domain support enables modeling scenarios with mixed-type domains (e.g., meshes and contours).
 * **Python APIs for shape statistics:** Python APIs for principal component analysis (PCA) are added for shape statistics. These APIs include reading particle files and computing eigenvectors, eigenvalues, and PCA loadings. See `ellipsoid_pca` for a demonstrating example.
 
 
@@ -30,7 +30,7 @@
 
 * **Multi-domain shape cohort generation:** Ellipsoid joint generation is added to ShapeWorks' cohort generator python module. Shape cohorts with multiple domains can be generated with options to control the distance separating the domains and modes of variations (size/rotation). These cohorts can be used for troubleshooting multiple domain shape modeling workflows.
 
-* **New use cases:** A new use case (`ellipsoid_pca`) demonstrating the usage of the new PCA tools is added. The `thin_cavity_bean` use case is added to demonstrate geodesic distance based particle-to-particle interactions to demonstrate improved shape statistics and surface sampling for thin and convoluted strucutres. The `supershapes_1mode_contour` use case is added to demonstrate shape modeling using contour doamins. Another two new use cases, `ellipsoid_multiple_domain` and `ellipsoid_multiple_domain_mesh`, are added to demonstrate a typical shape modeling workflow for multiple domains using binary segmentations and surface meshes, respectively.
+* **New use cases:** A new use case (`ellipsoid_pca`) demonstrating the usage of the new PCA tools is added. The `thin_cavity_bean` use case is added to demonstrate geodesic distance-based particle-to-particle interactions to demonstrate improved shape statistics and surface sampling for thin and convoluted structures. The `supershapes_1mode_contour` use case is added to demonstrate shape modeling using contour domains. Another two new use cases, `ellipsoid_multiple_domain` and `ellipsoid_multiple_domain_mesh`, are added to demonstrate a typical shape modeling workflow for multiple domains using binary segmentations and surface meshes, respectively.
 
 
 ### Improvements
@@ -56,15 +56,15 @@
 
 #### Deep Learning & Shape Modeling
 
-* **Refactored DeepSSM:** Defined a config file for DeepSSM parameters that is used in training and testing. This will be helpful for parameter tuning, model comparison, and adding additional functionality and parameters to DeepSSM.
-* **DeepSSM with fine tuning:** A fine-tuning option has been added to DeepSSM. This allows the model to learn the mapping between the PCA space to the correspondence point space , improving accuracy.
+* **Refactored DeepSSM:** Defined a config file for DeepSSM parameters that are used in training and testing. This will be helpful for parameter tuning, model comparison, and adding additional functionality and parameters to DeepSSM.
+* **DeepSSM with fine-tuning:** A fine-tuning option has been added to DeepSSM. This allows the model to learn the mapping between the PCA space to the correspondence point space, improving accuracy.
 * **Improved DeepSSM evaluation:** DeepSSM evaluation has been adapted to use ShapeWorks mesh warp function and Python binding mesh distance function.
 * **DeepSSM on both GPU and CPU:** The DeepSSM use case has been adapted to run on both GPU and CPU. It is considerably faster on GPU but no longer exits when running on CPU.
 
 
 #### User's Support
 
-* **Mutliple domain support:** `OptimizeUtils` and `AnalyzeUtils` are updated to handle multiple domain datasets.
+* **Multiple domain support:** `OptimizeUtils` and `AnalyzeUtils` are updated to handle multiple domain datasets.
 * **Restructured use cases:** Depreciated `GroomUtils` and `EvaluationUtils` are depreciated. All use cases are restructured to make the grooming steps more transparent and demonstrate the usage of Python APIs.
 * **Improved documentation:** More clear documentation both from Python, the command line, and online are added.
 
@@ -79,7 +79,6 @@
 #### Deep Learning & Shape Modeling
 
 #### User's Support-->
-
 
 
 ## ShapeWorks 6.0 - 2020-03-30
