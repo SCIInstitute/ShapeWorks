@@ -156,7 +156,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
   this->elapsed_timer_.start();
   this->optimize_ = QSharedPointer<QOptimize>::create();
 
-  this->clear_particles();
+  this->session_->clear_particles();
 
   this->handle_progress(1, "");
   this->optimize_parameters_ = QSharedPointer<OptimizeParameters>::create(
