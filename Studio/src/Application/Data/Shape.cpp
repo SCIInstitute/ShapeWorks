@@ -541,8 +541,8 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
 
     values[i] = pixel;
   }
-  this->point_features_[feature] = values;
 
+  this->set_point_features(feature, values);
 }
 
 //---------------------------------------------------------------------------
