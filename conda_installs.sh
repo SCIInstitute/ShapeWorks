@@ -176,9 +176,11 @@ function install_conda() {
   jupyter nbextension enable spellchecker/main
   jupyter nbextension enable toc2/main
 
-  # installing nbstripout to strip out notebooks cell outputs before committing 
-  nbstripout --install
-  nbstripout --install --attributes .gitattributes
+  if [ -x "$(command -v git)" ]; then  # don't invoke if git is not installed
+    # installing nbstripout to strip out notebooks cell outputs before committing 
+    nbstripout --install
+    nbstripout --install --attributes .gitattributes
+  fi
 
   # install any additional Linux dependencies
   if [[ "$(uname)" == "Linux" ]]; then
