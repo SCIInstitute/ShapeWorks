@@ -1,6 +1,6 @@
 REM remove existing shapeworks env if any
 set CONDAENV=shapeworks
-conda env remove -n %CONDAENV%
+call conda env remove -n %CONDAENV%
 
 REM update anaconda
 call conda config --add channels anaconda
