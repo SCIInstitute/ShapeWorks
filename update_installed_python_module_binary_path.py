@@ -17,8 +17,8 @@ if __name__ == "__main__":
     if len(sys.argv[1:]) != 2:
         print(f'params: <shapeworks module setup_path.py> <shapeworks bin path>')
         sys.exit(1)
-    MODULE_INSTALL_SCRIPT = sys.argv[1]
-    BINARY_INSTALL_PATH = sys.argv[2]
-    replaceAll(path.normpath(path.join(MODULE_INSTALL_SCRIPT)),
+    MODULE_INSTALL_SCRIPT = path.normpath(sys.argv[1])
+    BINARY_INSTALL_PATH = path.normpath(sys.argv[2])
+    replaceAll(MODULE_INSTALL_SCRIPT,
                str("\"\""),
                str(f'\"{BINARY_INSTALL_PATH}\"'))
