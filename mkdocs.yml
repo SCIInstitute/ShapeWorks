@@ -57,7 +57,11 @@ nav:
    - 'Femur Mesh: SSM directly from meshes':    'use-cases/femur-mesh.md'
    - 'Lumps: SSM directly from meshes':         'use-cases/lumps.md'
    - 'Right Ventricle: Highly Variable Shapes': 'use-cases/right-ventricle.md'
-   - 'Femur SSM Directly from Images':          'use-cases/deep-ssm-femur.md'         
+   - 'Femur SSM Directly from Images':          'use-cases/deep-ssm-femur.md'
+   - 'Shape Model for Multiple Domains '        'use-cases/ellipsoid-multiple-domain'
+   - 'Shape Model for Multiple Domains directly from Meshes'     'use-cases/ellipsoid-multiple-domain-mesh'
+   - 'Ellipsoid: Shape Statistics in Python'    'use-cases/ellipsoid-pca'   
+     
 - For Developers:
    - 'How to Build ShapeWorks from Source?': 'dev/build.md'
    - 'How to Contribute to ShapeWorks?':     'dev/contribute.md'

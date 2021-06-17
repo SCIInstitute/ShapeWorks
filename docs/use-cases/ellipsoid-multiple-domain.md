@@ -1,4 +1,4 @@
-# Shape Model for Multiple Domain 
+# Shape Model for Multiple Domains 
 
 ## What and Where is the Use Case?
 

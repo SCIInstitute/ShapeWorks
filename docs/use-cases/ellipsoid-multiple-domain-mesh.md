@@ -1,4 +1,4 @@
-# Shape Model for Multiple Domain directly from Mesh
+# Shape Model for Multiple Domains directly from Mesh
 
 ## What and Where is the Use Case?
 
