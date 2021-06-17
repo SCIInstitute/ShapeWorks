@@ -94,7 +94,7 @@ def Run_Pipeline(args):
         reference_side = "left"  # somewhat arbitrary, could be R for right
         # Set cutting plane
         cutting_plane_points = np.array(
-            [[-1.0, -1.0, -700], [1.0, -1.0, -700], [-1.0, 1.0, -700]])
+            [[-1.0, -1.0, -675], [1.0, -1.0, -675], [-1.0, 1.0, -675]])
         cp_prefix = 'm03_L'
 
         # BEGIN GROOMING WITH IMAGES
