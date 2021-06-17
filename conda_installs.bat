@@ -8,8 +8,9 @@ call conda update --yes -n base -c defaults conda
 call conda update --yes --all
 
 REM create and activate shapeworks env
-call conda create --yes --name shapeworks python=3.7
-call conda activate shapeworks
+set CONDAENV=shapeworks
+call conda create --yes --name %CONDAENV% python=3.7
+call conda activate %CONDAENV%
 
 REM install shapeworks deps
 call conda install --yes colorama=0.4.3
@@ -24,7 +25,7 @@ call conda install --yes notebook=6.1.5
 
 REM reactivate shapeworks environment
 call conda activate base
-call conda activate shapeworks
+call conda activate %CONDAENV%
 
 call pip install --upgrade pip
 call pip install termcolor==1.1.0
@@ -65,7 +66,3 @@ call jupyter nbextension enable spellchecker/main
 call jupyter nbextension enable toc2/main
 
 call conda info
-
-
-
-

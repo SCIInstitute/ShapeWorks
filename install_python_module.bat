@@ -6,4 +6,4 @@ call pip install Python\shapeworks
 
 set CONDA_INSTALL_DIR=%CONDA_PREFIX%\lib\site-packages\shapeworks
 
-python .\update_installed_python_module_binary_path.py %CONDA_INSTALL_DIR%\setup_path.py %cd%\bin
+call python .\update_installed_python_module_binary_path.py "%CONDA_INSTALL_DIR%\setup_path.py" "%cd%\bin"
