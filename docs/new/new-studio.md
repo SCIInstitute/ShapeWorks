@@ -1,9 +1,24 @@
-# New in ShapeWorksStudio
+# New in ShapeWorks Studio
 
+## Multiple Domains
+
+As of ShapeWorks 6.1, we added support in ShapeWorks Studio for modeling multiple domains (e.g. anatomies) in joint correspondance model.
+
+![ShapeWorks Project with Multiple Domains - Analyze](../img/studio/studio_multiple_domain_analyze.png)
+
+See [Multiple Domains](../studio/getting-started-with-studio.md#multiple-domains) for more information.
+
+## Mesh Grooming
+
+As of ShapeWorks 6.1, we added support in ShapeWorks Studio for mesh grooming, including smoothing, hole filling, and iterative closest point pre-alignment.
+
+![ShapeWorks Studio Groom Module for Meshes](../img/studio/studio_groom_mesh.png){: width="300" }
+
+See [Groom Module](../studio/getting-started-with-studio.md#groom-module) for more information.
 
 ## Mesh Support 
 
-As of ShapeWorks 6.0, we added mesh support to ShapeWorksStudio including loading meshes, optimizing shape models directly on meshes, and visualizing meshes with scalar feature values. Meshes can store values at vertices such as "cortical thickness", or "fibrosis” and ShapeWorksStudio uses them in a similar manner as feature maps/volumes.
+As of ShapeWorks 6.0, we added mesh support to ShapeWorks Studio including loading meshes, optimizing shape models directly on meshes, and visualizing meshes with scalar feature values. Meshes can store values at vertices such as "cortical thickness", or "fibrosis” and ShapeWorksStudio uses them in a similar manner as feature maps/volumes.
 
 *Open meshes in Studio*
 ![Screenshot showing open meshes in Studio](../img/new/open-mesh-studio.png)
@@ -29,7 +44,7 @@ As of ShapeWorks 6.0, we added support for automatic glyph sizing, draging/dropp
 
 ## Surface Reconstruction 
 
-ShapeWorksStudio provides a particle-based surface reconstruction that can reconstruct high quality surface meshes with fewer number of particles. See [How to Analyze Your Shape Model?](../workflow/analyze.md#surface-reconstruction) for details about the method.
+ShapeWorks Studio provides a particle-based surface reconstruction that can reconstruct high quality surface meshes with fewer number of particles. See [How to Analyze Your Shape Model?](../workflow/analyze.md#surface-reconstruction) for details about the method.
 
 
 *With particle-based surface reconstruction, there is not need to optimize denser particle systems (i.e., with more particles) to reconstruct surface meshes with subvoxel accuracy*
@@ -46,7 +61,7 @@ ShapeWorksStudio provides a particle-based surface reconstruction that can recon
 
 ## Dynamic Loading
 
-ShapeWorksStudio support load-on-demand, which makes it more scalable by supporting loading in order of 100s of samples. For instance, an old small project that took 10+ seconds to load now starts instantly in Studio.
+ShapeWorks Studio support load-on-demand, which makes it more scalable by supporting loading in order of 100s of samples. For instance, an old small project that took 10+ seconds to load now starts instantly in Studio.
 
 
 *(old) without dynamic loading*
@@ -60,14 +75,14 @@ ShapeWorksStudio support load-on-demand, which makes it more scalable by support
 
 ## Live Particles Movement 
 
-ShapeWorksStudio allows for live introspection of the correpsondence placement optimization process and the ability to abort the optimization at any time (e.g., changing algorithmic parameters).
+ShapeWorks Studio allows for live introspection of the correpsondence placement optimization process and the ability to abort the optimization at any time (e.g., changing algorithmic parameters).
 
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_optimize_live.mp4" autoplay muted loop controls style="width:100%"></p>
 
 ## Feature Maps
 
-ShapeWorksStudio has the ability to integrate **feature maps**.  A **feature map** is a 3d image volume that contains scalar values to be associated with each shape’s surface.  For example, this could be raw or processed CT/MRI data.  The feature map can be displayed for each surface by choosing the desired feature map in the feature map combobox at the bottom of the screen. 
+ShapeWorks Studio has the ability to integrate **feature maps**.  A **feature map** is a 3d image volume that contains scalar values to be associated with each shape’s surface.  For example, this could be raw or processed CT/MRI data.  The feature map can be displayed for each surface by choosing the desired feature map in the feature map combobox at the bottom of the screen. 
 After the correspondence is generated, the average feature map can be displayed on the mean shape in the analysis tab.
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_feature_map.mp4" autoplay muted loop controls style="width:100%"></p>

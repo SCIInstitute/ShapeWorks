@@ -195,7 +195,7 @@ QLabel {
                </font>
               </property>
               <property name="text">
-               <string>Copyright © 2020 SCI Institute
+               <string>Copyright © 2021 SCI Institute
 University of Utah
 All Rights Reserved</string>
               </property>
