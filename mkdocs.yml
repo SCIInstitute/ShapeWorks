@@ -33,7 +33,7 @@ nav:
    - 'ShapeWorks Command':                   'new/shapeworks-command.md'
    - 'Shape Model Evaluation':               'new/ssm-eval.md'
    - 'ShapeWorks in Python':                 'new/shapeworks-python.md'
-   - 'Ellipsoid Joint Generation'            'new/ellipsoid-joint-generation.md'
+   - 'Ellipsoid Joint Generation':           'new/ellipsoid-joint-generation.md'
 - ShapeWorks Studio:
    - 'Getting Started With ShapeWorks Studio': 'studio/getting-started-with-studio.md'
 - ShapeWorks in Python:
@@ -59,11 +59,11 @@ nav:
    - 'Lumps: SSM directly from meshes':         'use-cases/lumps.md'
    - 'Right Ventricle: Highly Variable Shapes': 'use-cases/right-ventricle.md'
    - 'Femur SSM Directly from Images':          'use-cases/deep-ssm-femur.md'
-   - 'Shape Model for Multiple Domains '        'use-cases/ellipsoid-multiple-domain'
-   - 'Shape Model for Multiple Domains directly from Meshes'     'use-cases/ellipsoid-multiple-domain-mesh'
-   - 'Ellipsoid: Shape Statistics in Python'    'use-cases/ellipsoid-pca'   
-   - 'Shape Models with Geodesic Distance based Repulsion'   'use-cases/thin-cavity-bean.md'
-   - 'Shape Models for N-dimensional Contours'  'use-cases/supershapes-contour.md'
+   - 'Shape Model for Multiple Domains':        'use-cases/ellipsoid-multiple-domain'
+   - 'Shape Model for Multiple Domains directly from Meshes':     'use-cases/ellipsoid-multiple-domain-mesh'
+   - 'Ellipsoid: Shape Statistics in Python':    'use-cases/ellipsoid-pca'   
+   - 'Shape Models with Geodesic Distance based Repulsion':   'use-cases/thin-cavity-bean.md'
+   - 'Shape Models for N-dimensional Contours':  'use-cases/supershapes-contour.md'
      
 - For Developers:
    - 'How to Build ShapeWorks from Source?': 'dev/build.md'
