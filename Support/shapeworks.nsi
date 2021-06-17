@@ -18,7 +18,7 @@ ManifestDPIAware true
 
 ; The name of the installer
 !define PRODUCT "ShapeWorks"
-Name "ShapeWorks-$%SW_VERSION%"
+Name "$%SW_VERSION%"
 
 ; The file to write
 OutFile "$%SW_VERSION%.exe"
@@ -126,10 +126,12 @@ Function .onInit
 
   IfFileExists "$INSTDIR/uninstall.exe" AlreadyExists DoesNotExist
   AlreadyExists:
-    MessageBox MB_YESNO|MB_ICONQUESTION "An installation of ${PRODUCT} exists in this directory ($INSTDIR). If you proceed, it will be uninstalled.  Proceed?" /SD IDYES IDYES Proceed IDNO PleaseAbort`
+    MessageBox MB_YESNO|MB_ICONQUESTION "An installation of ${PRODUCT} exists in this directory ($INSTDIR). If you proceed, it will be uninstalled.  Proceed?" /SD IDYES IDYES Proceed IDNO PleaseAbort
       Proceed:
         ExecWait '"$INSTDIR\uninstall.exe" /S _?=$INSTDIR'
+        goto Done
       PleaseAbort:
 	      Abort
   DoesNotExist:
+  Done:
 FunctionEnd
