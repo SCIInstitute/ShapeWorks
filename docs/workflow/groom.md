@@ -60,6 +60,7 @@ Hence, the shapes alignment pipeline includes the following steps:
 	- `antialias` the binary segmentation to convert it to a smooth continuous-valued image
 	- `translate` the binary segmentation so that the center of the image doamin is the center of mass of the shape.
 	- `binarize` (aka thresholding) to get a binary segmentation
+  - `recenter` moves the center of the image (which is now the center of mass) to (0,0,0)
 	
 - *Reference shape selection:* One option for a reference is to select the shape that is closest to all other samples in the given cohort, i.e., the medoid shape. If shape instances are misaligned (i.e., do not share the same coordinate frame), translational and rotational differences should be factored out before reference selection.
 	- Use the pymodule function `find_reference_image_index` that perform pairwise rigid registration using the iterative closest point method and selects the sample that is closest to all other samples after factoring out global transformation differences.
@@ -81,7 +82,7 @@ translation_vector   =  shape_seg.center() - shape_seg.centerOfMass()
 
 shape_seg.antialias(antialias_iterations)
          .translate(translation_vector)
-         .binarize()
+         .binarize().recenter()
          .write(out_shape_filename)
 ```
 
