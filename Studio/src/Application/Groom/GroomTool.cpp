@@ -286,6 +286,29 @@ void GroomTool::handle_thread_complete()
 //---------------------------------------------------------------------------
 void GroomTool::on_skip_button_clicked()
 {
+  bool has_image = false;
+  auto subjects = session_->get_project()->get_subjects();
+  auto domain_names = session_->get_project()->get_domain_names();
+  if (subjects.size() > 0) {
+    for (int domain = 0; domain < domain_names.size(); domain++) {
+      if (subjects[0]->get_domain_types()[domain] == DomainType::Image) {
+        has_image = true;
+      }
+    }
+  }
+
+  if (has_image) {
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Are you sure?",
+                                  "Are you sure your input data is already groomed?\n\n"
+                                  "The image volumes must already be distance transforms.\n\n"
+                                  "Is that correct?",
+                                  QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::No) {
+      return;
+    }
+  }
+
   store_params();
   groom_ = QSharedPointer<QGroom>(new QGroom(session_->get_project()));
   groom_->set_skip_grooming(true);
@@ -374,7 +397,6 @@ void GroomTool::update_ui()
 {
   ui_->mesh_smooth_stack->setCurrentIndex(ui_->mesh_smooth_method->currentIndex());
   ui_->mesh_smooth_box->setEnabled(ui_->mesh_smooth->isChecked());
-
 }
 
 }
