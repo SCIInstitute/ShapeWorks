@@ -171,7 +171,7 @@ Function .onInit
   IfFileExists "$INSTDIR/uninstall.exe" AlreadyExists DoesNotExist
   AlreadyExists:
     ${If} ${Cmd} `MessageBox MB_YESNO|MB_ICONQUESTION "An installation of ${PRODUCT} exists in this directory ($INSTDIR). Do you want to uninstall this version?" /SD IDYES IDYES`
-      !insertmacro UninstallExisting $0 $0
+      !insertmacro UninstallExisting $0 "$INSTDIR/uninstall.exe"
       ${If} $0 <> 0
     	  MessageBox MB_YESNO|MB_ICONSTOP "Failed to uninstall, continue anyway?" /SD IDYES IDYES +2
 	  Abort
