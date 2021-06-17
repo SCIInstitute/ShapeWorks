@@ -168,13 +168,14 @@ Function .onInit
     SetRegView 64
   ${EndIf}
 
-	ReadRegStr $0 HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT}" "UninstallString"
-	${If} $0 != ""
-	${AndIf} ${Cmd} `MessageBox MB_YESNO|MB_ICONQUESTION "An installation of ${PRODUCT} exists in this directory ($INSTDIR). Do you want to uninstall this version?" /SD IDYES IDYES`
-		!insertmacro UninstallExisting $0 $0
-		${If} $0 <> 0
-			MessageBox MB_YESNO|MB_ICONSTOP "Failed to uninstall, continue anyway?" /SD IDYES IDYES +2
-			Abort
-		${EndIf}
-	${EndIf}
+  IfFileExists "$INSTDIR/uninstall.exe" AlreadyExists DoesNotExist
+  AlreadyExists:
+    ${If} ${Cmd} `MessageBox MB_YESNO|MB_ICONQUESTION "An installation of ${PRODUCT} exists in this directory ($INSTDIR). Do you want to uninstall this version?" /SD IDYES IDYES`
+      !insertmacro UninstallExisting $0 $0
+      ${If} $0 <> 0
+    	  MessageBox MB_YESNO|MB_ICONSTOP "Failed to uninstall, continue anyway?" /SD IDYES IDYES +2
+	  Abort
+      ${EndIf}
+    ${EndIf}
+  DoesNotExist:
 FunctionEnd
