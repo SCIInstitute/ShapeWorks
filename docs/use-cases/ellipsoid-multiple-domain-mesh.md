@@ -1,4 +1,4 @@
-# Shape Model for Multiple Domain 
+# Shape Model for Multiple Domain directly from Mesh
 
 ## What and Where is the Use Case?
 
@@ -6,17 +6,17 @@ This use case demonstrates using ShapeWorks tools to perform the following.
 
 - Generate shape models for anatomies with multiple structures (domains), e.g., joints.
 - Optimization is carried out in the given domains' shared/joint shape spaces to capture inter-domains correlations and interactions
+- Build a shape model where shapes are given as triangular surface meshes
 
 
-
-The use case is located at: `Examples/Python/ellipsoid_multiple_domain.py`
+The use case is located at: `Examples/Python/ellipsoid_multiple_domain_mesh.py`
 
 
 There are three datasets available for this use case:
-- `ellipsoid_joint_rotation` 
+- `ellipsoid_joint_rotation`
 - `ellipsoid_joint_size`
 - `ellipsoid_joint_size_rotation`
-By defualt, the use case runs on the `ellipsoid_joint_rotation` dataset. The name of the dataset can be changed in the `ellipsoid_multiple_domain.py` file if required.
+By defualt, the use case runs on the `ellipsoid_joint_rotation` dataset. The name of the dataset can be changed in the `ellipsoid_multiple_domain_mesh.py` file if required.
  
 ## Running the Use Case
 
@@ -24,10 +24,10 @@ To run the use case, run `RunUseCase.py` (in `Examples/Python/`).
 
 ```
 $ cd /path/to/shapeworks/Examples/Python
-$ python RunUseCase.py --use_case ellipsoid_multiple_domain
+$ python RunUseCase.py --use_case ellipsoid_multiple_domain_mesh
 ```
 
-This calls `ellipsoid_multiple_domain.py` (in `Examples/Python/`) to perform the following.
+This calls `ellipsoid_multiple_domain_mesh.py` (in `Examples/Python/`) to perform the following.
  
 
 * Loads the `ellipsoid joint` dataset using a local version if it exists (i.e., previously downloaded); otherwise, the dataset is automatically downloaded from the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/).
@@ -36,19 +36,17 @@ This calls `ellipsoid_multiple_domain.py` (in `Examples/Python/`) to perform the
 
 
 ## Grooming Data
-In this use case, we download pre-aligned data. Hence we require only two groooming steps.
-1. **Isotropic Resampling**: Binary segmentations in `ellipsoid_joint_rotation/segmentations/` are resampled to have an isotropic voxel spacing.
-2. **Distance Transform**: Next,the smooth signed distance transform is computed, and the dataset is now ready for the optimize phase.
-The use case will be updated soon to demonstrate the full grooming process including alignment. 
+
+In this use case, we download pre-groomed data. The use case will be updated soon to demonstrate the full mesh grooming process.
 
 ## Optimizing Shape Model
 
 Below are the default optimization parameters when running this use case. For a description of the optimize tool and its algorithmic parameters, see: [How to Optimize Your Shape Model](../workflow/optimize.md).
 
 ```bash
-$ python RunUseCase.py --use_case ellipsoid_multiple_domain
+$ python RunUseCase.py --use_case ellipsoid_multiple_domain_mesh
 ```
-The list of `<inputs>` (binary segmentation images) should be ordered consistently for each shape.(e.g., shape1-domain1, shape1-domain2, shape2-domain1, shape2-domain2 ... etc.).
+The list of `<inputs>` (surface mesh ) should be ordered consistently for each shape.(e.g., shape1-domain1, shape1-domain2, shape2-domain1, shape2-domain2 ... etc.).
 
 ```python
 {
@@ -63,7 +61,7 @@ The list of `<inputs>` (binary segmentation images) should be ordered consistent
         "ending_regularization" : 0.5,
         "recompute_regularization_interval" : 2,
         "domains_per_shape" : 2,
-        "domain_type" : 'image',
+        "domain_type" : 'mesh',
         "relative_weighting" : 1, 
         "initial_relative_weighting" : 0.1,
         "procrustes_interval" : 0,
@@ -71,7 +69,7 @@ The list of `<inputs>` (binary segmentation images) should be ordered consistent
         "save_init_splits" : 0,
         "verbosity" : 3
 
-      }
+}
 ```
 
 ## Analyzing Shape Model

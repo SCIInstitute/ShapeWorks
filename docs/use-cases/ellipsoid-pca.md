@@ -17,8 +17,6 @@ $ cd /path/to/shapeworks/Examples/Python
 $python RunUseCase.py --use_case ellipsoid_pca 
 ```
 
-
-
 This calls `ellipsoid_pca.py` (in `Examples/Python/`) to perform the following.
 
 * Loads the existing (pre-trained) ellipsoid shape model 
