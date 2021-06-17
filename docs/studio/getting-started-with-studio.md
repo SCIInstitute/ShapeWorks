@@ -209,25 +209,29 @@ There will also be new worksheets with parameters from those tools and other stu
 
 ## Multiple Domains
 
-ShapeWorks Studio supports grooming, optimization and analysis for multiple domains/anatomies within a project.  To set up a project with multiple domains per subject, simply add additional "shape" columns to a ShapeWorks Project Spreadsheet:
+ShapeWorks Studio supports grooming, optimization and analysis for multiple domains/anatomies within a project.  To set up a project with multiple domains per subject, simply add additional `shape` columns to a ShapeWorks Project Spreadsheet:
 
 ![ShapeWorks Project with Multiple Domains](../img/studio/studio_project_multiple_domains.png){: width="300" }
 
-This this example, we've defined two domains, "left_atrium" and "appendage".  When we open this in Studio, we will see:
+This this example, we've defined two domains, `left_atrium` and `appendage`.  When we open this in Studio, we will see:
 
 ### Multiple Domains - Data
 
+The multiple domains are showed in the Data panel when importing a ShapeWorks Project Spreadsheet file with more than one column with the `shape` prefix.
+ 
 ![ShapeWorks Project with Multiple Domains - Data](../img/studio/studio_multiple_domain_data.png){: width="600" }
 
-When multiple domains are present, grooming options will be available on a per-domain basis with a combobox at the top of the grooming panel.  This allows for different grooming options depending on the anatomy type.
+
 
 ### Multiple Domains - Groom
+
+When multiple domains are present, grooming options will be available on a per-domain basis with a combobox at the top of the grooming panel.  This allows for different grooming options depending on the anatomy type.
 
 ![ShapeWorks Project with Multiple Domains - Groom](../img/studio/studio_multiple_domain_groom.png){: width="300" }
 
 ### Multiple Domains - Optimize
 
-For optimization, each domain can be given a different number of particles, but all other parameters are global to the optimization process:
+For optimization, each domain can be given a different number of particles, but all other parameters are global to the optimization process.
 
 ![ShapeWorks Project with Multiple Domains - Optimize](../img/studio/studio_multiple_domain_optimize.png){: width="300" }
 
