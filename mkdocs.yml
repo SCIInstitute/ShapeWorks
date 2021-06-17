@@ -33,6 +33,7 @@ nav:
    - 'ShapeWorks Command':                   'new/shapeworks-command.md'
    - 'Shape Model Evaluation':               'new/ssm-eval.md'
    - 'ShapeWorks in Python':                 'new/shapeworks-python.md'
+   - 'Ellipsoid Joint Generation'            'new/ellipsoid-joint-generation.md'
 - ShapeWorks Studio:
    - 'Getting Started With ShapeWorks Studio': 'studio/getting-started-with-studio.md'
 - ShapeWorks in Python:
