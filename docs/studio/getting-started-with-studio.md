@@ -20,7 +20,14 @@ The Data Module shows the project data table as well as user-defined/saved notes
 
 The Groom module provides options to preprocess/groom the input data.  Options differ for binary segmentations and meshes. You also have the option of skipping grooming if your data is already prepped.
 
+Grooming options for binary segmentation volumes:
+
 ![ShapeWorks Studio Groom Module](../img/studio/studio_groom.png){: width="300" }
+
+Grooming options for meshes:
+
+![ShapeWorks Studio Groom Module for Meshes](../img/studio/studio_groom_mesh.png){: width="300" }
+
 
 ## Optimize Module
 
@@ -183,7 +190,7 @@ Users input shapes (either binary segmentations or meshes) in the first sheet (o
 
 | Prefix | Description |
 | --- | ----------- |
-| segmentation_&lt;name&gt; | An input segmentation with a given name |
+| shape_&lt;name&gt; | An input shape (segmentation/mesh) with a given name.<br>* Specify multiple shape_&lt;name&gt; columns to input multiple anatomies for each subject |
 | group_&lt;name&gt; | An group column with categorical types |
 | feature_&lt;name&gt; | A feature volume (such as an MRI or CT) |
 
@@ -200,6 +207,14 @@ After completing groom and optimize steps, this worksheet will look like this:
 
 There will also be new worksheets with parameters from those tools and other studio settings.
 
+## Multiple Domains
 
+ShapeWorks Studio supports grooming, optimization and analysis for multiple domains/anatomies within a project.  To set up a project with multiple domains per subject, simply add additional "shape" columns to a ShapeWorks Project Spreadsheet:
+
+![ShapeWorks Project with Multiple Domains](../img/studio/studio_project_multiple_domains.png)
+
+This this example, we've defined two domains, "left_atrium" and "appendage".  When we open this in Studio, we will see:
+
+![ShapeWorks Project with Multiple Domains - Data](../img/studio/studio_multiple_domain_data.png)
 
 
