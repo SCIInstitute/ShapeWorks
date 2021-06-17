@@ -67,22 +67,24 @@
 * **Multiple domain support:** `OptimizeUtils` and `AnalyzeUtils` are updated to handle multiple domain datasets.
 * **Restructured use cases:** Depreciated `GroomUtils`, `CommonUtils`, and `EvaluationUtils`. All use cases are restructured to make the grooming steps more transparent and demonstrate the usage of Python APIs with inline documentation. 
 * **Improved documentation:** More clear documentation both from Python, the command line, and online are added.
-* **Improved notebooks** Notebooks have been simplified by moving helper functions into ShapeWorks pymodule, reducing repeated information, and using only the PyVista library for visualization. 
+* **Improved notebooks:** Notebooks are significantly simplified by moving helper functions into the ShapeWorks Python module, reducing redundant information, and using only the PyVista library for visualization. 
 
 
 
 ### Fixes
 
 #### ShapeWorks Back-end
-* **Image to Array** ShapeWorks image functionality has been fixed so that an image can be successfully converted to a numpy array and back. 
+
+* **Image to Array:** ShapeWorks image functionality is fixed such that an image can be successfully converted to a numpy array and back to a ShapeWorks image. 
 
 #### ShapeWorks Front-end
 
-* **Notebook visualization** Volume renderings using ITK Widgets were causing notebooks to crash on some platforms. The notebooks have been updated to no longer use ITK Widgets for visualization. 
-* **Use case file writing** RunUseCase.py has been updated to check that the current folder is writable before proceeding so that use case output can be saved. 
+* **Notebook visualization:** Volume renderings using ITK Widgets were causing notebooks to crash on some platforms. The notebooks are now updated to no longer use ITK Widgets for visualization and instead use the more robust and stable PyVista library. 
+* **Use case file writing:** RunUseCase.py has been updated to check that the current folder is writable before proceeding so that use case output can be saved. 
 
 #### Deep Learning & Shape Modeling
-* **DeepSSM Evaluation** The DeepSSM evaluation step in the use case has been updated to use ShapeWorks mesh distance rather than the deprecated SurfaceToSurfaceDistance command. 
+
+* **DeepSSM evaluation:** The DeepSSM evaluation step in the use case is updated to use ShapeWorks mesh distance rather than the deprecated SurfaceToSurfaceDistance command. 
 
 
 ## ShapeWorks 6.0 - 2020-03-30
