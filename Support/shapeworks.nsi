@@ -126,10 +126,10 @@ Function .onInit
 
   IfFileExists "$INSTDIR/uninstall.exe" AlreadyExists DoesNotExist
   AlreadyExists:
-    ${If} ${Cmd} `MessageBox MB_YESNO|MB_ICONQUESTION "An installation of ${PRODUCT} exists in this directory ($INSTDIR). If you proceed, it will be uninstalled.  Proceed?" /SD IDYES IDNO PleaseAbort`
-      ExecWait '"$INSTDIR\uninstall.exe" /S _?=$INSTDIR'
+    MessageBox MB_YESNO|MB_ICONQUESTION "An installation of ${PRODUCT} exists in this directory ($INSTDIR). If you proceed, it will be uninstalled.  Proceed?" /SD IDYES IDYES Proceed IDNO PleaseAbort`
+      Proceed:
+        ExecWait '"$INSTDIR\uninstall.exe" /S _?=$INSTDIR'
       PleaseAbort:
 	      Abort
-    ${EndIf}
   DoesNotExist:
 FunctionEnd
