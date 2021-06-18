@@ -1324,6 +1324,18 @@ void ShapeWorksStudioApp::on_action_preferences_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_export_current_mesh_triggered()
 {
+  bool single = true;
+  if (this->session_->get_project()->get_number_of_domains_per_subject() > 0) {
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Multiple Domains",
+                                  "This export contains multiple domains.\n\n"
+                                  "Would you like each domain exported separately?",
+                                  QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::Yes) {
+      single = false;
+    }
+  }
+
   auto dir = preferences_.get_last_directory() + "/";
   QString filename = QFileDialog::getSaveFileName(this, tr("Export Current Mesh"),
                                                   dir + "mesh",
@@ -1333,12 +1345,26 @@ void ShapeWorksStudioApp::on_action_export_current_mesh_triggered()
   }
   this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
 
-  auto poly_data = this->visualizer_->get_current_mesh();
-  vtkPolyDataWriter* writer = vtkPolyDataWriter::New();
-  writer->SetFileName(filename.toStdString().c_str());
-  writer->SetInputData(poly_data);
-  writer->WriteArrayMetaDataOff();
-  writer->Write();
+  if (single) {
+    auto poly_data = this->visualizer_->get_current_mesh();
+    vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+    writer->SetFileName(filename.toStdString().c_str());
+    writer->SetInputData(poly_data);
+    writer->WriteArrayMetaDataOff(); // needed for older readers to read these files
+    writer->Write();
+  }
+  else {
+    auto meshes = this->visualizer_->get_current_meshes_transformed();
+    auto domain_names = session_->get_project()->get_domain_names();
+
+    QFileInfo fi(filename);
+    QString base = fi.path() + QDir::separator() + fi.completeBaseName();
+    for (int domain = 0; domain < meshes.size(); domain++) {
+      QString name =
+        base + "_" + QString::fromStdString(domain_names[domain]) + "." + fi.completeSuffix();
+      std::cerr << "name = " << name.toStdString() << "\n";
+    }
+  }
 }
 
 //---------------------------------------------------------------------------

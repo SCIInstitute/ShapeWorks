@@ -118,29 +118,33 @@ void Visualizer::handle_new_mesh()
 //-----------------------------------------------------------------------------
 vtkSmartPointer<vtkPolyData> Visualizer::get_current_mesh()
 {
+  auto meshes = this->get_current_meshes_transformed();
+  vtkSmartPointer<vtkAppendPolyData> append = vtkSmartPointer<vtkAppendPolyData>::New();
+  for (int domain = 0; domain < meshes.size(); domain++) {
+    append->AddInputData(meshes[domain]);
+  }
+  append->Update();
+  vtkSmartPointer<vtkPolyData> combined = append->GetOutput();
+  return combined;
+}
+
+//-----------------------------------------------------------------------------
+std::vector<vtkSmartPointer<vtkPolyData>> Visualizer::get_current_meshes_transformed()
+{
+  std::vector<vtkSmartPointer<vtkPolyData>> list;
   auto shapes = this->lightbox_->get_shapes();
   if (shapes.size() > 0) {
     auto meshes = shapes[0]->get_meshes(this->display_mode_).meshes();
-    if (meshes.size() == 1) {
-      return meshes[0]->get_poly_data();
-    }
-    else {
-      vtkSmartPointer<vtkAppendPolyData> append = vtkSmartPointer<vtkAppendPolyData>::New();
-      for (int domain = 0; domain < meshes.size(); domain++) {
-        // we have to transform each domain to its location in order to export an appended mesh
-        auto filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-        filter->SetTransform(this->get_transform(shapes[0], domain));
-        filter->SetInputData(meshes[domain]->get_poly_data());
-        filter->Update();
-
-        append->AddInputData(filter->GetOutput());
-      }
-      append->Update();
-      vtkSmartPointer<vtkPolyData> combined = append->GetOutput();
-      return combined;
+    for (int domain = 0; domain < meshes.size(); domain++) {
+      // we have to transform each domain to its location in order to export an appended mesh
+      auto filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+      filter->SetTransform(this->get_transform(shapes[0], domain));
+      filter->SetInputData(meshes[domain]->get_poly_data());
+      filter->Update();
+      list.push_back(filter->GetOutput());
     }
   }
-  return nullptr;
+  return list;
 }
 
 //-----------------------------------------------------------------------------
