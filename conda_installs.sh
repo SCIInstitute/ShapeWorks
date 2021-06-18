@@ -147,6 +147,7 @@ function install_conda() {
   if ! pip install Python/ShapeCohortGenPackage;        then return 1; fi # install shape cohort generation code as a package
 
   ./install_python_module.sh   # install python module
+  ./Support/conda_env_setup.sh         # install conda [de]activate scripts
 
 
   if [[ "$GITHUB_ACTION" != "" ]]; then
