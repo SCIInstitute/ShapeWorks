@@ -14,7 +14,7 @@ if [[ "$sourced" == "0" ]]; then
 fi
 
 CONDAENV=shapeworks
-if [[ "$#" -gt 1 ]]; then
+if [[ "$#" -eq 1 ]]; then
    CONDAENV=$1
 fi
 echo "creating new conda environment for ShapeWorks called $CONDAENV..."
