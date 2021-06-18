@@ -31,6 +31,9 @@ This calls `thin_cavity_bean.py` (in `Examples/Python/`) to perform the followin
 
 In this use case, we download pre-groomed data. The use case will be updated soon to demonstrate the full mesh grooming process.
 
+Here is an example of the data:
+![Thin cavity bean](../img/use-cases/thin_cavity_bean.png)
+
 ## Optimizing Shape Model
 
 Below are the default optimization parameters when running this use case. For a description of the optimize tool and its algorithmic parameters, see: [How to Optimize Your Shape Model](../workflow/optimize.md).
@@ -64,3 +67,4 @@ Below are the default optimization parameters when running this use case. For a 
 
 ShapeWorksStudio visualizes/analyzes the optimized particle-based shape model by visualizing the mean shape, individual shape samples, and the shape modes of variations. For more information, see: [How to Analyze Your Shape Model?](../workflow/analyze.md).            
 
+![Thin cavity bean analyze](https://sci.utah.edu/~shapeworks/doc-resources/pngs/thin_cavity_bean.gif)

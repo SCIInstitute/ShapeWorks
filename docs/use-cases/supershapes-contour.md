@@ -7,6 +7,9 @@ This use case demonstrates using ShapeWorks tools to perform the following.
 
 The use case is located at: `Examples/Python/supershapes_1mode_contour.py`
 
+Here is an example of the data:
+![Supershapes contour](../img/use-cases/supershapes_contour.png)
+
 ## Running the Use Case
 
 To run the use case, run `RunUseCase.py` (in `Examples/Python/`).
@@ -61,3 +64,4 @@ Below are the default optimization parameters when running this use case. For a 
 
 ShapeWorksStudio visualizes/analyzes the optimized particle-based shape model by visualizing the mean shape, individual shape samples, and the shape modes of variations. For more information, see: [How to Analyze Your Shape Model?](../workflow/analyze.md).            
 
+![Supershapes contour analyze](https://sci.utah.edu/~shapeworks/doc-resources/pngs/supershapes_contour.gif)
