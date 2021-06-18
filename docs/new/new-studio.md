@@ -6,7 +6,7 @@ As of ShapeWorks 6.1, we added support in ShapeWorks Studio for modeling multipl
 
 ![ShapeWorks Project with Multiple Domains - Analyze](../img/studio/studio_multiple_domain_analyze.png)
 
-See [Multiple Domains](../studio/getting-started-with-studio.md#multiple-domains) for more information.
+See [Multiple Domains](../studio/multiple-domains.md) for more information.
 
 ## Mesh Grooming
 

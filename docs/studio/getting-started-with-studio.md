@@ -1,4 +1,4 @@
-# ShapeWorks Studio
+# Getting Started With ShapeWorks Studio
 
 ShapeWorks Studio provides an all-in-one GUI based interface to the
 ShapeWorks toolkit.  In Studio, you can Groom, Optimize and Analyze
@@ -207,37 +207,4 @@ After completing groom and optimize steps, this worksheet will look like this:
 
 There will also be new worksheets with parameters from those tools and other studio settings.
 
-## Multiple Domains
-
-ShapeWorks Studio supports grooming, optimization and analysis for multiple domains/anatomies within a project.  To set up a project with multiple domains per subject, simply add additional `shape` columns to a ShapeWorks Project Spreadsheet:
-
-![ShapeWorks Project with Multiple Domains](../img/studio/studio_project_multiple_domains.png){: width="300" }
-
-This this example, we've defined two domains, `left_atrium` and `appendage`.  When we open this in Studio, we will see:
-
-### Multiple Domains - Data
-
-The multiple domains are showed in the Data panel when importing a ShapeWorks Project Spreadsheet file with more than one column with the `shape` prefix.
- 
-![ShapeWorks Project with Multiple Domains - Data](../img/studio/studio_multiple_domain_data.png){: width="600" }
-
-
-
-### Multiple Domains - Groom
-
-When multiple domains are present, grooming options will be available on a per-domain basis with a combobox at the top of the grooming panel.  This allows for different grooming options depending on the anatomy type.
-
-![ShapeWorks Project with Multiple Domains - Groom](../img/studio/studio_multiple_domain_groom.png){: width="300" }
-
-### Multiple Domains - Optimize
-
-For optimization, each domain can be given a different number of particles, but all other parameters are global to the optimization process.
-
-![ShapeWorks Project with Multiple Domains - Optimize](../img/studio/studio_multiple_domain_optimize.png){: width="300" }
-
-### Multiple Domains - Analysis
-
-Analysis options are similar for multiple domains as for single domain usage.  Each domain will be reconstructed separated and shown as a mesh with a different color.
-
-![ShapeWorks Project with Multiple Domains - Analyze](../img/studio/studio_multiple_domain_analyze.png){: width="600" }
 

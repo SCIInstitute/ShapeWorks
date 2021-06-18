@@ -36,6 +36,7 @@ nav:
    - 'Ellipsoid Joint Generation':           'new/ellipsoid-joint-generation.md'
 - ShapeWorks Studio:
    - 'Getting Started With ShapeWorks Studio': 'studio/getting-started-with-studio.md'
+   - 'Multiple Domains SSM': 'studio/multiple-domains.md'
 - ShapeWorks in Python:
    - 'Getting Started with Notebooks' :               'notebooks/getting-started-with-notebooks.ipynb'  
    - 'Getting Started with Segmentations' :           'notebooks/getting-started-with-segmentations.ipynb'  
