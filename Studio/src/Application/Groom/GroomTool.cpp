@@ -98,7 +98,7 @@ void GroomTool::on_autopad_checkbox_stateChanged(int state)
 }
 
 //---------------------------------------------------------------------------
-void GroomTool::handle_error(std::string msg)
+void GroomTool::handle_error(QString msg)
 {
   this->groom_is_running_ = false;
   emit error_message(msg);
@@ -253,7 +253,7 @@ void GroomTool::on_run_groom_button_clicked()
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, &ShapeworksWorker::finished, this, &GroomTool::handle_thread_complete);
   connect(this->groom_.data(), &QGroom::progress, this, &GroomTool::handle_progress);
-  connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
+  connect(worker, &ShapeworksWorker::error_message, this, &GroomTool::handle_error);
   connect(worker, &ShapeworksWorker::message, this, &GroomTool::message);
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   thread->start();
@@ -267,8 +267,7 @@ void GroomTool::handle_thread_complete()
 {
   emit progress(95);
 
-  std::string duration = QString::number(this->timer_.elapsed() / 1000.0, 'f',
-                                         1).toStdString();
+  QString duration = QString::number(this->timer_.elapsed() / 1000.0, 'f', 1);
   emit message("Groom Complete.  Duration: " + duration + " seconds");
 
   // trigger reload of meshes

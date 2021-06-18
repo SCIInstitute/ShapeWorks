@@ -146,8 +146,11 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           this, &ShapeWorksStudioApp::handle_progress);
   connect(this->analysis_tool_.data(), SIGNAL(reconstruction_complete()),
           this, SLOT(handle_reconstruction_complete()));
+
   connect(this->analysis_tool_.data(), &AnalysisTool::message,
           this, &ShapeWorksStudioApp::handle_message);
+  connect(this->analysis_tool_.data(), &AnalysisTool::warning,
+          this, &ShapeWorksStudioApp::handle_warning);
   connect(this->analysis_tool_.data(), &AnalysisTool::error,
           this, &ShapeWorksStudioApp::handle_error);
 
@@ -184,8 +187,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           this, &ShapeWorksStudioApp::handle_groom_start);
   connect(this->groom_tool_.data(), &GroomTool::groom_complete,
           this, &ShapeWorksStudioApp::handle_groom_complete);
-  connect(this->groom_tool_.data(), SIGNAL(error_message(std::string)),
-          this, SLOT(handle_error(std::string)));
+  connect(this->groom_tool_.data(), &GroomTool::error_message,
+          this, &ShapeWorksStudioApp::handle_error);
   connect(this->groom_tool_.data(), &GroomTool::message,
           this, &ShapeWorksStudioApp::handle_message);
   connect(this->groom_tool_.data(), &GroomTool::progress,
@@ -201,10 +204,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   connect(this->optimize_tool_.data(), &OptimizeTool::optimize_start, this,
           &ShapeWorksStudioApp::handle_optimize_start);
 
-  connect(this->optimize_tool_.data(), SIGNAL(error_message(std::string)),
-          this, SLOT(handle_error(std::string)));
-  connect(this->optimize_tool_.data(), SIGNAL(warning_message(std::string)),
-          this, SLOT(handle_warning(std::string)));
+  connect(this->optimize_tool_.data(), &OptimizeTool::error_message,
+          this, &ShapeWorksStudioApp::handle_error);
+  connect(this->optimize_tool_.data(), &OptimizeTool::warning_message,
+          this, &ShapeWorksStudioApp::handle_warning);
   connect(this->optimize_tool_.data(), &OptimizeTool::message,
           this, &ShapeWorksStudioApp::handle_message);
   connect(this->optimize_tool_.data(), &OptimizeTool::status,
@@ -416,7 +419,7 @@ void ShapeWorksStudioApp::on_action_import_triggered()
   auto filenames = QFileDialog::getOpenFileNames(this, tr("Import Files..."),
                                                  this->preferences_.get_last_directory(),
                                                  tr(
-                                                   "Supported types (*.nrrd *.nii *.nii.gz *.mha *.vtk *.ply *.vtp *.obj *stl)"));
+                                                   "Supported types (*.nrrd *.nii *.nii.gz *.mha *.vtk *.ply *.vtp *.obj *.stl)"));
 
   if (filenames.size() == 0) {
     // was cancelled
@@ -720,36 +723,36 @@ void ShapeWorksStudioApp::handle_pca_update()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::handle_message(std::string str)
+void ShapeWorksStudioApp::handle_message(QString str)
 {
   if (str != this->current_message_) {
-    STUDIO_LOG_MESSAGE(QString::fromStdString(str));
+    STUDIO_LOG_MESSAGE(str);
   }
-  this->ui_->statusbar->showMessage(QString::fromStdString(str));
+  this->ui_->statusbar->showMessage(str);
   this->current_message_ = str;
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::handle_status(std::string str)
+void ShapeWorksStudioApp::handle_status(QString str)
 {
-  this->ui_->statusbar->showMessage(QString::fromStdString(str));
+  this->ui_->statusbar->showMessage(str);
   this->current_message_ = str;
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::handle_error(std::string str)
+void ShapeWorksStudioApp::handle_error(QString str)
 {
-  STUDIO_LOG_ERROR(QString::fromStdString(str));
-  QMessageBox::critical(this, "Critical Error", str.c_str());
+  STUDIO_LOG_ERROR(str);
+  QMessageBox::critical(this, "Critical Error", str);
   this->handle_message(str);
   //this->handle_progress(100);
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::handle_warning(std::string str)
+void ShapeWorksStudioApp::handle_warning(QString str)
 {
-  STUDIO_LOG_MESSAGE(QString::fromStdString(str));
-  QMessageBox::warning(this, "Warning!", str.c_str());
+  STUDIO_LOG_MESSAGE(str);
+  QMessageBox::warning(this, "Warning!", str);
 }
 
 //---------------------------------------------------------------------------
@@ -822,8 +825,8 @@ void ShapeWorksStudioApp::new_session()
   connect(this->session_.data(), SIGNAL(points_changed()), this, SLOT(handle_points_changed()));
   connect(this->session_.data(), SIGNAL(update_display()), this,
           SLOT(handle_display_setting_changed()));
-  connect(this->session_.data(), SIGNAL(message(std::string)), this,
-          SLOT(handle_message(std::string)));
+  connect(this->session_.data(), &Session::message, this,
+          &ShapeWorksStudioApp::handle_message);
   connect(this->session_.data(), SIGNAL(update_display()), this,
           SLOT(handle_display_setting_changed()));
   connect(this->session_.data(), &Session::new_mesh, this, &ShapeWorksStudioApp::handle_new_mesh);
@@ -1222,7 +1225,7 @@ void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged(QString disp
 void ShapeWorksStudioApp::open_project(QString filename)
 {
   this->new_session();
-  this->handle_message("Loading Project: " + filename.toStdString());
+  this->handle_message("Loading Project: " + filename);
   this->handle_progress(-1);
   this->is_loading_ = true;
 
@@ -1329,7 +1332,8 @@ void ShapeWorksStudioApp::on_action_export_current_mesh_triggered()
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(this, "Multiple Domains",
                                   "This export contains multiple domains.\n\n"
-                                  "Would you like each domain exported separately?",
+                                  "Would you like each domain exported separately?\n\n"
+                                  "Each mesh will be suffixed with the domain name.",
                                   QMessageBox::Yes | QMessageBox::No);
     if (reply == QMessageBox::Yes) {
       single = false;
@@ -1338,33 +1342,54 @@ void ShapeWorksStudioApp::on_action_export_current_mesh_triggered()
 
   auto dir = preferences_.get_last_directory() + "/";
   QString filename = QFileDialog::getSaveFileName(this, tr("Export Current Mesh"),
-                                                  dir + "mesh",
-                                                  tr("VTK files (*.vtk)"));
+                                                  dir + "mesh", tr(
+      "Supported types (*.vtk *.ply *.vtp *.obj *.stl)"));
   if (filename.isEmpty()) {
     return;
   }
   this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
 
   if (single) {
-    auto poly_data = this->visualizer_->get_current_mesh();
-    vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-    writer->SetFileName(filename.toStdString().c_str());
-    writer->SetInputData(poly_data);
-    writer->WriteArrayMetaDataOff(); // needed for older readers to read these files
-    writer->Write();
+    this->write_mesh(this->visualizer_->get_current_mesh(), filename);
+    this->handle_message("Wrote: " + filename);
   }
   else {
     auto meshes = this->visualizer_->get_current_meshes_transformed();
     auto domain_names = session_->get_project()->get_domain_names();
+
+    if (meshes.empty()) {
+      this->handle_error("Error exporting mesh: not ready yet");
+    }
 
     QFileInfo fi(filename);
     QString base = fi.path() + QDir::separator() + fi.completeBaseName();
     for (int domain = 0; domain < meshes.size(); domain++) {
       QString name =
         base + "_" + QString::fromStdString(domain_names[domain]) + "." + fi.completeSuffix();
-      std::cerr << "name = " << name.toStdString() << "\n";
+
+      if (!this->write_mesh(meshes[domain], name)) {
+        return;
+      }
+      this->handle_message("Wrote: " + name);
     }
   }
+}
+
+//---------------------------------------------------------------------------
+bool ShapeWorksStudioApp::write_mesh(vtkSmartPointer<vtkPolyData> poly_data, QString filename)
+{
+  if (!poly_data) {
+    this->handle_error("Error exporting mesh: not ready yet");
+  }
+  try {
+    Mesh mesh(poly_data);
+    mesh.write(filename.toStdString());
+  }
+  catch (std::exception& e) {
+    this->handle_error(e.what());
+    return false;
+  }
+  return true;
 }
 
 //---------------------------------------------------------------------------
@@ -1382,7 +1407,7 @@ void ShapeWorksStudioApp::on_action_export_current_particles_triggered()
   auto particles = this->visualizer_->get_current_shape().get_combined_global_particles();
 
   if (!ShapeWorksStudioApp::write_particle_file(filename.toStdString(), particles)) {
-    this->handle_error("Error writing particle file: " + filename.toStdString());
+    this->handle_error("Error writing particle file: " + filename);
   }
   this->handle_message("Successfully exported particle file");
 }
@@ -1627,7 +1652,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered()
       writer->WriteArrayMetaDataOff();
       writer->Write();
     }
-    this->handle_message("Successfully exported PCA Mesh files: " + filename.toStdString());
+    this->handle_message("Successfully exported PCA Mesh files: " + filename);
     return;
   }
   auto shape = this->visualizer_->get_current_shape();
@@ -1640,7 +1665,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered()
   //writer->SetInputData(msh);
   writer->WriteArrayMetaDataOff();
   writer->Write();
-  this->handle_message("Successfully exported PCA Mesh file: " + filename.toStdString());
+  this->handle_message("Successfully exported PCA Mesh file: " + filename);
 }
 
 //---------------------------------------------------------------------------
@@ -1663,7 +1688,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvalues_triggered()
     out << values[i] << std::endl;
   }
   out.close();
-  this->handle_message("Successfully exported eigenvalue EVAL file: " + filename.toStdString());
+  this->handle_message("Successfully exported eigenvalue EVAL file: " + filename);
 }
 
 //---------------------------------------------------------------------------
@@ -1692,7 +1717,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered()
     }
     out.close();
   }
-  this->handle_message("Successfully exported eigenvalue EVAL file: " + filename.toStdString());
+  this->handle_message("Successfully exported eigenvalue EVAL file: " + filename);
 }
 
 //---------------------------------------------------------------------------
@@ -1717,8 +1742,8 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered()
   double increment = range / half_steps;
 
   auto mean_pts = this->analysis_tool_->get_shape_points(mode, 0).get_combined_global_particles();
-  std::string mean_name = basename + "_mean.particles";
-  if (!ShapeWorksStudioApp::write_particle_file(mean_name, mean_pts)) {
+  QString mean_name = QString::fromStdString(basename) + "_mean.particles";
+  if (!ShapeWorksStudioApp::write_particle_file(mean_name.toStdString(), mean_pts)) {
     this->handle_error("Error writing particle file: " + mean_name);
     return;
   }
@@ -1732,7 +1757,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered()
     auto pts = this->analysis_tool_->get_shape_points(mode,
                                                       -pca_value).get_combined_global_particles();
     if (!ShapeWorksStudioApp::write_particle_file(minus_name, pts)) {
-      this->handle_error("Error writing particle file: " + minus_name);
+      this->handle_error("Error writing particle file: " + QString::fromStdString(minus_name));
       return;
     }
 
@@ -1740,7 +1765,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered()
       basename + "_mode_" + std::to_string(mode) + "_plus_" + pca_string + ".pts";
     pts = this->analysis_tool_->get_shape_points(mode, pca_value).get_combined_global_particles();
     if (!ShapeWorksStudioApp::write_particle_file(plus_name, pts)) {
-      this->handle_error("Error writing particle file: " + plus_name);
+      this->handle_error("Error writing particle file: " + QString::fromStdString(plus_name));
       return;
     }
   }
@@ -1786,7 +1811,7 @@ void ShapeWorksStudioApp::on_actionExport_Variance_Graph_triggered()
     this->handle_error("Error writing variance graph");
   }
   else {
-    this->handle_message("Successfully exported Variance Graph: " + filename.toStdString());
+    this->handle_message("Successfully exported Variance Graph: " + filename);
   }
 }
 
@@ -1959,3 +1984,4 @@ void ShapeWorksStudioApp::dropEvent(QDropEvent* event)
 //---------------------------------------------------------------------------
 
 }
+

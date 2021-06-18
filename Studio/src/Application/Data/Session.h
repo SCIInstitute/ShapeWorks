@@ -121,7 +121,7 @@ public:
 public Q_SLOTS:
   void handle_clear_cache();
   void handle_new_mesh();
-  void handle_message(std::string s);
+  void handle_message(QString s);
   void handle_thread_complete();
 
 signals:
@@ -130,7 +130,7 @@ signals:
   void points_changed();
   void update_display();
   void new_mesh();
-  void message(std::string s);
+  void message(QString s);
 
 public:
   // constants

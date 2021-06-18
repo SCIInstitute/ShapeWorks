@@ -57,7 +57,7 @@ void Session::handle_new_mesh()
 }
 
 //---------------------------------------------------------------------------
-void Session::handle_message(std::string s)
+void Session::handle_message(QString s)
 {
   emit message(s);
 }
