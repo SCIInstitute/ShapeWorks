@@ -5,7 +5,7 @@ import fileinput
 Replaces strings in a file.
 """
 def replace_strings(file, search_exp, replace_exp):
-    for line in fileinput.input(file, inplace=1):
+    for line in fileinput.input(file, backup='', inplace=1):
         if search_exp in line:
             line = line.replace(search_exp, replace_exp)
         sys.stdout.write(line)
