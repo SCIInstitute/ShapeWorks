@@ -32,7 +32,9 @@ ShapeWorks comes with Python examples to get you started. To run them:
 
 4. Run "conda_installs.bat"
 
-   **Note:** If you already have anaconda/miniconda installed, this step may hang.  If this step hangs, please uninstall anaconda/miniconda and re-install it and then run conda_installs.bat.
+**Note:** You can also pass a different name for the installation environment: `conda_installs.bat shapeworks_new`
+
+**Warning:** If you already have anaconda/miniconda installed, this step may hang.  If so please uninstall anaconda/miniconda, re-install it, then run conda_installs.bat again. This seems to be an occasional problem with Anaconda on Windows.
 
 5. Activate the shapeworks conda environment: "conda activate shapeworks"
 

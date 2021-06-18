@@ -19,6 +19,8 @@ ShapeWorks comes with Python examples to get you started. To run them:
 
 2. type `source conda_installs.sh` to install necessary Python packages into a protected environment.
 
+**Note:** You can also pass a different name for the installation environment: `source conda_installs.sh shapeworks_new`
+
 3. Copy the Examples folder to another location (ex: `cp -r Examples $HOME/ShapeWorks-Examples`).
 
 4. Activate the shapeworks conda environment: `conda activate shapeworks`

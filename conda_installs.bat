@@ -1,5 +1,9 @@
 REM remove existing shapeworks env if any
 set CONDAENV=shapeworks
+IF NOT "%1"=="" SET CONDAENV=%1
+echo "creating new conda environment for ShapeWorks called %CONDAENV%..."
+
+REM remove any existing environment with this name
 call conda env remove -n %CONDAENV%
 
 REM update anaconda
@@ -50,7 +54,7 @@ call pip install Python/ShapeCohortGenPackage
 
 REM install the shapeworks python module and conda [de]activate scripts
 call install_python_module.bat
-call Support\conda_env_setup.bat
+call conda_env_setup.bat
 
 REM installs for jupyter notebooks
 call pip install nbstripout

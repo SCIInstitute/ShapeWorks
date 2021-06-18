@@ -3,15 +3,21 @@
 #
 echo ""
 echo "Note: this script only supports bash and zsh shells "
-echo "      It must be called using \"source ./conda_installs.sh\""
+echo "      It must be called using \"source ./conda_installs.sh [optional_env_name]\""
 echo ""
 
 (return 0 2>/dev/null) && sourced=1 || sourced=0
 
 if [[ "$sourced" == "0" ]]; then
-  echo "ERROR: must call this script using \"source ./conda_installs.sh\""
+  echo "ERROR: must call this script using \"source ./conda_installs.sh [optional_env_name]\""
   exit 1
 fi
+
+CONDAENV=shapeworks
+if [[ "$#" -gt 1 ]]; then
+   CONDAENV=$1
+fi
+echo "creating new conda environment for ShapeWorks called $CONDAENV..."
 
 # PyTorch installation
 function install_pytorch() {
@@ -69,7 +75,6 @@ function install_conda() {
   if ! conda update --yes --all; then return 1; fi
 
   # create and activate shapeworks env
-  CONDAENV=shapeworks
   if ! conda create --yes --name $CONDAENV python=3.7.8; then return 1; fi
   eval "$(conda shell.bash hook)"
   if ! conda activate $CONDAENV; then return 1; fi
@@ -147,7 +152,7 @@ function install_conda() {
   if ! pip install Python/ShapeCohortGenPackage;        then return 1; fi # install shape cohort generation code as a package
 
   ./install_python_module.sh   # install python module
-  ./Support/conda_env_setup.sh         # install conda [de]activate scripts
+  ./conda_env_setup.sh         # install conda [de]activate scripts
 
 
   if [[ "$GITHUB_ACTION" != "" ]]; then
