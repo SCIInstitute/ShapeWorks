@@ -1,8 +1,7 @@
 #!/bin/bash
 
-# Adds shapeworks bin directory to PATH on conda activate.
-# Stores existing PATH to be restored on conda deactivate.
+# Store _SHAPEWORKS_BIN_PATH to be removed on conda deactivate.
+export _SHAPEWORKS_BIN_PATH=shapeworks_placeholder_string
 
-export _CONDA_SHAPEWORKS_PREV_PATH=$PATH
-
-export PATH="placeholder_string":$PATH
+# Add _SHAPEWORKS_BIN_PATH to PATH on conda activate.
+export PATH=$_SHAPEWORKS_BIN_PATH:$PATH

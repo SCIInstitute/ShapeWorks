@@ -6,5 +6,5 @@ for CHANGE in "activate" "deactivate"
 do
     mkdir -p "${CONDA_PREFIX}/etc/conda/${CHANGE}.d"
     cp "shapeworks-${CHANGE}.sh" "${CONDA_PREFIX}/etc/conda/${CHANGE}.d/shapeworks-${CHANGE}.sh"
-    python ./replace_strings.py "${CONDA_PREFIX}/etc/conda/${CHANGE}.d/shapeworks-${CHANGE}.sh" placeholder_string `pwd`/bin
+    python ./replace_strings.py "${CONDA_PREFIX}/etc/conda/${CHANGE}.d/shapeworks-${CHANGE}.sh" shapeworks_placeholder_string "\"`pwd`/bin\""
 done
