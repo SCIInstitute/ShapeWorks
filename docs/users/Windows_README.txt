@@ -42,7 +42,7 @@ You have downloaded a binary distribution of ShapeWorks.
 
   **Warning:** If you already have anaconda/miniconda installed, this step may
     hang.  If so please uninstall anaconda/miniconda, re-install it, then run
-    conda_installs.bat again. This seems to be an occasional problem with
+    install_shapeworks again. This seems to be an occasional problem with
     Anaconda on Windows.
 
 **Important:** Your shapeworks conda environment must always be activated before using ShapeWorks.

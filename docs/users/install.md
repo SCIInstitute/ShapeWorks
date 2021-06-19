@@ -50,7 +50,7 @@ Please make sure that you download the [latest ShapeWorks binary release](https:
 `install_shapeworks shapeworks_61`
 
 !!! danger "Warning"
-    If you already have anaconda/miniconda installed, this step may hang.  If so please uninstall anaconda/miniconda, re-install it, then run conda_installs.bat again. This seems to be an occasional problem with Anaconda on Windows.
+    If you already have anaconda/miniconda installed, this step may hang.  If so please uninstall anaconda/miniconda, re-install it, then run install_shapeworks again. This seems to be an occasional problem with Anaconda on Windows.
 
 
 #### ShapeWorks comes with Python examples to get you started.

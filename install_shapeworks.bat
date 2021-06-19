@@ -53,8 +53,8 @@ call pip install Python/DeepSSMUtilsPackage
 call pip install Python/ShapeCohortGenPackage
 
 REM install the shapeworks python module and conda [de]activate scripts
-call install_python_module.bat
-call conda_env_setup.bat
+call .\Installation\install_python_module.bat
+call .\Installation\conda_env_setup.bat
 
 REM installs for jupyter notebooks
 call pip install nbstripout

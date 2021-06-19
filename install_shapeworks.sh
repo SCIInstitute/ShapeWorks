@@ -3,13 +3,13 @@
 #
 echo ""
 echo "Note: this script only supports bash and zsh shells "
-echo "      It must be called using \"source ./conda_installs.sh [optional_env_name]\""
+echo "      It must be called using \"source ./install_shapeworks.sh [optional_env_name]\""
 echo ""
 
 (return 0 2>/dev/null) && sourced=1 || sourced=0
 
 if [[ "$sourced" == "0" ]]; then
-  echo "ERROR: must call this script using \"source ./conda_installs.sh [optional_env_name]\""
+  echo "ERROR: must call this script using \"source ./install_shapeworks.sh [optional_env_name]\""
   exit 1
 fi
 
