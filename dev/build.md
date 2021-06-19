@@ -41,8 +41,9 @@ We use Anaconda (conda) to install many dependencies required for both building 
 
 To install conda and the dependencies it provides (currently requires either bash or zsh shell), run:
 ```
-$ source conda_installs.sh
+$ source install_shapeworks.sh [environment name]`  
 ```
+**Note:** By default this creates an environment named **shapeworks**, but you can specify a different name and it's okay to have multiple environments.  
 
 ShapeWorks uses *[git-lfs](https://github.com/git-lfs/git-lfs/)* to store image data for testing.  If git-lfs was not already installed before cloning ShapeWorks, please use the following commands to get this data:  
 ```
@@ -93,7 +94,9 @@ Download and install [[Anaconda]](https://www.anaconda.com/).
 !!! important
     It is recommended **not** to add Anaconda to your PATH and **not** to register Anaconda as your default Python.  
 
-Using the *Anaconda Prompt*, run `conda_installs.bat`  
+Using the *Anaconda Prompt*, run `install_shapeworks.bat [environment name]`  
+**Note:** By default this creates an environment named **shapeworks**, but you can specify a different name and it's okay to have multiple environments.  
+
 
 #### Qt5  
 Download and install the latest version of [Qt5](https://download.qt.io/archive/qt/), selecting the LGPL (free) license (at least version 5.10 required).   

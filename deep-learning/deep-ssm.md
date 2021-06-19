@@ -60,7 +60,7 @@ We then compare the original mesh to the predicted mesh via surface-to-surface d
 
 ## Using the DeepSSM Python Package
 
-The ShapeWorks DeepSSM package, `DeepSSMUtils`, is installed to the ShapeWorks anaconda environment when `conda_installs.sh` is run. 
+The ShapeWorks DeepSSM package, `DeepSSMUtils`, is installed with the rest of the ShapeWorks Anaconda environment using `install_shapeworks`.
 
 !!! danger "Activate shapeworks environment"
     Each time you use ShapeWorks and/or its Python packages, you must first activate its environment using the `conda activate shapeworks` command on the terminal.

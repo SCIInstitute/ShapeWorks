@@ -258,11 +258,9 @@
               
                 <h1 id="pytorch-gpu-support-for-shapeworks">PyTorch GPU Support for ShapeWorks</h1>
 <p>ShapeWorks deep learning tools, such as the <code>DeepSSMUtils</code> package, requires PyTorch with GPU support. 
-This is installed to the <code>shapeworks</code> conda environment when <code>conda_installs.sh</code> is run. </p>
-<p>Currently <code>conda_installs.sh</code> installs the most recent stable release of PyTorch which can be found at <a href="https://pytorch.org/">pytorch.org</a>.<br />
-When installing, <code>conda_installs.sh</code> checks which CUDA driver version is installed on the system and if it finds teh CUDA version is supported by the most recent 
-PyTorch version, the PyTorch with GPU support is installed.
-If an incompatible version of the CUDA driver is found, then <code>conda_installs.sh</code> installs CPU PyTorch instead. </p>
+This is installed with the rest of the ShapeWorks Anaconda environment using <code>install_shapeworks</code>. 
+It selects the most recent stable release of PyTorch which can be found at <a href="https://pytorch.org/">pytorch.org</a>.  </p>
+<p>When the Anaconda enironment is created using <code>install_shapeworks</code>, PyTorch with GPU support is installed if the system's current CUDA driver version is supported. Otherwise it selects the CPU version of PyTorch.</p>
 <h2 id="checking-if-pytorch-installation-has-gpu-support">Checking if PyTorch installation has GPU support</h2>
 <p>To check if your <code>shapeworks</code> environment has PyTorch with GPU support, run the following:
 <div class="highlight"><pre><span></span><code>conda activate shapeworks
@@ -274,11 +272,11 @@ python
 If <code>torch.cuda.is_available()</code> is True then PyTorch has GPU support, otherwise the CPU version was installed. 
 If <code>torch</code> cannot be imported than PyTorch was not installed to the <code>shapeworks</code> environment. </p>
 <h2 id="reinstalling-the-correct-pytorch-version">Reinstalling the Correct Pytorch Version</h2>
-<p>The following steps explain how to include a different PyTorch version in the <code>shapeworks</code> conda environment if you find that your system requires an older version 
-of PyTorch or <code>conda_installs.sh</code> does not correcty find your CUDA version.</p>
+<p>If you find that your system requires an older version of PyTorch or <code>install_shapeworks</code> did not correcty find your CUDA version, 
+the following steps explain how to install a different PyTorch version in the <code>shapeworks</code> conda environment.</p>
 <p>Deltailed instructions about the different ways to install PyTorch can be found here: <a href="https://pytorch.org/get-started/locally/">PyTorch Getting Started</a>.</p>
 <ol>
-<li>If <code>conda_installs.sh</code> has already been run and the CPU version of PyTorch was installed, first that needs to be uninstalled. To uninstall run:
+<li>If the CPU version of PyTorch was installed, that first needs to be uninstalled. To uninstall run:
 <div class="highlight"><pre><span></span><code>conda activate shapeworks
 conda uninstall pytorch
 </code></pre></div></li>

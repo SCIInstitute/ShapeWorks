@@ -347,8 +347,9 @@ See <a href="contribute.html">How to Contribute?</a> for more details on git com
 <h4 id="anaconda">Anaconda</h4>
 <p>We use Anaconda (conda) to install many dependencies required for both building and running ShapeWorks. Conda [sub]environments do not affect a machine's global setup in any way, do not require sudo to install, and are only available at the user level when activated.</p>
 <p>To install conda and the dependencies it provides (currently requires either bash or zsh shell), run:
-<div class="highlight"><pre><span></span><code>$ source conda_installs.sh
-</code></pre></div></p>
+<div class="highlight"><pre><span></span><code>$ source install_shapeworks.sh [environment name]`  
+</code></pre></div>
+<strong>Note:</strong> By default this creates an environment named <strong>shapeworks</strong>, but you can specify a different name and it's okay to have multiple environments.  </p>
 <p>ShapeWorks uses <em><a href="https://github.com/git-lfs/git-lfs/">git-lfs</a></em> to store image data for testing.  If git-lfs was not already installed before cloning ShapeWorks, please use the following commands to get this data:<br />
 <div class="highlight"><pre><span></span><code>$ git lfs fetch
 $ git lfs install
@@ -388,7 +389,8 @@ Download and install <a href="https://visualstudio.microsoft.com/">[Visual Studi
 <p class="admonition-title">Important</p>
 <p>It is recommended <strong>not</strong> to add Anaconda to your PATH and <strong>not</strong> to register Anaconda as your default Python.  </p>
 </div>
-<p>Using the <em>Anaconda Prompt</em>, run <code>conda_installs.bat</code>  </p>
+<p>Using the <em>Anaconda Prompt</em>, run <code>install_shapeworks.bat [environment name]</code><br />
+<strong>Note:</strong> By default this creates an environment named <strong>shapeworks</strong>, but you can specify a different name and it's okay to have multiple environments.  </p>
 <h4 id="qt5_1">Qt5</h4>
 <p>Download and install the latest version of <a href="https://download.qt.io/archive/qt/">Qt5</a>, selecting the LGPL (free) license (at least version 5.10 required).   </p>
 <p>After installing Qt5, add the directory containing <code>qmake.exe</code> to your PATH. See <a href="paths.html">Adding to PATH Environment Variable</a> for help with this.  </p>

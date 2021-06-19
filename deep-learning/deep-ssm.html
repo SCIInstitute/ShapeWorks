@@ -329,7 +329,7 @@
 <p>We then compare the original mesh to the predicted mesh via surface-to-surface distance. To find the distance from the original to the predicted, we consider each vertex in the original and find the shortest distance to the predicted mesh's surface. This process is not symmetric as it depends on the vertices of one mesh, so the distance from the predicted to the original will be slightly different. We compute the Hausdorff distance that takes the max of these vertex-wise distances to return a single value as a measure of accuracy. We also consider the vertex-wise distances as a scalar field on the mesh vertices and visualize them as a heat map on the surface. This provides us with a way of seeing where the predicted PDM was more or less accurate.</p>
 <p><img alt="Mesh Distance" src="../img/deep-learning/mesh-distance.png" /></p>
 <h2 id="using-the-deepssm-python-package">Using the DeepSSM Python Package</h2>
-<p>The ShapeWorks DeepSSM package, <code>DeepSSMUtils</code>, is installed to the ShapeWorks anaconda environment when <code>conda_installs.sh</code> is run. </p>
+<p>The ShapeWorks DeepSSM package, <code>DeepSSMUtils</code>, is installed with the rest of the ShapeWorks Anaconda environment using <code>install_shapeworks</code>.</p>
 <div class="admonition danger">
 <p class="admonition-title">Activate shapeworks environment</p>
 <p>Each time you use ShapeWorks and/or its Python packages, you must first activate its environment using the <code>conda activate shapeworks</code> command on the terminal.</p>

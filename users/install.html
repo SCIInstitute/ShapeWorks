@@ -83,11 +83,41 @@
                 <ul class="current">
                     <li class="toctree-l1 current"><a class="reference internal current" href="install.html">How to Install ShapeWorks?</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#first-download-shapeworks">First, download ShapeWorks</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#next-follow-the-instructions-for-your-platform">Next, follow the instructions for your platform.</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#installing-shapeworks-on-windows">Installing ShapeWorks on Windows</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#installation-instructions">Installation instructions.</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#shapeworks-comes-with-python-examples-to-get-you-started">ShapeWorks comes with Python examples to get you started.</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#shapeworks-also-includes-interactive-jupyter-python-notebook-examples">ShapeWorks also includes interactive Jupyter Python notebook examples.</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#installing-shapeworks-on-mac">Installing ShapeWorks on Mac</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#installation-instructions_1">Installation instructions.</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#shapeworks-comes-with-python-examples-to-get-you-started_1">ShapeWorks comes with Python examples to get you started.</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#shapeworks-also-includes-interactive-jupyter-python-notebook-examples_1">ShapeWorks also includes interactive Jupyter Python notebook examples.</a>
+    </li>
+        </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#installing-shapeworks-on-linux">Installing ShapeWorks on Linux</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#installation-instructions_2">Installation instructions.</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#shapeworks-comes-with-python-examples-to-get-you-started_2">ShapeWorks comes with Python examples to get you started.</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#shapeworks-also-includes-interactive-jupyter-python-notebook-examples_2">ShapeWorks also includes interactive Jupyter Python notebook examples.</a>
+    </li>
+        </ul>
     </li>
     </ul>
                     </li>
@@ -259,143 +289,222 @@
             <div class="section">
               
                 <h1 id="how-to-install-shapeworks">How to Install ShapeWorks?</h1>
-<p>ShapeWorks provides official user releases, the features of which can be seen at <a href="../about/release-notes.html">Release Notes</a>.</p>
-<p>First, download the <a href="https://github.com/SCIInstitute/ShapeWorks/releases/latest">latest ShapeWorks binary release</a>.    </p>
-<p>We also provide up-to-date development builds from the master branch for: <br />
-<a href="https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-windows">Windows</a><br />
-<a href="https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-mac">Mac</a><br />
-<a href="https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-linux">Linux</a>  </p>
+<h2 id="first-download-shapeworks"><em><strong>First, download ShapeWorks</strong></em></h2>
 <div class="admonition important">
-<p class="admonition-title">Important</p>
+<p class="admonition-title">Release Builds</p>
+<p>We provide the following <a href="https://github.com/SCIInstitute/ShapeWorks/releases/latest">official user releases</a>.<br />
+<a href="https://github.com/SCIInstitute/ShapeWorks/releases/download/v6.0.0/ShapeWorks-v6.0.0-windows.exe"><strong>Windows</strong></a><br />
+<a href="https://github.com/SCIInstitute/ShapeWorks/releases/download/v6.0.0/ShapeWorks-v6.0.0-mac.pkg"><strong>Mac</strong></a><br />
+<a href="https://github.com/SCIInstitute/ShapeWorks/releases/download/v6.0.0/ShapeWorks-v6.0.0-linux.zip"><strong>Linux</strong></a>  </p>
+<p>Their features can be seen at <a href="../about/release-notes.html">Release Notes</a>.</p>
+</div>
+<div class="admonition danger">
+<p class="admonition-title">Development Builds</p>
+<p>We also provide up-to-date development builds from the <strong>master</strong> branch<br />
+<a href="https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-windows">Windows Dev Build</a><br />
+<a href="https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-mac">Mac Dev Build</a><br />
+<a href="https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-linux">Linux Dev Build</a></p>
 <p>Please understand that these are in-progress development builds, not official releases.</p>
 </div>
-<p>Then follow the appropriate instructions for their platform:<br />
-<a href="#installing-shapeworks-on-windows">Windows</a> <br />
-<a href="#installing-shapeworks-on-mac">Mac</a> <br />
-<a href="#installing-shapeworks-on-linux">Linux</a>   </p>
-<div class="admonition danger">
-<p class="admonition-title">Activate shapeworks environment</p>
-<p>Each time you use <a href="../tools/ShapeWorksCommands.html">ShapeWorks from the command line</a>, you must first activate its environment using the <code>conda activate shapeworks</code> command on the terminal.</p>
-</div>
+<h2 id="next-follow-the-instructions-for-your-platform"><em><strong>Next, follow the instructions for your platform.</strong></em></h2>
+<p><a href="#installing-shapeworks-on-windows">Windows</a><br />
+<a href="#installing-shapeworks-on-mac">Mac</a><br />
+<a href="#installing-shapeworks-on-linux">Linux</a></p>
 <h2 id="installing-shapeworks-on-windows">Installing ShapeWorks on Windows</h2>
-<p>Please make sure that you download the <a href="https://github.com/SCIInstitute/ShapeWorks/releases/latest">latest ShapeWorks binary release</a>, or up-to-date development builds from the master branch for <a href="https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-windows">Windows</a>. <em>Please understand that these are in-progress development builds, not official releases.</em></p>
-<p>To install:</p>
-<ul>
-<li>Download and install the "Microsoft Visual C++ Redistributable for Visual Studio 2015, 2017 and 2019." :</li>
-</ul>
-<div class="highlight"><pre><span></span><code>https://aka.ms/vs/16/release/vc_redist.x64.exe
-</code></pre></div>
-<ul>
-<li>Download and install Miniconda for Windows:</li>
-</ul>
-<div class="highlight"><pre><span></span><code>https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe
-</code></pre></div>
-<ul>
+<p>Please make sure that you download the <a href="https://github.com/SCIInstitute/ShapeWorks/releases/latest">latest ShapeWorks binary release</a>, or up-to-date development builds from the master branch for <a href="https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-windows">Windows</a> <em>(remember these are in-progress development builds, not official releases).</em></p>
+<h3 id="installation-instructions">Installation instructions.</h3>
+<ol>
 <li>
-<p>Copy "C:\Program Files\ShapeWorks\Examples" to another location</p>
+<p>Download and install the "Microsoft Visual C++ Redistributable for Visual Studio 2015, 2017 and 2019."<br />
+<a href="https://aka.ms/vs/16/release/vc_redist.x64.exe">https://aka.ms/vs/16/release/vc_redist.x64.exe</a></p>
 </li>
 <li>
-<p>Open "Anaconda Prompt"</p>
+<p>Download and install Miniconda for Windows.<br />
+<a href="https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe">https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe</a></p>
 </li>
 <li>
-<p>CD to "C:\Program Files\ShapeWorks"</p>
+<p>Double-click on the installer that you downloaded and follow the instructions.<br />
+   Please choose whatever installation directory you want.</p>
 </li>
 <li>
-<p>Run:</p>
+<p>Open an Anaconda terminal and change directory to the chosen installation path.<br />
+<code>cd "C:\Program Files\ShapeWorks"</code></p>
 </li>
-</ul>
-<div class="highlight"><pre><span></span><code>$ conda_installs.bat
-</code></pre></div>
+<li>
+<p>Create the <strong>shapeworks</strong> conda environment, installing everything necessary to run.<br />
+<code>install_shapeworks</code><br />
+<strong>Note:</strong> You can pass a different name for the environment, enabling multiple installations.<br />
+<code>install_shapeworks shapeworks_61</code></p>
+</li>
+</ol>
 <div class="admonition danger">
-<p class="admonition-title">Running conda_installs.bat</p>
-<p>If you already have anaconda/miniconda installed, this step may hang.  If this step hangs, please uninstall anaconda/miniconda and re-install it and then run conda_installs.bat.</p>
+<p class="admonition-title">Warning</p>
+<p>If you already have anaconda/miniconda installed, this step may hang.  If so please uninstall anaconda/miniconda, re-install it, then run install_shapeworks again. This seems to be an occasional problem with Anaconda on Windows.</p>
 </div>
-<ul>
+<h4 id="shapeworks-comes-with-python-examples-to-get-you-started">ShapeWorks comes with Python examples to get you started.</h4>
+<ol>
 <li>
-<p>CD to your copied Examples\Python location</p>
+<p>Open an Anaconda terminal and activate the shapeworks conda environment (use the environment name passed to <strong>install_shapeworks</strong> above).<br />
+<code>conda activate shapeworks</code></p>
 </li>
 <li>
-<p>To run an example:</p>
+<p>Copy the Examples folder to another location of your choosing (you can also use Explorer).<br />
+<code>xcopy /E/H Examples %HOMEPATH%\ShapeWorks-Examples\</code></p>
 </li>
-</ul>
-<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case [insert name of use case here]
-</code></pre></div>
-<ul>
-<li>For names for the use cases that are currently released, run:</li>
-</ul>
-<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --help
-</code></pre></div>
-<ul>
-<li>More information about running use cases can be found <a href="../use-cases/use-cases.html#running-the-use-cases">here</a>.</li>
-</ul>
-<p>Running conda_installs.bat will activate the conda shapeworks environment
-into your current anaconda prompt. </p>
-<div class="admonition danger">
-<p class="admonition-title">Activate shapeworks environment</p>
-<p>For subsequent usage, the shapeworks conda environment must be activated using the <code>conda activate shapeworks</code> command on the terminal.</p>
-</div>
+<li>
+<p>Change to the Python folder of the Examples directory you copied.<br />
+<code>cd %HOMEPATH%\ShapeWorks-Examples\Python</code></p>
+</li>
+<li>
+<p>Run one of the included use cases. To list them all, run: <code>python RunUseCase.py --help</code>.<br />
+<code>python RunUseCase.py --use_case &lt;insert name of use case here&gt;</code></p>
+</li>
+<li>
+<p>More information about running use cases can be found <a href="../use-cases/use-cases.html#running-the-use-cases">here</a>.</p>
+</li>
+</ol>
+<h4 id="shapeworks-also-includes-interactive-jupyter-python-notebook-examples">ShapeWorks also includes interactive Jupyter Python notebook examples.</h4>
+<ol>
+<li>
+<p>Open an Anaconda terminal and activate the shapeworks conda environment (use the environment name passed to <strong>install_shapeworks</strong> above).<br />
+<code>conda activate shapeworks</code></p>
+</li>
+<li>
+<p>Change to the notebook tutorials folder of the Examples directory you copied.<br />
+<code>cd %HOMEPATH%\ShapeWorks-Examples\Python\notebooks\tutorials</code></p>
+</li>
+<li>
+<p>Start the Jupyter notebook server. This will open a new tab in your web brower.<br />
+<code>jupyter notebook</code></p>
+</li>
+<li>
+<p>Click on a notebook to get started.</p>
+</li>
+</ol>
 <div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If you have installed ShapeWorks in a different location than "C:\Program Files\ShapeWorks", please add the path to the "bin" directory as the final argument to RunUseCase.py so that the path will be set correctly.</p>
+<p class="admonition-title">Important</p>
+<p>Your shapeworks conda environment must always be activated before using ShapeWorks.</p>
 </div>
 <h2 id="installing-shapeworks-on-mac">Installing ShapeWorks on Mac</h2>
-<p>Please make sure that you download the <a href="https://github.com/SCIInstitute/ShapeWorks/releases/latest">latest ShapeWorks binary release</a>, or up-to-date development builds from the master branch for <a href="https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-mac">Mac</a>. <em>Please understand that these are in-progress development builds, not official releases.</em></p>
-<p>To use the installer version of ShapeWorks (.pkg):</p>
-<ul>
+<p>Please make sure that you download the <a href="https://github.com/SCIInstitute/ShapeWorks/releases/latest">latest ShapeWorks binary release</a>, or up-to-date development builds from the master branch for <a href="https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-mac">Mac</a> <em>(remember these are in-progress development builds, not official releases).</em></p>
+<h4 id="installation-instructions_1">Installation instructions.</h4>
+<ol>
 <li>
-<p>Install the ShapeWorks pkg file.</p>
+<p>Install the ShapeWorks .pkg file by double-clicking on the file.</p>
 </li>
 <li>
-<p>Open a terminal, change directory to /Applications/ShapeWorks</p>
+<p>Open a terminal and change directory to the installation path.<br />
+<code>cd /Applications/ShapeWorks</code></p>
 </li>
 <li>
-<p>Type:</p>
+<p>Create a protected conda environment that installs everything necessary to run.<br />
+<code>source install_shapeworks.sh</code><br />
+<strong>Note:</strong> You can pass a different name for the environment, enabling multiple installations.<br />
+<code>source install_shapeworks.sh shapeworks_61</code></p>
 </li>
-</ul>
-<div class="highlight"><pre><span></span><code>$ source conda_installs.sh
-</code></pre></div>
-<ul>
+</ol>
+<h4 id="shapeworks-comes-with-python-examples-to-get-you-started_1">ShapeWorks comes with Python examples to get you started.</h4>
+<ol>
 <li>
-<p>Copy "/Applications/ShapeWorks/Examples to another location (e.g., $HOME/ShapeWorks-Examples)</p>
+<p>Open a terminal and activate the shapeworks conda environment (use the environment name passed to <strong>install_shapeworks</strong> above).<br />
+<code>conda activate shapeworks</code></p>
 </li>
 <li>
-<p>CD to your copied Examples/Python location</p>
+<p>Copy the Examples folder to another location of your choosing.<br />
+<code>cp -r Examples $HOME/ShapeWorks-Examples</code></p>
 </li>
 <li>
-<p>To run an example:</p>
+<p>Change to the Python folder of the Examples directory you copied.<br />
+<code>cd $HOME/ShapeWorks-Examples/Python</code></p>
 </li>
-</ul>
-<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --use_case [insert name of use case here]
-</code></pre></div>
-<ul>
-<li>For names for the use cases that are currently released, run:</li>
-</ul>
-<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --help
-</code></pre></div>
-<ul>
-<li>More information about running use cases can be found <a href="../use-cases/use-cases.html#running-the-use-cases">here</a>.</li>
-</ul>
-<div class="admonition danger">
-<p class="admonition-title">Activate shapeworks environment</p>
-<p>For subsequent usage, the shapeworks conda environment must be activated using the <code>conda activate shapeworks</code> command on the terminal.</p>
+<li>
+<p>Run one of the included use cases. To list them all, run: <code>python RunUseCase.py --help</code>.<br />
+<code>python RunUseCase.py --use_case  &lt;insert name of use case here&gt;</code></p>
+</li>
+<li>
+<p>More information about running use cases can be found <a href="../use-cases/use-cases.html#running-the-use-cases">here</a>.</p>
+</li>
+</ol>
+<h4 id="shapeworks-also-includes-interactive-jupyter-python-notebook-examples_1">ShapeWorks also includes interactive Jupyter Python notebook examples.</h4>
+<ol>
+<li>
+<p>Open a terminal and activate the shapeworks conda environment (use the environment name passed to <strong>install_shapeworks</strong> above).<br />
+<code>conda activate shapeworks</code></p>
+</li>
+<li>
+<p>Change to the notebook tutorials folder of the Examples directory you copied.<br />
+<code>cd $HOME/ShapeWorks-Examples/Python/notebooks/tutorials</code></p>
+</li>
+<li>
+<p>Start the Jupyter notebook server. This will open a new tab in your web brower.<br />
+<code>jupyter notebook</code></p>
+</li>
+<li>
+<p>Click on a notebook to get started.</p>
+</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Important</p>
+<p>Your shapeworks conda environment must always be activated before using ShapeWorks.</p>
 </div>
 <h2 id="installing-shapeworks-on-linux">Installing ShapeWorks on Linux</h2>
-<p>Please make sure that you download the <a href="https://github.com/SCIInstitute/ShapeWorks/releases/latest">latest ShapeWorks binary release</a>, or up-to-date development builds from the master branch for <a href="https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-linux">Linux</a>. <em>Please understand that these are in-progress development builds, not official releases.</em></p>
-<p>ShapeWorks comes with <a href="../use-cases/use-cases.html">python examples</a> to get you started. To run them, you will
-need python with a few packages.  The easiest way to <strong>install</strong> them is to run:</p>
-<div class="highlight"><pre><span></span><code>$ source ./conda_installs.sh
-</code></pre></div>
-<p>Then, to run the example:</p>
-<div class="highlight"><pre><span></span><code>$ cd Examples/Python
-$ python RunUseCase.py --use_case [insert name of use case here]
-</code></pre></div>
-<p>For names for the use cases that are currently released, run:</p>
-<div class="highlight"><pre><span></span><code>$ python RunUseCase.py --help
-</code></pre></div>
+<p>Please make sure that you download the <a href="https://github.com/SCIInstitute/ShapeWorks/releases/latest">latest ShapeWorks binary release</a>, or up-to-date development builds from the master branch for <a href="https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-linux">Linux</a> <em>(remember these are in-progress development builds, not official releases).</em></p>
+<h4 id="installation-instructions_2">Installation instructions.</h4>
+<ol>
+<li>
+<p>Open a terminal and change directory to the installation path (where you unzipped the downloaded file).<br />
+<code>cd /path/to/shapeworks</code></p>
+</li>
+<li>
+<p>Create a protected conda environment that installs everything necessary to run.<br />
+<code>source install_shapeworks.sh</code><br />
+<strong>Note:</strong> You can pass a different name for the environment, enabling multiple installations.<br />
+<code>source install_shapeworks.sh shapeworks_61</code></p>
+</li>
+</ol>
+<h4 id="shapeworks-comes-with-python-examples-to-get-you-started_2">ShapeWorks comes with Python examples to get you started.</h4>
+<ol>
+<li>
+<p>Open a terminal and activate the shapeworks conda environment (use the environment name passed to <strong>install_shapeworks</strong> above).<br />
+<code>conda activate shapeworks</code></p>
+</li>
+<li>
+<p>Copy the Examples folder to another location of your choosing.<br />
+<code>cp -r Examples $HOME/ShapeWorks-Examples</code></p>
+</li>
+<li>
+<p>Change to the Python folder of the Examples directory you copied.<br />
+<code>cd $HOME/ShapeWorks-Examples/Python</code></p>
+</li>
+<li>
+<p>Run one of the included use cases. To list them all, run: <code>python RunUseCase.py --help</code>.<br />
+<code>python RunUseCase.py --use_case  &lt;insert name of use case here&gt;</code></p>
+</li>
+<li>
 <p>More information about running use cases can be found <a href="../use-cases/use-cases.html#running-the-use-cases">here</a>.</p>
-<div class="admonition danger">
-<p class="admonition-title">Activate shapeworks environment</p>
-<p>For subsequent usage, the shapeworks conda environment must be activated using the <code>conda activate shapeworks</code> command on the terminal.</p>
+</li>
+</ol>
+<h4 id="shapeworks-also-includes-interactive-jupyter-python-notebook-examples_2">ShapeWorks also includes interactive Jupyter Python notebook examples.</h4>
+<ol>
+<li>
+<p>Open a terminal and activate the shapeworks conda environment (use the environment name passed to <strong>install_shapeworks</strong> above).<br />
+<code>conda activate shapeworks</code></p>
+</li>
+<li>
+<p>Change to the notebook tutorials folder of the Examples directory you copied.<br />
+<code>cd $HOME/ShapeWorks-Examples/Python/notebooks/tutorials</code></p>
+</li>
+<li>
+<p>Start the Jupyter notebook server. This will open a new tab in your web brower.<br />
+<code>jupyter notebook</code></p>
+</li>
+<li>
+<p>Click on a notebook to get started.</p>
+</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Important</p>
+<p>Your shapeworks conda environment must always be activated before using ShapeWorks.</p>
 </div>
               
             </div>
