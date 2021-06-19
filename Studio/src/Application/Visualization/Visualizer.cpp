@@ -103,7 +103,12 @@ void Visualizer::display_shape(ShapeHandle shape)
 //-----------------------------------------------------------------------------
 StudioParticles Visualizer::get_current_shape()
 {
-  return this->current_shape_;
+  auto shapes = this->lightbox_->get_shapes();
+  if (shapes.size() > 0) {
+    return shapes[0]->get_particles();
+  }
+  StudioParticles particles;
+  return particles;
 }
 
 //-----------------------------------------------------------------------------

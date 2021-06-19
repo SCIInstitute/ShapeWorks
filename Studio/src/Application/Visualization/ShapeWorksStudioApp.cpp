@@ -34,6 +34,7 @@
 #include <Visualization/WheelEventForwarder.h>
 #include <Interface/SplashScreen.h>
 #include <Interface/KeyboardShortcuts.h>
+#include <Utils/StudioUtils.h>
 
 // ui
 #include <ui_ShapeWorksStudioApp.h>
@@ -1327,18 +1328,7 @@ void ShapeWorksStudioApp::on_action_preferences_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_export_current_mesh_triggered()
 {
-  bool single = true;
-  if (this->session_->get_project()->get_number_of_domains_per_subject() > 0) {
-    QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this, "Multiple Domains",
-                                  "This export contains multiple domains.\n\n"
-                                  "Would you like each domain exported separately?\n\n"
-                                  "Each will be suffixed with the domain name.",
-                                  QMessageBox::Yes | QMessageBox::No);
-    if (reply == QMessageBox::Yes) {
-      single = false;
-    }
-  }
+  bool single = StudioUtils::ask_multiple_domains_as_single(this, this->session_->get_project());
 
   auto dir = preferences_.get_last_directory() + "/";
   QString filename = QFileDialog::getSaveFileName(this, tr("Export Current Mesh"),
@@ -1395,6 +1385,8 @@ bool ShapeWorksStudioApp::write_mesh(vtkSmartPointer<vtkPolyData> poly_data, QSt
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_export_current_particles_triggered()
 {
+  bool single = StudioUtils::ask_multiple_domains_as_single(this, this->session_->get_project());
+
   auto dir = preferences_.get_last_directory() + "/";
   QString filename = QFileDialog::getSaveFileName(this, tr("Export Current Particles"),
                                                   dir + "shape",
@@ -1404,12 +1396,36 @@ void ShapeWorksStudioApp::on_action_export_current_particles_triggered()
   }
   this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
 
-  auto particles = this->visualizer_->get_current_shape().get_combined_global_particles();
+  if (single) {
+    auto particles = this->visualizer_->get_current_shape().get_combined_global_particles();
 
-  if (!ShapeWorksStudioApp::write_particle_file(filename.toStdString(), particles)) {
-    this->handle_error("Error writing particle file: " + filename);
+    if (!ShapeWorksStudioApp::write_particle_file(filename.toStdString(), particles)) {
+      this->handle_error("Error writing particle file: " + filename);
+    }
+    this->handle_message("Wrote: " + filename);
+
   }
-  this->handle_message("Successfully exported particle file");
+  else {
+
+    auto domain_names = session_->get_project()->get_domain_names();
+
+    QFileInfo fi(filename);
+    QString base = fi.path() + QDir::separator() + fi.completeBaseName();
+    for (int domain = 0; domain < domain_names.size(); domain++) {
+      QString name =
+        base + "_" + QString::fromStdString(domain_names[domain]) + "." + fi.completeSuffix();
+
+      auto shape = this->visualizer_->get_current_shape();
+      auto particles = this->visualizer_->get_current_shape().get_world_particles(domain);
+      if (!ShapeWorksStudioApp::write_particle_file(name.toStdString(),
+                                                    particles)) {
+        this->handle_error("Error writing particle file: " + name);
+      }
+
+      this->handle_message("Wrote: " + name);
+    }
+  }
+
 }
 
 //---------------------------------------------------------------------------
