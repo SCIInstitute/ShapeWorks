@@ -4,7 +4,7 @@ ShapeWorks includes a Python package, `DataAugmentationUtils`, that supports mod
 
 ## Using the Data Augmentation Package
 
-The ShapeWorks data augmentation package, `DataAugmentationUtils`, is installed to the ShapeWorks anaconda environment when `conda_installs.sh` is run. 
+The ShapeWorks data augmentation package, `DataAugmentationUtils`, is installed with the rest of the ShapeWorks Anaconda environment using `install_shapeworks`.
 
 
 !!! danger "Activate shapeworks environment"

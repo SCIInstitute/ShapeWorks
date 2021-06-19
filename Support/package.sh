@@ -48,9 +48,8 @@ cp -a $INSTALL_DEP_DIR/* "package/${VERSION}"
 cp -a $INSTALL_DIR/* "package/${VERSION}"
 cp -a Examples "package/${VERSION}"
 cp -a Python "package/${VERSION}"
-cp conda_installs.sh package/${VERSION}
-cp install_python_module.sh package/${VERSION}
-cp update_installed_python_module_binary_path.py package/${VERSION}
+cp -a Installation "package/${VERSION}"
+cp install_shapeworks.sh package/${VERSION}
 cp docs/about/release-notes.md package/${VERSION}
 
 if [[ "$OSTYPE" == "darwin"* ]]; then

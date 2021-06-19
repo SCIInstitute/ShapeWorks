@@ -6,4 +6,8 @@ call pip install Python\shapeworks
 
 set CONDA_INSTALL_DIR=%CONDA_PREFIX%\lib\site-packages\shapeworks
 
-call python .\update_installed_python_module_binary_path.py "%CONDA_INSTALL_DIR%\setup_path.py" "%cd%\bin"
+:: format windows path to use forward slashes
+set BIN_PATH=%cd%\bin
+set BIN_PATH=%BIN_PATH:\=/%
+
+call python .\Installation\replace_strings.py "%CONDA_INSTALL_DIR%\setup_path.py" placeholder_string %BIN_PATH%

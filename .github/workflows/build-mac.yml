@@ -61,7 +61,7 @@ jobs:
       
     - name: conda installs
       shell: bash -l {0}
-      run: source ./conda_installs.sh
+      run: source ./install_shapeworks.sh
 
     - name: install ccache
       shell: bash -l {0}

@@ -8,4 +8,4 @@ if ! pip install Python/shapeworks; then exit -1; fi
 
 CONDA_INSTALL_DIR=`pip show shapeworks | grep Location | awk '{print $2}'`/shapeworks
 
-python ./update_installed_python_module_binary_path.py $CONDA_INSTALL_DIR/setup_path.py `pwd`/bin
+python ./Installation/replace_strings.py $CONDA_INSTALL_DIR/setup_path.py placeholder_string `pwd`/bin

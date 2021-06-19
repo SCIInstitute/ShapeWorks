@@ -64,14 +64,13 @@ Section "ShapeWorks (required)"
   SetOutPath $INSTDIR
   
   ; Put file there
-  File "conda_installs.bat"
-  File "install_python_module.bat"
-  File "update_installed_python_module_binary_path.py"
+  File "install_shapeworks.bat"
   File "Windows_README.txt"
   File /r "bin"
   File /r "Examples"
   File /r "Python"
   File /r "Documentation"
+  File /r "Installation"
 
   
   ; Write the installation path into the registry
