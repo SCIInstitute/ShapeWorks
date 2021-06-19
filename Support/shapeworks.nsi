@@ -64,7 +64,7 @@ Section "ShapeWorks (required)"
   SetOutPath $INSTDIR
   
   ; Put file there
-  File "conda_installs.bat"
+  File "install_shapeworks.bat"
   File "install_python_module.bat"
   File "conda_env_setup.bat"
   File "shapeworks-activate.bat"
