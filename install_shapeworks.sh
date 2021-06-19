@@ -151,8 +151,8 @@ function install_conda() {
   if ! pip install Python/DeepSSMUtilsPackage;          then return 1; fi # install DeepSSM code as a package
   if ! pip install Python/ShapeCohortGenPackage;        then return 1; fi # install shape cohort generation code as a package
 
-  ./install_python_module.sh   # install python module
-  ./conda_env_setup.sh         # install conda [de]activate scripts
+  ./Installation/install_python_module.sh   # install python module
+  ./Installation/conda_env_setup.sh         # install conda [de]activate scripts
 
 
   if [[ "$GITHUB_ACTION" != "" ]]; then

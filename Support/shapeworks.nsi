@@ -65,18 +65,12 @@ Section "ShapeWorks (required)"
   
   ; Put file there
   File "install_shapeworks.bat"
-  File "install_python_module.bat"
-  File "conda_env_setup.bat"
-  File "shapeworks-activate.bat"
-  File "shapeworks-activate.sh"
-  File "shapeworks-deactivate.bat"
-  File "shapeworks-deactivate.sh"
-  File "replace_strings.py"
   File "Windows_README.txt"
   File /r "bin"
   File /r "Examples"
   File /r "Python"
   File /r "Documentation"
+  File /r "Installation"
 
   
   ; Write the installation path into the registry
