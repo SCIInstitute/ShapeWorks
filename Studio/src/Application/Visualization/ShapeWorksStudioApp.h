@@ -180,6 +180,7 @@ private:
   void save_project(std::string filename);
 
   bool write_mesh(vtkSmartPointer<vtkPolyData> poly_data, QString filename);
+  bool write_scalars(vtkSmartPointer<vtkPolyData> poly_data, QString filename);
 
   /// designer form
   Ui_ShapeWorksStudioApp* ui_;

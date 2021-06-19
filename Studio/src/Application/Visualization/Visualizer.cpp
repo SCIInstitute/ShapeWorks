@@ -124,6 +124,9 @@ void Visualizer::handle_new_mesh()
 vtkSmartPointer<vtkPolyData> Visualizer::get_current_mesh()
 {
   auto meshes = this->get_current_meshes_transformed();
+  if (meshes.empty()) {
+    return nullptr;
+  }
   vtkSmartPointer<vtkAppendPolyData> append = vtkSmartPointer<vtkAppendPolyData>::New();
   for (int domain = 0; domain < meshes.size(); domain++) {
     append->AddInputData(meshes[domain]);

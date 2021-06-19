@@ -1349,6 +1349,7 @@ void ShapeWorksStudioApp::on_action_export_current_mesh_triggered()
 
     if (meshes.empty()) {
       this->handle_error("Error exporting mesh: not ready yet");
+      return;
     }
 
     QFileInfo fi(filename);
@@ -1379,6 +1380,61 @@ bool ShapeWorksStudioApp::write_mesh(vtkSmartPointer<vtkPolyData> poly_data, QSt
     this->handle_error(e.what());
     return false;
   }
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool ShapeWorksStudioApp::write_scalars(vtkSmartPointer<vtkPolyData> poly_data, QString filename)
+{
+  if (!poly_data) {
+    this->handle_error("Error, no scalars to export");
+    return false;
+  }
+  std::ofstream output;
+  output.open(filename.toStdString().c_str());
+  output << "point,x,y,z";
+
+  auto scalars = poly_data->GetPointData()->GetScalars();
+  if (!scalars) {
+    this->handle_error("Error, no scalars to export");
+    return false;
+  }
+  scalars->SetName("scalar_values");
+
+  //poly_data->GetPointData()->AddArray(scalars);
+  int num_arrays = poly_data->GetPointData()->GetNumberOfArrays();
+
+  for (int i = 0; i < num_arrays; i++) {
+    if (!poly_data->GetPointData()->GetArrayName(i)) {
+      output << "," << "scalars";
+    }
+    else {
+      output << "," << poly_data->GetPointData()->GetArrayName(i);
+      std::cout << "array: " << poly_data->GetPointData()->GetArrayName(i) << "\n";
+    }
+  }
+
+  output << "\n";
+
+  // iterate over vertices
+  vtkPoints* points = poly_data->GetPoints();
+  int num_points = points->GetNumberOfPoints();
+
+  for (int i = 0; i < num_points; i++) {
+    output << i;
+    output << "," << poly_data->GetPoint(i)[0];
+    output << "," << poly_data->GetPoint(i)[1];
+    output << "," << poly_data->GetPoint(i)[2];
+
+    for (int j = 0; j < num_arrays; j++) {
+      output << "," << poly_data->GetPointData()->GetArray(j)->GetTuple(i)[0];
+      //std::cout << "array: " << poly_data->GetPointData()->GetArrayName(i) << "\n";
+    }
+
+    output << "\n";
+  }
+
+  output.close();
   return true;
 }
 
@@ -1431,6 +1487,8 @@ void ShapeWorksStudioApp::on_action_export_current_particles_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered()
 {
+  bool single = StudioUtils::ask_multiple_domains_as_single(this, this->session_->get_project());
+
   auto dir = preferences_.get_last_directory().toStdString() + "/";
   QString filename = QFileDialog::getSaveFileName(this, tr("Export Mesh Scalars"),
                                                   QString::fromStdString(dir) + "scalars",
@@ -1440,49 +1498,37 @@ void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered()
   }
   this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
 
-  auto poly_data = this->visualizer_->get_current_mesh();
+  if (single) {
+    auto poly_data = this->visualizer_->get_current_mesh();
+    this->write_scalars(poly_data, filename);
 
-  std::ofstream output;
-  output.open(filename.toStdString().c_str());
-  output << "point,x,y,z";
+  }
+  else {
 
-  auto scalars = poly_data->GetPointData()->GetScalars();
-  scalars->SetName("scalar_values");
-
-  //poly_data->GetPointData()->AddArray(scalars);
-  int num_arrays = poly_data->GetPointData()->GetNumberOfArrays();
-
-  for (int i = 0; i < num_arrays; i++) {
-    if (!poly_data->GetPointData()->GetArrayName(i)) {
-      output << "," << "scalars";
+    auto meshes = this->visualizer_->get_current_meshes_transformed();
+    if (meshes.empty()) {
+      this->handle_error("Error exporting mesh: not ready yet");
+      return;
     }
-    else {
-      output << "," << poly_data->GetPointData()->GetArrayName(i);
-      std::cout << "array: " << poly_data->GetPointData()->GetArrayName(i) << "\n";
+
+    auto domain_names = session_->get_project()->get_domain_names();
+
+    QFileInfo fi(filename);
+    QString base = fi.path() + QDir::separator() + fi.completeBaseName();
+    for (int domain = 0; domain < domain_names.size(); domain++) {
+      QString name =
+        base + "_" + QString::fromStdString(domain_names[domain]) + "." + fi.completeSuffix();
+
+      auto poly_data = meshes[domain];
+      if (!this->write_scalars(poly_data, base)) {
+        this->handle_error("Error writing particle file: " + name);
+        return;
+      }
+
+      this->handle_message("Wrote: " + name);
     }
   }
 
-  output << "\n";
-
-  // iterate over vertices
-  vtkPoints* points = poly_data->GetPoints();
-  int num_points = points->GetNumberOfPoints();
-
-  for (int i = 0; i < num_points; i++) {
-    output << i;
-    output << "," << poly_data->GetPoint(i)[0];
-    output << "," << poly_data->GetPoint(i)[1];
-    output << "," << poly_data->GetPoint(i)[2];
-
-    for (int j = 0; j < num_arrays; j++) {
-      output << "," << poly_data->GetPointData()->GetArray(j)->GetTuple(i)[0];
-      //std::cout << "array: " << poly_data->GetPointData()->GetArrayName(i) << "\n";
-    }
-
-    output << "\n";
-  }
-
-  output.close();
 }
 
 //---------------------------------------------------------------------------
@@ -1994,6 +2040,7 @@ void ShapeWorksStudioApp::dropEvent(QDropEvent* event)
     event->ignore();
   }
 }
+
 
 
 
