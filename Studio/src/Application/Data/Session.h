@@ -130,7 +130,8 @@ signals:
   void points_changed();
   void update_display();
   void new_mesh();
-  void message(QString s);
+  void message(QString);
+  void error(QString);
 
 public:
   // constants

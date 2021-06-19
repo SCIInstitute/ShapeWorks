@@ -1333,7 +1333,7 @@ void ShapeWorksStudioApp::on_action_export_current_mesh_triggered()
     reply = QMessageBox::question(this, "Multiple Domains",
                                   "This export contains multiple domains.\n\n"
                                   "Would you like each domain exported separately?\n\n"
-                                  "Each mesh will be suffixed with the domain name.",
+                                  "Each will be suffixed with the domain name.",
                                   QMessageBox::Yes | QMessageBox::No);
     if (reply == QMessageBox::Yes) {
       single = false;

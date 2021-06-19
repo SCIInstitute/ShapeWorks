@@ -379,14 +379,9 @@ bool Session::load_light_project(QString filename)
     }
   }
 
-  //this->calculate_reconstructed_samples();
-
   this->parameters().set("view_state", Visualizer::MODE_RECONSTRUCTION_C);
   this->parameters().set("tool_state", Session::ANALYSIS_C);
 
-  //this->preferences_.set_preference("display_state",
-//                                    QString::fromStdString(Visualizer::MODE_RECONSTRUCTION_C));
-//  this->preferences_.set_preference("tool_state", QString::fromStdString(Session::ANALYSIS_C));
   this->renumber_shapes();
 
   this->project_->store_subjects();
