@@ -1386,22 +1386,19 @@ bool ShapeWorksStudioApp::write_mesh(vtkSmartPointer<vtkPolyData> poly_data, QSt
 //---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::write_scalars(vtkSmartPointer<vtkPolyData> poly_data, QString filename)
 {
-  if (!poly_data) {
+  if (!poly_data || !poly_data->GetPointData()->GetScalars()) {
     this->handle_error("Error, no scalars to export");
     return false;
   }
+
   std::ofstream output;
   output.open(filename.toStdString().c_str());
-  output << "point,x,y,z";
-
-  auto scalars = poly_data->GetPointData()->GetScalars();
-  if (!scalars) {
-    this->handle_error("Error, no scalars to export");
+  if (output.bad()) {
+    this->handle_error("Error writing to file: " + filename);
     return false;
   }
-  scalars->SetName("scalar_values");
+  output << "point,x,y,z";
 
-  //poly_data->GetPointData()->AddArray(scalars);
   int num_arrays = poly_data->GetPointData()->GetNumberOfArrays();
 
   for (int i = 0; i < num_arrays; i++) {
@@ -1428,9 +1425,7 @@ bool ShapeWorksStudioApp::write_scalars(vtkSmartPointer<vtkPolyData> poly_data, 
 
     for (int j = 0; j < num_arrays; j++) {
       output << "," << poly_data->GetPointData()->GetArray(j)->GetTuple(i)[0];
-      //std::cout << "array: " << poly_data->GetPointData()->GetArrayName(i) << "\n";
     }
-
     output << "\n";
   }
 
@@ -1501,7 +1496,6 @@ void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered()
   if (single) {
     auto poly_data = this->visualizer_->get_current_mesh();
     this->write_scalars(poly_data, filename);
-
   }
   else {
 
@@ -1521,7 +1515,6 @@ void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered()
 
       auto poly_data = meshes[domain];
       if (!this->write_scalars(poly_data, base)) {
-        this->handle_error("Error writing particle file: " + name);
         return;
       }
 

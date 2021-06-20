@@ -589,6 +589,7 @@ bool Session::load_point_files(std::vector<std::string> local, std::vector<std::
     if (this->shapes_.size() <= i) {
       auto shape = QSharedPointer<Shape>(new Shape);
       std::shared_ptr<Subject> subject = std::make_shared<Subject>();
+      subject->set_number_of_domains(domains_per_shape);
       shape->set_mesh_manager(this->mesh_manager_);
       shape->set_subject(subject);
       this->project_->get_subjects().push_back(subject);
