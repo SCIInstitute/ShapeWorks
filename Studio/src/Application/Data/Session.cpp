@@ -57,7 +57,7 @@ void Session::handle_new_mesh()
 }
 
 //---------------------------------------------------------------------------
-void Session::handle_message(std::string s)
+void Session::handle_message(QString s)
 {
   emit message(s);
 }
@@ -379,14 +379,9 @@ bool Session::load_light_project(QString filename)
     }
   }
 
-  //this->calculate_reconstructed_samples();
-
   this->parameters().set("view_state", Visualizer::MODE_RECONSTRUCTION_C);
   this->parameters().set("tool_state", Session::ANALYSIS_C);
 
-  //this->preferences_.set_preference("display_state",
-//                                    QString::fromStdString(Visualizer::MODE_RECONSTRUCTION_C));
-//  this->preferences_.set_preference("tool_state", QString::fromStdString(Session::ANALYSIS_C));
   this->renumber_shapes();
 
   this->project_->store_subjects();
@@ -594,6 +589,7 @@ bool Session::load_point_files(std::vector<std::string> local, std::vector<std::
     if (this->shapes_.size() <= i) {
       auto shape = QSharedPointer<Shape>(new Shape);
       std::shared_ptr<Subject> subject = std::make_shared<Subject>();
+      subject->set_number_of_domains(domains_per_shape);
       shape->set_mesh_manager(this->mesh_manager_);
       shape->set_subject(subject);
       this->project_->get_subjects().push_back(subject);

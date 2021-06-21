@@ -35,11 +35,11 @@ public Q_SLOTS:
 
 Q_SIGNALS:
   void result_ready();
-  void error_message(std::string);
-  void warning_message(std::string);
+  void error_message(QString);
+  void warning_message(QString);
+  void message(QString);
   void step_made(int val);
   void finished();
-  void message(std::string);
 
 private:
   QSharedPointer<QGroom> groom_;

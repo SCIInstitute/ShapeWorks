@@ -188,9 +188,9 @@ void AnalysisTool::on_reconstructionButton_clicked()
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_reconstruction_complete()));
 
-  connect(worker, &ShapeworksWorker::error_message, this, &AnalysisTool::handle_error);
-  connect(worker, &ShapeworksWorker::warning_message, this, &AnalysisTool::handle_warning);
-  connect(worker, &ShapeworksWorker::message, this, &AnalysisTool::handle_message);
+  connect(worker, &ShapeworksWorker::error_message, this, &AnalysisTool::error);
+  connect(worker, &ShapeworksWorker::warning_message, this, &AnalysisTool::warning);
+  connect(worker, &ShapeworksWorker::message, this, &AnalysisTool::message);
 
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   thread->start();
@@ -433,7 +433,7 @@ bool AnalysisTool::compute_stats()
   int point_size = points[0].size();
   for (auto&& p : points) {
     if (p.size() != point_size) {
-      this->handle_error(
+      emit error(
         "Inconsistency in data, particle files must contain the same number of points");
       return false;
     }
@@ -864,26 +864,6 @@ ShapeHandle AnalysisTool::create_shape_from_points(StudioParticles points)
   return shape;
 }
 
-//---------------------------------------------------------------------------
-void AnalysisTool::handle_error(std::string message_string)
-{
-  STUDIO_LOG_ERROR(QString::fromStdString(message_string));
-  emit error(message_string);
-}
-
-//---------------------------------------------------------------------------
-void AnalysisTool::handle_warning(std::string message_string)
-{
-  STUDIO_LOG_ERROR(QString::fromStdString(message_string));
-  emit error(message_string);
-}
-
-//---------------------------------------------------------------------------
-void AnalysisTool::handle_message(std::string message_string)
-{
-  STUDIO_LOG_MESSAGE(QString::fromStdString(message_string));
-  emit message(message_string);
-}
 
 //---------------------------------------------------------------------------
 void AnalysisTool::set_feature_map(const std::string& feature_map)
