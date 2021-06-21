@@ -99,7 +99,7 @@ void MeshManager::check_error_status(MeshHandle mesh)
     this->error_emitted_ = true;
     std::string message = "Error during mesh construction:\n\n" + mesh->get_error_message()
                           + "\n\nFurther messages will be suppressed\n";
-    emit error_encountered(message);
+    emit error_encountered(QString::fromStdString(message));
   }
 }
 

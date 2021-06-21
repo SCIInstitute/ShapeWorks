@@ -321,7 +321,7 @@ void Project::store_subjects()
       groomed_present = true;
       int count = 0;
       while (groomed_files.size() > groomed_columns.size()) {
-        groomed_columns.push_back(this->get_new_file_column(GROOMED_PREFIX, count));
+        groomed_columns.push_back(this->get_new_file_column(GROOMED_PREFIX, count++));
       }
       this->set_list(groomed_columns, i, groomed_files);
 
@@ -355,6 +355,7 @@ void Project::store_subjects()
           this->get_new_file_column(std::string(LOCAL_PARTICLES) + "_", count));
         world_columns.push_back(
           this->get_new_file_column(std::string(WORLD_PARTICLES) + "_", count));
+        count++;
       }
 
       this->set_list(local_columns, i, local_files);
@@ -765,11 +766,13 @@ int Project::get_or_create_worksheet(std::string name)
 //---------------------------------------------------------------------------
 std::string Project::get_new_file_column(std::string name, int idx)
 {
+  return name + std::to_string(idx+1);
+
   if (idx == 0) {
-    return name + "_file";
+    return name + "file";
   }
   else {
-    return name + "_file_" + std::to_string(idx);
+    return name + "file_" + std::to_string(idx);
   }
 }
 

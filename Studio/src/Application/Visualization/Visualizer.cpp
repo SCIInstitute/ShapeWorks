@@ -103,7 +103,12 @@ void Visualizer::display_shape(ShapeHandle shape)
 //-----------------------------------------------------------------------------
 StudioParticles Visualizer::get_current_shape()
 {
-  return this->current_shape_;
+  auto shapes = this->lightbox_->get_shapes();
+  if (shapes.size() > 0) {
+    return shapes[0]->get_particles();
+  }
+  StudioParticles particles;
+  return particles;
 }
 
 //-----------------------------------------------------------------------------
@@ -118,29 +123,42 @@ void Visualizer::handle_new_mesh()
 //-----------------------------------------------------------------------------
 vtkSmartPointer<vtkPolyData> Visualizer::get_current_mesh()
 {
+  auto meshes = this->get_current_meshes_transformed();
+  if (meshes.empty()) {
+    return nullptr;
+  }
+  vtkSmartPointer<vtkAppendPolyData> append = vtkSmartPointer<vtkAppendPolyData>::New();
+  for (int domain = 0; domain < meshes.size(); domain++) {
+    append->AddInputData(meshes[domain]);
+  }
+  append->Update();
+  vtkSmartPointer<vtkPolyData> combined = append->GetOutput();
+  return combined;
+}
+
+//-----------------------------------------------------------------------------
+std::vector<vtkSmartPointer<vtkPolyData>> Visualizer::get_current_meshes_transformed()
+{
+  std::vector<vtkSmartPointer<vtkPolyData>> list;
   auto shapes = this->lightbox_->get_shapes();
   if (shapes.size() > 0) {
-    auto meshes = shapes[0]->get_meshes(this->display_mode_).meshes();
-    if (meshes.size() == 1) {
-      return meshes[0]->get_poly_data();
-    }
-    else {
-      vtkSmartPointer<vtkAppendPolyData> append = vtkSmartPointer<vtkAppendPolyData>::New();
+    if (shapes[0]->get_meshes(this->display_mode_).valid()) {
+      auto meshes = shapes[0]->get_meshes(this->display_mode_).meshes();
+
       for (int domain = 0; domain < meshes.size(); domain++) {
+        if (!meshes[domain]->get_poly_data()) {
+          return list;
+        }
         // we have to transform each domain to its location in order to export an appended mesh
         auto filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
         filter->SetTransform(this->get_transform(shapes[0], domain));
         filter->SetInputData(meshes[domain]->get_poly_data());
         filter->Update();
-
-        append->AddInputData(filter->GetOutput());
+        list.push_back(filter->GetOutput());
       }
-      append->Update();
-      vtkSmartPointer<vtkPolyData> combined = append->GetOutput();
-      return combined;
     }
   }
-  return nullptr;
+  return list;
 }
 
 //-----------------------------------------------------------------------------

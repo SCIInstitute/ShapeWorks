@@ -15,6 +15,9 @@
 
 #include <vnl_vector.h>
 
+#include <vtkPolyData.h>
+#include <vtkSmartPointer.h>
+
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
 
@@ -99,15 +102,15 @@ public Q_SLOTS:
 
   void handle_color_scheme();
   void handle_pca_update();
-  void handle_message(std::string str);
-  void handle_status(std::string str);
-  void handle_error(std::string str);
-  void handle_warning(std::string str);
+  void handle_message(QString str);
+  void handle_status(QString str);
+  void handle_error(QString str);
+  void handle_warning(QString str);
   void handle_progress(int amt);
   void handle_new_mesh();
   void handle_clear_cache();
 
-  void update_feature_map_selection(const QString &feature_map);
+  void update_feature_map_selection(const QString& feature_map);
   void show_splash_screen();
   void about();
   void keyboard_shortcuts();
@@ -176,6 +179,9 @@ private:
 
   void save_project(std::string filename);
 
+  bool write_mesh(vtkSmartPointer<vtkPolyData> poly_data, QString filename);
+  bool write_scalars(vtkSmartPointer<vtkPolyData> poly_data, QString filename);
+
   /// designer form
   Ui_ShapeWorksStudioApp* ui_;
 
@@ -204,7 +210,7 @@ private:
   QList<QAction*> recent_file_actions_;
 
   QProgressBar* progress_bar_;
-  std::string current_message_;
+  QString current_message_;
 
   std::string current_display_mode_;
 
@@ -215,7 +221,6 @@ private:
 
   QElapsedTimer time_since_last_update_;
   qint64 last_render_ = -1;
-
 
 };
 }

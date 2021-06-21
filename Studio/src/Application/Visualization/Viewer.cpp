@@ -392,11 +392,13 @@ void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitud
     point_locator->BuildLocator();
 
     vtkFloatArray* surface_magnitudes = vtkFloatArray::New();
+    surface_magnitudes->SetName("surface_difference");
     surface_magnitudes->SetNumberOfComponents(1);
     surface_magnitudes->SetNumberOfTuples(poly_data->GetPoints()->GetNumberOfPoints());
 
     vtkFloatArray* surface_vectors = vtkFloatArray::New();
     surface_vectors->SetNumberOfComponents(3);
+    surface_vectors->SetName("surface_vectors");
     surface_vectors->SetNumberOfTuples(poly_data->GetPoints()->GetNumberOfPoints());
 
     for (unsigned int i = 0; i < surface_magnitudes->GetNumberOfTuples(); i++) {

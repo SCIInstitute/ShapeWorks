@@ -46,53 +46,53 @@ void ShapeworksWorker::process()
         this->groom_->run();
       } catch (itk::ExceptionObject& ex) {
         std::cerr << "ITK Exception: " << ex << std::endl;
-        emit error_message(std::string("ITK Exception: ") + ex.GetDescription());
+        emit error_message(QString("ITK Exception: ") + ex.GetDescription());
         return;
       } catch (std::runtime_error& e) {
-        emit error_message(std::string("Error: ") + e.what());
+        emit error_message(QString("Error: ") + e.what());
         return;
       } catch (std::exception& e) {
-        emit error_message(std::string("Error: ") + e.what());
+        emit error_message(QString("Error: ") + e.what());
         return;
       } catch (...) {
-        emit error_message(std::string("Error during grooming!"));
+        emit error_message(QString("Error during grooming!"));
         return;
       }
       if (this->groom_->get_aborted()) {
-        emit error_message(std::string("Groom Aborted!"));
+        emit error_message(QString("Groom Aborted!"));
         return;
       }
       break;
     case ShapeworksWorker::OptimizeType:
       try {
-        emit message(std::string("Loading data..."));
+        emit message("Loading data...");
         this->optimize_parameters_->set_up_optimize(this->optimize_.data());
-        emit message(std::string("Optimizing correspondence..."));
+        emit message("Optimizing correspondence...");
         this->optimize_->Run();
       } catch (std::runtime_error e) {
         std::cerr << "Exception: " << e.what() << "\n";
-        emit error_message(std::string("Error: ") + e.what());
+        emit error_message(QString("Error: ") + e.what());
         return;
       } catch (itk::ExceptionObject& ex) {
         std::cerr << "ITK Exception: " << ex << std::endl;
-        emit error_message(std::string("ITK Exception: ") + ex.GetDescription());
+        emit error_message(QString("ITK Exception: ") + ex.GetDescription());
         return;
       } catch (std::exception& e) {
-        emit error_message(std::string("Error: ") + e.what());
+        emit error_message(QString("Error: ") + e.what());
         return;
       } catch (...) {
-        emit error_message(std::string("Error during optimization!"));
+        emit error_message("Error during optimization!");
         return;
       }
       if (this->optimize_->GetAborted()) {
-        emit message(std::string("Optimization Aborted!"));
+        emit message("Optimization Aborted!");
         return;
       }
 
       break;
     case ShapeworksWorker::ReconstructType:
       try {
-        emit message(std::string("Warping to mean space..."));
+        emit message("Warping to mean space...");
         for (int i = 0; i < this->session_->get_domains_per_shape(); i++) {
 
           auto shapes = this->session_->get_shapes();
@@ -115,7 +115,7 @@ void ShapeworksWorker::process()
           emit warning_message(e.what());
         }
         else {
-          emit error_message(std::string("Error: ") + e.what());
+          emit error_message(QString("Error: ") + e.what());
           return;
         }
       } catch (std::exception& e) {
@@ -123,11 +123,11 @@ void ShapeworksWorker::process()
           emit warning_message(e.what());
         }
         else {
-          emit error_message(std::string("Error: ") + e.what());
+          emit error_message(QString("Error: ") + e.what());
           return;
         }
       } catch (...) {
-        emit error_message(std::string("Error during optimization!"));
+        emit error_message(QString("Error during optimization!"));
         return;
       }
       break;

@@ -50,8 +50,8 @@ public:
 Q_SIGNALS:
   void groom_start();
   void groom_complete();
-  void error_message(std::string);
-  void message(std::string);
+  void error_message(QString);
+  void message(QString);
   void progress(int);
 
 public Q_SLOTS:
@@ -74,7 +74,7 @@ public Q_SLOTS:
 
   void handle_thread_complete();
   void handle_progress(int val);
-  void handle_error(std::string msg);
+  void handle_error(QString msg);
 
 private:
 

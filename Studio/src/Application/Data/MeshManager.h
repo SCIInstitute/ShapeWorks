@@ -64,10 +64,10 @@ Q_SIGNALS:
 
   void new_mesh();
 
-  void error_encountered(std::string message);
+  void error_encountered(QString message);
 
   void progress(int);
-  void status(std::string);
+  void status(QString);
 
 private:
 
