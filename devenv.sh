@@ -14,13 +14,13 @@
 (return 0 2>/dev/null) && sourced=1 || sourced=0
 
 if [[ "$sourced" == "0" ]]; then
-    echo "ERROR: must call this script using \"source ./devenv.sh <source_dir> <build_dir>\""
+    echo "ERROR: must call this script using \"source ./devenv.sh SOURCE_DIR BUILD_DIR\""
     exit 1
 fi
 
 if [[ "$#" -ne 2 ]]; then
-    echo "ERROR: must pass both SOURCE_DIR and BUILD_DIR"
-    exit 1
+    echo "ERROR: must call this script using \"source ./devenv.sh SOURCE_DIR BUILD_DIR\""
+    return 1
 fi    
 
 SOURCE=$1
@@ -28,6 +28,9 @@ BUILD=$2
 
 export PATH=${BUILD}/bin:$PATH
 export PYTHONPATH=${BUILD}/bin:$PYTHONPATH
+if [[ "$(uname)" == "Linux" ]]; then
+    export LD_LIBRARY_PATH=${BUILD}/bin:${BUILD}/lib:${LD_LIBRARY_PATH}
+fi
 
 # add each module in ${SOURCE}/Python to the PYTHONPATH
 for M in ${SOURCE}/Python/*/; do
