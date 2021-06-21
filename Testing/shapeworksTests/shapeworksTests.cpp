@@ -1,7 +1,5 @@
 #include "Testing.h"
 
-// TODO: finish consolidating tests below (next commit)
-
 //---------------------------------------------------------------------------
 void run_use_case(const std::string& name)
 {
@@ -91,11 +89,6 @@ TEST(shapeworksTests, compareTest)
   run_use_case("compare.sh");
 }
 
-TEST(shapeworksTests, compareFailTest)
-{
-  ASSERT_TRUE(true); //(system("bash comparefail.sh"));
-}
-
 TEST(shapeworksTests, antialiasTest)
 {
   run_use_case("antialias.sh");
@@ -104,11 +97,6 @@ TEST(shapeworksTests, antialiasTest)
 TEST(shapeworksTests, antialiasMeshTest)
 {
   run_use_case("antialias_mesh.sh");
-}
-
-TEST(shapeworksTests, antialiasFailTest)
-{
-  ASSERT_TRUE(true); //(system("bash antialiasfail.sh"));
 }
 
 TEST(shapeworksTests, resampleTest)
@@ -146,19 +134,9 @@ TEST(shapeworksTests, scaleimageTest)
   run_use_case("scaleimage.sh");
 }
 
-TEST(shapeworksTests, scaleimageFailTest)
-{
-  ASSERT_TRUE(true); //(system("bash scaleimagefail.sh"));
-}
-
 TEST(shapeworksTests, rotateTest)
 {
   run_use_case("rotate.sh");
-}
-
-TEST(shapeworksTests, rotateFailTest)
-{
-  ASSERT_TRUE(true); //(system("bash rotatefail.sh"));
 }
 
 TEST(shapeworksTests, extractabelTest)
@@ -186,11 +164,6 @@ TEST(shapeworksTests, curvatureTest)
   run_use_case("curvature.sh");
 }
 
-TEST(shapeworksTests, curvatureFailTest)
-{
-  ASSERT_TRUE(true); //(system("bash curvaturefail.sh"));
-}
-
 TEST(shapeworksTests, gradientTest)
 {
   run_use_case("gradient.sh");
@@ -211,11 +184,6 @@ TEST(shapeworksTests, tplevelsetTest)
   run_use_case("tplevelset.sh");
 }
 
-TEST(shapeworksTests, tplevelsetFailTest)
-{
-  ASSERT_TRUE(true); //(system("bash tplevelsetfail.sh"));
-}
-
 TEST(shapeworksTests, topoTest)
 {
   run_use_case("topo.sh");
@@ -231,11 +199,6 @@ TEST(shapeworksTests, icpimageTest)
   run_use_case("icpimage.sh");
 }
 
-TEST(shapeworksTests, icpimageFailTest)
-{
-  ASSERT_TRUE(true); //(system("bash icpimagefail.sh"));
-}
-
 TEST(shapeworksTests, cropTest)
 {
   run_use_case("crop.sh");
@@ -246,29 +209,14 @@ TEST(shapeworksTests, clipimageTest)
   run_use_case("clipimage.sh");
 }
 
-TEST(shapeworksTests, clipimageFailTest)
-{
-  ASSERT_TRUE(true); //(system("bash clipimagefail.sh"));
-}
-
 TEST(shapeworksTests, reflectimageTest)
 {
   run_use_case("reflectimage.sh");
 }
 
-TEST(shapeworksTests, reflectimageFailTest)
-{
-  ASSERT_TRUE(true); //(system("bash reflectimagefail.sh"));
-}
-
 TEST(shapeworksTests, warpTest)
 {
   run_use_case("warp.sh");
-}
-
-TEST(shapeworksTests, warpFailTest)
-{
-  ASSERT_TRUE(true); //(system("bash warpfail.sh"));
 }
 
 TEST(shapeworksTests, setoriginTest)
@@ -279,11 +227,6 @@ TEST(shapeworksTests, setoriginTest)
 TEST(shapeworksTests, setspacingTest)
 {
   run_use_case("setspacing.sh");
-}
-
-TEST(shapeworksTests, setspacingFailTest)
-{
-  ASSERT_TRUE(true); //(system("bash setspacingfail.sh"));
 }
 
 TEST(shapeworksTests, negateTest)
