@@ -1400,6 +1400,7 @@ bool ShapeWorksStudioApp::write_scalars(vtkSmartPointer<vtkPolyData> poly_data, 
   output << "point,x,y,z";
 
   int num_arrays = poly_data->GetPointData()->GetNumberOfArrays();
+  std::cerr << "number of arrays = " << num_arrays << "\n";
 
   for (int i = 0; i < num_arrays; i++) {
     if (!poly_data->GetPointData()->GetArrayName(i)) {
@@ -1407,7 +1408,6 @@ bool ShapeWorksStudioApp::write_scalars(vtkSmartPointer<vtkPolyData> poly_data, 
     }
     else {
       output << "," << poly_data->GetPointData()->GetArrayName(i);
-      std::cout << "array: " << poly_data->GetPointData()->GetArrayName(i) << "\n";
     }
   }
 
@@ -1514,7 +1514,7 @@ void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered()
         base + "_" + QString::fromStdString(domain_names[domain]) + "." + fi.completeSuffix();
 
       auto poly_data = meshes[domain];
-      if (!this->write_scalars(poly_data, base)) {
+      if (!this->write_scalars(poly_data, name)) {
         return;
       }
 
