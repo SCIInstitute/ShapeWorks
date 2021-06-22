@@ -5,6 +5,7 @@
 #include <vector>
 #include <numeric>
 #include <algorithm>
+#include <cstdlib>
 
 #ifdef _WIN32
 #include <direct.h>
@@ -38,6 +39,24 @@ namespace py = pybind11;
 
 namespace shapeworks {
 
+#ifdef _WIN32
+static std::string find_in_path(std::string file) {
+  std::stringstream path(getenv("PATH"));
+  while (! path.eof()) {
+    std::string test;
+    struct stat info;
+    getline(path, test, ';');
+    std::string base = test;
+    test.append("/");
+    test.append(file);
+    if (stat(test.c_str(), &info) == 0) {
+      return base;
+    }
+  }
+  return "";
+}
+#endif
+
 //---------------------------------------------------------------------------
 Optimize::Optimize()
 {
@@ -48,6 +67,16 @@ Optimize::Optimize()
 bool Optimize::Run()
 {
   if (this->m_python_filename != "") {
+    
+#ifdef _WIN32
+    // need to set PYTHONHOME to the same directory as python.exe on Windows
+    std::string found_path = find_in_path("python.exe");
+    if (found_path != "") {
+      std::cerr << "python.exe found in: " << found_path << "\n";
+      _putenv_s("PYTHONHOME", found_path.c_str());
+    }
+#endif
+  
     py::initialize_interpreter();
 
     auto dir = this->m_python_filename;
