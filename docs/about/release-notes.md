@@ -1,6 +1,6 @@
 # Release Notes
 
-## ShapeWorks 6.1 - 2021-06-17
+## ShapeWorks 6.1 - 2021-06-25
 
 ![](../img/about/release6.1.png)
 
@@ -68,8 +68,8 @@
 * **Restructured use cases:** Depreciated `GroomUtils`, `CommonUtils`, and `EvaluationUtils`. All use cases are restructured to make the grooming steps more transparent and demonstrate the usage of Python APIs with inline documentation. 
 * **Improved documentation:** More clear documentation both from Python, the command line, and online are added.
 * **Improved notebooks:** Notebooks are significantly simplified by moving helper functions into the ShapeWorks Python module, reducing redundant information, and using only the PyVista library for visualization. 
-
-
+* **Improved installation:** Users no longer are required to modify PATHs or pass parameters to find executables or import the ShapeWorks Python module. Installation works even if non-standard installation directories are used and it works on all platforms.
+* **New shapeworks environments can now be created using `install_shapeworks [name]`:** This supports multiple installations on the same platform, where users can change installation just by activating a different conda environment.
 
 ### Fixes
 
