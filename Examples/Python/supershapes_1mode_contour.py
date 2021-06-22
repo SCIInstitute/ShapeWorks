@@ -5,11 +5,10 @@ Example demonstrating Contour Domain in ShapeWorks
 ==================================================
 """
 import os
-import numpy as np
-from GroomUtils import *
-from OptimizeUtils import *
-from AnalyzeUtils import *
-import CommonUtils
+import glob
+import shapeworks as sw
+import OptimizeUtils
+import AnalyzeUtils
 from ShapeCohortGen.CohortGenerator import Supershapes2DCohortGenerator
 
 def Run_Pipeline(args):
@@ -18,21 +17,18 @@ def Run_Pipeline(args):
     process
     """
     print("\nStep 1. Extract Data\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
-
-    datasetName = "supershapes2D_1mode-v0"
-    outputDirectory = "Output/supershapes_1mode_contour/"
+    dataset_name = "supershapes2D_1mode-v0"
+    output_directory = "Output/supershapes_1mode_contour/"
 
     # See the generate_supershapes() function in this file for how the data is generated
-    CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
-    contourFiles = sorted(glob.glob(outputDirectory + datasetName + "/contours/*.vtp"))
+    sw.data.download_and_unzip_dataset(dataset_name, output_directory)
+    contour_files = sorted(glob.glob(output_directory + dataset_name + "/contours/*.vtp"))
 
-    pointDir = outputDirectory + 'shape_models/'
-    if not os.path.exists(pointDir):
-        os.makedirs(pointDir)
+    point_dir = output_directory + 'shape_models/'
+    if not os.path.exists(point_dir):
+        os.makedirs(point_dir)
 
-    parameterDictionary = {
+    parameter_dictionary = {
         "number_of_particles" : 64,
         "use_normals": 0,
         "normal_weight": 0.0,
@@ -57,17 +53,16 @@ def Run_Pipeline(args):
     """
     Now we execute a single scale particle optimization function.
     """
-    [localPointFiles, worldPointFiles] = runShapeWorksOptimize(pointDir, contourFiles, parameterDictionary)
+    [local_point_files, world_point_files] = OptimizeUtils.runShapeWorksOptimize(point_dir, contour_files, parameter_dictionary)
 
     if args.tiny_test:
         print("Done with tiny test")
         exit()
 
     print("\nStep 5. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
-    if args.interactive != 0:
-        input("Press Enter to continue")
 
-    launchShapeWorksStudio(pointDir, [], localPointFiles, worldPointFiles)
+
+    AnalyzeUtils.launchShapeWorksStudio(point_dir, [], local_point_files, world_point_files)
 
 def generate_supershapes(out_dir):
     m = 6

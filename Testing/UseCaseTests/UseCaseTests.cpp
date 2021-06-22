@@ -8,10 +8,6 @@
   #include <unistd.h>
 #endif
 
-// locations
-std::string python_examples_location = std::string(TEST_DATA_DIR) + std::string(
-  "/../../Examples/Python");
-
 //---------------------------------------------------------------------------
 static bool file_exists(const std::string& filename)
 {
@@ -23,37 +19,27 @@ static bool file_exists(const std::string& filename)
 void run_use_case(const std::string& name, const std::string& check_file)
 {
   // check that one of the resulting files exists
-  std::string file = python_examples_location + "/" + check_file;
+  std::string file = std::string(PYTHON_EXAMPLES_DIR) + "/" + check_file;
 
   // change to the python examples directory
-  chdir(python_examples_location.c_str());
+  chdir(std::string(PYTHON_EXAMPLES_DIR).c_str());
 
   // delete the file to make sure it's remade
   std::remove(file.c_str());
 
   // run python
-  std::string command = "python RunUseCase.py --use_case " + name + " --tiny_test";
+  std::string command = "python RunUseCase.py " + name + " --tiny_test";
   std::cerr << "Running command: " << command << "\n";
   ASSERT_FALSE(system(command.c_str()));
 
   ASSERT_TRUE(file_exists(file));
 }
 
-
-//---------------------------------------------------------------------------
-// only need to run pythonEnvSetup once or it continuously appends to paths
-// FIXME: This is a problem if you only need to execute a single test (same problem in ShapeworksTests)
-TEST(UseCaseTests, setup)
-{
-  pythonEnvSetup();
-  ASSERT_TRUE(true);
-}
-
 //---------------------------------------------------------------------------
 TEST(UseCaseTests, ellipsoid)
 {
   run_use_case("ellipsoid",
-               "Output/ellipsoid/shape_models/32/ellipsoid_00.isores.center.com.aligned.cropped.tpSmoothDT_local.particles");
+               "Output/ellipsoid/shape_models/32/ellipsoid_00_local.particles");
 }
 
 //---------------------------------------------------------------------------
@@ -67,14 +53,14 @@ TEST(UseCaseTests, ellipsoid_mesh)
 TEST(UseCaseTests, ellipsoid_fd)
 {
   run_use_case("ellipsoid_fd",
-               "Output/ellipsoid_fd/shape_models/128/ellipsoid_19.isores.center.com.aligned.cropped.tpSmoothDT_local.particles");
+               "Output/ellipsoid_fd/shape_models/128/ellipsoid_00.isores.center.com.aligned.cropped.tpSmoothDT_local.particles");
 }
 
 //---------------------------------------------------------------------------
 TEST(UseCaseTests, ellipsoid_cut)
 {
   run_use_case("ellipsoid_cut",
-               "Output/ellipsoid_cut/shape_models/16/ellipsoid_00.tpSmoothDT_local.particles");
+               "Output/ellipsoid_cut/shape_models/16/ellipsoid_00_local.particles");
 }
 
 //---------------------------------------------------------------------------
@@ -83,7 +69,6 @@ TEST(UseCaseTests, ellipsoid_evaluate)
   run_use_case("ellipsoid_evaluate",
                "Output/ellipsoid/evaluation/compactness/scree.txt");
 }
-
 
 //---------------------------------------------------------------------------
 TEST(UseCaseTests, lumps)
@@ -96,15 +81,21 @@ TEST(UseCaseTests, lumps)
 TEST(UseCaseTests, left_atrium)
 {
   run_use_case("left_atrium",
-               "Output/left_atrium/shape_models/32/CARMA0046.laendo_no_veins.isores.center.pad.com.aligned.cropped.tpSmoothDT_local.particles");
+               "Output/left_atrium/shape_models/32/CARMA0046.laendo_no_veins_local.particles");
 }
-
 
 //---------------------------------------------------------------------------
 TEST(UseCaseTests, femur)
 {
   run_use_case("femur",
-               "Output/femur/shape_models/32/m03_L_femur.isores.pad.com.center.aligned.clipped.tpSmoothDT_local.particles");
+               "Output/femur/shape_models/32/m03_L_femur_local.particles");
+}
+
+//---------------------------------------------------------------------------
+TEST(UseCaseTests, femur_groom_images)
+{
+  run_use_case("femur --groom_images",
+               "Output/femur/shape_models/32/m03_L_femur_local.particles");
 }
 
 //---------------------------------------------------------------------------
@@ -118,7 +109,7 @@ TEST(UseCaseTests, femur_mesh)
 TEST(UseCaseTests, femur_cut)
 {
   run_use_case("femur_cut",
-               "Output/femur_cut/shape_models/32/m03_L_femur.isores.pad.com.center.aligned.tpSmoothDT_local.particles");
+               "Output/femur_cut/shape_models/32/m03_L_femur_local.particles");
 }
 
 //---------------------------------------------------------------------------
@@ -141,6 +132,18 @@ TEST(UseCaseTests, thin_cavity_bean)
                "Output/thin_cavity_bean/shape_models/32/thin_cavity_bean_00_local.particles");
 }
 
+//---------------------------------------------------------------------------
+TEST(UseCaseTests, ellipsoid_multiple_domain)
+{
+  run_use_case("ellipsoid_multiple_domain",
+               "Output/ellipsoid_multiple_domain/shape_models/32_32/ellipsoid_joint_00_d1_local.particles");
+}
+//---------------------------------------------------------------------------
+TEST(UseCaseTests, ellipsoid_multiple_domain_mesh)
+{
+  run_use_case("ellipsoid_multiple_domain_mesh",
+               "Output/ellipsoid_multiple_domain_mesh/shape_models/32_32/ellipsoid_joint_00_d1_local.particles");
+}
 //---------------------------------------------------------------------------
 TEST(UseCaseTests, ellipsoid_pca)
 {

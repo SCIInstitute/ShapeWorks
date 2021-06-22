@@ -1,7 +1,6 @@
-import subprocess
+import shapeworks as sw
 import numpy as np
-
-# from image2ssm.ssmaug.utils import estimate_homogeneous_similar_transform,get_homogeneous_coordinates
+import os
 
 '''
 Reads data from files in given list and turns into one np matrix
@@ -45,14 +44,12 @@ def make_CSV(filename, orig_imgs, orig_points, orig_embeddings, gen_imgs, gen_po
 Use warp between particles to warp original image into a new image
 '''
 def generate_image(out_dir, gen_particles, base_image, base_particles):
-	image_name = gen_particles.split('/')[-1].replace(".particles",".nrrd")
-	gen_image = out_dir + "Generated-Images/" + image_name
-	cmd = ["shapeworks", 
-		"read-image", "--name", base_image,
-		"warp-image", "--source", base_particles, "--target", gen_particles, "--stride", "2",
-		"write-image", "--name", gen_image]
-	subprocess.check_call(cmd)
-	return gen_image
+  image_name = os.path.basename(gen_particles).replace(".particles",".nrrd")
+  gen_image = out_dir + "Generated-Images/" + image_name
+  img = sw.Image(base_image)
+  transform = sw.ImageUtils.createWarpTransform(base_particles, gen_particles, 2)
+  img.applyTransform(transform).write(gen_image)
+  return gen_image
 
 def get_homogeneous_coordinates(x):
 	'''

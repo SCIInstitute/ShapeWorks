@@ -124,10 +124,6 @@ public Q_SLOTS:
   //! Set the currently selected feature map
   void set_feature_map(const std::string& feature_map);
 
-  void handle_error(std::string message);
-  void handle_warning(std::string message);
-  void handle_message(std::string message);
-
   void group_changed();
 
   bool groups_active();
@@ -150,8 +146,9 @@ signals:
   void update_view();
   void pca_update();
   void progress(int);
-  void message(std::string);
-  void error(std::string);
+  void message(QString);
+  void error(QString);
+  void warning(QString);
   void reconstruction_complete();
 
 private:

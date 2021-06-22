@@ -146,20 +146,13 @@ MeshGroup Shape::get_reconstructed_meshes(bool wait)
 //---------------------------------------------------------------------------
 void Shape::reset_groomed_mesh()
 {
-  this->groomed_mesh_.reset();
   this->groomed_meshes_ = MeshGroup(this->subject_->get_number_of_domains());
-}
-
-//---------------------------------------------------------------------------
-void Shape::set_reconstructed_mesh(MeshHandle mesh)
-{
-  this->reconstructed_mesh_ = mesh;
 }
 
 //---------------------------------------------------------------------------
 void Shape::clear_reconstructed_mesh()
 {
-  this->reconstructed_mesh_ = nullptr;
+  this->reconstructed_meshes_ = MeshGroup(this->subject_->get_number_of_domains());
 }
 
 //---------------------------------------------------------------------------
@@ -285,32 +278,6 @@ QString Shape::get_groomed_filename_with_path(int domain)
   }
   return QString::fromStdString(this->subject_->get_groomed_filenames()[domain]);
 }
-
-/*
-//---------------------------------------------------------------------------
-QString Shape::get_global_point_filename()
-{
-  return QFileInfo(this->global_point_filename_).fileName();
-}
-
-//---------------------------------------------------------------------------
-QString Shape::get_global_point_filename_with_path()
-{
-  return this->global_point_filename_;
-}
-
-//---------------------------------------------------------------------------
-QString Shape::get_local_point_filename()
-{
-  return QFileInfo(this->local_point_filename_).fileName();
-}
-
-//---------------------------------------------------------------------------
-QString Shape::get_local_point_filename_with_path()
-{
-  return this->local_point_filename_;
-}
-*/
 
 //---------------------------------------------------------------------------
 QList<Shape::Point> Shape::get_exclusion_sphere_centers()
@@ -479,8 +446,6 @@ void Shape::load_feature(std::string display_mode, std::string feature)
 
         // assign scalars at points
         this->load_feature_from_mesh(feature, original_meshes[d]);
-        group.meshes()[d]->apply_scalars(original_meshes[d]);
-
       }
       else {
         // read the feature
@@ -497,9 +462,7 @@ void Shape::load_feature(std::string display_mode, std::string feature)
           QMessageBox::warning(0, "Unable to open file",
                                "Error opening file: \"" + filename + "\"");
         }
-
       }
-
     }
   }
 }
@@ -545,8 +508,8 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
 
     values[i] = pixel;
   }
-  this->point_features_[feature] = values;
 
+  this->set_point_features(feature, values);
 }
 
 //---------------------------------------------------------------------------
@@ -580,8 +543,8 @@ void Shape::load_feature_from_mesh(std::string feature, MeshHandle mesh)
 
     values[i] = var.ToDouble();
   }
-  this->point_features_[feature] = values;
 
+  this->set_point_features(feature, values);
 }
 
 //---------------------------------------------------------------------------

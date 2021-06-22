@@ -57,7 +57,7 @@ void Session::handle_new_mesh()
 }
 
 //---------------------------------------------------------------------------
-void Session::handle_message(std::string s)
+void Session::handle_message(QString s)
 {
   emit message(s);
 }
@@ -151,9 +151,8 @@ bool Session::save_project(std::string fname)
     //this->session_->set_original_files(original_list);
   }
 
-
   // correspondence points
-  if (this->unsaved_particle_files_) {
+  if (this->unsaved_particle_files_ && this->particles_present()) {
     for (int i = 0; i < this->shapes_.size(); i++) {
       auto local_files = this->shapes_[i]->get_subject()->get_local_particle_filenames();
       auto world_files = this->shapes_[i]->get_subject()->get_world_particle_filenames();
@@ -380,14 +379,9 @@ bool Session::load_light_project(QString filename)
     }
   }
 
-  //this->calculate_reconstructed_samples();
-
   this->parameters().set("view_state", Visualizer::MODE_RECONSTRUCTION_C);
   this->parameters().set("tool_state", Session::ANALYSIS_C);
 
-  //this->preferences_.set_preference("display_state",
-//                                    QString::fromStdString(Visualizer::MODE_RECONSTRUCTION_C));
-//  this->preferences_.set_preference("tool_state", QString::fromStdString(Session::ANALYSIS_C));
   this->renumber_shapes();
 
   this->project_->store_subjects();
@@ -595,6 +589,7 @@ bool Session::load_point_files(std::vector<std::string> local, std::vector<std::
     if (this->shapes_.size() <= i) {
       auto shape = QSharedPointer<Shape>(new Shape);
       std::shared_ptr<Subject> subject = std::make_shared<Subject>();
+      subject->set_number_of_domains(domains_per_shape);
       shape->set_mesh_manager(this->mesh_manager_);
       shape->set_subject(subject);
       this->project_->get_subjects().push_back(subject);
@@ -644,17 +639,11 @@ bool Session::update_particles(std::vector<StudioParticles> particles)
       this->project_->get_subjects().push_back(subject);
       this->shapes_.push_back(shape);
     }
-
     shape->set_particles(particles[i]);
   }
 
-  // update the project now that we have particles
-  //this->project_->store_subjects();
-
-  //if (particles.size() > 0) {
   this->unsaved_particle_files_ = true;
   emit points_changed();
-  //}
   return true;
 }
 
@@ -753,7 +742,16 @@ bool Session::groomed_present()
 //---------------------------------------------------------------------------
 bool Session::particles_present()
 {
-  return this->project_->get_particles_present();
+  if (!this->project_->get_particles_present()) {
+    return false;
+  }
+
+  if (this->shapes_.size() > 0) {
+    auto shape = this->shapes_[0];
+    return (shape->get_global_correspondence_points().size() > 0);
+  }
+
+  return true;
 }
 
 //---------------------------------------------------------------------------
@@ -877,6 +875,13 @@ Point3 Session::get_point(const vnl_vector<double>& points, int i)
 double Session::get_auto_glyph_size()
 {
   return this->auto_glyph_size_;
+}
+
+//---------------------------------------------------------------------------
+void Session::clear_particles()
+{
+  std::vector<StudioParticles> particles(this->get_num_shapes());
+  this->update_particles(particles);
 }
 
 }

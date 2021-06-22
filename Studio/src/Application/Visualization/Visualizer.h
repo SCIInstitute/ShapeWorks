@@ -73,6 +73,7 @@ public:
 
   void handle_new_mesh();
   vtkSmartPointer<vtkPolyData> get_current_mesh();
+  std::vector<vtkSmartPointer<vtkPolyData>> get_current_meshes_transformed();
 
   //! Get the currently selected feature map
   const std::string& get_feature_map() const;
@@ -97,6 +98,9 @@ public:
 
   //! Update the feature range with a given range
   void update_feature_range(double* range);
+
+  //! Request the transform for a given shape and domain
+  vtkSmartPointer<vtkTransform> get_transform(QSharedPointer<Shape> shape, int domain);
 
 public Q_SLOTS:
 

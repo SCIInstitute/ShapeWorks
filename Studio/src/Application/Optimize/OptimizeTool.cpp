@@ -93,14 +93,14 @@ OptimizeTool::~OptimizeTool()
 {}
 
 //---------------------------------------------------------------------------
-void OptimizeTool::handle_error(std::string msg)
+void OptimizeTool::handle_error(QString msg)
 {
   emit error_message(msg);
   this->update_run_button();
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::handle_warning(std::string msg)
+void OptimizeTool::handle_warning(QString msg)
 {
   emit warning_message(msg);
 }
@@ -109,7 +109,7 @@ void OptimizeTool::handle_warning(std::string msg)
 void OptimizeTool::handle_progress(int val, QString progress_message)
 {
   emit progress(val);
-  emit status(progress_message.toStdString());
+  emit status(progress_message);
 
   auto particles = this->optimize_->GetParticles();
   this->session_->update_particles(particles);
@@ -126,8 +126,7 @@ void OptimizeTool::handle_optimize_complete()
   this->session_->get_project()->store_subjects();
   emit progress(100);
 
-  std::string duration = QString::number(this->elapsed_timer_.elapsed() / 1000.0, 'f',
-                                         1).toStdString();
+  QString duration = QString::number(this->elapsed_timer_.elapsed() / 1000.0, 'f', 1);
   emit message("Optimize Complete.  Duration: " + duration + " seconds");
   emit optimize_complete();
   this->update_run_button();
@@ -156,7 +155,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
   this->elapsed_timer_.start();
   this->optimize_ = QSharedPointer<QOptimize>::create();
 
-  this->clear_particles();
+  this->session_->clear_particles();
 
   this->handle_progress(1, "");
   this->optimize_parameters_ = QSharedPointer<OptimizeParameters>::create(
@@ -178,8 +177,8 @@ void OptimizeTool::on_run_optimize_button_clicked()
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_optimize_complete()));
   connect(this->optimize_.data(), &QOptimize::progress, this, &OptimizeTool::handle_progress);
-  connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
-  connect(worker, SIGNAL(message(std::string)), this, SLOT(handle_message(std::string)));
+  connect(worker, &ShapeworksWorker::error_message, this, &OptimizeTool::handle_error);
+  connect(worker, &ShapeworksWorker::message, this, &OptimizeTool::handle_message);
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
   connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
@@ -189,7 +188,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::handle_message(std::string s)
+void OptimizeTool::handle_message(QString s)
 {
   emit message(s);
 }
@@ -346,14 +345,6 @@ void OptimizeTool::handle_load_progress(int count)
   if (value < 100) { // cannot emit 100 or the main interface will think the job is done
     emit progress(static_cast<int>(value));
   }
-}
-
-//---------------------------------------------------------------------------
-void OptimizeTool::clear_particles()
-{
-  // clear out old points
-  std::vector<StudioParticles> particles(this->session_->get_num_shapes());
-  this->session_->update_particles(particles);
 }
 
 //---------------------------------------------------------------------------

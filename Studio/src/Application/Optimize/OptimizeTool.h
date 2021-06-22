@@ -53,9 +53,9 @@ public Q_SLOTS:
   void on_restoreDefaults_clicked();
   void handle_optimize_complete();
   void handle_progress(int val, QString message);
-  void handle_error(std::string);
-  void handle_warning(std::string);
-  void handle_message(std::string);
+  void handle_error(QString);
+  void handle_warning(QString);
+  void handle_message(QString);
 
   void update_ui_elements();
 
@@ -65,11 +65,11 @@ signals:
   void optimize_start();
   void optimize_complete();
 
-  void error_message(std::string);
-  void warning_message(std::string);
+  void error_message(QString);
+  void warning_message(QString);
   void progress(int);
-  void message(std::string);
-  void status(std::string);
+  void message(QString);
+  void status(QString);
 
 private:
 
@@ -78,8 +78,6 @@ private:
   void update_run_button();
 
   void handle_load_progress(int count);
-
-  void clear_particles();
 
   std::vector<QLineEdit*> particle_boxes_;
 

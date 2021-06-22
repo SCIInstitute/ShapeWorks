@@ -2,6 +2,8 @@
 #include <vtkLookupTable.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderWindow.h>
+#include <vtkAppendPolyData.h>
+#include <vtkTransformPolyDataFilter.h>
 
 #include <Visualization/Visualizer.h>
 #include <Data/Shape.h>
@@ -101,7 +103,12 @@ void Visualizer::display_shape(ShapeHandle shape)
 //-----------------------------------------------------------------------------
 StudioParticles Visualizer::get_current_shape()
 {
-  return this->current_shape_;
+  auto shapes = this->lightbox_->get_shapes();
+  if (shapes.size() > 0) {
+    return shapes[0]->get_particles();
+  }
+  StudioParticles particles;
+  return particles;
 }
 
 //-----------------------------------------------------------------------------
@@ -116,13 +123,42 @@ void Visualizer::handle_new_mesh()
 //-----------------------------------------------------------------------------
 vtkSmartPointer<vtkPolyData> Visualizer::get_current_mesh()
 {
+  auto meshes = this->get_current_meshes_transformed();
+  if (meshes.empty()) {
+    return nullptr;
+  }
+  vtkSmartPointer<vtkAppendPolyData> append = vtkSmartPointer<vtkAppendPolyData>::New();
+  for (int domain = 0; domain < meshes.size(); domain++) {
+    append->AddInputData(meshes[domain]);
+  }
+  append->Update();
+  vtkSmartPointer<vtkPolyData> combined = append->GetOutput();
+  return combined;
+}
 
-  /// TODO: append meshes
+//-----------------------------------------------------------------------------
+std::vector<vtkSmartPointer<vtkPolyData>> Visualizer::get_current_meshes_transformed()
+{
+  std::vector<vtkSmartPointer<vtkPolyData>> list;
   auto shapes = this->lightbox_->get_shapes();
   if (shapes.size() > 0) {
-    return shapes[0]->get_meshes(this->display_mode_).meshes()[0]->get_poly_data();
+    if (shapes[0]->get_meshes(this->display_mode_).valid()) {
+      auto meshes = shapes[0]->get_meshes(this->display_mode_).meshes();
+
+      for (int domain = 0; domain < meshes.size(); domain++) {
+        if (!meshes[domain]->get_poly_data()) {
+          return list;
+        }
+        // we have to transform each domain to its location in order to export an appended mesh
+        auto filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+        filter->SetTransform(this->get_transform(shapes[0], domain));
+        filter->SetInputData(meshes[domain]->get_poly_data());
+        filter->Update();
+        list.push_back(filter->GetOutput());
+      }
+    }
   }
-  return nullptr;
+  return list;
 }
 
 //-----------------------------------------------------------------------------
@@ -390,6 +426,26 @@ void Visualizer::set_uniform_feature_range(bool value)
 bool Visualizer::get_uniform_feature_range(void)
 {
   return feature_range_uniform_;
+}
+
+//-----------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> Visualizer::get_transform(QSharedPointer<Shape> shape, int domain)
+{
+  vtkSmartPointer<vtkTransform> transform;
+
+  if (this->get_display_mode() == Visualizer::MODE_ORIGINAL_C) {
+    if (this->get_center()) {
+      transform = shape->get_transform();
+    }
+  }
+  else if (this->get_display_mode() == Visualizer::MODE_GROOMED_C) {
+    transform = shape->get_alignment();
+  }
+  else {
+    transform = shape->get_reconstruction_transform(domain);
+  }
+
+  return transform;
 }
 
 }
