@@ -73,6 +73,8 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
   ui_->sinc_passband->setValidator(double_validator);
 
   update_ui();
+
+  ui_->center_checkbox->hide();
 }
 
 //---------------------------------------------------------------------------
@@ -82,19 +84,22 @@ GroomTool::~GroomTool()
 //---------------------------------------------------------------------------
 void GroomTool::on_antialias_checkbox_stateChanged(int state)
 {
-  ui_->antialias_groupbox->setEnabled(state);
+  ui_->antialias_iterations_label->setEnabled(state);
+  ui_->antialias_iterations->setEnabled(state);
 }
 
 //---------------------------------------------------------------------------
 void GroomTool::on_blur_checkbox_stateChanged(int state)
 {
-  ui_->blur_groupbox->setEnabled(state);
+  ui_->blur_sigma_label->setEnabled(state);
+  ui_->blur_sigma->setEnabled(state);
 }
 
 //---------------------------------------------------------------------------
 void GroomTool::on_autopad_checkbox_stateChanged(int state)
 {
-  ui_->pad_groupbox->setEnabled(state);
+  ui_->padding_amount->setEnabled(state);
+  ui_->pad_amount_label->setEnabled(state);
 }
 
 //---------------------------------------------------------------------------
