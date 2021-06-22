@@ -1,19 +1,20 @@
 # Adding Environment Variables for Development
 
 !!! danger "This is unnecessary for users!"
-    **Be careful** doing this! You are responsible for messing up your own PATH.  
     Users only need to activate their conda environments (`conda activate shapeworks`).
     In the past, setting PATH was necessary. Now it will only cause problems. 
 
 !!! note "The simplest way for developers"
-    A script called **devenv** is provider to setup developer environments on all platforms.
+    A script called **devenv** is provided to setup developer environments on all platforms.
 
-### Using **devenv** script to configure developer environment
+## Using **devenv** script to configure developer environment
 
-This handy script takes two arguments: the path to your ShapeWorks source directory and the path to your build directory.  
-It then configures the environment of the terminal from which it is sourced such that:
-- PATH and PYTHONPATH point to $BUILD/bin
-- PYTHONPATH points to each module in $SOURCE/Python
+The **devenv** script, short for **dev**eloper **env**ironment, only requires one parameter: the path to the build binaries. It infers the source path from its own location.  
+
+It configures the environment of the terminal from which it is sourced such that:  
+
+- PATH and PYTHONPATH point to $BUILD_BIN directory  
+- PYTHONPATH points to each module in $SOURCE/Python  
 
 This is very useful for development, since after sourcing this, processes in the
 environment will use executables from the given build and import modules from
@@ -23,30 +24,37 @@ It dramatically reduces the probability of using the wrong paths for testing,
 and eliminates the need to **pip install** any of the Python modules during
 development.
 
-As an example of using it, when a build directory is inside source:  
-On Linux or OSX:
+As an example of using it with a make-based build directory inside source on Linux or OSX:
 ```
-(shapeworks) ~/code/ShapeWorks$ source ./devenv.sh `pwd` `pwd`/build_debug
-```
-
-On Windows:
-```
-(shapeworks) ~/code/ShapeWorks> devenv  %cd% %cd%\build
+(shapeworks) ~/code/ShapeWorks$ source ./devenv.sh ./build/bin
 ```
 
-Any path can be passed as the parameters for this script. These examples are just demonstrating simple versions that require less typing.
+On Windows, to point to the RelWithDebInfo binaries in a build directory inside source:
+```
+(shapeworks) ~/code/ShapeWorks> devenv .\build\bin\RelWithDebInfo
+```
 
+Any path can be passed as the parameter for this script and it can be called from any location. Another example:
+```
+(shapeworks) ~/code/ShapeWorks/build_xcode/bin/Debug$ source ../../devenv.sh Debug
+```
 
-## Manually adding to the PATH on OSX/Linux
+### Manually adding paths
+
+While unnecessary for the use of ShapeWorks, these are the steps to manually add items to your paths.
+
+#### OSX/Linux
+
 `$ export PATH=path/to/add:$PATH`  
 
 Verify the results with the command: `$ echo $PATH`  
 
-## Manually adding to the PATH on Windows
+#### Windows
+
 `$ set PATH=path/to/add;%PATH%`  
 This only modifies the path for the current command prompt.  
 
-To permanently add to the path:     
+To permanently add to the path (or so you can remove what has previously been added):  
 
 - Go to *Settings/Edit the system environment variables/Environment Variables*  
 - Choose the *Path* variable and press *Edit...*  

@@ -1,10 +1,10 @@
 #
 # Configures developer environment such that:
-# - PATH and PYTHONPATH point to $BUILD/bin
+# - PATH and PYTHONPATH point to $BUILD_BIN
 # - PYTHONPATH points to each module in $SOURCE/Python
 #
 # Example when build directory is inside source:
-#   (shapeworks) ~/code/ShapeWorks$ source ./devenv.sh `pwd` `pwd`/build_debug
+#   (shapeworks) ~/code/ShapeWorks$ source ./devenv.sh ./build/bin
 #
 # After sourcing this, processes in the environment will use executables from
 # the given build and import modules from the developer's source (including the
@@ -14,23 +14,22 @@
 (return 0 2>/dev/null) && sourced=1 || sourced=0
 
 if [[ "$sourced" == "0" ]]; then
-    echo "ERROR: must call this script using \"source ./devenv.sh SOURCE_DIR BUILD_DIR\""
+    echo "ERROR: must call this script using \"source ./devenv.sh BUILD_BIN\""
     exit 1
 fi
 
-if [[ "$#" -ne 2 ]]; then
-    echo "ERROR: must call this script using \"source ./devenv.sh SOURCE_DIR BUILD_DIR\""
+if [[ "$#" -ne 1 ]]; then
+    echo "ERROR: must call this script using \"source ./devenv.sh BUILD_BIN\""
     return 1
 fi    
 
-SOURCE=$1
-BUILD=$2
+SOURCE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+echo "Source directory: ${SOURCE}"
+BUILD="$( cd "$1" &> /dev/null && pwd )"
+echo "Binary directory: ${BUILD}"
 
-export PATH=${BUILD}/bin:$PATH
-export PYTHONPATH=${BUILD}/bin:$PYTHONPATH
-if [[ "$(uname)" == "Linux" ]]; then
-    export LD_LIBRARY_PATH=${BUILD}/bin:${BUILD}/lib:${LD_LIBRARY_PATH}
-fi
+export PATH=${BUILD}:$PATH
+export PYTHONPATH=${BUILD}:$PYTHONPATH
 
 # add each module in ${SOURCE}/Python to the PYTHONPATH
 for M in ${SOURCE}/Python/*/; do
