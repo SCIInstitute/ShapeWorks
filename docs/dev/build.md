@@ -2,6 +2,8 @@
 
 If you encounter problems, have questions, or need help, please contact `<shapeworks-dev-support@sci.utah.edu>`.
 
+!!! note "After you finish building..."
+    While user installations have everything you need in the PATH, developer builds like these need those additions. Please See [Adding Environment Variables for Development](../dev/paths.md) for instructions on the simple **devenv** script that takes care of everything.
 
 ## Minimum Requirements
 
