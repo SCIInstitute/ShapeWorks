@@ -29,6 +29,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/c++.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script> 
   
   <script>
@@ -194,9 +195,17 @@
                     </li>
                     <li class="toctree-l1 current"><a class="reference internal current" href="paths.html">Adding to PATH Environment Variable</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#adding-to-the-path-on-osxlinux">Adding to the PATH on OSX/Linux</a>
+    <li class="toctree-l2"><a class="reference internal" href="#using-devenv-script-to-configure-developer-environment">Using devenv script to configure developer environment</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#manually-adding-paths">Manually adding paths</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#osxlinux">OSX/Linux</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#adding-to-the-path-on-windows">Adding to the PATH on Windows</a>
+    <li class="toctree-l4"><a class="reference internal" href="#windows">Windows</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
     </li>
     </ul>
                     </li>
@@ -256,18 +265,47 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="adding-to-path-environment-variable">Adding to PATH Environment Variable</h1>
+                <h1 id="adding-environment-variables-for-development">Adding Environment Variables for Development</h1>
 <div class="admonition danger">
-<p class="admonition-title">Danger</p>
-<p><strong>Be careful</strong> doing this! You are responsible for messing up your own PATH.  </p>
+<p class="admonition-title">This is unnecessary for users!</p>
+<p>Users only need to activate their conda environments (<code>conda activate shapeworks</code>).
+In the past, setting PATH was necessary. Now it will only cause problems. </p>
 </div>
-<h2 id="adding-to-the-path-on-osxlinux">Adding to the PATH on OSX/Linux</h2>
+<div class="admonition note">
+<p class="admonition-title">The simplest way for developers</p>
+<p>A script called <strong>devenv</strong> is provided to setup developer environments on all platforms.</p>
+</div>
+<h2 id="using-devenv-script-to-configure-developer-environment">Using <strong>devenv</strong> script to configure developer environment</h2>
+<p>The <strong>devenv</strong> script, short for <strong>dev</strong>eloper <strong>env</strong>ironment, only requires one parameter: the path to the build binaries. It infers the source path from its own location.  </p>
+<p>It configures the environment of the terminal from which it is sourced such that:  </p>
+<ul>
+<li>PATH and PYTHONPATH point to $BUILD_BIN directory  </li>
+<li>PYTHONPATH points to each module in $SOURCE/Python  </li>
+</ul>
+<p>This is very useful for development, since after sourcing this, processes in the
+environment will use executables from the given build and import modules from
+the developer's source--this includes the compiled portion of the Python bindings!</p>
+<p>It dramatically reduces the probability of using the wrong paths for testing,
+and eliminates the need to <strong>pip install</strong> any of the Python modules during
+development.</p>
+<p>As an example of using it with a make-based build directory inside source on Linux or OSX:
+<div class="highlight"><pre><span></span><code>(shapeworks) ~/code/ShapeWorks$ source ./devenv.sh ./build/bin
+</code></pre></div></p>
+<p>On Windows, to point to the RelWithDebInfo binaries in a build directory inside source:
+<div class="highlight"><pre><span></span><code>(shapeworks) ~/code/ShapeWorks&gt; devenv .\build\bin\RelWithDebInfo
+</code></pre></div></p>
+<p>Any path can be passed as the parameter for this script and it can be called from any location. Another example:
+<div class="highlight"><pre><span></span><code>(shapeworks) ~/code/ShapeWorks/build_xcode/bin/Debug$ source ../../devenv.sh Debug
+</code></pre></div></p>
+<h3 id="manually-adding-paths">Manually adding paths</h3>
+<p>While unnecessary for the use of ShapeWorks, these are the steps to manually add items to your paths.</p>
+<h4 id="osxlinux">OSX/Linux</h4>
 <p><code>$ export PATH=path/to/add:$PATH</code>  </p>
 <p>Verify the results with the command: <code>$ echo $PATH</code>  </p>
-<h2 id="adding-to-the-path-on-windows">Adding to the PATH on Windows</h2>
+<h4 id="windows">Windows</h4>
 <p><code>$ set PATH=path/to/add;%PATH%</code><br />
 This only modifies the path for the current command prompt.  </p>
-<p>To permanently add to the path:     </p>
+<p>To permanently add to the path (or so you can remove what has previously been added):  </p>
 <ul>
 <li>Go to <em>Settings/Edit the system environment variables/Environment Variables</em>  </li>
 <li>Choose the <em>Path</em> variable and press <em>Edit...</em>  </li>
